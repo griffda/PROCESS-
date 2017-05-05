@@ -488,8 +488,8 @@ module physics_variables
        'Lackner-Gottardi (stell)', &
   !+ad_varc  <LI> (24)  ITER-93H (H-mode)
        'ITER-93H             (H)', &
-  !+ad_varc  <LI> (25)  TITAN (RFP)
-       'TITAN RFP               ', &
+  !+ad_varc  <LI> (25)
+       'TITAN RFP OBSOLETE      ', &
   !+ad_varc  <LI> (26)  ITER H-97P ELM-free (H-mode)
        'ITER H-97P ELM-free  (H)', &
   !+ad_varc  <LI> (27)  ITER H-97P ELMy (H-mode)
@@ -880,7 +880,7 @@ module current_drive_variables
   !+ad_varc         <LI> new Culham Lower Hybrid model
   !+ad_varc         <LI> new Culham ECCD model
   !+ad_varc         <LI> new Culham Neutral Beam model
-  !+ad_varc         <LI> RFP Oscillating Field current drive
+  !+ad_varc         <LI> RFP Oscillating Field current drive NOT SUPPORTED
   !+ad_varc         <LI> ECRH user input gamma </OL>
   integer :: iefrf = 5
   !+ad_vars  irfcd /1/ : switch for current drive calculation:<UL>
@@ -1622,7 +1622,6 @@ module pfcoil_variables
   !+ad_hist  15/04/13 PJK Added sigpfcf
   !+ad_hist  16/04/13 PJK Added sigpfcalw
   !+ad_hist  17/04/13 PJK Removed cohbof; changed fcohbof initial value
-  !+ad_hist  27/11/13 PJK Moved pfrmax, pfmmax from RFP module
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  22/09/14 PJK Attempted to clarify zref description
@@ -1805,9 +1804,6 @@ module pfcoil_variables
   real(kind(1.0D0)) :: rpf2 = -1.63D0
   !+ad_vars  s_tresca_oh : Tresca stress coils/central solenoid [MPa]
   real(kind(1.0D0)) :: s_tresca_oh = 0.0D0
-  !+ad_vars  sccufac /0.0188/ : ratio of superconductor to copper
-  !+ad_varc                     cable at a magnetic field of 1T (RFP coils only)
-  real(kind(1.0D0)) :: sccufac = 0.0188D0
   !+ad_vars  sigpfcalw /500.0/ : maximum permissible tensile stress (MPa) in
   !+ad_varc                      steel coil cases for superconducting PF coils
   !+ad_varc                      (ipfres=0)
@@ -1895,7 +1891,7 @@ module tfcoil_variables
   !+ad_hisc               changed dcond dimensions
   !+ad_hist  19/06/13 PJK Removed rjtfsual
   !+ad_hist  08/10/13 PJK Reassigned isumattf=2; added fhts
-  !+ad_hist  17/10/13 PJK Modified cdtfleg comment; imported tftort from RFP module
+  !+ad_hist  17/10/13 PJK Modified cdtfleg comment
   !+ad_hist  06/11/13 PJK Modified various comments; removed obsolete switch magnt
   !+ad_hist  01/05/14 PJK Changed TF coil stress model limits to recent ITER values;
   !+ad_hisc               added stress_model etc.; corrected arc array lengths
@@ -1907,7 +1903,6 @@ module tfcoil_variables
   !+ad_hist  12/05/14 PJK Added insstrain
   !+ad_hist  12/06/14 PJK Changed prp default value to 0.0
   !+ad_hist  24/06/14 PJK Removed wtbc
-  !+ad_hist  30/07/14 PJK Changed tftort comment
   !+ad_hist  30/07/14 PJK Renamed borev to tfborev
   !+ad_hist  31/07/14 PJK Added acasetfo, dcondins, whtconin, whtgw, whtrp;
   !+ad_hisc               removed aspcstf
@@ -2159,11 +2154,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfsao = 0.0D0
   !+ad_vars  tftmp /4.5/ : peak helium coolant temperature in TF coils and PF coils (K)
   real(kind(1.0D0)) :: tftmp = 4.5D0
+  ! ISSUE #508 Remove RFP option: frfpf, frfptf, sccufac
   !+ad_vars  tftort : TF coil toroidal thickness (m)
-  !+ad_varc           (calculated for tokamaks and stellarators;
-  !+ad_varc           RFPs - input value, default=0.33, is used)
-  !+ad_varc           (iteration variable 77) (RFP only)
-  real(kind(1.0D0)) :: tftort = 0.33D0
+  real(kind(1.0D0)) :: tftort = 4.5D0
+
   !+ad_vars  thicndut /8.0e-4/ : conduit insulation thickness (m)
   real(kind(1.0D0)) :: thicndut = 8.0D-4
   !+ad_vars  thkcas /0.3/ : inboard TF coil case outer (non-plasma side) thickness (m)
@@ -2792,7 +2786,7 @@ module buildings_variables
   !+ad_vars  admvol : volume of administration buildings (m3)
   real(kind(1.0D0)) :: admvol = 0.0D0
   !+ad_vars  clh1 /2.5/ : vertical clearance from TF coil to cryostat (m)
-  !+ad_varc               (calculated for tokamaks, RFPs)
+  !+ad_varc               (calculated for tokamaks)
   real(kind(1.0D0)) :: clh1 = 2.5D0
   !+ad_vars  clh2 /15.0/ : clearance beneath TF coil to foundation
   !+ad_varc                (including basement) (m)
@@ -2949,7 +2943,7 @@ module build_variables
   !+ad_vars  bore /1.42/ : central solenoid inboard radius (m)
   !+ad_varc                (iteration variable 29)
   real(kind(1.0D0)) :: bore = 1.42D0
-  !+ad_vars  clhsf /4.268/ : cryostat lid height scaling factor (tokamaks, RFPs)
+  !+ad_vars  clhsf /4.268/ : cryostat lid height scaling factor (tokamaks)
   real(kind(1.0D0)) :: clhsf = 4.268D0
   !+ad_vars  ddwex /0.07/ : cryostat thickness (m)
   real(kind(1.0D0)) :: ddwex = 0.07D0
@@ -3576,7 +3570,7 @@ module constraint_variables
   !+ad_hist  25/09/13 PJK Changed fportsz description
   !+ad_hist  30/09/13 PJK Added pseprmax, fpsepr
   !+ad_hist  28/10/13 PJK Corrected fdene comment
-  !+ad_hist  26/02/14 PJK Added ftftort, ftfthko
+  !+ad_hist  26/02/14 PJK Added ftfthko
   !+ad_hist  08/05/14 PJK Added bigqmin
   !+ad_hist  19/05/14 PJK Added fradpwr
   !+ad_hist  17/09/14 PJK Changed default values
@@ -3710,12 +3704,6 @@ module constraint_variables
   !+ad_vars  fradwall /1.0/ : f-value for upper limit on radiation wall load
   !+ad_varc                   (constr. equ. 67, iteration variable 116 )
   real(kind(1.0D0)) :: fradwall = 1.0D0
-  !+ad_vars  frfpf /1.0/ : f-value for RFP reversal parameter
-  !+ad_varc                (constraint equation 49, iteration variable 80)
-  real(kind(1.0D0)) :: frfpf = 1.0D0
-  !+ad_vars  frfptf /1.0/ : f-value for RFP TF coil toroidal thickness
-  !+ad_varc                 (constraint equation 47, iteration variable 76)
-  real(kind(1.0D0)) :: frfptf = 1.0D0
   !+ad_vars  frminor /1.0/ : f-value for minor radius limit
   !+ad_varc                  (constraint equation 21, iteration variable 32)
   real(kind(1.0D0)) :: frminor = 1.0D0
@@ -3737,12 +3725,6 @@ module constraint_variables
   !+ad_vars  ftcycl /1.0/ : f-value for cycle time
   !+ad_varc                 (constraint equation 42, iteration variable 67)
   real(kind(1.0D0)) :: ftcycl = 1.0D0
-  !+ad_vars  ftfthko /1.0/ : f-value for TF coil outer leg radial thickness lower limit
-  !+ad_varc                  (constraint equation 58, iteration variable 100)
-  real(kind(1.0D0)) :: ftfthko = 1.0D0
-  !+ad_vars  ftftort /1.0/ : f-value for TF coil outer leg toroidal width lower limit
-  !+ad_varc                  (constraint equation 57, iteration variable 99)
-  real(kind(1.0D0)) :: ftftort = 1.0D0
   !+ad_vars  ftmargoh /1.0/ : f-value for central solenoid temperature margin
   !+ad_varc                   (constraint equation 60, iteration variable 106)
   real(kind(1.0D0)) :: ftmargoh = 1.0D0
@@ -3891,7 +3873,7 @@ module stellarator_variables
 
   !+ad_vars  istell /0/ : switch for stellarator option
   !+ad_varc               (set via <CODE>device.dat</CODE>):<UL>
-  !+ad_varc          <LI> = 0 use tokamak, RFP or IFE model;
+  !+ad_varc          <LI> = 0 use tokamak, or IFE model;
   !+ad_varc          <LI> = 1 use stellarator model</UL>
   integer :: istell = 0
 
@@ -3946,64 +3928,8 @@ end module stellarator_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-module rfp_variables
+! Issue #508 Remove RFP option: module rfp_variables
 
-  !+ad_name  rfp_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  reversed field pinch model
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  reversed field pinch model.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  31/10/12 PJK Initial version of module
-  !+ad_hist  17/10/13 PJK Moved tftort to TF coil module
-  !+ad_hist  27/11/13 PJK Moved pfrmax, pfmmax to PF coil module
-  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  public
-
-  !+ad_vars  irfp /0/ : switch for RFP option
-  !+ad_varc             (set via <CODE>device.dat</CODE>):<UL>
-  !+ad_varc        <LI> = 0 use tokamak, stellarator or IFE model;
-  !+ad_varc        <LI> = 1 use RFP model</UL>
-  integer :: irfp = 0
-
-  !+ad_vars  nrfppf /16/ FIX : number of RFP PF coils (final two are SC EF coils)
-  integer, parameter :: nrfppf = 16
-
-  !+ad_vars  cptrfp(nrfppf) : current per turn in each RFP PF coil (A/m2)
-  real(kind(1.0D0)), dimension(nrfppf) :: cptrfp = 0.0D0
-  !+ad_vars  drpf(nrfppf) : radial cross-section of each RFP PF coil (m)
-  real(kind(1.0D0)), dimension(nrfppf) :: drpf = 0.0D0
-  !+ad_vars  dzpf(nrfppf) : vertical cross-section of each RFP PF coil (m)
-  real(kind(1.0D0)), dimension(nrfppf) :: dzpf = 0.0D0
-  !+ad_vars  nturns(nrfppf) : number of turns of each RFP PF coil
-  real(kind(1.0D0)), dimension(nrfppf) :: nturns = 0.0D0
-  !+ad_vars  resrfp(nrfppf) : resistance of each RFP PF coil (ohms)
-  real(kind(1.0D0)), dimension(nrfppf) :: resrfp = 0.0D0
-  !+ad_vars  rfpf : RFP reversal parameter F
-  real(kind(1.0D0)) :: rfpf = 0.0D0
-  !+ad_vars  rfpth /1.5/ : RFP pinch parameter theta
-  !+ad_varc                (iteration variable 78)
-  real(kind(1.0D0)) :: rfpth = 1.5D0
-  !+ad_vars  rrpf(nrfppf) : radius of each RFP PF coil (m)
-  real(kind(1.0D0)), dimension(nrfppf) :: rrpf = 0.0D0
-  !+ad_vars  zzpf(nrfppf) : vertical position of each RFP PF coil (m)
-  real(kind(1.0D0)), dimension(nrfppf) :: zzpf = 0.0D0
-
-end module rfp_variables
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module ife_variables
 
@@ -4033,7 +3959,7 @@ module ife_variables
 
   !+ad_vars  ife /0/ : switch for IFE option
   !+ad_varc            (set via <CODE>device.dat</CODE>):<UL>
-  !+ad_varc       <LI> = 0 use tokamak, RFP or stellarator model;
+  !+ad_varc       <LI> = 0 use tokamak, or stellarator model;
   !+ad_varc       <LI> = 1 use IFE model</UL>
   integer :: ife = 0
 

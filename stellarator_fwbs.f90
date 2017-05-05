@@ -54,7 +54,7 @@ module kit_blanket_model
   !
   !  IB = inboard, OB = outboard
 
-  integer, parameter :: np = 2 
+  integer, parameter :: np = 2
 
   real(kind(1.0D0)), dimension(np) :: x_BZ_IB, x_BM_IB, x_BP_IB, x_VV_IB
   real(kind(1.0D0)), dimension(np) :: x_BZ_OB, x_BM_OB, x_BP_OB, x_VV_OB
@@ -133,7 +133,7 @@ module kit_blanket_model
 
   !  [n/cm^2/sec] Reference fast neutron flux on VV inner side [Fish09]
 
-  real(kind(1.0D0)) :: phi_n_0_VV_ref = 2.0D10  
+  real(kind(1.0D0)) :: phi_n_0_VV_ref = 2.0D10
 
   !  Vacuum vessel helium production pre-exponential terms and decay lengths
 
@@ -142,7 +142,7 @@ module kit_blanket_model
 
   !  [dpa] Allowable neutron damage to the FW EUROFER
 
-  real(kind(1.0D0)) :: D_EU_max = 60.0D0  
+  real(kind(1.0D0)) :: D_EU_max = 60.0D0
 
   !  Variables used in this module, ultimately to be set via the calling routine
   !  to values given by PROCESS variables
@@ -593,7 +593,7 @@ contains
          ( exp(-t_FW_IB/lambda_q_BZ_breed_IB) - &
          exp(-(t_FW_IB+t_BZ_IB)/lambda_q_BZ_breed_IB) )
 
-    !  Nuclear power in IB Be pebbles     
+    !  Nuclear power in IB Be pebbles
 
     P_BZ_Be_IB = 1.0D-6 * nwl_ratio * nwl_IB_ratio_PPCS * A_BZ_Be_IB * &
          lambda_q_BZ_Be_IB * q_0_BZ_Be_IB * &
@@ -1143,7 +1143,7 @@ module fwbs_module
   !+ad_call  physics_variables
   !+ad_call  plasma_geometry_module
   !+ad_call  process_output
-  !+ad_call  rfp_variables
+
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
@@ -1155,7 +1155,7 @@ module fwbs_module
   !+ad_hist  31/10/12 PJK Moved local common variables into module header
   !+ad_hist  06/11/12 PJK Added plasma_geometry_module
   !+ad_hist  09/04/13 PJK Added buildings_variables, pfcoil_variables,
-  !+ad_hisc               rfp_variables, stellarator_variables
+  !+ad_hisc               stellarator_variables
   !+ad_hist  08/05/13 PJK Added dshellvol, eshellvol
   !+ad_hist  22/05/13 PJK Added kit_blanket_model, build_module, times_variables
   !+ad_hist  14/08/13 PJK Made blanket_neutronics public
@@ -1179,7 +1179,7 @@ module fwbs_module
   use plasma_geometry_module
   use process_output
   use refprop_interface
-  use rfp_variables
+
   use stellarator_variables
   use tfcoil_variables
   use times_variables
@@ -1316,7 +1316,7 @@ contains
     end if
     hshld = 0.5D0*(htop + hbot)
 
-    if ((itart == 1).or.(fwbsshape == 1)) then  !  D-shaped 
+    if ((itart == 1).or.(fwbsshape == 1)) then  !  D-shaped
 
        !  Major radius to outer edge of inboard blanket
 
@@ -1861,26 +1861,15 @@ contains
 
     !  External cryostat radius (m)
     !  rb(i) = outer radius of PF coil i (tokamaks)
-    !  rrpf(i) = radius of RFP coil i (RFPs)
-
-    if (irfp == 1) then
-       rdewex = maxval(rrpf + 0.5D0*drpf) + rpf2dewar
-    else  !  tokamaks
-       rdewex = maxval(rb) + rpf2dewar
-    end if
-
+    rdewex = maxval(rb) + rpf2dewar
+    
     !  Clearance between uppermost PF coil and cryostat lid
     !  Scaling from ITER by M. Kovari
 
     hcryopf = clhsf * (2.0D0*rdewex)/28.440D0
 
     !  Half-height of cryostat
-
-    if (irfp /= 1) then
-       zdewex = maxval(zh) + hcryopf
-    else
-       zdewex = maxval(zzpf + 0.5D0*dzpf) + hcryopf
-    end if
+    zdewex = maxval(zh) + hcryopf
 
     !  Vertical clearance between TF coil and cryostat
 
@@ -2147,7 +2136,7 @@ contains
   end subroutine fwbs
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   subroutine blanket_neutronics
 
     !+ad_name  blanket_neutronics
@@ -2291,7 +2280,7 @@ contains
     vvhemax = max(vvhemaxi,vvhemaxo)
 
   end subroutine blanket_neutronics
-  
+
   function tsat(p)
 
     !+ad_name  tsat

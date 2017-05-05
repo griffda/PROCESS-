@@ -18,7 +18,7 @@ module availability_module
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pulse_variables
-  !+ad_call  rfp_variables
+
   !+ad_call  times_variables
   !+ad_call  vacuum_variables
   !+ad_call  maths_library
@@ -42,7 +42,7 @@ module availability_module
   use physics_variables
   use process_output
   use pulse_variables
-  use rfp_variables
+
   use tfcoil_variables
   use times_variables
   use vacuum_variables
@@ -85,7 +85,7 @@ contains
     !+ad_hist  17/10/12 PJK Added divertor_variables
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  31/10/12 PJK Added cost_variables
-    !+ad_hist  05/11/12 PJK Added rfp_variables
+
     !+ad_hist  05/11/12 PJK Added ife_variables
     !+ad_hist  05/11/12 PJK Added pulse_variables
     !+ad_hist  23/05/13 PJK Removed bktlife calculation if blktmodel>0
@@ -137,13 +137,7 @@ contains
        end if
 
        ! Divertor lifetime (years)
-       if (irfp == 1) then
-         ! if a rfp machine
-         divlife = 1.0D0
-       else
-         ! if a tokamak
-         divlife = min(adivflnc/hldiv, tlife)
-       end if
+       divlife = min(adivflnc/hldiv, tlife)
 
        ! Centrepost lifetime (years) (ST machines only)
        if (itart == 1) then
@@ -208,7 +202,7 @@ contains
        end if
 
        ! Divertor
-       if ((divlife < tlife).and.(irfp /= 1)) then
+       if (divlife < tlife) then
           divlife = min( divlife/cfactr, tlife )
        end if
 
@@ -433,14 +427,8 @@ contains
        bktlife =  min(abktflnc/wallmw, tlife)
 
        ! Divertor lifetime (years)
-       if (irfp == 1) then
-          ! if a rfp machine
-          divlife = 1.0D0
-       else
-          ! if a tokamak
-          divlife = min( adivflnc/hldiv, tlife )
-       end if
-
+       divlife = min( adivflnc/hldiv, tlife )
+       
        ! Centrepost lifetime (years) (ST only)
        if (itart == 1) then
           cplife = min( cpstflnc/wallmw, tlife )

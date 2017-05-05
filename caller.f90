@@ -32,8 +32,8 @@ subroutine caller(xc,nvars)
   !+ad_call  power_module
   !+ad_call  process_output
   !+ad_call  pulse_module
-  !+ad_call  rfp_module
-  !+ad_call  rfp_variables
+
+
   !+ad_call  sctfcoil_module
   !+ad_call  startup_module
   !+ad_call  stellarator_module
@@ -62,10 +62,6 @@ subroutine caller(xc,nvars)
   !+ad_call  power2
   !+ad_call  pulse
   !+ad_call  radialb
-  !+ad_call  rfppfc
-  !+ad_call  rfppfp
-  !+ad_call  rfpphy
-  !+ad_call  rfptfc
   !+ad_call  startup
   !+ad_call  stcall
   !+ad_call  strucall
@@ -85,32 +81,6 @@ subroutine caller(xc,nvars)
   !+ad_hist  24/05/06 PJK Moved call to STRUCALL after DIVCALL
   !+ad_hist  27/07/11 PJK Initial F90 version
   !+ad_hist  24/09/12 PJK Swapped argument order of RADIALB, DIVCALL, INDUCT
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Added costs_module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added physics_module
-  !+ad_hist  17/10/12 PJK Added current_drive_module
-  !+ad_hist  17/10/12 PJK Added divertor_module
-  !+ad_hist  18/10/12 PJK Added fwbs_module
-  !+ad_hist  18/10/12 PJK Added pfcoil_module
-  !+ad_hist  29/10/12 PJK Added tfcoil_module
-  !+ad_hist  29/10/12 PJK Added sctfcoil_module
-  !+ad_hist  29/10/12 PJK Added structure_module
-  !+ad_hist  29/10/12 PJK Added vacuum_module
-  !+ad_hist  30/10/12 PJK Added power_module
-  !+ad_hist  30/10/12 PJK Added buildings_module
-  !+ad_hist  30/10/12 PJK Added build_module
-  !+ad_hist  31/10/12 PJK Added stellarator_variables
-  !+ad_hist  31/10/12 PJK Added stellarator_module
-  !+ad_hist  05/11/12 PJK Added rfp_variables
-  !+ad_hist  05/11/12 PJK Added rfp_module
-  !+ad_hist  05/11/12 PJK Added ife_variables
-  !+ad_hist  05/11/12 PJK Added ife_module
-  !+ad_hist  05/11/12 PJK Added pulse_module
-  !+ad_hist  06/11/12 PJK Added startup_module
-  !+ad_hist  06/11/12 PJK Added availability_module
-  !+ad_hist  06/11/12 PJK Added plasma_geometry_module
   !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
   !+ad_hist  02/12/14 JM  Added new availability model in caller (avail_2)
   !+ad_hist  13/03/15 JM  Changed calling of blanket models and import of blanket modules
@@ -141,8 +111,8 @@ subroutine caller(xc,nvars)
   use power_module
   use process_output
   use pulse_module
-  use rfp_module
-  use rfp_variables
+
+
   use sctfcoil_module
   use startup_module
   use stellarator_module
@@ -198,7 +168,7 @@ subroutine caller(xc,nvars)
      return
   end if
 
-  !  Tokamak and RFP calls !
+  !  Tokamak calls !
   !!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Plasma geometry model !
@@ -215,16 +185,7 @@ subroutine caller(xc,nvars)
   ! Vertical build
   call vbuild(nout,0)
 
-  ! Physics model !
-  !!!!!!!!!!!!!!!!!
-
-  if (irfp == 0) then
-     ! if a tokamak
-     call physics
-  else
-     ! if a rfp machine
-     call rfpphy
-  end if
+  call physics
 
   ! startup model (not used) !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -232,41 +193,22 @@ subroutine caller(xc,nvars)
   !call startup(nout,0)  !  commented-out for speed reasons
 
   ! Toroidal field coil model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  call tfcoil(nout,0)
 
-  if (irfp == 0) then
-     ! if a tokamak
-     call tfcoil(nout,0)
-  else
-     ! if a rfp machine
-     call rfptfc(nout,0)
-  end if
 
   ! Toroidal field coil superconductor model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call tfspcall(nout,0)
 
-  ! Poloidal field coil model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! Poloidal field and OH coil model
+  call pfcoil
+  ! Poloidal field coil inductance calculation
+  call induct(nout,0)
+  ! Volt-second capability of PF coil set
+  call vsec
 
-  if (irfp == 0) then
-     ! if a tokamak
 
-     ! Poloidal field and OH coil model
-     call pfcoil
-
-     ! Poloidal field coil inductance calculation
-     call induct(nout,0)
-
-     ! Volt-second capability of PF coil set
-     call vsec
-
-  else
-     ! if a rfp machine
-     call rfppfc(nout,0)
-
-  end if
 
   ! Pulsed reactor model !
   !!!!!!!!!!!!!!!!!!!!!!!!
@@ -335,15 +277,8 @@ subroutine caller(xc,nvars)
   call tfpwr(nout,0)
 
   ! Poloidal field coil power model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   call pfpwr(nout,0)
 
-  if (irfp == 0) then
-     ! if a tokamak
-     call pfpwr(nout,0)
-  else
-     ! if a rfp machine
-     call rfppfp(nout,0)
-  end if
 
   ! Plant heat transport part 1 !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

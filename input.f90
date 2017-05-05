@@ -95,7 +95,6 @@ module process_input
   !+ad_call  pf_power_variables
   !+ad_call  process_output
   !+ad_call  pulse_variables
-  !+ad_call  rfp_variables
   !+ad_call  scan_module
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
@@ -122,7 +121,6 @@ module process_input
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_hist  31/10/12 PJK Added stellarator_variables
-  !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  14/01/13 PJK Changed (maximum) line length from 200 to maxlen
@@ -156,7 +154,6 @@ module process_input
   use pf_power_variables
   use process_output
   use pulse_variables
-  use rfp_variables
   use scan_module
   use stellarator_variables
   use tfcoil_variables
@@ -324,8 +321,6 @@ contains
     !+ad_hist  30/09/13 PJK Added PSEPRMAX, FPSEPR
     !+ad_hist  08/10/13 PJK Reassigned ISUMATTF=2; added FHTS
     !+ad_hist  07/11/13 PJK Removed obsolete switch MAGNT
-    !+ad_hist  18/11/13 PJK Raised TFTORT upper limit
-    !+ad_hist  26/11/13 PJK Lowered RALPNE lower limit
     !+ad_hist  28/11/13 PJK Added IPROFILE
     !+ad_hist  17/12/13 PJK Changed IOPTIMZ description
     !+ad_hist  19/12/13 PJK Changed EPSFCN description
@@ -333,7 +328,7 @@ contains
     !+ad_hist  24/02/14 PJK Removed echoing of long input lines to output
     !+ad_hist  26/02/14 PJK Changed references to non-optimising solver
     !+ad_hisc               from hybrid to hybrd
-    !+ad_hist  26/02/14 PJK Added FTFTORT, FTFTHKO, FJOHC
+    !+ad_hist  26/02/14 PJK Added FTFTHKO, FJOHC
     !+ad_hist  27/02/14 PJK Added NINEQNS
     !+ad_hist  03/03/14 PJK Changed lower bound of TRATIO to 0.0
     !+ad_hist  10/03/14 PJK Removed CAREA
@@ -354,7 +349,6 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed BCYLTH, BLNKTTH
     !+ad_hist  22/07/14 PJK Added RUNTITLE
-    !+ad_hist  30/07/14 PJK Changed TFTORT comment
     !+ad_hist  31/07/14 PJK Added DCONDINS; removed ASPCSTF
     !+ad_hist  19/08/14 PJK Removed RECYLE, IMPFE
     !+ad_hist  19/08/14 PJK Removed CASFACT
@@ -800,9 +794,6 @@ contains
        case ('ralpne')
           call parse_real_variable('ralpne', ralpne, 1.0D-12, 1.0D0, &
                'Thermal alpha density / electron density')
-       case ('rfpth')
-          call parse_real_variable('rfpth', rfpth, 0.01D0, 1.8D0, &
-               'RFP pinch parameter, theta')
        case ('rhopedn')
           call parse_real_variable('rhopedn', rhopedn, 0.01D0, 1.0D0, &
                'Density pedestal r/a')
@@ -976,12 +967,6 @@ contains
        case ('fradwall')
           call parse_real_variable('fradwall', fradwall, 0.001D0, 1.0D0, &
                'f-value for upper limit on radiation wall load')
-       case ('frfpf')
-          call parse_real_variable('frfpf', frfpf, 0.001D0, 10.0D0, &
-               'F-value for RFP reversal parameter')
-       case ('frfptf')
-          call parse_real_variable('frfptf', frfptf, 0.001D0, 1.0D0, &
-               'F-value for TF coil toroidal thickness')
        case ('frminor')
           call parse_real_variable('frminor', frminor, 0.001D0, 10.0D0, &
                'F-value for minor radius limit')
@@ -1003,12 +988,6 @@ contains
        case ('ftcycl')
           call parse_real_variable('ftcycl', ftcycl, 0.001D0, 10.0D0, &
                'F-value for cycle time')
-       case ('ftfthko')
-          call parse_real_variable('ftfthko', ftfthko, 0.001D0, 1.0D0, &
-               'F-value for minimum TF coil leg rad width')
-       case ('ftftort')
-          call parse_real_variable('ftftort', ftftort, 0.001D0, 1.0D0, &
-               'F-value for minimum TF coil leg tor width')
        case ('ftmargtf')
           call parse_real_variable('ftmargtf', ftmargtf, 0.001D0, 10.0D0, &
                'F-value for TF coil temp. margin')
@@ -1684,18 +1663,6 @@ contains
        case ('tftmp')
           call parse_real_variable('tftmp', tftmp, 0.01D0, 10.0D0, &
                'Peak TF coil He coolant temp. (K)')
-       case ('tftort')
-          if (irfp == 0) then
-             write(outfile,*) ' '
-             write(outfile,*) '**********'
-             write(outfile,*) 'TFTORT is now obsolete for tokamaks and stellarators -'
-             write(outfile,*) 'please remove it from the input file.'
-             write(outfile,*) '**********'
-             write(outfile,*) ' '
-             obsolete_var = .true.
-          end if
-          call parse_real_variable('tftort', tftort, 0.1D0, 4.0D0, &
-               'RFP TF coil toroidal thickness (m)')
        case ('thicndut')
           call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
@@ -1803,9 +1770,6 @@ contains
        case ('rpf2')
           call parse_real_variable('rpf2', rpf2, -3.0D0, 3.0D0, &
                'Radial offset for group 2 PF coils')
-       case ('sccufac')
-          call parse_real_variable('sccufac', sccufac, 0.001D0, 0.1D0, &
-               'sc/cu ratio in PF coils per tesla')
        case ('sigpfcalw')
           call parse_real_variable('sigpfcalw', sigpfcalw, 1.0D0, 1.0D3, &
                'Allowable stress in the PF coil case (MPa)')

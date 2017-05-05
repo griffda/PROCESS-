@@ -12,7 +12,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on  5 May 2017 13:37:07 +01:00(hh:mm) UTC by freia008
+ PROCESS 1.0.10 : Run on  5 May 2017 15:55:23 +01:00(hh:mm) UTC by freia008
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -111,11 +111,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
     1  Beta consistency                      =  3.7314E-02              2.3064E-10                 6.1810E-09
     2  Global power balance consistency      =  1.6924E-01 MW/m3       -1.6608E-09 MW/m3          -9.8133E-09
-    3  Density upper limit                   <  6.8675E+19 /m3         -8.5499E+09 /m3            -1.0375E-10
-    4  (Epsilon x beta-pol) upper limit      <  1.3800E+00             -1.3197E-12                -3.5352E-12
+    3  Density upper limit                   <  6.8675E+19 /m3         -8.5498E+09 /m3            -1.0375E-10
+    4  (Epsilon x beta-pol) upper limit      <  1.3800E+00             -1.3199E-12                -3.5356E-12
     5  Neutron wall load upper limit         <  8.0000E+00 MW/m2       -4.3815E-08 MW/m2          -4.3548E-08
     6  Toroidal field 1/R consistency        =  4.4729E+01 T.m         -2.4751E-07 T.m            -5.5336E-09
-    7  Radial build consistency              =  9.0666E+00 m           -7.3341E-10 m              -8.0891E-11
+    7  Radial build consistency              =  9.0666E+00 m           -7.3340E-10 m              -8.0891E-11
     8  Burn time lower limit                 >  7.2000E+03 sec         -1.0435E-02 sec            -1.4493E-06
     9  Net electric power lower limit        >  5.0000E+02 MW           1.5776E-04 MW              3.1552E-07
    10  Beta upper limit                      <  5.6067E-02              2.2970E-10                 7.2804E-09
@@ -886,7 +886,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -7.439E+06 -7.439E+06 -7.439E+06  0.000E+00
    5         0.000E+00  0.000E+00 -4.807E+06 -4.807E+06 -4.807E+06  0.000E+00
    6         0.000E+00  0.000E+00 -4.807E+06 -4.807E+06 -4.807E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00 -2.525E-08  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.374E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.201E-01  OP 

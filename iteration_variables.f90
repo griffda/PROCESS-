@@ -26,7 +26,7 @@ subroutine loadxc
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
-  !+ad_call  rfp_variables
+
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
@@ -46,7 +46,7 @@ subroutine loadxc
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added constraint_variables
-  !+ad_hist  05/11/12 PJK Added rfp_variables
+
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  06/11/12 PJK Renamed source file iteration_variables.f90 from xc.f90
@@ -105,7 +105,7 @@ subroutine loadxc
   use pfcoil_variables
   use physics_variables
   use pulse_variables
-  use rfp_variables
+
   use stellarator_variables
   use tfcoil_variables
   use times_variables
@@ -149,7 +149,7 @@ subroutine loadxc
      case (22) ; xcm(i) = tbrnmn
      case (23) ; xcm(i) = fcoolcp
      case (24) ; xcm(i) = cdtfleg
-        if ((itfsup == 1).or.(irfp == 1)) call report_error(47)
+        if (itfsup == 1) call report_error(47)
      case (25) ; xcm(i) = fpnetel
      case (26) ; xcm(i) = ffuspow
      case (27) ; xcm(i) = fhldiv
@@ -187,7 +187,7 @@ subroutine loadxc
      case (58) ; xcm(i) = thwcndut
      case (59) ; xcm(i) = fcutfsu
      case (60) ; xcm(i) = cpttf
-        if ((istell == 1).or.((irfp == 0).and.(itfsup == 0))) call report_error(49)
+        if ((istell == 1).or.(itfsup == 0)) call report_error(49)
      case (61) ; xcm(i) = gapds
      case (62) ; xcm(i) = fdtmp
      case (63) ; xcm(i) = ftpeak
@@ -204,12 +204,11 @@ subroutine loadxc
      case (73) ; xcm(i) = scrapli
      case (74) ; xcm(i) = scraplo
      case (75) ; xcm(i) = tfootfi
-     case (76) ; xcm(i) = frfptf
-     case (77) ; xcm(i) = tftort
-        if (irfp == 0) call report_error(51)
-     case (78) ; xcm(i) = rfpth
+     case (76) ; write(*,*) 'Iteration variable 76 is not supported.'
+     case (77) ; write(*,*) 'Iteration variable 77 is not supported.'
+     case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
      case (79) ; xcm(i) = fbetap
-     case (80) ; xcm(i) = frfpf
+     case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
      case (81) ; xcm(i) = edrive
      case (82) ; xcm(i) = drveff
      case (83) ; xcm(i) = tgain
@@ -229,8 +228,8 @@ subroutine loadxc
      case (96) ; xcm(i) = fvvhe
      case (97) ; xcm(i) = fpsepr
      case (98) ; xcm(i) = li6enrich
-     case (99) ; xcm(i) = ftftort
-     case (100) ; xcm(i) = ftfthko
+     case (99) ; write(*,*) 'Iteration variable 99 is not supported.'
+     case (100) ; write(*,*) 'Iteration variable 100 is not supported.'
      case (101) ; xcm(i) = prp
      case (102) ; xcm(i) = impurity_arr(impvar)%frac
      case (103) ; xcm(i) = flhthresh
@@ -347,7 +346,7 @@ subroutine convxc(xc,nn)
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
-  !+ad_call  rfp_variables
+
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  report_error
@@ -364,7 +363,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added constraint_variables
-  !+ad_hist  05/11/12 PJK Added rfp_variables
+
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  17/01/13 PJK Removed bounds checking of iteration variables
   !+ad_hist  11/04/13 PJK Removed ti recalculation (moved to physics)
@@ -411,7 +410,7 @@ subroutine convxc(xc,nn)
   use numerics
   use pfcoil_variables
   use physics_variables
-  use rfp_variables
+
   use tfcoil_variables
   use times_variables
 
@@ -507,11 +506,11 @@ subroutine convxc(xc,nn)
      case (73) ; scrapli   = xc(i)/scale(i)
      case (74) ; scraplo   = xc(i)/scale(i)
      case (75) ; tfootfi   = xc(i)/scale(i)
-     case (76) ; frfptf    = xc(i)/scale(i)
-     case (77) ; tftort    = xc(i)/scale(i)
-     case (78) ; rfpth     = xc(i)/scale(i)
+     case (76) ; write(*,*) 'Iteration variable 76 is not supported.'
+     case (77) ; write(*,*) 'Iteration variable 77 is not supported.'
+     case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
      case (79) ; fbetap    = xc(i)/scale(i)
-     case (80) ; frfpf     = xc(i)/scale(i)
+     case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
      case (81) ; edrive    = xc(i)/scale(i)
      case (82) ; drveff    = xc(i)/scale(i)
      case (83) ; tgain     = xc(i)/scale(i)
@@ -531,8 +530,8 @@ subroutine convxc(xc,nn)
      case (96) ; fvvhe     = xc(i)/scale(i)
      case (97) ; fpsepr    = xc(i)/scale(i)
      case (98) ; li6enrich = xc(i)/scale(i)
-     case (99) ; ftftort   = xc(i)/scale(i)
-     case (100) ; ftfthko  = xc(i)/scale(i)
+     case (99) ; write(*,*) 'Iteration variable 99 is not supported.'
+     case (100); write(*,*) 'Iteration variable 100 is not supported.'
      case (101) ; prp      = xc(i)/scale(i)
      case (102)
         fimpvar = xc(i)/scale(i)

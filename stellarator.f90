@@ -248,7 +248,7 @@ module stellarator_module
   !+ad_call  plasma_geometry_module
   !+ad_call  power_module
   !+ad_call  process_output
-  !+ad_call  rfp_variables
+
   !+ad_call  sctfcoil_module
   !+ad_call  stellarator_variables
   !+ad_call  structure_module
@@ -294,7 +294,7 @@ module stellarator_module
   use power_module
   use process_output
   use profiles_module
-  use rfp_variables
+
   use sctfcoil_module
   use stellarator_variables
   use structure_module
@@ -679,7 +679,7 @@ contains
              Zmn(m,n) = SR*Zmn(m,n)
           else
              Rmn(m,n) = Sa*Rmn(m,n)
-             Zmn(m,n) = Sa*Zmn(m,n)           
+             Zmn(m,n) = Sa*Zmn(m,n)
           end if
 
        end do
@@ -702,7 +702,7 @@ contains
     !  Expand array and set not given fourier components to zero.
     !  This is required because the volume is calculated with
     !  a double sum over m1,n1 and m2,n2 resulting in mixed
-    !  mode numbers m*=m1+m2, etc. 
+    !  mode numbers m*=m1+m2, etc.
     !  Therefore m* > m_max meaning, that the sum goes over mode numbers,
     !  which are not given by the input file - but these components can simply
     !  be set to zero
@@ -890,7 +890,7 @@ contains
 
     !  Thickness of outboard TF coil legs
 
-    tfthko = tfcth 
+    tfthko = tfcth
 
     !  Radius to centre of outboard TF coil legs
 
@@ -1634,7 +1634,7 @@ contains
           pnucbzi = pnucbsi * (1.0D0 - exp(-blnkith/decaybzi))
           pnucbzo = pnucbso * (1.0D0 - exp(-blnkoth/decaybzo))
 
-          !  Calculate coolant pumping powers from input fraction.  
+          !  Calculate coolant pumping powers from input fraction.
           !  The pumping power is assumed to be a fraction, fpump, of the
           !  incident thermal power to each component so that
           !  htpmw_i = fpump_i*C, where C is the non-pumping thermal power
@@ -1657,8 +1657,8 @@ contains
           pnucblkt = (pnucbzi + pnucbzo)*emult
 
           !  Calculation of shield and divertor powers
-          !  Shield and divertor powers and pumping powers are calculated using the same 
-          !  simplified method as the first wall and breeder zone when secondary_cycle = 0. 
+          !  Shield and divertor powers and pumping powers are calculated using the same
+          !  simplified method as the first wall and breeder zone when secondary_cycle = 0.
           !  i.e. the pumping power is a fraction of the total thermal power deposited in the
           !  coolant.
 
@@ -1680,7 +1680,7 @@ contains
 
           pnucshld = pnucshldi + pnucshldo
 
-          !  Calculate coolant pumping powers from input fraction.  
+          !  Calculate coolant pumping powers from input fraction.
           !  The pumping power is assumed to be a fraction, fpump, of the incident
           !  thermal power to each component so that,
           !     htpmw_i = fpump_i*C
@@ -2400,8 +2400,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Tokamak/RFP-specific PF coil fence mass set to zero
-
+    !  Tokamak-specific PF coil fence mass set to zero
     fncmass = 0.0D0
 
     !  Set the following to zero to avoid double-counting.
@@ -2679,7 +2678,7 @@ contains
     ! The coil module here is based on the bean-shaped plane as this plane can
     ! be most easily scaled and is similar to the Tokamak poloidal shape. As
     ! all coil shapes are assumed to be fixed, all other coils scale
-    ! accordingly. 
+    ! accordingly.
 
     !  r_theta0   !  This is a new global input variable which will be calculated
     !       in the updated geometry module
@@ -2695,7 +2694,7 @@ contains
     !  Factors used to scale the Helias 5-B parameters
 
     f_R = rmajor/Rg5B       !  Size scaling factor with respect to Helias 5-B
-    f_s = D_coil/D_coil_5B  !  Coil scaling factor 
+    f_s = D_coil/D_coil_5B  !  Coil scaling factor
     f_N = tfno/tfno5B       !  Coil number factor
     f_B = bt/B10            !  B-field scaling factor
     f_I = f_R*f_B/f_N       !  Current scaling factor
@@ -2706,7 +2705,7 @@ contains
 
     !  Calculate B-fields for different coil cross-section scales
 
-    res = 0.05D0               ! resolution 
+    res = 0.05D0               ! resolution
     f_max = 1.5D0              ! maximal f_q for iteration
     N_it = nint(f_max/res)     ! number of iterations
     off = 0.05D0               ! offset
@@ -2735,7 +2734,7 @@ contains
     if (isumattf == 1) then
        Bc = Bco
     else if (isumattf == 3) then
-       Bc = Bc2        
+       Bc = Bc2
     else
        idiags(1) = isumattf ; call report_error(110)
     end if
@@ -2909,9 +2908,9 @@ contains
     tinstf = 0.0D0       ! insulation, already in casing:  casthi+tinstf == h_insu_in
     awpc = (thkwp + 2.0D0*tinstf)*(wwp1 + 2.0D0*tinstf)
     ! [m^2] winding-pack cross sectional area including insulation
-    tftort = wwp1 + 2.0D0*casths  ! [m] Thickness of inboard leg in toroidal direction  
-    tfcth = thkcas + thkwp + casthi  ! [m] Thickness of inboard leg in radial direction  
-    tfthko = tfcth                   ! [m] Thickness of outboard leg in radial direction  
+    tftort = wwp1 + 2.0D0*casths  ! [m] Thickness of inboard leg in toroidal direction
+    tfcth = thkcas + thkwp + casthi  ! [m] Thickness of inboard leg in radial direction
+    tfthko = tfcth                   ! [m] Thickness of outboard leg in radial direction
     acasetf = (tfcth*tftort)-awpc    ! [m^2] Cross-sectional area of surrounding case
 
     if (isumattf == 3) tftmp = T_u  ! [K] Helium coolant temperature for NbTi
@@ -2948,7 +2947,7 @@ contains
     !jwptf = ritfc/(tfno*awptf)
     jwptf = j*1.0D6               ! [A/m^2] winding pack current density
 
-    !leno = sqrt(cpttf/jwptf)          
+    !leno = sqrt(cpttf/jwptf)
     leno = t_w_i                  ! [m] Dimension of square cross-section of each turn
 
     ! [m] Dimension of square cable space inside insulation
@@ -2966,7 +2965,7 @@ contains
 
     !  Total number of turns per coil
 
-    turnstf = t_no    
+    turnstf = t_no
 
     ! [m^2] Total conductor cross-sectional area, taking account of void area
 

@@ -54,7 +54,7 @@ module physics_module
   !+ad_call  profiles_module
   !+ad_call  process_output
   !+ad_call  pulse_variables
-  !+ad_call  rfp_variables
+
   !+ad_call  startup_variables
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
@@ -105,7 +105,7 @@ module physics_module
   use profiles_module
   use process_output
   use pulse_variables
-  use rfp_variables
+
   use startup_variables
   use stellarator_variables
   use tfcoil_variables
@@ -3333,7 +3333,6 @@ end function t_eped_scaling
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  30/06/94 PJK Added stellarator scaling laws 20-23
     !+ad_hist  07/12/95 PJK Added pcharge to plasma input power
-    !+ad_hist  06/03/96 PJK Added RFP scaling law
     !+ad_hist  14/11/97 PJK Added ITER-97 scaling laws (26,27)
     !+ad_hist  01/04/98 PJK Added ITER-96P scaling law (28) and moved
     !+ad_hisc               calculation of dnla into BETCOM instead
@@ -3704,14 +3703,7 @@ end function t_eped_scaling
        qtaue = 0.0D0
        rtaue = -0.67D0
 
-    case (25)  !  TITAN RFP scaling
-       !  TITAN RFP Fusion Reactor Study, Scoping Phase Report
-       !  UCLA-PPG-1100, page 5-9, Jan 1987
-       tauee = hfact * 0.05D0 * pcur * rminor**2
-       gtaue = 0.0D0
-       ptaue = 0.0D0
-       qtaue = 0.0D0
-       rtaue = 0.0D0
+   case (25)  !  Issue #508 Remove RFP option.
 
        !  Next two are ITER-97 H-mode scalings
        !  J. G. Cordey et al., EPS Berchtesgaden, 1997
@@ -5544,7 +5536,7 @@ end function t_eped_scaling
 
     call osubhd(outfile,'Current and Field :')
 
-    if ((istell == 0).and.(irfp == 0)) then
+    if (istell == 0) then
        if (iprofile == 0) then
           call ocmmnt(outfile, &
                'Consistency between q0,q,alphaj,rli,dnbeta is not enforced')
@@ -5568,16 +5560,9 @@ end function t_eped_scaling
        call ovarrf(outfile,'Vertical field at plasma (T)','(bvert)',bvert, 'OP ')
     end if
 
-    if (irfp == 0) then
-       call ovarrf(outfile,'Vacuum toroidal field at R (T)','(bt)',bt)
-       call ovarrf(outfile,'Average poloidal field (T)','(bp)',bp, 'OP ')
-    else
-       call ovarrf(outfile,'Toroidal field at plasma edge (T)','(-bt)',-bt)
-       call ovarrf(outfile,'Poloidal field at plasma edge (T)','(bp)',bp, 'OP ')
-       call ovarrf(outfile,'Reversal parameter F','(rfpf)',rfpf, 'OP ')
-       call ovarrf(outfile,'Pinch parameter theta','(rfpth)',rfpth)
-    end if
-
+    call ovarrf(outfile,'Vacuum toroidal field at R (T)','(bt)',bt)
+    call ovarrf(outfile,'Average poloidal field (T)','(bp)',bp, 'OP ')
+    
     call ovarrf(outfile,'Total field (sqrt(bp^2 + bt^2)) (T)','(btot)',btot, 'OP ')
 
     if (istell == 0) then

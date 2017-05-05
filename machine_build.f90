@@ -27,10 +27,10 @@ module build_module
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  rfp_variables
+
   !+ad_call  tfcoil_variables
   !+ad_hist  30/10/12 PJK Initial version of module
-  !+ad_hist  05/11/12 PJK Added rfp_variables
+
   !+ad_hist  09/05/13 PJK Added dshellarea, eshellarea
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  19/08/14 PJK Added pfcoil_variables
@@ -51,7 +51,7 @@ module build_module
   use pfcoil_variables
   use physics_variables
   use process_output
-  use rfp_variables
+
   use tfcoil_variables
 
   implicit none
@@ -606,15 +606,8 @@ contains
 
     !  Height to inside edge of TF coil
 
-    if (irfp == 0) then
-       hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
-    else
-       !  RFP: TF coil is assumed circular
-       hmax = 0.5D0 * &
-            (gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor &
-            +rminor+scraplo+fwoth+blnkoth+shldoth+ddwi+gapsto)
-    end if
-
+    hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
+    
     !  Vertical locations of divertor coils
 
     if (snull == 0) then

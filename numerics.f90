@@ -42,7 +42,7 @@ module numerics
   !+ad_hist  13/02/14 PJK Expanded lablcc(56) to all 33 characters to
   !+ad_hisc               prevent gfortran error message
   !+ad_hist  26/02/14 PJK New constraint eqns 57,58 added; new iteration
-  !+ad_hisc               variables 99 (ftftort) and 100 (ftfthko) added
+  !+ad_hisc               variables and 100 (ftfthko) added
   !+ad_hist  27/02/14 PJK Modified nineqns comment
   !+ad_hist  05/03/14 PJK Clarified lablcc descriptions
   !+ad_hist  06/03/14 PJK Comment changes

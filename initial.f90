@@ -42,28 +42,6 @@ subroutine initial
   !+ad_hist  26/07/11 PJK Added JCRIT_MODEL
   !+ad_hist  09/11/11 PJK Removed ICULCR
   !+ad_hist  19/09/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  10/10/12 PJK Removed IVMS
-  !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Removed physics variables from list
-  !+ad_hist  15/10/12 PJK Removed numerics variables from list
-  !+ad_hist  16/10/12 PJK Removed current drive variables from list
-  !+ad_hist  17/10/12 PJK Removed divertor variables from list
-  !+ad_hist  18/10/12 PJK Removed first wall, blanket, shield variables
-  !+ad_hist  18/10/12 PJK Removed PF coil variables
-  !+ad_hist  18/10/12 PJK Removed TF coil variables
-  !+ad_hist  29/10/12 PJK Removed structure variables
-  !+ad_hist  29/10/12 PJK Removed vacuum variables
-  !+ad_hist  29/10/12 PJK Removed PF coil power conversion variables
-  !+ad_hist  30/10/12 PJK Removed heat transport variables
-  !+ad_hist  30/10/12 PJK Removed times variables
-  !+ad_hist  30/10/12 PJK Removed buildings variables
-  !+ad_hist  30/10/12 PJK Removed build variables
-  !+ad_hist  31/10/12 PJK Removed cost variables
-  !+ad_hist  31/10/12 PJK Removed inequality variables
-  !+ad_hist  31/10/12 PJK Added stellarator_variables
-  !+ad_hist  31/10/12 PJK Added stellarator_module
-  !+ad_hist  31/10/12 PJK Removed RFP variables
   !+ad_hist  05/11/12 PJK Removed call to ifeini
   !+ad_hist  05/11/12 PJK Removed pulsed reactor variables
   !+ad_hist  05/03/15 JM  Changed blanket fraction check to new models
@@ -111,14 +89,12 @@ subroutine devtyp
   !+ad_desc  directory, a standard tokamak model is assumed.
   !+ad_prob  None
   !+ad_call  ife_variables
-  !+ad_call  rfp_variables
   !+ad_call  stellarator_variables
   !+ad_hist  27/02/96 PJK Initial version
   !+ad_hist  08/10/96 PJK Fixed error: (istell.gt.2) should be (idev.gt.2)
   !+ad_hist  14/03/97 PJK idev=3 ==> inertial fusion power plant
   !+ad_hist  19/09/12 PJK Initial F90 version
   !+ad_hist  31/10/12 PJK Added stellarator_variables
-  !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  04/11/16 MK Added check for content of device file
   !+ad_stat  Okay
@@ -127,7 +103,6 @@ subroutine devtyp
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use ife_variables
-  use rfp_variables
   use stellarator_variables
 
   implicit none
@@ -143,7 +118,6 @@ subroutine devtyp
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   devFile = 'device.dat'
   istell = 0
-  irfp   = 0
   ife    = 0
   idev   = 0      ! Default value MK
 
@@ -168,8 +142,7 @@ subroutine devtyp
         case (1)  !  Stellarator model
            istell = 1
 
-        case (2)  !  Reversed Field Pinch model
-           irfp = 1
+        case (2)  !  ! ISSUE #508 Remove RFP option
 
         case (3)  !  Inertial Fusion Energy model
            ife = 1
@@ -209,7 +182,6 @@ subroutine check
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pulse_variables
-  !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
   !+ad_call  report_error
   !+ad_hist  08/10/96 PJK Initial upgraded version
@@ -218,18 +190,6 @@ subroutine check
   !+ad_hist  01/04/98 PJK Added rnbeam reset for no NBI
   !+ad_hist  19/01/99 PJK Added warning about iiter flag with non-ITER profiles
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Added global_variables module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  18/10/12 PJK Added pfcoil_variables
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  30/10/12 PJK Added buildings_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  05/11/12 PJK Added rfp_variables
-  !+ad_hist  05/11/12 PJK Added ife_variables
-  !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  18/12/12 PJK Added snull and other PF coil location checks
   !+ad_hist  11/04/13 PJK Energy storage building volume set to zero if lpulse=0
   !+ad_hist  23/05/13 PJK Coolant type set to water if blktmodel>0
@@ -271,7 +231,6 @@ subroutine check
   use physics_variables
   use process_output
   use pulse_variables
-  use rfp_variables
   use tfcoil_variables
   use stellarator_variables
   use vacuum_variables
@@ -480,28 +439,7 @@ subroutine check
 
   end if
 
-  !  Reversed Field Pinch model
-
-  if (irfp == 1) then
-
-     if (itart == 1) call report_error(45)
-
-     ddwi     = 0.0D0
-     kappa    = 1.0D0
-     icase    = 'Reversed field pinch model'
-     iefrf    = 9
-     ifispact = 0
-     iohcl    = 0
-     ipfres   = 1
-     isumatpf = 3
-     tfc_model = 0
-     itfsup   = 0
-     ohcth    = 0.0D0
-     pfclres  = 1.7D-8
-     tfootfi  = 1.0D0
-     triang   = 0.0D0
-     vf(:) = 0.1D0
-  end if
+  ! ISSUE #508 Remove RFP option
 
   !  Inertial Fusion Energy model
 

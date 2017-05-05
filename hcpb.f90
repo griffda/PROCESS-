@@ -36,7 +36,6 @@ module ccfe_hcpb_module
   use fwbs_variables
   use heat_transport_variables
   use maths_library
-  use rfp_variables
   use pfcoil_variables
   use physics_variables
   use process_output
@@ -794,36 +793,18 @@ contains
     implicit none
 
     ! cryostat radius (m)
-    ! For rfp machines
-    if (irfp == 1) then
-
-      ! rrpf(i) = radius of RFP coil i (RFPs)
-      rdewex = maxval(rrpf + 0.5D0*drpf) + rpf2dewar
-
-    ! Tokamaks
-    else
-
-      ! rb(i) = outer radius of PF coil i (tokamaks)
-      rdewex = maxval(rb) + rpf2dewar
-
-    end if
+    ! ISSUE #508 Remove RFP option
+    ! rb(i) = outer radius of PF coil i (tokamaks)
+    rdewex = maxval(rb) + rpf2dewar
 
     ! Clearance between uppermost PF coil and cryostat lid (m).
     ! Scaling from ITER by M. Kovari
     hcryopf = clhsf * (2.0D0*rdewex)/28.440D0
 
     ! Half-height of cryostat (m)
-    ! Tokamak
-    if (irfp /= 1) then
+    ! ISSUE #508 Remove RFP option
+    zdewex = maxval(zh) + hcryopf
 
-      zdewex = maxval(zh) + hcryopf
-
-    ! rfp machine
-    else
-
-      zdewex = maxval(zzpf + 0.5D0*dzpf) + hcryopf
-
-    end if
 
     ! Vertical clearance between TF coil and cryostat (m)
     clh1 = zdewex - (hmax + tfcth)
@@ -2122,7 +2103,6 @@ module kit_hcpb_module
   use tfcoil_variables
   use times_variables
   use divertor_variables
-  use rfp_variables
   use pfcoil_variables
   use global_variables
   use buildings_variables
@@ -3680,36 +3660,17 @@ contains
     implicit none
 
     ! cryostat radius (m)
-    ! For rfp machines
-    if (irfp == 1) then
-
-       ! rrpf(i) = radius of RFP coil i (RFPs)
-       rdewex = maxval(rrpf + 0.5D0*drpf) + rpf2dewar
-
-    ! Tokamaks
-    else
-
-       ! rb(i) = outer radius of PF coil i (tokamaks)
-       rdewex = maxval(rb) + rpf2dewar
-
-    end if
+    ! ISSUE #508 Remove RFP option
+    ! rb(i) = outer radius of PF coil i (tokamaks)
+    rdewex = maxval(rb) + rpf2dewar
 
     ! Clearance between uppermost PF coil and cryostat lid (m).
     ! Scaling from ITER by M. Kovari
     hcryopf = clhsf * (2.0D0*rdewex)/28.440D0
 
     ! Half-height of cryostat (m)
-    ! Tokamak
-    if (irfp /= 1) then
-
-       zdewex = maxval(zh) + hcryopf
-
-    ! rfp machine
-    else
-
-       zdewex = maxval(zzpf + 0.5D0*dzpf) + hcryopf
-
-    end if
+    ! ISSUE #508 Remove RFP option
+    zdewex = maxval(zh) + hcryopf
 
     ! Vertical clearance between TF coil and cryostat (m)
     clh1 = zdewex - (hmax + tfcth)

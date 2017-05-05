@@ -187,10 +187,7 @@ contains
           effnbss = effnbss * feffcd
           effcd = effnbss
 
-       case (9)  ! (trivial) RFP Oscillating Field CD model
-
-          effofss = 0.8D0 * feffcd ! TITAN figure: efficiency = 0.8 A/W
-          effcd = effofss
+       case (9)  ! Issue #508 Remove RFP option  Oscillating Field CD model
 
        case (10)  ! ECRH user input gamma
 
@@ -325,7 +322,7 @@ contains
 
     case (9)
        call ocmmnt(outfile,'Oscillating Field Current Drive')
-    
+
     case (10)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive (user input gamma_CD)')
 
@@ -344,7 +341,7 @@ contains
        call ocmmnt(outfile,'Current is driven by both inductive')
        call ocmmnt(outfile,'and non-inductive means.')
     end if
-    
+
     call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', '(pheat)', pheat)
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq, 'OP ')
     call ovarre(outfile,'Current drive efficiency (A/W)','(effcd)',effcd, 'OP ')

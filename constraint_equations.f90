@@ -26,7 +26,6 @@ module constraints
   !+ad_call  pf_power_variables
   !+ad_call  pulse_variables
   !+ad_call  report_error
-  !+ad_call  rfp_variables
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
@@ -56,7 +55,6 @@ module constraints
   use physics_variables
   use pf_power_variables
   use pulse_variables
-  use rfp_variables
   use stellarator_variables
   use tfcoil_variables
   use times_variables
@@ -99,7 +97,6 @@ contains
     !+ad_call  None
     !+ad_hist  01/07/94 PJK Improved layout and added stellarator constraints
     !+ad_hist  08/12/94 PJK Added stellarator radial build consistency
-    !+ad_hist  27/02/96 PJK Added rfp equation 47.
     !+ad_hist  07/10/96 PJK Added ICULBL=2 option to constraint no.24
     !+ad_hist  21/03/97 PJK Added IFE equation 50.
     !+ad_hist  01/04/98 PJK Modified equations 2,3,4,7 and 28 to take into
@@ -121,7 +118,6 @@ contains
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  31/10/12 PJK Added constraint_variables
     !+ad_hist  31/10/12 PJK Added stellarator_variables
-    !+ad_hist  05/11/12 PJK Added rfp_variables
     !+ad_hist  05/11/12 PJK Added ife_variables
     !+ad_hist  05/11/12 PJK Added pulse_variables
     !+ad_hist  06/11/12 PJK Renamed routine from con1 to constraints,
@@ -790,7 +786,7 @@ contains
           ! = 1    |  apply limit to thermal beta
           ! = 2    |  apply limit to thermal + neutral beam beta
           ! istell |  switch for stellarator option
-          ! = 0    |  use tokamak, RFP or IFE model
+          ! = 0    |  use tokamak, IFE model
           ! = 1    |  use stellarator model
           if ((iculbl == 0).or.(istell /= 0)) then
 
@@ -1226,26 +1222,8 @@ contains
           end if
 
        case (47)  ! Equation for TF coil toroidal thickness upper limit
+          ! Issue #508 Remove RFP option
           ! Relevant only to reversed field pinch devices
-          !#=# tf coil
-          !#=#=# frfptf, tftort
-
-          ! if the machine is not a rfp then exit and report an error
-          if (irfp == 0) call report_error(11)
-
-          ! frfptf |  f-value for RFP TF coil toroidal thickness
-          ! rbmax  |  radius of maximum TF B-field (m)
-          ! tfcth  |  inboard TF coil thickness (m)
-          ! tfno   |  number of TF coils
-          ! tftort |  TF coil toroidal thickness (m)
-          cc(i) = 1.0D0 - frfptf * (2.0D0*(rbmax-tfcth)*tan(pi/tfno))/tftort
-
-          if (present(con)) then
-             con(i) = (2.0D0*(rbmax-tfcth)*tan(pi/tfno)) * (1.0D0 - cc(i))
-             err(i) = tftort * cc(i)
-             symbol(i) = '<'
-             units(i) = 'm'
-          end if
 
        case (48)  ! Equation for poloidal beta upper limit
           !#=# physics
@@ -1263,22 +1241,8 @@ contains
              units(i) = ''
           end if
 
-       case (49)  ! Equation to ensure RFP reversal parameter F is negative
-          !#=# rfp
-          !#=#=# frfpf, rfpf
-
-          ! TODO should this have an error message like constraint 47
-
-          ! frfpf |  f-value for RFP reversal parameter
-          ! rfpf  |  RFP reversal parameter F
-          cc(i) = 1.0D0 + frfpf * rfpf/0.001D0
-
-          if (present(con)) then
-             con(i) = 0.001D0 * (1.0D0 - cc(i))
-             err(i) = 0.001D0 * cc(i)
-             symbol(i) = '<'
-             units(i) = ''
-          end if
+       case (49)
+           ! Issue #508 Remove RFP option Equation to ensure reversal parameter F is negative
 
        case (50)  ! Equation for IFE repetition rate upper limit
           ! Relevant only to inertial fusion energy devices
@@ -1408,40 +1372,9 @@ contains
              units(i) = 'MW/m'
           end if
 
-       case (57)  ! Equation for TF coil outer leg toroidal thickness lower limit
-          !#=# tfcoil
-          !#=#=# ftftort, tftort
+      case (57)  ! Obsolete
 
-          ! ftftort |  f-value for TF coil outer leg toroidal width lower limit
-          ! tftort  |  TF coil toroidal thickness (m)
-          ! wwp1    |  width of first step of winding pack (m)
-          ! tinstf  |  ground insulation thickness surrounding winding pack (m)
-          ! casths  |  inboard TF coil sidewall case thickness (m)
-          cc(i) = 1.0D0 - ftftort * tftort/(wwp1 + 2.0D0*tinstf + 2.0D0*casths)
-
-          if (present(con)) then
-             con(i) = (wwp1 + 2.0D0*tinstf + 2.0D0*casths) * (1.0D0 - cc(i))
-             err(i) = (wwp1 + 2.0D0*tinstf + 2.0D0*casths) * cc(i)
-             symbol(i) = '>'
-             units(i) = 'm'
-          end if
-
-       case (58)  ! Equation for TF coil outer leg radial thickness lower limit
-          !#=# tfcoil
-          !#=#=# ftfthko, tfthko
-
-          ! ftfthko |  f-value for TF coil outer leg radial thickness lower limit
-          ! tfthko  |  outboard TF coil thickness (m)
-          ! thkwp   |  radial thickness of winding pack (m)
-          ! tinstf  |  ground insulation thickness surrounding winding pack (m)
-          cc(i) = 1.0D0 - ftfthko * tfthko/(thkwp + 2.0D0*tinstf)
-
-          if (present(con)) then
-             con(i) = (thkwp + 2.0D0*tinstf) * (1.0D0 - cc(i))
-             err(i) = (thkwp + 2.0D0*tinstf) * cc(i)
-             symbol(i) = '>'
-             units(i) = 'm'
-          end if
+       case (58)  ! Obsolete
 
        case (59)  ! Equation for neutral beam shine-through fraction upper limit
           !#=# current_drive

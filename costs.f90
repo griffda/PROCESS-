@@ -56,7 +56,7 @@ module costs_module
   !+ad_call  pf_power_variables
   !+ad_call  process_output
   !+ad_call  pulse_variables
-  !+ad_call  rfp_variables
+
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
@@ -77,7 +77,7 @@ module costs_module
   !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added cost_variables
-  !+ad_hist  05/11/12 PJK Added rfp_variables
+
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  30/06/14 PJK Added error_handling
@@ -101,7 +101,7 @@ module costs_module
   use pf_power_variables
   use process_output
   use pulse_variables
-  use rfp_variables
+
   use structure_variables
   use tfcoil_variables
   use times_variables
@@ -341,9 +341,6 @@ contains
        call ocosts(outfile,'2231','ECH system cost (M$)',c2231)
        call ocosts(outfile,'2232','Lower hybrid system cost (M$)',c2232)
        call ocosts(outfile,'2233','Neutral beam system cost (M$)',c2233)
-       if (irfp == 1) then
-          call ocosts(outfile,'2234','Oscillating field system cost (M$)',c2234)
-       end if
     end if
 
     call oblnkl(outfile)
@@ -1417,7 +1414,6 @@ contains
     !+ad_prob  None
     !+ad_call  acc2221
     !+ad_call  acc2222
-    !+ad_call  acc2222a
     !+ad_call  acc2223
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
@@ -1444,12 +1440,7 @@ contains
     call acc2221
 
     !  Account 222.2 : PF magnet assemblies
-
-    if (irfp == 0) then
-       call acc2222
-    else
-       call acc2222a
-    end if
+     call acc2222
 
     !  Account 222.3 : Cryostat
 
@@ -1602,7 +1593,6 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  16/10/14 PJK Replaced sccufac usage with input copper fractions
     !+ad_hist  24/11/14 PJK Corrected conductor costs for resistive coils
     !+ad_hist  13/10/15 MDK Issue #328 Fix conductor costs.
     !+ad_stat  Okay
@@ -1661,9 +1651,6 @@ contains
     do i = 1,npf
 
        !  Superconductor ($/m)
-
-       !costpfsc = ucsc(isumatpf) * (sccufac*bpf(i)) * &
-       !     abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcond(isumatpf)
        if (ipfres == 0) then
           costpfsc = ucsc(isumatpf) * (1.0D0-fcupfsu)*(1.0D0-vf(i)) * &
                abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcond(isumatpf)
@@ -1671,10 +1658,7 @@ contains
           costpfsc = 0.0D0
        end if
 
-       !  Copper ($/m)
-
-       !costpfcu = uccu * (1.0D0-sccufac*bpf(i)) * &
-       !     abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
+       !  Copper ($/m)       
        if (ipfres == 0) then
           costpfcu = uccu * fcupfsu*(1.0D0-vf(i)) * &
                abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
@@ -1757,130 +1741,7 @@ contains
 
   end subroutine acc2222
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine acc2222a
-
-    !+ad_name  acc2222a
-    !+ad_summ  Account 222.2 : PF magnet assemblies (Reversed Field Pinch)
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 222.2 (PF magnet) costs
-    !+ad_desc  for a reversed field pinch device.
-    !+ad_desc  Conductor costs use an algorithm devised by R. Hancox,
-    !+ad_desc  January 1994, under contract to Culham, which takes into
-    !+ad_desc  account the fact that the superconductor/copper ratio in
-    !+ad_desc  the conductor is proportional to the maximum field that
-    !+ad_desc  each coil will experience. OH and PF coils are treated
-    !+ad_desc  similarly. Maximum values for current, current density and field
-    !+ad_desc  are used.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
-         pfwndl,sccufac1
-    real(kind(1.0D0)), dimension(4) :: cmlsa
-    integer :: i
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Cost multiplier for Level of Safety Assurance
-
-    cmlsa(1) = 0.6900D0
-    cmlsa(2) = 0.8450D0
-    cmlsa(3) = 0.9225D0
-    cmlsa(4) = 1.0000D0
-
-    !  Total length of PF coil windings (m)
-
-    pfwndl = 0.0D0
-    do i = 1,nrfppf
-       pfwndl = pfwndl + twopi*rrpf(i)*nturns(i)
-    end do
-
-    !  Account 222.2.1 : Conductor
-
-    c22221 = 0.0D0
-    do i = 1,nrfppf
-
-       !  Resistive coils (first 14 coils only)
-
-       if (i <= 14) then
-          sccufac1 = sccufac
-          sccufac = 0.0D0
-          costpfsh = 0.0D0
-       else
-          sccufac1 = sccufac
-          costpfsh = cconshpf
-       end if
-
-       !  Superconductor ($/m)
-
-       costpfsc = ucsc(isumatpf) * (sccufac*bpf(i)) * &
-            drpf(i) * dzpf(i) / nturns(i) * dcond(isumatpf)
-
-       !  Copper ($/m)
-
-       costpfcu = uccu * (1.0D0-sccufac*bpf(i)) * &
-            drpf(i) * dzpf(i) / nturns(i) * dcopper
-
-       !  Total cost/metre of superconductor and copper wire
-
-       costwire = costpfsc + costpfcu
-
-       !  Total cost/metre of conductor (including sheath and fixed costs)
-
-       cpfconpm = costwire + costpfsh + cconfix
-
-       !  Total account 222.2.1
-
-       c22221 = c22221 + (1.0D-6 * twopi * rrpf(i) * nturns(i) * &
-            cpfconpm)
-
-       !  Reset sccufac to previous value if necessary
-
-       sccufac = sccufac1
-
-    end do
-
-    c22221 = fkind * c22221 * cmlsa(lsa)
-
-    !  Account 222.2.2 : Winding
-
-    c22222 = 1.0D-6 * ucwindpf * pfwndl
-    c22222 = fkind * c22222 * cmlsa(lsa)
-
-    !  Account 222.2.3 : Steel case - will be zero for resistive coils
-
-    c22223 = 1.0D-6 * uccase * whtpfs
-    c22223 = fkind * c22223 * cmlsa(lsa)
-
-    !  Account 222.2.4 : Support structure
-
-    c22224 = 1.0D-6 * ucfnc * fncmass
-    c22224 = fkind * c22224 * cmlsa(lsa)
-
-    !  Total account 222.2
-
-    c2222 = c22221 + c22222 + c22223 + c22224
-
-  end subroutine acc2222a
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc2223
 
@@ -2002,12 +1863,6 @@ contains
        c2233 = 1.0D-6 * ucnbi * (1.0D6*pnbitot)**exprf
        if (ifueltyp == 1) c2233 = (1.0D0-fcdfuel) * c2233
        c2233 = fkind * c2233
-
-       !  Account 223.4 : Oscillating Field (RFP)
-
-       c2234 = 1.0D-6 * ucof * (1.0D6*pofcd)**exprf
-       if (ifueltyp == 1) c2234 = (1.0D0-fcdfuel) * c2234
-       c2234 = fkind * c2234
 
     else
 
@@ -2895,7 +2750,7 @@ contains
   end subroutine acc26
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   subroutine acc9
 
     !+ad_name  acc9

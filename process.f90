@@ -1402,8 +1402,8 @@ subroutine output(outfile)
   !+ad_call  physics_variables
   !+ad_call  power_module
   !+ad_call  pulse_module
-  !+ad_call  rfp_module
-  !+ad_call  rfp_variables
+
+
   !+ad_call  sctfcoil_module
   !+ad_call  startup_module
   !+ad_call  stellarator_module
@@ -1433,9 +1433,6 @@ subroutine output(outfile)
   !+ad_call  power2
   !+ad_call  pulse
   !+ad_call  radialb
-  !+ad_call  rfppfc
-  !+ad_call  rfppfp
-  !+ad_call  rfptfc
   !+ad_call  startup
   !+ad_call  stout
   !+ad_call  strucall
@@ -1468,8 +1465,6 @@ subroutine output(outfile)
   !+ad_hist  30/10/12 PJK Added build_module
   !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_hist  31/10/12 PJK Added stellarator_module
-  !+ad_hist  05/11/12 PJK Added rfp_variables
-  !+ad_hist  05/11/12 PJK Added rfp_module
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_module
   !+ad_hist  05/11/12 PJK Added ife_module
@@ -1503,8 +1498,8 @@ subroutine output(outfile)
   use physics_variables
   use power_module
   use pulse_module
-  use rfp_module
-  use rfp_variables
+
+
   use sctfcoil_module
   use startup_module
   use stellarator_module
@@ -1629,15 +1624,7 @@ subroutine output(outfile)
   call vbuild(outfile,1)
 
   ! Toroidal field coil model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  if (irfp == 0) then
-     ! if a tokamak
-     call tfcoil(outfile,1)
-  else
-     ! if a rfp machine
-     call rfptfc(outfile,1)
-  end if
+  call tfcoil(outfile,1)
 
   ! Toroidal field coil superconductor model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1652,18 +1639,10 @@ subroutine output(outfile)
   end if
 
   ! Poloidal field coil model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  if (irfp == 0) then
-     ! if a tokamak
-     call outpf(outfile)
-  else
-     ! if a rfp machine
-     call rfppfc(outfile,1)
-  end if
+  call outpf(outfile)
 
   ! TODO what is outvolt?
-  if (irfp == 0) call outvolt(outfile)
+  call outvolt(outfile)
 
   ! Structure Model !
   !!!!!!!!!!!!!!!!!!!
@@ -1671,8 +1650,7 @@ subroutine output(outfile)
   call strucall(outfile,1)
 
   ! Poloidal field coil inductance calculation
-
-  if (irfp == 0) call induct(outfile,1)
+  call induct(outfile,1)
 
   ! Blanket model !
   !!!!!!!!!!!!!!!!!!
@@ -1712,16 +1690,8 @@ subroutine output(outfile)
   call tfpwr(outfile,1)
 
   ! Poloidal field coil power model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  if (irfp == 0) then
-     ! if a tokamak
-     call pfpwr(outfile,1)
-  else
-     ! if a rfp machine
-     call rfppfp(outfile,1)
-  end if
-
+  call pfpwr(outfile,1)
+ 
   ! Vacuum model !
   !!!!!!!!!!!!!!!!
 
