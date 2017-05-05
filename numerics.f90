@@ -280,11 +280,11 @@ module numerics
        'Edge safety factor lower limit   ', &
        !+ad_varc  <LI> (46) Ip/Irod upper limit (TART)
        'Ip/Irod upper limit              ', &
-       !+ad_varc  <LI> (47) TF coil toroidal thickness upper limit (RFP)
+       !+ad_varc  <LI> (47) NOT USED
        'TF coil tor. thickness upper lim ', &
        !+ad_varc  <LI> (48) Poloidal beta upper limit
        'Poloidal beta upper limit        ', &
-       !+ad_varc  <LI> (49) RFP reversal parameter &lt; 0 (RFP)
+       !+ad_varc  <LI> (49) NOT USED
        'RFP reversal parameter < 0       ', &
        !+ad_varc  <LI> (50) IFE repetition rate upper limit (IFE)
        'IFE repetition rate upper limit  ', &
@@ -300,9 +300,9 @@ module numerics
        'Vessel helium concentration limit', &
        !+ad_varc  <LI> (56) Pseparatrix/Rmajor upper limit
        'Psep / R upper limit             ', &
-       !+ad_varc  <LI> (57) TF coil leg toroidal thickness lower limit (OBSOLETE)
+       !+ad_varc  <LI> (57) NOT USED
        'TF coil leg tor width lower limit', &
-       !+ad_varc  <LI> (58) TF coil leg radial thickness lower limit (OBSOLETE)
+       !+ad_varc  <LI> (58) NOT USED
        'TF coil leg rad width lower limit', &
        !+ad_varc  <LI> (59) Neutral beam shine-through fraction upper limit (NBI)
        'NB shine-through frac upper limit', &
@@ -504,11 +504,11 @@ module numerics
        'scraplo       ', &
        !+ad_varc  <LI> (75) tfootfi
        'tfootfi       ', &
-       !+ad_varc  <LI> (76) frfptf (f-value for equation 47)
+       !+ad_varc  <LI> (76) NOT USED
        'frfptf        ', &
-       !+ad_varc  <LI> (77) tftort
+       !+ad_varc  <LI> (77) NOT USED
        'tftort        ', &
-       !+ad_varc  <LI> (78) rfpth
+       !+ad_varc  <LI> (78) NOT USED
        'rfpth         ', &
        !+ad_varc  <LI> (79) fbetap (f-value for equation 48)
        'fbetap        ', &
@@ -550,9 +550,9 @@ module numerics
        'fpsepr        ', &
        !+ad_varc  <LI> (98) li6enrich
        'li6enrich     ', &
-       !+ad_varc  <LI> (99) ftftort (f-value for equation 57) (OBSOLETE)
+       !+ad_varc  <LI> (99) NOT USED
        'ftftort       ', &
-       !+ad_varc  <LI> (100) ftfthko (f-value for equation 58) (OBSOLETE)
+       !+ad_varc  <LI> (100) NOT USED
        'ftfthko       ', &
        !+ad_varc  <LI> (101) prp
        'prp           ', &
