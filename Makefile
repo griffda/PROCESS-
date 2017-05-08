@@ -84,7 +84,6 @@ source = \
  global_variables.f90 \
  hcll.f90 \
  hcpb.f90 \
- ife.f90 \
  impurity_radiation.f90 \
  initial.f90 \
  input.f90 \
@@ -133,7 +132,6 @@ object = \
  global_variables.o \
  hcll.o \
  hcpb.o \
- ife.o \
  impurity_radiation.o \
  initial.o \
  input.o \
@@ -249,7 +247,7 @@ default: process.exe
 availability.o: global_variables.o output.o maths_library.o
 buildings.o: global_variables.o output.o
 caller.o: availability.o buildings.o costs.o costs_2015.o current_drive.o divertor.o divertor_ode.o \
-  global_variables.o hcll.o hcpb.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \
+  global_variables.o hcll.o hcpb.o machine_build.o numerics.o output.o pfcoil.o physics.o \
   plant_power.o plasma_geometry.o pulse.o sctfcoil.o startup.o structure.o \
   stellarator.o tfcoil.o vacuum.o
 constraint_equations.o: error_handling.o global_variables.o numerics.o
@@ -268,7 +266,6 @@ fw.o : global_variables.o output.o refprop_interface.o
 global_variables.o:
 hcll.o : fw.o global_variables.o output.o
 hcpb.o : fw.o global_variables.o output.o maths_library.o refprop_interface.o
-ife.o: availability.o costs.o error_handling.o global_variables.o output.o
 impurity_radiation.o: error_handling.o global_variables.o root.dir
 initial.o: error_handling.o global_variables.o output.o scan.o stellarator.o
 input.o: error_handling.o global_variables.o numerics.o output.o scan.o
@@ -286,7 +283,7 @@ plasma_geometry.o: global_variables.o
 plasma_profiles.o: error_handling.o global_variables.o maths_library.o
 process.o: availability.o buildings.o constraint_equations.o costs.o current_drive.o \
   divertor.o divertor_ode.o error_handling.o evaluators.o global_variables.o hcll.o hcpb.o \
-  ife.o impurity_radiation.o input.o machine_build.o maths_library.o numerics.o output.o \
+  impurity_radiation.o input.o machine_build.o maths_library.o numerics.o output.o \
   pfcoil.o physics.o plant_power.o pulse.o scan.o sctfcoil.o startup.o \
   stellarator.o structure.o tfcoil.o vacuum.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o

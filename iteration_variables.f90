@@ -21,7 +21,7 @@ subroutine loadxc
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
+
   !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
@@ -36,19 +36,6 @@ subroutine loadxc
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  09/10/12 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  18/10/12 PJK Added fwbs_variables
-  !+ad_hist  18/10/12 PJK Added pfcoil_variables
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  30/10/12 PJK Added times_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  31/10/12 PJK Added constraint_variables
-
-  !+ad_hist  05/11/12 PJK Added ife_variables
-  !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  06/11/12 PJK Renamed source file iteration_variables.f90 from xc.f90
   !+ad_hist  04/06/13 PJK Added ftbr (89), blbuith (90), blbuoth (91),
   !+ad_hisc               fflutf (92), shldith (93), shldoth (94),
@@ -99,7 +86,7 @@ subroutine loadxc
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-  use ife_variables
+
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
@@ -117,7 +104,7 @@ subroutine loadxc
 
   !  Local variables
 
-  integer :: i,j
+  integer :: i
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   do i = 1,nvar
@@ -209,13 +196,12 @@ subroutine loadxc
      case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
      case (79) ; xcm(i) = fbetap
      case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
-     case (81) ; xcm(i) = edrive
-     case (82) ; xcm(i) = drveff
-     case (83) ; xcm(i) = tgain
-     case (84) ; xcm(i) = chrad
-     case (85) ; xcm(i) = pdrive
-     case (86) ; xcm(i) = frrmax
-    ! #506 Hydrogen production removed
+     case (81) ; write(*,*) 'Iteration variable 81 is not supported.'
+     case (82) ; write(*,*) 'Iteration variable 82 is not supported.'
+     case (83) ; write(*,*) 'Iteration variable 83 is not supported.'
+     case (84) ; write(*,*) 'Iteration variable 84 is not supported.'
+     case (85) ; write(*,*) 'Iteration variable 85 is not supported.'
+     case (86) ; write(*,*) 'Iteration variable 86 is not supported.'
      case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
      case (88) ; write(*,*) 'Iteration variable 87 is not supported.'
      case (89) ; xcm(i) = ftbr
@@ -341,7 +327,7 @@ subroutine convxc(xc,nn)
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
+
   !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
@@ -353,18 +339,6 @@ subroutine convxc(xc,nn)
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  16/11/11 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  18/10/12 PJK Added fwbs_variables
-  !+ad_hist  18/10/12 PJK Added pfcoil_variables
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  30/10/12 PJK Added times_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  31/10/12 PJK Added constraint_variables
-
-  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  17/01/13 PJK Removed bounds checking of iteration variables
   !+ad_hist  11/04/13 PJK Removed ti recalculation (moved to physics)
   !+ad_hist  04/06/13 PJK Added ftbr (89), blbuith (90), blbuoth (91),
@@ -405,7 +379,7 @@ subroutine convxc(xc,nn)
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-  use ife_variables
+
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
@@ -511,15 +485,14 @@ subroutine convxc(xc,nn)
      case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
      case (79) ; fbetap    = xc(i)/scale(i)
      case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
-     case (81) ; edrive    = xc(i)/scale(i)
-     case (82) ; drveff    = xc(i)/scale(i)
-     case (83) ; tgain     = xc(i)/scale(i)
-     case (84) ; chrad     = xc(i)/scale(i)
-     case (85) ; pdrive    = xc(i)/scale(i)
-     case (86) ; frrmax    = xc(i)/scale(i)
-     ! #506 Hydrogen production removed
+     case (81) ; write(*,*) 'Iteration variable 81 is not supported.'
+     case (82) ; write(*,*) 'Iteration variable 82 is not supported.'
+     case (83) ; write(*,*) 'Iteration variable 83 is not supported.'
+     case (84) ; write(*,*) 'Iteration variable 84 is not supported.'
+     case (85) ; write(*,*) 'Iteration variable 85 is not supported.'
+     case (86) ; write(*,*) 'Iteration variable 86 is not supported.'
      case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
-     case (88) ; write(*,*) 'Iteration variable 87 is not supported.'
+     case (88) ; write(*,*) 'Iteration variable 88 is not supported.'
      case (89) ; ftbr      = xc(i)/scale(i)
      case (90) ; blbuith   = xc(i)/scale(i)
      case (91) ; blbuoth   = xc(i)/scale(i)

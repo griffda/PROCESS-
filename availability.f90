@@ -14,7 +14,7 @@ module availability_module
   !+ad_call  cost_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
-  !+ad_call  ife_variables
+
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pulse_variables
@@ -38,7 +38,7 @@ module availability_module
   use cost_variables
   use divertor_variables
   use fwbs_variables
-  use ife_variables
+
   use physics_variables
   use process_output
   use pulse_variables
@@ -85,8 +85,6 @@ contains
     !+ad_hist  17/10/12 PJK Added divertor_variables
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  31/10/12 PJK Added cost_variables
-
-    !+ad_hist  05/11/12 PJK Added ife_variables
     !+ad_hist  05/11/12 PJK Added pulse_variables
     !+ad_hist  23/05/13 PJK Removed bktlife calculation if blktmodel>0
     !+ad_hist  05/06/13 PJK Removed abktflnc output if blktmodel>0
@@ -122,9 +120,6 @@ contains
 
     ! Full power lifetime (in years) !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    ! Most of these are already calculated for an IFE device
-
-    if (ife /= 1) then  ! if not an intertial device
 
        ! First wall / blanket lifetime (years)
 
@@ -143,8 +138,6 @@ contains
        if (itart == 1) then
           cplife = min(cpstflnc/wallmw, tlife)
        end if
-
-    end if
 
     ! Plant Availability (iavail=0,1) !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -194,8 +187,6 @@ contains
 
     ! Modify lifetimes to take account of the availability
 
-    if (ife /= 1) then
-
        ! First wall / blanket
        if (bktlife < tlife) then
           bktlife = min( bktlife/cfactr, tlife )
@@ -210,8 +201,6 @@ contains
        if ((itart == 1).and.(cplife < tlife)) then
           cplife = min( cplife/cfactr, tlife )
        end if
-
-    end if
 
     ! Current drive system lifetime (assumed equal to first wall and blanket lifetime)
     cdrlife = bktlife
@@ -419,22 +408,17 @@ contains
 
     ! Full power lifetimes (in years) !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    ! Most of these are already calculated for an IFE device
-
-    if (ife /= 1) then  ! if a tokamak
 
        ! First wall / blanket lifetime (years)
        bktlife =  min(abktflnc/wallmw, tlife)
 
        ! Divertor lifetime (years)
        divlife = min( adivflnc/hldiv, tlife )
-       
+
        ! Centrepost lifetime (years) (ST only)
        if (itart == 1) then
           cplife = min( cpstflnc/wallmw, tlife )
        end if
-
-    end if
 
     ! Current drive lifetime (assumed equal to first wall and blanket lifetime)
     cdrlife = bktlife

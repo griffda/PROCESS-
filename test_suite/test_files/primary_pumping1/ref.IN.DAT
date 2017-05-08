@@ -172,7 +172,7 @@ verbose = 1
 run_tests = 0
 *-------------Heat Transport Variables-------------*
 baseel   = 55.0d6 * Base plant electric load (w)
-fauxbop  = 0.032 * Fraction of gross electric power to balance-of-plant
+
 *primary_pumping = 0 * Switch for pumping of primary coolant
 *htpmw_blkt = 50
 *htpmw_div = 50

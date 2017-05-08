@@ -12,7 +12,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on  5 May 2017 15:56:07 +01:00(hh:mm) UTC by freia008
+ PROCESS 1.0.10 : Run on  8 May 2017 10:05:17 +01:00(hh:mm) UTC by freia012
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demo 1 vacuum model test  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -1767,7 +1767,7 @@ verbose = 0      * Switch for turning on/off diagnostic messages * turn on diagn
 
 *-------------Heat Transport Variables-------------*
 etath = 0.375    * Thermal to electric conversion efficiency; input if ipowerflow=0
-fauxbop = 0.032  * Fraction of gross electric power to balance-of-plant
+
 fpumpblkt = 0.042  * Fraction of total blanket thermal power required
 fpumpdiv = 0.042  * Fraction of total divertor thermal power required
 fpumpfw = 0.042  * Fraction of total first wall thermal power required

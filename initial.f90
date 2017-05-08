@@ -24,8 +24,7 @@ subroutine initial
   !+ad_hist  05/02/97 PJK Added Martensitic steel fractions fms...
   !+ad_hist  13/02/97 PJK Changed initial value of fwlife to zero (no
   !+ad_hisc               longer an input parameter, but calculated)
-  !+ad_hist  21/03/97 PJK Added call to initialise IFE variables
-  !+ad_hisc               and added new iteration variables 81--86
+  !+ad_hist  21/03/97 PJK Added new iteration variables 81--86
   !+ad_hist  18/11/97 PJK Added ITER-97 scaling laws, IVMS,DRTOP,DZTOP
   !+ad_hist  01/04/98 PJK Added ITER-96P scaling law, IGNITE, DNLA
   !+ad_hist  24/04/98 PJK Added IMPC,IMPFE,IMPO,FKBLKT
@@ -88,21 +87,19 @@ subroutine devtyp
   !+ad_desc  is to be modelled. If the file is not present in the current
   !+ad_desc  directory, a standard tokamak model is assumed.
   !+ad_prob  None
-  !+ad_call  ife_variables
+
   !+ad_call  stellarator_variables
   !+ad_hist  27/02/96 PJK Initial version
   !+ad_hist  08/10/96 PJK Fixed error: (istell.gt.2) should be (idev.gt.2)
   !+ad_hist  14/03/97 PJK idev=3 ==> inertial fusion power plant
   !+ad_hist  19/09/12 PJK Initial F90 version
-  !+ad_hist  31/10/12 PJK Added stellarator_variables
-  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  04/11/16 MK Added check for content of device file
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use ife_variables
+
   use stellarator_variables
 
   implicit none
@@ -118,7 +115,6 @@ subroutine devtyp
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   devFile = 'device.dat'
   istell = 0
-  ife    = 0
   idev   = 0      ! Default value MK
 
   !  Read a second input file. If the file does not exist or
@@ -143,9 +139,7 @@ subroutine devtyp
            istell = 1
 
         case (2)  !  ! ISSUE #508 Remove RFP option
-
-        case (3)  !  Inertial Fusion Energy model
-           ife = 1
+        case (3)  !  ISSUE #508 Remove Inertial Fusion Energy model
 
         case default  !  Tokamak model
            continue
@@ -176,7 +170,7 @@ subroutine check
   !+ad_call  fwbs_variables
   !+ad_call  global_variables
   !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
+
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -186,7 +180,6 @@ subroutine check
   !+ad_call  report_error
   !+ad_hist  08/10/96 PJK Initial upgraded version
   !+ad_hist  23/01/97 PJK Moved resetting of trithtmw from POWER
-  !+ad_hist  14/03/97 PJK Added coding relevant to IFE device
   !+ad_hist  01/04/98 PJK Added rnbeam reset for no NBI
   !+ad_hist  19/01/99 PJK Added warning about iiter flag with non-ITER profiles
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
@@ -225,7 +218,7 @@ subroutine check
   use global_variables
   use heat_transport_variables
   use impurity_radiation_module
-  use ife_variables
+
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -437,15 +430,6 @@ subroutine check
      if (k > 2) call report_error(43)
      if ((snull == 1).and.(j < 2)) call report_error(44)
 
-  end if
-
-  ! ISSUE #508 Remove RFP option
-
-  !  Inertial Fusion Energy model
-
-  if (ife == 1) then
-     icase    = 'Inertial Fusion Energy model'
-     lpulse   = 0
   end if
 
   !  Pulsed power plant model

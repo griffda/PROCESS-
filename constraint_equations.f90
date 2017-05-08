@@ -19,7 +19,7 @@ module constraints
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
+
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -49,7 +49,7 @@ module constraints
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-  use ife_variables
+
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -98,28 +98,12 @@ contains
     !+ad_hist  01/07/94 PJK Improved layout and added stellarator constraints
     !+ad_hist  08/12/94 PJK Added stellarator radial build consistency
     !+ad_hist  07/10/96 PJK Added ICULBL=2 option to constraint no.24
-    !+ad_hist  21/03/97 PJK Added IFE equation 50.
     !+ad_hist  01/04/98 PJK Modified equations 2,3,4,7 and 28 to take into
     !+ad_hisc               account IGNITE (ignition switch) setting
     !+ad_hist  25/07/11 PJK Applied Greenwald density limit to line-averaged
     !+ad_hisc               rather than volume-averaged density
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  14/11/11 PJK Changed NaN error check
-    !+ad_hist  10/10/12 PJK Modified to use new numerics module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  16/10/12 PJK Added current_drive_variables
-    !+ad_hist  17/10/12 PJK Added divertor_variables
-    !+ad_hist  18/10/12 PJK Added pfcoil_variables
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  29/10/12 PJK Added pf_power_variables
-    !+ad_hist  30/10/12 PJK Added heat_transport_variables
-    !+ad_hist  30/10/12 PJK Added times_variables
-    !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  31/10/12 PJK Added constraint_variables
-    !+ad_hist  31/10/12 PJK Added stellarator_variables
-    !+ad_hist  05/11/12 PJK Added ife_variables
-    !+ad_hist  05/11/12 PJK Added pulse_variables
     !+ad_hist  06/11/12 PJK Renamed routine from con1 to constraints,
     !+ad_hisc               and the source file itself from eqns.f90 to
     !+ad_hisc               constraint_equations.f90
@@ -786,7 +770,7 @@ contains
           ! = 1    |  apply limit to thermal beta
           ! = 2    |  apply limit to thermal + neutral beam beta
           ! istell |  switch for stellarator option
-          ! = 0    |  use tokamak, IFE model
+          ! = 0    |  use tokamak model
           ! = 1    |  use stellarator model
           if ((iculbl == 0).or.(istell /= 0)) then
 
@@ -1241,28 +1225,9 @@ contains
              units(i) = ''
           end if
 
-       case (49)
-           ! Issue #508 Remove RFP option Equation to ensure reversal parameter F is negative
+       case (49)  ! Issue #508 Remove RFP option Equation to ensure reversal parameter F is negative
 
-       case (50)  ! Equation for IFE repetition rate upper limit
-          ! Relevant only to inertial fusion energy devices
-          !#=# ife
-          !#=#=# frrmax, rrmax
-
-          ! if machine is not a inertial confinement machine then report error
-          if (ife == 0) call report_error(12)
-
-          ! frrmax |  f-value for maximum IFE repetition rate
-          ! rrmax  |  maximum IFE repetition rate (Hz)
-          ! reprat |  IFE driver repetition rate (Hz)
-          cc(i) = 1.0D0 - frrmax * rrmax/reprat
-
-          if (present(con)) then
-             con(i) = rrmax * (1.0D0 - cc(i))
-             err(i) = reprat * cc(i)
-             symbol(i) = '<'
-             units(i) = '/sec'
-          end if
+       case (50)  ! Issue #508 Remove IFE option: Equation for repetition rate upper limit
 
        case (51)  ! Equation to enforce startup flux = available startup flux
           ! This is a consistency equation

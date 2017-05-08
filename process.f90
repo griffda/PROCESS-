@@ -1395,8 +1395,8 @@ subroutine output(outfile)
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
-  !+ad_call  ife_module
-  !+ad_call  ife_variables
+
+
   !+ad_call  pfcoil_module
   !+ad_call  physics_module
   !+ad_call  physics_variables
@@ -1449,27 +1449,6 @@ subroutine output(outfile)
   !+ad_hist  20/09/11 PJK Initial F90 version
   !+ad_hist  24/09/12 PJK Swapped argument order of RADIALB, DIVCALL, INDUCT
   !+ad_hist  10/10/12 PJK Moved routine from output.f90 to aamain.f90
-  !+ad_hist  15/10/12 PJK Added costs_module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added physics_module
-  !+ad_hist  17/10/12 PJK Added current_drive_module
-  !+ad_hist  17/10/12 PJK Added divertor_module
-  !+ad_hist  18/10/12 PJK Added fwbs_module
-  !+ad_hist  18/10/12 PJK Added pfcoil_module
-  !+ad_hist  29/10/12 PJK Added tfcoil_module
-  !+ad_hist  29/10/12 PJK Added sctfcoil_module
-  !+ad_hist  29/10/12 PJK Added structure_module
-  !+ad_hist  29/10/12 PJK Added vacuum_module
-  !+ad_hist  30/10/12 PJK Added power_module
-  !+ad_hist  30/10/12 PJK Added buildings_module
-  !+ad_hist  30/10/12 PJK Added build_module
-  !+ad_hist  31/10/12 PJK Added stellarator_variables
-  !+ad_hist  31/10/12 PJK Added stellarator_module
-  !+ad_hist  05/11/12 PJK Added ife_variables
-  !+ad_hist  05/11/12 PJK Added pulse_module
-  !+ad_hist  05/11/12 PJK Added ife_module
-  !+ad_hist  06/11/12 PJK Added startup_module
-  !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
   !+ad_hist  09/07/14 PJK Turned on error handling
   !+ad_hist  07/06/16  JM Added some extra comments
@@ -1491,15 +1470,11 @@ subroutine output(outfile)
   use error_handling
   use fwbs_module
   use fwbs_variables
-  use ife_module
-  use ife_variables
   use pfcoil_module
   use physics_module
   use physics_variables
   use power_module
   use pulse_module
-
-
   use sctfcoil_module
   use startup_module
   use stellarator_module
@@ -1531,12 +1506,6 @@ subroutine output(outfile)
   !  Call stellarator output routine instead if relevant
   if (istell /= 0) then
      call stout(outfile)
-     return
-  end if
-
-  ! Call inertial fusion energy output routine instead if relevant
-  if (ife /= 0) then
-     call ifeout(outfile)
      return
   end if
 
@@ -1691,7 +1660,7 @@ subroutine output(outfile)
 
   ! Poloidal field coil power model !
   call pfpwr(outfile,1)
- 
+
   ! Vacuum model !
   !!!!!!!!!!!!!!!!
 

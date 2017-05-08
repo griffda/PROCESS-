@@ -12,7 +12,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on  5 May 2017 15:55:57 +01:00(hh:mm) UTC by freia008
+ PROCESS 1.0.10 : Run on  8 May 2017 10:05:05 +01:00(hh:mm) UTC by freia012
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -1702,7 +1702,7 @@ runtitle = Michael's test file
 verbose = 1
 *-------------Heat Transport Variables-------------*
 baseel   = 55.0d6 * Base plant electric load (w)
-fauxbop  = 0.032 * Fraction of gross electric power to balance-of-plant
+
 htpmw_min = 0.0 * Minimum total electrical power for primary coolant pumps (mw)
 *------------------Ife Variables-------------------*
 *------------Impurity Radiation Module-------------*

@@ -286,7 +286,7 @@ module numerics
        'Poloidal beta upper limit        ', &
        !+ad_varc  <LI> (49) NOT USED
        'RFP reversal parameter < 0       ', &
-       !+ad_varc  <LI> (50) IFE repetition rate upper limit (IFE)
+       !+ad_varc  <LI> (50) NOT USED
        'IFE repetition rate upper limit  ', &
        !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE)
        'Startup volt-seconds consistency ', &
@@ -512,23 +512,23 @@ module numerics
        'rfpth         ', &
        !+ad_varc  <LI> (79) fbetap (f-value for equation 48)
        'fbetap        ', &
-       !+ad_varc  <LI> (80) frfpf (f-value for equation 49)
+       !+ad_varc  <LI> (80) NOT USED
        'frfpf         ', &
-       !+ad_varc  <LI> (81) edrive
+       !+ad_varc  <LI> (81) NOT USED
        'edrive        ', &
-       !+ad_varc  <LI> (82) drveff
+       !+ad_varc  <LI> (82) NOT USED
        'drveff        ', &
-       !+ad_varc  <LI> (83) tgain
+       !+ad_varc  <LI> (83) NOT USED
        'tgain         ', &
-       !+ad_varc  <LI> (84) chrad
+       !+ad_varc  <LI> (84) NOT USED
        'chrad         ', &
-       !+ad_varc  <LI> (85) pdrive
+       !+ad_varc  <LI> (85) NOT USED
        'pdrive        ', &
-       !+ad_varc  <LI> (86) frrmax (f-value for equation 50)
+       !+ad_varc  <LI> (86) NOT USED
        'frrmax        ', &
-       !+ad_varc  <LI> (87) helecmw
+       !+ad_varc  <LI> (87) NOT USED
        'helecmw       ', &
-       !+ad_varc  <LI> (88) hthermmw
+       !+ad_varc  <LI> (88) NOT USED
        'hthermmw      ', &
        !+ad_varc  <LI> (89) ftbr (f-value for equation 52)
        'ftbr          ', &
@@ -626,9 +626,9 @@ module numerics
        'fimp(12)      ', &
        !+ad_varc  <LI> (135) fimp(13) :  Xenon density fraction relative to electron density
        'fimp(13)      ', &
-       !+ad_varc  <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density</UL>
+       !+ad_varc  <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density
        'fimp(14)      ', &
-        !+ad_varc  <LI> (137) fplhsep (f-value for equation 73)
+        !+ad_varc  <LI> (137) fplhsep (f-value for equation 73)</UL>
        'fplhsep       ' &
        /)
 

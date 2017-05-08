@@ -12,7 +12,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on  5 May 2017 15:55:38 +01:00(hh:mm) UTC by freia008
+ PROCESS 1.0.10 : Run on  8 May 2017 10:04:03 +01:00(hh:mm) UTC by freia012
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -1466,7 +1466,7 @@ vfblkt   = 0.10 * Coolant void fraction in blanket (blktmodel=0);
 *-------------Heat Transport Variables-------------*
 
 etath    = 0.375 * Thermal to electric conversion efficiency; input if ipowerflow=0
-fauxbop  = 0.032 * Fraction of gross electric power to balance-of-plant
+
 ipowerflow = 0 * Switch for power flow model;
 primary_pumping = 0 * Switch for pumping power for primary coolant
 

@@ -87,7 +87,7 @@ module process_input
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
+
   !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
@@ -103,26 +103,6 @@ module process_input
   !+ad_hist  20/01/95 PJK Initial version (PROCESS)
   !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
   !+ad_hist  02/10/12 PJK Initial F90 version (PROCESS)
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  09/10/12 PJK Modified to use scan_module
-  !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  18/10/12 PJK Added fwbs_variables
-  !+ad_hist  18/10/12 PJK Added pfcoil_variables
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  29/10/12 PJK Added vacuum_variables
-  !+ad_hist  29/10/12 PJK Added pf_power_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  30/10/12 PJK Added times_variables
-  !+ad_hist  30/10/12 PJK Added buildings_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  31/10/12 PJK Added cost_variables
-  !+ad_hist  31/10/12 PJK Added constraint_variables
-  !+ad_hist  31/10/12 PJK Added stellarator_variables
-  !+ad_hist  05/11/12 PJK Added ife_variables
-  !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  14/01/13 PJK Changed (maximum) line length from 200 to maxlen
   !+ad_hist  13/05/14 PJK Added impurity_radiation_module
   !+ad_hist  30/06/14 PJK Added error_handling
@@ -146,7 +126,7 @@ module process_input
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-  use ife_variables
+
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
@@ -2093,9 +2073,6 @@ contains
        case ('etath')
           call parse_real_variable('etath', etath, 0.0D0, 1.0D0, &
                'Thermal-electric conversion efficiency')
-       case ('fauxbop')
-          call parse_real_variable('fauxbop', fauxbop, 0.0D0, 1.0D0, &
-               'Frac. of gross electric power to BOP')
        case ('fmgdmw')
           call parse_real_variable('fmgdmw', fmgdmw, 0.0D0, 100.0D0, &
                'Power to MGF units (MW)')
@@ -2707,177 +2684,6 @@ contains
        case ('vmec_zmn_file')
           call parse_string_variable('vmec_zmn_file', vmec_zmn_file, &
                'VMEC Z(m,n) filename')
-
-          !  Inertial Fusion Energy plant settings
-
-       case ('bldr')
-          call parse_real_variable('bldr', bldr, 0.0D0, 10.0D0, &
-               'IFE blanket radial thickness (m)')
-       case ('bldzl')
-          call parse_real_variable('bldzl', bldzl, 0.0D0, 10.0D0, &
-               'IFE blanket bottom part thickness (m)')
-       case ('bldzu')
-          call parse_real_variable('bldzu', bldzu, 0.0D0, 10.0D0, &
-               'IFE blanket top part thickness (m)')
-       case ('blmatf')  !  N.B. actually a 2-D array
-          call parse_real_array('blmatf', blmatf, isub1, 3*(maxmat+1), &
-               'IFE blanket material fraction', icode)
-       case ('cdriv0')
-          call parse_real_variable('cdriv0', cdriv0, 50.0D0, 500.0D0, &
-               'IFE driver cost offset (M$)')
-       case ('cdriv1')
-          call parse_real_variable('cdriv1', cdriv1, 50.0D0, 500.0D0, &
-               'IFE driver cost offset (M$)')
-       case ('cdriv2')
-          call parse_real_variable('cdriv2', cdriv2, 50.0D0, 500.0D0, &
-               'IFE driver cost offset (M$)')
-       case ('chdzl')
-          call parse_real_variable('chdzl', chdzl, 0.0D0, 10.0D0, &
-               'IFE chamber bottom part thickness (m)')
-       case ('chdzu')
-          call parse_real_variable('chdzu', chdzu, 0.0D0, 10.0D0, &
-               'IFE chamber top part thickness (m)')
-       case ('chmatf')
-          call parse_real_array('chmatf', chmatf, isub1, maxmat+1, &
-               'IFE chamber material fraction', icode)
-       case ('chrad')
-          call parse_real_variable('chrad', chrad, 0.1D0, 20.0D0, &
-               'IFE chamber radial thickness (m)')
-       case ('dcdrv0')
-          call parse_real_variable('dcdrv0', dcdrv0, 0.0D0, 200.0D0, &
-               'IFE driver cost gradient (M$/MJ)')
-       case ('dcdrv1')
-          call parse_real_variable('dcdrv1', dcdrv1, 0.0D0, 200.0D0, &
-               'IFE driver cost gradient (M$/MJ)')
-       case ('dcdrv2')
-          call parse_real_variable('dcdrv2', dcdrv2, 0.0D0, 200.0D0, &
-               'IFE driver cost gradient (M$/MJ)')
-       case ('drveff')
-          call parse_real_variable('drveff', drveff, 0.01D0, 1.0D0, &
-               'IFE driver efficiency')
-       case ('edrive')
-          call parse_real_variable('edrive', edrive, 1.0D5, 50.0D6, &
-               'IFE driver energy (J)')
-       case ('etave')
-          call parse_real_array('etave', etave, isub1, 10, &
-               'IFE driver efficiency vs driver energy', icode)
-       case ('fbreed')
-          call parse_real_variable('fbreed', fbreed, 0.0D0, 0.999D0, &
-               'Fraction of breeder outside core')
-       case ('fburn')
-          call parse_real_variable('fburn', fburn, 0.01D0, 1.0D0, &
-               'IFE burn fraction')
-       case ('flirad')
-          call parse_real_variable('flirad', flirad, 0.0D0, 10.0D0, &
-               'Radius of FLiBe inlet (HYLIFE) (m)')
-       case ('frrmax')
-          call parse_real_variable('frrmax', frrmax, 1.0D-6, 1.0D0, &
-               'F-value for IFE repetition rate')
-       case ('fwdr')
-          call parse_real_variable('fwdr', fwdr, 0.0D0, 10.0D0, &
-               'IFE first wall radial thickness (m)')
-       case ('fwdzl')
-          call parse_real_variable('fwdzl', fwdzl, 0.0D0, 10.0D0, &
-               'IFE first wall bottom part thickness (m)')
-       case ('fwdzu')
-          call parse_real_variable('fwdzu', fwdzu, 0.0D0, 10.0D0, &
-               'IFE first wall top part thickness (m)')
-       case ('fwmatf')  !  N.B. actually a 2-D array
-          call parse_real_array('fwmatf', fwmatf, isub1, 3*(maxmat+1), &
-               'IFE first wall material fraction', icode)
-       case ('gainve')
-          call parse_real_array('gainve', gainve, isub1, 10, &
-               'IFE target gain vs driver energy', icode)
-       case ('ifedrv')
-          call parse_int_variable('ifedrv', ifedrv, -1, 2, &
-               'IFE driver type')
-       case ('ifetyp')
-          call parse_int_variable('ifetyp', ifetyp, 0, 3, &
-               'IFE device build type')
-       case ('mcdriv')
-          call parse_real_variable('mcdriv', mcdriv, 0.1D0, 10.0D0, &
-               'IFE driver cost multiplier')
-       case ('pdrive')
-          call parse_real_variable('pdrive', pdrive, 1.0D6, 200.0D6, &
-               'IFE driver power to target (W)')
-       case ('pifecr')
-          call parse_real_variable('pifecr', pifecr, 0.0D0, 100.0D0, &
-               'IFE cryogenic power (MW)')
-       case ('ptargf')
-          call parse_real_variable('ptargf', ptargf, 0.1D0, 100.0D0, &
-               'IFE target factory power at 6Hz (MW)')
-       case ('rrmax')
-          call parse_real_variable('rrmax', rrmax, 1.0D0, 50.0D0, &
-               'Maximum IFE repetition rate (Hz)')
-       case ('shdr')
-          call parse_real_variable('shdr', shdr, 0.0D0, 10.0D0, &
-               'IFE shield radial thickness (m)')
-       case ('shdzl')
-          call parse_real_variable('shdzl', shdzl, 0.0D0, 10.0D0, &
-               'IFE shield bottom part thickness (m)')
-       case ('shdzu')
-          call parse_real_variable('shdzu', shdzu, 0.0D0, 10.0D0, &
-               'IFE shield top part thickness (m)')
-       case ('shmatf')  !  N.B. actually a 2-D array
-          call parse_real_array('shmatf', shmatf, isub1, 3*(maxmat+1), &
-               'IFE shield material fraction', icode)
-       case ('sombdr')
-          call parse_real_variable('sombdr', sombdr, 0.0D0, 10.0D0, &
-               'Radius of SOMBRERO blanket bottom (m)')
-       case ('somtdr')
-          call parse_real_variable('somtdr', somtdr, 0.0D0, 10.0D0, &
-               'Radius of SOMBRERO blanket top (m)')
-       case ('tgain')
-          call parse_real_variable('tgain', tgain, 1.0D0, 500.0D0, &
-               'IFE target gain')
-       case ('uccarb')
-          call parse_real_variable('uccarb', uccarb, 10.0D0, 1.0D3, &
-               'Cost of carbon cloth ($/kg)')
-       case ('ucconc')
-          call parse_real_variable('ucconc', ucconc, 0.1D0, 1.0D3, &
-               'Cost of concrete ($/kg)')
-       case ('ucflib')
-          call parse_real_variable('ucflib', ucflib, 10.0D0, 1.0D3, &
-               'Cost of FLiBe ($/kg)')
-       case ('uctarg')
-          call parse_real_variable('uctarg', uctarg, 0.1D0, 1.0D3, &
-               'Cost per IFE target ($/target)')
-       case ('v1dr')
-          call parse_real_variable('v1dr', v1dr, 0.0D0, 10.0D0, &
-               'IFE void 1 radial thickness (m)')
-       case ('v1dzl')
-          call parse_real_variable('v1dzl', v1dzl, 0.0D0, 10.0D0, &
-               'IFE void 1 bottom part thickness (m)')
-       case ('v1dzu')
-          call parse_real_variable('v1dzu', v1dzu, 0.0D0, 10.0D0, &
-               'IFE void 1 top part thickness (m)')
-       case ('v1matf')  !  N.B. actually a 2-D array
-          call parse_real_array('v1matf', v1matf, isub1, 3*(maxmat+1), &
-               'IFE void 1 material fraction', icode)
-       case ('v2dr')
-          call parse_real_variable('v2dr', v2dr, 0.0D0, 10.0D0, &
-               'IFE void 2 radial thickness (m)')
-       case ('v2dzl')
-          call parse_real_variable('v2dzl', v2dzl, 0.0D0, 10.0D0, &
-               'IFE void 2 bottom part thickness (m)')
-       case ('v2dzu')
-          call parse_real_variable('v2dzu', v2dzu, 0.0D0, 10.0D0, &
-               'IFE void 2 top part thickness (m)')
-       case ('v2matf')  !  N.B. actually a 2-D array
-          call parse_real_array('v2matf', v2matf, isub1, 3*(maxmat+1), &
-               'IFE void 2 material fraction', icode)
-       case ('v3dr')
-          call parse_real_variable('v3dr', v3dr, 0.0D0, 50.0D0, &
-               'IFE void 3 radial thickness (m)')
-       case ('v3dzl')
-          call parse_real_variable('v3dzl', v3dzl, 0.0D0, 30.0D0, &
-               'IFE void 3 bottom part thickness (m)')
-       case ('v3dzu')
-          call parse_real_variable('v3dzu', v3dzu, 0.0D0, 30.0D0, &
-               'IFE void 3 top part thickness (m)')
-       case ('v3matf')  !  N.B. actually a 2-D array
-          call parse_real_array('v3matf', v3matf, isub1, 3*(maxmat+1), &
-               'IFE void 3 material fraction', icode)
 
        case default
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)

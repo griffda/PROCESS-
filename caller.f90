@@ -21,8 +21,8 @@ subroutine caller(xc,nvars)
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
-  !+ad_call  ife_module
-  !+ad_call  ife_variables
+
+
   !+ad_call  kit_hcpb_module
   !+ad_call  numerics
   !+ad_call  pfcoil_module
@@ -101,8 +101,6 @@ subroutine caller(xc,nvars)
   use divertor_ode
   use divertor_Kallenbach_variables
   use fwbs_variables
-  use ife_module
-  use ife_variables
   use numerics
   use pfcoil_module
   use physics_module
@@ -157,14 +155,6 @@ subroutine caller(xc,nvars)
 
   if (istell /= 0) then
      call stcall
-     return
-  end if
-
-  !  Inertial Fusion Energy caller !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  if (ife /= 0) then
-     call ifecll
      return
   end if
 

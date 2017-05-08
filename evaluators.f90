@@ -21,7 +21,7 @@ module function_evaluator
   !+ad_call  divertor_variables
   !+ad_call  error_handling
   !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
+
   !+ad_call  numerics
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
@@ -30,17 +30,6 @@ module function_evaluator
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_hist  10/10/12 PJK Initial version of module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  29/10/12 PJK Added pf_power_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  31/10/12 PJK Added cost_variables
-  !+ad_hist  17/12/12 PJK Added times_variables
-  !+ad_hist  19/05/14 PJK Added ife_variables, stellarator_variables
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_hist  28/07/14 PJK Added constraints
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -52,7 +41,7 @@ module function_evaluator
   use divertor_variables
   use error_handling
   use heat_transport_variables
-  use ife_variables
+
   use numerics
   use physics_variables
   use pf_power_variables
@@ -196,7 +185,7 @@ contains
 
     !  Convergence loop to ensure burn time consistency
 
-    if ((istell /= 1).and.(ife /= 1)) then
+    if (istell /= 1) then
        loop = 0
        do while ( (loop < 10).and. &
             (abs((tburn-tburn0)/max(tburn,0.01D0)) > 0.001D0) )
