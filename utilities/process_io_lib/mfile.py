@@ -199,8 +199,8 @@ class MFile(object):
 
     def parse_mfile(self):
         """Function to parse MFILE.DAT"""
-        for line in (c for c in (clean_line(l) for l in self.mfile_lines)
-                     if c != [""]):
+        for line in (c for c in (clean_line(l) for l in self.mfile_lines if '#' not in l[:2]) 
+            if c != [""]):
             self.add_line(line)
 
     def add_line(self, line):

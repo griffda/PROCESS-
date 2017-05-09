@@ -1226,8 +1226,12 @@ contains
           end if
 
        case (49)  ! Issue #508 Remove RFP option Equation to ensure reversal parameter F is negative
+        !#=# empty
+        !#=#=# empty
 
        case (50)  ! Issue #508 Remove IFE option: Equation for repetition rate upper limit
+        !#=# empty
+        !#=#=# empty
 
        case (51)  ! Equation to enforce startup flux = available startup flux
           ! This is a consistency equation
@@ -1337,9 +1341,13 @@ contains
              units(i) = 'MW/m'
           end if
 
-      case (57)  ! Obsolete
+       case (57)  ! Obsolete
+        !#=# empty
+        !#=#=# empty
 
        case (58)  ! Obsolete
+        !#=# empty
+        !#=#=# empty
 
        case (59)  ! Equation for neutral beam shine-through fraction upper limit
           !#=# current_drive

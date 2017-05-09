@@ -124,6 +124,8 @@ contains
 
     write(file,'(t2,a)') stars(1:nstars)//' '//string//' '//stars(1:nstars2)
 
+    write(mfile,'(t2,a)') '#'//' '//string//' '//'#'
+
   end subroutine ocentr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
