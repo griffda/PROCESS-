@@ -99,7 +99,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 137
+  integer, parameter :: ipnvars = 139
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 73
   !+ad_vars  ipnfoms FIX : number of available figures of merit
@@ -554,7 +554,7 @@ module numerics
        'ftftort       ', &
        !+ad_varc  <LI> (100) NOT USED
        'ftfthko       ', &
-       !+ad_varc  <LI> (101) prp
+       !+ad_varc  <LI> (101) NOT USED
        'prp           ', &
        !+ad_varc  <LI> (102) fimpvar
        'fimpvar       ', &
@@ -628,8 +628,12 @@ module numerics
        'fimp(13)      ', &
        !+ad_varc  <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density
        'fimp(14)      ', &
-        !+ad_varc  <LI> (137) fplhsep (f-value for equation 73)</UL>
-       'fplhsep       ' &
+       !+ad_varc  <LI> (137) fplhsep (f-value for equation 73)
+       'fplhsep       ', &
+       !+ad_varc  <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
+       'rebco_thicknes', &
+       !+ad_varc  <LI> (139) copper_thickness : thickness of copper layer in tape (m)</UL>
+       'copper_thickne' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -784,7 +788,9 @@ module numerics
        1.00D-8, &  !  134
        1.00D-8, &  !  135
        1.00D-8, &  !  136
-       0.001D0  &  !  137
+       0.001D0, &  !  137
+       0.01D-6, &  !  138
+       1.00D-6  &  !  139
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -926,7 +932,9 @@ module numerics
        0.010D0, &  !  134
        0.010D0, &  !  135
        0.010D0, &  !  136
-       1.000D0 &   !  137
+       1.000D0, &  !  137
+       100.0D-6,&  !  138
+       1.00D-3  &  !  139
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

@@ -57,6 +57,7 @@ module pfcoil_module
   use physics_variables
   use process_output
   use sctfcoil_module
+  use superconductors
   use tfcoil_variables
   use times_variables
 

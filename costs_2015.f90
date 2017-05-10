@@ -157,7 +157,7 @@ contains
     if(annual_electric_output.gt.0.00001) then
         coe = (1.0D0/annual_electric_output)*(total_costs/amortization + maintenance)
     endif
-    
+
     ! Switch on output if there is a NaN error
     if ((abs(concost) > 9.99D99).or.(concost /= concost)) then
         call write_costs_to_output
@@ -398,17 +398,7 @@ contains
     ! Scale with total TF coil length (m)
     s(14)%k = tfno * tfleng
     s(14)%kref = 18.0D0*34.1D0
-    s(14)%cost = s(14)%cost_factor * s(14)%cref * (s(14)%k / s(14)%kref)**costexp
-
-    ! TF coil radial plates cost ($)
-    s(15)%label = "TF coil radial plates"
-    ! This is included even if radial plate option is not turned on in TF stress calc
-    ! ITER radial plates cost (2014 $)
-    s(15)%cref = 395.0D6
-    ! Scale with the total TF coil winding pack volume (m^3)
-    s(15)%k = 0.5D0*thkwp*(wwp1+wwp2) * tfleng * tfno
-    s(15)%kref = 317.3D0
-    s(15)%cost = s(15)%cost_factor * s(15)%cref * (s(15)%k / s(15)%kref)**costexp
+    s(14)%cost = s(14)%cost_factor * s(14)%cref * (s(14)%k / s(14)%kref)**costexp    
 
     ! TF coil winding costs ($)
     s(16)%label = "TF coil winding"

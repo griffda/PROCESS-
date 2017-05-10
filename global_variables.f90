@@ -1631,7 +1631,6 @@ module pfcoil_variables
   !+ad_hist  11/11/14 PJK Changed default values for fcuohsu, vfohc
   !+ad_hist  11/11/14 PJK Added tmargoh
   !+ad_hist  22/04/15 JM  Added etapsu, pfwp and pfsec
-  !+ad_hist  11/06/15 MDK Added spiral_od and spiral_id
   !+ad_hist  24/02/17 JM  Added oh_steel_frac
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1897,11 +1896,10 @@ module tfcoil_variables
   !+ad_hisc               added stress_model etc.; corrected arc array lengths
   !+ad_hist  01/05/14 PJK Lowered ripmax default value from 5.0 to 1.0
   !+ad_hist  06/05/14 PJK Removed wpvf
-  !+ad_hist  07/05/14 PJK Changed prp and trp definitions; removed rnltf;
+  !+ad_hist  07/05/14 PJK removed rnltf;
   !+ad_hisc               replaced itfmod and stress_model with tfc_model
   !+ad_hist  08/05/14 PJK Changed ripmax description
   !+ad_hist  12/05/14 PJK Added insstrain
-  !+ad_hist  12/06/14 PJK Changed prp default value to 0.0
   !+ad_hist  24/06/14 PJK Removed wtbc
   !+ad_hist  30/07/14 PJK Renamed borev to tfborev
   !+ad_hist  31/07/14 PJK Added acasetfo, dcondins, whtconin, whtgw, whtrp;
@@ -1939,8 +1937,6 @@ module tfcoil_variables
 
   !+ad_vars  arealeg : outboard TF leg area (m2)
   real(kind(1.0D0)) :: arealeg = 0.0D0
-  !+ad_vars  arp : TF coil radial plate area (m2)
-  real(kind(1.0D0)) :: arp = 0.0D0
   !+ad_vars  aswp : winding pack structure area (m2)
   real(kind(1.0D0)) :: aswp = 0.0D0
   !+ad_vars  avwp : winding pack void (He coolant) area (m2)
@@ -2000,8 +1996,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: eyins = 2.0D10
   !+ad_vars  eyoung(2) : work array used in stress calculation (Pa)
   real(kind(1.0D0)), dimension(2) :: eyoung = 0.0D0
-  !+ad_vars  eyrp : TF coil radial plate Young's modulus (Pa)
-  real(kind(1.0D0)) :: eyrp = 0.0D0
   !+ad_vars  eystl /2.05e11/ : steel case Young's modulus (Pa)
   !+ad_varc                    (default value from DDD11-2 v2 2 (2009))
   real(kind(1.0D0)) :: eystl = 2.05D11
@@ -2052,10 +2046,6 @@ module tfcoil_variables
   !+ad_vars  poisson /0.3/ : Poisson's ratio for TF stress calculation
   !+ad_varc                  (assumed constant over entire coil)
   real(kind(1.0D0)) :: poisson = 0.3D0
-  !+ad_vars  prp /0/ : ratio of the cross-sectional area of the radial plates
-  !+ad_varc              + inter-turn steel caps to the whole winding pack's
-  !+ad_varc              cross-sectional area (iteration variable 101)
-  real(kind(1.0D0)) :: prp = 0.0D0
   !+ad_vars  radtf(3) : work array used in stress calculation (m)
   real(kind(1.0D0)), dimension(3) :: radtf = 0.0D0
   !+ad_vars  rbmax : radius of maximum TF B-field (m)
@@ -2174,11 +2164,6 @@ module tfcoil_variables
   !+ad_varc                   (calculated for stellarators)
   real(kind(1.0D0)) :: tinstf = 0.018D0
 
-  !+ad_vars  spiral_od /0.01/ : central tube for helium coolant: outer diameter (m)
-  real(kind(1.0D0)) :: spiral_od = 0.01D0
-  !+ad_vars  spiral_id /0.01/ : central tube for helium coolant: inner diameter (m)
-  real(kind(1.0D0)) :: spiral_id = 0.008D0
-
   !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (CS and TF coils) (K)
   real(kind(1.0D0)) :: tmargmin = 2.5D0
   !+ad_vars  temp_margin  : temperature margin (K)
@@ -2189,8 +2174,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tmaxpro = 150.0D0
   !+ad_vars  tmpcry /4.5/ : coil temperature for cryogenic plant power calculation (K)
   real(kind(1.0D0)) :: tmpcry = 4.5D0
-  !+ad_vars  trp : TF coil radial plate and inter-turn steel cap half-thickness (m)
-  real(kind(1.0D0)) :: trp = 0.0D0
   !+ad_vars  turnstf : number of turns per TF coil
   real(kind(1.0D0)) :: turnstf = 0.0D0
   !+ad_vars  vdalw /20.0/ : max voltage across TF coil during quench (kV)
@@ -2220,8 +2203,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whtconsh = 0.0D0
   !+ad_vars  whtgw : mass of ground-wall insulation layer per coil (kg/coil)
   real(kind(1.0D0)) :: whtgw = 0.0D0
-  !+ad_vars  whtrp : mass of steel radial plates + caps per coil (kg/coil)
-  real(kind(1.0D0)) :: whtrp = 0.0D0
   !+ad_vars  whttf : total mass of the TF coils (kg)
   real(kind(1.0D0)) :: whttf = 0.0D0
   !+ad_vars  windstrain : longitudinal strain in winding pack (tfc_model=1)
@@ -4100,3 +4081,44 @@ module fispact_variables
   real(kind(1.0D0)) :: fwtemp = 0.0D0
 
 end module fispact_variables
+!------------------------------------------------------------------------
+
+module rebco_variables
+
+  !+ad_name  rebco_variables
+  !+ad_summ  Variables relating to the REBCO HTS tape, strand and cable
+  !+ad_summ  Conduit information is in the modules relating to each coil.
+  !+ad_type  Module
+  !+ad_docs  TODO
+  implicit none ! ---------------------------------------------------------
+
+  !+ad_vars  rebco_thickness /1.0e-6/ : thickness of REBCO layer in tape (m) (iteration variable TODO)
+  real(kind(1.0D0)) :: rebco_thickness = 1.0D-6
+  !+ad_vars  copper_thickness /100e-6/ : thickness of copper layer in tape (m) (iteration variable TODO)
+  real(kind(1.0D0)) :: copper_thickness = 100.0D-6
+  !+ad_vars  hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
+  real(kind(1.0D0)) :: hastelloy_thickness = 50.0D-6
+  !+ad_vars  tape_width /5.375e-3/ : Mean width of tape (m)
+  real(kind(1.0D0)) :: tape_width = 5.375D-3
+
+  !+ad_vars  croco_od /9.3e-3/ : Outer diameter of CroCo strand (m)
+  real(kind(1.0D0)) :: croco_od = 9.3D-3
+  !+ad_vars  croco_id /7.0e-3/ : Inner diameter of CroCo copper tube (m)
+  real(kind(1.0D0)) :: croco_id = 7.0D-3
+
+  !+ad_vars  rebco_area  : Inner diameter of CroCo copper tube (m)
+  real(kind(1.0D0)) :: rebco_area
+  !+ad_vars  croco_area : Inner diameter of CroCo copper tube (m)
+  real(kind(1.0D0)) :: croco_area
+  !+ad_vars  cable_crit_current : Critical current of HTS cable with croCo strand (A)
+  real(kind(1.0D0)) :: cable_crit_current
+  !+ad_vars  number_croco /7/ : Number of CroCo strands in the conductor
+  integer :: number_croco = 7
+
+  !+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of area inside the jacket
+  real(kind(1.0D0)) :: copper_bar = 0.23d0
+
+
+
+
+  end module rebco_variables

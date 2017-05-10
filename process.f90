@@ -1600,7 +1600,7 @@ subroutine output(outfile)
 
   call tfspcall(outfile,1)
 
-  ! Tight asepct ratio machine model !
+  ! Tight aspect ratio machine model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   if (itart == 1) then
@@ -1693,6 +1693,7 @@ subroutine runtests
   use numerics
   use process_output
   use pfcoil_module
+  use superconductors
   implicit none
   call ovarre(nout,'Binomial coefficients C(5,0): 1', '(binomial(5,0))', binomial(5,0))
   call ovarre(nout,'Binomial coefficients C(5,1): 5', '(binomial(5,1))', binomial(5,1))
@@ -1700,6 +1701,8 @@ subroutine runtests
   call ovarre(nout,'Binomial coefficients C(5,3): 10', '(binomial(5,3))', binomial(5,3))
   call ovarre(nout,'Binomial coefficients C(5,4): 5', '(binomial(5,4))', binomial(5,4))
   call ovarre(nout,'Binomial coefficients C(5,5): 1', '(binomial(5,5))', binomial(5,5))
+
+  call test_rebco()
 
   call brookscoil(nout)
 end subroutine runtests
@@ -2092,7 +2095,7 @@ subroutine get_DDMonYYTimeZone(dt_time)
 ! GIT 395: Rewrite to vacuum pump availability. New Binomial routine.
 ! GIT 396: New cost model complete.  J Shimwell parametric TBR model #195. #292, #293
 ! GIT 397: Issues dealt with now or previously: #301 #219 #244 #252 #255 #262 #264 #268 #269 #278 #294 #295 #284
-! GIT 398: Tidy first wall and blanket thermohydraulics (#302), Radial plate error (#300), Append input file to output file (#305)
+! GIT 398: Tidy first wall and blanket thermohydraulics (#302), Append input file to output file (#305)
 ! GIT 399: Minimum total electrical power for primary coolant pumps (htpmw_min) (#303). The user now specifies the allowable von Mises stress for TFC and hoop stress for CS.
 ! GIT 400: Blanket fractions now defined using breeder_multiplier: combined breeder/multipler fraction. Steel is remainder. Cryogenics output added.
 !          Corrected surface heat flux on first wall #309. Cost of electricity and maintenance cost now included in 2015 cost model.

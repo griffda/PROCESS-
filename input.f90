@@ -78,28 +78,6 @@ module process_input
   !+ad_desc  of what is being attempted.
   !+ad_desc  </UL>
   !+ad_prob  Some routines still contain GOTOs...
-  !+ad_call  build_variables
-  !+ad_call  buildings_variables
-  !+ad_call  constraint_variables
-  !+ad_call  cost_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  heat_transport_variables
-
-  !+ad_call  impurity_radiation_module
-  !+ad_call  numerics
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  pf_power_variables
-  !+ad_call  process_output
-  !+ad_call  pulse_variables
-  !+ad_call  scan_module
-  !+ad_call  stellarator_variables
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_call  vacuum_variables
   !+ad_hist  20/01/95 PJK Initial version (PROCESS)
   !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
   !+ad_hist  02/10/12 PJK Initial F90 version (PROCESS)
@@ -139,6 +117,7 @@ module process_input
   use tfcoil_variables
   use times_variables
   use vacuum_variables
+  use rebco_variables
 
   implicit none
 
@@ -358,7 +337,6 @@ contains
     !+ad_hist  22/04/15 JM  Added etapsu
     !+ad_hist  19/05/15 PJK Variable names in calls now lowercase
     !+ad_hist  20/05/15 RK  Added iscdens, fgwped
-    !+ad_hist  11/06/15 MDK Added spiral_od and spiral_id
     !+ad_hist  12/08/15 MDK vacuum_model and associated variables #304
     !+ad_hist  18/11/15 RK  zeffmax and fzeffmax for constraint equation 64
     !+ad_hist  26/11/15 RK  added sigvvall to TF variables, tfinsgap
@@ -1482,6 +1460,20 @@ contains
        case ('bcritsc')
           call parse_real_variable('bcritsc', bcritsc, 10.0D0, 50.0D0, &
                'Critical field for superconductor')
+
+       case ('tape_width')
+          call parse_real_variable('tape_width', tape_width, 0.0D0, 0.1D0, &
+               'Mean width of HTS tape in CroCo (m)')
+       case ('croco_od')
+          call parse_real_variable('croco_od', croco_od, 0.0D0, 0.1D0, &
+               'Outer diameter of CroCo strand (m)')
+       case ('number_croco')
+          call parse_int_variable('number_croco', number_croco, 0, 10, &
+               'Number of CroCo strands in the conductor')
+       case ('copper_bar')
+          call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.1D0, &
+               'area of central copper bar, as a fraction of area inside the jacket')
+
        case ('casthi')
           call parse_real_variable('casthi', casthi, 0.0D0, 1.0D0, &
                'TF coil case inner thickness (m)')
@@ -1550,7 +1542,7 @@ contains
           call parse_real_variable('frhocp', frhocp, 0.01D0, 5.0D0, &
                'TART c/p resistivity enhancement factor')
        case ('isumattf')
-          call parse_int_variable('isumattf', isumattf, 1, 5, &
+          call parse_int_variable('isumattf', isumattf, 1, 6, &
                'TF coil superconductor material')
           if (isumattf == 2) then
              write(outfile,*) ' '
@@ -1598,9 +1590,6 @@ contains
        case ('poisson')
           call parse_real_variable('poisson', poisson, 0.0D0, 1.0D0, &
                'Poissons ratio for TF stress calc.')
-       case ('prp')
-          call parse_real_variable('prp', prp, 0.0D0, 0.9D0, &
-               'Radial plate area / winding pack area')
        case ('ptempalw')
           call parse_real_variable('ptempalw', ptempalw, 50.0D0, 300.0D0, &
                'Maximum peak centrepost temp. (C)')
@@ -1655,12 +1644,6 @@ contains
        case ('tinstf')
           call parse_real_variable('tinstf', tinstf, 0.0D0, 0.1D0, &
                'Ground wall insulation thickness (m)')
-       case ('spiral_od')
-          call parse_real_variable('spiral_od', spiral_od, 0.0D0, 0.1D0, &
-               'central tube for helium coolant: outer diameter (m)')
-       case ('spiral_id')
-          call parse_real_variable('spiral_id', spiral_id, 0.0D0, 0.1D0, &
-               'central tube for helium coolant: inner diameter (m)')
        case ('tmargmin')
           call parse_real_variable('tmargmin', tmargmin, 0.0D0, 10.0D0, &
                'Minimum allowable temp margin (K)')

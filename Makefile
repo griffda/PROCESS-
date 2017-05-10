@@ -111,6 +111,7 @@ source = \
  stellarator.f90 \
  stellarator_fwbs.f90 \
  structure.f90 \
+ superconductors.f90 \
  tfcoil.f90 \
  vacuum.f90
 
@@ -159,6 +160,7 @@ object = \
  stellarator.o \
  stellarator_fwbs.o \
  structure.o \
+ superconductors.o \
  tfcoil.o \
  vacuum.o
 
@@ -275,7 +277,7 @@ maths_library.o: global_variables.o
 numerics.o: global_variables.o maths_library.o
 ode.o:
 output.o: global_variables.o numerics.o
-pfcoil.o: error_handling.o global_variables.o maths_library.o output.o sctfcoil.o
+pfcoil.o: error_handling.o global_variables.o maths_library.o output.o sctfcoil.o superconductors.o
 physics.o: current_drive.o error_handling.o global_variables.o impurity_radiation.o \
   maths_library.o numerics.o output.o plasma_profiles.o
 plant_power.o: error_handling.o global_variables.o output.o
@@ -285,7 +287,7 @@ process.o: availability.o buildings.o constraint_equations.o costs.o current_dri
   divertor.o divertor_ode.o error_handling.o evaluators.o global_variables.o hcll.o hcpb.o \
   impurity_radiation.o input.o machine_build.o maths_library.o numerics.o output.o \
   pfcoil.o physics.o plant_power.o pulse.o scan.o sctfcoil.o startup.o \
-  stellarator.o structure.o tfcoil.o vacuum.o
+  stellarator.o structure.o superconductors.o tfcoil.o vacuum.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
 read_and_get_atomic_data.o: maths_library.o read_radiation.o
 read_radiation.o: maths_library.o impurity_radiation.o
@@ -294,7 +296,7 @@ refprop.o:
 refprop_interface.o: error_handling.o refprop.o
 safety.o: global_variables.o output.o
 scan.o: error_handling.o global_variables.o numerics.o output.o
-sctfcoil.o: error_handling.o global_variables.o maths_library.o output.o
+sctfcoil.o: error_handling.o global_variables.o maths_library.o output.o superconductors.o
 startup.o: global_variables.o maths_library.o output.o physics.o
 stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \
   stellarator_fwbs.o global_variables.o maths_library.o numerics.o output.o physics.o plant_power.o \
@@ -302,6 +304,7 @@ stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o err
 stellarator_fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o \
   maths_library.o
 structure.o: global_variables.o output.o
+superconductors.o: global_variables.o output.o
 tfcoil.o: error_handling.o global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: error_handling.o global_variables.o output.o
 

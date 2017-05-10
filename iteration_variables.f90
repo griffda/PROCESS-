@@ -86,17 +86,16 @@ subroutine loadxc
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
   use physics_variables
   use pulse_variables
-
   use stellarator_variables
   use tfcoil_variables
   use times_variables
   use global_variables
+  use rebco_variables
 
   implicit none
 
@@ -216,7 +215,7 @@ subroutine loadxc
      case (98) ; xcm(i) = li6enrich
      case (99) ; write(*,*) 'Iteration variable 99 is not supported.'
      case (100) ; write(*,*) 'Iteration variable 100 is not supported.'
-     case (101) ; xcm(i) = prp
+     case (101) ; write(*,*) 'Iteration variable 101 is not supported.'
      case (102) ; xcm(i) = impurity_arr(impvar)%frac
      case (103) ; xcm(i) = flhthresh
      case (104) ; xcm(i) = fcwr
@@ -253,6 +252,8 @@ subroutine loadxc
      case (135) ; xcm(i) = impurity_arr(13)%frac
      case (136) ; xcm(i) = impurity_arr(14)%frac
      case (137) ; xcm(i) = fplhsep
+     case (138) ; xcm(i) = rebco_thickness
+     case (139) ; xcm(i) = copper_thickness
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -505,7 +506,7 @@ subroutine convxc(xc,nn)
      case (98) ; li6enrich = xc(i)/scale(i)
      case (99) ; write(*,*) 'Iteration variable 99 is not supported.'
      case (100); write(*,*) 'Iteration variable 100 is not supported.'
-     case (101) ; prp      = xc(i)/scale(i)
+     case (101); write(*,*) 'Iteration variable 101 is not supported.'
      case (102)
         fimpvar = xc(i)/scale(i)
         impurity_arr(impvar)%frac = fimpvar
