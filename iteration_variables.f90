@@ -254,6 +254,7 @@ subroutine loadxc
      case (137) ; xcm(i) = fplhsep
      case (138) ; xcm(i) = rebco_thickness
      case (139) ; xcm(i) = copper_thickness
+     case (140) ; xcm(i) = thkwp
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -384,8 +385,8 @@ subroutine convxc(xc,nn)
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
-  use physics_variables
-
+  use physics_variables  
+  use rebco_variables
   use tfcoil_variables
   use times_variables
 
@@ -545,6 +546,9 @@ subroutine convxc(xc,nn)
      case (135) ; impurity_arr(13)%frac = xc(i)/scale(i)
      case (136) ; impurity_arr(14)%frac = xc(i)/scale(i)
      case (137) ; fplhsep = xc(i)/scale(i)
+     case (138) ; rebco_thickness = xc(i)/scale(i)
+     case (139) ; copper_thickness = xc(i)/scale(i)
+     case (140) ; thkwp = xc(i)/scale(i)
 
      case default
 

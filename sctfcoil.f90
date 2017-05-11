@@ -98,10 +98,6 @@ subroutine sctfcoil(outfile,iprint)
     !+ad_hist  04/11/92 PJK Initial version
     !+ad_hist  25/07/11 PJK Simplified outboard leg cross-section
     !+ad_hist  10/05/12 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  18/12/12 PJK/RK Modified vertical bore for single-null cases
     !+ad_hist  06/11/13 PJK Modified coil case mass and leg area calculations
     !+ad_hist  26/02/14 PJK Changed comment in the case of too small tftort
@@ -122,8 +118,8 @@ subroutine sctfcoil(outfile,iprint)
     !+ad_hist  08/12/15 MDK New TF coil shape with straight vertical section
     !+ad_hist  19/01/16 JM  Updated tfboreh and tfborev for new radial build
     !+ad_hist  27/02/17 JM  Added WST Nb3Sn option for superconductor
+    !+ad_hist  10/05/17 MDK Issue #478 Removed radial plate option
     !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -136,11 +132,21 @@ subroutine sctfcoil(outfile,iprint)
     !  Local variables
     !integer :: i,peaktfflag
     integer :: peaktfflag
-    real(kind(1.0D0)) :: awpc,awptf,bcylir,cplen,leni,leno, &
+    real(kind(1.0D0)) :: awpc,awptf,bcylir,cplen, &
     radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf, a, b, c, radvv, deltf
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Determine layout of the inboard midplane TF coil leg
+    ! Set the plasma-facing wall thickness if it has not been set explicitly
+    if(casthi_is_fraction) casthi = casthi_fraction * tfcth
+
+    ! Issue #514 Radial dimensions of inboard leg
+    ! Calculate tfcth if thkwp is an iteration variable (140)
+    if (any(ixc(1:nvar) == 140) ) then
+        tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+    else
+        thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+    endif
+
 
     !  Radius of centre of inboard TF coil leg
     if (itart == 1) then
@@ -149,7 +155,7 @@ subroutine sctfcoil(outfile,iprint)
         rtfcin = bore + ohcth + precomp + gapoh + 0.5D0*tfcth
     end if
 
-    !  Radius of outer edge of inboard leg
+    !  Major radius of plasma-facing edge of inboard leg
     rcoil = rtfcin + 0.5D0*tfcth
 
     !  Radius of inner edge of inboard leg
@@ -161,6 +167,8 @@ subroutine sctfcoil(outfile,iprint)
 
     !  TF coil width in toroidal direction
     tftort = 2.0D0 * rcoil*sin(thtcoil)
+    !  casths: case thickness of side wall
+    if(tfc_sidewall_is_fraction) casths = casths_fraction * tftort
 
     !  Annular area of midplane containing TF coil inboard legs
 
@@ -194,8 +202,7 @@ subroutine sctfcoil(outfile,iprint)
 
     !  Calculation of forces : centering and vertical
     cforce = bmaxtf*ritfc/(2.0D0*tfno)
-    vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * &
-    log(rtot/rtfcin) / tfno
+    vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * log(rtot/rtfcin) / tfno
 
     !  The rest of this routine deals with superconducting coils.
 
@@ -205,11 +212,9 @@ subroutine sctfcoil(outfile,iprint)
     call tfcind(tfcth)
 
     !  Find total TF coil stored magnetic energy (GJ)
-    ! estotf = 1.0D-9 *  0.5D0*tfind / tfno * ritfc**2   ! OBSOLETE
     estotft = 1.0D-9 *  0.5D0*tfind * ritfc**2
 
     !  Case thicknesses (inboard leg)
-
     if (tfc_model == 0) thkcas = tfcth * 0.5D0
 
     !  N.B. Calculations below may be spurious for tfc_model=0 (solid copper coils),
@@ -217,13 +222,6 @@ subroutine sctfcoil(outfile,iprint)
 
     !  thkcas: case thickness of side further away from plasma
     !  casthi: case thickness of side nearest plasma
-    !  casths: case thickness of side wall
-
-    !  Winding pack dimensions (each inboard leg)
-
-    !  Radial extent
-
-    thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
 
     if (thkwp <= 0.0D0) then
         fdiags(1) = thkwp ; fdiags(2) = tfcth
@@ -256,7 +254,6 @@ subroutine sctfcoil(outfile,iprint)
     wwp2 = 2.0D0 * ((radwp-0.5D0*thkwp)*tant - casths - tinstf - tfinsgap)
 
     !  Total cross-sectional area of winding pack
-
     awptf = (0.5D0*thkwp)*(wwp1 + wwp2)
 
     !  Total cross-sectional area of winding pack,
@@ -282,44 +279,37 @@ subroutine sctfcoil(outfile,iprint)
     end if
 
     !  Area of rectangular cross-section outboard leg
-
     arealeg = tftort * tfthko
 
     !  Cross-sectional area of surrounding case, outboard leg
-
     acasetfo = arealeg - awpc
 
     !  Winding pack current density (forced to be positive)
     jwptf = max(1.0D0, ritfc/(tfno*awptf))
 
-    !  Superconducting cable information
-    !  (number of turns not required to be an integer here for numerics)
+    !  Superconducting cable
+    !  (number of turns not required to be an integer)
 
     !  Radius of rounded corners of cable space inside conduit
     rbcndut = thwcndut * 0.75D0
 
     !  Dimension of square cross-section of each turn
-    ! Issue #478 Remove radial plate option
     leno = sqrt(cpttf / jwptf)
 
-    !  Dimension of square cable space inside insulation and case of
-    !  the conduit of each turn
-
+    !  Dimension of square cable space inside insulation and conduit
     leni = leno - 2.0D0*(thwcndut + thicndut)
 
     if (leni <= 0.0D0) then
         fdiags(1) = leni ; fdiags(2) = leno
         fdiags(3) = thwcndut ; fdiags(4) = thicndut
         call report_error(100)
-        write(*,*) 'Error in routine SCTFCOIL:'
-        write(*,*) 'Cable space dimension, leni = ',leni
-        write(*,*) 'Reduce conduit case or insulation thicknesses,'
+        write(*,*) 'Error in SCTFCOIL.f90: Cable space dimension, leni = ',leni
+        write(*,*) 'Ensure thwcndut (TF coil conduit case thickness) is an iteration variable (58)'
         write(*,*) 'or increase cpttf value or lower bound.'
-        write(*,*) ' '
+        write(*,*)
     end if
 
     !  Cross-sectional area of cable space per turn
-
     acstf = leni**2 - (4.0D0-pi)*rbcndut**2
 
     if (acstf <= 0.0D0) then
@@ -347,26 +337,22 @@ subroutine sctfcoil(outfile,iprint)
     end if
 
     !  Cross-sectional area of conduit case per turn
-
     acndttf = (leni + 2.0D0*thwcndut)**2 - acstf
 
-    !  Total number of turns per TF coil
-
+    !  Total number of turns per TF coil (not required to be an integer)
     turnstf = awptf / (leno*leno)
 
     ! Central helium channel down the conductor core
     awphec = turnstf * ((pi/4.0d0)*dhecoil**2)
 
     !  Total conductor cross-sectional area, taking account of void area
-    !  and central helium channel down the conductor core
-
+    !  and central helium channel
     acond = acstf * turnstf * (1.0D0-vftf) - awphec
 
     !  Void area in cable for He, not including central channel
     avwp = acstf * turnstf * vftf
 
     !  Insulation area (not including ground-wall)
-
     aiwp = turnstf * (leno**2 - acndttf - acstf)
 
     !  Area of steel structure in winding pack
@@ -405,22 +391,21 @@ subroutine sctfcoil(outfile,iprint)
     tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(rtfcin+rtot)
 
     !  Mass of case
+    ! -------------
 
     !  The length of the vertical section is that of the first (inboard) segment
-
     cplen = 2.0D0*(radctf(1) + 0.5D0*tfcth) * dthet(1)
 
     !  The 2.2 factor is used as a scaling factor to fit
     !  to the ITER-FDR value of 450 tonnes; see CCFE note T&M/PKNIGHT/PROCESS/026
-
     whtcas = 2.2D0 * dcase * (cplen * acasetf + (tfleng-cplen) * acasetfo)
 
     !  Mass of ground-wall insulation (assumed to be same density/material as
     !  conduit insulation)
-
     whtgw = tfleng * (awpc-awptf) * dcondins
 
-    !  Masses of conductor constituents:
+    !  Masses of conductor constituents
+    !  --------------------------------
 
     !  Superconductor.
     !  Includes space allowance for central helium channel, area awphec
@@ -1417,9 +1402,17 @@ subroutine outtf(outfile, peaktfflag)
     call osubhd(outfile,'Quench information :')
     call ovarre(outfile,'Allowable stress in vacuum vessel (Pa)','(sigvvall)',sigvvall)
     call ovarre(outfile,'Allowable quench time (s)','(taucq)',taucq, 'OP ')
-    call ovarre(outfile,'Dump time (s)','(tdmptf)',tdmptf)
+    call ovarre(outfile,'Quench time (s)','(tdmptf)',tdmptf)
 
     call osubhd(outfile,'Conductor Information :')
+    call ovarre(outfile,'Width of cable (square) (m)','(leno)',leno, 'OP ')
+    call ovarre(outfile,'Width of space inside cable (m)','(leni)',leni, 'OP ')
+    call ovarre(outfile,'Area of space inside cable (m2)','(acs)',acs, 'OP ')
+
+    call ovarre(outfile,'Conduit thickness (m)','(thwcndut)',thwcndut)
+    call ovarre(outfile,'Inter-turn insulation thickness (m)','(thicndut)',thicndut)
+
+
     call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc, 'OP ')
     call ovarre(outfile,'Copper mass per coil (kg)','(whtconcu)',whtconcu, 'OP ')
     call ovarre(outfile,'Steel conduit mass per coil (kg)','(whtconsh)',whtconsh, 'OP ')
@@ -1656,6 +1649,7 @@ contains
         real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
         jcritsc,jcrit0,jcritm,jcritp,jcritstr,jsc,jstrand,jtol,jwdgop, &
         t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot
+
         logical:: validity
         ! real(kind(1.0D0)) :: iooic
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1728,6 +1722,8 @@ contains
         case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
             call jcrit_rebco(thelium,bmax,jcritsc,validity,iprint)
             call croco(jcritsc)
+            call croco(jcritsc)
+            jcritstr = croco_crit_current
             icrit = cable_crit_current
 
         case default  !  Error condition
@@ -1782,6 +1778,11 @@ contains
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
                     call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
                     call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+                case (6)
+                    call jcrit_rebco(ttest,bmax,jcrit0,validity,iprint)
+                    if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
+                    call jcrit_rebco(ttestm,bmax,jcritm,validity,iprint)
+                    call jcrit_rebco(ttestp,bmax,jcritp,validity,iprint)
                 end select
                 ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
             end do solve_for_tmarg
@@ -1800,21 +1801,51 @@ contains
         call oheadr(outfile,'Superconducting TF Coils')
 
         select case (isumat)
-
         case (1)
             call ocmmnt(outfile,'Superconductor used: Nb3Sn')
             call ocmmnt(outfile,'  (ITER Jcrit model, standard parameters)')
+            call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
+            call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
         case (2)
             call ocmmnt(outfile,'Superconductor used: Bi-2212 HTS')
         case (3)
             call ocmmnt(outfile,'Superconductor used: NbTi')
+            call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
+            call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
         case (4)
             call ocmmnt(outfile,'Superconductor used: Nb3Sn')
             call ocmmnt(outfile,'  (ITER Jcrit model, user-defined parameters)')
+            call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
+            call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
         case (5)
             call ocmmnt(outfile,'Superconductor used: Nb3Sn')
             call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
-        case default
+            call ovarre(outfile,'Critical field at zero temperature and strain (T)','(bc20m)',bc20m)
+            call ovarre(outfile,'Critical temperature at zero field and strain (K)', '(tc0m)',tc0m)
+        case (6)
+            call ocmmnt(outfile,'Superconductor used: REBCO HTS tape in CroCo strand')
+
+            call ovarre(outfile,'thickness of REBCO layer in tape (m)','(rebco_thickness)',rebco_thickness)
+            call ovarre(outfile,'thickness of copper layer in tape (m)','(copper_thickness)', copper_thickness)
+            call ovarre(outfile,'thickness of Hastelloy layer in tape (m) ','(hastelloy_thickness)', hastelloy_thickness)
+            call ovarre(outfile,'Area of central copper bar, as a fraction of area inside the jacket ', &
+                                 '(copper_bar)', copper_bar)
+
+            call ovarre(outfile,'Mean width of tape (m)','(tape_width)',tape_width , 'OP ')
+            call ovarre(outfile,'Outer diameter of CroCo strand (m) ','(croco_od)', croco_od, 'OP ')
+            call ovarre(outfile,'Inner diameter of CroCo copper tube (m) ','(croco_id)',croco_id , 'OP ')
+            call ovarin(outfile,'Number of CroCo strands in the conductor ','(number_croco)',number_croco , 'OP ')
+            call ovarre(outfile,' ','(tape_thickness)',tape_thickness , 'OP ')
+            call ovarre(outfile,'Thickness of stack of tapes (m) ','(stack_thickness)',stack_thickness , 'OP ')
+            call ovarre(outfile,'Number of tapes in strand','(tapes)',tapes , 'OP ')
+            call ovarre(outfile,'Area of REBCO in strand (m2)','(rebco_area)',rebco_area , 'OP ')
+            call ovarre(outfile,'Area of copper in strand (m2)','(copper_area)',copper_area , 'OP ')
+            call ovarre(outfile,'Area of hastelloy substrate in strand (m2) ','(hastelloy_area)',hastelloy_area , 'OP ')
+            call ovarre(outfile,'Area of solder in strand (m2)  ','(solder_area)',solder_area , 'OP ')
+            call ovarre(outfile,'Area of CroCo strand (m2)  ','(croco_area)',croco_area , 'OP ')
+            call ovarre(outfile,'Area of helium coolant in cable (m2)','(cable_helium_area)',cable_helium_area , 'OP ')
+            call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_crit_current)',croco_crit_current , 'OP ')
+            call ovarre(outfile,'Critical current of cable (A) ','(cable_crit_current)',cable_crit_current , 'OP ')
 
         end select
 
@@ -1834,20 +1865,8 @@ contains
         call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
         call ovarre(outfile,'Strain on superconductor','(strncon)',strain)
 
-        call osubhd(outfile,'Critical Current Information :')
-        if (isumat /= 2) then
-            call ovarre(outfile,'Critical field at zero temperature and strain (T)', &
-            '(bc20m)',bc20m)
-            call ovarre(outfile,'Critical temperature at zero field and strain (K)', &
-            '(tc0m)',tc0m)
-        end if
         call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc, 'OP ')
         call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr, 'OP ')
-        ! MDK Remove these as their meaning is not clear to the reader:
-        !if ((isumat == 1).or.(isumat == 4)) then
-        !   call ovarre(outfile,'Critical field (T)','(bcrit)',bcrit)
-        !end if
-        !call ovarre(outfile,'Critical temperature (K)','(tcrit)',tcrit)
 
         call ovarre(outfile,'Operating winding pack J (A/m2)','(jwdgop)',jwdgop, 'OP ')
         call ovarre(outfile,'Critical winding pack current density (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
@@ -1857,9 +1876,9 @@ contains
 
         call osubhd(outfile,'Protection Information :')
         call ovarre(outfile,'Maximum temperature in quench (K)','(tmaxpro)', tmax)
-        call ovarre(outfile,'Winding pack protection J (A/m2)','(jwdgpro)', jwdgpro, 'OP ')
-        call ovarre(outfile,'Dump time (s)','(tdmptf)',tdmptf)
-        call ovarre(outfile,'Dump voltage (V)','(vd)',vd, 'OP ')
+        call ovarre(outfile,'Maximum current density in winding pack given by quench protection (A/m2)','(jwdgpro)', jwdgpro, 'OP ')
+        call ovarre(outfile,'Quench time (s)','(tdmptf)',tdmptf)
+        call ovarre(outfile,'Quench voltage (V)','(vd)',vd, 'OP ')
 
     end subroutine supercon
 

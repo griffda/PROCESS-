@@ -1430,9 +1430,15 @@ contains
        case ('sigallpc')
           call parse_real_variable('sigallpc', sigallpc, 0.0D1, 1.0D9, &
                'Allowable stress in CS pre-comp structure (Pa)')
+    ! Issue #514 Make tfcth an output not an input or iteration variable:
+    ! Eventually this input will be removed.
        case ('tfcth')
           call parse_real_variable('tfcth', tfcth, 0.0D0, 10.0D0, &
                'TF coil thickness (m)')
+       case ('thkwp')
+          call parse_real_variable('thkwp', thkwp, 0.0D0, 10.0D0, &
+               'TF coil winding pack radial thickness (m)')
+
        case ('tfootfi')
           call parse_real_variable('tfootfi', tfootfi, 0.2D0, 5.0D0, &
                'TFC outboard/inboard leg thickness')
@@ -1464,22 +1470,47 @@ contains
        case ('tape_width')
           call parse_real_variable('tape_width', tape_width, 0.0D0, 0.1D0, &
                'Mean width of HTS tape in CroCo (m)')
+
+       case ('rebco_thickness')
+          call parse_real_variable('rebco_thickness', rebco_thickness, 0.01D-6, 100.0D-6, &
+               'rebco_thickness')
+       case ('hastelloy_thickness')
+          call parse_real_variable('hastelloy_thickness', hastelloy_thickness, 0.01D-6, 1000.0D-6, &
+               'hastelloy_thickness')
+       case ('croco_id')
+          call parse_real_variable('croco_id', croco_id, 0.0D0, 0.1D0, &
+               'croco_id')
        case ('croco_od')
           call parse_real_variable('croco_od', croco_od, 0.0D0, 0.1D0, &
                'Outer diameter of CroCo strand (m)')
+       case ('copper_thickness')
+          call parse_real_variable('copper_thickness', copper_thickness, 0.0D0, 1000.0D-6, &
+               'copper_thickness (m)')
+
        case ('number_croco')
           call parse_int_variable('number_croco', number_croco, 0, 10, &
                'Number of CroCo strands in the conductor')
        case ('copper_bar')
-          call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.1D0, &
+          call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.9D0, &
                'area of central copper bar, as a fraction of area inside the jacket')
 
        case ('casthi')
           call parse_real_variable('casthi', casthi, 0.0D0, 1.0D0, &
                'TF coil case inner thickness (m)')
+       ! OR
+       case ('casthi_fraction')
+          call parse_real_variable('casthi_fraction', casthi_fraction, 0.0D0, 1.0D0, &
+               'inboard TF coil case plasma side thickness as a fraction of tfcth')
+
+       ! Use EITHER
        case ('casths')
           call parse_real_variable('casths', casths, 0.0D0, 1.0D0, &
                'TF coil case sidewall thickness (m)')
+       ! OR
+       case ('casths_fraction')
+          call parse_real_variable('casths_fraction', casths_fraction, 0.0D0, 1.0D0, &
+               'inboard TF coil sidewall case thickness as a fraction of tftort')
+
        case ('cdtfleg')
           call parse_real_variable('cdtfleg', cdtfleg, 0.1D0, 1.0D8, &
                'TF leg overall current density (A/m2)')
@@ -1497,7 +1528,7 @@ contains
           call parse_real_variable('dcase', dcase, 1.0D3, 1.0D5, &
                'Density of TF coil case (kg/m3)')
        case ('dcond')
-          call parse_real_array('dcond', dcond, isub1, 5, &
+          call parse_real_array('dcond', dcond, isub1, 6, &
                'TF/PF coil superconductor density (kg/m3)', icode)
        case ('dcondins')
           call parse_real_variable('dcondins', dcondins, 5.0D2, 1.0D4, &

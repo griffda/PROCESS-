@@ -99,7 +99,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 139
+  integer, parameter :: ipnvars = 140
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 73
   !+ad_vars  ipnfoms FIX : number of available figures of merit
@@ -378,7 +378,7 @@ module numerics
        'pheat         ', &
        !+ad_varc  <LI> (12) oacdcp
        'oacdcp        ', &
-       !+ad_varc  <LI> (13) tfcth
+       !+ad_varc  <LI> (13) tfcth NOT RECOMMENDED
        'tfcth         ', &
        !+ad_varc  <LI> (14) fwalld (f-value for equation 8)
        'fwalld        ', &
@@ -632,8 +632,10 @@ module numerics
        'fplhsep       ', &
        !+ad_varc  <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
        'rebco_thicknes', &
-       !+ad_varc  <LI> (139) copper_thickness : thickness of copper layer in tape (m)</UL>
-       'copper_thickne' &
+       !+ad_varc  <LI> (139) copper_thickness : thickness of copper layer in tape (m)
+       'copper_thickne', &
+       !+ad_varc  <LI> (140) thkwp : radial thickness of TFC winding pack (m)</UL>
+       'thkwp         '  &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -790,7 +792,8 @@ module numerics
        1.00D-8, &  !  136
        0.001D0, &  !  137
        0.01D-6, &  !  138
-       1.00D-6  &  !  139
+       1.00D-6, &  !  139
+       0.001D0  &  !  140
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -934,7 +937,8 @@ module numerics
        0.010D0, &  !  136
        1.000D0, &  !  137
        100.0D-6,&  !  138
-       1.00D-3  &  !  139
+       1.00D-3, &  !  139
+       2.000D0  &  !  140
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

@@ -35,7 +35,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on  8 May 2017 10:05:55 +01:00(hh:mm) UTC by freia012
+ PROCESS 1.0.10 : Run on 11 May 2017 16:14:01 +01:00(hh:mm) UTC by freia054
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -110,13 +110,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ******************************** TF Coils (M$) *********************************
  
  TF Coil insertion and welding                                                345 
- TF coil radial plates                                                        547 
  TF coil winding                                                              822 
  Copper strand for TF coil                                                     67 
  Strands with Nb3Sn superconductor and copper stabiliser                     1074 
  Testing of superconducting strands                                             4 
  Cabling and jacketing                                                        161 
- Total TF coil costs                                                         3021 
+ Total TF coil costs                                                         2474 
  
  ************************* First wall and blanket (M$) **************************
  
@@ -163,20 +162,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Diagnostics systems                                                          640 
  Radiological protection                                                       60 
  Access control and security systems                                           67 
- Assembly                                                                    2517 
- Control and communication                                                    588 
+ Assembly                                                                    2398 
+ Control and communication                                                    566 
  Additional project expenditure                                              1624 
  Logistics                                                                    223 
- Total remaining subsystem costs                                            17084 
+ Total remaining subsystem costs                                            16942 
  
- TOTAL OVERNIGHT CAPITAL COST (M$)                                          32653 
- Annual maintenance cost (M$)                                                1541 
+ TOTAL OVERNIGHT CAPITAL COST (M$)                                          31964 
+ Annual maintenance cost (M$)                                                1540 
  
  Net electric output (MW)                                                 (pnetelmw)                  697.828  OP 
  Capacity factor                                                          (cpfact)                      0.606  OP 
  Mean electric output (MW)                                                (mean_electric_outpu        422.971  OP 
- Capital cost / mean electric output ($/W)                                                             77.199  OP 
- Levelized cost of electricity ($/MWh)                                    (coe)                      1463.868  OP 
+ Capital cost / mean electric output ($/W)                                                             75.570  OP 
+ Levelized cost of electricity ($/MWh)                                    (coe)                      1444.638  OP 
  
  ********************************************* Plant Availability *********************************************
  
@@ -640,10 +639,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Allowable stress in vacuum vessel (Pa)                                   (sigvvall)                9.300E+07     
  Allowable quench time (s)                                                (taucq)                   2.814E+01  OP 
- Dump time (s)                                                            (tdmptf)                  3.000E+01     
+ Quench time (s)                                                          (tdmptf)                  3.000E+01     
  
  Conductor Information :
  
+ Width of cable (square) (m)                                              (leno)                    4.956E-02  OP 
+ Width of space inside cable (m)                                          (leni)                    3.756E-02  OP 
+ Area of space inside cable (m2)                                          (acs)                     0.000E+00  OP 
+ Conduit thickness (m)                                                    (thwcndut)                4.000E-03     
+ Inter-turn insulation thickness (m)                                      (thicndut)                2.000E-03     
  Superconductor mass per coil (kg)                                        (whtconsc)                2.848E+04  OP 
  Copper mass per coil (kg)                                                (whtconcu)                5.822E+04  OP 
  Steel conduit mass per coil (kg)                                         (whtconsh)                5.654E+04  OP 
@@ -662,7 +666,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.333E-01     
  Conductor fraction of winding pack                                       (acond/ap)                3.747E-01  OP 
  Conduit fraction of winding pack                                         (turnstf*acndttf/ap)      2.739E-01  OP 
- Additional steel (radial plate) fraction of winding pack                 (arp/ap)                  0.000E+00  OP 
  Insulator fraction of winding pack                                       (aiwp/ap)                 1.549E-01  OP 
  Helium area fraction of winding pack excluding central channel           (avwp/ap)                 1.885E-01  OP 
  Central helium channel area as fraction of winding pack                  (awphec/ap)               7.994E-03  OP 
@@ -670,8 +673,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Winding radial thickness (m)                                             (thkwp)                   4.630E-01  OP 
  Winding width 1 (m)                                                      (wwp1)                    1.207E+00  OP 
  Winding width 2 (m)                                                      (wwp2)                    1.125E+00  OP 
- Radial plate thickness (m)                                               (2*trp)                   0.000E+00  OP 
- Mass of radial plates + caps per coil (kg)                               (whtrp)                   0.000E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  1.300E-02     
  Winding pack insertion gap (m)                                           (tfinsgap)                1.000E-02     
  Ground wall mass per coil (kg)                                           (whtgw)                   6.965E+03  OP 
@@ -709,17 +710,14 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Superconductor used: Nb3Sn
    (ITER Jcrit model, standard parameters)
+ Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
+ Critical temperature at zero field and strain (K)                        (tc0m)                    1.606E+01     
  
  Peak field at conductor (T)                                              (bmax)                    1.269E+01  OP 
  Helium temperature at peak field (K)                                     (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.440E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 6.667E-01     
  Strain on superconductor                                                 (strncon)                -5.000E-03     
- 
- Critical Current Information :
- 
- Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
- Critical temperature at zero field and strain (K)                        (tc0m)                    1.606E+01     
  Critical current density in superconductor (A/m2)                        (jcritsc)                 4.860E+08  OP 
  Critical current density in strand (A/m2)                                (jcritstr)                1.620E+08  OP 
  Operating winding pack J (A/m2)                                          (jwdgop)                  2.646E+07  OP 
@@ -731,9 +729,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Protection Information :
  
  Maximum temperature in quench (K)                                        (tmaxpro)                 1.500E+02     
- Winding pack protection J (A/m2)                                         (jwdgpro)                 2.119E+07  OP 
- Dump time (s)                                                            (tdmptf)                  3.000E+01     
- Dump voltage (V)                                                         (vd)                      9.499E+03  OP 
+ Maximum current density in winding pack given by quench protection (A/m2 (jwdgpro)                 2.119E+07  OP 
+ Quench time (s)                                                          (tdmptf)                  3.000E+01     
+ Quench voltage (V)                                                       (vd)                      9.499E+03  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -1502,13 +1500,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ******************************** TF Coils (M$) *********************************
  
  TF Coil insertion and welding                                                345 
- TF coil radial plates                                                        547 
  TF coil winding                                                              822 
  Copper strand for TF coil                                                     67 
  Strands with Nb3Sn superconductor and copper stabiliser                     1074 
  Testing of superconducting strands                                             4 
  Cabling and jacketing                                                        161 
- Total TF coil costs                                                         3021 
+ Total TF coil costs                                                         2474 
  
  ************************* First wall and blanket (M$) **************************
  
@@ -1555,20 +1552,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Diagnostics systems                                                          640 
  Radiological protection                                                       60 
  Access control and security systems                                           67 
- Assembly                                                                    2517 
- Control and communication                                                    588 
+ Assembly                                                                    2398 
+ Control and communication                                                    566 
  Additional project expenditure                                              1624 
  Logistics                                                                    223 
- Total remaining subsystem costs                                            17084 
+ Total remaining subsystem costs                                            16942 
  
- TOTAL OVERNIGHT CAPITAL COST (M$)                                          32653 
- Annual maintenance cost (M$)                                                1541 
+ TOTAL OVERNIGHT CAPITAL COST (M$)                                          31964 
+ Annual maintenance cost (M$)                                                1540 
  
  Net electric output (MW)                                                 (pnetelmw)                  697.828  OP 
  Capacity factor                                                          (cpfact)                      0.606  OP 
  Mean electric output (MW)                                                (mean_electric_outpu        422.971  OP 
- Capital cost / mean electric output ($/W)                                                             77.199  OP 
- Levelized cost of electricity ($/MWh)                                    (coe)                      1463.868  OP 
+ Capital cost / mean electric output ($/W)                                                             75.570  OP 
+ Levelized cost of electricity ($/MWh)                                    (coe)                      1444.638  OP 
  
  ********************************************* Plant Availability *********************************************
  
@@ -2032,10 +2029,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Allowable stress in vacuum vessel (Pa)                                   (sigvvall)                9.300E+07     
  Allowable quench time (s)                                                (taucq)                   2.814E+01  OP 
- Dump time (s)                                                            (tdmptf)                  3.000E+01     
+ Quench time (s)                                                          (tdmptf)                  3.000E+01     
  
  Conductor Information :
  
+ Width of cable (square) (m)                                              (leno)                    4.956E-02  OP 
+ Width of space inside cable (m)                                          (leni)                    3.756E-02  OP 
+ Area of space inside cable (m2)                                          (acs)                     0.000E+00  OP 
+ Conduit thickness (m)                                                    (thwcndut)                4.000E-03     
+ Inter-turn insulation thickness (m)                                      (thicndut)                2.000E-03     
  Superconductor mass per coil (kg)                                        (whtconsc)                2.848E+04  OP 
  Copper mass per coil (kg)                                                (whtconcu)                5.822E+04  OP 
  Steel conduit mass per coil (kg)                                         (whtconsh)                5.654E+04  OP 
@@ -2054,7 +2056,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.333E-01     
  Conductor fraction of winding pack                                       (acond/ap)                3.747E-01  OP 
  Conduit fraction of winding pack                                         (turnstf*acndttf/ap)      2.739E-01  OP 
- Additional steel (radial plate) fraction of winding pack                 (arp/ap)                  0.000E+00  OP 
  Insulator fraction of winding pack                                       (aiwp/ap)                 1.549E-01  OP 
  Helium area fraction of winding pack excluding central channel           (avwp/ap)                 1.885E-01  OP 
  Central helium channel area as fraction of winding pack                  (awphec/ap)               7.994E-03  OP 
@@ -2062,8 +2063,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Winding radial thickness (m)                                             (thkwp)                   4.630E-01  OP 
  Winding width 1 (m)                                                      (wwp1)                    1.207E+00  OP 
  Winding width 2 (m)                                                      (wwp2)                    1.125E+00  OP 
- Radial plate thickness (m)                                               (2*trp)                   0.000E+00  OP 
- Mass of radial plates + caps per coil (kg)                               (whtrp)                   0.000E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  1.300E-02     
  Winding pack insertion gap (m)                                           (tfinsgap)                1.000E-02     
  Ground wall mass per coil (kg)                                           (whtgw)                   6.965E+03  OP 
@@ -2101,17 +2100,14 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Superconductor used: Nb3Sn
    (ITER Jcrit model, standard parameters)
+ Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
+ Critical temperature at zero field and strain (K)                        (tc0m)                    1.606E+01     
  
  Peak field at conductor (T)                                              (bmax)                    1.269E+01  OP 
  Helium temperature at peak field (K)                                     (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.440E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 6.667E-01     
  Strain on superconductor                                                 (strncon)                -5.000E-03     
- 
- Critical Current Information :
- 
- Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
- Critical temperature at zero field and strain (K)                        (tc0m)                    1.606E+01     
  Critical current density in superconductor (A/m2)                        (jcritsc)                 4.860E+08  OP 
  Critical current density in strand (A/m2)                                (jcritstr)                1.620E+08  OP 
  Operating winding pack J (A/m2)                                          (jwdgop)                  2.646E+07  OP 
@@ -2123,9 +2119,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Protection Information :
  
  Maximum temperature in quench (K)                                        (tmaxpro)                 1.500E+02     
- Winding pack protection J (A/m2)                                         (jwdgpro)                 2.119E+07  OP 
- Dump time (s)                                                            (tdmptf)                  3.000E+01     
- Dump voltage (V)                                                         (vd)                      9.499E+03  OP 
+ Maximum current density in winding pack given by quench protection (A/m2 (jwdgpro)                 2.119E+07  OP 
+ Quench time (s)                                                          (tdmptf)                  3.000E+01     
+ Quench voltage (V)                                                       (vd)                      9.499E+03  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -2894,13 +2890,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ******************************** TF Coils (M$) *********************************
  
  TF Coil insertion and welding                                                345 
- TF coil radial plates                                                        547 
  TF coil winding                                                              822 
  Copper strand for TF coil                                                     67 
  Strands with Nb3Sn superconductor and copper stabiliser                     1074 
  Testing of superconducting strands                                             4 
  Cabling and jacketing                                                        161 
- Total TF coil costs                                                         3021 
+ Total TF coil costs                                                         2474 
  
  ************************* First wall and blanket (M$) **************************
  
@@ -2947,20 +2942,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Diagnostics systems                                                          640 
  Radiological protection                                                       60 
  Access control and security systems                                           67 
- Assembly                                                                    2517 
- Control and communication                                                    588 
+ Assembly                                                                    2398 
+ Control and communication                                                    566 
  Additional project expenditure                                              1624 
  Logistics                                                                    223 
- Total remaining subsystem costs                                            17084 
+ Total remaining subsystem costs                                            16942 
  
- TOTAL OVERNIGHT CAPITAL COST (M$)                                          32653 
- Annual maintenance cost (M$)                                                1541 
+ TOTAL OVERNIGHT CAPITAL COST (M$)                                          31964 
+ Annual maintenance cost (M$)                                                1540 
  
  Net electric output (MW)                                                 (pnetelmw)                  697.828  OP 
  Capacity factor                                                          (cpfact)                      0.606  OP 
  Mean electric output (MW)                                                (mean_electric_outpu        422.971  OP 
- Capital cost / mean electric output ($/W)                                                             77.199  OP 
- Levelized cost of electricity ($/MWh)                                    (coe)                      1463.868  OP 
+ Capital cost / mean electric output ($/W)                                                             75.570  OP 
+ Levelized cost of electricity ($/MWh)                                    (coe)                      1444.638  OP 
  
  ********************************************* Plant Availability *********************************************
  
@@ -3424,10 +3419,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Allowable stress in vacuum vessel (Pa)                                   (sigvvall)                9.300E+07     
  Allowable quench time (s)                                                (taucq)                   2.814E+01  OP 
- Dump time (s)                                                            (tdmptf)                  3.000E+01     
+ Quench time (s)                                                          (tdmptf)                  3.000E+01     
  
  Conductor Information :
  
+ Width of cable (square) (m)                                              (leno)                    4.956E-02  OP 
+ Width of space inside cable (m)                                          (leni)                    3.756E-02  OP 
+ Area of space inside cable (m2)                                          (acs)                     0.000E+00  OP 
+ Conduit thickness (m)                                                    (thwcndut)                4.000E-03     
+ Inter-turn insulation thickness (m)                                      (thicndut)                2.000E-03     
  Superconductor mass per coil (kg)                                        (whtconsc)                2.848E+04  OP 
  Copper mass per coil (kg)                                                (whtconcu)                5.822E+04  OP 
  Steel conduit mass per coil (kg)                                         (whtconsh)                5.654E+04  OP 
@@ -3446,7 +3446,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.333E-01     
  Conductor fraction of winding pack                                       (acond/ap)                3.747E-01  OP 
  Conduit fraction of winding pack                                         (turnstf*acndttf/ap)      2.739E-01  OP 
- Additional steel (radial plate) fraction of winding pack                 (arp/ap)                  0.000E+00  OP 
  Insulator fraction of winding pack                                       (aiwp/ap)                 1.549E-01  OP 
  Helium area fraction of winding pack excluding central channel           (avwp/ap)                 1.885E-01  OP 
  Central helium channel area as fraction of winding pack                  (awphec/ap)               7.994E-03  OP 
@@ -3454,8 +3453,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Winding radial thickness (m)                                             (thkwp)                   4.630E-01  OP 
  Winding width 1 (m)                                                      (wwp1)                    1.207E+00  OP 
  Winding width 2 (m)                                                      (wwp2)                    1.125E+00  OP 
- Radial plate thickness (m)                                               (2*trp)                   0.000E+00  OP 
- Mass of radial plates + caps per coil (kg)                               (whtrp)                   0.000E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  1.300E-02     
  Winding pack insertion gap (m)                                           (tfinsgap)                1.000E-02     
  Ground wall mass per coil (kg)                                           (whtgw)                   6.965E+03  OP 
@@ -3493,17 +3490,14 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Superconductor used: Nb3Sn
    (ITER Jcrit model, standard parameters)
+ Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
+ Critical temperature at zero field and strain (K)                        (tc0m)                    1.606E+01     
  
  Peak field at conductor (T)                                              (bmax)                    1.269E+01  OP 
  Helium temperature at peak field (K)                                     (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.440E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 6.667E-01     
  Strain on superconductor                                                 (strncon)                -5.000E-03     
- 
- Critical Current Information :
- 
- Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
- Critical temperature at zero field and strain (K)                        (tc0m)                    1.606E+01     
  Critical current density in superconductor (A/m2)                        (jcritsc)                 4.860E+08  OP 
  Critical current density in strand (A/m2)                                (jcritstr)                1.620E+08  OP 
  Operating winding pack J (A/m2)                                          (jwdgop)                  2.646E+07  OP 
@@ -3515,9 +3509,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Protection Information :
  
  Maximum temperature in quench (K)                                        (tmaxpro)                 1.500E+02     
- Winding pack protection J (A/m2)                                         (jwdgpro)                 2.119E+07  OP 
- Dump time (s)                                                            (tdmptf)                  3.000E+01     
- Dump voltage (V)                                                         (vd)                      9.499E+03  OP 
+ Maximum current density in winding pack given by quench protection (A/m2 (jwdgpro)                 2.119E+07  OP 
+ Quench time (s)                                                          (tdmptf)                  3.000E+01     
+ Quench voltage (V)                                                       (vd)                      9.499E+03  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  

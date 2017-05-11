@@ -161,12 +161,16 @@ contains
       precomp = 0.0D0
     end if
 
-    ! Radial build to tfcoil
+    ! Issue #514 Radial dimensions of inboard leg
+    ! Calculate tfcth if thkwp is an iteration variable (140)
+    if (any(ixc(1:nvar) == 140) ) then
+        tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+    endif
 
+    ! Radial build to tfcoil
     rbldtotf = bore + ohcth + precomp + gapoh + tfcth
 
     ! Additional gap spacing due to flat surfaces of TF:
-
     deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 
     !  Radial build to centre of plasma (should be equal to rmajor)
@@ -183,7 +187,6 @@ contains
     rsldo = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
 
     !  Thickness of outboard TF coil legs
-
     if (itfsup == 0) then
        tfthko = tfootfi*tfcth
     else
@@ -191,12 +194,8 @@ contains
     end if
 
     !  Radius to centre of outboard TF coil legs
-
     rtot = rsldo + vvblgap + ddwi + gapomin + thshield + tftsgap + 0.5D0*tfthko
 
-    !  Check ripple
-
-    !call rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
     call ripple_amplitude(ripple,ripmax,rtot,rtotl,ripflag)
 
     !  If the ripple is too large then move the outboard TF coil leg
@@ -607,7 +606,7 @@ contains
     !  Height to inside edge of TF coil
 
     hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
-    
+
     !  Vertical locations of divertor coils
 
     if (snull == 0) then

@@ -11,7 +11,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on  8 May 2017 10:04:33 +01:00(hh:mm) UTC by freia012
+ PROCESS 1.0.10 : Run on 11 May 2017 16:14:30 +01:00(hh:mm) UTC by freia054
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Kallenbach divertor model
  (Please include this header in any models, presentations and papers based on these results)
@@ -38,8 +38,8 @@
  Number of constraints                                                    (neqns)                          24     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 5.918E-07  OP 
- Number of VMCON iterations                                               (nviter)                         17  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 2.332E-07  OP 
+ Number of VMCON iterations                                               (nviter)                         19  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
  
@@ -94,11 +94,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    24                  hfact            1.1000E+00     1.0000
    25                  oacdcp           9.7302E+06     1.0242
    26                  tfcth            9.8069E-01     0.9807
-   27                  ohcth            8.6289E-01     0.9588
+   27                  ohcth            8.6287E-01     0.9587
    28                  q                3.0000E+00     1.0000
    29                  bore             2.3110E+00     1.0048
    30                  coheof           1.2050E+07     1.0041
-   31                  fcohbop          9.1759E-01     1.0195
+   31                  fcohbop          9.1758E-01     1.0195
    32                  gapoh            5.0000E-02     1.0000
    33                  fvsbrnni         4.9726E-01     1.0360
    34                  thkcas           4.5476E-01     0.9095
@@ -116,30 +116,30 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.6961E-02              5.4731E-12                 1.4808E-10
-    2  Global power balance consistency      =  1.7397E-01 MW/m3       -7.2490E-11 MW/m3          -4.1667E-10
-    3  Density upper limit                   <  6.8592E+19 /m3         -8.8520E+08 /m3            -1.0755E-11
-    4  Neutron wall load upper limit         <  8.0000E+00 MW/m2       -1.2114E-09 MW/m2          -1.1693E-09
-    5  Toroidal field 1/R consistency        =  4.4538E+01 T.m         -6.2747E-10 T.m            -1.4089E-11
-    6  Radial build consistency              =  9.0527E+00 m            8.9952E-12 m               9.9365E-13
-    7  Burn time lower limit                 >  7.2000E+03 sec          3.2660E-03 sec             4.5361E-07
-    8  L-H power threshold limit             >  1.0532E+02 MW          -7.4515E-07 MW             -4.5265E-09
-    9  Net electric power lower limit        >  5.0000E+02 MW          -1.1412E-03 MW             -2.2825E-06
-   10  Beta upper limit                      <  5.6067E-02              5.5958E-12                 1.7526E-10
-   11  CS temperature margin lower limit     >  1.5000E+00 K            0.0000E+00 K               0.0000E+00
-   12  Injection power upper limit           <  5.0000E+01 MW           1.7061E-10 MW              3.4122E-12
-   13  TF coil case stress upper limit       <  6.0000E+08 Pa           4.1362E+00 Pa              6.8937E-09
-   14  TF coil conduit stress upper lim      <  6.0000E+08 Pa           4.1373E+00 Pa              8.4142E-09
-   15  Dump voltage upper limit              <  9.7413E+00 V            1.9399E-07 V               2.2714E-08
-   16  J_winding pack/J_protection limit     <  2.3504E+07 A/m2         1.9353E-04 A/m2            8.2341E-12
-   17  TF coil temp. margin lower limit      >  1.5000E+00 K            0.0000E+00 K               0.0000E+00
-   18  taup/taueff                           >  5.0000E+00              3.5853E-10                 7.1707E-11
-   19  Dump time set by VV stress            >  2.0998E+01 s           -4.2842E-10 s              -2.0403E-11
-   20  Rate of change of energy in field     <  3.0000E+02 MW           1.1279E-05 MW              3.7597E-08
-   21  pdivt < psep_kallenbach divertor      =  1.6462E+02 MW           4.7497E-05 MW              2.8853E-07
-   22  Separatrix temp consistency           =  2.3602E+02 eV           4.4396E-05 eV              1.8810E-07
-   23  Separatrix density consistency        =  3.0866E+19 m-3         -5.7511E+12 m-3            -1.8632E-07
-   24  CS Tresca stress limit                <  6.0000E+08 MPa         -5.6030E-02 MPa            -9.3383E-11
+    1  Beta consistency                      =  3.6961E-02              2.5906E-13                 7.0092E-12
+    2  Global power balance consistency      =  1.7397E-01 MW/m3       -1.9522E-12 MW/m3          -1.1221E-11
+    3  Density upper limit                   <  6.8592E+19 /m3          8.7453E+06 /m3             1.0625E-13
+    4  Neutron wall load upper limit         <  8.0000E+00 MW/m2       -5.1281E-11 MW/m2          -4.9500E-11
+    5  Toroidal field 1/R consistency        =  4.4538E+01 T.m         -3.3782E-11 T.m            -7.5850E-13
+    6  Radial build consistency              =  9.0527E+00 m           -1.9699E-13 m              -2.1760E-14
+    7  Burn time lower limit                 >  7.2000E+03 sec          1.5082E-03 sec             2.0947E-07
+    8  L-H power threshold limit             >  1.0532E+02 MW          -1.5131E-08 MW             -9.1915E-11
+    9  Net electric power lower limit        >  5.0000E+02 MW          -1.2043E-03 MW             -2.4086E-06
+   10  Beta upper limit                      <  5.6067E-02              2.5158E-13                 7.8794E-12
+   11  CS temperature margin lower limit     >  1.5000E+00 K            4.9960E-16 K               3.3307E-16
+   12  Injection power upper limit           <  5.0000E+01 MW          -1.1768E-11 MW             -2.3537E-13
+   13  TF coil case stress upper limit       <  6.0000E+08 Pa          -1.8505E+00 Pa             -3.0841E-09
+   14  TF coil conduit stress upper lim      <  6.0000E+08 Pa          -1.8502E+00 Pa             -3.7628E-09
+   15  Dump voltage upper limit              <  9.7413E+00 V           -8.6809E-08 V              -1.0164E-08
+   16  J_winding pack/J_protection limit     <  2.3504E+07 A/m2        -5.3545E-06 A/m2           -2.2782E-13
+   17  TF coil temp. margin lower limit      >  1.5000E+00 K           -1.4638E-11 K              -9.7586E-12
+   18  taup/taueff                           >  5.0000E+00             -8.3303E-11                -1.6661E-11
+   19  Dump time set by VV stress            >  2.0998E+01 s           -1.4673E-11 s              -6.9877E-13
+   20  Rate of change of energy in field     <  3.0000E+02 MW          -4.8966E-06 MW             -1.6322E-08
+   21  pdivt < psep_kallenbach divertor      =  1.6462E+02 MW           4.4355E-06 MW              2.6944E-08
+   22  Separatrix temp consistency           =  2.3602E+02 eV           6.1885E-06 eV              2.6221E-08
+   23  Separatrix density consistency        =  3.0866E+19 m-3         -8.0754E+11 m-3            -2.6163E-08
+   24  CS Tresca stress limit                <  6.0000E+08 MPa         -6.8016E-02 MPa            -1.1336E-10
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -511,7 +511,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power lost due to charge exchange  [W]                                   ()                        7.893E+06  OP 
  Power lost due to electron impact ionisation [W]                         ()                        6.070E+06  OP 
  Total power lost due to radiation, ionisation and recombination [W]      (TotalPowerLost)          6.553E+07  OP 
- Power balance error [W]                                                  (balance)                 1.434E-07  OP 
+ Power balance error [W]                                                  (balance)                -2.794E-08  OP 
  The following impurities are used in the divertor model:
                         He       Be       C_       N_       O_       Ne       Si       Ar       Fe       Ni       Kr       Xe       W_
   Fraction in SOL  7.0E-02  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  2.1E-03  2.5E-04
@@ -578,7 +578,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
  Plasma lower triangularity                                               (tril)                        0.500  OP 
  Plasma elongation                                                        (kappa)                       1.781  OP 
- TF coil vertical offset (m)                                              (tfoffset)                   -0.258  OP 
+ TF coil vertical offset (m)                                              (tfoffset)                   -0.259  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.277  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                         9.990  OP 
  Plasma lower X-pt, radial (m)                                            (rxpt)                        7.593  OP 
@@ -660,10 +660,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Allowable stress in vacuum vessel (Pa)                                   (sigvvall)                9.300E+07     
  Allowable quench time (s)                                                (taucq)                   2.100E+01  OP 
- Dump time (s)                                                            (tdmptf)                  2.100E+01  ITV
+ Quench time (s)                                                          (tdmptf)                  2.100E+01  ITV
  
  Conductor Information :
  
+ Width of cable (square) (m)                                              (leno)                    6.188E-02  OP 
+ Width of space inside cable (m)                                          (leni)                    4.288E-02  OP 
+ Area of space inside cable (m2)                                          (acs)                     0.000E+00  OP 
+ Conduit thickness (m)                                                    (thwcndut)                8.000E-03  ITV
+ Inter-turn insulation thickness (m)                                      (thicndut)                1.500E-03     
  Superconductor mass per coil (kg)                                        (whtconsc)                8.384E+03  OP 
  Copper mass per coil (kg)                                                (whtconcu)                6.691E+04  OP 
  Steel conduit mass per coil (kg)                                         (whtconsh)                9.865E+04  OP 
@@ -682,7 +687,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Superconductor fraction of conductor                                     (1-fcutfsu)               1.586E-01     
  Conductor fraction of winding pack                                       (acond/ap)                3.100E-01  OP 
  Conduit fraction of winding pack                                         (turnstf*acndttf/ap)      4.333E-01  OP 
- Additional steel (radial plate) fraction of winding pack                 (arp/ap)                  0.000E+00  OP 
  Insulator fraction of winding pack                                       (aiwp/ap)                 9.461E-02  OP 
  Helium area fraction of winding pack excluding central channel           (avwp/ap)                 1.416E-01  OP 
  Central helium channel area as fraction of winding pack                  (awphec/ap)               2.051E-02  OP 
@@ -690,8 +694,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Winding radial thickness (m)                                             (thkwp)                   4.299E-01  OP 
  Winding width 1 (m)                                                      (wwp1)                    1.420E+00  OP 
  Winding width 2 (m)                                                      (wwp2)                    1.335E+00  OP 
- Radial plate thickness (m)                                               (2*trp)                   0.000E+00  OP 
- Mass of radial plates + caps per coil (kg)                               (whtrp)                   0.000E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
  Winding pack insertion gap (m)                                           (tfinsgap)                1.000E-02     
  Ground wall mass per coil (kg)                                           (whtgw)                   6.025E+03  OP 
@@ -712,7 +714,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil model                                                            (tfc_model)                       1     
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.000E+08     
  Vertical stress (Pa)                                                     (sigvert)                 2.278E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))               0.000E+00     
+ Case radial stress (Pa)                                                  (sigrtf(1))               2.442E-08     
  Case tangential stress (Pa)                                              (sigttf(1))              -3.722E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -1.774E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.639E+08  OP 
@@ -729,17 +731,14 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Superconductor used: Nb3Sn
   (WST Nb3Sn critical surface model)
+ Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
+ Critical temperature at zero field and strain (K)                        (tc0m)                    1.606E+01     
  
  Peak field at conductor (T)                                              (bmax)                    1.118E+01  OP 
  Helium temperature at peak field (K)                                     (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.434E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 8.414E-01  ITV
  Strain on superconductor                                                 (strncon)                -5.000E-03     
- 
- Critical Current Information :
- 
- Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
- Critical temperature at zero field and strain (K)                        (tc0m)                    1.606E+01     
  Critical current density in superconductor (A/m2)                        (jcritsc)                 7.097E+08  OP 
  Critical current density in strand (A/m2)                                (jcritstr)                1.126E+08  OP 
  Operating winding pack J (A/m2)                                          (jwdgop)                  2.350E+07  OP 
@@ -751,9 +750,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Protection Information :
  
  Maximum temperature in quench (K)                                        (tmaxpro)                 1.500E+02     
- Winding pack protection J (A/m2)                                         (jwdgpro)                 2.350E+07  OP 
- Dump time (s)                                                            (tdmptf)                  2.100E+01  ITV
- Dump voltage (V)                                                         (vd)                      8.540E+03  OP 
+ Maximum current density in winding pack given by quench protection (A/m2 (jwdgpro)                 2.350E+07  OP 
+ Quench time (s)                                                          (tdmptf)                  2.100E+01  ITV
+ Quench voltage (V)                                                       (vd)                      8.540E+03  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -765,7 +764,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Maximum field at Beginning Of Pulse (T)                                  (bmaxoh0)                 1.199E+01  OP 
  Critical superconductor current density at BOP (A/m2)                    (jscoh_bop)               5.912E+08  OP 
- Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           1.773E+08  OP 
+ Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           1.774E+08  OP 
  Allowable overall current density at BOP (A/m2)                          (rjohc0)                  1.868E+07  OP 
  Actual overall current density at BOP (A/m2)                             (cohbop)                  1.106E+07  OP 
  
@@ -815,7 +814,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
   PF4           18.57       -2.92        1.20        1.20      204.74        0.10
   PF5           16.93        8.18        0.80        0.80      118.87        0.07
   PF6           16.93       -8.18        0.80        0.80      118.87        0.07
-  CS             2.74        0.00        0.86       14.83     3586.40        0.37
+  CS             2.74        0.00        0.86       14.83     3586.37        0.37
  Plasma          9.05        0.00        5.84       10.40        1.00
  
  PF Coil Information at Peak Current:
@@ -829,7 +828,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
   PF4   -8.64  7.512E+08  6.000E+06  0.01 1.059E+06   4.560E+05    2.759E+00
   PF5   -5.11  7.708E+08  8.000E+06  0.01 4.281E+05   1.979E+05    2.581E+00
   PF6   -5.11  7.708E+08  8.000E+06  0.01 4.281E+05   1.979E+05    2.581E+00
-  CS  -154.22  1.868E+07  1.205E+07  0.65 2.091E+05   1.461E+06    1.199E+01
+  CS  -154.21  1.868E+07  1.205E+07  0.65 2.091E+05   1.461E+06    1.199E+01
        ------                             ---------   ---------
        218.41                             4.026E+06   3.237E+06
  
@@ -896,7 +895,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -7.495E+06 -7.495E+06 -7.495E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.085E+06 -5.085E+06 -5.085E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.085E+06 -5.085E+06 -5.085E+06  0.000E+00
-   7         0.000E+00  0.000E+00  1.631E-09  1.631E-09  2.609E-08  0.000E+00
+   7         0.000E+00  0.000E+00  1.631E-09  1.631E-09 -2.609E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.176E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -5.576E-02  OP 
@@ -940,8 +939,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First Wall Armour Volume (m3)                                            (fw_armour_vol)               7.109  OP 
  First Wall Volume (m3)                                                   (volfw)                      21.626  OP 
  Blanket Volume (m3)                                                      (volblkt)                  1657.529  OP 
- Shield Volume (m3)                                                       (volshld)                   732.026  OP 
- Vacuum vessel volume (m3)                                                (vdewin)                   1255.256  OP 
+ Shield Volume (m3)                                                       (volshld)                   732.027  OP 
+ Vacuum vessel volume (m3)                                                (vdewin)                   1255.257  OP 
  
  Component Masses :
  
@@ -1231,7 +1230,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat removal from vacuum pumps (MW)                                      (vachtmw)                     0.500  OP 
  TF coil resistive power (MW)                                             (tfcmw)                       0.000  OP 
  
- Total low-grade thermal power (MW)                                       (psechtmw)                  583.470  OP 
+ Total low-grade thermal power (MW)                                       (psechtmw)                  583.469  OP 
  Total High-grade thermal power (MW)                                      (pthermmw)                 2211.207  OP 
  
  Number of primary heat exchangers                                        (nphx)                            3  OP 
@@ -1241,7 +1240,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  -------------------------------
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
- Transport power from scaling law (MW)                                    (pscalingmw)                326.675  OP 
+ Transport power from scaling law (MW)                                    (pscalingmw)                326.674  OP 
  Radiation power from inside "coreradius" (MW)                            (pcoreradmw)                105.747  OP 
  Total (MW)                                                                                           432.422  OP 
  
@@ -1290,8 +1289,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Net electrical output (MW)	                                              (pnetelmw)                  500.001  OP 
  Heat rejected by main power conversion circuit (MW)                      (rejected_main)            1302.401  OP 
- Heat rejected by other cooling circuits (MW)                             (psechtmw)                  583.470  OP 
- Total (MW)                                                                                          2385.872  OP 
+ Heat rejected by other cooling circuits (MW)                             (psechtmw)                  583.469  OP 
+ Total (MW)                                                                                          2385.871  OP 
  
  
  Plant efficiency measures :

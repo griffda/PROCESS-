@@ -3,14 +3,11 @@
 subroutine initial
 
   !+ad_name  initial
-  !+ad_summ  Routine to initialise all the COMMON block variables
+  !+ad_summ  Routine to initialise
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
   !+ad_args  None
-  !+ad_desc  This routine initialises all the COMMON block variables.
-  !+ad_desc  N.B. Many of these variables are re-initialised elsewhere in the
-  !+ad_desc  code, but are set to zero in this routine anyway.
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  stellarator_module
@@ -379,11 +376,11 @@ subroutine check
   end if
 
   !  Tight aspect ratio options
+  ! ---------------------------
 
   if (itart == 1) then
 
      icase  = 'Tight aspect ratio tokamak model'
-
      bore   = 0.0D0
      gapoh  = 0.0D0
      ohcth  = 0.0D0
@@ -449,15 +446,26 @@ subroutine check
 
   !  Ensure that if TF coils are non-superconducting,
   !  only simple stress calculations are performed
-
   if (itfsup == 0) tfc_model = 0
 
-  !  PF coil resistivity is zero if superconducting
+  ! TF coil
+  ! -------
 
+  ! If TFC sidewall has not been set by user
+  if(casths<0.1d-10) tfc_sidewall_is_fraction = .true.
+  ! If inboard TF coil case plasma side thickness has not been set by user
+  if(casthi<0.1d-10) casthi_is_fraction = .true.
+
+  ! Issue #514 Radial dimensions of inboard leg
+  ! Ensure that tfcth is defined if thkwp is an iteration variable (140)
+  ! if (any(ixc(1:nvar) == 140) ) then
+  !     tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+  ! endif
+
+  !  PF coil resistivity is zero if superconducting
   if (ipfres == 0) pfclres = 0.0D0
 
   !  If there is no NBI, then hot beam density should be zero
-
   if (irfcd == 1) then
      if ((iefrf /= 5).and.(iefrf /= 8)) rnbeam = 0.0D0
   else

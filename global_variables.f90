@@ -1727,6 +1727,7 @@ module pfcoil_variables
   !+ad_varc            <LI> = 3 NbTi;
   !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters
   !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation</UL>
+
   integer :: isumatpf = 1
   !+ad_vars  jscoh_bop : central solenoid superconductor critical current density (A/m2)
   !+ad_varc                  at beginning-of-pulse
@@ -1952,12 +1953,31 @@ module tfcoil_variables
   real(kind(1.0D0)) :: bmaxtfrp = 0.0D0
   !+ad_vars  casestr : case strain
   real(kind(1.0D0)) :: casestr = 0.0D0
-  !+ad_vars  casthi /0.05/ : inboard TF coil case inner (plasma side) thickness (m)
+
+  !+ad_vars  casthi /0.05/ : EITHER: inboard TF coil case plasma side thickness (m)
   !+ad_varc                  (calculated for stellarators)
-  real(kind(1.0D0)) :: casthi = 0.05D0
-  !+ad_vars  casths /0.07/ : inboard TF coil sidewall case thickness (m)
+  real(kind(1.0D0)) :: casthi = 0.0D0
+  !+ad_vars  casthi_fraction /0.03/ : OR: inboard TF coil case plasma side thickness as a fraction of tfcth
+  real(kind(1.0D0)) :: casthi_fraction = 0.05D0
+  logical :: casthi_is_fraction
+
+  !+ad_vars  casths /0.0/ : EITHER: inboard TF coil sidewall case thickness (m)
   !+ad_varc                  (calculated for stellarators)
-  real(kind(1.0D0)) :: casths = 0.07D0
+  real(kind(1.0D0)) :: casths = 0.0D0
+  !+ad_vars  casths_fraction /0.03/ : OR: inboard TF coil sidewall case thickness as a fraction of tftort
+  real(kind(1.0D0)) :: casths_fraction = 0.03D0
+  logical :: tfc_sidewall_is_fraction
+
+
+
+
+  !+ad_vars  leni : Cable dimension (square) (m)
+  real(kind(1.0D0)) :: leno
+  !+ad_vars  leni : Dimension of space inside cable (m)
+  real(kind(1.0D0)) :: leni
+  !+ad_vars  acs : Area of space inside cable (m2)
+  real(kind(1.0D0)) :: acs
+
   !+ad_vars  cdtfleg /1.0e6/ : TF leg overall current density (A/m2)
   !+ad_varc                    (resistive coils only) (iteration variable 24)
   real(kind(1.0D0)) :: cdtfleg = 1.0D6
@@ -1972,8 +1992,8 @@ module tfcoil_variables
 
   !+ad_vars  dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)) :: dcase = 8000.0D0
-  !+ad_vars  dcond(5) /9000.0/ : density of superconductor type given by isumattf/isumatoh/isumatpf (kg/m3)
-  real(kind(1.0D0)), dimension(5) :: dcond = 9000.0D0
+  !+ad_vars  dcond(6) /9000.0/ : density of superconductor type given by isumattf/isumatoh/isumatpf (kg/m3)
+  real(kind(1.0D0)), dimension(6) :: dcond = 9000.0D0
   !+ad_vars  dcondins /1800.0/ : density of conduit + ground-wall insulation (kg/m3)
   real(kind(1.0D0)) :: dcondins = 1800.0D0
   !+ad_vars  dcopper /8900.0/ : density of copper (kg/m3)
@@ -2023,7 +2043,8 @@ module tfcoil_variables
   !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
   !+ad_varc            <LI> = 3 NbTi;
   !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters
-  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation</UL>
+  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation
+  !+ad_varc            <LI> = 6 REBCO HTS tape in CroCo strand</UL>
   integer :: isumattf = 1
   !+ad_vars  itfsup /1/ : switch for TF coil conductor model:<UL>
   !+ad_varc          <LI> = 0 copper;
@@ -2097,7 +2118,7 @@ module tfcoil_variables
   !+ad_vars  tcritsc /16.0/ : critical temperature (K) for superconductor
   !+ad_varc                   at zero field and strain (isumattf=4, =tc0m)
   real(kind(1.0D0)) :: tcritsc = 16.0D0
-  !+ad_vars  tdmptf /10.0/ : dump time for TF coil (s)
+  !+ad_vars  tdmptf /10.0/ : quench time for TF coil (s)
   !+ad_varc                  (iteration variable 56)
   real(kind(1.0D0)) :: tdmptf = 10.0D0
   !+ad_vars  tfareain : area of inboard midplane TF legs (m2)
@@ -2154,10 +2175,10 @@ module tfcoil_variables
   !+ad_varc                 (iteration variable 57)
   !+ad_varc                 (calculated for stellarators)
   real(kind(1.0D0)) :: thkcas = 0.3D0
-  !+ad_vars  thkwp : radial thickness of winding pack (m)
+  ! Issue #514 Make thkwp an iteration variable
+  !+ad_vars  thkwp : radial thickness of winding pack (m) (iteration variable 140)
   real(kind(1.0D0)) :: thkwp = 0.0D0
-  !+ad_vars  thwcndut /8.0e-3/ : TF coil conduit case thickness (m)
-  !+ad_varc                      (iteration variable 58)
+  !+ad_vars  thwcndut /8.0e-3/ : TF coil conduit case thickness (m) (iteration variable 58)
   real(kind(1.0D0)) :: thwcndut = 8.0D-3
   !+ad_vars  tinstf /0.018/ : ground insulation thickness surrounding winding pack (m)
   !+ad_vars                   Includes allowance for 10 mm insertion gap.
@@ -3035,10 +3056,17 @@ module build_variables
   real(kind(1.0D0)) :: shldtth = 0.6D0
   !+ad_vars  sigallpc /3.0d8/ : allowable stress in CSpre-compression structure (Pa);
   real(kind(1.0D0)) :: sigallpc = 3.0D8
-  !+ad_vars  tfcth /1.173/ : inboard TF coil thickness, (centrepost for ST) (m)
-  !+ad_varc                (calculated for stellarators)
-  !+ad_varc                (iteration variable 13)
-  real(kind(1.0D0)) :: tfcth = 1.173D0
+
+  ! Issue #514 Make tfcth an output not an iteration variable
+  !!!+ad_vars  tfcth /1.173/ : inboard TF coil thickness, (centrepost for ST) (m)
+  !!!+ad_varc                (calculated for stellarators)
+  !!!+ad_varc                (iteration variable 13)
+  !real(kind(1.0D0)) :: tfcth = 1.173D0
+
+  !+ad_vars  tfcth : inboard TF coil thickness, (centrepost for ST) (m)
+  !+ad_varc                (calculated, NOT an iteration variable)
+  real(kind(1.0D0)) :: tfcth = 0.0D0
+
   !+ad_vars  tfoffset : vertical distance between centre of TF coils and centre of plasma (m)
   real(kind(1.0D0)) :: tfoffset = 0.0D0
   !+ad_vars  tfootfi /1.19/ : TF coil outboard leg / inboard leg radial thickness
@@ -3480,9 +3508,9 @@ module cost_variables
   real(kind(1.0D0)) :: ucpp = 48.0D0
   !+ad_vars  ucrb /400.0/ : cost of reactor building (M$/m3)
   real(kind(1.0D0)) :: ucrb = 400.0D0
-  !+ad_vars  ucsc(4) /600.0,600.0,300.0,600.0/ : cost of superconductor ($/kg)
-  real(kind(1.0D0)), dimension(5) :: ucsc = &
-       (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0/)
+  !+ad_vars  ucsc(6) /600.0,600.0,300.0,600.0/ : cost of superconductor ($/kg)
+  real(kind(1.0D0)), dimension(6) :: ucsc = &
+       (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0/)
   !+ad_vars  ucsh /115.0/ FIX : cost of shops and warehouses (M$/m3)
   real(kind(1.0D0)) :: ucsh = 115.0D0
   !+ad_vars  ucshld /32.0/ : cost of shield structural steel ($/kg)
@@ -4092,9 +4120,9 @@ module rebco_variables
   !+ad_docs  TODO
   implicit none ! ---------------------------------------------------------
 
-  !+ad_vars  rebco_thickness /1.0e-6/ : thickness of REBCO layer in tape (m) (iteration variable TODO)
+  !+ad_vars  rebco_thickness /1.0e-6/ : thickness of REBCO layer in tape (m)
   real(kind(1.0D0)) :: rebco_thickness = 1.0D-6
-  !+ad_vars  copper_thickness /100e-6/ : thickness of copper layer in tape (m) (iteration variable TODO)
+  !+ad_vars  copper_thickness /100e-6/ : thickness of copper layer in tape (m)
   real(kind(1.0D0)) :: copper_thickness = 100.0D-6
   !+ad_vars  hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
   real(kind(1.0D0)) :: hastelloy_thickness = 50.0D-6
@@ -4105,20 +4133,22 @@ module rebco_variables
   real(kind(1.0D0)) :: croco_od = 9.3D-3
   !+ad_vars  croco_id /7.0e-3/ : Inner diameter of CroCo copper tube (m)
   real(kind(1.0D0)) :: croco_id = 7.0D-3
-
-  !+ad_vars  rebco_area  : Inner diameter of CroCo copper tube (m)
-  real(kind(1.0D0)) :: rebco_area
-  !+ad_vars  croco_area : Inner diameter of CroCo copper tube (m)
-  real(kind(1.0D0)) :: croco_area
-  !+ad_vars  cable_crit_current : Critical current of HTS cable with croCo strand (A)
-  real(kind(1.0D0)) :: cable_crit_current
   !+ad_vars  number_croco /7/ : Number of CroCo strands in the conductor
   integer :: number_croco = 7
 
   !+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of area inside the jacket
   real(kind(1.0D0)) :: copper_bar = 0.23d0
 
-
-
+  real(kind(1.0D0)) :: tape_thickness
+  real(kind(1.0D0)) :: stack_thickness
+  real(kind(1.0D0)) :: tapes
+  real(kind(1.0D0)) :: rebco_area
+  real(kind(1.0D0)) :: copper_area
+  real(kind(1.0D0)) :: hastelloy_area
+  real(kind(1.0D0)) :: solder_area
+  real(kind(1.0D0)) :: croco_area
+  real(kind(1.0D0)) :: croco_crit_current
+  real(kind(1.0D0)) :: cable_crit_current
+  real(kind(1.0D0)) :: cable_helium_area
 
   end module rebco_variables
