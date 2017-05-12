@@ -378,7 +378,7 @@ module numerics
        'pheat         ', &
        !+ad_varc  <LI> (12) oacdcp
        'oacdcp        ', &
-       !+ad_varc  <LI> (13) tfcth NOT RECOMMENDED
+       !+ad_varc  <LI> (13) tfcth (NOT RECOMMENDED)
        'tfcth         ', &
        !+ad_varc  <LI> (14) fwalld (f-value for equation 8)
        'fwalld        ', &

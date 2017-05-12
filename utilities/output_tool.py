@@ -587,7 +587,10 @@ def output_diagrams():
     """
     
     heading(1,"Diagrams")
-    output_png("alt text", "process_diagram.png", "PROCESS output diagrams")
+    try:
+        output_png("alt text", "process_diagram.png", "PROCESS output diagrams")
+    except:
+        pass
 
 def output_modules():
     """
