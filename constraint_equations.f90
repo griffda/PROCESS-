@@ -614,7 +614,7 @@ contains
 
        case (16)  ! Equation for net electric power lower limit
           !#=# heat_transport
-          !#=#=# fpnetel, penetelin
+          !#=#=# fpnetel, pnetelin
 
           ! fpnetel  |  f-value for net electric power
           ! pnetelmw |  net electric power (MW)

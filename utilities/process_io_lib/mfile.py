@@ -23,6 +23,7 @@
 
 """
 
+from collections import OrderedDict
 import operator
 import logging
 from sys import stderr
@@ -154,7 +155,7 @@ class MFileErrorClass(object):
         return False
 
 
-class MFileDataDictionary(dict):
+class MFileDataDictionary(OrderedDict):
     """ Class object to act as a dictionary for the data.
     """
 
@@ -173,13 +174,63 @@ class MFileDataDictionary(dict):
             return MFileErrorClass(item)
 
 
+class DefaultOrderedDict(OrderedDict):
+    # Source: http://stackoverflow.com/a/6190500/562769
+    def __init__(self, default_factory=None, *a, **kw):
+        if (default_factory is not None and
+           not isinstance(default_factory, Callable)):
+            raise TypeError('first argument must be callable')
+        OrderedDict.__init__(self, *a, **kw)
+        self.default_factory = default_factory
+
+    def __getitem__(self, key):
+        try:
+            return OrderedDict.__getitem__(self, key)
+        except KeyError:
+            return self.__missing__(key)
+
+    def __missing__(self, key):
+        if self.default_factory is None:
+            return MFileErrorClass(key)
+        self[key] = value = self.default_factory()
+        return value
+
+    def __reduce__(self):
+        if self.default_factory is None:
+            args = tuple()
+        else:
+            args = self.default_factory,
+        return type(self), args, None, None, self.items()
+
+    def copy(self):
+        return self.__copy__()
+
+    def __copy__(self):
+        return type(self)(self.default_factory, self)
+
+    def __deepcopy__(self, memo):
+        import copy
+        return type(self)(self.default_factory,
+                          copy.deepcopy(self.items()))
+
+    def __repr__(self):
+        return 'OrderedDefaultDict(%s, %s)' % (self.default_factory,
+                                               OrderedDict.__repr__(self))
+
+
 class MFile(object):
     def __init__(self, filename="MFILE.DAT"):
         """Class object to store the MFile Objects"""
         LOG.info("Creating MFile class for file '{}'".format(filename))
         self.filename = filename
-        self.data = MFileDataDictionary()
+        # self.data = MFileDataDictionary()
+        # self.data = OrderedDict()
+        self.data = DefaultOrderedDict()
         self.mfile_lines = list()
+        self.mfile_modules = dict()
+        self.des_name = list()
+        self.mfile_modules["Misc"] = list()
+        self.current_module = "Misc"
         if filename is not None:
             LOG.info("Opening file '{}'".format(self.filename))
             self.open_mfile()
@@ -199,7 +250,8 @@ class MFile(object):
 
     def parse_mfile(self):
         """Function to parse MFILE.DAT"""
-        for line in (c for c in (clean_line(l) for l in self.mfile_lines if '#' not in l[:2]) 
+        # for line in (c for c in (clean_line(l) for l in self.mfile_lines if '#' not in l[:2]) 
+        for line in (c for c in (clean_line(l) for l in self.mfile_lines) 
             if c != [""]):
             self.add_line(line)
 
@@ -207,19 +259,36 @@ class MFile(object):
         """Function to read the line from MFILE and add to the appropriate
         class or create a new class if it is the first instance of it.
         """
-        var_des = line[0]
-        extracted_var_name = sort_brackets(line[1])
-        var_name = var_des if extracted_var_name == "" else extracted_var_name
-        if "runtitle" in var_name:
-            var_value = " ".join(line[2:])
+        if "#" in line[:2]:
+            combined = " ".join(line[1:-1])
+            EXCLUSIONS = ["Feasible", "feasible", "Errors", "Waveforms", "Power Reactor Optimisation Code"]
+            if any(exclusion not in combined for exclusion in EXCLUSIONS):
+                self.current_module = combined
+                self.mfile_modules[self.current_module] = list()
+
         else:
-            var_value = sort_value(line[2])
-        var_unit = get_unit(var_des)
-        if len(line) >= 4:
-            var_flag = line[3]
-        else:
-            var_flag = None
-        self.add_to_mfile_variable(var_des, var_name, var_value, var_unit, var_flag)
+
+            var_des = line[0]
+            extracted_var_name = sort_brackets(line[1])
+
+            if extracted_var_name == "":
+                var_name = var_des
+                self.des_name.append(var_name)
+            else:
+                var_name = extracted_var_name
+
+            if "runtitle" in var_name:
+                var_value = " ".join(line[2:])
+            else:
+                var_value = sort_value(line[2])
+            var_unit = get_unit(var_des)
+            if len(line) >= 4:
+                var_flag = line[3]
+            else:
+                var_flag = None
+
+            self.mfile_modules[self.current_module].append(var_name)
+            self.add_to_mfile_variable(var_des, var_name, var_value, var_unit, var_flag)
 
     def add_to_mfile_variable(self, des, name, value, unit, flag, scan=None):
         """Function to add value to MFile class for that name/description
@@ -234,7 +303,7 @@ class MFile(object):
                                           get_number_of_scans()+1)
             self.data[var_key].set_scan(scan_num, value)
         else:
-            var = MFileVariable(name, des, unit, var_flag=flag)
+            var = MFileVariable(name, des, unit, var_flag=flag, var_mod=self.current_module)
             self.data[var_key] = var
             self.data[var_key].set_scan(1, value)
 

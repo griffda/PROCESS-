@@ -77,6 +77,114 @@
             "mod":"Vacuum Variables"
         }
     },
+    "projects":{
+        "General":{
+            "mfile_sections":[
+                "Plant Availability",
+                "Radial Build",
+                "Vertical Build",
+                "Times",
+                "Support Structure",
+                "Numerics",
+                "Plant Buildings System"
+                ],
+            "icc_modules":[
+                "build",
+                "times"
+                ],
+            "in_dat_modules":[
+                "Build Variables",
+                "Times Variables",
+                "Numerics",
+                "Buildings Variables",
+                "Cost Variables",
+                "Pulse Variables"
+            ]
+        },
+        "Physics":{
+            "mfile_sections":[
+                "Plasma",
+                "Divertor build and plasma position"
+                ],
+            "icc_modules":[
+                "physics",
+                "divertor",
+                "divertor_kallenbach"
+            ],
+            "in_dat_modules":[
+                "Physics Variables",
+                "Divertor Variables",
+                "Divertor Kallenbach Variables",
+                "Impurity Radiation Module"
+            ]
+        },
+        "Magnets":{
+            "mfile_sections":[
+                "Central Solenoid and PF Coils",
+                "Volt Second Consumption",
+                "TF Coils",
+                "Superconducting TF Coils",
+                "Superconducting TF Coil Power Conversion",
+                "PF Coils and Central Solenoid: Power and Energy"
+                ],
+            "icc_modules":[
+                "tfcoil",
+                "pfcoil"
+                ],
+            "in_dat_modules":[
+                "Tfcoil Variables",
+                "Pfcoil Variables",
+                "Pf Power Variables"
+            ]
+        },
+        "Balance-of-plant":{
+            "mfile_sections":[
+                "Electric Power Requirements",
+                "Plant Power / Heat Transport Balance"
+            ],
+            "icc_modules":[
+                "heat_transport"
+            ],
+            "in_dat_modules":[
+                "Heat Transport Variables"
+            ]
+        },
+        "Breeder-blanket":{
+            "mfile_sections":[
+                "First wall and blanket : CCFE HCPB model"
+            ],
+            "icc_modules":[
+                "fwbs"
+            ],
+            "in_dat_modules":[
+                "Fwbs Variables"
+            ]
+        
+        },
+        "Heating-and-current-drive":{
+            "mfile_sections":[
+                "Current Drive System"
+            ],
+            "icc_modules":[
+                "current_drive"
+            ],
+            "in_dat_modules":[
+                "Current Drive Variables"
+            ]
+        },
+        "Tritium-fuelling-and-vacuum":{
+            "mfile_sections":[
+                "Vacuum System",
+                "Cryogenics"
+            ],
+            "icc_modules":[
+                "vacuum"
+            ],
+            "in_dat_modules":[
+                "Vacuum Variables"
+            ]
+        }
+    },
     "exclusions":{
         "constraints":[],
         "itvars":[],
