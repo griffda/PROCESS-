@@ -174,10 +174,12 @@ DEBUG = YES
 ifeq ($(OS),Windows_NT)
 	MYROOT_1 = echo character(len=*), parameter :: ROOTDIR = "%cd%" > root.dir
 	MYROOT_2 = echo ROOTDIR = "%cd%" > utilities\rootdir.py
+	MYTAG_0 = del tag.num
 	MYTAG_1 = echo character(len=*), parameter :: tagno = "%git describe%" > tag.num
 else
 	MYROOT_1 = echo "  character(len=*), parameter :: ROOTDIR = '"`pwd`"'" > root.dir
 	MYROOT_2 = echo "ROOTDIR = '"`pwd`"'" > utilities/rootdir.py
+	MYTAG_0 = rm -rf tag.num
 	MYTAG_1 = echo "  character(len=*), parameter :: tagno = '"`git describe`"'" > tag.num
 endif
 
@@ -318,6 +320,7 @@ root.dir:
 	${MYROOT_2}
 
 tag.num:
+	${MYTAG_0}
 	${MYTAG_1}
 
 ### Utilities #################
