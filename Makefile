@@ -329,6 +329,7 @@ tag.num:
 clean:
 	rm -f process.exe *.o *.mod
 	rm -f root.dir
+	rm -f tag.num
 	rm -f *~
 	rm -f utilities/process_io_lib/process_dicts.py
 	rm -f utilities/processgui/dicts/gui_dicts.py
@@ -341,6 +342,7 @@ win_clean:
 	del utilities\processgui\dicts\gui_dicts.py
 	del *.html
 	del root.dir
+	del tag.num
 	rmdir /q /s documentation\html
 
 cleandoc:
