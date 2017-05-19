@@ -427,6 +427,8 @@ subroutine run_summary
   character(len = 100) :: rstring
   integer :: version
 
+  include "tag.num"
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Obtain execution details for this run
@@ -453,6 +455,7 @@ subroutine run_summary
      !  Run execution details
      call ocmmnt(outfile, progid(1))  !  program name
      call ocmmnt(outfile, progid(2))  !  version
+     call ocmmnt(outfile, 'Tag Number : "'//tagno//'"')  !  directory
      !call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
      !call ocmmnt(outfile, progid(5))  !  computer
@@ -500,6 +503,9 @@ subroutine run_summary
 
   rstring = '"'//runtitle//'"'
   call ovarst(mfile,'PROCESS run title','(runtitle)',rstring)
+
+  rstring = '"'//tagno//'"'
+  call ovarst(mfile,'PROCESS tag number','(tagno)',rstring)
 
 #ifndef unit_test
 ! MDK these lines duplicate the ones below.
