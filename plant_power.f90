@@ -49,6 +49,7 @@ module power_module
   use build_variables
   use buildings_variables
   use constants
+  use constraint_variables
   use cost_variables
   use current_drive_variables
   use error_handling
@@ -1466,6 +1467,7 @@ contains
 	call ocmmnt(outfile,'Electrical Power Balance :')
     call ocmmnt(outfile,'--------------------------')
 	call ovarrf(outfile,'Net electric power output(MW)','(pnetelmw.)',pnetelmw, 'OP ')
+    call ovarrf(outfile,'Required Net electric power output(MW)','(pnetelin)',pnetelin)
 	call ovarrf(outfile,'Electric power for heating and current drive (MW)','(pinjwp)',pinjwp, 'OP ')
 	call ovarrf(outfile,'Electric power for primary coolant pumps (MW)','(htpmw)',htpmw, 'OP ')
 	call ovarrf(outfile,'Electric power for vacuum pumps (MW)','(vachtmw)',vachtmw)

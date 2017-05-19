@@ -36,6 +36,7 @@ module current_drive_module
   ! Import modules !
   !!!!!!!!!!!!!!!!!!
 
+  use constraint_variables
   use constants
   use current_drive_variables
   use error_handling
@@ -394,6 +395,7 @@ contains
        call ovarrf(outfile,'Beam first orbit loss power (MW)','(porbitlossmw)', porbitlossmw, 'OP ')
        call ovarrf(outfile,'Beam shine-through power [MW]','(nbshinemw)',nbshinemw, 'OP ')
        call ovarrf(outfile,'Beam power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
+       call ovarrf(outfile,'Maximum allowable beam power (MW)','(pinjalw)',pinjalw)
        call ovarrf(outfile,'Total (MW)', &
                            '(porbitlossmw+nbshinemw+pinjmw)',porbitlossmw+nbshinemw+pinjmw)
        call oblnkl(outfile)
@@ -409,6 +411,7 @@ contains
 
     if (abs(echpwr) > 1.0D-8) then
        call ovarre(outfile,'Electron cyclotron injected power (MW)','(echpwr)',echpwr, 'OP ')
+       call ovarrf(outfile,'Maximum allowable ECRH power (MW)','(pinjalw)',pinjalw)
        call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
        call ovarre(outfile,'ECH wall plug power (MW)','(echwpow)',echwpow, 'OP ')
     end if

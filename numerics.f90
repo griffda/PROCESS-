@@ -215,7 +215,7 @@ module numerics
        'Burn time lower limit            ', &
        !+ad_varc  <LI> (14) Neutral beam decay lengths to plasma centre (NBI) (consistency equation)
        'NBI decay lengths consistency    ', &
-       !+ad_varc  <LI> (15) L-H power threshold limit
+       !+ad_varc  <LI> (15) LH power threshold limit
        'L-H power threshold limit        ', &
        !+ad_varc  <LI> (16) Net electric power lower limit
        'Net electric power lower limit   ', &
@@ -378,7 +378,7 @@ module numerics
        'pheat         ', &
        !+ad_varc  <LI> (12) oacdcp
        'oacdcp        ', &
-       !+ad_varc  <LI> (13) tfcth NOT RECOMMENDED
+       !+ad_varc  <LI> (13) tfcth (NOT RECOMMENDED)
        'tfcth         ', &
        !+ad_varc  <LI> (14) fwalld (f-value for equation 8)
        'fwalld        ', &
