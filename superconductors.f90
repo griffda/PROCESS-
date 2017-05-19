@@ -474,7 +474,7 @@ subroutine croco(jcritsc,croco_strand)
 
     rebco_area = rebco_thickness * tape_width * tapes
     croco_area =  pi * croco_od**2
-    
+
     croco_strand%copper_fraction = copper_area / croco_area
     croco_strand%hastelloy_fraction = hastelloy_area / croco_area
     croco_strand%helium_fraction = 0.0d0
@@ -624,12 +624,12 @@ subroutine hastelloy_properties(temperature,hastelloy)
                        -8.12438d-9*T**4
     endif
 
-    if(T<48.7135d0)then
-        hastelloy%resistivity = 1.23386d-6 - 1.40462d-9*T + 1.09943d-10*T**2 -  &
-                                3.81875d-12*T**3 + 6.3866d-14*T**4 - 4.10322d-16*T**5
-    else if(T.ge.48.7135d0)then
-        hastelloy%resistivity = 1.22641d-6 + 1.19188d-10*T
-    endif
+    ! if(T<48.7135d0)then
+    !     hastelloy%resistivity = 1.23386d-6 - 1.40462d-9*T + 1.09943d-10*T**2 -  &
+    !                             3.81875d-12*T**3 + 6.3866d-14*T**4 - 4.10322d-16*T**5
+    ! else if(T.ge.48.7135d0)then
+    !     hastelloy%resistivity = 1.22641d-6 + 1.19188d-10*T
+    ! endif
 end subroutine hastelloy_properties
 ! --------------------------------------------------------------------------
 subroutine solder_properties(T,solder)
@@ -652,15 +652,15 @@ subroutine solder_properties(T,solder)
         solder%cp = 181.29d0
     endif
 
-    if(T<31.0d0)then
-        solder%resistivity = 3.40409d-9 + 1.98993d-12*T + 6.56824d-12*T**2 - 1.32602d-13*T**3  &
-                            +1.33974d-15*T**4
-    else if((T.ge.31.0d0).and.(T<300.0d0))then
-        solder%resistivity = -9.01684d-9 + 5.11669d-10*T + 1.40751d-13*T**2 - 5.6729d-16*T**3 +  &
-                              7.41049d-19*T**4
-    else
-        solder%resistivity = 1.4782d-7
-    endif
+    ! if(T<31.0d0)then
+    !     solder%resistivity = 3.40409d-9 + 1.98993d-12*T + 6.56824d-12*T**2 - 1.32602d-13*T**3  &
+    !                         +1.33974d-15*T**4
+    ! else if((T.ge.31.0d0).and.(T<300.0d0))then
+    !     solder%resistivity = -9.01684d-9 + 5.11669d-10*T + 1.40751d-13*T**2 - 5.6729d-16*T**3 +  &
+    !                           7.41049d-19*T**4
+    ! else
+    !     solder%resistivity = 1.4782d-7
+    ! endif
 
 end subroutine solder_properties
 ! -------------------------------------------------------------------------

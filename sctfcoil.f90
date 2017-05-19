@@ -53,6 +53,7 @@ use physics_variables
 use process_output
 use tfcoil_variables
 use superconductors
+use resistive_materials
 
 private
 public :: bi2212, itersc, wstsc, jcrit_nbti, outtf, sctfcoil, stresscl, &
@@ -68,6 +69,8 @@ real(kind(1.0D0)), private :: tf_fit_z
 !  Ratio of peak field with ripple to nominal axisymmetric peak field
 real(kind(1.0D0)), private :: tf_fit_y
 
+type(resistive_material)::copper, hastelloy, solder, jacket
+type(volume_fractions)::croco_strand, tf_cable
 contains
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1542,8 +1545,7 @@ subroutine tfspcall(outfile,iprint)
     fhts,strncon,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
     outfile,jwdgpro,jwdgcrt,vdump,tmargtf)
 
-    !  Dump voltage in kV
-
+    !  TFC Quench voltage in kV
     vtfskv = vdump/1.0D3
 
 contains
@@ -1639,8 +1641,8 @@ contains
         !  Arguments
 
         integer, intent(in) :: isumat, iprint, outfile
-        real(kind(1.0D0)), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts, &
-        iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
+        real(kind(1.0D0)), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts
+        real(kind(1.0D0)), intent(in) :: iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
         real(kind(1.0D0)), intent(out) :: jwdgpro, jwdgcrt, vd, tmarg
 
         !  Local variables
@@ -1674,7 +1676,6 @@ contains
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
             icrit = jcritstr * acs * (1.0D0-fhetot)
-
 
         case (2)  !  Bi-2212 high temperature superconductor parameterization
 
@@ -1721,9 +1722,8 @@ contains
 
         case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
             call jcrit_rebco(thelium,bmax,jcritsc,validity,iprint)
-            call croco(jcritsc)
-            call croco(jcritsc)
-            jcritstr = croco_crit_current
+            call croco(jcritsc,croco_strand)
+            jcritstr = croco_strand%critical_current
             icrit = cable_crit_current
 
         case default  !  Error condition
@@ -1794,7 +1794,12 @@ contains
         !  (N.B. Unclear of this routine's relevance for Bi-2212 (isumat=2), due
         !  to presence of fcu argument, which is not used for this model above)
 
-        call protect(iop,tfes,acs,aturn,tdump,fcond,fcu,thelium,tmax,jwdgpro,vd)
+        select case (isumat)
+        case (1,2,3,4,5)
+            call protect(iop,tfes,acs,aturn,tdump,fcond,fcu,thelium,tmax,jwdgpro,vd)
+        case(6)
+            call croco_quench(croco_strand) ! TODO
+        end select
 
         if (iprint == 0) return
 
@@ -1844,7 +1849,8 @@ contains
             call ovarre(outfile,'Area of solder in strand (m2)  ','(solder_area)',solder_area , 'OP ')
             call ovarre(outfile,'Area of CroCo strand (m2)  ','(croco_area)',croco_area , 'OP ')
             call ovarre(outfile,'Area of helium coolant in cable (m2)','(cable_helium_area)',cable_helium_area , 'OP ')
-            call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_crit_current)',croco_crit_current , 'OP ')
+            call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_strand%critical_current)', &
+                                 croco_strand%critical_current , 'OP ')
             call ovarre(outfile,'Critical current of cable (A) ','(cable_crit_current)',cable_crit_current , 'OP ')
 
         end select
@@ -1995,8 +2001,77 @@ contains
         ajwpro = ajcp*(acs/aturn)
 
     end subroutine protect
+    ! --------------------------------------------------------------------
+    subroutine croco_quench(croco_strand)
+
+        !+ad_name  croco_quench
+        !+ad_summ  Finds the current density limited by the maximum temperature in quench
+        !+ad_type  Subroutine
+        !+ad_args  cpttf : Operating current in cable (A)
+        !+ad_args  tfes : input real : Energy stored per TF coil (J)
+        !+ad_args  acs : input real : Cable space - inside area (m2)
+        !+ad_args  aturn : input real : Area per turn (i.e.  entire cable) (m2)
+        !+ad_args  tdmptf : quench time (sec)
+        !+ad_args  fcond : input real : Fraction of cable space containing conductor
+        !+ad_args  fcu : input real : Fraction of conductor that is copper
+        !+ad_args  tba : input real : He temperature at peak field point (K)
+        !+ad_args  tmax : input real : Max conductor temperature during quench (K)
+        !+ad_args  ajwpro : output real :  Winding pack current density from temperature
+        !+ad_argc                          rise protection (A/m2)
+        !+ad_args  vtfskv :  Quench voltage (kV)
+        !+ad_desc  This routine calculates maximum conductor current density which
+        !+ad_desc  It also finds the dump voltage.
+        !+ad_desc  <P>These calculations are based on Miller's formulations.
+        ! See section 2.3 of PROCESS physics paper.
+
+        implicit none
+        type(volume_fractions), intent(in)::croco_strand
+        !real(kind(1.0D0)), intent(out) :: ajwpro
+
+        real(kind(1.0D0)) :: aa,ai1,ai2,ai3,ajcp,bb,cc,dd,delta_T
+
+        !  Dump voltage
+        vtfskv = 2.0D0 * tfes/(tdmptf*cpttf)
+
+        ! Current density limited by temperature rise during quench
+        ! Calculate integrals in a simple way to guarantee speed.
+        ! First operating temperature to 30 K
+
+        delta_T = tftmp
+
+
+
+        ajcp = sqrt( aa* (bb+cc+dd) )
+        !ajwpro = ajcp*(acs/aturn)
+
+
+    end subroutine croco_quench
 
 end subroutine tfspcall
+! -------------------------------------------------------------------------
+function quench_integrand(T, adiabatic_object)
+    implicit none
+    ! The "adiabatic_object" is the set of strands or the complete cable.
+    type(volume_fractions)::adiabatic_object
+    real(kind(1.0D0)) ::T
+    real(kind(1.0D0))::term1, term2, term3, term4, quench_integrand
 
+    call copper_properties2(T,bmaxtf, copper)
+    call hastelloy_properties(T,hastelloy)
+    call solder_properties(T,solder)
+
+    term1 = adiabatic_object%copper_fraction * copper%density * copper%cp
+    term2 = adiabatic_object%hastelloy_fraction * hastelloy%density * hastelloy%cp
+    term3 = adiabatic_object%solder_fraction * solder%density * solder%cp
+    if(adiabatic_object%jacket_fraction>1.0D-6) then
+        call jacket_properties(T,jacket)
+        term4 = adiabatic_object%jacket_fraction * solder%density * solder%cp
+    else
+        term4=0.0D0
+    endif
+    quench_integrand = (term1+term2+term3+term4) / copper%resistivity
+
+end function quench_integrand
+! -------------------------------------------------------------------------
 
 end module sctfcoil_module

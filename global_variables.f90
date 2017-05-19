@@ -4147,8 +4147,34 @@ module rebco_variables
   real(kind(1.0D0)) :: hastelloy_area
   real(kind(1.0D0)) :: solder_area
   real(kind(1.0D0)) :: croco_area
-  real(kind(1.0D0)) :: croco_crit_current
   real(kind(1.0D0)) :: cable_crit_current
   real(kind(1.0D0)) :: cable_helium_area
 
   end module rebco_variables
+  !------------------------------------------------------------------------
+
+  module resistive_materials
+
+      !+ad_name  resistive_material
+      !+ad_summ  Variables relating to resistive materials in superconducting cables
+      !+ad_type  Module
+      !+ad_docs  TODO
+      implicit none ! ---------------------------------------------------------
+
+      type resistive_material
+          character(len=80) :: label        ! Description
+          real(kind(1.0D0)) :: cp           ! Specific heat capacity J/(K kg).
+          real(kind(1.0D0)) :: rrr          ! Residual resistivity ratio
+          real(kind(1.0D0)) :: resistivity  ! ohm.m
+          real(kind(1.0D0)) :: density = 8960  ! kg/m3
+      end type
+
+      type volume_fractions
+          real(kind(1.0D0)) :: copper_fraction=0.0d0
+          real(kind(1.0D0)) :: hastelloy_fraction=0.0d0
+          real(kind(1.0D0)) :: helium_fraction=0.0d0
+          real(kind(1.0D0)) :: solder_fraction=0.0d0
+          real(kind(1.0D0)) :: jacket_fraction=0.0d0
+          real(kind(1.0D0)) :: critical_current=0.0d0
+      end type
+  end module resistive_materials
