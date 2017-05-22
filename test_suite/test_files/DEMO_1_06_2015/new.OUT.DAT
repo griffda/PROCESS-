@@ -30,12 +30,13 @@
  
    Program : ./process.exe
    Version : 1.0.10   Release Date :: 2017-04-27
-      User : mkovari
- Directory : /home/mkovari/develop/test_suite
+ Tag Number : "1.0.10-19-gf59c026"
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/tag_output/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on 11 May 2017 16:14:01 +01:00(hh:mm) UTC by freia054
+ PROCESS 1.0.10 : Run on 22 May 2017 14:00:09 +01:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -469,6 +470,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beam first orbit loss power (MW)                                         (porbitlossmw)                0.000  OP 
  Beam shine-through power [MW]                                            (nbshinemw)                   0.006  OP 
  Beam power deposited in plasma (MW)                                      (pinjmw)                     51.709  OP 
+ Maximum allowable beam power (MW)                                        (pinjalw)                    50.000     
  Total (MW)                                                               (porbitlossmw+nbshin         51.715     
  
  Beam power entering vacuum vessel (MW)                                   (pnbitot)                    51.715  OP 
@@ -1363,6 +1365,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical Power Balance :
  --------------------------
  Net electric power output(MW)                                            (pnetelmw.)                 697.828  OP 
+ Required Net electric power output(MW)                                   (pnetelin)                  500.000     
  Electric power for heating and current drive (MW)                        (pinjwp)                    129.287  OP 
  Electric power for primary coolant pumps (MW)                            (htpmw)                       2.573  OP 
  Electric power for vacuum pumps (MW)                                     (vachtmw)                     0.500     
@@ -1859,6 +1862,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beam first orbit loss power (MW)                                         (porbitlossmw)                0.000  OP 
  Beam shine-through power [MW]                                            (nbshinemw)                   0.006  OP 
  Beam power deposited in plasma (MW)                                      (pinjmw)                     51.709  OP 
+ Maximum allowable beam power (MW)                                        (pinjalw)                    50.000     
  Total (MW)                                                               (porbitlossmw+nbshin         51.715     
  
  Beam power entering vacuum vessel (MW)                                   (pnbitot)                    51.715  OP 
@@ -2753,6 +2757,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical Power Balance :
  --------------------------
  Net electric power output(MW)                                            (pnetelmw.)                 697.828  OP 
+ Required Net electric power output(MW)                                   (pnetelin)                  500.000     
  Electric power for heating and current drive (MW)                        (pinjwp)                    129.287  OP 
  Electric power for primary coolant pumps (MW)                            (htpmw)                       2.573  OP 
  Electric power for vacuum pumps (MW)                                     (vachtmw)                     0.500     
@@ -3249,6 +3254,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beam first orbit loss power (MW)                                         (porbitlossmw)                0.000  OP 
  Beam shine-through power [MW]                                            (nbshinemw)                   0.006  OP 
  Beam power deposited in plasma (MW)                                      (pinjmw)                     51.709  OP 
+ Maximum allowable beam power (MW)                                        (pinjalw)                    50.000     
  Total (MW)                                                               (porbitlossmw+nbshin         51.715     
  
  Beam power entering vacuum vessel (MW)                                   (pnbitot)                    51.715  OP 
@@ -4143,6 +4149,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical Power Balance :
  --------------------------
  Net electric power output(MW)                                            (pnetelmw.)                 697.828  OP 
+ Required Net electric power output(MW)                                   (pnetelin)                  500.000     
  Electric power for heating and current drive (MW)                        (pinjwp)                    129.287  OP 
  Electric power for primary coolant pumps (MW)                            (htpmw)                       2.573  OP 
  Electric power for vacuum pumps (MW)                                     (vachtmw)                     0.500     

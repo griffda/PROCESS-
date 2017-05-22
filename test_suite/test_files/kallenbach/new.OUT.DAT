@@ -6,12 +6,13 @@
  
    Program : ./process.exe
    Version : 1.0.10   Release Date :: 2017-04-27
-      User : mkovari
- Directory : /home/mkovari/develop/test_suite
+ Tag Number : "1.0.10-19-gf59c026"
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/tag_output/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on 11 May 2017 16:14:30 +01:00(hh:mm) UTC by freia054
+ PROCESS 1.0.10 : Run on 22 May 2017 13:59:25 +01:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Kallenbach divertor model
  (Please include this header in any models, presentations and papers based on these results)
@@ -423,6 +424,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fraction of the plasma current produced by non-inductive means           (fvsbrnni)                    0.497  ITV
  
  Electron cyclotron injected power (MW)                                   (echpwr)                  5.000E+01  OP 
+ Maximum allowable ECRH power (MW)                                        (pinjalw)                    50.000     
  ECH wall plug efficiency                                                 (etaech)                  4.000E-01     
  ECH wall plug power (MW)                                                 (echwpow)                 1.250E+02  OP 
  
@@ -1268,6 +1270,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical Power Balance :
  --------------------------
  Net electric power output(MW)                                            (pnetelmw.)                 500.001  OP 
+ Required Net electric power output(MW)                                   (pnetelin)                  500.000     
  Electric power for heating and current drive (MW)                        (pinjwp)                    125.000  OP 
  Electric power for primary coolant pumps (MW)                            (htpmw)                     155.000  OP 
  Electric power for vacuum pumps (MW)                                     (vachtmw)                     0.500     
