@@ -2537,9 +2537,9 @@ contains
     call fcnvmc2(n,m,x,fgrd,cnorm,lcnorm,info)
     if (info < 0) return
 
-	!  Setup line overwrite for VMCON iterations output
-	open(unit=iotty)
-	write(*,*) ""
+    !  Setup line overwrite for VMCON iterations output
+    open(unit=iotty)
+    write(*,*) ""
     !write(*,*) repeat("*", 110)
     !write(*,*) ""
     !write(*,*) "  VMCON Iterations"

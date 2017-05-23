@@ -1404,104 +1404,104 @@ contains
     call ocmmnt(outfile,'Only energy deposited in the plasma is included here.')
 
     if (iradloss == 0) then
-		call ocmmnt(outfile,'Total power loss is scaling power plus radiation (iradloss = 0)')
-		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
-		call ovarrf(outfile,'Total net radiation power (MW)','(pradmw)',pradmw, 'OP ')
-		sum = pscalingmw+pradmw
-		call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
+        call ocmmnt(outfile,'Total power loss is scaling power plus radiation (iradloss = 0)')
+        call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
+        call ovarrf(outfile,'Total net radiation power (MW)','(pradmw)',pradmw, 'OP ')
+        sum = pscalingmw+pradmw
+        call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
     else if (iradloss == 1) then
-		call ocmmnt(outfile,'Total power loss is scaling power plus core radiation only (iradloss = 1)')
-		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
-		call ovarrf(outfile,'Radiation power from inside "coreradius" (MW)','(pcoreradmw)',pcoreradmw, 'OP ')
-		call ovarrf(outfile,'Total (MW)','',pscalingmw+pcoreradmw, 'OP ')
-		sum = pscalingmw+pcoreradmw
+        call ocmmnt(outfile,'Total power loss is scaling power plus core radiation only (iradloss = 1)')
+        call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
+        call ovarrf(outfile,'Radiation power from inside "coreradius" (MW)','(pcoreradmw)',pcoreradmw, 'OP ')
+        call ovarrf(outfile,'Total (MW)','',pscalingmw+pcoreradmw, 'OP ')
+        sum = pscalingmw+pcoreradmw
     else if (iradloss == 2) then
-		call ocmmnt(outfile,'Total power loss is scaling power only (iradloss = 1).')
-		call ocmmnt(outfile,'This is not recommended for power plant models.')
-		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
-		call ovarrf(outfile,'Total (MW)','',pscalingmw, 'OP ')
-		sum = pscalingmw
+        call ocmmnt(outfile,'Total power loss is scaling power only (iradloss = 1).')
+        call ocmmnt(outfile,'This is not recommended for power plant models.')
+        call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
+        call ovarrf(outfile,'Total (MW)','',pscalingmw, 'OP ')
+        sum = pscalingmw
     else
         write(*,*) 'The value of iradloss appears to be invalid.'
         call ocmmnt(outfile,'ERROR: The value of iradloss appears to be invalid.')
     end if
 
     call oblnkl(outfile)
-	call ovarrf(outfile,'Alpha power deposited in plasma (MW)','(falpha*palpmw)',falpha*palpmw, 'OP ')
-	call ovarrf(outfile,'Power from charged products of DD and/or D-He3 fusion (MW)','(pchargemw)',pchargemw, 'OP ')
-	call ovarrf(outfile,'Ohmic heating (MW)','(pohmmw)',pohmmw, 'OP ')
-	call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
-	call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
-	call oblnkl(outfile)
-	if (abs(sum - (falpha*palpmw+pchargemw+pohmmw+pinjmw)) > 5.0D0) then
-	    write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
-	    call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
+    call ovarrf(outfile,'Alpha power deposited in plasma (MW)','(falpha*palpmw)',falpha*palpmw, 'OP ')
+    call ovarrf(outfile,'Power from charged products of DD and/or D-He3 fusion (MW)','(pchargemw)',pchargemw, 'OP ')
+    call ovarrf(outfile,'Ohmic heating (MW)','(pohmmw)',pohmmw, 'OP ')
+    call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
+    call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
+    call oblnkl(outfile)
+    if (abs(sum - (falpha*palpmw+pchargemw+pohmmw+pinjmw)) > 5.0D0) then
+       write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
+    call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
     end if
 
     call ocmmnt(outfile,'Power Balance for Reactor - Summary :')
     call ocmmnt(outfile,'-------------------------------------')
-	call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
-	call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
-	call ovarrf(outfile,'Injected power (MW)','(pinjmw)',pinjmw, 'OP ')
-	call ovarrf(outfile,'Ohmic power (MW)','(pohmmw)',pohmmw, 'OP ')
-	call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech, 'OP ')
-	sum = powfmw+emultmw+pinjmw+htpmw_mech+pohmmw
-	call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
-	call oblnkl(outfile)
-	!call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw, 'OP ')
-	call ovarrf(outfile,'Heat extracted from first wall and blanket (MW)','(pthermfw_blkt)',pthermfw_blkt, 'OP ')
-	call ovarrf(outfile,'Heat extracted from shield  (MW)','(pthermshld)',pthermshld, 'OP ')
-	call ovarrf(outfile,'Heat extracted from divertor (MW)','(pthermdiv)',pthermdiv, 'OP ')
-	call ovarrf(outfile,'Nuclear and photon power lost to H/CD system (MW)','(psechcd)',psechcd, 'OP ')
-	call ovarrf(outfile,'Total (MW)','',pthermfw_blkt+pthermshld+pthermdiv+psechcd, 'OP ')
-	call oblnkl(outfile)
+    call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
+    call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
+    call ovarrf(outfile,'Injected power (MW)','(pinjmw)',pinjmw, 'OP ')
+    call ovarrf(outfile,'Ohmic power (MW)','(pohmmw)',pohmmw, 'OP ')
+    call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech, 'OP ')
+    sum = powfmw+emultmw+pinjmw+htpmw_mech+pohmmw
+    call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
+    call oblnkl(outfile)
+    !call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw, 'OP ')
+    call ovarrf(outfile,'Heat extracted from first wall and blanket (MW)','(pthermfw_blkt)',pthermfw_blkt, 'OP ')
+    call ovarrf(outfile,'Heat extracted from shield  (MW)','(pthermshld)',pthermshld, 'OP ')
+    call ovarrf(outfile,'Heat extracted from divertor (MW)','(pthermdiv)',pthermdiv, 'OP ')
+    call ovarrf(outfile,'Nuclear and photon power lost to H/CD system (MW)','(psechcd)',psechcd, 'OP ')
+    call ovarrf(outfile,'Total (MW)','',pthermfw_blkt+pthermshld+pthermdiv+psechcd, 'OP ')
+    call oblnkl(outfile)
     if (abs(sum - (pthermfw_blkt+pthermshld+pthermdiv+psechcd)) > 5.0D0) then
-	    write(*,*) 'WARNING: Power balance for reactor is in error by more than 5 MW.'
-	    call ocmmnt(outfile,'WARNING: Power balance for reactor is in error by more than 5 MW.')
+       write(*,*) 'WARNING: Power balance for reactor is in error by more than 5 MW.'
+       call ocmmnt(outfile,'WARNING: Power balance for reactor is in error by more than 5 MW.')
     end if
 
 
-	! Heat rejected by main power conversion circuit
-	rejected_main = pthermmw * (1 - etath)
+    ! Heat rejected by main power conversion circuit
+    rejected_main = pthermmw * (1 - etath)
 
-	call ocmmnt(outfile,'Electrical Power Balance :')
+    call ocmmnt(outfile,'Electrical Power Balance :')
     call ocmmnt(outfile,'--------------------------')
-	call ovarrf(outfile,'Net electric power output(MW)','(pnetelmw.)',pnetelmw, 'OP ')
+    call ovarrf(outfile,'Net electric power output(MW)','(pnetelmw.)',pnetelmw, 'OP ')
     call ovarrf(outfile,'Required Net electric power output(MW)','(pnetelin)',pnetelin)
-	call ovarrf(outfile,'Electric power for heating and current drive (MW)','(pinjwp)',pinjwp, 'OP ')
-	call ovarrf(outfile,'Electric power for primary coolant pumps (MW)','(htpmw)',htpmw, 'OP ')
-	call ovarrf(outfile,'Electric power for vacuum pumps (MW)','(vachtmw)',vachtmw)
-	call ovarrf(outfile,'Electric power for tritium plant (MW)','(trithtmw)',trithtmw)
-	call ovarrf(outfile,'Electric power for cryoplant (MW)','(crypmw)',crypmw, 'OP ')
-	call ovarrf(outfile,'Electric power for TF coils (MW)','(tfacpd)',tfacpd, 'OP ')
-	call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwp)', pfwp, 'OP ')
-	call ovarrf(outfile,'All other internal electric power requirements (MW)','(fachtmw)', fachtmw, 'OP ')
-	sum = pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwp
-	call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
-	call oblnkl(outfile)
-	call ovarrf(outfile,'Gross electrical output* (MW)','(pgrossmw)',pgrossmw, 'OP ')
-	call ocmmnt(outfile,'(*Power for pumps in secondary circuit already subtracted)')
-	call oblnkl(outfile)
-	if (abs(sum - pgrossmw) > 5.0D0) then
-	    write(*,*) 'WARNING: Electrical Power balance is in error by more than 5 MW.'
-	    call ocmmnt(outfile,'WARNING: Electrical Power balance is in error by more than 5 MW.')
+    call ovarrf(outfile,'Electric power for heating and current drive (MW)','(pinjwp)',pinjwp, 'OP ')
+    call ovarrf(outfile,'Electric power for primary coolant pumps (MW)','(htpmw)',htpmw, 'OP ')
+    call ovarrf(outfile,'Electric power for vacuum pumps (MW)','(vachtmw)',vachtmw)
+    call ovarrf(outfile,'Electric power for tritium plant (MW)','(trithtmw)',trithtmw)
+    call ovarrf(outfile,'Electric power for cryoplant (MW)','(crypmw)',crypmw, 'OP ')
+    call ovarrf(outfile,'Electric power for TF coils (MW)','(tfacpd)',tfacpd, 'OP ')
+    call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwp)', pfwp, 'OP ')
+    call ovarrf(outfile,'All other internal electric power requirements (MW)','(fachtmw)', fachtmw, 'OP ')
+    sum = pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwp
+    call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
+    call oblnkl(outfile)
+    call ovarrf(outfile,'Gross electrical output* (MW)','(pgrossmw)',pgrossmw, 'OP ')
+    call ocmmnt(outfile,'(*Power for pumps in secondary circuit already subtracted)')
+    call oblnkl(outfile)
+    if (abs(sum - pgrossmw) > 5.0D0) then
+       write(*,*) 'WARNING: Electrical Power balance is in error by more than 5 MW.'
+       call ocmmnt(outfile,'WARNING: Electrical Power balance is in error by more than 5 MW.')
     end if
 
-	call ocmmnt(outfile,'Power balance for power plant :')
+    call ocmmnt(outfile,'Power balance for power plant :')
     call ocmmnt(outfile,'-------------------------------')
-	call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
-	call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
-	sum = powfmw + emultmw
-	call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
-	call oblnkl(outfile)
-	call ovarrf(outfile,'Net electrical output (MW)	','(pnetelmw)',pnetelmw, 'OP ')
-	call ovarrf(outfile,'Heat rejected by main power conversion circuit (MW)','(rejected_main)',rejected_main, 'OP ')
-	call ovarrf(outfile,'Heat rejected by other cooling circuits (MW)','(psechtmw)',psechtmw, 'OP ')
-	call ovarrf(outfile,'Total (MW)','',pnetelmw + rejected_main + psechtmw, 'OP ')
+    call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
+    call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
+    sum = powfmw + emultmw
+    call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
+    call oblnkl(outfile)
+    call ovarrf(outfile,'Net electrical output (MW)	','(pnetelmw)',pnetelmw, 'OP ')
+    call ovarrf(outfile,'Heat rejected by main power conversion circuit (MW)','(rejected_main)',rejected_main, 'OP ')
+    call ovarrf(outfile,'Heat rejected by other cooling circuits (MW)','(psechtmw)',psechtmw, 'OP ')
+    call ovarrf(outfile,'Total (MW)','',pnetelmw + rejected_main + psechtmw, 'OP ')
     call oblnkl(outfile)
     if (abs(sum - (pnetelmw + rejected_main + psechtmw)) > 5.0D0) then
-	    write(*,*) 'WARNING: Power balance for power plant is in error by more than 5 MW.'
-	    call ocmmnt(outfile,'WARNING: Power balance for power plant is in error by more than 5 MW.')
+       write(*,*) 'WARNING: Power balance for power plant is in error by more than 5 MW.'
+       call ocmmnt(outfile,'WARNING: Power balance for power plant is in error by more than 5 MW.')
     end if
 
     call osubhd(outfile,'Plant efficiency measures :')

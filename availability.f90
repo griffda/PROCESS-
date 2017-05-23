@@ -121,23 +121,23 @@ contains
     ! Full power lifetime (in years) !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-       ! First wall / blanket lifetime (years)
+    ! First wall / blanket lifetime (years)
 
-       ! TODO MDK Do this calculation whatever the value of blktmodel (whatever that is)
-       ! For some reason fwlife is not always calculated, so ignore it if it is still zero.
-       if (fwlife < 0.0001D0) then
-            bktlife = min(abktflnc/wallmw, tlife)
-       else
-            bktlife = min(fwlife, abktflnc/wallmw, tlife)
-       end if
+    ! TODO MDK Do this calculation whatever the value of blktmodel (whatever that is)
+    ! For some reason fwlife is not always calculated, so ignore it if it is still zero.
+    if (fwlife < 0.0001D0) then
+        bktlife = min(abktflnc/wallmw, tlife)
+    else
+        bktlife = min(fwlife, abktflnc/wallmw, tlife)
+    end if
 
-       ! Divertor lifetime (years)
-       divlife = min(adivflnc/hldiv, tlife)
+    ! Divertor lifetime (years)
+    divlife = min(adivflnc/hldiv, tlife)
 
-       ! Centrepost lifetime (years) (ST machines only)
-       if (itart == 1) then
-          cplife = min(cpstflnc/wallmw, tlife)
-       end if
+    ! Centrepost lifetime (years) (ST machines only)
+    if (itart == 1) then
+      cplife = min(cpstflnc/wallmw, tlife)
+    end if
 
     ! Plant Availability (iavail=0,1) !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -324,7 +324,7 @@ contains
     call calc_u_unplanned_bop(outfile,iprint, u_unplanned_bop)
 
     ! Heating and current drive
-    call calc_u_unplanned_hcd(outfile,iprint, u_unplanned_hcd)
+    call calc_u_unplanned_hcd(u_unplanned_hcd)
 
     ! Vacuum systems
 
@@ -399,7 +399,6 @@ contains
     ! Local variables !
     !!!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: lb, ld, td
     real(kind(1.0D0)) :: mttr_blanket, mttr_divertor, mttr_shortest
     real(kind(1.0D0)) :: lifetime_shortest, lifetime_longest
     integer :: n
@@ -518,7 +517,6 @@ contains
     ! Local Variables !
     !!!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: m, dy, dx, c, y_i, e, lam, u_diff, t_diff, u_diff_e
     real(kind(1.0D0)) :: mag_temp_marg_limit, mag_temp_marg, mag_main_time
     real(kind(1.0D0)) :: mag_min_u_unplanned, start_of_risk, t_life
 
@@ -699,7 +697,6 @@ contains
     ! Local Variables !
     !!!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) ::  fwbs_main_time
     real(kind(1.0D0)) :: a0, fwbs_avail, n, pf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -823,7 +820,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_hcd(outfile, iprint, u_unplanned_hcd)
+  subroutine calc_u_unplanned_hcd(u_unplanned_hcd)
 
     !+ad_name  calc_u_unplanned_fwbs
     !+ad_summ  Calculates the unplanned unavailability of the heating and current drive system
@@ -849,7 +846,6 @@ contains
     ! Arguments !
     !!!!!!!!!!!!!
 
-    integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_hcd
 
     ! Local variables !
@@ -905,10 +901,10 @@ contains
     ! Local variables !
     !!!!!!!!!!!!!!!!!!!
 
-    integer :: i, j, k, total_pumps, n
-    real(kind(1.0D0)) :: cryo_failure_rate, num_redundancy_pumps, cryo_main_time
+    integer :: total_pumps, n
+    real(kind(1.0D0)) :: cryo_failure_rate, cryo_main_time
     real(kind(1.0D0)) :: cryo_nfailure_rate, t_down
-    real(kind(1.0D0)) :: pump_failures, n_shutdown, t_op_bt, sum_prob
+    real(kind(1.0D0)) :: n_shutdown, t_op_bt, sum_prob
 
     real(kind(1.0D0)), dimension(vpumpn + redun_vac + 1) :: vac_fail_p
 
