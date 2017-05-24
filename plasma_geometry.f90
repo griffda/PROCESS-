@@ -584,8 +584,6 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: xvol
-
       !  Arguments
 
       real(kind(1.0D0)), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao

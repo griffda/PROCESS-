@@ -77,23 +77,23 @@ module kit_blanket_model
 
   real(kind(1.0D0)) :: A_cov_PPCS = 1365.0D0   ! [m^2] Total blanket coverage area
   real(kind(1.0D0)) :: A_FW_PPCS = 1253.0D0    ! [m^2] First wall area
-  real(kind(1.0D0)) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
-  real(kind(1.0D0)) :: A_FW_OB_PPCS = 905.6D0  ! [m^2] OB first wall area
   real(kind(1.0D0)) :: NWL_av_PPCS = 1.94D0    ! [MW/m^2] Average neutron wall load
   real(kind(1.0D0)) :: NWL_av_IB_PPCS = 1.73D0 ! [MW/m^2] Average IB wall load
   real(kind(1.0D0)) :: NWL_av_OB_PPCS = 1.92D0 ! [MW/m^2] Average OB wall load
   real(kind(1.0D0)) :: NWL_max_IB_PPCS = 1.99D0 ! [MW/m^2] Maximum IB wall load
   real(kind(1.0D0)) :: NWL_max_OB_PPCS = 2.41D0 ! [MW/m^2] Maximum OB wall load
-  real(kind(1.0D0)) :: f_peak_PPCS = 1.21      ! [--] Neutron wall load peaking factor
   real(kind(1.0D0)) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
   real(kind(1.0D0)) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
-  character(len=13) :: breeder_PPCS = 'Orthosilicate' ! Breeder type
-
   real(kind(1.0D0)) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
   real(kind(1.0D0)) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
   real(kind(1.0D0)) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
-  real(kind(1.0D0)) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
+  
   ! not used...
+  ! real(kind(1.0D0)) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
+  ! real(kind(1.0D0)) :: A_FW_OB_PPCS = 905.6D0  ! [m^2] OB first wall area
+  ! character(len=13) :: breeder_PPCS = 'Orthosilicate' ! Breeder type
+  ! real(kind(1.0D0)) :: f_peak_PPCS = 1.21      ! [--] Neutron wall load peaking factor
+  ! real(kind(1.0D0)) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
   !real(kind(1.0D0)) :: t_HTS_IB_PPCS = 17.0D0  ! [cm] IB high temp. shield thickness
   !real(kind(1.0D0)) :: alpha_HTS_IB_PPCS = 40.0D0 ! [%] IB HTS helium fraction
   !real(kind(1.0D0)) :: t_HTS_OB_PPCS = 27.0D0  ! [cm] OB high temp. shield thickness
@@ -1189,13 +1189,6 @@ module fwbs_module
   private
   public :: fwbs, blanket_neutronics, tsat, sctfcoil_nuclear_heating_iter90
 
-  !  Local variables
-
-  real(kind(1.0D0)) :: a,g0,pf,reyd
-  real(kind(1.0D0)) :: tc,tol,tso
-  real(kind(1.0D0)) :: hle,hli,hre,hri,sle,sli,sre,sri,tre
-  integer :: ncc
-
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1277,7 +1270,7 @@ contains
 
     integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
 
-    real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
+    real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq, &
          fpsdt,frachit,hbot,hblnkt,hcryopf,hecan,hshld,htop,htheci,hvv, &
          pheci,pheco, fpydt, pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
          raddose,v1,v2,volshldi,volshldo,wpthk,zdewex,coolvol
@@ -2088,22 +2081,22 @@ contains
          '       Void fraction' ,t45,1pe10.3,/ &
          '    Penetration shield'        ,t62,1pe10.3)
 
-601 format( &
-         t32,'volume (m3)',t45,'vol fraction',t62,'weight (kg)'/ &
-         t32,'-----------',t45,'------------',t62,'-----------'/ &
-         '    Inboard blanket' ,t32,1pe10.3,/ &
-         '    Outboard blanket' ,t32,1pe10.3,/ &
-         '    Total blanket' ,t32,1pe10.3,t62,1pe10.3/ &
-         '       Void fraction' ,t45,1pe10.3,/ &
-         '       Blanket LiPb ',t45,1pe10.3,t62,1pe10.3/ &
-         '       Blanket Li   ',t45,1pe10.3,t62,1pe10.3/ &
-         '       Blanket ss   ',t45,1pe10.3,t62,1pe10.3/ &
-         '       Blanket Vd   ',t45,1pe10.3,t62,1pe10.3/ &
-         '    Inboard shield'  ,t32,1pe10.3,/ &
-         '    Outboard shield'  ,t32,1pe10.3,/ &
-         '    Primary shield',t32,1pe10.3,t62,1pe10.3/ &
-         '       Void fraction' ,t45,1pe10.3,/ &
-         '    Penetration shield'        ,t62,1pe10.3)
+! 601 format( &
+!          t32,'volume (m3)',t45,'vol fraction',t62,'weight (kg)'/ &
+!          t32,'-----------',t45,'------------',t62,'-----------'/ &
+!          '    Inboard blanket' ,t32,1pe10.3,/ &
+!          '    Outboard blanket' ,t32,1pe10.3,/ &
+!          '    Total blanket' ,t32,1pe10.3,t62,1pe10.3/ &
+!          '       Void fraction' ,t45,1pe10.3,/ &
+!          '       Blanket LiPb ',t45,1pe10.3,t62,1pe10.3/ &
+!          '       Blanket Li   ',t45,1pe10.3,t62,1pe10.3/ &
+!          '       Blanket ss   ',t45,1pe10.3,t62,1pe10.3/ &
+!          '       Blanket Vd   ',t45,1pe10.3,t62,1pe10.3/ &
+!          '    Inboard shield'  ,t32,1pe10.3,/ &
+!          '    Outboard shield'  ,t32,1pe10.3,/ &
+!          '    Primary shield',t32,1pe10.3,t62,1pe10.3/ &
+!          '       Void fraction' ,t45,1pe10.3,/ &
+!          '    Penetration shield'        ,t62,1pe10.3)
 
 602 format( &
          t32,'volume (m3)',t45,'vol fraction',t62,'weight (kg)'/ &
