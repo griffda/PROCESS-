@@ -20,7 +20,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on 11 May 2017 16:15:30 +01:00(hh:mm) UTC by freia054
+ PROCESS 1.0.10 : Run on 19 May 2017 13:09:22 +01:00(hh:mm) UTC by freia009
  Reactor concept design: Steady-state tokamak model, (c) CCFE
  "CFETR small (5.7m) reference file"
  (Please include this header in any models, presentations and papers based on these results)
@@ -438,6 +438,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beam first orbit loss power (MW)                                         (porbitlossmw)                0.000  OP 
  Beam shine-through power [MW]                                            (nbshinemw)                   0.000  OP 
  Beam power deposited in plasma (MW)                                      (pinjmw)                     89.912  OP 
+ Maximum allowable beam power (MW)                                        (pinjalw)                   100.000     
  Total (MW)                                                               (porbitlossmw+nbshin         89.912     
  
  Beam power entering vacuum vessel (MW)                                   (pnbitot)                    89.912  OP 
@@ -1342,6 +1343,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical Power Balance :
  --------------------------
  Net electric power output(MW)                                            (pnetelmw.)                -272.592  OP 
+ Required Net electric power output(MW)                                   (pnetelin)                 1000.000     
  Electric power for heating and current drive (MW)                        (pinjwp)                    299.705  OP 
  Electric power for primary coolant pumps (MW)                            (htpmw)                       0.637  OP 
  Electric power for vacuum pumps (MW)                                     (vachtmw)                     0.500     

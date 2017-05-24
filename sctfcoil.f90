@@ -69,11 +69,16 @@ real(kind(1.0D0)), private :: tf_fit_z
 !  Ratio of peak field with ripple to nominal axisymmetric peak field
 real(kind(1.0D0)), private :: tf_fit_y
 
-type(resistive_material)::copper, hastelloy, solder, jacket
-type(volume_fractions)::croco_strand, tf_cable
+type(resistive_material)::copper = resistive_material(density = 8960.0d0)
+type(resistive_material):: hastelloy = resistive_material(density = 8890.0d0)
+type(resistive_material):: solder = resistive_material(density = 8890.0d0) ! TODO
+type(resistive_material):: jacket = resistive_material(density = 7600.0d0) ! TODO
+type(resistive_material):: helium = resistive_material(density = 0.0d0) ! TODO
+type(volume_fractions)::croco_strand, croco_cable
+
 contains
 
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! --------------------------------------------------------------------------
 
 subroutine sctfcoil(outfile,iprint)
 
@@ -135,8 +140,8 @@ subroutine sctfcoil(outfile,iprint)
     !  Local variables
     !integer :: i,peaktfflag
     integer :: peaktfflag
-    real(kind(1.0D0)) :: awpc,awptf,bcylir,cplen, &
-    radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf, a, b, c, radvv, deltf
+    real(kind(1.0D0)) :: awpc,awptf,cplen, &
+    radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf, radvv, deltf
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Set the plasma-facing wall thickness if it has not been set explicitly
@@ -413,11 +418,10 @@ subroutine sctfcoil(outfile,iprint)
     !  Superconductor.
     !  Includes space allowance for central helium channel, area awphec
     whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
-    *dcond(isumattf)
+               *dcond(isumattf)
 
     !  Copper
-    whtconcu = (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) &
-    *dcopper
+    whtconcu = (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
 
     !  Steel conduit (sheath)
     whtconsh = tfleng * turnstf * acndttf * denstl
@@ -439,18 +443,18 @@ subroutine sctfcoil(outfile,iprint)
 
     if (iprint == 1) call outtf(outfile, peaktfflag)
 
-    if ((whttf<1.0d0).or.(whttf/=whttf)) then
-        write(*,*) '  whtcas = ', whtcas, ' whtcon = ', whtcon
-        write(*,*) '   tfno = ', tfno
-        write(*,*) '   whtgw = ', whtgw,  '  tfcth = ', tfcth
-        write(*,*) '  thkcas = ',thkcas,  ' casthi = ', casthi
-        write(*,*) '  casths = ',casths,  '  tfcth = ', tfcth
-        write(*,*) '  tinstf = ',tinstf,  '  tfleng = ', tfleng
-        write(*,*) 'tfinsgap = ',tfinsgap,'  turnstf = ', turnstf
-        write(*,*) 'thwcndut = ',thwcndut
-        write(*,*) 'thicndut = ',thicndut
-        write(*,*) '   cpttf = ',cpttf
-    end if
+    ! if ((whttf<1.0d0).or.(whttf/=whttf)) then
+    !     write(*,*) '  whtcas = ', whtcas, ' whtcon = ', whtcon
+    !     write(*,*) '   tfno = ', tfno
+    !     write(*,*) '   whtgw = ', whtgw,  '  tfcth = ', tfcth
+    !     write(*,*) '  thkcas = ',thkcas,  ' casthi = ', casthi
+    !     write(*,*) '  casths = ',casths,  '  tfcth = ', tfcth
+    !     write(*,*) '  tinstf = ',tinstf,  '  tfleng = ', tfleng
+    !     write(*,*) 'tfinsgap = ',tfinsgap,'  turnstf = ', turnstf
+    !     write(*,*) 'thwcndut = ',thwcndut
+    !     write(*,*) 'thicndut = ',thicndut
+    !     write(*,*) '   cpttf = ',cpttf
+    ! end if
 
 end subroutine sctfcoil
 
@@ -511,30 +515,18 @@ subroutine peak_tf_with_ripple(tfno,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
     select case (nint(tfno))
 
     case (16)
-        !a(1) =  0.32715D0
-        !a(2) =  1.9715D0
-        !a(3) = -1.2326D0
-        !a(4) =  1.1419D0
         a(1) =  0.28101D0
         a(2) =  1.8481D0
         a(3) = -0.88159D0
         a(4) =  0.93834D0
 
     case (18)
-        !a(1) =  0.33705D0
-        !a(2) =  1.9517D0
-        !a(3) = -1.1414D0
-        !a(4) =  1.0661D0
         a(1) =  0.29153D0
         a(2) =  1.81600D0
         a(3) = -0.84178D0
         a(4) =  0.90426D0
 
     case (20)
-        !a(1) =  0.30288D0
-        !a(2) =  2.0272D0
-        !a(3) = -1.1348D0
-        !a(4) =  1.0913D0
         a(1) =  0.29853D0
         a(2) =  1.82130D0
         a(3) = -0.85031D0
@@ -629,15 +621,10 @@ subroutine stresscl
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Allowable von Mises stress (Pa).  This is now a user input: alstrtf
-
-    ! alstrtf = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
-
     !  Simple stress model option
 
     if (tfc_model == 0) then
-        call sctfjalw(bmaxtfrp,rtfcin,rtot,rbmax,(1.0D-6*alstrtf), &
-        tdmptf,jwdgcrt)
+        call sctfjalw(bmaxtfrp,rtfcin,rtot,rbmax,(1.0D-6*alstrtf), tdmptf,jwdgcrt)
         return
     end if
 
@@ -651,9 +638,9 @@ subroutine stresscl
     end if
 
     !  CCFE two-layer model
-    !  Layers are labelled from inboard to outboard
+    !  Layers are labelled from inboard to outboard.
     !  The first layer is the steel casing inboard of the winding pack,
-    !  while the second layer is the winding pack itself
+    !  while the second layer is the winding pack itself.
 
     radtf(1) = rtfcin - 0.5D0*tfcth
     radtf(2) = rbmax - thkwp
@@ -665,7 +652,7 @@ subroutine stresscl
     ! inertion gap is tfinsgap on 4 sides
     t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
 
-    eyoung(2) = eyngeff(eystl,eyins,eywp,t_ins_eff,seff,thwcndut,tcbs)
+    eyoung(2) = eyngeff(eystl,eyins,t_ins_eff,thwcndut,tcbs)
 
     jeff(1) = 0.0D0
     jeff(2) = ritfc / ( pi * (radtf(3)**2 - radtf(2)**2))
@@ -708,12 +695,12 @@ subroutine stresscl
     !strtf2 = s_vmises_case
 
     !  Young's modulus and strain in vertical direction on winding pack
-    eyzwp = eyngzwp(eystl,eyins,eywp,t_ins_eff,seff,thwcndut,tcbs)
+    eyzwp = eyngzwp(eystl,eyins,eywp,t_ins_eff,thwcndut,tcbs)
     windstrain = sigvert / eyzwp
 
     !  Radial strain in insulator
     insstrain = sigrtf(2) / eyins * &
-    edoeeff(eystl,eyins,eywp,t_ins_eff,seff,thwcndut,tcbs)
+    edoeeff(eystl,eyins,t_ins_eff,thwcndut,tcbs)
 
 end subroutine stresscl
 
@@ -842,7 +829,7 @@ end subroutine two_layer_stress
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function eyngeff(estl,eins,ewp,tins,teff,tstl,tcs)
+function eyngeff(estl,eins,tins,tstl,tcs)
 
     !+ad_name  eyngeff
     !+ad_summ  Finds the effective Young's modulus of the TF coil winding pack
@@ -853,9 +840,7 @@ function eyngeff(estl,eins,ewp,tins,teff,tstl,tcs)
     !+ad_cont  N/A
     !+ad_args  estl : input real : Young's modulus of steel (Pa)
     !+ad_args  eins : input real : Young's modulus of insulator (Pa)
-    !+ad_args  ewp  : input real : Young's modulus of windings (Pa)
     !+ad_args  tins : input real : insulator wrap thickness (m)
-    !+ad_args  teff : input real : dimension of total cable with insulator (m)
     !+ad_args  tstl : input real : thickness of steel conduit (m)
     !+ad_args  tcs  : input real : dimension of cable space area inside conduit (m)
     !+ad_desc  This routine calculates the effective Young's modulus (Pa)
@@ -877,7 +862,7 @@ function eyngeff(estl,eins,ewp,tins,teff,tstl,tcs)
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,tins,teff,tstl,tcs
+    real(kind(1.0D0)), intent(in) :: estl,eins,tins,tstl,tcs
 
     !  Local variables
 
@@ -898,7 +883,7 @@ end function eyngeff
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function edoeeff(estl,eins,ewp,tins,teff,tstl,tcs)
+function edoeeff(estl,eins,tins,tstl,tcs)
 
     !+ad_name  edoeeff
     !+ad_summ  Returns ratio of E_d to E_eff in Morris
@@ -908,9 +893,7 @@ function edoeeff(estl,eins,ewp,tins,teff,tstl,tcs)
     !+ad_cont  N/A
     !+ad_args  estl : input real : Young's modulus of steel (Pa)
     !+ad_args  eins : input real : Young's modulus of insulator (Pa)
-    !+ad_args  ewp  : input real : Young's modulus of windings (Pa)
     !+ad_args  tins : input real : insulator wrap thickness (m)
-    !+ad_args  teff : input real : dimension of total cable with insulator (m)
     !+ad_args  tstl : input real : thickness of steel conduit (m)
     !+ad_args  tcs  : input real : dimension of cable space area inside conduit (m)
     !+ad_desc  This routine calculates the ratio of E_d to the effective Young's
@@ -930,7 +913,7 @@ function edoeeff(estl,eins,ewp,tins,teff,tstl,tcs)
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,tins,teff,tstl,tcs
+    real(kind(1.0D0)), intent(in) :: estl,eins,tins,tstl,tcs
 
     !  Local variables
 
@@ -954,7 +937,7 @@ end function edoeeff
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function eyngzwp(estl,eins,ewp,tins,teff,tstl,tcs)
+function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
 
     !+ad_name  eyngzwp
     !+ad_summ  Finds the vertical Young's modulus of the TF coil winding pack
@@ -966,14 +949,13 @@ function eyngzwp(estl,eins,ewp,tins,teff,tstl,tcs)
     !+ad_args  eins : input real : Young's modulus of insulator (Pa)
     !+ad_args  ewp  : input real : Young's modulus of windings (Pa)
     !+ad_args  tins : input real : insulator wrap thickness (m)
-    !+ad_args  teff : input real : dimension of total cable with insulator (m)
     !+ad_args  tstl : input real : thickness of steel conduit (m)
     !+ad_args  tcs  : input real : dimension of cable space area inside conduit (m)
     !+ad_desc  This routine calculates the vertical Young's modulus (Pa)
     !+ad_desc  of the TF coil in the winding pack section.
     !+ad_prob  None
     !+ad_call  None
-    !+ad_hist  30/04/14 PJK/JM Initial versiont
+    !+ad_hist  30/04/14 PJK/JM Initial version
     !+ad_stat  Okay
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
@@ -985,7 +967,7 @@ function eyngzwp(estl,eins,ewp,tins,teff,tstl,tcs)
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,tins,teff,tstl,tcs
+    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,tins,tstl,tcs
 
     !  Local variables
 
@@ -1519,12 +1501,9 @@ subroutine tfspcall(outfile,iprint)
 
     implicit none
 
-    !  Arguments
-
     integer, intent(in) :: outfile, iprint
 
     !  Local variables
-
     real(kind(1.0D0)) :: aturn, tfes, vdump
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1638,8 +1617,6 @@ contains
 
         implicit none
 
-        !  Arguments
-
         integer, intent(in) :: isumat, iprint, outfile
         real(kind(1.0D0)), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts
         real(kind(1.0D0)), intent(in) :: iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
@@ -1653,13 +1630,13 @@ contains
         t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot
 
         logical:: validity
-        ! real(kind(1.0D0)) :: iooic
+
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ! Rename tdmptf as it is called tdump in this routine and those called from here.
         tdump = tdmptf
 
+        ! Helium channel (not present in CroCo cable.)
         fhetot = fhe + (pi/4.0d0)*dhecoil*dhecoil/acs
-
         !  Conductor fraction (including central helium channel)
         fcond = 1.0D0 - fhetot
 
@@ -1675,7 +1652,7 @@ contains
             call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
-            icrit = jcritstr * acs * (1.0D0-fhetot)
+            icrit = jcritstr * acs * fcond
 
         case (2)  !  Bi-2212 high temperature superconductor parameterization
 
@@ -1685,13 +1662,13 @@ contains
             !  The parameterization for jcritstr assumes a particular strand
             !  composition that does not require a user-defined copper fraction,
             !  so this is irrelevant in this model
-            jstrand = jwp * aturn / (acs*(1.0D0-fhetot))
+            jstrand = jwp * aturn / (acs*fcond)
 
             call bi2212(bmax,jstrand,thelium,fhts,jcritstr,tmarg)
             jcritsc = jcritstr / (1.0D0-fcu)
             tcrit = thelium + tmarg
             !  Critical current in cable
-            icrit = jcritstr * acs * (1.0D0-fhetot)
+            icrit = jcritstr * acs * fcond
 
         case (3)  !  NbTi data
             bc20m = 15.0D0
@@ -1700,7 +1677,7 @@ contains
             call jcrit_nbti(thelium,bmax,c0,bc20m,tc0m,jcritsc,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
-            icrit = jcritstr * acs * (1.0D0-fhetot)
+            icrit = jcritstr * acs * fcond
 
         case (4)  !  ITER Nb3Sn parameterization, but user-defined parameters
             bc20m = bcritsc
@@ -1708,7 +1685,7 @@ contains
             call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
-            icrit = jcritstr * acs * (1.0D0-fhetot)
+            icrit = jcritstr * acs * fcond
 
         case (5) ! WST Nb3Sn parameterisation
             bc20m = 32.97D0
@@ -1718,13 +1695,26 @@ contains
             call wstsc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc * (1.0D0-fcu)
             !  Critical current in cable
-            icrit = jcritstr * acs * (1.0D0-fhetot)
+            icrit = jcritstr * acs * fcond
 
         case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
             call jcrit_rebco(thelium,bmax,jcritsc,validity,iprint)
-            call croco(jcritsc,croco_strand)
+            ! acs : Cable space - inside area (m2)
+            ! aturn : Area per turn (i.e. entire jacketed cable) (m2)
+            croco_cable%acs =  acs
+            croco_cable%aturn =  aturn
+
+            call croco(jcritsc,croco_strand,croco_cable)
             jcritstr = croco_strand%critical_current
-            icrit = cable_crit_current
+            icrit = croco_cable%critical_current
+            write(*,*)jcritsc
+            write(*,*)croco_strand%critical_current
+            write(*,*)croco_cable%critical_current
+            write(*,*)thelium
+            write(*,*)tmargmin
+            write(*,*)croco_cable%acs
+            write(*,*)croco_cable%aturn
+            write(*,*)
 
         case default  !  Error condition
             idiags(1) = isumat ; call report_error(105)
@@ -1785,6 +1775,14 @@ contains
                     call jcrit_rebco(ttestp,bmax,jcritp,validity,iprint)
                 end select
                 ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
+                if (ttest <= 0.0D0) then
+                    write(*,*)'Temperature margin data'
+                    write(*,*)'ttest ',ttest, 'bmax ', bmax
+                    write(*,*)'jcrit0 ', jcrit0,'jsc    ', jsc
+                    write(*,*)'ttestp ', ttestp,'ttestm ',ttestm
+                    write(*,*)'jcritp ', jcritp,'jcritm ',jcritm
+                    write(*,*)
+                endif
             end do solve_for_tmarg
             tmarg = ttest - thelium
             temp_margin = tmarg
@@ -1798,7 +1796,9 @@ contains
         case (1,2,3,4,5)
             call protect(iop,tfes,acs,aturn,tdump,fcond,fcu,thelium,tmax,jwdgpro,vd)
         case(6)
-            call croco_quench(croco_strand) ! TODO
+            croco_strand%tmax = tmax_croco
+            croco_cable%tmax = tmax_jacket
+            call croco_quench(croco_strand,croco_cable)
         end select
 
         if (iprint == 0) return
@@ -1881,8 +1881,16 @@ contains
         call ovarre(outfile,'Temperature margin (K)','(tmarg)',tmarg, 'OP ')
 
         call osubhd(outfile,'Protection Information :')
-        call ovarre(outfile,'Maximum temperature in quench (K)','(tmaxpro)', tmax)
-        call ovarre(outfile,'Maximum current density in winding pack given by quench protection (A/m2)','(jwdgpro)', jwdgpro, 'OP ')
+        select case (isumat)
+        case (1,2,3,4,5)
+            call ovarre(outfile,'Maximum temperature in quench (K)','(tmaxpro)', tmax)
+        case(6)
+            call ovarre(outfile,'Maximum temperature in quench: CroCo strand (K)','(tmax_croco)', tmax_croco)
+            call ovarre(outfile,'Maximum temperature in quench: Jacket (K)','(tmax_croco)', tmax_jacket)
+        end select
+
+        call ovarre(outfile,'Max current density in winding pack given by temperature rise in quench (A/m2)', &
+                   '(jwdgpro)', jwdgpro, 'OP ')
         call ovarre(outfile,'Quench time (s)','(tdmptf)',tdmptf)
         call ovarre(outfile,'Quench voltage (V)','(vd)',vd, 'OP ')
 
@@ -2002,59 +2010,93 @@ contains
 
     end subroutine protect
     ! --------------------------------------------------------------------
-    subroutine croco_quench(croco_strand)
+    subroutine croco_quench(croco_strand, croco_cable)
 
         !+ad_name  croco_quench
         !+ad_summ  Finds the current density limited by the maximum temperature in quench
         !+ad_type  Subroutine
-        !+ad_args  cpttf : Operating current in cable (A)
-        !+ad_args  tfes : input real : Energy stored per TF coil (J)
-        !+ad_args  acs : input real : Cable space - inside area (m2)
-        !+ad_args  aturn : input real : Area per turn (i.e.  entire cable) (m2)
-        !+ad_args  tdmptf : quench time (sec)
-        !+ad_args  fcond : input real : Fraction of cable space containing conductor
-        !+ad_args  fcu : input real : Fraction of conductor that is copper
-        !+ad_args  tba : input real : He temperature at peak field point (K)
-        !+ad_args  tmax : input real : Max conductor temperature during quench (K)
-        !+ad_args  ajwpro : output real :  Winding pack current density from temperature
-        !+ad_argc                          rise protection (A/m2)
-        !+ad_args  vtfskv :  Quench voltage (kV)
-        !+ad_desc  This routine calculates maximum conductor current density which
+        !+ad_args
         !+ad_desc  It also finds the dump voltage.
-        !+ad_desc  <P>These calculations are based on Miller's formulations.
         ! See section 2.3 of PROCESS physics paper.
 
         implicit none
-        type(volume_fractions), intent(in)::croco_strand
-        !real(kind(1.0D0)), intent(out) :: ajwpro
+        type(volume_fractions), intent(in)::croco_strand,croco_cable
+        real(kind(1.0D0)):: prefactor, jwdgpro_strand, jwdgpro_cable
 
-        real(kind(1.0D0)) :: aa,ai1,ai2,ai3,ajcp,bb,cc,dd,delta_T
-
-        !  Dump voltage
+        ! vtfskv : voltage across a TF coil during quench (kV)
+        ! PROCESS physics paper equation 24.
         vtfskv = 2.0D0 * tfes/(tdmptf*cpttf)
 
-        ! Current density limited by temperature rise during quench
-        ! Calculate integrals in a simple way to guarantee speed.
-        ! First operating temperature to 30 K
+        ! Current density limited by temperature rise during quench:
 
-        delta_T = tftmp
+        ! CROCO strands
+        !--------------
+        ! tdmptf /10.0/ : quench time for TF coil (s)
+        prefactor = 2.0d0 * croco_strand%copper_fraction / tdmptf
+        ! jwdgpro : allowable TF coil winding pack current density, for quench temperature rise protection (A/m2)
+        jwdgpro_strand = sqrt(prefactor*quench_integral(croco_strand))
 
+        ! CROCO cable with jacket
+        !------------------------
+        ! tdmptf /10.0/ : quench time for TF coil (s)
+        prefactor = 2.0d0 * croco_cable%copper_fraction / tdmptf
+        ! jwdgpro : allowable TF coil winding pack current density, for quench temperature rise protection (A/m2)
 
+        jwdgpro_cable = sqrt(prefactor*quench_integral(croco_cable))
 
-        ajcp = sqrt( aa* (bb+cc+dd) )
-        !ajwpro = ajcp*(acs/aturn)
-
+        ! The allowable TF coil winding pack current density is the lower of the
+        ! values calcualted for strands and cable, with *different maximum temperatures
+        jwdgpro = min(jwdgpro_strand,jwdgpro_cable)
 
     end subroutine croco_quench
 
 end subroutine tfspcall
 ! -------------------------------------------------------------------------
+function quench_integral(adiabatic_object)
+    implicit none
+    ! The "adiabatic_object" is the set of strands or the complete cable.
+    ! It is adiabatic in that it is assumed not to exchange heat with its surroundings
+    ! during the quench.
+    type(volume_fractions)::adiabatic_object
+    real(kind(1.0D0)) ::quench_integral
+    real(kind(1.0D0)) :: delta_T, sum, T, tmax
+    integer::i
+    ! Calculate integrals using the trapezium rule to guarantee consistency and speed.
+    ! Integral is split for speed into two parts:
+    ! Part 1: operating temperature to 50 K, Part 2: 50 to maximum temperature
+    ! tftmp /4.5/ : peak helium coolant temperature in TF coils and PF coils (K)
+    ! tmax : maximum temp rise during a quench for protection (K)
+    tmax = adiabatic_object%tmax
+    delta_T = (50.0d0 - tftmp)/10.0D0
+    sum = quench_integrand(tftmp, adiabatic_object) * delta_T /2d0
+    sum = quench_integrand(tftmp,adiabatic_object) * delta_T /2.0d0
+    do i=1,9
+        T = tftmp + i*delta_T
+        sum = sum + quench_integrand(T,adiabatic_object)*delta_T
+    end do
+    sum = sum + quench_integrand(30.0d0,adiabatic_object) * delta_T /2.0d0
+
+    delta_T = (tmax - 50.0d0)/10.0D0
+    sum = sum + quench_integrand(50.0d0,adiabatic_object) * delta_T /2.0d0
+    do i=1,9
+        T = 50.0d0 + i*delta_T
+        sum = sum + quench_integrand(T,adiabatic_object)*delta_T
+    end do
+    sum = sum + quench_integrand(tmax,adiabatic_object) * delta_T /2.0d0
+    quench_integral = sum
+
+end function quench_integral
+! -------------------------------------------------------------------------
 function quench_integrand(T, adiabatic_object)
     implicit none
     ! The "adiabatic_object" is the set of strands or the complete cable.
+    ! It is adiabatic in that it is assumed not to exchange heat with its surroundings
+    ! during the quench.
+    ! This calculates the sum of the integrands of equations 21 to 23 of Physics paper,
+    ! with the volume fractions included in each integrand.
     type(volume_fractions)::adiabatic_object
     real(kind(1.0D0)) ::T
-    real(kind(1.0D0))::term1, term2, term3, term4, quench_integrand
+    real(kind(1.0D0))::term1, term2, term3, term4, term5, quench_integrand
 
     call copper_properties2(T,bmaxtf, copper)
     call hastelloy_properties(T,hastelloy)
@@ -2063,13 +2105,16 @@ function quench_integrand(T, adiabatic_object)
     term1 = adiabatic_object%copper_fraction * copper%density * copper%cp
     term2 = adiabatic_object%hastelloy_fraction * hastelloy%density * hastelloy%cp
     term3 = adiabatic_object%solder_fraction * solder%density * solder%cp
+    ! If the adiabatic object is a cable then it will include a jacket and helium coolant.
     if(adiabatic_object%jacket_fraction>1.0D-6) then
         call jacket_properties(T,jacket)
-        term4 = adiabatic_object%jacket_fraction * solder%density * solder%cp
+        term4 = adiabatic_object%jacket_fraction * jacket%density * jacket%cp
+        call helium_properties(T,helium)
+        term5 = adiabatic_object%helium_fraction * helium%density * helium%cp
     else
-        term4=0.0D0
+        term4=0.0D0; term5=0.0d0
     endif
-    quench_integrand = (term1+term2+term3+term4) / copper%resistivity
+    quench_integrand = (term1+term2+term3+term4+term5) / copper%resistivity
 
 end function quench_integrand
 ! -------------------------------------------------------------------------

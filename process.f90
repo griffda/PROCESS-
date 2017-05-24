@@ -1708,7 +1708,7 @@ subroutine runtests
   call ovarre(nout,'Binomial coefficients C(5,4): 5', '(binomial(5,4))', binomial(5,4))
   call ovarre(nout,'Binomial coefficients C(5,5): 1', '(binomial(5,5))', binomial(5,5))
 
-  call test_rebco()
+  call test_quench()
 
   call brookscoil(nout)
 end subroutine runtests

@@ -61,17 +61,68 @@ subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
 
 end subroutine jcrit_rebco
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine test_rebco()
-    real(kind(1.0D0)) :: jcrit
+subroutine test_quench()
+    real(kind(1.0D0)) :: jcrit,ratio, res290
+    real(kind(1.0D0)) :: T, delta_t,jcrit01,jcrit1,jcrit5, jcrit12
     logical :: validity
+    type(resistive_material)::copper, jacket
+    copper%rrr = 100.0d0
+10  format(1x,a,1pe10.2,a,1pe10.2)
+20  format(1x,a,10(1pe10.3))
 
-    call jcrit_rebco(14.0d0, 15.0d0, jcrit, validity, 0)
     write(*,*)'TEST of subroutine jcrit_rebco:'
-    write(*,*)'temperature = 14 K,   Field = 15 T, validity = ', validity
-    write(*,10)'jcrit =  ', jcrit
-10  format(1x,a,1pe10.3)
-    write(*,*)'Critical current from Superpower plot (approx) =  2.5e10 A/m2'
-end subroutine test_rebco
+    call jcrit_rebco(14.0d0, 15.0d0, jcrit, validity, 0)
+    write(*,*)'Temperature = 14 K,   Field = 15 T, validity = ', validity
+    write(*,10)'jcrit                                         = ', jcrit
+    write(*,*) 'Critical current from Superpower plot (approx)=  2.5e10 A/m2'
+    write(*,*)
+
+
+    open(unit=1,file='REBCO.DAT')
+    T = 4
+    delta_t = 0.1
+    write(1,*)
+    do i=1,680
+        call jcrit_rebco(T, 0.1d0, jcrit01, validity, 0)
+        call jcrit_rebco(T, 1.0d0, jcrit1, validity, 0)
+        call jcrit_rebco(T, 5.0d0, jcrit5, validity, 0)
+        call jcrit_rebco(T, 12.0d0, jcrit12, validity, 0)
+        write(1,20)'Temperature= ',T, jcrit01,jcrit1,jcrit5, jcrit12
+        T=T+delta_t
+    end do
+    write(*,*)
+    close(unit=1)
+
+    write(*,*)'TEST of subroutine copper_properties2:'
+    call copper_properties2(290.0d0,0.0d0, copper)
+    write(*,10)'Temperature = 290 K, Field = 0 T, resistivity (ohm.m) = ', &
+               copper%resistivity, '   cp (J/(kg.K) = ', copper%cp
+    write(*,10)'Expected values approx:           resistivity (ohm.m) = ', &
+               1.5E-8,             '   cp (J/(kg.K) = ', 375.0
+    write(*,*)
+    res290 = copper%resistivity
+    call copper_properties2(4.0d0,0.0d0, copper)
+    write(*,10)'Temperature = 4 K,   Field = 0 T, resistivity (ohm.m) = ', &
+                copper%resistivity, '   cp (J/(kg.K) = ', copper%cp
+    write(*,10)'Expected values approx:           resistivity (ohm.m) = ', &
+                1.5E-10,            '   cp (J/(kg.K) = ', 0.09942
+    ratio = res290 / copper%resistivity
+    write(*,10)'Stated RRR     = ', copper%rrr
+    write(*,10)'Calculated RRR = ', ratio
+    write(*,*)
+
+    write(*,*)'TEST of subroutine jacket_properties:'
+    call jacket_properties(4.0d0, jacket)
+    write(*,10)'Temperature = 4 K,     cp (J/(kg.K) = ', jacket%cp
+    write(*,10)'Expected value approx: cp (J/(kg.K) = ', 1.849
+    write(*,*)
+
+    call jacket_properties(280.0d0, jacket)
+    write(*,10)'Temperature = 280 K,   cp (J/(kg.K) = ', jacket%cp
+    write(*,10)'Expected value approx: cp (J/(kg.K) = ', 479.1
+    write(*,*)
+
+end subroutine test_quench
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
@@ -454,7 +505,7 @@ subroutine wstsc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 end subroutine wstsc
 !--------------------------------------------------------------------------
 
-subroutine croco(jcritsc,croco_strand)
+subroutine croco(jcritsc,croco_strand,croco_cable)
 
     !+ad_name  croco
     !+ad_summ  "CroCo" (cross-conductor) strand and cable design for
@@ -462,8 +513,10 @@ subroutine croco(jcritsc,croco_strand)
     !+ad_type  Subroutine
     implicit none
     real(kind(1.0D0)), intent(in) ::jcritsc
-    type(volume_fractions)::croco_strand
+    type(volume_fractions), intent(inout)::croco_strand,croco_cable
+    real(kind(1.0D0))::strands_per_area
 
+    ! Strand properties
     tape_thickness = rebco_thickness + copper_thickness + hastelloy_thickness
     stack_thickness = sqrt(croco_id**2 - (tape_width/2.0d0)**2)
     tapes = stack_thickness / tape_thickness
@@ -473,20 +526,27 @@ subroutine croco(jcritsc,croco_strand)
     solder_area = pi / 4.0d0 * croco_id**2 - stack_thickness * tape_width
 
     rebco_area = rebco_thickness * tape_width * tapes
-    croco_area =  pi * croco_od**2
+    croco_area =  pi / 4.0d0 * croco_od**2
 
     croco_strand%copper_fraction = copper_area / croco_area
     croco_strand%hastelloy_fraction = hastelloy_area / croco_area
     croco_strand%helium_fraction = 0.0d0
     croco_strand%solder_fraction = solder_area / croco_area
-
     croco_strand%critical_current = jcritsc * rebco_area
 
-    cable_crit_current = croco_strand%critical_current * number_croco
-    cable_helium_area =  0.25d0 * croco_od**2 * number_croco
+    ! Cable properties
+    croco_cable%critical_current = croco_strand%critical_current * number_croco
+    ! Helium area is the minimum possible given that the strand is round.
+    strands_per_area = number_croco / croco_cable%aturn
+    croco_cable%helium_fraction = (1 - pi / 4.0d0) * croco_od**2 * strands_per_area
+    croco_cable%copper_fraction = copper_area * strands_per_area
+    croco_cable%hastelloy_fraction = hastelloy_area * strands_per_area
+    croco_cable%solder_fraction = solder_area * strands_per_area
+    croco_cable%jacket_fraction = copper_area * strands_per_area
 
 end subroutine croco
 !--------------------------------------------------------------------------
+
 subroutine copper_properties(T,copper)
     ! RRR=100, B=12 T
     ! Cryodata Software Package, CRYOCOMP, v 3.0, Florence, SC, 1997
@@ -558,7 +618,7 @@ subroutine copper_properties2(T,B, copper)
     ! Review of ROXIE's Material Properties Database for Quench Simulation,
     ! Author: Giulio Manfreda, December 2011
     ! https://espace.cern.ch/roxie/Documentation/Materials.pdf
-    ! Different models use different definitions for residual resisitivity ratio RRR.
+    ! Different models use different definitions for residual resistivity ratio RRR.
     ! CUDI: resistivity at 290 K / 4 K.
     ! The range of validity of this t is between 4 K and 300 K.
     implicit none
@@ -592,6 +652,7 @@ subroutine copper_properties2(T,B, copper)
     bracket = 1 / (t5/T**5 + t3/T**3 + t1/T)
     copper%resistivity = 1.d-8 * (a/copper%rrr + bracket) + mr*B
 
+    ! Specific heat
     ! NIST typical polynomial interpolation, equation 4 page 3
     logt = log10(T)
     sum = a0 + a1*logt + a2*logt**2 + a3*logt**3 + a4*logt**4 + a5*logt**5 + a6*logt**6 +a7*logt**7
@@ -607,15 +668,13 @@ subroutine hastelloy_properties(temperature,hastelloy)
     real(kind(1.0D0)) :: T
 
     T = temperature
-    if(temperature>300d0) T=300d0
+    if(temperature>300d0) T=300.0d0
 
     ! Reinhard Heller: obtained by fitting data published in :
     ! J. Lu, E. S. Choi, and H. D. Zhou,
     ! "Physical properties of Hastelloy C-276 at cryogenic temperatures,"
     ! J. Appl. Phys. 103(6) 2008 064908
 
-    hastelloy%label = 'Hastelloy with specified T'
-    hastelloy%density = 8890.0d0    ! kg/m3
 
     if(T<42.2571d0)then
         hastelloy%cp = 0.60796d0 + 0.15309d0*T - 0.00237d0*T**2 + 6.76732d-4*T**3
@@ -640,9 +699,6 @@ subroutine solder_properties(T,solder)
 
     ! Reinhard Heller: obtained by fitting data
     ! Material Database from Cryodata Software Package, CRYOCOMP, version 3.0, Florence, SC
-
-    solder%label = 'Solder with specified T'
-    ! solder%density = TODO    ! kg/m3
 
     if(T<20.0d0)then
         solder%cp = 4.88028d0 - 2.92865d0*T + 0.52736d0*T**2 - 0.01861d0*T**3 + 2.36019d-4*T**4
@@ -682,8 +738,6 @@ subroutine jacket_properties(T, jacket)
     real(kind(1.0D0)), parameter::a6 = 24.7593
     real(kind(1.0D0)), parameter::a7 = -2.239153
 
-    jacket%label = 'Jacket (stainless steel 316)'
-
     logt = log10(T)
     if(T>300) logt = log10(300d0)
     sum = a0 + a1*logt + a2*logt**2 + a3*logt**3 + a4*logt**4 + a5*logt**5 + &
@@ -691,6 +745,11 @@ subroutine jacket_properties(T, jacket)
     jacket%cp = 10**sum
 
 end subroutine jacket_properties
-
+! ----------------------------------------------------------------------------
+subroutine helium_properties(T,helium)
+    real(kind(1.0D0)), intent(in) :: T   ! temperature
+    type(resistive_material)::helium
+    helium%cp = 0.0d0
+end subroutine helium_properties
 
 end module superconductors

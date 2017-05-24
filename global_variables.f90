@@ -2193,6 +2193,12 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tmargtf = 0.0D0
   !+ad_vars  tmaxpro /150.0/ : maximum temp rise during a quench for protection (K)
   real(kind(1.0D0)) :: tmaxpro = 150.0D0
+
+  !+ad_vars  tmax_croco /200.0/ : CroCo strand: maximum temp rise during a quench (K)
+  real(kind(1.0D0)) :: tmax_croco = 200.0D0
+  !+ad_vars  tmax_jacket /150.0/ : Jacket: maximum temp rise during a quench (K)
+  real(kind(1.0D0)) :: tmax_jacket = 150.0D0
+
   !+ad_vars  tmpcry /4.5/ : coil temperature for cryogenic plant power calculation (K)
   real(kind(1.0D0)) :: tmpcry = 4.5D0
   !+ad_vars  turnstf : number of turns per TF coil
@@ -4162,11 +4168,11 @@ module rebco_variables
       implicit none ! ---------------------------------------------------------
 
       type resistive_material
-          character(len=80) :: label        ! Description
-          real(kind(1.0D0)) :: cp           ! Specific heat capacity J/(K kg).
-          real(kind(1.0D0)) :: rrr          ! Residual resistivity ratio
-          real(kind(1.0D0)) :: resistivity  ! ohm.m
-          real(kind(1.0D0)) :: density = 8960  ! kg/m3
+          character(len=80) :: label = ''           ! Description
+          real(kind(1.0D0)) :: cp = 0.0d0           ! Specific heat capacity J/(K kg).
+          real(kind(1.0D0)) :: rrr = 0.0d0          ! Residual resistivity ratio
+          real(kind(1.0D0)) :: resistivity = 0.0d0  ! ohm.m
+          real(kind(1.0D0)) :: density = 0.0d0      ! kg/m3
       end type
 
       type volume_fractions
@@ -4176,5 +4182,8 @@ module rebco_variables
           real(kind(1.0D0)) :: solder_fraction=0.0d0
           real(kind(1.0D0)) :: jacket_fraction=0.0d0
           real(kind(1.0D0)) :: critical_current=0.0d0
+          real(kind(1.0D0)) :: acs=0.0d0          ! cable width (m)
+          real(kind(1.0D0)) :: aturn=0.0d0          ! cable width (m)
+          real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
       end type
   end module resistive_materials
