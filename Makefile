@@ -54,9 +54,109 @@
 #
 ###############################################################
 
-SRC = $(wildcard *.f90 *.f)
-SRC := $(filter-out autodoc.f90, $(SRC))
-OBJ = $(SRC:.f90=.o)
+SRC = \
+ availability.f90 \
+ buildings.f90 \
+ caller.f90 \
+ commons.for \
+ comtrn.for \
+ costs.f90 \
+ costs_2015.f90 \
+ constraint_equations.f90 \
+ current_drive.f90 \
+ divertor.f90 \
+ divertor_ode.f90 \
+ error_handling.f90 \
+ evaluators.f90 \
+ fispact.f90 \
+ fson_library.f90 \
+ fw.f90 \
+ global_variables.f90 \
+ hcll.f90 \
+ hcpb.f90 \
+ impurity_radiation.f90 \
+ initial.f90 \
+ input.f90 \
+ iteration_variables.f90 \
+ machine_build.f90 \
+ maths_library.f90 \
+ numerics.f90 \
+ ode.f90 \
+ output.f90 \
+ pfcoil.f90 \
+ physics.f90 \
+ plant_power.f90 \
+ plasma_geometry.f90 \
+ plasma_profiles.f90 \
+ process.f90 \
+ pulse.f90 \
+ read_radiation.f90 \
+ read_and_get_atomic_data.f90 \
+ refprop.f \
+ refprop_interface.f90 \
+ safety.f90 \
+ scan.f90 \
+ sctfcoil.f90 \
+ startup.f90 \
+ stellarator.f90 \
+ stellarator_fwbs.f90 \
+ structure.f90 \
+ superconductors.f90 \
+ tfcoil.f90 \
+ vacuum.f90
+
+OBJ = \
+ availability.o \
+ buildings.o \
+ caller.o \
+ constraint_equations.o \
+ costs.o \
+ costs_2015.o \
+ current_drive.o \
+ divertor.o \
+ divertor_ode.o \
+ error_handling.o \
+ evaluators.o \
+ fispact.o \
+ fson_library.o \
+ fw.o \
+ global_variables.o \
+ hcll.o \
+ hcpb.o \
+ impurity_radiation.o \
+ initial.o \
+ input.o \
+ iteration_variables.o \
+ machine_build.o \
+ maths_library.o \
+ numerics.o \
+ ode.o \
+ output.o \
+ pfcoil.o \
+ physics.o \
+ plant_power.o \
+ plasma_geometry.o \
+ plasma_profiles.o \
+ process.o \
+ pulse.o \
+ read_radiation.o \
+ read_and_get_atomic_data.o \
+ refprop.o \
+ refprop_interface.o \
+ safety.o \
+ scan.o \
+ sctfcoil.o \
+ startup.o \
+ stellarator.o \
+ stellarator_fwbs.o \
+ structure.o \
+ superconductors.o \
+ tfcoil.o \
+ vacuum.o
+
+# SRC = $(wildcard *.f90 *.f)
+# SRC := $(filter-out autodoc.f90, $(SRC))
+# OBJ = $(SRC:.f90=.o)
 
 ###### OS specifics #######
 
@@ -153,7 +253,7 @@ refprop.o:
 	${FORTRAN} ${FFLAGS_LIB} -c refprop.f -o refprop.o
 refprop_interface.o: error_handling.o refprop.o
 safety.o: global_variables.o output.o
-scan.o: error_handling.o global_variables.o numerics.o output.o
+scan.o: error_handling.o global_variables.o impurity_radiation.o numerics.o output.o
 sctfcoil.o: error_handling.o global_variables.o maths_library.o output.o superconductors.o
 startup.o: global_variables.o maths_library.o output.o physics.o
 stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \
