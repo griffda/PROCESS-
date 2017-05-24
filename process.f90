@@ -95,7 +95,11 @@ program process
      call get_command_argument(1, fileprefix)
   end if
 
-  inFile = trim(fileprefix)//"IN.DAT"
+  if (trim(fileprefix) == "") then
+    inFile = "IN.DAT"
+  else
+    inFile = trim(fileprefix)
+  end if
   outFile = trim(fileprefix)//"OUT.DAT"
   inquire(file = inFile, exist = inExist)
 
@@ -228,7 +232,13 @@ subroutine init
   call initial
 
   !  Open the input/output external files
-  open(unit=nin,file=trim(fileprefix)//'IN.DAT',status='old')
+  if (trim(fileprefix) == "") then
+    open(unit=nin,file="IN.DAT",status='old')
+  else
+    open(unit=nin,file=trim(fileprefix),status='old')
+  end if
+  ! open(unit=nin,file=trim(fileprefix)//'IN.DAT',status='old')
+  
   open(unit=nout,file=trim(fileprefix)//'OUT.DAT',status='unknown')
   open(unit=nplot,file=trim(fileprefix)//'PLOT.DAT',status='unknown')
   open(unit=mfile,file=trim(fileprefix)//'MFILE.DAT',status='unknown')

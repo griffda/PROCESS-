@@ -2,9 +2,6 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Version 1.0.5
-#
-#  P J Knight
 #  J Morris
 #
 #  Culham Centre for Fusion Energy
@@ -20,16 +17,9 @@
 #
 #  Type 'make' to compile the code.
 #
-#  Change the machine architecture from the default (FUN) using 'make ARCH=...'
-#    (see the list of available architectures below)
-#
-#  Turn on full debugging using 'make ARCH=... DEBUG=YES'
-#    (currently this is turned on by default)
+#  Type 'make debug' to compile the code with extra compilation flags.
 #
 #  Type 'make clean' to clean up the directory to allow a full Fortran recompilation
-#
-#  Type 'make cleandoc' to remove all html files and the intermediate files used
-#    to build the PROCESS User Guide, so that they can be recreated using 'make doc'
 #
 #  Type 'make html' to produce web-compatible html files from the autodoc
 #    comments embedded in the source code
@@ -62,114 +52,13 @@
 #
 #  Type 'make win_clean' to clean up the directory to allow a full Fortran recompilation on Windows
 #
-################# Start of Custom Section #####################
+###############################################################
 
-source = \
- availability.f90 \
- buildings.f90 \
- caller.f90 \
- commons.for \
- comtrn.for \
- costs.f90 \
- costs_2015.f90 \
- constraint_equations.f90 \
- current_drive.f90 \
- divertor.f90 \
- divertor_ode.f90 \
- error_handling.f90 \
- evaluators.f90 \
- fispact.f90 \
- fson_library.f90 \
- fw.f90 \
- global_variables.f90 \
- hcll.f90 \
- hcpb.f90 \
- impurity_radiation.f90 \
- initial.f90 \
- input.f90 \
- iteration_variables.f90 \
- machine_build.f90 \
- maths_library.f90 \
- numerics.f90 \
- ode.f90 \
- output.f90 \
- pfcoil.f90 \
- physics.f90 \
- plant_power.f90 \
- plasma_geometry.f90 \
- plasma_profiles.f90 \
- process.f90 \
- pulse.f90 \
- read_radiation.f90 \
- read_and_get_atomic_data.f90 \
- refprop.f \
- refprop_interface.f90 \
- safety.f90 \
- scan.f90 \
- sctfcoil.f90 \
- startup.f90 \
- stellarator.f90 \
- stellarator_fwbs.f90 \
- structure.f90 \
- superconductors.f90 \
- tfcoil.f90 \
- vacuum.f90
+SRC = $(wildcard *.f90 *.f)
+SRC := $(filter-out autodoc.f90, $(SRC))
+OBJ = $(SRC:.f90=.o)
 
-object = \
- availability.o \
- buildings.o \
- caller.o \
- constraint_equations.o \
- costs.o \
- costs_2015.o \
- current_drive.o \
- divertor.o \
- divertor_ode.o \
- error_handling.o \
- evaluators.o \
- fispact.o \
- fson_library.o \
- fw.o \
- global_variables.o \
- hcll.o \
- hcpb.o \
- impurity_radiation.o \
- initial.o \
- input.o \
- iteration_variables.o \
- machine_build.o \
- maths_library.o \
- numerics.o \
- ode.o \
- output.o \
- pfcoil.o \
- physics.o \
- plant_power.o \
- plasma_geometry.o \
- plasma_profiles.o \
- process.o \
- pulse.o \
- read_radiation.o \
- read_and_get_atomic_data.o \
- refprop.o \
- refprop_interface.o \
- safety.o \
- scan.o \
- sctfcoil.o \
- startup.o \
- stellarator.o \
- stellarator_fwbs.o \
- structure.o \
- superconductors.o \
- tfcoil.o \
- vacuum.o
-
-###### Architecture specifics #######
-#
-# Default = FUN (Fusion Unix Network)
-# Alternatives: FUN, JAC, GFORT
-ARCH = GFORT
-DEBUG = YES
+###### OS specifics #######
 
 ifeq ($(OS),Windows_NT)
 	MYROOT_1 = echo character(len=*), parameter :: ROOTDIR = "%cd%" > root.dir
@@ -183,51 +72,16 @@ else
 	MYTAG_1 = echo "  character(len=*), parameter :: tagno = '"`git describe`"'" > tag.num
 endif
 
-###### Fusion Unix Network - Intel Fortran
+###########################
 
-FORTRAN_FUN = ifort
-FFLAGS_FUN = -cpp
-FFLAGS_ALT_FUN = ${FFLAGS_FUN}
-LFLAGS_FUN = ${LDFLAGS}
-LIBS_FUN   =
-ifeq (${DEBUG},YES)
-	FFLAGS_FUN = -cpp -g -check bounds -check pointers -check uninit -traceback
+FORTRAN = gfortran
+FFLAGS = -cpp -g -fbounds-check -fbacktrace -Wconversion
+FFLAGS_ALT = -cpp -std=legacy
+FFLAGS_LIB = -cpp -g -fbounds-check -fbacktrace
+
+ifeq ($(MAKECMDGOALS),debug)
+	override FFLAGS += -Wall -Wextra
 endif
-
-###### JET Analysis Cluster - pgf95
-
-FORTRAN_JAC = pgf95
-FFLAGS_JAC = -Mpreprocess
-FFLAGS_ALT_JAC = ${FFLAGS_JAC}
-LFLAGS_JAC =
-LIBS_JAC   =
-ifeq (${DEBUG},YES)
-	FFLAGS_JAC = -Mpreprocess -g -C -Mchkptr -traceback
-endif
-
-###### gfortran
-
-FORTRAN_GFORT = gfortran
-FFLAGS_GFORT = -cpp
-FFLAGS_ALT_GFORT = ${FFLAGS_GFORT} -std=legacy
-FFLAGS_LIB_GFORT = -cpp -g -fbounds-check -fbacktrace
-LFLAGS_GFORT =
-LIBS_GFORT   =
-ifeq (${DEBUG},YES)
-	FFLAGS_GFORT = -cpp -g -fbounds-check -fbacktrace -Wconversion
-endif
-
-################### End of Custom Section #####################
-#
-# Leave this bit alone...
-#
-
-FORTRAN = ${FORTRAN_${ARCH}}
-FFLAGS = ${FFLAGS_${ARCH}}
-FFLAGS_ALT = ${FFLAGS_ALT_${ARCH}}
-FFLAGS_LIB = ${FFLAGS_LIB_${ARCH}}
-LFLAGS = ${LFLAGS_${ARCH}}
-LIBS   = ${LIBS_${ARCH}}
 
 .SUFFIXES:
 .SUFFIXES: .f .f90 .mod .o
@@ -243,27 +97,27 @@ LIBS   = ${LIBS_${ARCH}}
 .f90.mod:
 	${FORTRAN} ${FFLAGS} -c $*.f90
 
+# default option
 default: process.exe
-# object dependencies (usually via modules or header files)
-#fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o \
-#  maths_library.o
-#stellarator_fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o \
-#  maths_library.o
 
-availability.o: global_variables.o output.o maths_library.o
+# add additional compiler flags
+debug: process.exe
+
+# object dependencies (usually via modules or header files)
+availability.o: global_variables.o maths_library.o output.o
 buildings.o: global_variables.o output.o
 caller.o: availability.o buildings.o costs.o costs_2015.o current_drive.o divertor.o divertor_ode.o \
   global_variables.o hcll.o hcpb.o machine_build.o numerics.o output.o pfcoil.o physics.o \
   plant_power.o plasma_geometry.o pulse.o sctfcoil.o startup.o structure.o \
   stellarator.o tfcoil.o vacuum.o
 constraint_equations.o: error_handling.o global_variables.o numerics.o
-costs.o: error_handling.o global_variables.o output.o
-costs_2015.o: error_handling.o global_variables.o output.o hcpb.o
+costs.o: buildings.o error_handling.o global_variables.o output.o
+costs_2015.o: error_handling.o global_variables.o hcpb.o output.o
 current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
 divertor.o: error_handling.o global_variables.o output.o
-divertor_ode.o:read_and_get_atomic_data.o impurity_radiation.o read_radiation.o input.o ode.o
-error_handling.o: output.o fson_library.o root.dir
-evaluators.o: error_handling.o global_variables.o numerics.o output.o
+divertor_ode.o: input.o impurity_radiation.o ode.o read_and_get_atomic_data.o read_radiation.o
+error_handling.o: fson_library.o output.o root.dir
+evaluators.o: constraint_equations.o error_handling.o global_variables.o numerics.o output.o
 fispact.o: global_variables.o output.o
 	${FORTRAN} ${FFLAGS_ALT} -c fispact.f90 -o fispact.o
 fson_library.o:
@@ -272,7 +126,7 @@ fw.o : global_variables.o output.o refprop_interface.o
 global_variables.o:
 hcll.o : fw.o global_variables.o output.o
 hcpb.o : fw.o global_variables.o output.o maths_library.o refprop_interface.o
-impurity_radiation.o: error_handling.o global_variables.o root.dir
+impurity_radiation.o: error_handling.o global_variables.o root.dir plasma_profiles.o
 initial.o: error_handling.o global_variables.o output.o scan.o stellarator.o
 input.o: error_handling.o global_variables.o numerics.o output.o scan.o
 iteration_variables.o: error_handling.o global_variables.o numerics.o
@@ -291,10 +145,10 @@ process.o: availability.o buildings.o constraint_equations.o costs.o current_dri
   divertor.o divertor_ode.o error_handling.o evaluators.o global_variables.o hcll.o hcpb.o \
   impurity_radiation.o input.o machine_build.o maths_library.o numerics.o output.o \
   pfcoil.o physics.o plant_power.o pulse.o scan.o sctfcoil.o startup.o \
-  stellarator.o structure.o superconductors.o tfcoil.o vacuum.o tag.num
+  stellarator.o structure.o superconductors.o tag.num tfcoil.o vacuum.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
 read_and_get_atomic_data.o: maths_library.o read_radiation.o
-read_radiation.o: maths_library.o impurity_radiation.o
+read_radiation.o: impurity_radiation.o maths_library.o
 refprop.o:
 	${FORTRAN} ${FFLAGS_LIB} -c refprop.f -o refprop.o
 refprop_interface.o: error_handling.o refprop.o
@@ -305,15 +159,15 @@ startup.o: global_variables.o maths_library.o output.o physics.o
 stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \
   stellarator_fwbs.o global_variables.o maths_library.o numerics.o output.o physics.o plant_power.o \
   plasma_geometry.o plasma_profiles.o scan.o sctfcoil.o structure.o vacuum.o
-stellarator_fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o \
-  maths_library.o
+stellarator_fwbs.o: machine_build.o global_variables.o maths_library.o output.o \
+  plasma_geometry.o refprop_interface.o
 structure.o: global_variables.o output.o
-superconductors.o: global_variables.o output.o
+superconductors.o: global_variables.o output.o error_handling.o
 tfcoil.o: error_handling.o global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: error_handling.o global_variables.o output.o
 
-process.exe: $(object)
-	$(FORTRAN) $(LFLAGS) -o $@ $(object) $(LIBS)
+process.exe: $(OBJ)
+	$(FORTRAN) -o $@ $(OBJ)
 
 root.dir:
 	${MYROOT_1}
@@ -324,11 +178,9 @@ tag.num:
 	${MYTAG_1}
 
 ### Utilities #################
-
 .PHONY: clean cleandoc tar archive doc userguide html dicts
 
 # Clean up directory, to force full recompilation
-
 clean:
 	rm -f process.exe *.o *.mod
 	rm -f root.dir
@@ -356,7 +208,6 @@ cleandoc:
 # Make a tar distribution of the source and other critical files
 # from the current directory
 # (excludes input files IN.DAT, device.dat)
-
 otherfiles = Makefile vardes.html \
              *.tex *.eps process.pdf \
              autodoc.f90 adheader.src adfooter.src \
@@ -367,26 +218,24 @@ otherfiles = Makefile vardes.html \
 
 tar:
 	rm -f process.tar process.tar.gz
-	tar cvf process.tar $(source) $(otherfiles)
+	tar cvf process.tar $(SRC) $(otherfiles)
 	gzip process.tar
 
 # Make a tar archive of the source, input and output files
 # from the latest run in the current directory
-
 iofiles = IN.DAT OUT.DAT PLOT.DAT MFILE.DAT device.dat
 
 archive:
 	rm -f process_run.tar process_run.tar.gz
-	tar cvf process_run.tar $(source) $(iofiles) $(otherfiles)
+	tar cvf process_run.tar $(SRC) $(iofiles) $(otherfiles)
 	gzip process_run.tar
 
 # Documentation
-
 autodoc: autodoc.f90
 	$(FORTRAN) -o autodoc autodoc.f90
 
 html: autodoc
-	@ cat $(source) | ./autodoc
+	@ cat $(SRC) | ./autodoc
 	@ mkdir -p documentation/html
 	@ mv *.html documentation/html
 
@@ -399,7 +248,7 @@ userguide: documentation/process.tex
 doc: html userguide
 
 win_doc: autodoc
-	@ type $(source) | autodoc
+	@ type $(SRC) | autodoc
 	@ rmdir /q /s documentation\html
 	@ mkdir documentation\html
 	@ copy *.html documentation\html
