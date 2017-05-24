@@ -581,7 +581,8 @@ contains
     real(kind(1.0D0)), dimension(ngc2) :: albusa,pfbusr,cktr, &
          powpfii,vpfi,psmva,pfcr,rcktvm,rcktpm
     real(kind(1.0D0)) :: pfbusl,powpfr,cptburn,delktim,powpfi, &
-         powpfr2,ensxpf,engx,vpfij,engxpc
+         powpfr2,ensxpf,engx,vpfij
+        !  engxpc
     real(kind(1.0D0)), save :: pfbuspwr
     real(kind(1.0D0)), dimension(6) :: inductxcurrent,poloidalenergy
     integer :: i,ic,ngrpt,ig,ipf,jjpf,jjpf2,jpf,time
@@ -1049,7 +1050,7 @@ contains
     if ((itfsup /= 1).and.(ipfres == 1)) then  !  no superconducting coils
        helpow = 0.0D0
     else
-       call cryo(itfsup, ipfres, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, tfno, helpow)
+       call cryo(itfsup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, tfno, helpow)
     end if
 
     !  Use 13% of ideal Carnot efficiency to fit J. Miller estimate
@@ -1117,16 +1118,16 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: cirpowfr, primsum, pinj, secsum, othermw, rejected_main, sum
+    real(kind(1.0D0)) :: cirpowfr, primsum, pinj, secsum, rejected_main, sum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Centrepost coolant pump power (ST)
     if (itart == 1) then
-		ppumpmw = 1.0D-6 * ppump
-	else
-		ppumpmw = 0.0D0
-	end if
+        ppumpmw = 1.0D-6 * ppump
+    else
+        ppumpmw = 0.0D0
+    end if
 
     !  Facility heat removal (fcsht calculated in ACPOW)
     fachtmw = fcsht
@@ -1254,14 +1255,14 @@ contains
             call ocmmnt(outfile,'Power conversion cycle efficiency model: '// &
                 'efficiency set according to blanket type (div power to secondary)')
         else if (secondary_cycle == 1) then
-			call ocmmnt(outfile,'Power conversion cycle efficiency model: '// &
+            call ocmmnt(outfile,'Power conversion cycle efficiency model: '// &
                 'efficiency set according to blanket type (div power to primary)')
             call ovarrf(outfile, 'Thermal to electric conversion efficiency of the power conversion cycle', &
-			    '(etath)', etath)
+             '(etath)', etath)
         else if (secondary_cycle == 2) then
             call ocmmnt(outfile,'Power conversion cycle efficiency model: user-defined efficiency')
             call ovarrf(outfile, 'Thermal to electric conversion efficiency of the power conversion cycle', &
-			    '(etath)', etath)
+             '(etath)', etath)
         else if (secondary_cycle == 3) then
             call ocmmnt(outfile,'Power conversion cycle efficiency model: steam Rankine cycle')
         else
@@ -1719,7 +1720,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cryo(itfsup, ipfres, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, tfno, helpow)
+  subroutine cryo(itfsup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, tfno, helpow)
 
     !+ad_name  cryo
     !+ad_summ  Calculates cryogenic loads
@@ -1728,7 +1729,6 @@ contains
     !+ad_cont  N/A
     !+ad_args  itfsup : input integer : Switch denoting whether TF coils are
     !+ad_argc                           superconducting
-    !+ad_args  ipfres : input integer : Switch denoting whether PF coils are resistive
     !+ad_args  tfsai : input real : Inboard TF coil surface area (m2)
     !+ad_args  coldmass : input real : Mass of cold (cryogenic) components (kg),
     !+ad_argc                          including TF coils, PF coils, cryostat, and
@@ -1753,7 +1753,7 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: itfsup,ipfres
+    integer, intent(in) :: itfsup
     real(kind(1.0D0)), intent(in) :: coldmass,cpttf,ensxpfm,ptfnuc,tfno, &
          tfsai,tpulse
     real(kind(1.0D0)), intent(out) :: helpow
@@ -1833,42 +1833,42 @@ contains
     !  Etath from reference. Div power not to primary
     if (secondary_cycle == 0) then
 
-	   !  CCFE HCPB Model (with or without TBR)
-	   if ((iblanket == 1).or.(iblanket == 3)) then
-		  !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
+       !  CCFE HCPB Model (with or without TBR)
+       if ((iblanket == 1).or.(iblanket == 3)) then
+          !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
           etath = 0.411D0
 
        !  KIT HCPB model
-	   else if (iblanket == 2) then
-		  !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
+       else if (iblanket == 2) then
+          !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
           etath = 0.411D0
        else
           write(*,*) 'iblanket does not have a value in range 1-3.'
        end if
 
-	!  Etath from reference. Div power to primary
+    !  Etath from reference. Div power to primary
     else if (secondary_cycle == 1) then
 
-		!  CCFE HCPB Model (with or without TBR)
-	   if ((iblanket == 1).or.(iblanket == 3)) then
-		  !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
+        !  CCFE HCPB Model (with or without TBR)
+        if ((iblanket == 1).or.(iblanket == 3)) then
+          !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
           etath = 0.411D0 - delta_eta
 
         !  KIT HCPB model
         else if (iblanket == 2) then
-			etath = 0.411D0 - delta_eta
-		else
+          etath = 0.411D0 - delta_eta
+        else
           write(*,*) 'iblanket does not have a value in range 1-3.'
-		end if
+        end if
 
-	!  User input used, etath not changed
+    !  User input used, etath not changed
     else if (secondary_cycle == 2) then
        ! Do nothing
 
     !  Steam Rankine cycle to be used
     else if (secondary_cycle == 3) then
 
-		!  CCFE HCPB Model (with or without TBR)
+        !  CCFE HCPB Model (with or without TBR)
         if ((iblanket == 1).or.(iblanket == 3)) then
           !  If coolant is helium, the steam cycle is assumed to be superheated
           !  and a different correlation is used. The turbine inlet temperature
@@ -1887,7 +1887,7 @@ contains
 
        !  KIT HCPB Model
        else if (iblanket == 2) then
-		  !  Same as iblanket = 1
+          !  Same as iblanket = 1
           tturb = outlet_temp - 20.0D0
           if ((tturb < 657.0D0).or.(tturb > 915.0D0)) then
              idiags(1) = 2 ; fdiags(1) = tturb

@@ -228,7 +228,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
-         pht,pinj,sbar,sigvdt,zimp,zion
+         pinj,sbar,sigvdt,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1072,7 +1072,7 @@ end function t_eped_scaling
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      if (j /= nr)	then
+      if (j /= nr)  then
          beta_poloidal_local = 1.6D-4*pi * (ne(j+1)+ne(j)) * (tempe(j+1)+tempe(j))
       else
          beta_poloidal_local = 6.4D-4*pi * ne(j)*tempe(j)
@@ -1123,7 +1123,7 @@ end function t_eped_scaling
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      if (j /= nr)	then
+      if (j /= nr)  then
          beta_poloidal_local_total = 1.6D-4*pi * ( &
               ( (ne(j+1)+ne(j)) * (tempe(j+1)+tempe(j)) ) + &
               ( (ni(j+1)+ni(j)) * (tempi(j+1)+tempi(j)) ) )
@@ -1611,7 +1611,7 @@ end function t_eped_scaling
 
       integer, parameter :: ASTRA=1, SAUTER2002=2, SAUTER2013=3
 
-      real(kind(1.0D0)) :: eps,epseff,g,h,s,zz
+      real(kind(1.0D0)) :: eps,epseff,g,s,zz
 
       integer :: fit = ASTRA
 
@@ -1877,8 +1877,8 @@ end function t_eped_scaling
 
         fq = (1.0d0 + 1.2d0*(kappa - 1.0d0) + 0.56d0*(kappa-1.0d0)**2) * &
              (1.0d0 + 0.09d0 * triang + 0.16d0 * triang**2) * &
-	     (1.0d0 + 0.45d0 * triang * eps)/(1.0d0 - 0.74d0 * eps) * &
-	     (1.0d0 + 0.55d0 * (w07 - 1.0d0))
+       (1.0d0 + 0.45d0 * triang * eps)/(1.0d0 - 0.74d0 * eps) * &
+       (1.0d0 + 0.55d0 * (w07 - 1.0d0))
 
     case default
        idiags(1) = icurr ; call report_error(77)
@@ -2151,7 +2151,7 @@ end function t_eped_scaling
 
     !  Local variables
 
-    real(kind(1.0D0)) :: c1,c2,d1,d2,eps,e1,e2,f1,f2,ff1,ff2,g,h1,h2,y1,y2
+    real(kind(1.0D0)) :: c1,c2,d1,d2,eps,f1,f2,ff1,ff2,g,h1,h2,y1,y2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2864,7 +2864,7 @@ end function t_eped_scaling
     integer, parameter :: DT=1, DHE3=2, DD1=3, DD2=4
     integer :: ireaction,nofun
     real(kind(1.0D0)) :: alow,arate,bhigh,epsq8,errest,etot,flag, &
-         fpow,frate,ft,rint,tn,pa,pc,pn,prate,sigmav
+         fpow,frate,pa,pc,pn,prate,sigmav
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3209,7 +3209,7 @@ end function t_eped_scaling
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (t == 0.0D0) then
+    if  (t == 0.0D0) then
        bosch_hale = 0.0D0
        return
     end if
@@ -4094,9 +4094,9 @@ end function t_eped_scaling
     !  Number of alphas / alpha production rate
 
     if (alpharate /= 0.0D0) then
-       taup = dnalp / alpharate
+      taup = dnalp / alpharate
     else  !  only likely if DD is only active fusion reaction
-       taup = 0.0D0
+      taup = 0.0D0
     end if
 
     !  Fractional burnup
@@ -4283,7 +4283,7 @@ end function t_eped_scaling
     !  Local variables
 
     real(kind(1.0D0)) :: den20,fbc,fbhe,fbo,pbremdt,pbremz,pc,phe, &
-         phighz,po,radexp,t10,vr,xfact
+         phighz,po,radexp,t10,vr
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4709,7 +4709,7 @@ end function t_eped_scaling
     integer :: iisc
     real(kind(1.0D0)), parameter :: d1 = 1.0D0
     real(kind(1.0D0)) :: powerhtz, ptrez, ptriz, &
-         taueez, taueezz, taueffz, taueiz
+         taueez, taueffz, taueiz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4829,7 +4829,7 @@ end function t_eped_scaling
 
     !  Local variables
 
-    real(kind(1.0D0)) :: powerhtz,ptrez,ptriz,taueez,taueezz,taueiz,taueffz
+    real(kind(1.0D0)) :: powerhtz,ptrez,ptriz,taueezz,taueiz,taueffz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5330,7 +5330,7 @@ end function t_eped_scaling
 
       !  Local variables
 
-      real(kind(1.0D0)) :: a1,a2,a3,a4,a5,ans,atmd,ebm,t1,t2
+      real(kind(1.0D0)) :: a1,a2,a3,a4,a5,atmd,ebm,t1,t2
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5449,7 +5449,8 @@ end function t_eped_scaling
 
     !  Local variables
 
-    real(kind(1.0D0)) :: betath,pinj
+    real(kind(1.0D0)) :: betath
+    ! pinj
     integer :: imp
     character(len=30) :: tauelaw
     character(len=30) :: str1,str2

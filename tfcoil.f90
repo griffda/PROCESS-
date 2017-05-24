@@ -243,7 +243,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: extra,ltfleg,rmid,rtop,tdump,ztop
+    real(kind(1.0D0)) :: extra,ltfleg,rmid,rtop,ztop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
