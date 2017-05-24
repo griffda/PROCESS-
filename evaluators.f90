@@ -164,7 +164,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: fbac,ffor,summ,sqsumconfsq
+    real(kind(1.0D0)) :: summ,sqsumconfsq
     logical :: first_call = .true.
     integer :: ii, loop
 

@@ -221,7 +221,6 @@ subroutine init
 
   !  Local variables
   integer :: i
-  character(len=120) :: executable
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -332,7 +331,7 @@ subroutine inform(progid)
   !  Local variables
 !  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
-  character(len=120) :: executable
+  character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
        '1.0.10   Release Date :: 2017-04-27'
   character(len = 50) :: dt_time
@@ -428,15 +427,13 @@ subroutine run_summary
   integer, parameter :: width = 110
   integer :: lap, ii, outfile
   character(len = 110) :: progid(0:10)  !, dimension(0:10)
-  character(len = 7)   :: vstring
+  character(len = 9)   :: vstring
   character(len = 8)   :: date
   character(len = 10)  :: time
   character(len = 12)  :: dstring
   character(len = 7)   :: tstring
   character(len = 10)  :: ustring
   character(len = 100) :: rstring
-  integer :: version
-
   include "tag.num"
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1654,7 +1651,7 @@ subroutine output(outfile)
      call kit_hcpb(nout, 1)
   else if (iblanket == 3) then      ! CCFE HCPB model with Tritium Breeding Ratio calculation
      call ccfe_hcpb(nout, 1)
-	   call tbr_shimwell(nout, 1, breeder_f, li6enrich, iblanket_thickness, tbr)
+     call tbr_shimwell(nout, 1, breeder_f, li6enrich, iblanket_thickness, tbr)
   else if (iblanket == 4) then      ! KIT HCLL model
      call kit_hcll(nout, 1)
   end if
