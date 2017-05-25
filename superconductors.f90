@@ -514,14 +514,15 @@ subroutine croco(jcritsc,croco_strand,croco_cable)
     implicit none
     real(kind(1.0D0)), intent(in) ::jcritsc
     type(volume_fractions), intent(inout)::croco_strand,croco_cable
-    real(kind(1.0D0))::strands_per_area
+    real(kind(1.0D0))::strands_per_area,cable_copper_area
 
-    ! Strand properties
+    ! Properties of a single strand
     tape_thickness = rebco_thickness + copper_thickness + hastelloy_thickness
     stack_thickness = sqrt(croco_id**2 - (tape_width/2.0d0)**2)
     tapes = stack_thickness / tape_thickness
     rebco_area = rebco_thickness * tape_width * tapes
-    copper_area = pi / 4.0d0 * (croco_od**2 - croco_id**2) + copper_thickness*tape_width*tapes
+    copper_area = pi / 4.0d0 * (croco_od**2 - croco_id**2) &   ! copper tube
+                  + copper_thickness*tape_width*tapes          ! copper in tape
     hastelloy_area = hastelloy_thickness * tape_width * tapes
     solder_area = pi / 4.0d0 * croco_id**2 - stack_thickness * tape_width
 
@@ -535,14 +536,19 @@ subroutine croco(jcritsc,croco_strand,croco_cable)
     croco_strand%critical_current = jcritsc * rebco_area
 
     ! Cable properties
-    croco_cable%critical_current = croco_strand%critical_current * number_croco
-    ! Helium area is the minimum possible given that the strand is round.
+    ! The CroCo strands are packed in a square fashion in the cable space.
+    number_croco = croco_cable%acs*(1d0-copper_bar)/croco_od**2
     strands_per_area = number_croco / croco_cable%aturn
+    cable_copper_area = croco_cable%acs * copper_bar + copper_area*number_croco
+
+    croco_cable%copper_fraction = cable_copper_area / croco_cable%aturn
+    ! Helium area is the minimum possible given that the strand is round.
     croco_cable%helium_fraction = (1 - pi / 4.0d0) * croco_od**2 * strands_per_area
-    croco_cable%copper_fraction = copper_area * strands_per_area
     croco_cable%hastelloy_fraction = hastelloy_area * strands_per_area
     croco_cable%solder_fraction = solder_area * strands_per_area
-    croco_cable%jacket_fraction = copper_area * strands_per_area
+    croco_cable%rebco_fraction = rebco_area * strands_per_area
+
+    croco_cable%critical_current = croco_strand%critical_current * number_croco
 
 end subroutine croco
 !--------------------------------------------------------------------------
@@ -747,9 +753,16 @@ subroutine jacket_properties(T, jacket)
 end subroutine jacket_properties
 ! ----------------------------------------------------------------------------
 subroutine helium_properties(T,helium)
+    ! Isobaric Data for P = 0.60000 MPa
+    ! http://webbook.nist.gov/chemistry/fluid/
+    ! Assume constant pressure, and ideal gas behaviour.
+    ! This ignores the liquid-like behaviour below about 7 K,
+    ! which causes the density to be higher than predicted.
+    ! Use a reference: 50 K: density = 5.6929 kg/m3
+
     real(kind(1.0D0)), intent(in) :: T   ! temperature
     type(resistive_material)::helium
-    helium%cp = 0.0d0
+    helium%density = 5.6929d0 * 50d0 / T
 end subroutine helium_properties
 
 end module superconductors

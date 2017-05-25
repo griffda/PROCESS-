@@ -39,7 +39,7 @@ module global_variables
   !+ad_vars  maxcal /200/ : maximum number of VMCON iterations
   integer :: maxcal = 200
 
-  character(len=100) :: fileprefix = "" !'dummy_file_prefix'
+  character(len=30) :: fileprefix = "" !'dummy_file_prefix'
   character(len=25) :: xlabel,vlabel
 
 end module global_variables
@@ -1931,6 +1931,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: acond = 0.0D0
   !+ad_vars  acstf : internal area of the cable space (m2)
   real(kind(1.0D0)) :: acstf = 0.0D0
+  !+ad_vars  insulation_area : single turn insulation area (m2)
+  real(kind(1.0D0)) :: insulation_area = 0.0D0
   !+ad_vars  aiwp : winding pack insulation area (m2)
   real(kind(1.0D0)) :: aiwp = 0.0D0
   !+ad_vars  alstrtf /6.0D8/ : allowable von Mises stress in TF coil structural material (Pa)
@@ -1968,11 +1970,12 @@ module tfcoil_variables
   real(kind(1.0D0)) :: casths_fraction = 0.03D0
   logical :: tfc_sidewall_is_fraction
 
-
-
-
-  !+ad_vars  leni : Cable dimension (square) (m)
+  !+ad_vars  cable_width : Width of square cable (m)
+  real(kind(1.0D0)) :: cable_width
+  !+ad_vars  leno : Dimension of each turn including inter-turn insulation (m)
   real(kind(1.0D0)) :: leno
+
+
   !+ad_vars  leni : Dimension of space inside cable (m)
   real(kind(1.0D0)) :: leni
   !+ad_vars  acs : Area of space inside cable (m2)
@@ -2194,9 +2197,9 @@ module tfcoil_variables
   !+ad_vars  tmaxpro /150.0/ : maximum temp rise during a quench for protection (K)
   real(kind(1.0D0)) :: tmaxpro = 150.0D0
 
-  !+ad_vars  tmax_croco /200.0/ : CroCo strand: maximum temp rise during a quench (K)
+  !+ad_vars  tmax_croco /200.0/ : CroCo strand: maximum temp during a quench (K)
   real(kind(1.0D0)) :: tmax_croco = 200.0D0
-  !+ad_vars  tmax_jacket /150.0/ : Jacket: maximum temp rise during a quench (K)
+  !+ad_vars  tmax_jacket /150.0/ : Jacket: maximum temp during a quench (K)
   real(kind(1.0D0)) :: tmax_jacket = 150.0D0
 
   !+ad_vars  tmpcry /4.5/ : coil temperature for cryogenic plant power calculation (K)
@@ -4139,8 +4142,8 @@ module rebco_variables
   real(kind(1.0D0)) :: croco_od = 9.3D-3
   !+ad_vars  croco_id /7.0e-3/ : Inner diameter of CroCo copper tube (m)
   real(kind(1.0D0)) :: croco_id = 7.0D-3
-  !+ad_vars  number_croco /7/ : Number of CroCo strands in the conductor
-  integer :: number_croco = 7
+  !+ad_vars  number_croco : Number of CroCo strands in the conductor (not an integer)
+  real(kind(1.0D0)) :: number_croco = 7d0
 
   !+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of area inside the jacket
   real(kind(1.0D0)) :: copper_bar = 0.23d0
@@ -4181,9 +4184,10 @@ module rebco_variables
           real(kind(1.0D0)) :: helium_fraction=0.0d0
           real(kind(1.0D0)) :: solder_fraction=0.0d0
           real(kind(1.0D0)) :: jacket_fraction=0.0d0
+          real(kind(1.0D0)) :: rebco_fraction=0.0d0
           real(kind(1.0D0)) :: critical_current=0.0d0
-          real(kind(1.0D0)) :: acs=0.0d0          ! cable width (m)
-          real(kind(1.0D0)) :: aturn=0.0d0          ! cable width (m)
+          real(kind(1.0D0)) :: acs=0.0d0
+          real(kind(1.0D0)) :: aturn=0.0d0
           real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
       end type
   end module resistive_materials

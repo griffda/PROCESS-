@@ -1487,9 +1487,6 @@ contains
           call parse_real_variable('copper_thickness', copper_thickness, 0.0D0, 1000.0D-6, &
                'copper_thickness (m)')
 
-       case ('number_croco')
-          call parse_int_variable('number_croco', number_croco, 0, 10, &
-               'Number of CroCo strands in the conductor')
        case ('copper_bar')
           call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.9D0, &
                'area of central copper bar, as a fraction of area inside the jacket')
