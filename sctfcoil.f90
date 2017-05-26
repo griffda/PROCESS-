@@ -135,8 +135,9 @@ subroutine sctfcoil(outfile,iprint)
     !  Local variables
     !integer :: i,peaktfflag
     integer :: peaktfflag
-    real(kind(1.0D0)) :: awpc,awptf,bcylir,cplen, &
-    radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf, a, b, c, radvv, deltf
+    real(kind(1.0D0)) :: awpc,awptf,cplen, &
+    radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf, radvv, deltf
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Set the plasma-facing wall thickness if it has not been set explicitly
@@ -665,7 +666,7 @@ subroutine stresscl
     ! inertion gap is tfinsgap on 4 sides
     t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
 
-    eyoung(2) = eyngeff(eystl,eyins,eywp,t_ins_eff,seff,thwcndut,tcbs)
+    eyoung(2) = eyngeff(eystl,eyins,t_ins_eff,thwcndut,tcbs)
 
     jeff(1) = 0.0D0
     jeff(2) = ritfc / ( pi * (radtf(3)**2 - radtf(2)**2))
@@ -708,12 +709,12 @@ subroutine stresscl
     !strtf2 = s_vmises_case
 
     !  Young's modulus and strain in vertical direction on winding pack
-    eyzwp = eyngzwp(eystl,eyins,eywp,t_ins_eff,seff,thwcndut,tcbs)
+    eyzwp = eyngzwp(eystl,eyins,eywp,t_ins_eff,thwcndut,tcbs)
     windstrain = sigvert / eyzwp
 
     !  Radial strain in insulator
     insstrain = sigrtf(2) / eyins * &
-    edoeeff(eystl,eyins,eywp,t_ins_eff,seff,thwcndut,tcbs)
+    edoeeff(eystl,eyins,t_ins_eff,thwcndut,tcbs)
 
 end subroutine stresscl
 
@@ -842,7 +843,7 @@ end subroutine two_layer_stress
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function eyngeff(estl,eins,ewp,tins,teff,tstl,tcs)
+function eyngeff(estl,eins,tins,tstl,tcs)
 
     !+ad_name  eyngeff
     !+ad_summ  Finds the effective Young's modulus of the TF coil winding pack
@@ -853,9 +854,7 @@ function eyngeff(estl,eins,ewp,tins,teff,tstl,tcs)
     !+ad_cont  N/A
     !+ad_args  estl : input real : Young's modulus of steel (Pa)
     !+ad_args  eins : input real : Young's modulus of insulator (Pa)
-    !+ad_args  ewp  : input real : Young's modulus of windings (Pa)
     !+ad_args  tins : input real : insulator wrap thickness (m)
-    !+ad_args  teff : input real : dimension of total cable with insulator (m)
     !+ad_args  tstl : input real : thickness of steel conduit (m)
     !+ad_args  tcs  : input real : dimension of cable space area inside conduit (m)
     !+ad_desc  This routine calculates the effective Young's modulus (Pa)
@@ -877,7 +876,7 @@ function eyngeff(estl,eins,ewp,tins,teff,tstl,tcs)
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,tins,teff,tstl,tcs
+    real(kind(1.0D0)), intent(in) :: estl,eins,tins,tstl,tcs
 
     !  Local variables
 
@@ -898,7 +897,7 @@ end function eyngeff
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function edoeeff(estl,eins,ewp,tins,teff,tstl,tcs)
+function edoeeff(estl,eins,tins,tstl,tcs)
 
     !+ad_name  edoeeff
     !+ad_summ  Returns ratio of E_d to E_eff in Morris
@@ -908,9 +907,7 @@ function edoeeff(estl,eins,ewp,tins,teff,tstl,tcs)
     !+ad_cont  N/A
     !+ad_args  estl : input real : Young's modulus of steel (Pa)
     !+ad_args  eins : input real : Young's modulus of insulator (Pa)
-    !+ad_args  ewp  : input real : Young's modulus of windings (Pa)
     !+ad_args  tins : input real : insulator wrap thickness (m)
-    !+ad_args  teff : input real : dimension of total cable with insulator (m)
     !+ad_args  tstl : input real : thickness of steel conduit (m)
     !+ad_args  tcs  : input real : dimension of cable space area inside conduit (m)
     !+ad_desc  This routine calculates the ratio of E_d to the effective Young's
@@ -930,7 +927,7 @@ function edoeeff(estl,eins,ewp,tins,teff,tstl,tcs)
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,tins,teff,tstl,tcs
+    real(kind(1.0D0)), intent(in) :: estl,eins,tins,tstl,tcs
 
     !  Local variables
 
@@ -954,7 +951,7 @@ end function edoeeff
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function eyngzwp(estl,eins,ewp,tins,teff,tstl,tcs)
+function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
 
     !+ad_name  eyngzwp
     !+ad_summ  Finds the vertical Young's modulus of the TF coil winding pack
@@ -966,7 +963,6 @@ function eyngzwp(estl,eins,ewp,tins,teff,tstl,tcs)
     !+ad_args  eins : input real : Young's modulus of insulator (Pa)
     !+ad_args  ewp  : input real : Young's modulus of windings (Pa)
     !+ad_args  tins : input real : insulator wrap thickness (m)
-    !+ad_args  teff : input real : dimension of total cable with insulator (m)
     !+ad_args  tstl : input real : thickness of steel conduit (m)
     !+ad_args  tcs  : input real : dimension of cable space area inside conduit (m)
     !+ad_desc  This routine calculates the vertical Young's modulus (Pa)
@@ -985,7 +981,7 @@ function eyngzwp(estl,eins,ewp,tins,teff,tstl,tcs)
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,tins,teff,tstl,tcs
+    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,tins,tstl,tcs
 
     !  Local variables
 
@@ -2038,8 +2034,6 @@ contains
         ! First operating temperature to 30 K
 
         delta_T = tftmp
-
-
 
         ajcp = sqrt( aa* (bb+cc+dd) )
         !ajwpro = ajcp*(acs/aturn)

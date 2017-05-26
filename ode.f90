@@ -367,7 +367,7 @@ subroutine de ( f, neqn, y, t, tout, relerr, abserr, iflag, yy, wt, p, yp, &
   integer ( kind = 4 ) k
   integer ( kind = 4 ) kle4
   integer ( kind = 4 ) kold
-  integer ( kind = 4 ) l
+  ! integer ( kind = 4 ) l
   integer ( kind = 4 ), parameter :: maxnum = 500
   logical nornd
   integer ( kind = 4 ) nostep
@@ -1244,7 +1244,7 @@ subroutine intrp ( x, y, xout, yout, ypout, neqn, kold, phi, psi )
   integer ( kind = 4 ) j
   integer ( kind = 4 ) ki
   integer ( kind = 4 ) kold
-  integer ( kind = 4 ) l
+  ! integer ( kind = 4 ) l
   real ( kind = 8 ) phi(neqn,16)
   real ( kind = 8 ) psi(12)
   real ( kind = 8 ) psijm1

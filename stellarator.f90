@@ -125,7 +125,7 @@ module cartesian_vectors
   end interface
 
   interface operator (.dot.)
-     module procedure dot_product
+     module procedure dot_product_stell
   end interface
 
   interface operator (.cross.)
@@ -168,11 +168,11 @@ contains
     divide_vector%z = a%z / b
   end function divide_vector
 
-  elemental function dot_product(a,b)
-    real(kind(1.0D0)) :: dot_product
+  elemental function dot_product_stell(a,b)
+    real(kind(1.0D0)) :: dot_product_stell
     type (vector), intent(in) :: a,b
-    dot_product = (a%x * b%x) + (a%y * b%y) + (a%z * b%z)
-  end function dot_product
+    dot_product_stell = (a%x * b%x) + (a%y * b%y) + (a%z * b%z)
+  end function dot_product_stell
 
   elemental function cross_product(a,b)
     type (vector) :: cross_product
@@ -1195,7 +1195,7 @@ contains
 
     call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
          iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
-         plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
+         plascur,pcoreradpv,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
          xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
     ptremw = ptrepv*vol
@@ -1206,7 +1206,7 @@ contains
 
     sbar = 1.0D0
     call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
-         dnprot,taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+         taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Calculate beta limit
 
@@ -2248,7 +2248,7 @@ contains
 
        call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
             iinvqd,i,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
-            plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin, &
+            plascur,pcoreradpv,rmajor,rminor,te,ten,tin, &
             iotabar,qstar,vol,xarea,zeff,ptrez,ptriz,taueez,taueiz, &
             taueffz,powerhtz)
 

@@ -131,7 +131,7 @@ contains
     !  Local variables
 
 
-    real(kind(1.0D0)) :: a1,a2,hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild, rbldtotf, deltf, precomp, vbuild1
+    real(kind(1.0D0)) :: hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild, rbldtotf, deltf, precomp, vbuild1
     real(kind(1.0D0)) :: fwtth
 
     integer :: ripflag = 0
@@ -663,12 +663,13 @@ contains
 
     real(kind(1.0D0)), parameter :: soleno = 0.2D0  !  length along outboard divertor
     !  plate that scrapeoff hits
-    real(kind(1.0D0)) :: kap,tri,xpointo,rprimeo,phio,thetao, rci, rco, thetai
-    real(kind(1.0D0)) :: yspointo,xspointo,yprimeb
-    real(kind(1.0d0)) :: triu, tril, denomo, alphad, rxpt, zxpt
+    real(kind(1.0D0)) :: kap,thetao, rci, rco, thetai
+    ! real(kind(1.0D0)) :: yspointo,xspointo,yprimeb,xpointo, tri, rprimeo, phio
+    ! real(kind(1.0D0)) :: denomo, alphad
+    real(kind(1.0d0)) :: triu, tril, rxpt, zxpt
     real(kind(1.0d0)) :: rspi, zspi, zspo, rplti, zplti
     real(kind(1.0d0)) :: rplbi, zplbi, rplto, zplto, rplbo, zplbo
-    real(kind(1.0d0)) :: rpltop, zpltop, rgeocent, zgeocent, ptop_radial,ptop_vertical
+    real(kind(1.0d0)) :: ptop_radial,ptop_vertical
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -823,68 +824,68 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
+  ! subroutine rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
 
-    !+ad_name  rippl
-    !+ad_summ  TF ripple calculation
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  ripmax : input real : max ripple at plasma edge (peak to average) (%)
-    !+ad_args  rmajor : input real : plasma major radius (m)
-    !+ad_args  rminor : input real : plasma minor radius (m)
-    !+ad_args  rtot   : input real : default radius to the outboard TF coil leg (m)
-    !+ad_args  tfno   : input real(!) : number of TF coils
-    !+ad_args  ripple : output real : ripple at plasma edge (%)
-    !+ad_args  rtotl  : output real : required minimum radius to the centre
-    !+ad_argc                         of the outboard TF coil leg (m)
-    !+ad_desc  Subroutine to calculate TFC ripple and outboard TFC leg radius.
-    !+ad_desc  Input the max. ripple and default outboard leg location and the
-    !+ad_desc  routine checks to see if the ripple is OK. If not it moves
-    !+ad_desc  the outboard leg appropriately.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  27/07/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !   !+ad_name  rippl
+  !   !+ad_summ  TF ripple calculation
+  !   !+ad_type  Subroutine
+  !   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !   !+ad_cont  N/A
+  !   !+ad_args  ripmax : input real : max ripple at plasma edge (peak to average) (%)
+  !   !+ad_args  rmajor : input real : plasma major radius (m)
+  !   !+ad_args  rminor : input real : plasma minor radius (m)
+  !   !+ad_args  rtot   : input real : default radius to the outboard TF coil leg (m)
+  !   !+ad_args  tfno   : input real(!) : number of TF coils
+  !   !+ad_args  ripple : output real : ripple at plasma edge (%)
+  !   !+ad_args  rtotl  : output real : required minimum radius to the centre
+  !   !+ad_argc                         of the outboard TF coil leg (m)
+  !   !+ad_desc  Subroutine to calculate TFC ripple and outboard TFC leg radius.
+  !   !+ad_desc  Input the max. ripple and default outboard leg location and the
+  !   !+ad_desc  routine checks to see if the ripple is OK. If not it moves
+  !   !+ad_desc  the outboard leg appropriately.
+  !   !+ad_prob  None
+  !   !+ad_call  None
+  !   !+ad_hist  27/07/11 PJK Initial F90 version
+  !   !+ad_stat  Okay
+  !   !+ad_docs  None
+  !   !
+  !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+  !   implicit none
 
-    !  Arguments
+  !   !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: ripmax,rmajor,rminor,rtot,tfno
-    real(kind(1.0D0)), intent(out) :: ripple,rtotl
+  !   real(kind(1.0D0)), intent(in) :: ripmax,rmajor,rminor,rtot,tfno
+  !   real(kind(1.0D0)), intent(out) :: ripple,rtotl
 
-    !  Local variables
+  !   !  Local variables
 
-    real(kind(1.0D0)) :: prip,rotrp,pripc,coeff
+  !   real(kind(1.0D0)) :: prip,rotrp,pripc,coeff
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    coeff = 1.03333D0 &
-         + 0.210480D0 * tfno &
-         - 4.45253D-2 * tfno**2 &
-         + 3.50210D-3 * tfno**3 &
-         - 1.28945D-4 * tfno**4 &
-         + 1.84776D-6 * tfno**5
+  !   coeff = 1.03333D0 &
+  !        + 0.210480D0 * tfno &
+  !        - 4.45253D-2 * tfno**2 &
+  !        + 3.50210D-3 * tfno**3 &
+  !        - 1.28945D-4 * tfno**4 &
+  !        + 1.84776D-6 * tfno**5
 
-    prip = 0.01D0 * ripmax/coeff
-    rotrp = 1.023D0*(rmajor+rminor)/prip**(1.0D0/tfno)
+  !   prip = 0.01D0 * ripmax/coeff
+  !   rotrp = 1.023D0*(rmajor+rminor)/prip**(1.0D0/tfno)
 
-    if (rotrp > rtot) then
-       rtotl = rotrp
-       pripc = prip * 100.0D0
-       ripple = pripc * coeff
-    else
-       rtotl = rtot
-       prip = (1.023D0*(rmajor+rminor)/rtot)**(tfno)
-       pripc = prip*100.0D0
-       ripple = pripc * coeff
-    end if
+  !   if (rotrp > rtot) then
+  !      rtotl = rotrp
+  !      pripc = prip * 100.0D0
+  !      ripple = pripc * coeff
+  !   else
+  !      rtotl = rtot
+  !      prip = (1.023D0*(rmajor+rminor)/rtot)**(tfno)
+  !      pripc = prip*100.0D0
+  !      ripple = pripc * coeff
+  !   end if
 
-  end subroutine rippl
+  ! end subroutine rippl
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
