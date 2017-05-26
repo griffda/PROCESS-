@@ -1369,8 +1369,13 @@ subroutine outtf(outfile, peaktfflag)
 
     call osubhd(outfile,'Quench information :')
     call ovarre(outfile,'Allowable stress in vacuum vessel (Pa)','(sigvvall)',sigvvall)
-    call ovarre(outfile,'Allowable quench time (s)','(taucq)',taucq, 'OP ')
-    call ovarre(outfile,'Quench time (s)','(tdmptf)',tdmptf)
+    call ovarre(outfile,'Minimum allowed quench time due to stress in VV (s)','(taucq)',taucq, 'OP ')
+    call ovarre(outfile,'Actual quench time (s)','(tdmptf)',tdmptf)
+    call ovarre(outfile,'Max allowed current density in winding pack due to temperature rise in quench (A/m2)', &
+                        '(jwdgpro)', jwdgpro, 'OP ')
+    call ovarre(outfile,'Actual current density in winding pack (A/m2)', '(jwptf)', jwptf, 'OP ')
+    call ovarre(outfile,'Maximum allowed voltage during quench due to insulation (kV)', '(vdalw)', vdalw)
+    call ovarre(outfile,'Quench voltage (kV)','(vtfskv)',vtfskv, 'OP ')
 
     call osubhd(outfile,'Conductor Information :')
     call ovarre(outfile,'Width of cable (square) (m)','(cable_width)',cable_width, 'OP ')
@@ -1737,7 +1742,7 @@ contains
                     call jcrit_rebco(ttestm,bmax,jcritm,validity,iprint)
                     call jcrit_rebco(ttestp,bmax,jcritp,validity,iprint)
                 end select
-                ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)                
+                ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
             end do solve_for_tmarg
             tmarg = ttest - thelium
             temp_margin = tmarg
@@ -1873,11 +1878,6 @@ contains
             call ovarre(outfile,'Maximum temperature in quench: CroCo strand (K)','(tmax_croco)', tmax_croco)
             call ovarre(outfile,'Maximum temperature in quench: Jacket (K)','(tmax_croco)', tmax_jacket)
         end select
-
-        call ovarre(outfile,'Max current density in winding pack given by temperature rise in quench (A/m2)', &
-                   '(jwdgpro)', jwdgpro, 'OP ')
-        call ovarre(outfile,'Quench time (s)','(tdmptf)',tdmptf)
-        call ovarre(outfile,'Quench voltage (V)','(vd)',vd, 'OP ')
 
     end subroutine supercon
 

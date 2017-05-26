@@ -635,7 +635,7 @@ module numerics
        !+ad_varc  <LI> (139) copper_thickness : thickness of copper layer in tape (m)
        'copper_thickne', &
        !+ad_varc  <LI> (140) thkwp : radial thickness of TFC winding pack (m)</UL>
-       'thkwp         '  &
+       'thkwp         ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc

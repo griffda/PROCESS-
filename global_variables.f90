@@ -4129,9 +4129,9 @@ module rebco_variables
   !+ad_docs  TODO
   implicit none ! ---------------------------------------------------------
 
-  !+ad_vars  rebco_thickness /1.0e-6/ : thickness of REBCO layer in tape (m)
+  !+ad_vars  rebco_thickness /1.0e-6/ : thickness of REBCO layer in tape (m) (iteration variable 138)
   real(kind(1.0D0)) :: rebco_thickness = 1.0D-6
-  !+ad_vars  copper_thickness /100e-6/ : thickness of copper layer in tape (m)
+  !+ad_vars  copper_thickness /100e-6/ : thickness of copper layer in tape (m) (iteration variable 139)
   real(kind(1.0D0)) :: copper_thickness = 100.0D-6
   !+ad_vars  hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
   real(kind(1.0D0)) :: hastelloy_thickness = 50.0D-6
