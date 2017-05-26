@@ -624,7 +624,7 @@ def dict_default():
         try:
             name = args.split(',')[1].strip()
             if name not in di:
-                di[name] = None
+                di[name] = -1
                 logging.warning(" " + str(name) + " looks like an input " + \
                 "variable but cout not find a default value. Setting " + \
                 "default to None")
