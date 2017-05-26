@@ -802,7 +802,7 @@ contains
 
     integer :: timepoint
 
-    real(kind(1.0D0)) :: areaspf, bmax, bmaxoh2, bohci, bohco, bri, bro, &
+    real(kind(1.0D0)) :: areaspf, bmaxoh2, bohci, bohco, bri, bro, &
          bzi, bzo, da, forcepf, hohc, jcritwp, sgn, tmarg1, tmarg2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2274,8 +2274,6 @@ contains
   !real(kind(1.0D0)) :: kb, k2b
 
     real(kind(1.0D0)) :: axial_term_1, axial_term_2, axial_term_3
-
-    real(kind(1.0D0)) :: aa, bb, cc
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

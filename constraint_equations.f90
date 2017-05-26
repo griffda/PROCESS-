@@ -175,7 +175,7 @@ contains
     !!!!!!!!!!!!!!!!!!!
 
     integer :: i,i1,i2
-    real(kind(1.0D0)) :: acoil,cratmx,pdenom,pnumerator,pradmaxpv, &
+    real(kind(1.0D0)) :: cratmx,pdenom,pnumerator,pradmaxpv, &
          pscaling,rcw,totmva
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

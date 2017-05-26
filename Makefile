@@ -17,7 +17,9 @@
 #
 #  Type 'make' to compile the code.
 #
-#  Type 'make debug' to compile the code with extra compilation flags.
+#  Type 'make debug' to compile the code with warning compilation flags.
+#
+#  Type 'make extra_debug' to compile the code with extra  warning compilation flags.
 #
 #  Type 'make clean' to clean up the directory to allow a full Fortran recompilation
 #
@@ -180,6 +182,10 @@ FFLAGS_ALT = -cpp -std=legacy
 FFLAGS_LIB = -cpp -g -fbounds-check -fbacktrace
 
 ifeq ($(MAKECMDGOALS),debug)
+	override FFLAGS += -Wall
+endif
+
+ifeq ($(MAKECMDGOALS),extra_debug)
 	override FFLAGS += -Wall -Wextra
 endif
 
@@ -202,6 +208,9 @@ default: process.exe
 
 # add additional compiler flags
 debug: process.exe
+
+# add even more additional compiler flags
+extra_debug: process.exe
 
 # object dependencies (usually via modules or header files)
 availability.o: global_variables.o maths_library.o output.o

@@ -863,7 +863,7 @@
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    function deroff(x,a,t)
+    function deroff(x,a)
 
       !+ad_name  deroff
       !+ad_summ  Derivative of function fofx with respect to x
@@ -874,7 +874,6 @@
       !+ad_cont  N/A
       !+ad_args  x : input real : temperature (K)
       !+ad_args  a : input real : heat transfer coefficient
-      !+ad_args  t : input real : ambient air temperature (K)
       !+ad_desc  This routine evaluates the derivative with respect to x
       !+ad_desc  of the function <A HREF="fofx.html">fofx</A>.
       !+ad_prob  None
@@ -894,7 +893,7 @@
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: x,a,t
+      real(kind(1.0D0)), intent(in) :: x,a
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -948,7 +947,7 @@
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       do
-         delta = -f(x,q,a,t) / fprime(x,a,t)
+         delta = -f(x,q,a,t) / fprime(x,a)
          x = x + delta
 
          error = abs(delta/x)

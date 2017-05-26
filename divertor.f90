@@ -97,8 +97,8 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: aionso,bpav,bpstk,btstk,dconl,delne, &
-         delta,delw,diva,dtheta,frgd,gamdt,pdiv,plrefo,plsep, &
+    real(kind(1.0D0)) :: aionso,bpstk,btstk,dconl,delne, &
+         delta,delw,diva,dtheta,frgd,gamdt,pdiv,plsep, &
          ppdiv,pwr,qdiv,rbpbt,rnull,xpara,xperp,zeffso
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

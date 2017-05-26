@@ -325,7 +325,7 @@ module kit_hcll_module
   real(kind=double), private :: w_he
 
   ! Blanket He pumping power (MW)
-  real(kind=double), private :: p_pump
+  ! real(kind=double), private :: p_pump
 
   ! Surface heat flux on first wall (MW) (sum = pradfw)
   real(kind=double), private :: psurffwi, psurffwo
@@ -537,10 +537,10 @@ module kit_hcll_module
 
       ! Set first wall inboard/outboard thickness (m)
       fwith = 2*afw + 2*fw_wall
-  	  fwoth = fwith
+      fwoth = fwith
 
       ! Set coolant type
-  	  coolwh = 1
+      coolwh = 1
 
     end subroutine
 
@@ -1234,11 +1234,11 @@ module kit_hcll_module
      call ovarin(ofile, 'Switch for pumping of primary coolant', '(primary_pumping)', primary_pumping)
      if (primary_pumping == 0) then
          call ocmmnt(ofile, 'User sets mechanical pumping power directly')
-   	else if (primary_pumping == 1) then
-   	    call ocmmnt(ofile, 'User sets mechanical pumping power as a fraction of thermal power removed by coolant')
-   	else if (primary_pumping == 2) then
-   	    call ocmmnt(ofile, 'Mechanical pumping power is calculated for first wall and blanket')
-   	end if
+    else if (primary_pumping == 1) then
+        call ocmmnt(ofile, 'User sets mechanical pumping power as a fraction of thermal power removed by coolant')
+    else if (primary_pumping == 2) then
+        call ocmmnt(ofile, 'Mechanical pumping power is calculated for first wall and blanket')
+    end if
 
      call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
      call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
@@ -1320,8 +1320,8 @@ module kit_hcll_module
      ! enthalpy
      !real(kind=double) ::
 
-     real(kind=double) :: h2, kelbwn, kelbwt, kf, kstrght, &
-          lambda, reyn, rhof, s1, s2, viscf, viscfs, xifn, xift, ximn, ximt, vv, &
+     real(kind=double) :: h2, kelbwn, kelbwt, kstrght, &
+          lambda, reyn, rhof, s1, s2, viscf, xifn, xift, ximn, ximt, vv, &
           temp_mean,pdropstraight, pdrop90, pdrop180
 
      ! TODO Variables that appear not to be used below. Check again before removing
@@ -1359,7 +1359,7 @@ module kit_hcll_module
      reyn = rhof * vv * dh / viscf
 
      ! Calculate Darcy friction factor
-     call friction(reyn,dh,lambda)
+     call friction(reyn,lambda)
 
      ! Straight section pressure drop coefficient
      kstrght = lambda * flleng/dh

@@ -607,7 +607,7 @@ contains
     real(kind(1.0D0)), dimension(0:m_max,-n_max:n_max) :: Rmn, Zmn
     real(kind(1.0D0)), dimension(4*m_max+1,4*n_max+1) :: Rv, Zv
     real(kind(1.0D0)), save :: r_vmec,a_vmec,aspect_vmec,v_vmec,s_vmec
-    real(kind(1.0D0)) :: a,a_square,sr,sa,vvv,r_maj,du,dv,rr,drdv,drdu
+    real(kind(1.0D0)) :: a,a_square,sr,sa,r_maj,du,dv,rr,drdv,drdu
     real(kind(1.0D0)) :: dzdv,dzdu,rtemp,sum1,sum2,rn,u,v,suv,cuv
     character(len=80) :: header
     logical :: first_call = .true.
@@ -1187,7 +1187,7 @@ contains
 
     !  Calculate density limit
 
-    call stdlim(alphan,bt,powht,rmajor,rminor,dnelimt)
+    call stdlim(bt,powht,rmajor,rminor,dnelimt)
 
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law
@@ -1443,7 +1443,7 @@ contains
          decaybzo,decayfwi,decayfwo,decayshldi,decayshldo,dpacop,htheci, &
          pheci,pheco,pneut2,pnucbsi,pnucbso,pnucbzi,pnucbzo,pnucfwbs, &
          pnucfwbsi,pnucfwbso,pnucfwi,pnucfwo,pnucshldi,pnucshldo,pnucsi, &
-         pnucso,psurffwi,psurffwo,ptfiwp,ptfowp,r1,r2,raddose,vffwi,vffwo, &
+         pnucso,psurffwi,psurffwo,ptfiwp,ptfowp,r1,raddose,vffwi,vffwo, &
          volshldi,volshldo
 
     logical :: first_call = .true.
@@ -2066,14 +2066,13 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine stdlim(alphan,bt,powht,rmajor,rminor,dlimit)
+  subroutine stdlim(bt,powht,rmajor,rminor,dlimit)
 
     !+ad_name  stdlim
     !+ad_summ  Routine to calculate the density limit in a stellarator
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  None
-    !+ad_args  alphan : input real : Density profile index
     !+ad_args  bt     : input real : Toroidal field on axis (T)
     !+ad_args  powht  : input real : Absorbed heating power (MW)
     !+ad_args  rmajor : input real : Plasma major radius (m)
@@ -2098,7 +2097,7 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: alphan,bt,powht,rmajor,rminor
+    real(kind(1.0D0)), intent(in) :: bt,powht,rmajor,rminor
     real(kind(1.0D0)), intent(out) :: dlimit
 
     !  Local variables
@@ -2209,7 +2208,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: d2,powerhtz,ptrez,ptriz,taueez,taueezz, &
+    real(kind(1.0D0)) :: d2,powerhtz,ptrez,ptriz,taueez, &
          taueffz,taueiz
     integer :: i,iisc
     integer, parameter :: nstlaw = 5
@@ -2638,7 +2637,7 @@ contains
     integer :: nbticool,n_it,k
     real(kind(1.0D0)) :: a_hor_max,a_vert_max,alph,b,b0_final,b_abs_max, &
          b_abs_mittel,b_hor_avg,b_hor_max,b_i,b_max_final,b_max_max,b_maxtf, &
-         b_vert_avg,b_vert_max,bc,cpttf2,cr_area,d_coil,d_ic,du,f1,f2,f_b,f_i, &
+         b_vert_avg,b_vert_max,bc,cpttf2,cr_area,d_coil,d_ic,du,f_b,f_i, &
          f_max,f_n,f_q,f_q_final,f_r,f_s,h,h_hor_max,h_insu_in,h_insu_out,h_max, &
          h_vert_max,i,j,kk,m_struc,msupstr,off,r_avg,r_occ,r_theta0,res,s_case, &
          t_c,t_no,t_no2,t_u,t_w,t_w_i,tfarea_sc,u,w_coil,w_mag,w_max,y,z,z1,z2
@@ -3112,9 +3111,10 @@ contains
       !  Local variables
 
       integer :: i,n_h,n_b,nc,nsp_int
-      real(kind(1.0D0)) :: b,b_abs_zentr,b_abs_zwischen,b_max_equiv,b_x_zentr, &
+      real(kind(1.0D0)) :: b,b_abs_zentr,b_abs_zwischen,b_x_zentr, &
            b_x_zwischen,b_y_zentr,b_y_zwischen,bi_x,bi_y,bir,bir_1,biz,biz_1, &
            di_mean,dphi,h,il,isp,phi,r_q,rg,ri,rk,rri,vz_r,zi
+          !  b_max_equiv
       real(kind(1.0D0)), dimension(3,5) :: b_ptot
       real(kind(1.0D0)), allocatable, dimension(:,:) :: b_p
       type(vector) :: ax_coili,c_ci,n_ax_ci,n_z,n_rcoili,p
@@ -3418,7 +3418,7 @@ contains
       integer :: nsp_int,n_h,n_b,zaehler,n,ii,j,indn
       real(kind(1.0D0)) :: a,alpha,ao,b,beta,c,cf,d_phi,delta,dtheta,ek, &
            energie_gj,gamma,il,indukt,integral,isp,kk,l,ll,m11,p1,p2,p3,p4, &
-           p5,phi,r_q,rg,rk,rk5bcorr,rp,rs,theta,vz,xc,yc,zc,phi_ind,vo,k,ksq,psi
+           p5,phi,r_q,rg,rk,rk5bcorr,rp,rs,theta,vz,xc,yc,zc,vo,ksq,psi
       real(kind(1.0D0)), allocatable, dimension(:) :: m,integrand
       real(kind(1.0D0)), allocatable, dimension(:,:) :: indmat,indmatu,indmato,indmattot
 
@@ -3743,8 +3743,6 @@ contains
     integer, intent(in) :: outfile
 
     !  Local variables
-
-    integer :: i
     real(kind(1.0D0)) :: ap
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

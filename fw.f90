@@ -35,18 +35,16 @@ module fw_module
   integer, parameter :: double = 8
 
   ! Variables for output to file
-  integer, private :: ip, ofile
 
 contains
 
-  subroutine friction(reynolds, diameter, darcy_friction)
+  subroutine friction(reynolds, darcy_friction)
     !+ad_name  friction
     !+ad_summ  Calculate Darcy friction factor, using Haaland equation
     !+ad_type  function
     !+ad_auth  M Kovari, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  reynolds : input real : Reynolds number
-    !+ad_args  diameter : input real : Coolant pipe diameter
     !+ad_args  darcy_friction : output real : Darcy friction factor
     !+ad_desc  Darcy friction factor, using Haaland equation, an approximation to the
     !+ad_desc  implicit Colebrook–White equationGnielinski correlation.
@@ -62,7 +60,7 @@ contains
     ! Arguments !
     !!!!!!!!!!!!!
 
-    real(kind=double), intent(in) :: reynolds, diameter
+    real(kind=double), intent(in) :: reynolds
     real(kind=double), intent(out) :: darcy_friction
 
     ! Local variables !
@@ -165,7 +163,7 @@ contains
     pr = cf * viscf / kf
 
     ! Calculate Darcy friction factor, using Haaland equation
-    call friction(reynolds, diameter, f)
+    call friction(reynolds, f)
 
     ! Calculate the Nusselt number
     nusselt = (f/8.0d0)*(reynolds-1000.0d0)*pr / (1+12.7*sqrt(f/8.0d0)*(pr**0.6667-1.0d0))
