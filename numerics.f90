@@ -94,7 +94,6 @@ module numerics
   use maths_library
 
   implicit none
-  integer, private :: i, j      ! Loop counters
 
   public
 

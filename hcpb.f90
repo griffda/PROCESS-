@@ -114,9 +114,6 @@ module ccfe_hcpb_module
   ! Volume of inboard and outboard shield (m3)
   real(kind=double), private :: volshldi, volshldo
 
-  ! Inboard/outboard FW half thicknesses (m)
-  real(kind=double), private :: bfwi, bfwo
-
   ! Inboard/outboard FW coolant void fraction
   real(kind=double), private :: vffwi, vffwo
 
@@ -179,9 +176,6 @@ module ccfe_hcpb_module
 
   ! Exponential factors in nuclear heating calcs
   real(kind=double), private :: exp_blanket, exp_shield1, exp_shield2
-
-  ! Fraction of neutron energy lost by main wall
-  real(kind=double), private :: fdep
 
   ! Fractions of blanket by volume: steel, lithium orthosilicate, titanium beryllide
   real(kind=double), private :: fblss_ccfe, fblli2sio4, fbltibe12
@@ -1790,8 +1784,8 @@ contains
     ! enthalpy
     !real(kind=double) ::
 
-    real(kind=double) :: h2, kelbwn, kelbwt, kf, kstrght, &
-         lambda, reyn, rhof, s1, s2, viscf, viscfs, xifn, xift, ximn, ximt, vv, &
+    real(kind=double) :: h2, kelbwn, kelbwt, kstrght, &
+         lambda, reyn, rhof, s1, s2, viscf, xifn, xift, ximn, ximt, vv, &
          temp_mean,pdropstraight, pdrop90, pdrop180
 
     ! TODO Variables that appear not to be used below. Check again before removing
@@ -1829,7 +1823,7 @@ contains
     reyn = rhof * vv * dh / viscf
 
     ! Calculate Darcy friction factor
-    call friction(reyn,dh,lambda)
+    call friction(reyn,lambda)
 
     ! Straight section pressure drop coefficient
     kstrght = lambda * flleng/dh
@@ -2142,28 +2136,27 @@ module kit_hcpb_module
   ! of the PPCS Model B design
   real(kind=double) :: A_cov_PPCS = 1365.0D0   ! [m^2] Total blanket coverage area
   real(kind=double) :: A_FW_PPCS = 1253.0D0    ! [m^2] First wall area
-  real(kind=double) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
-  real(kind=double) :: A_FW_OB_PPCS = 905.6D0  ! [m^2] OB first wall area
   real(kind=double) :: NWL_av_PPCS = 1.94D0    ! [MW/m^2] Average neutron wall load
   real(kind=double) :: NWL_av_IB_PPCS = 1.73D0 ! [MW/m^2] Average IB wall load
   real(kind=double) :: NWL_av_OB_PPCS = 1.92D0 ! [MW/m^2] Average OB wall load
   real(kind=double) :: NWL_max_IB_PPCS = 1.99D0 ! [MW/m^2] Maximum IB wall load
   real(kind=double) :: NWL_max_OB_PPCS = 2.41D0 ! [MW/m^2] Maximum OB wall load
-  real(kind=double) :: f_peak_PPCS = 1.21D0      ! [--] Neutron wall load peaking factor
   real(kind=double) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
-  character(len=13) :: breeder_PPCS = 'Orthosilicate' ! Breeder type
 
-  real(kind=double) :: e_Li_PPCS = 60.0D0      ! [%] Li6 enrichment
-  real(kind=double) :: t_BZ_IB_PPCS = 23.5D0   ! [cm] IB Breeding Zone thickness
-  real(kind=double) :: t_BZ_OB_PPCS = 50.4D0   ! [cm] OB Breeding Zone thickness
-  real(kind=double) :: TBR_PPCS = 1.09D0       ! [--] Tritium Breeding Ratio
-  real(kind=double) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
-
-  ! 2012 blanket report values
-  !real(kind=double) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
-  !real(kind=double) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
-  !real(kind=double) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
-  !real(kind=double) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
+  ! 2012 blanket report values and unused parameters
+  ! real(kind=double) :: e_Li_PPCS = 60.0D0      ! [%] Li6 enrichment
+  ! real(kind=double) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
+  ! real(kind=double) :: A_FW_OB_PPCS = 905.6D0  ! [m^2] OB first wall area
+  ! character(len=13) :: breeder_PPCS = 'Orthosilicate' ! Breeder type
+  ! real(kind=double) :: f_peak_PPCS = 1.21D0      ! [--] Neutron wall load peaking factor
+  ! real(kind=double) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
+  ! real(kind=double) :: t_BZ_IB_PPCS = 23.5D0   ! [cm] IB Breeding Zone thickness
+  ! real(kind=double) :: t_BZ_OB_PPCS = 50.4D0   ! [cm] OB Breeding Zone thickness
+  ! real(kind=double) :: TBR_PPCS = 1.09D0       ! [--] Tritium Breeding Ratio
+  ! real(kind=double) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
+  ! real(kind=double) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
+  ! real(kind=double) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
+  ! real(kind=double) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
 
   ! Power density pre-exponential terms and decay lengths
   real(kind=double) :: q_0_BZ_breed_IB = 23.41D0 ! [W/cm^3] Pre-exp term in IB BZ breeder
@@ -2288,15 +2281,6 @@ module kit_hcpb_module
 
   ! Volume of inboard and outboard shield (m3)
   real(kind=double), private :: volshldi, volshldo
-
-  ! Internal half-height of cryostat (m)
-  ! real(kind=double), public :: zdewex  Now module fwbs_variables
-
-  ! Inboard/outboard FW half thicknesses (m)
-  real(kind=double), private :: bfw
-
-  !  Inboard/outboard FW coolant void fraction
-  real(kind=double), private :: vffwi, vffwo
 
 contains
 
@@ -2855,7 +2839,7 @@ contains
 
     ! Local variables
 
-    real(kind=double) :: wib, wob, tbr_2, eu_frac
+    real(kind=double) :: wib, wob, eu_frac
     real(kind=double), parameter :: wib_PPCS = 0.28D0, wob_PPCS = 0.72D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3234,9 +3218,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    ! Local variables
-    real(kind=double) :: hcryopf, r1, r2, r3, v1, v2
 
     ! Calculate blanket half-height
     call blanket_half_height

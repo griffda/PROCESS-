@@ -456,10 +456,11 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
-         annfuelt,annfwbl,annoam,annoam1,anntot,annwst,coecdr, &
+         annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
-
+         ! annoam1,
+         
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Number of kWh generated each year
@@ -1260,12 +1261,6 @@ contains
 
     implicit none
 
-    !  Arguments
-
-    !  Local variables
-
-    real(kind(1.0D0)), dimension(4) :: cmlsa
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
        c2215 = 1.0D-6 * divsur * ucdiv
@@ -1697,7 +1692,6 @@ contains
     !  Local variables
 
     real(kind(1.0D0)), parameter :: exprf = 1.0D0
-    real(kind(1.0D0)) :: switch
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2030,7 +2024,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: expes = 0.8D0
+    ! real(kind(1.0D0)), parameter :: expes = 0.8D0
     real(kind(1.0D0)) :: shcss
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2256,7 +2250,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) cfrht,targtm
+    real(kind(1.0D0)) cfrht
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

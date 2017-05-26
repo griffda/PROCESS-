@@ -750,9 +750,6 @@ contains
 
     implicit none
 
-    !  Local Variables
-    integer :: i, j
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     s(35)%label = "Energy conversion system"
@@ -788,7 +785,7 @@ contains
     implicit none
 
     !  Local Variables
-    integer :: i, j, k
+    integer :: i, j
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1009,7 +1006,7 @@ contains
     implicit none
 
     !  Local Variables
-    integer :: i, j, k, l, m, n, p, q
+    integer :: i, j, k, l, n, q
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

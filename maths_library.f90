@@ -1047,7 +1047,6 @@ contains
     !  Local variables
 
     real(kind(1.0D0)), dimension(2) :: det
-    real(kind(1.0D0)), dimension(n) :: work
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
