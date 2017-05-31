@@ -441,6 +441,8 @@ def dict_ixc_full():
         if match:
             num = int(match.group(1))
             name = match.group(2).strip()
+            if "fimp(" in line:
+                name = "fimp(" + line.split("fimp(")[-1].split(")")[0] + ")"
             lxc.append(name)
             assert num == len(lxc)
 
