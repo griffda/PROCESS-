@@ -1146,7 +1146,7 @@ subroutine doopt(ifail)
   call ovarin(nout,'Number of iteration variables','(nvar)',nvar)
   call ovarin(nout,'Number of constraints','(neqns)',neqns)
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
-  ! call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
+  call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
   if (ifail /= 1) then
      call ovarin(nout,'VMCON error flag','(ifail)',ifail)
   end if
