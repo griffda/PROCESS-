@@ -462,7 +462,7 @@ subroutine run_summary
      !  Run execution details
      call ocmmnt(outfile, progid(1))  !  program name
      call ocmmnt(outfile, progid(2))  !  version
-     call ocmmnt(outfile, 'Tag Number : "'//tagno//'"')  !  directory
+     call ocmmnt(outfile, '  Tag No. : "'//tagno//'"')  !  directory
      !call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
      !call ocmmnt(outfile, progid(5))  !  computer
@@ -1146,7 +1146,7 @@ subroutine doopt(ifail)
   call ovarin(nout,'Number of iteration variables','(nvar)',nvar)
   call ovarin(nout,'Number of constraints','(neqns)',neqns)
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
-  call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
+  ! call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
   if (ifail /= 1) then
      call ovarin(nout,'VMCON error flag','(ifail)',ifail)
   end if

@@ -1,0 +1,13 @@
+ lsa lies outside its allowed range :
+ Minimum value =            1
+ Maximum value =            4
+  Actual value =   1234567890
+ divdum lies outside its allowed range :
+ Minimum value =            0
+ Maximum value =            1
+  Actual value =   1234567890
+ impvar is now deprecated - use iteration variables 125-136 instead.
+ zfear lies outside its allowed range :
+ Minimum value =            0
+ Maximum value =            1
+  Actual value =   1234567890
