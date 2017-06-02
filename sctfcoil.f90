@@ -1801,7 +1801,7 @@ contains
             call ocmmnt(outfile,'Superconductor used: REBCO HTS tape in CroCo strand')
 
             call ovarre(outfile,'thickness of REBCO layer in tape (m)','(rebco_thickness)',rebco_thickness)
-            call ovarre(outfile,'thickness of copper layer in tape (m)','(copper_thickness)', copper_thickness)
+            call ovarre(outfile,'thickness of copper layer in tape (m)','(copper_thickne)', copper_thickness)
             call ovarre(outfile,'thickness of Hastelloy layer in tape (m) ','(hastelloy_thickness)', hastelloy_thickness)
             call ovarre(outfile,'Area of central copper bar, as a fraction of area inside the jacket ', &
                                  '(copper_bar)', copper_bar)
