@@ -303,7 +303,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: d,e,cv,w,q,t,cp,eta,rho,tcx,s,p,h
+    real(kind(1.0D0)) :: d,e,cv,w,q,t,cp,s,p,h
     real(kind(1.0D0)), dimension(ncmax) :: dl,dv,xl,xv
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

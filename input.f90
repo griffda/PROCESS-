@@ -137,9 +137,9 @@ module process_input
   integer :: infile, outfile, report_changes, icode
   logical :: subscript_present
   logical :: error = .False.
-
-  integer           :: error_code
-  character(len=78) :: error_routine, error_message
+  character(len=78) :: error_message
+  !   integer           :: error_code
+  !   character(len=78) :: error_routine
 
 contains
 
@@ -173,7 +173,8 @@ contains
     !  Local variables
 
     integer :: show_changes = 0
-    integer :: i, j
+    integer :: i
+    !     j
     logical :: constraints_exist=.false.
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -364,13 +365,11 @@ contains
     !  Local variables
 
     integer :: iost
-    integer :: isub1,isub2,ival,varlen
+    integer :: isub1,isub2,varlen
     integer :: no_constraints=0
     integer :: no_iteration=0
 
-    character(len=40) :: clbl,clbl2
     character(len=32) :: varnam
-    real(kind(1.0D0)) :: oldval,rval
 
     logical :: obsolete_var = .false.
 
@@ -3766,143 +3765,143 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine get_substring_trim(string,icode)
+!   subroutine get_substring_trim(string,icode)
 
-    !+ad_name  get_substring_trim
-    !+ad_summ  Routine that extracts a substring from a line of the input file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  string : output string : extracted string
-    !+ad_args  icode  : output integer : diagnostic flag
-    !+ad_desc  This routine extracts a string from the current line of
-    !+ad_desc  the input file, i.e. the value of a string variable as specified
-    !+ad_desc  by the user.
-    !+ad_prob  This routine truncates the string found at its first
-    !+ad_prob  non-leading blank, so routine <A HREF="get_substring.html">get_substring</A>
-    !+ad_prob  is used in practice.
-    !+ad_hist  05/01/04 PJK Initial F90 version
-    !+ad_hist  14/01/13 PJK Used maxlen for character array size
-    !+ad_stat  Okay, but not used at present
-    !+ad_docs  None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     !+ad_name  get_substring_trim
+!     !+ad_summ  Routine that extracts a substring from a line of the input file
+!     !+ad_type  Subroutine
+!     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+!     !+ad_cont  N/A
+!     !+ad_args  string : output string : extracted string
+!     !+ad_args  icode  : output integer : diagnostic flag
+!     !+ad_desc  This routine extracts a string from the current line of
+!     !+ad_desc  the input file, i.e. the value of a string variable as specified
+!     !+ad_desc  by the user.
+!     !+ad_prob  This routine truncates the string found at its first
+!     !+ad_prob  non-leading blank, so routine <A HREF="get_substring.html">get_substring</A>
+!     !+ad_prob  is used in practice.
+!     !+ad_hist  05/01/04 PJK Initial F90 version
+!     !+ad_hist  14/01/13 PJK Used maxlen for character array size
+!     !+ad_stat  Okay, but not used at present
+!     !+ad_docs  None
+!     !
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+!     implicit none
 
-    !  Arguments
+!     !  Arguments
 
-    integer, intent(out) :: icode
-    character(len=*), intent(out) :: string
+!     integer, intent(out) :: icode
+!     character(len=*), intent(out) :: string
 
-    !  Local variables
+!     !  Local variables
 
-    character(len=maxlen) :: varval
-    integer :: varlen,iost
+!     character(len=maxlen) :: varval
+!     integer :: varlen,iost
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! *** Ignore leading spaces
+!     ! *** Ignore leading spaces
 
-10  continue
-    if (iptr <= linelen) then
-       if (line(iptr:iptr) == ' ') then
-          iptr = iptr + 1
-          goto 10
-       end if
-    end if
+! 10  continue
+!     if (iptr <= linelen) then
+!        if (line(iptr:iptr) == ' ') then
+!           iptr = iptr + 1
+!           goto 10
+!        end if
+!     end if
 
-    if (iptr > linelen) then
+!     if (iptr > linelen) then
 
-       ! *** Read next line of namelist data
+!        ! *** Read next line of namelist data
 
-20     continue
-       read(infile,'(A)',iostat=iost) line
+! 20     continue
+!        read(infile,'(A)',iostat=iost) line
 
-       ! *** On error or end, leave routine with error set
+!        ! *** On error or end, leave routine with error set
 
-       if (iost /= 0) goto 60
+!        if (iost /= 0) goto 60
 
-       lineno = lineno + 1
+!        lineno = lineno + 1
 
-       ! *** Ignore blank lines
+!        ! *** Ignore blank lines
 
-       if (line == ' ') goto 10
+!        if (line == ' ') goto 10
 
-       ! *** Ignore comments, unless they start with '*****',
-       ! *** in which case print them.
+!        ! *** Ignore comments, unless they start with '*****',
+!        ! *** in which case print them.
 
-       if (line(1:5) == '*****') then
-          write(outfile,*) line(1:76)
-       end if
+!        if (line(1:5) == '*****') then
+!           write(outfile,*) line(1:76)
+!        end if
 
-       if (line(1:1) == '*') goto 10
+!        if (line(1:1) == '*') goto 10
 
-       ! *** Length of line excluding trailing spaces
+!        ! *** Length of line excluding trailing spaces
 
-       linelen = len_trim(line)
+!        linelen = len_trim(line)
 
-       ! *** If $END, return
+!        ! *** If $END, return
 
-       if (line(1:1) == '$') then
-          icode = -1
-          goto 1000
-       end if
-       iptr = 1
-30     continue
-       if (line(iptr:iptr) == ' ') then
-          iptr = iptr + 1
-          if (iptr <= linelen) goto 30
-          goto 20
-       end if
+!        if (line(1:1) == '$') then
+!           icode = -1
+!           goto 1000
+!        end if
+!        iptr = 1
+! 30     continue
+!        if (line(iptr:iptr) == ' ') then
+!           iptr = iptr + 1
+!           if (iptr <= linelen) goto 30
+!           goto 20
+!        end if
 
-       ! *** A continuation line starts with 0-9, - or + (more numbers)
+!        ! *** A continuation line starts with 0-9, - or + (more numbers)
 
-       if ((line(iptr:iptr) >= '0').and.(line(iptr:iptr) <= '9')) goto 40
-       if ((line(iptr:iptr) == '+').or.(line(iptr:iptr) == '-')) goto 40
-       icode = -1
-       goto 1000
-40     continue
+!        if ((line(iptr:iptr) >= '0').and.(line(iptr:iptr) <= '9')) goto 40
+!        if ((line(iptr:iptr) == '+').or.(line(iptr:iptr) == '-')) goto 40
+!        icode = -1
+!        goto 1000
+! 40     continue
 
-    end if
+!     end if
 
-    ! *** Put rest of line into varval (makes it easier to parse)
+!     ! *** Put rest of line into varval (makes it easier to parse)
 
-    varval = line(iptr:)
-    varlen = index(varval,',') - 1
-    if (varlen <= 0) varlen = index(varval,' ') - 1
-    if (varlen <= 0) varlen = iptr
+!     varval = line(iptr:)
+!     varlen = index(varval,',') - 1
+!     if (varlen <= 0) varlen = index(varval,' ') - 1
+!     if (varlen <= 0) varlen = iptr
 
-    ! *** Update pointer
+!     ! *** Update pointer
 
-    iptr = iptr + varlen
+!     iptr = iptr + varlen
 
-    ! *** Ignore trailing spaces
+!     ! *** Ignore trailing spaces
 
-50  continue
-    if (line(iptr:iptr) == ' ') then
-       iptr = iptr + 1
-       if (iptr <= linelen) goto 50
-    end if
+! 50  continue
+!     if (line(iptr:iptr) == ' ') then
+!        iptr = iptr + 1
+!        if (iptr <= linelen) goto 50
+!     end if
 
-    ! *** Ignore comma, if present
+!     ! *** Ignore comma, if present
 
-    if (iptr <= linelen) then
-       if (line(iptr:iptr) == ',') iptr = iptr + 1
-    end if
+!     if (iptr <= linelen) then
+!        if (line(iptr:iptr) == ',') iptr = iptr + 1
+!     end if
 
-    ! *** Write the text into the variable
+!     ! *** Write the text into the variable
 
-    string = varval(1:varlen)
+!     string = varval(1:varlen)
 
-    goto 1000
+!     goto 1000
 
-60  continue
-    icode = 1
+! 60  continue
+!     icode = 1
 
-1000 continue
+! 1000 continue
 
-  end subroutine get_substring_trim
+!   end subroutine get_substring_trim
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4574,57 +4573,57 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine report_input_error
+!   subroutine report_input_error
 
-    !+ad_name  report_input_error
-    !+ad_summ  Reports an error and stops the program
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine is called if an error has been detected, and
-    !+ad_desc  it reports the value of <CODE>error_code</CODE> and the
-    !+ad_desc  user-supplied error message, and stops the program.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  03/10/12 PJK Initial version
-    !+ad_hist  16/09/13 PJK Added 'Please check...' line
-    !+ad_hist  27/11/13 PJK Added more advice if the output file is unhelpful
-    !+ad_hist  26/06/14 PJK Changed routine name to prevent clash with
-    !+ad_hisc               global error handling routine
-    !+ad_hist  08/10/14 PJK Swapped order of the message lines so that the
-    !+ad_hisc               error itself is more obvious without scrolling
-    !+ad_stat  Okay
-    !+ad_docs  None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     !+ad_name  report_input_error
+!     !+ad_summ  Reports an error and stops the program
+!     !+ad_type  Subroutine
+!     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+!     !+ad_cont  N/A
+!     !+ad_args  None
+!     !+ad_desc  This routine is called if an error has been detected, and
+!     !+ad_desc  it reports the value of <CODE>error_code</CODE> and the
+!     !+ad_desc  user-supplied error message, and stops the program.
+!     !+ad_prob  None
+!     !+ad_call  report_error
+!     !+ad_hist  03/10/12 PJK Initial version
+!     !+ad_hist  16/09/13 PJK Added 'Please check...' line
+!     !+ad_hist  27/11/13 PJK Added more advice if the output file is unhelpful
+!     !+ad_hist  26/06/14 PJK Changed routine name to prevent clash with
+!     !+ad_hisc               global error handling routine
+!     !+ad_hist  08/10/14 PJK Swapped order of the message lines so that the
+!     !+ad_hisc               error itself is more obvious without scrolling
+!     !+ad_stat  Okay
+!     !+ad_docs  None
+!     !
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+!     implicit none
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    write(*,*)
-    write(*,*) 'Error trapped...'
-    write(*,*)
-    write(*,*) 'Please check the output file for further information.'
-    write(*,*)
-    write(*,*) 'If this does not contain a helpful error message, check '// &
-         'the lines of the input'
-    write(*,*) 'file following the last one copied to the output file - ' // &
-         'there is likely to be'
-    write(*,*) 'a mistake in the formatting somewhere...'
-    write(*,*)
-    write(*,*) 'Note that in-line comments are usually okay, but be very ' // &
-         'careful with the use'
-    write(*,*) 'of commas (best avoided altogether...)'
-    write(*,*)
-    write(*,*) 'Routine ',trim(error_routine),': ',trim(error_message)
-    write(*,*) 'Error Code: ',error_code
+!     write(*,*)
+!     write(*,*) 'Error trapped...'
+!     write(*,*)
+!     write(*,*) 'Please check the output file for further information.'
+!     write(*,*)
+!     write(*,*) 'If this does not contain a helpful error message, check '// &
+!          'the lines of the input'
+!     write(*,*) 'file following the last one copied to the output file - ' // &
+!          'there is likely to be'
+!     write(*,*) 'a mistake in the formatting somewhere...'
+!     write(*,*)
+!     write(*,*) 'Note that in-line comments are usually okay, but be very ' // &
+!          'careful with the use'
+!     write(*,*) 'of commas (best avoided altogether...)'
+!     write(*,*)
+!     write(*,*) 'Routine ',trim(error_routine),': ',trim(error_message)
+!     write(*,*) 'Error Code: ',error_code
 
-    idiags(1) = error_code
-    call report_error(130)
+!     idiags(1) = error_code
+!     call report_error(130)
 
-  end subroutine report_input_error
+!   end subroutine report_input_error
 
 end module process_input
 

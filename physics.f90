@@ -478,7 +478,7 @@ contains
 
     call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
          iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
-         plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
+         plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
          xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
     ptremw = ptrepv*vol
@@ -496,7 +496,7 @@ contains
 
     sbar = 1.0D0
     call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
-         dnprot,taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+         taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Calculate beta limit
 
@@ -3279,7 +3279,7 @@ end function t_eped_scaling
 
   subroutine pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
        iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw,&
-       plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
+       plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
        xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
     !+ad_name  pcond
@@ -3306,7 +3306,6 @@ end function t_eped_scaling
     !+ad_args  pchargemw : input real :  non-alpha charged particle fusion power (MW)
     !+ad_args  pinjmw    : input real :  auxiliary power to ions and electrons (MW)
     !+ad_args  plascur   : input real :  plasma current (A)
-    !+ad_args  pohmpv    : input real :  ohmic heating per unit volume (MW/m3)
     !+ad_args  pcoreradpv: input real :  total core radiation power (MW/m3)
     !+ad_args  q         : input real :  edge safety factor (tokamaks), or
     !+ad_argc                            rotational transform iotabar (stellarators)
@@ -3371,7 +3370,7 @@ end function t_eped_scaling
     integer, intent(in) :: iinvqd, isc, ignite
     real(kind(1.0D0)), intent(in) :: afuel, palpmw, aspect, bt, dene, &
          dnitot, dnla, eps, hfact, kappa, kappa95, pchargemw, pinjmw, &
-         plascur, pohmpv, pcoreradpv, q, qstar, rmajor, rminor, te, &
+         plascur, pcoreradpv, q, qstar, rmajor, rminor, te, &
          ten, tin, vol, xarea, zeff
     real(kind(1.0D0)), intent(out) :: kappaa, powerht, ptrepv, ptripv, &
          tauee, taueff, tauei
@@ -4028,7 +4027,7 @@ end function t_eped_scaling
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
-       dnprot,taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+       taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !+ad_name  phyaux
     !+ad_summ  Auxiliary physics quantities
@@ -4039,7 +4038,6 @@ end function t_eped_scaling
     !+ad_args  dene   : input real :  electron density (/m3)
     !+ad_args  deni   : input real :  fuel ion density (/m3)
     !+ad_args  dnalp  : input real :  alpha ash density (/m3)
-    !+ad_args  dnprot : input real :  proton ash density (/m3)
     !+ad_args  fusionrate : input real :  fusion reaction rate (/m3/s)
     !+ad_args  alpharate  : input real :  alpha particle production rate (/m3/s)
     !+ad_args  plascur: input real :  plasma current (A)
@@ -4073,7 +4071,7 @@ end function t_eped_scaling
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: aspect, dene, deni, dnalp, dnprot, &
+    real(kind(1.0D0)), intent(in) :: aspect, dene, deni, dnalp, &
          fusionrate, alpharate, plascur, sbar, taueff, vol
     real(kind(1.0D0)), intent(out) :: burnup, dntau, figmer, fusrat, &
          qfuel, rndfuel, taup
@@ -4729,7 +4727,7 @@ end function t_eped_scaling
     do iisc = 32,ipnlaws
        call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d1, &
             iinvqd,iisc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
-            plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
+            plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
             xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)
        hfac(iisc) = fhfac(iisc)
 
@@ -4835,7 +4833,7 @@ end function t_eped_scaling
 
     call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hhh, &
          iinvqd,iscz,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
-         plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
+         plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
          xarea,zeff,ptrez,ptriz,taueezz,taueiz,taueffz,powerhtz)
 
     ! MDK All the scaling laws now contain hfact, so this code no longer required.

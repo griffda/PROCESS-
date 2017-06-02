@@ -1510,6 +1510,12 @@ def plot_current_drive_info(axis, mfile_data, scan):
              r"$\times 10^{-20}$ MW m$^{2}$"),
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
             (hstar, "H* (non-rad. corr.)", "")]
+
+    data.append(("", "", ""))
+    data.append(("#Blanket Information", "", ""))
+    data.append(("tbr", "Tritium breeding ratio", ""))
+    data.append(("emult", "Energy multiplication in blanket", ""))
+
     plot_info(axis, data, mfile_data, scan)
 
 

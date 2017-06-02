@@ -286,6 +286,7 @@ contains
     !+ad_hist  14/05/14 PJK Initial PROCESS version
     !+ad_hist  17/06/14 PJK Added impdir usage
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  26/05/17 JM  Lack of impurity data now exits instead of using old model
     !+ad_stat  Okay
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -351,11 +352,13 @@ contains
        call import_impdata(fullpath, len_tab, &
             impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3, impurity_arr(no)%Zav)
     else
-       call report_error(29)
-       imprad_model = 0
-       write(*,*) "#####   Imprad_model = 0   #####", label // 'Lzdata.dat', iexist, impdir
-       error = 1
-       return
+      !  call report_error(29)
+      !  imprad_model = 0
+      !  write(*,*) "#####   Imprad_model = 0   #####", label // 'Lzdata.dat', iexist, impdir
+      !  error = 1
+       write(*,*) "# Warning :  Cannot find impurity data please check path."
+       write(*,*) "# Error   :  Current path is: ", impdir
+       stop
     end if
 
     !  Convert tabulated units if necessary

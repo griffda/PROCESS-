@@ -7,17 +7,21 @@
  
    Program : ./process.exe
    Version : 1.0.10   Release Date :: 2017-04-27
- Tag Number : "1.0.10-19-gf59c026"
+   Tag No. : "1.0.10-34-gbb069a7"
       User : morrisj
  Directory : /home/morrisj/Work/fortran/tag_output/test_suite
  
  **************************************************************************************************************
  
 <<<<<<< HEAD
+<<<<<<< HEAD
  PROCESS 1.0.10 : Run on 19 May 2017 13:08:57 +01:00(hh:mm) UTC by freia009
 =======
  PROCESS 1.0.10 : Run on 22 May 2017 14:00:06 +01:00(hh:mm) UTC by localhost.localdomain
 >>>>>>> 5efc3ef9c35ff80d96558c4cddcfd54c44e3a69c
+=======
+ PROCESS 1.0.10 : Run on  1 Jun 2017  8:59:53 +01:00(hh:mm) UTC by localhost.localdomain
+>>>>>>> d3ed1fb41c87999ec74da1a4658a0ef29efb8515
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)

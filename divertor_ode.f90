@@ -28,13 +28,9 @@ module divertor_ode
   ! Module-level declarations !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  logical, private :: verbose
   logical, public, save :: impurities_present(nimp)=.false.
-  integer, private :: iprint
-  integer, private :: element_index(nimp)
 
   ! impurity element name - temporary
-  character(len=2), private :: element='**'
 
   ! impurity concentrations in divertor zone
   real(kind(1.0D0)), public :: impurity_concs(nimp)

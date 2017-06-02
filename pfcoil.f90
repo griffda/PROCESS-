@@ -73,7 +73,7 @@ module pfcoil_module
   real(kind(1.0D0)) :: axial_force
   real(kind(1.0D0)), dimension(nfixmx) :: rfxf,zfxf,cfxf,xind
   real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls,zcls
-  real(kind(1.0D0)), dimension(ngrpmx) :: ccls,ccls2,ccl0
+  real(kind(1.0D0)), dimension(ngrpmx) :: ccls,ccl0
   real(kind(1.0D0)), dimension(ngc2) :: bpf2
   real(kind(1.0D0)), dimension(ngc2,3) :: vsdum
 
@@ -2367,7 +2367,7 @@ contains
     real(kind(1.0D0)), allocatable, dimension(:) :: roh,zoh
     real(kind(1.0D0)), dimension(nplas) :: rplasma,zplasma
     real(kind(1.0D0)), dimension(ngc2+nohmax) :: rc,zc,xc,cc,xcin,xcout
-    real(kind(1.0D0)) :: a,b,c,br,bz,deltar,delzoh,psi,r,reqv,rl,rp
+    real(kind(1.0D0)) :: a,b,c,br,bz,deltar,delzoh,psi,reqv,rl,rp
     real(kind(1.0D0)) :: xohpf,xohpl,xpfpl,zp
     integer :: i,ig,ii,ij,j,jj,k,nc,ncoilj,ncoils,nef,noh
 

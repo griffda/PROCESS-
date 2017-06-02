@@ -441,6 +441,8 @@ def dict_ixc_full():
         if match:
             num = int(match.group(1))
             name = match.group(2).strip()
+            if "fimp(" in line:
+                name = "fimp(" + line.split("fimp(")[-1].split(")")[0] + ")"
             lxc.append(name)
             assert num == len(lxc)
 
@@ -624,7 +626,7 @@ def dict_default():
         try:
             name = args.split(',')[1].strip()
             if name not in di:
-                di[name] = None
+                di[name] = -1
                 logging.warning(" " + str(name) + " looks like an input " + \
                 "variable but cout not find a default value. Setting " + \
                 "default to None")

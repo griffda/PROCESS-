@@ -70,7 +70,7 @@ contains
 
     character(len=100) :: acd_file, scd_file, plt_file, prb_file, ccd_file
 
-    real(kind(1.0D0)) :: logdens, logtemp, minldensity, minltemp, maxldensity, maxltemp
+    real(kind(1.0D0)) :: logdens, logtemp
 
     logical, save :: FirstCall = .true.
 
@@ -288,7 +288,7 @@ contains
     real(kind(1.0D0)):: s(3), al(3), cx
     real(kind(1.0D0)):: plt(3), prb(3), mass
     real(kind(1.0D0)):: lz_deuterium(3)
-    real(kind(1.0D0))::dummy
+    real(kind(1.0D0)):: dummy1, dummy2, dummy3, dummy4, dummy5
     integer::i,j
     real(kind(1.0D0))::te(15)=(/1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,12.,14.,16.,18.,20./)
     real(kind(1.0D0))::density(3)=(/1.e19,1.e20,1.e21/)
@@ -300,7 +300,7 @@ contains
                                        'ionis21', 'recomb21', 'line rad21', 'cont rad21', 'tot rad21'
     mass=2.0D0
     ! Just read data
-    call get_h_rates(1.d20, 1.0d0, dummy, dummy, dummy, dummy, dummy, &
+    call get_h_rates(1.d20, 1.0d0, dummy1, dummy2, dummy3, dummy4, dummy5, &
                           mass, verbose=.true.)
     do i=1,15
         do j=1,3

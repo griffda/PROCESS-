@@ -98,9 +98,9 @@ def get_default_value(var):
         num = is_bound(var)
         if num is False:
             if num < 0:
-                return DICT_IXC_BOUNDS[DICT_IXC_SIMPLE[str(-num)]]["lb"]
+                return DICT_IXC_BOUNDS[var]["lb"]
             else:
-                return DICT_IXC_BOUNDS[DICT_IXC_SIMPLE[str(num)]]["ub"]
+                return DICT_IXC_BOUNDS[var]["ub"]
     return None
 
 
@@ -397,6 +397,7 @@ def set_iter_vals(a_dat, b_dat, original_dict, target_dict, bound_fac=1.001):
             # the limits of the variable each step. This can be done by
             # setting boundu(#) and boundl(#) in target_dict and original_dict
             name = DICT_IXC_SIMPLE[str(num)]
+            print(name)
             tar_val = get_val(name, b_dat)
             if not tar_val:
                 print("Could not find a target value for %s" % name)
@@ -491,12 +492,12 @@ def setup():
     b_dat = inmod.InDat(CONF.b)
 
     if "isweep" in a_dat.data.keys():
-        if a_dat.data["isweep"].value > 1:
+        if a_dat.data["isweep"].value > "1":
             print("Sweep mode is enabled in A")
             exit()
 
     if "ioptimz" in a_dat.data.keys():
-        ioptimz = a_dat.data["ioptimz"].value
+        ioptimz = int(a_dat.data["ioptimz"].value)
         if not (ioptimz == 0 or ioptimz == 1):
             print("Warning, ioptimz != 0 or 1 in A. Continuing anyway...")
 

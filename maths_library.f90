@@ -131,9 +131,7 @@ contains
     real(kind(1.0D0)), dimension(n), intent(in) :: y
 
     !  Local variables
-
     integer :: i,j
-    real(kind(1.0D0)) :: dx, ddx
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -548,7 +546,7 @@ contains
 
   end function binarysearch
 
-  real(kind(1.0D0)) function interpolate(x_len, x_array, y_len, y_array, f, x, y, delta)
+  real(kind(1.0D0)) function interpolate(x_len, x_array, y_len, y_array, f, x, y)
     ! This function uses bilinear interpolation to estimate the value
     ! of a function f at point (x,y)
     ! f is assumed to be sampled on a regular grid, with the grid x values specified
@@ -560,7 +558,6 @@ contains
     real(kind(1.0D0)), dimension(y_len), intent(in) :: y_array
     real(kind(1.0D0)), dimension(x_len, y_len), intent(in) :: f
     real(kind(1.0D0)), intent(in) :: x,y
-    real(kind(1.0D0)), intent(in), optional :: delta
     real(kind(1.0D0)) :: denom, x1, x2, y1, y2
     integer :: i,j
 

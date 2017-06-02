@@ -1418,8 +1418,6 @@ contains
           !#=# vacuum
           !#=#=# fniterpump, tfno
 
-          ! TODO this is for vacuum_model == 'simple' only?
-
           ! fniterpump |  f-value for constraint that number of pumps < tfno
           ! tfno       |  number of TF coils
           ! niterpump  |  number of high vacuum pumps (real number), each with the throughput
@@ -1428,10 +1426,10 @@ contains
           cc(i) = 1.0D0 - fniterpump * tfno / niterpump
 
           if (present(con)) then
-             con(i) = tfno
-             err(i) = tfno * cc(i)
-             symbol(i) = '<'
-             units(i) = ''
+            con(i) = tfno
+            err(i) = tfno * cc(i)
+            symbol(i) = '<'
+            units(i) = ''
           end if
 
        case (64)  ! Upper limit on Zeff

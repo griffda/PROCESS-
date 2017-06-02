@@ -583,7 +583,6 @@ contains
 
     character(len=72) :: dum72
     character(len=20) :: dum20
-    ! character(len=15) :: dum15
     character(len=20) :: stripped
     character(len=3) :: flag
 

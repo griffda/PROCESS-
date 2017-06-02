@@ -2029,7 +2029,6 @@ contains
         ! values calcualted for strands and cable, with different maximum temperatures
         jwdgpro = min(jwdgpro_strand,jwdgpro_cable)
 
-
         if(jwdgpro_cable<1d0)write(*,*)'jwdgpro_cable', jwdgpro_cable
 
     end subroutine croco_quench
