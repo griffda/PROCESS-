@@ -30,6 +30,7 @@ ICC_FULL = proc_dict.DICT_ICC_FULL
 ICC_VARS = proc_dict.DICT_ICC_VARS
 IXC_FULL = proc_dict.DICT_IXC_FULL
 IXC_DEF = proc_dict.DICT_IXC_DEFAULT
+DES_FIMP = proc_dict.DICT_FIMP
 MODULES_FULL = proc_dict.DICT_MODULE
 DEFAULTS = proc_dict.DICT_DEFAULT
 DESCRIPTIONS = proc_dict.DICT_DESCRIPTIONS
@@ -355,7 +356,10 @@ def output_itvars(k):
     for item in IT_VARS:
     
         item_name = IXC_FULL[str(item)]["name"]
-        item_description = DESCRIPTIONS[item_name].split("\n")[0]
+        if "fimp(" in item_name:
+            item_description = DES_FIMP[item_name]
+        else:
+            item_description = DESCRIPTIONS[item_name].split("\n")[0]
         
         if item_name in IT_VAR_VALUES.keys():
             item_value = IT_VAR_VALUES[item_name]
@@ -366,7 +370,10 @@ def output_itvars(k):
             starting_value = INFILE.data[item_name].value
             starting_value = bold(starting_value)
         else:
-            starting_value = IXC_DEF[item_name]
+            if "fimp(" in item_name:
+                starting_value = item_value
+            else:
+                starting_value = IXC_DEF[item_name]
         
         if item_name in MODULES_IXC_NAMES_LIST:
 
@@ -417,13 +424,13 @@ def output_inputs(k):
                 else:
                     comment = ""
 
-                if item == "fimp":
-                    i_des = fimp_descriptions()
+                if "fimp(" in item:
+                    i_des = DES_FIMP[item]
 
                 if type(item_value) == list:
                     table_line([code(item), bold("array"), item_des], ".4g")
                     for i in range(len(item_value)):
-                        if item == "fimp":
+                        if "fimp(" in item:
                             item_des = i_des[i]
                         else:
                             item_des = "-"

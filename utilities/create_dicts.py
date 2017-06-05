@@ -857,6 +857,7 @@ List of dictionaries:
     PARAMETER_DEFAULTS     : Default values for making a plot file from MFILE.DAT
     NON_F_VALUES           : Parameters that start with f, but are not f-values
     DICT_TF_TYPE           : PROCESS TF coil types
+    DICT_FIMP              : PROCESS impurity types for fimp
     DICT_OPIMISATION_VARS  : Optimisation variable dictionary
     DICT_IXC2NSWEEP        : Maps ixc no. to nsweep, if applicable
     DICT_NSWEEP2IXC        : Maps nsweep to ixc no, if applicable
@@ -901,6 +902,22 @@ NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']
 
 # PROCESS TF Coil types
 DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn", 5: "WST Nb3Sn"}
+
+# FIMP Values
+DICT_FIMP = {"fimp(1)":"Hydrogen (fraction calculated by code)",
+             "fimp(2)":"Helium",
+             "fimp(3)":"Beryllium",
+             "fimp(4)":"Carbon",
+             "fimp(5)":"Nitrogen",
+             "fimp(6)":"Oxygen",
+             "fimp(7)":"Neon",
+             "fimp(8)":"Silicon",
+             "fimp(9)":"Argon",
+             "fimp(10)":"Iron",
+             "fimp(11)":"Nickel",
+             "fimp(12)":"Krypton",
+             "fimp(13)":"Xenon",
+             "fimp(14)":"Tungsten"}
 
 # Optimisation variable dictionary
 DICT_OPTIMISATION_VARS = {1: 'Plasma major radius',
