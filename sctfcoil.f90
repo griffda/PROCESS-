@@ -52,10 +52,12 @@ use process_output
 use tfcoil_variables
 use superconductors
 use resistive_materials
+implicit none
+
 
 private
 public :: bi2212, itersc, wstsc, jcrit_nbti, outtf, sctfcoil, stresscl, &
-tfcind, tfspcall
+tfcind, tfspcall, initialise_cables
 
 !  Module variables
 !  Dimensionless winding pack width
@@ -67,16 +69,29 @@ real(kind(1.0D0)), private :: tf_fit_z
 !  Ratio of peak field with ripple to nominal axisymmetric peak field
 real(kind(1.0D0)), private :: tf_fit_y
 
-type(resistive_material):: copper = resistive_material(density = 8960.0d0, rrr=100d0)
-type(resistive_material):: hastelloy = resistive_material(density = 8890.0d0)
-! Solder density: 60EN ie 60%Sn + 40%Pb solder (approx the same as eutectic 63/37)
-type(resistive_material):: solder = resistive_material(density = 8400.0d0)
-type(resistive_material):: jacket = resistive_material(density = 8000.0d0) ! 304 stainless
-type(resistive_material):: helium = resistive_material(cp=5793d0)
+! Current in each TF coil
+real(kind(1.0D0))::tfc_current
+
+type(resistive_material):: copper
+type(resistive_material):: hastelloy
+type(resistive_material):: solder
+type(resistive_material):: jacket
+type(resistive_material):: helium
 type(volume_fractions)::croco_strand, croco_cable
+
+real(kind(1.0D0)):: t1, time2, tau2,estotft,croco_quench_factor
 
 contains
 
+! --------------------------------------------------------------------------
+subroutine initialise_cables()
+    copper%rrr = copper_rrr
+    copper%density = 8960.0d0
+    hastelloy%density = 8890.0d0
+    ! Solder: 60EN ie 60%Sn + 40%Pb solder (approx the same as eutectic 63/37)
+    solder%density = 8400.0d0
+    jacket%density = 8000.0d0       ! 304 stainless
+end subroutine initialise_cables
 ! --------------------------------------------------------------------------
 
 subroutine sctfcoil(outfile,iprint)
@@ -182,18 +197,8 @@ subroutine sctfcoil(outfile,iprint)
 
     !  Total current in TF coils
     ritfc = oacdcp * tfareain
-    ! if (ritfc < 0.0D0) then
-    !     fdiags(1) = ritfc ; fdiags(2) = oacdcp ; fdiags(3) = tfareain
-    !     call report_error(97)
-    !     write(*,*) 'Error in routine SCTFCOIL:'
-    !     write(*,*) 'TF coil current is negative, ritfc = ',ritfc
-    !     write(*,*) '   Overall current density, oacdcp = ',oacdcp
-    !     write(*,*) '    Cross-sectional area, tfareain = ',tfareain
-    !     write(*,*) ' '
-    !     write(*,*) ' PROCESS continuing, ritfc forced to be +ve...'
-    !     ritfc = abs(ritfc)  !  changed from 1.0D0
-    ! end if
 
+    tfc_current = ritfc/tfno
     ! Determine quench time (based on IDM: 2MBSE3)
     ! Issue #337: Force on the vessel wall due to TF coil quench
 
@@ -217,8 +222,10 @@ subroutine sctfcoil(outfile,iprint)
     !  Calculation of TF coil inductance
     call tfcind(tfcth)
 
-    !  Find total TF coil stored magnetic energy (GJ)
-    estotft = 1.0D-9 *  0.5D0*tfind * ritfc**2
+    !  Total TF coil stored magnetic energy (J)
+    estotft = 0.5D0*tfind * ritfc**2
+    !  Total TF coil stored magnetic energy (GJ)
+    estotftgj = 1.0D-9 * estotft
 
     !  Case thicknesses (inboard leg)
     if (tfc_model == 0) thkcas = tfcth * 0.5D0
@@ -228,24 +235,6 @@ subroutine sctfcoil(outfile,iprint)
 
     !  thkcas: case thickness of side further away from plasma
     !  casthi: case thickness of side nearest plasma
-
-    ! if (thkwp <= 0.0D0) then
-    !     fdiags(1) = thkwp ; fdiags(2) = tfcth
-    !     fdiags(3) = thkcas ; fdiags(4) = casthi
-    !     fdiags(5) = casths ; fdiags(6) = tinstf
-    !     fdiags(7) = tfinsgap
-    !     call report_error(98)
-    !     write(*,*) 'Error in routine SCTFCOIL:'
-    !     write(*,*) 'Negative winding pack thickness:        thkwp (m) =',thkwp
-    !     write(*,*) 'Inboard TF coil thickness is too small: tfcth (m) =',tfcth
-    !     write(*,*) 'Increase tfcth or make it an iteration variable (13) with'
-    !     write(*,*) 'a lower bound, or reduce the case and insulation thicknesses'
-    !     write(*,*) 'or their upper bounds:'
-    !     write(*,*) 'thkcas=',thkcas,' casthi=',casthi
-    !     write(*,*) 'casths=',casths,' tinstf=',tinstf
-    !     write(*,*) 'tfinsgap=', tfinsgap
-    !     write(*,*) ' '
-    ! end if
 
     !  Radius of geometrical centre of winding pack
     radwp = rcoil - casthi - tfinsgap - tinstf - 0.5D0*thkwp
@@ -428,19 +417,6 @@ subroutine sctfcoil(outfile,iprint)
     call stresscl
 
     if (iprint == 1) call outtf(outfile, peaktfflag)
-
-    ! if ((whttf<1.0d0).or.(whttf/=whttf)) then
-    !     write(*,*) '  whtcas = ', whtcas, ' whtcon = ', whtcon
-    !     write(*,*) '   tfno = ', tfno
-    !     write(*,*) '   whtgw = ', whtgw,  '  tfcth = ', tfcth
-    !     write(*,*) '  thkcas = ',thkcas,  ' casthi = ', casthi
-    !     write(*,*) '  casths = ',casths,  '  tfcth = ', tfcth
-    !     write(*,*) '  tinstf = ',tinstf,  '  tfleng = ', tfleng
-    !     write(*,*) 'tfinsgap = ',tfinsgap,'  turnstf = ', turnstf
-    !     write(*,*) 'thwcndut = ',thwcndut
-    !     write(*,*) 'thicndut = ',thicndut
-    !     write(*,*) '   cpttf = ',cpttf
-    ! end if
 
 end subroutine sctfcoil
 
@@ -1329,7 +1305,7 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp, 'OP ')
     call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
     call ovarre(outfile,'Ripple amplitude at plasma (%)','(ripple)',ripple, 'OP ')
-    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotft)',estotft, 'OP ')
+    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj, 'OP ')
     call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf, 'OP ')
     call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/tfno)',whttf/tfno, 'OP ')
     call ovarre(outfile,'Vertical separating force per leg (N)','(vforce)',vforce, 'OP ')
@@ -1370,12 +1346,29 @@ subroutine outtf(outfile, peaktfflag)
     call osubhd(outfile,'Quench information :')
     call ovarre(outfile,'Allowable stress in vacuum vessel (Pa)','(sigvvall)',sigvvall)
     call ovarre(outfile,'Minimum allowed quench time due to stress in VV (s)','(taucq)',taucq, 'OP ')
-    call ovarre(outfile,'Actual quench time (s)','(tdmptf)',tdmptf)
+    call ovarre(outfile,'Actual quench time (or time constant) (s)','(tdmptf)',tdmptf)
     call ovarre(outfile,'Max allowed current density in winding pack due to temperature rise in quench (A/m2)', &
                         '(jwdgpro)', jwdgpro, 'OP ')
     call ovarre(outfile,'Actual current density in winding pack (A/m2)', '(jwptf)', jwptf, 'OP ')
     call ovarre(outfile,'Maximum allowed voltage during quench due to insulation (kV)', '(vdalw)', vdalw)
     call ovarre(outfile,'Quench voltage (kV)','(vtfskv)',vtfskv, 'OP ')
+
+    select case (isumattf)
+    case (1,2,3,4,5)
+        call ovarre(outfile,'Maximum allowed temp rise during a quench (K)','(tmaxpro)', tmaxpro)
+    case(6)
+        call ovarre(outfile,'Maximum temperature in quench: CroCo strand (K)','(tmax_croco)', tmax_croco)
+        call ovarre(outfile,'Maximum temperature in quench: Jacket (K)','(tmax_croco)', tmax_jacket)
+        call ocmmnt(outfile,'Fast discharge current model: '//quench_model)
+        if(quench_detection_ef>1d-10)then
+            call ocmmnt(outfile, 'Two-phase quench model is used')
+            call ovarre(outfile,'Time for quench detection (s)','(time1)', time1)
+            call ovarre(outfile,'Peak temperature of normal zone before quench is detected (K)','(T1)',T1,'OP ')
+        else
+            call ocmmnt(outfile, 'Simple one-phase quench model is used')
+        endif
+    end select
+
 
     call osubhd(outfile,'Conductor Information :')
     call ovarre(outfile,'Width of cable (square) (m)','(cable_width)',cable_width, 'OP ')
@@ -1492,7 +1485,7 @@ subroutine tfspcall(outfile,iprint)
     end if
 
     !  Stored energy (J) per coil and cross-sectional area per turn
-    tfes = estotft * 1.0D9 / tfno
+    tfes = estotft / tfno
     aturn = ritfc/(jwptf*tfno*turnstf)
 
     call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,jwptf,isumattf, &
@@ -1681,8 +1674,8 @@ contains
             croco_cable%jacket_fraction = acndttf/croco_cable%aturn
 
             call croco(jcritsc,croco_strand,croco_cable)
-            jcritstr = croco_strand%critical_current
             icrit = croco_cable%critical_current
+            jcritstr = croco_cable%critical_current / croco_cable%number_croco
 
         case default  !  Error condition
             idiags(1) = isumat ; call report_error(105)
@@ -1758,7 +1751,7 @@ contains
         case(6)
             croco_strand%tmax = tmax_croco
             croco_cable%tmax = tmax_jacket
-            call croco_quench(croco_strand,croco_cable)
+            call croco_quench(croco_cable)
             vd = vtfskv
         end select
 
@@ -1809,7 +1802,8 @@ contains
             call ovarre(outfile,'Mean width of tape (m)','(tape_width)',tape_width , 'OP ')
             call ovarre(outfile,'Outer diameter of CroCo strand (m) ','(croco_od)', croco_od, 'OP ')
             call ovarre(outfile,'Inner diameter of CroCo copper tube (m) ','(croco_id)',croco_id , 'OP ')
-            call ovarrf(outfile,'Number of CroCo strands in the conductor ','(number_croco)',number_croco , 'OP ')
+            call ovarrf(outfile,'Number of CroCo strands in the conductor ','(croco_cable%number_croco)',&
+                                                                              croco_cable%number_croco , 'OP ')
             call ovarre(outfile,'Thickness of each HTS coated tape ','(tape_thickness)',tape_thickness , 'OP ')
             call ovarre(outfile,'Thickness of stack of tapes (m) ','(stack_thickness)',stack_thickness , 'OP ')
             call ovarre(outfile,'Number of tapes in strand','(tapes)',tapes , 'OP ')
@@ -1870,14 +1864,19 @@ contains
         call ovarre(outfile,'Operating current / critical current','(iooic)', iooic, 'OP ')
         call ovarre(outfile,'Temperature margin (K)','(tmarg)',tmarg, 'OP ')
 
-        call osubhd(outfile,'Protection Information :')
-        select case (isumat)
-        case (1,2,3,4,5)
-            call ovarre(outfile,'Maximum temperature in quench (K)','(tmaxpro)', tmax)
-        case(6)
-            call ovarre(outfile,'Maximum temperature in quench: CroCo strand (K)','(tmax_croco)', tmax_croco)
-            call ovarre(outfile,'Maximum temperature in quench: Jacket (K)','(tmax_croco)', tmax_jacket)
-        end select
+        ! call osubhd(outfile,'Protection Information :')
+        ! select case (isumat)
+        ! case (1,2,3,4,5)
+        !     call ovarre(outfile,'Maximum temperature in quench (K)','(tmaxpro)', tmax)
+        ! case(6)
+        !     call ovarre(outfile,'Maximum temperature in quench: CroCo strand (K)','(tmax_croco)', tmax_croco)
+        !     call ovarre(outfile,'Maximum temperature in quench: Jacket (K)','(tmax_croco)', tmax_jacket)
+        ! end select
+        ! if(quench_detection_time>1d-10)then
+        !     call ocmmnt(outfile, 'Two-phase quench model is used')
+        !     call ovarre(outfile,'Time for quench detection (s)','(quench_detection_time)', quench_detection_time)
+        !     call ovarre(outfile,'Peak temperature of normal zone before quench is detected (K)','(t1)',t1,'OP ')
+        ! endif
 
     end subroutine supercon
 
@@ -1994,113 +1993,144 @@ contains
         ajwpro = ajcp*(acs/aturn)
 
     end subroutine protect
-    ! --------------------------------------------------------------------
-    subroutine croco_quench(croco_strand, croco_cable)
-
-        !+ad_name  croco_quench
-        !+ad_summ  Finds the current density limited by the maximum temperature in quench
-        !+ad_type  Subroutine
-        !+ad_desc  It also finds the dump voltage.
-        ! See section 2.3 of PROCESS physics paper.
-
-        implicit none
-        type(volume_fractions), intent(in)::croco_strand,croco_cable
-        real(kind(1.0D0)):: prefactor, jwdgpro_strand, jwdgpro_cable
-
-        ! vtfskv : voltage across a TF coil during quench (kV)
-        ! PROCESS physics paper equation 24.
-        vtfskv = 2.0D0 * tfes/(tdmptf*cpttf)
-
-        ! Current density limited by temperature rise during quench:
-        ! jwdgpro : allowable TF coil winding pack current density, for quench temperature rise protection (A/m2)
-        ! tdmptf /10.0/ : quench time for TF coil (s)
-
-        ! CROCO strands
-        !--------------
-        prefactor = 2.0d0 * croco_strand%copper_fraction / tdmptf
-        jwdgpro_strand = sqrt(prefactor*quench_integral(croco_strand))
-
-        ! CROCO cable with jacket
-        !------------------------
-        prefactor = 2.0d0 * croco_cable%copper_fraction / tdmptf
-        jwdgpro_cable = sqrt(prefactor*quench_integral(croco_cable))
-
-        ! The allowable TF coil winding pack current density is the lower of the
-        ! values calcualted for strands and cable, with different maximum temperatures
-        jwdgpro = min(jwdgpro_strand,jwdgpro_cable)
-
-        if(jwdgpro_cable<1d0)write(*,*)'jwdgpro_cable', jwdgpro_cable
-
-    end subroutine croco_quench
 
 end subroutine tfspcall
-! -------------------------------------------------------------------------
-function quench_integral(adiabatic_object)
-    implicit none
-    ! The "adiabatic_object" is the set of strands or the complete cable.
-    ! It is adiabatic in that it is assumed not to exchange heat with its surroundings
-    ! during the quench.
-    type(volume_fractions)::adiabatic_object
-    real(kind(1.0D0)) :: quench_integral
-    real(kind(1.0D0)) :: delta_T, T, tmax
-    real(kind(1.0D0)) :: sum_copper,sum_hastelloy,sum_solder, sum_jacket,sum_helium
-    real(kind(1.0D0)) :: integral_copper, integral_hastelloy, integral_solder
-    real(kind(1.0D0)) :: integral_jacket, integral_helium
-    real(kind(1.0D0)) :: delta_T_fine,delta_T_coarse
+
+! --------------------------------------------------------------------
+subroutine croco_quench(croco_cable)
+
+    !+ad_name  croco_quench
+    !+ad_summ  Finds the current density limited by the maximum temperatures in quench
+    !+ad_type  Subroutine
+    !+ad_desc  It also finds the dump voltage.
+
+    type(volume_fractions), intent(in)::croco_cable
+    real(kind(1.0D0)):: prefactor, jwdgpro_1, jwdgpro_2, etamax,delta_T, T, T1
+    real(kind(1.0D0)):: integral1,integral2,integral, sum1, sum2
     integer::i
-    logical::cable
-    ! Calculate integrals using the rectangle rule for simplicity and to guarantee consistency and speed.
-    ! tftmp /4.5/ : peak helium coolant temperature in TF coils and PF coils (K)
-    ! %tmax : maximum temp during a quench for protection (K)
 
-    ! If the adiabatic object is a cable then it will include a jacket and helium coolant.
-    if(adiabatic_object%jacket_fraction>1.0D-6) cable=.True.
-
-    tmax = adiabatic_object%tmax
-    if(tftmp.ge.50d0)write(*,*)'ERROR: tftmp (helium coolant temperature in TF coils) must be < 50 K.'
-    if(tmax.le.50d0)write(*,*)'ERROR: Maximum permitted quench temperature must be > 50 K.'
-
-    delta_T_fine = (50.0d0 - tftmp)/10.0D0
-    delta_T_coarse = (tmax - 50.0d0)/10.0D0
-
-    sum_copper = 0d0; sum_hastelloy = 0d0; sum_solder = 0d0
-    sum_jacket = 0d0; sum_helium = 0d0
-    do i=0,19
-        ! use a finer spacng below 50 K
-        if(i.le.9)then
-            delta_T=delta_T_fine
+    if(quench_detection_ef>1d-10)then
+        ! Two-phase quench model is used.
+        ! Phase 1
+        ! Value of resistivity at which detection voltage is reached
+        etamax = quench_detection_ef * croco_cable%copper_fraction / jwptf
+        delta_T = 1d0
+        integral = 0d0
+        do i=0,300
             T = tftmp + (i+0.5d0)*delta_T
-        else
-            delta_T=delta_T_coarse
-            T = 50.0d0 + (i - 10d0 + 0.5d0)*delta_T
-        endif
+            ! Check the resistivity
+            call copper_properties2(T,bmaxtf,copper)
+            if (copper%resistivity>=etamax)then
+                ! Quench detection voltage has been passed
+                T1 = T - 0.5d0*delta_T
+                write(*,*)'Quench detected: '
+                exit
+            end if
+            ! Quench detection voltage not yet reached
+            ! For phase 1 we do not include the jacket.
+            integral = integral + delta_T * quench_integrand(T,&
+                copper=copper,hastelloy=hastelloy,solder=solder,helium=helium)
+        end do
+        write(*,'(10(a,1pe10.3,1x))') 'Temp = ', T, 'etamax = ', etamax, 'copper%resistivity = ', copper%resistivity
 
-        call copper_properties2(T,bmaxtf, copper)
-        call hastelloy_properties(T,hastelloy)
-        call solder_properties(T,solder)
-        ! All the densities are constant EXCEPT helium
-        sum_copper = sum_copper       + copper%cp    / copper%resistivity * delta_T
-        sum_hastelloy = sum_hastelloy + hastelloy%cp / copper%resistivity * delta_T
-        sum_solder = sum_solder       + solder%cp    / copper%resistivity * delta_T
-        if(cable) then
-            call jacket_properties(T,jacket)
-            call helium_properties(T,helium)
-            sum_jacket = sum_jacket   + jacket%cp   / copper%resistivity * delta_T
-            sum_helium = sum_helium   + helium%cp * helium%density  / copper%resistivity * delta_T
-        endif
+        croco_quench_factor = croco_cable%copper_fraction / jwptf**2
+        time1 = croco_quench_factor * integral
+
+        if(T1>tmax_croco)write(*,*)'Phase 1 of quench is too hot: T1 = ',T1
+    else
+        ! Quench is detected instantly - no phase 1.
+        T1 = tftmp
+    endif
+
+    ! vtfskv : voltage across a TF coil during quench (kV)
+    ! Current density limited by temperature rise during quench:
+    ! jwdgpro : allowable TF coil winding pack current density, for quench temperature rise (A/m2)
+    ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
+    ! For clarity (!?) I have copied this into 'time2' or 'tau2' depending on the model.
+
+    if(quench_model=='linear')then
+        time2 = tdmptf
+        vtfskv = 2.0D0/time2 * (estotft/tfno) / cpttf
+        prefactor = 3.0d0/time2 * croco_cable%copper_fraction
+    elseif(quench_model=='exponential')then
+        tau2 = tdmptf
+        vtfskv = 2.0D0/tau2 * (estotft/tfno) / cpttf
+        prefactor = 2.0d0/tau2 * croco_cable%copper_fraction
+    endif
+
+    ! Phase 2 of quench: fast discharge into resistor
+    delta_T = (tmax_croco-T1)/50d0
+    sum1 = 0d0; sum2 = 0d0
+    do i=0,49
+        T = T1 + (i+0.5d0)*delta_T
+        write(*,*)'T = ', T
+        ! For phase 2 we run the integral twice: once with and once without the jacket.
+        sum1 = sum1 + quench_integrand(T,copper=copper, &
+                    hastelloy=hastelloy,solder=solder,helium=helium)
+        if(T<=tmax_jacket)then
+            sum2 = sum2 + quench_integrand(T,copper=copper, &
+                        hastelloy=hastelloy,solder=solder,helium=helium,jacket=jacket)
+        end if
     end do
+    integral1 = sum1 * delta_T
+    integral2 = sum2 * delta_T
 
-    integral_copper    = sum_copper    * adiabatic_object%copper_fraction * copper%density
-    integral_hastelloy = sum_hastelloy * adiabatic_object%hastelloy_fraction * hastelloy%density
-    integral_solder    = sum_solder    * adiabatic_object%solder_fraction * solder%density
-    integral_jacket    = sum_jacket    * adiabatic_object%jacket_fraction * jacket%density
-    ! helium density is included above.
-    integral_helium   = sum_helium     * adiabatic_object%helium_fraction
+    ! CROCO strands
+    jwdgpro_1= sqrt(prefactor*integral1)
+    ! CROCO cable with jacket
+    jwdgpro_2 = sqrt(prefactor*integral2)
 
-    quench_integral = integral_copper + integral_hastelloy + integral_solder + &
-                      integral_jacket + integral_helium
+    ! The allowable TF coil winding pack current density is the lower of the
+    ! values calculated for strands and cable, with different maximum temperatures
+    jwdgpro = min(jwdgpro_1,jwdgpro_2)
+    write(*,*)'jwdgpro_1 = ', jwdgpro_1, 'jwdgpro_2 = ', jwdgpro_2
 
-end function quench_integral
+    if(jwdgpro<1d0)write(*,*)'jwdgpro = ', jwdgpro
+
+end subroutine croco_quench
+
+!-----------------------------------------------------------------------
+
+function quench_integrand(temperature,copper,hastelloy,solder,helium,jacket)
+    real(kind(1.0D0)),intent(in):: temperature
+    ! Only those materials that are actually supplied in the arguments are used.
+    type(resistive_material),intent(in),optional::copper,hastelloy,solder,helium,jacket
+    real(kind(1.0D0))::sum,quench_integrand
+
+    sum = 0d0
+    write(*,*)'! quench_integrand'
+    write(*,*)temperature,bmaxtf,copper
+    call copper_properties2(temperature,bmaxtf, copper)
+    if(present(copper))then
+        sum = sum + croco_cable%copper_fraction * copper%density * copper%cp
+    end if
+    if(present(hastelloy))then
+        call hastelloy_properties(temperature,hastelloy)
+        sum = sum + croco_cable%hastelloy_fraction * hastelloy%density * hastelloy%cp
+    end if
+    if(present(solder))then
+        call solder_properties(temperature,solder)
+        sum = sum + croco_cable%solder_fraction    * solder%density * solder%cp
+    end if
+    if(present(helium))then
+        call helium_properties(temperature,helium)
+        sum = sum + croco_cable%helium_fraction * helium%cp_density
+    end if
+    if(present(jacket))then
+        call jacket_properties(temperature,jacket)
+        sum = sum + croco_cable%jacket_fraction    * jacket%density * jacket%cp
+    end if
+
+    quench_integrand = sum / copper%resistivity
+
+    write(*,'(10(1pe10.3), 1x)')temperature, copper%resistivity, sum,quench_integrand
+    write(*,'(10(1pe10.3), 1x)')croco_cable%copper_fraction    , copper%density ,copper%cp
+    write(*,'(10(1pe10.3), 1x)')croco_cable%hastelloy_fraction , hastelloy%density , hastelloy%cp
+    write(*,'(10(1pe10.3), 1x)')croco_cable%solder_fraction    , solder%density , solder%cp
+
+end function quench_integrand
+
 ! -------------------------------------------------------------------------
+
 
 end module sctfcoil_module

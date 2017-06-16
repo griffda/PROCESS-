@@ -7,21 +7,13 @@
  
    Program : ./process.exe
    Version : 1.0.10   Release Date :: 2017-04-27
-   Tag No. : "1.0.10-34-gbb069a7"
-      User : morrisj
- Directory : /home/morrisj/Work/fortran/tag_output/test_suite
+ Tag Number : "1.0.10-30-g2c81a56"
+      User : mkovari
+ Directory : /home/mkovari/develop/test_suite
  
  **************************************************************************************************************
  
-<<<<<<< HEAD
-<<<<<<< HEAD
- PROCESS 1.0.10 : Run on 19 May 2017 13:10:12 +01:00(hh:mm) UTC by freia009
-=======
- PROCESS 1.0.10 : Run on 22 May 2017 14:00:22 +01:00(hh:mm) UTC by localhost.localdomain
->>>>>>> 5efc3ef9c35ff80d96558c4cddcfd54c44e3a69c
-=======
- PROCESS 1.0.10 : Run on  1 Jun 2017  8:59:28 +01:00(hh:mm) UTC by localhost.localdomain
->>>>>>> d3ed1fb41c87999ec74da1a4658a0ef29efb8515
+ PROCESS 1.0.10 : Run on  2 Jun 2017 11:25:45 +01:00(hh:mm) UTC by freia055
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -119,7 +111,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
     1  Beta consistency                      =  3.7311E-02              4.2632E-10                 1.1426E-08
     2  Global power balance consistency      =  1.6934E-01 MW/m3       -3.8376E-09 MW/m3          -2.2663E-08
-    3  Density upper limit                   <  6.8716E+19 /m3          4.0748E+10 /m3             4.9415E-10
+    3  Density upper limit                   <  6.8716E+19 /m3          4.0748E+10 /m3             4.9416E-10
     4  Neutron wall load upper limit         <  8.0000E+00 MW/m2       -7.0379E-08 MW/m2          -6.9972E-08
     5  Toroidal field 1/R consistency        =  4.4696E+01 T.m         -1.0112E-06 T.m            -2.2624E-08
     6  Radial build consistency              =  9.0605E+00 m           -2.8683E-10 m              -3.1658E-11
@@ -657,14 +649,17 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Quench information :
  
  Allowable stress in vacuum vessel (Pa)                                   (sigvvall)                9.300E+07     
- Allowable quench time (s)                                                (taucq)                   2.101E+01  OP 
- Quench time (s)                                                          (tdmptf)                  1.000E+01  ITV
+ Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.101E+01  OP 
+ Actual quench time (s)                                                   (tdmptf)                  1.000E+01  ITV
+ Max allowed current density in winding pack due to temperature rise in q (jwdgpro)                 2.440E+07  OP 
+ Actual current density in winding pack (A/m2)                            (jwptf)                   2.440E+07  OP 
+ Maximum allowed voltage during quench due to insulation (kV)             (vdalw)                   2.454E+01  ITV
+ Quench voltage (kV)                                                      (vtfskv)                  2.007E+01  OP 
  
  Conductor Information :
  
- Width of cable (square) (m)                                              (leno)                    5.319E-02  OP 
+ Width of cable (square) (m)                                              (cable_width)             4.919E-02  OP 
  Width of space inside cable (m)                                          (leni)                    3.319E-02  OP 
- Area of space inside cable (m2)                                          (acs)                     0.000E+00  OP 
  Conduit thickness (m)                                                    (thwcndut)                8.000E-03  ITV
  Inter-turn insulation thickness (m)                                      (thicndut)                2.000E-03     
  Superconductor mass per coil (kg)                                        (whtconsc)                1.647E+04  OP 
@@ -673,21 +668,19 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Conduit insulation mass per coil (kg)                                    (whtconin)                6.366E+03  OP 
  Total conductor cable mass per coil (kg)                                 (whtcon)                  1.495E+05  OP 
  Cable conductor + void area (m2)                                         (acstf)                   1.071E-03  OP 
- Coolant fraction in cable excluding central channel                      (vftf)                    3.300E-01     
- Diameter of central helium channel in cable                              (dhecoil)                 5.000E-03     
- Conduit case thickness (m)                                               (thwcndut)                8.000E-03  ITV
- Conduit insulation thickness (m)                                         (thicndut)                2.000E-03     
  
  Winding Pack Information :
  
+ Diameter of central helium channel in cable                              (dhecoil)                 5.000E-03     
  Fractions by area
+ Coolant fraction in cable excluding central channel                      (vftf)                    3.300E-01     
  Copper fraction of conductor                                             (fcutfsu)                 6.773E-01  ITV
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.227E-01     
- Conductor fraction of winding pack                                       (acond/ap)                2.466E-01  OP 
- Conduit fraction of winding pack                                         (turnstf*acndttf/ap)      4.768E-01  OP 
- Insulator fraction of winding pack                                       (aiwp/ap)                 1.447E-01  OP 
- Helium area fraction of winding pack excluding central channel           (avwp/ap)                 1.249E-01  OP 
- Central helium channel area as fraction of winding pack                  (awphec/ap)               6.940E-03  OP 
+ Conductor fraction of winding pack                                       (acond/ap)                2.359E+00  OP 
+ Conduit fraction of winding pack                                         (turnstf*acndttf/ap)      4.561E+00  OP 
+ Insulator fraction of winding pack                                       (aiwp/ap)                 1.385E+00  OP 
+ Helium area fraction of winding pack excluding central channel           (avwp/ap)                 1.195E+00  OP 
+ Central helium channel area as fraction of winding pack                  (awphec/ap)               6.639E-02  OP 
  Check total area fractions in winding pack = 1                                                         1.000000     
  Winding radial thickness (m)                                             (thkwp)                   4.673E-01  OP 
  Winding width 1 (m)                                                      (wwp1)                    1.130E+00  OP 
@@ -712,7 +705,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil model                                                            (tfc_model)                       1     
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 5.500E+08     
  Vertical stress (Pa)                                                     (sigvert)                 2.031E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))               2.442E-08     
+ Case radial stress (Pa)                                                  (sigrtf(1))              -2.442E-08     
  Case tangential stress (Pa)                                              (sigttf(1))              -3.469E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -1.543E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.109E+08  OP 
@@ -727,6 +720,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************************** Superconducting TF Coils ******************************************
  
+ Superconductor switch                                                    (isumat)                          1     
  Superconductor used: Nb3Sn
    (ITER Jcrit model, standard parameters)
  Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
@@ -748,9 +742,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Protection Information :
  
  Maximum temperature in quench (K)                                        (tmaxpro)                 1.500E+02     
- Maximum current density in winding pack given by quench protection (A/m2 (jwdgpro)                 2.440E+07  OP 
- Quench time (s)                                                          (tdmptf)                  1.000E+01  ITV
- Quench voltage (V)                                                       (vd)                      2.007E+04  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -1433,7 +1424,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 42.943868  OP 
  Total (MW)                                                                                          2412.292527  OP 
  
- Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            2046.976686  OP 
+ Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            2046.976687  OP 
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.512583  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 365.836579  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000000  OP 

@@ -7,21 +7,13 @@
  
    Program : ./process.exe
    Version : 1.0.10   Release Date :: 2017-04-27
-   Tag No. : "1.0.10-34-gbb069a7"
-      User : morrisj
- Directory : /home/morrisj/Work/fortran/tag_output/test_suite
+ Tag Number : "1.0.10-30-g2c81a56"
+      User : mkovari
+ Directory : /home/mkovari/develop/test_suite
  
  **************************************************************************************************************
  
-<<<<<<< HEAD
-<<<<<<< HEAD
- PROCESS 1.0.10 : Run on 19 May 2017 13:10:04 +01:00(hh:mm) UTC by freia009
-=======
- PROCESS 1.0.10 : Run on 22 May 2017 14:00:19 +01:00(hh:mm) UTC by localhost.localdomain
->>>>>>> 5efc3ef9c35ff80d96558c4cddcfd54c44e3a69c
-=======
- PROCESS 1.0.10 : Run on  1 Jun 2017  8:59:59 +01:00(hh:mm) UTC by localhost.localdomain
->>>>>>> d3ed1fb41c87999ec74da1a4658a0ef29efb8515
+ PROCESS 1.0.10 : Run on  2 Jun 2017 11:26:59 +01:00(hh:mm) UTC by freia055
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demo 1 vacuum model test  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -126,24 +118,24 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
     1  Beta consistency                      =  3.5280E-02              7.2739E-12                 2.0618E-10
     2  Global power balance consistency      =  1.7024E-01 MW/m3       -4.8033E-11 MW/m3          -2.8215E-10
-    3  Density upper limit                   <  7.3437E+19 /m3         -9.6307E+09 /m3            -1.0929E-10
-    4  Beam ion density consistency          =  1.2977E+17 /m3         -2.7197E+07 /m3            -2.0959E-10
+    3  Density upper limit                   <  7.3437E+19 /m3         -9.6308E+09 /m3            -1.0929E-10
+    4  Beam ion density consistency          =  1.2977E+17 /m3         -2.7198E+07 /m3            -2.0959E-10
     5  Neutron wall load upper limit         <  8.0000E+00 MW/m2       -1.0683E-09 MW/m2          -1.0912E-09
-    6  Toroidal field 1/R consistency        =  4.5592E+01 T.m          9.8426E-10 T.m             2.1588E-11
+    6  Toroidal field 1/R consistency        =  4.5592E+01 T.m          9.8428E-10 T.m             2.1589E-11
     7  Radial build consistency              =  8.8519E+00 m           -6.4561E-10 m              -7.2935E-11
     8  Burn time lower limit                 >  7.2000E+03 sec         -5.1711E-03 sec            -7.1821E-07
     9  L-H power threshold limit             >  1.0837E+02 MW          -4.0347E-07 MW             -2.6812E-09
    10  Net electric power lower limit        >  5.0000E+02 MW          -2.0195E-04 MW             -4.0389E-07
    11  Radiation fraction upper limit        <  1.7024E-01 MW/m3        8.9562E-11 MW/m3           8.4908E-10
-   12  Beta upper limit                      <  5.6067E-02              4.2906E-12                 1.4161E-10
+   12  Beta upper limit                      <  5.6067E-02              4.2906E-12                 1.4162E-10
    13  CS coil EOF current density limit     <  6.7334E+07 A/m2        -4.2205E+01 A/m2           -2.5072E-06
    14  CS coil BOP current density limit     <  6.2933E+07 A/m2        -3.7459E+01 A/m2           -2.3809E-06
-   15  Injection power upper limit           <  5.0000E+01 MW          -1.1714E-08 MW             -2.3428E-10
+   15  Injection power upper limit           <  5.0000E+01 MW          -1.1715E-08 MW             -2.3429E-10
    16  TF coil case stress upper limit       <  5.5000E+08 Pa          -1.8446E+01 Pa             -3.3538E-08
    17  TF coil conduit stress upper lim      <  5.5000E+08 Pa          -1.8444E+01 Pa             -3.5609E-08
    18  I_op / I_critical (TF coil)           <  5.6887E+07 A/m2         4.1217E-03 A/m2            1.4491E-10
    19  Dump voltage upper limit              <  1.2650E+01 V           -1.3632E-06 V              -1.0776E-07
-   20  J_winding pack/J_protection limit     <  2.8443E+07 A/m2         1.0649E-03 A/m2            3.7438E-11
+   20  J_winding pack/J_protection limit     <  2.8443E+07 A/m2         1.0648E-03 A/m2            3.7436E-11
    21  Tritium breeding ratio lower lim      >  1.1500E+00              2.7204E-08                 2.3655E-08
    22  Psep / R upper limit                  <  1.7000E+01 MW/m        -4.3668E-08 MW/m           -2.5687E-09
    23  number of ITER-like vacuum pumps      <  1.8000E+01              1.9984E-15                 1.1102E-16
@@ -624,7 +616,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
  Plasma lower triangularity                                               (tril)                        0.500  OP 
  Plasma elongation                                                        (kappa)                       1.781  OP 
- TF coil vertical offset (m)                                              (tfoffset)                   -0.616  OP 
+ TF coil vertical offset (m)                                              (tfoffset)                   -0.617  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.160  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                         9.768  OP 
  Plasma lower X-pt, radial (m)                                            (rxpt)                        7.424  OP 
@@ -705,14 +697,17 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Quench information :
  
  Allowable stress in vacuum vessel (Pa)                                   (sigvvall)                9.300E+07     
- Allowable quench time (s)                                                (taucq)                   2.112E+01  OP 
- Quench time (s)                                                          (tdmptf)                  1.735E+01  ITV
+ Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.112E+01  OP 
+ Actual quench time (s)                                                   (tdmptf)                  1.735E+01  ITV
+ Max allowed current density in winding pack due to temperature rise in q (jwdgpro)                 2.844E+07  OP 
+ Actual current density in winding pack (A/m2)                            (jwptf)                   2.844E+07  OP 
+ Maximum allowed voltage during quench due to insulation (kV)             (vdalw)                   1.265E+01     
+ Quench voltage (kV)                                                      (vtfskv)                  1.265E+01  OP 
  
  Conductor Information :
  
- Width of cable (square) (m)                                              (leno)                    4.780E-02  OP 
+ Width of cable (square) (m)                                              (cable_width)             4.380E-02  OP 
  Width of space inside cable (m)                                          (leni)                    3.580E-02  OP 
- Area of space inside cable (m2)                                          (acs)                     0.000E+00  OP 
  Conduit thickness (m)                                                    (thwcndut)                4.000E-03  ITV
  Inter-turn insulation thickness (m)                                      (thicndut)                2.000E-03     
  Superconductor mass per coil (kg)                                        (whtconsc)                1.753E+04  OP 
@@ -721,21 +716,19 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Conduit insulation mass per coil (kg)                                    (whtconin)                6.132E+03  OP 
  Total conductor cable mass per coil (kg)                                 (whtcon)                  1.205E+05  OP 
  Cable conductor + void area (m2)                                         (acstf)                   1.274E-03  OP 
- Coolant fraction in cable excluding central channel                      (vftf)                    3.300E-01     
- Diameter of central helium channel in cable                              (dhecoil)                 5.000E-03     
- Conduit case thickness (m)                                               (thwcndut)                4.000E-03  ITV
- Conduit insulation thickness (m)                                         (thicndut)                2.000E-03     
  
  Winding Pack Information :
  
+ Diameter of central helium channel in cable                              (dhecoil)                 5.000E-03     
  Fractions by area
+ Coolant fraction in cable excluding central channel                      (vftf)                    3.300E-01     
  Copper fraction of conductor                                             (fcutfsu)                 7.316E-01  ITV
  Superconductor fraction of conductor                                     (1-fcutfsu)               2.684E-01     
- Conductor fraction of winding pack                                       (acond/ap)                3.650E-01  OP 
- Conduit fraction of winding pack                                         (turnstf*acndttf/ap)      2.821E-01  OP 
- Insulator fraction of winding pack                                       (aiwp/ap)                 1.603E-01  OP 
- Helium area fraction of winding pack excluding central channel           (avwp/ap)                 1.840E-01  OP 
- Central helium channel area as fraction of winding pack                  (awphec/ap)               8.592E-03  OP 
+ Conductor fraction of winding pack                                       (acond/ap)                3.400E+00  OP 
+ Conduit fraction of winding pack                                         (turnstf*acndttf/ap)      2.627E+00  OP 
+ Insulator fraction of winding pack                                       (aiwp/ap)                 1.493E+00  OP 
+ Helium area fraction of winding pack excluding central channel           (avwp/ap)                 1.714E+00  OP 
+ Central helium channel area as fraction of winding pack                  (awphec/ap)               8.003E-02  OP 
  Check total area fractions in winding pack = 1                                                         1.000     
  Winding radial thickness (m)                                             (thkwp)                   4.026E-01  OP 
  Winding width 1 (m)                                                      (wwp1)                    1.141E+00  OP 
@@ -760,7 +753,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil model                                                            (tfc_model)                       1     
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 5.500E+08     
  Vertical stress (Pa)                                                     (sigvert)                 2.132E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))               2.442E-08     
+ Case radial stress (Pa)                                                  (sigrtf(1))               0.000E+00     
  Case tangential stress (Pa)                                              (sigttf(1))              -3.368E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -3.048E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.402E+08  OP 
@@ -775,6 +768,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************************** Superconducting TF Coils ******************************************
  
+ Superconductor switch                                                    (isumat)                          1     
  Superconductor used: Nb3Sn
    (ITER Jcrit model, standard parameters)
  Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
@@ -796,9 +790,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Protection Information :
  
  Maximum temperature in quench (K)                                        (tmaxpro)                 1.500E+02     
- Maximum current density in winding pack given by quench protection (A/m2 (jwdgpro)                 2.844E+07  OP 
- Quench time (s)                                                          (tdmptf)                  1.735E+01  ITV
- Quench voltage (V)                                                       (vd)                      1.265E+04  OP 
  
  *************************************** Central Solenoid and PF Coils ****************************************
  

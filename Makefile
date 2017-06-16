@@ -236,7 +236,7 @@ global_variables.o:
 hcll.o : fw.o global_variables.o output.o
 hcpb.o : fw.o global_variables.o output.o maths_library.o refprop_interface.o
 impurity_radiation.o: error_handling.o global_variables.o root.dir plasma_profiles.o
-initial.o: error_handling.o global_variables.o output.o scan.o stellarator.o
+initial.o: error_handling.o global_variables.o output.o scan.o sctfcoil.o stellarator.o
 input.o: error_handling.o global_variables.o numerics.o output.o scan.o
 iteration_variables.o: error_handling.o global_variables.o numerics.o
 machine_build.o: error_handling.o global_variables.o output.o

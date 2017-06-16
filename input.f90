@@ -1485,10 +1485,12 @@ contains
        case ('copper_thickness')
           call parse_real_variable('copper_thickness', copper_thickness, 0.0D0, 1000.0D-6, &
                'copper_thickness (m)')
-
        case ('copper_bar')
           call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.9D0, &
                'area of central copper bar, as a fraction of area inside the jacket')
+       case ('copper_rrr')
+          call parse_real_variable('copper_rrr', copper_rrr, 1.0D0, 1.0D4, &
+               'residual resistivity ratio copper in TF superconducting cable')
 
        case ('casthi')
           call parse_real_variable('casthi', casthi, 0.0D0, 1.0D0, &
@@ -1677,6 +1679,12 @@ contains
        case ('tmaxpro')
           call parse_real_variable('tmaxpro', tmaxpro, 0.0D0, 1.0D3, &
                'Maximum temp rise during quench (K)')
+
+       case ('quench_model')
+          call parse_string_variable('quench_model', quench_model, 'quench_model')
+      case ('quench_detection_ef')
+          call parse_real_variable('quench_detection_ef', quench_detection_ef, 0.0D0, 1.0D1, &
+               'Electric field at which TF quench is detected and discharge begins (V/m)')
 
        case ('tmax_croco')
           call parse_real_variable('tmax_croco', tmax_croco, 4.0D0, 1.0D3, &

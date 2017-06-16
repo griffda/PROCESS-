@@ -232,9 +232,9 @@ contains
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      !  Stored energy (MJ) MDK changed to estotft/tfno
+      !  Stored energy (MJ) MDK changed to estotftgj/tfno
 
-      ettfmj = estotft / tfno * 1.0D3
+      ettfmj = estotftgj / tfno * 1.0D3
 
       !  TF coil current (kA)
 

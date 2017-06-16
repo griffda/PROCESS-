@@ -260,7 +260,7 @@ contains
     s(7)%label = "Magnet discharge buildings"
     s(7)%cref = 35000.0D0 * light_build_cost_per_vol
     ! Scale with total stored energy in TF coils (GJ)
-    s(7)%k = estotft
+    s(7)%k = estotftgj
     s(7)%kref = 41.0D0
     s(7)%cost  = s(7)%cost_factor * s(7)%cref * (s(7)%k / s(7)%kref)
 

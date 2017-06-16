@@ -2010,9 +2010,8 @@ module tfcoil_variables
   !+ad_vars  estotf : stored energy per TF coil (GJ) OBSOLETE
   real(kind(1.0D0)) :: estotf = 0.0D0
 
-  !+ad_vars  estotft : total stored energy in the toroidal field (GJ)
-
-  real(kind(1.0D0)) :: estotft = 0.0D0
+  !+ad_vars  estotftgj : total stored energy in the toroidal field (GJ)
+  real(kind(1.0D0)) :: estotftgj = 0.0D0
 
   !+ad_vars  eyins /2.0e10/ : insulator Young's modulus (Pa)
   !+ad_varc                   (default value from DDD11-2 v2 2 (2009))
@@ -2116,13 +2115,29 @@ module tfcoil_variables
   real(kind(1.0D0)) :: strtf1 = 0.0D0
   !+ad_vars  strtf2 : Constrained stress in TF coil case (Pa)
   real(kind(1.0D0)) :: strtf2 = 0.0D0
+
+  ! Issue #522: Quench models
+  !+ad_vars  quench_model /exponential/ : switch for TF coil quench model:<UL>
+  !+ad_varc                  <LI> = 'exponential' exponential quench with constant discharge resistor
+  !+ad_varc                  <LI> = 'linear' quench with constant voltage</UL>
+  !+ad_varc                    Only applies to REBCO magnet at present
+  character(len=12) :: quench_model = 'exponential'
+
+  !+ad_vars  quench_detection_ef /0.0/ : Electric field at which TF quench is detected and discharge begins (V/m)
+  real(kind(1.0D0)) :: quench_detection_ef = 0D0
+  !+ad_vars  time1 : Time at which TF quench is detected (s)
+  real(kind(1.0D0)) :: time1 = 0D0
+
   !+ad_vars  taucq : allowable TF quench time (s)
   real(kind(1.0D0)) :: taucq = 30.0D0
   !+ad_vars  tcritsc /16.0/ : critical temperature (K) for superconductor
   !+ad_varc                   at zero field and strain (isumattf=4, =tc0m)
   real(kind(1.0D0)) :: tcritsc = 16.0D0
-  !+ad_vars  tdmptf /10.0/ : quench time for TF coil (s)
+  !+ad_vars  tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s)
   !+ad_varc                  (iteration variable 56)
+  !+ad_varc                  For REBCO model, meaning depends on quench_model:
+  !+ad_varc                  <LI> exponential quench : e-folding time (s)
+  !+ad_varc                  <LI> linear quench : discharge time (s)
   real(kind(1.0D0)) :: tdmptf = 10.0D0
   !+ad_vars  tfareain : area of inboard midplane TF legs (m2)
   real(kind(1.0D0)) :: tfareain = 0.0D0
@@ -4142,11 +4157,11 @@ module rebco_variables
   real(kind(1.0D0)) :: croco_od = 9.3D-3
   !+ad_vars  croco_id /7.0e-3/ : Inner diameter of CroCo copper tube (m)
   real(kind(1.0D0)) :: croco_id = 7.0D-3
-  !+ad_vars  number_croco : Number of CroCo strands in the conductor (not an integer)
-  real(kind(1.0D0)) :: number_croco = 7d0
 
   !+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of area inside the jacket
   real(kind(1.0D0)) :: copper_bar = 0.23d0
+  !+ad_vars  copper_rrr /100.0/ : residual resistivity ratio copper in TF superconducting cable
+  real(kind(1.0D0)) :: copper_rrr = 100d0
 
   real(kind(1.0D0)) :: tape_thickness
   real(kind(1.0D0)) :: stack_thickness
@@ -4172,22 +4187,25 @@ module rebco_variables
 
       type resistive_material
           character(len=80) :: label = ''           ! Description
-          real(kind(1.0D0)) :: cp = 0.0d0           ! Specific heat capacity J/(K kg).
-          real(kind(1.0D0)) :: rrr = 0.0d0          ! Residual resistivity ratio
-          real(kind(1.0D0)) :: resistivity = 0.0d0  ! ohm.m
-          real(kind(1.0D0)) :: density = 0.0d0      ! kg/m3
+          real(kind(1.0D0)) :: cp            ! Specific heat capacity J/(K kg).
+          real(kind(1.0D0)) :: rrr           ! Residual resistivity ratio
+          real(kind(1.0D0)) :: resistivity   ! ohm.m
+          real(kind(1.0D0)) :: density       ! kg/m3
+          real(kind(1.0D0)) :: cp_density    ! Cp x density J/K/m3
       end type
 
       type volume_fractions
-          real(kind(1.0D0)) :: copper_fraction=0.0d0
-          real(kind(1.0D0)) :: hastelloy_fraction=0.0d0
-          real(kind(1.0D0)) :: helium_fraction=0.0d0
-          real(kind(1.0D0)) :: solder_fraction=0.0d0
-          real(kind(1.0D0)) :: jacket_fraction=0.0d0
-          real(kind(1.0D0)) :: rebco_fraction=0.0d0
-          real(kind(1.0D0)) :: critical_current=0.0d0
-          real(kind(1.0D0)) :: acs=0.0d0
-          real(kind(1.0D0)) :: aturn=0.0d0
+          real(kind(1.0D0)) :: copper_fraction
+          real(kind(1.0D0)) :: copper_bar_fraction
+          real(kind(1.0D0)) :: hastelloy_fraction
+          real(kind(1.0D0)) :: helium_fraction
+          real(kind(1.0D0)) :: solder_fraction
+          real(kind(1.0D0)) :: jacket_fraction
+          real(kind(1.0D0)) :: rebco_fraction
+          real(kind(1.0D0)) :: critical_current
+          real(kind(1.0D0)) :: number_croco         ! Number of CroCo strands (not an integer)
+          real(kind(1.0D0)) :: acs
+          real(kind(1.0D0)) :: aturn
           real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
       end type
   end module resistive_materials
