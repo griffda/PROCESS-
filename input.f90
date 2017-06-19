@@ -1673,9 +1673,15 @@ contains
        case ('tinstf')
           call parse_real_variable('tinstf', tinstf, 0.0D0, 0.1D0, &
                'Ground wall insulation thickness (m)')
+       case ('tmargmin_tf')
+          call parse_real_variable('tmargmin_tf', tmargmin_tf, 0.0D0, 20.0D0, &
+               'Minimum allowable temp margin: TF coil (K)')
+       case ('tmargmin_cs')
+          call parse_real_variable('tmargmin_cs', tmargmin_cs, 0.0D0, 20.0D0, &
+               'Minimum allowable temp margin: CS (K)')
        case ('tmargmin')
-          call parse_real_variable('tmargmin', tmargmin, 0.0D0, 10.0D0, &
-               'Minimum allowable temp margin (K)')
+          call parse_real_variable('tmargmin', tmargmin, 0.0D0, 20.0D0, &
+               'Minimum allowable temp margin: TFC AND CS (K)')
        case ('tmaxpro')
           call parse_real_variable('tmaxpro', tmaxpro, 0.0D0, 1.0D3, &
                'Maximum temp rise during quench (K)')

@@ -519,10 +519,13 @@ contains
 
     real(kind(1.0D0)) :: mag_temp_marg_limit, mag_temp_marg, mag_main_time
     real(kind(1.0D0)) :: mag_min_u_unplanned, start_of_risk, t_life
+    real(kind(1.0D0)) :: tmargmin
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Magnet temperature margin limit (K)
+    ! Use the lower of the two values.  Issue #526
+    tmargmin = min(tmargmin_tf,tmargmin_cs)
     mag_temp_marg_limit = tmargmin
 
     ! Magnet temperature margin (K)

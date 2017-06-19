@@ -2037,7 +2037,7 @@ contains
 
        !  Newton-Raphson method; start at requested minimum temperature margin
 
-       ttest = thelium + tmargmin
+       ttest = thelium + tmargmin_cs
        delt = 0.01D0
        jtol = 1.0D4
 
@@ -2807,12 +2807,14 @@ contains
                '(tftmp)',tftmp)
           call ovarre(outfile,'CS temperature margin (K)', &
                '(tmargoh)',tmargoh, 'OP ')
+          call ovarre(outfile,'Minimum permitted temperature margin (K)', &
+               '(tmargmin_cs)',tmargmin_cs)
           ! Check whether CS coil is hitting any limits
           ! iteration variable (39) fjohc0
           ! iteration variable(38) fjohc
           if ( (abs(coheof) > 0.99D0*abs(boundu(38)*rjohc)).or. &
                (abs(cohbop) > 0.99D0*abs(boundu(39)*rjohc0)) ) CSlimit=.true.
-          if (tmargoh < 1.01D0*tmargmin) CSlimit=.true.
+          if (tmargoh < 1.01D0*tmargmin_cs) CSlimit=.true.
           if (.not.CSlimit) call report_error(135)
 
        else

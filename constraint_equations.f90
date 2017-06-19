@@ -1019,16 +1019,16 @@ contains
 
        case (36)  ! Equation for TF coil s/c temperature margin lower limit (SCTF)
           !#=# tfcoil
-          !#=#=# ftmargtf, tmargmin
+          !#=#=# ftmargtf, tmargmin_tf
 
           ! ftmargtf |  f-value for TF coil temperature margin
           ! tmargtf  |  TF coil temperature margin (K)
-          ! tmargmin |  minimum allowable temperature margin (K)
-          cc(i) = 1.0D0 - ftmargtf * tmargtf/tmargmin
+          ! tmargmin_tf |  minimum allowable temperature margin (K)
+          cc(i) = 1.0D0 - ftmargtf * tmargtf/tmargmin_tf
 
           if (present(con)) then
-             con(i) = tmargmin * (1.0D0 - cc(i))
-             err(i) = tmargmin * cc(i)
+             con(i) = tmargmin_tf * (1.0D0 - cc(i))
+             err(i) = tmargmin_tf * cc(i)
              symbol(i) = '>'
              units(i) = 'K'
           end if
@@ -1365,18 +1365,18 @@ contains
              units(i) = ''
           end if
 
-       case (60)  ! Equation for OH coil s/c temperature margin lower limit (SCTF)
+      case (60)  ! Equation for Central Solenoid s/c temperature margin lower limit
           !#=# tfcoil
-          !#=#=# ftmargoh, tmargmin
+          !#=#=# ftmargoh, tmargmin_cs
 
           ! ftmargoh |  f-value for central solenoid temparature margin
           ! tmargoh  |  central solenoid temprature margin (K)
-          ! tmargmin |  minimum allowable temperature margin (K)
-          cc(i) = 1.0D0 - ftmargoh * tmargoh/tmargmin
+          ! tmargmin_cs |  minimum allowable temperature margin (K)
+          cc(i) = 1.0D0 - ftmargoh * tmargoh/tmargmin_cs
 
           if (present(con)) then
-             con(i) = tmargmin * (1.0D0 - cc(i))
-             err(i) = tmargmin * cc(i)
+             con(i) = tmargmin_cs * (1.0D0 - cc(i))
+             err(i) = tmargmin_cs * cc(i)
              symbol(i) = '>'
              units(i) = 'K'
           end if

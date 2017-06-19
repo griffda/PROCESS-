@@ -166,7 +166,7 @@ subroutine loadxc
      case (52) ; xcm(i) = vdalw
      case (53) ; xcm(i) = fjprot
      case (54) ; xcm(i) = ftmargtf
-     case (55) ; xcm(i) = tmargmin
+     case (55) ; write(*,*) 'Iteration variable 55 is not supported.'
      case (56) ; xcm(i) = tdmptf
      case (57) ; xcm(i) = thkcas
         if ((tfc_model == 0).or.(istell == 1)) call report_error(48)
@@ -385,7 +385,7 @@ subroutine convxc(xc,nn)
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
-  use physics_variables  
+  use physics_variables
   use rebco_variables
   use tfcoil_variables
   use times_variables
@@ -461,7 +461,7 @@ subroutine convxc(xc,nn)
      case (52) ; vdalw     = xc(i)/scale(i)
      case (53) ; fjprot    = xc(i)/scale(i)
      case (54) ; ftmargtf  = xc(i)/scale(i)
-     case (55) ; tmargmin  = xc(i)/scale(i)
+     case (55) ; write(*,*) 'Iteration variable 55 is not supported.'
      case (56) ; tdmptf    = xc(i)/scale(i)
      case (57) ; thkcas    = xc(i)/scale(i)
      case (58) ; thwcndut  = xc(i)/scale(i)

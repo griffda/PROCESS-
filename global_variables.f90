@@ -2203,8 +2203,13 @@ module tfcoil_variables
   !+ad_varc                   (calculated for stellarators)
   real(kind(1.0D0)) :: tinstf = 0.018D0
 
-  !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (CS and TF coils) (K)
-  real(kind(1.0D0)) :: tmargmin = 2.5D0
+  !+ad_vars  tmargmin_tf /0/ : minimum allowable temperature margin : TF coils (K)
+  real(kind(1.0D0)) :: tmargmin_tf = 0D0
+  !+ad_vars  tmargmin_cs /0/ : minimum allowable temperature margin : CS (K)
+  real(kind(1.0D0)) :: tmargmin_cs = 0D0
+  !+ad_vars  tmargmin /0/ : minimum allowable temperature margin : TFC AND CS (K)
+  real(kind(1.0D0)) :: tmargmin = 0D0
+
   !+ad_vars  temp_margin  : temperature margin (K)
   real(kind(1.0D0)) :: temp_margin = 0.00D0
   !+ad_vars  tmargtf :  TF coil temperature margin (K)
@@ -4186,12 +4191,16 @@ module rebco_variables
       implicit none ! ---------------------------------------------------------
 
       type resistive_material
-          character(len=80) :: label = ''           ! Description
           real(kind(1.0D0)) :: cp            ! Specific heat capacity J/(K kg).
           real(kind(1.0D0)) :: rrr           ! Residual resistivity ratio
           real(kind(1.0D0)) :: resistivity   ! ohm.m
           real(kind(1.0D0)) :: density       ! kg/m3
           real(kind(1.0D0)) :: cp_density    ! Cp x density J/K/m3
+      end type
+
+      type supercon_strand
+          real(kind(1.0D0)) :: area
+          real(kind(1.0D0)) :: critical_current
       end type
 
       type volume_fractions

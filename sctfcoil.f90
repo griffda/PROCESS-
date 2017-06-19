@@ -77,10 +77,11 @@ type(resistive_material):: hastelloy
 type(resistive_material):: solder
 type(resistive_material):: jacket
 type(resistive_material):: helium
-type(volume_fractions)::croco_strand, croco_cable
+type(volume_fractions):: croco_cable
+type(supercon_strand)::croco_strand
 
-real(kind(1.0D0)):: t1, time2, tau2,estotft,croco_quench_factor
-
+real(kind(1.0D0)):: T1, time2, tau2,estotft,croco_quench_factor
+real(kind(1.0D0)):: jwdgpro_1, jwdgpro_2
 contains
 
 ! --------------------------------------------------------------------------
@@ -1358,11 +1359,19 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Maximum allowed temp rise during a quench (K)','(tmaxpro)', tmaxpro)
     case(6)
         call ovarre(outfile,'Maximum temperature in quench: CroCo strand (K)','(tmax_croco)', tmax_croco)
-        call ovarre(outfile,'Maximum temperature in quench: Jacket (K)','(tmax_croco)', tmax_jacket)
+        call ovarre(outfile,'Maximum temperature in quench: Jacket (K)','(tmax_jacket)', tmax_jacket)
+        if(jwdgpro_1<jwdgpro_2)then
+            call ocmmnt(outfile,'Strands are limiting.')
+        else if(jwdgpro_2<jwdgpro_1)then
+            call ocmmnt(outfile,'Cable jacket is limiting.')
+        end if
+
         call ocmmnt(outfile,'Fast discharge current model: '//quench_model)
         if(quench_detection_ef>1d-10)then
-            call ocmmnt(outfile, 'Two-phase quench model is used')
-            call ovarre(outfile,'Time for quench detection (s)','(time1)', time1)
+            call ocmmnt(outfile,'Two-phase quench model is used')
+            call ovarre(outfile,'Electric field at which TF quench is detected, discharge begins (V/m)',&
+                                '(quench_detection_ef)', quench_detection_ef)
+            call ovarre(outfile,'Time for quench detection (s)','(time1)', time1,'OP ')
             call ovarre(outfile,'Peak temperature of normal zone before quench is detected (K)','(T1)',T1,'OP ')
         else
             call ocmmnt(outfile, 'Simple one-phase quench model is used')
@@ -1406,7 +1415,7 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Winding width 2 (m)','(wwp2)',wwp2, 'OP ')
     call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
     call ovarre(outfile,'Winding pack insertion gap (m)','(tfinsgap)',tfinsgap)
-    call ovarre(outfile,'Ground wall mass per coil (kg)','(whtgw)',whtgw, 'OP ')
+    call ovarre(outfile,'mass of ground-wall insulation layer per coil (kg)','(whtgw)',whtgw, 'OP ')
     call ovarre(outfile,'Number of turns per TF coil','(turnstf)',turnstf, 'OP ')
     call ovarre(outfile,'Current per turn (A)','(cpttf)',cpttf)
 
@@ -1675,7 +1684,7 @@ contains
 
             call croco(jcritsc,croco_strand,croco_cable)
             icrit = croco_cable%critical_current
-            jcritstr = croco_cable%critical_current / croco_cable%number_croco
+            jcritstr = croco_strand%critical_current / croco_strand%area
 
         case default  !  Error condition
             idiags(1) = isumat ; call report_error(105)
@@ -1694,13 +1703,14 @@ contains
         !  Temperature margin (already calculated in bi2212 for isumat=2)
         if (isumat /= 2) then
             !  Newton-Raphson method; start approx at requested minimum temperature margin
-            ttest = thelium + tmargmin + 0.001d0
+            ttest = thelium + tmargmin_tf + 0.001d0
             delt = 0.01D0
             jtol = 1.0D4
 
             !  Actual current density in superconductor, which should be equal to jcrit(thelium+tmarg)
             !  when we have found the desired value of tmarg
             jsc = iooic * jcritsc
+            if(iooic<=0d0)write(*,*)'jsc',jsc, ' iooic', iooic, ' jcritsc',jcritsc
 
             lap = 0
             solve_for_tmarg: do ; lap = lap+1
@@ -1739,6 +1749,7 @@ contains
             end do solve_for_tmarg
             tmarg = ttest - thelium
             temp_margin = tmarg
+
         end if
 
         !  Find the current density limited by the protection limit
@@ -1749,7 +1760,6 @@ contains
         case (1,2,3,4,5)
             call protect(iop,tfes,acs,aturn,tdump,fcond,fcu,thelium,tmax,jwdgpro,vd)
         case(6)
-            croco_strand%tmax = tmax_croco
             croco_cable%tmax = tmax_jacket
             call croco_quench(croco_cable)
             vd = vtfskv
@@ -1799,9 +1809,9 @@ contains
             call ovarre(outfile,'Area of central copper bar, as a fraction of area inside the jacket ', &
                                  '(copper_bar)', copper_bar)
 
-            call ovarre(outfile,'Mean width of tape (m)','(tape_width)',tape_width , 'OP ')
-            call ovarre(outfile,'Outer diameter of CroCo strand (m) ','(croco_od)', croco_od, 'OP ')
-            call ovarre(outfile,'Inner diameter of CroCo copper tube (m) ','(croco_id)',croco_id , 'OP ')
+            call ovarre(outfile,'Mean width of tape (m)','(tape_width)',tape_width)
+            call ovarre(outfile,'Outer diameter of CroCo strand (m) ','(croco_od)', croco_od)
+            call ovarre(outfile,'Inner diameter of CroCo copper tube (m) ','(croco_id)',croco_id)
             call ovarrf(outfile,'Number of CroCo strands in the conductor ','(croco_cable%number_croco)',&
                                                                               croco_cable%number_croco , 'OP ')
             call ovarre(outfile,'Thickness of each HTS coated tape ','(tape_thickness)',tape_thickness , 'OP ')
@@ -1812,14 +1822,15 @@ contains
             call ovarre(outfile,'Area of copper in strand (m2)','(copper_area)',copper_area , 'OP ')
             call ovarre(outfile,'Area of hastelloy substrate in strand (m2) ','(hastelloy_area)',hastelloy_area , 'OP ')
             call ovarre(outfile,'Area of solder in strand (m2)  ','(solder_area)',solder_area , 'OP ')
-            call ovarre(outfile,'Total: area of CroCo strand (m2)  ','(croco_area)',croco_area , 'OP ')
-            if(abs(croco_area-(rebco_area+copper_area+hastelloy_area+solder_area))>1d-6)then
+            call ovarre(outfile,'Total: area of CroCo strand (m2)  ','(croco_strand%area)',croco_strand%area , 'OP ')
+            if(abs(croco_strand%area-(rebco_area+copper_area+hastelloy_area+solder_area))>1d-6)then
                 call ocmmnt(outfile, "ERROR: Areas in CroCo strand do not add up")
+                write(*,*)'ERROR: Areas in CroCo strand do not add up - see OUT.DAT'
             endif
 
             call ovarre(outfile,'Width of square cable (m)','(cable_width)', cable_width , 'OP ')
-            call ovarre(outfile,'Area of cable (m)','(aturn)', aturn , 'OP ')
-            call ovarrf(outfile,'REBCO fraction of cable','(rebco_fraction)',croco_cable%rebco_fraction , 'OP ')
+            call ovarre(outfile,'Area of cable (m2)','(aturn)', aturn , 'OP ')
+            call ovarre(outfile,'REBCO fraction of cable','(rebco_fraction)',croco_cable%rebco_fraction , 'OP ')
             call ovarrf(outfile,'Copper fraction of cable','(copper_fraction)',croco_cable%copper_fraction , 'OP ')
             call ovarrf(outfile,'Hastelloy fraction of cable','(hastelloy_fraction)',croco_cable%hastelloy_fraction , 'OP ')
             call ovarrf(outfile,'Solder fraction of cable','(solder_fraction)',croco_cable%solder_fraction , 'OP ')
@@ -1836,8 +1847,7 @@ contains
                                                                          croco_strand%critical_current , 'OP ')
             call ovarre(outfile,'Critical current of cable (A) ','(croco_cable%critical_current)', &
                                                                    croco_cable%critical_current , 'OP ')
-
-        end select
+        end select ! case (isumat)
 
         if (run_tests==1) then
             call oblnkl(outfile)
@@ -1851,13 +1861,13 @@ contains
         call oblnkl(outfile)
         call ovarre(outfile,'Peak field at conductor (T)','(bmax)',bmax, 'OP ')
         call ovarre(outfile,'Helium temperature at peak field (K)','(thelium)',thelium)
-        call ovarre(outfile,'Total helium fraction inside cable space','(fhetot)',fhetot, 'OP ')
-        call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
-        call ovarre(outfile,'Strain on superconductor','(strncon)',strain)
-
+        if(isumat/=6)then
+            call ovarre(outfile,'Total helium fraction inside cable space','(fhetot)',fhetot, 'OP ')
+            call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
+            call ovarre(outfile,'Strain on superconductor','(strncon)',strain)
+        end if
         call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc, 'OP ')
         call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr, 'OP ')
-
         call ovarre(outfile,'Operating winding pack J (A/m2)','(jwdgop)',jwdgop, 'OP ')
         call ovarre(outfile,'Critical winding pack current density (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
         call ovarre(outfile,'Critical current (A)','(icrit)',icrit, 'OP ')
@@ -2005,7 +2015,7 @@ subroutine croco_quench(croco_cable)
     !+ad_desc  It also finds the dump voltage.
 
     type(volume_fractions), intent(in)::croco_cable
-    real(kind(1.0D0)):: prefactor, jwdgpro_1, jwdgpro_2, etamax,delta_T, T, T1
+    real(kind(1.0D0)):: prefactor,  etamax,delta_T, T
     real(kind(1.0D0)):: integral1,integral2,integral, sum1, sum2
     integer::i
 
@@ -2022,8 +2032,8 @@ subroutine croco_quench(croco_cable)
             call copper_properties2(T,bmaxtf,copper)
             if (copper%resistivity>=etamax)then
                 ! Quench detection voltage has been passed
+                !write(*,*)'T', T, ' copper%resistivity', copper%resistivity, ' etamax',etamax
                 T1 = T - 0.5d0*delta_T
-                write(*,*)'Quench detected: '
                 exit
             end if
             ! Quench detection voltage not yet reached
@@ -2031,7 +2041,7 @@ subroutine croco_quench(croco_cable)
             integral = integral + delta_T * quench_integrand(T,&
                 copper=copper,hastelloy=hastelloy,solder=solder,helium=helium)
         end do
-        write(*,'(10(a,1pe10.3,1x))') 'Temp = ', T, 'etamax = ', etamax, 'copper%resistivity = ', copper%resistivity
+        !write(*,'(10(a,1pe10.3,1x))') 'Temp = ', T, 'etamax = ', etamax, 'copper%resistivity = ', copper%resistivity
 
         croco_quench_factor = croco_cable%copper_fraction / jwptf**2
         time1 = croco_quench_factor * integral
@@ -2063,7 +2073,7 @@ subroutine croco_quench(croco_cable)
     sum1 = 0d0; sum2 = 0d0
     do i=0,49
         T = T1 + (i+0.5d0)*delta_T
-        write(*,*)'T = ', T
+        !write(*,*)'T = ', T
         ! For phase 2 we run the integral twice: once with and once without the jacket.
         sum1 = sum1 + quench_integrand(T,copper=copper, &
                     hastelloy=hastelloy,solder=solder,helium=helium)
@@ -2083,7 +2093,6 @@ subroutine croco_quench(croco_cable)
     ! The allowable TF coil winding pack current density is the lower of the
     ! values calculated for strands and cable, with different maximum temperatures
     jwdgpro = min(jwdgpro_1,jwdgpro_2)
-    write(*,*)'jwdgpro_1 = ', jwdgpro_1, 'jwdgpro_2 = ', jwdgpro_2
 
     if(jwdgpro<1d0)write(*,*)'jwdgpro = ', jwdgpro
 
@@ -2098,8 +2107,6 @@ function quench_integrand(temperature,copper,hastelloy,solder,helium,jacket)
     real(kind(1.0D0))::sum,quench_integrand
 
     sum = 0d0
-    write(*,*)'! quench_integrand'
-    write(*,*)temperature,bmaxtf,copper
     call copper_properties2(temperature,bmaxtf, copper)
     if(present(copper))then
         sum = sum + croco_cable%copper_fraction * copper%density * copper%cp
@@ -2123,10 +2130,10 @@ function quench_integrand(temperature,copper,hastelloy,solder,helium,jacket)
 
     quench_integrand = sum / copper%resistivity
 
-    write(*,'(10(1pe10.3), 1x)')temperature, copper%resistivity, sum,quench_integrand
-    write(*,'(10(1pe10.3), 1x)')croco_cable%copper_fraction    , copper%density ,copper%cp
-    write(*,'(10(1pe10.3), 1x)')croco_cable%hastelloy_fraction , hastelloy%density , hastelloy%cp
-    write(*,'(10(1pe10.3), 1x)')croco_cable%solder_fraction    , solder%density , solder%cp
+    ! write(*,'(10(1pe10.3), 1x)')temperature, copper%resistivity, sum,quench_integrand
+    ! write(*,'(10(1pe10.3), 1x)')croco_cable%copper_fraction    , copper%density ,copper%cp
+    ! write(*,'(10(1pe10.3), 1x)')croco_cable%hastelloy_fraction , hastelloy%density , hastelloy%cp
+    ! write(*,'(10(1pe10.3), 1x)')croco_cable%solder_fraction    , solder%density , solder%cp
 
 end function quench_integrand
 

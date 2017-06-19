@@ -529,8 +529,9 @@ subroutine croco(jcritsc,croco_strand,croco_cable)
     !+ad_type  Subroutine
     implicit none
     real(kind(1.0D0)), intent(in) ::jcritsc
-    type(volume_fractions), intent(inout)::croco_strand,croco_cable
-    real(kind(1.0D0))::strands_per_area, strand_critical_current
+    type(volume_fractions), intent(inout)::croco_cable
+    type(supercon_strand), intent(inout)::croco_strand
+    real(kind(1.0D0))::strands_per_area
 
     ! Properties of a single strand
     tape_thickness = rebco_thickness + copper_thickness + hastelloy_thickness
@@ -543,13 +544,12 @@ subroutine croco(jcritsc,croco_strand,croco_cable)
     solder_area = pi / 4.0d0 * croco_id**2 - stack_thickness * tape_width
 
     rebco_area = rebco_thickness * tape_width * tapes
-    croco_area =  pi / 4.0d0 * croco_od**2
-    ! The croco_strand instance of this derived type is only used for critical current:
-    strand_critical_current = jcritsc * rebco_area
+    croco_strand%area =  pi / 4.0d0 * croco_od**2
+    croco_strand%critical_current = jcritsc * rebco_area
 
     ! Cable properties
-    croco_strand%number_croco = croco_cable%acs*(1d0-copper_bar)/croco_od**2
-    croco_cable%critical_current = strand_critical_current * croco_cable%number_croco
+    croco_cable%number_croco = croco_cable%acs*(1d0-copper_bar)/croco_od**2
+    croco_cable%critical_current = croco_strand%critical_current * croco_cable%number_croco
     strands_per_area = croco_cable%number_croco / croco_cable%aturn
     croco_cable%copper_fraction = copper_area * strands_per_area + &
                                   copper_bar * croco_cable%acs / croco_cable%aturn
@@ -570,8 +570,6 @@ subroutine copper_properties(T,copper)
 
     type(resistive_material)::copper
     real(kind(1.0D0)), intent(in) :: T   ! temperature
-
-    copper%label = 'Copper with RRR=100 at B=12 T'
 
     if(T<40.0d0)then
         copper%cp = -1.6113+0.60915*T-0.07152*T**2+0.00398*T**3-4.07673E-5*T**4
@@ -617,9 +615,8 @@ end subroutine copper_properties
 !     real(kind(1.0D0))::rho0, rhoi, rhoi0    ! Resistivity terms (nano-ohm.m)
 !     real(kind(1.0D0))::denominator, x
 !
-!     copper%label = 'Copper with specified RRR and field'
 !
-!         rho0 = 15.53 / copper%rrr
+!     rho0 = 15.53 / copper%rrr
 !     denominator = 1 + P1*P3*T**(P2+P4)*exp(-(P5/T)**P6)
 !     rhoi = P1*T**P2 / denominator
 !     rhoi0 = P7*rhoi*rho0 / (rhoi+rho0)
@@ -663,9 +660,6 @@ subroutine copper_properties2(T,B, copper)
     ! page 5: Copper resistivity is computed in CUDI with the t function similar
     ! to the one of McAshan [McA88]
     ! Note this formula is much quicker to evaluate than the NIST formula.
-
-    
-
 
     bracket = 1d0 / (t5/T**5 + t3/T**3 + t1/T)
 

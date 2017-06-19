@@ -521,6 +521,22 @@ subroutine check
         call initialise_cables()
     end if
 
+    ! Check that the temperature margins are not overdetermined
+    if(tmargmin>0.0001d0)then
+        ! This limit has been input and will be applied to both TFC and CS
+        if(tmargmin_tf>0.0001d0)then
+            write(*,*)'tmargmin_tf and tmargmin should not both be specified in IN.DAT.'
+            write(*,*)'tmargmin_tf has been ignored.'
+        end if
+        if(tmargmin_cs>0.0001d0)then
+            write(*,*)'tmargmin_cs and tmargmin should not both be specified in IN.DAT.'
+            write(*,*)'tmargmin_cs has been ignored.'
+        end if
+        tmargmin_tf = tmargmin
+        tmargmin_cs = tmargmin
+    end if
+
+
     errors_on = .false.
 
 end subroutine check
