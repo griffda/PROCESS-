@@ -1873,20 +1873,7 @@ contains
         call ovarre(outfile,'Critical current (A)','(icrit)',icrit, 'OP ')
         call ovarre(outfile,'Operating current / critical current','(iooic)', iooic, 'OP ')
         call ovarre(outfile,'Temperature margin (K)','(tmarg)',tmarg, 'OP ')
-
-        ! call osubhd(outfile,'Protection Information :')
-        ! select case (isumat)
-        ! case (1,2,3,4,5)
-        !     call ovarre(outfile,'Maximum temperature in quench (K)','(tmaxpro)', tmax)
-        ! case(6)
-        !     call ovarre(outfile,'Maximum temperature in quench: CroCo strand (K)','(tmax_croco)', tmax_croco)
-        !     call ovarre(outfile,'Maximum temperature in quench: Jacket (K)','(tmax_croco)', tmax_jacket)
-        ! end select
-        ! if(quench_detection_time>1d-10)then
-        !     call ocmmnt(outfile, 'Two-phase quench model is used')
-        !     call ovarre(outfile,'Time for quench detection (s)','(quench_detection_time)', quench_detection_time)
-        !     call ovarre(outfile,'Peak temperature of normal zone before quench is detected (K)','(t1)',t1,'OP ')
-        ! endif
+        call ovarre(outfile,'Minimum permitted temperature margin (K)','(tmargmin_tf)',tmargmin_tf)
 
     end subroutine supercon
 
