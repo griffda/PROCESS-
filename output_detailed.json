@@ -1,0 +1,1146 @@
+{
+    "Times":{
+        "project":true,
+        "children":[],
+        "constraints":[
+            "times"
+        ],
+        "iteration-variables":[
+            "Times Variables"
+        ],
+        "input-sections":[
+            "Times Variables"
+        ],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "tcycle",
+            "tramp",
+            "tohs",
+            "theat",
+            "tburn",
+            "tqnch",
+            "tdwell"
+        ]
+    },
+    "Physics":{
+        "project":true,
+        "children":[
+            "Plasma Physics",
+            "Divertor Physics"            
+        ],
+        "constraints":[
+            "physics",
+            "divertor",
+            "divertor_kallenbach",
+            "impurity_radiation"
+        ],
+        "iteration-variables":[
+            "Physics Variables",
+            "Divertor Variables",
+            "Divertor Kallenbach Variables",
+            "Impurity Radiation Module"
+        ],
+        "input-sections":[
+            "Physics Variables",
+            "Divertor Variables",
+            "Divertor Kallenbach Variables",
+            "Impurity Radiation Module"
+        ],
+        "inputs":[],
+        "output-sections":[
+            "Plasma Geometry",
+            "Current and Field",
+            "Beta information",
+            "Temperature and Density",
+            "Impurity Radiation",
+            "Plasma Profiles",
+            "Fusion Power",
+            "Radiation Power",
+            "Confinement",
+            "Plasma Volt-s Requirements",
+            "Divertor Physics"
+        ],
+        "outputs":[
+
+        ]
+    },
+    "Plasma Physics":{
+        "project":false,
+        "children":[
+            "Plasma Geometry",
+            "Current and Field",
+            "Beta information",
+            "Temperature and Density",
+            "Impurity Radiation",
+            "Plasma Profiles",
+            "Fusion Power",
+            "Radiation Power",
+            "Confinement",
+            "Plasma Volt-s Requirements"
+        ],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[]
+    },
+    "Divertor Physics":{
+        "project":false,
+        "children":[
+            "Divertor"
+        ],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[]
+    },
+    "Plasma Geometry":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "rmajor",
+            "rminor",
+            "aspect",
+            "kappa",
+            "kappa95",
+            "triang",
+            "triang95",
+            "xarea",
+            "sarea",
+            "vol"
+        ]
+    },
+    "Current and Field":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "plascur/1d6",
+            "alphaj",
+            "rli",
+            "bvert",
+            "bt",
+            "bp",
+            "btot",
+            "q0",
+            "q95",
+            "qstar"
+        ]
+    },
+    "Beta information":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "beta",
+            "betap",
+            "betaft",
+            "betanb",
+            "gammaft",
+            "dnbeta"
+        ]
+    },
+    "Temperature and Density":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "te",
+            "te0",
+            "ti",
+            "ti0",
+            "ten",
+            "dene",
+            "ne0",
+            "dnla",
+            "dnla gw",
+            "dnitot",
+            "deni",
+            "dnz",
+            "dnalp",
+            "dnprot",
+            "dnbeam",
+            "dnelimt",
+            "ralpne"
+        ]
+    },
+    "Impurity Radiation":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "imprad model",
+            "fimp(01",
+            "fimp(02",
+            "fimp(03",
+            "fimp(04",
+            "fimp(05",
+            "fimp(06",
+            "fimp(07",
+            "fimp(08",
+            "fimp(09",
+            "fimp(10",
+            "fimp(11",
+            "fimp(12",
+            "fimp(13",
+            "fimp(14",
+            "aion",
+            "zeff"
+        ]
+    },
+    "Plasma Profiles":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "alphan",
+            "ipedestal",
+            "rhopedn",
+            "neped",
+            "fgwped",
+            "rhopedt",
+            "ieped",
+            "teped",
+            "tesep",
+            "nesep",
+            "fgwsep",
+            "alphat",
+            "tbeta"
+        ]
+    },
+    "Fusion Power":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "fdeut",
+            "ftrit",
+            "powfmw",
+            "pdt",
+            "pdd",
+            "pdhe3",
+            "palpmw",
+            "palpnb",
+            "pneutmw",
+            "pchargemw",
+            "pohmmw",
+            "falpha",
+            "falpe",
+            "falpi",
+            "ptrimw",
+            "ptremw",
+            "pinjimw",
+            "pinjemw",
+            "tauratio",
+            "qfuel",
+            "rndfuel",
+            "burnup",
+            "bigq"
+        ]
+    },
+    "Radiation Power":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "pbrempv*vol",
+            "plinepv*vol",
+            "psyncpv*vol",
+            "ssync",
+            "coreradius",
+            "coreradiationfracti",
+            "pcoreradmw",
+            "pedgeradmw",
+            "pradmw",
+            "rad fraction",
+            "photon wall",
+            "peakfactrad",
+            "maxradwallload",
+            "peakradwallload",
+            "wallmw"
+        ]
+    },
+    "Confinement":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "hfact",
+            "taueff",
+            "tauei",
+            "tauee",
+            "taup",
+            "taulimit"
+        ]
+    },
+    "Plasma Volt-s Requirements":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "vsstt",
+            "vsind",
+            "gamma",
+            "vsres",
+            "vsbrn",
+            "bootipf",
+            "vburn",
+            "rplas",
+            "res time",
+            "rlp",
+            "abs(vstot)",
+            "vssoft",
+            "vsmax"
+        ]
+    },
+    "Divertor":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "pdivt",
+            "pdivt/rmajor",
+            "pdivtbt/qar"
+        ]
+    },
+    "Magnets":{
+        "project":true,
+        "children":[
+            "TF Coils",
+            "PF Coils",
+            "Central Solenoid"
+        ],
+        "constraints":[
+            "pf_power",
+            "pfcoil",
+            "tfcoil"
+        ],
+        "iteration-variables":[
+            "Pf Power Variables",
+            "Pfcoil Variables",
+            "Tfcoil Variables"
+        ],
+        "input-sections":[
+            "Pf Power Variables",
+            "Pfcoil Variables",
+            "Tfcoil Variables"
+        ],
+        "inputs":[],
+        "output-sections":[
+            "General Coil Parameters",
+            "Coil Geometry",
+            "Stress and Forces",
+            "Quench Information",
+            "Conductor Information",
+            "Winding Pack",
+            "External Case Information",
+            "TF Superconductor",
+            "PF Coils",
+            "Central Solenoid"
+        ],
+        "outputs":[
+
+        ]
+    },
+    "TF Coils":{
+        "project":false,
+        "children":[
+            "General Coil Parameters",
+            "Coil Geometry",
+            "Stress and Forces",
+            "Quench Information",
+            "Conductor Information",
+            "Winding Pack",
+            "External Case Information",
+            "TF Superconductor"
+        ],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[]
+    },
+    "PF Coils":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "isumatpf",
+            "fcupfsu",
+            "sigpfcalw",
+            "sigpfcf",
+            "vstot"
+        ]
+    },
+    "Central Solenoid":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "isumatoh",
+            "bmaxoh0",
+            "jscoh bop",
+            "jstrandoh bop",
+            "rjohc0",
+            "cohbop",
+            "bmaxoh",
+            "jscoh eof",
+            "jstrandoh eof",
+            "rjohc",
+            "coheof",
+            "bore",
+            "ohcth",
+            "gapoh",
+            "areaoh",
+            "awpoh",
+            "awpoh*(1-vfohc)",
+            "awpoh*vfohc",
+            "areaoh-awpoh",
+            "oh steel frac",
+            "alstroh",
+            "sig hoop",
+            "sig axial",
+            "s tresca oh",
+            "axial force",
+            "strncon",
+            "fcuohsu",
+            "vfohc",
+            "tftmp",
+            "tmargoh"
+        ]
+    },
+    "General Coil Parameters":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "isumattf",
+            "jwptf",
+            "tfno",
+            "tfarea/tfno",
+            "ritfc/1.d6",
+            "bmaxtf",
+            "bmaxtfrp",
+            "ripmax",
+            "ripple",
+            "estotftgj",
+            "whttf/tfno"
+        ]
+    },
+    "Coil Geometry":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "tfcth",
+            "tfcth",
+            "tfthko",
+            "tficrn",
+            "tfocrn",
+            "tfleng",
+            "rtfcin",
+            "rtot",
+            "hmax",
+            "gapds"
+        ]
+    },
+    "Stress and Forces":{
+        "project":false,
+        "children":[],
+        "constraints":[
+            31,
+            32
+        ],
+        "iteration-variables":[
+            48,
+            49
+        ],
+        "input-sections":[],
+        "inputs":[
+            "alstrtf"
+        ],
+        "output-sections":[],
+        "outputs":[
+            "vforce",
+            "cforce",
+            "tfc model",
+            "alstrtf",
+            "sigvert",
+            "s tresca case",
+            "s tresca cond",
+            "s vmises case",
+            "s vmises cond",
+            "deflect",
+            "windstrain",
+            "insstrain"
+        ]
+    },
+    "Quench Information":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "sigvvall",
+            "taucq",
+            "tftmp",
+            "jwdgpro",
+            "jwptf",
+            "vdalw",
+            "vtfskv"
+        ]
+    },
+    "Conductor Information":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "cable width",
+            "leni",
+            "thwcndut",
+            "thicndut",
+            "acstf"
+        ]
+    },
+    "Winding Pack":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "dhecoil",
+            "vftf",
+            "fcutfsu",
+            "1-fcutfsu",
+            "acond/ap",
+            "aiwp/ap",
+            "avwp/ap",
+            "awphec/ap",
+            "thkwp",
+            "wwp1",
+            "wwp2",
+            "tinstf",
+            "tfinsgap",
+            "turnstf",
+            "cpttf"
+        ]
+    },
+    "External Case Information":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "casthi",
+            "thkcas",
+            "casths",
+            "acasetf",
+            "acasetfo"
+        ]
+    },
+    "TF Superconductor":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "isumat",
+            "bc20m",
+            "tc0m",
+            "bmax",
+            "thelium",
+            "fhetot",
+            "fcutfsu",
+            "strncon",
+            "jcritsc",
+            "jcritstr",
+            "jwdgop",
+            "jwdgcrt",
+            "icrit",
+            "iooic",
+            "tmarg",
+            "tmaxpro"
+        ]
+    },
+    "Breeder Blanket":{
+        "project":true,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "ptfnuc",
+            "pnucfw",
+            "pnucblkt",
+            "pnucshld",
+            "pnucdiv",
+            "fwpressure",
+            "blpressure",
+            "fwarea",
+            "rdewex",
+            "zdewex",
+            "li6enrich",
+            "tbr",
+            "fwith",
+            "fwith",
+            "blnkith",
+            "blnkoth",
+            "shldith",
+            "shldoth",
+            "fw armour thickness"
+        ]
+    },
+    "Heating and Current Drive":{
+        "project":true,
+        "children":[],
+        "constraints":[
+            14,
+            20,
+            30,
+            37,
+            40,
+            59
+        ],
+        "iteration-variables":[
+            7,
+            11,
+            19,
+            33,
+            40,
+            44,
+            46,
+            47,
+            105
+        ],
+        "input-sections":[],
+        "inputs":[
+            "iefrf",
+            "etaech",
+            "pinjalw",
+            "gamma_ecrh",
+            "enbeam",
+            "beamwd",
+            "bscfmax",
+            "cboot",
+            "etalh",
+            "etanbi",
+            "etaof",
+            "feffcd",
+            "forbitloss",
+            "frbeam",
+            "ftritbm",
+            "irfcd",
+            "nbshield",
+            "pheat",
+            "tbeamin",
+            "gamma"
+        ],
+        "output-sections":[],
+        "outputs":[
+            "bigq",
+            "effcd",
+            "gamcd",
+            "etacd",
+            "faccd",
+            "facoh",
+            "bootipf",
+            "fvsbrnni",
+            "echpwr",
+            "echwpow",
+            "plascur/1d6",
+            "te",
+            "te0",
+            "ti",
+            "ti0",
+            "dene",
+            "ne0",
+            "rli",
+            "pinjmw",
+            "pinjwp",
+            "pohmmw"
+        ]
+    },
+    "Balance Of Plant":{
+        "project":true,
+        "children":[
+            "FW Blanket",
+            "TF Power",
+            "PF Power",
+            "Electrical Power"
+        ],
+        "constraints":[
+            "heat_transport"
+        ],
+        "iteration-variables":[
+            "Heat Transport Variables"
+        ],
+        "input-sections":[
+            "Heat Transport Variables"
+        ],
+        "inputs":[],
+        "output-sections":[
+            "FW Blanket",
+            "TF Power",
+            "PF Power",
+            "Electrical Power"
+        ],
+        "outputs":[]
+    },
+    "FW Blanket":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "dp he",
+            "fpump",
+            "p plasma",
+            "t in compressor",
+            "t in bb",
+            "htpmw fw blkt",
+            "htpmw div",
+            "htpmw shld",
+            "emult",
+            "fdiv",
+            "fhcd",
+            "htpmw",
+            "etath",
+            "htpsecmw",
+            "pinjht",
+            "tfcmw",
+            "pthermmw"
+        ]
+    },
+    "TF Power":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "itfka",
+            "vtfskv",
+            "tchghr",
+            "ltfth",
+            "rcoils",
+            "tfcv",
+            "ntfbkr",
+            "ndumpr",
+            "r1dump",
+            "r1ppmw",
+            "r1emj",
+            "ttfsec",
+            "tfpsv",
+            "tfpska",
+            "tfckw",
+            "tfackw",
+            "rpower",
+            "xpower",
+            "tfbusl",
+            "rtfbus",
+            "vtfbus",
+            "tfacpd"
+        ]
+    },
+    "PF Power":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "pfckts",
+            "spsmva",
+            "spfbusl",
+            "pfbuspwr",
+            "srcktpm",
+            "vpfskv",
+            "ensxpfm",
+            "peakpoloidalpower"
+        ]
+    },
+    "Electrical Power":{
+        "project":false,
+        "children":[],
+        "constraints":[],
+        "iteration-variables":[],
+        "input-sections":[],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "basemw",
+            "bdvmw",
+            "crypmw",
+            "htpmw",
+            "ppfmw",
+            "ptfmw",
+            "pheatingmw",
+            "trithtmw",
+            "vachtmw"
+        ]
+    },
+    "Tritium Fuelling and Vacuum":{
+        "project":true,
+        "children":[],
+        "constraints":[
+            "vacuum"
+        ],
+        "iteration-variables":[
+            "Vacuum Variables"
+        ],
+        "input-sections":[
+            "Vacuum Variables"
+        ],
+        "inputs":[],
+        "output-sections":[],
+        "outputs":[
+            "rat",
+            "ogas",
+            "pbase",
+            "s(1)",
+            "snet(1)",
+            "volume",
+            "pend",
+            "pstart",
+            "tdwell",
+            "s(2)",
+            "snet(2)",
+            "prdiv",
+            "fhe",
+            "s(3)",
+            "snet(3)",
+            "frate",
+            "s(4)",
+            "snet(4)",
+            "nduct",
+            "d(imax)",
+            "l1",
+            "dout",
+            "l2",
+            "l3",
+            "pumpn"
+        ]
+    },
+    "Builds":{
+        "project":false,
+        "Radial Build":{
+            "1":{
+                "name": "bore",
+                "des": "Machine bore",
+                "combination": false
+            },
+            "2":{
+                "name": "ohcth",
+                "des": "Central solenoid",
+                "combination": false
+            },
+            "3":{
+                "name": "precomp",
+                "des": "CS precompression",
+                "combination": false
+            },
+            "4":{
+                "name": "gapoh",
+                "des": "Gap between precomp and TF inboard",
+                "combination": false
+            },
+            "5":{
+                "name": "tfcth",
+                "des": "TF coil inboard leg",
+                "combination": false
+            },
+            "6":{
+                "name": "deltf",
+                "des": "Gap between TF inboard and thermal shield",
+                "combination": false
+            },
+            "7":{
+                "name": "thshield",
+                "des": "Thermal shield",
+                "combination": false
+            },
+            "8":{
+                "name": "gapds",
+                "des": "Gap between thermal shield and vacuum vessel",
+                "combination": false
+            },
+            "9":{
+                "name": "ddwi + shldith",
+                "des": "Inboard vacuum vessel (and shielding)",
+                "combination": true,
+                "combo_type": "+"
+            },
+            "10":{
+                "name": "vvblgap",
+                "des": "Gap between vacuum vessel and inboard blanket",
+                "combination": false
+            },
+            "11":{
+                "name": "blnkith",
+                "des": "Inboard blanket",
+                "combination": false
+            },
+            "12":{
+                "name": "fwith",
+                "des": "Inboard first wall",
+                "combination": false
+            },
+            "13":{
+                "name": "scrapli",
+                "des": "Inboard scrape-off layer",
+                "combination": false
+            },
+            "14":{
+                "name": "rminor",
+                "des": "Plasma inboard minor radius",
+                "combination": false
+            },
+            "15":{
+                "name": "rminor",
+                "des": "Plasma outboard minor radius",
+                "combination": false
+            },
+            "16":{
+                "name": "scraplo",
+                "des": "Outboard scrape-off layer",
+                "combination": false
+            },
+            "17":{
+                "name": "fwoth",
+                "des": "Outboard first wall",
+                "combination": false
+            },
+            "18":{
+                "name": "blnkoth",
+                "des": "Outboard blanket",
+                "combination": false
+            },
+            "19":{
+                "name": "vvblgap",
+                "des": "Gap between vacuum vessel and outboard blanket",
+                "combination": false
+            },
+            "20":{
+                "name": "ddwi + shldoth",
+                "des": "Outboard vacuum vessel and shielding",
+                "combination": true,
+                "combo_type": "+"
+            },
+            "21":{
+                "name": "gapsto",
+                "des": "Gap between outboard vacuum vessel and thermal shield",
+                "combination": false
+            },
+            "22":{
+                "name": "thshield",
+                "des": "Outboard thermal shield",
+                "combination": false
+            },
+            "23":{
+                "name": "tftsgap",
+                "des": "Gap between outboard thermal shield and TF outboard",
+                "combination": false
+            },
+            "24":{
+                "name": "tfthko",
+                "des": "TF coil outboard leg",
+                "combination": false
+            }
+        },
+        "Vertical Build":{
+            "single":{
+                "1":{
+                    "name": "tfcth",
+                    "des": "Top TF Coil",
+                    "combination": false
+                },
+                "2":{
+                    "name": "tftsgap",
+                    "des": "Gap between thermal shield and top TF coil",
+                    "combination": false
+                },
+                "3":{
+                    "name": "thshield",
+                    "des": "Thermal shield",
+                    "combination": false
+                },
+                "4":{
+                    "name": "vgap2",
+                    "des": "Gap between thermal shield and top vacuum vessel",
+                    "combination": false
+                },
+                "5":{
+                    "name": "ddwi + shldtth",
+                    "des": "Top vacuum vessel (and shielding)",
+                    "combination": true,
+                    "combo_type": "+"
+                },
+                "6":{
+                    "name": "vvblgap",
+                    "des": "Gap between top vacuum vessel and top blanket",
+                    "combination": false
+                },
+                "7":{
+                    "name": "blnktth",
+                    "des": "Top blanket thickness",
+                    "combination": false
+                },
+                "8":{
+                    "name": "fwtth",
+                    "des": "Top first wall",
+                    "combination": false
+                },
+                "9":{
+                    "name": "vgaptop",
+                    "des": "Top scrape-off layer",
+                    "combination": false
+                },
+                "10":{
+                    "name": "rminor * kappa",
+                    "des": "Plasma half-height (top)",
+                    "combination": true,
+                    "combo_type": "*"
+                },
+                "11":{
+                    "name": "rminor * kappa",
+                    "des": "Plasma half-height (bottom)",
+                    "combination": true,
+                    "combo_type": "*"
+                },
+                "12":{
+                    "name": "vgap",
+                    "des": "Lower scrape-off layer",
+                    "combination": false
+                },
+                "13":{
+                    "name": "divfix",
+                    "des": "Divertor structure",
+                    "combination": false
+                },
+                "14":{
+                    "name": "ddwi + shldlth",
+                    "des": "Lower vacuum vessel (and shielding)",
+                    "combination": true,
+                    "combo_type": "+"
+                },
+                "15":{
+                    "name": "vgap2",
+                    "des": "Gap between lower vacuum vessel and thermal shield",
+                    "combination": false
+                },
+                "16":{
+                    "name": "thshield",
+                    "des": "Lower thermal shield",
+                    "combination": false
+                },
+                "17":{
+                    "name": "tftsgap",
+                    "des": "Gap between lower thermal shield and lower TF coil",
+                    "combination": false
+                },"18":{
+                    "name": "tfcth",
+                    "des": "Lower TF coil",
+                    "combination": false
+                }
+            },
+            "double":{
+                "1":{
+                    "name": "test",
+                    "des": "test",
+                    "combination": false
+                }
+            }
+        }
+    }
+}
