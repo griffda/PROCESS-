@@ -956,7 +956,7 @@ module divertor_kallenbach_variables
   !+ad_vars  kallenbach_tests /0/ : Switch to run tests of 1D Kallenbach divertor model (1=on, 0=off)
   integer :: kallenbach_tests = 0
 
-  !+ad_vars  lambda_target /0.005/ : SOL power fall-off length at the target, mapped to OMP [m]
+  !+ad_vars  lambda_q_target /0.005/ : SOL power fall-off length at the target, mapped to OMP [m]
   real(kind(1.0D0)) :: lambda_q_target = 0.005D0
 
   !+ad_vars  lambda_q_omp /0.002/ : SOL power fall-off length at the outer midplane, perpendicular to field [m]

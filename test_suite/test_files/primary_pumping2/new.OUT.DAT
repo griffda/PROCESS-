@@ -6,14 +6,14 @@
  **************************************************************************************************************
  
    Program : ./process.exe
-   Version : 1.0.10   Release Date :: 2017-04-27
- Tag Number : "1.0.10-30-g2c81a56"
-      User : mkovari
- Directory : /home/mkovari/develop/test_suite
+   Version : 1.0.11   Release Date :: 2017-06-29
+   Tag No. : "1.0.10-60-gd10598f"
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/process/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on  2 Jun 2017 11:27:05 +01:00(hh:mm) UTC by freia055
+ PROCESS 1.0.11 : Run on 29 Jun 2017  9:30:47 +01:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -112,8 +112,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
     1  Beta consistency                      =  3.7314E-02              2.3064E-10                 6.1810E-09
     2  Global power balance consistency      =  1.6924E-01 MW/m3       -1.6608E-09 MW/m3          -9.8133E-09
-    3  Density upper limit                   <  6.8675E+19 /m3         -8.5498E+09 /m3            -1.0375E-10
-    4  (Epsilon x beta-pol) upper limit      <  1.3800E+00             -1.3195E-12                -3.5347E-12
+    3  Density upper limit                   <  6.8675E+19 /m3         -8.5499E+09 /m3            -1.0375E-10
+    4  (Epsilon x beta-pol) upper limit      <  1.3800E+00             -1.3199E-12                -3.5356E-12
     5  Neutron wall load upper limit         <  8.0000E+00 MW/m2       -4.3815E-08 MW/m2          -4.3548E-08
     6  Toroidal field 1/R consistency        =  4.4729E+01 T.m         -2.4751E-07 T.m            -5.5336E-09
     7  Radial build consistency              =  9.0666E+00 m           -7.3340E-10 m              -8.0891E-11
@@ -625,7 +625,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Peak field (with ripple,T)                                               (bmaxtfrp)                1.164E+01  OP 
  Max allowed ripple amplitude at plasma (%)                               (ripmax)                  6.000E-01     
  Ripple amplitude at plasma (%)                                           (ripple)                  6.000E-01  OP 
- Total stored energy in TF coils (GJ)                                     (estotft)                 1.250E+02  OP 
+ Total stored energy in TF coils (GJ)                                     (estotftgj)               1.250E+02  OP 
  Total mass of TF coils (kg)                                              (whttf)                   1.734E+07  OP 
  Mass of each TF coil (kg)                                                (whttf/tfno)              9.633E+05  OP 
  Vertical separating force per leg (N)                                    (vforce)                  2.053E+08  OP 
@@ -652,11 +652,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Allowable stress in vacuum vessel (Pa)                                   (sigvvall)                9.300E+07     
  Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.104E+01  OP 
- Actual quench time (s)                                                   (tdmptf)                  1.000E+01  ITV
+ Actual quench time (or time constant) (s)                                (tdmptf)                  1.000E+01  ITV
  Max allowed current density in winding pack due to temperature rise in q (jwdgpro)                 2.417E+07  OP 
  Actual current density in winding pack (A/m2)                            (jwptf)                   2.417E+07  OP 
  Maximum allowed voltage during quench due to insulation (kV)             (vdalw)                   2.485E+01  ITV
  Quench voltage (kV)                                                      (vtfskv)                  2.059E+01  OP 
+ Maximum allowed temp rise during a quench (K)                            (tmaxpro)                 1.500E+02     
  
  Conductor Information :
  
@@ -689,7 +690,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Winding width 2 (m)                                                      (wwp2)                    1.047E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  1.300E-02     
  Winding pack insertion gap (m)                                           (tfinsgap)                1.000E-02     
- Ground wall mass per coil (kg)                                           (whtgw)                   6.560E+03  OP 
+ mass of ground-wall insulation layer per coil (kg)                       (whtgw)                   6.560E+03  OP 
  Number of turns per TF coil                                              (turnstf)                 1.842E+02  OP 
  Current per turn (A)                                                     (cpttf)                   6.744E+04  ITV
  
@@ -707,7 +708,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil model                                                            (tfc_model)                       1     
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 5.500E+08     
  Vertical stress (Pa)                                                     (sigvert)                 2.027E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))              -2.442E-08     
+ Case radial stress (Pa)                                                  (sigrtf(1))               2.442E-08     
  Case tangential stress (Pa)                                              (sigttf(1))              -3.473E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -1.530E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.104E+08  OP 
@@ -740,10 +741,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Critical current (A)                                                     (icrit)                   1.349E+05  OP 
  Operating current / critical current                                     (iooic)                   5.000E-01  OP 
  Temperature margin (K)                                                   (tmarg)                   2.299E+00  OP 
- 
- Protection Information :
- 
- Maximum temperature in quench (K)                                        (tmaxpro)                 1.500E+02     
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -784,6 +781,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
  Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
  CS temperature margin (K)                                                (tmargoh)                 3.377E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.700E+00     
  
  Superconducting PF coils
  PF coil superconductor material                                          (isumatpf)                        3     
