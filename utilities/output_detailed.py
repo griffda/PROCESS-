@@ -704,6 +704,9 @@ if __name__ == "__main__":
 
     PARSER.add_argument("-f", metavar='MFILENAME', type=str,
                         default="", help='specify PROCESS MFILE')
+
+    PARSER.add_argument("-j", metavar='JSONFILE', type=str,
+                        default="output_detailed.json", help='specify JSON file location and name')
     
     PARSER.add_argument("-o", metavar='OUTFILENAME', type=str,
                         default="output_detailed", help='specify output file')
@@ -712,10 +715,14 @@ if __name__ == "__main__":
 
     # read json
     try:
-        DATA = json.load(open('output_detailed.json'), 
+        json_filename = COMMAND_ARGS.j
+        DATA = json.load(open(json_filename), 
             object_pairs_hook=OrderedDict)
     except ValueError as e:
         print("Error in JSON config file. Please correct error: {0}".format(e))
+        sys.exit()
+    except FileNotFoundError as fe:
+        print("Cannot find JSON config file. Expecting file in: {0}".format(COMMAND_ARGS.j))
         sys.exit()
 
     if COMMAND_ARGS.f:
