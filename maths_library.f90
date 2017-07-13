@@ -90,6 +90,7 @@ module maths_library
   public :: ellipke,find_y_nonuniform_x,gamfun,hybrd,linesolv,qpsub, &
        quanc8,sumup3,svd,tril,vmcon,zeroin, eshellvol, dshellvol, &
        eshellarea, dshellarea, binomial, binarysearch, interpolate
+  public::variable_error
 
 contains
 
@@ -5971,7 +5972,18 @@ contains
 
   end subroutine eshellarea
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! ------------------------------------------------------------------------
+  pure function variable_error(variable)
+      real(kind(1.0D0)), intent(in) ::variable
+      logical::variable_error
+
+      if((variable/=variable).or.(variable<-9.99D99).or.(variable>9.99D99))then
+          variable_error = .TRUE.
+      else
+          variable_error = .FALSE.
+      end if
+
+  end function variable_error
 
 end module maths_library
 

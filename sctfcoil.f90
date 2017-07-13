@@ -81,7 +81,7 @@ type(volume_fractions):: croco_cable
 type(supercon_strand)::croco_strand
 
 real(kind(1.0D0)):: T1, time2, tau2,estotft,croco_quench_factor
-real(kind(1.0D0)):: jwdgpro_1, jwdgpro_2
+real(kind(1.0D0)):: jwdgpro_1, jwdgpro_2,  etamax
 contains
 
 ! --------------------------------------------------------------------------
@@ -294,7 +294,7 @@ subroutine sctfcoil(outfile,iprint)
     !  Dimension of square cable space inside conduit
     leni = cable_width - 2.0D0*thwcndut
 
-    !  Cross-sectional area of cable space per turn
+    !  Cross-sectional area of cable space per turn, taking account of rounded inside corners
     acstf = leni**2 - (4.0D0-pi)*rbcndut**2
 
     if (acstf <= 0.0D0) then
@@ -1371,8 +1371,10 @@ subroutine outtf(outfile, peaktfflag)
             call ocmmnt(outfile,'Two-phase quench model is used')
             call ovarre(outfile,'Electric field at which TF quench is detected, discharge begins (V/m)',&
                                 '(quench_detection_ef)', quench_detection_ef)
+
             call ovarre(outfile,'Time for quench detection (s)','(time1)', time1,'OP ')
             call ovarre(outfile,'Peak temperature of normal zone before quench is detected (K)','(T1)',T1,'OP ')
+            call ovarre(outfile,'Resistivity of copper in normal zone when quench is detected (ohm.m)','(etamax)',etamax,'OP ')
         else
             call ocmmnt(outfile, 'Simple one-phase quench model is used')
         endif
@@ -1381,6 +1383,7 @@ subroutine outtf(outfile, peaktfflag)
 
     call osubhd(outfile,'Conductor Information :')
     call ovarre(outfile,'Width of cable (square) (m)','(cable_width)',cable_width, 'OP ')
+    call ovarre(outfile,'Width of turn including inter-turn insulation (m)','(leno)',leno, 'OP ')
     call ovarre(outfile,'Width of space inside cable (m)','(leni)',leni, 'OP ')
     call ovarre(outfile,'Conduit thickness (m)','(thwcndut)',thwcndut)
     call ovarre(outfile,'Inter-turn insulation thickness (m)','(thicndut)',thicndut)
@@ -1677,10 +1680,9 @@ contains
         case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
             call jcrit_rebco(thelium,bmax,jcritsc,validity,iprint)
             ! acs : Cable space - inside area (m2)
-            ! aturn : Area per turn (i.e. entire jacketed cable) (m2)
             croco_cable%acs =  acstf
-            croco_cable%aturn =  cable_width**2
-            croco_cable%jacket_fraction = acndttf/croco_cable%aturn
+            croco_cable%area =  cable_width**2
+            croco_cable%jacket_fraction = acndttf/croco_cable%area
 
             call croco(jcritsc,croco_strand,croco_cable)
             icrit = croco_cable%critical_current
@@ -1691,7 +1693,8 @@ contains
 
         end select
 
-        !  Critical current density in winding pack
+        ! Critical current density in winding pack
+        ! aturn : Area per turn (i.e. entire jacketed cable with insulation) (m2)
         jwdgcrt = icrit / aturn
 
         !  Ratio of operating / critical current
@@ -1829,13 +1832,13 @@ contains
             endif
 
             call ovarre(outfile,'Width of square cable (m)','(cable_width)', cable_width , 'OP ')
-            call ovarre(outfile,'Area of cable (m2)','(aturn)', aturn , 'OP ')
+            call ovarre(outfile,'Area of cable (not incl insulation) (m2)','(area)', croco_cable%area , 'OP ')
             call ovarre(outfile,'REBCO fraction of cable','(rebco_fraction)',croco_cable%rebco_fraction , 'OP ')
-            call ovarrf(outfile,'Copper fraction of cable','(copper_fraction)',croco_cable%copper_fraction , 'OP ')
-            call ovarrf(outfile,'Hastelloy fraction of cable','(hastelloy_fraction)',croco_cable%hastelloy_fraction , 'OP ')
-            call ovarrf(outfile,'Solder fraction of cable','(solder_fraction)',croco_cable%solder_fraction , 'OP ')
-            call ovarrf(outfile,'Jacket fraction of cable','(jacket_fraction)',croco_cable%jacket_fraction , 'OP ')
-            call ovarrf(outfile,'Helium fraction of cable','(helium_fraction)',croco_cable%helium_fraction , 'OP ')
+            call ovarre(outfile,'Copper fraction of cable','(copper_fraction)',croco_cable%copper_fraction , 'OP ')
+            call ovarre(outfile,'Hastelloy fraction of cable','(hastelloy_fraction)',croco_cable%hastelloy_fraction , 'OP ')
+            call ovarre(outfile,'Solder fraction of cable','(solder_fraction)',croco_cable%solder_fraction , 'OP ')
+            call ovarre(outfile,'Jacket fraction of cable','(jacket_fraction)',croco_cable%jacket_fraction , 'OP ')
+            call ovarre(outfile,'Helium fraction of cable','(helium_fraction)',croco_cable%helium_fraction , 'OP ')
             total = croco_cable%copper_fraction+croco_cable%hastelloy_fraction+croco_cable%solder_fraction+ &
                     croco_cable%jacket_fraction+croco_cable%helium_fraction+croco_cable%rebco_fraction
             if(abs(total-1d0)>1d-6) then
@@ -2002,15 +2005,16 @@ subroutine croco_quench(croco_cable)
     !+ad_desc  It also finds the dump voltage.
 
     type(volume_fractions), intent(in)::croco_cable
-    real(kind(1.0D0)):: prefactor,  etamax,delta_T, T
-    real(kind(1.0D0)):: integral1,integral2,integral, sum1, sum2
+    real(kind(1.0D0)):: prefactor,delta_T, T
+    real(kind(1.0D0)):: integral1,integral2,integral, sum1, sum2, current_density_in_cable
     integer::i
 
     if(quench_detection_ef>1d-10)then
         ! Two-phase quench model is used.
         ! Phase 1
         ! Value of resistivity at which detection voltage is reached
-        etamax = quench_detection_ef * croco_cable%copper_fraction / jwptf
+        current_density_in_cable = jwptf *  (leno / cable_width)**2
+        etamax = quench_detection_ef * croco_cable%copper_fraction / current_density_in_cable
         delta_T = 1d0
         integral = 0d0
         do i=0,300

@@ -4214,7 +4214,7 @@ module rebco_variables
           real(kind(1.0D0)) :: critical_current
           real(kind(1.0D0)) :: number_croco         ! Number of CroCo strands (not an integer)
           real(kind(1.0D0)) :: acs
-          real(kind(1.0D0)) :: aturn
+          real(kind(1.0D0)) :: area
           real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
       end type
   end module resistive_materials

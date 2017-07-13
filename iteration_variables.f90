@@ -286,7 +286,8 @@ subroutine loadxc
 
      !  Crude method of catching NaN errors
 
-     if ( (abs(xcm(i)) > 9.99D99).or.(xcm(i) /= xcm(i)) ) then
+     !if ( (abs(xcm(i)) > 9.99D99).or.(xcm(i) /= xcm(i)) ) then
+     if ( variable_error(xcm(i)) ) then
         idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xcm(i)
         call report_error(56)
      end if
@@ -566,7 +567,8 @@ subroutine convxc(xc,nn)
 
      !  Crude method of catching NaN errors
 
-     if ((abs(xc(i)) > 9.99D99).or.(xc(i) /= xc(i))) then
+     !if ((abs(xc(i)) > 9.99D99).or.(xc(i) /= xc(i))) then
+     if(variable_error(xc(i)))then
         idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xc(i)
         call report_error(59)
      end if

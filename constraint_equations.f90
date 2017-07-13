@@ -1058,7 +1058,7 @@ contains
           !#=#=# ftpeak, tfwmatmax
 
           ! If the temperature peak == 0 then report an error
-          if (tpeak == 0.0D0) call report_error(5)
+          if (tpeak < 1.0D0) call report_error(5)
 
           ! ftpeak    |  f-value for first wall peak temperature
           ! tfwmatmax |  maximum temperature of first wall material (K)
@@ -1109,7 +1109,7 @@ contains
           !#=#=# ftcycl, tcycmn
 
           ! if the minimum cycle time == 0 report an error
-          if (tcycmn == 0.0D0) call report_error(6)
+          if (tcycmn < 1.0D0) call report_error(6)
 
           ! ftcycl |  f-value for cycle time
           ! tcycle |  full cycle time (s)
@@ -1609,7 +1609,8 @@ contains
        end select
 
        ! Crude method of catching NaN errors
-       if ((abs(cc(i)) > 9.99D99).or.(cc(i) /= cc(i))) then
+       !if ((abs(cc(i)) > 9.99D99).or.(cc(i) /= cc(i))) then
+       if (variable_error(cc(i))) then
 
           ! Add debugging lines as appropriate...
           select case (icc(i))
