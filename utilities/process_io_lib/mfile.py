@@ -87,7 +87,7 @@ class MFileVariable(dict):
           scan_value --> value of parameter for scan
 
         """
-        self["scan{}".format(scan_number)] = scan_value
+        self["scan{:02}".format(scan_number)] = scan_value
         if scan_number > self.latest_scan:
             self.latest_scan = scan_number
         LOG.debug("Scan {} for variable '{}' == {}".format(scan_number,
