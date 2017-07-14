@@ -481,8 +481,11 @@ def write_row_mplot_dat(filename, custom_keys, mfile_data):
         if key in mfile_keys:
             # Get the scan values for the row
             values = ""
-            for item in mfile_data.data[key].get_scans():
-                values += "{:.4e}".format(item) + " "
+            try:
+                for item in mfile_data.data[key].get_scans():
+                    values += "{:.4e}".format(item) + " "
+            except ValueError:
+                print("Skipped non-number parameter {0}".format(item))
             values += "\n"
 
             # Create the file line [name, description, val1, val2, ...]

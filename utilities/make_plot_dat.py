@@ -41,6 +41,9 @@ if __name__ == "__main__":
 
     parser.add_argument("--columns", help="Write make_plot_dat.out in columns",
                         action="store_true")
+    
+    parser.add_argument("--all", help="Output entire MFILE",
+                        action="store_true")
 
     args = parser.parse_args()
 
@@ -71,21 +74,24 @@ if __name__ == "__main__":
 
     # If the user has requested the default parameters get default list from
     # process_io_lib
-    if args.defaults:
-
-        # If user has specified column format
-        if args.columns:
-            make_plot_dat(M, PARAMETER_DEFAULTS, file_format="column")
-
-        # If user has specified row format
-        else:
-            make_plot_dat(M, PARAMETER_DEFAULTS)
+    if args.all:
+        make_plot_dat(M, M.data.keys())
     else:
+        if args.defaults:
 
-        # If user has specified column format
-        if args.columns:
-            make_plot_dat(M, INPUT_CONFIG, file_format="column")
+            # If user has specified column format
+            if args.columns:
+                make_plot_dat(M, PARAMETER_DEFAULTS, file_format="column")
 
-        # If user has specified row format
+            # If user has specified row format
+            else:
+                make_plot_dat(M, PARAMETER_DEFAULTS)
         else:
-            make_plot_dat(M, INPUT_CONFIG)
+
+            # If user has specified column format
+            if args.columns:
+                make_plot_dat(M, INPUT_CONFIG, file_format="column")
+
+            # If user has specified row format
+            else:
+                make_plot_dat(M, INPUT_CONFIG)
