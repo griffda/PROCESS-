@@ -486,7 +486,7 @@ def write_row_mplot_dat(filename, custom_keys, mfile_data):
                     values += "{:.4e}".format(item) + " "
             except ValueError:
                 print("Skipped non-number parameter {0}".format(item))
-            values += "\n"
+            # values += "\n"
 
             # Create the file line [name, description, val1, val2, ...]
             # Entries are justified to give the impression of fixed
