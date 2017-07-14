@@ -493,7 +493,7 @@ def write_row_mplot_dat(filename, custom_keys, mfile_data):
             # width columns
             lines.append(mfile_data.data[key].var_description.
                          replace(" ", "_").ljust(45)
-                         + " " + key.ljust(25) + " " + values + "\n")
+                         + " " + key.replace(" ", "_").ljust(25) + " " + values + "\n")
 
     # Write row to file.
     if lines != []:
