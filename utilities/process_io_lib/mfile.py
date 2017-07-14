@@ -439,12 +439,11 @@ def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
         # The first two lines contain the scanning variable and the number of
         # scans. These lines are preceded by a # symbol for ease of excluding.
         try:
+            scan_var = int(mfile_data.data["nsweep"].get_scan(-1))
             plot_dat.write("# Scanning Variable: {}".
-                           format(DICT_NSWEEP2VARNAME
-                                  [mfile_data.data["nsweep"].
-                                      get_scan(-1)] + "\n"))
-            plot_dat.write("# Number of scans: {}".format(
-                           int(mfile_data.data["isweep"].get_scan(-1)) + "\n"))
+                            format(DICT_NSWEEP2VARNAME[str(scan_var)] + "\n"))
+            sweep_num = int(mfile_data.data["isweep"].get_scan(-1))
+            plot_dat.write("# Number of scans: {}".format(str(sweep_num) + "\n"))
             plot_dat.close()
         except KeyError:
             print("File has no scan, continuing...")
@@ -478,7 +477,6 @@ def write_row_mplot_dat(filename, custom_keys, mfile_data):
     mfile_keys = mfile_data.data.keys()
 
     lines = []
-
     for key in custom_keys:
         if key in mfile_keys:
             # Get the scan values for the row

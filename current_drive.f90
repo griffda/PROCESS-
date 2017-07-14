@@ -195,6 +195,7 @@ contains
           gamcd = gamma_ecrh
           effrfss = gamcd / (dene20 * rmajor)
           etacd = etaech
+          effcd = effrfss
 
        case default
           idiags(1) = iefrf

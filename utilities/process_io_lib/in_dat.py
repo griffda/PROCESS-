@@ -140,6 +140,8 @@ def find_line_type(line):
             return "fimp"
         elif "zref(" in name:
             return "zref"
+        elif "impurity_enrichment(" in name:
+            return "impurity_enrichment"
         else:
             return "Parameter"
 
@@ -298,6 +300,19 @@ def process_zref(data, line):
     data["zref"].value[zref_index] = zref_value
 
 
+def process_enrichment(data, line):
+    """ Function to process impurity_enrichment array
+
+    :param data: Data dictionary for the IN.DAT information
+    :param line: Line from IN.DAT to process
+    :return: nothing
+    """
+
+    imp_rich_index = int(line.split("(")[1].split(")")[0]) - 1
+    imp_rich_value = eval(line.split("=")[-1].replace(",", ""))
+    data["impurity_enrichment"].value[imp_rich_index] = imp_rich_value
+
+
 def process_parameter(data, line):
     """ Function to process parameter entries in IN.DAT
 
@@ -382,6 +397,19 @@ def process_line(data, line_type, line):
 
         data["zref"] = INVariable("zref", empty_zref, "zref", parameter_group,
                                   comment)
+    
+    # Create a impurity_enrichment variable class using INVariable class if entry
+    # doesn't exist
+    if "impurity_enrichment" not in data.keys():
+        empty_imp = [0]*14
+        parameter_group = find_parameter_group("impurity_enrichment")
+
+        # Get parameter comment/description from dictionary
+        comment = DICT_DESCRIPTIONS["impurity_enrichment"].replace(",", ";").\
+            replace(".", ";").replace(":", ";")
+
+        data["impurity_enrichment"] = INVariable("impurity_enrichment", 
+            empty_imp, "impurity_enrichment", parameter_group, comment)
 
     # Constraint equations
     if line_type == "Constraint Equation":
@@ -402,6 +430,10 @@ def process_line(data, line_type, line):
     # zref
     elif line_type == "zref":
         process_zref(data, line)
+
+    # impurity_enrichment
+    elif line_type == "impurity_enrichment":
+        process_enrichment(data, line)
 
     # Parameter
     else:
@@ -526,6 +558,13 @@ def write_parameters(data, out_file):
                         tmp_zref_value = data["zref"].get_value[j]
                         parameter_line = "{0} = {1}\n".\
                             format(tmp_zref_name, tmp_zref_value)
+                        out_file.write(parameter_line)
+                elif item == "impurity_enrichment":
+                    for m in range(len(data["impurity_enrichment"].get_value)):
+                        tmp_imp_rich_name = "impurity_enrichment({0})".format(str(m+1).zfill(1))
+                        tmp_imp_rich_value = data["impurity_enrichment"].get_value[m]
+                        parameter_line = "{0} = {1}\n".\
+                            format(tmp_imp_rich_name, tmp_imp_rich_value)
                         out_file.write(parameter_line)
                 elif "vmec" in item:
                     parameter_line = "{0} = {1}\n".format(item,

@@ -1,8 +1,8 @@
 """
 
-  Create PROCESS output document
+  Create PROCESS output summary in html
 
-  James Morris 11/05/2017
+  James Morris 06/06/2017
   CCFE
 
 """
@@ -11,6 +11,7 @@
 import sys
 import json
 import argparse
+import collections
 from collections import OrderedDict
 from grip import export
 
@@ -25,6 +26,7 @@ except ImportError:
     exit()
 
 # Constants
+EXCLUSIONS = ["ixc", "icc"]
 MODULES = dict()
 ICC_FULL = proc_dict.DICT_ICC_FULL
 ICC_VARS = proc_dict.DICT_ICC_VARS
@@ -97,7 +99,11 @@ def content_heading(x):
 
 def content_subheading(x):
     tag = x.lower().replace(" ", "-").replace(":", "")
-    OUTFILE.write("&nbsp;&nbsp;&nbsp;&nbsp;[{0}](#{1})\n\n".format(x, tag))
+    OUTFILE.write("{0}[{1}](#{2})\n\n".format("&nbsp;"*8, x, tag))
+
+def content_subsubheading(x):
+    tag = x.lower().replace(" ", "-").replace(":", "")
+    OUTFILE.write("{0}[{1}](#{2})\n\n".format("&nbsp;"*16, x, tag))
 
 
 def table_heading(headings):
@@ -122,60 +128,11 @@ def table_line(items, form):
             try:
                 eval(item)
                 item_line += item_format.format(item) + " |"
-                # item_line += " {0:.4g} |".format(item)
             except (NameError, ValueError, SyntaxError, TypeError):
                 item_line += " {0} |".format(item)
     OUTFILE.write(item_line + "\n")
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-def check_empty(key):
-    """
-    Check not an empty section
-    """
-    title = key
-    con_mods = DATA["projects"][key]["icc_modules"]
-    mod_names = DATA["projects"][key]["in_dat_modules"]
-    tot_count = 0
-    con_count = 0
-    it_count = 0
-    in_count = 0
-    out_count = 0
-    result = dict()
-
-    CONSTRAINTS = INFILE.data["icc"].value
-    IT_VARS = INFILE.data["ixc"].value
-    IT_VAR_LIST = [IXC_FULL[str(itvar)]["name"] for itvar in IT_VARS]
-    MODULE_VAR_LIST = sum([MODULES_FULL[mod_name] for mod_name in mod_names], [])
-    MODULE_ICC_LIST = sum([MODULES[key] for key in MODULES.keys() if key in con_mods], [])
-
-    for item in CONSTRAINTS:
-        if item in MODULE_ICC_LIST:
-           tot_count += 1; con_count += 1
-
-    for item in IT_VARS:
-        item_name = IXC_FULL[str(item)]["name"]
-        if item_name in MODULE_VAR_LIST:
-            tot_count += 1; it_count += 1
-    
-    for item in INPUTS_LIST:
-        if item in MODULE_VAR_LIST:
-            if item not in IT_VAR_LIST:
-                tot_count += 1; in_count += 1
-
-    for item in MFILE_LIST:
-        if item in MODULE_VAR_LIST:
-            item_value = MFILE.data[item].get_scan(-1)
-            if item not in INPUTS_LIST:
-                tot_count += 1; out_count += 1
-    
-    result["tot_count"] = tot_count
-    result["con_count"] = con_count
-    result["it_count"] = it_count
-    result["in_count"] = in_count
-    result["out_count"] = out_count
-
-    return result
 
 
 def get_itvar_values():
@@ -206,41 +163,6 @@ def get_indat_comments():
             COMMENTS.setdefault(key,[]).append(value)
 
 
-def output_contents():
-    """
-    Print contents page
-    """
-
-    bold_info("Username", MFILE.data["username"].get_scan(-1))
-    bold_info("Date", MFILE.data["date"].get_scan(-1))
-    bold_info("Time", MFILE.data["time"].get_scan(-1))
-    bold_info("PROCESS version", MFILE.data["procver"].get_scan(-1))
-    bold_info("Run description", MFILE.data["runtitle"].get_scan(-1))
-
-    # Top level comment
-    output_line(bold("IN.DAT Comment"))
-    heading_comment("header-title")
-
-    heading(1, "Contents")
-
-    content_heading("Diagrams")
-
-    for k, v in DATA["projects"].items():
-
-        result = check_empty(k)
-
-        if result["tot_count"] != 0:
-
-            content_heading(k)
-
-            if k == "General":
-                content_subheading("Radial Build")
-                content_subheading("Vertical Build")
-
-            # for item in v["mfile_sections"]:
-            #     content_subheading(item)
-
-
 def constraint_comments(ky, iccs):
     """
     Display constraint comments for this module
@@ -251,74 +173,8 @@ def constraint_comments(ky, iccs):
         if con_key in COMMENTS.keys():
             con_name = ICC_FULL[str(icc)]["name"]
             comment = " ".join(COMMENTS[con_key])
-            output_below_table_comment(icc, con_name, comment)
-
-
-def output_constraints(k):
-    """
-    Output constraints for section k
-    """
-
-    con_mods = DATA["projects"][k]["icc_modules"]
-    mod_names = DATA["projects"][k]["mfile_sections"]
-    MODULE_ICC_LIST = sum([MODULES[key] for key in MODULES.keys() if key in con_mods], [])
-
-    heading(3, "Constraints")
-
-    table_heading(["Constraint", "Description", "F-Value Name", "F-Value Value", 
-        "Limit Name", "Limit", "Value"])
-
-    for item in CONSTRAINTS:
-        if item in MODULE_ICC_LIST:
-
-            con_name = ICC_FULL[str(item)]["name"]
-
-            if ICC_VARS[str(item)] != "consistency" and ICC_VARS[str(item)] != "empty":
-                if "f" in ICC_VARS[str(item)].keys():
-                    con_f_val_name = ICC_VARS[str(item)]["f"]
-                    if con_f_val_name not in MFILE_LIST:
-                        if con_f_val_name in IT_VAR_VALUES.keys():
-                            con_f_val = IT_VAR_VALUES[con_f_val_name]
-                        else:
-                            if con_f_val_name in INPUTS_LIST:
-                                con_f_val = INFILE.data[con_f_val_name].value
-                            else:
-                                con_f_val = IXC_DEF[con_f_val_name]
-                                con_f_val = bold(con_f_val)
-                    else:
-                        con_f_val = MFILE.data[con_f_val_name].get_scan(-1)
-
-                    con_lim_name = ICC_VARS[str(item)]["v"]
-
-                    if con_lim_name in MFILE.data.keys():
-                        con_lim = MFILE.data[con_lim_name].get_scan(-1)
-                    else:
-                        if con_lim_name in DEFAULTS.keys():
-                            con_lim = DEFAULTS[con_lim_name]
-                        else:
-                            con_lim = bold("calculated")
-            else:
-                con_f_val_name = "-"
-                con_lim_name = "consistency"
-                con_f_val = "-"
-                con_lim = "-"
-            
-            if con_f_val != "-" and con_lim != "-" and con_lim != bold("calculated"):
-                if type(con_lim) == str:
-                    con_lim = unbold(con_lim)
-                if type(con_f_val) == str:
-                    con_f_val = unbold(con_f_val)
-                actual_value = "{0:.2e}".format(float(con_lim)*float(con_f_val))
-                con_lim = "{0:.2e}".format(float(con_lim))
-                con_f_val = "{0:.2e}".format(float(con_f_val))
-            else:
-                actual_value = "-"
-
-            # if item in MODULES[con_mod]:
-            table_line([str(item), con_name, con_f_val_name, con_f_val, 
-                con_lim_name, con_lim, actual_value], ".4g")
-
-    constraint_comments(k, MODULE_ICC_LIST)
+            if any(c.isalpha() for c in comment):
+                output_below_table_comment(icc, con_name, comment)
 
 
 def iteration_comments(ky, ixcs):
@@ -335,19 +191,159 @@ def iteration_comments(ky, ixcs):
                 output_below_table_comment(ixc, itv_name, comment)
 
 
-def output_itvars(k):
+def output_contents():
+    """
+    Print contents page
+    """
+
+    bold_info("Username", MFILE.data["username"].get_scan(-1))
+    bold_info("Date", MFILE.data["date"].get_scan(-1))
+    bold_info("Time", MFILE.data["time"].get_scan(-1))
+    bold_info("PROCESS version", MFILE.data["procver"].get_scan(-1))
+    bold_info("PROCESS Tag Number", MFILE.data["tagno"].get_scan(-1))
+    bold_info("Run description", MFILE.data["runtitle"].get_scan(-1))
+    bold_info("PROCESS references", "[website](http://www.ccfe.ac.uk/powerplants.aspx), [physics paper](http://www.sciencedirect.com/science/article/pii/S0920379614005961), [engineering paper](http://www.sciencedirect.com/science/article/pii/S0920379616300072)")
+    bold_info("Contact", "[James Morris](mailto:james.morris2@ukaeak.uk)")
+
+    # Top level comment
+    output_line(bold("IN.DAT Comment"))
+    heading_comment("header-title")
+
+    heading(1, "Contents")
+
+    content_heading("Diagrams")
+
+    content_heading("Builds")
+    content_subheading("Radial Build")
+    content_subheading("Vertical Build")
+
+    for k, v in DATA.items():
+        if v["project"]:
+            content_heading(k)
+
+            if len(v["children"]) != 0:
+                for child in v["children"]:
+                    content_subheading(child)
+
+                    if len(DATA[child]["children"]) != 0:
+                        for child2 in DATA[child]["children"]:
+                            content_subsubheading(child2)
+
+
+def output_diagrams():
+    """
+    Embed plot_proc output
+    """
+    
+    heading(1,"Diagrams")
+    try:
+        output_png("alt text", "process_diagram.png", "PROCESS output diagrams")
+    except:
+        pass
+
+
+def output_constraints(k, numbers=False):
+    """
+    Output constraints list of constraint mods
+    """
+
+    MODULE_ICC_LIST = list()
+    if numbers:
+        cons = DATA[k]["constraints"]
+        for c in cons:
+            if c in CONSTRAINTS:
+                MODULE_ICC_LIST.append(c)
+            else:
+                print("Requested constraint {0} not a constraint for this MFILE".format(c))
+    else:
+        MODULE_ICC_LIST = sum([MODULES[key] for key in MODULES.keys() if key in DATA[k]["constraints"]], [])
+
+    if len(MODULE_ICC_LIST) == 0:
+        return
+
+    heading(3, "Constraints")
+
+    table_heading(["Constraint", "Description", "F-Value Name", "F-Value Value", 
+        "Limit Name", "Limit", "Value"])    
+
+    for item in MODULE_ICC_LIST:
+
+        con_name = ICC_FULL[str(item)]["name"]
+
+        if ICC_VARS[str(item)] != "consistency" and ICC_VARS[str(item)] != "empty":
+            if "f" in ICC_VARS[str(item)].keys():
+                con_f_val_name = ICC_VARS[str(item)]["f"]
+                if con_f_val_name not in MFILE_LIST:
+                    if con_f_val_name in IT_VAR_VALUES.keys():
+                        con_f_val = IT_VAR_VALUES[con_f_val_name]
+                    else:
+                        if con_f_val_name in INPUTS_LIST:
+                            con_f_val = INFILE.data[con_f_val_name].value
+                        else:
+                            con_f_val = IXC_DEF[con_f_val_name]
+                            con_f_val = bold(con_f_val)
+                else:
+                    con_f_val = MFILE.data[con_f_val_name].get_scan(-1)
+
+                con_lim_name = ICC_VARS[str(item)]["v"]
+
+                if con_lim_name in MFILE.data.keys():
+                    con_lim = MFILE.data[con_lim_name].get_scan(-1)
+                else:
+                    if con_lim_name in DEFAULTS.keys():
+                        con_lim = DEFAULTS[con_lim_name]
+                    else:
+                        con_lim = bold("calculated")
+        else:
+            con_f_val_name = "-"
+            con_lim_name = "consistency"
+            con_f_val = "-"
+            con_lim = "-"
+        
+        if con_f_val != "-" and con_lim != "-" and con_lim != bold("calculated"):
+            if type(con_lim) == str:
+                con_lim = unbold(con_lim)
+            if type(con_f_val) == str:
+                con_f_val = unbold(con_f_val)
+            actual_value = "{0:.2e}".format(float(con_lim)*float(con_f_val))
+            con_lim = "{0:.2e}".format(float(con_lim))
+            con_f_val = "{0:.2e}".format(float(con_f_val))
+        else:
+            actual_value = "-"
+
+        table_line([str(item), con_name, con_f_val_name, con_f_val, 
+            con_lim_name, con_lim, actual_value], ".4g")
+
+    constraint_comments(k, MODULE_ICC_LIST)
+
+
+def output_itvars(k, numbers=False):
     """
     Output iteration variables for section k
     """
 
-    mod_names = DATA["projects"][k]["in_dat_modules"]
-    MODULES_IXC_NAMES_LIST = [IXC_FULL[str(ixc)]["name"] for ixc in IT_VARS 
-        if any(IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name] 
-            for mod_name in mod_names)]
+    if numbers:
+        MODULES_IXC_NUMBERS_LIST = list()
+        itvars_list = DATA[k]["iteration-variables"]
+        for it in itvars_list:
+            if it in IT_VARS:
+                MODULES_IXC_NUMBERS_LIST.append(it)
+            else:
+                print("Requested iteration variable {0} not iteration variable for this MFILE".format(it))
+        MODULES_IXC_NAMES_LIST = [IXC_FULL[str(ixc)]["name"] for ixc in MODULES_IXC_NUMBERS_LIST]
 
-    MODULES_IXC_NUMBERS_LIST = [ixc for ixc in IT_VARS 
-        if any(IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name] 
-            for mod_name in mod_names)]
+    else:
+        mod_names = DATA[k]["iteration-variables"]
+        MODULES_IXC_NAMES_LIST = [IXC_FULL[str(ixc)]["name"] for ixc in IT_VARS 
+            if any(IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name] 
+                for mod_name in mod_names)]
+
+        MODULES_IXC_NUMBERS_LIST = [ixc for ixc in IT_VARS 
+            if any(IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name] 
+                for mod_name in mod_names)]
+
+    if len(MODULES_IXC_NAMES_LIST) == 0:
+        return
 
     heading(3, "Iteration Variables")
     output_line("* Values in **bold** are **not default** but user inputs.")
@@ -399,78 +395,174 @@ def output_itvars(k):
     iteration_comments(k, MODULES_IXC_NUMBERS_LIST)
 
 
-def output_inputs(k):
+def output_inputs(k, manual=False):
     """
     Output inputs for section k
     """
 
-    mod_names = DATA["projects"][k]["in_dat_modules"]
-    MODULE_INPUT_LIST = [item for item in INPUTS_LIST if any(item in MODULES_FULL[mod_name] for mod_name in mod_names)]
+    if manual:
+        mfile_values = list()
+        MODULE_INPUT_LIST = list()
+        inputs = DATA[k]["inputs"]
+        for inp in inputs:
+            if inp in INPUTS_LIST:
+                MODULE_INPUT_LIST.append(inp)
+            elif inp in MFILE_LIST:
+                mfile_values.append(inp)
+                MODULE_INPUT_LIST.append(inp)
+            else:
+                print("The input you requested {0} is not in the input file".format(inp))
+    else:
+        mod_names = DATA[k]["inputs"]
+        MODULE_INPUT_LIST = [item for item in INPUTS_LIST if any(item in MODULES_FULL[mod_name] for mod_name in mod_names)]
+
+    if len(MODULE_INPUT_LIST) == 0:
+        return
 
     heading(3, "Inputs")
+    output_line("* Values in **bold** are **default** input values. Output in MFILE but **NOT** specified in IN.DAT.")
     table_heading(["Input", "Value", "Description", "Comment"])
-
-    for item in INPUTS_LIST:
-        if item in MODULE_INPUT_LIST:
-            if item not in IT_VAR_LIST and item not in DATA["exclusions"]["inputs"]:
-
+    
+    for item in MODULE_INPUT_LIST:
+        if item not in IT_VAR_LIST and item not in EXCLUSIONS:
+            
+            if item not in INPUTS_LIST:
+                item_value = str(MFILE.data[item].get_scan(-1))
+            else:
                 item_value = INFILE.data[item].value
-                item_des = DESCRIPTIONS[item].split("\n")[0]
+            item_des = DESCRIPTIONS[item].split("\n")[0]
 
-                if "in-" + item in COMMENTS.keys():
-                    comment = COMMENTS["in-"+item][0].replace("\n", "")
-                    if comment == "":
-                        comment = ""
-                else:
+            if "in-" + item in COMMENTS.keys():
+                comment = COMMENTS["in-"+item][0].replace("\n", "")
+                if comment == "":
                     comment = ""
+            else:
+                comment = ""
 
-                if "fimp(" in item:
-                    i_des = DES_FIMP[item]
+            if "fimp(" in item:
+                i_des = DES_FIMP[item]
 
-                if type(item_value) == list:
-                    table_line([code(item), bold("array"), item_des], ".4g")
-                    for i in range(len(item_value)):
-                        if "fimp(" in item:
-                            item_des = i_des[i]
-                        else:
-                            item_des = "-"
-                        table_line([code(item) + "[{0}]".format(i), item_value[i], item_des[4:], comment], ".4g")
-                elif "," in item_value:
-                    table_line([code(item), bold("array"), item_des], ".4g")
-                    item_value = item_value.split(",")
-                    for i in range(len(item_value)):
-                        if item_value[i] != "":
-                            table_line([code(item) + "[{0}]".format(i), item_value[i], "-", comment], ".4g")
+            if type(item_value) == list:
+                table_line([code(item), bold("array"), item_des], ".4g")
+                for i in range(len(item_value)):
+                    if "fimp(" in item:
+                        item_des = i_des[i]
+                    else:
+                        item_des = "-"
+                    table_line([code(item) + "[{0}]".format(i), item_value[i], item_des[4:], comment], ".4g")
+            elif "," in item_value:
+                table_line([code(item), bold("array"), item_des], ".4g")
+                item_value = item_value.split(",")
+                for i in range(len(item_value)):
+                    if item_value[i] != "":
+                        table_line([code(item) + "[{0}]".format(i), item_value[i], "-", comment], ".4g")
+            else:
+                if item in mfile_values:
+                    table_line([code(item), bold(item_value), item_des, comment], ".4g")
                 else:
                     table_line([code(item), item_value, item_des, comment], ".4g")
 
 
-def output_outputs(k):
+def output_outputs(k, mod_out_list=[]):
     """
-    Output outputs for section k
+    Output outputs
     """
 
-    mod_names = DATA["projects"][k]["mfile_sections"]
-    MODULE_OUTPUTS_LIST = [item for item in MFILE_LIST if any(MFILE.data[item].var_mod == mod_name for mod_name in mod_names)]
-
+    MODULE_OUTPUTS_LIST = DATA[k]["outputs"] + mod_out_list
     heading(3, "Outputs")
     table_heading(["Output", "Value", "Description"])
 
-    for item in MFILE_LIST:
-        if item in MODULE_OUTPUTS_LIST:
+    for item in MODULE_OUTPUTS_LIST:
+        item_value = MFILE.data[item].get_scan(-1)
+        if item not in INPUTS_LIST:
 
-            item_value = MFILE.data[item].get_scan(-1)
-            if item not in INPUTS_LIST:
-
+            try:
                 item_des = MFILE.data[item].var_description.replace("_", " ")
                 if item_des.lower() == item.lower():
                     item_name = ""
                 else:
                     item_name = code(item)
                 table_line([item_name.replace(" ", "_"), item_value, item_des], ".4g")
+            except AttributeError:
+                print("Warning: Skipping item:  {0}".format(item))
+                pass
 
 
-def vertical_build():
+def output_output_sections(k):
+    """
+    Output the outputs from another sections
+    """
+
+    outputs_list = list()
+
+    for item in DATA[k]["output-sections"]:
+        outputs_list += DATA[item]["outputs"]
+    
+    output_outputs(k, mod_out_list=outputs_list)
+
+
+def output_section(k):
+    """
+    Output various items from section depending on JSON config file
+    """
+
+    if len(DATA[k]["constraints"]) != 0:
+        if DATA[k]["project"]:
+            if type(DATA[k]["constraints"][0]) == str:
+                output_constraints(k)
+            else:
+                output_constraints(k, numbers=True)
+        else:
+            output_constraints(k, numbers=True)
+
+    if len(DATA[k]["iteration-variables"]) != 0:
+        if DATA[k]["project"]:
+            if type(DATA[k]["constraints"][0]) == str:
+                output_itvars(k)
+            else:
+                output_itvars(k, numbers=True)    
+        else:
+            output_itvars(k, numbers=True)
+
+    if len(DATA[k]["input-sections"]) != 0:
+        output_inputs(k)
+
+    if len(DATA[k]["inputs"]) != 0:
+        output_inputs(k, manual=True)
+
+    if len(DATA[k]["output-sections"]) != 0:
+        output_output_sections(k)
+
+    if len(DATA[k]["outputs"]) != 0:
+        output_outputs(k)
+
+
+def output_projects():
+    """
+    Output the projects
+    """
+
+    for k, v in DATA.items():
+        if v["project"]:
+            heading(1, k)
+            heading_comment("header-{0}".format(k))
+            return_to_top()
+            output_section(k)
+            
+            if len(v["children"]) != 0:
+                for child in v["children"]:
+                    heading(2, child)
+                    return_to_top()
+                    output_section(child)
+
+                    if len(DATA[child]["children"]) != 0:
+                        for child2 in DATA[child]["children"]:
+                            heading(3, child2)
+                            return_to_top()
+                            output_section(child2)
+
+
+def output_vertical_build():
     """
     Output for vertical build
     """
@@ -479,9 +571,9 @@ def vertical_build():
     table_heading(["Name", "Thickness [m]", "Height [m]", "Description"])
 
     if MFILE.data["snull"].get_scan(-1):
-        vert_build = DATA["machine build"]["vertical"]["single"]
+        vert_build = DATA["Builds"]["Vertical Build"]["single"]
     else:
-        vert_build = DATA["machine build"]["vertical"]["double"]
+        vert_build = DATA["Builds"]["Vertical Build"]["double"]
 
     tot_height = MFILE.data["hmax"].get_scan(-1) - MFILE.data["shldlth"].get_scan(-1) \
         - MFILE.data["divfix"].get_scan(-1) - MFILE.data["vgap"].get_scan(-1) \
@@ -521,16 +613,16 @@ def vertical_build():
             table_line([code(item_name), item_value, v_build_sum, item_des], ".3f")
 
 
-def radial_build():
+def output_radial_build():
     """
-    Output the machine radial build
+    Output radial build
     """
 
     heading(2, "Radial Build")
     table_heading(["Name", "Thickness [m]", "Radial Position [m]", "Description"])
 
     r_build_sum = 0
-    rad_build = DATA["machine build"]["radial"]
+    rad_build = DATA["Builds"]["Radial Build"]
 
     for k, v in rad_build.items():
 
@@ -561,44 +653,6 @@ def radial_build():
     return
 
 
-def output_project(key, result):
-    """
-    Output sections
-    """
-
-    heading(1, key)
-    return_to_top()
-    heading_comment("header-{0}".format(key))
-
-    if key == "General":
-        radial_build()
-        vertical_build()
-
-    # Constraints
-    if result["con_count"] != 0:
-        output_constraints(key)
-    
-    if result["it_count"] != 0:
-        output_itvars(key)
-    
-    if result["in_count"] != 0:
-        output_inputs(key)
-
-    if result["out_count"] != 0:
-        output_outputs(key)
-
-
-def output_diagrams():
-    """
-    Embed plot_proc output
-    """
-    
-    heading(1,"Diagrams")
-    try:
-        output_png("alt text", "process_diagram.png", "PROCESS output diagrams")
-    except:
-        pass
-
 def output_modules():
     """
     Output the modules to markdown
@@ -616,13 +670,10 @@ def output_modules():
 
     output_diagrams()
 
-    for k, v in DATA["projects"].items():
-        
-        result = check_empty(k)
+    output_radial_build()
+    output_vertical_build()
 
-        if result["tot_count"] != 0:
-
-            output_project(k, result)
+    output_projects()
 
     OUTFILE.close()
 
@@ -634,7 +685,7 @@ def main(cargs):
 
     output_modules()
 
-    export(path="output_summary.md", 
+    export(path=cargs.o+".md", 
         password="e35a21bfce5462bebbecc2e43d12bf4ec2ba469d", render_wide=True, 
         render_inline=True, out_filename=cargs.o+".html", 
         title="PROCESS Output")
@@ -653,15 +704,26 @@ if __name__ == "__main__":
 
     PARSER.add_argument("-f", metavar='MFILENAME', type=str,
                         default="", help='specify PROCESS MFILE')
+
+    PARSER.add_argument("-j", metavar='JSONFILE', type=str,
+                        default="output_detailed.json", help='specify JSON file location and name')
     
     PARSER.add_argument("-o", metavar='OUTFILENAME', type=str,
-                        default="output_summary", help='specify output file')
+                        default="output_detailed", help='specify output file')
 
     COMMAND_ARGS = PARSER.parse_args()
 
     # read json
-    DATA = json.load(open('utilities/output_document.json'), 
-        object_pairs_hook=OrderedDict)
+    try:
+        json_filename = COMMAND_ARGS.j
+        DATA = json.load(open(json_filename), 
+            object_pairs_hook=OrderedDict)
+    except ValueError as e:
+        print("Error in JSON config file. Please correct error: {0}".format(e))
+        sys.exit()
+    except FileNotFoundError as fe:
+        print("Cannot find JSON config file. Expecting file in: {0}".format(COMMAND_ARGS.j))
+        sys.exit()
 
     if COMMAND_ARGS.f:
 
