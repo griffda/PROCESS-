@@ -224,7 +224,8 @@ costs.o: buildings.o error_handling.o global_variables.o output.o
 costs_2015.o: error_handling.o global_variables.o hcpb.o output.o
 current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
 divertor.o: error_handling.o global_variables.o output.o
-divertor_ode.o: input.o impurity_radiation.o ode.o read_and_get_atomic_data.o read_radiation.o
+divertor_ode.o: global_variables.o input.o maths_library.o  impurity_radiation.o ode.o \
+	read_and_get_atomic_data.o  read_radiation.o
 error_handling.o: fson_library.o output.o root.dir
 evaluators.o: constraint_equations.o error_handling.o global_variables.o numerics.o output.o
 fispact.o: global_variables.o output.o

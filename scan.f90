@@ -309,6 +309,7 @@ contains
     end if
 
     do iscan = 1,isweep
+       iscan_global = iscan           ! Makes iscan available globally (read-only)
 
        select case (nsweep)
 

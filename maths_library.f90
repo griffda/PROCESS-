@@ -91,6 +91,7 @@ module maths_library
        quanc8,sumup3,svd,tril,vmcon,zeroin, eshellvol, dshellvol, &
        eshellarea, dshellarea, binomial, binarysearch, interpolate
   public::variable_error
+  public :: integer2string
 
 contains
 
@@ -5984,6 +5985,14 @@ contains
       end if
 
   end function variable_error
+
+  ! ------------------------------------------------------------------------
+  pure function integer2string(value)
+      ! Convert an integer value to a 2-digit string with leading zero if required.
+      integer, intent(in) :: value
+      character(len=2) integer2string
+      write (integer2string,'(I2.2)') value
+  end function integer2string
 
 end module maths_library
 

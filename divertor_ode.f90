@@ -12,7 +12,8 @@ module divertor_ode
   !+ad_stat  Okay
   !+ad_docs
 
-
+  use global_variables
+  use maths_library
   use read_and_get_atomic_data
   use impurity_radiation_module, only: nimp, imp_label, impurity_arr
   use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
@@ -246,7 +247,7 @@ contains
     integer(kind=4) :: iwork(5)
 
     ! First step [m]
-    real(kind(1.0D0)) :: step0=0.0005
+    real(kind(1.0D0)) :: step0=0.0001
 
     ! Ratio between successive step sizes
     real(kind(1.0D0)) :: factor
@@ -323,6 +324,8 @@ contains
 
     ! Impurity radiation by species
     real(kind(1.0D0)) :: raddensspecies(nimp)
+
+    character(len=100) :: filename
 
     ! Major radius at outer midplane [m]
     romp = rmajor + rminor
@@ -585,7 +588,12 @@ do i = 2, nimp
     xout = step0
 
     if(iprint.eq.1) then
-        open(unit=9, file='output_divertor.txt', status='replace')
+        if(iscan_global/=0)then
+            filename = trim(fileprefix)//'_divertor' // integer2string(iscan_global) // '.txt'
+        else
+            filename = trim(fileprefix)//'_divertor.txt'
+        end if
+        open(unit=9, file=filename, status='replace')
         write(9,*) 'Y(7)_=_integral_of_radiation_loss_from_impurities_[MW]'
         write(9,*) 'Y(8)_=_integral_of_radiation_loss_from_hydrogenic_species_[MW]'
         write(9,*) 'Y(9)_=_integral_of_power_loss_due_to_charge_exchange_[MW]'
@@ -593,13 +601,13 @@ do i = 2, nimp
         write(9,*) 'qconv=_Convected_power_density_through_a_surface_perpendicular_to_B_[W/m2]'
         write(9,*) 'qcond=_Conducted_power_density_through_a_surface_perpendicular_to_B_[W/m2]'
         write(9,*) 'im_rad=_Impurity_radiation_[W/m2]'
-        write(9,'(a5, 2x, a8, 47a11)')  &
+        write(9,'(a5, 2x, a9, 47a11)')  &
               'step', 'x//B_[m]', 'te_[eV]', 'ne/1e20/m3', 'Pth_[Pa]', 'Ptotal_[Pa]', &
               'v_[m/s]', 'mach ',                                                     &
               'n0/1e20/m3', 'Power_[W]', 'perp_area', 'qtot_W/m2', 'qconv_W/m2', 'qcond_W/m2',         &
               'CX_W/m3', 'Ion_W/m3' , 'H_rad_W/m3', 'im_rad_W/m3', 'Y(7)', 'Y(8)', 'Y(9)', 'Y(10)',    &
               (impurity_arr(i)%Label, i=2,nimp),'n01/1e20/m3','n02/1e20m-3','nv24','v/ms-1'
-        open(unit=10, file='divertor_diagnostics.txt', status='replace')
+        !open(unit=10, file='divertor_diagnostics.txt', status='replace')
      endif
 
     do step = 0, step_num+1
@@ -721,10 +729,14 @@ do i = 1, nimp
         enddo
 
         if(iprint.eq.1) then
-            write(9,'(i5, 2x, f8.4, 46es11.3)')  &
+            do i=2,nimp
+                if(raddensspecies(i)<1.0d-99)raddensspecies(i)=0.0d0
+            end do
+
+            write(9,'(i5, 2x, f9.5, 46es11.3)')  &
                 step, x, te, nel20, Pthermal, pressure, v, mach, n0e20, Power, A_cross, qperp_total,  &
                 qperp_conv, qperp_conducted,plossdenscx, plossion, radHdens, raddens,                 &
-                y(7), y(8), y(9), y(10), (max(raddensspecies(i),1.0d-99), i=2,nimp),y(1),y(2),nv24,v
+                y(7), y(8), y(9), y(10), (raddensspecies(i), i=2,nimp),y(1),y(2),nv24,v
         end if
 
         ! Note when we reach the edge of the "near zone" (connection length = sab):
@@ -826,7 +838,7 @@ do i = 1, nimp
     call ovarre(outfile, 'Ion flux density on target [partfluxtar/sinfact]  m-2s-1 ','(IonFluxTarget)', IonFluxTarget, 'OP ')
     call ovarre(outfile, 'Nominal neutral pressure at target [p0partflux] [Pa] ','(p0partflux)', p0partflux, 'OP ')
     call ovarre(outfile, 'Plasma temperature near target [eV] ','(ttarget)', ttarget)
-    call ovarre(outfile, 'Total power in SOL near target, Power0 [W] ','(Power0)', Power0, 'OP ')
+
     call ovarre(outfile, 'Total plasma pressure near target (thermal+dynamic) [Pa] ','(pressure0)', pressure0, 'OP ')
     call ovarre(outfile, 'Momentum loss factor [-] ','(fmom)', fmom, 'OP ')
 

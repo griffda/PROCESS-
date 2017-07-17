@@ -787,7 +787,7 @@ contains
      ptop_vertical = kap*rminor
      call ovarrf(outfile, 'Plasma top position, radial (m)', '(ptop_radial)', ptop_radial, 'OP ')
      call ovarrf(outfile, 'Plasma top position, vertical (m)', '(ptop_vertical)', ptop_vertical, 'OP ')
-     call ovarrf(outfile, 'Plasma geometric centre, radial (m)', '(rmajor)', rmajor, 'OP ')
+     call ovarrf(outfile, 'Plasma geometric centre, radial (m)', '(rmajor.)', rmajor, 'OP ')
      call ovarrf(outfile, 'Plasma geometric centre, vertical (m)', '(0.0)', 0.0d0, 'OP ')
      call ovarrf(outfile, 'Plasma lower triangularity', '(tril)', tril, 'OP ')
      call ovarrf(outfile, 'Plasma elongation', '(kappa)', kap, 'OP ')

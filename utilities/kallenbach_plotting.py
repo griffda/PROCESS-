@@ -1,12 +1,28 @@
 #!/usr/bin/env python
 
+import os
+import argparse
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
+from matplotlib.ticker import NullFormatter
+nullfmt = NullFormatter()         # no labels
 
+parser = argparse.ArgumentParser(description='Plot plasma and neutral profiles \
+                      in SOL for Kallenbach 1D divertor model')
 
-f = open("output_divertor.txt", 'r')
+parser.add_argument('-f', metavar='f', type=str, help='File to read')
+
+args = parser.parse_args()
+
+# If user has specified a filename,
+if args.f:
+    filename=args.f
+else:
+    filename = 'output_divertor.txt'
+
+f = open(filename, 'r')
 lines = f.readlines()
 n = len(lines[8:])
 
@@ -63,14 +79,15 @@ per_column = list(zip(*per_row))
 # 38 - v
 
 # First page
-fig = plt.figure(figsize=(12, 9))
-plt.subplots_adjust(hspace=0.20)
+page1 = plt.figure(figsize=(10, 9))
+page1.subplots_adjust(hspace=0.05, wspace=0.0)
 
 # Second page plots
-page2 = plt.figure(figsize=(12, 9))
+page2 = plt.figure(figsize=(10, 9))
+page2.subplots_adjust(hspace=0.05, wspace=0.0)
 
 # find max x||b
-x_max = per_column[1][-1]
+x_max = float(per_column[1][-1])
 
 # Create numpy array of connection length
 xpar = np.array([float(x) for x in per_column[1]])
@@ -111,212 +128,267 @@ power_loss_integral = y7_mw + y8_mw + y9_mw
 spherical_power_load = power_loss_integral / (4*3.142*(xpar*0.5)**2)
 
 # Left hand plots (odd numbers)
-ax_1 = fig.add_subplot(421)
-ax_1.semilogy(per_column[1], hrad_mw, label="H rad")
-ax_1.semilogy(per_column[1], cx_mw, label="CX")
-ax_1.semilogy(per_column[1], im_mw, label="Imp rad")
-ax_1.semilogy(per_column[1], ion_mw, label="Ionisation")
-ax_1.set_xlim([0.0, 0.015])
-ax_1.set_ylim(ymin=1)
-#ax_1.set_ylim([10, 20000])
-ax_1.set_ylabel("power dens. (MWm$^{-3}$)")
-ax_1.legend(loc=1, prop={'size': 8})
+# Row 1
+p1r1left = page1.add_subplot(421)
+p1r1left.semilogy(per_column[1], hrad_mw, label="H rad", ls='dashed')
+p1r1left.semilogy(per_column[1], cx_mw, label="CX", ls='dotted')
+p1r1left.semilogy(per_column[1], im_mw, label="Imp rad", ls='dashdot')
+p1r1left.semilogy(per_column[1], ion_mw, label="Ionisation", ls='solid')
+p1r1left.set_xlim([0.0, 0.015])
+p1r1left.set_ylim(ymin=1)
+p1r1left.xaxis.set_major_formatter(nullfmt)
+p1r1left.set_ylabel("power dens. (MWm$^{-3}$)")
 
-ax_3 = fig.add_subplot(423)
-ax_3.plot(per_column[1], per_column[5], label="$P_{total}$")
-ax_3.plot(per_column[1], per_column[4], label="$P_{thermal}$")
-#ax_3.set_ylim([0.0, 5000])
-ax_3.set_xlim([0.0, 0.015])
-ax_3.set_ylim(ymin=0)
-ax_3.set_ylabel("pressure (Pa)")
-ax_3.legend(loc=4, prop={'size': 12})
 
-ax_5 = fig.add_subplot(425)
-ax_5.set_ylim([0.0, 14.0])
-ax_5.plot(per_column[1], per_column[2], label="$T_e$")
-ax_5.set_xlim([0.0, 0.015])
-ax_5.set_ylabel("$T_e$ (eV)", fontsize=14)
-ax_5.legend(loc=4, prop={'size': 12})
+# Row 2, Left
+p1r2left = page1.add_subplot(423)
+p1r2left.plot(per_column[1], per_column[5], label="$P_{total}$")
+p1r2left.plot(per_column[1], per_column[4], label="$P_{thermal}$")
+p1r2left.set_xlim([0.0, 0.015])
+p1r2left.set_ylim(ymin=0)
+p1r2left.set_ylim(ymax=2700)
+p1r2left.set_ylabel("pressure (Pa)")
+#p1r2left.legend(loc=4, prop={'size': 12})
+p1r2left.tick_params(axis='y', labelsize ='9')
+p1r2left.xaxis.set_major_formatter(nullfmt)
 
-ax_7 = fig.add_subplot(427)
-ax_7.semilogy(per_column[1], per_column[3], label="$n_e$")
-ax_7.semilogy(per_column[1], per_column[8], label="$n_0$")
-ax_7.semilogy(per_column[1], n01, label="$n_01/1e20 m-3$", ls='dashed')
-ax_7.semilogy(per_column[1], n02, label="$n_02/1e20 m-3$", ls='dashed')
-ax_7.semilogy(per_column[1], per_column[7], label="mach")
-#ax_7.set_ylim([0.1, 100])
-ax_7.set_xlim([0.0, 0.015])
-ax_7.set_ylim(ymin=0.1)
-ax_7.set_ylabel("$n_e$, $n_0$, mach", fontsize=14)
-ax_7.set_xlabel("$x\parallel B$ (m)", fontsize=14)
-ax_7.legend(loc=1, prop={'size': 8})
+# Row 3, Left
+p1r3left = page1.add_subplot(425)
+p1r3left.semilogy(per_column[1], per_column[2], label="$T_e$")
+p1r3left.set_xlim([0.0, 0.015])
+p1r3left.set_ylim(ymin=1.0)
+p1r3left.xaxis.set_major_formatter(nullfmt)
+p1r3left.set_ylabel("(eV)")
 
-# Right
-ax_2 = fig.add_subplot(422)
-ax_2.loglog(per_column[1], hrad_mw, label="H rad")
-ax_2.loglog(per_column[1], cx_mw, label="CX")
-ax_2.loglog(per_column[1], im_mw, label="Imp rad")
-ax_2.loglog(per_column[1], ion_mw, label="Ionisation")
-ax_2.set_xlim([0.014, 200])
-ax_2.set_ylim(ymin=1)
-ax_2.legend(loc=1, prop={'size': 8})
-ax_2.plot((x_max, x_max), (0.001, 10000), ls='dashed', color="black")
 
-ax_4 = fig.add_subplot(424)
-ax_4.semilogx(per_column[1], per_column[5], label="$P_{total}$")
-ax_4.semilogx(per_column[1], per_column[4], label="$P_{thermal}$")
-ax_4.set_xlim([0.014, 200])
-ax_4.legend(loc=3, prop={'size': 12})
-ax_4.plot((x_max, x_max), (0.0, 2000), ls='dashed', color="black")
+# Row 4, Left
+p1r4left = page1.add_subplot(427)
+p1r4left.semilogy(per_column[1], per_column[3], label="$n_e/10^{20}m^{-3}$")
+p1r4left.semilogy(per_column[1], per_column[8], label="$n_0/10^{20}m^{-3}$")
+p1r4left.semilogy(per_column[1], n01, label="$n_01/10^{20}m^{-3}$", ls='dashed')
+p1r4left.semilogy(per_column[1], n02, label="$n_02/10^{20}m^{-3}$", ls='dashed')
+p1r4left.semilogy(per_column[1], per_column[7], label="mach")
+#p1r4left.set_ylim([0.1, 100])
+p1r4left.set_xlim([0.0, 0.015])
+p1r4left.set_ylim(ymin=0.1)
+p1r4left.set_xlabel("$x\parallel B$ (m)", fontsize=14)
 
-ax_6 = fig.add_subplot(426)
-ax_6.semilogx(per_column[1], per_column[2], label="$T_e$")
-ax_6.set_xlim([0.014, 200])
-#ax_6.set_ylim([0.0, 350.0])
-ax_6.set_ylim(ymin=0.0)
-ax_6.legend(loc=2, prop={'size': 12})
-ax_6.plot((x_max, x_max), (0.0, 200), ls='dashed', color="black")
 
-ax_8 = fig.add_subplot(428)
-ax_8.loglog(per_column[1], per_column[3], label="$n_e$")
-ax_8.loglog(per_column[1], per_column[8], label="$n_0$")
-ax_8.loglog(per_column[1], n01, label="$n_01/1e20 m-3$", ls='dashed')
-ax_8.loglog(per_column[1], n02, label="$n_02/1e20 m-3$", ls='dashed')
-ax_8.loglog(per_column[1], per_column[7], label="mach")
-#ax_8.set_ylim([0.1, 10])
-ax_8.set_xlim([0.014, 200])
-ax_8.set_ylim(ymin=0.1)
-ax_8.set_xlabel("$x\parallel B$ (m)", fontsize=14)
-ax_8.legend(loc=1, prop={'size': 8})
-ax_8.plot((x_max, x_max), (0.1, 1), ls='dashed', color="black")
+# Row 1, Right
+p1r1right = page1.add_subplot(422)
+p1r1right.loglog(per_column[1], hrad_mw, label="H rad", ls='dashed')
+p1r1right.loglog(per_column[1], cx_mw, label="CX", ls='dotted')
+p1r1right.loglog(per_column[1], im_mw, label="Imp rad", ls='dashdot')
+p1r1right.loglog(per_column[1], ion_mw, label="Ionisation", ls='solid')
+p1r1right.set_xlim([0.015, x_max])
+p1r1right.set_ylim(ymin=1)
+p1r1right.legend(loc=1, prop={'size': 10})
+#p1r1right.plot((x_max, x_max), (0.001, 10000), ls='dashed', color="black")
+# no labels
+p1r1right.xaxis.set_major_formatter(nullfmt)
+p1r1right.yaxis.set_major_formatter(nullfmt)
+p1r1right.set_ylim(p1r1left.get_ylim())
+
+# Row 2, Right
+p1r2right = page1.add_subplot(424)
+p1r2right.semilogx(per_column[1], per_column[5], label="$P_{total}$")
+p1r2right.semilogx(per_column[1], per_column[4], label="$P_{thermal}$")
+p1r2right.set_xlim([0.015, x_max])
+p1r2right.set_ylim(ymin=0)
+p1r2right.legend(loc=4, prop={'size': 10})
+p1r2right.tick_params(axis='y', labelsize ='9')
+# no labels
+p1r2right.xaxis.set_major_formatter(nullfmt)
+p1r2right.yaxis.set_major_formatter(nullfmt)
+p1r2right.set_ylim(p1r2left.get_ylim())
+
+# Row 3, Right
+p1r3right = page1.add_subplot(426)
+p1r3right.loglog(per_column[1], per_column[2], label="$T_e$")
+p1r3right.set_xlim([0.015, x_max])
+#p1r3right.set_ylim([0.0, 350.0])
+p1r3right.set_ylim(ymin=1.0)
+p1r3right.legend(loc=4, prop={'size': 10})
+# no labels
+p1r3right.xaxis.set_major_formatter(nullfmt)
+p1r3right.yaxis.set_major_formatter(nullfmt)
+p1r3right.set_ylim(p1r3left.get_ylim())
+
+# Row 4, Right
+p1r4right = page1.add_subplot(428)
+p1r4right.loglog(per_column[1], per_column[3], label="$n_e/10^{20}m^{-3}$")
+p1r4right.loglog(per_column[1], per_column[8], label="$n_0/10^{20}m^{-3}$")
+p1r4right.loglog(per_column[1], n01, label="$n_{01}/10^{20}m^{-3}$", ls='dashed')
+p1r4right.loglog(per_column[1], n02, label="$n_{02}/10^{20}m^{-3}$", ls='dashed')
+p1r4right.loglog(per_column[1], per_column[7], label="mach")
+#p1r4right.set_ylim([0.1, 10])
+p1r4right.set_xlim([0.015, x_max])
+p1r4right.set_ylim(ymin=0.1)
+p1r4right.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+p1r4right.legend(loc=1, prop={'size': 10})
+# no labels
+p1r4right.yaxis.set_major_formatter(nullfmt)
+p1r4right.set_ylim(p1r4left.get_ylim())
 
 # Second page plots
 # Row 1
 # Left
-ax_9 = page2.add_subplot(421)
-ax_9.plot(per_column[1], power_loss_integral, label="Integrated power emission from SOL")
-ax_9.set_xlim([0.0, 0.015])
+p2r1left = page2.add_subplot(421)
+p2r1left.plot(per_column[1], power_loss_integral, label="Integrated power emission from SOL")
+p2r1left.set_xlim([0.0, 0.015])
 ymax = power_loss_integral[-1]
 ymax = round(ymax/50 + 0.5) * 50
-#ax_9.set_ylim([0, ymax])
-ax_9.set_ylabel("(MW)")
-ax_9.legend(loc=1, prop={'size': 8})
+#p2r1left.set_ylim([0, ymax])
+p2r1left.set_ylabel("(MW)")
+p2r1left.xaxis.set_major_formatter(nullfmt)
 
 # Right
-ax_10 = page2.add_subplot(422)
-ax_10.semilogx(per_column[1], power_loss_integral, label="Integrated power emission from SOL\n=radiation + charge exchange")
-ax_10.set_xlim([0.014, 200])
-#ax_10.set_ylim([0, ymax])
-ax_10.set_xlabel("$x\parallel B$ (m)", fontsize=14)
-ax_10.legend(loc=4, prop={'size': 8})
-ax_10.plot((x_max, x_max), (0.001, 50), ls='dashed', color="black")
+p2r1right = page2.add_subplot(422)
+p2r1right.semilogx(per_column[1], power_loss_integral, label="Integrated power emission from SOL\n=radiation + charge exchange")
+
+p2r1right.set_xlim([0.015, x_max])
+#p2r1right.set_ylim([0, ymax])
+#p2r1right.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+p2r1right.legend(loc=4, prop={'size': 10})
+# no labels
+p2r1right.xaxis.set_major_formatter(nullfmt)
+p2r1right.yaxis.set_major_formatter(nullfmt)
+p2r1right.set_ylim(p2r1left.get_ylim())
 
 # Row 2
 # Left
-ax_11 = page2.add_subplot(423, sharex=ax_9)
-ax_11.set_xlim([0.0, 0.015])
-ax_11.set_ylim([1, 1000])
-ax_11.set_xlabel("$x\parallel B$ (m)", fontsize=14)
-ax_11.set_ylabel("power dens. (MWm$^{-3}$)")
+p2r2left = page2.add_subplot(423)
+p2r2left.set_xlim([0.0, 0.015])
+p2r2left.set_ylim([1, 1000])
+#p2r2left.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+p2r2left.set_ylabel("power dens. (MWm$^{-3}$)")
 if max(He_mw)>0.001:
-    ax_11.semilogy(per_column[1], He_mw, label="He")
+    p2r2left.semilogy(per_column[1], He_mw, label="He", ls='solid')
 if max(Be_mw)>0.001:
-    ax_11.semilogy(per_column[1], Be_mw, label="Be")
+    p2r2left.semilogy(per_column[1], Be_mw, label="Be", ls='dashed')
 if max(C_mw)>0.001:
-    ax_11.semilogy(per_column[1], C_mw, label="C")
+    p2r2left.semilogy(per_column[1], C_mw, label="C", ls='dashdot')
 if max(N_mw)>0.001:
-    ax_11.semilogy(per_column[1], N_mw, label="N")
+    p2r2left.semilogy(per_column[1], N_mw, label="N", ls='dotted')
 if max(O_mw)>0.001:
-    ax_11.semilogy(per_column[1], O_mw, label="O")
+    p2r2left.semilogy(per_column[1], O_mw, label="O", ls='solid')
 if max(Ne_mw)>0.001:
-    ax_11.semilogy(per_column[1], Ne_mw, label="Ne")
+    p2r2left.semilogy(per_column[1], Ne_mw, label="Ne", ls='dashed')
 if max(Si_mw)>0.001:
-    ax_11.semilogy(per_column[1], Si_mw, label="Si")
+    p2r2left.semilogy(per_column[1], Si_mw, label="Si", ls='dashdot')
 if max(Ar_mw)>0.001:
-    ax_11.semilogy(per_column[1], Ar_mw, label="Ar")
+    p2r2left.semilogy(per_column[1], Ar_mw, label="Ar", ls='dotted')
 if max(Fe_mw)>0.001:
-    ax_11.semilogy(per_column[1], Fe_mw, label="Fe")
+    p2r2left.semilogy(per_column[1], Fe_mw, label="Fe", ls='solid')
 if max(Ni_mw)>0.001:
-    ax_11.semilogy(per_column[1], Ni_mw, label="Ni")
+    p2r2left.semilogy(per_column[1], Ni_mw, label="Ni", ls='dashed')
 if max(Kr_mw)>0.001:
-    ax_11.semilogy(per_column[1], Kr_mw, label="Kr")
+    p2r2left.semilogy(per_column[1], Kr_mw, label="Kr", ls='solid')
 if max(Xe_mw)>0.001:
-    ax_11.semilogy(per_column[1], Xe_mw, label="Xe")
+    p2r2left.semilogy(per_column[1], Xe_mw, label="Xe", ls='dashed')
 if max(W_mw)>0.001:
-    ax_11.semilogy(per_column[1], W_mw, label="W")
-ax_11.legend(loc=1, prop={'size': 8})
-ax_11.plot((x_max, x_max), (1, 10000), ls='dashed', color="black")
+    p2r2left.semilogy(per_column[1], W_mw, label="W", ls='dashdot')
+#p2r2left.legend(loc=1, prop={'size': 8})
+p2r2left.plot((x_max, x_max), (1, 10000), ls='dashed', color="black")
+p2r2left.xaxis.set_major_formatter(nullfmt)
+
 
 # Row 2 Right
-ax_12 = page2.add_subplot(424, sharex=ax_10)
-ax_12.set_xlim([0.014, 200])
-ax_12.set_ylim([1, 1000])
-ax_12.set_xlabel("$x\parallel B$ (m)", fontsize=14)
-ax_12.set_ylabel("power dens. (MWm$^{-3}$)")
+p2r2right = page2.add_subplot(424)
+p2r2right.set_xlim([0.015, x_max])
+p2r2right.set_ylim([1, 1000])
+#p2r2right.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+#p2r2right.set_ylabel("power dens. (MWm$^{-3}$)")
 if max(He_mw)>0.001:
-    ax_12.semilogy(per_column[1], He_mw, label="He")
+    p2r2right.loglog(per_column[1], He_mw, label="He", ls='solid')
 if max(Be_mw)>0.001:
-    ax_12.semilogy(per_column[1], Be_mw, label="Be")
+    p2r2right.loglog(per_column[1], Be_mw, label="Be", ls='dashed')
 if max(C_mw)>0.001:
-    ax_12.semilogy(per_column[1], C_mw, label="C")
+    p2r2right.loglog(per_column[1], C_mw, label="C", ls='dashdot')
 if max(N_mw)>0.001:
-    ax_12.semilogy(per_column[1], N_mw, label="N")
+    p2r2right.loglog(per_column[1], N_mw, label="N", ls='dotted')
 if max(O_mw)>0.001:
-    ax_12.semilogy(per_column[1], O_mw, label="O")
+    p2r2right.loglog(per_column[1], O_mw, label="O", ls='solid')
 if max(Ne_mw)>0.001:
-    ax_12.semilogy(per_column[1], Ne_mw, label="Ne")
+    p2r2right.loglog(per_column[1], Ne_mw, label="Ne", ls='dashed')
 if max(Si_mw)>0.001:
-    ax_12.semilogy(per_column[1], Si_mw, label="Si")
+    p2r2right.loglog(per_column[1], Si_mw, label="Si", ls='dashdot')
 if max(Ar_mw)>0.001:
-    ax_12.semilogy(per_column[1], Ar_mw, label="Ar")
+    p2r2right.loglog(per_column[1], Ar_mw, label="Ar", ls='dotted')
 if max(Fe_mw)>0.001:
-    ax_12.semilogy(per_column[1], Fe_mw, label="Fe")
+    p2r2right.loglog(per_column[1], Fe_mw, label="Fe", ls='solid')
 if max(Ni_mw)>0.001:
-    ax_12.semilogy(per_column[1], Ni_mw, label="Ni")
+    p2r2right.loglog(per_column[1], Ni_mw, label="Ni", ls='dashed')
 if max(Kr_mw)>0.001:
-    ax_12.semilogy(per_column[1], Kr_mw, label="Kr")
+    p2r2right.loglog(per_column[1], Kr_mw, label="Kr", ls='solid')
 if max(Xe_mw)>0.001:
-    ax_12.semilogy(per_column[1], Xe_mw, label="Xe")
+    p2r2right.loglog(per_column[1], Xe_mw, label="Xe", ls='dashed')
 if max(W_mw)>0.001:
-    ax_12.semilogy(per_column[1], W_mw, label="W")
-ax_12.legend(loc=1, prop={'size': 8})
-ax_12.plot((x_max, x_max), (1, 10000), ls='dashed', color="black")
+    p2r2right.loglog(per_column[1], W_mw, label="W", ls='dashdot')
+p2r2right.legend(loc=1, prop={'size': 10})
+# no labels
+p2r2right.xaxis.set_major_formatter(nullfmt)
+p2r2right.yaxis.set_major_formatter(nullfmt)
+p2r2right.set_ylim(p2r2left.get_ylim())
 
 # Row 3 Left
-ax_13 = page2.add_subplot(425)
-ax_13.plot(per_column[1], nv, label="Plasma flux [1e24 s-1 m-2]")
-ax_13.set_xlim([0.0, 0.015])
+p2r3left = page2.add_subplot(425)
+p2r3left.plot(per_column[1], nv, label="Plasma flux [$10^{24}m^{-2}s^{-1}$]")
+p2r3left.set_xlim([0.0, 0.015])
+p2r3left.set_ylim(ymax = 9.9)
+ylim = p2r3left.get_ylim()
+
+p2r3left.xaxis.set_major_formatter(nullfmt)
 #ymax = v[-1]
 #ymax = round(ymax/50 + 0.5) * 50
-#ax_13.set_ylim([0, ymax])
-ax_13.legend(loc=1, prop={'size': 8})
+#p2r3left.set_ylim([0, ymax])
+#p2r3left.legend(loc=1, prop={'size': 8})
 
 # Row 3 Right
-ax_14 = page2.add_subplot(426)
-ax_14.semilogx(per_column[1], nv, label="Plasma flux [1e24 s-1 m-2]")
-ax_14.set_xlim([0.014, 200])
-ax_14.set_xlabel("$x\parallel B$ (m)", fontsize=14)
-#ax_14.set_ylim([0, ymax])
-ax_14.legend(loc=1, prop={'size': 8})
-ax_14.plot((x_max, x_max), (0.001, 50), ls='dashed', color="black")
+p2r3right = page2.add_subplot(426)
+p2r3right.semilogx(per_column[1], nv, label="Plasma flux [$10^{24}m^{-2}s^{-1}$]")
+p2r3right.set_xlim([0.015, x_max])
+p2r3right.set_ylim([0, ylim[1]])
+p2r3right.legend(loc=1, prop={'size': 10})
+# no labels
+p2r3right.xaxis.set_major_formatter(nullfmt)
+p2r3right.yaxis.set_major_formatter(nullfmt)
+p2r3right.set_ylim(p2r3left.get_ylim())
 
 # Row 4 Left
-ax_15 = page2.add_subplot(427)
-ax_15.plot(per_column[1], v, label="Plasma speed [ms-1]")
-ax_15.set_xlim([0.0, 0.015])
-ax_15.legend(loc=1, prop={'size': 8})
+p2r4left = page2.add_subplot(427)
+p2r4left.plot(per_column[1], v, label="Plasma speed [ms$^{-1}$]")
+p2r4left.set_xlim([0.0, 0.015])
+ylim = p2r4left.get_ylim()
+p2r4left.tick_params(axis='y', labelsize ='9')
+p2r4left.set_xlabel("$x\parallel B$ (m)", fontsize=14)
 
 # Row 4 Right
-ax_16 = page2.add_subplot(428)
-ax_16.semilogx(per_column[1], v, label="Plasma speed [ms-1]")
-ax_16.set_xlim([0.014, 200])
-ax_16.set_xlabel("$x\parallel B$ (m)", fontsize=14)
-ax_16.legend(loc=1, prop={'size': 8})
-ax_16.plot((x_max, x_max), (0.001, 15000), ls='dashed', color="black")
+p2r4right = page2.add_subplot(428)
+p2r4right.semilogx(per_column[1], v, label="Plasma speed [ms$^{-1}$]")
+p2r4right.set_xlim([0.015, x_max])
+p2r4right.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+p2r4right.set_ylim([0, ylim[1]])
+p2r4right.legend(loc=1, prop={'size': 10})
+p2r4right.tick_params(axis='y', labelsize ='9')
+# no labels
+p2r4right.yaxis.set_major_formatter(nullfmt)
+p2r4right.set_ylim(p2r4left.get_ylim())
 
+# This should be called after all axes have been added
+# Unfortunately it seems to override the hspace and wspace parameters.
+#page1.tight_layout()
+#page2.tight_layout()
 
-plt.show(fig)
-plt.show(page2)
-with bpdf.PdfPages("1D divertor profiles.pdf") as pdf:
-        pdf.savefig(fig)
+# Save as a single two-page file
+with bpdf.PdfPages("1D profiles " + filename + ".pdf") as pdf:
+        pdf.savefig(page1)
         pdf.savefig(page2)
+
+with bpdf.PdfPages("1D profiles " + filename + "p1.pdf") as pdf:
+        pdf.savefig(page1)
+with bpdf.PdfPages("1D profiles " + filename + "p2.pdf") as pdf:
+        pdf.savefig(page2)
+
+plt.show(page1)
+plt.show(page2)
