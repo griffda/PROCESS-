@@ -151,7 +151,11 @@ def check_in_dat():
         try: 
             lowerinputbound = DICT_INPUT_BOUNDS[itervarname]['lb']
         except KeyError as err:
-            print('Error:')
+            #arrays do not have input bound checks
+            if '(' in itervarname: 
+                continue
+
+            print('Error in check_in_dat():')
             print('There seems to be some information missing from the dicts.')
             print('Please flag this up for a developer to investigate!')
             print(itervarname, err)
