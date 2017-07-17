@@ -329,13 +329,13 @@ module numerics
        !+ad_varc  <LI> (70) ensure that teomp is equal to the separatrix temperature in the pedestal profile,
        !+ad_varc            (Use iteration variable 119 (tesep))
        'Separatrix temp consistency      ',   &
-       !+ad_varc  <LI> (71) ensure that neomp is equal to the separatrix density (nesep) x neratio<
+       !+ad_varc  <LI> (71) ensure that neomp is equal to the separatrix density (nesep) x neratio
        'Separatrix density consistency   ',    &
        !+ad_varc  <LI> (72) central solenoid Tresca stress limit
        !+ad_varc            (Use iteration variable 123 (foh_stress))
        'CS Tresca stress limit           ',    &
-       !+ad_varc  <LI> (73) Psep >= Plh + Paux</UL>
-       !+ad_varc            (Use iteration variable 136 (fplhsep))
+       !+ad_varc  <LI> (73) Psep >= Plh + Paux
+       !+ad_varc            (Use iteration variable 136 (fplhsep))</UL>
        'Psep >= Plh + Paux               '    &
        /)
        !  Please note: All strings between '...' above must be exactly 33 chars long
