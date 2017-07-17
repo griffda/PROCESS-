@@ -107,9 +107,9 @@ class MFileVariable(dict):
 
         try:
             if scan_number is None or scan_number == -1:
-                return self["scan{}".format(self.latest_scan)]
+                return self["scan{:02}".format(self.latest_scan)]
             else:
-                return self["scan{}".format(scan_number)]
+                return self["scan{:02}".format(scan_number)]
         except KeyError:
             raise  # or substitute with any other exception type you want
 

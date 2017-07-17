@@ -37,9 +37,10 @@ def get_neqns_itervars(wdir='.'):
         if var != '':
             itervars += [DICT_IXC_SIMPLE[str(var)]]
 
-    assert in_dat.data['nvar'].get_value == len(itervars)
 
-    return in_dat.data['neqns'].get_value, itervars
+    assert in_dat.number_of_itvars == len(itervars)
+
+    return in_dat.number_of_constraints, itervars
 
 
 
@@ -150,7 +151,11 @@ def check_in_dat():
         try: 
             lowerinputbound = DICT_INPUT_BOUNDS[itervarname]['lb']
         except KeyError as err:
-            print('Error:')
+            #arrays do not have input bound checks
+            if '(' in itervarname: 
+                continue
+
+            print('Error in check_in_dat():')
             print('There seems to be some information missing from the dicts.')
             print('Please flag this up for a developer to investigate!')
             print(itervarname, err)

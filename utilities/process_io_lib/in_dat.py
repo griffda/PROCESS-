@@ -1217,6 +1217,19 @@ class InDat(object):
         # close file
         output.close()
 
+    @property
+    def number_of_constraints(self):
+        """
+        Return number of itvars
+        """
+        return(len(self.data["icc"].value))
+
+    @property
+    def number_of_itvars(self):
+        """
+        Return number of itvars
+        """
+        return(len(self.data["ixc"].value))
 
 def test(f):
     """Test function
@@ -1234,8 +1247,10 @@ def test(f):
 
 if __name__ == "__main__":
     # i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
-    i = InDat(filename="kallenbach_IN.DAT")
+    i = InDat(filename="IN.DAT")
     # print(i.data["ixc"].value)
+    # print(i.number_of_constraints)
+    # print(i.number_of_itvars)
     # print(i.data["fimp"].value)
     # print(i.data["ipfloc"].value)
     # i.change_fimp(3, 0.5)

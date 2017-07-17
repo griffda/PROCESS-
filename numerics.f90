@@ -334,8 +334,8 @@ module numerics
        !+ad_varc  <LI> (72) central solenoid Tresca stress limit
        !+ad_varc            (Use iteration variable 123 (foh_stress))
        'CS Tresca stress limit           ',    &
-       !+ad_varc  <LI> (73) Psep >= Plh + Paux</UL>
-       !+ad_varc            (Use iteration variable 136 (fplhsep))
+       !+ad_varc  <LI> (73) Psep >= Plh + Paux
+       !+ad_varc            (Use iteration variable 136 (fplhsep))</UL>
        'Psep >= Plh + Paux               '    &
        /)
        !  Please note: All strings between '...' above must be exactly 33 chars long

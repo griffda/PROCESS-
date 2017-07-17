@@ -976,8 +976,7 @@ module divertor_kallenbach_variables
   !+ad_vars  ttarget /2.3/ : Plasma temperature adjacent to divertor sheath [eV] (iteration variable 120)
   real(kind(1.0D0)) :: ttarget = 2.3D0
 
-  !+ad_vars  qtargettotal /5.0e6/ : Power density on target including surface recombination [W/m2]
-  !+ad_varc                         (iteration variable 124)
+  !+ad_vars  qtargettotal /5.0e6/ : Power density on target including surface recombination [W/m2] (iteration variable 124)
   real(kind(1.0D0)) :: qtargettotal = 5.0D6
 
   ! real(kind(1.0D0)) :: helium_enrichment = 1.0D0
