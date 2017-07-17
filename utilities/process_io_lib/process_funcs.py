@@ -37,9 +37,10 @@ def get_neqns_itervars(wdir='.'):
         if var != '':
             itervars += [DICT_IXC_SIMPLE[str(var)]]
 
-    assert in_dat.data['nvar'].get_value == len(itervars)
 
-    return in_dat.data['neqns'].get_value, itervars
+    assert in_dat.number_of_itvars == len(itervars)
+
+    return in_dat.number_of_constraints, itervars
 
 
 
