@@ -142,8 +142,8 @@ p1r1left.set_ylabel("power dens. (MWm$^{-3}$)")
 
 # Row 2, Left
 p1r2left = page1.add_subplot(423)
-p1r2left.plot(per_column[1], per_column[5], label="$P_{total}$")
-p1r2left.plot(per_column[1], per_column[4], label="$P_{thermal}$")
+p1r2left.plot(per_column[1], per_column[5], label="Plasma pressure including kinetic energy term")
+p1r2left.plot(per_column[1], per_column[4], label="Plasma thermal pressure")
 p1r2left.set_xlim([0.0, 0.015])
 p1r2left.set_ylim(ymin=0)
 p1r2left.set_ylim(ymax=2700)
@@ -191,8 +191,8 @@ p1r1right.set_ylim(p1r1left.get_ylim())
 
 # Row 2, Right
 p1r2right = page1.add_subplot(424)
-p1r2right.semilogx(per_column[1], per_column[5], label="$P_{total}$")
-p1r2right.semilogx(per_column[1], per_column[4], label="$P_{thermal}$")
+p1r2right.semilogx(per_column[1], per_column[5], label="Plasma pressure including kinetic energy term")
+p1r2right.semilogx(per_column[1], per_column[4], label="Plasma thermal pressure")
 p1r2right.set_xlim([0.015, x_max])
 p1r2right.set_ylim(ymin=0)
 p1r2right.legend(loc=4, prop={'size': 10})

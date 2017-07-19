@@ -601,7 +601,7 @@ do i = 2, nimp
         write(9,*) 'qconv=_Convected_power_density_through_a_surface_perpendicular_to_B_[W/m2]'
         write(9,*) 'qcond=_Conducted_power_density_through_a_surface_perpendicular_to_B_[W/m2]'
         write(9,*) 'im_rad=_Impurity_radiation_[W/m2]'
-        write(9,'(a5, 2x, a9, 47a11)')  &
+        write(9,'(a5, 2x, a9, 47a12)')  &
               'step', 'x//B_[m]', 'te_[eV]', 'ne/1e20/m3', 'Pth_[Pa]', 'Ptotal_[Pa]', &
               'v_[m/s]', 'mach ',                                                     &
               'n0/1e20/m3', 'Power_[W]', 'perp_area', 'qtot_W/m2', 'qconv_W/m2', 'qcond_W/m2',         &
@@ -733,7 +733,7 @@ do i = 1, nimp
                 if(raddensspecies(i)<1.0d-99)raddensspecies(i)=0.0d0
             end do
 
-            write(9,'(i5, 2x, f9.5, 46es11.3)')  &
+            write(9,'(i5, 2x, f9.5, 46es12.3)')  &
                 step, x, te, nel20, Pthermal, pressure, v, mach, n0e20, Power, A_cross, qperp_total,  &
                 qperp_conv, qperp_conducted,plossdenscx, plossion, radHdens, raddens,                 &
                 y(7), y(8), y(9), y(10), (raddensspecies(i), i=2,nimp),y(1),y(2),nv24,v
