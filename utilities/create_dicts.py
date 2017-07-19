@@ -135,17 +135,19 @@ def find(search_dir, regexp, flags=re.U):
     """
     files = []
     for file in os.listdir(search_dir):
-        path = search_dir + "/" + file
-        if os.path.isdir(path):
-            continue
-        try:
-            text = open(path).readlines()
-            for line in text:
-                if re.search(regexp, line, flags):
-                    files.append(path)
-                    break
-        except UnicodeDecodeError:
-            continue
+        if 'f90' in file:
+            path = search_dir + "/" + file
+            if os.path.isdir(path):
+                continue
+            try:
+                text = open(path).readlines()
+                for line in text:
+                    if re.search(regexp, line, flags):
+                        files.append(path)
+                        break
+            except UnicodeDecodeError:
+                continue
+
     return files
 
 def slice_file(file, re1, re2):
@@ -1091,7 +1093,7 @@ def print_icc_module():
 
     with open(file_loc) as f:
         lines = f.readlines()
-    
+
     counter = 1
     for line in lines:
         if "!#=# " in line:
@@ -1116,7 +1118,7 @@ def print_icc_vars():
 
     with open(file_loc) as f:
         lines = f.readlines()
-    
+
     counter = 1
     for line in lines:
         if "!#=#=#" in line:
