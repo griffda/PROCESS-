@@ -1713,7 +1713,14 @@ contains
             !  Actual current density in superconductor, which should be equal to jcrit(thelium+tmarg)
             !  when we have found the desired value of tmarg
             jsc = iooic * jcritsc
-            if(iooic<=0d0)write(*,*)'jsc',jsc, ' iooic', iooic, ' jcritsc',jcritsc
+            if(iooic<=0d0) then
+                write(*,*) 'ERROR'
+                write(*,*) 'Negative Iop/Icrit for TF coil'
+                write(*,*) 'jsc', jsc
+                write(*,*) 'iooic', iooic
+                write(*,*) 'jcritsc', jcritsc
+                write(*,*) 'Check cable dimensions. fcond likely gone negative. fcond =', fcond
+            end if
 
             lap = 0
             solve_for_tmarg: do ; lap = lap+1
