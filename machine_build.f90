@@ -309,7 +309,7 @@ contains
 
     radius = radius + bore
     call obuild(outfile,'Machine bore',bore,radius,'(bore)')
-    call ovarre(mfile,'Machine bore (m)','(bore)',bore)
+    call ovarre(mfile,'Machine bore (m)','(bore.)',bore)
 
     if (itart == 1) then
 
@@ -790,7 +790,7 @@ contains
      call ovarrf(outfile, 'Plasma geometric centre, radial (m)', '(rmajor.)', rmajor, 'OP ')
      call ovarrf(outfile, 'Plasma geometric centre, vertical (m)', '(0.0)', 0.0d0, 'OP ')
      call ovarrf(outfile, 'Plasma lower triangularity', '(tril)', tril, 'OP ')
-     call ovarrf(outfile, 'Plasma elongation', '(kappa)', kap, 'OP ')
+     call ovarrf(outfile, 'Plasma elongation', '(kappa.)', kap, 'OP ')
      call ovarrf(outfile, 'TF coil vertical offset (m)', '(tfoffset)', tfoffset, 'OP ')
      call ovarrf(outfile, 'Plasma outer arc radius of curvature (m)', '(rco)', rco, 'OP ')
      call ovarrf(outfile, 'Plasma inner arc radius of curvature (m)', '(rci)', rci, 'OP ')

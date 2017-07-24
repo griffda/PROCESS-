@@ -1413,7 +1413,7 @@ contains
     else if (iradloss == 1) then
         call ocmmnt(outfile,'Total power loss is scaling power plus core radiation only (iradloss = 1)')
         call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
-        call ovarrf(outfile,'Radiation power from inside "coreradius" (MW)','(pcoreradmw)',pcoreradmw, 'OP ')
+        call ovarrf(outfile,'Radiation power from inside "coreradius" (MW)','(pcoreradmw.)',pcoreradmw, 'OP ')
         call ovarrf(outfile,'Total (MW)','',pscalingmw+pcoreradmw, 'OP ')
         sum = pscalingmw+pcoreradmw
     else if (iradloss == 2) then
@@ -1429,8 +1429,8 @@ contains
 
     call oblnkl(outfile)
     call ovarrf(outfile,'Alpha power deposited in plasma (MW)','(falpha*palpmw)',falpha*palpmw, 'OP ')
-    call ovarrf(outfile,'Power from charged products of DD and/or D-He3 fusion (MW)','(pchargemw)',pchargemw, 'OP ')
-    call ovarrf(outfile,'Ohmic heating (MW)','(pohmmw)',pohmmw, 'OP ')
+    call ovarrf(outfile,'Power from charged products of DD and/or D-He3 fusion (MW)','(pchargemw.)',pchargemw, 'OP ')
+    call ovarrf(outfile,'Ohmic heating (MW)','(pohmmw.)',pohmmw, 'OP ')
     call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
     call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
     call oblnkl(outfile)
@@ -1441,10 +1441,10 @@ contains
 
     call ocmmnt(outfile,'Power Balance for Reactor - Summary :')
     call ocmmnt(outfile,'-------------------------------------')
-    call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
+    call ovarrf(outfile,'Fusion power (MW)','(powfmw.)',powfmw, 'OP ')
     call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
     call ovarrf(outfile,'Injected power (MW)','(pinjmw)',pinjmw, 'OP ')
-    call ovarrf(outfile,'Ohmic power (MW)','(pohmmw)',pohmmw, 'OP ')
+    call ovarrf(outfile,'Ohmic power (MW)','(pohmmw.)',pohmmw, 'OP ')
     call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech, 'OP ')
     sum = powfmw+emultmw+pinjmw+htpmw_mech+pohmmw
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')

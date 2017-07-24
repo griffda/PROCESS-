@@ -1124,9 +1124,9 @@ contains
 
        ! Divertor settings: 2016 Kallenbach model (2016/07/04)
 
-       case ('lambda_q_target')
-          call parse_real_variable('lambda_q_target', lambda_q_target, 0.001D0, 1.0D0, &
-               'SOL power fall-off length at the target, mapped to outer midplane [m]')
+       case ('target_spread')
+          call parse_real_variable('target_spread', target_spread, 0.001D0, 1.0D0, &
+               'Increase in SOL power fall-off length due to spreading, mapped to OMP [m]')
        case ('lambda_q_omp')
           call parse_real_variable('lambda_q_omp', lambda_q_omp, 0.0001D0, 1.0D0, &
                'SOL power fall-off length at the outer midplane, perpendicular to field [m]')

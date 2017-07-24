@@ -601,7 +601,7 @@ module numerics
        'oh_steel_frac ',  &
        !+ad_varc  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit
        'foh_stress    ',  &
-       !+ad_varc  <LI> (124) qtargettotal : Total power density on target [W/m2]
+       !+ad_varc  <LI> (124) qtargettotal : Power density on target including surface recombination [W/m2]
        'qtargettotal  ',  &
        !+ad_varc  <LI> (125) fimp(3) :  Beryllium density fraction relative to electron density
        'fimp(03)      ', &

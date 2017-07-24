@@ -65,8 +65,8 @@ module scan_module
 
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
-  !+ad_vars  ipnscnv /34/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 41
+  !+ad_vars  ipnscnv /42/ FIX : number of available scan variables
+  integer, parameter :: ipnscnv = 42
   !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
   !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
@@ -110,7 +110,8 @@ module scan_module
   !+ad_varc          <LI> 38 Neon upper limit
   !+ad_varc          <LI> 39 Argon upper limit
   !+ad_varc          <LI> 40 Xenon upper limit
-  !+ad_varc          <LI> 41 blnkoth</UL>
+  !+ad_varc          <LI> 41 blnkoth
+  !+ad_varc          <LI> 42 Argon fraction fimp(9)</UL>
 
   integer :: nsweep = 1
 
@@ -425,8 +426,8 @@ contains
           lambda_q_omp = sweep(iscan)
           vlabel = 'lambda_q_omp' ; xlabel = 'lambda_q at OMP (m)'
       case (36)
-          lambda_q_target = sweep(iscan)
-          vlabel = 'lambda_q_target' ; xlabel = 'lambda_q at target (m)'
+          target_spread = sweep(iscan)
+          vlabel = 'target_spread' ; xlabel = 'lambda_q increase (m)'
       case (37)
           lcon_factor = sweep(iscan)
           vlabel = 'lcon_factor' ; xlabel = 'Correction for lcon'
@@ -442,6 +443,11 @@ contains
       case (41)
           blnkoth = sweep(iscan)
           vlabel = 'blnkoth' ; xlabel = 'Outboard blanket thick.'
+      case (42)
+          fimp(9) = sweep(iscan)
+          ! I hope this is the correct thing to do.
+          impurity_arr(9)%frac = fimp(9)
+          vlabel = 'fimp(9)' ; xlabel = 'Argon fraction'
 
 
        case default

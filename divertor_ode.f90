@@ -20,7 +20,7 @@ module divertor_ode
   use constants
   use process_input, only: lower_case
   use divertor_kallenbach_variables, only : neratio, pressure0, fractionwidesol, fmom, TotalPowerLost, impurity_enrichment, &
-                                            lambda_q_omp, lambda_q_target
+                                            lambda_q_omp, target_spread
   use build_variables, only: rspo
   use physics_variables, only:  tesep_keV => tesep, bp
 
@@ -145,6 +145,9 @@ contains
     !+ad_vars  qtargettotal : Power density on target including surface recombination [W/m2]
     real(kind(1.0D0)),intent(in) :: qtargettotal
 
+    !+ad_vars  qtargetcomplete : Total power density on target [W/m2]
+    real(kind(1.0D0)) :: qtargetcomplete
+
     ! target angle [deg]
     real(kind(1.0D0)),intent(in) :: targetangle
 
@@ -237,7 +240,7 @@ contains
     !!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Number of steps along the 1D line
-    integer(kind=4), parameter :: step_num = 100
+    integer(kind=4), parameter :: step_num = 200
 
     ! NEQN, the number of coupled  differential equations to be solved
     integer(kind=4), parameter :: neqn = 10
@@ -247,7 +250,8 @@ contains
     integer(kind=4) :: iwork(5)
 
     ! First step [m]
-    real(kind(1.0D0)) :: step0=0.0001
+    ! TODO restore step = 0.0001
+    real(kind(1.0D0)) :: step0=0.00001
 
     ! Ratio between successive step sizes
     real(kind(1.0D0)) :: factor
@@ -267,6 +271,9 @@ contains
 
     !+ad_vars  A_cross : Area of flux bundle perpendicular to B
     real(kind(1.0D0)) :: A_cross
+
+    !+ad_vars  lambda_q_target : SOL radial thickness at the target, mapped to OMP [m]
+    real(kind(1.0D0)) :: lambda_q_target
 
     !+ad_vars  Powerup : upstream power [W]
     real(kind(1.0D0)) :: Powerup
@@ -303,6 +310,8 @@ contains
 
     ! Total power on target [W]
     real(kind(1.0D0)) :: powertargettotal
+
+
 
     !+ad_vars  WettedArea : Wetted area of target [m2]
     real(kind(1.0D0)) :: WettedArea
@@ -364,6 +373,8 @@ contains
     lcon = lcon_factor * (pi*q*rmajor/93.2) * (21.25*log(1/lambda_q_omp)-8.7)
 
     lengthofwidesol = fractionwidesol * lcon
+    ! lambda_q_target is no longer an input.
+    lambda_q_target = lambda_q_omp + target_spread
     sol_broadening = lambda_q_target / lambda_q_omp
 
     ! Populate array that says which impurities are present
@@ -790,6 +801,7 @@ do i = 1, nimp
 
     pitch_angle = asin(sin_pitch_angle)/degree
     poloidal_flux_expansion = Bp_omp / Bp_target
+    qtargetcomplete = qtargettotal + extra_flux
 
     call oheadr(outfile, 'Divertor: Kallenbach 1D Model')
     call ocmmnt(outfile, 'For graphical output use kallenbach_plotting.py')
@@ -815,7 +827,7 @@ do i = 1, nimp
     else
              call ocmmnt(outfile, 'Separatrix density consistency constraint 71 is NOT applied')
     end if
-    call ovarre(outfile, '. COMPARISON: Plasma density at separatrix [m-3]','(nesep)', nesep, 'OP ')
+    call ovarre(outfile, '. COMPARISON: Plasma density at separatrix [m-3]','(nesep.)', nesep, 'OP ')
 
     call ovarre(outfile, 'Poloidal field at outer midplane [T]','(Bp_omp)', Bp_omp, 'OP ')
     call ovarre(outfile, 'Power at outer midplane [W] ','(Powerup)', Powerup, 'OP ')
@@ -826,7 +838,7 @@ do i = 1, nimp
     else
          call ocmmnt(outfile, 'Separatrix power consistency constraint 69 is NOT applied')
     end if
-    call ovarre(outfile, '. COMPARISON: Separatrix power from main plasma model [MW]','(pdivt)', pdivt, 'OP ')
+    call ovarre(outfile, '. COMPARISON: Separatrix power from main plasma model [MW]','(pdivt.)', pdivt, 'OP ')
 
     call ovarre(outfile, 'Ratio: psep_kallenbach / Powerup ','(seppowerratio)', seppowerratio)
 
@@ -853,10 +865,12 @@ do i = 1, nimp
 
     call ovarre(outfile, '"Wetted area" of target [m2]','(WettedArea)', WettedArea, 'OP ')
     call ovarre(outfile, '"Wetted length" of target measured in poloidal plane [m]','(WettedLength)', WettedLength, 'OP ')
-    call ovarre(outfile, 'Total power density on target [W/m2]','(qtargettotal)', qtargettotal)
+
+    call ovarre(outfile, 'Total power density on target [W/m2]','(qtargetcomplete)', qtargetcomplete)
+    !call ovarre(outfile, 'Power density on target (subtotal) [W/m2]','(qtargettotal)', qtargettotal)
     call ovarre(outfile, 'Power density on target not including surface recombination [W/m2]','(qtarget)', qtarget, 'OP ')
     call ovarre(outfile, 'Power density on target due to surface recombination [W/m2]','(qtargetrecomb)', qtargetrecomb, 'OP ')
-    call ovarre(outfile, 'EXTRA Power density on target due to isotropic losses from SOL [W/m2]','(extra_flux)', extra_flux, 'OP ')
+    call ovarre(outfile, 'Power density on target due to isotropic losses from SOL [W/m2]','(extra_flux)', extra_flux, 'OP ')
     call ocmmnt(outfile, '(Based on 1/2 x (radiation + CX) in first "sab" of flux line.)')
     call ovarre(outfile, 'Connection length used for "near zone" (m)','(sab)', sab, 'OP ')
     call ovarre(outfile, 'Length of broadened downstream part of SOL [m]','(lengthofwidesol)', lengthofwidesol, 'OP ')

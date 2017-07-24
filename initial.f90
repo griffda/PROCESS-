@@ -534,7 +534,6 @@ subroutine check
         end if
         tmargmin_tf = tmargmin
         tmargmin_cs = tmargmin
-        write(*,*)'tmargmin_tf',tmargmin_tf, 'tmargmin_cs',tmargmin_cs
     end if
 
 

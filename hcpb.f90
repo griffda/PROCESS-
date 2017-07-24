@@ -898,7 +898,7 @@ contains
         call ovarre(ofile, 'Blanket line density (tonne/m2)', '(x_blanket)', x_blanket)
         call ovarre(ofile, 'Unit nuclear heating in TF coil (W/GW)', '(tfc_nuc_heating)', tfc_nuc_heating)
         call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc)
-        call ovarre(ofile, 'powfmw', '(powfmw)', powfmw)
+        call ovarre(ofile, 'powfmw', '(powfmw.)', powfmw)
         call ovarre(ofile, 'total mass of the TF coils (kg)', '(whttf)', whttf)
     end if
 

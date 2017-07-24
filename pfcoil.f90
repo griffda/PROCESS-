@@ -2772,8 +2772,8 @@ contains
           call ovarre(outfile,'Actual overall current density at EOF (A/m2)', '(coheof)',coheof)
           call oblnkl(outfile)
           ! MDK add ohcth, bore and gapoh as they can be iteration variables
-          call ovarre(outfile,'CS inside radius (m)', '(bore)',bore)
-          call ovarre(outfile,'CS thickness (m)', '(ohcth)',ohcth)
+          call ovarre(outfile,'CS inside radius (m)', '(bore.)',bore)
+          call ovarre(outfile,'CS thickness (m)', '(ohcth.)',ohcth)
           call ovarre(outfile,'Gap between central solenoid and TF coil (m)', '(gapoh)',gapoh)
           call ovarre(outfile,'CS overall cross-sectional area (m2)', &
                '(areaoh)',areaoh, 'OP ')

@@ -194,7 +194,7 @@ contains
     if (iprint == 0) return
     ! MDK Issue #242 Switch off divertor output
     return
-    
+
     call oheadr(outfile,'Divertor')
     call ocmmnt(outfile,'Harrison (ITER) Model')
     call oblnkl(outfile)
@@ -763,7 +763,7 @@ contains
     call osubhd(outfile,'Divertor Heat Load')
     call ocmmnt(outfile,'Assume an expanded divertor with a gaseous target')
     call oblnkl(outfile)
-    call ovarre(outfile,'Power to the divertor (MW)','(pdivt)',pdivt)
+    call ovarre(outfile,'Power to the divertor (MW)','(pdivt.)',pdivt)
     call ovarre(outfile,'Divertor surface area (m2)','(areadv)',areadv)
     call ovarre(outfile,'Divertor heat load (MW/m2)','(hldiv)',hldiv)
 

@@ -2542,7 +2542,7 @@ contains
 
     call oheadr(outfile,'Divertor')
 
-    call ovarre(outfile,'Power to divertor (MW)','(pdivt)',pdivt)
+    call ovarre(outfile,'Power to divertor (MW)','(pdivt.)',pdivt)
     call ovarre(outfile,'Angle of incidence (deg)','(anginc)',anginc*180.0D0/pi)
     call ovarre(outfile,'Perp. heat transport coefficient (m2/s)', &
          '(xpertin)',xpertin)

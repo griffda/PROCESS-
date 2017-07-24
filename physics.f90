@@ -5561,7 +5561,7 @@ end function t_eped_scaling
 
     call ovarrf(outfile,'Vacuum toroidal field at R (T)','(bt)',bt)
     call ovarrf(outfile,'Average poloidal field (T)','(bp)',bp, 'OP ')
-    
+
     call ovarrf(outfile,'Total field (sqrt(bp^2 + bt^2)) (T)','(btot)',btot, 'OP ')
 
     if (istell == 0) then
@@ -5751,7 +5751,7 @@ end function t_eped_scaling
     if (fhe3 > 1.0D-3) call ovarrf(outfile,'3-Helium fuel fraction','(fhe3)',fhe3)
 
     call osubhd(outfile,'Fusion Power :')
-    call ovarre(outfile,'Total fusion power (MW)','(powfmw)',powfmw, 'OP ')
+    call ovarre(outfile,'Total fusion power (MW)','(powfmw.)',powfmw, 'OP ')
     call ovarre(outfile,' =    D-T fusion power (MW)','(pdt)',pdt, 'OP ')
     call ovarre(outfile,'  +   D-D fusion power (MW)','(pdd)',pdd, 'OP ')
     call ovarre(outfile,'  + D-He3 fusion power (MW)','(pdhe3)',pdhe3, 'OP ')

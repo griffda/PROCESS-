@@ -957,14 +957,14 @@ module divertor_kallenbach_variables
   !+ad_vars  kallenbach_tests /0/ : Switch to run tests of 1D Kallenbach divertor model (1=on, 0=off)
   integer :: kallenbach_tests = 0
 
-  !+ad_vars  lambda_q_target /0.005/ : SOL power fall-off length at the target, mapped to OMP [m]
-  real(kind(1.0D0)) :: lambda_q_target = 0.005D0
+  !+ad_vars  target_spread /0.003/ : Increase in SOL power fall-off length due to spreading, mapped to OMP [m]
+  real(kind(1.0D0)) :: target_spread = 0.003D0
 
   !+ad_vars  lambda_q_omp /0.002/ : SOL power fall-off length at the outer midplane, perpendicular to field [m]
   real(kind(1.0D0)) :: lambda_q_omp = 0.002D0
 
   !+ad_vars  lcon_factor /1.0/ : Correction factor for connection length from OMP to divertor =
-  !+ad_varc                      connection length/(pi*q*rmajor)
+!+ad_varc                      connection length/(pi*q*rmajor)
   real(kind(1.0D0)) :: lcon_factor = 1.0D0
 
   !+ad_vars  netau /0.5/ : Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
