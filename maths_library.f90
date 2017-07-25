@@ -2445,6 +2445,7 @@ contains
     real(kind(1.0D0)) :: alpha,aux,auxa,calpha,dbd,dflsa,dg, &
          fls,flsa,spgdel,sum,temp,thcomp,theta
     real(kind(1.0D0)) :: summ, sqsumsq, sqsumsq_tol
+    real(kind(1.0D0)) :: lowest_valid_fom = 9999d0
     real(kind(1.0D0)), parameter :: zero = 0.0D0
     real(kind(1.0D0)), parameter :: cp1 = 0.1D0
     real(kind(1.0D0)), parameter :: cp2 = 0.2D0
@@ -2549,9 +2550,11 @@ contains
     iteration: do
 
        !  Output to terminal number of VMCON iterations
+
        iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
-       write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations", a1)', &
-             ADVANCE="NO"), niter+1, adjustl(iteration_progress), achar(13)
+       write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations. ", &
+             "FoM= ", f10.4, " Lowest valid FoM=", f10.4, a1)', &
+             ADVANCE="NO"), niter+1, adjustl(iteration_progress), objf, lowest_valid_fom, achar(13)
 
        !  Increment the quadratic subproblem counter
        nqp = nqp + 1
@@ -2678,6 +2681,10 @@ contains
        !  (the original criterion, plus constraint residuals below the tolerance level)
        !  Temporarily set the two tolerances equal (should perhaps be an input parameter)
        sqsumsq_tol = tol
+
+       ! Store the lowest valid FoM (ie where constraints are satisfied)
+       if (sqsumsq < sqsumsq_tol)  lowest_valid_fom = min(lowest_valid_fom, objf)
+
        if ((sum <= tol).and.(sqsumsq < sqsumsq_tol)) then
           if (verbose == 1) then
              write(*,*) 'Convergence parameter < convergence criterion (epsvmc)'

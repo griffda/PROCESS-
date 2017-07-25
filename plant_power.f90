@@ -1431,7 +1431,7 @@ contains
     call ovarrf(outfile,'Alpha power deposited in plasma (MW)','(falpha*palpmw)',falpha*palpmw, 'OP ')
     call ovarrf(outfile,'Power from charged products of DD and/or D-He3 fusion (MW)','(pchargemw.)',pchargemw, 'OP ')
     call ovarrf(outfile,'Ohmic heating (MW)','(pohmmw.)',pohmmw, 'OP ')
-    call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
+    call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw.)',pinjmw, 'OP ')
     call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
     call oblnkl(outfile)
     if (abs(sum - (falpha*palpmw+pchargemw+pohmmw+pinjmw)) > 5.0D0) then
@@ -1443,7 +1443,7 @@ contains
     call ocmmnt(outfile,'-------------------------------------')
     call ovarrf(outfile,'Fusion power (MW)','(powfmw.)',powfmw, 'OP ')
     call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
-    call ovarrf(outfile,'Injected power (MW)','(pinjmw)',pinjmw, 'OP ')
+    call ovarrf(outfile,'Injected power (MW)','(pinjmw..)',pinjmw, 'OP ')
     call ovarrf(outfile,'Ohmic power (MW)','(pohmmw.)',pohmmw, 'OP ')
     call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech, 'OP ')
     sum = powfmw+emultmw+pinjmw+htpmw_mech+pohmmw
