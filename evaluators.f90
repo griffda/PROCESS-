@@ -402,8 +402,9 @@ contains
     case (4)  !  TF coil + PF coil power
        fc = sgn * (tfcmw + 1.0D-3*srcktpm)/10.0D0
 
-    case (5)  !  fusion power / injection power
-       fc = sgn * powfmw / pinjmw
+   case (5)  !  Q = fusion gain  Issue #540
+       fc = sgn * powfmw / (pinjmw + porbitlossmw + pohmmw)
+       !fc = sgn * powfmw / pinjmw
 
     case (6)  !  cost of electricity
        fc = sgn * coe/100.0D0

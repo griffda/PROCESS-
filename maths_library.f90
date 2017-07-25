@@ -2552,9 +2552,15 @@ contains
        !  Output to terminal number of VMCON iterations
 
        iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
-       write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations. ", &
+       if(objf>=0d0)then
+           write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations. ", &
              "FoM= ", f10.4, " Lowest valid FoM=", f10.4, a1)', &
              ADVANCE="NO"), niter+1, adjustl(iteration_progress), objf, lowest_valid_fom, achar(13)
+        else
+             write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations. ", &
+               "FoM= ", f10.4, " Highest valid FoM=", f10.4, a1)', &
+               ADVANCE="NO"), niter+1, adjustl(iteration_progress), -objf, -lowest_valid_fom, achar(13)
+        end if
 
        !  Increment the quadratic subproblem counter
        nqp = nqp + 1
