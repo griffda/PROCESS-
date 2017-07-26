@@ -643,11 +643,11 @@ subroutine stresscl
     svmxz = sigvm(sigrcon, 0.0D0, sigvert, 0.0D0,0.0D0,0.0D0)
     svmyz = sigvm(0.0D0, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
 
-    ! von Mises stresses [MPa]
+    ! von Mises stresses [Pa]
     s_vmises_case = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
     s_vmises_cond = max(svmxz,svmyz)
 
-    ! Tresca stress criterion [Mpa]
+    ! Tresca stress criterion [pa]
     s_tresca_case = max(ABS(sigrtf(1)-sigttf(1)), ABS(sigttf(1)-sigvert), ABS(sigvert-sigrtf(1)))
     s_tresca_cond = max(ABS(sigrcon-sigtcon), ABS(sigtcon-sigvert), ABS(sigvert-sigrcon))
 
@@ -1445,10 +1445,10 @@ subroutine outtf(outfile, peaktfflag)
     end if
     call ovarre(outfile,'Conduit radial stress (Pa)','(sigrcon)',sigrcon, 'OP ')
     call ovarre(outfile,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon, 'OP ')
-    call ovarre(outfile,'Tresca stress in case (MPa)', '(s_tresca_case)', s_tresca_case, 'OP ')
-    call ovarre(outfile,'Tresca stress in conduit (MPa)', '(s_tresca_cond)', s_tresca_cond, 'OP ')
-    call ovarre(outfile,'von Mises stress in case (MPa)', '(s_vmises_case)', s_vmises_case, 'OP ')
-    call ovarre(outfile,'von Mises stress in conduit (MPa)', '(s_vmises_cond)', s_vmises_cond, 'OP ')
+    call ovarre(outfile,'Tresca stress in case (Pa)', '(s_tresca_case)', s_tresca_case, 'OP ')
+    call ovarre(outfile,'Tresca stress in conduit (Pa)', '(s_tresca_cond)', s_tresca_cond, 'OP ')
+    call ovarre(outfile,'von Mises stress in case (Pa)', '(s_vmises_case)', s_vmises_case, 'OP ')
+    call ovarre(outfile,'von Mises stress in conduit (Pa)', '(s_vmises_cond)', s_vmises_cond, 'OP ')
     call ovarre(outfile,'Deflection at midplane (m)','(deflect)',deflect, 'OP ')
     if (tfc_model == 1) then
         call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
