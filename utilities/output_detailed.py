@@ -10,6 +10,7 @@
 # Third party libraries
 import sys
 import json
+import subprocess
 import argparse
 import collections
 from collections import OrderedDict
@@ -36,6 +37,8 @@ DES_FIMP = proc_dict.DICT_FIMP
 MODULES_FULL = proc_dict.DICT_MODULE
 DEFAULTS = proc_dict.DICT_DEFAULT
 DESCRIPTIONS = proc_dict.DICT_DESCRIPTIONS
+FOM = proc_dict.DICT_OPTIMISATION_VARS
+
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -83,7 +86,7 @@ def return_to_top():
     OUTFILE.write("[:arrow_up:](#contents)\n\n")
 
 
-def output_png(x, y, z):
+def output_pic(x, y, z):
     OUTFILE.write("![{0}]({1} '{2}')\n\n".format(x, y, z))
 
 
@@ -106,6 +109,16 @@ def content_subsubheading(x):
     OUTFILE.write("{0}[{1}](#{2})\n\n".format("&nbsp;"*16, x, tag))
 
 
+def section_ro(section_name):
+    """
+    print mailto: for section RO
+    """
+    ro_name = DATA[section_name]["ro"]["name"]
+    ro_email = DATA[section_name]["ro"]["email"]
+    ro_lab = DATA[section_name]["ro"]["institute"]
+    OUTFILE.write("PMU RO: [{0}](mailto:{1}) ({2})\n\n".format(ro_name, ro_email, ro_lab))
+
+ 
 def table_heading(headings):
     header_line = "|"
     under_line = "|"
@@ -202,8 +215,16 @@ def output_contents():
     bold_info("PROCESS version", MFILE.data["procver"].get_scan(-1))
     bold_info("PROCESS Tag Number", MFILE.data["tagno"].get_scan(-1))
     bold_info("Run description", MFILE.data["runtitle"].get_scan(-1))
+
+    figure_of_merit = FOM[MFILE.data["minmax"].get_scan(-1)]
+    if MFILE.data["minmax"].get_scan(-1) < 0:
+        fom_type = "maximise"
+    else:
+        fom_type = "minimise"
+    bold_info("Figure of merit", "{0} {1}".format(fom_type,figure_of_merit.lower()))
+
     bold_info("PROCESS references", "[website](http://www.ccfe.ac.uk/powerplants.aspx), [physics paper](http://www.sciencedirect.com/science/article/pii/S0920379614005961), [engineering paper](http://www.sciencedirect.com/science/article/pii/S0920379616300072)")
-    bold_info("Contact", "[James Morris](mailto:james.morris2@ukaeak.uk)")
+    bold_info("Contacts", "[James Morris](mailto:james.morris2@ukaea.uk), [Hanni Lux](mailto:hanni.lux@ukaea.uk), [Michael Kovari](mailto:michael.kovari@ukaea.uk)")
 
     # Top level comment
     output_line(bold("IN.DAT Comment"))
@@ -230,15 +251,18 @@ def output_contents():
                             content_subsubheading(child2)
 
 
-def output_diagrams():
+def include_diagram(filename, caption):
     """
-    Embed plot_proc output
+    Put requested image in output
     """
-    
-    heading(1,"Diagrams")
+    global CAPTIONNUMBER
+
     try:
-        output_png("alt text", "process_diagram.png", "PROCESS output diagrams")
+        output_pic(caption, filename, caption)
+        output_line("Figure {0}: {1}".format(CAPTIONNUMBER, caption))
+        CAPTIONNUMBER += 1
     except:
+        print("Cannot find image {0}".format(filename))
         pass
 
 
@@ -253,8 +277,8 @@ def output_constraints(k, numbers=False):
         for c in cons:
             if c in CONSTRAINTS:
                 MODULE_ICC_LIST.append(c)
-            else:
-                print("Requested constraint {0} not a constraint for this MFILE".format(c))
+            # else:
+            #     print("Requested constraint {0} not a constraint for this MFILE".format(c))
     else:
         MODULE_ICC_LIST = sum([MODULES[key] for key in MODULES.keys() if key in DATA[k]["constraints"]], [])
 
@@ -328,8 +352,8 @@ def output_itvars(k, numbers=False):
         for it in itvars_list:
             if it in IT_VARS:
                 MODULES_IXC_NUMBERS_LIST.append(it)
-            else:
-                print("Requested iteration variable {0} not iteration variable for this MFILE".format(it))
+            # else:
+            #     print("Requested iteration variable {0} not iteration variable for this MFILE".format(it))
         MODULES_IXC_NAMES_LIST = [IXC_FULL[str(ixc)]["name"] for ixc in MODULES_IXC_NUMBERS_LIST]
 
     else:
@@ -400,8 +424,8 @@ def output_inputs(k, manual=False):
     Output inputs for section k
     """
 
+    mfile_values = list()
     if manual:
-        mfile_values = list()
         MODULE_INPUT_LIST = list()
         inputs = DATA[k]["inputs"]
         for inp in inputs:
@@ -410,10 +434,10 @@ def output_inputs(k, manual=False):
             elif inp in MFILE_LIST:
                 mfile_values.append(inp)
                 MODULE_INPUT_LIST.append(inp)
-            else:
-                print("The input you requested {0} is not in the input file".format(inp))
-    else:
-        mod_names = DATA[k]["inputs"]
+            # else:
+            #     print("The input you requested {0} is not in the input file".format(inp))
+    else:            
+        mod_names = DATA[k]["input-sections"]
         MODULE_INPUT_LIST = [item for item in INPUTS_LIST if any(item in MODULES_FULL[mod_name] for mod_name in mod_names)]
 
     if len(MODULE_INPUT_LIST) == 0:
@@ -537,6 +561,23 @@ def output_section(k):
         output_outputs(k)
 
 
+def output_section_topper(level, section_name, value):
+    """
+    outputs the top level information for the section
+    """
+
+    heading(level, section_name)
+
+    if level == 1:
+        section_ro(section_name)
+    heading_name = "header-{0}".format(section_name.lower().replace(" ", "-"))
+    heading_comment(heading_name)
+    return_to_top()
+    if value["diagrams"] != []:
+        for item in value["diagrams"]:
+            include_diagram(item["filename"], item["caption"])
+
+
 def output_projects():
     """
     Output the projects
@@ -544,21 +585,17 @@ def output_projects():
 
     for k, v in DATA.items():
         if v["project"]:
-            heading(1, k)
-            heading_comment("header-{0}".format(k))
-            return_to_top()
+            output_section_topper(1, k, v)
             output_section(k)
             
             if len(v["children"]) != 0:
                 for child in v["children"]:
-                    heading(2, child)
-                    return_to_top()
+                    output_section_topper(2, child, DATA[child])
                     output_section(child)
 
                     if len(DATA[child]["children"]) != 0:
                         for child2 in DATA[child]["children"]:
-                            heading(3, child2)
-                            return_to_top()
+                            output_section_topper(3, child2, DATA[child2])
                             output_section(child2)
 
 
@@ -668,7 +705,8 @@ def output_modules():
 
     output_contents()
 
-    output_diagrams()
+    heading(1,"Diagrams")
+    include_diagram("process_diagram.png", "PROCESS output diagrams")
 
     output_radial_build()
     output_vertical_build()
@@ -745,6 +783,9 @@ if __name__ == "__main__":
         IT_VAR_VALUES = get_itvar_values()
 
         OUTFILE = open(COMMAND_ARGS.o + ".md", "w")
+
+        # caption numbering
+        CAPTIONNUMBER = 1
 
         main(COMMAND_ARGS)
 

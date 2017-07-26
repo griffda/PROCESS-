@@ -1,7 +1,18 @@
 {
     "Times":{
         "project":true,
+        "ro":{
+            "name": "Test Name",
+            "email": "test.name@myemail.com",
+            "institute": "Test Lab"
+        },
         "children":[],
+        "diagrams":[
+            {
+                "filename":"figures/Times.png",
+                "caption": "PROCESS timings"
+            }
+        ],
         "constraints":[
             "times"
         ],
@@ -15,7 +26,6 @@
         "output-sections":[],
         "outputs":[
             "tcycle",
-            "tramp",
             "tohs",
             "theat",
             "tburn",
@@ -25,10 +35,16 @@
     },
     "Physics":{
         "project":true,
+        "ro":{
+            "name": "Ronald Wenninger",
+            "email": "ronald.wenninger@efda.org",
+            "institute": "IPP Garching"
+        },
         "children":[
             "Plasma Physics",
             "Divertor Physics"            
         ],
+        "diagrams":[],
         "constraints":[
             "physics",
             "divertor",
@@ -79,6 +95,7 @@
             "Confinement",
             "Plasma Volt-s Requirements"
         ],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -91,6 +108,7 @@
         "children":[
             "Divertor"
         ],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -101,6 +119,7 @@
     "Plasma Geometry":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -122,6 +141,7 @@
     "Current and Field":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -143,6 +163,7 @@
     "Beta information":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -160,6 +181,7 @@
     "Temperature and Density":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -188,6 +210,7 @@
     "Impurity Radiation":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -216,6 +239,7 @@
     "Plasma Profiles":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -240,6 +264,7 @@
     "Fusion Power":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -274,6 +299,7 @@
     "Radiation Power":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -300,6 +326,7 @@
     "Confinement":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -317,6 +344,7 @@
     "Plasma Volt-s Requirements":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -340,7 +368,13 @@
     },
     "Divertor":{
         "project":false,
+        "ro":{
+            "name": "Test Name",
+            "email": "test.name@myemail.com",
+            "institute": "Test Lab"
+        },
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -354,11 +388,18 @@
     },
     "Magnets":{
         "project":true,
+        "ro":{
+            "name": "Test Name",
+            "email": "test.name@myemail.com",
+            "institute": "Test Lab"
+        },
         "children":[
             "TF Coils",
             "PF Coils",
             "Central Solenoid"
         ],
+        "diagrams":[],
+        "diagrams":[],
         "constraints":[
             "pf_power",
             "pfcoil",
@@ -403,6 +444,7 @@
             "External Case Information",
             "TF Superconductor"
         ],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -413,6 +455,7 @@
     "PF Coils":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -429,6 +472,7 @@
     "Central Solenoid":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -470,6 +514,7 @@
     "General Coil Parameters":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -492,6 +537,12 @@
     "Coil Geometry":{
         "project":false,
         "children":[],
+        "diagrams":[
+            {
+                "filename":"figures/TFLeg.png",
+                "caption": "Toroidal Field coil inboard leg geometry."
+            }
+        ],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -513,6 +564,7 @@
     "Stress and Forces":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[
             31,
             32
@@ -544,6 +596,7 @@
     "Quench Information":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -562,6 +615,7 @@
     "Conductor Information":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -578,6 +632,12 @@
     "Winding Pack":{
         "project":false,
         "children":[],
+        "diagrams":[
+            {
+                "filename":"figures/TFWindingPack.png",
+                "caption": "Toroidal Field coil winding pack with dimensions"
+            }
+        ],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -604,6 +664,7 @@
     "External Case Information":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -620,6 +681,7 @@
     "TF Superconductor":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -646,7 +708,14 @@
     },
     "Breeder Blanket":{
         "project":true,
+        "ro":{
+            "name": "Test Name",
+            "email": "test.name@myemail.com",
+            "institute": "Test Lab"
+        },
         "children":[],
+        "diagrams":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -676,7 +745,14 @@
     },
     "Heating and Current Drive":{
         "project":true,
+        "ro":{
+            "name": "Test Name",
+            "email": "test.name@myemail.com",
+            "institute": "Test Lab"
+        },
         "children":[],
+        "diagrams":[],
+        "diagrams":[],
         "constraints":[
             14,
             20,
@@ -746,11 +822,22 @@
     },
     "Balance Of Plant":{
         "project":true,
+        "ro":{
+            "name": "Test Name",
+            "email": "test.name@myemail.com",
+            "institute": "Test Lab"
+        },
         "children":[
             "FW Blanket",
             "TF Power",
             "PF Power",
             "Electrical Power"
+        ],
+        "diagrams":[
+            {
+                "filename": "figures/PowerFlow.png", 
+                "caption": "PROCESS power balance"
+            }
         ],
         "constraints":[
             "heat_transport"
@@ -773,6 +860,7 @@
     "FW Blanket":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -801,6 +889,7 @@
     "TF Power":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -834,6 +923,7 @@
     "PF Power":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -853,6 +943,7 @@
     "Electrical Power":{
         "project":false,
         "children":[],
+        "diagrams":[],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
@@ -872,7 +963,13 @@
     },
     "Tritium Fuelling and Vacuum":{
         "project":true,
+        "ro":{
+            "name": "Test Name",
+            "email": "test.name@myemail.com",
+            "institute": "Test Lab"
+        },
         "children":[],
+        "diagrams":[],
         "constraints":[
             "vacuum"
         ],
