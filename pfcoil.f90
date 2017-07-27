@@ -3038,8 +3038,9 @@ contains
     integer, intent(in) :: outfile
 
     !  Local variables
+    character(len=50) :: circuit_name, circuit_var_name
+    integer :: jj,k,jjj
 
-    integer :: jj,k
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3082,7 +3083,7 @@ contains
     call ocmmnt(outfile,'circuit')
 
     do k = 1,ncirt-1
-       write(outfile,60) k,((cpt(k,jj)*turns(k)),jj=1,6)
+      write(outfile,60) k,((cpt(k,jj)*turns(k)),jj=1,6)
     end do
 60  format(t3,i2,t12,6(1pe11.3))
 
@@ -3116,6 +3117,24 @@ contains
     call oblnkl(outfile)
     call ovarre(outfile,'Ratio of central solenoid current at beginning of Pulse / end of flat-top','(fcohbop)',fcohbop)
     call ovarre(outfile,'Ratio of central solenoid current at beginning of Flat-top / end of flat-top','(fcohbof)',fcohbof, 'OP ')
+
+    call oshead(outfile,'PF Circuit Waveform Data')
+    do k = 1,ncirt
+      do jjj = 1, 6
+        if (k == ncirt) then
+          circuit_name = 'Plasma ' // ' - Time point ' // int_to_string2(jjj) // ' (A)'
+          circuit_var_name = '(plasma' // 't' // int_to_string2(jjj) // ')'
+        else if (k == ncirt-1) then
+          circuit_name = 'CS Circuit ' // ' - Time point ' // int_to_string2(jjj) // ' (A)'
+          circuit_var_name = '(cs' // 't' // int_to_string2(jjj) // ')'
+        else
+          circuit_name = 'PF Circuit ' // int_to_string2(k) // ' - Time point ' // int_to_string2(jjj) // ' (A)'
+          circuit_var_name = '(pfc' // int_to_string2(k) // 't' // int_to_string2(jjj) // ')'
+        end if
+        call ovarre(outfile,circuit_name,circuit_var_name, cpt(k,jjj)*turns(k))
+      end do
+    end do
+
   end subroutine outvolt
 
 end module pfcoil_module

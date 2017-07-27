@@ -8,13 +8,13 @@
  
    Program : ./process.exe
    Version : 1.0.11   Release Date :: 2017-06-29
-   Tag No. : "1.0.10-60-gd10598f"
+   Tag No. : "1.0.11-28-gc61030f"
       User : morrisj
- Directory : /home/morrisj/Work/fortran/process/test_suite
+ Directory : /home/morrisj/Work/fortran/output_tool_work/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.11 : Run on 29 Jun 2017  9:31:04 +01:00(hh:mm) UTC by localhost.localdomain
+ PROCESS 1.0.11 : Run on 27 Jul 2017 11:17:29 +01:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demoa 1 ralpne  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -378,7 +378,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Fusion Power :
  
- Total fusion power (MW)                                                  (powfmw)                  1.815E+03  OP 
+ Total fusion power (MW)                                                  (powfmw.)                 1.815E+03  OP 
   =    D-T fusion power (MW)                                              (pdt)                     1.813E+03  OP 
    +   D-D fusion power (MW)                                              (pdd)                     2.084E+00  OP 
    + D-He3 fusion power (MW)                                              (pdhe3)                   0.000E+00  OP 
@@ -615,10 +615,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Plasma top position, radial (m)                                          (ptop_radial)                 7.477  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.121  OP 
- Plasma geometric centre, radial (m)                                      (rmajor)                      8.914  ITV
+ Plasma geometric centre, radial (m)                                      (rmajor.)                     8.914  OP 
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
  Plasma lower triangularity                                               (tril)                        0.500  OP 
- Plasma elongation                                                        (kappa)                       1.781  OP 
+ Plasma elongation                                                        (kappa.)                      1.781  OP 
  TF coil vertical offset (m)                                              (tfoffset)                   -0.616  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.196  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                         9.837  OP 
@@ -711,6 +711,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Conductor Information :
  
  Width of cable (square) (m)                                              (cable_width)             4.422E-02  OP 
+ Width of turn including inter-turn insulation (m)                        (leno)                    4.822E-02  OP 
  Width of space inside cable (m)                                          (leni)                    3.622E-02  OP 
  Conduit thickness (m)                                                    (thwcndut)                4.000E-03  ITV
  Inter-turn insulation thickness (m)                                      (thicndut)                2.000E-03     
@@ -761,10 +762,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Case tangential stress (Pa)                                              (sigttf(1))              -3.366E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -3.151E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.429E+08  OP 
- Tresca stress in case (MPa)                                              (s_tresca_case)           5.500E+08  OP 
- Tresca stress in conduit (MPa)                                           (s_tresca_cond)           5.284E+08  OP 
- von Mises stress in case (MPa)                                           (s_vmises_case)           4.803E+08  OP 
- von Mises stress in conduit (MPa)                                        (s_vmises_cond)           4.605E+08  OP 
+ Tresca stress in case (Pa)                                               (s_tresca_case)           5.500E+08  OP 
+ Tresca stress in conduit (Pa)                                            (s_tresca_cond)           5.284E+08  OP 
+ von Mises stress in case (Pa)                                            (s_vmises_case)           4.803E+08  OP 
+ von Mises stress in conduit (Pa)                                         (s_vmises_cond)           4.605E+08  OP 
  Deflection at midplane (m)                                               (deflect)                -5.162E-03  OP 
  Winding pack vertical Young's Modulus (Pa)                               (eyzwp)                   6.001E+10  OP 
  Vertical strain on winding pack                                          (windstrain)              3.556E-03  OP 
@@ -790,6 +791,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Critical current (A)                                                     (icrit)                   1.300E+05  OP 
  Operating current / critical current                                     (iooic)                   5.000E-01  OP 
  Temperature margin (K)                                                   (tmarg)                   2.217E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tmargmin_tf)             1.700E+00     
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -811,8 +813,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.838E+07  OP 
  Actual overall current density at EOF (A/m2)                             (coheof)                  1.710E+07  ITV
  
- CS inside radius (m)                                                     (bore)                    2.509E+00  ITV
- CS thickness (m)                                                         (ohcth)                   5.845E-01  ITV
+ CS inside radius (m)                                                     (bore.)                   2.509E+00     
+ CS thickness (m)                                                         (ohcth.)                  5.845E-01     
  Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
  CS overall cross-sectional area (m2)                                     (areaoh)                  9.028E+00  OP 
  CS conductor+void cross-sectional area (m2)                              (awpoh)                   4.514E+00  OP 
@@ -937,6 +939,57 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.334E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -8.438E-02  OP 
+ 
+ *************************** PF Circuit Waveform Data ***************************
+ 
+ PF Circuit 01 - Time point 01 (A)                                        (pfc01t01)                0.000E+00     
+ PF Circuit 01 - Time point 02 (A)                                        (pfc01t02)                1.515E+07     
+ PF Circuit 01 - Time point 03 (A)                                        (pfc01t03)                1.867E+07     
+ PF Circuit 01 - Time point 04 (A)                                        (pfc01t04)                1.867E+07     
+ PF Circuit 01 - Time point 05 (A)                                        (pfc01t05)                1.065E+06     
+ PF Circuit 01 - Time point 06 (A)                                        (pfc01t06)                0.000E+00     
+ PF Circuit 02 - Time point 01 (A)                                        (pfc02t01)                0.000E+00     
+ PF Circuit 02 - Time point 02 (A)                                        (pfc02t02)                1.945E+07     
+ PF Circuit 02 - Time point 03 (A)                                        (pfc02t03)                2.152E+07     
+ PF Circuit 02 - Time point 04 (A)                                        (pfc02t04)                2.152E+07     
+ PF Circuit 02 - Time point 05 (A)                                        (pfc02t05)               -1.069E+06     
+ PF Circuit 02 - Time point 06 (A)                                        (pfc02t06)                0.000E+00     
+ PF Circuit 03 - Time point 01 (A)                                        (pfc03t01)               -0.000E+00     
+ PF Circuit 03 - Time point 02 (A)                                        (pfc03t02)                7.048E+05     
+ PF Circuit 03 - Time point 03 (A)                                        (pfc03t03)               -7.547E+06     
+ PF Circuit 03 - Time point 04 (A)                                        (pfc03t04)               -7.547E+06     
+ PF Circuit 03 - Time point 05 (A)                                        (pfc03t05)               -8.366E+06     
+ PF Circuit 03 - Time point 06 (A)                                        (pfc03t06)               -0.000E+00     
+ PF Circuit 04 - Time point 01 (A)                                        (pfc04t01)               -0.000E+00     
+ PF Circuit 04 - Time point 02 (A)                                        (pfc04t02)                7.048E+05     
+ PF Circuit 04 - Time point 03 (A)                                        (pfc04t03)               -7.547E+06     
+ PF Circuit 04 - Time point 04 (A)                                        (pfc04t04)               -7.547E+06     
+ PF Circuit 04 - Time point 05 (A)                                        (pfc04t05)               -8.366E+06     
+ PF Circuit 04 - Time point 06 (A)                                        (pfc04t06)               -0.000E+00     
+ PF Circuit 05 - Time point 01 (A)                                        (pfc05t01)               -0.000E+00     
+ PF Circuit 05 - Time point 02 (A)                                        (pfc05t02)                2.284E+05     
+ PF Circuit 05 - Time point 03 (A)                                        (pfc05t03)               -4.921E+06     
+ PF Circuit 05 - Time point 04 (A)                                        (pfc05t04)               -4.921E+06     
+ PF Circuit 05 - Time point 05 (A)                                        (pfc05t05)               -5.186E+06     
+ PF Circuit 05 - Time point 06 (A)                                        (pfc05t06)               -0.000E+00     
+ PF Circuit 06 - Time point 01 (A)                                        (pfc06t01)               -0.000E+00     
+ PF Circuit 06 - Time point 02 (A)                                        (pfc06t02)                2.284E+05     
+ PF Circuit 06 - Time point 03 (A)                                        (pfc06t03)               -4.921E+06     
+ PF Circuit 06 - Time point 04 (A)                                        (pfc06t04)               -4.921E+06     
+ PF Circuit 06 - Time point 05 (A)                                        (pfc06t05)               -5.186E+06     
+ PF Circuit 06 - Time point 06 (A)                                        (pfc06t06)               -0.000E+00     
+ CS Circuit  - Time point 01 (A)                                          (cst01)                  -0.000E+00     
+ CS Circuit  - Time point 02 (A)                                          (cst02)                   1.441E+08     
+ CS Circuit  - Time point 03 (A)                                          (cst03)                   1.302E+07     
+ CS Circuit  - Time point 04 (A)                                          (cst04)                   1.302E+07     
+ CS Circuit  - Time point 05 (A)                                          (cst05)                  -1.543E+08     
+ CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
+ Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
+ Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
+ Plasma  - Time point 03 (A)                                              (plasmat03)               1.920E+07     
+ Plasma  - Time point 04 (A)                                              (plasmat04)               1.920E+07     
+ Plasma  - Time point 05 (A)                                              (plasmat05)               1.920E+07     
+ Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
  
  ********************************************* Support Structure **********************************************
  
@@ -1403,21 +1456,21 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                286.473  OP 
- Radiation power from inside "coreradius" (MW)                            (pcoreradmw)                110.239  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               110.239  OP 
  Total (MW)                                                                                           396.713  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             344.476  OP 
- Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw)                   1.355  OP 
- Ohmic heating (MW)                                                       (pohmmw)                      0.881  OP 
- Injected power deposited in plasma (MW)                                  (pinjmw)                     50.000  OP 
+ Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw.)                  1.355  OP 
+ Ohmic heating (MW)                                                       (pohmmw.)                     0.881  OP 
+ Injected power deposited in plasma (MW)                                  (pinjmw.)                    50.000  OP 
  Total (MW)                                                                                           396.713  OP 
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw)                   1815.114  OP 
+ Fusion power (MW)                                                        (powfmw.)                  1815.114  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   345.692  OP 
- Injected power (MW)                                                      (pinjmw)                     50.000  OP 
- Ohmic power (MW)                                                         (pohmmw)                      0.881  OP 
+ Injected power (MW)                                                      (pinjmw..)                   50.000  OP 
+ Ohmic power (MW)                                                         (pohmmw.)                     0.881  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 14.908  OP 
  Total (MW)                                                                                          2226.596  OP 
  
@@ -1857,7 +1910,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Fusion Power :
  
- Total fusion power (MW)                                                  (powfmw)                  1.815E+03  OP 
+ Total fusion power (MW)                                                  (powfmw.)                 1.815E+03  OP 
   =    D-T fusion power (MW)                                              (pdt)                     1.813E+03  OP 
    +   D-D fusion power (MW)                                              (pdd)                     2.084E+00  OP 
    + D-He3 fusion power (MW)                                              (pdhe3)                   0.000E+00  OP 
@@ -2094,10 +2147,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Plasma top position, radial (m)                                          (ptop_radial)                 7.477  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.121  OP 
- Plasma geometric centre, radial (m)                                      (rmajor)                      8.914  ITV
+ Plasma geometric centre, radial (m)                                      (rmajor.)                     8.914  OP 
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
  Plasma lower triangularity                                               (tril)                        0.500  OP 
- Plasma elongation                                                        (kappa)                       1.781  OP 
+ Plasma elongation                                                        (kappa.)                      1.781  OP 
  TF coil vertical offset (m)                                              (tfoffset)                   -0.617  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.196  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                         9.837  OP 
@@ -2190,6 +2243,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Conductor Information :
  
  Width of cable (square) (m)                                              (cable_width)             4.422E-02  OP 
+ Width of turn including inter-turn insulation (m)                        (leno)                    4.822E-02  OP 
  Width of space inside cable (m)                                          (leni)                    3.622E-02  OP 
  Conduit thickness (m)                                                    (thwcndut)                4.000E-03  ITV
  Inter-turn insulation thickness (m)                                      (thicndut)                2.000E-03     
@@ -2240,10 +2294,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Case tangential stress (Pa)                                              (sigttf(1))              -3.366E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -3.151E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.429E+08  OP 
- Tresca stress in case (MPa)                                              (s_tresca_case)           5.500E+08  OP 
- Tresca stress in conduit (MPa)                                           (s_tresca_cond)           5.284E+08  OP 
- von Mises stress in case (MPa)                                           (s_vmises_case)           4.803E+08  OP 
- von Mises stress in conduit (MPa)                                        (s_vmises_cond)           4.605E+08  OP 
+ Tresca stress in case (Pa)                                               (s_tresca_case)           5.500E+08  OP 
+ Tresca stress in conduit (Pa)                                            (s_tresca_cond)           5.284E+08  OP 
+ von Mises stress in case (Pa)                                            (s_vmises_case)           4.803E+08  OP 
+ von Mises stress in conduit (Pa)                                         (s_vmises_cond)           4.605E+08  OP 
  Deflection at midplane (m)                                               (deflect)                -5.162E-03  OP 
  Winding pack vertical Young's Modulus (Pa)                               (eyzwp)                   6.001E+10  OP 
  Vertical strain on winding pack                                          (windstrain)              3.556E-03  OP 
@@ -2269,6 +2323,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Critical current (A)                                                     (icrit)                   1.300E+05  OP 
  Operating current / critical current                                     (iooic)                   5.000E-01  OP 
  Temperature margin (K)                                                   (tmarg)                   2.217E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tmargmin_tf)             1.700E+00     
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -2290,8 +2345,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.837E+07  OP 
  Actual overall current density at EOF (A/m2)                             (coheof)                  1.709E+07  ITV
  
- CS inside radius (m)                                                     (bore)                    2.509E+00  ITV
- CS thickness (m)                                                         (ohcth)                   5.846E-01  ITV
+ CS inside radius (m)                                                     (bore.)                   2.509E+00     
+ CS thickness (m)                                                         (ohcth.)                  5.846E-01     
  Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
  CS overall cross-sectional area (m2)                                     (areaoh)                  9.030E+00  OP 
  CS conductor+void cross-sectional area (m2)                              (awpoh)                   4.515E+00  OP 
@@ -2416,6 +2471,57 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.334E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -8.437E-02  OP 
+ 
+ *************************** PF Circuit Waveform Data ***************************
+ 
+ PF Circuit 01 - Time point 01 (A)                                        (pfc01t01)                0.000E+00     
+ PF Circuit 01 - Time point 02 (A)                                        (pfc01t02)                1.515E+07     
+ PF Circuit 01 - Time point 03 (A)                                        (pfc01t03)                1.867E+07     
+ PF Circuit 01 - Time point 04 (A)                                        (pfc01t04)                1.867E+07     
+ PF Circuit 01 - Time point 05 (A)                                        (pfc01t05)                1.065E+06     
+ PF Circuit 01 - Time point 06 (A)                                        (pfc01t06)                0.000E+00     
+ PF Circuit 02 - Time point 01 (A)                                        (pfc02t01)                0.000E+00     
+ PF Circuit 02 - Time point 02 (A)                                        (pfc02t02)                1.945E+07     
+ PF Circuit 02 - Time point 03 (A)                                        (pfc02t03)                2.152E+07     
+ PF Circuit 02 - Time point 04 (A)                                        (pfc02t04)                2.152E+07     
+ PF Circuit 02 - Time point 05 (A)                                        (pfc02t05)               -1.070E+06     
+ PF Circuit 02 - Time point 06 (A)                                        (pfc02t06)                0.000E+00     
+ PF Circuit 03 - Time point 01 (A)                                        (pfc03t01)               -0.000E+00     
+ PF Circuit 03 - Time point 02 (A)                                        (pfc03t02)                7.048E+05     
+ PF Circuit 03 - Time point 03 (A)                                        (pfc03t03)               -7.547E+06     
+ PF Circuit 03 - Time point 04 (A)                                        (pfc03t04)               -7.547E+06     
+ PF Circuit 03 - Time point 05 (A)                                        (pfc03t05)               -8.366E+06     
+ PF Circuit 03 - Time point 06 (A)                                        (pfc03t06)               -0.000E+00     
+ PF Circuit 04 - Time point 01 (A)                                        (pfc04t01)               -0.000E+00     
+ PF Circuit 04 - Time point 02 (A)                                        (pfc04t02)                7.048E+05     
+ PF Circuit 04 - Time point 03 (A)                                        (pfc04t03)               -7.547E+06     
+ PF Circuit 04 - Time point 04 (A)                                        (pfc04t04)               -7.547E+06     
+ PF Circuit 04 - Time point 05 (A)                                        (pfc04t05)               -8.366E+06     
+ PF Circuit 04 - Time point 06 (A)                                        (pfc04t06)               -0.000E+00     
+ PF Circuit 05 - Time point 01 (A)                                        (pfc05t01)               -0.000E+00     
+ PF Circuit 05 - Time point 02 (A)                                        (pfc05t02)                2.283E+05     
+ PF Circuit 05 - Time point 03 (A)                                        (pfc05t03)               -4.921E+06     
+ PF Circuit 05 - Time point 04 (A)                                        (pfc05t04)               -4.921E+06     
+ PF Circuit 05 - Time point 05 (A)                                        (pfc05t05)               -5.186E+06     
+ PF Circuit 05 - Time point 06 (A)                                        (pfc05t06)               -0.000E+00     
+ PF Circuit 06 - Time point 01 (A)                                        (pfc06t01)               -0.000E+00     
+ PF Circuit 06 - Time point 02 (A)                                        (pfc06t02)                2.283E+05     
+ PF Circuit 06 - Time point 03 (A)                                        (pfc06t03)               -4.921E+06     
+ PF Circuit 06 - Time point 04 (A)                                        (pfc06t04)               -4.921E+06     
+ PF Circuit 06 - Time point 05 (A)                                        (pfc06t05)               -5.186E+06     
+ PF Circuit 06 - Time point 06 (A)                                        (pfc06t06)               -0.000E+00     
+ CS Circuit  - Time point 01 (A)                                          (cst01)                  -0.000E+00     
+ CS Circuit  - Time point 02 (A)                                          (cst02)                   1.441E+08     
+ CS Circuit  - Time point 03 (A)                                          (cst03)                   1.302E+07     
+ CS Circuit  - Time point 04 (A)                                          (cst04)                   1.302E+07     
+ CS Circuit  - Time point 05 (A)                                          (cst05)                  -1.544E+08     
+ CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
+ Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
+ Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
+ Plasma  - Time point 03 (A)                                              (plasmat03)               1.920E+07     
+ Plasma  - Time point 04 (A)                                              (plasmat04)               1.920E+07     
+ Plasma  - Time point 05 (A)                                              (plasmat05)               1.920E+07     
+ Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
  
  ********************************************* Support Structure **********************************************
  
@@ -2882,21 +2988,21 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                286.465  OP 
- Radiation power from inside "coreradius" (MW)                            (pcoreradmw)                110.233  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               110.233  OP 
  Total (MW)                                                                                           396.698  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             344.461  OP 
- Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw)                   1.355  OP 
- Ohmic heating (MW)                                                       (pohmmw)                      0.881  OP 
- Injected power deposited in plasma (MW)                                  (pinjmw)                     50.000  OP 
+ Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw.)                  1.355  OP 
+ Ohmic heating (MW)                                                       (pohmmw.)                     0.881  OP 
+ Injected power deposited in plasma (MW)                                  (pinjmw.)                    50.000  OP 
  Total (MW)                                                                                           396.698  OP 
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw)                   1815.038  OP 
+ Fusion power (MW)                                                        (powfmw.)                  1815.038  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   345.678  OP 
- Injected power (MW)                                                      (pinjmw)                     50.000  OP 
- Ohmic power (MW)                                                         (pohmmw)                      0.881  OP 
+ Injected power (MW)                                                      (pinjmw..)                   50.000  OP 
+ Ohmic power (MW)                                                         (pohmmw.)                     0.881  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 14.907  OP 
  Total (MW)                                                                                          2226.505  OP 
  
@@ -3337,7 +3443,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Fusion Power :
  
- Total fusion power (MW)                                                  (powfmw)                  1.826E+03  OP 
+ Total fusion power (MW)                                                  (powfmw.)                 1.826E+03  OP 
   =    D-T fusion power (MW)                                              (pdt)                     1.824E+03  OP 
    +   D-D fusion power (MW)                                              (pdd)                     2.122E+00  OP 
    + D-He3 fusion power (MW)                                              (pdhe3)                   0.000E+00  OP 
@@ -3574,10 +3680,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Plasma top position, radial (m)                                          (ptop_radial)                 7.577  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.189  OP 
- Plasma geometric centre, radial (m)                                      (rmajor)                      9.034  ITV
+ Plasma geometric centre, radial (m)                                      (rmajor.)                     9.034  OP 
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
  Plasma lower triangularity                                               (tril)                        0.500  OP 
- Plasma elongation                                                        (kappa)                       1.781  OP 
+ Plasma elongation                                                        (kappa.)                      1.781  OP 
  TF coil vertical offset (m)                                              (tfoffset)                   -0.617  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.266  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                         9.969  OP 
@@ -3670,6 +3776,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Conductor Information :
  
  Width of cable (square) (m)                                              (cable_width)             4.501E-02  OP 
+ Width of turn including inter-turn insulation (m)                        (leno)                    4.901E-02  OP 
  Width of space inside cable (m)                                          (leni)                    3.701E-02  OP 
  Conduit thickness (m)                                                    (thwcndut)                4.000E-03  ITV
  Inter-turn insulation thickness (m)                                      (thicndut)                2.000E-03     
@@ -3720,10 +3827,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Case tangential stress (Pa)                                              (sigttf(1))              -3.362E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -3.342E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.479E+08  OP 
- Tresca stress in case (MPa)                                              (s_tresca_case)           5.500E+08  OP 
- Tresca stress in conduit (MPa)                                           (s_tresca_cond)           5.480E+08  OP 
- von Mises stress in case (MPa)                                           (s_vmises_case)           4.802E+08  OP 
- von Mises stress in conduit (MPa)                                        (s_vmises_cond)           4.784E+08  OP 
+ Tresca stress in case (Pa)                                               (s_tresca_case)           5.500E+08  OP 
+ Tresca stress in conduit (Pa)                                            (s_tresca_cond)           5.480E+08  OP 
+ von Mises stress in case (Pa)                                            (s_vmises_case)           4.802E+08  OP 
+ von Mises stress in conduit (Pa)                                         (s_vmises_cond)           4.784E+08  OP 
  Deflection at midplane (m)                                               (deflect)                -5.177E-03  OP 
  Winding pack vertical Young's Modulus (Pa)                               (eyzwp)                   5.925E+10  OP 
  Vertical strain on winding pack                                          (windstrain)              3.608E-03  OP 
@@ -3749,6 +3856,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Critical current (A)                                                     (icrit)                   1.300E+05  OP 
  Operating current / critical current                                     (iooic)                   5.000E-01  OP 
  Temperature margin (K)                                                   (tmarg)                   2.172E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tmargmin_tf)             1.700E+00     
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -3770,8 +3878,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.821E+07  OP 
  Actual overall current density at EOF (A/m2)                             (coheof)                  1.705E+07  ITV
  
- CS inside radius (m)                                                     (bore)                    2.519E+00  ITV
- CS thickness (m)                                                         (ohcth)                   5.879E-01  ITV
+ CS inside radius (m)                                                     (bore.)                   2.519E+00     
+ CS thickness (m)                                                         (ohcth.)                  5.879E-01     
  Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
  CS overall cross-sectional area (m2)                                     (areaoh)                  9.154E+00  OP 
  CS conductor+void cross-sectional area (m2)                              (awpoh)                   4.577E+00  OP 
@@ -3896,6 +4004,57 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.317E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -4.330E-02  OP 
+ 
+ *************************** PF Circuit Waveform Data ***************************
+ 
+ PF Circuit 01 - Time point 01 (A)                                        (pfc01t01)                0.000E+00     
+ PF Circuit 01 - Time point 02 (A)                                        (pfc01t02)                1.531E+07     
+ PF Circuit 01 - Time point 03 (A)                                        (pfc01t03)                1.869E+07     
+ PF Circuit 01 - Time point 04 (A)                                        (pfc01t04)                1.869E+07     
+ PF Circuit 01 - Time point 05 (A)                                        (pfc01t05)                1.541E+06     
+ PF Circuit 01 - Time point 06 (A)                                        (pfc01t06)                0.000E+00     
+ PF Circuit 02 - Time point 01 (A)                                        (pfc02t01)                0.000E+00     
+ PF Circuit 02 - Time point 02 (A)                                        (pfc02t02)                1.958E+07     
+ PF Circuit 02 - Time point 03 (A)                                        (pfc02t03)                2.141E+07     
+ PF Circuit 02 - Time point 04 (A)                                        (pfc02t04)                2.141E+07     
+ PF Circuit 02 - Time point 05 (A)                                        (pfc02t05)               -5.218E+05     
+ PF Circuit 02 - Time point 06 (A)                                        (pfc02t06)                0.000E+00     
+ PF Circuit 03 - Time point 01 (A)                                        (pfc03t01)               -0.000E+00     
+ PF Circuit 03 - Time point 02 (A)                                        (pfc03t02)                7.275E+05     
+ PF Circuit 03 - Time point 03 (A)                                        (pfc03t03)               -7.806E+06     
+ PF Circuit 03 - Time point 04 (A)                                        (pfc03t04)               -7.806E+06     
+ PF Circuit 03 - Time point 05 (A)                                        (pfc03t05)               -8.621E+06     
+ PF Circuit 03 - Time point 06 (A)                                        (pfc03t06)               -0.000E+00     
+ PF Circuit 04 - Time point 01 (A)                                        (pfc04t01)               -0.000E+00     
+ PF Circuit 04 - Time point 02 (A)                                        (pfc04t02)                7.275E+05     
+ PF Circuit 04 - Time point 03 (A)                                        (pfc04t03)               -7.806E+06     
+ PF Circuit 04 - Time point 04 (A)                                        (pfc04t04)               -7.806E+06     
+ PF Circuit 04 - Time point 05 (A)                                        (pfc04t05)               -8.621E+06     
+ PF Circuit 04 - Time point 06 (A)                                        (pfc04t06)               -0.000E+00     
+ PF Circuit 05 - Time point 01 (A)                                        (pfc05t01)               -0.000E+00     
+ PF Circuit 05 - Time point 02 (A)                                        (pfc05t02)                1.606E+05     
+ PF Circuit 05 - Time point 03 (A)                                        (pfc05t03)               -5.085E+06     
+ PF Circuit 05 - Time point 04 (A)                                        (pfc05t04)               -5.085E+06     
+ PF Circuit 05 - Time point 05 (A)                                        (pfc05t05)               -5.264E+06     
+ PF Circuit 05 - Time point 06 (A)                                        (pfc05t06)               -0.000E+00     
+ PF Circuit 06 - Time point 01 (A)                                        (pfc06t01)               -0.000E+00     
+ PF Circuit 06 - Time point 02 (A)                                        (pfc06t02)                1.606E+05     
+ PF Circuit 06 - Time point 03 (A)                                        (pfc06t03)               -5.085E+06     
+ PF Circuit 06 - Time point 04 (A)                                        (pfc06t04)               -5.085E+06     
+ PF Circuit 06 - Time point 05 (A)                                        (pfc06t05)               -5.264E+06     
+ PF Circuit 06 - Time point 06 (A)                                        (pfc06t06)               -0.000E+00     
+ CS Circuit  - Time point 01 (A)                                          (cst01)                  -0.000E+00     
+ CS Circuit  - Time point 02 (A)                                          (cst02)                   1.454E+08     
+ CS Circuit  - Time point 03 (A)                                          (cst03)                   6.759E+06     
+ CS Circuit  - Time point 04 (A)                                          (cst04)                   6.759E+06     
+ CS Circuit  - Time point 05 (A)                                          (cst05)                  -1.561E+08     
+ CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
+ Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
+ Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
+ Plasma  - Time point 03 (A)                                              (plasmat03)               1.992E+07     
+ Plasma  - Time point 04 (A)                                              (plasmat04)               1.992E+07     
+ Plasma  - Time point 05 (A)                                              (plasmat05)               1.992E+07     
+ Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
  
  ********************************************* Support Structure **********************************************
  
@@ -4362,21 +4521,21 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                286.007  OP 
- Radiation power from inside "coreradius" (MW)                            (pcoreradmw)                112.867  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               112.867  OP 
  Total (MW)                                                                                           398.874  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             346.605  OP 
- Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw)                   1.379  OP 
- Ohmic heating (MW)                                                       (pohmmw)                      0.890  OP 
- Injected power deposited in plasma (MW)                                  (pinjmw)                     50.000  OP 
+ Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw.)                  1.379  OP 
+ Ohmic heating (MW)                                                       (pohmmw.)                     0.890  OP 
+ Injected power deposited in plasma (MW)                                  (pinjmw.)                    50.000  OP 
  Total (MW)                                                                                           398.874  OP 
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw)                   1826.358  OP 
+ Fusion power (MW)                                                        (powfmw.)                  1826.358  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   347.834  OP 
- Injected power (MW)                                                      (pinjmw)                     50.000  OP 
- Ohmic power (MW)                                                         (pohmmw)                      0.890  OP 
+ Injected power (MW)                                                      (pinjmw..)                   50.000  OP 
+ Ohmic power (MW)                                                         (pohmmw.)                     0.890  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 15.037  OP 
  Total (MW)                                                                                          2240.118  OP 
  
