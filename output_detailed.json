@@ -2,15 +2,15 @@
     "Times":{
         "project":true,
         "ro":{
-            "name": "Test Name",
-            "email": "test.name@myemail.com",
-            "institute": "Test Lab"
+            "name": "Ronald Wenninger",
+            "email": "ronald.wenninger@efda.org",
+            "institute": "IPP Garching"
         },
         "children":[],
         "diagrams":[
             {
-                "filename":"figures/Times.png",
-                "caption": "PROCESS timings"
+                "filename":"figures/process_times.png",
+                "caption": "PROCESS timings **from** the given PROCESS run."
             }
         ],
         "constraints":[
@@ -31,7 +31,8 @@
             "tburn",
             "tqnch",
             "tdwell"
-        ]
+        ],
+        "exclusions":[]
     },
     "Physics":{
         "project":true,
@@ -78,8 +79,8 @@
             "Divertor Physics"
         ],
         "outputs":[
-
-        ]
+        ],
+        "exclusions":[]
     },
     "Plasma Physics":{
         "project":false,
@@ -96,12 +97,19 @@
             "Plasma Volt-s Requirements"
         ],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+
+        ],
+        "iteration-variables":[
+
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+
+        ],
         "output-sections":[],
-        "outputs":[]
+        "outputs":[],
+        "exclusions":[]
     },
     "Divertor Physics":{
         "project":false,
@@ -114,16 +122,38 @@
         "input-sections":[],
         "inputs":[],
         "output-sections":[],
-        "outputs":[]
+        "outputs":[],
+        "exclusions":[]
     },
     "Plasma Geometry":{
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            21,
+            23,
+            24
+        ],
+        "iteration-variables":[
+            1,
+            3,
+            5,
+            18,
+            73,
+            74
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "rmajor",
+            "rminor",
+            "aspect",
+            "kappa",
+            "kappa95",
+            "triang",
+            "triang95",
+            "q0",
+            "q95"
+        ],
         "output-sections":[],
         "outputs":[
             "rmajor",
@@ -135,17 +165,34 @@
             "triang95",
             "xarea",
             "sarea",
-            "vol"
-        ]
+            "vol",
+            "q0",
+            "q95"
+        ],
+        "exclusions":[]
     },
     "Current and Field":{
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            10,
+            23,
+            25
+        ],
+        "iteration-variables":[
+            2,
+            18
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "icurr",
+            "alphaj",
+            "rli",
+            "bt",
+            "q0",
+            "q"
+        ],
         "output-sections":[],
         "outputs":[
             "plascur/1d6",
@@ -158,16 +205,34 @@
             "q0",
             "q95",
             "qstar"
-        ]
+        ],
+        "exclusions":[]
     },
     "Beta information":{
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            1,
+            6,
+            24,
+            48
+        ],
+        "iteration-variables":[
+            5,
+            8,
+            36
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "beta",
+            "betap",
+            "betaft",
+            "betanb",
+            "gammaft",
+            "dnbeta",
+            "betalim"
+        ],
         "output-sections":[],
         "outputs":[
             "beta",
@@ -176,16 +241,29 @@
             "betanb",
             "gammaft",
             "dnbeta"
-        ]
+        ],
+        "exclusions":[]
     },
     "Temperature and Density":{
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            1,
+            5,
+            7
+        ],
+        "iteration-variables":[
+            4,
+            5,
+            9,
+            109,
+            119
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "ralpne"
+        ],
         "output-sections":[],
         "outputs":[
             "te",
@@ -205,16 +283,54 @@
             "dnbeam",
             "dnelimt",
             "ralpne"
-        ]
+        ],
+        "exclusions":[]
     },
     "Impurity Radiation":{
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            17,
+            67
+        ],
+        "iteration-variables":[
+            28,
+            102,
+            112,
+            116,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "imprad_model",
+            "fimp(01",
+            "fimp(02",
+            "fimp(03",
+            "fimp(04",
+            "fimp(05",
+            "fimp(06",
+            "fimp(07",
+            "fimp(08",
+            "fimp(09",
+            "fimp(10",
+            "fimp(11",
+            "fimp(12",
+            "fimp(13",
+            "fimp(14",
+            "aion"
+        ],
         "output-sections":[],
         "outputs":[
             "imprad model",
@@ -234,16 +350,35 @@
             "fimp(14",
             "aion",
             "zeff"
-        ]
+        ],
+        "exclusions":[]
     },
     "Plasma Profiles":{
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            
+        ],
+        "iteration-variables":[
+            119
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "alphan",
+            "ipedestal",
+            "rhopedn",
+            "neped",
+            "fgwped",
+            "rhopedt",
+            "ieped",
+            "teped",
+            "tesep",
+            "nesep",
+            "fgwsep",
+            "alphat",
+            "tbeta"
+        ],
         "output-sections":[],
         "outputs":[
             "alphan",
@@ -259,16 +394,27 @@
             "fgwsep",
             "alphat",
             "tbeta"
-        ]
+        ],
+        "exclusions":[]
     },
     "Fusion Power":{
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            9,
+            28
+        ],
+        "iteration-variables":[
+            26
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "fdeut",
+            "ftrit",
+            "falpha",
+            "tauratio"
+        ],
         "output-sections":[],
         "outputs":[
             "fdeut",
@@ -294,16 +440,31 @@
             "rndfuel",
             "burnup",
             "bigq"
-        ]
+        ],
+        "exclusions":[]
     },
     "Radiation Power":{
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            17,
+            67
+        ],  
+        "iteration-variables":[
+             28,
+            102,
+            112,
+            116
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "ssync",
+            "coreradius",
+            "coreradiationfraction",
+            "peakfactrad",
+            "maxradwallload"
+        ],
         "output-sections":[],
         "outputs":[
             "pbrempv*vol",
@@ -311,7 +472,7 @@
             "psyncpv*vol",
             "ssync",
             "coreradius",
-            "coreradiationfracti",
+            "coreradiationfraction",
             "pcoreradmw",
             "pedgeradmw",
             "pradmw",
@@ -321,16 +482,24 @@
             "maxradwallload",
             "peakradwallload",
             "wallmw"
-        ]
+        ],
+        "exclusions":[]
     },
     "Confinement":{
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            62
+        ],
+        "iteration-variables":[
+            110
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "hfact",
+            "taulimit"
+        ],
         "output-sections":[],
         "outputs":[
             "hfact",
@@ -339,16 +508,23 @@
             "tauee",
             "taup",
             "taulimit"
-        ]
+        ],
+        "exclusions":[]
     },
     "Plasma Volt-s Requirements":{
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            12
+        ],
+        "iteration-variables":[
+            15
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "gamma"
+        ],
         "output-sections":[],
         "outputs":[
             "vsstt",
@@ -364,41 +540,53 @@
             "abs(vstot)",
             "vssoft",
             "vsmax"
-        ]
+        ],
+        "exclusions":[]
     },
     "Divertor":{
         "project":false,
         "ro":{
-            "name": "Test Name",
-            "email": "test.name@myemail.com",
-            "institute": "Test Lab"
+            "name": "Ronald Wenninger",
+            "email": "ronald.wenninger@efda.org",
+            "institute": "IPP Garching"
         },
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            18,
+            56,
+            68
+        ],
+        "iteration-variables":[
+            27,
+            97,
+            117
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "psepbqarmax",
+            "pseprmax"
+        ],
         "output-sections":[],
         "outputs":[
             "pdivt",
             "pdivt/rmajor",
             "pdivtbt/qar"
-        ]
+        ],
+        "exclusions":[]
     },
     "Magnets":{
         "project":true,
         "ro":{
-            "name": "Test Name",
-            "email": "test.name@myemail.com",
-            "institute": "Test Lab"
+            "name": "Matti Coleman",
+            "email": "matti.coleman@euro-fusion.org",
+            "institute": "CCFE"
         },
         "children":[
             "TF Coils",
             "PF Coils",
             "Central Solenoid"
         ],
-        "diagrams":[],
         "diagrams":[],
         "constraints":[
             "pf_power",
@@ -424,12 +612,27 @@
             "Conductor Information",
             "Winding Pack",
             "External Case Information",
-            "TF Superconductor",
             "PF Coils",
             "Central Solenoid"
         ],
         "outputs":[
 
+        ],
+        "exclusions":[
+            "hmax",
+            "tfc model",
+            "sigvert",
+            "s mises cond",
+            "s mises case",
+            "leni",
+            "acstf",
+            "fcutfsu",
+            "1-fcutfsu",
+            "jscoh bop",
+            "jscoh eof",
+            "jstrandoh eof",
+            "rjohc",
+            "areaoh-awpoh"
         ]
     },
     "TF Coils":{
@@ -441,8 +644,7 @@
             "Quench Information",
             "Conductor Information",
             "Winding Pack",
-            "External Case Information",
-            "TF Superconductor"
+            "External Case Information"
         ],
         "diagrams":[],
         "constraints":[],
@@ -450,24 +652,32 @@
         "input-sections":[],
         "inputs":[],
         "output-sections":[],
-        "outputs":[]
+        "outputs":[],
+        "exclusions":[]
     },
     "PF Coils":{
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+
+        ],
+        "iteration-variables":[
+
+        ],
         "input-sections":[],
-        "inputs":[],
-        "output-sections":[],
-        "outputs":[
-            "isumatpf",
-            "fcupfsu",
+        "inputs":[
             "sigpfcalw",
             "sigpfcf",
+            "fcupfsu",
+            "isumatpf"
+        ],
+        "output-sections":[],
+        "outputs":[
+            "fcupfsu",
             "vstot"
-        ]
+        ],
+        "exclusions":[]
     },
     "Central Solenoid":{
         "project":false,
@@ -476,29 +686,29 @@
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
-        "inputs":[],
-        "output-sections":[],
-        "outputs":[
+        "inputs":[
             "isumatoh",
-            "bmaxoh0",
-            "jscoh bop",
-            "jstrandoh bop",
-            "rjohc0",
-            "cohbop",
-            "bmaxoh",
-            "jscoh eof",
-            "jstrandoh eof",
-            "rjohc",
-            "coheof",
             "bore",
             "ohcth",
+            "oh steel frac",
+            "alstroh",
+            "vfohc"
+        ],
+        "output-sections":[],
+        "outputs":[
+            "bmaxoh0",
+            "bore",
+            "ohcth",
+            "oh steel frac",
+            "vfohc",
+            "cohbop",
+            "bmaxoh",
+            "coheof",
             "gapoh",
             "areaoh",
             "awpoh",
             "awpoh*(1-vfohc)",
             "awpoh*vfohc",
-            "areaoh-awpoh",
-            "oh steel frac",
             "alstroh",
             "sig hoop",
             "sig axial",
@@ -506,10 +716,10 @@
             "axial force",
             "strncon",
             "fcuohsu",
-            "vfohc",
             "tftmp",
             "tmargoh"
-        ]
+        ],
+        "exclusions":[]
     },
     "General Coil Parameters":{
         "project":false,
@@ -524,15 +734,14 @@
             "isumattf",
             "jwptf",
             "tfno",
-            "tfarea/tfno",
             "ritfc/1.d6",
-            "bmaxtf",
             "bmaxtfrp",
             "ripmax",
             "ripple",
             "estotftgj",
             "whttf/tfno"
-        ]
+        ],
+        "exclusions":[]
     },
     "Coil Geometry":{
         "project":false,
@@ -557,9 +766,9 @@
             "tfleng",
             "rtfcin",
             "rtot",
-            "hmax",
             "gapds"
-        ]
+        ],
+        "exclusions":[]
     },
     "Stress and Forces":{
         "project":false,
@@ -581,17 +790,13 @@
         "outputs":[
             "vforce",
             "cforce",
-            "tfc model",
             "alstrtf",
-            "sigvert",
             "s tresca case",
             "s tresca cond",
-            "s vmises case",
-            "s vmises cond",
-            "deflect",
-            "windstrain",
-            "insstrain"
-        ]
+            "bc20m",
+            "tc0m"
+        ],
+        "exclusions":[]
     },
     "Quench Information":{
         "project":false,
@@ -610,7 +815,8 @@
             "jwptf",
             "vdalw",
             "vtfskv"
-        ]
+        ],
+        "exclusions":[]
     },
     "Conductor Information":{
         "project":false,
@@ -623,11 +829,20 @@
         "output-sections":[],
         "outputs":[
             "cable width",
-            "leni",
             "thwcndut",
             "thicndut",
-            "acstf"
-        ]
+            "bmax",
+            "fhetot",
+            "strncon",
+            "jcritsc",
+            "jcritstr",
+            "jwdgop",
+            "jwdgcrt",
+            "icrit",
+            "iooic",
+            "tmarg"
+        ],
+        "exclusions":[]
     },
     "Winding Pack":{
         "project":false,
@@ -659,7 +874,8 @@
             "tfinsgap",
             "turnstf",
             "cpttf"
-        ]
+        ],
+        "exclusions":[]
     },
     "External Case Information":{
         "project":false,
@@ -676,42 +892,15 @@
             "casths",
             "acasetf",
             "acasetfo"
-        ]
-    },
-    "TF Superconductor":{
-        "project":false,
-        "children":[],
-        "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
-        "input-sections":[],
-        "inputs":[],
-        "output-sections":[],
-        "outputs":[
-            "isumat",
-            "bc20m",
-            "tc0m",
-            "bmax",
-            "thelium",
-            "fhetot",
-            "fcutfsu",
-            "strncon",
-            "jcritsc",
-            "jcritstr",
-            "jwdgop",
-            "jwdgcrt",
-            "icrit",
-            "iooic",
-            "tmarg",
-            "tmaxpro"
-        ]
+        ],
+        "exclusions":[]
     },
     "Breeder Blanket":{
         "project":true,
         "ro":{
-            "name": "Test Name",
-            "email": "test.name@myemail.com",
-            "institute": "Test Lab"
+            "name": "Cismondi Fabio",
+            "email": "fabio.cismondi@euro-fusion.org",
+            "institute": "KIT"
         },
         "children":[],
         "diagrams":[],
@@ -741,14 +930,15 @@
             "shldith",
             "shldoth",
             "fw armour thickness"
-        ]
+        ],
+        "exclusions":[]
     },
     "Heating and Current Drive":{
         "project":true,
         "ro":{
-            "name": "Test Name",
-            "email": "test.name@myemail.com",
-            "institute": "Test Lab"
+            "name": "Matti Coleman",
+            "email": "matti.coleman@euro-fusion.org",
+            "institute": "CCFE"
         },
         "children":[],
         "diagrams":[],
@@ -807,7 +997,7 @@
             "fvsbrnni",
             "echpwr",
             "echwpow",
-            "plascur/1d6",
+            "plascur/1D6",
             "te",
             "te0",
             "ti",
@@ -818,7 +1008,8 @@
             "pinjmw",
             "pinjwp",
             "pohmmw"
-        ]
+        ],
+        "exclusions":[]
     },
     "Balance Of Plant":{
         "project":true,
@@ -855,7 +1046,8 @@
             "PF Power",
             "Electrical Power"
         ],
-        "outputs":[]
+        "outputs":[],
+        "exclusions":[]
     },
     "FW Blanket":{
         "project":false,
@@ -884,7 +1076,8 @@
             "pinjht",
             "tfcmw",
             "pthermmw"
-        ]
+        ],
+        "exclusions":[]
     },
     "TF Power":{
         "project":false,
@@ -918,7 +1111,8 @@
             "rtfbus",
             "vtfbus",
             "tfacpd"
-        ]
+        ],
+        "exclusions":[]
     },
     "PF Power":{
         "project":false,
@@ -938,7 +1132,8 @@
             "vpfskv",
             "ensxpfm",
             "peakpoloidalpower"
-        ]
+        ],
+        "exclusions":[]
     },
     "Electrical Power":{
         "project":false,
@@ -959,14 +1154,15 @@
             "pheatingmw",
             "trithtmw",
             "vachtmw"
-        ]
+        ],
+        "exclusions":[]
     },
     "Tritium Fuelling and Vacuum":{
         "project":true,
         "ro":{
-            "name": "Test Name",
-            "email": "test.name@myemail.com",
-            "institute": "Test Lab"
+            "name": "Cismondi Fabio",
+            "email": "fabio.cismondi@euro-fusion.org",
+            "institute": "KIT"
         },
         "children":[],
         "diagrams":[],
@@ -1007,10 +1203,21 @@
             "l2",
             "l3",
             "pumpn"
-        ]
+        ],
+        "exclusions":[]
     },
     "Builds":{
         "project":false,
+        "ro":{
+            "name": "Christian Bachmann",
+            "email": "christian.bachmann@euro-fusion.org",
+            "institute" : "IPP Garching"
+        },
+        "diagrams":{},
+        "radial_diagram":{
+                "filename": "figures/process_radial_plot.png",
+                "caption": "PROCESS radial build plot **from** given PROCESS run. "
+        },
         "Radial Build":{
             "1":{
                 "name": "bore",

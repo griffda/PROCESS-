@@ -445,10 +445,11 @@ contains
         flag = ''
     end if
 
+    if (any(name_xc == stripped))  flag = 'ITV'
+
     if (file /= mfile) then
        !MDK add label if it is an iteration variable
        ! The ITV flag overwrites the output_flag
-       if (any(name_xc == stripped))  flag = 'ITV'
        if (verbose==1) then
             write(file,10) dum72, dum20, value, flag
        else
@@ -525,11 +526,12 @@ contains
     else
         flag = ''
     end if
+    
+    if (any(name_xc == stripped))  flag = 'ITV'
 
     if (file /= mfile) then
        ! MDK add ITV label if it is an iteration variable
        ! The ITV flag overwrites the output_flag
-       if (any(name_xc == stripped))  flag = 'ITV'
        write(file,20) dum72, dum20, value, flag
     end if
 
@@ -600,11 +602,12 @@ contains
     else
         flag = ''
     end if
+       
+    if (any(name_xc == stripped))  flag = 'ITV'
 
     if (file /= mfile) then
        ! MDK add ITV label if it is an iteration variable
        ! The ITV flag overwrites the output_flag
-       if (any(name_xc == stripped))  flag = 'ITV'
        write(file,20) dum72, dum20, value, flag
     end if
 

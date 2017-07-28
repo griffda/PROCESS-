@@ -61,10 +61,10 @@ class MFileVariable(dict):
             get_scan    --> function to retrieve a given scan
             get_scans   --> function to retrieve all scans.
         """
-        self["var_name"] = var_name
-        self["var_description"] = var_description
-        self["var_unit"] = var_unit
-        self["var_flag"] = var_flag
+        self.var_name = var_name
+        self.var_description = var_description
+        self.var_unit = var_unit
+        self.var_flag = var_flag
         self.latest_scan = 0
         super().__init__(*args, **kwargs)
         LOG.debug("Initialising variable '{}': {}".
