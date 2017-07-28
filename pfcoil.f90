@@ -3119,6 +3119,7 @@ contains
     call ovarre(outfile,'Ratio of central solenoid current at beginning of Flat-top / end of flat-top','(fcohbof)',fcohbof, 'OP ')
 
     call oshead(outfile,'PF Circuit Waveform Data')
+    call ovarin(outfile,'Number of PF circuits including CS and plasma','(ncirt)',ncirt)
     do k = 1,ncirt
       do jjj = 1, 6
         if (k == ncirt) then
