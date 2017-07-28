@@ -19,5 +19,5 @@ then
 	echo "         Please consult F. Maviglia for all changes!"
     fi
 else
-    echo "need to give prefix as argument!"
+    echo "need to give prefix as argument! Convention is DEMO1_detailedDescr_YR_MTH_DY"
 fi
