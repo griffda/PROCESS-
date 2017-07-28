@@ -7,13 +7,13 @@
  
    Program : ./process.exe
    Version : 1.0.11   Release Date :: 2017-06-29
-   Tag No. : "1.0.10-60-gd10598f"
-      User : morrisj
- Directory : /home/morrisj/Work/fortran/process/test_suite
+   Tag No. : "1.0.11-13-g74f1dc4"
+      User : mkovari
+ Directory : /home/mkovari/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.11 : Run on 29 Jun 2017  9:30:45 +01:00(hh:mm) UTC by localhost.localdomain
+ PROCESS 1.0.11 : Run on 26 Jul 2017 12:28:04 +01:00(hh:mm) UTC by freia062
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -277,7 +277,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Fusion Power :
  
- Total fusion power (MW)                                                  (powfmw)                  2.685E+03  OP 
+ Total fusion power (MW)                                                  (powfmw.)                 2.685E+03  OP 
   =    D-T fusion power (MW)                                              (pdt)                     2.681E+03  OP 
    +   D-D fusion power (MW)                                              (pdd)                     3.450E+00  OP 
    + D-He3 fusion power (MW)                                              (pdhe3)                   0.000E+00  OP 
@@ -514,10 +514,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Plasma top position, radial (m)                                          (ptop_radial)                 7.947217  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.442861  OP 
- Plasma geometric centre, radial (m)                                      (rmajor)                      9.475528  ITV
+ Plasma geometric centre, radial (m)                                      (rmajor.)                     9.475528  OP 
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000000  OP 
  Plasma lower triangularity                                               (tril)                        0.500000  OP 
- Plasma elongation                                                        (kappa)                       1.780679  OP 
+ Plasma elongation                                                        (kappa.)                      1.780679  OP 
  TF coil vertical offset (m)                                              (tfoffset)                   -0.282500  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.523129  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                        10.456142  OP 
@@ -610,6 +610,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Conductor Information :
  
  Width of cable (square) (m)                                              (cable_width)             5.424E-02  OP 
+ Width of turn including inter-turn insulation (m)                        (leno)                    5.824E-02  OP 
  Width of space inside cable (m)                                          (leni)                    3.824E-02  OP 
  Conduit thickness (m)                                                    (thwcndut)                8.000E-03  ITV
  Inter-turn insulation thickness (m)                                      (thicndut)                2.000E-03     
@@ -689,6 +690,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Critical current (A)                                                     (icrit)                   1.800E+05  OP 
  Operating current / critical current                                     (iooic)                   5.000E-01  OP 
  Temperature margin (K)                                                   (tmarg)                   2.151E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tmargmin_tf)             1.700E+00     
  
  *************************************** Central Solenoid and PF Coils ****************************************
  
@@ -710,8 +712,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.399E+07  OP 
  Actual overall current density at EOF (A/m2)                             (coheof)                  1.600E+07  ITV
  
- CS inside radius (m)                                                     (bore)                    2.622E+00  ITV
- CS thickness (m)                                                         (ohcth)                   6.454E-01  ITV
+ CS inside radius (m)                                                     (bore.)                   2.622E+00     
+ CS thickness (m)                                                         (ohcth.)                  6.454E-01     
  Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
  CS overall cross-sectional area (m2)                                     (areaoh)                  9.728E+00  OP 
  CS conductor+void cross-sectional area (m2)                              (awpoh)                   4.864E+00  OP 
@@ -1134,21 +1136,21 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                391.435281  OP 
- Radiation power from inside "coreradius" (MW)                            (pcoreradmw)                171.326189  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               171.326189  OP 
  Total (MW)                                                                                           562.761471  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             509.449220  OP 
- Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw)                   2.234322  OP 
- Ohmic heating (MW)                                                       (pohmmw)                      1.077929  OP 
- Injected power deposited in plasma (MW)                                  (pinjmw)                     50.000000  OP 
+ Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw.)                  2.234322  OP 
+ Ohmic heating (MW)                                                       (pohmmw.)                     1.077929  OP 
+ Injected power deposited in plasma (MW)                                  (pinjmw.)                    50.000000  OP 
  Total (MW)                                                                                           562.761471  OP 
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw)                   2684.761886  OP 
+ Fusion power (MW)                                                        (powfmw.)                  2684.761886  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                     0.000000  OP 
- Injected power (MW)                                                      (pinjmw)                     50.000000  OP 
- Ohmic power (MW)                                                         (pohmmw)                      1.077929  OP 
+ Injected power (MW)                                                      (pinjmw..)                   50.000000  OP 
+ Ohmic power (MW)                                                         (pohmmw.)                     1.077929  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                  0.000000  OP 
  Total (MW)                                                                                          2735.839816  OP 
  

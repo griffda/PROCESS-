@@ -2445,7 +2445,7 @@ contains
     real(kind(1.0D0)) :: alpha,aux,auxa,calpha,dbd,dflsa,dg, &
          fls,flsa,spgdel,sum,temp,thcomp,theta
     real(kind(1.0D0)) :: summ, sqsumsq, sqsumsq_tol
-    real(kind(1.0D0)) :: lowest_valid_fom = 9999d0
+    real(kind(1.0D0)) :: lowest_valid_fom
     real(kind(1.0D0)), parameter :: zero = 0.0D0
     real(kind(1.0D0)), parameter :: cp1 = 0.1D0
     real(kind(1.0D0)), parameter :: cp2 = 0.2D0
@@ -2459,6 +2459,7 @@ contains
     external :: fcnvmc1,fcnvmc2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    lowest_valid_fom = 9999d0
 
     np1 = n + 1
     npp = 2*np1
