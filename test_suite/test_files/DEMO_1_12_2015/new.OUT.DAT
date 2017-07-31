@@ -7,6 +7,7 @@
  
    Program : ./process.exe
    Version : 1.0.11   Release Date :: 2017-06-29
+<<<<<<< HEAD
    Tag No. : "1.0.11-13-g74f1dc4"
       User : mkovari
  Directory : /home/mkovari/develop/test_suite
@@ -14,6 +15,15 @@
  **************************************************************************************************************
  
  PROCESS 1.0.11 : Run on 26 Jul 2017 12:29:00 +01:00(hh:mm) UTC by freia062
+=======
+   Tag No. : "1.0.11-28-gc61030f"
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/output_tool_work/test_suite
+ 
+ **************************************************************************************************************
+ 
+ PROCESS 1.0.11 : Run on 27 Jul 2017 11:17:35 +01:00(hh:mm) UTC by localhost.localdomain
+>>>>>>> b78dabf96d9ffa28f95bcb057aea10a1cd74fabe
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -714,10 +724,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Case tangential stress (Pa)                                              (sigttf(1))              -3.468E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -1.545E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.109E+08  OP 
- Tresca stress in case (MPa)                                              (s_tresca_case)           5.500E+08  OP 
- Tresca stress in conduit (MPa)                                           (s_tresca_cond)           4.141E+08  OP 
- von Mises stress in case (MPa)                                           (s_vmises_case)           4.817E+08  OP 
- von Mises stress in conduit (MPa)                                        (s_vmises_cond)           3.586E+08  OP 
+ Tresca stress in case (Pa)                                               (s_tresca_case)           5.500E+08  OP 
+ Tresca stress in conduit (Pa)                                            (s_tresca_cond)           4.141E+08  OP 
+ von Mises stress in case (Pa)                                            (s_vmises_case)           4.817E+08  OP 
+ von Mises stress in conduit (Pa)                                         (s_vmises_cond)           3.586E+08  OP 
  Deflection at midplane (m)                                               (deflect)                -5.342E-03  OP 
  Winding pack vertical Young's Modulus (Pa)                               (eyzwp)                   9.846E+10  OP 
  Vertical strain on winding pack                                          (windstrain)              2.064E-03  OP 
@@ -891,6 +901,57 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.374E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.207E-01  OP 
+ 
+ *************************** PF Circuit Waveform Data ***************************
+ 
+ PF Circuit 01 - Time point 01 (A)                                        (pfc01t01)                0.000E+00     
+ PF Circuit 01 - Time point 02 (A)                                        (pfc01t02)                1.733E+07     
+ PF Circuit 01 - Time point 03 (A)                                        (pfc01t03)                1.891E+07     
+ PF Circuit 01 - Time point 04 (A)                                        (pfc01t04)                1.891E+07     
+ PF Circuit 01 - Time point 05 (A)                                        (pfc01t05)               -1.813E+06     
+ PF Circuit 01 - Time point 06 (A)                                        (pfc01t06)                0.000E+00     
+ PF Circuit 02 - Time point 01 (A)                                        (pfc02t01)                0.000E+00     
+ PF Circuit 02 - Time point 02 (A)                                        (pfc02t02)                1.935E+07     
+ PF Circuit 02 - Time point 03 (A)                                        (pfc02t03)                2.027E+07     
+ PF Circuit 02 - Time point 04 (A)                                        (pfc02t04)                2.027E+07     
+ PF Circuit 02 - Time point 05 (A)                                        (pfc02t05)               -2.863E+06     
+ PF Circuit 02 - Time point 06 (A)                                        (pfc02t06)                0.000E+00     
+ PF Circuit 03 - Time point 01 (A)                                        (pfc03t01)               -0.000E+00     
+ PF Circuit 03 - Time point 02 (A)                                        (pfc03t02)                1.018E+06     
+ PF Circuit 03 - Time point 03 (A)                                        (pfc03t03)               -7.302E+06     
+ PF Circuit 03 - Time point 04 (A)                                        (pfc03t04)               -7.302E+06     
+ PF Circuit 03 - Time point 05 (A)                                        (pfc03t05)               -8.520E+06     
+ PF Circuit 03 - Time point 06 (A)                                        (pfc03t06)               -0.000E+00     
+ PF Circuit 04 - Time point 01 (A)                                        (pfc04t01)               -0.000E+00     
+ PF Circuit 04 - Time point 02 (A)                                        (pfc04t02)                1.018E+06     
+ PF Circuit 04 - Time point 03 (A)                                        (pfc04t03)               -7.302E+06     
+ PF Circuit 04 - Time point 04 (A)                                        (pfc04t04)               -7.302E+06     
+ PF Circuit 04 - Time point 05 (A)                                        (pfc04t05)               -8.520E+06     
+ PF Circuit 04 - Time point 06 (A)                                        (pfc04t06)               -0.000E+00     
+ PF Circuit 05 - Time point 01 (A)                                        (pfc05t01)               -0.000E+00     
+ PF Circuit 05 - Time point 02 (A)                                        (pfc05t02)               -4.287E+05     
+ PF Circuit 05 - Time point 03 (A)                                        (pfc05t03)               -4.858E+06     
+ PF Circuit 05 - Time point 04 (A)                                        (pfc05t04)               -4.858E+06     
+ PF Circuit 05 - Time point 05 (A)                                        (pfc05t05)               -4.345E+06     
+ PF Circuit 05 - Time point 06 (A)                                        (pfc05t06)               -0.000E+00     
+ PF Circuit 06 - Time point 01 (A)                                        (pfc06t01)               -0.000E+00     
+ PF Circuit 06 - Time point 02 (A)                                        (pfc06t02)               -4.287E+05     
+ PF Circuit 06 - Time point 03 (A)                                        (pfc06t03)               -4.858E+06     
+ PF Circuit 06 - Time point 04 (A)                                        (pfc06t04)               -4.858E+06     
+ PF Circuit 06 - Time point 05 (A)                                        (pfc06t05)               -4.345E+06     
+ PF Circuit 06 - Time point 06 (A)                                        (pfc06t06)               -0.000E+00     
+ CS Circuit  - Time point 01 (A)                                          (cst01)                  -0.000E+00     
+ CS Circuit  - Time point 02 (A)                                          (cst02)                   1.399E+08     
+ CS Circuit  - Time point 03 (A)                                          (cst03)                   1.801E+07     
+ CS Circuit  - Time point 04 (A)                                          (cst04)                   1.801E+07     
+ CS Circuit  - Time point 05 (A)                                          (cst05)                  -1.492E+08     
+ CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
+ Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
+ Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
+ Plasma  - Time point 03 (A)                                              (plasmat03)               1.844E+07     
+ Plasma  - Time point 04 (A)                                              (plasmat04)               1.844E+07     
+ Plasma  - Time point 05 (A)                                              (plasmat05)               1.844E+07     
+ Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
  
  ********************************************* Support Structure **********************************************
  

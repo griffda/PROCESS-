@@ -309,7 +309,7 @@ contains
 
     radius = radius + bore
     call obuild(outfile,'Machine bore',bore,radius,'(bore)')
-    call ovarre(mfile,'Machine bore (m)','(bore.)',bore)
+    call ovarre(mfile,'Machine bore (m)','(bore)',bore)
 
     if (itart == 1) then
 

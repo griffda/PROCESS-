@@ -405,10 +405,12 @@ def set_variable_in_indat(in_dat, varname, value):
         else:
             in_dat.add_bound(number, 'l', value)
     elif 'fimp' in varname and not varname == 'fimpvar':
+        #Fortran numbering converted to Python numbering!
         number = int((varname.split('('))[1].split(')')[0])-1
         in_dat.change_fimp(number, value)
     elif 'zref' in varname:
-        number = (varname.split('('))[1].split(')')[0]
+        #Fortran numbering converted to Python numbering!
+        number = int((varname.split('('))[1].split(')')[0])-1
         in_dat.change_zref(number, value)
     else:
         in_dat.add_parameter(varname, value)
