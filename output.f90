@@ -445,10 +445,11 @@ contains
         flag = ''
     end if
 
+    if (any(name_xc == stripped))  flag = 'ITV'
+
     if (file /= mfile) then
        !MDK add label if it is an iteration variable
        ! The ITV flag overwrites the output_flag
-       if (any(name_xc == stripped))  flag = 'ITV'
        if (verbose==1) then
             write(file,10) dum72, dum20, value, flag
        else
@@ -506,7 +507,7 @@ contains
     !  Local variables
 
     character(len=72) :: dum72
-    character(len=20) :: dum20
+    character(len=30) :: dum20
     character(len=20) :: stripped
     character(len=3) :: flag
 
@@ -525,11 +526,12 @@ contains
     else
         flag = ''
     end if
+    
+    if (any(name_xc == stripped))  flag = 'ITV'
 
     if (file /= mfile) then
        ! MDK add ITV label if it is an iteration variable
        ! The ITV flag overwrites the output_flag
-       if (any(name_xc == stripped))  flag = 'ITV'
        write(file,20) dum72, dum20, value, flag
     end if
 
@@ -537,7 +539,7 @@ contains
     call underscore(dum20)
     write(mfile,10) dum72, dum20, value, flag
 
-10  format(1x,a,t75,a,t100,1pe10.3," ",a,t10)
+10  format(1x,a,t75,a,t110,1pe10.3," ",a,t10)
 20  format(1x,a,t75,a,t100,1pe10.3, t112, a)
 
   end subroutine ovarre
@@ -582,7 +584,7 @@ contains
     !  Local variables
 
     character(len=72) :: dum72
-    character(len=20) :: dum20
+    character(len=30) :: dum20
     character(len=20) :: stripped
     character(len=3) :: flag
 
@@ -600,11 +602,12 @@ contains
     else
         flag = ''
     end if
+       
+    if (any(name_xc == stripped))  flag = 'ITV'
 
     if (file /= mfile) then
        ! MDK add ITV label if it is an iteration variable
        ! The ITV flag overwrites the output_flag
-       if (any(name_xc == stripped))  flag = 'ITV'
        write(file,20) dum72, dum20, value, flag
     end if
 
@@ -612,7 +615,7 @@ contains
     call underscore(dum20)
     write(mfile,10) dum72, dum20, value, flag
 
-10  format(1x,a,t75,a,t100,i10," ",a,t10)
+10  format(1x,a,t75,a,t110,i10," ",a,t10)
 20  format(1x,a,t75,a,t100,i10,t112, a)
 
   end subroutine ovarin
@@ -651,7 +654,7 @@ contains
     !  Local variables
 
     character(len=72) :: dum72
-    character(len=20) :: dum20
+    character(len=30) :: dum20
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -670,7 +673,7 @@ contains
     call underscore(dum20)
     write(mfile,10) dum72, dum20, value
 
-10  format(1x,a,t75,a,t100,a)
+10  format(1x,a,t75,a,t110,a)
 
   end subroutine ovarst
 
@@ -709,7 +712,7 @@ contains
 
     !  Local variables
 
-    character(len=20) :: dum20
+    character(len=30) :: dum20
     character(len=72) :: dum72
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -722,7 +725,7 @@ contains
     dum72 = descr
 
     write(file,10) dum20, dum72, value
-10  format(1x,a,t22,a,t100,f10.2)
+10  format(1x,a,t22,a,t110,f10.2)
 
     call ovarrf(mfile,descr,ccode,value)
 

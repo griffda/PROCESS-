@@ -1587,6 +1587,23 @@ module primary_pumping_variables
   !+ad_name  primary_pumping_variables
   !+ad_summ  Module containing global variables relating to the priamry_pumping
   !+ad_summ  primary_pumping=3 option  (Mechanical pumping power is calculated using specified pressure drop)
+  !+ad_type  Module
+  !+ad_auth  M Kovari, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  primary pumping information
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_stat  Okay
+  !+ad_docs  
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  implicit none
+
+  public
+
   ! Issue #503
   !+ad_vars  gamma_he /1.667/ FIX : ratio of specific heats for helium (primary_pumping=3)
   real(kind(1.0D0)) :: gamma_he = 1.667D0

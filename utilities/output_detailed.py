@@ -232,7 +232,7 @@ def output_contents():
 
     heading(1, "Contents")
 
-    content_heading("Diagrams")
+    content_heading("Output PDF")
 
     content_heading("Builds")
     content_subheading("Radial Build")
@@ -285,7 +285,7 @@ def output_constraints(k, numbers=False):
     if len(MODULE_ICC_LIST) == 0:
         return
 
-    heading(3, "Constraints")
+    heading(4, "Constraints")
 
     table_heading(["Constraint", "Description", "F-Value Name", "F-Value Value", 
         "Limit Name", "Limit", "Value"])    
@@ -369,7 +369,7 @@ def output_itvars(k, numbers=False):
     if len(MODULES_IXC_NAMES_LIST) == 0:
         return
 
-    heading(3, "Iteration Variables")
+    heading(4, "Iteration Variables")
     output_line("* Values in **bold** are **not default** but user inputs.")
     table_heading(["No.", "Name", "Final Value", "Description", "Starting Value", "Lower Bound", "Upper Bound"])
 
@@ -392,6 +392,8 @@ def output_itvars(k, numbers=False):
         else:
             if "fimp(" in item_name:
                 starting_value = item_value
+                fimp_index = int(item_name.split("(")[-1].split(")")[0])
+                starting_value = INFILE.data["fimp"].value[fimp_index-1]
             else:
                 starting_value = IXC_DEF[item_name]
         
@@ -432,8 +434,9 @@ def output_inputs(k, manual=False):
             if inp in INPUTS_LIST:
                 MODULE_INPUT_LIST.append(inp)
             elif inp in MFILE_LIST:
-                mfile_values.append(inp)
-                MODULE_INPUT_LIST.append(inp)
+                if MFILE.data[inp].var_flag != "OP" and MFILE.data[inp].var_flag != "ITV":
+                    mfile_values.append(inp)
+                    MODULE_INPUT_LIST.append(inp)
             # else:
             #     print("The input you requested {0} is not in the input file".format(inp))
     else:            
@@ -443,18 +446,29 @@ def output_inputs(k, manual=False):
     if len(MODULE_INPUT_LIST) == 0:
         return
 
-    heading(3, "Inputs")
+    heading(4, "Inputs")
     output_line("* Values in **bold** are **default** input values. Output in MFILE but **NOT** specified in IN.DAT.")
     table_heading(["Input", "Value", "Description", "Comment"])
     
     for item in MODULE_INPUT_LIST:
-        if item not in IT_VAR_LIST and item not in EXCLUSIONS:
+        if item not in IT_VAR_LIST and item not in EXCLUSIONS and item not in DATA[k]["exclusions"]:
             
-            if item not in INPUTS_LIST:
+            if "fimp(" in item:
+                item_name = "fimp"
+            else:
+                item_name = item
+
+            if item_name not in INPUTS_LIST:
                 item_value = str(MFILE.data[item].get_scan(-1))
             else:
-                item_value = INFILE.data[item].value
-            item_des = DESCRIPTIONS[item].split("\n")[0]
+                if "fimp(" not in item:
+                    item_value = INFILE.data[item].value
+                else:
+                    fimp_index = int(item.split("(")[-1].split(")")[0])
+                    item_value = str(INFILE.data["fimp"].value[fimp_index-1])
+
+            if "fimp(" not in item:
+                item_des = DESCRIPTIONS[item].split("\n")[0]
 
             if "in-" + item in COMMENTS.keys():
                 comment = COMMENTS["in-"+item][0].replace("\n", "")
@@ -463,25 +477,26 @@ def output_inputs(k, manual=False):
             else:
                 comment = ""
 
-            if "fimp(" in item:
-                i_des = DES_FIMP[item]
-
             if type(item_value) == list:
                 table_line([code(item), bold("array"), item_des], ".4g")
                 for i in range(len(item_value)):
-                    if "fimp(" in item:
-                        item_des = i_des[i]
+                    if "fimp" in item:
+                        item_des = DES_FIMP["fimp({0})".format(i+1)]
                     else:
                         item_des = "-"
-                    table_line([code(item) + "[{0}]".format(i), item_value[i], item_des[4:], comment], ".4g")
+                    table_line([code(item) + "[{0}]".format(i), item_value[i], item_des, comment], ".4g")
             elif "," in item_value:
                 table_line([code(item), bold("array"), item_des], ".4g")
                 item_value = item_value.split(",")
                 for i in range(len(item_value)):
                     if item_value[i] != "":
-                        table_line([code(item) + "[{0}]".format(i), item_value[i], "-", comment], ".4g")
+                        if "fimp" in item:
+                            item_des = DES_FIMP["fimp({0})".format(i+1)]
+                        else:
+                            item_des = "-"
+                        table_line([code(item) + "[{0}]".format(i), item_value[i], item_des, comment], ".4g")
             else:
-                if item in mfile_values:
+                if item_name not in INPUTS_LIST:
                     table_line([code(item), bold(item_value), item_des, comment], ".4g")
                 else:
                     table_line([code(item), item_value, item_des, comment], ".4g")
@@ -493,12 +508,12 @@ def output_outputs(k, mod_out_list=[]):
     """
 
     MODULE_OUTPUTS_LIST = DATA[k]["outputs"] + mod_out_list
-    heading(3, "Outputs")
+    heading(4, "Outputs")
     table_heading(["Output", "Value", "Description"])
 
     for item in MODULE_OUTPUTS_LIST:
         item_value = MFILE.data[item].get_scan(-1)
-        if item not in INPUTS_LIST:
+        if item not in INPUTS_LIST and item not in DATA[k]["exclusions"]:
 
             try:
                 item_des = MFILE.data[item].var_description.replace("_", " ")
@@ -656,6 +671,15 @@ def output_radial_build():
     """
 
     heading(2, "Radial Build")
+
+    try:
+        radial_plot_file = DATA["Builds"]["radial_diagram"]["filename"]
+        radial_plot_caption = DATA["Builds"]["radial_diagram"]["caption"]
+        include_diagram(radial_plot_file, radial_plot_caption)
+    except:
+        print("Cannot find image {0}".format(filename))
+        pass       
+
     table_heading(["Name", "Thickness [m]", "Radial Position [m]", "Description"])
 
     r_build_sum = 0
@@ -705,9 +729,10 @@ def output_modules():
 
     output_contents()
 
-    heading(1,"Diagrams")
+    heading(1,"Output PDF")
     include_diagram("process_diagram.png", "PROCESS output diagrams")
 
+    output_section_topper(1, "Builds", DATA["Builds"])
     output_radial_build()
     output_vertical_build()
 
