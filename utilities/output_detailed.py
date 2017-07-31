@@ -8,6 +8,7 @@
 """
 
 # Third party libraries
+import os
 import sys
 import json
 import subprocess
@@ -19,6 +20,9 @@ from grip import export
 # PROCESS libraries
 from process_io_lib.in_dat import InDat
 from process_io_lib.mfile import MFile
+from process_io_lib.process_plots import plot_pulse_timings, radial_bar_plot, \
+    plasma_profiles_plot
+
 try:
     import process_io_lib.process_dicts as proc_dict
 except ImportError:
@@ -170,9 +174,9 @@ def get_indat_comments():
     
     for line in lines:
         if line[:2] == "*#":
-            split_line = line.split(":")
+            split_line = line.split(":", 1)
             key = split_line[0][2:].replace(" ", "")
-            value = split_line[1].strip(" ")
+            value = split_line[1].strip(" ").strip("\n")
             COMMENTS.setdefault(key,[]).append(value)
 
 
@@ -287,8 +291,8 @@ def output_constraints(k, numbers=False):
 
     heading(4, "Constraints")
 
-    table_heading(["Constraint", "Description", "F-Value Name", "F-Value Value", 
-        "Limit Name", "Limit", "Value"])    
+    table_heading(["Constraint", "Description", "Limit Name", "Limit", "Value",
+        "F-Value Name", "F-Value Value"])    
 
     for item in MODULE_ICC_LIST:
 
@@ -334,9 +338,9 @@ def output_constraints(k, numbers=False):
             con_f_val = "{0:.2e}".format(float(con_f_val))
         else:
             actual_value = "-"
-
-        table_line([str(item), con_name, con_f_val_name, con_f_val, 
-            con_lim_name, con_lim, actual_value], ".4g")
+        
+        table_line([str(item), con_name, con_lim_name, con_lim, actual_value,
+            con_f_val_name, con_f_val], ".4g")
 
     constraint_comments(k, MODULE_ICC_LIST)
 
@@ -471,7 +475,7 @@ def output_inputs(k, manual=False):
                 item_des = DESCRIPTIONS[item].split("\n")[0]
 
             if "in-" + item in COMMENTS.keys():
-                comment = COMMENTS["in-"+item][0].replace("\n", "")
+                comment = " ".join(COMMENTS["in-"+item])
                 if comment == "":
                     comment = ""
             else:
@@ -741,10 +745,33 @@ def output_modules():
     OUTFILE.close()
 
 
+def create_plots():
+    """
+    Create all required plots for output
+    """
+
+    if not os.path.exists("documentation/figures/"):
+        subprocess.call(["mkdir", "figures"])
+    
+    # create pulse timings plot
+    plot_pulse_timings(MFILE, save=True, show=False, save_path="documentation/figures/")
+
+    # create radial build plot
+    # TODO: non-hard coded list needed
+    radial_build = ["bore", "ohcth", "precomp", "gapoh", "tfcth", "deltf", "thshield", 
+         "gapds", "ddwi", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "rminor"]
+    radial_bar_plot(radial_build, MFILE, show=False, save=True, save_path="documentation/figures/")
+
+    # create plasma profiles plot
+    plasma_profiles_plot(MFILE, show=False, save=True, save_path="documentation/figures/")
+
+
 def main(cargs):
     """
     Main
     """
+
+    create_plots()
 
     output_modules()
 
