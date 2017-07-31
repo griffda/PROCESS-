@@ -29,6 +29,7 @@ module ccfe_hcpb_module
 
   use build_variables
   use buildings_variables
+  use constraint_variables
   use cost_variables
   use current_drive_variables
   use divertor_variables
@@ -2030,6 +2031,7 @@ contains
         if (i == 3) call ovarin(outfile, 'Blanket thickness choice: THICK (0.75 m inboard, 1.30 m outboard)', &
             '(iblanket_thickness)', iblanket_thickness)
         call ovarrf(outfile, 'Tritium breeding ratio (5-year time-averaged)','(tbr)',tbr, 'OP ')
+        call ovarrf(outfile, 'Minimum Tritium breeding ratio','(tbrmin)',tbrmin)
 
         call ocmmnt(outfile,'(See "A parameter study of time-varying tritium production in solid-type breeder blankets,')
         call ocmmnt(outfile, 'J. Shimwell et al, Fusion Engineering and Design')

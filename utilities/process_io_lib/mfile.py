@@ -296,7 +296,8 @@ class MFile(object):
         if name == "":
             var_key = des.lower().replace("_", " ")
         else:
-            var_key = name.lower().replace("_", " ")
+            # var_key = name.lower().replace("_", " ")
+            var_key = name.lower()
 
         if var_key in self.data.keys():
             scan_num = scan if scan else (self.data[var_key].

@@ -9,7 +9,7 @@
         "children":[],
         "diagrams":[
             {
-                "filename":"figures/process_times.png",
+                "filename":"documentation/figures/process_times.png",
                 "caption": "PROCESS timings **from** the given PROCESS run."
             }
         ],
@@ -274,7 +274,7 @@
             "dene",
             "ne0",
             "dnla",
-            "dnla gw",
+            "dnla_gw",
             "dnitot",
             "deni",
             "dnz",
@@ -333,7 +333,7 @@
         ],
         "output-sections":[],
         "outputs":[
-            "imprad model",
+            "imprad_model",
             "fimp(01",
             "fimp(02",
             "fimp(03",
@@ -356,7 +356,12 @@
     "Plasma Profiles":{
         "project":false,
         "children":[],
-        "diagrams":[],
+        "diagrams":[
+            {
+                "filename":"documentation/figures/process_plasma_profiles.png",
+                "caption": "PROCESS plasma profiles."
+            }
+        ],
         "constraints":[
             
         ],
@@ -476,8 +481,8 @@
             "pcoreradmw",
             "pedgeradmw",
             "pradmw",
-            "rad fraction",
-            "photon wall",
+            "rad_fraction",
+            "photon_wall",
             "peakfactrad",
             "maxradwallload",
             "peakradwallload",
@@ -535,7 +540,7 @@
             "bootipf",
             "vburn",
             "rplas",
-            "res time",
+            "res_time",
             "rlp",
             "abs(vstot)",
             "vssoft",
@@ -622,15 +627,15 @@
             "hmax",
             "tfc model",
             "sigvert",
-            "s mises cond",
-            "s mises case",
+            "s_mises_cond",
+            "s_mises_case",
             "leni",
             "acstf",
             "fcutfsu",
             "1-fcutfsu",
-            "jscoh bop",
-            "jscoh eof",
-            "jstrandoh eof",
+            "jscoh_bop",
+            "jscoh_eof",
+            "jstrandoh_eof",
             "rjohc",
             "areaoh-awpoh"
         ]
@@ -683,14 +688,28 @@
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            26,
+            27,
+            60
+        ],
+        "iteration-variables":[
+            16,
+            37,
+            38,
+            39,
+            41,
+            42,
+            106,
+            122,
+            123
+        ],
         "input-sections":[],
         "inputs":[
             "isumatoh",
             "bore",
             "ohcth",
-            "oh steel frac",
+            "oh_steel_frac",
             "alstroh",
             "vfohc"
         ],
@@ -699,7 +718,7 @@
             "bmaxoh0",
             "bore",
             "ohcth",
-            "oh steel frac",
+            "oh_steel_frac",
             "vfohc",
             "cohbop",
             "bmaxoh",
@@ -710,10 +729,10 @@
             "awpoh*(1-vfohc)",
             "awpoh*vfohc",
             "alstroh",
-            "sig hoop",
-            "sig axial",
-            "s tresca oh",
-            "axial force",
+            "sig_hoop",
+            "sig_axial",
+            "s_tresca_oh",
+            "axial_force",
             "strncon",
             "fcuohsu",
             "tftmp",
@@ -748,7 +767,7 @@
         "children":[],
         "diagrams":[
             {
-                "filename":"figures/TFLeg.png",
+                "filename":"documentation/figures/TFLeg.png",
                 "caption": "Toroidal Field coil inboard leg geometry."
             }
         ],
@@ -791,8 +810,8 @@
             "vforce",
             "cforce",
             "alstrtf",
-            "s tresca case",
-            "s tresca cond",
+            "s_tresca_case",
+            "s_tresca_cond",
             "bc20m",
             "tc0m"
         ],
@@ -802,13 +821,26 @@
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            34,
+            65,
+            35,
+            36
+        ],
+        "iteration-variables":[
+            51,
+            52,
+            54,
+            56   
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "sigvvall",
+            "tmaxpro",
+            "tmargmin"
+        ],
         "output-sections":[],
         "outputs":[
-            "sigvvall",
             "taucq",
             "tftmp",
             "jwdgpro",
@@ -822,13 +854,17 @@
         "project":false,
         "children":[],
         "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            
+        ],
+        "iteration-variables":[
+            58
+        ],
         "input-sections":[],
         "inputs":[],
         "output-sections":[],
         "outputs":[
-            "cable width",
+            "cable_width",
             "thwcndut",
             "thicndut",
             "bmax",
@@ -840,7 +876,11 @@
             "jwdgcrt",
             "icrit",
             "iooic",
-            "tmarg"
+            "cable_width",
+            "leni",
+            "thwcndut",
+            "thicndut",
+            "acstf"
         ],
         "exclusions":[]
     },
@@ -849,20 +889,23 @@
         "children":[],
         "diagrams":[
             {
-                "filename":"figures/TFWindingPack.png",
+                "filename":"documentation/figures/TFWindingPack.png",
                 "caption": "Toroidal Field coil winding pack with dimensions"
             }
         ],
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
-        "inputs":[],
-        "output-sections":[],
-        "outputs":[
+        "inputs":[
             "dhecoil",
             "vftf",
             "fcutfsu",
-            "1-fcutfsu",
+            "tinstf",
+            "tfinsgap",
+            "cpttf"
+        ],
+        "output-sections":[],
+        "outputs":[
             "acond/ap",
             "aiwp/ap",
             "avwp/ap",
@@ -870,10 +913,8 @@
             "thkwp",
             "wwp1",
             "wwp2",
-            "tinstf",
-            "tfinsgap",
             "turnstf",
-            "cpttf"
+            "1-fcutfsu"
         ],
         "exclusions":[]
     },
@@ -884,12 +925,13 @@
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
-        "inputs":[],
-        "output-sections":[],
-        "outputs":[
+        "inputs":[
             "casthi",
             "thkcas",
-            "casths",
+            "casths"
+        ],
+        "output-sections":[],
+        "outputs":[
             "acasetf",
             "acasetfo"
         ],
@@ -904,11 +946,26 @@
         },
         "children":[],
         "diagrams":[],
-        "diagrams":[],
-        "constraints":[],
-        "iteration-variables":[],
+        "constraints":[
+            52,
+            55
+        ],
+        "iteration-variables":[
+            89,
+            95
+        ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "blnkith",
+            "blnkoth",
+            "shldith",
+            "shldoth",
+            "fwith",
+            "fwith",
+            "li6enrich",
+            "fw_armour_thickness",
+            "tbrmin"
+        ],
         "output-sections":[],
         "outputs":[
             "ptfnuc",
@@ -921,15 +978,7 @@
             "fwarea",
             "rdewex",
             "zdewex",
-            "li6enrich",
-            "tbr",
-            "fwith",
-            "fwith",
-            "blnkith",
-            "blnkoth",
-            "shldith",
-            "shldoth",
-            "fw armour thickness"
+            "tbr"
         ],
         "exclusions":[]
     },
@@ -997,7 +1046,7 @@
             "fvsbrnni",
             "echpwr",
             "echwpow",
-            "plascur/1D6",
+            "plascur/1d6",
             "te",
             "te0",
             "ti",
@@ -1026,7 +1075,7 @@
         ],
         "diagrams":[
             {
-                "filename": "figures/PowerFlow.png", 
+                "filename": "documentation/figures/PowerFlow.png", 
                 "caption": "PROCESS power balance"
             }
         ],
@@ -1056,22 +1105,23 @@
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "dp_he",
+            "t_in_bb",
+            "htpmw_fw_blkt",
+            "htpmw_div",
+            "htpmw_shld",
+            "emult",
+            "fhcd",
+            "fdiv",
+            "etath"
+        ],
         "output-sections":[],
         "outputs":[
-            "dp he",
             "fpump",
-            "p plasma",
-            "t in compressor",
-            "t in bb",
-            "htpmw fw blkt",
-            "htpmw div",
-            "htpmw shld",
-            "emult",
-            "fdiv",
-            "fhcd",
+            "p_plasma",
+            "t_in_compressor",
             "htpmw",
-            "etath",
             "htpsecmw",
             "pinjht",
             "tfcmw",
@@ -1121,7 +1171,9 @@
         "constraints":[],
         "iteration-variables":[],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "maxpoloidalpower"
+        ],
         "output-sections":[],
         "outputs":[
             "pfckts",
@@ -1175,18 +1227,19 @@
         "input-sections":[
             "Vacuum Variables"
         ],
-        "inputs":[],
+        "inputs":[
+            "rat",
+            "pbase",
+            "tdwell"
+        ],
         "output-sections":[],
         "outputs":[
-            "rat",
             "ogas",
-            "pbase",
             "s(1)",
             "snet(1)",
             "volume",
             "pend",
             "pstart",
-            "tdwell",
             "s(2)",
             "snet(2)",
             "prdiv",
@@ -1215,7 +1268,7 @@
         },
         "diagrams":{},
         "radial_diagram":{
-                "filename": "figures/process_radial_plot.png",
+                "filename": "documentation/figures/process_radial_plot.png",
                 "caption": "PROCESS radial build plot **from** given PROCESS run. "
         },
         "Radial Build":{
