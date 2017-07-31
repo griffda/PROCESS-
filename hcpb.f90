@@ -29,7 +29,7 @@ module ccfe_hcpb_module
 
   use build_variables
   use buildings_variables
-  use constraints
+  use constraint_variables
   use cost_variables
   use current_drive_variables
   use divertor_variables
