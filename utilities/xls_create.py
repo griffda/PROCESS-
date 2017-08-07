@@ -16,7 +16,7 @@ from openpyxl import Workbook, styles, load_workbook
 from openpyxl.styles import  Font, Border, Side
 
 
-def write_column_mplot_dat(spreadsheet, custom_keys, mfile_data):
+def append_line(spreadsheet, custom_keys, mfile_data):
     """Function to add data to a spreadsheet using MFILE"""
     try:
         num_scans = int(mfile_data.data["isweep"].get_scan(-1))
@@ -33,7 +33,11 @@ def write_column_mplot_dat(spreadsheet, custom_keys, mfile_data):
         wb = Workbook()
 
     # grab the active worksheet
-    ws = wb.active
+    if args.s:
+        ws = wb.create_sheet()
+        print('New sheet created:',args.s)
+    else:
+        ws = wb.active
 
     var_descriptions = ['']
     var_names = ['']
@@ -45,9 +49,13 @@ def write_column_mplot_dat(spreadsheet, custom_keys, mfile_data):
             val_keys.append(key)
             var_names = var_names + [key]
 
-    # Print the descriptions only once
-    if ws.max_row == 1:
+    # Print the descriptions only once on each sheet
+    if args.s == False:
+        if ws.max_row == 1:
+            ws.append(var_descriptions)
+    else:
         ws.append(var_descriptions)
+
 
     ws.append(var_names)
 
@@ -83,7 +91,10 @@ if __name__ == "__main__":
     parser.add_argument('-f', metavar='f', type=str, help='File to read as MFILE.DAT')
 
     parser.add_argument('-x', metavar='x', type=str,
-                        help='spreadsheet (.xlsx) file to append to')
+                        help='Workbook (.xlsx) file to append to')
+
+    parser.add_argument('-s', metavar='s', type=str,
+                        help='Start a new worksheet (tab) with specified name')
 
     parser.add_argument("--defaults", help="run with default params", action="store_true")
 
@@ -101,7 +112,7 @@ if __name__ == "__main__":
     else:
         M = mf.MFile()
 
-    # If user has specified a spreadsheet file that isn't data_summary.xlsx
+    # If user has specified a workbook file that isn't data_summary.xlsx
     if args.x:
         spreadsheet = args.x
     else:
@@ -136,6 +147,6 @@ if __name__ == "__main__":
     print(INPUT_CONFIG)
 
     if args.defaults:
-        write_column_mplot_dat(spreadsheet, INPUT_CONFIG, M)
+        append_line(spreadsheet, INPUT_CONFIG, M)
     else:
-        write_column_mplot_dat(spreadsheet, INPUT_CONFIG, M)
+        append_line(spreadsheet, INPUT_CONFIG, M)
