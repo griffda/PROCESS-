@@ -870,7 +870,7 @@ module current_drive_variables
   real(kind(1.0D0)) :: ftritbm = 1.0D-6
   !+ad_vars  gamcd : normalised current drive efficiency (1.0e20 A/W-m2)
   real(kind(1.0D0)) :: gamcd = 0.0D0
-  !+ad_vars  gamma_ecrh : user input ECRH gamma
+  !+ad_vars  gamma_ecrh /0.35/ : user input ECRH gamma (1.0e20 A/W-m2)
   real(kind(1.0D0)) :: gamma_ecrh = 0.35D0
   !+ad_vars  iefrf /5/ : switch for current drive efficiency model: <OL>
   !+ad_varc         <LI> Fenstermacher Lower Hybrid
