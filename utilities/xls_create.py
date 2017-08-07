@@ -1,11 +1,24 @@
 #!/usr/bin/env python
 
 """
-  Append summary data to a spreadsheet data_summary.xlsx or name specified.
+Append summary data to a spreadsheet data_summary.xlsx or name specified.
+Michael Kovari
 
-  Michael Kovari
+The descriptions are output only once, at the head of each worksheet.
+The variable names are output each time the utility is used, so the user can check that they haven't changed.
+Some clever person could include an automated check instead.  If this is done, it is still a good idea to leave a blank line -
+When Excel plots a graph, it handles blank lines by simply leaving a gap in the line joining the points.
 
-    + 31/07/2017: Initial version created
+Data source: MFILE.DAT or as specified
+Configuration file: xls.conf
+Output file data_summary.xlsx or as specified
+
+I have used openPyXL.
+Charts in existing workbooks will be lost.
+If you want to add a chart to the workbook, you will need to save a copy.
+
+You can now specify the sheet to which the data will be appended, with argument '-n'.
+The sheet will be created if it does not exist.
 """
 
 import os
@@ -32,12 +45,19 @@ def append_line(spreadsheet, custom_keys, mfile_data):
     except:
         wb = Workbook()
 
-    # grab the active worksheet
-    if args.s:
-        ws = wb.create_sheet()
-        print('New sheet created:',args.s)
+    # Use the worksheet with the specified name
+    if args.n:
+        try:
+            ws = wb.get_sheet_by_name(args.n)
+        except:
+            ws = wb.create_sheet(title=args.n)
+            new_sheet_created = True
+            print('New sheet created:',args.n)
     else:
+        # Use whichever worksheet is active
         ws = wb.active
+
+
 
     var_descriptions = ['']
     var_names = ['']
@@ -50,12 +70,12 @@ def append_line(spreadsheet, custom_keys, mfile_data):
             var_names = var_names + [key]
 
     # Print the descriptions only once on each sheet
-    if args.s == False:
+    try:
         if ws.max_row == 1:
             ws.append(var_descriptions)
-    else:
-        ws.append(var_descriptions)
-
+    except:
+        # Don't write the header line
+        pass
 
     ws.append(var_names)
 
@@ -75,7 +95,8 @@ def append_line(spreadsheet, custom_keys, mfile_data):
          ws.append(new_row)
 
     # Save the spreadsheet
-    wb.save(spreadsheet)
+    wb.save(spreadsheet)    
+    print('Data appended to worksheet', ws.title)
 
 #-----------------------------------------------------------------------------
 
@@ -93,8 +114,8 @@ if __name__ == "__main__":
     parser.add_argument('-x', metavar='x', type=str,
                         help='Workbook (.xlsx) file to append to')
 
-    parser.add_argument('-s', metavar='s', type=str,
-                        help='Start a new worksheet (tab) with specified name')
+    parser.add_argument('-n', metavar='n', type=str,
+                        help='Use the worksheet (tab) with specified name.  Sheet will be created if it does not exist.')
 
     parser.add_argument("--defaults", help="run with default params", action="store_true")
 
@@ -118,7 +139,7 @@ if __name__ == "__main__":
     else:
         spreadsheet = 'data_summary.xlsx'
 
-    print('spreadsheet name', spreadsheet)
+    print('Workbook name', spreadsheet)
 
     # Get files in current directory to check for the config file.
     current_directory = os.listdir(".")
