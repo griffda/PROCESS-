@@ -19,7 +19,7 @@ module divertor_ode
   use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
   use constants
   use process_input, only: lower_case
-  use divertor_kallenbach_variables, only : neratio, pressure0, fractionwidesol, fmom, TotalPowerLost, impurity_enrichment, &
+  use divertor_kallenbach_variables, only : neratio, pressure0, fractionwidesol, fmom, totalpowerlost, impurity_enrichment, &
                                             lambda_q_omp, target_spread
   use build_variables, only: rspo
   use physics_variables, only:  tesep_keV => tesep, bp
@@ -774,7 +774,7 @@ do i = 1, nimp
     fmom = 2.0D0*nete0/nete
 
     ! Total power lost due to radiation, ionisation and recombination [W]
-    TotalPowerLost =  (Y(7)+Y(8)+Y(9)+Y(10))*1.0e6
+    totalpowerlost =  (Y(7)+Y(8)+Y(9)+Y(10))*1.0e6
 
     ! Ion flux density on target [m-2s-1]
     IonFluxTarget = partfluxtar/sinfact
@@ -881,7 +881,7 @@ do i = 1, nimp
     call ovarre(outfile, 'Power lost due to charge exchange  [W] ','()', Y(9)*1.e6, 'OP ')
     call ovarre(outfile, 'Power lost due to electron impact ionisation [W] ','()', Y(10)*1.e6, 'OP ')
     call ovarre(outfile, 'Total power lost due to radiation, ionisation and recombination [W] ',&
-                         '(TotalPowerLost)', TotalPowerLost, 'OP ')
+                         '(totalpowerlost)', totalpowerlost, 'OP ')
     call ovarre(outfile, 'Power balance error [W] ','(balance)', balance, 'OP ')
 
     call ocmmnt(outfile, 'The following impurities are used in the divertor model:')

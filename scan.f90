@@ -285,7 +285,7 @@ contains
        plabel(65) = 'Temperature_at_target____'
        plabel(66) = 'Helium_fraction__________'
        plabel(67) = 'Momentum_loss_factor_____'
-       plabel(68) = 'TotalPowerLost_[W]_______'
+       plabel(68) = 'totalpowerlost_[W]_______'
        plabel(69) = 'H__concentration_________'
        plabel(70) = 'He_concentration_________'
        plabel(71) = 'Be_concentration_________'
@@ -552,7 +552,7 @@ contains
        outvar(65,iscan) = ttarget
        outvar(66,iscan) = ralpne
        outvar(67,iscan) = fmom
-       outvar(68,iscan) = TotalPowerLost
+       outvar(68,iscan) = totalpowerlost
        outvar(69,iscan) = fimp(1)
        outvar(70,iscan) = fimp(2)
        outvar(71,iscan) = fimp(3)

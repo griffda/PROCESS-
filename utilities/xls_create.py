@@ -65,7 +65,12 @@ def append_line(spreadsheet, custom_keys, mfile_data):
         if key in mfile_keys:
             var_description = mfile_data.data[key].var_description.replace(" ", "_")
             var_descriptions = var_descriptions + [var_description]
-
+            val_keys.append(key)
+            var_names = var_names + [key]
+        else:
+            # The variable does not appear in the MFILE.  Leave a space
+            var_description = ""
+            var_descriptions = var_descriptions + [var_description]
             val_keys.append(key)
             var_names = var_names + [key]
 
@@ -91,11 +96,10 @@ def append_line(spreadsheet, custom_keys, mfile_data):
                 # These are present in the MFILE for each scan point
                 value = mfile_data.data[vkey].get_scan(num+1)
              new_row = new_row + [value]
-
          ws.append(new_row)
 
     # Save the spreadsheet
-    wb.save(spreadsheet)    
+    wb.save(spreadsheet)
     print('Data appended to worksheet', ws.title)
 
 #-----------------------------------------------------------------------------
@@ -123,7 +127,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    default_variables = ['runtitle','username','date','iscan', 'rmajor', 'aspect', 'powfmw']
+    default_variables = ['runtitle','username','date','iscan', 'rmajor', 'aspect', 'powfmw',
+    'bt', 'beta', 'te','dene','ralpne','dnz','pradmw','pdivt','hfact','pinjmw','tburn',
+    'fmom','qtargetcomplete','qtarget','totalpowerlost','ohcth','tfcth','tmarg','sig_hoop',
+    'sig_axial','sig_axial']
+    # Also append these variables by default:
     header_variables = ['procver','date','time','username','runtitle','tagno','isweep','nsweep']
 
     # If user has specified an MFILE file that isn't MFILE.DAT pass the filename to
@@ -164,10 +172,6 @@ if __name__ == "__main__":
         conf_file.close()
 
     INPUT_CONFIG = mf.read_mplot_conf("xls.conf")
-    print('Variables to be output:')
     print(INPUT_CONFIG)
 
-    if args.defaults:
-        append_line(spreadsheet, INPUT_CONFIG, M)
-    else:
-        append_line(spreadsheet, INPUT_CONFIG, M)
+    append_line(spreadsheet, INPUT_CONFIG, M)

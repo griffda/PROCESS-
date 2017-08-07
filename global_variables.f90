@@ -1008,8 +1008,8 @@ module divertor_kallenbach_variables
   !+ad_vars  fmom : momentum loss factor [-]
   real(kind(1.0D0)), public :: fmom
 
-  !+ad_vars  TotalPowerLost : Total power lost due to radiation, ionisation and recombination [W]
-  real(kind(1.0D0)), public :: TotalPowerLost
+  !+ad_vars  totalpowerlost : Total power lost due to radiation, ionisation and recombination [W]
+  real(kind(1.0D0)), public :: totalpowerlost
 
 end module divertor_kallenbach_variables
 
