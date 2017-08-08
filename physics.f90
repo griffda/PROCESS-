@@ -523,7 +523,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 function t_eped_scaling()
-    ! Issue #413.
+    ! Issue #413.  See also comment dated 7/8/17
     ! Predictive pedestal modelling for DEMO,  Samuli Saarelma.
     ! https://idm.euro-fusion.org/?uid=2MSZ4T
 
@@ -538,14 +538,16 @@ function t_eped_scaling()
     a_beta = 0.43D0
     a_kappa = 0.50d0
     a_a = 0.88D0
-
+    ! Correction for single null and for ELMs = 0.65
     ! Elongation and triangularity are defined at the plasma boundary.
     ! Total normalised plasma beta is used.
-    t_eped_scaling = c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
+
+    t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
                           kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
 end function t_eped_scaling
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  function eped_warning()
+     ! Issue #413.
      logical :: eped_warning
      eped_warning=.false.
      if((triang<0.399d0).or.(triang>0.601d0)) eped_warning=.true.

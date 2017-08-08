@@ -10,7 +10,7 @@ Some clever person could include an automated check instead.  If this is done, i
 When Excel plots a graph, it handles blank lines by simply leaving a gap in the line joining the points.
 
 Data source: MFILE.DAT or as specified
-Configuration file: xls.conf
+Configuration file: xls.conf (Not required.  Default config file will be written if it is not present.)
 Output file data_summary.xlsx or as specified
 
 I have used openPyXL.
@@ -108,7 +108,8 @@ def append_line(spreadsheet, custom_keys, mfile_data):
 if __name__ == "__main__":
 
     # Setup command line arguments
-    parser = argparse.ArgumentParser(description='Append summary data to a spreadsheet data_summary.xlsx or name specified.')
+    parser = argparse.ArgumentParser(description='Append summary data to a spreadsheet data_summary.xlsx or name specified.'+
+    '  Config file xls.conf optional')
 
     parser.add_argument('-p', metavar='p', type=str, nargs='+',
                         help='add new variables to the output')
@@ -128,9 +129,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     default_variables = ['runtitle','username','date','iscan', 'rmajor', 'aspect', 'powfmw',
-    'bt', 'beta', 'te','dene','ralpne','dnz','pradmw','pdivt','hfact','pinjmw','tburn',
-    'fmom','qtargetcomplete','qtarget','totalpowerlost','ohcth','tfcth','tmarg','sig_hoop',
-    'sig_axial','sig_axial']
+    'bt', 'beta', 'te','te0','dene','ralpne','dnz','pradmw','pdivt','hfact','pinjmw','tburn',
+    'fmom','qtargetcomplete','qtarget','totalpowerlost','vburn','vsstt','bore','ohcth','tfcth','tmarg','sig_hoop',
+    'sig_axial','sig_axial', 'tesep', 'nesep','ieped','teped','neped']
     # Also append these variables by default:
     header_variables = ['procver','date','time','username','runtitle','tagno','isweep','nsweep']
 
