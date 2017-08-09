@@ -2267,7 +2267,7 @@ contains
     real(kind(1.0D0)), intent(out) :: s_axial,axial_force
 
     !  Local variables
-    real(kind(1.0D0)) :: b, hl, ni
+    real(kind(1.0D0)) :: b, hl, ni, area_ax
 
     real(kind(1.0D0)) :: kb2, k2b2, ekb2_1, ekb2_2, ek2b2_1, ek2b2_2
 
@@ -2308,8 +2308,11 @@ contains
     ! calculate axial force [N]
     axial_force = axial_term_1*(axial_term_2 - axial_term_3)
 
-    ! calculate axial stress [MPa]
-    s_axial = axial_force/(oh_steel_frac*0.5*areaoh)
+    ! axial area [m2]
+    area_ax = pi*(rb(nohc)**2 - ra(nohc)**2)
+
+    ! calculate unsmeared axial stress [MPa]
+    s_axial = axial_force/(oh_steel_frac*0.5*area_ax)
 
   end subroutine axial_stress
 
