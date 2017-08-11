@@ -1,3 +1,4 @@
+
 {
  "version":  [ "PROCESS revision 378" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
@@ -175,5 +176,6 @@
   { "no": 169, "level": 2, "message": "FLUID_PROPERTIES: Problem in call to tpflsh(REFPROP)" },
   { "no": 170, "level": 2, "message": "FLUID_PROPERTIES: Problem in call to trnprp(REFPROP)" },
   { "no": 171, "level": 2, "message": "ENTHALPY_PS: Problem in call to psflsh(REFPROP)" },
-  { "no": 172, "level": 2, "message": "TSAT_REFPROP: Problem in call to satp(REFPROP)" }]
+  { "no": 172, "level": 2, "message": "TSAT_REFPROP: Problem in call to satp(REFPROP)" },
+  { "no": 173, "level": 3, "message": "Do not use constraint 55 if iblanket != 2"}]
 }

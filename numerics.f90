@@ -295,7 +295,7 @@ module numerics
        'Neutron fluence on TF coil limit ', &
        !+ad_varc  <LI> (54) Peak TF coil nuclear heating upper limit
        'Peak TF coil nucl. heating limit ', &
-       !+ad_varc  <LI> (55) Vacuum vessel helium concentration upper limit
+       !+ad_varc  <LI> (55) Vacuum vessel helium concentration upper limit iblanket =2
        'Vessel helium concentration limit', &
        !+ad_varc  <LI> (56) Pseparatrix/Rmajor upper limit
        'Psep / R upper limit             ', &
