@@ -1558,13 +1558,13 @@ module fwbs_variables
   !+ad_varc             <LI> = 1 KIT model based on a helium-cooled pebble-bed
   !+ad_varc                      blanket (HCPB) reference design</UL>
   integer :: blktmodel = 0
-  !+ad_vars  declblkt /0.075/ : neutron power deposition decay length of blanket structural material (m)
+  !+ad_vars  declblkt /0.075/ : neutron power deposition decay length of blanket structural material (m) (Stellerators only)
   !+ad_varc
   real(kind(1.0D0)) :: declblkt = 0.075D0
-  !+ad_vars  declfw /0.075/ : neutron power deposition decay length of first wall structural material (m)
+  !+ad_vars  declfw /0.075/ : neutron power deposition decay length of first wall structural material (m) (Stellerators only)
   !+ad_varc
   real(kind(1.0D0)) :: declfw = 0.075D0
-  !+ad_vars  declshld /0.075/ : neutron power deposition decay length of shield structural material (m)
+  !+ad_vars  declshld /0.075/ : neutron power deposition decay length of shield structural material (m) (Stellerators only)
   !+ad_varc
   real(kind(1.0D0)) :: declshld = 0.075D0
   !+ad_vars  blkttype /3/ : Switch for blanket type:<UL>

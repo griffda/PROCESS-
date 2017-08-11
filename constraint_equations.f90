@@ -1288,8 +1288,6 @@ contains
           !#=# fwbs
           !#=#=# fptfnuc, ptfnucmax
 
-          ! TODO this is only for blanket model > 0. Vardes states ptfnucpm3 is only for iblanket > 0 (issue #380)
-
           ! fptfnuc   |  f-value for maximum TF coil nuclear heating
           ! ptfnucmax |  maximum nuclear heating in TF coil (MW/m3)
           ! ptfnucpm3 |  nuclear heating in the TF coil (MW/m3)
