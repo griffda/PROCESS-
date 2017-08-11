@@ -1371,10 +1371,7 @@ subroutine outtf(outfile, peaktfflag)
             call ocmmnt(outfile,'Two-phase quench model is used')
             call ovarre(outfile,'Electric field at which TF quench is detected, discharge begins (V/m)',&
                                 '(quench_detection_ef)', quench_detection_ef)
-
-            call ovarre(outfile,'Time for quench detection (s)','(time1)', time1,'OP ')
-            call ovarre(outfile,'Peak temperature of normal zone before quench is detected (K)','(T1)',T1,'OP ')
-            call ovarre(outfile,'Resistivity of copper in normal zone when quench is detected (ohm.m)','(etamax)',etamax,'OP ')
+            call ovarre(outfile,'Peak temperature before quench is detected (K)','(T1)',T1,'OP ')
         else
             call ocmmnt(outfile, 'Simple one-phase quench model is used')
         endif
@@ -2016,33 +2013,21 @@ subroutine croco_quench(croco_cable)
     real(kind(1.0D0)):: integral1,integral2,integral, sum1, sum2, current_density_in_cable
     integer::i
 
+    real(kind(1.0D0))::residual
+    logical::error
+
     if(quench_detection_ef>1d-10)then
         ! Two-phase quench model is used.
         ! Phase 1
-        ! Value of resistivity at which detection voltage is reached
+        ! Issue #548, or see K:\Power Plant Physics and Technology\PROCESS\HTS\
+        ! Solve for the temperature at which the quench detection field is reached.
+        ! secant_solve(f,x1,x2,solution,error,residual,opt_tol)
         current_density_in_cable = jwptf *  (leno / cable_width)**2
-        etamax = quench_detection_ef * croco_cable%copper_fraction / current_density_in_cable
-        delta_T = 1d0
-        integral = 0d0
-        do i=0,300
-            T = tftmp + (i+0.5d0)*delta_T
-            ! Check the resistivity
-            call copper_properties2(T,bmaxtf,copper)
-            if (copper%resistivity>=etamax)then
-                ! Quench detection voltage has been passed
-                !write(*,*)'T', T, ' copper%resistivity', copper%resistivity, ' etamax',etamax
-                T1 = T - 0.5d0*delta_T
-                exit
-            end if
-            ! Quench detection voltage not yet reached
-            ! For phase 1 we do not include the jacket.
-            integral = integral + delta_T * quench_integrand(T,&
-                copper=copper,hastelloy=hastelloy,solder=solder,helium=helium)
-        end do
-        !write(*,'(10(a,1pe10.3,1x))') 'Temp = ', T, 'etamax = ', etamax, 'copper%resistivity = ', copper%resistivity
+        call secant_solve(detection_field_error,5d0, 70d0,T1,error,residual)
+        ! T1 = Peak temperature of normal zone before quench is detected
 
-        croco_quench_factor = croco_cable%copper_fraction / jwptf**2
-        time1 = croco_quench_factor * integral
+        ! Obsolete but leave here for the moment
+        ! croco_quench_factor = croco_cable%copper_fraction / jwptf**2
 
         if(T1>tmax_croco)write(*,*)'Phase 1 of quench is too hot: T1 = ',T1
     else
@@ -2093,6 +2078,39 @@ subroutine croco_quench(croco_cable)
     jwdgpro = min(jwdgpro_1,jwdgpro_2)
 
     if(jwdgpro<1d0)write(*,*)'jwdgpro = ', jwdgpro
+
+contains
+    function detection_field_error(t1)
+        ! Issue #548.
+        ! The difference beteween the actual voltage developed during the first
+        ! phase of the quench and the specified detection voltage
+        real(kind(1.0D0))::detection_field_error, deltaj,jcritsc
+
+        real(kind(1.0D0)), intent(in) :: t1
+        real(kind(1.0D0)):: jc
+        logical :: validity
+        integer :: iprint
+
+        call copper_properties2(t1,bmaxtf,copper)
+        call jcrit_rebco(t1,bmaxtf,jcritsc,validity,iprint)
+
+        ! Critical current density at specified temperature t1, operating maximum field bmaxtf
+        jc = jcritsc * croco_cable%rebco_fraction
+
+        ! By definition jc=0 below the critical temperature at operating field
+        ! All the current flows in the copper
+        ! Note that the copper  resisitivity is a function of temperature, so it should still
+        ! be possible to solve for the correct detection voltage.
+        if(jc<0) jc = 0d0
+
+        deltaj = (current_density_in_cable - jc)
+        detection_field_error = deltaj * copper%resistivity / croco_cable%copper_fraction &
+                                  - quench_detection_ef
+        !write(*,*)"deltaj= ",deltaj, " detection_field_error=", detection_field_error, " quench_detection_ef=",quench_detection_ef
+        !write(*,*)"copper%resistivity= ",copper%resistivity, " t1=", t1, " bmaxtf=",bmaxtf
+        !write(*,*)"jcritsc=",jcritsc
+        !write(*,*)
+    end function
 
 end subroutine croco_quench
 

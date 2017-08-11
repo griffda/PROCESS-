@@ -237,7 +237,7 @@ subroutine init
     open(unit=nin,file=trim(fileprefix),status='old')
   end if
   ! open(unit=nin,file=trim(fileprefix)//'IN.DAT',status='old')
-  
+
   open(unit=nout,file=trim(fileprefix)//'OUT.DAT',status='unknown')
   open(unit=nplot,file=trim(fileprefix)//'PLOT.DAT',status='unknown')
   open(unit=mfile,file=trim(fileprefix)//'MFILE.DAT',status='unknown')
@@ -1716,8 +1716,8 @@ subroutine runtests
   call ovarre(nout,'Binomial coefficients C(5,5): 1', '(binomial(5,5))', binomial(5,5))
 
   call test_quench()
-
   call brookscoil(nout)
+  call test_secant_solve()
 end subroutine runtests
 
 

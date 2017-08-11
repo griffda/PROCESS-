@@ -89,7 +89,8 @@ module maths_library
 
   public :: ellipke,find_y_nonuniform_x,gamfun,hybrd,linesolv,qpsub, &
        quanc8,sumup3,svd,tril,vmcon,zeroin, eshellvol, dshellvol, &
-       eshellarea, dshellarea, binomial, binarysearch, interpolate
+       eshellarea, dshellarea, binomial, binarysearch, interpolate, &
+       secant_solve, test_secant_solve
   public::variable_error
   public :: integer2string
 
@@ -2459,7 +2460,7 @@ contains
     external :: fcnvmc1,fcnvmc2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    lowest_valid_fom = 9999d0
+    lowest_valid_fom = 999d0
 
     np1 = n + 1
     npp = 2*np1
@@ -2554,12 +2555,12 @@ contains
 
        iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
        if(objf>=0d0)then
-           write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations. ", &
-             "FoM= ", f10.4, " Lowest valid FoM=", f10.4, a1)', &
+           write(iotty, '("==>", I5, "  vmcon iterations", "   min [", a20, "] max. ", &
+             "Normalised FoM =", f9.4, " Lowest valid normalised FoM =", f9.4, a1)', &
              ADVANCE="NO"), niter+1, adjustl(iteration_progress), objf, lowest_valid_fom, achar(13)
         else
              write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations. ", &
-               "FoM= ", f10.4, " Highest valid FoM=", f10.4, a1)', &
+               "Normalised FoM = ", f9.4, " Highest valid normalised FoM =", f9.4, a1)', &
                ADVANCE="NO"), niter+1, adjustl(iteration_progress), -objf, -lowest_valid_fom, achar(13)
         end if
 
@@ -6008,6 +6009,75 @@ contains
       write (integer2string,'(I2.2)') value
   end function integer2string
 
+  ! ------------------------------------------------------------------------
+  subroutine secant_solve(f,x1,x2,solution,error,residual,opt_tol)
+      ! Solve an equation f(x)=0
+      ! Only requires one function evaluation per iteration (plus two to start with)
+      ! Does not require any derivatives.
+      ! https://en.wikipedia.org/wiki/Secant_method
+      ! Requires two initial values, x0 and x1, which should ideally be chosen to lie close to the root.
+      !external:: f
+      real(kind(1.0D0))::f
+      real(kind(1.0D0)), intent(out) ::solution, residual
+      real(kind(1.0D0)), intent(in) ::x1,x2
+      real(kind(1.0D0)), intent(in), optional ::opt_tol
+      real(kind(1.0D0)),dimension(20) ::x
+      integer :: i
+      logical, intent(out)::error
+      real(kind(1.0D0))::mean, tol,fximinus1, fximinus2
+      error = .FALSE.
+      tol=0.001d0; if (present(opt_tol)) tol=opt_tol
+
+      x(1)=x1
+      x(2)=x2
+      mean = (x1+x2)/2
+      ! Calculate the first two values before the loop
+      fximinus1 = f(x(2))
+      fximinus2 = f(x(1))
+      !write(*,*)"x(1)",x(1),"x(2)",x(2),"fximinus1",fximinus1,"fximinus2",fximinus2
+      do i=3,20
+          x(i) = x(i-1) - fximinus1 * ((x(i-1) - x(i-2)) / (fximinus1 - fximinus2))
+          ! Store values for the *next iteration
+          fximinus2 = fximinus1
+          fximinus1 = f(x(i))
+          residual = fximinus1
+          !write(*,*)"x(i)", x(i), "  residual",residual,"  fximinus1",fximinus1, "  fximinus2",fximinus2
+          ! test for convergence
+          if(abs(residual) < tol) then
+              solution = x(i)
+              return
+          endif
+      end do
+      ! Convergence not achieved.  Return the best value and a flag.
+      error = .TRUE.
+      solution = x(i-1)
+      write(*,*)"Secant solver not converged.  solution", solution, "  residual",residual
+      !stop
+
+  end subroutine secant_solve
+!---------------------------------------------------------------
+
+  subroutine test_secant_solve()
+      real(kind(1.0D0)) ::solution
+      real(kind(1.0D0)) ::residual
+      logical::error
+      !external:: f
+
+      call  secant_solve(dummy,10.d0,30.0d0,solution,error,residual)
+      if((abs(solution-24.7386)<0.001d0).and.(error.eqv..FALSE.).and.(abs(residual)<0.001d0))then
+          write(*,*)"secant solve: PASS.  Error = ", solution-24.7386, ' residual = ', residual
+      else
+           write(*,*)"secant solve: FAIL. solution=", solution, 'error flag = ', error, "residual = ", residual
+           write(*,*)"Correct solution should be 24.7386"
+      end if
+
+  contains
+      function dummy(x)
+          real(kind(1.0D0))::dummy,x
+          dummy = x**2 - 612.d0
+      end function
+  end subroutine test_secant_solve
+
 end module maths_library
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -6236,6 +6306,7 @@ contains
     integer, intent(inout) :: ifail
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    write(*,*)'subroutine objfn called, in module testdata, maths_library.f90'
 
     select case (itest)
 

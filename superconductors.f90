@@ -19,6 +19,8 @@ subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
     !+ad_args  temperature : input real : superconductor temperature (K)
     !+ad_args  bnormal : input real : Magnetic field at superconductor (T)
     !+ad_args  jcrit : output real : Critical current density in superconductor (A/m2)
+    ! Will return a negative number if the temperature is greater than Tc0, the
+    ! zero-field critical temperature.
     implicit none
 
     !  Arguments
@@ -28,7 +30,7 @@ subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
     integer, intent(in) :: iprint
 
     !  Local variables
-    real(kind(1.0D0)) :: birr, factor
+    real(kind(1.0D0)) :: birr, factor, tcb
 
     !  Parameters
     real(kind(1.0D0)), parameter :: tc0 = 90.0d0        !  (K)
@@ -38,6 +40,7 @@ subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
     real(kind(1.0D0)), parameter :: q = 1.7d0           ! exponent
     real(kind(1.0D0)), parameter :: alpha =1.54121d0    ! exponent
     real(kind(1.0D0)), parameter :: beta = 1.96679d0    ! exponent
+    real(kind(1.0D0)), parameter :: oneoveralpha = 1d0 / alpha  ! inverse
 
     validity = .true.
     if((temperature<4.2d0).or.(temperature>72.0d0) )validity = .false.
@@ -52,16 +55,33 @@ subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
         write(*,*)'temperature = ', temperature, '   Field = ', b
     endif
 
-    birr = birr0 * (1 - temperature/tc0)**alpha
-    factor = (b/birr)**p * (1-b/birr)**q
-    jcrit = (a/b) * birr**beta *factor
+    if(temperature<tc0)then
+        ! Normal case
+        birr = birr0 * (1 - temperature/tc0)**alpha
+    else
+        ! If temp is greater than critical temp, ensure result is real but negative.
+        birr = birr0 * (1 - temperature/tc0)
+    end if
+
+    if(b<birr)then
+        ! Normal case
+        factor = (b/birr)**p * (1-b/birr)**q
+        jcrit = (a/b) * (birr**beta) * factor
+    else
+        ! Field is too high
+        ! Ensure result is real but negative, and varies with temperature.
+        ! tcb = critical temperature at field b
+        tcb = tc0 * (1-(b/birr0)**oneoveralpha)
+        jcrit = -(temperature - tcb)
+    end if
+
 
 end subroutine jcrit_rebco
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 subroutine test_quench()
     real(kind(1.0D0)) :: jcrit
     real(kind(1.0D0)) :: B, delta_b,jcrit42,jcrit14,jcrit22, jcrit33
-    real(kind(1.0D0)) :: jcrit50, jcrit65, jcrit72
+    real(kind(1.0D0)) :: jcrit50, jcrit65, jcrit72, jcrit90
     real(kind(1.0D0)) :: T, delta_t, copper0, copper10, hastelloyB, RRR
     real(kind(1.0D0)) :: copper0B, copper10B
     integer::i
@@ -70,7 +90,7 @@ subroutine test_quench()
     type(resistive_material):: helium
     copper%rrr = 100.0d0
 10  format(1x,a,1pe10.2,a,1pe10.2)
-20  format(f10.1, 8(1pe10.2))
+20  format(f10.1, 9(1pe10.2))
 30  format(9(a10))
 
     write(*,*)'TEST of subroutine jcrit_rebco:'
@@ -84,7 +104,7 @@ subroutine test_quench()
     open(unit=1,file='REBCO_JC.DAT')
     B = 0.5d0
     delta_b = 0.5d0
-    write(1,30)'Field (T)', '4.2', '14', '22', '33', '50', '65', '72'
+    write(1,30)'Field (T)', '4.2', '14', '22', '33', '50', '65', '72', '90'
     do i=1,30
         call jcrit_rebco(4.2d0, B, jcrit42, validity, 0)
         call jcrit_rebco(14.0d0, B, jcrit14, validity, 0)
@@ -93,8 +113,10 @@ subroutine test_quench()
         call jcrit_rebco(50.0d0, B, jcrit50, validity, 0)
         call jcrit_rebco(65.0d0, B, jcrit65, validity, 0)
         call jcrit_rebco(72.0d0, B, jcrit72, validity, 0)
+        ! Beyond the critical temperature at any non-zero field
+        call jcrit_rebco(90.0d0, B, jcrit90, validity, 0)
 
-        write(1,20) B, jcrit42,jcrit14,jcrit22, jcrit33, jcrit50, jcrit65, jcrit72
+        write(1,20) B, jcrit42,jcrit14,jcrit22, jcrit33, jcrit50, jcrit65, jcrit72, jcrit90
         B = B + delta_b
     end do
     close(unit=1)
@@ -1547,5 +1569,8 @@ real function magrCu(T,B,RRR)
 
     return
 end
+
+!-----------------------------------------------------------------
+
 
 end module superconductors
