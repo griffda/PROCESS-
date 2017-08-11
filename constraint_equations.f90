@@ -1288,8 +1288,6 @@ contains
           !#=# fwbs
           !#=#=# fptfnuc, ptfnucmax
 
-          ! TODO this is only for blanket model > 0. Vardes states ptfnucpm3 is only for iblanket > 0 (issue #380)
-
           ! fptfnuc   |  f-value for maximum TF coil nuclear heating
           ! ptfnucmax |  maximum nuclear heating in TF coil (MW/m3)
           ! ptfnucpm3 |  nuclear heating in the TF coil (MW/m3)
@@ -1306,21 +1304,23 @@ contains
           !#=# fwbs
           !#=#=# fvvhe, vvhemax
 
-          ! TODO another mention of blanket model > 0 in vardes. (issue #380)
-          ! TODO vvhemax says iblanket = 2 only? (issue #381) is this correct.
-
           ! fvvhe   |  f-value for vacuum vessel He concentration limit
           ! vvhealw |  allowed maximum helium concentration in vacuum vessel
           !            at end of plant life (appm)
           ! vvhemax |  maximum helium concentration in vacuum vessel at end of
           !            plant life (appm) (iblanket=2 (KIT HCPB))
-          cc(i) = 1.0D0 - fvvhe * vvhealw/vvhemax
+          if (iblanket == 2) then 
+             cc(i) = 1.0D0 - fvvhe * vvhealw/vvhemax
 
-          if (present(con)) then
-             con(i) = vvhealw * (1.0D0 - cc(i))
-             err(i) = vvhemax * cc(i)
-             symbol(i) = '<'
-             units(i) = 'appm'
+             if (present(con)) then
+                con(i) = vvhealw * (1.0D0 - cc(i))
+                err(i) = vvhemax * cc(i)
+                symbol(i) = '<'
+                units(i) = 'appm'
+             end if
+          else
+             !if iblanket != 2
+             call report_error(173)
           end if
 
        case (56)  ! Equation for power through separatrix / major radius upper limit

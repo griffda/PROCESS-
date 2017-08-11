@@ -1558,13 +1558,13 @@ module fwbs_variables
   !+ad_varc             <LI> = 1 KIT model based on a helium-cooled pebble-bed
   !+ad_varc                      blanket (HCPB) reference design</UL>
   integer :: blktmodel = 0
-  !+ad_vars  declblkt /0.075/ : neutron power deposition decay length of blanket structural material (m)
+  !+ad_vars  declblkt /0.075/ : neutron power deposition decay length of blanket structural material (m) (Stellerators only)
   !+ad_varc
   real(kind(1.0D0)) :: declblkt = 0.075D0
-  !+ad_vars  declfw /0.075/ : neutron power deposition decay length of first wall structural material (m)
+  !+ad_vars  declfw /0.075/ : neutron power deposition decay length of first wall structural material (m) (Stellerators only)
   !+ad_varc
   real(kind(1.0D0)) :: declfw = 0.075D0
-  !+ad_vars  declshld /0.075/ : neutron power deposition decay length of shield structural material (m)
+  !+ad_vars  declshld /0.075/ : neutron power deposition decay length of shield structural material (m) (Stellerators only)
   !+ad_varc
   real(kind(1.0D0)) :: declshld = 0.075D0
   !+ad_vars  blkttype /3/ : Switch for blanket type:<UL>
@@ -3798,7 +3798,7 @@ module constraint_variables
   !+ad_varc              (constraint equation 12, iteration variable 15)
   real(kind(1.0D0)) :: fvs = 1.0D0
   !+ad_vars  fvvhe /1.0/ : f-value for vacuum vessel He concentration limit
-  !+ad_varc                (blktmodel>0)
+  !+ad_varc                (iblanket = 2)
   !+ad_varc                (constraint equation 55, iteration variable 96)
   real(kind(1.0D0)) :: fvvhe = 1.0D0
   !+ad_vars  fwalld /1.0/ : f-value for maximum wall load
@@ -3861,7 +3861,7 @@ module constraint_variables
   !+ad_varc                   (constraint equation 39)
   real(kind(1.0D0)) :: tpkmax = 600.0D0
   !+ad_vars  vvhealw /1.0/ : allowed maximum helium concentration in vacuum vessel
-  !+ad_varc                  at end of plant life (appm) (blktmodel>0)
+  !+ad_varc                  at end of plant life (appm) (iblanket =2)
   !+ad_varc                  (constraint equation 55)
   real(kind(1.0D0)) :: vvhealw = 1.0D0
   !+ad_vars  walalw /1.0/ : allowable wall-load (MW/m2)

@@ -31,7 +31,7 @@ class AToBConfig():
     outdir = abspath("steps")
     a = "A.DAT"
     b = "B.DAT"
-    path_to_process = "/home/pknight/process/bin/process_draft"
+    path_to_process = "/home/PROCESS/develop/process.exe"
     vary_niter = 20
     nsteps = 10
     factor = 1.2
