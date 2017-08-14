@@ -2556,11 +2556,11 @@ contains
        iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
        if(objf>=0d0)then
            write(iotty, '("==>", I5, "  vmcon iterations", "   min [", a20, "] max. ", &
-             "Normalised FoM =", f9.4, " Lowest valid normalised FoM =", f9.4, a1)', &
+            & "Normalised FoM =", f9.4, " Lowest valid normalised FoM =", f9.4, a1)', &
              ADVANCE="NO"), niter+1, adjustl(iteration_progress), objf, lowest_valid_fom, achar(13)
         else
              write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations. ", &
-               "Normalised FoM = ", f9.4, " Highest valid normalised FoM =", f9.4, a1)', &
+             &  "Normalised FoM = ", f9.4, " Highest valid normalised FoM =", f9.4, a1)', &
                ADVANCE="NO"), niter+1, adjustl(iteration_progress), -objf, -lowest_valid_fom, achar(13)
         end if
 

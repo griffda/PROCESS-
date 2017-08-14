@@ -14,10 +14,10 @@ contains
 subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
 
     !+ad_name  jcrit_rebco
-    !+ad_summ  Critical surface for "REBCO" 2nd generation HTS superconductor
+    !+ad_summ  Critical current density for "REBCO" 2nd generation HTS superconductor
     !+ad_type  Subroutine
     !+ad_args  temperature : input real : superconductor temperature (K)
-    !+ad_args  bnormal : input real : Magnetic field at superconductor (T)
+    !+ad_args  b : input real : Magnetic field at superconductor (T)
     !+ad_args  jcrit : output real : Critical current density in superconductor (A/m2)
     ! Will return a negative number if the temperature is greater than Tc0, the
     ! zero-field critical temperature.
@@ -75,9 +75,69 @@ subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
         jcrit = -(temperature - tcb)
     end if
 
-
 end subroutine jcrit_rebco
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! -------------------------------------------------------------------
+
+subroutine current_sharing_rebco(current_sharing_t, bfield, j)
+
+    !+ad_name  jcrit_rebco
+    !+ad_summ  Current sharing temperature for "REBCO" 2nd generation HTS superconductor
+    !+ad_type  Subroutine
+    !+ad_args  temperature : input real : superconductor temperature (K)
+    !+ad_args  b : input real : Magnetic field at superconductor (T)
+    !+ad_args  j : input real : Current density in superconductor (A/m2)
+    !+ad_args  current_sharing_t : output real : Current sharing temperature (K)
+    ! Uses 'function jcrit_rebco' and the finds the temperature for given field and current density
+    ! Will return a negative number if the current density is too high
+
+    implicit none
+
+    !  Arguments
+    real(kind(1.0D0)), intent(in) :: j, bfield
+    real(kind(1.0D0)), intent(out) :: current_sharing_t
+    real(kind(1.0D0))::x1,x2         ! Initial guesses for temperature
+    logical::error                   ! True if the solver does not converge
+    real(kind(1.0D0))::residual      ! Residual current density error
+    real(kind(1.0D0))::opt_tol = 1d7 ! Tolerance in current density
+
+    x1 = 4d0
+    x2 = 20d0
+    ! Solve for deltaj_rebco = 0
+    call secant_solve(deltaj_rebco,x1,x2,current_sharing_t,error,residual,opt_tol)
+
+contains
+
+    function deltaj_rebco(temperature)
+        ! Required because secant_solve requires a function not a subroutine
+        ! All we do is throw away the second output, 'validity'!
+        ! This needs to be 'contained' because 'bfield' must be available but cannot
+        ! be passed, because secant_solve requires a function of one variable!
+        ! Also j must be available.
+        real(kind(1.0D0)), intent(in) :: temperature
+        real(kind(1.0D0))::deltaj_rebco, jcritical
+        logical :: validity
+        integer :: iprint
+
+        call jcrit_rebco(temperature, bfield, jcritical, validity, iprint)
+        deltaj_rebco = jcritical - j
+    end function deltaj_rebco
+
+end subroutine current_sharing_rebco
+!--------------------------------------------------------------------
+
+function function_jcrit_rebco(temperature,b)
+    ! Required because secant_solve requires a function not a subroutine
+    ! All we do is throw away the second output, 'validity'!
+    real(kind(1.0D0)), intent(in) :: temperature, b
+    real(kind(1.0D0))::function_jcrit_rebco
+    logical :: validity
+    integer :: iprint
+
+    call jcrit_rebco(temperature, b, function_jcrit_rebco, validity, iprint)
+end function function_jcrit_rebco
+
+!--------------------------------------------------------------------
+
 subroutine test_quench()
     real(kind(1.0D0)) :: jcrit
     real(kind(1.0D0)) :: B, delta_b,jcrit42,jcrit14,jcrit22, jcrit33
@@ -559,7 +619,7 @@ subroutine croco(jcritsc,croco_strand,croco_cable)
     tape_thickness = rebco_thickness + copper_thickness + hastelloy_thickness
     stack_thickness = sqrt(croco_id**2 - (tape_width/2.0d0)**2)
     tapes = stack_thickness / tape_thickness
-    rebco_area = rebco_thickness * tape_width * tapes
+
     copper_area = pi / 4.0d0 * (croco_od**2 - croco_id**2) &   ! copper tube
                   + copper_thickness*tape_width*tapes          ! copper in tape
     hastelloy_area = hastelloy_thickness * tape_width * tapes
@@ -581,6 +641,7 @@ subroutine croco(jcritsc,croco_strand,croco_cable)
     croco_cable%hastelloy_fraction = hastelloy_area * strands_per_area
     croco_cable%solder_fraction = solder_area * strands_per_area
     croco_cable%rebco_fraction = rebco_area * strands_per_area
+    croco_cable%rebco_area = rebco_area * croco_cable%number_croco
 
 end subroutine croco
 !--------------------------------------------------------------------------

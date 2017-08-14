@@ -264,7 +264,7 @@ refprop.o:
 refprop_interface.o: error_handling.o refprop.o
 safety.o: global_variables.o output.o
 scan.o: error_handling.o global_variables.o impurity_radiation.o numerics.o output.o
-sctfcoil.o: error_handling.o global_variables.o maths_library.o output.o superconductors.o
+sctfcoil.o: error_handling.o global_variables.o maths_library.o ode.o output.o superconductors.o
 startup.o: global_variables.o maths_library.o output.o physics.o
 stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \
   stellarator_fwbs.o global_variables.o maths_library.o numerics.o output.o physics.o plant_power.o \

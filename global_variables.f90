@@ -1596,10 +1596,10 @@ module primary_pumping_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_stat  Okay
-  !+ad_docs  
+  !+ad_docs
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   implicit none
 
   public
@@ -4228,7 +4228,7 @@ module rebco_variables
           real(kind(1.0D0)) :: helium_fraction
           real(kind(1.0D0)) :: solder_fraction
           real(kind(1.0D0)) :: jacket_fraction
-          real(kind(1.0D0)) :: rebco_fraction
+          real(kind(1.0D0)) :: rebco_fraction, rebco_area
           real(kind(1.0D0)) :: critical_current
           real(kind(1.0D0)) :: number_croco         ! Number of CroCo strands (not an integer)
           real(kind(1.0D0)) :: acs
