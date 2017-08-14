@@ -167,11 +167,15 @@ ifeq ($(OS),Windows_NT)
 	MYROOT_2 = echo ROOTDIR = "%cd%" > utilities\rootdir.py
 	MYTAG_0 = del tag.num
 	MYTAG_1 = echo character(len=*), parameter :: tagno = "%git describe%" > tag.num
+	DIFF_0 = del untracked.info
+	DIFF_1 = echo integer :: untracked = %git diff | wc -l% > untracked.info
 else
 	MYROOT_1 = echo "  character(len=*), parameter :: ROOTDIR = '"`pwd`"'" > root.dir
 	MYROOT_2 = echo "ROOTDIR = '"`pwd`"'" > utilities/rootdir.py
 	MYTAG_0 = rm -rf tag.num
 	MYTAG_1 = echo "  character(len=*), parameter :: tagno = '"`git describe`"'" > tag.num
+	DIFF_0 = rm -rf untracked.info
+	DIFF_1 = echo " integer :: untracked = "`git diff | wc -l`"" > untracked.info
 endif
 
 ###########################
@@ -255,7 +259,7 @@ process.o: availability.o buildings.o constraint_equations.o costs.o current_dri
   divertor.o divertor_ode.o error_handling.o evaluators.o global_variables.o hcll.o hcpb.o \
   impurity_radiation.o input.o machine_build.o maths_library.o numerics.o output.o \
   pfcoil.o physics.o plant_power.o pulse.o scan.o sctfcoil.o startup.o \
-  stellarator.o structure.o superconductors.o tag.num tfcoil.o vacuum.o
+  stellarator.o structure.o superconductors.o tag.num untracked.info tfcoil.o vacuum.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
 read_and_get_atomic_data.o: maths_library.o read_radiation.o
 read_radiation.o: impurity_radiation.o maths_library.o
@@ -287,6 +291,10 @@ tag.num:
 	${MYTAG_0}
 	${MYTAG_1}
 
+untracked.info:
+	${DIFF_0}
+	${DIFF_1}
+
 ### Utilities #################
 .PHONY: clean cleandoc tar archive doc userguide html dicts
 
@@ -295,6 +303,7 @@ clean:
 	rm -f process.exe *.o *.mod
 	rm -f root.dir
 	rm -f tag.num
+	rm -f untracked.info
 	rm -f *~
 	rm -f utilities/process_io_lib/process_dicts.py
 	rm -f utilities/processgui/dicts/gui_dicts.py
@@ -308,6 +317,7 @@ win_clean:
 	del *.html
 	del root.dir
 	del tag.num
+	del untracked.info
 	rmdir /q /s documentation\html
 
 cleandoc:
