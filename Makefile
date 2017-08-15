@@ -296,7 +296,7 @@ untracked.info:
 	${DIFF_1}
 
 ### Utilities #################
-.PHONY: clean cleandoc tar archive doc userguide html dicts
+.PHONY: clean cleandoc tar archive doc userguide html dicts untracked.info
 
 # Clean up directory, to force full recompilation
 clean:
