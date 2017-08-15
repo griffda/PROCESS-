@@ -360,8 +360,8 @@ html: autodoc
 	@ mv *.html documentation/html
 
 userguide: documentation/process.tex
-	@ pdflatex documentation/process
-	@ pdflatex documentation/process
+	@ pdflatex -halt-on-error documentation/process > userguide.log 
+	@ pdflatex -halt-on-error documentation/process > userguide.log
 	@ mv -t documentation process.pdf process.log
 	@ rm process.lo* process.toc process.out *.aux documentation/*.aux
 
