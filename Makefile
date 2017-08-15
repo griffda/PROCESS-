@@ -360,8 +360,8 @@ html: autodoc
 	@ mv *.html documentation/html
 
 userguide: documentation/process.tex
-	@ pdflatex -halt-on-error documentation/process > userguide.log 
-	@ pdflatex -halt-on-error documentation/process > userguide.log
+	@ pdflatex -halt-on-error documentation/process > documentation/userguide.log || (echo "Error: See documentation/userguide.log"; exit 1) 
+	@ pdflatex -halt-on-error documentation/process > documentation/userguide.log || (echo "Error: See documentation/userguide.log" ; exit 1)
 	@ mv -t documentation process.pdf process.log
 	@ rm process.lo* process.toc process.out *.aux documentation/*.aux
 
