@@ -435,6 +435,7 @@ subroutine run_summary
   character(len = 10)  :: ustring
   character(len = 100) :: rstring
   include "tag.num"
+  include "untracked.info"
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -462,7 +463,11 @@ subroutine run_summary
      !  Run execution details
      call ocmmnt(outfile, progid(1))  !  program name
      call ocmmnt(outfile, progid(2))  !  version
-     call ocmmnt(outfile, '  Tag No. : "'//tagno//'"')  !  directory
+     if (untracked > 0) then
+       call ocmmnt(outfile, '  Tag No. : "'//tagno//' UT"')  !  directory
+     else
+       call ocmmnt(outfile, '  Tag No. : "'//tagno//'"')  !  directory
+     end if
      !call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
      !call ocmmnt(outfile, progid(5))  !  computer
