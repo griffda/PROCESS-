@@ -751,19 +751,21 @@ def create_plots():
     """
 
     if not os.path.exists("documentation/figures/"):
-        subprocess.call(["mkdir", "figures"])
+        save_p = ""
+    else:
+        save_p = "documentation/figures/"
     
     # create pulse timings plot
-    plot_pulse_timings(MFILE, save=True, show=False, save_path="documentation/figures/")
+    plot_pulse_timings(MFILE, save=True, show=False, save_path=save_p)
 
     # create radial build plot
     # TODO: non-hard coded list needed
     radial_build = ["bore", "ohcth", "precomp", "gapoh", "tfcth", "deltf", "thshield", 
          "gapds", "ddwi", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "rminor"]
-    radial_bar_plot(radial_build, MFILE, show=False, save=True, save_path="documentation/figures/")
+    radial_bar_plot(radial_build, MFILE, show=False, save=True, save_path=save_p)
 
     # create plasma profiles plot
-    plasma_profiles_plot(MFILE, show=False, save=True, save_path="documentation/figures/")
+    plasma_profiles_plot(MFILE, show=False, save=True, save_path=save_p)
 
 
 def main(cargs):
