@@ -174,10 +174,13 @@ def get_indat_comments():
     
     for line in lines:
         if line[:2] == "*#":
-            split_line = line.split(":", 1)
-            key = split_line[0][2:].replace(" ", "")
-            value = split_line[1].strip(" ").strip("\n")
-            COMMENTS.setdefault(key,[]).append(value)
+            try:
+                split_line = line.split(":", 1)
+                key = split_line[0][2:].replace(" ", "")
+                value = split_line[1].strip(" ").strip("\n")
+                COMMENTS.setdefault(key,[]).append(value)
+            except:
+                print("Error with comment for line in IN.DAT :: {0}".format(line))
 
 
 def constraint_comments(ky, iccs):
