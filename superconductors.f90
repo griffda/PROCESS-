@@ -1,6 +1,6 @@
 module superconductors
   !+ad_name  superconductors
-  !+ad_summ  Module containing superconducter critical surfaces and cable data
+  !+ad_summ  Module containing superconducter critical surfaces and conductor data
   !+ad_type  Module
   use process_output
   use error_handling
@@ -603,7 +603,7 @@ subroutine wstsc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 end subroutine wstsc
 !--------------------------------------------------------------------------
 
-subroutine croco(jcritsc,croco_strand,croco_cable)
+subroutine croco(jcritsc,croco_strand,conductor)
 
     !+ad_name  croco
     !+ad_summ  "CroCo" (cross-conductor) strand and cable design for
@@ -611,13 +611,13 @@ subroutine croco(jcritsc,croco_strand,croco_cable)
     !+ad_type  Subroutine
     implicit none
     real(kind(1.0D0)), intent(in) ::jcritsc
-    type(volume_fractions), intent(inout)::croco_cable
+    type(volume_fractions), intent(inout)::conductor
     type(supercon_strand), intent(inout)::croco_strand
     real(kind(1.0D0))::strands_per_area
 
     ! Properties of a single strand
     tape_thickness = rebco_thickness + copper_thickness + hastelloy_thickness
-    stack_thickness = sqrt(croco_id**2 - (tape_width/2.0d0)**2)
+    stack_thickness = sqrt(croco_id**2 - tape_width**2)
     tapes = stack_thickness / tape_thickness
 
     copper_area = pi / 4.0d0 * (croco_od**2 - croco_id**2) &   ! copper tube
@@ -630,18 +630,18 @@ subroutine croco(jcritsc,croco_strand,croco_cable)
     croco_strand%critical_current = jcritsc * rebco_area
 
     ! Cable properties
-    croco_cable%number_croco = croco_cable%acs*(1d0-copper_bar)/croco_od**2
-    croco_cable%critical_current = croco_strand%critical_current * croco_cable%number_croco
-    strands_per_area = croco_cable%number_croco / croco_cable%area
-    croco_cable%copper_fraction = copper_area * strands_per_area + &
-                                  copper_bar * croco_cable%acs / croco_cable%area
+    conductor%number_croco = conductor%acs*(1d0-copper_bar)/croco_od**2
+    conductor%critical_current = croco_strand%critical_current * conductor%number_croco
+    strands_per_area = conductor%number_croco / conductor%area
+    conductor%copper_fraction = copper_area * strands_per_area + &
+                                  copper_bar * conductor%acs / conductor%area
     ! The CroCo strands are packed in a square fashion in the cable space.
     ! Helium area is the minimum possible given that the strand is round.
-    croco_cable%helium_fraction = (1 - pi / 4.0d0) * croco_od**2 * strands_per_area
-    croco_cable%hastelloy_fraction = hastelloy_area * strands_per_area
-    croco_cable%solder_fraction = solder_area * strands_per_area
-    croco_cable%rebco_fraction = rebco_area * strands_per_area
-    croco_cable%rebco_area = rebco_area * croco_cable%number_croco
+    conductor%helium_fraction = (1 - pi / 4.0d0) * croco_od**2 * strands_per_area
+    conductor%hastelloy_fraction = hastelloy_area * strands_per_area
+    conductor%solder_fraction = solder_area * strands_per_area
+    conductor%rebco_fraction = rebco_area * strands_per_area
+    conductor%rebco_area = rebco_area * conductor%number_croco
 
 end subroutine croco
 !--------------------------------------------------------------------------

@@ -1713,7 +1713,7 @@ module pfcoil_variables
   !+ad_varc                  beginning of pulse / end of flat-top
   !+ad_varc                  (iteration variable 41)
   real(kind(1.0D0)) :: fcohbop = 0.9D0
-  !+ad_vars  fcuohsu /0.7/ : copper fraction of strand in central solenoid cable
+  !+ad_vars  fcuohsu /0.7/ : copper fraction of strand in central solenoid
   real(kind(1.0D0)) :: fcuohsu = 0.7D0
   !+ad_vars  fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
   real(kind(1.0D0)) :: fcupfsu = 0.69D0
@@ -1967,9 +1967,9 @@ module tfcoil_variables
   !+ad_vars  bcritsc /24.0/ : upper critical field (T) for Nb3Sn superconductor
   !+ad_varc                   at zero temperature and strain (isumattf=4, =bc20m)
   real(kind(1.0D0)) :: bcritsc = 24.0D0
-  !+ad_vars  bmaxtf : peak field at TF coil (T)
+  !+ad_vars  bmaxtf : mean peak field at TF coil (T)
   real(kind(1.0D0)) :: bmaxtf = 0.0D0
-  !+ad_vars  bmaxtfrp : peak field at conductor with ripple (T)
+  !+ad_vars  bmaxtfrp : peak field at TF conductor with ripple (T)
   real(kind(1.0D0)) :: bmaxtfrp = 0.0D0
   !+ad_vars  casestr : case strain
   real(kind(1.0D0)) :: casestr = 0.0D0
@@ -1988,15 +1988,15 @@ module tfcoil_variables
   real(kind(1.0D0)) :: casths_fraction = 0.03D0
   logical :: tfc_sidewall_is_fraction
 
-  !+ad_vars  cable_width : Width of square cable (m)
-  real(kind(1.0D0)) :: cable_width
+  !+ad_vars  conductor_width : Width of square conductor (m)
+  real(kind(1.0D0)) :: conductor_width
   !+ad_vars  leno : Dimension of each turn including inter-turn insulation (m)
   real(kind(1.0D0)) :: leno
 
 
-  !+ad_vars  leni : Dimension of space inside cable (m)
+  !+ad_vars  leni : Dimension of space inside conductor (m)
   real(kind(1.0D0)) :: leni
-  !+ad_vars  acs : Area of space inside cable (m2)
+  !+ad_vars  acs : Area of space inside conductor (m2)
   real(kind(1.0D0)) :: acs
 
   !+ad_vars  cdtfleg /1.0e6/ : TF leg overall current density (A/m2)
@@ -2102,13 +2102,13 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ritfc = 0.0D0
   !+ad_vars  sigrad : radial TF coil stress (MPa)
   real(kind(1.0D0)) :: sigrad = 0.0D0
-  !+ad_vars  sigrcon : radial stress in the cable conduit (Pa)
+  !+ad_vars  sigrcon : radial stress in the conductor conduit (Pa)
   real(kind(1.0D0)) :: sigrcon = 0.0D0
   !+ad_vars  sigrtf(2) : radial stress in TF coil regions (Pa)
   real(kind(1.0D0)), dimension(2) :: sigrtf = 0.0D0
   !+ad_vars  sigtan : transverse TF coil stress (MPa)
   real(kind(1.0D0)) :: sigtan = 0.0D0
-  !+ad_vars  sigtcon : tangential stress in the cable conduit (Pa)
+  !+ad_vars  sigtcon : tangential stress in the conductor conduit (Pa)
   real(kind(1.0D0)) :: sigtcon = 0.0D0
   !+ad_vars  sigttf(2) : tangential stress in TF coil regions (Pa)
   real(kind(1.0D0)), dimension(2) :: sigttf = 0.0D0
@@ -2129,7 +2129,7 @@ module tfcoil_variables
   !+ad_vars  strncon /-0.005/ : strain in superconductor material (TF, PF and CS)
   !+ad_varc                     (used in ITER Nb3Sn critical surface model)
   real(kind(1.0D0)) :: strncon = -0.005D0
-  !+ad_vars  strtf1 : Constrained stress in TF cable conduit (Pa)
+  !+ad_vars  strtf1 : Constrained stress in TF conductor conduit (Pa)
   real(kind(1.0D0)) :: strtf1 = 0.0D0
   !+ad_vars  strtf2 : Constrained stress in TF coil case (Pa)
   real(kind(1.0D0)) :: strtf2 = 0.0D0
@@ -2235,10 +2235,13 @@ module tfcoil_variables
   !+ad_vars  tmaxpro /150.0/ : maximum temp rise during a quench for protection (K)
   real(kind(1.0D0)) :: tmaxpro = 150.0D0
 
-  !+ad_vars  tmax_croco /200.0/ : CroCo strand: maximum temp during a quench (K)
+  !+ad_vars  tmax_croco /200.0/ : CroCo strand: maximum permitted temp during a quench (K)
   real(kind(1.0D0)) :: tmax_croco = 200.0D0
-  !+ad_vars  tmax_jacket /150.0/ : Jacket: maximum temp during a quench (K)
-  real(kind(1.0D0)) :: tmax_jacket = 150.0D0
+  ! !+ad_vars  tmax_jacket /150.0/ : Jacket: maximum temp during a quench (K)
+  ! real(kind(1.0D0)) :: tmax_jacket = 150.0D0
+
+  !+ad_vars  croco_quench_temperature : CroCo strand: Actual temp reached during a quench (K)
+  real(kind(1.0D0)) :: croco_quench_temperature = 0D0
 
   !+ad_vars  tmpcry /4.5/ : coil temperature for cryogenic plant power calculation (K)
   real(kind(1.0D0)) :: tmpcry = 4.5D0
@@ -2259,15 +2262,15 @@ module tfcoil_variables
   real(kind(1.0D0)) :: vtfskv = 0.0D0
   !+ad_vars  whtcas : mass per coil of external case (kg)
   real(kind(1.0D0)) :: whtcas = 0.0D0
-  !+ad_vars  whtcon : TF coil conductor cable mass per coil (kg)
+  !+ad_vars  whtcon : TF coil conductor mass per coil (kg)
   real(kind(1.0D0)) :: whtcon = 0.0D0
-  !+ad_vars  whtconcu : copper mass in TF coil conductor cable (kg/coil)
+  !+ad_vars  whtconcu : copper mass in TF coil conductor (kg/coil)
   real(kind(1.0D0)) :: whtconcu = 0.0D0
-  !+ad_vars  whtconin : conduit insulation mass in TF coil conductor cable (kg/coil)
+  !+ad_vars  whtconin : conduit insulation mass in TF coil conductor (kg/coil)
   real(kind(1.0D0)) :: whtconin = 0.0D0
-  !+ad_vars  whtconsc : superconductor mass in TF coil conductor cable (kg/coil)
+  !+ad_vars  whtconsc : superconductor mass in TF coil cable (kg/coil)
   real(kind(1.0D0)) :: whtconsc = 0.0D0
-  !+ad_vars  whtconsh : steel conduit mass in TF coil conductor cable (kg/coil)
+  !+ad_vars  whtconsh : steel conduit mass in TF coil conductor (kg/coil)
   real(kind(1.0D0)) :: whtconsh = 0.0D0
   !+ad_vars  whtgw : mass of ground-wall insulation layer per coil (kg/coil)
   real(kind(1.0D0)) :: whtgw = 0.0D0
@@ -3888,6 +3891,11 @@ module constraint_variables
   !+ad_varc                   (Not required as constraint 69 is an equality)
   real(kind(1.0D0)) :: fpsep = 1.0D0
 
+  !+ad_vars  fcqt /1.0/ : f-value: TF coil quench temparature mains below tmax_croco
+  !+ad_varc                   (constraint equation 74, iteration variable 115)
+  real(kind(1.0D0)) :: fcqt = 1.0D0
+
+
 end module constraint_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4161,7 +4169,7 @@ end module fispact_variables
 module rebco_variables
 
   !+ad_name  rebco_variables
-  !+ad_summ  Variables relating to the REBCO HTS tape, strand and cable
+  !+ad_summ  Variables relating to the REBCO HTS tape, strand and conductor
   !+ad_summ  Conduit information is in the modules relating to each coil.
   !+ad_type  Module
   !+ad_docs  TODO
@@ -4194,8 +4202,8 @@ module rebco_variables
   real(kind(1.0D0)) :: hastelloy_area
   real(kind(1.0D0)) :: solder_area
   real(kind(1.0D0)) :: croco_area
-  real(kind(1.0D0)) :: cable_crit_current
-  real(kind(1.0D0)) :: cable_helium_area
+  !real(kind(1.0D0)) :: cable_crit_current
+  !real(kind(1.0D0)) :: cable_helium_area
 
   end module rebco_variables
   !------------------------------------------------------------------------
@@ -4203,7 +4211,7 @@ module rebco_variables
   module resistive_materials
 
       !+ad_name  resistive_material
-      !+ad_summ  Variables relating to resistive materials in superconducting cables
+      !+ad_summ  Variables relating to resistive materials in superconducting conductors
       !+ad_type  Module
       !+ad_docs  TODO
       implicit none ! ---------------------------------------------------------
@@ -4233,6 +4241,6 @@ module rebco_variables
           real(kind(1.0D0)) :: number_croco         ! Number of CroCo strands (not an integer)
           real(kind(1.0D0)) :: acs
           real(kind(1.0D0)) :: area
-          real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
+          !real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
       end type
   end module resistive_materials

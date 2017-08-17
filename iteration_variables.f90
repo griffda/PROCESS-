@@ -255,6 +255,7 @@ subroutine loadxc
      case (138) ; xcm(i) = rebco_thickness
      case (139) ; xcm(i) = copper_thickness
      case (140) ; xcm(i) = thkwp
+     case (141) ; xcm(i) = fcqt 
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -295,7 +296,7 @@ subroutine loadxc
   end do
 
   do i = 1,nvar
-     if (xcm(i) /= 0.0D0) then
+     if (abs(xcm(i)) > 1.0D-99) then
         scale(i) = 1.0D0/xcm(i)
      else
         scale(i) = 1.0D0
@@ -550,6 +551,7 @@ subroutine convxc(xc,nn)
      case (138) ; rebco_thickness = xc(i)/scale(i)
      case (139) ; copper_thickness = xc(i)/scale(i)
      case (140) ; thkwp = xc(i)/scale(i)
+     case (141) ; fcqt = xc(i)/scale(i)
 
      case default
 
@@ -573,7 +575,7 @@ subroutine convxc(xc,nn)
         call report_error(59)
      end if
 
-     if (scale(i) == 0.0D0) then
+     if (abs(scale(i)) < 1.0D-99) then
         idiags(1) = i ; idiags(2) = ixc(i)
         call report_error(60)
      end if

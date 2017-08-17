@@ -981,7 +981,12 @@ contains
     !                    'f-value to ensure separatrix power is less than value from Kallen bach divertor')
        case ('fpsepbqar')
           call parse_real_variable('fpsepbqar', fpsepbqar, 0.001D0, 1.0D0, &
+                       'f-value for TF coil quench temperature < tmax_croco (constraint equation 74)')
+
+       case ('fcqt')
+          call parse_real_variable('fcqt', fcqt, 0.001D0, 1.0D0, &
                        'f-value for Psep * Bt / qAR upper limit ')
+
 
        case ('gammax')
           call parse_real_variable('gammax', gammax, 0.01D0, 10.0D0, &
@@ -1695,9 +1700,9 @@ contains
        case ('tmax_croco')
           call parse_real_variable('tmax_croco', tmax_croco, 4.0D0, 1.0D3, &
                'CroCo strand: maximum temp during a quench (K)')
-       case ('tmax_jacket')
-          call parse_real_variable('tmax_jacket', tmax_jacket, 4.0D0, 1.0D3, &
-               'Jacket: maximum temp during a quench (K)')
+    !    case ('tmax_jacket')
+    !       call parse_real_variable('tmax_jacket', tmax_jacket, 4.0D0, 1.0D3, &
+    !            'Jacket: maximum temp during a quench (K)')
 
        case ('tmpcry')
           call parse_real_variable('tmpcry', tmpcry, 0.01D0, 10.0D0, &
