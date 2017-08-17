@@ -361,20 +361,28 @@ autodoc: autodoc.f90
 # vardes.html is based ONLY on global_variables.f90 and numerics.f90
 # Warning: some input variables may be declared outside these two files.
 # These will not appear in vardes.html
+vardes: autodoc
+	@ cat $(GVAR) | ./autodoc
+	@ mkdir -p documentation/html
+	@ mv *.html documentation/html
+	
 html: autodoc
 	@ cat $(SRC) | ./autodoc
 	@ mv vardes.html vardes_full.html	
-	@ cat $(GVAR) | ./autodoc
 	@ mkdir -p documentation/html
 	@ mv *.html documentation/html
 
 userguide: documentation/process.tex
+	@ pandoc --standalone documentation/html/vardes.html --output documentation/html/vardes.tex	
+	@ pdflatex -halt-on-error documentation/html/vardes.tex > documentation/vardes.log || (echo "Error: See documentation/vardes.log"; exit 1) 
+	@ mv -t documentation vardes.pdf vardes.log
 	@ pdflatex -halt-on-error documentation/process > documentation/userguide.log || (echo "Error: See documentation/userguide.log"; exit 1) 
 	@ pdflatex -halt-on-error documentation/process > documentation/userguide.log || (echo "Error: See documentation/userguide.log" ; exit 1)
 	@ mv -t documentation process.pdf process.log
 	@ rm process.lo* process.toc process.out *.aux documentation/*.aux
+	@ rm vardes.out
 
-doc: html userguide
+doc: vardes html userguide
 
 win_doc: autodoc
 	@ type $(SRC) | autodoc
