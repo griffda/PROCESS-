@@ -1835,8 +1835,8 @@ contains
             call ovarre(outfile,'Mean width of tape (m)','(tape_width)',tape_width)
             call ovarre(outfile,'Outer diameter of CroCo strand (m) ','(croco_od)', croco_od)
             call ovarre(outfile,'Inner diameter of CroCo copper tube (m) ','(croco_id)',croco_id)
-            call ovarrf(outfile,'Number of CroCo strands in the conductor ','(conductor%number_croco)',&
-                                                                              conductor%number_croco , 'OP ')
+
+
             call ovarre(outfile,'Thickness of each HTS coated tape ','(tape_thickness)',tape_thickness , 'OP ')
             call ovarre(outfile,'Thickness of stack of tapes (m) ','(stack_thickness)',stack_thickness , 'OP ')
             call ovarre(outfile,'Number of tapes in strand','(tapes)',tapes , 'OP ')
@@ -1851,6 +1851,17 @@ contains
                 write(*,*)'ERROR: Areas in CroCo strand do not add up - see OUT.DAT'
             endif
 
+            call oblnkl(outfile)
+            call ocmmnt(outfile,'Cable information')
+            call ovarre(outfile,'Area of cable space (m2)','(acstf)',acstf , 'OP ')
+            call ovarre(outfile,'Area of central copper bar, as a fraction of cable space', '(copper_bar)', copper_bar)
+            call ovarre(outfile,'Area of helium coolant, as a fraction of cable space', &
+                                '(cable_helium_fraction)', cable_helium_fraction)
+            call ovarrf(outfile,'Number of CroCo strands in the conductor ','(conductor%number_croco)',&
+                                                                              conductor%number_croco , 'OP ')
+
+            call oblnkl(outfile)
+            call ocmmnt(outfile,'Conductor information')
             call ovarre(outfile,'Width of square conductor (m)','(conductor_width)', conductor_width , 'OP ')
             call ovarre(outfile,'Area of conductor (not incl insulation) (m2)','(area)', conductor%area , 'OP ')
             call ovarre(outfile,'REBCO fraction of conductor','(rebco_fraction)',conductor%rebco_fraction , 'OP ')
@@ -2130,18 +2141,14 @@ end subroutine croco_quench
 !-------------------------------------------------------------------
 subroutine dtempbydtime ( qtime, qtemperature, derivative )
   !+ad_name  dtempbydtime
-  !+ad_summ  Supplies the right hand side of the ODE for the croco quench phase 2
-  !+ad_type  subroutine
+  !+ad_summ  Supplies the right hand side of the ODE for the croco quench phase 2 subroutine
   !+ad_auth  M Kovari, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  t : input real : T, the independent variable
-  !+ad_args  temperature : input real : the dependent variable
-  !+ad_args  yp : output real : YP(), the value of the derivative
-  !+ad_desc
-  !+ad_prob  None
+  !+ad_args  qtime : input real : time, the independent variable
+  !+ad_args  qtemperature : input real : temperature, the dependent variable
+  !+ad_args  derivative : output real : the value of dtempbydtime
   !+ad_hist  14/08/17 MDK  Initial version
   !+ad_stat  Okay
-  !+ad_docs
 
   ! Time-dependent quantities during the fast discharge local to this subroutine:
 
@@ -2181,10 +2188,8 @@ subroutine dtempbydtime ( qtime, qtemperature, derivative )
   call jcrit_rebco(qtemp,qbfield,qj,validity,0)
   q_crit_current = conductor%rebco_area * qj
 
-  ! Note that the jacket is not included in the argument list
-  ! as we assume it takes no heat.
-  qratio = resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,helium)
-
+  ! The jacket is now included in the argument list
+  qratio = resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,helium,jacket)
 
   ! Derivatives
 
@@ -2195,7 +2200,6 @@ subroutine dtempbydtime ( qtime, qtemperature, derivative )
   !write(*,*)'subroutine dtempbydtime: derivative =',derivative(1)
   return
 end subroutine dtempbydtime
-
 
 !-----------------------------------------------------------------------
 
@@ -2220,7 +2224,7 @@ function resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,he
     end if
     if(present(helium))then
         call helium_properties(qtemp,helium)
-        sum = sum + conductor%helium_fraction * helium%cp_density
+        sum = sum + conductor%helium_fraction    * helium%cp_density
     end if
     if(present(jacket))then
         call jacket_properties(qtemp,jacket)

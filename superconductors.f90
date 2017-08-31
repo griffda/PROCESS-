@@ -629,15 +629,15 @@ subroutine croco(jcritsc,croco_strand,conductor)
     croco_strand%area =  pi / 4.0d0 * croco_od**2
     croco_strand%critical_current = jcritsc * rebco_area
 
-    ! Cable properties
-    conductor%number_croco = conductor%acs*(1d0-copper_bar)/croco_od**2
+    ! Conductor properties
+    conductor%number_croco = conductor%acs*(1d0-cable_helium_fraction-copper_bar)/croco_strand%area
     conductor%critical_current = croco_strand%critical_current * conductor%number_croco
     strands_per_area = conductor%number_croco / conductor%area
     conductor%copper_fraction = copper_area * strands_per_area + &
                                   copper_bar * conductor%acs / conductor%area
-    ! The CroCo strands are packed in a square fashion in the cable space.
-    ! Helium area is the minimum possible given that the strand is round.
-    conductor%helium_fraction = (1 - pi / 4.0d0) * croco_od**2 * strands_per_area
+
+    ! Helium area is set by the user.
+    conductor%helium_fraction = cable_helium_fraction * conductor%acs / conductor%area
     conductor%hastelloy_fraction = hastelloy_area * strands_per_area
     conductor%solder_fraction = solder_area * strands_per_area
     conductor%rebco_fraction = rebco_area * strands_per_area

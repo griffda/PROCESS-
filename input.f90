@@ -1169,6 +1169,12 @@ contains
           call parse_real_variable('fractionwidesol', fractionwidesol, 0.001D0, 0.99D0, &
                'Distance from target at which SOL gets broader as a fraction of connection length')
 
+       ! See HTS coil module for PROCESS.docx for helium area calculates!
+       ! The minimum allowed is the value obtained by packing the strands in a rectangular array = 1-pi/4
+       case ('cable_helium_fraction')
+          call parse_real_variable('cable_helium_fraction', cable_helium_fraction, 0.215D0, 0.99D0, &
+               'Helium area as a fraction of the cable space.')
+
           !  Divertor settings
 
        case ('anginc')

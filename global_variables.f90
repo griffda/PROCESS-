@@ -964,7 +964,7 @@ module divertor_kallenbach_variables
   real(kind(1.0D0)) :: lambda_q_omp = 0.002D0
 
   !+ad_vars  lcon_factor /1.0/ : Correction factor for connection length from OMP to divertor =
-!+ad_varc                      connection length/(pi*q*rmajor)
+  !+ad_varc                      connection length/(pi*q*rmajor)
   real(kind(1.0D0)) :: lcon_factor = 1.0D0
 
   !+ad_vars  netau /0.5/ : Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
@@ -4189,10 +4189,13 @@ module rebco_variables
   !+ad_vars  croco_id /7.0e-3/ : Inner diameter of CroCo copper tube (m)
   real(kind(1.0D0)) :: croco_id = 7.0D-3
 
-  !+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of area inside the jacket
+  !+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
   real(kind(1.0D0)) :: copper_bar = 0.23d0
   !+ad_vars  copper_rrr /100.0/ : residual resistivity ratio copper in TF superconducting cable
   real(kind(1.0D0)) :: copper_rrr = 100d0
+
+  !+ad_vars  cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
+  real(kind(1.0D0)) :: cable_helium_fraction = 0.284D0
 
   real(kind(1.0D0)) :: tape_thickness
   real(kind(1.0D0)) :: stack_thickness
@@ -4202,8 +4205,6 @@ module rebco_variables
   real(kind(1.0D0)) :: hastelloy_area
   real(kind(1.0D0)) :: solder_area
   real(kind(1.0D0)) :: croco_area
-  !real(kind(1.0D0)) :: cable_crit_current
-  !real(kind(1.0D0)) :: cable_helium_area
 
   end module rebco_variables
   !------------------------------------------------------------------------
