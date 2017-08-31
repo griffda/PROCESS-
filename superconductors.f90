@@ -838,12 +838,13 @@ subroutine helium_properties(T,helium)
     real(kind(1.0D0)), intent(in) :: T   ! temperature
     type(resistive_material)::helium
     ! Cp x density J/K/m3
-    if((T<10d0).and.(T>=4d0))then
+    if((T>=4d0).and.(T<10d0))then
         helium%cp_density = 12.285d3*T**3 - 309.92d3*T**2 + 2394.6d3*T - 5044.8d3
-    else if((T>=10d0).and.(T<=300d0))then
+    else if(T>=10d0)then
+        ! This probably works OK for arbitrarily high temperature
         helium%cp_density = 1745.1d3*T**(-1.031d0)
     else
-        write(*,*)'temperature is outside the range of helium data fit (4-300 K): ', T
+        write(*,*)'temperature is below the range of helium data fit (>4 K): ', T
     end if
 
 end subroutine helium_properties
