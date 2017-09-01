@@ -1553,7 +1553,7 @@ module fwbs_variables
   !+ad_varc                  (calculated if blktmodel > 0)
   real(kind(1.0D0)) :: vfblkt = 0.25D0
   !+ad_vars  blktmodel /0/ : switch for blanket/tritium breeding model
-  !+ad_varc                  (but see <CODE>lblnkt</CODE>):<UL>
+  !+ad_varc                  (but see <CODE>iblanket</CODE>):<UL>
   !+ad_varc             <LI> = 0 original simple model;
   !+ad_varc             <LI> = 1 KIT model based on a helium-cooled pebble-bed
   !+ad_varc                      blanket (HCPB) reference design</UL>
