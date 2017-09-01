@@ -98,9 +98,9 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 140
+  integer, parameter :: ipnvars = 141
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 73
+  integer, parameter :: ipeqns = 74
   !+ad_vars  ipnfoms FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 17
 
@@ -335,10 +335,13 @@ module numerics
        !+ad_varc            (Use iteration variable 123 (foh_stress))
        'CS Tresca stress limit           ',    &
        !+ad_varc  <LI> (73) Psep >= Plh + Paux
-       !+ad_varc            (Use iteration variable 136 (fplhsep))</UL>
-       'Psep >= Plh + Paux               '    &
+       !+ad_varc            (Use iteration variable 136 (fplhsep))
+       'Psep >= Plh + Paux               ',   &
+       !+ad_varc  <LI> (74) TFC quench < tmax_croco
+       !+ad_varc            (Use iteration variable 141 (fcqt))</UL>
+       'TFC quench < tmax_croco          '    &
        /)
-       !  Please note: All strings between '...' above must be exactly 33 chars long
+       ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
        ! The last ad_varc line ends with the html tag "</UL>".
 
@@ -633,8 +636,10 @@ module numerics
        'rebco_thicknes', &
        !+ad_varc  <LI> (139) copper_thickness : thickness of copper layer in tape (m)
        'copper_thickne', &
-       !+ad_varc  <LI> (140) thkwp : radial thickness of TFC winding pack (m)</UL>
-       'thkwp         ' &
+       !+ad_varc  <LI> (140) thkwp : radial thickness of TFC winding pack (m)
+       'thkwp         ', &
+       !+ad_varc  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)</UL>
+       'fcqt          ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -792,7 +797,8 @@ module numerics
        0.001D0, &  !  137
        0.01D-6, &  !  138
        1.00D-6, &  !  139
-       0.001D0  &  !  140
+       0.001D0, &  !  140
+       0.001D0  &  !  141
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -937,7 +943,8 @@ module numerics
        1.000D0, &  !  137
        100.0D-6,&  !  138
        1.00D-3, &  !  139
-       2.000D0  &  !  140
+       2.000D0, &  !  140
+       1.000D0  &  !  141
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

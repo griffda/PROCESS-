@@ -621,7 +621,7 @@ do i = 2, nimp
         !open(unit=10, file='divertor_diagnostics.txt', status='replace')
      endif
 
-    do step = 0, step_num+1
+    do step = 0, step_num+1 
         if(step.ne.0) then
 
             ! Solve the set of differential equations

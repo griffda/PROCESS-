@@ -156,6 +156,8 @@ OBJ = \
  tfcoil.o \
  vacuum.o
 
+ GVAR = global_variables.f90 numerics.f90
+
 # SRC = $(wildcard *.f90 *.f)
 # SRC := $(filter-out autodoc.f90, $(SRC))
 # OBJ = $(SRC:.f90=.o)
@@ -268,7 +270,7 @@ refprop.o:
 refprop_interface.o: error_handling.o refprop.o
 safety.o: global_variables.o output.o
 scan.o: error_handling.o global_variables.o impurity_radiation.o numerics.o output.o
-sctfcoil.o: error_handling.o global_variables.o maths_library.o output.o superconductors.o
+sctfcoil.o: error_handling.o global_variables.o maths_library.o ode.o output.o superconductors.o
 startup.o: global_variables.o maths_library.o output.o physics.o
 stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \
   stellarator_fwbs.o global_variables.o maths_library.o numerics.o output.o physics.o plant_power.o \
@@ -296,7 +298,7 @@ untracked.info:
 	${DIFF_1}
 
 ### Utilities #################
-.PHONY: clean cleandoc tar archive doc userguide html dicts untracked.info
+.PHONY: clean cleandoc tar archive doc userguide html dicts untracked.info tag.num
 
 # Clean up directory, to force full recompilation
 clean:
@@ -354,18 +356,33 @@ archive:
 autodoc: autodoc.f90
 	$(FORTRAN) -o autodoc autodoc.f90
 
+# Create two versions of the vardes:
+# vardes_full.html is the old version that covers the whole code
+# vardes.html is based ONLY on global_variables.f90 and numerics.f90
+# Warning: some input variables may be declared outside these two files.
+# These will not appear in vardes.html
+vardes: autodoc
+	@ cat $(GVAR) | ./autodoc
+	@ mkdir -p documentation/html
+	@ mv *.html documentation/html
+	
 html: autodoc
 	@ cat $(SRC) | ./autodoc
+	@ mv vardes.html vardes_full.html	
 	@ mkdir -p documentation/html
 	@ mv *.html documentation/html
 
 userguide: documentation/process.tex
+	@ pandoc --standalone documentation/html/vardes.html --output documentation/html/vardes.tex	
+	@ pdflatex -halt-on-error documentation/html/vardes.tex > documentation/vardes.log || (echo "Error: See documentation/vardes.log"; exit 1) 
+	@ mv -t documentation vardes.pdf vardes.log
 	@ pdflatex -halt-on-error documentation/process > documentation/userguide.log || (echo "Error: See documentation/userguide.log"; exit 1) 
 	@ pdflatex -halt-on-error documentation/process > documentation/userguide.log || (echo "Error: See documentation/userguide.log" ; exit 1)
 	@ mv -t documentation process.pdf process.log
 	@ rm process.lo* process.toc process.out *.aux documentation/*.aux
+	@ rm vardes.out
 
-doc: html userguide
+doc: vardes html userguide
 
 win_doc: autodoc
 	@ type $(SRC) | autodoc

@@ -1208,6 +1208,8 @@ contains
        case (47)  ! Equation for TF coil toroidal thickness upper limit
           ! Issue #508 Remove RFP option
           ! Relevant only to reversed field pinch devices
+          !#=# empty
+          !#=#=# empty
 
        case (48)  ! Equation for poloidal beta upper limit
           !#=# physics
@@ -1309,7 +1311,7 @@ contains
           !            at end of plant life (appm)
           ! vvhemax |  maximum helium concentration in vacuum vessel at end of
           !            plant life (appm) (iblanket=2 (KIT HCPB))
-          if (iblanket == 2) then 
+          if (iblanket == 2) then
              cc(i) = 1.0D0 - fvvhe * vvhealw/vvhemax
 
              if (present(con)) then
@@ -1600,6 +1602,24 @@ contains
              symbol(i) = '>'
              units(i) = 'MW'
            end if
+
+       case (74)  ! ensure TF coil quench temperature < tmax_croco
+           ! ONLY used for croco HTS coil
+           !#=# physics
+           !#=#=# fplhsep, pdivt
+
+           ! fcqt | f-value for constraint 74: TF coil quench temperature < tmax_croco
+           ! croco_quench_temperature | Actual TF coil quench temperature
+           ! tmax_croco  | Maximum TF coil quench temperature
+           cc(i) = 1.0d0 - fcqt * tmax_croco / croco_quench_temperature 
+
+           if (present(con)) then
+             con(i) = croco_quench_temperature
+             err(i) = croco_quench_temperature * cc(i)
+             symbol(i) = '<'
+             units(i) = 'K'
+           end if
+
 
        case default
 

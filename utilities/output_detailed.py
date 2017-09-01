@@ -174,10 +174,13 @@ def get_indat_comments():
     
     for line in lines:
         if line[:2] == "*#":
-            split_line = line.split(":", 1)
-            key = split_line[0][2:].replace(" ", "")
-            value = split_line[1].strip(" ").strip("\n")
-            COMMENTS.setdefault(key,[]).append(value)
+            try:
+                split_line = line.split(":", 1)
+                key = split_line[0][2:].replace(" ", "")
+                value = split_line[1].strip(" ").strip("\n")
+                COMMENTS.setdefault(key,[]).append(value)
+            except:
+                print("Error with comment for line in IN.DAT :: {0}".format(line))
 
 
 def constraint_comments(ky, iccs):
@@ -751,19 +754,21 @@ def create_plots():
     """
 
     if not os.path.exists("documentation/figures/"):
-        subprocess.call(["mkdir", "figures"])
+        save_p = ""
+    else:
+        save_p = "documentation/figures/"
     
     # create pulse timings plot
-    plot_pulse_timings(MFILE, save=True, show=False, save_path="documentation/figures/")
+    plot_pulse_timings(MFILE, save=True, show=False, save_path=save_p)
 
     # create radial build plot
     # TODO: non-hard coded list needed
     radial_build = ["bore", "ohcth", "precomp", "gapoh", "tfcth", "deltf", "thshield", 
          "gapds", "ddwi", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "rminor"]
-    radial_bar_plot(radial_build, MFILE, show=False, save=True, save_path="documentation/figures/")
+    radial_bar_plot(radial_build, MFILE, show=False, save=True, save_path=save_p)
 
     # create plasma profiles plot
-    plasma_profiles_plot(MFILE, show=False, save=True, save_path="documentation/figures/")
+    plasma_profiles_plot(MFILE, show=False, save=True, save_path=save_p)
 
 
 def main(cargs):
