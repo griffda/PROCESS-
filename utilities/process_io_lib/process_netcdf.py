@@ -230,7 +230,7 @@ class NetCDFWriter(object):
                 continue
             else:
                 var_group.description = var["var_description"]
-                var_group.name = var["var_name"]
+                var_group.group_name = var["var_name"]
                 var_group.unit = var["var_unit"] if (var["var_unit"] is not None) else "None"
             possible_scans = dict((scan, scanval)
                                   for scan, scanval in mfile_data[key].items()
@@ -305,8 +305,13 @@ class NetCDFWriter(object):
                     print(err, file=stderr)
                     print("Exiting, please debug this!", file=stderr)
                     exit()
-
-                var_group.name = var["var_name"]
+                try :
+                    var_group.group_name = var["var_name"]
+                except AttributeError as err:
+                    print("DB:", err)
+                    print(var["var_name"])
+                    print(var_group)
+                    exit()
                 var_group.unit = var["var_unit"] if (var["var_unit"] is not None) else "None"
                 possible_scans = dict((scan, scanval)
                                       for scan, scanval in mfile_data[key].items()
@@ -394,7 +399,7 @@ class NetCDFReader(object):
                            "{}".format(path, self.netcdf_filename))
         for group in mfile_data.groups.values():
             for variable in group.variables.values():
-                mfile_dict[group.name] = variable.getValue()
+                mfile_dict[group.group_name] = variable.getValue()
 
         return mfile_dict
 
@@ -410,7 +415,7 @@ class NetCDFReader(object):
                 scan_num = None
                 if "scan" in var_name:
                     scan_num = int(re.search("\d+", var_name).group())
-                m_file.add_to_mfile_variable(group.description, group.name,
+                m_file.add_to_mfile_variable(group.description, group.group_name,
                                          variable.getValue(), group.unit,
                                          scan_num)
         return m_file
