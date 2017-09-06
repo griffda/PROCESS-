@@ -731,12 +731,12 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         #add normalised constraints/iteration variables to output
         in_dat = InDat(self.or_in_dat)
-        nvar = in_dat.data['nvar'].get_value
+        nvar = in_dat.number_of_itvars
         for i in range(1, nvar+1):
             nitvar = 'nitvar{:03}'.format(i)
             if not nitvar in self.output_vars:
                 self.output_vars += [nitvar]
-        neqns = in_dat.data['neqns'].get_value
+        neqns = in_dat.number_of_constraints
         for i in range(1, neqns+1):
             normres = 'normres{:03}'.format(i)
             if not normres in self.output_vars:
