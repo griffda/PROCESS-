@@ -81,8 +81,8 @@ if __name__ == '__main__':
 
                 if no_unfeasible <= CONFIG.no_allowed_unfeasible:
                     if no_unfeasible > 0:
-                        print('WARNING: Non feasible point(s) in sweep,\
-         but finished anyway! %i ' % no_unfeasible)
+                        print('WARNING: %i non feasible point(s) in sweep,' % no_unfeasible,
+                              'but finished anyway! Allowed  %i. ' % CONFIG.no_allowed_unfeasible)
                     CONFIG.add_results2netcdf(RUN_ID)
                     RUN_ID += 1
                     break
@@ -95,3 +95,4 @@ if __name__ == '__main__':
             vary_iteration_variables(ITERVARS, LBS, UBS)
 
     # CONFIG.write_results()
+    print("UQ finished!")
