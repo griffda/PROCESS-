@@ -1832,7 +1832,7 @@ contains
           call parse_string_variable('fwcoolant', fwcoolant, 'first wall coolant')
           call lower_case(fwcoolant)
        case ('roughness')
-          call parse_real_variable('fwoutlet', fwoutlet, 0.0d0, 1.0D-2, &
+          call parse_real_variable('roughness', roughness, 0.0d0, 1.0D-2, &
                'first wall channel roughness epsilon')
        case ('fw_channel_length')
           call parse_real_variable('fw_channel_length', fw_channel_length, 0.1d0, 1.0D2, &

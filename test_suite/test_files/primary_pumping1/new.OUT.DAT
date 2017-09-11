@@ -7,13 +7,13 @@
  
    Program : ./process.exe
    Version : 1.0.11   Release Date :: 2017-06-29
-   Tag No. : "1.0.11-13-g74f1dc4"
+   Tag No. : "1.0.11-73-gdd9fe99 UT"
       User : mkovari
  Directory : /home/mkovari/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.11 : Run on  7 Aug 2017 11:51:05 +01:00(hh:mm) UTC by freia062
+ PROCESS 1.0.11 : Run on 11 Sep 2017 15:26:30 +01:00(hh:mm) UTC by freia062
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -156,7 +156,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Minimum temperature margin (K)                                           (tmargmin)                1.700E+00     
  c parameter, determining the temperature margin where lifetime declines  (conf_mag)                9.900E-01     
  Temperature Margin (K)                                                   (temp_margin)             2.277E+00  OP 
- Magnets unplanned unavailability                                         (u_unplanned_magnets      2.152E-02  OP 
+ Magnets unplanned unavailability                                         (u_unplanned_magnets)     2.152E-02  OP 
  
  Divertor:
  
@@ -347,7 +347,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Synchrotron radiation power (MW)                                         (psyncpv*vol)             1.513E+01  OP 
  synchrotron wall reflectivity factor                                     (ssync)                       0.600000     
  Normalised minor radius defining 'core'                                  (coreradius)              6.000E-01     
- Fraction of core radiation subtracted from P_L                           (coreradiationfracti      1.000E+00     
+ Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   1.000E+00     
  Total core radiation power (MW)                                          (pcoreradmw)              1.085E+02  OP 
  Edge radiation power (MW)                                                (pedgeradmw)              1.643E+02  OP 
  Total radiation power (MW)                                               (pradmw)                  2.728E+02  OP 
@@ -383,7 +383,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  2008 Martin scaling: 95% upper bound (MW)                                (pthrmw(7))               1.405E+02  OP 
  2008 Martin scaling: 95% lower bound (MW)                                (pthrmw(8))               7.309E+01  OP 
  
- L-H threshold power (enforced) (MW)                                      (boundl(103)*plhthre      1.068E+02  OP 
+ L-H threshold power (enforced) (MW)                                      (boundl(103)*plhthresh)   1.068E+02  OP 
  
  Confinement :
  
@@ -621,7 +621,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Inboard leg inboard half-width (m)                                       (tfocrn)                  5.579E-01  OP 
  Outboard leg toroidal thickness (m)                                      (tftort)                  1.456E+00  OP 
  Mean coil circumference (m)                                              (tfleng)                  4.789E+01  OP 
- Total current (MA)                                                       (ritfc/1.D6)              2.241E+02  OP 
+ Total current in all TF coils (MA)                                       (ritfc/1.D6)              2.241E+02  OP 
  Peak field (Amperes Law,T)                                               (bmaxtf)                  1.082E+01  OP 
  Peak field (with ripple,T)                                               (bmaxtfrp)                1.174E+01  OP 
  Max allowed ripple amplitude at plasma (%)                               (ripmax)                  6.000E-01     
@@ -654,7 +654,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable stress in vacuum vessel (Pa)                                   (sigvvall)                9.300E+07     
  Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.115E+01  OP 
  Actual quench time (or time constant) (s)                                (tdmptf)                  1.000E+01  ITV
- Max allowed current density in winding pack due to temperature rise in q (jwdgpro)                 2.698E+07  OP 
  Actual current density in winding pack (A/m2)                            (jwptf)                   2.698E+07  OP 
  Maximum allowed voltage during quench due to insulation (kV)             (vdalw)                   2.152E+01  ITV
  Quench voltage (kV)                                                      (vtfskv)                  1.544E+01  OP 
@@ -662,30 +661,25 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Conductor Information :
  
- Width of cable (square) (m)                                              (cable_width)             5.376E-02  OP 
+ Width of conductor (square) (m)                                          (conductor_width)         5.376E-02  OP 
  Width of turn including inter-turn insulation (m)                        (leno)                    5.776E-02  OP 
- Width of space inside cable (m)                                          (leni)                    3.776E-02  OP 
+ Width of space inside conductor (m)                                      (leni)                    3.776E-02  OP 
  Conduit thickness (m)                                                    (thwcndut)                8.000E-03  ITV
  Inter-turn insulation thickness (m)                                      (thicndut)                2.000E-03     
  Superconductor mass per coil (kg)                                        (whtconsc)                1.707E+04  OP 
  Copper mass per coil (kg)                                                (whtconcu)                3.590E+04  OP 
  Steel conduit mass per coil (kg)                                         (whtconsh)                7.727E+04  OP 
  Conduit insulation mass per coil (kg)                                    (whtconin)                5.320E+03  OP 
- Total conductor cable mass per coil (kg)                                 (whtcon)                  1.356E+05  OP 
+ Total conductor mass per coil (kg)                                       (whtcon)                  1.356E+05  OP 
  Cable conductor + void area (m2)                                         (acstf)                   1.395E-03  OP 
  
  Winding Pack Information :
  
  Diameter of central helium channel in cable                              (dhecoil)                 5.000E-03     
  Fractions by area
- Coolant fraction in cable excluding central channel                      (vftf)                    3.300E-01     
+ Coolant fraction in conductor excluding central channel                  (vftf)                    3.300E-01     
  Copper fraction of conductor                                             (fcutfsu)                 6.726E-01  ITV
  Superconductor fraction of conductor                                     (1-fcutfsu)               3.274E-01     
- Conductor fraction of winding pack                                       (acond/ap)                2.191E+00  OP 
- Conduit fraction of winding pack                                         (turnstf*acndttf/ap)      3.582E+00  OP 
- Insulator fraction of winding pack                                       (aiwp/ap)                 1.069E+00  OP 
- Helium area fraction of winding pack excluding central channel           (avwp/ap)                 1.103E+00  OP 
- Central helium channel area as fraction of winding pack                  (awphec/ap)               4.704E-02  OP 
  Check total area fractions in winding pack = 1                                                         1.000000     
  Winding radial thickness (m)                                             (thkwp)                   4.213E-01  OP 
  Winding width 1 (m)                                                      (wwp1)                    1.133E+00  OP 
@@ -714,10 +708,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Case tangential stress (Pa)                                              (sigttf(1))              -3.426E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -1.714E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.172E+08  OP 
- Tresca stress in case (MPa)                                              (s_tresca_case)           5.500E+08  OP 
- Tresca stress in conduit (MPa)                                           (s_tresca_cond)           4.246E+08  OP 
- von Mises stress in case (MPa)                                           (s_vmises_case)           4.811E+08  OP 
- von Mises stress in conduit (MPa)                                        (s_vmises_cond)           3.678E+08  OP 
+ Tresca stress in case (Pa)                                               (s_tresca_case)           5.500E+08  OP 
+ Tresca stress in conduit (Pa)                                            (s_tresca_cond)           4.246E+08  OP 
+ von Mises stress in case (Pa)                                            (s_vmises_case)           4.811E+08  OP 
+ von Mises stress in conduit (Pa)                                         (s_vmises_cond)           3.678E+08  OP 
  Deflection at midplane (m)                                               (deflect)                -5.288E-03  OP 
  Winding pack vertical Young's Modulus (Pa)                               (eyzwp)                   9.259E+10  OP 
  Vertical strain on winding pack                                          (windstrain)              2.240E-03  OP 
@@ -731,7 +725,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
  Critical temperature at zero field and strain (K)                        (tc0m)                    1.606E+01     
  
- Peak field at conductor (T)                                              (bmax)                    1.174E+01  OP 
  Helium temperature at peak field (K)                                     (thelium)                 4.750E+00     
  Total helium fraction inside cable space                                 (fhetot)                  3.441E-01  OP 
  Copper fraction of conductor                                             (fcutfsu)                 6.726E-01  ITV
@@ -776,8 +769,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  CS steel area fraction                                                   (oh_steel_frac)           5.000E-01     
  Allowable stress in CS steel (Pa)                                        (alstroh)                 4.000E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                5.722E+08  OP 
- Axial stress in CS steel (Pa)                                            (sig_axial)              -7.587E+08  OP 
- Tresca stress in CS steel (Pa)                                           (s_tresca_oh)             1.331E+09  OP 
+ Axial stress in CS steel (Pa)                                            (sig_axial)              -6.305E+08  OP 
+ Tresca stress in CS steel (Pa)                                           (s_tresca_oh)             1.203E+09  OP 
  Axial force in CS (N)                                                    (axial_force)            -1.743E+09  OP 
  Strain on superconductor                                                 (strncon)                -5.000E-03     
  Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
@@ -891,6 +884,58 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.370E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.240E-01  OP 
+ 
+ *************************** PF Circuit Waveform Data ***************************
+ 
+ Number of PF circuits including CS and plasma                            (ncirt)                           8     
+ PF Circuit 01 - Time point 01 (A)                                        (pfc01t01)                0.000E+00     
+ PF Circuit 01 - Time point 02 (A)                                        (pfc01t02)                1.737E+07     
+ PF Circuit 01 - Time point 03 (A)                                        (pfc01t03)                1.900E+07     
+ PF Circuit 01 - Time point 04 (A)                                        (pfc01t04)                1.900E+07     
+ PF Circuit 01 - Time point 05 (A)                                        (pfc01t05)               -1.831E+06     
+ PF Circuit 01 - Time point 06 (A)                                        (pfc01t06)                0.000E+00     
+ PF Circuit 02 - Time point 01 (A)                                        (pfc02t01)                0.000E+00     
+ PF Circuit 02 - Time point 02 (A)                                        (pfc02t02)                1.939E+07     
+ PF Circuit 02 - Time point 03 (A)                                        (pfc02t03)                2.038E+07     
+ PF Circuit 02 - Time point 04 (A)                                        (pfc02t04)                2.038E+07     
+ PF Circuit 02 - Time point 05 (A)                                        (pfc02t05)               -2.885E+06     
+ PF Circuit 02 - Time point 06 (A)                                        (pfc02t06)                0.000E+00     
+ PF Circuit 03 - Time point 01 (A)                                        (pfc03t01)               -0.000E+00     
+ PF Circuit 03 - Time point 02 (A)                                        (pfc03t02)                1.016E+06     
+ PF Circuit 03 - Time point 03 (A)                                        (pfc03t03)               -7.320E+06     
+ PF Circuit 03 - Time point 04 (A)                                        (pfc03t04)               -7.320E+06     
+ PF Circuit 03 - Time point 05 (A)                                        (pfc03t05)               -8.538E+06     
+ PF Circuit 03 - Time point 06 (A)                                        (pfc03t06)               -0.000E+00     
+ PF Circuit 04 - Time point 01 (A)                                        (pfc04t01)               -0.000E+00     
+ PF Circuit 04 - Time point 02 (A)                                        (pfc04t02)                1.016E+06     
+ PF Circuit 04 - Time point 03 (A)                                        (pfc04t03)               -7.320E+06     
+ PF Circuit 04 - Time point 04 (A)                                        (pfc04t04)               -7.320E+06     
+ PF Circuit 04 - Time point 05 (A)                                        (pfc04t05)               -8.538E+06     
+ PF Circuit 04 - Time point 06 (A)                                        (pfc04t06)               -0.000E+00     
+ PF Circuit 05 - Time point 01 (A)                                        (pfc05t01)               -0.000E+00     
+ PF Circuit 05 - Time point 02 (A)                                        (pfc05t02)               -4.047E+05     
+ PF Circuit 05 - Time point 03 (A)                                        (pfc05t03)               -4.867E+06     
+ PF Circuit 05 - Time point 04 (A)                                        (pfc05t04)               -4.867E+06     
+ PF Circuit 05 - Time point 05 (A)                                        (pfc05t05)               -4.382E+06     
+ PF Circuit 05 - Time point 06 (A)                                        (pfc05t06)               -0.000E+00     
+ PF Circuit 06 - Time point 01 (A)                                        (pfc06t01)               -0.000E+00     
+ PF Circuit 06 - Time point 02 (A)                                        (pfc06t02)               -4.047E+05     
+ PF Circuit 06 - Time point 03 (A)                                        (pfc06t03)               -4.867E+06     
+ PF Circuit 06 - Time point 04 (A)                                        (pfc06t04)               -4.867E+06     
+ PF Circuit 06 - Time point 05 (A)                                        (pfc06t05)               -4.382E+06     
+ PF Circuit 06 - Time point 06 (A)                                        (pfc06t06)               -0.000E+00     
+ CS Circuit  - Time point 01 (A)                                          (cst01)                  -0.000E+00     
+ CS Circuit  - Time point 02 (A)                                          (cst02)                   1.397E+08     
+ CS Circuit  - Time point 03 (A)                                          (cst03)                   1.848E+07     
+ CS Circuit  - Time point 04 (A)                                          (cst04)                   1.848E+07     
+ CS Circuit  - Time point 05 (A)                                          (cst05)                  -1.490E+08     
+ CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
+ Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
+ Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
+ Plasma  - Time point 03 (A)                                              (plasmat03)               1.850E+07     
+ Plasma  - Time point 04 (A)                                              (plasmat04)               1.850E+07     
+ Plasma  - Time point 05 (A)                                              (plasmat05)               1.850E+07     
+ Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
  
  ********************************************* Support Structure **********************************************
  
@@ -1241,14 +1286,14 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             374.028690  OP 
  Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw.)                  1.516498  OP 
  Ohmic heating (MW)                                                       (pohmmw.)                     0.893206  OP 
- Injected power deposited in plasma (MW)                                  (pinjmw.)                    50.000000  OP 
+ Injected power deposited in plasma (MW)                                  (pinjmw)                     50.000000  OP 
  Total (MW)                                                                                           426.438394  OP 
  
  Power Balance for Reactor - Summary :
  -------------------------------------
  Fusion power (MW)                                                        (powfmw.)                  1970.906415  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   375.363143  OP 
- Injected power (MW)                                                      (pinjmw..)                   50.000000  OP 
+ Injected power (MW)                                                      (pinjmw.)                    50.000000  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.893206  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 47.741282  OP 
  Total (MW)                                                                                          2444.904047  OP 
