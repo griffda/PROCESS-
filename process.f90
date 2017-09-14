@@ -464,7 +464,7 @@ subroutine run_summary
      call ocmmnt(outfile, progid(1))  !  program name
      call ocmmnt(outfile, progid(2))  !  version
      if (untracked > 0) then
-       call ocmmnt(outfile, '  Tag No. : "'//tagno//' UT"')  !  directory
+       call ocmmnt(outfile, '  Tag No. : "'//tagno//' Code used contains Untracked Changes"')  !  directory
      else
        call ocmmnt(outfile, '  Tag No. : "'//tagno//'"')  !  directory
      end if

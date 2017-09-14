@@ -751,6 +751,10 @@ contains
        case ('ralpne')
           call parse_real_variable('ralpne', ralpne, 1.0D-12, 1.0D0, &
                'Thermal alpha density / electron density')
+       case ('protium')
+          call parse_real_variable('protium', protium, 0.0D0, 1.0D0, &
+               'Protium density / electron density')
+
        case ('rhopedn')
           call parse_real_variable('rhopedn', rhopedn, 0.01D0, 1.0D0, &
                'Density pedestal r/a')

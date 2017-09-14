@@ -621,7 +621,7 @@ do i = 2, nimp
         !open(unit=10, file='divertor_diagnostics.txt', status='replace')
      endif
 
-    do step = 0, step_num+1 
+    do step = 0, step_num+1
         if(step.ne.0) then
 
             ! Solve the set of differential equations
@@ -770,7 +770,7 @@ do i = 1, nimp
     ! Power balance - should be zero [W]
     balance = (Y(6) - Y(7)-Y(8)-Y(9)-Y(10))*1.e6 - Power0
 
-    ! Momentum loss factor [-]
+    ! momentum factor [-]
     fmom = 2.0D0*nete0/nete
 
     ! Total power lost due to radiation, ionisation and recombination [W]
@@ -852,7 +852,7 @@ do i = 1, nimp
     call ovarre(outfile, 'Plasma temperature near target [eV] ','(ttarget)', ttarget)
 
     call ovarre(outfile, 'Total plasma pressure near target (thermal+dynamic) [Pa] ','(pressure0)', pressure0, 'OP ')
-    call ovarre(outfile, 'Momentum loss factor [-] ','(fmom)', fmom, 'OP ')
+    call ovarre(outfile, 'momentum factor [-] ','(fmom)', fmom, 'OP ')
 
     call osubhd(outfile, 'Divertor target parameters :')
     call ovarre(outfile, 'Angle between flux surface and normal to divertor target [deg]', '(targetangle)', targetangle)

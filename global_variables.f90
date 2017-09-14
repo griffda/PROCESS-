@@ -677,6 +677,9 @@ module physics_variables
   real(kind(1.0D0)) :: qstar = 0.0D0
   !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
   real(kind(1.0D0)) :: ralpne = 0.10D0
+  !+ad_vars  protium /0.0/ : Seeded protium density / electron density.  
+  real(kind(1.0D0)) :: protium = 0.0D0
+
   !+ad_vars  rli /0.9/ : plasma normalised internal inductance;
   !+ad_varc              calculated from alphaj if iprofile=1
   real(kind(1.0D0)) :: rli = 0.9D0
@@ -1005,7 +1008,7 @@ module divertor_kallenbach_variables
   !+ad_vars  fractionwidesol /0.1/ : Distance from target at which SOL gets broader as a fraction of connection length
   real(kind(1.0D0)) :: fractionwidesol = 0.1D0
 
-  !+ad_vars  fmom : momentum loss factor [-]
+  !+ad_vars  fmom : momentum factor [-]
   real(kind(1.0D0)), public :: fmom
 
   !+ad_vars  totalpowerlost : Total power lost due to radiation, ionisation and recombination [W]

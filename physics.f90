@@ -2356,15 +2356,18 @@ end function t_eped_scaling
 
     dnalp = dene * ralpne
 
-    !  Proton ash portion
+    !  Protons
     !  This calculation will be wrong on the first call as the particle
     !  production rates are evaluated later in the calling sequence
+    !  Issue #557 Allow protium impurity to be specified: 'protium'
+    !  This will override the calculated value which is a minimum.
 
     if (alpharate < 1.0D-6) then  !  not calculated yet...
-       dnprot = dnalp * (fhe3 + 1.0D-3) !  rough estimate
+       dnprot = max(protium*dene, dnalp * (fhe3 + 1.0D-3)) !  rough estimate
     else
-       dnprot = dnalp * protonrate/alpharate
+       dnprot = max(protium*dene, dnalp * protonrate/alpharate)
     end if
+
 
     !  Beam hot ion component
     !  If ignited, prevent beam fusion effects
@@ -2527,14 +2530,16 @@ end function t_eped_scaling
 
     dnalp = dene * ralpne
 
-    !  Proton ash portion
+    !  Protons
     !  This calculation will be wrong on the first call as the particle
     !  production rates are evaluated later in the calling sequence
+    !  Issue #557 Allow protium impurity to be specified: 'protium'
+    !  This will override the calculated value which is a minimum.
 
     if (alpharate < 1.0D-6) then  !  not calculated yet...
-       dnprot = dnalp * (fhe3 + 1.0D-3) !  rough estimate
+       dnprot = max(protium*dene, dnalp * (fhe3 + 1.0D-3)) !  rough estimate
     else
-       dnprot = dnalp * protonrate/alpharate
+       dnprot = max(protium*dene, dnalp * protonrate/alpharate)
     end if
 
     !  Beam hot ion component
@@ -2919,7 +2924,7 @@ end function t_eped_scaling
           pn = 0.0D0
           frate = fpow/etot  !  reactions/m3/second
           arate = frate
-          prate = frate
+          prate = frate      !  proton production /m3/second
           pdhe3pv = fpow
 
        case (DD1)  !  D + D --> 3He + n reaction
@@ -2932,7 +2937,7 @@ end function t_eped_scaling
           pn = 0.75D0 * fpow
           frate = fpow/etot  !  reactions/m3/second
           arate = 0.0D0
-          prate = frate
+          prate = 0.0D0      !  Issue #557: No proton production
           pddpv = pddpv + fpow
 
        case (DD2)  !  D + D --> T + p reaction
@@ -2945,7 +2950,7 @@ end function t_eped_scaling
           pn = 0.0D0
           frate = fpow/etot  !  reactions/m3/second
           arate = 0.0D0
-          prate = frate
+          prate = frate      !  proton production /m3/second
           pddpv = pddpv + fpow
 
        end select
@@ -5648,7 +5653,10 @@ end function t_eped_scaling
     call ovarre(outfile,'Fuel density (/m3)','(deni)',deni, 'OP ')
     call ovarre(outfile,'High Z impurity density (/m3)','(dnz)',dnz, 'OP ')
     call ovarre(outfile,'Helium ion density (thermalised ions only) (/m3)','(dnalp)',dnalp, 'OP ')
-    call ovarre(outfile,'Proton ash density (/m3)','(dnprot)',dnprot, 'OP ')
+    call ovarre(outfile,'Proton density (/m3)','(dnprot)',dnprot, 'OP ')
+    if(protium > 1.0d-10)then
+        call ovarre(outfile,'Seeded protium density / electron density','(protium)',protium, 'OP ')
+    end if
 
     call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam, 'OP ')
     call ovarre(outfile,'Density limit from scaling (/m3)','(dnelimt)',dnelimt, 'OP ')

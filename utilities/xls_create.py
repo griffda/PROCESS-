@@ -31,9 +31,12 @@ from openpyxl.styles import  Font, Border, Side
 
 def append_line(spreadsheet, custom_keys, mfile_data):
     """Function to add data to a spreadsheet using MFILE"""
-    try:
-        num_scans = int(mfile_data.data["isweep"].get_scan(-1))
-    except KeyError:
+
+    num_scans = int(mfile_data.data["isweep"].get_scan(-1))
+
+    # If isweep does not appear in MFILE, then the mfile_data.data function will
+    # catch the error, and num_scans will be 0
+    if num_scans == 0:
         num_scans = 1
     print('num_scans', num_scans)
 
