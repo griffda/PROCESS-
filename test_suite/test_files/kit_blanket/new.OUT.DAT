@@ -7,13 +7,13 @@
  
    Program : ./process.exe
    Version : 1.0.11   Release Date :: 2017-06-29
-   Tag No. : "1.0.11-79-g5cf9d55 Code used contains Untracked Changes"
+   Tag No. : "1.0.11-80-gacfeeb0 Code used contains Untracked Changes"
       User : mkovari
  Directory : /home/mkovari/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.11 : Run on 13 Sep 2017 14:49:13 +01:00(hh:mm) UTC by freia057
+ PROCESS 1.0.11 : Run on 14 Sep 2017 13:08:34 +01:00(hh:mm) UTC by freia031
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -218,7 +218,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fuel density (/m3)                                                       (deni)                    6.231E+19  OP 
  High Z impurity density (/m3)                                            (dnz)                     4.699E+16  OP 
  Helium ion density (thermalised ions only) (/m3)                         (dnalp)                   6.819E+18  OP 
- Proton ash density (/m3)                                                 (dnprot)                  2.030E+16  OP 
+ Proton density (/m3)                                                     (dnprot)                  2.030E+16  OP 
  Hot beam density (/m3)                                                   (dnbeam)                  3.936E+17  OP 
  Density limit from scaling (/m3)                                         (dnelimt)                 7.154E+19  OP 
  Density limit (enforced) (/m3)                                           (boundu(9)*dnelimt)       8.585E+19  OP 
@@ -509,41 +509,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Thermal shield                               0.050          -8.303   (thshield)          
  Gap                                          0.020          -8.353   (tftsgap)           
  TF coil                                      1.188          -9.561   (tfcth)             
- 
- ************************************* Divertor build and plasma position *************************************
- 
- Plasma top position, radial (m)                                          (ptop_radial)                 7.946390  OP 
- Plasma top position, vertical (m)                                        (ptop_vertical)               5.442294  OP 
- Plasma geometric centre, radial (m)                                      (rmajor.)                     9.474541  OP 
- Plasma geometric centre, vertical (m)                                    (0.0)                         0.000000  OP 
- Plasma lower triangularity                                               (tril)                        0.500000  OP 
- Plasma elongation                                                        (kappa.)                      1.780679  OP 
- TF coil vertical offset (m)                                              (tfoffset)                   -0.282500  OP 
- Plasma outer arc radius of curvature (m)                                 (rco)                         5.522553  OP 
- Plasma inner arc radius of curvature (m)                                 (rci)                        10.455053  OP 
- Plasma lower X-pt, radial (m)                                            (rxpt)                        7.946390  OP 
- Plasma lower X-pt, vertical (m)                                          (zxpt)                       -5.442294  OP 
- Poloidal plane angle between vertical and inner leg (rad)                (thetai)                      0.170694  OP 
- Poloidal plane angle between vertical and outer leg (rad)                (thetao)                      1.023311  OP 
- Poloidal plane angle between inner leg and plate (rad)                   (betai)                       1.000000     
- Poloidal plane angle between outer leg and plate (rad)                   (betao)                       1.000000     
- Inner divertor leg poloidal length (m)                                   (plsepi)                      1.000000     
- Outer divertor leg poloidal length (m)                                   (plsepo)                      1.500000     
- Inner divertor plate length (m)                                          (plleni)                      1.000000     
- Outer divertor plate length (m)                                          (plleno)                      1.000000     
- Inner strike point, radial (m)                                           (rspi)                        6.960923  OP 
- Inner strike point, vertical (m)                                         (zspi)                       -5.612161  OP 
- Inner plate top, radial (m)                                              (rplti)                       7.155679  OP 
- Inner plate top, vertical (m)                                            (zplti)                      -5.151651  OP 
- Inner plate bottom, radial (m)                                           (rplbi)                       6.766166  OP 
- Inner plate bottom, vertical (m)                                         (zplbi)                      -6.072672  OP 
- Outer strike point, radial (m)                                           (rspo)                        8.727203  OP 
- Outer strike point, vertical (m)                                         (zspo)                       -6.723049  OP 
- Outer plate top, radial (m)                                              (rplto)                       8.945817  OP 
- Outer plate top, vertical (m)                                            (zplto)                      -6.273373  OP 
- Outer plate bottom, radial (m)                                           (rplbo)                       8.508589  OP 
- Outer plate bottom, vertical (m)                                         (zplbo)                      -7.172724  OP 
- Calculated maximum divertor height (m)                                   (divht)                       2.021073  OP 
  
  ************************************************** TF Coils **************************************************
  

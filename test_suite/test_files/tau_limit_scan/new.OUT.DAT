@@ -8,13 +8,13 @@
  
    Program : ./process.exe
    Version : 1.0.11   Release Date :: 2017-06-29
-   Tag No. : "1.0.11-79-g5cf9d55 Code used contains Untracked Changes"
+   Tag No. : "1.0.11-80-gacfeeb0 Code used contains Untracked Changes"
       User : mkovari
  Directory : /home/mkovari/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.11 : Run on 13 Sep 2017 14:48:37 +01:00(hh:mm) UTC by freia057
+ PROCESS 1.0.11 : Run on 14 Sep 2017 13:08:38 +01:00(hh:mm) UTC by freia031
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demoa 1 ralpne  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -319,7 +319,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fuel density (/m3)                                                       (deni)                    6.071E+19  OP 
  High Z impurity density (/m3)                                            (dnz)                     2.715E+16  OP 
  Helium ion density (thermalised ions only) (/m3)                         (dnalp)                   8.930E+18  OP 
- Proton ash density (/m3)                                                 (dnprot)                  2.391E+16  OP 
+ Proton density (/m3)                                                     (dnprot)                  2.391E+16  OP 
  Hot beam density (/m3)                                                   (dnbeam)                  1.276E+17  OP 
  Density limit from scaling (/m3)                                         (dnelimt)                 7.390E+19  OP 
  Density limit (enforced) (/m3)                                           (boundu(9)*dnelimt)       8.868E+19  OP 
@@ -610,41 +610,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Thermal shield                               0.050          -8.482   (thshield)          
  Gap                                          0.050          -8.532   (tftsgap)           
  TF coil                                      1.111          -9.692   (tfcth)             
- 
- ************************************* Divertor build and plasma position *************************************
- 
- Plasma top position, radial (m)                                          (ptop_radial)                 7.477  OP 
- Plasma top position, vertical (m)                                        (ptop_vertical)               5.121  OP 
- Plasma geometric centre, radial (m)                                      (rmajor.)                     8.914  OP 
- Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
- Plasma lower triangularity                                               (tril)                        0.500  OP 
- Plasma elongation                                                        (kappa.)                      1.781  OP 
- TF coil vertical offset (m)                                              (tfoffset)                   -0.616  OP 
- Plasma outer arc radius of curvature (m)                                 (rco)                         5.196  OP 
- Plasma inner arc radius of curvature (m)                                 (rci)                         9.837  OP 
- Plasma lower X-pt, radial (m)                                            (rxpt)                        7.477  OP 
- Plasma lower X-pt, vertical (m)                                          (zxpt)                       -5.121  OP 
- Poloidal plane angle between vertical and inner leg (rad)                (thetai)                      0.171  OP 
- Poloidal plane angle between vertical and outer leg (rad)                (thetao)                      1.023  OP 
- Poloidal plane angle between inner leg and plate (rad)                   (betai)                       1.000     
- Poloidal plane angle between outer leg and plate (rad)                   (betao)                       1.000     
- Inner divertor leg poloidal length (m)                                   (plsepi)                      1.000     
- Outer divertor leg poloidal length (m)                                   (plsepo)                      1.500     
- Inner divertor plate length (m)                                          (plleni)                      1.000     
- Outer divertor plate length (m)                                          (plleno)                      1.000     
- Inner strike point, radial (m)                                           (rspi)                        6.491  OP 
- Inner strike point, vertical (m)                                         (zspi)                       -5.290  OP 
- Inner plate top, radial (m)                                              (rplti)                       6.686  OP 
- Inner plate top, vertical (m)                                            (zplti)                      -4.830  OP 
- Inner plate bottom, radial (m)                                           (rplbi)                       6.296  OP 
- Inner plate bottom, vertical (m)                                         (zplbi)                      -5.751  OP 
- Outer strike point, radial (m)                                           (rspo)                        8.257  OP 
- Outer strike point, vertical (m)                                         (zspo)                       -6.401  OP 
- Outer plate top, radial (m)                                              (rplto)                       8.476  OP 
- Outer plate top, vertical (m)                                            (zplto)                      -5.952  OP 
- Outer plate bottom, radial (m)                                           (rplbo)                       8.039  OP 
- Outer plate bottom, vertical (m)                                         (zplbo)                      -6.851  OP 
- Calculated maximum divertor height (m)                                   (divht)                       2.021  OP 
  
  ************************************************** TF Coils **************************************************
  
@@ -1846,7 +1811,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fuel density (/m3)                                                       (deni)                    6.071E+19  OP 
  High Z impurity density (/m3)                                            (dnz)                     2.715E+16  OP 
  Helium ion density (thermalised ions only) (/m3)                         (dnalp)                   8.930E+18  OP 
- Proton ash density (/m3)                                                 (dnprot)                  2.391E+16  OP 
+ Proton density (/m3)                                                     (dnprot)                  2.391E+16  OP 
  Hot beam density (/m3)                                                   (dnbeam)                  1.276E+17  OP 
  Density limit from scaling (/m3)                                         (dnelimt)                 7.390E+19  OP 
  Density limit (enforced) (/m3)                                           (boundu(9)*dnelimt)       8.868E+19  OP 
@@ -2137,41 +2102,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Thermal shield                               0.050          -8.482   (thshield)          
  Gap                                          0.050          -8.532   (tftsgap)           
  TF coil                                      1.111          -9.692   (tfcth)             
- 
- ************************************* Divertor build and plasma position *************************************
- 
- Plasma top position, radial (m)                                          (ptop_radial)                 7.477  OP 
- Plasma top position, vertical (m)                                        (ptop_vertical)               5.121  OP 
- Plasma geometric centre, radial (m)                                      (rmajor.)                     8.914  OP 
- Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
- Plasma lower triangularity                                               (tril)                        0.500  OP 
- Plasma elongation                                                        (kappa.)                      1.781  OP 
- TF coil vertical offset (m)                                              (tfoffset)                   -0.617  OP 
- Plasma outer arc radius of curvature (m)                                 (rco)                         5.196  OP 
- Plasma inner arc radius of curvature (m)                                 (rci)                         9.837  OP 
- Plasma lower X-pt, radial (m)                                            (rxpt)                        7.477  OP 
- Plasma lower X-pt, vertical (m)                                          (zxpt)                       -5.121  OP 
- Poloidal plane angle between vertical and inner leg (rad)                (thetai)                      0.171  OP 
- Poloidal plane angle between vertical and outer leg (rad)                (thetao)                      1.023  OP 
- Poloidal plane angle between inner leg and plate (rad)                   (betai)                       1.000     
- Poloidal plane angle between outer leg and plate (rad)                   (betao)                       1.000     
- Inner divertor leg poloidal length (m)                                   (plsepi)                      1.000     
- Outer divertor leg poloidal length (m)                                   (plsepo)                      1.500     
- Inner divertor plate length (m)                                          (plleni)                      1.000     
- Outer divertor plate length (m)                                          (plleno)                      1.000     
- Inner strike point, radial (m)                                           (rspi)                        6.491  OP 
- Inner strike point, vertical (m)                                         (zspi)                       -5.290  OP 
- Inner plate top, radial (m)                                              (rplti)                       6.686  OP 
- Inner plate top, vertical (m)                                            (zplti)                      -4.830  OP 
- Inner plate bottom, radial (m)                                           (rplbi)                       6.296  OP 
- Inner plate bottom, vertical (m)                                         (zplbi)                      -5.751  OP 
- Outer strike point, radial (m)                                           (rspo)                        8.257  OP 
- Outer strike point, vertical (m)                                         (zspo)                       -6.401  OP 
- Outer plate top, radial (m)                                              (rplto)                       8.476  OP 
- Outer plate top, vertical (m)                                            (zplto)                      -5.952  OP 
- Outer plate bottom, radial (m)                                           (rplbo)                       8.039  OP 
- Outer plate bottom, vertical (m)                                         (zplbo)                      -6.851  OP 
- Calculated maximum divertor height (m)                                   (divht)                       2.021  OP 
  
  ************************************************** TF Coils **************************************************
  
@@ -3374,7 +3304,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fuel density (/m3)                                                       (deni)                    5.845E+19  OP 
  High Z impurity density (/m3)                                            (dnz)                     2.398E+16  OP 
  Helium ion density (thermalised ions only) (/m3)                         (dnalp)                   1.054E+19  OP 
- Proton ash density (/m3)                                                 (dnprot)                  2.855E+16  OP 
+ Proton density (/m3)                                                     (dnprot)                  2.855E+16  OP 
  Hot beam density (/m3)                                                   (dnbeam)                  1.237E+17  OP 
  Density limit from scaling (/m3)                                         (dnelimt)                 7.466E+19  OP 
  Density limit (enforced) (/m3)                                           (boundu(9)*dnelimt)       8.959E+19  OP 
@@ -3665,41 +3595,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Thermal shield                               0.050          -8.549   (thshield)          
  Gap                                          0.050          -8.599   (tftsgap)           
  TF coil                                      1.176          -9.825   (tfcth)             
- 
- ************************************* Divertor build and plasma position *************************************
- 
- Plasma top position, radial (m)                                          (ptop_radial)                 7.575  OP 
- Plasma top position, vertical (m)                                        (ptop_vertical)               5.188  OP 
- Plasma geometric centre, radial (m)                                      (rmajor.)                     9.032  OP 
- Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
- Plasma lower triangularity                                               (tril)                        0.500  OP 
- Plasma elongation                                                        (kappa.)                      1.781  OP 
- TF coil vertical offset (m)                                              (tfoffset)                   -0.617  OP 
- Plasma outer arc radius of curvature (m)                                 (rco)                         5.264  OP 
- Plasma inner arc radius of curvature (m)                                 (rci)                         9.967  OP 
- Plasma lower X-pt, radial (m)                                            (rxpt)                        7.575  OP 
- Plasma lower X-pt, vertical (m)                                          (zxpt)                       -5.188  OP 
- Poloidal plane angle between vertical and inner leg (rad)                (thetai)                      0.171  OP 
- Poloidal plane angle between vertical and outer leg (rad)                (thetao)                      1.023  OP 
- Poloidal plane angle between inner leg and plate (rad)                   (betai)                       1.000     
- Poloidal plane angle between outer leg and plate (rad)                   (betao)                       1.000     
- Inner divertor leg poloidal length (m)                                   (plsepi)                      1.000     
- Outer divertor leg poloidal length (m)                                   (plsepo)                      1.500     
- Inner divertor plate length (m)                                          (plleni)                      1.000     
- Outer divertor plate length (m)                                          (plleno)                      1.000     
- Inner strike point, radial (m)                                           (rspi)                        6.590  OP 
- Inner strike point, vertical (m)                                         (zspi)                       -5.358  OP 
- Inner plate top, radial (m)                                              (rplti)                       6.784  OP 
- Inner plate top, vertical (m)                                            (zplti)                      -4.897  OP 
- Inner plate bottom, radial (m)                                           (rplbi)                       6.395  OP 
- Inner plate bottom, vertical (m)                                         (zplbi)                      -5.818  OP 
- Outer strike point, radial (m)                                           (rspo)                        8.356  OP 
- Outer strike point, vertical (m)                                         (zspo)                       -6.469  OP 
- Outer plate top, radial (m)                                              (rplto)                       8.574  OP 
- Outer plate top, vertical (m)                                            (zplto)                      -6.019  OP 
- Outer plate bottom, radial (m)                                           (rplbo)                       8.137  OP 
- Outer plate bottom, vertical (m)                                         (zplbo)                      -6.918  OP 
- Calculated maximum divertor height (m)                                   (divht)                       2.021  OP 
  
  ************************************************** TF Coils **************************************************
  
