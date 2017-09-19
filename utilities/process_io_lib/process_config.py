@@ -14,9 +14,9 @@ import os
 import subprocess
 from sys import stderr
 from time import sleep
+import collections as col
 from numpy.random import seed, uniform, normal
 from numpy import argsort, ndarray, argwhere, logical_or
-import collections as col
 from process_io_lib.process_funcs import  get_neqns_itervars,\
     get_variable_range, vary_iteration_variables, check_input_error,\
     process_stopped, get_from_indat_or_default,\
@@ -35,8 +35,7 @@ except ImportError:
     exit()
 from process_io_lib.process_netcdf import NetCDFWriter
 
-#def print_config(config_instance):
-#    print(config_instance.get_current_state())
+
 
 
 class ProcessConfig(object):
@@ -110,8 +109,9 @@ class ProcessConfig(object):
         if self.configfileexists:
             subprocess.call(['cp', self.filename, self.wdir])
         os.chdir(self.wdir)
-        subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT *.txt *.out\
- *.log *.pdf *.eps *.nc *.info'], shell=True)
+        subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT README.txt\
+        SolverTest.out process.log *.pdf  uncertainties.nc time.info'],
+                        shell=True)
 
 
     def create_readme(self, directory='.'):
@@ -138,8 +138,7 @@ class ProcessConfig(object):
 
             m_file = MFile(filename=directory+"/MFILE.DAT")
 
-            error_status =\
-                "Error status: {}  Error ID: {}\n".format(
+            error_status = "Error status: {}  Error ID: {}\n".format(
                 m_file.data['error status'].get_scan(-1),
                 m_file.data['error id'].get_scan(-1))
 
@@ -597,7 +596,7 @@ class RunProcessConfig(ProcessConfig):
 
         """ modifies IN.DAT using the configuration parameters"""
 
-        # Need to keep this order! 
+        # Need to keep this order!
         # If bounds are modified in vars, but ixc is newly added,
         # bounds do not get put into IN.DAT. Hence, vars needs to be modified
         # first.
@@ -809,9 +808,9 @@ class UncertaintiesConfig(ProcessConfig, Config):
             nsweep = get_from_indat_or_default(in_dat, 'nsweep')
             ixc = get_from_indat_or_default(in_dat, 'ixc')
             sweep = get_from_indat_or_default(in_dat, 'sweep')
-            if ((str(nsweep) in DICT_NSWEEP2IXC.keys()) and
-                (DICT_NSWEEP2IXC[str(nsweep)] in ixc) and
-                (not all(sweep[0] == item for item in sweep))):
+            if (str(nsweep) in DICT_NSWEEP2IXC.keys()) and\
+                (DICT_NSWEEP2IXC[str(nsweep)] in ixc) and\
+                (not all(sweep[0] == item for item in sweep)):
                 if self.no_scans != isweep:
                     #Change no of sweep points to correct value!!
                     set_variable_in_indat(in_dat, 'isweep', self.no_scans)
@@ -879,7 +878,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         in_dat = InDat()
         ixc_list = in_dat.data['ixc'].get_value
-        assert type(ixc_list) == list
+        assert isinstance(ixc_list, list)
 
         ixc_varname_list = [DICT_IXC_SIMPLE[str(x)] for x in ixc_list]
 
@@ -989,13 +988,13 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 # assures values are inside input bounds!
                 if varname in DICT_INPUT_BOUNDS:
                     args = argwhere(logical_or(
-                            values < DICT_INPUT_BOUNDS[varname]['lb'],
-                            values > DICT_INPUT_BOUNDS[varname]['ub']))
+                        values < DICT_INPUT_BOUNDS[varname]['lb'],
+                        values > DICT_INPUT_BOUNDS[varname]['ub']))
                     while len(args) > 0:
                         values[args] = normal(mean, std, len(args))
                         args = argwhere(logical_or(
-                                values < DICT_INPUT_BOUNDS[varname]['lb'],
-                                values > DICT_INPUT_BOUNDS[varname]['ub']))
+                            values < DICT_INPUT_BOUNDS[varname]['lb'],
+                            values > DICT_INPUT_BOUNDS[varname]['ub']))
                 else: #cutoff at 0 - typically negative values are meaningless
                     args = argwhere(values < 0.)
                     while len(args) > 0:
@@ -1017,13 +1016,13 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 values = normal(mean, std, self.no_samples)
                 if varname in DICT_INPUT_BOUNDS:
                     args = argwhere(logical_or(
-                            values < DICT_INPUT_BOUNDS[varname]['lb'],
-                            values > mean))
+                        values < DICT_INPUT_BOUNDS[varname]['lb'],
+                        values > mean))
                     while len(args) > 0:
                         values[args] = normal(mean, std, len(args))
                         args = argwhere(logical_or(
-                                values < DICT_INPUT_BOUNDS[varname]['lb'],
-                                values > mean))
+                            values < DICT_INPUT_BOUNDS[varname]['lb'],
+                            values > mean))
                 else:
                     args = argwhere(logical_or(values < 0.,
                                                values > mean))
@@ -1037,13 +1036,13 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 values = normal(mean, std, self.no_samples)
                 if varname in DICT_INPUT_BOUNDS:
                     args = argwhere(logical_or(
-                            values < mean,
-                            values > DICT_INPUT_BOUNDS[varname]['ub']))
+                        values < mean,
+                        values > DICT_INPUT_BOUNDS[varname]['ub']))
                     while len(args) > 0:
                         values[args] = normal(mean, std, len(args))
                         args = argwhere(logical_or(
-                                values < mean,
-                                values > DICT_INPUT_BOUNDS[varname]['ub']))
+                            values < mean,
+                            values > DICT_INPUT_BOUNDS[varname]['ub']))
                 else:
                     args = argwhere(values < mean)
                     while len(args) > 0:
@@ -1090,9 +1089,9 @@ class UncertaintiesConfig(ProcessConfig, Config):
                           overwrite=False) as ncdf_writer:
             try:
                 ncdf_writer.write_data(m_file, in_dat, run_id,
-                                             save_vars=self.output_vars,
-                                             mfile_latest_scan_only=True,
-                                             ignore_unknowns=True)
+                                       save_vars=self.output_vars,
+                                       mfile_latest_scan_only=True,
+                                       ignore_unknowns=True)
             except KeyError as err:
                 print('Error: You have specified an output variable that'
                       ' does not exist in MFILE. If this is a valid PROCESS'
@@ -1137,10 +1136,10 @@ class NdScanConfig(Config, RunProcessConfig):
     iterationvariablesatbounds = col.OrderedDict({})
     optionals = {
         'remove_scanvars_from_ixc': True,
-        #^ Removes all scanning variables from the iteration variables
+        # Removes all scanning variables from the iteration variables
         #  of the IN.DAT file.
         'smooth_itervars'              : False
-        #^ Activates data smoothing, which increases run time but reduces errors
+        # Activates data smoothing, which increases run time but reduces errors
         }
 
     def __init__(self, configfilename="ndscan.json"):
@@ -1188,7 +1187,7 @@ class NdScanConfig(Config, RunProcessConfig):
         for axis in axes:
             self.scanaxes['varnames'].append(axis["varname"])
 
-            if type(axis["steps"]) is list:
+            if isinstance(axis["steps"], list):
                 self.scanaxes['steps'].append(axis["steps"])
             else:
                 self.scanaxes['lbs'].append(axis["lowerbound"])
@@ -1225,7 +1224,7 @@ class NdScanConfig(Config, RunProcessConfig):
             for i in range(self.scanaxes['ndim']):
                 print('     ', self.scanaxes['varnames'][i])
                 print('     steps', self.scanaxes['steps'][i])
-                if type(self.scanaxes["steps"][i]) is not list:
+                if not isinstance(self.scanaxes["steps"][i], list):
                     print('     lbs  ', self.scanaxes['lbs'][i])
                     print('     ubs  ', self.scanaxes['ubs'][i])
                 print(' -------')
@@ -1261,7 +1260,7 @@ class NdScanConfig(Config, RunProcessConfig):
 
             self.currentstep.append(0)
 
-            if type(self.scanaxes["steps"][i]) is list:
+            if isinstance(self.scanaxes["steps"][i], list):
                 self.scanaxes['coords'] = self.scanaxes["steps"][i]
                 totalsteps.append(len(self.scanaxes['coords'][i]))
 
