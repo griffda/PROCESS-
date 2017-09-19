@@ -14,6 +14,7 @@ import scipy
 import argparse
 import process_io_lib.mfile as mf
 from process_io_lib.process_dicts import DICT_VAR_TYPE, DICT_DESCRIPTIONS
+from numpy import isfinite
 
 DEFAULT_COMPARE_PARAMS = [
     "rmajor", "rminor", "aspect", "kappa", "kappa95", "triang", "triang95",
@@ -100,8 +101,10 @@ def main(arg):
                 values[m] = (mfile_list[m].data[v].get_scan(-1))
 
         norm_vals = list()
-        if values[0] != 0:
+        if values[0] != 0 and isfinite(values[0]):
             norm_vals = values/values[0]
+        #else:
+        #    print(key, values[0])
 
         if len(norm_vals) >= 1:
             key = v.strip(".").strip(" ")
