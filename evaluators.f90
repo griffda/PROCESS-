@@ -447,7 +447,7 @@ contains
        fc = sgn * cfactr
 
     case (16)  !  major radius/burn time
-       fc = sgn * ( 0.95d0 * (rmajor/9.0d0) + 0.05d0 * (7200.d0/tburn) )
+       fc = sgn * ( 0.95d0 * (rmajor/9.0d0) - 0.05d0 * (7200.d0/tburn) )
 
     case (17)  !  net electrical output
        fc = sgn * pnetelmw / 500.0d0
