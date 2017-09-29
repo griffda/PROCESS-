@@ -213,7 +213,7 @@ def check_input_error(wdir='.'):
     """
 
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
-    error_id = m_file.data['error id'].get_scan(-1)
+    error_id = m_file.data['error_id'].get_scan(-1)
 
     if error_id == 130:
         print('Error in input file. Please check OUT.DAT \
@@ -236,7 +236,7 @@ def process_stopped(wdir='.'):
         print("Code continues to run!", file=stderr)
         return True
 
-    error_status = m_file.data['error status'].get_scan(-1)
+    error_status = m_file.data['error_status'].get_scan(-1)
 
     if error_status >= 3:
         return True

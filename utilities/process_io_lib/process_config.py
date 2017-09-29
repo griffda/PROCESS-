@@ -139,8 +139,8 @@ class ProcessConfig(object):
             m_file = MFile(filename=directory+"/MFILE.DAT")
 
             error_status = "Error status: {}  Error ID: {}\n".format(
-                m_file.data['error status'].get_scan(-1),
-                m_file.data['error id'].get_scan(-1))
+                m_file.data['error_status'].get_scan(-1),
+                m_file.data['error_id'].get_scan(-1))
 
             readme.write(error_status)
             readme.close()
