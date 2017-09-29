@@ -681,17 +681,25 @@ def add_parameter(data, parameter_name, parameter_value):
 
     # Check that the parameter is not already in the dictionary
     if parameter_name not in data.keys():
-        try:
-            parameter_group = find_parameter_group(parameter_name)
-            comment = DICT_DESCRIPTIONS[parameter_name]
-            param_data = INVariable(parameter_name, parameter_value,
-                                    "Parameter", parameter_group, comment)
-            data[parameter_name] = param_data
+        
+        parameter_group = find_parameter_group(parameter_name)
+        if 'fimp' in parameter_name:
+            comment = DICT_DESCRIPTIONS['fimp']
+        else:
+            try:
+                comment = DICT_DESCRIPTIONS[parameter_name]
+            except KeyError:
+                # The dictionary doesn't recognise the variable name
+                print("Warning: Description for {0}".format(parameter_name),
+                      "specified in IN.DAT not in dictionary.", file=stderr)
+                comment = ''
+                
+        param_data = INVariable(parameter_name, parameter_value,
+                                "Parameter", parameter_group, comment)
 
-        except KeyError:
-            # The dictionary doesn't recognise the variable name
-            print("Parameter {0} not recognised. Check!".
-                  format(parameter_name, file=stderr))
+        data[parameter_name] = param_data
+
+        
 
     # If it is already in there change the value to the new value
     else:
