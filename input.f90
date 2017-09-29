@@ -1156,7 +1156,7 @@ contains
           call parse_real_variable('targetangle', targetangle, 0.1D0, 90.0D0, &
                'Angle between field-line and divertor target (degrees)')
        case ('ttarget')
-          call parse_real_variable('ttarget', ttarget, 0.1D0, 1.0D4, &
+          call parse_real_variable('ttarget', ttarget, 1.0D0, 1.0D4, &
                'Plasma temperature adjacent to divertor sheath [eV]')
        case ('qtargettotal')
           call parse_real_variable('qtargettotal', qtargettotal, 0.1D0, 1.0D8, &
