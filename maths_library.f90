@@ -513,6 +513,7 @@ contains
     ! if ( abs(x1 - x2) <= delta) then
     !    assume x1 = x2
     ! endif
+    ! Should never return an index < 1 or > length! 
 
     implicit none
     integer, intent(in) :: length
@@ -545,7 +546,7 @@ contains
             left = middle + 1
         end if
     end do
-    binarysearch = right
+    binarysearch = min(max(right,1),length)
 
   end function binarysearch
 
@@ -567,6 +568,12 @@ contains
     i = binarysearch(x_len, x_array, x)
     j = binarysearch(y_len, y_array, y)
 
+    if (i  >= x_len) then
+       i = x_len -1
+    end if
+    if (j >= y_len) then
+       j = y_len-1
+    end if
     x1 = x_array(i)
     x2 = x_array(i+1)
 
