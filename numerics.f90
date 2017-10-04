@@ -184,143 +184,147 @@ module numerics
   !+ad_vars  active_constraints(ipeqns) : Logical array showing which constraints are active
   logical, dimension(ipeqns) :: active_constraints = .false.
 
-  !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
+  !+ad_vars  lablcc(ipeqns) : labels describing constraint equations (corresponding itvs)<UL>
   character(len=33), dimension(ipeqns) :: lablcc = (/ &
-       !+ad_varc  <LI> ( 1) Beta (consistency equation)
+       !+ad_varc  <LI> ( 1) Beta (consistency equation) (itv 5)
        'Beta consistency                 ', &
-       !+ad_varc  <LI> ( 2) Global power balance (consistency equation)
+       !+ad_varc  <LI> ( 2) Global power balance (consistency equation) (itv 10,1,2,3,4,6,11)
        'Global power balance consistency ', &
-       !+ad_varc  <LI> ( 3) Ion power balance
+       !+ad_varc  <LI> ( 3) Ion power balance DEPRECATED (itv 10,1,2,3,4,6,11)
        'Ion power balance                ', &
-       !+ad_varc  <LI> ( 4) Electron power balance
+       !+ad_varc  <LI> ( 4) Electron power balance DEPRECATED (itv 10,1,2,3,4,6,11)
        'Electron power balance           ', &
-       !+ad_varc  <LI> ( 5) Density upper limit
+       !+ad_varc  <LI> ( 5) Density upper limit (itv 9,1,2,3,4,5,6)
        'Density upper limit              ', &
-       !+ad_varc  <LI> ( 6) (Epsilon x beta poloidal) upper limit
+       !+ad_varc  <LI> ( 6) (Epsilon x beta poloidal) upper limit (itv 8,1,2,3,4,6)
        '(Epsilon x beta-pol) upper limit ', &
-       !+ad_varc  <LI> ( 7) Beam ion density (NBI) (consistency equation)
+       !+ad_varc  <LI> ( 7) Beam ion density (NBI) (consistency equation) (itv 7)
        'Beam ion density consistency     ', &
-       !+ad_varc  <LI> ( 8) Neutron wall load upper limit
+       !+ad_varc  <LI> ( 8) Neutron wall load upper limit (itv 14,1,2,3,4,6)
        'Neutron wall load upper limit    ', &
-       !+ad_varc  <LI> ( 9) Fusion power upper limit
+       !+ad_varc  <LI> ( 9) Fusion power upper limit (itv 26,1,2,3,4,6)
        'Fusion power upper limit         ', &
-       !+ad_varc  <LI> (10) Toroidal field 1/R (consistency equation)
+       !+ad_varc  <LI> (10) Toroidal field 1/R (consistency equation) (itv 12,1,2,3,13 )
        'Toroidal field 1/R consistency   ', &
-       !+ad_varc  <LI> (11) Radial build (consistency equation)
+       !+ad_varc  <LI> (11) Radial build (consistency equation) (itv 3,1,13,16,29,42,61)
        'Radial build consistency         ', &
-       !+ad_varc  <LI> (12) Volt second lower limit (STEADY STATE)
+       !+ad_varc  <LI> (12) Volt second lower limit (STEADY STATE) (itv 15,1,2,3)
        'Volt second lower limit          ', &
-       !+ad_varc  <LI> (13) Burn time lower limit (PULSE)
+       !+ad_varc  <LI> (13) Burn time lower limit (PULSE) (itv 21,1,16,17,22,29,42,44,61)
        'Burn time lower limit            ', &
        !+ad_varc  <LI> (14) Neutral beam decay lengths to plasma centre (NBI) (consistency equation)
+       !+ac_varc            (itv 19,1,2,3,6)
        'NBI decay lengths consistency    ', &
-       !+ad_varc  <LI> (15) LH power threshold limit
+       !+ad_varc  <LI> (15) LH power threshold limit (itv 103)
        'L-H power threshold limit        ', &
-       !+ad_varc  <LI> (16) Net electric power lower limit
+       !+ad_varc  <LI> (16) Net electric power lower limit (itv 25,1,2,3)
        'Net electric power lower limit   ', &
-       !+ad_varc  <LI> (17) Radiation fraction upper limit
+       !+ad_varc  <LI> (17) Radiation fraction upper limit (itv 28)
        'Radiation fraction upper limit   ', &
-       !+ad_varc  <LI> (18) Divertor heat load upper limit
+       !+ad_varc  <LI> (18) Divertor heat load upper limit (itv 27)
        'Divertor heat load upper limit   ', &
-       !+ad_varc  <LI> (19) MVA upper limit
+       !+ad_varc  <LI> (19) MVA upper limit (itv 30)
        'MVA upper limit                  ', &
-       !+ad_varc  <LI> (20) Neutral beam tangency radius upper limit (NBI)
+       !+ad_varc  <LI> (20) Neutral beam tangency radius upper limit (NBI) (itv 33,31,3,13)
        'Beam tangency radius upper limit ', &
-       !+ad_varc  <LI> (21) Plasma minor radius lower limit
+       !+ad_varc  <LI> (21) Plasma minor radius lower limit (itv 32)
        'Plasma minor radius lower limit  ', &
-       !+ad_varc  <LI> (22) Divertor collisionality upper limit
+       !+ad_varc  <LI> (22) Divertor collisionality upper limit (itv 34,43)
        'Divertor collisionality upper lim', &
        !+ad_varc  <LI> (23) Conducting shell to plasma minor radius ratio upper limit
+       !+ad_varc            (itv 104,1,74)
        'Conducting shell radius upper lim', &
-       !+ad_varc  <LI> (24) Beta upper limit
+       !+ad_varc  <LI> (24) Beta upper limit (itv 36,1,2,3,4,6,18)
        'Beta upper limit                 ', &
-       !+ad_varc  <LI> (25) Peak toroidal field upper limit
+       !+ad_varc  <LI> (25) Peak toroidal field upper limit (itv 35,3,13,29)
        'Peak toroidal field upper limit  ', &
        !+ad_varc  <LI> (26) Central solenoid EOF current density upper limit
+       !+ad_varc            (itv 38,37,41,12)
        'CS coil EOF current density limit', &
        !+ad_varc  <LI> (27) Central solenoid BOP current density upper limit
+       !+ad_varc            (itv 39,37,41,12)
        'CS coil BOP current density limit', &
-       !+ad_varc  <LI> (28) Fusion gain Q lower limit
+       !+ad_varc  <LI> (28) Fusion gain Q lower limit (itv 45,47,40)
        'Fusion gain Q lower limit        ', &
-       !+ad_varc  <LI> (29) Inboard radial build consistency
+       !+ad_varc  <LI> (29) Inboard radial build consistency (itv 3,1,13,16,29,42,61)
        'Inboard radial build consistency ', &
-       !+ad_varc  <LI> (30) Injection power upper limit
+       !+ad_varc  <LI> (30) Injection power upper limit (itv 46,47,11)
        'Injection power upper limit      ', &
-       !+ad_varc  <LI> (31) TF coil case stress upper limit (SCTF)
+       !+ad_varc  <LI> (31) TF coil case stress upper limit (SCTF) (itv 48,56,57,58,59,60,24)
        'TF coil case stress upper limit  ', &
-       !+ad_varc  <LI> (32) TF coil conduit stress upper limit (SCTF)
+       !+ad_varc  <LI> (32) TF coil conduit stress upper limit (SCTF) (itv 49,56,57,58,59,60,24)
        'TF coil conduit stress upper lim ', &
-       !+ad_varc  <LI> (33) I_op / I_critical (TF coil) (SCTF)
+       !+ad_varc  <LI> (33) I_op / I_critical (TF coil) (SCTF) (itv 50,56,57,58,59,60,24)
        'I_op / I_critical (TF coil)      ', &
-       !+ad_varc  <LI> (34) Dump voltage upper limit (SCTF)
+       !+ad_varc  <LI> (34) Dump voltage upper limit (SCTF) (itv 51,52,56,57,58,59,60,24)
        'Dump voltage upper limit         ', &
-       !+ad_varc  <LI> (35) J_winding pack/J_protection upper limit (SCTF)
+       !+ad_varc  <LI> (35) J_winding pack/J_protection upper limit (SCTF) (itv 53,56,57,58,59,60,24)
        'J_winding pack/J_protection limit', &
-       !+ad_varc  <LI> (36) TF coil temperature margin lower limit (SCTF)
+       !+ad_varc  <LI> (36) TF coil temperature margin lower limit (SCTF) (itv 54,55,56,57,58,59,60,24)
        'TF coil temp. margin lower limit ', &
-       !+ad_varc  <LI> (37) Current drive gamma upper limit
+       !+ad_varc  <LI> (37) Current drive gamma upper limit (itv 40,47)
        'Current drive gamma limit        ', &
-       !+ad_varc  <LI> (38) First wall coolant temperature rise upper limit
+       !+ad_varc  <LI> (38) First wall coolant temperature rise upper limit (itv 62)
        '1st wall coolant temp rise limit ', &
-       !+ad_varc  <LI> (39) First wall peak temperature upper limit
+       !+ad_varc  <LI> (39) First wall peak temperature upper limit (itv 63)
        'First wall peak temperature limit', &
-       !+ad_varc  <LI> (40) Start-up injection power lower limit (PULSE)
+       !+ad_varc  <LI> (40) Start-up injection power lower limit (PULSE) (itv 64) 
        'Start-up inj. power lower limit  ', &
-       !+ad_varc  <LI> (41) Plasma current ramp-up time lower limit (PULSE)
+       !+ad_varc  <LI> (41) Plasma current ramp-up time lower limit (PULSE) (itv  66,65)
        'Plasma curr. ramp time lower lim ', &
-       !+ad_varc  <LI> (42) Cycle time lower limit (PULSE)
+       !+ad_varc  <LI> (42) Cycle time lower limit (PULSE) (itv 67,65,17)
        'Cycle time lower limit           ', &
        !+ad_varc  <LI> (43) Average centrepost temperature
-       !+ad_varc            (TART) (consistency equation)
+       !+ad_varc            (TART) (consistency equation) (itv 69,70,13)
        'Average centrepost temperature   ', &
-       !+ad_varc  <LI> (44) Peak centrepost temperature upper limit (TART)
+       !+ad_varc  <LI> (44) Peak centrepost temperature upper limit (TART) (itv 68,69,70)
        'Peak centrepost temp. upper limit', &
-       !+ad_varc  <LI> (45) Edge safety factor lower limit (TART)
+       !+ad_varc  <LI> (45) Edge safety factor lower limit (TART) (itv 71,1,2,3)
        'Edge safety factor lower limit   ', &
-       !+ad_varc  <LI> (46) Ip/Irod upper limit (TART)
+       !+ad_varc  <LI> (46) Ip/Irod upper limit (TART) (itv 72,2,60)
        'Ip/Irod upper limit              ', &
        !+ad_varc  <LI> (47) NOT USED
        'TF coil tor. thickness upper lim ', &
-       !+ad_varc  <LI> (48) Poloidal beta upper limit
+       !+ad_varc  <LI> (48) Poloidal beta upper limit (itv 79,2,3,18) 
        'Poloidal beta upper limit        ', &
        !+ad_varc  <LI> (49) NOT USED
        'RFP reversal parameter < 0       ', &
        !+ad_varc  <LI> (50) NOT USED
        'IFE repetition rate upper limit  ', &
-       !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE)
+       !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE) (itv 16,29,3,1)
        'Startup volt-seconds consistency ', &
-       !+ad_varc  <LI> (52) Tritium breeding ratio lower limit
+       !+ad_varc  <LI> (52) Tritium breeding ratio lower limit (itv 89,90,91)
        'Tritium breeding ratio lower lim ', &
-       !+ad_varc  <LI> (53) Neutron fluence on TF coil upper limit
+       !+ad_varc  <LI> (53) Neutron fluence on TF coil upper limit (itv 92,93,94)
        'Neutron fluence on TF coil limit ', &
-       !+ad_varc  <LI> (54) Peak TF coil nuclear heating upper limit
+       !+ad_varc  <LI> (54) Peak TF coil nuclear heating upper limit (itv 95,93,94)
        'Peak TF coil nucl. heating limit ', &
-       !+ad_varc  <LI> (55) Vacuum vessel helium concentration upper limit iblanket =2
+       !+ad_varc  <LI> (55) Vacuum vessel helium concentration upper limit iblanket =2 (itv 96,93,94)
        'Vessel helium concentration limit', &
-       !+ad_varc  <LI> (56) Pseparatrix/Rmajor upper limit
+       !+ad_varc  <LI> (56) Pseparatrix/Rmajor upper limit (itv 97,1,3,102)
        'Psep / R upper limit             ', &
        !+ad_varc  <LI> (57) NOT USED
        'TF coil leg tor width lower limit', &
        !+ad_varc  <LI> (58) NOT USED
        'TF coil leg rad width lower limit', &
-       !+ad_varc  <LI> (59) Neutral beam shine-through fraction upper limit (NBI)
+       !+ad_varc  <LI> (59) Neutral beam shine-through fraction upper limit (NBI) (itv 105,6,19,4 )
        'NB shine-through frac upper limit', &
-       !+ad_varc  <LI> (60) Central solenoid temperature margin lower limit (SCTF)
+       !+ad_varc  <LI> (60) Central solenoid temperature margin lower limit (SCTF) (itv 106)
        'CS temperature margin lower limit', &
-       !+ad_varc  <LI> (61) Minimum availability value
+       !+ad_varc  <LI> (61) Minimum availability value (itv 107)
        'Minimum availability value       ',  &
-       !+ad_varc  <LI> (62) taup/taueff the ratio of particle to energy confinement times
+       !+ad_varc  <LI> (62) taup/taueff the ratio of particle to energy confinement times (itv 110)
        'taup/taueff                      ', &
-       !+ad_varc  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno
+       !+ad_varc  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno (itv 111)
        'number of ITER-like vacuum pumps ',  &
-       !+ad_varc  <LI> (64) Zeff less than or equal to zeffmax
+       !+ad_varc  <LI> (64) Zeff less than or equal to zeffmax (itv 112)
        'Zeff limit                       ',  &
-       !+ad_varc  <LI> (65) Dump time set by VV loads
+       !+ad_varc  <LI> (65) Dump time set by VV loads (itv 56, 113)
        'Dump time set by VV stress       ',   &
        !+ad_varc  <LI> (66) Limit on rate of change of energy in poloidal field
-       !+ad_varc            (Use iteration variable 65(tohs))
+       !+ad_varc            (Use iteration variable 65(tohs), 115)
        'Rate of change of energy in field',   &
-       !+ad_varc  <LI> (67) Simple Radiation Wall load limit
+       !+ad_varc  <LI> (67) Simple Radiation Wall load limit (116, 102, 4,6)
        'Upper Lim. on Radiation Wall load',   &
        !+ad_varc  <LI> (68) Psep * Bt / qAR upper limit
        'Upper Lim. on Psep * Bt / q A R  ',   &
@@ -560,9 +564,9 @@ module numerics
        'prp           ', &
        !+ad_varc  <LI> (102) fimpvar
        'fimpvar       ', &
-       !+ad_varc  <LI> (103) flhthresh
+       !+ad_varc  <LI> (103) flhthresh (f-value for equation 15)
        'flhthresh     ', &
-       !+ad_varc  <LI> (104) fcwr
+       !+ad_varc  <LI> (104) fcwr (f-value for equation 23)
        'fcwr          ', &
        !+ad_varc  <LI> (105) fnbshinef (f-value for equation 59)
        'fnbshinef     ', &
@@ -575,24 +579,27 @@ module numerics
        !+ad_varc  <LI> (109) ralpne: thermal alpha density / electron density
        'ralpne        ', &
        !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha particle
-       !+ad_varc       to energy confinement times
+       !+ad_varc       to energy confinement times (f-value for equation 62)
        'ftaulimit     ', &
        !+ad_varc  <LI> (111) fniterpump: f-value for constraint that
-       !+ad_varc       number of vacuum pumps <  TF coils
+       !+ad_varc       number of vacuum pumps <  TF coils (f-value for equation 63)
        'fniterpump    ',  &
-       !+ad_varc  <LI> (112) fzeffmax: f-value for max Zeff
+       !+ad_varc  <LI> (112) fzeffmax: f-value for max Zeff (f-value for equation 64)
        'fzeffmax      ',  &
-       !+ad_varc  <LI> (113) ftaucq: f-value for minimum quench time
+       !+ad_varc  <LI> (113) ftaucq: f-value for minimum quench time (f-value for equation 65)
        'ftaucq        ',  &
        !+ad_varc  <LI> (114) fw_channel_length: Length of a single first wall channel
+       !+ad_varc       (f-value for equation 39)
        'fw_channel_l  ',  &
        !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field
+       !+ad_varc             (f-value for equation 66)
        'fpoloidalpower',  &
        !+ad_varc  <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)
        'fradwall      ',  &
        !+ad_varc  <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)
        'fpsepbqar     ',  &
        !+ad_varc  <LI> (118) fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
+       !+ad_varc            (f-value for equation 69)
        'fpsep         ',  &
        !+ad_varc  <LI> (119) tesep:  separatrix temperature calculated by the Kallenbach divertor model
        'tesep         ',  &
@@ -602,7 +609,7 @@ module numerics
        'neratio       ',  &
        !+ad_varc  <LI> (122) oh_steel_frac : streel fraction of OH coil
        'oh_steel_frac ',  &
-       !+ad_varc  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit
+       !+ad_varc  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit (f-value for eq. 72)
        'foh_stress    ',  &
        !+ad_varc  <LI> (124) qtargettotal : Power density on target including surface recombination [W/m2]
        'qtargettotal  ',  &

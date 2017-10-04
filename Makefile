@@ -298,7 +298,7 @@ untracked.info:
 	${DIFF_1}
 
 ### Utilities #################
-.PHONY: clean cleandoc tar archive doc userguide html dicts untracked.info tag.num
+.PHONY: clean cleandoc tar archive doc userguide html dicts untracked.info tag.num developerguide utilitiesdoc optsolverdoc
 
 # Clean up directory, to force full recompilation
 clean:
@@ -365,7 +365,7 @@ vardes: autodoc
 	@ cat $(GVAR) | ./autodoc
 	@ mkdir -p documentation/html
 	@ mv *.html documentation/html
-	
+
 html: autodoc
 	@ cat $(SRC) | ./autodoc
 	@ mv vardes.html vardes_full.html	
@@ -378,11 +378,32 @@ userguide: documentation/process.tex
 	@ mv -t documentation vardes.pdf vardes.log
 	@ pdflatex -halt-on-error documentation/process > documentation/userguide.log || (echo "Error: See documentation/userguide.log"; exit 1) 
 	@ pdflatex -halt-on-error documentation/process > documentation/userguide.log || (echo "Error: See documentation/userguide.log" ; exit 1)
-	@ mv -t documentation process.pdf process.log
-	@ rm process.lo* process.toc process.out *.aux documentation/*.aux
+	@ mv -t documentation/pdf process.pdf process.log
+	@ rm process.lo* process.toc process.out *.aux 
 	@ rm vardes.out
 
-doc: vardes html userguide
+developerguide: documentation/developerguide.tex
+	@ pdflatex -halt-on-error documentation/developerguide > documentation/devguide.log || (echo "Error: See documentation/devguide.log"; exit 1) 
+	@ pdflatex -halt-on-error documentation/developerguide > documentation/devguide.log || (echo "Error: See documentation/devguide.log" ; exit 1)
+	@ mv -t documentation/pdf developerguide.pdf developerguide.log
+	@ rm developerguide.lo* developerguide.toc developerguide.out *.aux
+
+utilitiesdoc: documentation/utilitiesdoc.tex
+	@ pdflatex -halt-on-error documentation/utilitiesdoc > documentation/utdoc.log || (echo "Error: See documentation/utdoc.log"; exit 1) 
+	@ pdflatex -halt-on-error documentation/utilitiesdoc > documentation/utdoc.log || (echo "Error: See documentation/utdoc.log" ; exit 1)
+	@ mv -t documentation/pdf utilitiesdoc.pdf utilitiesdoc.log
+	@ rm  utilitiesdoc.toc utilitiesdoc.out *.aux
+
+optsolverdoc: documentation/optsolverdoc.tex
+	@ pdflatex -halt-on-error documentation/optsolverdoc > documentation/optdoc.log || (echo "Error: See documentation/optdoc.log"; exit 1)
+	@ bibtex optsolverdoc 
+	@ pdflatex -halt-on-error documentation/optsolverdoc > documentation/optdoc.log || (echo "Error: See documentation/optdoc.log" ; exit 1)
+	@ pdflatex -halt-on-error documentation/optsolverdoc > documentation/optdoc.log || (echo "Error: See documentation/optdoc.log"; exit 1)	
+	@ mv -t documentation/pdf optsolverdoc.pdf optsolverdoc.log
+	@ rm  optsolverdoc.out *.aux optsolverdoc.bbl optsolverdoc.blg
+
+
+doc: vardes html userguide developerguide utilitiesdoc optsolverdoc
 
 win_doc: autodoc
 	@ type $(SRC) | autodoc

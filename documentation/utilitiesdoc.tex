@@ -1,6 +1,75 @@
-\mychapter{Utility Programs}
-\label{chap:utilities}
+\documentclass[11pt,a4paper]{article}
+\usepackage{epsfig,colordvi,latexsym}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{tikz}  %  for VMCON flowchart in Appendix A
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{framed}
+\usetikzlibrary{trees}
 
+
+
+\pretolerance=10000
+\topmargin=0mm
+\headheight=0mm
+\headsep=8mm
+\textwidth=170mm
+\textheight=240mm
+\footskip=10mm
+\oddsidemargin=0mm
+\evensidemargin=-12mm
+\parskip=2mm
+\parindent=0mm
+
+\setcounter{secnumdepth}{3}
+\newcommand{\indat}{\mbox{\texttt{IN.DAT}}}
+\newcommand{\mfile}{\mbox{\texttt{MFILE.DAT}}}
+\newcommand{\outdat}{\mbox{\texttt{OUT.DAT}}}
+\newcommand{\plotdat}{\mbox{\texttt{PLOT.DAT}}}
+\newcommand{\process}{\mbox{\texttt{PROCESS}}}
+\newcommand{\vmcon}{\mbox{\texttt{VMCON}}}
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add here the date of the latest change and the code revision number
+\newcommand{\version}{
+04 October 2017
+\hfill
+PROCESS version: 1.0.12
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\setheader}[1]
+ {\markright{\rlap{\lower0.8ex\hbox to\textwidth{\hrulefill}}{\bf#1}}}
+\newcommand{\mychapter}[1]{\small\normalsize
+ \setcounter{footnote}{0}
+ \chapter{#1}
+ \pagestyle{myheadings}
+ \setheader{Chapter \thechapter\hspace{0.8em}#1}}
+\newcommand{\myappendix}[1]{\small\normalsize
+ \setcounter{footnote}{0}
+ \chapter{#1}
+ \pagestyle{myheadings}
+ \setheader{Appendix \thechapter\hspace{0.8em}#1}}
+
+\begin{document}
+
+\footnotesize
+\hfill
+
+\vspace*{4cm}
+\begin{center}
+\Huge A guide to the utilities of the \\ PROCESS Fusion Reactor Systems Code\\
+~\\ \LARGE The PROCESS Team: P.\ J.\ Knight, M.\ D.\ Kovari, H.\ Lux, J.\ Morris\\
+~\\ \Large Culham Centre for Fusion Energy/ United Kingdom Atomic Energy Authority\\
+Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
+\end{center}
+
+\normalsize
 A number of utilities for \process\ are available, for instance to modify the
 input file \indat, run \process\ until a feasible solution is found, or to
 extract and plot data from the \process\ output. All utilities are available
@@ -15,10 +84,26 @@ All executables use Python library functions either from the publicly
 available \texttt{numpy}, \texttt{scipy} and \texttt{matplotlib} libraries or
 the \process\ Python libraries documented in Section~\ref{sec:py_lib}. To use
 the \process\ Python libraries you need to make sure their directory is in
-your Python path. Use the commands given in Section~\ref{sec:run_environment} to
+your Python path. Use the commands given in the \process\/ Userguide to
 do this.
 
 All Python code has been written for Python 3.
+
+\vfill
+\footnotesize
+\version
+\normalsize
+
+\tableofcontents
+
+\newpage
+
+
+
+
+
+
+
 
 \section{Executables}
 \label{sec:py_exec}
@@ -170,7 +255,7 @@ This program has a similar structure to the \texttt{run\_process.py} program, bu
 \item{\textbf{Output:}} All the standard
   PROCESS output, \texttt{process.log}, \texttt{README.txt}, \texttt{time.info} (stores the run time of actual PROCESS iterations), \texttt{SolverTest.out}
 \end{description}
-The \texttt{SolverTest.out} file contains a table of the \texttt{ifail} values (see Table \ref{tab:ifail}), the figure of merit, the square root of the sum of the squares of the individual constraints as well as the initial and final values for the iteration variables and the individual constraint residuals. The value of Q, i.e. the ratio of
+The \texttt{SolverTest.out} file contains a table of the \texttt{ifail} values (see Userguide), the figure of merit, the square root of the sum of the squares of the individual constraints as well as the initial and final values for the iteration variables and the individual constraint residuals. The value of Q, i.e. the ratio of
 fusion power to injected power, is also included in the SolverTest.out file. All values can be used to diagnose the performance of the optimisation solver.
 
 
@@ -315,9 +400,9 @@ The individual parameters displayed in the 2 page summary are defined as follows
 \item[\texttt{Date}] Date of the \process\/ run
 \item[\texttt{Time}] Time of the \process\/ run
 \item[\texttt{User}] Nave of the user who ran \process.
-\item[\texttt{Optimisation}] Figure of merit (\texttt{minmax}, see Table \ref{tab:foms}) for constrained optimisation see Appendix \ref{app:Opt}.
+\item[\texttt{Optimisation}] Figure of merit (\texttt{minmax}, see vardes.html) for constrained optimisation (see Userguide).
 \item[\texttt{Plasma Composition}] Number densities of several ion species relative to the electron density.
-\item[\texttt{Coil Currents etc.}] Peak coil currents of the PF coils in $MA$, flux swing of the central solenoid used for startup and total available in $Wb$. Total burn time \texttt{tburn} in hrs (see \ref{fig:current_vs_time}).
+\item[\texttt{Coil Currents etc.}] Peak coil currents of the PF coils in $MA$, flux swing of the central solenoid used for startup and total available in $Wb$. Total burn time \texttt{tburn} in hrs (see Userguide).
 \item[\texttt{TF coils}] Describes the type, the peak field at the TF coil including ripple at the outboard edge of the inboard TF coil winding pack in $T$, the ratio of operating to superconducting critical current in TF coil $I/I_{crit}$, the temperature margin with respect to critical temperature of super conductor in $K$, Van Mises stresses on TF coils
 \item[\texttt{Cost of electricity}] This is the cost of electricity in $/MWh$. Check the respective cost model for the reference year of the inflation used.
 \item[\texttt{Geometry}] This is the major radius $R_0$, the minor radius $a$, the aspect ratio $A$, the plasma elongation at the 95\% flux surface $\kappa_{95}$, the plasma triangularity at the 95\% flux surface $\delta_{95}$, the surface area of the plasma, the plasma volume, the number of TF coils, the inboard and outboard thicknesses of the blanket and shield as well as the total fusion power.
@@ -753,8 +838,7 @@ these values have default values and do not need to be set.
   the design point. If not specified it is assumed to be \indat.
 \item[\texttt{process\_bin}] is the process binary that should be used. The
   default assumes that the user works on the CCFE Fusion Linux machines and
-  has executed the module commands for \process\ as described in
-  \ref{sec:run_environment}. Then either the master or development branch of
+  has executed the module commands for \process\ as described in the Userguide. Then either the master or development branch of
   process is being used depending on which module has been loaded.
 \item[\texttt{working\_directory}] represents the working directory, in which
   \process\ will be executed, in case this is supposed to be different to the
@@ -1544,14 +1628,6 @@ two derived classes \texttt{RunProcessConfig} and \texttt{TestProcessConfig}.
 
 \end{description}
 
-% Its class structure is described in Figure \ref{fig:uml_config}.
-%\begin{figure}
-%\includegraphics[height=0.9\textheight]{process_config_classes.pdf}
-%\caption{UML diagram of the class structure in \texttt{process\_config.py}.}
-%\includegraphics[width=0.9\textwidth]{process_config_classes_limited.pdf}
-%\caption{Class structure in \texttt{process\_config.py}.}
-%\label{fig:uml_config}
-%\end{figure}
 
 \subsection{process\_dicts.py}
 
@@ -1674,6 +1750,42 @@ A collection of functions used by \texttt{diagnose\_process.py}.
 
 \section{User Interface}
 
-The user interface is still being developed, but currently allows for viewing
-and editing of \indat\ files in a web browser. It can be found in the
-\texttt{utilities/gui} directory.  See ~\ref{sec:gui} for details.
+The user interface is under development more information can be found in the user guide/developer guide.
+
+\begin{thebibliography}{99}
+  \raggedright
+
+\bibitem{kovari_physics}
+M.\ Kovari, R.\ Kemp, H.\ Lux, P.\ Knight, J.\ Morris, D.\ J.\ Ward
+\textit{``PROCESS: a systems code for fusion power plants - Part 1: Physics''},
+Fusion Engineering and Design 89, 3054–3069 (2014), 
+http://dx.doi.org/10.1016/j.fusengdes.2014.09.018
+
+\bibitem{kovari_eng}
+M.~Kovari, F.~Fox, C.~Harrington, R.~Kembleton, P.~Knight, H.~Lux, J.~Morris
+\textit{``PROCESS: a systems code for fusion power plants - Part 2: Engineering''}, Fus. Eng. \& Des. 104, 9-20 (2016)
+
+\bibitem{hanni_radiation}
+H.~Lux, R.~Kemp, D.J.~Ward, M.~Sertoli
+\textit{``Impurity radiation in DEMO systems modelling''},
+Fus. Eng. \& Des. 101, 42-51 (2015)
+
+\bibitem{Lux2016}
+H.~Lux, R.~Kemp, E.~Fable, R.~Wenninger,
+\textit{``Radiation and confinement in 0D fusion systems codes''},
+ PPCF, 58, 7, 075001 (2016)
+
+\bibitem{WPPMI2014Report}
+\textit{``Report on the Systems Code Activities by CCFE in 2014''},
+R.\ Kemp, H.\ Lux, J.\ Morris, M.\ Kovari, P.\ Knight et al.,
+\href{https://idm.euro-fusion.org/?uid=2M94N2\&version=v1.0\&action=get\_document}
+{EuroFusion Report EFDA\_D\_2M94N2 v1.0 - PMI-7.1-2, December 2014}
+\url{https://idm.euro-fusion.org/?uid=2M94N2\&version=v1.0\&action=get\_document}
+
+  
+  
+\end{thebibliography}
+
+
+
+\end{document}
