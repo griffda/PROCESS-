@@ -1417,10 +1417,10 @@ class NdScanConfig(Config, RunProcessConfig):
 
 
         # Checks the error status
-        if currentrun.data["error status"].get_scan(-1) > 0:
+        if currentrun.data["error_status"].get_scan(-1) > 0:
             self.errorlist[tuple(self.currentstep)] = \
-                (currentrun.data["error status"].get_scan(-1),\
-                     currentrun.data["error id"].get_scan(-1))
+                (currentrun.data["error_status"].get_scan(-1),\
+                     currentrun.data["error_id"].get_scan(-1))
 
 
 

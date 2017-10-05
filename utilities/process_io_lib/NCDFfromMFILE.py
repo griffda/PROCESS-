@@ -217,7 +217,7 @@ class NCDFconverter(Config):
         """
         varoutput = [-1]*len(self.output_vars)
 
-        error_status = mfile.data['error status'].get_scan(-1)
+        error_status = mfile.data['error_status'].get_scan(-1)
         if error_status < 3:
             for ind, varname in enumerate(self.output_vars):
                 varoutput[ind] = mfile.data[varname].get_scan(-1)

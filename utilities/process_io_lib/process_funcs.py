@@ -253,7 +253,7 @@ def process_warnings(wdir='.'):
     """
 
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
-    error_status = m_file.data['error status'].get_scan(-1)
+    error_status = m_file.data['error_status'].get_scan(-1)
 
     if error_status >= 2:
         return True
