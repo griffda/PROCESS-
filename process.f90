@@ -333,7 +333,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '1.0.11   Release Date :: 2017-06-29'
+       '1.0.12   Release Date :: 2017-10-04'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
   ! integer :: unit
