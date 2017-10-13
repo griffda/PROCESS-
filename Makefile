@@ -320,7 +320,7 @@ win_clean:
 	del root.dir
 	del tag.num
 	del untracked.info
-	rmdir /q /s documentation\html
+	rmdir /q /s documentation/html
 
 cleandoc:
 	rm -f autodoc
