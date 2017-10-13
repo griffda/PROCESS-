@@ -177,7 +177,7 @@ else
 	MYTAG_0 = rm -rf tag.num
 	MYTAG_1 = echo "  character(len=*), parameter :: tagno = '"`git describe`"'" > tag.num
 	DIFF_0 = rm -rf untracked.info
-	DIFF_1 = echo " integer :: untracked = "`git diff | wc -l`"" > untracked.info
+	DIFF_1 = echo " integer :: untracked = '"`echo (git diff | Measure-Object -line).Lines`"'" > untracked.info
 endif
 
 ###########################
