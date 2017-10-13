@@ -170,14 +170,14 @@ ifeq ($(OS),Windows_NT)
 	MYTAG_0 = del tag.num
 	MYTAG_1 = echo character(len=*), parameter :: tagno = "%git describe%" > tag.num
 	DIFF_0 = del untracked.info
-	DIFF_1 = echo integer :: untracked = %git diff | wc -l% > untracked.info
+	DIFF_1 = echo " integer :: untracked = "`(git diff | Measure-Object -line).Lines`"" > untracked.info
 else
 	MYROOT_1 = echo "  character(len=*), parameter :: ROOTDIR = '"`pwd`"'" > root.dir
 	MYROOT_2 = echo "ROOTDIR = '"`pwd`"'" > utilities/rootdir.py
 	MYTAG_0 = rm -rf tag.num
 	MYTAG_1 = echo "  character(len=*), parameter :: tagno = '"`git describe`"'" > tag.num
 	DIFF_0 = rm -rf untracked.info
-	DIFF_1 = echo " integer :: untracked = '"`echo (git diff | Measure-Object -line).Lines`"'" > untracked.info
+	DIFF_1 = echo integer :: untracked = %git diff | wc -l% > untracked.info
 endif
 
 ###########################
