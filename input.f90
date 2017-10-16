@@ -1031,9 +1031,6 @@ contains
        case ('tbrnmn')
           call parse_real_variable('tbrnmn', tbrnmn, 1.0D-3, 1.0D6, &
                'Minimum burn time (s)')
-       case ('tpkmax')
-          call parse_real_variable('tpkmax', tpkmax, 100.0D0, 1.0D3, &
-               'Maximum first wall peak temperature (C)')
        case ('vvhealw')
           call parse_real_variable('vvhealw', vvhealw, 0.01D0, 10.0D0, &
                'Allowable maximum He conc. in VV (appm)')

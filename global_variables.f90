@@ -3864,9 +3864,6 @@ module constraint_variables
   !+ad_vars  tohsmn : minimum plasma current ramp-up time (s)
   !+ad_varc           (constraint equation 41)
   real(kind(1.0D0)) :: tohsmn = 1.0D0
-  !+ad_vars  tpkmax /600.0/ : maximum first wall peak temperature (C)
-  !+ad_varc                   (constraint equation 39)
-  real(kind(1.0D0)) :: tpkmax = 600.0D0
   !+ad_vars  vvhealw /1.0/ : allowed maximum helium concentration in vacuum vessel
   !+ad_varc                  at end of plant life (appm) (iblanket =2)
   !+ad_varc                  (constraint equation 55)
