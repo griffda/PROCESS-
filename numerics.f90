@@ -324,26 +324,23 @@ module numerics
        !+ad_varc  <LI> (66) Limit on rate of change of energy in poloidal field
        !+ad_varc            (Use iteration variable 65(tohs), 115)
        'Rate of change of energy in field',   &
-       !+ad_varc  <LI> (67) Simple Radiation Wall load limit (116, 102, 4,6)
+       !+ad_varc  <LI> (67) Simple Radiation Wall load limit (itv 116, 102, 4,6)
        'Upper Lim. on Radiation Wall load',   &
-       !+ad_varc  <LI> (68) Psep * Bt / qAR upper limit
+       !+ad_varc  <LI> (68) Psep * Bt / qAR upper limit (itv 117)
        'Upper Lim. on Psep * Bt / q A R  ',   &
-       !+ad_varc  <LI> (69) ensure separatrix power is equal to the value from Kallenbach divertor
+       !+ad_varc  <LI> (69) ensure separatrix power = the value from Kallenbach divertor (itv 118)
        'pdivt < psep_kallenbach divertor ',   &
-       !+ad_varc  <LI> (70) ensure that teomp is equal to the separatrix temperature in the pedestal profile,
-       !+ad_varc            (Use iteration variable 119 (tesep))
+       !+ad_varc  <LI> (70) ensure that teomp = separatrix temperature in the pedestal profile,
+       !+ad_varc            (itv 119 (tesep))
        'Separatrix temp consistency      ',   &
-       !+ad_varc  <LI> (71) ensure that neomp is equal to the separatrix density (nesep) x neratio
+       !+ad_varc  <LI> (71) ensure that neomp = separatrix density (nesep) x neratio
        'Separatrix density consistency   ',    &
-       !+ad_varc  <LI> (72) central solenoid Tresca stress limit
-       !+ad_varc            (Use iteration variable 123 (foh_stress))
-       'CS Tresca stress limit           ',    &
-       !+ad_varc  <LI> (73) Psep >= Plh + Paux
-       !+ad_varc            (Use iteration variable 136 (fplhsep))
-       'Psep >= Plh + Paux               ',   &
-       !+ad_varc  <LI> (74) TFC quench < tmax_croco
-       !+ad_varc            (Use iteration variable 141 (fcqt))</UL>
-       'TFC quench < tmax_croco          '    &
+       !+ad_varc  <LI> (72) central solenoid Tresca stress limit (itv 123 foh_stress)
+              'CS Tresca stress limit           ',    &
+       !+ad_varc  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep)
+              'Psep >= Plh + Paux               ',   &
+       !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))</UL>
+             'TFC quench < tmax_croco          '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -589,7 +586,6 @@ module numerics
        !+ad_varc  <LI> (113) ftaucq: f-value for minimum quench time (f-value for equation 65)
        'ftaucq        ',  &
        !+ad_varc  <LI> (114) fw_channel_length: Length of a single first wall channel
-       !+ad_varc       (f-value for equation 39)
        'fw_channel_l  ',  &
        !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field
        !+ad_varc             (f-value for equation 66)
