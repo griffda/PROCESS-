@@ -161,6 +161,8 @@ OBJ = \
 # SRC = $(wildcard *.f90 *.f)
 # SRC := $(filter-out autodoc.f90, $(SRC))
 # OBJ = $(SRC:.f90=.o)
+# DIFF_1 = echo integer :: untracked = %(git diff | Measure-Object -line).Lines% > untracked.info
+
 
 ###### OS specifics #######
 
@@ -170,7 +172,7 @@ ifeq ($(OS),Windows_NT)
 	MYTAG_0 = del tag.num
 	MYTAG_1 = echo character(len=*), parameter :: tagno = "%git describe%" > tag.num
 	DIFF_0 = del untracked.info
-	DIFF_1 = echo integer :: untracked = %(git diff | Measure-Object -line).Lines% > untracked.info
+	DIFF_1 = echo integer :: untracked = 0 > untracked.info
 else
 	MYROOT_1 = echo "  character(len=*), parameter :: ROOTDIR = '"`pwd`"'" > root.dir
 	MYROOT_2 = echo "ROOTDIR = '"`pwd`"'" > utilities/rootdir.py

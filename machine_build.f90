@@ -131,7 +131,7 @@ contains
     !  Local variables
 
 
-    real(kind(1.0D0)) :: hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild, rbldtotf, deltf, precomp, vbuild1
+    real(kind(1.0D0)) :: hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild, rbldtotf, deltf, vbuild1
     real(kind(1.0D0)) :: fwtth
 
     integer :: ripflag = 0
