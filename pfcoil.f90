@@ -639,7 +639,7 @@ contains
           if (ipfres == 0) then
              bmax = max(abs(bpf(i)), abs(bpf2(i)))
              call superconpf(bmax,vf(i),fcupfsu,rjconpf(i),isumatpf,fhts, &
-                  strncon,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc,tmarg)
+                  strncon_pf,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc,tmarg)
           end if
 
           !  Length of conductor
@@ -951,7 +951,7 @@ contains
        !  (superconducting coils only)
 
        call superconpf(bmaxoh,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
-            isumatoh,fhts,strncon,tftmp,bcritsc,tcritsc,jcritwp, &
+            isumatoh,fhts,strncon_cs,tftmp,bcritsc,tcritsc,jcritwp, &
             jstrandoh_eof,jscoh_eof,tmarg1)
 
        rjohc = jcritwp * awpoh/areaoh
@@ -959,7 +959,7 @@ contains
        !  Allowable coil overall current density at BOP
 
        call superconpf(bmaxoh0,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
-            isumatoh,fhts,strncon,tftmp,bcritsc,tcritsc,jcritwp, &
+            isumatoh,fhts,strncon_cs,tftmp,bcritsc,tcritsc,jcritwp, &
             jstrandoh_bop,jscoh_bop,tmarg2)
 
        rjpfalw(nohc) = jcritwp * awpoh/areaoh
@@ -2800,8 +2800,8 @@ contains
                '(s_tresca_oh)', s_tresca_oh, 'OP ')
           call ovarre(outfile,'Axial force in CS (N)', &
                '(axial_force)', axial_force, 'OP ')
-          call ovarre(outfile,'Strain on superconductor', &
-               '(strncon)',strncon)
+          call ovarre(outfile,'Strain on CS superconductor', &
+               '(strncon_cs)',strncon_cs)
           call ovarre(outfile,'Copper fraction in strand', &
                '(fcuohsu)',fcuohsu)
           call ovarre(outfile,'Void (coolant) fraction in conductor', &

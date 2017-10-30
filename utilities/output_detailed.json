@@ -675,7 +675,8 @@
             "sigpfcalw",
             "sigpfcf",
             "fcupfsu",
-            "isumatpf"
+            "isumatpf",
+            "strncon_pf"
         ],
         "output-sections":[],
         "outputs":[
@@ -711,7 +712,8 @@
             "ohcth",
             "oh_steel_frac",
             "alstroh",
-            "vfohc"
+            "vfohc",
+            "strncon_cs"
         ],
         "output-sections":[],
         "outputs":[
@@ -733,7 +735,6 @@
             "sig_axial",
             "s_tresca_oh",
             "axial_force",
-            "strncon",
             "fcuohsu",
             "tftmp",
             "tmargoh"
@@ -861,7 +862,9 @@
             58
         ],
         "input-sections":[],
-        "inputs":[],
+        "inputs":[
+            "strncon_tf"
+        ],
         "output-sections":[],
         "outputs":[
             "cable_width",
@@ -869,7 +872,6 @@
             "thicndut",
             "bmax",
             "fhetot",
-            "strncon",
             "jcritsc",
             "jcritstr",
             "jwdgop",

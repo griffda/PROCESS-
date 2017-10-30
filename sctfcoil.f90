@@ -1503,7 +1503,7 @@ subroutine tfspcall(outfile,iprint)
     aturn = ritfc/(jwptf*tfno*turnstf)
 
     call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,jwptf,isumattf, &
-    fhts,strncon,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
+    fhts,strncon_tf,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
     outfile,jwdgcrt,vdump,tmargtf)
 
     !  TFC Quench voltage in kV
@@ -1898,7 +1898,7 @@ contains
         if(isumat/=6)then
             call ovarre(outfile,'Total helium fraction inside cable space','(fhetot)',fhetot, 'OP ')
             call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
-            call ovarre(outfile,'Strain on superconductor','(strncon)',strain)
+            call ovarre(outfile,'Strain on superconductor','(strncon_tf)',strncon_tf)
         end if
         call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc, 'OP ')
         call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr, 'OP ')

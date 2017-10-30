@@ -1643,9 +1643,15 @@ contains
        case ('sigvvall')
           call parse_real_variable('sigvvall', sigvvall, 0.1D6, 500.0D6, &
                'Allowable stress in vacuum vessel for TF quench (Pa)')
-       case ('strncon')
-          call parse_real_variable('strncon', strncon, -0.02D0, 0.02D0, &
-               'Strain in superconductor material')
+       case ('strncon_cs')
+          call parse_real_variable('strncon_cs', strncon_cs, -0.02D0, 0.02D0, &
+               'Strain in CS superconductor material')
+       case ('strncon_pf')
+          call parse_real_variable('strncon_pf', strncon_pf, -0.02D0, 0.02D0, &
+               'Strain in PF superconductor material')
+       case ('strncon_tf')
+          call parse_real_variable('strncon_tf', strncon_tf, -0.02D0, 0.02D0, &
+               'Strain in TF superconductor material')
        case ('tcoolin')
           call parse_real_variable('tcoolin', tcoolin, -273.1D0, 100.0D0, &
                'Centrepost coolant inlet temperature')

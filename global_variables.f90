@@ -2130,9 +2130,15 @@ module tfcoil_variables
   real(kind(1.0D0)) :: sigvert = 0.0D0
   !+ad_vars  sigvvall /9.3e7/ : allowable stress from TF quench in vacuum vessel (Pa)
   real(kind(1.0D0)) :: sigvvall = 9.3D7
-  !+ad_vars  strncon /-0.005/ : strain in superconductor material (TF, PF and CS)
+  !+ad_vars  strncon_cs /-0.005/ : strain in CS superconductor material
   !+ad_varc                     (used in ITER Nb3Sn critical surface model)
-  real(kind(1.0D0)) :: strncon = -0.005D0
+  real(kind(1.0D0)) :: strncon_cs = -0.005D0
+  !+ad_vars  strncon_pf /-0.005/ : strain in PF superconductor material
+  !+ad_varc                     (used in ITER Nb3Sn critical surface model)
+  real(kind(1.0D0)) :: strncon_pf = -0.005D0
+  !+ad_vars  strncon_tf /-0.005/ : strain in TF superconductor material
+  !+ad_varc                     (used in ITER Nb3Sn critical surface model)
+  real(kind(1.0D0)) :: strncon_tf = -0.005D0
   !+ad_vars  strtf1 : Constrained stress in TF conductor conduit (Pa)
   real(kind(1.0D0)) :: strtf1 = 0.0D0
   !+ad_vars  strtf2 : Constrained stress in TF coil case (Pa)
