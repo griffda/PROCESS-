@@ -62,7 +62,7 @@ vertical_upper = ["rminor*kappa", "vgaptop",
 
 vertical_lower = ["rminor*kappa", "vgap",
                   "divfix",
-                  "shldlth", "ddwi",
+                  "shldltth", "ddwi",
                   "vgap2",
                   "thshield",
                   "tftsgap",
@@ -1113,7 +1113,7 @@ def plot_header(axis, mfile_data, scan):
              [abs(int(mfile_data.data["minmax"].get_scan(scan)))],
              "Optimising:", "")]
 
-    if mfile_data.data["imprad model"].get_scan(scan) == 1:
+    if mfile_data.data["imprad_model"].get_scan(scan) == 1:
         H = mfile_data.data["fimp(01"].get_scan(scan)
         He = mfile_data.data["fimp(02"].get_scan(scan)
         Be = mfile_data.data["fimp(03"].get_scan(scan)
@@ -1265,10 +1265,10 @@ def plot_physics_info(axis, mfile_data, scan):
     data = [("plascur/1d6", "$I_p$", "MA"),
             ("bt", "Vacuum $B_T$ at $R_0$", "T"),
             ("q95", "$q_{\mathrm{95}}$", ""),
-            ("normalised thermal beta", r"$\beta_N$, thermal",
+            ("normalised_thermal_beta", r"$\beta_N$, thermal",
              "% m T MA$^{-1}$"),
-            ("normalised total beta", r"$\beta_N$, total", "% m T MA$^{-1}$"),
-            ("thermal poloidal beta", r"$\beta_P$, thermal", ""),
+            ("normalised_total_beta", r"$\beta_N$, total", "% m T MA$^{-1}$"),
+            ("thermal_poloidal_beta", r"$\beta_P$, thermal", ""),
             ("betap", r"$\beta_P$, total", ""),
             ("te", r"$< t_e >$", "keV"),
             ("dene", r"$< n_e >$", "m$^{-3}$"),
@@ -1342,8 +1342,8 @@ def plot_magnetics_info(axis, mfile_data, scan):
             ("bmaxtfrp", "Peak field at conductor (w. rip.)", "T"),
             ("iooic", "I/I$_{\mathrm{crit}}$", ""),
             ("tmarg", "Temperature margin", "K"),
-            ("s tresca cond", "Conduit Von Mises stress", "Pa"),
-            ("s tresca case", "Case Von Mises stress", "Pa"),
+            ("s_tresca_cond", "Conduit Von Mises stress", "Pa"),
+            ("s_tresca_case", "Case Von Mises stress", "Pa"),
             ("alstrtf", "Allowable stress", "Pa"),
             ("", "", ""),
             ("#Costs", "", ""),
@@ -1391,7 +1391,7 @@ def plot_power_info(axis, mfile_data, scan):
     plant_eff = 100.0 * (mfile_data.data["pnetelmw"].get_scan(scan) /
                          mfile_data.data["powfmw"].get_scan(scan))
 
-    imprad = mfile_data.data["imprad model"].get_scan(scan)
+    imprad = mfile_data.data["imprad_model"].get_scan(scan)
 
 
     # Define appropriate pedestal and impurity parameters
