@@ -186,12 +186,26 @@ When releasing a ***tagged version of the code the user should compile a release
 This note should outline the major changes for the release, including issues from GitLab that
 were resolved, bugs fixed, etc.
 
+Between user tags Git will create tags in the following format:
+
+```
+1.0.12-11-g3f1b433
+```
+
+- `1.0.12` is the last manually entered tag by the user
+- `11` is the number of commits since that tag
+- `g3f1b433` is a unique identifier for this specific commit
+
+This allows the user to checkout a specific commit between tagged versions. PROCESS now outputs this information into the `OUT.DAT` and `MFILE.DAT` and is updated upon compilation. This way each output file is trackable to a specific commit.
+
+
 **Tagging Commands**
 
 | Command | Description |
 | -------- | -------- | 
 | `git describe --tags`   | show the current tag  | 
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
+| `git checkout tags/<tag name>` | checkout a specific tag |
 
 ## Windows Users
 

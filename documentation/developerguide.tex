@@ -718,7 +718,14 @@ assumed that readers have a working knowledge of Git commands.
 
 \subsection{Tagging}
 \label{sec:tagging}
-Tagging in \process\/ is used to document the version of the code any individual run has been performed with. This is necessary for proper provenance capture. Currently, only the gitlab commit number is unique, assuring full version control, but the \process\/ version tag documented in each output is not updated with each commit. From November 2016 onwards, we have changed our tagging system for the \process\/ versions (details see below). Any versions ending in {\bf .0} should be fully tested. How and when to tag versions is described in more detail in the upcoming sections detailing the code update and release procedures.
+Tagging in \process\/ is used to document the version of the code any individual 
+run has been performed with. This is necessary for proper provenance capture. 
+Currently, only the gitlab commit number is unique, assuring full version control, 
+but the \process\/ version tag documented in each output is not updated with 
+each commit. From November 2016 onwards, we have changed our tagging system for 
+the \process\/ versions (details see below). Any versions ending in {\bf .0} should 
+be fully tested. How and when to tag versions is described in more detail in the 
+upcoming sections detailing the code update and release procedures.
 
 \subsubsection{Tagging in the development version}
 Instead of having a single revision number - as was previously the case - we will be following the convention where the {\it development} version of \process\/ gets tagged according the format {\bf MasterRelease.MajorModel.MinorChange}, i.e. '1.3.29', corresponds to the 29th minor update since the implementation of the 3rd new major model after the 1st master release with the new tagging format.
@@ -729,6 +736,21 @@ The {\it master} version of \process\/ will be tagged according to the format {\
 \subsubsection{Tagging in a separate branch}
 This section covers tagging in e.g. the separate DEMO1 baseline branch and assures that while this branch can develop independently of the development branch, it still has unique version tagging and provenance capture. Tagging of a separate branch should be started when it is forked from develop. Hence, the initial tag should be {\bf BID\_MasterRelease.MajorModel.MinorChange}, where {\bf BID} is a short but informative branch identifier consisting of letters only. This allows for branching from the development version at any point. Ideally it does start from a fully tested version though! \Red{Manoj, please check that both characters as well as the new dot format are possible options for the autodoc tool!}
 
+\subsubsection{Tagging between manual tags}
+Between user tags Git will create tags in the following format:
+
+\texttt{1.0.12-11-g3f1b433}
+
+The parts are:
+\begin{itemize}
+  \item \texttt{1.0.12} is the last manually entered tag by the user
+  \item \texttt{11} is the number of commits since that tag
+  \item \texttt{g3f1b433} is a unique identifier for this specific commit
+\end{itemize}
+
+This allows the user to checkout a specific commit between tagged versions. 
+PROCESS now outputs this information into the `OUT.DAT` and `MFILE.DAT` and is 
+updated upon compilation. This way each output file is trackable to a specific commit.
 
 
 \subsection{Initial access to the source code}
