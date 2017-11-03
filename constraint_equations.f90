@@ -941,8 +941,8 @@ contains
           !#=#=# fstrcase, alstrtf
 
           ! fstrcase |  f value for TF coil case stress
-          ! alstrtf  |  allowable von Mises stress in TF coil structural material (MPa)
-          ! strtf2   |  von Mises stress in TF coil case (MPa)
+          ! alstrtf  |  allowable Tresca stress in TF coil structural material (MPa)
+          ! strtf2   |  Tresca stress in TF coil case (MPa)
           cc(i) = 1.0D0 - fstrcase * alstrtf/strtf2
 
           if (present(con)) then
@@ -957,8 +957,8 @@ contains
           !#=#=# fstrcond, alstrtf
 
           ! fstrcond |  f-value for TF coil conduit stress
-          ! alstrtf  |  allowable von Mises stress in TF coil structural material (MPa)
-          ! strtf1   |  von Mises stress in TF coil conduit (MPa)
+          ! alstrtf  |  allowable Tresca stress in TF coil structural material (MPa)
+          ! strtf1   |  Tresca stress in TF coil conduit (MPa)
           cc(i) = 1.0D0 - fstrcond * alstrtf/strtf1
 
           if (present(con)) then

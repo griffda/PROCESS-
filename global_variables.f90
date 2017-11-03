@@ -1957,7 +1957,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: insulation_area = 0.0D0
   !+ad_vars  aiwp : winding pack insulation area (m2)
   real(kind(1.0D0)) :: aiwp = 0.0D0
-  !+ad_vars  alstrtf /6.0D8/ : allowable von Mises stress in TF coil structural material (Pa)
+  !+ad_vars  alstrtf /6.0D8/ : allowable Tresca stress in TF coil structural material (Pa)
   real(kind(1.0D0)) :: alstrtf = 6.0D8
 
   !+ad_vars  arealeg : outboard TF leg area (m2)

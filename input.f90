@@ -1529,7 +1529,7 @@ contains
                'TF coil leg current per turn (A)')
        case ('alstrtf')
           call parse_real_variable('alstrtf', alstrtf, 1.0D6, 1.0D11, &
-               'Allowable von Mises stress in TF coil structural material (Pa)')
+               'Allowable Tresca stress in TF coil structural material (Pa)')
        case ('alstroh')
           call parse_real_variable('alstroh', alstroh, 1.0D6, 1.0D11, &
                'Allowable hoop stress in Central Solenoid structural material (Pa)')
