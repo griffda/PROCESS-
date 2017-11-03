@@ -1031,6 +1031,9 @@ contains
        case ('tbrnmn')
           call parse_real_variable('tbrnmn', tbrnmn, 1.0D-3, 1.0D6, &
                'Minimum burn time (s)')
+       case ('tcycmn')
+          call parse_real_variable('tcycmn', tcycmn, 1.0D-3, 2.0D6, &
+               'Minimum cycle time (s)')
        case ('vvhealw')
           call parse_real_variable('vvhealw', vvhealw, 0.01D0, 10.0D0, &
                'Allowable maximum He conc. in VV (appm)')
