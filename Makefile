@@ -185,7 +185,7 @@ endif
 ###########################
 
 FORTRAN = gfortran
-FFLAGS = -cpp -g -fbounds-check -fbacktrace -Wconversion
+FFLAGS = -cpp -g -fbounds-check -fbacktrace -Wconversion -Wunused-dummy-argument -Wunused-parameter
 FFLAGS_ALT = -cpp -std=legacy
 FFLAGS_LIB = -cpp -g -fbounds-check -fbacktrace
 
