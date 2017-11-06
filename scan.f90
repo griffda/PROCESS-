@@ -445,7 +445,6 @@ contains
           vlabel = 'blnkoth' ; xlabel = 'Outboard blanket thick.'
       case (42)
           fimp(9) = sweep(iscan)
-          ! I hope this is the correct thing to do.
           impurity_arr(9)%frac = fimp(9)
           vlabel = 'fimp(9)' ; xlabel = 'Argon fraction'
 
