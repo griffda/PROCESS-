@@ -144,35 +144,8 @@ contains
     !+ad_call  ovarin
     !+ad_call  ostars
     !+ad_call  report_error
-    !+ad_hist  03/10/96 PJK Initial upgraded version
-    !+ad_hist  01/04/98 PJK Added POWFMAX to list of scanning variables
-    !+ad_hist  23/06/98 PJK Added KAPPA and TRIANG to list of scanning vars
-    !+ad_hist  19/05/99 PJK Added warning about trying to scan CFACTR with
-    !+ad_hisc               new availability model
-    !+ad_hist  25/05/06 PJK Added implied-DO loops for sweep outputs
-    !+ad_hist  08/10/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/01/13 PJK Clarified some output labels
-    !+ad_hist  27/06/13 PJK Modified beta coefficient label
-    !+ad_hist  26/11/13 PJK Rationalised code structure; added scanning
-    !+ad_hisc               variable information to output banner
-    !+ad_hist  27/11/13 PJK Added Psep/R to list of output variables
-    !+ad_hist  28/11/13 PJK Added scan variable 27: tbrmin
-    !+ad_hist  12/02/14 PJK Added scan variable 28: bt
-    !+ad_hist  13/02/14 PJK Replaced spaces with underscores in xlabel, plabel
-    !+ad_hist  20/02/14 PJK Replaced te*pcoef with ten; changed plabel(20)
-    !+ad_hist  30/04/14 PJK Fixed plabel(20)
-    !+ad_hist  15/05/14 PJK Increased output width to 110 characters
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
-    !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  09/07/14 PJK Turned error reporting off after each output step
-    !+ad_hist  20/10/14 PJK OHC to CS
-    !+ad_hist  06/08/15 MDK Add taulimit to PLOT.DAT and to scan variables (31)
     !+ad_hist  06/08/15 MDK Use 1p format: 3.0000E+01 instead of 0.3000E+01
     !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -19,10 +19,10 @@ module divertor_ode
   use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
   use constants
   use process_input, only: lower_case
-  use divertor_kallenbach_variables, only : neratio, pressure0, fractionwidesol, fmom, totalpowerlost, impurity_enrichment, &
-                                            lambda_q_omp, target_spread
+  use divertor_kallenbach_variables, only: neratio, pressure0, fractionwidesol, fmom, totalpowerlost, impurity_enrichment, &
+             lambda_q_omp, target_spread, hydrogenicpowerlost, impuritypowerlost, exchangepowerlost, ionisationpowerlost
   use build_variables, only: rspo
-  use physics_variables, only:  tesep_keV => tesep, bp
+  use physics_variables, only:  tesep_keV => tesep
 
   implicit none
 
@@ -89,6 +89,7 @@ contains
   subroutine divertor_Kallenbach(rmajor,rminor,bt,plascur,bvert,q,verboseset,     &
              ttarget,qtargettotal,targetangle,lcon_factor,netau_in,&
              unit_test,abserrset,  &
+             bp, &
              psep_kallenbach, teomp, neomp,  &
              outfile,iprint)
 
@@ -163,8 +164,8 @@ contains
     ! Absolute error input
     real(kind(1.0D0)), optional, intent(in) :: abserrset
 
-    ! Helium and impurity enrichment
-    !real(kind(1.0D0)), optional, intent(in) :: helium_enrichment, impurity_enrichment
+    ! Average poloidal field (T)
+    real(kind(1.0D0)), optional, intent(in) :: bp
 
     ! Power conducted through the separatrix, calculated by divertor model [W]
     real(kind(1.0D0)), optional, intent(out) :: psep_kallenbach
@@ -236,6 +237,17 @@ contains
     real(kind(1.0D0)) :: Bp_target, Bt_target, Btotal_target, pitch_angle, sin_pitch_angle
     real(kind(1.0D0)) :: poloidal_flux_expansion
 
+    !+ad_vars  ptarget_conv : power deposited on target by convection [W]
+    real(kind(1.0D0)) ::ptarget_conv
+    !+ad_vars  ptarget_cond : power deposited on target by conduction [W]
+    real(kind(1.0D0)) ::ptarget_cond
+    !+ad_vars  ptarget_recomb : power deposited on target by recombination of hydrogenic ions [W]
+    real(kind(1.0D0)) ::ptarget_recomb
+    real(kind(1.0D0)) ::ptarget_isotropic
+    real(kind(1.0D0)) ::ptarget_total
+    real(kind(1.0D0)) ::ptarget_complete
+
+
     ! ODE solver parameters
     !!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -250,8 +262,7 @@ contains
     integer(kind=4) :: iwork(5)
 
     ! First step [m]
-    ! TODO restore step = 0.0001
-    real(kind(1.0D0)) :: step0=0.00001
+    real(kind(1.0D0)) :: step0=0.0001
 
     ! Ratio between successive step sizes
     real(kind(1.0D0)) :: factor
@@ -290,14 +301,11 @@ contains
     !+ad_vars  nel0 : Electron density near target [m-3]
     real(kind(1.0D0)) :: nel0
 
-    !+ad_vars  Precomb : power deposited on target by recombination of hydrogenic ions [W]
-    real(kind(1.0D0)) :: Precomb
-
     !+ad_vars  qtarget : Power density on target not including surface recombination [W/m2]
     real(kind(1.0D0)) :: qtarget
 
-    !+ad_vars  extra_flux : Power density on target due to isotropic losses from SOL [W/m2]
-    real(kind(1.0D0)) :: extra_flux
+    !+ad_vars  qtarget_isotropic : Power density on target due to isotropic losses from SOL [W/m2]
+    real(kind(1.0D0)) :: qtarget_isotropic
 
     !+ad_vars  receiving_area : Area on which the power due to isotropic losses from SOL energy is incident [m2]
     real(kind(1.0D0)) :: receiving_area
@@ -385,7 +393,7 @@ contains
 
         ! Loop over the remaining PROCESS impurities
         do i = 3, nimp
-            if (impurity_arr(i)%frac .gt. 1.e-10) then
+            if (impurity_arr(i)%frac .gt. 1.d-10) then
                 impurities_present(i) = .true.
             end if
         end do
@@ -511,8 +519,8 @@ contains
     ! The connection length used for calculating the "near zone":
     sab = 2.0D0*WettedLength/cos(targetangle*degree) * Btotal_target/Bp_target
 
-    ! Calculate the power carried by the plasma from the total power on the target
-    ! which includes surface recombination and association [W/m2]
+    ! Calculate the power density carried by the plasma from the total power density
+    ! on the target which includes surface recombination and association [W/m2]
     qtarget = qtargettotal / (1.0 + Erecomb/gammasheath/ttarget)
 
     ! Mach=1 is assumed as boundary condition at the target
@@ -564,13 +572,13 @@ do i = 2, nimp
     Power0 = qtarget*WettedArea
 
     ! Power deposited on target by recombination of hydrogenic ions [W]
-    Precomb = Erecomb*echarge*nel0*cs0*area_target
+    ptarget_recomb = Erecomb*echarge*nel0*cs0*area_target
 
     ! Power density on target due to surface recombination [W/m2]
-    qtargetrecomb = Precomb / WettedArea
+    qtargetrecomb = ptarget_recomb / WettedArea
 
     ! Total power on target [W]
-    powertargettotal = Power0 + Precomb
+    powertargettotal = Power0 + ptarget_recomb
 
     if ((present(unit_test)).and.unit_test) then
         call unit_test_read()
@@ -581,16 +589,16 @@ do i = 2, nimp
     x = 0.0D+00                     ! (ODE.F90: T)
 
     ! Define initial Y values:
-    y(1) = n010*1.e-20
-    y(2) = n020*1.e-20
+    y(1) = n010*1.d-20
+    y(2) = n020*1.d-20
     y(3) = te0
-    y(4) = nv0*1.e-24
+    y(4) = nv0*1.d-24
     y(5) = pressure0
-    y(6) = Power0/1.e6
-    y(7) =0.           ! Y(7) = integral of impurity radiation loss [MW]
-    y(8) =0.           ! Y(8) = integral of radiation loss from hydrogenic species [MW]
-    y(9) =0.           ! Y(9) = integral of power loss due to charge exchange [MW]
-    y(10)=0.           ! Y(10)= integral of power loss due to electron impact ionisation [MW]
+    y(6) = Power0/1.d6
+    y(7) =0.0D0           ! Y(7) = integral of impurity radiation loss [MW]
+    y(8) =0.0D0           ! Y(8) = integral of radiation loss from hydrogenic species [MW]
+    y(9) =0.0D0           ! Y(9) = integral of power loss due to charge exchange [MW]
+    y(10)=0.0d0           ! Y(10)= integral of power loss due to electron impact ionisation [MW]
 
     ! Use logarithmic spacing for the x values along the SOL
     factor = 10.0D0**(log10(lcon/step0)/real(step_num))
@@ -644,13 +652,13 @@ do i = 2, nimp
         endif
 
         ! Derived quantities need to be recalculated at each data point
-        n01 = Y(1)*1.e20
-        n02 = Y(2)*1.e20
+        n01 = Y(1)*1.d20
+        n02 = Y(2)*1.d20
         te  = Y(3)
         nv24 = Y(4)
-        nv  = nv24*1.e24
+        nv  = nv24*1.d24
         pressure = Y(5)
-        Power   = Y(6)*1.e6
+        Power   = Y(6)*1.d6
 
         ! The area of the flux tube, measured perpendicular to B
         ! This is set to a step function as in Kallenbach
@@ -663,7 +671,7 @@ do i = 2, nimp
         ! Calculate density [m-3]
         bracket = max( (pressure**2.0D0 - eightemi48*te*nv24**2.0D0), 0.0D0)
         nel = (pressure + sqrt(bracket))/(4.0D0*echarge*te)
-        nel20 = nel/1.e20
+        nel20 = nel/1.d20
         nelsquared = nel**2.0D0
 
         ! Thermal power [W]
@@ -692,7 +700,7 @@ do i = 2, nimp
 
         ! If the neutral density is small, set the atomic rates to zero.
         ! This adjustment is used in subroutine differential to make it behave better (less stiff)
-        if(n0.gt.abserr*1.e18) then
+        if(n0.gt.abserr*1.d18) then
             call get_h_rates(nel, te, s, al, cx, plt, prb, aplas, verbose=.false.)
 
             ! charge exchange rate for equation 7 [s-1]
@@ -729,7 +737,7 @@ do i = 2, nimp
         ! Get radiative loss for all impurities present
         raddens = 0.0D0
 
-do i = 1, nimp
+       do i = 1, nimp
             if(impurities_present(i)) then
                 lz = read_lz(imp_label(i), te, netau, mean_z=.false., mean_qz=.false., verbose=.false.)
                 ! MDK Store species-specific radiation data
@@ -753,13 +761,25 @@ do i = 1, nimp
         ! Note when we reach the edge of the "near zone" (connection length = sab):
         ! At this point we use split the integrated emission: half towards the target
         if((x.lt.sab).and.(xout.gt.sab)) then
-            extra_flux = 0.5D0 * 1e6 * (y(7) + y(8) + y(9)) / (2.0D0*WettedArea)
+            qtarget_isotropic = 0.5D0 * 1e6 * (y(7) + y(8) + y(9)) / (2.0D0*WettedArea)
+        endif
+
+        ! Store some target parameters
+        if(step==0)then
+            ptarget_conv = qperp_conv * A_cross
+            ptarget_cond = qperp_conducted * A_cross
+
         endif
     end do
+
+    ptarget_isotropic = qtarget_isotropic * WettedArea
+    ! This total is for checking only
+    ptarget_total = ptarget_conv + ptarget_cond + ptarget_recomb + ptarget_isotropic
 
     if(verbose) then
         write(*,*)'Differential equations complete'
     end if
+
 
     ! Upstream power [W]
     Powerup = Power
@@ -768,7 +788,7 @@ do i = 1, nimp
     psep_kallenbach = seppowerratio*Powerup
 
     ! Power balance - should be zero [W]
-    balance = (Y(6) - Y(7)-Y(8)-Y(9)-Y(10))*1.e6 - Power0
+    balance = (Y(6) - Y(7)-Y(8)-Y(9)-Y(10))*1.d6 - Power0
 
     ! momentum factor [-]
     fmom = 2.0D0*nete0/nete
@@ -801,7 +821,9 @@ do i = 1, nimp
 
     pitch_angle = asin(sin_pitch_angle)/degree
     poloidal_flux_expansion = Bp_omp / Bp_target
-    qtargetcomplete = qtargettotal + extra_flux
+    qtargetcomplete = qtargettotal + qtarget_isotropic
+    ! Just to check
+    ptarget_complete = qtargetcomplete * WettedArea
 
     call oheadr(outfile, 'Divertor: Kallenbach 1D Model')
     call ocmmnt(outfile, 'For graphical output use kallenbach_plotting.py')
@@ -859,27 +881,36 @@ do i = 1, nimp
     call ovarre(outfile, 'Pitch angle of field line at target [deg]','(pitch_angle)', pitch_angle, 'OP ')
     call ovarre(outfile, 'Ratio: area of flux tube perpendicular to B / target wetted area  ','(sinfact)', sinfact, 'OP ')
 
-    call ovarre(outfile, 'Total power on target [W]','(powertargettotal)', powertargettotal, 'OP ')
-    call ovarre(outfile, 'Power on target not including surface recombination [W]','(Power0)', Power0, 'OP ')
-    call ovarre(outfile, 'Power on target due to surface recombination [W]','(Precomb)', Precomb, 'OP ')
+    call ovarre(outfile, 'Total power on target [W]','(ptarget_total)', ptarget_total, 'OP ')
+    call ovarre(outfile, 'Total power on target [W]','(ptarget_complete)', ptarget_complete, 'OP ')
+    call ocmmnt(outfile, 'These should be equal.')
+
+    call ovarre(outfile, 'Power on target due to convection [W]','(ptarget_conv)', ptarget_conv, 'OP ')
+    call ovarre(outfile, 'Power on target due to conduction [W]','(ptarget_cond)', ptarget_cond, 'OP ')
+    call ovarre(outfile, 'Power on target due to surface recombination [W]','(ptarget_recomb)', ptarget_recomb, 'OP ')
+    call ovarre(outfile, 'Power on target due to isotropic losses [W]','(ptarget_isotropic)', ptarget_isotropic, 'OP ')
 
     call ovarre(outfile, '"Wetted area" of target [m2]','(WettedArea)', WettedArea, 'OP ')
     call ovarre(outfile, '"Wetted length" of target measured in poloidal plane [m]','(WettedLength)', WettedLength, 'OP ')
 
     call ovarre(outfile, 'Total power density on target [W/m2]','(qtargetcomplete)', qtargetcomplete)
-    !call ovarre(outfile, 'Power density on target (subtotal) [W/m2]','(qtargettotal)', qtargettotal)
-    call ovarre(outfile, 'Power density on target not including surface recombination [W/m2]','(qtarget)', qtarget, 'OP ')
+    call ovarre(outfile, 'Power density on target due to conduction and convection [W/m2]','(qtarget)', qtarget, 'OP ')
     call ovarre(outfile, 'Power density on target due to surface recombination [W/m2]','(qtargetrecomb)', qtargetrecomb, 'OP ')
-    call ovarre(outfile, 'Power density on target due to isotropic losses from SOL [W/m2]','(extra_flux)', extra_flux, 'OP ')
+    call ovarre(outfile, 'Power density on target due to isotropic losses from SOL [W/m2]', &
+                         '(qtarget_isotropic)', qtarget_isotropic, 'OP ')
     call ocmmnt(outfile, '(Based on 1/2 x (radiation + CX) in first "sab" of flux line.)')
     call ovarre(outfile, 'Connection length used for "near zone" (m)','(sab)', sab, 'OP ')
     call ovarre(outfile, 'Length of broadened downstream part of SOL [m]','(lengthofwidesol)', lengthofwidesol, 'OP ')
 
     call osubhd(outfile, 'Integrated powers :')
-    call ovarre(outfile, 'Power lost due to impurity radiation [W] ','()', Y(7)*1.e6, 'OP ')
-    call ovarre(outfile, 'Power lost due to hydrogenic radiation [W] ','()', Y(8)*1.e6, 'OP ')
-    call ovarre(outfile, 'Power lost due to charge exchange  [W] ','()', Y(9)*1.e6, 'OP ')
-    call ovarre(outfile, 'Power lost due to electron impact ionisation [W] ','()', Y(10)*1.e6, 'OP ')
+    impuritypowerlost = Y(7)*1.d6
+    hydrogenicpowerlost = Y(8)*1.d6
+    exchangepowerlost = Y(9)*1.d6
+    ionisationpowerlost = Y(10)*1.d6
+    call ovarre(outfile, 'Power lost due to impurity radiation [W] ','(impuritypowerlost)', impuritypowerlost, 'OP ')
+    call ovarre(outfile, 'Power lost due to hydrogenic radiation [W] ','(hydrogenicpowerlost)', hydrogenicpowerlost, 'OP ')
+    call ovarre(outfile, 'Power lost due to charge exchange  [W] ','(exchangepowerlost)', exchangepowerlost, 'OP ')
+    call ovarre(outfile, 'Power lost due to electron impact ionisation [W] ','(ionisationpowerlost)', ionisationpowerlost, 'OP ')
     call ovarre(outfile, 'Total power lost due to radiation, ionisation and recombination [W] ',&
                          '(totalpowerlost)', totalpowerlost, 'OP ')
     call ovarre(outfile, 'Power balance error [W] ','(balance)', balance, 'OP ')
@@ -938,28 +969,26 @@ do i = 1, nimp
     real(kind(1.0D0))::LzTotal
 
     ! Set initial values
-    n01 = Y(1)*1.e20
-    n02 = Y(2)*1.e20
+    n01 = Y(1)*1.d20
+    n02 = Y(2)*1.d20
     te  = Y(3)
-    nv  = Y(4)*1.e24
+    nv  = Y(4)*1.d24
     pressure = Y(5)
-    Power   = Y(6)*1.e6
+    Power   = Y(6)*1.d6
 
     ! Derived quantities
     nv24 = Y(4)
-    bracket = pressure**2.0D0 - eightemi48*te*nv24**2.0D0
+    bracket = pressure**2 - eightemi48*te*nv24**2
 
     if ((bracket .lt. 0.0)) then
 
-        if(bracket .ge. -0.0001*pressure**2) then
+        if((bracket .ge. -0.1*pressure**2).and.(t<0.001D0)) then
             ! Continue calculation
             bracket=0.d0
         else
             write(*,*) 'Square root of a negative number in divertor model'
-            write(*,*) 'x= ', t
-            write(*,*) 'pressure**2 = ', pressure**2
-            write(*,*) 'eightemi48*te*nv24**2 = ', eightemi48*te*nv24**2
-            write(*,*) 'y= ', y
+            write(*,'(10a14)') 't', 'pressure', 'te', 'nv24', 'pressure**2', 'eightemi48*te*nv24**2', 'bracket'
+            write(*,'(10es14.6)') t, pressure, te, nv24, pressure**2, eightemi48*te*nv24**2, bracket
             stop
         endif
 
@@ -969,7 +998,7 @@ do i = 1, nimp
     v = nv/nel
     n0 = n01 + n02                         ! neutral density = sum of the two velocity groups
 
-    if(n0.gt.abserr*1.e18)  then
+    if(n0.gt.abserr*1.d18)  then
         call get_h_rates(nel, te, s, al, cx, plt, prb, aplas, verbose=.false.)
 
         ! charge exchange for equation 7
@@ -1266,6 +1295,7 @@ subroutine kallenbach_test()
                            ttarget=2.3D0,qtargettotal=4.175D6,                  &
                            targetangle=30.0D0,lcon_factor=lcon_factor,            &
                            netau_in=0.5D0,unit_test=.false.,abserrset=1.0D-6,     &
+                           bp = 0.956d0,   &
                            psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
                            outfile=nout,iprint=1 )
 
@@ -1283,3 +1313,98 @@ subroutine kallenbach_test()
   call ocmmnt(nout, 'Compare to plots such as He_z.ps etc in /home/mkovari/sol/kallenbach/divertor_ode/LZ_NON_CORONA.')
 
 end subroutine Kallenbach_test
+
+!-------------------------------------------------------------------------
+subroutine kallenbach_scan()
+  !+ad_name  kallenbach_scan
+  !+ad_summ  Scans for divertor kallenbach model: No optimisation
+  !+ad_type  subroutine
+  !+ad_auth  M Kovari, CCFE, Culham Science Centre
+  !+ad_hist  13/11/17 MDK  Initial version
+  !
+  ! Modify this code to run whatever scans are required (or none)
+  ! The values of divertor_kallenbach_variables are taken from the input file,
+  ! but can be overwritten here.
+  use divertor_ode
+  use divertor_kallenbach_variables
+  use read_and_get_atomic_data
+  use read_radiation
+  use constants
+  use physics_variables, only:rmajor, rminor, plascur, bvert, bp, bt, q, ralpne
+  use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
+
+  implicit none
+
+  integer :: i
+  real(kind(1.0D0)):: dummy, dummy2, dummy3
+  integer::isweep
+
+  ! MDK Issue #494.
+  ! Invert the equation for lcon to ensure lcon=100 for this test.
+  ! lcon = lcon_factor * 0.395d0*pi*q*rmajor/lambda_omp**0.196
+  lcon_factor = 100.0D0 / (0.395d0*pi*3.0d0*8.0D0/0.002D0**0.196)
+
+  ! Set the impurity fractions to the test values
+  do i = 2, nimp
+    impurity_arr(i)%frac = 0.0D0
+  enddo
+
+  rmajor = 8.9384d0
+  rminor = 2.883d0
+  plascur = 19.075d6
+  bvert = -0.725d0
+  bp = 0.921d0
+  q = 3.000d0
+  ttarget = 10.0d0
+
+  ! Set the impurity fractions to the test values
+  do i = 2, nimp
+    impurity_arr(i)%frac = 0.0D0
+  enddo
+  impurity_arr(9)%frac  = 1.0d-3   ! argon
+  impurity_arr(13)%frac = 2.0d-4   ! Xenon
+  impurity_arr(14)%frac = 5d-05    ! Tungsten
+
+  isweep = 21
+  call oheadr(nout, 'Divertor: Kallenbach 1D Model - SCANS - ')
+  call ovarin(mfile,'Number of scan points','(isweep)',isweep)
+  call ovarin(mfile,'Scanning variable number','(nsweep)',33)
+
+  do i = 1, isweep
+
+      if(i==1) then
+          ttarget = 1.0d0
+      else
+          ttarget = 5.0d0*(i - 1.0d0)
+      endif
+      !impurity_arr(9)%frac = 1.0d-3 + (i-1.0d0)/(isweep-1.0d0) *1.0d-3
+      !write(*,*)'Running kallenbach model for argon = ',impurity_arr(9)%frac
+      write(*,*)'Running kallenbach model for ttarget = ',ttarget
+      call oblnkl(mfile)
+      call ovarin(mfile,'Scan point number','(iscan)',i)
+      call ovarre(nout, 'Major radius [m]','(rmajor)', rmajor)
+      call ovarre(nout, 'Minor radius [m]','(rminor)', rminor)
+      call ovarre(nout, 'Toroidal field [T]','(bt)', bt, 'OP ')
+      call ovarre(nout, 'Vertical (equilibrium) field [T]','(bvert)', bvert)
+      call ovarre(nout, 'Average poloidal field [T]','(bp)', bp)
+      call ovarre(nout, 'Plasma current [A]','(plascur)', plascur)
+      call ovarre(nout, 'q95 [A]','(q)', q)
+      call ovarre(nout, 'Helium ion density (thermalised ions only) / electron density','(ralpne)',ralpne)
+      call ovarre(nout, 'Argon ion density / electron density','(fimp(9)',impurity_arr(9)%frac)
+      call ovarre(nout, 'Xenon ion density / electron  density','(fimp(13)',impurity_arr(13)%frac)
+      call ovarre(nout, 'Tungsten ion density / electron density','(fimp(14)',impurity_arr(14)%frac)
+
+      call divertor_Kallenbach(rmajor=rmajor, rminor=rminor,     &
+                           bt=bt, plascur=plascur,      &
+                           bvert=bvert, q=q,            &
+                           verboseset=.false.,          &
+                           ttarget=ttarget, qtargettotal=qtargettotal,         &
+                           targetangle=targetangle,lcon_factor=lcon_factor,    &
+                           netau_in=netau,unit_test=.false.,abserrset=1.0D-6,  &
+                           bp = bp,   &
+                           psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3,  &
+                           outfile=nout,iprint=1 )
+   end do
+
+
+end subroutine Kallenbach_scan

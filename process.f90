@@ -114,15 +114,17 @@ program process
     if (run_tests == 1) call runtests
 
     if(kallenbach_tests==1) then
-      write(*,*)'Running test of Kallenbach divertor model.  Then stop.'
-      call Kallenbach_test()
+      !write(*,*)'Running test of Kallenbach divertor model.'
+      !call Kallenbach_test()
+      write(*,*)'Running parameter scan of Kallenbach divertor model.  Then stop.'
+      call kallenbach_scan()
       stop
     endif
 
      ! Call equation solver (HYBRD)
     call eqslv(ifail)
 
-     ! Call routine to do optimisation scans
+     ! Call routine to do scans
     if (ioptimz >= 0) then
        call scan
     else
@@ -190,17 +192,6 @@ subroutine init
   !+ad_call  initialise_error_list
   !+ad_call  input
   !+ad_call  run_summary
-  !+ad_hist  03/10/96 PJK Initial upgraded version
-  !+ad_hist  17/11/97 PJK Changed file names to *.DAT
-  !+ad_hist  08/10/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  09/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Added global_variables module
-  !+ad_hist  13/02/14 PJK Added mfile open statement
-  !+ad_hist  13/05/14 PJK Added impurity radiation model initialisation
-  !+ad_hist  25/06/14 PJK Introduced call to initialise error handling
-  !+ad_hist  22/07/14 PJK Rearranged calls to print output headers
-  !+ad_hist  10/09/14 PJK Added vfile open statement
   !+ad_hist  19/05/15 PJK Added ability to use a file prefix obtained
   !+ad_hisc               from a command line argument
   !+ad_stat  Okay
@@ -1592,6 +1583,7 @@ subroutine output(outfile)
       Ttarget=Ttarget,qtargettotal=qtargettotal,            &
       targetangle=targetangle,lcon_factor=lcon_factor, netau_in=netau, &
       unit_test=.false.,abserrset=1.d-5,  &
+      bp = bp,   &
       psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
       outfile=nout,iprint=1 )
 

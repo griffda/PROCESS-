@@ -240,6 +240,7 @@ subroutine caller(xc,nvars)
         Ttarget=Ttarget,qtargettotal=qtargettotal,            &
         targetangle=targetangle,lcon_factor=lcon_factor, &
         netau_in=netau,unit_test=.false.,abserrset=1.d-5,     &
+        bp = bp,   &
         psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
         outfile=nout,iprint=0 )
   else if(kallenbach_switch.eq.0) then

@@ -259,7 +259,7 @@ p2r1right.set_ylim(p2r1left.get_ylim())
 # Left
 p2r2left = page2.add_subplot(423)
 p2r2left.set_xlim([0.0, 0.015])
-p2r2left.set_ylim([1, 1000])
+p2r2left.set_ylim([0.1, 1000])
 #p2r2left.set_xlabel("$x\parallel B$ (m)", fontsize=14)
 p2r2left.set_ylabel("power dens. (MWm$^{-3}$)")
 if max(He_mw)>0.001:
@@ -296,7 +296,7 @@ p2r2left.xaxis.set_major_formatter(nullfmt)
 # Row 2 Right
 p2r2right = page2.add_subplot(424)
 p2r2right.set_xlim([0.015, x_max])
-p2r2right.set_ylim([1, 1000])
+p2r2right.set_ylim([0.1, 1000])
 #p2r2right.set_xlabel("$x\parallel B$ (m)", fontsize=14)
 #p2r2right.set_ylabel("power dens. (MWm$^{-3}$)")
 if max(He_mw)>0.001:

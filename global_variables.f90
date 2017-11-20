@@ -677,7 +677,7 @@ module physics_variables
   real(kind(1.0D0)) :: qstar = 0.0D0
   !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
   real(kind(1.0D0)) :: ralpne = 0.10D0
-  !+ad_vars  protium /0.0/ : Seeded protium density / electron density.  
+  !+ad_vars  protium /0.0/ : Seeded protium density / electron density.
   real(kind(1.0D0)) :: protium = 0.0D0
 
   !+ad_vars  rli /0.9/ : plasma normalised internal inductance;
@@ -1014,6 +1014,19 @@ module divertor_kallenbach_variables
 
   !+ad_vars  totalpowerlost : Total power lost due to radiation, ionisation and recombination [W]
   real(kind(1.0D0)), public :: totalpowerlost
+
+  !+ad_vars  impuritypowerlost : Power lost due to impurity radiation [W]
+  real(kind(1.0D0)), public :: impuritypowerlost
+
+  !+ad_vars  hydrogenicpowerlost : Power lost due to hydrogenic radiation [W]
+  real(kind(1.0D0)), public :: hydrogenicpowerlost
+
+  !+ad_vars  exchangepowerlost : Power lost due to charge exchange  [W]
+  real(kind(1.0D0)), public :: exchangepowerlost
+
+  !+ad_vars  ionisationpowerlost : Power lost due to electron impact ionisation [W]
+  real(kind(1.0D0)), public :: ionisationpowerlost
+
 
 end module divertor_kallenbach_variables
 
