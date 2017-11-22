@@ -44,7 +44,7 @@ SOURCEDIR = ROOTDIR
 #DICT_DEFAULT. This is used for adding important variables to the dictionary
 #that the script fails to parse.
 FIXEDVALS = {"ngc2" : 18, "nimp" : 14}
-FIXEDDEFS = {"impdir" : ROOTDIR+"\data/impuritydata",
+FIXEDDEFS = {"impdir" : ROOTDIR+"/data/impuritydata",
              "sweep" : [0.0] * 200
             }
 
@@ -110,7 +110,7 @@ def grep_r(search_dir, regexp, flags=re.U, extension=""):
 
     lines = []
     for file in os.listdir(search_dir):
-        path = search_dir + "\\" + file
+        path = search_dir + "/" + file
         if os.path.isdir(path):  #  ignore subdirectories
             continue
         if not file.endswith(extension):
@@ -136,7 +136,7 @@ def find(search_dir, regexp, flags=re.U):
     files = []
     for file in os.listdir(search_dir):
         if 'f90' in file:
-            path = search_dir + "\" + file
+            path = search_dir + "/" + file
             if os.path.isdir(path):
                 continue
             try:
@@ -272,7 +272,7 @@ def get_array_from_fortran(array_name):
               '\n The list of files is ', filelist, file=sys.stderr)
     assert(len(filelist) == 1)
     # slice the file between the parenthesis
-    arr = slice_file(filelist[0], rexp, r"\\)")
+    arr = slice_file(filelist[0], rexp, r"/\)")
 
     arr = [remove_comments(x) for x in arr]
     # combine whole array onto one line
@@ -340,7 +340,7 @@ def dict_ixc2nsweep():
     """
 
     di = {}
-    file = SOURCEDIR + "\scan.f90"
+    file = SOURCEDIR + "/scan.f90"
     #slice the file to get the switch statement relating to nsweep
     lines = slice_file(file, r"select case \(nsweep\)", r"case default")
 
@@ -389,7 +389,7 @@ def dict_var_type():
     """
     di = {}
     regexp = r"call parse_(real|int)_(array|variable)\("
-    lines = grep(SOURCEDIR + "\input.f90", regexp)
+    lines = grep(SOURCEDIR + "/input.f90", regexp)
     for line in lines:
         args = line.split('(')[1]
         name = args.split(',')[1].strip()
@@ -421,7 +421,7 @@ def dict_ixc_full():
     di = {}
 
     #get slice of file from 'lablxc = (/' to '/)'
-    lxctext = slice_file(SOURCEDIR + "\\numerics.f90", r"lablxc = \(/", r"/\)")
+    lxctext = slice_file(SOURCEDIR + "/numerics.f90", r"lablxc = \(/", r"/\)")
 
     regexp = r"""
                !\+ad_varc       #look for !+ad_varc
@@ -450,7 +450,7 @@ def dict_ixc_full():
 
 
     #get slice of file from 'boundu = (/' to '/)'
-    boundutext = slice_file(SOURCEDIR + "\\numerics.f90", \
+    boundutext = slice_file(SOURCEDIR + "/numerics.f90", \
                                 r"boundu = \(/", r"/\)")
     regexp = r"""
                 ([\d\.D-]+)     #fortran style floating point number contains
@@ -475,7 +475,7 @@ def dict_ixc_full():
             assert num == len(boundu)
 
     #get slice of file from 'boundl = (/' to '/)'
-    boundltext = slice_file(SOURCEDIR + "\\numerics.f90", \
+    boundltext = slice_file(SOURCEDIR + "/numerics.f90", \
                             r"boundl = \(/", r"/\)")
     boundl = []
     #ignore first and last lines
@@ -512,7 +512,7 @@ def dict_icc_full():
     di = dict()
 
     # get slice of file from 'lablxc = (/' to '/)'
-    lcctext = slice_file(SOURCEDIR + "\\numerics.f90", r"lablcc = \(/", r"/\)")
+    lcctext = slice_file(SOURCEDIR + "/numerics.f90", r"lablcc = \(/", r"/\)")
 
     regexp = r"""
                !\+ad_varc       #look for !+ad_varc
@@ -622,7 +622,7 @@ def dict_default():
 
     #check dict_default against input lines in input.f90. Report differences
     regexp2 = r"call parse_(real|int)_(array|variable)\((.*)"
-    test = grep(SOURCEDIR + "\input.f90", regexp2)
+    test = grep(SOURCEDIR + "/input.f90", regexp2)
     for line in test:
         args = re.search(regexp2, line).group(3)
         try:
@@ -655,7 +655,7 @@ def dict_input_bounds():
     di = {}
     failedlines = []
     regexp = r"call parse_(real|int)_variable\((.*)"
-    lines = grep(SOURCEDIR + "\input.f90", regexp)
+    lines = grep(SOURCEDIR + "/input.f90", regexp)
 
     for line in lines:
         match = re.search(regexp, line)
@@ -740,7 +740,6 @@ def dict_descriptions():
     #make manual changes
     #description of "isc" does not include the explanation of
     #the meaning of the values isc can take. Get it from lablmm
-    print(di.keys())
     isc_desc = di["isc"].split('\n')[0]
     lablmm = di["tauscl"].split('\n')[1:]
     di["isc"] = "\n".join([isc_desc] + lablmm)
@@ -819,7 +818,7 @@ def dict_nsweep2varname():
 
 
     di = {}
-    file = SOURCEDIR + "\scan.f90"
+    file = SOURCEDIR + "/scan.f90"
 
     #slice the file to get the switch statement relating to nsweep
     lines = slice_file(file, r"select case \(nsweep\)", r"case default")
@@ -847,8 +846,7 @@ def print_header():
     """
 
     #look for a line with 'Release Date'
-    print(SOURCEDIR)
-    rel_dat_list = grep(SOURCEDIR + "\process.f90", "Release Date")
+    rel_dat_list = grep(SOURCEDIR + "/process.f90", "Release Date")
     assert len(rel_dat_list) == 1
     dat_line = rel_dat_list[0]
     #the version number is right before 'Release Date'
@@ -1091,7 +1089,7 @@ def print_icc_module():
     icc_modules = dict()
     comment = "Dictionary mapping icc number to module"
 
-    file_loc = SOURCEDIR + "\constraint_equations.f90"
+    file_loc = SOURCEDIR + "/constraint_equations.f90"
 
     with open(file_loc) as f:
         lines = f.readlines()
@@ -1116,7 +1114,7 @@ def print_icc_vars():
     icc_vars = dict()
     comment = "Dictionary mapping icc number icc vars"
 
-    file_loc = SOURCEDIR + "\constraint_equations.f90"
+    file_loc = SOURCEDIR + "/constraint_equations.f90"
 
     with open(file_loc) as f:
         lines = f.readlines()
