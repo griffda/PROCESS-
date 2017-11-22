@@ -246,6 +246,7 @@ contains
     real(kind(1.0D0)) ::ptarget_isotropic
     real(kind(1.0D0)) ::ptarget_total
     real(kind(1.0D0)) ::ptarget_complete
+    real(kind(1.0D0)) ::neutral_target
 
 
     ! ODE solver parameters
@@ -340,7 +341,7 @@ contains
     real(kind(1.0D0)) :: ttypical
 
     ! Impurity radiation by species
-    real(kind(1.0D0)) :: raddensspecies(nimp)
+    real(kind(1.0D0)) :: raddensspecies(nimp)=0.0d0
 
     character(len=100) :: filename
 
@@ -748,9 +749,9 @@ do i = 2, nimp
         enddo
 
         if(iprint.eq.1) then
-            do i=2,nimp
-                if(raddensspecies(i)<1.0d-99)raddensspecies(i)=0.0d0
-            end do
+            ! do i=2,nimp
+            !     if(raddensspecies(i)<1.0d-99)raddensspecies(i)=0.0d0
+            ! end do
 
             write(9,'(i5, 2x, f9.5, 46es12.3)')  &
                 step, x, te, nel20, Pthermal, pressure, v, mach, n0e20, Power, A_cross, qperp_total,  &
@@ -768,7 +769,8 @@ do i = 2, nimp
         if(step==0)then
             ptarget_conv = qperp_conv * A_cross
             ptarget_cond = qperp_conducted * A_cross
-
+            ! Neutral density at targetangle [m-3]
+            neutral_target = n0e20 * 1d20
         endif
     end do
 
@@ -868,9 +870,10 @@ do i = 2, nimp
     call osubhd(outfile, 'Properties of SOL plasma adjacent to divertor sheath :')
     call ovarre(outfile, 'Ion sound speed near target [m/s] ','(cs0)', cs0, 'OP ')
     call ovarre(outfile, 'Plasma density near target [m-3] ','(nel0)', nel0, 'OP ')
-    call ovarre(outfile, 'Ion flux density perp to B at target [partfluxtar] m-2s-1 ','(partfluxtar)', partfluxtar, 'OP ')
+    call ovarre(outfile, 'Ion flux density perp to B at target m-2s-1 ','(partfluxtar)', partfluxtar, 'OP ')
     call ovarre(outfile, 'Ion flux density on target [partfluxtar/sinfact]  m-2s-1 ','(IonFluxTarget)', IonFluxTarget, 'OP ')
-    call ovarre(outfile, 'Nominal neutral pressure at target [p0partflux] [Pa] ','(p0partflux)', p0partflux, 'OP ')
+    call ovarre(outfile, 'Neutral density at target [m-3] ','(neutral_target)', neutral_target, 'OP ')
+    call ovarre(outfile, 'Nominal neutral pressure at target [Pa] ','(p0partflux)', p0partflux, 'OP ')
     call ovarre(outfile, 'Plasma temperature near target [eV] ','(ttarget)', ttarget)
 
     call ovarre(outfile, 'Total plasma pressure near target (thermal+dynamic) [Pa] ','(pressure0)', pressure0, 'OP ')
