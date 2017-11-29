@@ -346,12 +346,15 @@ subroutine check
         !  Density checks:
         !  not required if pedestal is set using Greenwald density (Issue #292)
 
-        if ((iscdens == 0) .and. (neped < nesep)) then
+        if ((fgwped <= 0d0) .and. (neped < nesep)) then
+            write(*,*)'Pedestal density is set manually and density is below separatrix!'
             fdiags(1) = neped ; fdiags(2) = nesep
             call report_error(151)
         end if
 
-        if ((iscdens == 0) .and. (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7)) then
+        if ((fgwped <= 0d0) .and. (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7)) then
+            write(*,*)'Pedestal density is set manually and pedestal width is zero'
+            write(*,*)'but pedestal density is not equal to separatrix density!'
             fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
             call report_error(152)
         end if
@@ -363,7 +366,7 @@ subroutine check
         !  (which will only have an effect if this is an optimisation run)
         !  Not required if pedestal is set using Greenwald density (Issue #292)
 
-        if ((iscdens == 0) .and. (dene <= neped)) then
+        if ((fgwped <= 0d0) .and. (dene <= neped)) then
             fdiags(1) = dene ; fdiags(2) = neped
             dene = neped*1.001D0
             call report_error(154)

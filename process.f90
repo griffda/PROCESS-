@@ -504,10 +504,10 @@ subroutine run_summary
   ustring = '"'//trim(progid(4)(13:20))//'"'
   call ovarst(mfile,'User','(username)',ustring)
 
-  rstring = '"'//runtitle//'"'
+  rstring = '"'//trim(runtitle)//'"'
   call ovarst(mfile,'PROCESS run title','(runtitle)',rstring)
 
-  rstring = '"'//tagno//'"'
+  rstring = '"'//trim(tagno)//'"'
   call ovarst(mfile,'PROCESS tag number','(tagno)',rstring)
 
 #ifndef unit_test
