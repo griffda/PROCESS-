@@ -194,8 +194,15 @@ contains
     ! neutral velocity along the flux bundle, group 1 [m/s]
     real(kind(1.0D0)) :: v0
 
+    ! Electron sheath energy transmission coefficient
+    real(kind(1.0D0)), parameter :: gammae = 5.5d0
+    ! Ion energy reflection coefficient
+    real(kind(1.0D0)), parameter :: energyreflection = 0.5d0
+    ! Ion sheath energy transmission coefficient
+    ! Issue #500 item 3. Adjust sheath heat transmission coefficient for ion reflection.
+    real(kind(1.0D0)), parameter :: gammai = 2.5d0 * (1d0 - energyreflection)
     ! Sheath energy transmission coefficient (kallenbach paper pg. 4)
-    real(kind(1.0D0)) :: gammasheath
+    real(kind(1.0D0)), parameter :: gammasheath = gammae + gammai
 
     ! Recombination energy [eV]
     real(kind(1.0D0)) :: Erecomb
@@ -330,18 +337,18 @@ contains
 
     !+ad_vars  sab : connection length used for calculating the "near zone" [m]
     real(kind(1.0D0)) :: sab
-
     !+ad_vars  romp : Major radius at outer midplane  [m]
     real(kind(1.0D0)) :: romp
-
     !+ad_vars  IonFluxTarget : Ion flux density on target [m-2s-1]
     real(kind(1.0D0)) :: IonFluxTarget
-
     ! Typical SOL temperature, used only for estimating zeffective in the SOL [eV]
     real(kind(1.0D0)) :: ttypical
-
     ! Impurity radiation by species
     real(kind(1.0D0)) :: raddensspecies(nimp)=0.0d0
+
+    ! Chodura sheath width [m]
+    real(kind(1.0D0)) :: lchodura
+    real(kind(1.0D0)),parameter :: squareroot6 = sqrt(6d0)
 
     character(len=100) :: filename
 
@@ -441,10 +448,6 @@ contains
         abserr = abserrset
     end if
 
-    ! Sheath energy transmission coefficient (Kallenbach paper page 4)
-    ! Issue #500 item 3. Adjust sheath heat transmission coefficient for ion reflection.
-    gammasheath = 6.5D0
-
     ! Dissociation energy, T2 to 2T = 4.59 eV
     ! Ionization energy, T to T+ e- = 13.55 eV
     ! http://energy.gov/sites/prod/files/2013/07/f2/hdbk1129.pdf
@@ -505,6 +508,10 @@ contains
 
     ! Sound speed [m/s]
     cs0 = sqrt(2.0D0*echarge*ttarget/mi)
+
+    ! Chodura sheath width (m).  Sin psi taken = 1.
+    ! Stangeby Equation 2.112
+    lchodura = squareroot6 * ttarget / (Btotal_target*cs0)
 
     ! Flux bundle area perp. to B at target [m2]
     area_target = area_omp * sol_broadening
@@ -878,6 +885,7 @@ do i = 2, nimp
 
     call ovarre(outfile, 'Total plasma pressure near target (thermal+dynamic) [Pa] ','(pressure0)', pressure0, 'OP ')
     call ovarre(outfile, 'momentum factor [-] ','(fmom)', fmom, 'OP ')
+    call ovarre(outfile, 'Nominal Chodura sheath width [m] ','(lchodura)', lchodura, 'OP ')
 
     call osubhd(outfile, 'Divertor target parameters :')
     call ovarre(outfile, 'Angle between flux surface and normal to divertor target [deg]', '(targetangle)', targetangle)
