@@ -293,10 +293,10 @@ module physics_variables
   !+ad_varc                 area in neutron wall load calculation (iwalld=1)
   real(kind(1.0D0)) :: ffwal = 0.92D0
   !+ad_vars  fgwped /0.85/ : fraction of Greenwald density to set as pedestal-top density
-  !+ad_varc                  (ipedestal=1, iscdens=1)
+  !+ad_varc                  If <0, pedestal-top density set manually using neped (ipedestal=1)
   real(kind(1.0D0)) :: fgwped = 0.85D0
   !+ad_vars  fgwsep /0.50/ : fraction of Greenwald density to set as separatrix density
-  !+ad_varc                  (ipedestal=1, iscdens=1)
+  !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal=1)
   real(kind(1.0D0)) :: fgwsep = 0.50D0
 
 
@@ -396,10 +396,9 @@ module physics_variables
   !+ad_varc             <LI> = 0 use original parabolic profiles;
   !+ad_varc             <LI> = 1 use pedestal profiles </UL>
   integer :: ipedestal = 1
-  !+ad_vars  iscdens /0/ : switch for pedestal profiles:<UL>
-  !+ad_varc             <LI> = 0 set pedestal-top density manually using neped;
-  !+ad_varc             <LI> = 1 set pedestal-top density as fgwped*Greenwald, and separatrix as fgwsep*Greenwald  </UL>
-  integer :: iscdens = 0
+  ! Issue #589 remove iscdens
+  !+ad_vars  iscdens /0/ : switch for pedestal profiles: OBSOLETE
+  ! integer :: iscdens = 0
 
   ! Issue #413
   !+ad_vars  ieped /0/ : switch for scaling pedestal-top temperature with plasma parameters:<UL>

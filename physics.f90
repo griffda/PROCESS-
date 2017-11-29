@@ -259,8 +259,16 @@ contains
     !    fgwped * Greenwald density limit
     !  Note: this used to be done before plasma current
 
-    if ((ipedestal == 1).and.(iscdens == 1)) then
+    ! if ((ipedestal == 1).and.(iscdens == 1)) then
+    !   neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
+    !   nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
+    ! end if
+
+    ! Issue #589 remove iscdens
+    if ((ipedestal == 1).and.(fgwped >=0d0)) then
       neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
+    endif
+    if ((ipedestal == 1).and.(fgwsep >=0d0)) then
       nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
     end if
 
@@ -5459,6 +5467,8 @@ end function t_eped_scaling
     integer :: imp
     character(len=30) :: tauelaw
     character(len=30) :: str1,str2
+    real(kind(1.0D0)) :: fgwped_out ! neped/dlimit(7)
+    real(kind(1.0D0)) :: fgwsep_out ! nesep/dlimit(7)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5715,14 +5725,20 @@ end function t_eped_scaling
     if(ipedestal==1)then
         call ocmmnt(outfile,'Pedestal profiles are used.')
         call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
-        if(iscdens.eq.1)then
+        if(fgwped >= 0d0)then
             call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped, 'OP ')
         else
             call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped)
         end if
-        fgwped = neped/dlimit(7)
-        fgwsep = nesep/dlimit(7)
-        call ovarre(outfile,'Electron density at pedestal / nGW','(fgwped)',fgwped)
+
+        ! This code is ODD! Don't change it! No explanation why fgwped and fgwsep
+        ! must be assigned to their exisiting values!
+        fgwped_out = neped/dlimit(7)
+        fgwsep_out = nesep/dlimit(7)
+        if(fgwped >= 0d0) fgwped = neped/dlimit(7)
+        if(fgwsep >= 0d0) fgwsep = nesep/dlimit(7)
+        
+        call ovarre(outfile,'Electron density at pedestal / nGW','(fgwped_out)',fgwped_out)
         call ovarrf(outfile,'Temperature pedestal r/a location','(rhopedt)',rhopedt)
         ! Issue #413 Pedestal scaling
         call ovarin(outfile,'Pedestal scaling switch','(ieped)',ieped)
@@ -5740,7 +5756,7 @@ end function t_eped_scaling
     endif
 
     call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
-    call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep)',fgwsep)
+    call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep_out)',fgwsep_out)
     call ovarrf(outfile,'Temperature profile index','(alphat)',alphat)
     call ovarrf(outfile,'Temperature profile index beta','(tbeta)',tbeta)
 
