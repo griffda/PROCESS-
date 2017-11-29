@@ -768,8 +768,9 @@ do i = 2, nimp
 
         ! Note when we reach the edge of the "near zone" (connection length = sab):
         ! At this point we use split the integrated emission: half towards the target
+        ! Y(9)_=_integral_of_power_loss_due_to_charge_exchange_[MW]
         if((x.lt.sab).and.(xout.gt.sab)) then
-            qtarget_isotropic = 0.5D0 * 1e6 * (y(7) + y(8) + y(9)) / (2.0D0*WettedArea)
+            qtarget_isotropic = 0.5D0 * 1e6 * (y(7) + y(8) + y(9)*(1d0-energyreflection)) / (2.0D0*WettedArea)
         endif
 
         ! Store some target parameters
