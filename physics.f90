@@ -259,15 +259,9 @@ contains
     !    fgwped * Greenwald density limit
     !  Note: this used to be done before plasma current
 
-    ! if ((ipedestal == 1).and.(iscdens == 1)) then
-    !   neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
-    !   nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
-    ! end if
-
-    ! Issue #589 Allow separatrix density to vary
-    if (ipedestal == 1) then
-        if (fgwped >= 0d0) neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
-        if (fgwsep >= 0d0) nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
+    if ((ipedestal == 1).and.(iscdens == 1)) then
+      neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
+      nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
     end if
 
     ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
@@ -5385,6 +5379,8 @@ end function t_eped_scaling
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  outfile : input integer : Fortran output unit identifier
+    !+ad_desc  This routine writes the plasma physics information
+    !+ad_desc  to a file, in a tidy format.
     !+ad_prob  None
     !+ad_call  int_to_string2
     !+ad_call  oblnkl
@@ -5396,10 +5392,60 @@ end function t_eped_scaling
     !+ad_call  ovarrf
     !+ad_call  ovarst
     !+ad_call  report_error
+    !+ad_hist  17/09/97 PJK Upgrade to higher standard of coding. Added
+    !+ad_hisc               Greenwald density limit
+    !+ad_hist  17/11/97 PJK Added additional beta diagnostics
+    !+ad_hist  01/04/98 PJK Added dnla to output, and comment about ignition
+    !+ad_hist  17/07/98 PJK Added power threshold scalings
+    !+ad_hist  19/01/99 PJK Added powerht and minor word changes
+    !+ad_hist  16/07/01 PJK Added kappaa
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_hist  17/12/12 PJK Added ZFEAR lines
+    !+ad_hist  18/12/12 PJK Added PTHRMW(6 to 8)
+    !+ad_hist  03/01/13 PJK Removed ICULDL if-statement
+    !+ad_hist  23/01/13 PJK Modified logic for stellarators and ignite=1
+    !+ad_hist  10/06/13 PJK Added ISHAPE=2 and other outputs
+    !+ad_hist  12/06/13 PJK Added plasma energy and other outputs
+    !+ad_hist  12/08/13 PJK Removed some stellarator-irrelevant outputs
+    !+ad_hist  30/09/13 PJK Added Psep/R output line
+    !+ad_hist  02/10/13 PJK Changed pcharge output description
+    !+ad_hist  14/11/13 PJK Corrected thermal energy outputs by 3/2
+    !+ad_hist  14/11/13 PJK Changed kappa95 output description
+    !+ad_hist  26/11/13 PJK Added taup/taueff ratio to output
+    !+ad_hist  28/11/13 PJK Added fuel-ion pair fusion power contributions to output
+    !+ad_hist  28/11/13 PJK Added icurr, iprofile information to output
+    !+ad_hist  20/02/14 PJK Added pedestal profile quantities
+    !+ad_hist  05/03/14 PJK Added on-axis values
+    !+ad_hist  06/03/14 PJK Added warning if pdivt=0.001;
+    !+ad_hisc               clarified ishape effects on kappa, triang
+    !+ad_hist  26/03/14 PJK Added all bootstrap current estimations
+    !+ad_hist  02/04/14 PJK Added confinement scaling law name to mfile
+    !+ad_hist  03/04/14 PJK Used ovarst to write out confinement scaling law name
+    !+ad_hist  23/04/14 PJK Added bvert
+    !+ad_hist  14/05/14 PJK Added impurity concentration info
+    !+ad_hist  21/05/14 PJK Added ignite
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  02/06/14 PJK Added fimpvar
+    !+ad_hist  05/06/14 PJK Rearranged power balance output
+    !+ad_hist  16/06/14 PJK Removed duplicate outputs
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  19/08/14 PJK Added dnla / Greenwald ratio
+    !+ad_hist  01/10/14 PJK Modified safety factor output statements
+    !+ad_hist  01/10/14 PJK Added plhthresh output
+    !+ad_hist  06/10/14 PJK Modified plhthresh output
+    !+ad_hist  11/11/14 PJK Added aion output
+    !+ad_hist  13/11/14 PJK Modified elong, triang outputs with ishape
+    !+ad_hist  13/11/14 PJK Modified iradloss usage
+    !+ad_hist  17/11/14 PJK Modified output to account for falpha, palpfwmw
+    !+ad_hist  18/11/14 PJK Corrected power balance output if ignite=1
     !+ad_hist  01/04/15 JM  Core plasma power balance removed
     !+ad_hist  05/08/15 MDK Output to say which impurity (if any) is an iteration variable.
     !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     implicit none
 
     !  Arguments
@@ -5409,12 +5455,11 @@ end function t_eped_scaling
     !  Local variables
 
     real(kind(1.0D0)) :: betath
-    real(kind(1.0D0)) :: fgwped_out   !neped/dlimit(7)
-    real(kind(1.0D0)) :: fgwsep_out   !nesep/dlimit(7)
     ! pinj
     integer :: imp
     character(len=30) :: tauelaw
     character(len=30) :: str1,str2
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     call oheadr(outfile,'Plasma')
@@ -5670,15 +5715,14 @@ end function t_eped_scaling
     if(ipedestal==1)then
         call ocmmnt(outfile,'Pedestal profiles are used.')
         call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
-        !if(iscdens.eq.1)then
-        if(fgwped >=0D0)then
+        if(iscdens.eq.1)then
             call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped, 'OP ')
         else
             call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped)
         end if
-        fgwped_out = neped/dlimit(7)
-        fgwsep_out = nesep/dlimit(7)
-        call ovarre(outfile,'Electron density at pedestal / nGW','(fgwped_out)',fgwped_out)
+        fgwped = neped/dlimit(7)
+        fgwsep = nesep/dlimit(7)
+        call ovarre(outfile,'Electron density at pedestal / nGW','(fgwped)',fgwped)
         call ovarrf(outfile,'Temperature pedestal r/a location','(rhopedt)',rhopedt)
         ! Issue #413 Pedestal scaling
         call ovarin(outfile,'Pedestal scaling switch','(ieped)',ieped)
@@ -5696,7 +5740,7 @@ end function t_eped_scaling
     endif
 
     call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
-    call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep_out)',fgwsep_out)
+    call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep)',fgwsep)
     call ovarrf(outfile,'Temperature profile index','(alphat)',alphat)
     call ovarrf(outfile,'Temperature profile index beta','(tbeta)',tbeta)
 
