@@ -255,7 +255,8 @@ subroutine loadxc
      case (138) ; xcm(i) = rebco_thickness
      case (139) ; xcm(i) = copper_thickness
      case (140) ; xcm(i) = thkwp
-     case (141) ; xcm(i) = fcqt 
+     case (141) ; xcm(i) = fcqt
+     case (142) ; xcm(i) = nesep
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -552,6 +553,7 @@ subroutine convxc(xc,nn)
      case (139) ; copper_thickness = xc(i)/scale(i)
      case (140) ; thkwp = xc(i)/scale(i)
      case (141) ; fcqt = xc(i)/scale(i)
+     case (142) ; nesep = xc(i)/scale(i)
 
      case default
 

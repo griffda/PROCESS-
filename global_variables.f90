@@ -299,8 +299,6 @@ module physics_variables
   !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal=1)
   real(kind(1.0D0)) :: fgwsep = 0.50D0
 
-
-
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
   real(kind(1.0D0)) :: fhe3 = 0.0D0
   !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar, where sbar=1)

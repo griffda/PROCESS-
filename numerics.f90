@@ -98,7 +98,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 141
+  integer, parameter :: ipnvars = 142
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 74
   !+ad_vars  ipnfoms FIX : number of available figures of merit
@@ -268,7 +268,7 @@ module numerics
        '1st wall coolant temp rise limit ', &
        !+ad_varc  <LI> (39) First wall peak temperature upper limit (itv 63)
        'First wall peak temperature limit', &
-       !+ad_varc  <LI> (40) Start-up injection power lower limit (PULSE) (itv 64) 
+       !+ad_varc  <LI> (40) Start-up injection power lower limit (PULSE) (itv 64)
        'Start-up inj. power lower limit  ', &
        !+ad_varc  <LI> (41) Plasma current ramp-up time lower limit (PULSE) (itv  66,65)
        'Plasma curr. ramp time lower lim ', &
@@ -285,7 +285,7 @@ module numerics
        'Ip/Irod upper limit              ', &
        !+ad_varc  <LI> (47) NOT USED
        'TF coil tor. thickness upper lim ', &
-       !+ad_varc  <LI> (48) Poloidal beta upper limit (itv 79,2,3,18) 
+       !+ad_varc  <LI> (48) Poloidal beta upper limit (itv 79,2,3,18)
        'Poloidal beta upper limit        ', &
        !+ad_varc  <LI> (49) NOT USED
        'RFP reversal parameter < 0       ', &
@@ -641,8 +641,10 @@ module numerics
        'copper_thickne', &
        !+ad_varc  <LI> (140) thkwp : radial thickness of TFC winding pack (m)
        'thkwp         ', &
-       !+ad_varc  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)</UL>
-       'fcqt          ' &
+       !+ad_varc  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
+       'fcqt          ', &
+       !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]</UL>
+       'nesep         ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -801,7 +803,8 @@ module numerics
        0.01D-6, &  !  138
        1.00D-6, &  !  139
        0.001D0, &  !  140
-       0.001D0  &  !  141
+       0.001D0, &  !  141
+       1.00D17  &  !  142
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -947,7 +950,8 @@ module numerics
        100.0D-6,&  !  138
        1.00D-3, &  !  139
        2.000D0, &  !  140
-       1.000D0  &  !  141
+       1.000D0, &  !  141
+       1.00D20  &  !  142
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
