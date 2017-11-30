@@ -442,7 +442,8 @@ contains
        call ovarin(mfile,'Scan point number','(iscan)',iscan)
 
        !  Call the optimization routine VMCON at this scan point
-       write(*,*)'Starting scan point ',iscan
+       write(*,20)'Starting scan point ',iscan, ': ', trim(xlabel),', ',trim(vlabel),' = ',sweep(iscan)
+20     format(a,i2,a,4a,1pe10.3)
        call doopt(ifail)
        call final(ifail)
 
