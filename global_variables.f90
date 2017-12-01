@@ -406,9 +406,9 @@ module physics_variables
   integer :: ieped = 0
 
   !+ad_vars  neped /0.0/ : electron density of pedestal [m-3] (ipedestal=1)
-  real(kind(1.0D0)) :: neped = 8.0D19
+  real(kind(1.0D0)) :: neped = 4.0D19
   !+ad_vars  nesep /0.0/ : electron density at separatrix [m-3] (ipedestal=1)
-  real(kind(1.0D0)) :: nesep = 5.0D19
+  real(kind(1.0D0)) :: nesep = 3.0D19
   !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal=1)
   real(kind(1.0D0)) :: rhopedn = 1.0D0
   !+ad_vars  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal=1)

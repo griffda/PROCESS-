@@ -368,12 +368,16 @@ subroutine check
 
         if ((fgwped < 0) .and. (dene <= neped)) then
             fdiags(1) = dene ; fdiags(2) = neped
+            write(*,*)'dene = ', dene, 'boundl(6) = ', boundl(6), '  neped = ', neped
+            write(*,*)'Set dene = neped*1.001D0 '
             dene = neped*1.001D0
             call report_error(154)
         end if
 
         if ((ioptimz >= 0).and.(any(ixc == 6)).and.(boundl(6) < neped*1.001D0)) then
             call report_error(155)
+            write(*,*)'dene = ', dene, 'boundl(6) = ', boundl(6), '  neped = ', neped
+            write(*,*)'Set boundl(6) = neped*1.001D0'
             boundl(6) = neped*1.001D0
             boundu(6) = max(boundu(6), boundl(6))
         end if
