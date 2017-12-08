@@ -169,6 +169,9 @@ OBJ = \
 ifeq ($(OS),Windows_NT)
 	MYROOT_1 = echo character(len=*), parameter :: ROOTDIR = "%cd%" > root.dir
 	MYROOT_2 = echo ROOTDIR = "%cd%" > utilities\rootdir.py
+	MYCOMMSG_0 = del com.msg
+	MYROOT_3_W = echo $substring = git log -1 --format=oneline
+	MYROOT_3 = echo character(len=*), parameter :: COMMSG = "%substring.Substring(41)%" > com.msg
 	MYTAG_0 = del tag.num
 	MYTAG_1 = echo character(len=*), parameter :: tagno = "%git describe%" > tag.num
 	DIFF_0 = del untracked.info
@@ -176,6 +179,9 @@ ifeq ($(OS),Windows_NT)
 else
 	MYROOT_1 = echo "  character(len=*), parameter :: ROOTDIR = '"`pwd`"'" > root.dir
 	MYROOT_2 = echo "ROOTDIR = '"`pwd`"'" > utilities/rootdir.py
+	MYCOMMSG_0 = rm -rf com.msg
+	MYROOT_3_W = 
+	MYROOT_3 = echo "  character(len=*), parameter :: COMMSG = '"`git log -1 --format=oneline | cut -c 42-`"'" > com.msg
 	MYTAG_0 = rm -rf tag.num
 	MYTAG_1 = echo "  character(len=*), parameter :: tagno = '"`git describe`"'" > tag.num
 	DIFF_0 = rm -rf untracked.info
@@ -259,7 +265,7 @@ physics.o: current_drive.o error_handling.o global_variables.o impurity_radiatio
 plant_power.o: error_handling.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: error_handling.o global_variables.o maths_library.o
-process.o: availability.o buildings.o constraint_equations.o costs.o current_drive.o \
+process.o: availability.o buildings.o constraint_equations.o costs.o com.msg current_drive.o \
   divertor.o divertor_ode.o error_handling.o evaluators.o global_variables.o hcll.o hcpb.o \
   impurity_radiation.o input.o machine_build.o maths_library.o numerics.o output.o \
   pfcoil.o physics.o plant_power.o pulse.o scan.o sctfcoil.o startup.o \
@@ -291,6 +297,11 @@ root.dir:
 	${MYROOT_1}
 	${MYROOT_2}
 
+com.msg:
+	${MYCOMMSG_0}
+	${MYROOT_3_W}
+	${MYROOT_3}
+
 tag.num:
 	${MYTAG_0}
 	${MYTAG_1}
@@ -300,13 +311,14 @@ untracked.info:
 	${DIFF_1}
 
 ### Utilities #################
-.PHONY: clean cleandoc tar archive doc userguide html dicts untracked.info tag.num developerguide utilitiesdoc optsolverdoc
+.PHONY: clean cleandoc tar archive doc userguide html dicts untracked.info tag.num com.msg developerguide utilitiesdoc optsolverdoc
 
 # Clean up directory, to force full recompilation
 clean:
 	rm -f process.exe *.o *.mod
 	rm -f root.dir
 	rm -f tag.num
+	rm -f com.msg
 	rm -f untracked.info
 	rm -f *~
 	rm -f utilities/process_io_lib/process_dicts.py
@@ -320,6 +332,7 @@ win_clean:
 	del utilities\processgui\dicts\gui_dicts.py
 	del *.html
 	del root.dir
+	del com.msg
 	del tag.num
 	del untracked.info
 	rmdir /q /s documentation/html

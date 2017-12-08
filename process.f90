@@ -425,6 +425,7 @@ subroutine run_summary
   character(len = 7)   :: tstring
   character(len = 10)  :: ustring
   character(len = 100) :: rstring
+  include "com.msg"
   include "tag.num"
   include "untracked.info"
 
@@ -459,6 +460,7 @@ subroutine run_summary
      else
        call ocmmnt(outfile, '  Tag No. : "'//tagno//'"')  !  directory
      end if
+     call ocmmnt(outfile, '  Last commit message : "'//COMMSG//'"')  !  directory
      !call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
      !call ocmmnt(outfile, progid(5))  !  computer
@@ -509,6 +511,9 @@ subroutine run_summary
 
   rstring = '"'//tagno//'"'
   call ovarst(mfile,'PROCESS tag number','(tagno)',rstring)
+
+  rstring = '"'//COMMSG//'"'
+  call ovarst(mfile,'PROCESS last commit message','(commsg)',rstring)
 
 #ifndef unit_test
 ! MDK these lines duplicate the ones below.
