@@ -132,7 +132,7 @@ contains
     end if
 
     ! Divertor lifetime (years)
-    divlife = min(adivflnc/hldiv, tlife)
+    divlife = max(0.0, min(adivflnc/hldiv, tlife))
 
     ! Centrepost lifetime (years) (ST machines only)
     if (itart == 1) then
