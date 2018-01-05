@@ -302,7 +302,15 @@ class MFile(object):
         if var_key in self.data.keys():
             scan_num = scan if scan else (self.data[var_key].
                                           get_number_of_scans()+1)
-            self.data[var_key].set_scan(scan_num, value)
+
+            # Check for duplicate entries per scan point if there are scans and no scans
+            a = len(self.data[var_key])
+            if "iscan" in self.data.keys():
+                b = len([key for key in self.data["iscan"].keys() if "Scan" in key])
+            else:
+                b = 1
+            if a != b:
+                self.data[var_key].set_scan(scan_num, value)
         else:
             var = MFileVariable(name, des, unit, var_flag=flag, var_mod=self.current_module)
             self.data[var_key] = var
@@ -599,10 +607,11 @@ def test(f):
 
     try:
         m = MFile(f)
+        # print(m.data["rmajor"].get_scans())
         return True
     except:
         return False
     return True
 
 # if __name__ == "__main__":
-#    test()
+#     test("MFILE.DAT")
