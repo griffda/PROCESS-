@@ -296,7 +296,6 @@ class MFile(object):
         if name == "":
             var_key = des.lower().replace("_", " ")
         else:
-            # var_key = name.lower().replace("_", " ")
             var_key = name.lower()
 
         if var_key in self.data.keys():
@@ -304,12 +303,16 @@ class MFile(object):
                                           get_number_of_scans()+1)
 
             # Check for duplicate entries per scan point if there are scans and no scans
-            a = len(self.data[var_key])
+            a = len(self.data[var_key].get_scans())
             if "iscan" in self.data.keys():
-                b = len([key for key in self.data["iscan"].keys() if "Scan" in key])
+                b = len(self.data["iscan"].get_scans())
             else:
                 b = 1
-            if a != b:
+
+            if var_key != "iscan":
+                if a < b:
+                    self.data[var_key].set_scan(scan_num, value)
+            else:
                 self.data[var_key].set_scan(scan_num, value)
         else:
             var = MFileVariable(name, des, unit, var_flag=flag, var_mod=self.current_module)
