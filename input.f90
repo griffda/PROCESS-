@@ -1069,9 +1069,6 @@ contains
        case ('etanbi')
           call parse_real_variable('etanbi', etanbi, 0.0D0, 1.0D0, &
                'NBI wall plug to injector efficiency')
-       case ('etaof')
-          call parse_real_variable('etaof', etaof, 0.0D0, 1.0D0, &
-               'OFCD wall plug to injector efficiency')
        case ('feffcd')
           call parse_real_variable('feffcd', feffcd, 0.0D0, 20.0D0, &
                'Current drive efficiency fiddle factor')
@@ -2390,9 +2387,6 @@ contains
        case ('ucoam')
           call parse_real_array('ucoam', ucoam, isub1, 4, &
                'Annual cost of operation and maintenance', icode)
-       case ('ucof')
-          call parse_real_variable('ucof', ucof, 0.1D0, 10.0D0, &
-               'Oscillating field current drive cost ($/W)')
        case ('ucpens')
           call parse_real_variable('ucpens', ucpens, 1.0D0, 100.0D0, &
                'Penetration shield cost ($/kg)')

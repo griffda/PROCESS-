@@ -123,7 +123,6 @@ contains
     echpwr = 0.0D0
     pnbeam = 0.0D0
     plhybd = 0.0D0
-    pofcd  = 0.0D0
     cnbeam = 0.0D0
     porbitlossmw = 0.0D0
 
@@ -267,13 +266,7 @@ contains
           cnbeam = 1.0D-3 * (pnbitot*1.0D6) / enbeam
 
        case (9)  ! OFCD
-
-          pofcd = 1.0D-6 * faccd * plascur / effofss + pheat
-          pinjimw = 0.0D0
-          pinjemw = pofcd
-          etacd = etaof
-          gamof = effofss * (dene20 * rmajor)
-          gamcd = gamof
+          ! RFP option removed in PROCESS (issue #508)
 
        end select
 
@@ -323,7 +316,7 @@ contains
        call ocmmnt(outfile,'Neutral Beam Current Drive')
 
     case (9)
-       call ocmmnt(outfile,'Oscillating Field Current Drive')
+       ! RFP option removed in PROCESS (issue #508)
 
     case (10)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive (user input gamma_CD)')
@@ -415,12 +408,6 @@ contains
        call ovarrf(outfile,'Maximum allowable ECRH power (MW)','(pinjalw)',pinjalw)
        call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
        call ovarre(outfile,'ECH wall plug power (MW)','(echwpow)',echwpow, 'OP ')
-    end if
-
-    if (abs(pofcd) > 1.0D-8) then
-       call ovarre(outfile,'OFCD efficiency (A/W)','(effofss)',effofss, 'OP ')
-       call ovarre(outfile,'OFCD gamma (10^20 A/W-m2)','(gamof)',gamof, 'OP ')
-       call ovarre(outfile,'OFCD power (MW)','(pofcd)',pofcd, 'OP ')
     end if
 
   end subroutine cudriv

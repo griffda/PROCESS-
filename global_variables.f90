@@ -857,8 +857,6 @@ module current_drive_variables
   real(kind(1.0D0)) :: pnbitot = 0.0D0
   !+ad_vars  nbshinemw : neutral beam shine-through power
   real(kind(1.0D0)) :: nbshinemw = 0.0D0
-  !+ad_vars  etaof /0.3/ : oscillating field wall plug to injector efficiency
-  real(kind(1.0D0)) :: etaof = 0.3D0
   !+ad_vars  feffcd /1.0/ : current drive efficiency fudge factor (iteration variable 47)
   real(kind(1.0D0)) :: feffcd = 1.0D0
   !+ad_vars  forbitloss /0.0/ : fraction of neutral beam power lost after ionisation but
@@ -881,7 +879,7 @@ module current_drive_variables
   !+ad_varc         <LI> new Culham Lower Hybrid model
   !+ad_varc         <LI> new Culham ECCD model
   !+ad_varc         <LI> new Culham Neutral Beam model
-  !+ad_varc         <LI> RFP Oscillating Field current drive NOT SUPPORTED
+  !+ad_varc         <LI> Empty (Oscillating field CD removed)
   !+ad_varc         <LI> ECRH user input gamma </OL>
   integer :: iefrf = 5
   !+ad_vars  irfcd /1/ : switch for current drive calculation:<UL>
@@ -908,8 +906,6 @@ module current_drive_variables
   real(kind(1.0D0)) :: plhybd = 0.0D0
   !+ad_vars  pnbeam : neutral beam injection power (MW)
   real(kind(1.0D0)) :: pnbeam = 0.0D0
-  !+ad_vars  pofcd : oscillating field CD injection power (MW)
-  real(kind(1.0D0)) :: pofcd = 0.0D0
   !+ad_vars  porbitlossmw : neutral beam power lost after ionisation but before
   !+ad_varc                 thermalisation (orbit loss power) (MW)
   real(kind(1.0D0)) :: porbitlossmw = 0.0D0
@@ -3554,8 +3550,6 @@ module cost_variables
   !+ad_varc                                   maintenance (M$/year/1200MW**0.5)
   real(kind(1.0D0)), dimension(4) :: ucoam = &
        (/68.8D0, 68.8D0, 68.8D0, 74.4D0/)
-  !+ad_vars  ucof /3.3/ : oscillating field current drive cost ($/W)
-  real(kind(1.0D0)) :: ucof = 3.3D0
   !+ad_vars  ucpens /32.0/ : penetration shield cost ($/kg)
   real(kind(1.0D0)) :: ucpens = 32.0D0
   !+ad_vars  ucpfb /210.0/ : cost of PF coil buses ($/kA/m)
