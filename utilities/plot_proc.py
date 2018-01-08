@@ -776,7 +776,6 @@ def plot_shield_snull(axis, mfile_data, scan):
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_1 = temp_array_1 + ((rs, zs))
 
-    print(cumulative_lower.keys())
     kapx = cumulative_lower['shldlth'] / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
