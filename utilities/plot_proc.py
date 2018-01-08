@@ -62,7 +62,7 @@ vertical_upper = ["rminor*kappa", "vgaptop",
 
 vertical_lower = ["rminor*kappa", "vgap",
                   "divfix",
-                  "shldltth", "ddwi",
+                  "shldlth", "ddwi",
                   "vgap2",
                   "thshield",
                   "tftsgap",
@@ -776,6 +776,7 @@ def plot_shield_snull(axis, mfile_data, scan):
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_1 = temp_array_1 + ((rs, zs))
 
+    print(cumulative_lower.keys())
     kapx = cumulative_lower['shldlth'] / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
@@ -1831,7 +1832,7 @@ if __name__ == '__main__':
         "For info contact michael.kovari@ukaea.uk or james.morris2@ukaea.uk")
 
     parser.add_argument("-f", metavar='FILENAME', type=str,
-                        default="", help='specify input/output file prefix')
+                        default="", help='specify input/output file path')
 
     parser.add_argument("-s", "--show", help="show plot as well as saving figure",
                         action="store_true")
@@ -1842,7 +1843,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # read MFILE
-    m_file = mf.MFile(args.f + "MFILE.DAT")
+    if args.f != "":
+        m_file = mf.MFile(args.f)
+    else:
+        m_file = mf.MFile("MFILE.DAT")
     scan = -1
     bore = m_file.data["bore"].get_scan(scan)
     ohcth = m_file.data["ohcth"].get_scan(scan)
