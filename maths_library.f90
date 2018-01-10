@@ -513,7 +513,7 @@ contains
     ! if ( abs(x1 - x2) <= delta) then
     !    assume x1 = x2
     ! endif
-    ! Should never return an index < 1 or > length! 
+    ! Should never return an index < 1 or > length!
 
     implicit none
     integer, intent(in) :: length
@@ -2558,19 +2558,6 @@ contains
 
     iteration: do
 
-       !  Output to terminal number of VMCON iterations
-
-       iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
-       if(objf>=0d0)then
-           write(iotty, '("==>", I5, "  vmcon iterations", "   min [", a20, "] max. ", &
-            & "Normalised FoM =", f9.4, " Lowest valid normalised FoM =", f9.4, a1)', &
-             ADVANCE="NO"), niter+1, adjustl(iteration_progress), objf, lowest_valid_fom, achar(13)
-        else
-             write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations. ", &
-             &  "Normalised FoM = ", f9.4, " Highest valid normalised FoM =", f9.4, a1)', &
-               ADVANCE="NO"), niter+1, adjustl(iteration_progress), -objf, -lowest_valid_fom, achar(13)
-        end if
-
        !  Increment the quadratic subproblem counter
        nqp = nqp + 1
        niter = nqp
@@ -2685,6 +2672,28 @@ contains
           summ = summ + conf(i)*conf(i)
        end do
        sqsumsq = sqrt(summ)
+
+       ! Move this block
+       !  Output to terminal number of VMCON iterations
+       iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
+    !    write(iotty, '("==>", I5, "  vmcon iterations", "   min [", a20, "] max. ", &
+    !      & "Normalised FoM =", f9.4, "  sqsumsq =", 1pe8.1, "  sum =", 1pe8.1, a1)', &
+    !      ADVANCE="NO"), niter+1, adjustl(iteration_progress), max(objf, -objf), sqsumsq, sum, achar(13)
+
+       write(iotty, '("==>", I5, "  vmcon iterations. Normalised FoM =", &
+           &  f8.3, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
+           ADVANCE="NO"), niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
+
+    !    if(objf>=0d0)then
+    !        write(iotty, '("==>", I5, "  vmcon iterations", "   min [", a20, "] max. ", &
+    !         & "Normalised FoM =", f9.4, "  sqsumsq =", 1pe8.1, "  sum =", 1pe8.1, a1)', &
+    !          ADVANCE="NO"), niter+1, adjustl(iteration_progress), objf, sqsumsq, sum, achar(13)
+    !     else
+    !          write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations. ", &
+    !          &  "Normalised FoM = ", f9.4, "  sqsumsq =", 1pe8.1, "  sum =", 1pe8.1, a1)', &
+    !            ADVANCE="NO"), niter+1, adjustl(iteration_progress), -objf, sqsumsq, sum, achar(13)
+    !     end if
+        ! End of block
 
        if (verbose == 1) then
           write(*,'(a,es13.5,a,es13.5)') &
