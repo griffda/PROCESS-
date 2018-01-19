@@ -405,9 +405,9 @@ module physics_variables
   !+ad_varc             <LI>    https://idm.euro-fusion.org/?uid=2MSZ4T </UL>
   integer :: ieped = 0
 
-  !+ad_vars  neped /0.0/ : electron density of pedestal [m-3] (ipedestal=1)
+  !+ad_vars  neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1)
   real(kind(1.0D0)) :: neped = 4.0D19
-  !+ad_vars  nesep /0.0/ : electron density at separatrix [m-3] (ipedestal=1)
+  !+ad_vars  nesep /3.0e19/ : electron density at separatrix [m-3] (ipedestal=1)
   real(kind(1.0D0)) :: nesep = 3.0D19
   !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal=1)
   real(kind(1.0D0)) :: rhopedn = 1.0D0
@@ -415,9 +415,9 @@ module physics_variables
   real(kind(1.0D0)) :: rhopedt = 1.0D0
   !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1)
   real(kind(1.0D0)) :: tbeta = 2.0D0
-  !+ad_vars  teped /0.0/ : electron temperature of pedestal (keV) (ipedestal=1, ieped=0)
+  !+ad_vars  teped /1.0/ : electron temperature of pedestal (keV) (ipedestal=1, ieped=0)
   real(kind(1.0D0)) :: teped = 1.0D0
-  !+ad_vars  tesep /0.0/ : electron temperature at separatrix (keV) (ipedestal=1)
+  !+ad_vars  tesep /0.1/ : electron temperature at separatrix (keV) (ipedestal=1)
   real(kind(1.0D0)) :: tesep = 0.1D0
 
   !+ad_vars  iprofile /1/ : switch for current profile consistency:<UL>
