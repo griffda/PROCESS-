@@ -1313,7 +1313,7 @@ module fwbs_variables
   !+ad_vars  <P><B>The following are used only in the CCFE HCPB blanket model
   !+ad_varc  (iblanket=1):</B><P>
 
-  !+ad_vars  breeder_f /0.154/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
+  !+ad_vars  breeder_f /0.5/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
   real(kind(1.0D0)) :: breeder_f = 0.5D0
   !+ad_vars  breeder_multiplier /0.75/ FIX : combined breeder/multipler fraction of blanket by volume
   real(kind(1.0D0)) :: breeder_multiplier = 0.75D0
@@ -1437,7 +1437,7 @@ module fwbs_variables
   real(kind(1.0D0)) :: afw = 0.006D0
   !+ad_vars  pitch /0.020/ : pitch of first wall cooling channels (m) (27/11/15)
   real(kind(1.0D0)) :: pitch = 0.020D0
-  !+ad_vars  fwinlet /623/ : inlet temperature of first wall coolant (K) (27/11/2015)
+  !+ad_vars  fwinlet /573/ : inlet temperature of first wall coolant (K) (27/11/2015)
   real(kind(1.0D0)) :: fwinlet = 573.0D0
   !+ad_vars  fwoutlet /823/ : outlet temperature of first wall coolant (K) (27/11/2015)
   real(kind(1.0D0)) :: fwoutlet = 823.0D0
@@ -1984,10 +1984,10 @@ module tfcoil_variables
   !+ad_vars  casestr : case strain
   real(kind(1.0D0)) :: casestr = 0.0D0
 
-  !+ad_vars  casthi /0.05/ : EITHER: inboard TF coil case plasma side thickness (m)
+  !+ad_vars  casthi /0.0/ : EITHER: inboard TF coil case plasma side thickness (m)
   !+ad_varc                  (calculated for stellarators)
   real(kind(1.0D0)) :: casthi = 0.0D0
-  !+ad_vars  casthi_fraction /0.03/ : OR: inboard TF coil case plasma side thickness as a fraction of tfcth
+  !+ad_vars  casthi_fraction /0.05/ : OR: inboard TF coil case plasma side thickness as a fraction of tfcth
   real(kind(1.0D0)) :: casthi_fraction = 0.05D0
   logical :: casthi_is_fraction
 
