@@ -3365,9 +3365,9 @@ module cost_variables
   real(kind(1.0D0)) :: div_nu = 14000.0D0
 
 
-  !+ad_vars  fwbs_nref /7000/ : Reference value for cycle life of blanket
+  !+ad_vars  fwbs_nref /20000/ : Reference value for cycle life of blanket
   real(kind(1.0D0)) :: fwbs_nref = 20000.0D0
-  !+ad_vars  fwbs_nu /14000/ : The cycle when the blanket fails with 100% probability
+  !+ad_vars  fwbs_nu /40000/ : The cycle when the blanket fails with 100% probability
   real(kind(1.0D0)) :: fwbs_nu = 40000.0D0
 
 
