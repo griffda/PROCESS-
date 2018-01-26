@@ -2377,7 +2377,7 @@ contains
                'LH system cost ($/W)')
        case ('ucme')
           call parse_real_variable('ucme', ucme, 1.0D7, 1.0D9, &
-               'Unit cost of maintenance equip. ($/W)')
+               'Unit cost of maintenance equip. ($/W**0.3)')
        case ('ucmisc')
           call parse_real_variable('ucmisc', ucmisc, 1.0D7, 5.0D7, &
                'Miscellaneous plant allowance ($)')
@@ -2398,7 +2398,7 @@ contains
                'Cost of PF coil DC breakers ($/MVA)')
        case ('ucpfbs')
           call parse_real_variable('ucpfbs', ucpfbs, 1.0D3, 1.0D4, &
-               'Cost of PF burn power supplies ($/kW)')
+               'Cost of PF burn power supplies ($/kW**0.7)')
        case ('ucpfcb')
           call parse_real_variable('ucpfcb', ucpfcb, 1.0D3, 1.0D5, &
                'Cost of PF coil AC breakers ($/circ)')
