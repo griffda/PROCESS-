@@ -1258,7 +1258,7 @@ subroutine outtf(outfile, peaktfflag)
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)) :: ap
+    real(kind(1.0D0)) :: ap, radius
     character(len=1) :: intstring
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1432,6 +1432,38 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Inboard leg case area per coil (m2)','(acasetf)',acasetf, 'OP ')
     call ovarre(outfile,'Outboard leg case area per coil (m2)','(acasetfo)',acasetfo, 'OP ')
     call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas, 'OP ')
+
+    call osubhd(outfile,'Radial build of TF coil centre-line :')
+    write(outfile,5)
+5   format(t43,'Thickness (m)',t60,'Outer radius (m)')
+    radius = bore + ohcth + precomp + gapoh
+    call obuild(outfile,'Innermost edge of TF coil',radius,radius)
+    radius = radius + thkcas
+    call obuild(outfile,'Coil case ("nose")',thkcas,radius,'(thkcas)')
+    radius = radius + tfinsgap
+    call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
+    radius = radius + tinstf
+    call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
+    radius = radius + thkwp/2d0 - tinstf
+    call obuild(outfile,'Winding - first half',thkwp/2d0 - tinstf,radius,'(thkwp/2 - tinstf)')
+    radius = radius + thkwp/2d0 - tinstf
+    call obuild(outfile,'Winding - second half',thkwp/2d0 - tinstf,radius,'(thkwp/2 - tinstf)')
+    radius = radius + tinstf
+    call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
+    radius = radius + tfinsgap
+    call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
+    radius = radius + casthi
+    call obuild(outfile,'Coil case (plasma side)',casthi,radius,'(casthi)')
+    if(abs((radius - rtfcin - 0.5D0*tfcth)) < 1d-6)then
+        call ocmmnt(outfile,'TF coil dimensions are consistent')
+    else
+        call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
+        call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',rtfcin + 0.5D0*tfcth)
+        call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
+        thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+        call oblnkl(outfile)
+    end if
+
 
     if (tfc_model == 0) then
         call osubhd(outfile,'TF Coil Stresses (solid copper coil model) :')

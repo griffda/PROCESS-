@@ -4210,6 +4210,12 @@ module rebco_variables
   !+ad_vars  cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
   real(kind(1.0D0)) :: cable_helium_fraction = 0.284D0
 
+  !+ad_vars  copperA_m2_max /1e8/ : Maximum TF coil current / copper area (A/m2)
+  real(kind(1.0D0)) :: copperA_m2_max = 1D8
+  !+ad_vars  f_copperA_m2_max /1/ : f-value for constraint 75: TF coil current / copper area < copperA_m2_max
+  real(kind(1.0D0)) :: f_copperA_m2_max = 1d0
+
+
   real(kind(1.0D0)) :: tape_thickness
   real(kind(1.0D0)) :: stack_thickness
   real(kind(1.0D0)) :: tapes
@@ -4218,6 +4224,7 @@ module rebco_variables
   real(kind(1.0D0)) :: hastelloy_area
   real(kind(1.0D0)) :: solder_area
   real(kind(1.0D0)) :: croco_area
+  real(kind(1.0D0)) :: copperA_m2       ! TF coil current / copper area (A/m2)
 
   end module rebco_variables
   !------------------------------------------------------------------------
