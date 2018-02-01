@@ -339,7 +339,7 @@ module numerics
        'CS Tresca stress limit           ',    &
        !+ad_varc  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep)
        'Psep >= Plh + Paux               ',   &
-       !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))</UL>
+       !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
        'TFC quench < tmax_croco          ',    &
        !+ad_varc  <LI> (75) TFC quench < tmax_croco (itv 143 f_copperA_m2_max) </UL>
        'TFC current/copper area < Max    '    &
@@ -645,10 +645,10 @@ module numerics
        'thkwp         ', &
        !+ad_varc  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
        'fcqt          ', &
-       !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]</UL>
+       !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
        'nesep         ', &
-       !+ad_varc  <LI> (143) f_copperA_m2_max : TF coil current / copper area < Maximum value (f-value for equation 75)</UL>
-       'nesep         ' &
+       !+ad_varc  <LI> (143) f_copperA_m2_max : TF coil current / copper area < Maximum value (f-value for equation 75) </UL>
+       'f_copperA_m2_m' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
