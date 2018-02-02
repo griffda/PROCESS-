@@ -181,7 +181,7 @@ else
 	MYROOT_2 = echo "ROOTDIR = '"`pwd`"'" > utilities/rootdir.py
 	MYCOMMSG_0 = rm -rf com.msg
 	MYROOT_3_W =
-	MYROOT_3 = echo "  character(len=*), parameter :: COMMSG = '"`git log -1 --format=oneline | cut -c 42-110`"'" > com.msg
+	MYROOT_3 = echo '  character(len=*), parameter :: COMMSG = "'`git log -1 --format=oneline | cut -c 42-110`'"' > com.msg
 	MYTAG_0 = rm -rf tag.num
 	MYTAG_1 = echo "  character(len=*), parameter :: tagno = '"`git describe`"'" > tag.num
 	DIFF_0 = rm -rf untracked.info
