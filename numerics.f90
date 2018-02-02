@@ -99,9 +99,9 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 143
+  integer, parameter :: ipnvars = 144
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 75
+  integer, parameter :: ipeqns = 76
   !+ad_vars  ipnfoms FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 17
 
@@ -343,7 +343,7 @@ module numerics
        !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
        'TFC quench < tmax_croco          ',    &
        !+ad_varc  <LI> (75) TFC current/copper area < Maximum (itv 143 f_copperA_m2) </UL>
-       'TFC current/copper area < Max    '    &
+       'TFC current/copper area < Max    ',    &
        !+ad_varc  <LI> (76) Eich critical separatrix density </UL>
        'Eich critical separatrix density '    &
        /)
@@ -651,7 +651,7 @@ module numerics
        !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
        'nesep         ', &
        !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75) </UL>
-       'f_copperA_m2  ' &
+       'f_copperA_m2  ', &
        !+ad_varc  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]</UL>
        'fnesep        ' &
        /)
