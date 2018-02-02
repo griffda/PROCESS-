@@ -405,9 +405,9 @@ module physics_variables
   !+ad_varc             <LI>    https://idm.euro-fusion.org/?uid=2MSZ4T </UL>
   integer :: ieped = 0
 
-  !+ad_vars  neped /0.0/ : electron density of pedestal [m-3] (ipedestal=1)
+  !+ad_vars  neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1)
   real(kind(1.0D0)) :: neped = 4.0D19
-  !+ad_vars  nesep /0.0/ : electron density at separatrix [m-3] (ipedestal=1)
+  !+ad_vars  nesep /3.0e19/ : electron density at separatrix [m-3] (ipedestal=1)
   real(kind(1.0D0)) :: nesep = 3.0D19
   !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal=1)
   real(kind(1.0D0)) :: rhopedn = 1.0D0
@@ -415,9 +415,9 @@ module physics_variables
   real(kind(1.0D0)) :: rhopedt = 1.0D0
   !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1)
   real(kind(1.0D0)) :: tbeta = 2.0D0
-  !+ad_vars  teped /0.0/ : electron temperature of pedestal (keV) (ipedestal=1, ieped=0)
+  !+ad_vars  teped /1.0/ : electron temperature of pedestal (keV) (ipedestal=1, ieped=0)
   real(kind(1.0D0)) :: teped = 1.0D0
-  !+ad_vars  tesep /0.0/ : electron temperature at separatrix (keV) (ipedestal=1)
+  !+ad_vars  tesep /0.1/ : electron temperature at separatrix (keV) (ipedestal=1)
   real(kind(1.0D0)) :: tesep = 0.1D0
 
   !+ad_vars  iprofile /1/ : switch for current profile consistency:<UL>
@@ -993,7 +993,7 @@ module divertor_kallenbach_variables
   !+ad_vars  neomp : Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
   real(kind(1.0D0)) :: neomp = 0.0D0
 
-  !+ad_vars  neratio : ratio of mean SOL density at OMP to separatrix density at OMP
+  !+ad_vars  neratio /0.75/ : Ratio of mean SOL density at OMP to separatrix density at OMP (iteration variable 121)
   real(kind(1.0D0)) :: neratio = 0.75D0
 
   !+ad_vars  pressure0 : Total plasma pressure near target (thermal+dynamic) [Pa]
@@ -1313,7 +1313,7 @@ module fwbs_variables
   !+ad_vars  <P><B>The following are used only in the CCFE HCPB blanket model
   !+ad_varc  (iblanket=1):</B><P>
 
-  !+ad_vars  breeder_f /0.154/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
+  !+ad_vars  breeder_f /0.5/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
   real(kind(1.0D0)) :: breeder_f = 0.5D0
   !+ad_vars  breeder_multiplier /0.75/ FIX : combined breeder/multipler fraction of blanket by volume
   real(kind(1.0D0)) :: breeder_multiplier = 0.75D0
@@ -1437,7 +1437,7 @@ module fwbs_variables
   real(kind(1.0D0)) :: afw = 0.006D0
   !+ad_vars  pitch /0.020/ : pitch of first wall cooling channels (m) (27/11/15)
   real(kind(1.0D0)) :: pitch = 0.020D0
-  !+ad_vars  fwinlet /623/ : inlet temperature of first wall coolant (K) (27/11/2015)
+  !+ad_vars  fwinlet /573/ : inlet temperature of first wall coolant (K) (27/11/2015)
   real(kind(1.0D0)) :: fwinlet = 573.0D0
   !+ad_vars  fwoutlet /823/ : outlet temperature of first wall coolant (K) (27/11/2015)
   real(kind(1.0D0)) :: fwoutlet = 823.0D0
@@ -1984,10 +1984,10 @@ module tfcoil_variables
   !+ad_vars  casestr : case strain
   real(kind(1.0D0)) :: casestr = 0.0D0
 
-  !+ad_vars  casthi /0.05/ : EITHER: inboard TF coil case plasma side thickness (m)
+  !+ad_vars  casthi /0.0/ : EITHER: inboard TF coil case plasma side thickness (m)
   !+ad_varc                  (calculated for stellarators)
   real(kind(1.0D0)) :: casthi = 0.0D0
-  !+ad_vars  casthi_fraction /0.03/ : OR: inboard TF coil case plasma side thickness as a fraction of tfcth
+  !+ad_vars  casthi_fraction /0.05/ : OR: inboard TF coil case plasma side thickness as a fraction of tfcth
   real(kind(1.0D0)) :: casthi_fraction = 0.05D0
   logical :: casthi_is_fraction
 
@@ -2228,7 +2228,7 @@ module tfcoil_variables
   !+ad_varc                 (calculated for stellarators)
   real(kind(1.0D0)) :: thkcas = 0.3D0
   ! Issue #514 Make thkwp an iteration variable
-  !+ad_vars  thkwp : radial thickness of winding pack (m) (iteration variable 140)
+  !+ad_vars  thkwp /0.0/ : radial thickness of winding pack (m) (iteration variable 140)
   real(kind(1.0D0)) :: thkwp = 0.0D0
   !+ad_vars  thwcndut /8.0e-3/ : TF coil conduit case thickness (m) (iteration variable 58)
   real(kind(1.0D0)) :: thwcndut = 8.0D-3
@@ -3365,9 +3365,9 @@ module cost_variables
   real(kind(1.0D0)) :: div_nu = 14000.0D0
 
 
-  !+ad_vars  fwbs_nref /7000/ : Reference value for cycle life of blanket
+  !+ad_vars  fwbs_nref /20000/ : Reference value for cycle life of blanket
   real(kind(1.0D0)) :: fwbs_nref = 20000.0D0
-  !+ad_vars  fwbs_nu /14000/ : The cycle when the blanket fails with 100% probability
+  !+ad_vars  fwbs_nu /40000/ : The cycle when the blanket fails with 100% probability
   real(kind(1.0D0)) :: fwbs_nu = 40000.0D0
 
 
@@ -3738,7 +3738,7 @@ module constraint_variables
   !+ad_varc                    (constraint equation 59, iteration variable 105)
   real(kind(1.0D0)) :: fnbshinef = 1.0D0
   !+ad_vars  fnesep /1.0/ : f-value for Eich critical separatrix density
-  !+ad_varc                    (constraint equation 75, iteration variable 143)
+  !+ad_varc                    (constraint equation 76, iteration variable 144)
   real(kind(1.0D0)) :: fnesep = 1.0D0
   !+ad_vars  foh_stress /1.0/ : f-value for Tresca stress in OH coil
   !+ad_varc                    (constraint equation 72, iteration variable 123)
@@ -3908,8 +3908,8 @@ module constraint_variables
   !+ad_varc                   (Not required as constraint 69 is an equality)
   real(kind(1.0D0)) :: fpsep = 1.0D0
 
-  !+ad_vars  fcqt /1.0/ : f-value: TF coil quench temparature mains below tmax_croco
-  !+ad_varc                   (constraint equation 74, iteration variable 115)
+  !+ad_vars  fcqt /1.0/ : f-value: TF coil quench temparature remains below tmax_croco
+  !+ad_varc                   (constraint equation 74, iteration variable 141)
   real(kind(1.0D0)) :: fcqt = 1.0D0
 
 
@@ -4194,8 +4194,8 @@ module rebco_variables
 
   !+ad_vars  rebco_thickness /1.0e-6/ : thickness of REBCO layer in tape (m) (iteration variable 138)
   real(kind(1.0D0)) :: rebco_thickness = 1.0D-6
-  !+ad_vars  copper_thickness /100e-6/ : thickness of copper layer in tape (m) (iteration variable 139)
-  real(kind(1.0D0)) :: copper_thickness = 100.0D-6
+  !+ad_vars  copper_thick /100e-6/ : thickness of copper layer in tape (m) (iteration variable 139)
+  real(kind(1.0D0)) :: copper_thick = 100.0D-6
   !+ad_vars  hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
   real(kind(1.0D0)) :: hastelloy_thickness = 50.0D-6
   !+ad_vars  tape_width /5.375e-3/ : Mean width of tape (m)
@@ -4214,6 +4214,12 @@ module rebco_variables
   !+ad_vars  cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
   real(kind(1.0D0)) :: cable_helium_fraction = 0.284D0
 
+  !+ad_vars  copperA_m2_max /1e8/ : Maximum TF coil current / copper area (A/m2)
+  real(kind(1.0D0)) :: copperA_m2_max = 1D8
+  !+ad_vars  f_copperA_m2 /1/ : f-value for constraint 75: TF coil current / copper area < copperA_m2_max
+  real(kind(1.0D0)) :: f_copperA_m2 = 1d0
+
+
   real(kind(1.0D0)) :: tape_thickness
   real(kind(1.0D0)) :: stack_thickness
   real(kind(1.0D0)) :: tapes
@@ -4222,6 +4228,7 @@ module rebco_variables
   real(kind(1.0D0)) :: hastelloy_area
   real(kind(1.0D0)) :: solder_area
   real(kind(1.0D0)) :: croco_area
+  real(kind(1.0D0)) :: copperA_m2       ! TF coil current / copper area (A/m2)
 
   end module rebco_variables
   !------------------------------------------------------------------------
@@ -4248,6 +4255,7 @@ module rebco_variables
       end type
 
       type volume_fractions
+          real(kind(1.0D0)) :: copper_area
           real(kind(1.0D0)) :: copper_fraction
           real(kind(1.0D0)) :: copper_bar_fraction
           real(kind(1.0D0)) :: hastelloy_fraction

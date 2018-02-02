@@ -84,7 +84,7 @@ module numerics
   !+ad_hist  09/11/16 HL  Added new constraint 67, it. var. 116
   !+ad_hist  19/01/17 JM  Added new constraint 68, it. var. 117
   !+ad_hist  08/02/17 JM  Added new constraints 69,70, 71, it. var. 118, 119, 120 (Kallenbach)
-  !+ad_hist  11/01/18 KE  Added new constraint eqn 75, Eich formula for nesep
+  !+ad_hist  11/01/18 KE  Added new constraint eqn 76, Eich formula for nesep
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -342,7 +342,9 @@ module numerics
        'Psep >= Plh + Paux               ',   &
        !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
        'TFC quench < tmax_croco          ',    &
-       !+ad_varc  <LI> (75) Eich critical separatrix density </UL>
+       !+ad_varc  <LI> (75) TFC current/copper area < Maximum (itv 143 f_copperA_m2) </UL>
+       'TFC current/copper area < Max    '    &
+       !+ad_varc  <LI> (76) Eich critical separatrix density </UL>
        'Eich critical separatrix density '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
@@ -358,7 +360,7 @@ module numerics
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (NEW:THERE ARE NO DEFAULTS):<UL>
   ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
-  ! othr python utilities, so they cannot easily be changed.
+  ! other python utilities, so they cannot easily be changed.
   character(len=14), dimension(ipnvars) :: lablxc = (/ &
        !+ad_varc  <LI> ( 1) aspect
        'aspect        ', &
@@ -640,15 +642,17 @@ module numerics
        'fplhsep       ', &
        !+ad_varc  <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
        'rebco_thicknes', &
-       !+ad_varc  <LI> (139) copper_thickness : thickness of copper layer in tape (m)
-       'copper_thickne', &
+       !+ad_varc  <LI> (139) copper_thick : thickness of copper layer in tape (m)
+       'copper_thick  ', &
        !+ad_varc  <LI> (140) thkwp : radial thickness of TFC winding pack (m)
        'thkwp         ', &
        !+ad_varc  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
        'fcqt          ', &
        !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
        'nesep         ', &
-       !+ad_varc  <LI> (143) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 75) [m-3]</UL>
+       !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75) </UL>
+       'f_copperA_m2  ' &
+       !+ad_varc  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]</UL>
        'fnesep        ' &
        /)
 
@@ -810,7 +814,8 @@ module numerics
        0.001D0, &  !  140
        0.001D0, &  !  141
        1.00D17, &  !  142
-       0.001D0 &  !  143
+       0.001D0, &  !  143
+       0.001D0 &  !  144
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -957,8 +962,9 @@ module numerics
        1.00D-3, &  !  139
        2.000D0, &  !  140
        1.000D0, &  !  141
-       1.00D21, &  !  142
-       1.000D0 &  !  143
+       1.00D20, &  !  142
+       1.000D0, &  !  143
+       1.000D0  &  !  144
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

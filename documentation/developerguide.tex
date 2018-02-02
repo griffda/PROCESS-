@@ -209,8 +209,8 @@ whenever the source code is modified.
   model is added or modified. This should be done immediately to ensure that
   the Guide remains consistent with the source code. Change the code's revision
   number and the date in \texttt{process.tex}.
-  
-\item Add a new file to the folder \texttt{release\_notes}.  It is particularly important to describe here any changes to the required IN.DAT - especially any change that makes previous IN.DAT files unusable.  
+
+\item Add a new file to the folder \texttt{release\_notes}.  It is particularly important to describe here any changes to the required IN.DAT - especially any change that makes previous IN.DAT files unusable.
 
 \end{enumerate}
 
@@ -258,6 +258,8 @@ New iteration variables (see Userguide and vardes.html) are added in the
 same way as input parameters, with the following additions:
 
 \begin{enumerate}
+
+\item The name of an iteration variable must not be more than 14 characters long.
 
 \item Increment the parameter \texttt{ipnvars} in module \texttt{numerics} in
   source file \texttt{numerics.f90} in order to accommodate the new iteration
@@ -718,13 +720,13 @@ assumed that readers have a working knowledge of Git commands.
 
 \subsection{Tagging}
 \label{sec:tagging}
-Tagging in \process\/ is used to document the version of the code any individual 
-run has been performed with. This is necessary for proper provenance capture. 
-Currently, only the gitlab commit number is unique, assuring full version control, 
-but the \process\/ version tag documented in each output is not updated with 
-each commit. From November 2016 onwards, we have changed our tagging system for 
-the \process\/ versions (details see below). Any versions ending in {\bf .0} should 
-be fully tested. How and when to tag versions is described in more detail in the 
+Tagging in \process\/ is used to document the version of the code any individual
+run has been performed with. This is necessary for proper provenance capture.
+Currently, only the gitlab commit number is unique, assuring full version control,
+but the \process\/ version tag documented in each output is not updated with
+each commit. From November 2016 onwards, we have changed our tagging system for
+the \process\/ versions (details see below). Any versions ending in {\bf .0} should
+be fully tested. How and when to tag versions is described in more detail in the
 upcoming sections detailing the code update and release procedures.
 
 \subsubsection{Tagging in the development version}
@@ -748,8 +750,8 @@ The parts are:
   \item \texttt{g3f1b433} is a unique identifier for this specific commit
 \end{itemize}
 
-This allows the user to checkout a specific commit between tagged versions. 
-PROCESS now outputs this information into the `OUT.DAT` and `MFILE.DAT` and is 
+This allows the user to checkout a specific commit between tagged versions.
+PROCESS now outputs this information into the `OUT.DAT` and `MFILE.DAT` and is
 updated upon compilation. This way each output file is trackable to a specific commit.
 
 
@@ -941,7 +943,7 @@ Section~\ref{sec:codemods}) and the code is fully tested.
 \begin{enumerate}
 
 \item In routine \texttt{inform} of file \texttt{process.f90}, change the
-  definition of \texttt{progver} by incrementing the \Red{last digit of the revision number by one e.g. from \texttt{1.3.26} to \texttt{1.3.27} for each minor commit or the second git for each fully tested major model that is included while setting the last digit to 0 e.g. from \texttt{1.3.26} to \texttt{1.4.0}}. Furthermore, update the Release Date. It is important to keep exactly the same format. 
+  definition of \texttt{progver} by incrementing the \Red{last digit of the revision number by one e.g. from \texttt{1.3.26} to \texttt{1.3.27} for each minor commit or the second git for each fully tested major model that is included while setting the last digit to 0 e.g. from \texttt{1.3.26} to \texttt{1.4.0}}. Furthermore, update the Release Date. It is important to keep exactly the same format.
 
 \item Add a brief comment to the bottom of source file \texttt{process.f90}
   describing the changes made since the last commit in the same branch. Start

@@ -1258,7 +1258,7 @@ subroutine outtf(outfile, peaktfflag)
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)) :: ap
+    real(kind(1.0D0)) :: ap, radius
     character(len=1) :: intstring
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1279,10 +1279,10 @@ subroutine outtf(outfile, peaktfflag)
         call ocmmnt(outfile, &
         '  (ITER Nb3Sn critical surface model, user-defined parameters)')
     case (5)
-        call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
+        call ocmmnt(outfile, ' (WST Nb3Sn)')
+    case (6)
+        call ocmmnt(outfile, ' (High temperature superconductor: REBCO HTS tape in CroCo strand)')
     end select
-
-    call osubhd(outfile,'Wedged TF Coils, with two-step winding')
 
     call ocmmnt(outfile,'Current Density :')
     call oblnkl(outfile)
@@ -1295,18 +1295,18 @@ subroutine outtf(outfile, peaktfflag)
 
     call osubhd(outfile,'General Coil Parameters :')
     call ovarre(outfile,'Number of TF coils','(tfno)',tfno)
-    call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/tfno)', tfareain/tfno, 'OP ')
+    ! call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/tfno)', tfareain/tfno, 'OP ')
     call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
     call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
-    call ovarre(outfile,'Inboard leg outboard half-width (m)','(tficrn)',tficrn, 'OP ')
-    call ovarre(outfile,'Inboard leg inboard half-width (m)','(tfocrn)',tfocrn, 'OP ')
+    call ovarre(outfile,'Inboard leg toroidal thickness at widest point (m)','(2*tficrn)',2d0*tficrn, 'OP ')
+    !call ovarre(outfile,'Inboard leg inboard toroidal thickness (m)','(tfocrn)',tfocrn, 'OP ')
     call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort, 'OP ')
     call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng, 'OP ')
     call ovarre(outfile,'Total current in all TF coils (MA)','(ritfc/1.D6)',1.0D-6*ritfc, 'OP ')
-    call ovarre(outfile,'Peak field (Amperes Law,T)','(bmaxtf)',bmaxtf, 'OP ')
-    call ovarre(outfile,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp, 'OP ')
-    call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
-    call ovarre(outfile,'Ripple amplitude at plasma (%)','(ripple)',ripple, 'OP ')
+    call ovarre(outfile,'Nominal peak field assuming Amperes Law with toroidal symmetry (T)','(bmaxtf)',bmaxtf, 'OP ')
+    call ovarre(outfile,'Actual peak field at discrete conductor (T)','(bmaxtfrp)',bmaxtfrp, 'OP ')
+    call ovarre(outfile,'Max allowed ripple amplitude at plasma outboard midplane (%)','(ripmax)',ripmax)
+    call ovarre(outfile,'Ripple amplitude at plasma outboard midplane (%)','(ripple)',ripple, 'OP ')
     call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj, 'OP ')
     call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf, 'OP ')
     call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/tfno)',whttf/tfno, 'OP ')
@@ -1346,29 +1346,32 @@ subroutine outtf(outfile, peaktfflag)
     20  format(i4,t10,f10.3,t25,f10.3)
 
     call osubhd(outfile,'Quench information :')
-    call ovarre(outfile,'Allowable stress in vacuum vessel (Pa)','(sigvvall)',sigvvall)
+    call ovarre(outfile,'Allowable stress in vacuum vessel (VV) due to quench (Pa)','(sigvvall)',sigvvall)
     call ovarre(outfile,'Minimum allowed quench time due to stress in VV (s)','(taucq)',taucq, 'OP ')
     call ovarre(outfile,'Actual quench time (or time constant) (s)','(tdmptf)',tdmptf)
     ! call ovarre(outfile,'Max allowed current density in winding pack due to temperature rise in quench (A/m2)', &
     !                     '(jwdgpro)', jwdgpro, 'OP ')
-    call ovarre(outfile,'Actual current density in winding pack (A/m2)', '(jwptf)', jwptf, 'OP ')
+    ! call ovarre(outfile,'Actual current density in winding pack (A/m2)', '(jwptf)', jwptf, 'OP ')
     call ovarre(outfile,'Maximum allowed voltage during quench due to insulation (kV)', '(vdalw)', vdalw)
-    call ovarre(outfile,'Quench voltage (kV)','(vtfskv)',vtfskv, 'OP ')
+    call ovarre(outfile,'Actual quench voltage (kV)','(vtfskv)',vtfskv, 'OP ')
 
     select case (isumattf)
     case (1,2,3,4,5)
         call ovarre(outfile,'Maximum allowed temp rise during a quench (K)','(tmaxpro)', tmaxpro)
     case(6)
-        call ovarre(outfile,'CroCo cable : Maximum permitted temperature in quench (K)',&
-                            '(tmax_croco)', tmax_croco)
-        call ovarre(outfile,'CroCo cable : Actual temp reached during a quench (K)', &
+        call ocmmnt(outfile,'CroCo cable : ')
+        if (any(icc == 74) ) then
+            call ovarre(outfile,'Maximum permitted temperature in quench (K)',&
+                                '(tmax_croco)', tmax_croco)
+        endif
+        call ovarre(outfile,'Actual temp reached during a quench (K)', &
                             '(croco_quench_temperature)', croco_quench_temperature)
-        !call ovarre(outfile,'Maximum temperature in quench: Jacket (K)','(tmax_jacket)', tmax_jacket)
-        ! if(jwdgpro_1<jwdgpro_2)then
-        !     call ocmmnt(outfile,'Strands are limiting.')
-        ! else if(jwdgpro_2<jwdgpro_1)then
-        !     call ocmmnt(outfile,'conductor jacket is limiting.')
-        ! end if
+        if (any(icc == 75) ) then
+        call ovarre(outfile,'Maximum permitted TF coil current / copper area (A/m2)', &
+                            '(copperA_m2_max)', copperA_m2_max)
+        endif
+        call ovarre(outfile,'Actual TF coil current / copper area (A/m2)', &
+                            '(copperA_m2)', copperA_m2)
 
         call ocmmnt(outfile,'Fast discharge current model: '//quench_model)
         if(quench_detection_ef>1d-10)then
@@ -1380,7 +1383,6 @@ subroutine outtf(outfile, peaktfflag)
             call ocmmnt(outfile, 'Simple one-phase quench model is used')
         endif
     end select
-
 
     call osubhd(outfile,'Conductor Information :')
     call ovarre(outfile,'Width of conductor (square) (m)','(conductor_width)',conductor_width, 'OP ')
@@ -1394,7 +1396,7 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Steel conduit mass per coil (kg)','(whtconsh)',whtconsh, 'OP ')
     call ovarre(outfile,'Conduit insulation mass per coil (kg)','(whtconin)',whtconin, 'OP ')
     call ovarre(outfile,'Total conductor mass per coil (kg)','(whtcon)',whtcon, 'OP ')
-    call ovarre(outfile,'Cable conductor + void area (m2)','(acstf)',acstf, 'OP ')
+    !call ovarre(outfile,'Cable conductor + void area (m2)','(acstf)',acstf, 'OP ')
 
     select case (isumattf)
     case (1,2,3,4,5)
@@ -1416,22 +1418,54 @@ subroutine outtf(outfile, peaktfflag)
     end select
 
     call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp, 'OP ')
-    call ovarre(outfile,'Winding width 1 (m)','(wwp1)',wwp1, 'OP ')
-    call ovarre(outfile,'Winding width 2 (m)','(wwp2)',wwp2, 'OP ')
+    call ovarre(outfile,'Winding toroidal width 1 (m)','(wwp1)',wwp1, 'OP ')
+    call ovarre(outfile,'Winding toroidal width 2 (m)','(wwp2)',wwp2, 'OP ')
     call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
     call ovarre(outfile,'Winding pack insertion gap (m)','(tfinsgap)',tfinsgap)
-    call ovarre(outfile,'mass of ground-wall insulation layer per coil (kg)','(whtgw)',whtgw, 'OP ')
+    !call ovarre(outfile,'Mass of ground-wall insulation layer per coil (kg)','(whtgw)',whtgw, 'OP ')
     call ovarre(outfile,'Number of turns per TF coil','(turnstf)',turnstf, 'OP ')
-    call ovarre(outfile,'Current per turn (A)','(cpttf)',cpttf)
+    !call ovarre(outfile,'Current per turn (A)','(cpttf)',cpttf)
 
     call osubhd(outfile,'External Case Information :')
 
-    call ovarre(outfile,'Inboard leg case outboard thickness (m)','(casthi)',casthi)
-    call ovarre(outfile,'Inboard leg case inboard thickness (m)','(thkcas)',thkcas)
-    call ovarre(outfile,'Inboard leg case toroidal thickness (m)','(casths)',casths)
-    call ovarre(outfile,'Inboard leg case area per coil (m2)','(acasetf)',acasetf, 'OP ')
-    call ovarre(outfile,'Outboard leg case area per coil (m2)','(acasetfo)',acasetfo, 'OP ')
+    call ovarre(outfile,'Inboard leg case plasma side wall thickness (m)','(casthi)',casthi)
+    call ovarre(outfile,'Inboard leg case inboard "nose" thickness (m)','(thkcas)',thkcas)
+    call ovarre(outfile,'Inboard leg case sidewall thickness at its narrowest point (m)','(casths)',casths)
+    !call ovarre(outfile,'Inboard leg case area per coil (m2)','(acasetf)',acasetf, 'OP ')
+    !call ovarre(outfile,'Outboard leg case area per coil (m2)','(acasetfo)',acasetfo, 'OP ')
     call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas, 'OP ')
+
+    call osubhd(outfile,'Radial build of TF coil centre-line :')
+    write(outfile,5)
+5   format(t43,'Thickness (m)',t60,'Outer radius (m)')
+    radius = bore + ohcth + precomp + gapoh
+    call obuild(outfile,'Innermost edge of TF coil',radius,radius)
+    radius = radius + thkcas
+    call obuild(outfile,'Coil case ("nose")',thkcas,radius,'(thkcas)')
+    radius = radius + tfinsgap
+    call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
+    radius = radius + tinstf
+    call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
+    radius = radius + thkwp/2d0 - tinstf
+    call obuild(outfile,'Winding - first half',thkwp/2d0 - tinstf,radius,'(thkwp/2 - tinstf)')
+    radius = radius + thkwp/2d0 - tinstf
+    call obuild(outfile,'Winding - second half',thkwp/2d0 - tinstf,radius,'(thkwp/2 - tinstf)')
+    radius = radius + tinstf
+    call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
+    radius = radius + tfinsgap
+    call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
+    radius = radius + casthi
+    call obuild(outfile,'Coil case (plasma side)',casthi,radius,'(casthi)')
+    if(abs((radius - rtfcin - 0.5D0*tfcth)) < 1d-6)then
+        call ocmmnt(outfile,'TF coil dimensions are consistent')
+    else
+        call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
+        call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',rtfcin + 0.5D0*tfcth)
+        call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
+        !thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+        call oblnkl(outfile)
+    end if
+
 
     if (tfc_model == 0) then
         call osubhd(outfile,'TF Coil Stresses (solid copper coil model) :')
@@ -1451,7 +1485,7 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Tresca stress in conduit (Pa)', '(s_tresca_cond)', s_tresca_cond, 'OP ')
     call ovarre(outfile,'von Mises stress in case (Pa)', '(s_vmises_case)', s_vmises_case, 'OP ')
     call ovarre(outfile,'von Mises stress in conduit (Pa)', '(s_vmises_cond)', s_vmises_cond, 'OP ')
-    call ovarre(outfile,'Deflection at midplane (m)','(deflect)',deflect, 'OP ')
+    call ovarre(outfile,'Peak radial deflection at midplane (m)','(deflect)',deflect, 'OP ')
     if (tfc_model == 1) then
         call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
         call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
@@ -1686,8 +1720,8 @@ contains
             conductor%acs =  acstf
             conductor%area =  conductor_width**2
             conductor%jacket_fraction = acndttf/conductor%area
-
             call croco(jcritsc,croco_strand,conductor)
+            copperA_m2 = iop / conductor%copper_area
             icrit = conductor%critical_current
             jcritstr = croco_strand%critical_current / croco_strand%area
 
@@ -1826,18 +1860,15 @@ contains
         case (6)
             call ocmmnt(outfile,'Superconductor used: REBCO HTS tape in CroCo strand')
 
-            call ovarre(outfile,'thickness of REBCO layer in tape (m)','(rebco_thickness)',rebco_thickness)
-            call ovarre(outfile,'thickness of copper layer in tape (m)','(copper_thickne)', copper_thickness)
-            call ovarre(outfile,'thickness of Hastelloy layer in tape (m) ','(hastelloy_thickness)', hastelloy_thickness)
-            call ovarre(outfile,'Area of central copper bar, as a fraction of area inside the jacket ', &
-                                 '(copper_bar)', copper_bar)
+            call ovarre(outfile,'Thickness of REBCO layer in tape (m)','(rebco_thickness)',rebco_thickness)
+            call ovarre(outfile,'Thickness of copper layer in tape (m)','(copper_thick  )', copper_thick)
+            call ovarre(outfile,'Thickness of Hastelloy layer in tape (m) ','(hastelloy_thickness)', hastelloy_thickness)
 
             call ovarre(outfile,'Mean width of tape (m)','(tape_width)',tape_width)
-            call ovarre(outfile,'Outer diameter of CroCo strand (m) ','(croco_od)', croco_od)
+            call ovarre(outfile,'Outer diameter of CroCo copper tube (m) ','(croco_od)', croco_od)
             call ovarre(outfile,'Inner diameter of CroCo copper tube (m) ','(croco_id)',croco_id)
 
-
-            call ovarre(outfile,'Thickness of each HTS coated tape ','(tape_thickness)',tape_thickness , 'OP ')
+            call ovarre(outfile,'Thickness of each HTS tape ','(tape_thickness)',tape_thickness , 'OP ')
             call ovarre(outfile,'Thickness of stack of tapes (m) ','(stack_thickness)',stack_thickness , 'OP ')
             call ovarre(outfile,'Number of tapes in strand','(tapes)',tapes , 'OP ')
             call oblnkl(outfile)
@@ -1853,17 +1884,17 @@ contains
 
             call oblnkl(outfile)
             call ocmmnt(outfile,'Cable information')
-            call ovarre(outfile,'Area of cable space (m2)','(acstf)',acstf , 'OP ')
             call ovarre(outfile,'Area of central copper bar, as a fraction of cable space', '(copper_bar)', copper_bar)
             call ovarre(outfile,'Area of helium coolant, as a fraction of cable space', &
-                                '(cable_helium_fraction)', cable_helium_fraction)
-            call ovarrf(outfile,'Number of CroCo strands in the conductor ','(conductor%number_croco)',&
+                                 '(cable_helium_fraction)', cable_helium_fraction)
+            call ovarrf(outfile,'Number of CroCo strands in the cable ','(conductor%number_croco)',&
                                                                               conductor%number_croco , 'OP ')
+            call ovarre(outfile,'Total area of cable space (m2)','(acstf)',acstf , 'OP ')
 
             call oblnkl(outfile)
-            call ocmmnt(outfile,'Conductor information')
+            call ocmmnt(outfile,'Conductor information (includes jacket, not including insulation)')
             call ovarre(outfile,'Width of square conductor (m)','(conductor_width)', conductor_width , 'OP ')
-            call ovarre(outfile,'Area of conductor (not incl insulation) (m2)','(area)', conductor%area , 'OP ')
+            call ovarre(outfile,'Area of conductor (m2)','(area)', conductor%area , 'OP ')
             call ovarre(outfile,'REBCO fraction of conductor','(rebco_fraction)',conductor%rebco_fraction , 'OP ')
             call ovarre(outfile,'Copper fraction of conductor','(copper_fraction)',conductor%copper_fraction , 'OP ')
             call ovarre(outfile,'Hastelloy fraction of conductor','(hastelloy_fraction)',conductor%hastelloy_fraction , 'OP ')
@@ -1879,8 +1910,8 @@ contains
             endif
             call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_strand%critical_current)', &
                                                                          croco_strand%critical_current , 'OP ')
-            call ovarre(outfile,'Critical current of cable (A) ','(conductor%critical_current)', &
-                                                                   conductor%critical_current , 'OP ')
+            !call ovarre(outfile,'Critical current of cable (A) ','(conductor%critical_current)', &
+            !                                                       conductor%critical_current , 'OP ')
         end select ! case (isumat)
 
         if (run_tests==1) then
@@ -1894,7 +1925,7 @@ contains
 
         call oblnkl(outfile)
         !call ovarre(outfile,'Peak field at conductor (T)','(bmax)',bmax, 'OP ')
-        call ovarre(outfile,'Helium temperature at peak field (K)','(thelium)',thelium)
+        call ovarre(outfile,'Helium temperature at peak field (= superconductor temperature) (K)','(thelium)',thelium)
         if(isumat/=6)then
             call ovarre(outfile,'Total helium fraction inside cable space','(fhetot)',fhetot, 'OP ')
             call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
@@ -1902,13 +1933,18 @@ contains
         end if
         call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc, 'OP ')
         call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr, 'OP ')
-        call ovarre(outfile,'Operating winding pack J (A/m2)','(jwdgop)',jwdgop, 'OP ')
-        call ovarre(outfile,'Critical winding pack current density (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
-        call ovarre(outfile,'Critical current (A)','(icrit)',icrit, 'OP ')
-        call ovarre(outfile,'Operating current / critical current','(iooic)', iooic, 'OP ')
-        call ovarre(outfile,'Temperature margin (K)','(tmarg)',tmarg, 'OP ')
+        call ovarre(outfile,'Critical current density in winding pack (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
+        call ovarre(outfile,'Actual current density in winding pack (A/m2)','(jwdgop)',jwdgop, 'OP ')
+
+
+
+
+        call ovarre(outfile,'Minimum allowed temperature margin in superconductor (K)','(tmargmin_tf)',tmargmin_tf)
+        call ovarre(outfile,'Actual temperature margin in superconductor (K)','(tmarg)',tmarg, 'OP ')
         ! call ovarre(outfile,'Temperature margin using secant solver (K)','(tmarg2)',tmarg2, 'OP ')
-        call ovarre(outfile,'Minimum permitted temperature margin (K)','(tmargmin_tf)',tmargmin_tf)
+        call ovarre(outfile,'Critical current (A)','(icrit)',icrit, 'OP ')
+        call ovarre(outfile,'Actual current (A)','(cpttf)',cpttf, 'OP ')
+        call ovarre(outfile,'Actual current / critical current','(iooic)', iooic, 'OP ')
 
     end subroutine supercon
 

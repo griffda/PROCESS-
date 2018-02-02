@@ -180,8 +180,8 @@ else
 	MYROOT_1 = echo "  character(len=*), parameter :: ROOTDIR = '"`pwd`"'" > root.dir
 	MYROOT_2 = echo "ROOTDIR = '"`pwd`"'" > utilities/rootdir.py
 	MYCOMMSG_0 = rm -rf com.msg
-	MYROOT_3_W = 
-	MYROOT_3 = echo "  character(len=*), parameter :: COMMSG = '"`git log -1 --format=oneline | cut -c 42-`"'" > com.msg
+	MYROOT_3_W =
+	MYROOT_3 = echo "  character(len=*), parameter :: COMMSG = '"`git log -1 --format=oneline | cut -c 42-110`"'" > com.msg
 	MYTAG_0 = rm -rf tag.num
 	MYTAG_1 = echo "  character(len=*), parameter :: tagno = '"`git describe`"'" > tag.num
 	DIFF_0 = rm -rf untracked.info
@@ -383,37 +383,37 @@ vardes: autodoc
 
 html: autodoc
 	@ cat $(SRC) | ./autodoc
-	@ mv vardes.html vardes_full.html	
+	@ mv vardes.html vardes_full.html
 	@ mkdir -p documentation/html
 	@ mv *.html documentation/html
 
 userguide: documentation/process.tex
-	@ pandoc --standalone documentation/html/vardes.html --output documentation/html/vardes.tex	
-	@ pdflatex -halt-on-error documentation/html/vardes.tex > documentation/vardes.log || (echo "Error: See documentation/vardes.log"; exit 1) 
+	@ pandoc --standalone documentation/html/vardes.html --output documentation/html/vardes.tex
+	@ pdflatex -halt-on-error documentation/html/vardes.tex > documentation/vardes.log || (echo "Error: See documentation/vardes.log"; exit 1)
 	@ mv -t documentation vardes.pdf vardes.log
-	@ pdflatex -halt-on-error documentation/process > documentation/userguide.log || (echo "Error: See documentation/userguide.log"; exit 1) 
+	@ pdflatex -halt-on-error documentation/process > documentation/userguide.log || (echo "Error: See documentation/userguide.log"; exit 1)
 	@ pdflatex -halt-on-error documentation/process > documentation/userguide.log || (echo "Error: See documentation/userguide.log" ; exit 1)
 	@ mv -t documentation/pdf process.pdf process.log
-	@ rm process.lo* process.toc process.out *.aux 
+	@ rm process.lo* process.toc process.out *.aux
 	@ rm vardes.out
 
 developerguide: documentation/developerguide.tex
-	@ pdflatex -halt-on-error documentation/developerguide > documentation/devguide.log || (echo "Error: See documentation/devguide.log"; exit 1) 
+	@ pdflatex -halt-on-error documentation/developerguide > documentation/devguide.log || (echo "Error: See documentation/devguide.log"; exit 1)
 	@ pdflatex -halt-on-error documentation/developerguide > documentation/devguide.log || (echo "Error: See documentation/devguide.log" ; exit 1)
 	@ mv -t documentation/pdf developerguide.pdf developerguide.log
 	@ rm developerguide.lo* developerguide.toc developerguide.out *.aux
 
 utilitiesdoc: documentation/utilitiesdoc.tex
-	@ pdflatex -halt-on-error documentation/utilitiesdoc > documentation/utdoc.log || (echo "Error: See documentation/utdoc.log"; exit 1) 
+	@ pdflatex -halt-on-error documentation/utilitiesdoc > documentation/utdoc.log || (echo "Error: See documentation/utdoc.log"; exit 1)
 	@ pdflatex -halt-on-error documentation/utilitiesdoc > documentation/utdoc.log || (echo "Error: See documentation/utdoc.log" ; exit 1)
 	@ mv -t documentation/pdf utilitiesdoc.pdf utilitiesdoc.log
 	@ rm  utilitiesdoc.toc utilitiesdoc.out *.aux
 
 optsolverdoc: documentation/optsolverdoc.tex
 	@ pdflatex -halt-on-error documentation/optsolverdoc > documentation/optdoc.log || (echo "Error: See documentation/optdoc.log"; exit 1)
-	@ bibtex optsolverdoc 
+	@ bibtex optsolverdoc
 	@ pdflatex -halt-on-error documentation/optsolverdoc > documentation/optdoc.log || (echo "Error: See documentation/optdoc.log" ; exit 1)
-	@ pdflatex -halt-on-error documentation/optsolverdoc > documentation/optdoc.log || (echo "Error: See documentation/optdoc.log"; exit 1)	
+	@ pdflatex -halt-on-error documentation/optsolverdoc > documentation/optdoc.log || (echo "Error: See documentation/optdoc.log"; exit 1)
 	@ mv -t documentation/pdf optsolverdoc.pdf optsolverdoc.log
 	@ rm  optsolverdoc.out *.aux optsolverdoc.bbl optsolverdoc.blg
 

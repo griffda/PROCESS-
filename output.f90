@@ -526,7 +526,7 @@ contains
     else
         flag = ''
     end if
-    
+
     if (any(name_xc == stripped))  flag = 'ITV'
 
     if (file /= mfile) then
@@ -539,7 +539,7 @@ contains
     call underscore(dum20)
     write(mfile,10) dum72, dum20, value, flag
 
-10  format(1x,a,t75,a,t110,1pe10.3," ",a,t10)
+10  format(1x,a,t75,a,t110,1pe11.4," ",a,t10)
 20  format(1x,a,t75,a,t100,1pe10.3, t112, a)
 
   end subroutine ovarre
@@ -602,7 +602,7 @@ contains
     else
         flag = ''
     end if
-       
+
     if (any(name_xc == stripped))  flag = 'ITV'
 
     if (file /= mfile) then

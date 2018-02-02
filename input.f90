@@ -995,7 +995,7 @@ contains
 
        case ('fcqt')
           call parse_real_variable('fcqt', fcqt, 0.001D0, 1.0D0, &
-                       'f-value for Psep * Bt / qAR upper limit ')
+                       'TF coil quench temparature remains below tmax_croco')
 
 
        case ('gammax')
@@ -1113,7 +1113,7 @@ contains
           call parse_real_variable('tburn', tburn, 0.0D0, 1.0D7, &
                'Burn time (s)')
        case ('tdwell')
-          call parse_real_variable('tdwell', tdwell, 0.0D0, 1.0D4, &
+          call parse_real_variable('tdwell', tdwell, 0.0D0, 1.0D8, &
                'Time between burns (s)')
        case ('theat')
           call parse_real_variable('theat', theat, 0.0D0, 1.0D4, &
@@ -1162,7 +1162,7 @@ contains
           call parse_real_variable('ttarget', ttarget, 1.0D0, 1.0D4, &
                'Plasma temperature adjacent to divertor sheath [eV]')
        case ('qtargettotal')
-          call parse_real_variable('qtargettotal', qtargettotal, 0.1D0, 1.0D8, &
+          call parse_real_variable('qtargettotal', qtargettotal, 0.001D0, 1.0D8, &
                'Power density on target including surface recombination [W/m2]')
        !case ('impurity_enrichment')
        !  call parse_real_variable('impurity_enrichment', impurity_enrichment, 0.1D0, 20.0D0, &
@@ -1500,15 +1500,22 @@ contains
        case ('croco_od')
           call parse_real_variable('croco_od', croco_od, 0.0D0, 0.1D0, &
                'Outer diameter of CroCo strand (m)')
-       case ('copper_thickness')
-          call parse_real_variable('copper_thickness', copper_thickness, 0.0D0, 1000.0D-6, &
-               'copper_thickness (m)')
+       case ('copper_thick')
+          call parse_real_variable('copper_thick', copper_thick, 0.0D0, 1000.0D-6, &
+               'copper_thick (m)')
        case ('copper_bar')
           call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.9D0, &
                'area of central copper bar, as a fraction of area inside the jacket')
        case ('copper_rrr')
           call parse_real_variable('copper_rrr', copper_rrr, 1.0D0, 1.0D4, &
                'residual resistivity ratio copper in TF superconducting cable')
+
+       case ('coppera_m2_max')
+          call parse_real_variable('coppera_m2_max', copperA_m2_max, 1.0D6, 1.0D10, &
+               'Maximum TF coil current / copper area (A/m2)')
+       case ('f_coppera_m2')
+          call parse_real_variable('f_copperA_m2', f_copperA_m2, 1.0D-3, 1.0D1, &
+               'f-value for constraint 75: TF coil current / copper area < copperA_m2_max')
 
        case ('casthi')
           call parse_real_variable('casthi', casthi, 0.0D0, 1.0D0, &
@@ -1531,7 +1538,7 @@ contains
           call parse_real_variable('cdtfleg', cdtfleg, 0.1D0, 1.0D8, &
                'TF leg overall current density (A/m2)')
        case ('cpttf')
-          call parse_real_variable('cpttf', cpttf, 1.0D0, 1.0D6, &
+          call parse_real_variable('cpttf', cpttf, 0.001D0, 1.0D6, &
                'TF coil leg current per turn (A)')
        case ('alstrtf')
           call parse_real_variable('alstrtf', alstrtf, 1.0D6, 1.0D11, &
@@ -1848,7 +1855,7 @@ contains
           call parse_real_variable('roughness', roughness, 0.0d0, 1.0D-2, &
                'first wall channel roughness epsilon')
        case ('fw_channel_length')
-          call parse_real_variable('fw_channel_length', fw_channel_length, 0.1d0, 1.0D2, &
+          call parse_real_variable('fw_channel_length', fw_channel_length, 1.0D-3, 1.0D3, &
                'first wall channel length')
        case ('peaking_factor')
           call parse_real_variable('peaking_factor', peaking_factor, 1.0d0, 100.0D0, &
@@ -2381,7 +2388,7 @@ contains
                'LH system cost ($/W)')
        case ('ucme')
           call parse_real_variable('ucme', ucme, 1.0D7, 1.0D9, &
-               'Unit cost of maintenance equip. ($/W)')
+               'Unit cost of maintenance equip. ($/W**0.3)')
        case ('ucmisc')
           call parse_real_variable('ucmisc', ucmisc, 1.0D7, 5.0D7, &
                'Miscellaneous plant allowance ($)')
@@ -2402,7 +2409,7 @@ contains
                'Cost of PF coil DC breakers ($/MVA)')
        case ('ucpfbs')
           call parse_real_variable('ucpfbs', ucpfbs, 1.0D3, 1.0D4, &
-               'Cost of PF burn power supplies ($/kW)')
+               'Cost of PF burn power supplies ($/kW**0.7)')
        case ('ucpfcb')
           call parse_real_variable('ucpfcb', ucpfcb, 1.0D3, 1.0D5, &
                'Cost of PF coil AC breakers ($/circ)')

@@ -55,6 +55,7 @@ module constraints
   use physics_variables
   use pf_power_variables
   use pulse_variables
+  use rebco_variables
   use stellarator_variables
   use tfcoil_variables
   use times_variables
@@ -1607,12 +1608,12 @@ contains
        case (74)  ! ensure TF coil quench temperature < tmax_croco
            ! ONLY used for croco HTS coil
            !#=# physics
-           !#=#=# fplhsep, pdivt
+           !#=#=# fcqt, tmax_croco
 
            ! fcqt | f-value for constraint 74: TF coil quench temperature < tmax_croco
            ! croco_quench_temperature | Actual TF coil quench temperature
            ! tmax_croco  | Maximum TF coil quench temperature
-           cc(i) = 1.0d0 - fcqt * tmax_croco / croco_quench_temperature 
+           cc(i) = 1.0d0 - fcqt * tmax_croco / croco_quench_temperature
 
            if (present(con)) then
              con(i) = croco_quench_temperature
@@ -1620,15 +1621,31 @@ contains
              symbol(i) = '<'
              units(i) = 'K'
           end if
-          
-       case (75)  ! Eich critical separatrix density model
+
+       case (75)  ! ensure that TF coil current / copper area < Maximum value
+           ! ONLY used for croco HTS coil
+           !#=# physics
+           !#=#=# f_copperA_m2, copperA_m2_max
+
+           ! f_copperA_m2 | f-value for constraint 75: TF coil current / copper area < copperA_m2_max
+           ! copperA_m2 | TF coil current / copper area
+           ! copperA_m2_max  | Maximum TF coil current / copper area
+           cc(i) = 1.0d0 - f_copperA_m2 * copperA_m2_max / copperA_m2
+
+           if (present(con)) then
+             con(i) = copperA_m2
+             err(i) = copperA_m2 * cc(i)
+             symbol(i) = '<'
+             units(i) = 'A/m2'
+           end if
+
+       case (76)  ! Eich critical separatrix density model
           ! Added for issue 558 with ref to http://iopscience.iop.org/article/10.1088/1741-4326/aaa340/pdf
            alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
            pdivt_Watts = pdivt * 1.0D6
            nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
                 * (pdivt_Watts ** (-11.0D0/70.0D0)) * dlimit(7)
            cc(i) = 1.0D0 - fnesep * nesep_crit/nesep
-
            if (present(con)) then
              con(i) = nesep
              err(i) = nesep * cc(i)

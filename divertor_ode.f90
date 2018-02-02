@@ -351,6 +351,8 @@ contains
     real(kind(1.0D0)),parameter :: squareroot6 = sqrt(6d0)
 
     character(len=100) :: filename
+    ! Angle between B and the surface normal (deg)
+    real(kind(1.0D0)) :: psi
 
     ! Major radius at outer midplane [m]
     romp = rmajor + rminor
@@ -381,6 +383,8 @@ contains
     sin_pitch_angle = abs(Bp_target / Btotal_target)
     ! Ratio: target area perp to B / target wetted area
     sinfact = 1.0D0 / (sin(targetangle*degree) * sin_pitch_angle)
+    ! Angle between B and the surface normal (deg)
+    psi = 90.0d0 - acos(1.0d0/sinfact)/degree
 
     ! Connection length from OMP to target
     ! MDK Issues #494, #497
@@ -891,6 +895,8 @@ do i = 2, nimp
     call osubhd(outfile, 'Divertor target parameters :')
     call ovarre(outfile, 'Angle between flux surface and normal to divertor target [deg]', '(targetangle)', targetangle)
     call ovarre(outfile, 'Pitch angle of field line at target [deg]','(pitch_angle)', pitch_angle, 'OP ')
+    call ovarre(outfile, 'Angle between B and the normal to divertor target [deg]','(psi)', psi, 'OP ')
+
     call ovarre(outfile, 'Ratio: area of flux tube perpendicular to B / target wetted area  ','(sinfact)', sinfact, 'OP ')
 
     call ovarre(outfile, 'Total power on target [W]','(ptarget_total)', ptarget_total, 'OP ')

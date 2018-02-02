@@ -72,7 +72,7 @@ subroutine loadxc
   !+ad_hist  27/02/17 JM  Added foh_stress (123)
   !+ad_hist  15/03/17 MDK  Added qtargettotal (124)
   !+ad_hist  17/03/17 MDK  Added impurities fimp(3-14) (125-136)
-  !+ad_hist  12/01/18 KE  Added fnesep (143)
+  !+ad_hist  12/01/18 KE  Added fnesep (144)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -254,11 +254,12 @@ subroutine loadxc
      case (136) ; xcm(i) = impurity_arr(14)%frac
      case (137) ; xcm(i) = fplhsep
      case (138) ; xcm(i) = rebco_thickness
-     case (139) ; xcm(i) = copper_thickness
+     case (139) ; xcm(i) = copper_thick
      case (140) ; xcm(i) = thkwp
      case (141) ; xcm(i) = fcqt
      case (142) ; xcm(i) = nesep
-     case (143) ; xcm(i) = fnesep
+     case (143) ; xcm(i) = f_copperA_m2
+     case (144) ; xcm(i) = fnesep
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -553,11 +554,12 @@ subroutine convxc(xc,nn)
      case (136) ; impurity_arr(14)%frac = xc(i)/scale(i)
      case (137) ; fplhsep = xc(i)/scale(i)
      case (138) ; rebco_thickness = xc(i)/scale(i)
-     case (139) ; copper_thickness = xc(i)/scale(i)
+     case (139) ; copper_thick = xc(i)/scale(i)
      case (140) ; thkwp = xc(i)/scale(i)
      case (141) ; fcqt = xc(i)/scale(i)
      case (142) ; nesep = xc(i)/scale(i)
-     case (143) ; fnesep = xc(i)/scale(i)
+     case (143) ; f_copperA_m2 = xc(i)/scale(i)
+     case (144) ; fnesep = xc(i)/scale(i)
 
      case default
 
