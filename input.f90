@@ -350,6 +350,7 @@ contains
     !+ad_hist  03/02/17 JM  Added psepbqarmax as input
     !+ad_hist  08/02/17 JM  Added Kallenbach inputs
     !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
+    !+ad_hist  12/01/18 KE  Added fnesep f-value for Eich crit. separatrix density
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -574,6 +575,9 @@ contains
        case ('fkzohm')
           call parse_real_variable('fkzohm', fkzohm, 0.5D0, 2.0D0, &
                'Zohm elongation scaling multiplier')
+       case ('fnesep')
+          call parse_real_variable('fnesep', fnesep, 0.1D0, 2.0D1, &
+               'Eich critical separatrix density')
        case ('fradmin')
           write(outfile,*) ' '
           write(outfile,*) '**********'

@@ -84,6 +84,7 @@ module numerics
   !+ad_hist  09/11/16 HL  Added new constraint 67, it. var. 116
   !+ad_hist  19/01/17 JM  Added new constraint 68, it. var. 117
   !+ad_hist  08/02/17 JM  Added new constraints 69,70, 71, it. var. 118, 119, 120 (Kallenbach)
+  !+ad_hist  11/01/18 KE  Added new constraint eqn 75, Eich formula for nesep
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -98,9 +99,9 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 142
+  integer, parameter :: ipnvars = 143
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 74
+  integer, parameter :: ipeqns = 75
   !+ad_vars  ipnfoms FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 17
 
@@ -336,11 +337,13 @@ module numerics
        !+ad_varc  <LI> (71) ensure that neomp = separatrix density (nesep) x neratio
        'Separatrix density consistency   ',    &
        !+ad_varc  <LI> (72) central solenoid Tresca stress limit (itv 123 foh_stress)
-              'CS Tresca stress limit           ',    &
+       'CS Tresca stress limit           ',    &
        !+ad_varc  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep)
-              'Psep >= Plh + Paux               ',   &
-       !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))</UL>
-             'TFC quench < tmax_croco          '    &
+       'Psep >= Plh + Paux               ',   &
+       !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
+       'TFC quench < tmax_croco          ',    &
+       !+ad_varc  <LI> (75) Eich critical separatrix density </UL>
+       'Eich critical separatrix density '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -643,8 +646,10 @@ module numerics
        'thkwp         ', &
        !+ad_varc  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
        'fcqt          ', &
-       !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]</UL>
-       'nesep         ' &
+       !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
+       'nesep         ', &
+       !+ad_varc  <LI> (143) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 75) [m-3]</UL>
+       'fnesep        ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -804,7 +809,8 @@ module numerics
        1.00D-6, &  !  139
        0.001D0, &  !  140
        0.001D0, &  !  141
-       1.00D17  &  !  142
+       1.00D17, &  !  142
+       0.001D0 &  !  143
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -951,7 +957,8 @@ module numerics
        1.00D-3, &  !  139
        2.000D0, &  !  140
        1.000D0, &  !  141
-       1.00D20  &  !  142
+       1.00D21, &  !  142
+       1.000D0 &  !  143
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

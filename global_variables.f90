@@ -3654,6 +3654,7 @@ module constraint_variables
   !+ad_hist  23/06/16 JM  Removed dtmpmx as no longer used anywhere
   !+ad_hist  09/11/16 HL  Added fradwall, maxradwalload, peakfactrad and peakradwalload
   !+ad_hist  19/01/17 JM  Added variables for constraint equation for psepbqar (68)
+  !+ad_hist  12/01/18 KE  Added fnesep f-value for Eich critical separatrix density
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3736,6 +3737,9 @@ module constraint_variables
   !+ad_vars  fnbshinef /1.0/ : f-value for maximum neutral beam shine-through fraction
   !+ad_varc                    (constraint equation 59, iteration variable 105)
   real(kind(1.0D0)) :: fnbshinef = 1.0D0
+  !+ad_vars  fnesep /1.0/ : f-value for Eich critical separatrix density
+  !+ad_varc                    (constraint equation 75, iteration variable 143)
+  real(kind(1.0D0)) :: fnesep = 1.0D0
   !+ad_vars  foh_stress /1.0/ : f-value for Tresca stress in OH coil
   !+ad_varc                    (constraint equation 72, iteration variable 123)
   real(kind(1.0D0)) :: foh_stress = 1.0D0
