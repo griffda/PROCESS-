@@ -993,7 +993,7 @@ module divertor_kallenbach_variables
   !+ad_vars  neomp : Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
   real(kind(1.0D0)) :: neomp = 0.0D0
 
-  !+ad_vars  neratio : ratio of mean SOL density at OMP to separatrix density at OMP
+  !+ad_vars  neratio /0.75/ : Ratio of mean SOL density at OMP to separatrix density at OMP (iteration variable 121)
   real(kind(1.0D0)) :: neratio = 0.75D0
 
   !+ad_vars  pressure0 : Total plasma pressure near target (thermal+dynamic) [Pa]
@@ -2228,7 +2228,7 @@ module tfcoil_variables
   !+ad_varc                 (calculated for stellarators)
   real(kind(1.0D0)) :: thkcas = 0.3D0
   ! Issue #514 Make thkwp an iteration variable
-  !+ad_vars  thkwp : radial thickness of winding pack (m) (iteration variable 140)
+  !+ad_vars  thkwp /0.0/ : radial thickness of winding pack (m) (iteration variable 140)
   real(kind(1.0D0)) :: thkwp = 0.0D0
   !+ad_vars  thwcndut /8.0e-3/ : TF coil conduit case thickness (m) (iteration variable 58)
   real(kind(1.0D0)) :: thwcndut = 8.0D-3
@@ -3904,8 +3904,8 @@ module constraint_variables
   !+ad_varc                   (Not required as constraint 69 is an equality)
   real(kind(1.0D0)) :: fpsep = 1.0D0
 
-  !+ad_vars  fcqt /1.0/ : f-value: TF coil quench temparature mains below tmax_croco
-  !+ad_varc                   (constraint equation 74, iteration variable 115)
+  !+ad_vars  fcqt /1.0/ : f-value: TF coil quench temparature remains below tmax_croco
+  !+ad_varc                   (constraint equation 74, iteration variable 141)
   real(kind(1.0D0)) :: fcqt = 1.0D0
 
 

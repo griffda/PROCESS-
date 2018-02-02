@@ -991,7 +991,7 @@ contains
 
        case ('fcqt')
           call parse_real_variable('fcqt', fcqt, 0.001D0, 1.0D0, &
-                       'f-value for Psep * Bt / qAR upper limit ')
+                       'TF coil quench temparature remains below tmax_croco')
 
 
        case ('gammax')
@@ -1109,7 +1109,7 @@ contains
           call parse_real_variable('tburn', tburn, 0.0D0, 1.0D7, &
                'Burn time (s)')
        case ('tdwell')
-          call parse_real_variable('tdwell', tdwell, 0.0D0, 1.0D4, &
+          call parse_real_variable('tdwell', tdwell, 0.0D0, 1.0D8, &
                'Time between burns (s)')
        case ('theat')
           call parse_real_variable('theat', theat, 0.0D0, 1.0D4, &
@@ -1158,7 +1158,7 @@ contains
           call parse_real_variable('ttarget', ttarget, 1.0D0, 1.0D4, &
                'Plasma temperature adjacent to divertor sheath [eV]')
        case ('qtargettotal')
-          call parse_real_variable('qtargettotal', qtargettotal, 0.1D0, 1.0D8, &
+          call parse_real_variable('qtargettotal', qtargettotal, 0.001D0, 1.0D8, &
                'Power density on target including surface recombination [W/m2]')
        !case ('impurity_enrichment')
        !  call parse_real_variable('impurity_enrichment', impurity_enrichment, 0.1D0, 20.0D0, &
@@ -1534,7 +1534,7 @@ contains
           call parse_real_variable('cdtfleg', cdtfleg, 0.1D0, 1.0D8, &
                'TF leg overall current density (A/m2)')
        case ('cpttf')
-          call parse_real_variable('cpttf', cpttf, 1.0D0, 1.0D6, &
+          call parse_real_variable('cpttf', cpttf, 0.001D0, 1.0D6, &
                'TF coil leg current per turn (A)')
        case ('alstrtf')
           call parse_real_variable('alstrtf', alstrtf, 1.0D6, 1.0D11, &
@@ -1851,7 +1851,7 @@ contains
           call parse_real_variable('roughness', roughness, 0.0d0, 1.0D-2, &
                'first wall channel roughness epsilon')
        case ('fw_channel_length')
-          call parse_real_variable('fw_channel_length', fw_channel_length, 0.1d0, 1.0D2, &
+          call parse_real_variable('fw_channel_length', fw_channel_length, 1.0D-3, 1.0D3, &
                'first wall channel length')
        case ('peaking_factor')
           call parse_real_variable('peaking_factor', peaking_factor, 1.0d0, 100.0D0, &

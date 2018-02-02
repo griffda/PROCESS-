@@ -647,7 +647,7 @@ module numerics
        'fcqt          ', &
        !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
        'nesep         ', &
-       !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75)</UL>
+       !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75) </UL>
        'f_copperA_m2  ' &
        /)
 
