@@ -409,6 +409,10 @@ module physics_variables
   real(kind(1.0D0)) :: neped = 4.0D19
   !+ad_vars  nesep /3.0e19/ : electron density at separatrix [m-3] (ipedestal=1)
   real(kind(1.0D0)) :: nesep = 3.0D19
+  !+ad_vars  alpha_crit : critical ballooning parameter value
+  real(kind(1.0D0)) :: alpha_crit = 0.0D0
+  !+ad_vars  nesep_crit : critical electron density at separatrix [m-3]
+  real(kind(1.0D0)) :: nesep_crit = 0.0D0
   !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal=1)
   real(kind(1.0D0)) :: rhopedn = 1.0D0
   !+ad_vars  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal=1)
