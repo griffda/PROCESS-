@@ -616,12 +616,12 @@ subroutine croco(jcritsc,croco_strand,conductor)
     real(kind(1.0D0))::strands_per_area
 
     ! Properties of a single strand
-    tape_thickness = rebco_thickness + copper_thickness + hastelloy_thickness
+    tape_thickness = rebco_thickness + copper_thick + hastelloy_thickness
     stack_thickness = sqrt(croco_id**2 - tape_width**2)
     tapes = stack_thickness / tape_thickness
 
     copper_area = pi / 4.0d0 * (croco_od**2 - croco_id**2) &   ! copper tube
-                  + copper_thickness*tape_width*tapes          ! copper in tape
+                  + copper_thick*tape_width*tapes          ! copper in tape
     hastelloy_area = hastelloy_thickness * tape_width * tapes
     solder_area = pi / 4.0d0 * croco_id**2 - stack_thickness * tape_width
 
@@ -633,8 +633,9 @@ subroutine croco(jcritsc,croco_strand,conductor)
     conductor%number_croco = conductor%acs*(1d0-cable_helium_fraction-copper_bar)/croco_strand%area
     conductor%critical_current = croco_strand%critical_current * conductor%number_croco
     strands_per_area = conductor%number_croco / conductor%area
-    conductor%copper_fraction = copper_area * strands_per_area + &
-                                  copper_bar * conductor%acs / conductor%area
+    conductor%copper_area = copper_area * conductor%number_croco + &
+                            copper_bar * conductor%acs
+    conductor%copper_fraction = conductor%copper_area / conductor%area
 
     ! Helium area is set by the user.
     conductor%helium_fraction = cable_helium_fraction * conductor%acs / conductor%area

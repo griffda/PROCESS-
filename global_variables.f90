@@ -4190,8 +4190,8 @@ module rebco_variables
 
   !+ad_vars  rebco_thickness /1.0e-6/ : thickness of REBCO layer in tape (m) (iteration variable 138)
   real(kind(1.0D0)) :: rebco_thickness = 1.0D-6
-  !+ad_vars  copper_thickness /100e-6/ : thickness of copper layer in tape (m) (iteration variable 139)
-  real(kind(1.0D0)) :: copper_thickness = 100.0D-6
+  !+ad_vars  copper_thick /100e-6/ : thickness of copper layer in tape (m) (iteration variable 139)
+  real(kind(1.0D0)) :: copper_thick = 100.0D-6
   !+ad_vars  hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
   real(kind(1.0D0)) :: hastelloy_thickness = 50.0D-6
   !+ad_vars  tape_width /5.375e-3/ : Mean width of tape (m)
@@ -4212,8 +4212,8 @@ module rebco_variables
 
   !+ad_vars  copperA_m2_max /1e8/ : Maximum TF coil current / copper area (A/m2)
   real(kind(1.0D0)) :: copperA_m2_max = 1D8
-  !+ad_vars  f_copperA_m2_max /1/ : f-value for constraint 75: TF coil current / copper area < copperA_m2_max
-  real(kind(1.0D0)) :: f_copperA_m2_max = 1d0
+  !+ad_vars  f_copperA_m2 /1/ : f-value for constraint 75: TF coil current / copper area < copperA_m2_max
+  real(kind(1.0D0)) :: f_copperA_m2 = 1d0
 
 
   real(kind(1.0D0)) :: tape_thickness
@@ -4251,6 +4251,7 @@ module rebco_variables
       end type
 
       type volume_fractions
+          real(kind(1.0D0)) :: copper_area
           real(kind(1.0D0)) :: copper_fraction
           real(kind(1.0D0)) :: copper_bar_fraction
           real(kind(1.0D0)) :: hastelloy_fraction

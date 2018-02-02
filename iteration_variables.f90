@@ -253,10 +253,11 @@ subroutine loadxc
      case (136) ; xcm(i) = impurity_arr(14)%frac
      case (137) ; xcm(i) = fplhsep
      case (138) ; xcm(i) = rebco_thickness
-     case (139) ; xcm(i) = copper_thickness
+     case (139) ; xcm(i) = copper_thick
      case (140) ; xcm(i) = thkwp
      case (141) ; xcm(i) = fcqt
      case (142) ; xcm(i) = nesep
+     case (143) ; xcm(i) = f_copperA_m2
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -550,10 +551,11 @@ subroutine convxc(xc,nn)
      case (136) ; impurity_arr(14)%frac = xc(i)/scale(i)
      case (137) ; fplhsep = xc(i)/scale(i)
      case (138) ; rebco_thickness = xc(i)/scale(i)
-     case (139) ; copper_thickness = xc(i)/scale(i)
+     case (139) ; copper_thick = xc(i)/scale(i)
      case (140) ; thkwp = xc(i)/scale(i)
      case (141) ; fcqt = xc(i)/scale(i)
      case (142) ; nesep = xc(i)/scale(i)
+     case (143) ; f_copperA_m2 = xc(i)/scale(i)
 
      case default
 

@@ -341,7 +341,7 @@ module numerics
        'Psep >= Plh + Paux               ',   &
        !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))</UL>
        'TFC quench < tmax_croco          ',    &
-       !+ad_varc  <LI> (75) TFC quench < tmax_croco (itv 143 f_copperA_m2_max) </UL>
+       !+ad_varc  <LI> (75) TFC quench < tmax_croco (itv 143 f_copperA_m2) </UL>
        'TFC current/copper area < Max    '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
@@ -357,7 +357,7 @@ module numerics
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (NEW:THERE ARE NO DEFAULTS):<UL>
   ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
-  ! othr python utilities, so they cannot easily be changed.
+  ! other python utilities, so they cannot easily be changed.
   character(len=14), dimension(ipnvars) :: lablxc = (/ &
        !+ad_varc  <LI> ( 1) aspect
        'aspect        ', &
@@ -639,16 +639,16 @@ module numerics
        'fplhsep       ', &
        !+ad_varc  <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
        'rebco_thicknes', &
-       !+ad_varc  <LI> (139) copper_thickness : thickness of copper layer in tape (m)
-       'copper_thickne', &
+       !+ad_varc  <LI> (139) copper_thick : thickness of copper layer in tape (m)
+       'copper_thick  ', &
        !+ad_varc  <LI> (140) thkwp : radial thickness of TFC winding pack (m)
        'thkwp         ', &
        !+ad_varc  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
        'fcqt          ', &
-       !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]</UL>
+       !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
        'nesep         ', &
-       !+ad_varc  <LI> (143) f_copperA_m2_max : TF coil current / copper area < Maximum value (f-value for equation 75)</UL>
-       'nesep         ' &
+       !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75)</UL>
+       'f_copperA_m2  ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc

@@ -1496,15 +1496,22 @@ contains
        case ('croco_od')
           call parse_real_variable('croco_od', croco_od, 0.0D0, 0.1D0, &
                'Outer diameter of CroCo strand (m)')
-       case ('copper_thickness')
-          call parse_real_variable('copper_thickness', copper_thickness, 0.0D0, 1000.0D-6, &
-               'copper_thickness (m)')
+       case ('copper_thick')
+          call parse_real_variable('copper_thick', copper_thick, 0.0D0, 1000.0D-6, &
+               'copper_thick (m)')
        case ('copper_bar')
           call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.9D0, &
                'area of central copper bar, as a fraction of area inside the jacket')
        case ('copper_rrr')
           call parse_real_variable('copper_rrr', copper_rrr, 1.0D0, 1.0D4, &
                'residual resistivity ratio copper in TF superconducting cable')
+
+       case ('coppera_m2_max')
+          call parse_real_variable('coppera_m2_max', copperA_m2_max, 1.0D6, 1.0D10, &
+               'Maximum TF coil current / copper area (A/m2)')
+       case ('f_coppera_m2')
+          call parse_real_variable('f_copperA_m2', f_copperA_m2, 1.0D-3, 1.0D1, &
+               'f-value for constraint 75: TF coil current / copper area < copperA_m2_max')
 
        case ('casthi')
           call parse_real_variable('casthi', casthi, 0.0D0, 1.0D0, &

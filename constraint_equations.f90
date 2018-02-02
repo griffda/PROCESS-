@@ -1624,18 +1624,18 @@ contains
        case (75)  ! ensure that TF coil current / copper area < Maximum value
            ! ONLY used for croco HTS coil
            !#=# physics
-           !#=#=# f_copperA_m2_max, copperA_m2_max
+           !#=#=# f_copperA_m2, copperA_m2_max
 
-           ! f_copperA_m2_max | f-value for constraint 75: TF coil current / copper area < copperA_m2_max
+           ! f_copperA_m2 | f-value for constraint 75: TF coil current / copper area < copperA_m2_max
            ! copperA_m2 | TF coil current / copper area
            ! copperA_m2_max  | Maximum TF coil current / copper area
-           cc(i) = 1.0d0 - f_copperA_m2_max * copperA_m2_max / copperA_m2 
+           cc(i) = 1.0d0 - f_copperA_m2 * copperA_m2_max / copperA_m2
 
            if (present(con)) then
              con(i) = copperA_m2
              err(i) = copperA_m2 * cc(i)
              symbol(i) = '<'
-             units(i) = 'A/mm2'
+             units(i) = 'A/m2'
            end if
 
        case default

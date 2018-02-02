@@ -1359,16 +1359,16 @@ subroutine outtf(outfile, peaktfflag)
     case (1,2,3,4,5)
         call ovarre(outfile,'Maximum allowed temp rise during a quench (K)','(tmaxpro)', tmaxpro)
     case(6)
-        call ovarre(outfile,'CroCo cable : Maximum permitted temperature in quench (K)',&
+        call ocmmnt(outfile,'CroCo cable : ')
+        call ovarre(outfile,'Maximum permitted temperature in quench (K)',&
                             '(tmax_croco)', tmax_croco)
-        call ovarre(outfile,'CroCo cable : Actual temp reached during a quench (K)', &
+        call ovarre(outfile,'Actual temp reached during a quench (K)', &
                             '(croco_quench_temperature)', croco_quench_temperature)
-        !call ovarre(outfile,'Maximum temperature in quench: Jacket (K)','(tmax_jacket)', tmax_jacket)
-        ! if(jwdgpro_1<jwdgpro_2)then
-        !     call ocmmnt(outfile,'Strands are limiting.')
-        ! else if(jwdgpro_2<jwdgpro_1)then
-        !     call ocmmnt(outfile,'conductor jacket is limiting.')
-        ! end if
+        call ovarre(outfile,'Maximum permitted TF coil current / copper area (A/m2)', &
+                            '(copperA_m2_max)', copperA_m2_max)
+        call ovarre(outfile,'Actual TF coil current / copper area (A/m2)', &
+                            '(copperA_m2)', copperA_m2)
+        write(*,'(a, 2x, 1pe10.3)')'Actual TF coil current / copper area (A/m2)', copperA_m2
 
         call ocmmnt(outfile,'Fast discharge current model: '//quench_model)
         if(quench_detection_ef>1d-10)then
@@ -1718,8 +1718,8 @@ contains
             conductor%acs =  acstf
             conductor%area =  conductor_width**2
             conductor%jacket_fraction = acndttf/conductor%area
-
             call croco(jcritsc,croco_strand,conductor)
+            copperA_m2 = iop / conductor%copper_area 
             icrit = conductor%critical_current
             jcritstr = croco_strand%critical_current / croco_strand%area
 
@@ -1859,7 +1859,7 @@ contains
             call ocmmnt(outfile,'Superconductor used: REBCO HTS tape in CroCo strand')
 
             call ovarre(outfile,'thickness of REBCO layer in tape (m)','(rebco_thickness)',rebco_thickness)
-            call ovarre(outfile,'thickness of copper layer in tape (m)','(copper_thickne)', copper_thickness)
+            call ovarre(outfile,'thickness of copper layer in tape (m)','(copper_thick  )', copper_thick)
             call ovarre(outfile,'thickness of Hastelloy layer in tape (m) ','(hastelloy_thickness)', hastelloy_thickness)
             call ovarre(outfile,'Area of central copper bar, as a fraction of area inside the jacket ', &
                                  '(copper_bar)', copper_bar)
