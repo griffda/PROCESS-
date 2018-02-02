@@ -339,9 +339,9 @@ module numerics
        'CS Tresca stress limit           ',    &
        !+ad_varc  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep)
        'Psep >= Plh + Paux               ',   &
-       !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))</UL>
+       !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
        'TFC quench < tmax_croco          ',    &
-       !+ad_varc  <LI> (75) TFC quench < tmax_croco (itv 143 f_copperA_m2) </UL>
+       !+ad_varc  <LI> (75) TFC current/copper area < Maximum (itv 143 f_copperA_m2) </UL>
        'TFC current/copper area < Max    '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
