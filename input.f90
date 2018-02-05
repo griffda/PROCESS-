@@ -1062,7 +1062,7 @@ contains
           call parse_real_variable('cboot', cboot, 0.0D0, 10.0D0, &
                'Bootstrap current fraction multiplier')
        case ('enbeam')
-          call parse_real_variable('enbeam', enbeam, 1.0D0, 20.0D3, &
+          call parse_real_variable('enbeam', enbeam, 1.0D0, 1.0D6, &
                'Neutral beam energy (keV)')
        case ('etalh')
           call parse_real_variable('etalh', etalh, 0.0D0, 1.0D0, &
