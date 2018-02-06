@@ -1693,6 +1693,11 @@ module pfcoil_variables
   !+ad_vars  alstroh /4.0D8/ : allowable hoop stress in Central Solenoid structural material (Pa)
   real(kind(1.0D0)) :: alstroh = 4.0D8
 
+  !+ad_vars  i_cs_stress /0/ : Switch for CS stress calculation:<UL>
+  !+ad_varc                   <LI> = 0 Hoop stress only;
+  !+ad_varc                   <LI> = 1 Hoop + Axial stress</UL>
+  integer :: i_cs_stress = 0
+
   !+ad_vars  areaoh : central solenoid cross-sectional area (m2)
   real(kind(1.0D0)) :: areaoh = 0.0D0
   !+ad_vars  awpoh : central solenoid conductor+void area (m2)

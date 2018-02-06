@@ -1547,6 +1547,10 @@ contains
           call parse_real_variable('alstroh', alstroh, 1.0D6, 1.0D11, &
                'Allowable hoop stress in Central Solenoid structural material (Pa)')
 
+       case ('i_cs_stress')
+          call parse_int_variable('i_cs_stress', i_cs_stress, 0, 1, &
+               'Switch for CS stress calculation')
+
        case ('dcase')
           call parse_real_variable('dcase', dcase, 1.0D3, 1.0D5, &
                'Density of TF coil case (kg/m3)')
