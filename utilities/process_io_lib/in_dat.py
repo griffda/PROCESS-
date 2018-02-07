@@ -397,7 +397,7 @@ def process_line(data, line_type, line):
 
         data["zref"] = INVariable("zref", empty_zref, "zref", parameter_group,
                                   comment)
-    
+
     # Create a impurity_enrichment variable class using INVariable class if entry
     # doesn't exist
     if "impurity_enrichment" not in data.keys():
@@ -408,7 +408,7 @@ def process_line(data, line_type, line):
         comment = DICT_DESCRIPTIONS["impurity_enrichment"].replace(",", ";").\
             replace(".", ";").replace(":", ";")
 
-        data["impurity_enrichment"] = INVariable("impurity_enrichment", 
+        data["impurity_enrichment"] = INVariable("impurity_enrichment",
             empty_imp, "impurity_enrichment", parameter_group, comment)
 
     # Constraint equations
@@ -681,7 +681,7 @@ def add_parameter(data, parameter_name, parameter_value):
 
     # Check that the parameter is not already in the dictionary
     if parameter_name not in data.keys():
-        
+
         parameter_group = find_parameter_group(parameter_name)
         if 'fimp' in parameter_name:
             comment = DICT_DESCRIPTIONS['fimp']
@@ -693,13 +693,13 @@ def add_parameter(data, parameter_name, parameter_value):
                 print("Warning: Description for {0}".format(parameter_name),
                       "specified in IN.DAT not in dictionary.", file=stderr)
                 comment = ''
-                
+
         param_data = INVariable(parameter_name, parameter_value,
                                 "Parameter", parameter_group, comment)
 
         data[parameter_name] = param_data
 
-        
+
 
     # If it is already in there change the value to the new value
     else:

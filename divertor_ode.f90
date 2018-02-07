@@ -143,7 +143,7 @@ contains
     ! Target temperature input [eV]
     real(kind(1.0D0)), intent(in) :: ttarget
 
-    !+ad_vars  qtargettotal : Power density on target including surface recombination [W/m2]
+    ! qtargettotal : Power density on target including surface recombination [W/m2]
     real(kind(1.0D0)),intent(in) :: qtargettotal
 
     !+ad_vars  qtargetcomplete : Total power density on target [W/m2]

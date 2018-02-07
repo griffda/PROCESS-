@@ -113,7 +113,7 @@ def get_val(varname, in_dat):
 
     """
     if varname in in_dat.data.keys():
-        return in_dat.data[varname].value
+        return in_dat.data[varname].get_value
     else:
         return get_default_value(varname)
 
@@ -324,7 +324,7 @@ def get_step_dicts(a_dat, b_dat, allowed_diffs=None):
                       " not find default value in dictionaries" % var)
                 exit()
 
-            if isinstance(b_dat.data[var].value, float):
+            if isinstance(b_dat.data[var].get_value, float):
                 # if float, the variable is a candidate for stepping
                 if original_val == target_val:
                     # if the values are the same, we don't

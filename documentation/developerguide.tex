@@ -856,7 +856,11 @@ and all test runs are successful!), use the following commands:
   \texttt{git commit -a} \\
   This commits all modified tracked files.
 
-\item An editor window will open; add a line summarising the changes you have made, save and close the window. This will initiate the commit to your \textit{local}\ copy of the repository.
+\item An editor window will open; add a line summarising the changes you have made, save and close the window. (Do not use quotation markes in your message.) This will initiate the commit to your \textit{local}\ copy of the repository.
+
+\item An alternative is to type\\
+\texttt{git commit -a -m 'Type message here'} \\
+This commits all modified tracked files, and adds the message entered between single quotes as shown.  No editor will open.  Do not use any quotation marks inside the message.
 
 \item \texttt{git push} \\
 Copies the changes you have made locally to the version in the central \texttt{GitLab} repository.  This uses a merging process, but if no-one else has changed your branch then the central version will simply become a copy of your local version.
@@ -964,8 +968,8 @@ This ensures that all the code and documentation compiles successfully.
 \item
 Close all open editor windows.  The commit will not work otherwise.
 
-\item   \texttt{git commit -a} \\
-  This commits all modified tracked files.\\
+\item   \texttt{git commit -a -m 'Type your message here'} \\
+  This commits all modified tracked files. (Do not use quotation marks inside your message.)\\
   \\
   Alternatively, you can do this in two steps:\\
   \texttt{git add process.f90 process.tex changedfile1 changedfile2 ...}  \\
