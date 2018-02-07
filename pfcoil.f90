@@ -910,8 +910,11 @@ contains
        areaspf = oh_steel_frac*areaoh
        ! areaspf = forcepf / alstroh
 
-       s_tresca_oh = max(ABS(sig_hoop-sig_axial), ABS(sig_axial-0.0D0), ABS(0.0D0 - sig_hoop))
-       !s_tresca_oh = max(ABS(sig_hoop-0.0D0), ABS(0.0D0-0.0D0), ABS(0.0D0 - sig_hoop))
+       if (i_cs_stress == 1) then
+           s_tresca_oh = max(ABS(sig_hoop-sig_axial), ABS(sig_axial-0.0D0), ABS(0.0D0 - sig_hoop))
+       else
+           s_tresca_oh = max(ABS(sig_hoop-0.0D0), ABS(0.0D0-0.0D0), ABS(0.0D0 - sig_hoop))
+       end if
 
        !  Thickness of hypothetical steel cylinders assumed to encase the CS along
        !  its inside and outside edges; in reality, the steel is distributed

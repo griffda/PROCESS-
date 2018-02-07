@@ -84,6 +84,7 @@ module numerics
   !+ad_hist  09/11/16 HL  Added new constraint 67, it. var. 116
   !+ad_hist  19/01/17 JM  Added new constraint 68, it. var. 117
   !+ad_hist  08/02/17 JM  Added new constraints 69,70, 71, it. var. 118, 119, 120 (Kallenbach)
+  !+ad_hist  11/01/18 KE  Added new constraint eqn 76, Eich formula for nesep
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -98,9 +99,9 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 143
+  integer, parameter :: ipnvars = 144
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 75
+  integer, parameter :: ipeqns = 76
   !+ad_vars  ipnfoms FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 17
 
@@ -342,7 +343,9 @@ module numerics
        !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
        'TFC quench < tmax_croco          ',    &
        !+ad_varc  <LI> (75) TFC current/copper area < Maximum (itv 143 f_copperA_m2) </UL>
-       'TFC current/copper area < Max    '    &
+       'TFC current/copper area < Max    ',    &
+       !+ad_varc  <LI> (76) Eich critical separatrix density </UL>
+       'Eich critical separatrix density '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -648,7 +651,9 @@ module numerics
        !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
        'nesep         ', &
        !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75) </UL>
-       'f_copperA_m2  ' &
+       'f_copperA_m2  ', &
+       !+ad_varc  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]</UL>
+       'fnesep        ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -809,7 +814,8 @@ module numerics
        0.001D0, &  !  140
        0.001D0, &  !  141
        1.00D17, &  !  142
-       0.001D0  &  !  143
+       0.001D0, &  !  143
+       0.001D0 &  !  144
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -957,7 +963,8 @@ module numerics
        2.000D0, &  !  140
        1.000D0, &  !  141
        1.00D20, &  !  142
-       1.000D0  &  !  143
+       1.000D0, &  !  143
+       1.000D0  &  !  144
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

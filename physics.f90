@@ -272,6 +272,13 @@ contains
       nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
     end if
 
+    !issue 558 - critical electron density at separatrix
+    if(any(icc==76))then
+       alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
+       nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
+            * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
+    endif
+    
     ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
     ! ieped : switch for scaling pedestal-top temperature with plasma parameters
     if ((ipedestal == 1).and.(ieped == 1)) teped = t_eped_scaling()
@@ -5755,6 +5762,12 @@ end function t_eped_scaling
         call ovarrf(outfile,'Electron temp. at separatrix (keV)','(tesep)',tesep)
     endif
 
+    ! Issue 558 - addition of constraint 76 to limit the value of nesep, in proportion with the ballooning parameter and Greenwald density
+    if(any(icc==76))then
+       call ovarre(outfile,'Critical ballooning parameter value','(alpha_crit)',alpha_crit)
+       call ovarre(outfile,'Critical electron density at separatrix (/m3)','(nesep_crit)',nesep_crit)
+    endif
+    
     call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
     call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep_out)',fgwsep_out)
     call ovarrf(outfile,'Temperature profile index','(alphat)',alphat)

@@ -72,6 +72,7 @@ subroutine loadxc
   !+ad_hist  27/02/17 JM  Added foh_stress (123)
   !+ad_hist  15/03/17 MDK  Added qtargettotal (124)
   !+ad_hist  17/03/17 MDK  Added impurities fimp(3-14) (125-136)
+  !+ad_hist  12/01/18 KE  Added fnesep (144)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -258,6 +259,7 @@ subroutine loadxc
      case (141) ; xcm(i) = fcqt
      case (142) ; xcm(i) = nesep
      case (143) ; xcm(i) = f_copperA_m2
+     case (144) ; xcm(i) = fnesep
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -371,6 +373,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  19/01/17 JM  Added fpsepbqar (117)
   !+ad_hist  08/02/17 JM  Added fpsep, tesep, ttarget (118, 119, 120)
   !+ad_hist  22/02/17 JM  Added neratio (121)
+  !+ad_hist  12/01/18 KE  Added fnesep (143)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -556,6 +559,7 @@ subroutine convxc(xc,nn)
      case (141) ; fcqt = xc(i)/scale(i)
      case (142) ; nesep = xc(i)/scale(i)
      case (143) ; f_copperA_m2 = xc(i)/scale(i)
+     case (144) ; fnesep = xc(i)/scale(i)
 
      case default
 

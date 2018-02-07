@@ -409,6 +409,10 @@ module physics_variables
   real(kind(1.0D0)) :: neped = 4.0D19
   !+ad_vars  nesep /3.0e19/ : electron density at separatrix [m-3] (ipedestal=1)
   real(kind(1.0D0)) :: nesep = 3.0D19
+  !+ad_vars  alpha_crit : critical ballooning parameter value
+  real(kind(1.0D0)) :: alpha_crit = 0.0D0
+  !+ad_vars  nesep_crit : critical electron density at separatrix [m-3]
+  real(kind(1.0D0)) :: nesep_crit = 0.0D0
   !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal=1)
   real(kind(1.0D0)) :: rhopedn = 1.0D0
   !+ad_vars  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal=1)
@@ -1688,6 +1692,11 @@ module pfcoil_variables
 
   !+ad_vars  alstroh /4.0D8/ : allowable hoop stress in Central Solenoid structural material (Pa)
   real(kind(1.0D0)) :: alstroh = 4.0D8
+
+  !+ad_vars  i_cs_stress /0/ : Switch for CS stress calculation:<UL>
+  !+ad_varc                   <LI> = 0 Hoop stress only;
+  !+ad_varc                   <LI> = 1 Hoop + Axial stress</UL>
+  integer :: i_cs_stress = 0
 
   !+ad_vars  areaoh : central solenoid cross-sectional area (m2)
   real(kind(1.0D0)) :: areaoh = 0.0D0
@@ -3654,6 +3663,7 @@ module constraint_variables
   !+ad_hist  23/06/16 JM  Removed dtmpmx as no longer used anywhere
   !+ad_hist  09/11/16 HL  Added fradwall, maxradwalload, peakfactrad and peakradwalload
   !+ad_hist  19/01/17 JM  Added variables for constraint equation for psepbqar (68)
+  !+ad_hist  12/01/18 KE  Added fnesep f-value for Eich critical separatrix density
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3736,6 +3746,9 @@ module constraint_variables
   !+ad_vars  fnbshinef /1.0/ : f-value for maximum neutral beam shine-through fraction
   !+ad_varc                    (constraint equation 59, iteration variable 105)
   real(kind(1.0D0)) :: fnbshinef = 1.0D0
+  !+ad_vars  fnesep /1.0/ : f-value for Eich critical separatrix density
+  !+ad_varc                    (constraint equation 76, iteration variable 144)
+  real(kind(1.0D0)) :: fnesep = 1.0D0
   !+ad_vars  foh_stress /1.0/ : f-value for Tresca stress in OH coil
   !+ad_varc                    (constraint equation 72, iteration variable 123)
   real(kind(1.0D0)) :: foh_stress = 1.0D0

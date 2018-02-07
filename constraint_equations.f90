@@ -178,6 +178,7 @@ contains
     integer :: i,i1,i2
     real(kind(1.0D0)) :: cratmx,pdenom,pnumerator,pradmaxpv, &
          pscaling,rcw,totmva
+    real(kind(1.0D0)) :: pdivt_Watts
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1619,7 +1620,7 @@ contains
              err(i) = croco_quench_temperature * cc(i)
              symbol(i) = '<'
              units(i) = 'K'
-           end if
+          end if
 
        case (75)  ! ensure that TF coil current / copper area < Maximum value
            ! ONLY used for croco HTS coil
@@ -1638,6 +1639,20 @@ contains
              units(i) = 'A/m2'
            end if
 
+       case (76)  ! Eich critical separatrix density model
+          ! Added for issue 558 with ref to http://iopscience.iop.org/article/10.1088/1741-4326/aaa340/pdf
+           !alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
+           !pdivt_Watts = pdivt * 1.0D6
+           !nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
+                !* (pdivt_Watts ** (-11.0D0/70.0D0)) * dlimit(7)
+           cc(i) = 1.0D0 - fnesep * nesep_crit/nesep
+           if (present(con)) then
+             con(i) = nesep
+             err(i) = nesep * cc(i)
+             symbol(i) = '<'
+             units(i) = 'm-3'
+           end if
+          
        case default
 
           idiags(1) = icc(i)

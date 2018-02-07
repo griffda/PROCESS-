@@ -282,8 +282,14 @@ def process_fimp(data, line):
     :return: nothing
     """
 
-    fimp_index = int(line.split("(")[1].split(")")[0]) - 1
-    fimp_value = eval(line.split("=")[-1].replace(",", ""))
+    if "*" in line:
+        fimp_comment = line.split("*")[1]
+        line_commentless = line.split("*")[0]
+    else:
+        line_commentless = line
+
+    fimp_index = int(line_commentless.split("(")[1].split(")")[0]) - 1
+    fimp_value = eval(line_commentless.split("=")[-1].replace(",", ""))
     data["fimp"].value[fimp_index] = fimp_value
 
 
@@ -295,8 +301,13 @@ def process_zref(data, line):
     :return: nothing
     """
 
-    zref_index = int(line.split("(")[1].split(")")[0]) - 1
-    zref_value = eval(line.split("=")[-1].replace(",", ""))
+    if "*" in line:
+        zref_comment = line.split("*")[1]
+        line_commentless = line.split("*")[0]
+    else:
+        line_commentless = line
+    zref_index = int(line_commentless.split("(")[1].split(")")[0]) - 1
+    zref_value = eval(line_commentless.split("=")[-1].replace(",", ""))
     data["zref"].value[zref_index] = zref_value
 
 
@@ -308,8 +319,13 @@ def process_enrichment(data, line):
     :return: nothing
     """
 
-    imp_rich_index = int(line.split("(")[1].split(")")[0]) - 1
-    imp_rich_value = eval(line.split("=")[-1].replace(",", ""))
+    if "*" in line:
+        imp_rich_comment = line.split("*")[1]
+        line_commentless = line.split("*")[0]
+    else:
+        line_commentless = line
+    imp_rich_index = int(line_commentless.split("(")[1].split(")")[0]) - 1
+    imp_rich_value = eval(line_commentless.split("=")[-1].replace(",", ""))
     data["impurity_enrichment"].value[imp_rich_index] = imp_rich_value
 
 

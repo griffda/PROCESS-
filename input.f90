@@ -350,6 +350,7 @@ contains
     !+ad_hist  03/02/17 JM  Added psepbqarmax as input
     !+ad_hist  08/02/17 JM  Added Kallenbach inputs
     !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
+    !+ad_hist  12/01/18 KE  Added fnesep f-value for Eich crit. separatrix density
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -574,6 +575,9 @@ contains
        case ('fkzohm')
           call parse_real_variable('fkzohm', fkzohm, 0.5D0, 2.0D0, &
                'Zohm elongation scaling multiplier')
+       case ('fnesep')
+          call parse_real_variable('fnesep', fnesep, 0.1D0, 2.0D1, &
+               'Eich critical separatrix density')
        case ('fradmin')
           write(outfile,*) ' '
           write(outfile,*) '**********'
@@ -1058,7 +1062,7 @@ contains
           call parse_real_variable('cboot', cboot, 0.0D0, 10.0D0, &
                'Bootstrap current fraction multiplier')
        case ('enbeam')
-          call parse_real_variable('enbeam', enbeam, 1.0D0, 20.0D3, &
+          call parse_real_variable('enbeam', enbeam, 1.0D0, 1.0D6, &
                'Neutral beam energy (keV)')
        case ('etalh')
           call parse_real_variable('etalh', etalh, 0.0D0, 1.0D0, &
@@ -1542,6 +1546,10 @@ contains
        case ('alstroh')
           call parse_real_variable('alstroh', alstroh, 1.0D6, 1.0D11, &
                'Allowable hoop stress in Central Solenoid structural material (Pa)')
+
+       case ('i_cs_stress')
+          call parse_int_variable('i_cs_stress', i_cs_stress, 0, 1, &
+               'Switch for CS stress calculation')
 
        case ('dcase')
           call parse_real_variable('dcase', dcase, 1.0D3, 1.0D5, &
