@@ -2161,9 +2161,6 @@ contains
        case ('ipowerflow')
           call parse_int_variable('ipowerflow', ipowerflow, 0, 1, &
                'Switch for power flow model')
-       !case ('iprimdiv')
-       !   call parse_int_variable('iprimdiv', iprimdiv, 0, 1, &
-       !        'Switch for divertor thermal power destiny')
        case ('iprimnloss')
           call parse_int_variable('iprimnloss', iprimnloss, 0, 1, &
                'Switch for lost neutron power destiny')
