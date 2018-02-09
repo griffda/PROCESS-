@@ -1723,7 +1723,7 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: curpff = 0.0D0
   !+ad_vars  curpfs(ngc2) : work array
   real(kind(1.0D0)), dimension(ngc2) :: curpfs = 0.0D0
-  !+ad_vars  etapsu : Efficiency of ohmic heating
+  !+ad_vars  etapsu /0.9/ : Efficiency of ohmic heating
   real(kind(1.0D0)) :: etapsu = 0.9D0
   !+ad_vars  fcohbof : ratio of central solenoid overall current density at
   !+ad_varc            beginning of flat-top / end of flat-top
