@@ -2433,6 +2433,7 @@ contains
     real(kind(1.0D0)), intent(out) :: objf
     real(kind(1.0D0)), intent(in) :: tol
     real(kind(1.0D0)), dimension(n), intent(inout) :: x
+    real(kind(1.0D0)), dimension(n) :: best_solution_vector
     real(kind(1.0D0)), dimension(n), intent(in) :: bndl,bndu
     real(kind(1.0D0)), dimension(n), intent(out) :: fgrd
     real(kind(1.0D0)), dimension(m), intent(out) :: conf
@@ -2452,6 +2453,7 @@ contains
 
     real(kind(1.0D0)) :: alpha,aux,auxa,calpha,dbd,dflsa,dg, &
          fls,flsa,spgdel,sum,temp,thcomp,theta
+    real(kind(1.0D0)) :: best_sum_so_far = 999d0
     real(kind(1.0D0)) :: summ, sqsumsq, sqsumsq_tol
     real(kind(1.0D0)) :: lowest_valid_fom
     real(kind(1.0D0)), parameter :: zero = 0.0D0
@@ -2548,10 +2550,6 @@ contains
     !  Setup line overwrite for VMCON iterations output
     open(unit=iotty)
     write(*,*) ""
-    !write(*,*) repeat("*", 110)
-    !write(*,*) ""
-    !write(*,*) "  VMCON Iterations"
-    !write(*,*) ""
 
     !  Start the iteration by calling the quadratic programming
     !  subroutine
@@ -2579,7 +2577,11 @@ contains
        !  The following return is made if the quadratic problem solver
        !  failed to find a feasible point, if an artificial bound was
        !  active, or if a singular matrix was detected
-       if ((info == 5).or.(info == 6)) return
+       if ((info == 5).or.(info == 6)) then
+           ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+           x = best_solution_vector
+           return
+       end if
 
        !  Initialize the line search iteration counter
        nls = 0
@@ -2673,27 +2675,12 @@ contains
        end do
        sqsumsq = sqrt(summ)
 
-       ! Move this block
        !  Output to terminal number of VMCON iterations
        iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
-    !    write(iotty, '("==>", I5, "  vmcon iterations", "   min [", a20, "] max. ", &
-    !      & "Normalised FoM =", f9.4, "  sqsumsq =", 1pe8.1, "  sum =", 1pe8.1, a1)', &
-    !      ADVANCE="NO"), niter+1, adjustl(iteration_progress), max(objf, -objf), sqsumsq, sum, achar(13)
 
        write(iotty, '("==>", I5, "  vmcon iterations. Normalised FoM =", &
            &  f8.3, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
            ADVANCE="NO"), niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
-
-    !    if(objf>=0d0)then
-    !        write(iotty, '("==>", I5, "  vmcon iterations", "   min [", a20, "] max. ", &
-    !         & "Normalised FoM =", f9.4, "  sqsumsq =", 1pe8.1, "  sum =", 1pe8.1, a1)', &
-    !          ADVANCE="NO"), niter+1, adjustl(iteration_progress), objf, sqsumsq, sum, achar(13)
-    !     else
-    !          write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations. ", &
-    !          &  "Normalised FoM = ", f9.4, "  sqsumsq =", 1pe8.1, "  sum =", 1pe8.1, a1)', &
-    !            ADVANCE="NO"), niter+1, adjustl(iteration_progress), -objf, sqsumsq, sum, achar(13)
-    !     end if
-        ! End of block
 
        if (verbose == 1) then
           write(*,'(a,es13.5,a,es13.5)') &
@@ -2715,6 +2702,13 @@ contains
              write(*,*) 'Root of sum of squares of residuals < tolerance (sqsumsq_tol)'
           end if
           return
+       end if
+
+       ! The convergence criteria are not yet satisfied.
+       ! Store the best value of the convergence parameter achieved
+       if(sum < best_sum_so_far)then
+           best_sum_so_far = sum
+           best_solution_vector = x
        end if
 
        !  Set sum to the weighted sum of infeasibilities
@@ -2759,7 +2753,9 @@ contains
              dflsa = spgdel - delta(np1)*sum
              if (dflsa >= zero) then
                 !  Error return because uphill search direction was calculated
-                info = 4
+                info = 4                
+                ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+                x = best_solution_vector
                 return
              end if
 
@@ -2803,6 +2799,8 @@ contains
                 call fcnvmc1(n,m,x,objf,conf,info)
                 if (info >= 0) info = 3
                 !  Error return because line search required 10 calls of fcnvmc1
+                ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+                x = best_solution_vector
                 return
              end if
 
@@ -2831,6 +2829,8 @@ contains
              end do
              !  Error return because there have been maxfev calls of fcnvmc1
              info = 2
+             ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+             x = best_solution_vector
              return
           end if
 
