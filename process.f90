@@ -802,26 +802,19 @@ subroutine herror(ifail)
      continue
 
   case (2)
-     call ocmmnt(nout, &
-          'The maximum number of calls has been reached without')
-     call ocmmnt(nout,'solution, suggesting that the iteration is not')
-     call ocmmnt(nout,'making good progress.')
+     call ocmmnt(nout,'The maximum number of calls has been reached without solution,')
+     call ocmmnt(nout,'suggesting that the iteration is not making good progress.')
      call ocmmnt(nout,'Try changing the variables in IXC.')
 
-     call ocmmnt(iotty, &
-          'The maximum number of calls has been reached without')
-     call ocmmnt(iotty,'solution, suggesting that the iteration is not')
-     call ocmmnt(iotty,'making good progress.')
+     call ocmmnt(iotty,'The maximum number of calls has been reached without solution,')
+     call ocmmnt(iotty,'suggesting that the iteration is not making good progress.')
      call ocmmnt(iotty,'Try changing the variables in IXC.')
 
   case (3)
-     call ocmmnt(nout, &
-          'The tolerance is too small: No further improvement')
-     call ocmmnt(nout,'in the approximate solution is possible.')
+     call ocmmnt(nout,'The tolerance is too small: No further improvement in the approximate solution is possible.')
      call ocmmnt(nout,'Try raising the value of FTOL.')
 
-     call ocmmnt(iotty, &
-          'The tolerance is too small: No further improvement')
+     call ocmmnt(iotty, 'The tolerance is too small: No further improvement in the approximate solution is possible.')
      call ocmmnt(iotty,'in the approximate solution is possible.')
      call ocmmnt(iotty,'Try raising the value of FTOL.')
 
@@ -832,8 +825,7 @@ subroutine herror(ifail)
      call oblnkl(nout)
      call ocmmnt(nout,'There is either no solution possible, or the code')
      call ocmmnt(nout,'is failing to escape from a deep local minimum.')
-     call ocmmnt(nout,'Try changing the variables in IXC, or')
-     call ocmmnt(nout,'modify their initial values.')
+     call ocmmnt(nout,'Try changing the variables in IXC, or modify their initial values.')
 
      call ocmmnt(iotty,'The iteration is not making good progress.')
      call ocmmnt(iotty,'The code may be stuck in a minimum in the residual')
@@ -841,11 +833,10 @@ subroutine herror(ifail)
      call oblnkl(iotty)
      call ocmmnt(iotty,'There is either no solution possible, or the code')
      call ocmmnt(iotty,'is failing to escape from a deep local minimum.')
-     call ocmmnt(iotty,'Try changing the variables in IXC, or')
-     call ocmmnt(iotty,'modify their initial values.')
+     call ocmmnt(iotty,'Try changing the variables in IXC, or modify their initial values.')
 
   case default
-     call ocmmnt(nout, 'This value of IFAIL should not be possible...')
+     call ocmmnt(nout,'This value of IFAIL should not be possible...')
      call ocmmnt(nout,'See source code for details.')
 
      call ocmmnt(iotty,'This value of IFAIL should not be possible...')
@@ -913,41 +904,28 @@ subroutine verror(ifail)
      continue
 
   case (2)
-     call ocmmnt(nout, &
-          'The maximum number of calls has been reached without')
-     call ocmmnt(nout,'solution, suggesting that the iteration is not')
-     call ocmmnt(nout,'making good progress.')
-     call ocmmnt(nout,'The code may be stuck in a minimum in the residual')
-     call ocmmnt(nout,'space that is significantly above zero.')
+     call ocmmnt(nout,'The maximum number of calls has been reached without solution.')
+     call ocmmnt(nout,'The code may be stuck in a minimum in the residual space that is significantly above zero.')
      call oblnkl(nout)
      call ocmmnt(nout,'There is either no solution possible, or the code')
      call ocmmnt(nout,'is failing to escape from a deep local minimum.')
-     call ocmmnt(nout,'Try changing the variables in IXC, or')
-     call ocmmnt(nout,'modify their initial values.')
+     call ocmmnt(nout,'Try changing the variables in IXC, or modify their initial values.')
 
-     call ocmmnt(iotty, &
-          'The maximum number of calls has been reached without')
-     call ocmmnt(iotty,'solution, suggesting that the iteration is not')
-     call ocmmnt(iotty,'making good progress.')
-     call ocmmnt(iotty,'The code may be stuck in a minimum in the residual')
-     call ocmmnt(iotty,'space that is significantly above zero.')
+     call ocmmnt(iotty,'The maximum number of calls has been reached without solution.')
+     call ocmmnt(iotty,'The code may be stuck in a minimum in the residual space that is significantly above zero.')
+     call oblnkl(nout)
      call oblnkl(iotty)
      call ocmmnt(iotty,'There is either no solution possible, or the code')
      call ocmmnt(iotty,'is failing to escape from a deep local minimum.')
-     call ocmmnt(iotty,'Try changing the variables in IXC, or')
-     call ocmmnt(iotty,'modify their initial values.')
+     call ocmmnt(iotty,'Try changing the variables in IXC, or modify their initial values.')
 
   case (3)
-     call ocmmnt(nout, &
-          'The line search required the maximum of 10 calls.')
-     call ocmmnt(nout, &
-          'A feasible solution may be difficult to achieve.')
+     call ocmmnt(nout,'The line search required the maximum of 10 calls.')
+     call ocmmnt(nout,'A feasible solution may be difficult to achieve.')
      call ocmmnt(nout,'Try changing or adding variables to IXC.')
 
-     call ocmmnt(iotty, &
-          'The line search required the maximum of 10 calls.')
-     call ocmmnt(iotty, &
-          'A feasible solution may be difficult to achieve.')
+     call ocmmnt(iotty,'The line search required the maximum of 10 calls.')
+     call ocmmnt(iotty,'A feasible solution may be difficult to achieve.')
      call ocmmnt(iotty,'Try changing or adding variables to IXC.')
 
   case (4)
@@ -1153,10 +1131,10 @@ subroutine doopt(ifail)
   end if
 
   call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
+  call ovarre(nout,'VMCON convergence parameter','(convergence_parameter)',convergence_parameter, 'OP ')
   call ovarin(nout,'Number of VMCON iterations','(nviter)',nviter, 'OP ')
   call oblnkl(nout)
 
-! MDK Try cleaner code, one line output
   if (ifail == 1) then
      string1 = 'PROCESS has successfully optimised the iteration variables'
   else
@@ -1173,7 +1151,6 @@ subroutine doopt(ifail)
   call upper_case(strfom)
   write(nout,10) trim(string1) // trim(string2),  trim(strfom)
 10 format(a90, t92, a22)
-! MDK end
 
   call oblnkl(nout)
 

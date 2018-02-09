@@ -1208,7 +1208,7 @@ contains
     call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
          lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
          gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
-         liwa,ilower,iupper,bndl,bndu)
+         liwa,ilower,iupper,bndl,bndu,convergence_parameter)
 
     write(*,*) ""
 
@@ -1231,7 +1231,7 @@ contains
        call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
             lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
             gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
-            liwa,ilower,iupper,bndl,bndu)
+            liwa,ilower,iupper,bndl,bndu,convergence_parameter)
     end if
 
     do ii = 1,n

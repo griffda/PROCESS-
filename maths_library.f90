@@ -2290,7 +2290,7 @@ contains
        fcnvmc1,fcnvmc2,mode,n,m,meq,x,objf,fgrd,conf,cnorm,lcnorm, &
        b,lb,tol,maxfev,info,nfev,niter,vlam,glag,vmu,cm,glaga,gamma,eta, &
        xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa,liwa,ilower, &
-       iupper,bndl,bndu)
+       iupper,bndl,bndu, sum)
 
     !+ad_name  vmcon
     !+ad_summ  Calculates the least value of a function of several variables
@@ -2445,6 +2445,7 @@ contains
     real(kind(1.0D0)), dimension(lh,lh), intent(out) :: h
     real(kind(1.0D0)), dimension(lb,lb), intent(inout) :: b
     real(kind(1.0D0)), dimension(*), intent(out) :: vlam,vmu,gm,bdl,bdu
+    real(kind(1.0D0)), intent(out), optional :: sum
 
     !  Local variables
 
@@ -2452,7 +2453,7 @@ contains
     integer :: inx,ki,ml,mlp1,mcon,mp1,mpn,mpnpp1,mpnppn
 
     real(kind(1.0D0)) :: alpha,aux,auxa,calpha,dbd,dflsa,dg, &
-         fls,flsa,spgdel,sum,temp,thcomp,theta
+         fls,flsa,spgdel,temp,thcomp,theta
     real(kind(1.0D0)) :: best_sum_so_far = 999d0
     real(kind(1.0D0)) :: summ, sqsumsq, sqsumsq_tol
     real(kind(1.0D0)) :: lowest_valid_fom
@@ -2580,6 +2581,10 @@ contains
        if ((info == 5).or.(info == 6)) then
            ! Issue #601 Return the best value of the solution vector - not the last value. MDK
            x = best_solution_vector
+           sum = best_sum_so_far
+           write(*,*)
+           write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+20         format(a,1pe10.3)
            return
        end if
 
@@ -2753,9 +2758,12 @@ contains
              dflsa = spgdel - delta(np1)*sum
              if (dflsa >= zero) then
                 !  Error return because uphill search direction was calculated
-                info = 4                
+                info = 4
                 ! Issue #601 Return the best value of the solution vector - not the last value. MDK
                 x = best_solution_vector
+                sum = best_sum_so_far
+                write(*,*)
+                write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
                 return
              end if
 
@@ -2801,6 +2809,9 @@ contains
                 !  Error return because line search required 10 calls of fcnvmc1
                 ! Issue #601 Return the best value of the solution vector - not the last value. MDK
                 x = best_solution_vector
+                sum = best_sum_so_far
+                write(*,*)
+                write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
                 return
              end if
 
@@ -2831,6 +2842,9 @@ contains
              info = 2
              ! Issue #601 Return the best value of the solution vector - not the last value. MDK
              x = best_solution_vector
+             sum = best_sum_so_far
+             write(*,*)
+             write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
              return
           end if
 
