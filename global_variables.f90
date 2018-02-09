@@ -2680,11 +2680,6 @@ module heat_transport_variables
   !+ad_varc              <LI> = 1 contributes to energy generation cycle</UL>
   !+ad_varc              (ipowerflow=0)
   integer :: iprimnloss = 0
-  !+ad_vars  iprimdiv /1/ : switch for divertor thermal power destiny:<UL>
-  !+ad_varc            <LI> = 0 does not contribute to energy generation cycle;
-  !+ad_varc            <LI> = 1 contributes to energy generation cycle</UL>
-  !+ad_varc             (N.B. is forced to be 1 under certain circumstances)
-  !integer :: iprimdiv = 1
 
   ! KEEP
   !+ad_vars  iprimshld /1/ : switch for shield thermal power destiny:<UL>
