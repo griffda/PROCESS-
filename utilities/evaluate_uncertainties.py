@@ -2,7 +2,7 @@
 """
 Code to assess uncertainties in the input parameters in PROCESS
 
-Author: H. Lux (Hanni.Lux@ccfe.ac.uk)
+Author: H. Lux (Hanni.Lux@ukaea.uk)
 
 Input files:
 run_process.conf (config file, in the same directory as this file)
@@ -18,7 +18,7 @@ MFILE.DAT   -  PROCESS output
 process.log - logfile of PROCESS output to stdout
 README.txt  - contains comments from config file
 
-Compatible with PROCESS version 368
+Compatible with PROCESS version 1.0.10
 """
 
 #######################
@@ -81,8 +81,8 @@ if __name__ == '__main__':
 
                 if no_unfeasible <= CONFIG.no_allowed_unfeasible:
                     if no_unfeasible > 0:
-                        print('WARNING: Non feasible point(s) in sweep,\
-         but finished anyway! %i ' % no_unfeasible)
+                        print('WARNING: %i non feasible point(s) in sweep,' % no_unfeasible,
+                              'but finished anyway! Allowed  %i. ' % CONFIG.no_allowed_unfeasible)
                     CONFIG.add_results2netcdf(RUN_ID)
                     RUN_ID += 1
                     break
@@ -94,7 +94,4 @@ if __name__ == '__main__':
 
             vary_iteration_variables(ITERVARS, LBS, UBS)
 
-
-
-
-    CONFIG.write_results()
+    print("UQ finished!")

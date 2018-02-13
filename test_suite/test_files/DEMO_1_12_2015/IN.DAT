@@ -112,7 +112,7 @@ shldoth  = 0.80 * Outboard shield thickness (m)
 shldtth  = 0.30 * Upper/lower shield thickness (m);
 tfcth    = 1.0500e+00 * Inboard tf coil thickness; (centrepost for st) (m)
 vgap2    = 0.061 * Vertical gap between vacuum vessel and tf coil (m)
-vgaptf   = 1.60 * Vertical gap between x-point and divertor (m)
+vgap   = 1.60 * Vertical gap between x-point and divertor (m)
 tftsgap = 0.02
 thshield = 0.05
 vvblgap = 0.02
@@ -176,7 +176,7 @@ runtitle = Michael's test file
 verbose = 1
 *-------------Heat Transport Variables-------------*
 baseel   = 55.0d6 * Base plant electric load (w)
-fauxbop  = 0.032 * Fraction of gross electric power to balance-of-plant
+
 htpmw_min = 0.0 * Minimum total electrical power for primary coolant pumps (mw)
 *------------------Ife Variables-------------------*
 *------------Impurity Radiation Module-------------*
@@ -214,7 +214,7 @@ ngrp     = 4 * Number of groups of pf coils;
 ohhghf   = 0.9 * Central solenoid height / tf coil internal height
 rjconpf  = 1.1d7, 1.1d7, 6.d6, 6.d6, 8.d6, 8.0d6, 8.0d6, 8.0d6, * Average winding pack current density of pf coil i (a/m2)
 rpf2     = -1.825 * Offset (m) of radial position of ipfloc=2 pf coils
-sigpfalw = 300.0 * Allowable stress in pf coils/central solenoid (mpa)
+
 maxpoloidalpower = 250
 fpoloidalpower = 1.00
 tohs = 80 *

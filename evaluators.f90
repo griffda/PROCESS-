@@ -21,7 +21,7 @@ module function_evaluator
   !+ad_call  divertor_variables
   !+ad_call  error_handling
   !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
+
   !+ad_call  numerics
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
@@ -30,17 +30,6 @@ module function_evaluator
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_hist  10/10/12 PJK Initial version of module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  29/10/12 PJK Added pf_power_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  31/10/12 PJK Added cost_variables
-  !+ad_hist  17/12/12 PJK Added times_variables
-  !+ad_hist  19/05/14 PJK Added ife_variables, stellarator_variables
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_hist  28/07/14 PJK Added constraints
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -52,7 +41,7 @@ module function_evaluator
   use divertor_variables
   use error_handling
   use heat_transport_variables
-  use ife_variables
+
   use numerics
   use physics_variables
   use pf_power_variables
@@ -162,7 +151,7 @@ contains
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
     implicit none
 
     !  Arguments
@@ -175,7 +164,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: fbac,ffor,summ,sqsumconfsq
+    real(kind(1.0D0)) :: summ,sqsumconfsq
     logical :: first_call = .true.
     integer :: ii, loop
 
@@ -196,7 +185,7 @@ contains
 
     !  Convergence loop to ensure burn time consistency
 
-    if ((istell /= 1).and.(ife /= 1)) then
+    if (istell /= 1) then
        loop = 0
        do while ( (loop < 10).and. &
             (abs((tburn-tburn0)/max(tburn,0.01D0)) > 0.001D0) )
@@ -204,12 +193,12 @@ contains
           call caller(xv,n)
           if (verbose == 1) then
               write(*, '(a, 2e10.3)') 'Internal tburn consistency check: ',tburn,tburn0
-          end if 
+          end if
        end do
        if (loop >= 10) then
             write(*,*) 'Burn time values are not consistent in iteration: ', nviter
-            write(*,*) 'tburn,tburn0: ',tburn,tburn0            
-       end if       
+            write(*,*) 'tburn,tburn0: ',tburn,tburn0
+       end if
     end if
 
     !  Evaluate figure of merit (objective function)
@@ -413,9 +402,10 @@ contains
     case (4)  !  TF coil + PF coil power
        fc = sgn * (tfcmw + 1.0D-3*srcktpm)/10.0D0
 
-    case (5)  !  fusion power / injection power
-       fc = sgn * powfmw / pinjmw
-       
+   case (5)  !  Q = fusion gain  Issue #540
+       fc = sgn * powfmw / (pinjmw + porbitlossmw + pohmmw)
+       !fc = sgn * powfmw / pinjmw
+
     case (6)  !  cost of electricity
        fc = sgn * coe/100.0D0
 
@@ -439,10 +429,13 @@ contains
        fc = sgn * pinjmw
 
     case (12)  !  hydrogen production capital cost
-       fc = sgn * chplant / 1.0D2
-
+       ! #506 OBSOLETE
+       write(*,*) 'Figure of Merit 13 (Hydrogen production) is no longer supported.'
+       stop
     case (13)  !  hydrogen production rate
-       fc = sgn * hpower / 1.0D2
+       ! #506 OBSOLETE
+       write(*,*) 'Figure of Merit 13 (Hydrogen production) is no longer supported.'
+       stop
 
     case (14)  !  pulse length
        fc = sgn * tburn / 2.0D4
@@ -454,8 +447,8 @@ contains
        fc = sgn * cfactr
 
     case (16)  !  major radius/burn time
-       fc = sgn * ( 0.95d0 * (rmajor/9.0d0) + 0.05d0 * (7200.d0/tburn) )
-       
+       fc = sgn * ( 0.95d0 * (rmajor/9.0d0) - 0.05d0 * (tburn/7200.d0) )
+
     case (17)  !  net electrical output
        fc = sgn * pnetelmw / 500.0d0
 

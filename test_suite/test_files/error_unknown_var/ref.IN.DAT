@@ -188,7 +188,7 @@ BLNKOTH = 1.275,
 SHLDOTH = 0.80,
 GAPOMIN = 0.20,
 *TFOOTFI = 1.20,
-VGAPTF  = 1.60,
+vgap  = 1.60,
 *BLNKTTH = 0.775
 SHLDTTH = 0.30,
 VGAP2   = 0.12,
@@ -309,7 +309,7 @@ $END
 
 $HTPWR
 ipowerflow=0
-FAUXBOP = 0.032
+
 ETATH = 0.375
 FFWLG = 0.01
 *iprimhtp = 1

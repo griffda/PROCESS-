@@ -27,14 +27,14 @@ module build_module
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  rfp_variables
+
   !+ad_call  tfcoil_variables
   !+ad_hist  30/10/12 PJK Initial version of module
-  !+ad_hist  05/11/12 PJK Added rfp_variables
+
   !+ad_hist  09/05/13 PJK Added dshellarea, eshellarea
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  19/08/14 PJK Added pfcoil_variables
-  !+ad_hist  23/04/15 MDK Removed fhole  
+  !+ad_hist  23/04/15 MDK Removed fhole
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -51,7 +51,7 @@ module build_module
   use pfcoil_variables
   use physics_variables
   use process_output
-  use rfp_variables
+
   use tfcoil_variables
 
   implicit none
@@ -113,9 +113,10 @@ contains
     !+ad_hist  02/09/14 PJK Modified ripflag handling
     !+ad_hist  20/10/14 PJK Changed OH coil to central solenoid
     !+ad_hist  06/02/15 JM  Added output of beamwd to mfile
-    !+ad_hist  06/03/15 JM  Put an additional call to ripple_amplitude after the change to 
+    !+ad_hist  06/03/15 JM  Put an additional call to ripple_amplitude after the change to
     !+ad_hisc 				rtot (issue #221)
     !+ad_hist  19/11/15 RK  Added pre-compression structure, thermal shield, and TF angular correction
+    !+ad_hist  01/11/16 JM  Added iprecomp switch for pre-compression structure calc. If 0 precomp=0
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -130,7 +131,7 @@ contains
     !  Local variables
 
 
-    real(kind(1.0D0)) :: a1,a2,hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild, rbldtotf, deltf, precomp, vbuild1
+    real(kind(1.0D0)) :: hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild, rbldtotf, deltf, vbuild1
     real(kind(1.0D0)) :: fwtth
 
     integer :: ripflag = 0
@@ -148,21 +149,28 @@ contains
     !  Top/bottom blanket thickness
 
     blnktth = 0.5D0*(blnkith+blnkoth)
-    
+
     !  Check if vgaptop has been set too small
-    
+
     vgaptop = max(0.5d0*(scrapli+scraplo), vgaptop)
-    
-    ! Calculate pre-compression structure thickness
-    
-    precomp = fseppc / (2.0d0 * pi * fcspc * sigallpc * (bore + bore + ohcth))
+
+    ! Calculate pre-compression structure thickness is iprecomp=1
+    if (iprecomp == 1) then
+      precomp = fseppc / (2.0d0 * pi * fcspc * sigallpc * (bore + bore + ohcth))
+    else
+      precomp = 0.0D0
+    end if
+
+    ! Issue #514 Radial dimensions of inboard leg
+    ! Calculate tfcth if thkwp is an iteration variable (140)
+    if (any(ixc(1:nvar) == 140) ) then
+        tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
+    endif
 
     ! Radial build to tfcoil
-    
     rbldtotf = bore + ohcth + precomp + gapoh + tfcth
-    
+
     ! Additional gap spacing due to flat surfaces of TF:
-    
     deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 
     !  Radial build to centre of plasma (should be equal to rmajor)
@@ -179,7 +187,6 @@ contains
     rsldo = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
 
     !  Thickness of outboard TF coil legs
-
     if (itfsup == 0) then
        tfthko = tfootfi*tfcth
     else
@@ -187,12 +194,8 @@ contains
     end if
 
     !  Radius to centre of outboard TF coil legs
-
     rtot = rsldo + vvblgap + ddwi + gapomin + thshield + tftsgap + 0.5D0*tfthko
 
-    !  Check ripple
-
-    !call rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
     call ripple_amplitude(ripple,ripmax,rtot,rtotl,ripflag)
 
     !  If the ripple is too large then move the outboard TF coil leg
@@ -202,7 +205,7 @@ contains
     else
        gapsto = gapomin
     end if
-    
+
     !  Call ripple calculation again with new rtot/gapsto value
     !  call rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
     call ripple_amplitude(ripple,ripmax,rtot,rtotl,ripflag)
@@ -289,7 +292,8 @@ contains
           fdiags(1) = wwp1*tfno/rmajor
           call report_error(141)
        else if (ripflag == 2) then
-          idiags(1) = tfno
+          ! Convert to integer as idiags is integer array
+          idiags(1) = INT(tfno)
           call report_error(142)
        else
           fdiags(1) = (rmajor+rminor)/rtot
@@ -326,7 +330,7 @@ contains
        radius = radius + ohcth
        call obuild(outfile,'Central solenoid',ohcth,radius,'(ohcth)')
        call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
-       
+
        radius = radius + precomp
        call obuild(outfile,'CS precompression',precomp,radius,'(precomp)')
        call ovarre(mfile,'CS precompression (m)','(precomp)',precomp)
@@ -338,26 +342,26 @@ contains
        radius = radius + tfcth
        call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
        call ovarre(mfile,'TF coil inboard leg (m)','(tfcth)',tfcth)
-       
+
        radius = radius + deltf
        call obuild(outfile,'Gap',deltf,radius,'(deltf)')
        call ovarre(mfile,'TF coil inboard leg gap (m)','(deltf)',deltf)
 
     end if
-    
+
     radius = radius + thshield
     call obuild(outfile,'Thermal shield',thshield,radius,'(thshield)')
     call ovarre(mfile,'Thermal shield (m)','(thshield)',thshield)
 
     radius = radius + gapds
     call obuild(outfile,'Gap',gapds,radius,'(gapds)')
-    call ovarre(mfile,'TF to vessel radial gap (m)','(gapds)',gapds)
+    call ovarre(mfile,'thermal shield to vessel radial gap (m)','(gapds)',gapds)
 
     radius = radius + ddwi + shldith
     call obuild(outfile,'Vacuum vessel (and shielding)',ddwi + shldith,radius,'(ddwi + shldith)')
     call ovarre(mfile,'Vacuum vessel radial thickness (m)','(ddwi)',ddwi)
     call ovarre(mfile,'Inner radiation shield radial thickness (m)','(shldith)',shldith)
-    
+
     radius = radius + vvblgap
     call obuild(outfile,'Gap',vvblgap,radius,'(vvblgap)')
     call ovarre(mfile,'Gap (m)','(vvblgap)',vvblgap)
@@ -391,7 +395,7 @@ contains
     radius = radius + blnkoth
     call obuild(outfile,'Outboard blanket',blnkoth,radius,'(blnkoth)')
     call ovarre(mfile,'Outboard blanket radial thickness (m)','(blnkoth)',blnkoth)
-    
+
     radius = radius + vvblgap
     call obuild(outfile,'Gap',vvblgap,radius,'(vvblgap)')
 
@@ -405,7 +409,7 @@ contains
 
     radius = radius + thshield
     call obuild(outfile,'Thermal shield',thshield,radius,'(thshield)')
-    
+
     radius = radius + tftsgap
     call obuild(outfile,'Gap',tftsgap,radius,'(tftsgap)')
     call ovarre(mfile,'Gap (m)','(tftsgap)',tftsgap)
@@ -456,7 +460,7 @@ contains
 
        vbuild = vbuild + tfcth
        call obuild(outfile,'TF coil',tfcth,vbuild)
-       
+
        ! end of Double null case
     else
        call ocmmnt(outfile,'Single null case')
@@ -464,16 +468,16 @@ contains
 
        vbuild = tfcth + tftsgap + thshield + vgap2 + ddwi + vvblgap + shldtth + blnktth + &
             0.5D0*(fwith+fwoth) + vgaptop + rminor*kappa
-	    
+
        ! To calculate vertical offset between TF coil centre and plasma centre
        vbuild1 = vbuild
-       
+
        call obuild(outfile,'TF coil',tfcth,vbuild,'(tfcth)')
        vbuild = vbuild - tfcth
-       
+
        call obuild(outfile,'Gap',tftsgap,vbuild,'(tftsgap)')
        vbuild = vbuild - tftsgap
-       
+
        call obuild(outfile,'Thermal shield',thshield,vbuild,'(thshield)')
        vbuild = vbuild - thshield
 
@@ -484,14 +488,14 @@ contains
        call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldtth,vbuild,'(ddwi+shldtth)')
        vbuild = vbuild - ddwi - shldtth
        call ovarre(mfile,'Top radiation shield thickness (m)','(shldtth)',shldtth)
-       
+
        call obuild(outfile,'Gap',vvblgap,vbuild,'(vvblgap)')
        vbuild = vbuild - vvblgap
 
        call obuild(outfile,'Top blanket',blnktth,vbuild,'(blnktth)')
        call ovarre(mfile,'Top blanket vertical thickness (m)','(blnktth)',blnktth)
        vbuild = vbuild - blnktth
-       
+
        fwtth = 0.5D0*(fwith+fwoth)
        call obuild(outfile,'Top first wall',fwtth,vbuild,'(fwtth)')
        call ovarre(mfile,'Top first wall vertical thickness (m)', 'fwtth',fwtth)
@@ -526,7 +530,7 @@ contains
 
        vbuild = vbuild - vgap2
        call obuild(nout,'Gap',vgap2,vbuild,'(vgap2)')
-       
+
        call obuild(outfile,'Thermal shield',thshield,vbuild,'(thshield)')
        vbuild = vbuild - thshield
 
@@ -535,11 +539,11 @@ contains
 
        vbuild = vbuild - tfcth
        call obuild(nout,'TF coil',tfcth,vbuild,'(tfcth)')
-       
+
        ! To calculate vertical offset between TF coil centre and plasma centre
        tfoffset = (vbuild1 + vbuild) / 2.0d0
-       
-       ! end of Single null case	
+
+       ! end of Single null case
     end if
 
     !  Other build quantities
@@ -593,23 +597,15 @@ contains
     !  Calculate the divertor geometry
 
     call divgeom(divht, outfile, iprint)
-
-    if (vgaptf == 0.0D0) then
+    ! Issue #481 Remove vgaptf
+    if (vgap < 0.00001D0) then
        vgap = divht
-    else
-       vgap = vgaptf
     end if
+    ! If vgap /= 0 use the value set by the user.
 
     !  Height to inside edge of TF coil
 
-    if (irfp == 0) then
-       hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
-    else
-       !  RFP: TF coil is assumed circular
-       hmax = 0.5D0 * &
-            (gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor &
-            +rminor+scraplo+fwoth+blnkoth+shldoth+ddwi+gapsto)
-    end if
+    hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
 
     !  Vertical locations of divertor coils
 
@@ -648,6 +644,8 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  17/10/12 PJK Added divertor_variables
     !+ad_hist  01/12/15 RK  Added new geometry and output
+    !+ad_hist  26/05/16 RK  Fixed new geometry
+    !+ad_hist  02/02/17 JM  Replaces rstrko global variable with rspo
     !+ad_stat  Okay
     !+ad_docs  TART option: Peng SOFT paper
     !
@@ -663,14 +661,15 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: soleno = 0.2D0  !  length along outboard divertor
+    !real(kind(1.0D0)), parameter :: soleno = 0.2D0  !  length along outboard divertor
     !  plate that scrapeoff hits
-    real(kind(1.0D0)) :: kap,tri,xpointo,rprimeo,phio,thetao
-    real(kind(1.0D0)) :: yspointo,xspointo,yprimeb
-    real(kind(1.0d0)) :: triu, tril, denomo, alphad, rxpt, zxpt
-    real(kind(1.0d0)) :: rspi, zspi, rspo, zspo, rplti, zplti
+    real(kind(1.0D0)) :: kap,thetao, rci, rco, thetai
+    ! real(kind(1.0D0)) :: yspointo,xspointo,yprimeb,xpointo, tri, rprimeo, phio
+    ! real(kind(1.0D0)) :: denomo, alphad
+    real(kind(1.0d0)) :: triu, tril, rxpt, zxpt
+    real(kind(1.0d0)) :: rspi, zspi, zspo, rplti, zplti
     real(kind(1.0d0)) :: rplbi, zplbi, rplto, zplto, rplbo, zplbo
-    real(kind(1.0d0)) :: rpltop, zpltop, rgeocent, zgeocent, ptop_radial,ptop_vertical
+    real(kind(1.0d0)) :: ptop_radial,ptop_vertical
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -687,9 +686,9 @@ contains
     kap = kappa
     triu = triang
     tril = triang
-    
+
     !! Old method: assumes that divertor arms are continuations of arcs
-    ! 
+    !
     !!  Outboard side
     !!  plsepo = poloidal length along the separatrix from null to
     !!           strike point on outboard [default 1.5 m]
@@ -701,7 +700,7 @@ contains
     !phio = asin(kap*rminor/rprimeo)
     !thetao = plsepo/rprimeo
     !
-    !!  Initial strike point 
+    !!  Initial strike point
     !
     !yspointo = rprimeo * sin(thetao + phio)
     !xspointo = xpointo - rprimeo * cos(thetao + phio)
@@ -719,142 +718,174 @@ contains
     !
     !divht = yprimeb + yspointo - kap*rminor
 
-    ! New method, assuming straight legs
-    
+    ! New method, assuming straight legs -- superceded by new method 26/5/2016
+    ! Assumed 90 degrees at X-pt -- wrong!
+    !
     !  Find half-angle of outboard arc
+    !denomo = (tril**2 + kap**2 - 1.0D0)/( 2.0D0*(1.0D0+tril) ) - tril
+    !thetao = atan(kap/denomo)
+    !!  Angle between horizontal and inner divertor leg
+    !alphad = (pi/2.0d0) - thetao
 
-    denomo = (tril**2 + kap**2 - 1.0D0)/( 2.0D0*(1.0D0+tril) ) - tril
-    thetao = atan(kap/denomo)
-    !  Angle between horizontal and inner divertor leg
-    alphad = (pi/2.0d0) - thetao
-    
+    ! Method 26/05/2016
+    ! Find radius of inner and outer plasma arcs
+
+    rco = 0.5*sqrt((rminor**2 * ((tril+1.0d0)**2 + kap**2)**2)/((tril + 1.0d0)**2))
+    rci = 0.5*sqrt((rminor**2 * ((tril-1.0d0)**2 + kap**2)**2)/((tril - 1.0d0)**2))
+
+    ! Find angles between vertical and legs
+    ! Inboard arc angle = outboard leg angle
+
+    thetao = asin(1.0d0 - (rminor*(1.0d0 - tril))/rci)
+
+    ! Outboard arc angle = inboard leg angle
+
+    thetai = asin(1.0d0 - (rminor*(1.0d0 + tril))/rco)
+
     !  Position of lower x-pt
     rxpt = rmajor - tril*rminor
     zxpt = -1.0d0 * kap * rminor
-    
+
     ! Position of inner strike point
-    rspi = rxpt - plsepi*cos(alphad)
-    zspi = zxpt - plsepi*sin(alphad)
-    
+    !rspi = rxpt - plsepi*cos(alphad)
+    !zspi = zxpt - plsepi*sin(alphad)
+    rspi = rxpt - plsepi*cos(thetai)
+    zspi = zxpt - plsepi*sin(thetai)
+
     ! Position of outer strike point
-    rspo = rxpt + plsepo*cos((pi/2.0d0)-alphad)
-    zspo = zxpt - plsepo*sin((pi/2.0d0)-alphad)
-    
+    !rspo = rxpt + plsepo*cos((pi/2.0d0)-alphad)
+    !zspo = zxpt - plsepo*sin((pi/2.0d0)-alphad)
+    rspo = rxpt + plsepo*cos(thetao)
+    zspo = zxpt - plsepo*sin(thetao)
+
     ! Position of inner plate ends
-    rplti = rspi - (plleni/2.0d0)*sin(betai + alphad - pi/2.0d0)
-    zplti = zspi + (plleni/2.0d0)*cos(betai + alphad - pi/2.0d0)
-    rplbi = rspi + (plleni/2.0d0)*sin(betai + alphad - pi/2.0d0)
-    zplbi = zspi - (plleni/2.0d0)*cos(betai + alphad - pi/2.0d0)
-    
+    !rplti = rspi - (plleni/2.0d0)*sin(betai + alphad - pi/2.0d0)
+    !zplti = zspi + (plleni/2.0d0)*cos(betai + alphad - pi/2.0d0)
+    !rplbi = rspi + (plleni/2.0d0)*sin(betai + alphad - pi/2.0d0)
+    !zplbi = zspi - (plleni/2.0d0)*cos(betai + alphad - pi/2.0d0)
+    rplti = rspi + (plleni/2.0d0)*cos(thetai + betai)
+    zplti = zspi + (plleni/2.0d0)*sin(thetai + betai)
+    rplbi = rspi - (plleni/2.0d0)*cos(thetai + betai)
+    zplbi = zspi - (plleni/2.0d0)*sin(thetai + betai)
+
     ! Position of outer plate ends
-    rplto = rspo + (plleno/2.0d0)*sin(betao - alphad)
-    zplto = zspo + (plleno/2.0d0)*cos(betao - alphad)
-    rplbo = rspo - (plleno/2.0d0)*sin(betao - alphad)
-    zplbo = zspo - (plleno/2.0d0)*cos(betao - alphad)
-    
+    !rplto = rspo + (plleno/2.0d0)*sin(betao - alphad)
+    !zplto = zspo + (plleno/2.0d0)*cos(betao - alphad)
+    !rplbo = rspo - (plleno/2.0d0)*sin(betao - alphad)
+    !zplbo = zspo - (plleno/2.0d0)*cos(betao - alphad)
+    rplto = rspo - (plleno/2.0d0)*cos(thetao + betao)
+    zplto = zspo + (plleno/2.0d0)*sin(thetao + betao)
+    rplbo = rspo + (plleno/2.0d0)*cos(thetao + betao)
+    zplbo = zspo - (plleno/2.0d0)*sin(thetao + betao)
+
     divht = max(zplti, zplto) - min(zplbo, zplbi)
-    
-    if (iprint == 1) then
-    
-     call oheadr(outfile, 'Divertor build and plasma position')
-     ptop_radial = rmajor - triu*rminor
-     ptop_vertical = kap*rminor
-     call ovarrf(outfile, 'Plasma top position, radial (m)', '(ptop_radial)', ptop_radial, 'OP ')
-     call ovarrf(outfile, 'Plasma top position, vertical (m)', '(ptop_vertical)', ptop_vertical, 'OP ')
-     call ovarrf(outfile, 'Plasma geometric centre, radial (m)', '(rmajor)', rmajor, 'OP ')
-     call ovarrf(outfile, 'Plasma geometric centre, vertical (m)', '(0.0)', 0.0d0, 'OP ')
-     call ovarrf(outfile, 'TF coil vertical offset (m)', '(tfoffset)', tfoffset, 'OP ')
-     call ovarrf(outfile, 'Plasma lower X-pt, radial (m)', '(rxpt)', rxpt, 'OP ')
-     call ovarrf(outfile, 'Plasma lower X-pt, vertical (m)', '(zxpt)', zxpt, 'OP ')
-     call ovarrf(outfile, 'Poloidal plane angle between horizontal and inner leg (rad)', '(alphad)', alphad, 'OP ')
-     call ovarrf(outfile, 'Poloidal plane angle between inner leg and plate (rad)', '(betai)', betai)
-     call ovarrf(outfile, 'Poloidal plane angle between outer leg and plate (rad)', '(betao)', betao)
-     call ovarrf(outfile, 'Inner divertor leg poloidal length (m)', '(plsepi)', plsepi)
-     call ovarrf(outfile, 'Outer divertor leg poloidal length (m)', '(plsepo)', plsepo)
-     call ovarrf(outfile, 'Inner divertor plate length (m)', '(plleni)', plleni)
-     call ovarrf(outfile, 'Outer divertor plate length (m)', '(plleno)', plleno)
-     call ovarrf(outfile, 'Inner strike point, radial (m)', '(rspi)', rspi, 'OP ')
-     call ovarrf(outfile, 'Inner strike point, vertical (m)', '(zspi)', zspi, 'OP ')
-     call ovarrf(outfile, 'Inner plate top, radial (m)', '(rplti)', rplti, 'OP ')
-     call ovarrf(outfile, 'Inner plate top, vertical (m)', '(zplti)', zplti, 'OP ')
-     call ovarrf(outfile, 'Inner plate bottom, radial (m)', '(rplbi)', rplbi, 'OP ')
-     call ovarrf(outfile, 'Inner plate bottom, vertical (m)', '(zplbi)', zplbi, 'OP ')
-     call ovarrf(outfile, 'Outer strike point, radial (m)', '(rspo)', rspo, 'OP ')
-     call ovarrf(outfile, 'Outer strike point, vertical (m)', '(zspo)', zspo, 'OP ')
-     call ovarrf(outfile, 'Outer plate top, radial (m)', '(rplto)', rplto, 'OP ')
-     call ovarrf(outfile, 'Outer plate top, vertical (m)', '(zplto)', zplto, 'OP ')
-     call ovarrf(outfile, 'Outer plate bottom, radial (m)', '(rplbo)', rplbo, 'OP ')
-     call ovarrf(outfile, 'Outer plate bottom, vertical (m)', '(zplbo)', zplbo, 'OP ')
-     call ovarrf(outfile, 'Calculated maximum divertor height (m)', '(divht)', divht, 'OP ')
-    
-    end if
-    
+
+    ! if (iprint == 1) then
+    !
+    !  call oheadr(outfile, 'Divertor build and plasma position')
+    !  ptop_radial = rmajor - triu*rminor
+    !  ptop_vertical = kap*rminor
+    !  call ovarrf(outfile, 'Plasma top position, radial (m)', '(ptop_radial)', ptop_radial, 'OP ')
+    !  call ovarrf(outfile, 'Plasma top position, vertical (m)', '(ptop_vertical)', ptop_vertical, 'OP ')
+    !  call ovarrf(outfile, 'Plasma geometric centre, radial (m)', '(rmajor.)', rmajor, 'OP ')
+    !  call ovarrf(outfile, 'Plasma geometric centre, vertical (m)', '(0.0)', 0.0d0, 'OP ')
+    !  call ovarrf(outfile, 'Plasma lower triangularity', '(tril)', tril, 'OP ')
+    !  call ovarrf(outfile, 'Plasma elongation', '(kappa.)', kap, 'OP ')
+    !  call ovarrf(outfile, 'TF coil vertical offset (m)', '(tfoffset)', tfoffset, 'OP ')
+    !  call ovarrf(outfile, 'Plasma outer arc radius of curvature (m)', '(rco)', rco, 'OP ')
+    !  call ovarrf(outfile, 'Plasma inner arc radius of curvature (m)', '(rci)', rci, 'OP ')
+    !  call ovarrf(outfile, 'Plasma lower X-pt, radial (m)', '(rxpt)', rxpt, 'OP ')
+    !  call ovarrf(outfile, 'Plasma lower X-pt, vertical (m)', '(zxpt)', zxpt, 'OP ')
+    !  call ovarrf(outfile, 'Poloidal plane angle between vertical and inner leg (rad)', '(thetai)', thetai, 'OP ')
+    !  call ovarrf(outfile, 'Poloidal plane angle between vertical and outer leg (rad)', '(thetao)', thetao, 'OP ')
+    !  call ovarrf(outfile, 'Poloidal plane angle between inner leg and plate (rad)', '(betai)', betai)
+    !  call ovarrf(outfile, 'Poloidal plane angle between outer leg and plate (rad)', '(betao)', betao)
+    !  call ovarrf(outfile, 'Inner divertor leg poloidal length (m)', '(plsepi)', plsepi)
+    !  call ovarrf(outfile, 'Outer divertor leg poloidal length (m)', '(plsepo)', plsepo)
+    !  call ovarrf(outfile, 'Inner divertor plate length (m)', '(plleni)', plleni)
+    !  call ovarrf(outfile, 'Outer divertor plate length (m)', '(plleno)', plleno)
+    !  call ovarrf(outfile, 'Inner strike point, radial (m)', '(rspi)', rspi, 'OP ')
+    !  call ovarrf(outfile, 'Inner strike point, vertical (m)', '(zspi)', zspi, 'OP ')
+    !  call ovarrf(outfile, 'Inner plate top, radial (m)', '(rplti)', rplti, 'OP ')
+    !  call ovarrf(outfile, 'Inner plate top, vertical (m)', '(zplti)', zplti, 'OP ')
+    !  call ovarrf(outfile, 'Inner plate bottom, radial (m)', '(rplbi)', rplbi, 'OP ')
+    !  call ovarrf(outfile, 'Inner plate bottom, vertical (m)', '(zplbi)', zplbi, 'OP ')
+    !  call ovarrf(outfile, 'Outer strike point, radial (m)', '(rspo)', rspo, 'OP ')
+    !  call ovarrf(outfile, 'Outer strike point, vertical (m)', '(zspo)', zspo, 'OP ')
+    !  call ovarrf(outfile, 'Outer plate top, radial (m)', '(rplto)', rplto, 'OP ')
+    !  call ovarrf(outfile, 'Outer plate top, vertical (m)', '(zplto)', zplto, 'OP ')
+    !  call ovarrf(outfile, 'Outer plate bottom, radial (m)', '(rplbo)', rplbo, 'OP ')
+    !  call ovarrf(outfile, 'Outer plate bottom, vertical (m)', '(zplbo)', zplbo, 'OP ')
+    !  call ovarrf(outfile, 'Calculated maximum divertor height (m)', '(divht)', divht, 'OP ')
+    !
+    ! end if
+
   end subroutine divgeom
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
+  ! subroutine rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
 
-    !+ad_name  rippl
-    !+ad_summ  TF ripple calculation
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  ripmax : input real : max ripple at plasma edge (peak to average) (%)
-    !+ad_args  rmajor : input real : plasma major radius (m)
-    !+ad_args  rminor : input real : plasma minor radius (m)
-    !+ad_args  rtot   : input real : default radius to the outboard TF coil leg (m)
-    !+ad_args  tfno   : input real(!) : number of TF coils
-    !+ad_args  ripple : output real : ripple at plasma edge (%)
-    !+ad_args  rtotl  : output real : required minimum radius to the centre
-    !+ad_argc                         of the outboard TF coil leg (m)
-    !+ad_desc  Subroutine to calculate TFC ripple and outboard TFC leg radius.
-    !+ad_desc  Input the max. ripple and default outboard leg location and the
-    !+ad_desc  routine checks to see if the ripple is OK. If not it moves
-    !+ad_desc  the outboard leg appropriately.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  27/07/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !   !+ad_name  rippl
+  !   !+ad_summ  TF ripple calculation
+  !   !+ad_type  Subroutine
+  !   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !   !+ad_cont  N/A
+  !   !+ad_args  ripmax : input real : max ripple at plasma edge (peak to average) (%)
+  !   !+ad_args  rmajor : input real : plasma major radius (m)
+  !   !+ad_args  rminor : input real : plasma minor radius (m)
+  !   !+ad_args  rtot   : input real : default radius to the outboard TF coil leg (m)
+  !   !+ad_args  tfno   : input real(!) : number of TF coils
+  !   !+ad_args  ripple : output real : ripple at plasma edge (%)
+  !   !+ad_args  rtotl  : output real : required minimum radius to the centre
+  !   !+ad_argc                         of the outboard TF coil leg (m)
+  !   !+ad_desc  Subroutine to calculate TFC ripple and outboard TFC leg radius.
+  !   !+ad_desc  Input the max. ripple and default outboard leg location and the
+  !   !+ad_desc  routine checks to see if the ripple is OK. If not it moves
+  !   !+ad_desc  the outboard leg appropriately.
+  !   !+ad_prob  None
+  !   !+ad_call  None
+  !   !+ad_hist  27/07/11 PJK Initial F90 version
+  !   !+ad_stat  Okay
+  !   !+ad_docs  None
+  !   !
+  !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+  !   implicit none
 
-    !  Arguments
+  !   !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: ripmax,rmajor,rminor,rtot,tfno
-    real(kind(1.0D0)), intent(out) :: ripple,rtotl
+  !   real(kind(1.0D0)), intent(in) :: ripmax,rmajor,rminor,rtot,tfno
+  !   real(kind(1.0D0)), intent(out) :: ripple,rtotl
 
-    !  Local variables
+  !   !  Local variables
 
-    real(kind(1.0D0)) :: prip,rotrp,pripc,coeff
+  !   real(kind(1.0D0)) :: prip,rotrp,pripc,coeff
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    coeff = 1.03333D0 &
-         + 0.210480D0 * tfno &
-         - 4.45253D-2 * tfno**2 &
-         + 3.50210D-3 * tfno**3 &
-         - 1.28945D-4 * tfno**4 &
-         + 1.84776D-6 * tfno**5
+  !   coeff = 1.03333D0 &
+  !        + 0.210480D0 * tfno &
+  !        - 4.45253D-2 * tfno**2 &
+  !        + 3.50210D-3 * tfno**3 &
+  !        - 1.28945D-4 * tfno**4 &
+  !        + 1.84776D-6 * tfno**5
 
-    prip = 0.01D0 * ripmax/coeff
-    rotrp = 1.023D0*(rmajor+rminor)/prip**(1.0D0/tfno)
+  !   prip = 0.01D0 * ripmax/coeff
+  !   rotrp = 1.023D0*(rmajor+rminor)/prip**(1.0D0/tfno)
 
-    if (rotrp > rtot) then
-       rtotl = rotrp
-       pripc = prip * 100.0D0
-       ripple = pripc * coeff
-    else
-       rtotl = rtot
-       prip = (1.023D0*(rmajor+rminor)/rtot)**(tfno)
-       pripc = prip*100.0D0
-       ripple = pripc * coeff
-    end if
+  !   if (rotrp > rtot) then
+  !      rtotl = rotrp
+  !      pripc = prip * 100.0D0
+  !      ripple = pripc * coeff
+  !   else
+  !      rtotl = rtot
+  !      prip = (1.023D0*(rmajor+rminor)/rtot)**(tfno)
+  !      pripc = prip*100.0D0
+  !      ripple = pripc * coeff
+  !   end if
 
-  end subroutine rippl
+  ! end subroutine rippl
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -923,7 +954,7 @@ contains
 
     ripple = 100.0D0 * c1*( (rmajor+rminor)/rtot )**(n-c2)
 
-    !  Calculated rtot to produce a ripple of amplitude ripmax 
+    !  Calculated rtot to produce a ripple of amplitude ripmax
 
     rtotmin = (rmajor+rminor) / &
          ( (0.01D0*ripmax/c1)**(1.0D0/(n-c2)) )

@@ -21,7 +21,7 @@ icc(17) = 35
 icc(18) = 39
 icc(19) = 15
 icc(20) = 56
-icc(21) = 62 
+icc(21) = 62
 
 *---------------Iteration Variables----------------*
 nvar = 38 * Number of iteration variables to use
@@ -81,12 +81,12 @@ ixc(34) = 59 * fcutfsu
 *boundl(59) = 0.66667
 boundl(59) = 0.4
 
-ixc(35) = 63  * ftpeak (f-value for equation 39) 
+ixc(35) = 63  * ftpeak (f-value for equation 39)
 
 ixc(36) = 109 * ralpne
 ixc(37) = 110 * ftaulimit
 
-ixc(38) = 114 * fw_channel_length 
+ixc(38) = 114 * fw_channel_length
 *-----------------Build Variables------------------*
 blnkith  = 0.755 * Inboard blanket thickness (m);
 blnkoth  = 1.275 * Outboard blanket thickness (m);
@@ -107,7 +107,7 @@ shldoth  = 0.80 * Outboard shield thickness (m)
 shldtth  = 0.30 * Upper/lower shield thickness (m);
 tfcth    = 1.0500e+00 * Inboard tf coil thickness; (centrepost for st) (m)
 vgap2    = 0.061 * Vertical gap between vacuum vessel and tf coil (m)
-vgaptf   = 1.60 * Vertical gap between x-point and divertor (m)
+vgap   = 1.60 * Vertical gap between x-point and divertor (m)
 tftsgap = 0.02
 thshield = 0.05
 vvblgap = 0.02
@@ -156,7 +156,7 @@ fblss    = 0.13 * Kit blanket model; steel fraction of breeding zone
 fhole    = 0.05 * Area fraction taken up by other holes (not used)
 fblbe    = 0.47 * Beryllium fraction of blanket by volume
 secondary_cycle = 2 * Switch for thermodynamic model of power conversion cycle;
-tfwmatmax = 873  * Maximum temperature of first wall material (k) (secondary_cycle>1)
+tfwmatmax = 875  * Maximum temperature of first wall material (k) (secondary_cycle>1)
 fwclfr   = 0.1 * First wall coolant fraction
 vfshld   = 0.60 * Coolant void fraction in shield
 vfblkt   = 0.10 * Coolant void fraction in blanket (blktmodel=0)
@@ -166,13 +166,14 @@ fwoutlet = 773 * outlet temperature of first wall coolant (K) (15/11/27)
 pitch = 0.020  * pitch of first wall cooling channels (m) (27/11/15)
 fwpressure = 8.0e6  * first wall coolant pressure (Pa) (secondary_cycle>1)
 peaking_factor = 2.0 * peaking factor for first wall heat loads (15/11/27)
+
 *-----------------Global Variables-----------------*
 runtitle = Michael's test file
 verbose = 1
 run_tests = 0
 *-------------Heat Transport Variables-------------*
 baseel   = 55.0d6 * Base plant electric load (w)
-fauxbop  = 0.032 * Fraction of gross electric power to balance-of-plant
+
 primary_pumping = 0 * Switch for pumping of primary coolant
 htpmw_blkt = 50
 htpmw_div = 50
@@ -223,7 +224,7 @@ ngrp     = 4 * Number of groups of pf coils;
 ohhghf   = 0.9 * Central solenoid height / tf coil internal height
 rjconpf  = 1.1d7, 1.1d7, 6.d6, 6.d6, 8.d6, 8.0d6, 8.0d6, 8.0d6, * Average winding pack current density of pf coil i (a/m2)
 rpf2     = -1.825 * Offset (m) of radial position of ipfloc=2 pf coils
-sigpfalw = 300.0 * Allowable stress in pf coils/central solenoid (mpa)
+
 zref(1) = 3.6
 zref(2) = 1.2
 zref(3) = 1.0

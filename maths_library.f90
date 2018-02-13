@@ -69,18 +69,19 @@ module maths_library
   !+ad_hist  04/03/14 PJK Added sumup2, sumup3, tril, ellipke,
   !+ad_hisc               find_y_nonuniform_x
   !+ad_hist  04/03/14 PJK Added dshellvol, eshellvol, dshellarea, eshellarea
+  !+ad_hist  08/02/17 JM  Added interpolate and binary_search for Kallenbach
   !+ad_stat  Okay
   !+ad_docs  http://en.wikipedia.org/wiki/Gamma_function
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use global_variables, only: verbose
+  use global_variables, only: verbose, maxcal
   use constants
   ! MDK Remove this dependency, as iotty is now defined in global variables.
   !use process_output
 
   implicit none
-  
+
   !  Precision variable
   integer, parameter :: double = 8
 
@@ -88,7 +89,10 @@ module maths_library
 
   public :: ellipke,find_y_nonuniform_x,gamfun,hybrd,linesolv,qpsub, &
        quanc8,sumup3,svd,tril,vmcon,zeroin, eshellvol, dshellvol, &
-       eshellarea, dshellarea, binomial
+       eshellarea, dshellarea, binomial, binarysearch, interpolate, &
+       secant_solve, test_secant_solve
+  public::variable_error
+  public :: integer2string
 
 contains
 
@@ -130,9 +134,7 @@ contains
     real(kind(1.0D0)), dimension(n), intent(in) :: y
 
     !  Local variables
-
     integer :: i,j
-    real(kind(1.0D0)) :: dx, ddx
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -430,7 +432,7 @@ contains
     integer :: numerator, i
     if (k == 0) then
         coefficient = 1
-    else        
+    else
         coefficient = 1.0D0
         do i = 1, k
             numerator = n + 1 -i
@@ -500,6 +502,90 @@ contains
     end if
 
   end function gamfun
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function binarysearch(length, array, value, delta)
+    ! Given an array and a value, returns the index of the element that
+    ! is closest to, but less than, the given value.
+    ! Uses a binary search algorithm.
+    ! "delta" is the tolerance used to determine if two values are equal
+    ! if ( abs(x1 - x2) <= delta) then
+    !    assume x1 = x2
+    ! endif
+    ! Should never return an index < 1 or > length!
+
+    implicit none
+    integer, intent(in) :: length
+    real(kind(1.0D0)), dimension(length), intent(in) :: array
+    real(kind(1.0D0)), intent(in) :: value
+    real(kind(1.0D0)), intent(in), optional :: delta
+    integer :: binarysearch
+    integer :: left, middle, right
+    real(kind(1.0D0)) :: d
+
+    if (present(delta) .eqv. .true.) then
+        d = delta
+    else
+        d = 1e-9
+    endif
+
+    left = 1
+    right = length
+    do
+        if (left > right) then
+            exit
+        endif
+        middle = nint((real(left+right)) / 2.0)
+        if ( abs(array(middle) - value) <= d) then
+            binarySearch = middle
+            return
+        else if (array(middle) > value) then
+            right = middle - 1
+        else
+            left = middle + 1
+        end if
+    end do
+    binarysearch = min(max(right,1),length)
+
+  end function binarysearch
+
+  real(kind(1.0D0)) function interpolate(x_len, x_array, y_len, y_array, f, x, y)
+    ! This function uses bilinear interpolation to estimate the value
+    ! of a function f at point (x,y)
+    ! f is assumed to be sampled on a regular grid, with the grid x values specified
+    ! by x_array and the grid y values specified by y_array
+    ! Reference: http://en.wikipedia.org/wiki/Bilinear_interpolation
+    implicit none
+    integer, intent(in) :: x_len, y_len
+    real(kind(1.0D0)), dimension(x_len), intent(in) :: x_array
+    real(kind(1.0D0)), dimension(y_len), intent(in) :: y_array
+    real(kind(1.0D0)), dimension(x_len, y_len), intent(in) :: f
+    real(kind(1.0D0)), intent(in) :: x,y
+    real(kind(1.0D0)) :: denom, x1, x2, y1, y2
+    integer :: i,j
+
+    i = binarysearch(x_len, x_array, x)
+    j = binarysearch(y_len, y_array, y)
+
+    if (i  >= x_len) then
+       i = x_len -1
+    end if
+    if (j >= y_len) then
+       j = y_len-1
+    end if
+    x1 = x_array(i)
+    x2 = x_array(i+1)
+
+    y1 = y_array(j)
+    y2 = y_array(j+1)
+
+    denom = (x2 - x1)*(y2 - y1)
+
+    interpolate = (f(i,j)*(x2-x)*(y2-y) + f(i+1,j)*(x-x1)*(y2-y) + &
+      f(i,j+1)*(x2-x)*(y-y1) + f(i+1, j+1)*(x-x1)*(y-y1))/denom
+
+  end function interpolate
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -968,7 +1054,6 @@ contains
     !  Local variables
 
     real(kind(1.0D0)), dimension(2) :: det
-    real(kind(1.0D0)), dimension(n) :: work
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2205,7 +2290,7 @@ contains
        fcnvmc1,fcnvmc2,mode,n,m,meq,x,objf,fgrd,conf,cnorm,lcnorm, &
        b,lb,tol,maxfev,info,nfev,niter,vlam,glag,vmu,cm,glaga,gamma,eta, &
        xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa,liwa,ilower, &
-       iupper,bndl,bndu)
+       iupper,bndl,bndu, sum)
 
     !+ad_name  vmcon
     !+ad_summ  Calculates the least value of a function of several variables
@@ -2328,6 +2413,7 @@ contains
     !+ad_hist  08/07/14 PJK/MDK Added a test of the residuals to the convergence
     !+ad_hisc               criteria
     !+ad_hist  10/09/14 PJK/MDK Added new info=7 value
+    !+ad_hist  22/02/17 JM  Updated VMCON iteration info output
     !+ad_stat  Okay
     !+ad_docs  ANL-80-64: Solution of the General Nonlinear Programming Problem
     !+ad_docc  with Subroutine VMCON, Roger L Crane, Kenneth E Hillstrom and
@@ -2347,6 +2433,7 @@ contains
     real(kind(1.0D0)), intent(out) :: objf
     real(kind(1.0D0)), intent(in) :: tol
     real(kind(1.0D0)), dimension(n), intent(inout) :: x
+    real(kind(1.0D0)), dimension(n) :: best_solution_vector
     real(kind(1.0D0)), dimension(n), intent(in) :: bndl,bndu
     real(kind(1.0D0)), dimension(n), intent(out) :: fgrd
     real(kind(1.0D0)), dimension(m), intent(out) :: conf
@@ -2358,6 +2445,7 @@ contains
     real(kind(1.0D0)), dimension(lh,lh), intent(out) :: h
     real(kind(1.0D0)), dimension(lb,lb), intent(inout) :: b
     real(kind(1.0D0)), dimension(*), intent(out) :: vlam,vmu,gm,bdl,bdu
+    real(kind(1.0D0)), intent(out), optional :: sum
 
     !  Local variables
 
@@ -2365,19 +2453,24 @@ contains
     integer :: inx,ki,ml,mlp1,mcon,mp1,mpn,mpnpp1,mpnppn
 
     real(kind(1.0D0)) :: alpha,aux,auxa,calpha,dbd,dflsa,dg, &
-         fls,flsa,spgdel,sum,temp,thcomp,theta
+         fls,flsa,spgdel,temp,thcomp,theta
+    real(kind(1.0D0)) :: best_sum_so_far = 999d0
     real(kind(1.0D0)) :: summ, sqsumsq, sqsumsq_tol
+    real(kind(1.0D0)) :: lowest_valid_fom
     real(kind(1.0D0)), parameter :: zero = 0.0D0
     real(kind(1.0D0)), parameter :: cp1 = 0.1D0
     real(kind(1.0D0)), parameter :: cp2 = 0.2D0
     real(kind(1.0D0)), parameter :: cp5 = 0.5D0
     real(kind(1.0D0)), parameter :: one = 1.0D0
 
+    character(len=20) :: iteration_progress
+
     !  External routines
 
     external :: fcnvmc1,fcnvmc2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    lowest_valid_fom = 999d0
 
     np1 = n + 1
     npp = 2*np1
@@ -2455,20 +2548,14 @@ contains
     call fcnvmc2(n,m,x,fgrd,cnorm,lcnorm,info)
     if (info < 0) return
 
-	!  Setup line overwrite for VMCON iterations output
-	open(unit=iotty, carriagecontrol='FORTRAN')
-	write(*,*) ""
-	! MDK To prevent circular dependencies in compilation, I will replace this
-	! a simple write statement
-    ! call oheadr(iotty, "VMCON Iterations")
-    write(*,*) "VMCON Iterations"
+    !  Setup line overwrite for VMCON iterations output
+    open(unit=iotty)
+    write(*,*) ""
 
     !  Start the iteration by calling the quadratic programming
     !  subroutine
-    
+
     iteration: do
-       !  Output to terminal number of VMCON iterations
-       write(iotty, '("+", I, '' vmcon iterations'')'), niter+1
 
        !  Increment the quadratic subproblem counter
        nqp = nqp + 1
@@ -2491,7 +2578,15 @@ contains
        !  The following return is made if the quadratic problem solver
        !  failed to find a feasible point, if an artificial bound was
        !  active, or if a singular matrix was detected
-       if ((info == 5).or.(info == 6)) return
+       if ((info == 5).or.(info == 6)) then
+           ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+           x = best_solution_vector
+           sum = best_sum_so_far
+           write(*,*)
+           write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+20         format(a,1pe10.3)
+           return
+       end if
 
        !  Initialize the line search iteration counter
        nls = 0
@@ -2585,6 +2680,13 @@ contains
        end do
        sqsumsq = sqrt(summ)
 
+       !  Output to terminal number of VMCON iterations
+       iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
+
+       write(iotty, '("==>", I5, "  vmcon iterations. Normalised FoM =", &
+           &  f8.3, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
+           ADVANCE="NO"), niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
+
        if (verbose == 1) then
           write(*,'(a,es13.5,a,es13.5)') &
                'Constraint residuals (sqsumsq) = ',sqsumsq, &
@@ -2595,12 +2697,23 @@ contains
        !  (the original criterion, plus constraint residuals below the tolerance level)
        !  Temporarily set the two tolerances equal (should perhaps be an input parameter)
        sqsumsq_tol = tol
+
+       ! Store the lowest valid FoM (ie where constraints are satisfied)
+       if (sqsumsq < sqsumsq_tol)  lowest_valid_fom = min(lowest_valid_fom, objf)
+
        if ((sum <= tol).and.(sqsumsq < sqsumsq_tol)) then
           if (verbose == 1) then
              write(*,*) 'Convergence parameter < convergence criterion (epsvmc)'
              write(*,*) 'Root of sum of squares of residuals < tolerance (sqsumsq_tol)'
           end if
           return
+       end if
+
+       ! The convergence criteria are not yet satisfied.
+       ! Store the best value of the convergence parameter achieved
+       if(sum < best_sum_so_far)then
+           best_sum_so_far = sum
+           best_solution_vector = x
        end if
 
        !  Set sum to the weighted sum of infeasibilities
@@ -2646,6 +2759,11 @@ contains
              if (dflsa >= zero) then
                 !  Error return because uphill search direction was calculated
                 info = 4
+                ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+                x = best_solution_vector
+                sum = best_sum_so_far
+                write(*,*)
+                write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
                 return
              end if
 
@@ -2689,6 +2807,11 @@ contains
                 call fcnvmc1(n,m,x,objf,conf,info)
                 if (info >= 0) info = 3
                 !  Error return because line search required 10 calls of fcnvmc1
+                ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+                x = best_solution_vector
+                sum = best_sum_so_far
+                write(*,*)
+                write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
                 return
              end if
 
@@ -2717,6 +2840,11 @@ contains
              end do
              !  Error return because there have been maxfev calls of fcnvmc1
              info = 2
+             ! Issue #601 Return the best value of the solution vector - not the last value. MDK
+             x = best_solution_vector
+             sum = best_sum_so_far
+             write(*,*)
+             write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
              return
           end if
 
@@ -3640,7 +3768,7 @@ contains
     end do
 
     !  MDK Check for singular matrix
-    !  h matrix is unchanged if determinant only (job=10) is requested.    
+    !  h matrix is unchanged if determinant only (job=10) is requested.
 
     if (verbose == 1) then
        call sgedi(h,ih,n,iwa,det,10)
@@ -5710,7 +5838,7 @@ contains
   end subroutine eshellvol
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   subroutine dshellvol(rmajor,rminor,zminor,drin,drout,dz,vin,vout,vtot)
 
     !+ad_name  dshellvol
@@ -5890,7 +6018,95 @@ contains
 
   end subroutine eshellarea
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! ------------------------------------------------------------------------
+  pure function variable_error(variable)
+      real(kind(1.0D0)), intent(in) ::variable
+      logical::variable_error
+
+      if((variable/=variable).or.(variable<-9.99D99).or.(variable>9.99D99))then
+          variable_error = .TRUE.
+      else
+          variable_error = .FALSE.
+      end if
+
+  end function variable_error
+
+  ! ------------------------------------------------------------------------
+  pure function integer2string(value)
+      ! Convert an integer value to a 2-digit string with leading zero if required.
+      integer, intent(in) :: value
+      character(len=2) integer2string
+      write (integer2string,'(I2.2)') value
+  end function integer2string
+
+  ! ------------------------------------------------------------------------
+  subroutine secant_solve(f,x1,x2,solution,error,residual,opt_tol)
+      ! Solve an equation f(x)=0
+      ! Only requires one function evaluation per iteration (plus two to start with)
+      ! Does not require any derivatives.
+      ! https://en.wikipedia.org/wiki/Secant_method
+      ! Requires two initial values, x0 and x1, which should ideally be chosen to lie close to the root.
+      !external:: f
+      real(kind(1.0D0))::f
+      real(kind(1.0D0)), intent(out) ::solution, residual
+      real(kind(1.0D0)), intent(in) ::x1,x2
+      real(kind(1.0D0)), intent(in), optional ::opt_tol
+      real(kind(1.0D0)),dimension(20) ::x
+      integer :: i
+      logical, intent(out)::error
+      real(kind(1.0D0))::mean, tol,fximinus1, fximinus2
+      error = .FALSE.
+      tol=0.001d0; if (present(opt_tol)) tol=opt_tol
+
+      x(1)=x1
+      x(2)=x2
+      mean = (x1+x2)/2
+      ! Calculate the first two values before the loop
+      fximinus1 = f(x(2))
+      fximinus2 = f(x(1))
+      !write(*,*)"x(1)",x(1),"x(2)",x(2),"fximinus1",fximinus1,"fximinus2",fximinus2
+      do i=3,20
+          x(i) = x(i-1) - fximinus1 * ((x(i-1) - x(i-2)) / (fximinus1 - fximinus2))
+          ! Store values for the *next iteration
+          fximinus2 = fximinus1
+          fximinus1 = f(x(i))
+          residual = fximinus1
+          !write(*,*)"x(i)", x(i), "  residual",residual,"  fximinus1",fximinus1, "  fximinus2",fximinus2
+          ! test for convergence
+          if(abs(residual) < tol) then
+              solution = x(i)
+              return
+          endif
+      end do
+      ! Convergence not achieved.  Return the best value and a flag.
+      error = .TRUE.
+      solution = x(i-1)
+      write(*,*)"Secant solver not converged.  solution", solution, "  residual",residual
+      !stop
+
+  end subroutine secant_solve
+!---------------------------------------------------------------
+
+  subroutine test_secant_solve()
+      real(kind(1.0D0)) ::solution
+      real(kind(1.0D0)) ::residual
+      logical::error
+      !external:: f
+
+      call  secant_solve(dummy,10.d0,30.0d0,solution,error,residual)
+      if((abs(solution-24.7386)<0.001d0).and.(error.eqv..FALSE.).and.(abs(residual)<0.001d0))then
+          write(*,*)"secant solve: PASS.  Error = ", solution-24.7386, ' residual = ', residual
+      else
+           write(*,*)"secant solve: FAIL. solution=", solution, 'error flag = ', error, "residual = ", residual
+           write(*,*)"Correct solution should be 24.7386"
+      end if
+
+  contains
+      function dummy(x)
+          real(kind(1.0D0))::dummy,x
+          dummy = x**2 - 612.d0
+      end function
+  end subroutine test_secant_solve
 
 end module maths_library
 
@@ -6120,6 +6336,7 @@ contains
     integer, intent(inout) :: ifail
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    write(*,*)'subroutine objfn called, in module testdata, maths_library.f90'
 
     select case (itest)
 

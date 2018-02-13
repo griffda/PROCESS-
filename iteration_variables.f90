@@ -21,12 +21,12 @@ subroutine loadxc
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
+
   !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
-  !+ad_call  rfp_variables
+
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
@@ -36,19 +36,6 @@ subroutine loadxc
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  09/10/12 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  18/10/12 PJK Added fwbs_variables
-  !+ad_hist  18/10/12 PJK Added pfcoil_variables
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  30/10/12 PJK Added times_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  31/10/12 PJK Added constraint_variables
-  !+ad_hist  05/11/12 PJK Added rfp_variables
-  !+ad_hist  05/11/12 PJK Added ife_variables
-  !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  06/11/12 PJK Renamed source file iteration_variables.f90 from xc.f90
   !+ad_hist  04/06/13 PJK Added ftbr (89), blbuith (90), blbuoth (91),
   !+ad_hisc               fflutf (92), shldith (93), shldoth (94),
@@ -77,6 +64,15 @@ subroutine loadxc
   !+ad_hist  26/08/15 MDK Added fniterpump (111)
   !+ad_hist  18/11/15 RK  Added fzeffmax (112)
   !+ad_hist  26/11/15 RK  Added ftaucq (113)
+  !+ad_hist  10/11/16 HL  Added fradwall (116)
+  !+ad_hist  19/01/17 JM  Added fpsepbqar (117)
+  !+ad_hist  08/02/17 JM  Added fpsep, tesep and ttarget  (118, 119, 120)
+  !+ad_hist  22/02/17 JM  Added neratio (121)
+  !+ad_hist  27/02/17 JM  Added oh_steel_frac (122)
+  !+ad_hist  27/02/17 JM  Added foh_stress (123)
+  !+ad_hist  15/03/17 MDK  Added qtargettotal (124)
+  !+ad_hist  17/03/17 MDK  Added impurities fimp(3-14) (125-136)
+  !+ad_hist  12/01/18 KE  Added fnesep (144)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -86,21 +82,21 @@ subroutine loadxc
   use constraint_variables
   use cost_variables
   use current_drive_variables
+  use divertor_kallenbach_variables
   use divertor_variables
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-  use ife_variables
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
   use physics_variables
   use pulse_variables
-  use rfp_variables
   use stellarator_variables
   use tfcoil_variables
   use times_variables
   use global_variables
+  use rebco_variables
 
   implicit none
 
@@ -108,7 +104,7 @@ subroutine loadxc
 
   !  Local variables
 
-  integer :: i,j
+  integer :: i
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   do i = 1,nvar
@@ -140,7 +136,7 @@ subroutine loadxc
      case (22) ; xcm(i) = tbrnmn
      case (23) ; xcm(i) = fcoolcp
      case (24) ; xcm(i) = cdtfleg
-        if ((itfsup == 1).or.(irfp == 1)) call report_error(47)
+        if (itfsup == 1) call report_error(47)
      case (25) ; xcm(i) = fpnetel
      case (26) ; xcm(i) = ffuspow
      case (27) ; xcm(i) = fhldiv
@@ -171,14 +167,14 @@ subroutine loadxc
      case (52) ; xcm(i) = vdalw
      case (53) ; xcm(i) = fjprot
      case (54) ; xcm(i) = ftmargtf
-     case (55) ; xcm(i) = tmargmin
+     case (55) ; write(*,*) 'Iteration variable 55 is not supported.'
      case (56) ; xcm(i) = tdmptf
      case (57) ; xcm(i) = thkcas
         if ((tfc_model == 0).or.(istell == 1)) call report_error(48)
      case (58) ; xcm(i) = thwcndut
      case (59) ; xcm(i) = fcutfsu
      case (60) ; xcm(i) = cpttf
-        if ((istell == 1).or.((irfp == 0).and.(itfsup == 0))) call report_error(49)
+        if ((istell == 1).or.(itfsup == 0)) call report_error(49)
      case (61) ; xcm(i) = gapds
      case (62) ; xcm(i) = fdtmp
      case (63) ; xcm(i) = ftpeak
@@ -195,26 +191,19 @@ subroutine loadxc
      case (73) ; xcm(i) = scrapli
      case (74) ; xcm(i) = scraplo
      case (75) ; xcm(i) = tfootfi
-     case (76) ; xcm(i) = frfptf
-     case (77) ; xcm(i) = tftort
-        if (irfp == 0) call report_error(51)
-     case (78) ; xcm(i) = rfpth
+     case (76) ; write(*,*) 'Iteration variable 76 is not supported.'
+     case (77) ; write(*,*) 'Iteration variable 77 is not supported.'
+     case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
      case (79) ; xcm(i) = fbetap
-     case (80) ; xcm(i) = frfpf
-     case (81) ; xcm(i) = edrive
-     case (82) ; xcm(i) = drveff
-     case (83) ; xcm(i) = tgain
-     case (84) ; xcm(i) = chrad
-     case (85) ; xcm(i) = pdrive
-     case (86) ; xcm(i) = frrmax
-     case (87) ; xcm(i) = helecmw
-        if ((ihplant < 1).or.(ihplant > 3)) then
-           idiags(1) = ihplant ; call report_error(52)
-        end if
-     case (88) ; xcm(i) = hthermmw
-        if (ihplant < 4) then
-           idiags(1) = ihplant ; call report_error(53)
-        end if
+     case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
+     case (81) ; write(*,*) 'Iteration variable 81 is not supported.'
+     case (82) ; write(*,*) 'Iteration variable 82 is not supported.'
+     case (83) ; write(*,*) 'Iteration variable 83 is not supported.'
+     case (84) ; write(*,*) 'Iteration variable 84 is not supported.'
+     case (85) ; write(*,*) 'Iteration variable 85 is not supported.'
+     case (86) ; write(*,*) 'Iteration variable 86 is not supported.'
+     case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
+     case (88) ; write(*,*) 'Iteration variable 87 is not supported.'
      case (89) ; xcm(i) = ftbr
      case (90) ; xcm(i) = blbuith
      case (91) ; xcm(i) = blbuoth
@@ -225,9 +214,9 @@ subroutine loadxc
      case (96) ; xcm(i) = fvvhe
      case (97) ; xcm(i) = fpsepr
      case (98) ; xcm(i) = li6enrich
-     case (99) ; xcm(i) = ftftort
-     case (100) ; xcm(i) = ftfthko
-     case (101) ; xcm(i) = prp
+     case (99) ; write(*,*) 'Iteration variable 99 is not supported.'
+     case (100) ; write(*,*) 'Iteration variable 100 is not supported.'
+     case (101) ; write(*,*) 'Iteration variable 101 is not supported.'
      case (102) ; xcm(i) = impurity_arr(impvar)%frac
      case (103) ; xcm(i) = flhthresh
      case (104) ; xcm(i) = fcwr
@@ -242,27 +231,56 @@ subroutine loadxc
      case (113) ; xcm(i) = ftaucq
      case (114) ; xcm(i) = fw_channel_length
      case (115) ; xcm(i) = fpoloidalpower
-    
+     case (116) ; xcm(i) = fradwall
+     case (117) ; xcm(i) = fpsepbqar
+     case (118) ; xcm(i) = fpsep
+     case (119) ; xcm(i) = tesep
+     case (120) ; xcm(i) = ttarget
+     case (121) ; xcm(i) = neratio
+     case (122) ; xcm(i) = oh_steel_frac
+     case (123) ; xcm(i) = foh_stress
+     case (124) ; xcm(i) = qtargettotal
+     case (125) ; xcm(i) = impurity_arr(3)%frac
+     case (126) ; xcm(i) = impurity_arr(4)%frac
+     case (127) ; xcm(i) = impurity_arr(5)%frac
+     case (128) ; xcm(i) = impurity_arr(6)%frac
+     case (129) ; xcm(i) = impurity_arr(7)%frac
+     case (130) ; xcm(i) = impurity_arr(8)%frac
+     case (131) ; xcm(i) = impurity_arr(9)%frac
+     case (132) ; xcm(i) = impurity_arr(10)%frac
+     case (133) ; xcm(i) = impurity_arr(11)%frac
+     case (134) ; xcm(i) = impurity_arr(12)%frac
+     case (135) ; xcm(i) = impurity_arr(13)%frac
+     case (136) ; xcm(i) = impurity_arr(14)%frac
+     case (137) ; xcm(i) = fplhsep
+     case (138) ; xcm(i) = rebco_thickness
+     case (139) ; xcm(i) = copper_thick
+     case (140) ; xcm(i) = thkwp
+     case (141) ; xcm(i) = fcqt
+     case (142) ; xcm(i) = nesep
+     case (143) ; xcm(i) = f_copperA_m2
+     case (144) ; xcm(i) = fnesep
+
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
         call report_error(54)
 
      end select
 
-      ! Simple list of iteration variable names 
+      ! Simple list of iteration variable names
       name_xc(i) = lablxc(ixc(i))
       ! Note that iteration variable 18 has more than one name:
       if ((ixc(i) == 18).and.(icurr /= 2)) name_xc(i) = 'q95'
       if ((ixc(i) == 18).and.(icurr == 2)) name_xc(i) = 'qbar'
-      
-      
+
+
        ! MDK Check if sweep variable is also an iteration variable
        if (name_xc(i) == vlabel) then
             write(nout,*) 'WARNING: The sweep variable is also an iteration variable.'
             write(nout,*) 'The values of the sweep variable will be overwritten by the optimiser.'
             write(*,*) 'WARNING: The sweep variable is also an iteration variable.'
        end if
-      
+
      !  Check that no iteration variable is zero
 
      if (abs(xcm(i)) <= 1.0D-12) then
@@ -273,7 +291,8 @@ subroutine loadxc
 
      !  Crude method of catching NaN errors
 
-     if ( (abs(xcm(i)) > 9.99D99).or.(xcm(i) /= xcm(i)) ) then
+     !if ( (abs(xcm(i)) > 9.99D99).or.(xcm(i) /= xcm(i)) ) then
+     if ( variable_error(xcm(i)) ) then
         idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xcm(i)
         call report_error(56)
      end if
@@ -281,7 +300,7 @@ subroutine loadxc
   end do
 
   do i = 1,nvar
-     if (xcm(i) /= 0.0D0) then
+     if (abs(xcm(i)) > 1.0D-99) then
         scale(i) = 1.0D0/xcm(i)
      else
         scale(i) = 1.0D0
@@ -316,30 +335,18 @@ subroutine convxc(xc,nn)
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
+
   !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
-  !+ad_call  rfp_variables
+
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  report_error
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  16/11/11 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  18/10/12 PJK Added fwbs_variables
-  !+ad_hist  18/10/12 PJK Added pfcoil_variables
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  30/10/12 PJK Added times_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  31/10/12 PJK Added constraint_variables
-  !+ad_hist  05/11/12 PJK Added rfp_variables
-  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  17/01/13 PJK Removed bounds checking of iteration variables
   !+ad_hist  11/04/13 PJK Removed ti recalculation (moved to physics)
   !+ad_hist  04/06/13 PJK Added ftbr (89), blbuith (90), blbuoth (91),
@@ -362,6 +369,11 @@ subroutine convxc(xc,nn)
   !+ad_hist  05/08/15 MDK Added ralpne (109), ftaulimit (110)
   !+ad_hist  18/11/15 RK  Added fzeffmax (112)
   !+ad_hist  26/11/15 RK  Added ftaucq (113)
+  !+ad_hist  10/11/16 HL  Added fradwall (116)
+  !+ad_hist  19/01/17 JM  Added fpsepbqar (117)
+  !+ad_hist  08/02/17 JM  Added fpsep, tesep, ttarget (118, 119, 120)
+  !+ad_hist  22/02/17 JM  Added neratio (121)
+  !+ad_hist  12/01/18 KE  Added fnesep (143)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -371,16 +383,17 @@ subroutine convxc(xc,nn)
   use constraint_variables
   use cost_variables
   use current_drive_variables
+  use divertor_kallenbach_variables
   use divertor_variables
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-  use ife_variables
+
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
   use physics_variables
-  use rfp_variables
+  use rebco_variables
   use tfcoil_variables
   use times_variables
 
@@ -389,7 +402,7 @@ subroutine convxc(xc,nn)
   !  Arguments
 
   integer, intent(in) :: nn
-  real(kind(1.0D0)), dimension(ipnvars), intent(inout) :: xc
+  real(kind(1.0D0)), dimension(ipnvars), intent(in) :: xc
 
   !  Local variables
 
@@ -455,7 +468,7 @@ subroutine convxc(xc,nn)
      case (52) ; vdalw     = xc(i)/scale(i)
      case (53) ; fjprot    = xc(i)/scale(i)
      case (54) ; ftmargtf  = xc(i)/scale(i)
-     case (55) ; tmargmin  = xc(i)/scale(i)
+     case (55) ; write(*,*) 'Iteration variable 55 is not supported.'
      case (56) ; tdmptf    = xc(i)/scale(i)
      case (57) ; thkcas    = xc(i)/scale(i)
      case (58) ; thwcndut  = xc(i)/scale(i)
@@ -476,19 +489,19 @@ subroutine convxc(xc,nn)
      case (73) ; scrapli   = xc(i)/scale(i)
      case (74) ; scraplo   = xc(i)/scale(i)
      case (75) ; tfootfi   = xc(i)/scale(i)
-     case (76) ; frfptf    = xc(i)/scale(i)
-     case (77) ; tftort    = xc(i)/scale(i)
-     case (78) ; rfpth     = xc(i)/scale(i)
+     case (76) ; write(*,*) 'Iteration variable 76 is not supported.'
+     case (77) ; write(*,*) 'Iteration variable 77 is not supported.'
+     case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
      case (79) ; fbetap    = xc(i)/scale(i)
-     case (80) ; frfpf     = xc(i)/scale(i)
-     case (81) ; edrive    = xc(i)/scale(i)
-     case (82) ; drveff    = xc(i)/scale(i)
-     case (83) ; tgain     = xc(i)/scale(i)
-     case (84) ; chrad     = xc(i)/scale(i)
-     case (85) ; pdrive    = xc(i)/scale(i)
-     case (86) ; frrmax    = xc(i)/scale(i)
-     case (87) ; helecmw   = xc(i)/scale(i)
-     case (88) ; hthermmw  = xc(i)/scale(i)
+     case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
+     case (81) ; write(*,*) 'Iteration variable 81 is not supported.'
+     case (82) ; write(*,*) 'Iteration variable 82 is not supported.'
+     case (83) ; write(*,*) 'Iteration variable 83 is not supported.'
+     case (84) ; write(*,*) 'Iteration variable 84 is not supported.'
+     case (85) ; write(*,*) 'Iteration variable 85 is not supported.'
+     case (86) ; write(*,*) 'Iteration variable 86 is not supported.'
+     case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
+     case (88) ; write(*,*) 'Iteration variable 88 is not supported.'
      case (89) ; ftbr      = xc(i)/scale(i)
      case (90) ; blbuith   = xc(i)/scale(i)
      case (91) ; blbuoth   = xc(i)/scale(i)
@@ -499,9 +512,9 @@ subroutine convxc(xc,nn)
      case (96) ; fvvhe     = xc(i)/scale(i)
      case (97) ; fpsepr    = xc(i)/scale(i)
      case (98) ; li6enrich = xc(i)/scale(i)
-     case (99) ; ftftort   = xc(i)/scale(i)
-     case (100) ; ftfthko  = xc(i)/scale(i)
-     case (101) ; prp      = xc(i)/scale(i)
+     case (99) ; write(*,*) 'Iteration variable 99 is not supported.'
+     case (100); write(*,*) 'Iteration variable 100 is not supported.'
+     case (101); write(*,*) 'Iteration variable 101 is not supported.'
      case (102)
         fimpvar = xc(i)/scale(i)
         impurity_arr(impvar)%frac = fimpvar
@@ -518,8 +531,38 @@ subroutine convxc(xc,nn)
      case (113) ; ftaucq = xc(i)/scale(i)
      case (114) ; fw_channel_length = xc(i)/scale(i)
      case (115) ; fpoloidalpower = xc(i)/scale(i)
+     case (116) ; fradwall = xc(i)/scale(i)
+     case (117) ; fpsepbqar = xc(i)/scale(i)
+     case (118) ; fpsep = xc(i)/scale(i)
+     case (119) ; tesep = xc(i)/scale(i)
+     case (120) ; ttarget = xc(i)/scale(i)
+     case (121) ; neratio = xc(i)/scale(i)
+     case (122) ; oh_steel_frac = xc(i)/scale(i)
+     case (123) ; foh_stress = xc(i)/scale(i)
+     case (124) ; qtargettotal = xc(i)/scale(i)
+     case (125) ; impurity_arr(3)%frac = xc(i)/scale(i)
+     case (126) ; impurity_arr(4)%frac = xc(i)/scale(i)
+     case (127) ; impurity_arr(5)%frac = xc(i)/scale(i)
+     case (128) ; impurity_arr(6)%frac = xc(i)/scale(i)
+     case (129) ; impurity_arr(7)%frac = xc(i)/scale(i)
+     case (130) ; impurity_arr(8)%frac = xc(i)/scale(i)
+     case (131) ; impurity_arr(9)%frac = xc(i)/scale(i)
+     case (132) ; impurity_arr(10)%frac = xc(i)/scale(i)
+     case (133) ; impurity_arr(11)%frac = xc(i)/scale(i)
+     case (134) ; impurity_arr(12)%frac = xc(i)/scale(i)
+     case (135) ; impurity_arr(13)%frac = xc(i)/scale(i)
+     case (136) ; impurity_arr(14)%frac = xc(i)/scale(i)
+     case (137) ; fplhsep = xc(i)/scale(i)
+     case (138) ; rebco_thickness = xc(i)/scale(i)
+     case (139) ; copper_thick = xc(i)/scale(i)
+     case (140) ; thkwp = xc(i)/scale(i)
+     case (141) ; fcqt = xc(i)/scale(i)
+     case (142) ; nesep = xc(i)/scale(i)
+     case (143) ; f_copperA_m2 = xc(i)/scale(i)
+     case (144) ; fnesep = xc(i)/scale(i)
 
      case default
+
         call report_error(57)
 
      end select
@@ -534,12 +577,13 @@ subroutine convxc(xc,nn)
 
      !  Crude method of catching NaN errors
 
-     if ((abs(xc(i)) > 9.99D99).or.(xc(i) /= xc(i))) then
+     !if ((abs(xc(i)) > 9.99D99).or.(xc(i) /= xc(i))) then
+     if(variable_error(xc(i)))then
         idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xc(i)
         call report_error(59)
      end if
 
-     if (scale(i) == 0.0D0) then
+     if (abs(scale(i)) < 1.0D-99) then
         idiags(1) = i ; idiags(2) = ixc(i)
         call report_error(60)
      end if

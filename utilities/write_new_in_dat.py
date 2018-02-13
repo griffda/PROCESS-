@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Creates a new IN.DAT using "
                                                  "iteration variable values "
-                                                 "from OUT.DAT.")
+                                                 "from MFILE.DAT.")
 
     parser.add_argument('-f', metavar='f', type=str, default="MFILE.DAT",
                         help='File to read as MFILE.DAT (default="MFILE.DAT")')

@@ -1,6 +1,6 @@
 !  $Id:: safety.f90 258 2014-04-24 12:28:55Z pknight                    $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   block data bdcond
 
      !  Thermal conductivity block data
@@ -184,7 +184,6 @@
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_hist  24/06/14 PJK Removed refs to bcylth
     !+ad_hist  08/09/14 PJK Simplistic changes for ipowerflow=1 model
-    !+ad_hist  16/10/14 PJK Replaced sccufac usage with fcuohsu
     !+ad_stat  This routine is untested in F90...
     !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
     !+ad_docs  Strategic Studies Note 96/30, January 1997
@@ -864,7 +863,7 @@
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    function deroff(x,a,t)
+    function deroff(x,a)
 
       !+ad_name  deroff
       !+ad_summ  Derivative of function fofx with respect to x
@@ -875,7 +874,6 @@
       !+ad_cont  N/A
       !+ad_args  x : input real : temperature (K)
       !+ad_args  a : input real : heat transfer coefficient
-      !+ad_args  t : input real : ambient air temperature (K)
       !+ad_desc  This routine evaluates the derivative with respect to x
       !+ad_desc  of the function <A HREF="fofx.html">fofx</A>.
       !+ad_prob  None
@@ -895,7 +893,7 @@
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: x,a,t
+      real(kind(1.0D0)), intent(in) :: x,a
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -949,7 +947,7 @@
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       do
-         delta = -f(x,q,a,t) / fprime(x,a,t)
+         delta = -f(x,q,a,t) / fprime(x,a)
          x = x + delta
 
          error = abs(delta/x)
@@ -959,4 +957,3 @@
     end subroutine newton
 
   end subroutine loca
-

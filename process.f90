@@ -6,6 +6,7 @@ program process
   !+ad_summ  Power Reactor Optimisation Code for Environmental and Safety Studies
   !+ad_type  Main program
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  M Kumar, CCFE, Culham Science Centre
   !+ad_cont  N/A
   !+ad_args  None
   !+ad_desc  Power Reactor Optimisation Code for Environmental and Safety Studies
@@ -50,6 +51,10 @@ program process
   !+ad_hisc               Transferred routine inform from aachange.f90
   !+ad_hist  13/02/14 PJK Added mfile close statement
   !+ad_hist  10/09/14 PJK Added vfile close statement
+  !+ad_hist  28/10/16 MK  Removed systems commands and added a subroutine
+  !+ad_hist               get_DDMonYYTimeZone to get date and time
+  !+ad_hist  04/11/16 MK  Added check for existence of input file
+  !+ad_hist  03/02/17 JM  Fixed input file existence check, now fileprefix defined before init
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  Box file F/RS/CIRE5523/PWF (up to 15/01/96)
@@ -64,7 +69,7 @@ program process
   use process_output
   use scan_module
   use numerics
-  use ccfe_hcpb_module
+  use divertor_Kallenbach_variables, only:kallenbach_tests
 
   implicit none
 
@@ -72,44 +77,93 @@ program process
 
   !  Local variables
   integer :: ifail
-  ! MDK
-  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
+  character(len = 130) :: line
+  character(len = 10)  :: fmtAppend
+  character(len = 50) :: inFile
+  character(len = 50) :: outFile
+  integer :: iost
+  logical :: inExist
+  integer :: nargs
+
+  !  Obtain a file prefix from a command line argument
+  !  (uses Fortran 2003 routines)
+  nargs = command_argument_count()
+
+  if (nargs == 0) then
+     fileprefix = ''
+  else
+     call get_command_argument(1, fileprefix)
+  end if
+
+  if (trim(fileprefix) == "") then
+    inFile = "IN.DAT"
+  else
+    inFile = trim(fileprefix)
+  end if
+  outFile = trim(fileprefix)//"OUT.DAT"
+  inquire(file = inFile, exist = inExist)
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !  Initialise things
-  call init
+  mainRun : if (inExist) then
+    !  Initialise things
+    call init
 
-  ! Run built-in tests.
-  ! These are distinct from the tests that are dependent on 'unit_test'.
-  if (run_tests == 1) call runtests
+    ! Run built-in tests.
+    ! These are distinct from the tests that are dependent on 'unit_test'.
+    if (run_tests == 1) call runtests
 
-  !  Call equation solver (HYBRD)
-  call eqslv(ifail)
+    if(kallenbach_tests==1) then
+      !write(*,*)'Running test of Kallenbach divertor model.'
+      !call Kallenbach_test()
+      write(*,*)'Running parameter scan of Kallenbach divertor model.  Then stop.'
+      call kallenbach_scan()
+      stop
+    endif
 
-  !  Call routine to do optimisation scans
-  if (ioptimz >= 0) then
-     call scan
-  else
-     call final(ifail)
-  end if
+     ! Call equation solver (HYBRD)
+    call eqslv(ifail)
 
-  call show_errors
+     ! Call routine to do scans
+    if (ioptimz >= 0) then
+       call scan
+    else
+       call final(ifail)
+    end if
 
-  call oheadr(nout,'End of PROCESS Output')
-  call oheadr(iotty,'End of PROCESS Output')
-  call oheadr(nout,'Copy of PROCESS Input Follows')
+    call show_errors
 
-  close(unit=nin)
-  close(unit=nout)
-  close(unit=nplot)
-  close(unit=mfile)
-  if (verbose == 1) close(unit=vfile)
+    call oheadr(nout,'End of PROCESS Output')
+    call oheadr(iotty,'End of PROCESS Output')
+    call oheadr(nout,'Copy of PROCESS Input Follows')
 
-  ! MDK System calls to append IN.DAT to OUT.DAT
-  call system('cat '//trim(fileprefix)//'OUT.DAT  '//trim(fileprefix)//'IN.DAT  '//'> '//tempfile)
-  call system('mv  '//tempfile//'  '//trim(fileprefix)//'OUT.DAT')
+    close(unit = nin)
+    close(unit = nout)
+    close(unit = nplot)
+    close(unit = mfile)
+    if (verbose == 1) close(unit = vfile)
 
+    open(unit = 100, FILE = inFile)
+    open(unit = 101, FILE = outFile, ACCESS = "append")
+    open(unit = 102, FILE=trim(fileprefix)//'MFILE.DAT', ACCESS = "append")
+    fmtAppend = '(A)'
+    write(102, fmtAppend) "***********************************************"
+
+    DO
+      read(100, fmtAppend, IOSTAT = iost) line
+      write(101, fmtAppend) trim(line)
+      write(102, fmtAppend) trim(line)
+      if(iost < 0) exit                   ! exit if End of line is reached in IN.DAT
+    END DO
+    close(unit = 100)
+    close(unit = 101)
+    close(unit = 102)
+
+  else mainRun
+
+    write(*, *) "There is no input file named"//inFile//" in the analysis folder"
+
+  end if mainRun
 
 end program process
 
@@ -138,17 +192,6 @@ subroutine init
   !+ad_call  initialise_error_list
   !+ad_call  input
   !+ad_call  run_summary
-  !+ad_hist  03/10/96 PJK Initial upgraded version
-  !+ad_hist  17/11/97 PJK Changed file names to *.DAT
-  !+ad_hist  08/10/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  09/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Added global_variables module
-  !+ad_hist  13/02/14 PJK Added mfile open statement
-  !+ad_hist  13/05/14 PJK Added impurity radiation model initialisation
-  !+ad_hist  25/06/14 PJK Introduced call to initialise error handling
-  !+ad_hist  22/07/14 PJK Rearranged calls to print output headers
-  !+ad_hist  10/09/14 PJK Added vfile open statement
   !+ad_hist  19/05/15 PJK Added ability to use a file prefix obtained
   !+ad_hisc               from a command line argument
   !+ad_stat  Okay
@@ -168,9 +211,7 @@ subroutine init
   !  Arguments
 
   !  Local variables
-  integer :: i, nargs
-  !character(len=100) :: fileprefix, executable
-  character(len=100) :: executable
+  integer :: i
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -180,18 +221,14 @@ subroutine init
   !  Initialise the program variables
   call initial
 
-  !  Obtain a file prefix from a command line argument
-  !  (uses Fortran 2003 routines)
-
-  nargs = command_argument_count()
-  if (nargs == 0) then
-     fileprefix = ''
-  else
-     call get_command_argument(1, fileprefix)
-  end if
-
   !  Open the input/output external files
-  open(unit=nin,file=trim(fileprefix)//'IN.DAT',status='old')
+  if (trim(fileprefix) == "") then
+    open(unit=nin,file="IN.DAT",status='old')
+  else
+    open(unit=nin,file=trim(fileprefix),status='old')
+  end if
+  ! open(unit=nin,file=trim(fileprefix)//'IN.DAT',status='old')
+
   open(unit=nout,file=trim(fileprefix)//'OUT.DAT',status='unknown')
   open(unit=nplot,file=trim(fileprefix)//'PLOT.DAT',status='unknown')
   open(unit=mfile,file=trim(fileprefix)//'MFILE.DAT',status='unknown')
@@ -235,7 +272,7 @@ subroutine inform(progid)
   !+ad_desc  machine etc. for the present run, and stores the information
   !+ad_desc  in a character string array.
   !+ad_prob  Non-standard Fortran, because of the unix system calls used.
-  !+ad_call  None (except system calls)
+  !+ad_call  get_DDMonYYTimeZone
   !+ad_hist  03/10/96 PJK Initial version
   !+ad_hist  07/10/96 PJK PROCESS 3001
   !+ad_hist  08/10/96 PJK PROCESS 3002
@@ -280,18 +317,22 @@ subroutine inform(progid)
   implicit none
 
   !  Arguments
-  character(len=72), dimension(0:10) :: progid
+  character(len=110), dimension(0:10) :: progid
 
   !  Local variables
-  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
+!  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
-  character(len=100) :: executable
+  character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '412    Release Date :: 2016-01-20'
+       '1.0.12   Release Date :: 2017-10-04'
+  character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
-  integer :: unit
-  logical :: unit_available
-
+  ! integer :: unit
+  ! logical :: unit_available
+  ! character(8)  :: date
+  ! character(10) :: time
+  ! character(5)  :: zone
+  ! integer, dimension(8) :: values
   !  External routines
 
   !  external system
@@ -300,48 +341,23 @@ subroutine inform(progid)
 
   !  Program name
   progname = 'PROCESS'
-  call get_command_argument(0,executable)
-  !  Create temporary data file
-  call system('/bin/rm -f '// tempfile // char(0))
-  call system('/bin/touch '// tempfile // char(0))
+  call get_command_argument(0, executable)
+  call get_DDMonYYTimeZone(dt_time)
+  id(1) = trim(dt_time) !values(3)//"/"// values(2)//"/"// values(1)  !   5 6 7!date
+  call getlog(id(2))    ! Get user ID
+  call hostnm(id(3))    ! Get host name
+  call getcwd(id(4))    ! Get current working directory
 
-  !  Write information to data file
-  call system('/bin/date >> ' // tempfile // char(0))
-  call system('/usr/bin/whoami >> ' // tempfile // char(0))
-  call system("/usr/bin/finger `/usr/bin/whoami` " // &
-       "| /usr/bin/head -1 | /usr/bin/cut -f 4 " // &
-       "| /usr/bin/cut -f 2-3 -d ' ' >> " // tempfile // char(0))
-  call system('/bin/hostname >> ' // tempfile // char(0))
-  call system('/bin/pwd >> ' // tempfile // char(0))
-
-  !  Read back information into ID array
-  unit = 20
-  unit_available = .false.
-  do while (.not.unit_available)
-     inquire(unit, exist=unit_available)
-     unit = unit+1
-  end do
-
-  open(unit,file=tempfile,status='old')
-  read(unit,'(A)') id(1)
-  read(unit,'(A)') id(2)
-  read(unit,'(A)') id(3)
-  read(unit,'(A)') id(4)
-  read(unit,'(A)') id(5)
-  close(unit)
-
-  !  Delete temporary data file
-  call system('/bin/rm -f ' // tempfile // char(0))
 
   !  Annotate information and store in PROGID character array
   !  for use in other program units via the routine argument
-  !progid(1) = '  Program : ' // progname
+
   progid(1) = '  Program : ' // executable
   progid(2) = '  Version : ' // progver
   progid(3) = 'Date/time : ' // id(1)
-  progid(4) = '     User : ' // trim(id(2)) // ' (' // trim(id(3)) // ')'
-  progid(5) = ' Computer : ' // id(4)
-  progid(6) = 'Directory : ' // id(5)
+  progid(4) = '     User : ' // id(2)
+  progid(5) = ' Computer : ' // id(3)
+  progid(6) = 'Directory : ' // id(4)
 
   !  Summarise most useful data, and store in progid(0)
   progid(0) = trim(progname) // ' ' // trim(progver(:7)) // &
@@ -383,6 +399,7 @@ subroutine run_summary
   !+ad_hisc               incorporating old routine codever
   !+ad_hisc  02/03/15 JM  Added runtitle to MFILE
   !+ad_hist  05/08/15 MDK Header describes output flag
+  !+ad_hist  15/11/16 JM  Changed the version numbering to new format (1.0.0)
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -400,15 +417,17 @@ subroutine run_summary
   !  Local variables
   integer, parameter :: width = 110
   integer :: lap, ii, outfile
-  character(len=72), dimension(0:10) :: progid
-  character(len=5) :: vstring
-  character(len=8) :: date
-  character(len=10) :: time
-  character(len=12) :: dstring
-  character(len=7) :: tstring
-  character(len=10) :: ustring
-  character(len=100) :: rstring
-  integer :: version
+  character(len = 110) :: progid(0:10)  !, dimension(0:10)
+  character(len = 9)   :: vstring
+  character(len = 8)   :: date
+  character(len = 10)  :: time
+  character(len = 12)  :: dstring
+  character(len = 7)   :: tstring
+  character(len = 10)  :: ustring
+  character(len = 100) :: rstring
+  include "com.msg"
+  include "tag.num"
+  include "untracked.info"
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -436,7 +455,13 @@ subroutine run_summary
      !  Run execution details
      call ocmmnt(outfile, progid(1))  !  program name
      call ocmmnt(outfile, progid(2))  !  version
-     call ocmmnt(outfile, progid(3))  !  date/time
+     if (untracked > 0) then
+       call ocmmnt(outfile, '  Tag No. : "'//tagno//' Code used contains Untracked Changes"')  !  directory
+     else
+       call ocmmnt(outfile, '  Tag No. : "'//tagno//'"')  !  directory
+     end if
+     call ocmmnt(outfile, '  Last commit message : "'//COMMSG//'"')  !  directory
+     !call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
      !call ocmmnt(outfile, progid(5))  !  computer
      call ocmmnt(outfile, progid(6))  !  directory
@@ -464,11 +489,9 @@ subroutine run_summary
 
   !  Beware of possible future changes to the progid(...) layouts
 
-  !  The following should work up to version 99999
   !  Relies on an internal read statement
-  vstring = progid(2)(13:17)
-  read(vstring,'(i5)') version
-  call ovarin(mfile,'PROCESS version number','(procver)',version)
+  vstring = progid(2)(13:21)
+  call ovarst(mfile,'PROCESS version number','(procver)','"'//vstring//'"')
 
   call date_and_time(date=date, time=time)
 
@@ -485,6 +508,12 @@ subroutine run_summary
 
   rstring = '"'//runtitle//'"'
   call ovarst(mfile,'PROCESS run title','(runtitle)',rstring)
+
+  rstring = '"'//tagno//'"'
+  call ovarst(mfile,'PROCESS tag number','(tagno)',rstring)
+
+  rstring = '"'//COMMSG//'"'
+  call ovarst(mfile,'PROCESS last commit message','(commsg)',rstring)
 
 #ifndef unit_test
 ! MDK these lines duplicate the ones below.
@@ -505,13 +534,13 @@ subroutine run_summary
 ! For VMCON they are printed out later with residues.
   call oblnkl(nout)
   if (ioptimz == -1) then
-		call ocmmnt(nout, 'The following constraint equations have been imposed,')
-		call ocmmnt(nout, 'but limits will not be enforced by the code :')
-		write(nout,30)
-30 	format(t10,'icc',t25,'label')
-		call oblnkl(nout)
-		write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
-40 	format(t1,i3,t10,i3,t18,a33)
+      call ocmmnt(nout, 'The following constraint equations have been imposed,')
+      call ocmmnt(nout, 'but limits will not be enforced by the code :')
+      write(nout,30)
+30    format(t10,'icc',t25,'label')
+      call oblnkl(nout)
+      write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
+40    format(t1,i3,t10,i3,t18,a33)
   end if
 
 !  call ocmmnt(nout, &
@@ -596,10 +625,11 @@ subroutine eqslv(ifail)
   !  Local variables
   integer :: inn,nprint,nx
   real(kind(1.0D0)) :: sumsq
-  real(kind(1.0D0)), dimension(iptnt) :: wa
+!  real(kind(1.0D0)), dimension(iptnt) :: wa
+  real(kind(1.0D0)) :: wa(iptnt)
   real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
-  character(len=1), dimension(ipeqns) :: sym
-  character(len=10), dimension(ipeqns) :: lab
+  character(len = 1), dimension(ipeqns) :: sym
+  character(len = 10), dimension(ipeqns) :: lab
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -612,8 +642,6 @@ subroutine eqslv(ifail)
   nprint = 0
 
   !  Use HYBRD to find a starting point
-  ! MDK Try allocating here
-  allocate(name_xc(nvar))
   call loadxc
   call eqsolv(fcnhyb,neqns,xcm,rcm,ftol,epsfcn,factor,nprint,ifail, &
        wa,iptnt,resdl,nfev1)
@@ -774,26 +802,19 @@ subroutine herror(ifail)
      continue
 
   case (2)
-     call ocmmnt(nout, &
-          'The maximum number of calls has been reached without')
-     call ocmmnt(nout,'solution, suggesting that the iteration is not')
-     call ocmmnt(nout,'making good progress.')
+     call ocmmnt(nout,'The maximum number of calls has been reached without solution,')
+     call ocmmnt(nout,'suggesting that the iteration is not making good progress.')
      call ocmmnt(nout,'Try changing the variables in IXC.')
 
-     call ocmmnt(iotty, &
-          'The maximum number of calls has been reached without')
-     call ocmmnt(iotty,'solution, suggesting that the iteration is not')
-     call ocmmnt(iotty,'making good progress.')
+     call ocmmnt(iotty,'The maximum number of calls has been reached without solution,')
+     call ocmmnt(iotty,'suggesting that the iteration is not making good progress.')
      call ocmmnt(iotty,'Try changing the variables in IXC.')
 
   case (3)
-     call ocmmnt(nout, &
-          'The tolerance is too small: No further improvement')
-     call ocmmnt(nout,'in the approximate solution is possible.')
+     call ocmmnt(nout,'The tolerance is too small: No further improvement in the approximate solution is possible.')
      call ocmmnt(nout,'Try raising the value of FTOL.')
 
-     call ocmmnt(iotty, &
-          'The tolerance is too small: No further improvement')
+     call ocmmnt(iotty, 'The tolerance is too small: No further improvement in the approximate solution is possible.')
      call ocmmnt(iotty,'in the approximate solution is possible.')
      call ocmmnt(iotty,'Try raising the value of FTOL.')
 
@@ -804,8 +825,7 @@ subroutine herror(ifail)
      call oblnkl(nout)
      call ocmmnt(nout,'There is either no solution possible, or the code')
      call ocmmnt(nout,'is failing to escape from a deep local minimum.')
-     call ocmmnt(nout,'Try changing the variables in IXC, or')
-     call ocmmnt(nout,'modify their initial values.')
+     call ocmmnt(nout,'Try changing the variables in IXC, or modify their initial values.')
 
      call ocmmnt(iotty,'The iteration is not making good progress.')
      call ocmmnt(iotty,'The code may be stuck in a minimum in the residual')
@@ -813,11 +833,10 @@ subroutine herror(ifail)
      call oblnkl(iotty)
      call ocmmnt(iotty,'There is either no solution possible, or the code')
      call ocmmnt(iotty,'is failing to escape from a deep local minimum.')
-     call ocmmnt(iotty,'Try changing the variables in IXC, or')
-     call ocmmnt(iotty,'modify their initial values.')
+     call ocmmnt(iotty,'Try changing the variables in IXC, or modify their initial values.')
 
   case default
-     call ocmmnt(nout, 'This value of IFAIL should not be possible...')
+     call ocmmnt(nout,'This value of IFAIL should not be possible...')
      call ocmmnt(nout,'See source code for details.')
 
      call ocmmnt(iotty,'This value of IFAIL should not be possible...')
@@ -885,41 +904,28 @@ subroutine verror(ifail)
      continue
 
   case (2)
-     call ocmmnt(nout, &
-          'The maximum number of calls has been reached without')
-     call ocmmnt(nout,'solution, suggesting that the iteration is not')
-     call ocmmnt(nout,'making good progress.')
-     call ocmmnt(nout,'The code may be stuck in a minimum in the residual')
-     call ocmmnt(nout,'space that is significantly above zero.')
+     call ocmmnt(nout,'The maximum number of calls has been reached without solution.')
+     call ocmmnt(nout,'The code may be stuck in a minimum in the residual space that is significantly above zero.')
      call oblnkl(nout)
      call ocmmnt(nout,'There is either no solution possible, or the code')
      call ocmmnt(nout,'is failing to escape from a deep local minimum.')
-     call ocmmnt(nout,'Try changing the variables in IXC, or')
-     call ocmmnt(nout,'modify their initial values.')
+     call ocmmnt(nout,'Try changing the variables in IXC, or modify their initial values.')
 
-     call ocmmnt(iotty, &
-          'The maximum number of calls has been reached without')
-     call ocmmnt(iotty,'solution, suggesting that the iteration is not')
-     call ocmmnt(iotty,'making good progress.')
-     call ocmmnt(iotty,'The code may be stuck in a minimum in the residual')
-     call ocmmnt(iotty,'space that is significantly above zero.')
+     call ocmmnt(iotty,'The maximum number of calls has been reached without solution.')
+     call ocmmnt(iotty,'The code may be stuck in a minimum in the residual space that is significantly above zero.')
+     call oblnkl(nout)
      call oblnkl(iotty)
      call ocmmnt(iotty,'There is either no solution possible, or the code')
      call ocmmnt(iotty,'is failing to escape from a deep local minimum.')
-     call ocmmnt(iotty,'Try changing the variables in IXC, or')
-     call ocmmnt(iotty,'modify their initial values.')
+     call ocmmnt(iotty,'Try changing the variables in IXC, or modify their initial values.')
 
   case (3)
-     call ocmmnt(nout, &
-          'The line search required the maximum of 10 calls.')
-     call ocmmnt(nout, &
-          'A feasible solution may be difficult to achieve.')
+     call ocmmnt(nout,'The line search required the maximum of 10 calls.')
+     call ocmmnt(nout,'A feasible solution may be difficult to achieve.')
      call ocmmnt(nout,'Try changing or adding variables to IXC.')
 
-     call ocmmnt(iotty, &
-          'The line search required the maximum of 10 calls.')
-     call ocmmnt(iotty, &
-          'A feasible solution may be difficult to achieve.')
+     call ocmmnt(iotty,'The line search required the maximum of 10 calls.')
+     call ocmmnt(iotty,'A feasible solution may be difficult to achieve.')
      call ocmmnt(iotty,'Try changing or adding variables to IXC.')
 
   case (4)
@@ -1123,11 +1129,12 @@ subroutine doopt(ifail)
   if (ifail /= 1) then
      call ovarin(nout,'VMCON error flag','(ifail)',ifail)
   end if
-  ! MDK call ovarre(nout,'Figure of merit objective function','(f)',f)
+
   call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
+  call ovarre(nout,'VMCON convergence parameter','(convergence_parameter)',convergence_parameter, 'OP ')
+  call ovarin(nout,'Number of VMCON iterations','(nviter)',nviter, 'OP ')
   call oblnkl(nout)
 
-! MDK Try cleaner code, one line output
   if (ifail == 1) then
      string1 = 'PROCESS has successfully optimised the iteration variables'
   else
@@ -1144,7 +1151,6 @@ subroutine doopt(ifail)
   call upper_case(strfom)
   write(nout,10) trim(string1) // trim(string2),  trim(strfom)
 10 format(a90, t92, a22)
-! MDK end
 
   call oblnkl(nout)
 
@@ -1216,7 +1222,7 @@ subroutine doopt(ifail)
      xcs(inn) = xcm(inn)*scafc(inn)
 !     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
 !          vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
-	  write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn)
+     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn)
 !80 format(t2,i4,t8,a9,t19,4(1pe12.4))
 !80 format(t2,i4,t8,a30,t39,2(1pe12.4))
 80 format(t2,i4,t8,a30,t39,1pe12.4, t52, 0pf10.4)
@@ -1320,11 +1326,11 @@ subroutine final(ifail)
   call output(nout)
 
   if (nfev1 == 0) then  !  no HYBRD call
-     if (nviter == 1) then
-        write(iotty,10) nviter,ncalls
-     else
-        write(iotty,20) nviter,ncalls
-     end if
+     !if (nviter == 1) then
+     !    write(iotty,10) nviter,ncalls
+     !else
+    !    write(iotty,20) nviter,ncalls
+     !end if
   else if (nviter == 0) then  !  no VMCON call
      if (nfev1 == 1) then
         write(iotty,30) nfev1,ncalls
@@ -1339,12 +1345,6 @@ subroutine final(ifail)
      write(iotty,70) nfev1,nviter,ncalls
   end if
 
-10 format( &
-       t2,'The optimisation required ',i5,' iteration',/, &
-       t2,'There were ',i6,' function calls')
-20 format( &
-       t2,'The optimisation required ',i5,' iterations',/, &
-       t2,'There were ',i6,' function calls')
 30 format( &
        t2,'The HYBRD point required ',i5,' iteration',/, &
        t2,'There were ',i6,' function calls')
@@ -1386,15 +1386,15 @@ subroutine output(outfile)
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
-  !+ad_call  ife_module
-  !+ad_call  ife_variables
+
+
   !+ad_call  pfcoil_module
   !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  power_module
   !+ad_call  pulse_module
-  !+ad_call  rfp_module
-  !+ad_call  rfp_variables
+
+
   !+ad_call  sctfcoil_module
   !+ad_call  startup_module
   !+ad_call  stellarator_module
@@ -1404,7 +1404,7 @@ subroutine output(outfile)
   !+ad_call  vaccum_module
   !+ad_call  acpow
   !+ad_call  avail
-  !+ad_call  avail_new
+  !+ad_call  avail_2
   !+ad_call  bldgcall
   !+ad_call  cntrpst
   !+ad_call  costs
@@ -1424,9 +1424,6 @@ subroutine output(outfile)
   !+ad_call  power2
   !+ad_call  pulse
   !+ad_call  radialb
-  !+ad_call  rfppfc
-  !+ad_call  rfppfp
-  !+ad_call  rfptfc
   !+ad_call  startup
   !+ad_call  stout
   !+ad_call  strucall
@@ -1443,31 +1440,9 @@ subroutine output(outfile)
   !+ad_hist  20/09/11 PJK Initial F90 version
   !+ad_hist  24/09/12 PJK Swapped argument order of RADIALB, DIVCALL, INDUCT
   !+ad_hist  10/10/12 PJK Moved routine from output.f90 to aamain.f90
-  !+ad_hist  15/10/12 PJK Added costs_module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added physics_module
-  !+ad_hist  17/10/12 PJK Added current_drive_module
-  !+ad_hist  17/10/12 PJK Added divertor_module
-  !+ad_hist  18/10/12 PJK Added fwbs_module
-  !+ad_hist  18/10/12 PJK Added pfcoil_module
-  !+ad_hist  29/10/12 PJK Added tfcoil_module
-  !+ad_hist  29/10/12 PJK Added sctfcoil_module
-  !+ad_hist  29/10/12 PJK Added structure_module
-  !+ad_hist  29/10/12 PJK Added vacuum_module
-  !+ad_hist  30/10/12 PJK Added power_module
-  !+ad_hist  30/10/12 PJK Added buildings_module
-  !+ad_hist  30/10/12 PJK Added build_module
-  !+ad_hist  31/10/12 PJK Added stellarator_variables
-  !+ad_hist  31/10/12 PJK Added stellarator_module
-  !+ad_hist  05/11/12 PJK Added rfp_variables
-  !+ad_hist  05/11/12 PJK Added rfp_module
-  !+ad_hist  05/11/12 PJK Added ife_variables
-  !+ad_hist  05/11/12 PJK Added ife_module
-  !+ad_hist  05/11/12 PJK Added pulse_module
-  !+ad_hist  06/11/12 PJK Added startup_module
-  !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
   !+ad_hist  09/07/14 PJK Turned on error handling
+  !+ad_hist  07/06/16  JM Added some extra comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1480,19 +1455,17 @@ subroutine output(outfile)
   use costs_2015_module
   use cost_variables
   use current_drive_module
+  use divertor_kallenbach_variables
+  use divertor_ode, only: divertor_kallenbach
   use divertor_module
   use error_handling
   use fwbs_module
   use fwbs_variables
-  use ife_module
-  use ife_variables
   use pfcoil_module
   use physics_module
   use physics_variables
   use power_module
   use pulse_module
-  use rfp_module
-  use rfp_variables
   use sctfcoil_module
   use startup_module
   use stellarator_module
@@ -1501,23 +1474,24 @@ subroutine output(outfile)
   use tfcoil_module
   use vacuum_module
 
-  !  Import blanket modules
+  ! Import blanket modules
   use ccfe_hcpb_module
   use kit_hcpb_module
+  use kit_hcll_module
 
   implicit none
 
-  !  Arguments
+  ! Arguments
 
   integer, intent(in) :: outfile
 
-  !  Local variables
+  ! Local variables
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !  Turn on error reporting
-  !  (warnings etc. encountered in previous iterations may have cleared themselves
-  !  during the solution process)
+  ! Turn on error reporting
+  ! (warnings etc. encountered in previous iterations may have cleared themselves
+  ! during the solution process)
   errors_on = .true.
 
   !  Call stellarator output routine instead if relevant
@@ -1526,11 +1500,14 @@ subroutine output(outfile)
      return
   end if
 
-  !  Call inertial fusion energy output routine instead if relevant
-  if (ife /= 0) then
-     call ifeout(outfile)
-     return
-  end if
+  ! Costs model !
+  !!!!!!!!!!!!!!!
+
+  ! Cost switch values
+  ! No.  |  model
+  ! ---- | ------
+  ! 0    |  1990 costs model
+  ! 1    |  2015 Kovari model
 
   if (cost_model == 1) then
      call costs_2015(outfile,1)
@@ -1538,78 +1515,167 @@ subroutine output(outfile)
      call costs(outfile,1)
   end if
 
+  ! Availability model !
+  !!!!!!!!!!!!!!!!!!!!!!
+
+  ! Availability switch values
+  ! No.  |  model
+  ! ---- | ------
+  ! 0    |  Input value for cfactr
+  ! 1    |  Ward and Taylor model (1999)
+  ! 2    |  Morris model (2015)
+
   if (iavail > 1) then
-     call avail_new(outfile, 1)
+     call avail_2(outfile, 1)  ! Morris model (2015)
   else
-     call avail(outfile,1)
+     call avail(outfile,1)  ! Taylor and Ward model (1999)
   end if
+
+
+  ! TODO what is this? not in caller.f90?
   call outplas(outfile)
+
+  ! startup model (not used) !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   !call startup(outfile,1)  !  commented-out for speed reasons
+
+  ! TODO what is this? not in caller.f90
   call igmarcal(outfile)
+
+  ! TODO what is this? Not in caller.f90?
   call cudriv(outfile,1)
+
+  ! Pulsed reactor model !
+  !!!!!!!!!!!!!!!!!!!!!!!!
+
   call pulse(outfile,1)
+
+
   call outtim(outfile)
-  call divcall(outfile,1)
+
+  ! Divertor Model !
+  !!!!!!!!!!!!!!!!!!
+
+  call ovarin(mfile, 'kallenbach_switch','(kallenbach_switch)', kallenbach_switch)
+  if(Kallenbach_switch.eq.1) then
+    call divertor_Kallenbach(rmajor=rmajor,rminor=rminor, &
+      bt=bt,plascur=plascur, bvert=bvert,q=q, &
+      verboseset=.false.,  &
+      Ttarget=Ttarget,qtargettotal=qtargettotal,            &
+      targetangle=targetangle,lcon_factor=lcon_factor, netau_in=netau, &
+      unit_test=.false.,abserrset=1.d-5,  &
+      bp = bp,   &
+      psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
+      outfile=nout,iprint=1 )
+
+  else
+    ! Old Divertor Model ! Comment this out MDK 30/11/16
+    call divcall(outfile,1)
+
+  end if
+
+  ! Machine Build Model !
+  !!!!!!!!!!!!!!!!!!!!!!!
+
+  ! Radial build
   call radialb(outfile,1)
+
+  ! Vertical build
   call vbuild(outfile,1)
 
-  if (irfp == 0) then
-     call tfcoil(outfile,1)
-  else
-     call rfptfc(outfile,1)
-  end if
+  ! Toroidal field coil model !
+  call tfcoil(outfile,1)
+
+  ! Toroidal field coil superconductor model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call tfspcall(outfile,1)
 
-  if (itart == 1) call cntrpst(outfile,1)
+  ! Tight aspect ratio machine model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  if (irfp == 0) then
-     call outpf(outfile)
-  else
-     call rfppfc(outfile,1)
+  if (itart == 1) then
+    call cntrpst(outfile,1)
   end if
 
-  if (irfp == 0) call outvolt(outfile)
+  ! Poloidal field coil model !
+  call outpf(outfile)
+
+  ! TODO what is outvolt?
+  call outvolt(outfile)
+
+  ! Structure Model !
+  !!!!!!!!!!!!!!!!!!!
 
   call strucall(outfile,1)
 
-  if (irfp == 0) call induct(outfile,1)
+  ! Poloidal field coil inductance calculation
+  call induct(outfile,1)
+
+  ! Blanket model !
+  !!!!!!!!!!!!!!!!!!
+
+  ! Blanket switch values
+  ! No.  |  model
+  ! ---- | ------
+  ! 1    |  CCFE HCPB model
+  ! 2    |  KIT HCPB model
+  ! 3    |  CCFE HCPB model with Tritium Breeding Ratio calculation
+  ! 4    |  KIT HCLL model
 
   if (iblanket == 1) then           ! CCFE HCPB model
-	 call ccfe_hcpb(nout, 1)
+      call ccfe_hcpb(nout, 1)
   else if (iblanket == 2) then      ! KIT HCPB model
      call kit_hcpb(nout, 1)
-  else if (iblanket == 3) then      ! CFE HCPB model with Tritium Breeding Ratio calculation
+  else if (iblanket == 3) then      ! CCFE HCPB model with Tritium Breeding Ratio calculation
      call ccfe_hcpb(nout, 1)
-	 call tbr_shimwell(nout, 1, breeder_f, li6enrich, iblanket_thickness, tbr)
+     call tbr_shimwell(nout, 1, breeder_f, li6enrich, iblanket_thickness, tbr)
+  else if (iblanket == 4) then      ! KIT HCLL model
+     call kit_hcll(nout, 1)
   end if
 
-  !call fwbs(outfile,1)
+  ! FISPACT and LOCA model (not used) !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  if (ifispact == 1) then
-     call fispac(0)
-     call fispac(1)
-     call loca(outfile,0)
-     call loca(outfile,1)
-  end if
+  ! if (ifispact == 1) then
+  !   call fispac(0)
+  !   call fispac(1)
+  !   call loca(outfile,0)
+  !   call loca(outfile,1)
+  !end if
+
+  ! Toroidal field coil power model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call tfpwr(outfile,1)
 
-  if (irfp == 0) then
-     call pfpwr(outfile,1)
-  else
-     call rfppfp(outfile,1)
-  end if
+  ! Poloidal field coil power model !
+  call pfpwr(outfile,1)
+
+  ! Vacuum model !
+  !!!!!!!!!!!!!!!!
 
   call vaccall(outfile,1)
-  if (cost_model==0) call bldgcall(outfile,1)
+
+  ! Buildings model (1990 costs model only) !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (cost_model==0) then
+    call bldgcall(outfile,1)
+  end if
+
+  ! Plant AC power requirements !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   call acpow(outfile,1)
+
+  ! Plant heat transport pt 2 & 3 !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   call power2(outfile,1)
 
-  !select case (iblanket)
-  !case(1)
-  !	call ccfe_hcpb(outfile, 1)
-  !end select
+  call power3(nout,1)
 
 end subroutine output
 
@@ -1619,6 +1685,7 @@ subroutine runtests
   use numerics
   use process_output
   use pfcoil_module
+  use superconductors
   implicit none
   call ovarre(nout,'Binomial coefficients C(5,0): 1', '(binomial(5,0))', binomial(5,0))
   call ovarre(nout,'Binomial coefficients C(5,1): 5', '(binomial(5,1))', binomial(5,1))
@@ -1627,8 +1694,60 @@ subroutine runtests
   call ovarre(nout,'Binomial coefficients C(5,4): 5', '(binomial(5,4))', binomial(5,4))
   call ovarre(nout,'Binomial coefficients C(5,5): 1', '(binomial(5,5))', binomial(5,5))
 
+  call test_quench()
   call brookscoil(nout)
+  call test_secant_solve()
 end subroutine runtests
+
+
+subroutine get_DDMonYYTimeZone(dt_time)
+  !+ad_name  get_DDMonYYTimeZone
+  !+ad_summ  Routine to get date, time and timezone
+  !+ad_type  Subroutine
+  !+ad_auth  M Kumar, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  dt_time : output string  : String containing formatted time and date
+  !+ad_desc  This routine calls the intrinsic DATE_AND_TIME subroutine
+  !+ad_desc  and format the output in
+  !+ad_desc  DD Mon YYYY hr:minute:second time difference from UTC.
+  !+ad_hist  28/10/16 MK Initial version
+  !+ad_stat  Okay
+
+! Arguments
+    CHARACTER(len = *), INTENT(OUT) :: dt_time
+! Local variables
+    INTEGER :: values(8)
+    CHARACTER(len = 1), parameter :: tspt = ":"
+    CHARACTER(len = 1), parameter :: spspt = " "
+
+    CHARACTER(len = 2)  :: dd
+    CHARACTER(len = 5)  :: mons(12)
+    CHARACTER(len = 4)  :: yyyy
+    CHARACTER(len = 2)  :: hr    ! Hour of the day
+    CHARACTER(len = 2)  :: mnt   ! Minute of the hour
+    CHARACTER(len = 2)  :: scnd  ! The seconds of the minute
+    CHARACTER(len = 5)  :: zn    ! In form (+-)hhmm, representing the difference with respect to Coordinated Universal Time (UTC).
+    CHARACTER(len = 20) :: znfrmt
+
+    mons = [' Jan ',' Feb ',' Mar ',' Apr ',' May ',' Jun ',&
+      ' Jul ',' Aug ',' Sep ',' Oct ',' Nov ',' Dec ']
+
+    CALL DATE_AND_TIME(ZONE = zn, VALUES = values)
+    znfrmt = zn(1:3)//":"//zn(4:5)//"(hh:mm) UTC"
+    znfrmt = trim(znfrmt)
+    WRITE(  dd,'(i2)') values(3)
+    WRITE(yyyy,'(i4)') values(1)
+    write(hr, '(i2)')  values(5)
+    write(mnt, '(i2)')  values(6)
+    write(scnd, '(i2)')  values(7)
+    if(mnt(1:1) == " ")   mnt(1:1) = "0"
+    if(scnd(1:1) == " ") scnd(1:1) = "0"
+
+    dt_time = dd//mons(values(2))//yyyy//spspt// &
+             hr//tspt//mnt//tspt//scnd//spspt//znfrmt
+    dt_time = trim(dt_time)
+
+  END subroutine get_DDMonYYTimeZone
 
 
 ! SVN 145: New CICC plots for User Guide
@@ -1968,7 +2087,7 @@ end subroutine runtests
 ! GIT 395: Rewrite to vacuum pump availability. New Binomial routine.
 ! GIT 396: New cost model complete.  J Shimwell parametric TBR model #195. #292, #293
 ! GIT 397: Issues dealt with now or previously: #301 #219 #244 #252 #255 #262 #264 #268 #269 #278 #294 #295 #284
-! GIT 398: Tidy first wall and blanket thermohydraulics (#302), Radial plate error (#300), Append input file to output file (#305)
+! GIT 398: Tidy first wall and blanket thermohydraulics (#302), Append input file to output file (#305)
 ! GIT 399: Minimum total electrical power for primary coolant pumps (htpmw_min) (#303). The user now specifies the allowable von Mises stress for TFC and hoop stress for CS.
 ! GIT 400: Blanket fractions now defined using breeder_multiplier: combined breeder/multipler fraction. Steel is remainder. Cryogenics output added.
 !          Corrected surface heat flux on first wall #309. Cost of electricity and maintenance cost now included in 2015 cost model.
@@ -2007,3 +2126,9 @@ end subroutine runtests
 ! 411      Added maximum rate of change of PF energy as a constraint.
 ! 412      Master release: Checked recent changes using the test suite. Made a
 !          few minor changes. Updated test function in plot_proc.
+! 413      HCLL model now implemented. See milestone march 2016 for details.
+! 1.0.0    Master release and update of versioning format. See release_notes_1_0_0.md
+! 1.0.6    Version used for start of 2017 baseline work
+! 1.0.7    Kallenbach model implemented but not fully tested
+! 1.0.8    Changes included that were used for jan/feb 2017 baseline runs.
+! 1.0.9    Time-dependent power reqs and simplified input file

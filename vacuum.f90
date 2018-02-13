@@ -91,21 +91,21 @@ contains
 
 ! MDK Check this!!
     gasld = 2.0D0*qfuel * afuel*umass
-    
-    if (vacuum_model == 'old') then    
+
+    if (vacuum_model == 'old') then
         call vacuum(powfmw,rmajor,rminor,0.5D0*(scrapli+scraplo),sarea,vol, &
          shldoth,shldith,tfcth,rsldi-gapds-ddwi,tfno,tdwell,dene,idivrt, &
          qtorus,gasld,pumpn,nvduct,dlscal,vacdshm,vcdimax,iprint,outfile)
         ! MDK pumpn is real: convert to integer by rounding.
-        vpumpn = floor(pumpn+0.5D0)    
+        vpumpn = floor(pumpn+0.5D0)
     else if (vacuum_model == 'simple') then
         call vacuum_simple(niterpump,iprint,outfile)
     else
       write(*,*) 'ERROR "vacuum_model" seems to be invalid:', vacuum_model
       write(outfile,*) 'ERROR "vacuum_model" seems to be invalid:', vacuum_model
     end if
-    
-         
+
+
 
   end subroutine vaccall
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -126,8 +126,9 @@ contains
     !+ad_call  ovarre
     !+ad_hist  12/08/15 MDK
     !+ad_hist  22/09/15 MDK. Battes, Day and Rohde pump-down model: See global_variables.f90
+    !+ad_hist  20/01/16  JM  Added pumptp variable for throughput. Default to ITER value.
     !+ad_stat  Okay
-    
+
     implicit none
 
     !  Arguments
@@ -138,26 +139,26 @@ contains
         write(*,*) 'Negative dwell time.  Reset tdwell = 100 seconds'
         tdwell = 100.0D0
     end if
-    
+
     ! Steady-state model (super simple)
     ! One ITER torus cryopump has a throughput of 50 Pa m3/s = 1.2155e+22 molecules/s
     ! Issue #304
-    niterpump = qfuel / 1.2155D22
-    
-    ! Pump-down: 
+    niterpump = qfuel / pumptp
+
+    ! Pump-down:
     ! Pumping speed per pump m3/s
     pumpspeed = pumpspeedmax * pumpareafraction * pumpspeedfactor * sarea / tfno
-        
+
     wallarea = (sarea / 1084.0d0) * 2000.0d0
     ! Required pumping speed for pump-down
     pumpdownspeed = (outgasfactor * wallarea / pbase ) * tdwell**(-outgasindex)
     ! Number of pumps required for pump-down
     npumpdown = pumpdownspeed / pumpspeed
-    
-    ! Combine the two (somewhat inconsistent) models 
+
+    ! Combine the two (somewhat inconsistent) models
     ! Note that 'npump' can be constrained by constraint equation 63
     npump = max(niterpump, npumpdown)
-    
+
     !  Output section
     if (iprint == 0) return
 
@@ -168,11 +169,11 @@ contains
     call ocmmnt(outfile,'Number of high vacuum pumps, each with the throughput')
     call ocmmnt(outfile,' of one ITER cryopump (50 Pa m3 s-1 = 1.2e+22 molecules/s),')
     call ovarre(outfile,' all operating at the same time', '(niterpump)',niterpump, 'OP ')
-    
+
     call ovarre(outfile,'Dwell time', '(tdwell)',tdwell)
     call ovarre(outfile,'Number of pumps required for pump-down', '(npumpdown)',npumpdown, 'OP ')
     call ovarre(outfile,'Number of pumps required overall', '(npump)',npump, 'OP ')
-    
+
   end subroutine vacuum_simple
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -550,7 +551,7 @@ contains
     call ovarre(outfile,'Passage diameter, divertor to ducts (m)', '(d(imax))',d(imax), 'OP ')
     call ovarre(outfile,'Passage length (m)','(l1)',l1, 'OP ')
     call ovarre(outfile,'Diameter of ducts (m)','(dout)',dout, 'OP ')
-    
+
     call ovarre(outfile,'Duct length, divertor to elbow (m)','(l2)',l2, 'OP ')
     call ovarre(outfile,'Duct length, elbow to pumps (m)','(l3)',l3)
     call ovarre(outfile,'Number of pumps','(pumpn)',pumpn, 'OP ')
@@ -561,4 +562,3 @@ contains
   end subroutine vacuum
 
 end module vacuum_module
-

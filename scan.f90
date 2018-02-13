@@ -27,17 +27,6 @@ module scan_module
   !+ad_call  tfcoil_variables
   !+ad_hist  09/10/12 PJK Initial version of module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Added global_variables module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added variable descriptions
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  18/10/12 PJK Added pfcoil_variables
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  29/10/12 PJK Added pf_power_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  31/10/12 PJK Added cost_variables
-  !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_hist  28/11/13 PJK Added scan variable 27: tbrmin
   !+ad_hist  12/02/14 PJK Added scan variable 28: bt
   !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
@@ -45,11 +34,14 @@ module scan_module
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  22/07/14 PJK Raised ipnscns from 50 to 200
   !+ad_hist  06/08/15 MDK Added taulimit (31)
+  !+ad_hist  14/11/16 JM  Added epsvmc (32)
+  !+ad_hist  10/03/17 MDK Added ttarget (33)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constraint_variables
   use cost_variables
   use current_drive_variables
@@ -65,6 +57,7 @@ module scan_module
   use process_output
   use tfcoil_variables
   use fwbs_variables
+  use divertor_kallenbach_variables
 
   implicit none
 
@@ -72,9 +65,8 @@ module scan_module
 
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
-  !+ad_vars  ipnscnv /30/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 31
-
+  !+ad_vars  ipnscnv /42/ FIX : number of available scan variables
+  integer, parameter :: ipnscnv = 42
   !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
   !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
@@ -98,7 +90,7 @@ module scan_module
   !+ad_varc          <LI> 18 gammax
   !+ad_varc          <LI> 19 boundl(16: ohcth)
   !+ad_varc          <LI> 20 tbrnmn
-  !+ad_varc          <LI> 21 sigpfalw
+  !+ad_varc          <LI> 21 not used
   !+ad_varc          <LI> 22 cfactr (N.B. requires iavail=0)
   !+ad_varc          <LI> 23 boundu(72: fipir)
   !+ad_varc          <LI> 24 powfmax
@@ -108,10 +100,22 @@ module scan_module
   !+ad_varc          <LI> 28 bt
   !+ad_varc          <LI> 29 coreradius
   !+ad_varc          <LI> 30 fimpvar
-  !+ad_varc          <LI> 31 taulimit</UL>
+  !+ad_varc          <LI> 31 taulimit
+  !+ad_varc          <LI> 32 epsvmc
+  !+ad_varc          <LI> 33 ttarget
+  !+ad_varc          <LI> 34 qtargettotal
+  !+ad_varc          <LI> 35 lambda_q_omp
+  !+ad_varc          <LI> 36 lambda_target
+  !+ad_varc          <LI> 37 lcon_factor
+  !+ad_varc          <LI> 38 Neon upper limit
+  !+ad_varc          <LI> 39 Argon upper limit
+  !+ad_varc          <LI> 40 Xenon upper limit
+  !+ad_varc          <LI> 41 blnkoth
+  !+ad_varc          <LI> 42 Argon fraction fimp(9)</UL>
+
   integer :: nsweep = 1
 
-  !+ad_vars  sweep(ipnscns) : actual values to use in scan
+  !+ad_vars  sweep(ipnscns) /../: actual values to use in scan
   real(kind(1.0D0)), dimension(ipnscns) :: sweep = 0.0D0
 
 contains
@@ -140,35 +144,8 @@ contains
     !+ad_call  ovarin
     !+ad_call  ostars
     !+ad_call  report_error
-    !+ad_hist  03/10/96 PJK Initial upgraded version
-    !+ad_hist  01/04/98 PJK Added POWFMAX to list of scanning variables
-    !+ad_hist  23/06/98 PJK Added KAPPA and TRIANG to list of scanning vars
-    !+ad_hist  19/05/99 PJK Added warning about trying to scan CFACTR with
-    !+ad_hisc               new availability model
-    !+ad_hist  25/05/06 PJK Added implied-DO loops for sweep outputs
-    !+ad_hist  08/10/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/01/13 PJK Clarified some output labels
-    !+ad_hist  27/06/13 PJK Modified beta coefficient label
-    !+ad_hist  26/11/13 PJK Rationalised code structure; added scanning
-    !+ad_hisc               variable information to output banner
-    !+ad_hist  27/11/13 PJK Added Psep/R to list of output variables
-    !+ad_hist  28/11/13 PJK Added scan variable 27: tbrmin
-    !+ad_hist  12/02/14 PJK Added scan variable 28: bt
-    !+ad_hist  13/02/14 PJK Replaced spaces with underscores in xlabel, plabel
-    !+ad_hist  20/02/14 PJK Replaced te*pcoef with ten; changed plabel(20)
-    !+ad_hist  30/04/14 PJK Fixed plabel(20)
-    !+ad_hist  15/05/14 PJK Increased output width to 110 characters
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
-    !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  09/07/14 PJK Turned error reporting off after each output step
-    !+ad_hist  20/10/14 PJK OHC to CS
-    !+ad_hist  06/08/15 MDK Add taulimit to PLOT.DAT and to scan variables (31)
     !+ad_hist  06/08/15 MDK Use 1p format: 3.0000E+01 instead of 0.3000E+01
     !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -182,7 +159,7 @@ contains
     ! character(len=25) :: xlabel,vlabel
     character(len=48) :: tlabel
 
-    integer, parameter :: noutvars = 58
+    integer, parameter :: noutvars = 83
     integer, parameter :: width = 110
 
     character(len=25), dimension(noutvars), save :: plabel
@@ -264,7 +241,7 @@ contains
        plabel(48) = 'Net_electric_Pwr_(MW)____'
        plabel(49) = 'Recirculating_Fraction___'
        plabel(50) = 'Psep/R___________________'
-       plabel(51) = 'fimpvar__________________'       
+       plabel(51) = 'fimpvar__________________'
        plabel(52) = 'Tot._radiation_power_(MW)'
        plabel(53) = 'First_wall_peak_temp_(K)_'
        plabel(54) = 'Cu_frac_TFC_conductor____'
@@ -272,6 +249,32 @@ contains
        plabel(56) = 'Conductor_area_TFC_(m2)__'
        plabel(57) = 'Area_TF_inboard_leg_(m2)_'
        plabel(58) = 'Taup/taueff_lower_limit__'
+       plabel(59) = 'Plasma_temp_at_sep_[keV]_'
+       plabel(60) = 'SOL_density_at_OMP_______'
+       plabel(61) = 'Power_through__separatrix'
+       plabel(62) = 'neomp/nesep_____________ '
+       plabel(63) = 'qtargettotal____________ '
+       plabel(64) = 'Total_pressure_at_target_'
+       plabel(65) = 'Temperature_at_target____'
+       plabel(66) = 'Helium_fraction__________'
+       plabel(67) = 'Momentum_loss_factor_____'
+       plabel(68) = 'totalpowerlost_[W]_______'
+       plabel(69) = 'H__concentration_________'
+       plabel(70) = 'He_concentration_________'
+       plabel(71) = 'Be_concentration_________'
+       plabel(72) = 'C__concentration_________'
+       plabel(73) = 'N__concentration_________'
+       plabel(74) = 'O__concentration_________'
+       plabel(75) = 'Ne_concentration_________'
+       plabel(76) = 'Si_concentration_________'
+       plabel(77) = 'Ar_concentration_________'
+       plabel(78) = 'Fe_concentration_________'
+       plabel(79) = 'Ni_concentration_________'
+       plabel(80) = 'Kr_concentration_________'
+       plabel(81) = 'Xe_concentration_________'
+       plabel(82) = 'W__concentration_________'
+       plabel(83) = 'teped____________________'
+
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
        call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
@@ -280,14 +283,15 @@ contains
     end if
 
     do iscan = 1,isweep
+       iscan_global = iscan           ! Makes iscan available globally (read-only)
 
        select case (nsweep)
 
           ! Use underscores instead of spaces in xlabel
-          ! MDK Remove the "=" from vlabel, to make it easier to compare with 
+          ! MDK Remove the "=" from vlabel, to make it easier to compare with
           ! list of iteration variables
 
-       case (1) 
+       case (1)
           aspect = sweep(iscan)
           vlabel = 'aspect' ; xlabel = 'Aspect_ratio'
        case (2)
@@ -313,7 +317,7 @@ contains
           vlabel = 'fqval' ; xlabel = 'Big_Q_f-value'
        case (9)
           te = sweep(iscan)
-          vlabel = 'te' ; xlabel = 'Electron_temperature_(keV)'
+          vlabel = 'te' ; xlabel = 'Electron_temperature_keV'
        case (10)
           boundu(15) = sweep(iscan)
           vlabel = 'boundu(15)' ; xlabel = 'Volt-second_upper_bound'
@@ -348,8 +352,8 @@ contains
           tbrnmn = sweep(iscan)
           vlabel = 'tbrnmn' ; xlabel = 'Minimum_burn_time_(s)'
        case (21)
-          sigpfalw = sweep(iscan)
-          vlabel = 'sigpfalw' ; xlabel = 'Allowable_PF_coil_stress'
+          ! sigpfalw = sweep(iscan)
+          vlabel = 'obsolete' ; xlabel = 'obsolete'
        case (22)
           if (iavail == 1) call report_error(95)
           cfactr = sweep(iscan)
@@ -377,12 +381,47 @@ contains
           vlabel = 'coreradius' ; xlabel = 'Core_radius'
        case (30)
           fimpvar = sweep(iscan)
-          impurity_arr(impvar)%frac = fimpvar
+          ! impurity_arr(impvar)%frac = fimpvar
           vlabel = 'fimpvar' ; xlabel = 'Impurity_fraction'
        case (31)
           taulimit = sweep(iscan)
           vlabel = 'taulimit' ; xlabel = 'Taup/taueff_lower_limit'
-       
+       case (32)
+          epsvmc = sweep(iscan)
+          vlabel = 'epsvmc' ; xlabel = 'VMCON error tolerance'
+       case (33)
+          ttarget = sweep(iscan)
+          vlabel = 'ttarget' ; xlabel = 'Plasma temp at divertor'
+      case (34)
+          qtargettotal = sweep(iscan)
+          vlabel = 'qtargettotal' ; xlabel = 'Total Q on target [W/m2] '
+      case (35)
+          lambda_q_omp = sweep(iscan)
+          vlabel = 'lambda_q_omp' ; xlabel = 'lambda_q at OMP (m)'
+      case (36)
+          target_spread = sweep(iscan)
+          vlabel = 'target_spread' ; xlabel = 'lambda_q increase (m)'
+      case (37)
+          lcon_factor = sweep(iscan)
+          vlabel = 'lcon_factor' ; xlabel = 'Correction for lcon'
+      case (38)
+          boundu(129) = sweep(iscan)
+          vlabel = 'boundu(129)' ; xlabel = ' Neon upper limit'
+      case (39)
+          boundu(131) = sweep(iscan)
+          vlabel = 'boundu(131)' ; xlabel = ' Argon upper limit'
+      case (40)
+          boundu(135) = sweep(iscan)
+          vlabel = 'boundu(135)' ; xlabel = ' Xenon upper limit'
+      case (41)
+          blnkoth = sweep(iscan)
+          vlabel = 'blnkoth' ; xlabel = 'Outboard blanket thick.'
+      case (42)
+          fimp(9) = sweep(iscan)
+          impurity_arr(9)%frac = fimp(9)
+          vlabel = 'fimp(9)' ; xlabel = 'Argon fraction'
+
+
        case default
           idiags(1) = nsweep ; call report_error(96)
 
@@ -394,7 +433,7 @@ contains
        call ostars(nout,width)
        ! MDK Added the "=" back in to the output statement.
        write(nout,10) ' ***** Scan point ', iscan,' of ',isweep,': ',trim(xlabel),', ',trim(vlabel),' = ',sweep(iscan),' *****'
-10     format(a,i2,a,i2,5a,1pe10.3,a)    
+10     format(a,i2,a,i2,5a,1pe10.3,a)
        call ostars(nout,width)
 
        !  Write additional information to mfile
@@ -403,7 +442,8 @@ contains
        call ovarin(mfile,'Scan point number','(iscan)',iscan)
 
        !  Call the optimization routine VMCON at this scan point
-
+       write(*,20)'Starting scan point ',iscan, ': ', trim(xlabel),', ',trim(vlabel),' = ',sweep(iscan)
+20     format(a,i2,a,4a,1pe10.3)
        call doopt(ifail)
        call final(ifail)
 
@@ -467,7 +507,8 @@ contains
           outvar(49,iscan) = 0.0D0
        end if
        outvar(50,iscan) = pdivt/rmajor
-       outvar(51,iscan) = fimpvar
+       !outvar(51,iscan) = fimpvar
+       outvar(51,iscan) = 0.0d0
        outvar(52,iscan) = pradmw
        outvar(53,iscan) = tpeak
        outvar(54,iscan) = fcutfsu
@@ -475,7 +516,31 @@ contains
        outvar(56,iscan) = acond
        outvar(57,iscan) = tfareain/tfno
        outvar(58,iscan) = taulimit
-       
+       outvar(59,iscan) = tesep
+       outvar(60,iscan) = neomp
+       outvar(61,iscan) = psep_kallenbach
+       outvar(62,iscan) = neratio
+       outvar(63,iscan) = qtargettotal
+       outvar(64,iscan) = pressure0
+       outvar(65,iscan) = ttarget
+       outvar(66,iscan) = ralpne
+       outvar(67,iscan) = fmom
+       outvar(68,iscan) = totalpowerlost
+       outvar(69,iscan) = fimp(1)
+       outvar(70,iscan) = fimp(2)
+       outvar(71,iscan) = fimp(3)
+       outvar(72,iscan) = fimp(4)
+       outvar(73,iscan) = fimp(5)
+       outvar(74,iscan) = fimp(6)
+       outvar(75,iscan) = fimp(7)
+       outvar(76,iscan) = fimp(8)
+       outvar(77,iscan) = fimp(9)
+       outvar(78,iscan) = fimp(10)
+       outvar(79,iscan) = fimp(11)
+       outvar(80,iscan) = fimp(12)
+       outvar(81,iscan) = fimp(13)
+       outvar(82,iscan) = fimp(14)
+       outvar(83,iscan) = teped
 
     end do  !  End of scanning loop
 
@@ -483,11 +548,11 @@ contains
 
     write(nplot,'(i8)') isweep
     write(nplot,'(a48)') tlabel
-    write(nplot,'(a25, 1p, 20e11.4)') xlabel,(sweep(iscan),iscan=1,isweep)
+    write(nplot,'(a25, 1p, 200e11.4)') xlabel,(sweep(iscan),iscan=1,isweep)
 
     do ivar = 1,noutvars
        !write(nplot,'(a25,20e11.4)') plabel(ivar), (outvar(ivar,iscan), iscan=1,isweep)
-       write(nplot,'(a25, 1p, 20e11.4)') plabel(ivar), (outvar(ivar,iscan), iscan=1,isweep)
+       write(nplot,'(a25, 1p, 200e11.4)') plabel(ivar), (outvar(ivar,iscan), iscan=1,isweep)
     end do
 
   end subroutine scan

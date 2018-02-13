@@ -125,7 +125,7 @@ module cartesian_vectors
   end interface
 
   interface operator (.dot.)
-     module procedure dot_product
+     module procedure dot_product_stell
   end interface
 
   interface operator (.cross.)
@@ -168,11 +168,11 @@ contains
     divide_vector%z = a%z / b
   end function divide_vector
 
-  elemental function dot_product(a,b)
-    real(kind(1.0D0)) :: dot_product
+  elemental function dot_product_stell(a,b)
+    real(kind(1.0D0)) :: dot_product_stell
     type (vector), intent(in) :: a,b
-    dot_product = (a%x * b%x) + (a%y * b%y) + (a%z * b%z)
-  end function dot_product
+    dot_product_stell = (a%x * b%x) + (a%y * b%y) + (a%z * b%z)
+  end function dot_product_stell
 
   elemental function cross_product(a,b)
     type (vector) :: cross_product
@@ -248,7 +248,7 @@ module stellarator_module
   !+ad_call  plasma_geometry_module
   !+ad_call  power_module
   !+ad_call  process_output
-  !+ad_call  rfp_variables
+
   !+ad_call  sctfcoil_module
   !+ad_call  stellarator_variables
   !+ad_call  structure_module
@@ -294,7 +294,7 @@ module stellarator_module
   use power_module
   use process_output
   use profiles_module
-  use rfp_variables
+
   use sctfcoil_module
   use stellarator_variables
   use structure_module
@@ -586,7 +586,7 @@ contains
     !+ad_docs  Stellarator Plasma Geometry Model for the Systems
     !+ad_docc  Code PROCESS, F. Warmer, 19/06/2013
     !+ad_docs  J. Geiger, IPP Greifswald internal document:  'Darstellung von
-    !+ad_docc  ineinandergeschachtelten toroidal geschlossenen Flächen mit
+    !+ad_docc  ineinandergeschachtelten toroidal geschlossenen Flï¿½chen mit
     !+ad_docc  Fourierkoeffizienten' ('Representation of nested, closed
     !+ad_docc  surfaces with Fourier coefficients')
     !
@@ -607,7 +607,7 @@ contains
     real(kind(1.0D0)), dimension(0:m_max,-n_max:n_max) :: Rmn, Zmn
     real(kind(1.0D0)), dimension(4*m_max+1,4*n_max+1) :: Rv, Zv
     real(kind(1.0D0)), save :: r_vmec,a_vmec,aspect_vmec,v_vmec,s_vmec
-    real(kind(1.0D0)) :: a,a_square,sr,sa,vvv,r_maj,du,dv,rr,drdv,drdu
+    real(kind(1.0D0)) :: a,a_square,sr,sa,r_maj,du,dv,rr,drdv,drdu
     real(kind(1.0D0)) :: dzdv,dzdu,rtemp,sum1,sum2,rn,u,v,suv,cuv
     character(len=80) :: header
     logical :: first_call = .true.
@@ -679,7 +679,7 @@ contains
              Zmn(m,n) = SR*Zmn(m,n)
           else
              Rmn(m,n) = Sa*Rmn(m,n)
-             Zmn(m,n) = Sa*Zmn(m,n)           
+             Zmn(m,n) = Sa*Zmn(m,n)
           end if
 
        end do
@@ -702,7 +702,7 @@ contains
     !  Expand array and set not given fourier components to zero.
     !  This is required because the volume is calculated with
     !  a double sum over m1,n1 and m2,n2 resulting in mixed
-    !  mode numbers m*=m1+m2, etc. 
+    !  mode numbers m*=m1+m2, etc.
     !  Therefore m* > m_max meaning, that the sum goes over mode numbers,
     !  which are not given by the input file - but these components can simply
     !  be set to zero
@@ -890,7 +890,7 @@ contains
 
     !  Thickness of outboard TF coil legs
 
-    tfthko = tfcth 
+    tfthko = tfcth
 
     !  Radius to centre of outboard TF coil legs
 
@@ -907,7 +907,7 @@ contains
 
     !  Outer divertor strike point radius, set equal to major radius
 
-    rstrko = rmajor
+    rspo = rmajor
 
     !  First wall area: scales with minor radius
 
@@ -1187,7 +1187,7 @@ contains
 
     !  Calculate density limit
 
-    call stdlim(alphan,bt,powht,rmajor,rminor,dnelimt)
+    call stdlim(bt,powht,rmajor,rminor,dnelimt)
 
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law
@@ -1195,7 +1195,7 @@ contains
 
     call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
          iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
-         plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
+         plascur,pcoreradpv,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
          xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
     ptremw = ptrepv*vol
@@ -1206,7 +1206,7 @@ contains
 
     sbar = 1.0D0
     call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
-         dnprot,taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+         taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Calculate beta limit
 
@@ -1443,7 +1443,7 @@ contains
          decaybzo,decayfwi,decayfwo,decayshldi,decayshldo,dpacop,htheci, &
          pheci,pheco,pneut2,pnucbsi,pnucbso,pnucbzi,pnucbzo,pnucfwbs, &
          pnucfwbsi,pnucfwbso,pnucfwi,pnucfwo,pnucshldi,pnucshldo,pnucsi, &
-         pnucso,psurffwi,psurffwo,ptfiwp,ptfowp,r1,r2,raddose,vffwi,vffwo, &
+         pnucso,psurffwi,psurffwo,ptfiwp,ptfowp,r1,raddose,vffwi,vffwo, &
          volshldi,volshldo
 
     logical :: first_call = .true.
@@ -1634,7 +1634,7 @@ contains
           pnucbzi = pnucbsi * (1.0D0 - exp(-blnkith/decaybzi))
           pnucbzo = pnucbso * (1.0D0 - exp(-blnkoth/decaybzo))
 
-          !  Calculate coolant pumping powers from input fraction.  
+          !  Calculate coolant pumping powers from input fraction.
           !  The pumping power is assumed to be a fraction, fpump, of the
           !  incident thermal power to each component so that
           !  htpmw_i = fpump_i*C, where C is the non-pumping thermal power
@@ -1657,8 +1657,8 @@ contains
           pnucblkt = (pnucbzi + pnucbzo)*emult
 
           !  Calculation of shield and divertor powers
-          !  Shield and divertor powers and pumping powers are calculated using the same 
-          !  simplified method as the first wall and breeder zone when secondary_cycle = 0. 
+          !  Shield and divertor powers and pumping powers are calculated using the same
+          !  simplified method as the first wall and breeder zone when secondary_cycle = 0.
           !  i.e. the pumping power is a fraction of the total thermal power deposited in the
           !  coolant.
 
@@ -1680,7 +1680,7 @@ contains
 
           pnucshld = pnucshldi + pnucshldo
 
-          !  Calculate coolant pumping powers from input fraction.  
+          !  Calculate coolant pumping powers from input fraction.
           !  The pumping power is assumed to be a fraction, fpump, of the incident
           !  thermal power to each component so that,
           !     htpmw_i = fpump_i*C
@@ -2066,14 +2066,13 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine stdlim(alphan,bt,powht,rmajor,rminor,dlimit)
+  subroutine stdlim(bt,powht,rmajor,rminor,dlimit)
 
     !+ad_name  stdlim
     !+ad_summ  Routine to calculate the density limit in a stellarator
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  None
-    !+ad_args  alphan : input real : Density profile index
     !+ad_args  bt     : input real : Toroidal field on axis (T)
     !+ad_args  powht  : input real : Absorbed heating power (MW)
     !+ad_args  rmajor : input real : Plasma major radius (m)
@@ -2098,7 +2097,7 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: alphan,bt,powht,rmajor,rminor
+    real(kind(1.0D0)), intent(in) :: bt,powht,rmajor,rminor
     real(kind(1.0D0)), intent(out) :: dlimit
 
     !  Local variables
@@ -2209,7 +2208,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: d2,powerhtz,ptrez,ptriz,taueez,taueezz, &
+    real(kind(1.0D0)) :: d2,powerhtz,ptrez,ptriz,taueez, &
          taueffz,taueiz
     integer :: i,iisc
     integer, parameter :: nstlaw = 5
@@ -2249,7 +2248,7 @@ contains
 
        call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
             iinvqd,i,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
-            plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin, &
+            plascur,pcoreradpv,rmajor,rminor,te,ten,tin, &
             iotabar,qstar,vol,xarea,zeff,ptrez,ptriz,taueez,taueiz, &
             taueffz,powerhtz)
 
@@ -2400,8 +2399,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Tokamak/RFP-specific PF coil fence mass set to zero
-
+    !  Tokamak-specific PF coil fence mass set to zero
     fncmass = 0.0D0
 
     !  Set the following to zero to avoid double-counting.
@@ -2544,7 +2542,7 @@ contains
 
     call oheadr(outfile,'Divertor')
 
-    call ovarre(outfile,'Power to divertor (MW)','(pdivt)',pdivt)
+    call ovarre(outfile,'Power to divertor (MW)','(pdivt.)',pdivt)
     call ovarre(outfile,'Angle of incidence (deg)','(anginc)',anginc*180.0D0/pi)
     call ovarre(outfile,'Perp. heat transport coefficient (m2/s)', &
          '(xpertin)',xpertin)
@@ -2639,7 +2637,7 @@ contains
     integer :: nbticool,n_it,k
     real(kind(1.0D0)) :: a_hor_max,a_vert_max,alph,b,b0_final,b_abs_max, &
          b_abs_mittel,b_hor_avg,b_hor_max,b_i,b_max_final,b_max_max,b_maxtf, &
-         b_vert_avg,b_vert_max,bc,cpttf2,cr_area,d_coil,d_ic,du,f1,f2,f_b,f_i, &
+         b_vert_avg,b_vert_max,bc,cpttf2,cr_area,d_coil,d_ic,du,f_b,f_i, &
          f_max,f_n,f_q,f_q_final,f_r,f_s,h,h_hor_max,h_insu_in,h_insu_out,h_max, &
          h_vert_max,i,j,kk,m_struc,msupstr,off,r_avg,r_occ,r_theta0,res,s_case, &
          t_c,t_no,t_no2,t_u,t_w,t_w_i,tfarea_sc,u,w_coil,w_mag,w_max,y,z,z1,z2
@@ -2679,7 +2677,7 @@ contains
     ! The coil module here is based on the bean-shaped plane as this plane can
     ! be most easily scaled and is similar to the Tokamak poloidal shape. As
     ! all coil shapes are assumed to be fixed, all other coils scale
-    ! accordingly. 
+    ! accordingly.
 
     !  r_theta0   !  This is a new global input variable which will be calculated
     !       in the updated geometry module
@@ -2695,7 +2693,7 @@ contains
     !  Factors used to scale the Helias 5-B parameters
 
     f_R = rmajor/Rg5B       !  Size scaling factor with respect to Helias 5-B
-    f_s = D_coil/D_coil_5B  !  Coil scaling factor 
+    f_s = D_coil/D_coil_5B  !  Coil scaling factor
     f_N = tfno/tfno5B       !  Coil number factor
     f_B = bt/B10            !  B-field scaling factor
     f_I = f_R*f_B/f_N       !  Current scaling factor
@@ -2706,7 +2704,7 @@ contains
 
     !  Calculate B-fields for different coil cross-section scales
 
-    res = 0.05D0               ! resolution 
+    res = 0.05D0               ! resolution
     f_max = 1.5D0              ! maximal f_q for iteration
     N_it = nint(f_max/res)     ! number of iterations
     off = 0.05D0               ! offset
@@ -2735,7 +2733,7 @@ contains
     if (isumattf == 1) then
        Bc = Bco
     else if (isumattf == 3) then
-       Bc = Bc2        
+       Bc = Bc2
     else
        idiags(1) = isumattf ; call report_error(110)
     end if
@@ -2909,9 +2907,9 @@ contains
     tinstf = 0.0D0       ! insulation, already in casing:  casthi+tinstf == h_insu_in
     awpc = (thkwp + 2.0D0*tinstf)*(wwp1 + 2.0D0*tinstf)
     ! [m^2] winding-pack cross sectional area including insulation
-    tftort = wwp1 + 2.0D0*casths  ! [m] Thickness of inboard leg in toroidal direction  
-    tfcth = thkcas + thkwp + casthi  ! [m] Thickness of inboard leg in radial direction  
-    tfthko = tfcth                   ! [m] Thickness of outboard leg in radial direction  
+    tftort = wwp1 + 2.0D0*casths  ! [m] Thickness of inboard leg in toroidal direction
+    tfcth = thkcas + thkwp + casthi  ! [m] Thickness of inboard leg in radial direction
+    tfthko = tfcth                   ! [m] Thickness of outboard leg in radial direction
     acasetf = (tfcth*tftort)-awpc    ! [m^2] Cross-sectional area of surrounding case
 
     if (isumattf == 3) tftmp = T_u  ! [K] Helium coolant temperature for NbTi
@@ -2948,7 +2946,7 @@ contains
     !jwptf = ritfc/(tfno*awptf)
     jwptf = j*1.0D6               ! [A/m^2] winding pack current density
 
-    !leno = sqrt(cpttf/jwptf)          
+    !leno = sqrt(cpttf/jwptf)
     leno = t_w_i                  ! [m] Dimension of square cross-section of each turn
 
     ! [m] Dimension of square cable space inside insulation
@@ -2966,7 +2964,7 @@ contains
 
     !  Total number of turns per coil
 
-    turnstf = t_no    
+    turnstf = t_no
 
     ! [m^2] Total conductor cross-sectional area, taking account of void area
 
@@ -3113,9 +3111,10 @@ contains
       !  Local variables
 
       integer :: i,n_h,n_b,nc,nsp_int
-      real(kind(1.0D0)) :: b,b_abs_zentr,b_abs_zwischen,b_max_equiv,b_x_zentr, &
+      real(kind(1.0D0)) :: b,b_abs_zentr,b_abs_zwischen,b_x_zentr, &
            b_x_zwischen,b_y_zentr,b_y_zwischen,bi_x,bi_y,bir,bir_1,biz,biz_1, &
            di_mean,dphi,h,il,isp,phi,r_q,rg,ri,rk,rri,vz_r,zi
+          !  b_max_equiv
       real(kind(1.0D0)), dimension(3,5) :: b_ptot
       real(kind(1.0D0)), allocatable, dimension(:,:) :: b_p
       type(vector) :: ax_coili,c_ci,n_ax_ci,n_z,n_rcoili,p
@@ -3419,7 +3418,7 @@ contains
       integer :: nsp_int,n_h,n_b,zaehler,n,ii,j,indn
       real(kind(1.0D0)) :: a,alpha,ao,b,beta,c,cf,d_phi,delta,dtheta,ek, &
            energie_gj,gamma,il,indukt,integral,isp,kk,l,ll,m11,p1,p2,p3,p4, &
-           p5,phi,r_q,rg,rk,rk5bcorr,rp,rs,theta,vz,xc,yc,zc,phi_ind,vo,k,ksq,psi
+           p5,phi,r_q,rg,rk,rk5bcorr,rp,rs,theta,vz,xc,yc,zc,vo,ksq,psi
       real(kind(1.0D0)), allocatable, dimension(:) :: m,integrand
       real(kind(1.0D0)), allocatable, dimension(:,:) :: indmat,indmatu,indmato,indmattot
 
@@ -3744,8 +3743,6 @@ contains
     integer, intent(in) :: outfile
 
     !  Local variables
-
-    integer :: i
     real(kind(1.0D0)) :: ap
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

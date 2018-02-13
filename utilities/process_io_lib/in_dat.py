@@ -11,13 +11,14 @@
 
 import subprocess
 import numpy as np
+from sys import stderr
 
 # Dictionary for variable types
 try:
     from process_io_lib.process_dicts import DICT_VAR_TYPE
 except ImportError:
     print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
+'make dicts'!", file=stderr)
     exit()
 
 # Dictionary for ixc -> name
@@ -36,9 +37,9 @@ from process_io_lib.process_dicts import DICT_DESCRIPTIONS
 from process_io_lib.process_dicts import DICT_DEFAULT
 
 # ioptimz values
-ioptimz_des = {"-1": "for no optimisation, HYBRD only",
+ioptimz_des = {"-1": "for no optimisation HYBRD only",
                "0": "for HYBRD and VMCON (not recommended)",
-               "1": "for optimisation, VMCON only"}
+               "1": "for optimisation VMCON only"}
 
 
 def fortran_python_scientific(var_value):
@@ -139,6 +140,8 @@ def find_line_type(line):
             return "fimp"
         elif "zref(" in name:
             return "zref"
+        elif "impurity_enrichment(" in name:
+            return "impurity_enrichment"
         else:
             return "Parameter"
 
@@ -279,8 +282,14 @@ def process_fimp(data, line):
     :return: nothing
     """
 
-    fimp_index = int(line.split("(")[1].split(")")[0]) - 1
-    fimp_value = eval(line.split("=")[-1].replace(",", ""))
+    if "*" in line:
+        fimp_comment = line.split("*")[1]
+        line_commentless = line.split("*")[0]
+    else:
+        line_commentless = line
+
+    fimp_index = int(line_commentless.split("(")[1].split(")")[0]) - 1
+    fimp_value = eval(line_commentless.split("=")[-1].replace(",", ""))
     data["fimp"].value[fimp_index] = fimp_value
 
 
@@ -292,9 +301,32 @@ def process_zref(data, line):
     :return: nothing
     """
 
-    zref_index = int(line.split("(")[1].split(")")[0]) - 1
-    zref_value = eval(line.split("=")[-1].replace(",", ""))
+    if "*" in line:
+        zref_comment = line.split("*")[1]
+        line_commentless = line.split("*")[0]
+    else:
+        line_commentless = line
+    zref_index = int(line_commentless.split("(")[1].split(")")[0]) - 1
+    zref_value = eval(line_commentless.split("=")[-1].replace(",", ""))
     data["zref"].value[zref_index] = zref_value
+
+
+def process_enrichment(data, line):
+    """ Function to process impurity_enrichment array
+
+    :param data: Data dictionary for the IN.DAT information
+    :param line: Line from IN.DAT to process
+    :return: nothing
+    """
+
+    if "*" in line:
+        imp_rich_comment = line.split("*")[1]
+        line_commentless = line.split("*")[0]
+    else:
+        line_commentless = line
+    imp_rich_index = int(line_commentless.split("(")[1].split(")")[0]) - 1
+    imp_rich_value = eval(line_commentless.split("=")[-1].replace(",", ""))
+    data["impurity_enrichment"].value[imp_rich_index] = imp_rich_value
 
 
 def process_parameter(data, line):
@@ -313,14 +345,20 @@ def process_parameter(data, line):
 
     # Parameter value
     if len(no_comment_line[-1].split(",")) > 2:
-        value = no_comment_line[1].strip()
+        try:
+            value = no_comment_line[1].strip()
+        except IndexError:
+            print('Error when reading IN.DAT file on line', no_comment_line,
+                  '\n Please note, that our Python Library cannot cope with',
+                  ' variable definitions on multiple lines.', file=stderr)
+            exit()
     else:
         try:
             value = no_comment_line[1].strip().replace(",", "")
         except IndexError:
             print('Error when reading IN.DAT file on line', no_comment_line,
                   '\n Please note, that our Python Library cannot cope with',
-                  ' variable definitions on multiple lines.')
+                  ' variable definitions on multiple lines.', file=stderr)
             exit()
 
     # Find group of variables the parameter belongs to
@@ -376,6 +414,19 @@ def process_line(data, line_type, line):
         data["zref"] = INVariable("zref", empty_zref, "zref", parameter_group,
                                   comment)
 
+    # Create a impurity_enrichment variable class using INVariable class if entry
+    # doesn't exist
+    if "impurity_enrichment" not in data.keys():
+        empty_imp = [0]*14
+        parameter_group = find_parameter_group("impurity_enrichment")
+
+        # Get parameter comment/description from dictionary
+        comment = DICT_DESCRIPTIONS["impurity_enrichment"].replace(",", ";").\
+            replace(".", ";").replace(":", ";")
+
+        data["impurity_enrichment"] = INVariable("impurity_enrichment",
+            empty_imp, "impurity_enrichment", parameter_group, comment)
+
     # Constraint equations
     if line_type == "Constraint Equation":
         process_constraint_equation(data, line)
@@ -395,6 +446,10 @@ def process_line(data, line_type, line):
     # zref
     elif line_type == "zref":
         process_zref(data, line)
+
+    # impurity_enrichment
+    elif line_type == "impurity_enrichment":
+        process_enrichment(data, line)
 
     # Parameter
     else:
@@ -429,22 +484,14 @@ def write_constraint_equations(data, out_file):
     # Header
     write_title("Constraint Equations", out_file)
 
-    # Write number of equations to file
-    neqns_line = "neqns = {0} * {1}\n".format(data["neqns"].value,
-                                              data["neqns"].comment)
-    out_file.write(neqns_line)
-
     # List of constraints
     constraint_equations = data["icc"].value
 
     # Write constraints to file
-    counter = 1
     for constraint in constraint_equations:
         comment = DICT_ICC_FULL[str(constraint)]["name"]
-        constraint_line = "icc({0}) = {1} * {2}\n".format(counter,
-                                                          constraint, comment)
+        constraint_line = "icc = {0} * {1}\n".format(constraint, comment)
         out_file.write(constraint_line)
-        counter += 1
 
 
 def write_iteration_variables(data, out_file):
@@ -461,20 +508,12 @@ def write_iteration_variables(data, out_file):
     # List of constraints
     iteration_variables = data["ixc"].value
 
-    # Write nvar
-    nvar_line = "nvar = {0} * {1}\n".format(data["nvar"].value,
-                                            data["nvar"].comment)
-    out_file.write(nvar_line)
-
     # Write constraints to file
-    counter = 1
     for variable in iteration_variables:
         comment = DICT_IXC_SIMPLE[str(variable).replace(",", ";").
                                   replace(".", ";").replace(":", ";")]
-        variable_line = "ixc({0}) = {1} * {2}\n".format(counter, variable,
-                                                        comment)
+        variable_line = "ixc = {0} * {1}\n".format(variable, comment)
         out_file.write(variable_line)
-        counter += 1
 
         # Write bounds if there are any
         if str(variable) in data["bounds"].value:
@@ -536,6 +575,13 @@ def write_parameters(data, out_file):
                         parameter_line = "{0} = {1}\n".\
                             format(tmp_zref_name, tmp_zref_value)
                         out_file.write(parameter_line)
+                elif item == "impurity_enrichment":
+                    for m in range(len(data["impurity_enrichment"].get_value)):
+                        tmp_imp_rich_name = "impurity_enrichment({0})".format(str(m+1).zfill(1))
+                        tmp_imp_rich_value = data["impurity_enrichment"].get_value[m]
+                        parameter_line = "{0} = {1}\n".\
+                            format(tmp_imp_rich_name, tmp_imp_rich_value)
+                        out_file.write(parameter_line)
                 elif "vmec" in item:
                     parameter_line = "{0} = {1}\n".format(item,
                                                           data[item].value)
@@ -581,9 +627,6 @@ def add_iteration_variable(data, variable_number):
         data["ixc"].value.append(variable_number)
         data["ixc"].value.sort()
 
-        # Increase the number of iteration variables parameter by 1
-        data["nvar"].value = str(data["nvar"].get_value + 1)
-
     else:
         print("Variable number {0} already in iteration variable list".
               format(variable_number))
@@ -601,9 +644,6 @@ def remove_iteration_variable(data, variable_number):
     if variable_number in data["ixc"].value:
         data["ixc"].value.remove(variable_number)
         data["ixc"].value.sort()
-
-        # Decrease the number of iteration variables parameter by 1
-        data["nvar"].value = str(data["nvar"].get_value - 1)
     else:
         print("Variable number {0} not in iteration variable list".
               format(variable_number))
@@ -622,8 +662,6 @@ def add_constraint_equation(data, equation_number):
         data["icc"].value.append(equation_number)
         data["icc"].value.sort()
 
-        # Increase the number of constraint equations parameter by 1
-        data["neqns"].value = str(data["neqns"].get_value + 1)
     else:
         print("Equation number {0} already in constraint equations list".
               format(equation_number))
@@ -643,8 +681,6 @@ def remove_constraint_equation(data, equation_number):
         data["icc"].value.remove(equation_number)
         data["icc"].value.sort()
 
-        # Decrease the number of constraint equations parameter by 1
-        data["neqns"].value = str(data["neqns"].get_value - 1)
     else:
         print("Equation number {0} not in constraint equations list".
               format(equation_number))
@@ -661,17 +697,25 @@ def add_parameter(data, parameter_name, parameter_value):
 
     # Check that the parameter is not already in the dictionary
     if parameter_name not in data.keys():
-        try:
-            parameter_group = find_parameter_group(parameter_name)
-            comment = DICT_DESCRIPTIONS[parameter_name]
-            param_data = INVariable(parameter_name, parameter_value,
-                                    "Parameter", parameter_group, comment)
-            data[parameter_name] = param_data
 
-        except KeyError:
-            # The dictionary doesn't recognise the variable name
-            print("Parameter {0} not recognised. Check!".
-                  format(parameter_name))
+        parameter_group = find_parameter_group(parameter_name)
+        if 'fimp' in parameter_name:
+            comment = DICT_DESCRIPTIONS['fimp']
+        else:
+            try:
+                comment = DICT_DESCRIPTIONS[parameter_name]
+            except KeyError:
+                # The dictionary doesn't recognise the variable name
+                print("Warning: Description for {0}".format(parameter_name),
+                      "specified in IN.DAT not in dictionary.", file=stderr)
+                comment = ''
+
+        param_data = INVariable(parameter_name, parameter_value,
+                                "Parameter", parameter_group, comment)
+
+        data[parameter_name] = param_data
+
+
 
     # If it is already in there change the value to the new value
     else:
@@ -883,7 +927,7 @@ def variable_constraint_type_check(item_number, var_type):
 
         except ValueError:
             print("Value {0} for {1} not valid. Check value!".
-                  format(item_number, var_type))
+                  format(item_number, var_type), file=stderr)
 
     # Check if item is in float format
     elif isinstance(item_number, float):
@@ -993,21 +1037,24 @@ class InDat(object):
             - Alterations to IN.DAT
     """
 
-    def __init__(self, filename="IN.DAT"):
+    def __init__(self, filename="IN.DAT", start_line=0):
         """ Initialise class
 
         :param filename: Name of input IN.DAT
+        :param start_line: Line to start reading from
         :return: Nothing
         """
 
         self.filename = filename
+        self.start_line = start_line
 
         # Initialise parameters
         self.in_dat_lines = list()
         self.data = dict()
 
         # read in IN.DAT
-        self.read_in_dat()
+        if filename is not None:
+            self.read_in_dat()
 
     def read_in_dat(self):
         """Function to read in 'self.filename' and put data into dictionary
@@ -1017,6 +1064,7 @@ class InDat(object):
         # Read in IN.DAT
         with open(self.filename) as indat:
             self.in_dat_lines = indat.readlines()
+            self.in_dat_lines = self.in_dat_lines[self.start_line:]
 
         # Remove empty lines from the file
         self.in_dat_lines = remove_empty_lines(self.in_dat_lines)
@@ -1036,13 +1084,13 @@ class InDat(object):
             # Ignore title, header and commented lines
             if line_type != "Title" and line_type != "Comment":
 
-                # try:
+                try:
                     # for non-title lines process line and store data.
-                process_line(self.data, line_type, l_line)
-                # except KeyError:
-                #    print("Warning: Line below is causing a problem. Check "
-            #              "that line in IN.DAT is valid. Line skipped!\n{0}".
-        #                  format(line))
+                    process_line(self.data, line_type, l_line)
+                except KeyError:
+                    print("Warning: Line below is causing a problem. Check "
+                          "that line in IN.DAT is valid. Line skipped!\n{0}".
+                          format(line), file=stderr)
 
     def add_iteration_variable(self, variable_number):
         """ Function to add iteration variable to IN.DAT data dictionary
@@ -1193,6 +1241,19 @@ class InDat(object):
         # close file
         output.close()
 
+    @property
+    def number_of_constraints(self):
+        """
+        Return number of itvars
+        """
+        return(len(self.data["icc"].value))
+
+    @property
+    def number_of_itvars(self):
+        """
+        Return number of itvars
+        """
+        return(len(self.data["ixc"].value))
 
 def test(f):
     """Test function
@@ -1210,8 +1271,10 @@ def test(f):
 
 if __name__ == "__main__":
     # i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
-    i = InDat(filename="../../Original_IN.DAT")
+    i = InDat(filename="IN.DAT")
     # print(i.data["ixc"].value)
+    # print(i.number_of_constraints)
+    # print(i.number_of_itvars)
     # print(i.data["fimp"].value)
     # print(i.data["ipfloc"].value)
     # i.change_fimp(3, 0.5)
@@ -1237,5 +1300,5 @@ if __name__ == "__main__":
     # i.remove_parameter("blnkithsddd")
     # i.remove_parameter("blnkith")
     # i.add_parameter("sweep", [3.0, 3.0])
-    print(i.data["bounds"].get_value)
+    # print(i.data["bounds"].get_value)
     i.write_in_dat()

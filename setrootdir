@@ -1,4 +1,0 @@
-#!/bin/sh
-echo "  character(len=*), parameter :: ROOTDIR = '"`pwd`"'" > root.dir
-
-echo "ROOTDIR = '"`pwd`"'" > utilities/rootdir.py

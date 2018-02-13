@@ -50,37 +50,18 @@ module costs_module
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
+
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
   !+ad_call  process_output
   !+ad_call  pulse_variables
-  !+ad_call  rfp_variables
+
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  vacuum_variables
   !+ad_hist  15/10/12 PJK Initial version of module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added constants
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  18/10/12 PJK Added fwbs_variables
-  !+ad_hist  18/10/12 PJK Added pfcoil_variables
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  29/10/12 PJK Added structure_variables
-  !+ad_hist  29/10/12 PJK Added vacuum_variables
-  !+ad_hist  29/10/12 PJK Added pf_power_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  30/10/12 PJK Added times_variables
-  !+ad_hist  30/10/12 PJK Added buildings_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  31/10/12 PJK Added cost_variables
-  !+ad_hist  05/11/12 PJK Added rfp_variables
-  !+ad_hist  05/11/12 PJK Added ife_variables
-  !+ad_hist  05/11/12 PJK Added pulse_variables
-  !+ad_hist  30/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -95,13 +76,13 @@ module costs_module
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-  use ife_variables
+
   use pfcoil_variables
   use physics_variables
   use pf_power_variables
   use process_output
   use pulse_variables
-  use rfp_variables
+
   use structure_variables
   use tfcoil_variables
   use times_variables
@@ -211,13 +192,10 @@ contains
 
     call acc26
 
-    !  Hydrogen Production Plant
-
-    call acchyd
-
     !  Total plant direct cost
 
-    cdirt = c21 + c22 + c23 + c24 + c25 + c26 + chplant
+    !cdirt = c21 + c22 + c23 + c24 + c25 + c26 + chplant
+    cdirt = c21 + c22 + c23 + c24 + c25 + c26
 
     !  Account 9 : Indirect cost and project contingency
 
@@ -257,25 +235,15 @@ contains
     call oshead(outfile,'Reactor Systems')
     call ocosts(outfile,'2211','First wall cost (M$)',c2211)
 
-    if (ife /= 1) then
-       if ((ipowerflow == 0).or.(blkttype == 3)) then
-          call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
-          call ocosts(outfile,'22122','Blanket breeder material cost (M$)',c22122)                
-       else
-          call ocosts(outfile,'22121','Blanket lithium-lead cost (M$)',c22121)
-          call ocosts(outfile,'22122','Blanket lithium cost (M$)',c22122)
-       end if
-       call ocosts(outfile,'22123','Blanket stainless steel cost (M$)',c22123)
-       call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
-    else  !  IFE
-       call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
-       call ocosts(outfile,'22122','Blanket lithium oxide cost (M$)',c22122)
-       call ocosts(outfile,'22123','Blanket stainless steel cost (M$)',c22123)
-       call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
-       call ocosts(outfile,'22125','Blanket carbon cloth cost (M$)',c22125)
-       call ocosts(outfile,'22126','Blanket concrete cost (M$)',c22126)
-       call ocosts(outfile,'22127','Blanket FLiBe cost (M$)',c22127)
+    if ((ipowerflow == 0).or.(blkttype == 3)) then
+      call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
+      call ocosts(outfile,'22122','Blanket breeder material cost (M$)',c22122)
+    else
+      call ocosts(outfile,'22121','Blanket lithium-lead cost (M$)',c22121)
+      call ocosts(outfile,'22122','Blanket lithium cost (M$)',c22122)
     end if
+    call ocosts(outfile,'22123','Blanket stainless steel cost (M$)',c22123)
+    call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
 
     call ocosts(outfile,'2212','Blanket total cost (M$)',c2212)
     call ocosts(outfile,'22131','Bulk shield cost (M$)',c22131)
@@ -293,8 +261,6 @@ contains
 
     call oblnkl(outfile)
     call ocosts(outfile,'221','Total account 221 cost (M$)',c221)
-
-    if (ife /= 1) then
 
        call oshead(outfile,'Magnets')
 
@@ -334,20 +300,11 @@ contains
        call oblnkl(outfile)
        call ocosts(outfile,'222','Total account 222 cost (M$)',c222)
 
-    end if
+       call oshead(outfile,'Power Injection')
 
-    call oshead(outfile,'Power Injection')
-
-    if (ife == 1) then
-       call ocosts(outfile,'2231','IFE driver system cost (M$)',c2231)
-    else
        call ocosts(outfile,'2231','ECH system cost (M$)',c2231)
        call ocosts(outfile,'2232','Lower hybrid system cost (M$)',c2232)
        call ocosts(outfile,'2233','Neutral beam system cost (M$)',c2233)
-       if (irfp == 1) then
-          call ocosts(outfile,'2234','Oscillating field system cost (M$)',c2234)
-       end if
-    end if
 
     call oblnkl(outfile)
     call ocosts(outfile,'223','Total account 223 cost (M$)',c223)
@@ -361,8 +318,6 @@ contains
     call ocosts(outfile,'2246','Instrumentation cost (M$)',c2246)
     call oblnkl(outfile)
     call ocosts(outfile,'224','Total account 224 cost (M$)',c224)
-
-    if (ife /= 1) then
 
        call oshead(outfile,'Power Conditioning')
        call ocosts(outfile,'22511','TF coil power supplies cost (M$)',c22511)
@@ -384,8 +339,6 @@ contains
        call ocosts(outfile,'2253','Total, energy storage cost (M$)',c2253)
        call oblnkl(outfile)
        call ocosts(outfile,'225','Total account 225 cost (M$)',c225)
-
-    end if
 
     call oshead(outfile,'Heat Transport System')
     call ocosts(outfile,'cpp','Pumps and piping system cost (M$)',cpp)
@@ -431,11 +384,6 @@ contains
 
     call oshead(outfile,'Heat Rejection System')
     call ocosts(outfile,'26','Heat rejection system cost (M$)',c26)
-
-    if (ihplant /= 0) then
-       call oshead(outfile,'Hydrogen Production')
-       call ocosts(outfile,' ','Hydrogen production plant cost (M$)',chplant)
-    end if
 
     call oshead(outfile,'Plant Direct Cost')
     call ocosts(outfile,'cdirt','Plant direct cost (M$)',cdirt)
@@ -508,10 +456,11 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
-         annfuelt,annfwbl,annoam,annoam1,anntot,annwst,coecdr, &
+         annfuelt,annfwbl,annoam,anntot,annwst,coecdr, &
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
-
+         ! annoam1,
+         
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Number of kWh generated each year
@@ -557,7 +506,7 @@ contains
     annfwbl = (fwallcst + blkcst) * &
          (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
 
-         
+
 
     !  Cost of electricity due to first wall/blanket replacements
 
@@ -565,11 +514,6 @@ contains
 
     !  Costs due to divertor renewal
     !  =============================
-
-    if (ife == 1) then
-       anndiv = 0.0D0
-       coediv = 0.0D0
-    else
 
        !  Compound interest factor
 
@@ -588,12 +532,10 @@ contains
 
        coediv = 1.0D9 * anndiv / kwhpy
 
-    end if
-
     !  Costs due to centrepost renewal
     !  ===============================
 
-    if ((itart == 1).and.(ife /= 1)) then
+    if (itart == 1) then
 
        !  Compound interest factor
 
@@ -683,13 +625,9 @@ contains
 
     !  Annual cost of fuel
 
-    if (ife /= 1) then
        !  Sum D-T fuel cost and He3 fuel cost
        annfuel = ucfuel * pnetelmw/1200.0D0 + &
             1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * 365.0D0 * cfactr
-    else
-       annfuel = 1.0D-6 * uctarg * reprat * 3.1536D7 * cfactr
-    end if
 
     !  Cost of electricity due to reactor fuel
 
@@ -753,24 +691,24 @@ contains
     call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)', &
          fwbllife)
 
-    if (ife /= 1) then
+
        call ovarrf(outfile,'Divertor life (years)','(divlife.)',divlife)
        if (itart == 1) then
           call ovarrf(outfile,'Centrepost life (years)','(cplife.)',cplife)
        end if
-    end if
+
 
     call ovarrf(outfile,'Cost of electricity (m$/kWh)','(coe)',coe)
 
     call osubhd(outfile,'Power Generation Costs :')
-    
+
     if ((annfwbl /= annfwbl).or.(annfwbl > 1.0D10).or.(annfwbl < 0.0D0)) then
         write(outfile,*)'Problem with annfwbl'
         write(outfile,*)'fwallcst=', fwallcst, '  blkcst=', blkcst
         write(outfile,*)'crffwbl=', crffwbl,   '  fcap0cp=', fcap0cp
         write(outfile,*)'feffwbl=', feffwbl,   '  fwbllife=', fwbllife
     end if
-    
+
     write(outfile,200) &
          anncap,coecap, &
          annoam,coeoam, &
@@ -806,7 +744,6 @@ contains
        call ovarrf(outfile,'Blanket direct capital cost (M$)', &
             '(blkcst)',blkcst)
 
-       if (ife /= 1) then
           call ovarrf(outfile,'Divertor direct capital cost (M$)', &
                '(divcst)',divcst)
           if (itart == 1) then
@@ -817,12 +754,7 @@ contains
                '',cdcost*fcdfuel/(1.0D0-fcdfuel))
           call ovarrf(outfile,'Fraction of CD cost --> fuel cost', &
                '(fcdfuel)',fcdfuel)
-       else
-          call ovarrf(outfile,'IFE driver system direct cap cost (M$)', &
-               '',cdcost*fcdfuel/(1.0D0-fcdfuel))
-          call ovarrf(outfile,'Fraction of driver cost --> fuel cost', &
-               '(fcdfuel)',fcdfuel)
-       end if
+
     end if
 
   end subroutine coelc
@@ -1100,11 +1032,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  IFE plant material unit costs
-    !  uccarb   : carbon cloth cost $/kg [50.0]
-    !  ucconc   : concrete cost $/kg [0.1]
-    !  fwmatm(J,I) : mass of material I in region J of first wall
-
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.5000D0
@@ -1112,16 +1039,7 @@ contains
     cmlsa(3) = 0.8750D0
     cmlsa(4) = 1.0000D0
 
-    if (ife /= 1) then
-       c2211 = 1.0D-6 * cmlsa(lsa) * ((ucfwa+ucfws)*fwarea + ucfwps)
-            
-    else
-       c2211 = 1.0D-6 * cmlsa(lsa) * ( &
-            ucblss   * (fwmatm(1,1)+fwmatm(2,1)+fwmatm(3,1)) + &
-            uccarb   * (fwmatm(1,2)+fwmatm(2,2)+fwmatm(3,2)) + &
-            ucblli2o * (fwmatm(1,4)+fwmatm(2,4)+fwmatm(3,4)) + &
-            ucconc   * (fwmatm(1,5)+fwmatm(2,5)+fwmatm(3,5)) )
-    end if
+    c2211 = 1.0D-6 * cmlsa(lsa) * ((ucfwa+ucfws)*fwarea + ucfwps)
 
     c2211 = fkind * c2211
 
@@ -1168,13 +1086,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  IFE unit costs
-    !  uccarb   : carbon cloth [50.0]
-    !  ucconc   : concrete [0.1]
-    !  ucflib   : FLiBe [84.0]
-    !  mflibe   : Total mass of FLiBe (kg)
-    !  blmatm(J,I) : mass of material I in region J of blanket
-
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.5000D0
@@ -1182,7 +1093,7 @@ contains
     cmlsa(3) = 0.8750D0
     cmlsa(4) = 1.0000D0
 
-    if (ife /= 1) then
+
 
        if (ipowerflow == 0) then
           c22121 = 1.0D-6 * whtblbe * ucblbe
@@ -1208,21 +1119,6 @@ contains
        c22125 = 0.0D0
        c22126 = 0.0D0
        c22127 = 0.0D0
-
-    else
-
-       !  IFE blanket; materials present are Li2O, steel, carbon, concrete
-       !  and FLiBe
-
-       c22121 = 0.0D0
-       c22122 = 1.0D-6 * wtblli2o * ucblli2o
-       c22123 = 1.0D-6 * whtblss * ucblss
-       c22124 = 0.0D0
-       c22125 = 1.0D-6 * uccarb * (blmatm(1,2)+blmatm(2,2)+blmatm(3,2))
-       c22126 = 1.0D-6 * ucconc * (blmatm(1,5)+blmatm(2,5)+blmatm(3,5))
-       c22127 = 1.0D-6 * ucflib * mflibe
-
-    end if
 
     c22121 = fkind * c22121 * cmlsa(lsa)
     c22122 = fkind * c22122 * cmlsa(lsa)
@@ -1274,11 +1170,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  IFE unit costs
-    !  uccarb   : carbon cloth [50.0]
-    !  ucconc   : concrete [0.1]
-    !  shmatm(J,I) : mass of material I in region J of shield
-
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.5000D0
@@ -1286,25 +1177,12 @@ contains
     cmlsa(3) = 0.8750D0
     cmlsa(4) = 1.0000D0
 
-    if (ife /= 1) then
        c22131 = 1.0D-6 * whtshld * ucshld * cmlsa(lsa)
-    else
-       c22131 = 1.0D-6 * cmlsa(lsa) * ( &
-            ucshld *   (shmatm(1,1)+shmatm(2,1)+shmatm(3,1)) + &
-            uccarb *   (shmatm(1,2)+shmatm(2,2)+shmatm(3,2)) + &
-            ucblli2o * (shmatm(1,4)+shmatm(2,4)+shmatm(3,4)) + &
-            ucconc *   (shmatm(1,5)+shmatm(2,5)+shmatm(3,5)) )
-    end if
 
     c22131 = fkind * c22131
 
     !  Penetration shield assumed to be typical steel plate
-
-    if (ife /= 1) then
        c22132 = 1.0D-6 * wpenshld * ucpens * cmlsa(lsa)
-    else
-       c22132 = 0.0D0
-    end if
 
     c22132 = fkind * c22132
 
@@ -1383,15 +1261,7 @@ contains
 
     implicit none
 
-    !  Arguments
-
-    !  Local variables
-
-    real(kind(1.0D0)), dimension(4) :: cmlsa
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (ife /= 1) then
 
        c2215 = 1.0D-6 * divsur * ucdiv
        c2215 = fkind * c2215
@@ -1402,11 +1272,6 @@ contains
        else
           divcst = 0.0D0
        end if
-
-    else
-       c2215 = 0.0D0
-       divcst = 0.0D0
-    end if
 
   end subroutine acc2215
 
@@ -1425,7 +1290,6 @@ contains
     !+ad_prob  None
     !+ad_call  acc2221
     !+ad_call  acc2222
-    !+ad_call  acc2222a
     !+ad_call  acc2223
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
@@ -1442,22 +1306,12 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (ife == 1) then
-       c222 = 0.0D0
-       return
-    end if
-
     !  Account 222.1 : TF magnet assemblies
 
     call acc2221
 
     !  Account 222.2 : PF magnet assemblies
-
-    if (irfp == 0) then
-       call acc2222
-    else
-       call acc2222a
-    end if
+     call acc2222
 
     !  Account 222.3 : Cryostat
 
@@ -1465,7 +1319,7 @@ contains
 
     !  Total account 222
 
-    c222 = c2221 + c2222 + c2223 
+    c222 = c2221 + c2222 + c2223
 
   end subroutine acc222
 
@@ -1610,7 +1464,6 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  16/10/14 PJK Replaced sccufac usage with input copper fractions
     !+ad_hist  24/11/14 PJK Corrected conductor costs for resistive coils
     !+ad_hist  13/10/15 MDK Issue #328 Fix conductor costs.
     !+ad_stat  Okay
@@ -1669,9 +1522,6 @@ contains
     do i = 1,npf
 
        !  Superconductor ($/m)
-
-       !costpfsc = ucsc(isumatpf) * (sccufac*bpf(i)) * &
-       !     abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcond(isumatpf)
        if (ipfres == 0) then
           costpfsc = ucsc(isumatpf) * (1.0D0-fcupfsu)*(1.0D0-vf(i)) * &
                abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcond(isumatpf)
@@ -1680,9 +1530,6 @@ contains
        end if
 
        !  Copper ($/m)
-
-       !costpfcu = uccu * (1.0D0-sccufac*bpf(i)) * &
-       !     abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
        if (ipfres == 0) then
           costpfcu = uccu * fcupfsu*(1.0D0-vf(i)) * &
                abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
@@ -1710,8 +1557,8 @@ contains
 
     if (iohcl == 1) then
 
-       !  Superconductor ($/m)  
-       !  Issue #328  Use CS conductor cross-sectional area (m2) 
+       !  Superconductor ($/m)
+       !  Issue #328  Use CS conductor cross-sectional area (m2)
        if (ipfres == 0) then
           costpfsc = ucsc(isumatoh) * awpoh*(1-vfohc)*(1-fcuohsu)/turns(nohc) * dcond(isumatoh)
        else
@@ -1719,7 +1566,7 @@ contains
        end if
 
        !  Copper ($/m)
-       
+
        if (ipfres == 0) then
           costpfcu = uccu * awpoh*(1-vfohc)*fcuohsu/turns(nohc) * dcopper
        else
@@ -1765,130 +1612,7 @@ contains
 
   end subroutine acc2222
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine acc2222a
-
-    !+ad_name  acc2222a
-    !+ad_summ  Account 222.2 : PF magnet assemblies (Reversed Field Pinch)
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 222.2 (PF magnet) costs
-    !+ad_desc  for a reversed field pinch device.
-    !+ad_desc  Conductor costs use an algorithm devised by R. Hancox,
-    !+ad_desc  January 1994, under contract to Culham, which takes into
-    !+ad_desc  account the fact that the superconductor/copper ratio in
-    !+ad_desc  the conductor is proportional to the maximum field that
-    !+ad_desc  each coil will experience. OH and PF coils are treated
-    !+ad_desc  similarly. Maximum values for current, current density and field
-    !+ad_desc  are used.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
-         pfwndl,sccufac1
-    real(kind(1.0D0)), dimension(4) :: cmlsa
-    integer :: i
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Cost multiplier for Level of Safety Assurance
-
-    cmlsa(1) = 0.6900D0
-    cmlsa(2) = 0.8450D0
-    cmlsa(3) = 0.9225D0
-    cmlsa(4) = 1.0000D0
-
-    !  Total length of PF coil windings (m)
-
-    pfwndl = 0.0D0
-    do i = 1,nrfppf
-       pfwndl = pfwndl + twopi*rrpf(i)*nturns(i)
-    end do
-
-    !  Account 222.2.1 : Conductor
-
-    c22221 = 0.0D0
-    do i = 1,nrfppf
-
-       !  Resistive coils (first 14 coils only)
-
-       if (i <= 14) then
-          sccufac1 = sccufac
-          sccufac = 0.0D0
-          costpfsh = 0.0D0
-       else
-          sccufac1 = sccufac
-          costpfsh = cconshpf
-       end if
-
-       !  Superconductor ($/m)
-
-       costpfsc = ucsc(isumatpf) * (sccufac*bpf(i)) * &
-            drpf(i) * dzpf(i) / nturns(i) * dcond(isumatpf)
-
-       !  Copper ($/m)
-
-       costpfcu = uccu * (1.0D0-sccufac*bpf(i)) * &
-            drpf(i) * dzpf(i) / nturns(i) * dcopper
-
-       !  Total cost/metre of superconductor and copper wire
-
-       costwire = costpfsc + costpfcu
-
-       !  Total cost/metre of conductor (including sheath and fixed costs)
-
-       cpfconpm = costwire + costpfsh + cconfix
-
-       !  Total account 222.2.1
-
-       c22221 = c22221 + (1.0D-6 * twopi * rrpf(i) * nturns(i) * &
-            cpfconpm)
-
-       !  Reset sccufac to previous value if necessary
-
-       sccufac = sccufac1
-
-    end do
-
-    c22221 = fkind * c22221 * cmlsa(lsa)
-
-    !  Account 222.2.2 : Winding
-
-    c22222 = 1.0D-6 * ucwindpf * pfwndl
-    c22222 = fkind * c22222 * cmlsa(lsa)
-
-    !  Account 222.2.3 : Steel case - will be zero for resistive coils
-
-    c22223 = 1.0D-6 * uccase * whtpfs
-    c22223 = fkind * c22223 * cmlsa(lsa)
-
-    !  Account 222.2.4 : Support structure
-
-    c22224 = 1.0D-6 * ucfnc * fncmass
-    c22224 = fkind * c22224 * cmlsa(lsa)
-
-    !  Total account 222.2
-
-    c2222 = c22221 + c22222 + c22223 + c22224
-
-  end subroutine acc2222a
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc2223
 
@@ -1968,26 +1692,11 @@ contains
     !  Local variables
 
     real(kind(1.0D0)), parameter :: exprf = 1.0D0
-    real(kind(1.0D0)) :: switch
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  IFE costs (deflated to 1990 dollars) taken from
-    !  Meier and Bieri (OSIRIS heavy ion beam), Fus Tech 21 (1992) 1547
-    !  Meier and von Rosenberg (SOMBRERO laser), Fus Tech 21 (1992) 1552
-    !  cdriv0   : IFE generic/laser driver cost at edrive=0 (M$) [154.3]
-    !  dcdrv0   : generic/laser driver cost gradient (M$/MJ) [111.4]
-    !  cdriv1   : IFE low energy heavy ion beam driver cost
-    !             extrapolated to edrive=0 (M$) [163.2]
-    !  dcdrv1   : HIB driver cost gradient at low energy (M$/MJ) [78.0]
-    !  cdriv2   : IFE high energy heavy ion beam driver cost
-    !             extrapolated to edrive=0 (M$) [244.9]
-    !  dcdrv2   : HIB driver cost gradient at high energy (M$/MJ) [59.9]
-    !  mcdriv   : IFE driver cost multiplier [1.0]
 
-    if (ife /= 1) then
-
-       !  Account 223.1 : ECH
+           !  Account 223.1 : ECH
 
        c2231 = 1.0D-6 * ucech * (1.0D6*echpwr)**exprf
        if (ifueltyp == 1) c2231 = (1.0D0-fcdfuel) * c2231
@@ -2010,41 +1719,6 @@ contains
        c2233 = 1.0D-6 * ucnbi * (1.0D6*pnbitot)**exprf
        if (ifueltyp == 1) c2233 = (1.0D0-fcdfuel) * c2233
        c2233 = fkind * c2233
-
-       !  Account 223.4 : Oscillating Field (RFP)
-
-       c2234 = 1.0D-6 * ucof * (1.0D6*pofcd)**exprf
-       if (ifueltyp == 1) c2234 = (1.0D0-fcdfuel) * c2234
-       c2234 = fkind * c2234
-
-    else
-
-       !  IFE driver costs (depends on driver type)
-       !  Assume offset linear form for generic and SOMBRERO types,
-       !  or one of two offset linear forms for OSIRIS type
-
-       if (ifedrv /= 2) then
-          c2231 = mcdriv * (cdriv0 + dcdrv0*1.0D-6*edrive)
-       else
-          if (dcdrv1 <= dcdrv2) then
-             switch = 0.0D0
-          else
-             switch = (cdriv2-cdriv1)/(dcdrv1-dcdrv2)
-          end if
-          if (edrive <= switch) then
-             c2231 = mcdriv * (cdriv1 + dcdrv1*1.0D-6*edrive)
-          else
-             c2231 = mcdriv * (cdriv2 + dcdrv2*1.0D-6*edrive)
-          end if
-       end if
-
-       if (ifueltyp == 1) c2231 = (1.0D0-fcdfuel) * c2231
-       c2231 = fkind * c2231
-       c2232 = 0.0D0
-       c2233 = 0.0D0
-       c2234 = 0.0D0
-
-    end if
 
     !  Total account 223
 
@@ -2154,10 +1828,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (ife == 1) then
-       c225 = 0.0D0
-    else
-
        !  Account 225.1 : TF coil power conditioning
 
        call acc2251
@@ -2173,9 +1843,6 @@ contains
        !  Total account 225
 
        c225 = c2251 + c2252 + c2253
-
-    end if
-
   end subroutine acc225
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2357,7 +2024,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: expes = 0.8D0
+    ! real(kind(1.0D0)), parameter :: expes = 0.8D0
     real(kind(1.0D0)) :: shcss
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2432,7 +2099,7 @@ contains
           !  Simplistic approach that assumes that a large stainless steel
           !  block acts as the thermal storage medium. No account is taken
           !  of the cost of the piping within the block, etc.
-          ! 
+          !
           !  shcss is the specific heat capacity of stainless steel (J/kg/K)
           !  dtstor is the maximum allowable temperature change in the
           !  stainless steel block (input)
@@ -2540,14 +2207,6 @@ contains
          (1.0D6*crypmw)**exphts + (1.0D6*vachtmw)**exphts + &
          (1.0D6*trithtmw)**exphts + (1.0D6*fachtmw)**exphts )
 
-    if (ife == 1) cppa = cppa + 1.0D-6 * ucahts * ( &
-         (1.0D6*tdspmw)**exphts + (1.0D6*tfacmw)**exphts )
-
-    !  Hydrogen production powers
-
-    if (ihplant /= 0) cppa = cppa + 1.0D-6 * ucahts * ( &
-         (1.0D6*hthermmw)**exphts + (1.0D6*helecmw)**exphts )
-
     cppa = fkind * cppa * cmlsa(lsa)
     c2262 = cppa
 
@@ -2591,7 +2250,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) cfrht,targtm
+    real(kind(1.0D0)) cfrht
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2602,18 +2261,12 @@ contains
 
     !  Account 227.2 : Fuel processing and purification
 
-    if (ife /= 1) then
        !  Previous calculation, using qfuel in Amps:
        !  1.3 should have been afuel*umass/echarge*1000*s/day = 2.2
        !wtgpd = burnup * qfuel * 1.3D0
 
        !  New calculation: 2 nuclei * reactions/sec * kg/nucleus * g/kg * sec/day
        wtgpd = 2.0D0*rndfuel * afuel*umass*1000.0D0 * 86400.0D0
-    else
-       targtm = gain * edrive * 3.0D0 * 1.67D-27 * 1.0D3 / &
-            (1.602D-19 * 17.6D6 * fburn)
-       wtgpd = targtm * reprat * 86400.0D0
-    end if
 
     !  Assumes that He3 costs same as tritium to process...
     c2272 = 1.0D-6 * ucfpr * (0.5D0 + 0.5D0*(wtgpd/60.0D0)**0.67D0)
@@ -2706,7 +2359,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    c229 = 1.0D-6 * ucme 
+    c229 = 1.0D-6 * ucme
     c229 = fkind * c229
 
   end subroutine acc229
@@ -2906,57 +2559,6 @@ contains
     c26 = 1.0D-6 * uchrs * pwrrej/2300.0D0 * cmlsa(lsa)
 
   end subroutine acc26
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine acchyd
-
-    !+ad_name  acchyd
-    !+ad_summ  Costs of a Hydrogen Production Plant
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the costs of a hydrogen production plant.
-    !+ad_desc  Costs are scaled with the hydrogen production rate (MW equivalent).
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  F/T&amp;M/PJK/LOGBOOK20, pp.2-3
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: uchyd
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    select case (ihplant)
-
-    case (0)
-       uchyd = 0.0D0
-    case (1)
-       uchyd = uchlte
-    case (2)
-       uchyd = uchhten
-    case (3)
-       uchyd = uchhtex
-    case default
-       uchyd = uchth
-
-    end select
-
-    chplant = 1.0D-6 * uchyd * (1.0D3*hpower)
-
-  end subroutine acchyd
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

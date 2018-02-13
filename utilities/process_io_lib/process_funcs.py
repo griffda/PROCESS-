@@ -6,17 +6,19 @@ Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 Compatible with PROCESS version 368 """
 
 from os.path import join as pjoin
+from sys import stderr
 try:
     from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
     NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT, DICT_INPUT_BOUNDS
 except ImportError:
     print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
+'make dicts'!", file=stderr)
     exit()
 from process_io_lib.in_dat import InDat
 from process_io_lib.mfile import MFile
 from numpy.random import uniform
 from time import sleep
+
 
 
 def get_neqns_itervars(wdir='.'):
@@ -35,9 +37,10 @@ def get_neqns_itervars(wdir='.'):
         if var != '':
             itervars += [DICT_IXC_SIMPLE[str(var)]]
 
-    assert in_dat.data['nvar'].get_value == len(itervars)
 
-    return in_dat.data['neqns'].get_value, itervars
+    assert in_dat.number_of_itvars == len(itervars)
+
+    return in_dat.number_of_constraints, itervars
 
 
 
@@ -96,6 +99,11 @@ def  get_variable_range(itervars, factor, wdir='.'):
         else:
             value = get_from_indat_or_default(in_dat, varname)
 
+            if value == None:
+                print('Error: Iteration variable {} has None value!'.format(
+                        varname))
+                exit()
+
             # to allow the factor to have some influence
             if value == 0.:
                 value = 1.
@@ -111,8 +119,9 @@ def  get_variable_range(itervars, factor, wdir='.'):
 
         if lbs[-1] > ubs[-1]:
             print('Error: Iteration variable {} has BOUNDL={.f} >\
- BOUNDU={.f}\n Update process_dicts or input file!'.format(varname, lbs[-1],
-                                                           ubs[-1]))
+ BOUNDU={.f}\n Update process_dicts or input file!'.format(varname,
+                                                           lbs[-1], ubs[-1]),
+                  file=stderr)
 
             exit()
         #assert lbs[-1] < ubs[-1]
@@ -139,12 +148,24 @@ def check_in_dat():
 
     for itervarno in ixc_list:
         itervarname = DICT_IXC_SIMPLE[str(itervarno)]
-        lowerinputbound = DICT_INPUT_BOUNDS[itervarname]['lb']
+        try: 
+            lowerinputbound = DICT_INPUT_BOUNDS[itervarname]['lb']
+        except KeyError as err:
+            #arrays do not have input bound checks
+            if '(' in itervarname: 
+                continue
+
+            print('Error in check_in_dat():')
+            print('There seems to be some information missing from the dicts.')
+            print('Please flag this up for a developer to investigate!')
+            print(itervarname, err)
+            print(DICT_INPUT_BOUNDS[itervarname])
+            exit()
 
         if DICT_IXC_BOUNDS[itervarname]['lb'] < lowerinputbound:
             print("Warning: boundl for ", itervarname,
                   " lies out of allowed input range!\n Reset boundl(",
-                  itervarno, ") to ", lowerinputbound)
+                  itervarno, ") to ", lowerinputbound, file=stderr)
             DICT_IXC_BOUNDS[itervarname]['lb'] = lowerinputbound
             set_variable_in_indat(in_dat, "boundl("+str(itervarno)+")",
                                   lowerinputbound)
@@ -155,7 +176,7 @@ def check_in_dat():
         if DICT_IXC_BOUNDS[itervarname]['ub'] > upperinputbound:
             print("Warning: boundu for", itervarname,
                   "lies out of allowed input range!\n Reset boundu({}) \
-to".format(itervarno), upperinputbound)
+to".format(itervarno), upperinputbound, file=stderr)
             DICT_IXC_BOUNDS[itervarname]['ub'] = upperinputbound
             set_variable_in_indat(in_dat, "boundu("+str(itervarno)+")",
                                   upperinputbound)
@@ -180,7 +201,7 @@ def check_logfile(logfile='process.log'):
         for line in outlogfile:
             if errormessage in line:
                 print('An Error has occured. Please check the output \
-                       file for more information.')
+                       file for more information.', file=stderr)
                 exit()
 
 
@@ -192,11 +213,11 @@ def check_input_error(wdir='.'):
     """
 
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
-    error_id = m_file.data['error id'].get_scan(-1)
+    error_id = m_file.data['error_id'].get_scan(-1)
 
     if error_id == 130:
         print('Error in input file. Please check OUT.DAT \
-for more information.')
+for more information.', file=stderr)
         exit()
 
 
@@ -208,9 +229,14 @@ def process_stopped(wdir='.'):
     Checks the process Mfile whether it has
     prematurely stopped.
     """
-    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
+    try:
+        m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
+    except FileNotFoundError as err:
+        print("No MFILE has been found! FYI:\n {0}".format(err), file=stderr)
+        print("Code continues to run!", file=stderr)
+        return True
 
-    error_status = m_file.data['error status'].get_scan(-1)
+    error_status = m_file.data['error_status'].get_scan(-1)
 
     if error_status >= 3:
         return True
@@ -227,7 +253,7 @@ def process_warnings(wdir='.'):
     """
 
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
-    error_status = m_file.data['error status'].get_scan(-1)
+    error_status = m_file.data['error_status'].get_scan(-1)
 
     if error_status >= 2:
         return True
@@ -365,6 +391,7 @@ def get_from_indat_or_default(in_dat, varname):
         return DICT_DEFAULT[varname]
 
 
+
 def set_variable_in_indat(in_dat, varname, value):
 
     """ quick function that sets a variable value in
@@ -378,10 +405,12 @@ def set_variable_in_indat(in_dat, varname, value):
         else:
             in_dat.add_bound(number, 'l', value)
     elif 'fimp' in varname and not varname == 'fimpvar':
-        number = (varname.split('('))[1].split(')')[0]
+        #Fortran numbering converted to Python numbering!
+        number = int((varname.split('('))[1].split(')')[0])-1
         in_dat.change_fimp(number, value)
     elif 'zref' in varname:
-        number = (varname.split('('))[1].split(')')[0]
+        #Fortran numbering converted to Python numbering!
+        number = int((varname.split('('))[1].split(')')[0])-1
         in_dat.change_zref(number, value)
     else:
         in_dat.add_parameter(varname, value)

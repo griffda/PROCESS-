@@ -52,9 +52,9 @@ module refprop_interface
 
   !  Obtain the root directory
 
-#include "root.dir"
+  include "root.dir"
 
-  character(len=60) :: fluids_dir = ROOTDIR//'/fluids/'
+  character(len=60) :: fluids_dir = ROOTDIR//'/data/fluids/'
 
 contains
 
@@ -303,7 +303,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: d,e,cv,w,q,t,cp,eta,rho,tcx,s,p,h
+    real(kind(1.0D0)) :: d,e,cv,w,q,t,cp,s,p,h
     real(kind(1.0D0)), dimension(ncmax) :: dl,dv,xl,xv
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

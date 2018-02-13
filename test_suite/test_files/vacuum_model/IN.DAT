@@ -203,7 +203,7 @@ shldoth = 0.8    * Outboard shield thickness (m)
 shldtth = 0.3    * Upper/lower shield thickness (m);
 tfcth = 0.91859  * Inboard tf coil thickness; (centrepost for st) (m)
 vgap2 = 0.12     * Vertical gap between vacuum vessel and tf coil (m)
-vgaptf = 1.6     * Vertical gap between x-point and divertor (m)
+vgap = 1.6     * Vertical gap between x-point and divertor (m)
 
 
 *---------------Buildings Variables----------------*
@@ -280,8 +280,7 @@ verbose = 0      * Switch for turning on/off diagnostic messages * turn on diagn
 
 *-------------Heat Transport Variables-------------*
 etath = 0.375    * Thermal to electric conversion efficiency; input if ipowerflow=0
-fauxbop = 0.032  * Fraction of gross electric power to balance-of-plant
-ffwlg = 0.01     * Fraction of first wall / divertor power to low grade heat
+
 fpumpblkt = 0.042  * Fraction of total blanket thermal power required
 fpumpdiv = 0.042  * Fraction of total divertor thermal power required
 fpumpfw = 0.042  * Fraction of total first wall thermal power required
@@ -319,7 +318,7 @@ ngrp = 4         * Number of groups of pf coils;
 ohhghf = 0.9     * Central solenoid height / tf coil internal height
 rjconpf = 11000000.0, 11000000.0, 6000000.0, 6000000.0, 8000000.0, 8000000.0, 8000000.0, 8000000.0  * Average winding pack current density of pf coil i (a/m2)
 rpf2 = -1.825    * Offset (m) of radial position of ipfloc=2 pf coils
-sigpfalw = 300.0  * Allowable stress in pf coils/central solenoid (mpa)
+
 zref = 3.6, 1.2, 1.0, 2.8, 1.0, 1.0, 1.0, 1.0  * Pf coil vertical positioning adjuster
 
 
@@ -342,6 +341,7 @@ impc = 0.0       * Carbon impurity multiplier (imprad_model=0 only)
 impo = 0.0       * Oxygen impurity multiplier (imprad_model=0 only)
 iscdens = 1      * Switch for pedestal profiles * set pedestal-top density as fgwped * greenwald density limit
 nesep = 2e+19    * Electron density at separatrix (/m3) (ipedestal=1)
+neped = 5.75E+19 * Electron density at pedestal (/m3) (ipedestal=1)
 rhopedn = 0.94   * R/a of density pedestal (ipedestal=1)
 rhopedt = 0.94   * R/a of temperature pedestal (ipedestal=1)
 teped = 5.5      * Electron temperature of pedestal (kev) (ipedestal=1)

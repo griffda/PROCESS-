@@ -44,7 +44,7 @@ module process_output
 
   public
 
-  
+
 
 contains
 
@@ -123,6 +123,8 @@ contains
     !  Write the whole line
 
     write(file,'(t2,a)') stars(1:nstars)//' '//string//' '//stars(1:nstars2)
+
+    write(mfile,'(t2,a)') '#'//' '//string//' '//'#'
 
   end subroutine ocentr
 
@@ -338,6 +340,8 @@ contains
     !+ad_hist  15/05/14 PJK Increased output width to 110 characters
     !+ad_hist  23/07/14 PJK Trimmed off trailing spaces
     !+ad_hist  05/08/15 MDK Remove "stop" command when the comment is too long.
+    !+ad_hist  28/10/16 MK Modified previous output to reflect warning message.
+    !+ad_hist              Removed variable (dummy) and use "string" to print.
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -354,11 +358,10 @@ contains
 
     integer, parameter :: maxwidth = 110
     integer :: lh
-    character(len=110) :: dummy
+!    character(len = maxwidth) :: dummy
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    lh = len(string)
+    lh = len(trim(string))
 
     if (lh == 0) then
        write(*,*) 'Error in routine OCMMNT :'
@@ -368,16 +371,16 @@ contains
     end if
 
     if (lh >= maxwidth) then
-       write(*,*) 'Error in routine OCMMNT :'
-       write(*,*) string
-       write(*,*) 'This is too long to fit into ',maxwidth,' columns.'
+       write(*, *) 'Warning in routine OCMMNT :'
+       write(*, '(A)') string
+!       write(*,*) 'This is too long to fit into ',maxwidth,' columns.'
+       write(*, '(A,i3,A)') 'This is longer than ',maxwidth,' columns.'  ! MK 28/10/2016 Modified previous output to reflect warning message
        !write(*,*) 'PROCESS stopping.'
        !stop
     end if
-    dummy = string
-    !write(file,'(t2,a)') trim(string)
-    write(file,'(t2,a)') trim(dummy)
-
+!    dummy = trim(string)
+    write(file,'(t2,a)') trim(string)
+    !write(file,'(t2,a)') dummy
   end subroutine ocmmnt
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -435,22 +438,23 @@ contains
     dum72 = descr
     dum20 = varnam
     stripped = varnam(2:len(varnam)-1)
-    
+
     if (present(output_flag)) then
         flag = output_flag
-    else 
+    else
         flag = ''
     end if
 
+    if (any(name_xc == stripped))  flag = 'ITV'
+
     if (file /= mfile) then
        !MDK add label if it is an iteration variable
-       ! The ITV flag overwrites the output_flag 
-       if (any(name_xc == stripped))  flag = 'ITV'
-       if (verbose==1) then 
+       ! The ITV flag overwrites the output_flag
+       if (verbose==1) then
             write(file,10) dum72, dum20, value, flag
        else
             write(file,20) dum72, dum20, value, flag
-       end if                  
+       end if
     end if
 
 10  format(1x,a,t75,a,t100,f13.6, t115, a)
@@ -503,7 +507,7 @@ contains
     !  Local variables
 
     character(len=72) :: dum72
-    character(len=20) :: dum20
+    character(len=30) :: dum20
     character(len=20) :: stripped
     character(len=3) :: flag
 
@@ -519,22 +523,23 @@ contains
     stripped = varnam(2:len(varnam)-1)
     if (present(output_flag)) then
         flag = output_flag
-    else 
+    else
         flag = ''
     end if
 
+    if (any(name_xc == stripped))  flag = 'ITV'
+
     if (file /= mfile) then
        ! MDK add ITV label if it is an iteration variable
-       ! The ITV flag overwrites the output_flag 
-       if (any(name_xc == stripped))  flag = 'ITV'
+       ! The ITV flag overwrites the output_flag
        write(file,20) dum72, dum20, value, flag
     end if
 
     call underscore(dum72)
     call underscore(dum20)
-    write(mfile,10) dum72, dum20, value
+    write(mfile,10) dum72, dum20, value, flag
 
-10  format(1x,a,t75,a,t100,1pe10.3)
+10  format(1x,a,t75,a,t110,1pe11.4," ",a,t10)
 20  format(1x,a,t75,a,t100,1pe10.3, t112, a)
 
   end subroutine ovarre
@@ -579,7 +584,7 @@ contains
     !  Local variables
 
     character(len=72) :: dum72
-    character(len=20) :: dum20
+    character(len=30) :: dum20
     character(len=20) :: stripped
     character(len=3) :: flag
 
@@ -594,22 +599,23 @@ contains
     stripped = varnam(2:len(varnam)-1)
     if (present(output_flag)) then
         flag = output_flag
-    else 
+    else
         flag = ''
     end if
 
+    if (any(name_xc == stripped))  flag = 'ITV'
+
     if (file /= mfile) then
        ! MDK add ITV label if it is an iteration variable
-       ! The ITV flag overwrites the output_flag 
-       if (any(name_xc == stripped))  flag = 'ITV'
+       ! The ITV flag overwrites the output_flag
        write(file,20) dum72, dum20, value, flag
     end if
 
     call underscore(dum72)
     call underscore(dum20)
-    write(mfile,10) dum72, dum20, value
+    write(mfile,10) dum72, dum20, value, flag
 
-10  format(1x,a,t75,a,t100,i10)
+10  format(1x,a,t75,a,t110,i10," ",a,t10)
 20  format(1x,a,t75,a,t100,i10,t112, a)
 
   end subroutine ovarin
@@ -648,7 +654,7 @@ contains
     !  Local variables
 
     character(len=72) :: dum72
-    character(len=20) :: dum20
+    character(len=30) :: dum20
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -667,7 +673,7 @@ contains
     call underscore(dum20)
     write(mfile,10) dum72, dum20, value
 
-10  format(1x,a,t75,a,t100,a)
+10  format(1x,a,t75,a,t110,a)
 
   end subroutine ovarst
 
@@ -706,7 +712,7 @@ contains
 
     !  Local variables
 
-    character(len=20) :: dum20
+    character(len=30) :: dum20
     character(len=72) :: dum72
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -719,7 +725,7 @@ contains
     dum72 = descr
 
     write(file,10) dum20, dum72, value
-10  format(1x,a,t22,a,t100,f10.2)
+10  format(1x,a,t22,a,t110,f10.2)
 
     call ovarrf(mfile,descr,ccode,value)
 
@@ -760,7 +766,7 @@ contains
 
     !  Local variables
 
-    character(len=30) :: dum30    
+    character(len=30) :: dum30
     character(len=20) :: dum20
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -771,8 +777,8 @@ contains
 
     dum30 = descr
     if (present(variable_name)) then
-        dum20 = variable_name    
-    else 
+        dum20 = variable_name
+    else
         dum20 = ''
     end if
 

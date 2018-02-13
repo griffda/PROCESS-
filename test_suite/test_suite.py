@@ -287,6 +287,10 @@ def clean_up(drs):
     subprocess.call(["rm", "PLOT.DAT"])
     subprocess.call(["rm", "VFILE.DAT"])
 
+    # move kallenbach files
+    subprocess.call(["mv", "divertor_diagnostics.txt", "test_area/kallenbach/"])
+    subprocess.call(["mv", "output_divertor.txt", "test_area/kallenbach/"])
+
     # remove executable
     subprocess.call(["rm", "process.exe"])
 
@@ -336,6 +340,11 @@ def copy_test_to_test_area(test_name, test_status, ars):
     subprocess.call(["cp", "{0}/{1}/ref.MFILE.DAT".format(ars.ref, test_name),
                      "test_area/{0}/".format(test_name)])
 
+    # new.OUT.DAT to test_files
+
+    subprocess.call(["cp", "OUT.DAT", "test_files/{0}/new.OUT.DAT".
+                    format(test_name)])
+
     # new.OUT.DAT
     subprocess.call(["mv", "OUT.DAT", "test_area/{0}/new.OUT.DAT".
                     format(test_name)])
@@ -370,7 +379,7 @@ def close_print(ver):
     Prints closing summary to the terminal and the summary.log file.
     """
 
-    msg = "\nPROCESS version r{0} test run complete".format(ver)
+    msg = "\nPROCESS version {0} test run complete".format(ver)
 
     # To terminal
     print(BColours.BOLD + msg + BColours.ENDC)
@@ -460,7 +469,7 @@ def get_version(tests_dict):
 
     for item in version_numbers:
         if item != "":
-            return int(item)
+            return item
 
 
 def overwrite_references(ars, dr, vr):
@@ -638,20 +647,21 @@ def test_plot_proc(fs):
     # add to utilities.log
     amend_utility_log("plot_proc.py")
 
-    #sys.stdout = open("utilities.log", "a")
+    # sys.stdout = open("utilities.log", "a")
 
     # test all MFILEs
     for key in fs.keys():
         if "error_" not in key:
-            file_name = "test_area/{0}/new.MFILE.DAT".format(key)
-            # file_name = fs[key]["path"] + "new.MFILE.DAT"
-            results.append(pp.test(file_name))
+            if "stellarator" not in key:
+                file_name = "test_area/{0}/new.MFILE.DAT".format(key)
+                # file_name = fs[key]["path"] + "new.MFILE.DAT"
+                results.append(pp.test(file_name))
 
-            #if results[-1]:
+            # if results[-1]:
             #    subprocess.call(["mv", "ref.SUMMARY.pdf", "test_area/{0}/".
             #                    format(key)])
 
-    #sys.stdout = sys.__stdout__
+    # sys.stdout = sys.__stdout__
 
     # Output message
     msg = "Test ==>  {0:<40}".format("plot_proc.py")
@@ -704,11 +714,27 @@ class TestCase(object):
         files appropriately.
         """
 
+        if self.test == "stellarator":
+            subprocess.call(["cp {0} .".format(self.path + "device.dat")],
+                            shell=True)
+            subprocess.call(["cp {0} .".format(self.path + "vmec_info.dat")],
+                            shell=True)
+            subprocess.call(["cp {0} .".format(self.path + "vmec_Rmn.dat")],
+                            shell=True)
+            subprocess.call(["cp {0} .".format(self.path + "vmec_Zmn.dat")],
+                            shell=True)
+
         # run PROCESS
-        subprocess.call(["cp {0} .".format(self.path + "/IN.DAT")],
+        subprocess.call(["cp {0} .".format(self.path + "IN.DAT")],
                         shell=True)
         self.process_exit_code = subprocess.call(["./process.exe >> run.log"],
-                                                 shell=True, timeout=100)
+                                                 shell=True, timeout=1000)
+
+        if self.test == "stellarator":
+            subprocess.call(["rm device.dat"], shell=True)
+            subprocess.call(["rm vmec_info.dat"], shell=True)
+            subprocess.call(["rm vmec_Rmn.dat"], shell=True)
+            subprocess.call(["rm vmec_Zmn.dat"], shell=True)
 
         # check PROCESS call exit code
         if self.process_exit_code != 0:
@@ -816,6 +842,7 @@ def main(args):
                 # initiate test object for the test case
                 tests[key] = TestCase(key, drs[key], difference, args)
 
+
                 # run test
                 tests[key].run_test()
 
@@ -830,6 +857,7 @@ def main(args):
             tests[key] = TestCase(key, drs[key], difference, args)
 
             # run test
+            print("Starting test ==>  {0:<40}".format(key))
             tests[key].run_test()
 
             # Output message to terminal

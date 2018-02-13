@@ -14,7 +14,6 @@ module pfcoil_module
   !+ad_cont  peakb
   !+ad_cont  bfmax
   !+ad_cont  waveform
-  !+ad_cont  pfjalw
   !+ad_cont  superconpf
   !+ad_cont  vsec
   !+ad_cont  induct
@@ -41,6 +40,9 @@ module pfcoil_module
   !+ad_hist  15/04/13 PJK Added fwbs_variables
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  16/10/14 PJK Added sctfcoil_module
+  !+ad_hist  22/02/17 JM  Changed function selfinductance to Bunet's formula
+  !+ad_hist  27/02/17 JM  Added WST Nb3Sn as option for superconductor
+  !+ad_hist  22/03/17 JM  Removed pfjalw as no longer used anywhere
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -55,6 +57,7 @@ module pfcoil_module
   use physics_variables
   use process_output
   use sctfcoil_module
+  use superconductors
   use tfcoil_variables
   use times_variables
 
@@ -66,10 +69,11 @@ module pfcoil_module
   !  Local variables
 
   integer :: nef,nfxf
-  real(kind(1.0D0)) :: ricpf, ssq0
+  real(kind(1.0D0)) :: ricpf, ssq0, sig_axial, sig_hoop
+  real(kind(1.0D0)) :: axial_force
   real(kind(1.0D0)), dimension(nfixmx) :: rfxf,zfxf,cfxf,xind
   real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls,zcls
-  real(kind(1.0D0)), dimension(ngrpmx) :: ccls,ccls2,ccl0
+  real(kind(1.0D0)), dimension(ngrpmx) :: ccls,ccl0
   real(kind(1.0D0)), dimension(ngc2) :: bpf2
   real(kind(1.0D0)), dimension(ngc2,3) :: vsdum
 
@@ -187,7 +191,7 @@ contains
 
     !  Add one if an OH coil is present, and make an extra group
 
-    if (iohcl /= 0) then 
+    if (iohcl /= 0) then
        nohc = nohc + 1
        ncls(ngrp+1) = 1
     end if
@@ -264,7 +268,7 @@ contains
           do k = 1,ncls(j)
              rcls(j,k) = rohc + rpf1
 
-             !  Z coordinate of coil enforced so as not 
+             !  Z coordinate of coil enforced so as not
              !  to occupy the same space as the OH coil
 
              zcls(j,k) = signn(k) * ( hmax*ohhghf + 0.1D0 + &
@@ -483,7 +487,7 @@ contains
 
     !  Flux swing required from CS coil
 
-    csflux = -(vsres + vsind) - pfflux 
+    csflux = -(vsres + vsind) - pfflux
 
     if (iohcl == 1) then
 
@@ -633,10 +637,9 @@ contains
           !  Allowable current density (for superconducting coils)
 
           if (ipfres == 0) then
-             !rjpfalw(i) = pfjalw(bpf(i),bpf2(i),ra(i),rb(i),sigpfalw)
              bmax = max(abs(bpf(i)), abs(bpf2(i)))
              call superconpf(bmax,vf(i),fcupfsu,rjconpf(i),isumatpf,fhts, &
-                  strncon,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc,tmarg)
+                  strncon_pf,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc,tmarg)
           end if
 
           !  Length of conductor
@@ -799,8 +802,8 @@ contains
 
     integer :: timepoint
 
-    real(kind(1.0D0)) :: areaspf,bmax,bmaxoh2,bohci,bohco,bri,bro, &
-         bzi,bzo,da,forcepf,hohc,jcritwp,sgn,tmarg1,tmarg2
+    real(kind(1.0D0)) :: areaspf, bmaxoh2, bohci, bohco, bri, bro, &
+         bzi, bzo, da, forcepf, hohc, jcritwp, sgn, tmarg1, tmarg2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -889,16 +892,33 @@ contains
     if (ipfres == 0) then
 
        !  Superconducting coil
+
+       ! New calculation from M. N. Wilson for hoop stress
+       call hoop_stress(ra(nohc), sig_hoop)
+
+       ! New calculation from Y. Iwasa for axial stress
+       call axial_stress(sig_axial,axial_force)
+
        !  Allowable (hoop) stress (Pa) alstroh
        ! Now a user input
-
        ! alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
-       areaspf = forcepf / alstroh
+
+       ! Now steel area fraction is iteration variable and constraint
+       ! equation is used for OH coil stress
+
+       ! Area of steel in OH coil
+       areaspf = oh_steel_frac*areaoh
+       ! areaspf = forcepf / alstroh
+
+       if (i_cs_stress == 1) then
+           s_tresca_oh = max(ABS(sig_hoop-sig_axial), ABS(sig_axial-0.0D0), ABS(0.0D0 - sig_hoop))
+       else
+           s_tresca_oh = max(ABS(sig_hoop-0.0D0), ABS(0.0D0-0.0D0), ABS(0.0D0 - sig_hoop))
+       end if
 
        !  Thickness of hypothetical steel cylinders assumed to encase the CS along
        !  its inside and outside edges; in reality, the steel is distributed
        !  throughout the conductor
-
        pfcaseth(nohc) = 0.25D0 * areaspf/hohc
 
     else
@@ -933,18 +953,16 @@ contains
        !  Allowable coil overall current density at EOF
        !  (superconducting coils only)
 
-       !rjohc = pfjalw(bohci,bohco,ra(nohc),rb(nohc),sigpfalw)
-       call superconpf(bmaxoh,vfohc,fcuohsu,abs(ric(nohc))/awpoh, &
-            isumatoh,fhts,strncon,tftmp,bcritsc,tcritsc,jcritwp, &
+       call superconpf(bmaxoh,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
+            isumatoh,fhts,strncon_cs,tftmp,bcritsc,tcritsc,jcritwp, &
             jstrandoh_eof,jscoh_eof,tmarg1)
 
        rjohc = jcritwp * awpoh/areaoh
 
        !  Allowable coil overall current density at BOP
 
-       !rjpfalw(nohc) = pfjalw(bmaxoh0,abs(bzo),ra(nohc),rb(nohc),sigpfalw)
-       call superconpf(bmaxoh0,vfohc,fcuohsu,abs(ric(nohc))/awpoh, &
-            isumatoh,fhts,strncon,tftmp,bcritsc,tcritsc,jcritwp, &
+       call superconpf(bmaxoh0,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
+            isumatoh,fhts,strncon_cs,tftmp,bcritsc,tcritsc,jcritwp, &
             jstrandoh_bop,jscoh_bop,tmarg2)
 
        rjpfalw(nohc) = jcritwp * awpoh/areaoh
@@ -1892,64 +1910,6 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function pfjalw(bi,bo,ri,ro,sigalw)
-
-    !+ad_name  pfjalw
-    !+ad_summ  Calculates maximum allowable current density in a
-    !+ad_summ  superconducting PF coil
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Galambos, ORNL
-    !+ad_auth  J Miller, ORNL
-    !+ad_cont  N/A
-    !+ad_args  bi : input real : peak field at inner edge (T)
-    !+ad_args  bo : input real : peak field at outer edge (T)
-    !+ad_args  ri : input real : radius of inner edge (m)
-    !+ad_args  ro : input real : radius of outer edge (m)
-    !+ad_args  sigalw : input real : allowable stress (tangential) (MPa)
-    !+ad_desc  This function calculates the maximum allowable current
-    !+ad_desc  density in a superconducting PF coil, using J. Miller's
-    !+ad_desc  quick method. Originally programmed by J. Galambos 1991.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/12 PJK Initial F90 version
-    !+ad_stat  No longer used
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    real(kind(1.0D0)) :: pfjalw
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: bi,bo,ri,ro,sigalw
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: r2fact,rfact,yy,zz
-    real(kind(1.0D0)), parameter :: xbig = 32.0D0
-    real(kind(1.0D0)), parameter :: y1 = 1.0D0  !  temperature margin (K)
-    real(kind(1.0D0)), parameter :: y2 = 16.0D0 !  critical temperature at zero field (K)
-    real(kind(1.0D0)), parameter :: y3 = 23.0D0 !  critical field at zero temperature (T)
-    real(kind(1.0D0)), parameter :: y4 = 5.0D0  !  bulk He temperature (K)
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    rfact = ro/ri
-    r2fact = -0.053D0 * rfact**2 + 0.925D0*rfact + 0.1D0
-    yy = 1.0D0 - y1 / (y2*(1.0D0-bi/y3) - y4)
-    yy = max(yy, 0.001D0)
-    zz = 0.036D0 * sqrt(bi)/(1.0D0-bi/23.0D0)**2
-
-    pfjalw = 1.45D8/( xbig/sigalw * r2fact * (bi+bo)*(ri+ro) + &
-         1.0D0 + 0.6D0/yy * zz )
-
-  end function pfjalw
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   subroutine superconpf(bmax,fhe,fcu,jwp,isumat,fhts,strain,thelium, &
        bcritsc,tcritsc,jcritwp,jcritstr,jcritsc,tmarg)
 
@@ -1967,6 +1927,7 @@ contains
     !+ad_argc                           2 = Bi-2212 High Temperature Superconductor,
     !+ad_argc                           3 = NbTi,
     !+ad_argc                           4 = ITER Nb3Sn, user-defined parameters
+    !+ad_argc                           5 = WST Nb3Sn parameterisation
     !+ad_args  fhts    : input real : Adjustment factor (<= 1) to account for strain,
     !+ad_argc                         radiation damage, fatigue or AC losses
     !+ad_args  strain : input real : Strain on superconductor at operation conditions
@@ -2054,6 +2015,16 @@ contains
        call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
        jcritstr = jcritsc * (1.0D0-fcu)
 
+    case (5) ! WST Nb3Sn parameterisation
+         bc20m = 32.97D0
+         tc0m = 16.06D0
+
+         !  jcritsc returned by itersc is the critical current density in the
+         !  superconductor - not the whole strand, which contains copper
+
+         call wstsc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+         jcritstr = jcritsc * (1.0D0-fcu)
+
     case default  !  Error condition
        idiags(1) = isumat ; call report_error(156)
 
@@ -2069,7 +2040,7 @@ contains
 
        !  Newton-Raphson method; start at requested minimum temperature margin
 
-       ttest = thelium + tmargmin
+       ttest = thelium + tmargmin_cs
        delt = 0.01D0
        jtol = 1.0D4
 
@@ -2091,14 +2062,19 @@ contains
           select case (isumat)
           case (1,4)
              call itersc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
-             if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+             if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
              call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
              call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
           case (3)
              call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
-             if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+             if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
              call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
              call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
+          case (5)
+             call wstsc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+             if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
+             call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+             call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
           end select
           ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
        end do solve_for_tmarg
@@ -2192,6 +2168,159 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  subroutine hoop_stress(r, s_hoop)
+    !+ad_name  hoop_stress
+    !+ad_summ  Calculation of hoop stress of central solenoid
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  r : input real : radial position a < r < b
+    !+ad_args  s_hoop : output real : hoop stress (MPa)
+    !+ad_desc  This routine calculates the hoop stress of the central solenoid
+    !+ad_desc  from "Superconducting magnets", M. N. Wilson OUP
+    !+ad_prob  None
+    !+ad_hist  24/02/17 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+    real(kind(1.0D0)), intent(in) :: r
+    real(kind(1.0D0)), intent(out) :: s_hoop
+
+    !  Local variables
+    real(kind(1.0D0)) :: K, M, a, b, B_a, B_b, alpha, epsilon, j
+
+    real(kind(1.0D0)) :: hp_term_1, hp_term_2, hp_term_3, hp_term_4
+
+    real(kind(1.0D0)) :: s_hoop_nom
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! Inner radius of OH coil [m]
+    a = ra(nohc)
+
+    ! Outer radius of OH coil [m]
+    b = rb(nohc)
+
+    ! alpha
+    alpha = b/a
+
+    ! epsilon
+    epsilon = r/a
+
+    ! Field at inner radius of coil [T]
+    B_a = bmaxoh0
+
+    ! Field at outer radius of coil [T]
+    ! Assume to be 0 for now
+    B_b = 0.0D0
+
+    ! current density [A/m^2]
+    j = cohbop
+
+    ! K term
+    K = ((alpha*B_a - B_b)*j*a)/(alpha - 1.0D0)
+
+    ! M term
+    M = ((B_a - B_b)*j*a)/(alpha - 1.0D0)
+
+    ! calculate hoop stress terms
+    hp_term_1 = K*((2.0D0 + poisson)/(3.0D0*(alpha + 1.0D0)))
+
+    hp_term_2 = alpha**2 + alpha + 1.0D0 + alpha**2/epsilon**2 - &
+      epsilon*(((1.0D0 + 2.0D0*poisson)*(alpha + 1.0D0)) / (2.0D0 + poisson))
+
+    hp_term_3 = M*((3.0D0 + poisson) / (8.0D0))
+
+    hp_term_4 = alpha**2 + 1.0D0 + alpha**2/epsilon**2 - &
+            epsilon**2*((1.0D0 + 3.0D0*poisson)/(3.0D0 + poisson))
+
+    s_hoop_nom = hp_term_1*hp_term_2 - hp_term_3*hp_term_4
+
+    s_hoop = s_hoop_nom/oh_steel_frac
+
+  end subroutine hoop_stress
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine axial_stress(s_axial,axial_force)
+    !+ad_name  axial_stress
+    !+ad_summ  Calculation of axial stress of central solenoid
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  r : input real : radial position a < r < b
+    !+ad_args  s_hoop : output real : hoop stress (MPa)
+    !+ad_desc  This routine calculates the axial stress of the central solenoid
+    !+ad_desc  from "Case studies in superconducting magnets", Y. Iwasa, Springer
+    !+ad_prob  None
+    !+ad_hist  27/02/17 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+    real(kind(1.0D0)), intent(out) :: s_axial,axial_force
+
+    !  Local variables
+    real(kind(1.0D0)) :: b, hl, ni, area_ax
+
+    real(kind(1.0D0)) :: kb2, k2b2, ekb2_1, ekb2_2, ek2b2_1, ek2b2_2
+
+  !real(kind(1.0D0)) :: kb, k2b
+
+    real(kind(1.0D0)) :: axial_term_1, axial_term_2, axial_term_3
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! Outer radius of OH coil [m]
+    b = rb(nohc)
+
+    ! Half height of OH coil [m]
+    hl = zh(nohc)
+
+    ! OH coil current [A]
+    ni = ric(nohc)*1.0E6
+
+    ! kb term for elliptical integrals
+    ! kb2 = SQRT((4.0D0*b**2)/(4.0D0*b**2 + hl**2))
+    kb2 = (4.0D0*b**2)/(4.0D0*b**2 + hl**2)
+
+    ! k2b term for elliptical integrals
+    !k2b2 = SQRT((4.0D0*b**2)/(4.0D0*b**2 + 4.0D0*hl**2))
+    k2b2 = (4.0D0*b**2)/(4.0D0*b**2 + 4.0D0*hl**2)
+
+    ! term 1
+    axial_term_1 = -(rmu0/2.0D0)*(ni/(2.0D0*hl))**2
+
+    ! term 2
+    call ellipke(kb2, ekb2_1, ekb2_2)
+    axial_term_2 = 2.0D0*hl*(SQRT(4.0D0*b**2 + hl**2))*(ekb2_1 - ekb2_2)
+
+    ! term 3
+    call ellipke(k2b2, ek2b2_1, ek2b2_2)
+    axial_term_3 = 2.0D0*hl*(SQRT(4.0D0*b**2 + 4.0D0*hl**2))*(ek2b2_1 - ek2b2_2)
+
+    ! calculate axial force [N]
+    axial_force = axial_term_1*(axial_term_2 - axial_term_3)
+
+    ! axial area [m2]
+    area_ax = pi*(rb(nohc)**2 - ra(nohc)**2)
+
+    ! calculate unsmeared axial stress [MPa]
+    s_axial = axial_force/(oh_steel_frac*0.5*area_ax)
+
+  end subroutine axial_stress
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine induct(outfile,iprint)
 
     !+ad_name  induct
@@ -2223,7 +2352,7 @@ contains
     !+ad_hisc               if noh is too large
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  06/01/16 MDK Put the self-inductance formula in a function, 
+    !+ad_hist  06/01/16 MDK Put the self-inductance formula in a function,
     !+ad_hist  06/01/16 MDK added Brooks coil test
     !+ad_stat  Okay
     !+ad_docs  None
@@ -2244,7 +2373,7 @@ contains
     real(kind(1.0D0)), allocatable, dimension(:) :: roh,zoh
     real(kind(1.0D0)), dimension(nplas) :: rplasma,zplasma
     real(kind(1.0D0)), dimension(ngc2+nohmax) :: rc,zc,xc,cc,xcin,xcout
-    real(kind(1.0D0)) :: a,b,c,br,bz,deltar,delzoh,psi,r,reqv,rl,rp
+    real(kind(1.0D0)) :: a,b,c,br,bz,deltar,delzoh,psi,reqv,rl,rp
     real(kind(1.0D0)) :: xohpf,xohpl,xpfpl,zp
     integer :: i,ig,ii,ij,j,jj,k,nc,ncoilj,ncoils,nef,noh
 
@@ -2454,58 +2583,86 @@ contains
   end subroutine induct
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   function selfinductance(a,b,c,N)
-    ! Formulas and tables for the calculation of mutual and self-inductance [Revised], 
+    !+ad_name  selfinductance
+    !+ad_summ  Calculates the selfinductance using Bunet's formula
+    !+ad_type  Function returning real
+    !+ad_auth  M. Kovari, CCFE
+    !+ad_cont  N/A
+    !+ad_args  a  : input real : mean radius of coil (m)
+    !+ad_args  b  : input real : length of coil (m) (given as l in the reference)
+    !+ad_args  c  : input real : radial winding thickness (m)
+    !+ad_args  N  : input real : number of turns
+    !+ad_desc  This routine calculates the self inductance in Henries
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  22/02/17 JM  Initial version (issue #396)
+    !+ad_stat  Okay
+    !+ad_docs  Radiotron Designers Handbook (4th Edition) chapter 10
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    ! Function declarations
+    real(kind(1.0D0)) :: a, b, c, N, selfinductance
+
+    ! Calculate self inductance
+    selfinductance = (1.0d-6/0.0254d0)*a**2*N**2/(9.0d0*a + 10.0d0*b + 8.4d0*c + 3.2d0*c*b/a)
+
+    ! OLD Formula
+    ! JM - KEEP FOR NOW
+    ! Formulas and tables for the calculation of mutual and self-inductance [Revised],
     ! Rosa and Grover, Scientific papers of the Bureau of Standards, No. 169, 3rd ed., 1916
     ! a = mean radius of coil
     ! b = length of coil
     ! c = radial winding thickness
     ! N = number of turns
-    real(kind(1.0D0)) :: a,b,c, N, selfinductance, r, r2_16a2, x, x2, q, at, lambda, mu, p
+    ! real(kind(1.0D0)) :: a,b,c, N, selfinductance, r, r2_16a2, x, x2, q, at, lambda, mu, p
 
-    !  Equation 88, p. 137      
-    x = b/c
-    x2 = x**2
-    q = log(1.0d0+x2) 
-    p = log(1.0d0+1.0d0/x2)
-    at = atan(x)
-    lambda = log(8.0d0*a/c) + 1/12.0d0 - pi*x/3.0d0 - 0.5d0*q + 1/(12.0d0*x2)*q &
-              + 1/12.0d0*x2*p + 2.0d0/3.0d0*(x-1.0d0/x)*at
-                 
-    mu = c**2/(96.0d0*a**2)*     &
-         ((log(8.0d0*a/c)-0.5d0*q)*(1+3.0d0*x2) + 3.45d0*x2 + 221.0d0/60.0d0   &
-         -1.6d0*pi*x**3 + 3.2d0*x**3*at - 0.1d0/x2*q + 0.5d0*x2**2*p)
-        
-    selfinductance = rmu0*a*N**2 * (lambda + mu)     
-    
-    if((selfinductance<0.0d0).or.(selfinductance .ne. selfinductance).or.(selfinductance>1000.0d0)) then
-        write(*,*) 'a = ',a, ' b = ', b
-        write(*,*) 'c = ',c, ' x = ', x
-        write(*,*) 'q = ',q, ' at = ', at
-        write(*,*) 'x2 = ',x2, ' N = ', N
-        write(*,*) 'lambda = ',lambda, ' mu = ', mu
-        write(*,*) 'selfinductance = ',selfinductance
-    end if
-    
+    ! !  Equation 88, p. 137
+    ! x = b/c
+    ! x2 = x**2
+    ! q = log(1.0d0+x2)
+    ! p = log(1.0d0+1.0d0/x2)
+    ! at = atan(x)
+    ! lambda = log(8.0d0*a/c) + 1/12.0d0 - pi*x/3.0d0 - 0.5d0*q + 1/(12.0d0*x2)*q &
+    !           + 1/12.0d0*x2*p + 2.0d0/3.0d0*(x-1.0d0/x)*at
+
+    ! mu = c**2/(96.0d0*a**2)*     &
+    !      ((log(8.0d0*a/c)-0.5d0*q)*(1+3.0d0*x2) + 3.45d0*x2 + 221.0d0/60.0d0   &
+    !      -1.6d0*pi*x**3 + 3.2d0*x**3*at - 0.1d0/x2*q + 0.5d0*x2**2*p)
+
+    ! selfinductance = rmu0*a*N**2 * (lambda + mu)
+
+    ! if((selfinductance<0.0d0).or.(selfinductance .ne. selfinductance).or.(selfinductance>1000.0d0)) then
+    !     write(*,*) 'a = ',a, ' b = ', b
+    !     write(*,*) 'c = ',c, ' x = ', x
+    !     write(*,*) 'q = ',q, ' at = ', at
+    !     write(*,*) 'x2 = ',x2, ' N = ', N
+    !     write(*,*) 'lambda = ',lambda, ' mu = ', mu
+    !     write(*,*) 'selfinductance = ',selfinductance
+    ! end if
+
   end function selfinductance
-  
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   subroutine brookscoil(outfile)
-    ! http://www.nessengr.com/techdata/brooks/brooks.html  
+    ! http://www.nessengr.com/techdata/brooks/brooks.html
     real(kind(1.0D0)) :: a,b,c, N, l, lp
-    character(len=10) :: test    
+    character(len=10) :: test
     integer, intent(in) :: outfile
-      
+
     c = 1.0d0
     a = 1.5d0 * c
     b = c
     N = 1.0d0
-    
+
     l = 0.025491d0 * c * 100.0d0 * N**2 * 1.0d-6
     lp = selfinductance(a,b,c,N)
-    if ((l/lp < 1.05d0).and.(l/lp > 0.95d0)) then 
+    if ((l/lp < 1.05d0).and.(l/lp > 0.95d0)) then
         test = 'PASS'
     else
         test = 'FAIL'
@@ -2515,7 +2672,7 @@ contains
     call ovarre(outfile,'Self-inductance of 1m Brooks coil: PROCESS formula', '(lp)',lp, 'OP ')
     call oblnkl(outfile)
     write(*,*) 'Test of self-inductance formula: '//test
-    
+
   end subroutine brookscoil
 
 
@@ -2568,6 +2725,7 @@ contains
 
     integer :: k,nef
     character(len=2) :: intstring
+    logical :: CSlimit=.false.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2593,6 +2751,8 @@ contains
           case (4)
              call ocmmnt(outfile, &
                   '  (ITER Nb3Sn critical surface model, user-defined parameters)')
+          case (5)
+             call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
           end select
 
           call osubhd(outfile,'Central Solenoid Current Density Limits :')
@@ -2618,8 +2778,8 @@ contains
           call ovarre(outfile,'Actual overall current density at EOF (A/m2)', '(coheof)',coheof)
           call oblnkl(outfile)
           ! MDK add ohcth, bore and gapoh as they can be iteration variables
-          call ovarre(outfile,'CS inside radius (m)', '(bore)',bore)
-          call ovarre(outfile,'CS thickness (m)', '(ohcth)',ohcth)
+          call ovarre(outfile,'CS inside radius (m)', '(bore.)',bore)
+          call ovarre(outfile,'CS thickness (m)', '(ohcth.)',ohcth)
           call ovarre(outfile,'Gap between central solenoid and TF coil (m)', '(gapoh)',gapoh)
           call ovarre(outfile,'CS overall cross-sectional area (m2)', &
                '(areaoh)',areaoh, 'OP ')
@@ -2632,11 +2792,19 @@ contains
           call ovarre(outfile,'CS steel cross-sectional area (m2)', &
                '(areaoh-awpoh)',areaoh-awpoh, 'OP ')
           call ovarre(outfile,'CS steel area fraction', &
-               '',(areaoh-awpoh)/areaoh, 'OP ')
-          call ovarre(outfile,'Allowable hoop stress in CS steel (Pa)', &
+               '(oh_steel_frac)',oh_steel_frac)
+          call ovarre(outfile,'Allowable stress in CS steel (Pa)', &
                '(alstroh)',alstroh)
-          call ovarre(outfile,'Strain on superconductor', &
-               '(strncon)',strncon)
+          call ovarre(outfile,'Hoop stress in CS steel (Pa)', &
+               '(sig_hoop)', sig_hoop, 'OP ')
+          call ovarre(outfile,'Axial stress in CS steel (Pa)', &
+               '(sig_axial)', sig_axial, 'OP ')
+          call ovarre(outfile,'Tresca stress in CS steel (Pa)', &
+               '(s_tresca_oh)', s_tresca_oh, 'OP ')
+          call ovarre(outfile,'Axial force in CS (N)', &
+               '(axial_force)', axial_force, 'OP ')
+          call ovarre(outfile,'Strain on CS superconductor', &
+               '(strncon_cs)',strncon_cs)
           call ovarre(outfile,'Copper fraction in strand', &
                '(fcuohsu)',fcuohsu)
           call ovarre(outfile,'Void (coolant) fraction in conductor', &
@@ -2645,11 +2813,15 @@ contains
                '(tftmp)',tftmp)
           call ovarre(outfile,'CS temperature margin (K)', &
                '(tmargoh)',tmargoh, 'OP ')
-
-          if ( (abs(coheof) < 0.99D0*abs(rjohc)).and. &
-               (abs(cohbop) < 0.99D0*abs(rjohc0)) ) then
-             call report_error(135)
-          end if
+          call ovarre(outfile,'Minimum permitted temperature margin (K)', &
+               '(tmargmin_cs)',tmargmin_cs)
+          ! Check whether CS coil is hitting any limits
+          ! iteration variable (39) fjohc0
+          ! iteration variable(38) fjohc
+          if ( (abs(coheof) > 0.99D0*abs(boundu(38)*rjohc)).or. &
+               (abs(cohbop) > 0.99D0*abs(boundu(39)*rjohc0)) ) CSlimit=.true.
+          if (tmargoh < 1.01D0*tmargmin_cs) CSlimit=.true.
+          if (.not.CSlimit) call report_error(135)
 
        else
           call ocmmnt(outfile,'Resistive central solenoid')
@@ -2673,6 +2845,8 @@ contains
        case (4)
           call ocmmnt(outfile, &
                '  (ITER Nb3Sn critical surface model, user-defined parameters)')
+       case (5)
+          call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
        end select
 
        call ovarre(outfile,'Copper fraction in conductor','(fcupfsu)',fcupfsu)
@@ -2870,8 +3044,9 @@ contains
     integer, intent(in) :: outfile
 
     !  Local variables
+    character(len=50) :: circuit_name, circuit_var_name
+    integer :: jj,k,jjj
 
-    integer :: jj,k
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2914,7 +3089,7 @@ contains
     call ocmmnt(outfile,'circuit')
 
     do k = 1,ncirt-1
-       write(outfile,60) k,((cpt(k,jj)*turns(k)),jj=1,6)
+      write(outfile,60) k,((cpt(k,jj)*turns(k)),jj=1,6)
     end do
 60  format(t3,i2,t12,6(1pe11.3))
 
@@ -2948,6 +3123,25 @@ contains
     call oblnkl(outfile)
     call ovarre(outfile,'Ratio of central solenoid current at beginning of Pulse / end of flat-top','(fcohbop)',fcohbop)
     call ovarre(outfile,'Ratio of central solenoid current at beginning of Flat-top / end of flat-top','(fcohbof)',fcohbof, 'OP ')
+
+    call oshead(outfile,'PF Circuit Waveform Data')
+    call ovarin(outfile,'Number of PF circuits including CS and plasma','(ncirt)',ncirt)
+    do k = 1,ncirt
+      do jjj = 1, 6
+        if (k == ncirt) then
+          circuit_name = 'Plasma ' // ' - Time point ' // int_to_string2(jjj) // ' (A)'
+          circuit_var_name = '(plasma' // 't' // int_to_string2(jjj) // ')'
+        else if (k == ncirt-1) then
+          circuit_name = 'CS Circuit ' // ' - Time point ' // int_to_string2(jjj) // ' (A)'
+          circuit_var_name = '(cs' // 't' // int_to_string2(jjj) // ')'
+        else
+          circuit_name = 'PF Circuit ' // int_to_string2(k) // ' - Time point ' // int_to_string2(jjj) // ' (A)'
+          circuit_var_name = '(pfc' // int_to_string2(k) // 't' // int_to_string2(jjj) // ')'
+        end if
+        call ovarre(outfile,circuit_name,circuit_var_name, cpt(k,jjj)*turns(k))
+      end do
+    end do
+
   end subroutine outvolt
 
 end module pfcoil_module

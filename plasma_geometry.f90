@@ -15,7 +15,7 @@ module plasma_geometry_module
   !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  physics_variables
-  !+ad_call  rfp_variables
+
   !+ad_hist  06/11/12 PJK Initial version of module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -25,7 +25,7 @@ module plasma_geometry_module
   use build_variables
   use constants
   use physics_variables
-  use rfp_variables
+
 
   implicit none
 
@@ -64,7 +64,7 @@ contains
     !+ad_hist  14/11/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  05/11/12 PJK Added rfp_variables
+
     !+ad_hist  10/06/13 PJK New ISHAPE=2 elongation scaling; sf2 replaced by
     !+ad_hisc               global variable pperim
     !+ad_hist  14/11/13 PJK Unified kappa95 estimate to Hartmann suggestion
@@ -147,31 +147,6 @@ contains
     if (iscrp == 0) then
        scraplo = 0.1D0 * rminor
        scrapli = 0.1D0 * rminor
-    end if
-
-    !  RFP calculations (circular plasma)
-
-    if (irfp == 1) then
-
-       !  Plasma poloidal perimeter
-
-       pperim = 2.0D0*pi*rminor
-       sf = 1.0D0
-
-       !  Plasma volume (kappa should be 1.0)
-
-       vol = cvol * 2.0D0 * pi**2 * rmajor * rminor**2 * kappa
-
-       !  Plasma surface area (very bad approx for outboard area...)
-
-       sarea = 4.0D0 * pi**2 * rmajor * rminor * 0.5D0*(kappa+1.0D0)
-       sareao = 0.5D0 * sarea
-
-       !  Plasma cross-sectional area
-
-       xarea = pi * rminor * rminor
-
-       return
     end if
 
     !  Double null configuration
@@ -608,8 +583,6 @@ contains
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       implicit none
-
-      real(kind(1.0D0)) :: xvol
 
       !  Arguments
 

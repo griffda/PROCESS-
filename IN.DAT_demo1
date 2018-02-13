@@ -8,7 +8,7 @@
 *****   peaked  ITG-limited
 *****   flat    ITG-limited
 *****   flat    ITB
-*****	
+*****
 *****  User :
 *****    Peter Knight
 *****
@@ -85,10 +85,10 @@ RUNTITLE = DEMO 1 standard test case
 $INPT1
 NEQNS = 17,
 NVAR = 29,
-ICC = 1,  2,  5,  8, 10, 11, 16, 24, 25, 26, 
+ICC = 1,  2,  5,  8, 10, 11, 16, 24, 25, 26,
  27, 30, 31, 32, 33, 34, 35
 IXC = 2,  4,  5,  6,  9, 10, 12, 14, 16, 18,
- 29, 35, 36, 37, 38, 39, 41, 42, 44, 48, 49, 
+ 29, 35, 36, 37, 38, 39, 41, 42, 44, 48, 49,
  50, 51, 53, 56, 57, 58, 59, 61
 BOUNDU(3) = 11,
 BOUNDU(9)  = 1.2,
@@ -293,7 +293,7 @@ fcohbop = 1.000d0,
 RPF2 = -1.825
 *ROUTR = 0.01,
 OHHGHF = 0.9,
-SIGPFALW = 300.0,
+
 isumatpf = 3,
 $END
 

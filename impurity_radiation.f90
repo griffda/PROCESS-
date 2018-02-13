@@ -17,6 +17,7 @@ module impurity_radiation_module
   !+ad_cont  pbremden
   !+ad_cont  pimpden
   !+ad_cont  fradcore
+  !+ad_cont  Zav_of_te
   !+ad_args  N/A
   !+ad_desc  This module contains routines for calculating the
   !+ad_desc  bremsstrahlung and line radiation of impurities
@@ -40,6 +41,7 @@ module impurity_radiation_module
   !+ad_hist  25/09/14 PJK Corrected root.dir include syntax
   !+ad_hist  06/10/14 PJK Changed impvar default from 10 to 9
   !+ad_hist  08/12/14 PJK Changed impdir label
+  !+ad_hist  29/03/16 HL Added coreradiationfraction
   !+ad_stat  Okay
   !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
   !+ad_docs  Sertoli, private communication
@@ -55,7 +57,7 @@ module impurity_radiation_module
 
   private
   public :: initialise_imprad, impradprofile, z2index, element2index, fradcore
-  public :: imp_dat
+  public :: imp_dat, Zav_of_te
 
   !+ad_vars  imprad_model /1/ : switch for impurity radiation model:<UL>
   !+ad_varc               <LI>  = 0 original ITER 1989 model
@@ -67,22 +69,25 @@ module impurity_radiation_module
   !+ad_vars  nimp /14/ FIX : number of ion species in impurity radiation model
   integer, public, parameter :: nimp = 14
 
-  !+ad_vars  coreradius /0.9/ : normalised radius defining the 'core' region
-  real(kind(1.0D0)), public :: coreradius = 0.9D0
+  !+ad_vars  coreradius /0.6/ : normalised radius defining the 'core' region
+  real(kind(1.0D0)), public :: coreradius = 0.6D0
+
+  !+ad_vars  coreradiationfraction /1.0/ : fraction of radiation from 'core' region that is subtracted from the loss power
+  real(kind(1.0D0)), public :: coreradiationfraction = 1.0D0
 
   !+ad_vars  fimp(nimp) /1.0,0.1,0.02,0.0,0.0,0.0,0.0,0.0,0.0016,0.0,0.0,0.0,0.0,0.0/ :
   !+ad_varc         impurity number density fractions relative to electron density
   !+ad_varc         (iteration variable 102 is fimp(impvar))
   real(kind(1.0D0)), public, dimension(nimp) :: fimp = &
-       (/ 1.0D0, 0.1D0, 0.02D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
-       0.0D0, 0.0016D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
+       (/ 1.0D0, 0.1D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
+       0.0D0, 0.00D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
   !+ad_vars  imp_label(nimp) : impurity ion species names:<UL>
   character(len=2), public, dimension(nimp) :: imp_label = (/ &
   !+ad_varc  <LI> ( 1)  Hydrogen  (fraction calculated by code)
        'H_', &
-  !+ad_varc  <LI> ( 2)  Helium    (fraction calculated by code)
+  !+ad_varc  <LI> ( 2)  Helium
        'He', &
-  !+ad_varc  <LI> ( 3)  Beryllium (default fraction 2%)
+  !+ad_varc  <LI> ( 3)  Beryllium
        'Be', &
   !+ad_varc  <LI> ( 4)  Carbon
        'C_', &
@@ -94,7 +99,7 @@ module impurity_radiation_module
        'Ne', &
   !+ad_varc  <LI> ( 8)  Silicon
        'Si', &
-  !+ad_varc  <LI> ( 9)  Argon (default fraction 0.16%)
+  !+ad_varc  <LI> ( 9)  Argon
        'Ar', &
   !+ad_varc  <LI> (10)  Iron
        'Fe', &
@@ -109,24 +114,25 @@ module impurity_radiation_module
 
   !+ad_vars  fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
   !+ad_varc                     (iteration variable 102)
+  ! Deprecated
   real(kind(1.0D0)), public :: fimpvar = 1.0D-3
 
     !  Obtain the root directory
 
-#include "root.dir"
+  include "root.dir"
 
   !+ad_vars  impdir /'/home/PROCESS/[branch]/impuritydata'/ :
   !+ad_varc           Directory containing impurity radiation data files
-  character(len=80), public :: impdir = ROOTDIR//'/impuritydata/'
+  character(len=120), public :: impdir = ROOTDIR//'/data/impuritydata/'
 
-  !+ad_vars  impvar /9 (argon)/ : fimp element value to be varied if iteration
+  !+ad_vars  impvar : impurity to be iterated (deprecated)
   !+ad_varc                       variable number 102 is turned on
   integer, public :: impvar = 9
 
   !  Declare impurity data type
 
   type :: imp_dat
-     
+
      character(len=2)  :: Label    !  Element name
      integer           :: Z        !  Charge number
      real(kind(1.0D0)) :: amass    !  Atomic mass
@@ -138,7 +144,7 @@ module impurity_radiation_module
      real(kind(1.0D0)), allocatable, dimension(:) :: Lz_Wm3
      !  Table of corresponding average atomic charge values
      real(kind(1.0D0)), allocatable, dimension(:) :: Zav
-     
+
   end type imp_dat
 
   type(imp_dat),  dimension(nimp), save, public :: impurity_arr
@@ -148,7 +154,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine initialise_imprad
-    
+
     !+ad_name  initialise_imprad
     !+ad_summ  Initialises the impurity radiation data structure
     !+ad_type  Subroutine
@@ -172,7 +178,7 @@ contains
 
     real(kind(1.0D0)) :: tmult, lzmult, frac
     integer :: table_length, errorflag
-    
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Error flag will be set to 1 by routine init_imp_element if any
@@ -253,13 +259,13 @@ contains
 
   subroutine init_imp_element(no, label, Z, amass, frac, len_tab, TinkeV, &
        LzinWm3, error)
-    
+
     !+ad_name  init_imp_element
     !+ad_summ  Initialises the impurity radiation data for a species
     !+ad_type  Subroutine
     !+ad_auth  H Lux, CCFE, Culham Science Centre
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A   
+    !+ad_cont  N/A
     !+ad_args  no      : input integer  : position of species in impurity array
     !+ad_args  label   : input string   : species name
     !+ad_args  Z       : input integer  : species charge number
@@ -280,6 +286,7 @@ contains
     !+ad_hist  14/05/14 PJK Initial PROCESS version
     !+ad_hist  17/06/14 PJK Added impdir usage
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  26/05/17 JM  Lack of impurity data now exits instead of using old model
     !+ad_stat  Okay
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -289,15 +296,15 @@ contains
     !  Arguments
 
     integer, intent(in)           :: no
-    character(len=2), intent(in)  :: label    
-    integer, intent(in)           :: Z        
-    real(kind(1.0D0)), intent(in) :: amass    
-    real(kind(1.0D0)), intent(in) :: frac     
-    integer, intent(in)           :: len_tab   
+    character(len=2), intent(in)  :: label
+    integer, intent(in)           :: Z
+    real(kind(1.0D0)), intent(in) :: amass
+    real(kind(1.0D0)), intent(in) :: frac
+    integer, intent(in)           :: len_tab
     real(kind(1.0D0)), intent(in) :: TinkeV, LzinWm3
 
     integer, intent(inout) :: error
-    
+
     !  Local variables
 
     integer :: status, i
@@ -313,7 +320,7 @@ contains
        idiags(1) = no ; idiags(2) = size(impurity_arr)
        call report_error(27)
     end if
-    
+
     impurity_arr(no)%label   = label
     impurity_arr(no)%Z       = Z
     impurity_arr(no)%amass   = amass
@@ -345,11 +352,13 @@ contains
        call import_impdata(fullpath, len_tab, &
             impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3, impurity_arr(no)%Zav)
     else
-       call report_error(29)
-       imprad_model = 0
-       write(*,*) "#####   Imprad_model = 0   #####", label // 'Lzdata.dat', iexist, impdir
-       error = 1
-       return
+      !  call report_error(29)
+      !  imprad_model = 0
+      !  write(*,*) "#####   Imprad_model = 0   #####", label // 'Lzdata.dat', iexist, impdir
+      !  error = 1
+       write(*,*) "# Warning :  Cannot find impurity data please check path."
+       write(*,*) "# Error   :  Current path is: ", impdir
+       stop
     end if
 
     !  Convert tabulated units if necessary
@@ -364,7 +373,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine import_impdata(filename, nlines, col1, col2, col3, skiprows, fmt)
-    
+
     !+ad_name  import_impdata
     !+ad_summ  Reads two columns of data from file
     !+ad_type  Subroutine
@@ -372,7 +381,7 @@ contains
     !+ad_cont  N/A
     !+ad_args  filename : input char(len=128)     : input filename
     !+ad_args  nlines   : input integer           : no. of lines to be read
-    !+ad_args  col1(nlines) : output real array   : data in column1 
+    !+ad_args  col1(nlines) : output real array   : data in column1
     !+ad_args  col2(nlines) : output real array   : data in column2
     !+ad_args  col3(nlines) : output real array   : data in column3
     !+ad_args  skiprows : optional input integer  : no. of initial rows to skip
@@ -413,7 +422,7 @@ contains
 
     !  Optional variables
 
-    if (present(skiprows)) then 
+    if (present(skiprows)) then
        local_skip = skiprows
     else
        local_skip = 2
@@ -421,7 +430,7 @@ contains
 
     if (present(fmt)) then
        local_fmt = fmt
-    else 
+    else
        local_fmt = '(3F10.2)'
     end if
 
@@ -442,14 +451,14 @@ contains
 
     do i = 1, nlines
        read(unit=unit, fmt=local_fmt, iostat=iostat) in1, in2, in3
-       if (iostat > 0) then 
+       if (iostat > 0) then
           idiags(1) = iostat ; idiags(2) = i
           call report_error(32)
        else if (iostat < 0) then
           exit  !  EOF
        else
-          col1(i) = in1 
-          col2(i) = in2 
+          col1(i) = in1
+          col2(i) = in2
           col3(i) = in3
        end if
     end do
@@ -607,7 +616,7 @@ contains
 
     !  Total impurity radiation
 
-    pimp = pimpden(imp_element, ne, te) 
+    pimp = pimpden(imp_element, ne, te)
 
     if (pimp >= pbrem) then
        pline = pimp - pbrem
@@ -655,7 +664,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    pbremden = imp_element%frac * ne * ne * imp_element%Z * imp_element%Z &
+    pbremden = imp_element%frac * ne * ne * Zav_of_te(imp_element,te)**2 &
          * 5.355D-37 * sqrt(te)
 
   end function pbremden
@@ -729,7 +738,7 @@ contains
        !  This is okay because Bremsstrahlung will dominate at higher temp.
        lz = imp_element%Lz_Wm3(imp_element%len_tab)
 
-    else 
+    else
 
        do i = 1, imp_element%len_tab-1
 
@@ -756,10 +765,10 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function fradcore(rho,coreradius)
+  function fradcore(rho,coreradius,coreradiationfraction)
 
     !+ad_name  fradcore
-    !+ad_summ  Function to calculate core radiation fraction 
+    !+ad_summ  Function to calculate core radiation fraction
     !+ad_type  Function returning real
     !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_auth  H Lux, CCFE, Culham Science Centre
@@ -767,14 +776,16 @@ contains
     !+ad_cont  N/A
     !+ad_args  rho        : input real : normalised minor radius
     !+ad_args  coreradius : input real : normalised core radius
+    !+ad_args coreradiationfraction : input real : fraction of core radiation
     !+ad_desc  This function calculates the core radiation fraction
     !+ad_desc  at normalised minor radius <CODE>rho</CODE> given a fixed
-    !+ad_desc  core radius
+    !+ad_desc  core radius using only a specified fraction of that radiation.
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  08/10/13 RK  Initial draft
     !+ad_hist  16/12/13 HL  Added coreradius as optional input
     !+ad_hist  19/05/14 PJK First PROCESS implementation
+    !+ad_hist 29/03/16 HL Added coreradiationfraction
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -788,17 +799,95 @@ contains
 
     real(kind(1.0D0)), intent(in) :: rho
     real(kind(1.0D0)), intent(in) :: coreradius
+    real(kind(1.0D0)), intent(in) :: coreradiationfraction
 
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (rho < coreradius) then
-       fradcore = 1.0D0
+       fradcore = coreradiationfraction
     else
        fradcore = 0.0D0
     end if
 
   end function fradcore
+
+
+  function Zav_of_te(imp_element,te)
+
+    !+ad_name  Zav_of_te
+    !+ad_summ  Electron temperature dependent average atomic number
+    !+ad_type  Function returning real
+    !+ad_auth  H Lux, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  imp_element : input imp_dat : impurity element
+    !+ad_args  te : input real : electron temperature (keV)
+    !+ad_desc  This routine returns the interpolated average atomic
+    !+ad_desc  charge for a given electron temperature.
+    !+ad_desc  <P>The Zav versus temperature data is interpolated from
+    !+ad_desc  lookup tables from the ADAS data base provided by Martin O'Mullane.
+    !+ad_prob  If the requested temperature for the calculation is outside
+    !+ad_prob  of the tabulated range of the fit, the nearest temperature
+    !+ad_prob  point's data is used.
+    !+ad_call  report_error
+    !+ad_hist  22/02/16 HL  First draft of routine
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+       implicit none
+
+    real(kind(1.0D0)) :: Zav_of_te
+
+    !  Arguments
+
+    type(imp_dat),  intent(in) :: imp_element
+    real(kind(1.0D0)), intent(in) :: te
+
+    !  Local variables
+
+    integer :: i
+    real(kind(1.0D0)) :: xi, yi, c
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Interpolate tabulated data
+
+    !  Temperatures lower than the minimum, or higher than the maximum,
+    !  are dealt with by taking the Zav value at the nearest tabulated
+    !  temperature point
+
+    if (te <= imp_element%Temp_keV(1)) then
+       ! This should not be too unreasonable.
+       Zav_of_te = imp_element%Zav(1)
+
+    else if (te >= imp_element%Temp_keV(imp_element%len_tab)) then
+       !  This should be okay, as most elements are fully ionised by now.
+       Zav_of_te = imp_element%Zav(imp_element%len_tab)
+
+    else
+
+       do i = 1, imp_element%len_tab-1
+
+          !  Linear interpolation in log-lin space
+
+          if ( (te > imp_element%Temp_keV(i)) .and. &
+               (te <= imp_element%Temp_keV(i+1)) ) then
+
+             yi = imp_element%Zav(i)
+             xi = log(imp_element%Temp_keV(i))
+             c  = (imp_element%Zav(i+1) - yi) / &
+                  (log(imp_element%Temp_keV(i+1)) - xi)
+             Zav_of_te = yi + c * (log(te) - xi)
+             exit
+          end if
+
+       end do
+
+    end if
+
+  end function Zav_of_te
+
 
 end module impurity_radiation_module

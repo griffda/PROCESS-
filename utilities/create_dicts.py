@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
    This is a program to automatically produce the process_dicts.py file
@@ -44,7 +44,7 @@ SOURCEDIR = ROOTDIR
 #DICT_DEFAULT. This is used for adding important variables to the dictionary
 #that the script fails to parse.
 FIXEDVALS = {"ngc2" : 18, "nimp" : 14}
-FIXEDDEFS = {"impdir" : ROOTDIR+"/impuritydata",
+FIXEDDEFS = {"impdir" : ROOTDIR+"/data/impuritydata",
              "sweep" : [0.0] * 200
             }
 
@@ -135,17 +135,19 @@ def find(search_dir, regexp, flags=re.U):
     """
     files = []
     for file in os.listdir(search_dir):
-        path = search_dir + "/" + file
-        if os.path.isdir(path):
-            continue
-        try:
-            text = open(path).readlines()
-            for line in text:
-                if re.search(regexp, line, flags):
-                    files.append(path)
-                    break
-        except UnicodeDecodeError:
-            continue
+        if 'f90' in file:
+            path = search_dir + "/" + file
+            if os.path.isdir(path):
+                continue
+            try:
+                text = open(path).readlines()
+                for line in text:
+                    if re.search(regexp, line, flags):
+                        files.append(path)
+                        break
+            except UnicodeDecodeError:
+                continue
+
     return files
 
 def slice_file(file, re1, re2):
@@ -262,22 +264,23 @@ def get_array_from_fortran(array_name):
 
     """
     rexp = array_name + r" = \(/"
-    #find files that look like they have an assignment in
+    # find files that look like they have an assignment in
     filelist = find(SOURCEDIR, rexp)
-    if len(filelist) > 1 :
-        print('The regular expression ',rexp, '\n  does not appear exactly once in the folder \n',SOURCEDIR,
+    if len(filelist) > 1:
+        print('The regular expression ', rexp,
+              '\n  does not appear exactly once in the folder \n', SOURCEDIR,
               '\n The list of files is ', filelist, file=sys.stderr)
-    assert(len(filelist)==1)
-    #slice the file between the parenthesis
+    assert(len(filelist) == 1)
+    # slice the file between the parenthesis
     arr = slice_file(filelist[0], rexp, r"/\)")
 
     arr = [remove_comments(x) for x in arr]
-    #combine whole array onto one line
+    # combine whole array onto one line
     array_line = "".join(arr)
-    #regex that gets the string between the brackets
+    # regex that gets the string between the brackets
     array_regex = rexp + r"(.*?)/\)"
     val_string = re.search(array_regex, array_line).group(1)
-    #split the string and convert it to the correct type
+    # split the string and convert it to the correct type
     value = [to_type(x) for x in val_string.split(",")]
 
     list_type = type(value[0])
@@ -440,6 +443,8 @@ def dict_ixc_full():
         if match:
             num = int(match.group(1))
             name = match.group(2).strip()
+            if "fimp(" in line:
+                name = "fimp(" + line.split("fimp(")[-1].split(")")[0] + ")"
             lxc.append(name)
             assert num == len(lxc)
 
@@ -623,7 +628,7 @@ def dict_default():
         try:
             name = args.split(',')[1].strip()
             if name not in di:
-                di[name] = None
+                di[name] = -1
                 logging.warning(" " + str(name) + " looks like an input " + \
                 "variable but cout not find a default value. Setting " + \
                 "default to None")
@@ -854,6 +859,7 @@ List of dictionaries:
     PARAMETER_DEFAULTS     : Default values for making a plot file from MFILE.DAT
     NON_F_VALUES           : Parameters that start with f, but are not f-values
     DICT_TF_TYPE           : PROCESS TF coil types
+    DICT_FIMP              : PROCESS impurity types for fimp
     DICT_OPIMISATION_VARS  : Optimisation variable dictionary
     DICT_IXC2NSWEEP        : Maps ixc no. to nsweep, if applicable
     DICT_NSWEEP2IXC        : Maps nsweep to ixc no, if applicable
@@ -897,7 +903,23 @@ PARAMETER_DEFAULTS = ["rmajor", "aspect", "rminor", "bt", "powfmw", "pnetelmw",
 NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']
 
 # PROCESS TF Coil types
-DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn"}
+DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn", 5: "WST Nb3Sn", 6: "REBCO"}
+
+# FIMP Values
+DICT_FIMP = {"fimp(1)":"Hydrogen (fraction calculated by code)",
+             "fimp(2)":"Helium",
+             "fimp(3)":"Beryllium",
+             "fimp(4)":"Carbon",
+             "fimp(5)":"Nitrogen",
+             "fimp(6)":"Oxygen",
+             "fimp(7)":"Neon",
+             "fimp(8)":"Silicon",
+             "fimp(9)":"Argon",
+             "fimp(10)":"Iron",
+             "fimp(11)":"Nickel",
+             "fimp(12)":"Krypton",
+             "fimp(13)":"Xenon",
+             "fimp(14)":"Tungsten"}
 
 # Optimisation variable dictionary
 DICT_OPTIMISATION_VARS = {1: 'Plasma major radius',
@@ -914,7 +936,9 @@ DICT_OPTIMISATION_VARS = {1: 'Plasma major radius',
                           12: 'hydrogen production capital cost',
                           13: 'hydrogen production rate',
                           14: 'pulse length',
-                          15: 'plant availability factor'} """
+                          15: 'plant availability factor',
+                          16: 'linear combination of major radius (minimised) and pulse length (maximised)',
+                          17: 'net electrical output'} """
 
     print(out)
 
@@ -1044,13 +1068,70 @@ def print_module():
 def print_nsweep2varname():
 
     """
-    Prints: 
+    Prints:
     DICT_NSWEEP2VARNAME
     """
+
     lam = lambda x: int(x[0])
     nsweep2varname = dict_nsweep2varname()
     comment = 'Dictionary mapping nsweep to varname'
+
     print_dict(nsweep2varname, 'DICT_NSWEEP2VARNAME', comment, lam)
+
+def print_icc_module():
+
+    """
+    Prints:
+    DICT_ICC_MODULE
+    """
+
+    lam = lambda x: int(x[0])
+    icc_modules = dict()
+    comment = "Dictionary mapping icc number to module"
+
+    file_loc = SOURCEDIR + "/constraint_equations.f90"
+
+    with open(file_loc) as f:
+        lines = f.readlines()
+
+    counter = 1
+    for line in lines:
+        if "!#=# " in line:
+            module = line.split("#=#")[-1].replace(" ", "").strip("\n")
+            icc_modules[str(counter)] = module
+            counter += 1
+    print_dict(icc_modules, "DICT_ICC_MODULE", comment, lam)
+
+
+def print_icc_vars():
+
+    """
+    Prints:
+    DICT_ICC_VARS
+    """
+
+    lam = lambda x: int(x[0])
+    icc_vars = dict()
+    comment = "Dictionary mapping icc number icc vars"
+
+    file_loc = SOURCEDIR + "/constraint_equations.f90"
+
+    with open(file_loc) as f:
+        lines = f.readlines()
+
+    counter = 1
+    for line in lines:
+        if "!#=#=#" in line:
+            vars = line.split("!#=#=#")[-1].replace(" ", "").strip("\n").split(",")
+            if vars[0] != "consistency" and vars[0] != "empty":
+                f_value = vars[0]
+                cons_var = vars[1]
+                icc_vars[str(counter)] = {"f":f_value, "v":cons_var}
+            else:
+                icc_vars[str(counter)] = "consistency"
+            counter += 1
+    print_dict(icc_vars, "DICT_ICC_VARS", comment, lam)
+
 
 def print_all():
     """Prints every dictionary
@@ -1067,6 +1148,8 @@ def print_all():
     print_descriptions()
     print_module()
     print_nsweep2varname()
+    print_icc_module()
+    print_icc_vars()
 
 
 if __name__ == "__main__":

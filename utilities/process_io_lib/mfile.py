@@ -23,22 +23,29 @@
 
 """
 
+from collections import OrderedDict
 import operator
 import logging
+from sys import stderr
 LOG = logging.getLogger("mfile")
 
 try:
+    from fuzzywuzzy import process as fuzzysearch
+except ImportError:
+    LOG.info("Fuzzy variable name suggestions not available for MFile")
+
+try :
     import process_io_lib.process_dicts
     from process_io_lib.process_dicts import DICT_NSWEEP2VARNAME
 except ImportError:
-    print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
+    print("Error: The Python dictionaries have not yet been created. Please"
+          "run 'make dicts'!", file=stderr)
     exit()
 
 
 class MFileVariable(dict):
     """Class for containing a single mfile variable """
-    def __init__(self, var_name, var_description, var_unit=None, *args,
+    def __init__(self, var_name, var_description, var_unit=None, var_flag=None, *args,
                  **kwargs):
         """
         An object class to contain information (and data values) for a single
@@ -54,9 +61,10 @@ class MFileVariable(dict):
             get_scan    --> function to retrieve a given scan
             get_scans   --> function to retrieve all scans.
         """
-        self["var_name"] = var_name
-        self["var_description"] = var_description
-        self["var_unit"] = var_unit
+        self.var_name = var_name
+        self.var_description = var_description
+        self.var_unit = var_unit
+        self.var_flag = var_flag
         self.latest_scan = 0
         super().__init__(*args, **kwargs)
         LOG.debug("Initialising variable '{}': {}".
@@ -79,7 +87,7 @@ class MFileVariable(dict):
           scan_value --> value of parameter for scan
 
         """
-        self["scan{}".format(scan_number)] = scan_value
+        self["scan{:02}".format(scan_number)] = scan_value
         if scan_number > self.latest_scan:
             self.latest_scan = scan_number
         LOG.debug("Scan {} for variable '{}' == {}".format(scan_number,
@@ -99,9 +107,9 @@ class MFileVariable(dict):
 
         try:
             if scan_number is None or scan_number == -1:
-                return self["scan{}".format(self.latest_scan)]
+                return self["scan{:02}".format(self.latest_scan)]
             else:
-                return self["scan{}".format(scan_number)]
+                return self["scan{:02}".format(scan_number)]
         except KeyError:
             raise  # or substitute with any other exception type you want
 
@@ -147,7 +155,7 @@ class MFileErrorClass(object):
         return False
 
 
-class MFileDataDictionary(dict):
+class MFileDataDictionary(OrderedDict):
     """ Class object to act as a dictionary for the data.
     """
 
@@ -166,13 +174,63 @@ class MFileDataDictionary(dict):
             return MFileErrorClass(item)
 
 
+class DefaultOrderedDict(OrderedDict):
+    # Source: http://stackoverflow.com/a/6190500/562769
+    def __init__(self, default_factory=None, *a, **kw):
+        if (default_factory is not None and
+           not isinstance(default_factory, Callable)):
+            raise TypeError('first argument must be callable')
+        OrderedDict.__init__(self, *a, **kw)
+        self.default_factory = default_factory
+
+    def __getitem__(self, key):
+        try:
+            return OrderedDict.__getitem__(self, key)
+        except KeyError:
+            return self.__missing__(key)
+
+    def __missing__(self, key):
+        if self.default_factory is None:
+            return MFileErrorClass(key)
+        self[key] = value = self.default_factory()
+        return value
+
+    def __reduce__(self):
+        if self.default_factory is None:
+            args = tuple()
+        else:
+            args = self.default_factory,
+        return type(self), args, None, None, self.items()
+
+    def copy(self):
+        return self.__copy__()
+
+    def __copy__(self):
+        return type(self)(self.default_factory, self)
+
+    def __deepcopy__(self, memo):
+        import copy
+        return type(self)(self.default_factory,
+                          copy.deepcopy(self.items()))
+
+    def __repr__(self):
+        return 'OrderedDefaultDict(%s, %s)' % (self.default_factory,
+                                               OrderedDict.__repr__(self))
+
+
 class MFile(object):
     def __init__(self, filename="MFILE.DAT"):
         """Class object to store the MFile Objects"""
         LOG.info("Creating MFile class for file '{}'".format(filename))
         self.filename = filename
-        self.data = MFileDataDictionary()
+        # self.data = MFileDataDictionary()
+        # self.data = OrderedDict()
+        self.data = DefaultOrderedDict()
         self.mfile_lines = list()
+        self.mfile_modules = dict()
+        self.des_name = list()
+        self.mfile_modules["Misc"] = list()
+        self.current_module = "Misc"
         if filename is not None:
             LOG.info("Opening file '{}'".format(self.filename))
             self.open_mfile()
@@ -183,43 +241,93 @@ class MFile(object):
         """Function to open MFILE.DAT"""
         with open(self.filename, "r") as mfile:
             self.mfile_lines = mfile.readlines()
+        
+        for i in range(len(self.mfile_lines)):
+            if "*----" in self.mfile_lines[i] or "***" in self.mfile_lines[i]:
+                self.mfile_lines = self.mfile_lines[:i]
+                self.mfile_end = i
+                return
 
     def parse_mfile(self):
         """Function to parse MFILE.DAT"""
-        for line in (c for c in (clean_line(l) for l in self.mfile_lines)
-                     if c != [""]):
+        # for line in (c for c in (clean_line(l) for l in self.mfile_lines if '#' not in l[:2]) 
+        for line in (c for c in (clean_line(l) for l in self.mfile_lines) 
+            if c != [""]):
             self.add_line(line)
 
     def add_line(self, line):
         """Function to read the line from MFILE and add to the appropriate
         class or create a new class if it is the first instance of it.
         """
-        var_des = line[0]
-        extracted_var_name = sort_brackets(line[1])
-        var_name = var_des if extracted_var_name == "" else extracted_var_name
-        if "runtitle" in var_name:
-            var_value = " ".join(line[2:])
-        else:
-            var_value = sort_value(line[2])
-        var_unit = get_unit(var_des)
-        self.add_to_mfile_variable(var_des, var_name, var_value, var_unit)
+        if "#" in line[:2]:
+            combined = " ".join(line[1:-1])
+            EXCLUSIONS = ["Feasible", "feasible", "Errors", "Waveforms", "Power Reactor Optimisation Code"]
+            if any(exclusion not in combined for exclusion in EXCLUSIONS):
+                self.current_module = combined
+                self.mfile_modules[self.current_module] = list()
 
-    def add_to_mfile_variable(self, des, name, value, unit, scan=None):
+        else:
+
+            var_des = line[0]
+            extracted_var_name = sort_brackets(line[1])
+
+            if extracted_var_name == "":
+                var_name = var_des
+                self.des_name.append(var_name)
+            else:
+                var_name = extracted_var_name
+
+            if "runtitle" in var_name:
+                var_value = " ".join(line[2:])
+            else:
+                var_value = sort_value(line[2])
+            var_unit = get_unit(var_des)
+            if len(line) >= 4:
+                var_flag = line[3]
+            else:
+                var_flag = None
+
+            self.mfile_modules[self.current_module].append(var_name)
+            self.add_to_mfile_variable(var_des, var_name, var_value, var_unit, var_flag)
+
+    def add_to_mfile_variable(self, des, name, value, unit, flag, scan=None):
         """Function to add value to MFile class for that name/description
         """
         if name == "":
             var_key = des.lower().replace("_", " ")
         else:
-            var_key = name.lower().replace("_", " ")
+            var_key = name.lower()
 
         if var_key in self.data.keys():
             scan_num = scan if scan else (self.data[var_key].
                                           get_number_of_scans()+1)
-            self.data[var_key].set_scan(scan_num, value)
+
+            # Check for duplicate entries per scan point if there are scans and no scans
+            a = len(self.data[var_key].get_scans())
+            if "iscan" in self.data.keys():
+                b = len(self.data["iscan"].get_scans())
+            else:
+                b = 1
+
+            if var_key != "iscan":
+                if a < b:
+                    self.data[var_key].set_scan(scan_num, value)
+            else:
+                self.data[var_key].set_scan(scan_num, value)
         else:
-            var = MFileVariable(name, des, unit)
+            var = MFileVariable(name, des, unit, var_flag=flag, var_mod=self.current_module)
             self.data[var_key] = var
             self.data[var_key].set_scan(1, value)
+
+    def suggest_variable(self, search_string, limit=3):
+        """
+        Return a list of possible variable matches for the given search_string
+        in this MFile.
+        limit is the maximum number of suggestions returned.
+        """
+        return [x[0] for x in fuzzysearch.extract(search_string,
+                                                  self.data.keys(),
+                                                  limit=limit)]
 
 
 def sort_value(val):
@@ -227,8 +335,13 @@ def sort_value(val):
     if '"' in val:
         return str(val.strip('"'))
     else:
-        return float(val)
-
+        try:
+            return float(val)
+        except ValueError as err:
+            print("Please fix this!", file=stderr)
+            print(err, file=stderr)
+            print(val)
+            exit()
 
 def sort_brackets(var):
     """Function to sort bracket madness on variable name."""
@@ -338,12 +451,11 @@ def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
         # The first two lines contain the scanning variable and the number of
         # scans. These lines are preceded by a # symbol for ease of excluding.
         try:
+            scan_var = int(mfile_data.data["nsweep"].get_scan(-1))
             plot_dat.write("# Scanning Variable: {}".
-                           format(DICT_NSWEEP2VARNAME
-                                  [mfile_data.data["nsweep"].
-                                      get_scan(-1)] + "\n"))
-            plot_dat.write("# Number of scans: {}".format(
-                           int(mfile_data.data["isweep"].get_scan(-1)) + "\n"))
+                            format(DICT_NSWEEP2VARNAME[str(scan_var)] + "\n"))
+            sweep_num = int(mfile_data.data["isweep"].get_scan(-1))
+            plot_dat.write("# Number of scans: {}".format(str(sweep_num) + "\n"))
             plot_dat.close()
         except KeyError:
             print("File has no scan, continuing...")
@@ -377,21 +489,23 @@ def write_row_mplot_dat(filename, custom_keys, mfile_data):
     mfile_keys = mfile_data.data.keys()
 
     lines = []
-
     for key in custom_keys:
         if key in mfile_keys:
             # Get the scan values for the row
             values = ""
-            for item in mfile_data.data[key].get_scans():
-                values += "{:.4e}".format(item) + " "
-            values += "\n"
+            try:
+                for item in mfile_data.data[key].get_scans():
+                    values += "{:.4e}".format(item) + " "
+            except ValueError:
+                print("Skipped non-number parameter {0}".format(item))
+            # values += "\n"
 
             # Create the file line [name, description, val1, val2, ...]
             # Entries are justified to give the impression of fixed
             # width columns
             lines.append(mfile_data.data[key].var_description.
                          replace(" ", "_").ljust(45)
-                         + " " + key.ljust(25) + " " + values + "\n")
+                         + " " + key.replace(" ", "_").ljust(25) + " " + values + "\n")
 
     # Write row to file.
     if lines != []:
@@ -496,10 +610,11 @@ def test(f):
 
     try:
         m = MFile(f)
+        # print(m.data["rmajor"].get_scans())
         return True
     except:
         return False
     return True
 
 # if __name__ == "__main__":
-#    test()
+#     test("MFILE.DAT")
