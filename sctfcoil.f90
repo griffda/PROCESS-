@@ -1446,10 +1446,10 @@ subroutine outtf(outfile, peaktfflag)
     call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
     radius = radius + tinstf
     call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
-    radius = radius + thkwp/2d0 - tinstf
-    call obuild(outfile,'Winding - first half',thkwp/2d0 - tinstf,radius,'(thkwp/2 - tinstf)')
-    radius = radius + thkwp/2d0 - tinstf
-    call obuild(outfile,'Winding - second half',thkwp/2d0 - tinstf,radius,'(thkwp/2 - tinstf)')
+    radius = radius + thkwp/2d0
+    call obuild(outfile,'Winding - first half',thkwp/2d0,radius,'(thkwp/2 - tinstf)')
+    radius = radius + thkwp/2d0
+    call obuild(outfile,'Winding - second half',thkwp/2d0,radius,'(thkwp/2 - tinstf)')
     radius = radius + tinstf
     call obuild(outfile,'Winding pack insulation',tinstf,radius,'(tinstf)')
     radius = radius + tfinsgap
