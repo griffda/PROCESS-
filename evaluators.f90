@@ -452,6 +452,9 @@ contains
     case (17)  !  net electrical output
        fc = sgn * pnetelmw / 500.0d0
 
+   case (18)  !  Null figure of merit
+      fc = 1d0
+
     case default
        idiags(1) = iab ; call report_error(24)
 

@@ -103,7 +103,7 @@ module numerics
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 76
   !+ad_vars  ipnfoms FIX : number of available figures of merit
-  integer, parameter :: ipnfoms = 17
+  integer, parameter :: ipnfoms = 18
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
@@ -155,9 +155,11 @@ module numerics
        !+ad_varc  <LI> (16) linear combination of major radius (minimised) and pulse length (maximised)
        !+ad_varc              note: FoM should be minimised only!
        'min R0, max tau_burn. ', &
-       !+ad_varc  <LI> (17) net electrical output </UL>
-       'net electrical output.' /)
-
+       !+ad_varc  <LI> (17) net electrical output
+       'net electrical output.', &
+       !+ad_varc  <LI> (18) Null Figure of Merit </UL>
+       'Null figure of merit. '  &
+        /)
   !+ad_vars  ncalls : number of function calls during solution
   integer :: ncalls = 0
   !+ad_vars  neqns /14/ : number of equality constraints to be satisfied
