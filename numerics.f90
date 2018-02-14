@@ -62,7 +62,7 @@ module numerics
   !+ad_hist  02/10/14 PJK Reassigned lablcc(23); new iteration variable 104
   !+ad_hist  06/10/14 PJK New iteration variable 105; new constraint 59
   !+ad_hist  13/10/14 PJK Changed boundu(50: fiooic) from 0.5 to 1.0
-  !+ad_hist  20/10/14 PJK OH to CS
+  !+ad_hist  20/10/14 PJK Central Solenoid to CS
   !+ad_hist  11/11/14 PJK New iteration variable 106; new constraint 60
   !+ad_hist  13/11/14 PJK lablxc(106) corrected
   !+ad_hist  25/11/14 PJK New iteration variable 107; new constraint 61
@@ -608,7 +608,7 @@ module numerics
        'ttarget       ',  &
        !+ad_varc  <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP
        'neratio       ',  &
-       !+ad_varc  <LI> (122) oh_steel_frac : streel fraction of OH coil
+       !+ad_varc  <LI> (122) oh_steel_frac : streel fraction of Central Solenoid
        'oh_steel_frac ',  &
        !+ad_varc  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit (f-value for eq. 72)
        'foh_stress    ',  &

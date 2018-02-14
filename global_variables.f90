@@ -3745,7 +3745,7 @@ module constraint_variables
   !+ad_vars  fnesep /1.0/ : f-value for Eich critical separatrix density
   !+ad_varc                    (constraint equation 76, iteration variable 144)
   real(kind(1.0D0)) :: fnesep = 1.0D0
-  !+ad_vars  foh_stress /1.0/ : f-value for Tresca stress in OH coil
+  !+ad_vars  foh_stress /1.0/ : f-value for Tresca stress in Central Solenoid
   !+ad_varc                    (constraint equation 72, iteration variable 123)
   real(kind(1.0D0)) :: foh_stress = 1.0D0
   !+ad_vars  fpeakb /1.0/ : f-value for maximum toroidal field

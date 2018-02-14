@@ -147,7 +147,7 @@ contains
     !+ad_hist  11/06/13 PJK Modified ipdot and tohsmn equations
     !+ad_hist  27/06/13 PJK Modified output heading
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
-    !+ad_hist  29/10/14 PJK Label changed from OH to CS
+    !+ad_hist  29/10/14 PJK Label changed from Central Solenoid to CS
     !+ad_hist  27/11/15 MDK The whole of subroutine thrmal commented out.
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
@@ -170,15 +170,15 @@ contains
 
     if (lpulse /= 1) return
 
-    !  Current/turn in OH coil at beginning of pulse (A/turn)
+    !  Current/turn in Central Solenoid at beginning of pulse (A/turn)
 
     ioht1 = cpt(nohc,2)
 
-    !  Current/turn in OH coil at start of flat-top (A/turn)
+    !  Current/turn in Central Solenoid at start of flat-top (A/turn)
 
     ioht2 = cpt(nohc,3)
 
-    !  OH coil resistance (ohms)
+    !  Central Solenoid resistance (ohms)
 
     if (ipfres == 0) then
        r = 0.0D0
@@ -186,7 +186,7 @@ contains
        r = powohres/( 1.0D6*ric(nohc) )**2
     end if
 
-    !  OH coil bus resistance (ohms) (assumed to include power supply)
+    !  Central Solenoid bus resistance (ohms) (assumed to include power supply)
     !  Bus parameters taken from routine PFPWR.
 
     pfbusl = 8.0D0 * rmajor + 140.0D0
@@ -194,15 +194,15 @@ contains
 
     rho = 1.5D0 * 2.62D-4 * pfbusl/albusa
 
-    !  OH coil power source emf (volts)
+    !  Central Solenoid power source emf (volts)
 
     v = vpfskv * 1.0D3
 
-    !  Mutual inductance between OH coil and plasma (H)
+    !  Mutual inductance between Central Solenoid and plasma (H)
 
     m = sxlg(nohc,ncirt)
 
-    !  Self inductance of OH coil (H)
+    !  Self inductance of Central Solenoid (H)
 
     loh = sxlg(nohc,nohc)
 
@@ -310,7 +310,7 @@ contains
 
        call osubhd(outfile,'Volt-second considerations:')
 
-       call ovarre(outfile,'Total V-s capability of OH/PF coils (Wb)', &
+       call ovarre(outfile,'Total V-s capability of Central Solenoid/PF coils (Wb)', &
             '(abs(vstot))',abs(vstot))
        call ovarre(outfile,'Required volt-seconds during start-up (Wb)', &
             '(vssoft)',vssoft)

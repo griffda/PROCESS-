@@ -111,7 +111,7 @@ contains
     !+ad_hist  31/07/14 PJK Re-modified tfthko calculation
     !+ad_hist  19/08/14 PJK Added ddwex, ohhghf to mfile
     !+ad_hist  02/09/14 PJK Modified ripflag handling
-    !+ad_hist  20/10/14 PJK Changed OH coil to central solenoid
+    !+ad_hist  20/10/14 PJK Changed Central Solenoid to central solenoid
     !+ad_hist  06/02/15 JM  Added output of beamwd to mfile
     !+ad_hist  06/03/15 JM  Put an additional call to ripple_amplitude after the change to
     !+ad_hisc 				rtot (issue #221)

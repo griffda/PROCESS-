@@ -637,15 +637,15 @@ contains
     !  Inductive MVA requirements, and stored energy
     delktim = tohs
 
-    !  PF system (including OH solenoid) inductive MVA requirements
+    !  PF system (including Central Solenoid solenoid) inductive MVA requirements
     !  cpt(i,j) : current per turn of coil i at (end) time period j (A)
     powpfi = 0.0D0
     powpfr = 0.0D0
     powpfr2 = 0.0D0
     ensxpf = 0.0D0
 
-    !  ncirt : total number of PF coils (including OH coil and plasma)
-    !          plasma is #ncirt, and OH coil is #(ncirt-1)
+    !  ncirt : total number of PF coils (including Central Solenoid and plasma)
+    !          plasma is #ncirt, and Central Solenoid is #(ncirt-1)
     !  sxlg(i,j) : mutual inductance between coil i and j
     do i = 1, ncirt
        powpfii(i) = 0.0D0

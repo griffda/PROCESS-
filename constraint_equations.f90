@@ -152,7 +152,7 @@ contains
     !+ad_hist  09/11/16 HL  Added new eqn 67
     !+ad_hist  25/01/17 JM  Added new eqn 68 for psep*b/q*A*r limit
     !+ad_hist  08/02/17 JM  Added constraint equations 69,70 and 71 for Kallenbach model
-    !+ad_hist  27/02/17 JM  Added constraint equation 72 for OH stress model
+    !+ad_hist  27/02/17 JM  Added constraint equation 72 for Central Solenoid stress model
     !+ad_hist  20/04/17 JM  Added string tags to constraints
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -843,7 +843,7 @@ contains
              units(i) = 'T'
           end if
 
-       case (26)  ! Equation for OH coil current density upper limit at EOF
+       case (26)  ! Equation for Central Solenoid current density upper limit at EOF
           !#=# pfcoil
           !#=#=# fjohc, rjohc
 
@@ -859,7 +859,7 @@ contains
              units(i) = 'A/m2'
           end if
 
-       case (27)  ! Equation for OH coil current density upper limit at BOP
+       case (27)  ! Equation for Central Solenoid current density upper limit at BOP
           !#=# pfcoil
           !#=#=# fjohc0, rjohc0
 
@@ -1572,13 +1572,13 @@ contains
              units(i) = 'm-3'
            end if
 
-       case (72) ! OH coil Tresca stress limit
+       case (72) ! Central Solenoid Tresca stress limit
            !#=# tfcoil
            !#=#=# foh_stress, alstroh
 
            ! foh_stress      |  f-value for stress limit
            ! alstroh         |  Maximum permitted stress [MPa]
-           ! s_tresca_oh     |  Calculated Tresca stress for OH coil [MPa]
+           ! s_tresca_oh     |  Calculated Tresca stress for Central Solenoid [MPa]
            cc(i) = 1.0d0 - foh_stress * alstroh / s_tresca_oh
 
            if (present(con)) then

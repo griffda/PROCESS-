@@ -191,7 +191,7 @@ subroutine caller(xc,nvars)
 
   call tfspcall(nout,0)
 
-  ! Poloidal field and OH coil model
+  ! Poloidal field and Central Solenoid model
   call pfcoil
   ! Poloidal field coil inductance calculation
   call induct(nout,0)

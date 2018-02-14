@@ -84,14 +84,14 @@ contains
   subroutine pfcoil
 
     !+ad_name  pfcoil
-    !+ad_summ  Routine to perform calculations for the PF and OH coils
+    !+ad_summ  Routine to perform calculations for the PF and Central Solenoid coils
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This subroutine performs the calculations for the PF and
-    !+ad_desc  OH coils, to determine their size, location, current waveforms,
+    !+ad_desc  Central Solenoid coils, to determine their size, location, current waveforms,
     !+ad_desc  stresses etc.
     !+ad_prob  On the very first call, the inductance matrix sxlg has not
     !+ad_prob  previously been calculated by routine induct, so could in theory
@@ -169,7 +169,7 @@ contains
 
     top_bottom = 1
 
-    !  Set up the number of PF coils including the OH coil (nohc),
+    !  Set up the number of PF coils including the Central Solenoid (nohc),
     !  and the number of PF circuits including the plasma (ncirt)
 
     if (ngrp > ngrpmx) then
@@ -189,7 +189,7 @@ contains
        nohc = nohc + ncls(i)
     end do
 
-    !  Add one if an OH coil is present, and make an extra group
+    !  Add one if an Central Solenoid is present, and make an extra group
 
     if (iohcl /= 0) then
        nohc = nohc + 1
@@ -200,7 +200,7 @@ contains
 
     ncirt = nohc + 1
 
-    !  Overall current density in the OH coil at beginning of pulse
+    !  Overall current density in the Central Solenoid at beginning of pulse
 
     cohbop = coheof * fcohbop
 
@@ -214,9 +214,9 @@ contains
     tim(6) = tim(5) + tqnch
 
     !  Set up call to MHD scaling routine for coil currents.
-    !  First break up OH solenoid into 'filaments'
+    !  First break up Central Solenoid solenoid into 'filaments'
 
-    !  OH coil radius
+    !  Central Solenoid radius
 
     if (itart == 1) then
        rohc = bore + tfcth + gapoh + 0.5D0*ohcth
@@ -224,7 +224,7 @@ contains
        rohc = bore + 0.5D0*ohcth
     end if
 
-    !  nfxf is the total no of filaments into which the OH coil is split,
+    !  nfxf is the total no of filaments into which the Central Solenoid is split,
     !  if present
 
     if (iohcl == 0) then
@@ -232,14 +232,14 @@ contains
        ioheof = 0.0D0
     else
        nfxf = 2*nfxfh
-       ioheof = -hmax*ohhghf*ohcth*2.0D0*coheof  !  total OH current at EOF
+       ioheof = -hmax*ohhghf*ohcth*2.0D0*coheof  !  total Central Solenoid current at EOF
 
        if (nfxf > nfixmx) then
           idiags(1) = nfxf ; idiags(2) = nfixmx
           call report_error(66)
        end if
 
-       !  Symmetric up/down OH coil : Find (R,Z) and current of each filament at BOP
+       !  Symmetric up/down Central Solenoid : Find (R,Z) and current of each filament at BOP
 
        do nng = 1,nfxfh
           rfxf(nng) = rohc
@@ -263,13 +263,13 @@ contains
 
        if (ipfloc(j) == 1) then
 
-          !  PF coil is stacked on top of the OH coil
+          !  PF coil is stacked on top of the Central Solenoid
 
           do k = 1,ncls(j)
              rcls(j,k) = rohc + rpf1
 
              !  Z coordinate of coil enforced so as not
-             !  to occupy the same space as the OH coil
+             !  to occupy the same space as the Central Solenoid
 
              zcls(j,k) = signn(k) * ( hmax*ohhghf + 0.1D0 + &
                   0.5D0 * ( hmax*(1.0D0-ohhghf) + tfcth + 0.1D0) )
@@ -351,7 +351,7 @@ contains
 
           if (ipfloc(i) == 1) then
 
-             !  PF coil is stacked on top of the OH coil
+             !  PF coil is stacked on top of the Central Solenoid
 
              ccls(i) = 0.0D0
              idiags(1) = i ; call report_error(69)
@@ -389,8 +389,8 @@ contains
 
           if (ipfloc(i) == 1) then
 
-             !  PF coil is stacked on top of the OH coil
-             !  This coil is to balance OH coil flux and should not be involved
+             !  PF coil is stacked on top of the Central Solenoid
+             !  This coil is to balance Central Solenoid flux and should not be involved
              !  in equilibrium calculation -- RK 07/12
 
              ccls(i) = 0.0D0
@@ -533,8 +533,8 @@ contains
        end do
     end do
 
-    !  Current in OH coil as a function of time
-    !  N.B. If the OH coil is not present then ioheof is zero.
+    !  Current in Central Solenoid as a function of time
+    !  N.B. If the Central Solenoid is not present then ioheof is zero.
 
     curpfs(ncl+1) = -1.0D-6 * ioheof * fcohbop
     curpff(ncl+1) = 1.0D-6 * ioheof * fcohbof
@@ -558,7 +558,7 @@ contains
 
           if (ipfloc(ii) == 1) then
 
-             !  PF coil is stacked on top of the OH coil
+             !  PF coil is stacked on top of the Central Solenoid
 
              dx = 0.5D0 * ohcth
              dz = 0.5D0 * (hmax*(1.0D0-ohhghf) + tfcth + 0.1D0)  !  ???
@@ -720,7 +720,7 @@ contains
     end do
     itr_sum = itr_sum + ((bore + 0.5*ohcth) * turns(nohc) * cptdin(nohc))
 
-    !  Find OH coil information
+    !  Find Central Solenoid information
 
     if (iohcl /= 0) call ohcalc
 
@@ -766,13 +766,13 @@ contains
   subroutine ohcalc
 
     !+ad_name  ohcalc
-    !+ad_summ  Routine to perform calculations for the OH solenoid
+    !+ad_summ  Routine to perform calculations for the Central Solenoid solenoid
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This subroutine performs the calculations for the
-    !+ad_desc  OH solenoid coil.
+    !+ad_desc  Central Solenoid solenoid coil.
     !+ad_prob  None
     !+ad_call  bfmax
     !+ad_call  peakb
@@ -784,7 +784,7 @@ contains
     !+ad_hist  25/11/13 PJK Simplified (R,Z) calculation
     !+ad_hist  16/10/14 PJK New calculation for critical current density
     !+ad_hisc               and steel case area
-    !+ad_hist  06/11/14 PJK Used strncon to specify strain in OH superconductor
+    !+ad_hist  06/11/14 PJK Used strncon to specify strain in Central Solenoid superconductor
     !+ad_hist  10/11/14 PJK Clarified comments
     !+ad_hist  13/11/14 PJK Added fudge to ensure positive conductor area
     !+ad_hist  17/11/14 PJK Removed aturn argument from superconpf
@@ -807,7 +807,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Half-height of OH coil
+    !  Half-height of Central Solenoid
 
     hohc = hmax * ohhghf
 
@@ -833,7 +833,7 @@ contains
 
     areaoh = 2.0D0 * hohc * ohcth
 
-    !  Maximum current (MA-turns) in OH coil, at either BOP or EOF
+    !  Maximum current (MA-turns) in Central Solenoid, at either BOP or EOF
 
     if (cohbop > coheof) then
        sgn = 1.0D0
@@ -854,7 +854,7 @@ contains
     !  Peak field at the End-Of-Flattop (EOF)
     !  Occurs at inner edge of coil; bmaxoh2 and bzi are of opposite sign at EOF
 
-    !  Peak field due to OH coil itself
+    !  Peak field due to Central Solenoid itself
 
     bmaxoh2 = bfmax(coheof,ra(nohc),rb(nohc),hohc)
 
@@ -865,7 +865,7 @@ contains
     bmaxoh = abs(bzi - bmaxoh2)
     bohci = bmaxoh
 
-    !  Peak field on outboard side of OH coil
+    !  Peak field on outboard side of Central Solenoid
     !  (self-field is assumed to be zero - long solenoid approximation)
 
     bohco = abs(bzo)
@@ -883,7 +883,7 @@ contains
     bpf(nohc) = max(bmaxoh, abs(bmaxoh0))
     bpf2(nohc) = max(bohco, abs(bzo))
 
-    !  (J x B) hoop force on OH coil (N)
+    !  (J x B) hoop force on Central Solenoid (N)
 
     forcepf = 0.5D6 * (bpf(nohc)+bpf2(nohc))*abs(ric(nohc))*rpf(nohc)
 
@@ -904,9 +904,9 @@ contains
        ! alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
 
        ! Now steel area fraction is iteration variable and constraint
-       ! equation is used for OH coil stress
+       ! equation is used for Central Solenoid stress
 
-       ! Area of steel in OH coil
+       ! Area of steel in Central Solenoid
        areaspf = oh_steel_frac*areaoh
        ! areaspf = forcepf / alstroh
 
@@ -922,7 +922,7 @@ contains
        pfcaseth(nohc) = 0.25D0 * areaspf/hohc
 
     else
-       areaspf = 0.0D0  !  Resistive OH coil - no steel needed
+       areaspf = 0.0D0  !  Resistive Central Solenoid - no steel needed
        pfcaseth(nohc) = 0.0D0
     end if
 
@@ -940,7 +940,7 @@ contains
     da = 0.0001D0  !  1 cm^2
     if (awpoh < da) awpoh = da*da / (2.0D0*da - awpoh)
 
-    !  Weight of conductor in OH coil
+    !  Weight of conductor in Central Solenoid
 
     if (ipfres == 0) then
        wtc(nohc) = awpoh * (1.0D0-vfohc) * 2.0D0*pi*rpf(nohc) * dcond(isumatoh)
@@ -1637,10 +1637,10 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  OH coil contribution
+    !  Central Solenoid contribution
 
     if ((iohcl /= 0).and.(i == nohc)) then
-       !  Peak field is to be calculated at the OH coil itself,
+       !  Peak field is to be calculated at the Central Solenoid itself,
        !  so exclude its own contribution; its self field is
        !  dealt with externally using routine BFMAX
        kk = 0
@@ -1659,7 +1659,7 @@ contains
        end if
 
        if (iohcl == 0) then
-          !  No OH coil
+          !  No Central Solenoid
           kk = 0
        else
           if (cohbop > coheof) then
@@ -1668,7 +1668,7 @@ contains
              sgn = -1.0D0
           end if
 
-          !  Current in each filament representing part of the OH coil
+          !  Current in each filament representing part of the Central Solenoid
 
           do iohc = 1,nfxf
              cfxf(iohc) = waves(nohc,it)*coheof*sgn*ohcth*ohhghf &
@@ -1679,7 +1679,7 @@ contains
 
     end if
 
-    !  Non-OH coils' contributions
+    !  Non-Central Solenoid coils' contributions
 
     jj = 0
     do iii = 1,ngrp
@@ -1735,7 +1735,7 @@ contains
     call bfield(kk,rfxf,zfxf,cfxf,xind,ra(i),zpf(i),bri,bzi,psi)
     call bfield(kk,rfxf,zfxf,cfxf,xind,rb(i),zpf(i),bro,bzo,psi)
 
-    !  bpf and bpf2 for the OH coil are calculated in OHCALC
+    !  bpf and bpf2 for the Central Solenoid are calculated in OHCALC
 
     if ((iohcl /= 0).and.(i == nohc)) return
 
@@ -2117,7 +2117,7 @@ contains
     !  PF volt-seconds during start-up
 
     if (iohcl.eq.0) then
-       !  No OH coil
+       !  No Central Solenoid
        nef = ncirt - 1
     else
        nef = ncirt - 2
@@ -2131,7 +2131,7 @@ contains
        vsefsu = vsefsu + ( vsdum(i,2) - vsdum(i,1) )
     end do
 
-    !  OH startup volt-seconds
+    !  Central Solenoid startup volt-seconds
 
     if (iohcl /= 0) then
        vsdum(nohc,1) = sxlg(ncirt,ncirt-1) * cpt(ncirt-1,2)
@@ -2200,10 +2200,10 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Inner radius of OH coil [m]
+    ! Inner radius of Central Solenoid [m]
     a = ra(nohc)
 
-    ! Outer radius of OH coil [m]
+    ! Outer radius of Central Solenoid [m]
     b = rb(nohc)
 
     ! alpha
@@ -2280,13 +2280,13 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Outer radius of OH coil [m]
+    ! Outer radius of Central Solenoid [m]
     b = rb(nohc)
 
-    ! Half height of OH coil [m]
+    ! Half height of Central Solenoid [m]
     hl = zh(nohc)
 
-    ! OH coil current [A]
+    ! Central Solenoid current [A]
     ni = ric(nohc)*1.0E6
 
     ! kb term for elliptical integrals
@@ -2345,7 +2345,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  19/11/13 PJK Fixed problem with array bounds if ncls(1)=1
-    !+ad_hist  26/11/13 PJK Improved OH coil self inductance, and OH-plasma
+    !+ad_hist  26/11/13 PJK Improved Central Solenoid self inductance, and Central Solenoid-plasma
     !+ad_hisc               mutual inductance calculations;
     !+ad_hisc               Removed obsolete argument to bfield calls
     !+ad_hist  25/02/14 PJK Raised nohmax, and added warning message
@@ -2367,7 +2367,7 @@ contains
 
     !  Local variables
 
-    integer, parameter :: nohmax = 200 !  Maximum no. of segments for the OH coil
+    integer, parameter :: nohmax = 200 !  Maximum no. of segments for the Central Solenoid
     integer, parameter :: nplas = 1 !  Number of filaments describing the plasma
 
     real(kind(1.0D0)), allocatable, dimension(:) :: roh,zoh
@@ -2390,7 +2390,7 @@ contains
 
     sxlg(:,:) = 0.0D0
 
-    !  Break OH coil into noh segments
+    !  Break Central Solenoid into noh segments
     !
     !  Choose noh so that the radial thickness of the coil is not thinner
     !  than each segment is tall, i.e. the segments are pancake-like,
@@ -2422,9 +2422,9 @@ contains
     rplasma(1) = rmajor  !  assumes nplas==1
     zplasma(1) = 0.0D0
 
-    !  OH coil / plasma mutual inductance
+    !  Central Solenoid / plasma mutual inductance
     !
-    !  Improved calculation: Each OH segment is now split into two filaments,
+    !  Improved calculation: Each Central Solenoid segment is now split into two filaments,
     !  of radius reqv+deltar and reqv-deltar, respectively. The mutual inductance
     !  of the segment with a plasma circuit is the mean of that calculated
     !  using the two equivalent filaments.
@@ -2491,13 +2491,13 @@ contains
 
     if (iohcl /= 0) then
 
-       !  OH coil self inductance
+       !  Central Solenoid self inductance
        a = rohc                 !  mean radius of coil
        b = 2.0D0*zh(nohc)       !  length of coil
        c = rb(nohc) - ra(nohc)  !  radial winding thickness
        sxlg(nohc,nohc) = selfinductance(a,b,c,turns(nohc))
 
-       !  OH coil / PF coil mutual inductances
+       !  Central Solenoid / PF coil mutual inductances
 
        nc = noh
        do i = 1,noh
@@ -2701,7 +2701,7 @@ contains
     !+ad_hist  02/04/14 PJK Added coil geometry to mfile
     !+ad_hist  03/04/14 PJK Added coil currents and fields to mfile
     !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  09/07/14 PJK Added info message if OH coil current density is
+    !+ad_hist  09/07/14 PJK Added info message if Central Solenoid current density is
     !+ad_hist               not reaching its upper limit
     !+ad_hist  01/09/14 PJK Changed .or. to .and. for the info message test
     !+ad_hist  15/10/14 PJK Added more outputs
@@ -2870,7 +2870,7 @@ contains
 
     end if
 
-    !  nef is the number of coils excluding the OH coil
+    !  nef is the number of coils excluding the Central Solenoid
 
     nef = nohc
     if (iohcl /= 0) nef = nef - 1
@@ -2906,7 +2906,7 @@ contains
             '(bpf('//intstring//'))',bpf(k))
     end do
 
-    !  OH coil, if present
+    !  Central Solenoid, if present
 
     if (iohcl /= 0) then
        write(outfile,30) rpf(nohc),zpf(nohc),(rb(nohc)-ra(nohc)), &
@@ -2975,7 +2975,7 @@ contains
 
 90  format('  PF',i1,f8.2,2(1pe11.3),0p,f6.2,1pe10.3,1pe12.3,1pe13.3)
 
-    !  OH coil, if present
+    !  Central Solenoid, if present
 
     if (iohcl /= 0) then
        if (ipfres == 0) then
@@ -3030,7 +3030,7 @@ contains
     !+ad_hist  18/12/12 PJK/RK Modified for new PF coil current calculations
     !+ad_hist  15/05/14 PJK Added vstot to output
     !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  20/10/14 PJK OH to CS
+    !+ad_hist  20/10/14 PJK Central Solenoid to CS
     !+ad_hist  03/08/15 MDK Change in output format for fcohop, fcohbof
     !+ad_stat  Okay
     !+ad_docs  None

@@ -86,7 +86,7 @@ module process_input
   !+ad_hist  30/06/14 PJK Added error_handling
   !+ad_hist  22/07/14 PJK Moved run_summary into process.f90
   !+ad_hist  19/05/15 PJK Added lower_case
-  !+ad_hist  01/11/16 JM  Added iprecomp switch for OH coil pre-compression structure
+  !+ad_hist  01/11/16 JM  Added iprecomp switch for Central Solenoid pre-compression structure
   !+ad_hist  08/03/17 JM  Added time-dependent power reqs
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
@@ -865,10 +865,10 @@ contains
                'F-value for Ip/Irod')
        case ('fjohc')
           call parse_real_variable('fjohc', fjohc, 0.001D0, 10.0D0, &
-               'F-value for OH coil current at EOF')
+               'F-value for Central Solenoid current at EOF')
        case ('fjohc0')
           call parse_real_variable('fjohc0', fjohc0, 0.001D0, 10.0D0, &
-               'F-value for OH coil current at BOP')
+               'F-value for Central Solenoid current at BOP')
        case ('fjtfc')
           write(outfile,*) ' '
           write(outfile,*) '**********'
@@ -1380,7 +1380,7 @@ contains
                'Martensitic frac of steel in first wall')
        case ('fmsoh')
           call parse_real_variable('fmsoh', fmsoh, 0.0D0, 1.0D0, &
-               'Martensitic frac of steel in OH coil')
+               'Martensitic frac of steel in Central Solenoid')
        case ('fmssh')
           call parse_real_variable('fmssh', fmssh, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in shield')
@@ -1413,13 +1413,13 @@ contains
                'Min gap between outboard shield & vac vessel (m)')
        case ('iohcl')
           call parse_int_variable('iohcl', iohcl, 0, 1, &
-               'Switch for existence of OH coil')
+               'Switch for existence of Central Solenoid')
        case ('iprecomp')
           call parse_int_variable('iprecomp', iprecomp, 0, 1, &
-               'Switch for existence of OH coil pre-compression structure')
+               'Switch for existence of Central Solenoid pre-compression structure')
        case ('ohcth')
           call parse_real_variable('ohcth', ohcth, 0.0D0, 10.0D0, &
-               'OH coil thickness (m)')
+               'Central Solenoid thickness (m)')
        case ('rinboard')
           call parse_real_variable('rinboard', rinboard, 0.1D0, 10.0D0, &
                'Plasma inboard radius (m)')
@@ -1754,7 +1754,7 @@ contains
                'PF coil current smoothing parameter')
        case ('coheof')
           call parse_real_variable('coheof', coheof, 1.0D4, 1.0D8, &
-               'OH coil current density at EOF')
+               'Central Solenoid current density at EOF')
        case ('cptdin')
           call parse_real_array('cptdin', cptdin, isub1, ngc2, &
                'Current per turn for PF coil', icode)
@@ -1771,10 +1771,10 @@ contains
           obsolete_var = .true.
        case ('fcohbop')
           call parse_real_variable('fcohbop', fcohbop, 0.0D0, 1.0D0, &
-               'OH coil J ratio : BOP/EOF')
+               'Central Solenoid J ratio : BOP/EOF')
        case ('fcuohsu')
           call parse_real_variable('fcuohsu', fcuohsu, 0.0D0, 1.0D0, &
-               'Cu frac of conductor in OH coil cable')
+               'Cu frac of conductor in Central Solenoid cable')
        case ('fcupfsu')
           call parse_real_variable('fcupfsu', fcupfsu, 0.0D0, 1.0D0, &
                'Cu fraction of PF cable conductor')
@@ -1786,7 +1786,7 @@ contains
                'Switch for supercond / resist PF coils')
        case ('isumatoh')
           call parse_int_variable('isumatoh', isumatoh, 1, 5, &
-               'OH coil superconductor material')
+               'Central Solenoid superconductor material')
        case ('isumatpf')
           call parse_int_variable('isumatpf', isumatpf, 1, 5, &
                'PF coil superconductor material')
@@ -1795,13 +1795,13 @@ contains
                'No of coils in PF group', icode)
        case ('nfxfh')
           call parse_int_variable('nfxfh', nfxfh, 1, nfixmx/2, &
-               'OH coil splitting parameter')
+               'Central Solenoid splitting parameter')
        case ('ngrp')
           call parse_int_variable('ngrp', ngrp, 0, ngrpmx, &
                'No of groups of PF coils')
        case ('ohhghf')
           call parse_real_variable('ohhghf', ohhghf, 0.0D0, 2.0D0, &
-               'OH coil height / TF coil height')
+               'Central Solenoid height / TF coil height')
        case ('pfclres')
           call parse_real_variable('pfclres', pfclres, 0.0D0, 1.0D-4, &
                'PF coil resistivity (ohm-m)')
@@ -1828,7 +1828,7 @@ contains
                'Void fraction of PF coil', icode)
        case ('vfohc')
           call parse_real_variable('vfohc', vfohc, 0.0D0, 1.0D0, &
-               'OH coil void fraction for coolant')
+               'Central Solenoid void fraction for coolant')
        case ('zref')
           call parse_real_array('zref', zref, isub1, ngrpmx, &
                'height of coil group / minor radius', icode)

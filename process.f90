@@ -1823,7 +1823,7 @@ subroutine get_DDMonYYTimeZone(dt_time)
 ! SVN 202: Changed some other unusual boundl, boundu values
 ! SVN 203: Fix in vacuum.f90 to remove runtime error problem
 ! SVN 204: Fix in induct routine to prevent problems if ncls(1)=1
-! SVN 205: Improved OH coil self inductance calculation, and OH coil to
+! SVN 205: Improved Central Solenoid self inductance calculation, and Central Solenoid to
 !          plasma mutual inductance
 ! SVN 206: New output taup/taueff;
 !          Erroneous decimal points present within input lines for integer variables
@@ -1876,7 +1876,7 @@ subroutine get_DDMonYYTimeZone(dt_time)
 !          Added mkovari's write_constraints.py utility
 ! SVN 236: Minor additions to User Guide;
 !          Trapped problem with port size calculation if coil spacing is too narrow;
-!          Trapped probable negative square root argument if OH coil is very wide
+!          Trapped probable negative square root argument if Central Solenoid is very wide
 ! SVN 237: Used HYBRD throughout instead of HYBRID;
 !          Added new argument niter to VMCON;
 !          Added lists of figures and tables to User Guide
@@ -2038,7 +2038,7 @@ subroutine get_DDMonYYTimeZone(dt_time)
 ! GIT 349: Split User Guide over several .tex files
 ! GIT 350: PF/CS superconductor calculations now use same routines as for TF coils;
 !          PF/CS coil case calculations clarified
-! GIT 351: OH coil changed to Central solenoid in output files
+! GIT 351: Central Solenoid changed to Central solenoid in output files
 ! GIT 352: Confinement times for H=1 instead of H=2 now output
 ! GIT 353: Corrections to NBI orbit loss power handling; User Guide figure updates
 ! GIT 354: Updated build diagrams in User Guide

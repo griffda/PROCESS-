@@ -169,7 +169,7 @@
     !+ad_call  oheadr
     !+ad_call  ovarre
     !+ad_hist  06/02/97 PJK Initial version
-    !+ad_hist  26/02/97 PJK Corrected cases where there is no OH coil
+    !+ad_hist  26/02/97 PJK Corrected cases where there is no Central Solenoid
     !+ad_hist  06/07/99 PJK Allowed for use of more ISUMATTF options
     !+ad_hist  19/09/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
@@ -313,7 +313,7 @@
     !  Take account of different builds for TART and non-TART devices
     !  IBC = bucking cylinder region number
     !  ITF = inboard TF coil region number
-    !  IOH = OH coil region number
+    !  IOH = Central Solenoid region number
 
     if (itart == 0) then
        ibc = 3
@@ -329,7 +329,7 @@
 
     matfrc(1,5) = 1.0D0
 
-    !  OH coil
+    !  Central Solenoid
 
     if (iohcl == 1) then
 

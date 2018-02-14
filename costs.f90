@@ -1510,7 +1510,7 @@ contains
        costpfsh = cconshpf
     end if
 
-    !  Non-OH coils
+    !  Non-Central Solenoid coils
 
     if (iohcl == 1) then
        npf = nohc-1
@@ -1546,14 +1546,14 @@ contains
 
        cpfconpm = costwire + costpfsh + cconfix
 
-       !  Total account 222.2.1 (PF coils excluding OH coil)
+       !  Total account 222.2.1 (PF coils excluding Central Solenoid)
 
        c22221 = c22221 + (1.0D-6 * twopi * rpf(i) * turns(i) * &
             cpfconpm)
 
     end do
 
-    !  OH coil
+    !  Central Solenoid
 
     if (iohcl == 1) then
 
@@ -1574,7 +1574,7 @@ contains
           costpfcu = uccu * awpoh*(1-vfohc)/turns(nohc) * dcopper
        end if
 
-       !  Total cost/metre of superconductor and copper wire (OH coil)
+       !  Total cost/metre of superconductor and copper wire (Central Solenoid)
 
        costwire = costpfsc + costpfcu
 
@@ -1582,7 +1582,7 @@ contains
 
        cpfconpm = costwire + costpfsh + cconfix
 
-       !  Total account 222.2.1 (PF+OH coils)
+       !  Total account 222.2.1 (PF+Central Solenoid coils)
 
        c22221 = c22221 + (1.0D-6 * twopi * rpf(nohc) * turns(nohc) * &
             cpfconpm)
