@@ -88,6 +88,7 @@ module process_input
   !+ad_hist  19/05/15 PJK Added lower_case
   !+ad_hist  01/11/16 JM  Added iprecomp switch for Central Solenoid pre-compression structure
   !+ad_hist  08/03/17 JM  Added time-dependent power reqs
+  !+ad_hist  15/02/18 SIM Made denw an input
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1970,6 +1971,9 @@ contains
        case ('denstl')
           call parse_real_variable('denstl', denstl, 5.0D3, 1.0D4, &
                'Density of steel (kg/m3)')
+       case ('denw')
+          call parse_real_variable('denw', denw, 1.0D4, 5.0D4, &
+               'Density of tungsten (kg/m3)')
        case ('emult')
           call parse_real_variable('emult', emult, 1.0D0, 2.0D0, &
                'Energy multip. in blanket and shield')
