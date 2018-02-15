@@ -138,8 +138,6 @@
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate
 
   integer :: jped,nx,nxt,nchannels, iped_model,jdum1,nxequil,i_qsaw, i_profiles, i_diagz
-    
-
 
   i_diagz=nint(num%maxa)
 
@@ -206,10 +204,11 @@
 	
 
   !some diagnostics
+
   if (geom%counter.ge.1.) then
-     open(99,file='./CHARTST/PROCESSINPUT.chartst',position='append')
+     open(99,file='../PLASMOD/CHARTST/PROCESSINPUT.chartst',position='append')
   else
-     open(99,file='./CHARTST/PROCESSINPUT.chartst')
+     open(99,file='../PLASMOD/CHARTST/PROCESSINPUT.chartst')
   endif
   write(99,*)   '    '
   write(99,*)   'new iteration'
@@ -1251,9 +1250,9 @@ endif
 
 !diags
   if (geom%counter.gt.1.) then
-     open(99,file='./CHARTST/PROCESSOUTPUT.chartst',STATUS='UNKNOWN',Access = 'append')
+     open(99,file='../PLASMOD/CHARTST/PROCESSOUTPUT.chartst',STATUS='UNKNOWN',Access = 'append')
   else
-     open(99,file='./CHARTST/PROCESSOUTPUT.chartst')
+     open(99,file='../PLASMOD/CHARTST/PROCESSOUTPUT.chartst')
   endif
   write(99,'(911E25.11)')   x
   write(99,'(911E25.11)')   nepr
@@ -1282,16 +1281,16 @@ endif
   write(99,'(911E25.11)')   pradtot+pradedge
   close(99)
 
-  open(99,file='./CHARTST/forastra1.txt')
+  open(99,file='../PLASMOD/CHARTST/forastra1.txt')
   write(99,'(111E25.11)')   rmajor,aspect,elong,triang,ip,btor, &
        & che,cxe,car,fuelmix,xb,hfactor,Hnow,loss%H,loss%Pfus,loss%pnbi
   close(99)
-  open(99,file='./CHARTST/forastra11.txt')
+  open(99,file='../PLASMOD/CHARTST/forastra11.txt')
   write(99,*)   'rmajor,aspect,elong,triang,ip,btor,che,cxe,cne,fuelmix,xb,hfactor,Hnow,loss%H'
   write(99,'(111E25.11)')   rmajor,aspect,elong,triang,ip,btor, &
        & che,cxe,car,fuelmix,xb,hfactor,Hnow,loss%H
   close(99)
-  open(99,file='./CHARTST/forastra2.txt')
+  open(99,file='../PLASMOD/CHARTST/forastra2.txt')
   write(99,'(999E25.11)')   x
   write(99,'(999E25.11)')   nepr
   write(99,'(999E25.11)')   tepr

@@ -111,8 +111,8 @@ module physics_module
   use tfcoil_variables
   use times_variables
 
-	use structs
-	use grad_func
+  use structs
+  use grad_func
 
   implicit none
 
