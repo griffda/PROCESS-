@@ -1,0 +1,4 @@
+gfortran -I. -o transporz structs.f90 grad_func.f90 syscode_dummy.f90  cubsfml.f90  trmodel.f90 e3m.f90 transport_solver.f90 equil.f90  
+
+
+
