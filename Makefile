@@ -108,7 +108,7 @@ SRC = \
  tfcoil.f90 \
  vacuum.f90 \
  $(PLASMOD_DIR)/cubsfml.f90 \
- $(PLASMOD_DIR)/e3m.f90 \
+ $(PLASMOD_DIR)/e3m.f \
  $(PLASMOD_DIR)/equil.f90 \
  $(PLASMOD_DIR)/grad_func.f90 \
  $(PLASMOD_DIR)/structs.f90 \
