@@ -162,8 +162,8 @@ module numerics
         /)
   !+ad_vars  ncalls : number of function calls during solution
   integer :: ncalls = 0
-  !+ad_vars  neqns /14/ : number of equality constraints to be satisfied
-  integer :: neqns = 14
+  !+ad_vars  neqns /0/ : number of equality constraints to be satisfied
+  integer :: neqns = 0
   !+ad_vars  nfev1 : number of calls to FCNHYB (HYBRD function caller) made
   integer :: nfev1 = 0
   !+ad_vars  nfev2 : number of calls to FCNVMC1 (VMCON function caller) made

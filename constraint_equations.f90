@@ -176,9 +176,8 @@ contains
     !!!!!!!!!!!!!!!!!!!
 
     integer :: i,i1,i2
-    real(kind(1.0D0)) :: cratmx,pdenom,pnumerator,pradmaxpv, &
-         pscaling,rcw,totmva
-    real(kind(1.0D0)) :: pdivt_Watts
+    real(kind(1.0D0)) :: cratmx,pdenom,pnumerator,pradmaxpv
+    real(kind(1.0D0)) :: pscaling,rcw,totmva
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -412,8 +411,8 @@ contains
              ! dnla    |  line averaged electron density (m-3)
              cc(i) = 1.0D0 - fdene * dnelimt/dnla
              if (present(con)) then
-                con(i) = dnelimt * (1.0D0 - cc(i))
-                err(i) = dnla * cc(i)
+                con(i) = fdene * dnelimt
+                err(i) = fdene * dnelimt - dnla
                 symbol(i) = '<'
                 units(i) = '/m3'
              end if
@@ -488,8 +487,8 @@ contains
           cc(i) = 1.0D0 - fwalld * walalw/wallmw
 
           if (present(con)) then
-             con(i) = walalw * (1.0D0 - cc(i))
-             err(i) = wallmw * cc(i)
+             con(i) = fwalld * walalw
+             err(i) = fwalld * walalw - wallmw
              symbol(i) = '<'
              units(i) = 'MW/m2'
           end if
@@ -572,8 +571,8 @@ contains
           cc(i) = 1.0D0 - ftburn * tburn/tbrnmn
 
           if (present(con)) then
-             con(i) = tbrnmn * (1.0D0 - cc(i))
-             err(i) = tbrnmn * cc(i)
+             con(i) = tbrnmn / ftburn
+             err(i) = tbrnmn / ftburn  - tburn
              symbol(i) = '>'
              units(i) = 'sec'
           end if
@@ -601,11 +600,11 @@ contains
           ! flhthresh |  f-value for L-H power threshold
           ! plhthresh |  L-H mode power threshold (MW)
           ! pdivt     |  power conducted to the divertor region (MW)
-          cc(i) = 1.0D0 - flhthresh * plhthresh / pdivt
+          cc(i) = -(1.0D0 - flhthresh * plhthresh / pdivt)
 
           if (present(con)) then
-             con(i) = plhthresh * (1.0D0 - cc(i))
-             err(i) = pdivt * cc(i)
+             con(i) = plhthresh
+             err(i) = plhthresh - pdivt / flhthresh
              if (flhthresh > 1.0D0) then
                 symbol(i) = '>'
              else
@@ -624,8 +623,8 @@ contains
           cc(i) = 1.0D0 - fpnetel * pnetelmw / pnetelin
 
           if (present(con)) then
-             con(i) = pnetelin * (1.0D0 - cc(i))
-             err(i) = pnetelin * cc(i)
+             con(i) = pnetelin
+             err(i) = pnetelmw - pnetelin / fpnetel
              symbol(i) = '>'
              units(i) = 'MW'
           end if
@@ -784,8 +783,8 @@ contains
              cc(i) = 1.0D0 - fbetatry * betalim/beta
 
              if (present(con)) then
-                con(i) = betalim * (1.0D0 - cc(i))
-                err(i) = beta * cc(i)
+                con(i) = betalim
+                err(i) = betalim - beta / fbetatry
                 symbol(i) = '<'
                 units(i) = ''
              end if
@@ -802,8 +801,8 @@ contains
              cc(i) = 1.0D0 - fbetatry * betalim/(beta-betaft-betanb)
 
              if (present(con)) then
-                con(i) = betalim * (1.0D0 - cc(i))
-                err(i) = (beta-betaft-betanb) * cc(i)
+                con(i) = betalim
+                err(i) = betalim - (beta-betaft-betanb) / fbetatry
                 symbol(i) = '<'
                 units(i) = ''
              end if
@@ -853,8 +852,8 @@ contains
           cc(i) = 1.0D0 - fjohc * rjohc/coheof
 
           if (present(con)) then
-             con(i) = rjohc * (1.0D0 - cc(i))
-             err(i) = coheof * cc(i)
+             con(i) = rjohc
+             err(i) = rjohc - coheof / fjohc
              symbol(i) = '<'
              units(i) = 'A/m2'
           end if
@@ -869,8 +868,8 @@ contains
           cc(i) = 1.0D0 - fjohc0 * rjohc0/cohbop
 
           if (present(con)) then
-             con(i) = rjohc0 * (1.0D0 - cc(i))
-             err(i) = cohbop * cc(i)
+             con(i) = rjohc0
+             err(i) = rjohc0 - cohbop / fjohc0
              symbol(i) = '<'
              units(i) = 'A/m2'
           end if
@@ -932,8 +931,8 @@ contains
           cc(i) = 1.0D0 - pinjmw / (fpinj * pinjalw)
 
           if (present(con)) then
-             con(i) = pinjalw * (1.0D0 - cc(i))
-             err(i) = pinjmw * cc(i)
+             con(i) = pinjalw
+             err(i) = pinjalw  - pinjmw * fpinj
              symbol(i) = '<'
              units(i) = 'MW'
           end if
@@ -948,8 +947,8 @@ contains
           cc(i) = 1.0D0 - fstrcase * alstrtf/strtf2
 
           if (present(con)) then
-             con(i) = alstrtf * (1.0D0 - cc(i))
-             err(i) = strtf2 * cc(i)
+             con(i) = alstrtf
+             err(i) = alstrtf - strtf2 / fstrcase
              symbol(i) = '<'
              units(i) = 'Pa'
           end if
@@ -964,8 +963,8 @@ contains
           cc(i) = 1.0D0 - fstrcond * alstrtf/strtf1
 
           if (present(con)) then
-             con(i) = alstrtf * (1.0D0 - cc(i))
-             err(i) = strtf1 * cc(i)
+             con(i) = alstrtf
+             err(i) = alstrtf - strtf1 / fstrcond
              symbol(i) = '<'
              units(i) = 'Pa'
           end if
@@ -996,8 +995,8 @@ contains
           cc(i) = 1.0D0 - fvdump * vdalw/vtfskv
 
           if (present(con)) then
-             con(i) = vdalw * (1.0D0 - cc(i))
-             err(i) = vtfskv * cc(i)
+             con(i) = vdalw
+             err(i) = vdalw - vtfskv
              symbol(i) = '<'
              units(i) = 'V'
           end if
@@ -1013,8 +1012,8 @@ contains
           cc(i) = 1.0D0 - fjprot * jwdgpro/jwptf
 
           if (present(con)) then
-             con(i) = jwdgpro * (1.0D0 - cc(i))
-             err(i) = jwptf * cc(i)
+             con(i) = jwdgpro
+             err(i) = jwptf - jwptf
              symbol(i) = '<'
              units(i) = 'A/m2'
           end if
@@ -1029,8 +1028,8 @@ contains
           cc(i) = 1.0D0 - ftmargtf * tmargtf/tmargmin_tf
 
           if (present(con)) then
-             con(i) = tmargmin_tf * (1.0D0 - cc(i))
-             err(i) = tmargmin_tf * cc(i)
+             con(i) = tmargmin_tf
+             err(i) = tmargmin_tf - tmargtf
              symbol(i) = '>'
              units(i) = 'K'
           end if
@@ -1379,8 +1378,8 @@ contains
           cc(i) = 1.0D0 - ftmargoh * tmargoh/tmargmin_cs
 
           if (present(con)) then
-             con(i) = tmargmin_cs * (1.0D0 - cc(i))
-             err(i) = tmargmin_cs * cc(i)
+             con(i) = tmargmin_cs
+             err(i) = tmargmin_cs - tmargoh
              symbol(i) = '>'
              units(i) = 'K'
           end if
@@ -1460,11 +1459,11 @@ contains
            ! ftaucq |  f-value for calculated minimum TF quench time
            ! tdmptf |  dump time for TF coil (s)
            ! taucq  |  allowable TF quench time (s)
-           cc(i) = 1.0d0 - ftaucq * tdmptf / taucq
+           cc(i) =  1.0d0 - ftaucq * tdmptf / taucq
 
            if (present(con)) then
              con(i) = taucq
-             err(i) = taucq * cc(i)
+             err(i) = taucq - tdmptf
              symbol(i) = '>'
              units(i) = 's'
            end if
@@ -1517,10 +1516,11 @@ contains
 
            if (present(con)) then
              con(i) = psepbqarmax
-             err(i) = psepbqarmax * cc(i)
+             err(i) = (pdivt*bt)/(q95*aspect*rmajor) - psepbqarmax
              symbol(i) = '<'
              units(i) = 'MWT/m'
            end if
+
 
        case (69)  ! ensure separatrix power is less than value from Kallenbach divertor
            !#=# divertor_kallenbach
@@ -1579,11 +1579,13 @@ contains
            ! foh_stress      |  f-value for stress limit
            ! alstroh         |  Maximum permitted stress [MPa]
            ! s_tresca_oh     |  Calculated Tresca stress for Central Solenoid [MPa]
+           ! Reverse the sign so it works as an inequality constraint (cc(i) > 0)
+           ! This will have no effect if it is used as an equality constraint because it will be squared.
            cc(i) = 1.0d0 - foh_stress * alstroh / s_tresca_oh
 
            if (present(con)) then
              con(i) = alstroh
-             err(i) = alstroh * cc(i)
+             err(i) = alstroh - s_tresca_oh
              symbol(i) = '<'
              units(i) = 'MPa'
            end if
@@ -1652,7 +1654,7 @@ contains
              symbol(i) = '<'
              units(i) = 'm-3'
            end if
-          
+
        case default
 
           idiags(1) = icc(i)
@@ -1707,6 +1709,10 @@ contains
        end if
 
     end do
+    ! Issue 505 Reverse the sign so it works as an inequality constraint (cc(i) > 0)
+    ! This will have no effect if it is used as an equality constraint because it will be squared.
+    cc = -cc
+
 
   end subroutine constraint_eqns
 
