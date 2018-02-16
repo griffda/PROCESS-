@@ -107,7 +107,6 @@ SRC = \
  superconductors.f90 \
  tfcoil.f90 \
  vacuum.f90 \
- $(PLASMOD_DIR)/cubsfml.f90 \
  $(PLASMOD_DIR)/e3m.f \
  $(PLASMOD_DIR)/equil.f90 \
  $(PLASMOD_DIR)/grad_func.f90 \
@@ -163,7 +162,6 @@ OBJ = \
  superconductors.o \
  tfcoil.o \
  vacuum.o \
- $(PLASMOD_DIR)/cubsfml.o \
  $(PLASMOD_DIR)/e3m.o \
  $(PLASMOD_DIR)/equil.o \
  $(PLASMOD_DIR)/grad_func.o \
@@ -305,7 +303,6 @@ structure.o: global_variables.o output.o
 superconductors.o: global_variables.o output.o error_handling.o
 tfcoil.o: error_handling.o global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: error_handling.o global_variables.o output.o
-$(PLASMOD_DIR)/cubsfml.o: $(PLASMOD_DIR)/grad_func.o
 $(PLASMOD_DIR)/e3m.o: 
 $(PLASMOD_DIR)/equil.o: $(PLASMOD_DIR)/grad_func.o
 $(PLASMOD_DIR)/grad_func.o: 
