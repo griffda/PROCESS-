@@ -109,7 +109,7 @@ yllama=1.d0
 
 
 	pradtot=prad+psync+pbrad
-	jrad=min(nx,max(1,nint(comp%pradpos/dx)))
+	jrad=min(nx,max(1,nint(comp%pradpos*nx)))
 	pradedge=pradtot
 	pradtot(jrad:nx)=0.d0
 	if (jrad.gt.1)	pradedge(1:jrad-1)=0.d0
