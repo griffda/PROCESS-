@@ -176,7 +176,7 @@ TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)
 !     .	,GR,GBD,GL,GSD,A,BD,B,BA,BB,BC,C,D
 !     .  ,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ
 nxtemp=nx
-	call EMEQ(BA,BB,R+SHIF(nx),rmin,ELON,TRIA*rmin,nx, &		! radial grid point No.
+	call EMEQ(BA,BB,R+SHIF(nx),rmin,ELON,TRIA,nx, &		! radial grid point No.
              &	 ACEQLB,BTOR*R/(R+SHIF(nx)),IP,GR,GBD,GL,GSD,gra, & 
         &  sqgra,grar,avr2,ai0,dgrda,avsqg,vvvv,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
         &  TIME)
