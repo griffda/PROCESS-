@@ -201,7 +201,7 @@ nxtemp=nx
 		else
 
 
-	write(*,*) vvvv(nx)
+!	write(*,*) vvvv(nx)
 
 	BTOOO=BTOR*R/(R+SHIF(nx)) ! toroidal field at plasma axis
 	ROOO=(R+SHIF(nx))! plasma axis
@@ -264,8 +264,8 @@ nxtemp=nx
            k=gl
 	v=vvvv
 
-	write(*,*) shif(1),shif(nx)
-	write(*,*) v(nx),trapz(vr)*hro
+!	write(*,*) shif(1),shif(nx)
+!	write(*,*) v(nx),trapz(vr)*hro
 
 !	write(*,*) 'p',vprime(1:10)
 !	write(*,*) 'p',vr(nx-4:nx)
