@@ -176,7 +176,7 @@ TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)
 !     .	,GR,GBD,GL,GSD,A,BD,B,BA,BB,BC,C,D
 !     .  ,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ
 nxtemp=nx
-	call EMEQ(BA,BB,R+SHIF(nx),rmin,ELON,TRIA,nx, &		! radial grid point No.
+	call EMEQ(BA,BB,R+SHIF(nx),rmin,ELON,TRIA*rmin,nx, &		! radial grid point No.
              &	 ACEQLB,BTOR*R/(R+SHIF(nx)),IP,GR,GBD,GL,GSD,gra, & 
         &  sqgra,grar,avr2,ai0,dgrda,avsqg,vvvv,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
         &  TIME)
@@ -194,12 +194,14 @@ nxtemp=nx
 		goto 111
 	endif
 
-!	write(*,*) sqgra,vprime
 
 	if (isnan(sqgra(2))) then
 	pres_fac=1.d-5
 	goto 111
 		else
+
+
+	write(*,*) vvvv(nx)
 
 	BTOOO=BTOR*R/(R+SHIF(nx)) ! toroidal field at plasma axis
 	ROOO=(R+SHIF(nx))! plasma axis
@@ -261,6 +263,9 @@ nxtemp=nx
            shif=gbd
            k=gl
 	v=vvvv
+
+	write(*,*) shif(1),shif(nx)
+	write(*,*) v(nx),trapz(vr)*hro
 
 !	write(*,*) 'p',vprime(1:10)
 !	write(*,*) 'p',vr(nx-4:nx)
@@ -401,7 +406,7 @@ subroutine INITEQUIL( &
   smallk = (elon-1.0d0) * x**2
   k = smallk + 1.0d0
   d = tria * x**2
-  shif = 0.0d0 * d
+  shif = 0.0d0 * d*(1.-x)
 
   rhoint = x * rmin !minor radius
   !volume
