@@ -10,7 +10,7 @@ subroutine compute_equil( &
   roc, Vloop, fbs,fcd, toleq, &
   k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar,&
   ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
-  )
+  ,pres_fac)
   
   use grad_func
   implicit none
@@ -24,11 +24,11 @@ subroutine compute_equil( &
   real(kind(1.0d0)), dimension(nx), intent(in) :: x, te, ti, ne, ni, palph, cc, G30,qinit,G20,vp0
   real(kind(1.0D0)), intent(in) :: q_edge_in,f_ind_in,R,rmin,btor,betaz,lint,ipol0,e_charge,mu_vacuum
   
-  real(kind(1.0d0)), intent(inout) :: qedge,ip,q_95,elon,tria,elong95,triang95
+  real(kind(1.0d0)), intent(inout) :: pres_fac,qedge,ip,q_95,elon,tria,elong95,triang95
   
-  real(kind(1.0D0)), intent(out) :: roc, Vloop, fbs,fcd, toleq
-  real(kind(1.0d0)), dimension(nx), intent(out) :: k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar
-  real(kind(1.0d0)), dimension(nx), intent(out) :: ipol, Vprime,droda,eqpf,eqff,gradro
+  real(kind(1.0D0)), intent(inout) :: roc, Vloop, fbs,fcd, toleq
+  real(kind(1.0d0)), dimension(nx), intent(inout) :: k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar
+  real(kind(1.0d0)), dimension(nx), intent(inout) :: ipol, Vprime,droda,eqpf,eqff,gradro
   
   !  Local variables
 ! Other local variables of interest
@@ -54,12 +54,13 @@ subroutine compute_equil( &
   real(kind(1.0d0)), dimension(nx) :: gra,sqgra,grar,avr2,ai0,dgrda,avsqg !gradient,sqrgradient,radial gradient,
   
   integer :: na,diagz,nxtemp
-  real(kind(1.0d0)) :: gpp4,gp2,yro,hro,yda,TIME,alfa,pres_fac
+  real(kind(1.0d0)) :: gpp4,gp2,yro,hro,yda,TIME,alfa
 ! Quiet NAN, double precision.
 REAL(8), PARAMETER :: D_QNAN = &
 TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)  
   diagz=1
   
+	pres_fac=1.d0
   na = nx-1
   gp2 = 2.*pi
   gpp4 = gp2*gp2
@@ -71,7 +72,7 @@ TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)
   
   
 !  write(*,*) 'jiter',jiter
-  pres_fac=1.d0
+!  pres_fac=1.d0
   if (jiter .eq. 0) then 
 
      !geometry, initial guess  151116
@@ -161,6 +162,8 @@ TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)
 	eqff=-2.*pi/mu_vacuum/R*ffprime*1.e-6
 
 
+!	write(*,*) eqpf,eqff
+
 !write(*,*) 'g',eqpf(nx-4:nx),eqff(nx-4:nx)
 
         
@@ -189,27 +192,30 @@ nxtemp=nx
 
 	if (nx.lt.1) then
 	nx=nxtemp
-	pres_fac=1.d-5
+	pres_fac=pres_fac*0.9
+!	write(*,*) 'not converged pressure too high',pres_fac
+!stop
 !		qedge=d_qnan
 		goto 111
 	endif
 
 
 	if (isnan(sqgra(2))) then
-	pres_fac=1.d-5
+	pres_fac=pres_fac*0.9
+!	write(*,*) 'not converged pressure too high'
+!	stop
 	goto 111
-		else
+	endif
 
 
-!	write(*,*) vvvv(nx)
-
+!	write(*,*) pres_fac
 	BTOOO=BTOR*R/(R+SHIF(nx)) ! toroidal field at plasma axis
 	ROOO=(R+SHIF(nx))! plasma axis
         
         
         
         ! Define a new RHO-grid:
-	ALFA = .001
+	ALFA = .00001
 	call SMAP(ALFA,nx,x,nx,x,gr)
 	call SMAP(ALFA,nx,x,nx,x,gbd)
 	call SMAP(ALFA,nx,x,nx,x,gl)
@@ -222,9 +228,17 @@ nxtemp=nx
 	call SMAP(ALFA,nx,x,nx,x,dgrda)
 	call SMAP(ALFA,nx,x,nx,x,avsqg)
 	call SMAP(ALFA,nx,x,nx,x,vvvv)
+	call SMAP(ALFA,nx,x,nx,x,ai0)
+	call SMAP(ALFA,nx,x,nx,x,gr)
+	IPOL=ai0
+
 
 	ROC = GR(nx)		! Define a new RHO_edge
 	rho = GR !rho toroidal
+	phi=btor*3.141592*rho**2.d0
+
+
+
  !----------------------------------------------------------------------|
  ! Map quantities attributed to the auxiliary grid:
  ! A -> <[nabla(a)]^2>		B -> <[nabla(a)/r]^2>
@@ -309,7 +323,7 @@ nxtemp=nx
  !not used!!!
 	
         
-	endif
+!	endif
      endif
      !EMEQ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      
@@ -515,13 +529,13 @@ subroutine ADDITIONAL_CALCS( &
   real(kind(1.0d0)), intent(inout) :: qedge,elon,tria,elong95,triang95
   real(kind(1.0d0)), intent(inout),dimension(nx) :: Vprime,k,d
   !output
-  real(kind(1.0D0)), dimension(nx), intent(out) :: dV,phi,rho,ipol,jpol,kerncur,jpar,q,psi, dum1 
-  real(kind(1.0D0)), intent(out) :: roc,Vloop,toleq,Ibs,Epar,fbs,fcd
+  real(kind(1.0D0)), dimension(nx), intent(inout) :: dV,phi,rho,ipol,jpol,kerncur,jpar,q,psi, dum1 
+  real(kind(1.0D0)), intent(inout) :: roc,Vloop,toleq,Ibs,Epar,fbs,fcd
   !local
   real(kind(1.0D0)), dimension(nx) :: dvdr,rhoint,f,dum2
   real(kind(1.0D0)) :: icd
   real(kind(1.0d0)), parameter :: pi = 4.0d0*datan(1.0d0) !3.1415926535d0 !, mu_vacuum = 1.2566d-6
-  real(kind(1.0D0)) :: dpsidt,gp2,qcyl,alfa
+  real(kind(1.0D0)) :: dpsidt,gp2,qcyl,alfa,kcyl,dcyl
   integer :: j,DEBUG_FLAG,j_9
   gp2 = 2.*pi
   rhoint = x * rmin !minor radius
@@ -531,13 +545,16 @@ subroutine ADDITIONAL_CALCS( &
 
   if (jiter .ne. 0) then 
      !additional calcs	
-     dV=gradient1(V)
-     phi = cumint1(gp2*FF*G3/(2.*pi)*dV)
-     rho = sqrt(phi/(pi*btor))
-     roc = rho(nx)
+     dV=vprime*(x(2)-x(1))*rmin
 	!write(*,*) roc
-     ipol = gp2*FF
-     jpol = gp2*FF/(R*btor)
+!     ipol = gp2*FF
+     jpol = ipol/(R*btor)
+!     phi = cumint1(ipol*G3/(2.*pi)*dV)
+!     rho = sqrt(phi/(pi*btor))
+!     roc = rho(nx)
+!write(*,*) ipol,phi,rho,roc,dv
+!pause
+
      kerncur = cc/ipol**2.*dV
      Ibs = sum(cubb/ipol**2.*dV)*ipol(nx)*btor/(2.*pi)
      Icd = sum(jcdr/ipol**2.*dV)*ipol(nx)*btor/(2.*pi)
@@ -550,11 +567,11 @@ subroutine ADDITIONAL_CALCS( &
      kerncur = jpar/ipol**2.*dV
      
      dum1=ipol*btor/gp2*cumint1(dV*jpar/ipol**2.)
-     q=ipol*g2*g3/(mu_vacuum*8*pi**3.*dum1*1.e6)*1.05
+     q=ipol*g2*g3/(mu_vacuum*8*pi**3.*dum1*1.e6)
 
 !	write(*,*) 'j9',j_9
 !write(*,*) 	'q',q
-
+!pause
 	j_9=1
 	do j=1,nx
 	if (q(j).le.1.d0) then
@@ -600,18 +617,20 @@ subroutine ADDITIONAL_CALCS( &
 	do j=1,nx
 	if (dum2(j).le.0.95) j_9=j
 	enddo
-	qcyl=q(j_9)
+	qcyl=(q(j_9+1)-q(j_9))/(dum2(j_9+1)-dum2(j_9))*(0.95-dum2(j_9))+q(j_9)
+	kcyl=(k(j_9+1)-k(j_9))/(dum2(j_9+1)-dum2(j_9))*(0.95-dum2(j_9))+k(j_9)
+	dcyl=(d(j_9+1)-d(j_9))/(dum2(j_9+1)-dum2(j_9))*(0.95-dum2(j_9))+d(j_9)
 
 	if (i_equiltype.eq.1) ip=ip*qcyl/q_95
 	if (i_equiltype.eq.2) q_95=qcyl
 
-	k=k/k(j_9)*elong95
-	d=d/d(j_9)*triang95
+	k=k/kcyl*elong95
+	d=d/dcyl*triang95
 	elon=k(nx)
 	tria=d(nx)
 
 
-!	write(*,*) 'equil' ,ip,roc,ipol(nx),Ibs,Icd,Epar,Vloop,qedge,toleq,q_95,qedge,q(nx),j_9,q(j_9)
+!	write(*,*) 'equil' ,j_9,x(j_9),q(j_9),q(j_9+1),dum2(j_9+1),dum2(j_9)
 	
 !	open(32,file='qprof.out')
 !	write(32,'(911E25.11)') q

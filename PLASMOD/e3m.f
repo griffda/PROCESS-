@@ -127,7 +127,7 @@
 !	save AOLD,GLOLD,G3DOLD,NAOLD,NITER,cgp
 	common /EMEQMR/SKDR(NP),SKGA(NP),SQG22R(NP)
 	data AOLD/0.d0/GLOLD/0.d0/G3DOLD/0.d0/NAOLD/1/
-	data NITER/60/
+	data NITER/1e4/
 	data cgp/3.14159265359d0/	
     
     !*************************************************
@@ -172,7 +172,7 @@ C      call EQGB3(BR00,SA0,GL0,GD30,NA)
          WSJP(I)=BA(I)
          WSP(I)=BB(I)
       enddo
-      NITER=30                    ! Use 60 for the 1st entry only
+      NITER=1e4                    ! Use 60 for the 1st entry only
       !!!call add2loc("Calling EQAB3"//char(0))
 !	write(*,*) NA,NT,NITER,ACC
       call EQAB3(NA,NT,NITER,ACC) ! Call MEM equil solver
@@ -502,10 +502,11 @@ C  SD3,SDD3
 
 C      write(*,'(2I5,5F10.7)')ITER,NITER,WSACC
       if (ITER.EQ.NITER)	then
-	 write(*,*)'>>> EMEQ >>> Maximum iteration number achieved'
-	 write(*,*)'             No convergence'
+!	 write(*,*)'>>> EMEQ >>> Maximum iteration number achieved'
+!	 write(*,*)'             No convergence'
          NA = 0			! Suppress optional output
-         return
+	na1=0
+									return
       endif
 
 C  SD2D1,GD2L,SD2D3

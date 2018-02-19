@@ -135,9 +135,11 @@
   real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,fcd,qdivt,q_heat,q_cd,q_fus,q_95
 
 !for sol model
-  real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate
+  real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac
 
   integer :: jped,nx,nxt,nchannels, iped_model,jdum1,nxequil,i_qsaw, i_profiles, i_diagz
+    
+pres_fac=1.d0 !coefficient to avoid emeq crashing
 
   i_diagz=nint(num%maxa)
 
@@ -204,11 +206,10 @@
 	
 
   !some diagnostics
-
   if (geom%counter.ge.1.) then
-     open(99,file='../PLASMOD/CHARTST/PROCESSINPUT.chartst',position='append')
+     open(99,file='./CHARTST/PROCESSINPUT.chartst',position='append')
   else
-     open(99,file='../PLASMOD/CHARTST/PROCESSINPUT.chartst')
+     open(99,file='./CHARTST/PROCESSINPUT.chartst')
   endif
   write(99,*)   '    '
   write(99,*)   'new iteration'
@@ -497,7 +498,7 @@ q_fus=loss%qfus
           roc, Vloop, fbs,fcd, toleq, &
           k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar,&
           ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
-          )
+          ,pres_fac)
   else
 !	write(*,*) "equil call oldnew",radp%volum(nx)
      !this uses previous results to speed up
@@ -512,7 +513,7 @@ q_fus=loss%qfus
           roc, Vloop, fbs,fcd, toleq, &
           k, d, shif, radp%jbs, radp%jcd, radp%Volum, G1, G2, G3, dV, phi, q, rho, radp%psi, jpar,&
           radp%ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
-          )
+          ,pres_fac)
      psi = radp%psi
      ipol=radp%ipol
      jcdr=radp%jcd
@@ -967,6 +968,10 @@ endif
 	include 'cubsfml.inc'
 	 cubb(1)=0.d0
 	cubb=max(0.d0,cubb)
+
+!	cubb=0.d0
+!	jcdr=0.d0
+
 !	write(*,*) cubb
 
            !assign present state to old, so that one can reverse if there are problems in equil
@@ -999,7 +1004,7 @@ endif
            !equilibrium solver
 
         !diagnostic
-!	write(*,*) cubb,jcdr
+	!write(*,*) tepr(1),nepr(1),betan
            call compute_equil(&
                                 !input 
                 nx, jiter,i_equiltype, &
@@ -1011,7 +1016,7 @@ endif
                 roc, Vloop, fbs,fcd, dum1, &
                 k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar,&
                 ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
-                )
+                ,pres_fac)
            !check if isnan
            if (isnan(qedge).or.isnan(vloop).or.ip.eq.0.d0) then
               write(*,*) 'equilibrium not converged',vloop,q,ip
@@ -1250,9 +1255,9 @@ endif
 
 !diags
   if (geom%counter.gt.1.) then
-     open(99,file='../PLASMOD/CHARTST/PROCESSOUTPUT.chartst',STATUS='UNKNOWN',Access = 'append')
+     open(99,file='./CHARTST/PROCESSOUTPUT.chartst',STATUS='UNKNOWN',Access = 'append')
   else
-     open(99,file='../PLASMOD/CHARTST/PROCESSOUTPUT.chartst')
+     open(99,file='./CHARTST/PROCESSOUTPUT.chartst')
   endif
   write(99,'(911E25.11)')   x
   write(99,'(911E25.11)')   nepr
@@ -1281,16 +1286,16 @@ endif
   write(99,'(911E25.11)')   pradtot+pradedge
   close(99)
 
-  open(99,file='../PLASMOD/CHARTST/forastra1.txt')
+  open(99,file='./CHARTST/forastra1.txt')
   write(99,'(111E25.11)')   rmajor,aspect,elong,triang,ip,btor, &
        & che,cxe,car,fuelmix,xb,hfactor,Hnow,loss%H,loss%Pfus,loss%pnbi
   close(99)
-  open(99,file='../PLASMOD/CHARTST/forastra11.txt')
+  open(99,file='./CHARTST/forastra11.txt')
   write(99,*)   'rmajor,aspect,elong,triang,ip,btor,che,cxe,cne,fuelmix,xb,hfactor,Hnow,loss%H'
   write(99,'(111E25.11)')   rmajor,aspect,elong,triang,ip,btor, &
        & che,cxe,car,fuelmix,xb,hfactor,Hnow,loss%H
   close(99)
-  open(99,file='../PLASMOD/CHARTST/forastra2.txt')
+  open(99,file='./CHARTST/forastra2.txt')
   write(99,'(999E25.11)')   x
   write(99,'(999E25.11)')   nepr
   write(99,'(999E25.11)')   tepr
@@ -1315,6 +1320,7 @@ endif
   write(99,'(999E25.11)')   shif
   write(99,'(999E25.11)')   eqpf
   write(99,'(999E25.11)')   eqff
+  write(99,'(999E25.11)')   (psi-psi(1))/(psi(nx)-psi(1))
   close(99)
 
 
