@@ -2551,7 +2551,7 @@ contains
     !  Setup line overwrite for VMCON iterations output
     open(unit=iotty)
     write(*,*) ""
-    
+
     !  Start the iteration by calling the quadratic programming
     !  subroutine
 
@@ -2675,9 +2675,7 @@ contains
 
        !  Check convergence of constraint residuals
        summ = 0.0D0
-       !do i = 1,m
-       ! This only includes the equality constraints Issue #505
-       do i = 1,meq
+       do i = 1,m
           summ = summ + conf(i)*conf(i)
        end do
        sqsumsq = sqrt(summ)
