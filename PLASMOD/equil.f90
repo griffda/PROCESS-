@@ -208,7 +208,6 @@ nxtemp=nx
 	endif
 
 
-!	write(*,*) pres_fac
 	BTOOO=BTOR*R/(R+SHIF(nx)) ! toroidal field at plasma axis
 	ROOO=(R+SHIF(nx))! plasma axis
         

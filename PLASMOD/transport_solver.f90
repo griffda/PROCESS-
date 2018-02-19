@@ -1193,7 +1193,7 @@ endif
   mhd%ip_out = ip
 
   jpol=ipol/(rmajor*btor)
-
+	write(*,*) pres_fac
 
   if (mhd%equilcheck.eq.1.d0) then
      write(2901,*) 'change vloop'
