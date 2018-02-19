@@ -125,14 +125,6 @@ module physics_module
 
   integer :: iscz
   real(kind(1.0D0)) :: vcritx, photon_wall, rad_fraction
-    type (geometry) :: geom
-    type (composition) :: comp
-    type (pedestal) :: ped
-    type (inputs) :: inp0
-    type (radial_profiles) :: radp
-    type (MHD_EQ) :: mhd
-    type (power_losses) :: loss
-    type (numerics_transp) :: num
 
 
 contains
@@ -242,7 +234,17 @@ contains
 
     real(kind(1.0D0)) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
          pinj,sbar,sigvdt,zion
-	 integer :: i_flag
+		 
+   !PLASMOD derived types
+    type (geometry) :: geom
+    type (composition) :: comp
+    type (pedestal) :: ped
+    type (inputs) :: inp0
+    type (radial_profiles) :: radp
+    type (MHD_EQ) :: mhd
+    type (power_losses) :: loss
+    type (numerics_transp) :: num
+    integer :: i_flag
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -268,8 +270,6 @@ contains
        q95 = q  !  i.e. input (or iteration variable) value
     end if
 
-
-!	write(*,*) 'q',q,plascur/1e6
     !  Calculate density and temperature profile quantities
     !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
     !    fgwped * Greenwald density limit
@@ -299,37 +299,38 @@ contains
     ! ieped : switch for scaling pedestal-top temperature with plasma parameters
     if ((ipedestal == 1).and.(ieped == 1)) teped = t_eped_scaling()
 
+    if (ipedestal == 2)then
 
-!	include 'defaults_inputs.f90' !default values
+       !include 'defaults_inputs.f90' !default values
 	num%tol=0.00001d0 !tolerance to be reached, in % variation at each time step
-     	num%dtmin=0.01d0 !min time step
-     	num%dtmax=0.1d0 !max time step
-     	num%dt=0.01d0 !time step
-     	num%dtinc=2.d0 !decrease of dt
-     	num%Ainc=1.1d0 !increase of dt
-     	num%test=100000. !max iteration number
-     	num%tolmin=10.1d0 ! multiplier of etolm that should not be overcome
-     	num%eopt=0.1d0 !exponent of jipperdo
-     	num%dtmaxmin=0.1d0 !exponent of jipperdo2
-     	num%capA=0.1d0 !first radial grid point
-     	num%maxA=0.d0 !diagz 0 or 1
-     	num%dgy=1.e-5 !Newton differential
-     	num%i_modeltype=1 !1 - simple gyrobohm scaling
-     	num%i_equiltype=1 !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
-     	num%nx=41	 !number of interpolated grid points
-     	num%nxt=7 !number of reduced grid points
-     	num%nchannels=3  !leave this at 3
-     	num%ipedestal=2 !1 - fixed temperature pedestal. 2 - Sareelma scaling
-     	num%i_impmodel=1 !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
-
+	num%dtmin=0.01d0 !min time step
+	num%dtmax=0.1d0 !max time step
+	num%dt=0.01d0 !time step
+	num%dtinc=2.d0 !decrease of dt
+	num%Ainc=1.1d0 !increase of dt
+	num%test=100000. !max iteration number
+	num%tolmin=10.1d0 ! multiplier of etolm that should not be overcome
+	num%eopt=0.1d0 !exponent of jipperdo
+	num%dtmaxmin=0.1d0 !exponent of jipperdo2
+	num%capA=0.1d0 !first radial grid point
+	num%maxA=0.d0 !diagz 0 or 1
+	num%dgy=1.e-5 !Newton differential
+	num%i_modeltype=1 !1 - simple gyrobohm scaling
+	num%i_equiltype=1 !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+	num%nx=41	 !number of interpolated grid points
+	num%nxt=7 !number of reduced grid points
+	num%nchannels=3  !leave this at 3
+	num%ipedestal=2 !1 - fixed temperature pedestal. 2 - Sareelma scaling
+	num%i_impmodel=1 !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
+	
 	comp%globtau(1) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
 	comp%globtau(2) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
 	comp%globtau(3) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
 	comp%globtau(4) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
 	comp%globtau(5) = 1. !tauparticle/tauE for D, T, He, Xe, Ar
 	comp%fuelmix = 0.5d0 !fuel mix
-    	comp%c_car = 100. !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
-
+	comp%c_car = 100. !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
+	
 !derivatives
 	inp0%qnbi_psepfac=50. !dqnbi/d(1-Psep/PLH)
 	inp0%cxe_psepfac=1.e-4 !dcxe/d(1-Psep/PLH)
@@ -337,24 +338,24 @@ contains
 
 !deposition locations
         inp0%x_heat(1)=0. !nbi
-        inp0%x_heat(2)=0. !ech
-        inp0%x_cd(1)=0. !nbi
-        inp0%x_cd(2)=0. !ech
-        inp0%x_fus(1)=0. !nbi
-        inp0%x_fus(2)=0. !ech
-        inp0%x_control(1)=0. !nbi
-        inp0%x_control(2)=0. !ech
-        inp0%dx_heat(1)=0.2 !nbi
-        inp0%dx_heat(2)=0.03 !ech
-        inp0%dx_cd(1)=0.2 !nbi
-        inp0%dx_cd(2)=0.03 !ech
-        inp0%dx_fus(1)=0.2 !nbi
-        inp0%dx_fus(2)=0.03 !ech
-        inp0%dx_control(1)=0.2 !nbi
-        inp0%dx_control(2)=0.03 !ech
-        inp0%nbi_energy=1000. !in keV
+	inp0%x_heat(2)=0. !ech
+	inp0%x_cd(1)=0. !nbi
+	inp0%x_cd(2)=0. !ech
+	inp0%x_fus(1)=0. !nbi
+	inp0%x_fus(2)=0. !ech
+	inp0%x_control(1)=0. !nbi
+	inp0%x_control(2)=0. !ech
+	inp0%dx_heat(1)=0.2 !nbi
+	inp0%dx_heat(2)=0.03 !ech
+	inp0%dx_cd(1)=0.2 !nbi
+	inp0%dx_cd(2)=0.03 !ech
+	inp0%dx_fus(1)=0.2 !nbi
+	inp0%dx_fus(2)=0.03 !ech
+	inp0%dx_control(1)=0.2 !nbi
+	inp0%dx_control(2)=0.03 !ech
+	inp0%nbi_energy=1000. !in keV
 
-   if (geom%counter.eq.0.d0) then
+!if (geom%counter.eq.0.d0) then
 	comp%car = 0. !argon concentration, used if qdivt=0.
 	comp%cxe = 0. !xenon concentration, if negative uses Psepplh as criterion
 	comp%che = 0. !helium concentration, used if globtau(3)=0.
@@ -378,57 +379,59 @@ contains
 	inp0%f_ni=0. !required fraction of non inductive current, if 0, dont use CD
 	inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat)
 
-    	geom%k = kappa95*1.2d0 !edge elongation
-    	geom%d = triang95*1.2d0 !edge triangularity
+	geom%k = kappa !edge elongation
+	geom%d = triang !edge triangularity
 	geom%ip=plascur/1.d6
-
-   endif
-
-
-!Here are the PROCESS links for input
+	
+!endif
+	!Here are the PROCESS links for input
 	geom%r=rmajor
 	geom%a=aspect
 	geom%q95=q95
 	geom%bt=bt
-    	geom%k95 = kappa95 !edge elongation
-    	geom%d95 = triang95 !edge triangularity
+	geom%k95 = kappa95 !edge elongation
+	geom%d95 = triang95 !edge triangularity
 
-    	ped%rho_t=rhopedt !pedestal top position T
-    	ped%rho_n=rhopedt !pedestal top position n
-    	ped%tesep=tesep  !separatrix temperature
+	ped%rho_t=rhopedt !pedestal top position T
+	ped%rho_n=rhopedt !pedestal top position n
+	ped%tesep=tesep  !separatrix temperature
 
 	inp0%Hfac_inp=hfact !input H factor, if 0., this is not used. This is radiation corrected H factor
-      	inp0%pheatmax=pinjalw !max allowed power for heating+CD+fusion control
-    	inp0%q_control=pheat !minimal power required for control
-   	inp0%f_gw=fgwped !pedestal top greenwald fraction
-   	inp0%f_gws=fgwsep !separatrix greenwald fraction
-
+	inp0%pheatmax=pinjalw !max allowed power for heating+CD+fusion control
+	inp0%q_control=pheat !minimal power required for control
+	inp0%f_gw=fgwped !pedestal top greenwald fraction
+	inp0%f_gws=fgwsep !separatrix greenwald fraction
+	
 	comp%pradpos = coreradius ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
 	comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
 
-i_flag=1
-open(32,file='plasmodsolprima.dat')
-write(32,*) 'num ',num
-write(32,*) 'geom ',geom
-write(32,*) 'comp ',comp
-write(32,*) 'ped ',ped
-write(32,*) 'inp0 ',inp0
-write(32,*) 'mhd ',mhd
-write(32,*) 'loss ',loss
- close(32)	
-!pause
- call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
-open(32,file='plasmodsoldopo.dat')
-write(32,*) 'num ',num
-write(32,*) 'geom ',geom
-write(32,*) 'comp ',comp
-write(32,*) 'ped ',ped
-write(32,*) 'inp0 ',inp0
-write(32,*) 'mhd ',mhd
-write(32,*) 'loss ',loss
- close(32)	
-!pause
- if (i_flag.ne.1) pause
+	i_flag=1
+	open(32,file='plasmodsolprima.dat')
+	write(32,*) 'num ',num
+	write(32,*) 'geom ',geom
+	write(32,*) 'comp ',comp
+	write(32,*) 'ped ',ped
+	write(32,*) 'inp0 ',inp0
+	write(32,*) 'mhd ',mhd
+	write(32,*) 'loss ',loss
+	close(32)	
+
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	open(32,file='plasmodsoldopo.dat')
+	write(32,*) 'num ',num
+	write(32,*) 'geom ',geom
+	write(32,*) 'comp ',comp
+	write(32,*) 'ped ',ped
+	write(32,*) 'inp0 ',inp0
+	write(32,*) 'mhd ',mhd
+	write(32,*) 'loss ',loss
+        close(32)
+        if (i_flag.ne.1)then
+           write(*,*) 'Katy - Transport model has not converged'
+           call report_error(174)
+	endif	
+		!teped = 
+    endif
 
     call plasma_profiles
 

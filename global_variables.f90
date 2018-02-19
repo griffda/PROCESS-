@@ -393,7 +393,8 @@ module physics_variables
 
   !+ad_vars  ipedestal /1/ : switch for pedestal profiles:<UL>
   !+ad_varc             <LI> = 0 use original parabolic profiles;
-  !+ad_varc             <LI> = 1 use pedestal profiles </UL>
+  !+ad_varc             <LI> = 1 use pedestal profiles
+  !+ad_varc             <LI> = 2 use PLASMOD transport model to calculate pedestal profiles </UL>
   integer :: ipedestal = 1
   ! Issue #589 remove iscdens
   !+ad_vars  iscdens /0/ : switch for pedestal profiles: OBSOLETE

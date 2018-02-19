@@ -691,7 +691,7 @@ contains
                'Index for impurity fraction iteration variable')
           write(outfile,*) 'impvar is now deprecated - use iteration variables 125-136 instead.'
        case ('ipedestal')
-          call parse_int_variable('ipedestal', ipedestal, 0, 1, &
+          call parse_int_variable('ipedestal', ipedestal, 0, 2, &
                'Switch for plasma profile type')
        case ('iprofile')
           call parse_int_variable('iprofile', iprofile, 0, 1, &

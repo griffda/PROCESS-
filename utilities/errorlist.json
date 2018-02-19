@@ -3,7 +3,7 @@
  "version":  [ "PROCESS revision 378" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 173,
+ "n_errortypes": 174,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -177,5 +177,6 @@
   { "no": 170, "level": 2, "message": "FLUID_PROPERTIES: Problem in call to trnprp(REFPROP)" },
   { "no": 171, "level": 2, "message": "ENTHALPY_PS: Problem in call to psflsh(REFPROP)" },
   { "no": 172, "level": 2, "message": "TSAT_REFPROP: Problem in call to satp(REFPROP)" },
-  { "no": 173, "level": 3, "message": "Do not use constraint 55 if iblanket != 2"}]
+  { "no": 173, "level": 3, "message": "Do not use constraint 55 if iblanket != 2"},
+  { "no": 174, "level": 3, "message": "Transport model (1D) has not converged"}]
 }
