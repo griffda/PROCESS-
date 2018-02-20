@@ -1225,10 +1225,9 @@ contains
           b(ii,ii) = bfactor
           xv(ii) = xcm(ii)      !  Re-initialise iteration values
        end do
-       if (verbose == 1) then
-          write(*,*) 'VMCON error code = 5.  Rerunning VMCON using a new'
-          write(*,*) 'initial estimate of the second derivative matrix.'
-       end if
+       ! if (verbose == 1) then
+       write(*,*) 'VMCON error code = 5.  Rerunning VMCON with a new initial estimate of the second derivative matrix.'
+       ! end if
 
        call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
             lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &

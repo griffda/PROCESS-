@@ -46,6 +46,7 @@ contains
   subroutine startup(outfile,iprint)
 
     !+ad_name  startup
+    !+ad_summ  NEVER CALLED
     !+ad_summ  Routine to find the minimum auxiliary power required for start-up
     !+ad_type  Subroutine
     !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
@@ -60,7 +61,7 @@ contains
     !+ad_desc  This is accomplished by calling the non-linear optimisation routine
     !+ad_desc  VMCON, so this subroutine simply sets up the equations to be solved.
     !+ad_desc  <P>PROCESS assumes that all the ion temperatures and profile
-    !+ad_desc  parameters are identical and utilises charge neutrality in 
+    !+ad_desc  parameters are identical and utilises charge neutrality in
     !+ad_desc  order to calculate DENI.
     !+ad_desc  <P>ZEFF is assumed to remain constant, in other words the
     !+ad_desc  ion/electron ratios are invariant.
@@ -83,7 +84,7 @@ contains
     !+ad_desc        E
     !+ad_desc                =    P         +  P    -  P         +  P
     !+ad_desc                      alpha        aux     rad          ohm
-    !+ad_desc  
+    !+ad_desc
     !+ad_desc                      p   q                                  r
     !+ad_desc  tau    =  gg  + ff n   T    ( P      + P    + P    + P    )
     !+ad_desc     E                e20 e10    alpha    ohm    rad    ohm
@@ -197,7 +198,7 @@ contains
 
     !  Ohmic power multiplier
     !  If the ohmic power density calculated in subroutine POHM is
-    !  changed in the future then the constant DD must be changed 
+    !  changed in the future then the constant DD must be changed
     !  accordingly.
 
     !  The following lines come directly from the formulae within
@@ -240,6 +241,7 @@ contains
          cnorm,lcnorm,b,lb,tol,maxfev,info,nfev,niter,vlam1,glag,vmu, &
          cm,glaga,gamma1,eta,xa,bdelta,delta,ldel,gm,bdl,bdu, &
          h,lh,wa,lwa,iwa,liwa,ilower,iupper,bndl,bndu)
+    if(info /= 1)write(*,*)'Subroutine startup failed: VMCON call failed.'
 
     auxmin = objf
     nign = x(1)*1.0D20

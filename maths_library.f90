@@ -2471,6 +2471,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     lowest_valid_fom = 999d0
+    best_solution_vector = x
 
     np1 = n + 1
     npp = 2*np1
@@ -2551,7 +2552,7 @@ contains
     !  Setup line overwrite for VMCON iterations output
     open(unit=iotty)
     write(*,*) ""
-    
+
     !  Start the iteration by calling the quadratic programming
     !  subroutine
 
@@ -2584,6 +2585,7 @@ contains
            sum = best_sum_so_far
            write(*,*)
            write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
+           write(*,*)'Return from VMCON'
 20         format(a,1pe10.3)
            return
        end if
@@ -2791,15 +2793,13 @@ contains
              info = 1  !  reset on each iteration
              if (aux > 0.0D0) then
                 if (verbose == 1) then
-                   write(*,*) 'VMCON optimiser line search attempt '// &
-                        'failed - retrying...'
+                   write(*,*) 'VMCON optimiser line search attempt failed - retrying...'
                 end if
                 info = 7
                 exit line_search
              end if
 
-             !  Exit if the line search requires ten or more function
-             !  evaluations
+             !  Exit if the line search requires ten or more function evaluations
 
              if (nfev >= (nfinit + 10)) then
                 do i = 1, n
@@ -2808,7 +2808,7 @@ contains
                 nfev = nfev + 1
                 call fcnvmc1(n,m,x,objf,conf,info)
                 if (info >= 0) info = 3
-                !  Error return because line search required 10 calls of fcnvmc1
+                ! Error return because line search required 10 calls of fcnvmc1
                 ! Issue #601 Return the best value of the solution vector - not the last value. MDK
                 x = best_solution_vector
                 sum = best_sum_so_far
