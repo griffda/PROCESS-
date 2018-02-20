@@ -91,6 +91,7 @@ SRC = \
  plant_power.f90 \
  plasma_geometry.f90 \
  plasma_profiles.f90 \
+ plasmod_variables.f90 \
  process.f90 \
  pulse.f90 \
  read_radiation.f90 \
@@ -146,6 +147,7 @@ OBJ = \
  plant_power.o \
  plasma_geometry.o \
  plasma_profiles.o \
+ plasmod_variables.o \
  process.o \
  pulse.o \
  read_radiation.o \
@@ -265,7 +267,7 @@ hcll.o : fw.o global_variables.o output.o
 hcpb.o : fw.o global_variables.o output.o maths_library.o refprop_interface.o
 impurity_radiation.o: error_handling.o global_variables.o root.dir plasma_profiles.o
 initial.o: error_handling.o global_variables.o output.o scan.o sctfcoil.o stellarator.o
-input.o: error_handling.o global_variables.o numerics.o output.o scan.o
+input.o: error_handling.o global_variables.o numerics.o output.o scan.o plasmod_variables.o
 iteration_variables.o: error_handling.o global_variables.o numerics.o
 machine_build.o: error_handling.o global_variables.o output.o
 maths_library.o: global_variables.o
@@ -303,10 +305,11 @@ structure.o: global_variables.o output.o
 superconductors.o: global_variables.o output.o error_handling.o
 tfcoil.o: error_handling.o global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: error_handling.o global_variables.o output.o
+plasmod_variables.o: $(PLASMOD_DIR)/structs.o
 $(PLASMOD_DIR)/e3m.o: 
 $(PLASMOD_DIR)/equil.o: $(PLASMOD_DIR)/grad_func.o
 $(PLASMOD_DIR)/grad_func.o: 
-$(PLASMOD_DIR)/structs.o: 
+$(PLASMOD_DIR)/structs.o:
 $(PLASMOD_DIR)/transport_solver.o: $(PLASMOD_DIR)/grad_func.o $(PLASMOD_DIR)/structs.o
 $(PLASMOD_DIR)/trmodel.o: $(PLASMOD_DIR)/grad_func.o
 

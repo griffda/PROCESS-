@@ -4275,4 +4275,5 @@ module rebco_variables
           real(kind(1.0D0)) :: area
           !real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
       end type
-  end module resistive_materials
+    end module resistive_materials
+    

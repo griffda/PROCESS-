@@ -114,6 +114,8 @@ module physics_module
   use structs
   use grad_func
 
+  use plasmod_variables
+
   implicit none
 
   private
@@ -308,26 +310,26 @@ contains
 	teped = t_eped_scaling()
 
        !include 'defaults_inputs.f90' !default values
-	num%tol=0.00001d0 !tolerance to be reached, in % variation at each time step
-	num%dtmin=0.01d0 !min time step
-	num%dtmax=0.1d0 !max time step
-	num%dt=0.01d0 !time step
-	num%dtinc=2.d0 !decrease of dt
-	num%Ainc=1.1d0 !increase of dt
-	num%test=100000. !max iteration number
-	num%tolmin=10.1d0 ! multiplier of etolm that should not be overcome
-	num%eopt=0.1d0 !exponent of jipperdo
-	num%dtmaxmin=0.1d0 !exponent of jipperdo2
-	num%capA=0.1d0 !first radial grid point
-	num%maxA=0.d0 !diagz 0 or 1
-	num%dgy=1.e-5 !Newton differential
-	num%i_modeltype=1 !1 - simple gyrobohm scaling
-	num%i_equiltype=1 !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
-	num%nx=41	 !number of interpolated grid points
-	num%nxt=7 !number of reduced grid points
-	num%nchannels=3  !leave this at 3
-	num%ipedestal=2 !1 - fixed temperature pedestal. 2 - Sareelma scaling
-	num%i_impmodel=1 !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
+	num%tol=plasmod_tol !tolerance to be reached, in % variation at each time step
+	num%dtmin=plasmod_dtmin !min time step
+	num%dtmax=plasmod_dtmax !max time step
+	num%dt=plasmod_dt !time step
+	num%dtinc=plasmod_dtinc !decrease of dt
+	num%Ainc=plasmod_ainc !increase of dt
+	num%test=plasmod_test !max iteration number
+	num%tolmin=plasmod_tolmin ! multiplier of etolm that should not be overcome
+	num%eopt=plasmod_eopt !exponent of jipperdo
+	num%dtmaxmin=plasmod_dtmaxmin !exponent of jipperdo2
+	num%capA=plasmod_capa !first radial grid point
+	num%maxA=plasmod_maxa !diagz 0 or 1
+	num%dgy=plasmod_dgy !Newton differential
+	num%i_modeltype=plasmod_i_modeltype !1 - simple gyrobohm scaling
+	num%i_equiltype=plasmod_i_equiltype !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+	num%nx=plasmod_nx	 !number of interpolated grid points
+	num%nxt=plasmod_nxt !number of reduced grid points
+	num%nchannels=plasmod_nchannels  !leave this at 3
+	num%ipedestal=plasmod_ipedestal !1 - fixed temperature pedestal. 2 - Sareelma scaling
+	num%i_impmodel=plasmod_i_impmodel !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
 	
 	comp%globtau(1) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
 	comp%globtau(2) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
@@ -360,36 +362,36 @@ contains
 	inp0%dx_control(1)=0.2 !nbi
 	inp0%dx_control(2)=0.03 !ech
 	inp0%nbi_energy=1000. !in keV
+        write(*,*) 'geom counter = ', geom%counter
+        if (geom%counter.eq.0.d0) then
+           comp%car = 0. !argon concentration, used if qdivt=0.
+           comp%cxe = 0. !xenon concentration, if negative uses Psepplh as criterion
+           comp%che = 0. !helium concentration, used if globtau(3)=0.
+           comp%psepplh_inf = 1.01 !Psep/PLH if below this, use nbi
+           comp%psepplh_sup = 12000.d0 !Psep/PLH if above this, use Xe
+           comp%psep_r = 12000.d0 !Psep/R max value
+           comp%qdivt = 0. !divertor heat flux in MW/m^2, if 0, dont use SOL model
 
-!if (geom%counter.eq.0.d0) then
-	comp%car = 0. !argon concentration, used if qdivt=0.
-	comp%cxe = 0. !xenon concentration, if negative uses Psepplh as criterion
-	comp%che = 0. !helium concentration, used if globtau(3)=0.
-	comp%psepplh_inf = 1.01 !Psep/PLH if below this, use nbi
-	comp%psepplh_sup = 12000.d0 !Psep/PLH if above this, use Xe
-	comp%psep_r = 12000.d0 !Psep/R max value
-	comp%qdivt = 0. !divertor heat flux in MW/m^2, if 0, dont use SOL model
+           ped%teped=teped !pedestal top temperature
 
-	ped%teped=teped !pedestal top temperature
+           inp0%nbcdeff=2.6 !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
+           inp0%eccdeff=0.3 !CD = this * PCD * TE/NE !not used for now
+           inp0%pech=0.d0 !ech power !not used for now
+           inp0%pnbi=0.d0 !nbi power
+           inp0%qheat=0.d0 !nbi power
+           inp0%qcd=0.d0 !nbi power
+           inp0%qfus=0.d0 !nbi power
+           inp0%spellet=0.d0 !pellet mass in particles of D in 10^19
+           inp0%fpellet=0.5d0 !pellet frequency in Hz
+           inp0%V_loop=-1.e6 !target loop voltage. If lower than -1.e5, dont use this
+           inp0%f_ni=0. !required fraction of non inductive current, if 0, dont use CD
+           inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat)
 
-	inp0%nbcdeff=2.6 !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
-	inp0%eccdeff=0.3 !CD = this * PCD * TE/NE !not used for now
-	inp0%pech=0.d0 !ech power !not used for now
-	inp0%pnbi=0.d0 !nbi power
-	inp0%qheat=0.d0 !nbi power
-	inp0%qcd=0.d0 !nbi power
-	inp0%qfus=0.d0 !nbi power
-	inp0%spellet=0.d0 !pellet mass in particles of D in 10^19
-	inp0%fpellet=0.5d0 !pellet frequency in Hz
-	inp0%V_loop=-1.e6 !target loop voltage. If lower than -1.e5, dont use this
-	inp0%f_ni=0. !required fraction of non inductive current, if 0, dont use CD
-	inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat)
-
-	geom%k = kappa !edge elongation
-	geom%d = triang !edge triangularity
-	geom%ip=plascur/1.d6
-	
-!endif
+           geom%k = kappa !edge elongation
+           geom%d = triang !edge triangularity
+           geom%ip=plascur/1.d6	
+        endif
+           
 	!Here are the PROCESS links for input
 	geom%r=rmajor
 	geom%a=aspect
@@ -433,11 +435,19 @@ contains
 	write(32,*) 'mhd ',mhd
 	write(32,*) 'loss ',loss
         close(32)
-!	pause
-        if (i_flag.ne.1)then
-           write(*,*) 'Katy - Transport model has not converged'
+
+        if (i_flag==1)then
+           write(*,*) 'Katy - Transport model has converged!!!'
+        elseif (i_flag==0)then
+           write(*,*) 'Katy - Transport model has crashed'
            call report_error(174)
-	endif	
+        elseif (i_flag==-1)then
+           write(*,*) 'Katy - Transport model has not converged after itermax'
+           call report_error(174)
+        elseif (i_flag==-2)then
+           write(*,*) 'Katy - Transport model equilibrium crashed'
+           call report_error(174)
+	endif
 		!teped = 
     endif
 
