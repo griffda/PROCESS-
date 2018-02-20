@@ -1233,7 +1233,7 @@ contains
           call parse_real_variable('divfix', divfix, 0.1D0, 5.0D0, &
                'Divertor structure vertical extent (m)')
        case ('divplt')
-          call parse_real_variable('divplt', divplt, 0.1D0, 1.0D0, &
+          call parse_real_variable('divplt', divplt, 0.01D0, 1.0D0, &
                'Divertor plate thickness (m)')
        case ('fdfs')
           call parse_real_variable('fdfs', fdfs, 0.0D0, 20.0D0, &
@@ -1928,7 +1928,7 @@ contains
           call parse_int_variable('irefprop', irefprop, 0, 1, &
                'Switch to use REFPROP routines')
        case ('outlet_temp')
-          call parse_real_variable('outlet_temp', outlet_temp, 450.0D0, 700.0D0, &
+          call parse_real_variable('outlet_temp', outlet_temp, 450.0D0, 900.0D0, &
                'Coolant outlet temperature (K)')
        case ('nblktmodpo')
           call parse_int_variable('nblktmodpo', nblktmodpo, 1, 16, &
