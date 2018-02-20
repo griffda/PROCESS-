@@ -300,6 +300,12 @@ contains
     if ((ipedestal == 1).and.(ieped == 1)) teped = t_eped_scaling()
 
     if (ipedestal == 2)then
+      neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
+      nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
+       alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
+       nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
+            * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
+	teped = t_eped_scaling()
 
        !include 'defaults_inputs.f90' !default values
 	num%tol=0.00001d0 !tolerance to be reached, in % variation at each time step
@@ -417,6 +423,7 @@ contains
 	close(32)	
 
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	
 	open(32,file='plasmodsoldopo.dat')
 	write(32,*) 'num ',num
 	write(32,*) 'geom ',geom
@@ -426,6 +433,7 @@ contains
 	write(32,*) 'mhd ',mhd
 	write(32,*) 'loss ',loss
         close(32)
+!	pause
         if (i_flag.ne.1)then
            write(*,*) 'Katy - Transport model has not converged'
            call report_error(174)
