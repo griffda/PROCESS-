@@ -190,15 +190,15 @@ pres_fac=1.d0 !coefficient to avoid emeq crashing
           & abs(geom%q95-geom%q95old)/geom%q95+ & 
           & abs(btor-geom%btold)/btor
   endif
-!	write(*,*) chepck,geom%counter,jiterext
+	write(*,*) chepck,geom%counter,jiterext
 
   if (geom%counter.ge.1..and.chepck.gt.0.1) then
      ! if machine has changed, restart from scratch
-!write(*,*) 'machine has changed'
+write(*,*) 'machine has changed'
      jiterext=1
   endif
 
-!write(*,*) 'PLASMOD RUNS'
+write(*,*) 'PLASMOD RUNS'
 
   if (mhd%equilcheck.eq.0.d0) jiterext=1
 
@@ -207,9 +207,9 @@ pres_fac=1.d0 !coefficient to avoid emeq crashing
 
   !some diagnostics
   if (geom%counter.ge.1.) then
-     open(99,file='../PLASMOD/CHARTST/PROCESSINPUT.chartst',position='append')
+     open(99,file='./CHARTST/PROCESSINPUT.chartst',position='append')
   else
-     open(99,file='../PLASMOD/CHARTST/PROCESSINPUT.chartst')
+     open(99,file='./CHARTST/PROCESSINPUT.chartst')
   endif
   write(99,*)   '    '
   write(99,*)   'new iteration'
@@ -1255,9 +1255,9 @@ endif
 
 !diags
   if (geom%counter.gt.1.) then
-     open(99,file='../PLASMOD/CHARTST/PROCESSOUTPUT.chartst',STATUS='UNKNOWN',Access = 'append')
+     open(99,file='./CHARTST/PROCESSOUTPUT.chartst',STATUS='UNKNOWN',Access = 'append')
   else
-     open(99,file='../PLASMOD/CHARTST/PROCESSOUTPUT.chartst')
+     open(99,file='./CHARTST/PROCESSOUTPUT.chartst')
   endif
   write(99,'(911E25.11)')   x
   write(99,'(911E25.11)')   nepr
@@ -1286,16 +1286,16 @@ endif
   write(99,'(911E25.11)')   pradtot+pradedge
   close(99)
 
-  open(99,file='../PLASMOD/CHARTST/forastra1.txt')
+  open(99,file='./CHARTST/forastra1.txt')
   write(99,'(111E25.11)')   rmajor,aspect,elong,triang,ip,btor, &
        & che,cxe,car,fuelmix,xb,hfactor,Hnow,loss%H,loss%Pfus,loss%pnbi
   close(99)
-  open(99,file='../PLASMOD/CHARTST/forastra11.txt')
+  open(99,file='./CHARTST/forastra11.txt')
   write(99,*)   'rmajor,aspect,elong,triang,ip,btor,che,cxe,cne,fuelmix,xb,hfactor,Hnow,loss%H'
   write(99,'(111E25.11)')   rmajor,aspect,elong,triang,ip,btor, &
        & che,cxe,car,fuelmix,xb,hfactor,Hnow,loss%H
   close(99)
-  open(99,file='../PLASMOD/CHARTST/forastra2.txt')
+  open(99,file='./CHARTST/forastra2.txt')
   write(99,'(999E25.11)')   x
   write(99,'(999E25.11)')   nepr
   write(99,'(999E25.11)')   tepr
@@ -1338,7 +1338,7 @@ endif
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 
 
-!	write(*,*) "plasmod end ",jiter
+	write(*,*) "plasmod end ",jiter
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 
