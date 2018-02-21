@@ -11,10 +11,11 @@ module structs
       SEQUENCE
       real(kind(1.0D0)) :: tol, dtmin, dtminmin, dtminmax, dtmax, dtmaxmin, dtmaxmax, dtinc, tolopt, eopt, &
         etol, etol0, etolm,tolmax, tolmin, dgy !, dtmin0, dt0
-      real(kind(1.0d0)) :: dt, capA, Ainc, maxA, test, biggest, i_modeltype, i_equiltype
+      real(kind(1.0d0)) :: dt, capA, Ainc, maxA, test, biggest
+      integer :: i_modeltype, i_equiltype
       integer :: nx != 11!31!41    !these should go into inputs together with numeric_transp
       integer :: nxt, nchannels,i_impmodel != 5, nchannels = 3
-      real(kind(1.0d0)) :: ipedestal
+      integer :: ipedestal
     end type numerics_transp  
 
 

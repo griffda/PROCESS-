@@ -224,9 +224,9 @@ write(*,*) 'PLASMOD RUNS'
   !assign some numerics
   nchannels=num%nchannels
   nxequil=nx
-  iped_model=nint(num%ipedestal)
-  i_modeltype = nint(num%i_modeltype)  
-  i_equiltype = nint(num%i_equiltype)   
+  iped_model=   (num%ipedestal)
+  i_modeltype = (num%i_modeltype)  
+  i_equiltype = (num%i_equiltype)   
   nitermax = nint(num%test)
   pow_eq = num%etol0
   amin = rminor
