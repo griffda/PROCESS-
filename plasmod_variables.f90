@@ -11,7 +11,7 @@ module plasmod_variables
   implicit none
   
   public
-
+  
  !Derived type numerics_transp 
   !+ad_vars  plasmod_tol /0.00001d0/ : Tolerance to be reached, in % variation at each time step
   real(kind(1.0D0)) :: plasmod_tol = 0.00001d0
@@ -55,12 +55,39 @@ module plasmod_variables
   integer :: plasmod_i_impmodel = 1
 
  !Derived type composition 
-  !+ad_vars  plasmod_globtau(5) /5.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
+  !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
   real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0 /)
-  !plasmod_globtau(1) = 5.0d0
-  !plasmod_globtau(2) = 5.0d0
-  !plasmod_globtau(3) = 5.0d0
-  !plasmod_globtau(4) = 5.0d0
-  !plasmod_globtau(5) = 1.0d0
+  !+ad_vars  plasmod_c_car /100.0d0/ : compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
+  real(kind(1.0D0)) :: plasmod_c_car = 100.0d0
+
+ !Derived type inputs
+  !+ad_vars  plasmod_qnbi_psepfac /50.0d0/ : dqnbi/d(1-Psep/PLH)
+  real(kind(1.0D0)) :: plasmod_qnbi_psepfac = 50.0d0
+  !+ad_vars  plasmod_cxe_psepfac /1.0d-4/ : dcxe/d(1-Psep/PLH)
+  real(kind(1.0D0)) :: plasmod_cxe_psepfac = 1.0d-4
+  !+ad_vars  plasmod_car_qdivt /1.0d-4/ : dcar/d(qdivt)
+  real(kind(1.0D0)) :: plasmod_car_qdivt = 1.0d-4
+
+    !deposition locations
+  !+ad_vars  plasmod_x_heat(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_x_heat = (/ 0.0d0, 0.0d0 /)
+  !+ad_vars  plasmod_x_cd(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_x_cd = (/ 0.0d0, 0.0d0 /)
+  !+ad_vars  plasmod_x_fus(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_x_fus = (/ 0.0d0, 0.0d0 /)
+  !+ad_vars  plasmod_x_control(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_x_control = (/ 0.0d0, 0.0d0 /)
+  !+ad_vars  plasmod_dx_heat(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_dx_heat = (/ 0.2d0, 0.03d0 /)
+  !+ad_vars  plasmod_dx_cd(2) /0.2d0, 0.03/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_dx_cd = (/ 0.2d0, 0.03d0 /)
+  !+ad_vars  plasmod_dx_fus(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_dx_fus = (/ 0.2d0, 0.03d0 /)
+  !+ad_vars  plasmod_dx_control(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_dx_control = (/ 0.2d0, 0.03d0 /)
+
+  !+ad_vars  plasmod_nbi_energy /1000.0d0/ :: In keV
+  real(kind(1.0D0)) :: plasmod_nbi_energy = 1000.0d0
+
   
 end module plasmod_variables

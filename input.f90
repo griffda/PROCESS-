@@ -1053,7 +1053,7 @@ contains
                'Allowable Zeff')
 
           !  PLASMOD 1D transport model settings
-          
+
     !Derived type numerics_transp
        case ('plasmod_tol')
           call parse_real_variable('plasmod_tol', plasmod_tol, 0.0D0, 1.0D0, &
@@ -1119,7 +1119,53 @@ contains
    !Derived type composition
        case ('plasmod_globtau')
           call parse_real_array('plasmod_globtau', plasmod_globtau, isub1, 5, &
-               'tauparticle/tauE for D, T, He, Xe, Ar', icode)
+               'Tauparticle/tauE for D, T, He, Xe, Ar', icode)
+       case ('plasmod_c_car')
+          call parse_real_variable('plasmod_c_car', plasmod_c_car, 0.0D0, 1.0D3, &
+               'Compression factor between div and core: eg 10 is 10 times Argon conc in divertor than in core')
+
+    !Derived type inputs
+       case ('plasmod_qnbi_psepfac')
+          call parse_real_variable('plasmod_qnbi_psepfac', plasmod_qnbi_psepfac, 0.0D0, 1.0D2, &
+               'dqnbi/d(1-Psep/PLH)')
+       case ('plasmod_cxe_psepfac')
+          call parse_real_variable('plasmod_cxe_psepfac', plasmod_cxe_psepfac, 0.0D0, 1.0D-2, &
+               'dcxe/d(1-Psep/PLH)')
+       case ('plasmod_car_qdivt')
+          call parse_real_variable('plasmod_car_qdivt', plasmod_car_qdivt, 0.0D0, 1.0D-2, &
+               'dcar/d(qdivt)')
+          !deposition locations
+       case ('plasmod_x_heat')
+          call parse_real_array('plasmod_x_heat', plasmod_x_heat, isub1, 2, &
+               'Element 1 - nbi, element 2 - ech', icode)   
+       case ('plasmod_x_cd')
+          call parse_real_array('plasmod_x_cd', plasmod_x_cd, isub1, 2, &
+               'Element 1 - nbi, element 2 - ech', icode)
+       case ('plasmod_x_fus')
+          call parse_real_array('plasmod_x_fus', plasmod_x_fus, isub1, 2, &
+               'Element 1 - nbi, element 2 - ech', icode)
+       case ('plasmod_x_control')
+          call parse_real_array('plasmod_x_control', plasmod_x_control, isub1, 2, &
+               'Element 1 - nbi, element 2 - ech', icode)
+       case ('plasmod_dx_heat')
+          call parse_real_array('plasmod_dx_heat', plasmod_dx_heat, isub1, 2, &
+               'Element 1 - nbi, element 2 - ech', icode)   
+       case ('plasmod_dx_cd')
+          call parse_real_array('plasmod_dx_cd', plasmod_dx_cd, isub1, 2, &
+               'Element 1 - nbi, element 2 - ech', icode)
+       case ('plasmod_dx_fus')
+          call parse_real_array('plasmod_dx_fus', plasmod_dx_fus, isub1, 2, &
+               'Element 1 - nbi, element 2 - ech', icode)
+       case ('plasmod_dx_control')
+          call parse_real_array('plasmod_dx_control', plasmod_dx_control, isub1, 2, &
+               'Element 1 - nbi, element 2 - ech', icode)
+       case ('plasmod_nbi_energy')
+          call parse_real_variable('plasmod_nbi_energy', plasmod_nbi_energy, 0.0D0, 1.0D4, &
+               'in keV')
+
+
+
+
           
           !  Current drive settings
 

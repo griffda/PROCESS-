@@ -128,6 +128,17 @@ module physics_module
   integer :: iscz
   real(kind(1.0D0)) :: vcritx, photon_wall, rad_fraction
 
+     !PLASMOD derived types
+  type (geometry) :: geom
+  type (composition) :: comp
+  type (pedestal) :: ped
+  type (inputs) :: inp0
+  type (radial_profiles) :: radp
+  type (MHD_EQ) :: mhd
+  type (power_losses) :: loss
+  type (numerics_transp) :: num
+  integer :: i_flag
+
 
 contains
 
@@ -237,16 +248,6 @@ contains
     real(kind(1.0D0)) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
          pinj,sbar,sigvdt,zion
 		 
-   !PLASMOD derived types
-    type (geometry) :: geom
-    type (composition) :: comp
-    type (pedestal) :: ped
-    type (inputs) :: inp0
-    type (radial_profiles) :: radp
-    type (MHD_EQ) :: mhd
-    type (power_losses) :: loss
-    type (numerics_transp) :: num
-    integer :: i_flag
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -309,7 +310,6 @@ contains
             * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
 	teped = t_eped_scaling()
 
-       !include 'defaults_inputs.f90' !default values
 	num%tol=plasmod_tol !tolerance to be reached, in % variation at each time step
 	num%dtmin=plasmod_dtmin !min time step
 	num%dtmax=plasmod_dtmax !max time step
@@ -331,37 +331,38 @@ contains
 	num%ipedestal=plasmod_ipedestal !1 - fixed temperature pedestal. 2 - Sareelma scaling
 	num%i_impmodel=plasmod_i_impmodel !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
 	
-	comp%globtau(1) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
-	comp%globtau(2) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
-	comp%globtau(3) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
-	comp%globtau(4) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
-	comp%globtau(5) = 1. !tauparticle/tauE for D, T, He, Xe, Ar
+	comp%globtau(1) = plasmod_globtau(1) !tauparticle/tauE for D, T, He, Xe, Ar
+	comp%globtau(2) = plasmod_globtau(2) !tauparticle/tauE for D, T, He, Xe, Ar
+	comp%globtau(3) = plasmod_globtau(3) !tauparticle/tauE for D, T, He, Xe, Ar
+	comp%globtau(4) = plasmod_globtau(4) !tauparticle/tauE for D, T, He, Xe, Ar
+	comp%globtau(5) = plasmod_globtau(5) !tauparticle/tauE for D, T, He, Xe, Ar
 	comp%fuelmix = 0.5d0 !fuel mix
-	comp%c_car = 100. !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
+	comp%c_car = plasmod_c_car !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
 	
 !derivatives
-	inp0%qnbi_psepfac=50. !dqnbi/d(1-Psep/PLH)
-	inp0%cxe_psepfac=1.e-4 !dcxe/d(1-Psep/PLH)
-	inp0%car_qdivt=1.e-4 !dcar/d(qdivt)
+	inp0%qnbi_psepfac=plasmod_qnbi_psepfac !dqnbi/d(1-Psep/PLH)
+	inp0%cxe_psepfac=plasmod_cxe_psepfac !dcxe/d(1-Psep/PLH)
+	inp0%car_qdivt=plasmod_car_qdivt !dcar/d(qdivt)
 
 !deposition locations
-        inp0%x_heat(1)=0. !nbi
-	inp0%x_heat(2)=0. !ech
-	inp0%x_cd(1)=0. !nbi
-	inp0%x_cd(2)=0. !ech
-	inp0%x_fus(1)=0. !nbi
-	inp0%x_fus(2)=0. !ech
-	inp0%x_control(1)=0. !nbi
-	inp0%x_control(2)=0. !ech
-	inp0%dx_heat(1)=0.2 !nbi
-	inp0%dx_heat(2)=0.03 !ech
-	inp0%dx_cd(1)=0.2 !nbi
-	inp0%dx_cd(2)=0.03 !ech
-	inp0%dx_fus(1)=0.2 !nbi
-	inp0%dx_fus(2)=0.03 !ech
-	inp0%dx_control(1)=0.2 !nbi
-	inp0%dx_control(2)=0.03 !ech
-	inp0%nbi_energy=1000. !in keV
+        inp0%x_heat(1)=plasmod_x_heat(1) !nbi
+	inp0%x_heat(2)=plasmod_x_heat(2) !ech
+	inp0%x_cd(1)=plasmod_x_cd(1) !nbi
+	inp0%x_cd(2)=plasmod_x_cd(2) !ech
+	inp0%x_fus(1)=plasmod_x_fus(1) !nbi
+	inp0%x_fus(2)=plasmod_x_fus(2) !ech
+	inp0%x_control(1)=plasmod_x_control(1) !nbi
+	inp0%x_control(2)=plasmod_x_control(2) !ech
+	inp0%dx_heat(1)=plasmod_dx_heat(1) !nbi
+	inp0%dx_heat(2)=plasmod_dx_heat(2) !ech
+	inp0%dx_cd(1)=plasmod_dx_cd(1) !nbi
+	inp0%dx_cd(2)=plasmod_dx_cd(2) !ech
+	inp0%dx_fus(1)=plasmod_dx_fus(1) !nbi
+	inp0%dx_fus(2)=plasmod_dx_fus(2) !ech
+	inp0%dx_control(1)=plasmod_dx_control(1) !nbi
+	inp0%dx_control(2)=plasmod_dx_control(2) !ech
+        inp0%nbi_energy=plasmod_nbi_energy !in keV
+ 
         write(*,*) 'geom counter = ', geom%counter
         if (geom%counter.eq.0.d0) then
            comp%car = 0. !argon concentration, used if qdivt=0.
