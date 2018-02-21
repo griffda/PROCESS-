@@ -448,7 +448,6 @@ contains
            write(*,*) 'Katy - Transport model equilibrium crashed'
            call report_error(174)
 	endif
-		!teped = 
     endif
 
     call plasma_profiles

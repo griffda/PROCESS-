@@ -12,6 +12,7 @@ module plasmod_variables
   
   public
 
+ !Derived type numerics_transp 
   !+ad_vars  plasmod_tol /0.00001d0/ : Tolerance to be reached, in % variation at each time step
   real(kind(1.0D0)) :: plasmod_tol = 0.00001d0
   !+ad_vars  plasmod_dtmin /0.01d0/ : Min time step
@@ -39,9 +40,9 @@ module plasmod_variables
   !+ad_vars  plasmod_dgy /1.0d-5/ : Newton differential
   real(kind(1.0D0)) :: plasmod_dgy = 1.0d-5
   !+ad_vars  plasmod_i_modeltype /1/ : 1 - Simple gyrobohm scaling
-  real(kind(1.0D0)) :: plasmod_i_modeltype = 1.0d0
+  integer :: plasmod_i_modeltype = 1
   !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
-  real(kind(1.0D0)) :: plasmod_i_equiltype = 1.0d0
+  integer :: plasmod_i_equiltype = 1
   !+ad_vars  plasmod_nx /41/ : Number of interpolated grid points
   integer :: plasmod_nx = 41
   !+ad_vars  plasmod_nxt /7/ : Number of reduced grid points
@@ -49,10 +50,17 @@ module plasmod_variables
   !+ad_vars  plasmod_nchannels /3/ : Leave this at 3
   integer :: plasmod_nchannels = 3
   !+ad_vars  plasmod_ipedestal /2/ : 1 - fixed temperature pedestal. 2 - Sareelma scaling
-  real(kind(1.0D0)) :: plasmod_ipedestal = 2.0d0
+  integer :: plasmod_ipedestal = 2
   !+ad_vars  plasmod_i_impmodel /1/ : Impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
   integer :: plasmod_i_impmodel = 1
 
-
+ !Derived type composition 
+  !+ad_vars  plasmod_globtau(5) /5.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
+  real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0 /)
+  !plasmod_globtau(1) = 5.0d0
+  !plasmod_globtau(2) = 5.0d0
+  !plasmod_globtau(3) = 5.0d0
+  !plasmod_globtau(4) = 5.0d0
+  !plasmod_globtau(5) = 1.0d0
   
 end module plasmod_variables
