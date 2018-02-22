@@ -59,7 +59,15 @@ module plasmod_variables
   real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0 /)
   !+ad_vars  plasmod_c_car /100.0d0/ : compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
   real(kind(1.0D0)) :: plasmod_c_car = 100.0d0
-
+  !+ad_vars  plasmod_psepplh_inf /1.01d0/ : Psep/PLH if below this, use nbi
+  real(kind(1.0D0)) :: plasmod_psepplh_inf = 1.01d0
+  !+ad_vars  plasmod_psepplh_sup /12000.0d0/ : Psep/PLH if above this, use Xe
+  real(kind(1.0D0)) :: plasmod_psepplh_sup = 12000.0d0
+  !+ad_vars  plasmod_psep_r /12000.0d0/ : Psep/R max value
+  real(kind(1.0D0)) :: plasmod_psep_r = 12000.0d0
+  !+ad_vars  plasmod_qdivt /0.0d0/ : Divertor heat flux in MW/m^2, if 0, dont use SOL model
+  real(kind(1.0D0)) :: plasmod_qdivt = 0.0d0  
+  
  !Derived type inputs
   !+ad_vars  plasmod_qnbi_psepfac /50.0d0/ : dqnbi/d(1-Psep/PLH)
   real(kind(1.0D0)) :: plasmod_qnbi_psepfac = 50.0d0
@@ -67,7 +75,6 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_cxe_psepfac = 1.0d-4
   !+ad_vars  plasmod_car_qdivt /1.0d-4/ : dcar/d(qdivt)
   real(kind(1.0D0)) :: plasmod_car_qdivt = 1.0d-4
-
     !deposition locations
   !+ad_vars  plasmod_x_heat(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_heat = (/ 0.0d0, 0.0d0 /)
@@ -88,6 +95,11 @@ module plasmod_variables
 
   !+ad_vars  plasmod_nbi_energy /1000.0d0/ :: In keV
   real(kind(1.0D0)) :: plasmod_nbi_energy = 1000.0d0
-
+  !+ad_vars  plasmod_v_loop /-1.0d-6/ :: Target loop voltage. If lower than -1.e5 do not use
+  real(kind(1.0D0)) :: plasmod_v_loop = -1.0d-6
+  !+ad_vars  plasmod_f_ni /0.0d0/ :: Required fraction of non inductive current. If 0 do not use CD
+  real(kind(1.0D0)) :: plasmod_f_ni = 0.0d0
+  !+ad_vars  plasmod_pfus /0.0d0/ :: If 0. not used (otherwise controlled with Pauxheat)
+  real(kind(1.0D0)) :: plasmod_pfus = 0.0d0
   
 end module plasmod_variables

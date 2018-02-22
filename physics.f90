@@ -362,16 +362,24 @@ contains
 	inp0%dx_control(1)=plasmod_dx_control(1) !nbi
 	inp0%dx_control(2)=plasmod_dx_control(2) !ech
         inp0%nbi_energy=plasmod_nbi_energy !in keV
- 
+
+        comp%psepplh_inf = plasmod_psepplh_inf !Psep/PLH if below this, use nbi
+        comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
+        comp%psep_r = plasmod_psep_r !Psep/R max value
+        comp%qdivt = plasmod_qdivt !divertor heat flux in MW/m^2, if 0, dont use SOL model
+        inp0%V_loop=plasmod_v_loop !target loop voltage. If lower than -1.e5 dont use
+        inp0%f_ni=plasmod_f_ni !required fraction of non inductive current, if 0 dont use CD
+        inp0%pfus=plasmod_pfus !if 0., not used (otherwise it would be controlled with Pauxheat)
+        
         write(*,*) 'geom counter = ', geom%counter
         if (geom%counter.eq.0.d0) then
            comp%car = 0. !argon concentration, used if qdivt=0.
            comp%cxe = 0. !xenon concentration, if negative uses Psepplh as criterion
            comp%che = 0. !helium concentration, used if globtau(3)=0.
-           comp%psepplh_inf = 1.01 !Psep/PLH if below this, use nbi
-           comp%psepplh_sup = 12000.d0 !Psep/PLH if above this, use Xe
-           comp%psep_r = 12000.d0 !Psep/R max value
-           comp%qdivt = 0. !divertor heat flux in MW/m^2, if 0, dont use SOL model
+           !comp%psepplh_inf = 1.01 !Psep/PLH if below this, use nbi
+           !comp%psepplh_sup = 12000.d0 !Psep/PLH if above this, use Xe
+           !comp%psep_r = 12000.d0 !Psep/R max value
+           !comp%qdivt = 0. !divertor heat flux in MW/m^2, if 0, dont use SOL model
 
            ped%teped=teped !pedestal top temperature
 
@@ -384,9 +392,9 @@ contains
            inp0%qfus=0.d0 !nbi power
            inp0%spellet=0.d0 !pellet mass in particles of D in 10^19
            inp0%fpellet=0.5d0 !pellet frequency in Hz
-           inp0%V_loop=-1.e6 !target loop voltage. If lower than -1.e5, dont use this
-           inp0%f_ni=0. !required fraction of non inductive current, if 0, dont use CD
-           inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat)
+           !inp0%V_loop=-1.e6 !target loop voltage. If lower than -1.e5, dont use this
+           !inp0%f_ni=0. !required fraction of non inductive current, if 0, dont use CD
+           !inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat)
 
            geom%k = kappa !edge elongation
            geom%d = triang !edge triangularity

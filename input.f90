@@ -1123,7 +1123,19 @@ contains
        case ('plasmod_c_car')
           call parse_real_variable('plasmod_c_car', plasmod_c_car, 0.0D0, 1.0D3, &
                'Compression factor between div and core: eg 10 is 10 times Argon conc in divertor than in core')
-
+       case ('plasmod_psepplh_inf')
+          call parse_real_variable('plasmod_psepplh_inf', plasmod_psepplh_inf, 0.0D0, 2.0D0, &
+               'Psep/PLH if below this, use nbi')
+        case ('plasmod_psepplh_sup')
+          call parse_real_variable('plasmod_psepplh_sup', plasmod_psepplh_sup, 0.0D0, 2.0D4, &
+               'Psep/PLH if above this, use Xe')
+        case ('plasmod_psep_r')
+          call parse_real_variable('plasmod_psep_r', plasmod_psep_r, 0.0D0, 2.0D4, &
+               'Psep/R max value')          
+       case ('plasmod_qdivt')
+          call parse_real_variable('plasmod_qdivt', plasmod_qdivt, 0.0D0, 100.0D0, &
+               'Divertor heat flux in MW/m^2, if 0, dont use SOL model')
+          
     !Derived type inputs
        case ('plasmod_qnbi_psepfac')
           call parse_real_variable('plasmod_qnbi_psepfac', plasmod_qnbi_psepfac, 0.0D0, 1.0D2, &
@@ -1162,9 +1174,15 @@ contains
        case ('plasmod_nbi_energy')
           call parse_real_variable('plasmod_nbi_energy', plasmod_nbi_energy, 0.0D0, 1.0D4, &
                'in keV')
-
-
-
+       case ('plasmod_v_loop')
+          call parse_real_variable('plasmod_v_loop', plasmod_v_loop, -1.0D4, 1.0D4, &
+               'Target loop voltage. If lower than -1.e5 do not use')
+       case ('plasmod_f_ni')
+          call parse_real_variable('plasmod_f_ni', plasmod_f_ni, 0.0D0, 1.0D0, &
+               'Required fraction of non inductive current. If 0 do not use CD')
+       case ('plasmod_pfus')
+          call parse_real_variable('plasmod_pfus', plasmod_pfus, 0.0D0, 1.0D4, &
+               'If 0. not used (otherwise controlled with Pauxheat)')
 
           
           !  Current drive settings
