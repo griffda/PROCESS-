@@ -10,7 +10,7 @@ subroutine compute_equil( &
   roc, Vloop, fbs,fcd, toleq, &
   k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar,&
   ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
-  ,pres_fac)
+  ,pres_fac,areat)
   
   use grad_func
   implicit none
@@ -54,7 +54,7 @@ subroutine compute_equil( &
   real(kind(1.0d0)), dimension(nx) :: gra,sqgra,grar,avr2,ai0,dgrda,avsqg !gradient,sqrgradient,radial gradient,
   
   integer :: na,diagz,nxtemp
-  real(kind(1.0d0)) :: gpp4,gp2,yro,hro,yda,TIME,alfa
+  real(kind(1.0d0)) :: gpp4,gp2,yro,hro,yda,TIME,alfa,areat
 ! Quiet NAN, double precision.
 REAL(8), PARAMETER :: D_QNAN = &
 TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)  
@@ -320,6 +320,9 @@ nxtemp=nx
 	BDB0=BDB0*BTOOO/BTOR
 	B0DB2=B0DB2/BTOOO**2.*BTOR**2.
  !not used!!!
+
+ areat=2.*pi*trapz((x*rmin*k+x**2.*rmin**2./2.*derivcc(nx,x*rmin,k,1)))*(x(2)-x(1))*rmin
+!	pause
 	
         
 !	endif

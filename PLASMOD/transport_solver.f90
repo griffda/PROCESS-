@@ -135,7 +135,7 @@
   real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,fcd,qdivt,q_heat,q_cd,q_fus,q_95
 
 !for sol model
-  real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac
+  real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat
 
   integer :: jped,nx,nxt,nchannels, iped_model,jdum1,nxequil,i_qsaw, i_profiles, i_diagz
     
@@ -498,7 +498,7 @@ q_fus=loss%qfus
           roc, Vloop, fbs,fcd, toleq, &
           k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar,&
           ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
-          ,pres_fac)
+          ,pres_fac,areat)
   else
 !	write(*,*) "equil call oldnew",radp%volum(nx)
      !this uses previous results to speed up
@@ -513,7 +513,7 @@ q_fus=loss%qfus
           roc, Vloop, fbs,fcd, toleq, &
           k, d, shif, radp%jbs, radp%jcd, radp%Volum, G1, G2, G3, dV, phi, q, rho, radp%psi, jpar,&
           radp%ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
-          ,pres_fac)
+          ,pres_fac,areat)
      psi = radp%psi
      ipol=radp%ipol
      jcdr=radp%jcd
@@ -1016,7 +1016,7 @@ endif
                 roc, Vloop, fbs,fcd, dum1, &
                 k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar,&
                 ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
-                ,pres_fac)
+                ,pres_fac,areat)
            !check if isnan
            if (isnan(qedge).or.isnan(vloop).or.ip.eq.0.d0) then
               write(*,*) 'equilibrium not converged',vloop,q,ip
@@ -1173,7 +1173,7 @@ endif
   mhd%Bpolavg=trapz(radp%bpol*dv)/v(nx)
   mhd%betator=2.d0*mu_vacuum*1.d3*1.d19*e_charge*trapz(pressure*dv)/(v(nx)*btor**2.d0)
   mhd%betapol=2.d0*mu_vacuum*1.d3*1.d19*e_charge*trapz(pressure*dv)/trapz(radp%bpol**2.d0*dv)
-  mhd%torsurf=v(nx)/(2.d0*pi*rmajor)
+  mhd%torsurf=areat
 
 	mhd%betan = betan
   !write(*,*) radp%bpol
