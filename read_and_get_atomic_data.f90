@@ -8,7 +8,7 @@ module read_and_get_atomic_data
   !+ad_prob  None
   !+ad_hist  25/01/17 MDK  Initial version of module
   !+ad_stat  Okay
-  !+ad_docs  
+  !+ad_docs
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -17,14 +17,14 @@ module read_and_get_atomic_data
 
     use maths_library
     use read_radiation
-    
+
     implicit none
 
 contains
 
   subroutine get_h_rates(density, temperature, s, al, cx, plt, prb, mass, verbose)
     !+ad_name  get_h_rates
-    !+ad_summ  
+    !+ad_summ
     !+ad_type  subroutine
     !+ad_auth  M Kovari, CCFE, Culham Science Centre
     !+ad_cont  N/A
@@ -37,11 +37,11 @@ contains
     !+ad_args  prb : output real : continuum radiation power rate coefficient (Wm^3)
     !+ad_args  mass : input real : relative atomic mass for cx rate coefficient
     !+ad_args  verbose : input logical : verbose switch
-    !+ad_desc  
+    !+ad_desc
     !+ad_prob  None
     !+ad_hist  01/02/17 MDK  Initial version
     !+ad_stat  Okay
-    !+ad_docs  
+    !+ad_docs
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -82,14 +82,14 @@ contains
     ! The # character must be at the start of the line.
     include "root.dir"
 
-    character(len=80), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
+    character(len=120), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
 
     ! Maxima for log density and log temperature in each data file
-    real(kind(1.0D0)), save :: max_scd_d, max_scd_t       
-    real(kind(1.0D0)), save :: max_acd_d, max_acd_t        
-    real(kind(1.0D0)), save :: max_ccd_d, max_ccd_t        
+    real(kind(1.0D0)), save :: max_scd_d, max_scd_t
+    real(kind(1.0D0)), save :: max_acd_d, max_acd_t
+    real(kind(1.0D0)), save :: max_ccd_d, max_ccd_t
     real(kind(1.0D0)), save :: max_plt_d, max_plt_t
-    real(kind(1.0D0)), save :: max_prb_d, max_prb_t      
+    real(kind(1.0D0)), save :: max_prb_d, max_prb_t
 
     ine = 24
     ite = 29
@@ -143,30 +143,30 @@ contains
       ! line radiation data
       call read_atomdat(plt_d,plt_t,plt_r, ine=24, ite=29, filename=plt_file, verbose=verbose)
       ! continuum radiation data
-      call read_atomdat(prb_d,prb_t,prb_r, ine=24, ite=29, filename=prb_file, verbose=verbose)  
-        
+      call read_atomdat(prb_d,prb_t,prb_r, ine=24, ite=29, filename=prb_file, verbose=verbose)
+
       ! Store the maxima for log density and log temperature in each data file
-      ! Subtract a smidgen to ensure that the values submitted for interpolation are 
+      ! Subtract a smidgen to ensure that the values submitted for interpolation are
       ! the range.
       max_scd_d=maxval(scd_d) - 0.00001
       max_scd_t=maxval(scd_t) - 0.00001
-        
+
       max_acd_d=maxval(acd_d) - 0.00001
       max_acd_t=maxval(acd_t) - 0.00001
-        
+
       max_ccd_d=maxval(ccd_d) - 0.00001
       max_ccd_t=maxval(ccd_t) - 0.00001
-        
+
       max_plt_d=maxval(plt_d) - 0.00001
-      max_plt_t=maxval(plt_t) - 0.00001        
-        
+      max_plt_t=maxval(plt_t) - 0.00001
+
       max_prb_d=maxval(prb_d) - 0.00001
-      max_prb_t=maxval(prb_t) - 0.00001       
-        
+      max_prb_t=maxval(prb_t) - 0.00001
+
     end if
 
     ! Using function interpolate(x_len, x_array, y_len, y_array, f, x, y, delta)
-    ! ionisation        
+    ! ionisation
     s   = 1.d-6*10.0**(interpolate(ine, scd_d, ite, scd_t, scd_r,   &
                                   min(logdens,max_scd_d),           &
                                   min(logtemp,max_scd_t)))
@@ -193,7 +193,7 @@ contains
 
   subroutine read_atomdat(density,temperature,rates, ine, ite, filename, verbose)
     !+ad_name  get_h_rates
-    !+ad_summ  
+    !+ad_summ
     !+ad_type  subroutine
     !+ad_auth  M Kovari, CCFE, Culham Science Centre
     !+ad_cont  N/A
@@ -206,11 +206,11 @@ contains
     !+ad_args  prb : input  : continuum radiation power rate coefficient (Wm^3)
     !+ad_args  mass : input  : relative atomic mass for cx rate coefficient
     !+ad_args  verbose : output  : verbose switch
-    !+ad_desc  
+    !+ad_desc
     !+ad_prob  None
     !+ad_hist  01/02/17 MDK  Initial version
     !+ad_stat  Okay
-    !+ad_docs  
+    !+ad_docs
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
