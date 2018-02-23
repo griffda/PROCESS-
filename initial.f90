@@ -541,7 +541,12 @@ subroutine check
         end if
         tmargmin_tf = tmargmin
         tmargmin_cs = tmargmin
-    end if
+     end if
+
+     ! Initialise value for gamcd for use in PLASMOD first iteration
+     if(ipedestal==2)then
+        gamcd = 0.3
+     endif
 
 
     errors_on = .false.
