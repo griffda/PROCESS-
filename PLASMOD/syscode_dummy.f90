@@ -175,6 +175,9 @@ write(774,'(911E25.11)') geom%R,geom%bt,loss%pfus,loss%qheat+loss%qfus+loss%qcd,
 write(*,*) "geom%R,geom%bt,loss%pfus,loss%qheat+loss%qfus+loss%qcd,comp%cxe,comp%che"
 write(*,'(911E25.11)') geom%R,geom%bt,loss%pfus,loss%qheat+loss%qfus+loss%qcd,comp%cxe,comp%che
 
+
+write(*,*) (mhd%f_ni-mhd%fbs)*geom%ip/loss%pnbi*1e3
+
 !pause
 
 enddo

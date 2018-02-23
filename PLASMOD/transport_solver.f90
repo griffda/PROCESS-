@@ -964,7 +964,7 @@ endif
            !compute current drive from ecrh and nbi
            jcdr=0.d0
            !if (num%etol.lt.num%tolopt) 
-											jcdr=inp0%nbcdeff*pnbi !
+											jcdr=inp0%nbcdeff*pnbi*6.2832/trapz(nepr*dv)*v(nx) !PROCESS definition of gammacd
 	include 'cubsfml.inc'
 	 cubb(1)=0.d0
 	cubb=max(0.d0,cubb)
