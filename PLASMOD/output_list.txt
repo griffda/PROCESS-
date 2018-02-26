@@ -1,0 +1,80 @@
+SCALARS
+
+geom%ip   = plasma current in MA computed by PLASMOD
+geom%q95  = q_95
+geom%k    = edge elongation
+geom%d    = edge triangularity
+
+comp%cxe  = xenon concentration at the pedestal top
+comp%che  = Helium concentration
+comp%car  = argon concentration at the pedestal top
+
+
+loss%pnbi  = total amount of required power for all kind of controls (MW)
+
+ped%teped = pedestal top electron temperature keV
+ped%neped = pedestal top density 10^19 m^-3
+ped%nsep  = separatrix density
+ped%tsep  = separatrix temperature
+
+mhd%vp  = plasma volume in m^3
+mhd%Sp  = plasma lateral surface in m^2
+mhd%torsurf = plasma surface of a toroidal section in m^2
+
+mhd%q_sep = edge safety factor value
+mhd%vloop  = loop voltage in V
+mhd%fbs    = bootstrap current fraction
+mhd%f_ni   = total non inductive current fraction
+
+loss%peaux = total auxiliary power to electrons (MW)
+loss%piaux = total auxiliary power to ions (MW)
+
+loss%qheat = power used to control Psep (MW)
+loss%qcd = power used for CD (MW)
+loss%qfus = power used to control Pfus (MW)
+
+loss%Psep = net separatrix power in MW = Paux+Pfus-Prad
+loss%PLH  = LH transition power in MW
+loss%Prad = total radiated power in MW
+loss%Wth = plasma energy in MJ
+loss%taueff = confinement time in s
+loss%H  =  computed H factor according to ITER 98 y2 elmy H mode
+loss%Pfus  = total fusion power in MW (it is basically 5.*alpha power)
+loss%pohm = Ohmic power (MW)
+loss%rplas = plasma resistivity (V/A)
+loss%psync = total synchrotron power MW
+loss%pbrehms = total brehmstrahlung power in MW
+loss%pline = total line radiation in MW
+loss%psepi = ion power through separatrix MW
+loss%psepe = electron separatrix power MW
+loss%piepv = volume averaged equipartition power MW/m^3  --> electrons lose this power and ions gain it
+loss%pdiv = power onto divertor in MW/m^2
+loss%pradedge = edge radiation MW
+loss%pradcore = core radiation MW
+
+radp%av_ne = volume average electron density in 10^19 m^-3
+radp%av_ni = volume average ion density 
+radp%av_ti = volume average ion temperature in kev
+radp%av_te = volume average electron temperature
+radp%zeff = volume average effective charge
+
+
+
+PROFILES all stored in radp%
+
+volum = volume in m^3
+jbs = bootstrap current in MA/m^2
+jcd = current drive current
+jpar = total parallel current density
+ipol = poloidal current in m*T
+qprof = safety factor profile
+psi = poloidal flux in Wb
+Vp = dVolum/dr in m^2
+x = normalized minor radius, the local minor radius is x*geom%R/geom%A
+ne = electron density in 10^19 m^-3
+te = electron temperature in kev
+ti = ion temperature 
+cc = plasma conductivity in MA/(V*m)
+palph = alpha pressure in keV*10^10 m^-3
+nions = ion density in 10^19 m^-3
+
