@@ -32,4 +32,6 @@ PLASMOD/CHARTST/*
 PLASMOD/*.DAT
 PLASMOD/*.dat
 PLASMOD/fort.*
+PLASMOD/output_list.txt
+PLASMOD/KE*
 *~
