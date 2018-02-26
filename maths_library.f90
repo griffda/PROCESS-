@@ -2585,7 +2585,6 @@ contains
            sum = best_sum_so_far
            write(*,*)
            write(*,20)'Best solution vector will be output. Convergence parameter = ', sum
-           write(*,*)'Return from VMCON'
 20         format(a,1pe10.3)
            return
        end if
@@ -2688,7 +2687,7 @@ contains
        iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
 
        write(iotty, '("==>", I5, "  vmcon iterations. Normalised FoM =", &
-           &  f8.3, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
+           &  f8.4, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
            ADVANCE="NO"), niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
 
        if (verbose == 1) then

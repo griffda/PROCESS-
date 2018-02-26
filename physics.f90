@@ -278,7 +278,7 @@ contains
        nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
             * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
     endif
-    
+
     ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
     ! ieped : switch for scaling pedestal-top temperature with plasma parameters
     if ((ipedestal == 1).and.(ieped == 1)) teped = t_eped_scaling()
@@ -561,18 +561,55 @@ function t_eped_scaling()
                           kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
 end function t_eped_scaling
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- function eped_warning()
-     ! Issue #413.
-     logical :: eped_warning
-     eped_warning=.false.
-     if((triang<0.399d0).or.(triang>0.601d0)) eped_warning=.true.
-     if((kappa<1.499d0).or.(kappa>2.001d0)) eped_warning=.true.
-     if((plascur<9.99d6).or.(plascur>20.01d6)) eped_warning=.true.
-     if((rmajor<6.99d0).or.(rmajor>11.01d0)) eped_warning=.true.
-     if((rminor<1.99d0).or.(rminor>3.501d0))eped_warning=.true.
-     if((normalised_total_beta<1.99d0).or.(normalised_total_beta>3.01d0))eped_warning=.true.
-     if(tesep>0.5)eped_warning=.true.
- end function eped_warning
+ ! function eped_warning()
+ !     ! Issue #413.
+ !     logical :: eped_warning
+ !     eped_warning=.false.
+ !     if((triang<0.399d0).or.(triang>0.601d0)) eped_warning=.true.
+ !     if((kappa<1.499d0).or.(kappa>2.001d0)) eped_warning=.true.
+ !     if((plascur<9.99d6).or.(plascur>20.01d6)) eped_warning=.true.
+ !     if((rmajor<6.99d0).or.(rmajor>11.01d0)) eped_warning=.true.
+ !     if((rminor<1.99d0).or.(rminor>3.501d0))eped_warning=.true.
+ !     if((normalised_total_beta<1.99d0).or.(normalised_total_beta>3.01d0))eped_warning=.true.
+ !     if(tesep>0.5)eped_warning=.true.
+ ! end function eped_warning
+
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  function eped_warning()
+      ! Issue #413.  MDK 26/2/18: improved output
+      character(len=100) :: eped_warning, info_string
+      eped_warning=''
+      info_string = ''
+
+      if((triang<0.399d0).or.(triang>0.601d0)) then
+          write(info_string , '(1pe13.4)') triang
+          eped_warning='triang = '//trim(info_string)
+      endif
+      if((kappa<1.499d0).or.(kappa>2.001d0)) then
+          write(info_string , '(1pe13.4)') kappa
+          eped_warning=trim(eped_warning)//'  kappa = '//trim(info_string)
+      endif
+      if((plascur<9.99d6).or.(plascur>20.01d6)) then
+          write(info_string , '(1pe13.4)') plascur
+          eped_warning=trim(eped_warning)//'  plascur = '//trim(info_string)
+      endif
+      if((rmajor<6.99d0).or.(rmajor>11.01d0)) then
+          write(info_string , '(1pe13.4)') rmajor
+          eped_warning=trim(eped_warning)//'  rmajor = '//trim(info_string)
+      endif
+      if((rminor<1.99d0).or.(rminor>3.501d0))then
+          write(info_string , '(1pe13.4)') rminor
+          eped_warning=trim(eped_warning)//'  rminor = '//trim(info_string)
+      endif
+      if((normalised_total_beta<1.99d0).or.(normalised_total_beta>3.01d0))then
+          write(info_string , '(1pe13.4)') normalised_total_beta
+          eped_warning=trim(eped_warning)//'  normalised_total_beta = '//trim(info_string)
+      endif
+      if(tesep>0.5)then
+          write(info_string , '(1pe13.4)') tesep
+          eped_warning=trim(eped_warning)//'  tesep = '//trim(info_string)
+      endif
+  end function eped_warning
  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function bootstrap_fraction_iter89(aspect,beta,bt,cboot,plascur,q95,q0,rmajor,vol)
@@ -5744,18 +5781,21 @@ end function t_eped_scaling
         fgwsep_out = nesep/dlimit(7)
         if(fgwped >= 0d0) fgwped = neped/dlimit(7)
         if(fgwsep >= 0d0) fgwsep = nesep/dlimit(7)
-        
+
         call ovarre(outfile,'Electron density at pedestal / nGW','(fgwped_out)',fgwped_out)
         call ovarrf(outfile,'Temperature pedestal r/a location','(rhopedt)',rhopedt)
         ! Issue #413 Pedestal scaling
         call ovarin(outfile,'Pedestal scaling switch','(ieped)',ieped)
         if(ieped==1)then
             call ocmmnt(outfile,'Saarelma 6-parameter pedestal temperature scaling is ON')
-            if(eped_warning())then
+            if(eped_warning() /= '')then
                 call ocmmnt(outfile,'WARNING: Pedestal parameters are outside the range of applicability of the scaling:')
                 call ocmmnt(outfile,'triang: 0.4 - 0.6; kappa: 1.5 - 2.0;   plascur: 10 - 20 MA, rmajor: 7 - 11 m;')
                 call ocmmnt(outfile,'rminor: 2 - 3.5 m; tesep: 0 - 0.5 keV; normalised_total_beta: 2 - 3; ')
-                write(*,*)'WARNING: Pedestal parameters are outside the range of applicability of the scaling'
+                write(*,*)'WARNING: Pedestal parameters are outside the range of applicability of the scaling:'
+                write(*,*)'triang: 0.4 - 0.6; kappa: 1.5 - 2.0;   plascur: 10 - 20 MA, rmajor: 7 - 11 m;'
+                write(*,*)'rminor: 2 - 3.5 m; tesep: 0 - 0.5 keV; normalised_total_beta: 2 - 3'
+                write(*,*)trim(eped_warning())
             endif
         endif
         call ovarrf(outfile,'Electron temp. pedestal height (keV)','(teped)',teped)
@@ -5767,7 +5807,7 @@ end function t_eped_scaling
        call ovarre(outfile,'Critical ballooning parameter value','(alpha_crit)',alpha_crit)
        call ovarre(outfile,'Critical electron density at separatrix (/m3)','(nesep_crit)',nesep_crit)
     endif
-    
+
     call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
     call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep_out)',fgwsep_out)
     call ovarrf(outfile,'Temperature profile index','(alphat)',alphat)
