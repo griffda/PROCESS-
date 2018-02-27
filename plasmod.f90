@@ -3,7 +3,25 @@
   !Katy Ellis, created this file 26/02/18 to support the implementation of the
   !PLASMOD 1D transport model, coded by Emiliano Fable
 
-module plasmod
+module plasmod_module
+
+
+  !+ad_name  plasmod
+  !+ad_summ  Module containing plasmod interface
+  !+ad_type  Module
+  !+ad_auth  K Ellis, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains variables relating to the PLASMOD
+  !+ad_desc  1-dimensional transport code.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  26/02/18 KE Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   ! This module sets up the plasmod variables, calls the function and writes the output
   use plasmod_variables
   use global_variables
@@ -12,26 +30,57 @@ module plasmod
   use current_drive_variables
   use constants
   use constraint_variables
-  use structs
+  use process_output
+
+
   
   implicit none
 
   public
 
-  !type (geometry) :: geom
-  !type (composition) :: comp
-  !type (pedestal) :: ped
-  !type (inputs) :: inp0
-  !type (numerics_transp) :: num
   
 contains
 
   subroutine setupPlasmod(num,geom,comp,ped,inp0)
+
+    !+ad_name  setupPlasmod
+    !+ad_summ  Routine to set up the PLASMOD input params
+    !+ad_type  Subroutine
+    !+ad_auth  K Ellis, UKAEA, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  num : derived type :
+    !+ad_args  geom : derived type : 
+    !+ad_args  comp : derived type :
+    !+ad_args  ped : derived type :
+    !+ad_args  inp0 : derived type : 
+    !+ad_desc  This routine writes out the times of the various stages
+    !+ad_desc  during a single plant cycle.
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  oheadr
+    !+ad_call  ovarrf
+    !+ad_hist  26/02/18 KE Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    
+
+    implicit none
+
+    
+    !  Arguments
+ 
     type (geometry), intent(inout) :: geom
     type (composition), intent(inout) :: comp
     type (pedestal), intent(inout) :: ped
     type (inputs), intent(inout) :: inp0
     type (numerics_transp), intent(inout) :: num
+    
+    !  Local variables
+
+    
     
     neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
     nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
@@ -64,6 +113,8 @@ contains
     comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
 
     if (geom%counter.eq.0.d0) then
+
+         
        num%tol=plasmod_tol !tolerance to be reached, in % variation at each time step
        num%dtmin=plasmod_dtmin !min time step
        num%dtmax=plasmod_dtmax !max time step
@@ -72,6 +123,7 @@ contains
        num%Ainc=plasmod_ainc !increase of dt
        num%test=plasmod_test !max iteration number
        num%tolmin=plasmod_tolmin ! multiplier of etolm that should not be overcome
+       
        num%eopt=plasmod_eopt !exponent of jipperdo
        num%dtmaxmin=plasmod_dtmaxmin !exponent of jipperdo2
        num%capA=plasmod_capa !first radial grid point
@@ -150,9 +202,43 @@ contains
 
   end subroutine runPlasmod
 
-  subroutine outputPlasmod
+  subroutine outputPlasmod(outfile)
 
+
+    !+ad_name  outputPlasmod
+    !+ad_summ  Routine to print out the output from PLASMOD
+    !+ad_type  Subroutine
+    !+ad_auth  K Ellis, UKAEA, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  outfile : input integer : Fortran output unit identifier
+    !+ad_desc  This routine writes out the results from the PLASMOD code
+    !+ad_prob  None
+    !+ad_call  oheadr
+    !+ad_call  ovarrf
+    !+ad_hist  27/02/18 KE Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+
+    implicit none
+    
+    !  Arguments
+    integer, intent(in) :: outfile
+    
+   
+    call oheadr(outfile,'PLASMOD')
+
+    call ovarrf(outfile,'Power crossing the separatrix (MW)','(loss%Psep)', loss%Psep)
+    !call ovarrf(outfile,'Plasma current ramp-up time (s)','(tohs)',tohs)
+    !call ovarrf(outfile,'Heating time (s)','(theat)',theat)
+    !call ovarre(outfile,'Burn time (s)','(tburn)',tburn, 'OP ')
+    !call ovarrf(outfile,'Reset time to zero current for CS (s)','(tqnch)',tqnch)
+    !call ovarrf(outfile,'Time between pulses (s)','(tdwell)',tdwell)
+    !call oblnkl(outfile)
+    !call ovarre(outfile,'Total plant cycle time (s)','(tcycle)',tcycle, 'OP ')
 
   end subroutine outputPlasmod
   
-end module plasmod
+end module plasmod_module

@@ -1443,6 +1443,7 @@ subroutine output(outfile)
   !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
   !+ad_hist  09/07/14 PJK Turned on error handling
   !+ad_hist  07/06/16  JM Added some extra comments
+  !+ad_hist  27/02/2018 KE Added plasmod output routine
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1464,6 +1465,8 @@ subroutine output(outfile)
   use pfcoil_module
   use physics_module
   use physics_variables
+  use plasmod_module
+  use plasmod_variables
   use power_module
   use pulse_module
   use sctfcoil_module
@@ -1534,6 +1537,10 @@ subroutine output(outfile)
 
   ! TODO what is this? not in caller.f90?
   call outplas(outfile)
+
+
+  ! 
+  call outputPlasmod(outfile)
 
   ! startup model (not used) !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!

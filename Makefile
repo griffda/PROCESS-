@@ -92,7 +92,6 @@ SRC = \
  plasma_geometry.f90 \
  plasma_profiles.f90 \
  plasmod.f90 \
- plasmod_variables.f90 \
  process.f90 \
  pulse.f90 \
  read_radiation.f90 \
@@ -149,7 +148,6 @@ OBJ = \
  plasma_geometry.o \
  plasma_profiles.o \
  plasmod.o \
- plasmod_variables.o \
  process.o \
  pulse.o \
  read_radiation.o \
@@ -264,12 +262,12 @@ fispact.o: global_variables.o output.o
 fson_library.o:
 	${FORTRAN} ${FFLAGS_LIB} -c fson_library.f90 -o fson_library.o
 fw.o : global_variables.o output.o refprop_interface.o
-global_variables.o:
+global_variables.o: $(PLASMOD_DIR)/structs.o
 hcll.o : fw.o global_variables.o output.o
 hcpb.o : fw.o global_variables.o output.o maths_library.o refprop_interface.o
 impurity_radiation.o: error_handling.o global_variables.o root.dir plasma_profiles.o
 initial.o: error_handling.o global_variables.o output.o scan.o sctfcoil.o stellarator.o
-input.o: error_handling.o global_variables.o numerics.o output.o scan.o plasmod_variables.o
+input.o: error_handling.o global_variables.o numerics.o output.o scan.o
 iteration_variables.o: error_handling.o global_variables.o numerics.o
 machine_build.o: error_handling.o global_variables.o output.o
 maths_library.o: global_variables.o
@@ -279,7 +277,7 @@ output.o: global_variables.o numerics.o
 pfcoil.o: error_handling.o global_variables.o maths_library.o output.o sctfcoil.o superconductors.o
 physics.o: current_drive.o error_handling.o global_variables.o impurity_radiation.o \
   maths_library.o numerics.o output.o plasma_profiles.o plasmod.o \
- $(PLASMOD_DIR)/structs.o $(PLASMOD_DIR)/grad_func.o
+  $(PLASMOD_DIR)/grad_func.o
 plant_power.o: error_handling.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: error_handling.o global_variables.o maths_library.o
@@ -307,8 +305,7 @@ structure.o: global_variables.o output.o
 superconductors.o: global_variables.o output.o error_handling.o
 tfcoil.o: error_handling.o global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: error_handling.o global_variables.o output.o
-plasmod.o: global_variables.o plasmod_variables.o $(PLASMOD_DIR)/structs.o
-plasmod_variables.o: $(PLASMOD_DIR)/structs.o
+plasmod.o: global_variables.o output.f90 impurity_radiation.f90
 $(PLASMOD_DIR)/e3m.o: 
 $(PLASMOD_DIR)/equil.o: $(PLASMOD_DIR)/grad_func.o
 $(PLASMOD_DIR)/grad_func.o: 

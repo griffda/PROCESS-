@@ -111,10 +111,10 @@ module physics_module
   use tfcoil_variables
   use times_variables
 
-  use structs
+  !use structs
   use grad_func
   
-  use plasmod
+  use plasmod_module
   use plasmod_variables
 
   implicit none
@@ -129,18 +129,7 @@ module physics_module
   integer :: iscz
   real(kind(1.0D0)) :: vcritx, photon_wall, rad_fraction
 
-  !PLASMOD derived types
-  !if (ipedestal == 2)then
-     type (geometry) :: geom
-     type (composition) :: comp
-     type (pedestal) :: ped
-     type (inputs) :: inp0
-     type (radial_profiles) :: radp
-     type (MHD_EQ) :: mhd
-     type (power_losses) :: loss
-     type (numerics_transp) :: num
-     integer :: i_flag
-  !endif
+
   
 contains
 
@@ -311,7 +300,7 @@ contains
  !      alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
  !      nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
  !           * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
-       teped = t_eped_scaling()
+       teped = t_eped_scaling() !needs to stay here because of circular dependency with plasmod.f90
 
        !Here are the PROCESS links for input
  !      geom%r=rmajor
@@ -335,10 +324,7 @@ contains
  !      inp0%nbcdeff=gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
        
  !      comp%pradpos = coreradius ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
- !      comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
-       write(*,*) 'geom counter = ', geom%counter
-       call setupPlasmod(num,geom,comp,ped,inp0)
-       
+ !      comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value       
 
        !if (geom%counter.eq.0.d0) then
        !   num%tol=plasmod_tol !tolerance to be reached, in % variation at each time step
@@ -418,30 +404,42 @@ contains
        !   geom%ip=plascur/1.d6	
 
        !   ped%teped=teped !pedestal top temperature
-       !endif
+          !endif
+          
+       write(*,*) 'geom counter = ', geom%counter
+       call setupPlasmod(num,geom,comp,ped,inp0)
 
-       i_flag=1
-       open(32,file='plasmodsolprima.dat')
-       write(32,*) 'num ',num
-       write(32,*) 'geom ',geom
-       write(32,*) 'comp ',comp
-       write(32,*) 'ped ',ped
-       write(32,*) 'inp0 ',inp0
-       write(32,*) 'mhd ',mhd
-       write(32,*) 'loss ',loss
-       close(32)	
+       if(1 == 1) then
+       
+          i_flag=1
+          open(32,file='plasmodsolprima.dat')
+          write(32,*) 'num ',num
+          write(32,*) 'geom ',geom
+          write(32,*) 'comp ',comp
+          write(32,*) 'ped ',ped
+          write(32,*) 'inp0 ',inp0
+          write(32,*) 'mhd ',mhd
+          write(32,*) 'loss ',loss
+          close(32)	
+          
+       endif
 
        call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+       
+       !integer, intent(in) :: outfile
+       !call outputPlasmod(outfile,num,geom,comp,ped,radp,mhd,loss)
 
-       open(32,file='plasmodsoldopo.dat')
-       write(32,*) 'num ',num
-       write(32,*) 'geom ',geom
-       write(32,*) 'comp ',comp
-       write(32,*) 'ped ',ped
-       write(32,*) 'inp0 ',inp0
-       write(32,*) 'mhd ',mhd
-       write(32,*) 'loss ',loss
-       close(32)
+       if (1 == 1) then
+          open(32,file='plasmodsoldopo.dat')
+          write(32,*) 'num ',num
+          write(32,*) 'geom ',geom
+          write(32,*) 'comp ',comp
+          write(32,*) 'ped ',ped
+          write(32,*) 'inp0 ',inp0
+          write(32,*) 'mhd ',mhd
+          write(32,*) 'loss ',loss
+          close(32)
+       endif
 
        if (i_flag==1)then
           write(*,*) 'Katy - Transport model has converged!!!'
