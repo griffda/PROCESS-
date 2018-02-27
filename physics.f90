@@ -264,21 +264,12 @@ contains
        q95 = q  !  i.e. input (or iteration variable) value
     end if
 
-    !  Calculate density and temperature profile quantities
-    !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
-    !    fgwped * Greenwald density limit
-    !  Note: this used to be done before plasma current
-
-    ! if ((ipedestal == 1).and.(iscdens == 1)) then
-    !   neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
-    !   nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
-    ! end if
 
     ! Issue #589 remove iscdens
-    if ((ipedestal == 1).and.(fgwped >=0d0)) then
+    if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwped >=0d0)) then
       neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
     endif
-    if ((ipedestal == 1).and.(fgwsep >=0d0)) then
+    if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwsep >=0d0)) then
       nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
     end if
 
@@ -291,121 +282,14 @@ contains
     
     ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
     ! ieped : switch for scaling pedestal-top temperature with plasma parameters
-    if ((ipedestal == 1).and.(ieped == 1)) teped = t_eped_scaling()
+    if (((ipedestal == 1).or.(ipedestal==2)).and.(ieped == 1)) teped = t_eped_scaling()
 
-    if (ipedestal == 2)then
-       ! Run PLASMOD 
- !      neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
- !      nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
- !      alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
- !      nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
- !           * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
-       teped = t_eped_scaling() !needs to stay here because of circular dependency with plasmod.f90
-
-       !Here are the PROCESS links for input
- !      geom%r=rmajor
- !      geom%a=aspect
- !      geom%q95=q95
- !      geom%bt=bt
- !      geom%k95 = kappa95 !edge elongation
- !      geom%d95 = triang95 !edge triangularity
-
+    if (ipedestal .ne. 3)then
        
- !      ped%rho_t=rhopedt !pedestal top position T
- !      ped%rho_n=rhopedt !pedestal top position n
- !      ped%tesep=tesep  !separatrix temperature
- !      
- !      inp0%Hfac_inp=hfact !input H factor, if 0., this is not used. This is radiation corrected H factor
- !      inp0%pheatmax=pinjalw !max allowed power for heating+CD+fusion control
- !      inp0%q_control=pheat !minimal power required for control
- !      inp0%f_gw=fgwped !pedestal top greenwald fraction
- !      inp0%f_gws=fgwsep !separatrix greenwald fraction
- !      write(*,*) 'gamcd = ', gamcd
- !      inp0%nbcdeff=gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
+       call plasma_profiles
        
- !      comp%pradpos = coreradius ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
- !      comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value       
-
-       !if (geom%counter.eq.0.d0) then
-       !   num%tol=plasmod_tol !tolerance to be reached, in % variation at each time step
-       !   num%dtmin=plasmod_dtmin !min time step
-       !   num%dtmax=plasmod_dtmax !max time step
-       !   num%dt=plasmod_dt !time step
-       !   num%dtinc=plasmod_dtinc !decrease of dt
-       !   num%Ainc=plasmod_ainc !increase of dt
-       !   num%test=plasmod_test !max iteration number
-       !   num%tolmin=plasmod_tolmin ! multiplier of etolm that should not be overcome
-       !   num%eopt=plasmod_eopt !exponent of jipperdo
-       !   num%dtmaxmin=plasmod_dtmaxmin !exponent of jipperdo2
-       !   num%capA=plasmod_capa !first radial grid point
-       !   num%maxA=plasmod_maxa !diagz 0 or 1
-       !   num%dgy=plasmod_dgy !Newton differential
-       !   num%i_modeltype=plasmod_i_modeltype !1 - simple gyrobohm scaling
-       !   num%i_equiltype=plasmod_i_equiltype !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
-       !   num%nx=plasmod_nx	 !number of interpolated grid points
-       !   num%nxt=plasmod_nxt !number of reduced grid points
-       !   num%nchannels=plasmod_nchannels  !leave this at 3
-       !   num%ipedestal=plasmod_ipedestal !1 - fixed temperature pedestal. 2 - Sareelma scaling
-       !   num%i_impmodel=plasmod_i_impmodel !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
-       !   comp%globtau(1) = plasmod_globtau(1) !tauparticle/tauE for D, T, He, Xe, Ar
-       !   comp%globtau(2) = plasmod_globtau(2) !tauparticle/tauE for D, T, He, Xe, Ar
-       !   comp%globtau(3) = plasmod_globtau(3) !tauparticle/tauE for D, T, He, Xe, Ar
-       !   comp%globtau(4) = plasmod_globtau(4) !tauparticle/tauE for D, T, He, Xe, Ar
-       !   comp%globtau(5) = plasmod_globtau(5) !tauparticle/tauE for D, T, He, Xe, Ar
-       !   comp%fuelmix = 0.5d0 !fuel mix
-       !   comp%c_car = plasmod_c_car !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
-       !   comp%car = 0. !argon concentration, used if qdivt=0.
-       !   comp%cxe = 0. !xenon concentration, if negative uses Psepplh as criterion
-       !   comp%che = 0. !helium concentration, used if globtau(3)=0.
-          
-          !derivatives
-       !   inp0%qnbi_psepfac=plasmod_qnbi_psepfac !dqnbi/d(1-Psep/PLH)
-       !   inp0%cxe_psepfac=plasmod_cxe_psepfac !dcxe/d(1-Psep/PLH)
-       !   inp0%car_qdivt=plasmod_car_qdivt !dcar/d(qdivt)
-          
-          !deposition locations
-       !   inp0%x_heat(1)=plasmod_x_heat(1) !nbi
-       !   inp0%x_heat(2)=plasmod_x_heat(2) !ech
-       !   inp0%x_cd(1)=plasmod_x_cd(1) !nbi
-       !   inp0%x_cd(2)=plasmod_x_cd(2) !ech
-       !   inp0%x_fus(1)=plasmod_x_fus(1) !nbi
-       !   inp0%x_fus(2)=plasmod_x_fus(2) !ech
-       !   inp0%x_control(1)=plasmod_x_control(1) !nbi
-       !   inp0%x_control(2)=plasmod_x_control(2) !ech
-       !   inp0%dx_heat(1)=plasmod_dx_heat(1) !nbi
-       !   inp0%dx_heat(2)=plasmod_dx_heat(2) !ech
-       !   inp0%dx_cd(1)=plasmod_dx_cd(1) !nbi
-       !   inp0%dx_cd(2)=plasmod_dx_cd(2) !ech
-       !   inp0%dx_fus(1)=plasmod_dx_fus(1) !nbi
-       !   inp0%dx_fus(2)=plasmod_dx_fus(2) !ech
-       !   inp0%dx_control(1)=plasmod_dx_control(1) !nbi
-       !   inp0%dx_control(2)=plasmod_dx_control(2) !ech
-       !   inp0%nbi_energy=plasmod_nbi_energy !in keV
-
-       !   inp0%eccdeff=0.3 !CD = this * PCD * TE/NE !not used for now
-       !   inp0%pech=0.d0 !ech power !not used for now
-       !   inp0%pnbi=0.d0 !nbi power
-       !   inp0%qheat=0.d0 !nbi power
-       !   inp0%qcd=0.d0 !nbi power
-       !   inp0%qfus=0.d0 !nbi power
-       !   inp0%spellet=0.d0 !pellet mass in particles of D in 10^19
-       !   inp0%fpellet=0.5d0 !pellet frequency in Hz
-          
-       !   comp%psepplh_inf = plasmod_psepplh_inf !Psep/PLH if below this, use nbi
-       !   comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
-       !   comp%psep_r = plasmod_psep_r !Psep/R max value
-       !   comp%qdivt = plasmod_qdivt !divertor heat flux in MW/m^2, if 0, dont use SOL model
-       !   inp0%V_loop=plasmod_v_loop !target loop voltage. If lower than -1.e5 dont use
-       !   inp0%f_ni=plasmod_f_ni !required fraction of non inductive current, if 0 dont use CD
-       !   inp0%pfus=plasmod_pfus !if 0., not used (otherwise it would be controlled with Pauxheat)
-          
-       !   geom%k = kappa !edge elongation
-       !   geom%d = triang !edge triangularity
-       !   geom%ip=plascur/1.d6	
-
-       !   ped%teped=teped !pedestal top temperature
-          !endif
-          
+    else  ! Run PLASMOD 
+         
        write(*,*) 'geom counter = ', geom%counter
        call setupPlasmod(num,geom,comp,ped,inp0)
 
@@ -426,9 +310,6 @@ contains
 
        call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
        
-       !integer, intent(in) :: outfile
-       !call outputPlasmod(outfile,num,geom,comp,ped,radp,mhd,loss)
-
        if (1 == 1) then
           open(32,file='plasmodsoldopo.dat')
           write(32,*) 'num ',num
@@ -453,10 +334,13 @@ contains
           write(*,*) 'Katy - Transport model equilibrium crashed'
           call report_error(174)
        endif
+
+       !HL Todo: update PROCESS variables with output from PLASMOD
+       te0 = radp%te(1) ! Check this is right!
+       
+       
     endif
     
-    call plasma_profiles
-
     btot = sqrt(bt**2 + bp**2)
     betap = beta * ( btot/bp )**2
 
@@ -5901,7 +5785,7 @@ end function t_eped_scaling
 
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
     call ovarin(outfile,'Plasma profile model','(ipedestal)',ipedestal)
-    if(ipedestal==1)then
+    if((ipedestal==1).or.(ipedestal==2))then
         call ocmmnt(outfile,'Pedestal profiles are used.')
         call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
         if(fgwped >= 0d0)then

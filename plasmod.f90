@@ -70,39 +70,29 @@ contains
     type (pedestal), intent(inout) :: ped
     type (inputs), intent(inout) :: inp0
     type (numerics_transp), intent(inout) :: num
-    
-    alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
-    nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
-    * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
-    !teped = t_eped_scaling()
+
+
+    ! Only variables that can be iteration variables or those that
+    ! are calculated inside PROCESS need to be put here:
     
     !Here are the PROCESS links for input
     geom%r=rmajor
     geom%a=aspect
     geom%q95=q95
     geom%bt=bt
-    geom%k95 = kappa95 !edge elongation
-    geom%d95 = triang95 !edge triangularity
-    
-    ped%rho_t=rhopedt !pedestal top position T
-    ped%rho_n=rhopedt !pedestal top position n
-    ped%tesep=tesep  !separatrix temperature
-    
+       
     inp0%Hfac_inp=hfact !input H factor, if 0., this is not used. This is radiation corrected H factor
     inp0%pheatmax=pinjalw !max allowed power for heating+CD+fusion control
     inp0%q_control=pheat !minimal power required for control
     
 
-    inp0%f_gw=fgwped !pedestal top greenwald fraction
-    inp0%f_gws=fgwsep !separatrix greenwald fraction
-       
-    write(*,*) 'gamcd = ', gamcd
-    inp0%nbcdeff=gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
-    
-    comp%pradpos = coreradius ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
-    comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
+    ! all fixed input variables that cannot change within a PROCESS iteration go here!
+    ! They only need to be initialised once.
+    if (geom%counter.eq.0.d0) then
 
-    if (geom%counter.eq.0.d0) then     
+       geom%k95 = kappa95 !edge elongation
+       geom%d95 = triang95 !edge triangularity
+         
        num%tol=plasmod_tol !tolerance to be reached, in % variation at each time step
        num%dtmin=plasmod_dtmin !min time step
        num%dtmax=plasmod_dtmax !max time step
@@ -132,13 +122,15 @@ contains
        endif
        
        num%i_impmodel=plasmod_i_impmodel !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
+       ! HL Todo: We need to make sure that our impurity fractions/mixes match with Emilianos confinement time relations!
        comp%globtau(1) = plasmod_globtau(1) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(2) = plasmod_globtau(2) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(3) = plasmod_globtau(3) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(4) = plasmod_globtau(4) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(5) = plasmod_globtau(5) !tauparticle/tauE for D, T, He, Xe, Ar
-       comp%fuelmix = 0.5d0 !fuel mix
+       comp%fuelmix = 0.5d0 !fuel mix Could be fdeut or ftrit! CHECK!
        comp%c_car = plasmod_c_car !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
+       !HL Todo: We need to make sure the impurity concentrations match with the PROCESS definitions for ralpne and fimp
        comp%car = 0. !argon concentration, used if qdivt=0.
        comp%cxe = 0. !xenon concentration, if negative uses Psepplh as criterion
        comp%che = 0. !helium concentration, used if globtau(3)=0.
@@ -166,7 +158,8 @@ contains
        inp0%dx_control(1)=plasmod_dx_control(1) !nbi
        inp0%dx_control(2)=plasmod_dx_control(2) !ech
        inp0%nbi_energy=plasmod_nbi_energy !in keV
-       
+
+       !HL To do: I guess, these still need to be made input variables?
        inp0%eccdeff=0.3 !CD = this * PCD * TE/NE !not used for now
        inp0%pech=0.d0 !ech power !not used for now
        inp0%pnbi=0.d0 !nbi power
@@ -187,8 +180,23 @@ contains
        geom%k = kappa !edge elongation
        geom%d = triang !edge triangularity
        geom%ip=plascur/1.d6	
-       
+
+
+       ped%rho_t=rhopedt !pedestal top position T
+       ped%rho_n=rhopedt !pedestal top position n
+       ped%tesep=tesep  !separatrix temperature
        ped%teped=teped !pedestal top temperature
+
+       inp0%f_gw=fgwped !pedestal top greenwald fraction
+       inp0%f_gws=fgwsep !separatrix greenwald fraction
+       
+       write(*,*) 'gamcd = ', gamcd
+       inp0%nbcdeff=gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
+       
+       comp%pradpos = coreradius ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
+       comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
+
+
     endif
     
   end subroutine setupPlasmod
