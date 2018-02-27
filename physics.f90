@@ -4905,7 +4905,7 @@ end function t_eped_scaling
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    call osubhd(outfile,'Energy confinement times, and required H-factors :')
+    call oheadr(outfile,'Energy confinement times, and required H-factors :')
 
     write(outfile,10)
 10  format(t5,'scaling law', t30,'confinement time (s)', &

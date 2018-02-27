@@ -1,8 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !Katy Ellis, created this file 26/02/18 to support the implementation of the
-  !PLASMOD 1D transport model, coded by Emiliano Fable
-
 module plasmod_module
 
 
@@ -33,12 +30,10 @@ module plasmod_module
   use process_output
   use error_handling
 
-
   
   implicit none
 
   public
-
   
 contains
 
@@ -66,11 +61,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    
-
     implicit none
 
-    
     !  Arguments
  
     type (geometry), intent(inout) :: geom
@@ -78,9 +70,6 @@ contains
     type (pedestal), intent(inout) :: ped
     type (inputs), intent(inout) :: inp0
     type (numerics_transp), intent(inout) :: num
-    
-
-    
     
     alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
     nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
@@ -113,9 +102,7 @@ contains
     comp%pradpos = coreradius ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
     comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
 
-    if (geom%counter.eq.0.d0) then
-
-         
+    if (geom%counter.eq.0.d0) then     
        num%tol=plasmod_tol !tolerance to be reached, in % variation at each time step
        num%dtmin=plasmod_dtmin !min time step
        num%dtmax=plasmod_dtmax !max time step
@@ -229,25 +216,78 @@ contains
     !+ad_docs  None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
 
     implicit none
     
     !  Arguments
     integer, intent(in) :: outfile
     
-   
     call oheadr(outfile,'PLASMOD')
 
-    call ovarrf(outfile,'Power crossing the separatrix (MW)','(loss%Psep)', loss%Psep)
-    !call ovarrf(outfile,'Plasma current ramp-up time (s)','(tohs)',tohs)
-    !call ovarrf(outfile,'Heating time (s)','(theat)',theat)
-    !call ovarre(outfile,'Burn time (s)','(tburn)',tburn, 'OP ')
-    !call ovarrf(outfile,'Reset time to zero current for CS (s)','(tqnch)',tqnch)
-    !call ovarrf(outfile,'Time between pulses (s)','(tdwell)',tdwell)
-    !call oblnkl(outfile)
-    !call ovarre(outfile,'Total plant cycle time (s)','(tcycle)',tcycle, 'OP ')
+    call osubhd(outfile,'Geometry')
 
+    !ovarrf is floating point variable using F format
+    !ovarre is floating point variable using E format
+    !ovarin is floating point variable
+    
+    call ovarrf(outfile,'Plasma current (MA)','(geom%ip)', geom%ip)
+    call ovarrf(outfile,'q95','(geom%q95)', geom%q95)
+    call ovarrf(outfile,'Edge elongation','(geom%k)', geom%k)
+    call ovarrf(outfile,'Edge triangularity','(geom%d)', geom%d)
+
+    call osubhd(outfile,'Composition')
+    call ovarrf(outfile,'Xenon concentration at the pedestal top','(comp%cxe)', comp%cxe)
+    call ovarrf(outfile,'Helium concentration','(comp%che)', comp%che)
+    call ovarrf(outfile,'Argon concentration at the pedestal top','(comp%car)', comp%car)
+
+    call osubhd(outfile,'Pedestal')
+    call ovarrf(outfile,'Pedestal top electron temperature (keV)','(ped%teped)', ped%teped)
+    !call ovarrf(outfile,'Pedestal top density (10^19 m^-3)','(ped%neped)', ped%neped)
+    call ovarrf(outfile,'Separatrix density (10^19 m^-3)','(ped%nsep)', ped%nsep)
+    !call ovarrf(outfile,'Separatrix temperature (keV?)','(ped%tsep)', ped%tsep)
+
+    call osubhd(outfile,'Power losses')
+    call ovarrf(outfile,'Total required power for all kind of controls (MW)','(loss%pnbi)', loss%pnbi)
+    call ovarrf(outfile,'Total auxiliary power to electrons (MW)','(loss%peaux)', loss%peaux)
+    call ovarrf(outfile,'Total auxiliary power to ions (MW)','(loss%piaux)', loss%piaux)
+    call ovarrf(outfile,'Power used to control Psep (MW)','(loss%qheat)', loss%qheat)
+    call ovarrf(outfile,'Power used for CD (MW)','(loss%qcd)', loss%qcd)
+    call ovarrf(outfile,'Power used to control Pfus (MW)','(loss%qfus)', loss%qfus)
+    call ovarrf(outfile,'Net separatrix power = Paux+Pfus-Prad (MW)','(loss%Psep)', loss%Psep)
+    call ovarrf(outfile,'LH transition power (MW)','(loss%PLH)', loss%PLH)
+    call ovarrf(outfile,'Total radiated power (MW)','(loss%Prad)', loss%Prad)
+    call ovarrf(outfile,'Plasma energy (MJ)','(loss%Wth)', loss%Wth)
+    call ovarrf(outfile,'Confinement time (s)','(loss%taueff)', loss%taueff)
+    call ovarrf(outfile,'Computed H factor according to ITER 98 y2 elmy H mode','(loss%H)', loss%H)
+    call ovarrf(outfile,'Total fusion power (MW) i.e. 5*alpha power','(loss%Pfus)', loss%Pfus)
+    call ovarrf(outfile,'Ohmic power (MW)','(loss%Pohm)', loss%Pohm)
+    call ovarrf(outfile,'Plasma resistivity (V/A)','(loss%rplas)', loss%rplas)
+    call ovarrf(outfile,'Total synchrotron power (MW)','(loss%psync)', loss%psync)
+    call ovarrf(outfile,'Total Brehmstrahlung power (MW)','(loss%pbrehms)', loss%pbrehms)
+    call ovarrf(outfile,'Total line radiation (MW)','(loss%pline)', loss%pline)
+    call ovarrf(outfile,'Ion power through separatrix (MW)','(loss%psepi)', loss%psepi)
+    call ovarrf(outfile,'Electron power through separatrix (MW)','(loss%psepe)', loss%psepe)
+    call ovarrf(outfile,'Volume averaged equipartition power (MW/m^3),electrons lose and ions gain)','(loss%piepv)', loss%piepv)
+    call ovarrf(outfile,'Power onto divertor (MW/m^2)','(loss%pdiv)', loss%pdiv)
+    call ovarrf(outfile,'Edge radiation (MW)','(loss%pradedge)', loss%pradedge)
+    call ovarrf(outfile,'Core radiation (MW)','(loss%pradcore)', loss%pradcore)  
+    
+    call osubhd(outfile,'Magneto Hydro Dynamics')
+    call ovarrf(outfile,'Plasma volume (m^3)','(mhd%vp)', mhd%vp)
+    call ovarrf(outfile,'Plasma lateral surface (m^2)','(mhd%Sp)', mhd%Sp)
+    call ovarrf(outfile,'Plasma surface of a toroidal section (m^2)','(mhd%torsurf)', mhd%torsurf)  
+    call ovarrf(outfile,'Edge safety factor','(mhd%q_sep)', mhd%q_sep)
+    call ovarrf(outfile,'Loop voltage (V)','(mhd%vloop)', mhd%vloop)
+    call ovarrf(outfile,'Bootstrap current fraction','(mhd%fbs)', mhd%fbs)
+    call ovarrf(outfile,'Total non-inductive current fraction','(mhd%f_ni)', mhd%f_ni)
+
+    call osubhd(outfile,'Radial profile averages')
+    call ovarrf(outfile,'Volume averaged electron density (10^19 m^-3)','(radp%av_ne)', radp%av_ne)
+    call ovarrf(outfile,'Volume averaged ion density (10^19 m^-3)','(radp%av_ni)', radp%av_ni)   
+    call ovarrf(outfile,'Volume averaged electron temperature (keV)','(radp%av_te)', radp%av_te)
+    call ovarrf(outfile,'Volume averaged ion temperature (keV)','(radp%av_ti)', radp%av_ti)
+    call ovarrf(outfile,'Volume averaged effective charge','(radp%zeff)', radp%zeff)
+    
   end subroutine outputPlasmod
   
 end module plasmod_module
