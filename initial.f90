@@ -386,10 +386,10 @@ subroutine check
 
      if(ipedestal == 2 .or. ipedestal == 3) then
         if (fgwped < 0 )then
-           report_error(176)
+           call report_error(176)
         endif
         if (fgwsep < 0 ) then
-           report_error(177)
+           call report_error(177)
         endif
      endif
      

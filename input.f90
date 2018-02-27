@@ -692,7 +692,7 @@ contains
                'Index for impurity fraction iteration variable')
           write(outfile,*) 'impvar is now deprecated - use iteration variables 125-136 instead.'
        case ('ipedestal')
-          call parse_int_variable('ipedestal', ipedestal, 0, 2, &
+          call parse_int_variable('ipedestal', ipedestal, 0, 3, &
                'Switch for plasma profile type')
        case ('iprofile')
           call parse_int_variable('iprofile', iprofile, 0, 1, &
@@ -1109,9 +1109,6 @@ contains
        case ('plasmod_nchannels')
           call parse_int_variable('plasmod_nchannels', plasmod_nchannels, 3, 3, &
                'Leave this at 3')
-       case ('plasmod_ipedestal')
-          call parse_int_variable('plasmod_ipedestal', plasmod_ipedestal, 1, 2, &
-               ' 1 - fixed temperature pedestal. 2 - Sareelma scaling')
        case ('plasmod_i_impmodel')
           call parse_int_variable('plasmod_i_impmodel', plasmod_i_impmodel, 0, 1, &
                'Impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.')

@@ -305,7 +305,7 @@ structure.o: global_variables.o output.o
 superconductors.o: global_variables.o output.o error_handling.o
 tfcoil.o: error_handling.o global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: error_handling.o global_variables.o output.o
-plasmod.o: global_variables.o output.f90 impurity_radiation.f90
+plasmod.o: global_variables.o output.f90 impurity_radiation.f90 error_handling.o
 $(PLASMOD_DIR)/e3m.o: 
 $(PLASMOD_DIR)/equil.o: $(PLASMOD_DIR)/grad_func.o
 $(PLASMOD_DIR)/grad_func.o: 

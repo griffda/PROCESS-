@@ -31,6 +31,7 @@ module plasmod_module
   use constants
   use constraint_variables
   use process_output
+  use error_handling
 
 
   
@@ -140,7 +141,7 @@ contains
        else if (ieped == 1) then
           num%ipedestal= 2  !Sareelma scaling
        else
-          report_error(175) !option not possible
+          call report_error(175) !option not possible
        endif
        
        num%i_impmodel=plasmod_i_impmodel !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
