@@ -297,10 +297,12 @@ module physics_variables
   !+ad_varc                 area in neutron wall load calculation (iwalld=1)
   real(kind(1.0D0)) :: ffwal = 0.92D0
   !+ad_vars  fgwped /0.85/ : fraction of Greenwald density to set as pedestal-top density
-  !+ad_varc                  If <0, pedestal-top density set manually using neped (ipedestal=1)
+  !+ad_varc                  If <0, pedestal-top density set manually using neped (ipedestal>=1)
+  !+ad_varc                  Needs to be >0 if ipedestal = 3
   real(kind(1.0D0)) :: fgwped = 0.85D0
   !+ad_vars  fgwsep /0.50/ : fraction of Greenwald density to set as separatrix density
-  !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal=1)
+  !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal>=1)
+  !+ad_varc                  Needs to be >0 if ipedestal = 3  
   real(kind(1.0D0)) :: fgwsep = 0.50D0
 
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
@@ -397,7 +399,8 @@ module physics_variables
   !+ad_vars  ipedestal /1/ : switch for pedestal profiles:<UL>
   !+ad_varc             <LI> = 0 use original parabolic profiles;
   !+ad_varc             <LI> = 1 use pedestal profiles
-  !+ad_varc             <LI> = 2 use PLASMOD transport model to calculate pedestal profiles </UL>
+  !+ad_varc             <LI> = 2 use pedestal profiles and run PLASMOD on final output
+  !+ad_varc             <LI> = 3 use PLASMOD transport model only to calculate pedestal profiles</UL>
   integer :: ipedestal = 1
   ! Issue #589 remove iscdens
   !+ad_vars  iscdens /0/ : switch for pedestal profiles: OBSOLETE
@@ -410,23 +413,23 @@ module physics_variables
   !+ad_varc             <LI>    https://idm.euro-fusion.org/?uid=2MSZ4T </UL>
   integer :: ieped = 0
 
-  !+ad_vars  neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1)
+  !+ad_vars  neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1,2, calculated if 3)
   real(kind(1.0D0)) :: neped = 4.0D19
-  !+ad_vars  nesep /3.0e19/ : electron density at separatrix [m-3] (ipedestal=1)
+  !+ad_vars  nesep /3.0e19/ : electron density at separatrix [m-3] (ipedestal=1,2, calculated if 3)
   real(kind(1.0D0)) :: nesep = 3.0D19
   !+ad_vars  alpha_crit : critical ballooning parameter value
   real(kind(1.0D0)) :: alpha_crit = 0.0D0
   !+ad_vars  nesep_crit : critical electron density at separatrix [m-3]
   real(kind(1.0D0)) :: nesep_crit = 0.0D0
-  !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal=1)
+  !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal>=1)
   real(kind(1.0D0)) :: rhopedn = 1.0D0
-  !+ad_vars  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal=1)
+  !+ad_vars  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal>=1)
   real(kind(1.0D0)) :: rhopedt = 1.0D0
-  !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1)
+  !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1,2)
   real(kind(1.0D0)) :: tbeta = 2.0D0
-  !+ad_vars  teped /1.0/ : electron temperature of pedestal (keV) (ipedestal=1, ieped=0)
+  !+ad_vars  teped /1.0/ : electron temperature of pedestal (keV) (ipedestal>=1, ieped=0, calculated for ieped=1)
   real(kind(1.0D0)) :: teped = 1.0D0
-  !+ad_vars  tesep /0.1/ : electron temperature at separatrix (keV) (ipedestal=1)
+  !+ad_vars  tesep /0.1/ : electron temperature at separatrix (keV) (ipedestal>=1)
   real(kind(1.0D0)) :: tesep = 0.1D0
 
   !+ad_vars  iprofile /1/ : switch for current profile consistency:<UL>
@@ -848,8 +851,6 @@ module plasmod_variables
   integer :: plasmod_nxt = 7
   !+ad_vars  plasmod_nchannels /3/ : Leave this at 3
   integer :: plasmod_nchannels = 3
-  !+ad_vars  plasmod_ipedestal /2/ : 1 - fixed temperature pedestal. 2 - Sareelma scaling
-  integer :: plasmod_ipedestal = 2
   !+ad_vars  plasmod_i_impmodel /1/ : Impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
   integer :: plasmod_i_impmodel = 1
 
@@ -1271,7 +1272,7 @@ module divertor_variables
   !+ad_vars  ppdivr : peak heat load at plate (with radiation) (MW/m2)
   real(kind(1.0D0)) :: ppdivr = 0.0D0
   !+ad_vars  prn1 /0.285/ : n-scrape-off / n-average plasma;
-  !+ad_varc                 (input for ipedestal=0, = nesep/dene if ipedestal=1)
+  !+ad_varc                 (input for ipedestal=0, = nesep/dene if ipedestal>=1)
   real(kind(1.0D0)) :: prn1 = 0.285D0
   !+ad_vars  ptpdiv : peak temperature at the plate (eV)
   real(kind(1.0D0)) :: ptpdiv = 0.0D0

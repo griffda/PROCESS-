@@ -78,12 +78,9 @@ contains
     type (inputs), intent(inout) :: inp0
     type (numerics_transp), intent(inout) :: num
     
-    !  Local variables
 
     
     
-    neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
-    nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
     alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
     nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
     * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
@@ -104,8 +101,11 @@ contains
     inp0%Hfac_inp=hfact !input H factor, if 0., this is not used. This is radiation corrected H factor
     inp0%pheatmax=pinjalw !max allowed power for heating+CD+fusion control
     inp0%q_control=pheat !minimal power required for control
+    
+
     inp0%f_gw=fgwped !pedestal top greenwald fraction
     inp0%f_gws=fgwsep !separatrix greenwald fraction
+       
     write(*,*) 'gamcd = ', gamcd
     inp0%nbcdeff=gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
     
@@ -134,7 +134,15 @@ contains
        num%nx=plasmod_nx	 !number of interpolated grid points
        num%nxt=plasmod_nxt !number of reduced grid points
        num%nchannels=plasmod_nchannels  !leave this at 3
-       num%ipedestal=plasmod_ipedestal !1 - fixed temperature pedestal. 2 - Sareelma scaling
+       
+       if(ieped == 0) then
+          num%ipedestal= 1  !fixed temperature pedestal
+       else if (ieped == 1) then
+          num%ipedestal= 2  !Sareelma scaling
+       else
+          report_error(175) !option not possible
+       endif
+       
        num%i_impmodel=plasmod_i_impmodel !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
        comp%globtau(1) = plasmod_globtau(1) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(2) = plasmod_globtau(2) !tauparticle/tauE for D, T, He, Xe, Ar

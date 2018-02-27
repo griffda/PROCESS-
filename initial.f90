@@ -311,7 +311,7 @@ subroutine check
 
     !  Plasma profile consistency checks
 
-    if (ipedestal == 1) then
+    if (ipedestal == 1 .or. ipedestal == 2) then
 
         !  Temperature checks
 
@@ -382,7 +382,17 @@ subroutine check
             boundu(6) = max(boundu(6), boundl(6))
         end if
 
-    end if
+     end if
+
+     if(ipedestal == 2 .or. ipedestal == 3) then
+        if (fgwped < 0 )then
+           report_error(176)
+        endif
+        if (fgwsep < 0 ) then
+           report_error(177)
+        endif
+     endif
+     
 
     !  Tight aspect ratio options
     ! ---------------------------
