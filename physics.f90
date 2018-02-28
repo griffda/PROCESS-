@@ -291,11 +291,10 @@ contains
     else  ! Run PLASMOD 
          
        write(*,*) 'geom counter = ', geom%counter
-       call setupPlasmod(num,geom,comp,ped,inp0)
+       call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
 
        if(1 == 1) then
        
-          i_flag=1
           open(32,file='plasmodsolprima.dat')
           write(32,*) 'num ',num
           write(32,*) 'geom ',geom
@@ -335,57 +334,11 @@ contains
           call report_error(174)
        endif
 
-       !HL Todo: update PROCESS variables with output from PLASMOD
-       te0 = radp%te(1) ! Check this is right!
-
-       plascur = geom%ip * 1.0D6 !needs to be in Amps. Also equal to mhd%ip?
-       q95 = geom%q95  ! also equal to mhd%q?
-
-       ralpne = comp%che
-       fimp(13) = comp%cxe !do these need to be normalised?
-       fimp(9) = comp%car
-
-       teped = ped%teped
-       neped = ped%nped
-       nesep = ped%nsep
-
-       !mhd%equilcheck is flag
-       normalised_total_beta = mhd%betan !not sure on this one...
-       vol = mhd%vp ! plasma volume (m^3)
-       = mhd%q_sep !q at separatrix?
-       = mhd%vloop
-       bootipf= mhd%fbs
-       fvsbrnni = mhd%f_ni !non-inductive current fraction 
-
-       powfmw = loss%pfus
-       taueff = loss%taueff ! several choices here
-       hfact = loss%H
-
-       !tau_scal = loss%taueff/loss%H  ??
-
-       = loss%Wth !not sure about this one
-       = loss%prad ! fradpwr is total radiation fraction 
-       = loss%pradedge
-
-       pcoreradmw = loss%pradcore
-       = loss%psync ! psyncpv is synchrotron radiation power per volume
-       = loss%pbrehms ! pbrempv is bremsstrahlung power per volume
-       = loss%pline !plinepv is line radiation power per volume (MW/m3)
-       = loss%psepi / 1.0D6 !psep_kallenbach is Power conducted through the separatrix, as calculated by the divertor model [W] ion/electron??
-       = loss%piepv
-       pinjemw = loss%peaux
-       pinjimw = loss%piaux
-       hldiv = loss%pdiv
-       = loss%Psep
-       = loss%PLH
-       
-       qfuel = loss%dfuelreq * 2.0 !qfuel is for nucleus pairs
-       != loss%tfuelreq ! think this is assumed in PROCESS to be the same as above
-       = loss%hepumpreq
-
-
+       !call convert_Plasmod2PROCESS(num,geom,comp,ped,inp0,radp,mhd,loss)
        
     endif
+
+    !HL Todo go through all statements above and below and make sure they are consistent with ipedestal = 3
     
     btot = sqrt(bt**2 + bp**2)
     betap = beta * ( btot/bp )**2

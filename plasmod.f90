@@ -29,6 +29,7 @@ module plasmod_module
   use constraint_variables
   use process_output
   use error_handling
+  use divertor_variables
 
   
   implicit none
@@ -37,27 +38,25 @@ module plasmod_module
   
 contains
 
-  subroutine setupPlasmod(num,geom,comp,ped,inp0)
+  subroutine setupPlasmod(num,geom,comp,ped,inp0,i_flag)
 
     !+ad_name  setupPlasmod
     !+ad_summ  Routine to set up the PLASMOD input params
     !+ad_type  Subroutine
     !+ad_auth  K Ellis, UKAEA, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  num : derived type :
-    !+ad_args  geom : derived type : 
-    !+ad_args  comp : derived type :
-    !+ad_args  ped : derived type :
-    !+ad_args  inp0 : derived type : 
+    !+ad_args  num  : derived type : numerics information
+    !+ad_args  geom : derived type : geometry information 
+    !+ad_args  comp : derived type : composition information
+    !+ad_args  ped  : derived type :  pedestal information
+    !+ad_args  inp0 : derived type : miscellaneous input information
+    !+ad_args  i_flag : integer    : PLASMOD error flag 
     !+ad_desc  This routine writes out the times of the various stages
     !+ad_desc  during a single plant cycle.
     !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  oheadr
-    !+ad_call  ovarrf
     !+ad_hist  26/02/18 KE Initial F90 version
     !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -70,10 +69,13 @@ contains
     type (pedestal), intent(inout) :: ped
     type (inputs), intent(inout) :: inp0
     type (numerics_transp), intent(inout) :: num
+    integer, intent(inout) :: i_flag
 
 
     ! Only variables that can be iteration variables or those that
     ! are calculated inside PROCESS need to be put here:
+
+    i_flag = 1
     
     !Here are the PROCESS links for input
     geom%r=rmajor
@@ -201,10 +203,89 @@ contains
     
   end subroutine setupPlasmod
 
-  subroutine runPlasmod
+  subroutine convert_Plasmod2PROCESS(num,geom,comp,ped,inp0,radp,mhd,loss)
 
+    !+ad_name  convert_Plasmod2PROCESS
+    !+ad_summ  Routine to set up the PLASMOD input params
+    !+ad_type  Subroutine
+    !+ad_auth  K Ellis, UKAEA, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  num : derived type :
+    !+ad_args  geom : derived type : 
+    !+ad_args  comp : derived type :
+    !+ad_args  ped : derived type :
+    !+ad_args  inp0 : derived type : 
+    !+ad_desc  This routine writes out the times of the various stages
+    !+ad_desc  during a single plant cycle.
+    !+ad_prob  None
+    !+ad_hist  28/02/18 HL Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  end subroutine runPlasmod
+    implicit none
+
+    !  Arguments
+    type (geometry), intent(inout) :: geom
+    type (composition), intent(inout) :: comp
+    type (pedestal), intent(inout) :: ped
+    type (inputs), intent(inout) :: inp0
+    type (radial_profiles), intent(inout) :: radp
+    type (MHD_EQ), intent(inout) :: mhd 
+    type (power_losses), intent(inout) :: loss 
+    type (numerics_transp), intent(inout) :: num
+    
+    
+    !HL Todo: update PROCESS variables with output from PLASMOD
+    te0 = radp%te(1) ! Check this is right!
+    
+    plascur = geom%ip * 1.0D6 !needs to be in Amps. Also equal to mhd%ip?
+    q95 = geom%q95  ! also equal to mhd%q?
+    
+    ralpne = comp%che
+    fimp(13) = comp%cxe !do these need to be normalised?
+    fimp(9) = comp%car
+    
+    teped = ped%teped
+    neped = ped%nped
+    nesep = ped%nsep
+    
+    !mhd%equilcheck is flag
+    normalised_total_beta = mhd%betan !not sure on this one...
+    vol = mhd%vp ! plasma volume (m^3)
+    != mhd%q_sep !q at separatrix?
+    != mhd%vloop
+    bootipf= mhd%fbs
+    fvsbrnni = mhd%f_ni !non-inductive current fraction 
+    
+    powfmw = loss%pfus
+    taueff = loss%taueff ! several choices here
+    hfact = loss%H
+    
+    !tau_scal = loss%taueff/loss%H  ??
+    
+    != loss%Wth !not sure about this one
+    != loss%prad ! fradpwr is total radiation fraction 
+    != loss%pradedge
+    
+    pcoreradmw = loss%pradcore
+    != loss%psync ! psyncpv is synchrotron radiation power per volume
+    != loss%pbrehms ! pbrempv is bremsstrahlung power per volume
+    != loss%pline !plinepv is line radiation power per volume (MW/m3)
+    != loss%psepi / 1.0D6 !psep_kallenbach is Power conducted through the separatrix, as calculated by the divertor model [W] ion/electron??
+    != loss%piepv
+    pinjemw = loss%peaux
+    pinjimw = loss%piaux
+    hldiv = loss%pdiv
+    != loss%Psep
+    != loss%PLH
+    
+    qfuel = loss%dfuelreq * 2.0 !qfuel is for nucleus pairs
+    != loss%tfuelreq ! think this is assumed in PROCESS to be the same as above
+    != loss%hepumpreq
+
+  end subroutine convert_Plasmod2PROCESS
 
   subroutine outputPlasmod(outfile)
 
@@ -218,6 +299,7 @@ contains
     !+ad_desc  This routine writes out the results from the PLASMOD code
     !+ad_prob  None
     !+ad_call  oheadr
+    !+ad_call  osubhd
     !+ad_call  ovarrf
     !+ad_hist  27/02/18 KE Initial F90 version
     !+ad_stat  Okay
@@ -237,6 +319,8 @@ contains
     !ovarrf is floating point variable using F format
     !ovarre is floating point variable using E format
     !ovarin is floating point variable
+
+    call ovarin(outfile, 'PLASMOD error flag', '(i_flag)', i_flag)
     
     call ovarrf(outfile,'Plasma current (MA)','(geom%ip)', geom%ip)
     call ovarrf(outfile,'q95','(geom%q95)', geom%q95)
@@ -250,9 +334,9 @@ contains
 
     call osubhd(outfile,'Pedestal')
     call ovarrf(outfile,'Pedestal top electron temperature (keV)','(ped%teped)', ped%teped)
-    !call ovarrf(outfile,'Pedestal top density (10^19 m^-3)','(ped%neped)', ped%neped)
+    call ovarrf(outfile,'Pedestal top density (10^19 m^-3)','(ped%nped)', ped%nped)
     call ovarrf(outfile,'Separatrix density (10^19 m^-3)','(ped%nsep)', ped%nsep)
-    !call ovarrf(outfile,'Separatrix temperature (keV?)','(ped%tsep)', ped%tsep)
+    call ovarrf(outfile,'Separatrix temperature (keV?)','(ped%tesep)', ped%tesep)
 
     call osubhd(outfile,'Power losses')
     call ovarrf(outfile,'Total required power for all kind of controls (MW)','(loss%pnbi)', loss%pnbi)

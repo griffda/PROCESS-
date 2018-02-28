@@ -1040,6 +1040,9 @@ subroutine doopt(ifail)
   use numerics
   use process_output
   use process_input
+  ! for ipedestal = 2 option
+  use plasmod_variables
+  use plasmod_module
 
   implicit none
 
@@ -1066,6 +1069,25 @@ subroutine doopt(ifail)
   call loadxc
   call boundxc
   call optimiz(fcnvmc1,fcnvmc2,ifail,f)
+
+  ! Calculate PLASMOD after everything else has finished for comparison
+  if (ipedestal == 2) then
+     
+     call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
+     
+     call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+     
+     if (i_flag==1)then
+        write(*,*) 'PLASMOD has converged!!!'
+     elseif (i_flag==0)then
+        write(*,*) 'The PLASMOD transport model has crashed'
+     elseif (i_flag==-1)then
+        write(*,*) 'The PLASMOD transport model has not converged after itermax'
+     elseif (i_flag==-2)then
+        write(*,*) 'The PLASMOD equilibrium has crashed'
+      endif
+     
+  endif
 
   !  Check on accuracy of solution by summing the
   !  squares of the residuals of the equality constraints
@@ -1535,13 +1557,16 @@ subroutine output(outfile)
   end if
 
 
-  ! TODO what is this? not in caller.f90?
+  ! Writing the output from physics.f90 into OUT.DAT + MFILE.DAT
   call outplas(outfile)
 
 
-  ! 
-  call outputPlasmod(outfile)
+  ! Writing 
+  if (ipedestal == 2 .or. ipedestal == 3) then
+     call outputPlasmod(outfile)
+  endif
 
+  
   ! startup model (not used) !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
