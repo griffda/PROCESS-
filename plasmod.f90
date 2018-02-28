@@ -9,8 +9,10 @@ module plasmod_module
   !+ad_auth  K Ellis, CCFE, Culham Science Centre
   !+ad_cont  N/A
   !+ad_args  N/A
-  !+ad_desc  This module contains variables relating to the PLASMOD
-  !+ad_desc  1-dimensional transport code.
+  !+ad_desc  This module contains all the interface
+  !+ad_desc  functions between the 1D transport and 
+  !+ad_desc  equilibrium code PLASMOD and the rest
+  !+ad_desc  of PROCESS.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  26/02/18 KE Initial version of module
@@ -19,7 +21,6 @@ module plasmod_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! This module sets up the plasmod variables, calls the function and writes the output
   use plasmod_variables
   use global_variables
   use physics_variables
@@ -51,8 +52,8 @@ contains
     !+ad_args  ped  : derived type :  pedestal information
     !+ad_args  inp0 : derived type : miscellaneous input information
     !+ad_args  i_flag : integer    : PLASMOD error flag 
-    !+ad_desc  This routine writes out the times of the various stages
-    !+ad_desc  during a single plant cycle.
+    !+ad_desc  This routine sets up the input parameters for
+    !+ad_desc  PLASMOD from PROCESS variables.
     !+ad_prob  None
     !+ad_hist  26/02/18 KE Initial F90 version
     !+ad_stat  Okay
@@ -77,13 +78,12 @@ contains
 
     i_flag = 1
     
-    !Here are the PROCESS links for input
     geom%r=rmajor
     geom%a=aspect
     geom%q95=q95
     geom%bt=bt
        
-    inp0%Hfac_inp=hfact !input H factor, if 0., this is not used. This is radiation corrected H factor
+    inp0%Hfac_inp=hfact !input H factor (radiation corrected), if 0., this is not used. 
     inp0%pheatmax=pinjalw !max allowed power for heating+CD+fusion control
     inp0%q_control=pheat !minimal power required for control
     
@@ -95,25 +95,25 @@ contains
        geom%k95 = kappa95 !edge elongation
        geom%d95 = triang95 !edge triangularity
          
-       num%tol=plasmod_tol !tolerance to be reached, in % variation at each time step
-       num%dtmin=plasmod_dtmin !min time step
-       num%dtmax=plasmod_dtmax !max time step
-       num%dt=plasmod_dt !time step
-       num%dtinc=plasmod_dtinc !decrease of dt
-       num%Ainc=plasmod_ainc !increase of dt
-       num%test=plasmod_test !max iteration number
-       num%tolmin=plasmod_tolmin ! multiplier of etolm that should not be overcome
+       num%tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
+       num%dtmin  = plasmod_dtmin !min time step
+       num%dtmax  = plasmod_dtmax !max time step
+       num%dt     = plasmod_dt !time step
+       num%dtinc  = plasmod_dtinc !decrease of dt
+       num%Ainc   = plasmod_ainc !increase of dt
+       num%test   = plasmod_test !max iteration number
+       num%tolmin = plasmod_tolmin ! multiplier of etolm that should not be overcome
        
-       num%eopt=plasmod_eopt !exponent of jipperdo
-       num%dtmaxmin=plasmod_dtmaxmin !exponent of jipperdo2
-       num%capA=plasmod_capa !first radial grid point
-       num%maxA=plasmod_maxa !diagz 0 or 1
-       num%dgy=plasmod_dgy !Newton differential
-       num%i_modeltype=plasmod_i_modeltype !1 - simple gyrobohm scaling
-       num%i_equiltype=plasmod_i_equiltype !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
-       num%nx=plasmod_nx	 !number of interpolated grid points
-       num%nxt=plasmod_nxt !number of reduced grid points
-       num%nchannels=plasmod_nchannels  !leave this at 3
+       num%eopt     = plasmod_eopt !exponent of jipperdo
+       num%dtmaxmin = plasmod_dtmaxmin !exponent of jipperdo2
+       num%capA     = plasmod_capa !first radial grid point
+       num%maxA     = plasmod_maxa !diagz 0 or 1
+       num%dgy      = plasmod_dgy !Newton differential
+       num%i_modeltype = plasmod_i_modeltype !1 - simple gyrobohm scaling
+       num%i_equiltype = plasmod_i_equiltype !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+       num%nx  = plasmod_nx  !number of interpolated grid points
+       num%nxt = plasmod_nxt !number of reduced grid points
+       num%nchannels = plasmod_nchannels  !leave this at 3
        
        if(ieped == 0) then
           num%ipedestal= 1  !fixed temperature pedestal
@@ -123,7 +123,7 @@ contains
           call report_error(175) !option not possible
        endif
        
-       num%i_impmodel=plasmod_i_impmodel !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
+       num%i_impmodel = plasmod_i_impmodel !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
        ! HL Todo: We need to make sure that our impurity fractions/mixes match with Emilianos confinement time relations!
        comp%globtau(1) = plasmod_globtau(1) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(2) = plasmod_globtau(2) !tauparticle/tauE for D, T, He, Xe, Ar
@@ -171,39 +171,41 @@ contains
        inp0%spellet=0.d0 !pellet mass in particles of D in 10^19
        inp0%fpellet=0.5d0 !pellet frequency in Hz
        
+       inp0%f_gw   = fgwped !pedestal top greenwald fraction
+       inp0%f_gws  = fgwsep !separatrix greenwald fraction
+       inp0%V_loop = plasmod_v_loop !target loop voltage. If lower than -1.e5 dont use
+       inp0%f_ni   = plasmod_f_ni !required fraction of non inductive current, if 0 dont use CD
+       inp0%pfus   = plasmod_pfus !if 0., not used (otherwise it would be controlled with Pauxheat)
+       
        comp%psepplh_inf = plasmod_psepplh_inf !Psep/PLH if below this, use nbi
        comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
-       comp%psep_r = plasmod_psep_r !Psep/R max value
-       comp%qdivt = plasmod_qdivt !divertor heat flux in MW/m^2, if 0, dont use SOL model
-       inp0%V_loop=plasmod_v_loop !target loop voltage. If lower than -1.e5 dont use
-       inp0%f_ni=plasmod_f_ni !required fraction of non inductive current, if 0 dont use CD
-       inp0%pfus=plasmod_pfus !if 0., not used (otherwise it would be controlled with Pauxheat)
-       
-       geom%k = kappa !edge elongation
-       geom%d = triang !edge triangularity
-       geom%ip=plascur/1.d6	
 
-
-       ped%rho_t=rhopedt !pedestal top position T
-       ped%rho_n=rhopedt !pedestal top position n
-       ped%tesep=tesep  !separatrix temperature
-       ped%teped=teped !pedestal top temperature
-
-       inp0%f_gw=fgwped !pedestal top greenwald fraction
-       inp0%f_gws=fgwsep !separatrix greenwald fraction
+       comp%qdivt       = plasmod_qdivt !divertor heat flux in MW/m^2, if 0, dont use SOL model
+       comp%pradpos     = coreradius ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
        
-       write(*,*) 'gamcd = ', gamcd
-       inp0%nbcdeff=gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
-       
-       comp%pradpos = coreradius ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
+       !Todo Add checks that these are only used, if you actually want to constrain those values
+       ! Set to large values otherwise! pseprmax and psepbqarmax cannot be used at the same time!
+       comp%psep_r      = pseprmax !Psep/R max value 
        comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
 
+       ped%rho_t = rhopedt !pedestal top position T
+       ped%rho_n = rhopedt !pedestal top position n
+       ped%tesep = tesep  !separatrix temperature
+       ped%teped = teped !pedestal top temperature
+       
+       geom%k  = kappa !edge elongation
+       geom%d  = triang !edge triangularity
+       geom%ip = plascur/1.d6	
+       
+       write(*,*) 'gamcd = ', gamcd
+       inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
+       
 
     endif
     
   end subroutine setupPlasmod
 
-  subroutine convert_Plasmod2PROCESS(num,geom,comp,ped,inp0,radp,mhd,loss)
+  subroutine convert_Plasmod2PROCESS(geom,comp,ped,inp0,radp,mhd,loss)
 
     !+ad_name  convert_Plasmod2PROCESS
     !+ad_summ  Routine to set up the PLASMOD input params
@@ -234,52 +236,75 @@ contains
     type (radial_profiles), intent(inout) :: radp
     type (MHD_EQ), intent(inout) :: mhd 
     type (power_losses), intent(inout) :: loss 
-    type (numerics_transp), intent(inout) :: num
+
+
+    if (i_flag==1)then
+       write(*,*) 'PLASMOD has converged!!!'
+    elseif (i_flag==0)then
+       write(*,*) 'The PLASMOD transport model has crashed'
+       call report_error(174)
+    elseif (i_flag==-1)then
+       write(*,*) 'The PLASMOD transport model has not converged after itermax'
+       call report_error(174)
+    elseif (i_flag==-2)then
+       write(*,*) 'The PLASMOD equilibrium has crashed'
+       call report_error(174)
+    endif
+
+    
+    if (mhd%equilcheck .ne. 1) then
+       write(*,*) 'The PLASMOD equilibrium has crashed'
+       call report_error(174) 
+    endif
     
     
-    !HL Todo: update PROCESS variables with output from PLASMOD
-    te0 = radp%te(1) ! Check this is right!
-    
-    plascur = geom%ip * 1.0D6 !needs to be in Amps. Also equal to mhd%ip?
-    q95 = geom%q95  ! also equal to mhd%q?
-    
-    ralpne = comp%che
-    fimp(13) = comp%cxe !do these need to be normalised?
-    fimp(9) = comp%car
-    
-    teped = ped%teped
+    te0 = radp%te(1) 
+    teped = ped%teped !only computed, if ieped = 2
+    ne0   = radp%ne(1)
     neped = ped%nped
     nesep = ped%nsep
+
     
-    !mhd%equilcheck is flag
-    normalised_total_beta = mhd%betan !not sure on this one...
+    !If plascur was an input, q95 is an output and vice versa
+    !Reassign both for simplicity
+    !Plasma current in Ampere
+    !plascur = geom%ip * 1.0D6 
+    plascur = mhd%ip_out  * 1.0D6
+    !Edge safety factor
+    !q95 = geom%q95  
+    q95 = mhd%q
+    
+    ralpne   = comp%che
+    fimp(13) = comp%cxe 
+    fimp(9)  = comp%car
+    
+    normalised_total_beta = mhd%betan ! Todo Assure other beta's are calculated consistently.
+    
     vol = mhd%vp ! plasma volume (m^3)
-    != mhd%q_sep !q at separatrix?
-    != mhd%vloop
+    !mhd%q_sep !q at separatrix
+    !mhd%vloop !loop voltage in V ! Check this is consistent with our volt-seconds requirements routine in physics.f90
     bootipf= mhd%fbs
+    !If this is an output cannot be an iteration variable! Add input check!
     fvsbrnni = mhd%f_ni !non-inductive current fraction 
     
-    powfmw = loss%pfus
-    taueff = loss%taueff ! several choices here
+    powfmw = loss%pfus ! Check this is consistent with PROCESS calculation! Does PLASMOD only use an approximation?
+    taueff = loss%taueff 
     hfact = loss%H
-    
-    !tau_scal = loss%taueff/loss%H  ??
-    
-    != loss%Wth !not sure about this one
-    != loss%prad ! fradpwr is total radiation fraction 
-    != loss%pradedge
-    
+        
+    != loss%Wth 
+    pradmw     = loss%prad ! fradpwr is total radiation fraction 
+    pedgeradmw = loss%pradedge    
     pcoreradmw = loss%pradcore
-    != loss%psync ! psyncpv is synchrotron radiation power per volume
-    != loss%pbrehms ! pbrempv is bremsstrahlung power per volume
-    != loss%pline !plinepv is line radiation power per volume (MW/m3)
+    psyncpv    = loss%psync/vol 
+    pbrempv    = loss%pbrehms/vol
+    plinepv    = loss%pline/vol
     != loss%psepi / 1.0D6 !psep_kallenbach is Power conducted through the separatrix, as calculated by the divertor model [W] ion/electron??
-    != loss%piepv
-    pinjemw = loss%peaux
-    pinjimw = loss%piaux
-    hldiv = loss%pdiv
-    != loss%Psep
-    != loss%PLH
+    piepv      = loss%piepv
+    pinjemw    = loss%peaux
+    pinjimw    = loss%piaux
+    hldiv      = loss%pdiv
+    pdivt      = loss%Psep
+    plhthresh  = loss%PLH !Todo: Add warning to input, ipedestal ==2,3 can only be used with ilhthresh = 6.
     
     qfuel = loss%dfuelreq * 2.0 !qfuel is for nucleus pairs
     != loss%tfuelreq ! think this is assumed in PROCESS to be the same as above

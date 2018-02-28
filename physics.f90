@@ -293,8 +293,8 @@ contains
        write(*,*) 'geom counter = ', geom%counter
        call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
 
-       if(1 == 1) then
-       
+       if(verbose == 1) then
+
           open(32,file='plasmodsolprima.dat')
           write(32,*) 'num ',num
           write(32,*) 'geom ',geom
@@ -309,7 +309,7 @@ contains
 
        call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
        
-       if (1 == 1) then
+       if (verbose == 1) then
           open(32,file='plasmodsoldopo.dat')
           write(32,*) 'num ',num
           write(32,*) 'geom ',geom
@@ -321,20 +321,8 @@ contains
           close(32)
        endif
 
-       if (i_flag==1)then
-          write(*,*) 'Katy - Transport model has converged!!!'
-       elseif (i_flag==0)then
-          write(*,*) 'Katy - Transport model has crashed'
-          call report_error(174)
-       elseif (i_flag==-1)then
-          write(*,*) 'Katy - Transport model has not converged after itermax'
-          call report_error(174)
-       elseif (i_flag==-2)then
-          write(*,*) 'Katy - Transport model equilibrium crashed'
-          call report_error(174)
-       endif
 
-       !call convert_Plasmod2PROCESS(num,geom,comp,ped,inp0,radp,mhd,loss)
+       call convert_Plasmod2PROCESS(geom,comp,ped,inp0,radp,mhd,loss)
        
     endif
 
@@ -444,31 +432,37 @@ contains
 
     if (irfcd /= 0) call cudriv(nout,0)
 
-    !  Calculate fusion power + components
+    
+    if (ipedestal .ne. 3) then
+       
+       !  Calculate fusion power + components
+       call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
+            sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
 
-    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
-         sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
+       pdt = pdtpv * vol
+       pdhe3 = pdhe3pv * vol
+       pdd = pddpv * vol
 
-    pdt = pdtpv * vol
-    pdhe3 = pdhe3pv * vol
-    pdd = pddpv * vol
 
-    !  Calculate neutral beam slowing down effects
-    !  If ignited, then ignore beam fusion effects
+       !  Calculate neutral beam slowing down effects
+       !  If ignited, then ignore beam fusion effects
 
-    if ((cnbeam /= 0.0D0).and.(ignite == 0)) then
-       call beamfus(beamfus0,betbm0,bp,bt,cnbeam,dene,deni,dlamie, &
-            ealphadt,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
-            zeffai,betanb,dnbeam2,palpnb)
-       fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
-       alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
-    end if
+       if ((cnbeam /= 0.0D0).and.(ignite == 0)) then
+          call beamfus(beamfus0,betbm0,bp,bt,cnbeam,dene,deni,dlamie, &
+               ealphadt,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
+               zeffai,betanb,dnbeam2,palpnb)
+          fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
+          alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
+       end if
 
-    pdt = pdt + 5.0D0*palpnb
-
-    call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-         ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw,betaft, &
-         palppv,palpipv,palpepv,pfuscmw,powfmw)
+       pdt = pdt + 5.0D0*palpnb
+       
+       call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
+            ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw,betaft, &
+            palppv,palpipv,palpepv,pfuscmw,powfmw)
+    
+    endif
+       
 
     !  Nominal mean neutron wall load on entire first wall area including divertor and beam holes
     !  Note that 'fwarea' excludes these, so they have been added back in.
@@ -478,19 +472,25 @@ contains
        wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
     end if
 
+    
+
     !  Calculate ion/electron equilibration power
 
     call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
-    !  Calculate radiation power
 
-    call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
-         pcoreradpv,pedgeradpv,pradpv)
+    if (ipedestal .ne. 3) then
+       !  Calculate radiation power
+       
+       call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
+            pcoreradpv,pedgeradpv,pradpv)
+       
+       pcoreradmw = pcoreradpv*vol
+       pedgeradmw = pedgeradpv*vol
+       pradmw = pradpv*vol
 
-    pcoreradmw = pcoreradpv*vol
-    pedgeradmw = pedgeradpv*vol
-    pradmw = pradpv*vol
-
+    endif
+       
     ! MDK
     !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
     !  Note that 'fwarea' excludes these, so they have been added back in.
@@ -510,13 +510,17 @@ contains
     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
     res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
 
-    !  Calculate L- to H-mode power threshold for different scalings
+    if (ipedestal .ne. 3) then
+       
+       !  Calculate L- to H-mode power threshold for different scalings
 
-    call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
+       call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
-    !  Enforced L-H power threshold value (if constraint 15 is turned on)
+       !  Enforced L-H power threshold value (if constraint 15 is turned on)
 
-    plhthresh = pthrmw(ilhthresh)
+       plhthresh = pthrmw(ilhthresh)
+       
+    endif
 
     !  Power transported to the divertor by charged particles,
     !  i.e. excludes neutrons and radiation, and also NBI orbit loss power,

@@ -1126,9 +1126,7 @@ contains
         case ('plasmod_psepplh_sup')
           call parse_real_variable('plasmod_psepplh_sup', plasmod_psepplh_sup, 0.0D0, 2.0D4, &
                'Psep/PLH if above this, use Xe')
-        case ('plasmod_psep_r')
-          call parse_real_variable('plasmod_psep_r', plasmod_psep_r, 0.0D0, 2.0D4, &
-               'Psep/R max value')          
+        
        case ('plasmod_qdivt')
           call parse_real_variable('plasmod_qdivt', plasmod_qdivt, 0.0D0, 100.0D0, &
                'Divertor heat flux in MW/m^2, if 0, dont use SOL model')
