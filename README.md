@@ -100,7 +100,7 @@ Minor changes
   ```
 
 - Before pushing back to the repository make sure that your branch is up to date
-with any changes that might have been made by other developers, `git pull --rebase`
+with any changes that might have been made by other developers, `git pull`
 - When you wish to push your branch back to the repository enter `git push`
 
 ### Merging
@@ -111,9 +111,9 @@ If you have finished making a major change, after creating a new branch, you wil
 to merge your branch with the develop branch.
 
 - Make sure you have committed all of your changes to your local branch.
-- Update your local repo with `git pull --rebase`
+- Update your local repo with `git pull`
 - Checkout the development branch `git checkout develop`
-- Check remote repo again `git pull --rebase`
+- Check remote repo again `git pull`
 - Checkout your new branch `git checkout my_branch_name`
 - Merge develop into your branch `git merge develop`
 - If there are conflicts check the files listed for the following:
@@ -135,7 +135,7 @@ files that had conflicts.
 After developing your branch and during the development merging develop into it to make
 sure the two branches don't diverge you will need to merge your branch with develop.
 
-- Check your repo is up to date `git pull --rebase`
+- Check your repo is up to date `git pull`
 - `git checkout my_branch_name`
 - `git checkout develop`
 - `git merge my_branch_name`
