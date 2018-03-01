@@ -18,6 +18,8 @@ module global_variables
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+ 
 
   implicit none
 
@@ -165,6 +167,7 @@ module physics_variables
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+
   implicit none
 
   public
@@ -294,10 +297,12 @@ module physics_variables
   !+ad_varc                 area in neutron wall load calculation (iwalld=1)
   real(kind(1.0D0)) :: ffwal = 0.92D0
   !+ad_vars  fgwped /0.85/ : fraction of Greenwald density to set as pedestal-top density
-  !+ad_varc                  If <0, pedestal-top density set manually using neped (ipedestal=1)
+  !+ad_varc                  If <0, pedestal-top density set manually using neped (ipedestal>=1)
+  !+ad_varc                  Needs to be >0 if ipedestal = 3
   real(kind(1.0D0)) :: fgwped = 0.85D0
   !+ad_vars  fgwsep /0.50/ : fraction of Greenwald density to set as separatrix density
-  !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal=1)
+  !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal>=1)
+  !+ad_varc                  Needs to be >0 if ipedestal = 3  
   real(kind(1.0D0)) :: fgwsep = 0.50D0
 
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
@@ -393,7 +398,9 @@ module physics_variables
 
   !+ad_vars  ipedestal /1/ : switch for pedestal profiles:<UL>
   !+ad_varc             <LI> = 0 use original parabolic profiles;
-  !+ad_varc             <LI> = 1 use pedestal profiles </UL>
+  !+ad_varc             <LI> = 1 use pedestal profiles
+  !+ad_varc             <LI> = 2 use pedestal profiles and run PLASMOD on final output
+  !+ad_varc             <LI> = 3 use PLASMOD transport model only to calculate pedestal profiles</UL>
   integer :: ipedestal = 1
   ! Issue #589 remove iscdens
   !+ad_vars  iscdens /0/ : switch for pedestal profiles: OBSOLETE
@@ -406,23 +413,23 @@ module physics_variables
   !+ad_varc             <LI>    https://idm.euro-fusion.org/?uid=2MSZ4T </UL>
   integer :: ieped = 0
 
-  !+ad_vars  neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1)
+  !+ad_vars  neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1,2, calculated if 3)
   real(kind(1.0D0)) :: neped = 4.0D19
-  !+ad_vars  nesep /3.0e19/ : electron density at separatrix [m-3] (ipedestal=1)
+  !+ad_vars  nesep /3.0e19/ : electron density at separatrix [m-3] (ipedestal=1,2, calculated if 3)
   real(kind(1.0D0)) :: nesep = 3.0D19
   !+ad_vars  alpha_crit : critical ballooning parameter value
   real(kind(1.0D0)) :: alpha_crit = 0.0D0
   !+ad_vars  nesep_crit : critical electron density at separatrix [m-3]
   real(kind(1.0D0)) :: nesep_crit = 0.0D0
-  !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal=1)
+  !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal>=1)
   real(kind(1.0D0)) :: rhopedn = 1.0D0
-  !+ad_vars  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal=1)
+  !+ad_vars  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal>=1)
   real(kind(1.0D0)) :: rhopedt = 1.0D0
-  !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1)
+  !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1,2)
   real(kind(1.0D0)) :: tbeta = 2.0D0
-  !+ad_vars  teped /1.0/ : electron temperature of pedestal (keV) (ipedestal=1, ieped=0)
+  !+ad_vars  teped /1.0/ : electron temperature of pedestal (keV) (ipedestal>=1, ieped=0, calculated for ieped=1)
   real(kind(1.0D0)) :: teped = 1.0D0
-  !+ad_vars  tesep /0.1/ : electron temperature at separatrix (keV) (ipedestal=1)
+  !+ad_vars  tesep /0.1/ : electron temperature at separatrix (keV) (ipedestal>=1)
   real(kind(1.0D0)) :: tesep = 0.1D0
 
   !+ad_vars  iprofile /1/ : switch for current profile consistency:<UL>
@@ -780,6 +787,140 @@ module physics_variables
 
 end module physics_variables
 
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+module plasmod_variables
+
+  !+ad_name  plasmod_variables
+  !+ad_summ  Module containing global variables relating to PLASMOD
+  !+ad_type  Module
+  !+ad_auth  K Ellis, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to PLASMOD
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  26/02/18 KE Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  use structs
+  
+
+  implicit none
+
+  
+  public
+  
+ !Derived type numerics_transp 
+  !+ad_vars  plasmod_tol /0.00001d0/ : Tolerance to be reached, in % variation at each time step
+  real(kind(1.0D0)) :: plasmod_tol = 0.00001d0
+  !+ad_vars  plasmod_dtmin /0.01d0/ : Min time step
+  real(kind(1.0D0)) :: plasmod_dtmin = 0.01d0
+  !+ad_vars  plasmod_dtmax /0.1d0/ : Max time step
+  real(kind(1.0D0)) :: plasmod_dtmax = 0.1d0
+  !+ad_vars  plasmod_dt /0.01d0/ : Time step
+  real(kind(1.0D0)) :: plasmod_dt = 0.01d0
+  !+ad_vars  plasmod_dtinc /2.0d0/ : Decrease of dt
+  real(kind(1.0D0)) :: plasmod_dtinc = 2.0d0
+  !+ad_vars  plasmod_ainc /1.1d0/ : Increase of dt
+  real(kind(1.0D0)) :: plasmod_Ainc = 1.1d0
+  !+ad_vars  plasmod_test /100000.0d0/ : Max iteration number
+  real(kind(1.0D0)) :: plasmod_test = 100000.0d0
+  !+ad_vars  plasmod_tolmin /10.1d0/ : Multiplier of etolm that should not be overcome
+  real(kind(1.0D0)) :: plasmod_tolmin = 10.1d0
+  !+ad_vars  plasmod_eopt /0.1d0/ : Exponent of jipperdo
+  real(kind(1.0D0)) :: plasmod_eopt = 0.1d0
+  !+ad_vars  plasmod_dtmaxmin /0.1d0/ : Exponent of jipperdo2
+  real(kind(1.0D0)) :: plasmod_dtmaxmin = 0.1d0
+  !+ad_vars  plasmod_capa /0.1d0/ : First radial grid point
+  real(kind(1.0D0)) :: plasmod_capA = 0.1d0
+  !+ad_vars  plasmod_maxa /0.0d0/ : Diagz 0 or 1
+  real(kind(1.0D0)) :: plasmod_maxA = 0.0d0
+  !+ad_vars  plasmod_dgy /1.0d-5/ : Newton differential
+  real(kind(1.0D0)) :: plasmod_dgy = 1.0d-5
+  !+ad_vars  plasmod_i_modeltype /1/ : 1 - Simple gyrobohm scaling
+  integer :: plasmod_i_modeltype = 1
+  !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+  integer :: plasmod_i_equiltype = 1
+  !+ad_vars  plasmod_nx /41/ : Number of interpolated grid points
+  integer :: plasmod_nx = 41
+  !+ad_vars  plasmod_nxt /7/ : Number of reduced grid points
+  integer :: plasmod_nxt = 7
+  !+ad_vars  plasmod_nchannels /3/ : Leave this at 3
+  integer :: plasmod_nchannels = 3
+  !+ad_vars  plasmod_i_impmodel /1/ : Impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
+  integer :: plasmod_i_impmodel = 1
+
+ !Derived type composition 
+  !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
+  real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0 /)
+  !+ad_vars  plasmod_c_car /100.0d0/ : compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
+  real(kind(1.0D0)) :: plasmod_c_car = 100.0d0
+  !+ad_vars  plasmod_psepplh_sup /12000.0d0/ : Psep/PLH if above this, use Xe
+  real(kind(1.0D0)) :: plasmod_psepplh_sup = 12000.0d0
+  !+ad_vars  plasmod_qdivt /0.0d0/ : Divertor heat flux in MW/m^2, if 0, dont use SOL model
+  real(kind(1.0D0)) :: plasmod_qdivt = 0.0d0  
+  
+ !Derived type inputs
+  !+ad_vars  plasmod_qnbi_psepfac /50.0d0/ : dqnbi/d(1-Psep/PLH)
+  real(kind(1.0D0)) :: plasmod_qnbi_psepfac = 50.0d0
+  !+ad_vars  plasmod_cxe_psepfac /1.0d-4/ : dcxe/d(1-Psep/PLH)
+  real(kind(1.0D0)) :: plasmod_cxe_psepfac = 1.0d-4
+  !+ad_vars  plasmod_car_qdivt /1.0d-4/ : dcar/d(qdivt)
+  real(kind(1.0D0)) :: plasmod_car_qdivt = 1.0d-4
+    !deposition locations
+  !+ad_vars  plasmod_x_heat(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_x_heat = (/ 0.0d0, 0.0d0 /)
+  !+ad_vars  plasmod_x_cd(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_x_cd = (/ 0.0d0, 0.0d0 /)
+  !+ad_vars  plasmod_x_fus(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_x_fus = (/ 0.0d0, 0.0d0 /)
+  !+ad_vars  plasmod_x_control(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_x_control = (/ 0.0d0, 0.0d0 /)
+  !+ad_vars  plasmod_dx_heat(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_dx_heat = (/ 0.2d0, 0.03d0 /)
+  !+ad_vars  plasmod_dx_cd(2) /0.2d0, 0.03/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_dx_cd = (/ 0.2d0, 0.03d0 /)
+  !+ad_vars  plasmod_dx_fus(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_dx_fus = (/ 0.2d0, 0.03d0 /)
+  !+ad_vars  plasmod_dx_control(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  real(kind(1.0D0)), dimension(2) :: plasmod_dx_control = (/ 0.2d0, 0.03d0 /)
+
+  !+ad_vars  plasmod_nbi_energy /1000.0d0/ :: In keV
+  real(kind(1.0D0)) :: plasmod_nbi_energy = 1000.0d0
+  !+ad_vars  plasmod_v_loop /-1.0d-6/ :: Target loop voltage. If lower than -1.e5 do not use
+  real(kind(1.0D0)) :: plasmod_v_loop = -1.0d-6
+  !+ad_vars  plasmod_f_ni /0.0d0/ :: Required fraction of non inductive current. If 0 do not use CD
+  real(kind(1.0D0)) :: plasmod_f_ni = 0.0d0
+  !+ad_vars  plasmod_pfus /0.0d0/ :: If 0. not used (otherwise controlled with Pauxheat)
+  real(kind(1.0D0)) :: plasmod_pfus = 0.0d0
+  
+  !+ad_vars  geom ::  Derived type containing all geometry information for PLASMOD
+  type (geometry) :: geom
+  !+ad_vars  comp ::  Derived type containing all composition information for PLASMOD
+  type (composition) :: comp
+  !+ad_vars  ped ::  Derived type containing all pedestal information for PLASMOD
+  type (pedestal) :: ped
+  !+ad_vars  inp0 ::  Derived type containing miscellaneous input information for PLASMOD
+  type (inputs) :: inp0
+  !+ad_vars  radp ::  Derived type containing all radial profile information for PLASMOD
+  type (radial_profiles) :: radp
+  !+ad_vars  mhd ::  Derived type containing all mhd information for PLASMOD
+  type (MHD_EQ) :: mhd
+  !+ad_vars  loss ::  Derived type containing all power loss information for PLASMOD
+  type (power_losses) :: loss
+  !+ad_vars  num ::  Derived type containing all numerics information for PLASMOD
+  type (numerics_transp) :: num
+  !+ad_vars  i_flag ::  Error flag for PLASMOD
+  integer :: i_flag
+
+  
+end module plasmod_variables
+
+
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module current_drive_variables
@@ -1127,7 +1268,7 @@ module divertor_variables
   !+ad_vars  ppdivr : peak heat load at plate (with radiation) (MW/m2)
   real(kind(1.0D0)) :: ppdivr = 0.0D0
   !+ad_vars  prn1 /0.285/ : n-scrape-off / n-average plasma;
-  !+ad_varc                 (input for ipedestal=0, = nesep/dene if ipedestal=1)
+  !+ad_varc                 (input for ipedestal=0, = nesep/dene if ipedestal>=1)
   real(kind(1.0D0)) :: prn1 = 0.285D0
   !+ad_vars  ptpdiv : peak temperature at the plate (eV)
   real(kind(1.0D0)) :: ptpdiv = 0.0D0
@@ -4274,4 +4415,5 @@ module rebco_variables
           real(kind(1.0D0)) :: area
           !real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
       end type
-  end module resistive_materials
+    end module resistive_materials
+    

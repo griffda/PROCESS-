@@ -1,0 +1,1391 @@
+ Variable "iscdens" is obsolete.
+          25  constraints.            41  iteration variables
+ 
+ **************************************************************************************************************
+ ************************************************** PROCESS ***************************************************
+ ************************************** Power Reactor Optimisation Code ***************************************
+ **************************************************************************************************************
+ 
+   Program : ../process.exe
+   Version : 1.0.12   Release Date :: 2017-10-04
+   Tag No. : "1.0.12-112-gf82dbe7 Code used contains Untracked Changes"
+   Last commit message : "cd efficiency according to process"
+      User : kellis
+ Directory : /home/kellis/Process/PROCESS_PLASMOD/process/PLASMOD
+ 
+ **************************************************************************************************************
+ 
+ PROCESS 1.0.12 : Run on 23 Feb 2018 17:54:00 +00:00(hh:mm) UTC by freia006
+ Reactor concept design: Pulsed tokamak model, (c) CCFE
+ Run Title (change this line using input variable 'runtitle')
+ gamcd =   0.30000001192092896     
+ geom counter =    0.0000000000000000     
+   0.0000000000000000        0.0000000000000000                1
+ PLASMOD RUNS
+ plasmod end          449
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    1.0000000000000000     
+   0.0000000000000000        1.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          270
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    2.0000000000000000     
+   0.0000000000000000        2.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end           41
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    3.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            5
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   9.9900099900092159E-004   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          192
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   2.0020020020018467E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          211
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   1.9990009990008607E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          235
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   2.0020020020020783E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          261
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   1.0000000000001366E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          232
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          141
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            6
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   9.9900099900089318E-004   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   2.0020020020019040E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          187
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   1.0000000000000083E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          300
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          132
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            6
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ 
+==>    2  vmcon iterations. Normalised FoM =   1.800  Residuals (sqsumsq) = 3.5E-01  Convergence param = 7.5E-02 gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   1.1260876364374280E-002   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          290
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          206
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            6
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   9.9900099900098317E-004   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          194
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   2.0020020020019703E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          213
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   1.9990009990008845E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          235
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   2.0020020020020007E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          260
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   1.0000000000000974E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          235
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          141
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            6
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   9.9900099900087453E-004   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   2.0020020020017522E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          186
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   9.9999999999987534E-004   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          296
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          132
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            6
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+==>    3  vmcon iterations. Normalised FoM =   1.811  Residuals (sqsumsq) = 5.6E-02  Convergence param = 2.1E-02 gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   1.2560725634197873E-002   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          289
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          210
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            7
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   9.9900099900093807E-004   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          192
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   2.0020020020018793E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          211
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   1.9990009990009374E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          235
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   2.0020020020020011E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          260
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   9.9999999999999959E-004   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          232
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          141
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            6
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   9.9900099900081772E-004   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   2.0020020020017526E-003   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          187
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   9.9999999999993258E-004   3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          300
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end          132
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            6
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     
+   0.0000000000000000        3.0000000000000000                2
+ PLASMOD RUNS
+ plasmod end            2
+ Katy - Transport model has converged!!!
+ gamcd =   0.30000000000000004     
+ geom counter =    4.0000000000000000     

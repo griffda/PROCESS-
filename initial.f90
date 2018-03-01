@@ -311,7 +311,7 @@ subroutine check
 
     !  Plasma profile consistency checks
 
-    if (ipedestal == 1) then
+    if (ipedestal == 1 .or. ipedestal == 2) then
 
         !  Temperature checks
 
@@ -382,7 +382,38 @@ subroutine check
             boundu(6) = max(boundu(6), boundl(6))
         end if
 
-    end if
+     end if
+
+     if(ipedestal == 2 .or. ipedestal == 3) then
+        if (fgwped < 0 )then
+           call report_error(176)
+        endif
+        if (fgwsep < 0 ) then
+           call report_error(177)
+        endif
+     endif
+
+     ! Cannot use Psep/R and PsepB/qAR limits at the same time
+     if(any(icc == 68) .and. any(icc == 56)) then
+        call report_error(178)
+     endif
+
+     !need to enforce H-mode using Martin scaling, if using PLASMOD
+     if ((ipedestal == 2).or. (ipedestal==3)) then
+        if(.not. any(icc == 15)) then
+           call report_error(179)
+        endif
+
+        if (ilhthresh .ne. 6) then
+           call report_error(180)
+        endif
+
+        if (boundl(103) < 1.) then
+           call report_error(181)
+        endif
+
+     endif
+     
 
     !  Tight aspect ratio options
     ! ---------------------------
@@ -541,7 +572,12 @@ subroutine check
         end if
         tmargmin_tf = tmargmin
         tmargmin_cs = tmargmin
-    end if
+     end if
+
+     ! Initialise value for gamcd for use in PLASMOD first iteration
+     if(ipedestal==2)then
+        gamcd = 0.3
+     endif
 
 
     errors_on = .false.

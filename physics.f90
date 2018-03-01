@@ -111,6 +111,12 @@ module physics_module
   use tfcoil_variables
   use times_variables
 
+  !use structs
+  use grad_func
+  
+  use plasmod_module
+  use plasmod_variables
+
   implicit none
 
   private
@@ -122,7 +128,6 @@ module physics_module
 
   integer :: iscz
   real(kind(1.0D0)) :: vcritx, photon_wall, rad_fraction
-
 
 contains
 
@@ -259,16 +264,11 @@ contains
     !    fgwped * Greenwald density limit
     !  Note: this used to be done before plasma current
 
-    ! if ((ipedestal == 1).and.(iscdens == 1)) then
-    !   neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
-    !   nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
-    ! end if
-
     ! Issue #589 remove iscdens
-    if ((ipedestal == 1).and.(fgwped >=0d0)) then
+    if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwped >=0d0)) then
       neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
     endif
-    if ((ipedestal == 1).and.(fgwsep >=0d0)) then
+    if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwsep >=0d0)) then
       nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
     end if
 
@@ -278,13 +278,55 @@ contains
        nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
             * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
     endif
-
+    
     ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
     ! ieped : switch for scaling pedestal-top temperature with plasma parameters
-    if ((ipedestal == 1).and.(ieped == 1)) teped = t_eped_scaling()
+    if (((ipedestal == 1).or.(ipedestal==2)).and.(ieped == 1)) teped = t_eped_scaling()
 
-    call plasma_profiles
+    if (ipedestal .ne. 3)then
+       
+       call plasma_profiles
+       
+    else  ! Run PLASMOD 
+         
+       write(*,*) 'geom counter = ', geom%counter
+       call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
 
+       if(verbose == 1) then
+
+          open(32,file='plasmodsolprima.dat')
+          write(32,*) 'num ',num
+          write(32,*) 'geom ',geom
+          write(32,*) 'comp ',comp
+          write(32,*) 'ped ',ped
+          write(32,*) 'inp0 ',inp0
+          write(32,*) 'mhd ',mhd
+          write(32,*) 'loss ',loss
+          close(32)	
+          
+       endif
+
+       call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+       
+       if (verbose == 1) then
+          open(32,file='plasmodsoldopo.dat')
+          write(32,*) 'num ',num
+          write(32,*) 'geom ',geom
+          write(32,*) 'comp ',comp
+          write(32,*) 'ped ',ped
+          write(32,*) 'inp0 ',inp0
+          write(32,*) 'mhd ',mhd
+          write(32,*) 'loss ',loss
+          close(32)
+       endif
+
+
+       call convert_Plasmod2PROCESS(geom,comp,ped,inp0,radp,mhd,loss)
+       
+    endif
+
+    !HL Todo go through all statements above and below and make sure they are consistent with ipedestal = 3
+    
     btot = sqrt(bt**2 + bp**2)
     betap = beta * ( btot/bp )**2
 
@@ -388,33 +430,37 @@ contains
     !  Do auxiliary current drive power calculations
 
     if (irfcd /= 0) call cudriv(nout,0)
+ 
+    if (ipedestal .ne. 3) then
+       
+       !  Calculate fusion power + components
+       call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
+            sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
 
-    !  Calculate fusion power + components
+       pdt = pdtpv * vol
+       pdhe3 = pdhe3pv * vol
+       pdd = pddpv * vol
 
-    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
-         sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
 
-    pdt = pdtpv * vol
-    pdhe3 = pdhe3pv * vol
-    pdd = pddpv * vol
+       !  Calculate neutral beam slowing down effects
+       !  If ignited, then ignore beam fusion effects
 
-    !  Calculate neutral beam slowing down effects
-    !  If ignited, then ignore beam fusion effects
+       if ((cnbeam /= 0.0D0).and.(ignite == 0)) then
+          call beamfus(beamfus0,betbm0,bp,bt,cnbeam,dene,deni,dlamie, &
+               ealphadt,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
+               zeffai,betanb,dnbeam2,palpnb)
+          fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
+          alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
+       end if
 
-    if ((cnbeam /= 0.0D0).and.(ignite == 0)) then
-       call beamfus(beamfus0,betbm0,bp,bt,cnbeam,dene,deni,dlamie, &
-            ealphadt,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
-            zeffai,betanb,dnbeam2,palpnb)
-       fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
-       alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
-    end if
-
-    pdt = pdt + 5.0D0*palpnb
-
-    call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-         ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw,betaft, &
-         palppv,palpipv,palpepv,pfuscmw,powfmw)
-
+       pdt = pdt + 5.0D0*palpnb
+       
+       call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
+            ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw,betaft, &
+            palppv,palpipv,palpepv,pfuscmw,powfmw)
+    
+    endif
+       
     !  Nominal mean neutron wall load on entire first wall area including divertor and beam holes
     !  Note that 'fwarea' excludes these, so they have been added back in.
     if (iwalld == 1) then
@@ -427,15 +473,18 @@ contains
 
     call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
-    !  Calculate radiation power
+    if (ipedestal .ne. 3) then
+       !  Calculate radiation power
+       
+       call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
+            pcoreradpv,pedgeradpv,pradpv)
+       
+       pcoreradmw = pcoreradpv*vol
+       pedgeradmw = pedgeradpv*vol
+       pradmw = pradpv*vol
 
-    call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
-         pcoreradpv,pedgeradpv,pradpv)
-
-    pcoreradmw = pcoreradpv*vol
-    pedgeradmw = pedgeradpv*vol
-    pradmw = pradpv*vol
-
+    endif
+       
     ! MDK
     !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
     !  Note that 'fwarea' excludes these, so they have been added back in.
@@ -455,13 +504,17 @@ contains
     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
     res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
 
-    !  Calculate L- to H-mode power threshold for different scalings
+    if (ipedestal .ne. 3) then
+       
+       !  Calculate L- to H-mode power threshold for different scalings
 
-    call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
+       call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
-    !  Enforced L-H power threshold value (if constraint 15 is turned on)
+       !  Enforced L-H power threshold value (if constraint 15 is turned on)
 
-    plhthresh = pthrmw(ilhthresh)
+       plhthresh = pthrmw(ilhthresh)
+       
+    endif
 
     !  Power transported to the divertor by charged particles,
     !  i.e. excludes neutrons and radiation, and also NBI orbit loss power,
@@ -561,6 +614,7 @@ function t_eped_scaling()
                           kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
 end function t_eped_scaling
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
  ! function eped_warning()
  !     ! Issue #413.
  !     logical :: eped_warning
@@ -610,6 +664,7 @@ end function t_eped_scaling
           eped_warning=trim(eped_warning)//'  tesep = '//trim(info_string)
       endif
   end function eped_warning
+
  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function bootstrap_fraction_iter89(aspect,beta,bt,cboot,plascur,q95,q0,rmajor,vol)
@@ -4770,7 +4825,7 @@ end function t_eped_scaling
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    call osubhd(outfile,'Energy confinement times, and required H-factors :')
+    call oheadr(outfile,'Energy confinement times, and required H-factors :')
 
     write(outfile,10)
 10  format(t5,'scaling law', t30,'confinement time (s)', &
@@ -5766,7 +5821,8 @@ end function t_eped_scaling
 
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
     call ovarin(outfile,'Plasma profile model','(ipedestal)',ipedestal)
-    if(ipedestal==1)then
+
+    if((ipedestal==1).or.(ipedestal==2))then
         call ocmmnt(outfile,'Pedestal profiles are used.')
         call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
         if(fgwped >= 0d0)then
@@ -5788,6 +5844,7 @@ end function t_eped_scaling
         call ovarin(outfile,'Pedestal scaling switch','(ieped)',ieped)
         if(ieped==1)then
             call ocmmnt(outfile,'Saarelma 6-parameter pedestal temperature scaling is ON')
+
             if(eped_warning() /= '')then
                 call ocmmnt(outfile,'WARNING: Pedestal parameters are outside the range of applicability of the scaling:')
                 call ocmmnt(outfile,'triang: 0.4 - 0.6; kappa: 1.5 - 2.0;   plascur: 10 - 20 MA, rmajor: 7 - 11 m;')

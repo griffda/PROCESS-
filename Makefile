@@ -55,6 +55,7 @@
 #  Type 'make win_clean' to clean up the directory to allow a full Fortran recompilation on Windows
 #
 ###############################################################
+PLASMOD_DIR=PLASMOD
 
 SRC = \
  availability.f90 \
@@ -90,6 +91,7 @@ SRC = \
  plant_power.f90 \
  plasma_geometry.f90 \
  plasma_profiles.f90 \
+ plasmod.f90 \
  process.f90 \
  pulse.f90 \
  read_radiation.f90 \
@@ -105,7 +107,14 @@ SRC = \
  structure.f90 \
  superconductors.f90 \
  tfcoil.f90 \
- vacuum.f90
+ vacuum.f90 \
+ $(PLASMOD_DIR)/e3m.f \
+ $(PLASMOD_DIR)/equil.f90 \
+ $(PLASMOD_DIR)/grad_func.f90 \
+ $(PLASMOD_DIR)/structs.f90 \
+ $(PLASMOD_DIR)/transport_solver.f90 \
+ $(PLASMOD_DIR)/trmodel.f90
+
 
 OBJ = \
  availability.o \
@@ -139,6 +148,7 @@ OBJ = \
  plant_power.o \
  plasma_geometry.o \
  plasma_profiles.o \
+ plasmod.o \
  process.o \
  pulse.o \
  read_radiation.o \
@@ -154,7 +164,14 @@ OBJ = \
  structure.o \
  superconductors.o \
  tfcoil.o \
- vacuum.o
+ vacuum.o \
+ $(PLASMOD_DIR)/e3m.o \
+ $(PLASMOD_DIR)/equil.o \
+ $(PLASMOD_DIR)/grad_func.o \
+ $(PLASMOD_DIR)/structs.o \
+ $(PLASMOD_DIR)/transport_solver.o \
+ $(PLASMOD_DIR)/trmodel.o
+
 
  GVAR = global_variables.f90 numerics.f90
 
@@ -247,7 +264,7 @@ fispact.o: global_variables.o output.o
 fson_library.o:
 	${FORTRAN} ${FFLAGS_LIB} -c fson_library.f90 -o fson_library.o
 fw.o : global_variables.o output.o refprop_interface.o
-global_variables.o:
+global_variables.o: $(PLASMOD_DIR)/structs.o
 hcll.o : fw.o global_variables.o output.o
 hcpb.o : fw.o global_variables.o output.o maths_library.o refprop_interface.o
 impurity_radiation.o: error_handling.o global_variables.o root.dir plasma_profiles.o
@@ -261,7 +278,8 @@ ode.o:
 output.o: global_variables.o numerics.o
 pfcoil.o: error_handling.o global_variables.o maths_library.o output.o sctfcoil.o superconductors.o
 physics.o: current_drive.o error_handling.o global_variables.o impurity_radiation.o \
-  maths_library.o numerics.o output.o plasma_profiles.o
+  maths_library.o numerics.o output.o plasma_profiles.o plasmod.o \
+  $(PLASMOD_DIR)/grad_func.o
 plant_power.o: error_handling.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: error_handling.o global_variables.o maths_library.o
@@ -289,6 +307,13 @@ structure.o: global_variables.o output.o
 superconductors.o: global_variables.o output.o error_handling.o
 tfcoil.o: error_handling.o global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: error_handling.o global_variables.o output.o
+plasmod.o: global_variables.o output.f90 impurity_radiation.f90 error_handling.o
+$(PLASMOD_DIR)/e3m.o: 
+$(PLASMOD_DIR)/equil.o: $(PLASMOD_DIR)/grad_func.o
+$(PLASMOD_DIR)/grad_func.o: 
+$(PLASMOD_DIR)/structs.o:
+$(PLASMOD_DIR)/transport_solver.o: $(PLASMOD_DIR)/grad_func.o $(PLASMOD_DIR)/structs.o
+$(PLASMOD_DIR)/trmodel.o: $(PLASMOD_DIR)/grad_func.o
 
 process.exe: $(OBJ)
 	$(FORTRAN) -o $@ $(OBJ)
@@ -316,6 +341,7 @@ untracked.info:
 # Clean up directory, to force full recompilation
 clean:
 	rm -f process.exe *.o *.mod
+	rm -f $(PLASMOD_DIR)/*.o $(PLASMOD_DIR)/*.mod
 	rm -f root.dir
 	rm -f tag.num
 	rm -f com.msg
