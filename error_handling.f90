@@ -151,7 +151,7 @@ contains
     !  Local variables
 
     integer :: n_errortypes
-    character(len=100) :: filename
+    character(len=120) :: filename
     type(fson_value), pointer :: errorfile
 
     !  Obtain the root directory
@@ -295,7 +295,7 @@ contains
     implicit none
 
     !  Arguments
-    
+
     !  Local variables
 
     type (error_list_item), pointer :: ptr
@@ -304,10 +304,10 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    call oheadr(iotty,'Errors and Warnings')       
-    call oheadr(nout,'Errors and Warnings')    
+    call oheadr(iotty,'Errors and Warnings')
+    call oheadr(nout,'Errors and Warnings')
     call ocmmnt(nout,'(See top of file for solver errors and warnings.)')
-       
+
     select case (error_status)
     case (0)
         status_message = 'No messages'
@@ -319,9 +319,9 @@ contains
         status_message = 'Errors'
     case default
         status_message = 'Incorrect value of error_status'
-    end select    
-    
-    call ocmmnt(nout,'PROCESS status flag:   '//status_message)           
+    end select
+
+    call ocmmnt(nout,'PROCESS status flag:   '//status_message)
     write(*,*)       'PROCESS status flag:   '//status_message
     call oblnkl(iotty)
     call ovarin(nout,'PROCESS error status flag','(error_status)',error_status)
@@ -366,4 +366,3 @@ contains
   end subroutine show_errors
 
 end module error_handling
-

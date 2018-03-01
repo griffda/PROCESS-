@@ -265,7 +265,7 @@ isumatpf = 3 * Switch for superconductor material in pf coils;
 ncls     = 1,1,2,2, * Number of pf coils in group j
 ngrp     = 4 * Number of groups of pf coils;
 ohhghf   = 0.9 * Central solenoid height / tf coil internal height
-oh_steel_frac = 0.8242 * Central solenoid steel fraction (iteration variable 122)
+oh_steel_frac = 5.0649E-01  * Central solenoid steel fraction (iteration variable 122)
 rjconpf  = 1.1d7, 1.1d7, 6.d6, 6.d6, 8.d6, 8.0d6, 8.0d6, 8.0d6, * Average winding pack current density of pf coil i (a/m2)
 rpf2     = -1.825 * Offset (m) of radial position of ipfloc=2 pf coils
 zref(1) = 3.6

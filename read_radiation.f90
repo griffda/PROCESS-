@@ -9,7 +9,7 @@ module read_radiation
   !+ad_hist  25/01/17 MDK Initial version of module
   !+ad_hist  08/02/17 JM  Tidy up
   !+ad_stat  Okay
-  !+ad_docs  
+  !+ad_docs
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -20,7 +20,7 @@ module read_radiation
   use impurity_radiation_module, only: nimp, fimp, imp_label
 
   implicit none
-    
+
   ! List of impurities in the SOL/divertor model IS now same as the main plasma impurities
 
 contains
@@ -76,7 +76,7 @@ contains
 
     ! Function output
     real(kind(1.0D0)) :: read_lz
-    
+
     ! Natural logs of netau and te
     real(kind(1.0D0)) :: lnetau, lte
 
@@ -105,7 +105,7 @@ contains
     ! The # character must be at the start of the line.
     include "root.dir"
 
-    character(len=80), save :: lzdir = trim(ROOTDIR//'/data/lz_non_corona_14_elements/')
+    character(len=120), save :: lzdir = trim(ROOTDIR//'/data/lz_non_corona_14_elements/')
 
     ! Find the index of the element.  Exclude hydrogen by starting at 2 (Helium)
     do i = 2, nimp
@@ -240,7 +240,7 @@ contains
     !+ad_hist  08/02/17 MDK  Initial version
     !+ad_hist  08/02/17 JM  Tidy
     !+ad_stat  Okay
-    !+ad_docs  
+    !+ad_docs
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -265,7 +265,7 @@ contains
     ! netau data
     real(kind(1.0D0)) :: data_netau
 
-    ! 
+    !
     integer :: pos, i, j, iostatus
 
     ! Electron temperature array [eV]
@@ -285,9 +285,9 @@ contains
       write(*,*)'nt = ',nt,'  nnetau = ',nnetau
     endif
 
-    do         
+    do
       read(8,*,IOSTAT=iostatus)string
-      
+
       ! The string 'Te[eV]' is present
       if(index(string,'Te[eV]').ne.0) exit
 
@@ -316,7 +316,7 @@ contains
       read(substring,*)data_netau
 
       lnetau_array(j) = log(data_netau)
-      
+
       ! Read the data
       ! A fixed format read doesn't work for some reason
       read(8,*)(impurity_data(i,j), i= 1, nt)
@@ -341,7 +341,7 @@ contains
     !+ad_hist  08/02/17 MDK Initial version
     !+ad_hist  13/02/17 JM  Tidy
     !+ad_stat  Okay
-    !+ad_docs  
+    !+ad_docs
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -349,7 +349,7 @@ contains
 
     ! Subroutine declarations !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
     character(len=2) :: element
 
     real(kind(1.0D0)) :: dummy
@@ -379,7 +379,7 @@ contains
         do j=2,nimp
             Lz_plot(j)=read_lz(imp_label(j),te(i),netau, mean_z=.false., mean_qz=.false., verbose=.false.)
         enddo
-        write(12,'(30es11.3)')te(i), (Lz_plot(j), j=2,nimp)            
+        write(12,'(30es11.3)')te(i), (Lz_plot(j), j=2,nimp)
     enddo
     close(unit=12)
 
@@ -398,7 +398,7 @@ contains
     !+ad_hist  08/02/17 MDK Initial version
     !+ad_hist  13/02/17 JM  Tidy
     !+ad_stat  Okay
-    !+ad_docs  
+    !+ad_docs
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -406,7 +406,7 @@ contains
 
     ! Subroutine declarations !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
     character(len=2) :: element
 
     real(kind(1.0D0)) :: dummy
@@ -421,13 +421,13 @@ contains
     real(kind(1.0D0)) :: Z_plot(3,nimp)
 
     real(kind(1.0D0)) :: netau(3) = (/0.1, 1.0, 10.0/)
-    
+
     open(unit=12,file='mean_Z.txt',status='replace')
 
     write(12,*)'Mean Z'
 
     write(12,'(a11,  42(3(a4, es7.1)))')'Te (ev)',((imp_label(i),netau(j), j=1,3),i=2,nimp)
-    
+
     ! Just read data.  Exclude hydrogen by starting at 2
     do i = 2, nimp
         element = imp_label(i)

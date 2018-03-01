@@ -976,7 +976,7 @@ contains
     exp_blanket = 1-exp(-b*mass)
     pnucblkt = powfmw * a * exp_blanket
     if ((pnucblkt<1.0d0).or.(pnucblkt /= pnucblkt)) then
-        write(*,*)'Error in nuclear_heating_fw. '
+        write(*,*)'Error in nuclear_heating_blanket. '
         write(*,*)'pnucblkt =', pnucblkt, ' exp_blanket =', exp_blanket
         write(*,*)'powfmw =', powfmw, ' mass =', mass
         stop

@@ -2471,6 +2471,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     lowest_valid_fom = 999d0
+    best_solution_vector = x
 
     np1 = n + 1
     npp = 2*np1
@@ -2675,7 +2676,9 @@ contains
 
        !  Check convergence of constraint residuals
        summ = 0.0D0
-       do i = 1,m
+       !do i = 1,m
+       ! This only includes the equality constraints Issue #505
+       do i = 1,meq
           summ = summ + conf(i)*conf(i)
        end do
        sqsumsq = sqrt(summ)
@@ -2684,7 +2687,7 @@ contains
        iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
 
        write(iotty, '("==>", I5, "  vmcon iterations. Normalised FoM =", &
-           &  f8.3, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
+           &  f8.4, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
            ADVANCE="NO"), niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
 
        if (verbose == 1) then
@@ -2789,15 +2792,13 @@ contains
              info = 1  !  reset on each iteration
              if (aux > 0.0D0) then
                 if (verbose == 1) then
-                   write(*,*) 'VMCON optimiser line search attempt '// &
-                        'failed - retrying...'
+                   write(*,*) 'VMCON optimiser line search attempt failed - retrying...'
                 end if
                 info = 7
                 exit line_search
              end if
 
-             !  Exit if the line search requires ten or more function
-             !  evaluations
+             !  Exit if the line search requires ten or more function evaluations
 
              if (nfev >= (nfinit + 10)) then
                 do i = 1, n
@@ -2806,7 +2807,7 @@ contains
                 nfev = nfev + 1
                 call fcnvmc1(n,m,x,objf,conf,info)
                 if (info >= 0) info = 3
-                !  Error return because line search required 10 calls of fcnvmc1
+                ! Error return because line search required 10 calls of fcnvmc1
                 ! Issue #601 Return the best value of the solution vector - not the last value. MDK
                 x = best_solution_vector
                 sum = best_sum_so_far

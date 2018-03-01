@@ -1145,7 +1145,7 @@ subroutine doopt(ifail)
   end if
 
   call ovarin(nout,'Number of iteration variables','(nvar)',nvar)
-  call ovarin(nout,'Number of constraints','(neqns)',neqns)
+  call ovarin(nout,'Number of constraints (total)','(neqns+nineqns)',neqns+nineqns)
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
   call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
   if (ifail /= 1) then
@@ -1272,7 +1272,7 @@ subroutine doopt(ifail)
   call osubhd(nout, &
        'The following equality constraint residues should be close to zero :')
 
-  call constraint_eqns(neqns,con1,-1,con2,err,sym,lab)
+  call constraint_eqns(neqns+nineqns,con1,-1,con2,err,sym,lab)
   write(nout,90)
 90 format(t48,'physical',t73,'constraint',t100,'normalised')
   write(nout,100)
@@ -1288,15 +1288,17 @@ subroutine doopt(ifail)
 
   if (nineqns > 0) then
      call osubhd(nout, &
-          'The following inequality constraint residues should be positive :')
+          'The following inequality constraint residues should be greater than or approximately equal to zero :')
 
      do inn = neqns+1,neqns+nineqns
-        write(nout,120) inn,lablcc(icc(inn)),rcm(inn),vlam(inn)
+        !write(nout,120) inn,lablcc(icc(inn)),rcm(inn),vlam(inn)
+        write(nout,110) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
+                        lab(inn), err(inn), lab(inn)
         call ovarre(mfile,lablcc(icc(inn)),'(constr'//int_to_string3(inn)//')',rcm(inn))
      end do
   end if
 
-120 format(t2,i4,t8,a33,t45,1pe12.4,1pe12.4)
+! 120 format(t2,i4,t8,a33,t45,1pe12.4,1pe12.4)
 
 end subroutine doopt
 

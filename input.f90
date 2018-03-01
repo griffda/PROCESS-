@@ -471,10 +471,12 @@ contains
           no_constraints = no_constraints + 1
           call parse_int_array('icc', icc, isub1, ipeqns, &
                'Constraint equation', icode,no_constraints)
+          no_constraints = isub1
       case ('ixc')
           no_iteration = no_iteration + 1
           call parse_int_array('ixc', ixc, isub1, ipnvars, &
                    'Iteration variable', icode,no_iteration)
+          no_iteration = isub1
 
        case ('ioptimz')
           call parse_int_variable('ioptimz', ioptimz, -1, 1, &
@@ -485,8 +487,8 @@ contains
        case ('minmax')
           call parse_int_variable('minmax', minmax, -ipnfoms, ipnfoms, 'Switch for figure of merit')
        case ('neqns')
-           write(*,*)'The number of constraints is counted automatically and does not need to be stated in IN.DAT.'
-     !    call parse_int_variable('neqns', neqns, 1, ipeqns, 'No of equality constraints')
+           write(*,*)'The total number of constraints is counted automatically and does not need to be stated in IN.DAT.'
+           call parse_int_variable('neqns', neqns, 1, ipeqns, 'No of equality constraints')
        case ('nineqns')
           call parse_int_variable('nineqns', nineqns, 1, ipeqns, 'No of inequality constraints')
        case ('nvar')
@@ -1354,7 +1356,7 @@ contains
           call parse_real_variable('divfix', divfix, 0.1D0, 5.0D0, &
                'Divertor structure vertical extent (m)')
        case ('divplt')
-          call parse_real_variable('divplt', divplt, 0.1D0, 1.0D0, &
+          call parse_real_variable('divplt', divplt, 0.01D0, 1.0D0, &
                'Divertor plate thickness (m)')
        case ('fdfs')
           call parse_real_variable('fdfs', fdfs, 0.0D0, 20.0D0, &
@@ -2049,7 +2051,7 @@ contains
           call parse_int_variable('irefprop', irefprop, 0, 1, &
                'Switch to use REFPROP routines')
        case ('outlet_temp')
-          call parse_real_variable('outlet_temp', outlet_temp, 450.0D0, 700.0D0, &
+          call parse_real_variable('outlet_temp', outlet_temp, 450.0D0, 900.0D0, &
                'Coolant outlet temperature (K)')
        case ('nblktmodpo')
           call parse_int_variable('nblktmodpo', nblktmodpo, 1, 16, &
@@ -2901,9 +2903,18 @@ contains
        cycle
 
     end do loop_over_lines
-    neqns = no_constraints
+
+    if(neqns == 0) then
+        ! The value of neqns has not been set in the input file.  Default = 0.
+        neqns = no_constraints - nineqns
+    else
+        ! The value of neqns has been set in the input file.
+        nineqns = no_constraints - neqns
+    end if
+
     nvar = no_iteration
-    write(*,*)neqns,' constraints.  ',nvar,' iteration variables'
+    write(*,*)no_constraints,' constraints (total).  ',nvar,' iteration variables'
+    write(*,*)nineqns, ' inequality constraints,  ', neqns, ' equality constraints'
 
     if (error .eqv. .True.) stop
 
@@ -3289,11 +3300,14 @@ contains
        isub1 = 1
        if(present(startindex))isub1 = startindex
        do
-          call get_value_int(val,icode)
+          call get_value_int(val,icode)          
           !  icode == 1 denotes an error
-          !  icode == -1 denotes end of line, so the next line needs to be read in
-          !  (hence the 'goto 20' in the calling routine)
-          if (icode /= 0) return
+          !  icode == -1 denotes end of line
+          if (icode /= 0) then
+              ! Make sure isub1 = the last array index
+              isub1 = isub1 - 1
+              return
+          end if
 
           oldval = varval(isub1)
           varval(isub1) = val
@@ -3303,6 +3317,7 @@ contains
           end if
           isub1 = isub1 + 1
        end do
+
     end if
 
 10  format(a,a,a,a1,i3,a,i12)

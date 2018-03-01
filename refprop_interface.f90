@@ -54,7 +54,7 @@ module refprop_interface
 
   include "root.dir"
 
-  character(len=60) :: fluids_dir = ROOTDIR//'/data/fluids/'
+  character(len=120) :: fluids_dir = ROOTDIR//'/data/fluids/'
 
 contains
 
@@ -204,8 +204,8 @@ contains
     end if
     if ((pressure<1.0d5).or.(pressure>1.0d9).or.(pressure/=pressure)) then
         write(*,*) 'pressure = ', pressure, 'near line ', label
-    end if  
-    
+    end if
+
     call initialise_refprop(fluid)
 
     !  Input conversions

@@ -2793,6 +2793,13 @@ contains
                '(areaoh-awpoh)',areaoh-awpoh, 'OP ')
           call ovarre(outfile,'CS steel area fraction', &
                '(oh_steel_frac)',oh_steel_frac)
+          if (i_cs_stress == 1) then
+            call ocmmnt(outfile, 'Hoop + axial stress considered')
+          else
+            call ocmmnt(outfile, 'Only hoop stress considered')
+          end if
+          call ovarin(outfile,'Switch for CS stress calculation', &
+               '(i_cs_stress)',i_cs_stress)
           call ovarre(outfile,'Allowable stress in CS steel (Pa)', &
                '(alstroh)',alstroh)
           call ovarre(outfile,'Hoop stress in CS steel (Pa)', &

@@ -115,6 +115,7 @@ SRC = \
  $(PLASMOD_DIR)/transport_solver.f90 \
  $(PLASMOD_DIR)/trmodel.f90
 
+
 OBJ = \
  availability.o \
  buildings.o \
@@ -170,6 +171,7 @@ OBJ = \
  $(PLASMOD_DIR)/structs.o \
  $(PLASMOD_DIR)/transport_solver.o \
  $(PLASMOD_DIR)/trmodel.o
+
 
  GVAR = global_variables.f90 numerics.f90
 
@@ -230,7 +232,7 @@ endif
 
 # making modules
 .f90.mod:
-	${FORTRAN} ${FFLAGS} -c -r $*.f90
+	${FORTRAN} ${FFLAGS} -c $*.f90
 
 # default option
 default: process.exe

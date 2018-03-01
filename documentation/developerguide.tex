@@ -875,13 +875,13 @@ It is a good idea to periodically merge the \texttt{develop} branch into the bra
 \item Firstly, make sure you have committed your latest changes into the
   central \texttt{GitLab} repository as described in the previous section.  Set the directory containing the working branch as your current directory.
 
-\item \texttt{git pull}.  \\
+\item \texttt{git pull --rebase}.  \\
 Merges the version in the central repository into the local branch by copying over any changes that have been made in the version stored centrally.
 
 \item \texttt{git checkout develop}  \\
 This switches the "current branch" to \texttt{develop}.
 
-\item \texttt{git pull} \\
+\item \texttt{git pull --rebase} \\
 Updates the current branch of the local repository to the same branch on the central repository.
 
 \item \texttt{git checkout dev\_mynewmodel}  \\
@@ -923,7 +923,7 @@ differences:
 \item Firstly, make sure you have committed your latest changes to the working
   branch into the central \texttt{GitLab} repository.
 
-\item \texttt{git pull}\\
+\item \texttt{git pull --rebase}\\
 Merges the version in the central repository into the local branch by copying over any changes that have been made in the version stored centrally.
 
 \item \texttt{git checkout dev\_mynewmodel}
@@ -1017,7 +1017,7 @@ executables and documentation should be performed. This is done as follows:
 \item \texttt{cd develop}  (or \texttt{cd master}, as appropriate to the
   branch to be rebuilt)
 
-\item \texttt{git pull}\\
+\item \texttt{git pull --rebase}\\
 Updates the version stored in this folder to the version stored centrally.
 
 \item \texttt{make all}

@@ -30,20 +30,17 @@ SOFT 2014, fusion engineering and design ([paper](http://www.sciencedirect.com/s
 
 ## Build
 
-- for compiling on CCFE fusion machines add to your bashrc:
-    - `module unload ifort/10.0.023`
-    - `module load gcc/4.8.2`
 - get repository
-    - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where folder name
-    is the name of the folder you want to save PROCESS to.
-- inside PROCESS directory run `make`
+    - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where `folder_name`
+    is the name of the folder that will be created when cloning the repository.
+- inside PROCESS directory run `make` to compile the executable `process.exe`.
 
 Additionally
 
 - to make python dictionaries run `make dicts`
 - to make documentation run `make doc`
 - to make everything run `make all`
-- to clean directory run `make clean`
+- to clean the directory run `make clean`
 
 ## Run
 
@@ -103,7 +100,7 @@ Minor changes
   ```
 
 - Before pushing back to the repository make sure that your branch is up to date
-with any changes that might have been made by other developers, `git pull`
+with any changes that might have been made by other developers, `git pull --rebase`
 - When you wish to push your branch back to the repository enter `git push`
 
 ### Merging
@@ -114,9 +111,9 @@ If you have finished making a major change, after creating a new branch, you wil
 to merge your branch with the develop branch.
 
 - Make sure you have committed all of your changes to your local branch.
-- Update your local repo with `git pull`
+- Update your local repo with `git pull --rebase`
 - Checkout the development branch `git checkout develop`
-- Check remote repo again `git pull`
+- Check remote repo again `git pull --rebase`
 - Checkout your new branch `git checkout my_branch_name`
 - Merge develop into your branch `git merge develop`
 - If there are conflicts check the files listed for the following:
@@ -138,7 +135,7 @@ files that had conflicts.
 After developing your branch and during the development merging develop into it to make
 sure the two branches don't diverge you will need to merge your branch with develop.
 
-- Check your repo is up to date `git pull`
+- Check your repo is up to date `git pull --rebase`
 - `git checkout my_branch_name`
 - `git checkout develop`
 - `git merge my_branch_name`
