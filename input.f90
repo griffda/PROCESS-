@@ -1169,9 +1169,6 @@ contains
        case ('plasmod_v_loop')
           call parse_real_variable('plasmod_v_loop', plasmod_v_loop, -1.0D4, 1.0D4, &
                'Target loop voltage. If lower than -1.e5 do not use')
-       case ('plasmod_f_ni')
-          call parse_real_variable('plasmod_f_ni', plasmod_f_ni, 0.0D0, 1.0D0, &
-               'Required fraction of non inductive current. If 0 do not use CD')
        case ('plasmod_pfus')
           call parse_real_variable('plasmod_pfus', plasmod_pfus, 0.0D0, 1.0D4, &
                'If 0. not used (otherwise controlled with Pauxheat)')

@@ -86,8 +86,10 @@ contains
        
     inp0%Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used. 
     inp0%pheatmax  = pinjalw !max allowed power for heating+CD+fusion control
-    inp0%q_control = pheat !minimal power required for control
-    
+    inp0%q_control = pheat !minimal power required for control !HL: I am not sure this match is right!
+
+    !fvsbrnni can be an iteration variable!
+    inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
     ! all fixed input variables that cannot change within a PROCESS iteration go here!
     ! They only need to be initialised once.
@@ -132,8 +134,14 @@ contains
        comp%globtau(4) = plasmod_globtau(4) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(5) = plasmod_globtau(5) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%fuelmix = 0.5d0 !fuel mix Could be fdeut or ftrit! CHECK!
+
+       ! This should be equal to "impurity_enrichment(9)" if using the
+       ! Kallenbach model at the same time
+       ! This needs to be implemented when coupling to the Kallenbach model!
        comp%c_car = plasmod_c_car !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
+       
        !HL Todo: We need to make sure the impurity concentrations match with the PROCESS definitions for ralpne and fimp
+       ! This might change to adopt the PROCESS Radiation model!
        comp%car = fimp(9) !argon concentration, used if qdivt=0.
        comp%cxe = fimp(13) !xenon concentration, if negative uses Psepplh as criterion
        comp%che = ralpne !helium concentration, used if globtau(3)=0.
@@ -163,24 +171,27 @@ contains
        inp0%nbi_energy=plasmod_nbi_energy !in keV
 
        !HL To do: I guess, these still need to be made input variables?
-       inp0%eccdeff=0.3 !CD = this * PCD * TE/NE !not used for now
-       inp0%pech=0.d0 !ech power !not used for now
-       inp0%pnbi=0.d0 !nbi power
-       inp0%qheat=0.d0 !nbi power
-       inp0%qcd=0.d0 !nbi power
-       inp0%qfus=0.d0 !nbi power
-       inp0%spellet=0.d0 !pellet mass in particles of D in 10^19
-       inp0%fpellet=0.5d0 !pellet frequency in Hz
+       inp0%eccdeff = 0.3  !CD = this * PCD * TE/NE !not used for now
+       inp0%pech    = 0.d0 !ech power !not used for now
+       inp0%pnbi    = 0.d0 !nbi power
+       inp0%qheat   = 0.d0 !nbi power
+       inp0%qcd     = 0.d0 !nbi power
+       inp0%qfus    = 0.d0 !nbi power
+       inp0%spellet = 0.d0 !pellet mass in particles of D in 10^19
+       inp0%fpellet = 0.5d0 !pellet frequency in Hz
        
        inp0%f_gw   = fgwped !pedestal top greenwald fraction
        inp0%f_gws  = fgwsep !separatrix greenwald fraction
        inp0%V_loop = plasmod_v_loop !target loop voltage. If lower than -1.e5 dont use
-       inp0%f_ni   = plasmod_f_ni !required fraction of non inductive current, if 0 dont use CD
+
        inp0%pfus   = plasmod_pfus !if 0., not used (otherwise it would be controlled with Pauxheat)
        
        comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi
        comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
 
+       ! qdivt should be equal to qtargettotal /5.0e6/ if using the
+       ! Kallenbach model at the same time
+       ! This needs to be implemented when coupling to the Kallenbach model!
        comp%qdivt       = plasmod_qdivt !divertor heat flux in MW/m^2, if 0, dont use SOL model
        comp%pradpos     = coreradius ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
 
@@ -263,6 +274,8 @@ contains
     endif
 
     
+    ! This will likely be depricated in the future, as this is covered
+    ! by i_flag
     if (mhd%equilcheck .ne. 1) then
        write(*,*) 'The PLASMOD equilibrium has crashed'
        call report_error(174) 
@@ -279,11 +292,12 @@ contains
     !If plascur was an input, q95 is an output and vice versa
     !Reassign both for simplicity
     !Plasma current in Ampere
-    !plascur = geom%ip * 1.0D6 
-    plascur = mhd%ip_out  * 1.0D6
+    plascur = geom%ip * 1.0D6 
     !Edge safety factor
-    !q95 = geom%q95  
-    q95 = mhd%q
+    q95 = geom%q95
+    !duplicate variables that might get deprecated!
+    !plascur = mhd%ip_out  * 1.0D6
+    !q95 = mhd%q
     
     ralpne   = comp%che
     fimp(13) = comp%cxe 
@@ -295,12 +309,14 @@ contains
     !mhd%q_sep !q at separatrix
     !mhd%vloop !loop voltage in V ! Check this is consistent with our volt-seconds requirements routine in physics.f90
     bootipf= mhd%fbs
-    !If this is an output cannot be an iteration variable! Add input check!
-    fvsbrnni = mhd%f_ni !non-inductive current fraction 
+
+    ! This should match that input value and therefore should not need to be reassigned
+    ! One could implement a reference check?
+    !fvsbrnni = mhd%f_ni !non-inductive current fraction 
     
-    powfmw = loss%pfus ! Check this is consistent with PROCESS calculation! Does PLASMOD only use an approximation?
+    powfmw = loss%pfus ! Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS
     taueff = loss%taueff 
-    hfact = loss%H
+    hfact  = loss%H
         
     != loss%Wth 
     pradmw     = loss%prad ! fradpwr is total radiation fraction 

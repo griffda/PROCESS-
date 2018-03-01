@@ -331,7 +331,9 @@ module physics_variables
   !+ad_vars  hfac(ipnlaws) : H factors for an ignited plasma for each energy confinement
   !+ad_varc                  time scaling law
   real(kind(1.0D0)), dimension(ipnlaws) :: hfac = 0.0D0
-  !+ad_vars  hfact /1.0/ : H factor on energy confinement times (iteration variable 10)
+  !+ad_vars  hfact /1.0/ : H factor on energy confinement times, radiation corrected
+  !+ad_varc                (iteration variable 10)
+  !+ad_varc                if ipedestal=2,3, and hfact = 0, not used in PLASMOD
   real(kind(1.0D0)) :: hfact = 1.0D0
   ! Issue #219
   !+ad_vars  taumax /10/ : Maximum allowed energy confinement time (s)
@@ -410,6 +412,7 @@ module physics_variables
   !+ad_vars  ieped /0/ : switch for scaling pedestal-top temperature with plasma parameters:<UL>
   !+ad_varc             <LI> = 0 set pedestal-top temperature manually using teped;
   !+ad_varc             <LI> = 1 set pedestal-top temperature using EPED scaling;
+  !+ad_varc                   (PLASMOD implementation of scaling within PLASMOD, ipedestal =2,3) 
   !+ad_varc             <LI>    https://idm.euro-fusion.org/?uid=2MSZ4T </UL>
   integer :: ieped = 0
 
@@ -893,8 +896,6 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_nbi_energy = 1000.0d0
   !+ad_vars  plasmod_v_loop /-1.0d-6/ :: Target loop voltage. If lower than -1.e5 do not use
   real(kind(1.0D0)) :: plasmod_v_loop = -1.0d-6
-  !+ad_vars  plasmod_f_ni /0.0d0/ :: Required fraction of non inductive current. If 0 do not use CD
-  real(kind(1.0D0)) :: plasmod_f_ni = 0.0d0
   !+ad_vars  plasmod_pfus /0.0d0/ :: If 0. not used (otherwise controlled with Pauxheat)
   real(kind(1.0D0)) :: plasmod_pfus = 0.0d0
   
