@@ -113,7 +113,7 @@ module physics_module
 
   !use structs
   use grad_func
-  
+
   use plasmod_module
   use plasmod_variables
 
@@ -124,10 +124,14 @@ module physics_module
        palph,palph2,pcond,phyaux,physics,plasma_composition, &
        pohm,radpwr,rether
 
-  !  Local variables
-
+  !  Module-level variables
   integer :: iscz
   real(kind(1.0D0)) :: vcritx, photon_wall, rad_fraction
+
+  real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
+  real(kind(1.0D0)) :: total_loss_power        ! [W]
+  real(kind(1.0D0)) :: total_energy_conf_time  ! [s]
+
 
 contains
 
@@ -278,17 +282,17 @@ contains
        nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
             * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
     endif
-    
+
     ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
     ! ieped : switch for scaling pedestal-top temperature with plasma parameters
     if (((ipedestal == 1).or.(ipedestal==2)).and.(ieped == 1)) teped = t_eped_scaling()
 
     if (ipedestal .ne. 3)then
-       
+
        call plasma_profiles
-       
-    else  ! Run PLASMOD 
-         
+
+    else  ! Run PLASMOD
+
        write(*,*) 'geom counter = ', geom%counter
        call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
 
@@ -302,12 +306,12 @@ contains
           write(32,*) 'inp0 ',inp0
           write(32,*) 'mhd ',mhd
           write(32,*) 'loss ',loss
-          close(32)	
-          
+          close(32)
+
        endif
 
        call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
-       
+
        if (verbose == 1) then
           open(32,file='plasmodsoldopo.dat')
           write(32,*) 'num ',num
@@ -322,11 +326,11 @@ contains
 
 
        call convert_Plasmod2PROCESS(geom,comp,ped,inp0,radp,mhd,loss)
-       
+
     endif
 
     !HL Todo go through all statements above and below and make sure they are consistent with ipedestal = 3
-    
+
     btot = sqrt(bt**2 + bp**2)
     betap = beta * ( btot/bp )**2
 
@@ -430,9 +434,9 @@ contains
     !  Do auxiliary current drive power calculations
 
     if (irfcd /= 0) call cudriv(nout,0)
- 
+
     if (ipedestal .ne. 3) then
-       
+
        !  Calculate fusion power + components
        call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
             sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
@@ -454,13 +458,13 @@ contains
        end if
 
        pdt = pdt + 5.0D0*palpnb
-       
+
        call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
             ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw,betaft, &
             palppv,palpipv,palpepv,pfuscmw,powfmw)
-    
+
     endif
-       
+
     !  Nominal mean neutron wall load on entire first wall area including divertor and beam holes
     !  Note that 'fwarea' excludes these, so they have been added back in.
     if (iwalld == 1) then
@@ -475,16 +479,16 @@ contains
 
     if (ipedestal .ne. 3) then
        !  Calculate radiation power
-       
+
        call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
             pcoreradpv,pedgeradpv,pradpv)
-       
+
        pcoreradmw = pcoreradpv*vol
        pedgeradmw = pedgeradpv*vol
        pradmw = pradpv*vol
 
     endif
-       
+
     ! MDK
     !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
     !  Note that 'fwarea' excludes these, so they have been added back in.
@@ -505,7 +509,7 @@ contains
     res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
 
     if (ipedestal .ne. 3) then
-       
+
        !  Calculate L- to H-mode power threshold for different scalings
 
        call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
@@ -513,7 +517,7 @@ contains
        !  Enforced L-H power threshold value (if constraint 15 is turned on)
 
        plhthresh = pthrmw(ilhthresh)
-       
+
     endif
 
     !  Power transported to the divertor by charged particles,
@@ -585,7 +589,10 @@ contains
     call culblm(bt,dnbeta,plascur,rminor,betalim)
 
     ! Calculate some derived quantities that may not have been defined earlier
-    rad_fraction = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
+    total_loss_power = 1d6 * (falpha*palpmw+pchargemw+pohmmw+pinjmw)
+    rad_fraction = pradmw / total_loss_power
+    total_plasma_internal_energy = 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol
+    total_energy_conf_time = total_plasma_internal_energy / total_loss_power
 
   end subroutine physics
 
@@ -5742,7 +5749,8 @@ end function t_eped_scaling
     end if
 
     call ovarre(outfile,'Plasma thermal energy (J)',' ', 1.5D0*betath*btot*btot/(2.0D0*rmu0)*vol, 'OP ')
-    call ovarre(outfile,'Total plasma internal energy (J)',' ', 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol, 'OP ')
+
+    call ovarre(outfile,'Total plasma internal energy (J)','(total_plasma_internal_energy)', total_plasma_internal_energy, 'OP ')
 
     call osubhd(outfile,'Temperature and Density (volume averaged) :')
     call ovarrf(outfile,'Electron temperature (keV)','(te)',te)
@@ -6017,6 +6025,9 @@ end function t_eped_scaling
     ! Note alpha confinement time is no longer equal to fuel particle confinement time.
     call ovarrf(outfile,'Alpha particle/energy confinement time ratio','(taup/taueff)',taup/taueff, 'OP ')
     call ovarrf(outfile,'Lower limit on taup/taueff','(taulimit)',taulimit)
+
+    call ovarrf(outfile,'Total energy confinement time including radiation loss (s)', &
+                        '(total_energy_conf_time)', total_energy_conf_time, 'OP ')
 
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')
