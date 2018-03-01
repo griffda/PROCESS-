@@ -31,6 +31,7 @@ module plasmod_module
   use process_output
   use error_handling
   use divertor_variables
+  use numerics !for boundl
 
   
   implicit none
@@ -78,14 +79,14 @@ contains
 
     i_flag = 1
     
-    geom%r=rmajor
-    geom%a=aspect
-    geom%q95=q95
-    geom%bt=bt
+    geom%r   = rmajor
+    geom%a   = aspect
+    geom%q95 = q95
+    geom%bt  = bt
        
-    inp0%Hfac_inp=hfact !input H factor (radiation corrected), if 0., this is not used. 
-    inp0%pheatmax=pinjalw !max allowed power for heating+CD+fusion control
-    inp0%q_control=pheat !minimal power required for control
+    inp0%Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used. 
+    inp0%pheatmax  = pinjalw !max allowed power for heating+CD+fusion control
+    inp0%q_control = pheat !minimal power required for control
     
 
     ! all fixed input variables that cannot change within a PROCESS iteration go here!
@@ -133,9 +134,9 @@ contains
        comp%fuelmix = 0.5d0 !fuel mix Could be fdeut or ftrit! CHECK!
        comp%c_car = plasmod_c_car !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
        !HL Todo: We need to make sure the impurity concentrations match with the PROCESS definitions for ralpne and fimp
-       comp%car = 0. !argon concentration, used if qdivt=0.
-       comp%cxe = 0. !xenon concentration, if negative uses Psepplh as criterion
-       comp%che = 0. !helium concentration, used if globtau(3)=0.
+       comp%car = fimp(9) !argon concentration, used if qdivt=0.
+       comp%cxe = fimp(13) !xenon concentration, if negative uses Psepplh as criterion
+       comp%che = ralpne !helium concentration, used if globtau(3)=0.
        
        !derivatives
        inp0%qnbi_psepfac=plasmod_qnbi_psepfac !dqnbi/d(1-Psep/PLH)
@@ -177,17 +178,27 @@ contains
        inp0%f_ni   = plasmod_f_ni !required fraction of non inductive current, if 0 dont use CD
        inp0%pfus   = plasmod_pfus !if 0., not used (otherwise it would be controlled with Pauxheat)
        
-       comp%psepplh_inf = plasmod_psepplh_inf !Psep/PLH if below this, use nbi
+       comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi
        comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
 
        comp%qdivt       = plasmod_qdivt !divertor heat flux in MW/m^2, if 0, dont use SOL model
        comp%pradpos     = coreradius ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
-       
-       !Todo Add checks that these are only used, if you actually want to constrain those values
-       ! Set to large values otherwise! pseprmax and psepbqarmax cannot be used at the same time!
-       comp%psep_r      = pseprmax !Psep/R max value 
-       comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
 
+       
+       ! These values should only be set, if the respective constraints
+       ! are being used. They should be set to large values otherwise.
+       ! pseprmax and psepbqarmax cannot be used at the same time!
+       if (any(icc == 56)) then
+          comp%psep_r      = pseprmax !Psep/R max value
+          comp%psepb_q95AR = 1.0e3 !large number to have no effect
+       else if (any(icc == 68)) then
+          comp%psep_r      = 1.0e3 !large number to have no effect
+          comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
+       else
+          comp%psep_r      = 1.0e3 !large number to have no effect
+          comp%psepb_q95AR = 1.0e3 !large number to have no effect
+       endif
+       
        ped%rho_t = rhopedt !pedestal top position T
        ped%rho_n = rhopedt !pedestal top position n
        ped%tesep = tesep  !separatrix temperature
@@ -304,7 +315,7 @@ contains
     pinjimw    = loss%piaux
     hldiv      = loss%pdiv
     pdivt      = loss%Psep
-    plhthresh  = loss%PLH !Todo: Add warning to input, ipedestal ==2,3 can only be used with ilhthresh = 6.
+    plhthresh  = loss%PLH 
     
     qfuel = loss%dfuelreq * 2.0 !qfuel is for nucleus pairs
     != loss%tfuelreq ! think this is assumed in PROCESS to be the same as above

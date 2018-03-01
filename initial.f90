@@ -392,6 +392,27 @@ subroutine check
            call report_error(177)
         endif
      endif
+
+     ! Cannot use Psep/R and PsepB/qAR limits at the same time
+     if(any(icc == 68) .and. any(icc == 56)) then
+        call report_error(178)
+     endif
+
+     !need to enforce H-mode using Martin scaling, if using PLASMOD
+     if ((ipedestal == 2).or. (ipedestal==3)) then
+        if(.not. any(icc == 15)) then
+           call report_error(179)
+        endif
+
+        if (ilhthresh .ne. 6) then
+           call report_error(180)
+        endif
+
+        if (boundl(103) < 1.) then
+           call report_error(181)
+        endif
+
+     endif
      
 
     !  Tight aspect ratio options

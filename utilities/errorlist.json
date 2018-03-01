@@ -3,7 +3,7 @@
  "version":  [ "PROCESS revision 378" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 177,
+ "n_errortypes": 181,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -181,5 +181,9 @@
      { "no": 174, "level": 3, "message": "Transport model (1D) has not converged"},
      {"no": 175, "level": 3, "message": "Error: PLASMOD (ipedestal=2,3) can only be used with ieped = 0 or 1"},
      {"no": 176, "level": 3, "message": "Error: fgwped has to be > 0, if ipedestal = 2 or 3"},
-     {"no": 177, "level": 3, "message": "Error: fgwsep has to be > 0, if ipedestal = 2 or 3"}]
+     {"no": 177, "level": 3, "message": "Error: fgwsep has to be > 0, if ipedestal = 2 or 3"},
+ {"no": 178, "level": 3, "message": "Error: Cannot use Psep/R and PsepB/qAR limits at the same time"},
+ {"no": 179, "level": 3, "message": "Error: You have to use the LH-threshold constraint with PLASMOD"},
+ {"no": 180, "level": 3, "message": "Error: You have to use ilhthesh = 6 (Martin scaling) with PLASMOD"},
+ {"no": 181, "level": 3, "message": "Error: You have to enforce H-mode with PLASMOD"}]
 }
