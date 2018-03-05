@@ -153,6 +153,7 @@
     comp%fuelmix = 0.5d0 !fuel mix
 
     comp%pradpos = 0.75d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
+    comp%pradfrac = 1.d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
 
 				inp0%f_gw=0.905 !pedestal top greenwald fraction
 				inp0%f_gws=0.5 !separatrix greenwald fraction

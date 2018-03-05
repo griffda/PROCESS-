@@ -114,6 +114,10 @@ yllama=1.d0
 	pradtot(jrad:nx)=0.d0
 	if (jrad.gt.1)	pradedge(1:jrad-1)=0.d0
 
+	pradedge=pradedge+pradtot*(1.-comp%pradfrac)
+	pradtot=pradtot*comp%pradfrac
+
+
 
 
 

@@ -96,7 +96,7 @@ module structs
     type composition
       SEQUENCE
       real(kind(1.0D0)) :: globtau(5),psepplh_inf,psepplh_sup,qdivt,fuelmix,typ1,typ2,typ3,che,cxe,car,c_car, &
-						& pradpos,psepb_q95AR,psep_r
+						& pradpos,pradfrac,psepb_q95AR,psep_r
     end type composition 
 
 !+ad_name  pedestal
