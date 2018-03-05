@@ -1,8 +1,14 @@
 !constraints: psep and plh
 	Psep = trapz((powe+powi)*dV) !net psep, including radiation
 
+	if (inp0%PLH.eq.0) then
 	PLH=1.67*(trapz(nepr*dv)/trapz(dv)/10.)**0.61*(geom%bt)**0.78 &
      & *rminor**0.89*geom%r**0.94 !Martin scaling
+	else
+	PLH=inp0%PLH
+	endif
+
+
 	if (i_diagz.eq.1) 	write(*,*) 'plh',plh
 
 	if (comp%psepplh_inf.gt.0.) then

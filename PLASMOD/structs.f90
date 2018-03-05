@@ -149,7 +149,8 @@ module structs
 						& v_loop,f_gws,qnbi_psepfac,cxe_psepfac,pech,pnbi,car_qdivt, & 
 						& qheat,qcd,qfus,spellet,fpellet,q_control, & 
 						& x_heat(2),x_cd(2),x_fus(2),x_control(2), &
-						& dx_heat(2),dx_cd(2),dx_fus(2),dx_control(2),nbi_energy
+						& dx_heat(2),dx_cd(2),dx_fus(2),dx_control(2),nbi_energy, &
+						& PLH
 !gamma_ecrh,gamma_nbi (efficiencies)
     end type inputs 
 
