@@ -78,34 +78,62 @@ contains
     ! are calculated inside PROCESS need to be put here:
 
     i_flag = 1
-    
+
     geom%r   = rmajor
     geom%a   = aspect
     geom%q95 = q95
     geom%bt  = bt
-       
-    inp0%Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used. 
+
+    inp0%Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used.
     inp0%pheatmax  = pinjalw !max allowed power for heating+CD+fusion control
     inp0%q_control = pheat !minimal power required for control !HL: I am not sure this match is right!
 
     !fvsbrnni can be an iteration variable!
     inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
-    ! HL Todo: We need to make sure the impurity concentrations match with the PROCESS definitions for ralpne and fimp
+    ! HL Todo: We need to make sure the impurity concentrations match with
+    ! the PROCESS definitions for ralpne and fimp
     ! This might change to adopt the PROCESS Radiation model!
-    ! All of these can be iteration variables, but I don't know if this is consistent with PLASMOD
+    ! All of these can be iteration variables, but I don't know if this is
+    ! consistent with PLASMOD
     comp%car = fimp(9) !argon concentration, used if qdivt=0.
-    comp%cxe = fimp(13)!xenon concentration, if negative uses Psepplh as criterion
-    comp%che = ralpne  !helium concentration, used if globtau(3)=0.
     
 
-    ! all fixed input variables that cannot change within a PROCESS iteration go here!
+    !uses PROCES defined LH threshold, if this is > 0
+    inp0%PLH = 0d0 !plhthresh ! This won't work as this can only be calculated after.
+
+
+
+    ! all fixed input variables that cannot change within a PROCESS
+    ! iteration go here!
     ! They only need to be initialised once.
     if (geom%counter.eq.0.d0) then
 
-       geom%k95 = kappa95 !edge elongation
-       geom%d95 = triang95 !edge triangularity
-         
+       ! To selfconsistently compute the He concentration inside PLASMOD
+       ! this has to be 0.d0. Then globtau is used!
+       comp%che = 0.d0 !helium concentration
+       !Cxe is used if psepqbarmax is assigned, or pseprmax. or psepplh_sup.
+       !cxe is computed by PLASMOD so it cannot be assigned as input.
+       !It makes it much more robust and stable. 
+       comp%cxe = 0.d0 !xenon concentration
+
+       comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi
+
+       ! These values should only be set, if the respective constraints
+       ! are being used. They should be set to large values otherwise.
+       ! pseprmax and psepbqarmax cannot be used at the same time!
+       if (any(icc == 56)) then
+          comp%psep_r      = pseprmax !Psep/R max value
+          comp%psepb_q95AR = 1.0e3 !large number to have no effect
+       else if (any(icc == 68)) then
+          comp%psep_r      = 1.0e3 !large number to have no effect
+          comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
+       else
+          comp%psep_r      = 1.0e3 !large number to have no effect
+          comp%psepb_q95AR = 1.0e3 !large number to have no effect
+       endif
+       
+
        num%tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
        num%dtmin  = plasmod_dtmin !min time step
        num%dtmax  = plasmod_dtmax !max time step
@@ -114,18 +142,19 @@ contains
        num%Ainc   = plasmod_ainc !increase of dt
        num%test   = plasmod_test !max iteration number
        num%tolmin = plasmod_tolmin ! multiplier of etolm that should not be overcome
-       
+
        num%eopt     = plasmod_eopt !exponent of jipperdo
        num%dtmaxmin = plasmod_dtmaxmin !exponent of jipperdo2
        num%capA     = plasmod_capa !first radial grid point
        num%maxA     = plasmod_maxa !diagz 0 or 1
        num%dgy      = plasmod_dgy !Newton differential
        num%i_modeltype = plasmod_i_modeltype !1 - simple gyrobohm scaling
-       num%i_equiltype = plasmod_i_equiltype !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+       num%i_equiltype = plasmod_i_equiltype !1 - EMEQ, solve equilibrium
+       !with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
        num%nx  = plasmod_nx  !number of interpolated grid points
        num%nxt = plasmod_nxt !number of reduced grid points
        num%nchannels = plasmod_nchannels  !leave this at 3
-       
+
        if(ieped == 0) then
           num%ipedestal= 1  !fixed temperature pedestal
        else if (ieped == 1) then
@@ -133,27 +162,31 @@ contains
        else
           call report_error(175) !option not possible
        endif
-       
-       num%i_impmodel = plasmod_i_impmodel !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
-       ! HL Todo: We need to make sure that our impurity fractions/mixes match with Emilianos confinement time relations!
+
+       num%i_impmodel = plasmod_i_impmodel !impurity model: 0 - fixed
+       !concentration, 1 - concentration fixed at pedestal top, then fixed density. 
+       ! HL Todo: We need to make sure that our impurity fractions/mixes
+       ! match with Emilianos confinement time relations!
        comp%globtau(1) = plasmod_globtau(1) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(2) = plasmod_globtau(2) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(3) = plasmod_globtau(3) !tauparticle/tauE for D, T, He, Xe, Ar
-       comp%globtau(4) = plasmod_globtau(4) !tauparticle/tauE for D, T, He, Xe, Ar
+       comp%globtau(4) = plasmod_globtau(4) !tauparticle/tauE for D, T, He, Xe, Ar Not used for Xe!
        comp%globtau(5) = plasmod_globtau(5) !tauparticle/tauE for D, T, He, Xe, Ar
-       comp%fuelmix = 0.5d0 !fuel mix Could be fdeut or ftrit! CHECK!
+       comp%fuelmix = 0.5d0 !fuel mix Could be fdeut or ftrit or sqrt(fdeut*ftrit)! CHECK!
 
        ! This should be equal to "impurity_enrichment(9)" if using the
        ! Kallenbach model at the same time
        ! This needs to be implemented when coupling to the Kallenbach model!
-       comp%c_car = plasmod_c_car !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
-       
-       
+       comp%c_car = plasmod_c_car !compression factor between div and
+       !core: e.g. 10 means there is 10 more Argon concentration in the
+       !divertor than in the core
+
+
        !derivatives
        inp0%qnbi_psepfac = plasmod_qnbi_psepfac !dqnbi/d(1-Psep/PLH)
        inp0%cxe_psepfac  = plasmod_cxe_psepfac !dcxe/d(1-Psep/PLH)
        inp0%car_qdivt    = plasmod_car_qdivt !dcar/d(qdivt)
-       
+
        !deposition locations
        inp0%x_heat(1)     = plasmod_x_heat(1) !nbi
        inp0%x_heat(2)     = plasmod_x_heat(2) !ech
@@ -182,51 +215,43 @@ contains
        inp0%qfus    = 0.d0 !nbi power
        inp0%spellet = 0.d0 !pellet mass in particles of D in 10^19
        inp0%fpellet = 0.5d0 !pellet frequency in Hz
-       
-       inp0%f_gw   = fgwped !pedestal top greenwald fraction
-       inp0%f_gws  = fgwsep !separatrix greenwald fraction
-       inp0%V_loop = plasmod_v_loop !target loop voltage. If lower than -1.e5 dont use
 
+
+       inp0%V_loop = plasmod_v_loop !target loop voltage. If lower than  -1.e5 dont use
        inp0%pfus   = plasmod_pfus !if 0., not used (otherwise it would be controlled with Pauxheat)
-       
-       comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi
+
+
        comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
 
        ! qdivt should be equal to qtargettotal /5.0e6/ if using the
        ! Kallenbach model at the same time
        ! This needs to be implemented when coupling to the Kallenbach model!
        comp%qdivt       = plasmod_qdivt !divertor heat flux in MW/m^2, if 0, dont use SOL model
-       comp%pradpos     = coreradius ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
+       comp%pradfrac    = coreradiationfraction !fraction of radiation from 'core' region that is subtracted from the loss power
+       comp%pradpos     = coreradius ! position after which radiation is
+       !counted 0. for tau and other global quantities, i.e. position after
+       !which radiation is "edge"
 
        
-       ! These values should only be set, if the respective constraints
-       ! are being used. They should be set to large values otherwise.
-       ! pseprmax and psepbqarmax cannot be used at the same time!
-       if (any(icc == 56)) then
-          comp%psep_r      = pseprmax !Psep/R max value
-          comp%psepb_q95AR = 1.0e3 !large number to have no effect
-       else if (any(icc == 68)) then
-          comp%psep_r      = 1.0e3 !large number to have no effect
-          comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
-       else
-          comp%psep_r      = 1.0e3 !large number to have no effect
-          comp%psepb_q95AR = 1.0e3 !large number to have no effect
-       endif
+       ped%tesep  = tesep  !separatrix temperature
+       ped%rho_t  = rhopedt !pedestal top position T
+       ped%rho_n  = rhopedn !pedestal top position n
+       ped%teped  = teped !pedestal top temperature
+       inp0%f_gw  = fgwped !pedestal top greenwald fraction
+       inp0%f_gws = fgwsep !separatrix greenwald fraction
        
-       ped%rho_t = rhopedt !pedestal top position T
-       ped%rho_n = rhopedt !pedestal top position n
-       ped%tesep = tesep  !separatrix temperature
-       ped%teped = teped !pedestal top temperature
-       
+
        geom%k  = kappa !edge elongation
        geom%d  = triang !edge triangularity
-       geom%ip = plascur/1.d6	
-       
-       write(*,*) 'gamcd = ', gamcd
-       inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
+       geom%ip = plascur/1.d6
+       geom%k95 = kappa95 !edge elongation
+       geom%d95 = triang95 !edge triangularity
        
 
-    endif
+       write(*,*) 'gamcd = ', gamcd
+       inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 *
+m^3/MW)
+       endif
     
   end subroutine setupPlasmod
 

@@ -858,7 +858,7 @@ module plasmod_variables
   integer :: plasmod_i_impmodel = 1
 
  !Derived type composition 
-  !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
+  !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar (NOT used for Xe!)
   real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0 /)
   !+ad_vars  plasmod_c_car /100.0d0/ : compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
   real(kind(1.0D0)) :: plasmod_c_car = 100.0d0
