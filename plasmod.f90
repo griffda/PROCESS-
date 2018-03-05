@@ -91,6 +91,14 @@ contains
     !fvsbrnni can be an iteration variable!
     inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
+    ! HL Todo: We need to make sure the impurity concentrations match with the PROCESS definitions for ralpne and fimp
+    ! This might change to adopt the PROCESS Radiation model!
+    ! All of these can be iteration variables, but I don't know if this is consistent with PLASMOD
+    comp%car = fimp(9) !argon concentration, used if qdivt=0.
+    comp%cxe = fimp(13)!xenon concentration, if negative uses Psepplh as criterion
+    comp%che = ralpne  !helium concentration, used if globtau(3)=0.
+    
+
     ! all fixed input variables that cannot change within a PROCESS iteration go here!
     ! They only need to be initialised once.
     if (geom%counter.eq.0.d0) then
@@ -140,35 +148,30 @@ contains
        ! This needs to be implemented when coupling to the Kallenbach model!
        comp%c_car = plasmod_c_car !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
        
-       !HL Todo: We need to make sure the impurity concentrations match with the PROCESS definitions for ralpne and fimp
-       ! This might change to adopt the PROCESS Radiation model!
-       comp%car = fimp(9) !argon concentration, used if qdivt=0.
-       comp%cxe = fimp(13) !xenon concentration, if negative uses Psepplh as criterion
-       comp%che = ralpne !helium concentration, used if globtau(3)=0.
        
        !derivatives
-       inp0%qnbi_psepfac=plasmod_qnbi_psepfac !dqnbi/d(1-Psep/PLH)
-       inp0%cxe_psepfac=plasmod_cxe_psepfac !dcxe/d(1-Psep/PLH)
-       inp0%car_qdivt=plasmod_car_qdivt !dcar/d(qdivt)
+       inp0%qnbi_psepfac = plasmod_qnbi_psepfac !dqnbi/d(1-Psep/PLH)
+       inp0%cxe_psepfac  = plasmod_cxe_psepfac !dcxe/d(1-Psep/PLH)
+       inp0%car_qdivt    = plasmod_car_qdivt !dcar/d(qdivt)
        
        !deposition locations
-       inp0%x_heat(1)=plasmod_x_heat(1) !nbi
-       inp0%x_heat(2)=plasmod_x_heat(2) !ech
-       inp0%x_cd(1)=plasmod_x_cd(1) !nbi
-       inp0%x_cd(2)=plasmod_x_cd(2) !ech
-       inp0%x_fus(1)=plasmod_x_fus(1) !nbi
-       inp0%x_fus(2)=plasmod_x_fus(2) !ech
-       inp0%x_control(1)=plasmod_x_control(1) !nbi
-       inp0%x_control(2)=plasmod_x_control(2) !ech
-       inp0%dx_heat(1)=plasmod_dx_heat(1) !nbi
-       inp0%dx_heat(2)=plasmod_dx_heat(2) !ech
-       inp0%dx_cd(1)=plasmod_dx_cd(1) !nbi
-       inp0%dx_cd(2)=plasmod_dx_cd(2) !ech
-       inp0%dx_fus(1)=plasmod_dx_fus(1) !nbi
-       inp0%dx_fus(2)=plasmod_dx_fus(2) !ech
-       inp0%dx_control(1)=plasmod_dx_control(1) !nbi
-       inp0%dx_control(2)=plasmod_dx_control(2) !ech
-       inp0%nbi_energy=plasmod_nbi_energy !in keV
+       inp0%x_heat(1)     = plasmod_x_heat(1) !nbi
+       inp0%x_heat(2)     = plasmod_x_heat(2) !ech
+       inp0%x_cd(1)       = plasmod_x_cd(1) !nbi
+       inp0%x_cd(2)       = plasmod_x_cd(2) !ech
+       inp0%x_fus(1)      = plasmod_x_fus(1) !nbi
+       inp0%x_fus(2)      = plasmod_x_fus(2) !ech
+       inp0%x_control(1)  = plasmod_x_control(1) !nbi
+       inp0%x_control(2)  = plasmod_x_control(2) !ech
+       inp0%dx_heat(1)    = plasmod_dx_heat(1) !nbi
+       inp0%dx_heat(2)    = plasmod_dx_heat(2) !ech
+       inp0%dx_cd(1)      = plasmod_dx_cd(1) !nbi
+       inp0%dx_cd(2)      = plasmod_dx_cd(2) !ech
+       inp0%dx_fus(1)     = plasmod_dx_fus(1) !nbi
+       inp0%dx_fus(2)     = plasmod_dx_fus(2) !ech
+       inp0%dx_control(1) = plasmod_dx_control(1) !nbi
+       inp0%dx_control(2) = plasmod_dx_control(2) !ech
+       inp0%nbi_energy    = plasmod_nbi_energy !in keV
 
        !HL To do: I guess, these still need to be made input variables?
        inp0%eccdeff = 0.3  !CD = this * PCD * TE/NE !not used for now
@@ -227,7 +230,7 @@ contains
     
   end subroutine setupPlasmod
 
-  subroutine convert_Plasmod2PROCESS(geom,comp,ped,inp0,radp,mhd,loss)
+  subroutine convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss)
 
     !+ad_name  convert_Plasmod2PROCESS
     !+ad_summ  Routine to set up the PLASMOD input params
@@ -238,7 +241,6 @@ contains
     !+ad_args  geom : derived type : 
     !+ad_args  comp : derived type :
     !+ad_args  ped : derived type :
-    !+ad_args  inp0 : derived type : 
     !+ad_desc  This routine writes out the times of the various stages
     !+ad_desc  during a single plant cycle.
     !+ad_prob  None
@@ -254,7 +256,6 @@ contains
     type (geometry), intent(inout) :: geom
     type (composition), intent(inout) :: comp
     type (pedestal), intent(inout) :: ped
-    type (inputs), intent(inout) :: inp0
     type (radial_profiles), intent(inout) :: radp
     type (MHD_EQ), intent(inout) :: mhd 
     type (power_losses), intent(inout) :: loss 
@@ -298,12 +299,17 @@ contains
     !duplicate variables that might get deprecated!
     !plascur = mhd%ip_out  * 1.0D6
     !q95 = mhd%q
+
+    !Need these: previously calculated in plascur
+    qstar = 0d0 ! equivalent cylindrical safety factor (shaped)
+    bp    = 0d0 ! poloidal field in (T)
+    
     
     ralpne   = comp%che
     fimp(13) = comp%cxe 
     fimp(9)  = comp%car
     
-    normalised_total_beta = mhd%betan ! Todo Assure other beta's are calculated consistently.
+    normalised_total_beta = mhd%betan ! Todo: Assure other beta's are calculated consistently.
     
     vol = mhd%vp ! plasma volume (m^3)
     !mhd%q_sep !q at separatrix
@@ -314,18 +320,46 @@ contains
     ! One could implement a reference check?
     !fvsbrnni = mhd%f_ni !non-inductive current fraction 
     
+
+
+    !Need this: previously calculated in palph
+    palppv     = 0d0 !alpha particle fusion power per volume (MW/m3)
+    pchargepv  = 0d0 !other charged particle fusion power/volume (MW/m3)
+    pneutpv    = 0d0 !neutron fusion power per volume (MW/m3)
+    !sigvdt     = 0d0 !profile averaged <sigma v DT> (m3/s) !Don't need this
+    fusionrate = 0d0 !fusion reaction rate (reactions/m3/s)
+    alpharate  = 0d0 !alpha particle production rate (/m3/s)
+    pdt        = 0d0 !D-T fusion power (MW)
+    pdhe3      = 0d0 !D-He3 fusion power (MW)
+    pdd        = 0d0 !D-D fusion power (MW) 
+
+
+    !Need this: previously calculated in beamfus
+    betanb  = 0D0 !neutral beam beta component
+    dnbeam2 = 0D0 !hot beam ion density (/m3)
+    palpnb  = 0D0 !alpha power from hot neutral beam ions (MW)
+
+    !Need this: previously calculated in palph2
+    palpmw    = 0d0 !alpha power (MW)
+    pneutmw   = 0d0 !neutron fusion power (MW)
+    pchargemw = 0d0 !other charged particle fusion power (MW)
+    betaft    = 0d0 !fast alpha beta component
+    palppv    = 0d0 !alpha power per volume (MW/m3)
+    palpepv   = 0d0 !alpha power per volume to electrons (MW/m3)
+    palpipv   = 0d0 !alpha power per volume to ions (MW/m3)
+    pfuscmw   = 0d0 !charged particle fusion power (MW)
+    
     powfmw = loss%pfus ! Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS
-    taueff = loss%taueff 
     hfact  = loss%H
         
-    != loss%Wth 
+
     pradmw     = loss%prad ! fradpwr is total radiation fraction 
     pedgeradmw = loss%pradedge    
     pcoreradmw = loss%pradcore
     psyncpv    = loss%psync/vol 
     pbrempv    = loss%pbrehms/vol
     plinepv    = loss%pline/vol
-    != loss%psepi / 1.0D6 !psep_kallenbach is Power conducted through the separatrix, as calculated by the divertor model [W] ion/electron??
+
     piepv      = loss%piepv
     pinjemw    = loss%peaux
     pinjimw    = loss%piaux
@@ -333,9 +367,20 @@ contains
     pdivt      = loss%Psep
     plhthresh  = loss%PLH 
     
+    !Need this: previously calculated by pcond
+    ptrepv  =  0d0 !electron transport power (MW/m3)
+    ptripv  =  0d0 !ion transport power (MW/m3)
+    tauee   =  0d0 !electron energy confinement time (s)
+    tauei   =  0d0 !ion energy confinement time (s)
+    powerht =  0d0 !heating power (MW) assumed in calculation of confinement scaling
+    taueff  =  loss%taueff   !global energy confinement time (s)
+    
     qfuel = loss%dfuelreq * 2.0 !qfuel is for nucleus pairs
+    !UNUSED within PROCESS??
+    != loss%psepi / 1.0D6 !psep_kallenbach is Power conducted through the separatrix, as calculated by the divertor model [W] ion/electron??
     != loss%tfuelreq ! think this is assumed in PROCESS to be the same as above
     != loss%hepumpreq
+    != loss%Wth 
 
   end subroutine convert_Plasmod2PROCESS
 

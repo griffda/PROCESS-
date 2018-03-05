@@ -249,40 +249,39 @@ contains
     end if
 
     !  Calculate plasma current
+    if (ipedestal .ne. 3) then
+       call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
+            pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
-    call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
-         pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
+       
+       !  Calculate density and temperature profile quantities
+       !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
+       !    fgwped * Greenwald density limit
+       !  Note: this used to be done before plasma current
+       ! Issue #589 remove iscdens
+       if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwped >=0d0)) then
+          neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
+       endif
+       if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwsep >=0d0)) then
+          nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
+       end if
 
+    endif
+    
     if (icurr == 2) then
        q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
     else
        q95 = q  !  i.e. input (or iteration variable) value
     end if
 
-    !  Calculate density and temperature profile quantities
-    !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
-    !    fgwped * Greenwald density limit
-    !  Note: this used to be done before plasma current
 
-    ! Issue #589 remove iscdens
-    if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwped >=0d0)) then
-      neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
-    endif
-    if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwsep >=0d0)) then
-      nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
-    end if
-
-    !issue 558 - critical electron density at separatrix
-    if(any(icc==76))then
-       alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
-       nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
-            * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
-    endif
     
     ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
     ! ieped : switch for scaling pedestal-top temperature with plasma parameters
-    if (((ipedestal == 1).or.(ipedestal==2)).and.(ieped == 1)) teped = t_eped_scaling()
-
+    if ((ipedestal >= 1) .and. (ieped == 1)) then
+       teped = t_eped_scaling()
+    endif
+    
     if (ipedestal .ne. 3)then
        
        call plasma_profiles
@@ -321,7 +320,7 @@ contains
        endif
 
 
-       call convert_Plasmod2PROCESS(geom,comp,ped,inp0,radp,mhd,loss)
+       call convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss)
        
     endif
 
@@ -393,31 +392,36 @@ contains
 
     bscf_sauter = cboot * bootstrap_fraction_sauter()
 
-    if (bscfmax < 0.0D0) then
-       bootipf = abs(bscfmax)
-    else
-       if (ibss == 1) then
-          bootipf = bscf_iter89
-       else if (ibss == 2) then
-          bootipf = bscf_nevins
-       else if (ibss == 3) then
-          bootipf = bscf_wilson
-       else if (ibss == 4) then
-          bootipf = bscf_sauter
+    if (ipedestal .ne. 3) then
+
+       if (bscfmax < 0.0D0) then
+          bootipf = abs(bscfmax)
        else
-          idiags(1) = ibss ; call report_error(75)
+          if (ibss == 1) then
+             bootipf = bscf_iter89
+          else if (ibss == 2) then
+             bootipf = bscf_nevins
+          else if (ibss == 3) then
+             bootipf = bscf_wilson
+          else if (ibss == 4) then
+             bootipf = bscf_sauter
+          else
+             idiags(1) = ibss ; call report_error(75)
+          end if
+          
+          bootipf = min(bootipf,bscfmax)
+
        end if
-
-       bootipf = min(bootipf,bscfmax)
-
-    end if
-
-    !  Bootstrap current fraction constrained to be less than
-    !  or equal to the total fraction of the plasma current
-    !  produced by non-inductive means (which also includes
-    !  the current drive proportion)
-
-    bootipf = min(bootipf,fvsbrnni)
+       
+       !  Bootstrap current fraction constrained to be less than
+       !  or equal to the total fraction of the plasma current
+       !  produced by non-inductive means (which also includes
+       !  the current drive proportion)
+       
+       bootipf = min(bootipf,fvsbrnni)
+       
+    endif
+       
 
     !  Fraction of plasma current produced by inductive means
 
@@ -469,11 +473,13 @@ contains
        wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
     end if
 
-    !  Calculate ion/electron equilibration power
-
-    call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
-
     if (ipedestal .ne. 3) then
+       
+        !  Calculate ion/electron equilibration power
+
+        call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
+
+   
        !  Calculate radiation power
        
        call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
@@ -514,23 +520,24 @@ contains
 
        plhthresh = pthrmw(ilhthresh)
        
+
+       !  Power transported to the divertor by charged particles,
+       !  i.e. excludes neutrons and radiation, and also NBI orbit loss power,
+       !  which is assumed to be absorbed by the first wall
+
+       if (ignite == 0) then
+          pinj = pinjmw
+       else
+          pinj = 0.0D0
+       end if
+       pdivt = falpha*palpmw + pchargemw + pinj + pohmmw - pradmw
+
+       !  The following line is unphysical, but prevents -ve sqrt argument
+       !  Should be obsolete if constraint eqn 17 is turned on
+       
+       pdivt = max(0.001D0, pdivt)
+       
     endif
-
-    !  Power transported to the divertor by charged particles,
-    !  i.e. excludes neutrons and radiation, and also NBI orbit loss power,
-    !  which is assumed to be absorbed by the first wall
-
-    if (ignite == 0) then
-       pinj = pinjmw
-    else
-       pinj = 0.0D0
-    end if
-    pdivt = falpha*palpmw + pchargemw + pinj + pohmmw - pradmw
-
-    !  The following line is unphysical, but prevents -ve sqrt argument
-    !  Should be obsolete if constraint eqn 17 is turned on
-
-    pdivt = max(0.001D0, pdivt)
 
     !  Power transported to the first wall by escaped alpha particles
 
@@ -541,18 +548,22 @@ contains
     call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
          rmajor,rminor,sarea,zeff,dlimit,dnelimt)
 
-    !  Calculate transport losses and energy confinement time using the
-    !  chosen scaling law
+    if (ipedestal .ne. 3) then
+    
+       !  Calculate transport losses and energy confinement time using the
+       !  chosen scaling law
+       
+       call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
+            iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
+            plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
+            xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
+       
+       ptremw = ptrepv*vol
+       ptrimw = ptripv*vol
+       !  Total transport power from scaling law (MW)
+       pscalingmw = ptremw + ptrimw
 
-    call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
-         iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
-         plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
-         xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
-
-    ptremw = ptrepv*vol
-    ptrimw = ptripv*vol
-    !  Total transport power from scaling law (MW)
-    pscalingmw = ptremw + ptrimw
+    endif
 
     !  Calculate volt-second requirements
 
