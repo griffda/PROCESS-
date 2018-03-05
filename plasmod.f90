@@ -249,8 +249,7 @@ contains
        
 
        write(*,*) 'gamcd = ', gamcd
-       inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 *
-m^3/MW)
+       inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
        endif
     
   end subroutine setupPlasmod
