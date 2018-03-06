@@ -220,12 +220,12 @@ write(*,*) 'PLASMOD RUNS'
   write(99,*)   'inp0 :',inp0
   write(99,*)   'num :',num
   close(99)
-  write(*,*)   'geom: ',geom
-  write(*,*)   'comp :',comp
+!  write(*,*)   'geom: ',geom
+!  write(*,*)   'comp :',comp
 !  write(99,*)   'impurity :',impurity_arr(13)%frac,impurity_arr(7)%frac
-  write(*,*)   'ped :',ped
-  write(*,*)   'inp0 :',inp0
-  write(*,*)   'num :',num
+!  write(*,*)   'ped :',ped
+!  write(*,*)   'inp0 :',inp0
+!  write(*,*)   'num :',num
 
   !assign some numerics
   nchannels=num%nchannels
