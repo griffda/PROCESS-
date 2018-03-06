@@ -132,7 +132,7 @@
   real(kind(1.0d0)) :: q_edge_in,f_ind_in,ip0 ,te0,ti0,ne0,fq  !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: elong95,triang95  !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: xb,teb,tib,neb,zmain,amain,toleq,fuelmix
-  real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,fcd,qdivt,q_heat,q_cd,q_fus,q_95
+  real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,fcd,qdivt,q_heat,q_cd,q_fus,q_95,qtote,qtoti,w_e,w_i
 
 !for sol model
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat
@@ -663,8 +663,12 @@ write(1441,'(4111E25.11)') xtrt,a(:,1),a(:,2),a(:,3),b(:,1),b(:,2),b(:,3), &
      Qf = trapz((pedt+pidt)*dV)
      !total alpha power
      Qtot = trapz((Powe+Powi+pradedge)*dV)
+     Qtote = trapz((Powe+pradedge)*dV)
+     Qtoti = trapz(Powi*dV)
      !total power through separatrix (excluding line radiation!)
      W = (1.5d0)*(tepr*nepr + tipr*nions) * e_charge * 1.0d3 * 1.0d19/1.0d6
+     W_e = trapz((1.5d0)*(tepr*nepr ) * e_charge * 1.0d3 * 1.0d19/1.0d6*dv)
+     W_i = trapz((1.5d0)*( tipr*nions) * e_charge * 1.0d3 * 1.0d19/1.0d6*dv)
      !plasma energy profile
      taue = trapz(W*dV)/Qtot
      !confinement time
@@ -1252,6 +1256,45 @@ endif
 	loss%hepumpreq = trapz(nHe*dv)/(comp%globtau(3)*taue)
 
 
+   !Need these: previously calculated in plascur
+!     qstar = 0d0 ! equivalent cylindrical safety factor (shaped)
+!     bp    = 0d0 ! poloidal field in (T)
+
+
+!     !Need this: previously calculated in palph
+!     palppv     = trapz(pdt*dv)/v(nx) !alpha particle fusion power per volume (MW/m3)
+!     pchargepv  = 0d0 !other charged particle fusion power/volume (MW/m3)
+!     pneutpv    = 4.*trapz(pdt*dv)/v(nx) !neutron fusion power per volume (MW/m3)
+!     !sigvdt     = 0d0 !profile averaged <sigma v DT> (m3/s) !Don't need 
+!this
+!     fusionrate = 0d0 !fusion reaction rate (reactions/m3/s)
+!     alpharate  = 0d0 !alpha particle production rate (/m3/s)
+!     pdt        = 5.*trapz(pdt*dv) !D-T fusion power (MW)
+!     pdhe3      = 0d0 !D-He3 fusion power (MW)
+!     pdd        = 0d0 !D-D fusion power (MW)
+
+!     !Need this: previously calculated in beamfus
+!     betanb  = 0D0 !neutral beam beta component
+!     dnbeam2 = 0D0 !hot beam ion density (/m3)
+!     palpnb  = 0D0 !alpha power from hot neutral beam ions (MW)
+
+!     !Need this: previously calculated in palph2
+!     palpmw    = trapz(pdt*dv) !alpha power (MW)
+!     pneutmw   = trapz(pdt*dv)*4. !neutron fusion power (MW)
+!     pchargemw = 0d0 !other charged particle fusion power (MW)
+!     betaft    = 0d0 !fast alpha beta component
+!     palppv    = trapz(pdt*dv)/v(nx) !alpha power per volume (MW/m3)
+!     palpepv   = trapz(pedt*dv)/v(nx) !alpha power per volume to electrons (MW/m3)
+!     palpipv   = trapz(pidt*dv)/v(nx) !alpha power per volume to ions (MW/m3)
+!     pfuscmw   = trapz(pdt*dv)/v(nx) !charged particle fusion power (MW)
+
+!     !Need this: previously calculated by pcond
+!     ptrepv  =  trapz(powe*dv)/v(nx) !electron transport power (MW/m3)
+!     ptripv  =  trapz(powi*dv)/v(nx) !ion transport power (MW/m3)
+!     tauee   =  w_e/qtote !electron energy confinement time (s)
+!     tauei   =  w_i/qtoti !ion energy confinement time (s)
+!     powerht =  Qtot !heating power (MW) assumed in calculation of 
+!confinement scaling
 
 !diags
   if (geom%counter.gt.1.) then
