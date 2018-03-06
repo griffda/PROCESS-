@@ -220,6 +220,12 @@ write(*,*) 'PLASMOD RUNS'
   write(99,*)   'inp0 :',inp0
   write(99,*)   'num :',num
   close(99)
+!  write(*,*)   'geom: ',geom
+!  write(*,*)   'comp :',comp
+!  write(99,*)   'impurity :',impurity_arr(13)%frac,impurity_arr(7)%frac
+!  write(*,*)   'ped :',ped
+!  write(*,*)   'inp0 :',inp0
+!  write(*,*)   'num :',num
 
   !assign some numerics
   nchannels=num%nchannels
@@ -1238,6 +1244,9 @@ endif
 	loss%pdiv=qdivt
 
 
+ loss%palpe=trapz(pedt*dv)
+ loss%palpi=trapz(pidt*dv)
+
 
   !Additionals after transport
 
@@ -1247,6 +1256,16 @@ endif
   loss%pradcore=qrad
   loss%psepe=trapz(powe*dv)
 
+ loss%betaft=trapz(palph*dV)/V(nx)*1.e3*e_charge*1.e19*2.*mu_vacuum/btor**2.
+
+
+ mhd%qstar = 5*btor*rminor**2./rmajor/ip* & 
+ & (1+elong95**2.*(1+2*triang95**2.-1.2*triang95**3.))/2.
+
+ mhd%bp=mhd%bpolavg
+
+ loss%fusionrate=trapz(pdt*dv)/v(nx)/5.632d0*1e19	
+ loss%alpharate=loss%fusionrate
 
 
 !fueling
@@ -1295,6 +1314,10 @@ endif
 !     tauei   =  w_i/qtoti !ion energy confinement time (s)
 !     powerht =  Qtot !heating power (MW) assumed in calculation of 
 !confinement scaling
+ loss%tauee=w_e/qtote
+ loss%tauei=w_i/qtoti
+ loss%qtot=qtot
+
 
 !diags
   if (geom%counter.gt.1.) then

@@ -208,6 +208,7 @@ module structs
       SEQUENCE
       real(kind(1.0D0)) :: Vp, Sp, Vloop, fbs, q , f_gwpedtop !, Hfac_out
       real(kind(1.0D0)) :: Bpolavg,betator,betapol,torsurf,ip_out,f_ni,equilcheck,betan,q_sep
+      real(kind(1.0D0)) :: qstar,bp
     end type MHD_EQ 
 
 !+ad_name  power_losses
@@ -230,10 +231,11 @@ module structs
       real(kind(1.0D0)) :: Psep, Prad, Wth, TAUeff, & 
 						& H, Pfus, Pdiv, Tdiv, Pradcore, Pradsol, chifac0, PLH
       real(kind(1.0D0)) :: pradedge,psync,pbrehms,pline,& 
-						 & psepe,psepi,Hcorr,piepv,pohm,rplas,dfuelreq,tfuelreq,hepumpreq, &
-							& qheat,qcd,qfus,pnbi,pech,peaux,piaux
-							! power units in MW   
-							 end type power_losses 
+  & psepe,psepi,Hcorr,piepv,pohm,rplas,dfuelreq,tfuelreq,hepumpreq, &
+	& qheat,qcd,qfus,pnbi,pech,peaux,piaux, & 
+	& fusionrate,alpharate,betaft,palpe,palpi,tauee,tauei,qtot
+	! power units in MW   
+ end type power_losses 
 
 
 end module structs
