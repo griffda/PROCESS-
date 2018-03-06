@@ -579,7 +579,11 @@ subroutine check
         gamcd = 0.3
      endif
 
-
+     ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
+     if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or.(ixc==109).or.(ixc==102)))then
+        call report_error(182)
+     endif
+     
     errors_on = .false.
 
 end subroutine check
