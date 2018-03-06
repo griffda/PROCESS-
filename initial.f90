@@ -575,7 +575,7 @@ subroutine check
      end if
 
      ! Initialise value for gamcd for use in PLASMOD first iteration
-     if(ipedestal==2)then
+     if(ipedestal==2 .or. ipedestal==3)then
         gamcd = 0.3
      endif
 
