@@ -249,7 +249,7 @@ contains
     end if
 
     !  Calculate plasma current
-    if (ipedestal .ne. 3) then
+!    if (ipedestal .ne. 3) then
        call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
             pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
@@ -266,7 +266,7 @@ contains
           nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
        end if
 
-    endif
+!    endif
     
     if (icurr == 2) then
        q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
@@ -511,7 +511,7 @@ contains
     res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
 
     if (ipedestal .ne. 3) then
-       
+       ! KE - ohmic power (above) should come from PLASMOD and inside IF
        !  Calculate L- to H-mode power threshold for different scalings
 
        call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
@@ -564,7 +564,7 @@ contains
        pscalingmw = ptremw + ptrimw
 
     endif
-
+    !vscal and phyaux should be replaced by PLASMOD output ipedestal 3
     !  Calculate volt-second requirements
 
     call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
@@ -598,6 +598,10 @@ contains
     ! Calculate some derived quantities that may not have been defined earlier
     rad_fraction = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
 
+    if(ipedestal==3)then
+
+    endif
+    
   end subroutine physics
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

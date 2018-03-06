@@ -326,12 +326,12 @@ contains
 
     !Need these: previously calculated in plascur
     qstar = 0d0 ! equivalent cylindrical safety factor (shaped)
-    bp    = 0d0 ! poloidal field in (T)
-    
+    bp    = 0d0 ! poloidal field in (T) !Emiliano todo
+    !beta = mhd%betan !needs to be un-normalised
     
     ralpne   = comp%che
     fimp(13) = comp%cxe 
-    fimp(9)  = comp%car
+    !fimp(9)  = comp%car !PLASMOD does not compute argon - get from Kall.model
     
     normalised_total_beta = mhd%betan ! Todo: Assure other beta's are calculated consistently.
     
@@ -347,15 +347,15 @@ contains
 
 
     !Need this: previously calculated in palph
-    palppv     = 0d0 !alpha particle fusion power per volume (MW/m3)
-    pchargepv  = 0d0 !other charged particle fusion power/volume (MW/m3)
-    pneutpv    = 0d0 !neutron fusion power per volume (MW/m3)
+    palppv     = loss%Pfus/(5.0*vol) !alpha particle fusion power per volume (MW/m3)
+    pchargepv  = 0d0 !other charged particle fusion power/volume (MW/m3) !???
+    pneutpv    = loss%Pfus / (5.0*vol) * 4.0 !neutron fusion power per volume (MW/m3)
     !sigvdt     = 0d0 !profile averaged <sigma v DT> (m3/s) !Don't need this
-    fusionrate = 0d0 !fusion reaction rate (reactions/m3/s)
-    alpharate  = 0d0 !alpha particle production rate (/m3/s)
-    pdt        = 0d0 !D-T fusion power (MW)
-    pdhe3      = 0d0 !D-He3 fusion power (MW)
-    pdd        = 0d0 !D-D fusion power (MW) 
+    fusionrate = 0d0 !fusion reaction rate (reactions/m3/s) !Emiliano will add
+    alpharate  = 0d0 !alpha particle production rate (/m3/s) !Emiliano
+    pdt        = loss%Pfus !D-T fusion power (MW)
+    pdhe3      = 0d0 !D-He3 fusion power (MW) !PLASMOD does not calc.
+    pdd        = 0d0 !D-D fusion power (MW) !PLASMOD does not calc.
 
 
     !Need this: previously calculated in beamfus
@@ -364,14 +364,14 @@ contains
     palpnb  = 0D0 !alpha power from hot neutral beam ions (MW)
 
     !Need this: previously calculated in palph2
-    palpmw    = 0d0 !alpha power (MW)
-    pneutmw   = 0d0 !neutron fusion power (MW)
+    palpmw    = loss%Pfus/5.0 !alpha power (MW)
+    pneutmw   = loss%Pfus/5.0 * 4.0  !neutron fusion power (MW)
     pchargemw = 0d0 !other charged particle fusion power (MW)
-    betaft    = 0d0 !fast alpha beta component
-    palppv    = 0d0 !alpha power per volume (MW/m3)
-    palpepv   = 0d0 !alpha power per volume to electrons (MW/m3)
+    betaft    = 0d0 !fast alpha beta component !Emiliano will add
+   ! palppv    = 0d0 !alpha power per volume (MW/m3)
+    palpepv   = 0d0 !alpha power per volume to electrons (MW/m3) !Emiliano todo
     palpipv   = 0d0 !alpha power per volume to ions (MW/m3)
-    pfuscmw   = 0d0 !charged particle fusion power (MW)
+    pfuscmw   = 0d0 !charged particle fusion power (MW) !what is this?
     
     powfmw = loss%pfus ! Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS
     hfact  = loss%H
@@ -387,14 +387,14 @@ contains
     piepv      = loss%piepv
     pinjemw    = loss%peaux
     pinjimw    = loss%piaux
-    hldiv      = loss%pdiv
+    !hldiv      = loss%pdiv !
     pdivt      = loss%Psep
     plhthresh  = loss%PLH 
     
     !Need this: previously calculated by pcond
-    ptrepv  =  0d0 !electron transport power (MW/m3)
-    ptripv  =  0d0 !ion transport power (MW/m3)
-    tauee   =  0d0 !electron energy confinement time (s)
+    ptrepv  =  loss%psepe/vol !electron transport power (MW/m3)
+    ptripv  =  loss%psepi/vol !ion transport power (MW/m3)
+    tauee   =  0d0 !electron energy confinement time (s) !Emiliano todo
     tauei   =  0d0 !ion energy confinement time (s)
     powerht =  0d0 !heating power (MW) assumed in calculation of confinement scaling
     taueff  =  loss%taueff   !global energy confinement time (s)
