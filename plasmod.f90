@@ -284,7 +284,7 @@ contains
     type (MHD_EQ), intent(inout) :: mhd 
     type (power_losses), intent(inout) :: loss 
 
-	double precision :: theat,tburn,aeps,beps,rlpext,rlpint,vburn
+    double precision :: theat,tburn,aeps,beps,rlpext,rlpint,vburn
 
 
     if (i_flag==1)then
@@ -314,15 +314,15 @@ contains
     ne0   = radp%ne(1)*1.d19
     neped = ped%nped*1.d19
     nesep = ped%nsep*1.d19
-    te=radp%av_te
-    dene=radp%av_ne*1.d19
-    ti=radp%av_ti
-    ti0=radp%ti(1) !ion temperature on axis
+    te = radp%av_te
+    dene = radp%av_ne*1.d19
+    ti = radp%av_ti
+    ti0 = radp%ti(1) !ion temperature on axis
 
     ten = 0.0d0 !Electron temp., density weighted (keV)
     dnla = 0.0d0 !Line-averaged electron density (/m3)  
 
-    dnitot = 0.0d0 !Ion density (/m3)
+    dnitot = radp%av_ni * 1.0d19 !Ion density (/m3)
     deni = 0.0d0 ! Fuel density (/m3)
     dnz = 0.0d0 !High Z impurity density (/m3)
     dnalp = 0.0d0 ! Helium ion density (thermalised ions only) (/m3)
@@ -365,7 +365,7 @@ contains
     !fimp(9)  = comp%car !PLASMOD does not compute argon - get from Kall.model
     aion = 0.0d0 ! Average mass of all ions (amu)
 
-    zeff = 0.0d0 ! Effective charge
+    zeff = radp%zeff ! Effective charge
     
     
     normalised_total_beta = mhd%betan ! Todo: Assure other beta's are calculated consistently.
@@ -396,15 +396,15 @@ contains
     dnbeam2 = 0D0 !hot beam ion density (/m3)
     palpnb  = 0D0 !alpha power from hot neutral beam ions (MW)
 
-    gammaft = 0.0d0
+    gammaft = 0.0d0 !(Fast alpha + beam beta)/(thermal beta) 
     
     !Need this: previously calculated in palph2
     palpmw    = loss%Pfus/5.0 !alpha power (MW)
     pneutmw   = loss%Pfus/5.0 * 4.0  !neutron fusion power (MW)
     pchargemw = 0d0 !other charged particle fusion power (MW)
-    betaft    = loss%betaft !fast alpha beta component !Emiliano will add
+    betaft    = loss%betaft !fast alpha beta component
    ! palppv    = 0d0 !alpha power per volume (MW/m3)
-    palpepv   = loss%palpe/vol !alpha power per volume to electrons (MW/m3) !Emiliano todo
+    palpepv   = loss%palpe/vol !alpha power per volume to electrons (MW/m3) !KE, is this different to palppv?
     palpipv   = loss%palpi/vol !alpha power per volume to ions (MW/m3)
     pfuscmw   = loss%Pfus/5.0 !charged particle fusion power (MW) !what is this?
     
@@ -447,11 +447,11 @@ contains
     kappa = geom%k ! Added KE
     kappa95 = geom%k95
     kappaa = geom%k !plasma elongation calculated using area ratio-KE is this correct?
-    !triang = geom%d !not OP in OUT.DAT
+    triang = geom%d 
     triang95 = geom%d95
 
     pperim = 0.0d0 !Plasma poloidal perimeter (m)
-    xarea = 0.0d0 !Plasma cross-sectional area (m2)
+    xarea = mhd%torsurf !Plasma cross-sectional area (m2) - added KE
     sarea = 0.0d0 !Plasma surface area (m2)
     
     !vscalc:
@@ -477,7 +477,7 @@ contains
 
     !phyaux:
     dntau = radp%av_ne*taueff*1.d19 !plasma average n-tau (s/m3)
-    figmer = 0.0d0 !physics figure of merit !KE - guess not relevant to PLASMOD?
+    !figmer = 0.0d0 !physics figure of merit !KE - guess not relevant to PLASMOD?
     !fusrat = 0.0d0 ! number of fusion reactions per second !not a global variable
     rndfuel = fusionrate*vol !fuel burnup rate (reactions/s)
     taup = loss%taueff*comp%globtau(3) !(alpha) particle confinement time (s)
@@ -501,9 +501,9 @@ contains
     
     coreradius = 0.0d0 !Normalised minor radius defining 'core'     
 ! Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
-    pcoreradmw = 0.0d0 !Total core radiation power (MW) 
-    pedgeradmw = 0.0d0 !Edge radiation power (MW) 
-    pradmw = 0.0d0 !Total radiation power (MW) 
+    pcoreradmw = loss%pradcore !Total core radiation power (MW) 
+    pedgeradmw = loss%pradedge !Edge radiation power (MW) 
+    pradmw = loss%Prad !Total radiation power (MW) 
     !rad_fraction = 0.0d0 !Radiation fraction = total radiation / total power deposited in plasma KE - local variable
     !photon_wall = 0.0d0 !Nominal mean radiation load on inside surface of reactor (MW/m2) KE - local variable
     peakradwallload = 0.0d0 !Peak radiation wall load (MW/m^2) 
