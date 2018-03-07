@@ -564,6 +564,17 @@ contains
        !  Total transport power from scaling law (MW)
        !pscalingmw = ptremw + ptrimw
 
+       !vscalc and phyaux inside IF - not calculated if PLASMOD is used
+       call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
+            plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
+
+       !  Calculate auxiliary physics related information
+       !  for the rest of the code
+       
+       sbar = 1.0D0
+       call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
+            taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+
     endif
 
     ptremw = ptrepv*vol
@@ -574,15 +585,15 @@ contains
     !vscal and phyaux should be replaced by PLASMOD output ipedestal 3
     !  Calculate volt-second requirements
 
-    call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
-         plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
+!    call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
+!         plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
 
-    !  Calculate auxiliary physics related information
-    !  for the rest of the code
+!    !  Calculate auxiliary physics related information
+!    !  for the rest of the code
 
-    sbar = 1.0D0
-    call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
-         taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+!    sbar = 1.0D0
+!    call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
+!         taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Calculate beta limit
 
