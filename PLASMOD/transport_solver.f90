@@ -1184,6 +1184,7 @@ endif
   mhd%betator=2.d0*mu_vacuum*1.d3*1.d19*e_charge*trapz(pressure*dv)/(v(nx)*btor**2.d0)
   mhd%betapol=2.d0*mu_vacuum*1.d3*1.d19*e_charge*trapz(pressure*dv)/trapz(radp%bpol**2.d0*dv)
   mhd%torsurf=areat
+  mhd%rli=trapz(radp%bpol**2.d0*dv)/((1.d6*geom%ip)**2.d0)/(4.*pi*1.d-7)
 
 	mhd%betan = betan
   !write(*,*) radp%bpol
