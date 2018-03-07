@@ -190,7 +190,7 @@ pres_fac=1.d0 !coefficient to avoid emeq crashing
           & abs(geom%q95-geom%q95old)/geom%q95+ & 
           & abs(btor-geom%btold)/btor
   endif
-	write(*,*) chepck,geom%counter,jiterext
+!	write(*,*) chepck,geom%counter,jiterext
 
   if (geom%counter.ge.1..and.chepck.gt.0.1) then
      ! if machine has changed, restart from scratch
@@ -198,7 +198,7 @@ write(*,*) 'machine has changed'
      jiterext=1
   endif
 
-write(*,*) 'PLASMOD RUNS'
+!write(*,*) 'PLASMOD RUNS'
 
   if (mhd%equilcheck.eq.0.d0) jiterext=1
 
@@ -1184,7 +1184,8 @@ endif
   mhd%betator=2.d0*mu_vacuum*1.d3*1.d19*e_charge*trapz(pressure*dv)/(v(nx)*btor**2.d0)
   mhd%betapol=2.d0*mu_vacuum*1.d3*1.d19*e_charge*trapz(pressure*dv)/trapz(radp%bpol**2.d0*dv)
   mhd%torsurf=areat
-  mhd%rli=trapz(radp%bpol**2.d0*dv)/((1.d6*geom%ip)**2.d0)/(4.*pi*1.d-7)
+  mhd%rli=2.d0*trapz(radp%bpol**2.d0*dv)/ & 
+  & ((1.d6*geom%ip)**2.d0)/(4.*3.141592*1.d-7)**2.d0/rmajor
 
 	mhd%betan = betan
   !write(*,*) radp%bpol
@@ -1405,7 +1406,7 @@ endif
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 
 
-	write(*,*) "plasmod end ",jiter
+!	write(*,*) "plasmod end ",jiter
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 
