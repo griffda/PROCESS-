@@ -38,7 +38,7 @@ dum2=min(dum2,comp%psep_r*rmajor)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!constraint: current drive fni or loop voltage
+!constraint: current drive fni or loop voltage!
 	if (inp0%f_ni.gt.0.) then
 		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+& 
 		& inp0%qnbi_psepfac*(inp0%f_ni-(fbs+fcd))*num%dt/(1.+num%dt)))
@@ -59,6 +59,8 @@ dum2=min(dum2,comp%psep_r*rmajor)
 !sum up all powers
 	loss%pnbi=q_heat+q_cd+q_fus+inp0%q_control
 
+
+write(*,*) comp%psepb_q95AR,Psep*btor/q_95/geom%A/rmajor,cxe
 
 !constraint: divertor temperature
 	include 'solmodel.f90'
