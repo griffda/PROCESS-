@@ -1264,7 +1264,7 @@ endif
 
  mhd%bp=mhd%bpolavg
 
- loss%fusionrate=trapz(pdt*dv)/v(nx)/5.632d0*1e19	
+ loss%fusionrate=trapz((pedt+pidt)*dv)/v(nx)/5.632*1.e19	
  loss%alpharate=loss%fusionrate
 
 
