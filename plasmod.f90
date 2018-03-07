@@ -419,20 +419,13 @@ contains
     !phyaux:
     burnup = 0.0d0 !fractional plasma burnup
     dntau = 0.0d0 !plasma average n-tau (s/m3)
-    figmer = 0.0d0 !physics figure of merit
+    figmer = 0.0d0 !physics figure of merit !KE - guess not relevant to PLASMOD?
     !fusrat = 0.0d0 ! number of fusion reactions per second !not a global variable
-    qfuel = 0.0d0 !fuelling rate for D-T (nucleus-pairs/sec)
     rndfuel = 0.0d0 !fuel burnup rate (reactions/s)
     taup = 0.0d0 !(alpha) particle confinement time (s)
 
-    !pcond
+    !pcond !other outputs already added by Hanni above
     kappaa = 0.0d0 !plasma elongation calculated using area ratio
-    ptrepv = 0.0d0 !electron transport power (MW/m3)
-    ptripv = 0.0d0 !ion transport power (MW/m3)
-    tauee = 0.0d0 !electron energy confinement time (s)
-    taueff = 0.0d0 !global energy confinement time (s)
-    tauei = 0.0d0 !ion energy confinement time (s)
-    powerht = 0.0d0 !heating power (MW) assumed in calculation
 
     !pohm
     pohmpv = 0.0d0 !ohmic heating power per unit volume (MW/m3)

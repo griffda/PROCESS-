@@ -614,8 +614,12 @@ contains
           write(32,*) 'nesep ',nesep, ' vol ',vol
           write(32,*) 'plascur ',plascur, ' bootipf ',bootipf
           write(32,*) 'q95 ',q95, ' qstar ',qstar
-          write(32,*) 'bp ',bp
-          write(32,*) 'ralpne ',ralpne, ' fimp_13 ',fimp(13)
+          write(32,*) 'kappaa ',kappaa
+          write(32,*) 'FIELDS -----'
+          write(32,*) 'bp ',bp, ' bt ',bt
+          write(32,*) 'btot ', btot
+          write(32,*) 'BETA -----'
+          write(32,*) 'betap ', betap, ' betaft ',betaft
           write(32,*) 'normalised_total_beta ',normalised_total_beta
           write(32,*) 'RATES -----'
           write(32,*) 'fusionrate ',fusionrate, ' alpharate ',alpharate
@@ -623,11 +627,32 @@ contains
           write(32,*) 'palpmw ',palpmw, ' pchargemw ',pchargemw, ' pneutmw ',pneutmw
           write(32,*) 'palppv ',palppv, ' pchargepv ',pchargepv, ' pneutpv ',pneutpv
           write(32,*) 'pdt ',pdt, ' pdhe3 ',pdhe3, ' pdd ',pdd
-          write(32,*) 'betaft ',betaft, ' palpepv ',palpepv, ' palpipv ',palpipv
+          write(32,*) 'palpepv ',palpepv, ' palpipv ',palpipv
           write(32,*) 'powfmw ',powfmw, ' pfuscmw ',pfuscmw, ' hfact ',hfact
-          
+          write(32,*) 'ptrepv ',ptrepv, ' ptripv ',ptripv
+          write(32,*) 'powerht ',powerht
+          write(32,*) 'CONFINEMENT -----'
+          write(32,*) 'tauee ',tauee, ' tauei ',tauei
+          write(32,*) 'taueff ',taueff, ' taup ',taup, ' dntau ',dntau
           write(32,*) 'NEUTRAL BEAM -----'
           write(32,*) 'betanb ',betanb, ' dnbeam2 ',dnbeam2, ' palpnb ',palpnb
+          write(32,*) 'IMPURITIES -----'
+          write(32,*) 'ralpne ',ralpne, ' fimp_13 ',fimp(13)
+          write(32,*) 'RADIATION -----'
+          write(32,*) 'rad_fraction ', rad_fraction, ' pradmw ',pradmw
+          write(32,*) 'pcoreradmw ', pcoreradmw, ' pedgeradmw ',pedgeradmw
+          write(32,*) 'psyncpv ', psyncpv, ' pbrempv ',pbrempv
+          write(32,*) 'plinepv ', plinepv, ' piepv ',piepv
+          write(32,*) 'pinjemw ', pinjemw, ' pinjimw ',pinjimw
+          write(32,*) 'FUELLING -----'
+          write(32,*) 'qfuel ',qfuel, ' burnup ',burnup, ' rndfuel ',rndfuel
+          write(32,*) 'PLASMA INDUCTANCE -----'
+          write(32,*) 'phiint ', phiint, ' rlp ',rlp
+          write(32,*) 'vsbrn ', vsbrn, ' vsind ',vsind
+          write(32,*) 'vsres ', vsres, ' vsstt ',vsstt
+          write(32,*) 'PLASMA RESISTANCE -----'
+          write(32,*) 'pohmpv ', pohmpv, ' pohmmw ',pohmmw
+          write(32,*) 'rpfac ', rpfac, ' rplas ',rplas
           close(32)
        endif
     !endif
