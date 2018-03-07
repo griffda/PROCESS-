@@ -309,10 +309,11 @@ contains
     
     te0 = radp%te(1) 
     teped = ped%teped !only computed, if ieped = 2
-    ne0   = radp%ne(1)
-    neped = ped%nped
-    nesep = ped%nsep
-
+    ne0   = radp%ne(1)*1.d19
+    neped = ped%nped*1.d19
+    nesep = ped%nsep*1.d19
+    te=radp%av_te
+    dene=radp%av_ne*1.d19
     
     !If plascur was an input, q95 is an output and vice versa
     !Reassign both for simplicity
@@ -371,7 +372,7 @@ contains
    ! palppv    = 0d0 !alpha power per volume (MW/m3)
     palpepv   = loss%palpe/vol !alpha power per volume to electrons (MW/m3) !Emiliano todo
     palpipv   = loss%palpi/vol !alpha power per volume to ions (MW/m3)
-    pfuscmw   = 0d0 !charged particle fusion power (MW) !what is this?
+    pfuscmw   = loss%Pfus/5.0 !charged particle fusion power (MW) !what is this?
     
     powfmw = loss%pfus ! Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS
     hfact  = loss%H
@@ -404,8 +405,41 @@ contains
     != loss%psepi / 1.0D6 !psep_kallenbach is Power conducted through the separatrix, as calculated by the divertor model [W] ion/electron??
     != loss%tfuelreq ! think this is assumed in PROCESS to be the same as above
     != loss%hepumpreq
-    != loss%Wth 
+    != loss%Wth
+    
+    !Katy to do - add outputs from my list of output functions
+    !vscalc:
+    phiint = 0.0d0 !internal plasma volt-seconds (Wb)
+    rlp = 0.0d0 !plasma inductance (H)
+    vsbrn = 0.0d0 !volt-seconds needed during flat-top (heat+burn) (Wb)
+    vsind = 0.0d0 !internal and external plasma inductance V-s (Wb)
+    vsres = 0.0d0 !resistive losses in start-up volt-seconds (Wb)
+    vsstt = 0.0d0 !total volt-seconds needed (Wb) 
 
+    !phyaux:
+    burnup = 0.0d0 !fractional plasma burnup
+    dntau = 0.0d0 !plasma average n-tau (s/m3)
+    figmer = 0.0d0 !physics figure of merit
+    !fusrat = 0.0d0 ! number of fusion reactions per second !not a global variable
+    qfuel = 0.0d0 !fuelling rate for D-T (nucleus-pairs/sec)
+    rndfuel = 0.0d0 !fuel burnup rate (reactions/s)
+    taup = 0.0d0 !(alpha) particle confinement time (s)
+
+    !pcond
+    kappaa = 0.0d0 !plasma elongation calculated using area ratio
+    ptrepv = 0.0d0 !electron transport power (MW/m3)
+    ptripv = 0.0d0 !ion transport power (MW/m3)
+    tauee = 0.0d0 !electron energy confinement time (s)
+    taueff = 0.0d0 !global energy confinement time (s)
+    tauei = 0.0d0 !ion energy confinement time (s)
+    powerht = 0.0d0 !heating power (MW) assumed in calculation
+
+    !pohm
+    pohmpv = 0.0d0 !ohmic heating power per unit volume (MW/m3)
+    pohmmw = 0.0d0 !ohmic heating power (MW)
+    rpfac = 0.0d0 !neoclassical resistivity enhancement factor
+    rplas = 0.0d0 !plasma resistance (ohm)
+    
   end subroutine convert_Plasmod2PROCESS
 
   subroutine outputPlasmod(outfile)
