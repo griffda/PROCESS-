@@ -254,7 +254,7 @@ contains
     
   end subroutine setupPlasmod
 
-  subroutine convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss)
+  subroutine convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,tburn)
 
     !+ad_name  convert_Plasmod2PROCESS
     !+ad_summ  Routine to set up the PLASMOD input params
@@ -283,6 +283,8 @@ contains
     type (radial_profiles), intent(inout) :: radp
     type (MHD_EQ), intent(inout) :: mhd 
     type (power_losses), intent(inout) :: loss 
+
+	double precision :: theat,tburn,aeps,beps,rlpext,rlpint,vburn
 
 
     if (i_flag==1)then
@@ -314,11 +316,24 @@ contains
     nesep = ped%nsep*1.d19
     te=radp%av_te
     dene=radp%av_ne*1.d19
+    ti=radp%av_ti
+    ti0=radp%ti(1) !ion temperature on axis
+
+    ten = 0.0d0 !Electron temp., density weighted (keV)
+    dnla = 0.0d0 !Line-averaged electron density (/m3)  
+
+    dnitot = 0.0d0 !Ion density (/m3)
+    deni = 0.0d0 ! Fuel density (/m3)
+    dnz = 0.0d0 !High Z impurity density (/m3)
+    dnalp = 0.0d0 ! Helium ion density (thermalised ions only) (/m3)
+    dnprot = 0.0d0 ! Proton density (/m3)
+    dnbeam = 0.0d0 ! Hot beam density (/m3)
+    dnelimt = 0.0d0 ! Density limit from scaling (/m3)
+    
     
     !If plascur was an input, q95 is an output and vice versa
     !Reassign both for simplicity
-    !Plasma current in Ampere
-    plascur = geom%ip * 1.0D6 
+    plascur = geom%ip * 1.0D6 !Plasma current in Ampere
     !Edge safety factor
     q95 = geom%q95
     !duplicate variables that might get deprecated!
@@ -327,12 +342,31 @@ contains
 
     !Need these: previously calculated in plascur
     qstar = mhd%qstar ! equivalent cylindrical safety factor (shaped)
-    bp    = mhd%bp ! poloidal field in (T) !Emiliano todo
-    !beta = mhd%betan !needs to be un-normalised
+    bp    = mhd%bp ! poloidal field in (T)
+    !bt - 0.0d0 KE assume this is not an output of plasmod?
+    !btot - 0.0d0 KE - this is calculated using bt and bp after they are defined
+    beta = mhd%betan * geom%ip / (rminor * bt) ! beta (un-normalised) - not OP??
+    betap = 0.0d0 !Total poloidal beta
+    !betat = 0.0d0 !Total toroidal beta - local variable
+    !Thermal beta - KE need to figure out what the (local) variable name is
+    !Thermal poloidal beta - as above
+    !Thermal toroidal beta (= beta-exp) - as above
+    !2nd stability beta : beta_p / (R/a)  ?
+    !epbetmax = 0.0d0 !2nd stability beta upper limit - KE not an OP
+    dnbeta = 0.0d0 !Beta g coefficient
+    !Normalised thermal beta - KE need to find local variable name
+    !Normalised total beta
+    betalim = 0.0d0 ! Limit on thermal beta 
+    !plasma thermal energy - need to find local variable name
+    !Total plasma internal energy (J) - as above
     
     ralpne   = comp%che
     fimp(13) = comp%cxe 
     !fimp(9)  = comp%car !PLASMOD does not compute argon - get from Kall.model
+    aion = 0.0d0 ! Average mass of all ions (amu)
+
+    zeff = 0.0d0 ! Effective charge
+    
     
     normalised_total_beta = mhd%betan ! Todo: Assure other beta's are calculated consistently.
     
@@ -344,8 +378,6 @@ contains
     ! This should match that input value and therefore should not need to be reassigned
     ! One could implement a reference check?
     !fvsbrnni = mhd%f_ni !non-inductive current fraction 
-    
-
 
     !Need this: previously calculated in palph
     palppv     = loss%Pfus/(5.0*vol) !alpha particle fusion power per volume (MW/m3)
@@ -364,6 +396,8 @@ contains
     dnbeam2 = 0D0 !hot beam ion density (/m3)
     palpnb  = 0D0 !alpha power from hot neutral beam ions (MW)
 
+    gammaft = 0.0d0
+    
     !Need this: previously calculated in palph2
     palpmw    = loss%Pfus/5.0 !alpha power (MW)
     pneutmw   = loss%Pfus/5.0 * 4.0  !neutron fusion power (MW)
@@ -375,6 +409,7 @@ contains
     pfuscmw   = loss%Pfus/5.0 !charged particle fusion power (MW) !what is this?
     
     powfmw = loss%pfus ! Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS
+    ! Total power deposited in plasma (MW) - need to find local name
     hfact  = loss%H
         
 
@@ -391,7 +426,8 @@ contains
     !hldiv      = loss%pdiv !
     pdivt      = loss%Psep
     plhthresh  = loss%PLH 
-    
+
+
     !Need this: previously calculated by pcond
     ptrepv  =  loss%psepe/vol !electron transport power (MW/m3)
     ptripv  =  loss%psepi/vol !ion transport power (MW/m3)
@@ -400,38 +436,87 @@ contains
     powerht =  loss%qtot !heating power (MW) assumed in calculation of confinement scaling
     taueff  =  loss%taueff   !global energy confinement time (s)
     
-    qfuel = loss%dfuelreq * 2.0 !qfuel is for nucleus pairs
+    qfuel = loss%dfuelreq * 2.0*1.d19 !qfuel is for nucleus pairs
     !UNUSED within PROCESS??
     != loss%psepi / 1.0D6 !psep_kallenbach is Power conducted through the separatrix, as calculated by the divertor model [W] ion/electron??
     != loss%tfuelreq ! think this is assumed in PROCESS to be the same as above
     != loss%hepumpreq
     != loss%Wth
+
+    !plasma geometry
+    kappa = geom%k ! Added KE
+    kappa95 = geom%k95
+    kappaa = geom%k !plasma elongation calculated using area ratio-KE is this correct?
+    !triang = geom%d !not OP in OUT.DAT
+    triang95 = geom%d95
+
+    pperim = 0.0d0 !Plasma poloidal perimeter (m)
+    xarea = 0.0d0 !Plasma cross-sectional area (m2)
+    sarea = 0.0d0 !Plasma surface area (m2)
     
-    !Katy to do - add outputs from my list of output functions
     !vscalc:
-    phiint = 0.0d0 !internal plasma volt-seconds (Wb)
-    rlp = 0.0d0 !plasma inductance (H)
-    vsbrn = 0.0d0 !volt-seconds needed during flat-top (heat+burn) (Wb)
-    vsind = 0.0d0 !internal and external plasma inductance V-s (Wb)
-    vsres = 0.0d0 !resistive losses in start-up volt-seconds (Wb)
-    vsstt = 0.0d0 !total volt-seconds needed (Wb) 
+    phiint = radp%psi(size(radp%psi)) !internal plasma volt-seconds (Wb)
+    rli = mhd%rli !plasma inductance internal (H)
+    rlpint = rmu0 * rmajor * rli/2.0D0
+    vsres = gamma * rmu0*geom%ip*1.d6*rmajor
+    aeps = (1.0D0 + 1.81D0*sqrt(eps)+2.05D0*eps)*log(8.0D0/eps) &
+         - (2.0D0 + 9.25D0*sqrt(eps)-1.21D0*eps)
+    beps = 0.73D0 * sqrt(eps) *(1.0D0 + 2.0D0*eps**4-6.0D0*eps**5 &
+         + 3.7D0*eps**6)
+    rlpext = rmajor*rmu0 * aeps*(1.0D0-eps)/(1.0D0-eps+beps*kappa)
+    rlp = rlpext + rlpint
+    vsind = rlp * geom%ip*1.d6
+    vsstt = vsres + vsind
+    vburn = plascur * rplas * facoh * csawth
+    vsbrn = vburn*(theat + tburn)
+    vsstt = vsstt + vsbrn
+!    vsbrn = 0.0d0 !volt-seconds needed during flat-top (heat+burn) (Wb)
+!    vsind = 0.0d0 !internal and external plasma inductance V-s (Wb)
+!    vsres = 0.0d0 !resistive losses in start-up volt-seconds (Wb)
+!    vsstt = 0.0d0 !total volt-seconds needed (Wb) 
 
     !phyaux:
-    burnup = 0.0d0 !fractional plasma burnup
-    dntau = 0.0d0 !plasma average n-tau (s/m3)
+    dntau = radp%av_ne*taueff*1.d19 !plasma average n-tau (s/m3)
     figmer = 0.0d0 !physics figure of merit !KE - guess not relevant to PLASMOD?
     !fusrat = 0.0d0 ! number of fusion reactions per second !not a global variable
-    rndfuel = 0.0d0 !fuel burnup rate (reactions/s)
-    taup = 0.0d0 !(alpha) particle confinement time (s)
-
-    !pcond !other outputs already added by Hanni above
-    kappaa = 0.0d0 !plasma elongation calculated using area ratio
+    rndfuel = fusionrate*vol !fuel burnup rate (reactions/s)
+    taup = loss%taueff*comp%globtau(3) !(alpha) particle confinement time (s)
+    burnup = rndfuel/qfuel*2.d0 !fractional plasma burnup
 
     !pohm
-    pohmpv = 0.0d0 !ohmic heating power per unit volume (MW/m3)
-    pohmmw = 0.0d0 !ohmic heating power (MW)
-    rpfac = 0.0d0 !neoclassical resistivity enhancement factor
-    rplas = 0.0d0 !plasma resistance (ohm)
+    pohmpv = loss%pohm/vol !ohmic heating power per unit volume (MW/m3)
+    pohmmw = loss%pohm !ohmic heating power (MW)
+    rpfac = 1.0d0 !neoclassical resistivity enhancement factor
+    rplas = loss%rplas !plasma resistance (ohm)
+
+    pinjmw=loss%pnbi
+
+    alphaj = 0.0d0 !Current density profile factor 
+    bvert = 0.0d0 !Vertical field at plasma (T)
+
+!    Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             3.228E+01  OP 
+! Line radiation power (MW)                                                (plinepv*vol)             0.000E+00  OP 
+! Synchrotron radiation power (MW)                                         (psyncpv*vol)             5.298E+01  OP 
+! synchrotron wall reflectivity factor                                     (ssync)                       0.600000
+    
+    coreradius = 0.0d0 !Normalised minor radius defining 'core'     
+! Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
+    pcoreradmw = 0.0d0 !Total core radiation power (MW) 
+    pedgeradmw = 0.0d0 !Edge radiation power (MW) 
+    pradmw = 0.0d0 !Total radiation power (MW) 
+    !rad_fraction = 0.0d0 !Radiation fraction = total radiation / total power deposited in plasma KE - local variable
+    !photon_wall = 0.0d0 !Nominal mean radiation load on inside surface of reactor (MW/m2) KE - local variable
+    peakradwallload = 0.0d0 !Peak radiation wall load (MW/m^2) 
+    wallmw = 0.0d0 !Nominal mean neutron load on inside surface of reactor (MW/m2) 
+  
+    falpha = 0.0d0 !Fraction of alpha power deposited in plasma - KE is this really an OP? 
+    falpe = 0.0d0 !Fraction of alpha power to electrons 
+    falpi = 0.0d0 !Fraction of alpha power to ions
+    ptrimw = 0.0d0 !Ion transport (MW)  
+    ptremw = 0.0d0 !Electron transport (MW) 
+
+! Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            3.314E+01  OP 
+! Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             1.610E+01  OP 
     
   end subroutine convert_Plasmod2PROCESS
 

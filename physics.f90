@@ -249,11 +249,10 @@ contains
     end if
 
     !  Calculate plasma current
-!    if (ipedestal .ne. 3) then
+    !if (ipedestal .ne. 3) then
        call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
             pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
-       
        !  Calculate density and temperature profile quantities
        !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
        !    fgwped * Greenwald density limit
@@ -318,7 +317,7 @@ contains
        endif
 
 
-       call convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss)
+       call convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,tburn)
        
     endif
 
