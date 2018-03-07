@@ -431,9 +431,10 @@ contains
 
     !  Do auxiliary current drive power calculations
 
-    if (irfcd /= 0) call cudriv(nout,0)
+    !if (irfcd /= 0) call cudriv(nout,0)
  
     if (ipedestal .ne. 3) then
+       if (irfcd /= 0) call cudriv(nout,0)
        
        !  Calculate fusion power + components
        call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
