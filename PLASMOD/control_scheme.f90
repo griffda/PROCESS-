@@ -60,7 +60,7 @@ dum2=min(dum2,comp%psep_r*rmajor)
 	loss%pnbi=q_heat+q_cd+q_fus+inp0%q_control
 
 
-write(*,*) comp%psepb_q95AR,Psep*btor/q_95/geom%A/rmajor,cxe
+!write(*,*) comp%psepb_q95AR,Psep*btor/q_95/geom%A/rmajor,cxe
 
 !constraint: divertor temperature
 	include 'solmodel.f90'
