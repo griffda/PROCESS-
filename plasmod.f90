@@ -126,13 +126,14 @@ contains
           comp%psep_r      = pseprmax !Psep/R max value
           comp%psepb_q95AR = 1.0e3 !large number to have no effect
        else if (any(icc == 68)) then
-          comp%psep_r      = 1.0e3 !large number to have no effect
-          comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
        else
           comp%psep_r      = 1.0e3 !large number to have no effect
           comp%psepb_q95AR = 1.0e3 !large number to have no effect
        endif
        
+       comp%psepplh_sup = 1.0e3 !Psep/PLH if below this, use nbi
+          comp%psep_r      = 1.0e3 !large number to have no effect
+          comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
 
        num%tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
        num%dtmin  = plasmod_dtmin !min time step
@@ -310,17 +311,16 @@ contains
     
     
     te0 = radp%te(1) 
+    ti0 = radp%ti(1) !ion temperature on axis
     teped = ped%teped !only computed, if ieped = 2
     ne0   = radp%ne(1)*1.d19
     neped = ped%nped*1.d19
     nesep = ped%nsep*1.d19
     te = radp%av_te
-    dene = radp%av_ne*1.d19
+    ten = radp%av_te
     ti = radp%av_ti
-    ti0 = radp%ti(1) !ion temperature on axis
-
-    ten = 0.0d0 !Electron temp., density weighted (keV)
-    dnla = 0.0d0 !Line-averaged electron density (/m3)  
+    dene = radp%av_ne*1.d19
+    dnla=sum(radp%ne)/size(radp%ne)*1.d19
 
     dnitot = radp%av_ni * 1.0d19 !Ion density (/m3)
     deni = 0.0d0 ! Fuel density (/m3)
@@ -345,8 +345,8 @@ contains
     bp    = mhd%bp ! poloidal field in (T)
     !bt - 0.0d0 KE assume this is not an output of plasmod?
     !btot - 0.0d0 KE - this is calculated using bt and bp after they are defined
-    beta = mhd%betan * geom%ip / (rminor * bt) ! beta (un-normalised) - not OP??
-    betap = 0.0d0 !Total poloidal beta
+    beta = mhd%betan * geom%ip / (rminor * bt)/100. ! beta (un-normalised) - not OP??
+!    betap = 0.0d0 !Total poloidal beta
     !betat = 0.0d0 !Total toroidal beta - local variable
     !Thermal beta - KE need to figure out what the (local) variable name is
     !Thermal poloidal beta - as above
@@ -362,6 +362,7 @@ contains
     
     ralpne   = comp%che
     fimp(13) = comp%cxe 
+    impurity_arr(13)%frac=fimp(13)
     !fimp(9)  = comp%car !PLASMOD does not compute argon - get from Kall.model
     aion = 0.0d0 ! Average mass of all ions (amu)
 
@@ -425,7 +426,8 @@ contains
     pinjimw    = loss%piaux
     !hldiv      = loss%pdiv !
     pdivt      = loss%Psep
-    plhthresh  = loss%PLH 
+    plhthresh  = loss%PLH
+    !pinjwp     = loss%pnbi
 
 
     !Need this: previously calculated by pcond
@@ -450,9 +452,9 @@ contains
     triang = geom%d 
     triang95 = geom%d95
 
-    pperim = 0.0d0 !Plasma poloidal perimeter (m)
+!    pperim = 0.0d0 !Plasma poloidal perimeter (m)
     xarea = mhd%torsurf !Plasma cross-sectional area (m2) - added KE
-    sarea = 0.0d0 !Plasma surface area (m2)
+    sarea=mhd%sp
     
     !vscalc:
     phiint = radp%psi(size(radp%psi)) !internal plasma volt-seconds (Wb)
@@ -491,29 +493,29 @@ contains
 
     pinjmw=loss%pnbi
 
-    alphaj = 0.0d0 !Current density profile factor 
-    bvert = 0.0d0 !Vertical field at plasma (T)
+!    alphaj = 0.0d0 !Current density profile factor 
+!    bvert = 0.0d0 !Vertical field at plasma (T)
 
 !    Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             3.228E+01  OP 
 ! Line radiation power (MW)                                                (plinepv*vol)             0.000E+00  OP 
 ! Synchrotron radiation power (MW)                                         (psyncpv*vol)             5.298E+01  OP 
 ! synchrotron wall reflectivity factor                                     (ssync)                       0.600000
     
-    coreradius = 0.0d0 !Normalised minor radius defining 'core'     
+!    coreradius = 0.0d0 !Normalised minor radius defining 'core'     
 ! Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
-    pcoreradmw = loss%pradcore !Total core radiation power (MW) 
-    pedgeradmw = loss%pradedge !Edge radiation power (MW) 
-    pradmw = loss%Prad !Total radiation power (MW) 
+ !   pcoreradmw = loss%pradcore !Total core radiation power (MW) 
+ !   pedgeradmw = loss%pradedge !Edge radiation power (MW) 
+ !   pradmw = loss%Prad !Total radiation power (MW) 
     !rad_fraction = 0.0d0 !Radiation fraction = total radiation / total power deposited in plasma KE - local variable
     !photon_wall = 0.0d0 !Nominal mean radiation load on inside surface of reactor (MW/m2) KE - local variable
-    peakradwallload = 0.0d0 !Peak radiation wall load (MW/m^2) 
-    wallmw = 0.0d0 !Nominal mean neutron load on inside surface of reactor (MW/m2) 
+!    peakradwallload = 0.0d0 !Peak radiation wall load (MW/m^2) 
+!    wallmw = 0.0d0 !Nominal mean neutron load on inside surface of reactor (MW/m2) 
   
-    falpha = 0.0d0 !Fraction of alpha power deposited in plasma - KE is this really an OP? 
-    falpe = 0.0d0 !Fraction of alpha power to electrons 
-    falpi = 0.0d0 !Fraction of alpha power to ions
-    ptrimw = 0.0d0 !Ion transport (MW)  
-    ptremw = 0.0d0 !Electron transport (MW) 
+falpha=1.0
+falpe= loss%palpe/(loss%palpe+loss%palpi)   
+falpi= loss%palpi/(loss%palpe+loss%palpi)   
+!    ptrimw = 0.0d0 !Ion transport (MW)  
+!    ptremw = 0.0d0 !Electron transport (MW) 
 
 ! Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            3.314E+01  OP 
 ! Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             1.610E+01  OP 

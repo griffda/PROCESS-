@@ -1232,8 +1232,8 @@ endif
   loss%Pfus = 5.0d0*trapz((pidt+pedt)*dV)
   loss%chifac0 = chifac0
 
-  loss%pohm=ip*vloop
-  loss%rplas=vloop/ip/1.d6
+  loss%pohm=ip*(1.-fbs-fcd)*vloop
+  loss%rplas=vloop/(ip*(1.-fbs-fcd))/1.d6
 
 
 

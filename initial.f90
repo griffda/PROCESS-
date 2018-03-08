@@ -401,7 +401,7 @@ subroutine check
      !need to enforce H-mode using Martin scaling, if using PLASMOD
      if ((ipedestal == 2).or. (ipedestal==3)) then
         if(.not. any(icc == 15)) then
-           call report_error(179)
+     !      call report_error(179)
         endif
 
         if (ilhthresh .ne. 6) then
