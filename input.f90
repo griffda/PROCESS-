@@ -1058,61 +1058,61 @@ contains
 
     !Derived type numerics_transp
        case ('plasmod_tol')
-          call parse_real_variable('plasmod_tol', plasmod_tol, 0.0D0, 1.0D0, &
+          call parse_real_variable('plasmod_tol', plasmod_tol, 0.0D0, 1.0D4, &
                'Tolerance to be reached, in % variation at each time step')
        case ('plasmod_dtmin')
-          call parse_real_variable('plasmod_dtmin', plasmod_dtmin, 0.0D0, 1.0D0, &
+          call parse_real_variable('plasmod_dtmin', plasmod_dtmin, 0.0D0, 1.0D4, &
                'Min time step')
        case ('plasmod_dtmax')
-          call parse_real_variable('plasmod_dtmax', plasmod_dtmax, 0.0D0, 1.0D0, &
+          call parse_real_variable('plasmod_dtmax', plasmod_dtmax, 0.0D0, 1.0D4, &
                'Max time step')
        case ('plasmod_dt')
-          call parse_real_variable('plasmod_dt', plasmod_dt, 0.0D0, 1.0D0, &
+          call parse_real_variable('plasmod_dt', plasmod_dt, 0.0D0, 1.0D4, &
                'Time step')
        case ('plasmod_dtinc')
-          call parse_real_variable('plasmod_dtinc', plasmod_dtinc, 0.0D0, 10.0D0, &
+          call parse_real_variable('plasmod_dtinc', plasmod_dtinc, 0.0D0, 10.0D4, &
                'Decrease of dt')
        case ('plasmod_ainc')
-          call parse_real_variable('plasmod_ainc', plasmod_Ainc, 0.0D0, 2.0D0, &
+          call parse_real_variable('plasmod_ainc', plasmod_Ainc, 0.0D0, 2.0D4, &
                'Increase of dt')
        case ('plasmod_test')
           call parse_real_variable('plasmod_test', plasmod_test, 0.0D0, 1.0D6, &
                'Max iteration number')
        case ('plasmod_tolmin')
-          call parse_real_variable('plasmod_tolmin', plasmod_tolmin, 0.0D0, 20.0D0, &
+          call parse_real_variable('plasmod_tolmin', plasmod_tolmin, 0.0D0, 20.0D4, &
                'Multiplier of etolm that should not be overcome')
        case ('plasmod_eopt')
-          call parse_real_variable('plasmod_eopt', plasmod_eopt, 0.0D0, 1.0D0, &
+          call parse_real_variable('plasmod_eopt', plasmod_eopt, 0.0D0, 1.0D4, &
                'Exponent of jipperdo')
        case ('plasmod_dtmaxmin')
-          call parse_real_variable('plasmod_dtmaxmin', plasmod_dtmaxmin, 0.0D0, 1.0D0, &
+          call parse_real_variable('plasmod_dtmaxmin', plasmod_dtmaxmin, 0.0D0, 1.0D4, &
                'Exponent of jipperdo2')
        case ('plasmod_capa')
-          call parse_real_variable('plasmod_capa', plasmod_capA, 0.0D0, 1.0D0, &
+          call parse_real_variable('plasmod_capa', plasmod_capA, 0.0D0, 1.0D4, &
                'First radial grid point')
        case ('plasmod_maxa')
-          call parse_real_variable('plasmod_maxa', plasmod_maxA, 0.0D0, 1.0D0, &
+          call parse_real_variable('plasmod_maxa', plasmod_maxA, 0.0D0, 1.0D4, &
                'Diagz 0 or 1')
        case ('plasmod_dgy')
-          call parse_real_variable('plasmod_dgy', plasmod_dgy, 0.0D0, 1.0D0, &
+          call parse_real_variable('plasmod_dgy', plasmod_dgy, 0.0D0, 1.0D4, &
                'Newton differential')
        case ('plasmod_i_modeltype')
-          call parse_int_variable('plasmod_i_modeltype', plasmod_i_modeltype, 0, 1, &
+          call parse_int_variable('plasmod_i_modeltype', plasmod_i_modeltype, 0, 10000, &
                '1 - Simple gyrobohm scaling')
        case ('plasmod_i_equiltype')
-          call parse_int_variable('plasmod_i_equiltype', plasmod_i_equiltype, 1, 2, &
+          call parse_int_variable('plasmod_i_equiltype', plasmod_i_equiltype, 1, 20000, &
                '1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.')
        case ('plasmod_nx')
-          call parse_int_variable('plasmod_nx', plasmod_nx, 0, 1000, &
+          call parse_int_variable('plasmod_nx', plasmod_nx, 0, 10000, &
                'Number of interpolated grid points')
        case ('plasmod_nxt')
-          call parse_int_variable('plasmod_nxt', plasmod_nxt, 0, 1000, &
+          call parse_int_variable('plasmod_nxt', plasmod_nxt, 0, 10000, &
                'Number of reduced grid points')
        case ('plasmod_nchannels')
           call parse_int_variable('plasmod_nchannels', plasmod_nchannels, 3, 3, &
                'Leave this at 3')
        case ('plasmod_i_impmodel')
-          call parse_int_variable('plasmod_i_impmodel', plasmod_i_impmodel, 0, 1, &
+          call parse_int_variable('plasmod_i_impmodel', plasmod_i_impmodel, 0, 10000, &
                'Impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.')
 
    !Derived type composition
@@ -1120,25 +1120,25 @@ contains
           call parse_real_array('plasmod_globtau', plasmod_globtau, isub1, 5, &
                'Tauparticle/tauE for D, T, He, Xe, Ar', icode)
        case ('plasmod_c_car')
-          call parse_real_variable('plasmod_c_car', plasmod_c_car, 0.0D0, 1.0D3, &
+          call parse_real_variable('plasmod_c_car', plasmod_c_car, 0.0D0, 1.0D4, &
                'Compression factor between div and core: eg 10 is 10 times Argon conc in divertor than in core')
         case ('plasmod_psepplh_sup')
           call parse_real_variable('plasmod_psepplh_sup', plasmod_psepplh_sup, 0.0D0, 2.0D4, &
                'Psep/PLH if above this, use Xe')
         
        case ('plasmod_qdivt')
-          call parse_real_variable('plasmod_qdivt', plasmod_qdivt, 0.0D0, 100.0D0, &
+          call parse_real_variable('plasmod_qdivt', plasmod_qdivt, 0.0D0, 1.0D6, &
                'Divertor heat flux in MW/m^2, if 0, dont use SOL model')
           
     !Derived type inputs
        case ('plasmod_qnbi_psepfac')
-          call parse_real_variable('plasmod_qnbi_psepfac', plasmod_qnbi_psepfac, 0.0D0, 1.0D2, &
+          call parse_real_variable('plasmod_qnbi_psepfac', plasmod_qnbi_psepfac, 0.0D0, 1.0D4, &
                'dqnbi/d(1-Psep/PLH)')
        case ('plasmod_cxe_psepfac')
-          call parse_real_variable('plasmod_cxe_psepfac', plasmod_cxe_psepfac, 0.0D0, 1.0D-2, &
+          call parse_real_variable('plasmod_cxe_psepfac', plasmod_cxe_psepfac, 0.0D0, 1.0D4, &
                'dcxe/d(1-Psep/PLH)')
        case ('plasmod_car_qdivt')
-          call parse_real_variable('plasmod_car_qdivt', plasmod_car_qdivt, 0.0D0, 1.0D-2, &
+          call parse_real_variable('plasmod_car_qdivt', plasmod_car_qdivt, 0.0D0, 1.0D4, &
                'dcar/d(qdivt)')
           !deposition locations
        case ('plasmod_x_heat')
