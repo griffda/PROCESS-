@@ -362,6 +362,21 @@ contains
     
     ralpne   = comp%che
     fimp(13) = comp%cxe 
+    fimp(2) = comp%che 
+    impurity_arr(1)%frac=0.d0
+    impurity_arr(2)%frac=ralpne
+    impurity_arr(3)%frac=0.d0
+    impurity_arr(4)%frac=0.d0
+    impurity_arr(5)%frac=0.d0
+    impurity_arr(6)%frac=0.d0
+    impurity_arr(7)%frac=0.d0
+    impurity_arr(8)%frac=0.d0
+    impurity_arr(9)%frac=0.d0
+    impurity_arr(10)%frac=0.d0
+    impurity_arr(11)%frac=0.d0
+    impurity_arr(12)%frac=0.d0
+    impurity_arr(13)%frac=0.d0
+    impurity_arr(14)%frac=0.d0
     impurity_arr(13)%frac=fimp(13)
     !fimp(9)  = comp%car !PLASMOD does not compute argon - get from Kall.model
     aion = 0.0d0 ! Average mass of all ions (amu)
@@ -457,6 +472,7 @@ contains
     sarea=mhd%sp
     
     !vscalc:
+    facoh=(1.-mhd%f_ni)
     phiint = radp%psi(size(radp%psi)) !internal plasma volt-seconds (Wb)
     rli = mhd%rli !plasma inductance internal (H)
     rlpint = rmu0 * rmajor * rli/2.0D0
@@ -470,6 +486,7 @@ contains
     vsind = rlp * geom%ip*1.d6
     vsstt = vsres + vsind
     vburn = plascur * rplas * facoh * csawth
+!	write(*,*) plascur,rplas,facoh,mhd%vloop,vburn,theat,tburn
     vsbrn = vburn*(theat + tburn)
     vsstt = vsstt + vsbrn
 !    vsbrn = 0.0d0 !volt-seconds needed during flat-top (heat+burn) (Wb)
@@ -514,8 +531,8 @@ contains
 falpha=1.0
 falpe= loss%palpe/(loss%palpe+loss%palpi)   
 falpi= loss%palpi/(loss%palpe+loss%palpi)   
-!    ptrimw = 0.0d0 !Ion transport (MW)  
-!    ptremw = 0.0d0 !Electron transport (MW) 
+    ptrimw = loss%psepi !Ion transport (MW)  
+    ptremw = loss%psepe !Electron transport (MW) 
 
 ! Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            3.314E+01  OP 
 ! Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             1.610E+01  OP 
