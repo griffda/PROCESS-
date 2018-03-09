@@ -235,9 +235,14 @@ contains
 
        case (5,8)  ! NBCD
 
-          ! MDK. See Gitlab issue #248, and scanned note.
-          power1 = 1.0D-6 * faccd * plascur / effnbss + pheat
-
+          !For PLASMOD
+          if(ipedestal.ne.3)then
+             ! MDK. See Gitlab issue #248, and scanned note.
+             power1 = 1.0D-6 * faccd * plascur / effnbss + pheat
+          else
+             power1 = pinjmw
+          endif
+          
           ! Account for first orbit losses
           ! (power due to particles that are ionised but not thermalised) [MW]:
           ! This includes a second order term in shinethrough*(first orbit loss)

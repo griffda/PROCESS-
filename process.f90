@@ -1578,9 +1578,7 @@ subroutine output(outfile)
   call igmarcal(outfile)
 
   ! TODO what is this? Not in caller.f90?
-  if(ipedestal.ne.3)then
-     call cudriv(outfile,1)
-  endif
+  call cudriv(outfile,1)
   
   ! Pulsed reactor model !
   !!!!!!!!!!!!!!!!!!!!!!!!
