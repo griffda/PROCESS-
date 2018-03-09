@@ -86,16 +86,11 @@ contains
 
     inp0%Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used.
     inp0%pheatmax  = pinjalw !max allowed power for heating+CD+fusion control
-    inp0%q_control = pheat !minimal power required for control !HL: I am not sure this match is right!
+    inp0%q_control = pheat !minimal power required for control 
 
     !fvsbrnni can be an iteration variable!
     inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
-    ! HL Todo: We need to make sure the impurity concentrations match with
-    ! the PROCESS definitions for ralpne and fimp
-    ! This might change to adopt the PROCESS Radiation model!
-    ! All of these can be iteration variables, but I don't know if this is
-    ! consistent with PLASMOD
     comp%car = fimp(9) !argon concentration, used if qdivt=0.
     
 
@@ -350,7 +345,8 @@ contains
     
     ralpne   = comp%che
     fimp(13) = comp%cxe 
-    fimp(2) = comp%che 
+    fimp(2) = comp%che
+    !HL: I think this is wrong, should be fimp instead of impurity_arr
     impurity_arr(1)%frac=0.d0
     impurity_arr(2)%frac=ralpne
     impurity_arr(3)%frac=0.d0

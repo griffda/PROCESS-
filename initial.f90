@@ -400,6 +400,8 @@ subroutine check
 
      !need to enforce H-mode using Martin scaling, if using PLASMOD
      if ((ipedestal == 2).or. (ipedestal==3)) then
+
+        !Todo: The L-H threshold is checked inside PLASMOD do we need to duplicate in PROCESS??
         if(.not. any(icc == 15)) then
      !      call report_error(179)
         endif
@@ -413,6 +415,30 @@ subroutine check
         endif
 
      endif
+
+     ! Initialise value for gamcd for use in PLASMOD first iteration
+     if(ipedestal==2 .or. ipedestal==3)then
+        gamcd = 0.3
+     endif
+
+
+     if(ipedestal==3)then
+        ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
+        ! These are outputs of PLASMOD
+        ! ixc(4) = te, ixc(5) = beta, ixc(6) = dene, ixc(9) = fdene, ixc(109) = ralpne, ixc(102) = fimpvar
+        if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or.(ixc==109).or.(ixc==102)))then
+           call report_error(182)
+        endif
+
+        ! density limit cannot be used with PLASMOD use fgwsep and/or fgwped instead.
+        if (any(icc==9)) then
+           call report_error(183)
+        endif
+
+        ! Currently PLASMOD only allows Argon and Xe 
+        
+     endif
+     
      
 
     !  Tight aspect ratio options
@@ -574,17 +600,7 @@ subroutine check
         tmargmin_cs = tmargmin
      end if
 
-     ! Initialise value for gamcd for use in PLASMOD first iteration
-     if(ipedestal==2 .or. ipedestal==3)then
-        gamcd = 0.3
-     endif
 
-     ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
-     if(ipedestal==3)then
-        if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or.(ixc==109).or.(ixc==102)))then
-           call report_error(182)
-        endif
-     endif
      
     errors_on = .false.
 
