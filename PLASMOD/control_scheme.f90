@@ -43,7 +43,7 @@ dum2=min(dum2,comp%psep_r*rmajor)
 		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+& 
 		& inp0%qnbi_psepfac*(inp0%f_ni-(fbs+fcd))*num%dt/(1.+num%dt)))
 	endif
-	if (inp0%V_loop.gt.-1.e5) then
+	if (inp0%V_loop.gt.-1.e3) then
 		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+& 
 		& inp0%qnbi_psepfac*(vloop-inp0%V_loop)*num%dt/(1.+num%dt)))
 	endif
