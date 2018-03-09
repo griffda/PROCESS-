@@ -129,9 +129,9 @@
 
 !geometry
     geom%A = 3.1d0  !aspect ratio
-    geom%R = 9.9999988941987930  ! major radius in m
-    geom%bt = 5.6493381531406115 !magnetic field
-    geom%R = 9.00189  ! major radius in m
+    geom%R = 12.6  ! major radius in m
+    geom%bt = 5.1022 !magnetic field
+    geom%R = 9.002  ! major radius in m
     geom%bt = 5.8547 !magnetic field
         geom%k =1.6969830041844367 !edge elongation
     geom%d =  0.38491934960310104  !edge triangularity
