@@ -249,7 +249,6 @@ contains
        geom%d95 = triang95 !edge triangularity
        
 
-       write(*,*) 'gamcd = ', gamcd
        inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
        endif
     
@@ -289,7 +288,7 @@ contains
 
 
     if (i_flag==1)then
-       write(*,*) 'PLASMOD has converged!!!'
+!       write(*,*) 'PLASMOD has converged!!!'
     elseif (i_flag==0)then
        write(*,*) 'The PLASMOD transport model has crashed'
        call report_error(174)

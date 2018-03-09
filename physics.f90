@@ -287,7 +287,7 @@ contains
        
     else  ! Run PLASMOD 
          
-       write(*,*) 'geom counter = ', geom%counter
+!       write(*,*) 'geom counter = ', geom%counter
        call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
 
        if(verbose == 1) then
