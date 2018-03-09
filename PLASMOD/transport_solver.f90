@@ -109,7 +109,7 @@
   real(kind(1.0d0)), dimension(num%nx) :: pressure0,k0, d0, shif0, G10, dV0, phi0, rho0, V0, psi0, ipol00, Vprime0, jpar0,gradro0 !   conflict with process
   integer :: jiterext, jiterextmax, jrad
   real(kind(1.0d0)), dimension(num%nx) :: shear, W, mux, hro, ametr, nel, tel, tii, nii, ya
-  real(kind(1.0d0)), dimension(num%nx) :: sqeps, dlogte, dlogti, dlogne, dpsi, betpl, betple, nalf, droda
+  real(kind(1.0d0)), dimension(num%nx) :: q_oh,sqeps, dlogte, dlogti, dlogne, dpsi, betpl, betple, nalf, droda
   real(kind(1.0d0)), dimension(num%nx) :: nuee, nues, zavg, nui, nuis, coulg, cc, tpf, cubb
   real(kind(1.0d0)), dimension(num%nx) :: zz, zft, zdf, dcsa, hcee, hcei, hcsa, a0, alp, a1, xcsa !
   real(kind(1.0d0)), dimension(num%nx) :: zfte, zfte2, zfte3, zfte4,powe,powi,sfuel
@@ -460,7 +460,7 @@ q_fus=loss%qfus
   Fm = F
   jacob = eye2(nxt*nchannels)
   ijacob = jacob
-		
+		q_oh=0.d0
 
 		
 
@@ -1067,6 +1067,7 @@ endif
               !	
            else
               toleq=dum1
+  q_oh=ip*(1.-fbs-fcd)*vloop/v(nx)
               mhd%equilcheck=1.d0
               radp%Volum  = V
               radp%jbs  = cubb

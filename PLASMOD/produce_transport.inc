@@ -128,9 +128,9 @@ yllama=1.d0
 
 
 	sfus_he=pfus(nx)/5./5.632
-	
+!	write(*,*) trapz(q_oh*dv)
 	! net powers
-	Powe = Peaux - peicl + pedt - prad- psync - pbrad
+	Powe = Peaux - peicl + pedt - prad- psync - pbrad +q_oh
 	Powi = Piaux + peicl + pidt
 
 !write(*,*) 'powers',powe(1),powi(1),pedt(1),prad(1),peaux(1),psync(1),pbrad(1),peicl(1)
