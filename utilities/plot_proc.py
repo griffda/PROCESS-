@@ -1327,7 +1327,14 @@ def plot_magnetics_info(axis, mfile_data, scan):
 
 
     tburn = mfile_data.data["tburn"].get_scan(scan) / 3600.0
-    tftype = proc_dict.DICT_TF_TYPE[mfile_data.data["isumattf"].get_scan(scan)]
+
+    tfmat = 0
+    tfmat = mfile_data.data["isumattf"].get_scan(scan)
+    if tfmat > 0:
+        tftype = proc_dict.DICT_TF_TYPE[mfile_data.data["isumattf"].get_scan(scan)]
+    else:
+        tftype = "Copper"
+    
     vssoft = mfile_data.data["vsres"].get_scan(scan) + \
              mfile_data.data["vsind"].get_scan(scan)
 
