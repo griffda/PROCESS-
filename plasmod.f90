@@ -132,8 +132,8 @@ contains
        endif
        
        comp%psepplh_sup = 1.0e3 !Psep/PLH if below this, use nbi
-       comp%psep_r      = 1.0e3 !large number to have no effect
-       comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
+          comp%psep_r      = 1.0e3 !large number to have no effect
+          comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
 
        num%tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
        num%dtmin  = plasmod_dtmin !min time step
@@ -476,20 +476,23 @@ contains
     phiint = radp%psi(size(radp%psi)) !internal plasma volt-seconds (Wb)
     rli = mhd%rli !plasma inductance internal (H)
     rlpint = rmu0 * rmajor * rli/2.0D0
-    
+    vsres = gamma * rmu0*geom%ip*1.d6*rmajor
     aeps = (1.0D0 + 1.81D0*sqrt(eps)+2.05D0*eps)*log(8.0D0/eps) &
          - (2.0D0 + 9.25D0*sqrt(eps)-1.21D0*eps)
     beps = 0.73D0 * sqrt(eps) *(1.0D0 + 2.0D0*eps**4-6.0D0*eps**5 &
          + 3.7D0*eps**6)
     rlpext = rmajor*rmu0 * aeps*(1.0D0-eps)/(1.0D0-eps+beps*kappa)
     rlp = rlpext + rlpint
-
-    vsres = gamma * rmu0*geom%ip*1.d6*rmajor !resistive losses in start-up volt-seconds (Wb)
-    vsind = rlp * geom%ip*1.d6 !internal and external plasma inductance V-s (Wb)
-    !vsstt = vsres + vsind
+    vsind = rlp * geom%ip*1.d6
+    vsstt = vsres + vsind
     vburn = plascur * rplas * facoh * csawth
-    vsbrn = vburn*(theat + tburn) !volt-seconds needed during flat-top (heat+burn) (Wb)
-    vsstt = vsres + vsind + vsbrn !total volt-seconds needed (Wb)
+!	write(*,*) plascur,rplas,facoh,mhd%vloop,vburn,theat,tburn
+    vsbrn = vburn*(theat + tburn)
+    vsstt = vsstt + vsbrn
+!    vsbrn = 0.0d0 !volt-seconds needed during flat-top (heat+burn) (Wb)
+!    vsind = 0.0d0 !internal and external plasma inductance V-s (Wb)
+!    vsres = 0.0d0 !resistive losses in start-up volt-seconds (Wb)
+!    vsstt = 0.0d0 !total volt-seconds needed (Wb) 
 
     !phyaux:
     dntau = radp%av_ne*taueff*1.d19 !plasma average n-tau (s/m3)
@@ -525,11 +528,11 @@ contains
 !    peakradwallload = 0.0d0 !Peak radiation wall load (MW/m^2) 
 !    wallmw = 0.0d0 !Nominal mean neutron load on inside surface of reactor (MW/m2) 
   
-   falpha=1.0
-   falpe= loss%palpe/(loss%palpe+loss%palpi)   
-   falpi= loss%palpi/(loss%palpe+loss%palpi)   
-   ptrimw = loss%psepi !Ion transport (MW)  
-   ptremw = loss%psepe !Electron transport (MW) 
+falpha=1.0
+falpe= loss%palpe/(loss%palpe+loss%palpi)   
+falpi= loss%palpi/(loss%palpe+loss%palpi)   
+    ptrimw = loss%psepi !Ion transport (MW)  
+    ptremw = loss%psepe !Electron transport (MW) 
 
 ! Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            3.314E+01  OP 
 ! Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             1.610E+01  OP 
