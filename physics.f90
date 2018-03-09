@@ -5903,7 +5903,7 @@ end function t_eped_scaling
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
     call ovarin(outfile,'Plasma profile model','(ipedestal)',ipedestal)
 
-    if((ipedestal==1).or.(ipedestal==2))then
+    if(ipedestal.ge.1)then
         call ocmmnt(outfile,'Pedestal profiles are used.')
         call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
         if(fgwped >= 0d0)then
