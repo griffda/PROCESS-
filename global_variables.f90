@@ -874,6 +874,8 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_cxe_psepfac = 1.0d-4
   !+ad_vars  plasmod_car_qdivt /1.0d-4/ : dcar/d(qdivt)
   real(kind(1.0D0)) :: plasmod_car_qdivt = 1.0d-4
+  !+ad_vars  plasmod_maxpauxor /20.0d0/ : Max allowed auxiliary power / R
+  real(kind(1.0D0)) :: plasmod_maxpauxor = 20.0d0
     !deposition locations
   !+ad_vars  plasmod_x_heat(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_heat = (/ 0.0d0, 0.0d0 /)

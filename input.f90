@@ -1140,6 +1140,9 @@ contains
        case ('plasmod_car_qdivt')
           call parse_real_variable('plasmod_car_qdivt', plasmod_car_qdivt, 0.0D0, 1.0D4, &
                'dcar/d(qdivt)')
+       case ('plasmod_maxpauxor')
+          call parse_real_variable('plasmod_maxpauxor', plasmod_maxpauxor, 0.0D0, 1.0D4, &
+               'Max allowed auxiliary power / R')
           !deposition locations
        case ('plasmod_x_heat')
           call parse_real_array('plasmod_x_heat', plasmod_x_heat, isub1, 2, &

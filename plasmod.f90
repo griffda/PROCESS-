@@ -127,8 +127,8 @@ contains
        endif
        
        comp%psepplh_sup = 1.0e3 !Psep/PLH if below this, use nbi
-          comp%psep_r      = 1.0e3 !large number to have no effect
-         inp0%maxpauxor=20. ! maximum Paux/R allowed
+       comp%psep_r      = 1.0e3 !large number to have no effect
+       inp0%maxpauxor    = plasmod_maxpauxor ! maximum Paux/R allowed
 
        num%tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
        num%dtmin  = plasmod_dtmin !min time step
