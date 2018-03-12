@@ -150,7 +150,7 @@ module structs
 						& qheat,qcd,qfus,spellet,fpellet,q_control, & 
 						& x_heat(2),x_cd(2),x_fus(2),x_control(2), &
 						& dx_heat(2),dx_cd(2),dx_fus(2),dx_control(2),nbi_energy, &
-						& PLH
+						& PLH,maxpauxor
 !gamma_ecrh,gamma_nbi (efficiencies)
     end type inputs 
 

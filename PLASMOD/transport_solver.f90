@@ -156,7 +156,6 @@ pres_fac=1.d0 !coefficient to avoid emeq crashing
   triang95 = geom%d95
   Ip = geom%Ip !MA
   btor = geom%Bt
-
 	i_flag=1 !success
 
   !this counter checks if transport is called the first time or not (to improve speed reusing previous iterations results)

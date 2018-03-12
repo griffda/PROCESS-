@@ -102,7 +102,7 @@
 				inp0%car_qdivt=1.e-6 !dcar/d(qdivt)
 
 
-
+inp0%maxpauxor=20. ! maximum Paux/R allowed
 
 
 ! actual values for testing
@@ -178,6 +178,7 @@
 				inp0%fpellet=0.5d0 !pellet frequency in Hz
 				inp0%q_control=50.d0 !minimal power required for control
 
+inp0%maxpauxor=20. ! maximum Paux/R allowed
 
 !constraints
 				inp0%V_loop=-1.e6 !target loop voltage. If lower than -1.e5, dont use this
