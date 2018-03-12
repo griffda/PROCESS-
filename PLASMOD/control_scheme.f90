@@ -32,8 +32,14 @@ dum2=min(dum2,comp%psep_r*rmajor)
 	
 	if (dum2.lt.1.d6) then
 		cxe=max(0.,cxe+inp0%cxe_psepfac*(Psep-dum2)/dum2*num%dt/(1.+num%dt))
+
+ if (q_heat.gt.0.) cxe=0.d0
 	comp%cxe=cxe
+
 	endif
+
+
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
