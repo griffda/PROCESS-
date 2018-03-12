@@ -186,6 +186,6 @@
   {"no": 179, "level": 3, "message": "CHECK: You have to use the LH-threshold constraint with PLASMOD(ipedestal=3)"},
   {"no": 180, "level": 3, "message": "CHECK: You have to use ilhthesh = 6 (Martin scaling) with PLASMOD(ipedestal=3)"},
   {"no": 181, "level": 3, "message": "CHECK: You have to enforce H-mode with PLASMOD(ipedestal=3)"},
-     {"no": 182, "level": 3, "message": "CHECK: The following it.vars can't be used with PLASMOD(iepdestal=3) as they are outputs: 4, 5, 6, 9, 109, 102"},
-     {"no": 182, "level": 3, "message": "CHECK: The density limit cannot be used in conjuctions with PLASMOD(ipedestal=3), use fgwsep or fgwped instead"}]
+     {"no": 182, "level": 3, "message": "CHECK: It.vars can't be used with PLASMOD: 4,5,6,9,36,102,103,109,110"},
+     {"no": 183, "level": 3, "message": "CHECK: The density limit cannot be used in conjuctions with PLASMOD(ipedestal=3), use fgwsep or fgwped instead"}]
 }

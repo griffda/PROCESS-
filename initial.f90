@@ -425,11 +425,12 @@ subroutine check
      if(ipedestal==3)then
         ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
         ! These are outputs of PLASMOD
-        ! ixc(4) = te, ixc(5) = beta, ixc(6) = dene, ixc(9) = fdene, ixc(109) = ralpne, ixc(102) = fimpvar
-        if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or.(ixc==109).or.(ixc==102)))then
+        ! ixc(4) = te, ixc(5) = beta, ixc(6) = dene, ixc(9) = fdene, ixc(36) = fbetatry, ixc(102) = fimpvar, ixc(103) = flhthresh, ixc(109) = ralpne, ixc(110) = ftaulimit
+        if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or.(ixc==36).or. &
+             (ixc==102).or.(ixc==103).or.(ixc==109).or.(ixc==110)))then
            call report_error(182)
         endif
-
+           
         ! density limit cannot be used with PLASMOD use fgwsep and/or fgwped instead.
         if (any(icc==9)) then
            call report_error(183)
