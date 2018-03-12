@@ -59,6 +59,7 @@ dum2=min(dum2,comp%psep_r*rmajor)
 !sum up all powers
  loss%pnbi=min(inp0%maxpauxor*geom%r, & 
  & min(inp0%pheatmax,q_heat+q_cd+q_fus+inp0%q_control))
+!write(*,*) inp0%q_control,q_cd,q_heat,q_fus,loss%pnbi
 
 
 !write(*,*) comp%psepb_q95AR,Psep*btor/q_95/geom%A/rmajor,cxe

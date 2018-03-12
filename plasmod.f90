@@ -97,7 +97,7 @@ contains
     !uses PROCES defined LH threshold, if this is > 0
     inp0%PLH = 0d0 !plhthresh ! This won't work as this can only be calculated after.
 
-
+    comp%psepb_q95AR = psepbqarmax*fpsepbqar !Psep B/qaR max value times the iteration variable
 
     ! all fixed input variables that cannot change within a PROCESS
     ! iteration go here!
@@ -128,7 +128,6 @@ contains
        
        comp%psepplh_sup = 1.0e3 !Psep/PLH if below this, use nbi
           comp%psep_r      = 1.0e3 !large number to have no effect
-          comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value
          inp0%maxpauxor=20. ! maximum Paux/R allowed
 
        num%tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
