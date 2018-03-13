@@ -442,7 +442,7 @@ module physics_variables
   !+ad_varc                      (recommendation: use icurr=4 with this option) </UL>
   integer :: iprofile = 1
   !+ad_vars  iradloss /1/ : switch for radiation loss term usage in power balance (see User Guide):<UL>
-  !+ad_varc             <LI> = 0 total power lost is scaling power plus radiation
+  !+ad_varc             <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
   !+ad_varc             <LI> = 1 total power lost is scaling power plus core radiation only
   !+ad_varc             <LI> = 2 total power lost is scaling power only, with no additional
   !+ad_varc                      allowance for radiation. This is not recommended for power plant models.</UL>

@@ -419,7 +419,7 @@ subroutine check
         gamcd = 0.3
 
 
-        if(iradloss .ne. 1) then
+        if(iradloss .ne. 0) then
            call report_error(183)
         endif
 
