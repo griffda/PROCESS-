@@ -570,7 +570,7 @@ subroutine ADDITIONAL_CALCS( &
      
      dum1=ipol*btor/gp2*cumint1(dV*jpar/ipol**2.)
      q=ipol*g2*g3/(mu_vacuum*8*pi**3.*dum1*1.e6)
-
+ q(1)=q(2)
 !	write(*,*) 'j9',j_9
 !write(*,*) 	'q',q
 !pause
