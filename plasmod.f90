@@ -21,7 +21,7 @@ module plasmod_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use plasmod_variables
+  !use plasmod_variables
   use global_variables
   use physics_variables
   use impurity_radiation_module
@@ -588,7 +588,55 @@ contains
     call ovarrf(outfile,'Volume averaged electron temperature (keV)','(radp%av_te)', radp%av_te)
     call ovarrf(outfile,'Volume averaged ion temperature (keV)','(radp%av_ti)', radp%av_ti)
     call ovarrf(outfile,'Volume averaged effective charge','(radp%zeff)', radp%zeff)
+
+    call outputRadialProf
     
   end subroutine outputPlasmod
-  
+
+  subroutine outputRadialProf
+
+
+    !+ad_name  outputRadialProf
+    !+ad_summ  Routine to print out the radial profiles from PLASMOD
+    !+ad_type  Subroutine
+    !+ad_auth  K Ellis, UKAEA, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine writes out the radial profiles as created by the PLASMOD code
+    !+ad_prob  None
+    !+ad_call  oheadr
+    !+ad_call  osubhd
+    !+ad_call  ovarrf
+    !+ad_hist  13/03/18 KE Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+    
+    !  Arguments
+
+    integer, parameter :: radp_file = 15  !  Radial profiles file unit identifier
+    character(len = 50) :: outfile_radp
+    integer :: j
+    outfile_radp = trim(fileprefix)//"_RADP.DAT"
+
+    open(unit = radp_file, file = outfile_radp, action = 'write')
+    
+    call oheadr(radp_file,'PLASMOD Radial Profiles')
+    !call oblnkl(radp_file)
+
+    call osubhd(radp_file,'Radial position      ||    Electron density  ||    Electron temperature     ||    Ion temperature    ||')
+
+    do j=1,41
+       write(radp_file,*) radp%x(j),radp%ne(j),radp%Te(j),radp%Ti(j)
+    end do
+    
+    !call ovarrf(outfile_radp,'Plasma current (MA)','(geom%ip)', geom%ip)
+
+    close(unit = radp_file)
+
+  end subroutine outputRadialProf
+      
 end module plasmod_module
