@@ -383,6 +383,13 @@ subroutine check
         end if
 
      end if
+     
+     
+     ! Cannot use Psep/R and PsepB/qAR limits at the same time
+     if(any(icc == 68) .and. any(icc == 56)) then
+        call report_error(178)
+     endif
+     
 
      if(ipedestal == 2 .or. ipedestal == 3) then
         if (fgwped < 0 )then
@@ -391,16 +398,10 @@ subroutine check
         if (fgwsep < 0 ) then
            call report_error(177)
         endif
-     endif
 
-     ! Cannot use Psep/R and PsepB/qAR limits at the same time
-     if(any(icc == 68) .and. any(icc == 56)) then
-        call report_error(178)
-     endif
 
-     !need to enforce H-mode using Martin scaling, if using PLASMOD
-     if ((ipedestal == 2).or. (ipedestal==3)) then
 
+        !need to enforce H-mode using Martin scaling, if using PLASMOD
         !Todo: The L-H threshold is checked inside PLASMOD do we need to duplicate in PROCESS??
         if(.not. any(icc == 15)) then
      !      call report_error(179)
@@ -413,13 +414,18 @@ subroutine check
         if (boundl(103) < 1.) then
            call report_error(181)
         endif
-
-     endif
-
-     ! Initialise value for gamcd for use in PLASMOD first iteration
-     if(ipedestal==2 .or. ipedestal==3)then
+        
+        ! Initialise value for gamcd for use in PLASMOD first iteration
         gamcd = 0.3
+
+
+        if(iradloss .ne. 1) then
+           call report_error(183)
+        endif
+
      endif
+
+     
 
 
      if(ipedestal==3)then
@@ -439,7 +445,8 @@ subroutine check
         ! Currently PLASMOD only allows Argon and Xe 
         
      endif
-     
+
+      
      
 
     !  Tight aspect ratio options
