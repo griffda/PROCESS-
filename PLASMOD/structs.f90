@@ -120,7 +120,7 @@ module structs
 
     type pedestal
       SEQUENCE
-      real(kind(1.0D0)) :: nped,teped,nsep,tesep,rho_T,rho_n   !should go into the solver
+      real(kind(1.0D0)) :: nped,teped,nsep,tesep,rho_T,rho_n,pedscal   !should go into the solver
     end type pedestal 
 
 

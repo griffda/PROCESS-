@@ -76,6 +76,7 @@
     ped%tesep=0.3  !separatrix temperature
     ped%rho_t=0.96 !pedestal top position T
     ped%rho_n=0.96 !pedestal top position n
+    ped%pedscal=1. !pedestal top position n
 
 				inp0%Hfac_inp=1. !input H factor, if 0., this is not used. This is radiation corrected H factor
 

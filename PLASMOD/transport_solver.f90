@@ -803,7 +803,7 @@ endif
               betan=trapz(pressure*dV)/V(nx)*1.e3*e_charge*1.e19*2.*mu_vacuum/btor**2.
               betan=100.*betan*rminor*btor/Ip
 
-              P_pedtop = 2.*rmajor**(-0.38)*triang**(0.83)*elong**(0.62)*Ip**(1.25)*betan**(0.43)
+              P_pedtop = ped%pedscal*2.*rmajor**(-0.38)*triang**(0.83)*elong**(0.62)*Ip**(1.25)*betan**(0.43)
 	if (i_diagz.eq.1) 	write(*,*) 'betan,tpedtop',betan,P_pedtop/neb,V(nx),palph(1),pressure(1)
 
               !SOL and pedestal stuff (SOL not used now)
