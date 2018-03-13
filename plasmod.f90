@@ -97,7 +97,22 @@ contains
     !uses PROCES defined LH threshold, if this is > 0
     inp0%PLH = 0d0 !plhthresh ! This won't work as this can only be calculated after.
 
-    comp%psepb_q95AR = psepbqarmax*fpsepbqar !Psep B/qaR max value times the iteration variable
+    ! These values should only be set, if the respective constraints
+    ! are being used. They should be set to large values otherwise.
+    ! pseprmax and psepbqarmax cannot be used at the same time!
+    if (any(icc == 56)) then
+       comp%psep_r      = pseprmax*fpsepr !Psep/R max value
+       comp%psepb_q95AR = 1.0e3 !large number to have no effect
+    else if (any(icc == 68)) then
+       comp%psep_r      = 1.0e3 !large number to have no effect
+       comp%psepb_q95AR = psepbqarmax*fpsepbqar !Psep B/qaR max value times the iteration variable
+       
+    else
+       comp%psep_r      = 1.0e3 !large number to have no effect
+       comp%psepb_q95AR = 1.0e3 !large number to have no effect
+    endif
+    
+
 
     ! all fixed input variables that cannot change within a PROCESS
     ! iteration go here!
@@ -112,22 +127,8 @@ contains
        !It makes it much more robust and stable. 
        comp%cxe = 0.d0 !xenon concentration
 
-       comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi
-
-       ! These values should only be set, if the respective constraints
-       ! are being used. They should be set to large values otherwise.
-       ! pseprmax and psepbqarmax cannot be used at the same time!
-       if (any(icc == 56)) then
-          comp%psep_r      = pseprmax !Psep/R max value
-          comp%psepb_q95AR = 1.0e3 !large number to have no effect
-       else if (any(icc == 68)) then
-       else
-          comp%psep_r      = 1.0e3 !large number to have no effect
-          comp%psepb_q95AR = 1.0e3 !large number to have no effect
-       endif
-       
+       comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi      
        comp%psepplh_sup = 1.0e3 !Psep/PLH if below this, use nbi
-       comp%psep_r      = 1.0e3 !large number to have no effect
        inp0%maxpauxor    = plasmod_maxpauxor ! maximum Paux/R allowed
 
        num%tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
