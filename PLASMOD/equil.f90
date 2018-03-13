@@ -596,6 +596,7 @@ subroutine ADDITIONAL_CALCS( &
 11	continue
 	q(1)=sum(q(1:j_9))/(j_9-1.d0)
 	q(1:j_9)=q(1)+(q(j_9)-q(1))*v(1:j_9)/v(j_9)	
+ q(1)=q(2)
 
 10	continue
 
