@@ -900,6 +900,10 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_v_loop = -1.0d-6
   !+ad_vars  plasmod_pfus /0.0d0/ :: If 0. not used (otherwise controlled with Pauxheat)
   real(kind(1.0D0)) :: plasmod_pfus = 0.0d0
+  !+ad_vars  plasmod_pedscal /1.0d0/ :: multiplication factor of the pedestal scaling in PLASMOD
+  !+ad_varc                             can be used to scan the pedestal height.
+  real(kind(1.0D0)) :: plasmod_pedscal = 1.0d0
+  
   
   !+ad_vars  geom ::  Derived type containing all geometry information for PLASMOD
   type (geometry) :: geom

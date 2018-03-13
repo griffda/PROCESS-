@@ -229,12 +229,13 @@ contains
        !which radiation is "edge"
 
        
-       ped%tesep  = tesep  !separatrix temperature
-       ped%rho_t  = rhopedt !pedestal top position T
-       ped%rho_n  = rhopedn !pedestal top position n
-       ped%teped  = teped !pedestal top temperature
-       inp0%f_gw  = fgwped !pedestal top greenwald fraction
-       inp0%f_gws = fgwsep !separatrix greenwald fraction
+       ped%tesep   = tesep  !separatrix temperature
+       ped%rho_t   = rhopedt !pedestal top position T
+       ped%rho_n   = rhopedn !pedestal top position n
+       ped%pedscal = plasmod_pedscal !multiplies the pedestal scaling in PLASMOD
+       ped%teped   = teped !pedestal top temperature
+       inp0%f_gw   = fgwped !pedestal top greenwald fraction
+       inp0%f_gws  = fgwsep !separatrix greenwald fraction
        
 
        geom%k  = kappa !edge elongation
@@ -304,17 +305,17 @@ contains
     endif
     
     
-    te0 = radp%te(1) 
-    ti0 = radp%ti(1) !ion temperature on axis
+    te0   = radp%te(1) 
+    ti0   = radp%ti(1) !ion temperature on axis
     teped = ped%teped !only computed, if ieped = 2
     ne0   = radp%ne(1)*1.d19
     neped = ped%nped*1.d19
     nesep = ped%nsep*1.d19
-    te = radp%av_te
-    ten = radp%av_te
-    ti = radp%av_ti
-    dene = radp%av_ne*1.d19
-    dnla=sum(radp%ne)/size(radp%ne)*1.d19
+    te    = radp%av_te
+    ten   = radp%av_te
+    ti    = radp%av_ti
+    dene  = radp%av_ne*1.d19
+    dnla  = sum(radp%ne)/size(radp%ne)*1.d19
 
     dnitot = radp%av_ni * 1.0d19 !Ion density (/m3)
     deni = 0.0d0 ! Fuel density (/m3)
@@ -347,21 +348,21 @@ contains
     fimp(13) = comp%cxe 
     fimp(2) = comp%che
     !HL: I think this is wrong, should be fimp instead of impurity_arr
-    impurity_arr(1)%frac=0.d0
-    impurity_arr(2)%frac=ralpne
-    impurity_arr(3)%frac=0.d0
-    impurity_arr(4)%frac=0.d0
-    impurity_arr(5)%frac=0.d0
-    impurity_arr(6)%frac=0.d0
-    impurity_arr(7)%frac=0.d0
-    impurity_arr(8)%frac=0.d0
-    impurity_arr(9)%frac=0.d0
-    impurity_arr(10)%frac=0.d0
-    impurity_arr(11)%frac=0.d0
-    impurity_arr(12)%frac=0.d0
-    impurity_arr(13)%frac=0.d0
-    impurity_arr(14)%frac=0.d0
-    impurity_arr(13)%frac=fimp(13)
+    impurity_arr(1)%frac  = 0.d0
+    impurity_arr(2)%frac  = ralpne
+    impurity_arr(3)%frac  = 0.d0
+    impurity_arr(4)%frac  = 0.d0
+    impurity_arr(5)%frac  = 0.d0
+    impurity_arr(6)%frac  = 0.d0
+    impurity_arr(7)%frac  = 0.d0
+    impurity_arr(8)%frac  = 0.d0
+    impurity_arr(9)%frac  = 0.d0
+    impurity_arr(10)%frac = 0.d0
+    impurity_arr(11)%frac = 0.d0
+    impurity_arr(12)%frac = 0.d0
+    impurity_arr(13)%frac = 0.d0
+    impurity_arr(14)%frac = 0.d0
+    impurity_arr(13)%frac = fimp(13)
     !fimp(9)  = comp%car !PLASMOD does not compute argon - get from Kall.model
     aion = 0.0d0 ! Average mass of all ions (amu)
 

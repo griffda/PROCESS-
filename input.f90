@@ -1177,7 +1177,9 @@ contains
        case ('plasmod_pfus')
           call parse_real_variable('plasmod_pfus', plasmod_pfus, 0.0D0, 1.0D4, &
                'If 0. not used (otherwise controlled with Pauxheat)')
-
+       case ('plasmod_pedscal')
+          call parse_real_variable('plasmod_pedscal', plasmod_pedscal, 0.0D0, 1.0D1, &
+               'multiplication factor of the pedestal scaling in PLASMOD')
           
           !  Current drive settings
 
