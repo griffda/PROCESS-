@@ -155,7 +155,7 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
     comp%pradpos = 0.75d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
     comp%pradfrac = 0.6d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
 
-				inp0%f_gw=0.85 !pedestal top greenwald fraction
+				inp0%f_gw=0.9 !pedestal top greenwald fraction
 				inp0%f_gws=0.5 !separatrix greenwald fraction
 
     ped%teped=5.5  !pedestal top temperature
@@ -176,7 +176,7 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 				inp0%fpellet=0.5d0 !pellet frequency in Hz
 				inp0%q_control=50.d0 !minimal power required for control
 
-inp0%maxpauxor=20. ! maximum Paux/R allowed
+	inp0%maxpauxor=20. ! maximum Paux/R allowed
 
 !constraints
 				inp0%V_loop=-1.e6 !target loop voltage. If lower than -1.e5, dont use this
@@ -194,7 +194,6 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 				inp0%qnbi_psepfac=50. !dqnbi/d(1-Psep/PLH)
 				inp0%cxe_psepfac=1.e-4 !dcxe/d(1-Psep/PLH)
 				inp0%car_qdivt=1.e-4 !dcar/d(qdivt)
-				inp0%maxpauxor=20. !max allowable Paux/R
 
 !deposition locations
 				inp0%x_heat(1)=0. !nbi
