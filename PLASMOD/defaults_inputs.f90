@@ -129,10 +129,8 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 
 !geometry
     geom%A = 3.1d0  !aspect ratio
-    geom%R = 12.6  ! major radius in m
-    geom%bt = 5.1022 !magnetic field
-    geom%R = 9.002  ! major radius in m
-    geom%bt = 5.8547 !magnetic field
+    geom%R = 9  ! major radius in m
+    geom%bt = 5.8 !magnetic field
         geom%k =1.6969830041844367 !edge elongation
     geom%d =  0.38491934960310104  !edge triangularity
     geom%k95 = 1.65d0 !edge elongation
@@ -141,10 +139,10 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
     geom%q95 = 3.8871 !safety factor. 
 	geom%counter=0.
 
-    comp%globtau(1) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
-    comp%globtau(2) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
-    comp%globtau(3) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
-    comp%globtau(4) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
+    comp%globtau(1) = 4. !tauparticle/tauE for D, T, He, Xe, Ar
+    comp%globtau(2) = 4. !tauparticle/tauE for D, T, He, Xe, Ar
+    comp%globtau(3) = 4. !tauparticle/tauE for D, T, He, Xe, Ar
+    comp%globtau(4) = 4. !tauparticle/tauE for D, T, He, Xe, Ar
     comp%globtau(5) = 1. !tauparticle/tauE for D, T, He, Xe, Ar
 
     comp%car = 0. !argon concentration, used if qdivt=0.
@@ -162,8 +160,8 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 
     ped%teped=5.5  !pedestal top temperature
     ped%tesep=0.1  !separatrix temperature
-    ped%rho_t=0.94 !pedestal top position T
-    ped%rho_n=0.94 !pedestal top position n
+    ped%rho_t=0.94 !pedestal top position T in r/a
+    ped%rho_n=0.94 !pedestal top position n in r/a
 
 
 				inp0%nbcdeff=0.3 !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
@@ -182,8 +180,8 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 
 !constraints
 				inp0%V_loop=-1.e6 !target loop voltage. If lower than -1.e5, dont use this
-				inp0%Hfac_inp=1.099998 !input H factor, if 0., this is not used. This is radiation corrected H factor
-				inp0%f_ni=0.38686 !required fraction of non inductive current, if 0, dont use CD
+				inp0%Hfac_inp=1.1 !input H factor, if 0., this is not used. This is radiation corrected H factor
+				inp0%f_ni=0. !required fraction of non inductive current, if 0, dont use CD
 				inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat)
     comp%psepplh_inf = 1. !Psep/PLH if below this, use nbi
     comp%psepplh_sup = 1000.2d0 !Psep/PLH if above this, use Xe
@@ -196,6 +194,7 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 				inp0%qnbi_psepfac=50. !dqnbi/d(1-Psep/PLH)
 				inp0%cxe_psepfac=1.e-4 !dcxe/d(1-Psep/PLH)
 				inp0%car_qdivt=1.e-4 !dcar/d(qdivt)
+				inp0%maxpauxor=20. !max allowable Paux/R
 
 !deposition locations
 				inp0%x_heat(1)=0. !nbi
