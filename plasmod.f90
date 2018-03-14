@@ -21,7 +21,7 @@ module plasmod_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !use plasmod_variables
+  use plasmod_variables
   use global_variables
   use physics_variables
   use impurity_radiation_module
@@ -100,10 +100,10 @@ contains
     ! These values should only be set, if the respective constraints
     ! are being used. They should be set to large values otherwise.
     ! pseprmax and psepbqarmax cannot be used at the same time!
-    if (any(icc == 56)) then
+    if (any(ixc == 97)) then
        comp%psep_r      = pseprmax*fpsepr !Psep/R max value
        comp%psepb_q95AR = 1.0e3 !large number to have no effect
-    else if (any(icc == 68)) then
+    else if (any(ixc == 117)) then
        comp%psep_r      = 1.0e3 !large number to have no effect
        comp%psepb_q95AR = psepbqarmax*fpsepbqar !Psep B/qaR max value times the iteration variable
        
