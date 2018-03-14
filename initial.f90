@@ -421,7 +421,7 @@ subroutine check
 
         ! PLASMOD only uses the core radiation for the H-factor correction.
         ! It calculates the power balance using the total radiation.
-        if(iradloss .ne. 0.and.ipedestal.ne.2) then
+        if(iradloss .ne. 0) then
            call report_error(183)
         endif
 
