@@ -169,7 +169,7 @@ contains
        comp%globtau(3) = plasmod_globtau(3) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(4) = plasmod_globtau(4) !tauparticle/tauE for D, T, He, Xe, Ar Not used for Xe!
        comp%globtau(5) = plasmod_globtau(5) !tauparticle/tauE for D, T, He, Xe, Ar
-       comp%fuelmix = 0.5d0 !fuel mix Could be fdeut or ftrit or sqrt(fdeut*ftrit)! CHECK!
+       comp%fuelmix = fdeut !fuel mix Could be fdeut or ftrit or sqrt(fdeut*ftrit)! CHECK!
 
        ! This should be equal to "impurity_enrichment(9)" if using the
        ! Kallenbach model at the same time
