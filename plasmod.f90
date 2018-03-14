@@ -468,7 +468,10 @@ contains
     rlpext = rmajor*rmu0 * aeps*(1.0D0-eps)/(1.0D0-eps+beps*kappa)
     rlp = rlpext + rlpint
     vsind = rlp * geom%ip*1.d6 !internal and external plasma inductance V-s (Wb)
+
+	
     vburn = plascur * rplas * facoh * csawth !volt-seconds needed during flat-top (heat+burn) (Wb)
+
     vsbrn = vburn*(theat + tburn)
     vsstt = vsres + vsind + vsbrn !total volt-seconds needed (Wb) 
 
