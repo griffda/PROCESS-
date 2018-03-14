@@ -1163,6 +1163,9 @@ endif
   !averages
   radp%av_ne = trapz(nepr*dV)/V(nx)
   radp%av_ni = trapz(nions*dV)/V(nx)
+  radp%av_nd = trapz((ndeut+ntrit)*dV)/V(nx)
+  radp%av_nz = trapz((nions-ndeut-ntrit)*dV)/V(nx)
+  radp%av_nhe = trapz((nhe)*dV)/V(nx)
   radp%av_Ti = trapz(tipr*dV)/V(nx)
   radp%av_Te = trapz(tepr*dV)/V(nx)
   radp%zeff  = trapz(zeff*dV)/V(nx)

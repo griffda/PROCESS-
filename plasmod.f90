@@ -319,14 +319,14 @@ contains
     dnla  = sum(radp%ne)/size(radp%ne)*1.d19
 
     dnitot = radp%av_ni * 1.0d19 !Ion density (/m3)
-    deni = 0.0d0 ! Fuel density (/m3)
-    dnz = 0.0d0 !High Z impurity density (/m3)
-    dnalp = 0.0d0 ! Helium ion density (thermalised ions only) (/m3)
+    deni = radp%av_nd*1.d19 ! Fuel density (/m3)
+    dnz = radp%av_nz*1.d19 !High Z impurity density (/m3)
+    dnalp = radp%av_nhe*1.d19 ! Helium ion density (thermalised ions only) (/m3)
     dnprot = 0.0d0 ! Proton density (/m3)
     dnbeam = 0.0d0 ! Hot beam density (/m3)
     dnelimt = 0.0d0 ! Density limit from scaling (/m3)
     
-    write(132,*) geom%r,geom%bt,loss%Pfus,loss%pnbi
+!    write(132,*) geom%r,geom%bt,loss%Pfus,loss%pnbi
     !If plascur was an input, q95 is an output and vice versa
     !Reassign both for simplicity
     plascur = geom%ip * 1.0D6 !Plasma current in Ampere
