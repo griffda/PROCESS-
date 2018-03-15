@@ -627,16 +627,24 @@ contains
 
     open(unit = radp_file, file = outfile_radp, action = 'write')
     
-    call oheadr(radp_file,'PLASMOD Radial Profiles')
-    !call oblnkl(radp_file)
-
-    call osubhd(radp_file,'Radial position      ||    Electron density  ||    Electron temperature     ||    Ion temperature    ||')
-
+    write(radp_file,*) '# **********PLASMOD Radial Profiles***********#'
+    write(radp_file,*) '#                                            '
+    write(radp_file,*) '# Radial position    ||     Electron density  ||    &
+         &Electron temperature   ||   Ion temperature   || &
+         &BS current density(MA/m^2)||&
+ &CD current dens(MA/m^2)||Total current dens(MA/m^2)||&
+ &Poloidal current(R*Bp)(T.m)|| Safety factor q    ||     Volume (m^3)    &
+ &||      dVolume/dr (m^2)  || Plasma conductivity(MA/(V.m)||&
+ &Alpha press(keV*10^10 m^-3)||Ion dens(10^19 m^-3) || &
+ &Poloidal flux (Wb)'
+         !&Deuterium density   ||    Tritium density   &
     do j=1,41
-       write(radp_file,*) radp%x(j),radp%ne(j),radp%Te(j),radp%Ti(j)
+       write(radp_file,*) radp%x(j),radp%ne(j),radp%Te(j),radp%Ti(j),&
+            !&radp%ndeut(j),radp%ntrit(j),
+            &radp%jbs(j),radp%jcd(j),radp%jpar(j),&
+            &radp%ipol(j),radp%qprof(j),radp%Volum(j),radp%vp(j),radp%cc(j),&
+            &radp%palph(j),radp%nions(j),radp%psi(j)
     end do
-    
-    !call ovarrf(outfile_radp,'Plasma current (MA)','(geom%ip)', geom%ip)
 
     close(unit = radp_file)
 
