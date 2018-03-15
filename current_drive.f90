@@ -269,6 +269,7 @@ contains
 
           !  Neutral beam current (A)
           cnbeam = 1.0D-3 * (pnbitot*1.0D6) / enbeam
+ if (ipedestal.eq.3) cnbeam = faccd*plascur
 
        case (9)  ! OFCD
           ! RFP option removed in PROCESS (issue #508)

@@ -422,12 +422,11 @@ contains
 
     !  Fraction of plasma current produced by inductive means
 
-    facoh = max( 1.0D-10, (1.0D0 - fvsbrnni) )
-
-    !  Fraction of plasma current produced by auxiliary current drive
-
-    faccd = fvsbrnni - bootipf
-
+    if (ipedestal .ne. 3) then
+      facoh = max( 1.0D-10, (1.0D0 - fvsbrnni) )
+!   Fraction of plasma current produced by auxiliary current drive
+      faccd = fvsbrnni - bootipf
+    endif
     !  Do auxiliary current drive power calculations
 
     if (irfcd /= 0) call cudriv(nout,0)

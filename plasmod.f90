@@ -457,6 +457,7 @@ contains
     
     !vscalc:
     facoh=(1.-mhd%f_ni)
+    faccd = fvsbrnni - bootipf
     phiint = radp%psi(size(radp%psi)) !internal plasma volt-seconds (Wb)
     rli = mhd%rli !plasma inductance internal (H)
     rlpint = rmu0 * rmajor * rli/2.0D0
