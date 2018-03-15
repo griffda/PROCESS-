@@ -357,7 +357,7 @@ contains
     impurity_arr(6)%frac  = 0.d0
     impurity_arr(7)%frac  = 0.d0
     impurity_arr(8)%frac  = 0.d0
-    impurity_arr(9)%frac  = 0.d0
+!    impurity_arr(9)%frac  = 0.d0
     impurity_arr(10)%frac = 0.d0
     impurity_arr(11)%frac = 0.d0
     impurity_arr(12)%frac = 0.d0
@@ -365,7 +365,7 @@ contains
     impurity_arr(14)%frac = 0.d0
     impurity_arr(13)%frac = fimp(13)
     !fimp(9)  = comp%car !PLASMOD does not compute argon - get from Kall.model
-    aion = 0.0d0 ! Average mass of all ions (amu)
+    aion = 2.0d0 ! Average mass of all ions (amu)
 
     zeff = radp%zeff ! Effective charge
     
@@ -490,6 +490,9 @@ contains
     rplas = loss%rplas !plasma resistance (ohm)
 
     pinjmw=loss%pnbi
+    pinjemw=loss%peaux
+    pinjimw=loss%piaux
+!    write(*,*) pinjmw,pinjemw,pinjimw
     pradpv = loss%Prad/vol !Total radiation power (MW) 
   
     falpha=1.0

@@ -235,41 +235,40 @@ contains
 
        case (5,8)  ! NBCD
 
-          !For PLASMOD
-          if(ipedestal.ne.3)then
+          if(ipedestal.ne.3)then  ! When not using PLASMOD
              ! MDK. See Gitlab issue #248, and scanned note.
              power1 = 1.0D-6 * faccd * plascur / effnbss + pheat
-          else
-             power1 = pinjmw
-          endif
           
-          ! Account for first orbit losses
-          ! (power due to particles that are ionised but not thermalised) [MW]:
-          ! This includes a second order term in shinethrough*(first orbit loss)
-          forbitloss = min(0.999,forbitloss) ! Should never be needed
-          pnbitot = power1 / (1.0D0-forbitloss+forbitloss*nbshinef)
+             ! Account for first orbit losses
+             ! (power due to particles that are ionised but not thermalised) [MW]:
+             ! This includes a second order term in shinethrough*(first orbit loss)
+             forbitloss = min(0.999,forbitloss) ! Should never be needed
+             pnbitot = power1 / (1.0D0-forbitloss+forbitloss*nbshinef)
+             
+             ! Shinethrough power (atoms that are not ionised) [MW]:
+             nbshinemw = pnbitot * nbshinef
+             
+             ! First orbit loss
+             porbitlossmw = forbitloss * (pnbitot - nbshinemw)
+             
+             ! Power deposited
+             pinjmw = pnbitot - nbshinemw - porbitlossmw
+             pinjimw = pinjmw * fpion
+             pinjemw = pinjmw * (1.0D0-fpion)
+             
+          else  !neutral beam powers calculated by PLASMOD
+             power1 = pinjmw
+             pnbitot = power1 
+          endif
 
-          ! Shinethrough power (atoms that are not ionised) [MW]:
-          nbshinemw = pnbitot * nbshinef
-
-          ! First orbit loss
-          porbitlossmw = forbitloss * (pnbitot - nbshinemw)
-
-          ! Power deposited
-          pinjmw = pnbitot - nbshinemw - porbitlossmw
-          pinjimw = pinjmw * fpion
-          pinjemw = pinjmw * (1.0D0-fpion)
-
-          ! neutral beam wall plug power
-          pwpnb = pnbitot/etanbi
+          pwpnb = pnbitot/etanbi ! neutral beam wall plug power
           pinjwp = pwpnb
           etacd = etanbi
           gamnb = effnbss * (dene20 * rmajor)
           gamcd = gamnb
+          cnbeam = 1.0D-3 * (pnbitot*1.0D6) / enbeam !  Neutral beam current (A)
 
-          !  Neutral beam current (A)
-          cnbeam = 1.0D-3 * (pnbitot*1.0D6) / enbeam
- if (ipedestal.eq.3) cnbeam = faccd*plascur
+!	  write(*,*) power1,fpion,pwpnb,pinjwp,etacd,gamnb,gamcd,cnbeam        
 
        case (9)  ! OFCD
           ! RFP option removed in PROCESS (issue #508)
