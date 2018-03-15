@@ -1129,6 +1129,9 @@ endif
   radp%Te = tepr
   radp%Ti = tipr
 
+	loss%peaux=trapz(peaux*dv)
+	loss%piaux=trapz(piaux*dv)
+
 !	write(*,*) ip,q_95,q(nx)
 
   if (mhd%equilcheck.eq.1.d0) then
@@ -1222,8 +1225,6 @@ endif
      mhd%f_ni = fcd+fbs
   endif
 
-	loss%peaux=trapz(peaux*dv)
-	loss%piaux=trapz(piaux*dv)
 	loss%qheat=q_heat
 	loss%qcd=q_cd
 	loss%qfus=q_fus
