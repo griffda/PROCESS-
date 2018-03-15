@@ -111,7 +111,6 @@ module physics_module
   use tfcoil_variables
   use times_variables
 
-  !use structs
   use grad_func
   
   use plasmod_module
@@ -124,10 +123,14 @@ module physics_module
        palph,palph2,pcond,phyaux,physics,plasma_composition, &
        pohm,radpwr,rether
 
-  !  Local variables
+  !  Module-level variables
 
   integer :: iscz
   real(kind(1.0D0)) :: vcritx, photon_wall, rad_fraction
+
+  real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
+  real(kind(1.0D0)) :: total_loss_power        ! [W]
+  real(kind(1.0D0)) :: total_energy_conf_time  ! [s]
 
 contains
 
@@ -226,7 +229,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+implicit none
 
     !  Arguments
 
@@ -250,36 +253,38 @@ contains
 
     !  Calculate plasma current
     !if (ipedestal .ne. 3) then
-       call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
-            pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
-
-       !  Calculate density and temperature profile quantities
-       !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
-       !    fgwped * Greenwald density limit
-       !  Note: this used to be done before plasma current
-       ! Issue #589 remove iscdens
-       if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwped >=0d0)) then
-          neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
-       endif
-       if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwsep >=0d0)) then
-          nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
-       end if
-
-!    endif
-    
-    if (icurr == 2) then
+    call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
+        pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
+	
+        if (icurr == 2) then
        q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
     else
        q95 = q  !  i.e. input (or iteration variable) value
     end if
+    !  Calculate density and temperature profile quantities
+    !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
+    !    fgwped * Greenwald density limit
+    !  Note: this used to be done before plasma current
+    ! Issue #589 remove iscdens
+    if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwped >=0d0)) then
+		neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
+    endif
+    if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwsep >=0d0)) then
+       nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
+    end if
 
-
+!    endif
     
+    !issue 558 - critical electron density at separatrix
+    if(any(icc==76))then
+       alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
+       nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
+            * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
+    endif													   
+
     ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
     ! ieped : switch for scaling pedestal-top temperature with plasma parameters
-    if ((ipedestal >= 1) .and. (ieped == 1)) then
-       teped = t_eped_scaling()
-    endif
+    if ((ipedestal >= 1) .and. (ieped == 1)) teped = t_eped_scaling()
     
     if (ipedestal .ne. 3)then
        
@@ -315,7 +320,6 @@ contains
           write(32,*) 'loss ',loss
           close(32)
        endif
-
 
        call convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,tburn)
        
@@ -390,7 +394,6 @@ contains
     bscf_sauter = cboot * bootstrap_fraction_sauter()
 
     if (ipedestal .ne. 3) then
-
        if (bscfmax < 0.0D0) then
           bootipf = abs(bscfmax)
        else
@@ -476,7 +479,6 @@ contains
 
         call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
-   
        !  Calculate radiation power
        
        call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
@@ -517,11 +519,10 @@ contains
        !  Enforced L-H power threshold value (if constraint 15 is turned on)
 
        plhthresh = pthrmw(ilhthresh)
-       
-
+        
        !  Power transported to the divertor by charged particles,
        !  i.e. excludes neutrons and radiation, and also NBI orbit loss power,
-       !  which is assumed to be absorbed by the first wall
+       !  which is assumed to be absorbed by the first wall												   													   
 
        if (ignite == 0) then
           pinj = pinjmw
@@ -584,15 +585,15 @@ contains
     !vscal and phyaux should be replaced by PLASMOD output ipedestal 3
     !  Calculate volt-second requirements
 
-!    call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
-!         plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
+    call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
+         plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
 
-!    !  Calculate auxiliary physics related information
-!    !  for the rest of the code
+    !  Calculate auxiliary physics related information
+    !  for the rest of the code
 
-!    sbar = 1.0D0
-!    call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
-!         taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+    sbar = 1.0D0
+    call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
+         taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Calculate beta limit
 
@@ -613,7 +614,10 @@ contains
     call culblm(bt,dnbeta,plascur,rminor,betalim)
 
     ! Calculate some derived quantities that may not have been defined earlier
-    rad_fraction = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
+	total_loss_power = 1d6 * (falpha*palpmw+pchargemw+pohmmw+pinjmw)
+    rad_fraction = 1.0D6*pradmw / total_loss_power
+    total_plasma_internal_energy = 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol
+    total_energy_conf_time = total_plasma_internal_energy / total_loss_power											  
 
     !if(ipedestal==3)then
        if (verbose == 1) then
@@ -5821,9 +5825,9 @@ end function t_eped_scaling
        call ovarrf(outfile,'Limit on thermal + NB beta','(betalim)', betalim, 'OP ')
     end if
 
-    call ovarre(outfile,'Plasma thermal energy (J)',' ', 1.5D0*betath*btot*btot/(2.0D0*rmu0)*vol, 'OP ')
-    call ovarre(outfile,'Total plasma internal energy (J)',' ', 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol, 'OP ')
-
+    call ovarre(outfile,'Plasma thermal energy (J)',' ', 1.5D0*betath*btot*btot/(2.0D0*rmu0)*vol, 'OP ')					 
+	call ovarre(outfile,'Total plasma internal energy (J)','(total_plasma_internal_energy)', total_plasma_internal_energy, 'OP ')
+	
     call osubhd(outfile,'Temperature and Density (volume averaged) :')
     call ovarrf(outfile,'Electron temperature (keV)','(te)',te)
     call ovarrf(outfile,'Electron temperature on axis (keV)','(te0)',te0, 'OP ')
@@ -6098,6 +6102,8 @@ end function t_eped_scaling
     call ovarrf(outfile,'Alpha particle/energy confinement time ratio','(taup/taueff)',taup/taueff, 'OP ')
     call ovarrf(outfile,'Lower limit on taup/taueff','(taulimit)',taulimit)
 
+	call ovarrf(outfile,'Total energy confinement time including radiation loss (s)', &
+                    '(total_energy_conf_time)', total_energy_conf_time, 'OP ')																							 
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')
        call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt, 'OP ')
