@@ -208,7 +208,7 @@ module structs
       SEQUENCE
       real(kind(1.0D0)) :: Vp, Sp, Vloop, fbs, q , f_gwpedtop !, Hfac_out
       real(kind(1.0D0)) :: Bpolavg,betator,betapol,torsurf,ip_out,f_ni,equilcheck,betan,q_sep
-      real(kind(1.0D0)) :: qstar,bp,rli
+      real(kind(1.0D0)) :: qstar,bp,rli,qoh
     end type MHD_EQ 
 
 !+ad_name  power_losses

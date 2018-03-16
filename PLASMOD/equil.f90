@@ -193,7 +193,7 @@ nxtemp=nx
 	if (nx.lt.1) then
 	nx=nxtemp
 	pres_fac=pres_fac*0.9
-	write(*,*) 'not converged pressure too high',pres_fac
+!	write(*,*) 'not converged pressure too high',pres_fac
 !stop
 !		qedge=d_qnan
 		goto 111
@@ -202,7 +202,7 @@ nxtemp=nx
 
 	if (isnan(sqgra(2))) then
 	pres_fac=pres_fac*0.9
-	write(*,*) 'not converged pressure too high'
+!	write(*,*) 'not converged pressure too high'
 !	stop
 	goto 111
 	endif

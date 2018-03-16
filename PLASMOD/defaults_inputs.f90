@@ -184,6 +184,7 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 				inp0%Hfac_inp=1.1 !input H factor, if 0., this is not used. This is radiation corrected H factor
 				inp0%f_ni=0. !required fraction of non inductive current, if 0, dont use CD
 				inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat)
+   inp0%PLH=0.
     comp%psepplh_inf = 1. !Psep/PLH if below this, use nbi
     comp%psepplh_sup = 1000.2d0 !Psep/PLH if above this, use Xe
     comp%psepb_q95AR = 9.2d0 !Psep B/qaR max value

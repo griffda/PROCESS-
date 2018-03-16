@@ -525,7 +525,7 @@ q_fus=loss%qfus
      palph=radp%palph
      cc=radp%cc
      V=radp%volum
-
+q_oh=mhd%qoh
 
   endif
 !	write(*,*) 'volume',v(nx)
@@ -1198,6 +1198,7 @@ endif
   mhd%rli=2.d0*trapz(radp%bpol**2.d0*dv)/ & 
   & ((1.d6*geom%ip)**2.d0)/(4.*3.141592*1.d-7)**2.d0/rmajor
 
+mhd%qoh=q_oh(1)
 	mhd%betan = betan
   !write(*,*) radp%bpol
   !stop
@@ -1415,7 +1416,7 @@ endif
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 
 
-!	write(*,*) "plasmod end ",jiter
+	write(*,*) "plasmod end ",jiter
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 
