@@ -444,7 +444,12 @@ subroutine check
            call report_error(183)
         endif
 
-        ! Currently PLASMOD only allows Argon and Xe 
+        ! The global power balance cannot be enforced when running PLASMOD
+        ! PROCESS cannot vary any of the relevant inputs as these are all
+        ! outputs of PLASMOD issue #631
+        if (any(icc == 2)) then
+           call report_error(185)
+        endif
         
      endif
 
