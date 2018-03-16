@@ -30,6 +30,10 @@
 	Piaux = exp(-(x-inp0%x_control(1))**2/inp0%dx_control(1)**2.d0)
  Pnbi=Pnbi+inp0%q_control*Piaux/trapz(Piaux*dV);
 
+
+!write(*,*) 'fds ',q_heat,q_cd,q_fus,inp0%q_control
+
+
 !split between electrons and ions of NBI
 	include 'calculate_beam_split.f90'
 
@@ -128,19 +132,15 @@ yllama=1.d0
 
 
 	sfus_he=pfus(nx)/5./5.632
-!	write(*,*) trapz(q_oh*dv)
 	! net powers
 	Powe = Peaux - peicl + pedt - prad- psync - pbrad +q_oh
 	Powi = Piaux + peicl + pidt
 
-!write(*,*) 'powers',powe(1),powi(1),pedt(1),prad(1),peaux(1),psync(1),pbrad(1),peicl(1)
-!write(*,*) g1(1:10),vprime(1:10),nepr(1:3)
 
 	totSe = cumint1(Powe*dV)
 	totSi = cumint1(Powi*dV)
     DdnVne = 625.d0*interp1_ef(nx,nxt,xr, totSe/G1/vprime/nepr, xtr)
     DdnVni = 625.d0*interp1_ef(nx,nxt,xr, totSi/G1/vprime/nions, xtr)
-
 	
 	! Fuelling
 	

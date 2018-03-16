@@ -692,7 +692,7 @@ write(1441,'(4111E25.11)') xtrt,a(:,1),a(:,2),a(:,3),b(:,1),b(:,2),b(:,3), &
 !	write(444,'(25E25.11)') Hnow,tepr(1),nepr(1),num%etol
 
 	if (i_diagz.eq.1) 	write(*,*) 'Qtot,taue,Hnow,ip'
-	if (i_diagz.eq.1) 	write(*,*) Qtot,taue,Hnow,ip
+	if (i_diagz.eq.1) 	write(*,*) Qtot,taue,Hnow,ip,y0,y
 
 
 	if (isnan(Qtot)) then
@@ -1067,6 +1067,7 @@ endif
            else
               toleq=dum1
   q_oh=ip*(1.-fbs-fcd)*vloop/v(nx)
+ 
               mhd%equilcheck=1.d0
               radp%Volum  = V
               radp%jbs  = cubb
