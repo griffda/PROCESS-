@@ -108,12 +108,12 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 
 ! actual values for testing
 																						    num%tol=0.00001d0 !tolerance to be reached, in % variation at each time step
-                          num%dtmin=0.01d0 !min time step
-                          num%dtmax=0.1d0 !max time step
+                          num%dtmin=0.00001d0 !min time step
+                          num%dtmax=0.01d0 !max time step
                           num%dt=0.01d0 !time step
                           num%dtinc=2.d0 !decrease of dt
                           num%Ainc=1.1d0 !increase of dt
-                          num%test=100000. !max iteration number
+                          num%test=10000. !max iteration number
                           num%tolmin=10.1d0 ! multiplier of etolm that should not be overcome
                           num%eopt=0.1d0 !exponent of jipperdo
                           num%dtmaxmin=0.1d0 !exponent of jipperdo2
@@ -123,21 +123,21 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
                           num%i_modeltype=1 !1 - simple gyrobohm scaling
                           num%i_equiltype=1 !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
                           num%nx=41        !number of interpolated grid points
-                          num%nxt=7 !number of reduced grid points
+                          num%nxt=11 !number of reduced grid points
                           num%nchannels=3  !leave this at 3
                           num%ipedestal=2 !1 - fixed temperature pedestal. 2 - Sareelma scaling
 																										num%i_impmodel=1 !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
 
 !geometry
     geom%A = 3.1d0  !aspect ratio
-    geom%R = 9  ! major radius in m
-    geom%bt = 5.8 !magnetic field
+    geom%R = 9.0837  ! major radius in m
+    geom%bt = 5.877 !magnetic field
         geom%k =1.6969830041844367 !edge elongation
     geom%d =  0.38491934960310104  !edge triangularity
     geom%k95 = 1.65d0 !edge elongation
     geom%d95 = 0.333d0 !edge triangularity
     geom%Ip =  17.75 !9.19727561008985 !19.6 !plasma current in MA : USED if equiltype=2, q95 is used if equiltype=1
-    geom%q95 = 3.8871 !safety factor. 
+    geom%q95 = 3.7793 !safety factor. 
 	geom%counter=0.
 
     comp%globtau(1) = 4. !tauparticle/tauE for D, T, He, Xe, Ar
@@ -163,7 +163,7 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
     ped%tesep=0.1  !separatrix temperature
     ped%rho_t=0.94 !pedestal top position T in r/a
     ped%rho_n=0.94 !pedestal top position n in r/a
-
+ped%pedscal=1.
 
 				inp0%nbcdeff=0.3 !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
 				inp0%eccdeff=0.3 !CD = this * PCD * TE/NE !not used for now
@@ -175,14 +175,14 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 				inp0%qfus=0.d0 !nbi power
 				inp0%spellet=0.d0 !pellet mass in particles of D in 10^19
 				inp0%fpellet=0.5d0 !pellet frequency in Hz
-				inp0%q_control=50.d0 !minimal power required for control
+				inp0%q_control=0.d0 !minimal power required for control
 
 	inp0%maxpauxor=20. ! maximum Paux/R allowed
 
 !constraints
 				inp0%V_loop=-1.e6 !target loop voltage. If lower than -1.e5, dont use this
 				inp0%Hfac_inp=1.1 !input H factor, if 0., this is not used. This is radiation corrected H factor
-				inp0%f_ni=0. !required fraction of non inductive current, if 0, dont use CD
+				inp0%f_ni=0.3346 !required fraction of non inductive current, if 0, dont use CD
 				inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat)
    inp0%PLH=0.
     comp%psepplh_inf = 1. !Psep/PLH if below this, use nbi

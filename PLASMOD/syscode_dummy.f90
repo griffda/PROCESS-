@@ -71,11 +71,7 @@
 !write(*,*) 'first iteration'
 !pause
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
-	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
-	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
-	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
-	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
-	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+
 stop
 	! i_flag = 1 (OK) , 0 (crashed) , -1 (not converged, max iterations reached) , -2 (equilibrium not converged)
 write(*,*) 'second iteration',i_flag
