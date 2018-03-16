@@ -1417,7 +1417,7 @@ mhd%qoh=q_oh(1)
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 
 
-	write(*,*) "plasmod end ",jiter
+!	write(*,*) "plasmod end ",jiter
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 
