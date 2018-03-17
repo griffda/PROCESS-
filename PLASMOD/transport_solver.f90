@@ -137,7 +137,7 @@
 !for sol model
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat
 
-  integer :: jped,nx,nxt,nchannels, iped_model,jdum1,nxequil,i_qsaw, i_profiles, i_diagz
+  integer :: jped,nx,nxt,nchannels, iped_model,jdum1,nxequil,i_qsaw, i_diagz
     
 pres_fac=1.d0 !coefficient to avoid emeq crashing
 
@@ -463,11 +463,9 @@ q_fus=loss%qfus
 
 		
 
-		i_profiles=1
 		
 
-		if (i_modeltype.eq.0) i_profiles=0
-  if (i_profiles.eq.1) call update_profiles(dx, nxt, nchannels, gy0, y0, rmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
+  call update_profiles(dx, nxt, nchannels, gy0, y0, rmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
 
 
 
@@ -660,10 +658,7 @@ write(1441,'(4111E25.11)') xtrt,a(:,1),a(:,2),a(:,3),b(:,1),b(:,2),b(:,3), &
 
 !write(*,*) 'gy'
 !write(*,*) gy
-     if (i_profiles.eq.1) then
         call update_profiles(dx, nxt, nchannels, gy, y0, rmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
-     else
-     endif
 !write(*,*) 'propfs'
 !write(*,*) n_e(1),t_e(1),t_i(1)
 
@@ -702,7 +697,7 @@ write(1441,'(4111E25.11)') xtrt,a(:,1),a(:,2),a(:,3),b(:,1),b(:,2),b(:,3), &
 	endif
      !these chies are used only by transport model 0
 
-	if (Hfactor.eq.0.d0) then
+	if (i_modeltype.ne.1) then
 	 chifac0=1.d0
 	else
   chifac0=max(0.01,chifac0+num%dt*(Hnow-Hfactor)/(1.+num%dt))
@@ -785,7 +780,6 @@ endif
 
 !	write(*,*) i_profiles,iped_model
 
-        if (i_profiles.eq.1) then
               N_e = (N_e+num%dt*N_e/neb*inp0%f_gw*nG)/(1.+num%dt)    !when f_gw is pedestal top greenwald fraction
               neb=N_e(nxt)
 														nsep=inp0%f_gws*nG
@@ -854,7 +848,6 @@ endif
               y(:,2) = T_e(1:nxt)
               y(:,3) = T_i(1:nxt)
            endif
-        endif
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!END PEDESTAL MODEL
 
 
@@ -1232,7 +1225,6 @@ mhd%qoh=q_oh(1)
 	loss%qfus=q_fus
 
 
-
   !loss powers and confinement characteristics
   loss%Psep = Qtot-Qradedge
   loss%PLH = PLH
@@ -1247,6 +1239,7 @@ mhd%qoh=q_oh(1)
   loss%rplas=vloop/(ip*(1.-fbs-fcd))/1.d6
 
 
+ if (i_modeltype.eq.1) loss%H=inp0%hfac_inp
 
   loss%psync=trapz(psync*dv)
   loss%pbrehms=trapz(pbrad*dv)

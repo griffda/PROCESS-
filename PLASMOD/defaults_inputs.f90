@@ -22,7 +22,7 @@
                           num%capA=0.1d0 !first radial grid point
                           num%maxA=0.d0 !diagz 0 or 1
                           num%dgy=1.e-5 !Newton differential
-                          num%i_modeltype=1 !1 - simple gyrobohm scaling
+                          num%i_modeltype=1 !1 - simple gyrobohm scaling with imposed H factor, > 1, other models with H in output
                           num%i_equiltype=1 !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
                           num%nx=41        !number of interpolated grid points
                           num%nxt=5 !number of reduced grid points
@@ -78,7 +78,7 @@
     ped%rho_n=0.96 !pedestal top position n
     ped%pedscal=1. !pedestal top position n
 
-				inp0%Hfac_inp=1. !input H factor, if 0., this is not used. This is radiation corrected H factor
+				inp0%Hfac_inp=1. !input H factor, if imodeltype > 1, this is ignored. 
 
 				inp0%nbcdeff=5. !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
 				inp0%eccdeff=0.3 !CD = this * PCD * TE/NE !not used for now
@@ -120,7 +120,7 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
                           num%capA=0.1d0 !first radial grid point
                           num%maxA=0.d0 !diagz 0 or 1
                           num%dgy=1.e-5 !Newton differential
-                          num%i_modeltype=1 !1 - simple gyrobohm scaling
+                          num%i_modeltype=1 !1 - simple gyrobohm scaling with imposed H factor, > 1, other models with H in output
                           num%i_equiltype=1 !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
                           num%nx=41        !number of interpolated grid points
                           num%nxt=11 !number of reduced grid points
@@ -181,7 +181,7 @@ ped%pedscal=1.
 
 !constraints
 				inp0%V_loop=-1.e6 !target loop voltage. If lower than -1.e5, dont use this
-				inp0%Hfac_inp=1.1 !input H factor, if 0., this is not used. This is radiation corrected H factor
+				inp0%Hfac_inp=1.1 !input H factor, if imodeltype > 1 this is ignored
 				inp0%f_ni=0.3346 !required fraction of non inductive current, if 0, dont use CD
 				inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat)
    inp0%PLH=0.
