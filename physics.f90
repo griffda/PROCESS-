@@ -321,7 +321,8 @@ implicit none
           close(32)
        endif
 
-       call convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,tburn)
+       call convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,tburn,&
+							& fusrat)
        
     endif
 
@@ -577,23 +578,27 @@ implicit none
 
     endif
 
-    ptremw = ptrepv*vol
-    ptrimw = ptripv*vol
+!    ptremw = ptrepv*vol
+!    ptrimw = ptripv*vol
     !  Total transport power from scaling law (MW)
     pscalingmw = ptremw + ptrimw
        
     !vscal and phyaux should be replaced by PLASMOD output ipedestal 3
     !  Calculate volt-second requirements
 
-    call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
-         plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
+
+!write(*,*) 
+
+!    call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
+!         plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
 
     !  Calculate auxiliary physics related information
     !  for the rest of the code
 
-    sbar = 1.0D0
-    call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
-         taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+
+!    sbar = 1.0D0
+!    call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
+!         taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Calculate beta limit
 

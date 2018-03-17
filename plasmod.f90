@@ -250,7 +250,8 @@ contains
     
   end subroutine setupPlasmod
 
-  subroutine convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,tburn)
+  subroutine convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,&
+		& tburn,fusrat)
 
     !+ad_name  convert_Plasmod2PROCESS
     !+ad_summ  Routine to set up the PLASMOD input params
@@ -280,7 +281,7 @@ contains
     type (MHD_EQ), intent(inout) :: mhd 
     type (power_losses), intent(inout) :: loss 
 
-    double precision :: theat,tburn,aeps,beps,rlpext,rlpint,vburn
+    double precision :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
 
 
     if (i_flag==1)then
@@ -435,7 +436,6 @@ contains
     powerht =  loss%qtot !heating power (MW) assumed in calculation of confinement scaling
     taueff  =  loss%taueff   !global energy confinement time (s)
     
-    qfuel = loss%dfuelreq * 2.0*1.d19 !qfuel is for nucleus pairs
     !UNUSED within PROCESS??
 
     != loss%tfuelreq ! think this is assumed in PROCESS to be the same as above
@@ -479,11 +479,13 @@ contains
     vsstt = vsres + vsind + vsbrn !total volt-seconds needed (Wb) 
 
     !phyaux:
+    qfuel = loss%dfuelreq * 2.0*1.d19 !qfuel is for nucleus pairs
     dntau = radp%av_ne*taueff*1.d19 !plasma average n-tau (s/m3)
-  
     rndfuel = fusionrate*vol !fuel burnup rate (reactions/s)
     taup = loss%taueff*comp%globtau(3) !(alpha) particle confinement time (s)
     burnup = rndfuel/qfuel*2.d0 !fractional plasma burnup
+    fusrat=fusionrate*vol
+				figmer=plascur*1.d-6*aspect
 
     !pohm
     pohmpv = loss%pohm/vol !ohmic heating power per unit volume (MW/m3)
@@ -494,7 +496,6 @@ contains
     pinjmw=loss%pnbi
     pinjemw=loss%peaux
     pinjimw=loss%piaux
-!    write(*,*) pinjmw,pinjemw,pinjimw
     pradpv = loss%Prad/vol !Total radiation power (MW) 
   
     falpha=1.0
