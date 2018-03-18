@@ -76,7 +76,7 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
 !stop
 	cgbohm=3.236*y0(:,2)**(1.5d0)*sqrt(AMJ)/(btor**2.*rmajor)
 
-     chie = 0.01d0 + 0.15d0*cgbohm*(3.13+(xtr/amin)**0.3d0)*(rlx(:,2)/10.d0)**1.d0*q_tr**1. 
+     chie = 0.01d0 + 0.25d0*cgbohm*(3.13+(xtr/amin)**0.3d0)*(rlx(:,2)/10.d0)**1.d0*q_tr**1. 
 !	write(*,*) chie
      chii = 2.*chie
      Dn = 0.5d0 * (chii+chie) * 0.8d0
@@ -109,11 +109,11 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
      Dn = 0.5d0 * (chii+chie) * 0.8d0
      Vn = -Dn/rmajor * (0.25d0*rlx(:,2)+0.5) * sqrt(xtr/amin)
 
-     a(:,1)=chifac*Dn
-     a(:,2)=chifac*chie
-     a(:,3)=chifac*chii
+     a(:,1)=Dn
+     a(:,2)=chie
+     a(:,3)=chii
 
-     b(:,1)=chifac*Vn
+     b(:,1)=Vn
      b(:,2)=0.0d0*Dn
      b(:,3)=0.0d0*Dn
 

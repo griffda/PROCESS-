@@ -1,6 +1,11 @@
 !constraints: psep and plh
 	Psep = trapz((powe+powi)*dV) !net psep, including radiation
 
+!assign q_control if give povs
+if (inp0%contrpovs.gt.0.) inp0%q_control=inp0%contrpovs*radp%vp(nx)*radp%gradro(nx)
+if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
+
+
 	if (inp0%PLH.eq.0) then
 	PLH=1.67*(trapz(nepr*dv)/trapz(dv)/10.)**0.61*(geom%bt)**0.78 &
      & *rminor**0.89*geom%r**0.94 !Martin scaling

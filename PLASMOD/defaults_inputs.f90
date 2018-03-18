@@ -196,6 +196,8 @@ ped%pedscal=1.
 				inp0%qnbi_psepfac=50. !dqnbi/d(1-Psep/PLH)
 				inp0%cxe_psepfac=1.e-4 !dcxe/d(1-Psep/PLH)
 				inp0%car_qdivt=1.e-4 !dcar/d(qdivt)
+				inp0%contrpovs=0.d0 !Pcontrol/S_lateral
+				inp0%contrpovr=2. !Pcontrol/R
 
 !deposition locations
 				inp0%x_heat(1)=0. !nbi
