@@ -84,6 +84,7 @@ contains
     geom%q95 = q95
     geom%bt  = bt
 
+    inp0%f_gw      = fgwped !pedestal top greenwald fraction
     inp0%Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used.
     inp0%pheatmax  = pinjalw !max allowed power for heating+CD+fusion control
     inp0%q_control = pheat !minimal power required for control 
@@ -236,7 +237,7 @@ contains
        ped%rho_n   = rhopedn !pedestal top position n
        ped%pedscal = plasmod_pedscal !multiplies the pedestal scaling in PLASMOD
        ped%teped   = teped !pedestal top temperature
-       inp0%f_gw   = fgwped !pedestal top greenwald fraction
+       !inp0%f_gw   = fgwped !moving outside of IF statement
        inp0%f_gws  = fgwsep !separatrix greenwald fraction
        
 
@@ -246,7 +247,7 @@ contains
        geom%k95 = kappa95 !edge elongation
        geom%d95 = triang95 !edge triangularity
         
-       endif
+    endif
     
   end subroutine setupPlasmod
 

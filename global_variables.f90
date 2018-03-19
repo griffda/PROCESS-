@@ -299,6 +299,7 @@ module physics_variables
   !+ad_vars  fgwped /0.85/ : fraction of Greenwald density to set as pedestal-top density
   !+ad_varc                  If <0, pedestal-top density set manually using neped (ipedestal>=1)
   !+ad_varc                  Needs to be >0 if ipedestal = 3
+  !+ad_varc                  (iteration variable 145)
   real(kind(1.0D0)) :: fgwped = 0.85D0
   !+ad_vars  fgwsep /0.50/ : fraction of Greenwald density to set as separatrix density
   !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal>=1)

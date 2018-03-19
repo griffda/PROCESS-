@@ -372,8 +372,8 @@ subroutine check
             write(*,*)'Set dene = neped*1.001D0 '
             dene = neped*1.001D0
             call report_error(154)
-        end if
-
+         end if
+         
         if ((ioptimz >= 0).and.(any(ixc == 6)).and.(boundl(6) < neped*1.001D0)) then
             call report_error(155)
             write(*,*)'dene = ', dene, 'boundl(6) = ', boundl(6), '  neped = ', neped
@@ -398,8 +398,10 @@ subroutine check
         if (fgwsep < 0 ) then
            call report_error(177)
         endif
-
-
+        if (boundl(145) < fgwsep) then  !if lower bound of fgwped < fgwsep
+           write(*,*)'boundl(145) = ',boundl(145), ', fgwsep = ',fgwsep
+           call report_error(186)
+        end if
 
         !need to enforce H-mode using Martin scaling, if using PLASMOD
         !Todo: The L-H threshold is checked inside PLASMOD do we need to duplicate in PROCESS??

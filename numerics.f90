@@ -99,7 +99,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 144
+  integer, parameter :: ipnvars = 145
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 76
   !+ad_vars  ipnfoms FIX : number of available figures of merit
@@ -655,7 +655,9 @@ module numerics
        !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75) </UL>
        'f_copperA_m2  ', &
        !+ad_varc  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]</UL>
-       'fnesep        ' &
+       'fnesep        ', &
+       !+ad_varc  <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density </UL>
+       'fgwped        ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -817,7 +819,8 @@ module numerics
        0.001D0, &  !  141
        1.00D17, &  !  142
        0.001D0, &  !  143
-       0.001D0 &  !  144
+       0.001D0, &  !  144
+       0.001D0  &  !  145
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -966,7 +969,8 @@ module numerics
        1.000D0, &  !  141
        1.00D20, &  !  142
        1.000D0, &  !  143
-       1.000D0  &  !  144
+       1.000D0, &  !  144
+       1.000D0  &  !  145
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
