@@ -332,8 +332,8 @@ module physics_variables
   !+ad_varc                  time scaling law
   real(kind(1.0D0)), dimension(ipnlaws) :: hfac = 0.0D0
   !+ad_vars  hfact /1.0/ : H factor on energy confinement times, radiation corrected
-  !+ad_varc                (iteration variable 10)
-  !+ad_varc                if ipedestal=2,3, and hfact = 0, not used in PLASMOD
+  !+ad_varc                (iteration variable 10).
+  !+ad_varc                If ipedestal=2 or 3 and hfact = 0, not used in PLASMOD
   real(kind(1.0D0)) :: hfact = 1.0D0
   ! Issue #219
   !+ad_vars  taumax /10/ : Maximum allowed energy confinement time (s)
@@ -818,7 +818,7 @@ module plasmod_variables
   public
   
  !Derived type numerics_transp 
-  !+ad_vars  plasmod_tol /0.00001d0/ : Tolerance to be reached, in % variation at each time step
+  !+ad_vars  plasmod_tol /0.00001d0/ : Tolerance to be reached at each time step (%)
   real(kind(1.0D0)) :: plasmod_tol = 0.00001d0
   !+ad_vars  plasmod_dtmin /0.01d0/ : Min time step
   real(kind(1.0D0)) :: plasmod_dtmin = 0.01d0
@@ -830,9 +830,9 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_dtinc = 2.0d0
   !+ad_vars  plasmod_ainc /1.1d0/ : Increase of dt
   real(kind(1.0D0)) :: plasmod_Ainc = 1.1d0
-  !+ad_vars  plasmod_test /100000.0d0/ : Max iteration number
+  !+ad_vars  plasmod_test /100000.0d0/ : Max number of iterations
   real(kind(1.0D0)) :: plasmod_test = 100000.0d0
-  !+ad_vars  plasmod_tolmin /10.1d0/ : Multiplier of etolm that should not be overcome
+  !+ad_vars  plasmod_tolmin /10.1d0/ : Multiplier of etolm which can not be exceeded
   real(kind(1.0D0)) :: plasmod_tolmin = 10.1d0
   !+ad_vars  plasmod_eopt /0.1d0/ : Exponent of jipperdo
   real(kind(1.0D0)) :: plasmod_eopt = 0.1d0
@@ -844,23 +844,27 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_maxA = 0.0d0
   !+ad_vars  plasmod_dgy /1.0d-5/ : Newton differential
   real(kind(1.0D0)) :: plasmod_dgy = 1.0d-5
-  !+ad_vars  plasmod_i_modeltype /1/ : 1 - Simple gyrobohm scaling
+  !+ad_vars  plasmod_i_modeltype /1/ : 1 - Simple gyrobohm scaling with imposed
+  !+ad_varc  H factor > 1. Other vales give H factor as output
   integer :: plasmod_i_modeltype = 1
-  !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+  !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve with sawteeth and inputted q95.
+  !+ad_varc  2 - EMEQ, solve with sawteeth and inputted Ip.
   integer :: plasmod_i_equiltype = 1
   !+ad_vars  plasmod_nx /41/ : Number of interpolated grid points
   integer :: plasmod_nx = 41
-  !+ad_vars  plasmod_nxt /7/ : Number of reduced grid points
+  !+ad_vars  plasmod_nxt /7/ : Number of solved grid points
   integer :: plasmod_nxt = 7
   !+ad_vars  plasmod_nchannels /3/ : Leave this at 3
   integer :: plasmod_nchannels = 3
-  !+ad_vars  plasmod_i_impmodel /1/ : Impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
+  !+ad_vars  plasmod_i_impmodel /1/ : Impurity model: 0 - fixed concentration,
+  !+ad_varc  1 - fixed concentration at pedestal top, then fixed density.
   integer :: plasmod_i_impmodel = 1
 
  !Derived type composition 
-  !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar (NOT used for Xe!)
+  !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
+  !+ad_varc  (NOT used for Xe!)
   real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0 /)
-  !+ad_vars  plasmod_c_car /100.0d0/ : compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
+  !+ad_vars  plasmod_c_car /100.0d0/ : compression factor, relative Argon concentration between divertor and core
   real(kind(1.0D0)) :: plasmod_c_car = 100.0d0
   !+ad_vars  plasmod_psepplh_sup /12000.0d0/ : Psep/PLH if above this, use Xe
   real(kind(1.0D0)) :: plasmod_psepplh_sup = 12000.0d0

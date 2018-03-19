@@ -146,7 +146,7 @@ contains
        num%capA     = plasmod_capa !first radial grid point
        num%maxA     = plasmod_maxa !diagz 0 or 1
        num%dgy      = plasmod_dgy !Newton differential
-       num%i_modeltype = plasmod_i_modeltype !1 - simple gyrobohm scaling
+       num%i_modeltype = plasmod_i_modeltype !1 - simple gyrobohm scaling with imposed H factor > 1, other models with H in output
        num%i_equiltype = plasmod_i_equiltype !1 - EMEQ, solve equilibrium
        !with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
        num%nx  = plasmod_nx  !number of interpolated grid points

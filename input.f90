@@ -1098,7 +1098,7 @@ contains
                'Newton differential')
        case ('plasmod_i_modeltype')
           call parse_int_variable('plasmod_i_modeltype', plasmod_i_modeltype, 0, 10000, &
-               '1 - Simple gyrobohm scaling')
+               '1 - Simple gyrobohm scaling with imposed H factor > 1, other models with H in output')
        case ('plasmod_i_equiltype')
           call parse_int_variable('plasmod_i_equiltype', plasmod_i_equiltype, 1, 20000, &
                '1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.')
