@@ -564,6 +564,9 @@ q_oh=mhd%qoh
 
 
   if (.not.allocated(radp%ne))    ALLOCATE ( radp%ne(nx) )
+  if (.not.allocated(radp%shif))    ALLOCATE ( radp%shif(nx) )
+  if (.not.allocated(radp%k))    ALLOCATE ( radp%k(nx) )
+  if (.not.allocated(radp%d))    ALLOCATE ( radp%d(nx) )
   if (.not.allocated(radp%Ti))       ALLOCATE ( radp%Ti(nx) )
   if (.not.allocated(radp%Te))       ALLOCATE ( radp%Te(nx) )
   if (.not.allocated(radp%x))       ALLOCATE ( radp%x(nx) )
@@ -1171,6 +1174,9 @@ endif
   radp%nepg(1:nxt+1) = N_e(1:nxt+1)
   radp%Tepg(1:nxt+1) = T_e(1:nxt+1)
   radp%Tipg(1:nxt+1) = T_i(1:nxt+1)
+radp%shif=shif
+radp%k=k
+radp%d=d
 
   !global geometry
   geom%Rold=rmajor
