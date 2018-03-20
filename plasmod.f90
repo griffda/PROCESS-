@@ -357,7 +357,7 @@ endif
     fimp(13) = comp%cxe 
     fimp(2) = comp%che
     !HL: I think this is wrong, should be fimp instead of impurity_arr
-    impurity_arr(1)%frac  = 0.d0
+    impurity_arr(1)%frac  = deni/dene
     impurity_arr(2)%frac  = ralpne
     impurity_arr(3)%frac  = 0.d0
     impurity_arr(4)%frac  = 0.d0
@@ -428,11 +428,8 @@ endif
     piepv      = loss%piepv
     pinjemw    = loss%peaux
     pinjimw    = loss%piaux
-    !hldiv      = loss%pdiv !
     pdivt      = loss%Psep
     plhthresh  = loss%PLH
-    !pinjwp     = loss%pnbi
-
 
     !Need this: previously calculated by pcond
     ptrepv  =  loss%psepe/vol !electron transport power (MW/m3)
@@ -442,14 +439,7 @@ endif
     powerht =  loss%qtot !heating power (MW) assumed in calculation of confinement scaling
     taueff  =  loss%taueff   !global energy confinement time (s)
     
-    !UNUSED within PROCESS??
-
-    != loss%tfuelreq ! think this is assumed in PROCESS to be the same as above
-    != loss%hepumpreq
-    != loss%Wth
-
-
-        xarea = mhd%torsurf !Plasma cross-sectional area (m2) - added KE
+    xarea = mhd%torsurf !Plasma cross-sectional area (m2) - added KE
     sarea=mhd%sp
     !plasma geometry
     kappa = geom%k
@@ -458,7 +448,7 @@ endif
     triang = geom%d 
     triang95 = geom%d95
 
-!    pperim = 0.0d0 !Plasma poloidal perimeter (m)
+!    pperim = 0.0d0 !Plasma poloidal perimeter (m), to be done yet EF
     
     !vscalc:
     facoh=(1.-mhd%f_ni)
