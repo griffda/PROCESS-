@@ -820,7 +820,7 @@ module numerics
        1.00D17, &  !  142
        0.001D0, &  !  143
        0.001D0, &  !  144
-       0.001D0  &  !  145
+       0.5D0  &  !  145
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during

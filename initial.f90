@@ -398,10 +398,7 @@ subroutine check
         if (fgwsep < 0 ) then
            call report_error(177)
         endif
-        if (boundl(145) < fgwsep) then  !if lower bound of fgwped < fgwsep
-           write(*,*)'boundl(145) = ',boundl(145), ', fgwsep = ',fgwsep
-           call report_error(186)
-        end if
+
 
         !need to enforce H-mode using Martin scaling, if using PLASMOD
         !Todo: The L-H threshold is checked inside PLASMOD do we need to duplicate in PROCESS??
@@ -452,6 +449,11 @@ subroutine check
         if (any(icc == 2)) then
            call report_error(185)
         endif
+
+        if ((any(ixc==145)) .and. (boundl(145) < fgwsep)) then  !if lower bound of fgwped < fgwsep
+           write(*,*)'boundl(145) = ',boundl(145), ', fgwsep = ',fgwsep
+           call report_error(186)
+        end if
         
      endif
 
