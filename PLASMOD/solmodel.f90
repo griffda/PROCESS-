@@ -22,4 +22,4 @@
 
 
 
-!write(*,*) 'qpar',qpar/1e6,qdivt,qpar/1.d6/qdivt
+!write(*,*) 'qpar',qpar/1e6,qdivt,car

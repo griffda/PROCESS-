@@ -147,7 +147,6 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
     comp%globtau(5) = 1. !tauparticle/tauE for D, T, He, Xe, Ar
 
     comp%car = 0. !argon concentration, used if qdivt=0.
-    comp%c_car = 100. !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
     comp%cxe = 0. !xenon concentration, if negative uses Psepplh as criterion
     comp%che = 0. !helium concentration, used if globtau(3)=0.
 
@@ -189,7 +188,8 @@ ped%pedscal=1.1
     comp%psepplh_sup = 1.2d0 !Psep/PLH if above this, use Xe
     comp%psepb_q95AR = 1000.2d0 !Psep B/qaR max value
     comp%psep_r = 10009.d0 !Psep/R max value
-    comp%qdivt = 0. !divertor heat flux in MW/m^2, if 0, dont use SOL model
+    comp%qdivt = 10. !divertor heat flux in MW/m^2, if 0, dont use SOL model
+    comp%c_car = 10. !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
 
 
 !derivatives

@@ -92,8 +92,10 @@ contains
     !fvsbrnni can be an iteration variable!
     inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
-    comp%car = fimp(9) !argon concentration, used if qdivt=0.
-    
+if (comp%qdivt.eq.0.d0) then
+    comp%car = fimp(9) !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+	else
+endif
 
     !uses PROCES defined LH threshold, if this is > 0
     inp0%PLH = 0d0 !plhthresh ! This won't work as this can only be calculated after.
@@ -128,6 +130,7 @@ contains
        !cxe is computed by PLASMOD so it cannot be assigned as input.
        !It makes it much more robust and stable. 
        comp%cxe = 0.d0 !xenon concentration
+    comp%car = 0.d0 !argon concentration, used if qdivt=0.
 
        comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi      
        comp%psepplh_sup = 1.0e3 !Psep/PLH if below this, use nbi
@@ -346,6 +349,10 @@ contains
 
     !plasma thermal energy - need to find local variable name
     
+if (comp%qdivt.gt.0.d0) then
+    fimp(9)=comp%car  !argon concentration, reassigned if qdivt>0, i.e. no Kallenbach model, uses SOL model of PLASMOD
+	else
+endif
     ralpne   = comp%che
     fimp(13) = comp%cxe 
     fimp(2) = comp%che
@@ -358,18 +365,16 @@ contains
     impurity_arr(6)%frac  = 0.d0
     impurity_arr(7)%frac  = 0.d0
     impurity_arr(8)%frac  = 0.d0
-!    impurity_arr(9)%frac  = 0.d0
+    impurity_arr(9)%frac  = fimp(9)
     impurity_arr(10)%frac = 0.d0
     impurity_arr(11)%frac = 0.d0
     impurity_arr(12)%frac = 0.d0
     impurity_arr(13)%frac = 0.d0
     impurity_arr(14)%frac = 0.d0
     impurity_arr(13)%frac = fimp(13)
-    !fimp(9)  = comp%car !PLASMOD does not compute argon - get from Kall.model
-    aion = 2.0d0 ! Average mass of all ions (amu)
+    aion = 2.0d0 ! Average mass of all ions (amu), to be done EF
 
     zeff = radp%zeff ! Effective charge
-    
     
     normalised_total_beta = mhd%betan
     
