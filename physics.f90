@@ -251,36 +251,32 @@ implicit none
        call plasma_composition
     end if
 
-    !  Calculate plasma current
-    !if (ipedestal .ne. 3) then
-    call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
-        pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
-	
-        if (icurr == 2) then
+    if (icurr == 2) then
        q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
     else
        q95 = q  !  i.e. input (or iteration variable) value
     end if
-    !  Calculate density and temperature profile quantities
-    !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
-    !    fgwped * Greenwald density limit
-    !  Note: this used to be done before plasma current
-    ! Issue #589 remove iscdens
-    if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwped >=0d0)) then
-		neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
-    endif
-    if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwsep >=0d0)) then
-       nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
-    end if
-
-!    endif
     
-    !issue 558 - critical electron density at separatrix
-    if(any(icc==76))then
-       alpha_crit = (kappa ** 1.2) * (1 + 1.5 * triang)
-       nesep_crit = 5.9D0 * alpha_crit * (aspect ** (-2.0D0/7.0D0)) * (((1.0D0 + (kappa ** 2.0D0)) / 2.0D0) ** (-6.0D0/7.0D0)) &
-            * ((pdivt * 1.0D6) ** (-11.0D0/70.0D0)) * dlimit(7)
-    endif													   
+    !  Calculate plasma current
+    if (ipedestal .ne. 3) then
+       
+       call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
+            pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
+
+       !  Calculate density and temperature profile quantities
+       !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
+       !    fgwped * Greenwald density limit
+       !  Note: this used to be done before plasma current
+       ! Issue #589 remove iscdens
+       if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwped >=0d0)) then
+          neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
+       endif
+       if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwsep >=0d0)) then
+          nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
+       end if
+       
+    endif
+    
 
     ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
     ! ieped : switch for scaling pedestal-top temperature with plasma parameters
@@ -323,8 +319,22 @@ implicit none
 
        call convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,tburn,&
 							& fusrat)
+
+       !  Recalculate plasma composition
+       ! ralpne, dene and te are outputs of PLASMOD
+       if (imprad_model == 0) then
+          call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impo, &
+               ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
+               dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
+               zion,zfear)
+       else
+          call plasma_composition
+       end if
+
        
     endif
+
+
 
     !HL Todo go through all statements above and below and make sure they are consistent with ipedestal = 3
     

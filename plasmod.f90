@@ -92,11 +92,12 @@ contains
     !fvsbrnni can be an iteration variable!
     inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
-if (comp%qdivt.eq.0.d0) then
-    comp%car = fimp(9) !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
-	else
-endif
-
+    if (comp%qdivt.eq.0.d0) then
+       comp%car = fimp(9) !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       !else
+       !@EF: What should happen, if this is not assigned?
+    endif
+    
     !uses PROCES defined LH threshold, if this is > 0
     inp0%PLH = 0d0 !plhthresh ! This won't work as this can only be calculated after.
 
@@ -333,7 +334,7 @@ endif
     dnbeam = 0.0d0 ! Hot beam density (/m3)
     dnelimt = 0.0d0 ! Density limit from scaling (/m3)
     
-!    write(132,*) geom%r,geom%bt,loss%Pfus,loss%pnbi
+
     !If plascur was an input, q95 is an output and vice versa
     !Reassign both for simplicity
     plascur = geom%ip * 1.0D6 !Plasma current in Ampere
@@ -346,17 +347,21 @@ endif
     !Need these: previously calculated in plascur
     qstar = mhd%qstar ! equivalent cylindrical safety factor (shaped)
     bp    = mhd%bp ! poloidal field in (T)
-    beta = mhd%betan * geom%ip / (rminor * bt)/100.
+    beta  = mhd%betan * geom%ip / (rminor * bt)/100.
 
     dnbeta = 0.0d0 !Beta g coefficient
 
     !plasma thermal energy - need to find local variable name
     
-if (comp%qdivt.gt.0.d0) then
-    fimp(9)=comp%car  !argon concentration, reassigned if qdivt>0, i.e. no Kallenbach model, uses SOL model of PLASMOD
-	else
-endif
+    if (comp%qdivt.gt.0.d0) then
+       fimp(9)=comp%car  !argon concentration, reassigned if qdivt>0, i.e. no Kallenbach model, uses SOL model of PLASMOD
+    !else
+       !@EF what should be happening here.
+    endif
+    
     ralpne   = comp%che
+    dnalp = dene * ralpne ! replaces assignement in plasma_composition
+
     fimp(13) = comp%cxe 
     fimp(2) = comp%che
     !HL: I think this is wrong, should be fimp instead of impurity_arr
