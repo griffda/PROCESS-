@@ -71,7 +71,14 @@
 !write(*,*) 'first iteration'
 !pause
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
-write(*,*) loss
+write(*,*) 'num',num
+write(*,*) 'geom',geom
+write(*,*) 'comp',comp
+write(*,*) 'ped',ped
+write(*,*) 'inp0',inp0
+!write(*,*) 'radp',radp
+write(*,*) 'mhd',mhd
+write(*,*) 'loss',loss
 
 stop
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
