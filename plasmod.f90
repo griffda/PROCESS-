@@ -221,7 +221,9 @@ endif
 
        inp0%V_loop = plasmod_v_loop !target loop voltage. If lower than  -1.e5 dont use
        inp0%pfus   = plasmod_pfus !if 0., not used (otherwise it would be controlled with Pauxheat)
-
+       !Only one of the two below should be specified
+       inp0%contrpovs = plasmod_contrpovs !control power in Paux/lateral_area (MW/m2)
+       inp0%contrpovr = plasmod_contrpovr !control power in Paux/R (MW/m)
 
        comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
 
@@ -244,6 +246,7 @@ endif
        inp0%f_gws  = fgwsep !separatrix greenwald fraction
        
 
+       
        geom%k  = kappa !edge elongation
        geom%d  = triang !edge triangularity
        geom%ip = plascur/1.d6

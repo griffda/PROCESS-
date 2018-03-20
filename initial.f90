@@ -219,6 +219,7 @@ subroutine check
     use numerics
     use pfcoil_variables
     use physics_variables
+    use plasmod_variables
     use process_output
     use pulse_variables
     use tfcoil_variables
@@ -424,9 +425,12 @@ subroutine check
            call report_error(183)
         endif
 
-     endif
+        ! Mutually exclusive variables - issue #632
+        if ((plasmod_contrpovs.ne.0).and.(plasmod_contrpovr.ne.0))then
+           call report_error(187)
+        endif
 
-     
+     endif
 
 
      if(ipedestal==3)then
@@ -456,8 +460,6 @@ subroutine check
         end if
         
      endif
-
-      
      
 
     !  Tight aspect ratio options

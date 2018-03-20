@@ -908,7 +908,10 @@ module plasmod_variables
   !+ad_vars  plasmod_pedscal /1.0d0/ :: multiplication factor of the pedestal scaling in PLASMOD
   !+ad_varc                             can be used to scan the pedestal height.
   real(kind(1.0D0)) :: plasmod_pedscal = 1.0d0
-  
+  !+ad_vars  plasmod_contrpovs /0.0d0/ :: control power in Paux/lateral_area (MW/m2)
+  real(kind(1.0D0)) :: plasmod_contrpovs = 0.0d0
+  !+ad_vars  plasmod_contrpovr /0.0d0/ :: control power in Paux/R (MW/m)
+  real(kind(1.0D0)) :: plasmod_contrpovr = 0.0d0
   
   !+ad_vars  geom ::  Derived type containing all geometry information for PLASMOD
   type (geometry) :: geom

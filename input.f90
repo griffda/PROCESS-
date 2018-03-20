@@ -1180,6 +1180,12 @@ contains
        case ('plasmod_pedscal')
           call parse_real_variable('plasmod_pedscal', plasmod_pedscal, 0.0D0, 1.0D1, &
                'multiplication factor of the pedestal scaling in PLASMOD')
+       case ('plasmod_contrpovs')
+          call parse_real_variable('plasmod_contrpovs', plasmod_contrpovs, 0.0D0, 1.0D4, &
+               'control power in Paux/lateral_area (MW/m2)')
+       case ('plasmod_contrpovr')
+          call parse_real_variable('plasmod_contrpovr', plasmod_contrpovr, 0.0D0, 1.0D4, &
+               'control power in Paux/R (MW/m)')
           
           !  Current drive settings
 
