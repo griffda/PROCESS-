@@ -209,16 +209,20 @@ contains
        inp0%dx_control(2) = plasmod_dx_control(2) !ech
        inp0%nbi_energy    = plasmod_nbi_energy !in keV
 
-       !HL To do: I guess, these still need to be made input variables?
-       inp0%eccdeff = 0.3  !CD = this * PCD * TE/NE !not used for now
-       inp0%pech    = 0.d0 !ech power !not used for now
-       inp0%pnbi    = 0.d0 !nbi power
-       inp0%qheat   = 0.d0 !nbi power
-       inp0%qcd     = 0.d0 !nbi power
-       inp0%qfus    = 0.d0 !nbi power
-       inp0%spellet = 0.d0 !pellet mass in particles of D in 10^19
-       inp0%fpellet = 0.5d0 !pellet frequency in Hz
+       !Electron-cyclotron heating variables ready for use when required
+       !inp0%eccdeff = plasmod_eccdeff !CD = this * PCD * TE/NE !not used for now
+       !inp0%pech    = plasmod_pech !ech power !not used for now
+       
+       !inp0%pnbi    = 0.d0 !nbi power
+       
+       ! qheat, qcd and qfus are calculated by PLASMOD, initialised here
+       inp0%qheat   = 0.d0 ! power used to control Psep (MW)
+       inp0%qcd     = 0.d0 ! power used for CD (MW)
+       inp0%qfus    = 0.d0 ! power used to control Pfus (MW)
 
+       !Pellet fuelling
+       inp0%spellet = plasmod_spellet !pellet mass in particles of D in 10^19
+       inp0%fpellet = plasmod_fpellet !pellet frequency in Hz
 
        inp0%V_loop = plasmod_v_loop !target loop voltage. If lower than  -1.e5 dont use
        inp0%pfus   = plasmod_pfus !if 0., not used (otherwise it would be controlled with Pauxheat)

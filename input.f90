@@ -1177,15 +1177,30 @@ contains
        case ('plasmod_pfus')
           call parse_real_variable('plasmod_pfus', plasmod_pfus, 0.0D0, 1.0D4, &
                'If 0. not used (otherwise controlled with Pauxheat)')
-       case ('plasmod_pedscal')
-          call parse_real_variable('plasmod_pedscal', plasmod_pedscal, 0.0D0, 1.0D1, &
-               'multiplication factor of the pedestal scaling in PLASMOD')
        case ('plasmod_contrpovs')
           call parse_real_variable('plasmod_contrpovs', plasmod_contrpovs, 0.0D0, 1.0D4, &
                'control power in Paux/lateral_area (MW/m2)')
        case ('plasmod_contrpovr')
           call parse_real_variable('plasmod_contrpovr', plasmod_contrpovr, 0.0D0, 1.0D4, &
                'control power in Paux/R (MW/m)')
+       case ('plasmod_eccdeff')
+          call parse_real_variable('plasmod_eccdeff', plasmod_eccdeff, 0.0D0, 1.0D0, &
+               'current drive multiplier: CD = eccdeff*PCD*TE/NE (not in use yet)')
+       case ('plasmod_pech')
+          call parse_real_variable('plasmod_pech', plasmod_pech, 0.0D0, 1.0D4, &
+               'ech power (not in use yet)')
+       case ('plasmod_spellet')
+          call parse_real_variable('plasmod_spellet', plasmod_spellet, 0.0D0, 1.0D4, &
+               'pellet mass in units of D in 10^19')
+       case ('plasmod_fpellet')
+          call parse_real_variable('plasmod_fpellet', plasmod_fpellet, 0.0D0, 1.0D4, &
+               'pellet frequency in Hz')   
+          
+          !Derived type pedestal
+       case ('plasmod_pedscal')
+          call parse_real_variable('plasmod_pedscal', plasmod_pedscal, 0.0D0, 1.0D1, &
+               'multiplication factor of the pedestal scaling in PLASMOD')
+
           
           !  Current drive settings
 

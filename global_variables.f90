@@ -824,29 +824,29 @@ module plasmod_variables
   public
   
  !Derived type numerics_transp 
-  !+ad_vars  plasmod_tol /0.00001d0/ : Tolerance to be reached at each time step (%)
+  !+ad_vars  plasmod_tol /0.00001d0/ : tolerance to be reached at each time step (%)
   real(kind(1.0D0)) :: plasmod_tol = 0.00001d0
-  !+ad_vars  plasmod_dtmin /0.01d0/ : Min time step
+  !+ad_vars  plasmod_dtmin /0.01d0/ : min time step
   real(kind(1.0D0)) :: plasmod_dtmin = 0.01d0
-  !+ad_vars  plasmod_dtmax /0.1d0/ : Max time step
+  !+ad_vars  plasmod_dtmax /0.1d0/ : max time step
   real(kind(1.0D0)) :: plasmod_dtmax = 0.1d0
-  !+ad_vars  plasmod_dt /0.01d0/ : Time step
+  !+ad_vars  plasmod_dt /0.01d0/ : time step
   real(kind(1.0D0)) :: plasmod_dt = 0.01d0
-  !+ad_vars  plasmod_dtinc /2.0d0/ : Decrease of dt
+  !+ad_vars  plasmod_dtinc /2.0d0/ : decrease of dt
   real(kind(1.0D0)) :: plasmod_dtinc = 2.0d0
-  !+ad_vars  plasmod_ainc /1.1d0/ : Increase of dt
+  !+ad_vars  plasmod_ainc /1.1d0/ : increase of dt
   real(kind(1.0D0)) :: plasmod_Ainc = 1.1d0
-  !+ad_vars  plasmod_test /100000.0d0/ : Max number of iterations
+  !+ad_vars  plasmod_test /100000.0d0/ : max number of iterations
   real(kind(1.0D0)) :: plasmod_test = 100000.0d0
-  !+ad_vars  plasmod_tolmin /10.1d0/ : Multiplier of etolm which can not be exceeded
+  !+ad_vars  plasmod_tolmin /10.1d0/ : multiplier of etolm which can not be exceeded
   real(kind(1.0D0)) :: plasmod_tolmin = 10.1d0
-  !+ad_vars  plasmod_eopt /0.1d0/ : Exponent of jipperdo
+  !+ad_vars  plasmod_eopt /0.1d0/ : exponent of jipperdo
   real(kind(1.0D0)) :: plasmod_eopt = 0.1d0
-  !+ad_vars  plasmod_dtmaxmin /0.1d0/ : Exponent of jipperdo2
+  !+ad_vars  plasmod_dtmaxmin /0.1d0/ : exponent of jipperdo2
   real(kind(1.0D0)) :: plasmod_dtmaxmin = 0.1d0
-  !+ad_vars  plasmod_capa /0.1d0/ : First radial grid point
+  !+ad_vars  plasmod_capa /0.1d0/ : first radial grid point
   real(kind(1.0D0)) :: plasmod_capA = 0.1d0
-  !+ad_vars  plasmod_maxa /0.0d0/ : Diagz 0 or 1
+  !+ad_vars  plasmod_maxa /0.0d0/ : diagz 0 or 1
   real(kind(1.0D0)) :: plasmod_maxA = 0.0d0
   !+ad_vars  plasmod_dgy /1.0d-5/ : Newton differential
   real(kind(1.0D0)) :: plasmod_dgy = 1.0d-5
@@ -858,13 +858,13 @@ module plasmod_variables
   !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve with sawteeth and inputted q95.
   !+ad_varc  2 - EMEQ, solve with sawteeth and inputted Ip (not recommended!).
   integer :: plasmod_i_equiltype = 1
-  !+ad_vars  plasmod_nx /41/ : Number of interpolated grid points
+  !+ad_vars  plasmod_nx /41/ : number of interpolated grid points
   integer :: plasmod_nx = 41
-  !+ad_vars  plasmod_nxt /7/ : Number of solved grid points
+  !+ad_vars  plasmod_nxt /7/ : number of solved grid points
   integer :: plasmod_nxt = 7
-  !+ad_vars  plasmod_nchannels /3/ : Leave this at 3
+  !+ad_vars  plasmod_nchannels /3/ : leave this at 3
   integer :: plasmod_nchannels = 3
-  !+ad_vars  plasmod_i_impmodel /1/ : Impurity model: 0 - fixed concentration,
+  !+ad_vars  plasmod_i_impmodel /1/ : impurity model: 0 - fixed concentration,
   !+ad_varc  1 - fixed concentration at pedestal top, then fixed density.
   integer :: plasmod_i_impmodel = 1
 
@@ -876,7 +876,7 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_c_car = 100.0d0
   !+ad_vars  plasmod_psepplh_sup /12000.0d0/ : Psep/PLH if above this, use Xe
   real(kind(1.0D0)) :: plasmod_psepplh_sup = 12000.0d0
-  !+ad_vars  plasmod_qdivt /0.0d0/ : Divertor heat flux in MW/m^2, if 0, dont use SOL model
+  !+ad_vars  plasmod_qdivt /0.0d0/ : divertor heat flux in MW/m^2, if 0, dont use SOL model
   real(kind(1.0D0)) :: plasmod_qdivt = 0.0d0  
   
  !Derived type inputs
@@ -886,39 +886,49 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_cxe_psepfac = 1.0d-4
   !+ad_vars  plasmod_car_qdivt /1.0d-4/ : dcar/d(qdivt)
   real(kind(1.0D0)) :: plasmod_car_qdivt = 1.0d-4
-  !+ad_vars  plasmod_maxpauxor /20.0d0/ : Max allowed auxiliary power / R
+  !+ad_vars  plasmod_maxpauxor /20.0d0/ : max allowed auxiliary power / R
   real(kind(1.0D0)) :: plasmod_maxpauxor = 20.0d0
     !deposition locations
-  !+ad_vars  plasmod_x_heat(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_x_heat(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_heat = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_x_cd(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_x_cd(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_cd = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_x_fus(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_x_fus(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_fus = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_x_control(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_x_control(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_control = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_dx_heat(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_dx_heat(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_heat = (/ 0.2d0, 0.03d0 /)
-  !+ad_vars  plasmod_dx_cd(2) /0.2d0, 0.03/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_dx_cd(2) /0.2d0, 0.03/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_cd = (/ 0.2d0, 0.03d0 /)
-  !+ad_vars  plasmod_dx_fus(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_dx_fus(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_fus = (/ 0.2d0, 0.03d0 /)
-  !+ad_vars  plasmod_dx_control(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_dx_control(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_control = (/ 0.2d0, 0.03d0 /)
-
-  !+ad_vars  plasmod_nbi_energy /1000.0d0/ :: In keV
-  real(kind(1.0D0)) :: plasmod_nbi_energy = 1000.0d0
-  !+ad_vars  plasmod_v_loop /-1.0d-6/ :: Target loop voltage. If lower than -1.e5 do not use
-  real(kind(1.0D0)) :: plasmod_v_loop = -1.0d-6
-  !+ad_vars  plasmod_pfus /0.0d0/ :: If 0. not used (otherwise controlled with Pauxheat)
-  real(kind(1.0D0)) :: plasmod_pfus = 0.0d0
-  !+ad_vars  plasmod_pedscal /1.0d0/ :: multiplication factor of the pedestal scaling in PLASMOD
-  !+ad_varc                             can be used to scan the pedestal height.
-  real(kind(1.0D0)) :: plasmod_pedscal = 1.0d0
   !+ad_vars  plasmod_contrpovs /0.0d0/ :: control power in Paux/lateral_area (MW/m2)
   real(kind(1.0D0)) :: plasmod_contrpovs = 0.0d0
   !+ad_vars  plasmod_contrpovr /0.0d0/ :: control power in Paux/R (MW/m)
   real(kind(1.0D0)) :: plasmod_contrpovr = 0.0d0
+  !+ad_vars  plasmod_nbi_energy /1000.0d0/ :: In keV
+  real(kind(1.0D0)) :: plasmod_nbi_energy = 1000.0d0
+  !+ad_vars  plasmod_v_loop /-1.0d-6/ :: target loop voltage. If lower than -1.e5 do not use
+  real(kind(1.0D0)) :: plasmod_v_loop = -1.0d-6
+  !+ad_vars  plasmod_pfus /0.0d0/ :: if 0. not used (otherwise controlled with Pauxheat)
+  real(kind(1.0D0)) :: plasmod_pfus = 0.0d0
+  !+ad_vars  plasmod_eccdeff /0.3d0/ :: current drive multiplier: CD = eccdeff*PCD*TE/NE (not in use yet)
+  real(kind(1.0D0)) :: plasmod_eccdeff = 0.3d0
+  !+ad_vars  plasmod_pech /0.0d0/ :: ech power (not in use yet)
+  real(kind(1.0D0)) :: plasmod_pech = 0.0d0
+  !+ad_vars  plasmod_spellet /0.0d0/ :: pellet mass in units of D in 10^19
+  real(kind(1.0D0)) :: plasmod_spellet = 0.0d0
+  !+ad_vars  plasmod_fpellet /0.5d0/ :: pellet frequency in Hz
+  real(kind(1.0D0)) :: plasmod_fpellet = 0.5d0
+  
+  !Derived type pedestal
+  !+ad_vars  plasmod_pedscal /1.0d0/ :: multiplication factor of the pedestal scaling in PLASMOD
+  !+ad_varc                             can be used to scan the pedestal height.
+  real(kind(1.0D0)) :: plasmod_pedscal = 1.0d0
+
   
   !+ad_vars  geom ::  Derived type containing all geometry information for PLASMOD
   type (geometry) :: geom
