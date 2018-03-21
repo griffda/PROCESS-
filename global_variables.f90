@@ -201,6 +201,7 @@ module physics_variables
   !+ad_vars  beamfus0 /1.0/ : multiplier for beam-background fusion calculation
   real(kind(1.0D0)) :: beamfus0 = 1.0D0
   !+ad_vars  beta /0.042/ : total plasma beta (iteration variable 5)
+  !+ad_varc             (calculated if ipedestal =3)
   real(kind(1.0D0)) :: beta = 0.042D0
   !+ad_vars  betaft : fast alpha beta component
   real(kind(1.0D0)) :: betaft = 0.0D0
@@ -237,6 +238,7 @@ module physics_variables
   !+ad_varc                  (constraint equation 23)
   real(kind(1.0D0)) :: cwrmax = 1.35D0
   !+ad_vars  dene /9.8e19/ : electron density (/m3) (iteration variable 6)
+  !+ad_varc                  (calculated if ipedestal=3)
   real(kind(1.0D0)) :: dene = 9.8D19
   !+ad_vars  deni : fuel ion density (/m3)
   real(kind(1.0D0)) :: deni = 0.0D0
@@ -689,6 +691,7 @@ module physics_variables
   !+ad_vars  qstar : cylindrical safety factor
   real(kind(1.0D0)) :: qstar = 0.0D0
   !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
+  !+ad_varc            (calculated if ipedestal=3)
   real(kind(1.0D0)) :: ralpne = 0.10D0
   !+ad_vars  protium /0.0/ : Seeded protium density / electron density.
   real(kind(1.0D0)) :: protium = 0.0D0
@@ -744,6 +747,7 @@ module physics_variables
 
   !+ad_vars  te /12.9/ : volume averaged electron temperature (keV)
   !+ad_varc              (iteration variable 4)
+  !+ad_varc              (calculated if ipedestal = 3)
   real(kind(1.0D0)) :: te = 12.9D0
   !+ad_vars  te0 : central electron temperature (keV)
   real(kind(1.0D0)) :: te0 = 0.0D0
@@ -3854,6 +3858,7 @@ module constraint_variables
   real(kind(1.0D0)) :: fcwr = 1.0D0
   !+ad_vars  fdene /1.0/ : f-value for density limit
   !+ad_varc                (constraint equation 5, iteration variable 9)
+  !+ad_varc                (invalid if ipedestal = 3)
   real(kind(1.0D0)) :: fdene = 1.0D0
   !+ad_vars  fdivcol /1.0/ : f-value for divertor collisionality
   !+ad_varc                  (constraint equation 22, iteration variable 34)

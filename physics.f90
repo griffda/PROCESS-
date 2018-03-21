@@ -258,8 +258,7 @@ implicit none
     end if
 
     if (ipedestal .ne. 3) then
-       
-       
+              
        !  Calculate plasma current
        call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
             pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
@@ -278,6 +277,8 @@ implicit none
 
     else if (geom%counter.eq.0.d0) then
        !if plasmod_i_equiltype = 2 plascur is an input
+       !This is not yet consistently implemented though and contradicts
+       !usual PROCESS workflows where q is an input/interation variable
       
        
        !Note that alphap is 0 here!
@@ -5808,7 +5809,7 @@ end function t_eped_scaling
     betath = beta-betaft-betanb
     gammaft = (betaft + betanb)/betath
     if (ipedestal == 3) then
-       call ovarre(outfile,'Total plasma beta','(beta)',beta, 'OP')
+       call ovarre(outfile,'Total plasma beta','(beta)',beta, 'OP ')
     else
        call ovarre(outfile,'Total plasma beta','(beta)',beta)     
     endif
