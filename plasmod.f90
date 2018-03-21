@@ -317,7 +317,7 @@ contains
        call report_error(174) 
     endif
     
-
+    !------------------------------------------------
     !Temperature outputs otherwise input or
     !calculated in plasma_profiles
     te0   = radp%te(1) 
@@ -328,7 +328,8 @@ contains
     ti    = radp%av_ti
     tin   = ti/te * ten
     pcoef = ten / te
-    
+
+    !------------------------------------------------
     !Density outputs otherwise inputs or
     !calculated in plasma_profiles
     dene  = radp%av_ne*1.d19
@@ -342,13 +343,48 @@ contains
     !  Central pressure (Pa), from ideal gas law : p = nkT
     p0 = (ne0*te0 + ni0*ti0) * 1.0D3 * echarge
 
-
-    deni = radp%av_nd*1.d19 ! Fuel density (/m3)
-    dnz = radp%av_nz*1.d19 !High Z impurity density (/m3)
+    
+    !------------------------------------------------
+    !replacing plasma_compostion/betcom outputs
     dnalp = radp%av_nhe*1.d19 ! Helium ion density (thermalised ions only) (/m3)
-    dnprot = 0.0d0 ! Proton density (/m3)
-    dnbeam = 0.0d0 ! Hot beam density (/m3)
-    dnelimt = 0.0d0 ! Density limit from scaling (/m3)
+    dnprot = protium*dene ! Proton density (/m3) from seeding only!
+    ! Hot beam density (/m3)
+    if (ignite == 0) then
+       dnbeam = dene * rnbeam
+    else
+       dnbeam = 0.0D0
+    end if
+    deni  = radp%av_nd*1.d19 ! Fuel density (/m3)
+    dnz   = radp%av_nz*1.d19 !High Z impurity density (/m3)
+
+    fimp(13) =  
+    fimp(2) = comp%che
+    impurity_arr(1)%frac  = deni/dene
+    impurity_arr(2)%frac  = comp%che
+    impurity_arr(3)%frac  = 0.d0
+    impurity_arr(4)%frac  = 0.d0
+    impurity_arr(5)%frac  = 0.d0
+    impurity_arr(6)%frac  = 0.d0
+    impurity_arr(7)%frac  = 0.d0
+    impurity_arr(8)%frac  = 0.d0
+    impurity_arr(9)%frac  = fimp(9)
+    impurity_arr(10)%frac = 0.d0
+    impurity_arr(11)%frac = 0.d0
+    impurity_arr(12)%frac = 0.d0
+    impurity_arr(13)%frac = 0.d0
+    impurity_arr(14)%frac = 0.d0
+    impurity_arr(13)%frac = comp%cxe
+    aion = 2.0d0 ! Average mass of all ions (amu), to be done EF
+
+    if (comp%qdivt.gt.0.d0) then
+       fimp(9)=comp%car  !argon concentration, reassigned if qdivt>0, i.e. no Kallenbach model, uses SOL model of PLASMOD
+    !else
+       !@EF what should be happening here.
+    endif
+    
+    ralpne   = comp%che
+    dnalp = dene * ralpne ! replaces assignement in plasma_composition
+    
     
 
     !if plasmod_i_equiltype = 1 q95 is an input and plascur an output
@@ -370,34 +406,9 @@ contains
 
     !plasma thermal energy - need to find local variable name
     
-    if (comp%qdivt.gt.0.d0) then
-       fimp(9)=comp%car  !argon concentration, reassigned if qdivt>0, i.e. no Kallenbach model, uses SOL model of PLASMOD
-    !else
-       !@EF what should be happening here.
-    endif
-    
-    ralpne   = comp%che
-    dnalp = dene * ralpne ! replaces assignement in plasma_composition
 
-    fimp(13) = comp%cxe 
-    fimp(2) = comp%che
-    !HL: I think this is wrong, should be fimp instead of impurity_arr
-    impurity_arr(1)%frac  = deni/dene
-    impurity_arr(2)%frac  = ralpne
-    impurity_arr(3)%frac  = 0.d0
-    impurity_arr(4)%frac  = 0.d0
-    impurity_arr(5)%frac  = 0.d0
-    impurity_arr(6)%frac  = 0.d0
-    impurity_arr(7)%frac  = 0.d0
-    impurity_arr(8)%frac  = 0.d0
-    impurity_arr(9)%frac  = fimp(9)
-    impurity_arr(10)%frac = 0.d0
-    impurity_arr(11)%frac = 0.d0
-    impurity_arr(12)%frac = 0.d0
-    impurity_arr(13)%frac = 0.d0
-    impurity_arr(14)%frac = 0.d0
-    impurity_arr(13)%frac = fimp(13)
-    aion = 2.0d0 ! Average mass of all ions (amu), to be done EF
+
+
 
     zeff = radp%zeff ! Effective charge
     

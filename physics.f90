@@ -331,17 +331,6 @@ implicit none
        call convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,tburn,&
 							& fusrat)
 
-       !  Recalculate plasma composition
-       ! ralpne, dene and te are outputs of PLASMOD
-       if (imprad_model == 0) then
-          call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impo, &
-               ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
-               dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
-               zion,zfear)
-       else
-          call plasma_composition
-       end if
-
        
     endif
 
@@ -5873,7 +5862,7 @@ end function t_eped_scaling
     call ovarre(outfile,'Helium ion density (thermalised ions only) (/m3)','(dnalp)',dnalp, 'OP ')
     call ovarre(outfile,'Proton density (/m3)','(dnprot)',dnprot, 'OP ')
     if(protium > 1.0d-10)then
-        call ovarre(outfile,'Seeded protium density / electron density','(protium)',protium, 'OP ')
+        call ovarre(outfile,'Seeded protium density / electron density','(protium)',protium)
     end if
 
     call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam, 'OP ')
