@@ -251,15 +251,14 @@ implicit none
        call plasma_composition
     end if
 
-   
+    if (icurr == 2) then
+       q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
+    else
+       q95 = q  !  i.e. input (or iteration variable) value
+    end if
 
     if (ipedestal .ne. 3) then
        
-       if (icurr == 2) then
-          q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
-       else
-          q95 = q  !  i.e. input (or iteration variable) value
-       end if
        
        !  Calculate plasma current
        call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
@@ -278,14 +277,8 @@ implicit none
        end if
 
     else if (geom%counter.eq.0.d0) then
-       !if q95 is an input to PLASMOD, plascur is an output and vice versa.
-       !PLASMOD only needs these inputs in the first iteration.       
-       
-       if (icurr == 2) then
-          q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
-       else
-          q95 = q  !  i.e. input (or iteration variable) value
-       end if
+       !if plasmod_i_equiltype = 2 plascur is an input
+      
        
        !Note that alphap is 0 here!
        !alphap is only used for icurr=7 (Connor-Hastie model)

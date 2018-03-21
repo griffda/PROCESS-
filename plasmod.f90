@@ -347,7 +347,8 @@ contains
     dnelimt = 0.0d0 ! Density limit from scaling (/m3)
     
 
-    !If plascur was an input, q95 is an output and vice versa
+    !if plasmod_i_equiltype = 1 q95 is an input and plascur an output
+    !if plasmod_i_equiltype = 2 plascur is an input and q95 an output
     !Reassign both for simplicity
     plascur = geom%ip * 1.0D6 !Plasma current in Ampere
     !Edge safety factor

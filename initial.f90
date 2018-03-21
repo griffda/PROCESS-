@@ -460,10 +460,22 @@ subroutine check
         endif
 
         if ((any(ixc==145)) .and. (boundl(145) < fgwsep)) then  !if lower bound of fgwped < fgwsep
-           write(*,*)'boundl(145) = ',boundl(145), ', fgwsep = ',fgwsep
+           fdiags(1) = boundl(145); fdiags(2) = fgwsep
            call report_error(186)
         end if
-        
+
+        if (plasmod_i_equiltype == 2) then
+
+           !Warning, this is a not recommended option
+           !operation is inconsistent with PROCESS.
+           call report_error(189)
+
+           !cannot use q as iteration variable, if plasma current is input for EMEQ
+           if (any(ixc == 18)) then
+              call report_error(190)
+           endif
+           
+        endif
      endif
      
 

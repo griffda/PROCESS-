@@ -849,7 +849,7 @@ module plasmod_variables
   !+ad_varc  H factor > 1. Other vales give H factor as output
   integer :: plasmod_i_modeltype = 1
   !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve with sawteeth and inputted q95.
-  !+ad_varc  2 - EMEQ, solve with sawteeth and inputted Ip.
+  !+ad_varc  2 - EMEQ, solve with sawteeth and inputted Ip (not recommended!).
   integer :: plasmod_i_equiltype = 1
   !+ad_vars  plasmod_nx /41/ : Number of interpolated grid points
   integer :: plasmod_nx = 41
