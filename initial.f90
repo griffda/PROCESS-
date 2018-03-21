@@ -441,6 +441,11 @@ subroutine check
              (ixc==102).or.(ixc==103).or.(ixc==109).or.(ixc==110)))then
            call report_error(182)
         endif
+
+        !as beta is an output of PLASMOD, its consistency does not need to be enforced
+        if(any(icc == 1)) then
+           call report_error(188)
+        endif
            
         ! density limit cannot be used with PLASMOD use fgwsep and/or fgwped instead.
         if (any(icc==9)) then

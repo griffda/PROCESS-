@@ -350,8 +350,6 @@ implicit none
        
     endif
 
-
-   
     btot = sqrt(bt**2 + bp**2)
     betap = beta * ( btot/bp )**2
 
@@ -5815,8 +5813,11 @@ end function t_eped_scaling
 
     betath = beta-betaft-betanb
     gammaft = (betaft + betanb)/betath
-
-    call ovarre(outfile,'Total plasma beta','(beta)',beta)
+    if (ipedestal == 3) then
+       call ovarre(outfile,'Total plasma beta','(beta)',beta, 'OP')
+    else
+       call ovarre(outfile,'Total plasma beta','(beta)',beta)     
+    endif
     call ovarre(outfile,'Total poloidal beta','(betap)',betap, 'OP ')
     call ovarre(outfile,'Total toroidal beta',' ',beta*(btot/bt)**2, 'OP ')
     call ovarre(outfile,'Fast alpha beta','(betaft)',betaft, 'OP ')
