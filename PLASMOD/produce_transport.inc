@@ -18,7 +18,8 @@
 	! Powers section -- to be coupled otherwise to HandCD ultimately
 	! Auxiliary
 	Peaux = exp(-(x-inp0%x_heat(2))**2/inp0%dx_heat(2)**2.d0)
-	Pech=Peaux/trapz(Peaux*dV)*inp0%pech;
+	Pech=0.*Peaux/trapz(Peaux*dV);
+
 
 !sum over powers
 	Piaux = exp(-(x-inp0%x_heat(1))**2/inp0%dx_heat(1)**2.d0)
