@@ -3,7 +3,7 @@
  "version":  [ "PROCESS revision 378" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 190,
+ "n_errortypes": 191,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -194,6 +194,7 @@
      {"no": 187, "level": 3, "message": "CHECK: Specify only one variable from contrpovs and contrpovr"},
      {"no": 188, "level": 3, "message": "CHECK: The beta consistency equation cannot be used in conjunction with PLASMOD (ipedestal=3) as beta is an output"},
      {"no": 189, "level": 2, "message": "CHECK: plasmod_i_equiltype =2 is a not consistently implemented option!"},
-     {"no": 190, "level": 3, "message": "CHECK: if plasmod_i_equiltype = 2, q95 is an output and plascur an input. Hence, q cannot vary!"}
+     {"no": 190, "level": 3, "message": "CHECK: if plasmod_i_equiltype = 2, q95 is an output and plascur an input. Hence, q cannot vary!"},
+     {"no": 191, "level": 3, "message": "CHECK: if plasmod_i_modeltype > 1, beta is calculated and its limit is enforced inside PLASMOD. Therefore no beta limit needs be checked in PROCESS!"}
  ]
 }

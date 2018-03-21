@@ -436,8 +436,8 @@ subroutine check
      if(ipedestal==3)then
         ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
         ! These are outputs of PLASMOD
-        ! ixc(4) = te, ixc(5) = beta, ixc(6) = dene, ixc(9) = fdene, ixc(36) = fbetatry, ixc(102) = fimpvar, ixc(103) = flhthresh, ixc(109) = ralpne, ixc(110) = ftaulimit
-        if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or.(ixc==36).or. &
+        ! ixc(4) = te, ixc(5) = beta, ixc(6) = dene, ixc(9) = fdene,  ixc(102) = fimpvar, ixc(103) = flhthresh, ixc(109) = ralpne, ixc(110) = ftaulimit
+        if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or. &
              (ixc==102).or.(ixc==103).or.(ixc==109).or.(ixc==110)))then
            call report_error(182)
         endif
@@ -473,9 +473,26 @@ subroutine check
            !cannot use q as iteration variable, if plasma current is input for EMEQ
            if (any(ixc == 18)) then
               call report_error(190)
+           endif           
+        endif
+
+        !plasmod_i_modeltype = 1 enforces a given H-factor
+        !plasmod_i_modeltype > 1 calculates transport from the transport models
+        if (plasmod_i_modeltype > 1) then
+
+           !beta limit is enforced inside PLASMOD
+           !icc(6)  eps * betap upper limit
+           !ixc(8)  fbeta
+           !icc(24) beta upper limit
+           !ixc(36) fbetatry
+           !icc(48) poloidal beta upper limit
+           !ixc(79) fbetap
+           if (any((icc == 6) .or. (icc == 24) .or. (icc==48) ) .or. any((ixc == 8) .or.(ixc==36) .or. (ixc==79))) then
+              call report_error(191)
            endif
            
         endif
+        
      endif
      
 

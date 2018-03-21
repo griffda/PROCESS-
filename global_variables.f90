@@ -337,6 +337,7 @@ module physics_variables
   !+ad_vars  hfact /1.0/ : H factor on energy confinement times, radiation corrected
   !+ad_varc                (iteration variable 10).
   !+ad_varc                If ipedestal=2 or 3 and hfact = 0, not used in PLASMOD
+  !+ad_varc                (see also plasmod_i_modeltype)
   real(kind(1.0D0)) :: hfact = 1.0D0
   ! Issue #219
   !+ad_vars  taumax /10/ : Maximum allowed energy confinement time (s)
@@ -849,8 +850,10 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_maxA = 0.0d0
   !+ad_vars  plasmod_dgy /1.0d-5/ : Newton differential
   real(kind(1.0D0)) :: plasmod_dgy = 1.0d-5
-  !+ad_vars  plasmod_i_modeltype /1/ : 1 - Simple gyrobohm scaling with imposed
-  !+ad_varc  H factor > 1. Other vales give H factor as output
+  !+ad_vars  plasmod_i_modeltype /1/ : swithc for the transport model <UL>
+  !+ad_varc  <LI> 1 - Simple gyrobohm scaling with imposed
+  !+ad_varc  H factor > 1. Other values give H factor as output
+  !+ad_varc  <LI> 111 - roughly calibrated to give H=1 for DEMO, but not fixed H </UL>
   integer :: plasmod_i_modeltype = 1
   !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve with sawteeth and inputted q95.
   !+ad_varc  2 - EMEQ, solve with sawteeth and inputted Ip (not recommended!).
