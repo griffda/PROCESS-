@@ -251,15 +251,17 @@ implicit none
        call plasma_composition
     end if
 
-    if (icurr == 2) then
-       q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
-    else
-       q95 = q  !  i.e. input (or iteration variable) value
-    end if
-    
-    !  Calculate plasma current
+   
+
     if (ipedestal .ne. 3) then
        
+       if (icurr == 2) then
+          q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
+       else
+          q95 = q  !  i.e. input (or iteration variable) value
+       end if
+       
+       !  Calculate plasma current
        call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
             pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
@@ -274,6 +276,20 @@ implicit none
        if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwsep >=0d0)) then
           nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
        end if
+
+    else if (geom%counter.eq.0.d0) then
+       !if q95 is an input to PLASMOD, plascur is an output and vice versa.
+       !PLASMOD only needs these inputs in the first iteration.       
+       
+       if (icurr == 2) then
+          q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
+       else
+          q95 = q  !  i.e. input (or iteration variable) value
+       end if
+       
+       
+       call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
+            pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
        
     endif
     
@@ -335,9 +351,7 @@ implicit none
     endif
 
 
-
-    !HL Todo go through all statements above and below and make sure they are consistent with ipedestal = 3
-    
+   
     btot = sqrt(bt**2 + bp**2)
     betap = beta * ( btot/bp )**2
 

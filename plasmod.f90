@@ -347,9 +347,8 @@ contains
     !Need these: previously calculated in plascur
     qstar = mhd%qstar ! equivalent cylindrical safety factor (shaped)
     bp    = mhd%bp ! poloidal field in (T)
+    
     beta  = mhd%betan * geom%ip / (rminor * bt)/100.
-
-    dnbeta = 0.0d0 !Beta g coefficient
 
     !plasma thermal energy - need to find local variable name
     
