@@ -287,7 +287,8 @@ implicit none
           q95 = q  !  i.e. input (or iteration variable) value
        end if
        
-       
+       !Note that alphap is 0 here!
+       !alphap is only used for icurr=7 (Connor-Hastie model)
        call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
             pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
        
@@ -6145,7 +6146,13 @@ end function t_eped_scaling
        call ovarrf(outfile,'bootstrap current fraction multiplier', '(cboot)',cboot)
        call ovarrf(outfile,'Bootstrap fraction (ITER 1989)', '(bscf_iter89)',bscf_iter89, 'OP ')
        call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', '(bscf_nevins)',bscf_nevins, 'OP ')
-       call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
+       if (ipedestal==3) then
+          call ocmmnt(outfile,'if ipedestal==3, alphap=0 and the bscf_wilson will be meaningless')
+          call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
+       else
+          call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
+       endif
+       
        call ovarrf(outfile,'Bootstrap fraction (Sauter et al)', '(bscf_sauter)',bscf_sauter, 'OP ')
 
        if (bscfmax < 0.0D0) then

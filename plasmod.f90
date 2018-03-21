@@ -313,20 +313,32 @@ contains
        call report_error(174) 
     endif
     
-    
+
+    !Temperature outputs otherwise input or
+    !calculated in plasma_profiles
     te0   = radp%te(1) 
     ti0   = radp%ti(1) !ion temperature on axis
     teped = ped%teped !only computed, if ieped = 2
-    ne0   = radp%ne(1)*1.d19
-    neped = ped%nped*1.d19
-    nesep = ped%nsep*1.d19
     te    = radp%av_te
     ten   = radp%av_te
     ti    = radp%av_ti
+    tin   = ti/te * ten
+    pcoef = ten / te
+    
+    !Density outputs otherwise inputs or
+    !calculated in plasma_profiles
     dene  = radp%av_ne*1.d19
+    ne0   = radp%ne(1)*1.d19
+    neped = ped%nped*1.d19
+    nesep = ped%nsep*1.d19
+    dnitot = radp%av_ni * 1.0d19 !Ion density (/m3)
+    ni0   = dnitot/dene * ne0
     dnla  = sum(radp%ne)/size(radp%ne)*1.d19
 
-    dnitot = radp%av_ni * 1.0d19 !Ion density (/m3)
+    !  Central pressure (Pa), from ideal gas law : p = nkT
+    p0 = (ne0*te0 + ni0*ti0) * 1.0D3 * echarge
+
+
     deni = radp%av_nd*1.d19 ! Fuel density (/m3)
     dnz = radp%av_nz*1.d19 !High Z impurity density (/m3)
     dnalp = radp%av_nhe*1.d19 ! Helium ion density (thermalised ions only) (/m3)
@@ -348,6 +360,7 @@ contains
     qstar = mhd%qstar ! equivalent cylindrical safety factor (shaped)
     bp    = mhd%bp ! poloidal field in (T)
     
+    !beta is now an output, is an input with (ipedestal .ne. 3)
     beta  = mhd%betan * geom%ip / (rminor * bt)/100.
 
     !plasma thermal energy - need to find local variable name
