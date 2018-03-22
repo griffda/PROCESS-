@@ -110,14 +110,14 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 ! actual values for testing
 																						    num%tol=0.0000001d0 !tolerance to be reached, in % variation at each time step
                           num%dtmin=0.01d0 !min time step
-                          num%dtmax=0.01d0 !max time step
+                          num%dtmax=0.1d0 !max time step
                           num%dt=0.01d0 !time step
                           num%dtinc=2.d0 !decrease of dt
                           num%Ainc=1.1d0 !increase of dt
                           num%test=10000. !max iteration number
                           num%tolmin=10.1d0 ! multiplier of etolm that should not be overcome
-                          num%eopt=0.02d0 !exponent of jipperdo
-                          num%dtmaxmin=0.02d0 !exponent of jipperdo2
+                          num%eopt=0.1d0 !exponent of jipperdo
+                          num%dtmaxmin=0.1d0 !exponent of jipperdo2
                           num%capA=0.1d0 !first radial grid point
                           num%maxA=0.d0 !diagz 0 or 1
                           num%dgy=1.e-5 !Newton differential
