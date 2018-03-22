@@ -103,6 +103,7 @@ if __name__ == '__main__':
         try:
             RHO[f] = DATA[f][0]
             print('Inputted RHO')
+            print(RHO[f])
         except IndexError:
             print('Error: The column for the normalised radius does not exist!\
             Remember to start counting at 0!')
@@ -212,7 +213,8 @@ if __name__ == '__main__':
     plt.suptitle('Radial profiles (page 1)')
     
     plot_den = page1.add_subplot(221)
-    plt.scatter(RHO, DEN)
+    plt.scatter(RHO[0], DEN[0])
+    plt.scatter(RHO[1], DEN[1])
 
     plt.xlabel('r/a')
     plt.ylabel('ne / 1e19 m-3')
@@ -223,7 +225,8 @@ if __name__ == '__main__':
     plt.legend()
 
     plot_te = page1.add_subplot(222)
-    plt.scatter(RHO, TE)
+    plt.scatter(RHO[0], TE[0])
+    plt.scatter(RHO[1], TE[1])
 
     plt.xlabel('r/a')
     plt.ylabel('te / keV')
@@ -234,8 +237,9 @@ if __name__ == '__main__':
     plt.legend()
 
     plot_ti = page1.add_subplot(223)
-    plt.scatter(RHO, TI)
-
+    plt.scatter(RHO[0], TI[0])
+    plt.scatter(RHO[1], TI[1])
+    
     plt.xlabel('r/a')
     plt.ylabel('ti / keV')
     plt.title('Ion temperature')
@@ -245,8 +249,9 @@ if __name__ == '__main__':
     plt.legend()
 
     plot_q = page1.add_subplot(224)
-    plt.scatter(RHO, Q)
-
+    plt.scatter(RHO[0], Q[0])
+    plt.scatter(RHO[1], Q[1])
+    
     plt.xlabel('r/a')
     plt.ylabel('q')
     plt.title('Safety factor')
@@ -259,8 +264,9 @@ if __name__ == '__main__':
     plt.suptitle('Radial profiles (page 2) - currents')
 
     plot_jbs = page2.add_subplot(221)
-    plt.scatter(RHO, JBS)
-
+    plt.scatter(RHO[0], JBS[0])
+    plt.scatter(RHO[1], JBS[1])
+    
     plt.xlabel('r/a')
     plt.ylabel('J_bs / MA/m^2')
     plt.title('Boostrap current density')
@@ -270,8 +276,9 @@ if __name__ == '__main__':
     plt.legend()
 
     plot_jcd = page2.add_subplot(222)
-    plt.scatter(RHO, JCD)
-
+    plt.scatter(RHO[0], JCD[0])
+    plt.scatter(RHO[1], JCD[1])
+    
     plt.xlabel('r/a')
     plt.ylabel('J_cd / MA/m^2')
     plt.title('Current drive current density')
@@ -281,8 +288,9 @@ if __name__ == '__main__':
     plt.legend()
 
     plot_jtot = page2.add_subplot(223)
-    plt.scatter(RHO, JTOT)
-
+    plt.scatter(RHO[0], JTOT[0])
+    plt.scatter(RHO[1], JTOT[1])
+    
     plt.xlabel('r/a')
     plt.ylabel('J_tot / MA/m^2')
     plt.title('Total current density')
@@ -290,10 +298,12 @@ if __name__ == '__main__':
     plt.plot(RHO[0],JTOT[0], label="File0")
     plt.plot(RHO[1],JTOT[1], label="File1")
     plt.legend()
-    
-    plot_ipol = page2.add_subplot(224)
-    plt.scatter(RHO, IPOL)
 
+    # not a key quantity - Michael
+    plot_ipol = page2.add_subplot(224)
+    plt.scatter(RHO[0], IPOL[0])
+    plt.scatter(RHO[1], IPOL[1])
+    
     plt.xlabel('r/a')
     plt.ylabel('I_pol')
     plt.title('Poloidal current')
@@ -306,8 +316,9 @@ if __name__ == '__main__':
     plt.suptitle('Radial profiles (page 3)')
 
     plot_vol = page3.add_subplot(221)
-    plt.scatter(RHO, VOL)
-
+    plt.scatter(RHO[0], VOL[0])
+    plt.scatter(RHO[1], VOL[1])
+    
     plt.xlabel('r/a')
     plt.ylabel('Vol / m^3')
     plt.title('Plasma volume')
@@ -317,8 +328,9 @@ if __name__ == '__main__':
     plt.legend()
 
     plot_dvol = page3.add_subplot(222)
-    plt.scatter(RHO, DVOL)
-
+    plt.scatter(RHO[0], DVOL[0])
+    plt.scatter(RHO[1], DVOL[1])
+    
     plt.xlabel('r/a')
     plt.ylabel('dVol/dr / m^2')
     plt.title('dVolume/dr')
@@ -328,8 +340,9 @@ if __name__ == '__main__':
     plt.legend()
 
     plot_cond = page3.add_subplot(223)
-    plt.scatter(RHO, COND)
-
+    plt.scatter(RHO[0], COND[0])
+    plt.scatter(RHO[1], COND[1])
+    
     plt.xlabel('r/a')
     plt.ylabel('Cond / MA/(V.m)')
     plt.title('Plasma conductivity')
@@ -339,8 +352,9 @@ if __name__ == '__main__':
     plt.legend()
     
     plot_palph = page3.add_subplot(224)
-    plt.scatter(RHO, PALPH)
-
+    plt.scatter(RHO[0], PALPH[0])
+    plt.scatter(RHO[1], PALPH[1])
+    
     plt.xlabel('r/a')
     plt.ylabel('p_alpha / keV*10^10/m^3')
     plt.title('Alpha pressure')

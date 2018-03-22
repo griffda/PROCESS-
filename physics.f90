@@ -44,17 +44,21 @@ module physics_module
   !+ad_call  constraint_variables
   !+ad_call  current_drive_module
   !+ad_call  current_drive_variables
+  !+ad_call  divertor_kallenbach_variables
   !+ad_call  divertor_variables
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
+  !+ad_call  grad_func
   !+ad_call  heat_transport_variables
   !+ad_call  impurity_radiation_module
   !+ad_call  maths_library
+  !+ad_call  numerics
   !+ad_call  physics_variables
+  !+ad_call  plasmod_module
+  !+ad_call  plasmod_variables
   !+ad_call  profiles_module
   !+ad_call  process_output
   !+ad_call  pulse_variables
-
   !+ad_call  startup_variables
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
@@ -97,24 +101,22 @@ module physics_module
   use divertor_variables
   use error_handling
   use fwbs_variables
+  use grad_func
   use heat_transport_variables
   use impurity_radiation_module
   use maths_library
   use numerics
   use physics_variables
+  use plasmod_module
+  use plasmod_variables
   use profiles_module
   use process_output
   use pulse_variables
-
   use startup_variables
   use stellarator_variables
   use tfcoil_variables
-  use times_variables
+  use times_variables  
 
-  use grad_func
-  
-  use plasmod_module
-  use plasmod_variables
 
   implicit none
 
@@ -153,6 +155,7 @@ contains
     !+ad_call  bootstrap_fraction_nevins
     !+ad_call  bootstrap_fraction_sauter
     !+ad_call  bootstrap_fraction_wilson
+    !+ad_call  convert_Plasmod2PROCESS
     !+ad_call  cudriv
     !+ad_call  culblm
     !+ad_call  culcur
@@ -163,11 +166,13 @@ contains
     !+ad_call  phyaux
     !+ad_call  plasma_composition
     !+ad_call  plasma_profiles
+    !+ad_call  plasmod_EF
     !+ad_call  pohm
     !+ad_call  pthresh
     !+ad_call  radpwr
     !+ad_call  report_error
     !+ad_call  rether
+    !+ad_call  setupPlasmod
     !+ad_call  vscalc
     !+ad_hist  20/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  04/12/95 PJK Added D-He3 relevant coding
@@ -626,7 +631,7 @@ implicit none
     call culblm(bt,dnbeta,plascur,rminor,betalim)
 
     ! Calculate some derived quantities that may not have been defined earlier
-	total_loss_power = 1d6 * (falpha*palpmw+pchargemw+pohmmw+pinjmw)
+    total_loss_power = 1d6 * (falpha*palpmw+pchargemw+pohmmw+pinjmw)
     rad_fraction = 1.0D6*pradmw / total_loss_power
     total_plasma_internal_energy = 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol
     total_energy_conf_time = total_plasma_internal_energy / total_loss_power											  

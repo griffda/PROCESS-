@@ -14,26 +14,37 @@ module plasmod_module
   !+ad_desc  equilibrium code PLASMOD and the rest
   !+ad_desc  of PROCESS.
   !+ad_prob  None
-  !+ad_call  None
+  !+ad_call  constants
+  !+ad_call  constraint_variables
+  !+ad_call  current_drive_variables
+  !+ad_call  divertor_kallenbach_variables
+  !+ad_call  divertor_variables
+  !+ad_call  error_handling
+  !+ad_call  global_variables
+  !+ad_call  impurity_radiation_module
+  !+ad_call  numerics
+  !+ad_call  physics_variables
+  !+ad_call  plasmod_variables
+  !+ad_call  process_output
   !+ad_hist  26/02/18 KE Initial version of module
   !+ad_stat  Okay
   !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use plasmod_variables
-  use global_variables
-  use physics_variables
-  use impurity_radiation_module
-  use current_drive_variables
   use constants
   use constraint_variables
-  use process_output
-  use error_handling
+  use current_drive_variables
+  use divertor_kallenbach_variables   !for impurity_enrichment
   use divertor_variables
-  use numerics !for boundl
-  use divertor_kallenbach_variables !for impurity_enrichment
-
+  use error_handling
+  use global_variables
+  use impurity_radiation_module
+  use numerics                        !for boundl
+  use physics_variables
+  use plasmod_variables
+  use process_output
+  
   
   implicit none
 
@@ -357,6 +368,7 @@ contains
     dnalp = radp%av_nhe*1.d19 ! Helium ion density (thermalised ions only) (/m3)
     if ((dnalp - dene*ralpne)/dnalp > 1e-6) then
        fdiags(1) = dnalp; fdiags(2) = dene; fdiags(3) = ralpne;
+       ! KE - why calculate the line above when a fatal error is then called?
        call report_error(192)
     endif
     dnprot = protium*dene ! Proton density (/m3) from seeding only, not from DD-fusion!
@@ -747,9 +759,7 @@ contains
     !+ad_args  None
     !+ad_desc  This routine writes out the radial profiles as created by the PLASMOD code
     !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarrf
+    !+ad_call  None
     !+ad_hist  13/03/18 KE Initial F90 version
     !+ad_stat  Okay
     !+ad_docs  None
