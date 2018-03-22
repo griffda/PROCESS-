@@ -75,7 +75,7 @@
   type (numerics_transp), intent(inout) :: num   !, intent(in) ::   num !to numerics.f90
 
 
-  integer :: jiter, nitermax, jipperdo, jipper, redo, jnit,i_modeltype,i_equiltype
+  integer :: i_flag,jiter, nitermax, jipperdo, jipper, redo, jnit,i_modeltype,i_equiltype
 
 
   integer :: jipperdo2,jipper2,j
