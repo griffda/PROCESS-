@@ -1275,7 +1275,7 @@ mhd%qoh=q_oh(1)
 		comp%comparray(2)=che
   comp%comparray(13)=cxe
 		comp%comparray(9)=car
-	comp%comparray(1)=comp%protium+radp%av_ni/radp%av_ne
+ 	comp%comparray(1)=comp%protium+radp%av_nd/radp%av_ne
 
  mhd%qstar = 5*btor*rminor**2./rmajor/ip* & 
  & (1+elong95**2.*(1+2*triang95**2.-1.2*triang95**3.))/2.
