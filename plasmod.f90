@@ -56,6 +56,8 @@ contains
     !+ad_desc  This routine sets up the input parameters for
     !+ad_desc  PLASMOD from PROCESS variables.
     !+ad_prob  None
+    !+ad_call  report_error
+    !+ad_call  element2index
     !+ad_hist  26/02/18 KE Initial F90 version
     !+ad_stat  Okay
     !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
@@ -93,7 +95,7 @@ contains
     inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
     if (comp%qdivt.eq.0.d0) then
-       comp%comparray(9) = impurity_arr%frac(9) !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp%comparray(9) = impurity_arr(element2index('Ar'))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
        !else
        !@EF: What should happen, if this is not assigned?
     endif
@@ -280,6 +282,7 @@ contains
     !+ad_desc  This routine writes out the times of the various stages
     !+ad_desc  during a single plant cycle.
     !+ad_prob  None
+    !+ad_call  report_error
     !+ad_hist  28/02/18 HL Initial F90 version
     !+ad_stat  Okay
     !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
@@ -297,7 +300,8 @@ contains
     type (power_losses), intent(inout) :: loss 
 
     double precision :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
-    integer :: j
+    real(kind(1.0D0)) :: znimp, pc, znfuel
+    integer :: j, imp
 
 
     if (i_flag==1)then
@@ -347,34 +351,104 @@ contains
     !  Central pressure (Pa), from ideal gas law : p = nkT
     p0 = (ne0*te0 + ni0*ti0) * 1.0D3 * echarge
 
-    
+
+   
     !------------------------------------------------
-    !replacing plasma_compostion/betcom outputs
+    !Plasma Composition outputs otherwise inputs or
+    !calculated in plasma_compostion/betcom 
     !in PROCESS fimp is used for input
     !ralpne, fprot, ftrit etc. are used throughout instead impurity_arr()
     !impurity_arr is used for the composition calculations and
     !the radiation model
+    
+    ralpne = comp%comparray(2)
+    
     dnalp = radp%av_nhe*1.d19 ! Helium ion density (thermalised ions only) (/m3)
-    dnprot = protium*dene ! Proton density (/m3) from seeding only!
+    if ((dnalp - dene*ralpne)/dnalp > 1e-6) then
+       fdiags(1) = dnalp; fdiags(2) = dene; fdiags(3) = ralpne;
+       call report_error(192)
+    endif
+    dnprot = protium*dene ! Proton density (/m3) from seeding only, not from DD-fusion!
+    
     ! Hot beam density (/m3)
     if (ignite == 0) then
        dnbeam = dene * rnbeam
     else
        dnbeam = 0.0D0
     end if
-    deni  = radp%av_nd*1.d19 ! Fuel density (/m3)
-    dnz   = radp%av_nz*1.d19 !High Z impurity density (/m3)
 
-    ralpne = comp%comparray(2)
-    dnalp = dene * ralpne ! replaces assignement in plasma_composition
-    
     do j=1,nimp
        impurity_arr(j)%frac=comp%comparray(j)
     enddo
+    
+    !  Sum of Zi.ni for all impurity ions (those with charge > helium)
+    znimp = 0.0D0
+    do imp = 1,nimp
+       if (impurity_arr(imp)%Z > 2) then
+          znimp = znimp + Zav_of_te(impurity_arr(imp),te)*(impurity_arr(imp)%frac * dene)
+       end if
+    end do
+
+    !  Fuel portion - conserve charge neutrality
+    !  znfuel is the sum of Zi.ni for the three fuel ions
+    znfuel = dene - 2.0D0*dnalp - dnprot - dnbeam - znimp
+    deni   = znfuel/(1.0D0+fhe3)! Fuel density (/m3)
+    !deni  = radp%av_nd*1.d19 ! Fuel density (/m3)
+    
+    if ((deni - radp%av_nd*1.d19)/deni > 1e-6) then
+       fdiags(1) = deni; fdiags(2) = radp%av_nd*1.d19; fdiags(3) = znfuel; fdiags(4) = fhe3
+       call report_error(193)
+    endif
+
+    !  Ensure that deni is never negative or zero
+    if (deni < 1.0D0) then
+       fdiags(1) = deni ; call report_error(78)
+       deni = max(deni,1.0D0)
+    end if
+
+    
+    !  Set hydrogen and helium impurity fractions for
+    !  radiation calculations
+    impurity_arr(element2index('H_'))%frac = &
+         (dnprot + (fdeut+ftrit)*deni + dnbeam)/dene
+
+    impurity_arr(element2index('He'))%frac = fhe3*deni/dene + ralpne
+
+    !  Total impurity density (/m3)
+    dnz = 0.0D0
+    do imp = 1,nimp
+       if (impurity_arr(imp)%Z > 2) then
+          dnz = dnz + impurity_arr(imp)%frac*dene
+       end if
+    end do
+
+    if ( (dnz - radp%av_nz*1.d19)/dnz > 1e-6) then
+       fdiags(1) = dnz; fdiags(2) = radp%av_nz*1.d19
+       call report_error(194)
+    endif
+
+    !  Total ion density
+    dnitot = deni + dnalp + dnprot + dnbeam + dnz
+
+    !  Set some (obsolescent) impurity fraction variables
+    !  for the benefit of other routines
+    rncne = impurity_arr(element2index('C_'))%frac
+    rnone = impurity_arr(element2index('O_'))%frac
+    if (zfear == 0) then
+       rnfene = impurity_arr(element2index('Fe'))%frac
+    else
+       rnfene = impurity_arr(element2index('Ar'))%frac
+    end if
+       
+
+
 
     aion = 2.0d0 ! Average mass of all ions (amu), to be done EF
 
  
+
+
+    zeff = radp%zeff ! Effective charge
     
 
     !if plasmod_i_equiltype = 1 q95 is an input and plascur an output
@@ -394,14 +468,6 @@ contains
     !beta is now an output, is an input with (ipedestal .ne. 3)
     beta  = mhd%betan * geom%ip / (rminor * bt)/100.
 
-
-
-
-
-
-
-
-    zeff = radp%zeff ! Effective charge
     
     normalised_total_beta = mhd%betan
     
