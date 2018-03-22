@@ -6,7 +6,7 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !+ad_name do_transport
 !+ad_summ transport solver main subroutine
-  subroutine plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag,i_run)
+  subroutine plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 
 
 
@@ -77,7 +77,6 @@
 
   integer :: jiter, nitermax, jipperdo, jipper, redo, jnit,i_modeltype,i_equiltype
 
-  integer , intent(inout) :: i_flag  ,i_run  
 
   integer :: jipperdo2,jipper2,j
   real(kind(1.0d0)) :: x0, dx, dxn,psep,plh
