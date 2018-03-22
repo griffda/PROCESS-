@@ -59,10 +59,10 @@
 	call prxe_func(nx, tepr, prxe, zavxe)
 	call prar_func(nx, tepr, prne, zavne)
 	prad = nXe*nepr*prxe + nne*nepr*prne
-	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*nHe)
-	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*nHe)
-	nions = ndeut + ntrit + nNe + nXe + nHe
-	zeff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*nHe+zavne**2*nNe+zavxe**2*nXe)
+	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*nHe-comp%protium*nepr)
+	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*nHe-comp%protium*nepr)
+	nions = ndeut + ntrit + nNe + nXe + nHe+comp%protium*nepr
+	zeff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*nHe+zavne**2*nNe+zavxe**2*nXe+comp%protium*nepr)
     coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
 
   PBRAD=5.06E-5*zeff*NEpr**2.d0*SQRT(TEpr)

@@ -16,6 +16,7 @@ module structs
       integer :: nx != 11!31!41    !these should go into inputs together with numeric_transp
       integer :: nxt, nchannels,i_impmodel != 5, nchannels = 3
       integer :: ipedestal
+      real(kind(1.0d0)) :: chvars(100)
     end type numerics_transp  
 
 
@@ -96,7 +97,7 @@ module structs
     type composition
       SEQUENCE
       real(kind(1.0D0)) :: globtau(5),psepplh_inf,psepplh_sup,qdivt,fuelmix,typ1,typ2,typ3,che,cxe,car,c_car, &
-						& pradpos,pradfrac,psepb_q95AR,psep_r
+						& pradpos,pradfrac,psepb_q95AR,psep_r,comparray(14),protium
     end type composition 
 
 !+ad_name  pedestal
@@ -150,7 +151,7 @@ module structs
 						& qheat,qcd,qfus,spellet,fpellet,q_control, & 
 						& x_heat(2),x_cd(2),x_fus(2),x_control(2), &
 						& dx_heat(2),dx_cd(2),dx_fus(2),dx_control(2),nbi_energy, &
-						& PLH,maxpauxor,contrpovs=0.d0,contrpovr=0.d0
+						& PLH,maxpauxor,contrpovs=0.d0,contrpovr=0.d0,betalim
 !gamma_ecrh,gamma_nbi (efficiencies)
     end type inputs 
 
