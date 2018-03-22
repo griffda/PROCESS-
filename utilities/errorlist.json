@@ -3,7 +3,7 @@
  "version":  [ "PROCESS version 1.0.12" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 194,
+ "n_errortypes": 195,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -198,6 +198,7 @@
      {"no": 191, "level": 3, "message": "CHECK: if plasmod_i_modeltype > 1, beta is calculated and its limit is enforced inside PLASMOD. Therefore no beta limit needs be checked in PROCESS!"},
      {"no": 192, "level": 3, "message": "CONVERT_PLASMOD2PROCESS: Definitions of dnalp inconsistent between PLASMOD and PROCESS! Flag to developer!"},
      {"no": 193, "level": 3, "message": "CONVERT_PLASMOD2PROCESS: Definitions of deni inconsistent between PLASMOD and PROCESS! Flag to developer!"},
-     {"no": 194, "level": 3, "message": "CONVERT_PLASMOD2PROCESS: Definitions of dnz inconsistent between PLASMOD and PROCESS! Flag to developer!"}
+     {"no": 194, "level": 3, "message": "CONVERT_PLASMOD2PROCESS: Definitions of dnz inconsistent between PLASMOD and PROCESS! Flag to developer!"},
+     {"no": 195, "level": 3, "message": "CONVERT_PLASMOD2PROCESS: Definitions of zeff inconsistent between PLASMOD and PROCESS! Flag to developer!"}
  ]
 }

@@ -32,6 +32,7 @@ module plasmod_module
   use error_handling
   use divertor_variables
   use numerics !for boundl
+  use divertor_kallenbach_variables !for impurity_enrichment
 
   
   implicit none
@@ -127,20 +128,15 @@ contains
     if (geom%counter.eq.0.d0) then
 
        ! To selfconsistently compute the He concentration inside PLASMOD
-       ! this has to be 0.d0. Then globtau is used!
-       comp%comparray = 0.d0 !array of impurities
-       comp%protium   = protium !protium is treated separately, I assume it is a fixed value right? EF
+       ! its intial fraction has to be 0.d0. Then globtau is used!
+       ! The Xe fraction is used as an iteration variable inside PLASMOD
+       ! it adjusts to fulfil psepqbarmax, pseprmax or psepplh_sup.
+       comp%comparray = 0.d0 !array of impurities !HL: This overwrites Argon setting!!!
+       comp%protium   = protium !protium is treated separately
        
-       !comp%che = 0.d0 !helium concentration
-       !Cxe is used if psepqbarmax is assigned, or pseprmax. or psepplh_sup.
-       !cxe is computed by PLASMOD so it cannot be assigned as input.
-       !It makes it much more robust and stable. 
-       !comp%cxe = 0.d0 !xenon concentration
-       !comp%car = 0.d0 !argon concentration, used if qdivt=0.
-
        comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi      
-       comp%psepplh_sup = 1.0e3 !Psep/PLH if below this, use nbi
-       inp0%maxpauxor    = plasmod_maxpauxor ! maximum Paux/R allowed
+       comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
+       inp0%maxpauxor   = plasmod_maxpauxor ! maximum Paux/R allowed
 
        num%tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
        num%dtmin  = plasmod_dtmin !min time step
@@ -173,21 +169,17 @@ contains
 
        num%i_impmodel = plasmod_i_impmodel !impurity model: 0 - fixed
        !concentration, 1 - concentration fixed at pedestal top, then fixed density. 
-       ! HL Todo: We need to make sure that our impurity fractions/mixes
-       ! match with Emilianos confinement time relations!
        comp%globtau(1) = plasmod_globtau(1) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(2) = plasmod_globtau(2) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(3) = plasmod_globtau(3) !tauparticle/tauE for D, T, He, Xe, Ar
        comp%globtau(4) = plasmod_globtau(4) !tauparticle/tauE for D, T, He, Xe, Ar Not used for Xe!
        comp%globtau(5) = plasmod_globtau(5) !tauparticle/tauE for D, T, He, Xe, Ar
-       comp%fuelmix = fdeut !fuel mix Could be fdeut or ftrit or sqrt(fdeut*ftrit)! CHECK!
-
-       ! This should be equal to "impurity_enrichment(9)" if using the
-       ! Kallenbach model at the same time
-       ! This needs to be implemented when coupling to the Kallenbach model!
-       comp%c_car = plasmod_c_car !compression factor between div and
+       comp%fuelmix = fdeut !fuel mix
+       
+       !compression factor between div and
        !core: e.g. 10 means there is 10 more Argon concentration in the
        !divertor than in the core
+       comp%c_car = impurity_enrichment(element2index('Ar')) 
 
 
        !derivatives
@@ -252,7 +244,6 @@ contains
        ped%rho_n   = rhopedn !pedestal top position n
        ped%pedscal = plasmod_pedscal !multiplies the pedestal scaling in PLASMOD
        ped%teped   = teped !pedestal top temperature
-       !inp0%f_gw   = fgwped !moving outside of IF statement
        inp0%f_gws  = fgwsep !separatrix greenwald fraction
        
 
@@ -301,7 +292,7 @@ contains
 
     double precision :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
     real(kind(1.0D0)) :: znimp, pc, znfuel
-    integer :: j, imp
+    integer :: imp
 
 
     if (i_flag==1)then
@@ -377,8 +368,8 @@ contains
        dnbeam = 0.0D0
     end if
 
-    do j=1,nimp
-       impurity_arr(j)%frac=comp%comparray(j)
+    do imp=1,nimp
+       impurity_arr(imp)%frac=comp%comparray(imp)
     enddo
     
     !  Sum of Zi.ni for all impurity ions (those with charge > helium)
@@ -441,16 +432,66 @@ contains
     end if
        
 
+    !  Effective charge
+    !  Calculation should be sum(ni.Zi^2) / sum(ni.Zi),
+    !  but ne = sum(ni.Zi) through quasineutrality
+    zeff = 0.0D0
+    do imp = 1,nimp
+       zeff = zeff + impurity_arr(imp)%frac * Zav_of_te(impurity_arr(imp),te)**2
+    end do
 
+    if ((zeff - radp%zeff)/zeff > 1e-6) then
+       fdiags(1) = zeff; fdiags(2) = radp%zeff
+       call report_error(195)
+    endif
 
-    aion = 2.0d0 ! Average mass of all ions (amu), to be done EF
+    !  Define coulomb logarithm
+    !  (collisions: ion-electron, electron-electron)
 
- 
+    dlamee = 31.0D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
+    dlamie = 31.3D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
 
-
-    zeff = radp%zeff ! Effective charge
+    !  Fraction of alpha energy to ions and electrons
+    !  From Max Fenstermacher
+    !  (used with electron and ion power balance equations only)
+    !  No consideration of pchargepv here...
+    pc = pcoef
     
+    falpe = 0.88155D0 * exp(-te*pc/67.4036D0)
+    falpi = 1.0D0 - falpe
 
+    !  Average atomic masses
+
+    afuel = 2.0D0*fdeut + 3.0D0*ftrit + 3.0D0*fhe3
+    abeam = 2.0D0*(1.0D0-ftritbm) + 3.0D0*ftritbm
+
+    !  Density weighted mass
+
+    aion = afuel*deni + 4.0D0*dnalp + dnprot + abeam*dnbeam
+    do imp = 1,nimp
+       if (impurity_arr(imp)%Z > 2) then
+          aion = aion + dene*impurity_arr(imp)%frac*impurity_arr(imp)%amass
+       end if
+    end do
+    aion = aion/dnitot
+
+    !  Mass weighted plasma effective charge
+
+    zeffai = ( fdeut*deni/2.0D0 + ftrit*deni/3.0D0 + 4.0D0*fhe3*deni/3.0D0 + &
+         dnalp + dnprot + (1.0D0-ftritbm)*dnbeam/2.0D0 + ftritbm*dnbeam/3.0D0 &
+         ) / dene
+    do imp = 1,nimp
+       if (impurity_arr(imp)%Z > 2) then
+          zeffai = zeffai + impurity_arr(imp)%frac &
+          !     * (impurity_arr(imp)%Z)**2 / impurity_arr(imp)%amass
+               * Zav_of_te(impurity_arr(imp),te)**2 / impurity_arr(imp)%amass
+       end if
+    end do
+
+
+    !------------------------------------------------
+    !Plasma Current outputs otherwise inputs or
+    !calculated in culcur
     !if plasmod_i_equiltype = 1 q95 is an input and plascur an output
     !if plasmod_i_equiltype = 2 plascur is an input and q95 an output
     !Reassign both for simplicity
@@ -461,15 +502,18 @@ contains
     !plascur = mhd%ip_out  * 1.0D6
     !q95 = mhd%q
 
-    !Need these: previously calculated in plascur
     qstar = mhd%qstar ! equivalent cylindrical safety factor (shaped)
     bp    = mhd%bp ! poloidal field in (T)
-    
-    !beta is now an output, is an input with (ipedestal .ne. 3)
-    beta  = mhd%betan * geom%ip / (rminor * bt)/100.
 
     
+    !------------------------------------------------
+    !beta is now an output, is an input with (ipedestal .ne. 3)
+    beta  = mhd%betan * geom%ip / (rminor * bt)/100.
     normalised_total_beta = mhd%betan
+    
+    !------------------------------------------------
+    
+    
     
     vol = mhd%vp ! plasma volume (m^3)
     !mhd%q_sep !q at separatrix

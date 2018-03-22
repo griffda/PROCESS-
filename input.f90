@@ -1119,9 +1119,6 @@ contains
        case ('plasmod_globtau')
           call parse_real_array('plasmod_globtau', plasmod_globtau, isub1, 5, &
                'Tauparticle/tauE for D, T, He, Xe, Ar', icode)
-       case ('plasmod_c_car')
-          call parse_real_variable('plasmod_c_car', plasmod_c_car, 0.0D0, 1.0D4, &
-               'Compression factor between div and core: eg 10 is 10 times Argon conc in divertor than in core')
         case ('plasmod_psepplh_sup')
           call parse_real_variable('plasmod_psepplh_sup', plasmod_psepplh_sup, 0.0D0, 2.0D4, &
                'Psep/PLH if above this, use Xe')
