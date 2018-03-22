@@ -1,4 +1,4 @@
-	if (isnan(sum(wsd1))) then
+	if (isnan(sum(wsd1)).or.redo.eq.1) then
 	WSACC=0.d0
 	ITER=0
 	WGBJ=0.d0

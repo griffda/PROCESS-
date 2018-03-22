@@ -73,7 +73,7 @@
   !+ad_stat Okay
   !+ad_docs None
   
-	subroutine EMEQ(BA,BB,   ! j_zeta = BA*(R00/r) + BB*(r/R00-R00/r)
+	subroutine EMEQ(redo,BA,BB,   ! j_zeta = BA*(R00/r) + BB*(r/R00-R00/r)
      &   BR00, 	! R00 = R_0+\Delta_edge		! RTOR+SHIFT
      &            SA0, 	! a_edge			! ABC
      &            GL0, 	! \lambda_edge			! ELONG
@@ -111,7 +111,7 @@
     
 	implicit none
 	include 'emeq.inc'
-	integer ::	NA1,NAOLD,NA,NT,NT1,I,I1,J,K,NITER
+	integer ::	NA1,NAOLD,NA,NT,NT1,I,I1,J,K,NITER,redo
 	integer :: jiter
 	 real(kind(1.0d0)) ::	BR00,SA0,GL0,GD30,ACC,B0T,PLCUR,TIME
 	real(kind(1.0d0)) ::	BA(NA1),BB(NA1),GR(NA1),GBD(NA1),GL(NA1) 

@@ -21,14 +21,14 @@ subroutine compute_equil( &
   
   integer, intent(inout) :: nx, jiter,i_equiltype
   integer :: j
-  real(kind(1.0d0)), dimension(nx), intent(in) :: x, te, ti, ne, ni, palph, cc, G30,qinit,G20,vp0
+  real(kind(1.0d0)), dimension(nx), intent(in) :: x, te, ne, ni, cc, G30,qinit,G20,vp0
   real(kind(1.0D0)), intent(in) :: q_edge_in,f_ind_in,R,rmin,btor,betaz,lint,ipol0,e_charge,mu_vacuum
   
   real(kind(1.0d0)), intent(inout) :: pres_fac,qedge,ip,q_95,elon,tria,elong95,triang95
   
   real(kind(1.0D0)), intent(inout) :: roc, Vloop, fbs,fcd, toleq
   real(kind(1.0d0)), dimension(nx), intent(inout) :: k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar
-  real(kind(1.0d0)), dimension(nx), intent(inout) :: ipol, Vprime,droda,eqpf,eqff,gradro
+  real(kind(1.0d0)), dimension(nx), intent(inout) :: ipol, Vprime,droda,eqpf,eqff,gradro,palph, ti
   
   !  Local variables
 ! Other local variables of interest
@@ -45,7 +45,7 @@ subroutine compute_equil( &
   real(kind(1.0D0)), dimension(nx) :: smallk, dvdr, rhoint, f, jpol, kerncur, pressure, A, B, C, bbb, ccc, dum1, dum2, dum3
   real(kind(1.0D0)), dimension(nx) :: chat,betahat,y, FF, fp, kpk, dpk,  pprime,ffprime,ba,bb
   real(kind(1.0D0)) :: dpsidt, Epar, Ibs, fb, yb, C1
-  real(kind(1.0d0)), parameter :: pi = 4.0d0*datan(1.0d0),ACEQLB=1.0d-6 !pi = 3.1415926536d0,ACEQLB=1.e-6
+  real(kind(1.0d0)), parameter :: pi = 3.141592,ACEQLB=1.0d-6 !pi = 3.1415926536d0,ACEQLB=1.e-6
   real(kind(1.0d0)), dimension(nx) :: gr,GBD,GL,GSD, & 
   &  BD,BC,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
   &  btooo,rooo,g11,g22,g33,slat,vr
@@ -53,7 +53,7 @@ subroutine compute_equil( &
   & bdb0,bmint,bmaxt, b0db2,ya,ybb,BDB02,FOFB,qg3s,q0,vvvv
   real(kind(1.0d0)), dimension(nx) :: gra,sqgra,grar,avr2,ai0,dgrda,avsqg !gradient,sqrgradient,radial gradient,
   
-  integer :: na,diagz,nxtemp
+  integer :: na,diagz,nxtemp,redo
   real(kind(1.0d0)) :: gpp4,gp2,yro,hro,yda,TIME,alfa,areat
 ! Quiet NAN, double precision.
 REAL(8), PARAMETER :: D_QNAN = &
@@ -90,8 +90,12 @@ TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)
 
 
      !precalculations
+redo=0
 111	continue
      pressure = 1.d3 * e_charge * 1.d19 * (te*ne + ti*ni + palph)*pres_fac ! in J/m^3
+	if (isnan(palph(1))) pressure=0.d0
+	if (isnan(te(1))) pressure=0.d0
+	if (isnan(ti(1))) pressure=0.d0
      pprime = derivcc(nx,psi,pressure,2)
 
      q0 = qinit
@@ -130,7 +134,6 @@ TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)
      FF = sqrt(2.*y)
 	
 					ffprime=gpp4*(chat-betahat*FF**2.d0)     
-
 !	write(1551,*) ' ' 
 !	write(*,*) 'A ',A,' B',B,'C ',C,'y ', & 
 !	& ' ',y,'F',FF,' ','pp ',pprime,'ff ',ffprime
@@ -179,7 +182,7 @@ TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)
 !     .	,GR,GBD,GL,GSD,A,BD,B,BA,BB,BC,C,D
 !     .  ,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ
 nxtemp=nx
-	call EMEQ(BA,BB,R+SHIF(nx),rmin,ELON,TRIA*rmin,nx, &		! radial grid point No.
+	call EMEQ(redo,BA,BB,R+SHIF(nx),rmin,ELON,TRIA*rmin,nx, &		! radial grid point No.
              &	 ACEQLB,BTOR*R/(R+SHIF(nx)),IP,GR,GBD,GL,GSD,gra, & 
         &  sqgra,grar,avr2,ai0,dgrda,avsqg,vvvv,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
         &  TIME)
@@ -194,6 +197,7 @@ nxtemp=nx
 	nx=nxtemp
 	pres_fac=pres_fac*0.9
 !	write(*,*) 'not converged pressure too high',pres_fac
+	redo=1
 !stop
 !		qedge=d_qnan
 		goto 111
@@ -201,12 +205,15 @@ nxtemp=nx
 
 
 	if (isnan(sqgra(2))) then
+	nx=nxtemp
 	pres_fac=pres_fac*0.9
-!	write(*,*) 'not converged pressure too high'
+!	write(*,*) 'not converged pressure too high',pres_fac
+	redo=1
 !	stop
 	goto 111
 	endif
 
+!if (pres_fac.lt.1) write(*,*) "ok"
 
 	BTOOO=BTOR*R/(R+SHIF(nx)) ! toroidal field at plasma axis
 	ROOO=(R+SHIF(nx))! plasma axis

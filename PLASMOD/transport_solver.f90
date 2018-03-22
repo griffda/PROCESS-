@@ -599,6 +599,7 @@ q_oh=mhd%qoh
 
   do while (((num%etol .ge. num%tol).and.(jiter.le.nitermax)).or.(redo.eq.1))
 
+!write(*,*) num%etol,jiter,tepr(1)
      if (i_diagz.eq.1) write(3301,*) num%etol,toleq,num%tol,jiter,nitermax
      if (i_diagz.eq.1)     write(*,*) " "
      if (i_diagz.eq.1)     write(*,*) " "
@@ -769,10 +770,12 @@ endif
         !define the following quantities
 !	write(*,*) 'ng,nsep,ip,pi,rminor',ng,nsep,ip,pi,rminor
 
+!write(*,*) num%etol,jiter,tepr(1)
 
 	nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [N_e(1), N_e,nsep], xr)
 	tepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [T_e(1), T_e,tsep], xr)
 	tipr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [T_i(1), T_i,tsep], xr)
+!write(*,*) num%etol,jiter,tepr(1)
 !
 !	write(*,*) 'te', tepr
 !	write(*,*) 'ne', nepr
@@ -881,6 +884,7 @@ endif
 	nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [N_e(1), N_e,nsep], xr)
 	tepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [T_e(1), T_e,tsep],xr)
 	tipr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [T_i(1), T_i,tsep],xr)
+!write(*,*) num%etol,jiter,tepr(1)
 
         !alpha pressure
 	do jrad=1,nx
@@ -1106,7 +1110,8 @@ endif
 
 !	if (i_run.eq.0) num%etol = 0.d0
 
-
+!write(9999,*) num%etol
+!write(*,*) num%etol,jiter,tepr(1)
   end do  ! end of main iteration loop
   !numerical stuff
 
