@@ -6,7 +6,7 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !+ad_name do_transport
 !+ad_summ transport solver main subroutine
-  subroutine plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+  subroutine plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag,i_run)
 
 
 
@@ -77,7 +77,7 @@
 
   integer :: jiter, nitermax, jipperdo, jipper, redo, jnit,i_modeltype,i_equiltype
 
-  integer , intent(inout) :: i_flag    
+  integer , intent(inout) :: i_flag  ,i_run  
 
   integer :: jipperdo2,jipper2,j
   real(kind(1.0d0)) :: x0, dx, dxn,psep,plh
@@ -347,9 +347,9 @@ endif
   ! Initial conditions
 
 		!impurities
-		che=comp%che
-  cxe=comp%cxe
-		car=comp%car
+		che=comp%comparray(2)
+  cxe=comp%comparray(13)
+		car=comp%comparray(9)
 
   if (jiterext.eq.1) then
 
@@ -364,7 +364,7 @@ endif
      gT_e0(1:nxt) = -rmajor * gradient(log(T_e0(1:nxt)),xtr)
      gT_i0(1:nxt) = -rmajor * gradient(log(T_i0(1:nxt)),xtr)
 
-		che=comp%che
+		che=comp%comparray(2)
   cxe=0.d0
 		car=0.d0
 q_heat=inp0%qheat
@@ -1105,6 +1105,7 @@ endif
 
 	if (i_diagz.eq.1) 	write(*,*) 'qnbi, cxe',tepr(1),sfus_he,integr_cde(v,nepr,nx),comp%globtau(3),taue,loss%pnbi,cxe,che,car
 
+!	if (i_run.eq.0) num%etol = 0.d0
 
 
   end do  ! end of main iteration loop
@@ -1177,6 +1178,8 @@ endif
 radp%shif=shif
 radp%k=k
 radp%d=d
+
+
 
   !global geometry
   geom%Rold=rmajor
@@ -1270,6 +1273,10 @@ mhd%qoh=q_oh(1)
 
  loss%betaft=trapz(palph*dV)/V(nx)*1.e3*e_charge*1.e19*2.*mu_vacuum/btor**2.
 
+		comp%comparray(2)=che
+  comp%comparray(13)=cxe
+		comp%comparray(9)=car
+	comp%comparray(1)=comp%protium+radp%av_ni/radp%av_ne
 
  mhd%qstar = 5*btor*rminor**2./rmajor/ip* & 
  & (1+elong95**2.*(1+2*triang95**2.-1.2*triang95**3.))/2.
@@ -1416,7 +1423,7 @@ mhd%qoh=q_oh(1)
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 
 
-!	write(*,*) "plasmod end ",jiter
+	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 

@@ -102,21 +102,22 @@
 				inp0%cxe_psepfac=1.e-5 !dcxe/d(1-Psep/PLH)
 				inp0%car_qdivt=1.e-6 !dcar/d(qdivt)
 
+				inp0%betalim=0. !beta limit in units of beta. THis is used only by a transport model that does it. if 0, not used.
 
 inp0%maxpauxor=20. ! maximum Paux/R allowed
 
 
 ! actual values for testing
-																						    num%tol=0.00001d0 !tolerance to be reached, in % variation at each time step
-                          num%dtmin=0.00001d0 !min time step
+																						    num%tol=0.0000001d0 !tolerance to be reached, in % variation at each time step
+                          num%dtmin=0.01d0 !min time step
                           num%dtmax=0.01d0 !max time step
                           num%dt=0.01d0 !time step
                           num%dtinc=2.d0 !decrease of dt
                           num%Ainc=1.1d0 !increase of dt
                           num%test=10000. !max iteration number
                           num%tolmin=10.1d0 ! multiplier of etolm that should not be overcome
-                          num%eopt=0.1d0 !exponent of jipperdo
-                          num%dtmaxmin=0.1d0 !exponent of jipperdo2
+                          num%eopt=0.02d0 !exponent of jipperdo
+                          num%dtmaxmin=0.02d0 !exponent of jipperdo2
                           num%capA=0.1d0 !first radial grid point
                           num%maxA=0.d0 !diagz 0 or 1
                           num%dgy=1.e-5 !Newton differential
@@ -145,6 +146,9 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
     comp%globtau(3) = 4. !tauparticle/tauE for D, T, He, Xe, Ar
     comp%globtau(4) = 4. !tauparticle/tauE for D, T, He, Xe, Ar
     comp%globtau(5) = 1. !tauparticle/tauE for D, T, He, Xe, Ar
+
+	comp%comparray=0.d0
+	comp%protium = 0.d0
 
     comp%car = 0. !argon concentration, used if qdivt=0.
     comp%cxe = 0. !xenon concentration, if negative uses Psepplh as criterion
@@ -181,20 +185,20 @@ ped%pedscal=1.1
 !constraints
 				inp0%V_loop=-1.e6 !target loop voltage. If lower than -1.e5, dont use this
 				inp0%Hfac_inp=0.95 !input H factor, if imodeltype > 1 this is ignored
-				inp0%f_ni=0.1 !required fraction of non inductive current, if 0, dont use CD
+				inp0%f_ni=0. !required fraction of non inductive current, if 0, dont use CD
 				inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat)
    inp0%PLH=0.
     comp%psepplh_inf = 1. !Psep/PLH if below this, use nbi
-    comp%psepplh_sup = 1.2d0 !Psep/PLH if above this, use Xe
-    comp%psepb_q95AR = 1000.2d0 !Psep B/qaR max value
+    comp%psepplh_sup = 1000.2d0 !Psep/PLH if above this, use Xe
+    comp%psepb_q95AR = 9.2d0 !Psep B/qaR max value
     comp%psep_r = 10009.d0 !Psep/R max value
     comp%qdivt = 10. !divertor heat flux in MW/m^2, if 0, dont use SOL model
     comp%c_car = 10. !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
 
 
 !derivatives
-				inp0%qnbi_psepfac=50. !dqnbi/d(1-Psep/PLH)
-				inp0%cxe_psepfac=1.e-4 !dcxe/d(1-Psep/PLH)
+				inp0%qnbi_psepfac=100. !dqnbi/d(1-Psep/PLH)
+				inp0%cxe_psepfac=1.e-3 !dcxe/d(1-Psep/PLH)
 				inp0%car_qdivt=1.e-4 !dcar/d(qdivt)
 				inp0%contrpovs=0.d0 !Pcontrol/S_lateral
 				inp0%contrpovr=0.d0 !Pcontrol/R

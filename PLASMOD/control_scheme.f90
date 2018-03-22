@@ -39,10 +39,7 @@ dum2=min(dum2,comp%psep_r*rmajor)
 		cxe=max(0.,cxe+inp0%cxe_psepfac*(Psep-dum2)/dum2*num%dt/(1.+num%dt))
 
  if (q_heat.gt.0.) cxe=0.d0
-	comp%cxe=cxe
-
-	endif
-
+endif
 
 
 
@@ -88,7 +85,6 @@ if(q_fus.gt.0.) q_fus=q_fus*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 	include 'solmodel.f90'
 !	qdivt=0.d0 !put here sol model for qdivt
 	 car = max(0.,car+inp0%car_qdivt*(qdivt-comp%qdivt)*num%dt/(1.+num%dt))
-	comp%car=car
 	if (i_diagz.eq.1) 	write(556,*) car,qdivt
 	if (i_diagz.eq.1) 	write(*,*) 'ccar',car,qdivt,qpar
 	endif
@@ -97,5 +93,4 @@ if(q_fus.gt.0.) q_fus=q_fus*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 !Helium concentration 
 	if (comp%globtau(3).gt.0.) then
 	 che = 1.8d0*comp%globtau(3)*max(0.001,taue)*Sfus_he/integr_cde(v,nepr,nx)
-	comp%che=che
 	endif
