@@ -93,7 +93,7 @@ contains
     inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
     if (comp%qdivt.eq.0.d0) then
-       comp%car = fimp(9) !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp%comparray(9) = impurity_arr%frac(9) !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
        !else
        !@EF: What should happen, if this is not assigned?
     endif
@@ -126,12 +126,15 @@ contains
 
        ! To selfconsistently compute the He concentration inside PLASMOD
        ! this has to be 0.d0. Then globtau is used!
-       comp%che = 0.d0 !helium concentration
+       comp%comparray = 0.d0 !array of impurities
+       comp%protium   = protium !protium is treated separately, I assume it is a fixed value right? EF
+       
+       !comp%che = 0.d0 !helium concentration
        !Cxe is used if psepqbarmax is assigned, or pseprmax. or psepplh_sup.
        !cxe is computed by PLASMOD so it cannot be assigned as input.
        !It makes it much more robust and stable. 
-       comp%cxe = 0.d0 !xenon concentration
-    comp%car = 0.d0 !argon concentration, used if qdivt=0.
+       !comp%cxe = 0.d0 !xenon concentration
+       !comp%car = 0.d0 !argon concentration, used if qdivt=0.
 
        comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi      
        comp%psepplh_sup = 1.0e3 !Psep/PLH if below this, use nbi
@@ -294,6 +297,7 @@ contains
     type (power_losses), intent(inout) :: loss 
 
     double precision :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
+    integer :: j
 
 
     if (i_flag==1)then
@@ -346,6 +350,10 @@ contains
     
     !------------------------------------------------
     !replacing plasma_compostion/betcom outputs
+    !in PROCESS fimp is used for input
+    !ralpne, fprot, ftrit etc. are used throughout instead impurity_arr()
+    !impurity_arr is used for the composition calculations and
+    !the radiation model
     dnalp = radp%av_nhe*1.d19 ! Helium ion density (thermalised ions only) (/m3)
     dnprot = protium*dene ! Proton density (/m3) from seeding only!
     ! Hot beam density (/m3)
@@ -357,34 +365,16 @@ contains
     deni  = radp%av_nd*1.d19 ! Fuel density (/m3)
     dnz   = radp%av_nz*1.d19 !High Z impurity density (/m3)
 
-    fimp(13) =  
-    fimp(2) = comp%che
-    impurity_arr(1)%frac  = deni/dene
-    impurity_arr(2)%frac  = comp%che
-    impurity_arr(3)%frac  = 0.d0
-    impurity_arr(4)%frac  = 0.d0
-    impurity_arr(5)%frac  = 0.d0
-    impurity_arr(6)%frac  = 0.d0
-    impurity_arr(7)%frac  = 0.d0
-    impurity_arr(8)%frac  = 0.d0
-    impurity_arr(9)%frac  = fimp(9)
-    impurity_arr(10)%frac = 0.d0
-    impurity_arr(11)%frac = 0.d0
-    impurity_arr(12)%frac = 0.d0
-    impurity_arr(13)%frac = 0.d0
-    impurity_arr(14)%frac = 0.d0
-    impurity_arr(13)%frac = comp%cxe
-    aion = 2.0d0 ! Average mass of all ions (amu), to be done EF
-
-    if (comp%qdivt.gt.0.d0) then
-       fimp(9)=comp%car  !argon concentration, reassigned if qdivt>0, i.e. no Kallenbach model, uses SOL model of PLASMOD
-    !else
-       !@EF what should be happening here.
-    endif
-    
-    ralpne   = comp%che
+    ralpne = comp%comparray(2)
     dnalp = dene * ralpne ! replaces assignement in plasma_composition
     
+    do j=1,nimp
+       impurity_arr(j)%frac=comp%comparray(j)
+    enddo
+
+    aion = 2.0d0 ! Average mass of all ions (amu), to be done EF
+
+ 
     
 
     !if plasmod_i_equiltype = 1 q95 is an input and plascur an output
@@ -404,8 +394,9 @@ contains
     !beta is now an output, is an input with (ipedestal .ne. 3)
     beta  = mhd%betan * geom%ip / (rminor * bt)/100.
 
-    !plasma thermal energy - need to find local variable name
-    
+
+
+
 
 
 

@@ -298,11 +298,6 @@ subroutine check
         end do
     end if
 
-    !  Set relevant impurity fraction if iteration variable 102 is turned on
-
-    !if ( any(ixc == 102) ) then
-    ! impurity_arr(impvar)%frac = fimpvar
-    !end if
 
     !  Warn if ion power balance equation is being used with the new radiation model
 
