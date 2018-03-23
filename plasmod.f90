@@ -301,8 +301,8 @@ contains
     type (MHD_EQ), intent(inout) :: mhd 
     type (power_losses), intent(inout) :: loss 
 
-    double precision :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
-    real(kind(1.0D0)) :: znimp, pc, znfuel
+    real(kind(1.0D0)) :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
+    real(kind(1.0D0)) :: znimp, znfuel
     integer :: imp
 
 
@@ -337,7 +337,6 @@ contains
     ten   = radp%av_te
     ti    = radp%av_ti
     tin   = ti/te * ten
-    pcoef = ten / te
 
     !------------------------------------------------
     !Density outputs otherwise inputs or
@@ -368,7 +367,6 @@ contains
     dnalp = radp%av_nhe*1.d19 ! Helium ion density (thermalised ions only) (/m3)
     if ((dnalp - dene*ralpne)/dnalp > 1e-6) then
        fdiags(1) = dnalp; fdiags(2) = dene; fdiags(3) = ralpne;
-       ! KE - why calculate the line above when a fatal error is then called?
        call report_error(192)
     endif
     dnprot = protium*dene ! Proton density (/m3) from seeding only, not from DD-fusion!
@@ -383,25 +381,31 @@ contains
     do imp=1,nimp
        impurity_arr(imp)%frac=comp%comparray(imp)
     enddo
-    
-    !  Sum of Zi.ni for all impurity ions (those with charge > helium)
-    znimp = 0.0D0
-    do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          znimp = znimp + Zav_of_te(impurity_arr(imp),te)*(impurity_arr(imp)%frac * dene)
-       end if
-    end do
 
-    !  Fuel portion - conserve charge neutrality
-    !  znfuel is the sum of Zi.ni for the three fuel ions
-    znfuel = dene - 2.0D0*dnalp - dnprot - dnbeam - znimp
-    deni   = znfuel/(1.0D0+fhe3)! Fuel density (/m3)
-    !deni  = radp%av_nd*1.d19 ! Fuel density (/m3)
+    if (.false.) then !This cannot be used as PLASMOD cannot vary Z with Te yet
     
-    if ((deni - radp%av_nd*1.d19)/deni > 1e-6) then
-       fdiags(1) = deni; fdiags(2) = radp%av_nd*1.d19; fdiags(3) = znfuel; fdiags(4) = fhe3
-       call report_error(193)
+       !  Sum of Zi.ni for all impurity ions (those with charge > helium)
+       znimp = 0.0D0
+       do imp = 1,nimp
+          if (impurity_arr(imp)%Z > 2) then
+             znimp = znimp + Zav_of_te(impurity_arr(imp),te)*(impurity_arr(imp)%frac * dene)
+          end if
+       end do
+
+       !  Fuel portion - conserve charge neutrality
+       !  znfuel is the sum of Zi.ni for the three fuel ions
+       znfuel = dene - 2.0D0*dnalp - dnprot - dnbeam - znimp
+       deni   = znfuel/(1.0D0+fhe3)! Fuel density (/m3)
+    
+       if ((deni - radp%av_nd*1.d19)/deni > 1e-6) then
+          fdiags(1) = deni; fdiags(2) = radp%av_nd*1.d19; fdiags(3) = znfuel; fdiags(4) = fhe3
+          call report_error(193)
+       endif
+
     endif
+    
+    deni  = radp%av_nd*1.d19 ! Fuel density (/m3)
+    
 
     !  Ensure that deni is never negative or zero
     if (deni < 1.0D0) then
@@ -447,30 +451,28 @@ contains
     !  Effective charge
     !  Calculation should be sum(ni.Zi^2) / sum(ni.Zi),
     !  but ne = sum(ni.Zi) through quasineutrality
-    zeff = 0.0D0
-    do imp = 1,nimp
-       zeff = zeff + impurity_arr(imp)%frac * Zav_of_te(impurity_arr(imp),te)**2
-    end do
-
-    if ((zeff - radp%zeff)/zeff > 1e-6) then
-       fdiags(1) = zeff; fdiags(2) = radp%zeff
-       call report_error(195)
+    if (.false.) then !This cannot be used as PLASMOD cannot vary Z with Te yet
+       zeff = 0.0D0
+       do imp = 1,nimp
+          zeff = zeff + impurity_arr(imp)%frac * Zav_of_te(impurity_arr(imp),te)**2
+       end do
+       
+       if ((zeff - radp%zeff)/zeff > 1e-6) then
+          fdiags(1) = zeff; fdiags(2) = radp%zeff
+          call report_error(195)
+       endif
     endif
-
+    zeff = radp%zeff
+    
     !  Define coulomb logarithm
     !  (collisions: ion-electron, electron-electron)
 
     dlamee = 31.0D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
     dlamie = 31.3D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
-
-    !  Fraction of alpha energy to ions and electrons
-    !  From Max Fenstermacher
-    !  (used with electron and ion power balance equations only)
-    !  No consideration of pchargepv here...
-    pc = pcoef
     
-    falpe = 0.88155D0 * exp(-te*pc/67.4036D0)
-    falpi = 1.0D0 - falpe
+    falpe = loss%palpe/(loss%palpe+loss%palpi)   
+    falpi = loss%palpi/(loss%palpe+loss%palpi)   
+    
 
     !  Average atomic masses
 
@@ -630,7 +632,7 @@ contains
     taup = loss%taueff*comp%globtau(3) !(alpha) particle confinement time (s)
     burnup = rndfuel/qfuel*2.d0 !fractional plasma burnup
     fusrat=fusionrate*vol
-				figmer=plascur*1.d-6*aspect
+    figmer=plascur*1.d-6*aspect
 
     !pohm
     pohmpv = loss%pohm/vol !ohmic heating power per unit volume (MW/m3)
@@ -644,8 +646,7 @@ contains
     pradpv = loss%Prad/vol !Total radiation power (MW) 
   
     falpha=1.0
-    falpe= loss%palpe/(loss%palpe+loss%palpi)   
-    falpi= loss%palpi/(loss%palpe+loss%palpi)   
+
     ptrimw = loss%psepi !Ion transport (MW)  
     ptremw = loss%psepe !Electron transport (MW) 
    
