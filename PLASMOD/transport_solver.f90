@@ -1170,11 +1170,15 @@ endif
   radp%av_ni = trapz(nions*dV)/V(nx)
   radp%av_nd = trapz((ndeut+ntrit)*dV)/V(nx)
   radp%av_nz = trapz((nions-ndeut-ntrit)*dV)/V(nx)
+ 	nHe = cHe * nepr
   radp%av_nhe = trapz((nhe)*dV)/V(nx)
   radp%av_Ti = trapz(tipr*dV)/V(nx)
   radp%av_Te = trapz(tepr*dV)/V(nx)
   radp%zeff  = trapz(zeff*dV)/V(nx)
 
+		comp%comparray(2)=che
+  comp%comparray(13)=cxe
+		comp%comparray(9)=car
 
   radp%nepg(1:nxt+1) = N_e(1:nxt+1)
   radp%Tepg(1:nxt+1) = T_e(1:nxt+1)
@@ -1277,9 +1281,7 @@ mhd%qoh=q_oh(1)
 
  loss%betaft=trapz(palph*dV)/V(nx)*1.e3*e_charge*1.e19*2.*mu_vacuum/btor**2.
 
-		comp%comparray(2)=che
-  comp%comparray(13)=cxe
-		comp%comparray(9)=car
+
  	comp%comparray(1)=comp%protium+radp%av_nd/radp%av_ne
 
  mhd%qstar = 5*btor*rminor**2./rmajor/ip* & 
