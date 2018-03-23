@@ -1167,15 +1167,34 @@ endif
 
   !averages
   radp%av_ne = trapz(nepr*dV)/V(nx)
+! impurity model 0
+	if (num%i_impmodel.eq.0) then
+		nNe = car * nepr
+		nXe = cXe * nepr
+	endif
+	if (num%i_impmodel.eq.1) then
+		nNe = car * nepr
+		nXe = cXe * nepr
+	nne = nne(jped)
+	nxe = nxe(jped)
+	endif
+ 	nHe = cHe * nepr
+	call prxe_func(nx, tepr, prxe, zavxe)
+	call prar_func(nx, tepr, prne, zavne)
+	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*nHe-comp%protium*nepr)
+	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*nHe-comp%protium*nepr)
+	nions = ndeut + ntrit + nNe + nXe + nHe+comp%protium*nepr
+	zeff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*nHe+zavne**2*nNe+zavxe**2*nXe+comp%protium*nepr)
+  coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
   radp%av_ni = trapz(nions*dV)/V(nx)
   radp%av_nd = trapz((ndeut+ntrit)*dV)/V(nx)
-  radp%av_nz = trapz((nions-ndeut-ntrit)*dV)/V(nx)
- 	nHe = cHe * nepr
+  radp%av_nz = trapz((nne+nxe)*dv)/V(nx)
   radp%av_nhe = trapz((nhe)*dV)/V(nx)
   radp%av_Ti = trapz(tipr*dV)/V(nx)
   radp%av_Te = trapz(tepr*dV)/V(nx)
   radp%zeff  = trapz(zeff*dV)/V(nx)
 
+ 	comp%comparray(1)=comp%protium+radp%av_nd/radp%av_ne
 		comp%comparray(2)=che
   comp%comparray(13)=cxe
 		comp%comparray(9)=car
@@ -1282,7 +1301,6 @@ mhd%qoh=q_oh(1)
  loss%betaft=trapz(palph*dV)/V(nx)*1.e3*e_charge*1.e19*2.*mu_vacuum/btor**2.
 
 
- 	comp%comparray(1)=comp%protium+radp%av_nd/radp%av_ne
 
  mhd%qstar = 5*btor*rminor**2./rmajor/ip* & 
  & (1+elong95**2.*(1+2*triang95**2.-1.2*triang95**3.))/2.
