@@ -326,6 +326,19 @@ contains
        write(*,*) 'The PLASMOD equilibrium has crashed'
        call report_error(174) 
     endif
+
+    !------------------------------------------------
+    !Quantities previously calculated by geomty in plasma_geometry
+    !kappa95 and triang95 are inputs and not recalculated! (#646)
+    !HL Todo: We need to go through the radial build/vertical build and check
+    !that those are now consistent with the changes to the plasma geometry!
+    kappa    = geom%k
+    triang   = geom%d 
+    xarea    = mhd%torsurf !Plasma cross-sectional area (m2) - added KE
+    sarea    = mhd%sp
+    kappaa   = xarea/(3.141592*rminor**2)
+    !pperim = 0.0d0 !Plasma poloidal perimeter (m), to be done yet EF
+    
     
     !------------------------------------------------
     !Temperature outputs otherwise input or
@@ -406,9 +419,8 @@ contains
     
     deni  = radp%av_nd*1.d19 ! Fuel density (/m3)
     
-
     !  Ensure that deni is never negative or zero
-    if (deni < 1.0D0) then
+    if (deni < 0.0D0) then
        fdiags(1) = deni ; call report_error(78)
        deni = max(deni,1.0D0)
     end if
@@ -529,13 +541,20 @@ contains
     normalised_total_beta = mhd%betan
     
     !------------------------------------------------
+    !replacing parametrised bootstrap models
+    bootipf= mhd%fbs
+
     
+    !See #645 for discussion on fvsbrnni
+    fvsbrnni = mhd%f_ni
+    facoh = max(1.0D-10, (1.-mhd%f_ni))
+    faccd = max(0., mhd%f_ni - bootipf )
+
     
     
     vol = mhd%vp ! plasma volume (m^3)
     !mhd%q_sep !q at separatrix
     !mhd%vloop !loop voltage in V ! Check this is consistent with our volt-seconds requirements routine in physics.f90
-    bootipf= mhd%fbs
 
     ! This should match that input value and therefore should not need to be reassigned
     ! One could implement a reference check?
@@ -593,22 +612,10 @@ contains
     powerht =  loss%qtot !heating power (MW) assumed in calculation of confinement scaling
     taueff  =  loss%taueff   !global energy confinement time (s)
     
-    xarea = mhd%torsurf !Plasma cross-sectional area (m2) - added KE
-    sarea=mhd%sp
-    !plasma geometry
-    kappa = geom%k
-    kappa95 = geom%k95
-    kappaa = xarea/(3.141592*rminor**2)
-    triang = geom%d 
-    triang95 = geom%d95
 
-!    pperim = 0.0d0 !Plasma poloidal perimeter (m), to be done yet EF
+
     
-    !vscalc:
-    facoh=(1.-mhd%f_ni)
-    
-    !faccd = fvsbrnni - bootipf !changing to line below on request from EF
-    faccd = max(0.,mhd%f_ni - bootipf )
+
 
     phiint = radp%psi(size(radp%psi)) !internal plasma volt-seconds (Wb)
     rli = mhd%rli !plasma inductance internal (H)
@@ -651,7 +658,11 @@ contains
     falpha=1.0
 
     ptrimw = loss%psepi !Ion transport (MW)  
-    ptremw = loss%psepe !Electron transport (MW) 
+    ptremw = loss%psepe !Electron transport (MW)
+
+
+
+    
    
   end subroutine convert_Plasmod2PROCESS
 
