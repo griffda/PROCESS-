@@ -421,17 +421,21 @@ contains
 
     impurity_arr(element2index('He'))%frac = fhe3*deni/dene + ralpne
 
-    !  Total impurity density (/m3)
-    dnz = 0.0D0
-    do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          dnz = dnz + impurity_arr(imp)%frac*dene
-       end if
-    end do
-
-    if ( (dnz - radp%av_nz*1.d19)/dnz > 1e-6) then
-       fdiags(1) = dnz; fdiags(2) = radp%av_nz*1.d19
-       call report_error(194)
+    if (plasmod_i_impmodel == 0 ) then
+       !  Total impurity density (/m3)
+       dnz = 0.0D0
+       do imp = 1,nimp
+          if (impurity_arr(imp)%Z > 2) then
+             dnz = dnz + impurity_arr(imp)%frac*dene
+          end if
+       end do
+       
+       if ( (dnz - radp%av_nz*1.d19)/dnz > 1e-6) then
+          fdiags(1) = dnz; fdiags(2) = radp%av_nz*1.d19
+          call report_error(194)
+       endif
+    else
+       dnz = radp%av_nz*1.d19
     endif
 
     !  Total ion density
@@ -497,7 +501,6 @@ contains
     do imp = 1,nimp
        if (impurity_arr(imp)%Z > 2) then
           zeffai = zeffai + impurity_arr(imp)%frac &
-          !     * (impurity_arr(imp)%Z)**2 / impurity_arr(imp)%amass
                * Zav_of_te(impurity_arr(imp),te)**2 / impurity_arr(imp)%amass
        end if
     end do
