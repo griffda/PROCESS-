@@ -301,8 +301,8 @@ contains
     type (MHD_EQ), intent(inout) :: mhd 
     type (power_losses), intent(inout) :: loss 
 
-    double precision :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
-    real(kind(1.0D0)) :: znimp, pc, znfuel
+    real(kind(1.0D0)) :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
+    real(kind(1.0D0)) :: znimp, znfuel
     integer :: imp
 
 
