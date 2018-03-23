@@ -5865,6 +5865,8 @@ end function t_eped_scaling
         endif
         call ovarrf(outfile,'Electron temp. pedestal height (keV)','(teped)',teped)
         call ovarrf(outfile,'Electron temp. at separatrix (keV)','(tesep)',tesep)
+        call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
+        call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep_out)',fgwsep_out)
     endif
 
     ! Issue 558 - addition of constraint 76 to limit the value of nesep, in proportion with the ballooning parameter and Greenwald density
@@ -5873,8 +5875,6 @@ end function t_eped_scaling
        call ovarre(outfile,'Critical electron density at separatrix (/m3)','(nesep_crit)',nesep_crit)
     endif
 
-    call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
-    call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep_out)',fgwsep_out)
     call ovarrf(outfile,'Temperature profile index','(alphat)',alphat)
     call ovarrf(outfile,'Temperature profile index beta','(tbeta)',tbeta)
 
