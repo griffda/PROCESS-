@@ -49,6 +49,8 @@ if __name__ == '__main__':
     USEDEN = True
     USETE = True
     USETI = True
+    USEDEUT = True
+    USETRIT = True
     USEJBS = True
     USEJCD = True
     USEJTOT = True
@@ -57,9 +59,9 @@ if __name__ == '__main__':
     USEVOL = True
     USEDVOL = True
     USECOND = True
-    USEPALPH = True
-    USEDENI = True
-    USEFPOL = True
+    #USEPALPH = True
+    #USEDENI = True
+    #USEFPOL = True
     
     fileArray = [ARGS.filename0, ARGS.filename1]
     n = len(fileArray)
@@ -70,6 +72,8 @@ if __name__ == '__main__':
     DEN = [None] * n
     TE = [None] * n
     TI = [None] * n
+    DEUT = [None] * n
+    TRIT = [None] * n
     JBS = [None] * n
     JCD = [None] * n
     JTOT = [None] * n
@@ -78,9 +82,9 @@ if __name__ == '__main__':
     VOL = [None] * n
     DVOL = [None] * n
     COND = [None] * n
-    PALPH = [None] * n
-    DENI = [None] * n
-    FPOL = [None] * n
+    #PALPH = [None] * n
+    #DENI = [None] * n
+    #FPOL = [None] * n
     
     for f in range(0,n):
         #print('{0:d}'.format(f))
@@ -130,6 +134,20 @@ if __name__ == '__main__':
             print('Warning: The column for the ion temp does not exist!\
             Remember to start counting at 0!')
             USETI = False
+        #try:
+        #    DEUT[f] = DATA[f][4]
+        #    print('Inputted DEUT (Deuterium density)')
+        #except IndexError:
+        #    print('Warning: The column for the deuterium density does not exist!\
+        #    Remember to start counting at 0!')
+        #    USEDEUT = False
+        #try:
+        #    TRIT[f] = DATA[f][5]
+        #    print('Inputted TRIT (Tritium density)')
+        #except IndexError:
+        #    print('Warning: The column for the tritium density does not exist!\
+        #    Remember to start counting at 0!')
+        #    USETRIT = False    
         try:
             JBS[f] = DATA[f][4]
             print('Inputted JBS (bootstrap current)')
@@ -186,31 +204,31 @@ if __name__ == '__main__':
             print('Warning: The column for COND does not exist!\
             Remember to start counting at 0!')
             USECOND = False
-        try:
-            PALPH[f] = DATA[f][12]
-            print('Inputted PALPH (Alpha pressure)')
-        except IndexError:
-            print('Warning: The column for PALPH does not exist!\
-            Remember to start counting at 0!')
-            USEPALPH = False
-        try:
-            DENI[f] = DATA[f][13]
-            print('Inputted DENI (Ion density)')
-        except IndexError:
-            print('Warning: The column for DENI does not exist!\
-            Remember to start counting at 0!')
-            USEDENI = False
-        try:
-            FPOL[f] = DATA[f][14]
-            print('Inputted FPOL (Poloidal flux)')
-        except IndexError:
-            print('Warning: The column for FPOL does not exist!\
-            Remember to start counting at 0!')
-            USEFPOL = False
-            
-    page1 = plt.figure(figsize=(12, 9), dpi=80)
+        #try:
+        #    PALPH[f] = DATA[f][12]
+        #    print('Inputted PALPH (Alpha pressure)')
+        #except IndexError:
+        #    print('Warning: The column for PALPH does not exist!\
+        #    Remember to start counting at 0!')
+        #    USEPALPH = False
+        #try:
+        #    DENI[f] = DATA[f][13]
+        #    print('Inputted DENI (Ion density)')
+        #except IndexError:
+        #    print('Warning: The column for DENI does not exist!\
+        #    Remember to start counting at 0!')
+        #    USEDENI = False
+        #try:
+        #    FPOL[f] = DATA[f][14]
+        #    print('Inputted FPOL (Poloidal flux)')
+        #except IndexError:
+        #    print('Warning: The column for FPOL does not exist!\
+        #    Remember to start counting at 0!')
+        #    USEFPOL = False
 
-    plt.suptitle('Radial profiles (page 1)')
+    ###################
+    page1 = plt.figure(figsize=(12, 9), dpi=80)
+    plt.suptitle('Radial profiles (page 1) - densities')
     
     plot_den = page1.add_subplot(221)
     plt.scatter(RHO[0], DEN[0])
@@ -224,7 +242,35 @@ if __name__ == '__main__':
     plt.plot(RHO[1],DEN[1], label="File1")
     plt.legend()
 
-    plot_te = page1.add_subplot(222)
+    plot_deut = page1.add_subplot(222)
+    #plt.scatter(RHO[0], DEUT[0])
+    #plt.scatter(RHO[1], DEUT[1])
+    
+    plt.xlabel('r/a')
+    plt.ylabel('deut / 1e19 m-3')
+    plt.title('Deuterium density')
+    
+    #plt.plot(RHO[0],DEUT[0], label="File0")
+    #plt.plot(RHO[1],DEUT[1], label="File1")
+    plt.legend()
+
+    plot_trit = page1.add_subplot(223)
+    #plt.scatter(RHO[0], TRIT[0])
+    #plt.scatter(RHO[1], TRIT[1])
+    
+    plt.xlabel('r/a')
+    plt.ylabel('trit / 1e19 m-3')
+    plt.title('Tritium density')
+    
+    #plt.plot(RHO[0],TRIT[0], label="File0")
+    #plt.plot(RHO[1],TRIT[1], label="File1")
+    plt.legend()
+
+    #################
+    page2 = plt.figure(figsize=(12, 9), dpi=80)
+    plt.suptitle('Radial profiles (page 2) - temperatures')
+    
+    plot_te = page2.add_subplot(221)
     plt.scatter(RHO[0], TE[0])
     plt.scatter(RHO[1], TE[1])
 
@@ -236,7 +282,7 @@ if __name__ == '__main__':
     plt.plot(RHO[1],TE[1], label="File1")
     plt.legend()
 
-    plot_ti = page1.add_subplot(223)
+    plot_ti = page2.add_subplot(222)
     plt.scatter(RHO[0], TI[0])
     plt.scatter(RHO[1], TI[1])
     
@@ -248,22 +294,11 @@ if __name__ == '__main__':
     plt.plot(RHO[1],TI[1], label="File1")
     plt.legend()
 
-    plot_q = page1.add_subplot(224)
-    plt.scatter(RHO[0], Q[0])
-    plt.scatter(RHO[1], Q[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('q')
-    plt.title('Safety factor')
-    
-    plt.plot(RHO[0],Q[0], label="File0")
-    plt.plot(RHO[1],Q[1], label="File1")
-    plt.legend()
+    ###################
+    page3 = plt.figure(figsize=(12, 9), dpi=80)
+    plt.suptitle('Radial profiles (page 3) - currents')
 
-    page2 = plt.figure(figsize=(12, 9), dpi=80)
-    plt.suptitle('Radial profiles (page 2) - currents')
-
-    plot_jbs = page2.add_subplot(221)
+    plot_jbs = page3.add_subplot(221)
     plt.scatter(RHO[0], JBS[0])
     plt.scatter(RHO[1], JBS[1])
     
@@ -275,7 +310,7 @@ if __name__ == '__main__':
     plt.plot(RHO[1],JBS[1], label="File1")
     plt.legend()
 
-    plot_jcd = page2.add_subplot(222)
+    plot_jcd = page3.add_subplot(222)
     plt.scatter(RHO[0], JCD[0])
     plt.scatter(RHO[1], JCD[1])
     
@@ -287,7 +322,7 @@ if __name__ == '__main__':
     plt.plot(RHO[1],JCD[1], label="File1")
     plt.legend()
 
-    plot_jtot = page2.add_subplot(223)
+    plot_jtot = page3.add_subplot(223)
     plt.scatter(RHO[0], JTOT[0])
     plt.scatter(RHO[1], JTOT[1])
     
@@ -300,7 +335,7 @@ if __name__ == '__main__':
     plt.legend()
 
     # not a key quantity - Michael
-    plot_ipol = page2.add_subplot(224)
+    plot_ipol = page3.add_subplot(224)
     plt.scatter(RHO[0], IPOL[0])
     plt.scatter(RHO[1], IPOL[1])
     
@@ -311,11 +346,24 @@ if __name__ == '__main__':
     plt.plot(RHO[0],IPOL[0], label="File0")
     plt.plot(RHO[1],IPOL[1], label="File1")
     plt.legend()
-    
-    page3 = plt.figure(figsize=(12, 9), dpi=80)
-    plt.suptitle('Radial profiles (page 3)')
 
-    plot_vol = page3.add_subplot(221)
+    ################
+    page4 = plt.figure(figsize=(12, 9), dpi=80)
+    plt.suptitle('Radial profiles (page 4)')
+    
+    plot_q = page4.add_subplot(221)
+    plt.scatter(RHO[0], Q[0])
+    plt.scatter(RHO[1], Q[1])
+    
+    plt.xlabel('r/a')
+    plt.ylabel('q')
+    plt.title('Safety factor')
+    
+    plt.plot(RHO[0],Q[0], label="File0")
+    plt.plot(RHO[1],Q[1], label="File1")
+    plt.legend()
+    
+    plot_vol = page4.add_subplot(222)
     plt.scatter(RHO[0], VOL[0])
     plt.scatter(RHO[1], VOL[1])
     
@@ -327,7 +375,7 @@ if __name__ == '__main__':
     plt.plot(RHO[1],VOL[1], label="File1")
     plt.legend()
 
-    plot_dvol = page3.add_subplot(222)
+    plot_dvol = page4.add_subplot(223)
     plt.scatter(RHO[0], DVOL[0])
     plt.scatter(RHO[1], DVOL[1])
     
@@ -339,7 +387,7 @@ if __name__ == '__main__':
     plt.plot(RHO[1],DVOL[1], label="File1")
     plt.legend()
 
-    plot_cond = page3.add_subplot(223)
+    plot_cond = page4.add_subplot(224)
     plt.scatter(RHO[0], COND[0])
     plt.scatter(RHO[1], COND[1])
     
@@ -351,18 +399,17 @@ if __name__ == '__main__':
     plt.plot(RHO[1],COND[1], label="File1")
     plt.legend()
     
-    plot_palph = page3.add_subplot(224)
-    plt.scatter(RHO[0], PALPH[0])
-    plt.scatter(RHO[1], PALPH[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('p_alpha / keV*10^10/m^3')
-    plt.title('Alpha pressure')
-    
-    plt.plot(RHO[0],PALPH[0], label="File0")
-    plt.plot(RHO[1],PALPH[1], label="File1")
-    plt.legend()
-
+#    plot_palph = page3.add_subplot(224)
+#    plt.scatter(RHO[0], PALPH[0])
+#    plt.scatter(RHO[1], PALPH[1])
+#    
+#    plt.xlabel('r/a')
+#    plt.ylabel('p_alpha / keV*10^10/m^3')
+#    plt.title('Alpha pressure')
+#    
+#   plt.plot(RHO[0],PALPH[0], label="File0")
+#   plt.plot(RHO[1],PALPH[1], label="File1")
+#    plt.legend()
 
 
     
@@ -372,7 +419,8 @@ if __name__ == '__main__':
         pdf.savefig(page1)
         pdf.savefig(page2)
         pdf.savefig(page3)
-        
+        pdf.savefig(page4)
     plt.show(page1)
     plt.show(page2)
     plt.show(page3)
+    plt.show(page4)

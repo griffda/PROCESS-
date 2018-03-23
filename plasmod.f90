@@ -336,9 +336,11 @@ contains
     triang   = geom%d 
     xarea    = mhd%torsurf !Plasma cross-sectional area (m2) - added KE
     sarea    = mhd%sp
+    !sareao   =  !outboard plasma surface area
     kappaa   = xarea/(3.141592*rminor**2)
     !pperim = 0.0d0 !Plasma poloidal perimeter (m), to be done yet EF
-    
+    !sf = pperim / (2.0D0*pi*rminor)    
+    vol = mhd%vp ! plasma volume (m^3)
     
     !------------------------------------------------
     !Temperature outputs otherwise input or
@@ -551,8 +553,7 @@ contains
     faccd = max(0., mhd%f_ni - bootipf )
 
     
-    
-    vol = mhd%vp ! plasma volume (m^3)
+
     !mhd%q_sep !q at separatrix
     !mhd%vloop !loop voltage in V ! Check this is consistent with our volt-seconds requirements routine in physics.f90
 
@@ -796,16 +797,17 @@ contains
     write(radp_file,*) '#                                            '
     write(radp_file,*) '# Radial position    ||     Electron density  ||    &
          &Electron temperature   ||   Ion temperature   || &
+         &Deuterium density   ||    Tritium density   &
          &BS current density(MA/m^2)||&
  &CD current dens(MA/m^2)||Total current dens(MA/m^2)||&
  &Poloidal current(R*Bp)(T.m)|| Safety factor q    ||     Volume (m^3)    &
  &||      dVolume/dr (m^2)  || Plasma conductivity(MA/(V.m)||&
  &Alpha press(keV*10^10 m^-3)||Ion dens(10^19 m^-3) || &
  &Poloidal flux (Wb)'
-         !&Deuterium density   ||    Tritium density   &
+         
     do j=1,41
        write(radp_file,*) radp%x(j),radp%ne(j),radp%Te(j),radp%Ti(j),&
-            !&radp%ndeut(j),radp%ntrit(j),
+            &radp%ndeut(j),radp%ntrit(j),&
             &radp%jbs(j),radp%jcd(j),radp%jpar(j),&
             &radp%ipol(j),radp%qprof(j),radp%Volum(j),radp%vp(j),radp%cc(j),&
             &radp%palph(j),radp%nions(j),radp%psi(j)
