@@ -202,5 +202,4 @@
      {"no": 195, "level": 3, "message": "CONVERT_PLASMOD2PROCESS: Definitions of zeff inconsistent between PLASMOD and PROCESS! Flag to developer!"},
      {"no": 196, "level": 3, "message": "CHECK: ishape has to be 4, if ipedestal=2,3, as PLASMOD takes kappa95,triang95 as inputs!"}
  ]
- ]
 }
