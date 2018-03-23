@@ -395,15 +395,19 @@ implicit none
     bscf_iter89 = bootstrap_fraction_iter89(aspect,beta,btot,cboot,plascur, &
          q95,q0,rmajor,vol)
 
-    betat = beta * btot**2 / bt**2
-    bscf_nevins = cboot * bootstrap_fraction_nevins(alphan,alphat,betat,bt,dene, &
-         plascur,q95,q0,rmajor,rminor,ten,zeff)
 
-    !  Wilson scaling uses thermal poloidal beta, not total
-    betpth = (beta-betaft-betanb) * ( btot/bp )**2
-    bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
-         q0,q95,rmajor,rminor,itart)
-
+    !Profile parameters are meaningless with ipedestal=3
+    if (ipedestal.ne.3) then
+       betat = beta * btot**2 / bt**2
+       bscf_nevins = cboot * bootstrap_fraction_nevins(alphan,alphat,betat,bt,dene, &
+            plascur,q95,q0,rmajor,rminor,ten,zeff)
+       
+       !  Wilson scaling uses thermal poloidal beta, not total
+       betpth = (beta-betaft-betanb) * ( btot/bp )**2
+       bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
+            q0,q95,rmajor,rminor,itart)
+    endif
+    
     bscf_sauter = cboot * bootstrap_fraction_sauter()
 
     if (ipedestal .ne. 3) then
@@ -448,7 +452,7 @@ implicit none
     if (irfcd /= 0) call cudriv(nout,0)
  
     if (ipedestal .ne. 3) then
-!       if (irfcd /= 0) call cudriv(nout,0)
+
        
        !  Calculate fusion power + components
        call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
@@ -571,9 +575,8 @@ implicit none
             plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
             xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
        
-       !KE and EF :moved the 3 equations below to outside IF statement
-       !ptremw = ptrepv*vol
-       !ptrimw = ptripv*vol
+       ptremw = ptrepv*vol
+       ptrimw = ptripv*vol
        !  Total transport power from scaling law (MW)
        !pscalingmw = ptremw + ptrimw
 
@@ -590,8 +593,8 @@ implicit none
 
     endif
 
-!    ptremw = ptrepv*vol
-!    ptrimw = ptripv*vol
+    !ptremw = ptrepv*vol
+    !ptrimw = ptripv*vol
     !  Total transport power from scaling law (MW)
     pscalingmw = ptremw + ptrimw
        
@@ -2782,7 +2785,7 @@ end function t_eped_scaling
 
     !  Ensure that deni is never negative or zero
 
-    if (deni < 1.0D0) then
+    if (deni < 0.0D0) then
        fdiags(1) = deni ; call report_error(78)
        deni = max(deni,1.0D0)
     end if
@@ -6134,27 +6137,27 @@ end function t_eped_scaling
 
        call ovarrf(outfile,'bootstrap current fraction multiplier', '(cboot)',cboot)
        call ovarrf(outfile,'Bootstrap fraction (ITER 1989)', '(bscf_iter89)',bscf_iter89, 'OP ')
-       call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', '(bscf_nevins)',bscf_nevins, 'OP ')
-       if (ipedestal==3) then
-          call ocmmnt(outfile,'if ipedestal==3, alphap=0 and the bscf_wilson will be meaningless')
-          call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
-       else
-          call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
-       endif
-       
        call ovarrf(outfile,'Bootstrap fraction (Sauter et al)', '(bscf_sauter)',bscf_sauter, 'OP ')
+       
+       if (ipedestal==3) then
+          call ocmmnt(outfile,'if ipedestal==3, bscf_nevins and bscf_wilson are meaningless')
+          call ocmmnt(outfile,'(PLASMOD bootstrap current fraction used)')
+       else
+          call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', '(bscf_nevins)',bscf_nevins, 'OP ')
+          call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
+          if (bscfmax < 0.0D0) then
+             call ocmmnt(outfile,'  (User-specified bootstrap current fraction used)')
+          else if (ibss == 1) then
+             call ocmmnt(outfile,'  (ITER 1989 bootstrap current fraction model used)')
+          else if (ibss == 2) then
+             call ocmmnt(outfile,'  (Nevins et al bootstrap current fraction model used)')
+          else if (ibss == 3) then
+             call ocmmnt(outfile,'  (Wilson et al bootstrap current fraction model used)')
+          else if (ibss == 4) then
+             call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
+          end if
+       endif
 
-       if (bscfmax < 0.0D0) then
-          call ocmmnt(outfile,'  (User-specified bootstrap current fraction used)')
-       else if (ibss == 1) then
-          call ocmmnt(outfile,'  (ITER 1989 bootstrap current fraction model used)')
-       else if (ibss == 2) then
-          call ocmmnt(outfile,'  (Nevins et al bootstrap current fraction model used)')
-       else if (ibss == 3) then
-          call ocmmnt(outfile,'  (Wilson et al bootstrap current fraction model used)')
-       else if (ibss == 4) then
-          call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
-       end if
        call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf, 'OP ')
 
        call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', plascur*rplas*facoh, 'OP ')

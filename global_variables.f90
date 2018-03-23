@@ -1155,7 +1155,8 @@ module divertor_kallenbach_variables
   ! real(kind(1.0D0)) :: helium_enrichment = 1.0D0
   ! real(kind(1.0D0)) :: impurity_enrichment = 5.0D0
 
-  !+ad_vars  impurity_enrichment(14) /5.0/ : Ratio of each impurity concentration in SOL to confined plasma
+  !+ad_vars  impurity_enrichment(14) /5.0/ : Ratio of each impurity concentration in SOL to confined plasma+
+  !+ad_varc the enrichment for Argon is also propagated for PLASMOD (ipedestal=3)
   real(kind(1.0D0)), dimension(14) :: impurity_enrichment = 5.0D0
 
   !+ad_vars  psep_kallenbach : Power conducted through the separatrix, as calculated by the divertor model [W]
