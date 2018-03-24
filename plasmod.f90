@@ -806,11 +806,11 @@ contains
  &Poloidal flux (Wb)'
          
     do j=1,41
-       write(radp_file,*) radp%x(j),radp%ne(j),radp%Te(j),radp%Ti(j),&
-            &radp%ndeut(j),radp%ntrit(j),&
-            &radp%jbs(j),radp%jcd(j),radp%jpar(j),&
-            &radp%ipol(j),radp%qprof(j),radp%Volum(j),radp%vp(j),radp%cc(j),&
-            &radp%palph(j),radp%nions(j),radp%psi(j)
+!       write(radp_file,*) radp%x(j),radp%ne(j),radp%Te(j),radp%Ti(j),&
+!            &radp%ndeut(j),radp%ntrit(j),&
+!            &radp%jbs(j),radp%jcd(j),radp%jpar(j),&
+!            &radp%ipol(j),radp%qprof(j),radp%Volum(j),radp%vp(j),radp%cc(j),&
+!            &radp%palph(j),radp%nions(j),radp%psi(j)
     end do
 
     close(unit = radp_file)
