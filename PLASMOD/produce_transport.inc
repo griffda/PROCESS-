@@ -9,9 +9,9 @@
 		
 !	tepr=interp1([0.0d0, xtrt,amin], [T_e0(1), T_e0,tsep], xr)
 !	tipr=interp1([0.0d0, xtrt,amin], [T_i0(1), T_i0,tsep], xr)
-	nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [N_e0(1), N_e0,nsep],xr)
-	tepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [T_e0(1), T_e0,tsep],xr)
-	tipr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [T_i0(1), T_i0,tsep],xr)
+	nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [N_e0(1), N_e0],xr)
+	tepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [T_e0(1), T_e0],xr)
+	tipr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [T_i0(1), T_i0],xr)
 
 
 	

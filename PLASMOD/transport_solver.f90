@@ -769,9 +769,9 @@ endif
 
 !write(*,*) num%etol,jiter,tepr(1)
 
-	nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [N_e(1), N_e,nsep], xr)
-	tepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [T_e(1), T_e,tsep], xr)
-	tipr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [T_i(1), T_i,tsep], xr)
+	nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [N_e(1), N_e], xr)
+	tepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [T_e(1), T_e], xr)
+	tipr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [T_i(1), T_i], xr)
 !write(*,*) num%etol,jiter,tepr(1)
 !
 !	write(*,*) 'te', tepr
@@ -878,9 +878,9 @@ endif
 
         ! Current diffusion + equilibrium equation
         !Update profiles after pedestal
-	nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [N_e(1), N_e,nsep], xr)
-	tepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [T_e(1), T_e,tsep],xr)
-	tipr=interp1_ef(nxt+2,nx,[0.0d0, xtrt,amin], [T_i(1), T_i,tsep],xr)
+	nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [N_e(1), N_e], xr)
+	tepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [T_e(1), T_e],xr)
+	tipr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [T_i(1), T_i],xr)
 !write(*,*) num%etol,jiter,tepr(1)
 
         !alpha pressure
@@ -1444,7 +1444,7 @@ mhd%qoh=q_oh(1)
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 
 
-	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus
+!	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 
