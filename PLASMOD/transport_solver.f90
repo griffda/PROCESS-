@@ -593,10 +593,6 @@ q_oh=mhd%qoh
 
 
 
-
-
-
-
   do while (((num%etol .ge. num%tol).and.(jiter.le.nitermax)).or.(redo.eq.1))
 
 !write(*,*) num%etol,jiter,tepr(1)
@@ -634,7 +630,8 @@ write(1441,'(4111E25.11)') xtrt,a(:,1),a(:,2),a(:,3),b(:,1),b(:,2),b(:,3), &
 & c(:,1),c(:,2),c(:,3),y(:,1),y(:,2),y(:,3),chat(:,1),chat(:,2),chat(:,3),gy(:,1),gy(:,2),gy(:,3)
 	endif
 
-!	write(*,*) 'dt',num%dt,a(:,2),b(:,2),c(:,2),chat(:,2),y0(:,2)
+!write(*,*) 'dt',c(:,2),y0(:,1),nepr(nx-1:nx),nsep,ped%nsep,N_e(nxt+1)
+
      ! Transport solver
      Fvec = reshape(F,(/nxt*nchannels/))
      gippa = 0  ! this routine probably not required if imethod is always 1...!
@@ -726,7 +723,7 @@ write(1441,'(4111E25.11)') xtrt,a(:,1),a(:,2),a(:,3),b(:,1),b(:,2),b(:,3), &
 
 num%etolm=min(num%etol,num%etolm)
 
-
+redo=0
 
 !time step control
 if (num%etol.lt.num%etolm*num%tolmin) then
@@ -857,9 +854,9 @@ endif
 
 
         !Finally, update profiles 
-        T_e0(1:nxt)=T_e(1:nxt)
-        N_e0(1:nxt)=N_e(1:nxt)
-        T_i0(1:nxt)=T_i(1:nxt)
+        T_e0(1:nxt+1)=T_e(1:nxt+1)
+        N_e0(1:nxt+1)=N_e(1:nxt+1)
+        T_i0(1:nxt+1)=T_i(1:nxt+1)
         gT_e0(1:nxt)=gT_e(1:nxt)
         gn_e0(1:nxt)=gn_e(1:nxt)
         gT_i0(1:nxt)=gT_i(1:nxt)
@@ -1447,7 +1444,7 @@ mhd%qoh=q_oh(1)
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 
 
-!	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus
+	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 

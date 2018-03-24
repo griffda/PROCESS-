@@ -108,9 +108,9 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 
 
 ! actual values for testing
-																						    num%tol=0.0000001d0 !tolerance to be reached, in % variation at each time step
-                          num%dtmin=0.01d0 !min time step
-                          num%dtmax=0.1d0 !max time step
+																						    num%tol=1.e-10 !tolerance to be reached, in % variation at each time step
+                          num%dtmin=0.03d0 !min time step
+                          num%dtmax=0.03d0 !max time step
                           num%dt=0.01d0 !time step
                           num%dtinc=2.d0 !decrease of dt
                           num%Ainc=1.1d0 !increase of dt
