@@ -590,6 +590,8 @@ q_oh=mhd%qoh
   if (.not.allocated(radp%Tipg))       ALLOCATE ( radp%Tipg(nx) )
   if (.not.allocated(radp%bpol))       ALLOCATE ( radp%bpol(nx) )
   if (.not.allocated(radp%gradro))       ALLOCATE ( radp%gradro(nx) )
+  if (.not.allocated(radp%ndeut))       ALLOCATE ( radp%ndeut(nx) )
+  if (.not.allocated(radp%ntrit))       ALLOCATE ( radp%ntrit(nx) )
 
 
 
@@ -1127,6 +1129,8 @@ endif
   radp%ne = nepr
   radp%Te = tepr
   radp%Ti = tipr
+  radp%ndeut= ndeut
+  radp%ntrit = ntrit
 
 	loss%peaux=trapz(peaux*dv)
 	loss%piaux=trapz(piaux*dv)
