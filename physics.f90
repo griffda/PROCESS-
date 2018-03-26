@@ -481,6 +481,7 @@ implicit none
             palppv,palpipv,palpepv,pfuscmw,powfmw)
     
     endif
+
        
     !  Nominal mean neutron wall load on entire first wall area including divertor and beam holes
     !  Note that 'fwarea' excludes these, so they have been added back in.

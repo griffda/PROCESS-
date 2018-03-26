@@ -304,6 +304,7 @@ contains
 
     real(kind(1.0D0)) :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
     real(kind(1.0D0)) :: znimp, znfuel
+    real(kind(1.0D0)) :: pdtpv
     integer :: imp
 
 
@@ -561,35 +562,46 @@ contains
     ! This should match that input value and therefore should not need to be reassigned
     ! One could implement a reference check?
 
-    !Need this: previously calculated in palph
+    !-----------------------------------------------
+    !previously calculated by palph
     palppv     = loss%Pfus/(5.0*vol) !alpha particle fusion power per volume (MW/m3)
-    pchargepv  = 0d0 !other charged particle fusion power/volume (MW/m3) !???
+    pchargepv  = 0d0 !other charged particle fusion power/volume (MW/m3)
     pneutpv    = loss%Pfus / (5.0*vol) * 4.0 !neutron fusion power per volume (MW/m3)
+    !missing e.g. beam power as calculated in beamfus
+    !sigvdt = 0.0d0
     fusionrate = loss%fusionrate !fusion reaction rate (reactions/m3/s)
     alpharate  = loss%alpharate !alpha particle production rate (/m3/s)
+    !protonrate = 0.0d0
     pdt        = loss%Pfus !D-T fusion power (MW)
-    pdhe3      = 0d0 !D-He3 fusion power (MW) !PLASMOD does not calc.
-    pdd        = 0d0 !D-D fusion power (MW) !PLASMOD does not calc.
+    pdtpv      = pdt / vol
 
+    !KE - these things need to be called to reproduce non-DT reactions, and many more.
+    !call quanc8(fint,alow,bhigh,epsq8,epsq8,sigmav,errest,nofun,flag)
+    !etot = 18.35D0 * echarge  !  MJ
+    !pdhe3pv = 1.0D0 * sigmav * etot * fdeut*fhe3 * deni*deni  !  MW/m3
+    pdhe3      = 0d0 !KE = pdhe3pv * vol !D-He3 fusion power (MW) !PLASMOD does not calc.
+    pdd        = 0d0 !KE = pddpv * vol !D-D fusion power (MW) !PLASMOD does not calc.
 
+    !---------------------------------------------
     !Need this: previously calculated in beamfus
     betanb  = 0D0 !neutral beam beta component
     dnbeam2 = 0D0 !hot beam ion density (/m3)
     palpnb  = 0D0 !alpha power from hot neutral beam ions (MW)
 
     !gammaft = 0.0d0 !(Fast alpha + beam beta)/(thermal beta) 
-    
-    !Need this: previously calculated in palph2
+
+    !---------------------------------------------
+    !previously calculated in palph2
+    !pneutpv   = pneutpv + 4.0D0*palpnb/vol !updating with neutral beam power
     palpmw    = loss%Pfus/5.0 !alpha power (MW)
     pneutmw   = loss%Pfus/5.0 * 4.0  !neutron fusion power (MW)
     pchargemw = 0d0 !other charged particle fusion power (MW)
     betaft    = loss%betaft !fast alpha beta component
-    palpepv   = loss%palpe/vol !alpha power per volume to electrons (MW/m3) !KE, is this different to palppv?
+    palpepv   = loss%palpe/vol !alpha power per volume to electrons (MW/m3) 
     palpipv   = loss%palpi/vol !alpha power per volume to ions (MW/m3)
     pfuscmw   = loss%Pfus/5.0 !charged particle fusion power (MW) !what is this?
     
-    powfmw = loss%pfus ! Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS
-    ! Total power deposited in plasma (MW) - need to find local name
+    powfmw = loss%pfus ! Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS  !Total power deposited in plasma (MW)
     hfact  = loss%H
         
 
@@ -804,13 +816,13 @@ contains
  &||      dVolume/dr (m^2)  || Plasma conductivity(MA/(V.m)||&
  &Alpha press(keV*10^10 m^-3)||Ion dens(10^19 m^-3) || &
  &Poloidal flux (Wb)'
-         
-    do j=1,41
-!       write(radp_file,*) radp%x(j),radp%ne(j),radp%Te(j),radp%Ti(j),&
-!            &radp%ndeut(j),radp%ntrit(j),&
-!            &radp%jbs(j),radp%jcd(j),radp%jpar(j),&
-!            &radp%ipol(j),radp%qprof(j),radp%Volum(j),radp%vp(j),radp%cc(j),&
-!            &radp%palph(j),radp%nions(j),radp%psi(j)
+
+    do j=1,size(radp%x)
+       write(radp_file,*) radp%x(j),radp%ne(j),radp%Te(j),radp%Ti(j),&
+            &radp%ndeut(j),radp%ntrit(j),&
+            &radp%jbs(j),radp%jcd(j),radp%jpar(j),&
+            &radp%ipol(j),radp%qprof(j),radp%Volum(j),radp%vp(j),radp%cc(j),&
+            &radp%palph(j),radp%nions(j),radp%psi(j)
     end do
 
     close(unit = radp_file)
