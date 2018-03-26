@@ -118,19 +118,19 @@ contains
     ! These values should only be set, if the respective constraints
     ! are being used. They should be set to large values otherwise.
     ! pseprmax and psepbqarmax cannot be used at the same time!
-    if (any(icc == 56)) then
-       comp%psep_r      = pseprmax*fpsepr !Psep/R max value
-       comp%psepb_q95AR = 1.0e3 !large number to have no effect
-    else if (any(icc == 68)) then
-       comp%psep_r      = 1.0e3 !large number to have no effect
-       comp%psepb_q95AR = psepbqarmax*fpsepbqar !Psep B/qaR max value times the iteration variable
-       
-    else
-       comp%psep_r      = 1.0e3 !large number to have no effect
-       comp%psepb_q95AR = 1.0e3 !large number to have no effect
-    endif
+!    if (any(icc == 56)) then
+!       comp%psep_r      = pseprmax*fpsepr !Psep/R max value
+!       comp%psepb_q95AR = 1.0e3 !large number to have no effect
+!    else if (any(icc == 68)) then
+!       comp%psep_r      = 1.0e3 !large number to have no effect
+!    else
+!       comp%psep_r      = 1.0e3 !large number to have no effect
+!       comp%psepb_q95AR = 1.0e3 !large number to have no effect
+!    endif
 
-    inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
+       comp%psepb_q95AR = psepbqarmax*fpsepbqar !Psep B/qaR max value times the iteartion variable
+							
+							     inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
 
 
     ! all fixed input variables that cannot change within a PROCESS
@@ -147,6 +147,7 @@ contains
        
        comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi      
        comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
+       comp%psep_r      = 1.0e3 !large number to have no effect
        inp0%maxpauxor   = plasmod_maxpauxor ! maximum Paux/R allowed
 
        num%tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
@@ -617,6 +618,10 @@ contains
 
     
 
+    !pohm
+    pohmpv = loss%pohm/vol !ohmic heating power per unit volume (MW/m3)
+    pohmmw = loss%pohm !ohmic heating power (MW)
+    rpfac = 1.0d0 !neoclassical resistivity enhancement factor
 
     phiint = radp%psi(size(radp%psi)) !internal plasma volt-seconds (Wb)
     rli = mhd%rli !plasma inductance internal (H)
@@ -629,8 +634,8 @@ contains
     rlpext = rmajor*rmu0 * aeps*(1.0D0-eps)/(1.0D0-eps+beps*kappa)
     rlp = rlpext + rlpint
     vsind = rlp * geom%ip*1.d6 !internal and external plasma inductance V-s (Wb)
-
 	
+   	rplas=loss%rplas
     vburn = plascur * rplas * facoh * csawth !volt-seconds needed during flat-top (heat+burn) (Wb)
 
     vsbrn = vburn*(theat + tburn)
@@ -645,11 +650,6 @@ contains
     fusrat=fusionrate*vol
     figmer=plascur*1.d-6*aspect
 
-    !pohm
-    pohmpv = loss%pohm/vol !ohmic heating power per unit volume (MW/m3)
-    pohmmw = loss%pohm !ohmic heating power (MW)
-    rpfac = 1.0d0 !neoclassical resistivity enhancement factor
-    rplas = loss%rplas !plasma resistance (ohm)
 
     pinjmw=loss%pnbi
     pinjemw=loss%peaux
