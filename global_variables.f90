@@ -850,10 +850,12 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_maxA = 0.0d0
   !+ad_vars  plasmod_dgy /1.0d-5/ : Newton differential
   real(kind(1.0D0)) :: plasmod_dgy = 1.0d-5
+
   !+ad_vars  plasmod_i_modeltype /1/ : swithc for the transport model <UL>
   !+ad_varc  <LI> 1 - Simple gyrobohm scaling with imposed
   !+ad_varc  H factor > 1. Other values give H factor as output
   !+ad_varc  <LI> 111 - roughly calibrated to give H=1 for DEMO, but not fixed H </UL>
+
   integer :: plasmod_i_modeltype = 1
   !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve with sawteeth and inputted q95.
   !+ad_varc  2 - EMEQ, solve with sawteeth and inputted Ip (not recommended!).
@@ -917,6 +919,7 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_eccdeff = 0.3d0
   !+ad_vars  plasmod_pech /0.0d0/ :: ech power (not in use yet)
   real(kind(1.0D0)) :: plasmod_pech = 0.0d0
+
   !+ad_vars  plasmod_spellet /0.0d0/ :: pellet mass in units of D in 10^19
   real(kind(1.0D0)) :: plasmod_spellet = 0.0d0
   !+ad_vars  plasmod_fpellet /0.5d0/ :: pellet frequency in Hz
