@@ -122,24 +122,36 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
                           num%maxA=0.d0 !diagz 0 or 1
                           num%dgy=1.e-5 !Newton differential
                           num%i_modeltype=1 !1 - simple gyrobohm scaling with imposed H factor, > 1, other models with H in output
-                          num%i_equiltype=1 !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+                          num%i_equiltype=2 !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
                           num%nx=41        !number of interpolated grid points
                           num%nxt=7 !number of reduced grid points
                           num%nchannels=3  !leave this at 3
-                          num%ipedestal=2 !1 - fixed temperature pedestal. 2 - Sareelma scaling
+                          num%ipedestal=1 !1 - fixed temperature pedestal. 2 - Sareelma scaling
 																										num%i_impmodel=1 !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
 
 !geometry
-    geom%A = 3.1d0  !aspect ratio
-    geom%R = 9.  ! major radius in m
-    geom%bt = 5.8 !magnetic field
-    geom%k =1.6969830041844367 !edge elongation
-    geom%d =  0.38491934960310104  !edge triangularity
-    geom%k95 = 1.65d0 !edge elongation
-    geom%d95 = 0.333d0 !edge triangularity
-    geom%Ip =  17.75 !9.19727561008985 !19.6 !plasma current in MA : USED if equiltype=2, q95 is used if equiltype=1
+    geom%A =    6.2d0/2.d0  !aspect ratio
+    geom%R =    6.2  ! major radius in m
+				inp0%f_gw = 0.65 !pedestal top greenwald fraction
+				inp0%f_gws= 0.4 !separatrix greenwald fraction
+    geom%bt =   5.3 !magnetic field
+    geom%Ip =   15 !9.19727561008985 !19.6 !plasma current in MA : USED if equiltype=2, q95 is used if equiltype=1
+    ped%teped=  5.5  !pedestal top temperature
+
+!    geom%A =    3.1d0  !aspect ratio
+!    geom%R =    9.  ! major radius in m
+!				inp0%f_gw = 0.92 !pedestal top greenwald fraction
+!				inp0%f_gws= 0.5 !separatrix greenwald fraction
+!    geom%bt =   5.88 !magnetic field
+!    geom%Ip =   19 !9.19727561008985 !19.6 !plasma current in MA : USED if equiltype=2, q95 is used if equiltype=1
+!    ped%teped=  6.d0  !pedestal top temperature
+
+    geom%k95 =  1.65d0 !edge elongation
+    geom%d95 =  0.333d0 !edge triangularity
     geom%q95 = 3.5 !safety factor. 
 	geom%counter=0.
+    geom%k =1.6969830041844367 !edge elongation
+    geom%d =  0.38491934960310104  !edge triangularity
 
     comp%globtau(1) = 4. !tauparticle/tauE for D, T, He, Xe, Ar
     comp%globtau(2) = 4. !tauparticle/tauE for D, T, He, Xe, Ar
@@ -156,17 +168,14 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 
     comp%fuelmix = 0.5d0 !fuel mix
 
-    comp%pradpos = 0.75d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
-    comp%pradfrac = 0.6d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
+    comp%pradpos = 0.d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
+    comp%pradfrac = 0.d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
 
-				inp0%f_gw=0.9 !pedestal top greenwald fraction
-				inp0%f_gws=0.5 !separatrix greenwald fraction
 
-    ped%teped=5.5  !pedestal top temperature
     ped%tesep=0.1  !separatrix temperature
     ped%rho_t=0.94 !pedestal top position T in r/a
     ped%rho_n=0.94 !pedestal top position n in r/a
-ped%pedscal=1.1
+ped%pedscal=1.2
 
 				inp0%nbcdeff=0.3 !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
 				inp0%eccdeff=0.3 !CD = this * PCD * TE/NE !not used for now
@@ -178,7 +187,7 @@ ped%pedscal=1.1
 				inp0%qfus=0.d0 !nbi power
 				inp0%spellet=0.d0 !pellet mass in particles of D in 10^19
 				inp0%fpellet=0.5d0 !pellet frequency in Hz
-				inp0%q_control=50.d0 !minimal power required for control
+				inp0%q_control=40.d0 !minimal power required for control
 
 	inp0%maxpauxor=20. ! maximum Paux/R allowed
 
@@ -189,10 +198,10 @@ ped%pedscal=1.1
 				inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat)
    inp0%PLH=0.
     comp%psepplh_inf = 1. !Psep/PLH if below this, use nbi
-    comp%psepplh_sup = 1000.2d0 !Psep/PLH if above this, use Xe
-    comp%psepb_q95AR = 9.2d0 !Psep B/qaR max value
+    comp%psepplh_sup = 1000.5d0 !Psep/PLH if above this, use Xe
+    comp%psepb_q95AR = 10009.2d0 !Psep B/qaR max value
     comp%psep_r = 10009.d0 !Psep/R max value
-    comp%qdivt = 10. !divertor heat flux in MW/m^2, if 0, dont use SOL model
+    comp%qdivt = 0. !divertor heat flux in MW/m^2, if 0, dont use SOL model
     comp%c_car = 10. !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
 
 
