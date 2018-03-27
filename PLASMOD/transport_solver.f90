@@ -277,6 +277,9 @@ write(*,*) 'machine has changed'
 	ped%nsep=nsep
 endif	
 
+
+	num%dt=num%dtmin
+
   ! set up grid
   dx = 1.0d0/(nx-1.d0)
   dxn = dx
