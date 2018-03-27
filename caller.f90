@@ -177,6 +177,15 @@ subroutine caller(xc,nvars)
 
   call physics
 
+  !call build subroutines again if PLASMOD used, issue #650
+  if (ipedestal == 3) then   
+     ! Radial build
+     call radialb(nout,0)
+     
+     ! Vertical build
+     call vbuild(nout,0)
+  endif
+  
   ! startup model (not used) !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
