@@ -598,7 +598,7 @@ q_oh=mhd%qoh
 
 
 
-  do while (((num%etol .ge. num%tol).and.(jiter.le.nitermax)).or.(redo.eq.1))
+  do while (((num%etol+toleq/num%dt .ge. num%tol).and.(jiter.le.nitermax)).or.(redo.eq.1))
 
 !write(*,*) num%etol,jiter,tepr(1)
      if (i_diagz.eq.1) write(3301,*) num%etol,toleq,num%tol,jiter,nitermax
@@ -612,7 +612,7 @@ q_oh=mhd%qoh
      !update counters
      jnit=jnit+1
      jipperdo = nint(max(1.0d0, 1.0d0/(num%etol*num%dt/100.d0)**num%eopt))
-     jipperdo2 = nint(max(1.0d0, 1.0d0/(num%etol*num%dt/100.d0)**(num%dtmaxmin)))
+     jipperdo2 = nint(max(1.0d0, 1.0d0/(toleq/100.d0)**(num%dtmaxmin)))
 !!!!!
 
      !update profiles and tolerance
@@ -924,7 +924,7 @@ endif
 								& trapz((powe+powi)*dV),trapz((prad)*dV),cxe,che,psep/plh,ip
 	endif
         if (jipper2.ge.jipperdo2) then
-           cubb=0.d0
+								           cubb=0.d0
 !!!!!!!!!!
 !           if (num%etol.lt.num%tolopt) then
               !Bootstrap current calculation
@@ -1033,6 +1033,7 @@ endif
                 ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
                 ,pres_fac,areat)
            !check if isnan
+!	write(*,*) jiter,v(nx),num%etol,dum1
            if (isnan(qedge).or.isnan(vloop).or.ip.eq.0.d0) then
               write(*,*) 'equilibrium not converged',vloop,q,ip
               q=q0
@@ -1452,6 +1453,7 @@ mhd%qoh=q_oh(1)
 
 
 !	if (jiter.gt.3) write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus
+!	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 

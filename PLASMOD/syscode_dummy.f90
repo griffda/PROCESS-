@@ -71,6 +71,15 @@
 !write(*,*) 'first iteration'
 !pause
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 write(*,*) 'num',num
 write(*,*) 'geom',geom
 write(*,*) 'comp',comp

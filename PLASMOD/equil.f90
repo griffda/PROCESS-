@@ -93,6 +93,11 @@ TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)
 redo=0
 111	continue
      pressure = 1.d3 * e_charge * 1.d19 * (te*ne + ti*ni + palph)*pres_fac ! in J/m^3
+	if (pres_fac.lt.0.001) then
+	write(*,*) 'equilibrium not possible',pres_fac
+	stop
+	endif
+
 	if (isnan(palph(1))) pressure=0.d0
 	if (isnan(te(1))) pressure=0.d0
 	if (isnan(ti(1))) pressure=0.d0

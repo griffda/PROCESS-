@@ -116,13 +116,13 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
                           num%Ainc=1.1d0 !increase of dt
                           num%test=10000. !max iteration number
                           num%tolmin=10.1d0 ! multiplier of etolm that should not be overcome
-                          num%eopt=0.1d0 !exponent of jipperdo
-                          num%dtmaxmin=0.1d0 !exponent of jipperdo2
+                          num%eopt=0.01d0 !exponent of jipperdo
+                          num%dtmaxmin=0.01d0 !exponent of jipperdo2
                           num%capA=0.1d0 !first radial grid point
                           num%maxA=0.d0 !diagz 0 or 1
                           num%dgy=1.e-5 !Newton differential
                           num%i_modeltype=1 !1 - simple gyrobohm scaling with imposed H factor, > 1, other models with H in output
-                          num%i_equiltype=2 !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+                          num%i_equiltype=1 !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
                           num%nx=41        !number of interpolated grid points
                           num%nxt=7 !number of reduced grid points
                           num%nchannels=3  !leave this at 3
@@ -138,13 +138,13 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
     geom%Ip =   15 !9.19727561008985 !19.6 !plasma current in MA : USED if equiltype=2, q95 is used if equiltype=1
     ped%teped=  5.5  !pedestal top temperature
 
-!    geom%A =    3.1d0  !aspect ratio
-!    geom%R =    9.  ! major radius in m
-!				inp0%f_gw = 0.92 !pedestal top greenwald fraction
-!				inp0%f_gws= 0.5 !separatrix greenwald fraction
-!    geom%bt =   5.88 !magnetic field
-!    geom%Ip =   19 !9.19727561008985 !19.6 !plasma current in MA : USED if equiltype=2, q95 is used if equiltype=1
-!    ped%teped=  6.d0  !pedestal top temperature
+    geom%A =    3.1d0  !aspect ratio
+    geom%R =    9.  ! major radius in m
+				inp0%f_gw = 0.92 !pedestal top greenwald fraction
+				inp0%f_gws= 0.5 !separatrix greenwald fraction
+    geom%bt =   5.88 !magnetic field
+    geom%Ip =   19 !9.19727561008985 !19.6 !plasma current in MA : USED if equiltype=2, q95 is used if equiltype=1
+    ped%teped=  6.d0  !pedestal top temperature
 
     geom%k95 =  1.65d0 !edge elongation
     geom%d95 =  0.333d0 !edge triangularity
