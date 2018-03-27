@@ -571,17 +571,23 @@ contains
     !sigvdt = 0.0d0
     fusionrate = loss%fusionrate !fusion reaction rate (reactions/m3/s)
     alpharate  = loss%alpharate !alpha particle production rate (/m3/s)
-    !protonrate = 0.0d0
+    protonrate = 0.0d0
     pdt        = loss%Pfus !D-T fusion power (MW)
     pdtpv      = pdt / vol
 
-    !KE - these things need to be called to reproduce non-DT reactions, and many more.
+    !KE - many things need to be called to reproduce non-DT reactions.
+    !If we want to include PROCESS-generated contributions from e.g. DHe3, DD reactions
+    !it may be easier to call palph, but exclude the case (DT).
+    !Eventually PLASMOD will generate these other interactions more completely.
+    !For now, set values to zero.
     !call quanc8(fint,alow,bhigh,epsq8,epsq8,sigmav,errest,nofun,flag)
     !etot = 18.35D0 * echarge  !  MJ
     !pdhe3pv = 1.0D0 * sigmav * etot * fdeut*fhe3 * deni*deni  !  MW/m3
     pdhe3      = 0d0 !KE = pdhe3pv * vol !D-He3 fusion power (MW) !PLASMOD does not calc.
-    pdd        = 0d0 !KE = pddpv * vol !D-D fusion power (MW) !PLASMOD does not calc.
-
+    !pdhe3pv    = 0.0d0 !not global variable
+    pdd        = 0d0 !KE !D-D fusion power (MW) !PLASMOD does not calc.
+    !pddpv      = 0.0d0 !not global variable
+    
     !---------------------------------------------
     !Need this: previously calculated in beamfus
     betanb  = 0D0 !neutral beam beta component
@@ -591,20 +597,29 @@ contains
     !gammaft = 0.0d0 !(Fast alpha + beam beta)/(thermal beta) 
 
     !---------------------------------------------
-    !previously calculated in palph2
-    !pneutpv   = pneutpv + 4.0D0*palpnb/vol !updating with neutral beam power
-    palpmw    = loss%Pfus/5.0 !alpha power (MW)
-    pneutmw   = loss%Pfus/5.0 * 4.0  !neutron fusion power (MW)
-    pchargemw = 0d0 !other charged particle fusion power (MW)
-    betaft    = loss%betaft !fast alpha beta component
+    !previously calculated in palph2 - recalculates quantities to changes units
+    !e.g. per volume to MW, and to include beam fusion, e.g:
+     !neutrons
+    pneutpv   = loss%Pfus/(5.0 * vol) * 4.0  !neutron fusion power (MW/m3), updated below
+    pneutpv   = pneutpv + 4.0D0*palpnb/vol !updating with neutral beam power (currently zero)
+    pneutmw   = pneutpv * vol !neutron fusion power including beam fusion (currently zero) (MW)
+     !alphas
+    falpha    =1.0
     palpepv   = loss%palpe/vol !alpha power per volume to electrons (MW/m3) 
     palpipv   = loss%palpi/vol !alpha power per volume to ions (MW/m3)
-    pfuscmw   = loss%Pfus/5.0 !charged particle fusion power (MW) !what is this?
+    palppv    = palpepv / (falpha * falpe) !KE Equation from physics.f90, calc of palpepv. Valid?
+    palppv    = palppv + palpnb/vol !updating with neutral beam power (currently zero) (MW/m3)
+    palpmw    = loss%Pfus/5.0 !alpha power (MW)
+    betaft    = loss%betaft !fast alpha beta component
+     !non-alpha charged particles
+    pchargemw = 0d0 !other charged particle fusion power, excluding alphas (MW) !This comes from reactions other than DT
+    pfuscmw   = loss%Pfus/5.0 !charged particle fusion power (MW) !
+    !KE - not sure below is correct? Definition in PROCESS: pfuscmw = palpmw + pchargemw
+    powfmw    = loss%pfus ! Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS  !Total power deposited in plasma (MW)
+
     
-    powfmw = loss%pfus ! Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS  !Total power deposited in plasma (MW)
     hfact  = loss%H
         
-
     pradmw     = loss%prad ! fradpwr is total radiation fraction 
     pedgeradmw = loss%pradedge    
     pcoreradmw = loss%pradcore
@@ -618,7 +633,8 @@ contains
     pdivt      = loss%Psep
     plhthresh  = loss%PLH
 
-    !Need this: previously calculated by pcond
+    !-----------------------------------------
+    !previously calculated by pcond
     ptrepv  =  loss%psepe/vol !electron transport power (MW/m3)
     ptripv  =  loss%psepi/vol !ion transport power (MW/m3)
     tauee   =  loss%tauee !electron energy confinement time (s) !Emiliano todo
@@ -668,7 +684,7 @@ contains
     pinjimw=loss%piaux
     pradpv = loss%Prad/vol !Total radiation power (MW) 
   
-    falpha=1.0
+
 
     ptrimw = loss%psepi !Ion transport (MW)  
     ptremw = loss%psepe !Electron transport (MW)
