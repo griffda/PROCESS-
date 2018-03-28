@@ -824,10 +824,10 @@ module plasmod_variables
   public
   
  !Derived type numerics_transp 
-  !+ad_vars  plasmod_tol /0.00001d0/ : tolerance to be reached at each time step (%)
-  real(kind(1.0D0)) :: plasmod_tol = 0.00001d0
-  !+ad_vars  plasmod_dtmin /0.01d0/ : min time step
-  real(kind(1.0D0)) :: plasmod_dtmin = 0.01d0
+  !+ad_vars  plasmod_tol /1.0d-10/ : tolerance to be reached at each time step (%)
+  real(kind(1.0D0)) :: plasmod_tol = 1.0d-10
+  !+ad_vars  plasmod_dtmin /0.05d0/ : min time step
+  real(kind(1.0D0)) :: plasmod_dtmin = 0.05d0
   !+ad_vars  plasmod_dtmax /0.1d0/ : max time step
   real(kind(1.0D0)) :: plasmod_dtmax = 0.1d0
   !+ad_vars  plasmod_dt /0.01d0/ : time step
@@ -837,13 +837,13 @@ module plasmod_variables
   !+ad_vars  plasmod_ainc /1.1d0/ : increase of dt
   real(kind(1.0D0)) :: plasmod_Ainc = 1.1d0
   !+ad_vars  plasmod_test /100000.0d0/ : max number of iterations
-  real(kind(1.0D0)) :: plasmod_test = 100000.0d0
+  real(kind(1.0D0)) :: plasmod_test = 1000000.0d0
   !+ad_vars  plasmod_tolmin /10.1d0/ : multiplier of etolm which can not be exceeded
   real(kind(1.0D0)) :: plasmod_tolmin = 10.1d0
-  !+ad_vars  plasmod_eopt /0.1d0/ : exponent of jipperdo
-  real(kind(1.0D0)) :: plasmod_eopt = 0.1d0
-  !+ad_vars  plasmod_dtmaxmin /0.1d0/ : exponent of jipperdo2
-  real(kind(1.0D0)) :: plasmod_dtmaxmin = 0.1d0
+  !+ad_vars  plasmod_eopt /0.15d0/ : exponent of jipperdo
+  real(kind(1.0D0)) :: plasmod_eopt = 0.15d0
+  !+ad_vars  plasmod_dtmaxmin /0.15d0/ : exponent of jipperdo2
+  real(kind(1.0D0)) :: plasmod_dtmaxmin = 0.15d0
   !+ad_vars  plasmod_capa /0.1d0/ : first radial grid point
   real(kind(1.0D0)) :: plasmod_capA = 0.1d0
   !+ad_vars  plasmod_maxa /0.0d0/ : diagz 0 or 1
