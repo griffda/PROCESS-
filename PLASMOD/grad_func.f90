@@ -1,3 +1,4 @@
+!these are all numerical functions, I am not going to comment on these, accept them.
 module grad_func
  implicit none
 contains

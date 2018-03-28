@@ -745,10 +745,11 @@ endif
 
            !compute current drive from ecrh and nbi
            jcdr=0.d0
-											jcdr=inp0%nbcdeff*pnbi*6.2832/trapz(nepr*dv)*v(nx)*10.d0 !PROCESS definition of gammacd
-	include 'cubsfml.inc' !jbs computation according to Sauter et al.
-	 cubb(1)=0.d0
-		cubb=max(0.d0,cubb)
+											jcdr=inp0%nbcdeff*pnbi*6.2832/trapz(nepr*dv)*v(nx)*10.d0 !PROCESS definition of gamcd
+											
+ 	include 'cubsfml.inc' !jbs computation according to Sauter et al.
+	 cubb(1)=0.d0 !on axis is 0
+		cubb=max(0.d0,cubb) !do not allow negative bootstrap
 
            !assign present state to old, so that one can reverse if there are problems in equil
            dv0=dv

@@ -1,3 +1,5 @@
+!deallocate all radial profiles
+
   if (allocated(radp%ne))    deallocate ( radp%ne )
   if (allocated(radp%Ti))       deallocate ( radp%Ti )
   if (allocated(radp%Te))       deallocate ( radp%Te )

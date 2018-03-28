@@ -1,231 +1,142 @@
+! this subroutine computes the 2D equilibrium + the current diffusion equation at steady-state
 
 subroutine compute_equil( &
-  !input 
   nx, jiter,i_equiltype, &
   x, te, ti, ne, ni, palph, cc, G30,qinit,G20,vp0, &
   R,rmin,elon,tria,Ip,btor,betaz,lint,ipol0,e_charge,mu_vacuum, &
-  !inout
   qedge, &
-  !output
   roc, Vloop, fbs,fcd, toleq, &
   k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar,&
   ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
   ,pres_fac,areat)
-  
+
   use grad_func
   implicit none
 
 
-  
-  !  Arguments
-  
+!variable declaration!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   integer, intent(inout) :: nx, jiter,i_equiltype
   integer :: j
-  real(kind(1.0d0)), dimension(nx), intent(in) :: x, te, ne, ni, cc, G30,qinit,G20,vp0
   real(kind(1.0D0)), intent(in) :: q_edge_in,f_ind_in,R,rmin,btor,betaz,lint,ipol0,e_charge,mu_vacuum
-  
   real(kind(1.0d0)), intent(inout) :: pres_fac,qedge,ip,q_95,elon,tria,elong95,triang95
-  
   real(kind(1.0D0)), intent(inout) :: roc, Vloop, fbs,fcd, toleq
+  real(kind(1.0d0)), dimension(nx), intent(in) :: x, te, ne, ni, cc, G30,qinit,G20,vp0
   real(kind(1.0d0)), dimension(nx), intent(inout) :: k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar
   real(kind(1.0d0)), dimension(nx), intent(inout) :: ipol, Vprime,droda,eqpf,eqff,gradro,palph, ti
-  
-  !  Local variables
-! Other local variables of interest
-!rhoint                : local real : rhoint = x * rmin !minor radius, linspace ---
-!smallk                : local real : smallk = (elon-1.0d0) * x**2 - se usa para calcular la k en x ---
-!diagz                 : local integer : flag para activar el output, se usa al final
-!na                    : local integer : na = nx-1 -- no se usa!!
-!gp2                   : local real : gp2 = 2.*pi
-!gpp4                  : local real : gpp4 = gp2*gp2
-!yro                   : local real : 
-!hro                   : local real : 
-!yda                   : local real : 
-!TIME                  : local real :   
-  real(kind(1.0D0)), dimension(nx) :: smallk, dvdr, rhoint, f, jpol, kerncur, pressure, A, B, C, bbb, ccc, dum1, dum2, dum3
-  real(kind(1.0D0)), dimension(nx) :: chat,betahat,y, FF, fp, kpk, dpk,  pprime,ffprime,ba,bb
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+  !  Local variables!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  integer :: na,diagz,nxtemp,redo
   real(kind(1.0D0)) :: dpsidt, Epar, Ibs, fb, yb, C1
-  real(kind(1.0d0)), parameter :: pi = 3.141592,ACEQLB=1.0d-6 !pi = 3.1415926536d0,ACEQLB=1.e-6
-  real(kind(1.0d0)), dimension(nx) :: gr,GBD,GL,GSD, & 
-  &  BD,BC,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
-  &  btooo,rooo,g11,g22,g33,slat,vr
+  real(kind(1.0d0)) :: gpp4,gp2,yro,hro,yda,TIME,alfa,areat
 		real(kind(1.0d0)), dimension(nx) ::  &
   & bdb0,bmint,bmaxt, b0db2,ya,ybb,BDB02,FOFB,qg3s,q0,vvvv
   real(kind(1.0d0)), dimension(nx) :: gra,sqgra,grar,avr2,ai0,dgrda,avsqg !gradient,sqrgradient,radial gradient,
-  
-  integer :: na,diagz,nxtemp,redo
-  real(kind(1.0d0)) :: gpp4,gp2,yro,hro,yda,TIME,alfa,areat
+  real(kind(1.0D0)), dimension(nx) :: smallk, dvdr, rhoint, f, jpol, kerncur, pressure, A, B, C, bbb, ccc, dum1, dum2, dum3
+  real(kind(1.0D0)), dimension(nx) :: chat,betahat,y, FF, fp, kpk, dpk,  pprime,ffprime,ba,bb
+  real(kind(1.0d0)), dimension(nx) :: gr,GBD,GL,GSD, & 
+  &  BD,BC,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
+  &  btooo,rooo,g11,g22,g33,slat,vr
 ! Quiet NAN, double precision.
-REAL(8), PARAMETER :: D_QNAN = &
-TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)  
+  real(kind(1.0d0)), parameter :: pi = 3.141592,ACEQLB=1.0d-6 !pi = 3.1415926536d0,ACEQLB=1.e-6
+  REAL(8), PARAMETER :: D_QNAN = &
+  TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)  
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+!some initialization
   diagz=1
-  
 	pres_fac=1.d0
   na = nx-1
   gp2 = 2.*pi
   gpp4 = gp2*gp2
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-  
   cubb(1) = 0.0d0
-  rhoint = x * rmin !minor radius
-  
-  
-!  write(*,*) 'jiter',jiter
-!  pres_fac=1.d0
-  if (jiter .eq. 0) then 
+  rhoint = x * rmin !minor radiu
 
-     !geometry, initial guess  151116
+
+
+  if (jiter .eq. 0) then  !at the very first iteration, computes a very rough analytical equilibrium
      call INITEQUIL( &
           nx,x,elon,tria,R,rmin, &
           k,d,shif,V,G1,G2,G3&
           )
-     
-  else    ! next iterations
-     
-     
-     !	write(*,*) pressure,te,ne,ti,ni,palph
-     !	write(*,*) '*',ne,'('
+  else    ! for every other iteration after 0
 
+		redo=0 !check if eq has crashed
 
-
-     !precalculations
-redo=0
 111	continue
-     pressure = 1.d3 * e_charge * 1.d19 * (te*ne + ti*ni + palph)*pres_fac ! in J/m^3
-	if (pres_fac.lt.0.001) then
-	write(*,*) 'equilibrium not possible',pres_fac
-	stop
-	endif
+     pressure = 1.d3 * e_charge * 1.d19 * (te*ne + ti*ni + palph)*pres_fac ! plasma local total pressure in J/m^3
 
+	if (pres_fac.lt.0.001) then !stop if pressure goes to 0
+		write(*,*) 'equilibrium not possible',pres_fac
+		stop
+		endif
 	if (isnan(palph(1))) pressure=0.d0
 	if (isnan(te(1))) pressure=0.d0
 	if (isnan(ti(1))) pressure=0.d0
-     pprime = derivcc(nx,psi,pressure,2)
 
-     q0 = qinit
+!this below is E. Fable scheme for stable equilibrium calculations, NF 2012!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!computes FFprime and PPrime
+   pprime = derivcc(nx,psi,pressure,2)
+   q0 = qinit
+   qg3s = q0/G30
+   A=G20/qg3s**2.+(gpp4**2.)*G30
+   C=-gpp4*mu_vacuum*derivcc(nx,x,pressure,1)/A
+   dum3=G20/qg3s
+   dum2=derivcc(nx,x,dum3,1)
+   B = -dum2/qg3s/A	
+   fb = R*btor/gp2
+   yb = 0.5*fb**2.d0
+   dum2 = integrcc(nx,x,B)
+   dum1=exp(2.d0*dum2)
+			dum1 = dum1/dum1(nx)
+   dum3 = integrcc(nx,x,C/dum1)
+   dum3=dum3-dum3(nx)
+   C1 = yb 
+   y = dum1*(dum3+C1)
+			dum2=G20/qg3s
+  	dum3=derivcc(nx,psi,dum2,2)						
+   betahat=dum3/qg3s/A
+   Chat=-gpp4*mu_vacuum*pprime/A
+   FF = sqrt(2.*y)
+			ffprime=gpp4*(chat-betahat*FF**2.d0)     
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-     qg3s = q0/G30
-
-     A=G20/qg3s**2.+(gpp4**2.)*G30
-
-     C=-gpp4*mu_vacuum*derivcc(nx,x,pressure,1)/A
-
-     dum3=G20/qg3s
-     dum2=derivcc(nx,x,dum3,1)
-
-     B = -dum2/qg3s/A	
-
-     fb = R*btor/gp2
-     yb = 0.5*fb**2.d0
-     
-
-     dum2 = integrcc(nx,x,B)
-     dum1=exp(2.d0*dum2)
-					dum1 = dum1/dum1(nx)
 
 
-     dum3 = integrcc(nx,x,C/dum1)
-     dum3=dum3-dum3(nx)
-     C1 = yb 
 
-     y = dum1*(dum3+C1)
-
-						dum2=G20/qg3s
-	dum3=derivcc(nx,psi,dum2,2)						
-	betahat=dum3/qg3s/A
-	Chat=-gpp4*mu_vacuum*pprime/A
-
-     FF = sqrt(2.*y)
-	
-					ffprime=gpp4*(chat-betahat*FF**2.d0)     
-!	write(1551,*) ' ' 
-!	write(*,*) 'A ',A,' B',B,'C ',C,'y ', & 
-!	& ' ',y,'F',FF,' ','pp ',pprime,'ff ',ffprime
-
-!	write(1552,'(911E25.11)') pressure,psi,A,B,C,y,FF,pprime,ffprime
-
-     !EMEQ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!EMEQ- 3 Moment equilibrium caller!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      if (i_equiltype.eq.1.or.i_equiltype.eq.2) then
-        
-        !        call EMEQ 
-        !     &	(BA,BB		! j_zeta = BA*(R00/r) + BB*(r/R00-R00/r)
-        !     &	,RTOR+SHIFT	! R00 = R_0+\Delta_edge
-        !     &	,ABC		! a_edge
-        !     &	,ELONG		! \lambda_edge
-        !     &	,TRIABC		! \delta_edge
-        !     &	,N3EQL		! radial grid point No.
-        !     &	,ACEQLB		! relative accuracy
-        !     &	,BTOR*RTOR/(RTOR+SHIFT)		! B_tor_vac at R00
-        !     &	,IPL		! Total plasma current
-        !     .	,GR,GBD,GL,GSD,A,BD,B,BA,BB,BC,C,D
-        !     .  ,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ
-        !     .	,TIME)
-        
-        
+
 	BB = -2.*pi*R*pprime*1.e-6 !Zakharov (17)
 	BA = -2.*pi/mu_vacuum/R*ffprime*1.e-6+BB !Zakharov (16)
-
 	eqpf=BB
 	eqff=-2.*pi/mu_vacuum/R*ffprime*1.e-6
 
-
-!	write(*,*) eqpf,eqff
-
-!write(*,*) 'g',eqpf(nx-4:nx),eqff(nx-4:nx)
-
-        
-        !	do j=1,nx
-        !		write(88,'(7E25.11)') x(j),pprime(j),ffprime(j),BA(j),BB(j),FF(j),pressure(j)
-        !	enddo
-        
 	TIME=0.
         
-!	pause
-!	write(*,*) 'data2m',r,elon,tria,nx,btor,shif(nx),ip
 
-!     .	,GR,GBD,GL,GSD,A,BD,B,BA,BB,BC,C,D
-!     .  ,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ
-nxtemp=nx
+	nxtemp=nx
+	!call emeq with inputs Ba, BB which are pprime and ffprime recasted
 	call EMEQ(redo,BA,BB,R+SHIF(nx),rmin,ELON,TRIA*rmin,nx, &		! radial grid point No.
              &	 ACEQLB,BTOR*R/(R+SHIF(nx)),IP,GR,GBD,GL,GSD,gra, & 
         &  sqgra,grar,avr2,ai0,dgrda,avsqg,vvvv,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
         &  TIME)
-!	write(888,*) BA,BB,R+SHIF(nx),rmin,ELON,TRIA,nx, &		! radial grid point !No.
-!             &	 ACEQLB,BTOR*R/(R+SHIF(nx)),IP,GR,GBD,GL,GSD,gra, & 
-!        &  sqgra,grar,avr2,ai0,dgrda,avsqg,v,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
-!        &  TIME
-        
-        
 
-	if (nx.lt.1) then
+	if (nx.lt.1.or.isnan(sqgra(2))) then ! if crashed, redo at lower pressure
 	nx=nxtemp
 	pres_fac=pres_fac*0.9
-!	write(*,*) 'not converged pressure too high',pres_fac
 	redo=1
-!stop
-!		qedge=d_qnan
 		goto 111
 	endif
 
-
-	if (isnan(sqgra(2))) then
-	nx=nxtemp
-	pres_fac=pres_fac*0.9
-!	write(*,*) 'not converged pressure too high',pres_fac
-	redo=1
-!	stop
-	goto 111
-	endif
-
-!if (pres_fac.lt.1) write(*,*) "ok"
-
+!below, assign quantities and smooth profiles
 	BTOOO=BTOR*R/(R+SHIF(nx)) ! toroidal field at plasma axis
 	ROOO=(R+SHIF(nx))! plasma axis
-        
-        
-        
-        ! Define a new RHO-grid:
+
+!smoothing below
 	ALFA = .00001
 	call SMAP(ALFA,nx,x,nx,x,gr)
 	call SMAP(ALFA,nx,x,nx,x,gbd)
@@ -241,42 +152,16 @@ nxtemp=nx
 	call SMAP(ALFA,nx,x,nx,x,vvvv)
 	call SMAP(ALFA,nx,x,nx,x,ai0)
 	call SMAP(ALFA,nx,x,nx,x,gr)
+
+
+!some assignments
 	IPOL=ai0
-
-
 	ROC = GR(nx)		! Define a new RHO_edge
 	rho = GR !rho toroidal
 	phi=btor*3.141592*rho**2.d0
-
-
-
- !----------------------------------------------------------------------|
- ! Map quantities attributed to the auxiliary grid:
- ! A -> <[nabla(a)]^2>		B -> <[nabla(a)/r]^2>
- ! C -> dV/d(a)			BD -> <|nabla(a)|>
- ! BA -> G33			BB -> IPOL
- ! BC -> DRODA	!!  d(rho_A)/da=sqrt(RTOR/(RTOR+SHIFT))*d(rho_Z)/da
 	GPP4 = GP2*GP2
-        
 	hro = (x(2)-x(1))*rmin !minor radius differential
-	
-!	do	J=1,nx
-!	   DRODA(J) = sqgra(J)
-!	   G1(J) = gra(J)
-!	   G3(J) = avr2(J)
-!	   VR(J) = gpp4*avsqg(J)
-!	   G2(J) = grar(J)*VR(j)**2.
-!	   GRADRO(J) = dgrda(J)
-!	   Vprime(J) = VR(j)
-!	   YA(j) = G3(j)
-!	   YBb(j) = IPOL(j)
-  !         shif(j)=gbd(j)
- !          k(j)=gl(j)
-!	enddo
-
-
-
-	   DRODA = dgrda
+ DRODA = dgrda
 	   G1 = gra
 	   G3 = avr2
 	   VR = gpp4*avsqg
@@ -285,26 +170,10 @@ nxtemp=nx
 	   Vprime = VR
 	   YA = G3
 	   YBb = IPOL
-           shif=gbd
-           k=gl
+    shif=gbd
+    k=gl
 	v=vvvv
-
-!	write(*,*) shif(1),shif(nx)
-!	write(*,*) v(nx),trapz(vr)*hro
-
-!	write(*,*) 'p',vprime(1:10)
-!	write(*,*) 'p',vr(nx-4:nx)
-
-
- ! Multiply above quantities by linear in rho factors (i.e. f(0)=0)
-!	do	J=1,nx
-!	   SLAT(J) = GRADRO(J)*VR(J)
-!	enddo
-
-        SLAT = GRADRO*VR
-        
-        ! GL -> a
-        ! GSD -> \delta^{ASTRA} (dimensionless)
+  SLAT = GRADRO*VR
 	YDA = rmin/(nx-1.)
 	do	j =1,nx
 	   A(j) = YDA*(J-1.) !ametr
@@ -312,16 +181,6 @@ nxtemp=nx
 	enddo
 	B(1)=0. !tria
 	d=B
-        
-        !MR additional quantities
-        ! Note!	   BDB02(j) = G33(j)*IPOL(j)**2+(RHO(j)*MU(j)/RTOR)**2
-        !   BDB02 - <B**2/B0**2>
-        !   B0DB2 - <B0**2/B**2>
-        !   BMAXT - BMAXT
-        !   BMINT - BMINT
-        !   BDB0  - <B/BTOR>
-        !   FOFB  - <(BTOR/B)**2*(1.-SQRT(1-B/Bmax)*(1+.5B/Bmax))>
-        
         BDB02=B2B0EQ
         B0DB2=B0B2EQ
         BMAXT=BMAXEQ
@@ -331,33 +190,14 @@ nxtemp=nx
 	BDB02=BDB02*BTOOO**2./BTOR**2.
 	BDB0=BDB0*BTOOO/BTOR
 	B0DB2=B0DB2/BTOOO**2.*BTOR**2.
- !not used!!!
-
  areat=2.*pi*trapz((x*rmin*k+x**2.*rmin**2./2.*derivcc(nx,x*rmin,k,1)))*(x(2)-x(1))*rmin
-!	pause
-	
-        
-!	endif
-     endif
-     !EMEQ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     
-     
-     
-     
-     
-     !...!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     !...!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-     
-  end if
-  !end next iterations
-  
-  
-  !valid for all:
+	endif
+!EMEQ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+end if
 
 	if (isnan(sqgra(2))) then
-	
-		else
+!if crashed, dont do anything	
+		else !call current diffusion equation solver below
   call ADDITIONAL_CALCS( &
        i_equiltype,jiter,nx,V,btor,Ip,R,rmin,x,cc,cubb, jcdr, FF,G2,G3,q0,mu_vacuum, &
        qedge, &
@@ -365,50 +205,15 @@ nxtemp=nx
        ,q_edge_in,q_95,elon,tria,elong95,triang95,k,d)
 	endif
 
-  ! output
-  
-  
 
-
+!end of equil
 	return
 end subroutine compute_equil
 
 
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!+ad_name INITEQUIL
-!+ad_summ "compute initial guess for geometry"
-! definitions are initial guesses  041116, --- means confirmed
-!
-!+ad_args nx                    : input integer : dimension of radial vector
-!+ad_args x(nx)                 : input real array : radial position in poloidal section ---
-!+ad_args R                     : input real : major radius
-!+ad_args rmin                  : input real : minor radius 
-!+ad_args elon                  : input real : elongation k
-!+ad_args tria                  : input real : triangularity d
-!
-!+ad_args k(nx)                 : output real array : kappa at each flux surface - k = smallk + 1.0d0 - effective k at position x --
-!+ad_args d(nx)                 : output real array : delta at each flux surface - d = tria * x**2 - effective triangularity at x --
-!+ad_args shif(nx)              : output real array : shift at each flux surface - shif = 0.0d0 * d - effective shift at x --
-!+ad_args V(nx)                 : output real array : cumint1(dvdr * gradient1(rhoint)) - toroidal volume at rhoint --
-!+ad_args G1(nx)                : output real array : abs(grad(V)^2) (fable) ---
-!+ad_args G2(nx)                : output real array : (g1/R^2)_flux surface (fable) ---
-!+ad_args G3(nx)                : output real array : (1/R^2)_flux surface (fable) ---
-!
-!+ad_desc Other local variables of interest
-!+ad_args rhoint                : local real : rhoint = x * rmin !minor radius, linspace ---
-!+ad_args smallk                : local real : smallk = (elon-1.0d0) * x**2 - se usa para calcular la k en x ---
-!+ad_args dvdr                  : local real : 
-!+ad_args pi                    : local real : parameter 
-!+ad_desc=======================================================================
-!+ad_desc======================================================================|
-!+ad_prob None
-!+ad_call None
-!+ad_hist 15/11/16  programmed the initial version as a refactoring of previously existent code
-!+ad_stat Okay
-!+ad_docs None
-
-
+!this subroutine provides a rough analytical equilibrium
 subroutine INITEQUIL( &
      nx,x,elon,tria,R,rmin, &
      k,d,shif,V,G1,G2,G3&
@@ -416,20 +221,13 @@ subroutine INITEQUIL( &
 
   use grad_func
   implicit none
-  ! first iteration
-  
-  ! initial guess, parabolic elongation profile
-  !input
+
   integer, intent(in) :: nx
   real(kind(1.0d0)), intent(in) :: elon,tria,R,rmin
   real(kind(1.0d0)), dimension(nx), intent(in) :: x
-  !output
   real(kind(1.0D0)), dimension(nx), intent(out) :: k,d,shif,V,G1,G2,G3
-  !local
   real(kind(1.0D0)), dimension(nx) :: smallk,dvdr,rhoint
   real(kind(1.0d0)), parameter :: pi = 3.141592 !3.1415926535d0
-
-
 
   smallk = (elon-1.0d0) * x**2
   k = smallk + 1.0d0
@@ -462,70 +260,13 @@ subroutine INITEQUIL( &
   G3=1./R**2-1./(4.*R**4)*(-2.*rhoint**2 + 8.*shif*R-3.*d*R*rhoint + 4.&
   *gradient(shif,rhoint)*R*rhoint-rhoint**2*R*gradient(d,rhoint))
 
-!write(*,*) 'volum',elon,tria,R,rmin,v(nx)
-
 	return
 end subroutine INITEQUIL
 
 
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!+ad_name ADDITIONAL_CALCS
-!+ad_summ "compute results from MHD equilibrium calculations"
-! definitions are initial guesses  041116, --- means confirmed
-!
-!+ad_args nx                    : input integer : dimension of radial vector
-!+ad_args jiter                 : input integer : iteration number
-!+ad_args R                     : input real : major radius
-!+ad_args rmin                  : input real : minor radius 
-!+ad_args Ip                    : input real : poloidal current
-!+ad_args btor                  : input real : toroidal magnetic field
-!+ad_args mu_vacuum             : input real : vacuum permitivity (constant)
-!+ad_args V(nx)                 : input real array : cumint1(dvdr * gradient1(rhoint)) - toroidal volume at rhoint --
-!+ad_args x(nx)                 : input real array : radial position in poloidal section ---
-!+ad_args cc(nx)                : input real array : cc = 0.0*tepr+1.0d0 - algun tipo de corriente, es el jpar cuando jiter no es inicial
-!+ad_args cubb(nx)              : input real array : cubb =0.d0*nepr -- esta desactivado, es un vector nulo todo el tiempo
-!+ad_args FF(nx)                : input real array : 
-!+ad_args G2(nx)                : input real array : (g1/R^2)_flux surface (fable) ---
-!+ad_args G3(nx)                : input real array : (1/R^2)_flux surface (fable) ---
-!+ad_args q0(nx)                : input real array :
-
-!+ad_args qedge                 : input output real : quality factor at edge
-
-!+ad_args dV(nx)                : output real array : volume differential at each flux surface (?)
-!+ad_args phi(nx)               : output real array : poloidal angle coordinate at each flux surface (?)
-!+ad_args rho(nx)               : output real array : rho=sqrt(phi/(pi*btor)) !rho toroidal ---
-!+ad_args ipol(nx)              : output real array : poloidal current density at each flux surface (?)
-!+ad_args jpol(nx)              : output real array : *
-!+ad_args kerncur(nx)           : output real array : 
-!+ad_args jpar(nx)              : output real array : parallel current density at each flux surface (?)
-!+ad_args Vprime(nx)            : output real array : radial derivative of toroidal volume at radial position (fable) ---
-!+ad_args q(nx)                 : output real array : quality factor at each flux surface
-!+ad_args psi(nx)               : output real array : toroidal angle coordinate at each flux surface (?)
-!+ad_args dum1(nx)              : output real array : shift at each flux surface - shif = 0.0d0 * d - effective shift at x --
-!+ad_args roc                   : output real : 
-!+ad_args Vloop                 : output real : loop voltage
-!+ad_args toleq                 : output real : 
-!+ad_args Ibs                   : output real : 
-!+ad_args Epar                  : output real : 
-!
-!+ad_desc Other local variables of interest
-!+ad_args rhoint(nx)            : local real array : rhoint = x * rmin !minor radius, linspace ---
-!+ad_args f(nx)                 : local real array :
-!+ad_args dvdr(nx)              : local real array : 
-!+ad_args pi                    : local real : parameter 
-!+ad_args gp2                   : local real :  
-!+ad_args dpsidt                : local real :  
-!+ad_args j                     : local integer :  
-!+ad_desc=======================================================================
-!+ad_desc======================================================================|
-!+ad_prob None
-!+ad_call None
-!+ad_hist 15/11/16  programmed the initial version as a refactoring of previously existent code
-!+ad_stat Okay
-!+ad_docs None
-
-
+!the routine below computes current diffusion, ip, loop voltage, q profile, etc.
 subroutine ADDITIONAL_CALCS( &
      i_equiltype,jiter,nx,V,btor,Ip,R,rmin,x,cc,cubb,jcdr,FF,G2,G3,q0,mu_vacuum, &
      qedge, &
@@ -534,70 +275,63 @@ subroutine ADDITIONAL_CALCS( &
 
   use grad_func
   implicit none	
-  !input
+
+!input/output exchange variables
   integer, intent(in) :: nx,jiter,i_equiltype
   real(kind(1.0d0)), intent(in) :: R,rmin,btor,mu_vacuum,q_edge_in
   real(kind(1.0d0)), intent(inout) :: ip,q_95
-  real(kind(1.0d0)), dimension(nx), intent(in) :: V,x,cc,cubb,jcdr,FF,G2,G3,q0
-  !inout
   real(kind(1.0d0)), intent(inout) :: qedge,elon,tria,elong95,triang95
-  real(kind(1.0d0)), intent(inout),dimension(nx) :: Vprime,k,d
-  !output
-  real(kind(1.0D0)), dimension(nx), intent(inout) :: dV,phi,rho,ipol,jpol,kerncur,jpar,q,psi, dum1 
   real(kind(1.0D0)), intent(inout) :: roc,Vloop,toleq,Ibs,Epar,fbs,fcd
-  !local
-  real(kind(1.0D0)), dimension(nx) :: dvdr,rhoint,f,dum2
-  real(kind(1.0D0)) :: icd
-  real(kind(1.0d0)), parameter :: pi = 4.0d0*datan(1.0d0) !3.1415926535d0 !, mu_vacuum = 1.2566d-6
-  real(kind(1.0D0)) :: dpsidt,gp2,qcyl,alfa,kcyl,dcyl
+  real(kind(1.0d0)), dimension(nx), intent(inout) :: Vprime,k,d
+  real(kind(1.0d0)), dimension(nx), intent(in) :: V,x,cc,cubb,jcdr,FF,G2,G3,q0
+  real(kind(1.0D0)), dimension(nx), intent(inout) :: dV,phi,rho,ipol,jpol,kerncur,jpar,q,psi, dum1 
+
+!local variables
   integer :: j,DEBUG_FLAG,j_9
+  real(kind(1.0D0)) :: icd
+  real(kind(1.0D0)) :: dpsidt,gp2,qcyl,alfa,kcyl,dcyl
+  real(kind(1.0D0)), dimension(nx) :: dvdr,rhoint,f,dum2
+  real(kind(1.0d0)), parameter :: pi = 4.0d0*datan(1.0d0) !3.1415926535d0 !, mu_vacuum = 1.2566d-6
+
+
+!some definitions
   gp2 = 2.*pi
   rhoint = x * rmin !minor radius
+		qcyl=rmin**2.d0*btor/R/ip/0.091
 
+!choose
+  if (jiter .ne. 0) then  !if iterations already ongoing, use real calculation
+     dV=vprime*(x(2)-x(1))*rmin ! dV/dr
+     jpol = ipol/(R*btor) ! R*Bphi normalized to reference B*R
 
-	qcyl=rmin**2.d0*btor/R/ip/0.091
+!calculation of currents
+     kerncur = cc/ipol**2.*dV 
+     Ibs = sum(cubb/ipol**2.*dV)*ipol(nx)*btor/(2.*pi) !integrated bootstrap in MA
+     Icd = sum(jcdr/ipol**2.*dV)*ipol(nx)*btor/(2.*pi) !integrated CD
 
-  if (jiter .ne. 0) then 
-     !additional calcs	
-     dV=vprime*(x(2)-x(1))*rmin
-	!write(*,*) roc
-!     ipol = gp2*FF
-     jpol = ipol/(R*btor)
-!     phi = cumint1(ipol*G3/(2.*pi)*dV)
-!     rho = sqrt(phi/(pi*btor))
-!     roc = rho(nx)
-!write(*,*) ipol,phi,rho,roc,dv
-!pause
+     Epar = (Ip - Ibs-Icd)/(ipol(nx)*btor/(2.*pi)*trapz(kerncur)) !electric field
 
-     kerncur = cc/ipol**2.*dV
-     Ibs = sum(cubb/ipol**2.*dV)*ipol(nx)*btor/(2.*pi)
-     Icd = sum(jcdr/ipol**2.*dV)*ipol(nx)*btor/(2.*pi)
-     Epar = (Ip - Ibs-Icd)/(ipol(nx)*btor/(2.*pi)*trapz(kerncur))
-     
-     jpar = cc*Epar + cubb+jcdr
-     Vloop = Epar * 2. * pi * btor/(ipol(nx) * G3(nx))
-     
-!     Vprime = gradient(V, rho)
+     jpar = cc*Epar + cubb+jcdr !parallel current density of the plasma
+					
+     Vloop = Epar * 2. * pi * btor/(ipol(nx) * G3(nx)) !loop voltage
+					
+!calculation of safety factor
      kerncur = jpar/ipol**2.*dV
-     
      dum1=ipol*btor/gp2*cumint1(dV*jpar/ipol**2.)
      q=ipol*g2*g3/(mu_vacuum*8*pi**3.*dum1*1.e6)
  q(1)=q(2)
-!	write(*,*) 'j9',j_9
-!write(*,*) 	'q',q
-!pause
 	j_9=1
 	do j=1,nx
-	if (q(j).le.1.d0) then
+	if (q(j).le.1.d0) then !find q = 1 surface
 		j_9=j
 	endif
 	enddo
-
-	if (j_9.gt.1) then
+	if (j_9.gt.1) then !fix q = 1 if below 1
 	    q(1:j_9) = 1.d0
 	goto 10
 	endif
 
+!find reversed q surfaces
 	j_9=1
 	do j=1,nx
 	if (q(nx-j+1).le.q(1)) then
@@ -605,98 +339,70 @@ subroutine ADDITIONAL_CALCS( &
 		goto 11
 	endif
 	enddo
-11	continue
+11	continue ! if q is reversed, fix it to some arbitrary profile which is monotonic
 	q(1)=sum(q(1:j_9))/(j_9-1.d0)
 	q(1:j_9)=q(1)+(q(j_9)-q(1))*v(1:j_9)/v(j_9)	
  q(1)=q(2)
-
 10	continue
-
-
-
+!smooth q
 	ALFA = .00001
 	call SMAP(ALFA,nx,x,nx,x,q)
 
-
-
-
-     qedge=q(nx)
-     
-     psi = integrcc(nx,phi,1.d0/q)
-!	write(*,*) q,phi,psi
-     
-     toleq = maxval(abs(q-q0)/q0)
-
+     qedge=q(nx) !edge q
+					
+     psi = integrcc(nx,phi,1.d0/q) !compute Psi in Wb
+					
+     toleq = maxval(abs(q-q0)/q0) !tolerance of q
+					
+!find 95% position
 	dum2=(psi-psi(1))/(psi(nx)-psi(1))	     
 	j_9=1
 	do j=1,nx
 	if (dum2(j).le.0.95) j_9=j
 	enddo
+!calculate q, k, and d at 95 position
 	qcyl=(q(j_9+1)-q(j_9))/(dum2(j_9+1)-dum2(j_9))*(0.95-dum2(j_9))+q(j_9)
 	kcyl=(k(j_9+1)-k(j_9))/(dum2(j_9+1)-dum2(j_9))*(0.95-dum2(j_9))+k(j_9)
 	dcyl=(d(j_9+1)-d(j_9))/(dum2(j_9+1)-dum2(j_9))*(0.95-dum2(j_9))+d(j_9)
 
-	if (i_equiltype.eq.1) ip=ip*qcyl/q_95
-	if (i_equiltype.eq.2) q_95=qcyl
+	if (i_equiltype.eq.1) ip=ip*qcyl/q_95 !if q95 given, recalculate ip
+	if (i_equiltype.eq.2) q_95=qcyl !if ip given, recalculate q95
 
+!recalculate k, d fixing 95 value from input
 	k=k/kcyl*elong95
 	d=d/dcyl*triang95
 	elon=k(nx)
 	tria=d(nx)
 
-
-!	write(*,*) 'equil' ,j_9,x(j_9),q(j_9),q(j_9+1),dum2(j_9+1),dum2(j_9)
-	
-!	open(32,file='qprof.out')
-!	write(32,'(911E25.11)') q
-!	close(32)
-
-  else
-
-     !volume gradient
+  else !just for very first iteration, use rough estimates below
      dV=gradient1(V)
-     !toroidal flux, internal variable
      phi=btor*V/(2.*pi*R)
-     !quality factor at edge, internal variable
      q=1.+(qedge-1.)*x**4.
-     !toroidal rho, internal variable
      rho=sqrt(phi/(pi*btor)) !rho toroidal
      roc=rho(nx)
-     !poloidal flux, internal variable		
      psi=cumint1(gradient1(phi)/q)
-     !f function, internal variable
      f=gradient(psi,rhoint)
-     !poloidal current, internal variable
      ipol=R*btor*(1.+0.*x)
-     !poloidal current density, internal variable
      jpol=ipol/(R*btor)
-     !??, internal variable
      kerncur=dV*cc/ipol**2
-     !=0, internal variable
      Ibs=sum(dV*cubb/ipol**2)*ipol(nx)*btor/(2.*pi)
      Icd=sum(dV*jcdr/ipol**2)*ipol(nx)*btor/(2.*pi)
-     !=0, internal variable
      dpsidt=0.
-     !=0, internal variable
      Epar=dpsidt
-     !=0, internal variable
      jpar=cc*Epar+cubb+jcdr
-     !loop voltage, internal variable
      Vloop=Epar*2.*pi*btor/(ipol(nx)/G3(nx))
-     !derivada del volumen, internal variable
      Vprime=gradient(V,rhoint)
-     !toleq, lo calcula al principio y al final, el valor inicial para la iteracion cero (initial guess), cota de estabilidad del plasma
      toleq = maxval(abs(q-1.0d0))
 
   endif
 
-  !bootstrap fraction      
-  fbs=Ibs/Ip
+  !bootstrap and current drive fractions
+		fbs=Ibs/Ip
   fcd=Icd/Ip
 
 
+!end of current diffusion calculations
 
-	
 end subroutine ADDITIONAL_CALCS
 
 
