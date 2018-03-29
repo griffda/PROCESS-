@@ -2,7 +2,7 @@
 
 module plasmod_module
 
-
+  
   !+ad_name  plasmod
   !+ad_summ  Module containing plasmod interface
   !+ad_type  Module
@@ -118,19 +118,20 @@ contains
     ! These values should only be set, if the respective constraints
     ! are being used. They should be set to large values otherwise.
     ! pseprmax and psepbqarmax cannot be used at the same time!
-!    if (any(icc == 56)) then
-!       comp%psep_r      = pseprmax*fpsepr !Psep/R max value
-!       comp%psepb_q95AR = 1.0e3 !large number to have no effect
-!    else if (any(icc == 68)) then
-!       comp%psep_r      = 1.0e3 !large number to have no effect
-!    else
-!       comp%psep_r      = 1.0e3 !large number to have no effect
-!       comp%psepb_q95AR = 1.0e3 !large number to have no effect
-!    endif
-
+    if (any(icc == 56)) then
+       comp%psep_r      = pseprmax*fpsepr !Psep/R max value
+       comp%psepb_q95AR = 1.0e3 !large number to have no effect
+    else if (any(icc == 68)) then
+       comp%psep_r      = 1.0e3 !large number to have no effect
        comp%psepb_q95AR = psepbqarmax*fpsepbqar !Psep B/qaR max value times the iteartion variable
+    else
+       comp%psep_r      = 1.0e3 !large number to have no effect
+       comp%psepb_q95AR = 1.0e3 !large number to have no effect
+    endif
+
+       
 							
-							     inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
+    inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
 
 
     ! all fixed input variables that cannot change within a PROCESS
