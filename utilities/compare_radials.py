@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """
   Radial plot comparison tool using PLASMOD-type input
-  Based on radial profiling code from plot_proc.py
 
   Katy Ellis
   01/03/2018
@@ -22,7 +21,32 @@ from process_io_lib.profile_funcs import nresidual, tresidual, nprofile, \
     tprofile
 from pylab import figure, xlabel, ylabel, axvline, axhline, plot, show
 
+def plotProfile(i,p, count):
+    print('size of RHO[0] = '+ repr(len(RHO[0])))
+    print('size of DATA_PROFILES[0][i] = '+ repr(len(DATA_PROFILES[0][i])))
+    print(DATA_PROFILES[0][i])
+
+    #for i in range(0,len(ASSIGN_PAGE)):
+    #    if(ASSIGN_PAGE[i]==p):
+            if(count==0): figure=221
+            if(count==1): figure=222
+            if(count==2): figure=223
+            if(count==3): figure=224
+            page[p].add_subplot(figure)
+    
+            plt.scatter(RHO[0], DATA_PROFILES[0][i])
+            plt.scatter(RHO[1], DATA_PROFILES[1][i])
+
+            plt.xlabel('r/a')
+            plt.ylabel(AXIS_TITLES[i])
+            plt.title(PLOT_TITLES[i])
+            count=count+1
+    #plt.plot(RHO[0],DATA_PROFILES[0][i], label="File0")
+    #plt.plot(RHO[1],DATA_PROFILES[1][i], label="File1")
+    #plt.legend()
+
 if __name__ == '__main__':
+        
 ############################################################
 #Usage
 
@@ -39,61 +63,67 @@ if __name__ == '__main__':
                         help="ascii file containing data in columns,\
                         default = profile.txt")
     
-    #PARSER.add_argument("files", metavar='f', type=str,
-    #                    default='all', nargs='*',
-    #                    help="list of files to be plotted; \
-    #                    default = all")
-    
     ARGS = PARSER.parse_args()
-    
-    USEDEN = True
-    USETE = True
-    USETI = True
-    USEDEUT = True
-    USETRIT = True
-    USEJBS = True
-    USEJCD = True
-    USEJTOT = True
-    USEIPOL = True
-    USEQ = True
-    USEVOL = True
-    USEDVOL = True
-    USECOND = True
-    #USEPALPH = True
-    #USEDENI = True
-    #USEFPOL = True
+
+    LIST_PROFILES = ['DEN', 'TE', 'TI', 'DEUT', 'TRIT', 'JBS', 'JCD', 'JTOT', 'IPOL', 'Q', 'VOL', 'DVOL', 'COND']
+    list_len = len(LIST_PROFILES)
+    print('number of profiles to be plotted = ' + repr(list_len))
+    NUM_PAGES = 4
+    ASSIGN_PAGE = [1, 2, 2, 1, 1, 3, 3, 3, 3, 1, 4, 4, 2] #Which page for each plot (4 plots per page)
+
+    PLOT_TITLES = ['Electron density']
+    PLOT_TITLES.append('Electron temperature')
+    PLOT_TITLES.append('Ion temperature')
+    PLOT_TITLES.append('Deuterium density')
+    PLOT_TITLES.append('Tritium density')
+    PLOT_TITLES.append('Bootstrap current density')
+    PLOT_TITLES.append('Current drive current density')
+    PLOT_TITLES.append('Total current density')
+    PLOT_TITLES.append('Poloidal current')
+    PLOT_TITLES.append('Safety factor')
+    PLOT_TITLES.append('Plasma volume')
+    PLOT_TITLES.append('dVolume/dr')
+    PLOT_TITLES.append('Plasma conductivity')
+
+    AXIS_TITLES = ['ne / 1e19 m-3']
+    AXIS_TITLES.append('te / keV')
+    AXIS_TITLES.append('ti / keV')
+    AXIS_TITLES.append('deut / 1e19 m-3')
+    AXIS_TITLES.append('trit / 1e19 m-3')
+    AXIS_TITLES.append('J_bs / MA/m^2')
+    AXIS_TITLES.append('J_cd / MA/m^2')
+    AXIS_TITLES.append('J_tot / MA/m^2')
+    AXIS_TITLES.append('I_pol / MA')
+    AXIS_TITLES.append('q')
+    AXIS_TITLES.append('Vol / m^3')
+    AXIS_TITLES.append('dVol/dr / m^2')
+    AXIS_TITLES.append('Cond / MA/(V.m)')
+
+    PAGE_TITLES = ['Radial profiles (page 1) - densities']
+    PAGE_TITLES.append('Radial profiles (page 2)')
+    PAGE_TITLES.append('Radial profiles (page 3) - currents')
+    PAGE_TITLES.append('Radial profiles (page 4)')
     
     fileArray = [ARGS.filename0, ARGS.filename1]
     n = len(fileArray)
     print('number of files is: ' + repr(n))
     DATA = [None] * n
     RHO = [None] * n
+
+    DATA_PROFILES = [LIST_PROFILES] * n
     
-    DEN = [None] * n
-    TE = [None] * n
-    TI = [None] * n
-    DEUT = [None] * n
-    TRIT = [None] * n
-    JBS = [None] * n
-    JCD = [None] * n
-    JTOT = [None] * n
-    IPOL = [None] * n
-    Q = [None] * n
-    VOL = [None] * n
-    DVOL = [None] * n
-    COND = [None] * n
-    #PALPH = [None] * n
-    #DENI = [None] * n
-    #FPOL = [None] * n
-    
-    for f in range(0,n):
-        #print('{0:d}'.format(f))
+    #create vectors to store the data
+    useProfile = [None] * list_len
+    for i in range(0,list_len):
+        useProfile[i] = True
+
+    for f in range(0,n):  #loop over files
         print('filename' + repr(f) + ' = ' + repr(fileArray[f]))
         try:
             DATA[f] = loadtxt(fileArray[f], unpack=True)
             print('loaded data!')
             print('data size - ' + repr(DATA[f].size))
-        except FileNotFoundError:
+        except OSError:
             print('Error: There is no file called', fileArray[f])
             exit()
         except ValueError:
@@ -107,320 +137,59 @@ if __name__ == '__main__':
         try:
             RHO[f] = DATA[f][0]
             print('Inputted RHO')
-            print(RHO[f])
+            #print(RHO[f])
         except IndexError:
             print('Error: The column for the normalised radius does not exist!\
             Remember to start counting at 0!')
             exit()
+
+        for i in range(1,list_len):
+            try:
+                #print('f = '+repr(f)+' i = '+repr(i))
+                DATA_PROFILES[f][i] = DATA[f][i]
+                #print(DATA_PROFILES[f][i])
+                #print('Inputted ' + repr(LIST_PROFILES[i-1])) #prints entire array
+            except IndexError:
+                print('Warning: The column for the '+repr(LIST_PROFILES[i-1])+' in file '+repr(f)+' does not exist!\
+                Remember to start counting at 0!')
+                useProfile[i] = False
+        print(useProfile)
+        #print(RHO[0])
+        #print(DATA_PROFILES[0][1])
+        #print(RHO[1])
+        #print(DATA_PROFILES[1][1])
+
+    ###################
+    #count1 = 0
+    page = [None] * NUM_PAGES
+    for p in range(0,NUM_PAGES):
+        page[p] = plt.figure(figsize=(12, 9), dpi=80)
+        plt.suptitle(PAGE_TITLES[p])
             
-        try:
-            DEN[f] = DATA[f][1]
-            print('Inputted DEN')
-        except IndexError:
-            print('Warning: The column for the density does not exist!\
-            Remember to start counting at 0!')
-            USEDEN = False
-        try:
-            TE[f] = DATA[f][2]
-            print('Inputted TE (electron temp)')
-        except IndexError:
-            print('Warning: The column for the electron temp does not exist!\
-            Remember to start counting at 0!')
-            USETE = False
-        try:
-            TI[f] = DATA[f][3]
-            print('Inputted TI (ion temp)')
-        except IndexError:
-            print('Warning: The column for the ion temp does not exist!\
-            Remember to start counting at 0!')
-            USETI = False
-        #try:
-        #    DEUT[f] = DATA[f][4]
-        #    print('Inputted DEUT (Deuterium density)')
-        #except IndexError:
-        #    print('Warning: The column for the deuterium density does not exist!\
-        #    Remember to start counting at 0!')
-        #    USEDEUT = False
-        #try:
-        #    TRIT[f] = DATA[f][5]
-        #    print('Inputted TRIT (Tritium density)')
-        #except IndexError:
-        #    print('Warning: The column for the tritium density does not exist!\
-        #    Remember to start counting at 0!')
-        #    USETRIT = False    
-        try:
-            JBS[f] = DATA[f][4]
-            print('Inputted JBS (bootstrap current)')
-        except IndexError:
-            print('Warning: The column for the bootstrap current does not exist!\
-            Remember to start counting at 0!')
-            USEJBS = False
-        try:
-            JCD[f] = DATA[f][5]
-            print('Inputted JCD (CD current density)')
-        except IndexError:
-            print('Warning: The column for the CD current density does not exist!\
-            Remember to start counting at 0!')
-            USEJCD = False
-        try:
-            JTOT[f] = DATA[f][6]
-            print('Inputted JTOT (Total current density)')
-        except IndexError:
-            print('Warning: The column for the total current density does not exist!\
-            Remember to start counting at 0!')
-            USEJTOT = False
-        try:
-            IPOL[f] = DATA[f][7]
-            print('Inputted IPOL (Poloidal current)')
-        except IndexError:
-            print('Warning: The column for the poloidal current does not exist!\
-            Remember to start counting at 0!')
-            USEIPOL = False   
-        try:
-            Q[f] = DATA[f][8]
-            print('Inputted Q (safety factor)')
-        except IndexError:
-            print('Warning: The column for q does not exist!\
-            Remember to start counting at 0!')
-            USEQ = False
-        try:
-            VOL[f] = DATA[f][9]
-            print('Inputted VOL (Plasma volume)')
-        except IndexError:
-            print('Warning: The column for VOL does not exist!\
-            Remember to start counting at 0!')
-            USEVOL = False
-        try:
-            DVOL[f] = DATA[f][10]
-            print('Inputted DVOL (d(volume)/dr)')
-        except IndexError:
-            print('Warning: The column for DVOL does not exist!\
-            Remember to start counting at 0!')
-            USEDVOL = False
-        try:
-            COND[f] = DATA[f][11]
-            print('Inputted COND (Plasma conductivity)')
-        except IndexError:
-            print('Warning: The column for COND does not exist!\
-            Remember to start counting at 0!')
-            USECOND = False
-        #try:
-        #    PALPH[f] = DATA[f][12]
-        #    print('Inputted PALPH (Alpha pressure)')
-        #except IndexError:
-        #    print('Warning: The column for PALPH does not exist!\
-        #    Remember to start counting at 0!')
-        #    USEPALPH = False
-        #try:
-        #    DENI[f] = DATA[f][13]
-        #    print('Inputted DENI (Ion density)')
-        #except IndexError:
-        #    print('Warning: The column for DENI does not exist!\
-        #    Remember to start counting at 0!')
-        #    USEDENI = False
-        #try:
-        #    FPOL[f] = DATA[f][14]
-        #    print('Inputted FPOL (Poloidal flux)')
-        #except IndexError:
-        #    print('Warning: The column for FPOL does not exist!\
-        #    Remember to start counting at 0!')
-        #    USEFPOL = False
+        for i in range(2,3):   #list_len
+            plotProfile(i, p)
+                #if(count1==1):
+                #     page[p].add_subplot(222)
+                #     plotProfile(i, p)
 
-    ###################
-    page1 = plt.figure(figsize=(12, 9), dpi=80)
-    plt.suptitle('Radial profiles (page 1) - densities')
-    
-    plot_den = page1.add_subplot(221)
-    plt.scatter(RHO[0], DEN[0])
-    plt.scatter(RHO[1], DEN[1])
+    #plot_den = page1.add_subplot(221)
 
-    plt.xlabel('r/a')
-    plt.ylabel('ne / 1e19 m-3')
-    plt.title('Electron density')
+    print(RHO[0])
+    print(DATA_PROFILES[0][1])
+    print(RHO[1])
+    print(DATA_PROFILES[1][1])
     
-    plt.plot(RHO[0],DEN[0], label="File0")
-    plt.plot(RHO[1],DEN[1], label="File1")
-    plt.legend()
-
-    plot_deut = page1.add_subplot(222)
-    #plt.scatter(RHO[0], DEUT[0])
-    #plt.scatter(RHO[1], DEUT[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('deut / 1e19 m-3')
-    plt.title('Deuterium density')
-    
-    #plt.plot(RHO[0],DEUT[0], label="File0")
-    #plt.plot(RHO[1],DEUT[1], label="File1")
-    plt.legend()
-
-    plot_trit = page1.add_subplot(223)
-    #plt.scatter(RHO[0], TRIT[0])
-    #plt.scatter(RHO[1], TRIT[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('trit / 1e19 m-3')
-    plt.title('Tritium density')
-    
-    #plt.plot(RHO[0],TRIT[0], label="File0")
-    #plt.plot(RHO[1],TRIT[1], label="File1")
-    plt.legend()
-
-    #################
-    page2 = plt.figure(figsize=(12, 9), dpi=80)
-    plt.suptitle('Radial profiles (page 2) - temperatures')
-    
-    plot_te = page2.add_subplot(221)
-    plt.scatter(RHO[0], TE[0])
-    plt.scatter(RHO[1], TE[1])
-
-    plt.xlabel('r/a')
-    plt.ylabel('te / keV')
-    plt.title('Electron temperature')
-    
-    plt.plot(RHO[0],TE[0], label="File0")
-    plt.plot(RHO[1],TE[1], label="File1")
-    plt.legend()
-
-    plot_ti = page2.add_subplot(222)
-    plt.scatter(RHO[0], TI[0])
-    plt.scatter(RHO[1], TI[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('ti / keV')
-    plt.title('Ion temperature')
-    
-    plt.plot(RHO[0],TI[0], label="File0")
-    plt.plot(RHO[1],TI[1], label="File1")
-    plt.legend()
-
-    ###################
-    page3 = plt.figure(figsize=(12, 9), dpi=80)
-    plt.suptitle('Radial profiles (page 3) - currents')
-
-    plot_jbs = page3.add_subplot(221)
-    plt.scatter(RHO[0], JBS[0])
-    plt.scatter(RHO[1], JBS[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('J_bs / MA/m^2')
-    plt.title('Boostrap current density')
-    
-    plt.plot(RHO[0],JBS[0], label="File0")
-    plt.plot(RHO[1],JBS[1], label="File1")
-    plt.legend()
-
-    plot_jcd = page3.add_subplot(222)
-    plt.scatter(RHO[0], JCD[0])
-    plt.scatter(RHO[1], JCD[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('J_cd / MA/m^2')
-    plt.title('Current drive current density')
-    
-    plt.plot(RHO[0],JCD[0], label="File0")
-    plt.plot(RHO[1],JCD[1], label="File1")
-    plt.legend()
-
-    plot_jtot = page3.add_subplot(223)
-    plt.scatter(RHO[0], JTOT[0])
-    plt.scatter(RHO[1], JTOT[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('J_tot / MA/m^2')
-    plt.title('Total current density')
-    
-    plt.plot(RHO[0],JTOT[0], label="File0")
-    plt.plot(RHO[1],JTOT[1], label="File1")
-    plt.legend()
-
-    # not a key quantity - Michael
-    plot_ipol = page3.add_subplot(224)
-    plt.scatter(RHO[0], IPOL[0])
-    plt.scatter(RHO[1], IPOL[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('I_pol')
-    plt.title('Poloidal current')
-    
-    plt.plot(RHO[0],IPOL[0], label="File0")
-    plt.plot(RHO[1],IPOL[1], label="File1")
-    plt.legend()
-
-    ################
-    page4 = plt.figure(figsize=(12, 9), dpi=80)
-    plt.suptitle('Radial profiles (page 4)')
-    
-    plot_q = page4.add_subplot(221)
-    plt.scatter(RHO[0], Q[0])
-    plt.scatter(RHO[1], Q[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('q')
-    plt.title('Safety factor')
-    
-    plt.plot(RHO[0],Q[0], label="File0")
-    plt.plot(RHO[1],Q[1], label="File1")
-    plt.legend()
-    
-    plot_vol = page4.add_subplot(222)
-    plt.scatter(RHO[0], VOL[0])
-    plt.scatter(RHO[1], VOL[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('Vol / m^3')
-    plt.title('Plasma volume')
-    
-    plt.plot(RHO[0],VOL[0], label="File0")
-    plt.plot(RHO[1],VOL[1], label="File1")
-    plt.legend()
-
-    plot_dvol = page4.add_subplot(223)
-    plt.scatter(RHO[0], DVOL[0])
-    plt.scatter(RHO[1], DVOL[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('dVol/dr / m^2')
-    plt.title('dVolume/dr')
-    
-    plt.plot(RHO[0],DVOL[0], label="File0")
-    plt.plot(RHO[1],DVOL[1], label="File1")
-    plt.legend()
-
-    plot_cond = page4.add_subplot(224)
-    plt.scatter(RHO[0], COND[0])
-    plt.scatter(RHO[1], COND[1])
-    
-    plt.xlabel('r/a')
-    plt.ylabel('Cond / MA/(V.m)')
-    plt.title('Plasma conductivity')
-    
-    plt.plot(RHO[0],COND[0], label="File0")
-    plt.plot(RHO[1],COND[1], label="File1")
-    plt.legend()
-    
-#    plot_palph = page3.add_subplot(224)
-#    plt.scatter(RHO[0], PALPH[0])
-#    plt.scatter(RHO[1], PALPH[1])
-#    
-#    plt.xlabel('r/a')
-#    plt.ylabel('p_alpha / keV*10^10/m^3')
-#    plt.title('Alpha pressure')
-#    
-#   plt.plot(RHO[0],PALPH[0], label="File0")
-#   plt.plot(RHO[1],PALPH[1], label="File1")
-#    plt.legend()
-
-
-    
-    page1.savefig('../KatyTest/profile_plots.jpg')
+    #page1.savefig('../KatyTest/profile_plots.jpg')
 
     with bpdf.PdfPages("../KatyTest/radial_profiles.pdf") as pdf:
-        pdf.savefig(page1)
-        pdf.savefig(page2)
-        pdf.savefig(page3)
-        pdf.savefig(page4)
-    plt.show(page1)
-    plt.show(page2)
-    plt.show(page3)
-    plt.show(page4)
+        pdf.savefig(page[1])
+   #     pdf.savefig(page[2])
+   #     pdf.savefig(page[3])
+   #     pdf.savefig(page[4])
+    plt.show(page[1])
+   # plt.show(page[2])
+   # plt.show(page[3])
+   # plt.show(page[4])
+
+
+       
