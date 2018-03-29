@@ -264,8 +264,6 @@ contains
        ped%teped   = teped !pedestal top temperature
        inp0%f_gws  = fgwsep !separatrix greenwald fraction
        
-
-       
        geom%k  = kappa !edge elongation
        geom%d  = triang !edge triangularity
        geom%ip = plascur/1.d6
@@ -310,7 +308,7 @@ contains
 
     real(kind(1.0D0)) :: theat,tburn,aeps,beps,rlpext,rlpint,vburn,fusrat
     real(kind(1.0D0)) :: znimp, znfuel
-    real(kind(1.0D0)) :: pdtpv
+    real(kind(1.0D0)) :: pdtpv, betath
     integer :: imp
 
 
@@ -375,8 +373,6 @@ contains
     !  Central pressure (Pa), from ideal gas law : p = nkT
     p0 = (ne0*te0 + ni0*ti0) * 1.0D3 * echarge
 
-
-   
     !------------------------------------------------
     !Plasma Composition outputs otherwise inputs or
     !calculated in plasma_compostion/betcom 
@@ -473,7 +469,6 @@ contains
        rnfene = impurity_arr(element2index('Ar'))%frac
     end if
        
-
     !  Effective charge
     !  Calculation should be sum(ni.Zi^2) / sum(ni.Zi),
     !  but ne = sum(ni.Zi) through quasineutrality
@@ -527,7 +522,6 @@ contains
        end if
     end do
 
-
     !------------------------------------------------
     !Plasma Current outputs otherwise inputs or
     !calculated in culcur
@@ -543,7 +537,7 @@ contains
 
     qstar = mhd%qstar ! equivalent cylindrical safety factor (shaped)
     bp    = mhd%bp ! poloidal field in (T)
-
+    rli = mhd%rli !plasma inductance internal (H)
     
     !------------------------------------------------
     !beta is now an output, is an input with (ipedestal .ne. 3)
@@ -553,14 +547,11 @@ contains
     !------------------------------------------------
     !replacing parametrised bootstrap models
     bootipf= mhd%fbs
-
     
     !See #645 for discussion on fvsbrnni
     fvsbrnni = mhd%f_ni
     facoh = max(1.0D-10, (1.-mhd%f_ni))
     faccd = max(0., mhd%f_ni - bootipf )
-
-    
 
     !mhd%q_sep !q at separatrix
     !mhd%vloop !loop voltage in V ! Check this is consistent with our volt-seconds requirements routine in physics.f90
@@ -586,8 +577,6 @@ contains
     !it may be easier to call palph, but exclude the case (DT).
     !Eventually PLASMOD will generate these other interactions more completely.
     !For now, set values to zero.
-    !call quanc8(fint,alow,bhigh,epsq8,epsq8,sigmav,errest,nofun,flag)
-    !etot = 18.35D0 * echarge  !  MJ
     !pdhe3pv = 1.0D0 * sigmav * etot * fdeut*fhe3 * deni*deni  !  MW/m3
     pdhe3      = 0d0 !KE = pdhe3pv * vol !D-He3 fusion power (MW) !PLASMOD does not calc.
     !pdhe3pv    = 0.0d0 !not global variable
@@ -595,12 +584,10 @@ contains
     !pddpv      = 0.0d0 !not global variable
     
     !---------------------------------------------
-    !Need this: previously calculated in beamfus
+    !previously calculated in beamfus - KE, I don't think PLASMOD calculates beam properties. Could we call beamfus here using what PLASMOD inputs we have, and PROCESS values for the rest?
     betanb  = 0D0 !neutral beam beta component
     dnbeam2 = 0D0 !hot beam ion density (/m3)
     palpnb  = 0D0 !alpha power from hot neutral beam ions (MW)
-
-    !gammaft = 0.0d0 !(Fast alpha + beam beta)/(thermal beta) 
 
     !---------------------------------------------
     !previously calculated in palph2 - recalculates quantities to changes units
@@ -623,9 +610,10 @@ contains
     !KE - not sure below is correct? Definition in PROCESS: pfuscmw = palpmw + pchargemw
     powfmw    = loss%pfus ! Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS  !Total power deposited in plasma (MW)
 
-    
+    !---------------------------------------
+    betath = beta-betaft-betanb
+    gammaft = (betaft+betanb)/betath !(Fast alpha + beam beta)/(thermal beta)
     hfact  = loss%H
-        
     pradmw     = loss%prad ! fradpwr is total radiation fraction 
     pedgeradmw = loss%pradedge    
     pcoreradmw = loss%pradcore
@@ -647,35 +635,35 @@ contains
     tauei   =  loss%tauei !ion energy confinement time (s)
     powerht =  loss%qtot !heating power (MW) assumed in calculation of confinement scaling
     taueff  =  loss%taueff   !global energy confinement time (s)
-    
 
-
-    
-
-    !pohm
+    !-----------------------------------------
+    !previously calculated by pohm
     pohmpv = loss%pohm/vol !ohmic heating power per unit volume (MW/m3)
     pohmmw = loss%pohm !ohmic heating power (MW)
     rpfac = 1.0d0 !neoclassical resistivity enhancement factor
-
-    phiint = radp%psi(size(radp%psi)) !internal plasma volt-seconds (Wb)
-    rli = mhd%rli !plasma inductance internal (H)
+    rplas=loss%rplas
+    !-----------------------------------------
+    
     rlpint = rmu0 * rmajor * rli/2.0D0
-    vsres = gamma * rmu0*geom%ip*1.d6*rmajor !resistive losses in start-up volt-seconds (Wb)
+
     aeps = (1.0D0 + 1.81D0*sqrt(eps)+2.05D0*eps)*log(8.0D0/eps) &
          - (2.0D0 + 9.25D0*sqrt(eps)-1.21D0*eps)
     beps = 0.73D0 * sqrt(eps) *(1.0D0 + 2.0D0*eps**4-6.0D0*eps**5 &
          + 3.7D0*eps**6)
     rlpext = rmajor*rmu0 * aeps*(1.0D0-eps)/(1.0D0-eps+beps*kappa)
-    rlp = rlpext + rlpint
-    vsind = rlp * geom%ip*1.d6 !internal and external plasma inductance V-s (Wb)
-	
-   	rplas=loss%rplas
-    vburn = plascur * rplas * facoh * csawth !volt-seconds needed during flat-top (heat+burn) (Wb)
 
+    !-----------------------------------------
+    ! previously calculated by vscalc
+    phiint = radp%psi(size(radp%psi)) !internal plasma volt-seconds (Wb)
+    rlp = rlpext + rlpint
+    vburn = plascur * rplas * facoh * csawth !volt-seconds needed during flat-top (heat+burn) (Wb)
     vsbrn = vburn*(theat + tburn)
+    vsind = rlp * geom%ip*1.d6 !internal and external plasma inductance V-s (Wb)
+    vsres = gamma * rmu0*geom%ip*1.d6*rmajor !resistive losses in start-up volt-seconds (Wb)
     vsstt = vsres + vsind + vsbrn !total volt-seconds needed (Wb) 
 
-    !phyaux:
+    !----------------------------------------
+    ! previously calculated by phyaux:
     qfuel = loss%dfuelreq * 2.0*1.d19 !qfuel is for nucleus pairs
     dntau = radp%av_ne*taueff*1.d19 !plasma average n-tau (s/m3)
     rndfuel = fusionrate*vol !fuel burnup rate (reactions/s)
@@ -683,22 +671,16 @@ contains
     burnup = rndfuel/qfuel*2.d0 !fractional plasma burnup
     fusrat=fusionrate*vol
     figmer=plascur*1.d-6*aspect
-
+    !---------------------------------------
 
     pinjmw=loss%pnbi
     pinjemw=loss%peaux
     pinjimw=loss%piaux
     pradpv = loss%Prad/vol !Total radiation power (MW) 
   
-
-
     ptrimw = loss%psepi !Ion transport (MW)  
     ptremw = loss%psepe !Electron transport (MW)
-
-
-
-    
-   
+ 
   end subroutine convert_Plasmod2PROCESS
 
   subroutine outputPlasmod(outfile)

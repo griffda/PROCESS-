@@ -439,21 +439,18 @@ implicit none
        
     endif
        
-
     !  Fraction of plasma current produced by inductive means
-
     if (ipedestal .ne. 3) then
       facoh = max( 1.0D-10, (1.0D0 - fvsbrnni) )
-!   Fraction of plasma current produced by auxiliary current drive
+    !   Fraction of plasma current produced by auxiliary current drive
       faccd = fvsbrnni - bootipf
     endif
-    !  Do auxiliary current drive power calculations
 
+    !  Auxiliary current drive power calculations
+    
     if (irfcd /= 0) call cudriv(nout,0)
  
-    if (ipedestal .ne. 3) then
-
-       
+    if (ipedestal .ne. 3) then  ! otherwise replaced by PLASMOD variables
        !  Calculate fusion power + components
        call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
             sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
@@ -461,7 +458,6 @@ implicit none
        pdt = pdtpv * vol
        pdhe3 = pdhe3pv * vol
        pdd = pddpv * vol
-
 
        !  Calculate neutral beam slowing down effects
        !  If ignited, then ignore beam fusion effects
@@ -475,14 +471,13 @@ implicit none
        end if
 
        pdt = pdt + 5.0D0*palpnb
-       
+
+       ! Create some derived values and add beam contribution to fusion power
        call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
             ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw,betaft, &
             palppv,palpipv,palpepv,pfuscmw,powfmw)
-    
     endif
-
-       
+     
     !  Nominal mean neutron wall load on entire first wall area including divertor and beam holes
     !  Note that 'fwarea' excludes these, so they have been added back in.
     if (iwalld == 1) then
@@ -491,14 +486,12 @@ implicit none
        wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
     end if
 
-    if (ipedestal .ne. 3) then
+    if (ipedestal .ne. 3) then ! otherwise replaced by PLASMOD variables
        
         !  Calculate ion/electron equilibration power
-
         call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
        !  Calculate radiation power
-       
        call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
             pcoreradpv,pedgeradpv,pradpv)
        
@@ -519,29 +512,20 @@ implicit none
 
     peakradwallload = photon_wall * peakfactrad
 
-    !  Calculate ohmic power
-    !call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
-     !    pohmpv,pohmmw,rpfac,rplas)
-    ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
-    !res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
-
     if (ipedestal .ne. 3) then
+       !  Calculate ohmic power
        call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
             pohmpv,pohmmw,rpfac,rplas)
        
-       ! KE - ohmic power (above) should come from PLASMOD and inside IF
        !  Calculate L- to H-mode power threshold for different scalings
-
        call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
        !  Enforced L-H power threshold value (if constraint 15 is turned on)
-
        plhthresh = pthrmw(ilhthresh)
         
        !  Power transported to the divertor by charged particles,
        !  i.e. excludes neutrons and radiation, and also NBI orbit loss power,
-       !  which is assumed to be absorbed by the first wall												   													   
-
+       !  which is assumed to be absorbed by the first wall												   
        if (ignite == 0) then
           pinj = pinjmw
        else
@@ -551,10 +535,10 @@ implicit none
 
        !  The following line is unphysical, but prevents -ve sqrt argument
        !  Should be obsolete if constraint eqn 17 is turned on
-       
        pdivt = max(0.001D0, pdivt)
        
     endif
+ 
     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
     res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
     
@@ -570,7 +554,6 @@ implicit none
     
        !  Calculate transport losses and energy confinement time using the
        !  chosen scaling law
-       
        call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
             iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
             plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
@@ -579,15 +562,13 @@ implicit none
        ptremw = ptrepv*vol
        ptrimw = ptripv*vol
        !  Total transport power from scaling law (MW)
-       !pscalingmw = ptremw + ptrimw
+       !pscalingmw = ptremw + ptrimw !KE - why is this commented?
 
-       !vscalc and phyaux inside IF - not calculated if PLASMOD is used
+       ! Calculate Volt-second requirements
        call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
             plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
 
        !  Calculate auxiliary physics related information
-       !  for the rest of the code
-       
        sbar = 1.0D0
        call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
             taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
@@ -599,25 +580,9 @@ implicit none
     !  Total transport power from scaling law (MW)
     pscalingmw = ptremw + ptrimw
        
-    !vscal and phyaux should be replaced by PLASMOD output ipedestal 3
-    !  Calculate volt-second requirements
-
-
-!write(*,*) 
-
-!    call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
-!         plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
-
-    !  Calculate auxiliary physics related information
-    !  for the rest of the code
-
-
-!    sbar = 1.0D0
-!    call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
-!         taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+    !!!!vscal and phyaux should be replaced by PLASMOD output ipedestal 3 - is this done?
 
     !  Calculate beta limit
-
     if (iprofile == 0) then
 
        if (gtscale == 1) then
@@ -640,57 +605,55 @@ implicit none
     total_plasma_internal_energy = 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol
     total_energy_conf_time = total_plasma_internal_energy / total_loss_power											  
 
-    !if(ipedestal==3)then
-       if (verbose == 1) then
-          !write some PROCESS outputs that have been generated by PLASMOD
-          open(32,file='processOutput_plasmod.dat')
-          write(32,*) 'te0 ',te0, ' ne0 ',ne0
-          write(32,*) 'teped ',teped, ' neped ',neped
-          write(32,*) 'nesep ',nesep, ' vol ',vol
-          write(32,*) 'plascur ',plascur, ' bootipf ',bootipf
-          write(32,*) 'q95 ',q95, ' qstar ',qstar
-          write(32,*) 'kappaa ',kappaa
-          write(32,*) 'FIELDS -----'
-          write(32,*) 'bp ',bp, ' bt ',bt
-          write(32,*) 'btot ', btot
-          write(32,*) 'BETA -----'
-          write(32,*) 'betap ', betap, ' betaft ',betaft
-          write(32,*) 'normalised_total_beta ',normalised_total_beta
-          write(32,*) 'RATES -----'
-          write(32,*) 'fusionrate ',fusionrate, ' alpharate ',alpharate
-          write(32,*) 'POWERS -----'
-          write(32,*) 'palpmw ',palpmw, ' pchargemw ',pchargemw, ' pneutmw ',pneutmw
-          write(32,*) 'palppv ',palppv, ' pchargepv ',pchargepv, ' pneutpv ',pneutpv
-          write(32,*) 'pdt ',pdt, ' pdhe3 ',pdhe3, ' pdd ',pdd
-          write(32,*) 'palpepv ',palpepv, ' palpipv ',palpipv
-          write(32,*) 'powfmw ',powfmw, ' pfuscmw ',pfuscmw, ' hfact ',hfact
-          write(32,*) 'ptrepv ',ptrepv, ' ptripv ',ptripv
-          write(32,*) 'powerht ',powerht
-          write(32,*) 'CONFINEMENT -----'
-          write(32,*) 'tauee ',tauee, ' tauei ',tauei
-          write(32,*) 'taueff ',taueff, ' taup ',taup, ' dntau ',dntau
-          write(32,*) 'NEUTRAL BEAM -----'
-          write(32,*) 'betanb ',betanb, ' dnbeam2 ',dnbeam2, ' palpnb ',palpnb
-          write(32,*) 'IMPURITIES -----'
-          write(32,*) 'ralpne ',ralpne, ' fimp_13 ',fimp(13)
-          write(32,*) 'RADIATION -----'
-          write(32,*) 'rad_fraction ', rad_fraction, ' pradmw ',pradmw
-          write(32,*) 'pcoreradmw ', pcoreradmw, ' pedgeradmw ',pedgeradmw
-          write(32,*) 'psyncpv ', psyncpv, ' pbrempv ',pbrempv
-          write(32,*) 'plinepv ', plinepv, ' piepv ',piepv
-          write(32,*) 'pinjemw ', pinjemw, ' pinjimw ',pinjimw
-          write(32,*) 'FUELLING -----'
-          write(32,*) 'qfuel ',qfuel, ' burnup ',burnup, ' rndfuel ',rndfuel
-          write(32,*) 'PLASMA INDUCTANCE -----'
-          write(32,*) 'phiint ', phiint, ' rlp ',rlp
-          write(32,*) 'vsbrn ', vsbrn, ' vsind ',vsind
-          write(32,*) 'vsres ', vsres, ' vsstt ',vsstt
-          write(32,*) 'PLASMA RESISTANCE -----'
-          write(32,*) 'pohmpv ', pohmpv, ' pohmmw ',pohmmw
-          write(32,*) 'rpfac ', rpfac, ' rplas ',rplas
-          close(32)
-       endif
-    !endif
+    if (verbose == 1) then
+       !write some PROCESS outputs that have been generated by PLASMOD
+       open(32,file='processOutput_plasmod.dat')
+       write(32,*) 'te0 ',te0, ' ne0 ',ne0
+       write(32,*) 'teped ',teped, ' neped ',neped
+       write(32,*) 'nesep ',nesep, ' vol ',vol
+       write(32,*) 'plascur ',plascur, ' bootipf ',bootipf
+       write(32,*) 'q95 ',q95, ' qstar ',qstar
+       write(32,*) 'kappaa ',kappaa
+       write(32,*) 'FIELDS -----'
+       write(32,*) 'bp ',bp, ' bt ',bt
+       write(32,*) 'btot ', btot
+       write(32,*) 'BETA -----'
+       write(32,*) 'betap ', betap, ' betaft ',betaft
+       write(32,*) 'normalised_total_beta ',normalised_total_beta
+       write(32,*) 'RATES -----'
+       write(32,*) 'fusionrate ',fusionrate, ' alpharate ',alpharate
+       write(32,*) 'POWERS -----'
+       write(32,*) 'palpmw ',palpmw, ' pchargemw ',pchargemw, ' pneutmw ',pneutmw
+       write(32,*) 'palppv ',palppv, ' pchargepv ',pchargepv, ' pneutpv ',pneutpv
+       write(32,*) 'pdt ',pdt, ' pdhe3 ',pdhe3, ' pdd ',pdd
+       write(32,*) 'palpepv ',palpepv, ' palpipv ',palpipv
+       write(32,*) 'powfmw ',powfmw, ' pfuscmw ',pfuscmw, ' hfact ',hfact
+       write(32,*) 'ptrepv ',ptrepv, ' ptripv ',ptripv
+       write(32,*) 'powerht ',powerht
+       write(32,*) 'CONFINEMENT -----'
+       write(32,*) 'tauee ',tauee, ' tauei ',tauei
+       write(32,*) 'taueff ',taueff, ' taup ',taup, ' dntau ',dntau
+       write(32,*) 'NEUTRAL BEAM -----'
+       write(32,*) 'betanb ',betanb, ' dnbeam2 ',dnbeam2, ' palpnb ',palpnb
+       write(32,*) 'IMPURITIES -----'
+       write(32,*) 'ralpne ',ralpne, ' fimp_13 ',fimp(13)
+       write(32,*) 'RADIATION -----'
+       write(32,*) 'rad_fraction ', rad_fraction, ' pradmw ',pradmw
+       write(32,*) 'pcoreradmw ', pcoreradmw, ' pedgeradmw ',pedgeradmw
+       write(32,*) 'psyncpv ', psyncpv, ' pbrempv ',pbrempv
+       write(32,*) 'plinepv ', plinepv, ' piepv ',piepv
+       write(32,*) 'pinjemw ', pinjemw, ' pinjimw ',pinjimw
+       write(32,*) 'FUELLING -----'
+       write(32,*) 'qfuel ',qfuel, ' burnup ',burnup, ' rndfuel ',rndfuel
+       write(32,*) 'PLASMA INDUCTANCE -----'
+       write(32,*) 'phiint ', phiint, ' rlp ',rlp
+       write(32,*) 'vsbrn ', vsbrn, ' vsind ',vsind
+       write(32,*) 'vsres ', vsres, ' vsstt ',vsstt
+       write(32,*) 'PLASMA RESISTANCE -----'
+       write(32,*) 'pohmpv ', pohmpv, ' pohmmw ',pohmmw
+       write(32,*) 'rpfac ', rpfac, ' rplas ',rplas
+       close(32)
+    endif
     
   end subroutine physics
 
