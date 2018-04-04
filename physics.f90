@@ -2031,7 +2031,7 @@ end function t_eped_scaling
 
     if (iprofile == 1) then
        alphaj = qstar/q0 - 1.0D0
-       rli = log(1.65D0 + 0.89D0*alphaj)  !  Tokamaks 3rd Edition, Wesson
+       rli = log(1.65D0 + 0.89D0*alphaj)  !  Tokamaks 4th Edition, Wesson, page 116
     end if
 
   contains
