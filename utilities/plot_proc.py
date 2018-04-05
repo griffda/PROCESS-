@@ -661,12 +661,12 @@ def plot_tprofile(prof):
     prof.set_title('Temperature profile')
 
     if ipedestal == 1:
-        rhocore1 = np.linspace(0,0.9*rhopedn)
-        rhocore2 = np.linspace(0.9*rhopedn,rhopedn)
+        rhocore1 = np.linspace(0,0.9*rhopedt)
+        rhocore2 = np.linspace(0.9*rhopedt,rhopedt)
         rhocore = np.append(rhocore1,rhocore2)
-        tcore = teped + (te0-teped) * (1-(rhocore/rhopedn)**tbeta)**alphat
+        tcore = teped + (te0-teped) * (1-(rhocore/rhopedt)**tbeta)**alphat
 
-        rhosep = np.linspace(rhopedn,1)
+        rhosep = np.linspace(rhopedt,1)
         tsep = tesep + (teped-tesep)* (1-rhosep)/(1-min(0.9999,rhopedt))
 
         rho = np.append(rhocore,rhosep)
