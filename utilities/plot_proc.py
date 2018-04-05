@@ -697,7 +697,7 @@ def plot_qprofile(prof):
     q_r_nevin = q0 + (q95-q0)*(rho + rho*rho + rho**3)/(3.0)
     q_r_sauter = q0 + (q95-q0)*(rho*rho)
 
-    prof.plot(rho,q_r_nevin, label="Nevin")
+    prof.plot(rho,q_r_nevin, label="Nevins")
     prof.plot(rho,q_r_sauter, label="Sauter")
     prof.legend()
 
