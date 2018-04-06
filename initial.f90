@@ -430,6 +430,17 @@ subroutine check
         if (ishape .ne. 4) then
            call report_error(196)
         endif
+
+        !PLASMOD uses its own NBI current drive routine
+        if ((iefrf .ne. 5) .or. (iefrf .ne. 8)) then
+           call report_error(197)
+        endif
+
+
+        !PLASMOD always uses current drive
+        if(irfcd == 0) then
+           call report_error(198)
+        endif
         
 
      endif

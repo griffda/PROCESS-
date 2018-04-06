@@ -305,7 +305,6 @@ implicit none
        
     else  ! Run PLASMOD 
          
-!       write(*,*) 'geom counter = ', geom%counter
        call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
 
        if(verbose == 1) then
@@ -5882,7 +5881,9 @@ end function t_eped_scaling
     !    call ovarre(outfile,'Fractional density of variable impurity (ion / electron density)','(fimpvar)',fimpvar)
     !end if
     call oblnkl(outfile)
-
+    if (ipedestal==3) then
+       call ocmmnt(outfile, 'PLASMOD does not calculate a temperature dependent Zeff and zeffai!')
+    endif
     call ovarrf(outfile,'Effective charge','(zeff)',zeff, 'OP ')
 
     ! Issue #487.  No idea what zeffai is.

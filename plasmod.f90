@@ -336,11 +336,9 @@ contains
     !------------------------------------------------
     !Quantities previously calculated by geomty in plasma_geometry
     !kappa95 and triang95 are inputs and not recalculated! (#646)
-    !HL Todo: We need to go through the radial build/vertical build and check
-    !that those are now consistent with the changes to the plasma geometry!
     kappa    = geom%k
     triang   = geom%d 
-    xarea    = mhd%torsurf !Plasma cross-sectional area (m2) - added KE
+    xarea    = mhd%torsurf !Plasma cross-sectional area (m2)
     sarea    = mhd%sp
     !sareao   =  !outboard plasma surface area
     kappaa   = xarea/(3.141592*rminor**2)
@@ -673,7 +671,7 @@ contains
     figmer=plascur*1.d-6*aspect
     !---------------------------------------
 
-    pinjmw=loss%pnbi
+    pinjmw =loss%pnbi
     pinjemw=loss%peaux
     pinjimw=loss%piaux
     pradpv = loss%Prad/vol !Total radiation power (MW) 
@@ -774,6 +772,7 @@ contains
     call ovarrf(outfile,'Volume averaged ion density (10^19 m^-3)','(radp%av_ni)', radp%av_ni)   
     call ovarrf(outfile,'Volume averaged electron temperature (keV)','(radp%av_te)', radp%av_te)
     call ovarrf(outfile,'Volume averaged ion temperature (keV)','(radp%av_ti)', radp%av_ti)
+    call ocmmnt(outfile, 'PLASMOD does not calculate a temperature dependent Zeff!')
     call ovarrf(outfile,'Volume averaged effective charge','(radp%zeff)', radp%zeff)
 
     call outputRadialProf

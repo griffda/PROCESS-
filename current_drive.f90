@@ -257,6 +257,8 @@ contains
              pinjemw = pinjmw * (1.0D0-fpion)
              
           else  !neutral beam powers calculated by PLASMOD
+             porbitlossmw = 0.0d0
+             nbshinemw = 0.0d0
              power1 = pinjmw
              pnbitot = power1 
           endif
