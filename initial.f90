@@ -432,7 +432,7 @@ subroutine check
         endif
 
         !PLASMOD uses its own NBI current drive routine
-        if ((iefrf .ne. 5) .or. (iefrf .ne. 8)) then
+        if (.not.((iefrf == 5) .or. (iefrf == 8)) )then
            call report_error(197)
         endif
 
