@@ -235,33 +235,35 @@ contains
 
        case (5,8)  ! NBCD
 
-          if(ipedestal.ne.3)then  ! When not using PLASMOD
-             ! MDK. See Gitlab issue #248, and scanned note.
-             power1 = 1.0D-6 * faccd * plascur / effnbss + pheat
+  
+             
+          ! MDK. See Gitlab issue #248, and scanned note.
+          power1 = 1.0D-6 * faccd * plascur / effnbss + pheat
           
-             ! Account for first orbit losses
-             ! (power due to particles that are ionised but not thermalised) [MW]:
-             ! This includes a second order term in shinethrough*(first orbit loss)
-             forbitloss = min(0.999,forbitloss) ! Should never be needed
+          ! Account for first orbit losses
+          ! (power due to particles that are ionised but not thermalised) [MW]:
+          ! This includes a second order term in shinethrough*(first orbit loss)
+          forbitloss = min(0.999,forbitloss) ! Should never be needed
+          
+          if(ipedestal.ne.3)then  ! When not using PLASMOD
              pnbitot = power1 / (1.0D0-forbitloss+forbitloss*nbshinef)
-             
-             ! Shinethrough power (atoms that are not ionised) [MW]:
-             nbshinemw = pnbitot * nbshinef
-             
-             ! First orbit loss
-             porbitlossmw = forbitloss * (pnbitot - nbshinemw)
-             
-             ! Power deposited
-             pinjmw = pnbitot - nbshinemw - porbitlossmw
-             pinjimw = pinjmw * fpion
-             pinjemw = pinjmw * (1.0D0-fpion)
-             
-          else  !neutral beam powers calculated by PLASMOD
-             porbitlossmw = 0.0d0
-             nbshinemw = 0.0d0
-             power1 = pinjmw
-             pnbitot = power1 
+          else
+             ! Netural beam power calculated by PLASMOD
+             pnbitot = pinjmw / (1.0D0-forbitloss+forbitloss*nbshinef)
           endif
+          
+          ! Shinethrough power (atoms that are not ionised) [MW]:
+          nbshinemw = pnbitot * nbshinef
+          
+          ! First orbit loss
+          porbitlossmw = forbitloss * (pnbitot - nbshinemw)
+          
+          ! Power deposited
+          pinjmw = pnbitot - nbshinemw - porbitlossmw
+          pinjimw = pinjmw * fpion
+          pinjemw = pinjmw * (1.0D0-fpion)
+             
+
 
           pwpnb = pnbitot/etanbi ! neutral beam wall plug power
           pinjwp = pwpnb

@@ -219,7 +219,6 @@ contains
        inp0%dx_control(2) = plasmod_dx_control(2) !ech
        inp0%nbi_energy    = plasmod_nbi_energy !in keV
 
-       !HL To do: I guess, these still need to be made input variables?
        inp0%eccdeff = 0.3  !CD = this * PCD * TE/NE !not used for now
        inp0%pech    = 0.d0 !ech power !not used for now
        inp0%pnbi    = 0.d0 !nbi power
