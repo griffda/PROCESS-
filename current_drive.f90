@@ -115,7 +115,7 @@ contains
     ! Local variables !
     !!!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: dene20,effnbss,effofss,effrfss,fpion, &
+    real(kind(1.0D0)) :: dene20,effnbss,effofss,effrfss, &
          gamnb,gamof,gamrf,power1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

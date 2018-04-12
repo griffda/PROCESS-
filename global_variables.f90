@@ -1032,6 +1032,8 @@ module current_drive_variables
   real(kind(1.0D0)) :: etalh = 0.3D0
   !+ad_vars  etanbi /0.3/ : neutral beam wall plug to injector efficiency
   real(kind(1.0D0)) :: etanbi = 0.3D0
+  !+ad_vars fpion  :  fraction of beam energy to ions
+  real(kind(1.0D0)) :: fpion = 0.5D0
   !+ad_vars  pnbitot : neutral beam power entering vacuum vessel
   real(kind(1.0D0)) :: pnbitot = 0.0D0
   !+ad_vars  nbshinemw : neutral beam shine-through power
