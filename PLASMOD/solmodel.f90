@@ -1,13 +1,14 @@
+!initialize
 	qdivt=0.d0
 
-!eich scaling
+!T. Eich scaling
 	lambda_q=0.73e-3*btor**(-0.78)* &     
 		&   (rminor**2.*btor/(0.2*rmajor*ip))**1.02* &
  	&   (qtot-qrad)**0.1* &
  	&   (rmajor)**0.02* &
  	&    3.*3.
 
-!geometry
+!geometry of field line
 	lparsep=q(nx)*2.d0*pi*rmajor/2.d0
 	ldiv=0.55*lparsep
 	
@@ -15,6 +16,7 @@
 	qpar=(qtot-qradedge)*1.d6/(2.d0*pi*(rmajor+rminor+shif(nx)) & 
 	 & *lambda_q*rminor/rmajor/q(nx)/2.d0)
 
+!some numerical values for Msicci model
 	fx=10.d0
 	tau_relax=0.1
 	ds1=nne(nx)/nepr(nx)*comp%c_car
@@ -45,7 +47,7 @@ endif
 
 
 if (num%isiccir.eq.1) then
-
+! M. Siccinio SOL model
 	if (isnan(Tup_0d)) then
 		tshguess=100.
 		tupguess=1000.
@@ -62,9 +64,6 @@ if (num%isiccir.eq.1) then
 	qdivt=qdivt/1e6
 
 endif
-
-!write(*,*) 'sol inputoutput ', nne(1)/nepr(1),ds1,dd1,qpar/1e6,t_plate,qdivt,qtot,qtot-qradedge
-!pause
 
 
 

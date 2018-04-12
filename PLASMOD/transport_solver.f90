@@ -1132,7 +1132,7 @@ endif
   write(2901,*) 'converged in iterations : ',jiter,num%etol,toleq,redo,loss%Pfus,mhd%vloop,T_e(1),tepr(1),& 
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 !	if (jiter.gt.3) write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus
-!	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
+	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 

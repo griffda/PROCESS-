@@ -16,7 +16,7 @@ module structs
       integer :: ipedestal,ntglf
       real(kind(1.0d0)) :: chvars(100)
       real(kind(1.0d0)) :: xtglf(100)
-      integer :: isiccir
+      integer :: isiccir=0
     end type numerics_transp  
 
 

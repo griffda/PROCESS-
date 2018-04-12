@@ -126,9 +126,6 @@ yllama=1.d0
 
 	end do
 
-!write(*,*) 'prad ne,',nne(1)/nepr(1),trapz((nne*nepr*prne)*dV)
-
-
 !separate prad total in core and edge
 	pradtot=prad+psync+pbrad
 	jrad=min(nx,max(1,nint(comp%pradpos*nx)))
@@ -152,6 +149,7 @@ yllama=1.d0
 	Powi = Piaux + peicl + pidt
 	totSe = cumint1(Powe*dV)
 	totSi = cumint1(Powi*dV)
+
 !interpolate on transport grid
  DdnVne = 625.d0*interp1_ef(nx,nxt,xr, totSe/G1/vprime/nepr, xtr)
  DdnVni = 625.d0*interp1_ef(nx,nxt,xr, totSi/G1/vprime/nions, xtr)
