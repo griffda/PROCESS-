@@ -60,10 +60,12 @@
 
 ! INTERNAL VARIABLES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		logical :: filetglf
+		character*80 :: fnamez(num%nxt)
   integer :: jipperdo2,jipper2,j
-  integer :: i, gippa
+  integer :: i, gippa, g_info, g_count
   integer, dimension(num%nxt,num%nchannels) :: indxx
-  integer :: jiterext, jiterextmax, jrad
+  integer :: jiterext, jiterextmax, jrad,jrad1,jrad2
   integer :: j1,j2    , irho
   integer :: j_aux
   integer :: jped,nx,nxt,nchannels, iped_model,jdum1,nxequil,i_qsaw, i_diagz
@@ -88,10 +90,12 @@
 	 real(kind(1.0d0)), dimension(num%nxt+1) :: T_e0, T_i0, N_e0, xtrt, Fn0, Fe0, Fi0
   real(kind(1.0d0)), dimension(num%nxt+1) :: Fn, Fe, Fi
   real(kind(1.0d0)), dimension(num%nxt) :: xtr
+  real(kind(1.0d0)), dimension(num%ntglf,num%nchannels) :: atglf,btglf
   real(kind(1.0d0)), dimension(num%nxt) :: q_tr, sh_tr
   real(kind(1.0d0)), dimension(num%nxt) :: gng, geg, gig, gng0, geg0, gig0, DdnVne, DdnVni, DdnVn
   real(kind(1.0d0)), dimension(num%nxt+1) :: gn_e0, gT_e0, gT_i0
-  real(kind(1.0d0)), dimension(num%nxt,num%nchannels) :: y, gy, ay, by, cy, a, b, c, chat, gyhat
+  real(kind(1.0d0)), dimension(num%nxt,num%nchannels) :: y, gy, ay, by, cy, a, b, aa,bb,c, chat, gyhat
+  real(kind(1.0d0)), dimension(num%nxt,num%nchannels) :: a_neo,b_neo
   real(kind(1.0d0)), dimension(num%nxt,num%nchannels) :: qy, qy0, gy0, qym, gym
   real(kind(1.0d0)), dimension(num%nxt,num%nchannels) :: cym, cy0, y0, ym, F, F0, Fm
   real(kind(1.0d0)), dimension(num%nxt*num%nchannels,num%nxt*num%nchannels) :: jacob, ijacob
@@ -108,6 +112,8 @@
   real(kind(1.0d0)), dimension(num%nx) :: chie,chii,dnn,vvn,eqpf,eqff,gradro,jpol,nbi_split
   real(kind(1.0d0)), dimension(num%nxt,num%nchannels) :: gytemp,ytemp
   real(kind(1.0d0)), dimension(num%nxt*num%nchannels) :: F1vec,F2vec
+  real(kind(1.0d0)) :: tup_0d,fm_SE,Lr,tguess,tau_relax,tshguess,tupguess,fmguess
+  real(kind(1.0d0)) :: dqoqguess,tdivguess,tau,p_sep,ds2,dd2,ds3,dd3,ds1,dd1
   ! set physics constants
   real(kind(1.0d0)), parameter :: clight = 2.9979d+18, e_charge = 1.602d-19, eps_vacuum = 8.854d-12
   real(kind(1.0d0)), parameter :: m_electron = 9.109d-31, m_proton = 1.673d-27, mu_vacuum = 1.2566d-6
@@ -532,13 +538,28 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
 	if (i_diagz.eq.1) then
 		write(1441,'(4111E25.11)') xtrt,a(:,1),a(:,2),a(:,3),b(:,1),b(:,2),b(:,3), &
 		& c(:,1),c(:,2),c(:,3),y(:,1),y(:,2),y(:,3),chat(:,1),chat(:,2),chat(:,3),gy(:,1),gy(:,2),gy(:,3)
-	endif
+		write(1447,'(4111E25.11)') x,tepr,tipr,nepr, & 
+		& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,2),a(:,2),0.1d0],xr), & 
+		& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,3),a(:,3),0.1d0],xr), & 
+		& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,1),a(:,1),0.1d0],xr), & 
+		& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[b(1,1),b(:,1),0.d0],xr)
+		write(1448,'(4111E25.11)') tepr(1),tipr(1),nepr(1),teb,neb,che,cxe,car
+			endif
 
 ! Transport solver
     Fvec = reshape(F,(/nxt*nchannels/))
     gippa = 0  ! this routine probably not required if imethod is always 1...!
-    gyhat = (c-b*y0)/a/y0*rmajor  ! this is the transport solution for the normalized gradients
+    gyhat = (c-bb*y0)/aa/y0*rmajor  ! this is the transport solution for the normalized gradients
     gy = (gy0+num%dt*gyhat)/(1.0d0+num%dt)  ! this is the actual solution, weighted with the time step
+
+!	write(*,*) gy0,'*',gy
+
+!	write(1441,'(911E25.11)') x,nepr,tepr,tipr, & 
+!	& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,2),a(:,2),0.1d0],xr), & 
+!	& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[b(1,1),b(:,1),0.d0],xr)
+
+
+!if (jiter.eq.20) stop
 
 !after transport computation, update plasma profiles, ne te ti
   call update_profiles(dx, nxt, nchannels, gy, y0, rmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
@@ -1087,10 +1108,10 @@ endif
   write(99,'(999E25.11)')   jcdr
   write(99,'(911E25.11)')   peaux
   write(99,'(911E25.11)')   piaux
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,2),a(:,2),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,3),a(:,3),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,1),a(:,1),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[b(1,1),b(:,1),0.d0],xr)
+  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,2)+a_neo(1,2),a(:,2)+a_neo(:,2),0.1d0],xr)
+  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,3)+a_neo(1,3),a(:,3)+a_neo(:,3),0.1d0],xr)
+  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,1)+a_neo(1,1),a(:,1)+a_neo(:,1),0.1d0],xr)
+  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[b(1,1)+b_neo(1,1),b(:,1)+b_neo(:,1),0.d0],xr)
   write(99,'(999E25.11)')   vprime !15
   write(99,'(999E25.11)')   g1 !16
   write(99,'(999E25.11)')   droda !17
@@ -1100,13 +1121,18 @@ endif
   write(99,'(999E25.11)')   eqpf
   write(99,'(999E25.11)')   eqff
   write(99,'(999E25.11)')   (psi-psi(1))/(psi(nx)-psi(1))
+  write(99,'(999E25.11)')   ndeut+ntrit
+  write(99,'(999E25.11)')   nhe
+  write(99,'(999E25.11)')   nne
+  write(99,'(999E25.11)')   nxe
+		write(99,'(999E25.11)')   nxe*zavxe+nne*zavne+2*nhe
   close(99)
   write(2901,*) 'vloop,q,ip : ',mhd%vloop,mhd%q,mhd%ip_out 
   write(2901,*) 'Fusion power : ',loss%pfus 
   write(2901,*) 'converged in iterations : ',jiter,num%etol,toleq,redo,loss%Pfus,mhd%vloop,T_e(1),tepr(1),& 
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 !	if (jiter.gt.3) write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus
-!	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
+	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 
@@ -1402,38 +1428,32 @@ return
     zavne = 1.0d0
     
     do j = 1, size(tepr)
-       T = tepr(j)*1000.0d0
-       Z = log10(T)
-       
-       if (T.le.20.0d0) then
-          Y=-18.09 + 9.8979*Z - 3.6044*Z*Z
-       else if ((T.le.35.0d0).and.(T.gt.20.0d0)) then
-          Y=-10.073 - 3.3149*Z + 1.7445*Z*Z
-       else if ((T.le.70.0d0).and.(T.gt.35.0d0)) then
-          Y=-40.082 + 36.658*Z - 11.554*Z*Z
-       else if ((T.le.200.0d0).and.(T.gt.70.0d0)) then
-          Y=30.049 - 38.298*Z + 8.4829*Z*Z
-       else if ((T.le.500.0d0).and.(T.gt.200.0d0)) then
-          Y=-51.92 + 30.584*Z - 5.9674*Z*Z
-       else if ((T.le.2000.0d0).and.(T.gt.500.0d0)) then
-          Y=-2.6116 - 5.9817*Z + 0.81513*Z*Z
-       else if (T.gt.2000.0d0) then
-          Y=-5.8745 - 4.1134*Z + 0.54821*Z*Z
-       end if
-       prne(j) = 10.0d0**(Y+12.0d0)
+        T=TEpr(J)
+        Z=1/(TEpr(J)+.0001)
+        IF(T.LE..02)                 Y=1000*t
+        IF(T.LE..043.AND.T.GT..02)   Y=0.7*Z-0.55
+        IF(T.LE..07.AND.T.GT..043)   Y=0.65
+        IF(T.LE..25.AND.T.GT..07)    Y=30.*T-1.3
+        IF(T.LE..53.AND.T.GT..25)    Y=2.5*Z-4
+        IF(T.LE..86.AND.T.GT..53)    Y=0.7*Z-0.55
+        IF(T.LE.1.9.AND.T.GT..86)    Y=0.09*T+0.19
+        IF(T.LE.2.53.AND.T.GT.1.9)   Y=0.35
+        IF(T.LE.10..AND.T.GT.2.53)   Y=0.7/(T+.01)+0.09
+        IF(T.LE.23..AND.T.GT.10.)    Y=1/(T-3.4)**2+0.138
+        IF(T.LE.100..AND.T.GT.23.)   Y=9.*10**(-4.01)*T+0.12
+        IF(T.GT.100.) 		     Y=9.*10**(-4.01)*T+0.12
+        prne(j)	=Y
        
        T = T/1000.0
        Z = log10(T)
        
-       if (T.lt.0.09d0) then
-          zavne(j)=max(1.0d0 , 3.0d0+5.714d0*(Z+1.92d0))
-       else if ((T.lt.0.3d0).and.(T.ge.0.09d0)) then
-          zavne(j) = 8.0d0
-       else if ((T.lt.0.7d0).and.(T.ge.0.3d0)) then
-          zavne(j) = 8.0d0 + 5.435*(Z+0.5229)
-       else if (T.ge.0.7d0) then
-          zavne(j) = 10.0d0
-       end if
+					zavne(j)=1.
+       IF(T.LT..045.AND.T.GE..0055) zavne(j)=3.+7.6545*(Z+2.)
+       IF(T.LT..12.AND.T.GE..045) zavne(j)=8.
+       IF(T.LT..55.AND.T.GE..12) zavne(j)=8.+12.1*(Z+0.92)
+       IF(T.LT.1.8.and.T.GE..55)      zavne(j)=16.
+	IF(T.LT.4.0.and.T.ge.1.8)	zavne(j)=16+5.767*(Z-.2553)
+	if(T.gt.4.)		zavne(j)=18.
        
     end do
 

@@ -126,7 +126,6 @@ yllama=1.d0
 
 	end do
 
-
 !separate prad total in core and edge
 	pradtot=prad+psync+pbrad
 	jrad=min(nx,max(1,nint(comp%pradpos*nx)))
@@ -150,6 +149,7 @@ yllama=1.d0
 	Powi = Piaux + peicl + pidt
 	totSe = cumint1(Powe*dV)
 	totSi = cumint1(Powi*dV)
+
 !interpolate on transport grid
  DdnVne = 625.d0*interp1_ef(nx,nxt,xr, totSe/G1/vprime/nepr, xtr)
  DdnVni = 625.d0*interp1_ef(nx,nxt,xr, totSi/G1/vprime/nions, xtr)
@@ -167,14 +167,28 @@ yllama=1.d0
 	c(:,3) = DdnVni
 	
 	! define transport coefficients
+ !write(*,*) jiter,"call transport",num%etol
+	if (i_modeltype.ne.9999) then
 	call trmodel(i_modeltype,nx,nxt, nchannels,vprime,2.5d0,1.d0,1.+0.*amin,1.+0.*amin,1.+0.*amin, & 
 			& nepr,tepr,nepr,0.5*nepr,0.*nepr,tipr,1.+0.*nepr,0.*nepr,2.5+0.*nepr,1./q,RHO,x*rminor, &
 			& SHIF,k,d,0.*shif,0.*shif,0.*shif,0.*shif,IPOL,g1*vprime,vprime,1.+0.*vprime, & 
 			& SHEAR,0.*nepr,0.*nepr,palph,0.*nepr,0.*nepr,0.*nepr,y0, gy0, xtr,x, amin, rmajor, btor,num%capA, q_tr, sh_tr, a, b, &
 			& Hfactor,chi00,chipow,Hnow,chifac0)
+	aa=a
+	bb=b
+	else
+	!TGLF
+
+!include "neo_inc.f90"	
+!include "tglf_inc.f90"	
+!include "tglf_inc_parallel.f90"	
+!stop
+		
+	endif
+
 
 !chat is the transport power from transport, while c is source power, the two must be equal at steady state
-	chat = a * gy0 * y0/rmajor + b * y0  ! To compare to c
+	chat = aa * gy0 * y0/rmajor + bb * y0  ! To compare to c
 
 	F = chat-c  ! New residual, F must go to zero at steady-state
 

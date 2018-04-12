@@ -12,7 +12,9 @@
     real(kind(1.0d0)) :: dtmax, dtmaxmin, dtmaxmax, tolmax, tolmin, dgy, etol0, etolm, dtmax0
     integer :: jiter, nitermax, Pf0, jipperdo, jipper, redo, jnit, redo0,i_modeltype,i_equiltype
     real(kind(1.0d0)) :: rminor,ng,pi
-    real(kind(1.0d0)),dimension(20) :: rscan,btscan
+    real(kind(1.0d0)),dimension(8) :: rscan
+				real(kind(1.0d0)),dimension(7) :: btscan
+    real(kind(1.0d0)),dimension(8,7) :: fusscan,vlopscan,volscan,hscan,nbiscan
     
     ! grid
     
@@ -37,9 +39,8 @@
 
 
 
-!	rscan=(/5.,6.5,8.,9.,10.,5.,6.5,8.,9.,10.,5.,6.5,8.,9.,10.,5.,6.5,8.,9.,10./)
-!	btscan=(/4.,4.,4.,4.,4.,5.,5.,5.,5.,5.,6.,6.,6.,6.,6.,6.5,6.5,6.5,6.5,6.5/)
-
+	rscan=(/8.7,8.8,8.9,9.,9.1,9.2,9.3,9.4/)
+	btscan=(/5.5,5.6,5.7,5.8,5.9,6.,6.1/)
 
     
     
@@ -51,11 +52,20 @@
 				!	pause
     ! set up grid
 
-	do j1scan=1,1
-	write(*,*) j1scan
+!	open(32,file='inpuz.dat')
+!	read(32,*) geom%R,geom%bt
+!	close(32)
+
+
+
+	do j2scan=4,4
+	do j1scan=4,4
+	call system('rm tglfou*')
+	write(*,*) j1scan,j2scan
 !    ped%teped=5.5  !pedestal top temperature
 !    ped%tesep=0.3  !separatrix temperature
-
+! geom%R=rscan(j1scan)
+!	geom%bt=btscan(j2scan)
   	num%dt=num%dtmin
 !					inp0%qnbi_psepfac=50. !dqnbi/d(1-Psep/PLH)
 !				inp0%cxe_psepfac=1.e-4 !dcxe/d(1-Psep/PLH)
@@ -71,6 +81,45 @@
 !write(*,*) 'first iteration'
 !pause
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+write(*,*) 'num',num
+write(*,*) 'geom',geom
+write(*,*) 'comp',comp
+write(*,*) 'ped',ped
+write(*,*) 'inp0',inp0
+!write(*,*) 'radp',radp
+write(*,*) 'mhd',mhd
+write(*,*) 'loss',loss
+write(*,*) ' '
+write(*,*) 'Pfus/V '
+write(*,*) loss%Pfus/mhd%vp
+
+fusscan(j1scan,j2scan)=loss%Pfus
+vlopscan(j1scan,j2scan)=mhd%vloop
+volscan(j1scan,j2scan)=mhd%vp
+hscan(j1scan,j2scan)=loss%H
+nbiscan(j1scan,j2scan)=loss%pnbi
+
+	open(32,file='fort.9911')
+	write(32,'(722E25.11)') rscan,btscan,fusscan,& 
+	& vlopscan,volscan,hscan,nbiscan
+	close(32)
+
+enddo
+enddo
+
+
+
+
+stop
+
+
+
+
+
+
+
+
+stop
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
@@ -210,7 +259,7 @@ write(*,*) (mhd%f_ni-mhd%fbs)*geom%ip/loss%pnbi*1e3
 
 !pause
 
-enddo
+!enddo
 
 
 

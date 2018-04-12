@@ -485,6 +485,13 @@ end function integr_cde
 		
 		t4=x2(i)
 
+	if (t4.gt.x(nx1).and.jdone.eq.0) then
+		y2(i)=y1(nx1)
+		jdone=1
+	endif
+
+
+
 		do j=2,Nx1-1
 		z1=x1(j-1)
 		z2=x1(j)

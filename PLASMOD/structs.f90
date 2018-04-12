@@ -13,8 +13,10 @@ module structs
       integer :: i_modeltype, i_equiltype
       integer :: nx != 11!31!41    !these should go into inputs together with numeric_transp
       integer :: nxt, nchannels,i_impmodel != 5, nchannels = 3
-      integer :: ipedestal
+      integer :: ipedestal,ntglf
       real(kind(1.0d0)) :: chvars(100)
+      real(kind(1.0d0)) :: xtglf(100)
+      integer :: isiccir=0
     end type numerics_transp  
 
 
@@ -57,7 +59,7 @@ module structs
 						& qheat,qcd,qfus,spellet,fpellet,q_control, & 
 						& x_heat(2),x_cd(2),x_fus(2),x_control(2), &
 						& dx_heat(2),dx_cd(2),dx_fus(2),dx_control(2),nbi_energy, &
-						& PLH,maxpauxor,contrpovs=0.d0,contrpovr=0.d0,betalim
+						& PLH,maxpauxor,contrpovs=0.d0,contrpovr=0.d0,betalim,fpion=0.5d0
     end type inputs 
 
 
