@@ -220,12 +220,9 @@ contains
        inp0%spellet = 0.d0 !pellet mass in particles of D in 10^19
        inp0%fpellet = 0.5d0 !pellet frequency in Hz
 
+       ! implemented global variables ready for use when required
        !inp0%eccdeff = plasmod_eccdeff  !CD = this * PCD * TE/NE !not used for now
        !inp0%pech    = plasmod_pech !ech power !not used for now
-       !inp0%pnbi    = plasmod_pnbi !nbi power
-       !inp0%qheat   = plasmod_qheat !
-       !inp0%qcd     = plasmod_qcd !
-       !inp0%qfus    = plasmod_qfus !
        !inp0%spellet = plasmod_spellet !pellet mass in particles of D in 10^19
        !inp0%fpellet = plasmod_fpellet !pellet frequency in Hz
 
@@ -305,23 +302,18 @@ contains
 !       write(*,*) 'PLASMOD has converged!!!'
     elseif (i_flag==0)then
        write(*,*) 'The PLASMOD transport model has crashed'
-       call report_error(174)
     elseif (i_flag==-1)then
        write(*,*) 'The PLASMOD transport model has not converged after itermax'
-       call report_error(174)
     elseif (i_flag==-2)then
        write(*,*) 'The PLASMOD equilibrium has crashed'
+    endif
+
+    ! mhd%equilcheck will likely be depricated in the future, as it is covered
+    ! by i_flag
+    if (i_flag.ne.1 .or. mhd%equilcheck.ne.1)then
        call report_error(174)
     endif
-
-    
-    ! This will likely be depricated in the future, as this is covered
-    ! by i_flag
-    if (mhd%equilcheck .ne. 1) then
-       write(*,*) 'The PLASMOD equilibrium has crashed'
-       call report_error(174) 
-    endif
-
+        
     !------------------------------------------------
     !Quantities previously calculated by geomty in plasma_geometry
     !kappa95 and triang95 are inputs and not recalculated! (#646)
@@ -412,7 +404,7 @@ contains
     
     deni  = radp%av_nd*1.d19 ! Fuel density (/m3)
     
-    !  Ensure that deni is never negative or zero
+    !  Ensure that deni is never negative or zero - KE: deni could be zero with this inequality
     if (deni < 0.0D0) then
        fdiags(1) = deni ; call report_error(78)
        deni = max(deni,1.0D0)
@@ -550,7 +542,7 @@ contains
     !previously calculated by palph
     palppv     = loss%Pfus/(5.0*vol) !alpha particle fusion power per volume (MW/m3)
     pchargepv  = 0d0 !other charged particle fusion power/volume (MW/m3)
-    pneutpv    = loss%Pfus / (5.0*vol) * 4.0 !neutron fusion power per volume (MW/m3)
+    !pneutpv calculated in palph2 section below
     !missing e.g. beam power as calculated in beamfus
     !sigvdt = 0.0d0
     fusionrate = loss%fusionrate !fusion reaction rate (reactions/m3/s)
@@ -661,10 +653,7 @@ contains
     !---------------------------------------
 
     pinjmw =loss%pnbi
-    pinjemw=loss%peaux
-    pinjimw=loss%piaux
     pradpv = loss%Prad/vol !Total radiation power (MW) 
-  
     ptrimw = loss%psepi !Ion transport (MW)  
     ptremw = loss%psepe !Electron transport (MW)
  
