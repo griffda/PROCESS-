@@ -36,3 +36,4 @@ PLASMOD/fort.*
 PLASMOD/output_list.txt
 PLASMOD/KE*
 *~
+/utilities/run_process.conf
