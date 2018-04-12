@@ -293,11 +293,10 @@ def poloidal_cross_section(axis, mfile_data, scan=-1):
     axis.set_ylabel('Z / m')
     axis.set_title('Poloidal cross-section')
 
-    if mfile_data.data["snull"].get_scan(scan):
-        plot_vacuum_vessel_snull(axis, mfile_data, scan)
-        plot_shield_snull(axis, mfile_data, scan)
-        plot_blanket_snull(axis, mfile_data, scan)
-        plot_firstwall_snull(axis, mfile_data, scan)
+    plot_vacuum_vessel(axis, mfile_data, scan)
+    plot_shield(axis, mfile_data, scan)
+    plot_blanket(axis, mfile_data, scan)
+    plot_firstwall(axis, mfile_data, scan)
 
     plot_plasma(axis, mfile_data, scan)
     plot_centre_cross(axis, mfile_data, scan)
@@ -702,7 +701,7 @@ def plot_qprofile(prof):
     prof.legend()
 
 
-def plot_vacuum_vessel_snull(axis, mfile_data, scan):
+def plot_vacuum_vessel(axis, mfile_data, scan):
     """Function to plot vacuum vessel
 
     Arguments:
@@ -710,6 +709,7 @@ def plot_vacuum_vessel_snull(axis, mfile_data, scan):
         mfile_data --> MFILE data object
         scan --> scan number to use
     """
+    snull = mfile_data.data["snull"].get_scan(scan)
     triang = mfile_data.data["triang95"].get_scan(scan)
     temp_array_1 = ()
     temp_array_2 = ()
@@ -743,17 +743,19 @@ def plot_vacuum_vessel_snull(axis, mfile_data, scan):
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
 
-
-    rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
-    zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
-    axis.fill(rs, zs, color=vessel)
+    if snull==1:
+        rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
+        zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
+        axis.fill(rs, zs, color=vessel)
 
     rs = np.concatenate([temp_array_2[0], temp_array_2[2][::-1]])
     zs = np.concatenate([temp_array_2[1], temp_array_2[3][::-1]])
     axis.fill(rs, zs, color=vessel)
+    if snull==0:
+        axis.fill(rs, -zs, color=vessel)
 
 
-def plot_shield_snull(axis, mfile_data, scan):
+def plot_shield(axis, mfile_data, scan):
     """Function to plot shield
 
     Arguments:
@@ -761,6 +763,7 @@ def plot_shield_snull(axis, mfile_data, scan):
         mfile_data --> MFILE data object
         scan --> scan number to use
     """
+    snull = mfile_data.data["snull"].get_scan(scan)
     triang = mfile_data.data["triang95"].get_scan(scan)
     temp_array_1 = ()
     temp_array_2 = ()
@@ -794,17 +797,19 @@ def plot_shield_snull(axis, mfile_data, scan):
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
 
-
-    rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
-    zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
-    axis.fill(rs, zs, color=shield)
+    if snull==1:
+        rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
+        zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
+        axis.fill(rs, zs, color=shield)
 
     rs = np.concatenate([temp_array_2[0], temp_array_2[2][::-1]])
     zs = np.concatenate([temp_array_2[1], temp_array_2[3][::-1]])
     axis.fill(rs, zs, color=shield)
+    if snull==0:
+        axis.fill(rs, -zs, color=shield)
 
-def plot_blanket_snull(axis, mfile_data, scan):
-    """Function to plot single null case of blanket
+def plot_blanket(axis, mfile_data, scan):
+    """Function to plot blanket
 
     Arguments:
       axis --> axis object to plot to
@@ -814,30 +819,32 @@ def plot_blanket_snull(axis, mfile_data, scan):
     """
     point_array = ()
 
-    # Upper blanket: outer surface
-    radx = (cumulative_radial_build("blnkoth", mfile_data, scan) +
-            cumulative_radial_build("vvblgapi", mfile_data, scan)) / 2.0
-    rminx = (cumulative_radial_build("blnkoth", mfile_data, scan) -
+    snull = mfile_data.data["snull"].get_scan(scan)
+    if snull==1:
+        # Upper blanket: outer surface
+        radx = (cumulative_radial_build("blnkoth", mfile_data, scan) +
+                cumulative_radial_build("vvblgapi", mfile_data, scan)) / 2.0
+        rminx = (cumulative_radial_build("blnkoth", mfile_data, scan) -
              cumulative_radial_build("vvblgapi", mfile_data, scan)) / 2.0
 
-    kapx = cumulative_upper['blnktth'] / rminx
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    point_array = point_array + ((rs, zs))
+        kapx = cumulative_upper['blnktth'] / rminx
+        (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+        point_array = point_array + ((rs, zs))
 
-    # Upper blanket: inner surface
-    radx = (cumulative_radial_build("fwoth", mfile_data, scan) +
-            cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
-    rminx = (cumulative_radial_build("fwoth", mfile_data, scan) -
-             cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
+        # Upper blanket: inner surface
+        radx = (cumulative_radial_build("fwoth", mfile_data, scan) +
+                cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
+        rminx = (cumulative_radial_build("fwoth", mfile_data, scan) -
+                 cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
 
-    kapx = cumulative_upper['fwtth'] / rminx
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    point_array = point_array + ((rs, zs))
+        kapx = cumulative_upper['fwtth'] / rminx
+        (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+        point_array = point_array + ((rs, zs))
 
-    # Plot upper blanket
-    rs = np.concatenate([point_array[0], point_array[2][::-1]])
-    zs = np.concatenate([point_array[1], point_array[3][::-1]])
-    axis.fill(rs, zs, color=blanket)
+        # Plot upper blanket
+        rs = np.concatenate([point_array[0], point_array[2][::-1]])
+        zs = np.concatenate([point_array[1], point_array[3][::-1]])
+        axis.fill(rs, zs, color=blanket)
 
     # Lower blanket
     blnktth = mfile_data.data["blnktth"].get_scan(scan)
@@ -846,10 +853,14 @@ def plot_blanket_snull(axis, mfile_data, scan):
     divgap = cumulative_lower['divfix']
     plotdhgap(axis, c_shldith, c_blnkoth, blnkith, blnkoth, divgap,
               -blnktth, triang, blanket)
+    if snull==0:
+        plotdhgap(axis, c_shldith, c_blnkoth, blnkith, blnkoth, -divgap,
+                  -blnktth, triang, blanket)
+              
 
 
-def plot_firstwall_snull(axis, mfile_data, scan):
-    """Function to plot single null case of first wall
+def plot_firstwall(axis, mfile_data, scan):
+    """Function to plot first wall
 
     Arguments:
       axis --> axis object to plot to
@@ -859,32 +870,33 @@ def plot_firstwall_snull(axis, mfile_data, scan):
     """
     blnktth = mfile_data.data["blnktth"].get_scan(scan)
     tfwvt = mfile_data.data["fwtth"].get_scan(scan)
+    snull = mfile_data.data["snull"].get_scan(scan)
     point_array = ()
 
-    # Upper first wall: outer surface
-    radx = (cumulative_radial_build("fwoth", mfile_data, scan) +
-            cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
-    rminx = (cumulative_radial_build("fwoth", mfile_data, scan) -
-             cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
+    if snull==1:
+        # Upper first wall: outer surface
+        radx = (cumulative_radial_build("fwoth", mfile_data, scan) +
+                cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
+        rminx = (cumulative_radial_build("fwoth", mfile_data, scan) -
+                 cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
 
-    kapx = cumulative_upper['fwtth'] / rminx
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    point_array = point_array + ((rs, zs))
+        kapx = cumulative_upper['fwtth'] / rminx
+        (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+        point_array = point_array + ((rs, zs))
 
-    # Upper first wall: inner surface
-    radx = (cumulative_radial_build("scraplo", mfile_data, scan) +
-            cumulative_radial_build("fwith", mfile_data, scan)) / 2.0
-    rminx = (cumulative_radial_build("scraplo", mfile_data, scan) -
-             cumulative_radial_build("fwith", mfile_data, scan)) / 2.0
+        # Upper first wall: inner surface
+        radx = (cumulative_radial_build("scraplo", mfile_data, scan) +
+                cumulative_radial_build("fwith", mfile_data, scan)) / 2.0
+        rminx = (cumulative_radial_build("scraplo", mfile_data, scan) -
+                 cumulative_radial_build("fwith", mfile_data, scan)) / 2.0
 
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    point_array = point_array + ((rs, zs))
+        (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+        point_array = point_array + ((rs, zs))
 
-    # Plot upper first wall
-    rs = np.concatenate([point_array[0], point_array[2][::-1]])
-    zs = np.concatenate([point_array[1], point_array[3][::-1]])
-    axis.fill(rs, zs, color=firstwall)
-
+        # Plot upper first wall
+        rs = np.concatenate([point_array[0], point_array[2][::-1]])
+        zs = np.concatenate([point_array[1], point_array[3][::-1]])
+        axis.fill(rs, zs, color=firstwall)
 
     # Lower first wall
     c_blnkith = cumulative_radial_build("blnkith", mfile_data, scan)
@@ -893,6 +905,10 @@ def plot_firstwall_snull(axis, mfile_data, scan):
 
     plotdhgap(axis, c_blnkith, c_fwoth, fwith, fwoth,
               divgap + blnktth, -tfwvt, triang, firstwall )
+    
+    if snull==0:
+        plotdhgap(axis, c_blnkith, c_fwoth, fwith, fwoth,
+                  -(divgap + blnktth), -tfwvt, triang, firstwall )
 
 
 def angle_check(angle1, angle2):
