@@ -442,15 +442,7 @@ subroutine check
            call report_error(198)
         endif
 
-        !This is a temporary set up
-        if (any(icc == 68)) then
-           write(*,*) "This is a temporary set please use icc 56 instead of icc 68!"
-           
-           write(*,*) 'PROCESS stopping.'
-           stop
-           
-        endif
-        
+       
 
      endif
 

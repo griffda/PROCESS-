@@ -117,23 +117,7 @@ contains
     !uses PROCES defined LH threshold, if this is > 0
     inp0%PLH = 0d0 !plhthresh ! This won't work as this can only be calculated after.
 
-    ! These values should only be set, if the respective constraints
-    ! are being used. They should be set to large values otherwise.
-    ! pseprmax and psepbqarmax cannot be used at the same time!
-    ! HL:This is a temporary set up and might get reactivated later. 
-    if (.false.) then
-       if (any(icc == 56)) then
-          comp%psep_r      = pseprmax !Psep/R max value
-          comp%psepb_q95AR = 1.0e3 !large number to have no effect
-       else if (any(icc == 68)) then
-          comp%psep_r      = 1.0e3 !large number to have no effect
-          comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value times the iteartion variable
-       else
-          comp%psep_r      = 1.0e3 !large number to have no effect
-          comp%psepb_q95AR = 1.0e3 !large number to have no effect
-       endif
-    endif
-       
+   
 							
     inp0%nbcdeff = gamcd ! normalised current drive efficiency (1.0e20 A/W-m2) 
 
@@ -145,8 +129,9 @@ contains
 
        !HL: This is a temporary set up for the moment!
        comp%psep_r      = pseprmax !Psep/R max value
-       comp%psepb_q95AR = 1.0e3 !large number to have no effect
+       comp%psepb_q95AR = psepbqarmax !Psep B/qAR max value
 
+       
        ! To selfconsistently compute the He concentration inside PLASMOD
        ! its intial fraction has to be 0.d0. Then globtau is used!
        ! The Xe fraction is used as an iteration variable inside PLASMOD
@@ -156,7 +141,6 @@ contains
        
        comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi      
        comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
-       comp%psep_r      = 1.0e3 !large number to have no effect
        inp0%maxpauxor   = plasmod_maxpauxor ! maximum Paux/R allowed
 
        num%tol    = plasmod_tol !tolerance to be reached, in % variation at each time step
@@ -251,8 +235,6 @@ contains
        !Only one of the two below should be specified
        inp0%contrpovs = plasmod_contrpovs !control power in Paux/lateral_area (MW/m2)
        inp0%contrpovr = plasmod_contrpovr !control power in Paux/R (MW/m)
-
-       comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
 
        ! qdivt should be equal to qtargettotal /5.0e6/ if using the
        ! Kallenbach model at the same time
