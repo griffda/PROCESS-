@@ -135,8 +135,7 @@ contains
     endif
        
 							
-    inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
-
+    inp0%nbcdeff = gamcd ! normalised current drive efficiency (1.0e20 A/W-m2) 
 
     ! all fixed input variables that cannot change within a PROCESS
     ! iteration go here!
