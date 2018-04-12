@@ -2734,6 +2734,7 @@ contains
     if (iohcl == 0) then
        call ocmmnt(outfile,'No central solenoid included')
        call oblnkl(outfile)
+       call ovarin(mfile,'Existence_of_central_solenoid','(iohcl)',iohcl)
     else
        if (ipfres == 0) then
           call ocmmnt(outfile,'Superconducting central solenoid')
