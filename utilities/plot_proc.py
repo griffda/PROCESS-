@@ -743,6 +743,8 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
 
+    # Single null: Draw top half from output
+    # Double null: Reflect bottom half to top
     if snull==1:
         rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
         zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
@@ -751,6 +753,7 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
     rs = np.concatenate([temp_array_2[0], temp_array_2[2][::-1]])
     zs = np.concatenate([temp_array_2[1], temp_array_2[3][::-1]])
     axis.fill(rs, zs, color=vessel)
+    # For double null, reflect shape of lower half to top instead
     if snull==0:
         axis.fill(rs, -zs, color=vessel)
 
@@ -797,6 +800,8 @@ def plot_shield(axis, mfile_data, scan):
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
 
+    # Single null: Draw top half from output
+    # Double null: Reflect bottom half to top
     if snull==1:
         rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
         zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
@@ -807,6 +812,7 @@ def plot_shield(axis, mfile_data, scan):
     axis.fill(rs, zs, color=shield)
     if snull==0:
         axis.fill(rs, -zs, color=shield)
+
 
 def plot_blanket(axis, mfile_data, scan):
     """Function to plot blanket
@@ -819,6 +825,8 @@ def plot_blanket(axis, mfile_data, scan):
     """
     point_array = ()
 
+    # Single null: Draw top half from output
+    # Double null: Reflect bottom half to top
     snull = mfile_data.data["snull"].get_scan(scan)
     if snull==1:
         # Upper blanket: outer surface
@@ -873,6 +881,8 @@ def plot_firstwall(axis, mfile_data, scan):
     snull = mfile_data.data["snull"].get_scan(scan)
     point_array = ()
 
+    # Single null: Draw top half from output
+    # Double null: Reflect bottom half to top
     if snull==1:
         # Upper first wall: outer surface
         radx = (cumulative_radial_build("fwoth", mfile_data, scan) +
@@ -1007,18 +1017,24 @@ def plot_pf_coils(axis, mfile_data, scan):
         if "rpf(" in item:
             number_of_coils += 1
 
-    # Get OH coil
-    # coils_r.append(mfile_data.data["rpf(nohc)"].get_scan(scan))
-    # coils_z.append(mfile_data.data["zpf(nohc)"].get_scan(scan))
-    # coils_dr.append(mfile_data.data["ohdr"].get_scan(scan))
-    # coils_dz.append(mfile_data.data["ohdz"].get_scan(scan))
     bore  = mfile_data.data["bore"].get_scan(scan)
     ohcth = mfile_data.data["ohcth"].get_scan(scan)
     ohdz = mfile_data.data["ohdz"].get_scan(scan)
-    #coil_text.append("CS")
 
-    # Rest of the coils
-    for coil in range(1, number_of_coils):
+    # Check for Central Solenoid
+    if "iohcl" in mfile_data.data.keys():
+        iohcl = mfile_data.data["iohcl"].get_scan(scan)
+    else:
+        iohcl = 1
+
+    # If Central Solenoid present, ignore last entry in for loop
+    # The last entry will be the OH coil in this case
+    if iohcl==0:
+        noc = number_of_coils + 1
+    else:
+        noc = number_of_coils
+
+    for coil in range(1, noc):
         coils_r.append(mfile_data.data["rpf({:02})".format(coil)].
                        get_scan(scan))
         coils_z.append(mfile_data.data["zpf({:02})".format(coil)].
@@ -1344,12 +1360,17 @@ def plot_magnetics_info(axis, mfile_data, scan):
 
     tburn = mfile_data.data["tburn"].get_scan(scan) / 3600.0
 
-    tfmat = 0
-    tfmat = mfile_data.data["isumattf"].get_scan(scan)
-    if tfmat > 0:
+    # Get superconductor material (isumattf)
+    # If isumattf not present, assume resistive
+    if "isumattf" in mfile_data.data.keys():
+        isumattf = mfile_data.data["isumattf"].get_scan(scan)
+    else:
+        isumattf = 0
+
+    if isumattf > 0:
         tftype = proc_dict.DICT_TF_TYPE[mfile_data.data["isumattf"].get_scan(scan)]
     else:
-        tftype = "Copper"
+        tftype = "Resistive"
     
     vssoft = mfile_data.data["vsres"].get_scan(scan) + \
              mfile_data.data["vsind"].get_scan(scan)
