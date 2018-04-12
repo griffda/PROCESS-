@@ -37,7 +37,7 @@ module structs
     type composition
       SEQUENCE
       real(kind(1.0D0)) :: globtau(5),psepplh_inf,psepplh_sup,qdivt,fuelmix,typ1,typ2,typ3,che,cxe,car,c_car, &
-						& pradpos,pradfrac,psepb_q95AR,psep_r,comparray(14),protium
+						& pradpos,pradfrac,psepb_q95AR,psep_r,comparray(14),protium,fcoreraditv=-1.d0
     end type composition 
 
 
@@ -59,7 +59,8 @@ module structs
 						& qheat,qcd,qfus,spellet,fpellet,q_control, & 
 						& x_heat(2),x_cd(2),x_fus(2),x_control(2), &
 						& dx_heat(2),dx_cd(2),dx_fus(2),dx_control(2),nbi_energy, &
-						& PLH,maxpauxor,contrpovs=0.d0,contrpovr=0.d0,betalim,fpion=0.5d0
+						& PLH,maxpauxor,contrpovs=0.d0,contrpovr=0.d0,betalim,fpion=0.5d0, & 
+						& fcdp=-1.d0
     end type inputs 
 
 

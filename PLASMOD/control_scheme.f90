@@ -24,27 +24,37 @@ if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 
 ! these below are: apply Xe if one of the criteria on Psep < psep_crit is to be satisfeid
 dum2=1.d6
-	if (comp%psepplh_sup.gt.0.d0) then
+	if (comp%psepplh_sup.gt.0.d0) then !use psep/Plh sup as constraint
 dum2=min(comp%psepplh_sup*PLH,dum2)
-	endif
-	if (comp%psepb_q95AR.gt.0.d0) then
+	endif 
+	if (comp%psepb_q95AR.gt.0.d0) then !use psepbqar as constraint
 dum2=min(dum2,comp%psepb_q95AR*(btor/q_95/geom%A/rmajor)**(-1.))
 	endif
-	if (comp%psep_r.gt.0.d0) then
+	if (comp%psep_r.gt.0.d0) then !use psep/R as constraint
 dum2=min(dum2,comp%psep_r*rmajor)
 	endif
-	if (dum2.lt.1.d6) then
+	if (dum2.lt.1.d6) then !do the calculation
 		cxe=max(0.,cxe+inp0%cxe_psepfac*(Psep-dum2)/dum2*num%dt/(1.+num%dt))
  if (q_heat.gt.0.) cxe=0.d0
 endif
+if (comp%fcoreraditv.ge.0.d0) then !if fcoreraditv is given , replace the above with this one
+ 		cxe=max(0.,cxe+inp0%cxe_psepfac*(comp%fcoreraditv*psepxe-plinexe)*num%dt/(1.+num%dt))
+endif
+
+
+
+
 
 
 !constraint: current drive fni or loop voltage!
-	if (inp0%f_ni.gt.0.) then
+	if (inp0%f_ni.gt.0.) then !use f_ni as constraint
 		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+& 
 		& inp0%qnbi_psepfac*(inp0%f_ni-(fbs+fcd))*num%dt/(1.+num%dt)))
 	endif
-	if (inp0%V_loop.gt.-1.e3) then
+	if (inp0%fcdp.ge.0.) then ! use fcdp as constraint
+		q_cd=inp0%fcdp*(inp0%pheatmax-q_heat-q_fus-inp0%q_control)
+	endif
+	if (inp0%V_loop.gt.-1.e3) then !use loop voltage as constraint
 		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+& 
 		& inp0%qnbi_psepfac*(vloop-inp0%V_loop)*num%dt/(1.+num%dt)))
 	endif
