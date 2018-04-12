@@ -106,6 +106,8 @@ contains
     !fvsbrnni can be an iteration variable!
     inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
+    inp0%fpion = fpion ! Fraction of neutral beam energy to ions
+
     if (comp%qdivt.eq.0.d0) then
        comp%comparray(9) = impurity_arr(element2index('Ar'))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
        !else
@@ -118,17 +120,19 @@ contains
     ! These values should only be set, if the respective constraints
     ! are being used. They should be set to large values otherwise.
     ! pseprmax and psepbqarmax cannot be used at the same time!
-    if (any(icc == 56)) then
-       comp%psep_r      = pseprmax*fpsepr !Psep/R max value
-       comp%psepb_q95AR = 1.0e3 !large number to have no effect
-    else if (any(icc == 68)) then
-       comp%psep_r      = 1.0e3 !large number to have no effect
-       comp%psepb_q95AR = psepbqarmax*fpsepbqar !Psep B/qaR max value times the iteartion variable
-    else
-       comp%psep_r      = 1.0e3 !large number to have no effect
-       comp%psepb_q95AR = 1.0e3 !large number to have no effect
+    ! HL:This is a temporary set up and might get reactivated later. 
+    if (.false.) then
+       if (any(icc == 56)) then
+          comp%psep_r      = pseprmax !Psep/R max value
+          comp%psepb_q95AR = 1.0e3 !large number to have no effect
+       else if (any(icc == 68)) then
+          comp%psep_r      = 1.0e3 !large number to have no effect
+          comp%psepb_q95AR = psepbqarmax !Psep B/qaR max value times the iteartion variable
+       else
+          comp%psep_r      = 1.0e3 !large number to have no effect
+          comp%psepb_q95AR = 1.0e3 !large number to have no effect
+       endif
     endif
-
        
 							
     inp0%nbcdeff = gamcd !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
@@ -138,6 +142,11 @@ contains
     ! iteration go here!
     ! They only need to be initialised once.
     if (geom%counter.eq.0.d0) then
+
+
+       !HL: This is a temporary set up for the moment!
+       comp%psep_r      = pseprmax !Psep/R max value
+       comp%psepb_q95AR = 1.0e3 !large number to have no effect
 
        ! To selfconsistently compute the He concentration inside PLASMOD
        ! its intial fraction has to be 0.d0. Then globtau is used!
