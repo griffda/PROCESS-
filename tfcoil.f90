@@ -10,6 +10,7 @@ module tfcoil_module
   !+ad_cont  concoptf
   !+ad_cont  cntrpst
   !+ad_cont  cpost
+  !+ad_cont  cutfshape
   !+ad_args  N/A
   !+ad_desc  This module contains routines for calculating the
   !+ad_desc  parameters of a resistive TF coil system for a fusion power plant.
@@ -69,6 +70,7 @@ contains
     !+ad_call  ovarre
     !+ad_call  portsz
     !+ad_call  sctfcoil
+    !+ad_call  cutfshape
     !+ad_hist  22/10/96 PJK Initial upgraded version
     !+ad_hist  08/05/12 PJK Initial F90 version
     !+ad_hist  08/10/12 PJK Swapped concoptf argument order
@@ -83,6 +85,7 @@ contains
     !+ad_hist  24/06/14 PJK Removed refs to bcylth
     !+ad_hist  30/07/14 PJK Added tftort calculation
     !+ad_hist  30/07/14 PJK Changed estotf output
+    !+ad_hist  11/04/18 SIM Added shape output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -97,6 +100,8 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: r1,rout,rin,tfcind1
+    integer :: i
+    character(len=1) :: intstring
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -175,6 +180,10 @@ contains
 
     call portsz
 
+    ! xarc and yarc shape calculation
+
+    call cutfshape
+
     if (iprint == 0) return
 
     !  Output section (resistive TF coils only)
@@ -197,6 +206,21 @@ contains
        call ovarre(outfile,'Vertical stress (Pa)','(sigver)',sigver)
 
        call concoptf(outfile,iprint)
+
+       call oblnkl(outfile)
+       call ocmmnt(outfile,'TF coil inner surface shape is approximated')
+       call ocmmnt(outfile,'by a straight segment and elliptical arcs between the following points :')
+       call oblnkl(outfile)
+
+       write(outfile,10)
+       10  format(t2,'point',t16,'x(m)',t31,'y(m)')
+       do i = 1,5
+          write(outfile,20) i,xarc(i),yarc(i)
+          intstring = int2char(i)
+          call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(i))
+          call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(i))
+       end do
+       20  format(i4,t10,f10.3,t25,f10.3)
 
     end if
 
@@ -671,5 +695,51 @@ contains
          / (1.0D0-fcool)
 
   end subroutine cpost
+
+  subroutine cutfshape
+
+      !+ad_name  cutfshape
+      !+ad_summ  Calculates the TF coil shape
+      !+ad_type  Subroutine
+      !+ad_desc  Calculates the shape of the INSIDE of the TF coil. The coil is
+      !+ad_desc  approximated by a straight inboard section and four elliptical arcs
+      !+ad_desc  This is a totally ad hoc model, with no physics or engineering basis.
+      !+ad_prob  None
+      !+ad_call  None
+      !+ad_hist  19/11/15 MDK Initial SC version
+      !+ad_hist  11/04/18 SIM Copied from the SC TF subroutine coilshap
+      !+ad_stat  Okay
+      implicit none
+      !  Arguments
+      !  Local variables
+      real(kind(1.0D0)) :: fstraight, a, b
+      integer :: i
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+      xarc(1) = rtfcin + tfcth/2.0d0
+      xarc(2) = rmajor - rminor/5.0d0
+      xarc(3) = rtot - tfcth/2.0d0
+      xarc(4) = xarc(2)
+      xarc(5) = xarc(1)
+      ! Height of straight section as a fraction of the coil inner height
+      fstraight = 0.6d0
+      if (snull==0) then
+          ! Double null
+          yarc(1) = fstraight * hmax
+          yarc(2) = hmax
+          yarc(3) = 0
+          yarc(4) = -hmax
+          yarc(5) = -fstraight * hmax
+      else
+          ! Single null
+          yarc(1) = fstraight * (hpfu - tfcth)
+          yarc(2) = hpfu - tfcth
+          yarc(3) = 0
+          yarc(4) = -hmax
+          yarc(5) = -fstraight * hmax
+      end if
+
+
+  end subroutine cutfshape
 
 end module tfcoil_module
