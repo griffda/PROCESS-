@@ -142,6 +142,8 @@ def find_line_type(line):
             return "zref"
         elif "impurity_enrichment(" in name:
             return "impurity_enrichment"
+        elif "plasmod_globtau(" in name:
+            return "plasmod_globtau"
         else:
             return "Parameter"
 
@@ -325,8 +327,26 @@ def process_enrichment(data, line):
     else:
         line_commentless = line
     imp_rich_index = int(line_commentless.split("(")[1].split(")")[0]) - 1
-    imp_rich_value = eval(line_commentless.split("=")[-1].replace(",", ""))
+    imp_rich_value = eval(line_commentless.split("=")[-1].replace(",", "").replace("d","e"))
     data["impurity_enrichment"].value[imp_rich_index] = imp_rich_value
+
+    
+def process_plasmod_globtau(data, line):
+    """ Function to process plasmod_globtau array
+
+    :param data: Data dictionary for the IN.DAT information
+    :param line: Line from IN.DAT to process
+    :return: nothing
+    """
+
+    if "*" in line:
+        globtau_comment = line.split("*")[1]
+        line_commentless = line.split("*")[0]
+    else:
+        line_commentless = line
+    globtau_index = int(line_commentless.split("(")[1].split(")")[0]) - 1
+    globtau_value = eval((line_commentless.split("=")[-1].replace(",", "")).replace("d","e"))
+    data["plasmod_globtau"].value[globtau_index] = globtau_value
 
 
 def process_parameter(data, line):
@@ -427,6 +447,20 @@ def process_line(data, line_type, line):
         data["impurity_enrichment"] = INVariable("impurity_enrichment",
             empty_imp, "impurity_enrichment", parameter_group, comment)
 
+    # Create a plasmod_globtau variable class using INVariable class if entry
+    # doesn't exist
+    if "plasmod_globtau" not in data.keys():
+        empty_imp = [0]*14
+        parameter_group = find_parameter_group("plasmod_globtau")
+
+        # Get parameter comment/description from dictionary
+        comment = DICT_DESCRIPTIONS["plasmod_globtau"].replace(",", ";").\
+            replace(".", ";").replace(":", ";")
+
+        data["plasmod_globtau"] = INVariable("plasmod_globtau",
+            empty_imp, "plasmod_globtau", parameter_group, comment)
+
+
     # Constraint equations
     if line_type == "Constraint Equation":
         process_constraint_equation(data, line)
@@ -450,6 +484,9 @@ def process_line(data, line_type, line):
     # impurity_enrichment
     elif line_type == "impurity_enrichment":
         process_enrichment(data, line)
+
+    elif line_type == "plasmod_globtau":
+        process_plasmod_globtau(data, line)
 
     # Parameter
     else:
