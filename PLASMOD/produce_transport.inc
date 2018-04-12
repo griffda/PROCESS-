@@ -150,6 +150,10 @@ yllama=1.d0
 	totSe = cumint1(Powe*dV)
 	totSi = cumint1(Powi*dV)
 
+!powers for fcoreraditv calculations
+	plinexe=trapz(nXe*nepr*prxe*dV)
+	psepxe=trapz((powe+powi+nXe*nepr*prxe)*dV)
+
 !interpolate on transport grid
  DdnVne = 625.d0*interp1_ef(nx,nxt,xr, totSe/G1/vprime/nepr, xtr)
  DdnVni = 625.d0*interp1_ef(nx,nxt,xr, totSi/G1/vprime/nions, xtr)
