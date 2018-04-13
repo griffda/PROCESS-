@@ -328,7 +328,7 @@ ped%pedscal=1.2
 				inp0%spellet=0.d0 !pellet mass in particles of D in 10^19
 				inp0%fpellet=0.5d0 !pellet frequency in Hz
 				inp0%q_control=50.d0 !minimal power required for control
-				inp0%fcdp=-1.d0 !ratio of PCD-Pothers over Pmax - Pothers
+				inp0%fcdp=0.d0 !ratio of PCD-Pothers over Pmax - Pothers
 				inp0%fpion=0.5d0 !ratio of NBI power to ioins
 
 	inp0%maxpauxor=20. ! maximum Paux/R allowed
@@ -343,10 +343,10 @@ ped%pedscal=1.2
     comp%psepplh_sup = 1000.2d0 !Psep/PLH if above this, use Xe
     comp%psepb_q95AR = 9.2d0 !Psep B/qaR max value
     comp%psep_r = 10009.d0 !Psep/R max value
-    comp%fcoreraditv = -1.d0 !ratio of Pxe / (Psep + Pxe)
+    comp%fcoreraditv = 0.d0 !ratio of Pxe / (Psep0 -Psep_crit) ; Psep0 is Palpha + Paux - Par - Pbrehm - Psync
 
-    num%isiccir=1 !SOL routine. 0 - fit, 1- Msicci model
-    comp%qdivt = 0. !divertor heat flux in MW/m^2, if 0, dont use SOL model
+    num%isiccir=0 !SOL routine. 0 - fit, 1- Msicci model
+    comp%qdivt = 10. !divertor heat flux in MW/m^2, if 0, dont use SOL model
     comp%c_car = 10. !compression factor between sol and div: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
 
 
