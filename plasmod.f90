@@ -106,6 +106,7 @@ contains
     !fvsbrnni can be an iteration variable!
     inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
+    !Note that this is only a correct input on the second iteration!
     inp0%fpion = fpion ! Fraction of neutral beam energy to ions
 
     if (comp%qdivt.eq.0.d0) then
@@ -520,7 +521,7 @@ contains
 
     qstar = mhd%qstar ! equivalent cylindrical safety factor (shaped)
     bp    = mhd%bp ! poloidal field in (T)
-    rli = mhd%rli !plasma inductance internal (H)
+    rli   = mhd%rli !plasma inductance internal (H)
     
     !------------------------------------------------
     !beta is now an output, is an input with (ipedestal .ne. 3)
@@ -543,6 +544,7 @@ contains
     ! One could implement a reference check?
 
     !-----------------------------------------------
+    !Fusion power and fast alpha pressure calculations
     !previously calculated by palph
     palppv     = loss%Pfus/(5.0*vol) !alpha particle fusion power per volume (MW/m3)
     pchargepv  = 0d0 !other charged particle fusion power/volume (MW/m3)
@@ -560,14 +562,14 @@ contains
     !it may be easier to call palph, but exclude the case (DT).
     !Eventually PLASMOD will generate these other interactions more completely.
     !For now, set values to zero.
-    !pdhe3pv = 1.0D0 * sigmav * etot * fdeut*fhe3 * deni*deni  !  MW/m3
-    pdhe3      = 0d0 !KE = pdhe3pv * vol !D-He3 fusion power (MW) !PLASMOD does not calc.
-    !pdhe3pv    = 0.0d0 !not global variable
+    pdhe3      = 0d0 !KE !D-He3 fusion power (MW) !PLASMOD does not calc.
     pdd        = 0d0 !KE !D-D fusion power (MW) !PLASMOD does not calc.
-    !pddpv      = 0.0d0 !not global variable
+
     
     !---------------------------------------------
-    !previously calculated in beamfus - KE, I don't think PLASMOD calculates beam properties. Could we call beamfus here using what PLASMOD inputs we have, and PROCESS values for the rest?
+    ! beam fusion components previously calculated in beamfus
+    ! PLASMOD does not currently calculate beam fusion properties
+    ! Todo: Add in PLASMOD or call beamfus instead!
     betanb  = 0D0 !neutral beam beta component
     dnbeam2 = 0D0 !hot beam ion density (/m3)
     palpnb  = 0D0 !alpha power from hot neutral beam ions (MW)
@@ -583,7 +585,6 @@ contains
     falpha    =1.0
     palpepv   = loss%palpe/vol !alpha power per volume to electrons (MW/m3) 
     palpipv   = loss%palpi/vol !alpha power per volume to ions (MW/m3)
-    palppv    = palpepv / (falpha * falpe) !KE Equation from physics.f90, calc of palpepv. Valid?
     palppv    = palppv + palpnb/vol !updating with neutral beam power (currently zero) (MW/m3)
     palpmw    = loss%Pfus/5.0 !alpha power (MW)
     betaft    = loss%betaft !fast alpha beta component
