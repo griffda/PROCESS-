@@ -388,6 +388,12 @@ subroutine check
      
 
      if(ipedestal == 2 .or. ipedestal == 3) then
+
+        !PLASMOD automatically takes both pseprmax and psepbqarmax as input
+        !It uses which ever one leads to the lower Psep value. Not to use
+        !one of them set them to a very large number
+        call report_error(199)
+        
         if (fgwped < 0 )then
            call report_error(176)
         endif
