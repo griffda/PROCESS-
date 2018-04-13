@@ -33,14 +33,17 @@ dum2=min(dum2,comp%psepb_q95AR*(btor/q_95/geom%A/rmajor)**(-1.))
 	if (comp%psep_r.gt.0.d0) then !use psep/R as constraint
 dum2=min(dum2,comp%psep_r*rmajor)
 	endif
-	if (dum2.lt.1.d6) then !do the calculation
+
+
+if (dum2.lt.1.d6.and.comp%fcoreraditv.lt.0.d0) then !do the calculation
 		cxe=max(0.,cxe+inp0%cxe_psepfac*(Psep-dum2)/dum2*num%dt/(1.+num%dt))
  if (q_heat.gt.0.) cxe=0.d0
 endif
-if (comp%fcoreraditv.ge.0.d0) then !if fcoreraditv is given , replace the above with this one
- 		cxe=max(0.,cxe+inp0%cxe_psepfac*(comp%fcoreraditv*psepxe-plinexe)*num%dt/(1.+num%dt))
-endif
 
+if (comp%fcoreraditv.ge.0.d0) then !if fcoreraditv is given , replace the above with this one
+ 		cxe=max(0.,cxe+inp0%cxe_psepfac*(comp%fcoreraditv*(psepxe-dum2)/dum2-plinexe/dum2)*num%dt/(1.+num%dt))
+ if (q_heat.gt.0.) cxe=0.d0
+endif
 
 
 
