@@ -721,7 +721,8 @@ contains
     call ovarrf(outfile,'Net separatrix power = Paux+Pfus-Prad (MW)','(loss%Psep)', loss%Psep, 'OP ')
     call ovarrf(outfile,'maximum ratio of Psep*Bt/qAR (MWT/m)','(psepbqarmax)', psepbqarmax)
     call ovarrf(outfile,'Actual Psep*Bt/qAR (MW/m)', '(Psepbt/q95AR)', loss%Psep*bt/rmajor/aspect/geom%q95, 'OP ')
-    call ovarrf(outfile,'maximum ratio of power crossing the separatrix to plasma major radius (Psep/R) (MW/m)','pseprmax', pseprmax)
+    call ovarrf(outfile,'maximum ratio of power crossing the separatrix to plasma major radius (Psep/R) (MW/m)', &
+         '(pseprmax)', pseprmax)
     call ovarrf(outfile,'Actual Psep/R (MW/m)', '(loss%Psep/R)', loss%Psep/rmajor, 'OP ')
     call ovarrf(outfile,'LH transition power (MW)','(loss%PLH)', loss%PLH, 'OP ')
     call ovarrf(outfile,'Total radiated power (MW)','(loss%Prad)', loss%Prad, 'OP ')
@@ -732,11 +733,12 @@ contains
     call ovarrf(outfile,'Ohmic power (MW)','(loss%Pohm)', loss%Pohm, 'OP ')
     call ovarrf(outfile,'Plasma resistivity (V/A)','(loss%rplas)', loss%rplas, 'OP ')
     call ovarrf(outfile,'Total synchrotron power (MW)','(loss%psync)', loss%psync, 'OP ')
-    call ovarrf(outfile,'Total Brehmstrahlung power (MW)','(loss%pbrehms)', loss%pbrehm, 'OP 's)
+    call ovarrf(outfile,'Total Brehmstrahlung power (MW)','(loss%pbrehms)', loss%pbrehms, 'OP ')
     call ovarrf(outfile,'Total line radiation (MW)','(loss%pline)', loss%pline, 'OP ')
     call ovarrf(outfile,'Ion power through separatrix (MW)','(loss%psepi)', loss%psepi, 'OP ')
     call ovarrf(outfile,'Electron power through separatrix (MW)','(loss%psepe)', loss%psepe, 'OP ')
-    call ovarrf(outfile,'Volume averaged equipartition power (MW/m^3),electrons lose and ions gain)','(loss%piepv)', loss%piepv, 'OP ')
+    call ovarrf(outfile,'Volume averaged equipartition power (MW/m^3),electrons lose and ions gain)','(loss%piepv)',&
+         loss%piepv, 'OP ')
     call ovarrf(outfile,'Power onto divertor (MW/m^2)','(loss%pdiv)', loss%pdiv, 'OP ')
     call ovarrf(outfile,'Edge radiation (MW)','(loss%pradedge)', loss%pradedge, 'OP ')
     call ovarrf(outfile,'Core radiation (MW)','(loss%pradcore)', loss%pradcore, 'OP ')  
@@ -748,7 +750,7 @@ contains
     call ovarrf(outfile,'Edge safety factor','(mhd%q_sep)', mhd%q_sep, 'OP ')
     call ovarrf(outfile,'Loop voltage (V)','(mhd%vloop)', mhd%vloop, 'OP ')
     call ovarrf(outfile,'Bootstrap current fraction','(mhd%fbs)', mhd%fbs, 'OP ')
-    call ovarrf(outfile,'Total non-inductive current fraction','(mhd%f_ni)', mhd%f_n, 'OP 'i)
+    call ovarrf(outfile,'Total non-inductive current fraction','(mhd%f_ni)', mhd%f_ni, 'OP ')
 
     call osubhd(outfile,'Radial profile averages')
     call ovarrf(outfile,'Volume averaged electron density (10^19 m^-3)','(radp%av_ne)', radp%av_ne, 'OP ')
