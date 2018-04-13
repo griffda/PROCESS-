@@ -161,7 +161,7 @@ if __name__ == '__main__':
     
     #page1.savefig('../KatyTest/profile_plots.jpg')
 
-    with bpdf.PdfPages("../KatyTest/radial_profiles.pdf") as pdf:
+    with bpdf.PdfPages("radial_profiles.pdf") as pdf:
         pdf.savefig(page[0])
         pdf.savefig(page[1])
         pdf.savefig(page[2])

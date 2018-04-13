@@ -117,7 +117,7 @@ contains
     
     !uses PROCES defined LH threshold, if this is > 0
     inp0%PLH = 0d0 !plhthresh ! This won't work as this can only be calculated after.
-
+    !KE - should inp0%PLH have the possibility to be an input variable?
    
 							
     inp0%nbcdeff = gamcd ! normalised current drive efficiency (1.0e20 A/W-m2) 
@@ -698,9 +698,18 @@ contains
     !ovarin is floating point variable
 
     call ovarin(outfile, 'PLASMOD error flag', '(i_flag)', i_flag, 'OP ')
-    
-    call ovarrf(outfile,'Plasma current (MA)','(geom%ip)', geom%ip)
-    call ovarrf(outfile,'q95','(geom%q95)', geom%q95)
+
+    !if plasmod_i_equiltype = 1 q95 is an input and plascur an output
+    !if plasmod_i_equiltype = 2 plascur is an input and q95 an output
+
+    if(plasmod_i_equiltype == 1)then
+       call ovarrf(outfile,'Plasma current (MA)','(geom%ip)', geom%ip, 'OP ')
+       call ovarrf(outfile,'q95','(geom%q95)', geom%q95)
+    else
+       call ovarrf(outfile,'Plasma current (MA)','(geom%ip)', geom%ip)
+       call ovarrf(outfile,'q95','(geom%q95)', geom%q95, 'OP ')
+    endif
+     
     call ovarrf(outfile,'Edge elongation','(geom%k)', geom%k, 'OP ')
     call ovarrf(outfile,'Edge triangularity','(geom%d)', geom%d, 'OP ')
 
@@ -710,18 +719,18 @@ contains
     call ovarrf(outfile,'Argon concentration at the pedestal top','(comp%car)', comp%car)
 
     call osubhd(outfile,'Pedestal')
-    call ovarrf(outfile,'Pedestal top electron temperature (keV)','(ped%teped)', ped%teped)
+    call ovarrf(outfile,'Pedestal top electron temperature (keV)','(ped%teped)', ped%teped, 'OP ')
     call ovarrf(outfile,'Pedestal top density (10^19 m^-3)','(ped%nped)', ped%nped, 'OP ')
-    call ovarrf(outfile,'Separatrix density (10^19 m^-3)','(ped%nsep)', ped%nsep)
+    call ovarrf(outfile,'Separatrix density (10^19 m^-3)','(ped%nsep)', ped%nsep, 'OP ')
     call ovarrf(outfile,'Separatrix temperature (keV?)','(ped%tesep)', ped%tesep)
 
     call osubhd(outfile,'Power losses')
     call ovarrf(outfile,'Total required power for all kind of controls (MW)','(loss%pnbi)', loss%pnbi, 'OP ')
     call ovarrf(outfile,'Total auxiliary power to electrons (MW)','(loss%peaux)', loss%peaux, 'OP ')
     call ovarrf(outfile,'Total auxiliary power to ions (MW)','(loss%piaux)', loss%piaux, 'OP ')
-    call ovarrf(outfile,'Power used to control Psep (MW)','(loss%qheat)', loss%qheat, 'OP ')
-    call ovarrf(outfile,'Power used for CD (MW)','(loss%qcd)', loss%qcd, 'OP ')
-    call ovarrf(outfile,'Power used to control Pfus (MW)','(loss%qfus)', loss%qfus, 'OP ')
+    call ovarrf(outfile,'Power used to control Psep (MW)','(loss%qheat)', loss%qheat, 'OP ') !KE - not being calculated
+    call ovarrf(outfile,'Power used for CD (MW)','(loss%qcd)', loss%qcd, 'OP ') !KE - not being calculated
+    call ovarrf(outfile,'Power used to control Pfus (MW)','(loss%qfus)', loss%qfus, 'OP ') !KE - not being calculated
     call ocmmnt(outfile,'Please note that PLASMOD uses both pseprmax and psepbqarmax simultaneously')
     call ovarrf(outfile,'Net separatrix power = Paux+Pfus-Prad (MW)','(loss%Psep)', loss%Psep, 'OP ')
     call ovarrf(outfile,'maximum ratio of Psep*Bt/qAR (MWT/m)','(psepbqarmax)', psepbqarmax)
@@ -729,11 +738,23 @@ contains
     call ovarrf(outfile,'maximum ratio of power crossing the separatrix to plasma major radius (Psep/R) (MW/m)', &
          '(pseprmax)', pseprmax)
     call ovarrf(outfile,'Actual Psep/R (MW/m)', '(loss%Psep/R)', loss%Psep/rmajor, 'OP ')
-    call ovarrf(outfile,'LH transition power (MW)','(loss%PLH)', loss%PLH, 'OP ')
+
+    if(inp0%PLH.eq.0.0) then
+       call ovarrf(outfile,'LH transition power (MW)','(loss%PLH)', loss%PLH, 'OP ')
+    else !user-defined value (see PLASMOD/control_scheme.f90)
+       call ovarrf(outfile,'LH transition power (MW)','(loss%PLH)', loss%PLH)
+    endif
+    
     call ovarrf(outfile,'Total radiated power (MW)','(loss%Prad)', loss%Prad, 'OP ')
     call ovarrf(outfile,'Plasma energy (MJ)','(loss%Wth)', loss%Wth, 'OP ')
     call ovarrf(outfile,'Confinement time (s)','(loss%taueff)', loss%taueff, 'OP ')
-    call ovarrf(outfile,'Computed H factor according to ITER 98 y2 elmy H mode','(loss%H)', loss%H, 'OP ')
+
+    if(num%i_modeltype.eq.1)then !H-factor is an input
+       call ovarrf(outfile,'H factor set by user','(loss%H)', loss%H)
+    else
+       call ovarrf(outfile,'Computed H factor according to ITER 98 y2 elmy H mode','(loss%H)', loss%H, 'OP ')
+    endif
+    
     call ovarrf(outfile,'Total fusion power (MW) i.e. 5*alpha power','(loss%Pfus)', loss%Pfus, 'OP ')
     call ovarrf(outfile,'Ohmic power (MW)','(loss%Pohm)', loss%Pohm, 'OP ')
     call ovarrf(outfile,'Plasma resistivity (V/A)','(loss%rplas)', loss%rplas, 'OP ')
@@ -746,7 +767,7 @@ contains
          loss%piepv, 'OP ')
     call ovarrf(outfile,'Power onto divertor (MW/m^2)','(loss%pdiv)', loss%pdiv, 'OP ')
     call ovarrf(outfile,'Edge radiation (MW)','(loss%pradedge)', loss%pradedge, 'OP ')
-    call ovarrf(outfile,'Core radiation (MW)','(loss%pradcore)', loss%pradcore, 'OP ')  
+    call ovarrf(outfile,'Core radiation (MW)','(loss%pradcore)', loss%pradcore, 'OP ')
     
     call osubhd(outfile,'Magneto Hydro Dynamics')
     call ovarrf(outfile,'Plasma volume (m^3)','(mhd%vp)', mhd%vp, 'OP ')

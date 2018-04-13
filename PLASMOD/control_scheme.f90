@@ -10,7 +10,7 @@ if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 	PLH=1.67*(trapz(nepr*dv)/trapz(dv)/10.)**0.61*(geom%bt)**0.78 &
      & *rminor**0.89*geom%r**0.94 !Martin scaling
 	else
-	PLH=inp0%PLH !this comes from outside
+	PLH=inp0%PLH !this comes from outside !KE - should this be a user-defined variable? It is not currently
 	endif
 
 
