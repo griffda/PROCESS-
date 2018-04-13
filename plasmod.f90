@@ -436,7 +436,11 @@ contains
     endif
 
     !  Total ion density
-    dnitot = deni + dnalp + dnprot + dnbeam + dnz
+    if ((dnitot - deni - dnalp - dnprot - dnbeam - dnz) > 1e-6) then
+       fdiags(1) = dnitot; fdiags(2) = deni; fdiags(3) = dnalp
+       fdiags(4) = dnprot; fdiags(5) = dnbeam; fdiags(6)= dnz
+       call report_error(200)
+    endif
 
     !  Set some (obsolescent) impurity fraction variables
     !  for the benefit of other routines
