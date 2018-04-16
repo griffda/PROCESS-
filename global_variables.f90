@@ -871,9 +871,9 @@ module plasmod_variables
   integer :: plasmod_i_impmodel = 1
 
  !Derived type composition 
-  !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
+  !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 7.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
   !+ad_varc  (NOT used for Xe!)
-  real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0 /)
+  real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 7.0d0, 5.0d0, 1.0d0 /)
   !+ad_vars  plasmod_psepplh_sup /12000.0d0/ : Psep/PLH if above this, use Xe
   real(kind(1.0D0)) :: plasmod_psepplh_sup = 12000.0d0
   !+ad_vars  plasmod_qdivt /0.0d0/ : divertor heat flux in MW/m^2, if 0, dont use SOL model
