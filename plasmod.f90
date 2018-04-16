@@ -557,14 +557,11 @@ contains
     pdt        = loss%Pfus !D-T fusion power (MW)
     pdtpv      = pdt / vol
 
-    !KE - many things need to be called to reproduce non-DT reactions.
-    !If we want to include PROCESS-generated contributions from e.g. DHe3, DD reactions
-    !it may be easier to call palph, but exclude the case (DT).
     !Eventually PLASMOD will generate these other interactions more completely.
     !For now, set values to zero.
     pdhe3      = 0d0 !KE !D-He3 fusion power (MW) !PLASMOD does not calc.
-    pdd        = 0d0 !KE !D-D fusion power (MW) !PLASMOD does not calc.
-
+    pdd        = loss%pfusdd !D-D fusion power (MW)
+    !pddpv      = pdd / vol !KE - not a global variable, is this required?
     
     !---------------------------------------------
     ! beam fusion components previously calculated in beamfus
@@ -591,8 +588,9 @@ contains
      !non-alpha charged particles
     pchargemw = 0d0 !other charged particle fusion power, excluding alphas (MW) !This comes from reactions other than DT
     pfuscmw   = loss%Pfus/5.0 !charged particle fusion power (MW) !
-    !KE - not sure below is correct? Definition in PROCESS: pfuscmw = palpmw + pchargemw
-    powfmw    = loss%pfus ! Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS  !Total power deposited in plasma (MW)
+    !KE - not sure above is correct? Definition in PROCESS: pfuscmw = palpmw + pchargemw
+    !KE - in PROCESS, below is, powfmw = palpmw + pneutmw + pchargemw
+    powfmw    = pdt + pdd + pdhe3 !Same calculation as in ASTRA, complete formula with cross section, should be equivalent to PROCESS  !Total power deposited in plasma (MW)
 
     !---------------------------------------
     betath = beta-betaft-betanb
