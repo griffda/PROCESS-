@@ -324,8 +324,8 @@ contains
     sarea    = mhd%sp
     !sareao   =  !outboard plasma surface area
     kappaa   = xarea/(3.141592*rminor**2)
-    !pperim = 0.0d0 !Plasma poloidal perimeter (m), to be done yet EF
-    !sf = pperim / (2.0D0*pi*rminor)    
+    pperim = geom%perim !Plasma poloidal perimeter (m)
+    sf = pperim / (2.0D0*pi*rminor)    
     vol = mhd%vp ! plasma volume (m^3)
     
     !------------------------------------------------
@@ -335,7 +335,7 @@ contains
     ti0   = radp%ti(1) !ion temperature on axis
     teped = ped%teped !only computed, if ieped = 2
     te    = radp%av_te
-    ten   = radp%av_te
+    ten   = radp%av_Ten
     ti    = radp%av_ti
     tin   = ti/te * ten
 
