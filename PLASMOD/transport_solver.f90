@@ -83,6 +83,7 @@
   real(kind(1.0d0)) :: xb,teb,tib,neb,zmain,amain,toleq,fuelmix
   real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,fcd,qdivt,q_heat,q_cd,q_fus,q_95,qtote,qtoti,w_e,w_i
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat,plinexe,psepxe
+  real(kind(1.0d0)), dimension(num%nx) :: theta_perim,dtheta,f_perim
   real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe, nXe, nNe, prxe, prne
   real(kind(1.0d0)), dimension(num%nx) :: pech,pnbi,psync,pbrad
   real(kind(1.0d0)), dimension(num%nx) :: zavxe, zavne, prad,pradtot,pradedge, ndeut, ntrit, nions, pedt, pidt, peicl, zeff!  conflict with   
@@ -1058,6 +1059,16 @@ endif
  loss%tauee=w_e/qtote
  loss%tauei=w_i/qtoti
  loss%qtot=qtot
+
+	!perimeter
+	do i=1,num%nx
+	theta_perim(i)=6.28318530717959*(i-1.)/num%nx
+	enddo
+	dtheta=theta_perim(2)-theta_perim(1)
+	f_perim=sqrt(cos(theta_perim)**2.+elong**2.*sin(theta_perim)**2.+ & 
+	 & triang**2.*sin(theta_perim)**4.-2.*triang*cos(theta_perim)*sin(theta_perim)**2.)
+	geom%perim = rminor*trapz(f_perim*dtheta)
+
 
 !diags for ASTRA
   if (geom%counter.gt.1.) then

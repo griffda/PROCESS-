@@ -28,7 +28,7 @@ module structs
       real(kind(1.0D0)) :: f_ind !the fraction of the plasma current produced by non-inductive means.
       real(kind(1.0D0)) :: q_edge 
       real(kind(1.0D0)) :: alphaj,alphan,alphat,ipedestal ,te,dene,tbeta
-      real(kind(1.0D0)) :: k95,d95,q95old
+      real(kind(1.0D0)) :: k95,d95,q95old,perim
     end type geometry 
 
 
