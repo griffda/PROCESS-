@@ -97,7 +97,7 @@ module structs
       real(kind(1.0D0)) :: pradedge,psync,pbrehms,pline,& 
   & psepe,psepi,Hcorr,piepv,pohm,rplas,dfuelreq,tfuelreq,hepumpreq, &
 	& qheat,qcd,qfus,pnbi,pech,peaux,piaux, & 
-	& fusionrate,alpharate,betaft,palpe,palpi,tauee,tauei,qtot
+	& fusionrate,alpharate,betaft,palpe,palpi,tauee,tauei,qtot,pfusdd
  end type power_losses 
 
 

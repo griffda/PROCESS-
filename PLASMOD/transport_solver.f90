@@ -72,7 +72,7 @@
   real(kind(1.0d0)) :: x0, dx, dxn,psep,plh
   real(kind(1.0d0)) :: Qeaux, Qiaux, Qrad ,qradedge, betan,P_pedtop, qecrh, qnbi, spellet, spuffing, f_gw !sfuelling
   real(kind(1.0d0)) :: nsep, Ip, btor, cHe, cxe,car,nG, qedge, elong, triang, amin ,tsep, rmajor,  rminor, aspect, nlineavg 
-  real(kind(1.0d0)) :: tau_sol, V_sol, D_ped, V_ped, lambda_sol,pdt,svdt
+  real(kind(1.0d0)) :: tau_sol, V_sol, D_ped, V_ped, lambda_sol,pdt,sv_dd,svdt
   real(kind(1.0d0)) :: rtor, yd, betaz, lint,taue,Qtot
   real(kind(1.0d0)) :: Hfactor,chi00,chipow,Hnow,tau_scal,chifac,chifac0
   real(kind(1.0d0)) :: paion, NALPH,YVALP,YLLAME,yllami,yllama,YY6,YEPS,YVC, YY7,yv7 ,yv6 !fraction of D-T power deposited to ions, plus dummies
@@ -83,7 +83,7 @@
   real(kind(1.0d0)) :: xb,teb,tib,neb,zmain,amain,toleq,fuelmix
   real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,fcd,qdivt,q_heat,q_cd,q_fus,q_95,qtote,qtoti,w_e,w_i
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat,plinexe,psepxe
-  real(kind(1.0d0)), dimension(num%nx) :: theta_perim,dtheta,f_perim
+  real(kind(1.0d0)), dimension(num%nx) :: theta_perim,dtheta,f_perim,p_dd
   real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe, nXe, nNe, prxe, prne
   real(kind(1.0d0)), dimension(num%nx) :: pech,pnbi,psync,pbrad
   real(kind(1.0d0)), dimension(num%nx) :: zavxe, zavne, prad,pradtot,pradedge, ndeut, ntrit, nions, pedt, pidt, peicl, zeff!  conflict with   
@@ -1024,6 +1024,7 @@ endif
 	loss%qheat=q_heat
 	loss%qcd=q_cd
 	loss%qfus=q_fus
+	loss%pfusdd=trapz(p_dd*dv)*4.d0
   !loss powers and confinement characteristics
   loss%Psep = Qtot-Qradedge
   loss%PLH = PLH
