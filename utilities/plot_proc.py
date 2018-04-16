@@ -68,14 +68,6 @@ vertical_lower = ["rminor*kappa", "vgap",
                   "tftsgap",
                   "tfcth"]
 
-vertical_snull = ["rminor*kappa", "vgap",
-                  "divfix",
-                  "shldtth", "ddwi",
-                  "vgap2",
-#                  "thshield",
-#                  "tftsgap",
-                  "tfcth"]
-
 ANIMATION_INFO = [("rmajor", "Major radius", "m"),
                   ("rminor", "Minor radius", "m"),
                   ("aspect", "Aspect ratio", "")]
@@ -196,9 +188,8 @@ def plot_plasma(axis, mfile_data, scan):
     ys2 = r2 * np.sin(angs2)
     axis.plot(xs1, ys1, color='black')
     axis.plot(xs2, ys2, color='black')
-    #axis.fill(xs1, ys1, color=plasma)
-    #axis.fill(xs2, ys2, color=plasma)
-    #SIM Unshaded plasma
+    axis.fill(xs1, ys1, color=plasma)
+    axis.fill(xs2, ys2, color=plasma)
 
 
 def plot_centre_cross(axis, mfile_data, scan):
@@ -291,19 +282,15 @@ def poloidal_cross_section(axis, mfile_data, scan=-1):
 
     """
     xmin = 0
-    xmax = 10
-    ymin = -6.5
-    ymax = 6.5
+    xmax = 20
+    ymin = -15
+    ymax = 15
     axis.set_ylim([ymin, ymax])
     axis.set_xlim([xmin, xmax])
     axis.set_autoscaley_on(False)
     axis.set_autoscalex_on(False)
     axis.set_xlabel('R / m')
     axis.set_ylabel('Z / m')
-    from matplotlib.ticker import MultipleLocator
-    minorLocator = MultipleLocator(0.5)
-    axis.yaxis.set_minor_locator(minorLocator)
-    axis.grid(axis='y', which='both')
     axis.set_title('Poloidal cross-section')
 
     plot_vacuum_vessel(axis, mfile_data, scan)
@@ -735,8 +722,9 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
 
     kapx = cumulative_upper['ddwi'] / rminx
 
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    temp_array_1 = temp_array_1 + ((rs, zs))
+    if snull==1:
+        (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+        temp_array_1 = temp_array_1 + ((rs, zs))
 
     kapx = cumulative_lower['ddwi'] / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
@@ -748,9 +736,10 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
              - cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
 
-    kapx = (cumulative_upper['ddwi'] - upper["ddwi"]) / rminx
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    temp_array_1 = temp_array_1 + ((rs, zs))
+    if snull==1:
+        kapx = (cumulative_upper['ddwi'] - upper["ddwi"]) / rminx
+        (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+        temp_array_1 = temp_array_1 + ((rs, zs))
 
     kapx = (cumulative_lower['ddwi'] + lower["ddwi"]) / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
@@ -790,15 +779,13 @@ def plot_shield(axis, mfile_data, scan):
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
              - cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
 
-    kapx = cumulative_upper['shldtth'] / rminx
-
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    temp_array_1 = temp_array_1 + ((rs, zs))
-
     if snull==1:
-        kapx = cumulative_lower['shldlth'] / rminx
-    elif snull==0:
-        kapx = cumulative_lower['shldtth'] / rminx 
+        kapx = cumulative_upper['shldtth'] / rminx
+        (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+        temp_array_1 = temp_array_1 + ((rs, zs))
+
+
+    kapx = cumulative_lower['shldlth'] / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
 
@@ -808,9 +795,10 @@ def plot_shield(axis, mfile_data, scan):
     rminx = (cumulative_radial_build("vvblgapo", mfile_data, scan)
              - cumulative_radial_build("shldith", mfile_data, scan)) / 2.0
 
-    kapx = (cumulative_upper['vvblgap']) / rminx
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    temp_array_1 = temp_array_1 + ((rs, zs))
+    if snull==1:
+        kapx = (cumulative_upper['vvblgap']) / rminx
+        (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+        temp_array_1 = temp_array_1 + ((rs, zs))
 
     kapx = (cumulative_lower['divfix']) / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
@@ -1805,9 +1793,6 @@ def test(f):
         global q95
         q95 = m_file.data["q95"].get_scan(scan)
 
-        snull = m_file.data["snull"].get_scan(scan)
-        if snull==0:
-            vertical_lower = vertical_snull
         # Build the dictionaries of radial and vertical build values and cumulative
         # values
         global radial
@@ -1962,10 +1947,7 @@ if __name__ == '__main__':
     q0 = m_file.data["q0"].get_scan(scan)
     q95 = m_file.data["q95"].get_scan(scan)
     kallenbach_switch = m_file.data["kallenbach_switch"].get_scan(scan)
-
-    snull = m_file.data["snull"].get_scan(scan)
-    if snull==0:
-        vertical_lower = vertical_snull
+    
     # Build the dictionaries of radial and vertical build values and cumulative values
     radial = {} ; cumulative_radial = {}; subtotal = 0
     for item in RADIAL_BUILD:
