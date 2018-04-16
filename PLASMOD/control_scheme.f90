@@ -96,8 +96,9 @@ if(q_fus.gt.0.) q_fus=q_fus*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 
 !Helium concentration calculation
 	if (comp%globtau(3).gt.0.) then
-	 che = 1.8d0*comp%globtau(3)*max(0.001,taue)*Sfus_he/integr_cde(v,nepr,nx)
+	 che = comp%globtau(3)*max(0.001,taue)*Sfus_he/integr_cde(v,nepr,nx)
 	endif
+
 
 
 !END OF MODULE

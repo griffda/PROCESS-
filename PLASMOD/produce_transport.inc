@@ -75,14 +75,15 @@
 !cross section of DT
 	  svdt = tipr(jrad)**(-0.333333333d0)
 	  svdt = 8.972d0*exp(-19.9826d0*svdt)*svdt*svdt*((tipr(jrad)+1.0134d0) & 
-			/(1.0d0+6.386d-3*(tipr(jrad)+1.0134d0)**2)     +1.877d0*exp(-0.16176d0*tipr(jrad)*sqrt(tipr(jrad))))
+			& /(1.0d0+6.386d-3*(tipr(jrad)+1.0134d0)**2)     & 
+			& +1.877d0*exp(-0.16176d0*tipr(jrad)*sqrt(tipr(jrad))))
 
 	sv_dd=0.16247+0.001741*TIpr(Jrad)-0.029*EXP(-0.3843*SQRT(TIpr(Jrad)))
 	sv_dd=sv_dd*EXP(-18.8085/(tipr(jrad)**.333333))/(tipr(jrad)**.333333)**2	
 
 ! alpha power local
 	  pdt = 5.632d0*ndeut(jrad)*ntrit(jrad)*svdt
-	  p_dd(jrad) = 817./625.*ndeut(jrad)*ndeut(jrad)*sv_dd
+	  p_dd(jrad) = 817./625.*ndeut(jrad)**2.*sv_dd
 
 !slowing down time of alphas
  ts_alf = 2.*SQRT(tepr(jrad))*tepr(jrad)/nepr(jrad)/COULG(jrad)
