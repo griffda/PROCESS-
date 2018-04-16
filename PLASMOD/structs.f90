@@ -74,6 +74,7 @@ module structs
 						&  ipol,qprof,Volum,g2,g3,vp,cc,& 
 						& palph,nions,psi,gte,gti,gne,Nepg,Tepg,Tipg,bpol,gradro,shif,k,d
       real(kind(1.0D0)) :: av_ne,av_Ti,av_Te, zeff,av_ni,av_nd,av_nz,av_nhe
+      real(kind(1.0D0)) :: av_Ten
     end type radial_profiles 
 
 

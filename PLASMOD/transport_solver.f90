@@ -964,6 +964,7 @@ endif
   radp%av_nhe = trapz((nhe)*dV)/V(nx)
   radp%av_Ti = trapz(tipr*dV)/V(nx)
   radp%av_Te = trapz(tepr*dV)/V(nx)
+  radp%av_Ten = trapz(tepr*nepr*dV)/trapz(nepr*dV)
   radp%zeff  = trapz(zeff*dV)/V(nx)
 
 !b.c.
