@@ -25,7 +25,6 @@ module physics_module
   !+ad_cont  phyaux
   !+ad_cont  plasma_composition
   !+ad_cont  pohm
-  !+ad_cont  pthresh
   !+ad_cont  radpwr
   !+ad_cont  rether
   !+ad_cont  vscalc

@@ -5,19 +5,22 @@ module physics_functions_module
   !+ad_type  Module
   !+ad_auth  K Ellis, CCFE, Culham Science Centre
   !+ad_cont  physics_functions
-  !+ad_cont  pthresh
-  !+ad_cont  palph
-  !+ad_cont  palph2
-  !+ad_cont  beamfus
   !+ad_cont  beamcalc
+  !+ad_cont  beamfus
   !+ad_cont  bosch_hale
   !+ad_cont  fsv
+  !+ad_cont  palph
+  !+ad_cont  palph2
+  !+ad_cont  pthresh
   !+ad_args  N/A
   !+ad_desc  This module contains physics routines which can be called by physics or 
   !+ad_desc  other modules (e.g. PLASMOD).
   !+ad_prob  None
-  !!!!+ad_call  build_variables
-
+  !+ad_call  constants
+  !+ad_call  error_handling 
+  !+ad_call  maths_library
+  !+ad_call  physics_variables
+  !+ad_call  profiles_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -989,7 +992,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    function fsv(u)
+  function fsv(u)
 
     !+ad_name  fsv
     !+ad_summ  Integrand function for the hot beam fusion reaction rate
