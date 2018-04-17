@@ -65,12 +65,12 @@ contains
     !+ad_desc  in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
     !+ad_prob  None
     !+ad_call  concoptf
+    !+ad_call  cutfshape
     !+ad_call  oheadr
     !+ad_call  osubhd
     !+ad_call  ovarre
     !+ad_call  portsz
     !+ad_call  sctfcoil
-    !+ad_call  cutfshape
     !+ad_hist  22/10/96 PJK Initial upgraded version
     !+ad_hist  08/05/12 PJK Initial F90 version
     !+ad_hist  08/10/12 PJK Swapped concoptf argument order
