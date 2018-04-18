@@ -182,6 +182,7 @@ def plot_plasma(axis, mfile_data, scan):
         angs1 = np.linspace(-theta1 + np.pi, (inang + theta1) + np.pi, 256,
                             endpoint=True)
         angs2 = np.linspace(-(outang + theta2), theta2, 256, endpoint=True)
+
     xs1 = -(r1 * np.cos(angs1) - x1)
     ys1 = r1 * np.sin(angs1)
     xs2 = -(r2 * np.cos(angs2) - x2)
