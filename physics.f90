@@ -6,25 +6,25 @@ module physics_module
   !+ad_summ  Module containing tokamak plasma physics routines
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  physics
+  !+ad_cont  physics					
   !+ad_cont  betcom
   !+ad_cont  bootstrap_fraction_iter89
   !+ad_cont  bootstrap_fraction_nevins
   !+ad_cont  bootstrap_fraction_sauter
-  !+ad_cont  bootstrap_fraction_wilson
+  !+ad_cont  bootstrap_fraction_wilson					   
   !+ad_cont  bpol
   !+ad_cont  culblm
   !+ad_cont  culcur
   !+ad_cont  culdlm
   !+ad_cont  fhfac
-  !+ad_cont  fhz
+  !+ad_cont  fhz				
   !+ad_cont  igmarcal
   !+ad_cont  outplas
-  !+ad_cont  outtim
+  !+ad_cont  outtim								   
   !+ad_cont  pcond
   !+ad_cont  phyaux
   !+ad_cont  plasma_composition
-  !+ad_cont  pohm
+  !+ad_cont  pohm					
   !+ad_cont  radpwr
   !+ad_cont  rether
   !+ad_cont  vscalc
@@ -109,8 +109,7 @@ module physics_module
   use startup_variables
   use stellarator_variables
   use tfcoil_variables
-  use times_variables  
-
+  use times_variables  					   
 
   implicit none
 
@@ -119,13 +118,13 @@ module physics_module
        physics,plasma_composition,pohm,radpwr,rether
        
   !  Module-level variables
-
+						   
   integer :: iscz
   real(kind(1.0D0)) :: photon_wall, rad_fraction
-
   real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
   real(kind(1.0D0)) :: total_loss_power        ! [W]
   real(kind(1.0D0)) :: total_energy_conf_time  ! [s]
+
 
 contains
 
@@ -238,7 +237,6 @@ implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
     if (icurr == 2) then
        q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
     else
@@ -248,7 +246,6 @@ implicit none
     if (ipedestal .ne. 3) then
 
        !  Calculate plasma composition
-
        if (imprad_model == 0) then
           call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impo, &
                ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
@@ -273,7 +270,7 @@ implicit none
        if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwsep >=0d0)) then
           nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
        end if
-
+														
     else if (geom%counter.eq.0.d0) then
        !if plasmod_i_equiltype = 2 plascur is an input
        !This is not yet consistently implemented though and contradicts
@@ -287,7 +284,6 @@ implicit none
        
     endif
     
-
     ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
     ! ieped : switch for scaling pedestal-top temperature with plasma parameters
     if ((ipedestal >= 1) .and. (ieped == 1)) teped = t_eped_scaling()
@@ -297,10 +293,11 @@ implicit none
        call plasma_profiles
        
     else  ! Run PLASMOD 
-         
+         												 
        call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
 
        if(verbose == 1) then
+
           open(32,file='plasmodsolprima.dat')
           write(32,*) 'num ',num
           write(32,*) 'geom ',geom
@@ -310,6 +307,7 @@ implicit none
           write(32,*) 'mhd ',mhd
           write(32,*) 'loss ',loss
           close(32)	   
+
        endif
 
        call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
@@ -329,7 +327,6 @@ implicit none
        call convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,tburn,&
 							& fusrat)
 
-       
     endif
 
     btot = sqrt(bt**2 + bp**2)
@@ -362,7 +359,6 @@ implicit none
          tqnch = tohs
        end if
 
-
     end if
 
     !  Reset second tburn value (tburn0).
@@ -385,8 +381,7 @@ implicit none
     !  Calculate bootstrap current fraction using various models
 
     bscf_iter89 = bootstrap_fraction_iter89(aspect,beta,btot,cboot,plascur, &
-         q95,q0,rmajor,vol)
-
+         q95,q0,rmajor,vol)											   
 
     !Profile parameters are meaningless with ipedestal=3
     if (ipedestal.ne.3) then
@@ -403,8 +398,8 @@ implicit none
     bscf_sauter = cboot * bootstrap_fraction_sauter()
 
     if (ipedestal .ne. 3) then
-       if (bscfmax < 0.0D0) then
-          bootipf = abs(bscfmax)
+       if (bscfmax < 0.0D0) then							   
+          bootipf = abs(bscfmax)							   
        else
           if (ibss == 1) then
              bootipf = bscf_iter89
@@ -443,6 +438,7 @@ implicit none
     if (irfcd /= 0) call cudriv(nout,0)
  
     if (ipedestal .ne. 3) then  ! otherwise replaced by PLASMOD variables
+
        !  Calculate fusion power + components
        call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
             sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
@@ -450,6 +446,7 @@ implicit none
        pdt = pdtpv * vol
        pdhe3 = pdhe3pv * vol
        pdd = pddpv * vol
+
 
        !  Calculate neutral beam slowing down effects
        !  If ignited, then ignore beam fusion effects
@@ -468,6 +465,7 @@ implicit none
        call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
             ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw,betaft, &
             palppv,palpipv,palpepv,pfuscmw,powfmw)
+
     endif
      
     !  Nominal mean neutron wall load on entire first wall area including divertor and beam holes
@@ -481,9 +479,12 @@ implicit none
     if (ipedestal .ne. 3) then ! otherwise replaced by PLASMOD variables
        
         !  Calculate ion/electron equilibration power
+
         call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
+							  
        !  Calculate radiation power
+
        call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
             pcoreradpv,pedgeradpv,pradpv)
        
@@ -510,9 +511,11 @@ implicit none
             pohmpv,pohmmw,rpfac,rplas)
        
        !  Calculate L- to H-mode power threshold for different scalings
+
        call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
        !  Enforced L-H power threshold value (if constraint 15 is turned on)
+
        plhthresh = pthrmw(ilhthresh)
         
        !  Power transported to the divertor by charged particles,
@@ -532,9 +535,10 @@ implicit none
     endif
  
     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
-    res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
-    
+    res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)							   
+
     !  Power transported to the first wall by escaped alpha particles
+
     palpfwmw = palpmw * (1.0D0-falpha)
 
     !  Density limit
@@ -572,9 +576,10 @@ implicit none
     !  Total transport power from scaling law (MW)
     pscalingmw = ptremw + ptrimw
        
-    !!!!vscal and phyaux should be replaced by PLASMOD output ipedestal 3 - is this done?
+    !!!!vscal and phyaux should be replaced by PLASMOD output ipedestal 3 - is this done?															  
 
     !  Calculate beta limit
+
     if (iprofile == 0) then
 
        if (gtscale == 1) then
@@ -2084,7 +2089,7 @@ end function t_eped_scaling
 
     if (iprofile == 1) then
        alphaj = qstar/q0 - 1.0D0
-       rli = log(1.65D0 + 0.89D0*alphaj)  !  Tokamaks 3rd Edition, Wesson
+       rli = log(1.65D0 + 0.89D0*alphaj)  !  Tokamaks 4th Edition, Wesson, page 116
     end if
 
   contains
@@ -2974,7 +2979,7 @@ end function t_eped_scaling
 
     dnelimt = dlimit(idensl)
 
-  end subroutine culdlm
+  end subroutine culdlm					 
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4276,7 +4281,7 @@ end function t_eped_scaling
 
   end subroutine pohm
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!																	  
 
   subroutine igmarcal(outfile)
 
@@ -4476,7 +4481,7 @@ end function t_eped_scaling
 
   end function fhz
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!																  
 
   subroutine outplas(outfile)
 
@@ -4745,6 +4750,7 @@ end function t_eped_scaling
     end if
 
     call ovarre(outfile,'Plasma thermal energy (J)',' ', 1.5D0*betath*btot*btot/(2.0D0*rmu0)*vol, 'OP ')					 
+
 	call ovarre(outfile,'Total plasma internal energy (J)','(total_plasma_internal_energy)', total_plasma_internal_energy, 'OP ')
 	
     call osubhd(outfile,'Temperature and Density (volume averaged) :')
@@ -4862,6 +4868,9 @@ end function t_eped_scaling
         endif
         call ovarrf(outfile,'Electron temp. pedestal height (keV)','(teped)',teped)
         call ovarrf(outfile,'Electron temp. at separatrix (keV)','(tesep)',tesep)
+        call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
+        call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep_out)',fgwsep_out)																		   
+																							 
     endif
 
     ! Issue 558 - addition of constraint 76 to limit the value of nesep, in proportion with the ballooning parameter and Greenwald density
@@ -4870,8 +4879,6 @@ end function t_eped_scaling
        call ovarre(outfile,'Critical electron density at separatrix (/m3)','(nesep_crit)',nesep_crit)
     endif
 
-    call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
-    call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep_out)',fgwsep_out)
     call ovarrf(outfile,'Temperature profile index','(alphat)',alphat)
     call ovarrf(outfile,'Temperature profile index beta','(tbeta)',tbeta)
 
@@ -5023,8 +5030,9 @@ end function t_eped_scaling
     call ovarrf(outfile,'Alpha particle/energy confinement time ratio','(taup/taueff)',taup/taueff, 'OP ')
     call ovarrf(outfile,'Lower limit on taup/taueff','(taulimit)',taulimit)
 
-	call ovarrf(outfile,'Total energy confinement time including radiation loss (s)', &
+    call ovarrf(outfile,'Total energy confinement time including radiation loss (s)', &
                     '(total_energy_conf_time)', total_energy_conf_time, 'OP ')																							 
+
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')
        call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt, 'OP ')
@@ -5035,6 +5043,8 @@ end function t_eped_scaling
 
        call ovarrf(outfile,'bootstrap current fraction multiplier', '(cboot)',cboot)
        call ovarrf(outfile,'Bootstrap fraction (ITER 1989)', '(bscf_iter89)',bscf_iter89, 'OP ')
+																								   
+																								   
        call ovarrf(outfile,'Bootstrap fraction (Sauter et al)', '(bscf_sauter)',bscf_sauter, 'OP ')
        
        if (ipedestal==3) then
@@ -5054,8 +5064,8 @@ end function t_eped_scaling
           else if (ibss == 4) then
              call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
           end if
-       endif
-
+       endif																					   
+			 
        call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf, 'OP ')
 
        call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', plascur*rplas*facoh, 'OP ')

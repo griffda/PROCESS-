@@ -241,10 +241,10 @@ module numerics
        'Beta upper limit                 ', &
        !+ad_varc  <LI> (25) Peak toroidal field upper limit (itv 35,3,13,29)
        'Peak toroidal field upper limit  ', &
-       !+ad_varc  <LI> (26) Central solenoid EOF current density upper limit
+       !+ad_varc  <LI> (26) Central solenoid EOF current density upper limit (ipfres=0)
        !+ad_varc            (itv 38,37,41,12)
        'CS coil EOF current density limit', &
-       !+ad_varc  <LI> (27) Central solenoid BOP current density upper limit
+       !+ad_varc  <LI> (27) Central solenoid BOP current density upper limit (ipfres=0)
        !+ad_varc            (itv 39,37,41,12)
        'CS coil BOP current density limit', &
        !+ad_varc  <LI> (28) Fusion gain Q lower limit (itv 45,47,40)

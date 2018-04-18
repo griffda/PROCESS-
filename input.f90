@@ -544,7 +544,7 @@ contains
           call parse_real_variable('dene', dene, 1.0D18, 1.0D22, &
                'Electron density (/m3)')
        case ('dnbeta')
-          call parse_real_variable('dnbeta', dnbeta, 0.3D0, 20.0D0, &
+          call parse_real_variable('dnbeta', dnbeta, 0.0D0, 20.0D0, &
                'beta coefficient')
        case ('epbetmax')
           call parse_real_variable('epbetmax', epbetmax, 0.01D0, 10.0D0, &
@@ -750,7 +750,7 @@ contains
           call parse_real_variable('nesep', nesep, 0.0D0, 1.0D21, &
                'Electron density at separatrix (/m3)')
        case ('q')
-          call parse_real_variable('q', q, 2.00D0, 50.0D0, &
+          call parse_real_variable('q', q, 1.00D0, 50.0D0, &
                'Edge safety factor')
        case ('q0')
           call parse_real_variable('q0', q0, 0.01D0, 20.0D0, &
@@ -1259,7 +1259,7 @@ contains
           !  Time settings
 
        case ('tburn')
-          call parse_real_variable('tburn', tburn, 0.0D0, 1.0D7, &
+          call parse_real_variable('tburn', tburn, 0.0D0, 1.0D8, &
                'Burn time (s)')
        case ('tdwell')
           call parse_real_variable('tdwell', tdwell, 0.0D0, 1.0D8, &

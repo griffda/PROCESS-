@@ -186,7 +186,11 @@ OBJ = \
 ###### OS specifics #######
 
 ifeq ($(OS),Windows_NT)
-	MYROOT_1 = echo character(len=*), parameter :: ROOTDIR = "%cd%" > root.dir
+	ifeq ($(MAKECMDGOALS), portable)
+		MYROOT_1 = echo character(len=*), parameter :: ROOTDIR = "." > root.dir
+	else
+		MYROOT_1 = echo character(len=*), parameter :: ROOTDIR = "%cd%" > root.dir
+	endif
 	MYROOT_2 = echo ROOTDIR = "%cd%" > utilities\rootdir.py
 	MYCOMMSG_0 = del com.msg
 	MYROOT_3_W = echo $substring = git log -1 --format=oneline
@@ -196,7 +200,11 @@ ifeq ($(OS),Windows_NT)
 	DIFF_0 = del untracked.info
 	DIFF_1 = echo integer :: untracked = 0 > untracked.info
 else
-	MYROOT_1 = echo "  character(len=*), parameter :: ROOTDIR = '"`pwd`"'" > root.dir
+	ifeq ($(MAKECMDGOALS), portable)
+		MYROOT_1 = echo "  character(len=*), parameter :: ROOTDIR = '"."'" > root.dir
+	else
+		MYROOT_1 = echo "  character(len=*), parameter :: ROOTDIR = '"`pwd`"'" > root.dir
+	endif
 	MYROOT_2 = echo "ROOTDIR = '"`pwd`"'" > utilities/rootdir.py
 	MYCOMMSG_0 = rm -rf com.msg
 	MYROOT_3_W =
@@ -244,6 +252,9 @@ debug: process.exe
 
 # add even more additional compiler flags
 extra_debug: process.exe
+
+# Make a portable version (i.e. only relative paths)
+portable: process.exe
 
 # object dependencies (usually via modules or header files)
 availability.o: global_variables.o maths_library.o output.o
