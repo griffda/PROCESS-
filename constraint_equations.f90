@@ -1655,6 +1655,22 @@ contains
              units(i) = 'm-3'
            end if
 
+        case (77)  ! Equation for maximum TF current per turn upper limit
+           !#=# tfcoil
+           !#=#=# fcpttf, cpttf, cpttf_max
+ 
+           ! fcpttf    |  f-value for TF coil current per turn
+           ! cpttf_max |  allowable TF coil current per turn [A/turn]
+           ! cpttf     |  TF coil current per turn [A/turn]
+           cc(i) = 1.0D0 - fcpttf * cpttf_max/cpttf
+ 
+           if (present(con)) then
+              con(i) = cpttf_max
+              err(i) = cpttf_max * cc(i)
+              symbol(i) = '<'
+              units(i) = 'A/turn'
+           end if
+
        case default
 
           idiags(1) = icc(i)
