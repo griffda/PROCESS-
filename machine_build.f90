@@ -314,15 +314,15 @@ contains
     if (itart == 1) then
 
        radius = radius + tfcth
-       call obuild(outfile,'TF coil inboard leg',tfcth,radius)
+       call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
        call ovarre(mfile,'TF coil inboard leg radial thickness (m)','(tfcth)',tfcth)
 
        radius = radius + gapoh
-       call obuild(outfile,'Gap',gapoh,radius)
+       call obuild(outfile,'Gap',gapoh,radius,'(gapoh)')
        call ovarre(mfile,'TF to CS radial gap (m)','(gapoh)',gapoh)
 
        radius = radius + ohcth
-       call obuild(outfile,'Central solenoid',ohcth,radius)
+       call obuild(outfile,'Central solenoid',ohcth,radius,'(ohcth)')
        call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
 
     else       ! conventional aspect ratio tokamak
