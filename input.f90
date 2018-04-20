@@ -1896,7 +1896,7 @@ contains
           call parse_real_variable('alfapf', alfapf, 1.0D-12, 1.0D0, &
                'PF coil current smoothing parameter')
        case ('coheof')
-          call parse_real_variable('coheof', coheof, 1.0D4, 1.0D8, &
+          call parse_real_variable('coheof', coheof, 1.0D4, 5.0D8, &
                'Central Solenoid current density at EOF')
        case ('cptdin')
           call parse_real_array('cptdin', cptdin, isub1, ngc2, &
