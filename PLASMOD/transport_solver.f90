@@ -644,7 +644,7 @@ endif
               y(:,1) = N_e(1:nxt)
    
 !update pedestal temperature if needed
-              pressure=(nepr*(tipr+tepr))+palph !total pressure
+              pressure=nepr*tepr+nions*tipr+palph !total pressure
               betan=trapz(pressure*dV)/V(nx)*1.e3*e_charge*1.e19*2.*mu_vacuum/btor**2. 
               betan=100.*betan*rminor*btor/Ip !beta_n
 
