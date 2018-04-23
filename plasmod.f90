@@ -312,6 +312,7 @@ contains
     ! mhd%equilcheck will likely be depricated in the future, as it is covered
     ! by i_flag
     if (i_flag.ne.1 .or. mhd%equilcheck.ne.1)then
+       idiags(1) = i_flag
        call report_error(174)
     endif
         
