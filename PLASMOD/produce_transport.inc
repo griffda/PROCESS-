@@ -1,7 +1,7 @@
 !this block compute sources and transport coefficients for the transport equations
 
 !update the profiles with the last calculation of the gradients
- call update_profiles(dx, nxt, nchannels, gy0, y0, rmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
+ call update_profiles(dx, nxt, nchannels, gy0, y0, rpmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
 	
 
 !interpolate to the finer grid
@@ -57,11 +57,11 @@
 	nions = ndeut + ntrit + nNe + nXe + nHe+comp%protium*nepr
 
 !Z effective
-	zeff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*nHe+zavne**2*nNe+zavxe**2*nXe+comp%protium*nepr)
+	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*nHe+zavne**2*nNe+zavxe**2*nXe+comp%protium*nepr)
     coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
 
 !caluclate brehmstrahliuzng radiation
-  PBRAD=5.06E-5*zeff*NEpr**2.d0*SQRT(TEpr)
+  PBRAD=5.06E-5*zepff*NEpr**2.d0*SQRT(TEpr)
 
 
 !this below is for synchrotron radiation computed in the loop
@@ -82,7 +82,7 @@
 	sv_dd=sv_dd*EXP(-18.8085/(tipr(jrad)**.333333))/(tipr(jrad)**.333333)**2	
 
 ! alpha power local
-	  pdt = 5.632d0*ndeut(jrad)*ntrit(jrad)*svdt
+	  pdtp = 5.632d0*ndeut(jrad)*ntrit(jrad)*svdt
 	  p_dd(jrad) = 817./625.*ndeut(jrad)**2.*sv_dd
 
 !slowing down time of alphas
@@ -112,8 +112,8 @@ PAION=2./YEPS**2*(0.577*YY6-0.167*YY7+0.3)
 
 
 !electron and ion fusion power
-      pedt(jrad) = (1.-paion)*pdt
-      pidt(jrad) = paion*pdt
+      pedt(jrad) = (1.-paion)*pdtp
+      pidt(jrad) = paion*pdtp
 
 !equipartition power from e to i
       peicl(jrad)=0.00246*COULG(jrad)*NEpr(jrad)*NIons(jrad)*ZMAIN**2.d0* &
@@ -124,7 +124,7 @@ yllama=1.d0
   yv6=totse(nx)
   yv7=totsi(nx)
 	PSYNC(jrad)=1.32E-7*(yv6*BTOR)**2.5 &
-     & *SQRT(yv7/rminor*(1.+18.*rminor/(rmajor*SQRT(yv6))))*yllama
+     & *SQRT(yv7/rpminor*(1.+18.*rpminor/(rpmajor*SQRT(yv6))))*yllama
 
 !alpha particle content (not used for particle balance for now)
 	nalf(jrad)=nalph
@@ -179,9 +179,9 @@ yllama=1.d0
  !write(*,*) jiter,"call transport",num%etol
 	if (i_modeltype.ne.9999) then
 	call trmodel(i_modeltype,nx,nxt, nchannels,vprime,2.5d0,1.d0,1.+0.*amin,1.+0.*amin,1.+0.*amin, & 
-			& nepr,tepr,nepr,0.5*nepr,0.*nepr,tipr,1.+0.*nepr,0.*nepr,2.5+0.*nepr,1./q,RHO,x*rminor, &
+			& nepr,tepr,nepr,0.5*nepr,0.*nepr,tipr,1.+0.*nepr,0.*nepr,2.5+0.*nepr,1./qprf,RHO,x*rpminor, &
 			& SHIF,k,d,0.*shif,0.*shif,0.*shif,0.*shif,IPOL,g1*vprime,vprime,1.+0.*vprime, & 
-			& SHEAR,0.*nepr,0.*nepr,palph,0.*nepr,0.*nepr,0.*nepr,y0, gy0, xtr,x, amin, rmajor, btor,num%capA, q_tr, sh_tr, a, b, &
+			& SHEAR,0.*nepr,0.*nepr,palpph,0.*nepr,0.*nepr,0.*nepr,y0, gy0, xtr,x, amin, rpmajor, btor,num%capA, q_tr, sh_tr, a, b, &
 			& Hfactor,chi00,chipow,Hnow,chifac0)
 	aa=a
 	bb=b
@@ -197,7 +197,7 @@ yllama=1.d0
 
 
 !chat is the transport power from transport, while c is source power, the two must be equal at steady state
-	chat = aa * gy0 * y0/rmajor + bb * y0  ! To compare to c
+	chat = aa * gy0 * y0/rpmajor + bb * y0  ! To compare to c
 
 	F = chat-c  ! New residual, F must go to zero at steady-state
 

@@ -8,7 +8,7 @@ if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 
 	if (inp0%PLH.eq.0) then 
 	PLH=1.67*(trapz(nepr*dv)/trapz(dv)/10.)**0.61*(geom%bt)**0.78 &
-     & *rminor**0.89*geom%r**0.94 !Martin scaling
+     & *rpminor**0.89*geom%r**0.94 !Martin scaling
 	else
 	PLH=inp0%PLH !this comes from outside !KE - should this be a user-defined variable? It is not currently
 	endif
@@ -28,10 +28,10 @@ dum2=1.d6
 dum2=min(comp%psepplh_sup*PLH,dum2)
 	endif 
 	if (comp%psepb_q95AR.gt.0.d0) then !use psepbqar as constraint
-dum2=min(dum2,comp%psepb_q95AR*(btor/q_95/geom%A/rmajor)**(-1.))
+dum2=min(dum2,comp%psepb_q95AR*(btor/q_95/geom%A/rpmajor)**(-1.))
 	endif
 	if (comp%psep_r.gt.0.d0) then !use psep/R as constraint
-dum2=min(dum2,comp%psep_r*rmajor)
+dum2=min(dum2,comp%psep_r*rpmajor)
 	endif
 
 

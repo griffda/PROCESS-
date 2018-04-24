@@ -3,18 +3,18 @@
 
 !T. Eich scaling
 	lambda_q=0.73e-3*btor**(-0.78)* &     
-		&   (rminor**2.*btor/(0.2*rmajor*ip))**1.02* &
+		&   (rpminor**2.*btor/(0.2*rpmajor*ip))**1.02* &
  	&   (qtot-qrad)**0.1* &
- 	&   (rmajor)**0.02* &
+ 	&   (rpmajor)**0.02* &
  	&    3.*3.
 
 !geometry of field line
-	lparsep=q(nx)*2.d0*pi*rmajor/2.d0
+	lparsep=qprf(nx)*2.d0*pi_g*rpmajor/2.d0
 	ldiv=0.55*lparsep
 	
 !upstream qpar
-	qpar=(qtot-qradedge)*1.d6/(2.d0*pi*(rmajor+rminor+shif(nx)) & 
-	 & *lambda_q*rminor/rmajor/q(nx)/2.d0)
+	qpar=(qtot-qradedge)*1.d6/(2.d0*pi_g*(rpmajor+rpminor+shif(nx)) & 
+	 & *lambda_q*rpminor/rpmajor/qprf(nx)/2.d0)
 
 !some numerical values for Msicci model
 	fx=10.d0

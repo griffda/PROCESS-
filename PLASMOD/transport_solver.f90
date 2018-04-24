@@ -10,10 +10,18 @@
 
     use grad_func
     use structs
+    use physics_functions_module
 
     implicit none
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+
+
+
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -96,22 +104,22 @@
   integer :: jped,nx,nxt,nchannels, iped_model,jdum1,nxequil,i_qsaw, i_diagz
   real(kind(1.0d0)) :: x0, dx, dxn,psep,plh
   real(kind(1.0d0)) :: Qeaux, Qiaux, Qrad ,qradedge, betan,P_pedtop, qecrh, qnbi, spellet, spuffing, f_gw !sfuelling
-  real(kind(1.0d0)) :: nsep, Ip, btor, cHe, cxe,car,nG, qedge, elong, triang, amin ,tsep, rmajor,  rminor, aspect, nlineavg 
-  real(kind(1.0d0)) :: tau_sol, V_sol, D_ped, V_ped, lambda_sol,pdt,sv_dd,svdt
+  real(kind(1.0d0)) :: nsep, Ip, btor, cHe, cxe,car,nG, qedge, elong, trianpg, amin ,tsep, rpmajor,  rpminor, asppect, nlineavg 
+  real(kind(1.0d0)) :: tau_sol, V_sol, D_ped, V_ped, lambda_sol,pdtp,sv_dd,svdt
   real(kind(1.0d0)) :: rtor, yd, betaz, lint,taue,Qtot
   real(kind(1.0d0)) :: Hfactor,chi00,chipow,Hnow,tau_scal,chifac,chifac0
   real(kind(1.0d0)) :: paion, NALPH,YVALP,YLLAME,yllami,yllama,YY6,YEPS,YVC, YY7,yv7 ,yv6 !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: ts_alf,chepck,dum1,dum2,roc0,vloop0,fbs0,toleq0,pow_eq   !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: aim1,aim2,aim3   !fraction of D-T power deposited to ions, plus dummies
-  real(kind(1.0d0)) :: q_edge_in,f_ind_in,ip0 ,te0,ti0,ne0,fq  !fraction of D-T power deposited to ions, plus dummies
-  real(kind(1.0d0)) :: elong95,triang95  !fraction of D-T power deposited to ions, plus dummies
+  real(kind(1.0d0)) :: q_edge_in,f_ind_in,ip0 ,tepp0,tipp0,nepp0,fq  !fraction of D-T power deposited to ions, plus dummies
+  real(kind(1.0d0)) :: elong95,trianpg95  !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: xb,teb,tib,neb,zmain,amain,toleq,fuelmix
   real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,fcd,qdivt,q_heat,q_cd,q_fus,q_95,qtote,qtoti,w_e,w_i
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat,plinexe,psepxe
   real(kind(1.0d0)), dimension(num%nx) :: theta_perim,dtheta,f_perim,p_dd
   real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe, nXe, nNe, prxe, prne
   real(kind(1.0d0)), dimension(num%nx) :: pech,pnbi,psync,pbrad
-  real(kind(1.0d0)), dimension(num%nx) :: zavxe, zavne, prad,pradtot,pradedge, ndeut, ntrit, nions, pedt, pidt, peicl, zeff!  conflict with   
+  real(kind(1.0d0)), dimension(num%nx) :: zavxe, zavne, prad,pradtot,pradedge, ndeut, ntrit, nions, pedt, pidt, peicl, zepff!  conflict with   
   real(kind(1.0d0)), dimension(num%nxt+1) :: T_e, T_i, N_e, gT_e, gT_i, gn_e
 	 real(kind(1.0d0)), dimension(num%nxt+1) :: T_e0, T_i0, N_e0, xtrt, Fn0, Fe0, Fi0
   real(kind(1.0d0)), dimension(num%nxt+1) :: Fn, Fe, Fi
@@ -126,7 +134,8 @@
   real(kind(1.0d0)), dimension(num%nxt,num%nchannels) :: cym, cy0, y0, ym, F, F0, Fm
   real(kind(1.0d0)), dimension(num%nxt*num%nchannels,num%nxt*num%nchannels) :: jacob, ijacob
   real(kind(1.0d0)), dimension(num%nxt*num%nchannels) :: Fvec, g0vec, gyvec
-  real(kind(1.0d0)), dimension(num%nx) :: pressure,k, d, jcdr, shif, G1, G2, G3, dV, phi, rho, V, psi, ipol, Vprime, jpar, q, q0
+  real(kind(1.0d0)), dimension(num%nx) :: pressure,k, d, jcdr, shif, G1, G2, G3, dV, phi, rho, V, psi, ipol, &
+		&  Vprime, jpar, qprf, qprf0
   real(kind(1.0d0)), dimension(num%nx) :: pressure0,k0, d0, shif0, G10, dV0, phi0, rho0, V0, psi0, ipol00, Vprime0, jpar0,gradro0 !   conflict with process
   real(kind(1.0d0)), dimension(num%nx) :: shear, W, mux, hro, ametr, nel, tel, tii, nii, ya
   real(kind(1.0d0)), dimension(num%nx) :: q_oh,sqeps, dlogte, dlogti, dlogne, dpsi, betpl, betple, nalf, droda
@@ -134,7 +143,7 @@
   real(kind(1.0d0)), dimension(num%nx) :: zz, zft, zdf, dcsa, hcee, hcei, hcsa, a0, alp, a1, xcsa !
   real(kind(1.0d0)), dimension(num%nx) :: zfte, zfte2, zfte3, zfte4,powe,powi,sfuel
   real(kind(1.0d0)), dimension(num%nx) :: zfti, zfti2, zfti3, zfti4,totse,totsi !
-  real(kind(1.0d0)), dimension(num%nx) :: palph, G30, G20, ipol0, vp0, pfus,sn,tots
+  real(kind(1.0d0)), dimension(num%nx) :: palpph, G30, G20, ipol0, vp0, pfus,sn,tots
   real(kind(1.0d0)), dimension(num%nx) :: chie,chii,dnn,vvn,eqpf,eqff,gradro,jpol,nbi_split
   real(kind(1.0d0)), dimension(num%nxt,num%nchannels) :: gytemp,ytemp
   real(kind(1.0d0)), dimension(num%nxt*num%nchannels) :: F1vec,F2vec
@@ -143,7 +152,7 @@
   ! set physics constants
   real(kind(1.0d0)), parameter :: clight = 2.9979d+18, e_charge = 1.602d-19, eps_vacuum = 8.854d-12
   real(kind(1.0d0)), parameter :: m_electron = 9.109d-31, m_proton = 1.673d-27, mu_vacuum = 1.2566d-6
-  real(kind(1.0d0)), parameter :: pe_mratio = 3438.0d0, planckh = 6.63d-34 , pi = 3.141592d0 
+  real(kind(1.0d0)), parameter :: pe_mratio = 3438.0d0, planckh = 6.63d-34 , pi_g = 3.141592
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -175,19 +184,19 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
 	i_flag=1 !success
 
   ! engineering data from input structures to local variables 
-  rmajor = geom%R
-  aspect = geom%A
-  rminor = rmajor/aspect
+  rpmajor = geom%R
+  asppect = geom%A
+  rpminor = rpmajor/asppect
   elong = geom%k
-  triang = geom%d
+  trianpg = geom%d
   elong95 = geom%k95
-  triang95 = geom%d95
+  trianpg95 = geom%d95
   Ip = geom%Ip !MA
   btor = geom%Bt
  	fuelmix=comp%fuelmix
 		q_edge_in=geom%q95*1.1
   q_95 = geom%q95
-  amin = rminor
+  amin = rpminor
   Hfactor = inp0%hfac_inp
   Hnow = Hfactor
 
@@ -203,10 +212,10 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
   !check if the machine has changed, major radius, current, anything
   chepck=0.d0
   if (geom%counter.ge.1.d0) then
-     chepck = abs(rmajor-geom%Rold)/rmajor+ & 
-          & abs(aspect-geom%aold)/rmajor+ & 
+     chepck = abs(rpmajor-geom%Rold)/rpmajor+ & 
+          & abs(asppect-geom%aold)/rpmajor+ & 
           & abs(elong-geom%kold)/elong+ & 
-          & abs(triang-geom%dold)/0.2+ & 
+          & abs(trianpg-geom%dold)/0.2+ & 
           & abs(geom%q95-geom%q95old)/geom%q95+ & 
           & abs(btor-geom%btold)/btor
   endif
@@ -258,13 +267,13 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
 
   !Setup plasma current from some formula, but really this will be changed by the code anyway, but keep this
 	if (jiterext.eq.1) then
-  fq = 0.5D0 * (1.17D0-0.65D0*1.d0/aspect)/((1.0D0-1.d0/aspect*1.d0/aspect)**2) * &
+  fq = 0.5D0 * (1.17D0-0.65D0*1.d0/asppect)/((1.0D0-1.d0/asppect*1.d0/asppect)**2) * &
        (1.0D0 + elong95**2 * &
-       (1.0D0 + 2.0D0*triang95**2 - 1.2D0*triang95**3) )
+       (1.0D0 + 2.0D0*trianpg95**2 - 1.2D0*trianpg95**3) )
   if (i_equiltype.eq.1) then
-   ip =5.d0*rminor**2.d0/(rmajor*q_95)*fq*btor !need to put an actual scaling here...
+   ip =5.d0*rpminor**2.d0/(rpmajor*q_95)*fq*btor !need to put an actual scaling here...
   endif
-  nG = 10.0d0 * Ip/(pi * rminor**2)  ! 10^19
+  nG = 10.0d0 * Ip/(pi_g * rpminor**2)  ! 10^19
   neb = inp0%f_gw*nG
   nsep = inp0%f_gws*nG
 		ped%nped=neb
@@ -302,9 +311,9 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
   gn_e = 0.0d0
 		qedge=q_95*1.1
   qinit = 1.0d0 + (qedge-1.0d0) * x**4
-  q0 = qinit
+  qprf0 = qinit
   Qrad=0.0d0    
-  palph = 0.0d0 * nions
+  palpph = 0.0d0 * nions
   betaz = 0.01d0
   lint = 0.7d0
   G30 = 1.d0*nepr
@@ -322,12 +331,12 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
   if (jiterext.eq.1) then !this is generic guess.
    T_e0(1:nxt) = 5.d0*teb*(1.0d0-xtr/xtr(nxt))+teb
    T_i0 = T_e0 
-   gn_e(1:nxt) = -rmajor * gradient(log(N_e0(1:nxt)),xtr)
-   gT_e(1:nxt) = -rmajor * gradient(log(T_e0(1:nxt)),xtr)
-   gT_i(1:nxt) = -rmajor * gradient(log(T_i0(1:nxt)),xtr)
+   gn_e(1:nxt) = -rpmajor * gradient(log(N_e0(1:nxt)),xtr)
+   gT_e(1:nxt) = -rpmajor * gradient(log(T_e0(1:nxt)),xtr)
+   gT_i(1:nxt) = -rpmajor * gradient(log(T_i0(1:nxt)),xtr)
    gn_e0 = gn_e
-   gT_e0(1:nxt) = -rmajor * gradient(log(T_e0(1:nxt)),xtr)
-   gT_i0(1:nxt) = -rmajor * gradient(log(T_i0(1:nxt)),xtr)
+   gT_e0(1:nxt) = -rpmajor * gradient(log(T_e0(1:nxt)),xtr)
+   gT_i0(1:nxt) = -rpmajor * gradient(log(T_i0(1:nxt)),xtr)
  	 cxe=0.d0
 			q_heat=inp0%qheat
 			q_cd=inp0%qcd
@@ -369,9 +378,9 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
   N_e = N_e0
   T_e = T_e0
   T_i = T_i0
-  q0 = qinit
-  q = qinit
-  q_tr = interp1_ef(nx,nxt,x, q, xtr/xr(nx))
+  qprf0 = qinit
+  qprf = qinit
+  q_tr = interp1_ef(nx,nxt,x, qprf, xtr/xr(nx))
   sh_tr = interp1_ef(nx,nxt,x, shear, xtr/xr(nx))
   Fn0 = 0.0d0 * gn_e + 100.0d0
   Fe0 = 0.0d0 * gn_e + 100.0d0
@@ -416,7 +425,7 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
  	shif(nx)=0.d0
 
 !call update_profiles to build up actual profiles from gradients
-  call update_profiles(dx, nxt, nchannels, gy0, y0, rmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
+  call update_profiles(dx, nxt, nchannels, gy0, y0, rpmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
   y0 = y
   ym = y
   N_e0(1:nxt)=y0(:,1)
@@ -432,39 +441,39 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
     call compute_equil( &
                                 !input 
           nx,jiterext-1,i_equiltype, &
-          x, tepr, tipr, nepr, nions, palph, cc, G30,q0,G20,vp0, &
-          rmajor,rminor,elong,triang,Ip,btor,betaz,lint,ipol0,e_charge,mu_vacuum, &
+          x, tepr, tipr, nepr, nions, palpph, cc, G30,qprf0,G20,vp0, &
+          rpmajor,rpminor,elong,trianpg,Ip,btor,betaz,lint,ipol0,e_charge,mu_vacuum, &
                                 !inout
           qedge,&
                                 !output
           roc, Vloop, fbs,fcd, toleq, &
-          k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar,&
-          ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
+          k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, qprf, rho, psi, jpar,&
+          ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,trianpg95 &
           ,pres_fac,areat)
   else !equilibrium updated using previous result as new guess, faster
     call compute_equil( &
                                 !input 
           nx, jiterext-jiterext+1,i_equiltype, &
           x, radp%te, radp%ti, radp%ne, radp%nions, radp%palph, radp%cc, radp%g3,radp%qprof,radp%g2,radp%vp, &
-          rmajor,rminor,elong,triang,Ip,btor,betaz,lint,radp%ipol(nx),e_charge,mu_vacuum, &
+          rpmajor,rpminor,elong,trianpg,Ip,btor,betaz,lint,radp%ipol(nx),e_charge,mu_vacuum, &
                                 !inout
           qedge,&
                                 !output
           roc, Vloop, fbs,fcd, toleq, &
-          k, d, shif, radp%jbs, radp%jcd, radp%Volum, G1, G2, G3, dV, phi, q, rho, radp%psi, jpar,&
-          radp%ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
+          k, d, shif, radp%jbs, radp%jcd, radp%Volum, G1, G2, G3, dV, phi, qprf, rho, radp%psi, jpar,&
+          radp%ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,trianpg95 &
           ,pres_fac,areat)
     psi = radp%psi
     ipol=radp%ipol
     jcdr=radp%jcd
-    palph=radp%palph
+    palpph=radp%palph
     cc=radp%cc
     V=radp%volum
     q_oh=mhd%qoh
   endif
 
 !update Greenwald density and profiles
-  nG = 10.0d0 * Ip/(pi * rminor**2)  ! 10^19
+  nG = 10.0d0 * Ip/(pi_g * rpminor**2)  ! 10^19
   nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt],[N_e(1), N_e],xr)
   tepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt],[T_e(1), T_e],xr)
   tipr=interp1_ef(nxt+2,nx,[0.0d0, xtrt],[T_i(1), T_i],xr) !
@@ -565,30 +574,30 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
 		write(1441,'(4111E25.11)') xtrt,a(:,1),a(:,2),a(:,3),b(:,1),b(:,2),b(:,3), &
 		& c(:,1),c(:,2),c(:,3),y(:,1),y(:,2),y(:,3),chat(:,1),chat(:,2),chat(:,3),gy(:,1),gy(:,2),gy(:,3)
 		write(1447,'(4111E25.11)') x,tepr,tipr,nepr, & 
-		& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,2),a(:,2),0.1d0],xr), & 
-		& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,3),a(:,3),0.1d0],xr), & 
-		& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,1),a(:,1),0.1d0],xr), & 
-		& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[b(1,1),b(:,1),0.d0],xr)
+		& interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,2),a(:,2),0.1d0],xr), & 
+		& interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,3),a(:,3),0.1d0],xr), & 
+		& interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,1),a(:,1),0.1d0],xr), & 
+		& interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[b(1,1),b(:,1),0.d0],xr)
 		write(1448,'(4111E25.11)') tepr(1),tipr(1),nepr(1),teb,neb,che,cxe,car
 			endif
 
 ! Transport solver
     Fvec = reshape(F,(/nxt*nchannels/))
     gippa = 0  ! this routine probably not required if imethod is always 1...!
-    gyhat = (c-bb*y0)/aa/y0*rmajor  ! this is the transport solution for the normalized gradients
+    gyhat = (c-bb*y0)/aa/y0*rpmajor  ! this is the transport solution for the normalized gradients
     gy = (gy0+num%dt*gyhat)/(1.0d0+num%dt)  ! this is the actual solution, weighted with the time step
 
 !	write(*,*) gy0,'*',gy
 
 !	write(1441,'(911E25.11)') x,nepr,tepr,tipr, & 
-!	& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,2),a(:,2),0.1d0],xr), & 
-!	& interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[b(1,1),b(:,1),0.d0],xr)
+!	& interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,2),a(:,2),0.1d0],xr), & 
+!	& interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[b(1,1),b(:,1),0.d0],xr)
 
 
 !if (jiter.eq.20) stop
 
 !after transport computation, update plasma profiles, ne te ti
-  call update_profiles(dx, nxt, nchannels, gy, y0, rmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
+  call update_profiles(dx, nxt, nchannels, gy, y0, rpmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
 
 !Additional quantities after transport
      Qf = trapz((pedt+pidt)*dV) !alpha power
@@ -601,9 +610,9 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
      taue = trapz(W*dV)/Qtot !confinement time (only thermal particles)
 
 !scaling confinement time, iter ipb98 y,2
-     tau_scal =0.0562*ip**.93*(rmajor*BTOR)**.15* &
+     tau_scal =0.0562*ip**.93*(rpmajor*BTOR)**.15* &
           &          amain**.19*amin**.58*elong**.78* &
-          &      (sum(nepr)/nx)**.41*rmajor**1.24/Qtot**0.69
+          &      (sum(nepr)/nx)**.41*rpmajor**1.24/Qtot**0.69
      Hnow=taue/tau_scal !H factor definition
 
 	if (i_diagz.eq.1) 	write(*,*) 'Qtot,taue,Hnow,ip'
@@ -669,13 +678,13 @@ endif
               y(:,1) = N_e(1:nxt)
    
 !update pedestal temperature if needed
-              pressure=nepr*tepr+nions*tipr+palph !total pressure
+              pressure=nepr*tepr+nions*tipr+palpph !total pressure
               betan=trapz(pressure*dV)/V(nx)*1.e3*e_charge*1.e19*2.*mu_vacuum/btor**2. 
-              betan=100.*betan*rminor*btor/Ip !beta_n
+              betan=100.*betan*rpminor*btor/Ip !beta_n
 
-              P_pedtop = ped%pedscal*2.*rmajor**(-0.38)*triang**(0.83)*elong**(0.62)*Ip**(1.25)*betan**(0.43) !Samuli's DEMO scaling
+              P_pedtop = ped%pedscal*2.*rpmajor**(-0.38)*trianpg**(0.83)*elong**(0.62)*Ip**(1.25)*betan**(0.43) !Samuli's DEMO scaling
 
-	if (i_diagz.eq.1) 	write(*,*) 'betan,tpedtop',betan,P_pedtop/neb,V(nx),palph(1),pressure(1)
+	if (i_diagz.eq.1) 	write(*,*) 'betan,tpedtop',betan,P_pedtop/neb,V(nx),palpph(1),pressure(1)
 
            if (iped_model.eq.2) then !update temperature if pedmodel = 2
 		T_e = T_e/teb*P_pedtop/neb
@@ -716,7 +725,7 @@ endif
 !compute new alpha pressure palph with slowdn_ef
 	do jrad=1,nx
            call slowdn_ef(tepr(jrad),zmain,2.d0,zavne(jrad), & 
-                & zavxe(jrad),nepr(jrad),amain,aim1,aim2,aim3,palph(jrad), & 
+                & zavxe(jrad),nepr(jrad),amain,aim1,aim2,aim3,palpph(jrad), & 
                 & nhe(jrad),nne(jrad),nxe(jrad),& 
                 & nalf(jrad),ndeut(jrad)+ntrit(jrad))
 	enddo
@@ -725,7 +734,7 @@ endif
 !initialize some quantities for equilibrium calculation
         betaz = 0.0d0
         lint = 0.0d0
-        q0 = q
+        qprf0 = qprf
         G30 = G3
         G20 = G2
         ipol0 = ipol
@@ -742,7 +751,7 @@ endif
         write(*,*) trapz((pbrad)*dV)
         write(*,*) trapz((pedt)*dV)
         write(*,*) trapz((pidt)*dV)
-        write(*,*) q(1),q(nx)
+        write(*,*) qprf(1),qprf(nx)
         write(*,*) ' end stuff'
         write(1321,'(911E25.11)') num%etol,toleq,trapz((peaux+piaux)*dV),trapz((pidt+pedt)*dV),& 
 								& tepr(1),nepr(1),neb,teb,tipr(1),&
@@ -752,29 +761,29 @@ endif
 
 !all the below is computation of jbs and conductivity cc
 								           cubb=0.d0 !initialize Jbs to 0
-              mux = 1.0d0/q
+              mux = 1.0d0/qprf
               hro = gradient1(rho)
               ametr = xr
               i = 1
-              rtor = rmajor
+              rtor = rpmajor
               nel = nepr
               tel = tepr
               tii = tipr
               nii = nions
-              yd = -0.8d0 * pi**2 * rmajor
+              yd = -0.8d0 * pi_g**2 * rpmajor
               sqeps = sqrt(ametr/rtor)
-              betpl = 4.0d0*1.6d-4*pi*(nel*tel + nii*tii)*(rtor/(btor*rho*(mux+0.000001)))**2
+              betpl = 4.0d0*1.6d-4*pi_g*(nel*tel + nii*tii)*(rtor/(btor*rho*(mux+0.000001)))**2
              	betpl(1)=betpl(2)
-														betple = 4.0d0*1.6d-4*pi*(nel*tel)*(rtor/(btor*rho*(mux+0.000001)))**2
+														betple = 4.0d0*1.6d-4*pi_g*(nel*tel)*(rtor/(btor*rho*(mux+0.000001)))**2
 														betple(1)=betple(2)
               nuee = 670.0d0*coulg*nel/tel**1.5d0
-              nues = 6.921e-5*rmajor*nepr*zeff*coulg/ & 
+              nues = 6.921e-5*rpmajor*nepr*zepff*coulg/ & 
                    & abs(mux*tepr**2.d0*sqeps**3.d0)
               zavg = nel/nii
-              nui = (zeff*zmain**2*zavg)*nii*322.0d0/(tii**1.5d0 * sqrt(amain))
+              nui = (zepff*zmain**2*zavg)*nii*322.0d0/(tii**1.5d0 * sqrt(amain))
               nuis = 3.2d-6*nui*rtor/(mux*sqeps**3 * sqrt(tii/amain))
               tpf = 1.0d0 - (1.0d0-sqeps**2) * sqrt(1.0d0 - sqeps**2)/(1.0d0+1.46d0*sqeps)
-              zz = zeff
+              zz = zepff
               zft = tpf
               ZDF = 1.+(0.55-0.1*ZFT)*SQRT(nues)
               ZDF = ZDF + 0.45*(1.-ZFT)*nues/ZZ/SQRT(ZZ)
@@ -783,8 +792,8 @@ endif
               dcsa=dcsa+0.59/ZZ*ZFT*ZFT-0.23/ZZ*ZFT*ZFT*ZFT
 !conductivity cc
               do jrad = 1, size(x)
-                 cc(jrad) = 601.2d0 * tepr(jrad)**(1.5d0)*(0.76+zeff(jrad))/ &
-                      & zeff(jrad)/(1.18+0.58*zeff(jrad))/coulg(jrad)
+                 cc(jrad) = 601.2d0 * tepr(jrad)**(1.5d0)*(0.76+zepff(jrad))/ &
+                      & zepff(jrad)/(1.18+0.58*zepff(jrad))/coulg(jrad)
               end do
               cc=cc*dcsa
 
@@ -820,23 +829,23 @@ endif
            call compute_equil(&
                                 !input 
                 nx, jiter,i_equiltype, &
-                x, tepr, tipr, nepr, nions, palph, cc, G30,q0,G20,vp0, &
-                rmajor,rminor,elong,triang,Ip,btor,betaz,lint,ipol0,e_charge,mu_vacuum, &
+                x, tepr, tipr, nepr, nions, palpph, cc, G30,qprf0,G20,vp0, &
+                rpmajor,rpminor,elong,trianpg,Ip,btor,betaz,lint,ipol0,e_charge,mu_vacuum, &
                                 !inout
                 qedge, &
                                 !output
                 roc, Vloop, fbs,fcd, dum1, &
-                k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar,&
-                ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
+                k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, qprf, rho, psi, jpar,&
+                ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,trianpg95 &
                 ,pres_fac,areat)
            !check if isnan
            if (isnan(qedge).or.isnan(vloop).or.ip.eq.0.d0) then
-              write(*,*) 'equilibrium not converged',vloop,q,ip
-              q=q0
+              write(*,*) 'equilibrium not converged',vloop,qprf,ip
+              qprf=qprf0
               ip=ip0
               dum1=qedge
-              qedge=q(nx)
-              q_95=q(nx-1)
+              qedge=qprf(nx)
+              q_95=qprf(nx-1)
               roc=roc0
               vloop=vloop0
               g1=g10
@@ -870,7 +879,7 @@ endif
               radp%jcd  = jcdr
               radp%jpar  = jpar
               radp%ipol  = ipol
-              radp%qprof = q
+              radp%qprof = qprf
               radp%psi=psi
               radp%g2 = G2
               radp%g3=G3
@@ -879,23 +888,23 @@ endif
 	if (num%i_equiltype.eq.1) geom%ip=ip
 	if (num%i_equiltype.eq.2) geom%q95=q_95
 	geom%k=elong
-	geom%d=triang
+	geom%d=trianpg
            endif
            !update and exit
            jipper2=0
         endif
 
 !some additional stuff
-        shear = gradient(log(q),log(x))
-        q_tr = interp1_ef(nx,nxt,x, q, xtr/xr(nx))
+        shear = gradient(log(qprf),log(x))
+        q_tr = interp1_ef(nx,nxt,x, qprf, xtr/xr(nx))
         sh_tr = interp1_ef(nx,nxt,x, shear, xtr/xr(nx))
 !current fractions
-	fbs=sum(cubb/ipol**2.*dV)*ipol(nx)*btor/(2.*pi)/ip
-	fcd=sum(jcdr/ipol**2.*dV)*ipol(nx)*btor/(2.*pi)/ip
+	fbs=sum(cubb/ipol**2.*dV)*ipol(nx)*btor/(2.*pi_g)/ip
+	fcd=sum(jcdr/ipol**2.*dV)*ipol(nx)*btor/(2.*pi_g)/ip
  endif ! jipperdo2, end of equilibrium call
 
 !update greenwald density
-  nG = 10.0d0 * Ip/(pi * rminor**2)  ! 10^19
+  nG = 10.0d0 * Ip/(pi_g * rpminor**2)  ! 10^19
 
 ! this below is the control_scheme routine for Psep, Pfus, f_ni, He content, and divertor protection
 	include 'control_scheme.f90'
@@ -944,7 +953,7 @@ endif
      radp%jcd  = jcdr
      radp%jpar  = jpar
      radp%ipol  = ipol
-     radp%qprof = q
+     radp%qprof = qprf
      radp%psi=psi
      radp%g2 = G2
      radp%g3=G3
@@ -952,7 +961,7 @@ endif
      radp%gradro=gradro
   endif
   radp%cc=cc
-  radp%palph=palph
+  radp%palph=palpph
   radp%nions=nions
   !gradients (only on transport grid)
   radp%gne(1:nxt) = gy(1:nxt,1)
@@ -982,7 +991,7 @@ endif
 	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*nHe-comp%protium*nepr)
 	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*nHe-comp%protium*nepr)
 	nions = ndeut + ntrit + nNe + nXe + nHe+comp%protium*nepr
-	zeff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*nHe+zavne**2*nNe+zavxe**2*nXe+comp%protium*nepr)
+	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*nHe+zavne**2*nNe+zavxe**2*nXe+comp%protium*nepr)
   coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
   radp%av_ni = trapz(nions*dV)/V(nx)
   radp%av_nd = trapz((ndeut+ntrit)*dV)/V(nx)
@@ -991,7 +1000,7 @@ endif
   radp%av_Ti = trapz(tipr*dV)/V(nx)
   radp%av_Te = trapz(tepr*dV)/V(nx)
   radp%av_Ten = trapz(tepr*nepr*dV)/trapz(nepr*dV)
-  radp%zeff  = trapz(zeff*dV)/V(nx)
+  radp%zeff  = trapz(zepff*dV)/V(nx)
 
 !b.c.
 	ped%teped=teb
@@ -1006,35 +1015,35 @@ endif
 		comp%comparray(9)=car
 
 !global geometry
-  geom%Rold=rmajor
-  geom%Aold=aspect
+  geom%Rold=rpmajor
+  geom%Aold=asppect
   geom%kold=elong
-  geom%dold=triang
+  geom%dold=trianpg
   geom%Ipold=geom%ip
   geom%Btold=btor
   geom%q95old=q_95
   geom%counter=geom%counter+1.d0
 
 !MHD
-  pressure=nepr*tepr+nions*tipr+palph
-  radp%bpol=1.d0/(2.d0*pi*rmajor)*gradient(psi,xr)
+  pressure=nepr*tepr+nions*tipr+palpph
+  radp%bpol=1.d0/(2.d0*pi_g*rpmajor)*gradient(psi,xr)
   mhd%Bpolavg=trapz(radp%bpol*dv)/v(nx)
   mhd%betator=2.d0*mu_vacuum*1.d3*1.d19*e_charge*trapz(pressure*dv)/(v(nx)*btor**2.d0)
   mhd%betapol=2.d0*mu_vacuum*1.d3*1.d19*e_charge*trapz(pressure*dv)/trapz(radp%bpol**2.d0*dv)
   mhd%torsurf=areat
   mhd%rli=2.d0*trapz(radp%bpol**2.d0*dv)/ & 
-  & ((1.d6*geom%ip)**2.d0)/(4.*3.141592*1.d-7)**2.d0/rmajor
+  & ((1.d6*geom%ip)**2.d0)/(4.*3.141592*1.d-7)**2.d0/rpmajor
  	mhd%qoh=q_oh(1)
  	mhd%betan = betan
-  mhd%f_gwpedtop=neb/(1./(3.141592*rminor**2.)*Ip*10)
+  mhd%f_gwpedtop=neb/(1./(3.141592*rpminor**2.)*Ip*10)
   mhd%Vp = V(nx)
   mhd%Sp = radp%vp(nx)*radp%gradro(nx)
   mhd%q = q_95
-  mhd%q_sep = q(nx)
+  mhd%q_sep = qprf(nx)
   mhd%ip_out = ip
-  jpol=ipol/(rmajor*btor)
-  mhd%qstar = 5*btor*rminor**2./rmajor/ip* & 
-  & (1+elong95**2.*(1+2*triang95**2.-1.2*triang95**3.))/2.
+  jpol=ipol/(rpmajor*btor)
+  mhd%qstar = 5*btor*rpminor**2./rpmajor/ip* & 
+  & (1+elong95**2.*(1+2*trianpg95**2.-1.2*trianpg95**3.))/2.
   mhd%bp=mhd%bpolavg
   if (mhd%equilcheck.eq.1.d0) then
      write(2901,*) 'change vloop'
@@ -1072,7 +1081,7 @@ endif
  if (i_modeltype.eq.1) loss%H=inp0%hfac_inp
  loss%fusionrate=trapz((pedt+pidt)*dv)/v(nx)/5.632*1.e19	
  loss%alpharate=loss%fusionrate
- loss%betaft=trapz(palph*dV)/V(nx)*1.e3*e_charge*1.e19*2.*mu_vacuum/btor**2.
+ loss%betaft=trapz(palpph*dV)/V(nx)*1.e3*e_charge*1.e19*2.*mu_vacuum/btor**2.
   loss%Hcorr=Hnow            ! H factor with radiation correction
   loss%pradedge=qradedge
   loss%pradcore=qrad
@@ -1092,8 +1101,8 @@ endif
 	enddo
 	dtheta=theta_perim(2)-theta_perim(1)
 	f_perim=sqrt(cos(theta_perim)**2.+elong**2.*sin(theta_perim)**2.+ & 
-	 & triang**2.*sin(theta_perim)**4.-2.*triang*cos(theta_perim)*sin(theta_perim)**2.)
-	geom%perim = rminor*trapz(f_perim*dtheta)
+	 & trianpg**2.*sin(theta_perim)**4.-2.*trianpg*cos(theta_perim)*sin(theta_perim)**2.)
+	geom%perim = rpminor*trapz(f_perim*dtheta)
 
 
 !diags for ASTRA
@@ -1106,33 +1115,33 @@ endif
   write(99,'(911E25.11)')   nepr
   write(99,'(911E25.11)')   tepr
   write(99,'(911E25.11)')   tipr
-  write(99,'(911E25.11)')   q
+  write(99,'(911E25.11)')   qprf
   write(99,'(911E25.11)')   jpar
   write(99,'(911E25.11)')   cubb
   write(99,'(911E25.11)')   jcdr
   write(99,'(911E25.11)')   peaux
   write(99,'(911E25.11)')   piaux
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,2),a(:,2),0.1d0],xr)
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,3),a(:,3),0.1d0],xr)
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,1),a(:,1),0.1d0],xr)
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[b(1,1),b(:,1),0.d0],xr)
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[c(1,2),c(:,2),0.1d0],xr)
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[c(1,3),c(:,3),0.1d0],xr)
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[c(1,1),c(:,1),0.1d0],xr)
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[c(1,1),c(:,1),0.d0],xr)
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[chat(1,2),chat(:,2),0.1d0],xr)
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[chat(1,3),chat(:,3),0.1d0],xr)
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[chat(1,1),chat(:,1),0.1d0],xr)
-  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[chat(1,1),chat(:,1),0.d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,2),a(:,2),0.1d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,3),a(:,3),0.1d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,1),a(:,1),0.1d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[b(1,1),b(:,1),0.d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[c(1,2),c(:,2),0.1d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[c(1,3),c(:,3),0.1d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[c(1,1),c(:,1),0.1d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[c(1,1),c(:,1),0.d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[chat(1,2),chat(:,2),0.1d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[chat(1,3),chat(:,3),0.1d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[chat(1,1),chat(:,1),0.1d0],xr)
+  write(99,'(911E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[chat(1,1),chat(:,1),0.d0],xr)
   write(99,'(911E25.11)')   pradtot+pradedge
   close(99)
   open(99,file='./CHARTST/forastra1.txt')
-  write(99,'(111E25.11)')   rmajor,aspect,elong,triang,ip,btor, &
+  write(99,'(111E25.11)')   rpmajor,asppect,elong,trianpg,ip,btor, &
        & che,cxe,car,fuelmix,xb,hfactor,Hnow,loss%H,loss%Pfus,loss%pnbi
   close(99)
   open(99,file='./CHARTST/forastra11.txt')
-  write(99,*)   'rmajor,aspect,elong,triang,ip,btor,che,cxe,cne,fuelmix,xb,hfactor,Hnow,loss%H'
-  write(99,'(111E25.11)')   rmajor,aspect,elong,triang,ip,btor, &
+  write(99,*)   'rpmajor,asppect,elong,trianpg,ip,btor,che,cxe,cne,fuelmix,xb,hfactor,Hnow,loss%H'
+  write(99,'(111E25.11)')   rpmajor,asppect,elong,trianpg,ip,btor, &
        & che,cxe,car,fuelmix,xb,hfactor,Hnow,loss%H
   close(99)
   open(99,file='./CHARTST/forastra2.txt')
@@ -1140,16 +1149,16 @@ endif
   write(99,'(999E25.11)')   nepr
   write(99,'(999E25.11)')   tepr
   write(99,'(999E25.11)')   tipr
-  write(99,'(999E25.11)')   q
+  write(99,'(999E25.11)')   qprf
   write(99,'(999E25.11)')   jpar
   write(99,'(999E25.11)')   cubb
   write(99,'(999E25.11)')   jcdr
   write(99,'(911E25.11)')   peaux
   write(99,'(911E25.11)')   piaux
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,2)+a_neo(1,2),a(:,2)+a_neo(:,2),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,3)+a_neo(1,3),a(:,3)+a_neo(:,3),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[a(1,1)+a_neo(1,1),a(:,1)+a_neo(:,1),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rminor],[b(1,1)+b_neo(1,1),b(:,1)+b_neo(:,1),0.d0],xr)
+  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,2)+a_neo(1,2),a(:,2)+a_neo(:,2),0.1d0],xr)
+  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,3)+a_neo(1,3),a(:,3)+a_neo(:,3),0.1d0],xr)
+  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,1)+a_neo(1,1),a(:,1)+a_neo(:,1),0.1d0],xr)
+  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[b(1,1)+b_neo(1,1),b(:,1)+b_neo(:,1),0.d0],xr)
   write(99,'(999E25.11)')   vprime !15
   write(99,'(999E25.11)')   g1 !16
   write(99,'(999E25.11)')   droda !17
