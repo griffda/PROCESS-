@@ -116,9 +116,7 @@ contains
     endif
     
     !uses PROCES defined LH threshold, if this is > 0
-    inp0%PLH = 0d0 !plhthresh ! This won't work as this can only be calculated after.
-    !KE - should inp0%PLH have the possibility to be an input variable?
-   
+    inp0%PLH = ilhthresh    
 							
     inp0%nbcdeff = gamcd ! normalised current drive efficiency (1.0e20 A/W-m2) 
 
