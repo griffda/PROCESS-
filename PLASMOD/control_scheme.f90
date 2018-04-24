@@ -6,15 +6,27 @@
 if (inp0%contrpovs.gt.0.) inp0%q_control=inp0%contrpovs*radp%vp(nx)*radp%gradro(nx)
 if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 
-	if (inp0%PLH.eq.0) then 
-	PLH=1.67*(trapz(nepr*dv)/trapz(dv)/10.)**0.61*(geom%bt)**0.78 &
-     & *rpminor**0.89*geom%r**0.94 !Martin scaling
-	else
-	PLH=inp0%PLH !this comes from outside !KE - should this be a user-defined variable? It is not currently
-	endif
 
+
+!LH threshold !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!PROCESS function
+	ne_av = trapz(nepr*dv)/v(nx)*1.d19
+	nela=sum(nepr)/nx*1.d19
+	call pthresh(ne_av,nela,btor,rpmajor,elong,vprime(nx)*gradro(nx),2.5d0,PLH_th) !PROCESS function
+!!!
+
+!PLASMOD function
+!	PLH_th(6)=1.67*(trapz(nepr*dv)/trapz(dv)/10.)**0.61*(geom%bt)**0.78 &    !PLASMOD function
+!    & *rpminor**0.89*geom%r**0.94 !Martin scaling
+!!!!
+
+!assignment
+	PLH = PLH_th(inp0%PLH)
 
 	if (i_diagz.eq.1) 	write(*,*) 'plh',plh
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 
 !this below is: if Psep < PLH*psepplhinf, applies NBI to not go into L mode
 	if (comp%psepplh_inf.gt.0.) then
@@ -29,6 +41,7 @@ dum2=min(comp%psepplh_sup*PLH,dum2)
 	endif 
 	if (comp%psepb_q95AR.gt.0.d0) then !use psepbqar as constraint
 dum2=min(dum2,comp%psepb_q95AR*(btor/q_95/geom%A/rpmajor)**(-1.))
+
 	endif
 	if (comp%psep_r.gt.0.d0) then !use psep/R as constraint
 dum2=min(dum2,comp%psep_r*rpmajor)
