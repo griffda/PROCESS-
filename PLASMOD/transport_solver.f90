@@ -33,11 +33,11 @@
 ! i_flag = -1 --> max iterations reached. 
 ! 				Reasons: * max iterations too low, increase them
 !													 * equilibrium oscillating between solutions --> pressure too high, reduce H factor
-!              * solution oscillating, reduce time step taumax and/or taumin
+!              * solution oscillating, reduce time step dtmax and/or dtmin
 !
 ! i_flag = 0 --> transport solver crashed. 
 !					Reasons: * strange paramaters. Check the inputs if something is abnormal
-!              * too large time step, reduce taumax (and/or taumin)
+!              * too large time step, reduce dtmax (and/or dtmin)
 !
 ! i_flag = -2 --> equilibrium crashes. 
 !					Reasons: * too strange q profile --> advanced scenarios not feasible for now

@@ -303,10 +303,19 @@ contains
 !       write(*,*) 'PLASMOD has converged!!!'
     elseif (i_flag==0)then
        write(*,*) 'The PLASMOD transport model has crashed'
+       write(*,*) 'Possible reasons: * strange parameters - check the inputs'
+       write(*,*) '* time step too large, reduce plasmod_dtmax (and/or plasmod_dtmin)'
     elseif (i_flag==-1)then
        write(*,*) 'The PLASMOD transport model has not converged after itermax'
+       write(*,*) 'Possible reasons: * max iterations too low, try increasing plasmod_test'
+       write(*,*) '* equilibrium oscillating between solutions --> pressure too high, reduce H factor'
+       write(*,*) '* solution oscillating, reduce time step size plasmod_dtmax and/or plasmod_dtmin'
     elseif (i_flag==-2)then
        write(*,*) 'The PLASMOD equilibrium has crashed'
+       write(*,*) 'Possible reasons: * overly complex q profile --> advanced scenarios not yet feasible'
+       write(*,*) '* pressure too high, reduce H factor'
+       write(*,*) '* negative temperatures or densities or some other strange parameters, reduce PLASMOD time step'
+       write(*,*) 'N.B. If reducing time step size doesnt work, try changing the parameters, particularly H factor'
     endif
 
     ! mhd%equilcheck will likely be depricated in the future, as it is covered
