@@ -16,6 +16,31 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!explanation of i_flag and what to do in case:
+!
+!
+! i_flag = 1 --> converged, no problems
+!
+! i_flag = -1 --> max iterations reached. 
+! 				Reasons: * max iterations too low, increase them
+!													 * equilibrium oscillating between solutions --> pressure too high, reduce H factor
+!              * solution oscillating, reduce time step taumax and/or taumin
+!
+! i_flag = 0 --> transport solver crashed. 
+!					Reasons: * strange paramaters. Check the inputs if something is abnormal
+!              * too large time step, reduce taumax (and/or taumin)
+!
+! i_flag = -2 --> equilibrium crashes. 
+!					Reasons: * too strange q profile --> advanced scenarios not feasible for now
+!              * too high pressure, reduce H factor
+!              * negative temperatures or densities or some other strange parameters, reduce time step
+!
+! Basically, first solution is reduce time step. If this doesnt work, try changing the parameters, above all H factor 
+!              
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 
 
 

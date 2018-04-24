@@ -79,6 +79,7 @@
 !				geom%q95 = 3.5 !safety factor. 
 								
 !write(*,*) 'first iteration'
+	include 'DEMOlike.dat'				
 !pause
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 !stop
