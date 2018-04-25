@@ -192,7 +192,6 @@ yllama=1.d0
 	c(:,3) = DdnVni
 	
 	! define transport coefficients
- !write(*,*) jiter,"call transport",num%etol
 	if (i_modeltype.ne.9999) then
 	call trmodel(i_modeltype,nx,nxt, nchannels,vprime,2.5d0,1.d0,1.+0.*amin,1.+0.*amin,1.+0.*amin, & 
 			& nepr,tepr,nepr,0.5*nepr,0.*nepr,tipr,1.+0.*nepr,0.*nepr,2.5+0.*nepr,1./qprf,RHO,x*rpminor, &
@@ -200,14 +199,12 @@ yllama=1.d0
 			& SHEAR,0.*nepr,0.*nepr,palpph,0.*nepr,0.*nepr,0.*nepr,y0, gy0, xtr,x, amin, rpmajor, btor,num%capA, q_tr, sh_tr, a, b, &
 			& Hfactor,chi00,chipow,Hnow,chifac0)
 
+!actual diffusivities adding stabilizing term num%dtmaxmax. G. V. Pereverzev and G. Corrigan method, CPC 2008
 	aa=a+num%dtmaxmax
 	bb=b-num%dtmaxmax*gy0/rpmajor
-!	aa=a
-!	bb=b
-!		write(*,*) jiter,tepr(1)
 
 	else
-	!TGLF
+	!TGLF, not used in PROCESS
 
 !include "neo_inc.f90"	
 !include "tglf_inc.f90"	
@@ -220,7 +217,7 @@ yllama=1.d0
 !chat is the transport power from transport, while c is source power, the two must be equal at steady state
 	chat = aa * gy0 * y0/rpmajor + bb * y0  ! To compare to c
 
-	F = chat-c  ! New residual, F must go to zero at steady-state
+	F = chat-c  ! New residual, norm of F must go to zero at steady-state
 
 
 
