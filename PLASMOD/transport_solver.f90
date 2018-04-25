@@ -252,7 +252,7 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
   jiterextmax = 1
 		num%dt=num%dtmin
 
-  !impurities mass ( to be substituted later by PROCESS functions)
+  !impurities mass ( to be substituted later by process)
   aim1=4.d0 !helium
   aim2=48.d0 !Ar
   aim3=131.d0 !Xe
@@ -687,8 +687,8 @@ endif
               betan=trapz(pressure*dV)/V(nx)*1.e3*e_charge*1.e19*2.*mu_vacuum/btor**2. 
               betan=100.*betan*rpminor*btor/Ip !beta_n
 
-              P_pedtop = ped%pedscal*2.*rpmajor**(-0.38)*trianpg**(0.83)*elong**(0.62)*Ip**(1.25)*betan**(0.43) !Samuli's DEMO scaling !PLASMOD function
-!              P_pedtop = ped%pedscal*p_eped_scaling(betan,elong,trianpg,ip) !Samuli's DEMO scaling !PROCESS function
+!              P_pedtop = ped%pedscal*2.*rpmajor**(-0.38)*trianpg**(0.83)*elong**(0.62)*Ip**(1.25)*betan**(0.43) !Samuli's DEMO scaling !PLASMOD function
+              P_pedtop = ped%pedscal*p_eped_scaling(betan,elong,trianpg,ip) !Samuli's DEMO scaling !PROCESS function
 
 	if (i_diagz.eq.1) 	write(*,*) 'betan,tpedtop',betan,P_pedtop/neb,V(nx),palpph(1),pressure(1)
 

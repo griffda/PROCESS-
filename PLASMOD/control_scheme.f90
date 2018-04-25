@@ -10,14 +10,14 @@ if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 
 !LH threshold !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !PROCESS function
-!	ne_av = trapz(nepr*dv)/v(nx)*1.d19
-!	nela=sum(nepr)/nx*1.d19
-!	call pthresh(ne_av,nela,btor,rpmajor,elong,vprime(nx)*gradro(nx),2.5d0,PLH_th) !PROCESS function
+	ne_av = trapz(nepr*dv)/v(nx)*1.d19
+	nela=sum(nepr)/nx*1.d19
+	call pthresh(ne_av,nela,btor,rpmajor,elong,vprime(nx)*gradro(nx),2.5d0,PLH_th) !PROCESS function
 !!!
 
 !PLASMOD function
-	PLH_th(6)=1.67*(trapz(nepr*dv)/trapz(dv)/10.)**0.61*(geom%bt)**0.78 &    !PLASMOD function
-    & *rpminor**0.89*geom%r**0.94 !Martin scaling
+!	PLH_th(6)=1.67*(trapz(nepr*dv)/trapz(dv)/10.)**0.61*(geom%bt)**0.78 &    !PLASMOD function
+!    & *rpminor**0.89*geom%r**0.94 !Martin scaling
 !!!!
 
 !assignment
