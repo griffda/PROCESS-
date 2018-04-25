@@ -10,7 +10,7 @@
 
     use grad_func
     use structs
-    use physics_functions_module
+!    use physics_functions_module
 
     implicit none
 
@@ -104,7 +104,7 @@
   integer :: jped,nx,nxt,nchannels, iped_model,jdum1,nxequil,i_qsaw, i_diagz
   real(kind(1.0d0)) :: x0, dx, dxn,psep,plh
   real(kind(1.0d0)) :: Qeaux, Qiaux, Qrad ,qradedge, betan,P_pedtop, qecrh, qnbi, spellet, spuffing, f_gw !sfuelling
-  real(kind(1.0d0)) :: nsep, Ip, btor, cHe,che3,cprot, & 
+  real(kind(1.0d0)) :: nsep, Ip, btor, cHe,cwol,che3,cprot, & 
 		 & cxe,car,nG, qedge, elong, trianpg, amin ,tsep, rpmajor,  rpminor, asppect, nlineavg 
   real(kind(1.0d0)) :: tau_sol, V_sol, D_ped, V_ped, lambda_sol,pdtp,sv_dd,svdt
   real(kind(1.0d0)) :: rtor, yd, betaz, lint,taue,Qtot
@@ -119,9 +119,11 @@
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat,plinexe,psepxe
   real(kind(1.0d0)) :: ne_av,nela,PLH_th(8)
   real(kind(1.0d0)), dimension(num%nx) :: theta_perim,dtheta,f_perim,p_dd
-  real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe,nprot,nhe3, nXe, nNe, prxe, prne
+  real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe,nwol,nprot,nhe3, nXe, nNe, prxe, prne
+  real(kind(1.0d0)), dimension(num%nx) :: prwol
   real(kind(1.0d0)), dimension(num%nx) :: pech,pnbi,psync,pbrad
-  real(kind(1.0d0)), dimension(num%nx) :: zavxe, zavne, prad,pradtot,pradedge, ndeut, ntrit, nions, pedt, pidt, peicl, zepff!  conflict with   
+  real(kind(1.0d0)), dimension(num%nx) :: zavxe, zavwol,zavne, & 
+		& prad,pradtot,pradedge, ndeut, ntrit, nions, pedt, pidt, peicl, zepff!  conflict with   
   real(kind(1.0d0)), dimension(num%nxt+1) :: T_e, T_i, N_e, gT_e, gT_i, gn_e
 	 real(kind(1.0d0)), dimension(num%nxt+1) :: T_e0, T_i0, N_e0, xtrt, Fn0, Fe0, Fi0
   real(kind(1.0d0)), dimension(num%nxt+1) :: Fn, Fe, Fi
@@ -260,6 +262,7 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
 		che=comp%comparray(2)
   cxe=comp%comparray(13)
 		car=comp%comparray(9)
+		cwol=comp%comparray(14)
 
   ! set transport boundary conditions
   xb = ped%rho_T !rho_n : normalized minor radius
@@ -980,26 +983,30 @@ endif
 	if (num%i_impmodel.eq.0) then
 		nNe = car * nepr
 		nXe = cXe * nepr
+		nwol = cwol * nepr
 	endif
 	if (num%i_impmodel.eq.1) then
 		nNe = car * nepr
 		nXe = cXe * nepr
+		nwol = cwol * nepr
 	nne = nne(jped)
 	nxe = nxe(jped)
+ 	nwol = nwol(jped)
 	endif
  	nHe = cHe * nepr
  	nHe3 = cHe3 * nepr
  	nprot = (cprot+comp%protium)*nepr
 	call prxe_func(nx, tepr, prxe, zavxe)
 	call prar_func(nx, tepr, prne, zavne)
-	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot)
-	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot)
-	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot
-	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+zavxe**2*nXe+nprot)
+	call prwol_func(nx, tepr, prwol, zavwol)
+	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
+	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
+	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot+nwol
+	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+zavxe**2*nXe+nprot+zavwol**2.*nwol)
   coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
   radp%av_ni = trapz(nions*dV)/V(nx)
   radp%av_nd = trapz((ndeut+ntrit)*dV)/V(nx)
-  radp%av_nz = trapz((nne+nxe)*dv)/V(nx)
+  radp%av_nz = trapz((nne+nxe+nwol)*dv)/V(nx)
   radp%av_nhe = trapz((nhe+nhe3)*dV)/V(nx)
   radp%av_Ti = trapz(tipr*dV)/V(nx)
   radp%av_Te = trapz(tepr*dV)/V(nx)
@@ -1017,6 +1024,7 @@ endif
 		comp%comparray(2)=che+che3
   comp%comparray(13)=cxe
 		comp%comparray(9)=car
+		comp%comparray(14)=cwol
 
 !global geometry
   geom%Rold=rpmajor
@@ -1365,6 +1373,52 @@ end subroutine plasmod_EF
 
 return     
   end subroutine prxe_func
+  
+
+
+
+
+
+  subroutine prwol_func(nx, tepr, prxe, zavxe)
+
+    implicit none
+    
+    ! Arguments
+    real(kind(1.0d0)), intent(in) :: tepr(nx)
+    real(kind(1.0d0)), intent(out) :: prxe(nx), zavxe(nx)
+    integer, intent(in) :: nx
+    
+    ! Local variables
+    real(kind(1.0d0)) :: T, Z, Y
+    integer :: j
+    
+    do j = 1, size(tepr)
+       T = tepr(j)*1000.0d0
+       Z = log10(tepr(j))
+       
+        IF(T.LE.333.)                Y=1.3
+        IF(333.LE.T.AND.T.LE.3.E3)   Y=1.6-1.32*Z**2
+	IF(T.GT.3.E3.AND.T.LT.7.E3)  Y=1.3
+	IF(T.GT.7.E3.AND.T.LT.1.5E4) Y=1.3-1.8*(Z-.845)
+	IF(T.GT.1.5E4)               Y=.7
+	PRxe(j)	=10.**Y
+       
+	T=TEpr(J)
+	Z=LOG10(T)
+					Zavxe(j)=0.
+	IF(T.LT..300.AND.T.GE..100) Zavxe(j)=12.8+3.14*(Z+1.)
+       IF(T.LT.1.00.AND.T.GE..300) Zavxe(j)=14.3+17.8*(Z+.522)
+       IF(T.LT.3.00.AND.T.GE.1.00) Zavxe(j)=23.6+43.5*Z
+       IF(T.GE.3.00)               Zavxe(j)=44.3+7.9*(Z-.478)
+
+
+
+
+
+    end do
+
+return     
+  end subroutine prwol_func
 
 
 

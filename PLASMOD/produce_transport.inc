@@ -40,26 +40,34 @@
 	if (num%i_impmodel.eq.0) then
 		nNe = car * nepr
 		nXe = cXe * nepr
+		nwol = cwol * nepr
 	endif
 	if (num%i_impmodel.eq.1) then
 		nNe = car * nepr
 		nXe = cXe * nepr
+		nwol = cwol * nepr
 	nne = nne(jped)
 	nxe = nxe(jped)
+	nwol = nwol(jped)
 	endif
 
 !call radiation functions for impurities		
 	call prxe_func(nx, tepr, prxe, zavxe)
 	call prar_func(nx, tepr, prne, zavne)
-	prad = nXe*nepr*prxe + nne*nepr*prne !total Prad density
+	call prwol_func(nx, tepr, prwol, zavwol)
+	prad = nXe*nepr*prxe + nne*nepr*prne+prwol*nwol*nepr !total Prad density
+
+!write(*,*) trapz(prwol*nwol*nepr*dV),zavwol(20)
 
 !quasi-neutrality equations
-	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot)
-	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot)
-	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot
+	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
+	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - & 
+	&  2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
+	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot+nwol
 
 !Z effective
-	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+zavxe**2*nXe+nprot)
+	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+ & 
+	& zavxe**2*nXe+nprot+zavwol**2.d0*nwol)
     coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
 
 !caluclate brehmstrahliuzng radiation
@@ -76,17 +84,17 @@
 
 !cross section of DT
 !PLASMOD function
-!	  svdt = tipr(jrad)**(-0.333333333d0)
-!	  svdt = 8.972d0*exp(-19.9826d0*svdt)*svdt*svdt*((tipr(jrad)+1.0134d0) & 
-!			& /(1.0d0+6.386d-3*(tipr(jrad)+1.0134d0)**2)     & 
-!			& +1.877d0*exp(-0.16176d0*tipr(jrad)*sqrt(tipr(jrad))))
-		 svdt = bosch_hale(tipr(jrad),1)*1.d19 !PROCESS function
+	  svdt = tipr(jrad)**(-0.333333333d0)
+	  svdt = 8.972d0*exp(-19.9826d0*svdt)*svdt*svdt*((tipr(jrad)+1.0134d0) & 
+			& /(1.0d0+6.386d-3*(tipr(jrad)+1.0134d0)**2)     & 
+			& +1.877d0*exp(-0.16176d0*tipr(jrad)*sqrt(tipr(jrad))))
+!		 svdt = bosch_hale(tipr(jrad),1)*1.d19 !PROCESS function
 
 !PLASMOD function
-!	sv_dd=0.16247+0.001741*TIpr(Jrad)-0.029*EXP(-0.3843*SQRT(TIpr(Jrad)))
-!	sv_dd=sv_dd*EXP(-18.8085/(tipr(jrad)**.333333))/(tipr(jrad)**.333333)**2	
-		 sv_dd = bosch_hale(tipr(jrad),3)*1.d19 !PROCESS function
-		 sv_dd = sv_dd+bosch_hale(tipr(jrad),4)*1.d19 !PROCESS function
+	sv_dd=0.16247+0.001741*TIpr(Jrad)-0.029*EXP(-0.3843*SQRT(TIpr(Jrad)))
+	sv_dd=sv_dd*EXP(-18.8085/(tipr(jrad)**.333333))/(tipr(jrad)**.333333)**2	
+!		 sv_dd = bosch_hale(tipr(jrad),3)*1.d19 !PROCESS function
+!		 sv_dd = sv_dd+bosch_hale(tipr(jrad),4)*1.d19 !PROCESS function
 
 ! alpha power local
 	  pdtp = 5.632d0*ndeut(jrad)*ntrit(jrad)*svdt
