@@ -199,8 +199,13 @@ yllama=1.d0
 			& SHIF,k,d,0.*shif,0.*shif,0.*shif,0.*shif,IPOL,g1*vprime,vprime,1.+0.*vprime, & 
 			& SHEAR,0.*nepr,0.*nepr,palpph,0.*nepr,0.*nepr,0.*nepr,y0, gy0, xtr,x, amin, rpmajor, btor,num%capA, q_tr, sh_tr, a, b, &
 			& Hfactor,chi00,chipow,Hnow,chifac0)
-	aa=a
-	bb=b
+
+	aa=a+num%dtmaxmax
+	bb=b-num%dtmaxmax*gy0/rpmajor
+!	aa=a
+!	bb=b
+!		write(*,*) jiter,tepr(1)
+
 	else
 	!TGLF
 

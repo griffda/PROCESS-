@@ -7,7 +7,7 @@ module structs
 !numerics
     type numerics_transp
       SEQUENCE
-      real(kind(1.0D0)) :: tol, dtmin, dtminmin, dtminmax, dtmax, dtmaxmin, dtmaxmax, dtinc, tolopt, eopt, &
+      real(kind(1.0D0)) :: tol, dtmin, dtminmin, dtminmax, dtmax, dtmaxmin, dtmaxmax=1.d0, dtinc, tolopt, eopt, &
         etol, etol0, etolm,tolmax, tolmin, dgy !, dtmin0, dt0
       real(kind(1.0d0)) :: dt, capA, Ainc, maxA, test, biggest
       integer :: i_modeltype, i_equiltype
