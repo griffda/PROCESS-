@@ -655,30 +655,6 @@ implicit none
   end subroutine physics
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-function t_eped_scaling()
-    ! Issue #413.  See also comment dated 7/8/17
-    ! Predictive pedestal modelling for DEMO,  Samuli Saarelma.
-    ! https://idm.euro-fusion.org/?uid=2MSZ4T
-
-    real(kind(1.0D0)) :: t_eped_scaling
-    ! Scaling constant and exponents
-    real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
-
-    c0 = 2.16d0
-    a_delta = 0.82D0
-    a_ip = 0.26D0
-    a_r = -0.39D0
-    a_beta = 0.43D0
-    a_kappa = 0.50d0
-    a_a = 0.88D0
-    ! Correction for single null and for ELMs = 0.65
-    ! Elongation and triangularity are defined at the plasma boundary.
-    ! Total normalised plasma beta is used.
-
-    t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
-                          kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
-end function t_eped_scaling
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
  ! function eped_warning()
  !     ! Issue #413.

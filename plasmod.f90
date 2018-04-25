@@ -115,7 +115,7 @@ contains
        !@EF: What should happen, if this is not assigned?
     endif
     
-    !uses PROCES defined LH threshold, if this is > 0
+    !uses PROCESS defined LH threshold, if this is > 0
     inp0%PLH = ilhthresh    
 							
     inp0%nbcdeff = gamcd ! normalised current drive efficiency (1.0e20 A/W-m2) 
