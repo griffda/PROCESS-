@@ -1108,13 +1108,25 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function t_eped_scaling()
-    ! Issue #413.  See also comment dated 7/8/17
-    ! Predictive pedestal modelling for DEMO,  Samuli Saarelma.
-    ! https://idm.euro-fusion.org/?uid=2MSZ4T
+    !+ad_name  t_eped_scaling
+    !+ad_summ  Scaling function for calculation of pedestal temperature
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This function calculates pedestal temperature using a scaling formula
+    !+ad_desc  Issue #413.  See also comment dated 7/8/17
+    !+ad_desc  Predictive pedestal modelling for DEMO,  Samuli Saarelma.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_stat  Okay
+    !+ad_docs  https://idm.euro-fusion.org/?uid=2MSZ4T
+    ! 
 
     real(kind(1.0D0)) :: t_eped_scaling
     ! Scaling constant and exponents
     real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
+    real(kind(1.0D0)) :: corrected_n_tot_beta
 
     c0 = 2.16d0
     a_delta = 0.82D0
@@ -1123,25 +1135,40 @@ contains
     a_beta = 0.43D0
     a_kappa = 0.50d0
     a_a = 0.88D0
+    
+    corrected_n_tot_beta = normalised_total_beta * 1.2566
+    ! KE, 25/04/18 Correction to normalised_total _beta applied as specified in the 
+    ! email from Samuli which is reproduced in issue #413
+    
     ! Correction for single null and for ELMs = 0.65
     ! Elongation and triangularity are defined at the plasma boundary.
     ! Total normalised plasma beta is used.
 
     t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
-                          kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
+                          kappa**a_kappa  * corrected_n_tot_beta**a_beta  * rminor**a_a
   end function t_eped_scaling
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function p_eped_scaling(betan_pl,kappa_pl,delta_pl,ip_pl)
-    ! Issue #413.  See also comment dated 7/8/17
-    ! Predictive pedestal modelling for DEMO,  Samuli Saarelma.
-    ! https://idm.euro-fusion.org/?uid=2MSZ4T
+    !+ad_name  p_eped_scaling
+    !+ad_summ  Scaling function for calculation of pedestal pressure
+    !+ad_type  Function returning real
+    !+ad_auth  E Fable, Max Planck Institute of Plasma Physics Garching
+    !+ad_cont  N/A
+    !+ad_args  This currently has PLASMOD inputs - could they come from global variables?
+    !+ad_desc  This function calculates pedestal pressure using a scaling formula
+    !+ad_desc  Issue #413.  See also comment dated 7/8/17
+    !+ad_desc  Predictive pedestal modelling for DEMO,  Samuli Saarelma.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_stat  Okay
+    !+ad_docs  https://idm.euro-fusion.org/?uid=2MSZ4T
     
     real(kind(1.0D0)) :: p_eped_scaling !pressure in kev*10¹9*m¯3
     ! Scaling constant and exponents
     real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
-    real(kind(1.0D0)) :: betan_pl,kappa_pl,delta_pl,ip_pl
+    real(kind(1.0D0)) :: betan_pl,kappa_pl,delta_pl,ip_pl,corrected_n_tot_beta
     
     c0 = 9.4d0
     a_delta = 0.82D0
@@ -1150,12 +1177,17 @@ contains
     a_beta = 0.43D0
     a_kappa = 0.50d0
     a_a = -1.11d0
+
+    corrected_n_tot_beta = betan_pl * 1.2566
+    ! KE, 25/04/18 Correction to normalised_total _beta applied as specified in the 
+    ! email from Samuli which is reproduced in issue #413
+    
     ! Correction for single null and for ELMs = 0.65
     ! Elongation and triangularity are defined at the plasma boundary.
     ! Total normalised plasma beta is used.
     
     p_eped_scaling =  0.65d0 * c0 * delta_pl**a_delta * ip_pl**a_ip * rmajor**a_r * &
-         kappa_pl**a_kappa  * betan_pl**a_beta * rminor**a_a
+         kappa_pl**a_kappa  * corrected_n_tot_beta**a_beta * rminor**a_a
   end function p_eped_scaling
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
