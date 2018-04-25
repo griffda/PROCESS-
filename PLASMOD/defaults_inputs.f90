@@ -276,6 +276,7 @@ ped%pedscal=1.2
                           num%xtglf(9)=0.7 !tolerance above which TGLF should be always called
                           num%xtglf(10)=0.75 !tolerance above which TGLF should be always called
                           num%xtglf(11)=0.8 !tolerance above which TGLF should be always called
+                          num%isawt=1 ! 0 for natural q profile, 1 for clamped at 1
 
 !geometry
     geom%A =    3.1d0  !aspect ratio

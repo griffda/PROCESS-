@@ -8,7 +8,7 @@ subroutine compute_equil( &
   roc, Vloop, fbs,fcd, toleq, &
   k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar,&
   ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
-  ,pres_fac,areat)
+  ,pres_fac,areat,isawt)
 
   use grad_func
   implicit none
@@ -16,7 +16,7 @@ subroutine compute_equil( &
 
 !variable declaration!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   integer, intent(inout) :: nx, jiter,i_equiltype
-  integer :: j
+  integer :: j,isawt
   real(kind(1.0D0)), intent(in) :: q_edge_in,f_ind_in,R,rmin,btor,betaz,lint,ipol0,e_charge,mu_vacuum
   real(kind(1.0d0)), intent(inout) :: pres_fac,qedge,ip,q_95,elon,tria,elong95,triang95
   real(kind(1.0D0)), intent(inout) :: roc, Vloop, fbs,fcd, toleq
@@ -202,7 +202,7 @@ end if
        i_equiltype,jiter,nx,V,btor,Ip,R,rmin,x,cc,cubb, jcdr, FF,G2,G3,q0,mu_vacuum, &
        qedge, &
        dV,phi,rho,roc,ipol,jpol,kerncur,Ibs,Epar,jpar,Vloop,Vprime,q,psi,toleq, dum1, fbs,fcd &
-       ,q_edge_in,q_95,elon,tria,elong95,triang95,k,d)
+       ,q_edge_in,q_95,elon,tria,elong95,triang95,k,d,isawt)
 	endif
 
 
@@ -271,13 +271,13 @@ subroutine ADDITIONAL_CALCS( &
      i_equiltype,jiter,nx,V,btor,Ip,R,rmin,x,cc,cubb,jcdr,FF,G2,G3,q0,mu_vacuum, &
      qedge, &
      dV,phi,rho,roc,ipol,jpol,kerncur,Ibs,Epar,jpar,Vloop,Vprime,q,psi,toleq, dum1, fbs,fcd &
-     ,q_edge_in,q_95,elon,tria,elong95,triang95,k,d)
+     ,q_edge_in,q_95,elon,tria,elong95,triang95,k,d,isawt)
 
   use grad_func
   implicit none	
 
 !input/output exchange variables
-  integer, intent(in) :: nx,jiter,i_equiltype
+  integer, intent(in) :: nx,jiter,i_equiltype,isawt
   real(kind(1.0d0)), intent(in) :: R,rmin,btor,mu_vacuum,q_edge_in
   real(kind(1.0d0)), intent(inout) :: ip,q_95
   real(kind(1.0d0)), intent(inout) :: qedge,elon,tria,elong95,triang95
@@ -327,7 +327,7 @@ subroutine ADDITIONAL_CALCS( &
 	endif
 	enddo
 	if (j_9.gt.1) then !fix q = 1 if below 1
-	    q(1:j_9) = 1.d0
+	if (isawt.eq.1) q(1:j_9) = 1.d0
 	goto 10
 	endif
 

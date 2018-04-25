@@ -10,7 +10,7 @@
 
     use grad_func
     use structs
-!    use physics_functions_module
+    use physics_functions_module
 
     implicit none
 
@@ -454,7 +454,7 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
           roc, Vloop, fbs,fcd, toleq, &
           k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, qprf, rho, psi, jpar,&
           ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,trianpg95 &
-          ,pres_fac,areat)
+          ,pres_fac,areat,num%isawt)
   else !equilibrium updated using previous result as new guess, faster
     call compute_equil( &
                                 !input 
@@ -467,7 +467,7 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
           roc, Vloop, fbs,fcd, toleq, &
           k, d, shif, radp%jbs, radp%jcd, radp%Volum, G1, G2, G3, dV, phi, qprf, rho, radp%psi, jpar,&
           radp%ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,trianpg95 &
-          ,pres_fac,areat)
+          ,pres_fac,areat,num%isawt)
     psi = radp%psi
     ipol=radp%ipol
     jcdr=radp%jcd
@@ -687,7 +687,8 @@ endif
               betan=trapz(pressure*dV)/V(nx)*1.e3*e_charge*1.e19*2.*mu_vacuum/btor**2. 
               betan=100.*betan*rpminor*btor/Ip !beta_n
 
-              P_pedtop = ped%pedscal*2.*rpmajor**(-0.38)*trianpg**(0.83)*elong**(0.62)*Ip**(1.25)*betan**(0.43) !Samuli's DEMO scaling
+              P_pedtop = ped%pedscal*2.*rpmajor**(-0.38)*trianpg**(0.83)*elong**(0.62)*Ip**(1.25)*betan**(0.43) !Samuli's DEMO scaling !PLASMOD function
+!              P_pedtop = ped%pedscal*p_eped_scaling(betan,elong,trianpg,ip) !Samuli's DEMO scaling !PROCESS function
 
 	if (i_diagz.eq.1) 	write(*,*) 'betan,tpedtop',betan,P_pedtop/neb,V(nx),palpph(1),pressure(1)
 
@@ -842,7 +843,7 @@ endif
                 roc, Vloop, fbs,fcd, dum1, &
                 k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, qprf, rho, psi, jpar,&
                 ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,trianpg95 &
-                ,pres_fac,areat)
+                ,pres_fac,areat,num%isawt)
            !check if isnan
            if (isnan(qedge).or.isnan(vloop).or.ip.eq.0.d0) then
               write(*,*) 'equilibrium not converged',vloop,qprf,ip
