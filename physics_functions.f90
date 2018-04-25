@@ -1130,6 +1130,33 @@ contains
     t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
                           kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
   end function t_eped_scaling
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function p_eped_scaling(betan_pl,kappa_pl,delta_pl,ip_pl)
+    ! Issue #413.  See also comment dated 7/8/17
+    ! Predictive pedestal modelling for DEMO,  Samuli Saarelma.
+    ! https://idm.euro-fusion.org/?uid=2MSZ4T
+    
+    real(kind(1.0D0)) :: p_eped_scaling !pressure in kev*10¹9*m¯3
+    ! Scaling constant and exponents
+    real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
+    real(kind(1.0D0)) :: betan_pl,kappa_pl,delta_pl,ip_pl
+    
+    c0 = 9.4d0
+    a_delta = 0.82D0
+    a_ip = 1.25D0
+    a_r = -0.39D0
+    a_beta = 0.43D0
+    a_kappa = 0.50d0
+    a_a = -1.11d0
+    ! Correction for single null and for ELMs = 0.65
+    ! Elongation and triangularity are defined at the plasma boundary.
+    ! Total normalised plasma beta is used.
+    
+    p_eped_scaling =  0.65d0 * c0 * delta_pl**a_delta * ip_pl**a_ip * rmajor**a_r * &
+         kappa_pl**a_kappa  * betan_pl**a_beta * rminor**a_a
+  end function p_eped_scaling
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
 end module physics_functions_module
