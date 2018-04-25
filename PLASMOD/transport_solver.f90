@@ -104,7 +104,8 @@
   integer :: jped,nx,nxt,nchannels, iped_model,jdum1,nxequil,i_qsaw, i_diagz
   real(kind(1.0d0)) :: x0, dx, dxn,psep,plh
   real(kind(1.0d0)) :: Qeaux, Qiaux, Qrad ,qradedge, betan,P_pedtop, qecrh, qnbi, spellet, spuffing, f_gw !sfuelling
-  real(kind(1.0d0)) :: nsep, Ip, btor, cHe, cxe,car,nG, qedge, elong, trianpg, amin ,tsep, rpmajor,  rpminor, asppect, nlineavg 
+  real(kind(1.0d0)) :: nsep, Ip, btor, cHe,che3,cprot, & 
+		 & cxe,car,nG, qedge, elong, trianpg, amin ,tsep, rpmajor,  rpminor, asppect, nlineavg 
   real(kind(1.0d0)) :: tau_sol, V_sol, D_ped, V_ped, lambda_sol,pdtp,sv_dd,svdt
   real(kind(1.0d0)) :: rtor, yd, betaz, lint,taue,Qtot
   real(kind(1.0d0)) :: Hfactor,chi00,chipow,Hnow,tau_scal,chifac,chifac0
@@ -114,11 +115,11 @@
   real(kind(1.0d0)) :: q_edge_in,f_ind_in,ip0 ,tepp0,tipp0,nepp0,fq  !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: elong95,trianpg95  !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: xb,teb,tib,neb,zmain,amain,toleq,fuelmix
-  real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,fcd,qdivt,q_heat,q_cd,q_fus,q_95,qtote,qtoti,w_e,w_i
+  real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,sfus_he3,sfus_p,fcd,qdivt,q_heat,q_cd,q_fus,q_95,qtote,qtoti,w_e,w_i
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat,plinexe,psepxe
   real(kind(1.0d0)) :: ne_av,nela,PLH_th(8)
   real(kind(1.0d0)), dimension(num%nx) :: theta_perim,dtheta,f_perim,p_dd
-  real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe, nXe, nNe, prxe, prne
+  real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe,nprot,nhe3, nXe, nNe, prxe, prne
   real(kind(1.0d0)), dimension(num%nx) :: pech,pnbi,psync,pbrad
   real(kind(1.0d0)), dimension(num%nx) :: zavxe, zavne, prad,pradtot,pradedge, ndeut, ntrit, nions, pedt, pidt, peicl, zepff!  conflict with   
   real(kind(1.0d0)), dimension(num%nxt+1) :: T_e, T_i, N_e, gT_e, gT_i, gn_e
@@ -987,17 +988,19 @@ endif
 	nxe = nxe(jped)
 	endif
  	nHe = cHe * nepr
+ 	nHe3 = cHe3 * nepr
+ 	nprot = (cprot+comp%protium)*nepr
 	call prxe_func(nx, tepr, prxe, zavxe)
 	call prar_func(nx, tepr, prne, zavne)
-	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*nHe-comp%protium*nepr)
-	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*nHe-comp%protium*nepr)
-	nions = ndeut + ntrit + nNe + nXe + nHe+comp%protium*nepr
-	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*nHe+zavne**2*nNe+zavxe**2*nXe+comp%protium*nepr)
+	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot)
+	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot)
+	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot
+	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+zavxe**2*nXe+nprot)
   coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
   radp%av_ni = trapz(nions*dV)/V(nx)
   radp%av_nd = trapz((ndeut+ntrit)*dV)/V(nx)
   radp%av_nz = trapz((nne+nxe)*dv)/V(nx)
-  radp%av_nhe = trapz((nhe)*dV)/V(nx)
+  radp%av_nhe = trapz((nhe+nhe3)*dV)/V(nx)
   radp%av_Ti = trapz(tipr*dV)/V(nx)
   radp%av_Te = trapz(tepr*dV)/V(nx)
   radp%av_Ten = trapz(tepr*nepr*dV)/trapz(nepr*dV)
@@ -1010,8 +1013,8 @@ endif
 	ped%nsep=nsep
 
 !composition
- 	comp%comparray(1)=comp%protium+radp%av_nd/radp%av_ne
-		comp%comparray(2)=che
+ 	comp%comparray(1)=comp%protium+cprot+radp%av_nd/radp%av_ne
+		comp%comparray(2)=che+che3
   comp%comparray(13)=cxe
 		comp%comparray(9)=car
 
