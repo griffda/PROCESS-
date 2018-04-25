@@ -136,6 +136,7 @@ contains
        ! The Xe fraction is used as an iteration variable inside PLASMOD
        ! it adjusts to fulfil psepqbarmax, pseprmax or psepplh_sup.
        comp%comparray = 0.d0 !array of impurities !HL: This overwrites Argon setting!!!
+       comp%comparray(14) = impurity_arr(element2index('W_'))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
        comp%protium   = protium !protium is treated separately
        
        comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi      
