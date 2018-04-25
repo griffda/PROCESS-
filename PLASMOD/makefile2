@@ -1,4 +1,5 @@
-gfortran  -I. -o  transporz  structs.f90 syscode_dummy.f90    grad_func.f90 trmodel.f90 e3m.f transport_solver.f90 equil.f90 
+ar -rv ../linprocess.a ../*.o
+gfortran  -I. -fintrinsic-modules-path ..   -I../. -o  transporz  structs.f90 syscode_dummy.f90    grad_func.f90 trmodel.f90 e3m.f transport_solver.f90 equil.f90  /afs/ipp-garching.mpg.de/home/e/emf/DEMO_project/process_plasmod/plasmod/linprocess.a
 
 
 
