@@ -154,14 +154,16 @@ contains
 
        num%eopt     = plasmod_eopt !exponent of jipperdo
        num%dtmaxmin = plasmod_dtmaxmin !exponent of jipperdo2
+       num%dtmaxmax = plasmod_dtmaxmax !stabilizing coefficient
        num%capA     = plasmod_capa !first radial grid point
        num%maxA     = plasmod_maxa !diagz 0 or 1
        num%dgy      = plasmod_dgy !Newton differential
        num%i_modeltype = plasmod_i_modeltype !1 - simple gyrobohm scaling with imposed H factor > 1, other models with H in output
        num%i_equiltype = plasmod_i_equiltype !1 - EMEQ, solve equilibrium
        !with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
-       num%nx  = plasmod_nx  !number of interpolated grid points
-       num%nxt = plasmod_nxt !number of reduced grid points
+       num%isawt     = plasmod_isawt !0 - no sawteeth, 1 - solve with sawteeth
+       num%nx        = plasmod_nx  !number of interpolated grid points
+       num%nxt       = plasmod_nxt !number of reduced grid points
        num%nchannels = plasmod_nchannels  !leave this at 3
 
        if(ieped == 0) then

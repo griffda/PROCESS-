@@ -844,6 +844,8 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_eopt = 0.15d0
   !+ad_vars  plasmod_dtmaxmin /0.15d0/ : exponent of jipperdo2
   real(kind(1.0D0)) :: plasmod_dtmaxmin = 0.15d0
+  !+ad_vars  plasmod_dtmaxmax /0.0d0/ : stabilizing coefficient
+  real(kind(1.0D0)) :: plasmod_dtmaxmax = 0.0d0
   !+ad_vars  plasmod_capa /0.1d0/ : first radial grid point
   real(kind(1.0D0)) :: plasmod_capA = 0.1d0
   !+ad_vars  plasmod_maxa /0.0d0/ : diagz 0 or 1
@@ -855,11 +857,15 @@ module plasmod_variables
   !+ad_varc  <LI> 1 - Simple gyrobohm scaling with imposed
   !+ad_varc  H factor > 1. Other values give H factor as output
   !+ad_varc  <LI> 111 - roughly calibrated to give H=1 for DEMO, but not fixed H </UL>
-
   integer :: plasmod_i_modeltype = 1
+
   !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve with sawteeth and inputted q95.
   !+ad_varc  2 - EMEQ, solve with sawteeth and inputted Ip (not recommended!).
   integer :: plasmod_i_equiltype = 1
+
+  !+ad_vars  plasmod_isawt /1/ : 0 - no sawteeth, 1 - solve with sawteeth.
+  integer :: plasmod_isawt = 1
+  
   !+ad_vars  plasmod_nx /41/ : number of interpolated grid points
   integer :: plasmod_nx = 41
   !+ad_vars  plasmod_nxt /7/ : number of solved grid points

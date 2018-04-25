@@ -1087,6 +1087,9 @@ contains
        case ('plasmod_dtmaxmin')
           call parse_real_variable('plasmod_dtmaxmin', plasmod_dtmaxmin, 0.0D0, 1.0D4, &
                'Exponent of jipperdo2')
+       case ('plasmod_dtmaxmax')
+          call parse_real_variable('plasmod_dtmaxmax', plasmod_dtmaxmax, 0.0D0, 1.0D4, &
+               'Stabilizing coefficient')
        case ('plasmod_capa')
           call parse_real_variable('plasmod_capa', plasmod_capA, 0.0D0, 1.0D4, &
                'First radial grid point')
@@ -1102,6 +1105,9 @@ contains
        case ('plasmod_i_equiltype')
           call parse_int_variable('plasmod_i_equiltype', plasmod_i_equiltype, 1, 20000, &
                '1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.')
+       case ('plasmod_isawt')
+          call parse_int_variable('plasmod_isawt', plasmod_isawt, 0, 2, &
+               '0 - no sawteeth, 1 - solve with sawteeth.')
        case ('plasmod_nx')
           call parse_int_variable('plasmod_nx', plasmod_nx, 0, 10000, &
                'Number of interpolated grid points')
