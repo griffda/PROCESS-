@@ -394,23 +394,19 @@ subroutine check
         !one of them set them to a very large number
         call report_error(199)
         
-        if (fgwped < 0 )then
+        if (fgwped .le. 0 )then
            call report_error(176)
         endif
-        if (fgwsep < 0 ) then
+        if (fgwsep .le. 0 ) then
            call report_error(177)
         endif
 
 
         !need to enforce H-mode using Martin scaling, if using PLASMOD
-        !Todo: The L-H threshold is checked inside PLASMOD do we need to duplicate in PROCESS??
-        if(.not. any(icc == 15)) then
+        !HL Todo: The L-H threshold is checked inside PLASMOD do we need to duplicate in PROCESS??
+        !if(.not. any(icc == 15)) then
      !      call report_error(179)
-        endif
-
-        if (ilhthresh .ne. 6) then
-           call report_error(180)
-        endif
+        !endif
 
         if (boundl(103) < 1.) then
            call report_error(181)
@@ -449,9 +445,12 @@ subroutine check
         endif
 
        
-
      endif
 
+     if ((any(ixc==145)) .and. (boundl(145) < fgwsep)) then  !if lower bound of fgwped < fgwsep
+        fdiags(1) = boundl(145); fdiags(2) = fgwsep
+        call report_error(186)
+     end if
 
      if(ipedestal==3)then
         ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
@@ -482,10 +481,7 @@ subroutine check
            call report_error(185)
         endif
 
-        if ((any(ixc==145)) .and. (boundl(145) < fgwsep)) then  !if lower bound of fgwped < fgwsep
-           fdiags(1) = boundl(145); fdiags(2) = fgwsep
-           call report_error(186)
-        end if
+
 
         if (plasmod_i_equiltype == 2) then
 
