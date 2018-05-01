@@ -12,7 +12,10 @@
 ## Minor changes
 
 - Changed upper bound on `coheof` from 1e8 to 5e8 (Issue #668).
+- A number of changes to `plot_proc.py` and outputs in the fortran associated 
+  with vertical build. (Merge requst !18)
 - Update utilities guide for a number of Python utilities
     - `cad_output.py` (Issue #671)
     - `convert_in_dat.py` (Issue #672)
     - `mcnp_output.py` (Issue #674)
+    - `output_summary.py` and `output_detailed.py` (Issue #675)
