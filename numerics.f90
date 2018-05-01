@@ -99,9 +99,9 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 145
+  integer, parameter :: ipnvars = 146
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 76
+  integer, parameter :: ipeqns = 77
   !+ad_vars  ipnfoms FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 18
 
@@ -344,10 +344,12 @@ module numerics
        'Psep >= Plh + Paux               ',   &
        !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
        'TFC quench < tmax_croco          ',    &
-       !+ad_varc  <LI> (75) TFC current/copper area < Maximum (itv 143 f_copperA_m2) </UL>
+       !+ad_varc  <LI> (75) TFC current/copper area < Maximum (itv 143 f_copperA_m2)
        'TFC current/copper area < Max    ',    &
-       !+ad_varc  <LI> (76) Eich critical separatrix density </UL>
-       'Eich critical separatrix density '    &
+       !+ad_varc  <LI> (76) Eich critical separatrix density
+       'Eich critical separatrix density ',   &
+       !+ad_varc  <LI> (77) TF coil current per turn upper limit </UL>
+       'TFC current per turn upper limit '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -652,12 +654,14 @@ module numerics
        'fcqt          ', &
        !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
        'nesep         ', &
-       !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75) </UL>
+       !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75)
        'f_copperA_m2  ', &
-       !+ad_varc  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]</UL>
+       !+ad_varc  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]
        'fnesep        ', &
-       !+ad_varc  <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density </UL>
-       'fgwped        ' &
+       !+ad_varc  <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density
+       'fgwped        ', &
+       !+ad_varc  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)</UL>
+       'fnesep        ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -820,7 +824,8 @@ module numerics
        1.00D17, &  !  142
        0.001D0, &  !  143
        0.001D0, &  !  144
-       0.5D0  &  !  145
+       0.500D0, &  !  145
+       0.001D0 &   !  146
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -970,7 +975,8 @@ module numerics
        1.00D20, &  !  142
        1.000D0, &  !  143
        1.000D0, &  !  144
-       1.000D0  &  !  145
+       1.000D0, &  !  145
+       1.000D0  &  !  146
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

@@ -1695,6 +1695,11 @@ contains
        case ('cpttf')
           call parse_real_variable('cpttf', cpttf, 0.001D0, 1.0D6, &
                'TF coil leg current per turn (A)')
+
+       case ('cpttf_max')
+          call parse_real_variable('cpttf_max', cpttf_max, 1.0D0, 1.0D6, &
+                    'Maximum allowable TF coil leg current per turn (A) (constraint equation 77)')
+                    
        case ('alstrtf')
           call parse_real_variable('alstrtf', alstrtf, 1.0D6, 1.0D11, &
                'Allowable Tresca stress in TF coil structural material (Pa)')
@@ -1754,6 +1759,9 @@ contains
        case ('frhocp')
           call parse_real_variable('frhocp', frhocp, 0.01D0, 5.0D0, &
                'TART c/p resistivity enhancement factor')
+       case ('i_tf_turns_integer')
+          call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
+                    'Switch for TF coil integer/non-integer turns')
        case ('isumattf')
           call parse_int_variable('isumattf', isumattf, 1, 6, &
                'TF coil superconductor material')
@@ -1797,6 +1805,12 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
+       case ('n_pancake')
+          call parse_int_variable('n_pancake', n_pancake, 1, 100, &
+               'Number of pancakes in TF coil (i_tf_turns_integer=1)')
+       case ('n_layer')
+          call parse_int_variable('n_layer', n_layer, 1, 100, &
+               'Number of layers in TF coil (i_tf_turns_integer=1)')
        case ('oacdcp')
           call parse_real_variable('oacdcp', oacdcp, 1.0D4, 1.0D9, &
                'Overall J in inboard TF coil midplane')
@@ -1908,7 +1922,7 @@ contains
           call parse_real_variable('alfapf', alfapf, 1.0D-12, 1.0D0, &
                'PF coil current smoothing parameter')
        case ('coheof')
-          call parse_real_variable('coheof', coheof, 1.0D4, 1.0D8, &
+          call parse_real_variable('coheof', coheof, 1.0D4, 5.0D8, &
                'Central Solenoid current density at EOF')
        case ('cptdin')
           call parse_real_array('cptdin', cptdin, isub1, ngc2, &

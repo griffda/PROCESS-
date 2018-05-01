@@ -221,7 +221,7 @@ contains
     ofile = outfile
 
     ! MDK (27/11/2015)
-    fwith = 2*afw + 2*fw_wall
+    fwith = 2.0D0*afw + 2.0D0*fw_wall
     fwoth = fwith
 
     ! Coolant type
@@ -2348,6 +2348,7 @@ contains
     !+ad_call  he_production_vacuum_vessel
     !+ad_call  blanket_lifetime
     !+ad_hist  06/06/13 PJK Initial release
+    !+ad_hist  24/04/18 SIM Calc fwith and fwoth to mirror MDK change to ccfe_hcpb
     !+ad_stat  Okay
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2361,6 +2362,10 @@ contains
     ! Assign module private variables to iprint and outfile
     ip = iprint
     ofile = outfile
+
+    ! SIM (Issue #669)
+    fwith = 2.0D0*afw + 2.0D0*fw_wall
+    fwoth = fwith
 
     ! Calculate FW/Blanket lifetime
     fwlife = min(abktflnc/wallmw, tlife)

@@ -314,15 +314,15 @@ contains
     if (itart == 1) then
 
        radius = radius + tfcth
-       call obuild(outfile,'TF coil inboard leg',tfcth,radius)
+       call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
        call ovarre(mfile,'TF coil inboard leg radial thickness (m)','(tfcth)',tfcth)
 
        radius = radius + gapoh
-       call obuild(outfile,'Gap',gapoh,radius)
+       call obuild(outfile,'Gap',gapoh,radius,'(gapoh)')
        call ovarre(mfile,'TF to CS radial gap (m)','(gapoh)',gapoh)
 
        radius = radius + ohcth
-       call obuild(outfile,'Central solenoid',ohcth,radius)
+       call obuild(outfile,'Central solenoid',ohcth,radius,'(ohcth)')
        call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
 
     else       ! conventional aspect ratio tokamak
@@ -434,32 +434,33 @@ contains
        call obuild(outfile,'Midplane',0.0D0,vbuild)
 
        vbuild = vbuild + rminor * kappa
-       call obuild(outfile,'Plasma top',rminor*kappa,vbuild)
+       call obuild(outfile,'Plasma top',rminor*kappa,vbuild,'(rminor*kappa)')
        call ovarre(mfile,'Plasma half-height (m)','(rminor*kappa)',rminor*kappa)
 
        vbuild = vbuild + vgap
-       call obuild(outfile,'Top scrape-off',vgap,vbuild)
+       call obuild(outfile,'Top scrape-off',vgap,vbuild,'(vgap)')
        call ovarre(mfile,'Top scrape-off vertical thickness (m)','(vgap)',vgap)
 
        vbuild = vbuild + divfix
-       call obuild(outfile,'Divertor structure',divfix,vbuild)
+       call obuild(outfile,'Divertor structure',divfix,vbuild,'(divfix)')
        call ovarre(mfile,'Divertor structure vertical thickness (m)','(divfix)',divfix)
 
-       vbuild = vbuild + shldtth
-       if (shldtth.ne.0.0d0) then
-          call obuild(outfile,'Top shield',shldtth,vbuild)
-       end if
-       call ovarre(mfile,'Top shield vertical thickness (m)','(shldtth)',shldtth)
-
-       vbuild = vbuild + ddwi
-       call obuild(outfile,'Vacuum vessel',ddwi,vbuild)
+       vbuild = vbuild + shldlth + ddwi
+       call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldlth,vbuild,'(ddwi+shldlth)')
+       call ovarre(mfile,'Bottom radiation shield thickness (m)','(shldlth)',shldlth)
 
        vbuild = vbuild + vgap2
-       call obuild(outfile,'Gap',vgap2,vbuild)
+       call obuild(outfile,'Gap',vgap2,vbuild,'(vgap2)')
        call ovarre(mfile,'Vessel - TF coil vertical gap (m)','(vgap2)',vgap2)
 
+       vbuild = vbuild + thshield
+       call obuild(outfile,'Thermal shield',thshield,vbuild,'(thshield)')
+
+       vbuild = vbuild + tftsgap
+       call obuild(outfile,'Gap',tftsgap,vbuild,'(tftsgap)')
+
        vbuild = vbuild + tfcth
-       call obuild(outfile,'TF coil',tfcth,vbuild)
+       call obuild(outfile,'TF coil',tfcth,vbuild,'(tfcth)')
 
        ! end of Double null case
     else
@@ -605,7 +606,7 @@ contains
 
     !  Height to inside edge of TF coil
 
-    hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
+        hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
 
     !  Vertical locations of divertor coils
 

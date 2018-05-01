@@ -261,6 +261,7 @@ subroutine loadxc
      case (143) ; xcm(i) = f_copperA_m2
      case (144) ; xcm(i) = fnesep
      case (145) ; xcm(i) = fgwped
+     case (146) ; xcm(i) = fcpttf
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -562,6 +563,7 @@ subroutine convxc(xc,nn)
      case (143) ; f_copperA_m2 = xc(i)/scale(i)
      case (144) ; fnesep = xc(i)/scale(i)
      case (145) ; fgwped = xc(i)/scale(i)
+     case (146) ; fcpttf = xc(i)/scale(i)
 
      case default
 

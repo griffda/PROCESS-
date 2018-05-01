@@ -4666,9 +4666,9 @@ implicit none
 
        if (icurr == 2) then
           call ovarrf(outfile,'Mean edge safety factor','(q)',q)
-       else
-          call ovarrf(outfile,'Safety factor at 95% flux surface','(q95)',q95)
        end if
+
+       call ovarrf(outfile,'Safety factor at 95% flux surface','(q95)',q95)
 
        call ovarrf(outfile,'Cylindrical safety factor (qcyl)','(qstar)',qstar, 'OP ')
 

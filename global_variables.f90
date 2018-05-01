@@ -2209,10 +2209,17 @@ module tfcoil_variables
   real(kind(1.0D0)) :: cforce = 0.0D0
   !+ad_vars  cph2o /4180.0/ FIX : specific heat capacity of water (J/kg/K)
   real(kind(1.0D0)) :: cph2o = 4180.0D0
-  !+ad_vars  cpttf /9.0e4/ : TF coil current per turn (A).
+  
+  !+ad_vars  cpttf /7.0e4/ : TF coil current per turn (A).
   !+ad_varc                  (calculated for stellarators)
+  !+ad_varc                  (calculated for integer-turn TF coils i_tf_turns_integer=1)
   !+ad_varc                  (iteration variable 60)
-  real(kind(1.0D0)) :: cpttf = 9.0e4
+  real(kind(1.0D0)) :: cpttf = 7.0e4
+
+  !+ad_vars  cpttf_max /9.0e4/ : Max TF coil current per turn [A].
+  !+ad_varc                  (For stellarators and i_tf_turns_integer=1)
+  !+ad_varc                  (constraint equation 77)
+  real(kind(1.0D0)) :: cpttf_max = 9.0e4
 
   !+ad_vars  dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)) :: dcase = 8000.0D0
@@ -2259,6 +2266,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: fhts = 0.5D0
   !+ad_vars  insstrain : radial strain in insulator (tfc_model=1)
   real(kind(1.0D0)) :: insstrain = 0.0D0
+  !+ad_vars  i_tf_turns_integer /0/ : switch for TF coil integer/non-integer turns<UL>
+  !+ad_varc          <LI> = 0 non-integer turns;
+  !+ad_varc          <LI> = 1 integer turns</UL>
+  integer :: i_tf_turns_integer = 0
   !+ad_vars  isumattf /1/ : switch for superconductor material in TF coils:<UL>
   !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
   !+ad_varc                     ITER parameters;
@@ -2284,6 +2295,13 @@ module tfcoil_variables
   real(kind(1.0D0)) :: jwdgpro = 0.0D0
   !+ad_vars  jwptf : winding pack current density (A/m2)
   real(kind(1.0D0)) :: jwptf = 0.0D0
+  
+  !+ad_vars  n_pancake /10/ : Number of pancakes in TF coil (i_tf_turns_integer=1)
+  integer :: n_pancake = 10
+
+  !+ad_vars  n_layer /20/ : Number of layers in TF coil (i_tf_turns_integer=1)
+  integer :: n_layer = 20
+  
   !+ad_vars  oacdcp /1.4e7/ : overall current density in TF coil inboard legs (A/m2)
   !+ad_varc                   (iteration variable 12)
   real(kind(1.0D0)) :: oacdcp = 1.4D7
@@ -3876,6 +3894,9 @@ module constraint_variables
   !+ad_vars  fbetatry /1.0/ : f-value for beta limit
   !+ad_varc                   (constraint equation 24, iteration variable 36)
   real(kind(1.0D0)) :: fbetatry = 1.0D0
+  !+ad_vars  fcpttf /1.0/ : f-value for TF coil current per turn upper limit
+  !+ad_varc               (constraint equation 77, iteration variable 146)
+  real(kind(1.0D0)) :: fcpttf = 1.0D0
   !+ad_vars  fcwr /1.0/ : f-value for conducting wall radius / rminor limit
   !+ad_varc               (constraint equation 23, iteration variable 104)
   real(kind(1.0D0)) :: fcwr = 1.0D0
