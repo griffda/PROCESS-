@@ -712,6 +712,75 @@ format for MCNP runs. The options for the script are:\\
  \end{verbatim}
 \end{mdframed}
 
+%-----------------------------------------
+\subsubsection{Create a html output summary from MFILE.DAT (output\_summary.py)}
+
+This utility has two versions in the repository:
+\begin{itemize}
+  \item \texttt{output\_summary.py} - general summary generate automatically. Not customisable.
+  \item \texttt{output\_detailed.py} - takes a configuration file called 
+  \texttt{output\_detailed.json} to configure the output html.
+\end{itemize}
+
+The output HTML arranges the variables into sections and allows the user to add comments and 
+other information to the summary by adding comments to the PROCESS IN.DAT. The comments in the 
+IN.DAT take the following form:
+
+\begin{mdframed}
+ \begin{verbatim}
+  
+  #header-physics : Comment under header called physics
+
+  #constraint-1 : Comment for constraint number 1
+  icc = 1
+
+  #iteration-variable-10 : Comment for iteration variable 10
+  ixc        = 10 * hfact
+
+  #in-neped : Comment for input neped
+  neped = 0.678e20 * Electron density of pedestal (/m3) (ipedestal=1)
+
+ \end{verbatim}
+\end{mdframed}
+
+The \texttt{IN.DAT} is appended to the end of the \texttt{MFILE.DAT} and the Python gets this 
+information from there. The comments have to follow the format above. It is not ideally run on 
+every PROCESS run, but is useful for summarising important PROCESS results. The options for 
+the \texttt{output\_summary.py} are:\\
+
+\begin{mdframed}
+ \begin{verbatim}
+  output_summary.py [-h] [-f MFILENAME] [-o OUTFILENAME]
+
+  Create PROCESS output document.For info contact james.morris2@ukaea.uk
+
+  optional arguments:
+   -h, --help      show this help message and exit
+   -f MFILENAME    specify PROCESS MFILE
+   -o OUTFILENAME  specify output file
+ \end{verbatim}
+\end{mdframed}
+
+The options for the \texttt{output\_detailed.py} are:\\
+
+\begin{mdframed}
+ \begin{verbatim}
+  output_detailed.py [-h] [-f MFILENAME] [-j JSONFILE] [-o OUTFILENAME]
+
+  Create PROCESS output document.For info contact james.morris2@ukaea.uk
+
+  optional arguments:
+   -h, --help      show this help message and exit
+   -f MFILENAME    specify PROCESS MFILE
+   -j JSONFILE     specify JSON file location and name
+   -o OUTFILENAME  specify output file
+ \end{verbatim}
+\end{mdframed}
+
+\texttt{Output\_detailed.py} also requires a configuration file named 
+\texttt{output\_detailed.json}. This JSON file contains the grouping of the output 
+and allows the user to adjust what is output and where.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Output Plotting}
 
