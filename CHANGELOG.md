@@ -15,3 +15,4 @@
 - Update utilities guide for a number of Python utilities
     - `cad_output.py` (Issue #671)
     - `convert_in_dat.py` (Issue #672)
+    - `mcnp_output.py` (Issue #674)

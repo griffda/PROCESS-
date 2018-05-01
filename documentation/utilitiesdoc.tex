@@ -105,7 +105,6 @@ All Python code has been written for Python 3.
 
 \newpage
 
-
 \section{Executables}
 \label{sec:py_exec}
 
@@ -681,7 +680,7 @@ eventually be removed. The options for the script are:\\
 
 \begin{mdframed}
  \begin{verbatim}
-  usage: convert_in_dat.py [-h] [-f f] [-o o]
+  convert_in_dat.py [-h] [-f f] [-o o]
 
   PROCESS IN.DAT converter. Convert IN.DAT into new format. For info contact
   james.morris2@ccfe.ac.uk
@@ -693,6 +692,25 @@ eventually be removed. The options for the script are:\\
  \end{verbatim}
 \end{mdframed}
 
+%-----------------------------------------
+\subsubsection{Create MCNP input file from MFILE.DAT (mcnp\_output.py)}
+
+The utility \texttt{mcnp\_output.py} takes a \texttt{MFILE.DAT} and converts it to a suitable 
+format for MCNP runs. The options for the script are:\\
+
+\begin{mdframed}
+ \begin{verbatim}
+  mcnp_output.py [-h] [-f f] [-o o] [--ctf]
+
+  Process MFILE.DAT into PROCESS.MCNP file.
+
+  optional arguments:
+   -h, --help  show this help message and exit
+   -f f        File to read as MFILE.DAT
+   -o o        File to write as PROCESS.MCNP
+   --ctf       True/False flag for CTF
+ \end{verbatim}
+\end{mdframed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Output Plotting}
