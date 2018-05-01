@@ -28,6 +28,7 @@ tag.num
 untracked.info
 com.msg
 Katy_test/*
+KatyTest/*
 PLASMOD/CHARTST/*
 PLASMOD/*.DAT
 PLASMOD/*.dat
@@ -35,3 +36,4 @@ PLASMOD/fort.*
 PLASMOD/output_list.txt
 PLASMOD/KE*
 *~
+/utilities/run_process.conf

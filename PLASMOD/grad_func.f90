@@ -1,3 +1,4 @@
+!these are all numerical functions, I am not going to comment on these, accept them.
 module grad_func
  implicit none
 contains
@@ -483,6 +484,13 @@ end function integr_cde
 		jdone=0
 		
 		t4=x2(i)
+
+	if (t4.gt.x(nx1).and.jdone.eq.0) then
+		y2(i)=y1(nx1)
+		jdone=1
+	endif
+
+
 
 		do j=2,Nx1-1
 		z1=x1(j-1)

@@ -288,6 +288,7 @@ module stellarator_module
   use maths_library
   use numerics
   use pfcoil_variables
+  use physics_functions_module
   use physics_module
   use physics_variables
   use plasma_geometry_module

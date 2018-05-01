@@ -88,6 +88,7 @@ SRC = \
  output.f90 \
  pfcoil.f90 \
  physics.f90 \
+ physics_functions.f90 \
  plant_power.f90 \
  plasma_geometry.f90 \
  plasma_profiles.f90 \
@@ -145,6 +146,7 @@ OBJ = \
  output.o \
  pfcoil.o \
  physics.o \
+ physics_functions.o \
  plant_power.o \
  plasma_geometry.o \
  plasma_profiles.o \
@@ -289,7 +291,7 @@ ode.o:
 output.o: global_variables.o numerics.o
 pfcoil.o: error_handling.o global_variables.o maths_library.o output.o sctfcoil.o superconductors.o
 physics.o: current_drive.o error_handling.o global_variables.o impurity_radiation.o \
-  maths_library.o numerics.o output.o plasma_profiles.o plasmod.o \
+  maths_library.o numerics.o output.o physics_functions.o plasma_profiles.o plasmod.o \
   $(PLASMOD_DIR)/grad_func.o
 plant_power.o: error_handling.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
@@ -323,7 +325,7 @@ $(PLASMOD_DIR)/e3m.o:
 $(PLASMOD_DIR)/equil.o: $(PLASMOD_DIR)/grad_func.o
 $(PLASMOD_DIR)/grad_func.o: 
 $(PLASMOD_DIR)/structs.o:
-$(PLASMOD_DIR)/transport_solver.o: $(PLASMOD_DIR)/grad_func.o $(PLASMOD_DIR)/structs.o
+$(PLASMOD_DIR)/transport_solver.o: physics_functions.o $(PLASMOD_DIR)/grad_func.o $(PLASMOD_DIR)/structs.o
 $(PLASMOD_DIR)/trmodel.o: $(PLASMOD_DIR)/grad_func.o
 
 process.exe: $(OBJ)

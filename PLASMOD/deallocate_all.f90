@@ -1,3 +1,5 @@
+!deallocate all radial profiles
+
   if (allocated(radp%ne))    deallocate ( radp%ne )
   if (allocated(radp%Ti))       deallocate ( radp%Ti )
   if (allocated(radp%Te))       deallocate ( radp%Te )
@@ -12,6 +14,9 @@
   if (allocated(radp%g3))       deallocate ( radp%g3 )
   if (allocated(radp%vp))       deallocate ( radp%vp )
   if (allocated(radp%palph))       deallocate ( radp%palph )
+  if (allocated(radp%k))       deallocate ( radp%k )
+  if (allocated(radp%shif))       deallocate ( radp%shif )
+  if (allocated(radp%d))       deallocate ( radp%d )
   if (allocated(radp%cc))       deallocate ( radp%cc )
   if (allocated(radp%nions))       deallocate ( radp%nions )
   if (allocated(radp%psi))       deallocate ( radp%psi )

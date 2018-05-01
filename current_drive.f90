@@ -115,7 +115,7 @@ contains
     ! Local variables !
     !!!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: dene20,effnbss,effofss,effrfss,fpion, &
+    real(kind(1.0D0)) :: dene20,effnbss,effofss,effrfss, &
          gamnb,gamof,gamrf,power1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -235,35 +235,44 @@ contains
 
        case (5,8)  ! NBCD
 
+  
+             
           ! MDK. See Gitlab issue #248, and scanned note.
           power1 = 1.0D-6 * faccd * plascur / effnbss + pheat
-
+          
           ! Account for first orbit losses
           ! (power due to particles that are ionised but not thermalised) [MW]:
           ! This includes a second order term in shinethrough*(first orbit loss)
           forbitloss = min(0.999,forbitloss) ! Should never be needed
-          pnbitot = power1 / (1.0D0-forbitloss+forbitloss*nbshinef)
-
+          
+          if(ipedestal.ne.3)then  ! When not using PLASMOD
+             pnbitot = power1 / (1.0D0-forbitloss+forbitloss*nbshinef)
+          else
+             ! Netural beam power calculated by PLASMOD
+             pnbitot = pinjmw / (1.0D0-forbitloss+forbitloss*nbshinef)
+          endif
+          
           ! Shinethrough power (atoms that are not ionised) [MW]:
           nbshinemw = pnbitot * nbshinef
-
+          
           ! First orbit loss
           porbitlossmw = forbitloss * (pnbitot - nbshinemw)
-
+          
           ! Power deposited
           pinjmw = pnbitot - nbshinemw - porbitlossmw
           pinjimw = pinjmw * fpion
           pinjemw = pinjmw * (1.0D0-fpion)
+             
 
-          ! neutral beam wall plug power
-          pwpnb = pnbitot/etanbi
+
+          pwpnb = pnbitot/etanbi ! neutral beam wall plug power
           pinjwp = pwpnb
           etacd = etanbi
           gamnb = effnbss * (dene20 * rmajor)
           gamcd = gamnb
+          cnbeam = 1.0D-3 * (pnbitot*1.0D6) / enbeam !  Neutral beam current (A)
 
-          !  Neutral beam current (A)
-          cnbeam = 1.0D-3 * (pnbitot*1.0D6) / enbeam
+!	  write(*,*) power1,fpion,pwpnb,pinjwp,etacd,gamnb,gamcd,cnbeam        
 
        case (9)  ! OFCD
           ! RFP option removed in PROCESS (issue #508)

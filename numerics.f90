@@ -99,7 +99,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 145
+  integer, parameter :: ipnvars = 146
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 77
   !+ad_vars  ipnfoms FIX : number of available figures of merit
@@ -654,11 +654,13 @@ module numerics
        'fcqt          ', &
        !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
        'nesep         ', &
-       !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75) </UL>
+       !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75)
        'f_copperA_m2  ', &
        !+ad_varc  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]
        'fnesep        ', &
-       !+ad_varc  <LI> (145) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)</UL>
+       !+ad_varc  <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density
+       'fgwped        ', &
+       !+ad_varc  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)</UL>
        'fnesep        ' &
        /)
 
@@ -822,7 +824,8 @@ module numerics
        1.00D17, &  !  142
        0.001D0, &  !  143
        0.001D0, &  !  144
-       0.001D0 &   !  145
+       0.500D0, &  !  145
+       0.001D0 &   !  146
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -972,7 +975,8 @@ module numerics
        1.00D20, &  !  142
        1.000D0, &  !  143
        1.000D0, &  !  144
-       1.000D0  &  !  145
+       1.000D0, &  !  145
+       1.000D0  &  !  146
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

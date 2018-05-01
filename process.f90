@@ -232,7 +232,7 @@ subroutine init
   open(unit=nout,file=trim(fileprefix)//'OUT.DAT',status='unknown')
   open(unit=nplot,file=trim(fileprefix)//'PLOT.DAT',status='unknown')
   open(unit=mfile,file=trim(fileprefix)//'MFILE.DAT',status='unknown')
-
+  
   !  Input any desired new initial values
   call input
 
@@ -1041,7 +1041,7 @@ subroutine doopt(ifail)
   use process_output
   use process_input
   ! for ipedestal = 2 option
-  use plasmod_variables
+  !use plasmod_variables
   use plasmod_module
 
   implicit none
@@ -1490,7 +1490,7 @@ subroutine output(outfile)
   use physics_module
   use physics_variables
   use plasmod_module
-  use plasmod_variables
+  !use plasmod_variables
   use power_module
   use pulse_module
   use sctfcoil_module
@@ -1579,7 +1579,7 @@ subroutine output(outfile)
 
   ! TODO what is this? Not in caller.f90?
   call cudriv(outfile,1)
-
+  
   ! Pulsed reactor model !
   !!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1712,6 +1712,7 @@ subroutine output(outfile)
   call power3(nout,1)
 
 end subroutine output
+
 
 subroutine runtests
   use maths_library

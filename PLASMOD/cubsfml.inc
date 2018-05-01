@@ -1,5 +1,7 @@
+!Bootstrap current calculation
+
               !cubsfml!!
-              zz = zeff
+              zz = zepff
 
               zft = tpf
               zdf = 1.0d0 + (1.0d0 - 0.1d0*zft) * sqrt(nues)
@@ -59,7 +61,7 @@
               dpsi = gradient1(psi)/hro
 
                cubb=0.5d0*(dcsa*dlogne+hcsa*dlogte+xcsa*dlogti)
- cubb=-btor/(0.2d0*pi*rtor)*rho*mux*cubb
+ cubb=-btor/(0.2d0*pi_g*rtor)*rho*mux*cubb !cubb is Jbs in MA/m^2
 
               ! end of cubsfml
 

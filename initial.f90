@@ -219,6 +219,7 @@ subroutine check
     use numerics
     use pfcoil_variables
     use physics_variables
+    use plasmod_variables
     use process_output
     use pulse_variables
     use tfcoil_variables
@@ -297,11 +298,6 @@ subroutine check
         end do
     end if
 
-    !  Set relevant impurity fraction if iteration variable 102 is turned on
-
-    !if ( any(ixc == 102) ) then
-    ! impurity_arr(impvar)%frac = fimpvar
-    !end if
 
     !  Warn if ion power balance equation is being used with the new radiation model
 
@@ -372,8 +368,8 @@ subroutine check
             write(*,*)'Set dene = neped*1.001D0 '
             dene = neped*1.001D0
             call report_error(154)
-        end if
-
+         end if
+         
         if ((ioptimz >= 0).and.(any(ixc == 6)).and.(boundl(6) < neped*1.001D0)) then
             call report_error(155)
             write(*,*)'dene = ', dene, 'boundl(6) = ', boundl(6), '  neped = ', neped
@@ -383,35 +379,139 @@ subroutine check
         end if
 
      end if
-
-     if(ipedestal == 2 .or. ipedestal == 3) then
-        if (fgwped < 0 )then
-           call report_error(176)
-        endif
-        if (fgwsep < 0 ) then
-           call report_error(177)
-        endif
-     endif
-
+     
+     
      ! Cannot use Psep/R and PsepB/qAR limits at the same time
      if(any(icc == 68) .and. any(icc == 56)) then
         call report_error(178)
      endif
+     
 
-     !need to enforce H-mode using Martin scaling, if using PLASMOD
-     if ((ipedestal == 2).or. (ipedestal==3)) then
-        if(.not. any(icc == 15)) then
-           call report_error(179)
+     if(ipedestal == 2 .or. ipedestal == 3) then
+
+        !PLASMOD automatically takes both pseprmax and psepbqarmax as input
+        !It uses which ever one leads to the lower Psep value. Not to use
+        !one of them set them to a very large number
+        call report_error(199)
+        
+        if (fgwped .le. 0 )then
+           call report_error(176)
+        endif
+        if (fgwsep .le. 0 ) then
+           call report_error(177)
         endif
 
-        if (ilhthresh .ne. 6) then
-           call report_error(180)
-        endif
+
+        !need to enforce H-mode using Martin scaling, if using PLASMOD
+        !HL Todo: The L-H threshold is checked inside PLASMOD do we need to duplicate in PROCESS??
+        !if(.not. any(icc == 15)) then
+     !      call report_error(179)
+        !endif
 
         if (boundl(103) < 1.) then
            call report_error(181)
         endif
+        
+        ! Initialise value for gamcd for use in PLASMOD first iteration
+        gamcd = 0.3
 
+
+        ! PLASMOD only uses the core radiation for the H-factor correction.
+        ! It calculates the power balance using the total radiation.
+        if(iradloss .ne. 0) then
+           call report_error(184)
+        endif
+
+        ! Mutually exclusive variables - issue #632
+        if ((plasmod_contrpovs.ne.0).and.(plasmod_contrpovr.ne.0))then
+           call report_error(187)
+        endif
+
+        !kappa95 and triang95 are input to PLASMOD
+        !kappa and triang are calculated
+        if (ishape .ne. 4) then
+           call report_error(196)
+        endif
+
+        !PLASMOD uses its own NBI current drive routine
+        if (.not.((iefrf == 5) .or. (iefrf == 8)) )then
+           call report_error(197)
+        endif
+
+
+        !PLASMOD always uses current drive
+        if(irfcd == 0) then
+           call report_error(198)
+        endif
+
+       
+     endif
+
+     if ((any(ixc==145)) .and. (boundl(145) < fgwsep)) then  !if lower bound of fgwped < fgwsep
+        fdiags(1) = boundl(145); fdiags(2) = fgwsep
+        call report_error(186)
+     end if
+
+     if(ipedestal==3)then
+        ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
+        ! These are outputs of PLASMOD
+        ! ixc(4) = te, ixc(5) = beta, ixc(6) = dene, ixc(9) = fdene,
+        ! ixc(102) = fimpvar, ixc(103) = flhthresh, ixc(109) = ralpne,
+        ! ixc(110) = ftaulimit, ixc(44) = fvsbrnni
+        if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or. &
+             (ixc==102).or.(ixc==103).or.(ixc==109).or.(ixc==110)&
+             .or.(ixc==44)))then
+           call report_error(182)
+        endif
+
+        !as beta is an output of PLASMOD, its consistency does not need to be enforced
+        if(any(icc == 1)) then
+           call report_error(188)
+        endif
+           
+        ! density limit cannot be used with PLASMOD use fgwsep and/or fgwped instead.
+        if (any(icc==9)) then
+           call report_error(183)
+        endif
+
+        ! The global power balance cannot be enforced when running PLASMOD
+        ! PROCESS cannot vary any of the relevant inputs as these are all
+        ! outputs of PLASMOD issue #631
+        if (any(icc == 2)) then
+           call report_error(185)
+        endif
+
+
+
+        if (plasmod_i_equiltype == 2) then
+
+           !Warning, this is a not recommended option
+           !operation is inconsistent with PROCESS.
+           call report_error(189)
+
+           !cannot use q as iteration variable, if plasma current is input for EMEQ
+           if (any(ixc == 18)) then
+              call report_error(190)
+           endif           
+        endif
+
+        !plasmod_i_modeltype = 1 enforces a given H-factor
+        !plasmod_i_modeltype > 1 calculates transport from the transport models
+        if (plasmod_i_modeltype > 1) then
+
+           !beta limit is enforced inside PLASMOD
+           !icc(6)  eps * betap upper limit
+           !ixc(8)  fbeta
+           !icc(24) beta upper limit
+           !ixc(36) fbetatry
+           !icc(48) poloidal beta upper limit
+           !ixc(79) fbetap
+           if (any((icc == 6) .or. (icc == 24) .or. (icc==48) ) .or. any((ixc == 8) .or.(ixc==36) .or. (ixc==79))) then
+              call report_error(191)
+           endif
+           
+        endif
+        
      endif
      
 
@@ -574,12 +674,8 @@ subroutine check
         tmargmin_cs = tmargmin
      end if
 
-     ! Initialise value for gamcd for use in PLASMOD first iteration
-     if(ipedestal==2)then
-        gamcd = 0.3
-     endif
 
-
+     
     errors_on = .false.
 
 end subroutine check

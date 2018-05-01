@@ -103,6 +103,20 @@ def is_bound(name):
     """
     return "bound" in name
 
+def is_array(name):
+    """ Function to determine if item is an array
+
+    :param name: Name of the variable
+    :return: True/False if name is of an array
+    """
+    if '(' in name:
+        name = name.split('(')[0]
+
+    try:
+        return "array" in DICT_VAR_TYPE[name]
+    except KeyError:
+        #print("Warning:", name, "is not in DICT_VAR_TYPE")
+        return False
 
 def find_line_type(line):
     """ Function to find line type
@@ -134,16 +148,13 @@ def find_line_type(line):
     elif is_bound(name):
         return "Bound"
 
+    # Else all other arrays
+    elif is_array(name):
+        return "Array"
+
     # Else the line contains an regular parameter
     else:
-        if "fimp(" in name:
-            return "fimp"
-        elif "zref(" in name:
-            return "zref"
-        elif "impurity_enrichment(" in name:
-            return "impurity_enrichment"
-        else:
-            return "Parameter"
+        return "Parameter"
 
 
 def find_parameter_group(name):
@@ -274,8 +285,10 @@ def process_bound(data, line):
     data["bounds"].value[bound][bound_type] = bound_value
 
 
-def process_fimp(data, line):
-    """Function to process fimp array
+
+
+def process_array(data, line):
+    """Function to process generic array
 
     :param data: Data dictionary for the IN.DAT information
     :param line: Line from IN.DAT to process
@@ -283,50 +296,17 @@ def process_fimp(data, line):
     """
 
     if "*" in line:
-        fimp_comment = line.split("*")[1]
+        array_comment = line.split("*")[1]
         line_commentless = line.split("*")[0]
     else:
         line_commentless = line
 
-    fimp_index = int(line_commentless.split("(")[1].split(")")[0]) - 1
-    fimp_value = eval(line_commentless.split("=")[-1].replace(",", ""))
-    data["fimp"].value[fimp_index] = fimp_value
+    name  = line_commentless.split("(")[0]
+    index = int(line_commentless.split("(")[1].split(")")[0]) - 1
+    value = line_commentless.split("=")[-1].replace(",", "")
 
+    data[name].value[index] = eval(fortran_python_scientific(value))
 
-def process_zref(data, line):
-    """ Function to process zref array
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line: Line from IN.DAT to process
-    :return: nothing
-    """
-
-    if "*" in line:
-        zref_comment = line.split("*")[1]
-        line_commentless = line.split("*")[0]
-    else:
-        line_commentless = line
-    zref_index = int(line_commentless.split("(")[1].split(")")[0]) - 1
-    zref_value = eval(line_commentless.split("=")[-1].replace(",", ""))
-    data["zref"].value[zref_index] = zref_value
-
-
-def process_enrichment(data, line):
-    """ Function to process impurity_enrichment array
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line: Line from IN.DAT to process
-    :return: nothing
-    """
-
-    if "*" in line:
-        imp_rich_comment = line.split("*")[1]
-        line_commentless = line.split("*")[0]
-    else:
-        line_commentless = line
-    imp_rich_index = int(line_commentless.split("(")[1].split(")")[0]) - 1
-    imp_rich_value = eval(line_commentless.split("=")[-1].replace(",", ""))
-    data["impurity_enrichment"].value[imp_rich_index] = imp_rich_value
 
 
 def process_parameter(data, line):
@@ -388,44 +368,6 @@ def process_line(data, line_type, line):
         data["bounds"] = INVariable("bounds", dict(), "Bound",
                                     "Bound", "Bounds")
 
-    # Create a fimp variables class using INVariable class if the fimp entry
-    # doesn't exist
-    if "fimp" not in data.keys():
-        empty_fimp = DICT_DEFAULT['fimp']
-        parameter_group = find_parameter_group("fimp")
-
-        # Get parameter comment/description from dictionary
-        comment = DICT_DESCRIPTIONS["fimp"].replace(",", ";").\
-            replace(".", ";").replace(":", ";")
-
-        data["fimp"] = INVariable("fimp", empty_fimp, "fimp", parameter_group,
-                                  comment)
-
-    # Create a zref variable class using INVariable class if the zref entry
-    # doesn't exist
-    if "zref" not in data.keys():
-        empty_zref = DICT_DEFAULT['zref']
-        parameter_group = find_parameter_group("zref")
-
-        # Get parameter comment/description from dictionary
-        comment = DICT_DESCRIPTIONS["zref"].replace(",", ";").\
-            replace(".", ";").replace(":", ";")
-
-        data["zref"] = INVariable("zref", empty_zref, "zref", parameter_group,
-                                  comment)
-
-    # Create a impurity_enrichment variable class using INVariable class if entry
-    # doesn't exist
-    if "impurity_enrichment" not in data.keys():
-        empty_imp = [0]*14
-        parameter_group = find_parameter_group("impurity_enrichment")
-
-        # Get parameter comment/description from dictionary
-        comment = DICT_DESCRIPTIONS["impurity_enrichment"].replace(",", ";").\
-            replace(".", ";").replace(":", ";")
-
-        data["impurity_enrichment"] = INVariable("impurity_enrichment",
-            empty_imp, "impurity_enrichment", parameter_group, comment)
 
     # Constraint equations
     if line_type == "Constraint Equation":
@@ -439,18 +381,28 @@ def process_line(data, line_type, line):
     elif line_type == "Bound":
         process_bound(data, line)
 
-    # fimp
-    elif line_type == "fimp":
-        process_fimp(data, line)
+    # Arrays
+    elif line_type == "Array":
+        
+        #Create geneneric array variable class using INVariable class,
+        #if it does not yet exist
+        line_commentless = line.split("*")[0]
+        array_name = line_commentless.split("(")[0]
+        if array_name not in data.keys():
+            empty_array = DICT_DEFAULT[array_name]
+            parameter_group = find_parameter_group(array_name)
 
-    # zref
-    elif line_type == "zref":
-        process_zref(data, line)
+            # Get parameter comment/description from dictionary
+            comment = DICT_DESCRIPTIONS[array_name].replace(",", ";").\
+                      replace(".", ";").replace(":", ";")
+            
+            data[array_name] = INVariable(array_name, empty_array, array_name,
+                                          parameter_group, comment)
 
-    # impurity_enrichment
-    elif line_type == "impurity_enrichment":
-        process_enrichment(data, line)
-
+        
+        process_array(data, line)
+        
+        
     # Parameter
     else:
         process_parameter(data, line)
@@ -746,40 +698,28 @@ def remove_parameter(data, parameter_name):
         print("Parameter {0} not in IN.DAT".format(parameter_name))
 
 
-def change_fimp(data, fimp_id, fimp_val):
-    """Function to change value in fimp array
+
+        
+
+def change_array(data, name, array_id, array_val):
+    """Function to change value in generic array
 
     :param data: Data dictionary for the IN.DAT information
-    :param fimp_id: impurity fraction array index
-    :param fimp_val: new impurity fraction array value
+    :param name: generic array name
+    :param array_id: generic array index
+    :param array_val: generic array value
     :return:
     """
-    data["fimp"].value[fimp_id] = fimp_val
-    if type(data["fimp"].value[fimp_id]) == str:
-        tmp_fimp = list(data["fimp"].value.split(","))
-        tmp_fimp[fimp_id] = fimp_val
-        new_fimp = str(tmp_fimp).strip("[").strip("]").replace("'", "")
-        data["fimp"].value = new_fimp
+    
+    data[name].value[array_id] = array_val
+    if type(data[name].value[array_id]) == str:
+        tmp = list(data[name].value.split(","))
+        tmp[array_id] = array_val
+        new_val = str(tmp).strip("[").strip("]").replace("'", "")
+        data[name].value = new_val
     else:
-        data["fimp"].value[fimp_id] = fimp_val
+        data[name].value[array_id] = array_val
 
-
-def change_zref(data, zref_id, zref_val):
-    """Function to change value in zref array
-
-    :param data: Data dictionary for the IN.DAT information
-    :param zref_id: zref array index
-    :param zref_val: new zref array value
-    :return:
-    """
-
-    if type(data["zref"].value[zref_id]) == str:
-        tmp_zref = list(data["zref"].value.split(","))
-        tmp_zref[zref_id] = zref_val
-        new_zref = str(tmp_zref).strip("[").strip("]").replace("'", "")
-        data["zref"].value = new_zref
-    else:
-        data["zref"].value[zref_id] = zref_val
 
 
 def add_bound(data, bound, bound_type, bound_value):
@@ -1158,27 +1098,19 @@ class InDat(object):
         # add/change parameter to/in IN.DAT data dictionary
         add_parameter(self.data, parameter_name, parameter_value)
 
-    def change_fimp(self, fimp_index, fimp_value):
+
+    def change_array(self, array_name, array_index, array_value):
         """Function to change value of an impurity fraction
 
-        :param fimp_index: index of impurity fraction array to change
-        :param fimp_value: value to change impurity fraction to
+        :param array_name: name of generic array to change
+        :param array_index: index of generic array to change
+        :param array_value: value to change array entry to
         :return:
         """
 
-        # change impurity fraction value in IN.DAT data dictionary
-        change_fimp(self.data, fimp_index, fimp_value)
+        # change generic array value in IN.DAT data dictionary
+        change_array(self.data, array_name, array_index, array_value)
 
-    def change_zref(self, zref_index, zref_value):
-        """Function to change value of zref
-
-        :param zref_index: index of zref to change
-        :param zref_value: value to change zref entry to
-        :return:
-        """
-
-        # change zref value in IN.DAT data dictionary
-        change_zref(self.data, zref_index, zref_value)
 
     def remove_parameter(self, parameter_name):
         """ Function to remove parameter from IN.DAT data dictionary

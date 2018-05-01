@@ -1,6 +1,6 @@
 
 *--------------------------------------------------*
-
+verbose=1
 
 *---------------Constraint Equations---------------*
 
@@ -296,7 +296,7 @@ ifispact = 0 * Switch for neutronics calculations;
 iinvqd   = 1 * Switch for inverse quadrature in l-mode scaling laws 5 and 9;
 impc     = 0. * Carbon impurity multiplier (imprad_model=0 only)
 impo     = 0. * Oxygen impurity multiplier (imprad_model=0 only)
-ipedestal = 2 * Switch for pedestal profiles;
+ipedestal = 1 * Switch for pedestal profiles;
 iscdens  = 1 * Switch for pedestal profiles;
 ieped    = 1 * Switch for scaling pedestal-top temperature with plasma parameters;
 neped    = 0.678e20 * Electron density of pedestal [m-3] (ipedestal=1)

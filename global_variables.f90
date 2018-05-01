@@ -201,6 +201,7 @@ module physics_variables
   !+ad_vars  beamfus0 /1.0/ : multiplier for beam-background fusion calculation
   real(kind(1.0D0)) :: beamfus0 = 1.0D0
   !+ad_vars  beta /0.042/ : total plasma beta (iteration variable 5)
+  !+ad_varc             (calculated if ipedestal =3)
   real(kind(1.0D0)) :: beta = 0.042D0
   !+ad_vars  betaft : fast alpha beta component
   real(kind(1.0D0)) :: betaft = 0.0D0
@@ -237,6 +238,7 @@ module physics_variables
   !+ad_varc                  (constraint equation 23)
   real(kind(1.0D0)) :: cwrmax = 1.35D0
   !+ad_vars  dene /9.8e19/ : electron density (/m3) (iteration variable 6)
+  !+ad_varc                  (calculated if ipedestal=3)
   real(kind(1.0D0)) :: dene = 9.8D19
   !+ad_vars  deni : fuel ion density (/m3)
   real(kind(1.0D0)) :: deni = 0.0D0
@@ -299,6 +301,7 @@ module physics_variables
   !+ad_vars  fgwped /0.85/ : fraction of Greenwald density to set as pedestal-top density
   !+ad_varc                  If <0, pedestal-top density set manually using neped (ipedestal>=1)
   !+ad_varc                  Needs to be >0 if ipedestal = 3
+  !+ad_varc                  (iteration variable 145)
   real(kind(1.0D0)) :: fgwped = 0.85D0
   !+ad_vars  fgwsep /0.50/ : fraction of Greenwald density to set as separatrix density
   !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal>=1)
@@ -331,7 +334,10 @@ module physics_variables
   !+ad_vars  hfac(ipnlaws) : H factors for an ignited plasma for each energy confinement
   !+ad_varc                  time scaling law
   real(kind(1.0D0)), dimension(ipnlaws) :: hfac = 0.0D0
-  !+ad_vars  hfact /1.0/ : H factor on energy confinement times (iteration variable 10)
+  !+ad_vars  hfact /1.0/ : H factor on energy confinement times, radiation corrected
+  !+ad_varc                (iteration variable 10).
+  !+ad_varc                If ipedestal=2 or 3 and hfact = 0, not used in PLASMOD
+  !+ad_varc                (see also plasmod_i_modeltype)
   real(kind(1.0D0)) :: hfact = 1.0D0
   ! Issue #219
   !+ad_vars  taumax /10/ : Maximum allowed energy confinement time (s)
@@ -410,6 +416,7 @@ module physics_variables
   !+ad_vars  ieped /0/ : switch for scaling pedestal-top temperature with plasma parameters:<UL>
   !+ad_varc             <LI> = 0 set pedestal-top temperature manually using teped;
   !+ad_varc             <LI> = 1 set pedestal-top temperature using EPED scaling;
+  !+ad_varc                   (PLASMOD implementation of scaling within PLASMOD, ipedestal =2,3) 
   !+ad_varc             <LI>    https://idm.euro-fusion.org/?uid=2MSZ4T </UL>
   integer :: ieped = 0
 
@@ -439,7 +446,7 @@ module physics_variables
   !+ad_varc                      (recommendation: use icurr=4 with this option) </UL>
   integer :: iprofile = 1
   !+ad_vars  iradloss /1/ : switch for radiation loss term usage in power balance (see User Guide):<UL>
-  !+ad_varc             <LI> = 0 total power lost is scaling power plus radiation
+  !+ad_varc             <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
   !+ad_varc             <LI> = 1 total power lost is scaling power plus core radiation only
   !+ad_varc             <LI> = 2 total power lost is scaling power only, with no additional
   !+ad_varc                      allowance for radiation. This is not recommended for power plant models.</UL>
@@ -685,6 +692,7 @@ module physics_variables
   !+ad_vars  qstar : cylindrical safety factor
   real(kind(1.0D0)) :: qstar = 0.0D0
   !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
+  !+ad_varc            (calculated if ipedestal=3)
   real(kind(1.0D0)) :: ralpne = 0.10D0
   !+ad_vars  protium /0.0/ : Seeded protium density / electron density.
   real(kind(1.0D0)) :: protium = 0.0D0
@@ -740,6 +748,7 @@ module physics_variables
 
   !+ad_vars  te /12.9/ : volume averaged electron temperature (keV)
   !+ad_varc              (iteration variable 4)
+  !+ad_varc              (calculated if ipedestal = 3)
   real(kind(1.0D0)) :: te = 12.9D0
   !+ad_vars  te0 : central electron temperature (keV)
   real(kind(1.0D0)) :: te0 = 0.0D0
@@ -815,53 +824,65 @@ module plasmod_variables
   public
   
  !Derived type numerics_transp 
-  !+ad_vars  plasmod_tol /0.00001d0/ : Tolerance to be reached, in % variation at each time step
-  real(kind(1.0D0)) :: plasmod_tol = 0.00001d0
-  !+ad_vars  plasmod_dtmin /0.01d0/ : Min time step
-  real(kind(1.0D0)) :: plasmod_dtmin = 0.01d0
-  !+ad_vars  plasmod_dtmax /0.1d0/ : Max time step
+  !+ad_vars  plasmod_tol /1.0d-10/ : tolerance to be reached at each time step (%)
+  real(kind(1.0D0)) :: plasmod_tol = 1.0d-10
+  !+ad_vars  plasmod_dtmin /0.05d0/ : min time step
+  real(kind(1.0D0)) :: plasmod_dtmin = 0.05d0
+  !+ad_vars  plasmod_dtmax /0.1d0/ : max time step
   real(kind(1.0D0)) :: plasmod_dtmax = 0.1d0
-  !+ad_vars  plasmod_dt /0.01d0/ : Time step
+  !+ad_vars  plasmod_dt /0.01d0/ : time step
   real(kind(1.0D0)) :: plasmod_dt = 0.01d0
-  !+ad_vars  plasmod_dtinc /2.0d0/ : Decrease of dt
+  !+ad_vars  plasmod_dtinc /2.0d0/ : decrease of dt
   real(kind(1.0D0)) :: plasmod_dtinc = 2.0d0
-  !+ad_vars  plasmod_ainc /1.1d0/ : Increase of dt
+  !+ad_vars  plasmod_ainc /1.1d0/ : increase of dt
   real(kind(1.0D0)) :: plasmod_Ainc = 1.1d0
-  !+ad_vars  plasmod_test /100000.0d0/ : Max iteration number
-  real(kind(1.0D0)) :: plasmod_test = 100000.0d0
-  !+ad_vars  plasmod_tolmin /10.1d0/ : Multiplier of etolm that should not be overcome
+  !+ad_vars  plasmod_test /100000.0d0/ : max number of iterations
+  real(kind(1.0D0)) :: plasmod_test = 1000000.0d0
+  !+ad_vars  plasmod_tolmin /10.1d0/ : multiplier of etolm which can not be exceeded
   real(kind(1.0D0)) :: plasmod_tolmin = 10.1d0
-  !+ad_vars  plasmod_eopt /0.1d0/ : Exponent of jipperdo
-  real(kind(1.0D0)) :: plasmod_eopt = 0.1d0
-  !+ad_vars  plasmod_dtmaxmin /0.1d0/ : Exponent of jipperdo2
-  real(kind(1.0D0)) :: plasmod_dtmaxmin = 0.1d0
-  !+ad_vars  plasmod_capa /0.1d0/ : First radial grid point
+  !+ad_vars  plasmod_eopt /0.15d0/ : exponent of jipperdo
+  real(kind(1.0D0)) :: plasmod_eopt = 0.15d0
+  !+ad_vars  plasmod_dtmaxmin /0.15d0/ : exponent of jipperdo2
+  real(kind(1.0D0)) :: plasmod_dtmaxmin = 0.15d0
+  !+ad_vars  plasmod_dtmaxmax /0.0d0/ : stabilizing coefficient
+  real(kind(1.0D0)) :: plasmod_dtmaxmax = 0.0d0
+  !+ad_vars  plasmod_capa /0.1d0/ : first radial grid point
   real(kind(1.0D0)) :: plasmod_capA = 0.1d0
-  !+ad_vars  plasmod_maxa /0.0d0/ : Diagz 0 or 1
+  !+ad_vars  plasmod_maxa /0.0d0/ : diagz 0 or 1
   real(kind(1.0D0)) :: plasmod_maxA = 0.0d0
   !+ad_vars  plasmod_dgy /1.0d-5/ : Newton differential
   real(kind(1.0D0)) :: plasmod_dgy = 1.0d-5
-  !+ad_vars  plasmod_i_modeltype /1/ : 1 - Simple gyrobohm scaling
+
+  !+ad_vars  plasmod_i_modeltype /1/ : swithc for the transport model <UL>
+  !+ad_varc  <LI> 1 - Simple gyrobohm scaling with imposed
+  !+ad_varc  H factor > 1. Other values give H factor as output
+  !+ad_varc  <LI> 111 - roughly calibrated to give H=1 for DEMO, but not fixed H </UL>
   integer :: plasmod_i_modeltype = 1
-  !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+
+  !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve with sawteeth and inputted q95.
+  !+ad_varc  2 - EMEQ, solve with sawteeth and inputted Ip (not recommended!).
   integer :: plasmod_i_equiltype = 1
-  !+ad_vars  plasmod_nx /41/ : Number of interpolated grid points
+
+  !+ad_vars  plasmod_isawt /1/ : 0 - no sawteeth, 1 - solve with sawteeth.
+  integer :: plasmod_isawt = 1
+  
+  !+ad_vars  plasmod_nx /41/ : number of interpolated grid points
   integer :: plasmod_nx = 41
-  !+ad_vars  plasmod_nxt /7/ : Number of reduced grid points
+  !+ad_vars  plasmod_nxt /7/ : number of solved grid points
   integer :: plasmod_nxt = 7
-  !+ad_vars  plasmod_nchannels /3/ : Leave this at 3
+  !+ad_vars  plasmod_nchannels /3/ : leave this at 3
   integer :: plasmod_nchannels = 3
-  !+ad_vars  plasmod_i_impmodel /1/ : Impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
+  !+ad_vars  plasmod_i_impmodel /1/ : impurity model: 0 - fixed concentration,
+  !+ad_varc  1 - fixed concentration at pedestal top, then fixed density.
   integer :: plasmod_i_impmodel = 1
 
  !Derived type composition 
-  !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
-  real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 5.0d0, 5.0d0, 1.0d0 /)
-  !+ad_vars  plasmod_c_car /100.0d0/ : compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
-  real(kind(1.0D0)) :: plasmod_c_car = 100.0d0
+  !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 7.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
+  !+ad_varc  (NOT used for Xe!)
+  real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 7.0d0, 5.0d0, 1.0d0 /)
   !+ad_vars  plasmod_psepplh_sup /12000.0d0/ : Psep/PLH if above this, use Xe
   real(kind(1.0D0)) :: plasmod_psepplh_sup = 12000.0d0
-  !+ad_vars  plasmod_qdivt /0.0d0/ : Divertor heat flux in MW/m^2, if 0, dont use SOL model
+  !+ad_vars  plasmod_qdivt /0.0d0/ : divertor heat flux in MW/m^2, if 0, dont use SOL model
   real(kind(1.0D0)) :: plasmod_qdivt = 0.0d0  
   
  !Derived type inputs
@@ -871,32 +892,50 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_cxe_psepfac = 1.0d-4
   !+ad_vars  plasmod_car_qdivt /1.0d-4/ : dcar/d(qdivt)
   real(kind(1.0D0)) :: plasmod_car_qdivt = 1.0d-4
+  !+ad_vars  plasmod_maxpauxor /20.0d0/ : max allowed auxiliary power / R
+  real(kind(1.0D0)) :: plasmod_maxpauxor = 20.0d0
     !deposition locations
-  !+ad_vars  plasmod_x_heat(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_x_heat(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_heat = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_x_cd(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_x_cd(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_cd = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_x_fus(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_x_fus(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_fus = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_x_control(2) /0.0d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_x_control(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_control = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_dx_heat(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_dx_heat(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_heat = (/ 0.2d0, 0.03d0 /)
-  !+ad_vars  plasmod_dx_cd(2) /0.2d0, 0.03/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_dx_cd(2) /0.2d0, 0.03/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_cd = (/ 0.2d0, 0.03d0 /)
-  !+ad_vars  plasmod_dx_fus(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_dx_fus(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_fus = (/ 0.2d0, 0.03d0 /)
-  !+ad_vars  plasmod_dx_control(2) /0.2d0, 0.03d0/ : Element 1 - nbi, element 2 - ech
+  !+ad_vars  plasmod_dx_control(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_control = (/ 0.2d0, 0.03d0 /)
-
+  !+ad_vars  plasmod_contrpovs /0.0d0/ :: control power in Paux/lateral_area (MW/m2)
+  real(kind(1.0D0)) :: plasmod_contrpovs = 0.0d0
+  !+ad_vars  plasmod_contrpovr /0.0d0/ :: control power in Paux/R (MW/m)
+  real(kind(1.0D0)) :: plasmod_contrpovr = 0.0d0
   !+ad_vars  plasmod_nbi_energy /1000.0d0/ :: In keV
   real(kind(1.0D0)) :: plasmod_nbi_energy = 1000.0d0
-  !+ad_vars  plasmod_v_loop /-1.0d-6/ :: Target loop voltage. If lower than -1.e5 do not use
+  !+ad_vars  plasmod_v_loop /-1.0d-6/ :: target loop voltage. If lower than -1.e5 do not use
   real(kind(1.0D0)) :: plasmod_v_loop = -1.0d-6
-  !+ad_vars  plasmod_f_ni /0.0d0/ :: Required fraction of non inductive current. If 0 do not use CD
-  real(kind(1.0D0)) :: plasmod_f_ni = 0.0d0
-  !+ad_vars  plasmod_pfus /0.0d0/ :: If 0. not used (otherwise controlled with Pauxheat)
+  !+ad_vars  plasmod_pfus /0.0d0/ :: if 0. not used (otherwise controlled with Pauxheat)
   real(kind(1.0D0)) :: plasmod_pfus = 0.0d0
+  !+ad_vars  plasmod_eccdeff /0.3d0/ :: current drive multiplier: CD = eccdeff*PCD*TE/NE (not in use yet)
+  real(kind(1.0D0)) :: plasmod_eccdeff = 0.3d0
+  !+ad_vars  plasmod_pech /0.0d0/ :: ech power (not in use yet)
+  real(kind(1.0D0)) :: plasmod_pech = 0.0d0
+
+  !+ad_vars  plasmod_spellet /0.0d0/ :: pellet mass in units of D in 10^19
+  real(kind(1.0D0)) :: plasmod_spellet = 0.0d0
+  !+ad_vars  plasmod_fpellet /0.5d0/ :: pellet frequency in Hz
+  real(kind(1.0D0)) :: plasmod_fpellet = 0.5d0
+  
+  !Derived type pedestal
+  !+ad_vars  plasmod_pedscal /1.0d0/ :: multiplication factor of the pedestal scaling in PLASMOD
+  !+ad_varc                             can be used to scan the pedestal height.
+  real(kind(1.0D0)) :: plasmod_pedscal = 1.0d0
+
   
   !+ad_vars  geom ::  Derived type containing all geometry information for PLASMOD
   type (geometry) :: geom
@@ -999,6 +1038,8 @@ module current_drive_variables
   real(kind(1.0D0)) :: etalh = 0.3D0
   !+ad_vars  etanbi /0.3/ : neutral beam wall plug to injector efficiency
   real(kind(1.0D0)) :: etanbi = 0.3D0
+  !+ad_vars fpion  :  fraction of beam energy to ions
+  real(kind(1.0D0)) :: fpion = 0.5D0
   !+ad_vars  pnbitot : neutral beam power entering vacuum vessel
   real(kind(1.0D0)) :: pnbitot = 0.0D0
   !+ad_vars  nbshinemw : neutral beam shine-through power
@@ -1012,9 +1053,9 @@ module current_drive_variables
   real(kind(1.0D0)) :: frbeam = 1.05D0
   !+ad_vars  ftritbm /1.0e-6/ : fraction of beam that is tritium
   real(kind(1.0D0)) :: ftritbm = 1.0D-6
-  !+ad_vars  gamcd : normalised current drive efficiency (1.0e20 A/W-m2)
+  !+ad_vars  gamcd : normalised current drive efficiency (1.0e20 A/(W m^2))
   real(kind(1.0D0)) :: gamcd = 0.0D0
-  !+ad_vars  gamma_ecrh /0.35/ : user input ECRH gamma (1.0e20 A/W-m2)
+  !+ad_vars  gamma_ecrh /0.35/ : user input ECRH gamma (1.0e20 A/(W m^2))
   real(kind(1.0D0)) :: gamma_ecrh = 0.35D0
   !+ad_vars  iefrf /5/ : switch for current drive efficiency model: <OL>
   !+ad_varc         <LI> Fenstermacher Lower Hybrid
@@ -1125,7 +1166,8 @@ module divertor_kallenbach_variables
   ! real(kind(1.0D0)) :: helium_enrichment = 1.0D0
   ! real(kind(1.0D0)) :: impurity_enrichment = 5.0D0
 
-  !+ad_vars  impurity_enrichment(14) /5.0/ : Ratio of each impurity concentration in SOL to confined plasma
+  !+ad_vars  impurity_enrichment(14) /5.0/ : Ratio of each impurity concentration in SOL to confined plasma+
+  !+ad_varc the enrichment for Argon is also propagated for PLASMOD (ipedestal=3)
   real(kind(1.0D0)), dimension(14) :: impurity_enrichment = 5.0D0
 
   !+ad_vars  psep_kallenbach : Power conducted through the separatrix, as calculated by the divertor model [W]
@@ -3853,13 +3895,14 @@ module constraint_variables
   !+ad_varc                   (constraint equation 24, iteration variable 36)
   real(kind(1.0D0)) :: fbetatry = 1.0D0
   !+ad_vars  fcpttf /1.0/ : f-value for TF coil current per turn upper limit
-  !+ad_varc               (constraint equation 77, iteration variable 145)
+  !+ad_varc               (constraint equation 77, iteration variable 146)
   real(kind(1.0D0)) :: fcpttf = 1.0D0
   !+ad_vars  fcwr /1.0/ : f-value for conducting wall radius / rminor limit
   !+ad_varc               (constraint equation 23, iteration variable 104)
   real(kind(1.0D0)) :: fcwr = 1.0D0
   !+ad_vars  fdene /1.0/ : f-value for density limit
   !+ad_varc                (constraint equation 5, iteration variable 9)
+  !+ad_varc                (invalid if ipedestal = 3)
   real(kind(1.0D0)) :: fdene = 1.0D0
   !+ad_vars  fdivcol /1.0/ : f-value for divertor collisionality
   !+ad_varc                  (constraint equation 22, iteration variable 34)
