@@ -15,7 +15,7 @@
 \definecolor{codeColour}{HTML}{F7F9FA}
 \definecolor{codeLine}{HTML}{E6E8EB}
 \mdfsetup{backgroundcolor=codeColour,  linecolor=codeLine,
-linewidth=2pt, topline=false, bottomline=false, rightline=false,
+linewidth=3pt, topline=false, bottomline=false, rightline=false,
 innertopmargin=15pt, innerbottommargin=5pt}
 
 \usetikzlibrary{trees}
@@ -1259,14 +1259,13 @@ This is the OUT.DAT the test suite created when running a given test case. After
 the test suite will move this file to the folder 
 \textbf{/process/test\_suite/test\_area/[test\_name]/}.\\
 
-
 \subsection{cad\_output.py}
 
 The PROCESS utility \texttt{cad\_output.py} takes the \texttt{mfile.py} and produces an 
 output file suitable for using in CAD programs (for testing \emph{Catia} was used). The output 
 file is named \texttt{PROCESS.CAD} by default. The output file provides a list of named 
 parameters for input into \emph{Catia}. Modification for other CAD programs may be required. 
-The options for the script are:
+The options for the script are:\\
 
 \begin{mdframed}
  \begin{verbatim}
@@ -1280,6 +1279,26 @@ The options for the script are:
     -f FILENAME  specify input filename
     -o OUTPUT    specify output filename
     -s, --show   show plot as well as saving figure
+ \end{verbatim}
+\end{mdframed}
+
+\subsection{convert\_in\_dat.py}
+
+The utility \texttt{convert\_in\_dat.py} takes a old format \texttt{IN.DAT} ($\sim$pre-2014) 
+and coverts it into the newer format. As fewer old \texttt{IN.DAT}s exist this utility will 
+eventually be removed. The options for the script are:\\
+
+\begin{mdframed}
+ \begin{verbatim}
+  usage: convert_in_dat.py [-h] [-f f] [-o o]
+
+  PROCESS IN.DAT converter. Convert IN.DAT into new format. For info contact
+  james.morris2@ccfe.ac.uk
+
+  optional arguments:
+   -h, --help  show this help message and exit
+   -f f        File to read as IN.DAT (default="IN.DAT")
+   -o o        File to read as IN.DAT (default="new_IN.DAT")
  \end{verbatim}
 \end{mdframed}
 
