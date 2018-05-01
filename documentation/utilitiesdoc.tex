@@ -9,9 +9,16 @@
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{framed}
+\usepackage{color}
+\usepackage{mdframed}
+
+\definecolor{codeColour}{HTML}{F7F9FA}
+\definecolor{codeLine}{HTML}{E6E8EB}
+\mdfsetup{backgroundcolor=codeColour,  linecolor=codeLine,
+linewidth=2pt, topline=false, bottomline=false, rightline=false,
+innertopmargin=15pt, innerbottommargin=5pt}
+
 \usetikzlibrary{trees}
-
-
 
 \pretolerance=10000
 \topmargin=0mm
@@ -97,12 +104,6 @@ All Python code has been written for Python 3.
 \tableofcontents
 
 \newpage
-
-
-
-
-
-
 
 
 \section{Executables}
@@ -1241,16 +1242,46 @@ Variables in new NOT IN ref:
 
 \subsubsection*{run.log}
 
-Run.log will take the output to the terminal for each PROCESS test case and dump it to a file in the test folder in \textbf{/process/test\_suite/test\_area/[test\_name]/}. If there is an error while running PROCESS this will be highlighted in \textbf{summary.log} and then the user can inspect the output in run.log\\
+Run.log will take the output to the terminal for each PROCESS test case and dump it to a 
+file in the test folder in \textbf{/process/test\_suite/test\_area/[test\_name]/}. If 
+there is an error while running PROCESS this will be highlighted in \textbf{summary.log} 
+and then the user can inspect the output in run.log\\
 
 \subsubsection*{new.MFILE.DAT}
 
-This is the MFILE.DAT the test suite created when running a given test case. After running the test suite will move this file to the folder \textbf{/process/test\_suite/test\_area/[test\_name]/}.\\
+This is the MFILE.DAT the test suite created when running a given test case. After running 
+the test suite will move this file to the folder 
+\textbf{/process/test\_suite/test\_area/[test\_name]/}.\\
 
 \subsubsection*{new.OUT.DAT}
 
-This is the OUT.DAT the test suite created when running a given test case. After running the test suite will move this file to the folder \textbf{/process/test\_suite/test\_area/[test\_name]/}.\\
+This is the OUT.DAT the test suite created when running a given test case. After running 
+the test suite will move this file to the folder 
+\textbf{/process/test\_suite/test\_area/[test\_name]/}.\\
 
+
+\subsection{cad\_output.py}
+
+The PROCESS utility \texttt{cad\_output.py} takes the \texttt{mfile.py} and produces an 
+output file suitable for using in CAD programs (for testing \emph{Catia} was used). The output 
+file is named \texttt{PROCESS.CAD} by default. The output file provides a list of named 
+parameters for input into \emph{Catia}. Modification for other CAD programs may be required. 
+The options for the script are:
+
+\begin{mdframed}
+ \begin{verbatim}
+  cad_output.py [-h] [-f FILENAME] [-o OUTPUT] [-s]
+
+  Produce a CAD output file of the PROCESS MFILE file for a given scan. For info
+  contact james.morris2@ccfe.ac.uk
+  
+  optional arguments:
+    -h, --help   show this help message and exit
+    -f FILENAME  specify input filename
+    -o OUTPUT    specify output filename
+    -s, --show   show plot as well as saving figure
+ \end{verbatim}
+\end{mdframed}
 
 \section{Python Libraries}
 \label{sec:py_lib}
