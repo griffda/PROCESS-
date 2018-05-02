@@ -675,7 +675,7 @@ contains
           write(outfile,*) ' '
           obsolete_var = .true.
        case ('ilhthresh')
-          call parse_int_variable('ilhthresh', ilhthresh, 1, 8, &
+          call parse_int_variable('ilhthresh', ilhthresh, 1, 14, &
                'Switch for L-H power threshold to enforce')
        case ('impc')
           call parse_real_variable('impc', impc, 0.0D0, 10.0D0, &

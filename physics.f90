@@ -4529,6 +4529,7 @@ implicit none
     !+ad_hist  18/11/14 PJK Corrected power balance output if ignite=1
     !+ad_hist  01/04/15 JM  Core plasma power balance removed
     !+ad_hist  05/08/15 MDK Output to say which impurity (if any) is an iteration variable.
+    !+ad_hist  02/05/18 SIM Added pthrmw(9 to 14)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4946,14 +4947,20 @@ implicit none
     if (istell == 0) then
        call osubhd(outfile,'H-mode Power Threshold Scalings :')
 
-       call ovarre(outfile,'1996 ITER scaling: nominal (MW)','(pthrmw(1))', pthrmw(1), 'OP ')
-       call ovarre(outfile,'1996 ITER scaling: upper bound (MW)','(pthrmw(2))', pthrmw(2), 'OP ')
-       call ovarre(outfile,'1996 ITER scaling: lower bound (MW)','(pthrmw(3))', pthrmw(3), 'OP ')
-       call ovarre(outfile,'1997 ITER scaling (1) (MW)','(pthrmw(4))',pthrmw(4), 'OP ')
-       call ovarre(outfile,'1997 ITER scaling (2) (MW)','(pthrmw(5))',pthrmw(5), 'OP ')
-       call ovarre(outfile,'2008 Martin scaling: nominal (MW)', '(pthrmw(6))',pthrmw(6), 'OP ')
-       call ovarre(outfile,'2008 Martin scaling: 95% upper bound (MW)', '(pthrmw(7))',pthrmw(7), 'OP ')
-       call ovarre(outfile,'2008 Martin scaling: 95% lower bound (MW)', '(pthrmw(8))',pthrmw(8), 'OP ')
+       call ovarre(outfile,'ITER 1996 scaling: nominal (MW)','(pthrmw(1))', pthrmw(1), 'OP ')
+       call ovarre(outfile,'ITER 1996 scaling: upper bound (MW)','(pthrmw(2))', pthrmw(2), 'OP ')
+       call ovarre(outfile,'ITER 1996 scaling: lower bound (MW)','(pthrmw(3))', pthrmw(3), 'OP ')
+       call ovarre(outfile,'ITER 1997 scaling (1) (MW)','(pthrmw(4))',pthrmw(4), 'OP ')
+       call ovarre(outfile,'ITER 1997 scaling (2) (MW)','(pthrmw(5))',pthrmw(5), 'OP ')
+       call ovarre(outfile,'Martin 2008 scaling: nominal (MW)', '(pthrmw(6))',pthrmw(6), 'OP ')
+       call ovarre(outfile,'Martin 2008 scaling: 95% upper bound (MW)', '(pthrmw(7))',pthrmw(7), 'OP ')
+       call ovarre(outfile,'Martin 2008 scaling: 95% lower bound (MW)', '(pthrmw(8))',pthrmw(8), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling: nominal (MW)', '(pthrmw(9))',pthrmw(9), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling: upper bound (MW)', '(pthrmw(10))',pthrmw(10), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling: lower bound (MW)', '(pthrmw(11))',pthrmw(11), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling (closed divertor): nominal (MW)', '(pthrmw(12))',pthrmw(12), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling (closed divertor): upper bound (MW)', '(pthrmw(13))',pthrmw(13), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling (closed divertor): lower bound (MW)', '(pthrmw(14))',pthrmw(14), 'OP ')
        call oblnkl(outfile)
        if ((ioptimz > 0).and.(active_constraints(15))) then
           call ovarre(outfile,'L-H threshold power (enforced) (MW)', '(boundl(103)*plhthresh)',boundl(103)*plhthresh, 'OP ')
