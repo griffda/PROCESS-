@@ -8,6 +8,9 @@
 
 ## Features
 
+- TF stress in conduit Tresca criterion can now have regular and CEA adjusted options 
+  (adjustment from [Torre et al. 2016](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7390035) 
+  paper). (Issue #678)
 
 ## Minor changes
 

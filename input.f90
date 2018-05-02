@@ -1759,6 +1759,9 @@ contains
        case ('frhocp')
           call parse_real_variable('frhocp', frhocp, 0.01D0, 5.0D0, &
                'TART c/p resistivity enhancement factor')
+       case ('i_tf_tresca')
+          call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &
+                         'Switch for TF coil Tresca criterion.')
        case ('i_tf_turns_integer')
           call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
                     'Switch for TF coil integer/non-integer turns')
