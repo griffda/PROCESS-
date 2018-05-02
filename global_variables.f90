@@ -2266,6 +2266,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: fhts = 0.5D0
   !+ad_vars  insstrain : radial strain in insulator (tfc_model=1)
   real(kind(1.0D0)) :: insstrain = 0.0D0
+  !+ad_vars  i_tf_tresca /0/ : switch for TF coil conduit Tresca stress criterion:<UL>
+  !+ad_varc          <LI> = 0 Tresca (no adjustment);
+  !+ad_varc          <LI> = 1 Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
+  integer :: i_tf_tresca = 0
   !+ad_vars  i_tf_turns_integer /0/ : switch for TF coil integer/non-integer turns<UL>
   !+ad_varc          <LI> = 0 non-integer turns;
   !+ad_varc          <LI> = 1 integer turns</UL>
