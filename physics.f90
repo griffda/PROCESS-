@@ -4947,6 +4947,7 @@ implicit none
     if (istell == 0) then
        call osubhd(outfile,'H-mode Power Threshold Scalings :')
 
+       call ovarin(outfile,'L-H threshold used:', "(ilhthresh)", ilhthresh)
        call ovarre(outfile,'ITER 1996 scaling: nominal (MW)','(pthrmw(1))', pthrmw(1), 'OP ')
        call ovarre(outfile,'ITER 1996 scaling: upper bound (MW)','(pthrmw(2))', pthrmw(2), 'OP ')
        call ovarre(outfile,'ITER 1996 scaling: lower bound (MW)','(pthrmw(3))', pthrmw(3), 'OP ')

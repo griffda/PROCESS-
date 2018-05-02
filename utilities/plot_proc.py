@@ -1426,8 +1426,11 @@ def plot_power_info(axis, mfile_data, scan):
     dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
     bt = mfile_data.data["bt"].get_scan(scan)
     surf = mfile_data.data["sarea"].get_scan(scan)
-    pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
-    err = pthresh - mfile_data.data["pthrmw(7)"].get_scan(scan)
+    if "ilhthresh" in mfile_data.data.keys():
+        ilhthresh = int(mfile_data.data["ilhthresh"].get_scan(scan))
+    else:
+        ilhthresh = 6
+    pthresh = mfile_data.data["pthrmw("+str(ilhthresh)+")"].get_scan(scan)
 
     gross_eff = 100.0 * (mfile_data.data["pgrossmw"].get_scan(scan) /
                          mfile_data.data["pthermmw"].get_scan(scan))
@@ -1524,7 +1527,11 @@ def plot_current_drive_info(axis, mfile_data, scan):
     dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
     bt = mfile_data.data["bt"].get_scan(scan)
     surf = mfile_data.data["sarea"].get_scan(scan)
-    pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
+    if "ilhthresh" in mfile_data.data.keys():
+        ilhthresh = int(mfile_data.data["ilhthresh"].get_scan(scan))
+    else:
+        ilhthresh = 6
+    pthresh = mfile_data.data["pthrmw("+str(ilhthresh)+")"].get_scan(scan)
     flh = pdivt / pthresh
 
     powerht = mfile_data.data["powerht"].get_scan(scan)
