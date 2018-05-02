@@ -23,7 +23,8 @@
  Pnbi=Pnbi+q_fus*Piaux/trapz(Piaux*dV);
 	Piaux = exp(-(x-inp0%x_control(1))**2/inp0%dx_control(1)**2.d0)
  Pnbi=Pnbi+inp0%q_control*Piaux/trapz(Piaux*dV);
-
+!nbi particle source
+	snebm =pnbi/(e_charge*1.d19*inp0%nbi_energy/1.e3)
 !split between electrons and ions of NBI
 	include 'calculate_beam_split.f90'
 
@@ -180,16 +181,16 @@ yllama=1.d0
  DdnVni = 625.d0*interp1_ef(nx,nxt,xr, totSi/G1/vprime/nions, xtr)
 	
 	! Fuelling
-	Sn = exp(-(x-0.85d0)**2 / 0.05d0)  ! No fuelling now, but this is pellet
-	totS = cumint1(Sn*dV)
-	totS = totS/totS(nx) 
+	Sn = exp(-(x-0.85d0)**2 / 0.05d0)/1464.552  ! pellet functional form, scaled to give unity fueling
+	Sn = inp0%spellet*inp0%fpellet*Sn+snebm  ! pellet + added NBI fueling snebm
+	totS = cumint1(Sn*dV) !cumulative integral
 !interpolate on transport grid
-	DdnVn = interp1(xr, inp0%spellet*inp0%fpellet*totS/Vprime/G1, xtr)
+	DdnVn = interp1(xr, totS/Vprime/G1, xtr)
 	
 !assignment
-	c(:,1) = DdnVn
-	c(:,2) = DdnVne
-	c(:,3) = DdnVni
+	c(:,1) = DdnVn !electron particle flux
+	c(:,2) = DdnVne !electron heat flux
+	c(:,3) = DdnVni !thermal ion heat flux
 	
 	! define transport coefficients
 	if (i_modeltype.ne.9999) then

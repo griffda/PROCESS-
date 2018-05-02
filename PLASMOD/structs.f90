@@ -77,6 +77,7 @@ module structs
 						& palph,nions,psi,gte,gti,gne,Nepg,Tepg,Tipg,bpol,gradro,shif,k,d
       real(kind(1.0D0)) :: av_ne,av_Ti,av_Te, zeff,av_ni,av_nd,av_nz,av_nhe
       real(kind(1.0D0)) :: av_Ten
+      real(kind(1.0D0)), DIMENSION(:), ALLOCATABLE :: nprot,nhe3,nalf,nwol
     end type radial_profiles 
 
 

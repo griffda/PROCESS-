@@ -94,6 +94,7 @@
 ! INTERNAL VARIABLES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		logical :: filetglf
+		logical :: dir_e
 		character*80 :: fnamez(num%nxt)
   integer :: jipperdo2,jipper2,j
   integer :: i, gippa, g_info, g_count
@@ -120,7 +121,7 @@
   real(kind(1.0d0)) :: ne_av,nela,PLH_th(8)
   real(kind(1.0d0)), dimension(num%nx) :: theta_perim,dtheta,f_perim,p_dd
   real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe,nwol,nprot,nhe3, nXe, nNe, prxe, prne
-  real(kind(1.0d0)), dimension(num%nx) :: prwol
+  real(kind(1.0d0)), dimension(num%nx) :: prwol,snebm
   real(kind(1.0d0)), dimension(num%nx) :: pech,pnbi,psync,pbrad
   real(kind(1.0d0)), dimension(num%nx) :: zavxe, zavwol,zavne, & 
 		& prad,pradtot,pradedge, ndeut, ntrit, nions, pedt, pidt, peicl, zepff!  conflict with   
@@ -181,6 +182,15 @@
     
 pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside equil.f90
 
+
+!create output directory if it oesnt exist
+if (geom%counter.eq.0) then
+	inquire(file='./CHARTST', exist=dir_e)
+	if ( dir_e ) then
+		else
+ 	 call system('mkdir CHARTST')
+		end if	
+endif
 
 !diagnostic switch
  i_diagz=nint(num%maxa)
@@ -531,6 +541,10 @@ pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside e
   if (.not.allocated(radp%gradro))       ALLOCATE ( radp%gradro(nx) )
   if (.not.allocated(radp%ndeut))       ALLOCATE ( radp%ndeut(nx) )
   if (.not.allocated(radp%ntrit))       ALLOCATE ( radp%ntrit(nx) )
+  if (.not.allocated(radp%nprot))       allocate ( radp%nprot(nx) )
+  if (.not.allocated(radp%nhe3))       allocate ( radp%nhe3(nx) )
+  if (.not.allocated(radp%nalf))       allocate ( radp%nalf(nx) )
+  if (.not.allocated(radp%nwol))       allocate ( radp%nwol(nx) )
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1013,6 +1027,11 @@ endif
   radp%av_Te = trapz(tepr*dV)/V(nx)
   radp%av_Ten = trapz(tepr*nepr*dV)/trapz(nepr*dV)
   radp%zeff  = trapz(zepff*dV)/V(nx)
+		radp%nhe3=nhe3
+		radp%nalf=nalf
+		radp%nwol=nwol
+		radp%nprot=nprot
+
 
 !b.c.
 	ped%teped=teb
@@ -1118,6 +1137,8 @@ endif
 	geom%perim = rpminor*trapz(f_perim*dtheta)
 
 
+	
+	
 !diags for ASTRA
   if (geom%counter.gt.1.) then
      open(99,file='./CHARTST/PROCESSOUTPUT.chartst',STATUS='UNKNOWN',Access = 'append')

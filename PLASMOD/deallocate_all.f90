@@ -30,3 +30,7 @@
   if (allocated(radp%gradro))       deallocate ( radp%gradro )
   if (allocated(radp%ndeut))       deallocate ( radp%ndeut )
   if (allocated(radp%ntrit))       deallocate ( radp%ntrit )
+  if (allocated(radp%nprot))       deallocate ( radp%nprot )
+  if (allocated(radp%nhe3))       deallocate ( radp%nhe3 )
+  if (allocated(radp%nalf))       deallocate ( radp%nalf )
+  if (allocated(radp%nwol))       deallocate ( radp%nwol )
