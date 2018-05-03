@@ -64,7 +64,7 @@ PROCESS version: 1.0.13
 \vspace*{4cm}
 \begin{center}
 \Huge A User Guide\\ to the \\ PROCESS Fusion Reactor Systems Code\\
-~\\ \LARGE The PROCESS team: P.\ J.\ Knight, M.\ D.\ Kovari, H.\ Lux, J.\ Morris\\
+~\\ \LARGE The PROCESS team: P.\ J.\ Knight, M.\ D.\ Kovari, H.\ Lux, J.\ Morris, K.\ Ellis, S.\ I.\ Muldrew\\
 ~\\ \Large Culham Centre for Fusion Energy/ United Kingdom Atomic Energy Authority\\
 Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 \end{center}
@@ -1241,37 +1241,40 @@ for the scaling laws listed in Table~\ref{tab:power_thresholds}, in
 routine~\texttt{PTHRESH}.
 
 To enforce one of these scalings, use input parameter \texttt{ilhthresh} to
-select the scaling to use, and turn on constraint equation no.\ 23 with
-iteration variable no.\ 104 (\texttt{flhthresh}). By default, this will ensure
+select the scaling to use, and turn on constraint equation no.\ 15 with
+iteration variable no.\ 103 (\texttt{flhthresh}). By default, this will ensure
 that the power reaching the divertor is at least equal to the threshold power
 calculated for the chosen scaling, which is a necessary condition for
-H-mode. However, for L-mode it might be appropriate to set \texttt{boundl(104)
-  = 0.001, boundu(104) = 1.0}, which will ensure that the power threshold does
+H-mode. However, for L-mode it might be appropriate to set \texttt{boundl(103)
+  = 0.001, boundu(103) = 1.0}, which will ensure that the power threshold does
 not exceed the calculated value, and therefore the machine cannot reach
 H-mode.
 
 % Table summarising L-H power threshold scalings
-
 \begin{table}[tbph]
 \small
 \begin{center}
 \begin{tabular}{||c||l||l||} \hline
- & name & reference \\ \hline
-(1) & 1996 ITER scaling: nominal & ITER Physics Design Description Document, \\
-(2) & 1996 ITER scaling: upper bound & D. Boucher, p.2-2 \\
-(3) & 1996 ITER scaling: lower bound &  \\ \hline
-(4) & 1997 ITER scaling, excluding elongation & J. A. Snipes, ITER H-mode
+ & Name & Reference \\ \hline
+(1) & ITER 1996 scaling: nominal & ITER Physics Design Description Document, \\
+(2) & ITER 1996 scaling: upper bound & D. Boucher, p.2-2 \\
+(3) & ITER 1996 scaling: lower bound &  \\ \hline
+(4) & ITER 1997 scaling, excluding elongation & J. A. Snipes, ITER H-mode
 Threshold Database \\
-(5) & 1997 ITER scaling, including elongation &  Working Group, Controlled
+(5) & ITER 1997 scaling, including elongation &  Working Group, Controlled
 Fusion and Plasma \\
  & & Physics, 24th EPS Conference, Berchtesgaden, \\
  & & June 1997, vol.21A, part III, p.961 \\ \hline
-(6) & 2008 Martin scaling: nominal & Martin et al, 11th IAEA Tech. Meeting on
-H-mode \\
-(7) & 2008 Martin scaling: 95\% upper bound &  Physics and Transport Barriers,
-Journal of Physics: \\
-(8) & 2008 Martin scaling: 95\% lower bound & Conference Series \textbf{123}
-(2008) 012033 \\
+(6) & Martin 2008 scaling: nominal & Martin et al, 11th IAEA Tech. Meeting on\\
+(7) & Martin 2008 scaling: 95\% upper bound &  H-mode Physics and Transport Barriers, Journal \\
+(8) & Martin 2008 scaling: 95\% lower bound &  of Physics: Conference Series \textbf{123}
+(2008) 012033 \\ \hline
+(9) & Snipes 2000 scaling: nominal & J. A. Snipes and the International H-mode\\
+(10) & Snipes 2000 scaling: upper bound & Threshold Database Working Group,\\
+(11) & Snipes 2000 scaling: lower bound &  2000, Plasma Phys. Control. Fusion, 42, A299\\
+(12) & Snipes 2000 scaling (closed divertor): nominal & \\
+(13) & Snipes 2000 scaling (closed divertor): upper bound & \\
+(14) & Snipes 2000 scaling (closed divertor): lower bound & \\
 \hline
 \end{tabular}
 \end{center}

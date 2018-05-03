@@ -654,11 +654,11 @@ module physics_variables
   !+ad_varc              (chosen via ilhthresh, and enforced if constraint equation 15 is on)
   real(kind(1.0D0)) :: plhthresh = 0.0D0
   !+ad_vars  pthrmw(14) : L-H power threshold for various scalings (MW): <OL>
-  !+ad_varc         <LI> ITER 1996: nominal
-  !+ad_varc         <LI> ITER 1996: upper bound
-  !+ad_varc         <LI> ITER 1996: lower bound
-  !+ad_varc         <LI> ITER 1997: excluding elongation
-  !+ad_varc         <LI> ITER 1997: including elongation
+  !+ad_varc         <LI> ITER 1996 scaling: nominal
+  !+ad_varc         <LI> ITER 1996 scaling: upper bound
+  !+ad_varc         <LI> ITER 1996 scaling: lower bound
+  !+ad_varc         <LI> ITER 1997 scaling: excluding elongation
+  !+ad_varc         <LI> ITER 1997 scaling: including elongation
   !+ad_varc         <LI> Martin 2008 scaling: nominal
   !+ad_varc         <LI> Martin 2008 scaling: 95% upper bound
   !+ad_varc         <LI> Martin 2008 scaling: 95% lower bound
