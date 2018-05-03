@@ -135,8 +135,9 @@ contains
        ! its intial fraction has to be 0.d0. Then globtau is used!
        ! The Xe fraction is used as an iteration variable inside PLASMOD
        ! it adjusts to fulfil psepqbarmax, pseprmax or psepplh_sup.
-       comp%comparray = 0.d0 !array of impurities !HL: This overwrites Argon setting!!!
-       comp%comparray(14) = impurity_arr(element2index('W_'))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp%comparray = 0.d0 !array of impurities
+       comp%comparray(9) = impurity_arr(element2index('Ar'))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp%comparray(14) = impurity_arr(element2index('W_'))%frac 
        comp%protium   = protium !protium is treated separately
        
        comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi      
@@ -697,6 +698,8 @@ contains
     
     !  Arguments
     integer, intent(in) :: outfile
+    integer :: imp
+    !character*10 :: nImpurity
     
     call oheadr(outfile,'PLASMOD')
 
@@ -722,10 +725,30 @@ contains
     call ovarrf(outfile,'Edge elongation','(geom%k)', geom%k, 'OP ')
     call ovarrf(outfile,'Edge triangularity','(geom%d)', geom%d, 'OP ')
 
-    call osubhd(outfile,'Composition')
-    call ovarrf(outfile,'Xenon concentration at the pedestal top','(comp%cxe)', comp%cxe)
-    call ovarrf(outfile,'Helium concentration','(comp%che)', comp%che)
-    call ovarrf(outfile,'Argon concentration at the pedestal top','(comp%car)', comp%car)
+    call osubhd(outfile,'Composition (impurity concentrations)')
+    !do imp=1,nimp
+    !   nImpurity = 'Impurity' //char(imp)
+       !call ovarrf(outfile,'Impurity '//char(imp),'(comp%comparray)', comp%comparray(imp))
+    !   call ovarrf(outfile,nImpurity,'(comp%comparray)', comp%comparray(imp))
+    !enddo
+    call ovarrf(outfile,'Hydrogen','(comp%comparray [1])', comp%comparray(1))
+    call ovarrf(outfile,'Helium','(comp%comparray [2])', comp%comparray(2))
+    call ovarrf(outfile,'Berylium','(comp%comparray [3])', comp%comparray(3))
+    call ovarrf(outfile,'Carbon','(comp%comparray [4])', comp%comparray(4))
+    call ovarrf(outfile,'Nitrogen','(comp%comparray [5])', comp%comparray(5))
+    call ovarrf(outfile,'Oxygen','(comp%comparray [6])', comp%comparray(6))
+    call ovarrf(outfile,'Neon','(comp%comparray [7])', comp%comparray(7))
+    call ovarrf(outfile,'Silicon','(comp%comparray [8])', comp%comparray(8))
+    call ovarrf(outfile,'Argon','(comp%comparray [9])', comp%comparray(9))
+    call ovarrf(outfile,'Iron','(comp%comparray [10])', comp%comparray(10))
+    call ovarrf(outfile,'Nickel','(comp%comparray [11])', comp%comparray(11))
+    call ovarrf(outfile,'Krypton','(comp%comparray [12])', comp%comparray(12))
+    call ovarrf(outfile,'Xenon','(comp%comparray [13])', comp%comparray(13))
+    call ovarrf(outfile,'Tungsten','(comp%comparray [14])', comp%comparray(14))
+    
+    !call ovarrf(outfile,'Xenon concentration at the pedestal top','(comp%cxe)', comp%cxe)
+    !call ovarrf(outfile,'Helium concentration','(comp%che)', comp%che)
+    !call ovarrf(outfile,'Argon concentration at the pedestal top','(comp%car)', comp%car)
 
     call osubhd(outfile,'Pedestal')
     call ovarrf(outfile,'Pedestal top electron temperature (keV)','(ped%teped)', ped%teped, 'OP ')
