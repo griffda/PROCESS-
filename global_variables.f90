@@ -162,7 +162,7 @@ module physics_variables
   !+ad_hist  02/11/16 HL  Added Petty and Lang confinement scalings (isc=41/42)
   !+ad_hist  08/02/17 JM  Added fgwsep the fraction of Greenwald density to set as separatrix density
   !+ad_hist  08/02/17 JM  Gave teped, tesep, neped and nesep non-zero defaults
-  !+ad_hist  02/05/18 SIM Added pthrmw(9 to 14)
+  !+ad_hist  02/05/18 SIM Added pthrmw(9-14)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -654,11 +654,11 @@ module physics_variables
   !+ad_varc              (chosen via ilhthresh, and enforced if constraint equation 15 is on)
   real(kind(1.0D0)) :: plhthresh = 0.0D0
   !+ad_vars  pthrmw(14) : L-H power threshold for various scalings (MW): <OL>
-  !+ad_varc         <LI> ITER 1996 nominal
-  !+ad_varc         <LI> ITER 1996 upper bound
-  !+ad_varc         <LI> ITER 1996 lower bound
-  !+ad_varc         <LI> ITER 1997 excluding elongation
-  !+ad_varc         <LI> ITER 1997 including elongation
+  !+ad_varc         <LI> ITER 1996: nominal
+  !+ad_varc         <LI> ITER 1996: upper bound
+  !+ad_varc         <LI> ITER 1996: lower bound
+  !+ad_varc         <LI> ITER 1997: excluding elongation
+  !+ad_varc         <LI> ITER 1997: including elongation
   !+ad_varc         <LI> Martin 2008 scaling: nominal
   !+ad_varc         <LI> Martin 2008 scaling: 95% upper bound
   !+ad_varc         <LI> Martin 2008 scaling: 95% lower bound

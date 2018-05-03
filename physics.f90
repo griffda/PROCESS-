@@ -4529,7 +4529,7 @@ implicit none
     !+ad_hist  18/11/14 PJK Corrected power balance output if ignite=1
     !+ad_hist  01/04/15 JM  Core plasma power balance removed
     !+ad_hist  05/08/15 MDK Output to say which impurity (if any) is an iteration variable.
-    !+ad_hist  02/05/18 SIM Added pthrmw(9 to 14)
+    !+ad_hist  02/05/18 SIM Added pthrmw(9-14) and associated error warnings
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4963,6 +4963,38 @@ implicit none
        call ovarre(outfile,'Snipes 2000 scaling (closed divertor): upper bound (MW)', '(pthrmw(13))',pthrmw(13), 'OP ')
        call ovarre(outfile,'Snipes 2000 scaling (closed divertor): lower bound (MW)', '(pthrmw(14))',pthrmw(14), 'OP ')
        call oblnkl(outfile)
+       if ((ilhthresh.eq.9).or.(ilhthresh.eq.10).or.(ilhthresh.eq.11)) then
+           if ((bt < 0.78D0).or.(bt > 7.94D0)) then
+               call ocmmnt(outfile,'(bt outside Snipes 2000 fitted range)')
+               call report_error(201)
+           end if
+           if ((rminor < 0.15D0).or.(rminor > 1.15D0)) then
+               call ocmmnt(outfile,'(rminor outside Snipes 2000 fitted range)')
+               call report_error(202)
+           end if
+           if ((rmajor < 0.55D0).or.(rmajor > 3.37D0)) then
+               call ocmmnt(outfile,'(rmajor outside Snipes 2000 fitted range)')
+               call report_error(203)
+           end if
+           if ((dnla < 0.09D20).or.(dnla > 3.16D20)) then
+               call ocmmnt(outfile,'(dnla outside Snipes 2000 fitted range)')
+               call report_error(204)
+           end if
+           if ((kappa < 1.0D0).or.(kappa > 2.04D0)) then
+               call ocmmnt(outfile,'(kappa outside Snipes 2000 fitted range)')
+               call report_error(205)
+           end if
+           if ((triang < 0.07D0).or.(triang > 0.74D0)) then
+               call ocmmnt(outfile,'(triang outside Snipes 2000 fitted range)')
+               call report_error(206)
+           end if
+       call oblnkl(outfile)
+       end if
+       if ((ilhthresh.eq.12).or.(ilhthresh.eq.13).or.(ilhthresh.eq.14)) then
+           call ocmmnt(outfile,'(L-H threshold for closed divertor only. Limited data used in Snipes fit)')
+           call oblnkl(outfile)
+           call report_error(207)
+       end if
        if ((ioptimz > 0).and.(active_constraints(15))) then
           call ovarre(outfile,'L-H threshold power (enforced) (MW)', '(boundl(103)*plhthresh)',boundl(103)*plhthresh, 'OP ')
        else
