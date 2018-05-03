@@ -31,6 +31,7 @@ module physics_functions_module
   use maths_library
   use physics_variables
   use profiles_module
+  use impurity_radiation_module
 
   implicit none
 
@@ -1190,5 +1191,327 @@ contains
          kappa_pl**a_kappa  * corrected_n_tot_beta**a_beta * rminor**a_a
   end function p_eped_scaling
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pradpv)
+
+    !+ad_name  radpwr
+    !+ad_summ  Radiation power interface routine
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  imprad_model : input integer : switch to choose model
+    !+ad_args  pbrempv    : output real : bremsstrahlung radiation power/volume (MW/m3)
+    !+ad_args  plinepv    : output real : line radiation power/volume (MW/m3)
+    !+ad_args  psyncpv    : output real : synchrotron radiation power/volume (MW/m3)
+    !+ad_args  pcoreradpv : output real : total core radiation power/volume (MW/m3)
+    !+ad_args  pedgeradpv : output real : edge (non-core) radiation power/volume (MW/m3)
+    !+ad_args  pradpv     : output real : total radiation power/volume (MW/m3)
+    !+ad_desc  This routine finds the radiation powers in MW/m3 by calling
+    !+ad_desc  relevant routines.
+    !+ad_call  prad_ipdg89
+    !+ad_call  psync_albajar_fidone
+    !+ad_call  imprad
+    !+ad_call  report_error
+    !+ad_hist  14/05/14 PJK Redefined routine as a caller to the actual calculations
+    !+ad_hist  20/05/14 PJK Clarified core radiation vs bremsstrahlung
+    !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: imprad_model
+    real(kind(1.0D0)), intent(out) :: pbrempv,plinepv,psyncpv,pcoreradpv, &
+         pedgeradpv,pradpv
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: pimpcore, pimptot
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Bremsstrahlung and line radiation
+
+    if (imprad_model == 0) then
+       call prad_ipdg89(pimpcore, pedgeradpv)
+       pimptot = pimpcore + pedgeradpv
+       pbrempv = 0.0D0 ; plinepv = 0.0D0  !  therefore, not useful...
+    else if (imprad_model == 1) then
+       call imprad(pbrempv, plinepv, pimpcore, pimptot)
+       pedgeradpv = pimptot - pimpcore
+    else
+       idiags(1) = imprad_model ; call report_error(82)
+    end if
+
+    !  Synchrotron radiation power/volume; assumed to be from core only
+
+    call psync_albajar_fidone(psyncpv)
+
+    !  Total core radiation power/volume
+
+    pcoreradpv = pimpcore + psyncpv
+
+    !  Total radiation power/volume
+
+    pradpv = pimptot + psyncpv  !  = pcoreradpv + pedgeradpv
+
+  end subroutine radpwr
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+  
+  subroutine prad_ipdg89(pcoreradpv,pedgeradpv)
+
+    !+ad_name  prad_ipdg89
+    !+ad_summ  Bremsstrahlung and line radiation power calculation
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  pcoreradpv : output real : core radiation power/volume (MW/m3)
+    !+ad_args  pedgeradpv : output real : edge line radiation power/volume (MW/m3)
+    !+ad_desc  This routine finds the D-T and impurity bremsstrahlung and line
+    !+ad_desc  radiation powers in MW/m3, using the IPDG89 formulation.
+    !+ad_prob  No account is taken of pedestal profiles.
+    !+ad_call  None
+    !+ad_hist  14/05/14 PJK Moved bremsstrahlung calculation here from original
+    !+ad_hisc               <CODE>radpwr</CODE> routine
+    !+ad_hist  19/05/14 PJK Renamed arguments
+    !+ad_hist  20/05/14 PJK Renamed routine from pbrems_ipdg89
+    !+ad_stat  Okay
+    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(out) :: pcoreradpv, pedgeradpv
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: den20,fbc,fbhe,fbo,pbremdt,pbremz,pc,phe, &
+         phighz,po,radexp,t10,vr
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    fbhe = 0.9D0
+    fbc = 0.52D0
+    fbo = 0.52D0
+
+    den20 = dene/1.0D20
+    t10 = ten/10.0D0
+
+    !  D-T bremsstrahlung (IPDG89)
+    !  Coefficient 0.016*radexp is C_B in IPDG89, with Zeff set to 1 for D-T
+    !  Note that the formula in IPDG89 should use ni/1.0E20 * ne/1.0E20,
+    !  not just (n20)^2 (the code below is correct)
+
+    radexp = (1.0D0 + alphan)**1.5D0 * sqrt(1.0D0 + alphan + alphat) / &
+         (1.0D0 + 2.0D0*alphan + 0.5D0*alphat)
+
+    pbremdt = 1.6D-2 * radexp * den20**2 * (deni/dene) * sqrt(t10)
+
+    !  High Z bremsstrahlung
+
+    vr = rmajor * (rminor*(1.0D0 + kappa95)/2.0D0)**2 / (58.652D0*vol)
+    phe = 65.8D0 * ralpne * (dene/7.0D19)**1.5D0 * vr
+    pc  = 1120.0D0 * rncne * (dene/7.0D19)**1.5D0 * vr
+    po  = 2240.0D0 * rnone * (dene/7.0D19)**1.5D0 * vr
+    if (zfear == 1) then  !  high-Z impurity is argon
+       phighz = 16000.0D0 * rnfene * (dene/7.0D19)**1.5D0 * vr
+    else  !  iron
+       phighz = 44800.0D0 * rnfene * (dene/7.0D19)**2.5D0 * vr
+    end if
+    pbremz = fbhe*phe + fbc*pc + fbo*po + fbfe*phighz
+
+    !  Total core radiation power (this is a more accurate description than
+    !  simply the bremsstrahlung power)
+
+    pcoreradpv = pbremz + pbremdt
+
+    !  Edge line radiation
+
+    pedgeradpv = (1.0D0-fbhe)*phe + (1.0D0-fbc)*pc + (1.0D0-fbo)*po + &
+         (1.0D0-fbfe)*phighz
+
+  end subroutine prad_ipdg89
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine psync_albajar_fidone(psyncpv)
+
+    !+ad_name  psync_albajar_fidone
+    !+ad_summ  Synchrotron radiation power calculation
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  psyncpv  : output real : synchrotron radiation power/volume (MW/m3)
+    !+ad_desc  This routine finds the synchrotron radiation power in MW/m3,
+    !+ad_desc  using the method of Albajar and Fidone.
+    !+ad_prob  No account is taken of pedestal profiles.
+    !+ad_call  None
+    !+ad_hist  14/05/14 PJK Moved synchrotron calculation here from original
+    !+ad_hisc               <CODE>radpwr</CODE> routine
+    !+ad_stat  Okay
+    !+ad_docs  Albajar, Nuclear Fusion 41 (2001) 665
+    !+ad_docs  Fidone, Giruzzi, Granata, Nuclear Fusion 41 (2001) 1755
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(out) :: psyncpv
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: de2o,dum,gfun,kap,kfun,pao,psync,rpow,tbet
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  tbet is betaT in Albajar, not to be confused with plasma beta
+
+    tbet = 2.0D0
+
+    !  rpow is the (1-Rsyn) power dependence based on plasma shape
+    !  (see Fidone)
+
+    rpow = 0.62D0
+
+    kap = vol / (2.0D0 * pi**2 * rmajor * rminor**2)
+
+    !  No account is taken of pedestal profiles here, other than use of
+    !  the correct ne0 and te0...
+
+    de2o = 1.0D-20*ne0
+    pao = 6.04D3 * (rminor*de2o)/bt
+    gfun = 0.93D0 * ( 1.0D0 + 0.85D0*exp(-0.82D0 * rmajor/rminor) )
+    kfun = (alphan + 3.87D0*alphat + 1.46D0)**(-0.79D0)
+    kfun = kfun * (1.98D0+alphat)**1.36D0 * tbet**2.14D0
+    kfun = kfun*(tbet**1.53D0 + 1.87D0*alphat - 0.16D0)**(-1.33D0)
+    dum = (1.0D0+0.12D0*(te0/(pao**0.41D0))*(1.0D0-ssync)**0.41D0)
+
+    !  Very high T modification, from Fidone
+
+    dum = dum**(-1.51D0)
+
+    psync = 3.84D-8 * (1.0D0-ssync)**rpow * rmajor * rminor**1.38D0
+    psync = psync * kap**0.79D0 * bt**2.62D0 * de2o**0.38D0
+    psync = psync * te0 *(16.0D0+te0)**2.61D0 * dum * gfun * kfun
+
+    !  psyncpv should be per unit volume; Albajar gives it as total
+
+    psyncpv = psync/vol
+
+  end subroutine psync_albajar_fidone
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine imprad(radb, radl, radcore, radtot)
+
+    !+ad_name  imprad
+    !+ad_summ  Total impurity line radiation and bremsstrahlung
+    !+ad_type  Subroutine
+    !+ad_auth  H Lux, CCFE, Culham Science Centre
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  radb    : output real : bremsstrahlung only (MW/m3)
+    !+ad_args  radl    : output real : line radiation only (MW/m3)
+    !+ad_args  radcore : output real : total impurity radiation from core (MW/m3)
+    !+ad_args  radtot  : output real : total impurity radiation (MW/m3)
+    !+ad_desc  This routine calculates the total radiation losses from
+    !+ad_desc  impurity line radiation and bremsstrahlung for all elements
+    !+ad_desc  for a given temperature and density profile.
+    !+ad_desc  <P>Bremsstrahlung equation from Johner
+    !+ad_desc  <P>L(z) data (coronal equilibrium) from Marco Sertoli, ASDEX-U,
+    !+ad_desc  ref. Kallenbach et al.
+    !+ad_prob  None
+    !+ad_call  Tprofile
+    !+ad_call  nprofile
+    !+ad_call  impradprofile
+    !+ad_call  fradcore
+    !+ad_hist  17/12/13 HL  First draft of routine, based on code by R Kemp
+    !+ad_hist  09/05/14 HL  Using new data structure
+    !+ad_hist  14/05/14 PJK First PROCESS implementation
+    !+ad_hist  19/05/14 PJK Added call to fradcore; radtot now an output arg
+    !+ad_stat  Okay
+    !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !+ad_docs  Sertoli, private communication
+    !+ad_docs  Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(out) :: radb, radl, radcore, radtot
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: rho, drho, trho,  nrho
+    real(kind(1.0D0)) :: pimp, pbrem, pline
+    integer :: i, imp, npts
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    npts = 200  !  originally 1000; no significant difference found
+    drho = 1.0D0/real(npts,kind(1.0D0))
+
+    radtot = 0.0D0
+    radcore = 0.0D0
+    radb = 0.0D0
+    radl = 0.0D0
+
+    !  Numerical integration using the midpoint rule
+    !  Consider using the maths_library integrator in the future...
+    !    quanc8(fun,0.0D0,1.0D0,abserr,relerr,result,errest,nofun,flag)
+
+    do i = 0, npts-1
+
+       rho = (0.5D0 + i)/npts
+       trho = tprofile(rho, rhopedt, te0, teped, tesep, alphat, tbeta)
+       nrho = nprofile(rho, rhopedn, ne0, neped, nesep, alphan)
+
+       do imp = 1, size(impurity_arr)
+
+          if (impurity_arr(imp)%frac > 1.0D-30) then
+
+             call impradprofile(impurity_arr(imp), nrho, trho, pimp, pbrem, pline)
+
+             radtot  = radtot  + pimp*rho
+             radcore = radcore + pimp*rho * fradcore(rho,coreradius,coreradiationfraction)
+             radb = radb + pbrem*rho
+             radl = radl + pline*rho
+          end if
+
+       end do
+    end do
+
+    !  Radiation powers in MW/m3
+
+    radtot  = 2.0D-6 * drho * radtot
+    radcore = 2.0D-6 * drho * radcore
+    radb    = 2.0D-6 * drho * radb
+    radl    = 2.0D-6 * drho * radl
+
+  end subroutine imprad
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+  
   
 end module physics_functions_module
