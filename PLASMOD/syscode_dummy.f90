@@ -79,15 +79,25 @@
 !				geom%q95 = 3.5 !safety factor. 
 								
 !write(*,*) 'first iteration'
-	include 'DEMOlike.dat'				
+!	include 'DEMOlike.dat'				
 !pause
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 !stop
-write(*,*) 'num',num
-write(*,*) 'geom',geom
+!write(*,*) 'num',num
+!write(*,*) 'geom',geom
 write(*,*) 'comp',comp
 write(*,*) 'ped',ped
-write(*,*) 'inp0',inp0
+!write(*,*) 'inp0',inp0
 !write(*,*) 'radp',radp
 write(*,*) 'mhd',mhd
 write(*,*) 'loss',loss

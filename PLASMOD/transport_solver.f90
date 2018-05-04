@@ -23,7 +23,6 @@
 
 
 
-
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !explanation of i_flag and what to do in case:
 !
@@ -96,14 +95,14 @@
 		logical :: filetglf
 		logical :: dir_e
 		character*80 :: fnamez(num%nxt)
-  integer :: jipperdo2,jipper2,j
+  integer :: jipperdo2,jipper2,j,j_points(num%nx)
   integer :: i, gippa, g_info, g_count
   integer, dimension(num%nxt,num%nchannels) :: indxx
   integer :: jiterext, jiterextmax, jrad,jrad1,jrad2
   integer :: j1,j2    , irho
-  integer :: j_aux
+  integer :: j_aux,j_qeq1,j_sawpos
   integer :: jped,nx,nxt,nchannels, iped_model,jdum1,nxequil,i_qsaw, i_diagz
-  real(kind(1.0d0)) :: x0, dx, dxn,psep,plh
+  real(kind(1.0d0)) :: x0, dx, dxn,psep,plh,pimp,pbrem,pline
   real(kind(1.0d0)) :: Qeaux, Qiaux, Qrad ,qradedge, betan,P_pedtop, qecrh, qnbi, spellet, spuffing, f_gw !sfuelling
   real(kind(1.0d0)) :: nsep, Ip, btor, cHe,cwol,che3,cprot, & 
 		 & cxe,car,nG, qedge, elong, trianpg, amin ,tsep, rpmajor,  rpminor, asppect, nlineavg 
@@ -122,7 +121,7 @@
   real(kind(1.0d0)), dimension(num%nx) :: theta_perim,dtheta,f_perim,p_dd
   real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe,nwol,nprot,nhe3, nXe, nNe, prxe, prne
   real(kind(1.0d0)), dimension(num%nx) :: prwol,snebm
-  real(kind(1.0d0)), dimension(num%nx) :: pech,pnbi,psync,pbrad
+  real(kind(1.0d0)), dimension(num%nx) :: pech,pnbi,pnbi_cd,psync,pbrad
   real(kind(1.0d0)), dimension(num%nx) :: zavxe, zavwol,zavne, & 
 		& prad,pradtot,pradedge, ndeut, ntrit, nions, pedt, pidt, peicl, zepff!  conflict with   
   real(kind(1.0d0)), dimension(num%nxt+1) :: T_e, T_i, N_e, gT_e, gT_i, gn_e
@@ -182,6 +181,7 @@
     
 pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside equil.f90
 
+!				 call initialise_imprad !PROCESS function, call this only if transprz stanfdalone, comment if in PROCESS
 
 !create output directory if it oesnt exist
 if (geom%counter.eq.0) then
@@ -308,6 +308,13 @@ endif
   xr = x*amin
   dx = xtr(2)-xtr(1)
 
+!this contains the index of the source grid on the transport grid
+		do i=1,num%nx
+	do j=1,num%nxt
+		 if (xtr(j).le.xr(i)) j_points(i)=j
+	enddo
+	enddo
+	
   !initial conditions from scratch
   T_e(nxt) = teb
   T_i(nxt) = tib
@@ -464,7 +471,7 @@ endif
           roc, Vloop, fbs,fcd, toleq, &
           k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, qprf, rho, psi, jpar,&
           ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,trianpg95 &
-          ,pres_fac,areat,num%isawt)
+          ,pres_fac,areat,num%isawt,j_qeq1)
   else !equilibrium updated using previous result as new guess, faster
     call compute_equil( &
                                 !input 
@@ -477,7 +484,7 @@ endif
           roc, Vloop, fbs,fcd, toleq, &
           k, d, shif, radp%jbs, radp%jcd, radp%Volum, G1, G2, G3, dV, phi, qprf, rho, radp%psi, jpar,&
           radp%ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,trianpg95 &
-          ,pres_fac,areat,num%isawt)
+          ,pres_fac,areat,num%isawt,j_qeq1)
     psi = radp%psi
     ipol=radp%ipol
     jcdr=radp%jcd
@@ -576,6 +583,8 @@ endif
      jipperdo = nint(max(1.0d0, 1.0d0/(num%etol*num%dt/100.d0)**num%eopt))
      jipperdo2 = nint(max(1.0d0, 1.0d0/(toleq/100.d0)**(num%dtmaxmin)))
     !!!!!
+
+
 
   !update profiles and tolerance
   y=y0
@@ -821,7 +830,8 @@ endif
 
            !compute current drive from ecrh and nbi
            jcdr=0.d0
-											jcdr=inp0%nbcdeff*pnbi*6.2832/trapz(nepr*dv)*v(nx)*10.d0 !PROCESS definition of gamcd
+											jcdr=inp0%nbcdeff*pnbi_cd*6.2832/trapz(nepr*dv)*v(nx)*10.d0+ & 
+											 & inp0%gamcdothers*inp0%nbcdeff*(pnbi-pnbi_cd)*6.2832/trapz(nepr*dv)*v(nx)*10.d0  !PROCESS definition of gamcd
 											
  	include 'cubsfml.inc' !jbs computation according to Sauter et al.
 	 cubb(1)=0.d0 !on axis is 0
@@ -857,7 +867,7 @@ endif
                 roc, Vloop, fbs,fcd, dum1, &
                 k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, qprf, rho, psi, jpar,&
                 ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,trianpg95 &
-                ,pres_fac,areat,num%isawt)
+                ,pres_fac,areat,num%isawt,j_qeq1)
            !check if isnan
            if (isnan(qedge).or.isnan(vloop).or.ip.eq.0.d0) then
               write(*,*) 'equilibrium not converged',vloop,qprf,ip
@@ -1011,9 +1021,28 @@ endif
  	nHe = cHe * nepr
  	nHe3 = cHe3 * nepr
  	nprot = (cprot+comp%protium)*nepr
-	call prxe_func(nx, tepr, prxe, zavxe)
-	call prar_func(nx, tepr, prne, zavne)
-	call prwol_func(nx, tepr, prwol, zavwol)
+!call radiation functions for impurities		
+!PLASMOD FUNCTIONS
+!	call prxe_func(nx, tepr, prxe, zavxe)
+!	call prar_func(nx, tepr, prne, zavne)
+!	call prwol_func(nx, tepr, prwol, zavwol)
+!!!!!!!!!!!!!!!!!!!
+!PROCESS FUNCTIONS
+	prwol=0.
+	prxe=0.
+	prne=0. 
+	do jrad=1,nx
+		call impradprofile(impurity_arr(comp%imptype(1)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prwol(jrad)=prwol(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(1))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavwol(jrad)=Zav_of_te(impurity_arr(comp%imptype(1)),tepr(jrad))
+		call impradprofile(impurity_arr(comp%imptype(2)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prxe(jrad)=prxe(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(2))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavxe(jrad)=Zav_of_te(impurity_arr(comp%imptype(2)),tepr(jrad))
+		call impradprofile(impurity_arr(comp%imptype(3)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prne(jrad)=prne(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(3))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavne(jrad)=Zav_of_te(impurity_arr(comp%imptype(3)),tepr(jrad))
+	enddo
+!!!!!!!!!!!!!!!!!!!
 	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
 	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
 	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot+nwol
