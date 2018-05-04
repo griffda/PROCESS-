@@ -1192,6 +1192,9 @@ contains
        case ('plasmod_pech')
           call parse_real_variable('plasmod_pech', plasmod_pech, 0.0D0, 1.0D4, &
                'ech power (not in use yet)')
+       case ('plasmod_gamcdothers')
+          call parse_real_variable('plasmod_gamcdothers', plasmod_gamcdothers, 0.0D0, 1.0D0, &
+               'efficiency multiplier for non-CD heating. If 0.0 pheat treated as if it had no current drive associated')
        case ('plasmod_spellet')
           call parse_real_variable('plasmod_spellet', plasmod_spellet, 0.0D0, 1.0D4, &
                'pellet mass in units of D in 10^19')

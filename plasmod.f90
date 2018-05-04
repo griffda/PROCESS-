@@ -220,6 +220,8 @@ contains
        inp0%qheat   = 0.d0 !
        inp0%qcd     = 0.d0 !
        inp0%qfus    = 0.d0 !
+       inp0%gamcdothers = plasmod_gamcdothers
+       
        inp0%spellet = 0.d0 !pellet mass in particles of D in 10^19
        inp0%fpellet = 0.5d0 !pellet frequency in Hz
 
