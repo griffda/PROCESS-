@@ -9,9 +9,15 @@ module physics_functions_module
   !+ad_cont  beamfus
   !+ad_cont  bosch_hale
   !+ad_cont  fsv
+  !+ad_cont  imprad
   !+ad_cont  palph
   !+ad_cont  palph2
+  !+ad_cont  p_eped_scaling
+  !+ad_cont  prad_ipdg89
+  !+ad_cont  psync_albajar_fidone
   !+ad_cont  pthresh
+  !+ad_cont  radpwr
+  !+ad_cont  t_eped_scaling
   !+ad_args  N/A
   !+ad_desc  This module contains physics routines which can be called by physics or 
   !+ad_desc  other modules (e.g. PLASMOD).
@@ -1509,9 +1515,5 @@ subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pra
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-
-
-  
   
 end module physics_functions_module
