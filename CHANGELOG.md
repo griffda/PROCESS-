@@ -10,6 +10,10 @@
 
 PLASMOD
  - add all changes to PROCESS from PLASMOD here
+ - Created a new file 'physics_functions.f90' to store code moved from physics.f90 which may be used by PLASMOD and other semi-independent models. 
+ - This is to prevent circular dependencies. 
+ - Subroutines include: beamcalc, beamfus, imprad, palph, palph2, prad_ipdg89, psync_albajar_fidone, pthresh, radpwr
+ - Functions include: bosch_hale, fsv, p_eped_scaling, t_eped_scaling,
 
 ## Minor changes
 
