@@ -18,6 +18,7 @@ module structs
       real(kind(1.0d0)) :: xtglf(100)
       integer :: isiccir=0
 						integer :: isawt=1
+						integer :: iprocess=1
     end type numerics_transp  
 
 

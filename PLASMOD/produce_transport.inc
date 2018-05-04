@@ -19,6 +19,7 @@
  Pnbi=q_heat*Piaux/trapz(Piaux*dV);
 	Piaux = exp(-(x-inp0%x_cd(1))**2/inp0%dx_cd(1)**2.d0)
  Pnbi=Pnbi+q_cd*Piaux/trapz(Piaux*dV);
+ Pnbi_cd=q_cd*Piaux/trapz(Piaux*dV); !this is power specifically for CD, to be used later for jcdr
 	Piaux = exp(-(x-inp0%x_fus(1))**2/inp0%dx_fus(1)**2.d0)
  Pnbi=Pnbi+q_fus*Piaux/trapz(Piaux*dV);
 	Piaux = exp(-(x-inp0%x_control(1))**2/inp0%dx_control(1)**2.d0)
@@ -53,9 +54,33 @@
 	endif
 
 !call radiation functions for impurities		
-	call prxe_func(nx, tepr, prxe, zavxe)
-	call prar_func(nx, tepr, prne, zavne)
-	call prwol_func(nx, tepr, prwol, zavwol)
+if (num%iprocess.eq.0) then
+!PLASMOD FUNCTIONS
+!	call prxe_func(nx, tepr, prxe, zavxe)
+!	call prar_func(nx, tepr, prne, zavne)
+!	call prwol_func(nx, tepr, prwol, zavwol)
+!!!!!!!!!!!!!!!!!!!
+	else
+!PROCESS FUNCTIONS
+	prwol=0.
+	prxe=0.
+	prne=0. 
+	do jrad=1,size(x)
+		call impradprofile(impurity_arr(comp%imptype(1)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prwol(jrad)=prwol(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(1))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavwol(jrad)=Zav_of_te(impurity_arr(comp%imptype(1)),tepr(jrad))
+		call impradprofile(impurity_arr(comp%imptype(2)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prxe(jrad)=prxe(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(2))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavxe(jrad)=Zav_of_te(impurity_arr(comp%imptype(2)),tepr(jrad))
+		call impradprofile(impurity_arr(comp%imptype(3)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prne(jrad)=prne(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(3))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavne(jrad)=Zav_of_te(impurity_arr(comp%imptype(3)),tepr(jrad))
+	enddo
+!!!!!!!!!!!!!!!!!!!
+	endif
+
+
+
 	prad = nXe*nepr*prxe + nne*nepr*prne+prwol*nwol*nepr !total Prad density
 
 !write(*,*) trapz(prwol*nwol*nepr*dV),zavwol(20)
@@ -192,6 +217,10 @@ yllama=1.d0
 	c(:,2) = DdnVne !electron heat flux
 	c(:,3) = DdnVni !thermal ion heat flux
 	
+!position of MHD-driven chi
+	if (inp0%chisawpos.ge.0.d0) j_sawpos=nint(inp0%chisawpos/dx)
+	if (inp0%chisawpos.lt.0.d0) j_sawpos=j_qeq1
+
 	! define transport coefficients
 	if (i_modeltype.ne.9999) then
 	call trmodel(i_modeltype,nx,nxt, nchannels,vprime,2.5d0,1.d0,1.+0.*amin,1.+0.*amin,1.+0.*amin, & 
@@ -203,6 +232,14 @@ yllama=1.d0
 !actual diffusivities adding stabilizing term num%dtmaxmax. G. V. Pereverzev and G. Corrigan method, CPC 2008
 	aa=a+num%dtmaxmax
 	bb=b-num%dtmaxmax*gy0/rpmajor
+
+!add sawtooth transport
+	if (j_sawpos.gt.0) then
+	if (j_points(j_sawpos).ge.1.and.j_points(j_sawpos).le.nxt) then
+	aa(j_points(j_sawpos):nxt,:) = aa(j_points(j_sawpos):nxt,:)+inp0%chisaw	
+	endif
+	endif
+!!!!!!!!!!!!!
 
 	else
 	!TGLF, not used in PROCESS

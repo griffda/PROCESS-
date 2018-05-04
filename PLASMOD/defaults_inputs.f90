@@ -29,6 +29,7 @@
                           num%nchannels=3  !leave this at 3
                           num%ipedestal=2 !1 - fixed temperature pedestal. 2 - Sareelma scaling
 																										num%i_impmodel=1 !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
+																										num%iprocess=0 !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
 																										
     geom%A = 3.1d0  !aspect ratio
     geom%R = 9.072d0  ! major radius in m

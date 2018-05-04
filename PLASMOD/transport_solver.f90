@@ -181,8 +181,6 @@
     
 pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside equil.f90
 
-!				 call initialise_imprad !PROCESS function, call this only if transprz stanfdalone, comment if in PROCESS
-
 !create output directory if it oesnt exist
 if (geom%counter.eq.0) then
 	inquire(file='./CHARTST', exist=dir_e)
@@ -1023,26 +1021,29 @@ endif
  	nprot = (cprot+comp%protium)*nepr
 !call radiation functions for impurities		
 !PLASMOD FUNCTIONS
-!	call prxe_func(nx, tepr, prxe, zavxe)
-!	call prar_func(nx, tepr, prne, zavne)
-!	call prwol_func(nx, tepr, prwol, zavwol)
+	if (num%iprocess.eq.0) then
+		call prxe_func(nx, tepr, prxe, zavxe)
+		call prar_func(nx, tepr, prne, zavne)
+		call prwol_func(nx, tepr, prwol, zavwol)
 !!!!!!!!!!!!!!!!!!!
+	else
 !PROCESS FUNCTIONS
-	prwol=0.
-	prxe=0.
-	prne=0. 
-	do jrad=1,nx
-		call impradprofile(impurity_arr(comp%imptype(1)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
-			prwol(jrad)=prwol(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(1))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
-			zavwol(jrad)=Zav_of_te(impurity_arr(comp%imptype(1)),tepr(jrad))
-		call impradprofile(impurity_arr(comp%imptype(2)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
-			prxe(jrad)=prxe(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(2))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
-			zavxe(jrad)=Zav_of_te(impurity_arr(comp%imptype(2)),tepr(jrad))
-		call impradprofile(impurity_arr(comp%imptype(3)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
-			prne(jrad)=prne(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(3))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
-			zavne(jrad)=Zav_of_te(impurity_arr(comp%imptype(3)),tepr(jrad))
-	enddo
+		prwol=0.
+		prxe=0.
+		prne=0. 
+		do jrad=1,nx
+			call impradprofile(impurity_arr(comp%imptype(1)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+				prwol(jrad)=prwol(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(1))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+				zavwol(jrad)=Zav_of_te(impurity_arr(comp%imptype(1)),tepr(jrad))
+			call impradprofile(impurity_arr(comp%imptype(2)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+				prxe(jrad)=prxe(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(2))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+				zavxe(jrad)=Zav_of_te(impurity_arr(comp%imptype(2)),tepr(jrad))
+			call impradprofile(impurity_arr(comp%imptype(3)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+				prne(jrad)=prne(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(3))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+				zavne(jrad)=Zav_of_te(impurity_arr(comp%imptype(3)),tepr(jrad))
+		enddo
 !!!!!!!!!!!!!!!!!!!
+	endif
 	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
 	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
 	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot+nwol
