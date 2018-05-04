@@ -52,6 +52,7 @@ contains
     !+ad_summ  L-mode to H-mode power threshold calculation
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  dene   : input real :  volume-averaged electron density (/m3)
     !+ad_args  dnla   : input real :  line-averaged electron density (/m3)
@@ -60,7 +61,7 @@ contains
     !+ad_args  kappa  : input real :  plasma elongation
     !+ad_args  sarea  : input real :  plasma surface area (m**2)
     !+ad_args  aion   : input real :  average mass of all ions (amu)
-    !+ad_args  pthrmw(8) : output real array : power threshold (different scalings)
+    !+ad_args  pthrmw(14) : output real array : power threshold (different scalings)
     !+ad_desc  This routine calculates the power threshold for the L-mode to
     !+ad_desc  H-mode transition.
     !+ad_prob  None
@@ -68,7 +69,8 @@ contains
     !+ad_hist  17/07/98 PJK New routine
     !+ad_hist  10/11/11 PJK Initial F90 version
     !+ad_hist  18/12/12 PJK Added scalings 6-8
-    !ad_hist   16/04/18 KVE Cut from physics and pasted into physics_functions
+    !+ad_hist  16/04/18 KVE Cut from physics and pasted into physics_functions
+    !+ad_hist  02/05/18 SIM Added scaling 9-14
     !+ad_stat  Okay
     !+ad_docs  ITER Physics Design Description Document, p.2-2
     !+ad_docs  ITER-FDR Plasma Performance Assessments, p.III-9
@@ -76,6 +78,8 @@ contains
     !+ad_docs  Martin et al, 11th IAEA Tech. Meeting on H-mode Physics and
     !+ad_docc  Transport Barriers, Journal of Physics: Conference Series
     !+ad_docc  123 (2008) 012033
+    !+ad_docs  J A Snipes and the International H-mode Threshold Database
+    !+ad+docc  Working Group, 2000, Plasma Phys. Control. Fusion, 42, A299
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -85,7 +89,7 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: dene,dnla,bt,rmajor,kappa,sarea,aion
-    real(kind(1.0D0)), dimension(8), intent(out) :: pthrmw
+    real(kind(1.0D0)), dimension(14), intent(out) :: pthrmw
 
     !  Local variables
 
@@ -130,6 +134,30 @@ contains
 
     pthrmw(7) = pthrmw(6) + 2.0D0*marterr
     pthrmw(8) = pthrmw(6) - 2.0D0*marterr
+
+    ! Snipes et al (2000) scaling with mass correction
+    ! Nominal, upper and lower
+    
+    pthrmw(9) = 1.42D0 * dnla20**0.58D0 * bt**0.82D0 * rmajor &
+               * rminor**0.81D0 * (2.0D0/aion) 
+
+    pthrmw(10) = 1.547D0 * dnla20**0.615D0 * bt**0.851D0 &
+              * rmajor**1.089D0 * rminor**0.876D0 * (2.0D0/aion)
+
+    pthrmw(11) = 1.293D0 * dnla20**0.545D0 * bt**0.789D0 &
+              * rmajor**0.911D0 * rminor**0.744D0 * (2.0D0/aion)
+
+    ! Snipes et al (2000) scaling (closed divertor) with mass correction
+    ! Nominal, upper and lower
+
+    pthrmw(12) = 0.8D0 * dnla20**0.5D0 * bt**0.53D0 * rmajor**1.51D0 &
+               * (2.0D0/aion) 
+
+    pthrmw(13) = 0.867D0 * dnla20**0.561D0 * bt**0.588D0 * rmajor**1.587D0 &
+               * (2.0D0/aion) 
+
+    pthrmw(14) = 0.733D0 * dnla20**0.439D0 * bt**0.472D0 * rmajor**1.433D0 &
+               * (2.0D0/aion) 
 
   end subroutine pthresh
 

@@ -4529,6 +4529,7 @@ implicit none
     !+ad_hist  18/11/14 PJK Corrected power balance output if ignite=1
     !+ad_hist  01/04/15 JM  Core plasma power balance removed
     !+ad_hist  05/08/15 MDK Output to say which impurity (if any) is an iteration variable.
+    !+ad_hist  02/05/18 SIM Added pthrmw(9-14) and associated error warnings
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4946,17 +4947,56 @@ implicit none
     if (istell == 0) then
        call osubhd(outfile,'H-mode Power Threshold Scalings :')
 
-       call ovarre(outfile,'1996 ITER scaling: nominal (MW)','(pthrmw(1))', pthrmw(1), 'OP ')
-       call ovarre(outfile,'1996 ITER scaling: upper bound (MW)','(pthrmw(2))', pthrmw(2), 'OP ')
-       call ovarre(outfile,'1996 ITER scaling: lower bound (MW)','(pthrmw(3))', pthrmw(3), 'OP ')
-       call ovarre(outfile,'1997 ITER scaling (1) (MW)','(pthrmw(4))',pthrmw(4), 'OP ')
-       call ovarre(outfile,'1997 ITER scaling (2) (MW)','(pthrmw(5))',pthrmw(5), 'OP ')
-       call ovarre(outfile,'2008 Martin scaling: nominal (MW)', '(pthrmw(6))',pthrmw(6), 'OP ')
-       call ovarre(outfile,'2008 Martin scaling: 95% upper bound (MW)', '(pthrmw(7))',pthrmw(7), 'OP ')
-       call ovarre(outfile,'2008 Martin scaling: 95% lower bound (MW)', '(pthrmw(8))',pthrmw(8), 'OP ')
+       call ovarre(outfile,'ITER 1996 scaling: nominal (MW)','(pthrmw(1))', pthrmw(1), 'OP ')
+       call ovarre(outfile,'ITER 1996 scaling: upper bound (MW)','(pthrmw(2))', pthrmw(2), 'OP ')
+       call ovarre(outfile,'ITER 1996 scaling: lower bound (MW)','(pthrmw(3))', pthrmw(3), 'OP ')
+       call ovarre(outfile,'ITER 1997 scaling (1) (MW)','(pthrmw(4))',pthrmw(4), 'OP ')
+       call ovarre(outfile,'ITER 1997 scaling (2) (MW)','(pthrmw(5))',pthrmw(5), 'OP ')
+       call ovarre(outfile,'Martin 2008 scaling: nominal (MW)', '(pthrmw(6))',pthrmw(6), 'OP ')
+       call ovarre(outfile,'Martin 2008 scaling: 95% upper bound (MW)', '(pthrmw(7))',pthrmw(7), 'OP ')
+       call ovarre(outfile,'Martin 2008 scaling: 95% lower bound (MW)', '(pthrmw(8))',pthrmw(8), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling: nominal (MW)', '(pthrmw(9))',pthrmw(9), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling: upper bound (MW)', '(pthrmw(10))',pthrmw(10), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling: lower bound (MW)', '(pthrmw(11))',pthrmw(11), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling (closed divertor): nominal (MW)', '(pthrmw(12))',pthrmw(12), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling (closed divertor): upper bound (MW)', '(pthrmw(13))',pthrmw(13), 'OP ')
+       call ovarre(outfile,'Snipes 2000 scaling (closed divertor): lower bound (MW)', '(pthrmw(14))',pthrmw(14), 'OP ')
        call oblnkl(outfile)
+       if ((ilhthresh.eq.9).or.(ilhthresh.eq.10).or.(ilhthresh.eq.11)) then
+           if ((bt < 0.78D0).or.(bt > 7.94D0)) then
+               call ocmmnt(outfile,'(bt outside Snipes 2000 fitted range)')
+               call report_error(201)
+           end if
+           if ((rminor < 0.15D0).or.(rminor > 1.15D0)) then
+               call ocmmnt(outfile,'(rminor outside Snipes 2000 fitted range)')
+               call report_error(202)
+           end if
+           if ((rmajor < 0.55D0).or.(rmajor > 3.37D0)) then
+               call ocmmnt(outfile,'(rmajor outside Snipes 2000 fitted range)')
+               call report_error(203)
+           end if
+           if ((dnla < 0.09D20).or.(dnla > 3.16D20)) then
+               call ocmmnt(outfile,'(dnla outside Snipes 2000 fitted range)')
+               call report_error(204)
+           end if
+           if ((kappa < 1.0D0).or.(kappa > 2.04D0)) then
+               call ocmmnt(outfile,'(kappa outside Snipes 2000 fitted range)')
+               call report_error(205)
+           end if
+           if ((triang < 0.07D0).or.(triang > 0.74D0)) then
+               call ocmmnt(outfile,'(triang outside Snipes 2000 fitted range)')
+               call report_error(206)
+           end if
+       call oblnkl(outfile)
+       end if
+       if ((ilhthresh.eq.12).or.(ilhthresh.eq.13).or.(ilhthresh.eq.14)) then
+           call ocmmnt(outfile,'(L-H threshold for closed divertor only. Limited data used in Snipes fit)')
+           call oblnkl(outfile)
+           call report_error(207)
+       end if
        if ((ioptimz > 0).and.(active_constraints(15))) then
           call ovarre(outfile,'L-H threshold power (enforced) (MW)', '(boundl(103)*plhthresh)',boundl(103)*plhthresh, 'OP ')
+          call ovarre(outfile,'L-H threshold power (MW)', '(plhthresh)',plhthresh, 'OP ')
        else
           call ovarre(outfile,'L-H threshold power (NOT enforced) (MW)', '(plhthresh)',plhthresh, 'OP ')
        end if

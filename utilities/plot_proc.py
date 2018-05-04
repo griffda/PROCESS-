@@ -1426,8 +1426,13 @@ def plot_power_info(axis, mfile_data, scan):
     dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
     bt = mfile_data.data["bt"].get_scan(scan)
     surf = mfile_data.data["sarea"].get_scan(scan)
-    pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
-    err = pthresh - mfile_data.data["pthrmw(7)"].get_scan(scan)
+
+    #Assume Martin scaling if pthresh is not printed
+    #Accounts for pthresh not being written prior to issue #679 and #680
+    if "plhthresh" in mfile_data.data.keys():
+        pthresh = mfile_data.data["plhthresh"].get_scan(scan)
+    else:
+        pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
 
     gross_eff = 100.0 * (mfile_data.data["pgrossmw"].get_scan(scan) /
                          mfile_data.data["pthermmw"].get_scan(scan))
@@ -1524,7 +1529,12 @@ def plot_current_drive_info(axis, mfile_data, scan):
     dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
     bt = mfile_data.data["bt"].get_scan(scan)
     surf = mfile_data.data["sarea"].get_scan(scan)
-    pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
+    #Assume Martin scaling if pthresh is not printed
+    #Accounts for pthresh not being written prior to issue #679 and #680
+    if "plhthresh" in mfile_data.data.keys():
+        pthresh = mfile_data.data["plhthresh"].get_scan(scan)
+    else:
+        pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
     flh = pdivt / pthresh
 
     powerht = mfile_data.data["powerht"].get_scan(scan)
