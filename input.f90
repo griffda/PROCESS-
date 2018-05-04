@@ -1132,6 +1132,9 @@ contains
        case ('plasmod_qdivt')
           call parse_real_variable('plasmod_qdivt', plasmod_qdivt, 0.0D0, 1.0D6, &
                'Divertor heat flux in MW/m^2, if 0, dont use SOL model')
+       case ('plasmod_imptype')
+          call parse_int_array('plasmod_imptype', plasmod_imptype, isub1, 3, &
+               'Impurities: 1 - intrinsic, 2 - Psep control, 3 - seeding for SOL (defaults: W, Xe, Ar)', icode)   
           
     !Derived type inputs
        case ('plasmod_qnbi_psepfac')

@@ -135,10 +135,16 @@ contains
        ! its intial fraction has to be 0.d0. Then globtau is used!
        ! The Xe fraction is used as an iteration variable inside PLASMOD
        ! it adjusts to fulfil psepqbarmax, pseprmax or psepplh_sup.
-       comp%comparray = 0.d0 !array of impurities
+       comp%comparray = 0.d0 !array of impurity concentrations
        comp%comparray(9) = impurity_arr(element2index('Ar'))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
        comp%comparray(14) = impurity_arr(element2index('W_'))%frac 
        comp%protium   = protium !protium is treated separately
+
+       ! Impurities to be used for (1)intrinsic (2)Psep control (3)SOL seeding
+       comp%imptype(1) = plasmod_imptype(1)
+       comp%imptype(2) = plasmod_imptype(2)
+       comp%imptype(3) = plasmod_imptype(3)
+
        
        comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi      
        comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe

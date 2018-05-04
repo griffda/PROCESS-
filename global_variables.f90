@@ -883,7 +883,9 @@ module plasmod_variables
   !+ad_vars  plasmod_psepplh_sup /12000.0d0/ : Psep/PLH if above this, use Xe
   real(kind(1.0D0)) :: plasmod_psepplh_sup = 12000.0d0
   !+ad_vars  plasmod_qdivt /0.0d0/ : divertor heat flux in MW/m^2, if 0, dont use SOL model
-  real(kind(1.0D0)) :: plasmod_qdivt = 0.0d0  
+  real(kind(1.0D0)) :: plasmod_qdivt = 0.0d0
+  !+ad_vars  plasmod_imptype(3) /14, 13, 9/ : Impurities: element 1 - intrinsic impurity, element 2 - Psep control, element 3 - seeding for SOL (defaults: W, Xe, Ar)
+  integer, dimension(3) :: plasmod_imptype = (/ 14, 13, 9 /)
   
  !Derived type inputs
   !+ad_vars  plasmod_qnbi_psepfac /50.0d0/ : dqnbi/d(1-Psep/PLH)
