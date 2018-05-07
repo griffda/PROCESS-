@@ -1,7 +1,7 @@
 ! This code is called PLASMOD, copyright E Fable 2018
 !
 ! Disclaimer: results obtained with this code should be referenced as:
-! E. Fable et al., Fusion Eng. and Design, to be published (2018)
+! E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
 
 
 ! MAIN CALL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
