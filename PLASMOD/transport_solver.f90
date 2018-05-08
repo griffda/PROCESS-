@@ -293,12 +293,14 @@ endif
 		ped%nsep=nsep
 	endif	
 
-  ! set up transport and reduced grids
+! set up transport and reduced grids
+! full grid
   dx = 1.0d0/(nx-1.d0)
   dxn = dx
   x = (/ (dx*(irho-1.), irho = 1, nx) /)
-  x0=max(num%capa,x(2)) !this maybe revisited ... EFable
  	jped=nint(xb/dx) !pedestal top position
+! reduced grid
+  x0=max(num%capa,x(2)) !this maybe revisited ... EFable
   xtr = linspace(x0, xb, nxt) * amin  ! normalized minor radius for transport
   xtrt(1:nxt) = xtr/amin
   xtrt(nxt+1) = 1.0d0

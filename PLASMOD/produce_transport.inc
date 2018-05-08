@@ -218,7 +218,7 @@ yllama=1.d0
 	c(:,3) = DdnVni !thermal ion heat flux
 	
 !position of MHD-driven chi
-	if (inp0%chisawpos.ge.0.d0) j_sawpos=nint(inp0%chisawpos/dx)
+	if (inp0%chisawpos.ge.0.d0) j_sawpos=nint(inp0%chisawpos/dxn)
 	if (inp0%chisawpos.lt.0.d0) j_sawpos=j_qeq1
 
 	! define transport coefficients
