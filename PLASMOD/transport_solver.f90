@@ -470,6 +470,7 @@ endif
           k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, qprf, rho, psi, jpar,&
           ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,trianpg95 &
           ,pres_fac,areat,num%isawt,j_qeq1)
+										j_qeq1=0
   else !equilibrium updated using previous result as new guess, faster
     call compute_equil( &
                                 !input 
