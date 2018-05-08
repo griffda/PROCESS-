@@ -1099,6 +1099,9 @@ contains
        case ('plasmod_dgy')
           call parse_real_variable('plasmod_dgy', plasmod_dgy, 0.0D0, 1.0D4, &
                'Newton differential')
+       case ('plasmod_iprocess')
+          call parse_int_variable('plasmod_iprocess', plasmod_iprocess, 0, 1, &
+               '0 - - use PLASMOD functions, 1 - use PROCESS functions')
        case ('plasmod_i_modeltype')
           call parse_int_variable('plasmod_i_modeltype', plasmod_i_modeltype, 0, 10000, &
                '1 - Simple gyrobohm scaling with imposed H factor > 1, other models with H in output')

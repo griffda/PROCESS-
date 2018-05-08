@@ -853,6 +853,8 @@ module plasmod_variables
   !+ad_vars  plasmod_dgy /1.0d-5/ : Newton differential
   real(kind(1.0D0)) :: plasmod_dgy = 1.0d-5
 
+  !+ad_vars  plasmod_iprocess /1/ : 0 - use PLASMOD functions, 1 - use PROCESS functions
+  integer :: plasmod_iprocess = 1
   !+ad_vars  plasmod_i_modeltype /1/ : swithc for the transport model <UL>
   !+ad_varc  <LI> 1 - Simple gyrobohm scaling with imposed
   !+ad_varc  H factor > 1. Other values give H factor as output
