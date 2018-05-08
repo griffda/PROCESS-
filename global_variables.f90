@@ -812,7 +812,7 @@ module plasmod_variables
   !+ad_call  None
   !+ad_hist  26/02/18 KE Initial version of module
   !+ad_stat  Okay
-  !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
+  !+ad_docs  E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   use structs

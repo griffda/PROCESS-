@@ -88,56 +88,22 @@ contains
     integer, intent(inout) :: i_flag
 
 
-    ! Only variables that can be iteration variables or those that
-    ! are calculated inside PROCESS need to be put here:
-
-    i_flag = 1
-
-    geom%r   = rmajor
-    geom%a   = aspect
-    geom%q95 = q95
-    geom%bt  = bt
-
-    inp0%f_gw      = fgwped !pedestal top greenwald fraction
-    inp0%Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used.
-    inp0%pheatmax  = pinjalw !max allowed power for heating+CD+fusion control
-    inp0%q_control = pheat !minimal power required for control 
-
-    !fvsbrnni can be an iteration variable!
-    inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
-
-    !Note that this is only a correct input on the second iteration!
-    inp0%fpion = fpion ! Fraction of neutral beam energy to ions
-
-    if (comp%qdivt.eq.0.d0) then
-       comp%comparray(9) = impurity_arr(element2index('Ar'))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
-       !else
-       !@EF: What should happen, if this is not assigned?
-    endif
-    
-    !uses PROCESS defined LH threshold, if this is > 0
-    inp0%PLH = ilhthresh    
-							
-    inp0%nbcdeff = gamcd ! normalised current drive efficiency (1.0e20 A/W-m2) 
-
-    ! all fixed input variables that cannot change within a PROCESS
-    ! iteration go here!
+    ! all fixed input variables that cannot change within a PROCESS iteration go here!
     ! They only need to be initialised once.
+    
     if (geom%counter.eq.0.d0) then
-
 
        !HL: This is a temporary set up for the moment!
        comp%psep_r      = pseprmax !Psep/R max value
        comp%psepb_q95AR = psepbqarmax !Psep B/qAR max value
-
        
        ! To selfconsistently compute the He concentration inside PLASMOD
        ! its intial fraction has to be 0.d0. Then globtau is used!
        ! The Xe fraction is used as an iteration variable inside PLASMOD
        ! it adjusts to fulfil psepqbarmax, pseprmax or psepplh_sup.
        comp%comparray = 0.d0 !array of impurity concentrations
-       comp%comparray(9) = impurity_arr(element2index('Ar'))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
-       comp%comparray(14) = impurity_arr(element2index('W_'))%frac 
+       comp%comparray(comp%imptype(3)) = impurity_arr(comp%imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp%comparray(comp%imptype(1)) = impurity_arr(comp%imptype(1))%frac 
        comp%protium   = protium !protium is treated separately
 
        ! Impurities to be used for (1)intrinsic (2)Psep control (3)SOL seeding
@@ -193,7 +159,7 @@ contains
        !compression factor between div and
        !core: e.g. 10 means there is 10 more Argon concentration in the
        !divertor than in the core
-       comp%c_car = impurity_enrichment(element2index('Ar')) 
+       comp%c_car = impurity_enrichment(comp%imptype(3)) 
 
 
        !derivatives
@@ -268,6 +234,39 @@ contains
        geom%d95 = triang95 !edge triangularity
         
     endif
+				
+    ! Variables that can be iteration variables or those that
+    ! are calculated inside PROCESS need to be put here:
+
+    i_flag = 1
+
+    geom%r   = rmajor
+    geom%a   = aspect
+    geom%q95 = q95
+    geom%bt  = bt
+
+    inp0%f_gw      = fgwped !pedestal top greenwald fraction
+    inp0%Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used.
+    inp0%pheatmax  = pinjalw !max allowed power for heating+CD+fusion control
+    inp0%q_control = pheat !minimal power required for control 
+
+    !fvsbrnni can be an iteration variable!
+    inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
+
+    !Note that this is only a correct input on the second iteration!
+    inp0%fpion = fpion ! Fraction of neutral beam energy to ions
+
+    if (comp%qdivt.eq.0.d0) then
+       comp%comparray(comp%imptype(3)) = impurity_arr(comp%imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       !else
+       !@EF: What should happen, if this is not assigned?
+    endif
+    
+    !uses PROCESS defined LH threshold, if this is > 0
+    inp0%PLH = ilhthresh    
+							
+    inp0%nbcdeff = gamcd ! normalised current drive efficiency (1.0e20 A/W-m2) 
+
     
   end subroutine setupPlasmod
 
@@ -289,7 +288,8 @@ contains
     !+ad_call  report_error
     !+ad_hist  28/02/18 HL Initial F90 version
     !+ad_stat  Okay
-    !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
+    !+ad_docs  E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
+
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
