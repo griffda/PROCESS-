@@ -93,6 +93,10 @@ contains
     
     if (geom%counter.eq.0.d0) then
 
+       num%nx        = plasmod_nx  !number of interpolated grid points
+       num%nxt       = plasmod_nxt !number of reduced grid points
+       num%nchannels = plasmod_nchannels  !leave this at 3
+       
        !HL: This is a temporary set up for the moment!
        comp%psep_r      = pseprmax !Psep/R max value
        comp%psepb_q95AR = psepbqarmax !Psep B/qAR max value
@@ -136,10 +140,11 @@ contains
        num%i_modeltype = plasmod_i_modeltype !1 - simple gyrobohm scaling with imposed H factor > 1, other models with H in output
        num%i_equiltype = plasmod_i_equiltype !1 - EMEQ, solve equilibrium
        !with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+       !sawtooth inputs
        num%isawt     = plasmod_isawt !0 - no sawteeth, 1 - solve with sawteeth
-       num%nx        = plasmod_nx  !number of interpolated grid points
-       num%nxt       = plasmod_nxt !number of reduced grid points
-       num%nchannels = plasmod_nchannels  !leave this at 3
+       inp0%chisawpos= plasmod_chisawpos !position where artificial sawtooth diffusivity is added, -1 - uses q=1 position
+       inp0%chisaw   = plasmod_chisaw !artificial diffusivity in m^2/s
+       inp0%sawpertau= plasmod_sawpertau !ratio between sawtooth period and confinement time
 
        if(ieped == 0) then
           num%ipedestal= 1  !fixed temperature pedestal

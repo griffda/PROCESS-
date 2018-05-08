@@ -1201,6 +1201,15 @@ contains
        case ('plasmod_gamcdothers')
           call parse_real_variable('plasmod_gamcdothers', plasmod_gamcdothers, 0.0D0, 1.0D0, &
                'efficiency multiplier for non-CD heating. If 0.0 pheat treated as if it had no current drive associated')
+       case ('plasmod_chisawpos')
+          call parse_real_variable('plasmod_chisawpos', plasmod_chisawpos, -10.0D0, 10.0D0, &
+               'position where artificial sawtooth diffusivity is added, -1 - uses q=1 position')
+       case ('plasmod_chisaw')
+          call parse_real_variable('plasmod_chisaw', plasmod_chisaw, 0.0D0, 1.0D4, &
+               'artificial diffusivity in m^2/s')
+       case ('plasmod_sawpertau')
+          call parse_real_variable('plasmod_sawpertau', plasmod_sawpertau, 0.0D0, 1.0D0, &
+               'ratio between sawtooth period and confinement time')          
        case ('plasmod_spellet')
           call parse_real_variable('plasmod_spellet', plasmod_spellet, 0.0D0, 1.0D4, &
                'pellet mass in units of D in 10^19')

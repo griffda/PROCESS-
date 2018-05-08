@@ -931,7 +931,12 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_pech = 0.0d0
   !+ad_vars  plasmod_gamcdothers /1.0d0/ :: efficiency multiplier for non-CD heating. If 0.0 pheat treated as if it had no current drive associated
   real(kind(1.0D0)) :: plasmod_gamcdothers = 1.0d0
-
+  !+ad_vars  plasmod_chisawpos /-1.0d0/ :: position where artificial sawtooth diffusivity is added, -1 - uses q=1 position
+  real(kind(1.0D0)) :: plasmod_chisawpos = -1.0d0
+  !+ad_vars  plasmod_chisaw /0.0d0/ :: artificial diffusivity in m^2/s
+  real(kind(1.0D0)) :: plasmod_chisaw = 0.0d0
+  !+ad_vars  plasmod_sawpertau /1.0d-6/ :: ratio between sawtooth period and confinement time
+  real(kind(1.0D0)) :: plasmod_sawpertau = 1.0d-6
   !+ad_vars  plasmod_spellet /0.0d0/ :: pellet mass in units of D in 10^19
   real(kind(1.0D0)) :: plasmod_spellet = 0.0d0
   !+ad_vars  plasmod_fpellet /0.5d0/ :: pellet frequency in Hz
