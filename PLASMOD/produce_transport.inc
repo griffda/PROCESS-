@@ -234,6 +234,7 @@ yllama=1.d0
 	bb=b-num%dtmaxmax*gy0/rpmajor
 
 !add sawtooth transport
+	j_sawpos=j_qeq1
 	if (j_sawpos.gt.0) then
 	if (j_points(j_sawpos).ge.1.and.j_points(j_sawpos).le.nxt) then
 	aa(j_points(j_sawpos):nxt,:) = aa(j_points(j_sawpos):nxt,:)+inp0%chisaw	
