@@ -39,6 +39,7 @@ Additionally
 
 - to make python dictionaries run `make dicts`
 - to make documentation run `make doc`
+- to make html files run `make html`
 - to make everything run `make all`
 - to clean the directory run `make clean`
 
