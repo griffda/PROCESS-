@@ -596,13 +596,13 @@ endif
   F=F0
   num%etol=num%etol0
 
-! the call below produces sources and transport coefficients to solve the equations
 
-!this block compute sources and transport coefficients for the transport equations
+
+!this block compute sources and transport coefficients for the transport equations!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! the call below produces sources and transport coefficients to solve the equations
 
 !update the profiles with the last calculation of the gradients
  call update_profiles(dx, nxt, nchannels, gy0, y0, rpmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
-	
 
 !interpolate to the finer grid
 	nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [N_e0(1), N_e0],xr)
@@ -628,7 +628,6 @@ endif
 !nbi particle source
 	snebm =pnbi/(e_charge*1.d19*inp0%nbi_energy/1.e3)
 
-
 !split between electrons and ions of NBI
 	!this should be replaced at some point with fpion from PROCESS
 !	nbi_split=0.5d0
@@ -639,7 +638,6 @@ endif
 !assign auxiliary power to electrons and ions
 	Peaux=Pech+nbi_split*Pnbi;
  Piaux=(1.d0-nbi_split)*Pnbi;
-
 
 	nHe = cHe * nepr !He density
 	nHe3 = cHe3 * nepr !He density
@@ -686,8 +684,6 @@ if (num%iprocess.eq.0) then
 !!!!!!!!!!!!!!!!!!!
 	endif
 
-
-
 	prad = nXe*nepr*prxe + nne*nepr*prne+prwol*nwol*nepr !total Prad density
 
 !write(*,*) trapz(prwol*nwol*nepr*dV),zavwol(20)
@@ -706,11 +702,9 @@ if (num%iprocess.eq.0) then
 !caluclate brehmstrahliuzng radiation
   PBRAD=5.06E-5*zepff*NEpr**2.d0*SQRT(TEpr)
 
-
 !this below is for synchrotron radiation computed in the loop
   totse(nx)=trapz(tepr*dV)/V(nx)
   totsi(nx)=trapz(nepr*dV)/V(nx)
-
 	
 	! Calculate fusion power and other powers
 	do jrad = 1, size(x)
@@ -757,7 +751,6 @@ YEPS=YVALP/(YVC+0.0001)
 YY6=atan(0.577*(2.*YEPS-1.))	   
 YY7=log((1.+YEPS)**2/(1.-YEPS+YEPS**2))
 PAION=2./YEPS**2*(0.577*YY6-0.167*YY7+0.3)
-
 
 !electron and ion fusion power
       pedt(jrad) = (1.-paion)*pdtp
@@ -868,9 +861,7 @@ yllama=1.d0
 
 	F = chat-c  ! New residual, norm of F must go to zero at steady-state
 
-
-
-
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
  if (i_diagz.eq.1)	write(*,*) 'matrix obtained'
@@ -1175,11 +1166,6 @@ endif
  cubb=-btor/(0.2d0*pi_g*rtor)*rho*mux*cubb !cubb is Jbs in MA/m^2
 
               ! end of cubsfml
-
-
-
-
-
 	 cubb(1)=0.d0 !on axis is 0
 		cubb=max(0.d0,cubb) !do not allow negative bootstrap
 
@@ -1293,8 +1279,6 @@ endif
 if (inp0%contrpovs.gt.0.) inp0%q_control=inp0%contrpovs*radp%vp(nx)*radp%gradro(nx)
 if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 
-
-
 !LH threshold !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !PROCESS function
 	ne_av = trapz(nepr*dv)/v(nx)*1.d19
@@ -1326,12 +1310,10 @@ dum2=min(comp%psepplh_sup*PLH,dum2)
 	endif 
 	if (comp%psepb_q95AR.gt.0.d0) then !use psepbqar as constraint
 dum2=min(dum2,comp%psepb_q95AR*(btor/q_95/geom%A/rpmajor)**(-1.))
-
 	endif
 	if (comp%psep_r.gt.0.d0) then !use psep/R as constraint
 dum2=min(dum2,comp%psep_r*rpmajor)
 	endif
-
 
 if (dum2.lt.1.d6.and.comp%fcoreraditv.lt.0.d0) then !do the calculation
 		cxe=max(0.,cxe+inp0%cxe_psepfac*(Psep-dum2)/dum2*num%dt/(1.+num%dt))
@@ -1342,7 +1324,6 @@ if (comp%fcoreraditv.ge.0.d0) then !if fcoreraditv is given , replace the above 
  		cxe=max(0.,cxe+inp0%cxe_psepfac*(comp%fcoreraditv*(psepxe-dum2)/dum2-plinexe/dum2)*num%dt/(1.+num%dt))
  if (q_heat.gt.0.) cxe=0.d0
 endif
-
 
 !constraint: current drive fni or loop voltage!
 	if (inp0%f_ni.gt.0.) then !use f_ni as constraint
@@ -1357,14 +1338,12 @@ endif
 		& inp0%qnbi_psepfac*(vloop-inp0%V_loop)*num%dt/(1.+num%dt)))
 	endif
 
-
 !constraint: pfusion target
 	if (inp0%pfus.gt.0.) then
 		q_fus=max(0.,min(inp0%pheatmax-q_heat-q_cd-inp0%q_control,q_fus+& 
 		& inp0%qnbi_psepfac*(1.d0-pfus(nx)/inp0%pfus)*num%dt/(1.+num%dt)))
 		if (i_diagz.eq.1) 	write(*,*) q_heat,q_cd,q_fus,pfus(nx)
 	endif
-
 
 !sum up all powers
  loss%pnbi=min(inp0%maxpauxor*geom%r, & 
@@ -1376,26 +1355,23 @@ if(q_cd.gt.0.) q_cd=q_cd*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 if(q_fus.gt.0.) q_fus=q_fus*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 
 
-!SOL MODEL below
-!constraint: divertor temperature --> gives Ar in output
+!SOL MODEL below!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	if (comp%qdivt.gt.0.) then
+	!constraint: divertor temperature --> gives Ar in output
 !initialize
 	qdivt=0.d0
-
 !T. Eich scaling
 	lambda_q=0.73e-3*btor**(-0.78)* &     
 		&   (rpminor**2.*btor/(0.2*rpmajor*ip))**1.02* &
  	&   (qtot-qrad)**0.1* &
  	&   (rpmajor)**0.02* &
  	&    3.*3.
-
 !geometry of field line
 	lparsep=qprf(nx)*2.d0*pi_g*rpmajor/2.d0
 	ldiv=0.55*lparsep
-	
 !upstream qpar
 	qpar=(qtot-qradedge)*1.d6/(2.d0*pi_g*(rpmajor+rpminor+shif(nx)) & 
 	 & *lambda_q*rpminor/rpmajor/qprf(nx)/2.d0)
-
 !some numerical values for Msicci model
 	fx=10.d0
 	tau_relax=0.1
@@ -1405,27 +1381,14 @@ if(q_fus.gt.0.) q_fus=q_fus*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 	dd2=ds2
 	ds3=0.d0
 	dd3=0.d0
-
-
-
-
-
-
 if (num%isiccir.eq.0) then
 !SOL model based on Eich scaling + a tanh fit of results of Mattia's model for qpar_divertor as a function of argon concentration
-
 !this is a fit to MS model
 !results
 	t_plate=max(0.001,qpar/fx)/1.e7*atan(1./(comp%c_car*car*nepr(1)/ &
      & (max(0.001,qpar/fx)/1.e6*0.00011*(4./nsep)))**16.)
 	qdivt = t_plate*0.8
 endif
-
-
-
-
-
-
 if (num%isiccir.eq.1) then
 ! M. Siccinio SOL model
 	if (isnan(Tup_0d)) then
@@ -1435,40 +1398,29 @@ if (num%isiccir.eq.1) then
 		dqoqguess=0.
 		tdivguess=100.
 	endif
-	
 !	call MS_SOL_model_sub(Lparsep,qpar,fx,0.d0, & 
 !	 & 0.d0,0.d0,nsep*1.d19,qdivt,Tup_0d,t_plate,fm_SE,Lr,6.d0,8.d0,7.d0 & 
 !		& ,1.e3*tsep,tau_relax,taue,tshguess,tupguess, & 
 !		& fmguess,dqoqguess,Ldiv,tdivguess,rmajor,Qtot-Qradedge,ds1,dd1,ds2,dd2, &
 !		& ds3,dd3)
 	qdivt=qdivt/1e6
-
 endif
-
-
-
-
-
 	if (i_diagz.eq.1) 	write(*,*) 'lambda',lambda_q,lparsep,ldiv,qpar,t_plate,qdivt,nsep
 	if (comp%qdivt.gt.0.) then
 !initialize
 	qdivt=0.d0
-
 !T. Eich scaling
 	lambda_q=0.73e-3*btor**(-0.78)* &     
 		&   (rpminor**2.*btor/(0.2*rpmajor*ip))**1.02* &
  	&   (qtot-qrad)**0.1* &
  	&   (rpmajor)**0.02* &
  	&    3.*3.
-
 !geometry of field line
 	lparsep=qprf(nx)*2.d0*pi_g*rpmajor/2.d0
 	ldiv=0.55*lparsep
-	
 !upstream qpar
 	qpar=(qtot-qradedge)*1.d6/(2.d0*pi_g*(rpmajor+rpminor+shif(nx)) & 
 	 & *lambda_q*rpminor/rpmajor/qprf(nx)/2.d0)
-
 !some numerical values for Msicci model
 	fx=10.d0
 	tau_relax=0.1
@@ -1478,27 +1430,14 @@ endif
 	dd2=ds2
 	ds3=0.d0
 	dd3=0.d0
-
-
-
-
-
-
 if (num%isiccir.eq.0) then
 !SOL model based on Eich scaling + a tanh fit of results of Mattia's model for qpar_divertor as a function of argon concentration
-
 !this is a fit to MS model
 !results
 	t_plate=max(0.001,qpar/fx)/1.e7*atan(1./(comp%c_car*car*nepr(1)/ &
      & (max(0.001,qpar/fx)/1.e6*0.00011*(4./nsep)))**16.)
 	qdivt = t_plate*0.8
 endif
-
-
-
-
-
-
 if (num%isiccir.eq.1) then
 ! M. Siccinio SOL model
 	if (isnan(Tup_0d)) then
@@ -1508,25 +1447,20 @@ if (num%isiccir.eq.1) then
 		dqoqguess=0.
 		tdivguess=100.
 	endif
-	
 !	call MS_SOL_model_sub(Lparsep,qpar,fx,0.d0, & 
 !	 & 0.d0,0.d0,nsep*1.d19,qdivt,Tup_0d,t_plate,fm_SE,Lr,6.d0,8.d0,7.d0 & 
 !		& ,1.e3*tsep,tau_relax,taue,tshguess,tupguess, & 
 !		& fmguess,dqoqguess,Ldiv,tdivguess,rmajor,Qtot-Qradedge,ds1,dd1,ds2,dd2, &
 !		& ds3,dd3)
 	qdivt=qdivt/1e6
-
 endif
-
-
-
-
-
 !	qdivt=0.d0 !put here sol model for qdivt
 	 car = max(0.,car+inp0%car_qdivt*(qdivt-comp%qdivt)*num%dt/(1.+num%dt))
 	if (i_diagz.eq.1) 	write(556,*) car,qdivt
 	if (i_diagz.eq.1) 	write(*,*) 'ccar',car,qdivt,qpar
 	endif
+endif
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 !Helium concentration calculation
@@ -1535,6 +1469,7 @@ endif
 	 che3 = comp%globtau(3)*max(0.001,taue)*Sfus_he3/integr_cde(v,nepr,nx)
 	 cprot = comp%globtau(1)*max(0.001,taue)*Sfus_p/integr_cde(v,nepr,nx)
 	endif
+
 !END OF MODULE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
