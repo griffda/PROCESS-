@@ -13,14 +13,17 @@ PLASMOD
  - See reference: E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
  - PLASMOD can be run during every PROCESS iteration by setting ipedestal to 3. It can be run just once, at the end of a PROCESS run by setting ipedestal to 2.
 
- - Created a new file 'physics_functions.f90' to store code moved from physics.f90 which may be used by PLASMOD and other semi-independent models. 
- - This is to prevent circular dependencies. 
+ - Created a new file 'physics_functions.f90' to store code moved from physics.f90 which may be used by PLASMOD and other semi-independent models.
+ - This is to prevent circular dependencies.
  - Subroutines include: beamcalc, beamfus, imprad, palph, palph2, prad_ipdg89, psync_albajar_fidone, pthresh, radpwr
  - Functions include: bosch_hale, fsv, p_eped_scaling, t_eped_scaling,
- - 
+
  - New user-defined inputs have been added, which all have the prefix 'plasmod_'. These are specific controls and inputs to PLASMOD.
  - For a complete list, see the vardes file. Where appropriate, previously-existing PROCESS input parameters still apply.
  - Certain constraints and iterations variables cannot be used with PLASMOD - see the User Guide for more information.
+
+	Utilities
+	- New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
 
 ## Minor changes
 

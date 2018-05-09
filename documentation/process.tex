@@ -30,6 +30,7 @@
 \newcommand{\mfile}{\mbox{\texttt{MFILE.DAT}}}
 \newcommand{\outdat}{\mbox{\texttt{OUT.DAT}}}
 \newcommand{\plotdat}{\mbox{\texttt{PLOT.DAT}}}
+\newcommand{\radpdat}{\mbox{\texttt{RADP.DAT}}}
 \newcommand{\process}{\mbox{\texttt{PROCESS}}}
 \newcommand{\vmcon}{\mbox{\texttt{VMCON}}}
 \renewcommand{\vec}[1]{\boldsymbol{#1}}
@@ -642,6 +643,7 @@ Section~\ref{sec:itvars}) to help in the optimisation process.
 \end{figure}
 
 \subsection{Plasma physics models}
+\label{sec:plasma_physics_models}
 
 By default, the plasma is assumed to have an up-down asymmetric, single null
 configuration (although this can be changed if desired --- see
@@ -1311,6 +1313,92 @@ treats the scrape-off layer merely as a gap. Switch \texttt{iscrp} determines
 whether the inboard and outboard gaps should be calculated as 10\% of the
 plasma minor radius (\texttt{iscrp = 0}), or set equal to the input values
 \texttt{scrapli} and \texttt{scraplo} (\texttt{iscrp = 1}).
+
+\subsection{PLASMOD - 1D transport model}
+\label{sec:plasmod}
+
+The PLASMOD~\cite{PLASMOD} code is a one-dimensional, time-independent particle and energy transport model, which has some basis in the ASTRA~\cite{ASTRA} simulator. Even this simplified transport code leads to potentially much more accurate modelling of the fusion power generated when compared to the 0D approximations found elsewhere in \process. PLASMOD solves for a user-defined number of discrete points in the radial direction between the core of the plasma and the pedestal in order to create profiles which are not based on simple parameterizations.
+
+Switch \texttt{ipedestal = 2} requests that PLASMOD be run \textit{only after} \process\ has found a feasible solution, whereas if \texttt{ipedestal = 3} then PLASMOD is called during every \process\ iteration. It is recommended that \texttt{ipedestal = 3} be used, other than for testing purposes.
+
+PLASMOD is run in conjunction with many \process\ physics models, although certain constraints and iteration variables are not applicable when \texttt{ipedestal = 3}, as detailed in this section. Engineering models are unaffected, although naturally, results in all model-types are liable to change.
+
+\subsubsection*{PLASMOD inputs}
+User-defined inputs specific to PLASMOD have the prefix 'plasmod\_' and should be added to the \indat. These control various aspects of the transport simulation, from maximum number of iterations to be attempted to the current drive efficiency. For a complete list refer to the vardes.html file.
+
+\subsubsection*{PLASMOD switches}
+Here is a summary of sub-models which may be accessed by the user:
+
+\begin{itemize}
+\item \texttt{plasmod\_i\_equiltype} Equilibrium model: 1 - EMEQ, solve with sawteeth and inputted q95. 2 - EMEQ, solve with sawteeth and inputted Ip (not recommended).
+\item \texttt{plasmod\_i\_modeltype} Transport model: 1 - Simple gyrobohm scaling with imposed H factor $>$ 1. Other values give H factor as output. 111 - roughly calibrated to give H=1 for DEMO, but not fixed H.
+\item \texttt{plasmod\_iprocess} Sub-functions: 0 - use PLASMOD functions, 1 - use PROCESS functions.
+\item \texttt{plasmod\_i\_impmodel} Impurity model: 0 - fixed concentration, 1 - fixed concentration at pedestal top, then fixed density. 
+\item \texttt{plasmod\_isawt} Sawtooth modelling: 0 - none, 1 - solve with sawteeth.  
+\end{itemize}
+
+For more details refer to the vardes.html file.
+
+\subsubsection*{PROCESS physics models substituted by PLASMOD}
+With reference to the sections found in~\ref{sec:plasma_physics_models} this is a summary of key outputs from PLASMOD:
+
+\begin{itemize}
+\item Plasma geometry - $\kappa$ and $\delta$
+\item Fusion reactions - power from D + T, D + D, ???...interactions are calculated by PLASMOD
+\item Plasma profiles - all radial profiles are created by PLASMOD, including many not availabe in \process\ 0D: electron density, electron temperature, ion density, ion temperature, current density, bootstrap current, current from current drive, poloidal current, poloidal fluix, safety factor, plasma conductivity, alpha pressure...
+\end{itemize}
+
+\subsubsection*{PROCESS physics models used by PLASMOD}
+
+\begin{itemize}
+\item Pedestal pressure scaling (subroutine \texttt{p\_eped\_scaling})
+\item Radiation model for Bremsstrahlung (subroutine \texttt{impradprofile})
+\item L-mode to H-mode power threshold calculation (subroutine \texttt{pthresh})
+\item Fusion reaction rate calculation (function \texttt{bosch\_hale})
+\end{itemize}
+
+\subsubsection*{PROCESS physics models constrained when using PLASMOD}
+
+\begin{itemize}
+
+\item The following iteration variables may not be used, as they are outputs of PLASMOD:
+  \subitem 4    \texttt{te}
+  \subitem 5    \texttt{beta}
+  \subitem 6    \texttt{dene}
+  \subitem 9    \texttt{fdene}
+  \subitem 44   \texttt{fvsbrnni}
+  \subitem 102  \texttt{fimpvar}
+  \subitem 103  \texttt{flhthresh}
+  \subitem 109  \texttt{ralpne}
+  \subitem 110  \texttt{ftaulimit}
+
+\item The following constraint equations may not be used, as they are constrained within PLASMOD:
+  \subitem 1    Beta
+  \subitem 2    Global power balance
+  \subitem 5    Density upper limit
+  \subitem 15   LH power threshold limit
+  \subitem 24   Beta upper limit
+  \subitem 30   Injection power upper limit ???
+  \subitem 62   Ratio of particle to energy confinement time
+  \subitem 68   Pseparatrix * Bt / q*A*R
+  
+
+\item If \texttt{plasmod\_i\_modeltype} $>$1 no constraint equations relating to beta may be applied.
+  
+\item Only \texttt{ishape = 4} may be used.
+
+\item NBI heating must be applied with the flag \texttt{iefrf} set to model 5 (ITER neutral beam model) or model 8 (Culham neutral beam model); Electron/Ion Cyclotron heating is not currently available in PLASMOD.
+
+\item Switch \texttt{iradloss} must be set to 0.
+
+\item L-H mode power threshold scaling mode must be 2008 Martin scaling: nominal (\texttt{ilhthresh} = 6).
+
+\item Both \texttt{fgwsep} and \texttt{fgwped} must be given a value greater than 0, and \texttt{fgwped} must have the larger value.
+
+\item Control power may be defined by the user by setting either \texttt{contrpovs} or \texttt{contrpovr} (per unit area or unit distance respectively) to be non-zero, but not both.
+  
+
+\end{itemize}
 
 \subsection{Armour, first wall and breeding blanket}
 The surface facing the plasma is a thin layer of a material highly resistant to melting and erosion, such as tungsten, referred to "armour".  It is cooled by conduction to the first wall underneath.
@@ -2795,6 +2883,9 @@ been designed to be ``machine-readable'' by some of the utility programs
 described in the utilities documentation, to allow simple post-processing and
 graphical output to be produced easily.
 
+Radial profiles produced by PLASMOD (see section~\ref{sec:plasmod}) are stored in
+output file \radpdat. 
+
 \section{Optimisation mode}
 
 Switch \texttt{ioptimz} should be set to \texttt{1} for optimisation mode.
@@ -3435,6 +3526,16 @@ R.\ Kemp, H.\ Lux, J.\ Morris, M.\ Kovari, P.\ Knight et al.,
 \href{https://idm.euro-fusion.org/?uid=2M94N2\&version=v1.0\&action=get\_document}
 {EuroFusion Report EFDA\_D\_2M94N2 v1.0 - PMI-7.1-2, December 2014}
 \url{https://idm.euro-fusion.org/?uid=2M94N2\&version=v1.0\&action=get\_document}
+
+\bibitem{PLASMOD}
+E.\ Fable, C.\ Angioni, M.\ Siccinio, H.\ Zohm,
+\textit{``Plasma physics for fusion reactor system codes: Framework and model code''},
+Fusion Engineering and Design 130, 131-136 (2018)
+
+\bibitem{ASTRA}
+G.V.\ Pereverzev, P.N.\ Yushmanov,
+\textit{``ASTRA. Automated System for Transport Analysis in a Tokamak''},
+Garching: Max-Planck-Institut für Plasmaphysik (2002), presented at IPP 5/98 
 
 \end{thebibliography}
 

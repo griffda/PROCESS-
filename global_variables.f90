@@ -855,7 +855,7 @@ module plasmod_variables
 
   !+ad_vars  plasmod_iprocess /1/ : 0 - use PLASMOD functions, 1 - use PROCESS functions
   integer :: plasmod_iprocess = 1
-  !+ad_vars  plasmod_i_modeltype /1/ : swithc for the transport model <UL>
+  !+ad_vars  plasmod_i_modeltype /1/ : switch for the transport model <UL>
   !+ad_varc  <LI> 1 - Simple gyrobohm scaling with imposed
   !+ad_varc  H factor > 1. Other values give H factor as output
   !+ad_varc  <LI> 111 - roughly calibrated to give H=1 for DEMO, but not fixed H </UL>
