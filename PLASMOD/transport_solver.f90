@@ -597,7 +597,282 @@ endif
   num%etol=num%etol0
 
 ! the call below produces sources and transport coefficients to solve the equations
-	include 'produce_transport.inc'
+
+!this block compute sources and transport coefficients for the transport equations
+
+!update the profiles with the last calculation of the gradients
+ call update_profiles(dx, nxt, nchannels, gy0, y0, rpmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
+	
+
+!interpolate to the finer grid
+	nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [N_e0(1), N_e0],xr)
+	tepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [T_e0(1), T_e0],xr)
+	tipr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [T_i0(1), T_i0],xr)
+
+	! Powers section -- to be coupled otherwise to HandCD ultimately
+	! Auxiliary, ECH not used for no
+	Peaux = exp(-(x-inp0%x_heat(2))**2/inp0%dx_heat(2)**2.d0)
+	Pech=0.*Peaux/trapz(Peaux*dV);
+
+!sum over powers for NBI, assumed the only aux heating for now
+	Piaux = exp(-(x-inp0%x_heat(1))**2/inp0%dx_heat(1)**2.d0)
+ Pnbi=q_heat*Piaux/trapz(Piaux*dV);
+	Piaux = exp(-(x-inp0%x_cd(1))**2/inp0%dx_cd(1)**2.d0)
+ Pnbi=Pnbi+q_cd*Piaux/trapz(Piaux*dV);
+ Pnbi_cd=q_cd*Piaux/trapz(Piaux*dV); !this is power specifically for CD, to be used later for jcdr
+	Piaux = exp(-(x-inp0%x_fus(1))**2/inp0%dx_fus(1)**2.d0)
+ Pnbi=Pnbi+q_fus*Piaux/trapz(Piaux*dV);
+	Piaux = exp(-(x-inp0%x_control(1))**2/inp0%dx_control(1)**2.d0)
+ Pnbi=Pnbi+inp0%q_control*Piaux/trapz(Piaux*dV);
+
+!nbi particle source
+	snebm =pnbi/(e_charge*1.d19*inp0%nbi_energy/1.e3)
+
+
+!split between electrons and ions of NBI
+	!this should be replaced at some point with fpion from PROCESS
+!	nbi_split=0.5d0
+!use fpion from PROCESS
+ nbi_split = 1.d0-inp0%fpion 
+
+
+!assign auxiliary power to electrons and ions
+	Peaux=Pech+nbi_split*Pnbi;
+ Piaux=(1.d0-nbi_split)*Pnbi;
+
+
+	nHe = cHe * nepr !He density
+	nHe3 = cHe3 * nepr !He density
+	nprot = (cprot+comp%protium) * nepr !He density
+!below impurity densities
+! impurity model 0
+	if (num%i_impmodel.eq.0) then
+		nNe = car * nepr
+		nXe = cXe * nepr
+		nwol = cwol * nepr
+	endif
+	if (num%i_impmodel.eq.1) then
+		nNe = car * nepr
+		nXe = cXe * nepr
+		nwol = cwol * nepr
+	nne = nne(jped)
+	nxe = nxe(jped)
+	nwol = nwol(jped)
+	endif
+
+!call radiation functions for impurities		
+if (num%iprocess.eq.0) then
+!PLASMOD FUNCTIONS
+!	call prxe_func(nx, tepr, prxe, zavxe)
+!	call prar_func(nx, tepr, prne, zavne)
+!	call prwol_func(nx, tepr, prwol, zavwol)
+!!!!!!!!!!!!!!!!!!!
+	else
+!PROCESS FUNCTIONS
+	prwol=0.
+	prxe=0.
+	prne=0. 
+	do jrad=1,size(x)
+		call impradprofile(impurity_arr(comp%imptype(1)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prwol(jrad)=prwol(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(1))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavwol(jrad)=Zav_of_te(impurity_arr(comp%imptype(1)),tepr(jrad))
+		call impradprofile(impurity_arr(comp%imptype(2)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prxe(jrad)=prxe(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(2))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavxe(jrad)=Zav_of_te(impurity_arr(comp%imptype(2)),tepr(jrad))
+		call impradprofile(impurity_arr(comp%imptype(3)), nepr(jrad)*1.d19, tepr(jrad), pimp, pbrem, pline)
+			prne(jrad)=prne(jrad)+pimp/(1.d-14+impurity_arr(comp%imptype(3))%frac)/(nepr(jrad)*1.d19)**2.d0*1.d19*1.d19/1.d6
+			zavne(jrad)=Zav_of_te(impurity_arr(comp%imptype(3)),tepr(jrad))
+	enddo
+!!!!!!!!!!!!!!!!!!!
+	endif
+
+
+
+	prad = nXe*nepr*prxe + nne*nepr*prne+prwol*nwol*nepr !total Prad density
+
+!write(*,*) trapz(prwol*nwol*nepr*dV),zavwol(20)
+
+!quasi-neutrality equations
+	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
+	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - & 
+	&  2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
+	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot+nwol
+
+!Z effective
+	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+ & 
+	& zavxe**2*nXe+nprot+zavwol**2.d0*nwol)
+    coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
+
+!caluclate brehmstrahliuzng radiation
+  PBRAD=5.06E-5*zepff*NEpr**2.d0*SQRT(TEpr)
+
+
+!this below is for synchrotron radiation computed in the loop
+  totse(nx)=trapz(tepr*dV)/V(nx)
+  totsi(nx)=trapz(nepr*dV)/V(nx)
+
+	
+	! Calculate fusion power and other powers
+	do jrad = 1, size(x)
+
+!cross section of DT
+!PLASMOD function
+!	  svdt = tipr(jrad)**(-0.333333333d0)
+!	  svdt = 8.972d0*exp(-19.9826d0*svdt)*svdt*svdt*((tipr(jrad)+1.0134d0) & 
+!			& /(1.0d0+6.386d-3*(tipr(jrad)+1.0134d0)**2)     & 
+!			& +1.877d0*exp(-0.16176d0*tipr(jrad)*sqrt(tipr(jrad))))
+		 svdt = bosch_hale(tipr(jrad),1)*1.d19 !PROCESS function
+
+!PLASMOD function
+!	sv_dd=0.16247+0.001741*TIpr(Jrad)-0.029*EXP(-0.3843*SQRT(TIpr(Jrad)))
+!	sv_dd=sv_dd*EXP(-18.8085/(tipr(jrad)**.333333))/(tipr(jrad)**.333333)**2	
+		 sv_dd = bosch_hale(tipr(jrad),3)*1.d19 !PROCESS function
+		 sv_dd = sv_dd+bosch_hale(tipr(jrad),4)*1.d19 !PROCESS function
+
+! alpha power local
+	  pdtp = 5.632d0*ndeut(jrad)*ntrit(jrad)*svdt
+	  p_dd(jrad) = 817./625.*ndeut(jrad)**2.*sv_dd
+
+!slowing down time of alphas
+ ts_alf = 2.*SQRT(tepr(jrad))*tepr(jrad)/nepr(jrad)/COULG(jrad)
+
+!alpha density
+ NALPH = NDEUT(jrad)*NTRIT(jrad)*SVDT*ts_alf
+
+! compute transfer of alpha power to electrons and ions in paion
+YVALP=1.2960e+07
+YLLAME=23.9+LOG(1.e3*tepr(jrad)/SQRT(1.e19*nepr(jrad)))
+YY6=SQRT(1.e3*tepr(jrad)/1.e19*nepr(jrad))
+YY6=YY6*(4.*AMAIN*YVALP)/(4.+AMAIN)	 
+  	  if(YY6.lt..1)YY6=0.1
+ YLLAMI=14.2+LOG(YY6)
+ YY6=SQRT(1.0e3*tepr(jrad)/1.0e19*nepr(jrad))*2.0*YVALP
+  	  if(YY6.lt..01)YY6=.01
+YLLAMA=14.2+LOG(YY6)
+  YY6=YLLAMI*NIons(jrad)/(AMAIN*nepr(jrad))
+  YY6=7.3e-4/YLLAME*(YY6+YLLAMA*NALPH/nepr(jrad))
+ if(YY6.lt.0.0001)YY6=.0001
+  YVC=YY6**0.33*SQRT(2.0*tepr(jrad)*1.7564e+14)
+YEPS=YVALP/(YVC+0.0001)
+YY6=atan(0.577*(2.*YEPS-1.))	   
+YY7=log((1.+YEPS)**2/(1.-YEPS+YEPS**2))
+PAION=2./YEPS**2*(0.577*YY6-0.167*YY7+0.3)
+
+
+!electron and ion fusion power
+      pedt(jrad) = (1.-paion)*pdtp
+      pidt(jrad) = paion*pdtp
+
+!equipartition power from e to i
+      peicl(jrad)=0.00246*COULG(jrad)*NEpr(jrad)*NIons(jrad)*ZMAIN**2.d0* &
+     & (TEpr(jrad)-TIpr(jrad))/(AMAIN*TEpr(jrad)*SQRT(TEpr(jrad)))
+
+!synchrotron power calculation
+yllama=1.d0
+  yv6=totse(nx)
+  yv7=totsi(nx)
+	PSYNC(jrad)=1.32E-7*(yv6*BTOR)**2.5 &
+     & *SQRT(yv7/rpminor*(1.+18.*rpminor/(rpmajor*SQRT(yv6))))*yllama
+
+!alpha particle content (not used for particle balance for now)
+	nalf(jrad)=nalph
+
+	end do
+
+!separate prad total in core and edge
+	pradtot=prad+psync+pbrad
+	jrad=min(nx,max(1,nint(comp%pradpos*nx)))
+	pradedge=pradtot
+	pradtot(jrad:nx)=0.d0
+	if (jrad.gt.1)	pradedge(1:jrad-1)=0.d0
+	pradedge=pradedge+pradtot*(1.-comp%pradfrac)
+	pradtot=pradtot*comp%pradfrac
+ Qrad = trapz((pradtot)*dV)
+	Qradedge = trapz((pradedge)*dV)
+
+!total fusion power from DT only
+	pfus = 5.0d0*cumint1((pedt+pidt)*dV)
+
+!Helium source
+	sfus_he=pfus(nx)/5./5.632
+	sfus_he3=0.
+	sfus_p=0.
+
+! net transport powers to electrons and ions
+	Powe = Peaux - peicl + pedt - prad- psync - pbrad +q_oh
+	Powi = Piaux + peicl + pidt
+	totSe = cumint1(Powe*dV)
+	totSi = cumint1(Powi*dV)
+
+!powers for fcoreraditv calculations
+	plinexe=trapz(nXe*nepr*prxe*dV)
+	psepxe=trapz((powe+powi+nXe*nepr*prxe)*dV)
+
+!interpolate on transport grid
+ DdnVne = 625.d0*interp1_ef(nx,nxt,xr, totSe/G1/vprime/nepr, xtr)
+ DdnVni = 625.d0*interp1_ef(nx,nxt,xr, totSi/G1/vprime/nions, xtr)
+	
+	! Fuelling
+	Sn = exp(-(x-0.85d0)**2 / 0.05d0)/1464.552  ! pellet functional form, scaled to give unity fueling
+	Sn = inp0%spellet*inp0%fpellet*Sn+snebm  ! pellet + added NBI fueling snebm
+	totS = cumint1(Sn*dV) !cumulative integral
+!interpolate on transport grid
+	DdnVn = interp1(xr, totS/Vprime/G1, xtr)
+	
+!assignment
+	c(:,1) = DdnVn !electron particle flux
+	c(:,2) = DdnVne !electron heat flux
+	c(:,3) = DdnVni !thermal ion heat flux
+	
+!position of MHD-driven chi
+	if (inp0%chisawpos.ge.0.d0) j_sawpos=nint(inp0%chisawpos/dxn)
+	if (inp0%chisawpos.lt.0.d0) j_sawpos=j_qeq1
+
+	! define transport coefficients
+	if (i_modeltype.ne.9999) then
+	call trmodel(i_modeltype,nx,nxt, nchannels,vprime,2.5d0,1.d0,1.+0.*amin,1.+0.*amin,1.+0.*amin, & 
+			& nepr,tepr,nepr,0.5*nepr,0.*nepr,tipr,1.+0.*nepr,0.*nepr,2.5+0.*nepr,1./qprf,RHO,x*rpminor, &
+			& SHIF,k,d,0.*shif,0.*shif,0.*shif,0.*shif,IPOL,g1*vprime,vprime,1.+0.*vprime, & 
+			& SHEAR,0.*nepr,0.*nepr,palpph,0.*nepr,0.*nepr,0.*nepr,y0, gy0, xtr,x, amin, rpmajor, btor,num%capA, q_tr, sh_tr, a, b, &
+			& Hfactor,chi00,chipow,Hnow,chifac0)
+
+!actual diffusivities adding stabilizing term num%dtmaxmax. G. V. Pereverzev and G. Corrigan method, CPC 2008
+	aa=a+num%dtmaxmax
+	bb=b-num%dtmaxmax*gy0/rpmajor
+
+!add sawtooth transport
+	if(j_sawpos.gt.size(j_points)) then
+		write(*,*) size(j_points),j_sawpos,inp0%chisawpos,j_qeq1,nint(inp0%chisawpos/dx),'*',qprf
+		stop
+		endif
+	if (j_sawpos.gt.0) then
+	if (j_points(j_sawpos).ge.1.and.j_points(j_sawpos).le.nxt) then
+	aa(j_points(j_sawpos):nxt,:) = aa(j_points(j_sawpos):nxt,:)+inp0%chisaw	
+	endif
+	endif
+!!!!!!!!!!!!!
+
+	else
+	!TGLF, not used in PROCESS
+
+!include "neo_inc.f90"	
+!include "tglf_inc.f90"	
+!include "tglf_inc_parallel.f90"	
+!stop
+		
+	endif
+
+
+!chat is the transport power from transport, while c is source power, the two must be equal at steady state
+	chat = aa * gy0 * y0/rpmajor + bb * y0  ! To compare to c
+
+	F = chat-c  ! New residual, norm of F must go to zero at steady-state
+
+
+
+
+
+
  if (i_diagz.eq.1)	write(*,*) 'matrix obtained'
 	if (i_diagz.eq.1) then
 		write(1441,'(4111E25.11)') xtrt,a(:,1),a(:,2),a(:,3),b(:,1),b(:,2),b(:,3), &
@@ -834,7 +1109,77 @@ endif
 											jcdr=inp0%nbcdeff*pnbi_cd*6.2832/trapz(nepr*dv)*v(nx)*10.d0+ & 
 											 & inp0%gamcdothers*inp0%nbcdeff*(pnbi-pnbi_cd)*6.2832/trapz(nepr*dv)*v(nx)*10.d0  !PROCESS definition of gamcd
 											
- 	include 'cubsfml.inc' !jbs computation according to Sauter et al.
+!Bootstrap current calculation
+
+              !cubsfml!!
+              zz = zepff
+
+              zft = tpf
+              zdf = 1.0d0 + (1.0d0 - 0.1d0*zft) * sqrt(nues)
+              zdf = zdf + 0.5d0*(1.0d0 - zft) * nues/zz
+              zft = zft/zdf
+              dcsa = (1.0d0 + 1.4d0/(zz+1.0d0))*zft - 1.9d0/(zz+1.0d0)*zft*zft
+              dcsa = dcsa + (0.3d0*zft*zft + 0.2d0*zft*zft*zft) * zft/(zz+1.0d0)
+              dcsa = dcsa * betpl
+!write(*,*) 'zef',zeff,tpf,betpl,dcsa
+              zft = tpf
+              zdf = 1.0d0 + 0.26d0*(1.0d0-zft)*sqrt(nues)
+              zdf = zdf + 0.18d0 * (1.0d0 - 0.37d0*zft)*nues/sqrt(zz)
+              zfte = zft/zdf
+              zfte2 = zfte*zfte
+              zfte3 = zfte*zfte2
+              zfte4 = zfte*zfte3
+
+              zdf = 1.0d0 + (1.0d0+0.6d0*zft) * sqrt(nues)
+              zdf = zdf + 0.85d0*(1.0d0 - 0.37d0*zft)*nues*(1.0d0+zz)
+              zfti = zft/zdf
+              zfti2 = zfti*zfti
+              zfti3 = zfti*zfti2
+              zfti4 = zfti*zfti3
+
+              hcee = (0.05d0 + 0.62d0*zz)/zz/(1.0d0+0.44d0*zz)*(zfte-zfte4)
+              hcee = hcee + (zfte2 - zfte4 - 1.2d0*(zfte3-zfte4))/(1.0d0+0.22*zz)
+              hcee = hcee + 1.2d0/(1.0d0+0.5d0*zz)*zfte4
+
+              hcei = -1.0d0*(0.56d0 + 1.93d0*zz)/zz/(1.0d0 + 0.44d0*zz)*(zfti-zfti4)
+              hcei = hcei + 4.95d0/(1.0d0 + 2.48d0*zz)*(zfti2 - zfti4 - 0.55d0*(zfti3-zfti4))
+              hcei = hcei - 1.2d0/(1.0d0 + 0.5d0*zz)*zfti4
+
+              hcsa = (betple*(hcee + hcei) + dcsa/betpl*betple)
+!write(*,*) hcsa
+
+              zdf = 1.0d0 + (1.0d0 - 0.1d0*zft)*sqrt(nues)
+              zdf = zdf + 0.5*(1.0d0 - 0.5d0*zft)*nues/zz
+              zfte = zft/zdf
+
+              xcsa = (1.0d0 + 1.4d0/(zz+1.0d0))*zfte - 1.9d0/(zz+1.0d0)*zfte**2
+              xcsa = xcsa + (0.3d0*zfte**2 + 0.2d0*zfte**3)*zfte/(zz+1.0d0)
+
+              a0 = -1.17d0*(1.0d0-zft)
+              a0 = a0/(1.0d0 - 0.22d0*zft - 0.19d0*zft*zft)
+
+              alp = (a0 + 0.25d0*(1.0d0 - zft**2)*sqrt(nuis))/(1.0d0+0.5d0*sqrt(nuis))
+              a1 = nuis**2 * zft**6
+              alp = (alp + 0.315d0*a1)/(1.0d0+0.15*a1)
+
+              xcsa = betpl*(1.0d0 - betple/betpl)*(xcsa*alp)
+              xcsa = xcsa + (1.0d0-betple/betpl)*dcsa
+
+              ya = 2.0d0/(yd)
+              dlogte = gradient1(log(tepr))/hro
+              dlogti = gradient1(log(tipr))/hro
+              dlogne = gradient1(log(nepr))/hro
+              dpsi = gradient1(psi)/hro
+
+               cubb=0.5d0*(dcsa*dlogne+hcsa*dlogte+xcsa*dlogti)
+ cubb=-btor/(0.2d0*pi_g*rtor)*rho*mux*cubb !cubb is Jbs in MA/m^2
+
+              ! end of cubsfml
+
+
+
+
+
 	 cubb(1)=0.d0 !on axis is 0
 		cubb=max(0.d0,cubb) !do not allow negative bootstrap
 
@@ -937,8 +1282,263 @@ endif
 !update greenwald density
   nG = 10.0d0 * Ip/(pi_g * rpminor**2)  ! 10^19
 
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! this below is the control_scheme routine for Psep, Pfus, f_ni, He content, and divertor protection
-	include 'control_scheme.f90'
+! this code control Xe, powers, He, Ar to fullfill requirements and constraints
+
+	Psep = trapz((powe+powi)*dV) !net psep
+
+!assign q_control if give povs
+if (inp0%contrpovs.gt.0.) inp0%q_control=inp0%contrpovs*radp%vp(nx)*radp%gradro(nx)
+if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
+
+
+
+!LH threshold !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!PROCESS function
+	ne_av = trapz(nepr*dv)/v(nx)*1.d19
+	nela=sum(nepr)/nx*1.d19
+	call pthresh(ne_av,nela,btor,rpmajor,elong,vprime(nx)*gradro(nx),2.5d0,PLH_th) !PROCESS function
+!!!
+
+!PLASMOD function
+!	PLH_th(6)=1.67*(trapz(nepr*dv)/trapz(dv)/10.)**0.61*(geom%bt)**0.78 &    !PLASMOD function
+!    & *rpminor**0.89*geom%r**0.94 !Martin scaling
+!!!!
+
+!assignment
+	PLH = PLH_th(inp0%PLH)
+
+	if (i_diagz.eq.1) 	write(*,*) 'plh',plh
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!this below is: if Psep < PLH*psepplhinf, applies NBI to not go into L mode
+	if (comp%psepplh_inf.gt.0.) then
+		q_heat=max(0.,min(inp0%pheatmax-q_cd-q_fus-inp0%q_control,q_heat+ & 
+		& inp0%qnbi_psepfac*(comp%psepplh_inf-Psep/PLH)*num%dt/(1.+num%dt)))
+	endif
+
+! these below are: apply Xe if one of the criteria on Psep < psep_crit is to be satisfeid
+dum2=1.d6
+	if (comp%psepplh_sup.gt.0.d0) then !use psep/Plh sup as constraint
+dum2=min(comp%psepplh_sup*PLH,dum2)
+	endif 
+	if (comp%psepb_q95AR.gt.0.d0) then !use psepbqar as constraint
+dum2=min(dum2,comp%psepb_q95AR*(btor/q_95/geom%A/rpmajor)**(-1.))
+
+	endif
+	if (comp%psep_r.gt.0.d0) then !use psep/R as constraint
+dum2=min(dum2,comp%psep_r*rpmajor)
+	endif
+
+
+if (dum2.lt.1.d6.and.comp%fcoreraditv.lt.0.d0) then !do the calculation
+		cxe=max(0.,cxe+inp0%cxe_psepfac*(Psep-dum2)/dum2*num%dt/(1.+num%dt))
+ if (q_heat.gt.0.) cxe=0.d0
+endif
+
+if (comp%fcoreraditv.ge.0.d0) then !if fcoreraditv is given , replace the above with this one
+ 		cxe=max(0.,cxe+inp0%cxe_psepfac*(comp%fcoreraditv*(psepxe-dum2)/dum2-plinexe/dum2)*num%dt/(1.+num%dt))
+ if (q_heat.gt.0.) cxe=0.d0
+endif
+
+
+!constraint: current drive fni or loop voltage!
+	if (inp0%f_ni.gt.0.) then !use f_ni as constraint
+		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+& 
+		& inp0%qnbi_psepfac*(inp0%f_ni-(fbs+fcd))*num%dt/(1.+num%dt)))
+	endif
+	if (inp0%fcdp.ge.0.) then ! use fcdp as constraint
+		q_cd=inp0%fcdp*(inp0%pheatmax-q_heat-q_fus-inp0%q_control)
+	endif
+	if (inp0%V_loop.gt.-1.e3) then !use loop voltage as constraint
+		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+& 
+		& inp0%qnbi_psepfac*(vloop-inp0%V_loop)*num%dt/(1.+num%dt)))
+	endif
+
+
+!constraint: pfusion target
+	if (inp0%pfus.gt.0.) then
+		q_fus=max(0.,min(inp0%pheatmax-q_heat-q_cd-inp0%q_control,q_fus+& 
+		& inp0%qnbi_psepfac*(1.d0-pfus(nx)/inp0%pfus)*num%dt/(1.+num%dt)))
+		if (i_diagz.eq.1) 	write(*,*) q_heat,q_cd,q_fus,pfus(nx)
+	endif
+
+
+!sum up all powers
+ loss%pnbi=min(inp0%maxpauxor*geom%r, & 
+ & min(inp0%pheatmax,q_heat+q_cd+q_fus+inp0%q_control))
+
+!this below limits the total power to the actual one if overridden
+if(q_heat.gt.0.) q_heat=q_heat*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
+if(q_cd.gt.0.) q_cd=q_cd*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
+if(q_fus.gt.0.) q_fus=q_fus*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
+
+
+!SOL MODEL below
+!constraint: divertor temperature --> gives Ar in output
+!initialize
+	qdivt=0.d0
+
+!T. Eich scaling
+	lambda_q=0.73e-3*btor**(-0.78)* &     
+		&   (rpminor**2.*btor/(0.2*rpmajor*ip))**1.02* &
+ 	&   (qtot-qrad)**0.1* &
+ 	&   (rpmajor)**0.02* &
+ 	&    3.*3.
+
+!geometry of field line
+	lparsep=qprf(nx)*2.d0*pi_g*rpmajor/2.d0
+	ldiv=0.55*lparsep
+	
+!upstream qpar
+	qpar=(qtot-qradedge)*1.d6/(2.d0*pi_g*(rpmajor+rpminor+shif(nx)) & 
+	 & *lambda_q*rpminor/rpmajor/qprf(nx)/2.d0)
+
+!some numerical values for Msicci model
+	fx=10.d0
+	tau_relax=0.1
+	ds1=nne(nx)/nepr(nx)*comp%c_car
+	dd1=comp%c_car*ds1
+	ds2=nxe(nx)/nepr(nx)*comp%c_car
+	dd2=ds2
+	ds3=0.d0
+	dd3=0.d0
+
+
+
+
+
+
+if (num%isiccir.eq.0) then
+!SOL model based on Eich scaling + a tanh fit of results of Mattia's model for qpar_divertor as a function of argon concentration
+
+!this is a fit to MS model
+!results
+	t_plate=max(0.001,qpar/fx)/1.e7*atan(1./(comp%c_car*car*nepr(1)/ &
+     & (max(0.001,qpar/fx)/1.e6*0.00011*(4./nsep)))**16.)
+	qdivt = t_plate*0.8
+endif
+
+
+
+
+
+
+if (num%isiccir.eq.1) then
+! M. Siccinio SOL model
+	if (isnan(Tup_0d)) then
+		tshguess=100.
+		tupguess=1000.
+		fmguess=0.
+		dqoqguess=0.
+		tdivguess=100.
+	endif
+	
+!	call MS_SOL_model_sub(Lparsep,qpar,fx,0.d0, & 
+!	 & 0.d0,0.d0,nsep*1.d19,qdivt,Tup_0d,t_plate,fm_SE,Lr,6.d0,8.d0,7.d0 & 
+!		& ,1.e3*tsep,tau_relax,taue,tshguess,tupguess, & 
+!		& fmguess,dqoqguess,Ldiv,tdivguess,rmajor,Qtot-Qradedge,ds1,dd1,ds2,dd2, &
+!		& ds3,dd3)
+	qdivt=qdivt/1e6
+
+endif
+
+
+
+
+
+	if (i_diagz.eq.1) 	write(*,*) 'lambda',lambda_q,lparsep,ldiv,qpar,t_plate,qdivt,nsep
+	if (comp%qdivt.gt.0.) then
+!initialize
+	qdivt=0.d0
+
+!T. Eich scaling
+	lambda_q=0.73e-3*btor**(-0.78)* &     
+		&   (rpminor**2.*btor/(0.2*rpmajor*ip))**1.02* &
+ 	&   (qtot-qrad)**0.1* &
+ 	&   (rpmajor)**0.02* &
+ 	&    3.*3.
+
+!geometry of field line
+	lparsep=qprf(nx)*2.d0*pi_g*rpmajor/2.d0
+	ldiv=0.55*lparsep
+	
+!upstream qpar
+	qpar=(qtot-qradedge)*1.d6/(2.d0*pi_g*(rpmajor+rpminor+shif(nx)) & 
+	 & *lambda_q*rpminor/rpmajor/qprf(nx)/2.d0)
+
+!some numerical values for Msicci model
+	fx=10.d0
+	tau_relax=0.1
+	ds1=nne(nx)/nepr(nx)*comp%c_car
+	dd1=comp%c_car*ds1
+	ds2=nxe(nx)/nepr(nx)*comp%c_car
+	dd2=ds2
+	ds3=0.d0
+	dd3=0.d0
+
+
+
+
+
+
+if (num%isiccir.eq.0) then
+!SOL model based on Eich scaling + a tanh fit of results of Mattia's model for qpar_divertor as a function of argon concentration
+
+!this is a fit to MS model
+!results
+	t_plate=max(0.001,qpar/fx)/1.e7*atan(1./(comp%c_car*car*nepr(1)/ &
+     & (max(0.001,qpar/fx)/1.e6*0.00011*(4./nsep)))**16.)
+	qdivt = t_plate*0.8
+endif
+
+
+
+
+
+
+if (num%isiccir.eq.1) then
+! M. Siccinio SOL model
+	if (isnan(Tup_0d)) then
+		tshguess=100.
+		tupguess=1000.
+		fmguess=0.
+		dqoqguess=0.
+		tdivguess=100.
+	endif
+	
+!	call MS_SOL_model_sub(Lparsep,qpar,fx,0.d0, & 
+!	 & 0.d0,0.d0,nsep*1.d19,qdivt,Tup_0d,t_plate,fm_SE,Lr,6.d0,8.d0,7.d0 & 
+!		& ,1.e3*tsep,tau_relax,taue,tshguess,tupguess, & 
+!		& fmguess,dqoqguess,Ldiv,tdivguess,rmajor,Qtot-Qradedge,ds1,dd1,ds2,dd2, &
+!		& ds3,dd3)
+	qdivt=qdivt/1e6
+
+endif
+
+
+
+
+
+!	qdivt=0.d0 !put here sol model for qdivt
+	 car = max(0.,car+inp0%car_qdivt*(qdivt-comp%qdivt)*num%dt/(1.+num%dt))
+	if (i_diagz.eq.1) 	write(556,*) car,qdivt
+	if (i_diagz.eq.1) 	write(*,*) 'ccar',car,qdivt,qpar
+	endif
+
+
+!Helium concentration calculation
+	if (comp%globtau(3).gt.0.) then
+	 che = comp%globtau(3)*max(0.001,taue)*Sfus_he/integr_cde(v,nepr,nx)
+	 che3 = comp%globtau(3)*max(0.001,taue)*Sfus_he3/integr_cde(v,nepr,nx)
+	 cprot = comp%globtau(1)*max(0.001,taue)*Sfus_p/integr_cde(v,nepr,nx)
+	endif
+!END OF MODULE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
 
 	if (i_diagz.eq.1) 	write(*,*) 'qnbi, cxe',tepr(1),sfus_he,integr_cde(v,nepr,nx),comp%globtau(3),taue,loss%pnbi,cxe,che,car
 
