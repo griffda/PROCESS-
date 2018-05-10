@@ -1,0 +1,17 @@
+stages:
+  - build
+  - testing
+  - jenkins
+
+build:Make
+#  image: ukaea/ubuntu-rolling
+
+ only:
+  - develop 
+ stage: build
+ script:
+  - gcc --version
+#  - ls -lah
+  - echo "Test "
+ tags:
+  - freia
