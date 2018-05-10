@@ -27,3 +27,5 @@
     - `plot_comparison.py` (Merge request !21)
 - New Python utility
     - `plot_comparison.py` (Merge request !21)
+- File prefixes for input files now works as intended. For example input file called `my_input_IN.DAT`
+  will be outputted as `my_input_OUT.DAT` etc.
