@@ -84,6 +84,7 @@ program process
   integer :: iost
   logical :: inExist
   integer :: nargs
+  integer :: file_name_length
 
   !  Obtain a file prefix from a command line argument
   !  (uses Fortran 2003 routines)
@@ -98,9 +99,11 @@ program process
   if (trim(fileprefix) == "") then
     inFile = "IN.DAT"
   else
+    file_name_length = LEN_TRIM(fileprefix)
+    output_prefix = fileprefix(1:file_name_length-6)
     inFile = trim(fileprefix)
   end if
-  outFile = trim(fileprefix)//"OUT.DAT"
+  outFile = trim(output_prefix)//"OUT.DAT"
   inquire(file = inFile, exist = inExist)
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -145,7 +148,7 @@ program process
 
     open(unit = 100, FILE = inFile)
     open(unit = 101, FILE = outFile, ACCESS = "append")
-    open(unit = 102, FILE=trim(fileprefix)//'MFILE.DAT', ACCESS = "append")
+    open(unit = 102, FILE=trim(output_prefix)//'MFILE.DAT', ACCESS = "append")
     fmtAppend = '(A)'
     write(102, fmtAppend) "***********************************************"
 
@@ -200,7 +203,7 @@ subroutine init
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use error_handling
-  use global_variables, only: verbose, fileprefix
+  use global_variables, only: verbose, fileprefix, output_prefix
   use impurity_radiation_module
   use numerics
   use process_input
@@ -229,9 +232,9 @@ subroutine init
   end if
   ! open(unit=nin,file=trim(fileprefix)//'IN.DAT',status='old')
 
-  open(unit=nout,file=trim(fileprefix)//'OUT.DAT',status='unknown')
-  open(unit=nplot,file=trim(fileprefix)//'PLOT.DAT',status='unknown')
-  open(unit=mfile,file=trim(fileprefix)//'MFILE.DAT',status='unknown')
+  open(unit=nout,file=trim(output_prefix)//'OUT.DAT',status='unknown')
+  open(unit=nplot,file=trim(output_prefix)//'PLOT.DAT',status='unknown')
+  open(unit=mfile,file=trim(output_prefix)//'MFILE.DAT',status='unknown')
   
   !  Input any desired new initial values
   call input
@@ -247,7 +250,7 @@ subroutine init
 
   !  Open verbose diagnostics file
   if (verbose == 1) then
-     open(unit=vfile,file=trim(fileprefix)//'VFILE.DAT',status='unknown')
+     open(unit=vfile,file=trim(output_prefix)//'VFILE.DAT',status='unknown')
      write(vfile,'(a80)') 'nviter = number of VMCON iterations.'
      write(vfile,'(a80)') '(1-mod(ifail,7))=1 indicates that there has '// &
           'been an escape from a failed line search.'

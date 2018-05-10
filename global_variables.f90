@@ -42,6 +42,7 @@ module global_variables
   integer :: maxcal = 200
 
   character(len=30) :: fileprefix = "" !'dummy_file_prefix'
+  character(len=50) :: output_prefix = "" ! output file prefix
   character(len=25) :: xlabel,vlabel
   integer :: iscan_global=0    ! Makes iscan available globally.
   real(kind(1.0D0)):: convergence_parameter  ! VMCON convergence parameter "sum"
