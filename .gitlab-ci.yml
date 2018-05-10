@@ -3,7 +3,7 @@ stages:
   - testing
   - jenkins
 
-build:Make
+build:Make:
 #  image: ukaea/ubuntu-rolling
 
  only:
