@@ -15,3 +15,5 @@ build:Make:
   - echo "Test "
  tags:
   - freia
+after_script:  # Now trigger testing
+- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"
