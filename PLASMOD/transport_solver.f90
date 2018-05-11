@@ -702,7 +702,7 @@ if (num%iprocess.eq.0) then
 !Z effective
 	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+ & 
 	& zavxe**2*nXe+nprot+zavwol**2.d0*nwol)
-	write(*,*) zavne(1),nne(1)/nepr(1)
+
     coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
 
 !caluclate brehmstrahliuzng radiation
