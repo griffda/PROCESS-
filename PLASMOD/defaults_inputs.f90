@@ -55,8 +55,8 @@
     comp%globtau(4) = 5. !tauparticle/tauE for D, T, He, Xe, Ar
     comp%globtau(5) = 1. !tauparticle/tauE for D, T, He, Xe, Ar
 
-    comp%imptype(1) = 13 !Xe
-    comp%imptype(2) = 14 !W
+    comp%imptype(1) = 14 !Xe
+    comp%imptype(2) = 13 !W
     comp%imptype(3) = 9 !Ar
 
     comp%psepplh_inf = 1.1 !Psep/PLH if below this, use nbi
@@ -71,6 +71,7 @@
     comp%che = 0.08 !helium concentration, used if globtau(3)=0.
 
     comp%fuelmix = 0.5d0 !fuel mix
+    comp%fuelhe3 = 0.d0 !fuel mix He3
 
     comp%pradpos = 0.d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
 
@@ -165,6 +166,7 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
     comp%globtau(5) = 1. !tauparticle/tauE for D, T, He, Xe, Ar
 
 	comp%comparray=0.d0
+	comp%che3=0.d0
 	comp%protium = 0.d0
 
     comp%car = 0. !argon concentration, used if qdivt=0.
@@ -281,7 +283,7 @@ ped%pedscal=1.2
                           num%xtglf(9)=0.7 !tolerance above which TGLF should be always called
                           num%xtglf(10)=0.75 !tolerance above which TGLF should be always called
                           num%xtglf(11)=0.8 !tolerance above which TGLF should be always called
-                          num%isawt=0 ! 0 for natural q profile, 1 for clamped at 1
+                          num%isawt=1 ! 0 for natural q profile, 1 for clamped at 1
 
 !geometry
     geom%A =    3.1d0  !aspect ratio
@@ -317,10 +319,6 @@ ped%pedscal=1.2
     comp%pradpos = 0.75d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
     comp%pradfrac = 0.6d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
 				
-				!FOR PROCESS
-    comp%imptype(1) = 13 !Xe
-    comp%imptype(2) = 14 !W
-    comp%imptype(3) = 9 !Ar
 
 
     ped%tesep=0.1  !separatrix temperature

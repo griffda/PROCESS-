@@ -79,7 +79,8 @@
 !				geom%q95 = 3.5 !safety factor. 
 								
 !write(*,*) 'first iteration'
-!	include 'DEMOlike.dat'				
+	include 'DEMOlike.dat'				
+	include 'ITERlike.dat'				
 !pause
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
@@ -103,7 +104,7 @@ write(*,*) 'mhd',mhd
 write(*,*) 'loss',loss
 write(*,*) ' '
 write(*,*) 'Pfus/V '
-write(*,*) loss%Pfus/mhd%vp
+write(*,*) loss%Pfus/mhd%vp,radp%zeff,mhd%vloop
 
 fusscan(j1scan,j2scan)=loss%Pfus
 vlopscan(j1scan,j2scan)=mhd%vloop

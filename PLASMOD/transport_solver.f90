@@ -104,7 +104,7 @@
   integer :: jped,nx,nxt,nchannels, iped_model,jdum1,nxequil,i_qsaw, i_diagz
   real(kind(1.0d0)) :: x0, dx, dxn,psep,plh,pimp,pbrem,pline
   real(kind(1.0d0)) :: Qeaux, Qiaux, Qrad ,qradedge, betan,P_pedtop, qecrh, qnbi, spellet, spuffing, f_gw !sfuelling
-  real(kind(1.0d0)) :: nsep, Ip, btor, cHe,cwol,che3,cprot, & 
+  real(kind(1.0d0)) :: nsep, Ip, btor, cHe,cwol,che3,che3fus,cprot, & 
 		 & cxe,car,nG, qedge, elong, trianpg, amin ,tsep, rpmajor,  rpminor, asppect, nlineavg 
   real(kind(1.0d0)) :: tau_sol, V_sol, D_ped, V_ped, lambda_sol,pdtp,sv_dd,svdt
   real(kind(1.0d0)) :: rtor, yd, betaz, lint,taue,Qtot
@@ -114,7 +114,7 @@
   real(kind(1.0d0)) :: aim1,aim2,aim3   !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: q_edge_in,f_ind_in,ip0 ,tepp0,tipp0,nepp0,fq  !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: elong95,trianpg95  !fraction of D-T power deposited to ions, plus dummies
-  real(kind(1.0d0)) :: xb,teb,tib,neb,zmain,amain,toleq,fuelmix
+  real(kind(1.0d0)) :: xb,teb,tib,neb,zmain,amain,toleq,fuelmix,fuelhe3
   real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,sfus_he3,sfus_p,fcd,qdivt,q_heat,q_cd,q_fus,q_95,qtote,qtoti,w_e,w_i
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat,plinexe,psepxe
   real(kind(1.0d0)) :: ne_av,nela,PLH_th(8)
@@ -206,6 +206,7 @@ endif
   Ip = geom%Ip !MA
   btor = geom%Bt
  	fuelmix=comp%fuelmix
+ 	fuelhe3=comp%fuelhe3
 		q_edge_in=geom%q95*1.1
   q_95 = geom%q95
   amin = rpminor
@@ -264,10 +265,11 @@ endif
   aim1=4.d0 !helium
   aim2=48.d0 !Ar
   aim3=131.d0 !Xe
-  zmain = 1.0d0  !to change this to comp%zmain
-  amain = 2*fuelmix+3*(1.-fuelmix) !D+T
+  zmain = 1.0d0*fuelmix+1.d0*(1.-fuelmix-fhe3)+2.*fhe3  !to change this to comp%zmain
+  amain = 2.*fuelmix+3.*(1.-fuelmix-fhe3)+3.*fhe3 !D+T+He3
 		!impurity concentrations
-		che=comp%comparray(2)
+		che=comp%comparray(2)-comp%che3
+		che3=comp%che3
   cxe=comp%comparray(13)
 		car=comp%comparray(9)
 		cwol=comp%comparray(14)
@@ -639,8 +641,8 @@ endif
 	Peaux=Pech+nbi_split*Pnbi;
  Piaux=(1.d0-nbi_split)*Pnbi;
 
+
 	nHe = cHe * nepr !He density
-	nHe3 = cHe3 * nepr !He density
 	nprot = (cprot+comp%protium) * nepr !He density
 !below impurity densities
 ! impurity model 0
@@ -661,9 +663,9 @@ endif
 !call radiation functions for impurities		
 if (num%iprocess.eq.0) then
 !PLASMOD FUNCTIONS
-!	call prxe_func(nx, tepr, prxe, zavxe)
-!	call prar_func(nx, tepr, prne, zavne)
-!	call prwol_func(nx, tepr, prwol, zavwol)
+	call prxe_func(nx, tepr, prxe, zavxe)
+	call prar_func(nx, tepr, prne, zavne)
+	call prwol_func(nx, tepr, prwol, zavwol)
 !!!!!!!!!!!!!!!!!!!
 	else
 !PROCESS FUNCTIONS
@@ -689,14 +691,18 @@ if (num%iprocess.eq.0) then
 !write(*,*) trapz(prwol*nwol*nepr*dV),zavwol(20)
 
 !quasi-neutrality equations
-	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
-	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - & 
-	&  2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
+	nHe3 = fuelhe3*(nepr - nNe*zavne - nXe*zavxe - & 
+	&  2.0d0*(nHe)-nprot-zavwol*nwol)+che3fus*nepr !He3 density
+	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe -2.0d0*(nHe)-nprot-zavwol*nwol-2.*che3fus*nepr)
+	ntrit = (1.0d0-fuelmix-fuelhe3)*(nepr - nNe*zavne - nXe*zavxe - & 
+	&  2.0d0*(nHe)-nprot-zavwol*nwol-2.*che3fus*nepr)
+	che3=nhe3(1)/nepr(1)
 	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot+nwol
 
 !Z effective
 	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+ & 
 	& zavxe**2*nXe+nprot+zavwol**2.d0*nwol)
+	write(*,*) zavne(1),nne(1)/nepr(1)
     coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
 
 !caluclate brehmstrahliuzng radiation
@@ -1295,6 +1301,7 @@ if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 	PLH = PLH_th(inp0%PLH)
 
 	if (i_diagz.eq.1) 	write(*,*) 'plh',plh
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !this below is: if Psep < PLH*psepplhinf, applies NBI to not go into L mode
@@ -1324,6 +1331,8 @@ if (comp%fcoreraditv.ge.0.d0) then !if fcoreraditv is given , replace the above 
  		cxe=max(0.,cxe+inp0%cxe_psepfac*(comp%fcoreraditv*(psepxe-dum2)/dum2-plinexe/dum2)*num%dt/(1.+num%dt))
  if (q_heat.gt.0.) cxe=0.d0
 endif
+
+	
 
 !constraint: current drive fni or loop voltage!
 	if (inp0%f_ni.gt.0.) then !use f_ni as constraint
@@ -1466,7 +1475,7 @@ endif
 !Helium concentration calculation
 	if (comp%globtau(3).gt.0.) then
 	 che = comp%globtau(3)*max(0.001,taue)*Sfus_he/integr_cde(v,nepr,nx)
-	 che3 = comp%globtau(3)*max(0.001,taue)*Sfus_he3/integr_cde(v,nepr,nx)
+	 che3fus = comp%globtau(3)*max(0.001,taue)*Sfus_he3/integr_cde(v,nepr,nx)
 	 cprot = comp%globtau(1)*max(0.001,taue)*Sfus_p/integr_cde(v,nepr,nx)
 	endif
 
@@ -1555,7 +1564,6 @@ endif
  	nwol = nwol(jped)
 	endif
  	nHe = cHe * nepr
- 	nHe3 = cHe3 * nepr
  	nprot = (cprot+comp%protium)*nepr
 !call radiation functions for impurities		
 !PLASMOD FUNCTIONS
@@ -1582,11 +1590,17 @@ endif
 		enddo
 !!!!!!!!!!!!!!!!!!!
 	endif
-	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
-	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
+	nHe3 = fuelhe3*(nepr - nNe*zavne - nXe*zavxe - & 
+	&  2.0d0*(nHe)-nprot-zavwol*nwol)+che3fus*nepr !He3 density
+	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe -2.0d0*(nHe)-nprot-zavwol*nwol-2.*che3fus*nepr)
+	ntrit = (1.0d0-fuelmix-fuelhe3)*(nepr - nNe*zavne - nXe*zavxe - & 
+	&  2.0d0*(nHe)-nprot-zavwol*nwol-2.*che3fus*nepr)
+	che3=nhe3(1)/nepr(1)
 	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot+nwol
+
 	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+zavxe**2*nXe+nprot+zavwol**2.*nwol)
   coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
+
   radp%av_ni = trapz(nions*dV)/V(nx)
   radp%av_nd = trapz((ndeut+ntrit)*dV)/V(nx)
   radp%av_nz = trapz((nne+nxe+nwol)*dv)/V(nx)
@@ -1609,10 +1623,11 @@ endif
 
 !composition
  	comp%comparray(1)=comp%protium+cprot+radp%av_nd/radp%av_ne
-		comp%comparray(2)=che+che3
+		comp%comparray(2)=che+che3fus
   comp%comparray(13)=cxe
 		comp%comparray(9)=car
 		comp%comparray(14)=cwol
+		comp%che3=che3
 
 !global geometry
   geom%Rold=rpmajor
@@ -2139,7 +2154,7 @@ return
         IF(T.GT.100.) 		     Y=9.*10**(-4.01)*T+0.12
         prne(j)	=Y
        
-       T = T/1000.0
+!       T = T/1000.0
        Z = log10(T)
        
 					zavne(j)=1.

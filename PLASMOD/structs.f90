@@ -41,6 +41,7 @@ module structs
       real(kind(1.0D0)) :: globtau(5),psepplh_inf,psepplh_sup,qdivt,fuelmix,typ1,typ2,typ3,che,cxe,car,c_car, &
 						& pradpos,pradfrac,psepb_q95AR,psep_r,comparray(14),protium,fcoreraditv=-1.d0
 						integer :: imptype(3)=(/14,13,9/) ! 1 for intrinsic, 2 for psep control, 3 for SOL control or SOL intrinsic
+	     real(kind(1.0D0)) :: fuelhe3,che3
     end type composition 
 
 
