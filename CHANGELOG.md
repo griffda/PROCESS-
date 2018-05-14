@@ -22,8 +22,8 @@ PLASMOD
  - For a complete list, see the vardes file. Where appropriate, previously-existing PROCESS input parameters still apply.
  - Certain constraints and iterations variables cannot be used with PLASMOD - see the User Guide for more information.
 
-	Utilities
-	- New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
+Utilities
+ - New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
 
 ## Minor changes
 
