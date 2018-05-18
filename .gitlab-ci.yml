@@ -2,15 +2,36 @@ stages:
   - build
   - testing
   - jenkins
+before_script:
+  - apt-get install -y gfortran
+  - apt-get install -y python3-numpy
+  - apt-get install -y python3-scipy
+  - apt-get install -y python3-matplotlib
+  - apt-get install dos2unix
 
 build:Make:
-#  image: ukaea/ubuntu-rolling
+ image: ukaea/ubuntu
 
  only:
-  - develop 
+  - test_set_up_python_fixes 
  stage: build
  script:
+  - pwd
   - gcc --version
+  - export PYTHONPATH=$PYTHONPATH:${PWD}/utilities
+  - export PATH=$PATH:${PWD}/utilities
+#  - dos2unix global_variables.f90
+  - ls -lah
+  - make clean
+  - make
+#  - cd utilities
+  - dos2unix ${PWD}/utilities/*.py
+#  - ls -lah utilities/
+#  - utilities/create_dicts.py
+  - make dicts
+  - cd test_suite
+  - dos2unix test_suite.py
+  - python test_suite.py -d 1.0
 #  - ls -lah
   - echo "Test "
  tags:
