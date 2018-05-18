@@ -4092,7 +4092,7 @@ module constraint_variables
   !+ad_varc                 (constraint equation 52)
   real(kind(1.0D0)) :: tbrmin = 1.1D0
   !+ad_vars  tbrnmn /1.0/ : minimum burn time (s)
-  !+ad_varc                 (constraint equation 13)
+  !+ad_varc                 (KE - no longer itv., see issue 706)
   real(kind(1.0D0)) :: tbrnmn = 1.0D0
   !+ad_vars  tcycmn : minimum cycle time (s)
   !+ad_varc           (constraint equation 42)
