@@ -447,7 +447,7 @@ def check_process_errors():
     """
 
     # check 1: check MFILE file length
-    mf = open("MFILE.DAT", "r")
+    mf = open("MFILE.DAT", "r", encoding="utf-8")
     mf_length = len(mf.readlines())
 
     if mf_length == 0:
