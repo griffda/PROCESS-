@@ -42,6 +42,10 @@ build:Make:
   - python test_suite.py -d 1.0
 #  - ls -lah
   - echo "Test "
+ artifacts:
+   expire_in: 2 yrs
+   paths:
+     - test_suite/*.xunit
  tags:
   - freia
 #after_script:  # Now trigger testing
