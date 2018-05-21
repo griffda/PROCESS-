@@ -317,6 +317,10 @@ contains
        call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
        call ovarre(mfile,'TF coil inboard leg radial thickness (m)','(tfcth)',tfcth)
 
+       radius = radius + deltf
+       call obuild(outfile,'Gap',deltf,radius,'(deltf)')
+       call ovarre(mfile,'TF coil inboard leg gap (m)','(deltf)',deltf)
+
        radius = radius + gapoh
        call obuild(outfile,'Gap',gapoh,radius,'(gapoh)')
        call ovarre(mfile,'TF to CS radial gap (m)','(gapoh)',gapoh)
