@@ -3,17 +3,25 @@ stages:
   - testing
   - jenkins
 before_script:
-  - apt-get install -y gfortran
-  - apt-get install -y python3-numpy
-  - apt-get install -y python3-scipy
-  - apt-get install -y python3-matplotlib
-  - apt-get install dos2unix
+#  - apt-get install -y gfortran
+#  - apt-get install -y python3-numpy
+#  - apt-get install -y python3-scipy
+#  - apt-get install -y python3-matplotlib
+#  - apt-get install dos2unix
+  - export LOGNAME=root
+  - source /etc/profile.d/modules.sh
+  - module use /usr/local/modules/default
+  - module unload python
+  - module load python/3.3
+  - module load gfortran
+#  - 
+  - echo ld_library_path=$LD_LIBRARY_PATH
 
 build:Make:
- image: ukaea/ubuntu
+# image: ukaea/ubuntu
 
  only:
-  - test_set_up_python_fixes 
+  - test_set_up 
  stage: build
  script:
   - pwd
@@ -36,5 +44,5 @@ build:Make:
   - echo "Test "
  tags:
   - freia
-after_script:  # Now trigger testing
-- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"
+#after_script:  # Now trigger testing
+#- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"
