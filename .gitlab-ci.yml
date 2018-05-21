@@ -21,7 +21,7 @@ build:Make:
 # image: ukaea/ubuntu
 
  only:
-  - test_set_up 
+  - test_set_up_python_fixes 
  stage: build
  script:
   - pwd
