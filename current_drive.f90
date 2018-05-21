@@ -359,7 +359,7 @@ contains
     call ovarrf(outfile,'Inductive fraction','(facoh)',facoh, 'OP ')
     ! Add total error check.
     call ovarrf(outfile,'Total','(bootipf+faccd+facoh)',bootipf+faccd+facoh)
-    if (abs(bootipf+faccd+facoh-1.0d0) > 1.0d-10) then
+    if (abs(bootipf+faccd+facoh-1.0d0) > 1.0d-8) then
         call ocmmnt(outfile,'ERROR: current drive fractions do not add to 1')
     end if
     ! MDK Add fvsbrnni as it can be an iteration variable
