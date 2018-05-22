@@ -562,10 +562,10 @@ contains
           call parse_real_variable('ffwal', ffwal, 0.0D0, 10.0D0, &
                'Wall load fiddle factor')
        case ('fgwped')
-          call parse_real_variable('fgwped', fgwped, -1D0, 5.0D0, &
+          call parse_real_variable('fgwped', fgwped, -1.0D0, 5.0D0, &
                'Fraction of n_G at pedestal top')
        case ('fgwsep')
-          call parse_real_variable('fgwsep', fgwsep, -1D0, 1.0D0, &
+          call parse_real_variable('fgwsep', fgwsep, -1.0D0, 1.0D0, &
                'Fraction of n_G at separatrix')
        case ('fhe3')
           call parse_real_variable('fhe3', fhe3, 0.0D0, 1.0D0, &
