@@ -437,6 +437,47 @@ def write_diff_log(test, diff_val, diffs, diff_n, only_ref, only_new):
     # close file
     diff_file.close()
 
+def write_xunit_files(test, diff_val, diffs, diff_n, only_ref, only_new):
+    """Write xunit file
+
+    Function to write test.log file.
+
+    :param test: test name
+    :param difff_val: difference value
+    :param diffs: dictionary of differences in MFILEs
+    :param diff_n: number of differences
+    :param only_ref: variables only in reference MFILE not new MFILE
+    :param only_new: variables only in new MFILE not reference MFILE
+    """
+
+    ref_file = open(test+".ref.xunit", "w")
+    new_file = open(test+".new.xunit", "w")
+    # write differences
+    for key in diffs.keys():
+        df = diffs[key]["diff"]
+        rf = diffs[key]["ref"]
+        nw = d = diffs[key]["new"]
+
+        ref_file.write("{0:<40}\t{1:<10}\t{2:<10.3g}\t{3:<10}\t{4:<10.2f}\n".
+                        format(key[:39],"=" , rf, " *  Difference(%) = ", df))
+        new_file.write("{0:<40}\t{1:<10}\t{2:<10.3g}\t{3:<10}\t{4:<10.2f}\n".
+                        format(key[:39], "=", nw, " *  Difference(%) = ", df))
+
+    # write variables in ref but not in new
+##    diff_file.write("\n\nThere are {0} variables in ref NOT IN new:\n\n".
+##                    format(len(only_ref)))
+##    for item in only_ref:
+##        diff_file.write("{0}\n".format(item))
+
+    # write variables in new but not in ref
+##    diff_file.write("\n\nThere are {0} variables in new NOT IN ref:\n\n".
+##                    format(len(only_new)))
+##    for item in only_new:
+##        diff_file.write("{0}\n".format(item))
+
+    # close file
+    ref_file.close()
+    new_file.close()
 
 def check_process_errors():
     """Check PROCESS run errors
@@ -447,7 +488,7 @@ def check_process_errors():
     """
 
     # check 1: check MFILE file length
-    mf = open("MFILE.DAT", "r")
+    mf = open("MFILE.DAT", "r", encoding="utf-8")
     mf_length = len(mf.readlines())
 
     if mf_length == 0:
@@ -779,7 +820,9 @@ class TestCase(object):
             # output differences to diff.log
             write_diff_log(self.test, self.diff, self.diffs, self.diff_num,
                            self.only_ref, self.only_new)
-
+            # output differences to test.log
+            write_xunit_files(self.test, self.diff, self.diffs, self.diff_num,
+                           self.only_ref, self.only_new)
         # copy files to test_area
         copy_test_to_test_area(self.test, self.status, self.arguments)
 
