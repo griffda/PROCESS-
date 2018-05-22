@@ -19,20 +19,33 @@ before_script:
 
 build:Make:
 # image: ukaea/ubuntu
-
  only:
   - test_set_up_python_fixes 
  stage: build
  script:
   - pwd
   - gcc --version
-  - export PYTHONPATH=$PYTHONPATH:${PWD}/utilities
-  - export PATH=$PATH:${PWD}/utilities
 #  - dos2unix global_variables.f90
   - ls -lah
   - make clean
   - make
 #  - cd utilities
+#  - ls -lah
+  - echo "Test "
+ artifacts:
+   expire_in: 2 yrs
+   paths:
+     - process.exe
+ tags:
+  - freia
+testing:test_suite:
+ only:
+  - test_set_up_python_fixes 
+ stage: testing
+ script:
+  - pwd
+  - export PYTHONPATH=$PYTHONPATH:${PWD}/utilities
+  - export PATH=$PATH:${PWD}/utilities
   - dos2unix ${PWD}/utilities/*.py
 #  - ls -lah utilities/
 #  - utilities/create_dicts.py
@@ -40,13 +53,12 @@ build:Make:
   - cd test_suite
   - dos2unix test_suite.py
   - python test_suite.py -d 1.0
-#  - ls -lah
-  - echo "Test "
  artifacts:
    expire_in: 2 yrs
    paths:
      - test_suite/*.xunit
  tags:
   - freia
+
 #after_script:  # Now trigger testing
 #- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"
