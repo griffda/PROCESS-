@@ -453,25 +453,10 @@ subroutine check
      end if
 
      if(ipedestal==3)then
-        ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
-        ! These are outputs of PLASMOD
-        ! ixc(4) = te, ixc(5) = beta, ixc(6) = dene, ixc(9) = fdene,
-        ! ixc(102) = fimpvar, ixc(103) = flhthresh, ixc(109) = ralpne,
-        ! ixc(110) = ftaulimit, ixc(44) = fvsbrnni
-        if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or. &
-             (ixc==102).or.(ixc==103).or.(ixc==109).or.(ixc==110)&
-             .or.(ixc==44)))then
-           call report_error(182)
-        endif
 
         !as beta is an output of PLASMOD, its consistency does not need to be enforced
         if(any(icc == 1)) then
            call report_error(188)
-        endif
-           
-        ! density limit cannot be used with PLASMOD use fgwsep and/or fgwped instead.
-        if (any(icc==9)) then
-           call report_error(183)
         endif
 
         ! The global power balance cannot be enforced when running PLASMOD
@@ -481,18 +466,24 @@ subroutine check
            call report_error(185)
         endif
 
+        ! density upper limit cannot be used with PLASMOD
+        if (any(icc == 5)) then
+           call report_error(201)
+        endif
+           
+        ! density limit cannot be used with PLASMOD use fgwsep and/or fgwped instead.
+        if (any(icc==9)) then
+           call report_error(183)
+        endif
 
+        ! LH power threshold limit cannot be used with PLASMOD
+        if (any(icc == 15)) then
+           call report_error(202)
+        endif
 
-        if (plasmod_i_equiltype == 2) then
-
-           !Warning, this is a not recommended option
-           !operation is inconsistent with PROCESS.
-           call report_error(189)
-
-           !cannot use q as iteration variable, if plasma current is input for EMEQ
-           if (any(ixc == 18)) then
-              call report_error(190)
-           endif           
+        ! ratio of particle/energy confinement times cannot be used with PLASMOD
+        if (any(icc == 62)) then
+           call report_error(203)
         endif
 
         !plasmod_i_modeltype = 1 enforces a given H-factor
@@ -506,10 +497,33 @@ subroutine check
            !ixc(36) fbetatry
            !icc(48) poloidal beta upper limit
            !ixc(79) fbetap
-           if (any((icc == 6) .or. (icc == 24) .or. (icc==48) ) .or. any((ixc == 8) .or.(ixc==36) .or. (ixc==79))) then
+           if (any((icc == 6) .or. (icc == 24) .or. (icc == 48) ) .or. any((ixc == 8) .or.(ixc == 36) .or. (ixc == 79))) then
               call report_error(191)
            endif
            
+        endif
+
+        ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
+        ! These are outputs of PLASMOD
+        ! ixc(4) = te, ixc(5) = beta, ixc(6) = dene, ixc(9) = fdene,
+        ! ixc(102) = fimpvar, ixc(103) = flhthresh, ixc(109) = ralpne,
+        ! ixc(110) = ftaulimit, ixc(44) = fvsbrnni
+        if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or. &
+             (ixc==102).or.(ixc==103).or.(ixc==109).or.(ixc==110)&
+             .or.(ixc==44)))then
+           call report_error(182)
+        endif
+
+        if (plasmod_i_equiltype == 2) then
+
+           !Warning, this is a not recommended option
+           !operation is inconsistent with PROCESS.
+           call report_error(189)
+
+           !cannot use q as iteration variable, if plasma current is input for EMEQ
+           if (any(ixc == 18)) then
+              call report_error(190)
+           endif           
         endif
         
      endif

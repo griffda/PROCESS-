@@ -3,7 +3,7 @@
  "version":  [ "PROCESS version 1.0.12" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 200,
+ "n_errortypes": 203,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -204,6 +204,9 @@
      {"no": 197, "level": 3, "message": "CHECK: PLASMOD (ipedestal=2,3) only uses NBI current drive"},
      {"no": 198, "level": 3, "message": "CHECK: PLASMOD (ipedestal=2,3) always has to have current drive"},
      {"no": 199, "level": 2, "message": "CHECK: PLASMOD (ipedestal=2,3) automatically takes both pseprmax and psepbqarmax as input. It uses which ever one leads to the lower Psep value. Not to use one of them set them to a very large number"},
-     {"no": 200, "level": 3, "message": "CONVERT_PLASMOD2PROCESS: PLASMOD output for dnitot is inconsistent"}
+     {"no": 200, "level": 3, "message": "CONVERT_PLASMOD2PROCESS: PLASMOD output for dnitot is inconsistent"},
+     {"no": 201, "level": 3, "message": "CHECK: You cannot use icc = 5 (density upper limit) in combination with PLASMOD(ipedestal=3)"},
+     {"no": 202, "level": 3, "message": "CHECK: You cannot use icc = 15 (LH power threshold limit) in combination with PLASMOD(ipedestal=3)"},
+     {"no": 203, "level": 3, "message": "CHECK: You cannot use icc = 62 (ratio of particle and energy confinement times) in combination with PLASMOD(ipedestal=3)"}
  ]
 }
