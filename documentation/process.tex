@@ -1360,30 +1360,32 @@ With reference to the sections found in~\ref{sec:plasma_physics_models} this is 
 \subsubsection*{PROCESS physics models constrained when using PLASMOD}
 
 \begin{itemize}
-
-\item The following iteration variables may not be used, as they are outputs of PLASMOD:
-  \subitem 4    \texttt{te}
-  \subitem 5    \texttt{beta}
-  \subitem 6    \texttt{dene}
-  \subitem 9    \texttt{fdene}
-  \subitem 44   \texttt{fvsbrnni}
-  \subitem 102  \texttt{fimpvar}
-  \subitem 103  \texttt{flhthresh}
-  \subitem 109  \texttt{ralpne}
-  \subitem 110  \texttt{ftaulimit}
-
+  
 \item The following constraint equations may not be used, as they are constrained within PLASMOD:
   \subitem 1    Beta
   \subitem 2    Global power balance
   \subitem 5    Density upper limit
   \subitem 15   LH power threshold limit
   \subitem 24   Beta upper limit
-  \subitem 30   Injection power upper limit ???
   \subitem 62   Ratio of particle to energy confinement time
   \subitem 68   Pseparatrix * Bt / q*A*R
   
+\item The following iteration variables may not be used, as they are outputs of PLASMOD:
+  \subitem 4    \texttt{te}
+  \subitem 5    \texttt{beta}
+  \subitem 6    \texttt{dene}
+  \subitem 9    \texttt{fdene}
+  \subitem 36   \texttt{fbetatry}
+  \subitem 44   \texttt{fvsbrnni}
+  \subitem 102  \texttt{fimpvar}
+  \subitem 103  \texttt{flhthresh}
+  \subitem 109  \texttt{ralpne}
+  \subitem 110  \texttt{ftaulimit}
+  \subitem 117  \texttt{fpsepbqar}
 
-\item If \texttt{plasmod\_i\_modeltype} $>$1 no constraint equations relating to beta may be applied.
+\item If \texttt{plasmod\_i\_modeltype} $>$1 no constraint equations or iteration variables relating to beta may be applied (\texttt{icc = 6, 24, 48} and \texttt{ixc = 8, 36, 79}.
+
+\item If \texttt{plasmod\_i\_equiltype} $=$2 then \texttt{q} cannot be used as an iteration variable \texttt{ixc = 18}. N.B. This option is not recommended.
   
 \item Only \texttt{ishape = 4} may be used.
 
