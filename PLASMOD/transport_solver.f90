@@ -269,6 +269,8 @@ endif
   amain = 2.*fuelmix+3.*(1.-fuelmix-fhe3)+3.*fhe3 !D+T+He3
 		!impurity concentrations
 		che=comp%comparray(2)-comp%che3
+		cprot=comp%protfus
+		che3fus=comp%he3fus
 		che3=comp%che3
   cxe=comp%comparray(13)
 		car=comp%comparray(9)
@@ -698,7 +700,9 @@ if (num%iprocess.eq.0) then
 	&  2.0d0*(nHe)-nprot-zavwol*nwol-2.*che3fus*nepr)
 	che3=nhe3(1)/nepr(1)
 	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot+nwol
-
+!	write(*,*) 'ndeut',ndeut(1),nepr(1),nhe(1),fuelmix,nne(1),nxe(1),nprot(1),nwol(1),che3fus
+!	write(*,*) 'ndeut',cprot,comp%protium
+!	stop
 !Z effective
 	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+ & 
 	& zavxe**2*nXe+nprot+zavwol**2.d0*nwol)
@@ -842,7 +846,7 @@ yllama=1.d0
 !add sawtooth transport
 	if(j_sawpos.gt.size(j_points)) then
 		write(*,*) size(j_points),j_sawpos,inp0%chisawpos,j_qeq1,nint(inp0%chisawpos/dx),'*',qprf
-		stop
+!		stop
 		endif
 	if (j_sawpos.gt.0) then
 	if (j_points(j_sawpos).ge.1.and.j_points(j_sawpos).le.nxt) then
@@ -1332,8 +1336,6 @@ if (comp%fcoreraditv.ge.0.d0) then !if fcoreraditv is given , replace the above 
  if (q_heat.gt.0.) cxe=0.d0
 endif
 
-	
-
 !constraint: current drive fni or loop voltage!
 	if (inp0%f_ni.gt.0.) then !use f_ni as constraint
 		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+& 
@@ -1474,9 +1476,9 @@ endif
 
 !Helium concentration calculation
 	if (comp%globtau(3).gt.0.) then
-	 che = comp%globtau(3)*max(0.001,taue)*Sfus_he/integr_cde(v,nepr,nx)
-	 che3fus = comp%globtau(3)*max(0.001,taue)*Sfus_he3/integr_cde(v,nepr,nx)
-	 cprot = comp%globtau(1)*max(0.001,taue)*Sfus_p/integr_cde(v,nepr,nx)
+	 che = (che+num%dt*comp%globtau(3)*max(0.001,taue)*Sfus_he/integr_cde(v,nepr,nx))/(1.+num%dt)
+	 che3fus = (che3fus+num%dt*comp%globtau(3)*max(0.001,taue)*Sfus_he3/integr_cde(v,nepr,nx))/(1.+num%dt)
+	 cprot = (cprot+num%dt*comp%globtau(1)*max(0.001,taue)*Sfus_p/integr_cde(v,nepr,nx))/(1.+num%dt)
 	endif
 
 !END OF MODULE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1628,6 +1630,8 @@ endif
 		comp%comparray(9)=car
 		comp%comparray(14)=cwol
 		comp%che3=che3
+		comp%protfus=cprot
+		comp%he3fus=che3fus
 
 !global geometry
   geom%Rold=rpmajor
@@ -1799,6 +1803,9 @@ endif
 	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
+!	write(*,*) 'iter uloop',ip,fbs,fcd,2.15e-3*(4.3-0.6/geom%a)*radp%zeff*ip*(1.-fbs-fcd)* &
+	 & !rpmajor/(rpminor**2.*geom%k95)/(radp%av_Ten/10.d0)**1.5,mhd%vloop,radp%zeff,mhd%f_ni
+!stop
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

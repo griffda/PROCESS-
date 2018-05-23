@@ -81,6 +81,7 @@
 !write(*,*) 'first iteration'
 	include 'DEMOlike.dat'				
 	include 'ITERlike.dat'				
+	include 'DEMO1.dat'				
 !pause
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
