@@ -38,7 +38,8 @@ SOFT 2014, fusion engineering and design ([paper](http://www.sciencedirect.com/s
 Additionally
 
 - to make python dictionaries run `make dicts`
-- to make documentation run `make doc`
+- to make documentation run `make doc`. (pdf compilation on UKAEA Freia machines 
+  requires the following line in your `.bashrc` file: `module load texlive/2017`)
 - to make html files run `make html`
 - to make everything run `make all`
 - to clean the directory run `make clean`
