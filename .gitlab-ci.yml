@@ -55,6 +55,8 @@ testing:test_suite:
   - cd test_suite
   - dos2unix test_suite.py
   - python test_suite.py -d 1.0
+  # Now trigger testing on Jenkins
+  - "curl -X POST http://mkumar:0eb1252f76a609d527edfbfdc0559eae@process-jenkins-ci.apps.l:8080/jenkins/job/PROCESS/build?token=MiLNGc-QvyEevhKK54go"
  artifacts:
    expire_in: 2 hrs
    paths:
