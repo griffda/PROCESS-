@@ -29,11 +29,13 @@ build:Make:
   - ls -lah
   - make clean
   - make
+# Now add trigger for PROCESS_Testing on GitLab CI
+  - "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"  
 #  - cd utilities
 #  - ls -lah
   - echo "Test "
  artifacts:
-   expire_in: 2 yrs
+   expire_in: 2 hrs
    paths:
      - process.exe
  tags:
@@ -54,14 +56,11 @@ testing:test_suite:
   - dos2unix test_suite.py
   - python test_suite.py -d 1.0
  artifacts:
-   expire_in: 2 yrs
+   expire_in: 2 hrs
    paths:
      - test_suite/*.xunit
  tags:
   - freia
-after_script:  # Now trigger testing
-# Now add trigger for PROCESS_Testing on GitLab CI
-  - "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"  
 
 #after_script:  # Now trigger testing
 #- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"
