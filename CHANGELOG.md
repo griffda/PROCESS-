@@ -17,6 +17,7 @@
   paper). (Issue #678)
 - [Snipes et al.](2000; http://iopscience.iop.org/article/10.1088/0741-3335/42/5A/336) H-mode threshold scaling options added (Issue #680)
 - Initial version of `.gitlab-ci.yml` created for GitLab CI.
+- Added a Spherical Tokamak example to the test suite (Issue #715)
 
 ## Minor changes
 

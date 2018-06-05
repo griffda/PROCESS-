@@ -1949,6 +1949,8 @@ implicit none
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
     !+ad_docc  unpublished internal Oak Ridge document
+    !+ad_docs  Y.-K. M. Peng, J. Galambos and P.C. Shipe, 1992,
+    !+ad_docc  Fusion Technology, 21, 1729
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
     !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -2087,7 +2089,7 @@ implicit none
       !+ad_args  qbar   : input real :  edge q-bar
       !+ad_args  rminor : input real :  plasma minor radius (m)
       !+ad_desc  This function calculates the plasma current in MA,
-      !+ad_desc  using a scaling from M Peng's notes, 24 February 1989.
+      !+ad_desc  using a scaling from Peng, Galambos and Shipe (1992).
       !+ad_desc  It is primarily used for Tight Aspect Ratio Tokamaks and is
       !+ad_desc  selected via <CODE>icurr=2</CODE>.
       !+ad_prob  None
@@ -2097,6 +2099,8 @@ implicit none
       !+ad_stat  Okay
       !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
       !+ad_docc  unpublished internal Oak Ridge document
+      !+ad_docs  Y.-K. M. Peng, J. Galambos and P.C. Shipe, 1992,
+      !+ad_docc  Fusion Technology, 21, 1729
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2277,8 +2281,8 @@ implicit none
     !+ad_args  perim  : input real :  plasma perimeter (m)
     !+ad_desc  This function calculates the poloidal field in Tesla,
     !+ad_desc  using a simple calculation using Stoke's Law for conventional
-    !+ad_desc  tokamaks, or for TARTs, a scaling from M Peng's notes,
-    !+ad_desc  24 February 1989.
+    !+ad_desc  tokamaks, or for TARTs, a scaling from Peng, Galambos and
+    !+ad_desc  Shipe (1992).
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
@@ -2287,6 +2291,8 @@ implicit none
     !+ad_stat  Okay
     !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
     !+ad_docc  unpublished internal Oak Ridge document
+    !+ad_docs  Y.-K. M. Peng, J. Galambos and P.C. Shipe, 1992,
+    !+ad_docc  Fusion Technology, 21, 1729
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
