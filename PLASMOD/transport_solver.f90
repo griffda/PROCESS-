@@ -499,6 +499,9 @@ endif
     q_oh=mhd%qoh
   endif
 
+	
+
+
 !update Greenwald density and profiles
   nG = 10.0d0 * Ip/(pi_g * rpminor**2)  ! 10^19
   nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt],[N_e(1), N_e],xr)
@@ -600,6 +603,9 @@ endif
   F=F0
   num%etol=num%etol0
 
+
+
+!	write(*,*) num%etol,toleq,tepr(1),cxe,q_heat
 
 
 !this block compute sources and transport coefficients for the transport equations!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -762,7 +768,7 @@ YY6=atan(0.577*(2.*YEPS-1.))
 YY7=log((1.+YEPS)**2/(1.-YEPS+YEPS**2))
 PAION=2./YEPS**2*(0.577*YY6-0.167*YY7+0.3)
 
-!electron and ion fusion power
+!electron and ion fusion power from DT
       pedt(jrad) = (1.-paion)*pdtp
       pidt(jrad) = paion*pdtp
 
@@ -798,8 +804,8 @@ yllama=1.d0
 
 !Helium source
 	sfus_he=pfus(nx)/5./5.632
-	sfus_he3=0.
-	sfus_p=0.
+	sfus_he3=trapz(p_dd*dV)/(817./625.)/2.d0
+	sfus_p=0.d0
 
 ! net transport powers to electrons and ions
 	Powe = Peaux - peicl + pedt - prad- psync - pbrad +q_oh
@@ -1325,6 +1331,13 @@ dum2=min(dum2,comp%psepb_q95AR*(btor/q_95/geom%A/rpmajor)**(-1.))
 	if (comp%psep_r.gt.0.d0) then !use psep/R as constraint
 dum2=min(dum2,comp%psep_r*rpmajor)
 	endif
+
+	if (PLH.gt.dum2) then
+	 write(*,*) 'PLH > Psep crit, not possible, stop, increase psepbqar or psepr'
+		stop
+	endif
+	
+
 
 if (dum2.lt.1.d6.and.comp%fcoreraditv.lt.0.d0) then !do the calculation
 		cxe=max(0.,cxe+inp0%cxe_psepfac*(Psep-dum2)/dum2*num%dt/(1.+num%dt))

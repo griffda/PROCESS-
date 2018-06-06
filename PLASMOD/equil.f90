@@ -136,6 +136,7 @@ subroutine compute_equil( &
 	BTOOO=BTOR*R/(R+SHIF(nx)) ! toroidal field at plasma axis
 	ROOO=(R+SHIF(nx))! plasma axis
 
+
 !smoothing below
 	ALFA = .00001
 	call SMAP(ALFA,nx,x,nx,x,gr)
