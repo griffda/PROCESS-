@@ -59,7 +59,7 @@ def plot_distribution(xarr, labelx, unc_dict):
             args = argwhere(logical_or(
                     xvalues < DICT_INPUT_BOUNDS[varname]['lb'],
                     xvalues > DICT_INPUT_BOUNDS[varname]['ub']))
-            yvalues[args] = zeros(len(args))
+            yvalues[args] = zeros(args.shape)
 
         else: #cutoff at 0 - typically negative values are meaningless
             args = argwhere(xvalues < 0.)
