@@ -9,6 +9,7 @@
 - Fixed error in spherical tokamak divertor geometry calculation (Issue #697)
 - Fixed error in spherical tokamak radial build calculation (Issue #704)
 - Fixed error in current drive fractions adding to > 1 (Issue #705).
+- Fixed issues with uncertainty python utility (Issue #716)
 
 ## Features
 
