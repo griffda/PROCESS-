@@ -6,10 +6,10 @@ Used for reading/writing NetCDF PROCESS data.
 
 import os
 import re
-
+import sys
+from sys import stderr
 import numpy as np
 from netCDF4 import Dataset
-from sys import stderr
 from process_io_lib.mfile import MFile, MFileErrorClass
 from process_io_lib.in_dat import InDat
 
@@ -27,6 +27,7 @@ class NetCDFWriter(object):
         self.netcdf_filename = os.path.abspath(netcdf_filename)
         self._append = append
         self._overwrite = overwrite
+        self.root = None
 
     def __enter__(self):
         self._open()
@@ -43,7 +44,7 @@ class NetCDFWriter(object):
                                 clobber=self._overwrite)
         except RuntimeError:
             raise OSError("Cannot create {} - file may already "
-                              "exist".format(self.netcdf_filename))
+                          "exist".format(self.netcdf_filename))
 
     def _close(self):
         """Correctly flush data to NetCDF file and close for writing."""
@@ -54,7 +55,7 @@ class NetCDFWriter(object):
 
     def _store_variable(self, var_name, value, var_group):
 
-        if 'bounds' == var_name:
+        if var_name == 'bounds':
             boundfmt = "bound{}({})"
             var_type = "f8"
             for boundno, bound_dict in value.items():
@@ -99,12 +100,15 @@ class NetCDFWriter(object):
 
     def handle_unknown_vars(self, save_vars, ignore_unknowns, source_data,
                             source_type):
-        """Common check for handling unspecified variables."""
+        """
+        Common check for handling unspecified variables.
+        save_vars       : string/list  : Variables to store
+        ignore_unknowns : Bool         : Ignores unknown variables
+        """
         if isinstance(save_vars, list):
             unknown_vars = set(save_vars) - set(source_data.keys())
 
             if any(unknown_vars) and ignore_unknowns:
-                # TODO: globally available logging mechanism for I/O library
                 print("Cannot save these variables (not provided in {}"
                       "instance): {}".format(source_type, unknown_vars))
             elif any(unknown_vars):
@@ -114,9 +118,9 @@ class NetCDFWriter(object):
             else:
                 pass
 
-    def handle_unknown_vars_two_files(self, save_vars, ignore_unknowns,
-                                      source_data1, source_type1, source_data2,
-                                      source_type2):
+    def handle_unknowns(self, save_vars, ignore_unknowns,
+                        source_data1, source_type1, source_data2,
+                        source_type2):
         """Common check for handling unspecified variables."""
         if isinstance(save_vars, list):
             save_vars1 = set(source_data1.keys()) & set(save_vars)
@@ -125,7 +129,6 @@ class NetCDFWriter(object):
             unknown_vars = unknown_vars - save_vars2
 
             if any(unknown_vars) and ignore_unknowns:
-                # TODO: globally available logging mechanism for I/O library
                 print("Cannot save these variables (neither provided in {}"
                       "instance nor in {} instance): {}".format(source_type1,
                                                                 source_type2,
@@ -188,7 +191,7 @@ class NetCDFWriter(object):
             self._store_variable(val.name, val.value, var_group)
 
     def write_mfile_data(self, mfile, run_id, save_vars="all",
-                         latest_scan_only=False, ignore_unknowns=False):
+                         ignore_unknowns=False):
         """
         Write the provided MFile instance out as a run within the NetCDF.
 
@@ -236,26 +239,29 @@ class NetCDFWriter(object):
                                   for scan, scanval in mfile_data[key].items()
                                   if "scan" in scan)
 
-            if latest_scan_only:
-                highest_scan = 0
-                latest_scan = None
-                for scan_k in possible_scans.keys():
-                    scan_num = int(scan_k.strip("scan"))
-                    if scan_num > highest_scan:
-                        highest_scan = scan_num
-                        latest_scan = scan_k
-                self._store_variable(latest_scan, possible_scans[latest_scan],
-                                     var_group)
-            else:
-                for scan, scan_val in possible_scans.items():
-                    self._store_variable(scan, scan_val, var_group)
+            #uses only latest scan
+            highest_scan = 0
+            latest_scan = None
+            for scan_k in possible_scans.keys():
+                scan_num = int(scan_k.strip("scan"))
+                if scan_num > highest_scan:
+                    highest_scan = scan_num
+                    latest_scan = scan_k
+            self._store_variable(latest_scan, possible_scans[latest_scan],
+                                 var_group)
+
 
 
     def write_data(self, mfile, in_dat, run_id, save_vars="all",
-                   mfile_latest_scan_only=False, ignore_unknowns=False):
+                   ignore_unknowns=False):
         """
         Write the provided MFile and InDat instances out as into the NetCDF
         associated with the given run_id.
+        mfile           : MFile object : input MFILE
+        in_dat          : InDat object : input IN.DAT file
+        run_id          : Integer      : Run ID
+        save_vars       : string/list  : Variables to store
+        ignore_unknowns : Bool         : Ignores unknown variables
         """
 
         mfile_data = mfile.data
@@ -269,13 +275,14 @@ class NetCDFWriter(object):
         indat_keys = []
 
         # Stop/warn when there are requested to-save variables that don't exist
-        save_vars_mfile, save_vars_indat = self.handle_unknown_vars_two_files(save_vars,
-                                                                              ignore_unknowns,
-                                                                              mfile_data,
-                                                                              "MFile",
-                                                                              in_data,
-                                                                              "InDat")
+        save_vars_mfile, save_vars_indat = self.handle_unknowns(save_vars,
+                                                               ignore_unknowns,
+                                                               mfile_data,
+                                                               "MFile",
+                                                               in_data,
+                                                               "InDat")
 
+        
         #MFILE
         for k in mfile_data.keys():
             if k.endswith("."):
@@ -294,42 +301,32 @@ class NetCDFWriter(object):
         for key in mfile_keys:
             var_group = mfile_vars.createGroup(key)
             var = mfile_data[key]
+            
             if isinstance(var, MFileErrorClass):
                 continue
             else:
-                try:
-                    var_group.description = var["var_description"]
-                except RuntimeError as err:
-                    print("DB info: {}".format(var["var_description"]),
-                          file=stderr)
-                    print(err, file=stderr)
-                    print("Exiting, please debug this!", file=stderr)
-                    exit()
-                try :
-                    var_group.group_name = var["var_name"]
-                except AttributeError as err:
-                    print("DB:", err)
-                    print(var["var_name"])
-                    print(var_group)
-                    exit()
-                var_group.unit = var["var_unit"] if (var["var_unit"] is not None) else "None"
+
+                var_group.description = var.var_description
+                var_group.group_name = var.var_name
+                var_group.unit = var.var_unit if (var.var_unit is not None) else "None"
+
+                    
                 possible_scans = dict((scan, scanval)
                                       for scan, scanval in mfile_data[key].items()
                                       if "scan" in scan)
 
-            if mfile_latest_scan_only:
-                highest_scan = 0
-                latest_scan = None
-                for scan_k in possible_scans.keys():
-                    scan_num = int(scan_k.strip("scan"))
-                    if scan_num > highest_scan:
-                        highest_scan = scan_num
-                        latest_scan = scan_k
-                self._store_variable(latest_scan, possible_scans[latest_scan],
-                                     var_group)
-            else:
-                for scan, scan_val in possible_scans.items():
-                    self._store_variable(scan, scan_val, var_group)
+                
+            #using latest scan only
+            highest_scan = 0
+            latest_scan = None
+            for scan_k in possible_scans.keys():
+                scan_num = int(scan_k.strip("scan"))
+                if scan_num > highest_scan:
+                    highest_scan = scan_num
+                    latest_scan = scan_k
+            self._store_variable(latest_scan, possible_scans[latest_scan],
+                                 var_group)
+
 
 
         #INDAT
@@ -414,10 +411,10 @@ class NetCDFReader(object):
             for var_name, variable in group.variables.items():
                 scan_num = None
                 if "scan" in var_name:
-                    scan_num = int(re.search("\d+", var_name).group())
+                    scan_num = int(re.search(r"\d+", var_name).group())
                 m_file.add_to_mfile_variable(group.description, group.group_name,
-                                         variable.getValue(), group.unit,
-                                         scan_num)
+                                             variable.getValue(), group.unit,
+                                             scan_num)
         return m_file
 
     def _get_indatdict(self, path):
@@ -514,7 +511,6 @@ class NetCDFReader(object):
 
 
 if __name__ == "__main__":
-    import sys
 
     mf = MFile("/home/edwardsj/example_MFILE.DAT")
 

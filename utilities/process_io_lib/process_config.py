@@ -1087,18 +1087,17 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         with NetCDFWriter(self.wdir+"/uncertainties.nc", append=True,
                           overwrite=False) as ncdf_writer:
-            try:
-                ncdf_writer.write_data(m_file, in_dat, run_id,
-                                       save_vars=self.output_vars,
-                                       mfile_latest_scan_only=True,
-                                       ignore_unknowns=True)
-            except KeyError as err:
-                print('Error: You have specified an output variable that'
-                      ' does not exist in MFILE. If this is a valid PROCESS'
-                      ' variable, request it being  added to the MFILE output,'
-                      ' else check your spelling!', file=stderr)
-                print(err, file=stderr)
-                exit()
+            #try:
+            ncdf_writer.write_data(m_file, in_dat, run_id,
+                                   save_vars=self.output_vars,
+                                   ignore_unknowns=True)
+            #except KeyError as err:
+            #    print('Error: You have specified an output variable that'
+            #          ' does not exist in MFILE. If this is a valid PROCESS'
+            #          ' variable, request it being  added to the MFILE output,'
+            #          ' else check your spelling!', file=stderr)
+            #    print(err, file=stderr)
+            #    exit()
 
 
 
