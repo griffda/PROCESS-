@@ -211,7 +211,7 @@ This allows the user to checkout a specific commit between tagged versions. PROC
 PROCESS does compile and run on Windows. The following instructions will get you to the point of compiling 
 and running the fortran code (and the Python utilities) on Windows.
 
-1. Install `mingw` using the following [installer](http://www.fortran.com/blog/wp-content/uploads/2013/05/g95-Mingw_201210.exe).
+1. Install `mingw` using the following [installer](https://sourceforge.net/projects/mingw/?source=typ_redirect).
     - click on basic setup and install the following options
         - `mingw32-base`
         - `mingw32-gcc-gfortran`
