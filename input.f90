@@ -88,7 +88,6 @@ module process_input
   !+ad_hist  19/05/15 PJK Added lower_case
   !+ad_hist  01/11/16 JM  Added iprecomp switch for Central Solenoid pre-compression structure
   !+ad_hist  08/03/17 JM  Added time-dependent power reqs
-  !+ad_hist  15/02/18 SIM Made denw an input
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -353,6 +352,7 @@ contains
     !+ad_hist  08/02/17 JM  Added Kallenbach inputs
     !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
     !+ad_hist  12/01/18 KE  Added fnesep f-value for Eich crit. separatrix density
+    !+ad_hist  15/02/18 SIM Made denw an input
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
