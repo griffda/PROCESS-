@@ -6,6 +6,7 @@
 *.aux
 *.log
 *.lof
+/test_suite/*.xunit
 /test_suite/test_area/*
 /test_suite/test_area/
 *__pycache__
