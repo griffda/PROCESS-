@@ -926,7 +926,7 @@ PARAMETER_DEFAULTS = ["rmajor", "aspect", "rminor", "bt", "powfmw", "pnetelmw",
 NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']
 
 # PROCESS TF Coil types
-DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn", 5: "WST Nb3Sn", 6: "REBCO"}
+DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn", 5: "WST Nb3Sn", 6: "REBCO", 7: "YBCO"}
 
 # FIMP Values
 DICT_FIMP = {"fimp(1)":"Hydrogen (fraction calculated by code)",

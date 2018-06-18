@@ -273,7 +273,7 @@ def cumulative_radial_build2(section, mfile_data, scan):
     return (cumulative_build, previous)
 
 
-def poloidal_cross_section(axis, mfile_data, scan=-1):
+def poloidal_cross_section(axis, mfile_data, scan):
     """Function to plot poloidal cross-section
 
     Arguments:
@@ -376,7 +376,7 @@ def color_key(axis):
 
 
 
-def toroidal_cross_section(axis, mfile_data, scan=-1):
+def toroidal_cross_section(axis, mfile_data, scan):
     """Function to plot toroidal cross-section
     Arguments:
       axis --> axis object to add plot to
@@ -1139,15 +1139,15 @@ def plot_header(axis, mfile_data, scan):
     axis.set_autoscaley_on(False)
     axis.set_autoscalex_on(False)
 
-    data2 = [("!" + str(mfile_data.data["runtitle"].get_scan(scan)),
+    data2 = [("!" + str(mfile_data.data["runtitle"].get_scan(-1)),
              "Run title", ""),
-             ("!" + str(mfile_data.data["procver"].get_scan(scan)),
+             ("!" + str(mfile_data.data["procver"].get_scan(-1)),
              "PROCESS Version", ""),
-             ("!" + mfile_data.data["date"].get_scan(scan), "Date:", ""),
-             ("!" + mfile_data.data["time"].get_scan(scan), "Time:", ""),
-             ("!" + mfile_data.data["username"].get_scan(scan), "User:", ""),
+             ("!" + mfile_data.data["date"].get_scan(-1), "Date:", ""),
+             ("!" + mfile_data.data["time"].get_scan(-1), "Time:", ""),
+             ("!" + mfile_data.data["username"].get_scan(-1), "User:", ""),
              ("!" + proc_dict.DICT_OPTIMISATION_VARS
-             [abs(int(mfile_data.data["minmax"].get_scan(scan)))],
+             [abs(int(mfile_data.data["minmax"].get_scan(-1)))],
              "Optimising:", "")]
 
     if mfile_data.data["imprad_model"].get_scan(scan) == 1:
@@ -1578,7 +1578,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     plot_info(axis, data, mfile_data, scan)
 
 
-def main(fig1, fig2, m_file_data, scan=-1):
+def main(fig1, fig2, m_file_data, scan):
     """Function to create radial and vertical build plot on given figure.
 
     Arguments:
@@ -1604,7 +1604,7 @@ def main(fig1, fig2, m_file_data, scan=-1):
     # Plot toroidal cross-section
     plot_2 = fig2.add_subplot(222, aspect='equal')
     #toroidal_cross_section(plot_2)
-    toroidal_cross_section(plot_2, m_file_data, scan=-1)
+    toroidal_cross_section(plot_2, m_file_data, scan)
 
     # Plot color key
     plot_3 = fig2.add_subplot(241)
@@ -1649,7 +1649,7 @@ def main(fig1, fig2, m_file_data, scan=-1):
     plot_current_drive_info(plot_6, m_file_data, scan)
     fig1.subplots_adjust(wspace=0.25)
 
-def save_plots(m_file_data, scan=-1):
+def save_plots(m_file_data, scan):
     """Function to recreate and save individual plots.
     """
 
