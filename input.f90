@@ -402,6 +402,7 @@ contains
 
        line = adjustl(line)  !  rotate any leading blanks to the end
        linelen = len_trim(line)
+       
 
 20     continue
 
@@ -415,7 +416,7 @@ contains
        if (line(1:5) == '*****') write(outfile,*) line(1:76)
        if (line(1:1) == '*') cycle
        if (line(1:1) == '$') cycle  !  in case block delimiters are still present
-
+       
        iptr = 1
 
        !  This must be an assignment line, so get the variable name
@@ -1472,7 +1473,7 @@ contains
             write(outfile,*) 'ERROR. BLNKITH input is not required for CCFE HCPB model with Tritium Breeding Ratio calculation -'
             write(outfile,*) 'please remove it from the input file'
             write(outfile,*) '**********'
-          else
+         else
             call parse_real_variable('blnkith', blnkith, 0.0D0, 10.0D0, &
                 'Inboard blanket thickness (m)')
           end if
@@ -3018,17 +3019,19 @@ contains
     if (subscript_present) then
        write(*,*) 'Unexpected subscript found at line ', lineno
        write(*,*) 'Variable name and description:'
-       write(*,*) varnam, description
+       write(*,*) varnam, ', ', description
           error = .True.
     end if
 
     !  Obtain the new value for the variable
 
     oldval = varval
+
     call get_value_real(varval,icode)
+
     if (icode /= 0) then
        write(*,*) 'Error whilst reading input file.  Variable name and description:'
-       write(*,*) varnam, description
+       write(*,*) varnam, ', ', description
           error = .True.
     end if
 
@@ -3102,7 +3105,7 @@ contains
     if (icode /= 0) then
        write(*,*) 'Unexpected subscript found at line ',lineno
        write(*,*) 'Variable name, description:'
-       write(*,*) varnam, description
+       write(*,*) varnam, ', ', description
           error = .True.
     end if
 
@@ -3171,7 +3174,7 @@ contains
     if (icode /= 0) then
        write(*,*) 'Error in IN.DAT found at line ',lineno
        write(*,*) 'Variable name, description:'
-       write(*,*) varnam, description
+       write(*,*) varnam, ', ', description
           error = .True.
     end if
 
@@ -3239,7 +3242,7 @@ contains
        if (icode /= 0) then
           write(*,*) 'Error in IN.DAT found at line ',lineno
           write(*,*) 'Variable name, description:'
-          write(*,*) varnam, description
+          write(*,*) varnam, ', ', description
           error = .True.
        end if
 
@@ -3331,7 +3334,7 @@ contains
        if (icode /= 0) then
           write(*,*) 'Error in IN.DAT found at line ',lineno
           write(*,*) 'Variable name, description:'
-          write(*,*) varnam, description
+          write(*,*) varnam, ', ', description
           error = .True.
        end if
 
@@ -3735,6 +3738,7 @@ contains
 
     character(len=maxlen) :: varval
     integer :: varlen,iost
+    integer :: foundComma, foundAst, foundPoint
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3807,8 +3811,45 @@ contains
 
     !  Discard any erroneous decimal points
 
-    varlen = index(varval,'.') - 1
-    if (varlen > 0) then
+!    varlen = index(varval,'.') - 1
+!    if (varlen > 0) then
+!       write(*,*) 'Integer value expected in following input line...'
+!       write(*,*) ' '
+!       write(*,*) '   ',line(1:50),'...'
+!       write(*,*) ' '
+!       write(*,*) 'The erroneous decimal point and subsequent digits have been'
+!       write(*,*) 'discarded to leave only the integer part.'
+!       write(*,*) 'PROCESS should continue okay, but please correct the input file!'
+!       write(*,*) ' '
+!       write(*,*) ' '
+!       write(*,*) ' '
+!    end if
+
+    ! *** Exclude any input after * or , - these denote an input comment
+    
+    varlen = len_trim(varval)
+    foundComma = varlen
+    foundAst = varlen
+    foundPoint = 0
+
+    if (index(varval,',') > 0) then
+       foundComma = index(varval,',') - 1
+    end if
+    if (index(varval,'*') > 0) then
+       foundAst = index(varval,'*') - 1
+    end if
+    varlen = min(varlen, foundComma, foundAst)
+
+    if (varlen <= 0) varlen = index(varval,' ') - 1
+    if (varlen <= 0) varlen = iptr
+
+    varval = varval(:varlen)
+
+    varlen = len_trim(varval)
+
+    foundPoint = index(varval,'.') - 1
+    if (foundPoint > 0) then
+       varlen = foundPoint
        write(*,*) 'Integer value expected in following input line...'
        write(*,*) ' '
        write(*,*) '   ',line(1:50),'...'
@@ -3820,10 +3861,6 @@ contains
        write(*,*) ' '
        write(*,*) ' '
     end if
-
-    if (varlen <= 0) varlen = index(varval,',') - 1
-    if (varlen <= 0) varlen = index(varval,' ') - 1
-    if (varlen <= 0) varlen = iptr
 
     ! *** Update pointer
 
@@ -3890,6 +3927,7 @@ contains
 
     character(len=maxlen) :: varval
     integer :: varlen,iost
+    integer :: foundComma, foundAst
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3912,7 +3950,7 @@ contains
        ! *** On error or end, leave routine with error set
 
        if (iost /= 0) goto 60
-
+       
        lineno = lineno + 1
 
        ! *** Ignore blank lines
@@ -3957,11 +3995,29 @@ contains
     end if
 
     ! *** Put rest of line into varval (makes it easier to parse)
-
+    
     varval = line(iptr:)
-    varlen = index(varval,',') - 1
+
+    ! *** Exclude any input after * or , - these denote an input comment
+    
+    varlen = len_trim(varval)
+    foundComma = varlen
+    foundAst = varlen
+
+    if (index(varval,',') > 0) then
+       foundComma = index(varval,',') - 1
+    end if
+    if (index(varval,'*') > 0) then
+       foundAst = index(varval,'*') - 1
+    end if
+    varlen = min(varlen, foundComma, foundAst)
+
     if (varlen <= 0) varlen = index(varval,' ') - 1
     if (varlen <= 0) varlen = iptr
+
+    varval = varval(:varlen)
+
+    varlen = len_trim(varval)
 
     ! *** Update pointer
 
@@ -3982,7 +4038,7 @@ contains
     end if
 
     ! *** Convert the ASCII text into a real value
-
+    
     call string_to_real(varval,varlen,rval,icode)
 
     goto 1000
