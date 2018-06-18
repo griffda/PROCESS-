@@ -94,7 +94,7 @@ class MFileVariable(dict):
                                                            self.var_name,
                                                            scan_value))
 
-    def get_scan(self, scan_number=None):
+    def get_scan(self, scan_number):
         """Returns the value of a specific scan. For scan = -1 or None the last
         scan is given.
 

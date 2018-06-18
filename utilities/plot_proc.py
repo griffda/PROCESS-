@@ -1863,7 +1863,7 @@ def test(f):
         page2 = plt.figure(figsize=(12, 9), dpi=80)
 
         # run main
-        main(page1, page2, m_file)
+        main(page1, page2, m_file, scan=scan)
 
         # with bpdf.PdfPages(args.o) as pdf:
         # with bpdf.PdfPages("ref.SUMMARY.pdf") as pdf:
@@ -1895,8 +1895,7 @@ if __name__ == '__main__':
     parser.add_argument("-s", "--show", help="show plot as well as saving figure",
                         action="store_true")
 
-    #parser.add_argument("--svg", help="save plots as svg files",
-    #                    action="store_true")
+    parser.add_argument("-n", type=int, help="Which scan to plot?")
 
     args = parser.parse_args()
 
@@ -1905,7 +1904,12 @@ if __name__ == '__main__':
         m_file = mf.MFile(args.f)
     else:
         m_file = mf.MFile("MFILE.DAT")
-    scan = -1
+
+    if args.n:
+        scan = args.n-1
+    else:
+        scan = -1
+
     bore = m_file.data["bore"].get_scan(scan)
     ohcth = m_file.data["ohcth"].get_scan(scan)
     gapoh = m_file.data["gapoh"].get_scan(scan)
@@ -2002,14 +2006,14 @@ if __name__ == '__main__':
 
     # read MFILE
     # m_file = mf.MFile(args.f)
-    scan = -1
+    # scan = scan
 
     # create main plot
     page1 = plt.figure(figsize=(12, 9), dpi=80)
     page2 = plt.figure(figsize=(12, 9), dpi=80)
 
     # run main
-    main(page1, page2, m_file)
+    main(page1, page2, m_file, scan=scan)
 
     # with bpdf.PdfPages(args.o) as pdf:
     with bpdf.PdfPages(args.f + "SUMMARY.pdf") as pdf:
