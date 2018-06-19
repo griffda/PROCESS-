@@ -199,3 +199,7 @@ add_executable(process.exe ${all_sources})
 target_link_libraries(process.exe lapack)
 #target_compile_features(PROCESS_Testing PRIVATE cxx_std_17)
 install(TARGETS process.exe DESTINATION ${CMAKE_SOURCE_DIR})
+add_custom_command(TARGET process.exe
+ POST_BUILD
+ COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}
+)
