@@ -3183,15 +3183,28 @@ contains
     implicit none
 
     ! Mass of steel in blanket (kg)
-    whtblss = denstl * ( volblkti/blnkith * ( blbuith * fblss + blbmith * (1.0D0-fblhebmi) + &
-    blbpith * (1.0D0-fblhebpi) ) + volblkto/blnkoth * ( blbuoth * fblss + &
-       blbmoth * (1.0D0-fblhebmo) + blbpoth * (1.0D0-fblhebpo) ) )
+    if (blnkith>1.0D-6) then
+        whtblss = denstl * ( volblkti/blnkith * ( blbuith * fblss + blbmith * (1.0D0-fblhebmi) + &
+         blbpith * (1.0D0-fblhebpi) ) + volblkto/blnkoth * ( blbuoth * fblss + &
+         blbmoth * (1.0D0-fblhebmo) + blbpoth * (1.0D0-fblhebpo) ) )
+    else
+        whtblss = denstl * ( volblkto/blnkoth * ( blbuoth * fblss + &
+         blbmoth * (1.0D0-fblhebmo) + blbpoth * (1.0D0-fblhebpo) ) )
+    end if
 
     ! Mass of beryllium in blanket (kg)
-    whtblbe = 1850.0D0 * fblbe * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
+    if (blnkith>1.0D-6) then
+        whtblbe = 1850.0D0 * fblbe * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
+    else
+        whtblbe = 1850.0D0 * fblbe * (volblkto * blbuoth/blnkoth)
+    end if
 
     ! Mass of breeder material in blanket (kg)
-    whtblbreed = densbreed * fblbreed * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
+    if (blnkith>1.0D-6) then
+        whtblbreed = densbreed * fblbreed * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
+    else
+        whtblbreed = densbreed * fblbreed * (volblkto * blbuoth/blnkoth)
+    end if
 
     ! Mass of blanket (kg)
     whtblkt = whtblss + whtblbe + whtblbreed

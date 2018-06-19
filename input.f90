@@ -88,7 +88,6 @@ module process_input
   !+ad_hist  19/05/15 PJK Added lower_case
   !+ad_hist  01/11/16 JM  Added iprecomp switch for Central Solenoid pre-compression structure
   !+ad_hist  08/03/17 JM  Added time-dependent power reqs
-  !+ad_hist  15/02/18 SIM Made denw an input
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -353,6 +352,7 @@ contains
     !+ad_hist  08/02/17 JM  Added Kallenbach inputs
     !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
     !+ad_hist  12/01/18 KE  Added fnesep f-value for Eich crit. separatrix density
+    !+ad_hist  15/02/18 SIM Made denw an input
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -562,10 +562,10 @@ contains
           call parse_real_variable('ffwal', ffwal, 0.0D0, 10.0D0, &
                'Wall load fiddle factor')
        case ('fgwped')
-          call parse_real_variable('fgwped', fgwped, -1D0, 5.0D0, &
+          call parse_real_variable('fgwped', fgwped, -1.0D0, 5.0D0, &
                'Fraction of n_G at pedestal top')
        case ('fgwsep')
-          call parse_real_variable('fgwsep', fgwsep, -1D0, 1.0D0, &
+          call parse_real_variable('fgwsep', fgwsep, -1.0D0, 1.0D0, &
                'Fraction of n_G at separatrix')
        case ('fhe3')
           call parse_real_variable('fhe3', fhe3, 0.0D0, 1.0D0, &
@@ -675,7 +675,7 @@ contains
           write(outfile,*) ' '
           obsolete_var = .true.
        case ('ilhthresh')
-          call parse_int_variable('ilhthresh', ilhthresh, 1, 8, &
+          call parse_int_variable('ilhthresh', ilhthresh, 1, 14, &
                'Switch for L-H power threshold to enforce')
        case ('impc')
           call parse_real_variable('impc', impc, 0.0D0, 10.0D0, &
@@ -1777,6 +1777,9 @@ contains
        case ('frhocp')
           call parse_real_variable('frhocp', frhocp, 0.01D0, 5.0D0, &
                'TART c/p resistivity enhancement factor')
+       case ('i_tf_tresca')
+          call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &
+                         'Switch for TF coil Tresca criterion.')
        case ('i_tf_turns_integer')
           call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
                     'Switch for TF coil integer/non-integer turns')

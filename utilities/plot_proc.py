@@ -273,7 +273,7 @@ def cumulative_radial_build2(section, mfile_data, scan):
     return (cumulative_build, previous)
 
 
-def poloidal_cross_section(axis, mfile_data, scan=-1):
+def poloidal_cross_section(axis, mfile_data, scan):
     """Function to plot poloidal cross-section
 
     Arguments:
@@ -376,7 +376,7 @@ def color_key(axis):
 
 
 
-def toroidal_cross_section(axis, mfile_data, scan=-1):
+def toroidal_cross_section(axis, mfile_data, scan):
     """Function to plot toroidal cross-section
     Arguments:
       axis --> axis object to add plot to
@@ -1139,15 +1139,15 @@ def plot_header(axis, mfile_data, scan):
     axis.set_autoscaley_on(False)
     axis.set_autoscalex_on(False)
 
-    data2 = [("!" + str(mfile_data.data["runtitle"].get_scan(scan)),
+    data2 = [("!" + str(mfile_data.data["runtitle"].get_scan(-1)),
              "Run title", ""),
-             ("!" + str(mfile_data.data["procver"].get_scan(scan)),
+             ("!" + str(mfile_data.data["procver"].get_scan(-1)),
              "PROCESS Version", ""),
-             ("!" + mfile_data.data["date"].get_scan(scan), "Date:", ""),
-             ("!" + mfile_data.data["time"].get_scan(scan), "Time:", ""),
-             ("!" + mfile_data.data["username"].get_scan(scan), "User:", ""),
+             ("!" + mfile_data.data["date"].get_scan(-1), "Date:", ""),
+             ("!" + mfile_data.data["time"].get_scan(-1), "Time:", ""),
+             ("!" + mfile_data.data["username"].get_scan(-1), "User:", ""),
              ("!" + proc_dict.DICT_OPTIMISATION_VARS
-             [abs(int(mfile_data.data["minmax"].get_scan(scan)))],
+             [abs(int(mfile_data.data["minmax"].get_scan(-1)))],
              "Optimising:", "")]
 
     if mfile_data.data["imprad_model"].get_scan(scan) == 1:
@@ -1426,8 +1426,13 @@ def plot_power_info(axis, mfile_data, scan):
     dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
     bt = mfile_data.data["bt"].get_scan(scan)
     surf = mfile_data.data["sarea"].get_scan(scan)
-    pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
-    err = pthresh - mfile_data.data["pthrmw(7)"].get_scan(scan)
+
+    #Assume Martin scaling if pthresh is not printed
+    #Accounts for pthresh not being written prior to issue #679 and #680
+    if "plhthresh" in mfile_data.data.keys():
+        pthresh = mfile_data.data["plhthresh"].get_scan(scan)
+    else:
+        pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
 
     gross_eff = 100.0 * (mfile_data.data["pgrossmw"].get_scan(scan) /
                          mfile_data.data["pthermmw"].get_scan(scan))
@@ -1524,7 +1529,12 @@ def plot_current_drive_info(axis, mfile_data, scan):
     dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
     bt = mfile_data.data["bt"].get_scan(scan)
     surf = mfile_data.data["sarea"].get_scan(scan)
-    pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
+    #Assume Martin scaling if pthresh is not printed
+    #Accounts for pthresh not being written prior to issue #679 and #680
+    if "plhthresh" in mfile_data.data.keys():
+        pthresh = mfile_data.data["plhthresh"].get_scan(scan)
+    else:
+        pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
     flh = pdivt / pthresh
 
     powerht = mfile_data.data["powerht"].get_scan(scan)
@@ -1568,7 +1578,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     plot_info(axis, data, mfile_data, scan)
 
 
-def main(fig1, fig2, m_file_data, scan=-1):
+def main(fig1, fig2, m_file_data, scan):
     """Function to create radial and vertical build plot on given figure.
 
     Arguments:
@@ -1594,7 +1604,7 @@ def main(fig1, fig2, m_file_data, scan=-1):
     # Plot toroidal cross-section
     plot_2 = fig2.add_subplot(222, aspect='equal')
     #toroidal_cross_section(plot_2)
-    toroidal_cross_section(plot_2, m_file_data, scan=-1)
+    toroidal_cross_section(plot_2, m_file_data, scan)
 
     # Plot color key
     plot_3 = fig2.add_subplot(241)
@@ -1639,7 +1649,7 @@ def main(fig1, fig2, m_file_data, scan=-1):
     plot_current_drive_info(plot_6, m_file_data, scan)
     fig1.subplots_adjust(wspace=0.25)
 
-def save_plots(m_file_data, scan=-1):
+def save_plots(m_file_data, scan):
     """Function to recreate and save individual plots.
     """
 
@@ -1853,7 +1863,7 @@ def test(f):
         page2 = plt.figure(figsize=(12, 9), dpi=80)
 
         # run main
-        main(page1, page2, m_file)
+        main(page1, page2, m_file, scan=scan)
 
         # with bpdf.PdfPages(args.o) as pdf:
         # with bpdf.PdfPages("ref.SUMMARY.pdf") as pdf:
@@ -1885,8 +1895,7 @@ if __name__ == '__main__':
     parser.add_argument("-s", "--show", help="show plot as well as saving figure",
                         action="store_true")
 
-    #parser.add_argument("--svg", help="save plots as svg files",
-    #                    action="store_true")
+    parser.add_argument("-n", type=int, help="Which scan to plot?")
 
     args = parser.parse_args()
 
@@ -1895,7 +1904,12 @@ if __name__ == '__main__':
         m_file = mf.MFile(args.f)
     else:
         m_file = mf.MFile("MFILE.DAT")
-    scan = -1
+
+    if args.n:
+        scan = args.n-1
+    else:
+        scan = -1
+
     bore = m_file.data["bore"].get_scan(scan)
     ohcth = m_file.data["ohcth"].get_scan(scan)
     gapoh = m_file.data["gapoh"].get_scan(scan)
@@ -1992,14 +2006,14 @@ if __name__ == '__main__':
 
     # read MFILE
     # m_file = mf.MFile(args.f)
-    scan = -1
+    # scan = scan
 
     # create main plot
     page1 = plt.figure(figsize=(12, 9), dpi=80)
     page2 = plt.figure(figsize=(12, 9), dpi=80)
 
     # run main
-    main(page1, page2, m_file)
+    main(page1, page2, m_file, scan=scan)
 
     # with bpdf.PdfPages(args.o) as pdf:
     with bpdf.PdfPages(args.f + "SUMMARY.pdf") as pdf:

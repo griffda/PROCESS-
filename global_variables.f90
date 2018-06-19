@@ -42,6 +42,7 @@ module global_variables
   integer :: maxcal = 200
 
   character(len=30) :: fileprefix = "" !'dummy_file_prefix'
+  character(len=50) :: output_prefix = "" ! output file prefix
   character(len=25) :: xlabel,vlabel
   integer :: iscan_global=0    ! Makes iscan available globally.
   real(kind(1.0D0)):: convergence_parameter  ! VMCON convergence parameter "sum"
@@ -162,6 +163,7 @@ module physics_variables
   !+ad_hist  02/11/16 HL  Added Petty and Lang confinement scalings (isc=41/42)
   !+ad_hist  08/02/17 JM  Added fgwsep the fraction of Greenwald density to set as separatrix density
   !+ad_hist  08/02/17 JM  Gave teped, tesep, neped and nesep non-zero defaults
+  !+ad_hist  02/05/18 SIM Added pthrmw(9-14)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -652,16 +654,22 @@ module physics_variables
   !+ad_vars  plhthresh : L-H mode power threshold (MW)
   !+ad_varc              (chosen via ilhthresh, and enforced if constraint equation 15 is on)
   real(kind(1.0D0)) :: plhthresh = 0.0D0
-  !+ad_vars  pthrmw(8) : L-H power threshold for various scalings (MW): <OL>
-  !+ad_varc         <LI> ITER 1996 nominal
-  !+ad_varc         <LI> ITER 1996 upper bound
-  !+ad_varc         <LI> ITER 1996 lower bound
-  !+ad_varc         <LI> ITER 1997 excluding elongation
-  !+ad_varc         <LI> ITER 1997 including elongation
-  !+ad_varc         <LI> 2008 Martin scaling: nominal
-  !+ad_varc         <LI> 2008 Martin scaling: 95% upper bound
-  !+ad_varc         <LI> 2008 Martin scaling: 95% lower bound</OL>
-  real(kind(1.0D0)), dimension(8) :: pthrmw = 0.0D0
+  !+ad_vars  pthrmw(14) : L-H power threshold for various scalings (MW): <OL>
+  !+ad_varc         <LI> ITER 1996 scaling: nominal
+  !+ad_varc         <LI> ITER 1996 scaling: upper bound
+  !+ad_varc         <LI> ITER 1996 scaling: lower bound
+  !+ad_varc         <LI> ITER 1997 scaling: excluding elongation
+  !+ad_varc         <LI> ITER 1997 scaling: including elongation
+  !+ad_varc         <LI> Martin 2008 scaling: nominal
+  !+ad_varc         <LI> Martin 2008 scaling: 95% upper bound
+  !+ad_varc         <LI> Martin 2008 scaling: 95% lower bound
+  !+ad_varc         <LI> Snipes 2000 scaling: nominal
+  !+ad_varc         <LI> Snipes 2000 scaling: upper bound
+  !+ad_varc         <LI> Snipes 2000 scaling: lower bound
+  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): nominal
+  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): upper bound
+  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): lower bound</OL>
+  real(kind(1.0D0)), dimension(14) :: pthrmw = 0.0D0
   !+ad_vars  ptremw : electron transport power (MW)
   real(kind(1.0D0)) :: ptremw = 0.0D0
   !+ad_vars  ptrepv : electron transport power per volume (MW/m3)
@@ -2277,6 +2285,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: fhts = 0.5D0
   !+ad_vars  insstrain : radial strain in insulator (tfc_model=1)
   real(kind(1.0D0)) :: insstrain = 0.0D0
+  !+ad_vars  i_tf_tresca /0/ : switch for TF coil conduit Tresca stress criterion:<UL>
+  !+ad_varc          <LI> = 0 Tresca (no adjustment);
+  !+ad_varc          <LI> = 1 Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
+  integer :: i_tf_tresca = 0
   !+ad_vars  i_tf_turns_integer /0/ : switch for TF coil integer/non-integer turns<UL>
   !+ad_varc          <LI> = 0 non-integer turns;
   !+ad_varc          <LI> = 1 integer turns</UL>
@@ -4091,7 +4103,7 @@ module constraint_variables
   !+ad_varc                 (constraint equation 52)
   real(kind(1.0D0)) :: tbrmin = 1.1D0
   !+ad_vars  tbrnmn /1.0/ : minimum burn time (s)
-  !+ad_varc                 (constraint equation 13)
+  !+ad_varc                 (KE - no longer itv., see issue 706)
   real(kind(1.0D0)) :: tbrnmn = 1.0D0
   !+ad_vars  tcycmn : minimum cycle time (s)
   !+ad_varc           (constraint equation 42)

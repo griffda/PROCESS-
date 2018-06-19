@@ -213,7 +213,7 @@ module numerics
        'Radial build consistency         ', &
        !+ad_varc  <LI> (12) Volt second lower limit (STEADY STATE) (itv 15,1,2,3)
        'Volt second lower limit          ', &
-       !+ad_varc  <LI> (13) Burn time lower limit (PULSE) (itv 21,1,16,17,22,29,42,44,61)
+       !+ad_varc  <LI> (13) Burn time lower limit (PULSE) (itv 21,1,16,17,29,42,44,61)
        'Burn time lower limit            ', &
        !+ad_varc  <LI> (14) Neutral beam decay lengths to plasma centre (NBI) (consistency equation)
        !+ac_varc            (itv 19,1,2,3,6)
@@ -408,7 +408,7 @@ module numerics
        'tcpav         ', &
        !+ad_varc  <LI> (21) ftburn (f-value for equation 13)
        'ftburn        ', &
-       !+ad_varc  <LI> (22) tbrnmn
+       !+ad_varc  <LI> (22) NOT USED
        'tbrnmn        ', &
        !+ad_varc  <LI> (23) fcoolcp
        'fcoolcp       ', &
@@ -701,7 +701,7 @@ module numerics
        1.000D0, &  !  19
        40.00D0, &  !  20
        0.001D0, &  !  21
-       0.001D0, &  !  22
+       0.001D0, &  !  22   KE made tbrnmn obsolete 18/05/18
        0.100D0, &  !  23
        1.000D4, &  !  24
        0.001D0, &  !  25
@@ -852,7 +852,7 @@ module numerics
        1.000D6, &  !  19
        1.000D3, &  !  20
        1.000D0, &  !  21
-       1.000D6, &  !  22
+       1.000D6, &  !  22   KE made tbrnmn obsolete 18/05/18
        0.500D0, &  !  23
        1.000D8, &  !  24
        1.000D0, &  !  25

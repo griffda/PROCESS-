@@ -97,13 +97,16 @@ real(kind(1.0D0)), private :: theta_coil
 real(kind(1.0D0)), private :: tan_theta_coil
 
 ! Conductor area radial and toroidal dimension [m]
-real(kind(1.0D0)) :: t_conductor_radial, t_conductor_toroidal
+real(kind(1.0D0)), private :: t_conductor_radial, t_conductor_toroidal
 
 ! Cable area radial and toroidal dimension [m]
-real(kind(1.0D0)) :: t_cable_radial, t_cable_toroidal
+real(kind(1.0D0)), private :: t_cable_radial, t_cable_toroidal
 
 ! Turn radial and toroidal dimension [m]
-real(kind(1.0D0)) :: t_turn_radial, t_turn_toroidal
+real(kind(1.0D0)), private :: t_turn_radial, t_turn_toroidal
+
+! Conduit Tresca stress with CEA adjustment factors [Pa]
+real(kind(1.0D0)), private :: s_tresca_cond_cea
 
 type(resistive_material):: copper
 type(resistive_material):: hastelloy
@@ -938,9 +941,20 @@ subroutine stresscl
     s_tresca_case = max(ABS(sigrtf(1)-sigttf(1)), ABS(sigttf(1)-sigvert), ABS(sigvert-sigrtf(1)))
     s_tresca_cond = max(ABS(sigrcon-sigtcon), ABS(sigtcon-sigvert), ABS(sigvert-sigrcon))
 
-    ! Stress to constrain
-    strtf1 = s_tresca_cond
+    ! Tresca stress using CEA calculation [Pa]
+    s_tresca_cond_cea = 1.02D0*abs(sigrcon) + 1.6D0*sigvert
+
+    if (i_tf_tresca == 1) then 
+        ! Use CEA adjusted stress
+        strtf1 = s_tresca_cond_cea
+    else
+        ! Stress to constrain
+        strtf1 = s_tresca_cond
+    end if
+
     strtf2 = s_tresca_case
+
+    ! Old von Mises
     !strtf1 = s_vmises_cond
     !strtf2 = s_vmises_case
 
@@ -1771,8 +1785,7 @@ subroutine outtf(outfile, peaktfflag)
         !thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
         call oblnkl(outfile)
     end if
-
-
+    
     if (tfc_model == 0) then
         call osubhd(outfile,'TF Coil Stresses (solid copper coil model) :')
     else
@@ -1787,8 +1800,10 @@ subroutine outtf(outfile, peaktfflag)
     end if
     call ovarre(outfile,'Conduit radial stress (Pa)','(sigrcon)',sigrcon, 'OP ')
     call ovarre(outfile,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon, 'OP ')
+    call ovarin(outfile,'Tresca conduit stress criterion', '(i_tf_tresca)', i_tf_tresca, 'OP ')
     call ovarre(outfile,'Tresca stress in case (Pa)', '(s_tresca_case)', s_tresca_case, 'OP ')
     call ovarre(outfile,'Tresca stress in conduit (Pa)', '(s_tresca_cond)', s_tresca_cond, 'OP ')
+    call ovarre(outfile,'CEA Adjusted Tresca stress in conduit (Pa)', '(s_tresca_cond_cea)', s_tresca_cond_cea, 'OP ')
     call ovarre(outfile,'von Mises stress in case (Pa)', '(s_vmises_case)', s_vmises_case, 'OP ')
     call ovarre(outfile,'von Mises stress in conduit (Pa)', '(s_vmises_cond)', s_vmises_cond, 'OP ')
     call ovarre(outfile,'Peak radial deflection at midplane (m)','(deflect)',deflect, 'OP ')

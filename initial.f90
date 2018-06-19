@@ -471,22 +471,22 @@ subroutine check
 
         ! LH power threshold limit cannot be used with PLASMOD
         if (any(icc == 15)) then
-           call report_error(202)
+           call report_error(209)
         endif
 
         ! Beta upper limit does not apply with PLASMOD
         if (any(icc == 24)) then
-           call report_error(204)
+           call report_error(211)
         endif
 
         ! ratio of particle/energy confinement times cannot be used with PLASMOD
         if (any(icc == 62)) then
-           call report_error(203)
+           call report_error(210)
         endif
 
         ! Psep * Bt / qAR upper limit cannot be used with PLASMOD
         if (any(icc == 68)) then
-           call report_error(201)
+           call report_error(208)
         endif
 
         !plasmod_i_modeltype = 1 enforces a given H-factor

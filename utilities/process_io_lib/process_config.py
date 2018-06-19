@@ -991,14 +991,14 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         values < DICT_INPUT_BOUNDS[varname]['lb'],
                         values > DICT_INPUT_BOUNDS[varname]['ub']))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, len(args[0]))
                         args = argwhere(logical_or(
                             values < DICT_INPUT_BOUNDS[varname]['lb'],
                             values > DICT_INPUT_BOUNDS[varname]['ub']))
                 else: #cutoff at 0 - typically negative values are meaningless
                     args = argwhere(values < 0.)
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, len(args[0]))
                         args = argwhere(values < 0)
 
             elif u_dict['errortype'].lower() == 'uniform':
@@ -1019,7 +1019,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         values < DICT_INPUT_BOUNDS[varname]['lb'],
                         values > mean))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, len(args[0]))
                         args = argwhere(logical_or(
                             values < DICT_INPUT_BOUNDS[varname]['lb'],
                             values > mean))
@@ -1027,7 +1027,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
                     args = argwhere(logical_or(values < 0.,
                                                values > mean))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, len(args[0]))
                         args = argwhere(logical_or(values < 0.,
                                                    values > mean))
             elif u_dict['errortype'].lower() == 'upperhalfgaussian':
@@ -1039,14 +1039,14 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         values < mean,
                         values > DICT_INPUT_BOUNDS[varname]['ub']))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, len(args[0]))
                         args = argwhere(logical_or(
                             values < mean,
                             values > DICT_INPUT_BOUNDS[varname]['ub']))
                 else:
                     args = argwhere(values < mean)
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, len(args[0]))
                         args = argwhere(values < mean)
 
             u_dict['samples'] = values
@@ -1087,18 +1087,17 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         with NetCDFWriter(self.wdir+"/uncertainties.nc", append=True,
                           overwrite=False) as ncdf_writer:
-            try:
-                ncdf_writer.write_data(m_file, in_dat, run_id,
-                                       save_vars=self.output_vars,
-                                       mfile_latest_scan_only=True,
-                                       ignore_unknowns=True)
-            except KeyError as err:
-                print('Error: You have specified an output variable that'
-                      ' does not exist in MFILE. If this is a valid PROCESS'
-                      ' variable, request it being  added to the MFILE output,'
-                      ' else check your spelling!', file=stderr)
-                print(err, file=stderr)
-                exit()
+            #try:
+            ncdf_writer.write_data(m_file, in_dat, run_id,
+                                   save_vars=self.output_vars,
+                                   ignore_unknowns=True)
+            #except KeyError as err:
+            #    print('Error: You have specified an output variable that'
+            #          ' does not exist in MFILE. If this is a valid PROCESS'
+            #          ' variable, request it being  added to the MFILE output,'
+            #          ' else check your spelling!', file=stderr)
+            #    print(err, file=stderr)
+            #    exit()
 
 
 

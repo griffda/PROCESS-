@@ -876,6 +876,11 @@ contains
 
     blnktth = 0.5D0*(blnkith+blnkoth)
 
+    ! First Wall
+
+    fwith = 2.0D0*afw + 2.0D0*fw_wall
+    fwoth = fwith
+
     !  Radial build to centre of plasma (should be equal to rmajor)
 
     rbld = bore + ohcth + gapoh + tfcth + gapds + &
