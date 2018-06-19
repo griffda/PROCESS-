@@ -1,0 +1,33 @@
+ *****                                                                       
+ impvar is now deprecated - use iteration variables 125-136 instead.
+ 
+ **************************************************************************************************************
+ ************************************************** PROCESS ***************************************************
+ ************************************** Power Reactor Optimisation Code ***************************************
+ **************************************************************************************************************
+ 
+   Program : ./process.exe
+   Version : 1.0.13   Release Date :: 2018-04-19
+   Tag No. : "1.0.13-296-g9128bfc Code used contains Untracked Changes"
+   Last commit message : "Split test_suite.py into two files. test_suite_functions.py contains a"
+      User : mkumar
+ Directory : /home/mkumar/process/test_suite
+ 
+ **************************************************************************************************************
+ 
+ PROCESS 1.0.13 : Run on 15 Jun 2018 17:17:39 +01:00(hh:mm) UTC by freia002
+ Reactor concept design: Pulsed tokamak model, (c) CCFE
+ demoa 1 ralpne  * Short descriptive title for the run
+ (Please include this header in any models, presentations and papers based on these results)
+ 
+ **************************************************************************************************************
+ Quantities listed in standard row format are labelled as follows in columns 112-114:
+ ITV : Active iteration variable (in any output blocks)
+ OP  : Calculated output quantity
+ Unlabelled quantities in standard row format are generally inputs
+ Note that calculated quantities may be trivially rescaled from inputs, or equal to bounds which are input.
+ 
+ 
+ **************************************************************************************************************
+ ***** Scan point  1 of  3: Taup/taueff_lower_limit, taulimit =  5.000E+00 *****
+ **************************************************************************************************************

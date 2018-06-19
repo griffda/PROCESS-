@@ -9,7 +9,10 @@
   James Morris 14/11/2015
   CCFE
 """
+
+# PROCESS test suite functions
 from test_suite_functions import *
+
 
 def main(args):
     """Main
@@ -52,7 +55,7 @@ def main(args):
 
 
                 # run test
-                tests[key].user_run_test()
+                tests[key].CI_run_test()
 
                 # Output message to terminal
                 print_message(key, tests[key])
@@ -66,7 +69,7 @@ def main(args):
 
             # run test
             print("Starting test ==>  {0:<40}".format(key))
-            tests[key].user_run_test()
+            tests[key].CI_run_test()
 
             # Output message to terminal
             print_message(key, tests[key])
@@ -133,6 +136,7 @@ if __name__ == "__main__":
                         "test_files", type=str, default="test_files")
 
     ag = parser.parse_args()
+
     main(ag)
 
     # Make sure terminal returns to regular colours

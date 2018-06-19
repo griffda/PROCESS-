@@ -1,0 +1,36 @@
+ *****  CFETR input file for EU-CN collaboration                             
+ *****                                                                       
+ *****  Based on 2014 paper by Son et al. "Concept design of CFETR tokamak ma
+ *****  http://ieeexplore.ieee.org/document/6716984/                         
+ *****                                                                       
+ *****  James Morris                                                         
+ *****  02/12/16                                                             
+ *****                                                                       
+ ****************************************************                        
+ 
+ **************************************************************************************************************
+ ************************************************** PROCESS ***************************************************
+ ************************************** Power Reactor Optimisation Code ***************************************
+ **************************************************************************************************************
+ 
+   Program : ./process.exe
+   Version : 1.0.13   Release Date :: 2018-04-19
+   Tag No. : "1.0.13-296-g9128bfc Code used contains Untracked Changes"
+   Last commit message : "Split test_suite.py into two files. test_suite_functions.py contains a"
+      User : mkumar
+ Directory : /home/mkumar/process/test_suite
+ 
+ **************************************************************************************************************
+ 
+ PROCESS 1.0.13 : Run on 15 Jun 2018 17:17:31 +01:00(hh:mm) UTC by freia002
+ Reactor concept design: Steady-state tokamak model, (c) CCFE
+ "CFETR small (5.7m) reference file"
+ (Please include this header in any models, presentations and papers based on these results)
+ 
+ **************************************************************************************************************
+ Quantities listed in standard row format are labelled as follows in columns 112-114:
+ ITV : Active iteration variable (in any output blocks)
+ OP  : Calculated output quantity
+ Unlabelled quantities in standard row format are generally inputs
+ Note that calculated quantities may be trivially rescaled from inputs, or equal to bounds which are input.
+ 
