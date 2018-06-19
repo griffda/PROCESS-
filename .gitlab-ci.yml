@@ -27,8 +27,9 @@ build:Make:
   - gcc --version
 #  - dos2unix global_variables.f90
   - ls -lah
-  - make clean
-  - make
+  - rm -rf build
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build
 # Now add trigger for PROCESS_Testing on GitLab CI
   - "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"  
 #  - cd utilities
@@ -49,8 +50,8 @@ build:vardes:
   - pwd
   - gcc --version
   - ls -lah
-  - make clean
-  - make vardes
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target vardes
  artifacts:
    expire_in: 2 hrs
    paths:
@@ -68,7 +69,8 @@ testing:test_suite:
   - dos2unix ${PWD}/utilities/*.py
 #  - ls -lah utilities/
 #  - utilities/create_dicts.py
-  - make dicts
+  - cmake3 -H. -Bbuild 
+  - cmake3 --build build --target dicts 
   - cd test_suite
   - dos2unix test_suite.py
   - python test_suite.py -d 1.0
