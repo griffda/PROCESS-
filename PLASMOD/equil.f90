@@ -34,20 +34,19 @@ subroutine compute_equil( &
   & bdb0,bmint,bmaxt, b0db2,ya,ybb,BDB02,FOFB,qg3s,q0,vvvv
   real(kind(1.0d0)), dimension(nx) :: gra,sqgra,grar,avr2,ai0,dgrda,avsqg !gradient,sqrgradient,radial gradient,
   real(kind(1.0D0)), dimension(nx) :: smallk, dvdr, rhoint, f, jpol, kerncur, pressure, A, B, C, bbb, ccc, dum1, dum2, dum3
-  real(kind(1.0D0)), dimension(nx) :: chat,betahat,y, FF, fp, kpk, dpk,  pprime,ffprime,ba,bb
+  real(kind(1.0D0)), dimension(nx) :: chat,betahat,y,  fp, kpk, dpk,  pprime,FF,ffprime,ba,bb
   real(kind(1.0d0)), dimension(nx) :: gr,GBD,GL,GSD, & 
   &  BD,BC,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
   &  btooo,rooo,g11,g22,g33,slat,vr
 ! Quiet NAN, double precision.
   real(kind(1.0d0)), parameter :: pi = 3.141592,ACEQLB=1.0d-6 !pi = 3.1415926536d0,ACEQLB=1.e-6
-  REAL(8), PARAMETER :: D_QNAN = &
-  TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)  
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 
 !some initialization
   diagz=1
+	pres_fac=betaz*f_ind_in*ipol0*lint*vp0(1)
 	pres_fac=1.d0
   na = nx-1
   gp2 = 2.*pi
@@ -122,8 +121,7 @@ subroutine compute_equil( &
 	!call emeq with inputs Ba, BB which are pprime and ffprime recasted
 	call EMEQ(redo,BA,BB,R+SHIF(nx),rmin,ELON,TRIA*rmin,nx, &		! radial grid point No.
              &	 ACEQLB,BTOR*R/(R+SHIF(nx)),IP,GR,GBD,GL,GSD,gra, & 
-        &  sqgra,grar,avr2,ai0,dgrda,avsqg,vvvv,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
-        &  TIME)
+        &  sqgra,grar,avr2,ai0,dgrda,avsqg,vvvv,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ)
 
 	if (nx.lt.1.or.isnan(sqgra(2))) then ! if crashed, redo at lower pressure
 	nx=nxtemp
@@ -295,8 +293,8 @@ subroutine ADDITIONAL_CALCS( &
   real(kind(1.0D0)), dimension(nx) :: dvdr,rhoint,f,dum2
   real(kind(1.0d0)), parameter :: pi = 4.0d0*datan(1.0d0) !3.1415926535d0 !, mu_vacuum = 1.2566d-6
 
-
 !some definitions
+  gp2 = q_edge_in*FF(1)
   gp2 = 2.*pi
   rhoint = x * rmin !minor radius
 		qcyl=rmin**2.d0*btor/R/ip/0.091

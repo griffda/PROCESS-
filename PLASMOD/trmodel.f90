@@ -36,7 +36,14 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
   real(kind(1.0d0)), dimension(nxt, nchan) :: rlx
 
 ! a definition
-  rlx = gy0
+  rlx(1,1) = gy0(1,1)*zef(1)*vtor(1)*zmj*aim1 & 
+		& *zim2(1)*vpol(1)*vr(1)*vrs(1)*zim3(1)*zim1(1)* & 
+		& x(1)*shear(1)*sh_tr(1)*tria(1)*te(1)*rho(1)*niz1(1)* &
+		& nibm(1)*ni(1)*niz3(1)*pblon(1)*pbper(1)*ne(1)*shif(1)* &
+		& pfast(1)*ti(1)*ipol(1)*mu(1)*ndeut(1)*g11(1)*er(1)* & 
+		& ametr(1)*hfactor*hnow*chi00*amain(1)*aim2*aim3*capa*chipow* & 
+		& gradro(1)*elon(1)
+		rlx = gy0
 
 
 

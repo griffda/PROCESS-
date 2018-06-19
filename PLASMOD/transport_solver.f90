@@ -154,9 +154,9 @@
   real(kind(1.0d0)) :: tup_0d,fm_SE,Lr,tguess,tau_relax,tshguess,tupguess,fmguess
   real(kind(1.0d0)) :: dqoqguess,tdivguess,tau,p_sep,ds2,dd2,ds3,dd3,ds1,dd1
   ! set physics constants
-  real(kind(1.0d0)), parameter :: clight = 2.9979d+18, e_charge = 1.602d-19, eps_vacuum = 8.854d-12
-  real(kind(1.0d0)), parameter :: m_electron = 9.109d-31, m_proton = 1.673d-27, mu_vacuum = 1.2566d-6
-  real(kind(1.0d0)), parameter :: pe_mratio = 3438.0d0, planckh = 6.63d-34 , pi_g = 3.141592
+  real(kind(1.0d0)), parameter ::  e_charge = 1.602d-19
+  real(kind(1.0d0)), parameter ::   mu_vacuum = 1.2566d-6
+  real(kind(1.0d0)), parameter :: pi_g = 3.141592
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
