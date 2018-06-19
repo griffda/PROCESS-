@@ -40,6 +40,23 @@ build:Make:
      - process.exe
  tags:
   - freia
+build:vardes:
+# image: ukaea/ubuntu
+ only:
+  - test_set_up_python_fixes 
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - make clean
+  - make vardes
+ artifacts:
+   expire_in: 2 hrs
+   paths:
+     - documentation/html/*.html
+ tags:
+  - freia
 testing:test_suite:
  only:
   - test_set_up_python_fixes 
