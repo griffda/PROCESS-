@@ -9,6 +9,7 @@
 /test_suite/*.xunit
 /test_suite/test_area/*
 /test_suite/test_area/
+/build/*
 *__pycache__
 *.pyc
 *.dvi
@@ -25,6 +26,9 @@ gui_dicts.py
 gui_dicts.py_prev
 rootdir.py
 VFILE.DAT
+MFILE.DAT
+PLOT.DAT
+OUT.DAT
 tag.num
 untracked.info
 com.msg
@@ -37,4 +41,10 @@ PLASMOD/fort.*
 PLASMOD/output_list.txt
 PLASMOD/KE*
 *~
+lib/PLASMOD/CHARTST/*
+lib/PLASMOD/*.DAT
+/lib/PLASMOD/*.dat
+/lib/PLASMOD/fort.*
+/lib/PLASMOD/output_list.txt
+/lib/PLASMOD/KE*
 /utilities/run_process.conf
