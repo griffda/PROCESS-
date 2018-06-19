@@ -57,7 +57,7 @@ def plotProfile(n,i,p,count):
 
     for f in range(0,n):
         if f==0:
-            plt.plot(DATA_PROFILES[f][0], DATA_PROFILES[f][i], linewidth=3, color='#0082CA', zorder=2, marker = '', label=LEGEND_NAME[f])
+            plt.plot(DATA_PROFILES[f][0], DATA_PROFILES[f][i], linewidth=2, color='C1', zorder=2, marker = '', label=LEGEND_NAME[f])
         else:
             plt.scatter(DATA_PROFILES[f][0], DATA_PROFILES[f][i], s = 60, color = '#808284', zorder=1, label=LEGEND_NAME[f])
             #plt.scatter(DATA_PROFILES[f][0], DATA_PROFILES[f][i], s = 20, color = 'C0', label=LEGEND_NAME[f])
@@ -102,7 +102,7 @@ def plot_nprofile(prof):  #cut-down version from plot_proc.py
     #    rho = np.append(rho1,rho2)
     #    ne = ne0 * (1-rho**2)**alphan
     ne = ne/1e19
-    prof.plot(rho,ne, linewidth = 4, linestyle = '--', color = 'C1', label="PROCESS 0D")
+    prof.plot(rho,ne, linewidth = 4, linestyle = '--', color = '#0082CA', label="PROCESS 0D")
     prof.legend()
     
 def plot_tprofile(prof):
@@ -124,7 +124,7 @@ def plot_tprofile(prof):
     #else:
     #    rho = np.linspace(0,1)
     #    te = te0 * (1-rho**2)**alphat
-    prof.plot(rho,te, linewidth = 4, linestyle = '--', color = 'C1', label="PROCESS 0D")
+    prof.plot(rho,te, linewidth = 4, linestyle = '--', color = '#0082CA', label="PROCESS 0D")
     prof.legend()
     
 def plot_qprofile(prof):
@@ -135,7 +135,7 @@ def plot_qprofile(prof):
     rho = np.linspace(0,1)
     q_r_sauter = q0 + (q95-q0)*(rho*rho)
 
-    prof.plot(rho,q_r_sauter, linewidth = 4, color = 'C1', label="PROCESS 0D")
+    prof.plot(rho,q_r_sauter, linewidth = 4, color = '#0082CA', label="PROCESS 0D")
     prof.legend()
 
 def get_mfileData():
@@ -220,14 +220,14 @@ if __name__ == '__main__':
     AXIS_TITLES.append(r'$t_i / keV$')
     AXIS_TITLES.append('$deut / 10^{19} m^{-3}$')
     AXIS_TITLES.append('$trit / 10^{19} m^{-3}$')
-    AXIS_TITLES.append('$J_bs / MA/m^{2}$')
-    AXIS_TITLES.append('$J_cd / MA/m^{2}$')
-    AXIS_TITLES.append('$J_tot / MA/m^{2}$')
+    AXIS_TITLES.append('$J_bs / MA.m^{-2}$')
+    AXIS_TITLES.append('$J_cd / MA.m^{-2}$')
+    AXIS_TITLES.append('$J_tot / MA.m^{-2}$')
     AXIS_TITLES.append('$I_pol / MA$')
     AXIS_TITLES.append('$q$')
     AXIS_TITLES.append('$Vol / m^{3}$')
     AXIS_TITLES.append('$dVol/dr / m^{2}$')
-    AXIS_TITLES.append('$Cond / MA/(V.m)$')
+    AXIS_TITLES.append('$Cond / MA.V^{-1}.m^{-1})$')
 
     PAGE_TITLES = ['Radial profiles (page 1)']
     PAGE_TITLES.append('Radial profiles (page 2)')
