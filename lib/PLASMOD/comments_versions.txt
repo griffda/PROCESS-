@@ -1,0 +1,33 @@
+PLASMOD, copyright E. Fable 2018
+
+22 jan 2018
+
+-committed version 12, fully working, Newton scheme still to be adapted to include the control variables...
+
+- corrected bug in equil.f90. now working!
+
+- corrected q profile smoothing, much better current calculation!
+
+- added impmodel and Ar feedback!
+
+
+
+24 jan 2018
+
+- added inp0%q_control that can be set as a minimal power for control purposes (e.g. 50 MW)
+
+- added documentation.txt for inputs, outputs, and usage
+
+
+
+25 jan 2018
+
+- added power deposition locations and widths as inputs
+
+- added routine to compute nbi split properly
+
+
+31 Jan 2018
+
+- added psep/R and psep B / qaR as max psep allowed (using Xe)
+

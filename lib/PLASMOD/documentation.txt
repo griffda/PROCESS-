@@ -1,0 +1,231 @@
+Here is the documentation about inputs and outputs.
+
+Inputs:
+
+!INPUTS with typical default values
+
+                          num%dtminmin=1.0d-9 !not used
+                          num%dtminmax=0.001 !not used
+                          num%dtmaxmax=100.0 !not used
+                          num%tolopt=0.0001 !not used
+                          num%etol=100.0d0 !not used
+                          num%etol0=100.d0 !not used
+                          num%etolm=100.0d0 !not used
+                          num%tolmax=0.1d0 !not used
+                          num%biggest=huge(kind(1.0d0)) !not used
+																						    num%tol=0.00001d0 !tolerance to be reached, in % variation at each time step
+                          num%dtmin=0.001d0 !min time step
+                          num%dtmax=0.5d0 !max time step
+                          num%dt=0.01d0 !time step 
+                          num%dtinc=2.d0 !decrease of dt
+                          num%Ainc=1.1d0 !increase of dt
+                          num%test=100000. !max iteration number
+                          num%tolmin=10.1d0 ! multiplier of etolm that should not be overcome
+                          num%eopt=0.1d0 !exponent of jipperdo
+                          num%dtmaxmin=0.1d0 !exponent of jipperdo2
+                          num%capA=0.1d0 !first radial grid point
+                          num%maxA=0.d0 !diagz 0 or 1
+                          num%dgy=1.e-5 !Newton differential
+                          num%i_modeltype=1 !1 - simple gyrobohm scaling
+                          num%i_equiltype=1 !1 - EMEQ, solve equilibrium with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+                          num%nx=41        !number of interpolated grid points
+                          num%nxt=5 !number of reduced grid points
+                          num%nchannels=3  !leave this at 3
+                          num%ipedestal=2 !1 - fixed temperature pedestal ped%teped. 2 - Saarelma scaling
+																										num%i_impmodel=1 !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
+																										
+    geom%A = 3.1d0  !aspect ratio R/a
+    geom%R = 9.072d0  ! major radius in m
+    geom%bt = 5.667 !magnetic field in T
+    geom%k = 1.7513d0 !edge elongation 
+    geom%d = 0.383d0 !edge triangularity
+    geom%k95 = 1.65d0 !edge elongation at 95% of flux
+    geom%d95 = 0.333d0 !edge triangularity at 95% of flux
+    geom%Ip =  19.6 ! plasma current in MA : USED if i_equiltype=2, q95 is used if i_equiltype=1
+				geom%q95 = 3.5 !safety factor at 95% of flux, used if i_equiltype=1. 
+				geom%counter=0. !dont touch this
+
+!this is just for first initialization
+    geom%Aold = geom%A  !aspect ratio
+    geom%Rold = geom%R  ! major radius in m
+    geom%kold = geom%k !edge elongation
+    geom%dold = geom%d !edge triangularity
+    geom%Ipold = geom%ip !plasma current in MA : USED if equiltype=2, q95 is used if equiltype=1
+    geom%btold = geom%bt !magnetic field
+
+!composition
+    comp%globtau(1) = 5. !tauparticle/tauE for D
+    comp%globtau(2) = 5. !tauparticle/tauE for T
+    comp%globtau(3) = 5. !tauparticle/tauE for He
+    comp%globtau(4) = 5. !tauparticle/tauE for Xe
+    comp%globtau(5) = 1. !tauparticle/tauE for Ar
+
+    comp%psepplh_inf = 1.1 !Psep/PLH if below this, use q_heat to control this
+    comp%psepplh_sup = 1.2 !Psep/PLH if above this, use Xe to control this via radiation, if not to be used, set a very very large value
+    comp%psepb_q95AR = 1000.d0 !Psep B/qaR max value, use the minimum between, if not to be used, set a very very large value this and pseplh_sup
+    comp%psep_r = 1000.d0 !Psep/R max value , if not to be used, set a very very large value
+    comp%qdivt = 0. !divertor heat flux in MW/m^2, if 0, dont use SOL model, if positive (in MW/m^2), uses car to control this
+
+    comp%car = 0. !argon concentration, used self-consistently if qdivt=0.
+    comp%c_car = 10. !compression factor between div and core: e.g. 10 means there is 10 more Argon concentration in the divertor than in the core
+    comp%cxe = 0. !xenon concentration, changed selfconsistently if psepplh_sup is non zero
+    comp%che = 0.08 !helium concentration, calculated self-consistently if globtau(3)>0
+
+    comp%fuelmix = 0.5d0 !fuel mix -> D = fuelmix*(ne-nZ), T = (1-fuelmix)*(ne-nZ)
+
+    comp%pradpos = 0.d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
+
+				inp0%f_gw=0.9 !pedestal top greenwald fraction
+				inp0%f_gws=0.5 !separatrix greenwald fraction
+
+    ped%teped=5.5  !pedestal top temperature
+    ped%tesep=0.3  !separatrix temperature
+    ped%rho_t=0.96 !pedestal top position T
+    ped%rho_n=0.96 !pedestal top position n
+
+				inp0%Hfac_inp=1. !input H factor to be reached. If 0., this is not used and H is instead an output. This is radiation corrected H factor using pradpos
+
+				inp0%nbcdeff=5. !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
+				inp0%eccdeff=0.3 !CD = this * PCD * TE/NE !not used for now
+				inp0%pheatmax=200. !max allowed power for heating+CD+fusion control+q_control
+
+				inp0%V_loop=-1.e6 !target loop voltage. If lower than -1.e5, dont use this
+				inp0%f_ni=0. !required fraction of non inductive current, if 0, dont use this
+				inp0%pfus=0. !if 0., not used (otherwise it would be controlled with Pauxheat), if positive, add power q_fus to control fusion power
+				inp0%q_control=50. !power required for additional control (NTM, sawteeth, etc.)
+
+				inp0%pech=0.d0 !ech power !not used for now
+				inp0%pnbi=0.d0 !nbi power !this is heat if not specified
+				inp0%qheat=0.d0 !nbi power
+				inp0%qcd=0.d0 !nbi power
+				inp0%qfus=0.d0 !nbi power
+
+!depositions and widths				
+				inp0%x_heat(1)=0. !nbi
+				inp0%x_heat(2)=0. !ech
+				inp0%x_cd(1)=0. !nbi
+				inp0%x_cd(2)=0. !ech
+				inp0%x_fus(1)=0. !nbi
+				inp0%x_fus(2)=0. !ech
+				inp0%x_control(1)=0. !nbi
+				inp0%x_control(2)=0. !ech
+				inp0%dx_heat(1)=0.2 !nbi
+				inp0%dx_heat(2)=0.03 !ech
+				inp0%dx_cd(1)=0.2 !nbi
+				inp0%dx_cd(2)=0.03 !ech
+				inp0%dx_fus(1)=0.2 !nbi
+				inp0%dx_fus(2)=0.03 !ech
+				inp0%dx_control(1)=0.2 !nbi
+				inp0%dx_control(2)=0.03 !ech
+				inp0%nbi_energy=1000. !in keV !beam energy
+				
+				
+
+				inp0%spellet=0.d0 !pellet mass in particles of D in 10^19
+				inp0%fpellet=0.5d0 !pellet frequency in Hz !pellet source is computed as inp0%spellet*inp0%fpellet in p/s
+
+
+!control derivatives (for internal calculations), suggested values
+				inp0%qnbi_psepfac=50. !dqnbi/d(1-Psep/PLH)
+				inp0%cxe_psepfac=1.e-5 !dcxe/d(1-Psep/PLH)
+				inp0%car_qdivt=1.e-6 !dcar/d(qdivt)
+
+
+
+
+! Outputs:
+
+* scalars
+	geom%ip --> this is an output if q95 was an input
+	mhd%ip --> plasma current in MA
+
+	geom%q95 --> this is an output if ip was an input
+	mhd%q --> q95
+
+	comp%che --> Helium concentration (computed if globtau(3) is finite)
+	comp%cxe --> Xenon concentration (computed if comp%psepplh_sup finite)
+	comp%car --> Argon concentration (computed if comp%qdivt finite)
+	
+
+	ped%teped --> computed if num%ipedestal=2
+	ped%nped --> computed according to inp0%fgw
+	ped%nsep --> computed according to inp0%fgws
+
+	
+	mhd%equilcheck = 0. if equilibrium crashed, 1 if ok
+	mhd%betan : total beta_N (thermal + alphas)
+	
+	loss%pfus : fusion power in MW (5* alpha power)	
+	loss%taueff : confinement time taue in s
+	loss%H : H factor
+				tau_scal = loss%taueff/loss%H
+	loss%Wth : plasma thermal energy in MJ
+	loss%prad: total radiated power (core + edge) in MW
+	loss%pradedge: edge radiated power in MW
+	loss%pradcore: core radiated power in MW
+	loss%psync : total synchrotron power (MW)
+	loss%pbrehms : brehmstralung power MW
+	loss%pline: line radiation MW
+	loss%psepi: ion separatrix power MW
+	loss%piepv: volume averaged equipartition power MW/m^3
+	loss%peaux: effective auxiliary electron heating in MW
+	loss%piaux: effective auxiliary ion heating in MW
+	
+	loss%pdiv : divertor power in MW/m^2
+
+	loss%Psep: separatrix power	MW
+	loss%PLH: LH transition power  MW
+
+	loss%dfuelreq : requested fueling in p/s for D
+	loss%tfuelreq : requested fueling in p/s for T
+
+	loss%hepumpreq = He production globally in p/s (to be pumped)
+	
+	mhd%vp : plasma volume in m^3
+	mhd%q_sep : separatrix q
+	mhd%vloop : loop voltage in V
+	mhd%fbs : bootstrap current fraction
+	mhd%f_ni : total non inductive current fraction (CD + bs)
+
+
+	i_flag = 1 if OK, -1 if not converged after itermax, -2 equilibrium crashed, 0 transport crashed
+
+
+
+* profiles	
+	radp%x : normalized coordinate r/a 
+	radp%ne : electron density profile in 10^19 m^-3
+	radp%te : electorn temperature profile in keV
+	radp%ti : ion temperature profile in keV
+
+	radp%qprof : safety factor profile
+	radp%jpar : parallel current profile in MA/m^2
+	radp%jbs :  bootstrap current profile
+	radp%jcd : current drive profile
+	radp%ipol : poloidal current R*BT profile in T*m
+	radp%psi : poloidal flux profile in Wb
+	radp%volum : plasma volum profile in m^3
+	
+
+
+
+
+
+! Suggested usage:
+
+ - always set Psep_PLH inf and sup to like ~1 to ~1.1 or 1.2
+	- qdivt = 0 to start
+	- Hfac_inp = 0.95 or 1 for baseline scenario, can try 0 but transport model will change later on
+	- q_control ~30 - 50 MW
+	- pedestal model 2
+	- equiltype 1
+	- impmodel 0 or 1 doesnt matter
+	- globtau(3) ~ 5 - 10
+	- f_ni or v_loop should be dictated by discharge duration (comes from SYS code)
+	
+
+
+
+
+
+
