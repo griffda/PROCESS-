@@ -175,7 +175,7 @@ file(WRITE ${FORT_SOURCE_DIR}/untracked.info "  integer::untracked = " ${UNTR_LN
 file(WRITE ${FORT_SOURCE_DIR}/root.dir "      character(len=*), parameter :: ROOTDIR = \"" ${FORT_SOURCE_DIR} "\"\n")
 file(APPEND ${FORT_SOURCE_DIR}/root.dir "      character(len=*), parameter :: INSTALLDIR = \"" ${CMAKE_SOURCE_DIR} "\"")
 file(WRITE ${UTILITIES_DIR}/rootdir.py "ROOTDIR = '" ${FORT_SOURCE_DIR} "'")
-file(COPY ${FORT_SOURCE_DIR}/root.dir DESTINATION ${CMAKE_SOURCE_DIR}/root.dir)
+file(COPY ${FORT_SOURCE_DIR}/root.dir DESTINATION ${CMAKE_SOURCE_DIR})
 #
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(PLSMOD_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/PLASMOD)
