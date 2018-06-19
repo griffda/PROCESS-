@@ -1133,7 +1133,6 @@ contains
     real(kind(1.0D0)) :: t_eped_scaling
     ! Scaling constant and exponents
     real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
-    real(kind(1.0D0)) :: corrected_n_tot_beta
 
     c0 = 2.16d0
     a_delta = 0.82D0
@@ -1143,7 +1142,9 @@ contains
     a_kappa = 0.50d0
     a_a = 0.88D0
     
-    corrected_n_tot_beta = normalised_total_beta * 1.2566
+    !corrected_n_tot_beta = normalised_total_beta * 1.2566
+    ! KE, 19/06/18 Reverting correction noted below. Samuli decided this
+    ! was not an error afterall.
     ! KE, 25/04/18 Correction to normalised_total _beta applied as specified in the 
     ! email from Samuli which is reproduced in issue #413
     
@@ -1152,7 +1153,7 @@ contains
     ! Total normalised plasma beta is used.
 
     t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
-                          kappa**a_kappa  * corrected_n_tot_beta**a_beta  * rminor**a_a
+                          kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
   end function t_eped_scaling
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1175,7 +1176,7 @@ contains
     real(kind(1.0D0)) :: p_eped_scaling !pressure in kev*10¹9*m¯3
     ! Scaling constant and exponents
     real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
-    real(kind(1.0D0)) :: betan_pl,kappa_pl,delta_pl,ip_pl,corrected_n_tot_beta
+    real(kind(1.0D0)) :: betan_pl,kappa_pl,delta_pl,ip_pl
     
     c0 = 9.4d0
     a_delta = 0.82D0
@@ -1185,7 +1186,9 @@ contains
     a_kappa = 0.50d0
     a_a = -1.11d0
 
-    corrected_n_tot_beta = betan_pl * 1.2566
+    !corrected_n_tot_beta = betan_pl * 1.2566
+    ! KE, 19/06/18 Reverting correction noted below. Samuli decided this
+    ! was not an error afterall.
     ! KE, 25/04/18 Correction to normalised_total _beta applied as specified in the 
     ! email from Samuli which is reproduced in issue #413
     
@@ -1194,7 +1197,7 @@ contains
     ! Total normalised plasma beta is used.
     
     p_eped_scaling =  0.65d0 * c0 * delta_pl**a_delta * ip_pl**a_ip * rmajor**a_r * &
-         kappa_pl**a_kappa  * corrected_n_tot_beta**a_beta * rminor**a_a
+         kappa_pl**a_kappa  * betan_pl**a_beta * rminor**a_a
   end function p_eped_scaling
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
