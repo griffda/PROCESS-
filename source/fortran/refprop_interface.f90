@@ -54,7 +54,8 @@ module refprop_interface
 
   include "root.dir"
 
-  character(len=120) :: fluids_dir = ROOTDIR//'/data/fluids/'
+!  character(len=120) :: fluids_dir = ROOTDIR//'/data/fluids/'
+  character(len=120) :: fluids_dir = INSTALLDIR//'/data/fluids/'
 
 contains
 

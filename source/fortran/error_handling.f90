@@ -162,7 +162,7 @@ contains
 
     !  Parse the json file
 
-    filename = ROOTDIR//'/utilities/errorlist.json'
+    filename = INSTALLDIR//'/utilities/errorlist.json'
     errorfile => fson_parse(trim(filename))
 
     !  Allocate memory for error_type array contents

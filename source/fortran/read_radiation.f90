@@ -103,10 +103,11 @@ contains
 
     ! Obtain the root directory from the file 'root.dir'
     ! The # character must be at the start of the line.
-    include "root.dir"
+#include "root.dir"
 
-    character(len=120), save :: lzdir = trim(ROOTDIR//'/data/lz_non_corona_14_elements/')
 
+ !   character(len=120), save :: lzdir = trim(ROOTDIR//'/data/lz_non_corona_14_elements/')
+    character(len=120), save :: lzdir = trim(INSTALLDIR//'/data/lz_non_corona_14_elements/')
     ! Find the index of the element.  Exclude hydrogen by starting at 2 (Helium)
     do i = 2, nimp
         if (imp_label(i) .eq. element) then
