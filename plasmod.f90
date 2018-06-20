@@ -860,9 +860,13 @@ contains
     !  Arguments
 
     integer, parameter :: radp_file = 15  !  Radial profiles file unit identifier
+    integer :: file_name_length
     character(len = 50) :: outfile_radp
     integer :: j
-    outfile_radp = trim(fileprefix)//"_RADP.DAT"
+    
+    file_name_length = LEN_TRIM(fileprefix)
+    output_prefix = fileprefix(1:file_name_length-6)
+    outfile_radp = trim(output_prefix)//"_RADP.DAT"
 
     open(unit = radp_file, file = outfile_radp, action = 'write')
     
