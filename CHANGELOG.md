@@ -14,12 +14,30 @@
 
 ## Features
 
+PLASMOD
+ - PLASMOD is a 1D transport model which replaces many of the plasma physics calculations in PROCESS. The previous set up remains available.
+ - See reference: E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
+ - PLASMOD can be run during every PROCESS iteration by setting ipedestal to 3. It can be run just once, at the end of a PROCESS run by setting ipedestal to 2.
+
+ - Created a new file 'physics_functions.f90' to store code moved from physics.f90 which may be used by PLASMOD and other semi-independent models.
+ - This is to prevent circular dependencies.
+ - Subroutines include: beamcalc, beamfus, imprad, palph, palph2, prad_ipdg89, psync_albajar_fidone, pthresh, radpwr
+ - Functions include: bosch_hale, fsv, p_eped_scaling, t_eped_scaling,
+
+ - New user-defined inputs have been added, which all have the prefix 'plasmod_'. These are specific controls and inputs to PLASMOD.
+ - For a complete list, see the vardes file. Where appropriate, previously-existing PROCESS input parameters still apply.
+ - Certain constraints and iterations variables cannot be used with PLASMOD - see the User Guide for more information.
+
+Utilities
+ - New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
+
 - TF stress in conduit Tresca criterion can now have regular and CEA adjusted options 
   (adjustment from [Torre et al. 2016](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7390035) 
   paper). (Issue #678)
 - [Snipes et al.](2000; http://iopscience.iop.org/article/10.1088/0741-3335/42/5A/336) H-mode threshold scaling options added (Issue #680)
 - Initial version of `.gitlab-ci.yml` created for GitLab CI.
 - Added Spherical Tokamak and Stellarator examples to the test suite (Issues #715 and #718)
+
 
 ## Minor changes
 
@@ -37,3 +55,4 @@
 - File prefixes for input files now works as intended. For example input file called `my_input_IN.DAT`
   will be outputted as `my_input_OUT.DAT` etc.
 - `tbrnmn` no longer iteration variable as there is constraint equation 13 and f-value `ftburn` already. `tbrnmn` will act as the constraint limit input value.
+

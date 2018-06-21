@@ -820,7 +820,7 @@ module plasmod_variables
   !+ad_call  None
   !+ad_hist  26/02/18 KE Initial version of module
   !+ad_stat  Okay
-  !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
+  !+ad_docs  E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   use structs
@@ -861,7 +861,9 @@ module plasmod_variables
   !+ad_vars  plasmod_dgy /1.0d-5/ : Newton differential
   real(kind(1.0D0)) :: plasmod_dgy = 1.0d-5
 
-  !+ad_vars  plasmod_i_modeltype /1/ : swithc for the transport model <UL>
+  !+ad_vars  plasmod_iprocess /1/ : 0 - use PLASMOD functions, 1 - use PROCESS functions
+  integer :: plasmod_iprocess = 1
+  !+ad_vars  plasmod_i_modeltype /1/ : switch for the transport model <UL>
   !+ad_varc  <LI> 1 - Simple gyrobohm scaling with imposed
   !+ad_varc  H factor > 1. Other values give H factor as output
   !+ad_varc  <LI> 111 - roughly calibrated to give H=1 for DEMO, but not fixed H </UL>
@@ -891,7 +893,9 @@ module plasmod_variables
   !+ad_vars  plasmod_psepplh_sup /12000.0d0/ : Psep/PLH if above this, use Xe
   real(kind(1.0D0)) :: plasmod_psepplh_sup = 12000.0d0
   !+ad_vars  plasmod_qdivt /0.0d0/ : divertor heat flux in MW/m^2, if 0, dont use SOL model
-  real(kind(1.0D0)) :: plasmod_qdivt = 0.0d0  
+  real(kind(1.0D0)) :: plasmod_qdivt = 0.0d0
+  !+ad_vars  plasmod_imptype(3) /14, 13, 9/ : Impurities: element 1 - intrinsic impurity, element 2 - Psep control, element 3 - seeding for SOL (defaults: W, Xe, Ar)
+  integer, dimension(3) :: plasmod_imptype = (/ 14, 13, 9 /)
   
  !Derived type inputs
   !+ad_vars  plasmod_qnbi_psepfac /50.0d0/ : dqnbi/d(1-Psep/PLH)
@@ -933,7 +937,14 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_eccdeff = 0.3d0
   !+ad_vars  plasmod_pech /0.0d0/ :: ech power (not in use yet)
   real(kind(1.0D0)) :: plasmod_pech = 0.0d0
-
+  !+ad_vars  plasmod_gamcdothers /1.0d0/ :: efficiency multiplier for non-CD heating. If 0.0 pheat treated as if it had no current drive associated
+  real(kind(1.0D0)) :: plasmod_gamcdothers = 1.0d0
+  !+ad_vars  plasmod_chisawpos /-1.0d0/ :: position where artificial sawtooth diffusivity is added, -1 - uses q=1 position
+  real(kind(1.0D0)) :: plasmod_chisawpos = -1.0d0
+  !+ad_vars  plasmod_chisaw /0.0d0/ :: artificial diffusivity in m^2/s
+  real(kind(1.0D0)) :: plasmod_chisaw = 0.0d0
+  !+ad_vars  plasmod_sawpertau /1.0d-6/ :: ratio between sawtooth period and confinement time
+  real(kind(1.0D0)) :: plasmod_sawpertau = 1.0d-6
   !+ad_vars  plasmod_spellet /0.0d0/ :: pellet mass in units of D in 10^19
   real(kind(1.0D0)) :: plasmod_spellet = 0.0d0
   !+ad_vars  plasmod_fpellet /0.5d0/ :: pellet frequency in Hz

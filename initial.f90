@@ -438,13 +438,11 @@ subroutine check
            call report_error(197)
         endif
 
-
         !PLASMOD always uses current drive
         if(irfcd == 0) then
            call report_error(198)
         endif
-
-       
+   
      endif
 
      if ((any(ixc==145)) .and. (boundl(145) < fgwsep)) then  !if lower bound of fgwped < fgwsep
@@ -453,25 +451,10 @@ subroutine check
      end if
 
      if(ipedestal==3)then
-        ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
-        ! These are outputs of PLASMOD
-        ! ixc(4) = te, ixc(5) = beta, ixc(6) = dene, ixc(9) = fdene,
-        ! ixc(102) = fimpvar, ixc(103) = flhthresh, ixc(109) = ralpne,
-        ! ixc(110) = ftaulimit, ixc(44) = fvsbrnni
-        if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or. &
-             (ixc==102).or.(ixc==103).or.(ixc==109).or.(ixc==110)&
-             .or.(ixc==44)))then
-           call report_error(182)
-        endif
 
         !as beta is an output of PLASMOD, its consistency does not need to be enforced
         if(any(icc == 1)) then
            call report_error(188)
-        endif
-           
-        ! density limit cannot be used with PLASMOD use fgwsep and/or fgwped instead.
-        if (any(icc==9)) then
-           call report_error(183)
         endif
 
         ! The global power balance cannot be enforced when running PLASMOD
@@ -481,7 +464,59 @@ subroutine check
            call report_error(185)
         endif
 
+        ! density upper limit cannot be used with PLASMOD
+        if (any(icc == 5)) then
+           call report_error(183)
+        endif
 
+        ! LH power threshold limit cannot be used with PLASMOD
+        if (any(icc == 15)) then
+           call report_error(209)
+        endif
+
+        ! Beta upper limit does not apply with PLASMOD
+        if (any(icc == 24)) then
+           call report_error(211)
+        endif
+
+        ! ratio of particle/energy confinement times cannot be used with PLASMOD
+        if (any(icc == 62)) then
+           call report_error(210)
+        endif
+
+        ! Psep * Bt / qAR upper limit cannot be used with PLASMOD
+        if (any(icc == 68)) then
+           call report_error(208)
+        endif
+
+        !plasmod_i_modeltype = 1 enforces a given H-factor
+        !plasmod_i_modeltype > 1 calculates transport from the transport models
+        if (plasmod_i_modeltype > 1) then
+           !beta limit is enforced inside PLASMOD
+           !icc(6)  eps * betap upper limit
+           !ixc(8)  fbeta
+           !icc(24) beta upper limit
+           !ixc(36) fbetatry
+           !icc(48) poloidal beta upper limit
+           !ixc(79) fbetap
+           
+           if (any((icc == 6) .or. (icc == 24) .or. (icc == 48) ) .or. any((ixc == 8) .or.(ixc == 36) .or. (ixc == 79))) then
+              call report_error(191)
+           endif
+           
+        endif
+
+        ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
+        ! These are outputs of PLASMOD
+        ! ixc(4) = te, ixc(5) = beta, ixc(6) = dene, ixc(9) = fdene,
+        !ixc(44) = fvsbrnni
+        ! ixc(102) = fimpvar, ixc(103) = flhthresh, ixc(109) = ralpne,
+        ! ixc(110) = ftaulimit, 
+        if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or.(ixc==36)&
+             .or.(ixc==44).or.(ixc==102).or.(ixc==103).or.(ixc==109).or.&
+             (ixc==110).or.(ixc==117)))then
+           call report_error(182)
+        endif
 
         if (plasmod_i_equiltype == 2) then
 
@@ -493,23 +528,6 @@ subroutine check
            if (any(ixc == 18)) then
               call report_error(190)
            endif           
-        endif
-
-        !plasmod_i_modeltype = 1 enforces a given H-factor
-        !plasmod_i_modeltype > 1 calculates transport from the transport models
-        if (plasmod_i_modeltype > 1) then
-
-           !beta limit is enforced inside PLASMOD
-           !icc(6)  eps * betap upper limit
-           !ixc(8)  fbeta
-           !icc(24) beta upper limit
-           !ixc(36) fbetatry
-           !icc(48) poloidal beta upper limit
-           !ixc(79) fbetap
-           if (any((icc == 6) .or. (icc == 24) .or. (icc==48) ) .or. any((ixc == 8) .or.(ixc==36) .or. (ixc==79))) then
-              call report_error(191)
-           endif
-           
         endif
         
      endif

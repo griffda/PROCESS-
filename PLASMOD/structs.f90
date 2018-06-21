@@ -18,6 +18,7 @@ module structs
       real(kind(1.0d0)) :: xtglf(100)
       integer :: isiccir=0
 						integer :: isawt=1
+						integer :: iprocess=1
     end type numerics_transp  
 
 
@@ -39,6 +40,8 @@ module structs
       SEQUENCE
       real(kind(1.0D0)) :: globtau(5),psepplh_inf,psepplh_sup,qdivt,fuelmix,typ1,typ2,typ3,che,cxe,car,c_car, &
 						& pradpos,pradfrac,psepb_q95AR,psep_r,comparray(14),protium,fcoreraditv=-1.d0
+						integer :: imptype(3)=(/14,13,9/) ! 1 for intrinsic, 2 for psep control, 3 for SOL control or SOL intrinsic
+	     real(kind(1.0D0)) :: fuelhe3=0.d0,che3,protfus=0.d0,he3fus=0.d0
     end type composition 
 
 
@@ -60,9 +63,10 @@ module structs
 						& qheat,qcd,qfus,spellet,fpellet,q_control, & 
 						& x_heat(2),x_cd(2),x_fus(2),x_control(2), &
 						& dx_heat(2),dx_cd(2),dx_fus(2),dx_control(2),nbi_energy, &
-						& maxpauxor,contrpovs=0.d0,contrpovr=0.d0,betalim,fpion=0.5d0, & 
-						& fcdp=-1.d0
-	integer :: PLH
+						& maxpauxor,contrpovs=0.d0,contrpovr=0.d0,betalim=0.d0,fpion=0.5d0, & 
+						& fcdp=-1.d0,chisaw=0.d0,chisawpos=-1.d0,gamcdothers=1.d0, & 
+						& sawpertau=1.d-6 !sawtooth period over confinement time
+	integer :: PLH=6
     end type inputs 
 
 
@@ -77,6 +81,7 @@ module structs
 						& palph,nions,psi,gte,gti,gne,Nepg,Tepg,Tipg,bpol,gradro,shif,k,d
       real(kind(1.0D0)) :: av_ne,av_Ti,av_Te, zeff,av_ni,av_nd,av_nz,av_nhe
       real(kind(1.0D0)) :: av_Ten
+      real(kind(1.0D0)), DIMENSION(:), ALLOCATABLE :: nprot,nhe3,nalf,nwol
     end type radial_profiles 
 
 

@@ -3,7 +3,7 @@
  "version":  [ "PROCESS version 1.0.12" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 207,
+ "n_errortypes": 211,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -186,8 +186,8 @@
   {"no": 179, "level": 3, "message": "CHECK: You have to use the LH-threshold constraint with PLASMOD(ipedestal=3)"},
   {"no": 180, "level": 1, "message": "OBSOLETE"},
   {"no": 181, "level": 3, "message": "CHECK: You have to enforce H-mode with PLASMOD(ipedestal=3)"},
-  {"no": 182, "level": 3, "message": "CHECK: It.vars can't be used with PLASMOD: 4,5,6,9,44,102,103,109,110"},
-  {"no": 183, "level": 3, "message": "CHECK: The density limit cannot be used in conjuctions with PLASMOD(ipedestal=3), use fgwsep or fgwped instead"},
+  {"no": 182, "level": 3, "message": "CHECK: It.vars 4,5,6,9,36,44,102,103,109,110,117 can't be used with PLASMOD:"},
+  {"no": 183, "level": 3, "message": "CHECK: The density limit (icc = 5) cannot be used in conjuctions with PLASMOD(ipedestal=3), use fgwsep or fgwped instead"},
   {"no": 184, "level": 3, "message": "CHECK: You need to use iradloss=0 with PLASMOD(ipedestal=2,3)"},
   {"no": 185, "level": 3, "message": "CHECK: You cannot use icc = 2 (global power balance) in combination with PLASMOD(ipedestal=3)"},
   {"no": 186, "level": 3, "message": "CHECK: Set lower bound of fgwped (it.var 145) to be greater than fgwsep"},
@@ -211,6 +211,10 @@
   {"no": 204, "level": 1, "message": "LH THRESHOLD: dnla outside Snipes 2000 fitted range"},
   {"no": 205, "level": 1, "message": "LH THRESHOLD: kappa outside Snipes 2000 fitted range"},
   {"no": 206, "level": 1, "message": "LH THRESHOLD: triang outside Snipes 2000 fitted range"},
-  {"no": 207, "level": 1, "message": "LH THRESHOLD: Closed divertor only. Limited data used in Snipes fit"}
+  {"no": 207, "level": 1, "message": "LH THRESHOLD: Closed divertor only. Limited data used in Snipes fit"},
+  {"no": 208, "level": 3, "message": "CHECK: icc = 68 (Psep * Bt / qAR upper limit) cannot be used with PLASMOD"},
+  {"no": 209, "level": 3, "message": "CHECK: You cannot use icc = 15 (LH power threshold limit) in combination with PLASMOD(ipedestal=3)"},
+  {"no": 210, "level": 3, "message": "CHECK: You cannot use icc = 62 (ratio of particle and energy confinement times) in combination with PLASMOD(ipedestal=3)"},
+  {"no": 211, "level": 3, "message": "CHECK: You cannot use icc = 24 (Beta upper limit) in combination with PLASMOD(ipedestal=3)"}
  ]
 }

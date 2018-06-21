@@ -1099,6 +1099,9 @@ contains
        case ('plasmod_dgy')
           call parse_real_variable('plasmod_dgy', plasmod_dgy, 0.0D0, 1.0D4, &
                'Newton differential')
+       case ('plasmod_iprocess')
+          call parse_int_variable('plasmod_iprocess', plasmod_iprocess, 0, 1, &
+               '0 - - use PLASMOD functions, 1 - use PROCESS functions')
        case ('plasmod_i_modeltype')
           call parse_int_variable('plasmod_i_modeltype', plasmod_i_modeltype, 0, 10000, &
                '1 - Simple gyrobohm scaling with imposed H factor > 1, other models with H in output')
@@ -1132,6 +1135,9 @@ contains
        case ('plasmod_qdivt')
           call parse_real_variable('plasmod_qdivt', plasmod_qdivt, 0.0D0, 1.0D6, &
                'Divertor heat flux in MW/m^2, if 0, dont use SOL model')
+       case ('plasmod_imptype')
+          call parse_int_array('plasmod_imptype', plasmod_imptype, isub1, 3, &
+               'Impurities: 1 - intrinsic, 2 - Psep control, 3 - seeding for SOL (defaults: W, Xe, Ar)', icode)   
           
     !Derived type inputs
        case ('plasmod_qnbi_psepfac')
@@ -1192,6 +1198,18 @@ contains
        case ('plasmod_pech')
           call parse_real_variable('plasmod_pech', plasmod_pech, 0.0D0, 1.0D4, &
                'ech power (not in use yet)')
+       case ('plasmod_gamcdothers')
+          call parse_real_variable('plasmod_gamcdothers', plasmod_gamcdothers, 0.0D0, 1.0D0, &
+               'efficiency multiplier for non-CD heating. If 0.0 pheat treated as if it had no current drive associated')
+       case ('plasmod_chisawpos')
+          call parse_real_variable('plasmod_chisawpos', plasmod_chisawpos, -10.0D0, 10.0D0, &
+               'position where artificial sawtooth diffusivity is added, -1 - uses q=1 position')
+       case ('plasmod_chisaw')
+          call parse_real_variable('plasmod_chisaw', plasmod_chisaw, 0.0D0, 1.0D4, &
+               'artificial diffusivity in m^2/s')
+       case ('plasmod_sawpertau')
+          call parse_real_variable('plasmod_sawpertau', plasmod_sawpertau, 0.0D0, 1.0D0, &
+               'ratio between sawtooth period and confinement time')          
        case ('plasmod_spellet')
           call parse_real_variable('plasmod_spellet', plasmod_spellet, 0.0D0, 1.0D4, &
                'pellet mass in units of D in 10^19')
