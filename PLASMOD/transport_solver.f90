@@ -959,10 +959,12 @@ num%dt=max(num%dtmin,num%dt/num%dtinc)
 endif
 	if (i_diagz.eq.1) 	write(444,'(6E25.11)') num%etol0,num%etol,num%dt,pfus(nx),loss%pnbi,comp%cxe
 
+!	write(1991,*) jiter,num%etol,toleq,tepr(1),Qtot,Hnow,PLH,Psep,cxe,q_heat
+
      if (jnit.ge.nitermax) then !if max iterations achieved, exit with an error message
-        write(*,*) 'max iterations acheived transport'
+        write(*,*) 'max number of transport iterations achieved'
         redo=0
-        num%etol=0.d0
+!        num%etol=0.d0
         jiter=nitermax+1
      endif
 	if (i_diagz.eq.1)    write(*,*) 'redo',redo
@@ -999,8 +1001,8 @@ endif
 	if (i_diagz.eq.1) 	write(*,*) 'betan,tpedtop',betan,P_pedtop/neb,V(nx),palpph(1),pressure(1)
 
            if (iped_model.eq.2) then !update temperature if pedmodel = 2
-		T_e = T_e/teb*P_pedtop/neb
-		T_i = T_i/tib*P_pedtop/neb
+		T_e = (T_e+num%dt*T_e/teb*P_pedtop/neb)/(1.+num%dt)
+		T_i = (T_i+num%dt*T_i/tib*P_pedtop/neb)/(1.+num%dt)
              teb = T_e(nxt)
               tib = teb
               T_e(nxt+1)=tsep
@@ -1299,7 +1301,7 @@ if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 !PROCESS function
 	ne_av = trapz(nepr*dv)/v(nx)*1.d19
 	nela=sum(nepr)/nx*1.d19
-	call pthresh(ne_av,nela,btor,rpmajor,elong,vprime(nx)*gradro(nx),2.5d0,PLH_th) !PROCESS function
+	call pthresh(ne_av,nela,btor,rpmajor,elong,vprime(nx)*gradro(nx),amain,PLH_th) !PROCESS function
 !!!
 
 !PLASMOD function
@@ -1308,7 +1310,8 @@ if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 !!!!
 
 !assignment
-	PLH = PLH_th(inp0%PLH)
+	if (jiter.gt.2)	PLH = (PLH+num%dt*PLH_th(inp0%PLH))/(1.+num%dt) ! to avoid oscillations
+	if (jiter.le.2)	PLH = PLH_th(inp0%PLH) !only first time step
 
 	if (i_diagz.eq.1) 	write(*,*) 'plh',plh
 
@@ -1813,7 +1816,7 @@ endif
   write(2901,*) 'converged in iterations : ',jiter,num%etol,toleq,redo,loss%Pfus,mhd%vloop,T_e(1),tepr(1),& 
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 !	if (jiter.gt.3) write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus
-	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
+!	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
 !	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 !	write(*,*) 'iter uloop',ip,fbs,fcd,2.15e-3*(4.3-0.6/geom%a)*radp%zeff*ip*(1.-fbs-fcd)* &
