@@ -11,6 +11,7 @@
 - Fixed error in current drive fractions adding to > 1 (Issue #705).
 - Fixed issues with uncertainty python utility (Issue #716)
 - Cost model no longer gives NaN for no inboard (iblanket=2) blanket (Issue #722)
+- Fixed incorrect cross sectional area calculation in resistive TF coils (Issue #727)
 
 ## Features
 
@@ -55,4 +56,5 @@ Utilities
 - File prefixes for input files now works as intended. For example input file called `my_input_IN.DAT`
   will be outputted as `my_input_OUT.DAT` etc.
 - `tbrnmn` no longer iteration variable as there is constraint equation 13 and f-value `ftburn` already. `tbrnmn` will act as the constraint limit input value.
+- `cdtfleg` no longer an iteration variable.  The outboard leg current density is now calculated for resistive TF coils. (Issue #727)
 

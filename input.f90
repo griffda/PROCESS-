@@ -353,6 +353,7 @@ contains
     !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
     !+ad_hist  12/01/18 KE  Added fnesep f-value for Eich crit. separatrix density
     !+ad_hist  15/02/18 SIM Made denw an input
+    !+ad_hist  22/06/18 SIM Made cdtfleg ann output instead of an input
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1708,9 +1709,6 @@ contains
           call parse_real_variable('casths_fraction', casths_fraction, 0.0D0, 1.0D0, &
                'inboard TF coil sidewall case thickness as a fraction of tftort')
 
-       case ('cdtfleg')
-          call parse_real_variable('cdtfleg', cdtfleg, 0.1D0, 1.0D8, &
-               'TF leg overall current density (A/m2)')
        case ('cpttf')
           call parse_real_variable('cpttf', cpttf, 0.001D0, 1.0D6, &
                'TF coil leg current per turn (A)')

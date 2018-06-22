@@ -2152,6 +2152,7 @@ module tfcoil_variables
   !+ad_hist  11/06/15 MDK Mods to TF coil defaults
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  26/11/15 RK  Added variables for quench time calculation: taucq, sigvvall
+  !+ad_hist  22/06/18 SIM Made cdtfleg an output instead of an input
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -2221,9 +2222,8 @@ module tfcoil_variables
   !+ad_vars  acs : Area of space inside conductor (m2)
   real(kind(1.0D0)) :: acs
 
-  !+ad_vars  cdtfleg /1.0e6/ : TF leg overall current density (A/m2)
-  !+ad_varc                    (resistive coils only) (iteration variable 24)
-  real(kind(1.0D0)) :: cdtfleg = 1.0D6
+  !+ad_vars  cdtfleg : TF outboard leg current density (A/m2) (resistive coils only)                  
+  real(kind(1.0D0)) :: cdtfleg = 0.0D0
   !+ad_vars  cforce : centering force on inboard leg (per coil) (N/m)
   real(kind(1.0D0)) :: cforce = 0.0D0
   !+ad_vars  cph2o /4180.0/ FIX : specific heat capacity of water (J/kg/K)
