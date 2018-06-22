@@ -866,7 +866,7 @@ contains
     
     file_name_length = LEN_TRIM(fileprefix)
     output_prefix = fileprefix(1:file_name_length-6)
-    outfile_radp = trim(output_prefix)//"_RADP.DAT"
+    outfile_radp = trim(output_prefix)//"RADP.DAT"
 
     open(unit = radp_file, file = outfile_radp, action = 'write')
     
