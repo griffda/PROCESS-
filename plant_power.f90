@@ -291,6 +291,7 @@ contains
       !+ad_hist  15/04/13 PJK Comment changes
       !+ad_hist  08/05/14 PJK Tidied up comments
       !+ad_hist  19/06/14 PJK Removed sect?? flags
+      !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
       !+ad_stat  Okay
       !+ad_docs  None
       !
@@ -475,7 +476,7 @@ contains
 
       !  Total steady state AC power demand, MW
 
-      tfacpd = tfacpd + rpower/0.9D0
+      tfacpd = tfacpd + rpower/etatf
 
       !  Total TF coil power conversion building floor area, m2
 

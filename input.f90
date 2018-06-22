@@ -354,6 +354,7 @@ contains
     !+ad_hist  12/01/18 KE  Added fnesep f-value for Eich crit. separatrix density
     !+ad_hist  15/02/18 SIM Made denw an input
     !+ad_hist  22/06/18 SIM Made cdtfleg ann output instead of an input
+    !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -2329,6 +2330,9 @@ contains
        case ('etahtp')
           call parse_real_variable('etahtp', etahtp, 0.1D0, 1.0D0, &
                'Coolant pump electrical efficiency')
+        case ('etatf')
+          call parse_real_variable('etatf', etatf, 0.0D0, 1.0D0, &
+               'AC to resistive power conversion for TF coils')
        case ('etath')
           call parse_real_variable('etath', etath, 0.0D0, 1.0D0, &
                'Thermal-electric conversion efficiency')

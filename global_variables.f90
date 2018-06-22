@@ -2831,6 +2831,7 @@ module heat_transport_variables
   !+ad_hist  13/01/15 PJK Changed pinjht description
   !+ad_hist  08/03/17 JM  Added time-dependent power reqs
   !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
+  !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2845,6 +2846,8 @@ module heat_transport_variables
   !+ad_vars  crypmw : cryogenic plant power (MW)
   real(kind(1.0D0)) :: crypmw = 0.0D0
 
+  !+ad_vars  etatf /0.9/ : AC to resistive power conversion for TF coils             
+  real(kind(1.0D0)) :: etatf = 0.9D0
   !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency
   !+ad_varc                 if secondary_cycle=2; otherwise calculated
   real(kind(1.0D0)) :: etath = 0.35D0
