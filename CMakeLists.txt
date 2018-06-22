@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.5)
 # Specify the minimum version for CMake
 #set(CMAKE_VERBOSE_MAKEFILE on)
 
