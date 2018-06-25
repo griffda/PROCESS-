@@ -355,6 +355,7 @@ contains
     !+ad_hist  15/02/18 SIM Made denw an input
     !+ad_hist  22/06/18 SIM Made cdtfleg ann output instead of an input
     !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
+    !+ad_hist  22/06/18 SIM tfacpd now always an output
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -2369,9 +2370,6 @@ contains
        case ('pinjmax')
           call parse_real_variable('pinjmax', pinjmax, 0.0D0, 1.0D3, &
                'Maximum injector wall plug power during pulse (MW)')
-       case ('tfacpd')
-          call parse_real_variable('tfacpd', tfacpd, 0.0D0, 100.0D0, &
-               'Total ss TF coil AC power demand (MW)')
        case ('trithtmw')
           call parse_real_variable('trithtmw', trithtmw, 0.0D0, 100.0D0, &
                'Tritium process power (MW)')

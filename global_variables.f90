@@ -2832,6 +2832,7 @@ module heat_transport_variables
   !+ad_hist  08/03/17 JM  Added time-dependent power reqs
   !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
   !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
+  !+ad_hist  22/06/18 SIM tfacpd now always an output
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2957,8 +2958,7 @@ module heat_transport_variables
   real(kind(1.0D0)) :: pthermmw = 0.0D0
   !+ad_vars  pwpm2 /150.0/ : base AC power requirement per unit floor area (W/m2)
   real(kind(1.0D0)) :: pwpm2 = 150.0D0
-  !+ad_vars  tfacpd /0.0/ : total steady state TF coil AC power demand (MW)
-  !+ad_varc                 (itfsup=0 only; calculated for itfsup=1)
+  !+ad_vars  tfacpd : total steady state TF coil AC power demand (MW)
   real(kind(1.0D0)) :: tfacpd = 0.0D0
   !+ad_vars  tlvpmw : estimate of total low voltage power (MW)
   real(kind(1.0D0)) :: tlvpmw = 0.0D0
