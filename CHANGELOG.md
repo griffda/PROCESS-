@@ -57,4 +57,4 @@ Utilities
   will be outputted as `my_input_OUT.DAT` etc.
 - `tbrnmn` no longer iteration variable as there is constraint equation 13 and f-value `ftburn` already. `tbrnmn` will act as the constraint limit input value.
 - `cdtfleg` no longer an iteration variable.  The outboard leg current density is now calculated for resistive TF coils. (Issue #727)
-
+- `tfacpd` is now calculted for resistive TF coils so is no longer an input.
