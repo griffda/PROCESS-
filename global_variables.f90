@@ -4491,17 +4491,16 @@ module rebco_variables
       end type
 
       type volume_fractions
-          real(kind(1.0D0)) :: copper_area
-          real(kind(1.0D0)) :: copper_fraction
-          real(kind(1.0D0)) :: copper_bar_fraction
-          real(kind(1.0D0)) :: hastelloy_fraction
-          real(kind(1.0D0)) :: helium_fraction
-          real(kind(1.0D0)) :: solder_fraction
-          real(kind(1.0D0)) :: jacket_fraction
-          real(kind(1.0D0)) :: rebco_fraction, rebco_area
+          real(kind(1.0D0)) :: copper_area,    copper_fraction
+          real(kind(1.0D0)) :: copper_bar_area,copper_bar_fraction
+          real(kind(1.0D0)) :: hastelloy_area, hastelloy_fraction
+          real(kind(1.0D0)) :: helium_area,    helium_fraction
+          real(kind(1.0D0)) :: solder_area,    solder_fraction
+          real(kind(1.0D0)) :: jacket_area,    jacket_fraction
+          real(kind(1.0D0)) :: rebco_area,     rebco_fraction
           real(kind(1.0D0)) :: critical_current
           real(kind(1.0D0)) :: number_croco         ! Number of CroCo strands (not an integer)
-          real(kind(1.0D0)) :: acs
+          real(kind(1.0D0)) :: acs                  ! area of cable space inside jacket
           real(kind(1.0D0)) :: area
           !real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
       end type
