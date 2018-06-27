@@ -132,7 +132,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     default_variables = ['runtitle','username','date','iscan', 'rmajor', 'aspect', 'powfmw',
-    'bt', 'beta', 'te','te0','dene','ralpne','dnz','pradmw','pdivt','hfact','pinjmw','tburn',
+    'bt', 'beta', 'te','te0','dene','ralpne','dnz','pradmw','pdivt','hfact','pinjmw','tburn','ttarget',
     'fmom','qtargetcomplete','qtarget','totalpowerlost','vburn','vsstt','bore','ohcth','tfcth','tmarg','sig_hoop',
     'sig_axial','sig_axial', 'tesep', 'nesep','ieped','teped','neped']
     # Also append these variables by default:
