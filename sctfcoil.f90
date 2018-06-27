@@ -1659,7 +1659,7 @@ subroutine outtf(outfile, peaktfflag)
     case (1,2,3,4,5)
         call ovarre(outfile,'Maximum allowed temp rise during a quench (K)','(tmaxpro)', tmaxpro)
     case(6)
-        call ocmmnt(outfile,'CroCo cable : ')
+        call ocmmnt(outfile,'CroCo cable with jacket: ')
         if (any(icc == 74) ) then
             call ovarre(outfile,'Maximum permitted temperature in quench (K)',&
                                 '(tmax_croco)', tmax_croco)
@@ -2040,6 +2040,7 @@ contains
             ! acs : Cable space - inside area (m2)
             conductor%acs =  acstf
             conductor%area =  conductor_width**2
+            conductor%jacket_area = acndttf
             conductor%jacket_fraction = acndttf/conductor%area
             call croco(jcritsc,croco_strand,conductor)
             copperA_m2 = iop / conductor%copper_area
@@ -2205,7 +2206,7 @@ contains
 
             call oblnkl(outfile)
             call ocmmnt(outfile,'Cable information')
-            call ovarre(outfile,'Area of central copper bar, as a fraction of cable space', '(copper_bar)', copper_bar)
+			call ovarre(outfile,'Area of central copper bar, as a fraction of cable space', '(copper_bar)', copper_bar)
             call ovarre(outfile,'Area of helium coolant, as a fraction of cable space', &
                                  '(cable_helium_fraction)', cable_helium_fraction)
             call ovarrf(outfile,'Number of CroCo strands in the cable ','(conductor%number_croco)',&
@@ -2216,23 +2217,22 @@ contains
             call ocmmnt(outfile,'Conductor information (includes jacket, not including insulation)')
             call ovarre(outfile,'Width of square conductor (m)','(conductor_width)', conductor_width , 'OP ')
             call ovarre(outfile,'Area of conductor (m2)','(area)', conductor%area , 'OP ')
-            call ovarre(outfile,'REBCO fraction of conductor','(rebco_fraction)',conductor%rebco_fraction , 'OP ')
-            call ovarre(outfile,'Copper fraction of conductor','(copper_fraction)',conductor%copper_fraction , 'OP ')
-            call ovarre(outfile,'Hastelloy fraction of conductor','(hastelloy_fraction)',conductor%hastelloy_fraction , 'OP ')
-            call ovarre(outfile,'Solder fraction of conductor','(solder_fraction)',conductor%solder_fraction , 'OP ')
-            call ovarre(outfile,'Jacket fraction of conductor','(jacket_fraction)',conductor%jacket_fraction , 'OP ')
-            call ovarre(outfile,'Helium fraction of conductor','(helium_fraction)',conductor%helium_fraction , 'OP ')
-            total = conductor%copper_fraction+conductor%hastelloy_fraction+conductor%solder_fraction+ &
-                    conductor%jacket_fraction+conductor%helium_fraction+conductor%rebco_fraction
-            if(abs(total-1d0)>1d-6) then
-                call ovarrf(outfile, "ERROR: conductor areas do not add up:",'(total)',total , 'OP ')
-            else
-                call ovarrf(outfile, "conductor area fractions add up:",'(total)',total , 'OP ')
+            call ovarre(outfile,'REBCO area of conductor (mm2)','(rebco_area)',conductor%rebco_area , 'OP ')
+            call ovarre(outfile,'Area of central copper bar (mm2)', '(copper_bar_area)', conductor%copper_bar_area, 'OP ')
+            call ovarre(outfile,'Copper area of conductor, total (mm2)','(copper_area)',conductor%copper_area, 'OP ')
+            call ovarre(outfile,'Hastelloy area of conductor (mm2)','(hastelloy_area)',conductor%hastelloy_area, 'OP ')
+            call ovarre(outfile,'Solder area of conductor (mm2)','(solder_area)',conductor%solder_area, 'OP ')
+            call ovarre(outfile,'Jacket area of conductor (mm2)','(jacket_area)',conductor%jacket_area, 'OP ')
+            call ovarre(outfile,'Helium area of conductor (mm2)','(helium_area)',conductor%helium_area, 'OP ')
+            total = conductor%copper_area+conductor%hastelloy_area+conductor%solder_area+ &
+                    conductor%jacket_area+conductor%helium_area+conductor%rebco_area
+            if(abs(total-conductor%area)>1d-8) then
+                call ovarre(outfile, "ERROR: conductor areas do not add up:",'(total)',total , 'OP ')
             endif
             call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_strand%critical_current)', &
                                                                          croco_strand%critical_current , 'OP ')
-            !call ovarre(outfile,'Critical current of cable (A) ','(conductor%critical_current)', &
-            !                                                       conductor%critical_current , 'OP ')
+            call ovarre(outfile,'Critical current of conductor (A) ','(conductor%critical_current)', &
+                                                                       conductor%critical_current , 'OP ')
         end select ! case (isumat)
 
         if (run_tests==1) then
@@ -2257,12 +2257,12 @@ contains
         call ovarre(outfile,'Critical current density in winding pack (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
         call ovarre(outfile,'Actual current density in winding pack (A/m2)','(jwdgop)',jwdgop, 'OP ')
 
-
-
-
         call ovarre(outfile,'Minimum allowed temperature margin in superconductor (K)','(tmargmin_tf)',tmargmin_tf)
         call ovarre(outfile,'Actual temperature margin in superconductor (K)','(tmarg)',tmarg, 'OP ')
-        ! call ovarre(outfile,'Temperature margin using secant solver (K)','(tmarg2)',tmarg2, 'OP ')
+        ! call ovarre(outfile,'Temperature margin using secant solver (K)','(tmarg2)',tmarg2, 'OP ')		
+		if (isumat == 6) then
+			call ovarre(outfile,'Current sharing temperature (K)','(current_sharing_t)',current_sharing_t, 'OP ')
+		end if			
         call ovarre(outfile,'Critical current (A)','(icrit)',icrit, 'OP ')
         call ovarre(outfile,'Actual current (A)','(cpttf)',cpttf, 'OP ')
         call ovarre(outfile,'Actual current / critical current','(iooic)', iooic, 'OP ')
@@ -2426,7 +2426,7 @@ subroutine croco_quench(conductor)
 
         if(T1>tmax_croco)write(*,*)'Phase 1 of quench is too hot: T1 = ',T1
     else
-        ! Quench is detected instan_theta_coilly - no phase 1.
+        ! Quench is detected instantly - no phase 1.
         T1 = tftmp
     endif
 

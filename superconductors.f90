@@ -613,8 +613,7 @@ subroutine croco(jcritsc,croco_strand,conductor)
     real(kind(1.0D0)), intent(in) ::jcritsc
     type(volume_fractions), intent(inout)::conductor
     type(supercon_strand), intent(inout)::croco_strand
-    real(kind(1.0D0))::strands_per_area
-
+    
     ! Properties of a single strand
     tape_thickness = rebco_thickness + copper_thick + hastelloy_thickness
     stack_thickness = sqrt(croco_id**2 - tape_width**2)
@@ -632,17 +631,22 @@ subroutine croco(jcritsc,croco_strand,conductor)
     ! Conductor properties
     conductor%number_croco = conductor%acs*(1d0-cable_helium_fraction-copper_bar)/croco_strand%area
     conductor%critical_current = croco_strand%critical_current * conductor%number_croco
-    strands_per_area = conductor%number_croco / conductor%area
-    conductor%copper_area = copper_area * conductor%number_croco + &
-                            copper_bar * conductor%acs
+	conductor%copper_bar_area = copper_bar * conductor%acs
+    conductor%copper_area = copper_area * conductor%number_croco + conductor%copper_bar_area
     conductor%copper_fraction = conductor%copper_area / conductor%area
 
     ! Helium area is set by the user.
-    conductor%helium_fraction = cable_helium_fraction * conductor%acs / conductor%area
-    conductor%hastelloy_fraction = hastelloy_area * strands_per_area
-    conductor%solder_fraction = solder_area * strands_per_area
-    conductor%rebco_fraction = rebco_area * strands_per_area
-    conductor%rebco_area = rebco_area * conductor%number_croco
+	conductor%helium_area = cable_helium_fraction * conductor%acs 
+    conductor%helium_fraction = conductor%helium_area / conductor%area
+	
+	conductor%hastelloy_area = hastelloy_area * conductor%number_croco    
+    conductor%hastelloy_fraction = conductor%hastelloy_area / conductor%area
+	
+	conductor%solder_area = solder_area * conductor%number_croco    
+    conductor%solder_fraction = conductor%solder_area / conductor%area
+	
+	conductor%rebco_area = rebco_area * conductor%number_croco    
+    conductor%rebco_fraction = conductor%rebco_area / conductor%area
 
 end subroutine croco
 !--------------------------------------------------------------------------
