@@ -288,8 +288,9 @@ def clean_up(drs):
     subprocess.call(["rm", "VFILE.DAT"])
 
     # move kallenbach files
-    subprocess.call(["mv", "divertor_diagnostics.txt", "test_area/kallenbach/"])
-    subprocess.call(["mv", "output_divertor.txt", "test_area/kallenbach/"])
+    #subprocess.call(["mv", "divertor_diagnostics.txt", "test_area/kallenbach/"])
+    subprocess.call("mv *_divertor*.txt test_area/kallenbach/", shell=True)
+    # subprocess.call(["mv", "output_divertor.txt", "test_area/kallenbach/"])
 
     # remove executable
     subprocess.call(["rm", "process.exe"])

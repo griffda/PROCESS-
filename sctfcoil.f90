@@ -2260,7 +2260,9 @@ contains
         call ovarre(outfile,'Minimum allowed temperature margin in superconductor (K)','(tmargmin_tf)',tmargmin_tf)
         call ovarre(outfile,'Actual temperature margin in superconductor (K)','(tmarg)',tmarg, 'OP ')
         ! call ovarre(outfile,'Temperature margin using secant solver (K)','(tmarg2)',tmarg2, 'OP ')		
-		call ovarre(outfile,'Current sharing temperature (K)','(current_sharing_t)',current_sharing_t, 'OP ')
+		if (isumat == 6) then
+			call ovarre(outfile,'Current sharing temperature (K)','(current_sharing_t)',current_sharing_t, 'OP ')
+		end if			
         call ovarre(outfile,'Critical current (A)','(icrit)',icrit, 'OP ')
         call ovarre(outfile,'Actual current (A)','(cpttf)',cpttf, 'OP ')
         call ovarre(outfile,'Actual current / critical current','(iooic)', iooic, 'OP ')
