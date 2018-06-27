@@ -133,7 +133,7 @@ subroutine loadxc
      case (19) ; xcm(i) = enbeam
      case (20) ; xcm(i) = tcpav
      case (21) ; xcm(i) = ftburn
-     case (22) ; xcm(i) = tbrnmn
+     case (22) ; write(*,*) 'Iteration variable 22 is not supported.'
      case (23) ; xcm(i) = fcoolcp
      case (24) ; xcm(i) = cdtfleg
         if (itfsup == 1) call report_error(47)
@@ -437,7 +437,7 @@ subroutine convxc(xc,nn)
      case (19) ; enbeam    = xc(i)/scale(i)
      case (20) ; tcpav     = xc(i)/scale(i)
      case (21) ; ftburn    = xc(i)/scale(i)
-     case (22) ; tbrnmn    = xc(i)/scale(i)
+     case (22) ; write(*,*) 'Iteration variable 22 is not supported.'
      case (23) ; fcoolcp   = xc(i)/scale(i)
      case (24) ; cdtfleg   = xc(i)/scale(i)
      case (25) ; fpnetel   = xc(i)/scale(i)

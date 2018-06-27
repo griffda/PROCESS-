@@ -59,11 +59,11 @@ def plot_distribution(xarr, labelx, unc_dict):
             args = argwhere(logical_or(
                     xvalues < DICT_INPUT_BOUNDS[varname]['lb'],
                     xvalues > DICT_INPUT_BOUNDS[varname]['ub']))
-            yvalues[args] = zeros(len(args))
+            yvalues[args] = zeros(args.shape)
 
         else: #cutoff at 0 - typically negative values are meaningless
             args = argwhere(xvalues < 0.)
-            yvalues[args] = zeros(len(args))
+            yvalues[args] = zeros(args.shape)
 
 
     elif unc_dict['errortype'].lower() == 'uniform':
@@ -90,12 +90,12 @@ def plot_distribution(xarr, labelx, unc_dict):
             args = argwhere(logical_or(
                     xvalues < DICT_INPUT_BOUNDS[varname]['lb'],
                     xvalues > u_mean))
-            yvalues[args] = zeros(len(args))
+            yvalues[args] = zeros(args.shape)
 
         else:
             args = argwhere(logical_or(xvalues < 0.,
                                        xvalues > u_mean))
-            yvalues[args] = zeros(len(args))
+            yvalues[args] = zeros(args.shape)
 
     elif unc_dict['errortype'].lower() == 'upperhalfgaussian':
         u_mean = unc_dict['mean']
@@ -108,10 +108,10 @@ def plot_distribution(xarr, labelx, unc_dict):
             args = argwhere(logical_or(
                     xvalues < u_mean,
                     xvalues > DICT_INPUT_BOUNDS[varname]['ub']))
-            yvalues[args] = zeros(len(args))
+            yvalues[args] = zeros(args.shape)
         else:
             args = argwhere(xvalues < u_mean)
-            yvalues[args] = zeros(len(args))
+            yvalues[args] = zeros(args.shape)
 
     plot(xvalues, yvalues, 'k-')
 

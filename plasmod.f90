@@ -88,56 +88,33 @@ contains
     integer, intent(inout) :: i_flag
 
 
-    ! Only variables that can be iteration variables or those that
-    ! are calculated inside PROCESS need to be put here:
-
-    i_flag = 1
-
-    geom%r   = rmajor
-    geom%a   = aspect
-    geom%q95 = q95
-    geom%bt  = bt
-
-    inp0%f_gw      = fgwped !pedestal top greenwald fraction
-    inp0%Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used.
-    inp0%pheatmax  = pinjalw !max allowed power for heating+CD+fusion control
-    inp0%q_control = pheat !minimal power required for control 
-
-    !fvsbrnni can be an iteration variable!
-    inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
-
-    !Note that this is only a correct input on the second iteration!
-    inp0%fpion = fpion ! Fraction of neutral beam energy to ions
-
-    if (comp%qdivt.eq.0.d0) then
-       comp%comparray(9) = impurity_arr(element2index('Ar'))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
-       !else
-       !@EF: What should happen, if this is not assigned?
-    endif
-    
-    !uses PROCESS defined LH threshold, if this is > 0
-    inp0%PLH = ilhthresh    
-							
-    inp0%nbcdeff = gamcd ! normalised current drive efficiency (1.0e20 A/W-m2) 
-
-    ! all fixed input variables that cannot change within a PROCESS
-    ! iteration go here!
+    ! all fixed input variables that cannot change within a PROCESS iteration go here!
     ! They only need to be initialised once.
+    
     if (geom%counter.eq.0.d0) then
 
-
+       num%nx        = plasmod_nx  !number of interpolated grid points
+       num%nxt       = plasmod_nxt !number of reduced grid points
+       num%nchannels = plasmod_nchannels  !leave this at 3
+       
        !HL: This is a temporary set up for the moment!
        comp%psep_r      = pseprmax !Psep/R max value
        comp%psepb_q95AR = psepbqarmax !Psep B/qAR max value
-
        
        ! To selfconsistently compute the He concentration inside PLASMOD
        ! its intial fraction has to be 0.d0. Then globtau is used!
        ! The Xe fraction is used as an iteration variable inside PLASMOD
        ! it adjusts to fulfil psepqbarmax, pseprmax or psepplh_sup.
-       comp%comparray = 0.d0 !array of impurities !HL: This overwrites Argon setting!!!
-       comp%comparray(14) = impurity_arr(element2index('W_'))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp%comparray = 0.d0 !array of impurity concentrations
+       comp%comparray(comp%imptype(3)) = impurity_arr(comp%imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp%comparray(comp%imptype(1)) = impurity_arr(comp%imptype(1))%frac 
        comp%protium   = protium !protium is treated separately
+
+       ! Impurities to be used for (1)intrinsic (2)Psep control (3)SOL seeding
+       comp%imptype(1) = plasmod_imptype(1)
+       comp%imptype(2) = plasmod_imptype(2)
+       comp%imptype(3) = plasmod_imptype(3)
+
        
        comp%psepplh_inf = boundl(103) !Psep/PLH if below this, use nbi      
        comp%psepplh_sup = plasmod_psepplh_sup !Psep/PLH if above this, use Xe
@@ -158,13 +135,16 @@ contains
        num%capA     = plasmod_capa !first radial grid point
        num%maxA     = plasmod_maxa !diagz 0 or 1
        num%dgy      = plasmod_dgy !Newton differential
+
+       num%iprocess = plasmod_iprocess !0 - use PLASMOD functions, 1 - use PROCESS functions
        num%i_modeltype = plasmod_i_modeltype !1 - simple gyrobohm scaling with imposed H factor > 1, other models with H in output
        num%i_equiltype = plasmod_i_equiltype !1 - EMEQ, solve equilibrium
        !with given q95, with sawteeth. 2- EMEQ, solve with given Ip, with sawteeth.
+       !sawtooth inputs
        num%isawt     = plasmod_isawt !0 - no sawteeth, 1 - solve with sawteeth
-       num%nx        = plasmod_nx  !number of interpolated grid points
-       num%nxt       = plasmod_nxt !number of reduced grid points
-       num%nchannels = plasmod_nchannels  !leave this at 3
+       inp0%chisawpos= plasmod_chisawpos !position where artificial sawtooth diffusivity is added, -1 - uses q=1 position
+       inp0%chisaw   = plasmod_chisaw !artificial diffusivity in m^2/s
+       inp0%sawpertau= plasmod_sawpertau !ratio between sawtooth period and confinement time
 
        if(ieped == 0) then
           num%ipedestal= 1  !fixed temperature pedestal
@@ -186,7 +166,7 @@ contains
        !compression factor between div and
        !core: e.g. 10 means there is 10 more Argon concentration in the
        !divertor than in the core
-       comp%c_car = impurity_enrichment(element2index('Ar')) 
+       comp%c_car = impurity_enrichment(comp%imptype(3)) 
 
 
        !derivatives
@@ -219,6 +199,8 @@ contains
        inp0%qheat   = 0.d0 !
        inp0%qcd     = 0.d0 !
        inp0%qfus    = 0.d0 !
+       inp0%gamcdothers = plasmod_gamcdothers
+       
        inp0%spellet = 0.d0 !pellet mass in particles of D in 10^19
        inp0%fpellet = 0.5d0 !pellet frequency in Hz
 
@@ -259,6 +241,39 @@ contains
        geom%d95 = triang95 !edge triangularity
         
     endif
+				
+    ! Variables that can be iteration variables or those that
+    ! are calculated inside PROCESS need to be put here:
+
+    i_flag = 1
+
+    geom%r   = rmajor
+    geom%a   = aspect
+    geom%q95 = q95
+    geom%bt  = bt
+
+    inp0%f_gw      = fgwped !pedestal top greenwald fraction
+    inp0%Hfac_inp  = hfact !input H factor (radiation corrected), if 0., this is not used.
+    inp0%pheatmax  = pinjalw !max allowed power for heating+CD+fusion control
+    inp0%q_control = pheat !minimal power required for control 
+
+    !fvsbrnni can be an iteration variable!
+    inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
+
+    !Note that this is only a correct input on the second iteration!
+    inp0%fpion = fpion ! Fraction of neutral beam energy to ions
+
+    if (comp%qdivt.eq.0.d0) then
+       comp%comparray(comp%imptype(3)) = impurity_arr(comp%imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       !else
+       !@EF: What should happen, if this is not assigned?
+    endif
+    
+    !uses PROCESS defined LH threshold, if this is > 0
+    inp0%PLH = ilhthresh    
+							
+    inp0%nbcdeff = gamcd ! normalised current drive efficiency (1.0e20 A/W-m2) 
+
     
   end subroutine setupPlasmod
 
@@ -280,7 +295,8 @@ contains
     !+ad_call  report_error
     !+ad_hist  28/02/18 HL Initial F90 version
     !+ad_stat  Okay
-    !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
+    !+ad_docs  E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
+
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -697,6 +713,8 @@ contains
     
     !  Arguments
     integer, intent(in) :: outfile
+    integer :: imp
+    !character*10 :: nImpurity
     
     call oheadr(outfile,'PLASMOD')
 
@@ -722,10 +740,30 @@ contains
     call ovarrf(outfile,'Edge elongation','(geom%k)', geom%k, 'OP ')
     call ovarrf(outfile,'Edge triangularity','(geom%d)', geom%d, 'OP ')
 
-    call osubhd(outfile,'Composition')
-    call ovarrf(outfile,'Xenon concentration at the pedestal top','(comp%cxe)', comp%cxe)
-    call ovarrf(outfile,'Helium concentration','(comp%che)', comp%che)
-    call ovarrf(outfile,'Argon concentration at the pedestal top','(comp%car)', comp%car)
+    call osubhd(outfile,'Composition (impurity concentrations)')
+    !do imp=1,nimp
+    !   nImpurity = 'Impurity' //char(imp)
+       !call ovarrf(outfile,'Impurity '//char(imp),'(comp%comparray)', comp%comparray(imp))
+    !   call ovarrf(outfile,nImpurity,'(comp%comparray)', comp%comparray(imp))
+    !enddo
+    call ovarrf(outfile,'Hydrogen','(comp%comparray [1])', comp%comparray(1))
+    call ovarrf(outfile,'Helium','(comp%comparray [2])', comp%comparray(2))
+    call ovarrf(outfile,'Berylium','(comp%comparray [3])', comp%comparray(3))
+    call ovarrf(outfile,'Carbon','(comp%comparray [4])', comp%comparray(4))
+    call ovarrf(outfile,'Nitrogen','(comp%comparray [5])', comp%comparray(5))
+    call ovarrf(outfile,'Oxygen','(comp%comparray [6])', comp%comparray(6))
+    call ovarrf(outfile,'Neon','(comp%comparray [7])', comp%comparray(7))
+    call ovarrf(outfile,'Silicon','(comp%comparray [8])', comp%comparray(8))
+    call ovarrf(outfile,'Argon','(comp%comparray [9])', comp%comparray(9))
+    call ovarrf(outfile,'Iron','(comp%comparray[10])', comp%comparray(10))
+    call ovarrf(outfile,'Nickel','(comp%comparray[11])', comp%comparray(11))
+    call ovarrf(outfile,'Krypton','(comp%comparray[12])', comp%comparray(12))
+    call ovarrf(outfile,'Xenon','(comp%comparray[13])', comp%comparray(13))
+    call ovarrf(outfile,'Tungsten','(comp%comparray[14])', comp%comparray(14))
+    
+    !call ovarrf(outfile,'Xenon concentration at the pedestal top','(comp%cxe)', comp%cxe)
+    !call ovarrf(outfile,'Helium concentration','(comp%che)', comp%che)
+    !call ovarrf(outfile,'Argon concentration at the pedestal top','(comp%car)', comp%car)
 
     call osubhd(outfile,'Pedestal')
     call ovarrf(outfile,'Pedestal top electron temperature (keV)','(ped%teped)', ped%teped, 'OP ')
@@ -822,9 +860,13 @@ contains
     !  Arguments
 
     integer, parameter :: radp_file = 15  !  Radial profiles file unit identifier
+    integer :: file_name_length
     character(len = 50) :: outfile_radp
     integer :: j
-    outfile_radp = trim(fileprefix)//"_RADP.DAT"
+    
+    file_name_length = LEN_TRIM(fileprefix)
+    output_prefix = fileprefix(1:file_name_length-6)
+    outfile_radp = trim(output_prefix)//"_RADP.DAT"
 
     open(unit = radp_file, file = outfile_radp, action = 'write')
     

@@ -750,7 +750,7 @@ contains
 
     !  Diagonal plate area
 
-    a3 = a2 / cos(theta)
+    a3 = a2 / (cos(theta)*cos(theta))
 
     !  Total divertor area (N.B. there are two of them)
 

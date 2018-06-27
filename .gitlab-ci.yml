@@ -2,18 +2,84 @@ stages:
   - build
   - testing
   - jenkins
+before_script:
+#  - apt-get install -y gfortran
+#  - apt-get install -y python3-numpy
+#  - apt-get install -y python3-scipy
+#  - apt-get install -y python3-matplotlib
+#  - apt-get install dos2unix
+  - export LOGNAME=root
+  - source /etc/profile.d/modules.sh
+  - module use /usr/local/modules/default
+  - module unload python
+  - module load python/3.3
+  - module load gfortran
+#  - 
+  - echo ld_library_path=$LD_LIBRARY_PATH
 
 build:Make:
-#  image: ukaea/ubuntu-rolling
-
+# image: ukaea/ubuntu
  only:
-  - develop 
+  - test_set_up_python_fixes 
  stage: build
  script:
+  - pwd
   - gcc --version
+#  - dos2unix global_variables.f90
+  - ls -lah
+  - make clean
+  - make
+# Now add trigger for PROCESS_Testing on GitLab CI
+  - "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"  
+#  - cd utilities
 #  - ls -lah
   - echo "Test "
+ artifacts:
+   expire_in: 2 hrs
+   paths:
+     - process.exe
  tags:
   - freia
-after_script:  # Now trigger testing
-- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"
+build:vardes:
+# image: ukaea/ubuntu
+ only:
+  - test_set_up_python_fixes 
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - make clean
+  - make vardes
+ artifacts:
+   expire_in: 2 hrs
+   paths:
+     - documentation/html/*.html
+ tags:
+  - freia
+testing:test_suite:
+ only:
+  - test_set_up_python_fixes 
+ stage: testing
+ script:
+  - pwd
+  - export PYTHONPATH=$PYTHONPATH:${PWD}/utilities
+  - export PATH=$PATH:${PWD}/utilities
+  - dos2unix ${PWD}/utilities/*.py
+#  - ls -lah utilities/
+#  - utilities/create_dicts.py
+  - make dicts
+  - cd test_suite
+  - dos2unix test_suite.py
+  - python test_suite.py -d 1.0
+  # Now trigger testing on Jenkins
+  - "curl -X POST http://mkumar:0eb1252f76a609d527edfbfdc0559eae@process-jenkins-ci.apps.l:8080/jenkins/job/PROCESS/build?token=MiLNGc-QvyEevhKK54go"
+ artifacts:
+   expire_in: 2 hrs
+   paths:
+     - test_suite/*.xunit
+ tags:
+  - freia
+
+#after_script:  # Now trigger testing
+#- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"

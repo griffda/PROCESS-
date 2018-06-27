@@ -8,14 +8,14 @@ subroutine compute_equil( &
   roc, Vloop, fbs,fcd, toleq, &
   k, d, shif, cubb, jcdr, V, G1, G2, G3, dV, phi, q, rho, psi, jpar,&
   ipol, Vprime,droda,eqpf,eqff,gradro,q_edge_in,f_ind_in,q_95,elong95,triang95 &
-  ,pres_fac,areat,isawt)
+  ,pres_fac,areat,isawt,j_qeq1)
 
   use grad_func
   implicit none
 
 
 !variable declaration!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  integer, intent(inout) :: nx, jiter,i_equiltype
+  integer, intent(inout) :: nx, jiter,i_equiltype,j_qeq1
   integer :: j,isawt
   real(kind(1.0D0)), intent(in) :: q_edge_in,f_ind_in,R,rmin,btor,betaz,lint,ipol0,e_charge,mu_vacuum
   real(kind(1.0d0)), intent(inout) :: pres_fac,qedge,ip,q_95,elon,tria,elong95,triang95
@@ -34,20 +34,19 @@ subroutine compute_equil( &
   & bdb0,bmint,bmaxt, b0db2,ya,ybb,BDB02,FOFB,qg3s,q0,vvvv
   real(kind(1.0d0)), dimension(nx) :: gra,sqgra,grar,avr2,ai0,dgrda,avsqg !gradient,sqrgradient,radial gradient,
   real(kind(1.0D0)), dimension(nx) :: smallk, dvdr, rhoint, f, jpol, kerncur, pressure, A, B, C, bbb, ccc, dum1, dum2, dum3
-  real(kind(1.0D0)), dimension(nx) :: chat,betahat,y, FF, fp, kpk, dpk,  pprime,ffprime,ba,bb
+  real(kind(1.0D0)), dimension(nx) :: chat,betahat,y,  fp, kpk, dpk,  pprime,FF,ffprime,ba,bb
   real(kind(1.0d0)), dimension(nx) :: gr,GBD,GL,GSD, & 
   &  BD,BC,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
   &  btooo,rooo,g11,g22,g33,slat,vr
 ! Quiet NAN, double precision.
   real(kind(1.0d0)), parameter :: pi = 3.141592,ACEQLB=1.0d-6 !pi = 3.1415926536d0,ACEQLB=1.e-6
-  REAL(8), PARAMETER :: D_QNAN = &
-  TRANSFER((/ Z'00000000', Z'7FF80000' /),1.0_8)  
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 
 !some initialization
   diagz=1
+	pres_fac=betaz*f_ind_in*ipol0*lint*vp0(1)
 	pres_fac=1.d0
   na = nx-1
   gp2 = 2.*pi
@@ -122,8 +121,7 @@ subroutine compute_equil( &
 	!call emeq with inputs Ba, BB which are pprime and ffprime recasted
 	call EMEQ(redo,BA,BB,R+SHIF(nx),rmin,ELON,TRIA*rmin,nx, &		! radial grid point No.
              &	 ACEQLB,BTOR*R/(R+SHIF(nx)),IP,GR,GBD,GL,GSD,gra, & 
-        &  sqgra,grar,avr2,ai0,dgrda,avsqg,vvvv,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
-        &  TIME)
+        &  sqgra,grar,avr2,ai0,dgrda,avsqg,vvvv,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ)
 
 	if (nx.lt.1.or.isnan(sqgra(2))) then ! if crashed, redo at lower pressure
 	nx=nxtemp
@@ -135,6 +133,7 @@ subroutine compute_equil( &
 !below, assign quantities and smooth profiles
 	BTOOO=BTOR*R/(R+SHIF(nx)) ! toroidal field at plasma axis
 	ROOO=(R+SHIF(nx))! plasma axis
+
 
 !smoothing below
 	ALFA = .00001
@@ -202,7 +201,7 @@ end if
        i_equiltype,jiter,nx,V,btor,Ip,R,rmin,x,cc,cubb, jcdr, FF,G2,G3,q0,mu_vacuum, &
        qedge, &
        dV,phi,rho,roc,ipol,jpol,kerncur,Ibs,Epar,jpar,Vloop,Vprime,q,psi,toleq, dum1, fbs,fcd &
-       ,q_edge_in,q_95,elon,tria,elong95,triang95,k,d,isawt)
+       ,q_edge_in,q_95,elon,tria,elong95,triang95,k,d,isawt,j_qeq1)
 	endif
 
 
@@ -271,13 +270,14 @@ subroutine ADDITIONAL_CALCS( &
      i_equiltype,jiter,nx,V,btor,Ip,R,rmin,x,cc,cubb,jcdr,FF,G2,G3,q0,mu_vacuum, &
      qedge, &
      dV,phi,rho,roc,ipol,jpol,kerncur,Ibs,Epar,jpar,Vloop,Vprime,q,psi,toleq, dum1, fbs,fcd &
-     ,q_edge_in,q_95,elon,tria,elong95,triang95,k,d,isawt)
+     ,q_edge_in,q_95,elon,tria,elong95,triang95,k,d,isawt,j_qeq1)
 
   use grad_func
   implicit none	
 
 !input/output exchange variables
   integer, intent(in) :: nx,jiter,i_equiltype,isawt
+		integer, intent(out) :: j_qeq1
   real(kind(1.0d0)), intent(in) :: R,rmin,btor,mu_vacuum,q_edge_in
   real(kind(1.0d0)), intent(inout) :: ip,q_95
   real(kind(1.0d0)), intent(inout) :: qedge,elon,tria,elong95,triang95
@@ -293,8 +293,8 @@ subroutine ADDITIONAL_CALCS( &
   real(kind(1.0D0)), dimension(nx) :: dvdr,rhoint,f,dum2
   real(kind(1.0d0)), parameter :: pi = 4.0d0*datan(1.0d0) !3.1415926535d0 !, mu_vacuum = 1.2566d-6
 
-
 !some definitions
+  gp2 = q_edge_in*FF(1)
   gp2 = 2.*pi
   rhoint = x * rmin !minor radius
 		qcyl=rmin**2.d0*btor/R/ip/0.091
@@ -319,6 +319,9 @@ subroutine ADDITIONAL_CALCS( &
      kerncur = jpar/ipol**2.*dV
      dum1=ipol*btor/gp2*cumint1(dV*jpar/ipol**2.)
      q=ipol*g2*g3/(mu_vacuum*8*pi**3.*dum1*1.e6)
+	
+	j_qeq1=0
+	
  q(1)=q(2)
 	j_9=1
 	do j=1,nx
@@ -328,6 +331,7 @@ subroutine ADDITIONAL_CALCS( &
 	enddo
 	if (j_9.gt.1) then !fix q = 1 if below 1
 	if (isawt.eq.1) q(1:j_9) = 1.d0
+	if (isawt.eq.1) j_qeq1=j_9
 	goto 10
 	endif
 

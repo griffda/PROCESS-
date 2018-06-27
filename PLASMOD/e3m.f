@@ -101,7 +101,7 @@
      &                     BMINEQ,  ! BMINT
      &                     BMODEQ,  ! <B/BTOR>
      &                     FOFBEQ,  ! <(BTOR/B)**2*(1.-SQRT(1-B/Bmax)*(1+.5B/Bmax))>
-     &                     GRDAEQ,TIME)! <grad a>
+     &                     GRDAEQ)! <grad a>
     ! - BR00,SA0 - MAJOR & MINOR RADII /METER/
     ! - GLO,GD3O - ELONGATION AND TRIANGULARITY /BOUNDARY VALUE/
     ! - GSD = TRIANGULARITY
@@ -127,7 +127,7 @@
 !	save AOLD,GLOLD,G3DOLD,NAOLD,NITER,cgp
 	common /EMEQMR/SKDR(NP),SKGA(NP),SQG22R(NP)
 	data AOLD/0.d0/GLOLD/0.d0/G3DOLD/0.d0/NAOLD/1/
-	data NITER/1e4/
+	data NITER/10000/
 	data cgp/3.14159265359d0/	
     
     !*************************************************
@@ -172,7 +172,7 @@ C      call EQGB3(BR00,SA0,GL0,GD30,NA)
          WSJP(I)=BA(I)
          WSP(I)=BB(I)
       enddo
-      NITER=1e4                    ! Use 60 for the 1st entry only
+      NITER=10000                    ! Use 60 for the 1st entry only
       !!!call add2loc("Calling EQAB3"//char(0))
 !	write(*,*) NA,NT,NITER,ACC
       call EQAB3(NA,NT,NITER,ACC) ! Call MEM equil solver
