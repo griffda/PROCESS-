@@ -1,7 +1,7 @@
 *************************************************************************
 *****                                                               *****
 *****        Fusion Nuclear Science Facility (FNSF)                 *****
-*****            Stuart Muldrew (01/06/2018)                        *****
+*****            Stuart Muldrew (25/06/2018)                        *****
 *****      Menard et al. (2016), Nucl. Fusion, 56, 106023           *****
 *****                                                               *****
 *****                                                               *****
@@ -72,10 +72,6 @@ tcpav = 70.753      *Average temp of TF coil inboard leg conductor (C) (resistiv
 ixc = 23            *fcoolcp
 fcoolcp = 0.41433   *Coolant fraction of TF coil inboard legs
 boundl(23) = 0.05
-
-ixc = 24            *cdtfleg
-cdtfleg  = 2895700.0 *TF leg overall current density (A/m2)
-boundl(24) = 5.0E5
 
 ixc = 26            *ffuspow
 ffuspow = 1.0       *f-value for maximum fusion power

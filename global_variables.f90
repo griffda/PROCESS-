@@ -2152,6 +2152,7 @@ module tfcoil_variables
   !+ad_hist  11/06/15 MDK Mods to TF coil defaults
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  26/11/15 RK  Added variables for quench time calculation: taucq, sigvvall
+  !+ad_hist  22/06/18 SIM Made cdtfleg an output instead of an input
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -2221,9 +2222,8 @@ module tfcoil_variables
   !+ad_vars  acs : Area of space inside conductor (m2)
   real(kind(1.0D0)) :: acs
 
-  !+ad_vars  cdtfleg /1.0e6/ : TF leg overall current density (A/m2)
-  !+ad_varc                    (resistive coils only) (iteration variable 24)
-  real(kind(1.0D0)) :: cdtfleg = 1.0D6
+  !+ad_vars  cdtfleg : TF outboard leg current density (A/m2) (resistive coils only)                  
+  real(kind(1.0D0)) :: cdtfleg = 0.0D0
   !+ad_vars  cforce : centering force on inboard leg (per coil) (N/m)
   real(kind(1.0D0)) :: cforce = 0.0D0
   !+ad_vars  cph2o /4180.0/ FIX : specific heat capacity of water (J/kg/K)
@@ -2831,6 +2831,8 @@ module heat_transport_variables
   !+ad_hist  13/01/15 PJK Changed pinjht description
   !+ad_hist  08/03/17 JM  Added time-dependent power reqs
   !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
+  !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
+  !+ad_hist  22/06/18 SIM tfacpd now always an output
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2845,6 +2847,8 @@ module heat_transport_variables
   !+ad_vars  crypmw : cryogenic plant power (MW)
   real(kind(1.0D0)) :: crypmw = 0.0D0
 
+  !+ad_vars  etatf /0.9/ : AC to resistive power conversion for TF coils             
+  real(kind(1.0D0)) :: etatf = 0.9D0
   !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency
   !+ad_varc                 if secondary_cycle=2; otherwise calculated
   real(kind(1.0D0)) :: etath = 0.35D0
@@ -2954,8 +2958,7 @@ module heat_transport_variables
   real(kind(1.0D0)) :: pthermmw = 0.0D0
   !+ad_vars  pwpm2 /150.0/ : base AC power requirement per unit floor area (W/m2)
   real(kind(1.0D0)) :: pwpm2 = 150.0D0
-  !+ad_vars  tfacpd /0.0/ : total steady state TF coil AC power demand (MW)
-  !+ad_varc                 (itfsup=0 only; calculated for itfsup=1)
+  !+ad_vars  tfacpd : total steady state TF coil AC power demand (MW)
   real(kind(1.0D0)) :: tfacpd = 0.0D0
   !+ad_vars  tlvpmw : estimate of total low voltage power (MW)
   real(kind(1.0D0)) :: tlvpmw = 0.0D0

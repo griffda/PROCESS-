@@ -85,6 +85,7 @@ module numerics
   !+ad_hist  19/01/17 JM  Added new constraint 68, it. var. 117
   !+ad_hist  08/02/17 JM  Added new constraints 69,70, 71, it. var. 118, 119, 120 (Kallenbach)
   !+ad_hist  11/01/18 KE  Added new constraint eqn 76, Eich formula for nesep
+  !+ad_hist  22/06/18 SIM cdtfleg (itv 24) no longer used
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -412,7 +413,7 @@ module numerics
        'tbrnmn        ', &
        !+ad_varc  <LI> (23) fcoolcp
        'fcoolcp       ', &
-       !+ad_varc  <LI> (24) cdtfleg
+       !+ad_varc  <LI> (24) NOT USED
        'cdtfleg       ', &
        !+ad_varc  <LI> (25) fpnetel (f-value for equation 16)
        'fpnetel       ', &

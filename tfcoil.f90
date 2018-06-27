@@ -254,6 +254,7 @@ contains
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed refs to bcylth
+    !+ad_hist  22/06/18 SIM Made cdtfleg an output instead of an input
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -283,10 +284,14 @@ contains
 
     !  Outboard leg information (per leg)
 
-    !  Cross-sectional area (N.B. does not use tfthko*tftort...)
+    !  Cross-sectional area
 
-    arealeg = ritfc/(tfno * cdtfleg)
+    arealeg = tfthko*tftort
     extra = sqrt(arealeg)
+
+    !  Outboard leg current density
+
+    cdtfleg = ritfc/(tfno * arealeg)
 
     !  Length of leg centre-line (N.B. this assumes rectangular shaped
     !  coils, not D-shaped)

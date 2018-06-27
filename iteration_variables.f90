@@ -73,6 +73,7 @@ subroutine loadxc
   !+ad_hist  15/03/17 MDK  Added qtargettotal (124)
   !+ad_hist  17/03/17 MDK  Added impurities fimp(3-14) (125-136)
   !+ad_hist  12/01/18 KE  Added fnesep (144)
+  !+ad_hist  22/06/18 SIM cdtfleg (itv 24) no longer used
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -135,8 +136,7 @@ subroutine loadxc
      case (21) ; xcm(i) = ftburn
      case (22) ; write(*,*) 'Iteration variable 22 is not supported.'
      case (23) ; xcm(i) = fcoolcp
-     case (24) ; xcm(i) = cdtfleg
-        if (itfsup == 1) call report_error(47)
+     case (24) ; write(*,*) 'Iteration variable 24 is not supported.'
      case (25) ; xcm(i) = fpnetel
      case (26) ; xcm(i) = ffuspow
      case (27) ; xcm(i) = fhldiv
