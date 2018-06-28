@@ -3183,7 +3183,7 @@ contains
     implicit none
 
     ! Mass of steel in blanket (kg)
-    if (blnkith>1.0D-6) then
+    if (iblnkith==1) then
         whtblss = denstl * ( volblkti/blnkith * ( blbuith * fblss + blbmith * (1.0D0-fblhebmi) + &
          blbpith * (1.0D0-fblhebpi) ) + volblkto/blnkoth * ( blbuoth * fblss + &
          blbmoth * (1.0D0-fblhebmo) + blbpoth * (1.0D0-fblhebpo) ) )
@@ -3193,14 +3193,14 @@ contains
     end if
 
     ! Mass of beryllium in blanket (kg)
-    if (blnkith>1.0D-6) then
+    if (iblnkith==1) then
         whtblbe = 1850.0D0 * fblbe * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
     else
         whtblbe = 1850.0D0 * fblbe * (volblkto * blbuoth/blnkoth)
     end if
 
     ! Mass of breeder material in blanket (kg)
-    if (blnkith>1.0D-6) then
+    if (iblnkith==1) then
         whtblbreed = densbreed * fblbreed * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
     else
         whtblbreed = densbreed * fblbreed * (volblkto * blbuoth/blnkoth)
@@ -3210,8 +3210,12 @@ contains
     whtblkt = whtblss + whtblbe + whtblbreed
 
     ! Void fraction of blanket inboard portion
-    vfblkti = volblkti/volblkt * ( (blbuith/blnkith) * (1.0D0 - fblbe - fblbreed - fblss) &
-       + (blbmith/blnkith) * fblhebmi + (blbpith/blnkith) * fblhebpi )
+    if (iblnkith==1) then
+        vfblkti = volblkti/volblkt * ( (blbuith/blnkith) * (1.0D0 - fblbe - fblbreed - fblss) &
+           + (blbmith/blnkith) * fblhebmi + (blbpith/blnkith) * fblhebpi )
+    else
+        vfblkti = 0.0D0
+    end if
 
     ! Void fraction of blanket outboard portion
     vfblkto = volblkto/volblkt * ( (blbuoth/blnkoth) * (1.0D0 - fblbe - fblbreed - fblss) &
