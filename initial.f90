@@ -202,6 +202,7 @@ subroutine check
     !+ad_hist  24/11/14 PJK Added trap if blanket material fractions do not sum to 1.0
     !+ad_hist  24/11/14 PJK Set coolwh via blkttype
     !+ad_hist  25/02/15 JM  Changed blanket composition check to use new blanket model layout
+    !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -543,6 +544,7 @@ subroutine check
         gapoh  = 0.0D0
         ohcth  = 0.0D0
         ddwi   = 0.0D0
+        iblnkith = 0
 
         if (icurr /= 2) then
             idiags(1) = icurr ; call report_error(37)
@@ -630,6 +632,10 @@ subroutine check
         rnbeam = 0.0D0
     end if
 
+    ! Set inboard blanket thickness to zero if no inboard blanket switch
+    ! used (Issue #732)
+    if (iblnkith == 0) blnkith = 0.0D0
+    
     !  Solid breeder assumed if ipowerflow=0
 
     !if (ipowerflow == 0) blkttype = 3
