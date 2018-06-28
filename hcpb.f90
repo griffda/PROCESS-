@@ -260,7 +260,7 @@ contains
     nuc_pow_dep_tot = pnucfw + pnucblkt + pnucshld + ptfnuc
 
     if((nuc_pow_dep_tot<1.0d0).or.(nuc_pow_dep_tot/=nuc_pow_dep_tot))  then
-        write(*,*)'pnucfw =', pnucfw, ' at line 283  ', 'pnucblkt =', pnucblkt
+        write(*,*)'pnucfw =', pnucfw, ' at line 263  ', 'pnucblkt =', pnucblkt
         write(*,*)'pnucshld =', pnucshld, ' ptfnuc =', ptfnuc
     end if
 
@@ -1806,7 +1806,7 @@ contains
     temp_mean = (temp_in + temp_out)/2.0d0
 
     ! Calculate coolant fluid properties
-    call fluid_properties(temp_mean, pressure, coolwh, density=rhof, viscosity=viscf, label='2001')
+    call fluid_properties(temp_mean, pressure, coolwh, density=rhof, viscosity=viscf, label='1809')
 
     ! Check that coolant density is within bounds and not a NaN/Inf
     if ((rhof>1.0d9).or.(rhof<=0.0d0).or.(rhof/=rhof)) then
@@ -1857,7 +1857,7 @@ contains
     ! if ((coolpin>1.0d9).or.(coolpin<=0.0d0).or.(coolpin/=coolpin)) call write_output
 
     !
-    call fluid_properties(temp_in, coolpin, coolant, enthalpy=h2, entropy=s2, label='2049')
+    call fluid_properties(temp_in, coolpin, coolant, enthalpy=h2, entropy=s2, label='1860')
 
     ! Assume isentropic pump so that s1 = s2
     s1 = s2
