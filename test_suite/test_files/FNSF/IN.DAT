@@ -169,6 +169,7 @@ tdwell   = 100.0    *Time between pulses in a pulsed reactor (s)
 
 blnkith  = 0.0      *Inboard blanket thickness (m)
 blnkoth  = 0.7      *Outboard blanket thickness (m)
+ddwi     = 0.0      *Vacuum vessel thickness (m)
 gapds    = 0.0      *Gap between inboard vacuum vessel and thermal shield (m)
 gapomin  = 0.0      *Minimum gap between outboard vacuum vessel and TF coil (m)
 iprecomp = 0        *Switch for existence of central solenoid pre-compression structure (0: no pre-compression structure)

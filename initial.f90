@@ -543,7 +543,6 @@ subroutine check
         bore   = 0.0D0
         gapoh  = 0.0D0
         ohcth  = 0.0D0
-        ddwi   = 0.0D0
         iblnkith = 0
 
         if (icurr /= 2) then
