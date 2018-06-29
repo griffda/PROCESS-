@@ -1284,7 +1284,7 @@ contains
     if (fwcoolant == 'water') coolant=2
     htpmw_fwi = pumppower(fwinlet, fwoutlet, fwpressure, fw_channel_length, afw, mffwi, &
         mffwpi, no90fw, no180fw, etaiso, coolant, 'Inboard first wall')
-    if (iblnkith==0) then
+    if (iblnkith==1) then
         htpmw_blkti = pumppower(inlet_temp, outlet_temp,blpressure, bzfllengi, afw, mfblkti, &
             mfblktpi, no90bz, no180bz, etaiso, coolwh, 'Inboard blanket')
     end if
