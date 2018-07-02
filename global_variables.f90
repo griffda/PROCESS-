@@ -561,6 +561,10 @@ module physics_variables
   !+ad_varc         <LI> = 0 use conventional aspect ratio models;
   !+ad_varc         <LI> = 1 use spherical tokamak models</UL>
   integer :: itart = 0
+  !+ad_vars  itartpf /0/ : switch for Spherical Tokamak PF models:<UL>
+  !+ad_varc         <LI> = 0 use Peng and Strickler (1986) model;
+  !+ad_varc         <LI> = 1 use conventional aspect ratio model</UL>
+  integer :: itartpf = 0
   !+ad_vars  iwalld /1/ : switch for neutron wall load calculation:<UL>
   !+ad_varc          <LI> = 1 use scaled plasma surface area;
   !+ad_varc          <LI> = 2 use first wall area directly</UL>

@@ -736,6 +736,9 @@ contains
        case ('itart')
           call parse_int_variable('itart', itart, 0, 1, &
                'Switch for tight aspect ratio physics')
+       case ('itartpf')
+                call parse_int_variable('itartpf', itartpf, 0, 1, &
+               'Switch for tight aspect ratio PF coils')
        case ('iwalld')
           call parse_int_variable('iwalld', iwalld, 1, 2, &
                'Switch for wall load calculation')
