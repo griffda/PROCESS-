@@ -4,16 +4,16 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : /home/smuldrew/process/718-Stell/process.exe
+   Program : ./process.exe
    Version : 1.0.13   Release Date :: 2018-04-19
-   Tag No. : "1.0.13-310-g1d56257 Code used contains Untracked Changes"
-   Last commit message : "Update README links for Windows"
+   Tag No. : "1.0.13-389-ga56db6f"
+   Last commit message : "Enabled SC PF coils for ST"
       User : smuldrew
- Directory : /home/smuldrew/Stellarator/tests
+ Directory : /home/smuldrew/process/test_reset/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.13 : Run on 11 Jun 2018 10:08:49 +01:00(hh:mm) UTC by G0764
+ PROCESS 1.0.13 : Run on  3 Jul 2018  8:17:58 +01:00(hh:mm) UTC by G0764
  Reactor concept design: Stellarator model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)

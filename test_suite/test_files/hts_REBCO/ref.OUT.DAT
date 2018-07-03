@@ -4,18 +4,18 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : process.exe
+   Program : ./process.exe
    Version : 1.0.13   Release Date :: 2018-04-19
-   Tag No. : "1.0.13-380-g9b55e9e Code used contains Untracked Changes"
-   Last commit message : "Test suite: Moved DEMO_1_06_2015 and DEMO_1_12_2015 to inactive folde"
-      User : mkovari
- Directory : /home/mkovari/develop3/tests/hts
+   Tag No. : "1.0.13-389-ga56db6f"
+   Last commit message : "Enabled SC PF coils for ST"
+      User : smuldrew
+ Directory : /home/smuldrew/process/test_reset/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.13 : Run on 27 Jun 2018 13:28:42 +01:00(hh:mm) UTC by freia045
+ PROCESS 1.0.13 : Run on  3 Jul 2018  8:17:56 +01:00(hh:mm) UTC by G0764
  Reactor concept design: Pulsed tokamak model, (c) CCFE
- CroCo attempt to match R. Heller, KIT, Aug 24, 2017
+ HTS model using "CroCo" conductor, based on KIT design
  (Please include this header in any models, presentations and papers based on these results)
  
  **************************************************************************************************************
@@ -1328,7 +1328,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  *************************************** Copy of PROCESS Input Follows ****************************************
  
-runtitle = CroCo attempt to match R. Heller, KIT, Aug 24, 2017
+runtitle = HTS model using "CroCo" conductor, based on KIT design
 *--------------------------------------------------*
 
 
