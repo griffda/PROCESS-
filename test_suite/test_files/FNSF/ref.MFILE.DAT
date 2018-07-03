@@ -3,12 +3,12 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.13   "
- Date_of_run_____________________________________________________________ (date)________________________     "25/06/2018"
- Time_of_run_____________________________________________________________ (time)________________________     "08:32"
+ Date_of_run_____________________________________________________________ (date)________________________     "03/07/2018"
+ Time_of_run_____________________________________________________________ (time)________________________     "08:17"
  User____________________________________________________________________ (username)____________________     "smuldrew"
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.13-371-geb19615"                                                                               
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Made tfacpd an output for resistive TF coils"                                                      
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.13-389-ga56db6f"                                                                               
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Enabled SC PF coils for ST"                                                                        
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -858,6 +858,7 @@ tdwell   = 100.0    *Time between pulses in a pulsed reactor (s)
 
 blnkith  = 0.0      *Inboard blanket thickness (m)
 blnkoth  = 0.7      *Outboard blanket thickness (m)
+ddwi     = 0.0      *Vacuum vessel thickness (m)
 gapds    = 0.0      *Gap between inboard vacuum vessel and thermal shield (m)
 gapomin  = 0.0      *Minimum gap between outboard vacuum vessel and TF coil (m)
 iprecomp = 0        *Switch for existence of central solenoid pre-compression structure (0: no pre-compression structure)

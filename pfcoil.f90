@@ -281,7 +281,7 @@ contains
 
           do k = 1,ncls(j)
              rcls(j,k) = rmajor + rpf2*triang*rminor
-             if (itart == 1) then
+             if (itart==1.and.itartpf==0) then
                 zcls(j,k) = (hmax-zref(j)) * signn(k)
              else
                 !zcls(j,k) = (hmax + tfcth + 0.86D0) * signn(k)
@@ -345,7 +345,7 @@ contains
 
     !  Simple coil current scaling for STs (good only for A < about 1.8)
 
-    if (itart == 1) then
+    if (itart==1.and.itartpf==0) then
 
        do i = 1,ngrp
 

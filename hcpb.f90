@@ -260,7 +260,7 @@ contains
     nuc_pow_dep_tot = pnucfw + pnucblkt + pnucshld + ptfnuc
 
     if((nuc_pow_dep_tot<1.0d0).or.(nuc_pow_dep_tot/=nuc_pow_dep_tot))  then
-        write(*,*)'pnucfw =', pnucfw, ' at line 283  ', 'pnucblkt =', pnucblkt
+        write(*,*)'pnucfw =', pnucfw, ' at line 263  ', 'pnucblkt =', pnucblkt
         write(*,*)'pnucshld =', pnucshld, ' ptfnuc =', ptfnuc
     end if
 
@@ -870,7 +870,11 @@ contains
     fw_density = denstl*(1.0D0-vffwm)
     blanket_density = whtblkt / volblkt
     shield_density = whtshld / volshld
-    vv_density = vvmass / vdewin
+    if (ddwi>1.0D-6) then
+        vv_density = vvmass / vdewin
+    else
+        vv_density = 0.0D0
+    end if
 
     ! Exponents (tonne/m2)
     ! Blanket exponent (/1000 for kg -> tonnes)
@@ -1164,6 +1168,7 @@ contains
     !+ad_prob  None
     !+ad_hist  23/02/15 JM  Initial version
     !+ad_hist  01/12/15 MDK Extensively revised Issue #348 (01/12/2015)
+    !+ad_hist  29/06/18 SIM Added iblnkith conditions (Issue #732)
     !+ad_stat  Okay
     ! ONLY CALLED if primary_pumping = 2
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1248,36 +1253,41 @@ contains
     ! Mass flow rate per coolant pipe (kg/s):
     mffwpi = mffwi / npfwi
 
-    ! Neutron power deposited in inboard blanket (MW)
-    pnucblkti = pnucblkt * volblkti / volblkt
+    if (iblnkith==1) then
+        ! Neutron power deposited in inboard blanket (MW)
+        pnucblkti = pnucblkt * volblkti / volblkt
 
-    ! Mass flow rate for inboard blanket coolant (kg/s)
-    mfblkti = 1.0D6*(pnucblkti) / (cf*(outlet_temp-inlet_temp))
+        ! Mass flow rate for inboard blanket coolant (kg/s)
+        mfblkti = 1.0D6*(pnucblkti) / (cf*(outlet_temp-inlet_temp))
 
-    ! Calc total num of pipes (in all inboard modules) from coolant frac and channel dimensions
-    ! Assumes up/down flow, two 90 deg bends per length
-    npblkti = (vfblkt * volblkti) / (pi * afw * afw * bzfllengi)
+        ! Calc total num of pipes (in all inboard modules) from coolant frac and channel dimensions
+        ! Assumes up/down flow, two 90 deg bends per length
+        npblkti = (vfblkt * volblkti) / (pi * afw * afw * bzfllengi)
 
-    ! Mass flow rate per coolant pipe (kg/s)
-    if ((npblkti<1.0d1).or.(npblkti/=npblkti).or.(mfblkti<1.0d0).or.(mfblkti/=mfblkti)) then
-        write(*,*) 'npblkti = ', npblkti, '   vfblkt =', vfblkt
-        write(*,*) 'mfblkti =',mfblkti,   'pnucblkti =', pnucblkti
-        write(*,*) 'pnucblkt =',pnucblkt,   'volblkti =', volblkti
-        stop
+        ! Mass flow rate per coolant pipe (kg/s)
+        if ((npblkti<1.0d1).or.(npblkti/=npblkti).or.(mfblkti<1.0d0).or.(mfblkti/=mfblkti)) then
+            write(*,*) 'npblkti = ', npblkti, '   vfblkt =', vfblkt
+            write(*,*) 'mfblkti =',mfblkti,   'pnucblkti =', pnucblkti
+            write(*,*) 'pnucblkt =',pnucblkt,   'volblkti =', volblkti
+            stop
+        end if
+
+        mfblktpi = mfblkti / npblkti
+
+        ! Coolant velocity in blanket (m/s)
+        velblkti = mfblktpi / (pi * afw * afw * rhof)
+
     end if
-
-    mfblktpi = mfblkti / npblkti
-
-    ! Coolant velocity in blanket (m/s)
-    velblkti = mfblktpi / (pi * afw * afw * rhof)
 
     ! Pumping powers for blanket and first wall (MW)
     if (fwcoolant == 'helium') coolant=1
     if (fwcoolant == 'water') coolant=2
     htpmw_fwi = pumppower(fwinlet, fwoutlet, fwpressure, fw_channel_length, afw, mffwi, &
         mffwpi, no90fw, no180fw, etaiso, coolant, 'Inboard first wall')
-    htpmw_blkti = pumppower(inlet_temp, outlet_temp,blpressure, bzfllengi, afw, mfblkti, &
-        mfblktpi, no90bz, no180bz, etaiso, coolwh, 'Inboard blanket')
+    if (iblnkith==1) then
+        htpmw_blkti = pumppower(inlet_temp, outlet_temp,blpressure, bzfllengi, afw, mfblkti, &
+            mfblktpi, no90bz, no180bz, etaiso, coolwh, 'Inboard blanket')
+    end if
 
     ! OUTBOARD !
     !!!!!!!!!!!!
@@ -1806,7 +1816,7 @@ contains
     temp_mean = (temp_in + temp_out)/2.0d0
 
     ! Calculate coolant fluid properties
-    call fluid_properties(temp_mean, pressure, coolwh, density=rhof, viscosity=viscf, label='2001')
+    call fluid_properties(temp_mean, pressure, coolwh, density=rhof, viscosity=viscf, label='1819')
 
     ! Check that coolant density is within bounds and not a NaN/Inf
     if ((rhof>1.0d9).or.(rhof<=0.0d0).or.(rhof/=rhof)) then
@@ -1857,7 +1867,7 @@ contains
     ! if ((coolpin>1.0d9).or.(coolpin<=0.0d0).or.(coolpin/=coolpin)) call write_output
 
     !
-    call fluid_properties(temp_in, coolpin, coolant, enthalpy=h2, entropy=s2, label='2049')
+    call fluid_properties(temp_in, coolpin, coolant, enthalpy=h2, entropy=s2, label='1870')
 
     ! Assume isentropic pump so that s1 = s2
     s1 = s2
@@ -3183,7 +3193,7 @@ contains
     implicit none
 
     ! Mass of steel in blanket (kg)
-    if (blnkith>1.0D-6) then
+    if (iblnkith==1) then
         whtblss = denstl * ( volblkti/blnkith * ( blbuith * fblss + blbmith * (1.0D0-fblhebmi) + &
          blbpith * (1.0D0-fblhebpi) ) + volblkto/blnkoth * ( blbuoth * fblss + &
          blbmoth * (1.0D0-fblhebmo) + blbpoth * (1.0D0-fblhebpo) ) )
@@ -3193,14 +3203,14 @@ contains
     end if
 
     ! Mass of beryllium in blanket (kg)
-    if (blnkith>1.0D-6) then
+    if (iblnkith==1) then
         whtblbe = 1850.0D0 * fblbe * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
     else
         whtblbe = 1850.0D0 * fblbe * (volblkto * blbuoth/blnkoth)
     end if
 
     ! Mass of breeder material in blanket (kg)
-    if (blnkith>1.0D-6) then
+    if (iblnkith==1) then
         whtblbreed = densbreed * fblbreed * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
     else
         whtblbreed = densbreed * fblbreed * (volblkto * blbuoth/blnkoth)
@@ -3210,8 +3220,12 @@ contains
     whtblkt = whtblss + whtblbe + whtblbreed
 
     ! Void fraction of blanket inboard portion
-    vfblkti = volblkti/volblkt * ( (blbuith/blnkith) * (1.0D0 - fblbe - fblbreed - fblss) &
-       + (blbmith/blnkith) * fblhebmi + (blbpith/blnkith) * fblhebpi )
+    if (iblnkith==1) then
+        vfblkti = volblkti/volblkt * ( (blbuith/blnkith) * (1.0D0 - fblbe - fblbreed - fblss) &
+           + (blbmith/blnkith) * fblhebmi + (blbpith/blnkith) * fblhebpi )
+    else
+        vfblkti = 0.0D0
+    end if
 
     ! Void fraction of blanket outboard portion
     vfblkto = volblkto/volblkt * ( (blbuoth/blnkoth) * (1.0D0 - fblbe - fblbreed - fblss) &

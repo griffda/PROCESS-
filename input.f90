@@ -356,6 +356,7 @@ contains
     !+ad_hist  22/06/18 SIM Made cdtfleg ann output instead of an input
     !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
     !+ad_hist  22/06/18 SIM tfacpd now always an output
+    !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -735,6 +736,9 @@ contains
        case ('itart')
           call parse_int_variable('itart', itart, 0, 1, &
                'Switch for tight aspect ratio physics')
+       case ('itartpf')
+                call parse_int_variable('itartpf', itartpf, 0, 1, &
+               'Switch for tight aspect ratio PF coils')
        case ('iwalld')
           call parse_int_variable('iwalld', iwalld, 1, 2, &
                'Switch for wall load calculation')
@@ -2263,6 +2267,8 @@ contains
               fwoth = 0.03D0
               fw_armour_thickness = 0.003D0
           end if
+       case ('iblnkith')
+          call parse_int_variable('iblnkith', iblnkith, 0, 1, 'Switch for inboard blanket')
 
        case ('inuclear')
          call parse_int_variable('inuclear', inuclear, 0, 1, &
