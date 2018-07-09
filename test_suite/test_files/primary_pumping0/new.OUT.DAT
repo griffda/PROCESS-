@@ -7,14 +7,14 @@
  
    Program : ./process.exe
    Version : 1.0.13   Release Date :: 2018-04-19
-   Tag No. : "1.0.13-296-g9128bfc Code used contains Untracked Changes"
-   Last commit message : "Split test_suite.py into two files. test_suite_functions.py contains a"
+   Tag No. : "1.0.13-305-g9fa7ee7 Code used contains Untracked Changes"
+   Last commit message : "Added a after build stage to copy process.exe to process directory,"
       User : mkumar
  Directory : /home/mkumar/process/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.13 : Run on 15 Jun 2018 17:17:39 +01:00(hh:mm) UTC by freia002
+ PROCESS 1.0.13 : Run on 20 Jun 2018  7:44:17 +01:00(hh:mm) UTC by freia010
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
