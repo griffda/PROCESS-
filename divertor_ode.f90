@@ -12,6 +12,11 @@ module divertor_ode
   !+ad_stat  Okay
   !+ad_docs
 
+  ! NEW VERSION! 29/6/18
+  ! Using n as variable rather than Ptotal
+  ! Y(5) = electron density (n) [1e20 m-3]
+  ! yp(5) = dn/dx [1e20 m-3 m-1]
+
   use global_variables
   use maths_library
   use read_and_get_atomic_data
@@ -282,7 +287,7 @@ contains
 
     ! These are local variables for recalculation at each data point - not used for integration:
     real(kind(1.0D0)) :: nel, v, n0, nelsquared
-    real(kind(1.0D0)) :: s, al, cx, plt, prb
+    real(kind(1.0D0)) :: s, al, Rcx, plt, prb
     real(kind(1.0D0)) :: cxrate, plossdenscx, ionrate1, ionrate2, recrate
     real(kind(1.0D0)) :: plossion, lz, raddens, radHdens, qperp_total, qperp_conv, qperp_conducted
     real(kind(1.0D0)) :: n01, n02, te, nv, pressure, Power, nv24, bracket, nel20, Pthermal, n0e20
@@ -628,7 +633,8 @@ do i = 2, nimp
     y(2) = n020*1.d-20
     y(3) = te0
     y(4) = nv0*1.d-24
-    y(5) = pressure0
+    !y(5) = pressure0
+    y(5) = nel0*1.d-20   ! 29/6/18
     y(6) = Power0/1.d6
     y(7) =0.0D0           ! Y(7) = integral of impurity radiation loss [MW]
     y(8) =0.0D0           ! Y(8) = integral of radiation loss from hydrogenic species [MW]
@@ -666,7 +672,6 @@ do i = 2, nimp
 
     do step = 0, step_num+1
         if(step.ne.0) then
-
             ! Solve the set of differential equations
             call ode(differential, neqn, y, x, xout, relerr, abserr, iflag, work, iwork )
 
@@ -684,6 +689,7 @@ do i = 2, nimp
                 write(*,*) 'If iflag = 6, invalid input parameters.'
                 write(*,*) 'Step number = ',step, '  x = ', x
             endif
+
         endif
 
         ! Derived quantities need to be recalculated at each data point
@@ -692,7 +698,10 @@ do i = 2, nimp
         te  = Y(3)
         nv24 = Y(4)
         nv  = nv24*1.d24
-        pressure = Y(5)
+        ! pressure = Y(5)
+        nel = Y(5)*1d20                               ! 29/6/18
+        nel20 = Y(5)                                  ! 29/6/18
+        pressure = mi*nv**2 / nel + 2*nel*echarge*te  ! 29/6/18
         Power   = Y(6)*1.d6
 
         ! The area of the flux tube, measured perpendicular to B
@@ -703,11 +712,11 @@ do i = 2, nimp
             A_cross = area_omp
         end if
 
-        ! Calculate density [m-3]
-        bracket = max( (pressure**2.0D0 - eightemi48*te*nv24**2.0D0), 0.0D0)
-        nel = (pressure + sqrt(bracket))/(4.0D0*echarge*te)
-        nel20 = nel/1.d20
-        nelsquared = nel**2.0D0
+        ! ! Calculate density [m-3]
+        ! bracket = max( (pressure**2 - eightemi48*te*nv24**2), 0.0D0)
+        ! nel = (pressure + sqrt(bracket))/(4.0D0*echarge*te)
+        ! nel20 = nel/1.d20
+        ! nelsquared = nel**2.0D0
 
         ! Thermal power [W]
         Pthermal = 2.0D0*nel*Te*echarge
@@ -736,10 +745,10 @@ do i = 2, nimp
         ! If the neutral density is small, set the atomic rates to zero.
         ! This adjustment is used in subroutine differential to make it behave better (less stiff)
         if(n0.gt.abserr*1.d18) then
-            call get_h_rates(nel, te, s, al, cx, plt, prb, aplas, verbose=.false.)
+            call get_h_rates(nel, te, s, al, Rcx, plt, prb, aplas, verbose=.false.)
 
             ! charge exchange rate for equation 7 [s-1]
-            cxrate = cx*nel*n0
+            cxrate = Rcx*nel*n0
 
             ! ionisation rate of neutrals: velocity group 1 [s-1]
             ionrate1 = s * nel * n01
@@ -1016,10 +1025,10 @@ do i = 2, nimp
     !
     real(kind(1.0D0)):: n01, n02, te, nv, pressure, Power, nv24, bracket
     real(kind(1.0D0)):: nel, v, n0
-    real(kind(1.0D0)):: s, al, cx, plt, prb
+    real(kind(1.0D0)):: s, al, Rcx, plt, prb
     real(kind(1.0D0)):: cxrate,plossdenscx,ionrate1,ionrate2,recrate
     real(kind(1.0D0)):: plossion,lz,raddens,radHdens,qperp_total,qperp_conv,qperp_conducted
-    real(kind(1.0D0)):: A_cross
+    real(kind(1.0D0)):: A_cross, dpdx,dnvdx, dndx
 
     ! Combined weighted radiative loss function
     real(kind(1.0D0))::LzTotal
@@ -1029,36 +1038,46 @@ do i = 2, nimp
     n02 = Y(2)*1.d20
     te  = Y(3)
     nv  = Y(4)*1.d24
-    pressure = Y(5)
+    ! pressure = Y(5)
+    nel = Y(5)*1d20                               ! 29/6/18
+    pressure = mi*nv**2 / nel + 2*nel*echarge*te  ! 29/6/18
+
     Power   = Y(6)*1.d6
 
     ! Derived quantities
     nv24 = Y(4)
-    bracket = pressure**2 - eightemi48*te*nv24**2
+    ! bracket = pressure**2 - eightemi48*te*nv24**2 =
 
-    if ((bracket .lt. 0.0)) then
+    ! ! Print the details at the very start, and if the quantity in the square root is negative
+    ! if (t < 1.0d-20) then
+    !     write(*,*) 'starting info for divertor model'
+    !     write(*,'(10a14)') 't', 'pressure', 'te', 'nv24', 'pressure**2', 'eightemi48etc', 'bracket'
+    !     write(*,'(10es14.6)') t, pressure, te, nv24, pressure**2, eightemi48*te*nv24**2, bracket
+    !     bracket = 0.0d0
+    ! endif
+    !
+    ! if ((bracket .lt. 0.0d0)) then
+    !     write(*,*) 'Square root of a negative number in divertor model'
+    !     write(*,'(10a14)') 't', 'pressure', 'te', 'nv24', 'pressure**2', 'eightemi48etc', 'bracket'
+    !     write(*,'(10es14.6)') t, pressure, te, nv24, pressure**2, eightemi48*te*nv24**2, bracket
+    !
+    !     if(t<0.0001D0) then   ! Continue calculation
+    !         bracket=0.d0
+    !     else
+    !         stop
+    !     endif
+    ! endif
 
-        if((bracket .ge. -0.1*pressure**2).and.(t<0.001D0)) then
-            ! Continue calculation
-            bracket=0.d0
-        else
-            write(*,*) 'Square root of a negative number in divertor model'
-            write(*,'(10a14)') 't', 'pressure', 'te', 'nv24', 'pressure**2', 'eightemi48*te*nv24**2', 'bracket'
-            write(*,'(10es14.6)') t, pressure, te, nv24, pressure**2, eightemi48*te*nv24**2, bracket
-            stop
-        endif
-
-    endif
-
-    nel = (pressure + sqrt(bracket))/(4.0d0*echarge*te)
+    ! nel = (pressure + sqrt(bracket))/(4.0d0*echarge*te)
     v = nv/nel
     n0 = n01 + n02                         ! neutral density = sum of the two velocity groups
 
     if(n0.gt.abserr*1.d18)  then
-        call get_h_rates(nel, te, s, al, cx, plt, prb, aplas, verbose=.false.)
+        call get_h_rates(nel, te, s, al, Rcx, plt, prb, aplas, verbose=.false.)
 
         ! charge exchange for equation 7
-        cxrate = cx*nel*n0
+
+        cxrate = Rcx*nel*n0
         ! ionisation of neutrals: velocity group 1
         ionrate1 = s * nel * n01
         ! ionisation of neutrals: velocity group 2
@@ -1084,7 +1103,6 @@ do i = 2, nimp
 
     ! Get radiative loss function for all impurities present
     LzTotal = 0.0D0
-
     do i = 2, nimp
         if(impurities_present(i)) then
             lz = read_lz(imp_label(i), te, netau, mean_z=.false., mean_qz=.false., verbose=.false.)
@@ -1128,10 +1146,16 @@ do i = 2, nimp
     yp(3) =qperp_conducted / te**2.5 / kappa0
 
     ! dnvdx Equation 3 - ion continuity
-    yp(4) =1.d-24*(ionrate1 + ionrate2 - recrate)
+    dnvdx = ionrate1 + ionrate2 - recrate
+    !yp(4) =1.d-24*(ionrate1 + ionrate2 - recrate)
+    yp(4) =1.d-24*dnvdx
 
-    ! dpressuredx Equation 6 - momentum conservation
-    yp(5) =-(cxrate/nel + al*nel)*nv*mi
+    !! dpressuredx Equation 6 - momentum conservation
+    !yp(5) =-(cxrate/nel + al*nel)*nv*mi
+    ! Use cxrate instead of Rcx as it may have been set to zero.
+    dpdx = -(cxrate/nel + al*nel)*nv*mi
+    dndx = (dpdx - 2.0d0*mi*v*dnvdx) / (2.0d0*echarge*te)
+    yp(5) = dndx * 1.d-20
 
     ! dPowerdx Equation 4 - energy conservation
     yp(6) =1.d-6*(raddens + radHdens + plossdenscx + plossion)*A_cross

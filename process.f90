@@ -117,10 +117,10 @@ program process
     if (run_tests == 1) call runtests
 
     if(kallenbach_tests==1) then
-      !write(*,*)'Running test of Kallenbach divertor model.'
-      !call Kallenbach_test()
-      write(*,*)'Running parameter scan of Kallenbach divertor model.  Then stop.'
-      call kallenbach_scan()
+      write(*,*)'Running test of Kallenbach divertor model.'
+      call Kallenbach_test()
+      !write(*,*)'Running parameter scan of Kallenbach divertor model.  Then stop.'
+      !call kallenbach_scan()
       stop
     endif
 
@@ -235,7 +235,7 @@ subroutine init
   open(unit=nout,file=trim(output_prefix)//'OUT.DAT',status='unknown')
   open(unit=nplot,file=trim(output_prefix)//'PLOT.DAT',status='unknown')
   open(unit=mfile,file=trim(output_prefix)//'MFILE.DAT',status='unknown')
-  
+
   !  Input any desired new initial values
   call input
 
@@ -1075,11 +1075,11 @@ subroutine doopt(ifail)
 
   ! Calculate PLASMOD after everything else has finished for comparison
   if (ipedestal == 2) then
-     
+
      call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
-     
+
      call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
-     
+
      if (i_flag==1)then
         write(*,*) 'PLASMOD has converged!!!'
      elseif (i_flag==0)then
@@ -1089,7 +1089,7 @@ subroutine doopt(ifail)
      elseif (i_flag==-2)then
         write(*,*) 'The PLASMOD equilibrium has crashed'
       endif
-     
+
   endif
 
   !  Check on accuracy of solution by summing the
@@ -1566,12 +1566,12 @@ subroutine output(outfile)
   call outplas(outfile)
 
 
-  ! Writing 
+  ! Writing
   if (ipedestal == 2 .or. ipedestal == 3) then
      call outputPlasmod(outfile)
   endif
 
-  
+
   ! startup model (not used) !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1582,7 +1582,7 @@ subroutine output(outfile)
 
   ! TODO what is this? Not in caller.f90?
   call cudriv(outfile,1)
-  
+
   ! Pulsed reactor model !
   !!!!!!!!!!!!!!!!!!!!!!!!
 
