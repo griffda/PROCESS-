@@ -561,6 +561,10 @@ module physics_variables
   !+ad_varc         <LI> = 0 use conventional aspect ratio models;
   !+ad_varc         <LI> = 1 use spherical tokamak models</UL>
   integer :: itart = 0
+  !+ad_vars  itartpf /0/ : switch for Spherical Tokamak PF models:<UL>
+  !+ad_varc         <LI> = 0 use Peng and Strickler (1986) model;
+  !+ad_varc         <LI> = 1 use conventional aspect ratio model</UL>
+  integer :: itartpf = 0
   !+ad_vars  iwalld /1/ : switch for neutron wall load calculation:<UL>
   !+ad_varc          <LI> = 1 use scaled plasma surface area;
   !+ad_varc          <LI> = 2 use first wall area directly</UL>
@@ -1394,6 +1398,7 @@ module fwbs_variables
   !+ad_hist  12/04/15 JM  Removed costr, astr, bstr, estr, lblnkt
   !+ad_hist  01/06/16 JM  Added denw
   !+ad_hist  01/06/16 JM  Added option 4 to iblanket
+  !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1471,6 +1476,11 @@ module fwbs_variables
   !+ad_varc             <LI> = 3 CCFE HCPB model with Tritium Breeding Ratio calculation;
   !+ad_varc             <LI> = 4 KIT HCLL model</UL>
   integer :: iblanket = 1
+
+  !+ad_vars  iblnkith /1/ : switch for inboard blanket: <UL>
+  !+ad_varc             <LI> = 0 No inboard blanket (blnkith=0.0);
+  !+ad_varc             <LI> = 1 Inboard blanket present</UL>
+  integer :: iblnkith = 1
 
   !+ad_vars  inuclear /0/ : switch for nuclear heating in the coils: <UL>
   !+ad_varc             <LI> = 0 Frances Fox model (default);
@@ -3230,7 +3240,8 @@ module build_variables
   !+ad_varc                    (iteration variable 91)
   real(kind(1.0D0)) :: blbuoth = 0.465D0
   !+ad_vars  blnkith /0.115/ : inboard blanket thickness (m);
-  !+ad_varc                    calculated if blktmodel > 0
+  !+ad_varc                    (calculated if blktmodel > 0) 
+  !+ad_varc                    (=0.0 if iblnkith=0)
   real(kind(1.0D0)) :: blnkith = 0.115D0
   !+ad_vars  blnkoth /0.235/ : outboard blanket thickness (m);
   !+ad_varc                    calculated if blktmodel > 0

@@ -3,12 +3,12 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.13   "
- Date_of_run_____________________________________________________________ (date)________________________     "27/06/2018"
- Time_of_run_____________________________________________________________ (time)________________________     "13:28"
- User____________________________________________________________________ (username)____________________     "mkovari" 
- PROCESS_run_title_______________________________________________________ (runtitle)____________________     "CroCo attempt to match R. Heller, KIT, Aug 24, 2017                                                
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.13-380-g9b55e9e"                                                                               
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Test suite: Moved DEMO_1_06_2015 and DEMO_1_12_2015 to inactive folde"                             
+ Date_of_run_____________________________________________________________ (date)________________________     "03/07/2018"
+ Time_of_run_____________________________________________________________ (time)________________________     "08:17"
+ User____________________________________________________________________ (username)____________________     "smuldrew"
+ PROCESS_run_title_______________________________________________________ (runtitle)____________________     "HTS model using "CroCo" conductor, based on KIT design                                             
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.13-389-ga56db6f"                                                                               
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Enabled SC PF coils for ST"                                                                        
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -920,7 +920,7 @@
  # End of PROCESS Output #
  # Copy of PROCESS Input Follows #
 ***********************************************
-runtitle = CroCo attempt to match R. Heller, KIT, Aug 24, 2017
+runtitle = HTS model using "CroCo" conductor, based on KIT design
 *--------------------------------------------------*
 
 

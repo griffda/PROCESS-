@@ -1774,7 +1774,7 @@ contains
     if (itfsup == 1) qss = qss + 2.0D0*tfsai
 
     !  Nuclear heating of TF coils (W) (zero if resistive)
-    if(inuclear==0) qnuc = 1.0D6 * ptfnuc
+    if(inuclear==0.and.itfsup == 1) qnuc = 1.0D6 * ptfnuc
     ! Issue #511: if inuclear = 1 then qnuc is input.
 
     !  AC losses

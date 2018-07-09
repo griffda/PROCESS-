@@ -12,16 +12,16 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : /home/smuldrew/process/727-CuTF/process.exe
+   Program : ./process.exe
    Version : 1.0.13   Release Date :: 2018-04-19
-   Tag No. : "1.0.13-371-geb19615"
-   Last commit message : "Made tfacpd an output for resistive TF coils"
+   Tag No. : "1.0.13-389-ga56db6f"
+   Last commit message : "Enabled SC PF coils for ST"
       User : smuldrew
- Directory : /home/smuldrew/process/727-CuTF/test_suite/test_files/FNSF
+ Directory : /home/smuldrew/process/test_reset/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.13 : Run on 25 Jun 2018  8:32:49 +01:00(hh:mm) UTC by G0764
+ PROCESS 1.0.13 : Run on  3 Jul 2018  8:17:54 +01:00(hh:mm) UTC by G0764
  Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  FNSF (Menard et al. 2016)
  (Please include this header in any models, presentations and papers based on these results)
@@ -1258,6 +1258,7 @@ tdwell   = 100.0    *Time between pulses in a pulsed reactor (s)
 
 blnkith  = 0.0      *Inboard blanket thickness (m)
 blnkoth  = 0.7      *Outboard blanket thickness (m)
+ddwi     = 0.0      *Vacuum vessel thickness (m)
 gapds    = 0.0      *Gap between inboard vacuum vessel and thermal shield (m)
 gapomin  = 0.0      *Minimum gap between outboard vacuum vessel and TF coil (m)
 iprecomp = 0        *Switch for existence of central solenoid pre-compression structure (0: no pre-compression structure)
