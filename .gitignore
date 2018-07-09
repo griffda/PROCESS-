@@ -8,6 +8,7 @@
 *.lof
 /test_suite/*.xunit
 /test_suite/test_area/*
+/test_suite/test_files/*
 /test_suite/test_area/
 /build/*
 *__pycache__
