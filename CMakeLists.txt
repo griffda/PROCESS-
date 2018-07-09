@@ -6,7 +6,6 @@ include(${CMAKE_ROOT}/Modules/CMakeDetermineCompiler.cmake)
 project(PROCESS)
 # enable Fortran
 enable_language(Fortran)
-find_package(MPI REQUIRED)
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
  message(STATUS, "Intel ")
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL PGI)
