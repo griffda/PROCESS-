@@ -1,6 +1,23 @@
 cmake_minimum_required(VERSION 3.5)
 # Specify the minimum version for CMake
 #set(CMAKE_VERBOSE_MAKEFILE on)
+include(${CMAKE_ROOT}/Modules/CMakeDetermineCompiler.cmake)
+# Project's name
+project(PROCESS)
+# enable Fortran
+enable_language(Fortran)
+find_package(MPI REQUIRED)
+if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+ message(STATUS, "Intel ")
+elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL PGI)
+message( FATAL_ERROR "Please unload pgi(module unload pgi) and load gfortran (module load gfortran) " )
+elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
+execute_process(COMMAND gfortran --version OUTPUT_VARIABLE GFORT_COMPILER_VERSION)
+ message(STATUS, ${GFORT_COMPILER_VERSION})
+#
+else()
+message( FATAL_ERROR "Unrecognized compiler. Please use  gfortran, ifort" )
+endif()
 
 set(FORT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/source/fortran)
 set(DOC_DIR ${CMAKE_SOURCE_DIR}/documentation)
@@ -17,7 +34,7 @@ elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
  set(FORTRAN gfortran)
  set(CMAKE_Fortran_COMPILER /usr/bin/gfortran)
 # Now define Fortran compiler flags
- add_definitions("-cpp -g -fbounds-check -Wconversion -Wunused-dummy-argument -Wunused-parameter")
+# add_definitions("-cpp -g -fbounds-check -Wconversion -Wunused-dummy-argument -Wunused-parameter")
 # set(ENV{FC} /usr/bin/gfortran)
 endif()
 #
@@ -26,13 +43,25 @@ find_program(CMAKE_CXX_COMPILER NAMES $ENV{CXX} g++ PATHS ENV PATH NO_DEFAULT_PA
 #find_program(CMAKE_Fortran_COMPILER NAMES $ENV{FC} gfortran PATHS ENV PATH NO_DEFAULT_PATH)
 #add_compile_options(-std=c++11)
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,/usr/local/lib64")
+#message(STATUS $ENV{PATH})
+#message(STATUS, ${CMAKE_CXX_COMPILER_ID})
+if ("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU")
+  # using GCC
+ message(STATUS, "GNU GFORTRAN ")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+  # using Intel C++
+ message(STATUS, "Intel ")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  # using Visual Studio C++
+ message(STATUS, "MSVC ")
+endif()
 
 set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} ${bounds}")
-set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${dialect} -cpp -g -fbounds-check -Wconversion -Wunused-dummy-argument -Wunused-parameter")
-# Project's name
-project(PROCESS)
-# enable Fortran
-enable_language(Fortran)
+#set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${dialect} -cpp -g -fbounds-check -Wconversion -Wunused-dummy-argument -Wunused-parameter")
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fbounds-check -Wconversion -Wunused-dummy-argument -Wunused-parameter")
+
+message("Fortran compiler used in this build will be -> ${CMAKE_Fortran_COMPILER_ID}")  # Must be after project(project_name)
+message("Fortran FLags are -> ${CMAKE_Fortran_FLAGS}")  # Must be after project(project_name)
 # The version number.
 set (process_VERSION_MAJOR 1)
 set (process_VERSION_MINOR 0)
