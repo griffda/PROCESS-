@@ -369,8 +369,6 @@ contains
       write(*,*) 'nped =', nped, ' nsep =', nsep
       write(*,*) 'nav =', nav, ' ncore =', ncore
       call report_error(212)
-    else if (ncore<nped) then
-      call report_error(213)
     end if
 
   end function ncore
