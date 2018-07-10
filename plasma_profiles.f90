@@ -338,10 +338,11 @@ contains
     !+ad_desc  This routine calculates the central density
     !+ad_desc  of a pedestalised profile.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  07/10/13 RK  First draft of routine
     !+ad_hist  19/12/13 HL  Separate function
     !+ad_hist  19/02/14 PJK First version within PROCESS
+    !+ad_hist  10/07/18 SIM Added error reporting
     !+ad_stat  Okay
     !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !
@@ -362,6 +363,15 @@ contains
          + nsep*(1.0D0 + alphan)*(-2.0D0 + rhopedn + rhopedn**2) &
          - nped*( (1.0D0 + alphan)*(1.0D0 + rhopedn) + &
          (alphan - 2.0D0)*rhopedn**2 ) )
+
+    if (ncore<0.0D0) then
+      write(*,*) 'Error in ncore: negative central density'
+      write(*,*) 'nped =', nped, ' nsep =', nsep
+      write(*,*) 'nav =', nav, ' ncore =', ncore
+      stop
+    else if (ncore<nped) then
+      call report_error(212)
+    end if
 
   end function ncore
 
