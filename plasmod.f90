@@ -217,10 +217,6 @@ contains
        inp0%contrpovs = plasmod_contrpovs !control power in Paux/lateral_area (MW/m2)
        inp0%contrpovr = plasmod_contrpovr !control power in Paux/R (MW/m)
 
-       !Iterations variables for PLASMOD - see issue #658
-       inp0%fcdp        = plasmod_fcdp !(P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power (PROCESS iteration variable 147)
-       comp%fcoreraditv = plasmod_fradc !Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad) (PROCESS iteration variable 148)
-
        ! qdivt should be equal to qtargettotal /5.0e6/ if using the
        ! Kallenbach model at the same time
        ! This needs to be implemented when coupling to the Kallenbach model!
@@ -264,6 +260,10 @@ contains
     !fvsbrnni can be an iteration variable!
     inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
+    !Iterations variables for PLASMOD - see issue #658
+    inp0%fcdp        = plasmod_fcdp !(P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power (PROCESS iteration variable 147)
+    comp%fcoreraditv = plasmod_fradc !Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad) (PROCESS iteration variable 148)
+    
     !Note that this is only a correct input on the second iteration!
     inp0%fpion = fpion ! Fraction of neutral beam energy to ions
 
@@ -567,10 +567,6 @@ contains
     fvsbrnni = mhd%f_ni
     facoh = max(1.0D-10, (1.-mhd%f_ni))
     faccd = max(0., mhd%f_ni - bootipf )
-
-    !Iterations variables for PLASMOD - see issue #658
-    plasmod_fcdp  = inp0%fcdp !(P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power (PROCESS iteration variable 147)
-    plasmod_fradc = comp%fcoreraditv !Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad) (PROCESS iteration variable 148)
 
     !mhd%q_sep !q at separatrix
     !mhd%vloop !loop voltage in V ! Check this is consistent with our volt-seconds requirements routine in physics.f90
