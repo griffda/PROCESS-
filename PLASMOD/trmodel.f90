@@ -52,7 +52,7 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
 !below: choice of model
 
 
-  if (i_modeltype.eq.1) then !this model assumes that H factor is give. Shape of coefficients is similar to TGLF, however can be improved a bit
+  if (i_modeltype.eq.1.or.i_modeltype.eq.555) then !this model assumes that H factor is give. Shape of coefficients is similar to TGLF, however can be improved a bit
 
 	cgbohm=3.236*y0(:,2)**(1.5d0)*sqrt(AMJ)/(btor**2.*rmajor) !gB factor
 

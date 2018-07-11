@@ -934,11 +934,18 @@ yllama=1.d0
 	i_flag=0
 	return
 	endif
-!these chies are used only by transport model 0
 
-	if (i_modeltype.ne.1) then 
+!these chies are used only by transport model 0
+		if (i_modeltype.ne.1.and.i_modeltype.ne.555) then 
 	 chifac0=1.d0  ! transport model gives H in output
 	else
+
+	if (i_modeltype.eq.555) then
+		Hfactor = 0.95*(teb/5.5)**0.39*(neb/6.)**0.15
+	endif
+
+!write(*,*) teb,Hnow,Hfactor,Psep,cxe,q_heat
+
   chifac0=max(0.01,chifac0+num%dt*(Hnow-Hfactor)/(1.+num%dt)) !imodeltype = 1: rescale transport to match H factor in input
 	endif
 
@@ -1342,12 +1349,13 @@ dum2=min(dum2,comp%psep_r*rpmajor)
 	
 
 
-if (dum2.lt.1.d6.and.comp%fcoreraditv.lt.0.d0) then !do the calculation
+if (dum2.lt.1.d6.and.comp%fcoreraditv.lt.0.) then !do the calculation
 		cxe=max(0.,cxe+inp0%cxe_psepfac*(Psep-dum2)/dum2*num%dt/(1.+num%dt))
  if (q_heat.gt.0.) cxe=0.d0
 endif
 
-if (comp%fcoreraditv.ge.0.d0) then !if fcoreraditv is given , replace the above with this one
+if (comp%fcoreraditv.ge.0.) then !if fcoreraditv is given , replace the above with this one
+			dum2=PLH*comp%psepplh_inf
  		cxe=max(0.,cxe+inp0%cxe_psepfac*(comp%fcoreraditv*(psepxe-dum2)/dum2-plinexe/dum2)*num%dt/(1.+num%dt))
  if (q_heat.gt.0.) cxe=0.d0
 endif
@@ -1364,6 +1372,11 @@ endif
 		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+& 
 		& inp0%qnbi_psepfac*(vloop-inp0%V_loop)*num%dt/(1.+num%dt)))
 	endif
+
+
+!	write(*,*) q_cd,cxe,Psep/PLH,Psep*btor/q_95/geom%A/rpmajor,fcd+fbs, & 
+!	& (inp0%pheatmax-q_heat-q_fus-inp0%q_control),psepxe,dum2,plinexe
+
 
 !constraint: pfusion target
 	if (inp0%pfus.gt.0.) then
