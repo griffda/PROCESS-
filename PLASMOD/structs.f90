@@ -19,6 +19,8 @@ module structs
       integer :: isiccir=0
 						integer :: isawt=1
 						integer :: iprocess=1
+						integer :: ifcoreraditv=0  !if 1, uses fcoreraditv as criterion on Xe
+						integer :: ifcdp=0         !if 1, uses fcdp as criterion on q_cd
     end type numerics_transp  
 
 
