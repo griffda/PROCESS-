@@ -99,7 +99,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 146
+  integer, parameter :: ipnvars = 148
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 77
   !+ad_vars  ipnfoms FIX : number of available figures of merit
@@ -661,7 +661,11 @@ module numerics
        !+ad_varc  <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density
        'fgwped        ', &
        !+ad_varc  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)</UL>
-       'fnesep        ' &
+       'fnesep        ', &
+       !+ad_varc  <LI> (147) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power</UL>
+       'plasmod_fcdp  ', &
+       !+ad_varc  <LI> (148) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)</UL>
+       'plasmod_fradc ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -825,7 +829,9 @@ module numerics
        0.001D0, &  !  143
        0.001D0, &  !  144
        0.500D0, &  !  145
-       0.001D0 &   !  146
+       0.001D0, &  !  146
+       0.000D0, &  !  147
+       0.000D0 &   !  148
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -976,7 +982,9 @@ module numerics
        1.000D0, &  !  143
        1.000D0, &  !  144
        1.000D0, &  !  145
-       1.000D0  &  !  146
+       1.000D0, &  !  146
+       1.000D0, &  !  147
+       1.000D0 &   !  148
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

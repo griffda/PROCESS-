@@ -935,6 +935,10 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_pfus = 0.0d0
   !+ad_vars  plasmod_eccdeff /0.3d0/ :: current drive multiplier: CD = eccdeff*PCD*TE/NE (not in use yet)
   real(kind(1.0D0)) :: plasmod_eccdeff = 0.3d0
+  !+ad_vars  plasmod_fcdp /-1.0d0/ :: (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power (iteration variable 147)
+  real(kind(1.0D0)) :: plasmod_fcdp = -1.0d0
+  !+ad_vars  plasmod_fradc /-1.0d0/ :: Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad) (iteration variable 148)
+  real(kind(1.0D0)) :: plasmod_fradc = -1.0d0
   !+ad_vars  plasmod_pech /0.0d0/ :: ech power (not in use yet)
   real(kind(1.0D0)) :: plasmod_pech = 0.0d0
   !+ad_vars  plasmod_gamcdothers /1.0d0/ :: efficiency multiplier for non-CD heating. If 0.0 pheat treated as if it had no current drive associated

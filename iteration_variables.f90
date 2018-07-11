@@ -91,6 +91,7 @@ subroutine loadxc
   use numerics
   use pfcoil_variables
   use physics_variables
+  use plasmod_variables
   use pulse_variables
   use stellarator_variables
   use tfcoil_variables
@@ -262,7 +263,9 @@ subroutine loadxc
      case (144) ; xcm(i) = fnesep
      case (145) ; xcm(i) = fgwped
      case (146) ; xcm(i) = fcpttf
-
+     case (147) ; xcm(i) = plasmod_fcdp
+     case (148) ; xcm(i) = plasmod_fradc
+        
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
         call report_error(54)
@@ -395,6 +398,7 @@ subroutine convxc(xc,nn)
   use numerics
   use pfcoil_variables
   use physics_variables
+  use plasmod_variables
   use rebco_variables
   use tfcoil_variables
   use times_variables
@@ -564,6 +568,8 @@ subroutine convxc(xc,nn)
      case (144) ; fnesep = xc(i)/scale(i)
      case (145) ; fgwped = xc(i)/scale(i)
      case (146) ; fcpttf = xc(i)/scale(i)
+     case (147) ; plasmod_fcdp = xc(i)/scale(i)
+     case (148) ; plasmod_fradc = xc(i)/scale(i)   
 
      case default
 
