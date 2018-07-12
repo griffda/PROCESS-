@@ -1374,7 +1374,7 @@ endif
 	endif
 
 
-!	write(*,*) q_cd,cxe,Psep/PLH,Psep*btor/q_95/geom%A/rpmajor,fcd+fbs, & 
+!	write(*,*) inp0%fcdp,q_cd,cxe,Psep/PLH,Psep*btor/q_95/geom%A/rpmajor,fcd+fbs, !& 
 !	& (inp0%pheatmax-q_heat-q_fus-inp0%q_control),psepxe,dum2,plinexe
 
 
