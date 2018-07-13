@@ -16,13 +16,8 @@ module global_variables
   !+ad_hist  23/07/14 PJK Added runtitle; modified icase
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
- 
 
   implicit none
-
   public
 
   !+ad_vars  icase : power plant type
@@ -307,7 +302,7 @@ module physics_variables
   real(kind(1.0D0)) :: fgwped = 0.85D0
   !+ad_vars  fgwsep /0.50/ : fraction of Greenwald density to set as separatrix density
   !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal>=1)
-  !+ad_varc                  Needs to be >0 if ipedestal = 3  
+  !+ad_varc                  Needs to be >0 if ipedestal = 3
   real(kind(1.0D0)) :: fgwsep = 0.50D0
 
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
@@ -418,7 +413,7 @@ module physics_variables
   !+ad_vars  ieped /0/ : switch for scaling pedestal-top temperature with plasma parameters:<UL>
   !+ad_varc             <LI> = 0 set pedestal-top temperature manually using teped;
   !+ad_varc             <LI> = 1 set pedestal-top temperature using EPED scaling;
-  !+ad_varc                   (PLASMOD implementation of scaling within PLASMOD, ipedestal =2,3) 
+  !+ad_varc                   (PLASMOD implementation of scaling within PLASMOD, ipedestal =2,3)
   !+ad_varc             <LI>    https://idm.euro-fusion.org/?uid=2MSZ4T </UL>
   integer :: ieped = 0
 
@@ -828,14 +823,14 @@ module plasmod_variables
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   use structs
-  
+
 
   implicit none
 
-  
+
   public
-  
- !Derived type numerics_transp 
+
+ !Derived type numerics_transp
   !+ad_vars  plasmod_tol /1.0d-10/ : tolerance to be reached at each time step (%)
   real(kind(1.0D0)) :: plasmod_tol = 1.0d-10
   !+ad_vars  plasmod_dtmin /0.05d0/ : min time step
@@ -879,7 +874,7 @@ module plasmod_variables
 
   !+ad_vars  plasmod_isawt /1/ : 0 - no sawteeth, 1 - solve with sawteeth.
   integer :: plasmod_isawt = 1
-  
+
   !+ad_vars  plasmod_nx /41/ : number of interpolated grid points
   integer :: plasmod_nx = 41
   !+ad_vars  plasmod_nxt /7/ : number of solved grid points
@@ -890,7 +885,7 @@ module plasmod_variables
   !+ad_varc  1 - fixed concentration at pedestal top, then fixed density.
   integer :: plasmod_i_impmodel = 1
 
- !Derived type composition 
+ !Derived type composition
   !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 7.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
   !+ad_varc  (NOT used for Xe!)
   real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 7.0d0, 5.0d0, 1.0d0 /)
@@ -900,7 +895,7 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_qdivt = 0.0d0
   !+ad_vars  plasmod_imptype(3) /14, 13, 9/ : Impurities: element 1 - intrinsic impurity, element 2 - Psep control, element 3 - seeding for SOL (defaults: W, Xe, Ar)
   integer, dimension(3) :: plasmod_imptype = (/ 14, 13, 9 /)
-  
+
  !Derived type inputs
   !+ad_vars  plasmod_qnbi_psepfac /50.0d0/ : dqnbi/d(1-Psep/PLH)
   real(kind(1.0D0)) :: plasmod_qnbi_psepfac = 50.0d0
@@ -953,13 +948,13 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_spellet = 0.0d0
   !+ad_vars  plasmod_fpellet /0.5d0/ :: pellet frequency in Hz
   real(kind(1.0D0)) :: plasmod_fpellet = 0.5d0
-  
+
   !Derived type pedestal
   !+ad_vars  plasmod_pedscal /1.0d0/ :: multiplication factor of the pedestal scaling in PLASMOD
   !+ad_varc                             can be used to scan the pedestal height.
   real(kind(1.0D0)) :: plasmod_pedscal = 1.0d0
 
-  
+
   !+ad_vars  geom ::  Derived type containing all geometry information for PLASMOD
   type (geometry) :: geom
   !+ad_vars  comp ::  Derived type containing all composition information for PLASMOD
@@ -979,7 +974,7 @@ module plasmod_variables
   !+ad_vars  i_flag ::  Error flag for PLASMOD
   integer :: i_flag
 
-  
+
 end module plasmod_variables
 
 
@@ -2232,13 +2227,13 @@ module tfcoil_variables
   !+ad_vars  acs : Area of space inside conductor (m2)
   real(kind(1.0D0)) :: acs
 
-  !+ad_vars  cdtfleg : TF outboard leg current density (A/m2) (resistive coils only)                  
+  !+ad_vars  cdtfleg : TF outboard leg current density (A/m2) (resistive coils only)
   real(kind(1.0D0)) :: cdtfleg = 0.0D0
   !+ad_vars  cforce : centering force on inboard leg (per coil) (N/m)
   real(kind(1.0D0)) :: cforce = 0.0D0
   !+ad_vars  cph2o /4180.0/ FIX : specific heat capacity of water (J/kg/K)
   real(kind(1.0D0)) :: cph2o = 4180.0D0
-  
+
   !+ad_vars  cpttf /7.0e4/ : TF coil current per turn (A).
   !+ad_varc                  (calculated for stellarators)
   !+ad_varc                  (calculated for integer-turn TF coils i_tf_turns_integer=1)
@@ -2328,13 +2323,13 @@ module tfcoil_variables
   real(kind(1.0D0)) :: jwdgpro = 0.0D0
   !+ad_vars  jwptf : winding pack current density (A/m2)
   real(kind(1.0D0)) :: jwptf = 0.0D0
-  
+
   !+ad_vars  n_pancake /10/ : Number of pancakes in TF coil (i_tf_turns_integer=1)
   integer :: n_pancake = 10
 
   !+ad_vars  n_layer /20/ : Number of layers in TF coil (i_tf_turns_integer=1)
   integer :: n_layer = 20
-  
+
   !+ad_vars  oacdcp /1.4e7/ : overall current density in TF coil inboard legs (A/m2)
   !+ad_varc                   (iteration variable 12)
   real(kind(1.0D0)) :: oacdcp = 1.4D7
@@ -2857,7 +2852,7 @@ module heat_transport_variables
   !+ad_vars  crypmw : cryogenic plant power (MW)
   real(kind(1.0D0)) :: crypmw = 0.0D0
 
-  !+ad_vars  etatf /0.9/ : AC to resistive power conversion for TF coils             
+  !+ad_vars  etatf /0.9/ : AC to resistive power conversion for TF coils
   real(kind(1.0D0)) :: etatf = 0.9D0
   !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency
   !+ad_varc                 if secondary_cycle=2; otherwise calculated
@@ -3240,7 +3235,7 @@ module build_variables
   !+ad_varc                    (iteration variable 91)
   real(kind(1.0D0)) :: blbuoth = 0.465D0
   !+ad_vars  blnkith /0.115/ : inboard blanket thickness (m);
-  !+ad_varc                    (calculated if blktmodel > 0) 
+  !+ad_varc                    (calculated if blktmodel > 0)
   !+ad_varc                    (=0.0 if iblnkith=0)
   real(kind(1.0D0)) :: blnkith = 0.115D0
   !+ad_vars  blnkoth /0.235/ : outboard blanket thickness (m);
@@ -4516,4 +4511,3 @@ module rebco_variables
           !real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
       end type
     end module resistive_materials
-    

@@ -74,7 +74,7 @@ real(kind(1.0D0)), private :: tf_fit_y
 ! Current in each TF coil
 real(kind(1.0D0)) :: tfc_current
 
-! Total cross-sectional area of winding pack including 
+! Total cross-sectional area of winding pack including
 ! GW insulation and insertion gap [m2]
 real(kind(1.0D0)), private :: awpc
 
@@ -190,17 +190,17 @@ subroutine sctfcoil(outfile,iprint)
 
     !  Local variables
     integer :: peaktfflag
-    
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     call tf_coil_geometry
-    
+
     if (i_tf_turns_integer == 1) then
         call tf_integer_winding_pack(outfile, iprint)
     else
         call tf_winding_pack(outfile, iprint)
     end if
-    
+
     call tf_field_and_force
 
     call coilshap
@@ -315,7 +315,7 @@ subroutine tf_winding_pack(outfile, iprint)
 
     ! Local variables
     !----------------
-    
+
     ! Rounded corner radius
     real(kind(1.0D0)) :: rbcndut
 
@@ -378,7 +378,7 @@ subroutine tf_winding_pack(outfile, iprint)
     ! Radius of rounded corners of cable space inside conduit [m]
     rbcndut = thwcndut * 0.75D0
 
-    ! Dimension of square cross-section of each turn 
+    ! Dimension of square cross-section of each turn
     ! including inter-turn insulation [m]
     leno = sqrt(cpttf / jwptf)
 
@@ -453,7 +453,7 @@ subroutine tf_integer_winding_pack(outfile, iprint)
 
     ! Arguments
     !----------
-    
+
     integer, intent(in) :: outfile, iprint
 
     ! Local variables
@@ -636,7 +636,7 @@ subroutine tf_field_and_force()
     ! Radial position of peak toroidal field (assuming axisymmetry) [m]
     ! (assumed to be at the outer edge of the winding pack)
     rbmax = r_tf_outer - casthi
-    
+
     ! Peak toroidal field (excluding ripple) [T]
     bmaxtf = 2.0D-7 * ritfc / rbmax
 
@@ -699,7 +699,7 @@ subroutine tf_coil_area_and_masses()
     ! Steel conduit (sheath) mass [kg]
     whtconsh = tfleng * turnstf * acndttf * denstl
 
-    ! Conduit insulation mass [kg] 
+    ! Conduit insulation mass [kg]
     ! (aiwp already contains turnstf)
     whtconin = tfleng * aiwp * dcondins
 
@@ -944,7 +944,7 @@ subroutine stresscl
     ! Tresca stress using CEA calculation [Pa]
     s_tresca_cond_cea = 1.02D0*abs(sigrcon) + 1.6D0*sigvert
 
-    if (i_tf_tresca == 1) then 
+    if (i_tf_tresca == 1) then
         ! Use CEA adjusted stress
         strtf1 = s_tresca_cond_cea
     else
@@ -1683,7 +1683,7 @@ subroutine outtf(outfile, peaktfflag)
             call ocmmnt(outfile, 'Simple one-phase quench model is used')
         endif
     end select
-    
+
     call osubhd(outfile,'Conductor Information :')
     if (i_tf_turns_integer == 1) then
         call ovarre(outfile, 'Radial width of conductor (m)', '(t_conductor_radial)', t_conductor_radial, 'OP ')
@@ -1735,10 +1735,10 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Winding toroidal width 1 (m)','(wwp1)',wwp1, 'OP ')
         call ovarre(outfile,'Winding toroidal width 2 (m)','(wwp2)',wwp2, 'OP ')
     end if
-    
+
     call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
     call ovarre(outfile,'Winding pack insertion gap (m)','(tfinsgap)',tfinsgap)
-    
+
     if (i_tf_turns_integer == 1) then
         call ovarin(outfile, 'Number of TF pancakes', '(n_pancake)', n_pancake)
         call ovarin(outfile, 'Number of TF layers', '(n_layer)', n_layer)
@@ -1785,7 +1785,7 @@ subroutine outtf(outfile, peaktfflag)
         !thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
         call oblnkl(outfile)
     end if
-    
+
     if (tfc_model == 0) then
         call osubhd(outfile,'TF Coil Stresses (solid copper coil model) :')
     else
@@ -2206,7 +2206,7 @@ contains
 
             call oblnkl(outfile)
             call ocmmnt(outfile,'Cable information')
-			call ovarre(outfile,'Area of central copper bar, as a fraction of cable space', '(copper_bar)', copper_bar)
+            call ovarre(outfile,'Area of central copper bar, as a fraction of cable space', '(copper_bar)', copper_bar)
             call ovarre(outfile,'Area of helium coolant, as a fraction of cable space', &
                                  '(cable_helium_fraction)', cable_helium_fraction)
             call ovarrf(outfile,'Number of CroCo strands in the cable ','(conductor%number_croco)',&
@@ -2259,10 +2259,10 @@ contains
 
         call ovarre(outfile,'Minimum allowed temperature margin in superconductor (K)','(tmargmin_tf)',tmargmin_tf)
         call ovarre(outfile,'Actual temperature margin in superconductor (K)','(tmarg)',tmarg, 'OP ')
-        ! call ovarre(outfile,'Temperature margin using secant solver (K)','(tmarg2)',tmarg2, 'OP ')		
-		if (isumat == 6) then
-			call ovarre(outfile,'Current sharing temperature (K)','(current_sharing_t)',current_sharing_t, 'OP ')
-		end if			
+        ! call ovarre(outfile,'Temperature margin using secant solver (K)','(tmarg2)',tmarg2, 'OP ')
+        if (isumat == 6) then
+            call ovarre(outfile,'Current sharing temperature (K)','(current_sharing_t)',current_sharing_t, 'OP ')
+        end if
         call ovarre(outfile,'Critical current (A)','(icrit)',icrit, 'OP ')
         call ovarre(outfile,'Actual current (A)','(cpttf)',cpttf, 'OP ')
         call ovarre(outfile,'Actual current / critical current','(iooic)', iooic, 'OP ')

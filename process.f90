@@ -1514,6 +1514,7 @@ subroutine output(outfile)
   ! Arguments
 
   integer, intent(in) :: outfile
+  logical :: verbose_logical
 
   ! Local variables
 
@@ -1593,15 +1594,19 @@ subroutine output(outfile)
 
   ! Divertor Model !
   !!!!!!!!!!!!!!!!!!
-
+  if(verbose==1) then
+      verbose_logical = .true.
+  else
+      verbose_logical = .false.
+  endif
   call ovarin(mfile, 'kallenbach_switch','(kallenbach_switch)', kallenbach_switch)
   if(Kallenbach_switch.eq.1) then
     call divertor_Kallenbach(rmajor=rmajor,rminor=rminor, &
       bt=bt,plascur=plascur, bvert=bvert,q=q, &
-      verboseset=.false.,  &
+      verboseset=verbose_logical,  &
       Ttarget=Ttarget,qtargettotal=qtargettotal,            &
       targetangle=targetangle,lcon_factor=lcon_factor, netau_in=netau, &
-      unit_test=.false.,abserrset=1.d-5,  &
+      unit_test=.false.,  &
       bp = bp,   &
       psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
       outfile=nout,iprint=1 )

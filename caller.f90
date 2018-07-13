@@ -134,6 +134,7 @@ subroutine caller(xc,nvars)
 
   real(kind(1.0D0)), dimension(ipnvars), intent(in) :: xc
   integer, intent(in) :: nvars
+  logical :: verbose_logical
 
   !  Local variables
 
@@ -178,14 +179,14 @@ subroutine caller(xc,nvars)
   call physics
 
   !call build subroutines again if PLASMOD used, issue #650
-  if (ipedestal == 3) then   
+  if (ipedestal == 3) then
      ! Radial build
      call radialb(nout,0)
-     
+
      ! Vertical build
      call vbuild(nout,0)
   endif
-  
+
   ! startup model (not used) !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -238,6 +239,11 @@ subroutine caller(xc,nvars)
 
   ! Divertor Model !
   !!!!!!!!!!!!!!!!!!
+  if(verbose==1) then
+      verbose_logical = .true.
+  else
+      verbose_logical = .false.
+  endif
 
   ! New divertor model
   if(kallenbach_switch.eq.1) then
@@ -245,10 +251,10 @@ subroutine caller(xc,nvars)
     call divertor_Kallenbach(rmajor=rmajor,rminor=rminor, &
         bt=bt,plascur=plascur,                                &
         bvert=bvert,q=q,                                      &
-        verboseset=.false.,                                   &
+        verboseset=verbose_logical,                                   &
         Ttarget=Ttarget,qtargettotal=qtargettotal,            &
         targetangle=targetangle,lcon_factor=lcon_factor, &
-        netau_in=netau,unit_test=.false.,abserrset=1.d-5,     &
+        netau_in=netau,unit_test=.false.,     &
         bp = bp,   &
         psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
         outfile=nout,iprint=0 )

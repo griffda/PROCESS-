@@ -599,6 +599,7 @@ subroutine wstsc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     scalefac = 1.0D6
 
     jcrit = jc1 * jc2 * jc3*scalefac
+    write(*,*)jc1 , jc2 , jc3 , scalefac
 
 end subroutine wstsc
 !--------------------------------------------------------------------------
@@ -613,7 +614,7 @@ subroutine croco(jcritsc,croco_strand,conductor)
     real(kind(1.0D0)), intent(in) ::jcritsc
     type(volume_fractions), intent(inout)::conductor
     type(supercon_strand), intent(inout)::croco_strand
-    
+
     ! Properties of a single strand
     tape_thickness = rebco_thickness + copper_thick + hastelloy_thickness
     stack_thickness = sqrt(croco_id**2 - tape_width**2)
@@ -636,16 +637,16 @@ subroutine croco(jcritsc,croco_strand,conductor)
     conductor%copper_fraction = conductor%copper_area / conductor%area
 
     ! Helium area is set by the user.
-	conductor%helium_area = cable_helium_fraction * conductor%acs 
+	conductor%helium_area = cable_helium_fraction * conductor%acs
     conductor%helium_fraction = conductor%helium_area / conductor%area
-	
-	conductor%hastelloy_area = hastelloy_area * conductor%number_croco    
+
+	conductor%hastelloy_area = hastelloy_area * conductor%number_croco
     conductor%hastelloy_fraction = conductor%hastelloy_area / conductor%area
-	
-	conductor%solder_area = solder_area * conductor%number_croco    
+
+	conductor%solder_area = solder_area * conductor%number_croco
     conductor%solder_fraction = conductor%solder_area / conductor%area
-	
-	conductor%rebco_area = rebco_area * conductor%number_croco    
+
+	conductor%rebco_area = rebco_area * conductor%number_croco
     conductor%rebco_fraction = conductor%rebco_area / conductor%area
 
 end subroutine croco

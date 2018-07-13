@@ -1970,6 +1970,11 @@ contains
     integer :: lap
     real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,jcrit0,jcritm, &
          jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp
+    real(kind(1.0D0)) :: current_sharing_t
+    real(kind(1.0D0))::x1,x2         ! Initial guesses for temperature
+    logical::error                   ! True if the solver does not converge
+    real(kind(1.0D0))::residual      ! Residual current density error
+    real(kind(1.0D0))::opt_tol = 1d7 ! Tolerance in current density
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2036,7 +2041,8 @@ contains
 
     !  Temperature margin (already calculated in bi2212 for isumat=2)
 
-    if (isumat /= 2) then
+    ! if (isumat /= 2) then
+    if ((isumat==1).or.(isumat==3).or.(isumat==4)) then
 
        !  Newton-Raphson method; start at requested minimum temperature margin
 
@@ -2067,23 +2073,48 @@ contains
              call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
           case (3)
              call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
+             write(*,*)'NbTi: ttest = ',ttest, '  jcrit0=', jcrit0, '  jsc=',jsc
              if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
              call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
              call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
-          case (5)
-             call wstsc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
-             if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-             call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
-             call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+        !   case (5)
+        !      call wstsc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+        !      write(*,*)'WST Nb3Sn: ttest = ',ttest, '  jcrit0=', jcrit0, '  jsc=',jsc
+        !      if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
+        !      call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+        !      call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
           end select
           ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
        end do solve_for_tmarg
 
        tmarg = ttest - thelium
+   end if
 
-    end if
+   ! MDK 13/7/18 Use secant solver for WST.  Newton method is not converging.
+   if(isumat==5) then
+       ! Current sharing temperature for WST Nb3Sn
+       x1 = 4d0  ! Initial values of temperature
+       x2 = 6d0
+       ! Solve for deltaj_wst = 0
+       call secant_solve(deltaj_wst,x1,x2,current_sharing_t,error,residual,opt_tol)
+       tmarg = current_sharing_t - thelium
+       write(*,*)'current_sharing_t=', current_sharing_t, '  tmarg=', tmarg
+   end if
 
-  end subroutine superconpf
+contains
+    ! These functions are required because secant_solve requires a function not a subroutine
+    ! They need to follow a 'contains' statement because 'jcrit0', 'bmax' and others
+    ! must be available but cannot be passed, because secant_solve requires
+    ! a function of one variable.
+
+    function deltaj_wst(temperature)
+        real(kind(1.0D0)), intent(in) :: temperature
+        real(kind(1.0D0))::deltaj_wst, jcrit0
+        call wstsc(temperature,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+        deltaj_wst = jcrit0 - jsc
+    end function deltaj_wst
+
+end subroutine superconpf
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
