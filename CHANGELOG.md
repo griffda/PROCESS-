@@ -13,6 +13,7 @@
 - Fixed issues when there is no inboard blanket (Issue #722 #732)
 - Fixed incorrect cross sectional area calculation in resistive TF coils (Issue #727)
 - Fixed constraint equations plot in diagnose_process.py (Issue #738)
+- Corrected units in resistive TF coil stress output
 
 ## Features
 

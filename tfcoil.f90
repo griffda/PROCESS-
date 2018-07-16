@@ -201,9 +201,9 @@ contains
        call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotf*tfno)',estotf*tfno)
        call ovarre(outfile,'Vertical force on inboard leg (N)','(vforce)',vforce)
        call ovarre(outfile,'Centering force on inboard leg (N/m)','(cforce)',cforce)
-       call ovarre(outfile,'Radial stress (Pa)','(sigrad)',sigrad)
-       call ovarre(outfile,'Transverse stress (Pa)','(sigtan)',sigtan)
-       call ovarre(outfile,'Vertical stress (Pa)','(sigver)',sigver)
+       call ovarre(outfile,'Radial stress (MPa)','(sigrad)',sigrad)
+       call ovarre(outfile,'Transverse stress (MPa)','(sigtan)',sigtan)
+       call ovarre(outfile,'Vertical stress (MPa)','(sigver)',sigver)
 
        call concoptf(outfile,iprint)
 
