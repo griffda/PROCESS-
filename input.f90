@@ -2580,7 +2580,7 @@ contains
                'Cost of heat transp system equip per loop ($/W)', icode)
        case ('uciac')
           call parse_real_variable('uciac', uciac, 1.0D7, 1.0D9, &
-               'Cost of instrum, control & diag.($/W)')
+               'Cost of instrum, control & diag.($)')
        case ('ucich')
           call parse_real_variable('ucich', ucich, 1.0D0, 10.0D0, &
                'Cost of ICH system ($/W)')
@@ -2589,7 +2589,7 @@ contains
                'LH system cost ($/W)')
        case ('ucme')
           call parse_real_variable('ucme', ucme, 1.0D7, 1.0D9, &
-               'Unit cost of maintenance equip. ($/W**0.3)')
+               'cost of maintenance equip. ($)')
        case ('ucmisc')
           call parse_real_variable('ucmisc', ucmisc, 1.0D7, 5.0D7, &
                'Miscellaneous plant allowance ($)')
