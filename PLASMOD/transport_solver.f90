@@ -110,7 +110,7 @@
   real(kind(1.0d0)) :: rtor, yd, betaz, lint,taue,Qtot
   real(kind(1.0d0)) :: Hfactor,chi00,chipow,Hnow,tau_scal,chifac,chifac0
   real(kind(1.0d0)) :: paion, NALPH,YVALP,YLLAME,yllami,yllama,YY6,YEPS,YVC, YY7,yv7 ,yv6 !fraction of D-T power deposited to ions, plus dummies
-  real(kind(1.0d0)) :: ts_alf,chepck,dum1,dum2,roc0,vloop0,fbs0,toleq0,pow_eq   !fraction of D-T power deposited to ions, plus dummies
+  real(kind(1.0d0)) :: ts_alf,chepck,dum1,dum2,dum31,roc0,vloop0,fbs0,toleq0,pow_eq   !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: aim1,aim2,aim3   !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: q_edge_in,f_ind_in,ip0 ,tepp0,tipp0,nepp0,fq  !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: elong95,trianpg95  !fraction of D-T power deposited to ions, plus dummies
@@ -1355,8 +1355,8 @@ if (dum2.lt.1.d6.and.comp%fcoreraditv.lt.0.) then !do the calculation
 endif
 
 if (comp%fcoreraditv.ge.0.) then !if fcoreraditv is given , replace the above with this one
-			dum2=PLH*comp%psepplh_inf
- 		cxe=max(0.,cxe+inp0%cxe_psepfac*(comp%fcoreraditv*(psepxe-dum2)/dum2-plinexe/dum2)*num%dt/(1.+num%dt))
+			dum31=PLH*comp%psepplh_inf
+ 		cxe=max(0.,cxe+inp0%cxe_psepfac*(comp%fcoreraditv*(dum2-dum31)/dum31-(dum2-Psep)/dum31)*num%dt/(1.+num%dt))
  if (q_heat.gt.0.) cxe=0.d0
 endif
 
@@ -1374,8 +1374,8 @@ endif
 	endif
 
 
-!	write(*,*) inp0%fcdp,q_cd,cxe,Psep/PLH,Psep*btor/q_95/geom%A/rpmajor,fcd+fbs, !& 
-!	& (inp0%pheatmax-q_heat-q_fus-inp0%q_control),psepxe,dum2,plinexe
+!	write(*,*) inp0%fcdp,comp%fcoreraditv,q_cd,cxe,Psep/PLH,Psep*btor/q_95/geom%A/rpmajor,fcd+fbs, & 
+!	& (inp0%pheatmax-q_heat-q_fus-inp0%q_control),psepxe,dum31,dum2,plinexe
 
 
 !constraint: pfusion target
