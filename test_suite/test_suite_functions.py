@@ -47,7 +47,7 @@ def clean_test_dir():
     subprocess.call(["rm", "-rf", "test_area"])
 
     # create new test_area directory
-    subprocess.call(["mkdir", "test_area"])
+    subprocess.call(["mkdir","-p", "test_area"])
 
 
 def welcome_print(df, ars):
@@ -322,7 +322,7 @@ def copy_test_to_test_area(test_name, test_status, ars):
     """
 
     # make test case "test area" directory
-    subprocess.call(["mkdir", "test_area/{0}".format(test_name)])
+    subprocess.call(["mkdir", "-p", "test_area/{0}".format(test_name)])
 
     # copy output files to test case folders
 

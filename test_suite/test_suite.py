@@ -133,7 +133,6 @@ if __name__ == "__main__":
                         "test_files", type=str, default="test_files")
 
     ag = parser.parse_args()
-
     main(ag)
 
     # Make sure terminal returns to regular colours
