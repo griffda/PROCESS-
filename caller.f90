@@ -250,7 +250,7 @@ subroutine caller(xc,nvars)
 
     call divertor_Kallenbach(rmajor=rmajor,rminor=rminor, &
         bt=bt,plascur=plascur,                                &
-        bvert=bvert,q=q,                                      &
+        q=q,                                      &
         verboseset=verbose_logical,                                   &
         Ttarget=Ttarget,qtargettotal=qtargettotal,            &
         targetangle=targetangle,lcon_factor=lcon_factor, &

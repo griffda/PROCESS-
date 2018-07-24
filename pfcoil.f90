@@ -2082,7 +2082,7 @@ contains
        end do solve_for_tmarg
        tmarg = ttest - thelium
    end if
-   
+
 
    ! MDK 13/7/18 Use secant solver for NbTi.
    if(isumat==3) then
@@ -2092,11 +2092,13 @@ contains
        call secant_solve(deltaj_nbti,x1,x2,current_sharing_t,error,residual,1000d0)
        tmarg = current_sharing_t - thelium
        call jcrit_nbti(current_sharing_t ,bmax,c0,bc20m,tc0m,jcrit0,t)
-       write(*,'(a24, 10(a12,es12.3))')'NbTi: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
-                                   '  jsc=',jsc, '  jcrit0=',jcrit0,  '  residual=', residual
+       if(variable_error(current_sharing_t))then  ! current sharing secant solver has failed.
+           write(*,'(a24, 10(a12,es12.3))')'NbTi: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
+                                           '  jsc=',jsc, '  jcrit0=',jcrit0,  '  residual=', residual
+       end if
    end if
 
-   ! MDK 13/7/18 Use secant solver for WST.  Newton method is not converging.
+   ! MDK 13/7/18 Use secant solver for WST.
    if(isumat==5) then
        ! Current sharing temperature for WST Nb3Sn
        x1 = 4d0  ! Initial values of temperature
@@ -2105,8 +2107,10 @@ contains
        call secant_solve(deltaj_wst,x1,x2,current_sharing_t,error,residual,1000d0)
        tmarg = current_sharing_t - thelium
        call wstsc(current_sharing_t,bmax,strain,bc20m,tc0m,jcrit0,b,t)
-       write(*,'(a24, 10(a12,es12.3))')'WST: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
-                                 '  jsc=',jsc, '  jcrit0=',jcrit0, '  residual=', residual
+       if(variable_error(current_sharing_t))then  ! current sharing secant solver has failed.
+           write(*,'(a24, 10(a12,es12.3))')'WST: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
+                                           '  jsc=',jsc, '  jcrit0=',jcrit0, '  residual=', residual
+       end if
    end if
 
 contains
@@ -2119,6 +2123,10 @@ contains
         real(kind(1.0D0)), intent(in) :: temperature
         real(kind(1.0D0))::deltaj_nbti, jcrit0
         call jcrit_nbti(temperature,bmax,c0,bc20m,tc0m,jcrit0,t)
+        if(variable_error(jcrit0))then  ! jcrit_nbti has failed.
+            write(*,'(a24, 10(a12,es12.3))')'jcrit_nbti: ', 'bmax=', bmax, '  temperature=', temperature, &
+                                            '  jcrit0=',jcrit0
+        end if
         deltaj_nbti = jcrit0 - jsc
     end function deltaj_nbti
 
@@ -2126,6 +2134,10 @@ contains
         real(kind(1.0D0)), intent(in) :: temperature
         real(kind(1.0D0))::deltaj_wst, jcrit0
         call wstsc(temperature,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+        if(variable_error(jcrit0))then  ! wstsc has failed.
+            write(*,'(a24, 10(a12,es12.3))')'deltaj_wst: ', 'bmax=', bmax, '  temperature=', temperature, &
+                                            '  jcrit0=',jcrit0
+        end if
         deltaj_wst = jcrit0 - jsc
     end function deltaj_wst
 

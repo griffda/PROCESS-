@@ -432,14 +432,14 @@ subroutine bi2212(bmax,jstrand,tsc,fhts,jcrit,tmarg)
 
 end subroutine bi2212
 !------------------------------------------------------------------
-subroutine jcrit_nbti(thelium,bmax,c0,bc20max,tc0max,jcrit,tcrit)
+subroutine jcrit_nbti(temperature,bmax,c0,bc20max,tc0max,jcrit,tcrit)
 
     !+ad_name  jcrit_nbti
     !+ad_summ  Critical current density in a NbTi superconductor strand
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  thelium : input real : Coolant/SC temperature (K)
+    !+ad_args  temperature : input real : SC temperature (K)
     !+ad_args  bmax : input real : Magnetic field at conductor (T)
     !+ad_args  c0   : input real : Scaling constant (A/m2)
     !+ad_args  bc20max : input real : Upper critical field (T) for superconductor
@@ -450,10 +450,11 @@ subroutine jcrit_nbti(thelium,bmax,c0,bc20max,tc0max,jcrit,tcrit)
     !+ad_desc  This routine calculates the critical current density and
     !+ad_desc  temperature in superconducting TF coils using NbTi
     !+ad_desc  as the superconductor.
-    !+ad_prob  Results will be misleading unless bmax < bc20max, and
+    !+ad_prob  Results will only be valid if bmax < bc20max, and
     !+ad_prob  thelium is sufficiently low.
     !+ad_call  None
     !+ad_hist  09/10/14 PJK Initial version, taken from inline code in supercon
+    !+ad_hist  20/07/18 MDK Use inputs even if they are out of range.  Output is real but can be negative.
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -462,36 +463,45 @@ subroutine jcrit_nbti(thelium,bmax,c0,bc20max,tc0max,jcrit,tcrit)
     implicit none
 
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: thelium, bmax, c0, bc20max, tc0max
+    real(kind(1.0D0)), intent(in) :: temperature, bmax, c0, bc20max, tc0max
     real(kind(1.0D0)), intent(out) :: jcrit, tcrit
 
     !  Local variables
     real(kind(1.0D0)) :: bratio, tbar
-    ! ------------------
+    !-----------------------------------
+    bratio = bmax/bc20max
 
-    bratio = min(bmax/bc20max, 0.9999D0)  !  avoids NaNs below
+    if (bmax < bc20max) then
+        !  Critical temperature (K)
+        tcrit = tc0max * (1.0D0 - bratio)**0.59D0
+    else
+        ! Allow bmax > bc20max but set error flag
+        ! Fudge to give real (negative) value if bratio < 1
+        tcrit = tc0max * (1.0D0 - bratio)
+    end if
 
-    !  Critical temperature (K)
-
-    tcrit = tc0max * (1.0D0 - bratio)**0.59D0
-
-    tbar = max((1.0D0 - thelium/tcrit), 0.001D0)
+    ! Allow tbar to be negative but set error flag
+    tbar = 1.0D0 - temperature/tcrit
 
     !  Critical current density (A/m2)
-
     jcrit = c0 * (1.0D0 - bratio) * tbar
+
+    ! if ((temperature > tcrit).or.(bmax > bc20max))then
+    !     write(*,*)'jcrit_nbti: out of range: ', 'bmax =', bmax, ' bc20max =', bc20max, &
+    !               ' temperature =',temperature, ' tcrit =',tcrit
+    ! end if
 
 end subroutine jcrit_nbti
 !--------------------------------------------------------------------
 
-subroutine wstsc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
+subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 
     !+ad_name  wstsc
     !+ad_summ  Implementation of WST Nb3Sn critical surface implementation
     !+ad_type  Subroutine
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  thelium : input real : Coolant/SC temperature (K)
+    !+ad_args  temperature : input real : SC temperature (K)
     !+ad_args  bmax : input real : Magnetic field at conductor (T)
     !+ad_args  strain : input real : Strain in superconductor
     !+ad_args  bc20max : input real : Upper critical field (T) for superconductor
@@ -506,6 +516,7 @@ subroutine wstsc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     !+ad_prob  None
     !+ad_call  report_error
     !+ad_hist  22/02/17 JM  Initial version
+    !+ad_hist  23/07/18 MDK Output is always real, but can be negative, and always uses the input values given.
     !+ad_stat  Okay
     !+ad_docs  https://idm.euro-fusion.org/?uid=2MMDTG
     !
@@ -514,26 +525,21 @@ subroutine wstsc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     implicit none
 
     ! Arguments
-    real(kind(1.0D0)), intent(in) :: thelium, bmax, strain, bc20max, tc0max
+    real(kind(1.0D0)), intent(in) :: temperature, bmax, strain, bc20max, tc0max
     real(kind(1.0D0)), intent(out) :: jcrit, bcrit, tcrit
 
     ! Local variables
 
     ! Scaling constant C [AT/mm2]
     real(kind(1.0D0)), parameter :: csc = 83075.0D0
-
     ! Low field exponent p
     real(kind(1.0D0)), parameter :: p = 0.593D0
-
     ! High field exponent q
     real(kind(1.0D0)), parameter :: q = 2.156D0
-
     ! Strain fitting constant C_{a1}
     real(kind(1.0D0)), parameter :: ca1 = 50.06D0
-
     ! Strain fitting constant C_{a2}
     real(kind(1.0D0)), parameter :: ca2 = 0.0D0
-
     ! epsilon_{0,a}
     real(kind(1.0D0)), parameter :: eps0a = 0.00312D0
 
@@ -552,6 +558,7 @@ subroutine wstsc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     strfun = sqrt(epssh**2 + eps0a**2) - sqrt((strain-epssh)**2 + eps0a**2)
     strfun = strfun*ca1 - ca2*strain
     strfun = 1.0D0 + (1.0D0/(1.0D0 - ca1*eps0a))*strfun
+    if(strfun<0.d0)write(*,*)'subroutine wstsc: strfun<0.d0. Value =', strfun
 
     !  $B^*_{C2} (0,\epsilon)$
     bc20eps = bc20max*strfun
@@ -559,14 +566,15 @@ subroutine wstsc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     !  $T^*_C (0,\epsilon)$
     tc0eps = tc0max * strfun**(1.0D0/3.0D0)
 
-    !  Reduced temperature, restricted to be < 1
-    !  Should remain < 1 for thelium < 0.94*tc0max (i.e. 15 kelvin for isumattf=1)
+    !  Reduced temperature
+    !  Should remain < 1 for temperature < 0.94*tc0max (i.e. 15 kelvin for isumattf=1)
 
-    if (thelium/tc0eps >= 1.0D0) then
-        fdiags(1) = thelium ; fdiags(2) = tc0eps
+    if (temperature/tc0eps >= 1.0D0) then
+        fdiags(1) = temperature ; fdiags(2) = tc0eps
         call report_error(159)
     end if
-    t = min(thelium/tc0eps, 0.9999D0)
+    ! t = min(thelium/tc0eps, 0.9999D0)
+    t = temperature/tc0eps
 
     !  Reduced magnetic field at zero temperature
     !  Should remain < 1 for bmax < 0.83*bc20max (i.e. 27 tesla for isumattf=1)
@@ -575,31 +583,74 @@ subroutine wstsc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
         fdiags(1) = bmax ; fdiags(2) = bc20eps
         call report_error(160)
     end if
-    bzero = min(bmax/bc20eps, 0.9999D0)
 
-    !  Critical temperature (K)
-    tcrit = tc0eps * (1.0D0 - bzero)**(1.0D0/1.52D0)  !  bzero must be < 1 to avoid NaNs
+    ! bzero = min(bmax/bc20eps, 0.9999D0)
+    bzero = bmax/bc20eps
 
-    !  Critical field (T)
-    bcrit = bc20eps * (1.0D0 - t**1.52D0)
+    if (bzero < 1.0d0) then
+        !  Critical temperature (K)
+        tcrit = tc0eps * (1.0D0 - bzero)**(1.0D0/1.52D0)
+    else
+        ! Allow bzero > 1, fudge to give real (negative) value of tcrit
+        ! This generates a real (negative) and continuous (but not differentiable)
+        ! function of bzero.
+        tcrit = tc0eps
+    end if
+
+
+
+    !  Critical field (T). Negative if normalised temperature t>1
+    if(t>0.0d0)then
+        bcrit = bc20eps * (1.0D0 - t**1.52D0)
+    else
+        ! Allow t<0, fudge to give real value of bcrit
+        bcrit = bc20eps * (1.0D0 - t)
+    end if
 
     !  Reduced magnetic field, restricted to be < 1
     if (bmax/bcrit >= 1.0D0) then
         fdiags(1) = bmax ; fdiags(2) = bcrit
         call report_error(161)
     end if
-    bred = min(bmax/bcrit, 0.9999D0)
+    ! bred = min(bmax/bcrit, 0.9999D0)
+    bred = bmax/bcrit
+
+    if ((bred>0.0d0).and.(bred < 1.0d0)) then
+        jc3 = bred**p * (1.0D0-bred)**q  !  bred must be < 1 to avoid NaNs
+    else
+        ! Allow bred > 1 or <0, fudge to give real (negative) value of jc3
+        ! This generates a real (negative) and continuous (but not differentiable)
+        ! function of bred.
+        jc3 = bred * (1.0D0-bred)
+        if(variable_error(jc3))then
+            write(*,'(a24, 8(a12,es12.3))')'jc3 jcrit is NaN.',' bred=',bred, ' bmax=',bmax, ' bcrit=',bcrit, ' t=',t
+            stop
+        end if
+    end if
 
     !  Critical current density in superconductor (A/m2)
     jc1 = (csc/bmax)*strfun
-    jc2 = (1.0D0-t**1.52D0) * (1.0D0-t**2)  !  t must be < 1 to avoid NaNs
-    jc3 = bred**p * (1.0D0-bred)**q  !  bred must be < 1 to avoid NaNs
+
+    if(t>0.0d0)then
+        jc2 = (1.0D0-t**1.52D0) * (1.0D0-t**2)
+    else
+        ! Allow t<0, fudge to give real value of jc2
+        ! This generates a real and continuous (but not differentiable) function of t.
+        jc2 = (1.0D0-t) * (1.0D0-t**2)
+    end if
+
+    ! jc3 = bred**p * (1.0D0-bred)**q  !  bred must be < 1 to avoid NaNs
 
     ! scale from mm2 to m2
     scalefac = 1.0D6
 
     jcrit = jc1 * jc2 * jc3*scalefac
-    write(*,*)jc1 , jc2 , jc3 , scalefac
+    if(variable_error(jcrit))then
+        write(*,'(a24, 8(a12,es12.3))')'WST jcrit is NaN.',' jc1=',jc1, ' jc2=',jc2, ' jc3=',jc3, ' t=',t
+        write(*,'(a24, 8(a12,es12.3))')'T=',T,' bmax=',bmax,' strain=',strain,' bc20max=',bc20max, &
+                                       ' tc0max=',tc0max,'jcrit=',jcrit,' bcrit=',bcrit,' tcrit=', tcrit
+        stop
+    end if
 
 end subroutine wstsc
 !--------------------------------------------------------------------------
@@ -632,21 +683,21 @@ subroutine croco(jcritsc,croco_strand,conductor)
     ! Conductor properties
     conductor%number_croco = conductor%acs*(1d0-cable_helium_fraction-copper_bar)/croco_strand%area
     conductor%critical_current = croco_strand%critical_current * conductor%number_croco
-	conductor%copper_bar_area = copper_bar * conductor%acs
+    conductor%copper_bar_area = copper_bar * conductor%acs
     conductor%copper_area = copper_area * conductor%number_croco + conductor%copper_bar_area
     conductor%copper_fraction = conductor%copper_area / conductor%area
 
     ! Helium area is set by the user.
-	conductor%helium_area = cable_helium_fraction * conductor%acs
+    conductor%helium_area = cable_helium_fraction * conductor%acs
     conductor%helium_fraction = conductor%helium_area / conductor%area
 
-	conductor%hastelloy_area = hastelloy_area * conductor%number_croco
+    conductor%hastelloy_area = hastelloy_area * conductor%number_croco
     conductor%hastelloy_fraction = conductor%hastelloy_area / conductor%area
 
-	conductor%solder_area = solder_area * conductor%number_croco
+    conductor%solder_area = solder_area * conductor%number_croco
     conductor%solder_fraction = conductor%solder_area / conductor%area
 
-	conductor%rebco_area = rebco_area * conductor%number_croco
+    conductor%rebco_area = rebco_area * conductor%number_croco
     conductor%rebco_fraction = conductor%rebco_area / conductor%area
 
 end subroutine croco

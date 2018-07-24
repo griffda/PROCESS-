@@ -91,7 +91,7 @@ module divertor_ode
 
 contains
 
-  subroutine divertor_Kallenbach(rmajor,rminor,bt,plascur,bvert,q,verboseset,     &
+  subroutine divertor_Kallenbach(rmajor,rminor,bt,plascur,q,verboseset,     &
              ttarget,qtargettotal,targetangle,lcon_factor,netau_in,&
              unit_test,abserrset,  &
              bp, &
@@ -140,7 +140,7 @@ contains
     real(kind(1.0D0)), intent(in) :: plascur
 
     ! Vertical field at plasma [T] UNUSED
-    real(kind(1.0D0)), intent(in) :: bvert
+    ! real(kind(1.0D0)), intent(in) :: bvert
 
     ! Plasma safety factor near edge
     real(kind(1.0D0)), intent(in) :: q
@@ -215,8 +215,8 @@ contains
     ! Volume recombination energy (assumed to be lost as radiation) [eV]
     real(kind(1.0D0)) :: Evolrec
 
-    ! Ion sound speed near target [m/s]
-    real(kind(1.0D0)) :: cs0
+    ! Ion sound speed near target, and a value slightly less [m/s]
+    real(kind(1.0D0)) :: cs0, cs0minus
 
     ! Nominal neutral pressure at target [Pa]
     real(kind(1.0D0)) :: p0partflux
@@ -275,7 +275,7 @@ contains
     integer(kind=4) :: iwork(5)
 
     ! First step [m]
-    real(kind(1.0D0)) :: step0=0.0001
+    real(kind(1.0D0)) :: step0=0.0002
 
     ! Ratio between successive step sizes
     real(kind(1.0D0)) :: factor
@@ -459,9 +459,8 @@ contains
     !      abs ( local error ) <= abs ( y ) * relerr + abserr
     ! for each component of the local error and solution vectors.
     ! abserr is also used to cut off reactions involving neutrals at n0=abserr*1e20 m-3
-    abserr = 1.0D-4
-    relerr = 0.0D0
-
+    abserr = 1.0d-4
+    relerr = 1.0D-4
     ! Set absolute error level if input
     if (present(abserrset)) then
         abserr = abserrset
@@ -535,6 +534,8 @@ contains
 
     ! Sound speed [m/s]
     cs0 = sqrt(2.0D0*echarge*ttarget/mi)
+    ! To prevent division by zero at the target, insert a factor just less than 1.
+    cs0minus = cs0 * 0.98d0
 
     ! Chodura sheath width (m).  Sin psi taken = 1.
     ! Stangeby Equation 2.112
@@ -565,10 +566,10 @@ contains
     ! Mach=1 is assumed as boundary condition at the target
     ! This equation not stated explicitly in the paper.
     ! Plasma density near target [m-3]
-    nel0 = qtarget*sinfact/(gammasheath*echarge*ttarget*cs0)
+    nel0 = qtarget*sinfact/(gammasheath*echarge*ttarget*cs0minus)
 
     ! Ion flux density perp to B at target [m-2.s-1]
-    partfluxtar = nel0*cs0
+    partfluxtar = nel0*cs0minus
 
     ! Estimate of corresponding neutral pressure, assuming conservation of flux densities the
     ! factor converts the flux density at the target into a molecular pressure at room temperature.
@@ -599,7 +600,7 @@ do i = 2, nimp
     te0 =  ttarget
 
     ! n*v [m-2.s-1]
-    nv0 = -nel0*cs0
+    nv0 = -nel0*cs0minus
 
     ! Pressure  (Kallenbach paper equation 6) [Pa]
     pressure0 = mi*nv0**2.0D0 / nel0 + nel0*2.0D0*echarge*te0
@@ -611,7 +612,7 @@ do i = 2, nimp
     Power0 = qtarget*WettedArea
 
     ! Power deposited on target by recombination of hydrogenic ions [W]
-    ptarget_recomb = Erecomb*echarge*nel0*cs0*area_target
+    ptarget_recomb = Erecomb*echarge*nel0*cs0minus*area_target
 
     ! Power density on target due to surface recombination [W/m2]
     qtargetrecomb = ptarget_recomb / WettedArea
@@ -672,6 +673,7 @@ do i = 2, nimp
     do step = 0, step_num+1
         if(step.ne.0) then
             ! Solve the set of differential equations
+            ! write(*,*) 'x = ',x,  '  xout = ', xout
             call ode(differential, neqn, y, x, xout, relerr, abserr, iflag, work, iwork )
 
             ! Logarithmic step along SOL (x)
@@ -1088,16 +1090,15 @@ do i = 2, nimp
     ! See K:\Power Plant Physics and Technology\PROCESS\SOL & Divertor\Revised equations for Kallenbach model.docx
     numerator = dpdx - 2.0d0*mi*v*dnvdx - 2.0d0*n*echarge*dtdx
     denominator = 2.0d0*echarge*te - mi*v**2
-    ! sign(x,y) has the same absolute value as x, but it has the same sign as y
-    ! Prevent division by zero
-    if(abs(denominator) < 1.0d-99)then
-        write(*,*)denominator, t
-        denominator = sign(abs(denominator)+1.0d-99,denominator)
-    endif
+    if((t<1.0d-5)  .or. (abs(denominator) < 1.0d-30) .or. (numerator/denominator)>1.0d24)then
+         !write(*,'(10(a18,es12.3))')'t=', t, '  te=',te, '  denominator=',denominator,&
+         !         '  numerator/denominator', numerator/denominator
+         !write(*,'(10(a18,es12.3))') 'numerator', numerator ,'  dpdx=', dpdx, ' - 2.0d0*mi*v*dnvdx', &
+         !         - 2.0d0*mi*v*dnvdx, '- 2.0d0*n*echarge*dtdx',- 2.0d0*n*echarge*dtdx
+    end if
 
     dndx = numerator / denominator
     yp(5) = dndx * 1.d-20
-    !write(*,*)'echarge=',echarge,  'te=', te, '  mi=', mi
 
     ! dPowerdx - energy conservation
     yp(6) =1.d-6*(raddens + radHdens + plossdenscx + plossion)*A_cross
@@ -1115,6 +1116,16 @@ do i = 2, nimp
     yp(10)=1.d-6*plossion*A_cross
 
     ! The effect of volume recombination on the power balance is not taken into account
+
+    ! At the target (sheath entrance) the model has a singularity.
+    ! Output some data for points very near the target.
+    if((t>0.0d0).and.t<1.0d-7)then
+        write(*,*)'Kallenbach SOL model: vector of dependent variables, gradients, and their ratio for 0 < x < 1e-7'
+        write(*,*)'y, yp, y/yp (m) at t = ', t
+        write(*,'(10es12.3)') y
+        write(*,'(10es12.3)') yp
+        write(*,'(10es12.3)') y/yp
+    end if
 
     return
 
@@ -1299,7 +1310,6 @@ subroutine kallenbach_test()
   call ovarre(nout, 'Major radius [m]','(rmajor)', rmajor)
   call ovarre(nout, 'Minor radius [m]','(rminor)', rminor)
   call ovarre(nout, 'Toroidal field [T]','(bt)', bt, 'OP ')
-  call ovarre(nout, 'Vertical (equilibrium) field [T]','(bvert)', 0.0D0)
   call ovarre(nout, 'Plasma current [A]','(plascur)', plascur)
   call ovarre(nout, 'q95 [A]','(q)', 3.0D0)
 
@@ -1312,7 +1322,7 @@ subroutine kallenbach_test()
 
   call divertor_Kallenbach(rmajor=rmajor, rminor=rminor,     &
                            bt=bt, plascur=plascur,      &
-                           bvert=0.0D0, q=3.0D0,            &
+                           q=3.0D0,            &
                            verboseset=.false.,          &
                            ttarget=2.3D0,qtargettotal=4.175D6,                  &
                            targetangle=30.0D0,lcon_factor=lcon_factor,            &
@@ -1352,7 +1362,7 @@ subroutine kallenbach_scan()
   use read_and_get_atomic_data
   use read_radiation
   use constants
-  use physics_variables, only:rmajor, rminor, plascur, bvert, bp, bt, q, ralpne
+  use physics_variables, only:rmajor, rminor, plascur, bp, bt, q, ralpne
   use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
 
   implicit none
@@ -1369,7 +1379,7 @@ subroutine kallenbach_scan()
   rmajor = 8.9384d0
   rminor = 2.883d0
   plascur = 19.075d6
-  bvert = -0.725d0
+  !bvert = -0.725d0
   bp = 0.921d0
   q = 3.000d0
   ttarget = 10.0d0
@@ -1402,7 +1412,6 @@ subroutine kallenbach_scan()
       call ovarre(nout, 'Major radius [m]','(rmajor)', rmajor)
       call ovarre(nout, 'Minor radius [m]','(rminor)', rminor)
       call ovarre(nout, 'Toroidal field [T]','(bt)', bt, 'OP ')
-      call ovarre(nout, 'Vertical (equilibrium) field [T]','(bvert)', bvert)
       call ovarre(nout, 'Average poloidal field [T]','(bp)', bp)
       call ovarre(nout, 'Plasma current [A]','(plascur)', plascur)
       call ovarre(nout, 'q95 [A]','(q)', q)
@@ -1413,7 +1422,7 @@ subroutine kallenbach_scan()
 
       call divertor_Kallenbach(rmajor=rmajor, rminor=rminor,     &
                            bt=bt, plascur=plascur,      &
-                           bvert=bvert, q=q,            &
+                           q=q,            &
                            verboseset=.false.,          &
                            ttarget=ttarget, qtargettotal=qtargettotal,         &
                            targetangle=targetangle,lcon_factor=lcon_factor,    &
