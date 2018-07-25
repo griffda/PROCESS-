@@ -1226,6 +1226,12 @@ module divertor_kallenbach_variables
   !+ad_vars  ionisationpowerlost : Power lost due to electron impact ionisation [W]
   real(kind(1.0D0)), public :: ionisationpowerlost
 
+  !+ad_vars  abserr_sol : Absolute contribution to the error tolerance in the Kallenbach divertor model
+  real(kind(1.0D0)), public :: abserr_sol = 1.d-4
+
+  !+ad_vars  relerr_sol : Relative contribution to the error tolerance in the Kallenbach divertor model
+  real(kind(1.0D0)), public :: relerr_sol = 1.d-4
+
 
 end module divertor_kallenbach_variables
 

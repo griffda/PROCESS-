@@ -406,7 +406,7 @@ contains
 
        line = adjustl(line)  !  rotate any leading blanks to the end
        linelen = len_trim(line)
-       
+
 
 20     continue
 
@@ -420,7 +420,7 @@ contains
        if (line(1:5) == '*****') write(outfile,*) line(1:76)
        if (line(1:1) == '*') cycle
        if (line(1:1) == '$') cycle  !  in case block delimiters are still present
-       
+
        iptr = 1
 
        !  This must be an assignment line, so get the variable name
@@ -1139,14 +1139,14 @@ contains
         case ('plasmod_psepplh_sup')
           call parse_real_variable('plasmod_psepplh_sup', plasmod_psepplh_sup, 0.0D0, 2.0D4, &
                'Psep/PLH if above this, use Xe')
-        
+
        case ('plasmod_qdivt')
           call parse_real_variable('plasmod_qdivt', plasmod_qdivt, 0.0D0, 1.0D6, &
                'Divertor heat flux in MW/m^2, if 0, dont use SOL model')
        case ('plasmod_imptype')
           call parse_int_array('plasmod_imptype', plasmod_imptype, isub1, 3, &
-               'Impurities: 1 - intrinsic, 2 - Psep control, 3 - seeding for SOL (defaults: W, Xe, Ar)', icode)   
-          
+               'Impurities: 1 - intrinsic, 2 - Psep control, 3 - seeding for SOL (defaults: W, Xe, Ar)', icode)
+
     !Derived type inputs
        case ('plasmod_qnbi_psepfac')
           call parse_real_variable('plasmod_qnbi_psepfac', plasmod_qnbi_psepfac, 0.0D0, 1.0D4, &
@@ -1163,7 +1163,7 @@ contains
           !deposition locations
        case ('plasmod_x_heat')
           call parse_real_array('plasmod_x_heat', plasmod_x_heat, isub1, 2, &
-               'Element 1 - nbi, element 2 - ech', icode)   
+               'Element 1 - nbi, element 2 - ech', icode)
        case ('plasmod_x_cd')
           call parse_real_array('plasmod_x_cd', plasmod_x_cd, isub1, 2, &
                'Element 1 - nbi, element 2 - ech', icode)
@@ -1175,7 +1175,7 @@ contains
                'Element 1 - nbi, element 2 - ech', icode)
        case ('plasmod_dx_heat')
           call parse_real_array('plasmod_dx_heat', plasmod_dx_heat, isub1, 2, &
-               'Element 1 - nbi, element 2 - ech', icode)   
+               'Element 1 - nbi, element 2 - ech', icode)
        case ('plasmod_dx_cd')
           call parse_real_array('plasmod_dx_cd', plasmod_dx_cd, isub1, 2, &
                'Element 1 - nbi, element 2 - ech', icode)
@@ -1217,20 +1217,20 @@ contains
                'artificial diffusivity in m^2/s')
        case ('plasmod_sawpertau')
           call parse_real_variable('plasmod_sawpertau', plasmod_sawpertau, 0.0D0, 1.0D0, &
-               'ratio between sawtooth period and confinement time')          
+               'ratio between sawtooth period and confinement time')
        case ('plasmod_spellet')
           call parse_real_variable('plasmod_spellet', plasmod_spellet, 0.0D0, 1.0D4, &
                'pellet mass in units of D in 10^19')
        case ('plasmod_fpellet')
           call parse_real_variable('plasmod_fpellet', plasmod_fpellet, 0.0D0, 1.0D4, &
-               'pellet frequency in Hz')   
-          
+               'pellet frequency in Hz')
+
           !Derived type pedestal
        case ('plasmod_pedscal')
           call parse_real_variable('plasmod_pedscal', plasmod_pedscal, 0.0D0, 1.0D1, &
                'multiplication factor of the pedestal scaling in PLASMOD')
 
-          
+
           !  Current drive settings
 
        case ('beamwd')
@@ -1356,6 +1356,15 @@ contains
        case ('fractionwidesol')
           call parse_real_variable('fractionwidesol', fractionwidesol, 0.001D0, 0.99D0, &
                'Distance from target at which SOL gets broader as a fraction of connection length')
+
+        case ('abserr_sol')
+          call parse_real_variable('abserr_sol', abserr_sol, 0.D0, 1.D-1, &
+                   'Absolute contribution to the error tolerance in the Kallenbach divertor model')
+        case ('relerr_sol')
+          call parse_real_variable('relerr_sol', relerr_sol, 0.D0, 1.D-1, &
+                  'Relative contribution to the error tolerance in the Kallenbach divertor model')
+        if((abserr_sol<1.d-6).and.(relerr_sol<1.d-6))write(*,*)'abserr_sol and relerr_sol must not both be very small.'
+
 
        ! See HTS coil module for PROCESS.docx for helium area calculates!
        ! The minimum allowed is the value obtained by packing the strands in a rectangular array = 1-pi/4
@@ -1722,7 +1731,7 @@ contains
        case ('cpttf_max')
           call parse_real_variable('cpttf_max', cpttf_max, 1.0D0, 1.0D6, &
                     'Maximum allowable TF coil leg current per turn (A) (constraint equation 77)')
-                    
+
        case ('alstrtf')
           call parse_real_variable('alstrtf', alstrtf, 1.0D6, 1.0D11, &
                'Allowable Tresca stress in TF coil structural material (Pa)')
@@ -3373,7 +3382,7 @@ contains
        isub1 = 1
        if(present(startindex))isub1 = startindex
        do
-          call get_value_int(val,icode)          
+          call get_value_int(val,icode)
           !  icode == 1 denotes an error
           !  icode == -1 denotes end of line
           if (icode /= 0) then
@@ -3850,7 +3859,7 @@ contains
 !    end if
 
     ! *** Exclude any input after * or , - these denote an input comment
-    
+
     varlen = len_trim(varval)
     foundComma = varlen
     foundAst = varlen
@@ -3974,7 +3983,7 @@ contains
        ! *** On error or end, leave routine with error set
 
        if (iost /= 0) goto 60
-       
+
        lineno = lineno + 1
 
        ! *** Ignore blank lines
@@ -4019,11 +4028,11 @@ contains
     end if
 
     ! *** Put rest of line into varval (makes it easier to parse)
-    
+
     varval = line(iptr:)
 
     ! *** Exclude any input after * or , - these denote an input comment
-    
+
     varlen = len_trim(varval)
     foundComma = varlen
     foundAst = varlen
@@ -4062,7 +4071,7 @@ contains
     end if
 
     ! *** Convert the ASCII text into a real value
-    
+
     call string_to_real(varval,varlen,rval,icode)
 
     goto 1000
