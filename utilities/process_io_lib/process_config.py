@@ -213,7 +213,7 @@ execution!', err, file=stderr)
             condense = condense.rstrip()
             lcase = condense.lower()
             if len(condense) > 0 and (condense[0] != "*"):
-                if 'comment' == lcase[:7]:
+                if lcase[:7] == 'comment':
                     self.comment = line[line.find("=")+1:]
                     configfile.close()
                     return True
@@ -526,7 +526,7 @@ class RunProcessConfig(ProcessConfig):
             condense = condense.rstrip()
             lcase = condense.lower()
             if len(condense) > 0 and (condense[0] != "*"):
-                if 'del_var_' == lcase[:8] and len(condense) > 8:
+                if lcase[:8] == 'del_var_'  and len(condense) > 8:
                     self.del_var += [condense[8:]]
 
         configfile.close()
@@ -1099,7 +1099,39 @@ class UncertaintiesConfig(ProcessConfig, Config):
             #    print(err, file=stderr)
             #    exit()
 
+    def write_error_summary(self, sample_index):
 
+        """ reads current MFILE and IN.DAT and adds specified output variables
+            to error summary file """
+
+        m_file = MFile(filename="MFILE.DAT")
+
+        if sample_index == 0:
+            header = "#sample_index"
+
+            for u_dict in self.uncertainties:
+                header += ' {:10s}'.format(u_dict['varname'])
+
+            header += " error_status error_id ifail\n"
+            err_summary = open(self.wdir+'/UQ_error_summary.txt', 'w')
+            err_summary.write(header)
+        else:
+            err_summary = open(self.wdir+'/UQ_error_summary.txt', 'a+')
+
+        output = '{:12d}'.format(sample_index)
+        for u_dict in self.uncertainties:
+            output += ' {0:10f}'.format(u_dict['samples'][sample_index])
+
+        output += ' {0:13d} {1:8d}'.format(int(m_file.data['error_status'].get_scan(-1)),
+                                           int(m_file.data['error_id'].get_scan(-1)))
+
+        if m_file.data['error_status'].get_scan(-1) < 3:
+            output += ' {:5d}\n'.format(int(m_file.data['ifail'].get_scan(-1)))
+        else:
+            output += '   -1\n'
+
+        err_summary.write(output)
+        err_summary.close()
 
 ################################################################################
 #class NdScanConfig(RunProcessConfig)
@@ -1137,9 +1169,9 @@ class NdScanConfig(Config, RunProcessConfig):
         'remove_scanvars_from_ixc': True,
         # Removes all scanning variables from the iteration variables
         #  of the IN.DAT file.
-        'smooth_itervars'              : False
+        'smooth_itervars'         : False
         # Activates data smoothing, which increases run time but reduces errors
-        }
+    }
 
     def __init__(self, configfilename="ndscan.json"):
 
