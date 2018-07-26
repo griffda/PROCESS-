@@ -1970,6 +1970,11 @@ contains
     integer :: lap
     real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,jcrit0,jcritm, &
          jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp
+    real(kind(1.0D0)) :: current_sharing_t
+    real(kind(1.0D0))::x1,x2         ! Initial guesses for temperature
+    logical::error                   ! True if the solver does not converge
+    real(kind(1.0D0))::residual      ! Residual current density error
+    real(kind(1.0D0))::opt_tol = 1d7 ! Tolerance in current density
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2033,23 +2038,18 @@ contains
     !  Critical current density in winding pack
 
     jcritwp = jcritstr * (1.0D0-fhe)
+    jstrand = jwp / (1.0D0-fhe)
+    jsc = jstrand / (1.0D0-fcu)
 
     !  Temperature margin (already calculated in bi2212 for isumat=2)
 
-    if (isumat /= 2) then
-
+    if ((isumat==1).or.(isumat==4)) then
        !  Newton-Raphson method; start at requested minimum temperature margin
-
        ttest = thelium + tmargmin_cs
        delt = 0.01D0
        jtol = 1.0D4
-
        !  Actual current density in superconductor, which should be equal to jcrit(thelium+tmarg)
        !  when we have found the desired value of tmarg
-
-       jstrand = jwp / (1.0D0-fhe)
-       jsc = jstrand / (1.0D0-fcu)
-
        lap = 0
        solve_for_tmarg: do ; lap = lap+1
           if ((ttest <= 0.0D0).or.(lap > 100)) then
@@ -2065,25 +2065,83 @@ contains
              if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
              call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
              call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
-          case (3)
-             call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
-             if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-             call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
-             call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
-          case (5)
-             call wstsc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
-             if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
-             call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
-             call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+        !   case (3)
+        !      call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
+        !      write(*,*)'NbTi: ttest = ',ttest, '  jcrit0=', jcrit0, '  jsc=',jsc
+        !      if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
+        !      call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
+        !      call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
+        !   case (5)
+        !      call wstsc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+        !      write(*,*)'WST Nb3Sn: ttest = ',ttest, '  jcrit0=', jcrit0, '  jsc=',jsc
+        !      if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
+        !      call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+        !      call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
           end select
           ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
        end do solve_for_tmarg
-
        tmarg = ttest - thelium
+   end if
 
-    end if
 
-  end subroutine superconpf
+   ! MDK 13/7/18 Use secant solver for NbTi.
+   if(isumat==3) then
+       x1 = 4d0  ! Initial values of temperature
+       x2 = 6d0
+       ! Solve for deltaj_nbti = 0
+       call secant_solve(deltaj_nbti,x1,x2,current_sharing_t,error,residual,100d0)
+       tmarg = current_sharing_t - thelium
+       call jcrit_nbti(current_sharing_t ,bmax,c0,bc20m,tc0m,jcrit0,t)
+       if(variable_error(current_sharing_t))then  ! current sharing secant solver has failed.
+           write(*,'(a24, 10(a12,es12.3))')'NbTi: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
+                                           '  jsc=',jsc, '  jcrit0=',jcrit0,  '  residual=', residual
+       end if
+   end if
+
+   ! MDK 13/7/18 Use secant solver for WST.
+   if(isumat==5) then
+       ! Current sharing temperature for WST Nb3Sn
+       x1 = 4d0  ! Initial values of temperature
+       x2 = 6d0
+       ! Solve for deltaj_wst = 0
+       call secant_solve(deltaj_wst,x1,x2,current_sharing_t,error,residual,100d0)
+       tmarg = current_sharing_t - thelium
+       call wstsc(current_sharing_t,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+       if(variable_error(current_sharing_t))then  ! current sharing secant solver has failed.
+           write(*,'(a24, 10(a12,es12.3))')'WST: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
+                                           '  jsc=',jsc, '  jcrit0=',jcrit0, '  residual=', residual
+       end if
+   end if
+
+contains
+    ! These functions are required because secant_solve requires a function not a subroutine
+    ! They need to follow a 'contains' statement because 'jcrit0', 'bmax' and others
+    ! must be available but cannot be passed, because secant_solve requires
+    ! a function of one variable.
+
+    function deltaj_nbti(temperature)
+        real(kind(1.0D0)), intent(in) :: temperature
+        real(kind(1.0D0))::deltaj_nbti, jcrit0
+        call jcrit_nbti(temperature,bmax,c0,bc20m,tc0m,jcrit0,t)
+        if(variable_error(jcrit0))then  ! jcrit_nbti has failed.
+            write(*,'(a24, 10(a12,es12.3))')'jcrit_nbti: ', 'bmax=', bmax, '  temperature=', temperature, &
+                                            '  jcrit0=',jcrit0
+        end if
+        deltaj_nbti = jcrit0 - jsc
+    end function deltaj_nbti
+
+    function deltaj_wst(temperature)
+        real(kind(1.0D0)), intent(in) :: temperature
+        real(kind(1.0D0))::deltaj_wst, jcrit0
+        call wstsc(temperature,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+        if(variable_error(jcrit0))then  ! wstsc has failed.
+            write(*,'(a24, 10(a12,es12.3))')'deltaj_wst: ', 'bmax=', bmax, '  temperature=', temperature, &
+                                            '  jcrit0=',jcrit0
+        end if
+        deltaj_wst = jcrit0 - jsc
+    end function deltaj_wst
+
+end subroutine superconpf
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

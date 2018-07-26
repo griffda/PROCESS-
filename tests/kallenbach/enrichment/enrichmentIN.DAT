@@ -1,6 +1,5 @@
-
-runtitle = Kallenbach divertor model
-
+runtitle = verious enrichment values for optimised reactor scenario.
+verbose=0
 *---------------Constraint Equations---------------*
 icc = 1 * Beta
 icc = 2 * Global power balance
@@ -79,12 +78,12 @@ ixc = 54 * ftmargtf
 
 icc = 62  * taup/taueff the ratio of particle to energy confinement times
 ixc = 109 * ralpne  Thermal alpha density / electron density
-boundu(109) = 0.25
 boundl(109) = 0.01
-*ixc = 110 * ftaulimit: f-value for lower limit on taup/taueff the ratio of alpha particle to energy confinement
-*boundl(110) = 0.001
-*boundu(110) = 1.0
-*ftaulimit = 1.0
+boundu(109) = 0.15
+ixc = 110 * ftaulimit: f-value for lower limit on taup/taueff the ratio of alpha particle to energy confinement
+boundl(110) = 0.001
+boundu(110) = 1.0
+ftaulimit = 1.0
 ralpne   = 0.07 * Thermal alpha density / electron density
 *taulimit = 5.0 * Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
 
@@ -119,10 +118,10 @@ boundu(119) = 10.0
 tesep       = 0.25 * Electron temperature at separatrix (kev) (ipedestal=1)
 
 * Divertor target plasma temperature
-*ixc = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
-*boundl(120) = 0.1
-*boundu(120) = 3.0
-*ttarget     = 3.0  * Plasma temperature adjacent to divertor sheath [eV]
+ixc = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
+boundl(120) = 1.0
+boundu(120) = 80.0 * MAXIMUM
+ttarget     = 3.0  * Plasma temperature adjacent to divertor sheath [eV]
 
 icc = 71       * ensure that neomp is equal to the separatrix density (nesep) x neratio
 *ixc = 121       * neratio: ratio of mean SOL density at OMP to separatrix density at OMP
@@ -143,7 +142,7 @@ boundu(2) = 10.0
 bt = 5.0
 
 ixc = 3 * rmajor
-boundl(3) = 8.0
+boundl(3) = 8.9
 boundu(3) = 12
 rmajor    = 9.2 * Plasma major radius (m) (iteration variable 3)
 
@@ -160,7 +159,6 @@ ixc = 12 * oacdcp
 oacdcp   = 9.5E+06 * Overall current density in tf coil inboard legs (a/m2)
 
 ixc = 13 * tfcth
-boundl(13) = 0.1
 tfcth = 1.0
 
 ixc = 16 * ohcth
@@ -217,13 +215,13 @@ ixc = 59 * copper fraction of cable conductor (TF coils)
 boundu(59) = 0.94
 fcutfsu    = 0.8
 
-ixc = 122 * central solenoid steel fraction
+ixc = 122 * oh_steel_frac : streel fraction of OH coil
 oh_steel_frac = 8.6E-01 * central solenoid steel fraction (iteration variable 122)
 
-ixc = 124 * qtargettotal : Total power density on target [W/m2]
-boundl(124) = 1.0e6
-boundu(124) = 10.0e6
-qtargettotal = 2.0e6       * Power density on target including surface recombination [W/m2]
+*ixc = 124 * qtargettotal : Total power density on target [W/m2]
+*boundl(124) = 1.0e6
+*boundu(124) = 10.0e6
+*qtargettotal = 2.0e6       * Power density on target including surface recombination [W/m2]
 
 
 *-----------------Build Variables------------------*
@@ -257,10 +255,8 @@ etaech = 0.4 * ECRH wall-plug efficiency
 *----------------Divertor Variables----------------*
 Kallenbach_switch = 1
 Kallenbach_tests = 0
-*helium_enrichment = 1.0    * Ratio of helium concentration in SOL to confined plasma
-*impurity_enrichment=5.0d0  * Ratio of impurity concentrations in SOL to confined plasma
 * Ratio of each impurity concentration in SOL to confined plasma
-impurity_enrichment(2) = 1.0
+impurity_enrichment(2) = 0.4
 impurity_enrichment(3) = 5.0
 impurity_enrichment(4) = 5.0
 impurity_enrichment(5) = 5.0
@@ -274,12 +270,16 @@ impurity_enrichment(12) = 5.0
 impurity_enrichment(13) = 5.0
 impurity_enrichment(14) = 5.0
 
-lambda_q_target=0.005        * SOL power fall-off length at the target mapped to OMP [m]
-netau_sol = 0.5                  * Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
-lambda_q_omp = 0.002
-targetangle = 30.0           * Angle between field-line and divertor target (degrees)
-fractionwidesol = 0.1        * Distance from target at which SOL gets broader as a fraction of connection length
-
+target_spread = 0.003 * Increase in sol power fall-off length due to spreading; mapped to omp [m]
+lambda_q_omp = 0.002 * Sol power fall-off length at the outer midplane; perpendicular to field [m]
+netau_sol    = 0.5 * Parameter describing the departure from local ionisation equilibrium in the sol; [ms;1e20/m3]
+targetangle = 30.0 * Angle between field-line and divertor target (degrees)
+qtargettotal = 1470000.0 * Power density on target including surface recombination [w/m2]
+neratio  = 0.9 * Ratio of mean sol density at omp to separatrix density at omp
+fractionwidesol = 0.1 * Distance from target at which sol gets broader as a fraction of connection length
+abserr_sol = 1e-4     * Relative contribution to the error tolerance in the Kallenbach divertor model
+relerr_sol = 1e-4     * Absolute contribution to the error tolerance in the Kallenbach divertor model
+mach0 = 0.999         * Mach number at target (must be just less than 1)
 
 *------------------Fwbs Variables------------------*
 vfshld   = 0.60 * Coolant void fraction in shield
@@ -297,7 +297,7 @@ htpmw_blkt = 0 * blanket primary pumping power He (MW)
 etahtp = 1.0 * mechanical pump wall-plug efficiency
 htpmw_fw = 155 * first wall primary pumping power He (MW)
 
-*------------Impurity Radiation Module-------------*
+*------------Impurity Radiation Modul------------*
 imprad_model = 1 * Switch for impurity radiation model;
 coreradius = 0.75 * Normalised radius defining the 'core' region
 coreradiationfraction = 0.6 * fraction of radiation from 'core' region that is subtracted from the loss pow
@@ -316,21 +316,22 @@ fimp(12) = 0.0
 *
 fimp(14) = 5e-05
 
-*ixc = 131   * fimp(9) : Argon density fraction relative to electron density
-*boundl(131) = 1.0e-4
-*boundu(131) = 0.01
-fimp(9) = 0.0
+*# Argon
+ixc = 131   * fimp(9) : Argon density fraction relative to electron density
+boundl(131) = 1.0e-4
+boundu(131) = 0.01
+fimp(9) = 1.0E-03
 
-ixc = 135   * fimp(13) : Xenon density fraction relative to electron density
-boundl(135) = 1.0e-10
-boundu(135) = 0.01
-fimp(13) = 2.34E-04
+*ixc = 135   * fimp(13) : Xenon density fraction relative to electron density
+*boundl(135) = 1.0e-10
+*boundu(135) = 0.01
+fimp(13) = 2.E-04
 
 *---------------------Numerics---------------------*
 ioptimz  = 1 * for optimisation VMCON only
-minmax   = 1 * Switch for figure-of-merit (see lablmm for descriptions)
-epsvmc   = 1.0e-6 * Error tolerance for vmcon
-maxcal   = 100
+minmax   = 1 * Switch for figure-of-merit ( 1) major radius
+epsvmc   = 2.0e-4 * Error tolerance for vmcon
+maxcal   = 200
 
 *----------------Pf Power Variables----------------*
 
@@ -394,18 +395,15 @@ lpulse = 1 * Switch for reactor model;
 tdwell = 0 * dwell time (s)
 
 *-------------------Scan Module--------------------*
-
-isweep   = 1  * Number of scan points to calculate
-nsweep   = 36  * Switch denoting quantity to scan
+isweep   = 15  * Number of scan points to calculate
+nsweep   = 34  * Switch denoting quantity to scan
 *31 taulimit
 *32 epsvmc
 *33 ttarget
 *34 qtargettotal
-*35 lambda_q_omp
+*35 lambda_q
 *36 lambda_target
-sweep = 0.007
-*sweep = 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.010, 0.011, 0.012  * Actual values to use in scan
-
+sweep =  2.0e6, 3.0e6, 4.0e6, 5.0e6, 6.0e6, 7.0e6, 8.0e6, 9.0e6, 10.0e6, 11e6, 12e6, 13e6, 14e6  * Actual values to use in scan
 *-----------------Tfcoil Variables-----------------*
 itfsup   = 1  * switch for TF coil conductor model 1=superconductor
 isumattf = 5
@@ -420,5 +418,6 @@ tinstf   = 0.008 * Ground insulation thickness surrounding winding pack (m)
 vftf     = 0.300 * Coolant fraction of tfc 'cable' (itfsup=1)
 
 *-----------------Times Variables------------------*
+
 *-----------------Vacuum Variables-----------------*
 *-----------------Vacuum Variables-----------------*

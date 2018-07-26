@@ -22,7 +22,7 @@ module read_and_get_atomic_data
 
 contains
 
-  subroutine get_h_rates(density, temperature, s, al, cx, plt, prb, mass, verbose)
+  subroutine get_h_rates(density, temperature, s, al, Rcx, plt, prb, mass, verbose)
     !+ad_name  get_h_rates
     !+ad_summ
     !+ad_type  subroutine
@@ -32,10 +32,10 @@ contains
     !+ad_args  temperature : input real : electron temperature  (eV)
     !+ad_args  s : output real : ionisation rate coefficient (m^3/s)
     !+ad_args  al : output real : recombination rate coefficient (m^3/s)
-    !+ad_args  cx : output real : charge exchange rate coefficient (m^3/s)
+    !+ad_args  Rcx : output real : charge exchange rate coefficient (m^3/s)
     !+ad_args  plt : output real : line radiation power rate coefficient (Wm^3)
     !+ad_args  prb : output real : continuum radiation power rate coefficient (Wm^3)
-    !+ad_args  mass : input real : relative atomic mass for cx rate coefficient
+    !+ad_args  mass : input real : relative atomic mass for CX rate coefficient
     !+ad_args  verbose : input logical : verbose switch
     !+ad_desc
     !+ad_prob  None
@@ -52,7 +52,7 @@ contains
 
     real(kind(1.0D0)), intent(in) :: density, temperature, mass
 
-    real(kind(1.0D0)), intent(out) :: s, al, cx, plt, prb
+    real(kind(1.0D0)), intent(out) :: s, al, Rcx, plt, prb
 
     logical, intent(in) :: verbose
 
@@ -113,7 +113,7 @@ contains
       prb_file = trim(hdatadir)//'prb96_h.dat'
 
       m = floor(mass+0.5)                     ! round to an integer
-      ! Select the correct atomic species for the cx rates: H, D or T
+      ! Select the correct atomic species for the CX rates: H, D or T
       if      (m == 1) then
           ccd_file = trim(hdatadir)//'ccd96_h.dat'
       elseif (m == 2) then
@@ -139,7 +139,7 @@ contains
       call read_atomdat(scd_d,scd_t,scd_r, ine=24, ite=29, filename=scd_file, verbose=verbose)
       ! recombination data
       call read_atomdat(acd_d,acd_t,acd_r, ine=24, ite=29, filename=acd_file, verbose=verbose)
-      ! cx data
+      ! CX data
       call read_atomdat(ccd_d,ccd_t,ccd_r, ine=24, ite=29, filename=ccd_file, verbose=verbose)
       ! line radiation data
       call read_atomdat(plt_d,plt_t,plt_r, ine=24, ite=29, filename=plt_file, verbose=verbose)
@@ -175,8 +175,8 @@ contains
     al  = 1.d-6*10.0**(interpolate(ine, acd_d, ite, acd_t, acd_r,   &
                                   min(logdens,max_acd_d),           &
                                   min(logtemp,max_acd_t)))
-    ! cx
-    cx  = 1.d-6*10.0**(interpolate(ine, ccd_d, ite, ccd_t, ccd_r,   &
+    ! Rcx
+    Rcx  = 1.d-6*10.0**(interpolate(ine, ccd_d, ite, ccd_t, ccd_r,   &
                                   min(logdens,max_ccd_d),           &
                                   min(logtemp,max_ccd_t)))
     ! line radiation
@@ -202,10 +202,10 @@ contains
     !+ad_args  temperature : input real : electron temperature  (eV)
     !+ad_args  s : input  : ionisation rate coefficient (m^3/s)
     !+ad_args  al : input  : recombination rate coefficient (m^3/s)
-    !+ad_args  cx : input  : charge exchange rate coefficient (m^3/s)
+    !+ad_args  Rcx : input  : charge exchange rate coefficient (m^3/s)
     !+ad_args  plt : input  : line radiation power rate coefficient (Wm^3)
     !+ad_args  prb : input  : continuum radiation power rate coefficient (Wm^3)
-    !+ad_args  mass : input  : relative atomic mass for cx rate coefficient
+    !+ad_args  mass : input  : relative atomic mass for CX rate coefficient
     !+ad_args  verbose : output  : verbose switch
     !+ad_desc
     !+ad_prob  None
@@ -249,7 +249,7 @@ contains
         ! Radiative cooling function Lz
         ! To test the interpolation, use a point at the geometrical mean of the two
         ! first temperatures and the two first values of ne.tau
-        real(kind(1.0D0)):: s, al, cx, plt, prb, density, temperature, mass
+        real(kind(1.0D0)):: s, al, Rcx, plt, prb, density, temperature, mass
         real(kind(1.0D0)):: te,netau,test_lz,estimate_lz
         te=sqrt(1.000 * 1.047)
         netau=sqrt(0.1*1.0)
@@ -266,18 +266,18 @@ contains
         write(*,'(5(e12.5),2x)')density, temperature, mass
 
         call get_h_rates(density, temperature, &
-                          s, al, cx, plt, prb, &
+                          s, al, Rcx, plt, prb, &
                           mass, verbose=.true.)
 
         write(*,*) 'Compare atomic rate values from code with values interpolated by hand:'
-        write(*,'(5(e12.5),2x)')s, al, cx, plt, prb
+        write(*,'(5(e12.5),2x)')s, al, Rcx, plt, prb
 
         s  = 10.0**((-37.87042 -37.83901  -27.99641 -27.97238)/4.0) / 1.0e6
         al = 10.0**((-11.85004 -11.83456  -11.99890 -11.98826)/4.0) / 1.0e6
-        cx = 10.0**((-8.59260  -8.59260    -8.50455  -8.50455)/4.0) / 1.0e6
+        Rcx = 10.0**((-8.59260  -8.59260    -8.50455  -8.50455)/4.0) / 1.0e6
         plt= 10.0**((-47.19666d0 -47.19666d0  -39.88720d0 -39.88720d0)/4.0d0) / 1.0d6
         prb= 10.0**((-29.50732 -29.49208  -29.65257 -29.64218)/4.0) / 1.0e6
-        write(*,'(5(e12.5),2x)')s, al, cx, plt, prb
+        write(*,'(5(e12.5),2x)')s, al, Rcx, plt, prb
         return
   end subroutine unit_test_read
 
@@ -286,7 +286,7 @@ contains
   subroutine plot_rates()
     ! Reads rate coefficients for deuterium.
     ! Compare to Figure 2 in Kallenbach 2016.
-    real(kind(1.0D0)):: s(3), al(3), cx
+    real(kind(1.0D0)):: s(3), al(3), Rcx
     real(kind(1.0D0)):: plt(3), prb(3), mass
     real(kind(1.0D0)):: lz_deuterium(3)
     real(kind(1.0D0)):: dummy1, dummy2, dummy3, dummy4, dummy5
@@ -296,7 +296,7 @@ contains
     !  Obtain the root directory from the file 'root.dir'
     ! The # character must be at the start of the line.
     open(unit=12,file='rate_coefficients.txt',status='replace')
-    write(12,'(30a11)')'te [eV]','cx', 'ionis19', 'recomb19', 'line rad19', 'cont rad19', 'tot rad19',&
+    write(12,'(30a11)')'te [eV]','Rcx', 'ionis19', 'recomb19', 'line rad19', 'cont rad19', 'tot rad19',&
                                        'ionis20', 'recomb20', 'line rad20', 'cont rad20', 'tot rad20',&
                                        'ionis21', 'recomb21', 'line rad21', 'cont rad21', 'tot rad21'
     mass=2.0D0
@@ -305,11 +305,11 @@ contains
                           mass, verbose=.true.)
     do i=1,15
         do j=1,3
-            call get_h_rates(density(j), te(i), s(j), al(j), cx, plt(j), prb(j), &
+            call get_h_rates(density(j), te(i), s(j), al(j), Rcx, plt(j), prb(j), &
                              mass, verbose=.false.)
             lz_deuterium(j)=plt(j)+prb(j)
         enddo
-        write(12,'(30es11.3)')te(i), cx, (s(j), al(j), plt(j), prb(j), lz_deuterium(j),  j=1,3)
+        write(12,'(30es11.3)')te(i), Rcx, (s(j), al(j), plt(j), prb(j), lz_deuterium(j),  j=1,3)
     enddo
     close(unit=12)
 

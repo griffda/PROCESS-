@@ -93,11 +93,12 @@ x_max = float(per_column[1][-1])
 xpar = np.array([float(x) for x in per_column[1]])
 xpar[0] = 99999
 
+
 # convert to MW
-hrad_mw = [float(x)/1e6 for x in per_column[16]]
 cx_mw = [float(x)/1e6 for x in per_column[14]]
-im_mw = [float(x)/1e6 for x in per_column[17]]
 ion_mw = [float(x)/1e6 for x in per_column[15]]
+hrad_mw = [float(x)/1e6 for x in per_column[16]]
+im_mw = [float(x)/1e6 for x in per_column[17]]
 # Power loss integrals are already in MW
 y7_mw = np.array([float(x) for x in per_column[18]])
 y8_mw = np.array([float(x) for x in per_column[19]])
@@ -135,7 +136,7 @@ p1r1left.semilogy(per_column[1], cx_mw, label="CX", ls='dotted')
 p1r1left.semilogy(per_column[1], im_mw, label="Imp rad", ls='dashdot')
 p1r1left.semilogy(per_column[1], ion_mw, label="Ionisation", ls='solid')
 p1r1left.set_xlim([0.0, 0.015])
-p1r1left.set_ylim(ymin=1)
+#p1r1left.set_ylim(ymin=1)
 p1r1left.xaxis.set_major_formatter(nullfmt)
 p1r1left.set_ylabel("power dens. (MWm$^{-3}$)")
 
@@ -146,7 +147,7 @@ p1r2left.plot(per_column[1], per_column[5], label="Plasma pressure including kin
 p1r2left.plot(per_column[1], per_column[4], label="Plasma thermal pressure")
 p1r2left.set_xlim([0.0, 0.015])
 p1r2left.set_ylim(ymin=0)
-p1r2left.set_ylim(ymax=2700)
+#p1r2left.set_ylim(ymax=2700)
 p1r2left.set_ylabel("pressure (Pa)")
 #p1r2left.legend(loc=4, prop={'size': 12})
 p1r2left.tick_params(axis='y', labelsize ='9')
@@ -170,7 +171,7 @@ p1r4left.semilogy(per_column[1], n02, label="$n_02/10^{20}m^{-3}$", ls='dashed')
 p1r4left.semilogy(per_column[1], per_column[7], label="mach")
 #p1r4left.set_ylim([0.1, 100])
 p1r4left.set_xlim([0.0, 0.015])
-p1r4left.set_ylim(ymin=0.1)
+p1r4left.set_ylim(ymin=0.01)
 p1r4left.set_xlabel("$x\parallel B$ (m)", fontsize=14)
 
 
@@ -181,7 +182,7 @@ p1r1right.loglog(per_column[1], cx_mw, label="CX", ls='dotted')
 p1r1right.loglog(per_column[1], im_mw, label="Imp rad", ls='dashdot')
 p1r1right.loglog(per_column[1], ion_mw, label="Ionisation", ls='solid')
 p1r1right.set_xlim([0.015, x_max])
-p1r1right.set_ylim(ymin=1)
+#p1r1right.set_ylim(ymin=1)
 p1r1right.legend(loc=1, prop={'size': 10})
 #p1r1right.plot((x_max, x_max), (0.001, 10000), ls='dashed', color="black")
 # no labels
@@ -223,7 +224,7 @@ p1r4right.loglog(per_column[1], n02, label="$n_{02}/10^{20}m^{-3}$", ls='dashed'
 p1r4right.loglog(per_column[1], per_column[7], label="mach")
 #p1r4right.set_ylim([0.1, 10])
 p1r4right.set_xlim([0.015, x_max])
-p1r4right.set_ylim(ymin=0.1)
+#p1r4right.set_ylim(ymin=0.1)
 p1r4right.set_xlabel("$x\parallel B$ (m)", fontsize=14)
 p1r4right.legend(loc=1, prop={'size': 10})
 # no labels
