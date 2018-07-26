@@ -214,7 +214,6 @@ else
 	DIFF_0 = rm -rf untracked.info
 	DIFF_1 = echo "integer :: untracked = "`git diff | wc -l`"" > untracked.info
 endif
-
 ###########################
 
 FORTRAN = gfortran
