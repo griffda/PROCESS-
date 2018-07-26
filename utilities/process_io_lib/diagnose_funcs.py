@@ -56,7 +56,7 @@ def plot_normalised_icc_res(mfilename='MFILE.DAT'):
     list_normres = []
     list_labels = []
 
-    neqns = int(m_file.data['neqns'].get_scan(-1))
+    neqns = int(m_file.data['neqns+nineqns'].get_scan(-1))
     for i in range(1, neqns+1):
 
         normres = m_file.data['normres{:03}'.format(i)].get_scan(-1)

@@ -3769,7 +3769,7 @@ module cost_variables
   !+ad_vars  uchts(2) /15.3,19.1/ : cost of heat transport system equipment
   !+ad_varc                         per loop ($/W); dependent on coolant type (coolwh)
   real(kind(1.0D0)), dimension(2) :: uchts = (/15.3D0, 19.1D0/)
-  !+ad_vars  uciac /1.5e8/ : cost of instrumentation, control & diagnostics ($/W)
+  !+ad_vars  uciac /1.5e8/ : cost of instrumentation, control & diagnostics ($)
   real(kind(1.0D0)) :: uciac = 1.5D8
   !+ad_vars  ucich /3.0/ : ICH system cost ($/W)
   real(kind(1.0D0)) :: ucich = 3.0D0
@@ -3781,7 +3781,7 @@ module cost_variables
   real(kind(1.0D0)) :: uclv = 16.0D0
   !+ad_vars  ucmb /260.0/ FIX: unit cost for reactor maintenance building (M$/m3)
   real(kind(1.0D0)) :: ucmb = 260.0D0
-  !+ad_vars  ucme /1.25e8/ : unit cost of maintenance equipment ($/W**0.3)
+  !+ad_vars  ucme /1.25e8/ : cost of maintenance equipment ($/)
   real(kind(1.0D0)) :: ucme = 1.25D8
   !+ad_vars  ucmisc /2.5e7/ : miscellaneous plant allowance ($)
   real(kind(1.0D0)) :: ucmisc = 2.5D7

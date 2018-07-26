@@ -4504,6 +4504,9 @@ implicit none
     call ovarin(outfile,'Plasma profile model','(ipedestal)',ipedestal)
 
     if(ipedestal.ge.1)then
+        if (ne0<neped) then
+            call report_error(213)
+        end if
         call ocmmnt(outfile,'Pedestal profiles are used.')
         call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
         if(fgwped >= 0d0)then

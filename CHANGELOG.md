@@ -12,6 +12,9 @@
 - Fixed issues with uncertainty python utility (Issue #716)
 - Fixed issues when there is no inboard blanket (Issue #722 #732)
 - Fixed incorrect cross sectional area calculation in resistive TF coils (Issue #727)
+- Fixed constraint equations plot in diagnose_process.py (Issue #738)
+- Corrected units in resistive TF coil stress output
+- Corrected units on ucme and uciac in global variables.
 
 ## Features
 
@@ -59,3 +62,4 @@ Utilities
 - `cdtfleg` no longer an iteration variable.  The outboard leg current density is now calculated for resistive TF coils. (Issue #727)
 - `tfacpd` is now calculted for resistive TF coils so is no longer an input.
 - Reset test_suite files (Issue #719)
+- Added error reporting to function ncore (Issue #735)
