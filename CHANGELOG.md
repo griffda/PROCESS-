@@ -33,7 +33,8 @@ PLASMOD
  - Certain constraints and iterations variables cannot be used with PLASMOD - see the User Guide for more information.
 
 Utilities
- - New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
+	- New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
+	- evaluate_uncertainties.py now outputs and additional file to allow analysis of failed PROCESS Runs.
 
 - TF stress in conduit Tresca criterion can now have regular and CEA adjusted options 
   (adjustment from [Torre et al. 2016](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7390035) 

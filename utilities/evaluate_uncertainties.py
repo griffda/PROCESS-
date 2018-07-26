@@ -18,7 +18,6 @@ MFILE.DAT   -  PROCESS output
 process.log - logfile of PROCESS output to stdout
 README.txt  - contains comments from config file
 
-Compatible with PROCESS version 1.0.10
 """
 
 #######################
@@ -88,10 +87,13 @@ if __name__ == '__main__':
                     break
                 else:
                     print('WARNING: %i non feasible point(s) in sweep!\
-         Rerunning!' % no_unfeasible)
+                    Rerunning!' % no_unfeasible)
             else:
                 print('PROCESS has stopped without finishing!')
 
+
             vary_iteration_variables(ITERVARS, LBS, UBS)
+
+        CONFIG.write_error_summary(j)
 
     print("UQ finished!")
