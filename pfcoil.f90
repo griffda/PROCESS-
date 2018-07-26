@@ -2089,7 +2089,7 @@ contains
        x1 = 4d0  ! Initial values of temperature
        x2 = 6d0
        ! Solve for deltaj_nbti = 0
-       call secant_solve(deltaj_nbti,x1,x2,current_sharing_t,error,residual,1000d0)
+       call secant_solve(deltaj_nbti,x1,x2,current_sharing_t,error,residual,100d0)
        tmarg = current_sharing_t - thelium
        call jcrit_nbti(current_sharing_t ,bmax,c0,bc20m,tc0m,jcrit0,t)
        if(variable_error(current_sharing_t))then  ! current sharing secant solver has failed.
@@ -2104,7 +2104,7 @@ contains
        x1 = 4d0  ! Initial values of temperature
        x2 = 6d0
        ! Solve for deltaj_wst = 0
-       call secant_solve(deltaj_wst,x1,x2,current_sharing_t,error,residual,1000d0)
+       call secant_solve(deltaj_wst,x1,x2,current_sharing_t,error,residual,100d0)
        tmarg = current_sharing_t - thelium
        call wstsc(current_sharing_t,bmax,strain,bc20m,tc0m,jcrit0,b,t)
        if(variable_error(current_sharing_t))then  ! current sharing secant solver has failed.

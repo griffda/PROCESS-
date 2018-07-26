@@ -1326,8 +1326,8 @@ contains
        case ('lcon_factor')
           call parse_real_variable('lcon_factor', lcon_factor, 1.0D-1, 1.0D1, &
                'Correction factor for connection length from OMP to divertor')
-       case ('netau')
-          call parse_real_variable('netau', netau, 0.1D0, 1.0D5, &
+       case ('netau_sol')
+          call parse_real_variable('netau_sol', netau_sol, 0.1D0, 1.0D5, &
                'Parameter describing the degree to which local ionisation equilibrium is reached in the SOL. [ms.1e20/m3]')
        case ('kallenbach_switch')
           call parse_int_variable('kallenbach_switch', kallenbach_switch, 0, 1, &
@@ -1365,6 +1365,9 @@ contains
                   'Relative contribution to the error tolerance in the Kallenbach divertor model')
         if((abserr_sol<1.d-6).and.(relerr_sol<1.d-6))write(*,*)'abserr_sol and relerr_sol must not both be very small.'
 
+      case ('mach0')
+      call parse_real_variable('mach0', mach0, 0.D0, 1.D0, &
+              'Mach number at target (must be just less than 1)')
 
        ! See HTS coil module for PROCESS.docx for helium area calculates!
        ! The minimum allowed is the value obtained by packing the strands in a rectangular array = 1-pi/4

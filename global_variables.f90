@@ -1168,8 +1168,8 @@ module divertor_kallenbach_variables
   !+ad_varc                      connection length/(pi*q*rmajor)
   real(kind(1.0D0)) :: lcon_factor = 1.0D0
 
-  !+ad_vars  netau /0.5/ : Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
-  real(kind(1.0D0)) :: netau = 0.5D0
+  !+ad_vars  netau_sol /0.5/ : Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
+  real(kind(1.0D0)) :: netau_sol = 0.5D0
 
   !+ad_vars  targetangle /30.0/ : Angle between field-line and divertor target (degrees)
   real(kind(1.0D0)) :: targetangle = 30.0D0
@@ -1231,6 +1231,9 @@ module divertor_kallenbach_variables
 
   !+ad_vars  relerr_sol : Relative contribution to the error tolerance in the Kallenbach divertor model
   real(kind(1.0D0)), public :: relerr_sol = 1.d-4
+
+  !+ad_vars  mach0 : Mach number at target (must be just less than 1)
+  real(kind(1.0D0)), public :: mach0 = 0.999
 
 
 end module divertor_kallenbach_variables

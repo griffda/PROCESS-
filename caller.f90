@@ -253,8 +253,8 @@ subroutine caller(xc,nvars)
         q=q,                                      &
         verboseset=verbose_logical,                                   &
         Ttarget=Ttarget,qtargettotal=qtargettotal,            &
-        targetangle=targetangle,lcon_factor=lcon_factor, &
-        netau_in=netau,unit_test=.false.,     &
+        targetangle=targetangle, &
+        unit_test=.false.,     &
         bp = bp,   &
         psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
         outfile=nout,iprint=0 )

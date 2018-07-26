@@ -24,9 +24,10 @@ module divertor_ode
   use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
   use constants
   use process_input, only: lower_case
-  use divertor_kallenbach_variables, only: neratio, pressure0, fractionwidesol, fmom, totalpowerlost, impurity_enrichment, &
-              lambda_q_omp, target_spread, hydrogenicpowerlost, impuritypowerlost, exchangepowerlost, ionisationpowerlost, &
-              abserr_sol, relerr_sol
+  use divertor_kallenbach_variables
+  !, only: neratio, pressure0, fractionwidesol, fmom, totalpowerlost, impurity_enrichment, &
+    !          lambda_q_omp, target_spread, hydrogenicpowerlost, impuritypowerlost, exchangepowerlost, ionisationpowerlost, &
+    !          abserr_sol, relerr_sol
   use build_variables, only: rspo
   use physics_variables, only:  tesep_keV => tesep
 
@@ -57,9 +58,6 @@ module divertor_ode
   real(kind(1.0D0)), private :: eightemi, eightemi48,  elEion
   real(kind(1.0D0)), private, parameter :: degree=pi/180.0D0
   real(kind(1.0D0)), parameter :: ln10=log(10.0D0)
-
-  ! "non-coronal parameter" for radiative loss function [ms.1e20/m3]
-  real(kind(1.0D0)), private :: netau
 
   ! constant in thermal conductivity (equation 5) [J/(s m eV^7/2)]
   real(kind(1.0D0)), private :: kappa0=2390.0D0
@@ -93,7 +91,7 @@ module divertor_ode
 contains
 
   subroutine divertor_Kallenbach(rmajor,rminor,bt,plascur,q,verboseset,     &
-             ttarget,qtargettotal,targetangle,lcon_factor,netau_in,&
+             ttarget,qtargettotal,targetangle, &
              unit_test,  &
              bp, &
              psep_kallenbach, teomp, neomp,  &
@@ -158,14 +156,8 @@ contains
     ! target angle [deg]
     real(kind(1.0D0)),intent(in) :: targetangle
 
-    ! target angle [deg]
-    real(kind(1.0D0)),intent(in) :: lcon_factor
-
     ! connection length from omp to target [m]
     real(kind(1.0D0)) :: lcon
-
-    ! "non-coronal parameter" for radiative loss function [ms.1e20/m3]
-    real(kind(1.0D0)), intent(in) :: netau_in
 
     ! Absolute error input
     ! real(kind(1.0D0)), optional, intent(in) :: abserrset
@@ -447,9 +439,6 @@ contains
     ! set verbose level
     verbose = verboseset
 
-    ! Set netau to initial input value
-    netau = netau_in
-
     if (verbose) then
         write(*,*) 'subroutine divertor_Kallenbach'
     end if
@@ -538,7 +527,7 @@ contains
     ! Sound speed [m/s]
     cs0 = sqrt(2.0D0*echarge*ttarget/mi)
     ! To prevent division by zero at the target, insert a factor just less than 1.
-    cs0minus = cs0 * 0.999d0
+    cs0minus = cs0 * mach0
 
     ! Chodura sheath width (m).  Sin psi taken = 1.
     ! Stangeby Equation 2.112
@@ -586,8 +575,8 @@ contains
 do i = 2, nimp
         if(impurities_present(i)) then
             element = imp_label(i)
-            z = read_lz(element,ttypical,netau, mean_z=.true., mean_qz=.false., verbose=.false.)
-            qz = read_lz(element,ttypical,netau, mean_z=.false., mean_qz=.true., verbose=.false.)
+            z = read_lz(element,ttypical,netau_sol, mean_z=.true., mean_qz=.false., verbose=.false.)
+            qz = read_lz(element,ttypical,netau_sol, mean_z=.false., mean_qz=.true., verbose=.false.)
             zeff_div = zeff_div + impurity_concs(i)*(qz-z)
         endif
     enddo
@@ -779,7 +768,7 @@ do i = 2, nimp
         raddens = 0.0D0
        do i = 2, nimp
             if(impurities_present(i)) then
-                lz = read_lz(imp_label(i), te, netau, mean_z=.false., mean_qz=.false., verbose=.false.)
+                lz = read_lz(imp_label(i), te, netau_sol, mean_z=.false., mean_qz=.false., verbose=.false.)
                 ! Store species-specific radiation loss density
                 raddensspecies(i) = lz*impurity_concs(i)*nelsquared
                 ! Total impurity radiation loss density
@@ -866,7 +855,7 @@ do i = 2, nimp
 
     call osubhd(outfile, 'Global SOL properties and geometry:')
     call ovarre(outfile, 'Connection length:  [m]','(lcon)', lcon, 'OP ')
-    call ovarre(outfile, 'Parameter for approach to local equilibrium  [ms.1e20/m3]','(netau)', netau)
+    call ovarre(outfile, 'Parameter for approach to local equilibrium  [ms.1e20/m3]','(netau_sol)', netau_sol)
     call ovarre(outfile, 'Typical SOL temperature, used only for estimating zeff_div [eV] ','(ttypical)', ttypical, 'OP ')
     call ocmmnt(outfile, 'The zeff_div is used only for estimating thermal conductivity of the SOL plasma.')
     call ovarre(outfile, 'Z effective [W] ','(zeff_div)', zeff_div, 'OP ')
@@ -1024,7 +1013,7 @@ do i = 2, nimp
     LzTotal = 0.0D0
     do i = 2, nimp
         if(impurities_present(i)) then
-            lz = read_lz(imp_label(i), te, netau, mean_z=.false., mean_qz=.false., verbose=.false.)
+            lz = read_lz(imp_label(i), te, netau_sol, mean_z=.false., mean_qz=.false., verbose=.false.)
             LzTotal = LzTotal + lz*impurity_concs(i)
         endif
     enddo
@@ -1296,7 +1285,7 @@ subroutine kallenbach_test()
   implicit none
 
   integer :: i
-  real(kind(1.0D0))::rmajor, rminor, bt, plascur, lcon_factor,dummy, dummy2, dummy3
+  real(kind(1.0D0))::rmajor, rminor, bt, plascur, dummy, dummy2, dummy3
 
   ! This section just for reproducing the original numbers
   rmajor = 8.0D0
@@ -1330,12 +1319,12 @@ subroutine kallenbach_test()
                            q=3.0D0,            &
                            verboseset=.false.,          &
                            ttarget=2.3D0,qtargettotal=4.175D6,                  &
-                           targetangle=30.0D0,lcon_factor=lcon_factor,            &
-                           netau_in=0.5D0,unit_test=.false.,     &
+                           targetangle=30.0D0,            &
+                           unit_test=.false.,     &
                            bp = 0.956d0,   &
                            psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
                            outfile=nout,iprint=1 )
-
+ 
   call ocmmnt(nout, 'Testing the reading of atomic rates and impurity radiative functions.')
   call ocmmnt(nout, 'Use "output_divertor.xlsx" in K:\Power Plant Physics and Technology\PROCESS\SOL & Divertor')
 
@@ -1430,8 +1419,8 @@ subroutine kallenbach_scan()
                            q=q,            &
                            verboseset=.false.,          &
                            ttarget=ttarget, qtargettotal=qtargettotal,         &
-                           targetangle=targetangle,lcon_factor=lcon_factor,    &
-                           netau_in=netau,unit_test=.false.,  &
+                           targetangle=targetangle,    &
+                           unit_test=.false.,  &
                            bp = bp,   &
                            psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3,  &
                            outfile=nout,iprint=1 )
