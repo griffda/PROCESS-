@@ -833,7 +833,7 @@ module numerics
   !+ad_varc                         VMCON optimisation runs
   real(kind(1.0D0)), dimension(ipnvars) :: boundu = (/ &
        10.00D0, &  !  1
-       100.0D0, &  !  2
+       30.00D0, &  !  2
        50.00D0, &  !  3
        150.0D0, &  !  4
        1.000D0, &  !  5
