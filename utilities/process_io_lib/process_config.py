@@ -1105,26 +1105,44 @@ class UncertaintiesConfig(ProcessConfig, Config):
             to error summary file """
 
         m_file = MFile(filename="MFILE.DAT")
+        nvar = int(m_file.data['nvar'].get_scan(-1))
 
+        
         if sample_index == 0:
             header = "#sample_index"
 
+            #Uncertain input variables
             for u_dict in self.uncertainties:
                 header += ' {:10s}'.format(u_dict['varname'])
 
+            #normalised iteration varialbes
+            for i in range(1, nvar+1):
+                
+                label = m_file.data['nitvar{:03}'.format(i)].var_description
+                header += ' n_{0:8s}'.format(label.replace('_(range_normalised)', ''))
+
+            #error status, id and ifail
             header += " error_status error_id ifail\n"
             err_summary = open(self.wdir+'/UQ_error_summary.txt', 'w')
             err_summary.write(header)
         else:
             err_summary = open(self.wdir+'/UQ_error_summary.txt', 'a+')
 
+        #Uncertain input variables
         output = '{:12d}'.format(sample_index)
         for u_dict in self.uncertainties:
             output += ' {0:10f}'.format(u_dict['samples'][sample_index])
 
+
+        #normalised iteration variables
+        for i in range(1, nvar+1):
+            output += ' {0:10f}'.format(m_file.data['nitvar{:03}'.format(i)].get_scan(-1))
+            
+
+        #error status and id 
         output += ' {0:13d} {1:8d}'.format(int(m_file.data['error_status'].get_scan(-1)),
                                            int(m_file.data['error_id'].get_scan(-1)))
-
+        #ifail
         if m_file.data['error_status'].get_scan(-1) < 3:
             output += ' {:5d}\n'.format(int(m_file.data['ifail'].get_scan(-1)))
         else:
