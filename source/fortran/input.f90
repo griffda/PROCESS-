@@ -524,7 +524,7 @@ contains
           call parse_real_variable('betbm0', betbm0, 0.0D0, 10.0D0, &
                'Leading coeff. for NB beta fraction')
        case ('bt')
-          call parse_real_variable('bt', bt, 0.0D0, 20.0D0, &
+          call parse_real_variable('bt', bt, 0.0D0, 30.0D0, &
                'Toroidal field on axis (T)')
        case ('cfe0')
           call parse_real_variable('cfe0', cfe0, 0.0D0, 10.0D0, &
