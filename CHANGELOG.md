@@ -64,3 +64,4 @@ Utilities
 - `tfacpd` is now calculted for resistive TF coils so is no longer an input.
 - Reset test_suite files (Issue #719)
 - Added error reporting to function ncore (Issue #735)
+- Added input `plasma_res_factor` for adjustment factor for plasma resistivity. Default is 1.0   to preserve old behaviour.
