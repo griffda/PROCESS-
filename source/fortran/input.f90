@@ -757,6 +757,9 @@ contains
        case ('nesep')
           call parse_real_variable('nesep', nesep, 0.0D0, 1.0D21, &
                'Electron density at separatrix (/m3)')
+       case ('plasma_res_factor')
+          call parse_real_variable('plasma_res_factor', plasma_res_factor, 0.0D0, 1.0D0, &
+               'Plasma resistivity pre-factor')
        case ('q')
           call parse_real_variable('q', q, 1.00D0, 50.0D0, &
                'Edge safety factor')

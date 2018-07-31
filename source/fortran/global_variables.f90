@@ -425,6 +425,8 @@ module physics_variables
   real(kind(1.0D0)) :: alpha_crit = 0.0D0
   !+ad_vars  nesep_crit : critical electron density at separatrix [m-3]
   real(kind(1.0D0)) :: nesep_crit = 0.0D0
+  !+ad_vars  plasma_res_factor /1.0/ : plasma resistivity pre-factor
+  real(kind(1.0D0)) :: plasma_res_factor = 1.0D0
   !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal>=1)
   real(kind(1.0D0)) :: rhopedn = 1.0D0
   !+ad_vars  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal>=1)

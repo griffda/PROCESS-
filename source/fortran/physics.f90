@@ -3922,7 +3922,7 @@ implicit none
 
     !  Plasma resistance, from loop voltage calculation in IPDG89
 
-    rplas = 2.15D-9 * zeff*rmajor / (kappa95*rminor**2 * t10**1.5D0)
+    rplas = plasma_res_factor * 2.15D-9 * zeff*rmajor / (kappa95*rminor**2 * t10**1.5D0)
 
     !  Neo-classical resistivity enhancement factor
     !  Taken from  N. A. Uckan et al, Fusion Technology 13 (1988) p.411.
