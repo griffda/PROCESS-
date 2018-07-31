@@ -10,7 +10,11 @@
 - Fixed error in spherical tokamak radial build calculation (Issue #704)
 - Fixed error in current drive fractions adding to > 1 (Issue #705).
 - Fixed issues with uncertainty python utility (Issue #716)
-- Cost model no longer gives NaN for no inboard (iblanket=2) blanket (Issue #722)
+- Fixed issues when there is no inboard blanket (Issue #722 #732)
+- Fixed incorrect cross sectional area calculation in resistive TF coils (Issue #727)
+- Fixed constraint equations plot in diagnose_process.py (Issue #738)
+- Corrected units in resistive TF coil stress output
+- Corrected units on ucme and uciac in global variables.
 
 ## Features
 
@@ -29,7 +33,8 @@ PLASMOD
  - Certain constraints and iterations variables cannot be used with PLASMOD - see the User Guide for more information.
 
 Utilities
- - New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
+	- New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
+	- evaluate_uncertainties.py now outputs and additional file to allow analysis of failed PROCESS Runs.
 
 - TF stress in conduit Tresca criterion can now have regular and CEA adjusted options 
   (adjustment from [Torre et al. 2016](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7390035) 
@@ -55,4 +60,8 @@ Utilities
 - File prefixes for input files now works as intended. For example input file called `my_input_IN.DAT`
   will be outputted as `my_input_OUT.DAT` etc.
 - `tbrnmn` no longer iteration variable as there is constraint equation 13 and f-value `ftburn` already. `tbrnmn` will act as the constraint limit input value.
-
+- `cdtfleg` no longer an iteration variable.  The outboard leg current density is now calculated for resistive TF coils. (Issue #727)
+- `tfacpd` is now calculted for resistive TF coils so is no longer an input.
+- Reset test_suite files (Issue #719)
+- Added error reporting to function ncore (Issue #735)
+- Added input `plasma_res_factor` for adjustment factor for plasma resistivity. Default is 1.0   to preserve old behaviour.

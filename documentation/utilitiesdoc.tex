@@ -1009,6 +1009,7 @@ Use -h or --help for help
 \texttt{uncertainties.nc}. This file (NetCDF format) can be visualised using the \texttt{display\_uncertainties.py} tool. \\
 \texttt{Readme.txt},\\
 \texttt{process.log}, \\
+\texttt{UQ\_error\_summary.txt},\\
 \process\ output from the last run.
 
 \end{description}
@@ -1138,6 +1139,9 @@ only the last of these scan points is ever kept for evaluation. (There is an
 option for developers to keep all the data for debugging purposes. However,
 this should typically not be used in production runs.) These files can be
 visualised using the \texttt{display\_uncertainties.py} tool.
+
+The UQ\_error\_summary.txt file is an ascii text file summarising all values of the uncertain parameter inputs, the normalised values of iteration variables (labelled ``n\_''variable name) and whether their runs have found a feasible solution (ifail=1), have encountered any PROCESS errors (ifail=-1, error\_status=3) or whether they have not found a feasible solution (all other ifail values, for details see PROCESS user guide). This file can be used to analyse parameter spaces prone to errors.
+
 
 
 \subsubsection{display\_uncertainties.py}

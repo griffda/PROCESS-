@@ -176,7 +176,7 @@ kallenbach_switch = 1 * Switch to turn on the 1d kallenbach divertor model (1=on
 kallenbach_tests = 0 * Switch to run tests of 1d kallenbach divertor model (1=on; 0=off)
 target_spread = 3.0e-3 * Increase in sol power fall-off length due to spreading; mapped to omp [m]
 lambda_q_omp = 0.002 * Sol power fall-off length at the outer midplane; perpendicular to field [m]
-netau    = 0.5 * Parameter describing the departure from local ionisation equilibrium in the sol; [ms;1e20/m3]
+netau_sol    = 0.5 * Parameter describing the departure from local ionisation equilibrium in the sol; [ms;1e20/m3]
 targetangle = 30.0 * Angle between field-line and divertor target (degrees)
 qtargettotal = 1671000.0 * Power density on target including surface recombination [w/m2]
 impurity_enrichment(1) = 0.0
