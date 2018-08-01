@@ -9,7 +9,7 @@
 - Fixed error in spherical tokamak divertor geometry calculation (Issue #697)
 - Fixed error in spherical tokamak radial build calculation (Issue #704)
 - Fixed error in current drive fractions adding to > 1 (Issue #705).
-- Fixed issues with uncertainty python utility (Issue #716)
+- Fixed issues with uncertainty python utility (Issue #716 #746)
 - Fixed issues when there is no inboard blanket (Issue #722 #732)
 - Fixed incorrect cross sectional area calculation in resistive TF coils (Issue #727)
 - Fixed constraint equations plot in diagnose_process.py (Issue #738)
