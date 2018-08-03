@@ -1225,6 +1225,29 @@ contains
 
     write(*,*) ""
 
+    ! If fail then alter value of epsfcn - this can be improved
+    if (ifail /= 1) then
+       write(*,*) 'Trying again with new epsfcn'
+       epsfcn = epsfcn * 10.0D0 !try new larger value
+       write(*,*) 'new epsfcn = ', epsfcn
+       call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
+            lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
+            gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
+            liwa,ilower,iupper,bndl,bndu,convergence_parameter)
+       epsfcn = epsfcn / 10.0D0 !reset value
+    end if
+    if (ifail /= 1) then
+       write(*,*) 'Trying again with new epsfcn'
+       epsfcn = epsfcn / 10.0D0 !try new smaller value
+       write(*,*) 'new epsfcn = ', epsfcn
+       call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
+            lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
+            gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
+            liwa,ilower,iupper,bndl,bndu,convergence_parameter)
+       epsfcn = epsfcn * 10.0D0 !reset value
+    end if
+    
+    
     !  If VMCON has exited with error code 5 try another run using a multiple of
     !  the identity matrix as input for the Hessian b(n,n).
     !  Only do this if VMCON has not iterated (nviter=1).

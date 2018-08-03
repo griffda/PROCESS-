@@ -158,8 +158,8 @@ hfact    = 1.1 * H factor on energy confinement times (iteration variable 10)
 ixc = 12 * oacdcp
 oacdcp   = 9.5E+06 * Overall current density in tf coil inboard legs (a/m2)
 
-ixc = 13 * tfcth
-tfcth = 1.0
+*ixc = 13 * tfcth REMOVED!
+*tfcth = 1.0
 
 ixc = 16 * ohcth
 boundl(16) = 0.8
@@ -223,6 +223,8 @@ oh_steel_frac = 8.6E-01 * central solenoid steel fraction (iteration variable 12
 *boundu(124) = 10.0e6
 *qtargettotal = 2.0e6       * Power density on target including surface recombination [W/m2]
 
+ixc = 140 * thkwp
+thkwp = 0.5
 
 *-----------------Build Variables------------------*
 blnkith  = 0.755 * Inboard blanket thickness (m);
@@ -277,9 +279,9 @@ targetangle = 30.0 * Angle between field-line and divertor target (degrees)
 qtargettotal = 1470000.0 * Power density on target including surface recombination [w/m2]
 neratio  = 0.9 * Ratio of mean sol density at omp to separatrix density at omp
 fractionwidesol = 0.1 * Distance from target at which sol gets broader as a fraction of connection length
-abserr_sol = 1e-4     * Relative contribution to the error tolerance in the Kallenbach divertor model
-relerr_sol = 1e-4     * Absolute contribution to the error tolerance in the Kallenbach divertor model
-mach0 = 0.999         * Mach number at target (must be just less than 1)
+abserr_sol = 1e-5     * Relative contribution to the error tolerance in the Kallenbach divertor model
+relerr_sol = 1e-5     * Absolute contribution to the error tolerance in the Kallenbach divertor model
+mach0 = 0.99         * Mach number at target (must be just less than 1)
 
 *------------------Fwbs Variables------------------*
 vfshld   = 0.60 * Coolant void fraction in shield
@@ -331,7 +333,7 @@ fimp(13) = 2.E-04
 ioptimz  = 1 * for optimisation VMCON only
 minmax   = 1 * Switch for figure-of-merit ( 1) major radius
 epsvmc   = 2.0e-4 * Error tolerance for vmcon
-maxcal   = 200
+maxcal   = 100
 
 *----------------Pf Power Variables----------------*
 
@@ -395,7 +397,7 @@ lpulse = 1 * Switch for reactor model;
 tdwell = 0 * dwell time (s)
 
 *-------------------Scan Module--------------------*
-isweep   = 15  * Number of scan points to calculate
+isweep   = 13  * Number of scan points to calculate
 nsweep   = 34  * Switch denoting quantity to scan
 *31 taulimit
 *32 epsvmc
