@@ -22,7 +22,6 @@ outlining the engineering models in PROCESS published in fusion engineering and 
 ### Other papers
 
 A list of other papers using PROCESS:
-
 - "Impurity radiation in DEMO systems modelling", H. Lux et al., 2015, fusion engineering and
 design, ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615302891))
 - "Implications of toroidal field coil stress limits on power plant design using PROCESS", J. Morris et al.,
