@@ -265,20 +265,25 @@ contains
     end if
 
     ! Power to the first wall (MW)
-    pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    !pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
 
     ! Power to the blanket (MW)
-    pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
-
+    !pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
+    
     ! Power to the shield(MW)
-    pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    !pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
 
     ! Power to the TF coils (MW)
-    ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    !ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
 
     ! pnucdiv is not changed.
     ! The energy due to multiplication, by subtraction:
-    emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
+    !emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
+    emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - pneutmw
 
     ! powerflow calculation for pumping power
     call powerflow_calc
