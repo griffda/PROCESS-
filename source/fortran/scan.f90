@@ -459,6 +459,7 @@ contains
     real(kind(1.0D0)), dimension(noutvars,ipnscns) :: outvar
     integer :: ifail, iscan, ivar, iscan_1, iscan_2
     logical :: first_call = .TRUE.
+    real(kind(1.0D0)), dimension(ipnscns) :: sweep_1_vals, sweep_2_vals
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -685,16 +686,20 @@ contains
             outvar(81,iscan) = fimp(13)
             outvar(82,iscan) = fimp(14)
             outvar(83,iscan) = teped
-    
+
+            sweep_1_vals(iscan) = sweep(iscan_1)
+            sweep_2_vals(iscan) = sweep_2(iscan_2)
             iscan = iscan + 1
         end do  !  End of scanning loop
     end do  !  End of scanning loop
  
     ! Finally, write data to PLOT.DAT
-    write(nplot,'(i8)') isweep
+    write(nplot,'(i8)') isweep*isweep_2
     write(nplot,'(a48)') tlabel
-    write(nplot,'(a25, 1p, 200e11.4)') xlabel,(sweep(iscan),iscan=1, &
-        isweep*isweep_2)
+    write(nplot,'(a25, 1p, 200e11.4)') xlabel, (sweep_1_vals(iscan), iscan=1, &
+          isweep*isweep_2)
+    write(nplot,'(a25, 1p, 200e11.4)') xlabel_2, (sweep_2_vals(iscan), & 
+          iscan=1, isweep*isweep_2)
 
     do ivar = 1, noutvars
         write(nplot,'(a25, 1p, 200e11.4)') plabel(ivar), (outvar(ivar,iscan), &
