@@ -2754,7 +2754,7 @@ contains
                'Unplanned unavailability for vessel')
 
 
-          !  Sweep settings
+        !  Sweep settings
 
        case ('isweep')
           call parse_int_variable('isweep', isweep, 0, ipnscns, &
@@ -2765,6 +2765,19 @@ contains
        case ('sweep')
           call parse_real_array('sweep', sweep, isub1, ipnscns, &
                'Actual values to use in scan', icode)
+
+        case ('scan_dim')
+          call parse_int_variable('scan_dim', scan_dim, 1, 2, &
+               'Switch for 1-D or 2-D scan')
+        case ('isweep_2')
+          call parse_int_variable('isweep_2', isweep_2, 0, ipnscns, &
+               'Number of 2D scans to perform')
+        case ('nsweep_2')
+          call parse_int_variable('nsweep_2', nsweep_2, 1, ipnscnv, &
+               'Second variable used in 2D scan')
+        case ('sweep_2')
+          call parse_real_array('sweep_2', sweep_2, isub1, ipnscns, &
+               'Actual values to use in 2D scan', icode)
 
           !  Buildings settings
 

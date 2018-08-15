@@ -32,6 +32,11 @@ PLASMOD
  - For a complete list, see the vardes file. Where appropriate, previously-existing PROCESS input parameters still apply.
  - Certain constraints and iterations variables cannot be used with PLASMOD - see the User Guide for more information.
 
+2D Scan
+ - implemented a basic 2-D scan feature in PROCESS.
+ - new inputs `scan_dim`, `isweep_2`, `nsweep_2` and `sweep_2`.
+ - Does the scan in a basic grid like manner (i.e. jumps to start of next row from end of previous). Would be nice to upgrade to 'zig-zag'-like approach.
+
 Utilities
 	- New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
 	- evaluate_uncertainties.py now outputs and additional file to allow analysis of failed PROCESS Runs.
