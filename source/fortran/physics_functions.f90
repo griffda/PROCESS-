@@ -1181,7 +1181,9 @@ contains
     ! Total normalised plasma beta is used.
 
     t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
-                          kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
+         kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
+    !Issue #730 - add scaling factor to eped model
+    t_eped_scaling = eped_sf * t_eped_scaling
   end function t_eped_scaling
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1226,6 +1228,8 @@ contains
     
     p_eped_scaling =  0.65d0 * c0 * delta_pl**a_delta * ip_pl**a_ip * rmajor**a_r * &
          kappa_pl**a_kappa  * betan_pl**a_beta * rminor**a_a
+    !Issue #730 - add scaling factor to eped model
+    p_eped_scaling = eped_sf * p_eped_scaling
   end function p_eped_scaling
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

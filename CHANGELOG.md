@@ -70,3 +70,4 @@ Utilities
 - Reset test_suite files (Issue #719)
 - Added error reporting to function ncore (Issue #735)
 - Added input `plasma_res_factor` for adjustment factor for plasma resistivity. Default is 1.0   to preserve old behaviour.
+- Added additional scaling factor 'eped_sf' for the EPED pedestal model (pressure and temperature versions).

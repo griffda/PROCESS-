@@ -554,6 +554,9 @@ contains
        case ('epbetmax')
           call parse_real_variable('epbetmax', epbetmax, 0.01D0, 10.0D0, &
                'Max epsilon*beta value')
+       case ('eped_sf')
+          call parse_real_variable('eped_sf', eped_sf, 0.0001D0, 2.0D0, &
+               'Scaling factor for EPED pedestal model')   
        case ('falpha')
           call parse_real_variable('falpha', falpha, 0.0D0, 1.0D0, &
                'Fraction of alpha power deposited to plasma')

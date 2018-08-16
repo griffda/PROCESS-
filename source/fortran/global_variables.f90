@@ -418,6 +418,10 @@ module physics_variables
   !+ad_varc             <LI>    https://idm.euro-fusion.org/?uid=2MSZ4T </UL>
   integer :: ieped = 0
 
+  ! Issue #730
+  !+ad_vars  eped_sf /0/ : scaling factor for EPED model
+  real(kind(1.0D0)) :: eped_sf = 1.0D0
+
   !+ad_vars  neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1,2, calculated if 3)
   real(kind(1.0D0)) :: neped = 4.0D19
   !+ad_vars  nesep /3.0e19/ : electron density at separatrix [m-3] (ipedestal=1,2, calculated if 3)
