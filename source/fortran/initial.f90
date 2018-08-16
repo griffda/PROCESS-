@@ -387,7 +387,12 @@ subroutine check
         call report_error(178)
      endif
      
-
+     if(ipedestal > 0) then
+        if(eped_sf > 1.0) then
+           call report_error(214)
+        endif
+     endif
+          
      if(ipedestal == 2 .or. ipedestal == 3) then
 
         !PLASMOD automatically takes both pseprmax and psepbqarmax as input
