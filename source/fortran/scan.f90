@@ -709,7 +709,7 @@ contains
   end subroutine scan_2d
 
   subroutine scan_select(nwp, swp, iscn, vlab, xlab)
-    !+ad_name  scan_select_1
+    !+ad_name  scan_select
     !+ad_summ  Routine to select first scan case
     !+ad_type  Subroutine
     !+ad_auth  J Morris, UKAEA, Culham Science Centre
