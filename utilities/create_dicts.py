@@ -338,7 +338,7 @@ def dict_ixc2nsweep():
 
        Example of a fragment we are looking for:
            case (1)
-              aspect = sweep(iscan)
+              aspect = swp(iscn)
               vlabel = 'aspect = ' ; xlabel = 'Aspect_ratio'
 
        Example dictionary entry:
@@ -348,12 +348,12 @@ def dict_ixc2nsweep():
     di = {}
     file = SOURCEDIR + "/scan.f90"
     #slice the file to get the switch statement relating to nsweep
-    lines = slice_file(file, r"select case \(nsweep\)", r"case default")
+    lines = slice_file(file, r"select case \(nwp\)", r"case default")
 
     #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
     modlines = []
     for line in lines[1:-1]:
-        if "case" in line or "sweep(iscan)" in line:
+        if "case" in line or "swp(iscn)" in line:
             line = remove_comments(line).replace(' ', '')
             modlines.append(line)
 
@@ -370,7 +370,7 @@ def dict_ixc2nsweep():
             num = match.group(1)
             #if the case statement matched, get the variable name
             #from the next line
-            match_2 = re.match(r"(.*?)=sweep\(iscan\)", modlines[i+1])
+            match_2 = re.match(r"(.*?)=swp\(iscn\)", modlines[i+1])
             if not match_2:
                 logging.warning("Error in dict_ixc2nsweep\n")
             else:
@@ -839,17 +839,16 @@ def dict_nsweep2varname():
     It maps the sweep variable number to its variable name
     """
 
-
     di = {}
     file = SOURCEDIR + "/scan.f90"
 
     #slice the file to get the switch statement relating to nsweep
-    lines = slice_file(file, r"select case \(nsweep\)", r"case default")
+    lines = slice_file(file, r"select case \(nwp\)", r"case default")
 
     #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
     modlines = []
     for line in lines[1:-1]:
-        if "case" in line or "sweep(iscan)" in line:
+        if "case" in line or "swp(iscn)" in line:
             line = remove_comments(line).replace(' ', '')
             modlines.append(line)
 
@@ -858,7 +857,7 @@ def dict_nsweep2varname():
         no = line1.replace('case(', '')
         no = no.replace(')', '')
         line2 = modlines[i*2+1]
-        varname = line2.replace('=sweep(iscan)', '')
+        varname = line2.replace('=swp(iscn)', '')
         di[no] = varname
 
     return di

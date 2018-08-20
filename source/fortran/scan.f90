@@ -129,7 +129,7 @@ module scan_module
   !+ad_vars  sweep(ipnscns) /../: actual values to use in scan
   real(kind(1.0D0)), dimension(ipnscns) :: sweep = 0.0D0
 
-  !+ad_vars  sweep(ipnscns) /../: actual values to use in 2D scan
+  !+ad_vars  sweep_2(ipnscns) /../: actual values to use in 2D scan
   real(kind(1.0D0)), dimension(ipnscns) :: sweep_2 = 0.0D0
 
 contains
