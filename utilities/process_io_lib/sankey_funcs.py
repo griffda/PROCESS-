@@ -245,7 +245,7 @@ def plot_simplified_sankey(mfilename='MFILE.DAT'):
     fachtmw = m_file.data['fachtmw'].get_scan(-1)
     itart = m_file.data['itart'].get_scan(-1)
     if itart == 1 :
-        ppumpmw = m_file.data['ppump'].get_scan(-1) #for STs only
+        ppumpmw = m_file.data['ppump'].get_scan(-1)/1e6 #for STs only
     tfacpd = m_file.data['tfacpd'].get_scan(-1)
     trithtmw = m_file.data['trithtmw'].get_scan(-1)
     vachtmw = m_file.data['vachtmw'].get_scan(-1)
