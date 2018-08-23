@@ -398,7 +398,7 @@ contains
        subscript_present = .FALSE.
 
        read(infile,'(A)',iostat=iost) line
-
+       write(*,*) 'KE main, line = ', line
        !  On error or end, return
        if (iost /= 0) exit loop_over_lines
 
@@ -431,6 +431,7 @@ contains
           write(*,*) 'Error in IN.DAT at line ', lineno
           write(*,*) line
           error = .True.
+          stop
        end if
 
        !  Read the associated data
@@ -2983,7 +2984,7 @@ contains
           write(*,*) 'Error occurred at this line in the IN.DAT file:', lineno
           write(*,*) line
           error = .True.
-
+          stop
 
        end select variable
 
@@ -2996,6 +2997,7 @@ contains
           write(*,*) 'Error occurred at this line in the IN.DAT file: ', lineno
           write(*,*) line
           error = .True.
+          stop
        end if
 
        !  If we have just read in an array, a different loop-back is needed
@@ -3150,7 +3152,8 @@ contains
        write(*,*) 'Unexpected subscript found in IN.DAT at line number: ', lineno
        write(*,*) 'Name and description of variable: '
        write(*,*) varnam, description
-          error = .True.
+       error = .True.
+       stop
     end if
 
     !  Obtain the new value for the variable
@@ -3219,7 +3222,8 @@ contains
        write(*,*) 'Unexpected subscript found in IN.DAT at line number: ', lineno
        write(*,*) 'Name and description of variable: '
        write(*,*) varnam, description
-          error = .True.
+       error = .True.
+       stop
     end if
 
     !  Obtain the new value for the variable
@@ -3230,7 +3234,8 @@ contains
        write(*,*) 'Error in IN.DAT found at line ',lineno
        write(*,*) 'Variable name, description:'
        write(*,*) varnam, ', ', description
-          error = .True.
+       error = .True.
+       stop
     end if
 
     if ((report_changes == 1).and.(trim(varval) /= trim(oldval))) then
@@ -3299,6 +3304,7 @@ contains
           write(*,*) 'Variable name, description:'
           write(*,*) varnam, ', ', description
           error = .True.
+          stop
        end if
 
        varval(isub1) = val
@@ -3391,6 +3397,7 @@ contains
           write(*,*) 'Variable name, description:'
           write(*,*) varnam, ', ', description
           error = .True.
+          stop
        end if
 
        varval(isub1) = val
@@ -3813,7 +3820,7 @@ contains
 
 20     CONTINUE
        read(infile,'(A)',iostat=iost) line
-
+       write(*,*) 'KE get_value_int, line = ', line
        ! *** On error or end, leave routine with error code set
 
        if (iost /= 0) goto 60
@@ -4001,7 +4008,7 @@ contains
 
 20     continue
        read(infile,'(A)',iostat=iost) line
-
+       write(*,*) 'KE get_value_real, line = ', line
        ! *** On error or end, leave routine with error set
 
        if (iost /= 0) goto 60
@@ -4299,7 +4306,7 @@ contains
 
 20     continue
        read(infile,'(A)',iostat=iost) line
-
+       write(*,*) 'KE get_substring, line = ', line
        ! *** On error or end, leave routine with error set
 
        if (iost /= 0) goto 60
