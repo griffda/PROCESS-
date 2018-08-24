@@ -15,6 +15,7 @@
 - Fixed constraint equations plot in diagnose_process.py (Issue #738)
 - Corrected units in resistive TF coil stress output
 - Corrected units on ucme and uciac in global variables.
+- Fixed issue with plot_proc.py scan counting (Issue #748)
 
 ## Features
 

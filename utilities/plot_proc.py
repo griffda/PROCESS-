@@ -1906,7 +1906,7 @@ if __name__ == '__main__':
         m_file = mf.MFile("MFILE.DAT")
 
     if args.n:
-        scan = args.n-1
+        scan = args.n
     else:
         scan = -1
 
