@@ -2993,7 +2993,7 @@ contains
           write(*,*) 'Error occurred at this line in the IN.DAT file:', lineno
           write(*,*) line
           error = .True.
-          stop
+          !stop
 
        end select variable
 
@@ -3098,7 +3098,7 @@ contains
     if (icode /= 0) then
        write(*,*) 'Error whilst reading input file.  Variable name and description:'
        write(*,*) varnam, ', ', description
-          error = .True.
+       error = .True.
     end if
 
     !  Check variable lies within range
@@ -3546,6 +3546,13 @@ contains
           ivar = -1234567890
        else
           ivar = 1234567890
+		  write(*,*) 'Problem with IN file string_to_int, please check line'
+          write(*,*) xstr
+          !KE - note that report_error cannot be called at this point
+          stop ! KE Issue #562  Stopping the code if value can't be read
+			!NOTE - this is trying to solve the problem of when the * is missed before 
+			!writing a comment in the IN file. Unfortunately it only works if the 
+			!value + comment is more than 10 characters long
        end if
        icode = 1
        goto 1000
@@ -3576,6 +3583,12 @@ contains
        if (negate) ivar = -ivar
 
     else
+	   if(ivar /= 0) then
+          write(*,*) 'Problem with IN file, please check line'
+          write(*,*) xstr
+          !KE - note that report_error cannot be called at this point
+          stop   !KE trying this
+       end if															 
        icode = 1
     end if
 
@@ -3769,6 +3782,13 @@ contains
     ! *** Errors
 
 60  continue
+       if(rval /= 0) then
+          write(*,*) 'Problem with IN file string_to_real, please check line'
+          write(*,*) string
+          !KE - trying this here to stop user putting a comment with no *
+		  !does not work. PROCESS however does not care, and still reads the value.
+          stop
+       end if
     icode = 1
 
 1000 continue
@@ -3913,15 +3933,9 @@ contains
     if (foundPoint > 0) then
        varlen = foundPoint
        write(*,*) 'Integer value expected in following input line...'
-       write(*,*) ' '
        write(*,*) '   ',line(1:50),'...'
-       write(*,*) ' '
-       write(*,*) 'The erroneous decimal point and subsequent digits have been'
-       write(*,*) 'discarded to leave only the integer part.'
-       write(*,*) 'PROCESS should continue okay, but please correct the input file!'
-       write(*,*) ' '
-       write(*,*) ' '
-       write(*,*) ' '
+       error = .True.
+       stop
     end if
 
     ! *** Update pointer
