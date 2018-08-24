@@ -375,6 +375,7 @@ contains
     integer :: isub1,isub2,varlen
     integer :: no_constraints=0
     integer :: no_iteration=0
+    integer :: foundAst
 
     character(len=32) :: varnam
 
@@ -422,6 +423,14 @@ contains
        if (line(1:1) == '$') cycle  !  in case block delimiters are still present
 
        iptr = 1
+
+       !Ignore input comments denoted by asterisk, before assigning variables
+       
+       if (index(line,'*') > 0) then
+          foundAst = index(line,'*') - 1
+          linelen = min(linelen, foundAst)
+          line = line(:linelen)
+       end if
 
        !  This must be an assignment line, so get the variable name
 
@@ -3412,6 +3421,7 @@ contains
        if(present(startindex))isub1 = startindex
        do
           call get_value_int(val,icode)
+          write(*,*) 'KE val, icode = ', val, ', ', icode
           !  icode == 1 denotes an error
           !  icode == -1 denotes end of line
           if (icode /= 0) then
@@ -3426,6 +3436,7 @@ contains
              write(outfile,10) trim(description),', ', &
                   trim(varnam),'(',isub1,') = ',varval(isub1)
           end if
+          write(*,*) 'KE isub1 = ', isub1
           isub1 = isub1 + 1
        end do
 
@@ -3813,9 +3824,13 @@ contains
           goto 10
        end if
     end if
-
-!     if (iptr > linelen) then
-
+    !write(*,*) 'line at iptr = ', line(iptr:iptr)
+    if (iptr > linelen) then
+       write(*,*) 'beyond line INT'
+       goto 60
+    endif
+    
+!        write(*,*) 'KE get val int iptr, linelen = ', iptr, ', ', linelen
 !        ! *** Read next line of namelist data
 
 ! 20     CONTINUE
@@ -3864,28 +3879,13 @@ contains
 !        if ((line(iptr:iptr) == '+').or.(line(iptr:iptr) == '-')) goto 40
 !        icode = -1
 !        goto 1000
-! 40     continue
+ 40     continue
 !     end if
 
     ! *** Put rest of line into varval (makes it easier to parse)
 
     varval = line(iptr:)
-
-    !  Discard any erroneous decimal points
-
-!    varlen = index(varval,'.') - 1
-!    if (varlen > 0) then
-!       write(*,*) 'Integer value expected in following input line...'
-!       write(*,*) ' '
-!       write(*,*) '   ',line(1:50),'...'
-!       write(*,*) ' '
-!       write(*,*) 'The erroneous decimal point and subsequent digits have been'
-!       write(*,*) 'discarded to leave only the integer part.'
-!       write(*,*) 'PROCESS should continue okay, but please correct the input file!'
-!       write(*,*) ' '
-!       write(*,*) ' '
-!       write(*,*) ' '
-!    end if
+    write(*,*) 'KE INT varval = ', varval
 
     ! *** Exclude any input after * or , - these denote an input comment
 
@@ -4002,8 +4002,12 @@ contains
           goto 10
        end if
     end if
+    if (iptr > linelen) then
+       write(*,*) 'beyond line REAL'
+       goto 60
+    endif
 !     if (iptr > linelen) then
-
+!        write(*,*) 'KE get val real iptr, linelen = ', iptr, ', ', linelen
 !        ! *** Read next line of namelist data
 
 ! 20     continue
@@ -4300,8 +4304,13 @@ contains
           goto 10
        end if
     end if
+    if (iptr > linelen) then
+       write(*,*) 'beyond line STRING'
+       goto 60
+    endif
+!     write(*,*) 'I am here!, line - ', line
 !     if (iptr > linelen) then
-
+!        write(*,*) 'KE get substring iptr, linelen = ', iptr, ', ', linelen
 !        ! *** Read next line of namelist data
 
 ! 20     continue
@@ -4357,10 +4366,15 @@ contains
     ! *** Put rest of line into varval (makes it easier to parse)
 
     varval = line(iptr:)
-    varlen = index(varval,',') - 1
-    if (varlen <= 0) varlen = index(varval,' ') - 1
+    varlen = len_trim(varval)
+    write(*,*) 'varlen1 = ', varlen
+    !varlen = index(varval,',') - 1
+    !write(*,*) 'varlen2 = ', varlen
+    !if (varlen <= 0) varlen = index(varval,' ') - 1
+    !write(*,*) 'varlen3 = ', varlen
     if (varlen <= 0) varlen = iptr
-
+    write(*,*) 'varlen4 = ', varlen
+    write(*,*) 'KE, varval = ', varval
     ! *** Update pointer
 
     iptr = iptr + varlen
