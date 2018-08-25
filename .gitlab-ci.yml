@@ -23,19 +23,18 @@ before_script:
 build:Make:
 # image: ukaea/ubuntu
  only:
+  - develop_unit_tests
   - reinke_crit_unit_tests
  stage: build
  script:
   - pwd
   - gcc --version
-#  - dos2unix global_variables.f90
   - ls -lah
   - rm -rf build
   - cmake3 -H. -Bbuild
   - cmake3 --build build
 # Now add trigger for PROCESS_Testing on GitLab CI               develop is PROCESS_Testing branch
   - "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"  
-#  - cd utilities
   - ls bin -lah
   - echo "Test "
  artifacts:
@@ -46,10 +45,10 @@ build:Make:
  tags:
   - freia
 build:vardes:
-# image: ukaea/ubuntu
+
  only:
   - reinke_crit_unit_tests
-#  - test_set_up_python_fixes 
+  - develop_unit_tests
  stage: build
  script:
   - pwd
@@ -64,25 +63,15 @@ build:vardes:
  tags:
   - freia
 testing:test_suite:
+ when: on_success  # Also default setting
  only:
   - reinke_crit_unit_tests
+  - develop_unit_tests
  stage: testing
  script:
   - pwd
-  - export PYTHONPATH=$PYTHONPATH:${PWD}/utilities
-  - export PATH=$PATH:${PWD}/utilities
-  - dos2unix ${PWD}/utilities/*.py
-#  - cmake3 -H. -Bbuild 
-#  - cmake3 --build build --target dicts 
-  - cd test_suite
-  - dos2unix ci_test_suite.py
-#  - python ci_test_suite.py -d 1.0
   # Now trigger testing on Jenkins
   - "curl -X POST http://mkumar:0eb1252f76a609d527edfbfdc0559eae@process-jenkins-ci.apps.l:8080/jenkins/job/PROCESS/build?token=MiLNGc-QvyEevhKK54go"
-# artifacts:
-#   expire_in: 2 hrs
-#   paths:
-#     - test_suite/*.xunit
  tags:
   - freia
 
