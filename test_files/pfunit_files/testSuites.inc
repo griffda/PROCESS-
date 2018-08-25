@@ -1,0 +1,7 @@
+!ADD_TEST_SUITE(helloWorld_suite)
+!ADD_TEST_SUITE(myTests_suite)
+!ADD_TEST_SUITE(Fixture_mod_suite)
+ADD_TEST_SUITE(test_current_drive_variables_suite)
+ADD_TEST_SUITE(test_physics_suite)
+ADD_TEST_SUITE(test_reinke_crit_module_suite)
+!ADD_TEST_SUITE(test_utilities_suite)

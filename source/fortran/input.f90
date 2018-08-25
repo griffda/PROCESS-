@@ -119,6 +119,7 @@ module process_input
   use times_variables
   use vacuum_variables
   use rebco_variables
+  use reinke_variables
 
   implicit none
 
@@ -129,7 +130,7 @@ module process_input
 #ifdef unit_test
   public :: parse_input_file
 #endif
-  public :: upper_case
+!  public :: upper_case
 
   integer, parameter :: maxlen = 300  !  maximum line length
   character(len=maxlen) :: line  !  current line of text from input file
@@ -952,6 +953,9 @@ contains
        case ('fradwall')
           call parse_real_variable('fradwall', fradwall, 0.001D0, 1.0D0, &
                'f-value for upper limit on radiation wall load')
+       case ('freinke')
+          call parse_real_variable('freinke', freinke, 0.001D0, 1.0D0, &
+               'f-value for upper limit on Reinke detachment criterion')
        case ('frminor')
           call parse_real_variable('frminor', frminor, 0.001D0, 10.0D0, &
                'F-value for minor radius limit')
@@ -998,6 +1002,9 @@ contains
        case ('fwalld')
           call parse_real_variable('fwalld', fwalld, 0.001D0, 10.0D0, &
                'F-value for wall load limit')
+       case ('fzactual')
+          call parse_real_variable('fzactual', fzactual, 0.0D0, 1.0D0, &
+               'fraction of specified impurity in SOL when constrained by Reinke criteria')
        case ('fzeffmax')
           call parse_real_variable('fzeffmax', fzeffmax, 0.001D0, 1.0D0, &
                'f-value for Zeff limit equation')
@@ -2928,8 +2935,14 @@ contains
           call parse_real_variable('outgasfactor', outgasfactor, 1.0D-6, 1.0D3, &
                'outgassing prefactor kw: outgassing rate at 1 s per unit area (Pa m s-1)')
 
+          ! Reinke criterion
+       case ('lhat')
+          call parse_real_variable('lhat', lhat, 1.0D0, 1.5D1, &
+               'connection length factor')
 
-
+       case ('impvardiv')
+          call parse_int_variable('impvardiv', impvardiv, 3, nimp, &
+               'Index of impurity to be iterated for Reike criterion')
 
 
           !  Stellarator settings
@@ -4790,67 +4803,6 @@ contains
 
   end subroutine check_range_real
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine upper_case(string,start,finish)
-
-    !+ad_name  upper_case
-    !+ad_summ  Routine that converts a (sub-)string to uppercase
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  string : input string   : character string of interest
-    !+ad_args  start  : optional input integer  : starting character for conversion
-    !+ad_args  finish : optional input integer  : final character for conversion
-    !+ad_desc  This routine converts the specified section of a string
-    !+ad_desc  to uppercase. By default, the whole string will be converted.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  05/01/04 PJK Initial F90 version
-    !+ad_hist  12/04/11 PJK Made start,finish arguments optional
-    !+ad_stat  Okay
-    !+ad_docs  None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    character(len=*), intent(inout) :: string
-    integer, optional, intent(in) :: start,finish
-
-    !  Local variables
-
-    character(len=1) :: letter
-    character(len=27) :: upptab = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'
-    integer :: loop, i
-
-    integer :: first, last
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (present(start)) then
-       first = start
-    else
-       first = 1
-    end if
-
-    if (present(finish)) then
-       last = finish
-    else
-       last = len(string)
-    end if
-
-    if (first <= last) then
-       do loop = first,last
-          letter = string(loop:loop)
-          i = index('abcdefghijklmnopqrstuvwxyz_',letter)
-          if (i > 0) string(loop:loop) = upptab(i:i)
-       end do
-    end if
-
-  end subroutine upper_case
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

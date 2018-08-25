@@ -35,6 +35,7 @@ module current_drive_module
 
   ! Import modules !
   !!!!!!!!!!!!!!!!!!
+  use iso_c_binding
 
   use constraint_variables
   use constants
@@ -423,7 +424,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine iternb(effnbss,fpion,fshine)
+  subroutine iternb(effnbss,fpion,fshine) bind(C, name="current_drive_iternb")
 
     !+ad_name  iternb
     !+ad_summ  Routine to calculate ITER Neutral Beam current drive parameters
@@ -590,7 +591,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion)
+  subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion) bind(C, name="current_drive_cfnbi")
 
     !+ad_name  cfnbi
     !+ad_summ  Routine to calculate the fraction of the fast particle energy

@@ -100,9 +100,9 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 146
+  integer, parameter :: ipnvars = 148
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 77
+  integer, parameter :: ipeqns = 78
   !+ad_vars  ipnfoms FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 18
 
@@ -341,7 +341,7 @@ module numerics
        'Separatrix density consistency   ',    &
        !+ad_varc  <LI> (72) central solenoid Tresca stress limit (itv 123 foh_stress)
        'CS Tresca stress limit           ',    &
-       !+ad_varc  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep)
+       !+ad_varc  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep))
        'Psep >= Plh + Paux               ',   &
        !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
        'TFC quench < tmax_croco          ',    &
@@ -349,8 +349,10 @@ module numerics
        'TFC current/copper area < Max    ',    &
        !+ad_varc  <LI> (76) Eich critical separatrix density
        'Eich critical separatrix density ',   &
-       !+ad_varc  <LI> (77) TF coil current per turn upper limit </UL>
-       'TFC current per turn upper limit '    &
+       !+ad_varc  <LI> (77) TF coil current per turn upper limit 
+       'TFC current per turn upper limit ',    &
+       !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)</UL>
+       'Reinke criterion fZ lower limit  '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -661,8 +663,12 @@ module numerics
        'fnesep        ', &
        !+ad_varc  <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density
        'fgwped        ', &
-       !+ad_varc  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)</UL>
-       'fnesep        ' &
+       !+ad_varc  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)
+       'fcpttf        ', &
+       !+ad_varc  <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)</UL>
+       'freinke       ', &
+       !+ad_varc  <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion</UL>
+       'fzactual      ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -826,7 +832,9 @@ module numerics
        0.001D0, &  !  143
        0.001D0, &  !  144
        0.500D0, &  !  145
-       0.001D0 &   !  146
+       0.001D0, &  !  146
+       0.001D0, &  !  147
+       1.00D-8  &  !  148
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -977,7 +985,9 @@ module numerics
        1.000D0, &  !  143
        1.000D0, &  !  144
        1.000D0, &  !  145
-       1.000D0  &  !  146
+       1.000D0, &  !  146
+       1.000D0, &  !  147
+       1.000D0  &  !  148
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
