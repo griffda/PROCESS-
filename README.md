@@ -44,6 +44,38 @@ On Freia, PFUnit and GTEST can be set in user profile (.bashrc) as
 
 ## Directory Structure
 
+Folder structure for PROCESS system without build and compile is depicted below
+
+```
+*-- CMakeLists.txt                      : Build and compile files
+*-- GNUmakefile                         : Build and compile pFUnit files
++-- lib                             : Libraries used in PROCESS
+|   +-- PLASMOD                         : PLASMOD lib files
++-- source                          : source files
+|   +-- Fortran                         : Fortran source files
+|   +-- cpp                             : C++ source files
++-- test_suite
+|   *-- ci_test_suite.py                : Python file for running test suite in Continuous integration system
+|   *-- ci_test_suite_functions.py      : Python functions  for running test suite in Continuous integration system
+|   *-- test_suite.py                   : Python file for running test suite by user on command line
+|   *-- test_suite_functions.py         : Python functions  for running test suite by user on command line
+|   +-- test_files                      : Input files for test suite
+|   +-- test_area                       : Output files for test suite
++-- test_files
+|   +-- pfunit_files                    : pFUnit test files
+|   +-- gtest_files                     : GTest test files
++-- utilities/                          : Python utilities files
++-- fispact/                                : fispact Data file
++-- data                                : Data file
+|   +-- fluids
+|   +-- h_data
+|   +-- lz_non_corona
+|   +-- lz_non_corona_14_elements
++-- documentation                       : Contain documentation files
+*-- IN.DAT                              : Sample PROCESS input file
+```
+
+Folder structure for PROCESS system after build and compile is depicted below
 ## Build Steps
 - It is recommended to load `gfortran` and unload `ifort` or any Fortran compiler explicitly before build,
     - `module unload ifort`
@@ -58,6 +90,25 @@ On Freia, PFUnit and GTEST can be set in user profile (.bashrc) as
 3. Step 2 will create a folder called `bin`, which contains three files, process.exe, process_GTest.exe and libPROCESS_calc_engine.so
 4. pFUnit unit test files are located in the folder _test_files/pfunit_files/_ with extension _.pf_. After completing step2 use `make tests` for running pFUnit test suite from home directory  
 5. GTest unit test files are located in the folder _test_files/gtest_files/_ with extension _.h_. After completing step 2 use `./bin/process_GTest` for running pFUnit test suite from home directory
+
+During compile and build steps, a number of files and folders are created. Additional files in the folder structure is depicted below
+
+```
++-- build                       : This folder is generated after cmake3 -H. -Bbuild
++-- bin                         : This folder is generated after cmake3 --build build
+|   *-- process.exe             : Executable for running PROCESS
+|   *-- libPROCESS_calc_engine.so   : Shared object containing all PROCESS functions, subroutines and modules
+|   *-- process_GTest.exe           : executable for running PROCESS unit test cases in GTest
++-- documentation                       : Contain documentation files
+|   +-- html             : Documentation generated after cmake3 --build build --target vardes
+*-- process.exe                     : PROCESS executable copied from /bin folder after finishing build process
+*-- tests.x                         : PROCESS executable copied from /bin folder after finishing build process
+*-- pfunit_results.xml              : pFUnit unit testing results file after running make tests
+*-- OUT.DAT                         : PROCESS output file generated after running ./process.exe
+*-- MFILE.DAT                       : PROCESS output file generated after running ./process.exe
+*-- VFILE.DAT                       : PROCESS output file generated after running ./process.exe
+```
+
 
 Additionally
 
