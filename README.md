@@ -27,21 +27,45 @@ design, ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615302
 - "Implications of toroidal field coil stress limits on power plant design using PROCESS", J. Morris et al.,
 SOFT 2014, fusion engineering and design ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615301290)).
 
-## Build
+## Build System
 
-- get repository
-    - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where `folder_name`
-    is the name of the folder that will be created when cloning the repository.
-- inside PROCESS directory run `make` to compile the executable `process.exe`.
+A number of software technologies for different tasks are used in PROCESS. [CMake](https://cmake.org/) is 
+used as build system for compilation, linking and creating executable and shared object. process.exe is 
+executable which links to a shared object, libPROCESS_Calculation_Engine.
+
+PROCESS calculation modules are primarly written in Fortran, Python is used for running series of integration tests.
+
+[pFUnit](http://pfunit.sourceforge.net/), and [Googletest](https://github.com/google/googletest) are used for unit testing 
+functions and subroutines within PROCESS. Googletest is also referred as GTest and will be used in this document
+
+On Freia, PFUnit and GTEST can be set in user profile (.bashrc) as 
+- `export PFUNIT=/home/PROCESS/testing_frameworks/pfunit_install/V_3-2_8`
+- `export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest`
+
+## Directory Structure
+
+## Build Steps
+- It is recommended to load `gfortran` and unload `ifort` or any Fortran compiler explicitly before build,
+    - `module unload ifort`
+    - `module unload pgi`
+    - `module load gfortran`  
+
+1. get repository
+    - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where `folder_name`is the name of the folder that will be created when cloning the repository.  
+2. Inside PROCESS directory, run CMAKE to build, compile and generate executable and shared object
+    - `cmake3 -H. -Bbuild`
+    - `cmake3 --build build`
+3. Step 2 will create a folder called `bin`, which contains three files, process.exe, process_GTest.exe and libPROCESS_calc_engine.so
+4. pFUnit unit test files are located in the folder _test_files/pfunit_files/_ with extension _.pf_. After completing step2 use `make tests` for running pFUnit test suite from home directory  
+5. GTest unit test files are located in the folder _test_files/gtest_files/_ with extension _.h_. After completing step 2 use `./bin/process_GTest` for running pFUnit test suite from home directory
 
 Additionally
 
-- to make python dictionaries run `make dicts`
-- to make documentation run `make doc`. (pdf compilation on UKAEA Freia machines 
+- to make python dictionaries run `cmake3 --build build --target dicts`
+- to make documentation run `cmake3 --build build --target doc`. (pdf compilation on UKAEA Freia machines 
   requires the following line in your `.bashrc` file: `module load texlive/2017`)
-- to make html files run `make html`
-- to make everything run `make all`
-- to clean the directory run `make clean`
+- to make html files run `cmake3 --build build --target html`
+- to clean the directory run `rm -rf build`
 
 ## Run
 
@@ -204,77 +228,6 @@ This allows the user to checkout a specific commit between tagged versions. PROC
 | `git describe --tags`   | show the current tag  | 
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 | `git checkout tags/<tag name>` | checkout a specific tag |
-
-## Windows Users
-
-PROCESS does compile and run on Windows. The following instructions will get you to the point of compiling 
-and running the fortran code (and the Python utilities) on Windows.
-
-1. Install `mingw` using the following [installer](https://sourceforge.net/projects/mingw/?source=typ_redirect).
-    - click on basic setup and install the following options
-        - `mingw32-base`
-        - `mingw32-gcc-gfortran`
-        - `mingw32-gcc-g++`
-        - `msys-base`
-    - Setup the windows environment variable `PATH` = `c:\MinGW\bin\`
-        - in `c:\MinGW\bin\` make a copy of `mingw32-make.exe` called `make.exe`
-
-2. Install a suitable editor or IDE. [Microsoft Visual Studio Code](https://code.visualstudio.com/) is 
-recommended.
-
-3. Install a Python distribution for windows and make sure it is available on the Windows command prompt.
-    - Recommend the [Anaconda Python distribution](https://www.continuum.io/downloads) for Windows.
-
-4. Install [git](https://git-for-windows.github.io/) for Windows
-    - ideally choose the option of having the git commands available to the Windows command prompt.
-    - set your git `user.name` and `user.email` to the desired values
-        ```
-        git config --global user.name "User Name"
-        git config --global user.email "user.name@domain.com"
-        ```
-    - turn of git converting line endings to `CRLF`
-        ```
-        git config --global core.autocrlf false
-        ```
-
-5. Clone the code from the PROCESS gitlab repository.
-    ```
-    git clone http://git.ccfe.ac.uk/process/process.git -b branch folder_name
-    ```
-
-6. **Check that your editor is using `LF` line endings and not `CRLF` line endings.**
-
-7. Go into the PROCESS code folder and build the code by running the following in the command prompt
-    ```
-    make
-    ```
-
-8. Run the code (provided there is an  `IN.DAT`)
-    ```
-    process.exe
-    ```
-
-9. Running the utilities
-    - Edit environment variables and creating a new one called `PYTHONPATH` and set it 
-    to `c:\some path\utilities\`. Where `some path` is the location of the process folder.
-    - Make the PROCESS Python dictionaries
-        ```
-        make win_dicts
-        ```
-    - Run a utility, e.g.
-        ```
-        python utilities\plot_proc.py -f MFILE.DAT
-        ```
-
-10. To create the HTML documentation run,
-    ```
-    make win_doc
-    ```
-
-11. Finally, to clean the make run,
-    ```
-    make win_clean
-    ```
 
 ## Contacts
 
