@@ -419,7 +419,7 @@ module physics_variables
   integer :: ieped = 0
 
   ! Issue #730
-  !+ad_vars  eped_sf /0/ : scaling factor for EPED model
+  !+ad_vars  eped_sf /1.0/ : Adjustment factor for EPED scaling to reduce pedestal temperature or pressure to mitigate or prevent ELMs
   real(kind(1.0D0)) :: eped_sf = 1.0D0
 
   !+ad_vars  neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1,2, calculated if 3)
