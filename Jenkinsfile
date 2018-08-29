@@ -47,7 +47,11 @@ agent any
              sh 'gcc --version'
              sh 'export CC=/usr/local/bin/gcc'
              sh 'export CXX=/usr/local/bin/g++'
+             withCredentials(
+             [sshUserPrivateKey(credentialsId: 'b3e0daf1-7bdd-43ca-ad6d-61b7002d9fbf', 
+             keyFileVariable: '', passphraseVariable: '', usernameVariable: '')]) {
              sh 'git clone -b develop git@git.ccfe.ac.uk:mkumar/PROCESS_Testing.git'
+             }
              dir('PROCESS_Testing')
              {
                pwd()
