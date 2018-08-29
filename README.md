@@ -122,6 +122,8 @@ Additionally
 - create input file IN.DAT
 - run `./process.exe`
 - results are output in OUT.DAT, MFILE.DAT
+- optionally, run the `utilities/run_process.py` script in conjunction with a config file to randomly vary the starting point of the input parameter set until a feasilble solution is found.
+    - `run_process.py -f CONFIGFILE`
 
 ## Development
 
