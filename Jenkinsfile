@@ -5,6 +5,12 @@ agent any
     {
         stage('Checkout') 
         {
+          checkout changelog: false, poll: false, 
+          scm: [$class: 'GitSCM', branches: [[name: '*/develop']], 
+          doGenerateSubmoduleConfigurations: false, extensions: [],         
+          submoduleCfg: [], userRemoteConfigs: [[credentialsId: '3fec59c5-adab-4c2a-9891-50efc6b25a95', 
+          url: 'git@git.ccfe.ac.uk:mkumar/PROCESS_Testing.git']]]
+
             steps 
             {
               checkout scm
@@ -47,10 +53,6 @@ agent any
              sh 'gcc --version'
              sh 'export CC=/usr/local/bin/gcc'
              sh 'export CXX=/usr/local/bin/g++'
-             withCredentials([usernameColonPassword(
-             credentialsId: '23faa430-5d27-4033-9d18-2b68f08ffbf8', variable: '')]) {
-             sh 'git clone -b develop git@git.ccfe.ac.uk:mkumar/PROCESS_Testing.git'
-             }
              dir('PROCESS_Testing')
              {
                pwd()
