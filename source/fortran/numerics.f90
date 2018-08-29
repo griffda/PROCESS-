@@ -100,9 +100,9 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 148
+  integer, parameter :: ipnvars = 150
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 77
+  integer, parameter :: ipeqns = 78
   !+ad_vars  ipnfoms FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 18
 
@@ -341,7 +341,7 @@ module numerics
        'Separatrix density consistency   ',    &
        !+ad_varc  <LI> (72) central solenoid Tresca stress limit (itv 123 foh_stress)
        'CS Tresca stress limit           ',    &
-       !+ad_varc  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep)
+       !+ad_varc  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep))
        'Psep >= Plh + Paux               ',   &
        !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
        'TFC quench < tmax_croco          ',    &
@@ -349,8 +349,10 @@ module numerics
        'TFC current/copper area < Max    ',    &
        !+ad_varc  <LI> (76) Eich critical separatrix density
        'Eich critical separatrix density ',   &
-       !+ad_varc  <LI> (77) TF coil current per turn upper limit </UL>
-       'TFC current per turn upper limit '    &
+       !+ad_varc  <LI> (77) TF coil current per turn upper limit 
+       'TFC current per turn upper limit ',    &
+       !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)</UL>
+       'Reinke criterion fZ lower limit  '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -666,7 +668,11 @@ module numerics
        !+ad_varc  <LI> (147) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power</UL>
        'plasmod_fcdp  ', &
        !+ad_varc  <LI> (148) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)</UL>
-       'plasmod_fradc ' &
+       'plasmod_fradc ', &
+       !+ad_varc  <LI> (149) freinke : F-value for Reinke detachment criterion (constraint equation 78)</UL>
+       'freinke       ', &
+       !+ad_varc  <LI> (150) fzactual : fraction of impurity at SOL with Reinke detachment criterion</UL>
+       'fzactual      ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -832,7 +838,9 @@ module numerics
        0.500D0, &  !  145
        0.001D0, &  !  146
        0.000D0, &  !  147
-       0.000D0 &   !  148
+       0.000D0, &  !  148
+       0.001D0, &  !  149
+       1.00D-8  &  !  150
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -985,7 +993,9 @@ module numerics
        1.000D0, &  !  145
        1.000D0, &  !  146
        1.000D0, &  !  147
-       1.000D0 &   !  148
+       1.000D0, &  !  148
+       1.000D0, &  !  149
+       1.000D0  &  !  150
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
@@ -1233,6 +1243,29 @@ contains
 
     write(*,*) ""
 
+    ! If fail then alter value of epsfcn - this can be improved
+    if (ifail /= 1) then
+       write(*,*) 'Trying again with new epsfcn'
+       epsfcn = epsfcn * 10.0D0 !try new larger value
+       write(*,*) 'new epsfcn = ', epsfcn
+       call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
+            lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
+            gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
+            liwa,ilower,iupper,bndl,bndu,convergence_parameter)
+       epsfcn = epsfcn / 10.0D0 !reset value
+    end if
+    if (ifail /= 1) then
+       write(*,*) 'Trying again with new epsfcn'
+       epsfcn = epsfcn / 10.0D0 !try new smaller value
+       write(*,*) 'new epsfcn = ', epsfcn
+       call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
+            lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
+            gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
+            liwa,ilower,iupper,bndl,bndu,convergence_parameter)
+       epsfcn = epsfcn * 10.0D0 !reset value
+    end if
+    
+    
     !  If VMCON has exited with error code 5 try another run using a multiple of
     !  the identity matrix as input for the Hessian b(n,n).
     !  Only do this if VMCON has not iterated (nviter=1).

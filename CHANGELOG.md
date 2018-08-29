@@ -9,12 +9,13 @@
 - Fixed error in spherical tokamak divertor geometry calculation (Issue #697)
 - Fixed error in spherical tokamak radial build calculation (Issue #704)
 - Fixed error in current drive fractions adding to > 1 (Issue #705).
-- Fixed issues with uncertainty python utility (Issue #716)
+- Fixed issues with uncertainty python utility (Issue #716 #746)
 - Fixed issues when there is no inboard blanket (Issue #722 #732)
 - Fixed incorrect cross sectional area calculation in resistive TF coils (Issue #727)
 - Fixed constraint equations plot in diagnose_process.py (Issue #738)
 - Corrected units in resistive TF coil stress output
 - Corrected units on ucme and uciac in global variables.
+- Fixed issue with plot_proc.py scan counting (Issue #748)
 
 ## Features
 
@@ -32,6 +33,11 @@ PLASMOD
  - For a complete list, see the vardes file. Where appropriate, previously-existing PROCESS input parameters still apply.
  - Certain constraints and iterations variables cannot be used with PLASMOD - see the User Guide for more information.
 
+2D Scan
+ - implemented a basic 2-D scan feature in PROCESS.
+ - new inputs `scan_dim`, `isweep_2`, `nsweep_2` and `sweep_2`.
+ - Does the scan in a basic grid like manner (i.e. jumps to start of next row from end of previous). Would be nice to upgrade to 'zig-zag'-like approach.
+
 Utilities
 	- New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
 	- evaluate_uncertainties.py now outputs and additional file to allow analysis of failed PROCESS Runs.
@@ -42,6 +48,7 @@ Utilities
 - [Snipes et al.](2000; http://iopscience.iop.org/article/10.1088/0741-3335/42/5A/336) H-mode threshold scaling options added (Issue #680)
 - Initial version of `.gitlab-ci.yml` created for GitLab CI.
 - Added Spherical Tokamak and Stellarator examples to the test suite (Issues #715 and #718)
+- Added [Reinke detachment criterion](http://iopscience.iop.org/article/10.1088/1741-4326/aa5145/meta) as constraint equation and formula for tesep (Issue #707)
 
 
 ## Minor changes
@@ -65,3 +72,4 @@ Utilities
 - Reset test_suite files (Issue #719)
 - Added error reporting to function ncore (Issue #735)
 - Added input `plasma_res_factor` for adjustment factor for plasma resistivity. Default is 1.0   to preserve old behaviour.
+- Added additional scaling factor 'eped_sf' for the EPED pedestal model (pressure and temperature versions).

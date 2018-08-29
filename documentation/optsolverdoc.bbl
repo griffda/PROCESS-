@@ -1,0 +1,73 @@
+\begin{thebibliography}{10}
+
+\bibitem{Schittkowski1980}
+P.J. Knight.
+\newblock {\em Nonlinear Programming Codes}.
+\newblock Springer, Berlin, 1980.
+
+\bibitem{Luenberger2008}
+D.~G. Luenberger and Yinyu Ye.
+\newblock {\em "Linear and Nonlinear Programming"}.
+\newblock International Series in Operations Research and Management Science.
+  Springer Science and Business Media LCC,, 3rd edition edition, 2008.
+
+\bibitem{vmcon}
+R.L. Crane, K.E. Hillstrom, and M.~Minkoff.
+\newblock Solution of the general nonlinear programming problem with subroutine
+  vmcon.
+\newblock {\em Argonne National Laboratory Report ANL-80-64}, 1980.
+
+\bibitem{Powell1964}
+M.J.D. Powell.
+\newblock {\em An efficient method for finding the minimum of a function of
+  several variables without calculating derivatives}.
+\newblock Computer Journal, 1964.
+
+\bibitem{Powell1978}
+M.J.D. Powell.
+\newblock A fast algorithm for nonlinearly constrained optimization
+  calculations.
+\newblock {\em Lecture Notes in Mathematics, Springer-Verlag, Berlin},
+  630:144--157, 1978.
+
+\bibitem{Han1975}
+S.-P. Han.
+\newblock {\em A globally convergent method for nonlinear programming.}
+\newblock Technical Report 75-257, Department for Computer Science, Cornell
+  University, 1975.
+
+\bibitem{Bazaraa1993}
+H.~D.~Sherali M.~S.~Bazaraa and C.~M. Shetty.
+\newblock {\em "Nonlinear Programming: Theory and Algorithms"}.
+\newblock John Wiley \& Sons, Inc., New York, 1993.
+
+\bibitem{Fletcher1970a}
+R.~Fletcher.
+\newblock {\em A general quadratic programming algorithm}.
+\newblock Technical Report T.P. 401, Atomic Energy Research Establishment,
+  1970.
+
+\bibitem{Fletcher1970b}
+R.~Fletcher.
+\newblock {\em The calculation of feasible points for linearly constrained
+  optimisation problems}.
+\newblock Technical Report R.6354, Atomic Energy Research Establishment, 1970.
+
+\bibitem{Fletcher1970c}
+R.~Fletcher.
+\newblock {\em A fortran subroutine for general quadratic programming}.
+\newblock Technical Report R.6370, Atomic Energy Research Establishment, 1970.
+
+\bibitem{Avriel2003}
+M.~Avriel.
+\newblock Nonlinear programming: Analysis and methods.
+\newblock {\em Dover Publications, Inc., Mineola, NY}, 2003.
+
+\bibitem{Powell1977}
+M.J.D. Powell.
+\newblock {\em The convergence of variable metric methods for non-linearly
+  constrained optimisation calculations}.
+\newblock presented at Nonlinear Programming Symposium 3, Madison, Wisconsin,,
+  1977.
+
+\end{thebibliography}

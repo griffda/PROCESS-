@@ -211,6 +211,7 @@ subroutine check
     use build_variables
     use buildings_variables
     use current_drive_variables
+    use divertor_kallenbach_variables
     use error_handling
     use fwbs_variables
     use global_variables
@@ -223,6 +224,7 @@ subroutine check
     use plasmod_variables
     use process_output
     use pulse_variables
+    use reinke_variables
     use tfcoil_variables
     use stellarator_variables
     use sctfcoil_module
@@ -387,7 +389,12 @@ subroutine check
         call report_error(178)
      endif
      
-
+     if(ipedestal > 0) then
+        if(eped_sf > 1.0) then
+           call report_error(214)
+        endif
+     endif
+          
      if(ipedestal == 2 .or. ipedestal == 3) then
 
         !PLASMOD automatically takes both pseprmax and psepbqarmax as input
@@ -532,6 +539,32 @@ subroutine check
         endif
         
      endif
+
+
+     if (any(icc == 78)) then
+        
+        !If Reinke criterion is used tesep is calculated and cannot be an
+        !iteration variable
+        if (any(ixc == 119)) then
+           call report_error(214)
+        endif
+        
+        !If Reinke criterion is used need to enforce LH-threshold
+        !using Martin scaling for consistency
+        if (.not. ilhthresh == 6) then
+           call report_error(215)
+        endif
+        if  (.not. any(icc==15) .and. (ipedestal .ne. 3)) then
+           call report_error(215)
+        endif
+
+        
+     endif
+
+     !if using Reinke iteration variable fzactual, then assign to imp. array
+     if (any(ixc == 148)) then
+        impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
+     endif        
      
 
     !  Tight aspect ratio options

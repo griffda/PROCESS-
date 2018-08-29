@@ -363,6 +363,9 @@ subroutine tf_winding_pack(outfile, iprint)
         write(*,*) 'awptf = ',awptf
         write(*,*) 'awpc = ',awpc
         write(*,*) 'acasetf = ',acasetf
+        write(*,*) 'KE thkwp, wwp1, wwp2 = ', thkwp, ', ', wwp1, ', ', wwp2
+        !negative awptf comes from neg. thkwp
+        write(*,*) 'tfcth, casthi, thkcas, tinstf, tfinsgap = ', tfcth, ', ', casthi, ', ', thkcas, ', ', tinstf, ', ', tfinsgap
         write(*,*) ' '
     end if
 

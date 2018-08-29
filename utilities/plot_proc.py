@@ -1906,7 +1906,7 @@ if __name__ == '__main__':
         m_file = mf.MFile("MFILE.DAT")
 
     if args.n:
-        scan = args.n-1
+        scan = args.n
     else:
         scan = -1
 
@@ -2031,6 +2031,4 @@ if __name__ == '__main__':
     plt.close(page1)
     plt.close(page2)
 
-    if(kallenbach_switch==1):
-        if args.show:
-            import kallenbach_plotting
+

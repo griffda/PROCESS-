@@ -991,14 +991,14 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         values < DICT_INPUT_BOUNDS[varname]['lb'],
                         values > DICT_INPUT_BOUNDS[varname]['ub']))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args[0]))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(logical_or(
                             values < DICT_INPUT_BOUNDS[varname]['lb'],
                             values > DICT_INPUT_BOUNDS[varname]['ub']))
                 else: #cutoff at 0 - typically negative values are meaningless
                     args = argwhere(values < 0.)
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args[0]))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(values < 0)
 
             elif u_dict['errortype'].lower() == 'uniform':
@@ -1019,7 +1019,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         values < DICT_INPUT_BOUNDS[varname]['lb'],
                         values > mean))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args[0]))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(logical_or(
                             values < DICT_INPUT_BOUNDS[varname]['lb'],
                             values > mean))
@@ -1027,7 +1027,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
                     args = argwhere(logical_or(values < 0.,
                                                values > mean))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args[0]))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(logical_or(values < 0.,
                                                    values > mean))
             elif u_dict['errortype'].lower() == 'upperhalfgaussian':
@@ -1039,14 +1039,14 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         values < mean,
                         values > DICT_INPUT_BOUNDS[varname]['ub']))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args[0]))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(logical_or(
                             values < mean,
                             values > DICT_INPUT_BOUNDS[varname]['ub']))
                 else:
                     args = argwhere(values < mean)
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args[0]))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(values < mean)
 
             u_dict['samples'] = values

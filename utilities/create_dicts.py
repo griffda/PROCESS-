@@ -90,7 +90,7 @@ def grep(file, regexp, flags=re.U):
     """
 
     lines = []
-     
+
     try:
      with open(file, "r", encoding="utf-8") as file_open:
         for line in file_open.readlines():
@@ -338,7 +338,7 @@ def dict_ixc2nsweep():
 
        Example of a fragment we are looking for:
            case (1)
-              aspect = sweep(iscan)
+              aspect = swp(iscn)
               vlabel = 'aspect = ' ; xlabel = 'Aspect_ratio'
 
        Example dictionary entry:
@@ -348,12 +348,12 @@ def dict_ixc2nsweep():
     di = {}
     file = SOURCEDIR + "/scan.f90"
     #slice the file to get the switch statement relating to nsweep
-    lines = slice_file(file, r"select case \(nsweep\)", r"case default")
+    lines = slice_file(file, r"select case \(nwp\)", r"case default")
 
     #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
     modlines = []
     for line in lines[1:-1]:
-        if "case" in line or "sweep(iscan)" in line:
+        if "case" in line or "swp(iscn)" in line:
             line = remove_comments(line).replace(' ', '')
             modlines.append(line)
 
@@ -370,7 +370,7 @@ def dict_ixc2nsweep():
             num = match.group(1)
             #if the case statement matched, get the variable name
             #from the next line
-            match_2 = re.match(r"(.*?)=sweep\(iscan\)", modlines[i+1])
+            match_2 = re.match(r"(.*?)=swp\(iscn\)", modlines[i+1])
             if not match_2:
                 logging.warning("Error in dict_ixc2nsweep\n")
             else:
@@ -839,17 +839,16 @@ def dict_nsweep2varname():
     It maps the sweep variable number to its variable name
     """
 
-
     di = {}
     file = SOURCEDIR + "/scan.f90"
 
     #slice the file to get the switch statement relating to nsweep
-    lines = slice_file(file, r"select case \(nsweep\)", r"case default")
+    lines = slice_file(file, r"select case \(nwp\)", r"case default")
 
     #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
     modlines = []
     for line in lines[1:-1]:
-        if "case" in line or "sweep(iscan)" in line:
+        if "case" in line or "swp(iscn)" in line:
             line = remove_comments(line).replace(' ', '')
             modlines.append(line)
 
@@ -858,7 +857,7 @@ def dict_nsweep2varname():
         no = line1.replace('case(', '')
         no = no.replace(')', '')
         line2 = modlines[i*2+1]
-        varname = line2.replace('=sweep(iscan)', '')
+        varname = line2.replace('=swp(iscn)', '')
         di[no] = varname
 
     return di
@@ -870,6 +869,9 @@ def print_header():
 
     #look for a line with 'Release Date'
     rel_dat_list = grep(SOURCEDIR + "/process.f90", "Release Date")
+    if len(rel_dat_list) == 0:       # for new file structure
+        rel_dat_list = grep(SOURCEDIR + "/main_module.f90", "Release Date")
+
     assert len(rel_dat_list) == 1
     dat_line = rel_dat_list[0]
     #the version number is right before 'Release Date'
@@ -1187,13 +1189,11 @@ if __name__ == "__main__":
     ARGS = PARSER.parse_args()
 
     #SOURCEDIR = ARGS.dir
-	
     try:
-      file = open("global_variables.f90","r",encoding="utf-8")
+      file = open("SOURCEDIR/global_variables.f90","r",encoding="utf-8")
 #      for line in file.readlines():#open(/builds/process/process/global_variables.f90).readlines():
 #        logging.warning("in global_variables.f90 , line ** %s\n", line)
       file.close()
     except IOError:
-      logging.warning( "Could not open file! ")
-    logging.warning("Manoj \n")
+      logging.warning( "Could not open file!")
     print_all()

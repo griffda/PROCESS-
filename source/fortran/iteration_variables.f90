@@ -94,6 +94,7 @@ subroutine loadxc
   use physics_variables
   use plasmod_variables
   use pulse_variables
+  use reinke_variables
   use stellarator_variables
   use tfcoil_variables
   use times_variables
@@ -265,7 +266,8 @@ subroutine loadxc
      case (146) ; xcm(i) = fcpttf
      case (147) ; xcm(i) = plasmod_fcdp
      case (148) ; xcm(i) = plasmod_fradc
-        
+     case (149) ; xcm(i) = freinke
+     case (150) ; xcm(i) = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual   
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
         call report_error(54)
@@ -400,6 +402,7 @@ subroutine convxc(xc,nn)
   use physics_variables
   use plasmod_variables
   use rebco_variables
+  use reinke_variables
   use tfcoil_variables
   use times_variables
 
@@ -570,7 +573,12 @@ subroutine convxc(xc,nn)
      case (146) ; fcpttf = xc(i)/scale(i)
      case (147) ; plasmod_fcdp = xc(i)/scale(i)
      case (148) ; plasmod_fradc = xc(i)/scale(i)   
-
+     case (149) ; freinke = xc(i)/scale(i)
+     case (150)
+        fzactual = xc(i)/scale(i)
+        impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
+        write(*,*) 'fzactual = ', fzactual
+        
      case default
 
         call report_error(57)

@@ -19,11 +19,11 @@ module physics_functions_module
   !+ad_cont  radpwr
   !+ad_cont  t_eped_scaling
   !+ad_args  N/A
-  !+ad_desc  This module contains physics routines which can be called by physics or 
+  !+ad_desc  This module contains physics routines which can be called by physics or
   !+ad_desc  other modules (e.g. PLASMOD).
   !+ad_prob  None
   !+ad_call  constants
-  !+ad_call  error_handling 
+  !+ad_call  error_handling
   !+ad_call  maths_library
   !+ad_call  physics_variables
   !+ad_call  profiles_module
@@ -33,11 +33,15 @@ module physics_functions_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+!  use divertor_ode, only: impurity_concs
+!  use divertor_kallenbach_variables, only: impurity_enrichment
   use error_handling
+  use impurity_radiation_module
   use maths_library
   use physics_variables
   use profiles_module
-  use impurity_radiation_module
+  use read_and_get_atomic_data
+!  use reinke_variables
 
   implicit none
 
@@ -46,15 +50,15 @@ module physics_functions_module
 
   !  Module-level variables
 
-  !integer :: 
+  !integer ::
   real(kind(1.0D0)) :: vcritx
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   subroutine pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
-    
+
     !+ad_name  pthresh
     !+ad_summ  L-mode to H-mode power threshold calculation
     !+ad_type  Subroutine
@@ -144,9 +148,9 @@ contains
 
     ! Snipes et al (2000) scaling with mass correction
     ! Nominal, upper and lower
-    
+
     pthrmw(9) = 1.42D0 * dnla20**0.58D0 * bt**0.82D0 * rmajor &
-               * rminor**0.81D0 * (2.0D0/aion) 
+               * rminor**0.81D0 * (2.0D0/aion)
 
     pthrmw(10) = 1.547D0 * dnla20**0.615D0 * bt**0.851D0 &
               * rmajor**1.089D0 * rminor**0.876D0 * (2.0D0/aion)
@@ -158,13 +162,13 @@ contains
     ! Nominal, upper and lower
 
     pthrmw(12) = 0.8D0 * dnla20**0.5D0 * bt**0.53D0 * rmajor**1.51D0 &
-               * (2.0D0/aion) 
+               * (2.0D0/aion)
 
     pthrmw(13) = 0.867D0 * dnla20**0.561D0 * bt**0.588D0 * rmajor**1.587D0 &
-               * (2.0D0/aion) 
+               * (2.0D0/aion)
 
     pthrmw(14) = 0.733D0 * dnla20**0.439D0 * bt**0.472D0 * rmajor**1.433D0 &
-               * (2.0D0/aion) 
+               * (2.0D0/aion)
 
   end subroutine pthresh
 
@@ -173,7 +177,7 @@ contains
   subroutine palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti, &
        palppv,pchargepv,pneutpv,sigvdt,fusionrate,alpharate,protonrate, &
        pdtpv,pdhe3pv,pddpv)
-    
+
     !+ad_name  palph
     !+ad_summ  (Initial part of) fusion power and fast alpha pressure calculations
     !+ad_type  Subroutine
@@ -326,7 +330,7 @@ contains
   contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
     function fint(rho)
 
       !+ad_name  fint
@@ -1156,7 +1160,7 @@ contains
     !+ad_call  None
     !+ad_stat  Okay
     !+ad_docs  https://idm.euro-fusion.org/?uid=2MSZ4T
-    ! 
+    !
 
     real(kind(1.0D0)) :: t_eped_scaling
     ! Scaling constant and exponents
@@ -1169,21 +1173,23 @@ contains
     a_beta = 0.43D0
     a_kappa = 0.50d0
     a_a = 0.88D0
-    
+
     !corrected_n_tot_beta = normalised_total_beta * 1.2566
     ! KE, 19/06/18 Reverting correction noted below. Samuli decided this
     ! was not an error afterall.
-    ! KE, 25/04/18 Correction to normalised_total _beta applied as specified in the 
+    ! KE, 25/04/18 Correction to normalised_total _beta applied as specified in the
     ! email from Samuli which is reproduced in issue #413
-    
+
     ! Correction for single null and for ELMs = 0.65
     ! Elongation and triangularity are defined at the plasma boundary.
     ! Total normalised plasma beta is used.
 
     t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
-                          kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
+         kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
+    !Issue #730 - add scaling factor to eped model
+    t_eped_scaling = eped_sf * t_eped_scaling
   end function t_eped_scaling
-  
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function p_eped_scaling(betan_pl,kappa_pl,delta_pl,ip_pl)
@@ -1200,12 +1206,12 @@ contains
     !+ad_call  None
     !+ad_stat  Okay
     !+ad_docs  https://idm.euro-fusion.org/?uid=2MSZ4T
-    
+
     real(kind(1.0D0)) :: p_eped_scaling !pressure in kev*10¹9*m¯3
     ! Scaling constant and exponents
     real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
     real(kind(1.0D0)) :: betan_pl,kappa_pl,delta_pl,ip_pl
-    
+
     c0 = 9.4d0
     a_delta = 0.82D0
     a_ip = 1.25D0
@@ -1217,18 +1223,20 @@ contains
     !corrected_n_tot_beta = betan_pl * 1.2566
     ! KE, 19/06/18 Reverting correction noted below. Samuli decided this
     ! was not an error afterall.
-    ! KE, 25/04/18 Correction to normalised_total _beta applied as specified in the 
+    ! KE, 25/04/18 Correction to normalised_total _beta applied as specified in the
     ! email from Samuli which is reproduced in issue #413
-    
+
     ! Correction for single null and for ELMs = 0.65
     ! Elongation and triangularity are defined at the plasma boundary.
     ! Total normalised plasma beta is used.
-    
+
     p_eped_scaling =  0.65d0 * c0 * delta_pl**a_delta * ip_pl**a_ip * rmajor**a_r * &
          kappa_pl**a_kappa  * betan_pl**a_beta * rminor**a_a
+    !Issue #730 - add scaling factor to eped model
+    p_eped_scaling = eped_sf * p_eped_scaling
   end function p_eped_scaling
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pradpv)
 
@@ -1301,9 +1309,6 @@ subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pra
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-
-  
   subroutine prad_ipdg89(pcoreradpv,pedgeradpv)
 
     !+ad_name  prad_ipdg89
@@ -1546,5 +1551,5 @@ subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pra
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  
+
 end module physics_functions_module

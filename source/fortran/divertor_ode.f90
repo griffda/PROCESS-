@@ -12,11 +12,6 @@ module divertor_ode
   !+ad_stat  Okay
   !+ad_docs
 
-  ! NEW VERSION! 29/6/18
-  ! Using n as variable rather than Ptotal
-  ! Y(5) = electron density (n) [1e20 m-3]
-  ! yp(5) = dn/dx [1e20 m-3 m-1]
-
   use global_variables
   use maths_library
   use read_and_get_atomic_data
@@ -30,6 +25,7 @@ module divertor_ode
     !          abserr_sol, relerr_sol
   use build_variables, only: rspo
   use physics_variables, only:  tesep_keV => tesep
+  use divertor_ode_var
 
   implicit none
 
@@ -39,9 +35,6 @@ module divertor_ode
   logical, public, save :: impurities_present(nimp)=.false.
 
   ! impurity element name - temporary
-
-  ! impurity concentrations in divertor zone
-  real(kind(1.0D0)), public :: impurity_concs(nimp)
 
   ! relative ion mass
   ! Issue #501: change from 2 to 2.5
@@ -279,11 +272,11 @@ contains
     real(kind(1.0D0)) :: y(neqn)
 
     ! These are local variables for recalculation at each data point - not used for integration:
-    real(kind(1.0D0)) :: nel, v, n0, nelsquared
+    real(kind(1.0D0)) :: v, n0, nelsquared
     real(kind(1.0D0)) :: s, al, Rcx, plt, prb
     real(kind(1.0D0)) :: cxrate, plossdenscx, ionrate1, ionrate2, recrate
     real(kind(1.0D0)) :: plossion, lz, raddens, radHdens, qperp_total, qperp_conv, qperp_conducted
-    real(kind(1.0D0)) :: n01, n02, te, nv, pressure, Power, nv24, nel20, Pthermal, n0e20
+    real(kind(1.0D0)) :: n, n01, n02, te, nv, pressure, Power, nv24, nel20, Pthermal, n0e20, bracket
     real(kind(1.0D0)) :: cs, mach
 
     !+ad_vars  A_cross : Area of flux bundle perpendicular to B
@@ -625,8 +618,7 @@ do i = 2, nimp
     y(2) = n020*1.d-20   ! y(2) = neutral density (group 2) [1e20 m-3]
     y(3) = te0           ! y(3) = temperature [eV]
     y(4) = nv0*1.d-24    ! y(4) = ion flux [1e24 m-3 s-1]
-    !y(5) = pressure0
-    y(5) = nel0*1.d-20   ! y(5) = electron density [1e20 m-3] 29/6/18
+    y(5) = pressure0  
     y(6) = Power0/1.d6   ! y(6) = power in SOL [MW]
     y(7) =1.0D0          ! Y(7) = 1 + integral of impurity radiation loss [MW]
     y(8) =1.0D0          ! Y(8) = 1 + integral of radiation loss from hydrogenic species [MW]
@@ -665,7 +657,6 @@ do i = 2, nimp
     do step = 0, step_num+1
         if(step.ne.0) then
             ! Solve the set of differential equations
-            ! write(*,*) 'x = ',x,  '  xout = ', xout
             call ode(differential, neqn, y, x, xout, relerr_sol, abserr_sol, iflag, work, iwork )
 
             ! Logarithmic step along SOL (x)
@@ -698,13 +689,8 @@ do i = 2, nimp
         te  = Y(3)
         nv24 = Y(4)
         nv  = nv24*1.d24
-        ! pressure = Y(5)
-        nel = Y(5)*1d20                               ! 29/6/18
-        nel20 = Y(5)                                  ! 29/6/18
-        Pthermal = 2.0D0*nel*te*echarge               ! Thermal pressure [Pa]
-        pressure = mi*nv**2 / nel + Pthermal          ! 29/6/18
+        pressure = Y(5) 
         Power   = Y(6)*1.d6
-        nelsquared = nel**2
 
         ! The area of the flux tube, measured perpendicular to B
         ! This is set to a step function as in Kallenbach
@@ -714,7 +700,15 @@ do i = 2, nimp
             A_cross = area_omp
         end if
 
-        v = nv/nel
+        ! Calculate density [m-3] 
+        bracket = max( (pressure**2.0D0 - eightemi48*te*nv24**2.0D0), 0.0D0)
+        n = (pressure + sqrt(bracket))/(4.0D0*echarge*te)
+        nel20 = n/1.d20
+        nelsquared = n**2.0D0
+        
+        Pthermal = 2.0D0*n*te*echarge               ! Thermal pressure [Pa]
+        
+        v = nv/n
         ! Neutral density = sum of the two velocity groups [1e20.m-3]
         n0e20 = Y(1) + Y(2)
         ! Heat flux perpendicular to flux tube cross section [W/m2]
@@ -722,7 +716,7 @@ do i = 2, nimp
 
         cs = sqrt(2.0D0*echarge*Te/mi)
         mach = -v/cs
-        nete = nel*te
+        nete = n*te
 
         ! Convective heat flux is positive [W/m2]
         qperp_conv= -(5.0D0*echarge*Te + 0.5D0*mi*v**2)*nv
@@ -737,14 +731,14 @@ do i = 2, nimp
         ! This adjustment is used in subroutine differential to make it behave better (less stiff)
         ! Include it here for consistency
         if(n0.gt.abserr_sol*1.d20) then
-            call get_h_rates(nel, te, s, al, Rcx, plt, prb, aplas, verbose=.false.)
+            call get_h_rates(n, te, s, al, Rcx, plt, prb, aplas, verbose=.false.)
 
             ! charge exchange rate for equation 7 [s-1]
-            cxrate = Rcx*nel*n0
+            cxrate = Rcx*n*n0
             ! ionisation rate of neutrals: velocity group 1 [s-1]
-            ionrate1 = s * nel * n01
+            ionrate1 = s * n * n01
             ! ionisation rate of neutrals: velocity group 2 [s-1]
-            ionrate2 = s * nel * n02
+            ionrate2 = s * n * n02
             ! recombination rate of ions and electrons [s-1]
             recrate = al*nelsquared
             ! energy conservation: equation 4, charge exchange term
@@ -752,9 +746,9 @@ do i = 2, nimp
             ! energy conservation: equation 4, ionisation term
             plossion = (ionrate1 + ionrate2)*elEion
             ! radiation loss density for neutral hydrogenic species
-            radHdens = (plt + prb)*n0*nel
+            radHdens = (plt + prb)*n0*n
 
-        else
+         else
             cxrate =0.0D0
             ionrate1 = 0.0D0
             ionrate2 = 0.0D0
@@ -829,7 +823,7 @@ do i = 2, nimp
     ionfluxtarget = partfluxtar/sinfact
 
     teomp = te         ! Plasma temperature at outer midplane [eV]
-    neomp = nel        ! Plasma density at outer midplane [m-3]
+    neomp = n        ! Plasma density at outer midplane [m-3]
     ! -----------------------------------------------------
 
     ! Output ----------------------------------------------
@@ -986,7 +980,7 @@ do i = 2, nimp
     real(kind(1.0D0)),intent(in) :: y(10)   ! Y(), the dependent variable
     real(kind(1.0D0)),intent(out) :: yp(10) ! YP(), the value of the derivative
 
-    real(kind(1.0D0)):: n01, n02, te, nv, pressure, Power, nv24
+    real(kind(1.0D0)):: n01, n02, te, nv, pressure, Power, nv24, bracket
     real(kind(1.0D0)):: n, v, n0
     real(kind(1.0D0)):: s, al, Rcx, plt, prb
     real(kind(1.0D0)):: cxrate,plossdenscx,ionrate1,ionrate2,recrate
@@ -1001,11 +995,28 @@ do i = 2, nimp
     n02 = Y(2)*1.d20
     te  = Y(3)
     nv  = Y(4)*1.d24
-    n = Y(5)*1d20
+    pressure = Y(5) 
     Power = Y(6)*1.d6                             ! Q
-
-    pressure = mi*nv**2 / n + 2*n*echarge*te
     nv24 = Y(4)               ! Ion flux
+
+    bracket = pressure**2 - eightemi48*te*nv24**2 
+
+    if ((bracket .lt. 0.0)) then
+
+        if((bracket .ge. -0.1*pressure**2).and.(t<0.001D0)) then
+            ! Continue calculation
+            bracket=0.d0
+        else
+            write(*,*) 'Square root of a negative number in divertor model'
+            write(*,'(10a14)') 't', 'pressure', 'te', 'nv24', 'pressure**2', 'eightemi48*te*nv24**2', 'bracket'
+            write(*,'(10es14.6)') t, pressure, te, nv24, pressure**2, eightemi48*te*nv24**2, bracket
+            stop
+        endif
+
+    endif
+
+    n = (pressure + sqrt(bracket))/(4.0d0*echarge*te) 
+
     v = nv/n                ! Plasma velocity
     n0 = n01 + n02            ! neutral density = sum of the two velocity groups
 
@@ -1065,7 +1076,7 @@ do i = 2, nimp
         ! Use recrate instead of a1 as it may have been set to zero.
         dpdx = -(cxrate/n + recrate/n)*nv*mi
     else
-        ! Fudge to make differential equation behave better
+       ! Fudge to make differential equation behave better
         cxrate=0.0D0
         ionrate1 = 0.0D0
         ionrate2 = 0.0D0
@@ -1091,18 +1102,18 @@ do i = 2, nimp
     ! See K:\Power Plant Physics and Technology\PROCESS\SOL & Divertor\Revised equations for Kallenbach model.docx
     numerator = dpdx - 2.0d0*mi*v*dnvdx - 2.0d0*n*echarge*dtdx
     denominator = 2.0d0*echarge*te - mi*v**2
-    if(abs(denominator/(2.0d0*echarge*te))<1.0d-3)  then
-         write(*,*)
-         write(*,'(10(a18,es12.3))')'t=', t, '  te=',te, '  denominator=',denominator,&
-                  '  numerator', numerator
-         write(*,'(10(a18,es12.3))') 'dpdx=', dpdx, ' 2.0d0*mi*v*dnvdx', &
-                  2.0d0*mi*v*dnvdx, '2.0d0*n*echarge*dtdx', 2.0d0*n*echarge*dtdx
-         write(*,'(10(a18,es12.3))') '2.0d0*echarge*te=', 2.0d0*echarge*te, ' mi*v**2', &
-                           mi*v**2, 'v', v, 'nv',nv
-    end if
+    !write(*,*) 'denom, product = ', denominator, 2.0d0*echarge*te
+    !if(t < 1.0d-4)  then
+    !     write(*,*)
+    !     write(*,'(10(a18,es12.3))')'t=', t, '  te=',te, '  denominator=',denominator,&
+    !              '  numerator', numerator
+    !     write(*,'(10(a18,es12.3))') 'dpdx=', dpdx, ' 2.0d0*mi*v*dnvdx', &
+    !              2.0d0*mi*v*dnvdx, '2.0d0*n*echarge*dtdx', 2.0d0*n*echarge*dtdx
+    !     write(*,'(10(a18,es12.3))') '2.0d0*echarge*te=', 2.0d0*echarge*te, ' mi*v**2', &
+    !                       mi*v**2, 'v', v, 'nv',nv
+    !end if
 
-    dndx = numerator / denominator
-    yp(5) = dndx * 1.d-20
+    yp(5) =-(cxrate/n + al*n)*nv*mi 
 
     ! dPowerdx - energy conservation
     yp(6) =1.d-6*(raddens + radHdens + plossdenscx + plossion)*A_cross
@@ -1120,6 +1131,10 @@ do i = 2, nimp
     yp(10)=1.d-6*plossion*A_cross
 
     ! The effect of volume recombination on the power balance is not taken into account
+    !write(*,'(10(i12))') 1,2,3,4,5,6,7,8,9,10
+    !write(*,'(10(es12.3))') y
+    !write(*,'(10(es12.3))') yp
+    !write(*,'(10(es12.3))') y/yp
 
     return
 
@@ -1258,171 +1273,3 @@ do i = 2, nimp
   !---------------------------------------------------------------------------
 
 end module divertor_ode
-
-!---------------------------------------------------------------------------
-! This routine is outside the module, so it functions as test for the module.
-
-subroutine kallenbach_test()
-  !+ad_name  kallenbach_test
-  !+ad_summ  Test for divertor kallenbach model
-  !+ad_type  subroutine
-  !+ad_auth  M Kovari, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_desc  Test of Kallenbach divertor model
-  !+ad_prob  None
-  !+ad_hist  01/02/17 MDK  Initial version
-  !+ad_stat  Okay
-  !+ad_docs
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use divertor_ode
-  use read_and_get_atomic_data
-  use read_radiation
-  use constants
-  use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
-
-  implicit none
-
-  integer :: i
-  real(kind(1.0D0))::rmajor, rminor, bt, plascur, dummy, dummy2, dummy3
-
-  ! This section just for reproducing the original numbers
-  rmajor = 8.0D0
-  rminor = 2.75D0
-  bt = 4.00972D0*(rmajor + rminor)/rmajor
-  plascur = 1.33542D0*(2.0D0*pi*rminor)/rmu0
-
-  ! MDK Issue #494.
-  ! Invert the equation for lcon to ensure lcon=100 for this test.
-  ! lcon = lcon_factor * 0.395d0*pi*q*rmajor/lambda_omp**0.196
-  lcon_factor = 100.0D0 / (0.395d0*pi*3.0d0*8.0D0/0.002D0**0.196)
-
-  call oheadr(nout, 'Divertor: Kallenbach 1D Model - TESTS - ')
-  call osubhd(nout, 'Inputs :')
-
-  call ovarre(nout, 'Major radius [m]','(rmajor)', rmajor)
-  call ovarre(nout, 'Minor radius [m]','(rminor)', rminor)
-  call ovarre(nout, 'Toroidal field [T]','(bt)', bt, 'OP ')
-  call ovarre(nout, 'Plasma current [A]','(plascur)', plascur)
-  call ovarre(nout, 'q95 [A]','(q)', 3.0D0)
-
-  ! Set the impurity fractions to the test values
-  do i = 2, nimp
-    impurity_arr(i)%frac = 0.0D0
-  enddo
-
-  impurity_arr(5)%frac = 8.0D-3  ! gives 0.04 in SOL, as in Kallenbach paper
-
-  call divertor_Kallenbach(rmajor=rmajor, rminor=rminor,     &
-                           bt=bt, plascur=plascur,      &
-                           q=3.0D0,            &
-                           verboseset=.false.,          &
-                           ttarget=2.3D0,qtargettotal=4.175D6,                  &
-                           targetangle=30.0D0,            &
-                           unit_test=.false.,     &
-                           bp = 0.956d0,   &
-                           psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
-                           outfile=nout,iprint=1 )
- 
-  call ocmmnt(nout, 'Testing the reading of atomic rates and impurity radiative functions.')
-  call ocmmnt(nout, 'Use "output_divertor.xlsx" in K:\Power Plant Physics and Technology\PROCESS\SOL & Divertor')
-
-  call plot_rates()
-  call ocmmnt(nout, 'Rate coefficients for deuterium - saved in "rate_coefficients.txt"')
-  call ocmmnt(nout, 'Compare to Figure 2 in Kallenbach 2016.')
-  call plot_Lz()
-  call ocmmnt(nout, 'Radiative loss functions - saved in "radiative_loss_functions.txt"')
-  call ocmmnt(nout, 'Compare to Figure 3 in Kallenbach 2016.')
-  call plot_z()
-  call ocmmnt(nout, 'Reads mean Z and mean Z^2 - saved in "mean_Z.tx"')
-  call ocmmnt(nout, 'Compare to plots such as He_z.ps etc in /home/mkovari/sol/kallenbach/divertor_ode/LZ_NON_CORONA.')
-
-end subroutine Kallenbach_test
-
-!-------------------------------------------------------------------------
-subroutine kallenbach_scan()
-  !+ad_name  kallenbach_scan
-  !+ad_summ  Scans for divertor kallenbach model: No optimisation
-  !+ad_type  subroutine
-  !+ad_auth  M Kovari, CCFE, Culham Science Centre
-  !+ad_hist  13/11/17 MDK  Initial version
-  !
-  ! Modify this code to run whatever scans are required (or none)
-  ! The values of divertor_kallenbach_variables are taken from the input file,
-  ! but can be overwritten here.
-  use divertor_ode
-  use divertor_kallenbach_variables
-  use read_and_get_atomic_data
-  use read_radiation
-  use constants
-  use physics_variables, only:rmajor, rminor, plascur, bp, bt, q, ralpne
-  use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
-
-  implicit none
-
-  integer :: i
-  real(kind(1.0D0)):: dummy, dummy2, dummy3
-  integer::isweep
-
-  ! MDK Issue #494.
-  ! Invert the equation for lcon to ensure lcon=100 for this test.
-  ! lcon = lcon_factor * 0.395d0*pi*q*rmajor/lambda_omp**0.196
-  lcon_factor = 100.0D0 / (0.395d0*pi*3.0d0*8.0D0/0.002D0**0.196)
-
-  rmajor = 8.9384d0
-  rminor = 2.883d0
-  plascur = 19.075d6
-  !bvert = -0.725d0
-  bp = 0.921d0
-  q = 3.000d0
-  ttarget = 10.0d0
-
-  ! Set the impurity fractions to the test values
-  do i = 2, nimp
-    impurity_arr(i)%frac = 0.0D0
-  enddo
-  impurity_arr(9)%frac  = 1.0d-3   ! argon
-  impurity_arr(13)%frac = 2.0d-4   ! Xenon
-  impurity_arr(14)%frac = 5d-05    ! Tungsten
-
-  isweep = 21
-  call oheadr(nout, 'Divertor: Kallenbach 1D Model - SCANS - ')
-  call ovarin(mfile,'Number of scan points','(isweep)',isweep)
-  call ovarin(mfile,'Scanning variable number','(nsweep)',33)
-
-  do i = 1, isweep
-
-      if(i==1) then
-          ttarget = 1.0d0
-      else
-          ttarget = 5.0d0*(i - 1.0d0)
-      endif
-      !impurity_arr(9)%frac = 1.0d-3 + (i-1.0d0)/(isweep-1.0d0) *1.0d-3
-      !write(*,*)'Running kallenbach model for argon = ',impurity_arr(9)%frac
-      write(*,*)'Running kallenbach model for ttarget = ',ttarget
-      call oblnkl(mfile)
-      call ovarin(mfile,'Scan point number','(iscan)',i)
-      call ovarre(nout, 'Major radius [m]','(rmajor)', rmajor)
-      call ovarre(nout, 'Minor radius [m]','(rminor)', rminor)
-      call ovarre(nout, 'Toroidal field [T]','(bt)', bt, 'OP ')
-      call ovarre(nout, 'Average poloidal field [T]','(bp)', bp)
-      call ovarre(nout, 'Plasma current [A]','(plascur)', plascur)
-      call ovarre(nout, 'q95 [A]','(q)', q)
-      call ovarre(nout, 'Helium ion density (thermalised ions only) / electron density','(ralpne)',ralpne)
-      call ovarre(nout, 'Argon ion density / electron density','(fimp(9)',impurity_arr(9)%frac)
-      call ovarre(nout, 'Xenon ion density / electron  density','(fimp(13)',impurity_arr(13)%frac)
-      call ovarre(nout, 'Tungsten ion density / electron density','(fimp(14)',impurity_arr(14)%frac)
-
-      call divertor_Kallenbach(rmajor=rmajor, rminor=rminor,     &
-                           bt=bt, plascur=plascur,      &
-                           q=q,            &
-                           verboseset=.false.,          &
-                           ttarget=ttarget, qtargettotal=qtargettotal,         &
-                           targetangle=targetangle,    &
-                           unit_test=.false.,  &
-                           bp = bp,   &
-                           psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3,  &
-                           outfile=nout,iprint=1 )
-   end do
-end subroutine Kallenbach_scan
