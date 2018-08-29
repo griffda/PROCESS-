@@ -8,7 +8,7 @@ agent any
 
             steps 
             {
-              checkout scm
+//              checkout scm
           checkout changelog: false, poll: false, 
           scm: [$class: 'GitSCM', branches: [[name: '*/develop']], 
           doGenerateSubmoduleConfigurations: false, extensions: [],         
@@ -53,14 +53,11 @@ agent any
              sh 'gcc --version'
              sh 'export CC=/usr/local/bin/gcc'
              sh 'export CXX=/usr/local/bin/g++'
-             dir('PROCESS_Testing')
-             {
                pwd()
                sh 'cmake -H. -Bbuild'
                sh 'cmake --build build'
                sh 'ls bin -lah'
                sh 'cp bin/PROCESS_Testing ../test_results'
-             }
              sh 'ls -lah'
           }
         }  // end of stage : Build
