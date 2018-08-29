@@ -5,15 +5,15 @@ agent any
     {
         stage('Checkout') 
         {
+
+            steps 
+            {
+              checkout scm
           checkout changelog: false, poll: false, 
           scm: [$class: 'GitSCM', branches: [[name: '*/develop']], 
           doGenerateSubmoduleConfigurations: false, extensions: [],         
           submoduleCfg: [], userRemoteConfigs: [[credentialsId: '3fec59c5-adab-4c2a-9891-50efc6b25a95', 
           url: 'git@git.ccfe.ac.uk:mkumar/PROCESS_Testing.git']]]
-
-            steps 
-            {
-              checkout scm
               sh 'pwd'
               sh 'ls -lah'
             }
