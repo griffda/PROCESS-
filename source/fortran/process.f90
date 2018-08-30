@@ -112,7 +112,7 @@ program process
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  mainRun : if (inExist) then
+  !mainRun : if (inExist) then
     !  Initialise things
     call init
 
