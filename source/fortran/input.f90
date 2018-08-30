@@ -139,8 +139,6 @@ module process_input
   logical :: subscript_present
   logical :: error = .False.
   character(len=78) :: error_message
-  !   integer           :: error_code
-  !   character(len=78) :: error_routine
 
 contains
 
@@ -374,7 +372,7 @@ contains
        subscript_present = .FALSE.
 
        read(infile,'(A)',iostat=iost) line
-       !write(*,*) 'KE main, line = ', line
+
        !  On error or end, return
        if (iost /= 0) exit loop_over_lines
 
@@ -415,7 +413,6 @@ contains
           write(*,*) 'Error in IN.DAT at line ', lineno
           write(*,*) line
           error = .True.
-          !stop
        end if
 
        !  Read the associated data
@@ -2968,7 +2965,6 @@ contains
           write(*,*) 'Error occurred at this line in the IN.DAT file:', lineno
           write(*,*) line
           error = .True.
-          !stop
 
        end select variable
 
@@ -2981,7 +2977,6 @@ contains
           write(*,*) 'Error occurred at this line in the IN.DAT file: ', lineno
           write(*,*) line
           error = .True.
-          !stop
        end if
 
        !  If we have just read in an array, a different loop-back is needed
@@ -3138,7 +3133,6 @@ contains
        write(*,*) 'Name and description of variable: '
        write(*,*) varnam, description
        error = .True.
-       !stop
     end if
 
     !  Obtain the new value for the variable
@@ -3220,7 +3214,6 @@ contains
        write(*,*) 'Variable name, description:'
        write(*,*) varnam, ', ', description
        error = .True.
-       !stop
     end if
 
     if ((report_changes == 1).and.(trim(varval) /= trim(oldval))) then
@@ -3289,7 +3282,6 @@ contains
           write(*,*) 'Variable name, description:'
           write(*,*) varnam, ', ', description
           error = .True.
-          !stop
        end if
 
        varval(isub1) = val
@@ -3382,7 +3374,6 @@ contains
           write(*,*) 'Variable name, description:'
           write(*,*) varnam, ', ', description
           error = .True.
-          !stop
        end if
 
        varval(isub1) = val
@@ -3397,7 +3388,7 @@ contains
        if(present(startindex))isub1 = startindex
        do
           call get_value_int(val,icode)
-          !write(*,*) 'KE val, icode = ', val, ', ', icode
+
           !  icode == 1 denotes an error
           !  icode == -1 denotes end of line
           if (icode /= 0) then
@@ -3412,7 +3403,6 @@ contains
              write(outfile,10) trim(description),', ', &
                   trim(varnam),'(',isub1,') = ',varval(isub1)
           end if
-          !write(*,*) 'KE isub1 = ', isub1
           isub1 = isub1 + 1
        end do
 
@@ -3756,16 +3746,12 @@ contains
     ! *** Errors
 
 60  continue
-    !write(*,*) 'KE rval = ', rval
-       !if(rval /= 0) then
-          write(*,*) 'Problem with IN file, please check line'
-          write(*,*) string
-          write(*,*) 'Comments should be indicated by an asterisk (*)'
-          error = .True.
-          !KE - trying this here to stop user putting a comment with no *
-		  !does not work. PROCESS however does not care, and still reads the value.
-          !stop
-       !end if
+    
+    write(*,*) 'Problem with IN file, please check line'
+    write(*,*) string
+    write(*,*) 'Comments should be indicated by an asterisk (*)'
+    error = .True.
+    
     icode = 1
 
 1000 continue
@@ -3821,13 +3807,9 @@ contains
           goto 10
        end if
     end if
-    !write(*,*) 'line at iptr = ', line(iptr:iptr)
-    if (iptr > linelen) then
-       !write(*,*) 'KE beyond line INT'
-       goto 60
-    endif
+
+    if (iptr > linelen) goto 60
     
-!        write(*,*) 'KE get val int iptr, linelen = ', iptr, ', ', linelen
 !        ! *** Read next line of namelist data
 
 ! 20     CONTINUE
@@ -3882,7 +3864,6 @@ contains
     ! *** Put rest of line into varval (makes it easier to parse)
 
     varval = line(iptr:)
-    !write(*,*) 'KE INT varval = ', varval
 
     ! *** Exclude any input after * or , - these denote an input comment
 
@@ -3912,7 +3893,6 @@ contains
        write(*,*) 'Integer value expected in following input line...'
        write(*,*) '   ',line(1:50),'...'
        error = .True.
-       !stop
     end if
 
     ! *** Update pointer
@@ -3994,7 +3974,6 @@ contains
        end if
     end if
     if (iptr > linelen) then
-       !write(*,*) 'KE beyond line REAL'
        goto 60
     endif
 !     if (iptr > linelen) then
@@ -4155,11 +4134,8 @@ contains
           goto 10
        end if
     end if
-    if (iptr > linelen) then
-       write(*,*) 'beyond line STRING'
-       goto 60
-    endif
-!     write(*,*) 'I am here!, line - ', line
+    if (iptr > linelen) goto 60
+    
 !     if (iptr > linelen) then
 !        write(*,*) 'KE get substring iptr, linelen = ', iptr, ', ', linelen
 !        ! *** Read next line of namelist data
@@ -4218,13 +4194,9 @@ contains
 
     varval = line(iptr:)
     varlen = len_trim(varval)
-    !varlen = index(varval,',') - 1
-    !write(*,*) 'KE varlen2 = ', varlen
-    !if (varlen <= 0) varlen = index(varval,' ') - 1
-    !write(*,*) 'varlen3 = ', varlen
+
     if (varlen <= 0) varlen = iptr
-    !write(*,*) 'varlen4 = ', varlen
-    !write(*,*) 'KE, varval = ', varval
+
     ! *** Update pointer
 
     iptr = iptr + varlen
@@ -4783,60 +4755,6 @@ contains
     end if
 
   end subroutine lower_case
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!   subroutine report_input_error
-
-!     !+ad_name  report_input_error
-!     !+ad_summ  Reports an error and stops the program
-!     !+ad_type  Subroutine
-!     !+ad_auth  P J Knight, CCFE, Culham Science Centre
-!     !+ad_cont  N/A
-!     !+ad_args  None
-!     !+ad_desc  This routine is called if an error has been detected, and
-!     !+ad_desc  it reports the value of <CODE>error_code</CODE> and the
-!     !+ad_desc  user-supplied error message, and stops the program.
-!     !+ad_prob  None
-!     !+ad_call  report_error
-!     !+ad_hist  03/10/12 PJK Initial version
-!     !+ad_hist  16/09/13 PJK Added 'Please check...' line
-!     !+ad_hist  27/11/13 PJK Added more advice if the output file is unhelpful
-!     !+ad_hist  26/06/14 PJK Changed routine name to prevent clash with
-!     !+ad_hisc               global error handling routine
-!     !+ad_hist  08/10/14 PJK Swapped order of the message lines so that the
-!     !+ad_hisc               error itself is more obvious without scrolling
-!     !+ad_stat  Okay
-!     !+ad_docs  None
-!     !
-!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!     implicit none
-
-!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!     write(*,*)
-!     write(*,*) 'Error trapped...'
-!     write(*,*)
-!     write(*,*) 'Please check the output file for further information.'
-!     write(*,*)
-!     write(*,*) 'If this does not contain a helpful error message, check '// &
-!          'the lines of the input'
-!     write(*,*) 'file following the last one copied to the output file - ' // &
-!          'there is likely to be'
-!     write(*,*) 'a mistake in the formatting somewhere...'
-!     write(*,*)
-!     write(*,*) 'Note that in-line comments are usually okay, but be very ' // &
-!          'careful with the use'
-!     write(*,*) 'of commas (best avoided altogether...)'
-!     write(*,*)
-!     write(*,*) 'Routine ',trim(error_routine),': ',trim(error_message)
-!     write(*,*) 'Error Code: ',error_code
-
-!     idiags(1) = error_code
-!     call report_error(130)
-
-!   end subroutine report_input_error
 
 end module process_input
 
