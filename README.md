@@ -30,7 +30,7 @@ SOFT 2014, Fusion Engineering and Design ([paper](http://www.sciencedirect.com/s
 ## Build System
 
 A number of software technologies are employed in PROCESS. [CMake](https://cmake.org/) is the compiler, for 
-linking the modules and creating the executable and shared object. process.exe is the executable, and it links to the
+linking the modules and creating the executable and shared object. `process.exe` is the executable, and it links to the
 shared object, libPROCESS_Calculation_Engine.
 
 PROCESS calculation modules are primarly written in Fortran. Python is used for running integration tests.
@@ -86,9 +86,9 @@ The folder structure for the PROCESS system prior to compilation is descibed bel
 2. Inside the PROCESS directory, run CMAKE to build, compile and generate the executable and shared object
     - `cmake3 -H. -Bbuild`
     - `cmake3 --build build`
-Step 2 will create a folder called `bin`, which contains three files: process.exe, process_GTest.exe and libPROCESS_calc_engine.so
+    - Step 2 will create a folder called `bin`, which contains three files: process.exe, process_GTest.exe and libPROCESS_calc_engine.so
 3. pFUnit unit test files are located in the folder _test_files/pfunit_files/_ with extension _.pf_. Use `make tests` from your home directory to run the pFUnit test suite   
-4. GTest unit test files are located in the folder _test_files/gtest_files/_ with extension _.h_. Use `./bin/process_GTest` from your home directory to run the GTest test suite 
+4. GTest unit test files are located in the folder _test_files/gtest_files/_ with extension _.h_. Use `./bin/process_test` from your home directory to run the GTest test suite 
 
 During the compile and build steps, a number of files and folders are created. Additional files in the folder structure are listed below:
 
@@ -122,6 +122,9 @@ Additionally
 - create input file IN.DAT
 - run `./process.exe`
 - results are output in OUT.DAT, MFILE.DAT
+- optionally, run the `utilities/run_process.py` script in conjunction with a config file to randomly vary the starting point of the input parameter set until a feasilble solution is found.
+    - `run_process.py -f CONFIGFILE`
+    - An example of the config file can be found in `documentation/pdf/utilitiesdoc.pdf`
 
 ## Development
 
