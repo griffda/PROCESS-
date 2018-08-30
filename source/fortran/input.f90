@@ -399,7 +399,7 @@ contains
        subscript_present = .FALSE.
 
        read(infile,'(A)',iostat=iost) line
-       write(*,*) 'KE main, line = ', line
+       !write(*,*) 'KE main, line = ', line
        !  On error or end, return
        if (iost /= 0) exit loop_over_lines
 
@@ -440,7 +440,7 @@ contains
           write(*,*) 'Error in IN.DAT at line ', lineno
           write(*,*) line
           error = .True.
-          stop
+          !stop
        end if
 
        !  Read the associated data
@@ -3006,7 +3006,7 @@ contains
           write(*,*) 'Error occurred at this line in the IN.DAT file: ', lineno
           write(*,*) line
           error = .True.
-          stop
+          !stop
        end if
 
        !  If we have just read in an array, a different loop-back is needed
@@ -3098,6 +3098,7 @@ contains
     if (icode /= 0) then
        write(*,*) 'Error whilst reading input file.  Variable name and description:'
        write(*,*) varnam, ', ', description
+       write(*,*) 'Comments should be indicated by an asterisk'
        error = .True.
     end if
 
@@ -3162,7 +3163,7 @@ contains
        write(*,*) 'Name and description of variable: '
        write(*,*) varnam, description
        error = .True.
-       stop
+       !stop
     end if
 
     !  Obtain the new value for the variable
@@ -3170,7 +3171,7 @@ contains
     oldval = varval
     call get_value_int(varval,icode)
     if (icode /= 0) then
-       write(*,*) 'Unexpected subscript found at line ',lineno
+       write(*,*) 'Error found in input file, check line ',lineno
        write(*,*) 'Variable name, description:'
        write(*,*) varnam, ', ', description
           error = .True.
@@ -3232,7 +3233,7 @@ contains
        write(*,*) 'Name and description of variable: '
        write(*,*) varnam, description
        error = .True.
-       stop
+       !stop
     end if
 
     !  Obtain the new value for the variable
@@ -3244,7 +3245,7 @@ contains
        write(*,*) 'Variable name, description:'
        write(*,*) varnam, ', ', description
        error = .True.
-       stop
+       !stop
     end if
 
     if ((report_changes == 1).and.(trim(varval) /= trim(oldval))) then
@@ -3313,7 +3314,7 @@ contains
           write(*,*) 'Variable name, description:'
           write(*,*) varnam, ', ', description
           error = .True.
-          stop
+          !stop
        end if
 
        varval(isub1) = val
@@ -3406,7 +3407,7 @@ contains
           write(*,*) 'Variable name, description:'
           write(*,*) varnam, ', ', description
           error = .True.
-          stop
+          !stop
        end if
 
        varval(isub1) = val
@@ -3421,7 +3422,7 @@ contains
        if(present(startindex))isub1 = startindex
        do
           call get_value_int(val,icode)
-          write(*,*) 'KE val, icode = ', val, ', ', icode
+          !write(*,*) 'KE val, icode = ', val, ', ', icode
           !  icode == 1 denotes an error
           !  icode == -1 denotes end of line
           if (icode /= 0) then
@@ -3436,7 +3437,7 @@ contains
              write(outfile,10) trim(description),', ', &
                   trim(varnam),'(',isub1,') = ',varval(isub1)
           end if
-          write(*,*) 'KE isub1 = ', isub1
+          !write(*,*) 'KE isub1 = ', isub1
           isub1 = isub1 + 1
        end do
 
@@ -3546,13 +3547,9 @@ contains
           ivar = -1234567890
        else
           ivar = 1234567890
-		  write(*,*) 'Problem with IN file string_to_int, please check line'
+          write(*,*) '1 Problem with IN file, please check line'
           write(*,*) xstr
-          !KE - note that report_error cannot be called at this point
-          stop ! KE Issue #562  Stopping the code if value can't be read
-			!NOTE - this is trying to solve the problem of when the * is missed before 
-			!writing a comment in the IN file. Unfortunately it only works if the 
-			!value + comment is more than 10 characters long
+          error = .True.
        end if
        icode = 1
        goto 1000
@@ -3583,11 +3580,11 @@ contains
        if (negate) ivar = -ivar
 
     else
-	   if(ivar /= 0) then
+       if(ivar /= 0) then
           write(*,*) 'Problem with IN file, please check line'
           write(*,*) xstr
-          !KE - note that report_error cannot be called at this point
-          stop   !KE trying this
+          write(*,*) 'Comments should be indicated by an asterisk (*)'
+          error = .True.
        end if															 
        icode = 1
     end if
@@ -3751,6 +3748,8 @@ contains
           iexpon = (iexpon * 10) + (ichar(string(iptr:iptr))-izero)
           iptr = iptr + 1
           if (iptr <= length) goto 40
+       else
+          goto 60
        end if
     else
        goto 60
@@ -3782,13 +3781,16 @@ contains
     ! *** Errors
 
 60  continue
-       if(rval /= 0) then
-          write(*,*) 'Problem with IN file string_to_real, please check line'
+    !write(*,*) 'KE rval = ', rval
+       !if(rval /= 0) then
+          write(*,*) 'Problem with IN file, please check line'
           write(*,*) string
+          write(*,*) 'Comments should be indicated by an asterisk (*)'
+          error = .True.
           !KE - trying this here to stop user putting a comment with no *
 		  !does not work. PROCESS however does not care, and still reads the value.
-          stop
-       end if
+          !stop
+       !end if
     icode = 1
 
 1000 continue
@@ -3846,7 +3848,7 @@ contains
     end if
     !write(*,*) 'line at iptr = ', line(iptr:iptr)
     if (iptr > linelen) then
-       write(*,*) 'beyond line INT'
+       !write(*,*) 'KE beyond line INT'
        goto 60
     endif
     
@@ -3905,7 +3907,7 @@ contains
     ! *** Put rest of line into varval (makes it easier to parse)
 
     varval = line(iptr:)
-    write(*,*) 'KE INT varval = ', varval
+    !write(*,*) 'KE INT varval = ', varval
 
     ! *** Exclude any input after * or , - these denote an input comment
 
@@ -3935,7 +3937,7 @@ contains
        write(*,*) 'Integer value expected in following input line...'
        write(*,*) '   ',line(1:50),'...'
        error = .True.
-       stop
+       !stop
     end if
 
     ! *** Update pointer
@@ -4017,7 +4019,7 @@ contains
        end if
     end if
     if (iptr > linelen) then
-       write(*,*) 'beyond line REAL'
+       !write(*,*) 'KE beyond line REAL'
        goto 60
     endif
 !     if (iptr > linelen) then
@@ -4381,14 +4383,13 @@ contains
 
     varval = line(iptr:)
     varlen = len_trim(varval)
-    write(*,*) 'varlen1 = ', varlen
     !varlen = index(varval,',') - 1
-    !write(*,*) 'varlen2 = ', varlen
+    !write(*,*) 'KE varlen2 = ', varlen
     !if (varlen <= 0) varlen = index(varval,' ') - 1
     !write(*,*) 'varlen3 = ', varlen
     if (varlen <= 0) varlen = iptr
-    write(*,*) 'varlen4 = ', varlen
-    write(*,*) 'KE, varval = ', varval
+    !write(*,*) 'varlen4 = ', varlen
+    !write(*,*) 'KE, varval = ', varval
     ! *** Update pointer
 
     iptr = iptr + varlen
