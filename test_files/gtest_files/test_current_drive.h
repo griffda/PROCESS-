@@ -8,8 +8,8 @@ TEST(Current_drive, iternb) {
 //    EXPECT_EQ(14.71, val);
 //   ASSERT_DOUBLE_EQ(14.71, val);
 //    ASSERT_NEAR(0.0, a, 0.00);
-    EXPECT_NEAR(0.0, b, 0.00);
-    EXPECT_NEAR(0.0, c, 0.00);
+//    EXPECT_NEAR(0.0, b, 0.00);
+    EXPECT_NEAR(0.9867, c, 0.010);
 }
 
 TEST(Current_drive, cfnbi) { 
