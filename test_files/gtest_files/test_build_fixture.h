@@ -42,12 +42,12 @@ public:
 TEST_F(buildTargetTest, vardes) { 
    struct stat calc_time = checkFileAttributes("documentation/html/build_variables.html"); 
     int curr = calc_time.st_mtime;
-    EXPECT_LT(ref_time, curr);
+    EXPECT_LE(ref_time, curr);
 }
 
 TEST_F(buildTargetTest, userguide) { 
    struct stat calc_time = checkFileAttributes("documentation/vardes.pdf"); 
     int curr = calc_time.st_mtime;
-    EXPECT_LT(ref_time, curr);
+    EXPECT_LE(ref_time, curr);
 }
 
