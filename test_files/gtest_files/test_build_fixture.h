@@ -1,4 +1,5 @@
 #include <fstream>
+#include <string>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -15,15 +16,17 @@ class buildTargetTest : public ::testing::Test {
 private:
 
 public: 
-   int ref_time = 0;
+   int calc_time = std::numeric_limits<int>::min();;
+   int ref_time = calc_time;
+   std::string folder = "bin/"; 
+   std::string file = "process_test.exe";
    buildTargetTest( ) { 
        // initialization code here
     } 
        //     
     void SetUp() { 
       //  All other targets must be run after cmake --build build 
-       struct stat ref_time_stat = checkFileAttributes("bin/process_test.exe"); 
-       ref_time = ref_time_stat.st_mtime; // This is reference time. 
+       ref_time = elapsed_time(folder.append(file).c_str()); // This is reference time. 
     }
        //                   
     void TearDown() { 
@@ -38,16 +41,13 @@ public:
      // put in any custom data members that you need 
 };
 
-
 TEST_F(buildTargetTest, vardes) { 
-   struct stat calc_time = checkFileAttributes("documentation/html/build_variables.html"); 
-    int curr = calc_time.st_mtime;
-    EXPECT_LE(ref_time, curr);
+   folder = "documentation/html/";
+   file = "build_variables.html";
+   run_file_unit_test(ref_time, folder.append(file).c_str());
 }
 
 TEST_F(buildTargetTest, userguide) { 
-   struct stat calc_time = checkFileAttributes("documentation/vardes.pdf"); 
-    int curr = calc_time.st_mtime;
-    EXPECT_LE(ref_time, curr);
+   run_file_unit_test(ref_time, "documentation/pdf/process.pdf");
 }
 
