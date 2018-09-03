@@ -3810,56 +3810,7 @@ contains
 
     if (iptr > linelen) goto 60
     
-!        ! *** Read next line of namelist data
-
-! 20     CONTINUE
-!        read(infile,'(A)',iostat=iost) line
-!        write(*,*) 'KE get_value_int, line = ', line
-!        ! *** On error or end, leave routine with error code set
-
-!        if (iost /= 0) goto 60
-
-!        lineno = lineno + 1
-
-!        ! *** Ignore blank lines
-
-!        if (line == ' ') goto 10
-
-!        ! *** Ignore comments, unless they start with '*****',
-!        ! *** in which case print them.
-
-!        if (line(1:5) == '*****') then
-!           write(outfile,*) line(1:76)
-!        end if
-
-!        if (line(1:1) == '*') goto 10
-
-!        ! *** Linelen of line excluding trailing spaces
-
-!        linelen = len_trim(line)
-
-!        ! *** If $END, return
-
-!        if (line(1:1) == '$') then
-!           icode = -1
-!           goto 1000
-!        end if
-!        iptr = 1
-! 30     continue
-!        if (line(iptr:iptr) == ' ') then
-!           iptr = iptr + 1
-!           if (iptr <= linelen) goto 30
-!           goto 20
-!        end if
-
-!        ! *** A continuation line starts with 0-9, - or + (more numbers)
-
-!        if ((line(iptr:iptr) >= '0').and.(line(iptr:iptr) <= '9')) goto 40
-!        if ((line(iptr:iptr) == '+').or.(line(iptr:iptr) == '-')) goto 40
-!        icode = -1
-!        goto 1000
- 40     continue
-!     end if
+! 40     continue !KE I guess I can remove this too
 
     ! *** Put rest of line into varval (makes it easier to parse)
 
@@ -3973,62 +3924,7 @@ contains
           goto 10
        end if
     end if
-    if (iptr > linelen) then
-       goto 60
-    endif
-!     if (iptr > linelen) then
-!        write(*,*) 'KE get val real iptr, linelen = ', iptr, ', ', linelen
-!        ! *** Read next line of namelist data
-
-! 20     continue
-!        read(infile,'(A)',iostat=iost) line
-!        write(*,*) 'KE get_value_real, line = ', line
-!        ! *** On error or end, leave routine with error set
-
-!        if (iost /= 0) goto 60
-
-!        lineno = lineno + 1
-
-!        ! *** Ignore blank lines
-
-!        if (line == ' ') goto 10
-
-!        ! *** Ignore comments, unless they start with '*****',
-!        ! *** in which case print them.
-
-!        if (line(1:5) == '*****') then
-!           write(outfile,*) line(1:76)
-!        end if
-
-!        if (line(1:1) == '*') goto 10
-
-!        ! *** Linelen of line excluding trailing spaces
-
-!        linelen = len_trim(line)
-
-!        ! *** If $END, return
-
-!        if (line(1:1) == '$') then
-!           icode = -1
-!           goto 1000
-!        end if
-!        iptr = 1
-! 30     continue
-!        if (line(iptr:iptr) == ' ') then
-!           iptr = iptr + 1
-!           if (iptr <= linelen) goto 30
-!           goto 20
-!        end if
-
-!        ! *** A continuation line starts with 0-9, - or + (more numbers)
-
-!        if ((line(iptr:iptr) >= '0').and.(line(iptr:iptr) <= '9')) goto 40
-!        if ((line(iptr:iptr) == '+').or.(line(iptr:iptr) == '-')) goto 40
-!        icode = -1
-!        goto 1000
-! 40     continue
-
-!     end if
+    if (iptr > linelen) goto 60
 
     ! *** Put rest of line into varval (makes it easier to parse)
 
@@ -4135,60 +4031,6 @@ contains
        end if
     end if
     if (iptr > linelen) goto 60
-    
-!     if (iptr > linelen) then
-!        write(*,*) 'KE get substring iptr, linelen = ', iptr, ', ', linelen
-!        ! *** Read next line of namelist data
-
-! 20     continue
-!        read(infile,'(A)',iostat=iost) line
-!        write(*,*) 'KE get_substring, line = ', line
-!        ! *** On error or end, leave routine with error set
-
-!        if (iost /= 0) goto 60
-
-!        lineno = lineno + 1
-
-!        ! *** Ignore blank lines
-
-!        if (line == ' ') goto 10
-
-!        ! *** Ignore comments, unless they start with '*****',
-!        ! *** in which case print them.
-
-!        if (line(1:5) == '*****') then
-!           write(outfile,*) line(1:76)
-!        end if
-
-!        if (line(1:1) == '*') goto 10
-
-!        ! *** Length of line excluding trailing spaces
-
-!        linelen = len_trim(line)
-
-!        ! *** If $END, return
-
-!        if (line(1:1) == '$') then
-!           icode = -1
-!           goto 1000
-!        end if
-!        iptr = 1
-! 30     continue
-!        if (line(iptr:iptr) == ' ') then
-!           iptr = iptr + 1
-!           if (iptr <= linelen) goto 30
-!           goto 20
-!        end if
-
-!        ! *** A continuation line starts with 0-9, - or + (more numbers)
-
-!        if ((line(iptr:iptr) >= '0').and.(line(iptr:iptr) <= '9')) goto 40
-!        if ((line(iptr:iptr) == '+').or.(line(iptr:iptr) == '-')) goto 40
-!        icode = -1
-!        goto 1000
-! 40     continue
-
-!     end if
 
     ! *** Put rest of line into varval (makes it easier to parse)
 
