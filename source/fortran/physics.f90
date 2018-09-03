@@ -1,4 +1,4 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module physics_module
 
@@ -4743,8 +4743,13 @@ implicit none
     call ovarrf(outfile,'Lower limit on taup/taueff','(taulimit)',taulimit)
 
     call ovarrf(outfile,'Total energy confinement time including radiation loss (s)', &
-                    '(total_energy_conf_time)', total_energy_conf_time, 'OP ')																							 
+         '(total_energy_conf_time)', total_energy_conf_time, 'OP ')
 
+    if (total_energy_conf_time > taueff) then
+       fdiags(1) = total_energy_conf_time ; fdiags(2) = taueff
+       call report_error(215)
+    endif
+    
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')
        call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt, 'OP ')

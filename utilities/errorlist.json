@@ -3,7 +3,7 @@
  "version":  [ "PROCESS version 1.0.13" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 214,
+ "n_errortypes": 215,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -218,6 +218,7 @@
   {"no": 211, "level": 3, "message": "CHECK: You cannot use icc = 24 (Beta upper limit) in combination with PLASMOD(ipedestal=3)"},
   {"no": 212, "level": 3, "message": "NCORE: Central density is negative"},
   {"no": 213, "level": 2, "message": "NCORE: Central density is less than pedestal density"},
-  {"no": 214, "level": 2, "message": "CHECK: Values of EPED scaling factor 'eped_sf' greater than 1 are not recommended"}
+  {"no": 214, "level": 2, "message": "CHECK: Values of EPED scaling factor 'eped_sf' greater than 1 are not recommended"},
+  {"no": 215, "level": 2, "message": "OUTPLAS: total_energy_conf_time (inc.rad losses) > global energy confinement time"}
  ]
 }
