@@ -104,13 +104,6 @@ add_custom_target(autodoc
   DEPENDS ${FORT_SOURCE_DIR}/autodoc.f90
 #  VERBATIM
 )
-add_custom_target(gtest
-#  add_executable(process_test.exe ${GTEST_DIR}/main_test.cpp)
-#  target_link_libraries(process_test.exe PROCESS_calc_engine)
-#  target_link_libraries(process_test.exe lapack)
-#  target_link_libraries(process_test.exe $ENV{GTEST}/lib/libgtest.a pthread)
-#  VERBATIM
-)
 add_custom_target(vardes
   COMMAND cat global_variables.f90 numerics.f90 | ./autodoc
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/documentation/html
@@ -258,7 +251,7 @@ execute_process(
  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
  OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-#set(UNTR_INFO 0)
+
 string(LENGTH "${UNTR_INFO}" UNTR_LN)  # count no of words
 file(WRITE ${FORT_SOURCE_DIR}/untracked.info "  integer::untracked = " ${UNTR_LN} )
 
