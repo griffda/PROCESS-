@@ -193,7 +193,7 @@ add_custom_target(optsolverdoc
 add_custom_target(doc
   COMMAND pwd
   COMMENT "Creating all documentation files"
-  DEPENDS vardes html userguide developerguide utilitiesdoc #optsolverdoc
+  DEPENDS vardes html userguide developerguide utilitiesdoc optsolverdoc
   WORKING_DIRECTORY ${DOC_DIR}
 )
 add_custom_target(all-builds
