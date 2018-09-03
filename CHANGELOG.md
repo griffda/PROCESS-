@@ -50,7 +50,6 @@ Utilities
 - Initial version of `.gitlab-ci.yml` created for GitLab CI.
 - Added Spherical Tokamak and Stellarator examples to the test suite (Issues #715 and #718)
 
-
 ## Minor changes
 
 - Changed upper bound on `coheof` from 1e8 to 5e8 (Issue #668).
