@@ -60,10 +60,10 @@ void run_file_unit_test(int &ref_time, const char* file_name)
     if(ref_time > min_int)
     {
       calc_time = elapsed_time(file_name); 
-      if(ref_time > min_int) {
+      if(ref_time > min_int && calc_time > 0) {
          EXPECT_LE(ref_time, calc_time);
       } else {
-        EXPECT_TRUE(false) << "File not found! Exiting test";
+        EXPECT_TRUE(false) << "ERROR : File -> "+std::string(file_name)+" not found";
       }
     } else {
       EXPECT_TRUE(false) << "process_test.exe not found! Exiting test";
