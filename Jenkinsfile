@@ -8,8 +8,6 @@ agent any
 
             steps 
             {
-                git 'git@git.ccfe.ac.uk:process/process.git'
-                lastChanges since: 'LAST_SUCCESSFUL_BUILD', format:'SIDE',matching: 'LINE'
 //              checkout scm
           checkout changelog: false, poll: false, 
           scm: [$class: 'GitSCM', branches: [[name: '*/develop']], 
