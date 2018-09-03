@@ -19,7 +19,7 @@ public:
    int calc_time = std::numeric_limits<int>::min();;
    int ref_time = calc_time;
    std::string folder = "bin/"; 
-   std::string file = "process_test.exe";
+   std::string file = "process_GTest.exe";
    buildTargetTest( ) { 
        // initialization code here
     } 
@@ -44,6 +44,12 @@ public:
 TEST_F(buildTargetTest, vardes) { 
    folder = "documentation/html/";
    file = "build_variables.html";
+   run_file_unit_test(ref_time, folder.append(file).c_str());
+}
+
+TEST_F(buildTargetTest, optsolver) { 
+   folder = "documentation/pdf/";
+   file = "optsolverdoc.pdf";
    run_file_unit_test(ref_time, folder.append(file).c_str());
 }
 
