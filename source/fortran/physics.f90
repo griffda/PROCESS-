@@ -1,4 +1,4 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module physics_module
 
@@ -4717,7 +4717,7 @@ implicit none
     call ovarst(mfile,'Confinement scaling law','(tauelaw)',trim(tauelaw))
 
     call ovarrf(outfile,'Confinement H factor','(hfact)',hfact)
-    call ovarrf(outfile,'Global energy confinement time (s)','(taueff)',taueff, 'OP ')
+    call ovarrf(outfile,'Global thermal energy confinement time (s)','(taueff)',taueff, 'OP ')
     call ovarrf(outfile,'Ion energy confinement time (s)','(tauei)',tauei, 'OP ')
     call ovarrf(outfile,'Electron energy confinement time (s)','(tauee)',tauee, 'OP ')
     call ovarre(outfile,'n.tau = Volume-average electron density x Energy confinement time (s/m3)', &
@@ -4742,9 +4742,10 @@ implicit none
     call ovarrf(outfile,'Alpha particle/energy confinement time ratio','(taup/taueff)',taup/taueff, 'OP ')
     call ovarrf(outfile,'Lower limit on taup/taueff','(taulimit)',taulimit)
 
-    call ovarrf(outfile,'Total energy confinement time including radiation loss (s)', &
-                    '(total_energy_conf_time)', total_energy_conf_time, 'OP ')																							 
-
+    call ovarrf(outfile,'Total energy confinement time (s)', &
+         '(total_energy_conf_time)', total_energy_conf_time, 'OP ')
+    call ocmmnt(outfile,'  (= stored energy including fast particles / loss power including radiation')
+    
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')
        call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt, 'OP ')
