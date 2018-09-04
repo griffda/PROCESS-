@@ -753,7 +753,7 @@ module physics_variables
   real(kind(1.0D0)) :: ssync = 0.6D0
   !+ad_vars  tauee : electron energy confinement time (sec)
   real(kind(1.0D0)) :: tauee = 0.0D0
-  !+ad_vars  taueff : global energy confinement time (sec)
+  !+ad_vars  taueff : global thermal energy confinement time (sec)
   real(kind(1.0D0)) :: taueff = 0.0D0
   !+ad_vars  tauei : ion energy confinement time (sec)
   real(kind(1.0D0)) :: tauei = 0.0D0
