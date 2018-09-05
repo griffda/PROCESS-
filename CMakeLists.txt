@@ -139,7 +139,7 @@ add_custom_target(userguide
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.toc
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/vardes.out
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/vardes.aux
-  DEPENDS ${DOC_DIR}/process.tex
+  DEPENDS vardes ${DOC_DIR}/process.tex
   WORKING_DIRECTORY ${DOC_DIR}
 )
 add_custom_target(developerguide
@@ -174,12 +174,14 @@ add_custom_target(optsolverdoc
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/optsolverdoc > ${DOC_DIR}/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/optdoc.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/optsolverdoc > ${DOC_DIR}/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/optdoc.log"
   COMMAND ${MOVE_FILE} -t pdf optsolverdoc.pdf optsolverdoc.log
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolveroc.aux
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolveroc.lof
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolveroc.log
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolveroc.lot
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolveroc.toc
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolveroc.out
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.aux
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.lof
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.log
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.lot
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.toc
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.out
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.bbl
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.blg
   DEPENDS ${DOC_DIR}/optsolverdoc.tex
   WORKING_DIRECTORY ${DOC_DIR}
 )
