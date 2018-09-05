@@ -109,12 +109,18 @@ if __name__ == "__main__":
                         help='File to write as new IN.DAT '
                              '(default="new_IN.DAT")')
 
+    parser.add_argument('-lfp', "--lfp", help="use last feasible point in a scan (default)", action="store_true")
+
+    parser.add_argument('-ffp', "--ffp", help="use first feasible point in a scan", action="store_true")
+
     args = parser.parse_args()
 
-    # Determine last feasible scan point
-    scan = last_feasible_point(args.f)
-    print("scan number = ", scan)
-    #scan = 0
+    if args.ffp:
+        scan = 1 #NB first point may not be feasible - to correct
+    else:      
+        # Determine last feasible scan point
+        scan = last_feasible_point(args.f)
+        print("scan number = ", scan)
     if (scan == 0):
         print("No feasible points in scan")
         raise SystemExit
