@@ -21,8 +21,37 @@ import argparse
 import process_io_lib.mfile as mf
 import process_io_lib.in_dat as in_dat
 
+def last_feasible_point(filename):
+    """Function to determine the last feasible point in a scan
 
-def get_iteration_variables(filename="MFILE.DAT", scan=-1):
+    Args: 
+      filename --> name of MFILE.DAT to read
+
+    Returns:
+      scanPoint --> scan number to use when writing new file
+    
+    """
+    mfile_data = mf.MFile(filename)
+    feasible = False
+    
+    # Get number of scans and assign as initial value of scanPoint        
+    scanPoint = int(mfile_data.data["isweep"].get_scan(-1))
+    
+    while feasible == False:
+        print("scan point = ", scanPoint)
+        for value in mfile_data.data.keys():
+            if "ifail" in value:
+                print("ifail = ", int(mfile_data.data[value].get_scan(scanPoint)))
+                if mfile_data.data[value].get_scan(scanPoint) == 1:
+                    print("found feasible")
+                    feasible = True
+                else:
+                    scanPoint = scanPoint - 1
+                break
+                
+    return scanPoint
+
+def get_iteration_variables(filename, scan):
     """Function to get a list of the iteration variables and their values from
     MFILE.DAT
 
@@ -82,8 +111,16 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # Determine last feasible scan point
+    scan = last_feasible_point(args.f)
+    print("scan number = ", scan)
+    #scan = 0
+    if (scan == 0):
+        print("No feasible points in scan")
+        raise SystemExit
+    
     # Get iteration variables from MFILE.DAT
-    it_vars = get_iteration_variables(args.f)
+    it_vars = get_iteration_variables(args.f, scan)
 
     # Read IN.DAT
     in_dat_data = in_dat.InDat(args.i)
