@@ -56,13 +56,39 @@ def orig_cost_model():
     ax2.pie(sizes2, labels=labels2, autopct='%1.1f%%')
     ax2.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
-    #fig1.savefig('direct_cost_breakdown.png')
-    #fig2.savefig('cost_breakdown.png')
+    if args.save:
+        fig1.savefig('direct_cost_breakdown.png')
+        fig2.savefig('cost_breakdown.png')
     plt.show()
 
 def new_cost_model():
-    print('2014 cost model not yet supported')
+    s09 = m_file.data["s09"].get_scan(-1)           # Buildings
+    s13 = m_file.data["s13"].get_scan(-1)           # Land
+    s21 = m_file.data["s21"].get_scan(-1)           # TF Coils
+    s27 = m_file.data["s27"].get_scan(-1)           # First wall and blanket
+    s31 = m_file.data["s31"].get_scan(-1)           # Active maintenance and remote handling
+    s34 = m_file.data["s34"].get_scan(-1)           # Vacuum vessel and liquid nitrogen plant
+    s35 = m_file.data["s35"].get_scan(-1)           # System for converting heat to electricity
+    s36 = m_file.data["s36"].get_scan(-1)           # CS and PF coils
+    s51 = m_file.data["s51"].get_scan(-1)           # Cryoplant and distribution
+    s52 = m_file.data["s52"].get_scan(-1)           # Electrical power supply and distribution
+    s59 = m_file.data["s59"].get_scan(-1)           # Additional project expenditure
+    s61 = m_file.data["s61"].get_scan(-1)           # Remaining subsystems
 
+    labels = ['Buildings', 'Land', 'TF Coils', 'First wall and blanket',
+    'Active maintenance and remote handling', 'Vacuum vessel and liquid nitrogen plant',
+    'CS and PF coils', 'Cryoplant and distribution','Electrical power supply and distribution',
+    'Additional project expenditure', 'Other subsystems']
+
+    sizes = [s09, s13, s21, s27, s31, s34, s36, s51, s52, s59, s35+s61-s36-s51-s52-s59]
+
+    fig1, ax1 = plt.subplots(figsize=(10,5))
+    ax1.pie(sizes, labels=labels, autopct='%1.1f%%')
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    if args.save:
+        fig1.savefig('direct_cost_breakdown.png')
+    plt.show()
 
 # Main code
 if __name__ == '__main__':
@@ -75,16 +101,17 @@ if __name__ == '__main__':
     parser.add_argument("-f", metavar='MFILE', type=str,
                        default="MFILE.DAT", help='specify the MFILE (default=MFILE.DAT)')
 
-    parser.add_argument("-v", metavar='cost_model', type=int,
-                       default="0", help='cost model used (0: 1990 model (default), 1: 2014 model)')
+    parser.add_argument("-s", "--save", help="save plot as well as showing figure",
+                        action="store_true")
+
 
     args = parser.parse_args()
 
     m_file = mf.MFile(args.f)
 
-    if args.v==0:
+    if "c21" in m_file.data.keys():
         orig_cost_model()
-    elif args.v==1:
+    elif "s01" in m_file.data.keys():
         new_cost_model()
     else:
-        print('Invalid cost model')
+        print('ERROR: Unidentified cost model')

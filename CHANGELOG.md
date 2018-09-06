@@ -42,6 +42,7 @@ Utilities
 	- New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
 	- evaluate_uncertainties.py now outputs and additional file to allow analysis of failed PROCESS Runs.
 	- New script plot_sankey.py to plot a Sankey diagram of the PROCESS power flow
+  - New script cost_analysis.py to plot pie charts of the cost breakdown.
 
 Miscellaneous
 - TF stress in conduit Tresca criterion can now have regular and CEA adjusted options 
