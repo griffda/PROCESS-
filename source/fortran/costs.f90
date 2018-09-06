@@ -153,6 +153,7 @@ contains
     !+ad_hist  08/09/14 PJK Modified blanket costs for ipowerflow=1 model
     !+ad_hist  03/11/14 PJK Clarified ipowerflow, blkttype logic
     !+ad_hist  17/11/14 PJK Added output_costs switch
+    !+ad_hist  06/09/18 SIM Added variable name output to MFILE
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
