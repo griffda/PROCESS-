@@ -41,13 +41,20 @@ def orig_cost_model():
         sizes2 = [cdirt, c9, ccont]
 
 
-    labels = ['Magnets and Power Conditioning', 'Site and Buildings', 'Maintenance Equipment', 
-    'Power Injection', 'Reactor Systems', 'Fuel Handling System', 'Instrumentation and Control', 
-    'Turbine Plant Equipment', 'Heat Transport System', 'Other']
+    if c23>1.0E-3:
+        labels = ['Magnets and Power Conditioning', 'Site and Buildings', 'Maintenance Equipment', 
+        'Power Injection', 'Reactor Systems', 'Fuel Handling System', 'Instrumentation and Control', 
+        'Turbine Plant Equipment', 'Heat Transport System', 'Other']
 
-    sizes = [c222+c225, c21, c229, c223, c221, c227, c228, c23, c226, c224+c24+c25+c26]
+        sizes = [c222+c225, c21, c229, c223, c221, c227, c228, c23, c226, c224+c24+c25+c26]
+    
+    else:
+        labels = ['Magnets and Power Conditioning', 'Site and Buildings', 'Maintenance Equipment', 
+        'Power Injection', 'Reactor Systems', 'Fuel Handling System', 'Instrumentation and Control', 
+        'Heat Transport System', 'Other']
 
-    #plt.figure(figsize=(8,8))
+        sizes = [c222+c225, c21, c229, c223, c221, c227, c228, c226, c224+c24+c25+c26]
+
     fig1, ax1 = plt.subplots(figsize=(8,5))
     ax1.pie(sizes, labels=labels, autopct='%1.1f%%')
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
