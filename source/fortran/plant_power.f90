@@ -1495,7 +1495,7 @@ contains
 
     call ocmmnt(outfile,'Power balance for power plant :')
     call ocmmnt(outfile,'-------------------------------')
-    call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
+    call ovarrf(outfile,'Fusion power (MW)','(powfmw.)',powfmw, 'OP ')
     call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
     sum = powfmw + emultmw
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
