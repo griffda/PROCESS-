@@ -21,34 +21,51 @@ import argparse
 import process_io_lib.mfile as mf
 import process_io_lib.in_dat as in_dat
 
-def last_feasible_point(filename):
-    """Function to determine the last feasible point in a scan
+def feasible_point(filename, position):
+    """Function to check for feasible solution before creating new IN.DAT, or to determine the first or last feasible point in a scan
 
     Args: 
       filename --> name of MFILE.DAT to read
+      position --> e.g first or last
 
     Returns:
       scanPoint --> scan number to use when writing new file
     
     """
     mfile_data = mf.MFile(filename)
-    feasible = False
-    
-    # Get number of scans and assign as initial value of scanPoint        
-    scanPoint = int(mfile_data.data["isweep"].get_scan(-1))
-    
-    while feasible == False:
-        print("scan point = ", scanPoint)
-        for value in mfile_data.data.keys():
-            if "ifail" in value:
-                print("ifail = ", int(mfile_data.data[value].get_scan(scanPoint)))
-                if mfile_data.data[value].get_scan(scanPoint) == 1:
-                    print("found feasible")
-                    feasible = True
-                else:
-                    scanPoint = scanPoint - 1
+    finished = False
+    scanPoint = 0
+    numScans = 1
+
+    for value in mfile_data.data.keys():
+            if ("isweep" in value):
+                numScans = int(mfile_data.data["isweep"].get_scan(-1))
                 break
-                
+
+    # Assign start point        
+    if position == "first":
+        checkPoint = 1
+    else:
+        checkPoint = numScans
+        
+    while finished == False:
+        for value in mfile_data.data.keys():
+            #Look for feasible scan points (with ifail = 1)
+            if "ifail" in value and "vmcon_error_flag_(ifail)" not in value:
+                if mfile_data.data[value].get_scan(checkPoint) == 1:
+                    finished = True
+                    scanPoint = checkPoint
+                else:
+                    if position == "last":
+                        if (checkPoint == 1):
+                            finished = True
+                        else:
+                            checkPoint = checkPoint - 1
+                    elif position == "first":
+                        if (checkPoint == numScans):
+                            finished = True
+                        else:
+                           checkPoint = checkPoint + 1 
     return scanPoint
 
 def get_iteration_variables(filename, scan):
@@ -116,14 +133,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.ffp:
-        scan = 1 #NB first point may not be feasible - to correct
+        # Determine first feasible scan point
+        scan = feasible_point(args.f, "first")
     else:      
-        # Determine last feasible scan point
-        scan = last_feasible_point(args.f)
-        print("scan number = ", scan)
+        # Determine last feasible scan point - default
+        scan = feasible_point(args.f, "last")
     if (scan == 0):
         print("No feasible points in scan")
         raise SystemExit
+    print("Using scan number = ", scan)
     
     # Get iteration variables from MFILE.DAT
     it_vars = get_iteration_variables(args.f, scan)
