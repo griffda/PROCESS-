@@ -94,7 +94,7 @@ def new_cost_model():
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
     if args.save:
-        fig1.savefig('direct_cost_breakdown.png')
+        fig1.savefig('cost_breakdown.png')
     plt.show()
 
 # Main code

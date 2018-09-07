@@ -71,7 +71,7 @@ PROCESS version: 1.0.13
 \vspace*{4cm}
 \begin{center}
 \Huge A guide to the utilities of the \\ PROCESS Fusion Reactor Systems Code\\
-~\\ \LARGE The PROCESS Team: P.\ J.\ Knight, M.\ D.\ Kovari, H.\ Lux, J.\ Morris\\
+~\\ \LARGE The PROCESS Team: P.\ J.\ Knight, M.\ D.\ Kovari, H.\ Lux, J.\ Morris, S.\ I.\ Muldrew \\
 ~\\ \Large Culham Centre for Fusion Energy/ United Kingdom Atomic Energy Authority\\
 Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 \end{center}
@@ -948,8 +948,9 @@ Use -h or --help for help
 
 
 %------------------------------------
-\subsubsection{Plot two parameters from many MFILES (plot\_comparison.py}
+\subsubsection{Plot two parameters from many MFILES (plot\_comparison.py)}
 
+\begin{quote}
 \begin{verbatim}
 usage: plot_comparison.py [-h] [-x XAXIS] [-y YAXIS] [-e END] [f [f ...]]
 
@@ -966,6 +967,37 @@ optional arguments:
                         y-axis, default=powfmw
   -e END, --end END     file format default = pdf
 \end{verbatim}
+\end{quote}
+
+\subsubsection{Plot pie chart of cost breakdown (cost\_analysis.py)}
+
+This utility plots the cost breakdown as a pie chart.  For both cost models it produces a pie chart of the costs grouped by item, so that the most expensive areas can easily be identified.  For the 1990 cost model an additional plot showing how the direct, indirect and contingency costs contribute to the overall budget is also shown. 
+
+\begin{description}
+	\item{\textbf{Input:}}
+	\mfile
+	
+	\item{\textbf{Output:}}
+	Displays plot of the cost breakdown to screen.  For 1990 cost model, the breakdown for direct, indirect and contingency is also shown.  These can be saved with -s argument (cost\_breakdown.png and direct\_cost\_breakdown.png).
+	
+\end{description}
+
+Optional arguments are:
+\begin{quote}
+\begin{verbatim}
+usage: cost_analysis.py [-h] [-f MFILE] [-s]
+
+Displays the cost breakdown as a pie chart. For more infomation contact Stuart
+Muldrew (stuart.muldrew@ukaea.uk)
+
+optional arguments:
+-h, --help  show this help message and exit
+-f MFILE    specify the MFILE (default=MFILE.DAT)
+-s, --save  save plot as well as showing figure
+
+\end{verbatim}
+\end{quote}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Uncertainty Tools}
