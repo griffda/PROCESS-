@@ -499,7 +499,9 @@ The resulting NetCDF file can be visualised using the \texttt{ndscan\_visualisat
 %-------------------------------
 \subsubsection{Turn output into input (write\_new\_in\_dat.py)}
 
-This program modifies a given \indat\ file such that the specified initial values of all the iteration variables are given by their values in \outdat.
+This program creates a new \indat\ file with the initial values of all the iteration variables replaced by their results in \outdat, if that ouput is a feasible solution.
+
+When a scan has been run, by default this program uses the last feasible point in that scan to write the new starting values. There is also an option to select the first feasible solution from a scan.
 
 \begin{description}
 \item{\textbf{Input:}}
@@ -509,6 +511,16 @@ This program modifies a given \indat\ file such that the specified initial value
 \texttt{new\_IN.DAT}
 \end{description}
 
+\begin{quote}
+\begin{verbatim}
+usage: write_new_in_dat.py [-h] [-f MFILE.DAT] [-i IN.DAT]
+
+optional arguments:
+  -h, --help   show this help message and exit
+  -lfp         use the last feasible point from a scan (default)
+  -ffp         use the first feasible point from a scan
+\end{verbatim}
+\end{quote}
 
 %-------------------------------
 \subsubsection{Create csv file summarising data in plot\_proc.py output (output\_data.py)}
