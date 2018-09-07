@@ -4572,7 +4572,7 @@ implicit none
     if (fhe3 > 1.0D-3) call ovarrf(outfile,'3-Helium fuel fraction','(fhe3)',fhe3)
 
     call osubhd(outfile,'Fusion Power :')
-    call ovarre(outfile,'Total fusion power (MW)','(powfmw.)',powfmw, 'OP ')
+    call ovarre(outfile,'Total fusion power (MW)','(powfmw)',powfmw, 'OP ')
     call ovarre(outfile,' =    D-T fusion power (MW)','(pdt)',pdt, 'OP ')
     call ovarre(outfile,'  +   D-D fusion power (MW)','(pdd)',pdd, 'OP ')
     call ovarre(outfile,'  + D-He3 fusion power (MW)','(pdhe3)',pdhe3, 'OP ')

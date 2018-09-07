@@ -1014,45 +1014,45 @@ contains
 
     call oshead(ofile,'Buildings (M$)')
     do i=1, 9
-       call ocost(ofile, s(i)%label, s(i)%cost/1.0D6)
+       call ocost(ofile, s(i)%label, i, s(i)%cost/1.0D6)
     end do
 
     call oshead(ofile,'Land (M$)')
     do j=10, 13
-       call ocost(ofile, s(j)%label, s(j)%cost/1.0D6)
+       call ocost(ofile, s(j)%label, j, s(j)%cost/1.0D6)
     end do
 
     call oshead(ofile,'TF Coils (M$)')
     do k=14, 21
-       call ocost(ofile, s(k)%label, s(k)%cost/1.0D6)
+       call ocost(ofile, s(k)%label, k, s(k)%cost/1.0D6)
     end do
 
     call oshead(ofile,'First wall and blanket (M$)')
     do l=22, 27
-       call ocost(ofile, s(l)%label, s(l)%cost/1.0D6)
+       call ocost(ofile, s(l)%label, l, s(l)%cost/1.0D6)
     end do
 
     call oshead(ofile,'Active maintenance and remote handling (M$)')
-    call ocost(ofile, s(28)%label, s(28)%cost/1.0D6)
-    call ocost(ofile, s(29)%label, s(29)%cost/1.0D6)
-    call ocost(ofile, s(31)%label, s(31)%cost/1.0D6)
+    call ocost(ofile, s(28)%label, 28, s(28)%cost/1.0D6)
+    call ocost(ofile, s(29)%label, 29, s(29)%cost/1.0D6)
+    call ocost(ofile, s(31)%label, 31, s(31)%cost/1.0D6)
 
     call oshead(ofile,'Vacuum vessel and liquid nitrogen plant (M$)')
     do n=32, 34
-       call ocost(ofile, s(n)%label, s(n)%cost/1.0D6)
+       call ocost(ofile, s(n)%label, n, s(n)%cost/1.0D6)
     end do
 
     call oshead(ofile,'System for converting heat to electricity (M$)')
-    call ocost(ofile, s(35)%label, s(35)%cost/1.0D6)
+    call ocost(ofile, s(35)%label, 35, s(35)%cost/1.0D6)
 
     call oshead(ofile,'Remaining subsystems (M$)')
     do q=36, 61
-       call ocost(ofile, s(q)%label, s(q)%cost/1.0D6)
+       call ocost(ofile, s(q)%label, q, s(q)%cost/1.0D6)
     end do
 
     call oblnkl(ofile)
-    call ocost(ofile, "TOTAL OVERNIGHT CAPITAL COST (M$)", total_costs/1.0D6)
-    call ocost(ofile, "Annual maintenance cost (M$)", maintenance/1.0D6)
+    call ocost_vname(ofile, "TOTAL OVERNIGHT CAPITAL COST (M$)", "(total_costs)", total_costs/1.0D6)
+    call ocost_vname(ofile, "Annual maintenance cost (M$)", "(maintenance)", maintenance/1.0D6)
     call oblnkl(ofile)
     call ovarrf(ofile,"Net electric output (MW)", '(pnetelmw)', pnetelmw, 'OP ')
     call ovarrf(ofile,"Capacity factor", '(cpfact)', cpfact, 'OP ')
@@ -1091,18 +1091,21 @@ contains
   end subroutine value_function
 
 
-subroutine ocost(file,descr,value)
+subroutine ocost(file,descr,n,value)
 
     !+ad_name  ocost
     !+ad_summ  Routine to print out the code, description and value
-    !+ad_summ  of a cost item in costs_2015
+    !+ad_summ  of a cost item from array s in costs_2015
     !+ad_type  Subroutine
+    !+ad_hist  06/09/18 SIM Added MFILE variable names
 
     implicit none
 
     !  Arguments
     integer, intent(in) :: file
+    integer :: n
     character(len=*), intent(in) :: descr
+    character(len=5) :: vname
     real(kind(1.0D0)), intent(in) :: value
     !  Local variables
     character(len=70) :: dum70
@@ -1113,8 +1116,41 @@ subroutine ocost(file,descr,value)
     dum70 = descr
     write(file,10) dum70, value, ' '
 10  format(1x,a,t73,f10.0, tl1, a)
-    call ovarrf(mfile,descr,'',value)
+    ! Create variable name of format s + array entry
+    write(vname,"(A2,I2.2,A1)") '(s', n, ')'
+
+    call ovarrf(mfile,descr,vname,value)
 
   end subroutine ocost
+
+  subroutine ocost_vname(file,descr,vname,value)
+
+    !+ad_name  ocost_vname
+    !+ad_summ  Routine to print out the code, description and value
+    !+ad_summ  of a cost item not in the array s in costs_2015
+    !+ad_type  Subroutine
+    !+ad_hist  06/09/18 SIM Added additional subroutine to take strings
+
+    implicit none
+
+    !  Arguments
+    integer, intent(in) :: file
+    integer :: n
+    character(len=*), intent(in) :: descr
+    character(len=*), intent(in) :: vname
+    real(kind(1.0D0)), intent(in) :: value
+    !  Local variables
+    character(len=70) :: dum70
+
+    if (descr == 'not used') return
+
+    !  Replace descr with dummy string of the correct length.
+    dum70 = descr
+    write(file,10) dum70, value, ' '
+10  format(1x,a,t73,f10.0, tl1, a)
+
+    call ovarrf(mfile,descr,vname,value)
+
+  end subroutine ocost_vname
 
 end module costs_2015_module

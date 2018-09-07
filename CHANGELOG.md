@@ -42,13 +42,16 @@ Utilities
 	- New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
 	- evaluate_uncertainties.py now outputs and additional file to allow analysis of failed PROCESS Runs.
 	- New script plot_sankey.py to plot a Sankey diagram of the PROCESS power flow
+  - New script cost_analysis.py to plot pie charts of the cost breakdown.
 
+Miscellaneous
 - TF stress in conduit Tresca criterion can now have regular and CEA adjusted options 
   (adjustment from [Torre et al. 2016](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7390035) 
   paper). (Issue #678)
 - [Snipes et al.](2000; http://iopscience.iop.org/article/10.1088/0741-3335/42/5A/336) H-mode threshold scaling options added (Issue #680)
 - Initial version of `.gitlab-ci.yml` created for GitLab CI.
 - Added Spherical Tokamak and Stellarator examples to the test suite (Issues #715 and #718)
+- Output to MFILE variable names for cost models
 
 ## Minor changes
 
