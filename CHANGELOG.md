@@ -55,7 +55,7 @@ Miscellaneous
 
 ## Minor changes
 
-- Changed upper bound on `coheof` from 1e8 to 5e8 (Issue #668).
+- Changed upper bound on `coheof` from 1.0e8 to 5.0e8 (Issue #668).
 - A number of changes to `plot_proc.py` and outputs in the fortran associated 
   with vertical build. (Merge request !18)
 - Update utilities guide for a number of Python utilities
