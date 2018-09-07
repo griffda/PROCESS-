@@ -73,3 +73,4 @@ Utilities
 - Added error reporting to function ncore (Issue #735)
 - Added input `plasma_res_factor` for adjustment factor for plasma resistivity. Default is 1.0   to preserve old behaviour.
 - Added additional scaling factor 'eped_sf' for the EPED pedestal model (pressure and temperature versions).
+-Made more robust the reading of input files - comments are now denoted only via an asterisk (*), and if a comment is present without an asterisk the reading of the input file will stop (previously it simply ignored constraint equations and iteration variables that could not be read). It is no longer permissible to write an input over multiple lines. Users can now use punctuation in comments as they wish, including full stops and commas.
