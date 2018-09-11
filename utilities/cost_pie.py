@@ -70,8 +70,8 @@ def orig_cost_model():
 
     # Save figures if option selected
     if args.save:
-        fig1.savefig('direct_cost_breakdown.png')
-        fig2.savefig('cost_breakdown.png')
+        fig1.savefig('direct_cost_pie.png')
+        fig2.savefig('cost_pie.png')
     plt.show()
 
 def new_cost_model():
@@ -104,7 +104,7 @@ def new_cost_model():
 
     # Save figures if option selected
     if args.save:
-        fig1.savefig('cost_breakdown.png')
+        fig1.savefig('cost_pie.png')
     plt.show()
 
 # Main code
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     parser.add_argument("-f", metavar='MFILE', type=str,
                        default="MFILE.DAT", help='specify the MFILE (default=MFILE.DAT)')
 
-    parser.add_argument("-s", "--save", help="save plot as well as showing figure",
+    parser.add_argument("-s", "--save", help="save as well as showing figure",
                         action="store_true")
 
 
