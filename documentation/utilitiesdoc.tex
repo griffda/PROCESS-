@@ -981,23 +981,23 @@ optional arguments:
 \end{verbatim}
 \end{quote}
 
-\subsubsection{Plot pie chart of cost breakdown (cost\_analysis.py)}
+\subsubsection{Plot pie chart of cost breakdown (cost\_pie.py)}
 
-This utility plots the cost breakdown as a pie chart.  For both cost models it produces a pie chart of the costs grouped by item, so that the most expensive areas can easily be identified.  For the 1990 cost model an additional plot showing how the direct, indirect and contingency costs contribute to the overall budget is also shown. 
+This utility plots the cost breakdown as a pie chart.  For both cost models it produces a pie chart of the costs grouped by item, so that the most expensive areas can easily be identified.  For the 1990 cost model, an additional plot showing how the direct, indirect and contingency costs contribute to the overall budget is shown. 
 
 \begin{description}
 	\item{\textbf{Input:}}
 	\mfile
 	
 	\item{\textbf{Output:}}
-	Displays plot of the cost breakdown to screen.  For 1990 cost model, the breakdown for direct, indirect and contingency is also shown.  These can be saved with -s argument (cost\_breakdown.png and direct\_cost\_breakdown.png).
+	Displays plot of the cost breakdown to screen.  For the 1990 cost model, the breakdown for direct, indirect and contingency is also shown.  These can be saved with -s argument (cost\_breakdown.png and direct\_cost\_breakdown.png).
 	
 \end{description}
 
 Optional arguments are:
 \begin{quote}
 \begin{verbatim}
-usage: cost_analysis.py [-h] [-f MFILE] [-s]
+usage: cost_pie.py [-h] [-f MFILE] [-s]
 
 Displays the cost breakdown as a pie chart.
 For more information contact Stuart.Muldrew@ukaea.uk
