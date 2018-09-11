@@ -13,6 +13,12 @@ import process_io_lib.mfile as mf
 import matplotlib.pyplot as plt
 
 def orig_cost_model():
+    """
+
+    Plot pie chart for the orginal 1990 cost model.
+    Two plots produced: (1) Breakdown of the direct costs and (2) Direct, indirect, etc.
+
+    """
     # Read Cost Values
     c21 = m_file.data["c21"].get_scan(-1)           # Site and Buildings
     c221 = m_file.data["c221"].get_scan(-1)         # Reactor Systems
@@ -75,6 +81,11 @@ def orig_cost_model():
     plt.show()
 
 def new_cost_model():
+    """
+
+    Plot pie chart for the new 2014 cost model.
+
+    """
     # Read Cost Values
     s09 = m_file.data["s09"].get_scan(-1)           # Buildings
     s13 = m_file.data["s13"].get_scan(-1)           # Land
@@ -118,7 +129,7 @@ if __name__ == '__main__':
     parser.add_argument("-f", metavar='MFILE', type=str,
                        default="MFILE.DAT", help='specify the MFILE (default=MFILE.DAT)')
 
-    parser.add_argument("-s", "--save", help="save as well as showing figure",
+    parser.add_argument("-s", "--save", help="save as well as displaying figure",
                         action="store_true")
 
 

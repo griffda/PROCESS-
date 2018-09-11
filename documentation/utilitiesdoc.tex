@@ -981,9 +981,9 @@ optional arguments:
 \end{verbatim}
 \end{quote}
 
-\subsubsection{Plot pie chart of cost breakdown (cost\_pie.py)}
+\subsubsection{Plot a pie chart of the cost breakdown (cost\_pie.py)}
 
-This utility plots the cost breakdown as a pie chart.  For both cost models it produces a pie chart of the costs grouped by item, so that the most expensive areas can easily be identified.  For the 1990 cost model, an additional plot showing how the direct, indirect and contingency costs contribute to the overall budget is shown. 
+This utility plots the cost breakdown as a pie chart giving each component as a percentage.  This allows for the most expensive areas to be easily identified.  For the 1990 cost model, an additional plot showing how the direct, indirect and contingency costs contribute to the overall budget is shown. 
 
 \begin{description}
 	\item{\textbf{Input:}}
@@ -994,20 +994,51 @@ This utility plots the cost breakdown as a pie chart.  For both cost models it p
 	
 \end{description}
 
-Optional arguments are:
+Help information:
 \begin{quote}
 \begin{verbatim}
 usage: cost_pie.py [-h] [-f MFILE] [-s]
 
-Displays the cost breakdown as a pie chart.
-For more information contact Stuart.Muldrew@ukaea.uk
+Displays the cost breakdown as a pie chart. For more information contact
+Stuart.Muldrew@ukaea.uk
 
 optional arguments:
 -h, --help  show this help message and exit
 -f MFILE    specify the MFILE (default=MFILE.DAT)
--s, --save  save as well as showing figure
+-s, --save  save as well as displaying figure
 
 \end{verbatim}
+\end{quote}
+
+\subsubsection{Plot a bar chart of the cost breakdown (cost\_bar.py)}
+
+This utility plots the cost breakdown as a bar chart giving the cost of each component.  This allows for the most expensive areas to be easily identified.  For the 1990 cost model, an additional plot showing how the direct, indirect and contingency costs contribute to the overall budget is shown.  Multiple MFILEs can be specified allowing for different PROCESS runs to be compared on the same plot.  An inflation factor can be specified using the -inf argument, which multiplies all the costs by that value. 
+
+\begin{description}
+	\item{\textbf{Input:}}
+	\mfile
+	
+	\item{\textbf{Output:}}
+	Displays plot of the cost breakdown to screen.  For the 1990 cost model, the breakdown for direct, indirect and contingency is also shown.  These can be saved with -s argument (cost\_bar.png and direct\_cost\_bar.png).
+	
+\end{description}
+
+Help information:
+\begin{quote}
+	\begin{verbatim}
+usage: cost_bar.py [-h] [-f f [f ...]] [-s] [-inf INF]
+
+Displays the cost breakdown as a bar chart. Multiple MFILEs can be given and
+will be plotted on the same chart. For more information contact
+Stuart.Muldrew@ukaea.uk
+
+optional arguments:
+-h, --help    show this help message and exit
+-f f [f ...]  specify the MFILE(s) to plot
+-s, --save    save as well as displaying figure
+-inf INF      Inflation Factor (multiplies costs)
+	
+	\end{verbatim}
 \end{quote}
 
 
