@@ -97,8 +97,8 @@ def comp_orig():
 
     # Save plots if option selected
     if args.save:
-        fig.savefig('direct_cost_bar.png')
-        fig2.savefig('cost_bar.png')
+        fig.savefig('direct_cost_bar.pdf')
+        fig2.savefig('cost_bar.pdf')
 
     plt.show()
 
@@ -159,7 +159,7 @@ def comp_new():
 
     # Save plots if option selected
     if args.save:
-        fig.savefig('cost_bar.png')
+        fig.savefig('cost_bar.pdf')
     
     plt.show()
 
