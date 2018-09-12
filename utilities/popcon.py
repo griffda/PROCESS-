@@ -22,8 +22,8 @@ Volume averaged value:   <n> = n0 / (1.0 + alphan)
 
 History:
 - Originally written by TNT in late 1980s (BBC Microcomputer / BBC Basic / primitive graphics)
-- Ported to IDL by PJK, added new routines, compared with PROCESS
-- Ported to Python in 2018 by SIM and added Mfile reading
+- Ported to IDL by PJK in 2011, added new routines and compared with W Han's cut-down PROCESS
+- Ported to Python in 2018 by SIM and added MFILE reading
 
 
 """
@@ -215,14 +215,12 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # Option for Test mode that ignores Mfile and runs with set parameters
+    # Option for Test mode that ignores MFILE and runs with set parameters
     if args.test:
-    # Test parameters from Richard Kembleton
+        # Test parameters from Richard Kembleton's DEMO1 (01/10/2013)
         a = 2.2           # Minor radius (m)
         R = 9.0           # Major radius (m)
         K = 1.8           # Elongation
-        tri = 0.3         # Triangularity
-        q = 5.0           # Safety factor
         plascur = 12.0    # Plasma current (MA)
         refl = 0.6        # Wall reflection coeff.
         B = 7.33          # Toroidal magnetic field
@@ -238,12 +236,9 @@ if __name__ == '__main__':
         RadModel = 2      # Radiation Model: (0) TNT (1) Process (2) Process + Albajar and Fidone Sync Model
     else:
         m_file = mf.MFile(args.f)
-        Zimp = args.zimp  # Impurity charge
         a = m_file.data["rminor"].get_scan(-1)               # Minor radius (m)
         R = m_file.data["rmajor"].get_scan(-1)               # Major radius (m)
-        K = m_file.data["kappa"].get_scan(-1)                # Elongation
-        tri = m_file.data["triang"].get_scan(-1)             # Triangularity
-        q = m_file.data["q95"].get_scan(-1)                  # Safety factor
+        K = m_file.data["kappaa"].get_scan(-1)               # Elongation
         plascur = m_file.data["plascur/1d6"].get_scan(-1)    # Plasma current (MA)
         refl = m_file.data["ssync"].get_scan(-1)             # Wall reflection coeff.
         B = m_file.data["bt"].get_scan(-1)                   # Toroidal magnetic field
