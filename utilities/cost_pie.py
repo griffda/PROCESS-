@@ -76,8 +76,8 @@ def orig_cost_model():
 
     # Save figures if option selected
     if args.save:
-        fig1.savefig('direct_cost_pie.png')
-        fig2.savefig('cost_pie.png')
+        fig1.savefig('direct_cost_pie.pdf')
+        fig2.savefig('cost_pie.pdf')
     plt.show()
 
 def new_cost_model():
@@ -115,7 +115,7 @@ def new_cost_model():
 
     # Save figures if option selected
     if args.save:
-        fig1.savefig('cost_pie.png')
+        fig1.savefig('cost_pie.pdf')
     plt.show()
 
 # Main code

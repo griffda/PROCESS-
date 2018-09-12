@@ -990,7 +990,7 @@ This utility plots the cost breakdown as a pie chart giving each component as a 
 	\mfile
 	
 	\item{\textbf{Output:}}
-	Displays plot of the cost breakdown to screen.  For the 1990 cost model, the breakdown for direct, indirect and contingency is also shown.  These can be saved with -s argument (cost\_pie.png and direct\_cost\_pie.png).
+	Displays plot of the cost breakdown to screen.  For the 1990 cost model, the breakdown for direct, indirect and contingency is also shown.  These can be saved with -s argument (cost\_pie.pdf and direct\_cost\_pie.pdf).
 	
 \end{description}
 
@@ -1019,7 +1019,7 @@ This utility plots the cost breakdown as a bar chart giving the cost of each com
 	\mfile
 	
 	\item{\textbf{Output:}}
-	Displays plot of the cost breakdown to screen.  For the 1990 cost model, the breakdown for direct, indirect and contingency is also shown.  These can be saved with -s argument (cost\_bar.png and direct\_cost\_bar.png).
+	Displays plot of the cost breakdown to screen.  For the 1990 cost model, the breakdown for direct, indirect and contingency is also shown.  These can be saved with -s argument (cost\_bar.pdf and direct\_cost\_bar.pdf).
 	
 \end{description}
 
@@ -1039,6 +1039,41 @@ optional arguments:
 -inf INF      Inflation Factor (multiplies costs)
 	
 	\end{verbatim}
+\end{quote}
+
+\subsubsection{POPCON plot (popcon.py)}
+
+This utility generates a POPCON plot from an MFILE that can be saved with the -s argument.  -x, -y and -z allow the user to set the definition of temperature, density and power respectively that is plotted.  Currently the impurity is set with an effective charge, and this can be parsed using -zimp (default is Argon).  The routine also features a test case that can be run by supplying the -t argument only.
+
+\begin{description}
+	\item{\textbf{Input:}}
+	\mfile
+	
+	\item{\textbf{Output:}}
+	Displays POPCON plot to screen.  This can be saved with -s argument (popcon.pdf).
+	
+\end{description}
+
+Help information:
+\begin{quote}
+\begin{verbatim}
+usage: popcon.py [-h] [-f MFILE] [-s] [-t] [-x X] [-y Y] [-z Z] [-zimp ZIMP]
+
+Displays a POPCON plot for input MFILE. For more information contact
+Stuart.Muldrew@ukaea.uk or Peter.Knight@ukaea.uk
+
+optional arguments:
+-h, --help  show this help message and exit
+-f MFILE    specify the MFILE (default=MFILE.DAT)
+-s, --save  save as well as displaying figure
+-t, --test  Test mode: ignores MFILE and runs with R Kembleton's test values
+-x X        Temperature (x-axis): (0) Central (1) Volume (default=1)
+-y Y        Density (y-axis): (0) Central (1) Volume (2) Line (default=1)
+-z Z        Power (z-axis): (0) Aux for balance (1) Net (2) Fusion
+(default=0)
+-zimp ZIMP  Impurity charge (default=18 Ar)
+	
+\end{verbatim}
 \end{quote}
 
 

@@ -43,6 +43,7 @@ Utilities
 	- evaluate_uncertainties.py now outputs and additional file to allow analysis of failed PROCESS Runs.
 	- New script plot_sankey.py to plot a Sankey diagram of the PROCESS power flow
   - New scripts cost_pie.py and cost_bar.py to analyse cost data.
+  - New script popcon.py to plot POPCON plot from MFILE.
 
 Miscellaneous
 - TF stress in conduit Tresca criterion can now have regular and CEA adjusted options 
