@@ -1,6 +1,6 @@
 # 1.0.14
 
-> Next release
+> next release
 
 ## Bug Fixes
 
