@@ -58,6 +58,7 @@ module scan_module
   use tfcoil_variables
   use fwbs_variables
   use divertor_kallenbach_variables
+  use final_module
 
   implicit none
 
@@ -862,5 +863,326 @@ contains
     end select
 
   end subroutine scan_select
+
+  subroutine doopt(ifail)
+
+  !+ad_name  doopt
+  !+ad_summ  Routine to call the optimising equation solver
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  ifail   : output integer : error flag
+  !+ad_desc  This routine calls the optimising equation solver.
+  !+ad_prob  None
+  !+ad_call  constraints
+  !+ad_call  error_handling
+  !+ad_call  function_evaluator
+  !+ad_call  numerics
+  !+ad_call  process_output
+  !+ad_call  boundxc
+  !+ad_call  constraint_eqns
+  !+ad_call  int_to_string3
+  !+ad_call  loadxc
+  !+ad_call  oblnkl
+  !+ad_call  ocmmnt
+  !+ad_call  oheadr
+  !+ad_call  optimiz
+  !+ad_call  osubhd
+  !+ad_call  ovarin
+  !+ad_call  ovarre
+  !+ad_call  report_error
+  !+ad_call  verror
+  !+ad_hist  03/10/96 PJK Initial upgraded version
+  !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  10/10/12 PJK Modified to use new numerics and function_evaluator
+  !+ad_hisc               modules
+  !+ad_hist  31/01/13 PJK Added warning about high residuals if the convergence
+  !+ad_hisc               is suspicious
+  !+ad_hist  04/07/13 PJK Modified wording for variables at/beyond their bounds
+  !+ad_hist  28/11/13 PJK Modified format lines for longer lablxc length
+  !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
+  !+ad_hist  27/02/14 PJK Added nineqns usage; minor output modifications
+  !+ad_hist  13/03/14 PJK Added numerical state information to mfile
+  !+ad_hist  09/07/14 PJK Added error reporting
+  !+ad_hist  09/07/14 PJK Added range-normalised iteration variable values to mfile
+  !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
+  !+ad_hisc               in physical units
+  !+ad_hist  19/08/14 PJK Added nvar, neqns to output, constraint residues to mfile
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use constraints
+  use error_handling
+  use function_evaluator
+  use numerics
+  use process_output
+  use utilities, only:upper_case
+  use main_module, only:verror
+  ! for ipedestal = 2 option
+  !use plasmod_variables
+  use plasmod_module
+
+  implicit none
+
+  !  Arguments
+  integer, intent(out) :: ifail
+
+  !  Local variables
+  integer :: ii,inn,iflag
+  real(kind(1.0D0)) :: summ,xcval,xmaxx,xminn,f,xnorm
+  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  character(len=1), dimension(ipeqns) :: sym
+  character(len=10), dimension(ipeqns) :: lab
+  character(len=30) :: strfom
+  character(len=60) :: string1, string2
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  If no optimisation is required, leave the routine
+  if (ioptimz < 0) return
+
+  !  Set up variables to be iterated
+  ! MDK Allocating here doesn't work if there is a scan
+  ! allocate(name_xc(nvar))
+  call loadxc
+  call boundxc
+  call optimiz(fcnvmc1,fcnvmc2,ifail,f)
+
+  ! Calculate PLASMOD after everything else has finished for comparison
+  if (ipedestal == 2) then
+
+     call setupPlasmod(num,geom,comp,ped,inp0,i_flag)
+
+     call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+
+     if (i_flag==1)then
+        write(*,*) 'PLASMOD has converged!!!'
+     elseif (i_flag==0)then
+        write(*,*) 'The PLASMOD transport model has crashed'
+     elseif (i_flag==-1)then
+        write(*,*) 'The PLASMOD transport model has not converged after itermax'
+     elseif (i_flag==-2)then
+        write(*,*) 'The PLASMOD equilibrium has crashed'
+      endif
+
+  endif
+
+  !  Check on accuracy of solution by summing the
+  !  squares of the residuals of the equality constraints
+  summ = 0.0D0
+  do ii = 1,neqns
+     summ = summ + rcm(ii)*rcm(ii)
+  end do
+  sqsumsq = sqrt(summ)
+
+  !  Turn on error reporting
+  errors_on = .true.
+
+  !  Print out information on solution
+  call oheadr(nout,'Numerics')
+  call ocmmnt(nout,'PROCESS has performed a VMCON (optimisation) run.')
+  if (ifail /= 1) then
+     !call ocmmnt(nout,'but could not find a feasible set of parameters.')
+     call oheadr(nout,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
+     call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
+     call ovarin(iotty,'VMCON error flag (ifail)','',ifail)
+     call oblnkl(iotty)
+
+     idiags(1) = ifail ; call report_error(132)
+
+  else
+     call ocmmnt(nout,'and found a feasible set of parameters.')
+     call oblnkl(nout)
+     call ovarin(nout,'VMCON error flag','(ifail)',ifail)
+     call oheadr(iotty,'PROCESS found a feasible solution')
+  end if
+
+  !call oblnkl(nout)
+
+  !  If necessary, write out a relevant error message
+  if (ifail /= 1) then
+     call verror(ifail)
+     call oblnkl(nout)
+     call oblnkl(iotty)
+  else
+     !  Show a warning if the constraints appear high even if allegedly converged
+     if (sqsumsq >= 1.0D-2) then
+        call oblnkl(nout)
+        call ocmmnt(nout,'WARNING: Constraint residues are HIGH; consider re-running')
+        call ocmmnt(nout,'   with lower values of EPSVMC to confirm convergence...')
+        call ocmmnt(nout,'   (should be able to get down to about 1.0E-8 okay)')
+        call oblnkl(nout)
+        call ocmmnt(iotty,'WARNING: Constraint residues are HIGH; consider re-running')
+        call ocmmnt(iotty,'   with lower values of EPSVMC to confirm convergence...')
+        call ocmmnt(iotty,'   (should be able to get down to about 1.0E-8 okay)')
+        call oblnkl(iotty)
+
+        fdiags(1) = sqsumsq ; call report_error(134)
+
+     end if
+  end if
+
+  call ovarin(nout,'Number of iteration variables','(nvar)',nvar)
+  call ovarin(nout,'Number of constraints (total)','(neqns+nineqns)',neqns+nineqns)
+  call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
+  call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
+  if (ifail /= 1) then
+     call ovarin(nout,'VMCON error flag','(ifail)',ifail)
+  end if
+
+  call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
+  call ovarre(nout,'VMCON convergence parameter','(convergence_parameter)',convergence_parameter, 'OP ')
+  call ovarin(nout,'Number of VMCON iterations','(nviter)',nviter, 'OP ')
+  call oblnkl(nout)
+
+  if (ifail == 1) then
+     string1 = 'PROCESS has successfully optimised the iteration variables'
+  else
+     string1 = 'PROCESS has tried to optimise the iteration variables'
+  end if
+
+  if (minmax > 0) then
+     string2 = ' to minimise the figure of merit: '
+  else
+     string2 = ' to maximise the figure of merit: '
+  end if
+
+  strfom = lablmm(abs(minmax))
+  call upper_case(strfom)
+  write(nout,10) trim(string1) // trim(string2),  trim(strfom)
+10 format(a90, t92, a22)
+
+  call oblnkl(nout)
+
+  !  Check which variables are at bounds
+  iflag = 0
+  do ii = 1,nvar
+     xminn = 1.01D0*bondl(ii)
+     xmaxx = 0.99D0*bondu(ii)
+
+     if (xcm(ii) < xminn) then
+        if (iflag == 0) then
+           call ocmmnt(nout, &
+                'Certain operating limits have been reached,')
+           call ocmmnt(nout, &
+                'as shown by the following iteration variables that are')
+           call ocmmnt(nout, &
+                'at or near to the edge of their prescribed range :')
+           call oblnkl(nout)
+           iflag = 1
+        end if
+        xcval = xcm(ii)*scafc(ii)
+        !write(nout,30) ii,lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
+        write(nout,30) lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
+     end if
+
+     if (xcm(ii) > xmaxx) then
+        if (iflag == 0) then
+           call ocmmnt(nout, &
+                'Certain operating limits have been reached,')
+           call ocmmnt(nout, &
+                'as shown by the following iteration variables that are')
+           call ocmmnt(nout, &
+                'at or near to the edge of their prescribed range :')
+           call oblnkl(nout)
+           iflag = 1
+        end if
+        xcval = xcm(ii)*scafc(ii)
+        write(nout,40) lablxc(ixc(ii)),xcval,bondu(ii)*scafc(ii)
+     end if
+  end do
+
+!30 format(t4,'Variable ',i3,' (',a9, &
+!        ',',1pe12.4,') is at or below its lower bound:',1pe12.4)
+30 format(t4, a30, '=',1pe12.4,' is at or below its lower bound:',1pe12.4)
+40 format(t4, a30, '=',1pe12.4,' is at or above its upper bound:',1pe12.4)
+!40 format(t4,'Variable ',i3,' (',a9, &
+!        ',',1pe12.4,') is at or above its upper bound:',1pe12.4)
+
+  !  Print out information on numerics
+  call osubhd(nout,'The solution vector is comprised as follows :')
+!  write(nout,50)
+! Remove Lagrange multipliers as no-one understands them.
+! MFILE not changed
+!50 format(t47,'lower',t59,'upper')
+
+  write(nout,60)
+!60 format(t23,'final',t33,'fractional',t46,'Lagrange',t58,'Lagrange')
+60 format(t43,'final',t55,'final /')
+
+
+  write(nout,70)
+!70 format(t5,'i',t23,'value',t35,'change',t45,'multiplier', &
+!        t57,'multiplier')
+70 format(t5,'i',t43,'value',t55,'initial')
+
+  call oblnkl(nout)
+
+  do inn = 1,nvar
+     xcs(inn) = xcm(inn)*scafc(inn)
+!     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
+!          vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
+     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn)
+!80 format(t2,i4,t8,a9,t19,4(1pe12.4))
+!80 format(t2,i4,t8,a30,t39,2(1pe12.4))
+80 format(t2,i4,t8,a30,t39,1pe12.4, t52, 0pf10.4)
+! MDK The 0p is needed because of a bizarre "feature"/bug in fortran:
+! the 1p in the previous format continues until changed.
+     call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
+
+     !  'Range-normalised' iteration variable values for MFILE:
+     !  0.0 (at lower bound) to 1.0 (at upper bound)
+     if (bondl(inn) == bondu(inn)) then
+        xnorm = 1.0D0
+     else
+        xnorm = (xcm(inn) - bondl(inn)) / (bondu(inn) - bondl(inn))
+        xnorm = max(xnorm, 0.0D0)
+        xnorm = min(xnorm, 1.0D0)
+     end if
+     ! Added ratio final/initial to MFILE
+     call ovarre(mfile,trim(lablxc(ixc(inn)))//' (final value/initial value)', &
+          '(xcm'//int_to_string3(inn)//')',xcm(inn))
+     call ovarre(mfile,trim(lablxc(ixc(inn)))//' (range normalised)', &
+          '(nitvar'//int_to_string3(inn)//')',xnorm)
+  end do
+
+
+  call osubhd(nout, &
+       'The following equality constraint residues should be close to zero :')
+
+  call constraint_eqns(neqns+nineqns,con1,-1,con2,err,sym,lab)
+  write(nout,90)
+90 format(t48,'physical',t73,'constraint',t100,'normalised')
+  write(nout,100)
+100 format(t47,'constraint',t74,'residue',t101,'residue')
+  call oblnkl(nout)
+  do inn = 1,neqns
+     write(nout,110) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
+          lab(inn),err(inn),lab(inn),con1(inn)
+     call ovarre(mfile,lablcc(icc(inn))//' normalised residue', &
+          '(normres'//int_to_string3(inn)//')',con1(inn))
+  end do
+110 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
+
+  if (nineqns > 0) then
+     call osubhd(nout, &
+          'The following inequality constraint residues should be greater than or approximately equal to zero :')
+
+     do inn = neqns+1,neqns+nineqns
+        !write(nout,120) inn,lablcc(icc(inn)),rcm(inn),vlam(inn)
+        write(nout,110) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
+                        lab(inn), err(inn), lab(inn)
+        call ovarre(mfile,lablcc(icc(inn)),'(constr'//int_to_string3(inn)//')',rcm(inn))
+     end do
+  end if
+
+! 120 format(t2,i4,t8,a33,t45,1pe12.4,1pe12.4)
+
+end subroutine doopt
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module scan_module

@@ -11,7 +11,7 @@
 """
 
 # PROCESS test suite functions
-from test_suite_functions import *
+from ci_test_suite_functions import *
 
 
 def main(args):
@@ -48,27 +48,14 @@ def main(args):
     for key in drs.keys():
 
         if "error_" in key:
-
-            if args.debug:
-                # initiate test object for the test case
-                tests[key] = TestCase(key, drs[key], difference, args)
-
-
-                # run test
-                tests[key].CI_run_test()
-
-                # Output message to terminal
-                print_message(key, tests[key])
-
-            else:
-                pass
+          pass
         else:
 
             # initiate test object for the test case
             tests[key] = TestCase(key, drs[key], difference, args)
 
             # run test
-            print("Starting test ==>  {0:<40}".format(key))
+            print("Starting test test_suite ==>  {0:<40}".format(key))
             tests[key].CI_run_test()
 
             # Output message to terminal

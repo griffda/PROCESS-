@@ -49,6 +49,7 @@ module availability_module
   use maths_library
   use global_variables
 
+  use iso_c_binding
   implicit none
 
   ! Module subroutine and variable declarations !
@@ -823,7 +824,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_hcd(u_unplanned_hcd)
+  subroutine calc_u_unplanned_hcd(u_unplanned_hcd) bind(C,name="availability_calc_u_unplanned_hcd")
 
     !+ad_name  calc_u_unplanned_fwbs
     !+ad_summ  Calculates the unplanned unavailability of the heating and current drive system

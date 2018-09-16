@@ -90,7 +90,7 @@ def grep(file, regexp, flags=re.U):
     """
 
     lines = []
-     
+
     try:
      with open(file, "r", encoding="utf-8") as file_open:
         for line in file_open.readlines():
@@ -869,6 +869,9 @@ def print_header():
 
     #look for a line with 'Release Date'
     rel_dat_list = grep(SOURCEDIR + "/process.f90", "Release Date")
+    if len(rel_dat_list) == 0:       # for new file structure
+        rel_dat_list = grep(SOURCEDIR + "/main_module.f90", "Release Date")
+
     assert len(rel_dat_list) == 1
     dat_line = rel_dat_list[0]
     #the version number is right before 'Release Date'
@@ -1186,13 +1189,11 @@ if __name__ == "__main__":
     ARGS = PARSER.parse_args()
 
     #SOURCEDIR = ARGS.dir
-	
     try:
-      file = open("global_variables.f90","r",encoding="utf-8")
+      file = open("SOURCEDIR/global_variables.f90","r",encoding="utf-8")
 #      for line in file.readlines():#open(/builds/process/process/global_variables.f90).readlines():
 #        logging.warning("in global_variables.f90 , line ** %s\n", line)
       file.close()
     except IOError:
-      logging.warning( "Could not open file! ")
-    logging.warning("Manoj \n")
+      logging.warning( "Could not open file!")
     print_all()

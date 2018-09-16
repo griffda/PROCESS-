@@ -1,0 +1,37 @@
+module test_current_drive_variables
+   implicit none
+   public
+
+
+contains
+
+@Before
+   subroutine mySetup()
+      implicit none
+
+   end subroutine mySetup
+
+@After
+   subroutine myTearDown()
+      implicit none
+
+   end subroutine myTearDown
+
+@Test
+   subroutine test_iternb()
+      use ISO_FORTRAN_ENV
+      use pfunit_mod
+   use current_drive_variables 
+      implicit none
+      real :: a, b, c
+      integer :: a1
+      a1 = 1
+      a = 3.2
+      b = 1.2
+      c = beamwd
+      @assertEqual(0.58, c)
+
+   end subroutine test_iternb
+
+
+end module test_current_drive_variables

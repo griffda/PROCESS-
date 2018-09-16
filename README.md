@@ -12,42 +12,119 @@ To read about how the code works and the modules in it see the
 ### Physics paper
 
 A [paper](http://www.sciencedirect.com/science/article/pii/S0920379614005961)
-outlining the physics models in PROCESS published in fusion engineering and design.
+outlining the physics models in PROCESS published in Fusion Engineering and Design.
 
 ### Engineering paper
 
 A [paper](http://www.euro-fusionscipub.org/wp-content/uploads/2015/08/WPPMIPR1505.pdf)
-outlining the engineering models in PROCESS published in fusion engineering and design.
+outlining the engineering models in PROCESS published in Fusion Engineering and Design.
 
 ### Other papers
 
 A list of other papers using PROCESS:
-- "Impurity radiation in DEMO systems modelling", H. Lux et al., 2015, fusion engineering and
-design, ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615302891))
+- "Impurity radiation in DEMO systems modelling", H. Lux et al., 2015, Fusion Engineering and
+Design, ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615302891))
 - "Implications of toroidal field coil stress limits on power plant design using PROCESS", J. Morris et al.,
-SOFT 2014, fusion engineering and design ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615301290)).
+SOFT 2014, Fusion Engineering and Design ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615301290)).
 
-## Build
+## Build System
 
-- get repository
-    - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where `folder_name`
-    is the name of the folder that will be created when cloning the repository.
-- inside PROCESS directory run `make` to compile the executable `process.exe`.
+A number of software technologies are employed in PROCESS. [CMake](https://cmake.org/) is the compiler, for 
+linking the modules and creating the executable and shared object. `process.exe` is the executable, and it links to the
+shared object, libPROCESS_Calculation_Engine.
+
+PROCESS calculation modules are primarly written in Fortran. Python is used for running integration tests.
+
+[pFUnit](http://pfunit.sourceforge.net/), and [Googletest](https://github.com/google/googletest) are used for unit testing 
+functions and subroutines within PROCESS. Googletest is also referred to as GTest in this document.
+
+On Freia, paths to PFUnit and GTEST can be set in your user profile (.bashrc) as 
+- `export PFUNIT=/home/PROCESS/testing_frameworks/pfunit_install/V_3-2_8`
+- `export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest`
+
+## Directory Structure
+
+The folder structure for the PROCESS system prior to compilation is descibed below:
+
+```
+*-- CMakeLists.txt                      : Build and compile files
+*-- GNUmakefile                         : Build and compile pFUnit files
++-- lib                             : Libraries used in PROCESS
+|   +-- PLASMOD                         : PLASMOD lib files
++-- source                          : source files
+|   +-- Fortran                         : Fortran source files
+|   +-- cpp                             : C++ source files
++-- test_suite
+|   *-- ci_test_suite.py                : Python file for running test suite in Continuous integration system
+|   *-- ci_test_suite_functions.py      : Python functions  for running test suite in Continuous integration system
+|   *-- test_suite.py                   : Python file for running test suite by user on command line
+|   *-- test_suite_functions.py         : Python functions  for running test suite by user on command line
+|   +-- test_files                      : Input files for test suite
+|   +-- test_area                       : Output files for test suite
++-- test_files
+|   +-- pfunit_files                    : pFUnit test files
+|   +-- gtest_files                     : GTest test files
++-- utilities/                          : Python utilities files
++-- fispact/                                : fispact Data file
++-- data                                : Data files
+|   +-- fluids
+|   +-- h_data
+|   +-- lz_non_corona
+|   +-- lz_non_corona_14_elements
++-- documentation                       : Contain documentation files
+*-- IN.DAT                              : Sample PROCESS input file
+```
+
+## Build Steps
+- When using Freia, it is recommended to load `gfortran` and unload `ifort` or other Fortran compilers explicitly before build:
+    - `module unload ifort`
+    - `module unload pgi`
+    - `module load gfortran`  
+
+1. get repository
+    - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where `folder_name`is the name of the folder which will be created when cloning the repository.  
+2. Inside the PROCESS directory, run CMAKE to build, compile and generate the executable and shared object
+    - `cmake3 -H. -Bbuild`
+    - `cmake3 --build build`
+    - Step 2 will create a folder called `bin`, which contains three files: process.exe, process_GTest.exe and libPROCESS_calc_engine.so
+3. pFUnit unit test files are located in the folder _test_files/pfunit_files/_ with extension _.pf_. Use `make tests` from your home directory to run the pFUnit test suite   
+4. GTest unit test files are located in the folder _test_files/gtest_files/_ with extension _.h_. Use `./bin/process_test` from your home directory to run the GTest test suite 
+
+During the compile and build steps, a number of files and folders are created. Additional files in the folder structure are listed below:
+
+```
++-- build                       : This folder is generated after cmake3 -H. -Bbuild
++-- bin                         : This folder is generated after cmake3 --build build
+|   *-- process.exe             : Executable for running PROCESS
+|   *-- libPROCESS_calc_engine.so   : Shared object containing all PROCESS functions, subroutines and modules
+|   *-- process_GTest.exe           : executable for running PROCESS unit test cases in GTest
++-- documentation                       : Contains documentation files
+|   +-- html             : Documentation generated after cmake3 --build build --target vardes
+*-- process.exe                     : PROCESS executable copied from /bin folder after finishing build process
+*-- tests.x                         : PROCESS executable copied from /bin folder after finishing build process
+*-- pfunit_results.xml              : pFUnit unit testing results file after running make tests
+*-- OUT.DAT                         : PROCESS output file generated after running ./process.exe
+*-- MFILE.DAT                       : PROCESS output file generated after running ./process.exe
+*-- VFILE.DAT                       : PROCESS output file generated after running ./process.exe
+```
+
 
 Additionally
 
-- to make python dictionaries run `make dicts`
-- to make documentation run `make doc`. (pdf compilation on UKAEA Freia machines 
+- to make python dictionaries run `cmake3 --build build --target dicts`
+- to make documentation run `cmake3 --build build --target doc`. (pdf compilation on UKAEA Freia machines 
   requires the following line in your `.bashrc` file: `module load texlive/2017`)
-- to make html files run `make html`
-- to make everything run `make all`
-- to clean the directory run `make clean`
+- to make html files run `cmake3 --build build --target html`
+- to clean the directory run `rm -rf build`
 
 ## Run
 
 - create input file IN.DAT
 - run `./process.exe`
-- results output in OUT.DAT, MFILE.DAT
+- results are output in OUT.DAT, MFILE.DAT
+- optionally, run the `utilities/run_process.py` script in conjunction with a config file to randomly vary the starting point of the input parameter set until a feasilble solution is found.
+    - `run_process.py -f CONFIGFILE`
+    - An example of the config file can be found in `documentation/pdf/utilitiesdoc.pdf`
 
 ## Development
 
@@ -76,13 +153,13 @@ described below.
 Major changes
 
 - Create a new branch (e.g. "model_a_development") on the GitLab webpage.
-    - or run `git branch new_branch_name` after clone the repo (next bullet)
-- Clone the repo `git clone git@git.ccfe.ac.uk:process/process.git`
+    - or run `git branch new_branch_name` after cloning the repo (next bullet)
+- Clone the repository `git clone git@git.ccfe.ac.uk:process/process.git`
 - Swap to your branch `git checkout new_branch_name`
 
-Minor changes
+Minor changes (e.g. single line changes)
 
-- Clone the repo `git clone git.git.ccfe.ac.uk:process/process.git`
+- Clone the repository `git clone git.git.ccfe.ac.uk:process/process.git`
 
 ### Committing changes
 
@@ -108,8 +185,7 @@ with any changes that might have been made by other developers, `git pull`
 
 #### Develop into your branch
 
-If you have finished making a major change, after creating a new branch, you will need
-to merge your branch with the develop branch.
+When you have finished making a major change on a new branch, you will need to merge your branch with the develop branch to keep up with the latest changes.
 
 - Make sure you have committed all of your changes to your local branch.
 - Update your local repo with `git pull`
@@ -133,8 +209,7 @@ files that had conflicts.
 
 #### Your branch into develop
 
-After developing your branch and during the development merging develop into it to make
-sure the two branches don't diverge you will need to merge your branch with develop.
+After having developed your branch, and merged develop into it as detailed in the previous comment, you will need to merge your branch with develop.
 
 - Check your repo is up to date `git pull`
 - `git checkout my_branch_name`
@@ -148,7 +223,7 @@ sure the two branches don't diverge you will need to merge your branch with deve
 Version takes the form `x.y.z` for internal development versions and takes the form `x.y` 
 for external master releases. 
 
-This will be similar to the .NET convention of version numbering
+This is similar to the .NET convention of version numbering
 
 
 `[major version]`.`[minor version]`.`[revision number]`
@@ -162,18 +237,18 @@ This will be similar to the .NET convention of version numbering
 
 To add a tag to a commit do the following:
 
-- In routine inform of file `process.f90`, change the definition of `progver` by
+- In subroutine `inform` in the file `process.f90`, change the value of `progver` by
 incrementing the revision appropriately (given guidance above) to `x.y.z` and the release date. It
 is important to keep exactly the same format.
-- Add a brief comment to the bottom of source file `process.f90` describing the changes made
+- Add a brief comment to the bottom of the source file `process.f90` describing the changes made
 since the last commit in the same branch.  Start the line with `! x.y.z:`, following the
 existing examples
-- If any of the User Guide `.tex` files have been modified, edit the definition of `\version`
-in `process.tex` by changing the Revision (to `x.y.z`) and the date
+- If any of the User Guide `.tex` files have been modified, edit the value of `\version`
+in `process.tex` by changing the Revision to `x.y.z` and the date
 - If you have changed any ”use” statements in the code, or any compilation dependencies in the Makefile, run
-`make clean`
-- To ensure that all the code and documentation compiles successfully run `make all`
-- Run `test_suite.py` in the `test_suite` folder to ensure PROCESS runs correctly
+`rm -rf build`
+- To ensure that all the code and documentation compiles successfully re-run the compiler, including the making of dicts, docs, etc.
+- Check `test_suite.py` in the `test_suite` folder runs successfully
 - Add files changed `git add file_1 file_2 ...`
 - Commit changes `git commit -m "COMMIT MESSAGE"`
 - Add a tag number `git tag -a x.y.z -m "Version x.y.z"`
@@ -194,7 +269,8 @@ Between user tags Git will create tags in the following format:
 - `11` is the number of commits since that tag
 - `g3f1b433` is a unique identifier for this specific commit
 
-This allows the user to checkout a specific commit between tagged versions. PROCESS now outputs this information into the `OUT.DAT` and `MFILE.DAT` and is updated upon compilation. This way each output file is trackable to a specific commit.
+This allows the user to checkout a specific commit between tagged versions. PROCESS now outputs this information into the `OUT.DAT` and `MFILE.DAT` and is 
+updated upon compilation. This way each output file is trackable to a specific commit.
 
 
 **Tagging Commands**
@@ -204,77 +280,6 @@ This allows the user to checkout a specific commit between tagged versions. PROC
 | `git describe --tags`   | show the current tag  | 
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 | `git checkout tags/<tag name>` | checkout a specific tag |
-
-## Windows Users
-
-PROCESS does compile and run on Windows. The following instructions will get you to the point of compiling 
-and running the fortran code (and the Python utilities) on Windows.
-
-1. Install `mingw` using the following [installer](https://sourceforge.net/projects/mingw/?source=typ_redirect).
-    - click on basic setup and install the following options
-        - `mingw32-base`
-        - `mingw32-gcc-gfortran`
-        - `mingw32-gcc-g++`
-        - `msys-base`
-    - Setup the windows environment variable `PATH` = `c:\MinGW\bin\`
-        - in `c:\MinGW\bin\` make a copy of `mingw32-make.exe` called `make.exe`
-
-2. Install a suitable editor or IDE. [Microsoft Visual Studio Code](https://code.visualstudio.com/) is 
-recommended.
-
-3. Install a Python distribution for windows and make sure it is available on the Windows command prompt.
-    - Recommend the [Anaconda Python distribution](https://www.continuum.io/downloads) for Windows.
-
-4. Install [git](https://git-for-windows.github.io/) for Windows
-    - ideally choose the option of having the git commands available to the Windows command prompt.
-    - set your git `user.name` and `user.email` to the desired values
-        ```
-        git config --global user.name "User Name"
-        git config --global user.email "user.name@domain.com"
-        ```
-    - turn of git converting line endings to `CRLF`
-        ```
-        git config --global core.autocrlf false
-        ```
-
-5. Clone the code from the PROCESS gitlab repository.
-    ```
-    git clone http://git.ccfe.ac.uk/process/process.git -b branch folder_name
-    ```
-
-6. **Check that your editor is using `LF` line endings and not `CRLF` line endings.**
-
-7. Go into the PROCESS code folder and build the code by running the following in the command prompt
-    ```
-    make
-    ```
-
-8. Run the code (provided there is an  `IN.DAT`)
-    ```
-    process.exe
-    ```
-
-9. Running the utilities
-    - Edit environment variables and creating a new one called `PYTHONPATH` and set it 
-    to `c:\some path\utilities\`. Where `some path` is the location of the process folder.
-    - Make the PROCESS Python dictionaries
-        ```
-        make win_dicts
-        ```
-    - Run a utility, e.g.
-        ```
-        python utilities\plot_proc.py -f MFILE.DAT
-        ```
-
-10. To create the HTML documentation run,
-    ```
-    make win_doc
-    ```
-
-11. Finally, to clean the make run,
-    ```
-    make win_clean
-    ```
 
 ## Contacts
 

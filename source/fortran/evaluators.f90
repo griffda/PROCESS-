@@ -50,6 +50,8 @@ module function_evaluator
   use tfcoil_variables
   use times_variables
 
+  use iso_c_binding
+
   implicit none
 
   public
@@ -335,7 +337,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine funfom(fc)
+  subroutine funfom(fc) bind(C, name="evaluators_funfom")
 
     !+ad_name  funfom
     !+ad_summ  Objective function evaluator for VMCON
@@ -371,12 +373,13 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(out) :: fc
-
+!    real(c_double), intent(out) :: fc
     !  Local variables
 
     integer :: iab
     real(kind(1.0D0)) :: sgn
 
+!        write(*,*) 'Figure of merit 2 (fusion power / input power) is not used.'
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     iab = abs(minmax)

@@ -1,48 +1,46 @@
 This is BibTeX, Version 0.99d (TeX Live 2013)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: optsolverdoc.aux
-I found no \citation commands---while reading file optsolverdoc.aux
-I found no \bibdata command---while reading file optsolverdoc.aux
-I found no \bibstyle command---while reading file optsolverdoc.aux
-You've used 0 entries,
-            0 wiz_defined-function locations,
-            83 strings with 498 characters,
-and the built_in function-call counts, 0 in all, are:
-= -- 0
-> -- 0
+The style file: unsrt.bst
+Database file #1: optsolverdoc.bib
+You've used 12 entries,
+            1791 wiz_defined-function locations,
+            512 strings with 5376 characters,
+and the built_in function-call counts, 1888 in all, are:
+= -- 159
+> -- 63
 < -- 0
-+ -- 0
-- -- 0
-* -- 0
-:= -- 0
-add.period$ -- 0
-call.type$ -- 0
-change.case$ -- 0
++ -- 28
+- -- 16
+* -- 60
+:= -- 315
+add.period$ -- 37
+call.type$ -- 12
+change.case$ -- 4
 chr.to.int$ -- 0
-cite$ -- 0
-duplicate$ -- 0
-empty$ -- 0
-format.name$ -- 0
-if$ -- 0
+cite$ -- 12
+duplicate$ -- 115
+empty$ -- 223
+format.name$ -- 16
+if$ -- 439
 int.to.chr$ -- 0
-int.to.str$ -- 0
-missing$ -- 0
-newline$ -- 0
-num.names$ -- 0
-pop$ -- 0
-preamble$ -- 0
+int.to.str$ -- 12
+missing$ -- 21
+newline$ -- 63
+num.names$ -- 12
+pop$ -- 67
+preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 0
+skip$ -- 28
 stack$ -- 0
-substring$ -- 0
-swap$ -- 0
+substring$ -- 21
+swap$ -- 12
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 0
-width$ -- 0
-write$ -- 0
-(There were 3 error messages)
+while$ -- 13
+width$ -- 14
+write$ -- 125

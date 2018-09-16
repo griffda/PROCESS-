@@ -56,11 +56,13 @@ module constraints
   use pf_power_variables
   use pulse_variables
   use rebco_variables
+  use reinke_variables
   use stellarator_variables
   use tfcoil_variables
   use times_variables
   use vacuum_variables
 
+  
   implicit none
 
   public :: constraint_eqns
@@ -1668,6 +1670,29 @@ contains
               err(i) = cpttf_max * cc(i)
               symbol(i) = '<'
               units(i) = 'A/turn'
+           end if
+
+
+        case(78) !Equation for Reinke criterion,
+           !divertor impurity fraction lower limit
+           !#=# divertor
+           !#=#=# freinke, fzactual, fzmin
+
+           ! freinke   |  f-value for Reinke criterion (itv 147)
+           ! fzmin     |  minimum impurity fraction from Reinke model
+           ! fzactual  |  actual impurity fraction
+           write(*,*) 'freinke, fzact, fzmin = ', freinke, ', ', fzactual, ', ', fzmin
+           !            1.0,    0.0,   value
+           cc(i) = 1.0D0 - freinke *  fzactual/fzmin
+           !KE note - cc(i) is always 1, code never enters IF statement...
+           write(*,*) 'cc(i), con = ', cc(i), ', ', con
+           if (present(con)) then
+              write(*,*) 'freinke, fzactual, fzmin = ', freinke, ', ', fzactual, ', ', fzmin
+              con(i) = fzmin * (1.0D0 - cc(i))
+              write(*,*) 'con i = ', con(i)
+              err(i) = fzmin * cc(i)
+              symbol(i) = '>'
+              units(i) = ''
            end if
 
        case default

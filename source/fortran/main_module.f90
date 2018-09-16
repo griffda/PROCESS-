@@ -1,0 +1,804 @@
+module main_module
+
+contains
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine inform(progid)
+
+  !+ad_name  inform
+  !+ad_summ  Routine to obtain information about the program being executed
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  progid(0:10) : output string array : Strings containing useful info
+  !+ad_desc  This subroutine uses system calls to identify the user, date,
+  !+ad_desc  machine etc. for the present run, and stores the information
+  !+ad_desc  in a character string array.
+  !+ad_prob  Non-standard Fortran, because of the unix system calls used.
+  !+ad_call  get_DDMonYYTimeZone
+  !+ad_hist  03/10/96 PJK Initial version
+  !+ad_hist  07/10/96 PJK PROCESS 3001
+  !+ad_hist  08/10/96 PJK PROCESS 3002
+  !+ad_hist  22/10/96 PJK PROCESS 3003
+  !+ad_hist  20/01/97 PJK PROCESS 3004
+  !+ad_hist  24/01/97 PJK PROCESS 3005
+  !+ad_hist  05/02/97 PJK PROCESS 3006
+  !+ad_hist  19/02/97 PJK PROCESS 3007
+  !+ad_hist  26/02/97 PJK PROCESS 3008
+  !+ad_hist  21/03/97 PJK PROCESS 3009
+  !+ad_hist  10/09/97 PJK PROCESS 3010
+  !+ad_hist  17/09/97 PJK PROCESS 3011
+  !+ad_hist  19/11/97 PJK PROCESS 3012
+  !+ad_hist  01/04/98 PJK PROCESS 3013
+  !+ad_hist  24/04/98 PJK PROCESS 3014
+  !+ad_hist  23/06/98 PJK PROCESS 3015
+  !+ad_hist  26/06/98 PJK PROCESS 3016
+  !+ad_hist  17/07/98 PJK PROCESS 3017
+  !+ad_hist  08/10/98 PJK PROCESS 3018
+  !+ad_hist  19/01/99 PJK PROCESS 3019
+  !+ad_hist  17/05/99 PJK PROCESS 3020
+  !+ad_hist  06/07/99 PJK PROCESS 3021
+  !+ad_hist  16/06/00 PJK PROCESS 3022: Modified 'whoami' call in this
+  !+ad_hisc               routine, and made a single Makefile suitable
+  !+ad_hisc               for both AIX and Linux
+  !+ad_hist  04/05/01 PJK PROCESS 3023
+  !+ad_hist  03/07/01 PJK PROCESS 3024
+  !+ad_hist  16/07/01 PJK PROCESS 3025
+  !+ad_hist  25/04/02 PJK PROCESS 3026
+  !+ad_hist  16/06/04 PJK PROCESS 3027
+  !+ad_hist  22/05/06 PJK PROCESS 3028
+  !+ad_hist  22/05/07 PJK PROCESS 3029
+  !+ad_hist  21/08/12 PJK Initial F90 version
+  !+ad_hist  23/01/13 PJK Changed progver to update automatically with SVN
+  !+ad_hist  06/05/14 PJK progver must now be changed manually (SVN --> git)
+  !+ad_hist  23/07/14 PJK Modified system calls
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  !  Arguments
+  character(len=110), dimension(0:10) :: progid
+
+  !  Local variables
+!  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
+  character(len=10) :: progname
+  character(len=98) :: executable
+  character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
+       '1.0.13   Release Date :: 2018-04-19'
+  character(len = 50) :: dt_time
+  character(len=72), dimension(10) :: id
+  ! integer :: unit
+  ! logical :: unit_available
+  ! character(8)  :: date
+  ! character(10) :: time
+  ! character(5)  :: zone
+  ! integer, dimension(8) :: values
+  !  External routines
+
+  !  external system
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  Program name
+  progname = 'PROCESS'
+  call get_command_argument(0, executable)
+  call get_DDMonYYTimeZone(dt_time)
+  id(1) = trim(dt_time) !values(3)//"/"// values(2)//"/"// values(1)  !   5 6 7!date
+  call getlog(id(2))    ! Get user ID
+  call hostnm(id(3))    ! Get host name
+  call getcwd(id(4))    ! Get current working directory
+
+
+  !  Annotate information and store in PROGID character array
+  !  for use in other program units via the routine argument
+
+  progid(1) = '  Program : ' // executable
+  progid(2) = '  Version : ' // progver
+  progid(3) = 'Date/time : ' // id(1)
+  progid(4) = '     User : ' // id(2)
+  progid(5) = ' Computer : ' // id(3)
+  progid(6) = 'Directory : ' // id(4)
+
+  !  Summarise most useful data, and store in progid(0)
+  progid(0) = trim(progname) // ' ' // trim(progver(:7)) // &
+       ' : Run on ' // trim(id(1)) // ' by ' // trim(id(3))
+
+end subroutine inform
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine run_summary
+
+  !+ad_name  run_summary
+  !+ad_summ  Routine to print out a summary header
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  None
+  !+ad_desc  This routine prints out a header summarising the program
+  !+ad_desc  execution details, plus a list of the active iteration
+  !+ad_desc  variables and constraint equations for the run.
+  !+ad_prob  None
+  !+ad_call  global_variables
+  !+ad_call  numerics
+  !+ad_call  process_output
+  !+ad_call  inform
+  !+ad_call  oblnkl
+  !+ad_call  ocentr
+  !+ad_call  ocmmnt
+  !+ad_call  ostars
+  !+ad_call  osubhd
+  !+ad_call  ovarin
+  !+ad_call  ovarst
+  !+ad_hist  28/06/94 PJK Improved layout
+  !+ad_hist  03/10/12 PJK Initial F90 version
+  !+ad_hist  08/10/12 PJK Changed routine name from edit1 to run_summary
+  !+ad_hist  28/11/13 PJK Modified format statement for longer lablxc
+  !+ad_hist  27/02/14 PJK Introduced use of nineqns
+  !+ad_hist  22/07/14 PJK Moved routine from input.f90, and rearranged layout,
+  !+ad_hisc               incorporating old routine codever
+  !+ad_hisc  02/03/15 JM  Added runtitle to MFILE
+  !+ad_hist  05/08/15 MDK Header describes output flag
+  !+ad_hist  15/11/16 JM  Changed the version numbering to new format (1.0.0)
+  !+ad_stat  Okay
+  !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
+  !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use global_variables
+  use numerics
+  use process_output
+
+  implicit none
+
+  !  Arguments
+
+  !  Local variables
+  integer, parameter :: width = 110
+  integer :: lap, ii, outfile
+  character(len = 110) :: progid(0:10)  !, dimension(0:10)
+  character(len = 9)   :: vstring
+  character(len = 8)   :: date
+  character(len = 10)  :: time
+  character(len = 12)  :: dstring
+  character(len = 7)   :: tstring
+  character(len = 10)  :: ustring
+  character(len = 100) :: rstring
+  include "com.msg"
+  include "tag.num"
+  include "untracked.info"
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  Obtain execution details for this run
+  call inform(progid)
+
+  !  Print code banner + run details to screen and output file
+  do lap = 1,2
+     if (lap == 1) then
+        outfile = iotty
+     else
+        outfile = nout
+     end if
+
+     call oblnkl(outfile)
+
+     call ostars(outfile, width)
+     call ocentr(outfile,'PROCESS', width)
+     call ocentr(outfile,'Power Reactor Optimisation Code', width)
+     !call ocentr(outfile,'for Environmental and Safety Studies', width)
+     call ostars(outfile, width)
+
+     call oblnkl(outfile)
+
+     !  Run execution details
+     call ocmmnt(outfile, progid(1))  !  program name
+     call ocmmnt(outfile, progid(2))  !  version
+     if (untracked > 0) then
+       call ocmmnt(outfile, '  Tag No. : "'//tagno//' Code used contains Untracked Changes"')  !  directory
+     else
+       call ocmmnt(outfile, '  Tag No. : "'//tagno//'"')  !  directory
+     end if
+     call ocmmnt(outfile, '  Last commit message : "'//COMMSG//'"')  !  directory
+     !call ocmmnt(outfile, progid(3))  !  date/time
+     call ocmmnt(outfile, progid(4))  !  user
+     !call ocmmnt(outfile, progid(5))  !  computer
+     call ocmmnt(outfile, progid(6))  !  directory
+
+     !  Print code version and run description
+     call oblnkl(outfile)
+     call ostars(outfile, width)
+     call oblnkl(outfile)
+     call ocmmnt(outfile, progid(0))
+     call ocmmnt(outfile, 'Reactor concept design: '// trim(icase) // ', (c) CCFE')
+     !call osubhd(outfile, runtitle)
+     call ocmmnt(outfile, runtitle)
+  end do
+
+  call ocmmnt(nout,'(Please include this header in any models, presentations and papers based on these results)')
+  call oblnkl(nout)
+  call ostars(nout, width)
+  ! Issue #270
+  call ocmmnt(nout,'Quantities listed in standard row format are labelled as follows in columns 112-114:')
+  call ocmmnt(nout,'ITV : Active iteration variable (in any output blocks)')
+  call ocmmnt(nout,'OP  : Calculated output quantity')
+  call ocmmnt(nout,'Unlabelled quantities in standard row format are generally inputs')
+  call ocmmnt(nout,'Note that calculated quantities may be trivially rescaled from inputs, or equal to bounds which are input.')
+  ! MDK Note that the label must be exactly three characters or none - I don't know how to fix this.
+
+  !  Beware of possible future changes to the progid(...) layouts
+
+  !  Relies on an internal read statement
+  vstring = progid(2)(13:21)
+  call ovarst(mfile,'PROCESS version number','(procver)','"'//vstring//'"')
+
+  call date_and_time(date=date, time=time)
+
+  !  Date output in the form "DD/MM/YYYY" (including quotes)
+  dstring = '"'//date(7:8)//'/'//date(5:6)//'/'//date(1:4)//'"'
+  call ovarst(mfile,'Date of run','(date)',dstring)
+
+  !  Time output in the form "hh:mm" (including quotes)
+  tstring = '"'//time(1:2)//':'//time(3:4)//'"'
+  call ovarst(mfile,'Time of run','(time)',tstring)
+
+  ustring = '"'//trim(progid(4)(13:20))//'"'
+  call ovarst(mfile,'User','(username)',ustring)
+
+  rstring = '"'//runtitle//'"'
+  call ovarst(mfile,'PROCESS run title','(runtitle)',rstring)
+
+  rstring = '"'//tagno//'"'
+  call ovarst(mfile,'PROCESS tag number','(tagno)',rstring)
+
+  rstring = '"'//COMMSG//'"'
+  call ovarst(mfile,'PROCESS last commit message','(commsg)',rstring)
+
+#ifndef unit_test
+! MDK these lines duplicate the ones below.
+!  call oblnkl(nout)
+!  call ocmmnt(nout,'The following variables will be adjusted by')
+!  call ocmmnt(nout,'the code during the iteration process :')
+!  call oblnkl(nout)
+
+!  write(nout,10)
+!10 format(t10,'ixc',t18,'label')
+
+!  call oblnkl(nout)
+
+!  write(nout,20) (ii,ixc(ii),lablxc(ixc(ii)),ii=1,nvar)
+!20 format(t1,i3,t10,i3,t18,a9)
+
+! MDK Only print out the constraints here for HYBRD.
+! For VMCON they are printed out later with residues.
+  call oblnkl(nout)
+  if (ioptimz == -1) then
+      call ocmmnt(nout, 'The following constraint equations have been imposed,')
+      call ocmmnt(nout, 'but limits will not be enforced by the code :')
+      write(nout,30)
+30    format(t10,'icc',t25,'label')
+      call oblnkl(nout)
+      write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
+40    format(t1,i3,t10,i3,t18,a33)
+  end if
+
+!  call ocmmnt(nout, &
+!       'The following constraint equations have been imposed,')
+!  if (ioptimz == -1) then
+!     call ocmmnt(nout, &
+!          'but limits will not be enforced by the code :')
+!  else
+!     call ocmmnt(nout,'and will be enforced by the code :')
+!  end if
+!  call oblnkl(nout)
+
+!  write(nout,30)
+!30 format(t10,'icc',t25,'label')
+
+!  call oblnkl(nout)
+
+!  write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
+!40 format(t1,i3,t10,i3,t18,a33)
+#endif
+
+end subroutine run_summary
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine eqslv(ifail)
+
+  !+ad_name  eqslv
+  !+ad_summ  Routine to call the non-optimising equation solver
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  ifail   : output integer : error flag
+  !+ad_desc  This routine calls the non-optimising equation solver.
+  !+ad_prob  None
+  !+ad_call  constraints
+  !+ad_call  function_evaluator
+  !+ad_call  numerics
+  !+ad_call  process_output
+  !+ad_call  constraint_eqns
+  !+ad_call  eqsolv
+  !+ad_call  fcnhyb
+  !+ad_call  herror
+  !+ad_call  int_to_string3
+  !+ad_call  loadxc
+  !+ad_call  oblnkl
+  !+ad_call  ocmmnt
+  !+ad_call  oheadr
+  !+ad_call  osubhd
+  !+ad_call  ovarin
+  !+ad_call  ovarre
+  !+ad_call  report_error
+  !+ad_hist  03/10/96 PJK Initial upgraded version
+  !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  10/10/12 PJK Modified to use new numerics, function_evaluator
+  !+ad_hisc               modules
+  !+ad_hist  31/01/13 PJK Added warning about high residuals if the convergence
+  !+ad_hisc               is suspicious
+  !+ad_hist  28/11/13 PJK Modified format line 40 for longer lablxc length
+  !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
+  !+ad_hist  13/03/14 PJK Added numerical state information to mfile
+  !+ad_hist  09/07/14 PJK Turned on error reporting
+  !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
+  !+ad_hisc               in physical units
+  !+ad_hist  19/08/14 PJK Added neqns, normalised residues to output
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use constraints
+  use process_output
+  use numerics
+  use function_evaluator
+
+  implicit none
+
+  !  Arguments
+  integer, intent(out) :: ifail
+
+  !  Local variables
+  integer :: inn,nprint,nx
+  real(kind(1.0D0)) :: sumsq
+!  real(kind(1.0D0)), dimension(iptnt) :: wa
+  real(kind(1.0D0)) :: wa(iptnt)
+  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  character(len = 1), dimension(ipeqns) :: sym
+  character(len = 10), dimension(ipeqns) :: lab
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  If no HYBRD (non-optimisation) runs are required, exit routine
+  if (ioptimz > 0) return
+
+  ncalls = 0
+  nfev1 = 0
+  nfev2 = 0
+  nprint = 0
+
+  !  Use HYBRD to find a starting point
+  call loadxc
+  call eqsolv(fcnhyb,neqns,xcm,rcm,ftol,epsfcn,factor,nprint,ifail, &
+       wa,iptnt,resdl,nfev1)
+
+  !  Turn on error reporting
+  errors_on = .true.
+
+  !  Print out information on solution
+  call oheadr(nout,'Numerics')
+  call ocmmnt(nout, &
+       'PROCESS has performed a HYBRD (non-optimisation) run,')
+
+  if (ifail /= 1) then
+     call ocmmnt(nout,'but could NOT find a feasible set of parameters.')
+     call oblnkl(nout)
+     call ovarin(nout,'Number of iteration variables and constraints','(neqns)',neqns)
+     call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
+
+     call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
+     call ovarin(iotty,'HYBRD error flag (ifail)','',ifail)
+     call oblnkl(iotty)
+
+     idiags(1) = ifail ; call report_error(131)
+
+  else
+     call ocmmnt(nout,'and found a feasible set of parameters.')
+     call oblnkl(nout)
+     call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
+     call oblnkl(nout)
+     call oheadr(iotty,'PROCESS found a feasible solution')
+  end if
+
+  !  Sum the square of the residuals
+  sumsq = 0.0D0
+  do nx = 1,neqns
+     sumsq = sumsq + rcm(nx)**2
+  end do
+  sqsumsq = sqrt(sumsq)
+
+  call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
+
+  !  If necessary, write out a relevant error message
+  if (ifail /= 1) then
+     call oblnkl(nout)
+     call herror(ifail)
+     call oblnkl(iotty)
+  else
+     !  Show a warning if the constraints appear high even if allegedly converged
+     if (sqsumsq >= 1.0D-2) then
+        call oblnkl(nout)
+        call ocmmnt(nout,'WARNING: Constraint residues are HIGH; consider re-running')
+        call ocmmnt(nout,'   with lower values of FTOL to confirm convergence...')
+        call ocmmnt(nout,'   (should be able to get down to about 1.0E-8 okay)')
+
+        call ocmmnt(iotty,'WARNING: Constraint residues are HIGH; consider re-running')
+        call ocmmnt(iotty,'   with lower values of FTOL to confirm convergence...')
+        call ocmmnt(iotty,'   (should be able to get down to about 1.0E-8 okay)')
+        call oblnkl(iotty)
+
+        fdiags(1) = sqsumsq ; call report_error(133)
+
+     end if
+  end if
+
+  call osubhd(nout,'The solution vector is comprised as follows :')
+
+  write(nout,10)
+10 format(t5,'i',t23,'final',t33,'fractional',t46,'residue')
+
+  write(nout,20)
+20 format(t23,'value',t35,'change')
+
+  call oblnkl(nout)
+
+  do inn = 1,neqns
+     xcs(inn) = xcm(inn)*scafc(inn)
+     write(nout,30) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn),resdl(inn)
+     call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
+  end do
+!30 format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
+! Make lablxc longer
+30 format(t2,i4,t8,a30,t39,1pe12.4,1pe12.4,1pe12.4)
+
+  call osubhd(nout, &
+       'The following constraint residues should be close to zero :')
+
+  call constraint_eqns(neqns,con1,-1,con2,err,sym,lab)
+  write(nout,40)
+40 format(t48,'physical',t73,'constraint',t100,'normalised')
+  write(nout,50)
+50 format(t47,'constraint',t74,'residue',t101,'residue')
+  call oblnkl(nout)
+  do inn = 1,neqns
+     write(nout,60) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
+          lab(inn),err(inn),lab(inn),con1(inn)
+     call ovarre(mfile,lablcc(icc(inn))//' normalised residue', &
+          '(normres'//int_to_string3(inn)//')',con1(inn))
+  end do
+60 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
+
+end subroutine eqslv
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine herror(ifail)
+
+  !+ad_name  herror
+  !+ad_summ  Routine to print out relevant messages in the case of an
+  !+ad_summ  unfeasible result from a HYBRD (non-optimisation) run
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  ifail  : input integer : error flag
+  !+ad_desc  This routine prints out relevant messages in the case of
+  !+ad_desc  an unfeasible result from a HYBRD (non-optimisation) run.
+  !+ad_desc  <P>The messages are written to units NOUT and IOTTY, which are
+  !+ad_desc  by default the output file and screen, respectively.
+  !+ad_desc  <P>If <CODE>IFAIL=1</CODE> then a feasible solution has been
+  !+ad_desc  found and therefore no error message is required.
+  !+ad_prob  None
+  !+ad_call  process_output
+  !+ad_call  oblnkl
+  !+ad_call  ocmmnt
+  !+ad_hist  03/10/96 PJK Initial upgraded version
+  !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  31/01/13 PJK Reworded the ifail=4 error message
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
+
+  implicit none
+
+  !  Arguments
+  integer, intent(in) :: ifail
+
+  !  Local variables
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  select case (ifail)
+
+  case (:-1)
+     call ocmmnt(nout, 'User-terminated execution of HYBRD.')
+     call ocmmnt(iotty,'User-terminated execution of HYBRD.')
+
+  case (0)
+     call ocmmnt(nout, 'Improper input parameters to the HYBRD routine.')
+     call ocmmnt(nout, 'PROCESS coding must be checked.')
+
+     call ocmmnt(iotty,'Improper input parameters to the HYBRD routine.')
+     call ocmmnt(iotty,'PROCESS coding must be checked.')
+
+  case (1)
+     continue
+
+  case (2)
+     call ocmmnt(nout,'The maximum number of calls has been reached without solution,')
+     call ocmmnt(nout,'suggesting that the iteration is not making good progress.')
+     call ocmmnt(nout,'Try changing the variables in IXC.')
+
+     call ocmmnt(iotty,'The maximum number of calls has been reached without solution,')
+     call ocmmnt(iotty,'suggesting that the iteration is not making good progress.')
+     call ocmmnt(iotty,'Try changing the variables in IXC.')
+
+  case (3)
+     call ocmmnt(nout,'The tolerance is too small: No further improvement in the approximate solution is possible.')
+     call ocmmnt(nout,'Try raising the value of FTOL.')
+
+     call ocmmnt(iotty, 'The tolerance is too small: No further improvement in the approximate solution is possible.')
+     call ocmmnt(iotty,'in the approximate solution is possible.')
+     call ocmmnt(iotty,'Try raising the value of FTOL.')
+
+  case (4)
+     call ocmmnt(nout,'The iteration is not making good progress.')
+     call ocmmnt(nout,'The code may be stuck in a minimum in the residual')
+     call ocmmnt(nout,'space that is significantly above zero.')
+     call oblnkl(nout)
+     call ocmmnt(nout,'There is either no solution possible, or the code')
+     call ocmmnt(nout,'is failing to escape from a deep local minimum.')
+     call ocmmnt(nout,'Try changing the variables in IXC, or modify their initial values.')
+
+     call ocmmnt(iotty,'The iteration is not making good progress.')
+     call ocmmnt(iotty,'The code may be stuck in a minimum in the residual')
+     call ocmmnt(iotty,'space that is significantly above zero.')
+     call oblnkl(iotty)
+     call ocmmnt(iotty,'There is either no solution possible, or the code')
+     call ocmmnt(iotty,'is failing to escape from a deep local minimum.')
+     call ocmmnt(iotty,'Try changing the variables in IXC, or modify their initial values.')
+
+  case default
+     call ocmmnt(nout,'This value of IFAIL should not be possible...')
+     call ocmmnt(nout,'See source code for details.')
+
+     call ocmmnt(iotty,'This value of IFAIL should not be possible...')
+     call ocmmnt(iotty,'See source code for details.')
+
+  end select
+
+end subroutine herror
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine verror(ifail)
+
+  !+ad_name  verror
+  !+ad_summ  Routine to print out relevant messages in the case of an
+  !+ad_summ  unfeasible result from a VMCON (optimisation) run
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  ifail  : input integer : error flag
+  !+ad_desc  This routine prints out relevant messages in the case of
+  !+ad_desc  an unfeasible result from a VMCON (optimisation) run.
+  !+ad_desc  <P>The messages are written to units NOUT and IOTTY, which are
+  !+ad_desc  by default the output file and screen, respectively.
+  !+ad_desc  <P>If <CODE>IFAIL=1</CODE> then a feasible solution has been
+  !+ad_desc  found and therefore no error message is required.
+  !+ad_prob  None
+  !+ad_call  process_output
+  !+ad_call  ocmmnt
+  !+ad_hist  03/10/96 PJK Initial upgraded version
+  !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  31/01/13 PJK Reworded the ifail=2 error message
+  !+ad_hist  04/07/13 PJK Reworded the ifail=5 error message
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
+
+  implicit none
+
+  !  Arguments
+  integer, intent(in) :: ifail
+
+  !  Local variables
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  select case (ifail)
+
+  case (:-1)
+     call ocmmnt(nout, 'User-terminated execution of VMCON.')
+     call ocmmnt(iotty,'User-terminated execution of VMCON.')
+
+  case (0)
+     call ocmmnt(nout, 'Improper input parameters to the VMCON routine.')
+     call ocmmnt(nout, 'PROCESS coding must be checked.')
+
+     call ocmmnt(iotty,'Improper input parameters to the VMCON routine.')
+     call ocmmnt(iotty,'PROCESS coding must be checked.')
+
+  case (1)
+     continue
+
+  case (2)
+     call ocmmnt(nout,'The maximum number of calls has been reached without solution.')
+     call ocmmnt(nout,'The code may be stuck in a minimum in the residual space that is significantly above zero.')
+     call oblnkl(nout)
+     call ocmmnt(nout,'There is either no solution possible, or the code')
+     call ocmmnt(nout,'is failing to escape from a deep local minimum.')
+     call ocmmnt(nout,'Try changing the variables in IXC, or modify their initial values.')
+
+     call ocmmnt(iotty,'The maximum number of calls has been reached without solution.')
+     call ocmmnt(iotty,'The code may be stuck in a minimum in the residual space that is significantly above zero.')
+     call oblnkl(nout)
+     call oblnkl(iotty)
+     call ocmmnt(iotty,'There is either no solution possible, or the code')
+     call ocmmnt(iotty,'is failing to escape from a deep local minimum.')
+     call ocmmnt(iotty,'Try changing the variables in IXC, or modify their initial values.')
+
+  case (3)
+     call ocmmnt(nout,'The line search required the maximum of 10 calls.')
+     call ocmmnt(nout,'A feasible solution may be difficult to achieve.')
+     call ocmmnt(nout,'Try changing or adding variables to IXC.')
+
+     call ocmmnt(iotty,'The line search required the maximum of 10 calls.')
+     call ocmmnt(iotty,'A feasible solution may be difficult to achieve.')
+     call ocmmnt(iotty,'Try changing or adding variables to IXC.')
+
+  case (4)
+     call ocmmnt(nout,'An uphill search direction was found.')
+     call ocmmnt(nout,'Try changing the equations in ICC, or')
+     call ocmmnt(nout,'adding new variables to IXC.')
+
+     call ocmmnt(iotty,'An uphill search direction was found.')
+     call ocmmnt(iotty,'Try changing the equations in ICC, or')
+     call ocmmnt(iotty,'adding new variables to IXC.')
+
+  case (5)
+     call ocmmnt(nout, &
+          'The quadratic programming technique was unable to')
+     call ocmmnt(nout,'find a feasible point.')
+     call oblnkl(nout)
+     call ocmmnt(nout,'Try changing or adding variables to IXC, or modify')
+     call ocmmnt(nout,'their initial values (especially if only 1 optimisation')
+     call ocmmnt(nout,'iteration was performed).')
+
+     call ocmmnt(iotty, &
+          'The quadratic programming technique was unable to')
+     call ocmmnt(iotty,'find a feasible point.')
+     call oblnkl(iotty)
+     call ocmmnt(iotty,'Try changing or adding variables to IXC, or modify')
+     call ocmmnt(iotty,'their initial values (especially if only 1 optimisation')
+     call ocmmnt(iotty,'iteration was performed).')
+
+  case (6)
+     call ocmmnt(nout, &
+          'The quadratic programming technique was restricted')
+     call ocmmnt(nout, &
+          'by an artificial bound, or failed due to a singular')
+     call ocmmnt(nout,'matrix.')
+     call ocmmnt(nout,'Try changing the equations in ICC, or')
+     call ocmmnt(nout,'adding new variables to IXC.')
+
+     call ocmmnt(iotty, &
+          'The quadratic programming technique was restricted')
+     call ocmmnt(iotty, &
+          'by an artificial bound, or failed due to a singular')
+     call ocmmnt(iotty,'matrix.')
+     call ocmmnt(iotty,'Try changing the equations in ICC, or')
+     call ocmmnt(iotty,'adding new variables to IXC.')
+
+  case default
+     call ocmmnt(nout,'This value of IFAIL should not be possible...')
+     call ocmmnt(nout,'See source code for details.')
+
+     call ocmmnt(iotty,'This value of IFAIL should not be possible...')
+     call ocmmnt(iotty,'See source code for details.')
+
+  end select
+
+end subroutine verror
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+subroutine runtests
+  use maths_library
+  use global_variables
+  use numerics
+  use process_output
+  use pfcoil_module
+  use superconductors
+  implicit none
+  call ovarre(nout,'Binomial coefficients C(5,0): 1', '(binomial(5,0))', binomial(5,0))
+  call ovarre(nout,'Binomial coefficients C(5,1): 5', '(binomial(5,1))', binomial(5,1))
+  call ovarre(nout,'Binomial coefficients C(5,2): 10', '(binomial(5,2))', binomial(5,2))
+  call ovarre(nout,'Binomial coefficients C(5,3): 10', '(binomial(5,3))', binomial(5,3))
+  call ovarre(nout,'Binomial coefficients C(5,4): 5', '(binomial(5,4))', binomial(5,4))
+  call ovarre(nout,'Binomial coefficients C(5,5): 1', '(binomial(5,5))', binomial(5,5))
+
+  call test_quench()
+  call brookscoil(nout)
+  call test_secant_solve()
+end subroutine runtests
+
+
+subroutine get_DDMonYYTimeZone(dt_time)
+  !+ad_name  get_DDMonYYTimeZone
+  !+ad_summ  Routine to get date, time and timezone
+  !+ad_type  Subroutine
+  !+ad_auth  M Kumar, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  dt_time : output string  : String containing formatted time and date
+  !+ad_desc  This routine calls the intrinsic DATE_AND_TIME subroutine
+  !+ad_desc  and format the output in
+  !+ad_desc  DD Mon YYYY hr:minute:second time difference from UTC.
+  !+ad_hist  28/10/16 MK Initial version
+  !+ad_stat  Okay
+
+! Arguments
+    CHARACTER(len = *), INTENT(OUT) :: dt_time
+! Local variables
+    INTEGER :: values(8)
+    CHARACTER(len = 1), parameter :: tspt = ":"
+    CHARACTER(len = 1), parameter :: spspt = " "
+
+    CHARACTER(len = 2)  :: dd
+    CHARACTER(len = 5)  :: mons(12)
+    CHARACTER(len = 4)  :: yyyy
+    CHARACTER(len = 2)  :: hr    ! Hour of the day
+    CHARACTER(len = 2)  :: mnt   ! Minute of the hour
+    CHARACTER(len = 2)  :: scnd  ! The seconds of the minute
+    CHARACTER(len = 5)  :: zn    ! In form (+-)hhmm, representing the difference with respect to Coordinated Universal Time (UTC).
+    CHARACTER(len = 20) :: znfrmt
+
+    mons = [' Jan ',' Feb ',' Mar ',' Apr ',' May ',' Jun ',&
+      ' Jul ',' Aug ',' Sep ',' Oct ',' Nov ',' Dec ']
+
+    CALL DATE_AND_TIME(ZONE = zn, VALUES = values)
+    znfrmt = zn(1:3)//":"//zn(4:5)//"(hh:mm) UTC"
+    znfrmt = trim(znfrmt)
+    WRITE(  dd,'(i2)') values(3)
+    WRITE(yyyy,'(i4)') values(1)
+    write(hr, '(i2)')  values(5)
+    write(mnt, '(i2)')  values(6)
+    write(scnd, '(i2)')  values(7)
+    if(mnt(1:1) == " ")   mnt(1:1) = "0"
+    if(scnd(1:1) == " ") scnd(1:1) = "0"
+
+    dt_time = dd//mons(values(2))//yyyy//spspt// &
+             hr//tspt//mnt//tspt//scnd//spspt//znfrmt
+    dt_time = trim(dt_time)
+
+  END subroutine get_DDMonYYTimeZone
+
+end module main_module

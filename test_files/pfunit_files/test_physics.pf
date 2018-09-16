@@ -1,0 +1,37 @@
+module test_physics
+     use physics_module
+   implicit none
+   public
+
+
+contains
+
+@Before
+   subroutine mySetup()
+      implicit none
+
+   end subroutine mySetup
+
+@After
+   subroutine myTearDown()
+      implicit none
+
+   end subroutine myTearDown
+
+@Test
+   subroutine test_subr()
+      use ISO_FORTRAN_ENV
+      use pfunit_mod
+      implicit none
+      real :: a, b, c
+      integer :: a1
+      a1 = 1
+      a = 3.2
+      b = 1.2
+      call subr(a, b)
+      @assertEqual(a, b)
+
+   end subroutine test_subr
+
+
+end module test_physics

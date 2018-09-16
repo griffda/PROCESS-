@@ -2,6 +2,7 @@ stages:
   - build
   - testing
   - jenkins
+#This command is used for generating gtest results in Jenkins  ./bin/process_test.exe --gtest_output=xml:gtest_results.xml
 before_script:
 #  - apt-get install -y gfortran
 #  - apt-get install -y python3-numpy
@@ -14,6 +15,7 @@ before_script:
   - module unload python
   - module load python/3.3
   - module load texlive/2017
+  - module unload ifort 
   - module load gfortran
 #  - 
   - echo ld_library_path=$LD_LIBRARY_PATH
@@ -21,31 +23,32 @@ before_script:
 build:Make:
 # image: ukaea/ubuntu
  only:
-  - test_set_up_python_fixes 
+  - develop_unit_tests
+  - reinke_crit_unit_tests
  stage: build
  script:
   - pwd
   - gcc --version
-#  - dos2unix global_variables.f90
   - ls -lah
   - rm -rf build
   - cmake3 -H. -Bbuild
   - cmake3 --build build
-# Now add trigger for PROCESS_Testing on GitLab CI
+# Now add trigger for PROCESS_Testing on GitLab CI               develop is PROCESS_Testing branch
   - "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"  
-#  - cd utilities
-#  - ls -lah
+  - ls bin -lah
   - echo "Test "
  artifacts:
    expire_in: 2 hrs
    paths:
-     - process.exe
+     - bin/process.exe
+     - bin/libPROCESS_calc_engine.so
  tags:
   - freia
 build:vardes:
-# image: ukaea/ubuntu
+
  only:
-  - test_set_up_python_fixes 
+  - reinke_crit_unit_tests
+  - develop_unit_tests
  stage: build
  script:
   - pwd
@@ -60,27 +63,15 @@ build:vardes:
  tags:
   - freia
 testing:test_suite:
+ when: on_success  # Also default setting
  only:
-  - test_set_up_python_fixes 
+  - reinke_crit_unit_tests
+  - develop_unit_tests
  stage: testing
  script:
   - pwd
-  - export PYTHONPATH=$PYTHONPATH:${PWD}/utilities
-  - export PATH=$PATH:${PWD}/utilities
-  - dos2unix ${PWD}/utilities/*.py
-#  - ls -lah utilities/
-#  - utilities/create_dicts.py
-  - cmake3 -H. -Bbuild 
-  - cmake3 --build build --target dicts 
-  - cd test_suite
-  - dos2unix test_suite.py
-  - python test_suite.py -d 1.0
   # Now trigger testing on Jenkins
   - "curl -X POST http://mkumar:0eb1252f76a609d527edfbfdc0559eae@process-jenkins-ci.apps.l:8080/jenkins/job/PROCESS/build?token=MiLNGc-QvyEevhKK54go"
- artifacts:
-   expire_in: 2 hrs
-   paths:
-     - test_suite/*.xunit
  tags:
   - freia
 

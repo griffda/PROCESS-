@@ -92,6 +92,9 @@ module constants
   !+ad_vars  umass FIX : unified atomic mass unit (kg)
   real(kind(1.0D0)), parameter :: umass = 1.660538921D-27
 
+contains
+
+
 end module constants
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -441,6 +444,7 @@ module physics_variables
   !+ad_vars  teped /1.0/ : electron temperature of pedestal (keV) (ipedestal>=1, ieped=0, calculated for ieped=1)
   real(kind(1.0D0)) :: teped = 1.0D0
   !+ad_vars  tesep /0.1/ : electron temperature at separatrix (keV) (ipedestal>=1)
+  !+ad_varc                calculated if reinke criterion is used (icc = 78)
   real(kind(1.0D0)) :: tesep = 0.1D0
 
   !+ad_vars  iprofile /1/ : switch for current profile consistency:<UL>
@@ -4037,6 +4041,9 @@ module constraint_variables
   !+ad_vars  fradwall /1.0/ : f-value for upper limit on radiation wall load
   !+ad_varc                   (constr. equ. 67, iteration variable 116 )
   real(kind(1.0D0)) :: fradwall = 1.0D0
+  !+ad_vars  freinke /1.0/ : f-value for Reinke detachment criterion
+  !+ad_varc                   (constr. equ. 78, iteration variable 147)
+  real(kind(1.0D0)) :: freinke = 1.0D0
   !+ad_vars  frminor /1.0/ : f-value for minor radius limit
   !+ad_varc                  (constraint equation 21, iteration variable 32)
   real(kind(1.0D0)) :: frminor = 1.0D0
@@ -4439,6 +4446,7 @@ module fispact_variables
   real(kind(1.0D0)) :: fwtemp = 0.0D0
 
 end module fispact_variables
+
 !------------------------------------------------------------------------
 
 module rebco_variables
@@ -4488,42 +4496,96 @@ module rebco_variables
   real(kind(1.0D0)) :: croco_area
   real(kind(1.0D0)) :: copperA_m2       ! TF coil current / copper area (A/m2)
 
-  end module rebco_variables
+end module rebco_variables
+
+!------------------------------------------------------------------------
+
+module resistive_materials
+
+  !+ad_name  resistive_material
+  !+ad_summ  Variables relating to resistive materials in superconducting conductors
+  !+ad_type  Module
+  !+ad_docs  TODO
+  implicit none ! ---------------------------------------------------------
+  
+  type resistive_material
+     real(kind(1.0D0)) :: cp            ! Specific heat capacity J/(K kg).
+     real(kind(1.0D0)) :: rrr           ! Residual resistivity ratio
+     real(kind(1.0D0)) :: resistivity   ! ohm.m
+     real(kind(1.0D0)) :: density       ! kg/m3
+     real(kind(1.0D0)) :: cp_density    ! Cp x density J/K/m3
+  end type resistive_material
+  
+  type supercon_strand
+     real(kind(1.0D0)) :: area
+     real(kind(1.0D0)) :: critical_current
+  end type supercon_strand
+  
+  type volume_fractions
+     real(kind(1.0D0)) :: copper_area,    copper_fraction
+     real(kind(1.0D0)) :: copper_bar_area,copper_bar_fraction
+     real(kind(1.0D0)) :: hastelloy_area, hastelloy_fraction
+     real(kind(1.0D0)) :: helium_area,    helium_fraction
+     real(kind(1.0D0)) :: solder_area,    solder_fraction
+     real(kind(1.0D0)) :: jacket_area,    jacket_fraction
+     real(kind(1.0D0)) :: rebco_area,     rebco_fraction
+     real(kind(1.0D0)) :: critical_current
+     real(kind(1.0D0)) :: number_croco         ! Number of CroCo strands (not an integer)
+     real(kind(1.0D0)) :: acs                  ! area of cable space inside jacket
+     real(kind(1.0D0)) :: area
+     !real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
+  end type volume_fractions
+end module resistive_materials
+
+!------------------------------------------------------------------------
+
+module reinke_variables
+  
+  !+ad_name  reinke_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  Reinke Criterion
+  !+ad_type  Module
+  !+ad_auth  H Lux, CCFE/UKAEA, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  minimum impurity fraction for detached divertor conditions
+  !+ad_desc  Reinke criterion. It furthermore uses several parameters from
+  !+ad_desc  Kallenbach model like netau and empurity_enrichment.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  22/05/18 HL Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  M.L. Reinke 2017 Nucl. Fusion 57 034004
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+ 
+  !+ad_vars  impvardiv /9/ : index of impurity to be iterated for 
+  !+ad_varc           Reinke divertor detachment criterion 
+  integer       :: impvardiv = 9
+  
+  !+ad_vars  lhat /4.33/ : connection length factor L|| = lhat qstar R
+  !+ad_varc                for Reinke criterion, default value from
+  !+ad_varc                Post et al. 1995 J. Nucl. Mat.  220-2 1014
+  real(kind(1.0D0)) :: lhat = 4.33D0
+
+  !+ad_vars  fzmin : Minimum impurity fraction necessary for detachment
+  !+ad_varc          This is the impurity at the SOL/Div
+  real(kind(1.0D0)) :: fzmin = 0.0D0
+  
+  !+ad_vars  fzactual : Actual impurity fraction of divertor impurity
+  !+ad_varc             (impvardiv) in the SoL (taking impurity_enrichment
+  !+ad_varc             into account) (iteration variable 148)
+  real(kind(1.0D0)) :: fzactual = 0.001D0
+  
+end module reinke_variables
+
   !------------------------------------------------------------------------
 
-  module resistive_materials
 
-      !+ad_name  resistive_material
-      !+ad_summ  Variables relating to resistive materials in superconducting conductors
-      !+ad_type  Module
-      !+ad_docs  TODO
-      implicit none ! ---------------------------------------------------------
 
-      type resistive_material
-          real(kind(1.0D0)) :: cp            ! Specific heat capacity J/(K kg).
-          real(kind(1.0D0)) :: rrr           ! Residual resistivity ratio
-          real(kind(1.0D0)) :: resistivity   ! ohm.m
-          real(kind(1.0D0)) :: density       ! kg/m3
-          real(kind(1.0D0)) :: cp_density    ! Cp x density J/K/m3
-      end type
-
-      type supercon_strand
-          real(kind(1.0D0)) :: area
-          real(kind(1.0D0)) :: critical_current
-      end type
-
-      type volume_fractions
-          real(kind(1.0D0)) :: copper_area,    copper_fraction
-          real(kind(1.0D0)) :: copper_bar_area,copper_bar_fraction
-          real(kind(1.0D0)) :: hastelloy_area, hastelloy_fraction
-          real(kind(1.0D0)) :: helium_area,    helium_fraction
-          real(kind(1.0D0)) :: solder_area,    solder_fraction
-          real(kind(1.0D0)) :: jacket_area,    jacket_fraction
-          real(kind(1.0D0)) :: rebco_area,     rebco_fraction
-          real(kind(1.0D0)) :: critical_current
-          real(kind(1.0D0)) :: number_croco         ! Number of CroCo strands (not an integer)
-          real(kind(1.0D0)) :: acs                  ! area of cable space inside jacket
-          real(kind(1.0D0)) :: area
-          !real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
-      end type
-    end module resistive_materials
