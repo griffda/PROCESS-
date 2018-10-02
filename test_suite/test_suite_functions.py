@@ -289,7 +289,7 @@ def clean_up(drs):
 
     # move kallenbach files
     #subprocess.call(["mv", "divertor_diagnostics.txt", "test_area/kallenbach/"])
-    subprocess.call("mv *_divertor*.txt test_area/kallenbach/", shell=True)
+    #subprocess.call("mv *_divertor*.txt test_area/kallenbach/", shell=True)
     # subprocess.call(["mv", "output_divertor.txt", "test_area/kallenbach/"])
 
     # remove executable
