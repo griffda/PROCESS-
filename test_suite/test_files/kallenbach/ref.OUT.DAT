@@ -6,14 +6,14 @@
  
    Program : ./process.exe
    Version : 1.0.13   Release Date :: 2018-04-19
-   Tag No. : "1.0.13-498-ga347e11"
+   Tag No. : "1.0.13-498-ga347e11 Code used contains Untracked Changes"
    Last commit message : "Included develop branch in GitLab CI system,"
-      User : smuldrew
- Directory : /home/smuldrew/process/latest/test_suite
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/kallenbach/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.13 : Run on  2 Oct 2018 15:50:20 +01:00(hh:mm) UTC by G0764
+ PROCESS 1.0.13 : Run on  5 Oct 2018  9:51:41 +01:00(hh:mm) UTC by F6964
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  kallenbach divertor model
  (Please include this header in any models, presentations and papers based on these results)
@@ -456,6 +456,97 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Time between pulses (s)                                                  (tdwell)                      0.000     
  
  Total plant cycle time (s)                                               (tcycle)                  8.099E+03  OP 
+ 
+ *************************************** Divertor: Kallenbach 1D Model ****************************************
+ 
+ For graphical output use kallenbach_plotting.py
+ 
+ Global SOL properties and geometry:
+ 
+ Connection length:  [m]                                                  (lcon)                    1.098E+02  OP 
+ Parameter for approach to local equilibrium  [ms.1e20/m3]                (netau_sol)               5.000E-01     
+ Typical SOL temperature, used only for estimating zeff_div [eV]          (ttypical)                1.219E+02  OP 
+ The zeff_div is used only for estimating thermal conductivity of the SOL plasma.
+ Z effective [W]                                                          (zeff_div)                1.530E+00  OP 
+ Plasma major radius [m]                                                  (rmajor)                  8.801E+00  ITV
+ Outboard midplane radius [m]                                             (romp)                    1.164E+01  OP 
+ Outboard strike point radius [m]                                         (rspo)                    8.163E+00  OP 
+ Toroidal field at outboard midplane [T]                                  (Bt_omp)                 -3.810E+00  OP 
+ Poloidal field at outboard midplane [T]                                  (Bp_omp)                  1.348E+00  OP 
+ Total field at outboard midplane [T]                                     (Btotal_omp)              4.042E+00  OP 
+ Toroidal field at strike point [T]                                       (Bt_target)              -5.434E+00  OP 
+ Poloidal field at strike point [T]                                       (Bp_target)               4.994E-01  OP 
+ Poloidal flux expansion: Bp_omp/Bp_target                                (poloidal_flux_expansion) 2.700E+00  OP 
+ 
+ Properties of SOL plasma :
+ 
+ SOL power fall-off length at the outer midplane [m]                      (lambda_q_omp)            2.000E-03     
+ SOL radial thickness at the target, mapped to OMP [m]                    (lambda_q_target)         9.000E-03     
+ SOL area (normal to B) at outer midplane [m2]                            (area_omp)                4.880E-02  OP 
+ SOL area (normal to B) at target [m2]                                    (area_target)             1.627E-01  OP 
+ Plasma temperature at outer midplane [eV]                                (teomp)                   2.438E+02  OP 
+ Plasma density at outer midplane [m-3]                                   (neomp)                   3.252E+19  OP 
+ Constraint 71 is applied as follows.
+ . Ratio: SOL density at OMP / separatrix density                         (neratio)                 9.000E-01     
+ . COMPARISON: Plasma density at separatrix [m-3]                         (nesep.)                  3.613E+19  OP 
+ Poloidal field at outer midplane [T]                                     (Bp_omp)                  1.348E+00  OP 
+ Power at outer midplane [W]                                              (Powerup)                 5.694E+07  OP 
+ Power conducted through the separatrix, calculated by divertor model [W] (psep_kallenbach)         1.310E+08  OP 
+ Separatrix power consistency constraint 69 is applied
+ . COMPARISON: Separatrix power from main plasma model [MW]               (pdivt.)                  1.310E+02  OP 
+ Ratio: psep_kallenbach / Powerup                                         (seppowerratio)           2.300E+00     
+ 
+ Properties of SOL plasma adjacent to divertor sheath :
+ 
+ Ion sound speed near target [m/s]                                        (cs0)                     1.332E+04  OP 
+ Plasma density near target [m-3]                                         (nel0)                    8.536E+20  OP 
+ Ion flux density perp to B at target m-2s-1                              (partfluxtar)             1.136E+25  OP 
+ Ion flux density on target [partfluxtar/sinfact]  m-2s-1                 (ionfluxtarget)           5.199E+23  OP 
+ Neutral density at target [m-3]                                          (neutral_target)          1.128E+21  OP 
+ Nominal neutral pressure at target [Pa]                                  (p0partflux)              3.354E+00  OP 
+ Plasma temperature near target [eV]                                      (ttarget)                 2.300E+00     
+ Total plasma pressure near target (thermal+dynamic) [Pa]                 (pressure0)               1.257E+03  OP 
+ momentum factor [-]                                                      (fmom)                    4.953E-01  OP 
+ Nominal Chodura sheath width [m]                                         (lchodura)                7.749E-05  OP 
+ 
+ Divertor target parameters :
+ 
+ Angle between flux surface and normal to divertor target [deg]           (targetangle)             3.000E+01     
+ Pitch angle of field line at target [deg]                                (pitch_angle)             5.251E+00  OP 
+ Angle between B and the normal to divertor target [deg]                  (psi)                     8.738E+01  OP 
+ Ratio: area of flux tube perpendicular to B / target wetted area         (sinfact)                 2.185E+01  OP 
+ Total power on target [W]                                                (ptarget_total)           1.459E+07  OP 
+ Total power on target [W]                                                (ptarget_complete)        1.459E+07  OP 
+ These should be equal.
+ Power on target due to convection [W]                                    (ptarget_conv)            4.085E+06  OP 
+ Power on target due to conduction [W]                                    (ptarget_cond)            5.121E+05  OP 
+ Power on target due to surface recombination [W]                         (ptarget_recomb)          4.708E+06  OP 
+ Power on target due to isotropic losses [W]                              (ptarget_isotropic)       5.282E+06  OP 
+ "Wetted area" of target [m2]                                             (WettedArea)              3.555E+00  OP 
+ "Wetted length" of target measured in poloidal plane [m]                 (WettedLength)            6.931E-02  OP 
+ Alternative calculation:
+ "Wetted area" of target [m2]                                             (WettedAreaComparison)    3.555E+00  OP 
+ "Wetted length" of target measured in poloidal plane [m]                 (WettedLengthComparison)  6.931E-02  OP 
+ Total power density on target [W/m2]                                     (qtargetcomplete)         4.104E+06     
+ Power density on target due to conduction and convection [W/m2]          (qtarget)                 1.293E+06  OP 
+ Power density on target due to surface recombination [W/m2]              (qtargetrecomb)           1.324E+06  OP 
+ Power density on target due to isotropic losses from SOL [W/m2]          (qtarget_isotropic)       1.486E+06  OP 
+ (Based on 1/2 x (radiation + CX) in first "sab" of flux line.)
+ Connection length used for "near zone" (m)                               (sab)                     1.749E+00  OP 
+ Length of broadened downstream part of SOL [m]                           (lengthofwidesol)         1.098E+01  OP 
+ 
+ Integrated powers :
+ 
+ Power lost due to impurity radiation [W]                                 (impuritypowerlost)       4.135E+07  OP 
+ Power lost due to hydrogenic radiation [W]                               (hydrogenicpowerlost)     9.298E+05  OP 
+ Power lost due to charge exchange  [W]                                   (exchangepowerlost)       5.616E+06  OP 
+ Power lost due to electron impact ionisation [W]                         (ionisationpowerlost)     4.444E+06  OP 
+ Total power lost due to radiation, ionisation and recombination [W]      (totalpowerlost)          5.234E+07  OP 
+ Power balance error [W]                                                  (balance)                -9.313E-09  OP 
+ The following impurities are used in the divertor model:
+                        He       Be       C_       N_       O_       Ne       Si       Ar       Fe       Ni       Kr       Xe       W_
+  Fraction in SOL  7.1E-02  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  0.0E+00  2.4E-03  2.5E-04
+       Enrichment  1.0E+00  5.0E+00  5.0E+00  5.0E+00  5.0E+00  5.0E+00  5.0E+00  5.0E+00  5.0E+00  5.0E+00  5.0E+00  5.0E+00  5.0E+00
  
  ************************************************ Radial Build ************************************************
  

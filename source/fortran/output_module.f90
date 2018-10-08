@@ -90,7 +90,8 @@ subroutine output(outfile)
   use cost_variables
   use current_drive_module
   use divertor_kallenbach_variables
-!  use divertor_ode, only: divertor_kallenbach
+  use divertor_ode 
+  ! , only: divertor_kallenbach
   use divertor_module
   use error_handling
   use fwbs_module
@@ -118,10 +119,10 @@ subroutine output(outfile)
   implicit none
 
   ! Arguments
-
   integer, intent(in) :: outfile
 
   ! Local variables
+  logical :: verbose_logical
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -199,18 +200,33 @@ subroutine output(outfile)
 
   ! Divertor Model !
   !!!!!!!!!!!!!!!!!!
+  if(verbose==1) then
+    verbose_logical = .true.
+  else
+    verbose_logical = .false.
+  endif
 
   call ovarin(mfile, 'kallenbach_switch','(kallenbach_switch)', kallenbach_switch)
   if(Kallenbach_switch.eq.1) then
-!    call divertor_Kallenbach(rmajor=rmajor,rminor=rminor, &
-!      bt=bt,plascur=plascur, bvert=bvert,q=q, &
-!      verboseset=.false.,  &
-!      Ttarget=Ttarget,qtargettotal=qtargettotal,            &
-!      targetangle=targetangle,lcon_factor=lcon_factor, netau_in=netau, &
-!      unit_test=.false.,abserrset=1.d-5,  &
-!      bp = bp,   &
-!      psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
-!      outfile=nout,iprint=1 )
+    !  call divertor_Kallenbach(rmajor=rmajor,rminor=rminor, &
+    !    bt=bt,plascur=plascur, bvert=bvert,q=q, &
+    !    verboseset=.false.,  &
+    !    Ttarget=Ttarget,qtargettotal=qtargettotal,            &
+    !    targetangle=targetangle,lcon_factor=lcon_factor, netau_in=netau, &
+    !    unit_test=.false.,abserrset=1.d-5,  &
+    !    bp = bp,   &
+    !    psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
+    !    outfile=nout,iprint=1 )
+    call divertor_Kallenbach(rmajor=rmajor,rminor=rminor, &
+        bt=bt,plascur=plascur,                                &
+        q=q,                                      &
+        verboseset=verbose_logical,                                   &
+        Ttarget=Ttarget,qtargettotal=qtargettotal,            &
+        targetangle=targetangle, &
+        unit_test=.false.,     &
+        bp = bp,   &
+        psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
+        outfile=nout,iprint=1)
 
   else
     ! Old Divertor Model ! Comment this out MDK 30/11/16

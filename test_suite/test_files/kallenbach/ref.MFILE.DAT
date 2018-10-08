@@ -3,9 +3,15 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.13   "
+<<<<<<< HEAD
  Date_of_run_____________________________________________________________ (date)________________________     "02/10/2018"
  Time_of_run_____________________________________________________________ (time)________________________     "15:50"
  User____________________________________________________________________ (username)____________________     "smuldrew"
+=======
+ Date_of_run_____________________________________________________________ (date)________________________     "05/10/2018"
+ Time_of_run_____________________________________________________________ (time)________________________     "09:28"
+ User____________________________________________________________________ (username)____________________     "morrisj" 
+>>>>>>> develop
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "kallenbach divertor model                                                                          
  PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.13-498-ga347e11"                                                                               
  PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Included develop branch in GitLab CI system,"                                                      
@@ -396,6 +402,69 @@
  Time_between_pulses_(s)_________________________________________________ (tdwell)______________________      0.0000E+00    
  Total_plant_cycle_time_(s)______________________________________________ (tcycle)______________________      8.0990E+03 OP 
  kallenbach_switch_______________________________________________________ (kallenbach_switch)___________              1    
+ # Divertor: Kallenbach 1D Model #
+ Connection_length:__[m]_________________________________________________ (lcon)________________________      1.0980E+02 OP 
+ Parameter_for_approach_to_local_equilibrium__[ms.1e20/m3]_______________ (netau_sol)___________________      5.0000E-01    
+ Typical_SOL_temperature,_used_only_for_estimating_zeff_div_[eV]_________ (ttypical)____________________      1.2188E+02 OP 
+ Z_effective_[W]_________________________________________________________ (zeff_div)____________________      1.5298E+00 OP 
+ Plasma_major_radius_[m]_________________________________________________ (rmajor)______________________      8.8015E+00 ITV
+ Outboard_midplane_radius_[m]____________________________________________ (romp)________________________      1.1641E+01 OP 
+ Outboard_strike_point_radius_[m]________________________________________ (rspo)________________________      8.1627E+00 OP 
+ Toroidal_field_at_outboard_midplane_[T]_________________________________ (Bt_omp)______________________     -3.8102E+00 OP 
+ Poloidal_field_at_outboard_midplane_[T]_________________________________ (Bp_omp)______________________      1.3483E+00 OP 
+ Total_field_at_outboard_midplane_[T]____________________________________ (Btotal_omp)__________________      4.0417E+00 OP 
+ Toroidal_field_at_strike_point_[T]______________________________________ (Bt_target)___________________     -5.4336E+00 OP 
+ Poloidal_field_at_strike_point_[T]______________________________________ (Bp_target)___________________      4.9936E-01 OP 
+ Poloidal_flux_expansion:_Bp_omp/Bp_target_______________________________ (poloidal_flux_expansion)_____      2.7000E+00 OP 
+ SOL_power_fall-off_length_at_the_outer_midplane_[m]_____________________ (lambda_q_omp)________________      2.0000E-03    
+ SOL_radial_thickness_at_the_target,_mapped_to_OMP_[m]___________________ (lambda_q_target)_____________      9.0000E-03    
+ SOL_area_(normal_to_B)_at_outer_midplane_[m2]___________________________ (area_omp)____________________      4.8799E-02 OP 
+ SOL_area_(normal_to_B)_at_target_[m2]___________________________________ (area_target)_________________      1.6266E-01 OP 
+ Plasma_temperature_at_outer_midplane_[eV]_______________________________ (teomp)_______________________      2.4377E+02 OP 
+ Plasma_density_at_outer_midplane_[m-3]__________________________________ (neomp)_______________________      3.2518E+19 OP 
+ ._Ratio:_SOL_density_at_OMP_/_separatrix_density________________________ (neratio)_____________________      9.0000E-01    
+ ._COMPARISON:_Plasma_density_at_separatrix_[m-3]________________________ (nesep.)______________________      3.6131E+19 OP 
+ Poloidal_field_at_outer_midplane_[T]____________________________________ (Bp_omp)______________________      1.3483E+00 OP 
+ Power_at_outer_midplane_[W]_____________________________________________ (Powerup)_____________________      5.6935E+07 OP 
+ Power_conducted_through_the_separatrix,_calculated_by_divertor_model_[W] (psep_kallenbach)_____________      1.3095E+08 OP 
+ ._COMPARISON:_Separatrix_power_from_main_plasma_model_[MW]______________ (pdivt.)______________________      1.3095E+02 OP 
+ Ratio:_psep_kallenbach_/_Powerup________________________________________ (seppowerratio)_______________      2.3000E+00    
+ Ion_sound_speed_near_target_[m/s]_______________________________________ (cs0)_________________________      1.3324E+04 OP 
+ Plasma_density_near_target_[m-3]________________________________________ (nel0)________________________      8.5357E+20 OP 
+ Ion_flux_density_perp_to_B_at_target_m-2s-1_____________________________ (partfluxtar)_________________      1.1362E+25 OP 
+ Ion_flux_density_on_target_[partfluxtar/sinfact]__m-2s-1________________ (ionfluxtarget)_______________      5.1990E+23 OP 
+ Neutral_density_at_target_[m-3]_________________________________________ (neutral_target)______________      1.1276E+21 OP 
+ Nominal_neutral_pressure_at_target_[Pa]_________________________________ (p0partflux)__________________      3.3542E+00 OP 
+ Plasma_temperature_near_target_[eV]_____________________________________ (ttarget)_____________________      2.3000E+00    
+ Total_plasma_pressure_near_target_(thermal+dynamic)_[Pa]________________ (pressure0)___________________      1.2569E+03 OP 
+ momentum_factor_[-]_____________________________________________________ (fmom)________________________      4.9534E-01 OP 
+ Nominal_Chodura_sheath_width_[m]________________________________________ (lchodura)____________________      7.7491E-05 OP 
+ Angle_between_flux_surface_and_normal_to_divertor_target_[deg]__________ (targetangle)_________________      3.0000E+01    
+ Pitch_angle_of_field_line_at_target_[deg]_______________________________ (pitch_angle)_________________      5.2509E+00 OP 
+ Angle_between_B_and_the_normal_to_divertor_target_[deg]_________________ (psi)_________________________      8.7377E+01 OP 
+ Ratio:_area_of_flux_tube_perpendicular_to_B_/_target_wetted_area________ (sinfact)_____________________      2.1854E+01 OP 
+ Total_power_on_target_[W]_______________________________________________ (ptarget_total)_______________      1.4587E+07 OP 
+ Total_power_on_target_[W]_______________________________________________ (ptarget_complete)____________      1.4587E+07 OP 
+ Power_on_target_due_to_convection_[W]___________________________________ (ptarget_conv)________________      4.0847E+06 OP 
+ Power_on_target_due_to_conduction_[W]___________________________________ (ptarget_cond)________________      5.1212E+05 OP 
+ Power_on_target_due_to_surface_recombination_[W]________________________ (ptarget_recomb)______________      4.7078E+06 OP 
+ Power_on_target_due_to_isotropic_losses_[W]_____________________________ (ptarget_isotropic)___________      5.2823E+06 OP 
+ "Wetted_area"_of_target_[m2]____________________________________________ (WettedArea)__________________      3.5546E+00 OP 
+ "Wetted_length"_of_target_measured_in_poloidal_plane_[m]________________ (WettedLength)________________      6.9308E-02 OP 
+ "Wetted_area"_of_target_[m2]____________________________________________ (WettedAreaComparison)________      3.5546E+00 OP 
+ "Wetted_length"_of_target_measured_in_poloidal_plane_[m]________________ (WettedLengthComparison)______      6.9308E-02 OP 
+ Total_power_density_on_target_[W/m2]____________________________________ (qtargetcomplete)_____________      4.1036E+06    
+ Power_density_on_target_due_to_conduction_and_convection_[W/m2]_________ (qtarget)_____________________      1.2932E+06 OP 
+ Power_density_on_target_due_to_surface_recombination_[W/m2]_____________ (qtargetrecomb)_______________      1.3244E+06 OP 
+ Power_density_on_target_due_to_isotropic_losses_from_SOL_[W/m2]_________ (qtarget_isotropic)___________      1.4860E+06 OP 
+ Connection_length_used_for_"near_zone"_(m)______________________________ (sab)_________________________      1.7489E+00 OP 
+ Length_of_broadened_downstream_part_of_SOL_[m]__________________________ (lengthofwidesol)_____________      1.0980E+01 OP 
+ Power_lost_due_to_impurity_radiation_[W]________________________________ (impuritypowerlost)___________      4.1349E+07 OP 
+ Power_lost_due_to_hydrogenic_radiation_[W]______________________________ (hydrogenicpowerlost)_________      9.2976E+05 OP 
+ Power_lost_due_to_charge_exchange__[W]__________________________________ (exchangepowerlost)___________      5.6161E+06 OP 
+ Power_lost_due_to_electron_impact_ionisation_[W]________________________ (ionisationpowerlost)_________      4.4439E+06 OP 
+ Total_power_lost_due_to_radiation,_ionisation_and_recombination_[W]_____ (totalpowerlost)______________      5.2339E+07 OP 
+ Power_balance_error_[W]_________________________________________________ (balance)_____________________     -9.3132E-09 OP 
  # Radial Build #
  Machine_bore_(m)________________________________________________________ (bore)________________________      2.1749E+00 ITV
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      8.0000E-01 ITV

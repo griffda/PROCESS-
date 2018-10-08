@@ -247,7 +247,6 @@ subroutine caller(xc,nvars)
 
   ! New divertor model
   if(kallenbach_switch.eq.1) then
-
     call divertor_Kallenbach(rmajor=rmajor,rminor=rminor, &
         bt=bt,plascur=plascur,                                &
         q=q,                                      &
@@ -257,7 +256,7 @@ subroutine caller(xc,nvars)
         unit_test=.false.,     &
         bp = bp,   &
         psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
-        outfile=nout,iprint=0 )
+        outfile=nout,iprint=0)
   else if(kallenbach_switch.eq.0) then
 
     ! Old Divertor Model ! Comment this out MDK 30/11/16
