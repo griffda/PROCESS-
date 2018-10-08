@@ -18,7 +18,6 @@ module divertor_ode
   use impurity_radiation_module, only: nimp, imp_label, impurity_arr
   use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
   use constants
-  use process_input, only: lower_case
   use divertor_kallenbach_variables
   !, only: neratio, pressure0, fractionwidesol, fmom, totalpowerlost, impurity_enrichment, &
     !          lambda_q_omp, target_spread, hydrogenicpowerlost, impuritypowerlost, exchangepowerlost, ionisationpowerlost, &

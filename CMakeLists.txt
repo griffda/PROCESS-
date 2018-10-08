@@ -6,9 +6,9 @@ include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS  -std=c++11)
-set(GTEST_INCLUDE_DIR $ENV{GTEST}/include)
-set(GTEST_LIBRARY $ENV{GTEST}/lib)
-set(GTEST_MAIN_LIBRARY $ENV{GTEST})
+# set(GTEST_INCLUDE_DIR $ENV{GTEST}/include)
+# set(GTEST_LIBRARY $ENV{GTEST}/lib)
+# set(GTEST_MAIN_LIBRARY $ENV{GTEST})
 #find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIR})
 
@@ -56,6 +56,14 @@ include_directories(${TEST_DIR}/gtest_files)
 #
 if(CMAKE_HOST_WIN32)  # For windows system
    message(STATUS, "Windows ")
+elseif(CMAKE_HOST_APPLE)  # For Apple OS X system
+   message(STATUS, "Apple OS X ")
+   message(STATUS,${CMAKE_BINARY_DIR})
+   set(MOVE_FILE mv)
+   set(COPY_FILE cp -p)
+   set(FORTRAN gfortran)
+   set(CMAKE_Fortran_COMPILER /usr/local/bin/gfortran)
+   set(CMAKE_CALC_ENGINE libPROCESS_calc_engine.dylib)
 elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
    message(STATUS, "Linux ")
    message(STATUS,${CMAKE_BINARY_DIR})
@@ -63,6 +71,7 @@ elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
    set(COPY_FILE cp -p)
    set(FORTRAN gfortran)
    set(CMAKE_Fortran_COMPILER /usr/bin/gfortran)
+   set(CMAKE_CALC_ENGINE libPROCESS_calc_engine.so)
 # Now define Fortran compiler flags
 # add_definitions("-cpp -g -fbounds-check -Wconversion -Wunused-dummy-argument -Wunused-parameter")
 # set(ENV{FC} /usr/bin/gfortran)
@@ -304,6 +313,6 @@ endif()
 install(TARGETS process.exe DESTINATION ${CMAKE_SOURCE_DIR})
 add_custom_command(TARGET process.exe
  POST_BUILD
- COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}
- COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/libPROCESS_calc_engine.so ${CMAKE_SOURCE_DIR}
+ COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR} 
+ COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/${CMAKE_CALC_ENGINE} ${CMAKE_SOURCE_DIR} 
 )
