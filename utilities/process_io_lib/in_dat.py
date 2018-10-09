@@ -1100,7 +1100,7 @@ class InDat(object):
 
 
     def change_array(self, array_name, array_index, array_value):
-        """Function to change value of an impurity fraction
+        """Function to change value in generic array
 
         :param array_name: name of generic array to change
         :param array_index: index of generic array to change
