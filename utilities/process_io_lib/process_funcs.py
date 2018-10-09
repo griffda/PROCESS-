@@ -398,7 +398,14 @@ def set_variable_in_indat(in_dat, varname, value):
         IN.DAT and creates it if necessary """
 
     varname = varname.lower()
-    if  '(' in varname:
+    if 'bound' in varname:
+        number = (varname.split('('))[1].split(')')[0]
+        if 'boundu' in varname:
+            in_dat.add_bound(number, 'u', value)
+        else:
+            in_dat.add_bound(number, 'l', value)
+    
+    elif '(' in varname:
         name = varname.split('(')[0]
         #Fortran numbering converted to Python numbering!
         id   = int((varname.split('('))[1].split(')')[0])-1
