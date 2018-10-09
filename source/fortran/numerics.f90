@@ -859,7 +859,7 @@ module numerics
        1.000D8, &  !  17
        50.00D0, &  !  18
        1.000D6, &  !  19
-       1.000D3, &  !  20
+       3.000D2, &  !  20   SIM 09/10/18 Lowered to within input limit 
        1.000D0, &  !  21
        1.000D6, &  !  22   KE made tbrnmn obsolete 18/05/18
        0.500D0, &  !  23
