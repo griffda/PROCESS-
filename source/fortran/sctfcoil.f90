@@ -116,8 +116,10 @@ type(resistive_material):: helium
 type(volume_fractions):: conductor
 type(supercon_strand)::croco_strand
 
-real(kind(1.0D0)):: T1, time2, tau2,estotft,croco_quench_factor
-real(kind(1.0D0)):: jwdgpro_1, jwdgpro_2,  etamax
+real(kind(1.0D0)):: T1, time2, tau2, estotft
+! (OBSOLETE, but leave for moment) 
+! real (kind(1.0D0)) ::croco_quench_factor 
+! real(kind(1.0D0)):: jwdgpro_1, jwdgpro_2,  etamax
 contains
 
 ! --------------------------------------------------------------------------
@@ -196,9 +198,9 @@ subroutine sctfcoil(outfile,iprint)
     call tf_coil_geometry
 
     if (i_tf_turns_integer == 1) then
-        call tf_integer_winding_pack(outfile, iprint)
+        call tf_integer_winding_pack()
     else
-        call tf_winding_pack(outfile, iprint)
+        call tf_winding_pack()
     end if
 
     call tf_field_and_force
@@ -298,20 +300,14 @@ end subroutine tf_coil_geometry
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tf_winding_pack(outfile, iprint)
+subroutine tf_winding_pack()
     ! Subroutine for calculating winding pack quantities
     !   - Overall dimensions of winding pack
     !   - Turn dimensions
     !   - Current, field, etc.
     !
-    ! Arguments:
-    !   - outfile : input integer : output file unit
-    !   - iprint  : input integer : switch for writing to output file (1=yes)
 
     implicit none
-
-    !  Arguments
-    integer, intent(in) :: outfile, iprint
 
     ! Local variables
     !----------------
@@ -445,19 +441,11 @@ end subroutine tf_winding_pack
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tf_integer_winding_pack(outfile, iprint)
+subroutine tf_integer_winding_pack()
     ! Subroutine to calculate integer winding pack
     !
-    ! Arguments:
-    !   - outfile : input integer : output file unit
-    !   - iprint  : input integer : switch for writing to output file (1=yes)
 
     implicit none
-
-    ! Arguments
-    !----------
-
-    integer, intent(in) :: outfile, iprint
 
     ! Local variables
     !----------------

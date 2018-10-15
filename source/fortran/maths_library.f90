@@ -2688,7 +2688,7 @@ contains
 
        write(iotty, '("==>", I5, "  vmcon iterations. Normalised FoM =", &
            &  f8.4, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
-           ADVANCE="NO"), niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
+           ADVANCE="NO") niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
 
        if (verbose == 1) then
           write(*,'(a,es13.5,a,es13.5)') &

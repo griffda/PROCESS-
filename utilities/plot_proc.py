@@ -22,7 +22,6 @@ import math
 from matplotlib.path import Path
 import matplotlib.patches as patches
 
-import scipy as sp
 import numpy as np
 try:
     import process_io_lib.process_dicts as proc_dict
@@ -165,8 +164,8 @@ def plot_plasma(axis, mfile_data, scan):
                              ((delta + 1.) ** 2))
     r2 = 0.5 * math.sqrt((a ** 2 * ((delta - 1.) ** 2 + kappa ** 2) ** 2) / \
                              ((delta - 1.) ** 2))
-    theta1 = sp.arcsin((kappa * a) / r1)
-    theta2 = sp.arcsin((kappa * a) / r2)
+    theta1 = np.arcsin((kappa * a) / r1)
+    theta2 = np.arcsin((kappa * a) / r2)
     inang = 1.0 / r1
     outang = 1.5 / r2
     if snull == 0:

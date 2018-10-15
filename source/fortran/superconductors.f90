@@ -974,7 +974,7 @@ real function cSn40Pb(T)
     ! external variables
     real     T
     ! fit variables
-    real     Tmin,Tmax,T0,T1
+    real     Tmin,Tmax,T0
     real     AA,BB,CC,DD,a,b,c,d,na,nb,nc,nd
 
     data     Tmin / 1.0 /, Tmax / 300.0/

@@ -111,13 +111,12 @@ contains
     ! Arguments !
     !!!!!!!!!!!!!
 
-    integer, intent(in) :: iprint,outfile
+    integer, intent(in) :: iprint, outfile
 
     ! Local variables !
     !!!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: dene20,effnbss,effofss,effrfss, &
-         gamnb,gamof,gamrf,power1
+    real(kind(1.0D0)) :: dene20, effnbss, effrfss, gamnb, gamrf, power1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

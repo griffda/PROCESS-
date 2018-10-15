@@ -714,11 +714,12 @@ contains
       !+ad_hist  19/11/15 MDK Initial SC version
       !+ad_hist  11/04/18 SIM Copied from the SC TF subroutine coilshap
       !+ad_stat  Okay
+
       implicit none
-      !  Arguments
+
       !  Local variables
-      real(kind(1.0D0)) :: fstraight, a, b
-      integer :: i
+      real(kind(1.0D0)) :: fstraight
+
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
       xarc(1) = rtfcin + tfcth/2.0d0
@@ -726,6 +727,7 @@ contains
       xarc(3) = rtot - tfcth/2.0d0
       xarc(4) = xarc(2)
       xarc(5) = xarc(1)
+
       ! Height of straight section as a fraction of the coil inner height
       fstraight = 0.6d0
       if (snull==0) then

@@ -1974,7 +1974,6 @@ contains
     real(kind(1.0D0))::x1,x2         ! Initial guesses for temperature
     logical::error                   ! True if the solver does not converge
     real(kind(1.0D0))::residual      ! Residual current density error
-    real(kind(1.0D0))::opt_tol = 1d7 ! Tolerance in current density
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

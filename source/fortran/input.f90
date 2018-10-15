@@ -3806,7 +3806,7 @@ contains
     !  Local variables
 
     character(len=maxlen) :: varval
-    integer :: varlen,iost
+    integer :: varlen
     integer :: foundComma, foundAst, foundPoint
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3923,7 +3923,7 @@ contains
     !  Local variables
 
     character(len=maxlen) :: varval
-    integer :: varlen,iost
+    integer :: varlen
     integer :: foundComma, foundAst
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4030,7 +4030,7 @@ contains
     !  Local variables
 
     character(len=maxlen) :: varval
-    integer :: varlen,iost
+    integer :: varlen
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

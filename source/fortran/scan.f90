@@ -207,7 +207,7 @@ contains
     integer, parameter :: width = 110
     character(len=25), dimension(noutvars), save :: plabel
     real(kind(1.0D0)), dimension(noutvars,ipnscns) :: outvar
-    integer :: ifail, iscan, ivar, iscan_1, iscan_2
+    integer :: ifail, iscan, ivar
     logical :: first_call = .TRUE.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

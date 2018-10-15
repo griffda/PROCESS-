@@ -1828,7 +1828,7 @@ implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine fast_alpha_bs()
+    !subroutine fast_alpha_bs()
 
       !  BSALP (local per index J) is in MA/m^2
 
@@ -1900,7 +1900,7 @@ implicit none
       !      RTOR*ZBIRTH*(ZA1*ZDPDPSI+ZA2*ZDSC3DPSI)
       ! BSALP=BSALP/1.e6
 
-    end subroutine fast_alpha_bs
+    !end subroutine fast_alpha_bs
 
   end function bootstrap_fraction_sauter
 
