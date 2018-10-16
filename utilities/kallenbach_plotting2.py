@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import argparse
 import numpy as np
 import matplotlib
+if sys.platform == "darwin":
+    matplotlib.use('WxAgg')
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
 from matplotlib.ticker import NullFormatter
@@ -29,7 +32,6 @@ n = len(lines[8:])
 # get headings
 headings = list(item.strip("\n") for item in lines[7].split(" ") if item != "")
 m = len(headings)
-# print(headings)
 
 per_row = []
 for line in lines[8:]:
@@ -80,18 +82,28 @@ per_column = list(zip(*per_row))
 
 # First page
 page1 = plt.figure(figsize=(6, 9))
-page1.subplots_adjust(hspace=0.05, wspace=0.0)
+page1.subplots_adjust(hspace=0.20, wspace=0.0)
 
 # Second page plots
 page2 = plt.figure(figsize=(6, 9))
-page2.subplots_adjust(hspace=0.05, wspace=0.0)
+page2.subplots_adjust(hspace=0.20, wspace=0.0)
 
 # find max x||b
 x_max = float(per_column[1][-1])
 
 # Create numpy array of connection length
 xpar = np.array([float(x) for x in per_column[1]])
-xpar[0] = 99999
+# xpar[0] = 99999
+
+# steps
+steps = [int(x) for x in per_column[0]]
+
+density = [float(x) for x in per_column[3]]
+target_temperature = [float(x) for x in per_column[2]]
+plasma_thermal_pressure = [float(x) for x in per_column[4]]
+plasma_pressure = [float(x) for x in per_column[5]]
+mach = [float(x) for x in per_column[7]]
+total_neutral_density = [float(x) for x in per_column[8]]
 
 # convert to MW
 cx_mw = [float(x)/1e6 for x in per_column[14]]
@@ -129,46 +141,46 @@ spherical_power_load = power_loss_integral / (4*3.142*(xpar*0.5)**2)
 
 # Row 1
 p1r1 = page1.add_subplot(411)
-p1r1.loglog(per_column[1], hrad_mw, label="H rad", ls='dashed')
-p1r1.loglog(per_column[1], cx_mw, label="CX", ls='dotted')
-p1r1.loglog(per_column[1], im_mw, label="Imp rad", ls='dashdot')
-p1r1.loglog(per_column[1], ion_mw, label="Ionisation", ls='solid')
+p1r1.loglog(xpar, hrad_mw, label="H rad", ls='dashed')
+p1r1.loglog(xpar, cx_mw, label="CX", ls='dotted')
+p1r1.loglog(xpar, im_mw, label="Imp rad", ls='dashdot')
+p1r1.loglog(xpar, ion_mw, label="Ionisation", ls='solid')
 p1r1.set_xlim(xmin=0.0002)
 p1r1.set_xlim(xmax=x_max)
 p1r1.set_ylim(ymin=1.0)
-p1r1.xaxis.set_major_formatter(nullfmt)
+# p1r1.xaxis.set_major_formatter(nullfmt)
 p1r1.set_ylabel("power dens. (MWm$^{-3}$)")
 p1r1.legend(loc=1, prop={'size': 10})
 
-# Row 2,
+# # Row 2,
 p1r2 = page1.add_subplot(412)
-p1r2.semilogx(per_column[1], per_column[5], label="Plasma pressure including kinetic energy term")
-p1r2.semilogx(per_column[1], per_column[4], label="Plasma thermal pressure")
+p1r2.semilogx(xpar, plasma_pressure, label="Plasma pressure including kinetic energy term")
+p1r2.semilogx(xpar, plasma_thermal_pressure, label="Plasma thermal pressure")
 p1r2.set_xlim(xmin=0.0002)
 p1r2.set_xlim(xmax=x_max)
 p1r2.set_ylim(ymin=0)
 p1r2.set_ylabel("pressure (Pa)")
 p1r2.legend(loc=4, prop={'size': 10})
 p1r2.tick_params(axis='y', labelsize ='9')
-p1r2.xaxis.set_major_formatter(nullfmt)
+# p1r2.xaxis.set_major_formatter(nullfmt)
 
 # Row 3,
 p1r3 = page1.add_subplot(413)
-p1r3.loglog(per_column[1], per_column[2], label="Target temperature $T_e$")
+p1r3.loglog(xpar, target_temperature, label="Temperature $T_e$")
 p1r3.set_xlim(xmin=0.0002)
 p1r3.set_xlim(xmax=x_max)
 p1r3.set_ylim(ymin=1.0)
-p1r3.xaxis.set_major_formatter(nullfmt)
+# p1r3.xaxis.set_major_formatter(nullfmt)
 p1r3.set_ylabel("(eV)")
 p1r3.legend(loc=4, prop={'size': 10})
 
 # Row 4,
 p1r4 = page1.add_subplot(414)
-p1r4.loglog(per_column[1], per_column[3], label="$n_e/10^{20}m^{-3}$")
-p1r4.loglog(per_column[1], per_column[8], label="$n_0/10^{20}m^{-3}$")
-p1r4.loglog(per_column[1], n01, label="$n_{01}/10^{20}m^{-3}$", ls='dashed')
-p1r4.loglog(per_column[1], n02, label="$n_{02}/10^{20}m^{-3}$", ls='dashed')
-p1r4.loglog(per_column[1], per_column[7], label="Mach")
+p1r4.loglog(xpar, density, label="$n_e/10^{20}m^{-3}$")
+p1r4.loglog(xpar, total_neutral_density, label="$n_0/10^{20}m^{-3}$")
+p1r4.loglog(xpar, n01, label="$n_{01}/10^{20}m^{-3}$", ls='dashed')
+p1r4.loglog(xpar, n02, label="$n_{02}/10^{20}m^{-3}$", ls='dashed')
+p1r4.loglog(xpar, mach, label="Mach")
 p1r4.set_xlim(xmin=0.0002)
 p1r4.set_xlim(xmax=x_max)
 p1r4.set_ylim(ymin=0.01)
@@ -180,14 +192,15 @@ p1r4.legend(loc=4, prop={'size': 10})
 # Row 1
 # Left
 p2r1 = page2.add_subplot(411)
-p2r1.semilogx(per_column[1], power_loss_integral, label="Integrated power emission from SOL\n=radiation + charge exchange")
+p2r1.semilogx(xpar, power_loss_integral, label="Integrated power emission from" 
+              " SOL\n=radiation + charge exchange")
 p2r1.set_xlim(xmin=0.0002)
 p2r1.set_xlim(xmax=x_max)
 ymax = power_loss_integral[-1]
 ymax = round(ymax/50 + 0.5) * 50
 #p2r1.set_ylim([0, ymax])
 p2r1.set_ylabel("(MW)")
-p2r1.xaxis.set_major_formatter(nullfmt)
+# p2r1.xaxis.set_major_formatter(nullfmt)
 p2r1.legend(loc=2, prop={'size': 10})
 
 # Row 2#
@@ -197,51 +210,52 @@ p2r2.set_xlim(xmax=x_max)
 p2r2.set_ylim([0.1, 1000])
 p2r2.set_ylabel("power dens. (MWm$^{-3}$)")
 if max(He_mw)>0.001:
-    p2r2.loglog(per_column[1], He_mw, label="He", ls='solid')
+    p2r2.loglog(xpar, He_mw, label="He", ls='solid')
 if max(Be_mw)>0.001:
-    p2r2.loglog(per_column[1], Be_mw, label="Be", ls='dashed')
+    p2r2.loglog(xpar, Be_mw, label="Be", ls='dashed')
 if max(C_mw)>0.001:
-    p2r2.loglog(per_column[1], C_mw, label="C", ls='dashdot')
+    p2r2.loglog(xpar, C_mw, label="C", ls='dashdot')
 if max(N_mw)>0.001:
-    p2r2.loglog(per_column[1], N_mw, label="N", ls='dotted')
+    p2r2.loglog(xpar, N_mw, label="N", ls='dotted')
 if max(O_mw)>0.001:
-    p2r2.loglog(per_column[1], O_mw, label="O", ls='solid')
+    p2r2.loglog(xpar, O_mw, label="O", ls='solid')
 if max(Ne_mw)>0.001:
-    p2r2.loglog(per_column[1], Ne_mw, label="Ne", ls='dashed')
+    p2r2.loglog(xpar, Ne_mw, label="Ne", ls='dashed')
 if max(Si_mw)>0.001:
-    p2r2.loglog(per_column[1], Si_mw, label="Si", ls='dashdot')
+    p2r2.loglog(xpar, Si_mw, label="Si", ls='dashdot')
 if max(Ar_mw)>0.001:
-    p2r2.loglog(per_column[1], Ar_mw, label="Ar", ls='dotted')
+    p2r2.loglog(xpar, Ar_mw, label="Ar", ls='dotted')
 if max(Fe_mw)>0.001:
-    p2r2.loglog(per_column[1], Fe_mw, label="Fe", ls='solid')
+    p2r2.loglog(xpar, Fe_mw, label="Fe", ls='solid')
 if max(Ni_mw)>0.001:
-    p2r2.loglog(per_column[1], Ni_mw, label="Ni", ls='dashed')
+    p2r2.loglog(xpar, Ni_mw, label="Ni", ls='dashed')
 if max(Kr_mw)>0.001:
-    p2r2.loglog(per_column[1], Kr_mw, label="Kr", ls='solid')
+    p2r2.loglog(xpar, Kr_mw, label="Kr", ls='solid')
 if max(Xe_mw)>0.001:
-    p2r2.loglog(per_column[1], Xe_mw, label="Xe", ls='dashed')
+    p2r2.loglog(xpar, Xe_mw, label="Xe", ls='dashed')
 if max(W_mw)>0.001:
-    p2r2.loglog(per_column[1], W_mw, label="W", ls='dashdot')
+    p2r2.loglog(xpar, W_mw, label="W", ls='dashdot')
 p2r2.legend(loc=1, prop={'size': 10})
 p2r2.plot((x_max, x_max), (1, 10000), ls='dashed', color="black")
-p2r2.xaxis.set_major_formatter(nullfmt)
+# p2r2.xaxis.set_major_formatter(nullfmt)
 
 # Row 3
 p2r3 = page2.add_subplot(413)
-p2r3.semilogx(per_column[1], nv, label="Plasma flux [$10^{24}m^{-2}s^{-1}$]")
+p2r3.semilogx(xpar, nv, label="Plasma flux [$10^{24}m^{-2}s^{-1}$]")
 p2r3.set_xlim(xmin=0.0002)
 p2r3.set_xlim(xmax=x_max)
-p2r3.xaxis.set_major_formatter(nullfmt)
+# p2r3.xaxis.set_major_formatter(nullfmt)
 p2r3.legend(loc=1, prop={'size': 10})
 
 # Row 4
 p2r4 = page2.add_subplot(414)
-p2r4.semilogx(per_column[1], v, label="Plasma speed [ms$^{-1}$]")
+p2r4.semilogx(xpar, v, label="Plasma speed [ms$^{-1}$]")
 p2r4.set_xlim(xmin=0.0002)
 p2r4.set_xlim(xmax=x_max)
 p2r4.tick_params(axis='y', labelsize ='9')
 p2r4.tick_params(axis='x', labelsize ='11')
-p2r4.set_xlabel("Connection length from target $x_{\parallel}$ (m)", fontsize=10)
+p2r4.set_xlabel("Connection length from target $x_{\parallel}$ (m)", 
+                fontsize=10)
 p2r4.legend(loc=1, prop={'size': 10})
 
 # Save as a single two-page file
