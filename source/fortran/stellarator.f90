@@ -939,55 +939,69 @@ contains
 
     drbild = bore + ohcth + gapoh
     radius = radius + drbild
-    call obuild(outfile,'Machine bore',drbild,radius)
+    call obuild(outfile,'Machine bore',drbild,radius,'(bore)')
+    call ovarre(mfile,'Machine bore (m)','(bore)',drbild)
 
     radius = radius + tfcth
-    call obuild(outfile,'Coil inboard leg',tfcth,radius)
+    call obuild(outfile,'Coil inboard leg',tfcth,radius,'(tfcth)')
+    call ovarre(mfile,'Coil inboard leg (m)','(deltf)',tfcth)
 
     radius = radius + gapds
-    call obuild(outfile,'Gap',gapds,radius)
+    call obuild(outfile,'Gap',gapds,radius,'(gapds)')
+    call ovarre(mfile,'Gap (m)','(gapds)',gapds)
 
     radius = radius + ddwi
-    call obuild(outfile,'Vacuum vessel',ddwi,radius)
+    call obuild(outfile,'Vacuum vessel',ddwi,radius,'(ddwi)')
+    call ovarre(mfile,'Vacuum vessel radial thickness (m)','(ddwi)',ddwi)
 
     radius = radius + shldith
-    call obuild(outfile,'Inboard shield',shldith,radius)
+    call obuild(outfile,'Inboard shield',shldith,radius,'(shldith)')
+    call ovarre(mfile,'Inner radiation shield radial thickness (m)','(shldith)',shldith)
 
     radius = radius + blnkith
-    call obuild(outfile,'Inboard blanket',blnkith,radius)
+    call obuild(outfile,'Inboard blanket',blnkith,radius,'(blnkith)')
+    call ovarre(mfile,'Inboard blanket radial thickness (m)','(blnkith)',blnkith)
 
     radius = radius + fwith
-    call obuild(outfile,'Inboard first wall',fwith,radius)
+    call obuild(outfile,'Inboard first wall',fwith,radius,'(fwith)')
+    call ovarre(mfile,'Inboard first wall radial thickness (m)','(fwith)',fwith)
 
     radius = radius + scrapli
-    call obuild(outfile,'Inboard scrape-off',scrapli,radius)
+    call obuild(outfile,'Inboard scrape-off',scrapli,radius,'(scrapli)')
+    call ovarre(mfile,'Inboard scrape-off radial thickness (m)','(scrapli)',scrapli)
 
     radius = radius + rminor
-    call obuild(outfile,'Plasma geometric centre',rminor,radius)
+    call obuild(outfile,'Plasma geometric centre',rminor,radius,'(rminor)')
 
     radius = radius + rminor
-    call obuild(outfile,'Plasma outboard edge',rminor,radius)
+    call obuild(outfile,'Plasma outboard edge',rminor,radius,'(rminor)')
 
     radius = radius + scraplo
-    call obuild(outfile,'Outboard scrape-off',scraplo,radius)
+    call obuild(outfile,'Outboard scrape-off',scraplo,radius,'(scraplo)')
+    call ovarre(mfile,'Outboard scrape-off radial thickness (m)','(scraplo)',scraplo)
 
     radius = radius + fwoth
-    call obuild(outfile,'Outboard first wall',fwoth,radius)
+    call obuild(outfile,'Outboard first wall',fwoth,radius,'(fwoth)')
+    call ovarre(mfile,'Outboard first wall radial thickness (m)','(fwoth)',fwoth)
 
     radius = radius + blnkoth
-    call obuild(outfile,'Outboard blanket',blnkoth,radius)
+    call obuild(outfile,'Outboard blanket',blnkoth,radius,'(blnkoth)')
+    call ovarre(mfile,'Outboard blanket radial thickness (m)','(blnkoth)',blnkoth)
 
     radius = radius + shldoth
-    call obuild(outfile,'Outboard shield',shldoth,radius)
+    call obuild(outfile,'Outboard shield',shldoth,radius,'(shldoth)')
+    call ovarre(mfile,'Outer radiation shield radial thickness (m)','(shldoth)',shldoth)
 
     radius = radius + ddwi
-    call obuild(outfile,'Vacuum vessel',ddwi,radius)
+    call obuild(outfile,'Vacuum vessel',ddwi,radius,'(ddwi)')
 
     radius = radius + gapsto
-    call obuild(outfile,'Gap',gapsto,radius)
+    call obuild(outfile,'Gap',gapsto,radius,'(gapsto)')
+    call ovarre(mfile,'Gap (m)','(gapsto)',gapsto)
 
     radius = radius + tfthko
-    call obuild(outfile,'Coil outboard leg',tfthko,radius)
+    call obuild(outfile,'Coil outboard leg',tfthko,radius,'(tfthko)')
+    call ovarre(mfile,'Coil outboard leg radial thickness (m)','(tfthko)',tfthko)
 
   end subroutine stbild
 
