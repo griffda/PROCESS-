@@ -847,6 +847,8 @@ contains
     !+ad_hist  24/06/14 PJK Removed refs to bcylth;
     !+ad_hisc               blnktth now always calculated
     !+ad_hist  06/11/14 PJK Added fhole etc. adjustment to first wall area
+    !+ad_hist  11/06/18 SIM Added fwith calculation using new inputs
+    !+ad_hist  16/10/18 SIM Output radial build to MFILE (Issue #770)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
