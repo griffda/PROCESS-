@@ -6,14 +6,14 @@
  
    Program : ./process.exe
    Version : 1.0.13   Release Date :: 2018-04-19
-   Tag No. : "1.0.13-498-ga347e11"
-   Last commit message : "Included develop branch in GitLab CI system,"
+   Tag No. : "1.0.13-516-g3abbe97"
+   Last commit message : "Update Kallenbach_plotting2.py,"
       User : smuldrew
  Directory : /home/smuldrew/process/latest/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.13 : Run on  2 Oct 2018 15:49:01 +01:00(hh:mm) UTC by G0764
+ PROCESS 1.0.13 : Run on 16 Oct 2018 13:09:05 +01:00(hh:mm) UTC by G0764
  Reactor concept design: Stellarator model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -488,23 +488,23 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
                                           Thickness (m)    Radius (m)
  Device centreline                            0.000           0.000                       
- Machine bore                                17.607          17.607                       
- Coil inboard leg                             0.950          18.557                       
- Gap                                          0.025          18.582                       
- Vacuum vessel                                0.350          18.932                       
- Inboard shield                               0.400          19.332                       
- Inboard blanket                              0.700          20.032                       
- Inboard first wall                           0.018          20.050                       
- Inboard scrape-off                           0.150          20.200                       
- Plasma geometric centre                      1.800          22.000                       
- Plasma outboard edge                         1.800          23.800                       
- Outboard scrape-off                          0.300          24.100                       
- Outboard first wall                          0.018          24.118                       
- Outboard blanket                             0.800          24.918                       
- Outboard shield                              0.700          25.618                       
- Vacuum vessel                                0.350          25.968                       
- Gap                                          0.025          25.993                       
- Coil outboard leg                            0.950          26.943                       
+ Machine bore                                17.607          17.607   (bore)              
+ Coil inboard leg                             0.950          18.557   (tfcth)             
+ Gap                                          0.025          18.582   (gapds)             
+ Vacuum vessel                                0.350          18.932   (ddwi)              
+ Inboard shield                               0.400          19.332   (shldith)           
+ Inboard blanket                              0.700          20.032   (blnkith)           
+ Inboard first wall                           0.018          20.050   (fwith)             
+ Inboard scrape-off                           0.150          20.200   (scrapli)           
+ Plasma geometric centre                      1.800          22.000   (rminor)            
+ Plasma outboard edge                         1.800          23.800   (rminor)            
+ Outboard scrape-off                          0.300          24.100   (scraplo)           
+ Outboard first wall                          0.018          24.118   (fwoth)             
+ Outboard blanket                             0.800          24.918   (blnkoth)           
+ Outboard shield                              0.700          25.618   (shldoth)           
+ Vacuum vessel                                0.350          25.968   (ddwi)              
+ Gap                                          0.025          25.993   (gapsto)            
+ Coil outboard leg                            0.950          26.943   (tfthko)            
  
  *********************************************** Modular Coils ************************************************
  
