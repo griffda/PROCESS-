@@ -2640,6 +2640,7 @@ contains
     !+ad_hist  26/06/14 PJK Added error_handling
     !+ad_hist  30/07/14 PJK Renamed borev to tfborev
     !+ad_hist  16/09/14 PJK Added tfcryoarea
+    !+ad_hist  17/10/18 SIM Switched estotf for estotftgj
     !+ad_stat  Okay
     !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
     !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
@@ -2963,7 +2964,7 @@ contains
     tfborev = 2.0D0*hmax          ! [m] estimated vertical coil bore
     tfleng = U                    ! [m] estimated average length of a coil
 
-    estotf = W_mag/tfno           ! [GJ] magnetic energy per coil
+    estotftgj = W_mag             ! [GJ] Total magnetic energy
 
     !jwptf = ritfc/(tfno*awptf)
     jwptf = j*1.0D6               ! [A/m^2] winding pack current density
@@ -3753,6 +3754,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  30/07/14 PJK Renamed borev to tfborev
     !+ad_hist  31/07/14 PJK Removed aspcstf
+    !+ad_hist  17/10/18 SIM Switched estotf for estotftgj
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -3786,7 +3788,7 @@ contains
     call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf)
     call ovarre(outfile,'Overall current density (A/m2)','(oacdcp)',oacdcp)
     call ovarre(outfile,'Maximum field on superconductor (T)','(bmaxtf)',bmaxtf)
-    call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
+    call ovarre(outfile,'Total Stored energy (GJ)','(estotftgj)',estotftgj)
     call ovarre(outfile,'Total mass of coils (kg)','(whttf)',whttf)
 
     call osubhd(outfile,'Coil Geometry :')
