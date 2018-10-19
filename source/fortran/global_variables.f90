@@ -2616,7 +2616,7 @@ module tfcoil_variables
   !+ad_vars  rcool /0.005/ : average radius of coolant channel (m)
   !+ad_varc                  (iteration variable 69)
   real(kind(1.0D0)) :: rcool = 0.005D0
-  !+ad_vars  rhocp : TF coil inboard leg resistance (ohm)
+  !+ad_vars  rhocp : TF coil inboard leg resistivity (Ohm-m)
   real(kind(1.0D0)) :: rhocp = 0.0D0
   !+ad_vars  tcoolin /40.0/ : centrepost coolant inlet temperature (C)
   real(kind(1.0D0)) :: tcoolin = 40.0D0
