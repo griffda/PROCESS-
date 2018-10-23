@@ -1393,6 +1393,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
             ("s_tresca_cond", "Conduit Von Mises stress", "Pa"),
             ("s_tresca_case", "Case Von Mises stress", "Pa"),
             ("alstrtf", "Allowable stress", "Pa"),
+            ("whttf/tfno", "Mass per TF coil", "kg"),
             ("", "", ""),
             ("#Costs", "", ""),
             ("coe", "Cost of electricity", "\$/MWh")]
