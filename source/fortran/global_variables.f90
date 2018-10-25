@@ -2462,7 +2462,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfinsgap = 0.010D0
   !+ad_vars  tflegmw : TF coil outboard leg resistive power (MW)
   real(kind(1.0D0)) :: tflegmw = 0.0D0
-  !+ad_vars  tflegres /2.5e-8/ : resistivity of a TF coil leg (Ohm-m)
+  !+ad_vars  tflegres /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
   real(kind(1.0D0)) :: tflegres = 2.5D-8
   !+ad_vars  tfleng : TF coil circumference (m)
   real(kind(1.0D0)) :: tfleng = 0.0D0

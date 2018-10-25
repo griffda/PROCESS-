@@ -14,14 +14,14 @@
  
    Program : ./process.exe
    Version : 1.0.13   Release Date :: 2018-04-19
-   Tag No. : "1.0.13-498-ga347e11"
-   Last commit message : "Included develop branch in GitLab CI system,"
+   Tag No. : "1.0.13-521-g6a7cfcf Code used contains Untracked Changes"
+   Last commit message : "Corrected description of rhocp,"
       User : smuldrew
  Directory : /home/smuldrew/process/latest/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.13 : Run on  2 Oct 2018 15:48:57 +01:00(hh:mm) UTC by G0764
+ PROCESS 1.0.13 : Run on 25 Oct 2018 10:14:40 +01:00(hh:mm) UTC by G0764
  Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  FNSF (Menard et al. 2016)
  (Please include this header in any models, presentations and papers based on these results)
@@ -741,9 +741,9 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Bus resistance (ohm)                                                     (rhobus)                  4.412E-06  OP 
  Bus current density (A/m2)                                               (jbus)                    1.250E+06     
  Bus length - all coils (m)                                               (tfbusl)                  3.000E+02     
- Bus mass (kg)                                                            (tfbusmas)                4.080E+06  OP 
- Total resistance for TF coil set (ohm)                                   (ztot)                    3.637E-05  OP 
- Steady-state voltage per coil (kV)                                       (vtfkv)                   6.441E-03  OP 
+ Bus mass (kg)                                                            (tfbusmas)                4.539E+06  OP 
+ Total resistance for TF coil set (ohm)                                   (ztot)                    3.648E-05  OP 
+ Steady-state voltage per coil (kV)                                       (vtfkv)                   6.461E-03  OP 
  Total power dissipation in TF coil set (MW)                              (tfcmw..)                 2.500E+02  OP 
  Power dissipation in TF coil set: inboard legs (MW)                      (tfcpmw)                  8.587E+01  OP 
  Power dissipation in TF coil set: outboard legs (MW)                     (tflegmw)                 1.442E+02  OP 

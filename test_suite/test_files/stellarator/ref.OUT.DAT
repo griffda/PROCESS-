@@ -6,14 +6,14 @@
  
    Program : ./process.exe
    Version : 1.0.13   Release Date :: 2018-04-19
-   Tag No. : "1.0.13-516-g3abbe97"
-   Last commit message : "Update Kallenbach_plotting2.py,"
+   Tag No. : "1.0.13-521-g6a7cfcf Code used contains Untracked Changes"
+   Last commit message : "Corrected description of rhocp,"
       User : smuldrew
  Directory : /home/smuldrew/process/latest/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.13 : Run on 16 Oct 2018 13:09:05 +01:00(hh:mm) UTC by G0764
+ PROCESS 1.0.13 : Run on 25 Oct 2018 10:14:43 +01:00(hh:mm) UTC by G0764
  Reactor concept design: Stellarator model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -36,8 +36,8 @@
  Number of constraints (total)                                            (neqns+nineqns)                   4     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          7     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 7.220E-07  OP 
- VMCON convergence parameter                                              (convergence_parameter)   2.812E-08  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 7.218E-07  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   2.811E-08  OP 
  Number of VMCON iterations                                               (nviter)                          5  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          CAPITAL COST.
@@ -53,7 +53,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                           final       final /
     i                                     value       initial
  
-    1                  beta             5.1329E-02     1.1887
+    1                  beta             5.1330E-02     1.1887
     2                  dene             1.1991E+20     0.4788
     3                  hfact            1.6762E+00     1.0872
     4                  fpnetel          1.0000E+00     1.0009
@@ -64,27 +64,27 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  5.1329E-02             -1.8473E-09                 3.5990E-08
-    2  Global power balance consistency      =  4.1059E-01 MW/m3       -2.7556E-07 MW/m3           6.7113E-07
+    1  Beta consistency                      =  5.1330E-02             -1.8488E-09                 3.6017E-08
+    2  Global power balance consistency      =  4.1060E-01 MW/m3       -2.7548E-07 MW/m3           6.7092E-07
     3  Radial build consistency              =  2.2000E+01 m            0.0000E+00 m              -0.0000E+00
-    4  Net electric power lower limit        >  1.0000E+03 MW           2.6381E-04 MW              2.6381E-07
+    4  Net electric power lower limit        >  1.0000E+03 MW           2.6373E-04 MW              2.6373E-07
  
  ******************************************** Final Feasible Point ********************************************
  
  
  ******************************************** Power Reactor Costs *********************************************
  
- First wall / blanket life (years)                                        (fwbllife)                   17.244     
+ First wall / blanket life (years)                                        (fwbllife)                   17.243     
  Divertor life (years)                                                    (divlife.)                    5.755     
- Cost of electricity (m$/kWh)                                             (coe)                       102.543     
+ Cost of electricity (m$/kWh)                                             (coe)                       102.129     
  
  Power Generation Costs :
  
                                                                            Annual Costs, M$       COE, m$/kWh
 
- Capital Investment                                                                599.32               91.23
+ Capital Investment                                                                596.63               90.82
  Operation & Maintenance                                                            62.81                9.56
- Decommissioning Fund                                                                5.07                0.77
+ Decommissioning Fund                                                                5.04                0.77
  Fuel Charge Breakdown
 
      Blanket & first wall                                                    0.00                0.00
@@ -95,7 +95,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
      Waste Disposal                                                          3.60                0.55
  Total Fuel Cost                                                                     6.47                0.99
 
- Total Cost                                                                        673.67              102.54
+ Total Cost                                                                        670.95              102.13
  
  ********************************************* Detailed Costings **********************************************
  
@@ -108,13 +108,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  (c2141)             Reactor maintenance building cost (M$)                                                       54.21
  (c2142)             Warm shop cost (M$)                                                                          35.30
  (c215)              Tritium building cost (M$)                                                                   12.43
- (c216)              Electrical equipment building cost (M$)                                                      14.95
+ (c216)              Electrical equipment building cost (M$)                                                      15.49
  (c2171)             Additional buildings cost (M$)                                                               15.12
  (c2172)             Control room buildings cost (M$)                                                             17.64
  (c2173)             Shop and warehouses cost (M$)                                                                 9.66
  (c2174)             Cryogenic building cost (M$)                                                                  7.37
  
- (c21)               Total account 21 cost (M$)                                                                  958.94
+ (c21)               Total account 21 cost (M$)                                                                  959.47
  
  ******************************* Reactor Systems ********************************
  
@@ -170,12 +170,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************** Power Conditioning ******************************
  
- (c22511)            TF coil power supplies cost (M$)                                                              6.71
+ (c22511)            TF coil power supplies cost (M$)                                                              8.44
  (c22512)            TF coil breakers cost (M$)                                                                    0.09
- (c22513)            TF coil dump resistors cost (M$)                                                             26.89
+ (c22513)            TF coil dump resistors cost (M$)                                                              0.12
  (c22514)            TF coil instrumentation and control (M$)                                                     15.00
  (c22515)            TF coil bussing cost (M$)                                                                   205.71
- (c2251)             Total, TF coil power costs (M$)                                                             254.41
+ (c2251)             Total, TF coil power costs (M$)                                                             229.37
  (c22521)            PF coil power supplies cost (M$)                                                              0.00
  (c22522)            PF coil instrumentation and control (M$)                                                      0.00
  (c22523)            PF coil bussing cost (M$)                                                                     0.00
@@ -186,18 +186,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  (c2252)             Total, PF coil power costs (M$)                                                               0.00
  (c2253)             Total, energy storage cost (M$)                                                               0.00
  
- (c225)              Total account 225 cost (M$)                                                                 254.41
+ (c225)              Total account 225 cost (M$)                                                                 229.37
  
  **************************** Heat Transport System *****************************
  
  (cpp)               Pumps and piping system cost (M$)                                                            61.03
- (chx)               Primary heat exchanger cost (M$)                                                             61.97
- (c2261)             Total, reactor cooling system cost (M$)                                                     123.00
+ (chx)               Primary heat exchanger cost (M$)                                                             61.98
+ (c2261)             Total, reactor cooling system cost (M$)                                                     123.01
  (cppa)              Pumps, piping cost (M$)                                                                      14.21
  (c2262)             Total, auxiliary cooling system cost (M$)                                                    14.21
  (c2263)             Total, cryogenic system cost (M$)                                                           176.74
  
- (c226)              Total account 226 cost (M$)                                                                 313.95
+ (c226)              Total account 226 cost (M$)                                                                 313.96
  
  ***************************** Fuel Handling System *****************************
  
@@ -206,7 +206,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  (c2273)             Atmospheric recovery systems cost (M$)                                                       64.72
  (c2274)             Nuclear building ventilation cost (M$)                                                       75.46
  
- (c227)              Total account 227 cost (M$)                                                                 306.69
+ (c227)              Total account 227 cost (M$)                                                                 306.70
  
  ************************* Instrumentation and Control **************************
  
@@ -218,11 +218,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  **************************** Total Account 22 Cost *****************************
  
- (c22)               Total account 22 cost (M$)                                                                 4146.42
+ (c22)               Total account 22 cost (M$)                                                                 4121.39
  
  *************************** Turbine Plant Equipment ****************************
  
- (c23)               Turbine plant equipment cost (M$)                                                           231.35
+ (c23)               Turbine plant equipment cost (M$)                                                           231.36
  
  *************************** Electric Plant Equipment ***************************
  
@@ -244,7 +244,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                     5444.26
+ (cdirt)             Plant direct cost (M$)                                                                     5419.78
  
  ****************************** Reactor Core Cost *******************************
  
@@ -252,23 +252,23 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ******************************** Indirect Cost *********************************
  
- (c9)                Indirect cost (M$)                                                                         1527.66
+ (c9)                Indirect cost (M$)                                                                         1520.79
  
  ****************************** Total Contingency *******************************
  
- (ccont)             Total contingency (M$)                                                                     1045.79
+ (ccont)             Total contingency (M$)                                                                     1041.09
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed cost (M$)                                                                      8017.71
+ (concost)           Constructed cost (M$)                                                                      7981.66
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          1202.66
+ (moneyint)          Interest during construction (M$)                                                          1197.25
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                              9220.36
+ (capcost)           Total capital investment (M$)                                                              9178.91
  
  ********************************************* Plant Availability *********************************************
  
@@ -377,18 +377,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Alpha power: beam-plasma (MW)                                            (palpnb)                  0.000E+00  OP 
  Neutron power (MW)                                                       (pneutmw)                 2.425E+03  OP 
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               2.431E+00  OP 
- Total power deposited in plasma (MW)                                     ()                        5.779E+02  OP 
+ Total power deposited in plasma (MW)                                     ()                        5.780E+02  OP 
  
  Radiation Power (excluding SOL):
  
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             5.511E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.102E+00  OP 
- Synchrotron radiation power (MW)                                         (psyncpv*vol)             3.079E+01  OP 
+ Synchrotron radiation power (MW)                                         (psyncpv*vol)             3.080E+01  OP 
  synchrotron wall reflectivity factor                                     (ssync)                       0.600     
  Normalised minor radius defining 'core'                                  (coreradius)              9.000E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   1.000E+00     
  Total core radiation power (MW)                                          (pcoreradmw)              8.566E+01  OP 
- Edge radiation power (MW)                                                (pedgeradmw)              4.184E+02  OP 
+ Edge radiation power (MW)                                                (pedgeradmw)              4.185E+02  OP 
  Total radiation power (MW)                                               (pradmw)                  5.041E+02  OP 
  Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            0.000E+00  OP 
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             0.000E+00  OP 
@@ -409,7 +409,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Ignited plasma switch (0=not ignited, 1=ignited)                         (ignite)                          1     
  
  Power into divertor zone via charged particles (MW)                      (pdivt)                   7.384E+01  OP 
- Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            3.356E+00  OP 
+ Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            3.357E+00  OP 
  Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             1.467E+00  OP 
  
  Confinement :
@@ -428,7 +428,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Switch for radiation loss term usage in power balance                    (iradloss)                        1     
  Radiation power subtracted from plasma power balance (MW)                                          8.566E+01  OP 
    (Radiation correction is core radiation power)
- Alpha particle confinement time (s)                                      (taup)                       15.704  OP 
+ Alpha particle confinement time (s)                                      (taup)                       15.703  OP 
  Alpha particle/energy confinement time ratio                             (taup/taueff)                 6.786  OP 
  Lower limit on taup/taueff                                               (taulimit)                    5.000     
  Total energy confinement time (s)                                        (total_energy_conf_t          0.000  OP 
@@ -482,7 +482,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power decay width (cm)                                                   (100*l_q)                 1.772E+01     
  Island width (m)                                                         (w_r)                     3.752E-01     
  Perp. distance from X-point to plate (m)                                 (Delta)                   2.251E-01     
- Peak heat load (MW/m2)                                                   (hldiv)                   5.792E+00     
+ Peak heat load (MW/m2)                                                   (hldiv)                   5.793E+00     
  
  ************************************************ Radial Build ************************************************
  
@@ -523,7 +523,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Winding pack current density (A/m2)                                      (jwptf)                   2.700E+07     
  Overall current density (A/m2)                                           (oacdcp)                  1.534E+07     
  Maximum field on superconductor (T)                                      (bmaxtf)                  1.212E+01     
- Stored energy per coil (GJ)                                              (estotf)                  3.059E+00     
+ Total Stored energy (GJ)                                                 (estotftgj)               1.529E+02     
  Total mass of coils (kg)                                                 (whttf)                   9.635E+06     
  
  Coil Geometry :
@@ -639,31 +639,31 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Number of TF coils                                                       (ntfc)                    5.000E+01     
  Voltage across a TF coil during quench (kV)                              (vtfskv)                  0.000E+00  OP 
  TF coil charge time (hours)                                              (tchghr)                  4.000E+00     
- Total inductance of TF coils (H)                                         (ltfth)                   0.000E+00  OP 
+ Total inductance of TF coils (H)                                         (ltfth)                   3.581E+01  OP 
  Total resistance of TF coils (ohm)                                       (rcoils)                  0.000E+00  OP 
- TF coil charging voltage (V)                                             (tfcv)                    5.927E+02     
+ TF coil charging voltage (V)                                             (tfcv)                    8.225E+02     
  Number of DC circuit breakers                                            (ntfbkr)                  5.000E+01     
  Number of dump resistors                                                 (ndumpr)                  2.000E+02     
  Resistance per dump resistor (ohm)                                       (r1dump)                  0.000E+00  OP 
  Dump resistor peak power (MW)                                            (r1ppmw)                  0.000E+00  OP 
- Energy supplied per dump resistor (MJ)                                   (r1emj)                   0.000E+00  OP 
- TF coil L/R time constant (s)                                            (ttfsec)                        NaN  OP 
- Power supply voltage (V)                                                 (tfpsv)                   6.223E+02  OP 
+ Energy supplied per dump resistor (MJ)                                   (r1emj)                   7.647E+02  OP 
+ TF coil L/R time constant (s)                                            (ttfsec)                   Infinity  OP 
+ Power supply voltage (V)                                                 (tfpsv)                   8.636E+02  OP 
  Power supply current (kA)                                                (tfpska)                  9.704E+01  OP 
- DC power supply rating (kW)                                              (tfckw)                   6.039E+04  OP 
- AC power for charging (kW)                                               (tfackw)                  6.710E+04  OP 
+ DC power supply rating (kW)                                              (tfckw)                   8.381E+04  OP 
+ AC power for charging (kW)                                               (tfackw)                  9.312E+04  OP 
  TF coil resistive power (MW)                                             (rpower)                  5.477E+01  OP 
- TF coil inductive power (MVA)                                            (xpower)                  0.000E+00  OP 
+ TF coil inductive power (MVA)                                            (xpower)                  2.124E+01  OP 
  Aluminium bus current density (kA/cm2)                                   (djmka)                   1.250E-01     
  Aluminium bus cross-sectional area (cm2)                                 (albusa)                  7.393E+02  OP 
  Total length of TF coil bussing (m)                                      (tfbusl)                  1.810E+04  OP 
  Aluminium bus weight (tonnes)                                            (albuswt)                 3.612E+03  OP 
  Total TF coil bus resistance (ohm)                                       (rtfbus)                  6.413E-03  OP 
  TF coil bus voltage drop (V)                                             (vtfbus)                  5.927E+02  OP 
- Dump resistor floor area (m2)                                            (drarea)                  1.000E+02  OP 
- TF coil power conversion floor space (m2)                                (tfcfsp)                  1.141E+03  OP 
- TF coil power conv. building volume (m3)                                 (tfcbv)                   6.844E+03  OP 
- TF coil AC inductive power demand (MW)                                   (xpwrmw)                  0.000E+00  OP 
+ Dump resistor floor area (m2)                                            (drarea)                  8.388E+03  OP 
+ TF coil power conversion floor space (m2)                                (tfcfsp)                  1.419E+03  OP 
+ TF coil power conv. building volume (m3)                                 (tfcbv)                   8.517E+03  OP 
+ TF coil AC inductive power demand (MW)                                   (xpwrmw)                  2.360E+01  OP 
  Total steady state AC power demand (MW)                                  (tfacpd)                  6.086E+01  OP 
  
  *********************************************** Vacuum System ************************************************
@@ -715,12 +715,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Internal volume of reactor building (m3)                                 (vrci)                    1.159E+06     
  Dist from centre of torus to bldg wall (m)                               (wrbi)                    4.578E+01     
- Effective floor area (m2)                                                (efloor)                  3.360E+05     
+ Effective floor area (m2)                                                (efloor)                  3.363E+05     
  Reactor building volume (m3)                                             (rbv)                     1.311E+06     
  Reactor maintenance building volume (m3)                                 (rmbv)                    2.482E+05     
  Warmshop volume (m3)                                                     (wsv)                     9.135E+04     
  Tritium building volume (m3)                                             (triv)                    4.000E+04     
- Electrical building volume (m3)                                          (elev)                    4.684E+04     
+ Electrical building volume (m3)                                          (elev)                    4.852E+04     
  Control building volume (m3)                                             (conv)                    6.000E+04     
  Cryogenics building volume (m3)                                          (cryv)                    1.908E+04     
  Administration building volume (m3)                                      (admv)                    1.000E+05     
@@ -740,7 +740,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Vacuum pumps  (MW)                                                       (vachtmw..)               5.000E-01     
  
  Total pulsed power (MW)                                                  (pacpmw)                  2.085E+02  OP 
- Total base power required at all times (MW)                              (fcsht)                   5.541E+01  OP 
+ Total base power required at all times (MW)                              (fcsht)                   5.545E+01  OP 
  
  ************************************************* Cryogenics *************************************************
  
@@ -793,13 +793,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                             High-grade             Low-grade              Total
                                              thermal power (MW)     thermal power (MW)      (MW)
          First wall:
-                               neutrons            457.83                0.00              457.83
+                               neutrons            457.85                0.00              457.85
              charged particle transport             30.29                0.00               30.29
-                              radiation            446.12                0.00              446.12
+                              radiation            446.14                0.00              446.14
                         coolant pumping              4.52                0.00                4.52
  
          Blanket:
-                               neutrons           1991.56                0.00             1991.56
+                               neutrons           1991.63                0.00             1991.63
              charged particle transport              0.00                0.00                0.00
                               radiation              0.00                0.00                0.00
                         coolant pumping              9.96                0.00                9.96
@@ -811,7 +811,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                         coolant pumping              0.00                0.00                0.00
  
          Divertor:
-                               neutrons              0.00              278.82              278.82
+                               neutrons              0.00              278.83              278.83
              charged particle transport              0.00               73.84               73.84
                               radiation              0.00               57.97               57.97
                         coolant pumping              0.00                2.05                2.05
@@ -829,22 +829,22 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                         coolant pumping              0.00                0.00                0.00
  
          ----------------------------------------------------------------------------------------
-                                 Totals           2940.38              412.68             3353.06
+                                 Totals           2940.48              412.70             3353.18
  
- Total power leaving reactor (across vacuum vessel boundary) (MW)                                    3353.062  OP 
+ Total power leaving reactor (across vacuum vessel boundary) (MW)                                    3353.179  OP 
  
  Other secondary thermal power constituents :
  
  Heat removal from cryogenic plant (MW)                                   (crypmw)                     59.328  OP 
- Heat removal from facilities (MW)                                        (fachtmw)                    55.406  OP 
+ Heat removal from facilities (MW)                                        (fachtmw)                    55.448  OP 
  Coolant pumping efficiency losses (MW)                                   (htpsecmw)                    0.870  OP 
  Heat removal from injection power (MW)                                   (pinjht)                      0.000  OP 
  Heat removal from tritium plant (MW)                                     (trithtmw)                   15.000  OP 
  Heat removal from vacuum pumps (MW)                                      (vachtmw)                     0.500  OP 
  TF coil resistive power (MW)                                             (tfcmw)                       0.000  OP 
  
- Total low-grade thermal power (MW)                                       (psechtmw)                  604.648  OP 
- Total High-grade thermal power (MW)                                      (pthermmw)                 2940.377  OP 
+ Total low-grade thermal power (MW)                                       (psechtmw)                  604.704  OP 
+ Total High-grade thermal power (MW)                                      (pthermmw)                 2940.480  OP 
  
  Number of primary heat exchangers                                        (nphx)                            3  OP 
  
@@ -854,30 +854,30 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                  0.000  OP 
- Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)                85.658  OP 
- Total (MW)                                                                                            85.658  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)                85.660  OP 
+ Total (MW)                                                                                            85.660  OP 
  
- Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             575.507  OP 
+ Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             575.527  OP 
  Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw.)                  2.431  OP 
  Ohmic heating (MW)                                                       (pohmmw.)                     0.000  OP 
  Injected power deposited in plasma (MW)                                  (pinjmw)                      0.000  OP 
- Total (MW)                                                                                           577.938  OP 
+ Total (MW)                                                                                           577.958  OP 
  
  WARNING: Power balance across separatrix is in error by more than 5 MW.
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw.)                  3032.733  OP 
+ Fusion power (MW)                                                        (powfmw.)                  3032.839  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                     0.000  OP 
  Injected power (MW)                                                      (pinjmw.)                     0.000  OP 
  Ohmic power (MW)                                                         (pohmmw.)                     0.000  OP 
- Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 16.531  OP 
- Total (MW)                                                                                          3049.264  OP 
+ Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 16.532  OP 
+ Total (MW)                                                                                          3049.371  OP 
  
- Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            2940.282  OP 
+ Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            2940.385  OP 
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.094  OP 
- Heat extracted from divertor (MW)                                        (pthermdiv)                 412.684  OP 
+ Heat extracted from divertor (MW)                                        (pthermdiv)                 412.699  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
- Total (MW)                                                                                          3353.061  OP 
+ Total (MW)                                                                                          3353.179  OP 
  
  WARNING: Power balance for reactor is in error by more than 5 MW.
  Electrical Power Balance :
@@ -885,35 +885,35 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Net electric power output(MW)                                            (pnetelmw.)                1000.000  OP 
  Required Net electric power output(MW)                                   (pnetelin)                 1000.000     
  Electric power for heating and current drive (MW)                        (pinjwp)                      0.000  OP 
- Electric power for primary coolant pumps (MW)                            (htpmw)                      17.401  OP 
+ Electric power for primary coolant pumps (MW)                            (htpmw)                      17.402  OP 
  Electric power for vacuum pumps (MW)                                     (vachtmw)                     0.500     
  Electric power for tritium plant (MW)                                    (trithtmw)                   15.000     
  Electric power for cryoplant (MW)                                        (crypmw)                     59.328  OP 
  Electric power for TF coils (MW)                                         (tfacpd)                     60.859  OP 
  Electric power for PF coils (MW)                                         (pfwp)                        0.000  OP 
- All other internal electric power requirements (MW)                      (fachtmw)                    55.406  OP 
- Total (MW)                                                                                          1208.495  OP 
+ All other internal electric power requirements (MW)                      (fachtmw)                    55.448  OP 
+ Total (MW)                                                                                          1208.537  OP 
  
- Gross electrical output* (MW)                                            (pgrossmw)                 1208.495  OP 
+ Gross electrical output* (MW)                                            (pgrossmw)                 1208.537  OP 
  (*Power for pumps in secondary circuit already subtracted)
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw.)                  3032.733  OP 
+ Fusion power (MW)                                                        (powfmw.)                  3032.839  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                     0.000  OP 
- Total (MW)                                                                                          3032.733  OP 
+ Total (MW)                                                                                          3032.839  OP 
  
  Net electrical output (MW)	                                              (pnetelmw)                 1000.000  OP 
- Heat rejected by main power conversion circuit (MW)                      (rejected_main)            1731.882  OP 
- Heat rejected by other cooling circuits (MW)                             (psechtmw)                  604.648  OP 
- Total (MW)                                                                                          3336.530  OP 
+ Heat rejected by main power conversion circuit (MW)                      (rejected_main)            1731.943  OP 
+ Heat rejected by other cooling circuits (MW)                             (psechtmw)                  604.704  OP 
+ Total (MW)                                                                                          3336.647  OP 
  
  WARNING: Power balance for power plant is in error by more than 5 MW.
  
  Plant efficiency measures :
  
- Net electric power / total nuclear power (%)                             (pnetelmw/(powfmw+em         32.974  OP 
- Net electric power / total fusion power (%)                              (pnetelmw/powfmw)            32.974  OP 
+ Net electric power / total nuclear power (%)                             (pnetelmw/(powfmw+em         32.972  OP 
+ Net electric power / total fusion power (%)                              (pnetelmw/powfmw)            32.972  OP 
  Gross electric power* / high grade heat (%)                              (etath)                      41.100     
  (*Power for pumps in secondary circuit already subtracted)
  Recirculating power fraction                                             (cirpowfr)                    0.173  OP 

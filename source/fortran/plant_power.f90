@@ -110,6 +110,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  05/08/15 MDK Tweaked the terminology in the output, added output labels
     !+ad_hist  22/06/18 SIM Added tfacpd calculation for resistive coils
+    !+ad_hist  25/10/18 SIM Corrected ztot calculation (Issue #773)
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -139,13 +140,13 @@ contains
        abus = cpttf/jbus
 
        !  Bus resistance (ohm)
-       rhobus = 2.5D-8 * tfbusl/abus
+       rhobus = tflegres * tfbusl/abus
 
        !  Bus mass (kg)
-       tfbusmas = tfbusl * abus * 8000.0D0
+       tfbusmas = tfbusl * abus * dcopper
 
        !  Total maximum impedance MDK actually just fixed resistance
-       ztot = tfno*rhotfleg + rhocp + rhobus
+       ztot = tfno*rhotfleg + (prescp/ritfc**2) + rhobus
 
        !  No reactive portion of the voltage is included here - assume long ramp times
        !  MDK This is steady state voltage, not "peak" voltage
