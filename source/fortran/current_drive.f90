@@ -28,6 +28,7 @@ module current_drive_module
   !+ad_hist  19/06/14 PJK Removed obsolete routines nbeam, ech, lwhymod
   !+ad_hist  26/06/14 PJK Added error handling
   !+ad_hist  25/01/17 JM  Added case 10 for iefrf for user input ECRH
+  !+ad_hist  24/10/18 MDK Added case 11 for iefrf for ECRH using Poli model "HARE"
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -45,6 +46,7 @@ module current_drive_module
   use physics_variables
   use process_output
   use heat_transport_variables
+  use hare, only:hare_calc
 
   implicit none
 
@@ -195,6 +197,16 @@ contains
           effrfss = gamcd / (dene20 * rmajor)
           etacd = etaech
           effcd = effrfss
+
+      case (11)  ! ECRH Poli model "HARE"
+            ! call hare_calc(dens,bfield,R0,amin,rho,te,zeff,nout)
+            call hare_calc(10.5d19,5.66d0, 9.072d2,2.920d2,0.1d0,32.d0, 2.d0, nout)
+            ! Temporarily use the reference values for input to hare.
+            ! Ignore the output: use the fixed values from the input file.
+            gamcd = gamma_ecrh
+            effrfss = gamcd / (dene20 * rmajor)
+            etacd = etaech
+            effcd = effrfss
 
        case default
           idiags(1) = iefrf
