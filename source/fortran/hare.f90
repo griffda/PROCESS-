@@ -1,30 +1,36 @@
 module hare
 
 contains
-    subroutine hare_calc(dens,bfield,R0,amin,rho,te0,zeff, nout)
+    subroutine hare_calc(dens,bfield,R0m,amin_m,rho,te0,zeff,        &
+                         fshift,xf,enpa,ftherm,fpp,cdeff,ampperwatt, &
+                         Temperature_capped)
         use mode
         use param
         use freq
         use process_output, only:ocmmnt, ovarre, ovarin, ovarrf
         implicit none
-        real(rkind), intent(in) :: dens,bfield,R0,amin,rho,te0,zeff
-        integer(ikind), intent(in) :: nout
+        real(rkind), intent(in) :: dens,bfield,R0m,amin_m,rho,te0,zeff
+        real(rkind), intent(out) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
+        logical, intent(out) :: Temperature_capped
         real(rkind) :: acosarg,xnpa,enpep,angnb,op,oc
-        real(rkind) :: ocmax,ocmin,cdeff
-        real(rkind) :: delsq,xnpe,xf,enpa
+        real(rkind) :: ocmax,ocmin
+        real(rkind) :: delsq,xnpe
         real(rkind) :: facop,conf,bmin,bmax
-        real(rkind) :: uparm,gammam,mcsq,ftherm,fpp,sgnnpa,nharm
-        real(rkind) :: Ra,Rpp,fshift,fapp,Teomc2,nucycloc,fabs,extrafac
+        real(rkind) :: uparm,gammam,mcsq,sgnnpa,nharm
+        real(rkind) :: Ra,Rpp,fapp,Teomc2,nucycloc,fabs,extrafac
         real(rkind) :: deltarho
         real(rkind) :: bigG
-        real(rkind) :: perc, kAperMW
-        real(rkind) :: te
+        real(rkind) :: perc
+        real(rkind) :: te, R0, amin
         complex(rkind) :: ex,ey,ez
 
         integer(ikind) :: lh1
         integer(ikind) :: cdharm = 1
 
+
         external currn
+        R0 = R0m * 100.e0_rkind     ! Convert to cm
+        amin = amin_m * 100.e0_rkind     ! Convert to cm
 
         imod = 1
 
@@ -34,9 +40,10 @@ contains
         ! Cap temperature at 30 keV (mimick ECCD saturation)
         if (te0 > 3.e1_rkind) then
             te = 3.e1_rkind
-            write(*,*)'Temperature capped at 30 keV (mimick ECCD saturation)'
+            Temperature_capped = .TRUE.
         else
             te = te0
+            Temperature_capped = .FALSE.
         end if
 
         ! guess position on poloidal surface (here 60 deg)
@@ -97,8 +104,7 @@ contains
             xnpe = 1.e0_rkind-xnpa-op-op*(oc*(1.e0_rkind+xnpa)+sqrt(oc*delsq))/ &
             2.e0_rkind/(1.e0_rkind-oc-op)
         endif
-        !
-        !      enpa  = sqrt(xnpa)*cos(angnb)/abs(cos(angnb))
+
         angnb = acos(enpa/sqrt(xnpa+xnpe))
 
         ! Wave polarization, cold plasma
@@ -106,55 +112,12 @@ contains
 
         enpep=sqrt(xnpe)
 
-        ! >>>
-        !Only O-mode implemented!!!!
-        !      nharm = nharm+1.e0_rkind
-        !      te2 = te*6.7e-1_rkind
-        !      bf2 = bfield*R0/(R0+5.e-1_rkind*amin*acosarg)
-        !      drho2 = 1.e0_rkind-rho-5.e-1_rkind*deltarho
-        !      write(*,210)dens,bf2,te2,xf,enpa,drho2,angnb,amin,nharm,perc
-        !210   format(10(1x,1pe11.4))
-        !      call parasitic(dens,bf2,te2,xf,enpa,drho2,angnb,amin,nharm,perc)
-        !      print*,'Power fraction absorbed by 2nd harmonic',1.e0_rkind-perc
-
-        !do i=1,11
-        !   acosarg = real(i-1)*pi/1.e1_rkind
-        !   acosarg = cos(acosarg)
-
         call currn(om,acosarg,xk0,xnpa,enpep,angnb,op,oc,ocmax,ocmin, &
         te,zeff,cdeff,lh1,ex,ey,ez,cdharm)
 
         perc = 1.e0_rkind
-        kAperMW = perc*1.e3_rkind*cdeff/2.e0_rkind/pi/R0
-
-        print*,'Frequency = Optimum wave frequency for ECCD (GHz)',xf/1.e9_rkind
-        print*,'Nparallel ',enpa
-        print*,'f_T = ratio of energy of resonant electrons to kTe at point of maximum &
-                & absorption ',ftherm
-        print*,'f_pp = ratio of energy of resonant electrons to kTe at pinch &
-                        & point',fpp
-        print*,'cdeff = Normalised current drive efficiency (eq 34: eta &
-                & = Icd.2.pi.R0 / P )  (Am/W)', cdeff
-        print*,'curr = Driven current per unit absorbed power (kA/MW) ', &
-                perc*1.e3_rkind*cdeff/2.e0_rkind/pi/R0
-
-        write(*,*)nout
-
-        call ocmmnt(nout,'ECCD results from "HARE" ')
-        call ocmmnt(nout,'("Fast evaluation of the current driven by electron &
-                          &cyclotron waves for reactor studies", E. Poli)')
-        call ocmmnt(nout,'Frequency shift = wave frequency / cold cyclotron resonance frequency on plasma axis')
-        call ovarrf(nout,'Frequency shift','(fshift)', fshift, 'OP ')
-        call ovarrf(nout,'Optimum wave frequency for ECCD (GHz)','(xf/1e9)', xf/1.e9_rkind, 'OP ')
-        call ovarrf(nout,'Nparallel','(enpa)', enpa, 'OP ')
-        call ovarrf(nout,'fT = Energy of resonant electrons / kTe at point of max absorption','(ftherm)', ftherm, 'OP ')
-        call ovarrf(nout,'Ratio of energy of resonant electrons to kTe at pinch &
-                         & point','(fpp)', fpp, 'OP ')
-        call ovarrf(nout,'Normalised CD efficiency: eta = Icd.2.pi.R0 / P (Am/W)','(cdeff)', cdeff, 'OP ')
-        call ovarrf(nout,'Driven current per unit absorbed power (kA/MW) ','(kAperMW)', kAperMW, 'OP ')
-
-
-        !enddo
+        !kAperMW = perc*1.e3_rkind*cdeff/2.e0_rkind/pi/R0
+        ampperwatt = perc*cdeff/2.e0_rkind/pi/R0
 
     end subroutine hare_calc
 

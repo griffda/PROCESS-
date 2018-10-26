@@ -94,7 +94,7 @@ subroutine currn(om,zacosarg,xk0,xnpa,enpep,angnb,op,oc,ocmax,ocmin, &
     CALL TorGA_curgap(rjpdh,rjpd0h,ratjpd,denom,aspct,enpa,xnperp, &
     imod,cefldx,cefldy,cefldz,te,thtc,theta,elomom,lh,ezeff,modelc, &
     tolcur,ngauss,ig,cdharm)
-
+    
     rjpd = rjpd + rjpdh
     rjpd0 = rjpd0 + rjpd0h
 
@@ -102,6 +102,7 @@ subroutine currn(om,zacosarg,xk0,xnpa,enpep,angnb,op,oc,ocmax,ocmin, &
     cdeff = rjpd
 
     rjpd0 = rjpd0 * zfac
+
 
     ! #ifdef PERF
     !   call profend('currn')  ! time profiling

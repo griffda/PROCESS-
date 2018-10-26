@@ -66,9 +66,9 @@ module scan_module
 
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
-  
-  !+ad_vars  ipnscnv /42/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 42
+
+  !+ad_vars  ipnscnv /43/ FIX : number of available scan variables
+  integer, parameter :: ipnscnv = 43
 
   !+ad_vars  scan_dim /1/ : 1-D or 2-D scan switch (1=1D, 2=2D)
   integer :: scan_dim = 1
@@ -121,7 +121,8 @@ module scan_module
   !+ad_varc          <LI> 39 Argon upper limit
   !+ad_varc          <LI> 40 Xenon upper limit
   !+ad_varc          <LI> 41 blnkoth
-  !+ad_varc          <LI> 42 Argon fraction fimp(9)</UL>
+  !+ad_varc          <LI> 42 Argon fraction fimp(9)
+  !+ad_varc          <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum</UL>
   integer :: nsweep = 1
 
   !+ad_vars  nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
@@ -309,7 +310,7 @@ contains
     end if
 
     do iscan = 1,isweep
-       
+
         ! Makes iscan available globally (read-only)
         iscan_global = iscan
 
@@ -553,35 +554,35 @@ contains
         plabel(81) = 'Xe_concentration_________'
         plabel(82) = 'W__concentration_________'
         plabel(83) = 'teped____________________'
- 
+
         call ovarin(mfile,'Number of scan points','(isweep)',isweep)
         call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
- 
+
         first_call = .false.
     end if
- 
+
     iscan = 1
 
     do iscan_1 = 1, isweep
 
         do iscan_2 = 1, isweep_2
-        
+
             ! Makes iscan available globally (read-only)
             iscan_global = iscan
- 
+
             call scan_select(nsweep, sweep, iscan_1, vlabel, xlabel)
             call scan_select(nsweep_2, sweep_2, iscan_2, vlabel_2, xlabel_2)
- 
+
             ! Write banner to output file
             call oblnkl(nout)
             call ostars(nout,width)
-            write(nout,10) iscan, isweep*isweep_2, trim(vlabel), & 
+            write(nout,10) iscan, isweep*isweep_2, trim(vlabel), &
                 sweep(iscan_1), trim(vlabel_2), sweep_2(iscan_2)
         ! 10    format(a, i2, a, i2, 5a, 1pe10.3, a)
         10  format(' ***** 2D scan point ', i3, ' of ', i3, ' : ', a, ' = ', &
                    1pe10.3, ' and ', a, ' = ', 1pe10.3, ' *****')
             call ostars(nout,width)
- 
+
             ! Write additional information to mfile
             call oblnkl(mfile)
             call ovarin(mfile,'Scan point number','(iscan)',iscan)
@@ -594,10 +595,10 @@ contains
                    1pe10.3, ' and ', a, ', ', a, ' = ', 1pe10.3)
             call doopt(ifail)
             call final(ifail)
- 
+
             ! Turn off error reporting (until next output)
             errors_on = .false.
- 
+
             ! Store values for PLOT.DAT output
             outvar( 1,iscan) = dble(ifail)
             outvar( 2,iscan) = sqsumsq
@@ -693,13 +694,13 @@ contains
             iscan = iscan + 1
         end do  !  End of scanning loop
     end do  !  End of scanning loop
- 
+
     ! Finally, write data to PLOT.DAT
     write(nplot,'(i8)') isweep*isweep_2
     write(nplot,'(a48)') tlabel
     write(nplot,'(a25, 1p, 200e11.4)') xlabel, (sweep_1_vals(iscan), iscan=1, &
           isweep*isweep_2)
-    write(nplot,'(a25, 1p, 200e11.4)') xlabel_2, (sweep_2_vals(iscan), & 
+    write(nplot,'(a25, 1p, 200e11.4)') xlabel_2, (sweep_2_vals(iscan), &
           iscan=1, isweep*isweep_2)
 
     do ivar = 1, noutvars
@@ -857,6 +858,9 @@ contains
             fimp(9) = swp(iscn)
             impurity_arr(9)%frac = fimp(9)
             vlab = 'fimp(9)' ; xlab = 'Argon fraction'
+        case (43)
+            rho_ecrh = swp(iscn)
+            vlab = 'rho_ecrh' ; xlab = 'rho at which ECCD is max'
         case default
             idiags(1) = nwp ; call report_error(96)
 
