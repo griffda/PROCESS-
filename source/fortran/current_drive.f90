@@ -435,6 +435,8 @@ contains
         call ocmmnt(nout,'("Fast evaluation of the current driven by electron &
                           &cyclotron waves for reactor studies", E. Poli)')
         call ovarrf(nout,'Normalised minor radius at which ECCD is maximum','(rho_ecrh)', rho_ecrh)
+        call ovarre(nout,'Density at radius of maximum ECCD (m-3)','(dens_at_rho)', dens_at_rho, 'OP ')
+        call ovarrf(nout,'Temperature at radius of maximum ECCD (keV)','(te_at_rho)', te_at_rho, 'OP ')
         if(Temperature_capped)then
             call ocmmnt(nout,'Temperature at point of max absorption capped at 30 keV to mimic ECCD saturation')
         end if
