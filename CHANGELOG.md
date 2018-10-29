@@ -17,6 +17,7 @@
 - Corrected units on ucme and uciac in global variables.
 - Fixed issue with plot_proc.py scan counting (Issue #748)
 - Fixed issue with run_process.py not working (Issue #766)
+- Switched obsolete estotf for estotftgj in stellarator 
 - Corrected ztot calculation in tfpwr subroutine for resistive TF coils (#773)
 
 ## Features
