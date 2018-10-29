@@ -117,12 +117,7 @@ program process
   mainRun : if (inExist) then
 
     !  Initialise
-    call init
-
-    ! Test the "HARE" ECCD module
-    ! call hare_calc(dens,bfield,R0,amin,rho,te,zeff,nout)
-    !call hare_calc(10.5d19,5.66d0, 9.072d2,2.920d2,0.1d0,32.d0, 2.d0, nout)
-    !stop
+    call init    
 
     ! Run built-in tests.
     ! These are distinct from the tests that are dependent on 'unit_test'.

@@ -1088,6 +1088,7 @@ module current_drive_variables
   real(kind(1.0D0)) :: gamma_ecrh = 0.35D0
   !+ad_vars  rho_ecrh /0.1/ : normalised minor radius at which electron cyclotron current drive is maximum
   real(kind(1.0D0)) :: rho_ecrh = 0.1D0
+
   !+ad_vars  iefrf /5/ : switch for current drive efficiency model: <OL>
   !+ad_varc         <LI> Fenstermacher Lower Hybrid
   !+ad_varc         <LI> Ion Cyclotron current drive
