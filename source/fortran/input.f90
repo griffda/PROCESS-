@@ -399,7 +399,7 @@ contains
        iptr = 1
 
        !Ignore input comments denoted by asterisk, before assigning variables
-       
+
        if (index(line,'*') > 0) then
           foundAst = index(line,'*') - 1
           linelen = min(linelen, foundAst)
@@ -539,7 +539,7 @@ contains
                'Max epsilon*beta value')
        case ('eped_sf')
           call parse_real_variable('eped_sf', eped_sf, 0.0001D0, 2.0D0, &
-               'Scaling factor for EPED pedestal model')   
+               'Scaling factor for EPED pedestal model')
        case ('falpha')
           call parse_real_variable('falpha', falpha, 0.0D0, 1.0D0, &
                'Fraction of alpha power deposited to plasma')
@@ -1264,8 +1264,12 @@ contains
        case ('gamma_ecrh')
           call parse_real_variable('gamma_ecrh', gamma_ecrh, 0.0D0, 1.0D0, &
                'User input ECRH gamma_CD')
+       case ('rho_ecrh')
+          call parse_real_variable('rho_ecrh', rho_ecrh, 0.0D0, 1.0D0, &
+               'normalised minor radius at which electron cyclotron current drive is maximum')
+
        case ('iefrf')
-          call parse_int_variable('iefrf', iefrf, 1, 10, &
+          call parse_int_variable('iefrf', iefrf, 1, 11, &
                'Switch for curr drive efficiency model')
        case ('irfcd')
           call parse_int_variable('irfcd', irfcd, 0, 1, &
@@ -3563,7 +3567,7 @@ contains
           write(*,*) xstr
           write(*,*) 'Comments should be indicated by an asterisk (*)'
           error = .True.
-       end if															 
+       end if
        icode = 1
     end if
 
@@ -3759,12 +3763,12 @@ contains
     ! *** Errors
 
 60  continue
-    
+
     write(*,*) 'Problem with IN file, please check line'
     write(*,*) string
     write(*,*) 'Comments should be indicated by an asterisk (*)'
     error = .True.
-    
+
     icode = 1
 
 1000 continue
@@ -3822,7 +3826,7 @@ contains
     end if
 
     if (iptr > linelen) goto 60
-    
+
 ! 40     continue !KE I guess I can remove this too
 
     ! *** Put rest of line into varval (makes it easier to parse)

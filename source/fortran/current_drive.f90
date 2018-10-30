@@ -28,6 +28,7 @@ module current_drive_module
   !+ad_hist  19/06/14 PJK Removed obsolete routines nbeam, ech, lwhymod
   !+ad_hist  26/06/14 PJK Added error handling
   !+ad_hist  25/01/17 JM  Added case 10 for iefrf for user input ECRH
+  !+ad_hist  24/10/18 MDK Added case 11 for iefrf for ECRH using Poli model "HARE"
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -45,6 +46,7 @@ module current_drive_module
   use physics_variables
   use process_output
   use heat_transport_variables
+  use hare, only:hare_calc
 
   implicit none
 
@@ -117,6 +119,10 @@ contains
     !!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: dene20, effnbss, effrfss, gamnb, gamrf, power1
+    real(kind(1.0D0)) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
+    real(kind(1.0D0)) :: dens_at_rho, te_at_rho
+    logical :: Temperature_capped
+    real(kind(1.0D0)) :: auxiliary_cd
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -193,8 +199,23 @@ contains
 
           gamcd = gamma_ecrh
           effrfss = gamcd / (dene20 * rmajor)
-          etacd = etaech
+          !etacd = etaech
           effcd = effrfss
+
+       case (11)  ! ECRH Poli model "HARE"
+          ! Density and temperature at the requested radius of maximum current drive
+          dens_at_rho = nprofile(rho_ecrh, rhopedn, ne0, neped, nesep, alphan)
+          te_at_rho = tprofile(rho_ecrh,rhopedt,te0,teped,tesep,alphat,tbeta)
+          !call hare_calc(10.5d19,5.66d0, 9.072d2,2.920d2,0.1d0,32.d0, 2.d0, &..
+          call hare_calc(dens_at_rho,bt, rmajor,rminor,rho_ecrh,te_at_rho, zeff, &
+                                 fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt,  &
+                                 Temperature_capped)
+          ! HARE generates negative current.
+          ampperwatt = abs(ampperwatt)
+          cdeff = abs(cdeff)
+          effcd = ampperwatt
+          gamcd = effcd * dene20 * rmajor
+          effrfss = effcd
 
        case default
           idiags(1) = iefrf
@@ -203,6 +224,7 @@ contains
        end select
 
        ! Compute current drive wall plug and injected powers (MW) and efficiencies
+       auxiliary_cd = faccd * plascur
        select case (iefrf)
 
        case (1,2,4,6)  ! LHCD or ICCD
@@ -223,7 +245,7 @@ contains
           gamrf = effrfss * (dene20 * rmajor)
           gamcd = gamrf
 
-       case (3,7,10)  ! ECCD
+      case (3,7,10,11)  ! ECCD
 
           echpwr = 1.0D-6 * faccd * plascur / effrfss + pheat
           pinjimw = 0.0D0
@@ -232,10 +254,7 @@ contains
           pinjwp = echwpow
           etacd = etaech
 
-
        case (5,8)  ! NBCD
-
-
 
           ! MDK. See Gitlab issue #248, and scanned note.
           power1 = 1.0D-6 * faccd * plascur / effnbss + pheat
@@ -263,8 +282,6 @@ contains
           pinjimw = pinjmw * fpion
           pinjemw = pinjmw * (1.0D0-fpion)
 
-
-
           pwpnb = pnbitot/etanbi ! neutral beam wall plug power
           pinjwp = pwpnb
           etacd = etanbi
@@ -274,8 +291,7 @@ contains
 
 !	  write(*,*) power1,fpion,pwpnb,pinjwp,etacd,gamnb,gamcd,cnbeam
 
-       case (9)  ! OFCD
-          ! RFP option removed in PROCESS (issue #508)
+       case (9)  ! OFCD - RFP option removed in PROCESS (issue #508)
 
        end select
 
@@ -314,22 +330,16 @@ contains
 
     case (1,4,6)
        call ocmmnt(outfile,'Lower Hybrid Current Drive')
-
     case (2)
        call ocmmnt(outfile,'Ion Cyclotron Current Drive')
-
     case (3,7)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive')
-
     case (5,8)
        call ocmmnt(outfile,'Neutral Beam Current Drive')
-
     case (9)
        ! RFP option removed in PROCESS (issue #508)
-
     case (10)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive (user input gamma_CD)')
-
     end select
 
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
@@ -348,6 +358,7 @@ contains
 
     call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', '(pheat)', pheat)
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq, 'OP ')
+    call ovarre(outfile,'Auxiliary current drive (A)','(auxiliary_cd)',auxiliary_cd, 'OP ')
     call ovarre(outfile,'Current drive efficiency (A/W)','(effcd)',effcd, 'OP ')
     call ovarre(outfile,'Normalised current drive efficiency, gamma (10^20 A/W-m2)', &
          '(gamcd)',gamcd, 'OP ')
@@ -418,6 +429,28 @@ contains
        call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
        call ovarre(outfile,'ECH wall plug power (MW)','(echwpow)',echwpow, 'OP ')
     end if
+
+    if (iefrf == 11) then  ! HARE ECRH
+        call ocmmnt(nout,'ECCD results from "HARE" ')
+        call ocmmnt(nout,'("Fast evaluation of the current driven by electron &
+                          &cyclotron waves for reactor studies", E. Poli)')
+        call ovarrf(nout,'Normalised minor radius at which ECCD is maximum','(rho_ecrh)', rho_ecrh)
+        call ovarre(nout,'Density at radius of maximum ECCD (m-3)','(dens_at_rho)', dens_at_rho, 'OP ')
+        call ovarrf(nout,'Temperature at radius of maximum ECCD (keV)','(te_at_rho)', te_at_rho, 'OP ')
+        if(Temperature_capped)then
+            call ocmmnt(nout,'Temperature at point of max absorption capped at 30 keV to mimic ECCD saturation')
+        end if
+        call ocmmnt(nout,'Frequency shift = wave frequency / cold cyclotron resonance frequency on plasma axis')
+        call ovarrf(nout,'Frequency shift','(fshift)', fshift, 'OP ')
+        call ovarrf(nout,'Optimum wave frequency for ECCD (GHz)','(xf/1e9)', xf/1.d9, 'OP ')
+        call ovarrf(nout,'Nparallel','(enpa)', enpa, 'OP ')
+        call ovarrf(nout,'fT = Energy of resonant electrons / kTe at point of max absorption','(ftherm)', ftherm, 'OP ')
+        call ovarrf(nout,'Ratio of energy of resonant electrons to kTe at pinch &
+                         & point','(fpp)', fpp, 'OP ')
+        ! cdeff needs to be converted to SI units.  Best leave it out altogether.
+        !call ovarrf(nout,'Normalised CD efficiency: eta = Icd.2.pi.R0 / P (Am/W)','(cdeff)', cdeff, 'OP ')
+        call ovarrf(nout,'Driven current per unit absorbed power (A/W) ','(ampperwatt)', ampperwatt, 'OP ')
+   end if
 
   end subroutine cudriv
 

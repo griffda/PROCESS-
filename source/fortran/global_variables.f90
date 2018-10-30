@@ -1086,6 +1086,9 @@ module current_drive_variables
   real(kind(1.0D0)) :: gamcd = 0.0D0
   !+ad_vars  gamma_ecrh /0.35/ : user input ECRH gamma (1.0e20 A/(W m^2))
   real(kind(1.0D0)) :: gamma_ecrh = 0.35D0
+  !+ad_vars  rho_ecrh /0.1/ : normalised minor radius at which electron cyclotron current drive is maximum
+  real(kind(1.0D0)) :: rho_ecrh = 0.1D0
+
   !+ad_vars  iefrf /5/ : switch for current drive efficiency model: <OL>
   !+ad_varc         <LI> Fenstermacher Lower Hybrid
   !+ad_varc         <LI> Ion Cyclotron current drive
@@ -1096,7 +1099,8 @@ module current_drive_variables
   !+ad_varc         <LI> new Culham ECCD model
   !+ad_varc         <LI> new Culham Neutral Beam model
   !+ad_varc         <LI> Empty (Oscillating field CD removed)
-  !+ad_varc         <LI> ECRH user input gamma </OL>
+  !+ad_varc         <LI> ECRH user input gamma
+  !+ad_varc         <LI> ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </OL>
   integer :: iefrf = 5
   !+ad_vars  irfcd /1/ : switch for current drive calculation:<UL>
   !+ad_varc         <LI> = 0 turned off;
@@ -4507,7 +4511,7 @@ module resistive_materials
   !+ad_type  Module
   !+ad_docs  TODO
   implicit none ! ---------------------------------------------------------
-  
+
   type resistive_material
      real(kind(1.0D0)) :: cp            ! Specific heat capacity J/(K kg).
      real(kind(1.0D0)) :: rrr           ! Residual resistivity ratio
@@ -4515,12 +4519,12 @@ module resistive_materials
      real(kind(1.0D0)) :: density       ! kg/m3
      real(kind(1.0D0)) :: cp_density    ! Cp x density J/K/m3
   end type resistive_material
-  
+
   type supercon_strand
      real(kind(1.0D0)) :: area
      real(kind(1.0D0)) :: critical_current
   end type supercon_strand
-  
+
   type volume_fractions
      real(kind(1.0D0)) :: copper_area,    copper_fraction
      real(kind(1.0D0)) :: copper_bar_area,copper_bar_fraction
@@ -4540,7 +4544,7 @@ end module resistive_materials
 !------------------------------------------------------------------------
 
 module reinke_variables
-  
+
   !+ad_name  reinke_variables
   !+ad_summ  Module containing global variables relating to the
   !+ad_summ  Reinke Criterion
@@ -4564,11 +4568,11 @@ module reinke_variables
 
   public
 
- 
-  !+ad_vars  impvardiv /9/ : index of impurity to be iterated for 
-  !+ad_varc           Reinke divertor detachment criterion 
+
+  !+ad_vars  impvardiv /9/ : index of impurity to be iterated for
+  !+ad_varc           Reinke divertor detachment criterion
   integer       :: impvardiv = 9
-  
+
   !+ad_vars  lhat /4.33/ : connection length factor L|| = lhat qstar R
   !+ad_varc                for Reinke criterion, default value from
   !+ad_varc                Post et al. 1995 J. Nucl. Mat.  220-2 1014
@@ -4577,15 +4581,12 @@ module reinke_variables
   !+ad_vars  fzmin : Minimum impurity fraction necessary for detachment
   !+ad_varc          This is the impurity at the SOL/Div
   real(kind(1.0D0)) :: fzmin = 0.0D0
-  
+
   !+ad_vars  fzactual : Actual impurity fraction of divertor impurity
   !+ad_varc             (impvardiv) in the SoL (taking impurity_enrichment
   !+ad_varc             into account) (iteration variable 148)
   real(kind(1.0D0)) :: fzactual = 0.001D0
-  
+
 end module reinke_variables
 
   !------------------------------------------------------------------------
-
-
-

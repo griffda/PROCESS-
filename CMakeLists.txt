@@ -32,7 +32,7 @@ elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL PGI)
   message( FATAL_ERROR "Please unload pgi(module unload pgi) and load gfortran "
           "(module load gfortran) " )
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
-  execute_process(COMMAND gfortran --version 
+  execute_process(COMMAND gfortran --version
                   OUTPUT_VARIABLE GFORT_COMPILER_VERSION)
   message(STATUS, ${GFORT_COMPILER_VERSION})
 else()
@@ -101,29 +101,34 @@ endif()
 
 
 set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} ${bounds}")
-#set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${dialect} -cpp -g -fbounds-check -Wconversion -Wunused-dummy-argument -Wunused-parameter")
-# set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fbounds-check -Wconversion -Wunused-dummy-argument -Wunused")
-set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fbounds-check")
+#set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${dialect} -cpp -g -fcheck=bounds -Wconversion -Wunused-dummy-argument -Wunused-parameter")
+# set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fcheck=bounds -fbacktrace-Wconversion -Wunused-dummy-argument -Wunused")
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fcheck=bounds -fbacktrace")
+# -Wall -Wextra -Wunused   have been removed for convenience
 
 message("\nFlag configuration for files")
 file(GLOB FORTRAN_FILES ${FORT_SOURCE_DIR}/*.f90)
 foreach(file ${FORTRAN_FILES})
   if(${file} MATCHES "fson_library.f90")
     message("-- Removed -Wconversion flag for -> " ${file})
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wunused-dummy-argument -Wunused")
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wunused-dummy-argument -Wunused -fcheck=bounds -fbacktrace")
   elseif(${file} MATCHES "maths_library.f90")
     message("-- Removed -Wunused-dummy-argument flag for --> " ${file})
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused")
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused -fcheck=bounds -fbacktrace")
   elseif(${file} MATCHES "superconductors.f90")
     message("-- Removed -Wunused-dummy-argument flag for --> " ${file})
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused")
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused -fcheck=bounds -fbacktrace")
   elseif(${file} MATCHES "fispact.f90")
     message("-- Use legacy flag for --> " ${file})
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-std=legacy")
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-std=legacy -fcheck=bounds -fbacktrace")
+  elseif(${file} MATCHES "TorGA_curgap.f90")
+    message("-- Use -fcheck=bounds -fbacktrace flags for --> " ${file})
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch")
   else()
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused-dummy-argument -Wunused")
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
   endif()
 endforeach()
+message("-- COMPILE_FLAGS for all other fortran files = -Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
 
 message("\n")
 message("Fortran compiler used in this build will be -> ${CMAKE_Fortran_COMPILER_ID}")  # Must be after project(project_name)
@@ -340,6 +345,6 @@ endif()
 install(TARGETS process.exe DESTINATION ${CMAKE_SOURCE_DIR})
 add_custom_command(TARGET process.exe
  POST_BUILD
- COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR} 
- COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/${CMAKE_CALC_ENGINE} ${CMAKE_SOURCE_DIR} 
+ COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}
+ COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/${CMAKE_CALC_ENGINE} ${CMAKE_SOURCE_DIR}
 )
