@@ -117,6 +117,7 @@ contains
     !+ad_hisc 				rtot (issue #221)
     !+ad_hist  19/11/15 RK  Added pre-compression structure, thermal shield, and TF angular correction
     !+ad_hist  01/11/16 JM  Added iprecomp switch for pre-compression structure calc. If 0 precomp=0
+    !+ad_hist  21/05/18 SIM Added deltf to output for ST (Issue #704)
     !+ad_stat  Okay
     !+ad_docs  None
     !

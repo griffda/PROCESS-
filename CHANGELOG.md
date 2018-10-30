@@ -16,6 +16,9 @@
 - Corrected units in resistive TF coil stress output
 - Corrected units on ucme and uciac in global variables.
 - Fixed issue with plot_proc.py scan counting (Issue #748)
+- Fixed issue with run_process.py not working (Issue #766)
+- Switched obsolete estotf for estotftgj in stellarator 
+- Corrected ztot calculation in tfpwr subroutine for resistive TF coils (#773)
 
 ## Features
 
@@ -39,11 +42,11 @@ PLASMOD
  - Does the scan in a basic grid like manner (i.e. jumps to start of next row from end of previous). Would be nice to upgrade to 'zig-zag'-like approach.
 
 Utilities
-	- New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
-	- evaluate_uncertainties.py now outputs and additional file to allow analysis of failed PROCESS Runs.
-	- New script plot_sankey.py to plot a Sankey diagram of the PROCESS power flow
-  - New scripts cost_pie.py and cost_bar.py to analyse cost data.
-  - New script popcon.py to plot POPCON plot from MFILE.
+ - New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
+ - evaluate_uncertainties.py now outputs and additional file to allow analysis of failed PROCESS Runs.
+ - New script plot_sankey.py to plot a Sankey diagram of the PROCESS power flow
+ - New scripts cost_pie.py and cost_bar.py to analyse cost data.
+ - New script popcon.py to plot POPCON plot from MFILE.
 
 Miscellaneous
 - TF stress in conduit Tresca criterion can now have regular and CEA adjusted options 
@@ -77,8 +80,6 @@ Miscellaneous
 - Added error reporting to function ncore (Issue #735)
 - Added input `plasma_res_factor` for adjustment factor for plasma resistivity. Default is 1.0   to preserve old behaviour.
 - Added additional scaling factor 'eped_sf' for the EPED pedestal model (pressure and temperature versions).
-<<<<<<< HEAD
 - Slight change to functionality of utilities/write_new_in_dat.py: This script will no longer create a new IN.DAT from a non-feasible solution. If a scan is run, it will take by default the last feasible solution. If required there is also an option to use the first feasible solution from a scan (Issue #752).
-=======
--Made more robust the reading of input files - comments are now denoted only via an asterisk (*), and if a comment is present without an asterisk the reading of the input file will stop (previously it simply ignored constraint equations and iteration variables that could not be read). It is no longer permissible to write an input over multiple lines. Users can now use punctuation in comments as they wish, including full stops and commas.
->>>>>>> develop_unit_tests
+- Made more robust the reading of input files - comments are now denoted only via an asterisk (*), and if a comment is present without an asterisk the reading of the input file will stop (previously it simply ignored constraint equations and iteration variables that could not be read). It is no longer permissible to write an input over multiple lines. Users can now use punctuation in comments as they wish, including full stops and commas.
+- Stellarator radial build is output to MFILE (Issue #770)
