@@ -23,7 +23,7 @@ before_script:
 build:Make:
 # image: ukaea/ubuntu
  only:
-  - develop 
+  - develop
  stage: build
  script:
   - pwd

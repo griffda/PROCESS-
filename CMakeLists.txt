@@ -141,13 +141,8 @@ set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_PATH /usr/lib)
 add_custom_target(autodoc
-<<<<<<< HEAD
 COMMAND ${FORTRAN} -o autodoc autodoc.f90
 WORKING_DIRECTORY ${FORT_SOURCE_DIR}
-=======
-  COMMAND ${FORTRAN} -o autodoc autodoc.f90
-  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
->>>>>>> develop_unit_tests
   DEPENDS ${FORT_SOURCE_DIR}/autodoc.f90
 #  VERBATIM
 )
