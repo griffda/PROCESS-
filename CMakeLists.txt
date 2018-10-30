@@ -15,7 +15,7 @@ set(CMAKE_CXX_FLAGS  -std=c++11)
 
 # Setup GoogleTest options
 set(GTEST_LIBRARY $ENV{GTEST}/lib)
-#set(GTEST_INCLUDE_DIR $ENV{GTEST}/include)
+set(GTEST_INCLUDE_DIR $ENV{GTEST}/include)
 include_directories(${GTEST_INCLUDE_DIR})
 set(GTEST_MAIN_LIBRARY $ENV{GTEST})
 
@@ -24,7 +24,7 @@ set(CMAKE_Fortran_Compiler gfortran)
 
 # Project's name
 project(PROCESS LANGUAGES Fortran CXX)
-set(CMAKE_Fortran_COMPILER_ID "GNU")
+
 # enable Fortran
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
   message(STATUS, "Intel ")
@@ -123,13 +123,12 @@ foreach(file ${FORTRAN_FILES})
     set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-std=legacy -fcheck=bounds -fbacktrace")
   elseif(${file} MATCHES "TorGA_curgap.f90")
     message("-- Use -fcheck=bounds -fbacktrace flags for --> " ${file})
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace")
-
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch")
   else()
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wall -Wextra")
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
   endif()
 endforeach()
-message("-- COMPILE_FLAGS for all other fortran files = -Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wall -Wextra")
+message("-- COMPILE_FLAGS for all other fortran files = -Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
 
 message("\n")
 message("Fortran compiler used in this build will be -> ${CMAKE_Fortran_COMPILER_ID}")  # Must be after project(project_name)
