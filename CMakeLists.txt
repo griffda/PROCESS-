@@ -24,7 +24,7 @@ set(CMAKE_Fortran_Compiler gfortran)
 
 # Project's name
 project(PROCESS LANGUAGES Fortran CXX)
-
+set(CMAKE_Fortran_COMPILER_ID "GNU")
 # enable Fortran
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
   message(STATUS, "Intel ")
