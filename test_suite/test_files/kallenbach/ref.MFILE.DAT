@@ -3,12 +3,12 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.13   "
- Date_of_run_____________________________________________________________ (date)________________________     "05/10/2018"
- Time_of_run_____________________________________________________________ (time)________________________     "09:28"
+ Date_of_run_____________________________________________________________ (date)________________________     "30/10/2018"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:08"
  User____________________________________________________________________ (username)____________________     "morrisj" 
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "kallenbach divertor model                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.13-498-ga347e11"                                                                               
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Included develop branch in GitLab CI system,"                                                      
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.13-576-gfdcda0e"                                                                               
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge develop_unit_tests into develop,"                                                            
  Number_of_scan_points___________________________________________________ (isweep)______________________              1    
  Scanning_variable_number________________________________________________ (nsweep)______________________             36    
  
@@ -20,9 +20,9 @@
  Number_of_constraints_(total)___________________________________________ (neqns+nineqns)_______________             24    
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________              1    
- Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      6.8997E-07 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      4.2022E-08 OP 
- Number_of_VMCON_iterations______________________________________________ (nviter)______________________             16 OP 
+ Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      9.5253E-08 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      2.8104E-08 OP 
+ Number_of_VMCON_iterations______________________________________________ (nviter)______________________             48 OP 
  bt______________________________________________________________________ (itvar001)____________________      5.0392E+00    
  bt_(final_value/initial_value)__________________________________________ (xcm001)______________________      1.0154E+00    
  bt_(range_normalised)___________________________________________________ (nitvar001)___________________      5.0343E-01    
@@ -58,7 +58,7 @@
  ohcth_(range_normalised)________________________________________________ (nitvar011)___________________      0.0000E+00    
  q_______________________________________________________________________ (itvar012)____________________      3.0000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm012)______________________      1.0000E+00    
- q_(range_normalised)____________________________________________________ (nitvar012)___________________      1.4173E-17    
+ q_(range_normalised)____________________________________________________ (nitvar012)___________________      0.0000E+00    
  ftburn__________________________________________________________________ (itvar013)____________________      1.0020E+00    
  ftburn_(final_value/initial_value)______________________________________ (xcm013)______________________      1.0000E+00    
  ftburn_(range_normalised)_______________________________________________ (nitvar013)___________________      1.0000E+00    
@@ -149,30 +149,30 @@
  fimp(13)________________________________________________________________ (itvar042)____________________      4.8356E-04    
  fimp(13)_(final_value/initial_value)____________________________________ (xcm042)______________________      1.4418E+00    
  fimp(13)_(range_normalised)_____________________________________________ (nitvar042)___________________      4.8356E-02    
- Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -4.0112E-13    
- Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      6.5414E-13    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________     -3.1530E-14    
- Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________      2.0455E-12    
- Toroidal_field_1/R_consistency____normalised_residue____________________ (normres005)__________________     -2.5202E-14    
- Radial_build_consistency__________normalised_residue____________________ (normres006)__________________      1.9540E-14    
- Burn_time_lower_limit_____________normalised_residue____________________ (normres007)__________________      7.9159E-09    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________     -7.9958E-12    
- Net_electric_power_lower_limit____normalised_residue____________________ (normres009)__________________      2.8928E-06    
- Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________     -3.8725E-13    
- Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________      8.4599E-14    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres012)__________________      1.4999E-10    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres013)__________________      1.8258E-10    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres014)__________________      4.9047E-10    
- J_winding_pack/J_protection_limit_normalised_residue____________________ (normres015)__________________      4.2855E-14    
- TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres016)__________________      4.8856E-12    
- CS_temperature_margin_lower_limit_normalised_residue____________________ (normres017)__________________     -6.8990E-07    
- taup/taueff_______________________normalised_residue____________________ (normres018)__________________      3.8325E-13    
- Dump_time_set_by_VV_stress________normalised_residue____________________ (normres019)__________________     -3.7192E-14    
- Rate_of_change_of_energy_in_field_normalised_residue____________________ (normres020)__________________      6.9842E-10    
- pdivt_<_psep_kallenbach_divertor__normalised_residue____________________ (normres021)__________________     -5.4649E-09    
- Separatrix_temp_consistency_______normalised_residue____________________ (normres022)__________________     -1.3330E-09    
- Separatrix_density_consistency____normalised_residue____________________ (normres023)__________________      8.0773E-10    
- CS_Tresca_stress_limit____________normalised_residue____________________ (normres024)__________________     -1.3735E-12    
+ Beta_consistency__________________normalised_residue____________________ (normres001)__________________      2.6434E-12    
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -4.2356E-12    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      3.4039E-13    
+ Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -1.2821E-11    
+ Toroidal_field_1/R_consistency____normalised_residue____________________ (normres005)__________________      2.7800E-13    
+ Radial_build_consistency__________normalised_residue____________________ (normres006)__________________     -1.4611E-13    
+ Burn_time_lower_limit_____________normalised_residue____________________ (normres007)__________________     -6.9857E-08    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________      5.2079E-11    
+ Net_electric_power_lower_limit____normalised_residue____________________ (normres009)__________________      2.8959E-06    
+ Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________      2.5457E-12    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________     -4.7340E-13    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres012)__________________     -1.1303E-09    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres013)__________________     -1.3759E-09    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres014)__________________     -3.6961E-09    
+ J_winding_pack/J_protection_limit_normalised_residue____________________ (normres015)__________________     -3.7437E-13    
+ TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres016)__________________     -3.7506E-11    
+ CS_temperature_margin_lower_limit_normalised_residue____________________ (normres017)__________________     -9.6775E-09    
+ taup/taueff_______________________normalised_residue____________________ (normres018)__________________     -2.3860E-12    
+ Dump_time_set_by_VV_stress________normalised_residue____________________ (normres019)__________________      4.1256E-13    
+ Rate_of_change_of_energy_in_field_normalised_residue____________________ (normres020)__________________     -5.2888E-09    
+ pdivt_<_psep_kallenbach_divertor__normalised_residue____________________ (normres021)__________________      6.2789E-08    
+ Separatrix_temp_consistency_______normalised_residue____________________ (normres022)__________________      1.4347E-08    
+ Separatrix_density_consistency____normalised_residue____________________ (normres023)__________________     -1.0368E-08    
+ CS_Tresca_stress_limit____________normalised_residue____________________ (normres024)__________________      6.6893E-12    
  # Final Feasible Point #
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      5.0000E+00    
@@ -316,7 +316,7 @@
  Ignited_plasma_switch_(0=not_ignited,_1=ignited)________________________ (ignite)______________________              0    
  Power_into_divertor_zone_via_charged_particles_(MW)_____________________ (pdivt)_______________________      1.3095E+02 OP 
  Psep_/_R_ratio_(MW/m)___________________________________________________ (pdivt/rmajor)________________      1.4878E+01 OP 
- Psep_Bt_/_qAR_ratio_(MWT/m)_____________________________________________ (pdivtbt/qar)_________________      8.0619E+00 OP 
+ Psep_Bt_/_qAR_ratio_(MWT/m)_____________________________________________ (pdivtbt/qar)_________________      8.0618E+00 OP 
  ITER_1996_scaling:_nominal_(MW)_________________________________________ (pthrmw(1))___________________      1.4622E+02 OP 
  ITER_1996_scaling:_upper_bound_(MW)_____________________________________ (pthrmw(2))___________________      3.3552E+02 OP 
  ITER_1996_scaling:_lower_bound_(MW)_____________________________________ (pthrmw(3))___________________      6.2875E+01 OP 
@@ -346,7 +346,7 @@
  Alpha_particle_confinement_time_(s)_____________________________________ (taup)________________________      1.8109E+01    
  Alpha_particle/energy_confinement_time_ratio____________________________ (taup/taueff)_________________      5.0000E+00    
  Lower_limit_on_taup/taueff______________________________________________ (taulimit)____________________      5.0000E+00    
- Total_energy_confinement_time_(s)_______________________________________ (total_energy_conf_time)______      3.0496E+00    
+ Total_energy_confinement_time_including_radiation_loss_(s)______________ (total_energy_conf_time)______      3.0496E+00    
  Total_volt-second_requirement_(Wb)______________________________________ (vsstt)_______________________      7.0790E+02 OP 
  Inductive_volt-seconds_(Wb)_____________________________________________ (vsind)_______________________      2.8205E+02 OP 
  Ejima_coefficient_______________________________________________________ (gamma)_______________________      3.0000E-01    
@@ -372,6 +372,7 @@
  Current_drive_efficiency_model__________________________________________ (iefrf)_______________________             10    
  Auxiliary_power_used_for_plasma_heating_only_(MW)_______________________ (pheat)_______________________      0.0000E+00    
  Fusion_gain_factor_Q____________________________________________________ (bigq)________________________      3.8708E+01 OP 
+ Auxiliary_current_drive_(A)_____________________________________________ (auxiliary_cd)________________      2.1766E+06 OP 
  Current_drive_efficiency_(A/W)__________________________________________ (effcd)_______________________      4.3531E-02 OP 
  Normalised_current_drive_efficiency,_gamma_(10^20_A/W-m2)_______________ (gamcd)_______________________      3.0000E-01 OP 
  Wall_plug_to_injector_efficiency________________________________________ (etacd)_______________________      4.0000E-01    
@@ -458,7 +459,7 @@
  Power_lost_due_to_charge_exchange__[W]__________________________________ (exchangepowerlost)___________      5.6161E+06 OP 
  Power_lost_due_to_electron_impact_ionisation_[W]________________________ (ionisationpowerlost)_________      4.4439E+06 OP 
  Total_power_lost_due_to_radiation,_ionisation_and_recombination_[W]_____ (totalpowerlost)______________      5.2339E+07 OP 
- Power_balance_error_[W]_________________________________________________ (balance)_____________________     -9.3132E-09 OP 
+ Power_balance_error_[W]_________________________________________________ (balance)_____________________     -2.5146E-08 OP 
  # Radial Build #
  Machine_bore_(m)________________________________________________________ (bore)________________________      2.1749E+00 ITV
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      8.0000E-01 ITV
@@ -495,6 +496,39 @@
  External_cryostat_thickness_(m)_________________________________________ (ddwex)_______________________      1.5000E-01    
  Ratio_of_Central_solenoid_height_to_TF_coil_internal_height_____________ (ohhghf)______________________      9.0000E-01    
  Width_of_neutral_beam_duct_where_it_passes_between_the_TF_coils_(m)_____ (beamwd)______________________      5.8000E-01    
+ # Divertor build and plasma position #
+ Plasma_top_position,_radial_(m)_________________________________________ (ptop_radial)_________________      7.3819E+00    
+ Plasma_top_position,_vertical_(m)_______________________________________ (ptop_vertical)_______________      5.0557E+00    
+ Plasma_geometric_centre,_radial_(m)_____________________________________ (rmajor.)_____________________      8.8015E+00    
+ Plasma_geometric_centre,_vertical_(m)___________________________________ (0.0)_________________________      0.0000E+00    
+ Plasma_lower_triangularity______________________________________________ (tril)________________________      5.0000E-01    
+ Plasma_elongation_______________________________________________________ (kappa.)______________________      1.7807E+00    
+ TF_coil_vertical_offset_(m)_____________________________________________ (tfoffset)____________________     -2.5850E-01    
+ Plasma_outer_arc_radius_of_curvature_(m)________________________________ (rco)_________________________      5.1302E+00    
+ Plasma_inner_arc_radius_of_curvature_(m)________________________________ (rci)_________________________      9.7124E+00    
+ Plasma_lower_X-pt,_radial_(m)___________________________________________ (rxpt)________________________      7.3819E+00    
+ Plasma_lower_X-pt,_vertical_(m)_________________________________________ (zxpt)________________________     -5.0557E+00    
+ Poloidal_plane_angle_between_vertical_and_inner_leg_(rad)_______________ (thetai)______________________      1.7069E-01    
+ Poloidal_plane_angle_between_vertical_and_outer_leg_(rad)_______________ (thetao)______________________      1.0233E+00    
+ Poloidal_plane_angle_between_inner_leg_and_plate_(rad)__________________ (betai)_______________________      1.0000E+00    
+ Poloidal_plane_angle_between_outer_leg_and_plate_(rad)__________________ (betao)_______________________      1.0000E+00    
+ Inner_divertor_leg_poloidal_length_(m)__________________________________ (plsepi)______________________      1.0000E+00    
+ Outer_divertor_leg_poloidal_length_(m)__________________________________ (plsepo)______________________      1.5000E+00    
+ Inner_divertor_plate_length_(m)_________________________________________ (plleni)______________________      1.0000E+00    
+ Outer_divertor_plate_length_(m)_________________________________________ (plleno)______________________      1.0000E+00    
+ Inner_strike_point,_radial_(m)__________________________________________ (rspi)________________________      6.3964E+00    
+ Inner_strike_point,_vertical_(m)________________________________________ (zspi)________________________     -5.2256E+00    
+ Inner_plate_top,_radial_(m)_____________________________________________ (rplti)_______________________      6.5912E+00    
+ Inner_plate_top,_vertical_(m)___________________________________________ (zplti)_______________________     -4.7650E+00    
+ Inner_plate_bottom,_radial_(m)__________________________________________ (rplbi)_______________________      6.2017E+00    
+ Inner_plate_bottom,_vertical_(m)________________________________________ (zplbi)_______________________     -5.6861E+00    
+ Outer_strike_point,_radial_(m)__________________________________________ (rspo)________________________      8.1627E+00    
+ Outer_strike_point,_vertical_(m)________________________________________ (zspo)________________________     -6.3364E+00    
+ Outer_plate_top,_radial_(m)_____________________________________________ (rplto)_______________________      8.3813E+00    
+ Outer_plate_top,_vertical_(m)___________________________________________ (zplto)_______________________     -5.8868E+00    
+ Outer_plate_bottom,_radial_(m)__________________________________________ (rplbo)_______________________      7.9441E+00    
+ Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -6.7861E+00    
+ Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0211E+00    
  # TF Coils #
  TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      2.3402E+07 OP 
@@ -599,7 +633,7 @@
  Maximum_field_at_Beginning_Of_Pulse_(T)_________________________________ (bmaxoh0)_____________________      1.4571E+01 OP 
  Critical_superconductor_current_density_at_BOP_(A/m2)___________________ (jscoh_bop)___________________      3.0332E+08 OP 
  Critical_strand_current_density_at_BOP_(A/m2)___________________________ (jstrandoh_bop)_______________      9.0997E+07 OP 
- Allowable_overall_current_density_at_BOP_(A/m2)_________________________ (rjohc0)______________________      2.9662E+07 OP 
+ Allowable_overall_current_density_at_BOP_(A/m2)_________________________ (rjohc0)______________________      2.9663E+07 OP 
  Actual_overall_current_density_at_BOP_(A/m2)____________________________ (cohbop)______________________      1.4432E+07 OP 
  Maximum_field_at_End_Of_Flattop_(T)_____________________________________ (bmaxoh)______________________      1.4574E+01 OP 
  Critical_superconductor_current_density_at_EOF_(A/m2)___________________ (jscoh_eof)___________________      3.0306E+08 OP 
