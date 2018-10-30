@@ -4762,9 +4762,10 @@ implicit none
     ! Note alpha confinement time is no longer equal to fuel particle confinement time.
     call ovarrf(outfile,'Alpha particle/energy confinement time ratio','(taup/taueff)',taup/taueff, 'OP ')
     call ovarrf(outfile,'Lower limit on taup/taueff','(taulimit)',taulimit)
-    call ovarrf(outfile,'Total energy confinement time (s)', &
+    call ovarrf(outfile,'Total energy confinement time including radiation loss (s)', &
          '(total_energy_conf_time)', total_energy_conf_time, 'OP ')
     call ocmmnt(outfile,'  (= stored energy including fast particles / loss power including radiation')
+
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')
        call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt, 'OP ')

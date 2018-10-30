@@ -4511,7 +4511,6 @@ module resistive_materials
   !+ad_type  Module
   !+ad_docs  TODO
   implicit none ! ---------------------------------------------------------
-
   type resistive_material
      real(kind(1.0D0)) :: cp            ! Specific heat capacity J/(K kg).
      real(kind(1.0D0)) :: rrr           ! Residual resistivity ratio
@@ -4519,12 +4518,10 @@ module resistive_materials
      real(kind(1.0D0)) :: density       ! kg/m3
      real(kind(1.0D0)) :: cp_density    ! Cp x density J/K/m3
   end type resistive_material
-
   type supercon_strand
      real(kind(1.0D0)) :: area
      real(kind(1.0D0)) :: critical_current
   end type supercon_strand
-
   type volume_fractions
      real(kind(1.0D0)) :: copper_area,    copper_fraction
      real(kind(1.0D0)) :: copper_bar_area,copper_bar_fraction
@@ -4544,7 +4541,6 @@ end module resistive_materials
 !------------------------------------------------------------------------
 
 module reinke_variables
-
   !+ad_name  reinke_variables
   !+ad_summ  Module containing global variables relating to the
   !+ad_summ  Reinke Criterion

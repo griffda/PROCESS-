@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2013)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: optsolverdoc.aux
+The style file: unsrt.bst
+Database file #1: optsolverdoc.bib
+You've used 12 entries,
+            1791 wiz_defined-function locations,
+            512 strings with 5376 characters,
+and the built_in function-call counts, 1888 in all, are:
+= -- 159
+> -- 63
+< -- 0
++ -- 28
+- -- 16
+* -- 60
+:= -- 315
+add.period$ -- 37
+call.type$ -- 12
+change.case$ -- 4
+chr.to.int$ -- 0
+cite$ -- 12
+duplicate$ -- 115
+empty$ -- 223
+format.name$ -- 16
+if$ -- 439
+int.to.chr$ -- 0
+int.to.str$ -- 12
+missing$ -- 21
+newline$ -- 63
+num.names$ -- 12
+pop$ -- 67
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 28
+stack$ -- 0
+substring$ -- 21
+swap$ -- 12
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 13
+width$ -- 14
+write$ -- 125
