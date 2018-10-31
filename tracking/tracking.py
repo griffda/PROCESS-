@@ -10,14 +10,13 @@
 """
 
 import sys
-import pandas
-import argparse
-import process_io_lib
-from process_io_lib import mfile as mf
 from collections import OrderedDict
+import argparse
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
 from matplotlib.ticker import MaxNLocator
+import pandas
+from process_io_lib import mfile as mf
 
 
 # List of variables to be tracked
@@ -31,13 +30,13 @@ TRACKING_LIST = [
     "taueff", "hfact", "tauelaw", "ralpne", "wallmw", "pcoreradmw",
     "psyncpv*vol", "pedgrandmw", "pradmw", "pnucblkt", "pnucshld", "pdivt",
     "pthresh", "fwbllife", "divlife", "pthermw", "bore", "ohcth",
-    "precomp", "gapoh", "tfcth", "deltf", "thshield", "gapds", "ddwi", 
-    "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "scraplo", "fwoth", 
+    "precomp", "gapoh", "tfcth", "deltf", "thshield", "gapds", "ddwi",
+    "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "scraplo", "fwoth",
     "blnkoth", "shldoth", "gapsto", "tftsgap", "tfthko",
     "etath", "pgrossmw", "pnetelmw", "pinjmw", "pheat", "bootipf", "faccd",
     "facoh", "gamnb", "enbeam", "powerht", "pdivr", "pdivnr", "flh", "hstar",
     "vssoft", "vstot", "tburn", "bmaxtf", "iooic", "tmarg", "tftmp", "strtf1",
-    "strtf2", "alstrtf", "coe", "concost", "capcosts", "fmom", "qtarget", 
+    "strtf2", "alstrtf", "coe", "concost", "capcosts", "fmom", "qtarget",
     "qtargetcomplete", "totalpowerlost"
 ]
 
@@ -111,7 +110,7 @@ PLOT_CONFIG = OrderedDict({
 
 def add_mfile_to_database(cargs, pdat, mdat, scan_num):
     """Add MFILE entry for a given scan to the Pandas dataframe
-    
+
     Arguments:
         cargs {list} -- Command line arguments
         pdat {Pandas DataFrame} -- Pandas DataFrame object
@@ -154,7 +153,7 @@ def add_mfile_to_database(cargs, pdat, mdat, scan_num):
 
 def save_latest_entry(cargs, pdat):
     """Save changes to overwrite input database
-    
+
     Arguments:
         cargs {list} -- Command line arguments
         pdat {Pandas DataFrame} -- Pandas DataFrame object
@@ -173,7 +172,7 @@ def save_latest_entry(cargs, pdat):
 
 def make_plots(cargs, pdat):
     """Make PDF plots
-    
+
     Arguments:
         cargs {list} -- Command line arguments
         pdat {Pandas DataFrame} -- Pandas DataFrame object
@@ -206,7 +205,7 @@ def make_plots(cargs, pdat):
         title = PLOT_CONFIG[page]["title"]
 
         # Create plot page
-        plot_page = plt.figure(figsize=(8,9), dpi=150)
+        plot_page = plt.figure(figsize=(8, 9), dpi=150)
         plot_page.suptitle(title, fontsize=14)
 
         # Number of rows and columns
@@ -224,25 +223,25 @@ def make_plots(cargs, pdat):
         for i in range(number_of_plots):
 
             # Create subplot
-            ax = plot_page.add_subplot(rows, columns, i+1)
+            axis = plot_page.add_subplot(rows, columns, i+1)
 
             # Row number of x values
-            x = list(pdat.index)[start_ind:]
-            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-            ax.set_xlabel("id")
+            x_values = list(pdat.index)[start_ind:]
+            axis.xaxis.set_major_locator(MaxNLocator(integer=True))
+            axis.set_xlabel("id")
 
             # List of y entries
             y_keys = PLOT_CONFIG[page]["plots"]["{0}".format(i+1)]["y"]
 
             # Axis label for y axis
             y_label = PLOT_CONFIG[page]["plots"]["{0}".format(i+1)]["y_label"]
-            ax.set_ylabel(y_label)
-            
+            axis.set_ylabel(y_label)
+
             # Plot listed y values
             for item in y_keys:
-                y = pdat[item][start_ind:]
-                ax.plot(x, y, label=item)
-            ax.legend(loc="best")
+                y_values = pdat[item][start_ind:]
+                axis.plot(x_values, y_values, label=item)
+            axis.legend(loc="best")
 
         plot_page.subplots_adjust(wspace=0.5, hspace=0.5)
         pages.append(plot_page)
@@ -250,14 +249,14 @@ def make_plots(cargs, pdat):
     with bpdf.PdfPages("test.pdf") as pdf:
         for page in pages:
             pdf.savefig(page)
-    
+
     for page in pages:
         plt.close(page)
 
 
 def main(clargs):
     """Main
-    
+
     Arguments:
         clargs {list} -- Command line arguments
     """
@@ -277,8 +276,6 @@ def main(clargs):
     if clargs.plot:
         make_plots(clargs, pdframe)
 
-    return
-
 
 if __name__ == "__main__":
 
@@ -289,15 +286,15 @@ if __name__ == "__main__":
     )
 
     PARSER.add_argument(
-        "--mfile", 
-        type=str, 
-        default="MFILE.DAT", 
+        "--mfile",
+        type=str,
+        default="MFILE.DAT",
         help='specify MFILE name'
     )
 
     PARSER.add_argument(
-        "--database", 
-        type=str, 
+        "--database",
+        type=str,
         default="baseline_tracking.txt",
         help='specify database file name'
     )
