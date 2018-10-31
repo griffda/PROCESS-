@@ -99,7 +99,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: r1,rout,rin,tfcind1
+    real(kind(1.0D0)) :: r1,rout,rin,tfcind1, deltf
     integer :: i
     character(len=1) :: intstring
 
@@ -107,12 +107,15 @@ contains
 
     if (itfsup == 0) then  !  Resistive TF coils
 
+       ! Gap between inboard TF coil and thermal shield [m]
+       deltf = (bore + ohcth + precomp + gapoh + tfcth) * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+
        !  Radius of outer edge of inboard TF coil leg (m)
 
        if (itart == 1) then
           rbmax = tfcth
        else
-          rbmax = rsldi - gapds - ddwi
+          rbmax = rsldi - gapds - ddwi - thshield - deltf
        end if
 
        !  Toroidal thickness of TF coil (m)
@@ -208,8 +211,9 @@ contains
        call concoptf(outfile,iprint)
 
        call oblnkl(outfile)
-       call ocmmnt(outfile,'TF coil inner surface shape is approximated')
-       call ocmmnt(outfile,'by a straight segment and elliptical arcs between the following points :')
+       call ocmmnt(outfile,'TF coil inner surface shape is given by a rectangle with the')
+       call ocmmnt(outfile,'following inner points (Note that this does not account')
+       call ocmmnt(outfile,'for the ST tapered centrepost):')
        call oblnkl(outfile)
 
        write(outfile,10)
@@ -268,7 +272,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: extra,ltfleg,rmid,rtop,ztop
+    real(kind(1.0D0)) :: ltfleg,rmid,rtop,ztop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
@@ -287,7 +291,6 @@ contains
     !  Cross-sectional area
 
     arealeg = tfthko*tftort
-    extra = sqrt(arealeg)
 
     !  Outboard leg current density
 
@@ -296,7 +299,7 @@ contains
     !  Length of leg centre-line (N.B. this assumes rectangular shaped
     !  coils, not D-shaped)
 
-    ltfleg = 2.0D0*hmax + extra + 2.0D0*(rtot - rbmax)
+    ltfleg = hmax + hpfu + 2.0D0*(rtot - rbmax)
 
     !  Volume
 
@@ -308,7 +311,7 @@ contains
 
     !  Total weight (of all legs), assuming copper
 
-    whttflgs = voltfleg * tfno * (1.0D0 - vftf) * 8900.0D0
+    whttflgs = voltfleg * tfno * (1.0D0 - vftf) * dcopper
 
     !  Inboard leg information (all legs)
 
@@ -346,7 +349,7 @@ contains
 
     !  Weight of conductor, assuming copper
 
-    whtcp = volcp * 8900.0D0 * (1.0D0-fcoolcp)
+    whtcp = volcp * dcopper * (1.0D0-fcoolcp)
 
     !  Total weight of TF coils
 
@@ -363,6 +366,7 @@ contains
     !  Output section
 
     call osubhd(outfile,'Conventional Copper TF Coil Information :')
+    call ovarin(outfile,'Copper TF coil','(itfsup)',itfsup)
     call ovarre(outfile,'Inboard leg current density (A/m2)','(oacdcp)',oacdcp)
     call ovarre(outfile,'Outboard leg current density (A/m2)','(cdtfleg)',cdtfleg)
     call ovarre(outfile,'Number of turns per outboard leg','(turnstf)',turnstf)
@@ -703,50 +707,35 @@ contains
 
   subroutine cutfshape
 
-      !+ad_name  cutfshape
-      !+ad_summ  Calculates the TF coil shape
-      !+ad_type  Subroutine
-      !+ad_desc  Calculates the shape of the INSIDE of the TF coil. The coil is
-      !+ad_desc  approximated by a straight inboard section and four elliptical arcs
-      !+ad_desc  This is a totally ad hoc model, with no physics or engineering basis.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  19/11/15 MDK Initial SC version
-      !+ad_hist  11/04/18 SIM Copied from the SC TF subroutine coilshap
-      !+ad_stat  Okay
+    !+ad_name  cutfshape
+    !+ad_summ  Calculates the TF coil shape
+    !+ad_type  Subroutine
+    !+ad_desc  Calculates the shape of the INSIDE of the TF coil. The coil is
+    !+ad_desc  given by a rectangular shape.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  11/04/18 SIM Copied from the SC TF subroutine coilshap
+    !+ad_hist  31/10/18 SIM Updated for a rectangular coil shape.
+    !+ad_stat  Okay
 
-      implicit none
+    implicit none
 
-      !  Local variables
-      real(kind(1.0D0)) :: fstraight
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-      xarc(1) = rtfcin + tfcth/2.0d0
-      xarc(2) = rmajor - rminor/5.0d0
-      xarc(3) = rtot - tfcth/2.0d0
-      xarc(4) = xarc(2)
-      xarc(5) = xarc(1)
+    xarc(1) = rtfcin + tfcth/2.0d0
+    xarc(2) = rtot - tfthko/2.0d0
+    xarc(3) = xarc(2)
+    xarc(4) = xarc(2)
+    xarc(5) = xarc(1)
 
-      ! Height of straight section as a fraction of the coil inner height
-      fstraight = 0.6d0
-      if (snull==0) then
-          ! Double null
-          yarc(1) = fstraight * hmax
-          yarc(2) = hmax
-          yarc(3) = 0
-          yarc(4) = -hmax
-          yarc(5) = -fstraight * hmax
-      else
-          ! Single null
-          yarc(1) = fstraight * (hpfu - tfcth)
-          yarc(2) = hpfu - tfcth
-          yarc(3) = 0
-          yarc(4) = -hmax
-          yarc(5) = -fstraight * hmax
-      end if
+    yarc(1) = hpfu - tfcth
+    yarc(2) = hpfu - tfcth
+    yarc(3) = 0
+    yarc(4) = -hmax
+    yarc(5) = -hmax
 
 
-  end subroutine cutfshape
+end subroutine cutfshape
+
 
 end module tfcoil_module

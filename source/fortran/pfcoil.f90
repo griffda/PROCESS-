@@ -301,8 +301,13 @@ contains
 
           do k = 1,ncls(j)
              zcls(j,k) = rminor * zref(j) * signn(k)
-             !  coil radius follows TF coil curve
-             rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2)
+             !  Coil radius follows TF coil curve for SC TF (D-shape)
+             !  otherwise stacked for resistive TF (rectangle-shape)
+             if (itfsup == 0) then
+                 rcls(j,k) = rclsnorm
+             else
+                 rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2)
+             end if
           end do
 
        else
