@@ -146,8 +146,10 @@ def add_mfile_to_database(cargs, pdat, mdat, scan_num):
     new_frame = pandas.DataFrame([new_entry], columns=column_headers)
 
     # Append frame to existing one
-    new_pdat = pdat.append(new_frame, ignore_index=True, sort=False)
+    new_pdat = pandas.concat([pdat, new_frame], ignore_index=True, sort=False, 
+                              verify_integrity=True)
 
+    print(new_pdat)
     return new_pdat
 
 
@@ -168,7 +170,6 @@ def save_latest_entry(cargs, pdat):
         sep = " "
 
     pdat.to_csv(cargs.save, sep=sep)
-
 
 def make_plots(cargs, pdat):
     """Make PDF plots
@@ -239,14 +240,14 @@ def make_plots(cargs, pdat):
 
             # Plot listed y values
             for item in y_keys:
-                y_values = pdat[item][start_ind:]
+                y_values = pdat[item][start_ind:]/pdat[item][0]
                 axis.plot(x_values, y_values, label=item)
             axis.legend(loc="best")
 
         plot_page.subplots_adjust(wspace=0.5, hspace=0.5)
         pages.append(plot_page)
 
-    with bpdf.PdfPages("test.pdf") as pdf:
+    with bpdf.PdfPages("{0}.pdf".format(cargs.database)) as pdf:
         for page in pages:
             pdf.savefig(page)
 
@@ -262,7 +263,14 @@ def main(clargs):
     """
 
     # Open database
-    pdframe = pandas.read_csv(clargs.database, delim_whitespace=True)
+    try:
+        pdframe = pandas.read_csv(clargs.database, delim_whitespace=True)
+    except FileNotFoundError:
+        # Create new frame
+        pdframe = pandas.DataFrame(columns=TRACKING_LIST)
+        clargs.save = clargs.database
+        print("-- Warning: Tracked file doesn't exist. Creating new one.")
+        print("          : saved as {0}".format(clargs.database))
 
     # Read MFILE
     mfile_data = mf.MFile(clargs.mfile)
@@ -329,7 +337,7 @@ if __name__ == "__main__":
     PARSER.add_argument(
         "--comment",
         type=str,
-        default="",
+        default=" ",
         help="Comment for the entry"
     )
 
