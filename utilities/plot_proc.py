@@ -962,42 +962,67 @@ def plot_tf_coils(axis, mfile_data, scan):
     y5 = mfile_data.data["yarc(5)"].get_scan(scan)
     if y3 != 0:
         print("TF coil geometry: The value of yarc(3) is not zero, but should be.")
-    # Inboard upper arc
-    x0 = x2
-    y0 = y1
-    a1 = x2-x1
-    b1 = y2-y1
-    a2 = a1+tfcth
-    b2 = b1+tfcth
-    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=rtangle, ang2=2*rtangle, color='cyan')
-    # Outboard upper arc
-    x0 = x2
-    y0 = 0
-    a1 = x3-x2
-    b1 = y2
-    a2 = a1+tfcth
-    b2 = b1+tfcth
-    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=0, ang2=rtangle, color='cyan')
-    # Inboard lower arc
-    x0 = x4
-    y0 = y5
-    a1 = x4-x5
-    b1 = y5-y4
-    a2 = a1+tfcth
-    b2 = b1+tfcth
-    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=-rtangle, ang2=-2*rtangle, color='cyan')
-    # Outboard lower arc
-    x0 = x4
-    y0 = 0
-    a1 = x3-x2
-    b1 = -y4
-    a2 = a1+tfcth
-    b2 = b1+tfcth
-    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=0, ang2=-rtangle, color='cyan')
-    # Vertical leg
-    # Bottom left corner
-    rect = patches.Rectangle([x5-tfcth, y5], tfcth, (y1-y5), lw=0, facecolor='cyan')
-    axis.add_patch(rect)
+    
+    # Check for Copper magnets
+    if "itfsup" in mfile_data.data.keys():
+        itfsup = mfile_data.data["itfsup"].get_scan(scan)
+    else:
+        itfsup = 1
+  
+    # Superconducting TF coils are D-shaped (itfsup=1), but copper TF coils are rectangular (itfsup=0)
+    if itfsup == 0:
+        # Inboard leg   
+        rect1 = patches.Rectangle([x5-tfcth, y5-tfcth], tfcth, (y1-y5+2.0*tfcth), lw=0, facecolor='cyan')
+        # Outboard leg vertical
+        rect2 = patches.Rectangle([x4, y4-tfcth], tfcth, (y2-y4+2.0*tfcth), lw=0, facecolor='cyan')
+        #Outboard leg horizontal bottom
+        rect3 = patches.Rectangle([x5, y5-tfcth], x4-x5, tfcth, lw=0, facecolor='cyan')
+        #Outboard leg horizontal top
+        rect4 = patches.Rectangle([x1, y1], x2-x1, tfcth, lw=0, facecolor='cyan')
+
+        # Plot it all
+        axis.add_patch(rect1)
+        axis.add_patch(rect2)
+        axis.add_patch(rect3)
+        axis.add_patch(rect4)
+
+    else:
+        # Inboard upper arc
+        x0 = x2
+        y0 = y1
+        a1 = x2-x1
+        b1 = y2-y1
+        a2 = a1+tfcth
+        b2 = b1+tfcth
+        ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=rtangle, ang2=2*rtangle, color='cyan')
+        # Outboard upper arc
+        x0 = x2
+        y0 = 0
+        a1 = x3-x2
+        b1 = y2
+        a2 = a1+tfcth
+        b2 = b1+tfcth
+        ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=0, ang2=rtangle, color='cyan')
+        # Inboard lower arc
+        x0 = x4
+        y0 = y5
+        a1 = x4-x5
+        b1 = y5-y4
+        a2 = a1+tfcth
+        b2 = b1+tfcth
+        ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=-rtangle, ang2=-2*rtangle, color='cyan')
+        # Outboard lower arc
+        x0 = x4
+        y0 = 0
+        a1 = x3-x2
+        b1 = -y4
+        a2 = a1+tfcth
+        b2 = b1+tfcth
+        ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=0, ang2=-rtangle, color='cyan')
+        # Vertical leg
+        # Bottom left corner
+        rect = patches.Rectangle([x5-tfcth, y5], tfcth, (y1-y5), lw=0, facecolor='cyan')
+        axis.add_patch(rect)
 
 
 def plot_pf_coils(axis, mfile_data, scan):

@@ -19,6 +19,7 @@
 - Fixed issue with run_process.py not working (Issue #766)
 - Switched obsolete estotf for estotftgj in stellarator 
 - Corrected ztot calculation in tfpwr subroutine for resistive TF coils (#773)
+- Corrected deltf in sctfcoil.f90 (#779)
 
 ## Features
 

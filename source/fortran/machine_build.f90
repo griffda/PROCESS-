@@ -537,12 +537,12 @@ contains
        vbuild = vbuild - vgap2
        call obuild(nout,'Gap',vgap2,vbuild,'(vgap2)')
 
-       call obuild(outfile,'Thermal shield',thshield,vbuild,'(thshield)')
        vbuild = vbuild - thshield
-
-       call obuild(outfile,'Gap',tftsgap,vbuild,'(tftsgap)')
+       call obuild(outfile,'Thermal shield',thshield,vbuild,'(thshield)')
+       
        vbuild = vbuild - tftsgap
-
+       call obuild(outfile,'Gap',tftsgap,vbuild,'(tftsgap)')
+       
        vbuild = vbuild - tfcth
        call obuild(nout,'TF coil',tfcth,vbuild,'(tfcth)')
 

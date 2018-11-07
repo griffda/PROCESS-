@@ -180,6 +180,7 @@ subroutine sctfcoil(outfile,iprint)
     !+ad_hist  19/01/16 JM  Updated tfboreh and tfborev for new radial build
     !+ad_hist  27/02/17 JM  Added WST Nb3Sn option for superconductor
     !+ad_hist  10/05/17 MDK Issue #478 Removed radial plate option
+    !+ad_hist  31/10/18 SIM Corrected deltf (Issue #779)
     !+ad_stat  Okay
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
@@ -288,7 +289,7 @@ subroutine tf_coil_geometry()
     shldtth + ddwi+ vgap2 + thshield + tftsgap + tfcth)
 
     ! Gap between inboard TF coil and thermal shield [m]
-    deltf = bore + ohcth + precomp + gapoh + tfcth * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    deltf = (bore + ohcth + precomp + gapoh + tfcth) * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 
     ! TF coil horizontal bore [m]
     tfboreh = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &

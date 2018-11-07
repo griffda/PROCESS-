@@ -1061,8 +1061,8 @@ contains
     ! coils. It turns out that emult is also approx constant, but this is not used. No energy
     ! multiplication in the divertor
 
-    ! Overwrite global variable for fdiv
-    fdiv = 0.115D0
+    ! Overwrite global variable for fdiv 07/11/18 SIM: Removed having spoken to JM
+    ! fdiv = 0.115D0
 
     ! Nuclear heating in the divertor just the neutron power times fdiv
     pnucdiv = 0.8D0 * powfmw * fdiv
