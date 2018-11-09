@@ -1,6 +1,14 @@
-# 1.0.14
+# 1.0.15
 
 > next release
+
+## Bug Fixes
+
+## Features
+
+## Minor Changes
+
+# 1.0.14
 
 ## Bug Fixes
 
