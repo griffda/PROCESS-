@@ -399,7 +399,7 @@ contains
        iptr = 1
 
        !Ignore input comments denoted by asterisk, before assigning variables
-       
+
        if (index(line,'*') > 0) then
           foundAst = index(line,'*') - 1
           linelen = min(linelen, foundAst)
@@ -539,7 +539,7 @@ contains
                'Max epsilon*beta value')
        case ('eped_sf')
           call parse_real_variable('eped_sf', eped_sf, 0.0001D0, 2.0D0, &
-               'Scaling factor for EPED pedestal model')   
+               'Scaling factor for EPED pedestal model')
        case ('falpha')
           call parse_real_variable('falpha', falpha, 0.0D0, 1.0D0, &
                'Fraction of alpha power deposited to plasma')
@@ -1364,11 +1364,10 @@ contains
       call parse_real_variable('mach0', mach0, 0.D0, 1.D0, &
               'Mach number at target (must be just less than 1)')
 
-       ! See HTS coil module for PROCESS.docx for helium area calculates!
-       ! The minimum allowed is the value obtained by packing the strands in a rectangular array = 1-pi/4
-       case ('cable_helium_fraction')
-          call parse_real_variable('cable_helium_fraction', cable_helium_fraction, 0.215D0, 0.99D0, &
-               'Helium area as a fraction of the cable space.')
+       ! See HTS coil module for PROCESS.docx
+       !case ('cable_helium_fraction')
+       !  call parse_real_variable('cable_helium_fraction', cable_helium_fraction, 0.215D0, 0.99D0, &
+       !           'Helium area as a fraction of the cable space.')
 
           !  Divertor settings
 
@@ -1691,9 +1690,9 @@ contains
        case ('copper_thick')
           call parse_real_variable('copper_thick', copper_thick, 0.0D0, 1000.0D-6, &
                'copper_thick (m)')
-       case ('copper_bar')
-          call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.9D0, &
-               'area of central copper bar, as a fraction of area inside the jacket')
+    !    case ('copper_bar')
+    !       call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.9D0, &
+    !            'area of central copper bar, as a fraction of area inside the jacket')
        case ('copper_rrr')
           call parse_real_variable('copper_rrr', copper_rrr, 1.0D0, 1.0D4, &
                'residual resistivity ratio copper in TF superconducting cable')
@@ -1901,6 +1900,9 @@ contains
        case ('thicndut')
           call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
+       case ('layer_ins')
+              call parse_real_variable('layer_ins', layer_ins, 0.0D0, 0.1D0, &
+               'Additional insulation thickness between layers (m)')
        case ('thkcas')
           call parse_real_variable('thkcas', thkcas, 0.0D0, 1.0D0, &
                'External supercond. case thickness (m)')
@@ -3563,7 +3565,7 @@ contains
           write(*,*) xstr
           write(*,*) 'Comments should be indicated by an asterisk (*)'
           error = .True.
-       end if															 
+       end if
        icode = 1
     end if
 
@@ -3759,12 +3761,12 @@ contains
     ! *** Errors
 
 60  continue
-    
+
     write(*,*) 'Problem with IN file, please check line'
     write(*,*) string
     write(*,*) 'Comments should be indicated by an asterisk (*)'
     error = .True.
-    
+
     icode = 1
 
 1000 continue
@@ -3822,7 +3824,7 @@ contains
     end if
 
     if (iptr > linelen) goto 60
-    
+
 ! 40     continue !KE I guess I can remove this too
 
     ! *** Put rest of line into varval (makes it easier to parse)
