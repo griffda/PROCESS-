@@ -148,8 +148,6 @@ def add_mfile_to_database(cargs, pdat, mdat, scan_num):
     # Append frame to existing one
     new_pdat = pandas.concat([pdat, new_frame], ignore_index=True, sort=False, 
                               verify_integrity=True)
-
-    print(new_pdat)
     return new_pdat
 
 
@@ -310,7 +308,7 @@ if __name__ == "__main__":
     PARSER.add_argument(
         "--save",
         type=str,
-        default="baseline_tracking.txt",
+        default="baseline_tracking_output.txt",
         help="save output of tracking tool to the specified filename"
     )
 
