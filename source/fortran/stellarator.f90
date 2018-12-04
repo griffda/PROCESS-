@@ -1223,6 +1223,8 @@ contains
     ptremw = ptrepv*vol
     ptrimw = ptripv*vol
 
+    pscalingmw = ptremw + ptrimw
+
     !  Calculate auxiliary physics related information
     !  for the rest of the code
 
@@ -1555,6 +1557,8 @@ contains
 
           pneut2 = (pneutmw - pnucloss - pnuccp) * emult
 
+          emultmw = pneut2 - (pneutmw - pnucloss - pnuccp)
+
           !  Nuclear heating in the blanket
 
           decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
@@ -1662,13 +1666,18 @@ contains
           !  htpmw_i = fpump_i*C, where C is the non-pumping thermal power
           !  deposited in the coolant
 
-          !  First wall pumping power (MW)
+          !  First wall and Blanket pumping power (MW)
 
-          htpmw_fw = fpumpfw * (pnucfwi + pnucfwo + psurffwi + psurffwo + porbitlossmw)
+          if (primary_pumping==0) then
+          !    Use input
+          else if (primary_pumping==1) then
+              htpmw_fw = fpumpfw * (pnucfwi + pnucfwo + psurffwi + psurffwo + porbitlossmw)
+              htpmw_blkt = fpumpblkt * (pnucbzi*emult + pnucbzo*emult)
+          else
+              call report_error(215)
+          endif
 
-          !  Blanket pumping power (MW)
-
-          htpmw_blkt = fpumpblkt * (pnucbzi*emult + pnucbzo*emult)
+          emultmw = fpumpblkt * (pnucbzi*emult + pnucbzo) * (emult - 1.0D0)
 
           !  Total nuclear heating of first wall (MW)
 
@@ -1677,6 +1686,8 @@ contains
           !  Total nuclear heating of blanket (MW)
 
           pnucblkt = (pnucbzi + pnucbzo)*emult
+
+          emultmw = emultmw + (pnucbzi + pnucbzo) * (emult - 1.0D0)
 
           !  Calculation of shield and divertor powers
           !  Shield and divertor powers and pumping powers are calculated using the same

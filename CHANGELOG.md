@@ -3,6 +3,7 @@
 > next release
 
 ## Bug Fixes
+- Added emultmw calculation to stellarator and fixed power balance errors (Issue #783)
 
 ## Features
 
