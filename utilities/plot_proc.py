@@ -1533,7 +1533,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     if((iefrf == 5)or(iefrf==8)):
         nbi = True
         axis.text(-0.05, 1, 'Neutral Beam Current Drive:', ha='left', va='center')
-    if((iefrf == 3)or(iefrf==7)or(iefrf==10)):
+    if((iefrf == 3)or(iefrf==7)or(iefrf==10)or(iefrf==11)):
         ecrh = True
         axis.text(-0.05, 1, 'Electron Cyclotron Current Drive:', ha='left', va='center')
     axis.set_ylim([ymin, ymax])
@@ -1904,6 +1904,7 @@ def test(f):
 
         return True
     except:
+        print(f)
         return False
 
 
