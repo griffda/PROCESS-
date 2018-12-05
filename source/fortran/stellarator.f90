@@ -847,6 +847,8 @@ contains
     !+ad_hist  24/06/14 PJK Removed refs to bcylth;
     !+ad_hisc               blnktth now always calculated
     !+ad_hist  06/11/14 PJK Added fhole etc. adjustment to first wall area
+    !+ad_hist  11/06/18 SIM Added fwith calculation using new inputs
+    !+ad_hist  16/10/18 SIM Output radial build to MFILE (Issue #770)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -939,55 +941,69 @@ contains
 
     drbild = bore + ohcth + gapoh
     radius = radius + drbild
-    call obuild(outfile,'Machine bore',drbild,radius)
+    call obuild(outfile,'Machine bore',drbild,radius,'(bore)')
+    call ovarre(mfile,'Machine bore (m)','(bore)',drbild)
 
     radius = radius + tfcth
-    call obuild(outfile,'Coil inboard leg',tfcth,radius)
+    call obuild(outfile,'Coil inboard leg',tfcth,radius,'(tfcth)')
+    call ovarre(mfile,'Coil inboard leg (m)','(deltf)',tfcth)
 
     radius = radius + gapds
-    call obuild(outfile,'Gap',gapds,radius)
+    call obuild(outfile,'Gap',gapds,radius,'(gapds)')
+    call ovarre(mfile,'Gap (m)','(gapds)',gapds)
 
     radius = radius + ddwi
-    call obuild(outfile,'Vacuum vessel',ddwi,radius)
+    call obuild(outfile,'Vacuum vessel',ddwi,radius,'(ddwi)')
+    call ovarre(mfile,'Vacuum vessel radial thickness (m)','(ddwi)',ddwi)
 
     radius = radius + shldith
-    call obuild(outfile,'Inboard shield',shldith,radius)
+    call obuild(outfile,'Inboard shield',shldith,radius,'(shldith)')
+    call ovarre(mfile,'Inner radiation shield radial thickness (m)','(shldith)',shldith)
 
     radius = radius + blnkith
-    call obuild(outfile,'Inboard blanket',blnkith,radius)
+    call obuild(outfile,'Inboard blanket',blnkith,radius,'(blnkith)')
+    call ovarre(mfile,'Inboard blanket radial thickness (m)','(blnkith)',blnkith)
 
     radius = radius + fwith
-    call obuild(outfile,'Inboard first wall',fwith,radius)
+    call obuild(outfile,'Inboard first wall',fwith,radius,'(fwith)')
+    call ovarre(mfile,'Inboard first wall radial thickness (m)','(fwith)',fwith)
 
     radius = radius + scrapli
-    call obuild(outfile,'Inboard scrape-off',scrapli,radius)
+    call obuild(outfile,'Inboard scrape-off',scrapli,radius,'(scrapli)')
+    call ovarre(mfile,'Inboard scrape-off radial thickness (m)','(scrapli)',scrapli)
 
     radius = radius + rminor
-    call obuild(outfile,'Plasma geometric centre',rminor,radius)
+    call obuild(outfile,'Plasma geometric centre',rminor,radius,'(rminor)')
 
     radius = radius + rminor
-    call obuild(outfile,'Plasma outboard edge',rminor,radius)
+    call obuild(outfile,'Plasma outboard edge',rminor,radius,'(rminor)')
 
     radius = radius + scraplo
-    call obuild(outfile,'Outboard scrape-off',scraplo,radius)
+    call obuild(outfile,'Outboard scrape-off',scraplo,radius,'(scraplo)')
+    call ovarre(mfile,'Outboard scrape-off radial thickness (m)','(scraplo)',scraplo)
 
     radius = radius + fwoth
-    call obuild(outfile,'Outboard first wall',fwoth,radius)
+    call obuild(outfile,'Outboard first wall',fwoth,radius,'(fwoth)')
+    call ovarre(mfile,'Outboard first wall radial thickness (m)','(fwoth)',fwoth)
 
     radius = radius + blnkoth
-    call obuild(outfile,'Outboard blanket',blnkoth,radius)
+    call obuild(outfile,'Outboard blanket',blnkoth,radius,'(blnkoth)')
+    call ovarre(mfile,'Outboard blanket radial thickness (m)','(blnkoth)',blnkoth)
 
     radius = radius + shldoth
-    call obuild(outfile,'Outboard shield',shldoth,radius)
+    call obuild(outfile,'Outboard shield',shldoth,radius,'(shldoth)')
+    call ovarre(mfile,'Outer radiation shield radial thickness (m)','(shldoth)',shldoth)
 
     radius = radius + ddwi
-    call obuild(outfile,'Vacuum vessel',ddwi,radius)
+    call obuild(outfile,'Vacuum vessel',ddwi,radius,'(ddwi)')
 
     radius = radius + gapsto
-    call obuild(outfile,'Gap',gapsto,radius)
+    call obuild(outfile,'Gap',gapsto,radius,'(gapsto)')
+    call ovarre(mfile,'Gap (m)','(gapsto)',gapsto)
 
     radius = radius + tfthko
-    call obuild(outfile,'Coil outboard leg',tfthko,radius)
+    call obuild(outfile,'Coil outboard leg',tfthko,radius,'(tfthko)')
+    call ovarre(mfile,'Coil outboard leg radial thickness (m)','(tfthko)',tfthko)
 
   end subroutine stbild
 
@@ -2624,6 +2640,7 @@ contains
     !+ad_hist  26/06/14 PJK Added error_handling
     !+ad_hist  30/07/14 PJK Renamed borev to tfborev
     !+ad_hist  16/09/14 PJK Added tfcryoarea
+    !+ad_hist  17/10/18 SIM Switched estotf for estotftgj
     !+ad_stat  Okay
     !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
     !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
@@ -2947,7 +2964,7 @@ contains
     tfborev = 2.0D0*hmax          ! [m] estimated vertical coil bore
     tfleng = U                    ! [m] estimated average length of a coil
 
-    estotf = W_mag/tfno           ! [GJ] magnetic energy per coil
+    estotftgj = W_mag             ! [GJ] Total magnetic energy
 
     !jwptf = ritfc/(tfno*awptf)
     jwptf = j*1.0D6               ! [A/m^2] winding pack current density
@@ -3737,6 +3754,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  30/07/14 PJK Renamed borev to tfborev
     !+ad_hist  31/07/14 PJK Removed aspcstf
+    !+ad_hist  17/10/18 SIM Switched estotf for estotftgj
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -3770,7 +3788,7 @@ contains
     call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf)
     call ovarre(outfile,'Overall current density (A/m2)','(oacdcp)',oacdcp)
     call ovarre(outfile,'Maximum field on superconductor (T)','(bmaxtf)',bmaxtf)
-    call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
+    call ovarre(outfile,'Total Stored energy (GJ)','(estotftgj)',estotftgj)
     call ovarre(outfile,'Total mass of coils (kg)','(whttf)',whttf)
 
     call osubhd(outfile,'Coil Geometry :')

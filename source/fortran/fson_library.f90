@@ -363,7 +363,6 @@ contains
   ! Adds the member to the linked list
   subroutine fson_value_add(this, member)
     type(fson_value), pointer :: this, member, p
-    character(len = 100) :: tmp
 
     ! associate the parent
     member % parent => this

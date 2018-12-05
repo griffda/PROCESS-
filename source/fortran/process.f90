@@ -75,6 +75,8 @@ program process
   use init_module
   use final_module
   use kallenbach_module
+  use hare, only: hare_calc
+  use mode
   implicit none
 
   !  Arguments
@@ -113,8 +115,9 @@ program process
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   mainRun : if (inExist) then
-    !  Initialise things
-    call init
+
+    !  Initialise
+    call init    
 
     ! Run built-in tests.
     ! These are distinct from the tests that are dependent on 'unit_test'.

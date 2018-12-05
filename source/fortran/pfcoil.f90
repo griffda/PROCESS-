@@ -301,8 +301,13 @@ contains
 
           do k = 1,ncls(j)
              zcls(j,k) = rminor * zref(j) * signn(k)
-             !  coil radius follows TF coil curve
-             rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2)
+             !  Coil radius follows TF coil curve for SC TF (D-shape)
+             !  otherwise stacked for resistive TF (rectangle-shape)
+             if (itfsup == 0) then
+                 rcls(j,k) = rclsnorm
+             else
+                 rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2)
+             end if
           end do
 
        else
@@ -1974,7 +1979,6 @@ contains
     real(kind(1.0D0))::x1,x2         ! Initial guesses for temperature
     logical::error                   ! True if the solver does not converge
     real(kind(1.0D0))::residual      ! Residual current density error
-    real(kind(1.0D0))::opt_tol = 1d7 ! Tolerance in current density
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

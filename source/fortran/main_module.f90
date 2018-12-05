@@ -68,7 +68,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '1.0.13   Release Date :: 2018-04-19'
+       '1.0.14   Release Date :: 2018-11-09'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
   ! integer :: unit
@@ -738,7 +738,11 @@ subroutine runtests
   use process_output
   use pfcoil_module
   use superconductors
+  use hare, only:hare_calc
+
   implicit none
+  real(kind(1.0D0)) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
+  logical :: Temperature_capped
   call ovarre(nout,'Binomial coefficients C(5,0): 1', '(binomial(5,0))', binomial(5,0))
   call ovarre(nout,'Binomial coefficients C(5,1): 5', '(binomial(5,1))', binomial(5,1))
   call ovarre(nout,'Binomial coefficients C(5,2): 10', '(binomial(5,2))', binomial(5,2))
@@ -749,6 +753,29 @@ subroutine runtests
   call test_quench()
   call brookscoil(nout)
   call test_secant_solve()
+
+  call hare_calc(10.5d19,5.66d0, 9.072d0,2.920d0,0.1d0,32.d0, 2.d0,        &
+                       fshift,xf,enpa,ftherm,fpp,cdeff,ampperwatt, &
+                       Temperature_capped)
+  if ( nearly_equal(fshift, 1.42523289425681d0) .and. &
+       nearly_equal(xf,225870909081.819d0) .and. &
+       nearly_equal(enpa,0.733122879151411d0) .and. &
+       nearly_equal(ftherm,4.14743724190895d0) .and. &
+       nearly_equal(fpp,8.01214300014219d0)  .and. &
+       nearly_equal(cdeff,-242.425838794356d0) .and. &
+       nearly_equal(ampperwatt,-42.5300601601860d-3) ) then
+      call ocmmnt(nout,'PASS: ECCD calculation using "HARE"')
+  else
+      call ocmmnt(nout,'FAIL: ECCD calculation using "HARE"')
+      call ovarre(nout,'fshift', '1.42523289', 999d0)
+      call ovarre(nout,'xf', '225870909081', xf)
+      call ovarre(nout,'enpa', '0.73312287', enpa)
+      call ovarre(nout,'ftherm', '4.14743724', ftherm)
+      call ovarre(nout,'fpp', '8.0121430001', fpp)
+      call ovarre(nout,'cdeff', '-242.42583879', cdeff)
+      call ovarre(nout,'ampperwatt', '-4.2530060e-2', ampperwatt)
+  end if
+
 end subroutine runtests
 
 

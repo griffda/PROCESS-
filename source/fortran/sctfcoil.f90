@@ -116,8 +116,10 @@ type(resistive_material):: helium
 type(volume_fractions):: conductor
 type(supercon_strand)::croco_strand
 
-real(kind(1.0D0)):: T1, time2, tau2,estotft,croco_quench_factor
-real(kind(1.0D0)):: jwdgpro_1, jwdgpro_2,  etamax
+real(kind(1.0D0)):: T1, time2, tau2, estotft
+! (OBSOLETE, but leave for moment)
+! real (kind(1.0D0)) ::croco_quench_factor
+! real(kind(1.0D0)):: jwdgpro_1, jwdgpro_2,  etamax
 contains
 
 ! --------------------------------------------------------------------------
@@ -156,6 +158,7 @@ subroutine sctfcoil(outfile,iprint)
     !+ad_call  tfcind
     !+ad_hist  27/02/17 JM  Added WST Nb3Sn option for superconductor
     !+ad_hist  10/05/17 MDK Issue #478 Removed radial plate option
+    !+ad_hist  31/10/18 SIM Corrected deltf (Issue #779)
     !+ad_stat  Okay
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -263,7 +266,7 @@ subroutine tf_coil_geometry()
     shldtth + ddwi+ vgap2 + thshield + tftsgap + tfcth)
 
     ! Gap between inboard TF coil and thermal shield [m]
-    deltf = bore + ohcth + precomp + gapoh + tfcth * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    deltf = (bore + ohcth + precomp + gapoh + tfcth) * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 
     ! TF coil horizontal bore [m]
     tfboreh = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &
@@ -280,6 +283,8 @@ subroutine tf_winding_pack()
     !   - Overall dimensions of winding pack
     !   - Turn dimensions
     !   - Current, field, etc.
+    !
+
     implicit none
 
     ! Local variables
@@ -1594,24 +1599,24 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Maximum allowed temp rise during a quench (K)','(tmaxpro)', tmaxpro)
     case(6)
         call ocmmnt(outfile,'CroCo cable with jacket: ')
-        if (any(icc == 74) ) then
-            call ovarre(outfile,'Maximum permitted temperature in quench (K)',&
-            '(tmax_croco)', tmax_croco)
-        endif
-        !call ovarre(outfile,'Actual temp reached during a quench (K)', &
-        !'(croco_quench_temperature)', croco_quench_temperature)
+        ! if (any(icc == 74) ) then
+        !     call ovarre(outfile,'Maximum permitted temperature in quench (K)',&
+        !                         '(tmax_croco)', tmax_croco)
+        ! endif
+        ! call ovarre(outfile,'Actual temp reached during a quench (K)', &
+        !                     '(croco_quench_temperature)', croco_quench_temperature)
         if (any(icc == 75) ) then
             call ovarre(outfile,'Maximum permitted TF coil current / copper area (A/m2)', &
             '(copperA_m2_max)', copperA_m2_max)
         endif
         call ovarre(outfile,'Actual TF coil current / copper area (A/m2)', &
-        '(copperA_m2)', copperA_m2)
+                            '(copperA_m2)', copperA_m2)
 
         ! call ocmmnt(outfile,'Fast discharge current model: '//quench_model)
         ! if(quench_detection_ef>1d-10)then
         !     call ocmmnt(outfile,'Two-phase quench model is used')
         !     call ovarre(outfile,'Electric field at which TF quench is detected, discharge begins (V/m)',&
-        !     '(quench_detection_ef)', quench_detection_ef)
+        !                         '(quench_detection_ef)', quench_detection_ef)
         !     call ovarre(outfile,'Peak temperature before quench is detected (K)','(T1)',T1,'OP ')
         ! else
         !     call ocmmnt(outfile, 'Simple one-phase quench model is used')
@@ -2341,7 +2346,26 @@ contains
     end subroutine protect
 
 end subroutine tfspcall
+! --------------------------------------------------------------------
+subroutine croco_voltage()
 
+    !+ad_name  croco_voltage
+    !+ad_summ  Finds the dump voltage in quench for the Croco HTS conductor
+    !+ad_type  Subroutine
+
+    ! vtfskv : voltage across a TF coil during quench (kV)
+    ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
+    ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
+
+    if(quench_model=='linear')then
+        time2 = tdmptf
+        vtfskv = 2.0D0/time2 * (estotft/tfno) / cpttf
+    elseif(quench_model=='exponential')then
+        tau2 = tdmptf
+        vtfskv = 2.0D0/tau2 * (estotft/tfno) / cpttf
+    endif
+
+end subroutine croco_voltage
 ! --------------------------------------------------------------------
 function croco_voltage()
 
@@ -2414,13 +2438,13 @@ subroutine croco_quench(conductor)
     ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
     ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
 
-    if(quench_model=='linear')then
-        time2 = tdmptf
-        vtfskv = 2.0D0/time2 * (estotft/tfno) / cpttf
-    elseif(quench_model=='exponential')then
-        tau2 = tdmptf
-        vtfskv = 2.0D0/tau2 * (estotft/tfno) / cpttf
-    endif
+    ! if(quench_model=='linear')then
+    !     time2 = tdmptf
+    !     vtfskv = 2.0D0/time2 * (estotft/tfno) / cpttf
+    ! elseif(quench_model=='exponential')then
+    !     tau2 = tdmptf
+    !     vtfskv = 2.0D0/tau2 * (estotft/tfno) / cpttf
+    ! endif
 
     ! PHASE 2 OF QUENCH: fast discharge into resistor
     ! The field declines in proportion to the current.

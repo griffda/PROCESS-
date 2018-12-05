@@ -90,7 +90,7 @@ module maths_library
   public :: ellipke,find_y_nonuniform_x,gamfun,hybrd,linesolv,qpsub, &
        quanc8,sumup3,svd,tril,vmcon,zeroin, eshellvol, dshellvol, &
        eshellarea, dshellarea, binomial, binarysearch, interpolate, &
-       secant_solve, test_secant_solve
+       secant_solve, test_secant_solve, nearly_equal
   public::variable_error
   public :: integer2string
 
@@ -2688,7 +2688,7 @@ contains
 
        write(iotty, '("==>", I5, "  vmcon iterations. Normalised FoM =", &
            &  f8.4, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
-           ADVANCE="NO"), niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
+           ADVANCE="NO") niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
 
        if (verbose == 1) then
           write(*,'(a,es13.5,a,es13.5)') &
@@ -6031,6 +6031,26 @@ contains
       end if
 
   end function variable_error
+
+  ! ------------------------------------------------------------------------
+  pure function nearly_equal(variable1, variable2,tol)
+      real(kind(1.0D0)), intent(in) ::variable1, variable2
+      real(kind(1.0D0)), intent(in), optional :: tol
+      real(kind(1.0D0)) :: tolerance
+      logical::nearly_equal
+      if(present(tol))then
+          tolerance = tol
+      else
+          tolerance = 1.d-5
+      end if
+
+      if(abs( (variable1 - variable2)/(variable1+variable2)) < tolerance) then
+          nearly_equal = .TRUE.
+      else
+          nearly_equal = .FALSE.
+      end if
+
+  end function nearly_equal
 
   ! ------------------------------------------------------------------------
   pure function integer2string(value)

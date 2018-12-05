@@ -1264,8 +1264,12 @@ contains
        case ('gamma_ecrh')
           call parse_real_variable('gamma_ecrh', gamma_ecrh, 0.0D0, 1.0D0, &
                'User input ECRH gamma_CD')
+       case ('rho_ecrh')
+          call parse_real_variable('rho_ecrh', rho_ecrh, 0.0D0, 1.0D0, &
+               'normalised minor radius at which electron cyclotron current drive is maximum')
+
        case ('iefrf')
-          call parse_int_variable('iefrf', iefrf, 1, 10, &
+          call parse_int_variable('iefrf', iefrf, 1, 11, &
                'Switch for curr drive efficiency model')
        case ('irfcd')
           call parse_int_variable('irfcd', irfcd, 0, 1, &
@@ -3808,7 +3812,7 @@ contains
     !  Local variables
 
     character(len=maxlen) :: varval
-    integer :: varlen,iost
+    integer :: varlen
     integer :: foundComma, foundAst, foundPoint
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3925,7 +3929,7 @@ contains
     !  Local variables
 
     character(len=maxlen) :: varval
-    integer :: varlen,iost
+    integer :: varlen
     integer :: foundComma, foundAst
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4032,7 +4036,7 @@ contains
     !  Local variables
 
     character(len=maxlen) :: varval
-    integer :: varlen,iost
+    integer :: varlen
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

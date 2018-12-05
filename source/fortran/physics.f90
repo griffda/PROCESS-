@@ -1828,7 +1828,7 @@ implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine fast_alpha_bs()
+    !subroutine fast_alpha_bs()
 
       !  BSALP (local per index J) is in MA/m^2
 
@@ -1900,7 +1900,7 @@ implicit none
       !      RTOR*ZBIRTH*(ZA1*ZDPDPSI+ZA2*ZDSC3DPSI)
       ! BSALP=BSALP/1.e6
 
-    end subroutine fast_alpha_bs
+    !end subroutine fast_alpha_bs
 
   end function bootstrap_fraction_sauter
 
@@ -4762,9 +4762,10 @@ implicit none
     ! Note alpha confinement time is no longer equal to fuel particle confinement time.
     call ovarrf(outfile,'Alpha particle/energy confinement time ratio','(taup/taueff)',taup/taueff, 'OP ')
     call ovarrf(outfile,'Lower limit on taup/taueff','(taulimit)',taulimit)
-    call ovarrf(outfile,'Total energy confinement time (s)', &
+    call ovarrf(outfile,'Total energy confinement time including radiation loss (s)', &
          '(total_energy_conf_time)', total_energy_conf_time, 'OP ')
     call ocmmnt(outfile,'  (= stored energy including fast particles / loss power including radiation')
+
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')
        call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt, 'OP ')

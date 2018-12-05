@@ -35,9 +35,12 @@ contains
 	function integrcc(nx,x,y)
 
 	implicit none
-	integer i,j,nx
+	integer i,nx
 	double precision x(nx),y(nx),drho,y1tmp
 	double precision sy(nx),integrcc(nx)
+
+	! not used
+	! integer j
 
 	sy=0.
 	do i=2,nx
@@ -54,9 +57,12 @@ contains
 	function derivcc(nx,x,y,gga)
 
 	implicit none
-	integer i,j,nx,gga
+	integer i,nx,gga
 	double precision x(nx),y(nx),dy(nx),derivcc(nx)
 	double precision P(3)
+
+	! not used
+	! integer j
 	
 	dy=0.
 	do i=2,nx-1
@@ -148,15 +154,18 @@ contains
 !		 use parameters_cpef2a
 	implicit none
 
-	integer Nx1,Nx2,i,j,k,jdone
+	integer Nx1,Nx2,i,j,jdone
 
 	double precision x1(Nx1)
 	double precision y1(Nx1)
 	double precision x2(Nx2)
 	double precision y2(Nx2),A,B
 	double precision linterp_ef(Nx2)
-	double precision z1,z2,z3,z4,z5
-	double precision t1,t2,t3,t4,t5
+	double precision z1,z2,z3,z4
+	double precision t1,t3,t4
+
+	! not used
+	! double precision t2, t5, z5, k
 
 
 	do i=1,Nx2
@@ -232,12 +241,16 @@ contains
 		function	INTEGR_CDE(x_input,y_input, &
      &    nagrid)
 	implicit none
-	integer	i,j,k,order_d,x_type,nagrid
+	integer	j,nagrid
 	double precision x_input(nagrid)
 	double precision y_input(nagrid),ys_output
-	double precision y1tmp,y2tmp,y3tmp,drho
-	double precision x1tmp,x2tmp,x3tmp
-	double precision Acoef,Bcoef,Ccoef,y0,integr_cde
+	double precision y1tmp,drho
+	double precision integr_cde
+
+	! Not used
+	! doubel precision y0, y2tmp, y3tmp, i, k, order_d, x_type
+	! double precision Acoef, Bcoef, Ccoef
+	! double precision x1tmp,x2tmp,x3tmp
 
 !C Normalized grid , GRP style
 							j=1
@@ -353,10 +366,13 @@ end function integr_cde
 	! Local variables
 
 	real(kind(1.0d0)), dimension(size(x2)) :: y2
-	real(kind(1.0d0)) :: dx, dy, dv
 	integer :: i, j,nx1,nx2,jdone
-	real(kind(1.0d0)) ::  z1,z2,z3,z4,z5,z11
-	real(kind(1.0d0)) ::  t1,t2,t3,t4,t5,t11,A,B,C
+	real(kind(1.0d0)) ::  z1,z2,z3
+	real(kind(1.0d0)) ::  t1,t2,t3,t4,A,B,C
+	
+	! Not used
+	! real(kind(1.0d0)) :: dx, dy, dv
+	! real(kind(1.0d0)) :: t5, t11, z4, z5, z11
 
 	Nx2=size(x2)
 	Nx1=size(x)
@@ -470,10 +486,12 @@ end function integr_cde
 	! Local variables
 
 	real(kind(1.0d0)), dimension(size(x2)) :: y2
-	real(kind(1.0d0)) :: dx, dy, dv
 	integer :: i, j,nx1,nx2,jdone
-	real(kind(1.0d0)) ::  z1,z2,z3,z4,z5,z11
-	real(kind(1.0d0)) ::  t1,t2,t3,t4,t5,t11,A,B,C
+	real(kind(1.0d0)) ::  z1,z2,z3
+	real(kind(1.0d0)) ::  t1,t2,t3,t4,A,B,C
+	! Not used
+	! real(kind(1.0d0)) :: dx, dy, dv
+	! real(kind(1.0d0)) ::  t5, t11, z11, z4, z5
 
 	Nx2=size(x2)
 	Nx1=size(x)

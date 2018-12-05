@@ -704,6 +704,7 @@ contains
     !+ad_hist  16/10/12 PJK Added constants; removed argument pi
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  21/05/18 SIM Corrected error in divertor area (Issue #697)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 64: Figure 2
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code

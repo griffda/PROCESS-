@@ -1135,7 +1135,6 @@ subroutine ocost(file,descr,n,value)
 
     !  Arguments
     integer, intent(in) :: file
-    integer :: n
     character(len=*), intent(in) :: descr
     character(len=*), intent(in) :: vname
     real(kind(1.0D0)), intent(in) :: value

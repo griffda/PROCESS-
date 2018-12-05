@@ -266,16 +266,26 @@ subroutine check
 
     if ( any(icc(1:neqns+nineqns) == 3) ) then
         call report_error(162)
+        write(*,*) 'PROCESS stopping'
+        stop
     end if
 
     if ( any(icc(1:neqns+nineqns) == 4) ) then
         call report_error(163)
+        write(*,*) 'PROCESS stopping'
+        stop
     end if
 
-    ! MDK Report error is constraint 63 is used with old vacuum model
+    ! MDK Report error if constraint 63 is used with old vacuum model
     if (any(icc(1:neqns+nineqns) == 63).and.(vacuum_model.ne.'simple') ) then
         write(*,*) 'Constraint 63 is requested without the correct vacuum model ("simple").'
         write(*,*) 'vacuum_model = ', vacuum_model
+        write(*,*) 'PROCESS stopping'
+        stop
+    end if
+
+    if ( any(icc(1:neqns+nineqns) == 74) ) then
+        write(*,*)'Constraint 74 (TF coil quench temperature for Croco HTS conductor) is not yet implemented'
         write(*,*) 'PROCESS stopping'
         stop
     end if
@@ -372,7 +382,7 @@ subroutine check
             dene = neped*1.001D0
             call report_error(154)
          end if
-         
+
         if ((ioptimz >= 0).and.(any(ixc == 6)).and.(boundl(6) < neped*1.001D0)) then
             call report_error(155)
             write(*,*)'dene = ', dene, 'boundl(6) = ', boundl(6), '  neped = ', neped
@@ -382,26 +392,26 @@ subroutine check
         end if
 
      end if
-     
-     
+
+
      ! Cannot use Psep/R and PsepB/qAR limits at the same time
      if(any(icc == 68) .and. any(icc == 56)) then
         call report_error(178)
      endif
-     
+
      if(ieped > 0) then
         if(eped_sf > 1.0) then
            call report_error(214)
         endif
      endif
-          
+
      if(ipedestal == 2 .or. ipedestal == 3) then
 
         !PLASMOD automatically takes both pseprmax and psepbqarmax as input
         !It uses which ever one leads to the lower Psep value. Not to use
         !one of them set them to a very large number
         call report_error(199)
-        
+
         if (fgwped .le. 0 )then
            call report_error(176)
         endif
@@ -419,7 +429,7 @@ subroutine check
         if (boundl(103) < 1.) then
            call report_error(181)
         endif
-        
+
         ! Initialise value for gamcd for use in PLASMOD first iteration
         gamcd = 0.3
 
@@ -450,7 +460,7 @@ subroutine check
         if(irfcd == 0) then
            call report_error(198)
         endif
-   
+
      endif
 
      if ((any(ixc==145)) .and. (boundl(145) < fgwsep)) then  !if lower bound of fgwped < fgwsep
@@ -507,11 +517,11 @@ subroutine check
            !ixc(36) fbetatry
            !icc(48) poloidal beta upper limit
            !ixc(79) fbetap
-           
+
            if (any((icc == 6) .or. (icc == 24) .or. (icc == 48) ) .or. any((ixc == 8) .or.(ixc == 36) .or. (ixc == 79))) then
               call report_error(191)
            endif
-           
+
         endif
 
         ! Stop PROCESS if certain iteration variables have been requested while using PLASMOD
@@ -519,7 +529,7 @@ subroutine check
         ! ixc(4) = te, ixc(5) = beta, ixc(6) = dene, ixc(9) = fdene,
         !ixc(44) = fvsbrnni
         ! ixc(102) = fimpvar, ixc(103) = flhthresh, ixc(109) = ralpne,
-        ! ixc(110) = ftaulimit, 
+        ! ixc(110) = ftaulimit,
         if(any((ixc==4).or.(ixc==5).or.(ixc==6).or.(ixc==9).or.(ixc==36)&
              .or.(ixc==44).or.(ixc==102).or.(ixc==103).or.(ixc==109).or.&
              (ixc==110).or.(ixc==117)))then
@@ -535,11 +545,31 @@ subroutine check
            !cannot use q as iteration variable, if plasma current is input for EMEQ
            if (any(ixc == 18)) then
               call report_error(190)
-           endif           
+           endif
         endif
-        
+
      endif
 
+
+     if (any(icc == 78)) then
+
+        !If Reinke criterion is used tesep is calculated and cannot be an
+        !iteration variable
+        if (any(ixc == 119)) then
+           call report_error(214)
+        endif
+
+        !If Reinke criterion is used need to enforce LH-threshold
+        !using Martin scaling for consistency
+        if (.not. ilhthresh == 6) then
+           call report_error(215)
+        endif
+        if  (.not. any(icc==15) .and. (ipedestal .ne. 3)) then
+           call report_error(215)
+        endif
+
+
+     endif
 
      if (any(icc == 78)) then
         
@@ -667,7 +697,7 @@ subroutine check
     ! Set inboard blanket thickness to zero if no inboard blanket switch
     ! used (Issue #732)
     if (iblnkith == 0) blnkith = 0.0D0
-    
+
     !  Solid breeder assumed if ipowerflow=0
 
     !if (ipowerflow == 0) blkttype = 3
@@ -731,7 +761,7 @@ subroutine check
      end if
 
 
-     
+
     errors_on = .false.
 
 end subroutine check

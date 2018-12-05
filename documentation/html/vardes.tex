@@ -49,7 +49,7 @@
 \begin{document}
 \maketitle
 
-\subsection{PROCESS Variable Descriptor File : dated 20180619}
+\subsection{PROCESS Variable Descriptor File : dated 20181026}
 
 \begin{center}\rule{3in}{0.4pt}\end{center}
 
@@ -440,6 +440,9 @@ so need not be initialised.
     https://idm.euro-fusion.org/?uid=2MSZ4T
   \end{itemize}
 \item
+  eped\_sf /1.0/ : Adjustment factor for EPED scaling to reduce pedestal
+  temperature or pressure to mitigate o
+\item
   neped /4.0e19/ : electron density of pedestal {[}m-3{]}
   (ipedestal=1,2, calculated if 3)
 \item
@@ -449,6 +452,8 @@ so need not be initialised.
   alpha\_crit : critical ballooning parameter value
 \item
   nesep\_crit : critical electron density at separatrix {[}m-3{]}
+\item
+  plasma\_res\_factor /1.0/ : plasma resistivity pre-factor
 \item
   rhopedn /1.0/ : r/a of density pedestal (ipedestal\textgreater{}=1)
 \item
@@ -461,7 +466,8 @@ so need not be initialised.
   (ipedestal\textgreater{}=1, ieped=0, calculated for ieped=1)
 \item
   tesep /0.1/ : electron temperature at separatrix (keV)
-  (ipedestal\textgreater{}=1)
+  (ipedestal\textgreater{}=1) calculated if reinke criterion is used
+  (icc = 78)
 \item
   iprofile /1/ : switch for current profile consistency:
 
@@ -620,6 +626,16 @@ so need not be initialised.
     = 0 use conventional aspect ratio models;
   \item
     = 1 use spherical tokamak models
+  \end{itemize}
+\item
+  itartpf /0/ : switch for Spherical Tokamak PF models:
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    = 0 use Peng and Strickler (1986) model;
+  \item
+    = 1 use conventional aspect ratio model
   \end{itemize}
 \item
   iwalld /1/ : switch for neutron wall load calculation:
@@ -833,7 +849,7 @@ so need not be initialised.
 \item
   tauee : electron energy confinement time (sec)
 \item
-  taueff : global energy confinement time (sec)
+  taueff : global thermal energy confinement time (sec)
 \item
   tauei : ion energy confinement time (sec)
 \item
@@ -923,7 +939,10 @@ so need not be initialised.
 \item
   plasmod\_dgy /1.0d-5/ : Newton differential
 \item
-  plasmod\_i\_modeltype /1/ : swithc for the transport model
+  plasmod\_iprocess /1/ : 0 - use PLASMOD functions, 1 - use PROCESS
+  functions
+\item
+  plasmod\_i\_modeltype /1/ : switch for the transport model
 
   \begin{itemize}
   \itemsep1pt\parskip0pt\parsep0pt
@@ -955,6 +974,9 @@ so need not be initialised.
 \item
   plasmod\_qdivt /0.0d0/ : divertor heat flux in MW/m\^{}2, if 0, dont
   use SOL model
+\item
+  plasmod\_imptype(3) /14, 13, 9/ : Impurities: element 1 - intrinsic
+  impurity, element 2 - Psep control, elem
 \item
   plasmod\_qnbi\_psepfac /50.0d0/ : dqnbi/d(1-Psep/PLH)
 \item
@@ -999,6 +1021,17 @@ so need not be initialised.
   eccdeff*PCD*TE/NE (not in use yet)
 \item
   plasmod\_pech /0.0d0/ :: ech power (not in use yet)
+\item
+  plasmod\_gamcdothers /1.0d0/ :: efficiency multiplier for non-CD
+  heating. If 0.0 pheat treated as if it had
+\item
+  plasmod\_chisawpos /-1.0d0/ :: position where artificial sawtooth
+  diffusivity is added, -1 - uses q=1 positi
+\item
+  plasmod\_chisaw /0.0d0/ :: artificial diffusivity in m\^{}2/s
+\item
+  plasmod\_sawpertau /1.0d-6/ :: ratio between sawtooth period and
+  confinement time
 \item
   plasmod\_spellet /0.0d0/ :: pellet mass in units of D in 10\^{}19
 \item
@@ -1095,6 +1128,9 @@ so need not be initialised.
 \item
   gamma\_ecrh /0.35/ : user input ECRH gamma (1.0e20 A/(W m\^{}2))
 \item
+  rho\_ecrh /0.1/ : normalised minor radius at which electron cyclotron
+  current drive is maximum
+\item
   iefrf /5/ : switch for current drive efficiency model:
 
   \begin{enumerate}
@@ -1119,6 +1155,8 @@ so need not be initialised.
     Empty (Oscillating field CD removed)
   \item
     ECRH user input gamma
+  \item
+    ECRH ``HARE'' model (E. Poli, Physics of Plasmas 2019)
   \end{enumerate}
 \item
   irfcd /1/ : switch for current drive calculation:
@@ -1188,8 +1226,8 @@ so need not be initialised.
   lcon\_factor /1.0/ : Correction factor for connection length from OMP
   to divertor = connection length/(pi*q*rmajor)
 \item
-  netau /0.5/ : Parameter describing the departure from local ionisation
-  equilibrium in the SOL. {[}ms.1e20/m3{]}
+  netau\_sol /0.5/ : Parameter describing the departure from local
+  ionisation equilibrium in the SOL. {[}ms.1e20
 \item
   targetangle /30.0/ : Angle between field-line and divertor target
   (degrees)
@@ -1236,6 +1274,14 @@ so need not be initialised.
 \item
   ionisationpowerlost : Power lost due to electron impact ionisation
   {[}W{]}
+\item
+  abserr\_sol : Absolute contribution to the error tolerance in the
+  Kallenbach divertor model
+\item
+  relerr\_sol : Relative contribution to the error tolerance in the
+  Kallenbach divertor model
+\item
+  mach0 : Mach number at target (must be just less than 1)
 \end{itemize}
 
 \subsubsection{\href{divertor_variables.html}{divertor\_variables}}
@@ -1405,6 +1451,16 @@ so need not be initialised.
     = 3 CCFE HCPB model with Tritium Breeding Ratio calculation;
   \item
     = 4 KIT HCLL model
+  \end{itemize}
+\item
+  iblnkith /1/ : switch for inboard blanket:
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    = 0 No inboard blanket (blnkith=0.0);
+  \item
+    = 1 Inboard blanket present
   \end{itemize}
 \item
   inuclear /0/ : switch for nuclear heating in the coils:
@@ -2155,8 +2211,8 @@ so need not be initialised.
 \item
   acs : Area of space inside conductor (m2)
 \item
-  cdtfleg /1.0e6/ : TF leg overall current density (A/m2) (resistive
-  coils only) (iteration variable 24)
+  cdtfleg : TF outboard leg current density (A/m2) (resistive coils
+  only)
 \item
   cforce : centering force on inboard leg (per coil) (N/m)
 \item
@@ -2722,6 +2778,8 @@ so need not be initialised.
 \item
   crypmw : cryogenic plant power (MW)
 \item
+  etatf /0.9/ : AC to resistive power conversion for TF coils
+\item
   etath /0.35/ : thermal to electric conversion efficiency if
   secondary\_cycle=2; otherwise calculated
 \item
@@ -2835,8 +2893,7 @@ so need not be initialised.
 \item
   pwpm2 /150.0/ : base AC power requirement per unit floor area (W/m2)
 \item
-  tfacpd /0.0/ : total steady state TF coil AC power demand (MW)
-  (itfsup=0 only; calculated for itfsup=1)
+  tfacpd : total steady state TF coil AC power demand (MW)
 \item
   tlvpmw : estimate of total low voltage power (MW)
 \item
@@ -3021,8 +3078,8 @@ so need not be initialised.
   blbuoth /0.465/ : outboard blanket breeding zone thickness (m)
   (blktmodel\textgreater{}0) (iteration variable 91)
 \item
-  blnkith /0.115/ : inboard blanket thickness (m); calculated if
-  blktmodel \textgreater{} 0
+  blnkith /0.115/ : inboard blanket thickness (m); (calculated if
+  blktmodel \textgreater{} 0) (=0.0 if iblnkith=0)
 \item
   blnkoth /0.235/ : outboard blanket thickness (m); calculated if
   blktmodel \textgreater{} 0
@@ -3552,7 +3609,7 @@ so need not be initialised.
   uchts(2) /15.3,19.1/ : cost of heat transport system equipment per
   loop (\$/W); dependent on coolant type (coolwh)
 \item
-  uciac /1.5e8/ : cost of instrumentation, control \& diagnostics (\$/W)
+  uciac /1.5e8/ : cost of instrumentation, control \& diagnostics (\$)
 \item
   ucich /3.0/ : ICH system cost (\$/W)
 \item
@@ -3564,7 +3621,7 @@ so need not be initialised.
 \item
   ucmb /260.0/ FIX: unit cost for reactor maintenance building (M\$/m3)
 \item
-  ucme /1.25e8/ : unit cost of maintenance equipment (\$/W**0.3)
+  ucme /1.25e8/ : cost of maintenance equipment (\$/)
 \item
   ucmisc /2.5e7/ : miscellaneous plant allowance (\$)
 \item
@@ -3762,6 +3819,9 @@ so need not be initialised.
 \item
   fradwall /1.0/ : f-value for upper limit on radiation wall load
   (constr. equ. 67, iteration variable 116 )
+\item
+  freinke /1.0/ : f-value for Reinke detachment criterion (constr. equ.
+  78, iteration variable 147)
 \item
   frminor /1.0/ : f-value for minor radius limit (constraint equation
   21, iteration variable 32)
@@ -4112,6 +4172,26 @@ so need not be initialised.
 
 \subsubsection{\href{resistive_material.html}{resistive\_material}}
 
+\subsubsection{\href{reinke_variables.html}{reinke\_variables}}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  impvardiv /9/ : index of impurity to be iterated for Reinke divertor
+  detachment criterion
+\item
+  lhat /4.33/ : connection length factor L\textbar{}\textbar{} = lhat
+  qstar R for Reinke criterion, default value from Post et al. 1995 J.
+  Nucl. Mat. 220-2 1014
+\item
+  fzmin : Minimum impurity fraction necessary for detachment This is the
+  impurity at the SOL/Div
+\item
+  fzactual : Actual impurity fraction of divertor impurity (impvardiv)
+  in the SoL (taking impurity\_enrichment into account) (iteration
+  variable 148)
+\end{itemize}
+
 \subsubsection{\href{numerics.html}{numerics}}
 
 \begin{itemize}
@@ -4371,7 +4451,7 @@ so need not be initialised.
   \item
     (72) central solenoid Tresca stress limit (itv 123 foh\_stress)
   \item
-    (73) Psep \textgreater{}= Plh + Paux (itv 137 (fplhsep)
+    (73) Psep \textgreater{}= Plh + Paux (itv 137 (fplhsep))
   \item
     (74) TFC quench \textless{} tmax\_croco (itv 141 (fcqt))
   \item
@@ -4381,6 +4461,9 @@ so need not be initialised.
     (76) Eich critical separatrix density
   \item
     (77) TF coil current per turn upper limit
+  \item
+    (78) Reinke criterion impurity fraction lower limit (itv 147
+    freinke)
   \end{itemize}
 \item
   ixc(ipnvars) /0/ : array defining which iteration variables to
@@ -4438,7 +4521,7 @@ so need not be initialised.
   \item
     (23) fcoolcp
   \item
-    (24) cdtfleg
+    (24) NOT USED
   \item
     (25) fpnetel (f-value for equation 16)
   \item
@@ -4703,25 +4786,31 @@ so need not be initialised.
   \item
     (146) fcpttf : F-value for TF coil current per turn limit
     (constraint equation 77)
+  \item
+    (147) freinke : F-value for Reinke detachment criterion (constraint
+    equation 78)
   \end{itemize}
 \item
-  sqsumsq : sqrt of the sum of the square of the constraint residuals
-\item
-  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON
-  derivatives
-\item
-  epsvmc /1.0e-6/ : error tolerance for VMCON
-\item
-  factor /0.1/ : used in HYBRD for first step size
-\item
-  ftol /1.0e-4/ : error tolerance for HYBRD
-\item
-  boundl(ipnvars) /../ : lower bounds used on ixc variables during VMCON
-  optimisation runs
-\item
-  boundu(ipnvars) /../ : upper bounds used on ixc variables during VMCON
-  optimisation runs
+  (148) fzactual : fraction of impurity at SOL with Reinke detachment
+  criterion
 \end{itemize}
+
+sqsumsq : sqrt of the sum of the square of the constraint residuals
+
+epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON
+derivatives
+
+epsvmc /1.0e-6/ : error tolerance for VMCON
+
+factor /0.1/ : used in HYBRD for first step size
+
+ftol /1.0e-4/ : error tolerance for HYBRD
+
+boundl(ipnvars) /../ : lower bounds used on ixc variables during VMCON
+optimisation runs
+
+boundu(ipnvars) /../ : upper bounds used on ixc variables during VMCON
+optimisation runs
 
 \subsubsection{\href{eqsolv.html}{eqsolv}}
 

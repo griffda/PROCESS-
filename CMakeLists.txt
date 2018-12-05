@@ -1,44 +1,49 @@
-cmake_minimum_required(VERSION 3.5)
+# CMake file for PROCESS
+# UKAEA
+
 # Specify the minimum version for CMake
-#set(CMAKE_VERBOSE_MAKEFILE on)
+cmake_minimum_required(VERSION 3.5)
+
+# Specify CMake root location
 include(${CMAKE_ROOT}/Modules/CMakeDetermineCompiler.cmake)
 include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
+
+# Set CMake stadard to be 11
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS  -std=c++11)
-set(GTEST_INCLUDE_DIR $ENV{GTEST}/include)
-set(GTEST_LIBRARY $ENV{GTEST}/lib)
-set(GTEST_MAIN_LIBRARY $ENV{GTEST})
-#find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIR})
 
-#include_directories($ENV{GTEST}/include)
-#include_directories($(PFUNIT)/include/base.mk)
+# Setup GoogleTest options
+set(GTEST_LIBRARY $ENV{GTEST}/lib)
+set(GTEST_INCLUDE_DIR $ENV{GTEST}/include)
+include_directories(${GTEST_INCLUDE_DIR})
+set(GTEST_MAIN_LIBRARY $ENV{GTEST})
+
+# Choose gfortran as compiler
 set(CMAKE_Fortran_Compiler gfortran)
+
 # Project's name
 project(PROCESS LANGUAGES Fortran CXX)
+
 # enable Fortran
-#enable_language(Fortran)
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
- message(STATUS, "Intel ")
+  message(STATUS, "Intel ")
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL PGI)
-message( FATAL_ERROR "Please unload pgi(module unload pgi) and load gfortran (module load gfortran) " )
+  message( FATAL_ERROR "Please unload pgi(module unload pgi) and load gfortran "
+          "(module load gfortran) " )
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
-execute_process(COMMAND gfortran --version OUTPUT_VARIABLE GFORT_COMPILER_VERSION)
- message(STATUS, ${GFORT_COMPILER_VERSION})
-#
+  execute_process(COMMAND gfortran --version
+                  OUTPUT_VARIABLE GFORT_COMPILER_VERSION)
+  message(STATUS, ${GFORT_COMPILER_VERSION})
 else()
-message( FATAL_ERROR "Unrecognized compiler. Please use  gfortran, ifort" )
+  message( FATAL_ERROR "Unrecognized compiler. Please use  gfortran, ifort" )
 endif()
 
-#set(LIB_EXT .o)
-#set(LIBS $(PFUNIT)/lib/libpfunit$(LIB_EXT))
-#set(OBJ_EXT .o)
-
-
+# Setup file extension preferences
 set(FORT_EXT .F90)
 set(PF_EXT .pf)
-#set(GTEST /home/mkumar/googletest/googletest)
+
+# Define directories for source etc.
 set(FORT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/source/fortran)
 set(CPP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/source/cpp)
 set(DOC_DIR ${CMAKE_SOURCE_DIR}/documentation)
@@ -53,9 +58,18 @@ set(BLD_DIR ${CMAKE_BINARY_DIR})
 set(CMAKE_INSTALL_RPATH ${CMAKE_BINARY_DIR})
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 include_directories(${TEST_DIR}/gtest_files)
-#
+
+# Check operating systems and set OS specific options
 if(CMAKE_HOST_WIN32)  # For windows system
    message(STATUS, "Windows ")
+elseif(CMAKE_HOST_APPLE)  # For Apple OS X system
+   message(STATUS, "Apple OS X ")
+   message(STATUS,${CMAKE_BINARY_DIR})
+   set(MOVE_FILE mv)
+   set(COPY_FILE cp -p)
+   set(FORTRAN gfortran)
+   set(CMAKE_Fortran_COMPILER /usr/local/bin/gfortran)
+   set(CMAKE_CALC_ENGINE libPROCESS_calc_engine.dylib)
 elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
    message(STATUS, "Linux ")
    message(STATUS,${CMAKE_BINARY_DIR})
@@ -63,35 +77,62 @@ elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
    set(COPY_FILE cp -p)
    set(FORTRAN gfortran)
    set(CMAKE_Fortran_COMPILER /usr/bin/gfortran)
-# Now define Fortran compiler flags
-# add_definitions("-cpp -g -fbounds-check -Wconversion -Wunused-dummy-argument -Wunused-parameter")
-# set(ENV{FC} /usr/bin/gfortran)
+   set(CMAKE_CALC_ENGINE libPROCESS_calc_engine.so)
 endif()
-#
+
+# Setup C and C++ compilers
 find_program(CMAKE_C_COMPILER NAMES $ENV{CC} gcc PATHS ENV PATH NO_DEFAULT_PATH)
 find_program(CMAKE_CXX_COMPILER NAMES $ENV{CXX} g++ PATHS ENV PATH NO_DEFAULT_PATH)
-#find_program(CMAKE_Fortran_COMPILER NAMES $ENV{FC} gfortran PATHS ENV PATH NO_DEFAULT_PATH)
-#add_compile_options(-std=c++11)
+
+# Set CMake compiler flags
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,/usr/local/lib64")
-#message(STATUS $ENV{PATH})
-#message(STATUS, ${CMAKE_CXX_COMPILER_ID})
+
+# CMake compiler setup
 if ("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU")
   # using GCC
- message(STATUS, "GNU GFORTRAN ")
+  message(STATUS, "GNU GFORTRAN ")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
   # using Intel C++
- message(STATUS, "Intel ")
+  message(STATUS, "Intel ")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   # using Visual Studio C++
- message(STATUS, "MSVC ")
+  message(STATUS, "MSVC ")
 endif()
 
-set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} ${bounds}")
-#set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${dialect} -cpp -g -fbounds-check -Wconversion -Wunused-dummy-argument -Wunused-parameter")
-set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fbounds-check -Wconversion -Wunused-dummy-argument -Wunused-parameter")
 
+set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} ${bounds}")
+#set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${dialect} -cpp -g -fcheck=bounds -Wconversion -Wunused-dummy-argument -Wunused-parameter")
+# set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fcheck=bounds -fbacktrace-Wconversion -Wunused-dummy-argument -Wunused")
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fcheck=bounds -fbacktrace")
+# -Wall -Wextra -Wunused   have been removed for convenience
+
+message("\nFlag configuration for files")
+file(GLOB FORTRAN_FILES ${FORT_SOURCE_DIR}/*.f90)
+foreach(file ${FORTRAN_FILES})
+  if(${file} MATCHES "fson_library.f90")
+    message("-- Removed -Wconversion flag for -> " ${file})
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wunused-dummy-argument -Wunused -fcheck=bounds -fbacktrace")
+  elseif(${file} MATCHES "maths_library.f90")
+    message("-- Removed -Wunused-dummy-argument flag for --> " ${file})
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused -fcheck=bounds -fbacktrace")
+  elseif(${file} MATCHES "superconductors.f90")
+    message("-- Removed -Wunused-dummy-argument flag for --> " ${file})
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused -fcheck=bounds -fbacktrace")
+  elseif(${file} MATCHES "fispact.f90")
+    message("-- Use legacy flag for --> " ${file})
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-std=legacy -fcheck=bounds -fbacktrace")
+  elseif(${file} MATCHES "TorGA_curgap.f90")
+    message("-- Use -fcheck=bounds -fbacktrace flags for --> " ${file})
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch")
+  else()
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
+  endif()
+endforeach()
+message("-- COMPILE_FLAGS for all other fortran files = -Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
+
+message("\n")
 message("Fortran compiler used in this build will be -> ${CMAKE_Fortran_COMPILER_ID}")  # Must be after project(project_name)
-message("Fortran FLags are -> ${CMAKE_Fortran_FLAGS}")  # Must be after project(project_name)
+message("Fortran Flags are -> ${CMAKE_Fortran_FLAGS}")  # Must be after project(project_name)
 # The version number.
 set (process_VERSION_MAJOR 1)
 set (process_VERSION_MINOR 0)
@@ -100,8 +141,8 @@ set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_PATH /usr/lib)
 add_custom_target(autodoc
-  COMMAND ${FORTRAN} -o autodoc autodoc.f90
-  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
+COMMAND ${FORTRAN} -o autodoc autodoc.f90
+WORKING_DIRECTORY ${FORT_SOURCE_DIR}
   DEPENDS ${FORT_SOURCE_DIR}/autodoc.f90
 #  VERBATIM
 )
@@ -305,5 +346,5 @@ install(TARGETS process.exe DESTINATION ${CMAKE_SOURCE_DIR})
 add_custom_command(TARGET process.exe
  POST_BUILD
  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}
- COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/libPROCESS_calc_engine.so ${CMAKE_SOURCE_DIR}
+ COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/${CMAKE_CALC_ENGINE} ${CMAKE_SOURCE_DIR}
 )
