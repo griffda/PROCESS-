@@ -428,6 +428,7 @@ contains
     !+ad_hist  06/11/14 PJK Added secondary_cycle=0 assumption
     !+ad_hist  12/11/14 PJK Added tpulse, tdown, tcycle
     !+ad_hist  24/11/14 PJK Brought blanket properties in line with tokamak
+    !+ad_hist  05/12/18 SIM Added primary_pumping, revised secondary_cycle
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -491,7 +492,7 @@ contains
     tfno = 50.0D0
 
     !  Blanket properties
-    secondary_cycle = 0  !  simple thermal hydraulic model assumed
+    !secondary_cycle = 0  !  simple thermal hydraulic model assumed
 
     !  CCFE HCPB blanket model
 	!if (iblanket == 1) then
@@ -1633,7 +1634,7 @@ contains
           psurffwi = pradfw * fwareaib/fwarea
           psurffwo = pradfw * fwareaob/fwarea
 
-          !  Simple blanket model (secondary_cycle=0) is assumed for stellarators
+          !  Simple blanket model (primary_pumping = 0 or 1) is assumed for stellarators
 
           !  The power deposited in the first wall, breeder zone and shield is
           !  calculated according to their dimensions and materials assuming
@@ -1691,7 +1692,7 @@ contains
 
           !  Calculation of shield and divertor powers
           !  Shield and divertor powers and pumping powers are calculated using the same
-          !  simplified method as the first wall and breeder zone when secondary_cycle = 0.
+          !  simplified method as the first wall and breeder zone when primary_pumping = 1.
           !  i.e. the pumping power is a fraction of the total thermal power deposited in the
           !  coolant.
 
@@ -1719,13 +1720,17 @@ contains
           !     htpmw_i = fpump_i*C
           !  where C is the non-pumping thermal power deposited in the coolant
 
-          !  Shield pumping power (MW)
+          if (primary_pumping==0) then
+              !    Use input
+          else if (primary_pumping==1) then
 
-          htpmw_shld = fpumpshld*(pnucshldi + pnucshldo)
+              !  Shield pumping power (MW)
+              htpmw_shld = fpumpshld*(pnucshldi + pnucshldo)
 
-          !  Divertor pumping power (MW)
+              !  Divertor pumping power (MW)
+              htpmw_div = fpumpdiv*(pdivt + pnucdiv + praddiv)
 
-          htpmw_div = fpumpdiv*(pdivt + pnucdiv + praddiv)
+          end if
 
           !  Remaining neutron power to coils and elsewhere. This is assumed
           !  (for superconducting coils at least) to be absorbed by the

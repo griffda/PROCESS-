@@ -1640,8 +1640,8 @@ module fwbs_variables
 
   !+ad_vars  primary_pumping /2/ : Switch for pumping power for primary coolant (06/01/2016):
   !+ad_varc       (mechanical power only)<UL>
-  !+ad_varc     <LI> = 0 User sets pump power directly (htpmw_blkt, htpmw_fw)
-  !+ad_varc     <LI> = 1 User sets pump power as a fraction of thermal power (fpumpblkt, fpumpfw)
+  !+ad_varc     <LI> = 0 User sets pump power directly (htpmw_blkt, htpmw_fw, htpmw_div, htpmw_shld)
+  !+ad_varc     <LI> = 1 User sets pump power as a fraction of thermal power (fpumpblkt, fpumpfw, fpumpdiv, fpumpshld)
   !+ad_varc     <LI> = 2 Mechanical pumping power is calculated
   !+ad_varc     <LI> = 3 Mechanical pumping power is calculated using specified pressure drop</UL>
   !+ad_vars  (peak first wall temperature is only calculated if primary_pumping = 2)
