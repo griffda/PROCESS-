@@ -12,16 +12,16 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : process.exe
+   Program : /home/smuldrew/process/latest/process.exe
    Version : 1.0.14   Release Date :: 2018-11-09
-   Tag No. : "1.0.14-1-g75a421c Code used contains Untracked Changes"
-   Last commit message : "Added emultmw to stellarator #783,"
+   Tag No. : "1.0.14-2-g18a31c5 Code used contains Untracked Changes"
+   Last commit message : "Added primary_pumping to stellarator #783,"
       User : smuldrew
  Directory : /home/smuldrew/Stellarator/HELIAS-5B
  
  **************************************************************************************************************
  
- PROCESS 1.0.14 : Run on  5 Dec 2018 14:41:47 +00:00(hh:mm) UTC by G0764
+ PROCESS 1.0.14 : Run on  6 Dec 2018 10:24:17 +00:00(hh:mm) UTC by G0764
  Reactor concept design: Stellarator model, (c) CCFE
  HELIAS-5B
  (Please include this header in any models, presentations and papers based on these results)
@@ -80,7 +80,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ******************************************** Final Feasible Point ********************************************
  
  
- ******************************************** Power Reactor Costs *********************************************
+ *************************************** Power Reactor Costs (1990 US$) ***************************************
  
  First wall / blanket life (years)                                        (fwbllife)                   17.552     
  Divertor life (years)                                                    (divlife.)                    8.216     
@@ -105,7 +105,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
 
  Total Cost                                                                        677.39              103.11
  
- ********************************************* Detailed Costings **********************************************
+ **************************************** Detailed Costings (1990 US$) ****************************************
  
  Acc.22 multiplier for Nth of a kind                                      (fkind)                   1.000E+00     
  Level of Safety Assurance                                                (lsa)                             2     
@@ -781,8 +781,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical pumping power for shield (MW)                                 (htpmwe_shld)             0.000E+00  OP 
  Electrical pumping power for divertor (MW)                               (htpmwe_div)              2.400E+01  OP 
  Total electrical pumping power for primary coolant (MW)                  (htpmw)                   2.000E+02  OP 
- Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               5.000E-03     
- Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                5.000E-03     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  1.000E+00     
  
  Plant thermodynamics: options :

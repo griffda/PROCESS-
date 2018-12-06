@@ -4,10 +4,13 @@
 
 ## Bug Fixes
 - Added emultmw calculation to stellarator and fixed power balance errors (Issue #783)
+- Amended fpump* output to match with primary_pumping options.
 
 ## Features
 
 ## Minor Changes
+- Explicitly state 1990 $ for old cost model
+
 
 # 1.0.14
 

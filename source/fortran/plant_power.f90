@@ -1233,13 +1233,16 @@ contains
     call ovarre(outfile, 'Electrical pumping power for divertor (MW)', '(htpmwe_div)', htpmwe_div, 'OP ')
     call ovarre(outfile, 'Total electrical pumping power for primary coolant (MW)', '(htpmw)', htpmw, 'OP ')
 
-    if (((secondary_cycle == 0).or.(secondary_cycle == 1)).and.(primary_pumping/=3)) then
+    if (primary_pumping==1) then
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in first wall', '(fpumpfw)', fpumpfw)
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in blanket', '(fpumpblkt)', fpumpblkt)
     end if
-
-    call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in shield', '(fpumpshld)', fpumpshld)
-    call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in divertor', '(fpumpdiv)',fpumpdiv)
+    
+    if (primary_pumping /= 0) then
+        call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in shield', '(fpumpshld)', fpumpshld)
+        call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in divertor', '(fpumpdiv)',fpumpdiv)
+    end if
+    
     call ovarre(outfile, 'Electrical efficiency of heat transport coolant pumps', '(etahtp)', etahtp)
     ! #284
     call osubhd(outfile,'Plant thermodynamics: options :')

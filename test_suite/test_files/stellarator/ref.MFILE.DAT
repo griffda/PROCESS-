@@ -3,12 +3,12 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.14   "
- Date_of_run_____________________________________________________________ (date)________________________     "05/12/2018"
- Time_of_run_____________________________________________________________ (time)________________________     "14:41"
+ Date_of_run_____________________________________________________________ (date)________________________     "06/12/2018"
+ Time_of_run_____________________________________________________________ (time)________________________     "10:24"
  User____________________________________________________________________ (username)____________________     "smuldrew"
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "HELIAS-5B                                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.14-1-g75a421c"                                                                                 
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added emultmw to stellarator #783,"                                                                
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.14-2-g18a31c5"                                                                                 
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added primary_pumping to stellarator #783,"                                                        
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -39,11 +39,11 @@
  Radial_build_consistency__________normalised_residue____________________ (normres003)__________________     -0.0000E+00    
  Net_electric_power_lower_limit____normalised_residue____________________ (normres004)__________________      4.2320E-09    
  # Final Feasible Point #
- # Power Reactor Costs #
+ # Power Reactor Costs (1990 US$) #
  First_wall_/_blanket_life_(years)_______________________________________ (fwbllife)____________________      1.7552E+01    
  Divertor_life_(years)___________________________________________________ (divlife.)____________________      8.2156E+00    
  Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      1.0311E+02    
- # Detailed Costings #
+ # Detailed Costings (1990 US$) #
  Acc.22_multiplier_for_Nth_of_a_kind_____________________________________ (fkind)_______________________      1.0000E+00    
  Level_of_Safety_Assurance_______________________________________________ (lsa)_________________________              2    
  Site_improvements,_facilities,_land_(M$)________________________________ (c211)________________________      3.2640E+01    
@@ -513,8 +513,6 @@
  Electrical_pumping_power_for_shield_(MW)________________________________ (htpmwe_shld)_________________      0.0000E+00 OP 
  Electrical_pumping_power_for_divertor_(MW)______________________________ (htpmwe_div)__________________      2.4000E+01 OP 
  Total_electrical_pumping_power_for_primary_coolant_(MW)_________________ (htpmw)_______________________      2.0000E+02 OP 
- Coolant_pump_power_/_non-pumping_thermal_power_in_shield________________ (fpumpshld)___________________      5.0000E-03    
- Coolant_pump_power_/_non-pumping_thermal_power_in_divertor______________ (fpumpdiv)____________________      5.0000E-03    
  Electrical_efficiency_of_heat_transport_coolant_pumps___________________ (etahtp)______________________      1.0000E+00    
  Thermal_to_electric_conversion_efficiency_of_the_power_conversion_cycle_ (etath)_______________________      4.0000E-01    
  Fraction_of_total_high-grade_thermal_power_to_divertor__________________ (pdivfraction)________________      1.1760E-01    
