@@ -299,7 +299,7 @@ subroutine tf_winding_pack()
     ! Radial position of inner edge of winding pack [m]
     r_wp_inner = r_tf_inner + thkcas
 
-    ! Radial position of outner edge of winding pack [m]
+    ! Radial position of outer edge of winding pack [m]
     r_wp_outer = r_wp_inner + thkwp
 
     ! Total current in TF coils [A]
@@ -408,7 +408,14 @@ subroutine tf_winding_pack()
         acond = acstf * turnstf * (1.0D0-vftf) - awphec
         ! Void area in conductor for He, not including central channel [m2]
         avwp = acstf * turnstf * vftf
-    end if   
+       
+    else if(isumattf == 6)then  ! REBCO
+        ! Diameter of circular cable space inside conduit [m]
+        leni = conductor_width - 2.0D0*thwcndut
+        ! Cross-sectional area of conduit jacket per turn [m2]
+        acndttf = conductor_width**2 - acstf
+            
+    end if  
 
 end subroutine tf_winding_pack
 
@@ -2112,16 +2119,18 @@ contains
         !  Find critical current density in superconducting strand, jcritstr
 
         call jcrit_rebco(thelium,bmax,jcritsc,validity,iprint)
-        ! acstf : Cable space - inside area (m2)        
+        ! acstf : Cable space - inside area (m2)
+        ! Set new croco_od - allowing for scaling of croco_od
+        croco_od = conductor_width / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
         conductor%acs =  9.d0/4.d0 * pi * croco_od**2
         acstf = conductor%acs
-        conductor%area =  conductor_width**2
+        conductor%area =  conductor_width**2 ! does this not assume it's a sqaure???
 
         conductor%jacket_area = conductor%area - conductor%acs
         acndttf = conductor%jacket_area
         
         conductor%jacket_fraction = conductor%jacket_area / conductor%area
-        call croco(jcritsc,croco_strand,conductor)
+        call croco(jcritsc,croco_strand,conductor,croco_od)
         copperA_m2 = iop / conductor%copper_area
         icrit = conductor%critical_current
         jcritstr = croco_strand%critical_current / croco_strand%area
@@ -2347,25 +2356,25 @@ contains
 
 end subroutine tfspcall
 ! --------------------------------------------------------------------
-subroutine croco_voltage()
+! ! subroutine croco_voltage()
 
-    !+ad_name  croco_voltage
-    !+ad_summ  Finds the dump voltage in quench for the Croco HTS conductor
-    !+ad_type  Subroutine
+!     !+ad_name  croco_voltage
+!     !+ad_summ  Finds the dump voltage in quench for the Croco HTS conductor
+!     !+ad_type  Subroutine
 
-    ! vtfskv : voltage across a TF coil during quench (kV)
-    ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
-    ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
+!     ! vtfskv : voltage across a TF coil during quench (kV)
+!     ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
+!     ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
 
-    if(quench_model=='linear')then
-        time2 = tdmptf
-        vtfskv = 2.0D0/time2 * (estotft/tfno) / cpttf
-    elseif(quench_model=='exponential')then
-        tau2 = tdmptf
-        vtfskv = 2.0D0/tau2 * (estotft/tfno) / cpttf
-    endif
+!     if(quench_model=='linear')then
+!         time2 = tdmptf
+!         vtfskv = 2.0D0/time2 * (estotft/tfno) / cpttf
+!     elseif(quench_model=='exponential')then
+!         tau2 = tdmptf
+!         vtfskv = 2.0D0/tau2 * (estotft/tfno) / cpttf
+!     endif
 
-end subroutine croco_voltage
+! ! end subroutine croco_voltage
 ! --------------------------------------------------------------------
 function croco_voltage()
 

@@ -655,7 +655,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 end subroutine wstsc
 !--------------------------------------------------------------------------
 
-subroutine croco(jcritsc,croco_strand,conductor)
+subroutine croco(jcritsc,croco_strand,conductor,croco_od)
 
     !+ad_name  croco
     !+ad_summ  "CroCo" (cross-conductor) strand and cable design for
@@ -666,10 +666,16 @@ subroutine croco(jcritsc,croco_strand,conductor)
     real(kind(1.0D0)), intent(in) ::jcritsc
     type(volume_fractions), intent(inout)::conductor
     type(supercon_strand), intent(inout)::croco_strand
-    real(kind(1.0D0)) :: d
+    real(kind(1.0D0)) :: d, scaling, croco_od !, conductor_width, thwcndut
     ! Define local alias
     d = croco_od
-
+    !d = conductor_width / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
+    
+    ! Define the scaling factor for the input REBCO variable
+    ! Ratio of new croco outer diameter and fixed base line value 
+    scaling = croco_od / 10.4d-3
+    tape_width = scaling * 3.75d-3
+    croco_id = scaling * 5.4d-3
     ! Properties of a single strand
     tape_thickness = rebco_thickness + copper_thick + hastelloy_thickness
     stack_thickness = sqrt(croco_id**2 - tape_width**2)
