@@ -1986,7 +1986,8 @@ module pfcoil_variables
   !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
   !+ad_varc            <LI> = 3 NbTi;
   !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters
-  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation</UL>
+  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation
+  !+ad_varc            <LI> = 6 REBCO HTS parameterisation</UL>
   integer :: isumatoh = 1
   !+ad_vars  isumatpf /1/ : switch for superconductor material in PF coils:<UL>
   !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard

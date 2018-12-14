@@ -1991,7 +1991,7 @@ contains
           call parse_int_variable('ipfres', ipfres, 0, 1, &
                'Switch for supercond / resist PF coils')
        case ('isumatoh')
-          call parse_int_variable('isumatoh', isumatoh, 1, 5, &
+          call parse_int_variable('isumatoh', isumatoh, 1, 6, &
                'Central Solenoid superconductor material')
        case ('isumatpf')
           call parse_int_variable('isumatpf', isumatpf, 1, 5, &

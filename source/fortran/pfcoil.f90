@@ -77,6 +77,9 @@ module pfcoil_module
   real(kind(1.0D0)), dimension(ngc2) :: bpf2
   real(kind(1.0D0)), dimension(ngc2,3) :: vsdum
 
+  type(volume_fractions):: conductorpf
+  type(supercon_strand)::croco_strand
+
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1969,12 +1972,14 @@ contains
     real(kind(1.0D0)), intent(in) :: bmax, fcu, fhe, fhts, jwp, &
          strain, thelium, bcritsc, tcritsc
     real(kind(1.0D0)), intent(out) :: jcritwp, jcritstr, jcritsc, tmarg
+    logical :: validity
 
     !  Local variables
 
     integer :: lap
     real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,jcrit0,jcritm, &
-         jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp
+         jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp, icrit, iop
+
     real(kind(1.0D0)) :: current_sharing_t
     real(kind(1.0D0))::x1,x2         ! Initial guesses for temperature
     logical::error                   ! True if the solver does not converge
@@ -2033,6 +2038,10 @@ contains
 
          call wstsc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
          jcritstr = jcritsc * (1.0D0-fcu)
+
+    case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
+       call jcrit_rebco(thelium,bmax,jcritsc,validity,0)
+       jcritstr = jcritsc * (1.0D0-fcu)
 
     case default  !  Error condition
        idiags(1) = isumat ; call report_error(156)
@@ -2115,6 +2124,13 @@ contains
            write(*,'(a24, 10(a12,es12.3))')'WST: current sharing ', 'temperature=', current_sharing_t, '  tmarg=', tmarg, &
                                            '  jsc=',jsc, '  jcrit0=',jcrit0, '  residual=', residual
        end if
+   end if
+
+    ! Temperature margin: An alternative method using secant solver
+   if (isumat == 6) then
+      call current_sharing_rebco(current_sharing_t, bmax, jsc)
+      tmarg = current_sharing_t - thelium
+      temp_margin = tmarg
    end if
 
 contains
