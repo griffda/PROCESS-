@@ -5,12 +5,13 @@
 ```
 Author: S.I. Muldrew, using file supplied by F. Warmer
 Date Created: 11/06/18
-PROCESS version created: 1.0.13
+Last Updated: 06/12/18
+PROCESS version created: 1.0.14
 ```
 
 ## Summary
 
-An example stellarator run in PROCESS.
+HELIAS-5B Stellarator
 
 ## Additional Notes
 

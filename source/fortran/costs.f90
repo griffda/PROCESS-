@@ -214,7 +214,7 @@ contains
 
     !  Output section
 
-    call oheadr(outfile,'Detailed Costings')
+    call oheadr(outfile,'Detailed Costings (1990 US$)')
     call ovarre(outfile,'Acc.22 multiplier for Nth of a kind','(fkind)', &
          fkind)
     call ovarin(outfile,'Level of Safety Assurance','(lsa)',lsa)
@@ -687,7 +687,7 @@ contains
 
     !  Output section
 
-    call oheadr(outfile,'Power Reactor Costs')
+    call oheadr(outfile,'Power Reactor Costs (1990 US$)')
 
     call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)', &
          fwbllife)
