@@ -4609,7 +4609,7 @@ implicit none
        call ovarre(outfile,'Line radiation power (MW)','(plinepv*vol)', plinepv*vol, 'OP ')
     end if
     call ovarre(outfile,'Synchrotron radiation power (MW)','(psyncpv*vol)', psyncpv*vol, 'OP ')
-    call ovarrf(outfile,'synchrotron wall reflectivity factor','(ssync)',ssync)
+    call ovarrf(outfile,'Synchrotron wall reflectivity factor','(ssync)',ssync)
     if (imprad_model == 1) then
        call ovarre(outfile,"Normalised minor radius defining 'core'", '(coreradius)',coreradius)
        call ovarre(outfile,"Fraction of core radiation subtracted from P_L", &
