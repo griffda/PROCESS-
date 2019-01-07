@@ -59,7 +59,7 @@ module scan_module
   use fwbs_variables
   use divertor_kallenbach_variables
   use final_module
-
+  
   implicit none
 
   public
@@ -67,8 +67,8 @@ module scan_module
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
 
-  !+ad_vars  ipnscnv /43/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 43
+  !+ad_vars  ipnscnv /45/ FIX : number of available scan variables
+  integer, parameter :: ipnscnv = 45
 
   !+ad_vars  scan_dim /1/ : 1-D or 2-D scan switch (1=1D, 2=2D)
   integer :: scan_dim = 1
@@ -122,7 +122,9 @@ module scan_module
   !+ad_varc          <LI> 40 Xenon upper limit
   !+ad_varc          <LI> 41 blnkoth
   !+ad_varc          <LI> 42 Argon fraction fimp(9)
-  !+ad_varc          <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum</UL>
+  !+ad_varc          <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum
+  !+ad_varc          <LI> 44 Allowable tresca stress in tf coil structural material
+  !+ad_varc          <LI> 45 Minimum allowable temperature margin ; tf coils </UL>
   integer :: nsweep = 1
 
   !+ad_vars  nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
@@ -861,6 +863,12 @@ contains
         case (43)
             rho_ecrh = swp(iscn)
             vlab = 'rho_ecrh' ; xlab = 'rho at which ECCD is max'
+        case (44)
+            alstrtf = swp(iscn)
+            vlab = 'alstrtf' ; xlab = 'Allowable_tresca_stress_in_tf_coil_(pa)'
+        case (45)
+            tmargmin_tf = swp(iscn)
+            vlab = 'tmargmin_tf' ; xlab = 'Minimum_allowable_temperature_margin'
         case default
             idiags(1) = nwp ; call report_error(96)
 

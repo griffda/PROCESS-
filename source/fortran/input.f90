@@ -1368,11 +1368,10 @@ contains
       call parse_real_variable('mach0', mach0, 0.D0, 1.D0, &
               'Mach number at target (must be just less than 1)')
 
-       ! See HTS coil module for PROCESS.docx for helium area calculates!
-       ! The minimum allowed is the value obtained by packing the strands in a rectangular array = 1-pi/4
-       case ('cable_helium_fraction')
-          call parse_real_variable('cable_helium_fraction', cable_helium_fraction, 0.215D0, 0.99D0, &
-               'Helium area as a fraction of the cable space.')
+       ! See HTS coil module for PROCESS.docx
+       !case ('cable_helium_fraction')
+       !  call parse_real_variable('cable_helium_fraction', cable_helium_fraction, 0.215D0, 0.99D0, &
+       !           'Helium area as a fraction of the cable space.')
 
           !  Divertor settings
 
@@ -1695,9 +1694,9 @@ contains
        case ('copper_thick')
           call parse_real_variable('copper_thick', copper_thick, 0.0D0, 1000.0D-6, &
                'copper_thick (m)')
-       case ('copper_bar')
-          call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.9D0, &
-               'area of central copper bar, as a fraction of area inside the jacket')
+    !    case ('copper_bar')
+    !       call parse_real_variable('copper_bar', copper_bar, 0.0D0, 0.9D0, &
+    !            'area of central copper bar, as a fraction of area inside the jacket')
        case ('copper_rrr')
           call parse_real_variable('copper_rrr', copper_rrr, 1.0D0, 1.0D4, &
                'residual resistivity ratio copper in TF superconducting cable')
@@ -1905,6 +1904,9 @@ contains
        case ('thicndut')
           call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
+       case ('layer_ins')
+              call parse_real_variable('layer_ins', layer_ins, 0.0D0, 0.1D0, &
+               'Additional insulation thickness between layers (m)')
        case ('thkcas')
           call parse_real_variable('thkcas', thkcas, 0.0D0, 1.0D0, &
                'External supercond. case thickness (m)')

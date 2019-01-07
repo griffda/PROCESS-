@@ -655,49 +655,61 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 end subroutine wstsc
 !--------------------------------------------------------------------------
 
-subroutine croco(jcritsc,croco_strand,conductor)
+subroutine croco(jcritsc,croco_strand,conductor,croco_od)
 
     !+ad_name  croco
     !+ad_summ  "CroCo" (cross-conductor) strand and cable design for
     !+ad_summ  "REBCO" 2nd generation HTS superconductor
     !+ad_type  Subroutine
+    ! Updated 13/11/18 using data from Lewandowska et al 2018.
     implicit none
     real(kind(1.0D0)), intent(in) ::jcritsc
     type(volume_fractions), intent(inout)::conductor
     type(supercon_strand), intent(inout)::croco_strand
-
+    real(kind(1.0D0)) :: d, scaling, croco_od !, conductor_width, thwcndut
+    ! Define local alias
+    d = croco_od
+    !d = conductor_width / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
+    
+    ! Define the scaling factor for the input REBCO variable
+    ! Ratio of new croco outer diameter and fixed base line value 
+    scaling = croco_od / 10.4d-3
+    tape_width = scaling * 3.75d-3
+    croco_id = scaling * 5.4d-3
     ! Properties of a single strand
     tape_thickness = rebco_thickness + copper_thick + hastelloy_thickness
     stack_thickness = sqrt(croco_id**2 - tape_width**2)
     tapes = stack_thickness / tape_thickness
 
-    copper_area = pi / 4.0d0 * (croco_od**2 - croco_id**2) &   ! copper tube
+    copper_area = pi / 4.0d0 * (d**2 - croco_id**2) &   ! copper tube
                   + copper_thick*tape_width*tapes          ! copper in tape
     hastelloy_area = hastelloy_thickness * tape_width * tapes
     solder_area = pi / 4.0d0 * croco_id**2 - stack_thickness * tape_width
 
     rebco_area = rebco_thickness * tape_width * tapes
-    croco_strand%area =  pi / 4.0d0 * croco_od**2
+    croco_strand%area =  pi / 4.0d0 * d**2
     croco_strand%critical_current = jcritsc * rebco_area
 
     ! Conductor properties
-    conductor%number_croco = conductor%acs*(1d0-cable_helium_fraction-copper_bar)/croco_strand%area
-    conductor%critical_current = croco_strand%critical_current * conductor%number_croco
-    conductor%copper_bar_area = copper_bar * conductor%acs
-    conductor%copper_area = copper_area * conductor%number_croco + conductor%copper_bar_area
+    !conductor%number_croco = conductor%acs*(1d0-cable_helium_fraction-copper_bar)/croco_strand%area
+    conductor%critical_current = croco_strand%critical_current * 6.0d0
+    ! Area of core = area of strand
+    conductor%copper_bar_area = croco_strand%area
+    conductor%copper_area = copper_area * 6.0d0 + conductor%copper_bar_area
     conductor%copper_fraction = conductor%copper_area / conductor%area
 
     ! Helium area is set by the user.
-    conductor%helium_area = cable_helium_fraction * conductor%acs
+    !conductor%helium_area = cable_helium_fraction * conductor%acs
+    conductor%helium_area = pi / 2.0d0 * d**2
     conductor%helium_fraction = conductor%helium_area / conductor%area
 
-    conductor%hastelloy_area = hastelloy_area * conductor%number_croco
+    conductor%hastelloy_area = hastelloy_area * 6.0d0
     conductor%hastelloy_fraction = conductor%hastelloy_area / conductor%area
 
-    conductor%solder_area = solder_area * conductor%number_croco
+    conductor%solder_area = solder_area * 6.0d0
     conductor%solder_fraction = conductor%solder_area / conductor%area
 
-    conductor%rebco_area = rebco_area * conductor%number_croco
+    conductor%rebco_area = rebco_area * 6.0d0
     conductor%rebco_fraction = conductor%rebco_area / conductor%area
 
 end subroutine croco

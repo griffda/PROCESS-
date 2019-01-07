@@ -2487,6 +2487,8 @@ module tfcoil_variables
 
   !+ad_vars  thicndut /8.0e-4/ : conduit insulation thickness (m)
   real(kind(1.0D0)) :: thicndut = 8.0D-4
+  !+ad_vars  layer_ins /0/ : Additional insulation thickness between layers (m)
+  real(kind(1.0D0)) :: layer_ins = 0.0D0
   !+ad_vars  thkcas /0.3/ : inboard TF coil case outer (non-plasma side) thickness (m)
   !+ad_varc                 (iteration variable 57)
   !+ad_varc                 (calculated for stellarators)
@@ -4462,6 +4464,7 @@ module rebco_variables
   !+ad_type  Module
   !+ad_docs  TODO
   implicit none ! ---------------------------------------------------------
+  ! Updated 13/11/18 using data from Lewandowska et al 2018.
 
   !+ad_vars  rebco_thickness /1.0e-6/ : thickness of REBCO layer in tape (m) (iteration variable 138)
   real(kind(1.0D0)) :: rebco_thickness = 1.0D-6
@@ -4469,21 +4472,21 @@ module rebco_variables
   real(kind(1.0D0)) :: copper_thick = 100.0D-6
   !+ad_vars  hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
   real(kind(1.0D0)) :: hastelloy_thickness = 50.0D-6
-  !+ad_vars  tape_width /5.375e-3/ : Mean width of tape (m)
-  real(kind(1.0D0)) :: tape_width = 5.375D-3
+  !+ad_vars  tape_width /3.75e-3/ : Mean width of tape (m)
+  real(kind(1.0D0)) :: tape_width = 3.75D-3
 
-  !+ad_vars  croco_od /9.3e-3/ : Outer diameter of CroCo strand (m)
-  real(kind(1.0D0)) :: croco_od = 9.3D-3
-  !+ad_vars  croco_id /7.0e-3/ : Inner diameter of CroCo copper tube (m)
-  real(kind(1.0D0)) :: croco_id = 7.0D-3
+  !+ad_vars  croco_od /10.4e-3/ : Outer diameter of CroCo strand (m)
+  real(kind(1.0D0)) :: croco_od = 10.4D-3
+  !+ad_vars  croco_id /5.4e-3/ : Inner diameter of CroCo copper tube (m)
+  real(kind(1.0D0)) :: croco_id = 5.4D-3
 
-  !+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
-  real(kind(1.0D0)) :: copper_bar = 0.23d0
+  !!+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
+  !real(kind(1.0D0)) :: copper_bar = 0.23d0
   !+ad_vars  copper_rrr /100.0/ : residual resistivity ratio copper in TF superconducting cable
   real(kind(1.0D0)) :: copper_rrr = 100d0
 
-  !+ad_vars  cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
-  real(kind(1.0D0)) :: cable_helium_fraction = 0.284D0
+  !!+ad_vars  cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
+  !real(kind(1.0D0)) :: cable_helium_fraction = 0.284D0
 
   !+ad_vars  copperA_m2_max /1e8/ : Maximum TF coil current / copper area (A/m2)
   real(kind(1.0D0)) :: copperA_m2_max = 1D8
@@ -4500,6 +4503,7 @@ module rebco_variables
   real(kind(1.0D0)) :: solder_area
   real(kind(1.0D0)) :: croco_area
   real(kind(1.0D0)) :: copperA_m2       ! TF coil current / copper area (A/m2)
+  !real(kind(1.0D0)) :: croco_od
 
 end module rebco_variables
 
@@ -4525,14 +4529,14 @@ module resistive_materials
   end type supercon_strand
   type volume_fractions
      real(kind(1.0D0)) :: copper_area,    copper_fraction
-     real(kind(1.0D0)) :: copper_bar_area,copper_bar_fraction
+     real(kind(1.0D0)) :: copper_bar_area  !,copper_bar_fraction
      real(kind(1.0D0)) :: hastelloy_area, hastelloy_fraction
      real(kind(1.0D0)) :: helium_area,    helium_fraction
      real(kind(1.0D0)) :: solder_area,    solder_fraction
      real(kind(1.0D0)) :: jacket_area,    jacket_fraction
      real(kind(1.0D0)) :: rebco_area,     rebco_fraction
      real(kind(1.0D0)) :: critical_current
-     real(kind(1.0D0)) :: number_croco         ! Number of CroCo strands (not an integer)
+     !real(kind(1.0D0)) :: number_croco         ! Number of CroCo strands (not an integer)
      real(kind(1.0D0)) :: acs                  ! area of cable space inside jacket
      real(kind(1.0D0)) :: area
      !real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
