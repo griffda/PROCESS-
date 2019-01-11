@@ -7,6 +7,7 @@
 - Amended fpump* output to match with primary_pumping options.
 
 ## Features
+- HTS REBCO model final version implemented
 
 ## Minor Changes
 - Explicitly state 1990 $ for old cost model

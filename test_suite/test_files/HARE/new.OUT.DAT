@@ -7,14 +7,14 @@
  
    Program : ./process.exe
    Version : 1.0.14   Release Date :: 2018-11-09
-   Tag No. : "1.0.14 Code used contains Untracked Changes"
-   Last commit message : "Changes for tag 1.0.14,"
+   Tag No. : "1.0.14-15-g48a8763"
+   Last commit message : "Merge branch 'HTS_Michael' into 'develop',"
       User : apearce
- Directory : /home/apearce/Documents/Process/test_suite
+ Directory : /home/apearce/process/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.14 : Run on  4 Dec 2018 13:20:26 +00:00(hh:mm) UTC by AlexPC
+ PROCESS 1.0.14 : Run on  8 Jan 2019 14:09:00 +00:00(hh:mm) UTC by AlexPC
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -119,25 +119,25 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.3521E-02             -1.7864E-15                 5.3291E-14
+    1  Beta consistency                      =  3.3521E-02             -1.8236E-15                 5.4401E-14
     2  Global power balance consistency      =  1.4989E-01 MW/m3       -1.5970E-11 MW/m3           1.0654E-10
-    3  Density upper limit                   <  8.3154E+19 /m3          1.3107E+05 /m3             1.5543E-15
-    4  Neutron wall load upper limit         <  9.3876E-01 MW/m2       -4.0801E-13 MW/m2          -4.3465E-13
-    5  Toroidal field 1/R consistency        =  4.9807E+01 T.m         -8.8475E-14 T.m             1.7764E-15
+    3  Density upper limit                   <  8.3154E+19 /m3          2.1299E+05 /m3             2.6645E-15
+    4  Neutron wall load upper limit         <  9.3876E-01 MW/m2       -4.0812E-13 MW/m2          -4.3476E-13
+    5  Toroidal field 1/R consistency        =  4.9807E+01 T.m         -6.6356E-14 T.m             1.3323E-15
     6  Radial build consistency              =  9.5245E+00 m            1.2689E-14 m              -1.3323E-15
     7  Burn time lower limit                 >  7.2000E+03 sec          3.9039E-06 sec            -5.4220E-10
-    8  L-H power threshold limit             >  1.1420E+02 MW           1.0585E-07 MW             -9.2686E-10
-    9  Net electric power lower limit        >  5.0000E+02 MW           3.6111E-07 MW              7.2222E-10
-   10  Beta upper limit                      <  5.6067E-02              3.2405E-15                 5.7732E-14
-   11  CS coil EOF current density limit     <  6.6570E+07 A/m2        -2.7142E-05 A/m2           -4.0767E-13
-   12  CS coil BOP current density limit     <  6.2097E+07 A/m2         1.8999E-06 A/m2            3.0642E-14
-   13  Injection power upper limit           <  5.0000E+01 MW           1.4928E-07 MW             -2.9856E-09
-   14  TF coil case stress upper limit       <  6.6000E+08 Pa          -6.0208E-03 Pa             -9.1224E-12
-   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -6.4917E-03 Pa             -9.8359E-12
-   16  I_op / I_critical (TF coil)           <  7.6093E+07 A/m2         3.1033E-07 A/m2           -1.3212E-14
-   17  Dump voltage upper limit              <  1.5013E+01 V            4.1073E+00 V              -2.8873E-11
+    8  L-H power threshold limit             >  1.1420E+02 MW           1.0585E-07 MW             -9.2688E-10
+    9  Net electric power lower limit        >  5.0000E+02 MW           3.6111E-07 MW              7.2223E-10
+   10  Beta upper limit                      <  5.6067E-02              3.2752E-15                 5.8398E-14
+   11  CS coil EOF current density limit     <  6.6570E+07 A/m2        -2.6718E-05 A/m2           -4.0135E-13
+   12  CS coil BOP current density limit     <  6.2097E+07 A/m2         2.3171E-06 A/m2            3.7303E-14
+   13  Injection power upper limit           <  5.0000E+01 MW           1.4928E-07 MW             -2.9857E-09
+   14  TF coil case stress upper limit       <  6.6000E+08 Pa          -6.0384E-03 Pa             -9.1491E-12
+   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -6.5053E-03 Pa             -9.8566E-12
+   16  I_op / I_critical (TF coil)           <  7.6093E+07 A/m2         3.4684E-07 A/m2           -1.4766E-14
+   17  Dump voltage upper limit              <  1.5013E+01 V            4.1073E+00 V              -2.8872E-11
    18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -3.2196E-15
-   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -8.8062E-09 MWT/m           9.2697E-10
+   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -8.8064E-09 MWT/m           9.2699E-10
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -297,7 +297,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             9.495E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.504E+02  OP 
  Synchrotron radiation power (MW)                                         (psyncpv*vol)             2.762E+01  OP 
- synchrotron wall reflectivity factor                                     (ssync)                       0.600     
+ Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
  Normalised minor radius defining 'core'                                  (coreradius)              7.500E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
  Total core radiation power (MW)                                          (pcoreradmw)              1.211E+02  OP 
@@ -660,7 +660,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil model                                                            (tfc_model)                       1     
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
  Vertical stress (Pa)                                                     (sigvert)                 2.590E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))               2.442E-08     
+ Case radial stress (Pa)                                                  (sigrtf(1))               4.885E-08     
  Case tangential stress (Pa)                                              (sigttf(1))              -4.010E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -3.534E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -3.191E+08  OP 
@@ -847,7 +847,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.159E+06 -8.159E+06 -8.159E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.516E+06 -5.516E+06 -5.516E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.516E+06 -5.516E+06 -5.516E+06  0.000E+00
-   7         0.000E+00  0.000E+00 -1.725E-09 -1.725E-09  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.328E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -7.880E-02  OP 
@@ -1159,10 +1159,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical pumping power for shield (MW)                                 (htpmwe_shld)             0.000E+00  OP 
  Electrical pumping power for divertor (MW)                               (htpmwe_div)              0.000E+00  OP 
  Total electrical pumping power for primary coolant (MW)                  (htpmw)                   1.550E+02  OP 
- Coolant pump power / non-pumping thermal power in first wall             (fpumpfw)                 5.000E-03     
- Coolant pump power / non-pumping thermal power in blanket                (fpumpblkt)               5.000E-03     
- Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               5.000E-03     
- Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                5.000E-03     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  1.000E+00     
  
  Plant thermodynamics: options :
@@ -1423,25 +1419,25 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.3522E-02              9.7137E-16                -2.8977E-14
-    2  Global power balance consistency      =  1.4946E-01 MW/m3        7.5997E-12 MW/m3          -5.0846E-11
-    3  Density upper limit                   <  8.3010E+19 /m3         -1.9661E+05 /m3            -2.3315E-15
-    4  Neutron wall load upper limit         <  9.3706E-01 MW/m2        1.8663E-13 MW/m2           1.9917E-13
-    5  Toroidal field 1/R consistency        =  4.9825E+01 T.m          1.4935E-13 T.m            -2.9976E-15
+    1  Beta consistency                      =  3.3522E-02              8.9694E-16                -2.6756E-14
+    2  Global power balance consistency      =  1.4946E-01 MW/m3        7.6001E-12 MW/m3          -5.0849E-11
+    3  Density upper limit                   <  8.3010E+19 /m3         -1.6384E+04 /m3            -2.2204E-16
+    4  Neutron wall load upper limit         <  9.3706E-01 MW/m2        1.8963E-13 MW/m2           2.0228E-13
+    5  Toroidal field 1/R consistency        =  4.9825E+01 T.m          1.2170E-13 T.m            -2.4425E-15
     6  Radial build consistency              =  9.5345E+00 m           -6.3512E-15 m               6.6613E-16
     7  Burn time lower limit                 >  7.2000E+03 sec         -2.9509E-06 sec             4.0985E-10
-    8  L-H power threshold limit             >  1.1423E+02 MW          -5.0451E-08 MW              4.4167E-10
-    9  Net electric power lower limit        >  5.0000E+02 MW          -2.0325E-07 MW             -4.0650E-10
-   10  Beta upper limit                      <  5.6067E-02             -1.5335E-15                -2.7311E-14
-   11  CS coil EOF current density limit     <  6.6273E+07 A/m2        -4.4441E-03 A/m2           -6.7058E-11
-   12  CS coil BOP current density limit     <  6.1825E+07 A/m2        -3.9607E-03 A/m2           -6.4063E-11
-   13  Injection power upper limit           <  5.0000E+01 MW          -7.1283E-08 MW              1.4257E-09
-   14  TF coil case stress upper limit       <  6.6000E+08 Pa           3.5884E-03 Pa              5.4370E-12
-   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa           3.8704E-03 Pa              5.8642E-12
-   16  I_op / I_critical (TF coil)           <  7.6330E+07 A/m2        -1.8776E-07 A/m2            7.9936E-15
-   17  Dump voltage upper limit              <  1.5018E+01 V            4.1048E+00 V               1.7221E-11
-   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            3.1086E-15
-   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m        4.1964E-09 MWT/m          -4.4172E-10
+    8  L-H power threshold limit             >  1.1423E+02 MW          -5.0452E-08 MW              4.4168E-10
+    9  Net electric power lower limit        >  5.0000E+02 MW          -2.0326E-07 MW             -4.0651E-10
+   10  Beta upper limit                      <  5.6067E-02             -1.5474E-15                -2.7645E-14
+   11  CS coil EOF current density limit     <  6.6273E+07 A/m2        -4.4429E-03 A/m2           -6.7040E-11
+   12  CS coil BOP current density limit     <  6.1825E+07 A/m2        -3.9598E-03 A/m2           -6.4049E-11
+   13  Injection power upper limit           <  5.0000E+01 MW          -7.1285E-08 MW              1.4257E-09
+   14  TF coil case stress upper limit       <  6.6000E+08 Pa           3.5990E-03 Pa              5.4532E-12
+   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa           3.8851E-03 Pa              5.8866E-12
+   16  I_op / I_critical (TF coil)           <  7.6330E+07 A/m2        -1.6169E-07 A/m2            6.8834E-15
+   17  Dump voltage upper limit              <  1.5018E+01 V            4.1048E+00 V               1.7228E-11
+   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            1.7764E-15
+   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m        4.1964E-09 MWT/m          -4.4173E-10
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -1601,7 +1597,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             9.489E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.503E+02  OP 
  Synchrotron radiation power (MW)                                         (psyncpv*vol)             2.765E+01  OP 
- synchrotron wall reflectivity factor                                     (ssync)                       0.600     
+ Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
  Normalised minor radius defining 'core'                                  (coreradius)              7.500E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
  Total core radiation power (MW)                                          (pcoreradmw)              1.211E+02  OP 
@@ -2151,7 +2147,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.161E+06 -8.161E+06 -8.161E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.516E+06 -5.516E+06 -5.516E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.516E+06 -5.516E+06 -5.516E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00 -2.767E-08  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.329E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -8.230E-02  OP 
@@ -2463,10 +2459,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical pumping power for shield (MW)                                 (htpmwe_shld)             0.000E+00  OP 
  Electrical pumping power for divertor (MW)                               (htpmwe_div)              0.000E+00  OP 
  Total electrical pumping power for primary coolant (MW)                  (htpmw)                   1.550E+02  OP 
- Coolant pump power / non-pumping thermal power in first wall             (fpumpfw)                 5.000E-03     
- Coolant pump power / non-pumping thermal power in blanket                (fpumpblkt)               5.000E-03     
- Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               5.000E-03     
- Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                5.000E-03     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  1.000E+00     
  
  Plant thermodynamics: options :
@@ -2727,25 +2719,25 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.3523E-02              4.8756E-16                -1.4544E-14
-    2  Global power balance consistency      =  1.4909E-01 MW/m3        4.0338E-12 MW/m3          -2.7056E-11
-    3  Density upper limit                   <  8.2884E+19 /m3          1.1469E+05 /m3             1.3323E-15
-    4  Neutron wall load upper limit         <  9.3557E-01 MW/m2        1.0203E-13 MW/m2           1.0902E-13
-    5  Toroidal field 1/R consistency        =  4.9840E+01 T.m         -1.1067E-14 T.m             2.2204E-16
-    6  Radial build consistency              =  9.5432E+00 m           -2.1190E-15 m               2.2204E-16
-    7  Burn time lower limit                 >  7.2000E+03 sec         -6.7021E-07 sec             9.3085E-11
-    8  L-H power threshold limit             >  1.1425E+02 MW          -2.6809E-08 MW              2.3465E-10
-    9  Net electric power lower limit        >  5.0000E+02 MW          -8.4095E-08 MW             -1.6819E-10
-   10  Beta upper limit                      <  5.6067E-02             -8.1879E-16                -1.4544E-14
+    1  Beta consistency                      =  3.3523E-02              4.8011E-16                -1.4322E-14
+    2  Global power balance consistency      =  1.4909E-01 MW/m3        4.0339E-12 MW/m3          -2.7057E-11
+    3  Density upper limit                   <  8.2884E+19 /m3          4.9152E+04 /m3             6.6613E-16
+    4  Neutron wall load upper limit         <  9.3557E-01 MW/m2        1.0125E-13 MW/m2           1.0814E-13
+    5  Toroidal field 1/R consistency        =  4.9840E+01 T.m         -2.2134E-14 T.m             4.4409E-16
+    6  Radial build consistency              =  9.5432E+00 m           -4.2380E-15 m               4.4409E-16
+    7  Burn time lower limit                 >  7.2000E+03 sec         -6.7019E-07 sec             9.3082E-11
+    8  L-H power threshold limit             >  1.1425E+02 MW          -2.6808E-08 MW              2.3464E-10
+    9  Net electric power lower limit        >  5.0000E+02 MW          -8.4091E-08 MW             -1.6818E-10
+   10  Beta upper limit                      <  5.6067E-02             -8.2573E-16                -1.4655E-14
    11  CS coil EOF current density limit     <  6.5867E+07 A/m2         1.0695E-02 A/m2            1.6237E-10
-   12  CS coil BOP current density limit     <  6.1453E+07 A/m2         9.4913E-03 A/m2            1.5445E-10
-   13  Injection power upper limit           <  5.0000E+01 MW          -3.7936E-08 MW              7.5873E-10
-   14  TF coil case stress upper limit       <  6.6000E+08 Pa           1.3442E-03 Pa              2.0366E-12
-   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa           1.4545E-03 Pa              2.2038E-12
-   16  I_op / I_critical (TF coil)           <  7.6539E+07 A/m2        -6.7804E-08 A/m2            2.8866E-15
-   17  Dump voltage upper limit              <  1.5023E+01 V            4.1026E+00 V               6.3844E-12
-   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            2.2204E-16
-   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m        2.2294E-09 MWT/m          -2.3468E-10
+   12  CS coil BOP current density limit     <  6.1453E+07 A/m2         9.4912E-03 A/m2            1.5445E-10
+   13  Injection power upper limit           <  5.0000E+01 MW          -3.7935E-08 MW              7.5870E-10
+   14  TF coil case stress upper limit       <  6.6000E+08 Pa           1.3340E-03 Pa              2.0210E-12
+   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa           1.4464E-03 Pa              2.1914E-12
+   16  I_op / I_critical (TF coil)           <  7.6539E+07 A/m2        -1.4082E-07 A/m2            5.9952E-15
+   17  Dump voltage upper limit              <  1.5023E+01 V            4.1026E+00 V               6.3842E-12
+   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            1.3323E-15
+   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m        2.2294E-09 MWT/m          -2.3467E-10
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -2905,7 +2897,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             9.484E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.502E+02  OP 
  Synchrotron radiation power (MW)                                         (psyncpv*vol)             2.767E+01  OP 
- synchrotron wall reflectivity factor                                     (ssync)                       0.600     
+ Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
  Normalised minor radius defining 'core'                                  (coreradius)              7.500E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
  Total core radiation power (MW)                                          (pcoreradmw)              1.211E+02  OP 
@@ -3455,7 +3447,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.162E+06 -8.162E+06 -8.162E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.517E+06 -5.517E+06 -5.517E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.517E+06 -5.517E+06 -5.517E+06  0.000E+00
-   7         0.000E+00  0.000E+00  1.734E-09  1.734E-09 -2.774E-08  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.330E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -8.520E-02  OP 
@@ -3767,10 +3759,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical pumping power for shield (MW)                                 (htpmwe_shld)             0.000E+00  OP 
  Electrical pumping power for divertor (MW)                               (htpmwe_div)              0.000E+00  OP 
  Total electrical pumping power for primary coolant (MW)                  (htpmw)                   1.550E+02  OP 
- Coolant pump power / non-pumping thermal power in first wall             (fpumpfw)                 5.000E-03     
- Coolant pump power / non-pumping thermal power in blanket                (fpumpblkt)               5.000E-03     
- Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               5.000E-03     
- Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                5.000E-03     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  1.000E+00     
  
  Plant thermodynamics: options :
@@ -3964,7 +3952,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Number of constraints (total)                                            (neqns+nineqns)                  19     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.249E-09  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.250E-09  OP 
  VMCON convergence parameter                                              (convergence_parameter)   5.366E-10  OP 
  Number of VMCON iterations                                               (nviter)                         13  OP 
  
@@ -4031,25 +4019,25 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.3525E-02              5.2852E-16                -1.5765E-14
-    2  Global power balance consistency      =  1.4842E-01 MW/m3       -1.6413E-12 MW/m3           1.1059E-11
-    3  Density upper limit                   <  8.2658E+19 /m3          8.1920E+04 /m3             8.8818E-16
-    4  Neutron wall load upper limit         <  9.3291E-01 MW/m2        1.3289E-13 MW/m2           1.4255E-13
-    5  Toroidal field 1/R consistency        =  4.9869E+01 T.m         -2.1039E-13 T.m             4.2188E-15
+    1  Beta consistency                      =  3.3525E-02              5.0619E-16                -1.5099E-14
+    2  Global power balance consistency      =  1.4842E-01 MW/m3       -1.6417E-12 MW/m3           1.1061E-11
+    3  Density upper limit                   <  8.2658E+19 /m3          4.9152E+04 /m3             6.6613E-16
+    4  Neutron wall load upper limit         <  9.3291E-01 MW/m2        1.3167E-13 MW/m2           1.4122E-13
+    5  Toroidal field 1/R consistency        =  4.9869E+01 T.m         -2.3253E-13 T.m             4.6629E-15
     6  Radial build consistency              =  9.5589E+00 m            3.1838E-15 m              -3.3307E-16
-    7  Burn time lower limit                 >  7.2000E+03 sec          1.4074E-06 sec            -1.9547E-10
-    8  L-H power threshold limit             >  1.1430E+02 MW           1.0940E-08 MW             -9.5721E-11
-    9  Net electric power lower limit        >  5.0000E+02 MW           1.1963E-07 MW              2.3926E-10
-   10  Beta upper limit                      <  5.6067E-02             -1.0061E-15                -1.7986E-14
-   11  CS coil EOF current density limit     <  6.5156E+07 A/m2         1.5243E-01 A/m2            2.3395E-09
-   12  CS coil BOP current density limit     <  6.0800E+07 A/m2         1.3542E-01 A/m2            2.2274E-09
-   13  Injection power upper limit           <  5.0000E+01 MW           1.5441E-08 MW             -3.0882E-10
-   14  TF coil case stress upper limit       <  6.6000E+08 Pa          -1.5157E-03 Pa             -2.2966E-12
-   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -1.6510E-03 Pa             -2.5016E-12
-   16  I_op / I_critical (TF coil)           <  7.6914E+07 A/m2         4.4333E-08 A/m2           -1.8874E-15
-   17  Dump voltage upper limit              <  1.5032E+01 V            4.0986E+00 V              -7.2781E-12
-   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -1.2212E-15
-   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -9.0906E-10 MWT/m           9.5691E-11
+    7  Burn time lower limit                 >  7.2000E+03 sec          1.4073E-06 sec            -1.9546E-10
+    8  L-H power threshold limit             >  1.1430E+02 MW           1.0942E-08 MW             -9.5732E-11
+    9  Net electric power lower limit        >  5.0000E+02 MW           1.1964E-07 MW              2.3928E-10
+   10  Beta upper limit                      <  5.6067E-02             -9.9920E-16                -1.7875E-14
+   11  CS coil EOF current density limit     <  6.5156E+07 A/m2         1.5244E-01 A/m2            2.3396E-09
+   12  CS coil BOP current density limit     <  6.0800E+07 A/m2         1.3543E-01 A/m2            2.2275E-09
+   13  Injection power upper limit           <  5.0000E+01 MW           1.5443E-08 MW             -3.0886E-10
+   14  TF coil case stress upper limit       <  6.6000E+08 Pa          -1.5385E-03 Pa             -2.3311E-12
+   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -1.6607E-03 Pa             -2.5162E-12
+   16  I_op / I_critical (TF coil)           <  7.6914E+07 A/m2        -1.0431E-08 A/m2            4.4409E-16
+   17  Dump voltage upper limit              <  1.5032E+01 V            4.0986E+00 V              -7.2784E-12
+   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            2.2204E-16
+   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -9.0917E-10 MWT/m           9.5702E-11
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -4209,7 +4197,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             9.475E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.500E+02  OP 
  Synchrotron radiation power (MW)                                         (psyncpv*vol)             2.772E+01  OP 
- synchrotron wall reflectivity factor                                     (ssync)                       0.600     
+ Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
  Normalised minor radius defining 'core'                                  (coreradius)              7.500E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
  Total core radiation power (MW)                                          (pcoreradmw)              1.210E+02  OP 
@@ -4759,7 +4747,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.165E+06 -8.165E+06 -8.165E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.517E+06 -5.517E+06 -5.517E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.517E+06 -5.517E+06 -5.517E+06  0.000E+00
-   7         0.000E+00  0.000E+00  1.743E-09  1.743E-09 -2.788E-08  0.000E+00
+   7         0.000E+00  0.000E+00 -1.743E-09 -1.743E-09  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.332E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -9.031E-02  OP 
@@ -5071,10 +5059,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical pumping power for shield (MW)                                 (htpmwe_shld)             0.000E+00  OP 
  Electrical pumping power for divertor (MW)                               (htpmwe_div)              0.000E+00  OP 
  Total electrical pumping power for primary coolant (MW)                  (htpmw)                   1.550E+02  OP 
- Coolant pump power / non-pumping thermal power in first wall             (fpumpfw)                 5.000E-03     
- Coolant pump power / non-pumping thermal power in blanket                (fpumpblkt)               5.000E-03     
- Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               5.000E-03     
- Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                5.000E-03     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  1.000E+00     
  
  Plant thermodynamics: options :
@@ -5335,24 +5319,24 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.3526E-02              1.0768E-14                -3.2119E-13
-    2  Global power balance consistency      =  1.4775E-01 MW/m3       -1.8188E-11 MW/m3           1.2310E-10
-    3  Density upper limit                   <  8.2433E+19 /m3         -1.4418E+06 /m3            -1.7542E-14
-    4  Neutron wall load upper limit         <  9.3025E-01 MW/m2        2.0797E-12 MW/m2           2.2355E-12
-    5  Toroidal field 1/R consistency        =  4.9897E+01 T.m          1.0525E-12 T.m            -2.1094E-14
+    1  Beta consistency                      =  3.3526E-02              1.0701E-14                -3.1919E-13
+    2  Global power balance consistency      =  1.4775E-01 MW/m3       -1.8189E-11 MW/m3           1.2310E-10
+    3  Density upper limit                   <  8.2433E+19 /m3         -1.5729E+06 /m3            -1.9096E-14
+    4  Neutron wall load upper limit         <  9.3025E-01 MW/m2        2.0780E-12 MW/m2           2.2338E-12
+    5  Toroidal field 1/R consistency        =  4.9897E+01 T.m          1.0359E-12 T.m            -2.0761E-14
     6  Radial build consistency              =  9.5747E+00 m           -8.9293E-14 m               9.3259E-15
     7  Burn time lower limit                 >  7.2000E+03 sec         -2.9970E-05 sec             4.1625E-09
     8  L-H power threshold limit             >  1.1434E+02 MW           1.2145E-07 MW             -1.0622E-09
     9  Net electric power lower limit        >  5.0000E+02 MW           4.3181E-07 MW              8.6362E-10
-   10  Beta upper limit                      <  5.6067E-02             -1.7625E-14                -3.1442E-13
-   11  CS coil EOF current density limit     <  6.4455E+07 A/m2        -8.1301E-02 A/m2           -1.2613E-09
-   12  CS coil BOP current density limit     <  6.0158E+07 A/m2        -7.2469E-02 A/m2           -1.2046E-09
-   13  Injection power upper limit           <  5.0000E+01 MW           1.7166E-07 MW             -3.4332E-09
-   14  TF coil case stress upper limit       <  6.6000E+08 Pa           4.9216E-02 Pa              7.4570E-11
-   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa           5.3472E-02 Pa              8.1018E-11
-   16  I_op / I_critical (TF coil)           <  7.7289E+07 A/m2        -2.9729E-06 A/m2            1.2657E-13
+   10  Beta upper limit                      <  5.6067E-02             -1.7611E-14                -3.1419E-13
+   11  CS coil EOF current density limit     <  6.4455E+07 A/m2        -8.1299E-02 A/m2           -1.2613E-09
+   12  CS coil BOP current density limit     <  6.0158E+07 A/m2        -7.2467E-02 A/m2           -1.2046E-09
+   13  Injection power upper limit           <  5.0000E+01 MW           1.7166E-07 MW             -3.4333E-09
+   14  TF coil case stress upper limit       <  6.6000E+08 Pa           4.9230E-02 Pa              7.4590E-11
+   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa           5.3474E-02 Pa              8.1021E-11
+   16  I_op / I_critical (TF coil)           <  7.7289E+07 A/m2        -2.9573E-06 A/m2            1.2590E-13
    17  Dump voltage upper limit              <  1.5041E+01 V            4.0945E+00 V               2.3599E-10
-   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            2.5757E-14
+   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            2.5313E-14
    19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -1.0085E-08 MWT/m           1.0616E-09
  
  ******************************************** Final Feasible Point ********************************************
@@ -5513,7 +5497,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             9.466E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.498E+02  OP 
  Synchrotron radiation power (MW)                                         (psyncpv*vol)             2.776E+01  OP 
- synchrotron wall reflectivity factor                                     (ssync)                       0.600     
+ Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
  Normalised minor radius defining 'core'                                  (coreradius)              7.500E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
  Total core radiation power (MW)                                          (pcoreradmw)              1.209E+02  OP 
@@ -5876,7 +5860,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil model                                                            (tfc_model)                       1     
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
  Vertical stress (Pa)                                                     (sigvert)                 2.585E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))               0.000E+00     
+ Case radial stress (Pa)                                                  (sigrtf(1))               7.327E-08     
  Case tangential stress (Pa)                                              (sigttf(1))              -4.015E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -3.487E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -3.186E+08  OP 
@@ -6063,7 +6047,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.169E+06 -8.169E+06 -8.169E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.517E+06 -5.517E+06 -5.517E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.517E+06 -5.517E+06 -5.517E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00 -2.802E-08  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.333E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -9.533E-02  OP 
@@ -6375,10 +6359,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical pumping power for shield (MW)                                 (htpmwe_shld)             0.000E+00  OP 
  Electrical pumping power for divertor (MW)                               (htpmwe_div)              0.000E+00  OP 
  Total electrical pumping power for primary coolant (MW)                  (htpmw)                   1.550E+02  OP 
- Coolant pump power / non-pumping thermal power in first wall             (fpumpfw)                 5.000E-03     
- Coolant pump power / non-pumping thermal power in blanket                (fpumpblkt)               5.000E-03     
- Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               5.000E-03     
- Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                5.000E-03     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  1.000E+00     
  
  Plant thermodynamics: options :
@@ -6639,25 +6619,25 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.3528E-02             -8.9336E-16                 2.6645E-14
-    2  Global power balance consistency      =  1.4706E-01 MW/m3        1.4039E-11 MW/m3          -9.5465E-11
-    3  Density upper limit                   <  8.2201E+19 /m3          4.9152E+04 /m3             6.6613E-16
+    1  Beta consistency                      =  3.3528E-02             -9.2314E-16                 2.7534E-14
+    2  Global power balance consistency      =  1.4706E-01 MW/m3        1.4039E-11 MW/m3          -9.5463E-11
+    3  Density upper limit                   <  8.2201E+19 /m3          0.0000E+00 /m3            -0.0000E+00
     4  Neutron wall load upper limit         <  9.2752E-01 MW/m2       -2.3537E-13 MW/m2          -2.5380E-13
-    5  Toroidal field 1/R consistency        =  4.9926E+01 T.m          1.9400E-13 T.m            -3.8858E-15
-    6  Radial build consistency              =  9.5910E+00 m            2.1296E-15 m              -2.2204E-16
+    5  Toroidal field 1/R consistency        =  4.9926E+01 T.m          1.9954E-13 T.m            -3.9968E-15
+    6  Radial build consistency              =  9.5910E+00 m           -2.1296E-15 m               2.2204E-16
     7  Burn time lower limit                 >  7.2000E+03 sec          1.1476E-06 sec            -1.5938E-10
-    8  L-H power threshold limit             >  1.1439E+02 MW          -9.4064E-08 MW              8.2234E-10
+    8  L-H power threshold limit             >  1.1439E+02 MW          -9.4062E-08 MW              8.2233E-10
     9  Net electric power lower limit        >  5.0000E+02 MW          -3.8187E-07 MW             -7.6374E-10
-   10  Beta upper limit                      <  5.6067E-02              1.8319E-15                 3.2641E-14
+   10  Beta upper limit                      <  5.6067E-02              1.7833E-15                 3.1752E-14
    11  CS coil EOF current density limit     <  6.3747E+07 A/m2         1.6294E-01 A/m2            2.5561E-09
    12  CS coil BOP current density limit     <  5.9508E+07 A/m2         1.4489E-01 A/m2            2.4348E-09
-   13  Injection power upper limit           <  5.0000E+01 MW          -1.3377E-07 MW              2.6753E-09
-   14  TF coil case stress upper limit       <  6.6000E+08 Pa           8.4281E-05 Pa              1.2768E-13
-   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa           9.3102E-05 Pa              1.4122E-13
-   16  I_op / I_critical (TF coil)           <  7.7677E+07 A/m2         5.4765E-08 A/m2           -2.3315E-15
-   17  Dump voltage upper limit              <  1.5050E+01 V            4.0903E+00 V               3.7015E-13
-   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -0.0000E+00
-   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m        7.8117E-09 MWT/m          -8.2229E-10
+   13  Injection power upper limit           <  5.0000E+01 MW          -1.3376E-07 MW              2.6753E-09
+   14  TF coil case stress upper limit       <  6.6000E+08 Pa           8.4877E-05 Pa              1.2856E-13
+   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa           9.2745E-05 Pa              1.4055E-13
+   16  I_op / I_critical (TF coil)           <  7.7677E+07 A/m2         8.0843E-08 A/m2           -3.4417E-15
+   17  Dump voltage upper limit              <  1.5050E+01 V            4.0903E+00 V               3.6993E-13
+   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2           -3.3307E-16
+   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m        7.8116E-09 MWT/m          -8.2227E-10
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -6817,7 +6797,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             9.457E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.495E+02  OP 
  Synchrotron radiation power (MW)                                         (psyncpv*vol)             2.781E+01  OP 
- synchrotron wall reflectivity factor                                     (ssync)                       0.600     
+ Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
  Normalised minor radius defining 'core'                                  (coreradius)              7.500E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
  Total core radiation power (MW)                                          (pcoreradmw)              1.208E+02  OP 
@@ -7180,7 +7160,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil model                                                            (tfc_model)                       1     
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
  Vertical stress (Pa)                                                     (sigvert)                 2.584E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))               7.327E-08     
+ Case radial stress (Pa)                                                  (sigrtf(1))               4.885E-08     
  Case tangential stress (Pa)                                              (sigttf(1))              -4.016E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -3.472E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -3.185E+08  OP 
@@ -7367,7 +7347,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.172E+06 -8.172E+06 -8.172E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.518E+06 -5.518E+06 -5.518E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.518E+06 -5.518E+06 -5.518E+06  0.000E+00
-   7         0.000E+00  0.000E+00  3.521E-09  3.521E-09  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.335E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.004E-01  OP 
@@ -7679,10 +7659,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical pumping power for shield (MW)                                 (htpmwe_shld)             0.000E+00  OP 
  Electrical pumping power for divertor (MW)                               (htpmwe_div)              0.000E+00  OP 
  Total electrical pumping power for primary coolant (MW)                  (htpmw)                   1.550E+02  OP 
- Coolant pump power / non-pumping thermal power in first wall             (fpumpfw)                 5.000E-03     
- Coolant pump power / non-pumping thermal power in blanket                (fpumpblkt)               5.000E-03     
- Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               5.000E-03     
- Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                5.000E-03     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  1.000E+00     
  
  Plant thermodynamics: options :
@@ -7943,25 +7919,25 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.3530E-02              3.3503E-17                -9.9920E-16
-    2  Global power balance consistency      =  1.4635E-01 MW/m3       -1.2888E-13 MW/m3           8.8063E-13
-    3  Density upper limit                   <  8.1960E+19 /m3         -1.6384E+05 /m3            -1.9984E-15
-    4  Neutron wall load upper limit         <  9.2468E-01 MW/m2       -1.1102E-14 MW/m2          -1.1990E-14
-    5  Toroidal field 1/R consistency        =  4.9956E+01 T.m          2.7731E-14 T.m            -5.5511E-16
+    1  Beta consistency                      =  3.3530E-02             -1.4890E-17                 4.4409E-16
+    2  Global power balance consistency      =  1.4635E-01 MW/m3       -1.2885E-13 MW/m3           8.8041E-13
+    3  Density upper limit                   <  8.1960E+19 /m3         -1.9661E+05 /m3            -2.4425E-15
+    4  Neutron wall load upper limit         <  9.2468E-01 MW/m2       -1.4100E-14 MW/m2          -1.5210E-14
+    5  Toroidal field 1/R consistency        =  4.9956E+01 T.m          0.0000E+00 T.m            -0.0000E+00
     6  Radial build consistency              =  9.6080E+00 m            0.0000E+00 m              -0.0000E+00
-    7  Burn time lower limit                 >  7.2000E+03 sec         -2.7551E-07 sec             3.8265E-11
-    8  L-H power threshold limit             >  1.1443E+02 MW           8.6528E-10 MW             -7.5615E-12
-    9  Net electric power lower limit        >  5.0000E+02 MW          -4.4656E-10 MW             -8.9317E-13
-   10  Beta upper limit                      <  5.6067E-02              9.0206E-17                 1.5543E-15
-   11  CS coil EOF current density limit     <  6.3024E+07 A/m2         5.7633E-03 A/m2            9.1447E-11
-   12  CS coil BOP current density limit     <  5.8844E+07 A/m2         5.1250E-03 A/m2            8.7094E-11
-   13  Injection power upper limit           <  5.0000E+01 MW           1.2429E-09 MW             -2.4858E-11
-   14  TF coil case stress upper limit       <  6.6000E+08 Pa           4.8232E-04 Pa              7.3075E-13
-   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa           5.2857E-04 Pa              8.0069E-13
-   16  I_op / I_critical (TF coil)           <  7.8081E+07 A/m2        -2.6078E-08 A/m2            1.1102E-15
-   17  Dump voltage upper limit              <  1.5083E+01 V            4.0752E+00 V               2.6268E-10
-   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            2.2204E-16
-   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -7.1799E-11 MWT/m           7.5566E-12
+    7  Burn time lower limit                 >  7.2000E+03 sec         -2.7552E-07 sec             3.8266E-11
+    8  L-H power threshold limit             >  1.1443E+02 MW           8.6364E-10 MW             -7.5471E-12
+    9  Net electric power lower limit        >  5.0000E+02 MW          -4.4804E-10 MW             -8.9606E-13
+   10  Beta upper limit                      <  5.6067E-02              1.1796E-16                 1.9984E-15
+   11  CS coil EOF current density limit     <  6.3024E+07 A/m2         5.7641E-03 A/m2            9.1460E-11
+   12  CS coil BOP current density limit     <  5.8844E+07 A/m2         5.1258E-03 A/m2            8.7108E-11
+   13  Injection power upper limit           <  5.0000E+01 MW           1.2416E-09 MW             -2.4833E-11
+   14  TF coil case stress upper limit       <  6.6000E+08 Pa           4.8256E-04 Pa              7.3119E-13
+   15  TF coil conduit stress upper lim      <  6.6000E+08 Pa           5.1999E-04 Pa              7.8781E-13
+   16  I_op / I_critical (TF coil)           <  7.8081E+07 A/m2        -4.6941E-08 A/m2            1.9984E-15
+   17  Dump voltage upper limit              <  1.5083E+01 V            4.0752E+00 V               2.6267E-10
+   18  J_winding pack/J_protection limit     <  2.3489E+07 A/m2         0.0000E+00 A/m2            6.6613E-16
+   19  Upper Lim. on Psep * Bt / q A R       <  9.5000E+00 MWT/m       -7.1671E-11 MWT/m           7.5444E-12
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -8121,7 +8097,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             9.447E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.493E+02  OP 
  Synchrotron radiation power (MW)                                         (psyncpv*vol)             2.785E+01  OP 
- synchrotron wall reflectivity factor                                     (ssync)                       0.600     
+ Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
  Normalised minor radius defining 'core'                                  (coreradius)              7.500E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
  Total core radiation power (MW)                                          (pcoreradmw)              1.208E+02  OP 
@@ -8983,10 +8959,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electrical pumping power for shield (MW)                                 (htpmwe_shld)             0.000E+00  OP 
  Electrical pumping power for divertor (MW)                               (htpmwe_div)              0.000E+00  OP 
  Total electrical pumping power for primary coolant (MW)                  (htpmw)                   1.550E+02  OP 
- Coolant pump power / non-pumping thermal power in first wall             (fpumpfw)                 5.000E-03     
- Coolant pump power / non-pumping thermal power in blanket                (fpumpblkt)               5.000E-03     
- Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               5.000E-03     
- Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                5.000E-03     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  1.000E+00     
  
  Plant thermodynamics: options :

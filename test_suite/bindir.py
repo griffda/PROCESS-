@@ -1,1 +1,1 @@
-BINDIR = '/home/mkumar/process_reinke/bin'
+BINDIR = '/home/apearce/process/bin'
