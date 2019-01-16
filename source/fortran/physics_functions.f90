@@ -63,7 +63,6 @@ contains
     !+ad_summ  L-mode to H-mode power threshold calculation
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  dene   : input real :  volume-averaged electron density (/m3)
     !+ad_args  dnla   : input real :  line-averaged electron density (/m3)

@@ -5,6 +5,7 @@
 ## Bug Fixes
 - Added emultmw calculation to stellarator and fixed power balance errors (Issue #783)
 - Amended fpump* output to match with primary_pumping options.
+- Corrected power crossing the separatrix for stellarators (Issue #787)
 
 ## Features
 - HTS REBCO model final version implemented
