@@ -1179,13 +1179,20 @@ contains
 
     !  Heating power to plasma (= Psol in divertor model)
     !  Ohmic power is zero in a stellarator
+    !  pradmw here is core + edge (no SOL)
 
     powht = falpha*palpmw + pchargemw + pohmmw - pradmw
     if (ignite == 0) powht = powht + pinjmw
 
     !  Power to divertor, = (1-f_rad)*Psol
 
-    pdivt = (1.0D0-f_rad) * powht
+    psolradmw = f_rad * powht
+    pdivt = powht - psolradmw
+
+    ! Add SOL Radiation to total
+
+    pradmw = pradmw + psolradmw
+    pradpv = pradmw / vol
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on (but beware -
@@ -1199,7 +1206,7 @@ contains
 
     !  Calculate density limit
 
-    call stdlim(bt,powht,rmajor,rminor,dnelimt)
+    !call stdlim(bt,powht,rmajor,rminor,dnelimt)
 
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law

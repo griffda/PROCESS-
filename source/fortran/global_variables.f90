@@ -656,6 +656,8 @@ module physics_variables
   real(kind(1.0D0)) :: pradpv = 0.0D0
   !+ad_vars  protonrate : proton production rate (particles/m3/sec)
   real(kind(1.0D0)) :: protonrate = 0.0D0
+  !+ad_vars  psolradmw : SOL radiation power (MW) (stellarator only)
+  real(kind(1.0D0)) :: psolradmw = 0.0D0
   !+ad_vars  psyncpv : synchrotron radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: psyncpv = 0.0D0
   !+ad_vars  ilhthresh /6/ : switch for L-H mode power threshold scaling to use

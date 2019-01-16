@@ -4617,6 +4617,9 @@ implicit none
     end if
     call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
     call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
+    if (istell==1) then
+        call ovarre(outfile,'SOL radiation power (MW)','(psolradmw)', psolradmw, 'OP ')
+    end if
     call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')
     call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma', &
         '(rad_fraction)', rad_fraction, 'OP ')
