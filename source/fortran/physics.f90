@@ -80,6 +80,7 @@ module physics_module
   !+ad_hist  01/10/14 PJK Added numerics
   !+ad_hist  20/05/15 RK  Added iscdens, fgwped for pedestal density scaling
   !+ad_hist  08/02/17 JM  Added Kallenbach model parameters
+  !+ad_hist  17/01/19 SIM Made photon_wall and rad_fraction global variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -121,7 +122,6 @@ module physics_module
   !  Module-level variables
 
   integer :: iscz
-  real(kind(1.0D0)) :: photon_wall, rad_fraction
   real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
   real(kind(1.0D0)) :: total_loss_power        ! [W]
   real(kind(1.0D0)) :: total_energy_conf_time  ! [s]

@@ -227,6 +227,7 @@ module stellarator_module
   !+ad_call  build_variables
   !+ad_call  buildings_module
   !+ad_call  constants
+  !+ad_call  constraint_variables
   !+ad_call  costs_module
   !+ad_call  cost_variables
   !+ad_call  current_drive_module
@@ -272,6 +273,7 @@ module stellarator_module
   use build_variables
   use buildings_module
   use constants
+  use constraint_variables
   use costs_module
   use cost_variables
   use current_drive_module
@@ -1077,6 +1079,7 @@ contains
     !+ad_hist  17/11/14 PJK Recalculated radiation power totals; included
     !+ad_hisc               falpha contributions
     !+ad_hist  16/01/19 SIM Revised core and edge radiation definition (#787)
+    !+ad_hist  17/01/19 SIM Added photon_wall and rad_fraction calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1204,9 +1207,25 @@ contains
 
     palpfwmw = palpmw * (1.0D0-falpha)
 
+    !  Nominal mean photon wall load
+
+    if (iwalld == 1) then
+        photon_wall = ffwal * pradmw / sarea
+    else
+        if (ipowerflow == 0) then
+            photon_wall = (1.0D0-fhole)*pradmw / fwarea
+        else
+            photon_wall = (1.0D0-fhole-fhcd-fdiv)*pradmw / fwarea
+        end if
+    end if
+
+    peakradwallload = photon_wall * peakfactrad
+
+    rad_fraction = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
+
     !  Calculate density limit
 
-    !call stdlim(bt,powht,rmajor,rminor,dnelimt)
+    call stdlim(bt,powht,rmajor,rminor,dnelimt)
 
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law
