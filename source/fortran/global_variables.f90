@@ -362,7 +362,8 @@ module physics_variables
   !+ad_varc         <LI> = 4 later ITER scaling, a la Uckan;
   !+ad_varc         <LI> = 5 Todd empirical scaling I;
   !+ad_varc         <LI> = 6 Todd empirical scaling II;
-  !+ad_varc         <LI> = 7 Connor-Hastie model</UL>
+  !+ad_varc         <LI> = 7 Connor-Hastie model;
+  !+ad_varc         <LI> = 8 Sauter scaling allowing negative triangularity</UL>
   integer :: icurr = 4
   !+ad_vars  idensl /7/ : switch for density limit to enforce (constraint equation 5):<UL>
   !+ad_varc          <LI> = 1 old ASDEX;
