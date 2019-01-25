@@ -1962,6 +1962,7 @@ implicit none
     !+ad_hist  28/11/13 PJK Added current profile consistency if iprofile=1
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  02/06/16 RK  Added Sauter scaling for negative triangularity
+    !+ad_hist  25/01/19 SIM Changed conhas call to kappa95 and triang95 (Issue #791)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
@@ -2036,7 +2037,7 @@ implicit none
 
        !  N.B. If iprofile=1, alphaj will be wrong during the first call (only)
 
-       call conhas(alphaj,alphap,bt,triang,eps,kappa,p0,fq)
+       call conhas(alphaj,alphap,bt,triang95,eps,kappa95,p0,fq)
 
     case (8)  !  Sauter scaling allowing negative triangularity [FED May 2016]
 
@@ -2178,7 +2179,7 @@ implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine conhas(alphaj,alphap,bt,delta,eps,kappa,p0,fq)
+    subroutine conhas(alphaj,alphap,bt,delta95,eps,kappa95,p0,fq)
 
       !+ad_name  conhas
       !+ad_summ  Routine to calculate the F coefficient used for scaling the
@@ -2189,9 +2190,9 @@ implicit none
       !+ad_args  alphaj   : input real :  current profile index
       !+ad_args  alphap   : input real :  pressure profile index
       !+ad_args  bt       : input real :  toroidal field on axis (T)
-      !+ad_args  delta    : input real :  plasma triangularity
+      !+ad_args  delta95  : input real :  plasma triangularity 95%
       !+ad_args  eps      : input real :  inverse aspect ratio
-      !+ad_args  kappa    : input real :  plasma elongation
+      !+ad_args  kappa95  : input real :  plasma elongation 95%
       !+ad_args  p0       : input real :  central plasma pressure (Pa)
       !+ad_args  fq       : output real : scaling for edge q from circular
       !+ad_argc                           cross-section cylindrical case
@@ -2202,6 +2203,7 @@ implicit none
       !+ad_call  None
       !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
       !+ad_hist  09/11/11 PJK Initial F90 version
+      !+ad_hist  25/01/19 SIM Changed kappa and delta to 95% (Issue #791)
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2212,7 +2214,7 @@ implicit none
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: alphaj,alphap,bt,delta,eps,kappa,p0
+      real(kind(1.0D0)), intent(in) :: alphaj,alphap,bt,delta95,eps,kappa95,p0
       real(kind(1.0D0)), intent(out) :: fq
 
       !  Local variables
@@ -2242,12 +2244,12 @@ implicit none
 
       !  T/r in AEA FUS 172
 
-      kap1 = kappa + 1.0D0
-      tr = kappa * delta / kap1**2
+      kap1 = kappa95 + 1.0D0
+      tr = kappa95 * delta95 / kap1**2
 
       !  E/r in AEA FUS 172
 
-      er = (kappa-1.0D0)/kap1
+      er = (kappa95-1.0D0)/kap1
 
       !  T primed in AEA FUS 172
 
