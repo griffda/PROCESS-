@@ -602,11 +602,13 @@ contains
           ! flhthresh |  f-value for L-H power threshold
           ! plhthresh |  L-H mode power threshold (MW)
           ! pdivt     |  power conducted to the divertor region (MW)
-          cc(i) = -(1.0D0 - flhthresh * plhthresh / pdivt)
+          cc(i) = -(1.0D0 - flhthresh * plhthresh / (2.0d0*pdivt))
+
+          write(*,*) 'P_LH / P_sep = ', flhthresh * plhthresh / (2.0d0*pdivt) - 1.0d0
 
           if (present(con)) then
              con(i) = plhthresh
-             err(i) = plhthresh - pdivt / flhthresh
+             err(i) = plhthresh - 2.0d0 * pdivt / flhthresh
              if (flhthresh > 1.0D0) then
                 symbol(i) = '>'
              else

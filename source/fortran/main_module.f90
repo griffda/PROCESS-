@@ -738,6 +738,7 @@ subroutine runtests
   use process_output
   use pfcoil_module
   use superconductors
+  use reinke_module
   use hare, only:hare_calc
 
   implicit none
@@ -753,6 +754,7 @@ subroutine runtests
   call test_quench()
   call brookscoil(nout)
   call test_secant_solve()
+  call test_reinke()
 
   call hare_calc(10.5d19,5.66d0, 9.072d0,2.920d0,0.1d0,32.d0, 2.d0,        &
                        fshift,xf,enpa,ftherm,fpp,cdeff,ampperwatt, &

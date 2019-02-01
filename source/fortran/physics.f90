@@ -484,7 +484,13 @@ implicit none
     if (iwalld == 1) then
        wallmw = ffwal * pneutmw / sarea
     else
-       wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
+       if (idivrt == 2) then
+         !Double null configuration
+         wallmw = (1.0D0-fhcd-2.0D0*fdiv)*pneutmw / fwarea
+       else
+         ! Single null Configuration
+         wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
+       end if 
     end if
 
     if (ipedestal .ne. 3) then ! otherwise replaced by PLASMOD variables
@@ -502,7 +508,7 @@ implicit none
        pcoreradmw = pcoreradpv*vol
        pedgeradmw = pedgeradpv*vol
        pradmw = pradpv*vol
-
+       !write(*,*) '(pradmw, pcoreradmw, pedgeradmw) = ', pradmw, pcoreradmw, pedgeradmw
     endif
 
     ! MDK
@@ -511,7 +517,13 @@ implicit none
     if (iwalld == 1) then
        photon_wall = ffwal * pradmw / sarea
     else
-       photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea
+       if (idivrt == 2) then
+         ! Double Null configuration
+         photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea
+       else
+         ! Single null configuration
+         photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea
+       end if 
     end if
 
     peakradwallload = photon_wall * peakfactrad
@@ -538,6 +550,12 @@ implicit none
           pinj = 0.0D0
        end if
        pdivt = falpha*palpmw + pchargemw + pinj + pohmmw - pradmw
+
+       ! if double null configuration share the power 
+       ! equally over the upper and lower divertor 
+       if (idivrt == 2) then
+         pdivt = pdivt/2.0d0
+       end if
 
        !  The following line is unphysical, but prevents -ve sqrt argument
        !  Should be obsolete if constraint eqn 17 is turned on
@@ -627,8 +645,7 @@ implicit none
           call report_error(216)
        endif
 
-       write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', impurity_arr(impvardiv)%frac, ', ',  impvardiv
-
+       write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', impurity_arr(impvardiv)%frac, ', ',  impvardiv  
        ! frac is zero, impvardiv is 9 which is default. However, the initial set value of impurity 9 is zero...need to set that impurity fraction to AT LEAST the min value, i.e. fzmin, see above
 
     endif
@@ -1267,11 +1284,11 @@ implicit none
       !+ad_desc  (private communication).
       !+ad_desc  <P>beta poloidal = 4*pi*(ne*Te+ni*Ti)/Bpo**2
       !+ad_desc  where ni is the sum of all ion densities (thermal)
-      !+ad_prob  PJK: I do not understand why it should be 4*pi*... instead
-      !+ad_prob  of 8*pi*... Presumably it is because of a strange ASTRA
-      !+ad_prob  method similar to that noted above in the calculation of jboot.
+      !+ad_prob  PJK: I do not understand why it should be 4*pdivti*... instead
+      !+ad_prob  of 8*pi*... Presumably it is because of a stpdivtange ASTRA
+      !+ad_prob  method similar to that noted above in the capdivtculation of jboot.
       !+ad_call  None
-      !+ad_hist  15/05/14 PJK New routine, which includes the ion pressure contribution
+      !+ad_hist  15/05/14 PJK New routine, which includes thepdivtion pressure contribution
       !+ad_stat  Okay
       !+ad_docs  Pereverzev, 25th April 1989 (?)
       !+ad_docs  E Fable, private communication, 15th May 2014
@@ -2914,7 +2931,12 @@ implicit none
     !  Power per unit area crossing the plasma edge
     !  (excludes radiation and neutrons)
 
-    qperp = pdivt/sarea
+    if (idivrt == 2) then
+      ! take total - not per divertor - for double null
+      qperp = 2.0d0*pdivt/sarea
+      else 
+      qperp = pdivt/sarea
+    end if
 
     !  Old ASDEX density limit formula
     !  This applies to the density at the plasma edge, so must be scaled
@@ -2954,7 +2976,12 @@ implicit none
        end if
        dlimit(4) = 0.0D0
     else
-       dlim = 1.0D20 * sqrt(pdivt/denom)
+       if (idivrt == 2) then
+          ! take total - not per divertor - for double null
+          dlim = 1.0D20 * sqrt(2.0d0*pdivt/denom)
+       else
+          dlim = 1.0D20 * sqrt(pdivt/denom)
+       end if 
        dlimit(4) = dlim/prn1
     end if
 
@@ -2962,7 +2989,12 @@ implicit none
     !  This applies to the density at the plasma edge, so must be scaled
     !  to give the density limit applying to the average plasma density.
 
-    dlim = 0.237D20 * bt * sqrt(pdivt)/rmajor
+    if (idivrt == 2) then
+      ! take total - not per divertor - for double null
+      dlim = 0.237D20 * bt * sqrt(2.0d0*pdivt)/rmajor
+    else
+      dlim = 0.237D20 * bt * sqrt(pdivt)/rmajor
+    end if
     dlimit(5) = dlim/prn1
 
     !  Hugill-Murakami M.q limit
@@ -4264,7 +4296,6 @@ implicit none
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     call oheadr(outfile,'Plasma')
-
     if (istell == 0) then
        select case (idivrt)
        case (0)
