@@ -173,8 +173,8 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /42/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 42
+  !+ad_vars  ipnlaws /45/ FIX : number of energy confinement time scaling laws
+  integer, parameter :: ipnlaws = 45
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
@@ -547,8 +547,14 @@ module physics_variables
        'Murari et al NPL     (H)', &
   !+ad_varc  <LI> (41)  Petty 2008 (H-mode)
        'Petty 2008           (H)', &
-  !+ad_varc  <LI> (41)  Lang et al. 2012 (H-mode)</UL>
-       'Lang et al. 2012     (H)' /)
+  !+ad_varc  <LI> (42)  Lang et al. 2012 (H-mode)
+       'Lang et al. 2012     (H)', &
+  !+ad_varc  <LI> (43)  Hubbard 2012 (I-mode) - nominal
+       'Hubbard 2012 - nom   (I)', &
+  !+ad_varc  <LI> (44)  Hubbard 2012 (I-mode) - lower bound
+       'Hubbard 2012 - lower (I)', &
+  !+ad_varc  <LI> (45)  Hubbard 2012 (I-mode) - upper bound</UL>
+       'Hubbard 2012 - upper (I)' /)
 
   !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;
@@ -664,7 +670,7 @@ module physics_variables
   !+ad_vars  plhthresh : L-H mode power threshold (MW)
   !+ad_varc              (chosen via ilhthresh, and enforced if constraint equation 15 is on)
   real(kind(1.0D0)) :: plhthresh = 0.0D0
-  !+ad_vars  pthrmw(14) : L-H power threshold for various scalings (MW): <OL>
+  !+ad_vars  pthrmw(18) : L-H power threshold for various scalings (MW): <OL>
   !+ad_varc         <LI> ITER 1996 scaling: nominal
   !+ad_varc         <LI> ITER 1996 scaling: upper bound
   !+ad_varc         <LI> ITER 1996 scaling: lower bound
@@ -678,8 +684,12 @@ module physics_variables
   !+ad_varc         <LI> Snipes 2000 scaling: lower bound
   !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): nominal
   !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): upper bound
-  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): lower bound</OL>
-  real(kind(1.0D0)), dimension(14) :: pthrmw = 0.0D0
+  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): lower bound
+  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: nominal
+  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: lower bound
+  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: upper bound
+  !+ad_varc         <LI> Hubbard et al. 2017 L-I threshold scaling</OL>
+  real(kind(1.0D0)), dimension(18) :: pthrmw = 0.0D0
   !+ad_vars  ptremw : electron transport power (MW)
   real(kind(1.0D0)) :: ptremw = 0.0D0
   !+ad_vars  ptrepv : electron transport power per volume (MW/m3)
@@ -2135,6 +2145,12 @@ module pfcoil_variables
   !+ad_varc               height of coil group j to plasma minor radius</UL>
   real(kind(1.0D0)), dimension(ngrpmx) :: zref = (/3.6D0, 1.2D0, 2.5D0, &
        1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
+
+  !+ad_vars  bmaxcs_lim : Central solenoid max field limit [T]
+  real(kind(1.0D0)) :: bmaxcs_lim = 13.0
+  !+ad_vars  fbmaxcs : F-value for CS mmax field (cons. 79, itvar 149)
+  real(kind(1.0D0)) :: fbmaxcs = 13.0
+
 
 end module pfcoil_variables
 
@@ -4587,6 +4603,11 @@ module reinke_variables
   !+ad_varc             (impvardiv) in the SoL (taking impurity_enrichment
   !+ad_varc             into account) (iteration variable 148)
   real(kind(1.0D0)) :: fzactual = 0.001D0
+
+  !+ad_vars  reinke_mode /0/ : Switch for Reinke criterion H/I mode
+  !+ad_varc          <LI> = 0 H-mode;
+  !+ad_varc          <LI> = 1 I-mode;</UL>
+  integer       :: reinke_mode = 0
 
 end module reinke_variables
 

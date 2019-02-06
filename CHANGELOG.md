@@ -8,6 +8,10 @@
 
 ## Features
 - HTS REBCO model final version implemented
+- Can now limit the CS peak field to be below set maximum
+- Added Hubbard 2012 and 2017 I-mode threshold scaling
+- Added Hubbard I mode confinement time scaling
+- Added I-mode version of Reinke criterion (fzmin)
 
 ## Minor Changes
 - Explicitly state 1990 $ for old cost model

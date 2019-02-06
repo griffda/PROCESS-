@@ -666,7 +666,7 @@ contains
           write(outfile,*) ' '
           obsolete_var = .true.
        case ('ilhthresh')
-          call parse_int_variable('ilhthresh', ilhthresh, 1, 14, &
+          call parse_int_variable('ilhthresh', ilhthresh, 1, 17, &
                'Switch for L-H power threshold to enforce')
        case ('impc')
           call parse_real_variable('impc', impc, 0.0D0, 10.0D0, &
@@ -1957,6 +1957,13 @@ contains
 
           !  PF coil settings
 
+       case ('bmaxcs_lim')
+         call parse_real_variable('bmaxcs_lim', bmaxcs_lim, 0.01D0, 100.0D0, &
+               'Maximum allowed peak field on central solenoid')
+       case ('fbmaxcs')
+         call parse_real_variable('fbmaxcs', fbmaxcs, 0.01D0, 1.0D0, &
+               'F-value for max peak CS field (con. 79, itvar 149)')
+
        case ('alfapf')
           call parse_real_variable('alfapf', alfapf, 1.0D-12, 1.0D0, &
                'PF coil current smoothing parameter')
@@ -2927,6 +2934,10 @@ contains
        case ('lhat')
           call parse_real_variable('lhat', lhat, 1.0D0, 1.5D1, &
                'connection length factor')
+
+       case ('reinke_mode')
+          call parse_int_variable('reinke_mode', reinke_mode, 0, 1, &
+               'Switch for Reinke Criterion mode (0=H, 1=I)')
 
        case ('impvardiv')
           call parse_int_variable('impvardiv', impvardiv, 3, nimp, &

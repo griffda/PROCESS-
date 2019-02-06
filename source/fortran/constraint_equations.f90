@@ -1695,6 +1695,22 @@ contains
               units(i) = ''
            end if
 
+       case (79)  ! Equation for maximum CS field
+            !#=# pfcoil
+            !#=#=# fbmaxcs, bmaxoh, bmaxoh0, bmaxcs_lim
+  
+            ! fbmaxcs        |  f-value for CS max field
+            ! bmaxcs_lim     |  allowable CS field [T]
+            ! bmaxoh/bmaxoh0 |  peak CS field [T]
+            cc(i) = 1.0D0 - fbmaxcs * bmaxcs_lim/max(bmaxoh, bmaxoh0)
+  
+            if (present(con)) then
+               con(i) = bmaxcs_lim
+               err(i) = bmaxcs_lim * cc(i)
+               symbol(i) = '<'
+               units(i) = 'A/turn'
+            end if
+
        case default
 
           idiags(1) = icc(i)

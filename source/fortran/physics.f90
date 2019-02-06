@@ -3603,6 +3603,35 @@ implicit none
        qtaue = 0.0D0
        rtaue = -0.74D0
 
+!  gtaue = offset term in tauee scaling
+    !  ptaue = exponent for density term in tauee scaling
+    !  qtaue = exponent for temperature term in tauee scaling
+    !  rtaue = exponent for power term in tauee scaling
+
+    case (43)  !  Hubbard et al. 2017 I-mode confinement time scaling - nominal
+      tauee = 0.014D0 * (plascur/1.0D6)**0.68D0 * bt**0.77D0 * dnla20**0.02D0 &
+              * powerht**(-0.29D0)
+      gtaue = 0.0D0
+      ptaue = 0.02D0
+      qtaue = 0.0D0
+      rtaue = -0.29D0
+    
+    case (44)  !  Hubbard et al. 2017 I-mode confinement time scaling - lower
+      tauee = 0.014D0 * (plascur/1.0D6)**0.60D0 * bt**0.70D0 * dnla20**(-0.03D0) &
+              * powerht**(-0.33D0)
+      gtaue = 0.0D0
+      ptaue = 0.02D0
+      qtaue = 0.0D0
+      rtaue = -0.29D0
+
+    case (45)  !  Hubbard et al. 2017 I-mode confinement time scaling - upper
+      tauee = 0.014D0 * (plascur/1.0D6)**0.76D0 * bt**0.84D0  * dnla20**0.07 &
+              * powerht**(-0.25D0)
+      gtaue = 0.0D0
+      ptaue = 0.02D0
+      qtaue = 0.0D0
+      rtaue = -0.29D0
+
     case default
        idiags(1) = isc ; call report_error(81)
 
@@ -4678,6 +4707,10 @@ implicit none
        call ovarre(outfile,'Snipes 2000 scaling (closed divertor): nominal (MW)', '(pthrmw(12))',pthrmw(12), 'OP ')
        call ovarre(outfile,'Snipes 2000 scaling (closed divertor): upper bound (MW)', '(pthrmw(13))',pthrmw(13), 'OP ')
        call ovarre(outfile,'Snipes 2000 scaling (closed divertor): lower bound (MW)', '(pthrmw(14))',pthrmw(14), 'OP ')
+       call ovarre(outfile,'Hubbard 2012 L-I threshold - nominal (MW)', '(pthrmw(15))',pthrmw(15), 'OP ')
+       call ovarre(outfile,'Hubbard 2012 L-I threshold - lower bound (MW)', '(pthrmw(16))',pthrmw(16), 'OP ')
+       call ovarre(outfile,'Hubbard 2012 L-I threshold - upper bound (MW)', '(pthrmw(17))',pthrmw(17), 'OP ')
+       call ovarre(outfile,'Hubbard 2017 L-I threshold', '(pthrmw(18))',pthrmw(18), 'OP ')
        call oblnkl(outfile)
        if ((ilhthresh.eq.9).or.(ilhthresh.eq.10).or.(ilhthresh.eq.11)) then
            if ((bt < 0.78D0).or.(bt > 7.94D0)) then

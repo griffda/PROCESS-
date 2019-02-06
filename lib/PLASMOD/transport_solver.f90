@@ -117,7 +117,7 @@
   real(kind(1.0d0)) :: xb,teb,tib,neb,zmain,amain,toleq,fuelmix,fuelhe3
   real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,sfus_he3,sfus_p,fcd,qdivt,q_heat,q_cd,q_fus,q_95,qtote,qtoti,w_e,w_i
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat,plinexe,psepxe
-  real(kind(1.0d0)) :: ne_av,nela,PLH_th(14)
+  real(kind(1.0d0)) :: ne_av,nela,PLH_th(18)
   real(kind(1.0d0)), dimension(num%nx) :: theta_perim,dtheta,f_perim,p_dd
   real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe,nwol,nprot,nhe3, nXe, nNe, prxe, prne
   real(kind(1.0d0)), dimension(num%nx) :: prwol,snebm
