@@ -1,4 +1,4 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module physics_module
 
@@ -1828,7 +1828,7 @@ implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine fast_alpha_bs()
+    !subroutine fast_alpha_bs()
 
       !  BSALP (local per index J) is in MA/m^2
 
@@ -1900,7 +1900,7 @@ implicit none
       !      RTOR*ZBIRTH*(ZA1*ZDPDPSI+ZA2*ZDSC3DPSI)
       ! BSALP=BSALP/1.e6
 
-    end subroutine fast_alpha_bs
+    !end subroutine fast_alpha_bs
 
   end function bootstrap_fraction_sauter
 
@@ -3603,6 +3603,35 @@ implicit none
        qtaue = 0.0D0
        rtaue = -0.74D0
 
+!  gtaue = offset term in tauee scaling
+    !  ptaue = exponent for density term in tauee scaling
+    !  qtaue = exponent for temperature term in tauee scaling
+    !  rtaue = exponent for power term in tauee scaling
+
+    case (43)  !  Hubbard et al. 2017 I-mode confinement time scaling - nominal
+      tauee = 0.014D0 * (plascur/1.0D6)**0.68D0 * bt**0.77D0 * dnla20**0.02D0 &
+              * powerht**(-0.29D0)
+      gtaue = 0.0D0
+      ptaue = 0.02D0
+      qtaue = 0.0D0
+      rtaue = -0.29D0
+    
+    case (44)  !  Hubbard et al. 2017 I-mode confinement time scaling - lower
+      tauee = 0.014D0 * (plascur/1.0D6)**0.60D0 * bt**0.70D0 * dnla20**(-0.03D0) &
+              * powerht**(-0.33D0)
+      gtaue = 0.0D0
+      ptaue = 0.02D0
+      qtaue = 0.0D0
+      rtaue = -0.29D0
+
+    case (45)  !  Hubbard et al. 2017 I-mode confinement time scaling - upper
+      tauee = 0.014D0 * (plascur/1.0D6)**0.76D0 * bt**0.84D0  * dnla20**0.07 &
+              * powerht**(-0.25D0)
+      gtaue = 0.0D0
+      ptaue = 0.02D0
+      qtaue = 0.0D0
+      rtaue = -0.29D0
+
     case default
        idiags(1) = isc ; call report_error(81)
 
@@ -4593,7 +4622,7 @@ implicit none
     if (fhe3 > 1.0D-3) call ovarrf(outfile,'3-Helium fuel fraction','(fhe3)',fhe3)
 
     call osubhd(outfile,'Fusion Power :')
-    call ovarre(outfile,'Total fusion power (MW)','(powfmw.)',powfmw, 'OP ')
+    call ovarre(outfile,'Total fusion power (MW)','(powfmw)',powfmw, 'OP ')
     call ovarre(outfile,' =    D-T fusion power (MW)','(pdt)',pdt, 'OP ')
     call ovarre(outfile,'  +   D-D fusion power (MW)','(pdd)',pdd, 'OP ')
     call ovarre(outfile,'  + D-He3 fusion power (MW)','(pdhe3)',pdhe3, 'OP ')
@@ -4609,7 +4638,7 @@ implicit none
        call ovarre(outfile,'Line radiation power (MW)','(plinepv*vol)', plinepv*vol, 'OP ')
     end if
     call ovarre(outfile,'Synchrotron radiation power (MW)','(psyncpv*vol)', psyncpv*vol, 'OP ')
-    call ovarrf(outfile,'synchrotron wall reflectivity factor','(ssync)',ssync)
+    call ovarrf(outfile,'Synchrotron wall reflectivity factor','(ssync)',ssync)
     if (imprad_model == 1) then
        call ovarre(outfile,"Normalised minor radius defining 'core'", '(coreradius)',coreradius)
        call ovarre(outfile,"Fraction of core radiation subtracted from P_L", &
@@ -4678,6 +4707,10 @@ implicit none
        call ovarre(outfile,'Snipes 2000 scaling (closed divertor): nominal (MW)', '(pthrmw(12))',pthrmw(12), 'OP ')
        call ovarre(outfile,'Snipes 2000 scaling (closed divertor): upper bound (MW)', '(pthrmw(13))',pthrmw(13), 'OP ')
        call ovarre(outfile,'Snipes 2000 scaling (closed divertor): lower bound (MW)', '(pthrmw(14))',pthrmw(14), 'OP ')
+       call ovarre(outfile,'Hubbard 2012 L-I threshold - nominal (MW)', '(pthrmw(15))',pthrmw(15), 'OP ')
+       call ovarre(outfile,'Hubbard 2012 L-I threshold - lower bound (MW)', '(pthrmw(16))',pthrmw(16), 'OP ')
+       call ovarre(outfile,'Hubbard 2012 L-I threshold - upper bound (MW)', '(pthrmw(17))',pthrmw(17), 'OP ')
+       call ovarre(outfile,'Hubbard 2017 L-I threshold', '(pthrmw(18))',pthrmw(18), 'OP ')
        call oblnkl(outfile)
        if ((ilhthresh.eq.9).or.(ilhthresh.eq.10).or.(ilhthresh.eq.11)) then
            if ((bt < 0.78D0).or.(bt > 7.94D0)) then
@@ -4738,7 +4771,7 @@ implicit none
     call ovarst(mfile,'Confinement scaling law','(tauelaw)',trim(tauelaw))
 
     call ovarrf(outfile,'Confinement H factor','(hfact)',hfact)
-    call ovarrf(outfile,'Global energy confinement time (s)','(taueff)',taueff, 'OP ')
+    call ovarrf(outfile,'Global thermal energy confinement time (s)','(taueff)',taueff, 'OP ')
     call ovarrf(outfile,'Ion energy confinement time (s)','(tauei)',tauei, 'OP ')
     call ovarrf(outfile,'Electron energy confinement time (s)','(tauee)',tauee, 'OP ')
     call ovarre(outfile,'n.tau = Volume-average electron density x Energy confinement time (s/m3)', &
@@ -4762,9 +4795,9 @@ implicit none
     ! Note alpha confinement time is no longer equal to fuel particle confinement time.
     call ovarrf(outfile,'Alpha particle/energy confinement time ratio','(taup/taueff)',taup/taueff, 'OP ')
     call ovarrf(outfile,'Lower limit on taup/taueff','(taulimit)',taulimit)
-
     call ovarrf(outfile,'Total energy confinement time including radiation loss (s)', &
-                    '(total_energy_conf_time)', total_energy_conf_time, 'OP ')
+         '(total_energy_conf_time)', total_energy_conf_time, 'OP ')
+    call ocmmnt(outfile,'  (= stored energy including fast particles / loss power including radiation')
 
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')

@@ -23,8 +23,7 @@ before_script:
 build:Make:
 # image: ukaea/ubuntu
  only:
-  - develop_unit_tests
-  - reinke_crit_unit_tests
+  - develop
  stage: build
  script:
   - pwd
@@ -47,8 +46,7 @@ build:Make:
 build:vardes:
 
  only:
-  - reinke_crit_unit_tests
-  - develop_unit_tests
+  - develop
  stage: build
  script:
   - pwd
@@ -65,8 +63,7 @@ build:vardes:
 testing:test_suite:
  when: on_success  # Also default setting
  only:
-  - reinke_crit_unit_tests
-  - develop_unit_tests
+  - develop
  stage: testing
  script:
   - pwd

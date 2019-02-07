@@ -173,8 +173,8 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /42/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 42
+  !+ad_vars  ipnlaws /45/ FIX : number of energy confinement time scaling laws
+  integer, parameter :: ipnlaws = 45
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
@@ -422,7 +422,7 @@ module physics_variables
   integer :: ieped = 0
 
   ! Issue #730
-  !+ad_vars  eped_sf /0/ : scaling factor for EPED model
+  !+ad_vars  eped_sf /1.0/ : Adjustment factor for EPED scaling to reduce pedestal temperature or pressure to mitigate or prevent ELMs
   real(kind(1.0D0)) :: eped_sf = 1.0D0
 
   !+ad_vars  neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1,2, calculated if 3)
@@ -547,8 +547,14 @@ module physics_variables
        'Murari et al NPL     (H)', &
   !+ad_varc  <LI> (41)  Petty 2008 (H-mode)
        'Petty 2008           (H)', &
-  !+ad_varc  <LI> (41)  Lang et al. 2012 (H-mode)</UL>
-       'Lang et al. 2012     (H)' /)
+  !+ad_varc  <LI> (42)  Lang et al. 2012 (H-mode)
+       'Lang et al. 2012     (H)', &
+  !+ad_varc  <LI> (43)  Hubbard 2012 (I-mode) - nominal
+       'Hubbard 2012 - nom   (I)', &
+  !+ad_varc  <LI> (44)  Hubbard 2012 (I-mode) - lower bound
+       'Hubbard 2012 - lower (I)', &
+  !+ad_varc  <LI> (45)  Hubbard 2012 (I-mode) - upper bound</UL>
+       'Hubbard 2012 - upper (I)' /)
 
   !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;
@@ -664,7 +670,7 @@ module physics_variables
   !+ad_vars  plhthresh : L-H mode power threshold (MW)
   !+ad_varc              (chosen via ilhthresh, and enforced if constraint equation 15 is on)
   real(kind(1.0D0)) :: plhthresh = 0.0D0
-  !+ad_vars  pthrmw(14) : L-H power threshold for various scalings (MW): <OL>
+  !+ad_vars  pthrmw(18) : L-H power threshold for various scalings (MW): <OL>
   !+ad_varc         <LI> ITER 1996 scaling: nominal
   !+ad_varc         <LI> ITER 1996 scaling: upper bound
   !+ad_varc         <LI> ITER 1996 scaling: lower bound
@@ -678,8 +684,12 @@ module physics_variables
   !+ad_varc         <LI> Snipes 2000 scaling: lower bound
   !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): nominal
   !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): upper bound
-  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): lower bound</OL>
-  real(kind(1.0D0)), dimension(14) :: pthrmw = 0.0D0
+  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): lower bound
+  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: nominal
+  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: lower bound
+  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: upper bound
+  !+ad_varc         <LI> Hubbard et al. 2017 L-I threshold scaling</OL>
+  real(kind(1.0D0)), dimension(18) :: pthrmw = 0.0D0
   !+ad_vars  ptremw : electron transport power (MW)
   real(kind(1.0D0)) :: ptremw = 0.0D0
   !+ad_vars  ptrepv : electron transport power per volume (MW/m3)
@@ -757,7 +767,7 @@ module physics_variables
   real(kind(1.0D0)) :: ssync = 0.6D0
   !+ad_vars  tauee : electron energy confinement time (sec)
   real(kind(1.0D0)) :: tauee = 0.0D0
-  !+ad_vars  taueff : global energy confinement time (sec)
+  !+ad_vars  taueff : global thermal energy confinement time (sec)
   real(kind(1.0D0)) :: taueff = 0.0D0
   !+ad_vars  tauei : ion energy confinement time (sec)
   real(kind(1.0D0)) :: tauei = 0.0D0
@@ -1090,6 +1100,9 @@ module current_drive_variables
   real(kind(1.0D0)) :: gamcd = 0.0D0
   !+ad_vars  gamma_ecrh /0.35/ : user input ECRH gamma (1.0e20 A/(W m^2))
   real(kind(1.0D0)) :: gamma_ecrh = 0.35D0
+  !+ad_vars  rho_ecrh /0.1/ : normalised minor radius at which electron cyclotron current drive is maximum
+  real(kind(1.0D0)) :: rho_ecrh = 0.1D0
+
   !+ad_vars  iefrf /5/ : switch for current drive efficiency model: <OL>
   !+ad_varc         <LI> Fenstermacher Lower Hybrid
   !+ad_varc         <LI> Ion Cyclotron current drive
@@ -1100,7 +1113,8 @@ module current_drive_variables
   !+ad_varc         <LI> new Culham ECCD model
   !+ad_varc         <LI> new Culham Neutral Beam model
   !+ad_varc         <LI> Empty (Oscillating field CD removed)
-  !+ad_varc         <LI> ECRH user input gamma </OL>
+  !+ad_varc         <LI> ECRH user input gamma
+  !+ad_varc         <LI> ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </OL>
   integer :: iefrf = 5
   !+ad_vars  irfcd /1/ : switch for current drive calculation:<UL>
   !+ad_varc         <LI> = 0 turned off;
@@ -1640,8 +1654,8 @@ module fwbs_variables
 
   !+ad_vars  primary_pumping /2/ : Switch for pumping power for primary coolant (06/01/2016):
   !+ad_varc       (mechanical power only)<UL>
-  !+ad_varc     <LI> = 0 User sets pump power directly (htpmw_blkt, htpmw_fw)
-  !+ad_varc     <LI> = 1 User sets pump power as a fraction of thermal power (fpumpblkt, fpumpfw)
+  !+ad_varc     <LI> = 0 User sets pump power directly (htpmw_blkt, htpmw_fw, htpmw_div, htpmw_shld)
+  !+ad_varc     <LI> = 1 User sets pump power as a fraction of thermal power (fpumpblkt, fpumpfw, fpumpdiv, fpumpshld)
   !+ad_varc     <LI> = 2 Mechanical pumping power is calculated
   !+ad_varc     <LI> = 3 Mechanical pumping power is calculated using specified pressure drop</UL>
   !+ad_vars  (peak first wall temperature is only calculated if primary_pumping = 2)
@@ -1986,7 +2000,8 @@ module pfcoil_variables
   !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
   !+ad_varc            <LI> = 3 NbTi;
   !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters
-  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation</UL>
+  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation
+  !+ad_varc            <LI> = 6 REBCO HTS parameterisation</UL>
   integer :: isumatoh = 1
   !+ad_vars  isumatpf /1/ : switch for superconductor material in PF coils:<UL>
   !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
@@ -2134,6 +2149,12 @@ module pfcoil_variables
   !+ad_varc               height of coil group j to plasma minor radius</UL>
   real(kind(1.0D0)), dimension(ngrpmx) :: zref = (/3.6D0, 1.2D0, 2.5D0, &
        1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
+
+  !+ad_vars  bmaxcs_lim : Central solenoid max field limit [T]
+  real(kind(1.0D0)) :: bmaxcs_lim = 13.0
+  !+ad_vars  fbmaxcs : F-value for CS mmax field (cons. 79, itvar 149)
+  real(kind(1.0D0)) :: fbmaxcs = 13.0
+
 
 end module pfcoil_variables
 
@@ -2466,7 +2487,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfinsgap = 0.010D0
   !+ad_vars  tflegmw : TF coil outboard leg resistive power (MW)
   real(kind(1.0D0)) :: tflegmw = 0.0D0
-  !+ad_vars  tflegres /2.5e-8/ : resistivity of a TF coil leg (Ohm-m)
+  !+ad_vars  tflegres /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
   real(kind(1.0D0)) :: tflegres = 2.5D-8
   !+ad_vars  tfleng : TF coil circumference (m)
   real(kind(1.0D0)) :: tfleng = 0.0D0
@@ -2486,6 +2507,8 @@ module tfcoil_variables
 
   !+ad_vars  thicndut /8.0e-4/ : conduit insulation thickness (m)
   real(kind(1.0D0)) :: thicndut = 8.0D-4
+  !+ad_vars  layer_ins /0/ : Additional insulation thickness between layers (m)
+  real(kind(1.0D0)) :: layer_ins = 0.0D0
   !+ad_vars  thkcas /0.3/ : inboard TF coil case outer (non-plasma side) thickness (m)
   !+ad_varc                 (iteration variable 57)
   !+ad_varc                 (calculated for stellarators)
@@ -2620,7 +2643,7 @@ module tfcoil_variables
   !+ad_vars  rcool /0.005/ : average radius of coolant channel (m)
   !+ad_varc                  (iteration variable 69)
   real(kind(1.0D0)) :: rcool = 0.005D0
-  !+ad_vars  rhocp : TF coil inboard leg resistance (ohm)
+  !+ad_vars  rhocp : TF coil inboard leg resistivity (Ohm-m)
   real(kind(1.0D0)) :: rhocp = 0.0D0
   !+ad_vars  tcoolin /40.0/ : centrepost coolant inlet temperature (C)
   real(kind(1.0D0)) :: tcoolin = 40.0D0
@@ -4461,6 +4484,7 @@ module rebco_variables
   !+ad_type  Module
   !+ad_docs  TODO
   implicit none ! ---------------------------------------------------------
+  ! Updated 13/11/18 using data from Lewandowska et al 2018.
 
   !+ad_vars  rebco_thickness /1.0e-6/ : thickness of REBCO layer in tape (m) (iteration variable 138)
   real(kind(1.0D0)) :: rebco_thickness = 1.0D-6
@@ -4468,21 +4492,21 @@ module rebco_variables
   real(kind(1.0D0)) :: copper_thick = 100.0D-6
   !+ad_vars  hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
   real(kind(1.0D0)) :: hastelloy_thickness = 50.0D-6
-  !+ad_vars  tape_width /5.375e-3/ : Mean width of tape (m)
-  real(kind(1.0D0)) :: tape_width = 5.375D-3
+  !+ad_vars  tape_width /3.75e-3/ : Mean width of tape (m)
+  real(kind(1.0D0)) :: tape_width = 3.75D-3
 
-  !+ad_vars  croco_od /9.3e-3/ : Outer diameter of CroCo strand (m)
-  real(kind(1.0D0)) :: croco_od = 9.3D-3
-  !+ad_vars  croco_id /7.0e-3/ : Inner diameter of CroCo copper tube (m)
-  real(kind(1.0D0)) :: croco_id = 7.0D-3
+  !+ad_vars  croco_od /10.4e-3/ : Outer diameter of CroCo strand (m)
+  real(kind(1.0D0)) :: croco_od = 10.4D-3
+  !+ad_vars  croco_id /5.4e-3/ : Inner diameter of CroCo copper tube (m)
+  real(kind(1.0D0)) :: croco_id = 5.4D-3
 
-  !+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
-  real(kind(1.0D0)) :: copper_bar = 0.23d0
+  !!+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
+  !real(kind(1.0D0)) :: copper_bar = 0.23d0
   !+ad_vars  copper_rrr /100.0/ : residual resistivity ratio copper in TF superconducting cable
   real(kind(1.0D0)) :: copper_rrr = 100d0
 
-  !+ad_vars  cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
-  real(kind(1.0D0)) :: cable_helium_fraction = 0.284D0
+  !!+ad_vars  cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
+  !real(kind(1.0D0)) :: cable_helium_fraction = 0.284D0
 
   !+ad_vars  copperA_m2_max /1e8/ : Maximum TF coil current / copper area (A/m2)
   real(kind(1.0D0)) :: copperA_m2_max = 1D8
@@ -4499,6 +4523,7 @@ module rebco_variables
   real(kind(1.0D0)) :: solder_area
   real(kind(1.0D0)) :: croco_area
   real(kind(1.0D0)) :: copperA_m2       ! TF coil current / copper area (A/m2)
+  !real(kind(1.0D0)) :: croco_od
 
 end module rebco_variables
 
@@ -4511,7 +4536,6 @@ module resistive_materials
   !+ad_type  Module
   !+ad_docs  TODO
   implicit none ! ---------------------------------------------------------
-  
   type resistive_material
      real(kind(1.0D0)) :: cp            ! Specific heat capacity J/(K kg).
      real(kind(1.0D0)) :: rrr           ! Residual resistivity ratio
@@ -4519,22 +4543,20 @@ module resistive_materials
      real(kind(1.0D0)) :: density       ! kg/m3
      real(kind(1.0D0)) :: cp_density    ! Cp x density J/K/m3
   end type resistive_material
-  
   type supercon_strand
      real(kind(1.0D0)) :: area
      real(kind(1.0D0)) :: critical_current
   end type supercon_strand
-  
   type volume_fractions
      real(kind(1.0D0)) :: copper_area,    copper_fraction
-     real(kind(1.0D0)) :: copper_bar_area,copper_bar_fraction
+     real(kind(1.0D0)) :: copper_bar_area  !,copper_bar_fraction
      real(kind(1.0D0)) :: hastelloy_area, hastelloy_fraction
      real(kind(1.0D0)) :: helium_area,    helium_fraction
      real(kind(1.0D0)) :: solder_area,    solder_fraction
      real(kind(1.0D0)) :: jacket_area,    jacket_fraction
      real(kind(1.0D0)) :: rebco_area,     rebco_fraction
      real(kind(1.0D0)) :: critical_current
-     real(kind(1.0D0)) :: number_croco         ! Number of CroCo strands (not an integer)
+     !real(kind(1.0D0)) :: number_croco         ! Number of CroCo strands (not an integer)
      real(kind(1.0D0)) :: acs                  ! area of cable space inside jacket
      real(kind(1.0D0)) :: area
      !real(kind(1.0D0)) :: tmax                 ! Maximum permitted temperature in quench
@@ -4544,7 +4566,6 @@ end module resistive_materials
 !------------------------------------------------------------------------
 
 module reinke_variables
-  
   !+ad_name  reinke_variables
   !+ad_summ  Module containing global variables relating to the
   !+ad_summ  Reinke Criterion
@@ -4568,11 +4589,11 @@ module reinke_variables
 
   public
 
- 
-  !+ad_vars  impvardiv /9/ : index of impurity to be iterated for 
-  !+ad_varc           Reinke divertor detachment criterion 
+
+  !+ad_vars  impvardiv /9/ : index of impurity to be iterated for
+  !+ad_varc           Reinke divertor detachment criterion
   integer       :: impvardiv = 9
-  
+
   !+ad_vars  lhat /4.33/ : connection length factor L|| = lhat qstar R
   !+ad_varc                for Reinke criterion, default value from
   !+ad_varc                Post et al. 1995 J. Nucl. Mat.  220-2 1014
@@ -4581,15 +4602,17 @@ module reinke_variables
   !+ad_vars  fzmin : Minimum impurity fraction necessary for detachment
   !+ad_varc          This is the impurity at the SOL/Div
   real(kind(1.0D0)) :: fzmin = 0.0D0
-  
+
   !+ad_vars  fzactual : Actual impurity fraction of divertor impurity
   !+ad_varc             (impvardiv) in the SoL (taking impurity_enrichment
   !+ad_varc             into account) (iteration variable 148)
   real(kind(1.0D0)) :: fzactual = 0.001D0
-  
+
+  !+ad_vars  reinke_mode /0/ : Switch for Reinke criterion H/I mode
+  !+ad_varc          <LI> = 0 H-mode;
+  !+ad_varc          <LI> = 1 I-mode;</UL>
+  integer       :: reinke_mode = 0
+
 end module reinke_variables
 
   !------------------------------------------------------------------------
-
-
-

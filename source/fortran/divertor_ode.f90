@@ -16,13 +16,10 @@ module divertor_ode
   use maths_library
   use read_and_get_atomic_data
   use impurity_radiation_module, only: nimp, imp_label, impurity_arr
-  use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
+  use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, &
+                            ovarin, ovarre, ovarrf, ovarst
   use constants
-  use process_input, only: lower_case
   use divertor_kallenbach_variables
-  !, only: neratio, pressure0, fractionwidesol, fmom, totalpowerlost, impurity_enrichment, &
-    !          lambda_q_omp, target_spread, hydrogenicpowerlost, impuritypowerlost, exchangepowerlost, ionisationpowerlost, &
-    !          abserr_sol, relerr_sol
   use build_variables, only: rspo
   use physics_variables, only:  tesep_keV => tesep
   use divertor_ode_var
@@ -58,8 +55,8 @@ module divertor_ode
   ! neutral velocity along the flux bundle, groups 1 & 2 [m/s]
   real(kind(1.0D0)), private :: v01, v02
 
-  ! Allowable absolute/relative error
-  real(kind(1.0D0)), private :: abserr, relerr
+  ! Allowable absolute/relative error (UNUSED)
+!   real(kind(1.0D0)), private :: abserr, relerr
 
   ! Circumference of plasma at outboard midplane and at target [m]
   real(kind(1.0D0)), private :: circumference_omp, circumference_target
@@ -985,7 +982,7 @@ do i = 2, nimp
     real(kind(1.0D0)):: s, al, Rcx, plt, prb
     real(kind(1.0D0)):: cxrate,plossdenscx,ionrate1,ionrate2,recrate
     real(kind(1.0D0)):: plossion,lz,raddens,radHdens,qperp_total,qperp_conv,qperp_conducted
-    real(kind(1.0D0)):: A_cross, dpdx,dnvdx, dndx, dtdx
+    real(kind(1.0D0)):: A_cross, dpdx, dnvdx, dtdx
     real(kind(1.0D0)):: numerator, denominator
     real(kind(1.0D0)):: LzTotal      ! Combined weighted radiative loss function
     integer :: i

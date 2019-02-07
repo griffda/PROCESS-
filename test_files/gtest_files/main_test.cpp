@@ -6,6 +6,7 @@
 #include "test_evaluators.h"
 #include "test_availability.h"
 #include "test_current_drive.h"
+#include "test_build_fixture.h"
 
 int main(int argc, char *argv[])
 {

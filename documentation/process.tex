@@ -38,9 +38,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-19 April 2018
+9 November 2018
 \hfill
-PROCESS version: 1.0.13
+PROCESS version: 1.0.14
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2806,7 +2806,70 @@ The unplanned downtime for the blanket is based on the number of cycles it exper
 
 It is assumed that the vacuum system can be maintained in parallel with blanket replacement, so it does not contribute to the planned downtime.  The unplanned downtime is based on an assumed failure rate for a cryopump, and a specified total number of pumps, with some of them being redundant.  The resulting downtime can be reduced to a negligible level if there are several redundant pumps, but in addition, there is a fixed unavailability to allow for common mode failures affecting several pumps.
 
+\section{Electron Cyclotron Current Drive}
 
+A model for electron cyclotron current drive (ECCD) is implemented, known as HARE.  The model is described in the paper\cite{kovari_ECCD} and implemented through the source file \texttt{hare.f90}. 
+
+The switch for the current drive efficiency model \texttt{iefrf} is used to include the ECCD model. This is done by selecting \texttt{iefrf = 11} and including the new input variable \texttt{rho\_ecrh},  which is the normalised minor radius at which electron cyclotron current drive is maximum and which is also available as scan variable 43. The new input and output parameters used by HARE are summarised in table \ref{tab:ECCD}.
+
+\begin{table}[tbph]
+\begin{center}
+\begin{tabular}{||c|c||} \hline
+output parameter & description \\ \hline
+\texttt{rho\_ecrh} &  Normalised minor radius at which ECCD is maximum  \\
+\texttt{fshift}  & Frequency shift = wave frequency / cold cyclotron resonance \\
+ &  frequency on plasma axis \\
+\texttt{xf} & Optimum wave frequency for ECCD (GHz)  \\
+\texttt{enpa} &Nparallel \\
+\texttt{ftherm} & fT = Energy of resonant electrons / $k_BT_e$ at point of max absorption  \\
+\texttt{fpp} &  Ratio of energy of resonant electrons to $k_BT_e$ at pinch  point \\
+\texttt{ampperwatt} & Driven current per unit absorbed power (AW$^{-1}$)  \\
+\hline
+\end{tabular}
+\end{center}
+\caption[Output parameters produced by HARE]
+{\label{tab:ECCD}
+  \textit{Summary of the variables in PROCESS that relate to
+    the ECCD model HARE.}
+}
+\end{table}
+
+There is also a test, triggered by \texttt{run\_tests = 1}. If this test is triggered then one test of the physics in HARE is performed, this is done using the parameters shown in talbe \ref{tab:testpara}.
+
+\begin{table}[tbph]
+\begin{center}
+\begin{tabular}{||c|c||} \hline
+test parameter & value \\ \hline
+\texttt{dens} &  10.5e19  \\
+\texttt{bfield}  & 5.66 \\
+\texttt{R0} & 9.072e2 \\
+\texttt{a} & 2.920e2 \\
+\texttt{rho} & 0.1 \\
+\texttt{te} &  32. \\
+\texttt{zeff} & 2.e0  \\
+\hline
+\end{tabular}
+\end{center}
+\caption[Input parameters used by HARE test]
+{\label{tab:testpara}
+  \textit{Summary of the input variables used in HARE runtest subroutine.}
+}
+\end{table}
+
+The output in OUT.DAT is either \texttt{PASS: ECCD calculation using "HARE"} or we find the ouput for a test fail, with an example being
+\begin{quote}
+\begin{verbatim}
+FAIL: ECCD calculation using "HARE"
+fshift                1.42523289                9.990E+02
+xf                      225870909081              2.259E+11
+enpa                 0.73312287                7.331E-01
+ftherm               4.14743724                4.147E+00
+fpp                  8.0121430001              8.012E+00 
+cdeff                 -242.42583879            -2.424E+02
+ampperwatt          -4.2530060e-2            -4.253E-02
+\end{verbatim}
+\end{quote}
+Where here the first column is the output parameter, the second column is the test expected output parameter values and the final third is the resultant output of the HARE calculation. 
 
 \mychapter{Running \process}
 \label{chap:run}
@@ -2868,8 +2931,7 @@ and \textit{myrun}\mfile\ will be created in the current directory.
 The input file \indat\ is used to change the values of the physics,
 engineering and other code parameters from their default values, and to set up
 the numerics (constraint equations, iteration variables etc.) required to
-define the problem to be solved.  The user interface writes the input file, so
-it is not necessary to edit it directly.  Details of layout and format are in
+define the problem to be solved. Details of layout and format are in
 Appendix~\ref{app:infile}.
 
 If the code encounters a problem reading the input file, it will stop
@@ -3483,6 +3545,11 @@ P.\ J.\ Knight,
 \textit{``PROCESS 3020: Plant Availability Model''},
 Work File Note F/PL/PJK/PROCESS/CODE/043
 
+\bibitem{kovari_ECCD} 
+E.\ Poli, M.\ M\"{u}ller, H.\ Zohm, M.\ Kovari,
+\textit{"Fast evaluation of the current driven by electron cyclotron waves for reactor studies"},   
+Physics of Plasmas,
+
 \bibitem{git}
 \href{http://git-scm.com/}{Git version control system}
 \url{http://git-scm.com/}
@@ -3550,7 +3617,7 @@ Garching: Max-Planck-Institut für Plasmaphysik (2002), presented at IPP 5/98
 The input file \indat\ is used to change the values of the physics,
 engineering and other code parameters from their default values, and to set up
 the numerics (constraint equations, iteration variables etc.) required to
-define the problem to be solved.  The user interface writes the input file, so it is not necessary to edit it directly.
+define the problem to be solved.
 
 \subsection{Tokamak or stellarator?}
 \label{sec:device}
@@ -3585,10 +3652,6 @@ The following rules must be obeyed when writing an input file:
 
 \item Other spaces within a line, and trailing spaces, are ignored.
 
-\item Commas are not necessary between variables (but see below).
-
-\item Data can extend over more than one line.
-
 \item One-dimensional arrays can be explicitly subscripted, or unscripted, in
   which case the following element order is assumed: \texttt{A(1), A(2),
     A(3),...}
@@ -3598,18 +3661,16 @@ The following rules must be obeyed when writing an input file:
   is assumed: \texttt{B(1,1), B(2,1), B(3,1),...} The use of the input file to
   specify multiple dimension array elements is prone to error.
 
-\item Unscripted array elements must be separated by commas.
+\item Unindexed array elements must be separated by commas.
 
 \item Blank lines are allowed anywhere in the input file.
 
 \item Lines starting with a \texttt{*} are assumed to be comments.
 
 \item Comment lines starting with five or more asterisks (i.e.\
-  \texttt{*****}) are reproduced verbatim in the output file. This feature is not recommended, as these comments are likely to become out of date.  The user interface does not support this feature.
+  \texttt{*****}) are reproduced verbatim in the output file. This feature is not recommended, as these comments are likely to become out of date.
 
-\item In-line comments are \textit{usually}\/ ignored, but there can be
-  problems if one contains a comma (\texttt{,}). If this is the case, there
-  must also be a comma after the variable's value and before the comment.
+\item In-line comments are denoted by an asterisk (\texttt{*}).
 
 \end{enumerate}
 
@@ -3619,42 +3680,44 @@ lines, to help the user keep related variables together.
 The following is a valid fragment of an input file (the vertical lines are
 simply to help show the column alignment):
 \begin{center}
-\begin{tabular}{||l}
-$\!\!$\texttt{* This line is a comment that will not appear in the output} \\
-$\!\!$\texttt{***** This line is a comment that will appear in the output} \\
-$\!\!$\texttt{boundl(1) = 2.5,} \\
-$\!\!$\texttt{BOUNDU(10) = 3.,} \\
-$\!\!$\texttt{BOUNDU(45) = 1,} \\
-$\!\!$\texttt{* Another comment... Note that real values can be entered as if} \\
-$\!\!$\texttt{* they were integers, and vice versa (but it's not recommended...)} \\
-$\!\!$\texttt{epsfcn = 10.e-4,} \\
-$\!\!$\texttt{Ftol = 1.D-4,} \\
-$\!\!$\texttt{* The next line sets the first five elements of array icc:} \\
-$\!\!$\texttt{ICC =   2, 10, 11, 24, 31} \\
-$\!\!$\texttt{* The next line sets the first ten elements of array ixc:} \\
-$\!\!$\texttt{ixc =   10, 12, 3, 36, 48,} \\
-$\!\!$\hspace{15mm}\texttt{1, 2, 6, 13, 16,} \\
-$\!\!$\texttt{IOPTIMZ = 1,} \\
-$\!\!$\texttt{maxcal = 200} \\
-$\!\!$\texttt{ nsweep = 7} \\
-$\!\!$\texttt{NEQNS = 5,    This is an in-line comment} \\
-$\!\!$\texttt{NVAR = 10,    Another, but successfully containing a comma!} \\
-\end{tabular}
+  \begin{tabular}{||l}
+    $\!\!$\texttt{* This line is a comment that will not appear in the output} \\
+    $\!\!$\texttt{***** This line is a comment that will appear in the output} \\
+    $\!\!$\texttt{boundl(1) = 2.5} \\
+    $\!\!$\texttt{BOUNDU(10) = 3.} \\
+    $\!\!$\texttt{BOUNDU(45) = 1} \\
+    $\!\!$\texttt{* Another comment... Note that real values can be entered as if} \\
+    $\!\!$\texttt{* they were integers, and vice versa (but it's not recommended...)} \\
+    $\!\!$\texttt{epsfcn = 10.e-4} \\
+    $\!\!$\texttt{Ftol = 1.D-4} \\
+    $\!\!$\texttt{icc =   1 * Beta consistency constraint equation} \\
+    $\!\!$\texttt{icc =   2 * Global power balance constraint equation} \\
+    $\!\!$\texttt{icc =   11 * Radial build constraint equation} \\
+    $\!\!$\texttt{IOPTIMZ = 1,} \\
+    $\!\!$\texttt{maxcal = 200} \\
+    $\!\!$\texttt{ nsweep = 7} \\
+    $\!\!$\texttt{NEQNS = 5  *  This is an in-line comment} \\
+    $\!\!$\texttt{NVAR = 10  *  Another, containing punctuation...!} \\
+  \end{tabular}
 \end{center}
 
-The following are \textit{invalid}\/ entries in the input file
-(Q: Why?!):
+The following are \textit{invalid}\/ entries in the input file:
 \begin{center}
-\begin{tabular}{||l}
-$\!\!$\texttt{boundl(1,1) = 2.5,} \\
-$\!\!$\texttt{BOUNDU(N) = 3.,} \\
-$\!\!$\texttt{A line of `random' characters like this will clearly wreak havoc} \\
-$\!\!$\texttt{eps fcn = 10.e-4, ftol = 1.D-4} \\
-$\!\!$\texttt{epsvmc = 1.0 e-4} \\
-$\!\!$\texttt{ICC =   2  10  11  24  31} \\
-$\!\!$\texttt{IOPTIMZ = 1.0,  This will in fact be okay - but is not recommended} \\
-$\!\!$\texttt{NEQNS = 5    An in-line comment on a line with only one comma (,) character} \\
-\end{tabular}
+  \begin{tabular}{||l}
+    $\!\!$\texttt{Iteration values listed in one line, or continuing onto a second line} \\
+    $\!\!$\texttt{ixc =   10, 12, 3, 36, 48,} \\
+    $\!\!$\hspace{15mm}\texttt{1, 2, 6, 13, 16,} \\
+    
+    $\!\!$\texttt{boundl(1,1) = 2.5, } \\
+    $\!\!$\texttt{BOUNDU(N) = 3.,} \\
+    $\!\!$\texttt{A line of `random' characters like this will clearly wreak havoc} \\
+    
+    $\!\!$\texttt{eps fcn = 10.e-4, ftol = 1.D-4} \\
+    $\!\!$\texttt{epsvmc = 1.0 e-4} \\
+    $\!\!$\texttt{ICC =   2  10  11  24  31 * with or without comma separation} \\
+    $\!\!$\texttt{IOPTIMZ = 1.0,  A comment denoted by a comma (old behaviour)} \\
+    $\!\!$\texttt{NEQNS = 5    An in-line comment without an asterisk} \\
+  \end{tabular}
 \end{center}
 
 If the code encounters a problem reading the input file, it will stop immediately

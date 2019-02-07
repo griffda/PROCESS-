@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 
   PROCESS to CAD program
@@ -5,9 +6,14 @@
   James Morris
   02/03/2015
 
+Hist:
+  05/11/2018 SIM Updated build variables and added copper TF coils
+  WARNING: Superconducting magnets still need fixing
+
 """
 
 import scipy
+import numpy as np
 
 # import argument parser
 import argparse
@@ -18,6 +24,8 @@ import process_io_lib.mfile as mf
 # Import matplotlib libraries for plotting
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc
+from matplotlib.path import Path
+import matplotlib.patches as patches
 
 
 class BuildDataContainer(object):
@@ -40,11 +48,32 @@ class BuildDataContainer(object):
         # Minor Radius
         self.a = data.data["rminor"].get_scan(-1)
 
+        # Single or double null
+        if "snull" in data.data.keys():
+            self.snull = data.data["snull"].get_scan(-1)
+        else:
+            self.snull = 1
+
+        # Central Solenoid
+        if "itfsup" in data.data.keys():
+            self.itfsup = data.data["itfsup"].get_scan(-1)
+        else:
+            self.itfsup = 1
+
         # Machine bore
         self.bore = data.data["bore"].get_scan(-1)
 
+        # Central Solenoid
+        if "iohcl" in data.data.keys():
+            self.iohcl = data.data["iohcl"].get_scan(-1)
+        else:
+            self.iohcl = 1
+
         # OH coil radial thickness
         self.ohcth = data.data["ohcth"].get_scan(-1)
+
+        # OH coil precompression structure
+        self.precomp = data.data["precomp"].get_scan(-1)
 
         # Radial gap between OH coil and TF coil inboard side
         self.gapoh = data.data["gapoh"].get_scan(-1)
@@ -52,7 +81,13 @@ class BuildDataContainer(object):
         # Inboard TF coil leg radial thickness
         self.tfcth = data.data["tfcth"].get_scan(-1)
 
-        # Radial gap between inboard TF coil and vacuum vessel
+        # Radial gap between inboard TF coil leg and thermal shield
+        self.deltf = data.data["deltf"].get_scan(-1)
+
+        # TF-VV thermal shield thickness
+        self.thshield = data.data["thshield"].get_scan(-1)
+
+        # Radial gap between inboard thermal shield and vacuum vessel
         self.gapds = data.data["gapds"].get_scan(-1)
 
         # Thickness of vacuum vessel
@@ -60,6 +95,9 @@ class BuildDataContainer(object):
 
         # Inboard shiled radial thickness
         self.shldith = data.data["shldith"].get_scan(-1)
+
+        # Gap between vacuum vessel and blanket
+        self.vvblgap = data.data["vvblgap"].get_scan(-1)
 
         # Inboard blanket radial thickness
         self.blnkith = data.data["blnkith"].get_scan(-1)
@@ -112,17 +150,26 @@ class BuildDataContainer(object):
         # Plasma half-height (not 95% surface values)
         self.plasma_half_height = self.kappa*self.a
 
+        # Top scrape-off
+        self.vgaptop = data.data["vgaptop"].get_scan(-1)
+
         # Upper first wall vertical thickness
-        self.topfw = (self.fwith + self.fwoth)/2.0
+        self.fwtth = data.data["fwtth"].get_scan(-1)
 
         # Upper blanket vertical thickness
         self.blnktth = data.data["blnktth"].get_scan(-1)
 
-        # Shield vertical thickness
+        # Upper shield vertical thickness
         self.shldtth = data.data["shldtth"].get_scan(-1)
+
+        # Lower shield vertical thickness
+        self.shldlth = data.data["shldlth"].get_scan(-1)
 
         # Divertor structure
         self.divfix = data.data["divfix"].get_scan(-1)
+
+        # Gap between TF coil and thermal shield
+        self.tftsgap = data.data["tftsgap"].get_scan(-1)
 
         # Cryostat radius
         self.rdewex = data.data["rdewex"].get_scan(-1)
@@ -181,6 +228,16 @@ class BuildDataContainer(object):
         self.yctfc_4 = data.data["yctfc(4)"].get_scan(-1)
         self.xarc_5 = data.data["xarc(5)"].get_scan(-1)
         self.yarc_5 = data.data["yarc(5)"].get_scan(-1)
+
+        # rmid
+        self.rmid = data.data["rmid"].get_scan(-1)
+        # rtop
+        self.rtop = data.data["rtop"].get_scan(-1)
+        # ztop
+        self.ztop = data.data["ztop"].get_scan(-1)
+        # hmax
+        self.hmax = data.data["hmax"].get_scan(-1)
+
 
 
 def write_header(cd_file, mfile):
@@ -277,7 +334,7 @@ def write_oh_gap(data, output_file):
     output_file.write("# OH Coil to TF gap (Cylinder)\n")
 
     # OH coil to TF coil gap radial mid point
-    oh_gap_rad_mid = data.bore + data.ohcth + data.gapoh/2.0
+    oh_gap_rad_mid = data.bore + data.ohcth + data.precomp + data.gapoh/2.0
     line_1 = "OH Coil to TF coil gap - radius mid = {0:.3f} m\n".\
         format(oh_gap_rad_mid)
 
@@ -395,59 +452,67 @@ def write_vacuum_vessel(data, output_file):
 
     # Vacuum vessel ellipse minor radius, outside inboard
     outside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds
+        data.bore - data.ohcth - data.precomp - data.gapoh - data.tfcth - \
+        data.deltf - data.thshield - data.gapds
     output_file.write("vacuum vessel - Ellipse minor radius - "
                       "outside inboard = {0:.3f} m\n".
                       format(outside_inboard_ellipse_minor_radius))
 
     # Vacuum vessel ellipse major radius - outside upper
-    outside_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
-        data.blnktth + data.shldtth + data.ddwi
+    if data.snull==0:
+        outside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix + data.shldlth + data.ddwi
+    else:
+        outside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgaptop + data.fwtth + data.blnktth + data.vvblgap + data.shldtth + \
+            data.ddwi
     output_file.write("vacuum vessel - Ellipse major radius - "
-                      "outside upper {0:.3f} m\n".
+                      "outside upper = {0:.3f} m\n".
                       format(outside_upper_ellipse_major_radius))
 
     # Vacuum vessel ellipse major radius - outside lower
     outside_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix + data.shldtth + data.ddwi
+        data.vgap + data.divfix + data.shldlth + data.ddwi
     output_file.write("vacuum vessel - Ellipse major radius - "
                       "outside lower = {0:.3f} m\n".
                       format(outside_lower_ellipse_major_radius))
 
     # Vacuum vessel ellipse minor radius - outside outboard
     outside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth + data.blnkoth + data.shldoth + data.ddwi
+        data.scraplo + data.fwoth + data.blnkoth + data.vvblgap + data.shldoth + data.ddwi
     output_file.write("vacuum vessel - Ellipse minor radius - "
                       "outside outboard = {0:.3f} m\n".
                       format(outside_outboard_ellipse_minor_radius))
 
     # Vacuum vessel ellipse minor radius - inside inboard
     inside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi
+        data.bore - data.ohcth - data.precomp - data.gapoh - data.tfcth - \
+        data.deltf - data.thshield - data.gapds - data.ddwi
     output_file.write("vacuum vessel - Ellipse minor radius - "
                       "inside inboard = {0:.3f} m\n".
                       format(inside_inboard_ellipse_minor_radius))
 
     # Vacuum vessel ellipse major radius - inside upper
-    inside_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
-        data.blnktth + data.shldtth
+    if data.snull==0:
+        inside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix + data.shldlth
+    else:
+        inside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgaptop + data.fwtth + data.blnktth + data.vvblgap + data.shldtth
     output_file.write("vacuum vessel - Ellipse major radius - "
-                      "inside upper {0:.3f} m\n".
+                      "inside upper = {0:.3f} m\n".
                       format(inside_upper_ellipse_major_radius))
 
     # Vacuum vessel ellipse major radius - inside lower
     inside_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix + data.shldtth
+        data.vgap + data.divfix + data.shldlth
     output_file.write("vacuum vessel - Ellipse major radius - "
                       "inside lower = {0:.3f} m\n".
                       format(inside_lower_ellipse_major_radius))
 
     # Vacuum vessel ellipse minor radius - inside outboard
     inside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth + data.blnkoth + data.shldoth
+        data.scraplo + data.fwoth + data.blnkoth + data.vvblgap + data.shldoth
     output_file.write("vacuum vessel - Ellipse minor radius - "
                       "inside outboard = {0:.3f} m\n".
                       format(inside_outboard_ellipse_minor_radius))
@@ -549,48 +614,54 @@ def write_shield(data, output_file):
 
     # Outside inboard ellipse minor radius
     outside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi
+        data.bore - data.ohcth - data.precomp - data.gapoh - data.tfcth - \
+        data.deltf - data.thshield - data.gapds - data.ddwi
     output_file.write("Shield - Ellipse minor radius - "
                       "outside inboard = {0:.3f} m\n".
                       format(outside_inboard_ellipse_minor_radius))
 
     # Outside upper ellipse major radius
-    outside_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
-        data.blnktth + data.shldtth
+    if data.snull==0:
+        outside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix + data.shldlth
+    else:
+        outside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgaptop + data.fwtth + data.blnktth + data.vvblgap + data.shldtth
     output_file.write("Shield - Ellipse major radius - "
-                      "outside upper {0:.3f} m\n".
+                      "outside upper = {0:.3f} m\n".
                       format(outside_upper_ellipse_major_radius))
 
     # Outside lower ellipse major radius
     outside_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix + data.shldtth
+        data.vgap + data.divfix + data.shldlth
     output_file.write("Shield - Ellipse major radius - "
                       "outside lower = {0:.3f} m\n".
                       format(outside_lower_ellipse_major_radius))
 
     # Outside outboard ellipse minor radius
     outside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth + data.blnkoth + data.shldoth
+        data.scraplo + data.fwoth + data.blnkoth + data.vvblgap + data.shldoth
     output_file.write("Shield - Ellipse minor radius - "
                       "outside outboard = {0:.3f} m\n".
                       format(outside_outboard_ellipse_minor_radius))
 
     # Inside inboard ellipse minor radius
     inside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith
+        data.bore - data.ohcth - data.precomp - data.gapoh - data.tfcth - \
+        data.deltf - data.thshield - data.gapds - data.ddwi - data.shldith
     output_file.write("Shield - Ellipse minor radius - "
                       "inside inboard = {0:.3f} m\n".
                       format(inside_inboard_ellipse_minor_radius))
 
     # Inside upper ellipse major radius
-    inside_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
-        data.blnktth
+    if data.snull==0:
+        inside_upper_ellipse_major_radius = data.plasma_half_height + \
+        data.vgap + data.divfix
+    else:
+        inside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgaptop + data.fwtth + data.blnktth + data.vvblgap
     output_file.write("Shield - Ellipse major radius - "
-                      "inside upper {0:.3f} m\n".
+                      "inside upper = {0:.3f} m\n".
                       format(inside_upper_ellipse_major_radius))
 
     # Inside lower ellipse major radius
@@ -602,7 +673,7 @@ def write_shield(data, output_file):
 
     # Inside outboard ellipse minor radius
     inside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth + data.blnkoth
+        data.scraplo + data.fwoth + data.blnkoth + data.vvblgap 
     output_file.write("Shield - Ellipse minor radius - "
                       "inside outboard = {0:.3f} m\n".
                       format(inside_outboard_ellipse_minor_radius))
@@ -704,18 +775,22 @@ def write_blanket(data, output_file):
 
     # Outside inboard ellipse minor radius
     outside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith
+        data.bore - data.ohcth - data.precomp - data.gapoh - data.tfcth - \
+        data.deltf - data.thshield - data.gapds - data.ddwi - data.shldith - \
+        data.vvblgap
     output_file.write("Blanket - Ellipse minor radius - "
                       "outside inboard = {0:.3f} m\n".
                       format(outside_inboard_ellipse_minor_radius))
 
     # Outside upper ellipse major radius
-    outside_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
-        data.blnktth
+    if data.snull==0:
+        outside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix
+    else:
+        outside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgaptop + data.fwtth + data.blnktth
     output_file.write("Blanket - Ellipse major radius - "
-                      "outside upper {0:.3f} m\n".
+                      "outside upper = {0:.3f} m\n".
                       format(outside_upper_ellipse_major_radius))
 
     # Outside lower ellipse major radius
@@ -734,22 +809,31 @@ def write_blanket(data, output_file):
 
     # Inside inboard ellipse minor radius
     inside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith - data.blnkith
+        data.bore - data.ohcth - data.precomp - data.gapoh - data.tfcth - \
+        data.deltf - data.thshield - data.gapds - data.ddwi - data.shldith - \
+        data.vvblgap - data.blnkith
     output_file.write("Blanket - Ellipse minor radius - "
                       "inside inboard = {0:.3f} m\n".
                       format(inside_inboard_ellipse_minor_radius))
 
     # Inside upper ellipse major radius
-    inside_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0
+    if data.snull==0:
+        inside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth)
+    else:
+        inside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgaptop + data.fwtth
     output_file.write("Blanket - Ellipse major radius - "
-                      "inside upper {0:.3f} m\n".
+                      "inside upper = {0:.3f} m\n".
                       format(inside_upper_ellipse_major_radius))
 
     # Inside lower ellipse major radius
-    inside_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix - data.blnktth
+    if data.snull==0:
+        inside_lower_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth)
+    else:
+        inside_lower_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - data.blnktth
     output_file.write("Blanket - Ellipse major radius - "
                       "inside lower = {0:.3f} m\n".
                       format(inside_lower_ellipse_major_radius))
@@ -868,22 +952,31 @@ def write_first_wall(data, output_file):
 
     # Outside inboard ellipse minor radius
     outside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith - data.blnkith
+        data.bore - data.ohcth - data.precomp - data.gapoh - data.tfcth - \
+        data.deltf - data.thshield - data.gapds - data.ddwi - data.shldith - \
+        data.vvblgap - data.blnkith
     output_file.write("First Wall - Ellipse minor radius - "
                       "outside inboard = {0:.3f} m\n".
                       format(outside_inboard_ellipse_minor_radius))
 
     # Outside upper ellipse major radius
-    outside_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0
+    if data.snull==0:
+        outside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth)
+    else:
+        outside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgaptop + data.fwtth
     output_file.write("First Wall - Ellipse major radius - "
-                      "outside upper {0:.3f} m\n".
+                      "outside upper = {0:.3f} m\n".
                       format(outside_upper_ellipse_major_radius))
 
     # Outside lower ellipse major radius
-    outside_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix - data.blnktth
+    if data.snull==0:
+        outside_lower_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth)
+    else:
+        outside_lower_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - data.blnktth
     output_file.write("First Wall - Ellipse major radius - "
                       "outside lower = {0:.3f} m\n".
                       format(outside_lower_ellipse_major_radius))
@@ -899,22 +992,32 @@ def write_first_wall(data, output_file):
 
     # Inside inboard ellipse minor radius
     inside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith - data.blnkith - data.fwith
+        data.bore - data.ohcth - data.precomp - data.gapoh - data.tfcth - \
+        data.deltf - data.thshield - data.gapds - data.ddwi - data.shldith - \
+        data.vvblgap - data.blnkith - data.fwith
     output_file.write("First Wall - Ellipse minor radius - "
                       "inside inboard = {0:.3f} m\n".
                       format(inside_inboard_ellipse_minor_radius))
 
     # Inside upper ellipse major radius
-    inside_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0)
+    if data.snull==0:
+        inside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
+            (data.fwith + data.fwoth)/2.0
+    else:
+        inside_upper_ellipse_major_radius = data.plasma_half_height + data.vgaptop
     output_file.write("First Wall - Ellipse major radius - "
-                      "inside upper {0:.3f} m\n".
+                      "inside upper = {0:.3f} m\n".
                       format(inside_upper_ellipse_major_radius))
 
     # Inside lower ellipse major radius
-    inside_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix - data.blnktth - (data.fwith + data.fwoth)/2.0
+    if data.snull==0:
+        inside_lower_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
+            (data.fwith + data.fwoth)/2.0
+    else:
+        inside_lower_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - data.blnktth - data.fwtth
     output_file.write("First Wall - Ellipse major radius - "
                       "inside lower = {0:.3f} m\n".
                       format(inside_lower_ellipse_major_radius))
@@ -1035,22 +1138,32 @@ def write_tungsten_armour(data, output_file):
 
     # Outside inboard ellipse minor radius
     outside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith - data.blnkith - data.fwith
+        data.bore - data.ohcth - data.precomp - data.gapoh - data.tfcth - \
+        data.deltf - data.thshield - data.gapds - data.ddwi - data.shldith - \
+        data.vvblgap - data.blnkith - data.fwith
     output_file.write("Tungsten Shielding - Ellipse minor radius - "
                       "outside inboard = {0:.3f} m\n".
                       format(outside_inboard_ellipse_minor_radius))
 
     # Outside upper ellipse major radius
-    outside_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0)
+    if data.snull==0:
+        outside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
+            0.5*(data.fwith + data.fwoth)
+    else:
+        outside_upper_ellipse_major_radius = data.plasma_half_height + data.vgaptop
     output_file.write("Tungsten Shielding - Ellipse major radius - "
-                      "outside upper {0:.3f} m\n".
+                      "outside upper = {0:.3f} m\n".
                       format(outside_upper_ellipse_major_radius))
 
     # Outside lower ellipse major radius
-    outside_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix - data.blnktth
+    if data.snull==0:
+        outside_lower_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
+            0.5*(data.fwith + data.fwoth)
+    else:
+        outside_lower_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - data.blnktth - data.fwtth
     output_file.write("Tungsten Shielding - Ellipse major radius - "
                       "outside lower = {0:.3f} m\n".
                       format(outside_lower_ellipse_major_radius))
@@ -1066,23 +1179,33 @@ def write_tungsten_armour(data, output_file):
 
     # Inside inboard ellipse minor radius
     inside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith - data.blnkith - data.fwith - 0.003
+        data.bore - data.ohcth - data.precomp - data.gapoh - data.tfcth - \
+        data.deltf - data.thshield - data.gapds - data.ddwi - data.shldith - \
+        data.vvblgap - data.blnkith - data.fwith - 0.003
     output_file.write("Tungsten Shielding - Ellipse minor radius - "
                       "inside inboard = {0:.3f} m\n".
                       format(inside_inboard_ellipse_minor_radius))
 
     # Inside upper ellipse major radius
-    inside_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) - 0.003
+    if data.snull==0:
+        inside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
+            (data.fwith + data.fwoth)/2.0 - 0.003
+    else:
+        inside_upper_ellipse_major_radius = data.plasma_half_height + \
+            data.vgaptop - 0.003
     output_file.write("Tungsten Shielding - Ellipse major radius - "
-                      "inside upper {0:.3f} m\n".
+                      "inside upper = {0:.3f} m\n".
                       format(inside_upper_ellipse_major_radius))
 
     # Inside lower ellipse major radius
-    inside_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix - data.blnktth - \
-        (data.fwith + data.fwoth)/2.0 - 0.003
+    if data.snull==0:
+        inside_lower_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
+            (data.fwith + data.fwoth)/2.0 - 0.003
+    else:
+        inside_lower_ellipse_major_radius = data.plasma_half_height + \
+            data.vgap + data.divfix - data.blnktth - data.fwtth - 0.003
     output_file.write("Tungsten Shielding - Ellipse major radius - "
                       "inside lower = {0:.3f} m\n".
                       format(inside_lower_ellipse_major_radius))
@@ -1218,11 +1341,19 @@ def write_plasma_shape(data, output_file):
     outang = 1.5/r2
 
     # Array of angle values for outside arc
-    angles_1 = scipy.linspace(-theta1+scipy.pi, (inang+theta1)+scipy.pi,
+    if data.snull==0:
+        angles_1 = scipy.linspace(-(inang + theta1) + scipy.pi, (inang + theta1) \
+                                 + scipy.pi, 100, endpoint=True)
+    else:
+        angles_1 = scipy.linspace(-theta1+scipy.pi, (inang+theta1)+scipy.pi,
                               100, endpoint=True)
 
     # Array of angle values for inside arc
-    angles_2 = scipy.linspace(-(outang+theta2), theta2, 100,
+    if data.snull==0:
+        angles_2 = scipy.linspace(-(outang + theta2), (outang + theta2), 100,
+                            endpoint=True)
+    else:
+        angles_2 = scipy.linspace(-(outang+theta2), theta2, 100,
                               endpoint=True)
 
     # x, y points for outside arc
@@ -1248,27 +1379,115 @@ def write_plasma_shape(data, output_file):
     # Write data for plasma arcs
     n = int(len(xs1))
     for i in range(n):
-        line = "Point.{0} {1:.3f} {2:.3f}\n".format(i+1, xs1[i], ys1[i])
+        line = "Point.{0} = {1:.3f} {2:.3f}\n".format(i+1, xs1[i], ys1[i])
         output_file.write(line)
 
     m = int(len(xs2))
     for j in range(m):
-        line = "Point.{0} {1:.3f} {2:.3f}\n".\
+        line = "Point.{0} = {1:.3f} {2:.3f}\n".\
             format(n + j + 1, xs2[j], ys2[j])
         output_file.write(line)
 
+
+def ellips_fill(axis, a1=0, a2=0, b1=0, b2=0, x0=0, y0=0, ang1=0, ang2=np.pi/2, color='pink'):
+    """Fills the space between two concentric ellipse sectors.
+
+    Arguments
+
+    axis: plot object
+    a1, a2, b1, b2 horizontal and vertical radii to be filled
+    x0, y0 coordinates of centre of the ellipses
+    ang1, ang2 are the polar angles of the start and end
+
+    """
+    angs = np.linspace(ang1, ang2, endpoint=True)
+    r1 = ((np.cos(angs)/a1)**2 + (np.sin(angs)/b1)**2)**(-0.5)
+    xs1 = r1 * np.cos(angs) + x0
+    ys1 = r1 * np.sin(angs) + y0
+    angs = np.linspace(ang2, ang1, endpoint=True)
+    r2 = ((np.cos(angs)/a2)**2 + (np.sin(angs)/b2)**2)**(-0.5)
+    xs2 = r2 * np.cos(angs) + x0
+    ys2 = r2 * np.sin(angs) + y0
+    verts = list(zip(xs1, ys1))
+    verts.extend(list(zip(xs2, ys2)))
+    endpoint=verts[-1:]
+    verts.extend(endpoint)
+    path = Path(verts, closed=True)
+    patch = patches.PathPatch(path, facecolor=color, lw=0)
+    axis.add_patch(patch)
+
+
+def write_cutf_coils(data, output_file):
+    # Description line
+    output_file.write("\n# TF Coil Outboard leg\n")
+
+    output_file.write("TF Coil - Number = {0:.0f} \n".
+                      format(data.tfno))   
+
+    # Point 1 - top inboard
+    output_file.write("TF Coil - point 1 R position = {0:.3f} m\n".
+                      format(data.xarc_1))    
+    output_file.write("TF Coil - point 1 Z position = {0:.3f} m\n".
+                      format(data.yarc_1))    
+
+    # Point 2 - top outboard
+    output_file.write("TF Coil - point 2 R position = {0:.3f} m\n".
+                      format(data.xarc_2))    
+    output_file.write("TF Coil - point 2 Z position = {0:.3f} m\n".
+                      format(data.yarc_2)) 
+
+    # Point 3 - bottom outboard
+    output_file.write("TF Coil - point 3 R position = {0:.3f} m\n".
+                      format(data.xarc_4))    
+    output_file.write("TF Coil - point 3 Z position = {0:.3f} m\n".
+                      format(data.yarc_4))    
+
+    # Point 4 - bottom inboard
+    output_file.write("TF Coil - point 4 R position = {0:.3f} m\n".
+                      format(data.xarc_5))    
+    output_file.write("TF Coil - point 4 Z position = {0:.3f} m\n".
+                      format(data.yarc_5)) 
+
+    # Outboard TF coil radial thickness
+    output_file.write("TF Coil - outboard leg - thickness = {0:.3f} m\n".
+                      format(data.tfthko)) 
+
+
+    output_file.write("\n# TF Coil Centrepost\n")
+    r1 = 0.5*(data.rmid + data.rtop)
+    z1 = 0.5*data.ztop
+    xpost = (r1-data.rmid)**2 + z1**2
+    ypost = data.ztop**2 / ( (data.rtop-data.rmid)**2 + data.ztop**2 )
+    rcpost = data.rmid + ( xpost / (1.0-ypost) )**0.5
+
+    output_file.write("Centrepost - radius mid = {0:.3f} m\n".
+                      format(data.rmid)) 
+    output_file.write("Centrepost - radius top = {0:.3f} m\n".
+                      format(data.rtop)) 
+    output_file.write("Centrepost - taper height = {0:.3f} m\n".
+                      format(data.ztop)) 
+    output_file.write("Centrepost - height = {0:.3f} m\n".
+                      format(data.hmax)) 
+    output_file.write("Centrepost - arc centre R = {0:.3f} m\n".
+                      format(rcpost))
+    output_file.write("Centrepost - arc centre Z = 0.000 m\n") 
+    output_file.write("Centrepost - arc radius = {0:.3f} m\n".
+                      format(rcpost-data.tfcth)) 
+
+  
 
 def write_tf_coils(data, output_file):
     """Function to plot TF coils
     """
 
     # Calc shift
-    top = data.plasma_half_height + (data.scrapli + data.scraplo)/2.0 + \
-        (data.fwith + data.fwoth)/2.0 + data.blnktth + data.shldtth + \
-        data.ddwi + data.vgap2 + data.tfcth
+    top = data.plasma_half_height + data.vgaptop + data.fwtth + \
+        data.blnktth + data.vvblgap + data.shldtth + data.ddwi + \
+        data.vgap2 + data.thshield + data.tftsgap + data.tfcth
 
-    bottom = -data.plasma_half_height - data.vgap - \
-        data.divfix - data.shldtth - data.ddwi - data.vgap2 - data.tfcth
+    bottom = -data.plasma_half_height - data.vgap - data.divfix - \
+        data.shldlth - data.ddwi - data.vgap2 - data.thshield - \
+        data.tftsgap - data.tfcth
 
     shift = (top + bottom)/2.0
 
@@ -1373,113 +1592,58 @@ def write_tf_coils(data, output_file):
 
     if data.plot:
 
-        x_1 = data.__dict__["xarc_1"]
-        y_1 = data.__dict__["yarc_1"]
-        x_2 = data.__dict__["xarc_2"]
-        y_2 = data.__dict__["yarc_2"]
-        x_3 = data.__dict__["xarc_3"]
-        y_3 = data.__dict__["yarc_3"]
-        x_4 = data.__dict__["xarc_4"]
-        y_4 = data.__dict__["yarc_4"]
-        x_5 = data.__dict__["xarc_5"]
+        x1 = data.__dict__["xarc_1"]
+        y1 = data.__dict__["yarc_1"]
+        x2 = data.__dict__["xarc_2"]
+        y2 = data.__dict__["yarc_2"]
+        x3 = data.__dict__["xarc_3"]
+        y3 = data.__dict__["yarc_3"]
+        x4 = data.__dict__["xarc_4"]
+        y4 = data.__dict__["yarc_4"]
+        x5 = data.__dict__["xarc_5"]
+        y5 = data.__dict__["yarc_5"]
+        tfcth = data.__dict__["tfcth"]
 
-        # Arc centres
-        x_c_1 = data.__dict__["xctfc_1"]
-        y_c_1 = data.__dict__["yctfc_1"]
-        x_c_2 = data.__dict__["xctfc_2"]
-        y_c_2 = data.__dict__["yctfc_2"]
-        x_c_3 = data.__dict__["xctfc_3"]
-        y_c_3 = data.__dict__["yctfc_3"]
-        x_c_4 = data.__dict__["xctfc_4"]
-        y_c_4 = data.__dict__["yctfc_4"]
-
-
-        # Arc radii
-        rad_1 = scipy.sqrt((x_1-x_c_1)**2 + (y_1 - y_c_1)**2)
-        rad_2 = scipy.sqrt((x_2-x_c_2)**2 + (y_2 - y_c_2)**2)
-        rad_3 = scipy.sqrt((x_3-x_c_3)**2 + (y_3 - y_c_3)**2)
-        rad_4 = scipy.sqrt((x_4-x_c_4)**2 + (y_4 - y_c_4)**2)
-
-        # Arc angles
-        a_1_1 = (x_1 - x_c_1)/rad_1
-        a_1_2 = (x_2 - x_c_1)/rad_1
-        a_1_1, a_1_2 = angle_check(a_1_1, a_1_2)
-        angle_1_1 = scipy.arcsin(a_1_1)
-        angle_1_2 = scipy.arcsin(a_1_2)
-
-        a_2_1 = (x_2 - x_c_2)/rad_2
-        a_2_2 = (x_3 - x_c_2)/rad_2
-        a_2_1, a_2_2 = angle_check(a_2_1, a_2_2)
-        angle_2_1 = scipy.arcsin(a_2_1)
-        angle_2_2 = scipy.arcsin(a_2_2)
-
-        a_3_1 = (x_3 - x_c_3)/rad_3
-        a_3_2 = (x_4 - x_c_3)/rad_3
-        a_3_1, a_3_2 = angle_check(a_3_1, a_3_2)
-        angle_3_1 = scipy.arcsin(a_3_1)
-        angle_3_2 = scipy.arcsin(a_3_2)
-
-        a_4_1 = (x_4 - x_c_4)/rad_4
-        a_4_2 = (x_5 - x_c_4)/rad_4
-        a_4_1, a_4_2 = angle_check(a_4_1, a_4_2)
-        angle_4_1 = scipy.arcsin(a_4_1)
-        angle_4_2 = scipy.arcsin(a_4_2)
-
-        in_x_1 = rad_1*scipy.sin(scipy.linspace(angle_1_1, angle_1_2, 30,
-                                 endpoint=True)) + x_c_1
-        in_x_2 = rad_2*scipy.sin(scipy.linspace(angle_2_1, angle_2_2, 30,
-                                 endpoint=True)) + x_c_2
-        in_x_3 = rad_3*scipy.sin(scipy.linspace(angle_3_1, angle_3_2, 30,
-                                 endpoint=True)) + x_c_3
-        in_x_4 = rad_4*scipy.sin(scipy.linspace(angle_4_1, angle_4_2, 30,
-                                 endpoint=True)) + x_c_4
-        in_x = scipy.concatenate((in_x_1, in_x_2, in_x_3, in_x_4))
-
-        in_y_1 = rad_1*scipy.cos(scipy.linspace(angle_1_1, angle_1_2, 30,
-                                 endpoint=True)) + y_c_1
-        in_y_2 = rad_2*scipy.cos(scipy.linspace(angle_2_1, angle_2_2, 30,
-                                 endpoint=True)) + y_c_2
-        in_y_3 = rad_3*scipy.cos(scipy.linspace(angle_3_1, angle_3_2, 30,
-                                 endpoint=True)) + y_c_3
-        in_y_4 = rad_4*scipy.cos(scipy.linspace(angle_4_1, angle_4_2, 30,
-                                 endpoint=True)) + y_c_4
-        in_y = scipy.concatenate((in_y_1, in_y_2, in_y_3, in_y_4))
-
-        in_x = scipy.concatenate([in_x, in_x[::-1]])
-        in_y = scipy.concatenate([in_y, -in_y[::-1]])
-
-        rad_to_outer_tf = data.r0 + data.a + data.scraplo + data.fwoth + \
-            data.blnkoth + data.shldoth + data.ddwi + data.gapsto
-        rad_to_inner_tf = data.bore + data.ohcth + data.gapoh + data.tfcth
-
-        in_width = rad_to_outer_tf - rad_to_inner_tf
-        out_width = in_width + data.tfcth + data.tfthko
-
-        rad_to_inside_inner_tf = data.bore + data.ohcth + data.gapoh
-
-        out_x = ((in_x - rad_to_inner_tf)*(out_width/in_width)) + \
-            rad_to_inside_inner_tf
-
-        top = data.plasma_half_height + (data.scrapli + data.scraplo)/2.0 + \
-            (data.fwith + data.fwoth)/2.0 + data.blnktth + data.shldtth + \
-            data.ddwi + data.vgap2 + data.tfcth
-
-        bottom = -data.plasma_half_height - data.vgap - \
-            data.divfix - data.shldtth - data.ddwi - data.vgap2 - data.tfcth
-
-        external = (top - bottom)/((top - data.tfcth) - (bottom + data.tfcth))
-
-        out_y = in_y * external
-
-        shift = (top + bottom)/2.0
-        out_y += shift
-        in_y += shift
-
-        ins_x = scipy.concatenate((in_x, out_x[::-1]))
-        ins_y = scipy.concatenate((in_y, out_y[::-1]))
+        rtangle = np.pi / 2
         fig = plt.figure(1)
         ax = fig.add_subplot(111, aspect='equal')
-        ax.fill(ins_x, ins_y, color='0.8')
+        # Inboard upper arc
+        x0 = x2
+        y0 = y1
+        a1 = x2-x1
+        b1 = y2-y1
+        a2 = a1+tfcth
+        b2 = b1+tfcth
+        ellips_fill(ax, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=rtangle, ang2=2*rtangle, color='0.8')
+        # Outboard upper arc
+        x0 = x2
+        y0 = 0
+        a1 = x3-x2
+        b1 = y2
+        a2 = a1+tfcth
+        b2 = b1+tfcth
+        ellips_fill(ax, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=0, ang2=rtangle, color='0.8')
+        # Inboard lower arc
+        x0 = x4
+        y0 = y5
+        a1 = x4-x5
+        b1 = y5-y4
+        a2 = a1+tfcth
+        b2 = b1+tfcth
+        ellips_fill(ax, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=-rtangle, ang2=-2*rtangle, color='0.8')
+        # Outboard lower arc
+        x0 = x4
+        y0 = 0
+        a1 = x3-x2
+        b1 = -y4
+        a2 = a1+tfcth
+        b2 = b1+tfcth
+        ellips_fill(ax, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=0, ang2=-rtangle, color='0.8')
+        # Vertical leg
+        # Bottom left corner
+        rect = patches.Rectangle([x5-tfcth, y5], tfcth, (y1-y5), lw=0, facecolor='0.8')
+        ax.add_patch(rect)
+
 
 
 def write_pf_coils(data, output_file):
@@ -1497,6 +1661,11 @@ def write_pf_coils(data, output_file):
     for item in data.mfile.data.keys():
         if "rpf(" in item:
             number_of_coils += 1
+
+    # If Central Solenoid present, ignore last entry in for loop
+    # The last entry will be the OH coil in this case
+    if data.iohcl==0:
+        number_of_coils += 1
 
     # Rest of the coils
     for coil in range(1, number_of_coils):
@@ -1535,12 +1704,12 @@ def write_pf_coils(data, output_file):
 
         output_file.write("\n# PF coil: {0}\n".format(coil_text[i]))
 
-        output_file.write("Coil 1 - height = {0:.3f} m\n".format(coils_z[i]))
-        output_file.write("Coil 1 - radius = {0:.3f} m\n".format(coils_r[i]))
-        output_file.write("Coil 1 - coil height = {0:.3f} m\n".
-                          format(coils_dz[i]))
-        output_file.write("Coil 1 - coil width = {0:.3f} m\n".
-                          format(coils_dr[i]))
+        output_file.write("Coil {0} - height = {1:.3f} m\n".format(coil_text[i],coils_z[i]))
+        output_file.write("Coil {0} - radius = {1:.3f} m\n".format(coil_text[i],coils_r[i]))
+        output_file.write("Coil {0} - coil height = {1:.3f} m\n".
+                          format(coil_text[i],coils_dz[i]))
+        output_file.write("Coil {0} - coil width = {1:.3f} m\n".
+                          format(coil_text[i],coils_dr[i]))
 
         if data.plot:
 
@@ -1599,7 +1768,10 @@ def write_cad_data(data, output_file):
     write_tungsten_armour(data, output_file)
 
     # Write TF coil data
-    write_tf_coils(data, output_file)
+    if data.itfsup==0:
+        write_cutf_coils(data, output_file)
+    else:
+        write_tf_coils(data, output_file)
 
     # Write PF coil data
     write_pf_coils(data, output_file)
@@ -1645,7 +1817,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Produce a CAD output file "
                                      "of the PROCESS MFILE file for a given "
                                      "scan. For info contact "
-                                     "james.morris2@ccfe.ac.uk")
+                                     "james.morris2@ukaea.uk")
 
     # Argument for the input file path
     parser.add_argument("-f", metavar='FILENAME', type=str,

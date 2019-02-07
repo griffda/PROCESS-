@@ -44,9 +44,9 @@ innertopmargin=15pt, innerbottommargin=5pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-19 April 2018
+9 November 2018
 \hfill
-PROCESS version: 1.0.13
+PROCESS version: 1.0.14
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -71,7 +71,7 @@ PROCESS version: 1.0.13
 \vspace*{4cm}
 \begin{center}
 \Huge A guide to the utilities of the \\ PROCESS Fusion Reactor Systems Code\\
-~\\ \LARGE The PROCESS Team: P.\ J.\ Knight, M.\ D.\ Kovari, H.\ Lux, J.\ Morris\\
+~\\ \LARGE The PROCESS Team: P.\ J.\ Knight, M.\ D.\ Kovari, H.\ Lux, J.\ Morris, S.\ I.\ Muldrew \\
 ~\\ \Large Culham Centre for Fusion Energy/ United Kingdom Atomic Energy Authority\\
 Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 \end{center}
@@ -499,7 +499,9 @@ The resulting NetCDF file can be visualised using the \texttt{ndscan\_visualisat
 %-------------------------------
 \subsubsection{Turn output into input (write\_new\_in\_dat.py)}
 
-This program modifies a given \indat\ file such that the specified initial values of all the iteration variables are given by their values in \outdat.
+This program creates a new \indat\ file with the initial values of all the iteration variables replaced by their results in \outdat, if that ouput is a feasible solution.
+
+When a scan has been run, by default this program uses the last feasible point in that scan to write the new starting values. There is also an option to select the first feasible solution from a scan.
 
 \begin{description}
 \item{\textbf{Input:}}
@@ -509,6 +511,16 @@ This program modifies a given \indat\ file such that the specified initial value
 \texttt{new\_IN.DAT}
 \end{description}
 
+\begin{quote}
+\begin{verbatim}
+usage: write_new_in_dat.py [-h] [-f MFILE.DAT] [-i IN.DAT]
+
+optional arguments:
+  -h, --help   show this help message and exit
+  -lfp         use the last feasible point from a scan (default)
+  -ffp         use the first feasible point from a scan
+\end{verbatim}
+\end{quote}
 
 %-------------------------------
 \subsubsection{Create csv file summarising data in plot\_proc.py output (output\_data.py)}
@@ -948,8 +960,9 @@ Use -h or --help for help
 
 
 %------------------------------------
-\subsubsection{Plot two parameters from many MFILES (plot\_comparison.py}
+\subsubsection{Plot two parameters from many MFILES (plot\_comparison.py)}
 
+\begin{quote}
 \begin{verbatim}
 usage: plot_comparison.py [-h] [-x XAXIS] [-y YAXIS] [-e END] [f [f ...]]
 
@@ -966,6 +979,103 @@ optional arguments:
                         y-axis, default=powfmw
   -e END, --end END     file format default = pdf
 \end{verbatim}
+\end{quote}
+
+\subsubsection{Plot a pie chart of the cost breakdown (cost\_pie.py)}
+
+This utility plots the cost breakdown as a pie chart giving each component as a percentage.  This allows for the most expensive areas to be easily identified.  For the 1990 cost model, an additional plot showing how the direct, indirect and contingency costs contribute to the overall budget is shown. 
+
+\begin{description}
+	\item{\textbf{Input:}}
+	\mfile
+	
+	\item{\textbf{Output:}}
+	Displays plot of the cost breakdown to screen.  For the 1990 cost model, the breakdown for direct, indirect and contingency is also shown.  These can be saved with -s argument (cost\_pie.pdf and direct\_cost\_pie.pdf).
+	
+\end{description}
+
+Help information:
+\begin{quote}
+\begin{verbatim}
+usage: cost_pie.py [-h] [-f MFILE] [-s]
+
+Displays the cost breakdown as a pie chart. For more information contact
+Stuart.Muldrew@ukaea.uk
+
+optional arguments:
+-h, --help  show this help message and exit
+-f MFILE    specify the MFILE (default=MFILE.DAT)
+-s, --save  save as well as displaying figure
+
+\end{verbatim}
+\end{quote}
+
+\subsubsection{Plot a bar chart of the cost breakdown (cost\_bar.py)}
+
+This utility plots the cost breakdown as a bar chart giving the cost of each component.  This allows for the most expensive areas to be easily identified.  For the 1990 cost model, an additional plot showing how the direct, indirect and contingency costs contribute to the overall budget is shown.  Multiple MFILEs can be specified allowing for different PROCESS runs to be compared on the same plot.  An inflation factor can be specified using the -inf argument, which multiplies all the costs by that value. 
+
+\begin{description}
+	\item{\textbf{Input:}}
+	\mfile
+	
+	\item{\textbf{Output:}}
+	Displays plot of the cost breakdown to screen.  For the 1990 cost model, the breakdown for direct, indirect and contingency is also shown.  These can be saved with -s argument (cost\_bar.pdf and direct\_cost\_bar.pdf).
+	
+\end{description}
+
+Help information:
+\begin{quote}
+	\begin{verbatim}
+usage: cost_bar.py [-h] [-f f [f ...]] [-s] [-inf INF]
+
+Displays the cost breakdown as a bar chart. Multiple MFILEs can be given and
+will be plotted on the same chart. For more information contact
+Stuart.Muldrew@ukaea.uk
+
+optional arguments:
+-h, --help    show this help message and exit
+-f f [f ...]  specify the MFILE(s) to plot
+-s, --save    save as well as displaying figure
+-inf INF      Inflation Factor (multiplies costs)
+	
+	\end{verbatim}
+\end{quote}
+
+\subsubsection{POPCON plot (popcon.py)}
+
+This utility generates a POPCON plot from an MFILE that can be saved with the -s argument.  -x, -y and -z allow the user to set the definition of temperature, density and power respectively that is plotted.  Currently the impurity is set with an effective charge, and this can be parsed using -zimp (default is Argon).  The routine also features a test case that can be run by supplying the -t argument only.
+
+\begin{description}
+	\item{\textbf{Input:}}
+	\mfile
+	
+	\item{\textbf{Output:}}
+	Displays POPCON plot to screen.  This can be saved with -s argument (popcon.pdf).
+	
+\end{description}
+
+Help information:
+\begin{quote}
+\begin{verbatim}
+usage: popcon.py [-h] [-f MFILE] [-s] [-t] [-x X] [-y Y] [-z Z] [-zimp ZIMP]
+
+Displays a POPCON plot for input MFILE. For more information contact
+Stuart.Muldrew@ukaea.uk or Peter.Knight@ukaea.uk
+
+optional arguments:
+-h, --help  show this help message and exit
+-f MFILE    specify the MFILE (default=MFILE.DAT)
+-s, --save  save as well as displaying figure
+-t, --test  Test mode: ignores MFILE and runs with R Kembleton's test values
+-x X        Temperature (x-axis): (0) Central (1) Volume (default=1)
+-y Y        Density (y-axis): (0) Central (1) Volume (2) Line (default=1)
+-z Z        Power (z-axis): (0) Aux for balance (1) Net (2) Fusion
+(default=0)
+-zimp ZIMP  Impurity charge (default=18 Ar)
+	
+\end{verbatim}
+\end{quote}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Uncertainty Tools}

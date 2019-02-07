@@ -110,6 +110,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  05/08/15 MDK Tweaked the terminology in the output, added output labels
     !+ad_hist  22/06/18 SIM Added tfacpd calculation for resistive coils
+    !+ad_hist  25/10/18 SIM Corrected ztot calculation (Issue #773)
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -139,13 +140,13 @@ contains
        abus = cpttf/jbus
 
        !  Bus resistance (ohm)
-       rhobus = 2.5D-8 * tfbusl/abus
+       rhobus = tflegres * tfbusl/abus
 
        !  Bus mass (kg)
-       tfbusmas = tfbusl * abus * 8000.0D0
+       tfbusmas = tfbusl * abus * dcopper
 
        !  Total maximum impedance MDK actually just fixed resistance
-       ztot = tfno*rhotfleg + rhocp + rhobus
+       ztot = tfno*rhotfleg + (prescp/ritfc**2) + rhobus
 
        !  No reactive portion of the voltage is included here - assume long ramp times
        !  MDK This is steady state voltage, not "peak" voltage
@@ -1232,13 +1233,16 @@ contains
     call ovarre(outfile, 'Electrical pumping power for divertor (MW)', '(htpmwe_div)', htpmwe_div, 'OP ')
     call ovarre(outfile, 'Total electrical pumping power for primary coolant (MW)', '(htpmw)', htpmw, 'OP ')
 
-    if (((secondary_cycle == 0).or.(secondary_cycle == 1)).and.(primary_pumping/=3)) then
+    if (primary_pumping==1) then
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in first wall', '(fpumpfw)', fpumpfw)
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in blanket', '(fpumpblkt)', fpumpblkt)
     end if
-
-    call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in shield', '(fpumpshld)', fpumpshld)
-    call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in divertor', '(fpumpdiv)',fpumpdiv)
+    
+    if (primary_pumping /= 0) then
+        call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in shield', '(fpumpshld)', fpumpshld)
+        call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in divertor', '(fpumpdiv)',fpumpdiv)
+    end if
+    
     call ovarre(outfile, 'Electrical efficiency of heat transport coolant pumps', '(etahtp)', etahtp)
     ! #284
     call osubhd(outfile,'Plant thermodynamics: options :')
@@ -1495,7 +1499,7 @@ contains
 
     call ocmmnt(outfile,'Power balance for power plant :')
     call ocmmnt(outfile,'-------------------------------')
-    call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
+    call ovarrf(outfile,'Fusion power (MW)','(powfmw.)',powfmw, 'OP ')
     call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
     sum = powfmw + emultmw
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')

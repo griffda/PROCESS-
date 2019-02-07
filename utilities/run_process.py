@@ -71,7 +71,7 @@ if __name__ == "__main__":
                     print("WARNING: Non feasible point(s) in sweep, "
                           "But finished anyway! {} ".format(no_unfeasible))
                 if process_warnings():
-                    print("\nThere were warnings in the final PROCSS run. "
+                    print("\nThere were warnings in the final PROCESS run. "
                           "Please check the log file!\n")
                 break
             else:

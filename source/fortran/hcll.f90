@@ -960,16 +960,20 @@ module kit_hcll_module
      pnuc_bkt_ratio = 2357.6D0/2753.6D0
 
      ! Nuclear heating in the first wall (MW)
-     pnucfw = powfmw*0.8D0*pnuc_fw_ratio
+     !pnucfw = powfmw*0.8D0*pnuc_fw_ratio
+     pnucfw = pneutmw*pnuc_fw_ratio
 
      ! Nuclear heating in the blanket with energy multiplication (MW)
-     pnucblkt = (powfmw*0.8D0*pnuc_bkt_ratio)*emult*CF
+     !pnucblkt = (powfmw*0.8D0*pnuc_bkt_ratio)*emult*CF
+     pnucblkt = (pneutmw*pnuc_bkt_ratio)*emult*CF
 
      ! Energy multiplication energy (MW)
-     emultmw = (powfmw*0.8D0*pnuc_bkt_ratio)*(emult - 1.0D0)
+     !emultmw = (powfmw*0.8D0*pnuc_bkt_ratio)*(emult - 1.0D0)
+     emultmw = (pneutmw*pnuc_bkt_ratio)*(emult - 1.0D0)
 
      ! Nuclear heating in the divertor
-     pnucdiv = powfmw*0.8D0*fdiv
+     !pnucdiv = powfmw*0.8D0*fdiv
+     pnucdiv = pneutmw*fdiv
 
      ! Radiation power incident on divertor (MW)
      praddiv = pradmw * fdiv

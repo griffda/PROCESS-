@@ -9,7 +9,7 @@ module reinke_module
 !  use physics_variables
 !  use profiles_module
 !  use read_and_get_atomic_data
-!  use reinke_variables
+   use reinke_variables
 
   implicit none
 
@@ -59,7 +59,7 @@ contains
     !+ad_hist  19/07/18 KE Testing and bug fixes
     !+ad_stat  Okay
     !+ad_docs  M.L. Reinke 2017 Nucl. Fusion 57 034004
-implicit none
+    implicit none
     real(kind(1.0D0)) :: reinke_fzmin
     real(kind(1.0D0)) :: bt, flh, qstar, rmajor, eps, fsep, fgw, kappa
     real(kind(1.0D0)) :: lhat, netau, tesep, ml_div, sum_fZ_ml_other, ml_z, lz
@@ -117,17 +117,30 @@ implicit none
        endif
     enddo
 
-    reinke_fzmin = 0.014 * bt**0.88 * flh**1.14 * qstar**0.32 * rmajor**1.33
+    if(reinke_mode == 1) then
+      ! I-mode
+      reinke_fzmin = 0.069 * bt**0.57 * flh**1.14 * rmajor**1.14 * eps**0.66
 
-    reinke_fzmin = reinke_fzmin * eps**0.59 / fsep**2. / fgw**1.18
+      reinke_fzmin = reinke_fzmin / (fsep**2.0 * fgw**0.86)
 
-    reinke_fzmin = reinke_fzmin / (1.D0 + kappa**2.)**0.64 / lhat**0.86
+      reinke_fzmin = reinke_fzmin / ((1.D0 + kappa**2.)**0.29 * lhat**0.86)
 
-    !subtract radiation contribution from fixed fraction impurities, then complete the equation
-    reinke_fzmin = (reinke_fzmin - sum_fZ_ml_other )/ ml_div
+      !subtract radiation contribution from fixed fraction impurities, then complete the equation
+      reinke_fzmin = (reinke_fzmin - sum_fZ_ml_other )/ ml_div
 
-    !return minimum fraction required at the SOL of specified impurity fraction
+    else
+      ! H-mode
+      reinke_fzmin = 0.014 * bt**0.88 * flh**1.14 * qstar**0.32 * rmajor**1.33
 
+      reinke_fzmin = reinke_fzmin * eps**0.59 / fsep**2. / fgw**1.18
+
+      reinke_fzmin = reinke_fzmin / (1.D0 + kappa**2.)**0.64 / lhat**0.86
+
+      !subtract radiation contribution from fixed fraction impurities, then complete the equation
+      reinke_fzmin = (reinke_fzmin - sum_fZ_ml_other )/ ml_div
+
+    end if  
+   !return minimum fraction required at the SOL of specified impurity fraction
   end function reinke_fzmin
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

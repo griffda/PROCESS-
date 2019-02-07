@@ -265,20 +265,25 @@ contains
     end if
 
     ! Power to the first wall (MW)
-    pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    !pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
 
     ! Power to the blanket (MW)
-    pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
-
+    !pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
+    
     ! Power to the shield(MW)
-    pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    !pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
 
     ! Power to the TF coils (MW)
-    ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    !ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
 
     ! pnucdiv is not changed.
     ! The energy due to multiplication, by subtraction:
-    emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
+    !emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
+    emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - pneutmw
 
     ! powerflow calculation for pumping power
     call powerflow_calc
@@ -1056,8 +1061,8 @@ contains
     ! coils. It turns out that emult is also approx constant, but this is not used. No energy
     ! multiplication in the divertor
 
-    ! Overwrite global variable for fdiv
-    fdiv = 0.115D0
+    ! Overwrite global variable for fdiv 07/11/18 SIM: Removed having spoken to JM
+    ! fdiv = 0.115D0
 
     ! Nuclear heating in the divertor just the neutron power times fdiv
     pnucdiv = 0.8D0 * powfmw * fdiv

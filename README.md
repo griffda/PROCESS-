@@ -124,6 +124,7 @@ Additionally
 - results are output in OUT.DAT, MFILE.DAT
 - optionally, run the `utilities/run_process.py` script in conjunction with a config file to randomly vary the starting point of the input parameter set until a feasilble solution is found.
     - `run_process.py -f CONFIGFILE`
+    - An example of the config file can be found in `documentation/pdf/utilitiesdoc.pdf`
 
 ## Development
 

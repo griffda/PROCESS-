@@ -1,6 +1,23 @@
-# 1.0.14
+# 1.0.15
 
-> Next release
+> next release
+
+## Bug Fixes
+- Added emultmw calculation to stellarator and fixed power balance errors (Issue #783)
+- Amended fpump* output to match with primary_pumping options.
+
+## Features
+- HTS REBCO model final version implemented
+- Can now limit the CS peak field to be below set maximum
+- Added Hubbard 2012 and 2017 I-mode threshold scaling
+- Added Hubbard I mode confinement time scaling
+- Added I-mode version of Reinke criterion (fzmin)
+
+## Minor Changes
+- Explicitly state 1990 $ for old cost model
+
+
+# 1.0.14
 
 ## Bug Fixes
 
@@ -16,6 +33,10 @@
 - Corrected units in resistive TF coil stress output
 - Corrected units on ucme and uciac in global variables.
 - Fixed issue with plot_proc.py scan counting (Issue #748)
+- Fixed issue with run_process.py not working (Issue #766)
+- Switched obsolete estotf for estotftgj in stellarator 
+- Corrected ztot calculation in tfpwr subroutine for resistive TF coils (#773)
+- Corrected deltf in sctfcoil.f90 (#779)
 
 ## Features
 
@@ -39,21 +60,25 @@ PLASMOD
  - Does the scan in a basic grid like manner (i.e. jumps to start of next row from end of previous). Would be nice to upgrade to 'zig-zag'-like approach.
 
 Utilities
-	- New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
-	- evaluate_uncertainties.py now outputs and additional file to allow analysis of failed PROCESS Runs.
+ - New script compare_radials.py to plot two radial profiles on the same chart for comparison. Takes input columns of data representing the profiles, with the first column being the x-axis, e.g. radial position.
+ - evaluate_uncertainties.py now outputs and additional file to allow analysis of failed PROCESS Runs.
+ - New script plot_sankey.py to plot a Sankey diagram of the PROCESS power flow
+ - New scripts cost_pie.py and cost_bar.py to analyse cost data.
+ - New script popcon.py to plot POPCON plot from MFILE.
 
+Miscellaneous
 - TF stress in conduit Tresca criterion can now have regular and CEA adjusted options 
   (adjustment from [Torre et al. 2016](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7390035) 
   paper). (Issue #678)
 - [Snipes et al.](2000; http://iopscience.iop.org/article/10.1088/0741-3335/42/5A/336) H-mode threshold scaling options added (Issue #680)
 - Initial version of `.gitlab-ci.yml` created for GitLab CI.
 - Added Spherical Tokamak and Stellarator examples to the test suite (Issues #715 and #718)
+- Output to MFILE variable names for cost models
 - Added [Reinke detachment criterion](http://iopscience.iop.org/article/10.1088/1741-4326/aa5145/meta) as constraint equation and formula for tesep (Issue #707)
-
 
 ## Minor changes
 
-- Changed upper bound on `coheof` from 1e8 to 5e8 (Issue #668).
+- Changed upper bound on `coheof` from 1.0e8 to 5.0e8 (Issue #668).
 - A number of changes to `plot_proc.py` and outputs in the fortran associated 
   with vertical build. (Merge request !18)
 - Update utilities guide for a number of Python utilities
@@ -73,3 +98,6 @@ Utilities
 - Added error reporting to function ncore (Issue #735)
 - Added input `plasma_res_factor` for adjustment factor for plasma resistivity. Default is 1.0   to preserve old behaviour.
 - Added additional scaling factor 'eped_sf' for the EPED pedestal model (pressure and temperature versions).
+- Slight change to functionality of utilities/write_new_in_dat.py: This script will no longer create a new IN.DAT from a non-feasible solution. If a scan is run, it will take by default the last feasible solution. If required there is also an option to use the first feasible solution from a scan (Issue #752).
+- Made more robust the reading of input files - comments are now denoted only via an asterisk (*), and if a comment is present without an asterisk the reading of the input file will stop (previously it simply ignored constraint equations and iteration variables that could not be read). It is no longer permissible to write an input over multiple lines. Users can now use punctuation in comments as they wish, including full stops and commas.
+- Stellarator radial build is output to MFILE (Issue #770)

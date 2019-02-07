@@ -94,15 +94,16 @@ module numerics
   use global_variables
   use constants
   use maths_library
+  use plasmod_variables
 
   implicit none
 
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 150
+  integer, parameter :: ipnvars = 151
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 78
+  integer, parameter :: ipeqns = 79
   !+ad_vars  ipnfoms FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 18
 
@@ -351,8 +352,10 @@ module numerics
        'Eich critical separatrix density ',   &
        !+ad_varc  <LI> (77) TF coil current per turn upper limit 
        'TFC current per turn upper limit ',    &
-       !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)</UL>
-       'Reinke criterion fZ lower limit  '    &
+       !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)
+       'Reinke criterion fZ lower limit  ',   &
+       !+ad_varc  <LI> (79) F-value for max peak CS field (itv  149 fbmaxcs)</UL>
+       'Peak CS field upper limit        '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -663,16 +666,18 @@ module numerics
        'fnesep        ', &
        !+ad_varc  <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density
        'fgwped        ', &
-       !+ad_varc  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)</UL>
-       'fnesep        ', &
-       !+ad_varc  <LI> (147) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power</UL>
-       'plasmod_fcdp  ', &
-       !+ad_varc  <LI> (148) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)</UL>
-       'plasmod_fradc ', &
-       !+ad_varc  <LI> (149) freinke : F-value for Reinke detachment criterion (constraint equation 78)</UL>
+       !+ad_varc  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)
+       'fcpttf        ', &
+       !+ad_varc  <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)
        'freinke       ', &
-       !+ad_varc  <LI> (150) fzactual : fraction of impurity at SOL with Reinke detachment criterion</UL>
-       'fzactual      ' &
+       !+ad_varc  <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion
+       'fzactual      ', &
+       !+ad_varc  <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
+       'fbmaxcs       ', &
+        !+ad_varc  <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power
+       'plasmod_fcdp  ', &
+       !+ad_varc  <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)</UL>
+       'plasmod_fradc ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -837,10 +842,11 @@ module numerics
        0.001D0, &  !  144
        0.500D0, &  !  145
        0.001D0, &  !  146
-       0.000D0, &  !  147
-       0.000D0, &  !  148
+       0.001D0, &  !  147
+       1.00D-8, &  !  148
        0.001D0, &  !  149
-       1.00D-8  &  !  150
+       0.000D0, &  !  150
+       0.001D0  &  !  151
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -865,7 +871,7 @@ module numerics
        1.000D8, &  !  17
        50.00D0, &  !  18
        1.000D6, &  !  19
-       1.000D3, &  !  20
+       3.000D2, &  !  20   SIM 09/10/18 Lowered to within input limit 
        1.000D0, &  !  21
        1.000D6, &  !  22   KE made tbrnmn obsolete 18/05/18
        0.500D0, &  !  23
@@ -995,7 +1001,8 @@ module numerics
        1.000D0, &  !  147
        1.000D0, &  !  148
        1.000D0, &  !  149
-       1.000D0  &  !  150
+       1.000D0, &  !  150
+       1.000D0  &  !  151
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

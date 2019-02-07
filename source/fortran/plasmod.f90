@@ -717,7 +717,7 @@ contains
     
     !  Arguments
     integer, intent(in) :: outfile
-    integer :: imp
+    ! integer :: imp (NOT USED)
     !character*10 :: nImpurity
     
     call oheadr(outfile,'PLASMOD')
