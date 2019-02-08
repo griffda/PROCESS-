@@ -14,10 +14,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS  -std=c++11)
 
 # Setup GoogleTest options
-set(GTEST_LIBRARY $ENV{GTEST}/lib)
-set(GTEST_INCLUDE_DIR $ENV{GTEST}/include)
-include_directories(${GTEST_INCLUDE_DIR})
-set(GTEST_MAIN_LIBRARY $ENV{GTEST})
+# set(GTEST_LIBRARY $ENV{GTEST}/lib)
+# set(GTEST_INCLUDE_DIR $ENV{GTEST}/include)
+# include_directories(${GTEST_INCLUDE_DIR})
+# set(GTEST_MAIN_LIBRARY $ENV{GTEST})
 
 # Choose gfortran as compiler
 set(CMAKE_Fortran_Compiler gfortran)
@@ -333,14 +333,14 @@ add_executable(process.exe ${FORT_SOURCE_DIR}/process.f90)
 set_target_properties(process.exe PROPERTIES LINKER_LANGUAGE Fortran)
 #####add_executable(process.exe ${all_sources})  one executable
 target_link_libraries(process.exe PROCESS_calc_engine)
-target_link_libraries(process.exe lapack)
+# target_link_libraries(process.exe lapack)
 # Now set target for CPP exe
-if(DEFINED ENV{GTEST})
-   add_executable(process_GTest.exe ${GTEST_DIR}/main_test.cpp)
-   target_link_libraries(process_GTest.exe PROCESS_calc_engine)
-   target_link_libraries(process_GTest.exe lapack)
-   target_link_libraries(process_GTest.exe $ENV{GTEST}/lib/libgtest.a pthread)
-endif()
+# if(DEFINED ENV{GTEST})
+#    add_executable(process_GTest.exe ${GTEST_DIR}/main_test.cpp)
+#    target_link_libraries(process_GTest.exe PROCESS_calc_engine)
+#   #  target_link_libraries(process_GTest.exe lapack)
+#    target_link_libraries(process_GTest.exe $ENV{GTEST}/lib/libgtest.a pthread)
+# endif()
 #   target_compile_features(PROCESS_Testing PRIVATE cxx_std_17)
 install(TARGETS process.exe DESTINATION ${CMAKE_SOURCE_DIR})
 add_custom_command(TARGET process.exe
