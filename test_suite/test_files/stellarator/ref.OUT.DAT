@@ -1,7 +1,7 @@
  *************************************************************************   
  *****                                                               *****   
  *****                        HELIAS-5B                              *****   
- *****               Stuart Muldrew (05/12/2018)                     *****   
+ *****               Stuart Muldrew (17/01/2019)                     *****   
  *****            Based on Felix Warmer Run (27/05/2015)             *****   
  *****   Warmer et al. (2016), IEEE Trans. Plasma Sci. 44, 1576      *****   
  *****                                                               *****   
@@ -12,16 +12,16 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : /home/smuldrew/process/latest/process.exe
+   Program : process.exe
    Version : 1.0.14   Release Date :: 2018-11-09
-   Tag No. : "1.0.14-2-g18a31c5 Code used contains Untracked Changes"
-   Last commit message : "Added primary_pumping to stellarator #783,"
+   Tag No. : "1.0.14-21-gfcbc9d4 Code used contains Untracked Changes"
+   Last commit message : "Made photon_wall and rad_fraction global variables. Added to stellarat"
       User : smuldrew
- Directory : /home/smuldrew/Stellarator/HELIAS-5B
+ Directory : /home/smuldrew/process/latest/test_suite/test_files/stellarator
  
  **************************************************************************************************************
  
- PROCESS 1.0.14 : Run on  6 Dec 2018 10:24:17 +00:00(hh:mm) UTC by G0764
+ PROCESS 1.0.14 : Run on 17 Jan 2019 10:15:17 +00:00(hh:mm) UTC by G0764
  Reactor concept design: Stellarator model, (c) CCFE
  HELIAS-5B
  (Please include this header in any models, presentations and papers based on these results)
@@ -44,7 +44,7 @@
  Number of constraints (total)                                            (neqns+nineqns)                   4     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          7     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 4.257E-09  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 4.271E-09  OP 
  VMCON convergence parameter                                              (convergence_parameter)   4.321E-10  OP 
  Number of VMCON iterations                                               (nviter)                          3  OP 
  
@@ -63,7 +63,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
     1                  beta             4.4513E-02     1.0000
     2                  dene             2.0914E+20     1.0000
-    3                  hfact            1.3390E+00     1.0000
+    3                  hfact            1.2187E+00     1.0000
     4                  fpnetel          1.0000E+00     1.0000
     5                  bore             1.7607E+01     1.0000
  
@@ -73,7 +73,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                               constraint                 residue                    residue
  
     1  Beta consistency                      =  4.4513E-02             -2.5289E-12                 5.6814E-11
-    2  Global power balance consistency      =  4.0323E-01 MW/m3       -1.8542E-10 MW/m3           4.5984E-10
+    2  Global power balance consistency      =  4.0323E-01 MW/m3       -2.3037E-10 MW/m3           5.7130E-10
     3  Radial build consistency              =  2.2000E+01 m            0.0000E+00 m              -0.0000E+00
     4  Net electric power lower limit        >  1.0000E+03 MW           4.2320E-06 MW              4.2320E-09
  
@@ -83,7 +83,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  *************************************** Power Reactor Costs (1990 US$) ***************************************
  
  First wall / blanket life (years)                                        (fwbllife)                   17.552     
- Divertor life (years)                                                    (divlife.)                    8.216     
+ Divertor life (years)                                                    (divlife.)                    8.692     
  Cost of electricity (m$/kWh)                                             (coe)                       103.110     
  
  Power Generation Costs :
@@ -283,7 +283,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable blanket neutron fluence (MW-yr/m2)                             (abktflnc)                1.500E+01     
  Allowable divertor heat fluence (MW-yr/m2)                               (adivflnc)                2.500E+01     
  First wall / blanket lifetime (years)                                    (bktlife)                 1.755E+01  OP 
- Divertor lifetime (years)                                                (divlife)                 8.216E+00  OP 
+ Divertor lifetime (years)                                                (divlife)                 8.692E+00  OP 
  Heating/CD system lifetime (years)                                       (cdrlife)                 1.755E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
@@ -341,7 +341,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium ion density (thermalised ions only) (/m3)                         (dnalp)                   2.091E+19  OP 
  Proton density (/m3)                                                     (dnprot)                  5.345E+16  OP 
  Hot beam density (/m3)                                                   (dnbeam)                  0.000E+00  OP 
- Density limit from scaling (/m3)                                         (dnelimt)                 1.144E+20  OP 
+ Density limit from scaling (/m3)                                         (dnelimt)                 1.112E+20  OP 
  Helium ion density (thermalised ions only) / electron density            (ralpne)                  1.000E-01     
  
  Plasma impurity model                                                    (imprad_model)                    1     
@@ -392,52 +392,53 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             1.260E+02  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.069E+02  OP 
  Synchrotron radiation power (MW)                                         (psyncpv*vol)             8.792E+00  OP 
- synchrotron wall reflectivity factor                                     (ssync)                       0.600     
- Normalised minor radius defining 'core'                                  (coreradius)              9.000E-01     
+ Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
+ Normalised minor radius defining 'core'                                  (coreradius)              6.000E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   1.000E+00     
- Total core radiation power (MW)                                          (pcoreradmw)              2.228E+02  OP 
- Edge radiation power (MW)                                                (pedgeradmw)              2.931E+02  OP 
- Total radiation power (MW)                                               (pradmw)                  5.159E+02  OP 
- Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            0.000E+00  OP 
- Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             0.000E+00  OP 
+ Total core radiation power (MW)                                          (pcoreradmw)              1.286E+02  OP 
+ Edge radiation power (MW)                                                (pedgeradmw)              1.131E+02  OP 
+ SOL radiation power (MW)                                                 (psolradmw)               2.770E+02  OP 
+ Total radiation power (MW)                                               (pradmw)                  5.187E+02  OP 
+ Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            9.139E-01  OP 
+ Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             2.481E-01  OP 
  Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
  Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
- Peak radiation wall load (MW/m^2)                                        (peakradwallload)         0.000E+00  OP 
+ Peak radiation wall load (MW/m^2)                                        (peakradwallload)         8.263E-01  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  1.140E+00  OP 
  
  Ohmic heating power (MW)                                                 (pohmmw)                  0.000E+00  OP 
  Fraction of alpha power deposited in plasma                              (falpha)                      0.950  OP 
  Fraction of alpha power to electrons                                     (falpe)                       0.781  OP 
  Fraction of alpha power to ions                                          (falpi)                       0.219  OP 
- Ion transport (MW)                                                       (ptrimw)                  1.589E+02  OP 
- Electron transport (MW)                                                  (ptremw)                  1.859E+02  OP 
+ Ion transport (MW)                                                       (ptrimw)                  2.023E+02  OP 
+ Electron transport (MW)                                                  (ptremw)                  2.367E+02  OP 
  Injection power to ions (MW)                                             (pinjimw)                 0.000E+00  OP 
  Injection power to electrons (MW)                                        (pinjemw)                 0.000E+00  OP 
    (Injected power only used for start-up phase)
  Ignited plasma switch (0=not ignited, 1=ignited)                         (ignite)                          1     
  
- Power into divertor zone via charged particles (MW)                      (pdivt)                   5.172E+01  OP 
- Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            2.351E+00  OP 
- Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             1.027E+00  OP 
+ Power into divertor zone via charged particles (MW)                      (pdivt)                   4.889E+01  OP 
+ Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            2.222E+00  OP 
+ Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             9.710E-01  OP 
  
  Confinement :
  
  Device is assumed to be ignited for the calculation of confinement time
  
  Confinement scaling law                    ISS04            (stell)
- Confinement H factor                                                     (hfact)                       1.339  ITV
- Global thermal energy confinement time (s)                               (taueff)                      3.102  OP 
- Ion energy confinement time (s)                                          (tauei)                       3.102  OP 
- Electron energy confinement time (s)                                     (tauee)                       3.102  OP 
- n.tau = Volume-average electron density x Energy confinement time (s/m3) (dntau)                   6.487E+20  OP 
+ Confinement H factor                                                     (hfact)                       1.219  ITV
+ Global thermal energy confinement time (s)                               (taueff)                      2.436  OP 
+ Ion energy confinement time (s)                                          (tauei)                       2.436  OP 
+ Electron energy confinement time (s)                                     (tauee)                       2.436  OP 
+ n.tau = Volume-average electron density x Energy confinement time (s/m3) (dntau)                   5.096E+20  OP 
  Triple product = Vol-average electron density x Vol-average electron temperature x Energy confinement time:
- Triple product  (keV s/m3)                                               (dntau*te)                4.541E+21  OP 
- Transport loss power assumed in scaling law (MW)                         (powerht)                 3.448E+02  OP 
+ Triple product  (keV s/m3)                                               (dntau*te)                3.567E+21  OP 
+ Transport loss power assumed in scaling law (MW)                         (powerht)                 4.390E+02  OP 
  Switch for radiation loss term usage in power balance                    (iradloss)                        1     
- Radiation power subtracted from plasma power balance (MW)                                          2.228E+02  OP 
+ Radiation power subtracted from plasma power balance (MW)                                          1.286E+02  OP 
    (Radiation correction is core radiation power)
  Alpha particle confinement time (s)                                      (taup)                       27.876  OP 
- Alpha particle/energy confinement time ratio                             (taup/taueff)                 8.987  OP 
+ Alpha particle/energy confinement time ratio                             (taup/taueff)                11.441  OP 
  Lower limit on taup/taueff                                               (taulimit)                    5.000     
  Total energy confinement time including radiation loss (s)               (total_energy_conf_t          0.000  OP 
    (= stored energy including fast particles / loss power including radiation
@@ -454,11 +455,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
     scaling law              confinement time (s)     H-factor for
                                  for H = 2           power balance
  
- LHD              (stell)          2.858                   2.170
- Gyro-reduced Bohm(stell)          2.573                   2.411
- Lackner-Gottardi (stell)          4.566                   1.288
- ISS95            (stell)          2.720                   2.161
- ISS04            (stell)          4.633                   1.268
+ LHD              (stell)          2.485                   1.961
+ Gyro-reduced Bohm(stell)          2.226                   2.189
+ Lackner-Gottardi (stell)          3.950                   1.169
+ ISS95            (stell)          2.359                   1.958
+ ISS04            (stell)          3.998                   1.153
  
  ****************************************** Auxiliary Heating System ******************************************
  
@@ -470,7 +471,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ************************************************** Divertor **************************************************
  
- Power to divertor (MW)                                                   (pdivt.)                  5.172E+01     
+ Power to divertor (MW)                                                   (pdivt.)                  4.889E+01     
  Angle of incidence (deg)                                                 (anginc)                  2.005E+00     
  Perp. heat transport coefficient (m2/s)                                  (xpertin)                 1.500E+00     
  Divertor plasma temperature (eV)                                         (tdiv)                    3.000E+00     
@@ -490,7 +491,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power decay width (cm)                                                   (100*l_q)                 1.772E+01     
  Island width (m)                                                         (w_r)                     3.752E-01     
  Perp. distance from X-point to plate (m)                                 (Delta)                   2.251E-01     
- Peak heat load (MW/m2)                                                   (hldiv)                   4.057E+00     
+ Peak heat load (MW/m2)                                                   (hldiv)                   3.835E+00     
  
  ************************************************ Radial Build ************************************************
  
@@ -789,7 +790,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
  Power conversion cycle efficiency model: user-defined efficiency
  Thermal to electric conversion efficiency of the power conversion cycle  (etath)                       0.400     
- Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.118  OP 
+ Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.117  OP 
  
  Power Balance for Reactor (across vacuum vessel boundary) - Detail
  ------------------------------------------------------------------
@@ -799,7 +800,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
          First wall:
                                neutrons            449.81                0.00              449.81
              charged particle transport             29.76                0.00               29.76
-                              radiation            456.53                0.00              456.53
+                              radiation            459.04                0.00              459.04
                         coolant pumping             56.00                0.00               56.00
  
          Blanket:
@@ -816,8 +817,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
          Divertor:
                                neutrons            273.93                0.00              273.93
-             charged particle transport             51.72                0.00               51.72
-                              radiation             59.32                0.00               59.32
+             charged particle transport             48.89                0.00               48.89
+                              radiation             59.65                0.00               59.65
                         coolant pumping             24.00                0.00               24.00
  
          TF coil:
@@ -857,8 +858,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  -------------------------------
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
- Transport power from scaling law (MW)                                    (pscalingmw)                344.824  OP 
- Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               222.754  OP 
+ Transport power from scaling law (MW)                                    (pscalingmw)                438.979  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               128.599  OP 
  Total (MW)                                                                                           567.578  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             565.464  OP 
@@ -876,9 +877,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                200.000  OP 
  Total (MW)                                                                                          3479.453  OP 
  
- Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            3068.755  OP 
+ Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            3071.264  OP 
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.092  OP 
- Heat extracted from divertor (MW)                                        (pthermdiv)                 408.978  OP 
+ Heat extracted from divertor (MW)                                        (pthermdiv)                 406.470  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
  Total (MW)                                                                                          3477.826  OP 
  
@@ -934,7 +935,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
 *************************************************************************
 *****                                                               *****
 *****                        HELIAS-5B                              *****
-*****               Stuart Muldrew (05/12/2018)                     *****
+*****               Stuart Muldrew (17/01/2019)                     *****
 *****            Based on Felix Warmer Run (27/05/2015)             *****
 *****   Warmer et al. (2016), IEEE Trans. Plasma Sci. 44, 1576      *****
 *****                                                               *****
@@ -960,7 +961,7 @@ boundl(6) = 3.005E19
 boundu(6) = 5.005E20
 
 ixc = 10                *hfact
-hfact = 1.3390          *H-factor on energy confinement times
+hfact = 1.2187          *H-factor on energy confinement times
 boundu(10) = 2.0
 
 ixc = 25                *fpnetel
@@ -1061,7 +1062,7 @@ etath    = 0.4          *Thermal to electric conversion efficiency; if seconday_
 *------------Impurity Radiation Module-------------*
 
 imprad_model = 1        *Switch for impurity radiation model
-coreradius = 0.9        *Normalised radius defining the 'core' region
+coreradius = 0.6        *Normalised radius defining the 'core' region
 
 fimp(1)  = 1.0          *Hydrogen (fraction calculated by code)
 fimp(2)  = 0.1          *Helium (fraction calculated by code)
@@ -1076,7 +1077,7 @@ fimp(10) = 0.0          *Iron
 fimp(11) = 0.0          *Nickel
 fimp(12) = 0.0          *Krypton
 fimp(13) = 0.0          *Xenon
-fimp(14) = 1.0d-5       *Tungsten
+fimp(14) = 1.0E-5       *Tungsten
 
 *---------------------Numerics---------------------*
 

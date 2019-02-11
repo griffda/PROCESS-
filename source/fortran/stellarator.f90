@@ -227,6 +227,7 @@ module stellarator_module
   !+ad_call  build_variables
   !+ad_call  buildings_module
   !+ad_call  constants
+  !+ad_call  constraint_variables
   !+ad_call  costs_module
   !+ad_call  cost_variables
   !+ad_call  current_drive_module
@@ -272,6 +273,7 @@ module stellarator_module
   use build_variables
   use buildings_module
   use constants
+  use constraint_variables
   use costs_module
   use cost_variables
   use current_drive_module
@@ -1076,6 +1078,8 @@ contains
     !+ad_hist  19/08/14 PJK Removed impfe usage
     !+ad_hist  17/11/14 PJK Recalculated radiation power totals; included
     !+ad_hisc               falpha contributions
+    !+ad_hist  16/01/19 SIM Revised core and edge radiation definition (#787)
+    !+ad_hist  17/01/19 SIM Added photon_wall and rad_fraction calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1168,35 +1172,30 @@ contains
     call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
     !  Calculate radiation power
-    !  N.B. pedgeradpv is recalculated below - thus making the model
-    !  inconsistent with the tokamak version
 
     call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
          pcoreradpv,pedgeradpv,pradpv)
 
     pcoreradmw = pcoreradpv*vol
+    pedgeradmw = pedgeradpv*vol
     pradmw = pradpv*vol
 
     !  Heating power to plasma (= Psol in divertor model)
     !  Ohmic power is zero in a stellarator
+    !  pradmw here is core + edge (no SOL)
 
-    powht = falpha*palpmw + pchargemw + pohmmw - pcoreradmw
+    powht = falpha*palpmw + pchargemw + pohmmw - pradmw
     if (ignite == 0) powht = powht + pinjmw
-
-    !  Edge radiation power/volume is obtained via input parameter f_rad
-    !  (in contrast to tokamak calculation)
-
-    pedgeradpv = f_rad*powht/vol
-    pedgeradmw = pedgeradpv*vol
-
-    !  Reset radiation power totals
-
-    pradmw = pcoreradmw + pedgeradmw
-    pradpv = pradmw/vol
 
     !  Power to divertor, = (1-f_rad)*Psol
 
-    pdivt = powht - pedgeradmw
+    psolradmw = f_rad * powht
+    pdivt = powht - psolradmw
+
+    ! Add SOL Radiation to total
+
+    pradmw = pradmw + psolradmw
+    pradpv = pradmw / vol
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on (but beware -
@@ -1207,6 +1206,22 @@ contains
     !  Power transported to the first wall by escaped alpha particles
 
     palpfwmw = palpmw * (1.0D0-falpha)
+
+    !  Nominal mean photon wall load
+
+    if (iwalld == 1) then
+        photon_wall = ffwal * pradmw / sarea
+    else
+        if (ipowerflow == 0) then
+            photon_wall = (1.0D0-fhole)*pradmw / fwarea
+        else
+            photon_wall = (1.0D0-fhole-fhcd-fdiv)*pradmw / fwarea
+        end if
+    end if
+
+    peakradwallload = photon_wall * peakfactrad
+
+    rad_fraction = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
 
     !  Calculate density limit
 

@@ -5,6 +5,8 @@
 ## Bug Fixes
 - Added emultmw calculation to stellarator and fixed power balance errors (Issue #783)
 - Amended fpump* output to match with primary_pumping options.
+- Corrected power crossing the separatrix for stellarators (Issue #787)
+- Changed Connor-Hastie plasma current model to kappa95 and triang95% (Issue #791)
 
 ## Features
 - HTS REBCO model final version implemented
@@ -15,7 +17,7 @@
 
 ## Minor Changes
 - Explicitly state 1990 $ for old cost model
-
+- Made photon_wall and rad_fraction global variables, and added calculations to stellarator. 
 
 # 1.0.14
 

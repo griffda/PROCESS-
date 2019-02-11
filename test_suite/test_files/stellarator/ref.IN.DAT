@@ -1,7 +1,7 @@
 *************************************************************************
 *****                                                               *****
 *****                        HELIAS-5B                              *****
-*****               Stuart Muldrew (05/12/2018)                     *****
+*****               Stuart Muldrew (17/01/2019)                     *****
 *****            Based on Felix Warmer Run (27/05/2015)             *****
 *****   Warmer et al. (2016), IEEE Trans. Plasma Sci. 44, 1576      *****
 *****                                                               *****
@@ -27,7 +27,7 @@ boundl(6) = 3.005E19
 boundu(6) = 5.005E20
 
 ixc = 10                *hfact
-hfact = 1.3390          *H-factor on energy confinement times
+hfact = 1.2187          *H-factor on energy confinement times
 boundu(10) = 2.0
 
 ixc = 25                *fpnetel
@@ -128,7 +128,7 @@ etath    = 0.4          *Thermal to electric conversion efficiency; if seconday_
 *------------Impurity Radiation Module-------------*
 
 imprad_model = 1        *Switch for impurity radiation model
-coreradius = 0.9        *Normalised radius defining the 'core' region
+coreradius = 0.6        *Normalised radius defining the 'core' region
 
 fimp(1)  = 1.0          *Hydrogen (fraction calculated by code)
 fimp(2)  = 0.1          *Helium (fraction calculated by code)
@@ -143,7 +143,7 @@ fimp(10) = 0.0          *Iron
 fimp(11) = 0.0          *Nickel
 fimp(12) = 0.0          *Krypton
 fimp(13) = 0.0          *Xenon
-fimp(14) = 1.0d-5       *Tungsten
+fimp(14) = 1.0E-5       *Tungsten
 
 *---------------------Numerics---------------------*
 
