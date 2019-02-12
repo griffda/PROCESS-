@@ -281,6 +281,12 @@ updated upon compilation. This way each output file is trackable to a specific c
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 | `git checkout tags/<tag name>` | checkout a specific tag |
 
+## Troubleshooting
+
+If you encounter issues with file line endings when working between Windows and Linux. Run the command on Freia to convert the line endings to unix based line endings for a given file (create_dicts.py in this case).
+
+```dos2unix create_dicts.py```
+
 ## Contacts
 
 [Hanni Lux](Hanni.lux@ukaea.uk)
