@@ -16,7 +16,7 @@
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
+!
 
 
 
@@ -108,7 +108,7 @@
 		 & cxe,car,nG, qedge, elong, trianpg, amin ,tsep, rpmajor,  rpminor, asppect, nlineavg
   real(kind(1.0d0)) :: tau_sol, V_sol, D_ped, V_ped, lambda_sol,pdtp,sv_dd,svdt
   real(kind(1.0d0)) :: rtor, yd, betaz, lint,taue,Qtot
-  real(kind(1.0d0)) :: Hfactor,chi00,chipow,Hnow,tau_scal,chifac,chifac0
+  real(kind(1.0d0)) :: Hfactor,hpalmod,chi00,chipow,Hnow,tau_scal,chifac,chifac0
   real(kind(1.0d0)) :: paion, NALPH,YVALP,YLLAME,yllami,yllama,YY6,YEPS,YVC, YY7,yv7 ,yv6 !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: ts_alf,chepck,dum1,dum2,dum31,roc0,vloop0,fbs0,toleq0,pow_eq   !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: aim1,aim2,aim3   !fraction of D-T power deposited to ions, plus dummies
@@ -696,7 +696,7 @@ if (num%iprocess.eq.0) then
 
 	prad = nXe*nepr*prxe + nne*nepr*prne+prwol*nwol*nepr !total Prad density
 
-!write(*,*) trapz(prwol*nwol*nepr*dV),zavwol(20)
+!write(*,*) prxe(1),nxe(1),nepr(1),trapz(prxe*nxe*nepr*dV),zavxe(1)
 
 !quasi-neutrality equations
 	nHe3 = fuelhe3*(nepr - nNe*zavne - nXe*zavxe - &
@@ -717,7 +717,8 @@ if (num%iprocess.eq.0) then
 
 !caluclate brehmstrahliuzng radiation
   PBRAD=5.06E-5*zepff*NEpr**2.d0*SQRT(TEpr)
-
+!	write(*,*) 'pbrad',zepff,nepr(1),tepr(1),pbrad(1),psync(1)
+!	write(*,*) 'pbrad',ndeut(1),ntrit(1),nhe(1),nhe3(1),nne(1),nxe(1),nprot(1),nwol(1)
 !this below is for synchrotron radiation computed in the loop
   totse(nx)=trapz(tepr*dV)/V(nx)
   totsi(nx)=trapz(nepr*dV)/V(nx)
@@ -882,6 +883,7 @@ yllama=1.d0
 
  if (i_diagz.eq.1)	write(*,*) 'matrix obtained'
 	if (i_diagz.eq.1) then
+!	pause
 		write(1441,'(4111E25.11)') xtrt,a(:,1),a(:,2),a(:,3),b(:,1),b(:,2),b(:,3), &
 		& c(:,1),c(:,2),c(:,3),y(:,1),y(:,2),y(:,3),chat(:,1),chat(:,2),chat(:,3),gy(:,1),gy(:,2),gy(:,3)
 		write(1447,'(4111E25.11)') x,tepr,tipr,nepr, &
@@ -941,11 +943,21 @@ yllama=1.d0
            chifac0=1.d0  ! transport model gives H in output
 	else
 
+	Hpalmod=1.04*0.60866*(neb/ng)**0.3563 * &  !corrected by 1.04 to make reference case H = 1
+	 & teb**0.4901 * &
+		& rpmajor**(-0.7644) * & 
+		& btor**(-0.7164) * &
+	 & exp(-0.00029094047453*(loss%pnbi+Qf)) * &
+		& exp(-0.00028677756085*trapz((pradtot+pradedge)*dV)) * &
+		& q**0.803 * &
+		& (rpmajor/rpminor)**(1.47123)
+		
            if (i_modeltype.eq.555) then
-		Hfactor = 0.95*(teb/5.5)**0.39*(neb/6.)**0.15
+		Hfactor = Hpalmod
            endif
 
-!write(*,*) teb,Hnow,Hfactor,Psep,cxe,q_heat
+!write(*,*) 'check', teb,neb/ng,rpmajor,btor,(loss%pnbi+Qf),trapz((pradtot+pradedge)*dV),q,rpmajor/rpminor,&
+!& Hnow,Hfactor,Hpalmod
 
            chifac0=max(0.01,chifac0+num%dt*(Hnow-Hfactor)/(1.+num%dt)) !imodeltype = 1: rescale transport to match H factor in input
 	endif
@@ -1344,6 +1356,7 @@ dum2=min(dum2,comp%psep_r*rpmajor)
 	endif
 
 	if (PLH.gt.dum2) then
+	write(*,*) 'PLH, Psepcrit',plh,dum2
 	 write(*,*) 'PLH > Psep crit, not possible, stop, increase psepbqar or psepr'
 		stop
 	endif
@@ -1395,6 +1408,8 @@ if(q_heat.gt.0.) q_heat=q_heat*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 if(q_cd.gt.0.) q_cd=q_cd*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 if(q_fus.gt.0.) q_fus=q_fus*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 
+
+!	write(*,*) qtot,psep,cxe,loss%pnbi,q_heat,q_cd,q_fus,PLH,dum2,tepr(1)
 
 !SOL MODEL below!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (comp%qdivt.gt.0.) then
@@ -1718,6 +1733,8 @@ endif
   loss%Pfus = 5.0d0*trapz((pidt+pedt)*dV)
   loss%chifac0 = chifac0
   loss%pohm=ip*(1.-fbs-fcd)*vloop
+
+
   loss%rplas=vloop/(ip*(1.-fbs-fcd))/1.d6
   loss%psync=trapz(psync*dv)
   loss%pbrehms=trapz(pbrad*dv)
@@ -1838,7 +1855,7 @@ endif
 !stop
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+!	stop
 
 end subroutine plasmod_EF
 
