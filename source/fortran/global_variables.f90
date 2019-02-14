@@ -551,12 +551,12 @@ module physics_variables
        'Petty 2008           (H)', &
   !+ad_varc  <LI> (42)  Lang et al. 2012 (H-mode)
        'Lang et al. 2012     (H)', &
-  !+ad_varc  <LI> (43)  Hubbard 2012 (I-mode) - nominal
-       'Hubbard 2012 - nom   (I)', &
-  !+ad_varc  <LI> (44)  Hubbard 2012 (I-mode) - lower bound
-       'Hubbard 2012 - lower (I)', &
-  !+ad_varc  <LI> (45)  Hubbard 2012 (I-mode) - upper bound</UL>
-       'Hubbard 2012 - upper (I)' /)
+  !+ad_varc  <LI> (43)  Hubbard 2017 (I-mode) - nominal
+       'Hubbard 2017 - nom   (I)', &
+  !+ad_varc  <LI> (44)  Hubbard 2017 (I-mode) - lower bound
+       'Hubbard 2017 - lower (I)', &
+  !+ad_varc  <LI> (45)  Hubbard 2017 (I-mode) - upper bound</UL>
+       'Hubbard 2017 - upper (I)' /)
 
   !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;

@@ -14,6 +14,9 @@
 - Added Hubbard 2012 and 2017 I-mode threshold scaling
 - Added Hubbard I mode confinement time scaling
 - Added I-mode version of Reinke criterion (fzmin)
+- New figure of linear combination figure of merit. Linear combination (50/50 
+  weighted) of $`Q`$ and $`t_{burn}`$.
+- I mode scalings for confinement time and L-I power threshold from Hubbard 2017.
 
 ## Minor Changes
 - Explicitly state 1990 $ for old cost model
