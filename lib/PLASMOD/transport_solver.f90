@@ -949,32 +949,32 @@ yllama=1.d0
            chifac0=1.d0  ! transport model gives H in output
 	else
 
-	Hpalmod=0.72884*(neb/ng)**0.2185 * &  !H factor Fpalmod scaling
-	 & teb**0.4342 * &
+	Hpalmod=1.04*0.73*(neb/ng)**0.219 * &  !corrected by 1.04 to make reference case H = 1
+	 & teb**0.434 * &
 		& rpmajor**(-0.867) * & 
-		& btor**(-0.9368) * &
-	 & exp(-0.000534*(loss%pnbi)) * &
+		& btor**(-0.937) * &
+	 & exp(-0.000535*(loss%pnbi)) * &
 		& exp(-0.000247*trapz((pradtot+pradedge)*dV)) * &
 		& q**0.948 * &
-		& (rpmajor/rpminor)**(1.6852)
+		& (rpmajor/rpminor)**(1.685)
 
 	npikpalmod=1.3043*(neb/ng)**(0.493) * &  !density peaking Fpalmod scaling
 	 & teb**(-0.444) * &
-		& rpmajor**(-0.2911) * & 
-		& btor**(1.001) * &
-	 & exp(0.00474*(loss%pnbi)) * &
-		& exp(-0.000995*trapz((pradtot+pradedge)*dV)) * &
-		& q**0. * &
-		& (rpmajor/rpminor)**(0.)
+		& rpmajor**(-0.291) * & 
+		& btor**(1.) * &
+	 & exp(0.00473*(loss%pnbi)) * &
+		& exp(-0.001*trapz((pradtot+pradedge)*dV)) * &
+		& (ip/17.75)**0.4 * &     ! (ip/17.75)^0.4
+		& (rpmajor/rpminor/3.1)**(0.)   !  (A/3.1)^0.
 
-	xihepalmod=0.9543*(neb/ng)**0.32 * &  !chii to chie ratio
+	xihepalmod=0.9543*(neb/ng)**0.32 * &  !density peaking Fpalmod scaling
 	 & teb**(-0.284) * &
 		& rpmajor**(0.42) * & 
 		& btor**(0.368) * &
-	 & exp(-0.000179*(loss%pnbi)) * &
+	 & exp(-0.00018*(loss%pnbi)) * &
 		& exp(-0.000456*trapz((pradtot+pradedge)*dV)) * &
-		& q**0. * &
-		& (rpmajor/rpminor)**(0.)
+		& (ip/17.75)**1.65 * &   ! (ip/17.75)^1.65    
+		& (rpmajor/rpminor/3.1)**(-0.5) ! (A/3.1)^-0.5
 		
            if (i_modeltype.eq.555) then
 		Hfactor = Hpalmod
