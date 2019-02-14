@@ -108,7 +108,7 @@
 		 & cxe,car,nG, qedge, elong, trianpg, amin ,tsep, rpmajor,  rpminor, asppect, nlineavg
   real(kind(1.0d0)) :: tau_sol, V_sol, D_ped, V_ped, lambda_sol,pdtp,sv_dd,svdt
   real(kind(1.0d0)) :: rtor, yd, betaz, lint,taue,Qtot
-  real(kind(1.0d0)) :: Hfactor,hpalmod,chi00,chipow,Hnow,tau_scal,chifac,chifac0
+  real(kind(1.0d0)) :: Hfactor,hpalmod,npikpalmod,xihepalmod,chi00,chipow,Hnow,tau_scal,chifac,chifac0
   real(kind(1.0d0)) :: paion, NALPH,YVALP,YLLAME,yllami,yllama,YY6,YEPS,YVC, YY7,yv7 ,yv6 !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: ts_alf,chepck,dum1,dum2,dum31,roc0,vloop0,fbs0,toleq0,pow_eq   !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: aim1,aim2,aim3   !fraction of D-T power deposited to ions, plus dummies
@@ -511,6 +511,12 @@ endif
   tib = teb
   nsep = inp0%f_gws*nG
 
+	!peaking for 1st iteration
+		npikpalmod=loss%npikpalmod
+		xihepalmod=loss%xihepalmod
+
+
+
   !initialization of counters & tolerance
   jiter=1
   jnit=0
@@ -844,7 +850,7 @@ yllama=1.d0
 			& nepr,tepr,nepr,0.5*nepr,0.*nepr,tipr,1.+0.*nepr,0.*nepr,2.5+0.*nepr,1./qprf,RHO,x*rpminor, &
 			& SHIF,k,d,0.*shif,0.*shif,0.*shif,0.*shif,IPOL,g1*vprime,vprime,1.+0.*vprime, &
 			& SHEAR,0.*nepr,0.*nepr,palpph,0.*nepr,0.*nepr,0.*nepr,y0, gy0, xtr,x, amin, rpmajor, btor,num%capA, q_tr, sh_tr, a, b, &
-			& Hfactor,chi00,chipow,Hnow,chifac0)
+			& Hfactor,chi00,chipow,Hnow,chifac0,npikpalmod,xihepalmod)
 
 !actual diffusivities adding stabilizing term num%dtmaxmax. G. V. Pereverzev and G. Corrigan method, CPC 2008
 	aa=a+num%dtmaxmax
@@ -943,14 +949,32 @@ yllama=1.d0
            chifac0=1.d0  ! transport model gives H in output
 	else
 
-	Hpalmod=1.04*0.60866*(neb/ng)**0.3563 * &  !corrected by 1.04 to make reference case H = 1
-	 & teb**0.4901 * &
-		& rpmajor**(-0.7644) * & 
-		& btor**(-0.7164) * &
-	 & exp(-0.00029094047453*(loss%pnbi+Qf)) * &
-		& exp(-0.00028677756085*trapz((pradtot+pradedge)*dV)) * &
-		& q**0.803 * &
-		& (rpmajor/rpminor)**(1.47123)
+	Hpalmod=0.72884*(neb/ng)**0.2185 * &  !H factor Fpalmod scaling
+	 & teb**0.4342 * &
+		& rpmajor**(-0.867) * & 
+		& btor**(-0.9368) * &
+	 & exp(-0.000534*(loss%pnbi)) * &
+		& exp(-0.000247*trapz((pradtot+pradedge)*dV)) * &
+		& q**0.948 * &
+		& (rpmajor/rpminor)**(1.6852)
+
+	npikpalmod=1.3043*(neb/ng)**(0.493) * &  !density peaking Fpalmod scaling
+	 & teb**(-0.444) * &
+		& rpmajor**(-0.2911) * & 
+		& btor**(1.001) * &
+	 & exp(0.00474*(loss%pnbi)) * &
+		& exp(-0.000995*trapz((pradtot+pradedge)*dV)) * &
+		& q**0. * &
+		& (rpmajor/rpminor)**(0.)
+
+	xihepalmod=0.9543*(neb/ng)**0.32 * &  !chii to chie ratio
+	 & teb**(-0.284) * &
+		& rpmajor**(0.42) * & 
+		& btor**(0.368) * &
+	 & exp(-0.000179*(loss%pnbi)) * &
+		& exp(-0.000456*trapz((pradtot+pradedge)*dV)) * &
+		& q**0. * &
+		& (rpmajor/rpminor)**(0.)
 		
            if (i_modeltype.eq.555) then
 		Hfactor = Hpalmod
@@ -1760,6 +1784,8 @@ endif
  loss%tauee=w_e/qtote
  loss%tauei=w_i/qtoti
  loss%qtot=qtot
+ loss%npikpalmod=npikpalmod
+ loss%xihepalmod=xihepalmod
 
 	!perimeter
 	do i=1,num%nx
