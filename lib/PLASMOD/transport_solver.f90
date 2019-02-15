@@ -953,7 +953,7 @@ yllama=1.d0
            chifac0=1.d0  ! transport model gives H in output
 	else
 
-	Hpalmod=0.73*(neb/ng)**0.219 * &  !corrected by 1.04 to make reference case H = 1
+	Hpalmod=0.73*(neb/ng)**0.219 * &  !H factor scaling from Fpalmod
 	 & teb**0.434 * &
 		& rpmajor**(-0.867) * & 
 		& btor**(-0.937) * &
