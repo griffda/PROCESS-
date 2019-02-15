@@ -959,27 +959,27 @@ yllama=1.d0
 		& btor**(-0.937) * &
 	 & exp(-0.000535*(loss%pnbi)) * &
 		& exp(-0.000247*trapz((pradtot+pradedge)*dV)) * &
-		& q**0.948 * &
+		& q_95**0.948 * &
 		& (rpmajor/rpminor)**(1.685)
 
-	npikpalmod=1.3043*(neb/ng)**(0.493) * &  !density peaking Fpalmod scaling
-	 & teb**(-0.444) * &
-		& rpmajor**(-0.291) * & 
-		& btor**(1.) * &
-	 & exp(0.00473*(loss%pnbi)) * &
-		& exp(-0.001*trapz((pradtot+pradedge)*dV)) * &
-		& (ip/17.75)**0.4 * &     ! (ip/17.75)^0.4
-		& (rpmajor/rpminor/3.1)**(0.)   !  (A/3.1)^0.
+	npikpalmod=0.02544*(neb/ng)**(0.475) * &  !density peaking Fpalmod scaling
+	 & teb**(-0.4395) * &
+		& rpmajor**(-0.258) * & 
+		& btor**(1.01268) * &
+	 & exp(0.0033*(loss%pnbi)) * &
+		& exp(-0.00091*trapz((pradtot+pradedge)*dV)) * &
+		& (ip)**0.874 * &     ! (ip/17.75)^0.4
+		& (rpmajor/rpminor)**(1.2146)   !  (A/3.1)^0.
 
-	xihepalmod=0.9543*(neb/ng)**0.32 * &  !density peaking Fpalmod scaling
-	 & teb**(-0.284) * &
-		& rpmajor**(0.42) * & 
-		& btor**(0.368) * &
-	 & exp(-0.00018*(loss%pnbi)) * &
-		& exp(-0.000456*trapz((pradtot+pradedge)*dV)) * &
-		& (ip/17.75)**1.65 * &   ! (ip/17.75)^1.65    
-		& (rpmajor/rpminor/3.1)**(-0.5) ! (A/3.1)^-0.5
-		
+	xihepalmod=3.411699*(neb/ng)**0.3210899 * &  !density peaking Fpalmod scaling
+	 & teb**(-0.284027) * &
+		& rpmajor**(0.4208) * & 
+		& btor**(0.365731) * &
+	 & exp(-0.000123003*(loss%pnbi)) * &
+		& exp(-0.00046091*trapz((pradtot+pradedge)*dV)) * &
+		& (ip)**(-0.393344) * &   ! (ip/17.75)^1.65    
+		& (rpmajor/rpminor)**(-0.12443211) ! (A/3.1)^-0.5
+
            if (i_modeltype.eq.555) then
 		Hfactor = Hpalmod
            endif
