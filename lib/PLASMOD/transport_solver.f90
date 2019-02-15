@@ -220,8 +220,11 @@ endif
 
   if (.not.allocated(radp%ne).or..not.allocated(radp%g2))    jiterext=1 !if nothing allocated, must be first call ever
 
-  if (geom%counter.eq.0.d0)   jiterext=1 !if geom%counter 0 --> first call ever
-
+		num%dt=num%dtmax
+  if (geom%counter.eq.0.d0) then
+				num%dt=num%dtmin
+		  jiterext=1 !if geom%counter 0 --> first call ever
+	endif
   !check if the machine has changed, major radius, current, anything
   chepck=0.d0
   if (geom%counter.ge.1.d0) then
@@ -237,6 +240,8 @@ endif
   if (geom%counter.ge.1..and.chepck.gt.0.1) then
    ! if machine has changed, restart from scratch guess
    write(*,*) 'machine has changed'
+		num%dt=num%dtmin
+	
    jiterext=1
   endif
 
@@ -259,7 +264,6 @@ endif
   redo = 0
   jnit = 0
   jiterextmax = 1
-		num%dt=num%dtmin
 
   !impurities mass ( to be substituted later by process)
   aim1=4.d0 !helium
@@ -949,7 +953,7 @@ yllama=1.d0
            chifac0=1.d0  ! transport model gives H in output
 	else
 
-	Hpalmod=1.04*0.73*(neb/ng)**0.219 * &  !corrected by 1.04 to make reference case H = 1
+	Hpalmod=0.73*(neb/ng)**0.219 * &  !corrected by 1.04 to make reference case H = 1
 	 & teb**0.434 * &
 		& rpmajor**(-0.867) * & 
 		& btor**(-0.937) * &
@@ -996,10 +1000,10 @@ yllama=1.d0
 
 !time step control
 if (num%etol.lt.num%etolm*num%tolmin) then
-num%dt=min(num%dtmax,num%dt*num%Ainc)
+!num%dt=min(num%dtmax,num%dt*num%Ainc)
 endif
 if (num%etol.ge.num%etolm*num%tolmin) then
-num%dt=max(num%dtmin,num%dt/num%dtinc)
+!num%dt=max(num%dtmin,num%dt/num%dtinc)
 endif
 	if (i_diagz.eq.1) 	write(444,'(6E25.11)') num%etol0,num%etol,num%dt,pfus(nx),loss%pnbi,comp%cxe
 
