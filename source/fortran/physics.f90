@@ -1284,11 +1284,11 @@ implicit none
       !+ad_desc  (private communication).
       !+ad_desc  <P>beta poloidal = 4*pi*(ne*Te+ni*Ti)/Bpo**2
       !+ad_desc  where ni is the sum of all ion densities (thermal)
-      !+ad_prob  PJK: I do not understand why it should be 4*pdivti*... instead
-      !+ad_prob  of 8*pi*... Presumably it is because of a stpdivtange ASTRA
-      !+ad_prob  method similar to that noted above in the capdivtculation of jboot.
+      !+ad_prob  PJK: I do not understand why it should be 4*pi*... instead
+      !+ad_prob  of 8*pi*... Presumably it is because of a strange ASTRA
+      !+ad_prob  method similar to that noted above in the caculation of jboot.
       !+ad_call  None
-      !+ad_hist  15/05/14 PJK New routine, which includes thepdivtion pressure contribution
+      !+ad_hist  15/05/14 PJK New routine, which includes the ion pressure contribution
       !+ad_stat  Okay
       !+ad_docs  Pereverzev, 25th April 1989 (?)
       !+ad_docs  E Fable, private communication, 15th May 2014

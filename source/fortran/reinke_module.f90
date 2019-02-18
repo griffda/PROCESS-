@@ -161,7 +161,6 @@ implicit none
     real(kind(1.0D0)) :: bt, flh, qstar, rmajor, eps, fgw, kappa, lhat
     real(kind(1.0D0)) :: kappa_0 = 2D3 !Stangeby W/m/eV^(7/2)
 
-
     reinke_tsep = bt**0.72 * flh**0.29 * fgw**0.21 * qstar**0.08 * rmajor**0.33
     !reinke_tsep = bt**0.72 * flh**0.2857 * fgw**0.2057 * qstar**0.08 * rmajor**0.3314
 

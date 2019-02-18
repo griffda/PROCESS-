@@ -995,7 +995,13 @@ contains
     !  Total thermal power deposited in divertor coolant (MW)
     !  = (conduction to divertor, less radiation) + (neutron and radiation power)
     !  using pdivt as calculated in physics.f90
-    pthermdiv = pdivt + (pnucdiv + praddiv) + htpmw_div
+    if (idivrt == 2) then
+        ! Double null divertor configuration
+        pthermdiv = 2.0d0*pdivt + (pnucdiv + praddiv) + htpmw_div
+    else
+        ! Single null divertor congiguration
+        pthermdiv = pdivt + (pnucdiv + praddiv) + htpmw_div
+    end if 
 
     !  Heat removal from first wall and divertor (MW) (only used in costs.f90)
     if(primary_pumping/=3) pfwdiv = pthermfw + pthermdiv

@@ -599,23 +599,41 @@ contains
           !#=# physics
           !#=#=# flhthresh, plhthresh
 
-          ! flhthresh |  f-value for L-H power threshold
-          ! plhthresh |  L-H mode power threshold (MW)
-          ! pdivt     |  power conducted to the divertor region (MW)
-          cc(i) = -(1.0D0 - flhthresh * plhthresh / (2.0d0*pdivt))
+          ! check for divertor configuration
+          if (idivrt == 2) then
+            ! Double Null
+            ! flhthresh |  f-value for L-H power threshold
+            ! plhthresh |  L-H mode power threshold (MW)
+            ! pdivt     |  power conducted to the divertor region (MW)
+            cc(i) = -(1.0D0 - flhthresh * plhthresh / (2.0D0*pdivt))
 
-          write(*,*) 'P_LH / P_sep = ', flhthresh * plhthresh / (2.0d0*pdivt) - 1.0d0
+            if (present(con)) then
+                con(i) = plhthresh
+                err(i) = plhthresh - 2.0D0 * pdivt / flhthresh
+                if (flhthresh > 1.0D0) then
+                  symbol(i) = '>'
+                else
+                  symbol(i) = '<'
+                end if
+                units(i) = 'MW'
+            end if
 
-          if (present(con)) then
-             con(i) = plhthresh
-             err(i) = plhthresh - 2.0d0 * pdivt / flhthresh
-             if (flhthresh > 1.0D0) then
-                symbol(i) = '>'
-             else
-                symbol(i) = '<'
-             end if
-             units(i) = 'MW'
-          end if
+          else
+            !Single null
+            cc(i) = -(1.0D0 - flhthresh * plhthresh / pdivt)
+
+            if (present(con)) then
+                con(i) = plhthresh
+                err(i) = plhthresh - pdivt / flhthresh
+                if (flhthresh > 1.0D0) then
+                  symbol(i) = '>'
+                else
+                  symbol(i) = '<'
+                end if
+                units(i) = 'MW'
+            end if
+          end if 
+
 
        case (16)  ! Equation for net electric power lower limit
           !#=# heat_transport
