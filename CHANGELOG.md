@@ -17,6 +17,7 @@
 - New figure of linear combination figure of merit. Linear combination (50/50 
   weighted) of $`Q`$ and $`t_{burn}`$.
 - I mode scalings for confinement time and L-I power threshold from Hubbard 2017.
+- New utility called `plot_profiles.py`. Plots T and n profiles for a list of given MFILES.
 
 ## Minor Changes
 - Explicitly state 1990 $ for old cost model
