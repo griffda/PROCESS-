@@ -80,6 +80,9 @@ elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
    set(CMAKE_CALC_ENGINE libPROCESS_calc_engine.so)
 endif()
 
+# Turn debug on/off with option -Ddebug=ON
+option(debug "debug" OFF)
+
 # Setup C and C++ compilers
 find_program(CMAKE_C_COMPILER NAMES $ENV{CC} gcc PATHS ENV PATH NO_DEFAULT_PATH)
 find_program(CMAKE_CXX_COMPILER NAMES $ENV{CXX} g++ PATHS ENV PATH NO_DEFAULT_PATH)
@@ -125,7 +128,11 @@ foreach(file ${FORTRAN_FILES})
     message("-- Use -fcheck=bounds -fbacktrace flags for --> " ${file})
     set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch")
   else()
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
+    if(${debug} MATCHES ON)
+      set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
+    else()
+      set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
+    endif()
   endif()
 endforeach()
 message("-- COMPILE_FLAGS for all other fortran files = -Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
