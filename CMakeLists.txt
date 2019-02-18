@@ -227,10 +227,29 @@ add_custom_target(optsolverdoc
   DEPENDS ${DOC_DIR}/optsolverdoc.tex
   WORKING_DIRECTORY ${DOC_DIR}
 )
+add_custom_target(tfdoc
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
+  COMMAND bibtex tfdoc
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
+  COMMAND ${MOVE_FILE} -f pdf tfdoc.pdf tfdoc.log
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.aux
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.lof
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.log
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.lot
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.toc
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.out
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.bbl
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.blg
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.fdb_latexmk
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.fls
+  DEPENDS ${DOC_DIR}/tfdoc.tex
+  WORKING_DIRECTORY ${DOC_DIR}
+)
 add_custom_target(doc
   COMMAND pwd
   COMMENT "Creating all documentation files"
-  DEPENDS vardes html userguide developerguide utilitiesdoc optsolverdoc
+  DEPENDS vardes html userguide developerguide utilitiesdoc optsolverdoc tfdoc
   WORKING_DIRECTORY ${DOC_DIR}
 )
 add_custom_target(all-builds

@@ -21,6 +21,7 @@
 ## Minor Changes
 - Explicitly state 1990 $ for old cost model
 - Made photon_wall and rad_fraction global variables, and added calculations to stellarator. 
+- TF coil documentation now in repository and makefile target `tfdoc`.
 
 # 1.0.14
 
