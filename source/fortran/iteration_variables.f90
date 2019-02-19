@@ -266,6 +266,7 @@ subroutine loadxc
      case (147) ; xcm(i) = freinke
      case (148) ; xcm(i) = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual   
      case (149) ; xcm(i) = fbmaxcs
+     case (150) ; xcm(i) = fgwsep
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -575,6 +576,8 @@ subroutine convxc(xc,nn)
         impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
         write(*,*) 'fzactual = ', fzactual
      case (149) ; fbmaxcs = xc(i)/scale(i)
+     case (150) ; fgwsep = xc(i)/scale(i)
+
      case default
 
         call report_error(57)

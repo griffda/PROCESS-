@@ -100,7 +100,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 149
+  integer, parameter :: ipnvars = 150
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 79
   !+ad_vars  ipnfoms FIX : number of available figures of merit
@@ -674,8 +674,10 @@ module numerics
        'freinke       ', &
        !+ad_varc  <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion
        'fzactual      ', &
-       !+ad_varc  <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)</UL>
-       'fbmaxcs       ' &
+       !+ad_varc  <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
+       'fbmaxcs       ', &
+       !+ad_varc  <LI> (150) fbmaxcs : Ratio of separatrix density to Greenwald density</UL>
+       'fgwsep        ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -842,7 +844,8 @@ module numerics
        0.001D0, &  !  146
        0.001D0, &  !  147
        1.00D-8, &  !  148
-       0.001D0  &  !  149
+       0.001D0, &  !  149
+       0.001D0  &  !  150
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -996,7 +999,8 @@ module numerics
        1.000D0, &  !  146
        1.000D0, &  !  147
        1.000D0, &  !  148
-       1.000D0  &  !  149
+       1.000D0, &  !  149
+       1.000D0  &  !  150
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
