@@ -23,7 +23,7 @@ module global_variables
   !+ad_vars  icase : power plant type
   character(len=48) :: icase = 'Steady-state tokamak model'
   !+ad_vars  runtitle /Run Title/ : short descriptive title for the run
-  character(len=120) :: runtitle = &
+  character(len=180) :: runtitle = &
        "Run Title (change this line using input variable 'runtitle')"
 
   !+ad_vars  verbose /0/ : switch for turning on/off diagnostic messages:<UL>
