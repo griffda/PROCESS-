@@ -5,6 +5,8 @@
 ## Bug Fixes
 - Added emultmw calculation to stellarator and fixed power balance errors (Issue #783)
 - Amended fpump* output to match with primary_pumping options.
+- Corrected power crossing the separatrix for stellarators (Issue #787)
+- Changed Connor-Hastie plasma current model to kappa95 and triang95% (Issue #791)
 
 ## Features
 - HTS REBCO model final version implemented
@@ -12,10 +14,16 @@
 - Added Hubbard 2012 and 2017 I-mode threshold scaling
 - Added Hubbard I mode confinement time scaling
 - Added I-mode version of Reinke criterion (fzmin)
+- New figure of linear combination figure of merit. Linear combination (50/50 
+  weighted) of $`Q`$ and $`t_{burn}`$.
+- I mode scalings for confinement time and L-I power threshold from Hubbard 2017.
+- New utility called `plot_profiles.py`. Plots T and n profiles for a list of given MFILES.
+- Can now setup the repo in `debug` mode for compilation. See `README.md` for instructions.
 
 ## Minor Changes
 - Explicitly state 1990 $ for old cost model
-
+- Made photon_wall and rad_fraction global variables, and added calculations to stellarator. 
+- TF coil documentation now in repository and makefile target `tfdoc`.
 
 # 1.0.14
 

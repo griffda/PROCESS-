@@ -85,6 +85,7 @@ The folder structure for the PROCESS system prior to compilation is descibed bel
     - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where `folder_name`is the name of the folder which will be created when cloning the repository.  
 2. Inside the PROCESS directory, run CMAKE to build, compile and generate the executable and shared object
     - `cmake3 -H. -Bbuild`
+      - or `cmake3 -H. -Bbuild -Ddebug=ON` to use all compiler warnings (`-Wall` and `-Wextra`).
     - `cmake3 --build build`
     - Step 2 will create a folder called `bin`, which contains three files: process.exe, process_GTest.exe and libPROCESS_calc_engine.so
 3. pFUnit unit test files are located in the folder _test_files/pfunit_files/_ with extension _.pf_. Use `make tests` from your home directory to run the pFUnit test suite   
@@ -280,6 +281,12 @@ updated upon compilation. This way each output file is trackable to a specific c
 | `git describe --tags`   | show the current tag  | 
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 | `git checkout tags/<tag name>` | checkout a specific tag |
+
+## Troubleshooting
+
+If you encounter issues with file line endings when working between Windows and Linux. Run the command on Freia to convert the line endings to unix based line endings for a given file (create_dicts.py in this case).
+
+```dos2unix create_dicts.py```
 
 ## Contacts
 

@@ -163,6 +163,7 @@ module physics_variables
   !+ad_hist  08/02/17 JM  Added fgwsep the fraction of Greenwald density to set as separatrix density
   !+ad_hist  08/02/17 JM  Gave teped, tesep, neped and nesep non-zero defaults
   !+ad_hist  02/05/18 SIM Added pthrmw(9-14)
+  !+ad_hist  17/01/19 SIM Moved photon_wall and rad_fraction to global from physics
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -361,7 +362,8 @@ module physics_variables
   !+ad_varc         <LI> = 4 later ITER scaling, a la Uckan;
   !+ad_varc         <LI> = 5 Todd empirical scaling I;
   !+ad_varc         <LI> = 6 Todd empirical scaling II;
-  !+ad_varc         <LI> = 7 Connor-Hastie model</UL>
+  !+ad_varc         <LI> = 7 Connor-Hastie model;
+  !+ad_varc         <LI> = 8 Sauter scaling allowing negative triangularity</UL>
   integer :: icurr = 4
   !+ad_vars  idensl /7/ : switch for density limit to enforce (constraint equation 5):<UL>
   !+ad_varc          <LI> = 1 old ASDEX;
@@ -549,12 +551,12 @@ module physics_variables
        'Petty 2008           (H)', &
   !+ad_varc  <LI> (42)  Lang et al. 2012 (H-mode)
        'Lang et al. 2012     (H)', &
-  !+ad_varc  <LI> (43)  Hubbard 2012 (I-mode) - nominal
-       'Hubbard 2012 - nom   (I)', &
-  !+ad_varc  <LI> (44)  Hubbard 2012 (I-mode) - lower bound
-       'Hubbard 2012 - lower (I)', &
-  !+ad_varc  <LI> (45)  Hubbard 2012 (I-mode) - upper bound</UL>
-       'Hubbard 2012 - upper (I)' /)
+  !+ad_varc  <LI> (43)  Hubbard 2017 (I-mode) - nominal
+       'Hubbard 2017 - nom   (I)', &
+  !+ad_varc  <LI> (44)  Hubbard 2017 (I-mode) - lower bound
+       'Hubbard 2017 - lower (I)', &
+  !+ad_varc  <LI> (45)  Hubbard 2017 (I-mode) - upper bound</UL>
+       'Hubbard 2017 - upper (I)' /)
 
   !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;
@@ -634,6 +636,8 @@ module physics_variables
   real(kind(1.0D0)) :: pfuscmw = 0.0D0
   !+ad_vars  phiint : internal plasma V-s
   real(kind(1.0D0)) :: phiint = 0.0D0
+  !+ad_vars  photon_wall : Nominal mean radiation load on inside surface of reactor (MW/m2)
+  real(kind(1.0D0)) :: photon_wall = 0.0D0
   !+ad_vars  piepv : ion/electron equilibration power per volume (MW/m3)
   real(kind(1.0D0)) :: piepv = 0.0D0
   !+ad_vars  plascur : plasma current (A)
@@ -662,6 +666,8 @@ module physics_variables
   real(kind(1.0D0)) :: pradpv = 0.0D0
   !+ad_vars  protonrate : proton production rate (particles/m3/sec)
   real(kind(1.0D0)) :: protonrate = 0.0D0
+  !+ad_vars  psolradmw : SOL radiation power (MW) (stellarator only)
+  real(kind(1.0D0)) :: psolradmw = 0.0D0
   !+ad_vars  psyncpv : synchrotron radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: psyncpv = 0.0D0
   !+ad_vars  ilhthresh /6/ : switch for L-H mode power threshold scaling to use
@@ -719,6 +725,8 @@ module physics_variables
   real(kind(1.0D0)) :: qlim = 0.0D0
   !+ad_vars  qstar : cylindrical safety factor
   real(kind(1.0D0)) :: qstar = 0.0D0
+  !+ad_vars rad_fraction : Radiation fraction = total radiation / total power deposited in plasma
+  real(kind(1.0D0)) :: rad_fraction = 0.0D0
   !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
   !+ad_varc            (calculated if ipedestal=3)
   real(kind(1.0D0)) :: ralpne = 0.10D0

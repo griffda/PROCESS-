@@ -269,6 +269,7 @@ subroutine loadxc
      case (149) ; xcm(i) = fbmaxcs
      case (150) ; xcm(i) = plasmod_fcdp
      case (151) ; xcm(i) = plasmod_fradc
+     case (152) ; xcm(i) = fgwsep
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -581,6 +582,8 @@ subroutine convxc(xc,nn)
      case (149) ; fbmaxcs = xc(i)/scale(i)
      case (150) ; plasmod_fcdp = xc(i)/scale(i)
      case (151) ; plasmod_fradc = xc(i)/scale(i)  
+     case (152) ; fgwsep = xc(i)/scale(i)
+
      case default
 
         call report_error(57)

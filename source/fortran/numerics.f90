@@ -101,11 +101,11 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 151
+  integer, parameter :: ipnvars = 152
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 79
   !+ad_vars  ipnfoms FIX : number of available figures of merit
-  integer, parameter :: ipnfoms = 18
+  integer, parameter :: ipnfoms = 19
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
@@ -159,8 +159,11 @@ module numerics
        'min R0, max tau_burn. ', &
        !+ad_varc  <LI> (17) net electrical output
        'net electrical output.', &
-       !+ad_varc  <LI> (18) Null Figure of Merit </UL>
-       'Null figure of merit. '  &
+       !+ad_varc  <LI> (18) Null Figure of Merit
+       'Null figure of merit. ',  &
+       !+ad_varc  <LI> (19) linear combination of big Q and pulse length (maximised)
+       !+ad_varc              note: FoM should be minimised only!</UL>
+       'max Q, max t_burn.    ' &
         /)
   !+ad_vars  ncalls : number of function calls during solution
   integer :: ncalls = 0
@@ -676,8 +679,10 @@ module numerics
        'fbmaxcs       ', &
         !+ad_varc  <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power
        'plasmod_fcdp  ', &
-       !+ad_varc  <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)</UL>
-       'plasmod_fradc ' &
+       !+ad_varc  <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)
+       'plasmod_fradc ', &
+       !+ad_varc  <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density</UL>
+       'fgwsep        ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -846,7 +851,8 @@ module numerics
        1.00D-8, &  !  148
        0.001D0, &  !  149
        0.000D0, &  !  150
-       0.001D0  &  !  151
+       0.001D0, &  !  151
+       0.001D0  &  !  152
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -1002,7 +1008,8 @@ module numerics
        1.000D0, &  !  148
        1.000D0, &  !  149
        1.000D0, &  !  150
-       1.000D0  &  !  151
+       1.000D0, &  !  151
+       1.000D0  &  !  152
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

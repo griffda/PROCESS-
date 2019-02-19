@@ -80,6 +80,9 @@ elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
    set(CMAKE_CALC_ENGINE libPROCESS_calc_engine.so)
 endif()
 
+# Turn debug on/off with option -Ddebug=ON
+option(debug "debug" OFF)
+
 # Setup C and C++ compilers
 find_program(CMAKE_C_COMPILER NAMES $ENV{CC} gcc PATHS ENV PATH NO_DEFAULT_PATH)
 find_program(CMAKE_CXX_COMPILER NAMES $ENV{CXX} g++ PATHS ENV PATH NO_DEFAULT_PATH)
@@ -125,7 +128,11 @@ foreach(file ${FORTRAN_FILES})
     message("-- Use -fcheck=bounds -fbacktrace flags for --> " ${file})
     set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch")
   else()
-    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
+    if(${debug} MATCHES ON)
+      set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
+    else()
+      set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
+    endif()
   endif()
 endforeach()
 message("-- COMPILE_FLAGS for all other fortran files = -Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
@@ -227,10 +234,29 @@ add_custom_target(optsolverdoc
   DEPENDS ${DOC_DIR}/optsolverdoc.tex
   WORKING_DIRECTORY ${DOC_DIR}
 )
+add_custom_target(tfdoc
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
+  COMMAND bibtex tfdoc
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
+  COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
+  COMMAND ${MOVE_FILE} -f pdf tfdoc.pdf tfdoc.log
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.aux
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.lof
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.log
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.lot
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.toc
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.out
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.bbl
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.blg
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.fdb_latexmk
+  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.fls
+  DEPENDS ${DOC_DIR}/tfdoc.tex
+  WORKING_DIRECTORY ${DOC_DIR}
+)
 add_custom_target(doc
   COMMAND pwd
   COMMENT "Creating all documentation files"
-  DEPENDS vardes html userguide developerguide utilitiesdoc optsolverdoc
+  DEPENDS vardes html userguide developerguide utilitiesdoc optsolverdoc tfdoc
   WORKING_DIRECTORY ${DOC_DIR}
 )
 add_custom_target(all-builds
