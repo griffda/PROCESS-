@@ -546,6 +546,9 @@ contains
        case ('fbfe')
           call parse_real_variable('fbfe', fbfe, 0.0D0, 1.0D0, &
                'Fraction of Fe radn to Bremsstrahlung')
+       case ('ftar')
+          call parse_real_variable('ftar', ftar, 0.5D0, 1.0D0, &
+               'Fraction of power to divertor with highest power load')
        case ('fdeut')
           call parse_real_variable('fdeut', fdeut, 0.0D0, 1.0D0, &
                'Deuterium fuel fraction')

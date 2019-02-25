@@ -296,6 +296,9 @@ module physics_variables
   real(kind(1.0D0)) :: fbfe = 0.35D0
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: fdeut = 0.5D0
+  !+ad_vars  ftar  /0.5/ : fraction of power to the divertor with highest
+  !+ad_vars                power load (snull = 0 only)
+  real(kind(1.0D0)) :: ftar = 0.5D0
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
   !+ad_varc                 area in neutron wall load calculation (iwalld=1)
   real(kind(1.0D0)) :: ffwal = 0.92D0
@@ -308,7 +311,6 @@ module physics_variables
   !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal>=1)
   !+ad_varc                  Needs to be >0 if ipedestal = 3
   real(kind(1.0D0)) :: fgwsep = 0.50D0
-
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
   real(kind(1.0D0)) :: fhe3 = 0.0D0
   !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar, where sbar=1)

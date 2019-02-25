@@ -1289,15 +1289,9 @@ subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pra
     else if (imprad_model == 1) then
        call imprad(pbrempv, plinepv, pimpcore, pimptot)
        pedgeradpv = pimptot - pimpcore
-       ! Double null divertor configuration
        ! We approximate that all edge radiaiton is produced near
        ! the X points, therefore to model double null we double the 
        ! edge radiation
-       !if (idivrt == 2) then
-       !   write(*,*) 'pedgeradpv = ', pedgeradpv
-       !  pedgeradpv = pedgeradpv * 2.0d0
-       !   write(*,*) 'pedgeradpv = ', pedgeradpv
-       !end if
     else
        idiags(1) = imprad_model ; call report_error(82)
     end if
@@ -1309,12 +1303,11 @@ subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pra
     !  Total core radiation power/volume
 
     pcoreradpv = pimpcore + psyncpv
-    !write(*,*) 'pcoreradpv = ', pcoreradpv
 
     !  Total radiation power/volume
 
     pradpv = pimptot + psyncpv ! pcoreradpv + pedgeradpv !
-    !write(*,*) 'pradpv = ', pradpv
+
   end subroutine radpwr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

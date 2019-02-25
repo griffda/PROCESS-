@@ -508,7 +508,6 @@ implicit none
        pcoreradmw = pcoreradpv*vol
        pedgeradmw = pedgeradpv*vol
        pradmw = pradpv*vol
-       !write(*,*) '(pradmw, pcoreradmw, pedgeradmw) = ', pradmw, pcoreradmw, pedgeradmw
     endif
 
     ! MDK
@@ -554,7 +553,7 @@ implicit none
        ! if double null configuration share the power 
        ! equally over the upper and lower divertor 
        if (idivrt == 2) then
-         pdivt = pdivt/2.0d0
+         pdivt = ftar*pdivt
        end if
 
        !  The following line is unphysical, but prevents -ve sqrt argument
@@ -2933,7 +2932,7 @@ implicit none
 
     if (idivrt == 2) then
       ! take total - not per divertor - for double null
-      qperp = 2.0d0*pdivt/sarea
+      qperp = pdivt/(ftar*sarea)
       else 
       qperp = pdivt/sarea
     end if
@@ -2978,7 +2977,7 @@ implicit none
     else
        if (idivrt == 2) then
           ! take total - not per divertor - for double null
-          dlim = 1.0D20 * sqrt(2.0d0*pdivt/denom)
+          dlim = 1.0D20 * sqrt(pdivt/(ftar*denom))
        else
           dlim = 1.0D20 * sqrt(pdivt/denom)
        end if 
@@ -2991,7 +2990,7 @@ implicit none
 
     if (idivrt == 2) then
       ! take total - not per divertor - for double null
-      dlim = 0.237D20 * bt * sqrt(2.0d0*pdivt)/rmajor
+      dlim = 0.237D20 * bt * sqrt(pdivt/ftar)/rmajor
     else
       dlim = 0.237D20 * bt * sqrt(pdivt)/rmajor
     end if

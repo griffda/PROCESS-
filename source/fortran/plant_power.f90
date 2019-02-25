@@ -997,7 +997,7 @@ contains
     !  using pdivt as calculated in physics.f90
     if (idivrt == 2) then
         ! Double null divertor configuration
-        pthermdiv = 2.0d0*pdivt + (pnucdiv + praddiv) + htpmw_div
+        pthermdiv = pdivt/ftar + (pnucdiv + praddiv) + htpmw_div
     else
         ! Single null divertor congiguration
         pthermdiv = pdivt + (pnucdiv + praddiv) + htpmw_div
