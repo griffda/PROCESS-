@@ -295,12 +295,10 @@ subroutine caller(xc,nvars)
 
   call vaccall(nout,0)
 
-  ! Buildings model (1990 costs model only) !
+  ! Buildings model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  if (cost_model==0) then
-     call bldgcall(nout,0)
-  end if
+  call bldgcall(nout,0)
 
   ! Plant AC power requirements !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

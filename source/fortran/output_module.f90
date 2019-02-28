@@ -317,12 +317,10 @@ subroutine output(outfile)
 
   call vaccall(outfile,1)
 
-  ! Buildings model (1990 costs model only) !
+  ! Buildings model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  if (cost_model==0) then
-    call bldgcall(outfile,1)
-  end if
+  call bldgcall(outfile,1)
 
   ! Plant AC power requirements !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
