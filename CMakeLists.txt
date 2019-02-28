@@ -239,7 +239,7 @@ add_custom_target(tfdoc
   COMMAND bibtex tfdoc
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
-  COMMAND ${MOVE_FILE} -f pdf tfdoc.pdf tfdoc.log
+  COMMAND ${MOVE_FILE} -t pdf tfdoc.pdf tfdoc.log
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.log
