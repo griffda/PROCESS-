@@ -219,6 +219,7 @@ contains
          fkind)
     call ovarin(outfile,'Level of Safety Assurance','(lsa)',lsa)
     call oblnkl(outfile)
+    call oshead(outfile,'Structures and Site Facilities')
     call ocosts(outfile,'(c211)','Site improvements, facilities, land (M$)',c211)
     call ocosts(outfile,'(c212)','Reactor building cost (M$)',c212)
     call ocosts(outfile,'(c213)','Turbine building cost (M$)',c213)

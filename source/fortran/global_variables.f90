@@ -3577,7 +3577,7 @@ module cost_variables
 
   !+ad_vars  cost_model /1/ : switch for cost model:<UL>
   !+ad_varc          <LI> = 0 use $ 1990 PROCESS model
-  !+ad_varc          <LI> = 1 use $ 2015 Kovari model</UL>
+  !+ad_varc          <LI> = 1 use $ 2014 Kovari model</UL>
   integer :: cost_model = 1
   !+ad_vars  cowner /0.15/ : owner cost factor
   real(kind(1.0D0)) :: cowner = 0.15D0
