@@ -6,37 +6,21 @@ module costs_star_module
   !+ad_summ  Module containing STAR fusion power plant costing algorithms
   !+ad_type  Module
   !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
-  !+ad_cont  costs
-  !+ad_cont  coelc
-  !+ad_cont  acc21
-  !+ad_cont  acc22
-  !+ad_cont  acc221
-  !+ad_cont  acc2211
-  !+ad_cont  acc2212
-  !+ad_cont  acc2213
-  !+ad_cont  acc2214
-  !+ad_cont  acc2215
-  !+ad_cont  acc222
-  !+ad_cont  acc2221
-  !+ad_cont  acc2222
-  !+ad_cont  acc2221
-  !+ad_cont  acc2223
-  !+ad_cont  acc223
-  !+ad_cont  acc224
-  !+ad_cont  acc225
-  !+ad_cont  acc2251
-  !+ad_cont  acc2252
-  !+ad_cont  acc2253
-  !+ad_cont  acc226
-  !+ad_cont  acc227
-  !+ad_cont  acc228
-  !+ad_cont  acc229
-  !+ad_cont  acc23
-  !+ad_cont  acc24
-  !+ad_cont  acc25
-  !+ad_cont  acc26
-  !+ad_cont  acchyd
-  !+ad_cont  acc9
+  !+ad_cont  costs_star
+  !+ad_cont  star_a20
+  !+ad_cont  star_a21
+  !+ad_cont  star_a22
+  !+ad_cont  star_a2201
+  !+ad_cont  star_a2202
+  !+ad_cont  star_a2203
+  !+ad_cont  star_a2204
+  !+ad_cont  star_a2205
+  !+ad_cont  star_a2206
+  !+ad_cont  star_a2207
+  !+ad_cont  star_a23
+  !+ad_cont  star_a24
+  !+ad_cont  star_a25
+  !+ad_cont  coelc_star
   !+ad_args  N/A
   !+ad_desc  This module contains the STAR fusion power plant costing model,
   !+ad_desc  developed by Nizar Ben Ayed, Stuart Muldrew and Tim Hender, based
@@ -96,11 +80,12 @@ module costs_star_module
 
   !  Various cost account values (M$)
 
-  real(kind(1.0D0)) :: ccont,cindrt
+  real(kind(1.0D0)) :: star20, star21, star22, star23, star24, star25, &
+  star91, star92, star93
 
-  real(kind(1.0D0)) :: star20, star21, star23, star24
+  ! Scaling Properties
 
-  real(kind(1.0D0)) :: vfi,vfi_star,ptherm_star
+  real(kind(1.0D0)) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star
 
 contains
 
@@ -120,21 +105,24 @@ contains
     !+ad_desc  from other sections of the code.
     !+ad_desc  <P>The code is arranged in the order of the standard accounts.
     !+ad_prob  None
+    !+ad_call  star_a20
     !+ad_call  star_a21
-    !+ad_call  acc22
-    !+ad_call  acc23
-    !+ad_call  acc24
-    !+ad_call  acc25
-    !+ad_call  acc26
-    !+ad_call  acchyd
-    !+ad_call  acc9
-    !+ad_call  coelc
+    !+ad_call  star_a22
+    !+ad_call  star_a2201
+    !+ad_call  star_a2202
+    !+ad_call  star_a2203
+    !+ad_call  star_a2204
+    !+ad_call  star_a2205
+    !+ad_call  star_a2206
+    !+ad_call  star_a2207
+    !+ad_call  star_a23
+    !+ad_call  star_a24
+    !+ad_call  star_a25
+    !+ad_call  coelc_star
     !+ad_call  oblnkl
     !+ad_call  ocosts
     !+ad_call  oheadr
     !+ad_call  oshead
-    !+ad_call  ovarin
-    !+ad_call  ovarre
     !+ad_hist  28/02/19 SIM Initial version
     !+ad_stat  Okay
     !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -157,10 +145,12 @@ contains
 
     !  STARFIRE Reference Value
 
-    vfi_star = 5.1D3
-    ptherm_star = 4.15D3
+    vfi_star = 5.1D3        ! Volume of Fusion Island
+    ptherm_star = 4.15D3    ! Thermal Power
+    pinjmw_star = 9.04D1    ! Auxiliary Power
+    fwarea_star = 7.8D2     ! First Wall Area
 
-    if (iprint==1) then
+    if ((iprint==1).and.(output_costs == 1)) then
     call oheadr(outfile,'STAR Costing Model (1983 US$)')
     end if
     
@@ -172,6 +162,10 @@ contains
 
     call star_a21(outfile,iprint)
 
+    !  Account 22 : Reactor Plant Equipment
+
+    call star_a22(outfile,iprint)
+
     !  Account 23 : Turbine Plant Equipment
 
     call star_a23(outfile,iprint)
@@ -180,47 +174,44 @@ contains
 
     call star_a24(outfile,iprint)
 
+    !  Account 25 : Miscellaneous Plant Equipment
+
+    call star_a25(outfile,iprint)
+
+
     !  Total plant direct cost
 
-    cdirt = star20 + star21 + star23
+    cdirt = star20 + star21 + star22 + star23 + star24 + star25
 
-    !  Indirect costs
+    ! Account 91 : Construction Facilities, Equipment and Services
+    star91 = 1.0D-1 * cdirt
 
-    cindrt = cfind(lsa) * cdirt * (1.0D0 + cowner)
+    ! Account 92 : Engineering and Costruction Management Services
+    star92 = 8.0D-2 * cdirt
 
-    !  Contingency costs
-
-    ccont = fcontng * (cdirt + cindrt)
+    ! Account 93 : Other Costs
+    star93 = 5.0D-2 * cdirt
 
     !  Constructed cost
 
-    concost = cdirt + cindrt + ccont
+    concost = cdirt + star91 + star92 + star93
 
-    if (iprint == 1) then
+    if ((iprint==1).and.(output_costs == 1)) then
     call oshead(outfile,'Plant Direct Cost')
     call ocosts(outfile,'(cdirt)','Plant direct cost (M$)',cdirt)
 
     call oshead(outfile,'Indirect Cost')
-    call ocosts(outfile,'(c9)','Indirect cost (M$)',cindrt)
-
-    call oshead(outfile,'Total Contingency')
-    call ocosts(outfile,'(ccont)','Total contingency (M$)',ccont)
+    call ocosts(outfile,'(star91)','Construction Facilities, Equipment and Services (10%) (M$)',star91)
+    call ocosts(outfile,'(star92)','Engineering and Costruction Management Services (8%) (M$)',star92)
+    call ocosts(outfile,'(star93)','Other Costs (5%) (M$)',star93)
 
     call oshead(outfile,'Constructed Cost')
     call ocosts(outfile,'(concost)','Constructed cost (M$)',concost)
-
-    if (ireactor == 1) then
-       call oshead(outfile,'Interest during Construction')
-       call ocosts(outfile,'(moneyint)','Interest during construction (M$)',moneyint)
-
-       call oshead(outfile,'Total Capital Investment')
-       call ocosts(outfile,'(capcost)','Total capital investment (M$)',capcost)
-    end if
    end if
 
     !  Cost of electricity
 
-    ! if ((ireactor == 1).and.(ipnet == 0)) call coelc(outfile,iprint)
+    ! if ((ireactor == 1).and.(ipnet == 0)) call coelc_star(outfile,iprint)
 
   end subroutine costs_star
 
@@ -269,12 +260,12 @@ contains
    star2002 = 3.0D-1
    star20 = star20 + star2002
 
-   if (iprint == 1) then
+   if ((iprint==1).and.(output_costs == 1)) then
    call oshead(outfile,'20. Land and Rights')
    call ocosts(outfile,'(star2001)','Land (M$)', star2001)
    call ocosts(outfile,'(star2002)','Site Preparation (M$)', star2002)
    call oblnkl(outfile)
-   call ocosts(outfile,'(star20)','Total account 20 cost (M$)', star20)
+   call ocosts(outfile,'(star20)','Total Account 20 Cost (M$)', star20)
    end if
 
  end subroutine star_a20
@@ -412,7 +403,7 @@ contains
    star2199 = 1.5D-1 * star21
    star21 = star21 + star2199
 
-   if (iprint == 1) then
+   if ((iprint==1).and.(output_costs == 1)) then
    call oshead(outfile,'21. Building and Site Service Infrastructure')
    call ocosts(outfile,'(star2101)','Site Improvements (M$)', star2101)
    call ocosts(outfile,'(star2102)','Reactor Building (M$)', star2102)
@@ -434,13 +425,578 @@ contains
    call ocosts(outfile,'(star2198)','Spares (M$)', star2198)
    call ocosts(outfile,'(star2199)','Contingency (M$)', star2199)
    call oblnkl(outfile)
-   call ocosts(outfile,'(star21)','Total account 21 cost (M$)', star21)
+   call ocosts(outfile,'(star21)','Total Account 21 Cost (M$)', star21)
    end if
 
  end subroutine star_a21
 
+ subroutine star_a22(outfile,iprint)
 
+     !+ad_name  star_a22
+     !+ad_summ  Account 22 : Reactor Plant Equipment
+     !+ad_type  Subroutine
+     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+     !+ad_cont  N/A
+     !+ad_args  None
+     !+ad_desc  This routine evaluates the Account 20 (Reactor Plant Equipment)
+     !+ad_desc  costs.
+     !+ad_prob  None
+     !+ad_call  None
+     !+ad_hist  01/03/19 SIM Initial version
+     !+ad_stat  Okay
+     !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     implicit none
+  
+     !  Arguments
+  
+     integer, intent(in) :: iprint,outfile
+  
+     !  Local variables
+
+     real(kind(1.0D0)):: star2298, star2299
+  
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     star22 = 0.0D0
+  
+     if ((iprint==1).and.(output_costs == 1)) then
+     call oshead(outfile,'22. Reactor Plant Equipment')
+     end if
+
+     !  Account 22.01 : Reactor Equipment
+
+     call star_a2201(outfile,iprint)
+
+     !  Account 22.02 : Heat Transfer Systems
+
+     call star_a2202(outfile,iprint)
+
+     !  Account 22.03 : Cryogenic Cooling System
+
+     call star_a2203(outfile,iprint)
+
+     !  Account 22.04 : Waste Treatment and Disposal
+
+     call star_a2204(outfile,iprint)
+
+     !  Account 22.05 : Fuel Handling and Storage
+
+     call star_a2205(outfile,iprint)
+
+     !  Account 22.06 : Other Reactor Plant Equipment
+
+     call star_a2206(outfile,iprint)
+
+     !  Account 22.07 : Instrumentation and Control
+
+     call star_a2207(outfile,iprint)
+
+     ! 22.98 Spares
+     ! Original STARFIRE value, no scaling
+     star2298 = 6.638D1 
+     star22 = star22 + star2298
+  
+     ! 21.99 Contingency
+     ! STARFIRE 15%
+     star2299 = 1.5D-1 * star22
+     star22 = star22 + star2299
+
+     if ((iprint==1).and.(output_costs == 1)) then
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star2298)','Spares (M$)', star2298)
+     call ocosts(outfile,'(star2299)','Contingency (M$)', star2299)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star22)','Total Account 22 Cost (M$)', star22)
+     end if
+  
+   end subroutine star_a22
+  
+
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+ subroutine star_a2201(outfile,iprint)
+
+     !+ad_name  star_a2201
+     !+ad_summ  Account 22.01 : Reactor Equipment
+     !+ad_type  Subroutine
+     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+     !+ad_cont  N/A
+     !+ad_args  None
+     !+ad_desc  This routine evaluates the Account 22.01 (Reactor Equipment)
+     !+ad_desc  costs.
+     !+ad_prob  None
+     !+ad_call  None
+     !+ad_hist  01/03/19 SIM Initial version
+     !+ad_stat  Okay
+     !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     implicit none
+  
+     !  Arguments
+  
+     integer, intent(in) :: iprint,outfile
+  
+     !  Local variables
+  
+     real(kind(1.0D0)):: &
+     star220101, star220102, star220103, star220104, star220105, &
+     star220106, star220107, star220108, star220109, star2201
+  
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     star2201 = 0.0D0
+     
+     ! 22.01.01 Blanket and First Wall
+     ! Original STARFIRE value, scaling with first wall area
+     star220101 = 8.236D1 * (fwarea / fwarea_star)
+     star2201 = star2201 + star220101
+  
+     ! 22.01.02 Shield
+     ! Original STARFIRE value, scaling with first wall area
+     star220102 = 1.8607D2 * (fwarea / fwarea_star)
+     star2201 = star2201 + star220102
+  
+     ! 22.01.03 Magnets
+     ! Original STARFIRE value, scaling with fusion island volume
+     star220103 = 1.7157D2 * (vfi / vfi_star)**(2.0D0/3.0D0)
+     star2201 = star2201 + star220103
+  
+     ! 22.01.04 Auxiliary Heating and Current Drive
+     ! Original STARFIRE value, scaling with auxiliary power
+     star220104 = 3.349D1 * (pinjmw / pinjmw_star)
+     star2201 = star2201 + star220104
+  
+     ! 22.01.05 Primary Structure and Support
+     ! Original STARFIRE value, no scaling
+     star220105 = 5.274D1
+     star2201 = star2201 + star220105
+  
+     ! 22.01.06 Reactor Vacuum System
+     ! Original STARFIRE value, no scaling
+     star220106 = 4.86D0
+     star2201 = star2201 + star220106
+  
+     ! 22.01.07 Power Supplies
+     ! Original STARFIRE value, no scaling
+     star220107 = 5.29D1
+     star2201 = star2201 + star220107
+  
+     ! 22.01.08 Impurity Control
+     ! Original STARFIRE value, no scaling
+     star220108 = 2.45D0
+     star2201 = star2201 + star220108
+  
+     ! 22.01.09 ECRH Plasma Breakdown
+     ! Original STARFIRE value, no scaling
+     star220109 = 2.82D0 
+     star2201 = star2201 + star220109
+  
+     star22 = star22 + star2201
+
+     if ((iprint==1).and.(output_costs == 1)) then
+     write(outfile,*) '                    22.01 Reactor Equipment'
+     call ocosts(outfile,'(star220101)','Blanket and First Wall (M$)', star220101)
+     call ocosts(outfile,'(star220102)','Shield (M$)', star220102)
+     call ocosts(outfile,'(star220103)','Magnets (M$)', star220103)
+     call ocosts(outfile,'(star220104)','Auxiliary Heating and Current Drive (M$)', star220104)
+     call ocosts(outfile,'(star220105)','Primary Structure and Support (M$)', star220105)
+     call ocosts(outfile,'(star220106)','Reactor Vacuum System (M$)', star220106)
+     call ocosts(outfile,'(star220107)','Power Supplies (M$)', star220107)
+     call ocosts(outfile,'(star220108)','Impurity Control (M$)', star220108)
+     call ocosts(outfile,'(star220109)','ECRH Plasma Breakdown (M$)', star220109)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star2201)','Total Account 22.01 Cost (M$)', star2201)
+     call oblnkl(outfile)
+     end if
+  
+   end subroutine star_a2201
+
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   subroutine star_a2202(outfile,iprint)
+
+     !+ad_name  star_a2202
+     !+ad_summ  Account 22.02 : Heat Transfer System
+     !+ad_type  Subroutine
+     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+     !+ad_cont  N/A
+     !+ad_args  None
+     !+ad_desc  This routine evaluates the Account 22.02 (Heat Transfer System)
+     !+ad_desc  costs.
+     !+ad_prob  None
+     !+ad_call  None
+     !+ad_hist  01/03/19 SIM Initial version
+     !+ad_stat  Okay
+     !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     implicit none
+  
+     !  Arguments
+  
+     integer, intent(in) :: iprint,outfile
+  
+     !  Local variables
+  
+     real(kind(1.0D0)):: star2202
+  
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     star2202 = 0.0D0
+     
+     ! 22.02 Heat Transfer System
+     ! Original STARFIRE value, scaling with first wall area
+     star2202 = 6.984D1 * (pthermmw / ptherm_star)  
+  
+     star22 = star22 + star2202
+
+     if ((iprint==1).and.(output_costs == 1)) then
+     write(outfile,*) '                    22.02 Heat Transfer System'
+     call ocosts(outfile,'(star2202)','Heat Transfer System (M$)', star2202)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star2202)','Total Account 22.02 Cost (M$)', star2202)
+     call oblnkl(outfile)
+     end if
+  
+   end subroutine star_a2202
+
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   subroutine star_a2203(outfile,iprint)
+
+     !+ad_name  star_a2203
+     !+ad_summ  Account 22.03 : Cryogenic Cooling System
+     !+ad_type  Subroutine
+     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+     !+ad_cont  N/A
+     !+ad_args  None
+     !+ad_desc  This routine evaluates the Account 22.02 (Cryogenic Cooling
+     !+ad_desc  System) costs.
+     !+ad_prob  None
+     !+ad_call  None
+     !+ad_hist  01/03/19 SIM Initial version
+     !+ad_stat  Okay
+     !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     implicit none
+  
+     !  Arguments
+  
+     integer, intent(in) :: iprint,outfile
+  
+     !  Local variables
+  
+     real(kind(1.0D0)):: &
+     star220301, star220302, star220303, star220304, star2203
+  
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     star2203 = 0.0D0
+     
+     ! 22.03.01 Helium Refrigerator
+     ! Original STARFIRE value, no scaling
+     star220301 = 7.7D0
+     star2203 = star2203 + star220301
+  
+     ! 22.03.02 Liquid Helium Transfer and Storage
+     ! Original STARFIRE value, no scaling
+     star220302 = 3.6D0
+     star2203 = star2203 + star220302
+  
+     ! 22.03.03 Gas Helium Storage
+     ! Original STARFIRE value, no scaling
+     star220303 = 2.8D0
+     star2203 = star2203 + star220303
+  
+     ! 22.03.04 Liquid Nitrogen Storage
+     ! Original STARFIRE value, no scaling
+     star220304 = 8.0D-1
+     star2203 = star2203 + star220304
+  
+     star22 = star22 + star2203
+
+     if ((iprint==1).and.(output_costs == 1)) then
+     write(outfile,*) '                    22.03 Cryogenic Cooling System'
+     call ocosts(outfile,'(star220301)','Helium Refrigerator (M$)', star220301)
+     call ocosts(outfile,'(star220302)','Liquid Helium Transfer and Storage (M$)', star220302)
+     call ocosts(outfile,'(star220303)','Gas Helium Storage (M$)', star220303)
+     call ocosts(outfile,'(star220304)','Liquid Nitrogen Storage (M$)', star220304)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star2203)','Total Account 22.03 Cost (M$)', star2203)
+     call oblnkl(outfile)
+     end if
+  
+   end subroutine star_a2203
+
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   subroutine star_a2204(outfile,iprint)
+
+     !+ad_name  star_a2204
+     !+ad_summ  Account 22.04 : Waste Treatment and Disposal
+     !+ad_type  Subroutine
+     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+     !+ad_cont  N/A
+     !+ad_args  None
+     !+ad_desc  This routine evaluates the Account 22.04 (Waste Treatment
+     !+ad_desc  and Disposal) costs.
+     !+ad_prob  None
+     !+ad_call  None
+     !+ad_hist  01/03/19 SIM Initial version
+     !+ad_stat  Okay
+     !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     implicit none
+  
+     !  Arguments
+  
+     integer, intent(in) :: iprint,outfile
+  
+     !  Local variables
+  
+     real(kind(1.0D0)):: &
+     star220401, star220402, star220403, star2204
+  
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     star2204 = 0.0D0
+     
+     ! 22.04.01 Liquid Waste
+     ! Original STARFIRE value, no scaling
+     star220401 = 1.7D0 * (pthermmw / ptherm_star) 
+     star2204 = star2204 + star220401
+  
+     ! 22.04.02 Gaseous Waste
+     ! Original STARFIRE value, no scaling
+     star220402 = 1.8D0 * (pthermmw / ptherm_star) 
+     star2204 = star2204 + star220402
+  
+     ! 22.04.03 Solid Waste
+     ! Original STARFIRE value, no scaling
+     star220403 = 1.3D0 * (pthermmw / ptherm_star) 
+     star2204 = star2204 + star220403
+  
+  
+     star22 = star22 + star2204
+
+     if ((iprint==1).and.(output_costs == 1)) then
+     write(outfile,*) '                    22.04 Waste Treatment and Disposal'
+     call ocosts(outfile,'(star220401)','Liquid Waste (M$)', star220401)
+     call ocosts(outfile,'(star220402)','Gaseous Waste (M$)', star220402)
+     call ocosts(outfile,'(star220403)','Solid Waste (M$)', star220403)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star2204)','Total Account 22.04 Cost (M$)', star2204)
+     call oblnkl(outfile)
+     end if
+  
+   end subroutine star_a2204
+
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   subroutine star_a2205(outfile,iprint)
+
+     !+ad_name  star_a2205
+     !+ad_summ  Account 22.05 : Fuel Handling and Storage
+     !+ad_type  Subroutine
+     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+     !+ad_cont  N/A
+     !+ad_args  None
+     !+ad_desc  This routine evaluates the Account 22.05 (Fuel Handling
+     !+ad_desc  and Storage) costs.
+     !+ad_prob  None
+     !+ad_call  None
+     !+ad_hist  01/03/19 SIM Initial version
+     !+ad_stat  Okay
+     !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     implicit none
+  
+     !  Arguments
+  
+     integer, intent(in) :: iprint,outfile
+  
+     !  Local variables
+  
+     real(kind(1.0D0)):: star2205
+  
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     star2205 = 0.0D0
+     
+     ! 22.05 Fuel Handling and Storage
+     ! Original STARFIRE value, no scaling
+     star2205 = 3.86D1 
+  
+     star22 = star22 + star2205
+
+     if ((iprint==1).and.(output_costs == 1)) then
+     write(outfile,*) '                    22.05 Fuel Handling and Storage'
+     call ocosts(outfile,'(star2205)','Fuel Handling and Storage (M$)', star2205)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star2205)','Total Account 22.05 Cost (M$)', star2205)
+     call oblnkl(outfile)
+     end if
+  
+   end subroutine star_a2205
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   subroutine star_a2206(outfile,iprint)
+
+     !+ad_name  star_a2206
+     !+ad_summ  Account 22.06 : Other Reactor Plant Equipment
+     !+ad_type  Subroutine
+     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+     !+ad_cont  N/A
+     !+ad_args  None
+     !+ad_desc  This routine evaluates the Account 22.01 (Other Reactor
+     !+ad_desc  Plant Equipment) costs.
+     !+ad_prob  None
+     !+ad_call  None
+     !+ad_hist  01/03/19 SIM Initial version
+     !+ad_stat  Okay
+     !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     implicit none
+  
+     !  Arguments
+  
+     integer, intent(in) :: iprint,outfile
+  
+     !  Local variables
+  
+     real(kind(1.0D0)):: &
+     star220601, star220602, star220603, star220604, star220605, &
+     star220606, star220607, star220608, star2206
+  
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     star2206 = 0.0D0
+     
+     ! 22.06.01 Maintenance Equipment
+     ! Original STARFIRE value, scaling with fusion island volume
+     star220601 = 3.83D1 * (vfi / vfi_star)
+     star2206 = star2206 + star220601
+  
+     ! 22.06.02 Special Heating Systems
+     ! Original STARFIRE value, no scaling
+     star220602 = 0.0D0
+     star2206 = star2206 + star220602
+  
+     ! 22.06.03 Coolant Storage
+     ! Original STARFIRE value, scaling with thermal power
+     star220603 = 2.4D-1 * (pthermmw / ptherm_star)
+     star2206 = star2206 + star220603
+  
+     ! 22.06.04 Gas System
+     ! Original STARFIRE value, scaling with fusion island volume
+     star220604 = 8.0D-2 * (vfi / vfi_star)
+     star2206 = star2206 + star220604
+  
+     ! 22.06.05 Inert Atmosphere System
+     ! Original STARFIRE value, no scaling
+     star220605 = 0.0D0
+     star2206 = star2206 + star220605
+  
+     ! 22.06.06 Fluid Leak Detection
+     ! Original STARFIRE value, no scaling
+     star220606 = 2.0D0
+     star2206 = star2206 + star220606
+  
+     ! 22.06.07 Closed Loop Coolant System
+     ! Original STARFIRE value, scaling with thermal power
+     star220607 = 1.97D0 * (pthermmw / ptherm_star)
+     star2206 = star2206 + star220607
+  
+     ! 22.06.08 Standby Cooling System
+     ! Original STARFIRE value, no scaling
+     star220608 = 1.16D0 * (pthermmw / ptherm_star)
+     star2206 = star2206 + star220608
+  
+     star22 = star22 + star2206
+
+     if ((iprint==1).and.(output_costs == 1)) then
+     write(outfile,*) '                    22.06 Other Reactor Plant Equipment'
+     call ocosts(outfile,'(star220601)','Maintenance Equipment (M$)', star220601)
+     call ocosts(outfile,'(star220602)','Special Heating Systems (M$)', star220602)
+     call ocosts(outfile,'(star220603)','Coolant Storage (M$)', star220603)
+     call ocosts(outfile,'(star220604)','Gas System (M$)', star220604)
+     ! call ocosts(outfile,'(star220605)','Inert Atmosphere System (M$)', star220605)
+     call ocosts(outfile,'(star220606)','Fluid Leak Detection (M$)', star220606)
+     call ocosts(outfile,'(star220607)','Closed Loop Coolant System (M$)', star220607)
+     call ocosts(outfile,'(star220608)','Standby Cooling System (M$)', star220608)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star2206)','Total Account 22.06 Cost (M$)', star2206)
+     call oblnkl(outfile)
+     end if
+  
+   end subroutine star_a2206
+ 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   subroutine star_a2207(outfile,iprint)
+
+     !+ad_name  star_a2207
+     !+ad_summ  Account 22.07 : Instrumentation and Control
+     !+ad_type  Subroutine
+     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+     !+ad_cont  N/A
+     !+ad_args  None
+     !+ad_desc  This routine evaluates the Account 22.07 (Instrumentation
+     !+ad_desc  and Control) costs.
+     !+ad_prob  None
+     !+ad_call  None
+     !+ad_hist  01/03/19 SIM Initial version
+     !+ad_stat  Okay
+     !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     implicit none
+  
+     !  Arguments
+  
+     integer, intent(in) :: iprint,outfile
+  
+     !  Local variables
+  
+     real(kind(1.0D0)):: star2207
+  
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     star2207 = 0.0D0
+     
+     ! 22.07 Instrumentation and Control
+     ! Original STARFIRE value, no scaling
+     star2207 = 2.341D1 
+  
+     star22 = star22 + star2207
+
+     if ((iprint==1).and.(output_costs == 1)) then
+     write(outfile,*) '                    22.07 Instrumentation and Control'
+     call ocosts(outfile,'(star2207)','Instrumentation and Control (M$)', star2207)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star2207)','Total Account 22.07 Cost (M$)', star2207)
+     call oblnkl(outfile)
+     end if
+  
+   end subroutine star_a2207
+
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
  subroutine star_a23(outfile,iprint)
 
@@ -521,7 +1077,7 @@ contains
    star2399 = 1.5D-1 * star23
    star23 = star23 + star2399
 
-   if (iprint == 1) then
+   if ((iprint==1).and.(output_costs == 1)) then
    call oshead(outfile,'23. Turbine Plant Equipment')
    call ocosts(outfile,'(star2301)','Turbine Generators (M$)', star2301)
    call ocosts(outfile,'(star2302)','Steam System (M$)', star2302)
@@ -533,12 +1089,12 @@ contains
    call ocosts(outfile,'(star2398)','Spares (M$)', star2398)
    call ocosts(outfile,'(star2399)','Contingency (M$)', star2399)
    call oblnkl(outfile)
-   call ocosts(outfile,'(star23)','Total account 23 cost (M$)', star23)
+   call ocosts(outfile,'(star23)','Total Account 23 Cost (M$)', star23)
    end if
 
  end subroutine star_a23
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
  subroutine star_a24(outfile,iprint)
 
@@ -619,7 +1175,7 @@ contains
    star2499 = 1.5D-1 * star24
    star24 = star24 + star2499
 
-   if (iprint == 1) then
+   if ((iprint==1).and.(output_costs == 1)) then
    call oshead(outfile,'24. Electric Plant Equipment')
    call ocosts(outfile,'(star2401)','Switch Gear (M$)', star2401)
    call ocosts(outfile,'(star2402)','Station Service Equipment (M$)', star2402)
@@ -631,19 +1187,98 @@ contains
    call ocosts(outfile,'(star2498)','Spares (M$)', star2498)
    call ocosts(outfile,'(star2499)','Contingency (M$)', star2499)
    call oblnkl(outfile)
-   call ocosts(outfile,'(star24)','Total account 23 cost (M$)', star24)
+   call ocosts(outfile,'(star24)','Total Account 24 Cost (M$)', star24)
    end if
 
  end subroutine star_a24
 
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ subroutine star_a25(outfile,iprint)
 
-  subroutine coelc(outfile,iprint)
+     !+ad_name  star_a25
+     !+ad_summ  Account 25 : Miscellaneous Plant Equipment
+     !+ad_type  Subroutine
+     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+     !+ad_cont  N/A
+     !+ad_args  None
+     !+ad_desc  This routine evaluates the Account 25 (Miscellaneous Plant 
+     !+ad_desc  Equipment) costs.
+     !+ad_prob  None
+     !+ad_call  None
+     !+ad_hist  01/03/19 SIM Initial version
+     !+ad_stat  Okay
+     !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     implicit none
+  
+     !  Arguments
+  
+     integer, intent(in) :: iprint,outfile
+  
+     !  Local variables
+  
+     real(kind(1.0D0)):: &
+     star2501, star2502, star2503, star2504, star2598, star2599
+  
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+     star25 = 0.0D0
+     
+     ! 25.01 Transport and Lifting Equipment
+     ! Original STARFIRE value, scaling with thermal power
+     star2501 = 1.568D1 * (pthermmw / ptherm_star)
+     star25 = star25 + star2501
+  
+     ! 24.02 Air and Water Service System
+     ! Original STARFIRE value, scaling with thermal power
+     star2502 = 1.235D1 * (pthermmw / ptherm_star)
+     star25 = star25 + star2502
+  
+     ! 24.03 Communications Equipment
+     ! Original STARFIRE value, no scaling
+     star2503 = 6.22D0
+     star25 = star25 + star2503
+  
+     ! 24.04 Furnishing and Fixtures
+     ! Original STARFIRE value, no scaling
+     star2504 = 7.5D-1
+     star25 = star25 + star2504
+  
+     ! 24.98 Spares
+     ! Original STARFIRE value, no scaling
+     star2598 = 4.5D-1 
+     star25 = star25 + star2598
+  
+     ! 24.99 Contingency
+     ! STARFIRE 15%
+     star2599 = 1.5D-1 * star25
+     star25 = star25 + star2599
+  
+     if ((iprint==1).and.(output_costs == 1)) then
+     call oshead(outfile,'25. Miscellaneous Plant Equipment')
+     call ocosts(outfile,'(star2501)','Transport and Lifting Equipment (M$)', star2501)
+     call ocosts(outfile,'(star2502)','Air and Water Service System (M$)', star2502)
+     call ocosts(outfile,'(star2503)','Communications Equipment (M$)', star2503)
+     call ocosts(outfile,'(star2504)','Furnishing and Fixtures (M$)', star2504)
+     call ocosts(outfile,'(star2598)','Spares (M$)', star2598)
+     call ocosts(outfile,'(star2599)','Contingency (M$)', star2599)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star25)','Total Account 25 Cost (M$)', star25)
+     end if
+  
+   end subroutine star_a25
+
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine coelc_star(outfile,iprint)
 
     !+ad_name  coelc
     !+ad_summ  Routine to calculate the cost of electricity for a fusion power plant
     !+ad_type  Subroutine
+    !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  outfile : input integer : output file unit
@@ -652,23 +1287,13 @@ contains
     !+ad_desc  for a fusion power plant.
     !+ad_desc  <P>Annual costs are in megadollars/year, electricity costs are in
     !+ad_desc  millidollars/kWh, while other costs are in megadollars.
-    !+ad_desc  All values are based on 1990 dollars.
+    !+ad_desc  All values are based on 1980 dollars.
     !+ad_prob  None
     !+ad_call  oheadr
     !+ad_call  oshead
     !+ad_call  osubhd
     !+ad_call  ovarrf
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  11/09/13 PJK Modified annfuel cost calculation
-    !+ad_hist  17/02/14 PJK Modified output format for some quantities
-    !+ad_hist  15/05/14 PJK Longer output line lengths
-    !+ad_hist  05/06/14 PJK Moved some power outputs to plant_power.f90
-    !+ad_hist  16/06/14 PJK Removed duplicate outputs
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  12/11/14 PJK tburn factor incorporated into cost of electricity
-    !+ad_hist  17/11/14 PJK Added output_costs switch
+    !+ad_hist  01/03/19 SIM Initial version copied from coelc
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -913,7 +1538,14 @@ contains
 
     !  Output section
 
-    call oheadr(outfile,'Power Reactor Costs (1990 US$)')
+     call oshead(outfile,'Interest during Construction')
+     call ocosts(outfile,'(moneyint)','Interest during construction (M$)',moneyint)
+
+     call oshead(outfile,'Total Capital Investment')
+     call ocosts(outfile,'(capcost)','Total capital investment (M$)',capcost)
+
+
+    call oheadr(outfile,'Power Reactor Costs (1980 US$)')
 
     call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)', &
          fwbllife)
@@ -984,6 +1616,6 @@ contains
 
     end if
 
-  end subroutine coelc
+  end subroutine coelc_star
 
 end module costs_star_module
