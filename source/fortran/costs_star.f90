@@ -81,7 +81,7 @@ module costs_star_module
   !  Various cost account values (M$)
 
   real(kind(1.0D0)) :: star20, star21, star22, star23, star24, star25, &
-  star91, star92, star93
+  star91, star92, star93, fwblkcost
 
   ! Scaling Properties
 
@@ -145,13 +145,13 @@ contains
 
     !  STARFIRE Reference Value
 
-    vfi_star = 5.1D3        ! Volume of Fusion Island
-    ptherm_star = 4.15D3    ! Thermal Power
-    pinjmw_star = 9.04D1    ! Auxiliary Power
-    fwarea_star = 7.8D2     ! First Wall Area
+    vfi_star = 5.1D3        ! Volume of Fusion Island (m3)
+    ptherm_star = 4.15D3    ! Thermal Power (MW)
+    pinjmw_star = 9.04D1    ! Auxiliary Power (MW)
+    fwarea_star = 7.8D2     ! First Wall Area (m2)
 
     if ((iprint==1).and.(output_costs == 1)) then
-    call oheadr(outfile,'STAR Costing Model (1983 US$)')
+      call oheadr(outfile,'STAR Costing Model (1983 US$)')
     end if
     
     !  Account 20 : Land and Rights
@@ -197,21 +197,21 @@ contains
     concost = cdirt + star91 + star92 + star93
 
     if ((iprint==1).and.(output_costs == 1)) then
-    call oshead(outfile,'Plant Direct Cost')
-    call ocosts(outfile,'(cdirt)','Plant direct cost (M$)',cdirt)
+      call oshead(outfile,'Plant Direct Cost')
+      call ocosts(outfile,'(cdirt)','Plant direct cost (M$)',cdirt)
 
-    call oshead(outfile,'Indirect Cost')
-    call ocosts(outfile,'(star91)','Construction Facilities, Equipment and Services (10%) (M$)',star91)
-    call ocosts(outfile,'(star92)','Engineering and Costruction Management Services (8%) (M$)',star92)
-    call ocosts(outfile,'(star93)','Other Costs (5%) (M$)',star93)
+      call oshead(outfile,'Indirect Cost')
+      call ocosts(outfile,'(star91)','Construction Facilities, Equipment and Services (10%) (M$)',star91)
+      call ocosts(outfile,'(star92)','Engineering and Costruction Management Services (8%) (M$)',star92)
+      call ocosts(outfile,'(star93)','Other Costs (5%) (M$)',star93)
 
-    call oshead(outfile,'Constructed Cost')
-    call ocosts(outfile,'(concost)','Constructed cost (M$)',concost)
-   end if
+      call oshead(outfile,'Constructed Cost')
+      call ocosts(outfile,'(concost)','Constructed cost (M$)',concost)
+    end if
 
     !  Cost of electricity
 
-    ! if ((ireactor == 1).and.(ipnet == 0)) call coelc_star(outfile,iprint)
+    if ((ireactor == 1).and.(ipnet == 0)) call coelc_star(outfile,iprint)
 
   end subroutine costs_star
 
@@ -229,7 +229,9 @@ contains
    !+ad_desc  This routine evaluates the Account 20 (Land and Rights)
    !+ad_desc  costs.
    !+ad_prob  None
-   !+ad_call  None
+   !+ad_call  oblnkl
+   !+ad_call  ocosts
+   !+ad_call  oshead
    !+ad_hist  28/02/19 SIM Initial version
    !+ad_stat  Okay
    !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -261,11 +263,11 @@ contains
    star20 = star20 + star2002
 
    if ((iprint==1).and.(output_costs == 1)) then
-   call oshead(outfile,'20. Land and Rights')
-   call ocosts(outfile,'(star2001)','Land (M$)', star2001)
-   call ocosts(outfile,'(star2002)','Site Preparation (M$)', star2002)
-   call oblnkl(outfile)
-   call ocosts(outfile,'(star20)','Total Account 20 Cost (M$)', star20)
+     call oshead(outfile,'20. Land and Rights')
+     call ocosts(outfile,'(star2001)','Land (M$)', star2001)
+     call ocosts(outfile,'(star2002)','Site Preparation (M$)', star2002)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star20)','Total Account 20 Cost (M$)', star20)
    end if
 
  end subroutine star_a20
@@ -283,7 +285,9 @@ contains
    !+ad_desc  This routine evaluates the Account 21 (Building and Site
    !+ad_desc  Service Infrastructure) costs.
    !+ad_prob  None
-   !+ad_call  None
+   !+ad_call  oblnkl
+   !+ad_call  ocosts
+   !+ad_call  oshead
    !+ad_hist  28/02/19 SIM Initial version
    !+ad_stat  Okay
    !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -404,28 +408,28 @@ contains
    star21 = star21 + star2199
 
    if ((iprint==1).and.(output_costs == 1)) then
-   call oshead(outfile,'21. Building and Site Service Infrastructure')
-   call ocosts(outfile,'(star2101)','Site Improvements (M$)', star2101)
-   call ocosts(outfile,'(star2102)','Reactor Building (M$)', star2102)
-   call ocosts(outfile,'(star2103)','Turbine Building (M$)', star2103)
-   call ocosts(outfile,'(star2104)','Cooling System Structures (M$)', star2104)
-   call ocosts(outfile,'(star2105)','Electrical Equipment and Power Supply Building (M$)', star2105)
-   call ocosts(outfile,'(star2106)','Auxiliary Services Building (M$)', star2106)
-   call ocosts(outfile,'(star2107)','Hot Cell (M$)', star2107)
-   call ocosts(outfile,'(star2108)','Reactor Service Building (M$)', star2108)
-   call ocosts(outfile,'(star2109)','Service Water Building (M$)', star2109)
-   call ocosts(outfile,'(star2110)','Fuel Handling and Storage Building (M$)', star2110)
-   call ocosts(outfile,'(star2111)','Control Room (M$)', star2111)
-   call ocosts(outfile,'(star2112)','AC Power Supply Building (M$)', star2112)
-   call ocosts(outfile,'(star2113)','Admin Building (M$)', star2113)
-   call ocosts(outfile,'(star2114)','Site Service (M$)', star2114)
-   call ocosts(outfile,'(star2115)','Cryogenics and Inert Gas Storage Building (M$)', star2115)
-   call ocosts(outfile,'(star2116)','Security Building (M$)', star2116)
-   call ocosts(outfile,'(star2117)','Ventilation Stack (M$)', star2117)
-   call ocosts(outfile,'(star2198)','Spares (M$)', star2198)
-   call ocosts(outfile,'(star2199)','Contingency (M$)', star2199)
-   call oblnkl(outfile)
-   call ocosts(outfile,'(star21)','Total Account 21 Cost (M$)', star21)
+     call oshead(outfile,'21. Building and Site Service Infrastructure')
+     call ocosts(outfile,'(star2101)','Site Improvements (M$)', star2101)
+     call ocosts(outfile,'(star2102)','Reactor Building (M$)', star2102)
+     call ocosts(outfile,'(star2103)','Turbine Building (M$)', star2103)
+     call ocosts(outfile,'(star2104)','Cooling System Structures (M$)', star2104)
+     call ocosts(outfile,'(star2105)','Electrical Equipment and Power Supply Building (M$)', star2105)
+     call ocosts(outfile,'(star2106)','Auxiliary Services Building (M$)', star2106)
+     call ocosts(outfile,'(star2107)','Hot Cell (M$)', star2107)
+     call ocosts(outfile,'(star2108)','Reactor Service Building (M$)', star2108)
+     call ocosts(outfile,'(star2109)','Service Water Building (M$)', star2109)
+     call ocosts(outfile,'(star2110)','Fuel Handling and Storage Building (M$)', star2110)
+     call ocosts(outfile,'(star2111)','Control Room (M$)', star2111)
+     call ocosts(outfile,'(star2112)','AC Power Supply Building (M$)', star2112)
+     call ocosts(outfile,'(star2113)','Admin Building (M$)', star2113)
+     call ocosts(outfile,'(star2114)','Site Service (M$)', star2114)
+     call ocosts(outfile,'(star2115)','Cryogenics and Inert Gas Storage Building (M$)', star2115)
+     call ocosts(outfile,'(star2116)','Security Building (M$)', star2116)
+     call ocosts(outfile,'(star2117)','Ventilation Stack (M$)', star2117)
+     call ocosts(outfile,'(star2198)','Spares (M$)', star2198)
+     call ocosts(outfile,'(star2199)','Contingency (M$)', star2199)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star21)','Total Account 21 Cost (M$)', star21)
    end if
 
  end subroutine star_a21
@@ -438,10 +442,19 @@ contains
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
      !+ad_cont  N/A
      !+ad_args  None
-     !+ad_desc  This routine evaluates the Account 20 (Reactor Plant Equipment)
+     !+ad_desc  This routine evaluates the Account 22 (Reactor Plant Equipment)
      !+ad_desc  costs.
      !+ad_prob  None
-     !+ad_call  None
+     !+ad_call  star_a2201
+     !+ad_call  star_a2202
+     !+ad_call  star_a2203
+     !+ad_call  star_a2204
+     !+ad_call  star_a2205
+     !+ad_call  star_a2206
+     !+ad_call  star_a2207
+     !+ad_call  oblnkl
+     !+ad_call  ocosts
+     !+ad_call  oshead
      !+ad_hist  01/03/19 SIM Initial version
      !+ad_stat  Okay
      !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -463,7 +476,7 @@ contains
      star22 = 0.0D0
   
      if ((iprint==1).and.(output_costs == 1)) then
-     call oshead(outfile,'22. Reactor Plant Equipment')
+       call oshead(outfile,'22. Reactor Plant Equipment')
      end if
 
      !  Account 22.01 : Reactor Equipment
@@ -505,11 +518,11 @@ contains
      star22 = star22 + star2299
 
      if ((iprint==1).and.(output_costs == 1)) then
-     call oblnkl(outfile)
-     call ocosts(outfile,'(star2298)','Spares (M$)', star2298)
-     call ocosts(outfile,'(star2299)','Contingency (M$)', star2299)
-     call oblnkl(outfile)
-     call ocosts(outfile,'(star22)','Total Account 22 Cost (M$)', star22)
+       write(outfile,*) '******************* '
+       call ocosts(outfile,'(star2298)','Spares (M$)', star2298)
+       call ocosts(outfile,'(star2299)','Contingency (M$)', star2299)
+       call oblnkl(outfile)
+       call ocosts(outfile,'(star22)','Total Account 22 Cost (M$)', star22)
      end if
   
    end subroutine star_a22
@@ -528,7 +541,8 @@ contains
      !+ad_desc  This routine evaluates the Account 22.01 (Reactor Equipment)
      !+ad_desc  costs.
      !+ad_prob  None
-     !+ad_call  None
+     !+ad_call  oblnkl
+     !+ad_call  ocosts
      !+ad_hist  01/03/19 SIM Initial version
      !+ad_stat  Okay
      !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -554,6 +568,10 @@ contains
      ! 22.01.01 Blanket and First Wall
      ! Original STARFIRE value, scaling with first wall area
      star220101 = 8.236D1 * (fwarea / fwarea_star)
+     if (ifueltyp==1) then
+       fwblkcost = star220101
+       star220101 = 0.0D0
+     end if
      star2201 = star2201 + star220101
   
      ! 22.01.02 Shield
@@ -569,6 +587,10 @@ contains
      ! 22.01.04 Auxiliary Heating and Current Drive
      ! Original STARFIRE value, scaling with auxiliary power
      star220104 = 3.349D1 * (pinjmw / pinjmw_star)
+     if (ifueltyp==1) then
+      star220104 = (1.0D0-fcdfuel) * star220104 
+      cdcost = star220104
+     end if
      star2201 = star2201 + star220104
   
      ! 22.01.05 Primary Structure and Support
@@ -599,19 +621,27 @@ contains
      star22 = star22 + star2201
 
      if ((iprint==1).and.(output_costs == 1)) then
-     write(outfile,*) '                    22.01 Reactor Equipment'
-     call ocosts(outfile,'(star220101)','Blanket and First Wall (M$)', star220101)
-     call ocosts(outfile,'(star220102)','Shield (M$)', star220102)
-     call ocosts(outfile,'(star220103)','Magnets (M$)', star220103)
-     call ocosts(outfile,'(star220104)','Auxiliary Heating and Current Drive (M$)', star220104)
-     call ocosts(outfile,'(star220105)','Primary Structure and Support (M$)', star220105)
-     call ocosts(outfile,'(star220106)','Reactor Vacuum System (M$)', star220106)
-     call ocosts(outfile,'(star220107)','Power Supplies (M$)', star220107)
-     call ocosts(outfile,'(star220108)','Impurity Control (M$)', star220108)
-     call ocosts(outfile,'(star220109)','ECRH Plasma Breakdown (M$)', star220109)
-     call oblnkl(outfile)
-     call ocosts(outfile,'(star2201)','Total Account 22.01 Cost (M$)', star2201)
-     call oblnkl(outfile)
+       write(outfile,*) '******************* 22.01 Reactor Equipment'
+       if (ifueltyp==0)then
+         call ocosts(outfile,'(star220101)','Blanket and First Wall (M$)', star220101)
+       else if (ifueltyp==1)then
+         call ocosts(outfile,'(star220101)','Blanket and First Wall (Treated as Fuel) (M$)', star220101)
+       end if
+       call ocosts(outfile,'(star220102)','Shield (M$)', star220102)
+       call ocosts(outfile,'(star220103)','Magnets (M$)', star220103)
+       if (ifueltyp==0)then
+         call ocosts(outfile,'(star220104)','Auxiliary Heating and Current Drive (M$)', star220104)
+       else if (ifueltyp==1)then
+        call ocosts(outfile,'(star220104)','Auxiliary Heating and Current Drive (Fraction as Fuel) (M$)', star220104)
+       end if
+       call ocosts(outfile,'(star220105)','Primary Structure and Support (M$)', star220105)
+       call ocosts(outfile,'(star220106)','Reactor Vacuum System (M$)', star220106)
+       call ocosts(outfile,'(star220107)','Power Supplies (M$)', star220107)
+       call ocosts(outfile,'(star220108)','Impurity Control (M$)', star220108)
+       call ocosts(outfile,'(star220109)','ECRH Plasma Breakdown (M$)', star220109)
+       call oblnkl(outfile)
+       call ocosts(outfile,'(star2201)','Total Account 22.01 Cost (M$)', star2201)
+       call oblnkl(outfile)
      end if
   
    end subroutine star_a2201
@@ -629,7 +659,8 @@ contains
      !+ad_desc  This routine evaluates the Account 22.02 (Heat Transfer System)
      !+ad_desc  costs.
      !+ad_prob  None
-     !+ad_call  None
+     !+ad_call  oblnkl
+     !+ad_call  ocosts
      !+ad_hist  01/03/19 SIM Initial version
      !+ad_stat  Okay
      !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -657,7 +688,7 @@ contains
      star22 = star22 + star2202
 
      if ((iprint==1).and.(output_costs == 1)) then
-     write(outfile,*) '                    22.02 Heat Transfer System'
+     write(outfile,*) '******************* 22.02 Heat Transfer System'
      call ocosts(outfile,'(star2202)','Heat Transfer System (M$)', star2202)
      call oblnkl(outfile)
      call ocosts(outfile,'(star2202)','Total Account 22.02 Cost (M$)', star2202)
@@ -676,10 +707,11 @@ contains
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
      !+ad_cont  N/A
      !+ad_args  None
-     !+ad_desc  This routine evaluates the Account 22.02 (Cryogenic Cooling
+     !+ad_desc  This routine evaluates the Account 22.03 (Cryogenic Cooling
      !+ad_desc  System) costs.
      !+ad_prob  None
-     !+ad_call  None
+     !+ad_call  oblnkl
+     !+ad_call  ocosts
      !+ad_hist  01/03/19 SIM Initial version
      !+ad_stat  Okay
      !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -724,14 +756,14 @@ contains
      star22 = star22 + star2203
 
      if ((iprint==1).and.(output_costs == 1)) then
-     write(outfile,*) '                    22.03 Cryogenic Cooling System'
-     call ocosts(outfile,'(star220301)','Helium Refrigerator (M$)', star220301)
-     call ocosts(outfile,'(star220302)','Liquid Helium Transfer and Storage (M$)', star220302)
-     call ocosts(outfile,'(star220303)','Gas Helium Storage (M$)', star220303)
-     call ocosts(outfile,'(star220304)','Liquid Nitrogen Storage (M$)', star220304)
-     call oblnkl(outfile)
-     call ocosts(outfile,'(star2203)','Total Account 22.03 Cost (M$)', star2203)
-     call oblnkl(outfile)
+       write(outfile,*) '******************* 22.03 Cryogenic Cooling System'
+       call ocosts(outfile,'(star220301)','Helium Refrigerator (M$)', star220301)
+       call ocosts(outfile,'(star220302)','Liquid Helium Transfer and Storage (M$)', star220302)
+       call ocosts(outfile,'(star220303)','Gas Helium Storage (M$)', star220303)
+       call ocosts(outfile,'(star220304)','Liquid Nitrogen Storage (M$)', star220304)
+       call oblnkl(outfile)
+       call ocosts(outfile,'(star2203)','Total Account 22.03 Cost (M$)', star2203)
+       call oblnkl(outfile)
      end if
   
    end subroutine star_a2203
@@ -790,13 +822,13 @@ contains
      star22 = star22 + star2204
 
      if ((iprint==1).and.(output_costs == 1)) then
-     write(outfile,*) '                    22.04 Waste Treatment and Disposal'
-     call ocosts(outfile,'(star220401)','Liquid Waste (M$)', star220401)
-     call ocosts(outfile,'(star220402)','Gaseous Waste (M$)', star220402)
-     call ocosts(outfile,'(star220403)','Solid Waste (M$)', star220403)
-     call oblnkl(outfile)
-     call ocosts(outfile,'(star2204)','Total Account 22.04 Cost (M$)', star2204)
-     call oblnkl(outfile)
+       write(outfile,*) '******************* 22.04 Waste Treatment and Disposal'
+       call ocosts(outfile,'(star220401)','Liquid Waste (M$)', star220401)
+       call ocosts(outfile,'(star220402)','Gaseous Waste (M$)', star220402)
+       call ocosts(outfile,'(star220403)','Solid Waste (M$)', star220403)
+       call oblnkl(outfile)
+       call ocosts(outfile,'(star2204)','Total Account 22.04 Cost (M$)', star2204)
+       call oblnkl(outfile)
      end if
   
    end subroutine star_a2204
@@ -814,7 +846,8 @@ contains
      !+ad_desc  This routine evaluates the Account 22.05 (Fuel Handling
      !+ad_desc  and Storage) costs.
      !+ad_prob  None
-     !+ad_call  None
+     !+ad_call  oblnkl
+     !+ad_call  ocosts
      !+ad_hist  01/03/19 SIM Initial version
      !+ad_stat  Okay
      !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -842,11 +875,11 @@ contains
      star22 = star22 + star2205
 
      if ((iprint==1).and.(output_costs == 1)) then
-     write(outfile,*) '                    22.05 Fuel Handling and Storage'
-     call ocosts(outfile,'(star2205)','Fuel Handling and Storage (M$)', star2205)
-     call oblnkl(outfile)
-     call ocosts(outfile,'(star2205)','Total Account 22.05 Cost (M$)', star2205)
-     call oblnkl(outfile)
+       write(outfile,*) '******************* 22.05 Fuel Handling and Storage'
+       call ocosts(outfile,'(star2205)','Fuel Handling and Storage (M$)', star2205)
+       call oblnkl(outfile)
+       call ocosts(outfile,'(star2205)','Total Account 22.05 Cost (M$)', star2205)
+       call oblnkl(outfile)
      end if
   
    end subroutine star_a2205
@@ -861,10 +894,11 @@ contains
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
      !+ad_cont  N/A
      !+ad_args  None
-     !+ad_desc  This routine evaluates the Account 22.01 (Other Reactor
+     !+ad_desc  This routine evaluates the Account 22.06 (Other Reactor
      !+ad_desc  Plant Equipment) costs.
      !+ad_prob  None
-     !+ad_call  None
+     !+ad_call  oblnkl
+     !+ad_call  ocosts
      !+ad_hist  01/03/19 SIM Initial version
      !+ad_stat  Okay
      !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -930,18 +964,18 @@ contains
      star22 = star22 + star2206
 
      if ((iprint==1).and.(output_costs == 1)) then
-     write(outfile,*) '                    22.06 Other Reactor Plant Equipment'
-     call ocosts(outfile,'(star220601)','Maintenance Equipment (M$)', star220601)
-     call ocosts(outfile,'(star220602)','Special Heating Systems (M$)', star220602)
-     call ocosts(outfile,'(star220603)','Coolant Storage (M$)', star220603)
-     call ocosts(outfile,'(star220604)','Gas System (M$)', star220604)
-     ! call ocosts(outfile,'(star220605)','Inert Atmosphere System (M$)', star220605)
-     call ocosts(outfile,'(star220606)','Fluid Leak Detection (M$)', star220606)
-     call ocosts(outfile,'(star220607)','Closed Loop Coolant System (M$)', star220607)
-     call ocosts(outfile,'(star220608)','Standby Cooling System (M$)', star220608)
-     call oblnkl(outfile)
-     call ocosts(outfile,'(star2206)','Total Account 22.06 Cost (M$)', star2206)
-     call oblnkl(outfile)
+       write(outfile,*) '******************* 22.06 Other Reactor Plant Equipment'
+       call ocosts(outfile,'(star220601)','Maintenance Equipment (M$)', star220601)
+       call ocosts(outfile,'(star220602)','Special Heating Systems (M$)', star220602)
+       call ocosts(outfile,'(star220603)','Coolant Storage (M$)', star220603)
+       call ocosts(outfile,'(star220604)','Gas System (M$)', star220604)
+       ! call ocosts(outfile,'(star220605)','Inert Atmosphere System (M$)', star220605)
+       call ocosts(outfile,'(star220606)','Fluid Leak Detection (M$)', star220606)
+       call ocosts(outfile,'(star220607)','Closed Loop Coolant System (M$)', star220607)
+       call ocosts(outfile,'(star220608)','Standby Cooling System (M$)', star220608)
+       call oblnkl(outfile)
+       call ocosts(outfile,'(star2206)','Total Account 22.06 Cost (M$)', star2206)
+       call oblnkl(outfile)
      end if
   
    end subroutine star_a2206
@@ -959,7 +993,8 @@ contains
      !+ad_desc  This routine evaluates the Account 22.07 (Instrumentation
      !+ad_desc  and Control) costs.
      !+ad_prob  None
-     !+ad_call  None
+     !+ad_call  oblnkl
+     !+ad_call  ocosts
      !+ad_hist  01/03/19 SIM Initial version
      !+ad_stat  Okay
      !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -987,7 +1022,7 @@ contains
      star22 = star22 + star2207
 
      if ((iprint==1).and.(output_costs == 1)) then
-     write(outfile,*) '                    22.07 Instrumentation and Control'
+     write(outfile,*) '******************* 22.07 Instrumentation and Control'
      call ocosts(outfile,'(star2207)','Instrumentation and Control (M$)', star2207)
      call oblnkl(outfile)
      call ocosts(outfile,'(star2207)','Total Account 22.07 Cost (M$)', star2207)
@@ -1009,7 +1044,9 @@ contains
    !+ad_desc  This routine evaluates the Account 23 (Turbine Plant Equipment)
    !+ad_desc  costs.
    !+ad_prob  None
-   !+ad_call  None
+   !+ad_call  oblnkl
+   !+ad_call  ocosts
+   !+ad_call  oshead
    !+ad_hist  28/02/19 SIM Initial version
    !+ad_stat  Okay
    !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -1078,18 +1115,18 @@ contains
    star23 = star23 + star2399
 
    if ((iprint==1).and.(output_costs == 1)) then
-   call oshead(outfile,'23. Turbine Plant Equipment')
-   call ocosts(outfile,'(star2301)','Turbine Generators (M$)', star2301)
-   call ocosts(outfile,'(star2302)','Steam System (M$)', star2302)
-   call ocosts(outfile,'(star2303)','Heat Rejection (M$)', star2303)
-   call ocosts(outfile,'(star2304)','Condensing System (M$)', star2304)
-   call ocosts(outfile,'(star2305)','Feedwater Heating System (M$)', star2305)
-   call ocosts(outfile,'(star2306)','Other Turbine Equipment (M$)', star2306)
-   call ocosts(outfile,'(star2307)','Instrumentation and Control (M$)', star2307)
-   call ocosts(outfile,'(star2398)','Spares (M$)', star2398)
-   call ocosts(outfile,'(star2399)','Contingency (M$)', star2399)
-   call oblnkl(outfile)
-   call ocosts(outfile,'(star23)','Total Account 23 Cost (M$)', star23)
+     call oshead(outfile,'23. Turbine Plant Equipment')
+     call ocosts(outfile,'(star2301)','Turbine Generators (M$)', star2301)
+     call ocosts(outfile,'(star2302)','Steam System (M$)', star2302)
+     call ocosts(outfile,'(star2303)','Heat Rejection (M$)', star2303)
+     call ocosts(outfile,'(star2304)','Condensing System (M$)', star2304)
+     call ocosts(outfile,'(star2305)','Feedwater Heating System (M$)', star2305)
+     call ocosts(outfile,'(star2306)','Other Turbine Equipment (M$)', star2306)
+     call ocosts(outfile,'(star2307)','Instrumentation and Control (M$)', star2307)
+     call ocosts(outfile,'(star2398)','Spares (M$)', star2398)
+     call ocosts(outfile,'(star2399)','Contingency (M$)', star2399)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star23)','Total Account 23 Cost (M$)', star23)
    end if
 
  end subroutine star_a23
@@ -1107,7 +1144,9 @@ contains
    !+ad_desc  This routine evaluates the Account 24 (Electric Plant 
    !+ad_desc  Equipment) costs.
    !+ad_prob  None
-   !+ad_call  None
+   !+ad_call  oblnkl
+   !+ad_call  ocosts
+   !+ad_call  oshead
    !+ad_hist  28/02/19 SIM Initial version
    !+ad_stat  Okay
    !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -1176,18 +1215,18 @@ contains
    star24 = star24 + star2499
 
    if ((iprint==1).and.(output_costs == 1)) then
-   call oshead(outfile,'24. Electric Plant Equipment')
-   call ocosts(outfile,'(star2401)','Switch Gear (M$)', star2401)
-   call ocosts(outfile,'(star2402)','Station Service Equipment (M$)', star2402)
-   call ocosts(outfile,'(star2403)','Switchboards (M$)', star2403)
-   call ocosts(outfile,'(star2404)','Protective Equipment (M$)', star2404)
-   call ocosts(outfile,'(star2405)','Electrical Structures (M$)', star2405)
-   call ocosts(outfile,'(star2406)','Power and Control Wiring (M$)', star2406)
-   call ocosts(outfile,'(star2407)','Electric Lighting (M$)', star2407)
-   call ocosts(outfile,'(star2498)','Spares (M$)', star2498)
-   call ocosts(outfile,'(star2499)','Contingency (M$)', star2499)
-   call oblnkl(outfile)
-   call ocosts(outfile,'(star24)','Total Account 24 Cost (M$)', star24)
+     call oshead(outfile,'24. Electric Plant Equipment')
+     call ocosts(outfile,'(star2401)','Switch Gear (M$)', star2401)
+     call ocosts(outfile,'(star2402)','Station Service Equipment (M$)', star2402)
+     call ocosts(outfile,'(star2403)','Switchboards (M$)', star2403)
+     call ocosts(outfile,'(star2404)','Protective Equipment (M$)', star2404)
+     call ocosts(outfile,'(star2405)','Electrical Structures (M$)', star2405)
+     call ocosts(outfile,'(star2406)','Power and Control Wiring (M$)', star2406)
+     call ocosts(outfile,'(star2407)','Electric Lighting (M$)', star2407)
+     call ocosts(outfile,'(star2498)','Spares (M$)', star2498)
+     call ocosts(outfile,'(star2499)','Contingency (M$)', star2499)
+     call oblnkl(outfile)
+     call ocosts(outfile,'(star24)','Total Account 24 Cost (M$)', star24)
    end if
 
  end subroutine star_a24
@@ -1205,7 +1244,9 @@ contains
      !+ad_desc  This routine evaluates the Account 25 (Miscellaneous Plant 
      !+ad_desc  Equipment) costs.
      !+ad_prob  None
-     !+ad_call  None
+     !+ad_call  oblnkl
+     !+ad_call  ocosts
+     !+ad_call  oshead
      !+ad_hist  01/03/19 SIM Initial version
      !+ad_stat  Okay
      !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
@@ -1258,15 +1299,15 @@ contains
      star25 = star25 + star2599
   
      if ((iprint==1).and.(output_costs == 1)) then
-     call oshead(outfile,'25. Miscellaneous Plant Equipment')
-     call ocosts(outfile,'(star2501)','Transport and Lifting Equipment (M$)', star2501)
-     call ocosts(outfile,'(star2502)','Air and Water Service System (M$)', star2502)
-     call ocosts(outfile,'(star2503)','Communications Equipment (M$)', star2503)
-     call ocosts(outfile,'(star2504)','Furnishing and Fixtures (M$)', star2504)
-     call ocosts(outfile,'(star2598)','Spares (M$)', star2598)
-     call ocosts(outfile,'(star2599)','Contingency (M$)', star2599)
-     call oblnkl(outfile)
-     call ocosts(outfile,'(star25)','Total Account 25 Cost (M$)', star25)
+       call oshead(outfile,'25. Miscellaneous Plant Equipment')
+       call ocosts(outfile,'(star2501)','Transport and Lifting Equipment (M$)', star2501)
+       call ocosts(outfile,'(star2502)','Air and Water Service System (M$)', star2502)
+       call ocosts(outfile,'(star2503)','Communications Equipment (M$)', star2503)
+       call ocosts(outfile,'(star2504)','Furnishing and Fixtures (M$)', star2504)
+       call ocosts(outfile,'(star2598)','Spares (M$)', star2598)
+       call ocosts(outfile,'(star2599)','Contingency (M$)', star2599)
+       call oblnkl(outfile)
+       call ocosts(outfile,'(star25)','Total Account 25 Cost (M$)', star25)
      end if
   
    end subroutine star_a25
@@ -1355,8 +1396,7 @@ contains
 
     !  Annual cost of replacements
 
-    annfwbl = (fwallcst + blkcst) * &
-         (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
+    annfwbl = fwblkcost * (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
 
 
 
@@ -1545,7 +1585,7 @@ contains
      call ocosts(outfile,'(capcost)','Total capital investment (M$)',capcost)
 
 
-    call oheadr(outfile,'Power Reactor Costs (1980 US$)')
+    call oheadr(outfile,'Cost of Electricity (1980 US$)')
 
     call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)', &
          fwbllife)
@@ -1563,7 +1603,7 @@ contains
 
     if ((annfwbl /= annfwbl).or.(annfwbl > 1.0D10).or.(annfwbl < 0.0D0)) then
         write(outfile,*)'Problem with annfwbl'
-        write(outfile,*)'fwallcst=', fwallcst, '  blkcst=', blkcst
+        write(outfile,*)'fwblkcost=', fwallcst
         write(outfile,*)'crffwbl=', crffwbl,   '  fcap0cp=', fcap0cp
         write(outfile,*)'feffwbl=', feffwbl,   '  fwbllife=', fwbllife
     end if
@@ -1598,10 +1638,8 @@ contains
 
     if (ifueltyp == 1) then
        call oshead(outfile,'Replaceable Components Direct Capital Cost')
-       call ovarrf(outfile,'First wall direct capital cost (M$)', &
-            '(fwallcst)',fwallcst)
-       call ovarrf(outfile,'Blanket direct capital cost (M$)', &
-            '(blkcst)',blkcst)
+       call ovarrf(outfile,'First wall and Blanket direct capital cost (M$)', &
+            '(fwblkcost)',fwblkcost)
 
           call ovarrf(outfile,'Divertor direct capital cost (M$)', &
                '(divcst)',divcst)
