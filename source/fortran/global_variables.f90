@@ -4474,13 +4474,15 @@ module rebco_variables
   real(kind(1.0D0)) :: copper_thick = 100.0D-6
   !+ad_vars  hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
   real(kind(1.0D0)) :: hastelloy_thickness = 50.0D-6
-  !+ad_vars  tape_width /3.75e-3/ : Mean width of tape (m)
-  real(kind(1.0D0)) :: tape_width = 3.75D-3
+  !+ad_vars  tape_width : Mean width of tape (m)
+  real(kind(1.0D0)) :: tape_width = 0.0D0
 
-  !+ad_vars  croco_od /10.4e-3/ : Outer diameter of CroCo strand (m)
-  real(kind(1.0D0)) :: croco_od = 10.4D-3
-  !+ad_vars  croco_id /5.4e-3/ : Inner diameter of CroCo copper tube (m)
-  real(kind(1.0D0)) :: croco_id = 5.4D-3
+  !+ad_vars  croco_od : Outer diameter of CroCo strand (m)
+  real(kind(1.0D0)) :: croco_od = 0.0D0
+  !+ad_vars  croco_id : Inner diameter of CroCo copper tube (m)
+  real(kind(1.0D0)) :: croco_id = 0.0D0
+  !+ad_vars  croco_thick /2.5e-3/ : Thickness of CroCo copper tube (m) (iteration variable 149)
+  real(kind(1.0D0)) :: croco_thick = 2.5D-3
 
   !!+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
   !real(kind(1.0D0)) :: copper_bar = 0.23d0

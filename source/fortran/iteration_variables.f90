@@ -264,7 +264,8 @@ subroutine loadxc
      case (145) ; xcm(i) = fgwped
      case (146) ; xcm(i) = fcpttf
      case (147) ; xcm(i) = freinke
-     case (148) ; xcm(i) = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual   
+     case (148) ; xcm(i) = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual  
+     case (149) ; xcm(i) = croco_thick
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -573,6 +574,7 @@ subroutine convxc(xc,nn)
         fzactual = xc(i)/scale(i)
         impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
         write(*,*) 'fzactual = ', fzactual
+     case (149) ; croco_thick = xc(i)/scale(i)
      case default
 
         call report_error(57)

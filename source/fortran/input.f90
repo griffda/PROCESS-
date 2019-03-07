@@ -996,9 +996,9 @@ contains
        case ('fpoloidalpower')
           call parse_real_variable('fpoloidalpower', fpoloidalpower, 0.001D0, 1.0D0, &
                'f-value for constraint on rate of change of energy in poloidal field')
-    !    case ('fpsep')
-    !       call parse_real_variable('fpsep', fpsep, 0.001D0, 1.0D0, &
-    !                    'f-value to ensure separatrix power is less than value from Kallen bach divertor')
+       case ('fpsep')
+           call parse_real_variable('fpsep', fpsep, 0.001D0, 1.0D0, &
+                        'f-value to ensure separatrix power is less than value from Kallen bach divertor')
        case ('fpsepbqar')
           call parse_real_variable('fpsepbqar', fpsepbqar, 0.001D0, 1.0D0, &
                        'f-value for TF coil quench temperature < tmax_croco (constraint equation 74)')
@@ -1678,9 +1678,9 @@ contains
           call parse_real_variable('bcritsc', bcritsc, 10.0D0, 50.0D0, &
                'Critical field for superconductor')
 
-       case ('tape_width')
-          call parse_real_variable('tape_width', tape_width, 0.0D0, 0.1D0, &
-               'Mean width of HTS tape in CroCo (m)')
+       !case ('tape_width')
+       !   call parse_real_variable('tape_width', tape_width, 0.0D0, 0.1D0, &
+       !       'Mean width of HTS tape in CroCo (m)')
 
        case ('rebco_thickness')
           call parse_real_variable('rebco_thickness', rebco_thickness, 0.01D-6, 100.0D-6, &
@@ -1688,12 +1688,15 @@ contains
        case ('hastelloy_thickness')
           call parse_real_variable('hastelloy_thickness', hastelloy_thickness, 0.01D-6, 1000.0D-6, &
                'hastelloy_thickness')
-       case ('croco_id')
-          call parse_real_variable('croco_id', croco_id, 0.0D0, 0.1D0, &
-               'croco_id')
-       case ('croco_od')
-          call parse_real_variable('croco_od', croco_od, 0.0D0, 0.1D0, &
-               'Outer diameter of CroCo strand (m)')
+      ! case ('croco_id')
+      !   call parse_real_variable('croco_id', croco_id, 0.0D0, 0.1D0, &
+      !       'croco_id')
+      ! case ('croco_od')
+      !    call parse_real_variable('croco_od', croco_od, 0.0D0, 0.1D0, &
+      !         'Outer diameter of CroCo strand (m)')
+       case ('croco_thick')
+          call parse_real_variable('croco_thick', croco_thick, 0.001D0, 0.1D0, &
+               'Thickness of CroCo copper tube (m)')
        case ('copper_thick')
           call parse_real_variable('copper_thick', copper_thick, 0.0D0, 1000.0D-6, &
                'copper_thick (m)')

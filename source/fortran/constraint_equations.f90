@@ -1551,8 +1551,8 @@ contains
            ! fpsep             | f-value for consistency of two values of separatrix power
            ! psep_kallenbach   | Power conducted through the separatrix, as calculated by the divertor model [W].
            ! pdivt             |  power to conducted to the divertor region (MW)
-           !cc(i) = 1.0d0 - fpsep * (psep_kallenbach/1.0d6) / pdivt
-           cc(i) = 1.0d0 - (psep_kallenbach/1.0d6) / pdivt
+           cc(i) = 1.0d0 - fpsep * (psep_kallenbach/1.0d6) / pdivt
+           !cc(i) = 1.0d0 - (psep_kallenbach/1.0d6) / pdivt
 
            if (present(con)) then
              con(i) = psep_kallenbach/1.0d6

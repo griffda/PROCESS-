@@ -7,14 +7,14 @@
  
    Program : ./process.exe
    Version : 1.0.14   Release Date :: 2018-11-09
-   Tag No. : "1.0.14-15-g48a8763"
-   Last commit message : "Merge branch 'HTS_Michael' into 'develop',"
+   Tag No. : "1.0.14-20-geb7966a Code used contains Untracked Changes"
+   Last commit message : "updated double null and added xexon frac scan varibale,"
       User : apearce
  Directory : /home/apearce/process/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.14 : Run on  8 Jan 2019 14:09:00 +00:00(hh:mm) UTC by AlexPC
+ PROCESS 1.0.14 : Run on 25 Feb 2019 10:31:43 +00:00(hh:mm) UTC by AlexPC
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -517,6 +517,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil                                      1.090         -10.022   (tfcth)             
  
  ************************************* Divertor build and plasma position *************************************
+ 
+ Divertor Configuration = Single Null Divertor
  
  Plasma top position, radial (m)                                          (ptop_radial)                 7.988  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.471  OP 
@@ -1818,6 +1820,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ************************************* Divertor build and plasma position *************************************
  
+ Divertor Configuration = Single Null Divertor
+ 
  Plasma top position, radial (m)                                          (ptop_radial)                 7.997  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.477  OP 
  Plasma geometric centre, radial (m)                                      (rmajor.)                     9.534  OP 
@@ -3117,6 +3121,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil                                      1.088         -10.030   (tfcth)             
  
  ************************************* Divertor build and plasma position *************************************
+ 
+ Divertor Configuration = Single Null Divertor
  
  Plasma top position, radial (m)                                          (ptop_radial)                 8.004  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.482  OP 
@@ -4418,6 +4424,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ************************************* Divertor build and plasma position *************************************
  
+ Divertor Configuration = Single Null Divertor
+ 
  Plasma top position, radial (m)                                          (ptop_radial)                 8.017  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.491  OP 
  Plasma geometric centre, radial (m)                                      (rmajor.)                     9.559  OP 
@@ -5717,6 +5725,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil                                      1.083         -10.044   (tfcth)             
  
  ************************************* Divertor build and plasma position *************************************
+ 
+ Divertor Configuration = Single Null Divertor
  
  Plasma top position, radial (m)                                          (ptop_radial)                 8.030  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.500  OP 
@@ -7018,6 +7028,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ************************************* Divertor build and plasma position *************************************
  
+ Divertor Configuration = Single Null Divertor
+ 
  Plasma top position, radial (m)                                          (ptop_radial)                 8.044  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.509  OP 
  Plasma geometric centre, radial (m)                                      (rmajor.)                     9.591  OP 
@@ -8317,6 +8329,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil                                      1.078         -10.058   (tfcth)             
  
  ************************************* Divertor build and plasma position *************************************
+ 
+ Divertor Configuration = Single Null Divertor
  
  Plasma top position, radial (m)                                          (ptop_radial)                 8.058  OP 
  Plasma top position, vertical (m)                                        (ptop_vertical)               5.519  OP 
