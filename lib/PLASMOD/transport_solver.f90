@@ -645,7 +645,7 @@ endif
 	Piaux = exp(-(x-inp0%x_control(1))**2/inp0%dx_control(1)**2.d0)
  Pnbi=Pnbi+inp0%q_control*Piaux/trapz(Piaux*dV);
 
-!nbi particle source
+!nbi particle source = nbi power density / (beam energy) = particle/s/m^3 in 1e19
 	snebm =pnbi/(e_charge*1.d19*inp0%nbi_energy/1.e3)
 
 !split between electrons and ions of NBI
@@ -833,8 +833,13 @@ yllama=1.d0
  DdnVni = 625.d0*interp1_ef(nx,nxt,xr, totSi/G1/vprime/nions, xtr)
 
 	! Fuelling
-	Sn = exp(-(x-0.85d0)**2 / 0.05d0)/1464.552  ! pellet functional form, scaled to give unity fueling
-	Sn = inp0%spellet*inp0%fpellet*Sn+snebm  ! pellet + added NBI fueling snebm
+	Sn = exp(-(x-0.7d0)**2 / (0.13d0)**2.)  ! pellet functional form, scaled to give unity fueling. The parameters x0 and dx should come from pellet scaling, but at the moment they are "universal" to x0=0.7 and dx=0.13
+	Sn=Sn/trapz(Sn*dv)
+
+! calculate pellet source to maintain pedestal top density, assume Dpedestal = 0.1 m^2/s (universal number)
+	inp0%spellet = 0.1*Vprime(nx)*G1(nx)/(1.-rhopedn)/rpminor*(neb-nsep) !geometry of last closed flux surface
+!	write(*,*) 'pellet ',nepr(1)/trapz(nepr*dv)*v(nx),trapz(snebm),inp0%spellet
+	Sn = 1.*inp0%spellet*Sn+1.*snebm  ! pellet + added NBI fueling snebm
 	totS = cumint1(Sn*dV) !cumulative integral
 !interpolate on transport grid
 	DdnVn = interp1(xr, totS/Vprime/G1, xtr)
@@ -968,8 +973,8 @@ yllama=1.d0
 		& btor**(1.887) * &
 	 & exp(0.0033*(loss%pnbi)) * &
 		& exp(-0.00091*trapz((pradtot+pradedge)*dV)) * &
-		& q**(-0.8741) * &     ! (ip/17.75)^0.4
-		& (rpmajor/rpminor)**(-0.534)   !  (A/3.1)^0.
+		& q**(-0.8741) * &     
+		& (rpmajor/rpminor)**(-0.534)   
 
 	xihepalmod=1.244*(neb/ng)**0.3210899 * &  !density peaking Fpalmod scaling
 	 & teb**(-0.284027) * &
@@ -977,14 +982,14 @@ yllama=1.d0
 		& btor**(-0.0276) * &
 	 & exp(-0.000123003*(loss%pnbi)) * &
 		& exp(-0.00046091*trapz((pradtot+pradedge)*dV)) * &
-		& q**(0.393344) * &   ! (ip/17.75)^1.65    
-		& (rpmajor/rpminor)**(0.6623) ! (A/3.1)^-0.5
+		& q**(0.393344) * &       
+		& (rpmajor/rpminor)**(0.6623) 
 
            if (i_modeltype.eq.555) then
 		Hfactor = Hpalmod
            endif
 
-!write(*,*) 'check', teb,neb/ng,rpmajor,btor,(loss%pnbi+Qf),trapz((pradtot+pradedge)*dV),q,rpmajor/rpminor,&
+!write(*,*) 'check', teb,neb/ng,rpmajor,btor,(loss%pnbi+Qf),trapz((pradtot+pradedge)*dV),q,rpmajor/r
 !& Hnow,Hfactor,Hpalmod
 
            chifac0=max(0.01,chifac0+num%dt*(Hnow-Hfactor)/(1.+num%dt)) !imodeltype = 1: rescale transport to match H factor in input
@@ -1544,6 +1549,11 @@ endif
 	if (i_diagz.eq.1) 	write(*,*) 'ccar',car,qdivt,qpar
 	endif
 endif
+
+! trying divertor protection to test !!!!!!!!!!!!!!
+!	 car = max(0.,car+((qtot-qradedge)*inp0%car_qdivt-car)*num%dt/(1.+num%dt))
+!	 car = (qtot-qradedge)*inp0%car_qdivt
+!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -1556,6 +1566,8 @@ endif
 
 !END OF MODULE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+
+!	write(*,*) 'etol ',num%etol,cxe,tepr(1),Qtot,hfactor
 
 
 
@@ -1871,6 +1883,7 @@ endif
   write(99,'(999E25.11)')   nne
   write(99,'(999E25.11)')   nxe
 		write(99,'(999E25.11)')   nxe*zavxe+nne*zavne+2*nhe
+  write(99,'(911E25.11)')   sn
   close(99)
   write(2901,*) 'vloop,q,ip : ',mhd%vloop,mhd%q,mhd%ip_out
   write(2901,*) 'Fusion power : ',loss%pfus
