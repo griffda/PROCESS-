@@ -68,7 +68,7 @@ module scan_module
   integer, parameter :: ipnscns = 200
 
   !+ad_vars  ipnscnv /45/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 46
+  integer, parameter :: ipnscnv = 47
 
   !+ad_vars  scan_dim /1/ : 1-D or 2-D scan switch (1=1D, 2=2D)
   integer :: scan_dim = 1
@@ -125,7 +125,8 @@ module scan_module
   !+ad_varc          <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum
   !+ad_varc          <LI> 44 Allowable tresca stress in tf coil structural material
   !+ad_varc          <LI> 45 Minimum allowable temperature margin ; tf coils
-  !+ad_varc          <LI> 46 boundu(150) fgwsep </UL>
+  !+ad_varc          <LI> 46 boundu(150) fgwsep
+  !+ad_varc          <LI> 47 impurity_enrichment(9) Argon impurity enrichment </UL>
   integer :: nsweep = 1
 
   !+ad_vars  nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
@@ -873,6 +874,9 @@ contains
         case (46)
             boundu(152) = swp(iscn)
             vlab = 'boundu(152)' ; xlab = 'Max allowable fgwsep'
+        case (47)
+            impurity_enrichment(9) = swp(iscn)
+            vlab = 'impurity_enrichment(9)' ; xlab = 'Argon SOL impurity enrichment'
         case default
             idiags(1) = nwp ; call report_error(96)
 
