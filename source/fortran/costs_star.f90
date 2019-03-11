@@ -324,22 +324,22 @@ contains
 
    ! 21.03 Turbine Building
    ! Original STARFIRE value, scaling with thermal power
-   star2103 = 3.592D1 * (pthermmw / ptherm_star)
+   star2103 = 3.592D1 * (pthermmw / ptherm_star)**0.6D0
    star21 = star21 + star2103
 
    ! 21.04 Cooling System Structures
    ! Original STARFIRE value, scaling with thermal power
-   star2104 = 7.96D0 * (pthermmw / ptherm_star)
+   star2104 = 7.96D0 * (pthermmw / ptherm_star)**0.6D0
    star21 = star21 + star2104
 
    ! 21.05 Electrical Equipment and Power Supply Building
    ! Original STARFIRE value, scaling with thermal power
-   star2105 = 9.16D0 * (pthermmw / ptherm_star)
+   star2105 = 9.16D0 * (pthermmw / ptherm_star)**0.6D0
    star21 = star21 + star2105
 
    ! 21.06 Auxiliary Services Building
    ! Original STARFIRE value, scaling with thermal power
-   star2106 = 3.26D0 * (pthermmw / ptherm_star)  
+   star2106 = 3.26D0 * (pthermmw / ptherm_star)**0.6D0  
    star21 = star21 + star2106
 
    ! 21.07 Hot Cell
@@ -354,12 +354,12 @@ contains
 
    ! 21.09 Service Water Building
    ! Original STARFIRE value, scaling with thermal power
-   star2109 = 6.6D-1 * (pthermmw / ptherm_star)  
+   star2109 = 6.6D-1 * (pthermmw / ptherm_star)**0.6D0  
    star21 = star21 + star2109
 
    ! 21.10 Fuel Handling and Storage Building
    ! Original STARFIRE value, scaling with thermal power
-   star2110 = 8.63D0 * (pthermmw / ptherm_star)  
+   star2110 = 8.63D0 * (pthermmw / ptherm_star)**0.6D0  
    star21 = star21 + star2110
 
    ! 21.11 Control Room
@@ -379,7 +379,7 @@ contains
 
    ! 21.14 Site Service
    ! Original STARFIRE value, scaling with thermal power
-   star2114 = 8.7D-1 * (pthermmw / ptherm_star)  
+   star2114 = 8.7D-1 * (pthermmw / ptherm_star)**0.6D0  
    star21 = star21 + star2114
 
    ! 21.15 Cryogenics and Inert Gas Storage Building
@@ -394,7 +394,7 @@ contains
 
    ! 21.17 Ventilation Stack
    ! Original STARFIRE value, scaling with thermal power
-   star2117 = 1.81D0 * (pthermmw / ptherm_star)  
+   star2117 = 1.81D0 * (pthermmw / ptherm_star)**0.6D0  
    star21 = star21 + star2117
 
    ! 21.98 Spares
@@ -581,7 +581,7 @@ contains
   
      ! 22.01.03 Magnets
      ! Original STARFIRE value, scaling with fusion island volume
-     star220103 = 1.7157D2 * (vfi / vfi_star)**(2.0D0/3.0D0)
+     star220103 = 1.7157D2 * (vfi / vfi_star)
      star2201 = star2201 + star220103
   
      ! 22.01.04 Auxiliary Heating and Current Drive
@@ -683,7 +683,7 @@ contains
      
      ! 22.02 Heat Transfer System
      ! Original STARFIRE value, scaling with first wall area
-     star2202 = 6.984D1 * (pthermmw / ptherm_star)  
+     star2202 = 6.984D1 * (pthermmw / ptherm_star)**0.6D0  
   
      star22 = star22 + star2202
 
@@ -805,17 +805,17 @@ contains
      
      ! 22.04.01 Liquid Waste
      ! Original STARFIRE value, no scaling
-     star220401 = 1.7D0 * (pthermmw / ptherm_star) 
+     star220401 = 1.7D0 * (pthermmw / ptherm_star)**0.6D0 
      star2204 = star2204 + star220401
   
      ! 22.04.02 Gaseous Waste
      ! Original STARFIRE value, no scaling
-     star220402 = 1.8D0 * (pthermmw / ptherm_star) 
+     star220402 = 1.8D0 * (pthermmw / ptherm_star)**0.6D0 
      star2204 = star2204 + star220402
   
      ! 22.04.03 Solid Waste
      ! Original STARFIRE value, no scaling
-     star220403 = 1.3D0 * (pthermmw / ptherm_star) 
+     star220403 = 1.3D0 * (pthermmw / ptherm_star)**0.6D0 
      star2204 = star2204 + star220403
   
   
@@ -933,7 +933,7 @@ contains
   
      ! 22.06.03 Coolant Storage
      ! Original STARFIRE value, scaling with thermal power
-     star220603 = 2.4D-1 * (pthermmw / ptherm_star)
+     star220603 = 2.4D-1 * (pthermmw / ptherm_star)**0.6D0
      star2206 = star2206 + star220603
   
      ! 22.06.04 Gas System
@@ -953,12 +953,12 @@ contains
   
      ! 22.06.07 Closed Loop Coolant System
      ! Original STARFIRE value, scaling with thermal power
-     star220607 = 1.97D0 * (pthermmw / ptherm_star)
+     star220607 = 1.97D0 * (pthermmw / ptherm_star)**0.6D0
      star2206 = star2206 + star220607
   
      ! 22.06.08 Standby Cooling System
      ! Original STARFIRE value, no scaling
-     star220608 = 1.16D0 * (pthermmw / ptherm_star)
+     star220608 = 1.16D0 * (pthermmw / ptherm_star)**0.6D0
      star2206 = star2206 + star220608
   
      star22 = star22 + star2206
@@ -1071,32 +1071,32 @@ contains
    
    ! 23.01 Turbine Generators
    ! Original STARFIRE value, scaling with thermal power
-   star2301 = 7.733D1 * (pthermmw / ptherm_star)
+   star2301 = 7.733D1 * (pthermmw / ptherm_star)**0.6D0
    star23 = star23 + star2301
 
    ! 23.02 Steam System
    ! Original STARFIRE value, scaling with thermal power
-   star2302 = 4.37D0 * (pthermmw / ptherm_star)
+   star2302 = 4.37D0 * (pthermmw / ptherm_star)**0.6D0
    star23 = star23 + star2302
 
    ! 23.03 Heat Rejection
    ! Original STARFIRE value, scaling with thermal power
-   star2303 = 4.434D1 * (pthermmw / ptherm_star)
+   star2303 = 4.434D1 * (pthermmw / ptherm_star)**0.6D0
    star23 = star23 + star2303
 
    ! 23.04 Condensing System
    ! Original STARFIRE value, scaling with thermal power
-   star2304 = 1.918D1 * (pthermmw / ptherm_star)
+   star2304 = 1.918D1 * (pthermmw / ptherm_star)**0.6D0
    star23 = star23 + star2304
 
    ! 23.05 Feedwater Heating System
    ! Original STARFIRE value, scaling with thermal power
-   star2305 = 9.39D0 * (pthermmw / ptherm_star)
+   star2305 = 9.39D0 * (pthermmw / ptherm_star)**0.6D0
    star23 = star23 + star2305
 
    ! 23.06 Other Turbine Equipment
    ! Original STARFIRE value, scaling with thermal power
-   star2306 = 5.084D1 * (pthermmw / ptherm_star)  
+   star2306 = 5.084D1 * (pthermmw / ptherm_star)**0.6D0  
    star23 = star23 + star2306
 
    ! 23.07 Instrumentation and Control
@@ -1270,12 +1270,12 @@ contains
      
      ! 25.01 Transport and Lifting Equipment
      ! Original STARFIRE value, scaling with thermal power
-     star2501 = 1.568D1 * (pthermmw / ptherm_star)
+     star2501 = 1.568D1 * (pthermmw / ptherm_star)**0.6D0
      star25 = star25 + star2501
   
      ! 24.02 Air and Water Service System
      ! Original STARFIRE value, scaling with thermal power
-     star2502 = 1.235D1 * (pthermmw / ptherm_star)
+     star2502 = 1.235D1 * (pthermmw / ptherm_star)**0.6D0
      star25 = star25 + star2502
   
      ! 24.03 Communications Equipment
