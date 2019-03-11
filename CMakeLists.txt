@@ -179,7 +179,7 @@ add_custom_target(userguide
 
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/process.tex > ${DOC_DIR}/userguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/userguide.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/process.tex > ${DOC_DIR}/userguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/userguide.log"
-  COMMAND ${MOVE_FILE} -t pdf process.pdf process.log
+  COMMAND ${MOVE_FILE} process.pdf process.log pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.out
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.lof
@@ -195,7 +195,7 @@ add_custom_target(developerguide
   COMMAND pwd
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/developerguide > ${DOC_DIR}/devguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/devguide.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/developerguide > ${DOC_DIR}/devguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/devguide.log"
-  COMMAND ${MOVE_FILE} -t pdf developerguide.pdf developerguide.log
+  COMMAND ${MOVE_FILE} developerguide.pdf developerguide.log pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.log
@@ -208,7 +208,7 @@ add_custom_target(developerguide
 add_custom_target(utilitiesdoc
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/utilitiesdoc > ${DOC_DIR}/utdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/utdoc.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/utilitiesdoc > ${DOC_DIR}/utdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/utdoc.log"
-  COMMAND ${MOVE_FILE} -t pdf utilitiesdoc.pdf utilitiesdoc.log
+  COMMAND ${MOVE_FILE} utilitiesdoc.pdf utilitiesdoc.log pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.lot
@@ -222,7 +222,7 @@ add_custom_target(optsolverdoc
   COMMAND bibtex optsolverdoc
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/optsolverdoc > ${DOC_DIR}/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/optdoc.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/optsolverdoc > ${DOC_DIR}/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/optdoc.log"
-  COMMAND ${MOVE_FILE} -t pdf optsolverdoc.pdf optsolverdoc.log
+  COMMAND ${MOVE_FILE} optsolverdoc.pdf optsolverdoc.log pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.log
@@ -239,7 +239,7 @@ add_custom_target(tfdoc
   COMMAND bibtex tfdoc
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
-  COMMAND ${MOVE_FILE} -t pdf tfdoc.pdf tfdoc.log
+  COMMAND ${MOVE_FILE} tfdoc.pdf tfdoc.log pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.log
