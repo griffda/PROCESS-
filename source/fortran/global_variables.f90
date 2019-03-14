@@ -711,6 +711,8 @@ module physics_variables
   real(kind(1.0D0)) :: qlim = 0.0D0
   !+ad_vars  qstar : cylindrical safety factor
   real(kind(1.0D0)) :: qstar = 0.0D0
+  !+ad_vars  rad_fraction_sol /0.8/ : SoL radiation fraction 
+  real(kind(1.0D0)) :: rad_fraction_sol = 0.8D0
   !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
   !+ad_varc            (calculated if ipedestal=3)
   real(kind(1.0D0)) :: ralpne = 0.10D0

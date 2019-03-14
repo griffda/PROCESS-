@@ -68,7 +68,7 @@ module scan_module
   integer, parameter :: ipnscns = 200
 
   !+ad_vars  ipnscnv /45/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 47
+  integer, parameter :: ipnscnv = 48
 
   !+ad_vars  scan_dim /1/ : 1-D or 2-D scan switch (1=1D, 2=2D)
   integer :: scan_dim = 1
@@ -126,7 +126,8 @@ module scan_module
   !+ad_varc          <LI> 44 Allowable tresca stress in tf coil structural material
   !+ad_varc          <LI> 45 Minimum allowable temperature margin ; tf coils 
   !+ad_varc          <LI> 46 Xenon fraction fimp(13)
-  !+ad_varc          <LI> 47 Power fraction in DN Divertor ftar </UL>
+  !+ad_varc          <LI> 47 Power fraction in DN Divertor ftar
+  !+ad_varc          <LI> 48 SoL radiation fraction </UL>
   integer :: nsweep = 1
 
   !+ad_vars  nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
@@ -878,6 +879,9 @@ contains
         case (47)
             ftar = swp(iscn)
             vlab = 'ftar' ; xlab = 'Maximum_divertor_power_fraction'
+        case (48)
+            rad_fraction_sol = swp(iscn)
+            vlab = 'rad_fraction_sol' ; xlab = 'SoL radiation fraction'
         case default
             idiags(1) = nwp ; call report_error(96)
 

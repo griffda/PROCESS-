@@ -121,7 +121,7 @@ module physics_module
   !  Module-level variables
 
   integer :: iscz
-  real(kind(1.0D0)) :: photon_wall, rad_fraction
+  real(kind(1.0D0)) :: photon_wall, rad_fraction, rad_fraction_core, photon_wall_core, photon_wall_sol
   real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
   real(kind(1.0D0)) :: total_loss_power        ! [W]
   real(kind(1.0D0)) :: total_energy_conf_time  ! [s]
@@ -510,23 +510,6 @@ implicit none
        pradmw = pradpv*vol
     endif
 
-    ! MDK
-    !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
-    !  Note that 'fwarea' excludes these, so they have been added back in.
-    if (iwalld == 1) then
-       photon_wall = ffwal * pradmw / sarea
-    else
-       if (idivrt == 2) then
-         ! Double Null configuration
-         photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea
-       else
-         ! Single null configuration
-         photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea
-       end if 
-    end if
-
-    peakradwallload = photon_wall * peakfactrad
-
     if (ipedestal .ne. 3) then
        !  Calculate ohmic power
        call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
@@ -625,9 +608,33 @@ implicit none
 
     call culblm(bt,dnbeta,plascur,rminor,betalim)
 
+    ! MDK
+    !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
+    !  Note that 'fwarea' excludes these, so they have been added back in.
+    if (iwalld == 1) then
+       photon_wall = ffwal * pradmw / sarea
+    else
+       if (idivrt == 2) then
+         ! Double Null configuration in - including SoL radiation
+         photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea + &
+          (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea * ftar)
+         !photon_wall_core = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea
+         !photon_wall_sol = (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea * ftar)
+         !write(*,*) 'photon_wall_core =', photon_wall_core, ', photon_wall_sol =', photon_wall_sol
+       else
+         ! Single null configuration - including SoL radaition
+         photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea + &
+         (1.0D0-fhcd-fdiv)*rad_fraction_sol*pdivt / fwarea
+       end if 
+    end if
+
+
+    peakradwallload = photon_wall *peakfactrad 
+
     ! Calculate some derived quantities that may not have been defined earlier
     total_loss_power = 1d6 * (falpha*palpmw+pchargemw+pohmmw+pinjmw)
-    rad_fraction = 1.0D6*pradmw / total_loss_power
+    rad_fraction_core = 1.0D6*pradmw / total_loss_power
+    rad_fraction = rad_fraction_core + (1.0d0 - rad_fraction_core) * rad_fraction_sol
     total_plasma_internal_energy = 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol
     total_energy_conf_time = total_plasma_internal_energy / total_loss_power
 
@@ -4648,6 +4655,10 @@ implicit none
     call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
     call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
     call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')
+    call ovarre(outfile,'Core radiation fraction = total radiation in core / total power deposited in plasma', &
+        '(rad_fraction_core)', rad_fraction_core, 'OP ')
+    call ovarre(outfile,'SoL radiation fraction = total radiation in SoL / total power accross separatrix', &
+        '(rad_fraction_sol)', rad_fraction_sol, 'IP ')
     call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma', &
         '(rad_fraction)', rad_fraction, 'OP ')
     call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)', &

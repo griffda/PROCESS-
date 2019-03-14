@@ -758,6 +758,9 @@ contains
        case ('tauratio')
           call parse_real_variable('tauratio', tauratio, 0.1D0, 100.0D0, &
                'Ratio of He and pellet particle confinement times')
+       case ('rad_fraction_sol')
+          call parse_real_variable('rad_fraction_sol', rad_fraction_sol, 0.0D0, 1.0D0, &
+               'SoL radiation fraction')
        case ('ralpne')
           call parse_real_variable('ralpne', ralpne, 1.0D-12, 1.0D0, &
                'Thermal alpha density / electron density')
