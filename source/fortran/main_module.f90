@@ -209,6 +209,7 @@ subroutine run_summary
      call ocmmnt(outfile, progid(4))  !  user
      !call ocmmnt(outfile, progid(5))  !  computer
      call ocmmnt(outfile, progid(6))  !  directory
+     call ocmmnt(outfile, '  Input file name: "'//trim(fileprefix)//'"')  !  input file name
 
      !  Print code version and run description
      call oblnkl(outfile)
@@ -258,6 +259,8 @@ subroutine run_summary
 
   rstring = '"'//COMMSG//'"'
   call ovarst(mfile,'PROCESS last commit message','(commsg)',rstring)
+
+  call ovarst(mfile,'Input filename','(fileprefix)',trim(fileprefix))
 
 #ifndef unit_test
 ! MDK these lines duplicate the ones below.
