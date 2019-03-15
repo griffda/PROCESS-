@@ -127,6 +127,40 @@ Additionally
     - `run_process.py -f CONFIGFILE`
     - An example of the config file can be found in `documentation/pdf/utilitiesdoc.pdf`
 
+### Batch Mode on Freia
+
+If you want to run PROCESS as a batch job on Freia do the following:
+- create a folder in /common/scratch/ (e.g. `mkdir /common/scratch/process-batch`)
+- copy across `process.exe` and `libPROCESS_calc_engine.so` into the folder
+- copy your input file into the folder
+- create a job file. e.g. `touch process.cmd`.
+
+`process.cmd`  should contain the following:
+```
+# @ executable = ./process.exe
+# @ arguments = <input filename>_IN.DAT
+# @ input = /dev/null
+# @ output = /home/<username>/baseline_2019.out
+# @ error = /home/<username>/baseline_2019.err
+# @ initialdir = /common/scratch/<folder name>/
+# @ notify_user = <username>
+# @ notification = complete
+# @ queue
+
+```
+
+**NOTE: you need the empty line at the end of the file.**
+
+To run the job enter:
+```
+llsubmit process.cmd
+```
+
+To see the status of your job enter:
+```
+qstat
+```
+
 ## Development
 
 ### Commit Logs
