@@ -260,7 +260,7 @@ subroutine run_summary
   rstring = '"'//COMMSG//'"'
   call ovarst(mfile,'PROCESS last commit message','(commsg)',rstring)
 
-  call ovarst(mfile,'Input filename','(fileprefix)',trim(fileprefix))
+  call ovarst(mfile,'Input filename','(fileprefix)','"'//trim(fileprefix//'"'))
 
 #ifndef unit_test
 ! MDK these lines duplicate the ones below.
