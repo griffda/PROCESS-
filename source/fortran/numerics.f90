@@ -94,13 +94,14 @@ module numerics
   use global_variables
   use constants
   use maths_library
+  use plasmod_variables
 
   implicit none
 
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 150
+  integer, parameter :: ipnvars = 152
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 79
   !+ad_vars  ipnfoms FIX : number of available figures of merit
@@ -676,7 +677,11 @@ module numerics
        'fzactual      ', &
        !+ad_varc  <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
        'fbmaxcs       ', &
-       !+ad_varc  <LI> (150) fbmaxcs : Ratio of separatrix density to Greenwald density</UL>
+        !+ad_varc  <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power
+       'plasmod_fcdp  ', &
+       !+ad_varc  <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)
+       'plasmod_fradc ', &
+       !+ad_varc  <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density</UL>
        'fgwsep        ' &
        /)
 
@@ -845,7 +850,9 @@ module numerics
        0.001D0, &  !  147
        1.00D-8, &  !  148
        0.001D0, &  !  149
-       0.001D0  &  !  150
+       0.000D0, &  !  150
+       0.001D0, &  !  151
+       0.001D0  &  !  152
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -1000,7 +1007,9 @@ module numerics
        1.000D0, &  !  147
        1.000D0, &  !  148
        1.000D0, &  !  149
-       1.000D0  &  !  150
+       1.000D0, &  !  150
+       1.000D0, &  !  151
+       1.000D0  &  !  152
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

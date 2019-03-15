@@ -83,7 +83,7 @@ contains
     include "root.dir"
 
 !    character(len=120), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
-    character(len=120), save :: hdatadir = trim(INSTALLDIR//'/data/h_data/')
+    character(len=180), save :: hdatadir = trim(INSTALLDIR//'/data/h_data/')
 
     ! Maxima for log density and log temperature in each data file
     real(kind(1.0D0)), save :: max_scd_d, max_scd_t

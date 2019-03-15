@@ -1189,6 +1189,12 @@ contains
        case ('plasmod_pfus')
           call parse_real_variable('plasmod_pfus', plasmod_pfus, 0.0D0, 1.0D4, &
                'If 0. not used (otherwise controlled with Pauxheat)')
+       case ('plasmod_fcdp')
+          call parse_real_variable('plasmod_fcdp', plasmod_fcdp, -1.0D0, 1.0D0, &
+               '(P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power')
+       case ('plasmod_fradc')
+          call parse_real_variable('plasmod_fradc', plasmod_fradc, -1.0D0, 1.0D0, &
+               'Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)')
        case ('plasmod_contrpovs')
           call parse_real_variable('plasmod_contrpovs', plasmod_contrpovs, 0.0D0, 1.0D4, &
                'control power in Paux/lateral_area (MW/m2)')

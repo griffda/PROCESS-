@@ -151,7 +151,7 @@ contains
     !  Local variables
 
     integer :: n_errortypes
-    character(len=120) :: filename
+    character(len=180) :: filename
     type(fson_value), pointer :: errorfile
 
     !  Obtain the root directory
