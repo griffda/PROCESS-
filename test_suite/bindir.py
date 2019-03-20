@@ -1,1 +1,0 @@
-BINDIR = '/home/apearce/process/bin'
