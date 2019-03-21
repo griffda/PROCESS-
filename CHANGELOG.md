@@ -2,6 +2,14 @@
 
 > next release
 
+## Bug Fixes
+
+## Features
+
+## Minor Changes
+
+- For issue #379 constraint 52 now gives warning for iblanket=1
+
 # 1.0.15
 
 ## Bug Fixes
