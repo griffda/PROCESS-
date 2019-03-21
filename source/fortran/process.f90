@@ -161,9 +161,9 @@ program process
 
     DO
       read(100, fmtAppend, IOSTAT = iost) line
+      if(iost < 0) exit                   ! exit if End of line is reached in IN.DAT
       write(101, fmtAppend) trim(line)
       write(102, fmtAppend) trim(line)
-      if(iost < 0) exit                   ! exit if End of line is reached in IN.DAT
     END DO
     close(unit = 100)
     close(unit = 101)
