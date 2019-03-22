@@ -92,7 +92,7 @@ module maths_library
        eshellarea, dshellarea, binomial, binarysearch, interpolate, &
        secant_solve, test_secant_solve, nearly_equal
   public::variable_error
-  public :: integer2string
+  public :: integer2string, integer3string
 
 contains
 
@@ -6059,6 +6059,13 @@ contains
       character(len=2) integer2string
       write (integer2string,'(I2.2)') value
   end function integer2string
+
+  pure function integer3string(value)
+      ! Convert an integer value to a 3-digit string with leading zero if required.
+      integer, intent(in) :: value
+      character(len=3) integer3string
+      write (integer3string,'(I3.3)') value
+  end function integer3string
 
   ! ------------------------------------------------------------------------
   subroutine secant_solve(f,x1,x2,solution,error,residual,opt_tol)

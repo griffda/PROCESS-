@@ -64,22 +64,12 @@ subroutine inform(progid)
   character(len=110), dimension(0:10) :: progid
 
   !  Local variables
-!  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=98) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
        '1.0.15   Release Date :: 2019-03-15'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
-  ! integer :: unit
-  ! logical :: unit_available
-  ! character(8)  :: date
-  ! character(10) :: time
-  ! character(5)  :: zone
-  ! integer, dimension(8) :: values
-  !  External routines
-
-  !  external system
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -87,11 +77,10 @@ subroutine inform(progid)
   progname = 'PROCESS'
   call get_command_argument(0, executable)
   call get_DDMonYYTimeZone(dt_time)
-  id(1) = trim(dt_time) !values(3)//"/"// values(2)//"/"// values(1)  !   5 6 7!date
+  id(1) = trim(dt_time) ! values(3)//"/"// values(2)//"/"// values(1)  ! 5 6 7!date
   call getlog(id(2))    ! Get user ID
   call hostnm(id(3))    ! Get host name
   call getcwd(id(4))    ! Get current working directory
-
 
   !  Annotate information and store in PROGID character array
   !  for use in other program units via the routine argument
@@ -156,12 +145,10 @@ subroutine run_summary
 
   implicit none
 
-  !  Arguments
-
   !  Local variables
   integer, parameter :: width = 110
   integer :: lap, ii, outfile
-  character(len = 110) :: progid(0:10)  !, dimension(0:10)
+  character(len = 110) :: progid(0:10)
   character(len = 9)   :: vstring
   character(len = 8)   :: date
   character(len = 10)  :: time
@@ -169,6 +156,9 @@ subroutine run_summary
   character(len = 7)   :: tstring
   character(len = 10)  :: ustring
   character(len = 100) :: rstring
+  character(len = 60)  :: fom_string
+  character(len = 14)  :: minmax_string
+  character(len = 10)  :: eps_string
   include "com.msg"
   include "tag.num"
   include "untracked.info"
@@ -186,39 +176,52 @@ subroutine run_summary
         outfile = nout
      end if
 
+     ! PROCESS code header
      call oblnkl(outfile)
-
      call ostars(outfile, width)
      call ocentr(outfile,'PROCESS', width)
      call ocentr(outfile,'Power Reactor Optimisation Code', width)
-     !call ocentr(outfile,'for Environmental and Safety Studies', width)
      call ostars(outfile, width)
-
      call oblnkl(outfile)
 
      !  Run execution details
      call ocmmnt(outfile, progid(1))  !  program name
      call ocmmnt(outfile, progid(2))  !  version
-     if (untracked > 0) then
-       call ocmmnt(outfile, '  Tag No. : "'//tagno//' Code used contains Untracked Changes"')  !  directory
+     if (untracked > 0) then  ! tag number
+       call ocmmnt(outfile, '  Tag No. : '//tagno//' code contains untracked changes')
      else
-       call ocmmnt(outfile, '  Tag No. : "'//tagno//'"')  !  directory
+       call ocmmnt(outfile, '  Tag No. : "'//tagno//'"')
      end if
-     call ocmmnt(outfile, '  Last commit message : "'//COMMSG//'"')  !  directory
-     !call ocmmnt(outfile, progid(3))  !  date/time
+     call ocmmnt(outfile, '  Git log : '//COMMSG)  !  Last git com message
+     call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
-     !call ocmmnt(outfile, progid(5))  !  computer
+     call ocmmnt(outfile, progid(5))  !  computer
      call ocmmnt(outfile, progid(6))  !  directory
-     call ocmmnt(outfile, '  Input file name: "'//trim(fileprefix)//'"')  !  input file name
+     call ocmmnt(outfile, '    Input : '//trim(fileprefix))  !  input file name
+     call ocmmnt(outfile, 'Run title : '//trim(runtitle))   ! run title
+     call ocmmnt(outfile, ' Run type : Reactor concept design: '// trim(icase) // ', (c) CCFE')
 
-     !  Print code version and run description
      call oblnkl(outfile)
      call ostars(outfile, width)
      call oblnkl(outfile)
-     call ocmmnt(outfile, progid(0))
-     call ocmmnt(outfile, 'Reactor concept design: '// trim(icase) // ', (c) CCFE')
-     !call osubhd(outfile, runtitle)
-     call ocmmnt(outfile, runtitle)
+     call ocmmnt(outfile, '  Equality constraints : '//integer2string(neqns))  !  Number of equality constraints
+     call ocmmnt(outfile, 'Inequality constraints : '//integer2string(nineqns))  !  Number of inequality constraints
+     call ocmmnt(outfile, '     Total constraints : '//integer2string(neqns+nineqns))  !  Number of constraints
+     call ocmmnt(outfile, '   Iteration variables : '//integer2string(nvar))  !  Number of iteration variables
+     call ocmmnt(outfile, '        Max iterations : '//integer3string(maxcal))  !  Max number of iterations
+
+     if (minmax > 0) then
+      minmax_string = '  -- minimise '
+     else
+      minmax_string = '  -- maximise '
+     end if
+     fom_string = lablmm(abs(minmax))
+     call ocmmnt(outfile, '      Figure of merit  : '//integer2string(minmax)//minmax_string//fom_string) ! Figure of merit
+     
+     write(eps_string, '(ES8.2)') epsvmc
+     call ocmmnt(outfile, ' Convergence parameter : '//eps_string)  !  Convergence parameter
+     call oblnkl(outfile)
+     call ostars(outfile, width)
   end do
 
   call ocmmnt(nout,'(Please include this header in any models, presentations and papers based on these results)')
@@ -263,22 +266,9 @@ subroutine run_summary
   call ovarst(mfile,'Input filename','(fileprefix)','"'//trim(fileprefix//'"'))
 
 #ifndef unit_test
-! MDK these lines duplicate the ones below.
-!  call oblnkl(nout)
-!  call ocmmnt(nout,'The following variables will be adjusted by')
-!  call ocmmnt(nout,'the code during the iteration process :')
-!  call oblnkl(nout)
 
-!  write(nout,10)
-!10 format(t10,'ixc',t18,'label')
-
-!  call oblnkl(nout)
-
-!  write(nout,20) (ii,ixc(ii),lablxc(ixc(ii)),ii=1,nvar)
-!20 format(t1,i3,t10,i3,t18,a9)
-
-! MDK Only print out the constraints here for HYBRD.
-! For VMCON they are printed out later with residues.
+  ! MDK Only print out the constraints here for HYBRD.
+  ! For VMCON they are printed out later with residues.
   call oblnkl(nout)
   if (ioptimz == -1) then
       call ocmmnt(nout, 'The following constraint equations have been imposed,')
@@ -290,23 +280,6 @@ subroutine run_summary
 40    format(t1,i3,t10,i3,t18,a33)
   end if
 
-!  call ocmmnt(nout, &
-!       'The following constraint equations have been imposed,')
-!  if (ioptimz == -1) then
-!     call ocmmnt(nout, &
-!          'but limits will not be enforced by the code :')
-!  else
-!     call ocmmnt(nout,'and will be enforced by the code :')
-!  end if
-!  call oblnkl(nout)
-
-!  write(nout,30)
-!30 format(t10,'icc',t25,'label')
-
-!  call oblnkl(nout)
-
-!  write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
-!40 format(t1,i3,t10,i3,t18,a33)
 #endif
 
 end subroutine run_summary

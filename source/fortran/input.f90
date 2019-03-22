@@ -3034,8 +3034,6 @@ contains
     end if
 
     nvar = no_iteration
-    write(*,*)no_constraints,' constraints (total).  ',nvar,' iteration variables'
-    write(*,*)nineqns, ' inequality constraints,  ', neqns, ' equality constraints'
 
     if (error .eqv. .True.) stop
 
