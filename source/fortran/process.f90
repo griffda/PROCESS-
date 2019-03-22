@@ -112,10 +112,10 @@ program process
 
     ! Usage help
     call osubhd(iotty,'# Usage')
-    call ocmmnt(iotty, "Running code with IN.DAT       : ./<path_to_executable/process.exe")
-    call ocmmnt(iotty, "Running code with named IN.DAT : ./<path_to_executable/process.exe <file_prefix>IN.DAT")
+    call ocmmnt(iotty, "Running code with IN.DAT        : ./<path_to_executable/process.exe")
+    call ocmmnt(iotty, "Running code with named IN.DAT  : ./<path_to_executable/process.exe <path_to_input>/<file_prefix>IN.DAT")
     call oblnkl(iotty)
-    call ocmmnt(iotty, "Help info    : ./<path_to_executable/process.exe help")
+    call ocmmnt(iotty, "Help info                       : ./<path_to_executable/process.exe help")
     call oblnkl(iotty)
     call ocmmnt(iotty, "## Example Usage")
     call oblnkl(iotty)
@@ -143,12 +143,12 @@ program process
     call ocmmnt(iotty, "                               : <file_prefix>MFILE.DAT")
     call ocmmnt(iotty, "                               : <file_prefix>PLOT.DAT")
 
+    ! Contact info
     call osubhd(iotty,'# Contact')
     call ocmmnt(iotty, "James Morris  : james.morris2@ukaea.uk")
     call ocmmnt(iotty, "Hanni Lux     : hanni.lux@ukaea.uk")
     call ocmmnt(iotty, "GitLab        : git.ccfe.ac.uk")
     call oblnkl(iotty)
-    
     stop
   else if (trim(fileprefix) == "") then
     inFile = "IN.DAT"
