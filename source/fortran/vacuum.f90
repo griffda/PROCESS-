@@ -135,7 +135,7 @@ contains
     integer, intent(in) :: iprint, outfile
     real(kind(1.0D0)), intent(out) :: npump
     real(kind(1.0D0)) :: pumpspeed, pumpdownspeed, npumpdown, niterpump, wallarea
-    if (tdwell <= 0.0d0) then
+    if (tdwell < 0.0d0) then
         write(*,*) 'Negative dwell time.  Reset tdwell = 100 seconds'
         tdwell = 100.0D0
     end if
@@ -259,7 +259,7 @@ contains
     real(kind(1.0D0)) :: a1,a1max,a2,a3,area,arsh,c1,c2,c3,cap,ccc, &
          ceff1,cmax,cnew,d1max,dc1,dc2,dc3,dcap,dd,densh,dnew,dout,dy, &
          fhe,frate,fsolid,k1,k2,k3,l1,l2,l3,ltot,ogas,pend,pfus,pstart, &
-         pumpn1,pumpn2,source,sss,thcsh,thdsh,theta,volume,y
+         pumpn1,pumpn2,source,sss,thcsh,thdsh,theta,volume,y,tpump
     real(kind(1.0D0)), dimension(4) :: s, d, ceff, xmult, sp, snet
     character(len=5) :: ipump
 
@@ -344,7 +344,16 @@ contains
 
     volume = plasma_vol * (aw+dsol)*(aw+dsol)/(aw*aw)
 
-    s(2) = volume / tdwell * log(pend / pstart)
+    !  dwell pumping options
+    if ((dwell_pump == 1).or.(tdwell == 0)) then
+      tpump = tramp
+    else if (dwell_pump == 2) then
+      tpump = tdwell + tramp
+    else
+      tpump = tdwell
+    end if
+
+    s(2) = volume / tpump * log(pend / pstart)
 
     !  Helium ash removal
     !  s(3) = net pump speed (He) required for helium ash removal (m^3/s)
@@ -502,7 +511,10 @@ contains
     call ovarre(outfile,'Plasma chamber volume (m3)','(volume)',volume, 'OP ')
     call ovarre(outfile,'Chamber pressure after burn (Pa)','(pend)',pend, 'OP ')
     call ovarre(outfile,'Chamber pressure before burn (Pa)','(pstart)', pstart)
+    call ovarin(outfile,'Allowable pumping time switch','(dwell_pump)',dwell_pump)
     call ovarre(outfile,'Dwell time between burns (s)','(tdwell.)',tdwell)
+    call ovarre(outfile,'CS ramp-up time burns (s)','(tramp.)',tramp)
+    call ovarre(outfile,'Allowable pumping time between burns (s)','(tpump)',tpump)
     call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(2))',s(2), 'OP ')
     call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(2))',snet(2), 'OP ')
 

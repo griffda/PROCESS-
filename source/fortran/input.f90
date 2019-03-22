@@ -2916,7 +2916,9 @@ contains
        case ('tn')
           call parse_real_variable('tn', tn, 1.0D0, 1.0D3, &
                'Neutral gas temp in chamber (K)')
-
+       case ('dwell_pump')
+               call parse_int_variable('dwell_pump', dwell_pump, 0, 2, &
+                    'switch for dwell pumping options')
        case ('pumpareafraction')
           call parse_real_variable('pumpareafraction', pumpareafraction, 1.0D-6, 1.0D0, &
                'Area of one pumping port as a fraction of plasma surface area')

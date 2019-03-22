@@ -2776,6 +2776,11 @@ module vacuum_variables
   real(kind(1.0D0)) :: vcdimax = 0.0D0
   !+ad_vars  vpumpn : number of high vacuum pumps
   integer :: vpumpn = 0
+  !+ad_vars  dwell_pump /0/ : switch for dwell pumping options:<UL>
+  !+ad_varc              <LI> = 0 pumping only during tdwell;
+  !+ad_varc              <LI> = 1 pumping only during tramp
+  !+ad_varc              <LI> = 2 pumping during tdwell + tramp</UL>
+  integer :: dwell_pump = 0
 
   !+ad_vars  <P><B>The following are used in the Battes, Day and Rohde pump-down model
   !+ad_varc  See "Basic considerations on the pump-down time in the dwell phase of a pulsed fusion DEMO"
