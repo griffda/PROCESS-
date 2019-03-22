@@ -84,8 +84,8 @@ module error_handling
   !  int and float arrays may be useful to provide diagnostic information
 
   type :: error
-     integer           :: level    !  severity level
-     character(len=80) :: message  !  information string
+     integer            :: level    !  severity level
+     character(len=200) :: message  !  information string
      integer, dimension(8) :: idiags = INT_DEFAULT
      real(kind(1.0D0)), dimension(8) :: fdiags = FLT_DEFAULT
   end type error
