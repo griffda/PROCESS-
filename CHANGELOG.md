@@ -6,6 +6,8 @@
 
 ## Features
 
+- new command line argument `./process.exe help` provides help info
+
 ## Minor Changes
 
 - For issue #379 constraint 52 now gives warning for iblanket=1
