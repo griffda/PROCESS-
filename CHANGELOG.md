@@ -7,6 +7,7 @@
 ## Features
 
 - new command line argument `./process.exe help` provides help info
+- new CMake option `-Ddll=ON/OFF`. Default is `ON`. Useful for profiling with gprof 
 
 ## Minor Changes
 

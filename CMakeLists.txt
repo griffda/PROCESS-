@@ -80,8 +80,12 @@ elseif(CMAKE_HOST_UNIX)  # For unix/ linux system
    set(CMAKE_CALC_ENGINE libPROCESS_calc_engine.so)
 endif()
 
+# Command line options
 # Turn debug on/off with option -Ddebug=ON
 option(debug "debug" OFF)
+
+# Turn debug on/off with option -Ddll=ON
+option(dll "dll" ON)
 
 # Setup C and C++ compilers
 find_program(CMAKE_C_COMPILER NAMES $ENV{CC} gcc PATHS ENV PATH NO_DEFAULT_PATH)
@@ -373,39 +377,52 @@ set(autodoc_sources ${all_sources})
 # Remove autodoc.f90 from compilation list
 list(REMOVE_ITEM all_sources ${FORT_SOURCE_DIR}/autodoc.f90)
 
-# Remove process.f90 from compilation list
-list(REMOVE_ITEM all_sources ${FORT_SOURCE_DIR}/process.f90)
+# Option to create DLL or single executable
+if(${dll} MATCHES ON)
 
-# Create dynamic library/shared object
-add_library(PROCESS_calc_engine SHARED ${all_sources})
-set_target_properties(PROCESS_calc_engine PROPERTIES LINKER_LANGUAGE Fortran)
+  # Remove process.f90 from compilation list
+  list(REMOVE_ITEM all_sources ${FORT_SOURCE_DIR}/process.f90)
 
-# add the executable source file process.f90
-add_executable(process.exe ${FORT_SOURCE_DIR}/process.f90)
-set_target_properties(process.exe PROPERTIES LINKER_LANGUAGE Fortran)
+  # Create dynamic library/shared object
+  add_library(PROCESS_calc_engine SHARED ${all_sources})
+  set_target_properties(PROCESS_calc_engine PROPERTIES LINKER_LANGUAGE Fortran)
 
-#####add_executable(process.exe ${all_sources})  one executable
+  # add the executable source file process.f90
+  add_executable(process.exe ${FORT_SOURCE_DIR}/process.f90)
+  set_target_properties(process.exe PROPERTIES LINKER_LANGUAGE Fortran)
 
-# Link the dynamic library/shared object with the executable
-target_link_libraries(process.exe PROCESS_calc_engine)
+  # Link the dynamic library/shared object with the executable
+  target_link_libraries(process.exe PROCESS_calc_engine)
 
-# Link the lapack library for the testing software
-target_link_libraries(process.exe lapack)
+  # Link the lapack library for the testing software
+  target_link_libraries(process.exe lapack)
 
-# Setup for Google test software (CPP executable)
-if(DEFINED ENV{GTEST})
-   add_executable(process_GTest.exe ${GTEST_DIR}/main_test.cpp)
-   target_link_libraries(process_GTest.exe PROCESS_calc_engine)
-   target_link_libraries(process_GTest.exe lapack)
-   target_link_libraries(process_GTest.exe $ENV{GTEST}/lib/libgtest.a pthread)
+  # Setup for Google test software (CPP executable)
+  if(DEFINED ENV{GTEST})
+    add_executable(process_GTest.exe ${GTEST_DIR}/main_test.cpp)
+    target_link_libraries(process_GTest.exe PROCESS_calc_engine)
+    target_link_libraries(process_GTest.exe lapack)
+    target_link_libraries(process_GTest.exe $ENV{GTEST}/lib/libgtest.a pthread)
+  endif()
+
+elseif(${dll} MATCHES OFF)
+
+  add_executable(process.exe ${all_sources})
+
 endif()
 
 # target_compile_features(PROCESS_Testing PRIVATE cxx_std_17)
 install(TARGETS process.exe DESTINATION ${CMAKE_SOURCE_DIR})
 
+if(${dll} MATCHES ON)
+  set(MOVE_DLL copy ${CMAKE_BINARY_DIR}/${CMAKE_CALC_ENGINE} ${CMAKE_SOURCE_DIR})
+elseif(${dll} MATCHES OFF)
+  set(MOVE_DLL echo "-- No dll to copy")
+endif()
+
 # Post build commands for copying executable and dynamic library to source dir
 add_custom_command(TARGET process.exe
- POST_BUILD
- COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}
- COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/${CMAKE_CALC_ENGINE} ${CMAKE_SOURCE_DIR}
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}
+  COMMAND ${CMAKE_COMMAND} -E ${MOVE_DLL}
 )
