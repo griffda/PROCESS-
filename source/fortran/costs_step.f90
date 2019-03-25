@@ -1,28 +1,28 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-module costs_star_module
+module costs_step_module
 
-  !+ad_name  costs_star_module
-  !+ad_summ  Module containing STAR fusion power plant costing algorithms
+  !+ad_name  costs_step_module
+  !+ad_summ  Module containing STEP fusion power plant costing algorithms
   !+ad_type  Module
   !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
-  !+ad_cont  costs_star
-  !+ad_cont  star_a20
-  !+ad_cont  star_a21
-  !+ad_cont  star_a22
-  !+ad_cont  star_a2201
-  !+ad_cont  star_a2202
-  !+ad_cont  star_a2203
-  !+ad_cont  star_a2204
-  !+ad_cont  star_a2205
-  !+ad_cont  star_a2206
-  !+ad_cont  star_a2207
-  !+ad_cont  star_a23
-  !+ad_cont  star_a24
-  !+ad_cont  star_a25
-  !+ad_cont  coelc_star
+  !+ad_cont  costs_step
+  !+ad_cont  step_a20
+  !+ad_cont  step_a21
+  !+ad_cont  step_a22
+  !+ad_cont  step_a2201
+  !+ad_cont  step_a2202
+  !+ad_cont  step_a2203
+  !+ad_cont  step_a2204
+  !+ad_cont  step_a2205
+  !+ad_cont  step_a2206
+  !+ad_cont  step_a2207
+  !+ad_cont  step_a23
+  !+ad_cont  step_a24
+  !+ad_cont  step_a25
+  !+ad_cont  coelc_step
   !+ad_args  N/A
-  !+ad_desc  This module contains the STAR fusion power plant costing model,
+  !+ad_desc  This module contains the STEP fusion power plant costing model,
   !+ad_desc  developed by Nizar Ben Ayed, Stuart Muldrew and Tim Hender, based
   !+ad_desc  on the STARFIRE costing framework.
   !+ad_prob  None
@@ -76,12 +76,12 @@ module costs_star_module
   implicit none
 
   private
-  public :: costs_star
+  public :: costs_step
 
   !  Various cost account values (M$)
 
-  real(kind(1.0D0)) :: star20, star21, star22, star23, star24, star25, &
-  star91, star92, star93, fwblkcost
+  real(kind(1.0D0)) :: step20, step21, step22, step23, step24, step25, &
+  step91, step92, step93, fwblkcost
 
   ! Scaling Properties
 
@@ -91,10 +91,10 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine costs_star(outfile,iprint)
+  subroutine costs_step(outfile,iprint)
 
-    !+ad_name  costs_star
-    !+ad_summ  STAR cost accounting for a fusion power plant
+    !+ad_name  costs_step
+    !+ad_summ  STEP cost accounting for a fusion power plant
     !+ad_type  Subroutine
     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
     !+ad_cont  N/A
@@ -105,20 +105,20 @@ contains
     !+ad_desc  from other sections of the code.
     !+ad_desc  <P>The code is arranged in the order of the standard accounts.
     !+ad_prob  None
-    !+ad_call  star_a20
-    !+ad_call  star_a21
-    !+ad_call  star_a22
-    !+ad_call  star_a2201
-    !+ad_call  star_a2202
-    !+ad_call  star_a2203
-    !+ad_call  star_a2204
-    !+ad_call  star_a2205
-    !+ad_call  star_a2206
-    !+ad_call  star_a2207
-    !+ad_call  star_a23
-    !+ad_call  star_a24
-    !+ad_call  star_a25
-    !+ad_call  coelc_star
+    !+ad_call  step_a20
+    !+ad_call  step_a21
+    !+ad_call  step_a22
+    !+ad_call  step_a2201
+    !+ad_call  step_a2202
+    !+ad_call  step_a2203
+    !+ad_call  step_a2204
+    !+ad_call  step_a2205
+    !+ad_call  step_a2206
+    !+ad_call  step_a2207
+    !+ad_call  step_a23
+    !+ad_call  step_a24
+    !+ad_call  step_a25
+    !+ad_call  coelc_step
     !+ad_call  oblnkl
     !+ad_call  ocosts
     !+ad_call  oheadr
@@ -139,7 +139,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Fusion Island Volume as defined by Sheffield et al. (1986)
+    !  Fusion Island Volume as defined by Sheffield & Milora (2016)
 
     vfi = pi * (rtot + 0.5D0*tfthko)**2 * (hpfu + hmax + tfcth)
 
@@ -151,59 +151,59 @@ contains
     fwarea_star = 7.8D2     ! First Wall Area (m2)
 
     if ((iprint==1).and.(output_costs == 1)) then
-      call oheadr(outfile,'STAR Costing Model (1983 US$)')
+      call oheadr(outfile,'STEP Costing Model (1980 US$)')
     end if
     
     !  Account 20 : Land and Rights
 
-    call star_a20(outfile,iprint)
+    call step_a20(outfile,iprint)
 
     !  Account 21 : Building and Site Service Infrastructure
 
-    call star_a21(outfile,iprint)
+    call step_a21(outfile,iprint)
 
     !  Account 22 : Reactor Plant Equipment
 
-    call star_a22(outfile,iprint)
+    call step_a22(outfile,iprint)
 
     !  Account 23 : Turbine Plant Equipment
 
-    call star_a23(outfile,iprint)
+    call step_a23(outfile,iprint)
 
     !  Account 24 : Electric Plant Equipment
 
-    call star_a24(outfile,iprint)
+    call step_a24(outfile,iprint)
 
     !  Account 25 : Miscellaneous Plant Equipment
 
-    call star_a25(outfile,iprint)
+    call step_a25(outfile,iprint)
 
 
     !  Total plant direct cost
 
-    cdirt = star20 + star21 + star22 + star23 + star24 + star25
+    cdirt = step20 + step21 + step22 + step23 + step24 + step25
 
     ! Account 91 : Construction Facilities, Equipment and Services
-    star91 = 1.0D-1 * cdirt
+    step91 = 1.0D-1 * cdirt
 
     ! Account 92 : Engineering and Costruction Management Services
-    star92 = 8.0D-2 * cdirt
+    step92 = 8.0D-2 * cdirt
 
     ! Account 93 : Other Costs
-    star93 = 5.0D-2 * cdirt
+    step93 = 5.0D-2 * cdirt
 
     !  Constructed cost
 
-    concost = cdirt + star91 + star92 + star93
+    concost = cdirt + step91 + step92 + step93
 
     if ((iprint==1).and.(output_costs == 1)) then
       call oshead(outfile,'Plant Direct Cost')
       call ocosts(outfile,'(cdirt)','Plant direct cost (M$)',cdirt)
 
       call oshead(outfile,'Indirect Cost')
-      call ocosts(outfile,'(star91)','Construction Facilities, Equipment and Services (10%) (M$)',star91)
-      call ocosts(outfile,'(star92)','Engineering and Costruction Management Services (8%) (M$)',star92)
-      call ocosts(outfile,'(star93)','Other Costs (5%) (M$)',star93)
+      call ocosts(outfile,'(step91)','Construction Facilities, Equipment and Services (10%) (M$)',step91)
+      call ocosts(outfile,'(step92)','Engineering and Costruction Management Services (8%) (M$)',step92)
+      call ocosts(outfile,'(step93)','Other Costs (5%) (M$)',step93)
 
       call oshead(outfile,'Constructed Cost')
       call ocosts(outfile,'(concost)','Constructed cost (M$)',concost)
@@ -211,16 +211,16 @@ contains
 
     !  Cost of electricity
 
-    if ((ireactor == 1).and.(ipnet == 0)) call coelc_star(outfile,iprint)
+    if ((ireactor == 1).and.(ipnet == 0)) call coelc_step(outfile,iprint)
 
-  end subroutine costs_star
+  end subroutine costs_step
 
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine star_a20(outfile,iprint)
+  subroutine step_a20(outfile,iprint)
 
-   !+ad_name  star_a20
+   !+ad_name  step_a20
    !+ad_summ  Account 20 : Land and Rights
    !+ad_type  Subroutine
    !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -246,37 +246,37 @@ contains
 
    !  Local variables
 
-   real(kind(1.0D0)):: star2001, star2002
+   real(kind(1.0D0)):: step2001, step2002
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   star20 = 0.0D0
+   step20 = 0.0D0
    
    ! 21.01 Land
    ! Original STARFIRE value, no scaling
-   star2001 = 3.0D0
-   star20 = star20 + star2001
+   step2001 = 3.0D0
+   step20 = step20 + step2001
 
    ! 21.02 Site Preparation
    ! Original STARFIRE value, no scaling
-   star2002 = 3.0D-1
-   star20 = star20 + star2002
+   step2002 = 3.0D-1
+   step20 = step20 + step2002
 
    if ((iprint==1).and.(output_costs == 1)) then
      call oshead(outfile,'20. Land and Rights')
-     call ocosts(outfile,'(star2001)','Land (M$)', star2001)
-     call ocosts(outfile,'(star2002)','Site Preparation (M$)', star2002)
+     call ocosts(outfile,'(step2001)','Land (M$)', step2001)
+     call ocosts(outfile,'(step2002)','Site Preparation (M$)', step2002)
      call oblnkl(outfile)
-     call ocosts(outfile,'(star20)','Total Account 20 Cost (M$)', star20)
+     call ocosts(outfile,'(step20)','Total Account 20 Cost (M$)', step20)
    end if
 
- end subroutine star_a20
+ end subroutine step_a20
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine star_a21(outfile,iprint)
+  subroutine step_a21(outfile,iprint)
 
-   !+ad_name  star_a21
+   !+ad_name  step_a21
    !+ad_summ  Account 21 : Building and Site Service Infrastructure
    !+ad_type  Subroutine
    !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -303,140 +303,140 @@ contains
    !  Local variables
 
    real(kind(1.0D0)):: &
-   star2101, star2102, star2103, star2104, star2105, star2106, &
-   star2107, star2108, star2109, star2110, star2111, star2112, &
-   star2113, star2114, star2115, star2116, star2117, star2198, &
-   star2199
+   step2101, step2102, step2103, step2104, step2105, step2106, &
+   step2107, step2108, step2109, step2110, step2111, step2112, &
+   step2113, step2114, step2115, step2116, step2117, step2198, &
+   step2199
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   star21 = 0.0D0
+   step21 = 0.0D0
    
    ! 21.01 Site Improvements
    ! Original STARFIRE value, no scaling
-   star2101 = 1.115D1
-   star21 = star21 + star2101
+   step2101 = 1.115D1
+   step21 = step21 + step2101
 
    ! 21.02 Reactor Building
    ! Original STARFIRE value, scaling with fusion island volume
-   star2102 = 1.5744D2 * (vfi / vfi_star)**(2.0D0 / 3.0D0)
-   star21 = star21 + star2102
+   step2102 = 1.5744D2 * (vfi / vfi_star)**(2.0D0 / 3.0D0)
+   step21 = step21 + step2102
 
    ! 21.03 Turbine Building
    ! Original STARFIRE value, scaling with thermal power
-   star2103 = 3.592D1 * (pthermmw / ptherm_star)**0.6D0
-   star21 = star21 + star2103
+   step2103 = 3.592D1 * (pthermmw / ptherm_star)**0.6D0
+   step21 = step21 + step2103
 
    ! 21.04 Cooling System Structures
    ! Original STARFIRE value, scaling with thermal power
-   star2104 = 7.96D0 * (pthermmw / ptherm_star)**0.6D0
-   star21 = star21 + star2104
+   step2104 = 7.96D0 * (pthermmw / ptherm_star)**0.6D0
+   step21 = step21 + step2104
 
    ! 21.05 Electrical Equipment and Power Supply Building
    ! Original STARFIRE value, scaling with thermal power
-   star2105 = 9.16D0 * (pthermmw / ptherm_star)**0.6D0
-   star21 = star21 + star2105
+   step2105 = 9.16D0 * (pthermmw / ptherm_star)**0.6D0
+   step21 = step21 + step2105
 
    ! 21.06 Auxiliary Services Building
    ! Original STARFIRE value, scaling with thermal power
-   star2106 = 3.26D0 * (pthermmw / ptherm_star)**0.6D0  
-   star21 = star21 + star2106
+   step2106 = 3.26D0 * (pthermmw / ptherm_star)**0.6D0  
+   step21 = step21 + step2106
 
    ! 21.07 Hot Cell
    ! Original STARFIRE value, scaling with fusion island volume
-   star2107 = 5.369D1 * (vfi / vfi_star)**(2.0D0/3.0D0)
-   star21 = star21 + star2107
+   step2107 = 5.369D1 * (vfi / vfi_star)**(2.0D0/3.0D0)
+   step21 = step21 + step2107
 
    ! 21.08 Reactor Service Building
    ! Original STARFIRE value, scaling with fusion island volume
-   star2108 = 1.88D0 * (vfi / vfi_star)**(2.0D0/3.0D0)
-   star21 = star21 + star2108
+   step2108 = 1.88D0 * (vfi / vfi_star)**(2.0D0/3.0D0)
+   step21 = step21 + step2108
 
    ! 21.09 Service Water Building
    ! Original STARFIRE value, scaling with thermal power
-   star2109 = 6.6D-1 * (pthermmw / ptherm_star)**0.6D0  
-   star21 = star21 + star2109
+   step2109 = 6.6D-1 * (pthermmw / ptherm_star)**0.6D0  
+   step21 = step21 + step2109
 
    ! 21.10 Fuel Handling and Storage Building
    ! Original STARFIRE value, scaling with thermal power
-   star2110 = 8.63D0 * (pthermmw / ptherm_star)**0.6D0  
-   star21 = star21 + star2110
+   step2110 = 8.63D0 * (pthermmw / ptherm_star)**0.6D0  
+   step21 = step21 + step2110
 
    ! 21.11 Control Room
    ! Original STARFIRE value, no scaling
-   star2111 = 3.1D0 
-   star21 = star21 + star2111
+   step2111 = 3.1D0 
+   step21 = step21 + step2111
 
    ! 21.12 AC Power Supply Building
    ! Original STARFIRE value, no scaling
-   star2112 = 2.05D0 
-   star21 = star21 + star2112
+   step2112 = 2.05D0 
+   step21 = step21 + step2112
 
    ! 21.13 Admin Building
    ! Original STARFIRE value, no scaling
-   star2113 = 8.7D-1
-   star21 = star21 + star2113
+   step2113 = 8.7D-1
+   step21 = step21 + step2113
 
    ! 21.14 Site Service
    ! Original STARFIRE value, scaling with thermal power
-   star2114 = 8.7D-1 * (pthermmw / ptherm_star)**0.6D0  
-   star21 = star21 + star2114
+   step2114 = 8.7D-1 * (pthermmw / ptherm_star)**0.6D0  
+   step21 = step21 + step2114
 
    ! 21.15 Cryogenics and Inert Gas Storage Building
    ! Original STARFIRE value, no scaling
-   star2115 = 9.1D-1
-   star21 = star21 + star2115
+   step2115 = 9.1D-1
+   step21 = step21 + step2115
 
    ! 21.16 Security Building
    ! Original STARFIRE value, no scaling
-   star2116 = 3.1D-1
-   star21 = star21 + star2116
+   step2116 = 3.1D-1
+   step21 = step21 + step2116
 
    ! 21.17 Ventilation Stack
    ! Original STARFIRE value, scaling with thermal power
-   star2117 = 1.81D0 * (pthermmw / ptherm_star)**0.6D0  
-   star21 = star21 + star2117
+   step2117 = 1.81D0 * (pthermmw / ptherm_star)**0.6D0  
+   step21 = step21 + step2117
 
    ! 21.98 Spares
    ! Original STARFIRE value, no scaling
-   star2198 = 1.96D0 
-   star21 = star21 + star2198
+   step2198 = 1.96D0 
+   step21 = step21 + step2198
 
    ! 21.99 Contingency
    ! STARFIRE 15%
-   star2199 = 1.5D-1 * star21
-   star21 = star21 + star2199
+   step2199 = 1.5D-1 * step21
+   step21 = step21 + step2199
 
    if ((iprint==1).and.(output_costs == 1)) then
      call oshead(outfile,'21. Building and Site Service Infrastructure')
-     call ocosts(outfile,'(star2101)','Site Improvements (M$)', star2101)
-     call ocosts(outfile,'(star2102)','Reactor Building (M$)', star2102)
-     call ocosts(outfile,'(star2103)','Turbine Building (M$)', star2103)
-     call ocosts(outfile,'(star2104)','Cooling System Structures (M$)', star2104)
-     call ocosts(outfile,'(star2105)','Electrical Equipment and Power Supply Building (M$)', star2105)
-     call ocosts(outfile,'(star2106)','Auxiliary Services Building (M$)', star2106)
-     call ocosts(outfile,'(star2107)','Hot Cell (M$)', star2107)
-     call ocosts(outfile,'(star2108)','Reactor Service Building (M$)', star2108)
-     call ocosts(outfile,'(star2109)','Service Water Building (M$)', star2109)
-     call ocosts(outfile,'(star2110)','Fuel Handling and Storage Building (M$)', star2110)
-     call ocosts(outfile,'(star2111)','Control Room (M$)', star2111)
-     call ocosts(outfile,'(star2112)','AC Power Supply Building (M$)', star2112)
-     call ocosts(outfile,'(star2113)','Admin Building (M$)', star2113)
-     call ocosts(outfile,'(star2114)','Site Service (M$)', star2114)
-     call ocosts(outfile,'(star2115)','Cryogenics and Inert Gas Storage Building (M$)', star2115)
-     call ocosts(outfile,'(star2116)','Security Building (M$)', star2116)
-     call ocosts(outfile,'(star2117)','Ventilation Stack (M$)', star2117)
-     call ocosts(outfile,'(star2198)','Spares (M$)', star2198)
-     call ocosts(outfile,'(star2199)','Contingency (M$)', star2199)
+     call ocosts(outfile,'(step2101)','Site Improvements (M$)', step2101)
+     call ocosts(outfile,'(step2102)','Reactor Building (M$)', step2102)
+     call ocosts(outfile,'(step2103)','Turbine Building (M$)', step2103)
+     call ocosts(outfile,'(step2104)','Cooling System Structures (M$)', step2104)
+     call ocosts(outfile,'(step2105)','Electrical Equipment and Power Supply Building (M$)', step2105)
+     call ocosts(outfile,'(step2106)','Auxiliary Services Building (M$)', step2106)
+     call ocosts(outfile,'(step2107)','Hot Cell (M$)', step2107)
+     call ocosts(outfile,'(step2108)','Reactor Service Building (M$)', step2108)
+     call ocosts(outfile,'(step2109)','Service Water Building (M$)', step2109)
+     call ocosts(outfile,'(step2110)','Fuel Handling and Storage Building (M$)', step2110)
+     call ocosts(outfile,'(step2111)','Control Room (M$)', step2111)
+     call ocosts(outfile,'(step2112)','AC Power Supply Building (M$)', step2112)
+     call ocosts(outfile,'(step2113)','Admin Building (M$)', step2113)
+     call ocosts(outfile,'(step2114)','Site Service (M$)', step2114)
+     call ocosts(outfile,'(step2115)','Cryogenics and Inert Gas Storage Building (M$)', step2115)
+     call ocosts(outfile,'(step2116)','Security Building (M$)', step2116)
+     call ocosts(outfile,'(step2117)','Ventilation Stack (M$)', step2117)
+     call ocosts(outfile,'(step2198)','Spares (M$)', step2198)
+     call ocosts(outfile,'(step2199)','Contingency (M$)', step2199)
      call oblnkl(outfile)
-     call ocosts(outfile,'(star21)','Total Account 21 Cost (M$)', star21)
+     call ocosts(outfile,'(step21)','Total Account 21 Cost (M$)', step21)
    end if
 
- end subroutine star_a21
+ end subroutine step_a21
 
- subroutine star_a22(outfile,iprint)
+ subroutine step_a22(outfile,iprint)
 
-     !+ad_name  star_a22
+     !+ad_name  step_a22
      !+ad_summ  Account 22 : Reactor Plant Equipment
      !+ad_type  Subroutine
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -445,13 +445,13 @@ contains
      !+ad_desc  This routine evaluates the Account 22 (Reactor Plant Equipment)
      !+ad_desc  costs.
      !+ad_prob  None
-     !+ad_call  star_a2201
-     !+ad_call  star_a2202
-     !+ad_call  star_a2203
-     !+ad_call  star_a2204
-     !+ad_call  star_a2205
-     !+ad_call  star_a2206
-     !+ad_call  star_a2207
+     !+ad_call  step_a2201
+     !+ad_call  step_a2202
+     !+ad_call  step_a2203
+     !+ad_call  step_a2204
+     !+ad_call  step_a2205
+     !+ad_call  step_a2206
+     !+ad_call  step_a2207
      !+ad_call  oblnkl
      !+ad_call  ocosts
      !+ad_call  oshead
@@ -469,11 +469,11 @@ contains
   
      !  Local variables
 
-     real(kind(1.0D0)):: star2298, star2299
+     real(kind(1.0D0)):: step2298, step2299
   
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-     star22 = 0.0D0
+     step22 = 0.0D0
   
      if ((iprint==1).and.(output_costs == 1)) then
        call oshead(outfile,'22. Reactor Plant Equipment')
@@ -481,58 +481,58 @@ contains
 
      !  Account 22.01 : Reactor Equipment
 
-     call star_a2201(outfile,iprint)
+     call step_a2201(outfile,iprint)
 
      !  Account 22.02 : Heat Transfer Systems
 
-     call star_a2202(outfile,iprint)
+     call step_a2202(outfile,iprint)
 
      !  Account 22.03 : Cryogenic Cooling System
 
-     call star_a2203(outfile,iprint)
+     call step_a2203(outfile,iprint)
 
      !  Account 22.04 : Waste Treatment and Disposal
 
-     call star_a2204(outfile,iprint)
+     call step_a2204(outfile,iprint)
 
      !  Account 22.05 : Fuel Handling and Storage
 
-     call star_a2205(outfile,iprint)
+     call step_a2205(outfile,iprint)
 
      !  Account 22.06 : Other Reactor Plant Equipment
 
-     call star_a2206(outfile,iprint)
+     call step_a2206(outfile,iprint)
 
      !  Account 22.07 : Instrumentation and Control
 
-     call star_a2207(outfile,iprint)
+     call step_a2207(outfile,iprint)
 
      ! 22.98 Spares
      ! Original STARFIRE value, no scaling
-     star2298 = 6.638D1 
-     star22 = star22 + star2298
+     step2298 = 6.638D1 
+     step22 = step22 + step2298
   
      ! 21.99 Contingency
      ! STARFIRE 15%
-     star2299 = 1.5D-1 * star22
-     star22 = star22 + star2299
+     step2299 = 1.5D-1 * step22
+     step22 = step22 + step2299
 
      if ((iprint==1).and.(output_costs == 1)) then
        write(outfile,*) '******************* '
-       call ocosts(outfile,'(star2298)','Spares (M$)', star2298)
-       call ocosts(outfile,'(star2299)','Contingency (M$)', star2299)
+       call ocosts(outfile,'(step2298)','Spares (M$)', step2298)
+       call ocosts(outfile,'(step2299)','Contingency (M$)', step2299)
        call oblnkl(outfile)
-       call ocosts(outfile,'(star22)','Total Account 22 Cost (M$)', star22)
+       call ocosts(outfile,'(step22)','Total Account 22 Cost (M$)', step22)
      end if
   
-   end subroutine star_a22
+   end subroutine step_a22
   
 
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
- subroutine star_a2201(outfile,iprint)
+ subroutine step_a2201(outfile,iprint)
 
-     !+ad_name  star_a2201
+     !+ad_name  step_a2201
      !+ad_summ  Account 22.01 : Reactor Equipment
      !+ad_type  Subroutine
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -558,99 +558,99 @@ contains
      !  Local variables
   
      real(kind(1.0D0)):: &
-     star220101, star220102, star220103, star220104, star220105, &
-     star220106, star220107, star220108, star220109, star2201
+     step220101, step220102, step220103, step220104, step220105, &
+     step220106, step220107, step220108, step220109, step2201
   
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-     star2201 = 0.0D0
+     step2201 = 0.0D0
      
      ! 22.01.01 Blanket and First Wall
      ! Original STARFIRE value, scaling with first wall area
-     star220101 = 8.236D1 * (fwarea / fwarea_star)
+     step220101 = 8.236D1 * (fwarea / fwarea_star)
      if (ifueltyp==1) then
-       fwblkcost = star220101
-       star220101 = 0.0D0
+       fwblkcost = step220101
+       step220101 = 0.0D0
      end if
-     star2201 = star2201 + star220101
+     step2201 = step2201 + step220101
   
      ! 22.01.02 Shield
      ! Original STARFIRE value, scaling with first wall area
-     star220102 = 1.8607D2 * (fwarea / fwarea_star)
-     star2201 = star2201 + star220102
+     step220102 = 1.8607D2 * (fwarea / fwarea_star)
+     step2201 = step2201 + step220102
   
      ! 22.01.03 Magnets
      ! Original STARFIRE value, scaling with fusion island volume
-     star220103 = 1.7157D2 * (vfi / vfi_star)
-     star2201 = star2201 + star220103
+     step220103 = 1.7157D2 * (vfi / vfi_star)
+     step2201 = step2201 + step220103
   
      ! 22.01.04 Auxiliary Heating and Current Drive
      ! Original STARFIRE value, scaling with auxiliary power
-     star220104 = 3.349D1 * (pinjmw / pinjmw_star)
+     step220104 = 3.349D1 * (pinjmw / pinjmw_star)
      if (ifueltyp==1) then
-      star220104 = (1.0D0-fcdfuel) * star220104 
-      cdcost = star220104
+      step220104 = (1.0D0-fcdfuel) * step220104 
+      cdcost = step220104
      end if
-     star2201 = star2201 + star220104
+     step2201 = step2201 + step220104
   
      ! 22.01.05 Primary Structure and Support
      ! Original STARFIRE value, no scaling
-     star220105 = 5.274D1
-     star2201 = star2201 + star220105
+     step220105 = 5.274D1
+     step2201 = step2201 + step220105
   
      ! 22.01.06 Reactor Vacuum System
      ! Original STARFIRE value, no scaling
-     star220106 = 4.86D0
-     star2201 = star2201 + star220106
+     step220106 = 4.86D0
+     step2201 = step2201 + step220106
   
      ! 22.01.07 Power Supplies
      ! Original STARFIRE value, no scaling
-     star220107 = 5.29D1
-     star2201 = star2201 + star220107
+     step220107 = 5.29D1
+     step2201 = step2201 + step220107
   
      ! 22.01.08 Impurity Control
      ! Original STARFIRE value, no scaling
-     star220108 = 2.45D0
-     star2201 = star2201 + star220108
+     step220108 = 2.45D0
+     step2201 = step2201 + step220108
   
      ! 22.01.09 ECRH Plasma Breakdown
      ! Original STARFIRE value, no scaling
-     star220109 = 2.82D0 
-     star2201 = star2201 + star220109
+     step220109 = 2.82D0 
+     step2201 = step2201 + step220109
   
-     star22 = star22 + star2201
+     step22 = step22 + step2201
 
      if ((iprint==1).and.(output_costs == 1)) then
        write(outfile,*) '******************* 22.01 Reactor Equipment'
        if (ifueltyp==0)then
-         call ocosts(outfile,'(star220101)','Blanket and First Wall (M$)', star220101)
+         call ocosts(outfile,'(step220101)','Blanket and First Wall (M$)', step220101)
        else if (ifueltyp==1)then
-         call ocosts(outfile,'(star220101)','Blanket and First Wall (Treated as Fuel) (M$)', star220101)
+         call ocosts(outfile,'(step220101)','Blanket and First Wall (Treated as Fuel) (M$)', step220101)
        end if
-       call ocosts(outfile,'(star220102)','Shield (M$)', star220102)
-       call ocosts(outfile,'(star220103)','Magnets (M$)', star220103)
+       call ocosts(outfile,'(step220102)','Shield (M$)', step220102)
+       call ocosts(outfile,'(step220103)','Magnets (M$)', step220103)
        if (ifueltyp==0)then
-         call ocosts(outfile,'(star220104)','Auxiliary Heating and Current Drive (M$)', star220104)
+         call ocosts(outfile,'(step220104)','Auxiliary Heating and Current Drive (M$)', step220104)
        else if (ifueltyp==1)then
-        call ocosts(outfile,'(star220104)','Auxiliary Heating and Current Drive (Fraction as Fuel) (M$)', star220104)
+        call ocosts(outfile,'(step220104)','Auxiliary Heating and Current Drive (Fraction as Fuel) (M$)', step220104)
        end if
-       call ocosts(outfile,'(star220105)','Primary Structure and Support (M$)', star220105)
-       call ocosts(outfile,'(star220106)','Reactor Vacuum System (M$)', star220106)
-       call ocosts(outfile,'(star220107)','Power Supplies (M$)', star220107)
-       call ocosts(outfile,'(star220108)','Impurity Control (M$)', star220108)
-       call ocosts(outfile,'(star220109)','ECRH Plasma Breakdown (M$)', star220109)
+       call ocosts(outfile,'(step220105)','Primary Structure and Support (M$)', step220105)
+       call ocosts(outfile,'(step220106)','Reactor Vacuum System (M$)', step220106)
+       call ocosts(outfile,'(step220107)','Power Supplies (M$)', step220107)
+       call ocosts(outfile,'(step220108)','Impurity Control (M$)', step220108)
+       call ocosts(outfile,'(step220109)','ECRH Plasma Breakdown (M$)', step220109)
        call oblnkl(outfile)
-       call ocosts(outfile,'(star2201)','Total Account 22.01 Cost (M$)', star2201)
+       call ocosts(outfile,'(step2201)','Total Account 22.01 Cost (M$)', step2201)
        call oblnkl(outfile)
      end if
   
-   end subroutine star_a2201
+   end subroutine step_a2201
 
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   subroutine star_a2202(outfile,iprint)
+   subroutine step_a2202(outfile,iprint)
 
-     !+ad_name  star_a2202
+     !+ad_name  step_a2202
      !+ad_summ  Account 22.02 : Heat Transfer System
      !+ad_type  Subroutine
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -675,33 +675,33 @@ contains
   
      !  Local variables
   
-     real(kind(1.0D0)):: star2202
+     real(kind(1.0D0)):: step2202
   
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-     star2202 = 0.0D0
+     step2202 = 0.0D0
      
      ! 22.02 Heat Transfer System
      ! Original STARFIRE value, scaling with first wall area
-     star2202 = 6.984D1 * (pthermmw / ptherm_star)**0.6D0  
+     step2202 = 6.984D1 * (pthermmw / ptherm_star)**0.6D0  
   
-     star22 = star22 + star2202
+     step22 = step22 + step2202
 
      if ((iprint==1).and.(output_costs == 1)) then
      write(outfile,*) '******************* 22.02 Heat Transfer System'
-     call ocosts(outfile,'(star2202)','Heat Transfer System (M$)', star2202)
+     call ocosts(outfile,'(step2202)','Heat Transfer System (M$)', step2202)
      call oblnkl(outfile)
-     call ocosts(outfile,'(star2202)','Total Account 22.02 Cost (M$)', star2202)
+     call ocosts(outfile,'(step2202)','Total Account 22.02 Cost (M$)', step2202)
      call oblnkl(outfile)
      end if
   
-   end subroutine star_a2202
+   end subroutine step_a2202
 
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   subroutine star_a2203(outfile,iprint)
+   subroutine step_a2203(outfile,iprint)
 
-     !+ad_name  star_a2203
+     !+ad_name  step_a2203
      !+ad_summ  Account 22.03 : Cryogenic Cooling System
      !+ad_type  Subroutine
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -727,52 +727,52 @@ contains
      !  Local variables
   
      real(kind(1.0D0)):: &
-     star220301, star220302, star220303, star220304, star2203
+     step220301, step220302, step220303, step220304, step2203
   
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-     star2203 = 0.0D0
+     step2203 = 0.0D0
      
      ! 22.03.01 Helium Refrigerator
      ! Original STARFIRE value, no scaling
-     star220301 = 7.7D0
-     star2203 = star2203 + star220301
+     step220301 = 7.7D0
+     step2203 = step2203 + step220301
   
      ! 22.03.02 Liquid Helium Transfer and Storage
      ! Original STARFIRE value, no scaling
-     star220302 = 3.6D0
-     star2203 = star2203 + star220302
+     step220302 = 3.6D0
+     step2203 = step2203 + step220302
   
      ! 22.03.03 Gas Helium Storage
      ! Original STARFIRE value, no scaling
-     star220303 = 2.8D0
-     star2203 = star2203 + star220303
+     step220303 = 2.8D0
+     step2203 = step2203 + step220303
   
      ! 22.03.04 Liquid Nitrogen Storage
      ! Original STARFIRE value, no scaling
-     star220304 = 8.0D-1
-     star2203 = star2203 + star220304
+     step220304 = 8.0D-1
+     step2203 = step2203 + step220304
   
-     star22 = star22 + star2203
+     step22 = step22 + step2203
 
      if ((iprint==1).and.(output_costs == 1)) then
        write(outfile,*) '******************* 22.03 Cryogenic Cooling System'
-       call ocosts(outfile,'(star220301)','Helium Refrigerator (M$)', star220301)
-       call ocosts(outfile,'(star220302)','Liquid Helium Transfer and Storage (M$)', star220302)
-       call ocosts(outfile,'(star220303)','Gas Helium Storage (M$)', star220303)
-       call ocosts(outfile,'(star220304)','Liquid Nitrogen Storage (M$)', star220304)
+       call ocosts(outfile,'(step220301)','Helium Refrigerator (M$)', step220301)
+       call ocosts(outfile,'(step220302)','Liquid Helium Transfer and Storage (M$)', step220302)
+       call ocosts(outfile,'(step220303)','Gas Helium Storage (M$)', step220303)
+       call ocosts(outfile,'(step220304)','Liquid Nitrogen Storage (M$)', step220304)
        call oblnkl(outfile)
-       call ocosts(outfile,'(star2203)','Total Account 22.03 Cost (M$)', star2203)
+       call ocosts(outfile,'(step2203)','Total Account 22.03 Cost (M$)', step2203)
        call oblnkl(outfile)
      end if
   
-   end subroutine star_a2203
+   end subroutine step_a2203
 
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   subroutine star_a2204(outfile,iprint)
+   subroutine step_a2204(outfile,iprint)
 
-     !+ad_name  star_a2204
+     !+ad_name  step_a2204
      !+ad_summ  Account 22.04 : Waste Treatment and Disposal
      !+ad_type  Subroutine
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -797,47 +797,47 @@ contains
      !  Local variables
   
      real(kind(1.0D0)):: &
-     star220401, star220402, star220403, star2204
+     step220401, step220402, step220403, step2204
   
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-     star2204 = 0.0D0
+     step2204 = 0.0D0
      
      ! 22.04.01 Liquid Waste
      ! Original STARFIRE value, no scaling
-     star220401 = 1.7D0 * (pthermmw / ptherm_star)**0.6D0 
-     star2204 = star2204 + star220401
+     step220401 = 1.7D0 * (pthermmw / ptherm_star)**0.6D0 
+     step2204 = step2204 + step220401
   
      ! 22.04.02 Gaseous Waste
      ! Original STARFIRE value, no scaling
-     star220402 = 1.8D0 * (pthermmw / ptherm_star)**0.6D0 
-     star2204 = star2204 + star220402
+     step220402 = 1.8D0 * (pthermmw / ptherm_star)**0.6D0 
+     step2204 = step2204 + step220402
   
      ! 22.04.03 Solid Waste
      ! Original STARFIRE value, no scaling
-     star220403 = 1.3D0 * (pthermmw / ptherm_star)**0.6D0 
-     star2204 = star2204 + star220403
+     step220403 = 1.3D0 * (pthermmw / ptherm_star)**0.6D0 
+     step2204 = step2204 + step220403
   
   
-     star22 = star22 + star2204
+     step22 = step22 + step2204
 
      if ((iprint==1).and.(output_costs == 1)) then
        write(outfile,*) '******************* 22.04 Waste Treatment and Disposal'
-       call ocosts(outfile,'(star220401)','Liquid Waste (M$)', star220401)
-       call ocosts(outfile,'(star220402)','Gaseous Waste (M$)', star220402)
-       call ocosts(outfile,'(star220403)','Solid Waste (M$)', star220403)
+       call ocosts(outfile,'(step220401)','Liquid Waste (M$)', step220401)
+       call ocosts(outfile,'(step220402)','Gaseous Waste (M$)', step220402)
+       call ocosts(outfile,'(step220403)','Solid Waste (M$)', step220403)
        call oblnkl(outfile)
-       call ocosts(outfile,'(star2204)','Total Account 22.04 Cost (M$)', star2204)
+       call ocosts(outfile,'(step2204)','Total Account 22.04 Cost (M$)', step2204)
        call oblnkl(outfile)
      end if
   
-   end subroutine star_a2204
+   end subroutine step_a2204
 
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   subroutine star_a2205(outfile,iprint)
+   subroutine step_a2205(outfile,iprint)
 
-     !+ad_name  star_a2205
+     !+ad_name  step_a2205
      !+ad_summ  Account 22.05 : Fuel Handling and Storage
      !+ad_type  Subroutine
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -862,33 +862,33 @@ contains
   
      !  Local variables
   
-     real(kind(1.0D0)):: star2205
+     real(kind(1.0D0)):: step2205
   
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-     star2205 = 0.0D0
+     step2205 = 0.0D0
      
      ! 22.05 Fuel Handling and Storage
      ! Original STARFIRE value, no scaling
-     star2205 = 3.86D1 
+     step2205 = 3.86D1 
   
-     star22 = star22 + star2205
+     step22 = step22 + step2205
 
      if ((iprint==1).and.(output_costs == 1)) then
        write(outfile,*) '******************* 22.05 Fuel Handling and Storage'
-       call ocosts(outfile,'(star2205)','Fuel Handling and Storage (M$)', star2205)
+       call ocosts(outfile,'(step2205)','Fuel Handling and Storage (M$)', step2205)
        call oblnkl(outfile)
-       call ocosts(outfile,'(star2205)','Total Account 22.05 Cost (M$)', star2205)
+       call ocosts(outfile,'(step2205)','Total Account 22.05 Cost (M$)', step2205)
        call oblnkl(outfile)
      end if
   
-   end subroutine star_a2205
+   end subroutine step_a2205
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   subroutine star_a2206(outfile,iprint)
+   subroutine step_a2206(outfile,iprint)
 
-     !+ad_name  star_a2206
+     !+ad_name  step_a2206
      !+ad_summ  Account 22.06 : Other Reactor Plant Equipment
      !+ad_type  Subroutine
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -914,77 +914,77 @@ contains
      !  Local variables
   
      real(kind(1.0D0)):: &
-     star220601, star220602, star220603, star220604, star220605, &
-     star220606, star220607, star220608, star2206
+     step220601, step220602, step220603, step220604, step220605, &
+     step220606, step220607, step220608, step2206
   
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-     star2206 = 0.0D0
+     step2206 = 0.0D0
      
      ! 22.06.01 Maintenance Equipment
      ! Original STARFIRE value, scaling with fusion island volume
-     star220601 = 3.83D1 * (vfi / vfi_star)
-     star2206 = star2206 + star220601
+     step220601 = 3.83D1 * (vfi / vfi_star)
+     step2206 = step2206 + step220601
   
      ! 22.06.02 Special Heating Systems
      ! Original STARFIRE value, no scaling
-     star220602 = 0.0D0
-     star2206 = star2206 + star220602
+     step220602 = 0.0D0
+     step2206 = step2206 + step220602
   
      ! 22.06.03 Coolant Storage
      ! Original STARFIRE value, scaling with thermal power
-     star220603 = 2.4D-1 * (pthermmw / ptherm_star)**0.6D0
-     star2206 = star2206 + star220603
+     step220603 = 2.4D-1 * (pthermmw / ptherm_star)**0.6D0
+     step2206 = step2206 + step220603
   
      ! 22.06.04 Gas System
      ! Original STARFIRE value, scaling with fusion island volume
-     star220604 = 8.0D-2 * (vfi / vfi_star)
-     star2206 = star2206 + star220604
+     step220604 = 8.0D-2 * (vfi / vfi_star)
+     step2206 = step2206 + step220604
   
      ! 22.06.05 Inert Atmosphere System
      ! Original STARFIRE value, no scaling
-     star220605 = 0.0D0
-     star2206 = star2206 + star220605
+     step220605 = 0.0D0
+     step2206 = step2206 + step220605
   
      ! 22.06.06 Fluid Leak Detection
      ! Original STARFIRE value, no scaling
-     star220606 = 2.0D0
-     star2206 = star2206 + star220606
+     step220606 = 2.0D0
+     step2206 = step2206 + step220606
   
      ! 22.06.07 Closed Loop Coolant System
      ! Original STARFIRE value, scaling with thermal power
-     star220607 = 1.97D0 * (pthermmw / ptherm_star)**0.6D0
-     star2206 = star2206 + star220607
+     step220607 = 1.97D0 * (pthermmw / ptherm_star)**0.6D0
+     step2206 = step2206 + step220607
   
      ! 22.06.08 Standby Cooling System
      ! Original STARFIRE value, no scaling
-     star220608 = 1.16D0 * (pthermmw / ptherm_star)**0.6D0
-     star2206 = star2206 + star220608
+     step220608 = 1.16D0 * (pthermmw / ptherm_star)**0.6D0
+     step2206 = step2206 + step220608
   
-     star22 = star22 + star2206
+     step22 = step22 + step2206
 
      if ((iprint==1).and.(output_costs == 1)) then
        write(outfile,*) '******************* 22.06 Other Reactor Plant Equipment'
-       call ocosts(outfile,'(star220601)','Maintenance Equipment (M$)', star220601)
-       call ocosts(outfile,'(star220602)','Special Heating Systems (M$)', star220602)
-       call ocosts(outfile,'(star220603)','Coolant Storage (M$)', star220603)
-       call ocosts(outfile,'(star220604)','Gas System (M$)', star220604)
-       ! call ocosts(outfile,'(star220605)','Inert Atmosphere System (M$)', star220605)
-       call ocosts(outfile,'(star220606)','Fluid Leak Detection (M$)', star220606)
-       call ocosts(outfile,'(star220607)','Closed Loop Coolant System (M$)', star220607)
-       call ocosts(outfile,'(star220608)','Standby Cooling System (M$)', star220608)
+       call ocosts(outfile,'(step220601)','Maintenance Equipment (M$)', step220601)
+       call ocosts(outfile,'(step220602)','Special Heating Systems (M$)', step220602)
+       call ocosts(outfile,'(step220603)','Coolant Storage (M$)', step220603)
+       call ocosts(outfile,'(step220604)','Gas System (M$)', step220604)
+       ! call ocosts(outfile,'(step220605)','Inert Atmosphere System (M$)', step220605)
+       call ocosts(outfile,'(step220606)','Fluid Leak Detection (M$)', step220606)
+       call ocosts(outfile,'(step220607)','Closed Loop Coolant System (M$)', step220607)
+       call ocosts(outfile,'(step220608)','Standby Cooling System (M$)', step220608)
        call oblnkl(outfile)
-       call ocosts(outfile,'(star2206)','Total Account 22.06 Cost (M$)', star2206)
+       call ocosts(outfile,'(step2206)','Total Account 22.06 Cost (M$)', step2206)
        call oblnkl(outfile)
      end if
   
-   end subroutine star_a2206
+   end subroutine step_a2206
  
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   subroutine star_a2207(outfile,iprint)
+   subroutine step_a2207(outfile,iprint)
 
-     !+ad_name  star_a2207
+     !+ad_name  step_a2207
      !+ad_summ  Account 22.07 : Instrumentation and Control
      !+ad_type  Subroutine
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -1009,33 +1009,33 @@ contains
   
      !  Local variables
   
-     real(kind(1.0D0)):: star2207
+     real(kind(1.0D0)):: step2207
   
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-     star2207 = 0.0D0
+     step2207 = 0.0D0
      
      ! 22.07 Instrumentation and Control
      ! Original STARFIRE value, no scaling
-     star2207 = 2.341D1 
+     step2207 = 2.341D1 
   
-     star22 = star22 + star2207
+     step22 = step22 + step2207
 
      if ((iprint==1).and.(output_costs == 1)) then
      write(outfile,*) '******************* 22.07 Instrumentation and Control'
-     call ocosts(outfile,'(star2207)','Instrumentation and Control (M$)', star2207)
+     call ocosts(outfile,'(step2207)','Instrumentation and Control (M$)', step2207)
      call oblnkl(outfile)
-     call ocosts(outfile,'(star2207)','Total Account 22.07 Cost (M$)', star2207)
+     call ocosts(outfile,'(step2207)','Total Account 22.07 Cost (M$)', step2207)
      call oblnkl(outfile)
      end if
   
-   end subroutine star_a2207
+   end subroutine step_a2207
 
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
- subroutine star_a23(outfile,iprint)
+ subroutine step_a23(outfile,iprint)
 
-   !+ad_name  star_a23
+   !+ad_name  step_a23
    !+ad_summ  Account 23 : Turbine Plant Equipment
    !+ad_type  Subroutine
    !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -1062,80 +1062,80 @@ contains
    !  Local variables
 
    real(kind(1.0D0)):: &
-   star2301, star2302, star2303, star2304, star2305, star2306, &
-   star2307, star2398, star2399
+   step2301, step2302, step2303, step2304, step2305, step2306, &
+   step2307, step2398, step2399
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   star23 = 0.0D0
+   step23 = 0.0D0
    
    ! 23.01 Turbine Generators
    ! Original STARFIRE value, scaling with thermal power
-   star2301 = 7.733D1 * (pthermmw / ptherm_star)**0.6D0
-   star23 = star23 + star2301
+   step2301 = 7.733D1 * (pthermmw / ptherm_star)**0.6D0
+   step23 = step23 + step2301
 
    ! 23.02 Steam System
    ! Original STARFIRE value, scaling with thermal power
-   star2302 = 4.37D0 * (pthermmw / ptherm_star)**0.6D0
-   star23 = star23 + star2302
+   step2302 = 4.37D0 * (pthermmw / ptherm_star)**0.6D0
+   step23 = step23 + step2302
 
    ! 23.03 Heat Rejection
    ! Original STARFIRE value, scaling with thermal power
-   star2303 = 4.434D1 * (pthermmw / ptherm_star)**0.6D0
-   star23 = star23 + star2303
+   step2303 = 4.434D1 * (pthermmw / ptherm_star)**0.6D0
+   step23 = step23 + step2303
 
    ! 23.04 Condensing System
    ! Original STARFIRE value, scaling with thermal power
-   star2304 = 1.918D1 * (pthermmw / ptherm_star)**0.6D0
-   star23 = star23 + star2304
+   step2304 = 1.918D1 * (pthermmw / ptherm_star)**0.6D0
+   step23 = step23 + step2304
 
    ! 23.05 Feedwater Heating System
    ! Original STARFIRE value, scaling with thermal power
-   star2305 = 9.39D0 * (pthermmw / ptherm_star)**0.6D0
-   star23 = star23 + star2305
+   step2305 = 9.39D0 * (pthermmw / ptherm_star)**0.6D0
+   step23 = step23 + step2305
 
    ! 23.06 Other Turbine Equipment
    ! Original STARFIRE value, scaling with thermal power
-   star2306 = 5.084D1 * (pthermmw / ptherm_star)**0.6D0  
-   star23 = star23 + star2306
+   step2306 = 5.084D1 * (pthermmw / ptherm_star)**0.6D0  
+   step23 = step23 + step2306
 
    ! 23.07 Instrumentation and Control
    ! Original STARFIRE value, no scaling
-   star2307 = 8.7D0
-   star23 = star23 + star2307
+   step2307 = 8.7D0
+   step23 = step23 + step2307
 
    ! 23.98 Spares
    ! Original STARFIRE value, no scaling
-   star2398 = 3.0D0 
-   star23 = star23 + star2398
+   step2398 = 3.0D0 
+   step23 = step23 + step2398
 
    ! 23.99 Contingency
    ! STARFIRE 15%
-   star2399 = 1.5D-1 * star23
-   star23 = star23 + star2399
+   step2399 = 1.5D-1 * step23
+   step23 = step23 + step2399
 
    if ((iprint==1).and.(output_costs == 1)) then
      call oshead(outfile,'23. Turbine Plant Equipment')
-     call ocosts(outfile,'(star2301)','Turbine Generators (M$)', star2301)
-     call ocosts(outfile,'(star2302)','Steam System (M$)', star2302)
-     call ocosts(outfile,'(star2303)','Heat Rejection (M$)', star2303)
-     call ocosts(outfile,'(star2304)','Condensing System (M$)', star2304)
-     call ocosts(outfile,'(star2305)','Feedwater Heating System (M$)', star2305)
-     call ocosts(outfile,'(star2306)','Other Turbine Equipment (M$)', star2306)
-     call ocosts(outfile,'(star2307)','Instrumentation and Control (M$)', star2307)
-     call ocosts(outfile,'(star2398)','Spares (M$)', star2398)
-     call ocosts(outfile,'(star2399)','Contingency (M$)', star2399)
+     call ocosts(outfile,'(step2301)','Turbine Generators (M$)', step2301)
+     call ocosts(outfile,'(step2302)','Steam System (M$)', step2302)
+     call ocosts(outfile,'(step2303)','Heat Rejection (M$)', step2303)
+     call ocosts(outfile,'(step2304)','Condensing System (M$)', step2304)
+     call ocosts(outfile,'(step2305)','Feedwater Heating System (M$)', step2305)
+     call ocosts(outfile,'(step2306)','Other Turbine Equipment (M$)', step2306)
+     call ocosts(outfile,'(step2307)','Instrumentation and Control (M$)', step2307)
+     call ocosts(outfile,'(step2398)','Spares (M$)', step2398)
+     call ocosts(outfile,'(step2399)','Contingency (M$)', step2399)
      call oblnkl(outfile)
-     call ocosts(outfile,'(star23)','Total Account 23 Cost (M$)', star23)
+     call ocosts(outfile,'(step23)','Total Account 23 Cost (M$)', step23)
    end if
 
- end subroutine star_a23
+ end subroutine step_a23
 
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
- subroutine star_a24(outfile,iprint)
+ subroutine step_a24(outfile,iprint)
 
-   !+ad_name  star_a24
+   !+ad_name  step_a24
    !+ad_summ  Account 24 : Electric Plant Equipment
    !+ad_type  Subroutine
    !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -1162,80 +1162,80 @@ contains
    !  Local variables
 
    real(kind(1.0D0)):: &
-   star2401, star2402, star2403, star2404, star2405, star2406, &
-   star2407, star2498, star2499
+   step2401, step2402, step2403, step2404, step2405, step2406, &
+   step2407, step2498, step2499
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   star24 = 0.0D0
+   step24 = 0.0D0
    
    ! 24.01 Switch Gear
    ! Original STARFIRE value, no scaling
-   star2401 = 1.239D1
-   star24 = star24 + star2401
+   step2401 = 1.239D1
+   step24 = step24 + step2401
 
    ! 24.02 Station Service Equipment
    ! Original STARFIRE value, no scaling
-   star2402 = 1.704D1
-   star24 = star24 + star2402
+   step2402 = 1.704D1
+   step24 = step24 + step2402
 
    ! 24.03 Switchboards
    ! Original STARFIRE value, no scaling
-   star2403 = 7.8D0
-   star24 = star24 + star2403
+   step2403 = 7.8D0
+   step24 = step24 + step2403
 
    ! 24.04 Protective Equipment
    ! Original STARFIRE value, no scaling
-   star2404 = 2.11D0
-   star24 = star24 + star2404
+   step2404 = 2.11D0
+   step24 = step24 + step2404
 
    ! 24.05 Electrical Structures
    ! Original STARFIRE value, no scaling
-   star2405 = 1.74D1
-   star24 = star24 + star2405
+   step2405 = 1.74D1
+   step24 = step24 + step2405
 
    ! 24.06 Power and Control Wiring
    ! Original STARFIRE value, no scaling
-   star2406 = 3.599D1
-   star24 = star24 + star2406
+   step2406 = 3.599D1
+   step24 = step24 + step2406
 
    ! 24.07 Electric Lighting
    ! Original STARFIRE value, no scaling
-   star2407 = 8.2D0
-   star24 = star24 + star2407
+   step2407 = 8.2D0
+   step24 = step24 + step2407
 
    ! 24.98 Spares
    ! Original STARFIRE value, no scaling
-   star2498 = 1.05D0 
-   star24 = star24 + star2498
+   step2498 = 1.05D0 
+   step24 = step24 + step2498
 
    ! 24.99 Contingency
    ! STARFIRE 15%
-   star2499 = 1.5D-1 * star24
-   star24 = star24 + star2499
+   step2499 = 1.5D-1 * step24
+   step24 = step24 + step2499
 
    if ((iprint==1).and.(output_costs == 1)) then
      call oshead(outfile,'24. Electric Plant Equipment')
-     call ocosts(outfile,'(star2401)','Switch Gear (M$)', star2401)
-     call ocosts(outfile,'(star2402)','Station Service Equipment (M$)', star2402)
-     call ocosts(outfile,'(star2403)','Switchboards (M$)', star2403)
-     call ocosts(outfile,'(star2404)','Protective Equipment (M$)', star2404)
-     call ocosts(outfile,'(star2405)','Electrical Structures (M$)', star2405)
-     call ocosts(outfile,'(star2406)','Power and Control Wiring (M$)', star2406)
-     call ocosts(outfile,'(star2407)','Electric Lighting (M$)', star2407)
-     call ocosts(outfile,'(star2498)','Spares (M$)', star2498)
-     call ocosts(outfile,'(star2499)','Contingency (M$)', star2499)
+     call ocosts(outfile,'(step2401)','Switch Gear (M$)', step2401)
+     call ocosts(outfile,'(step2402)','Station Service Equipment (M$)', step2402)
+     call ocosts(outfile,'(step2403)','Switchboards (M$)', step2403)
+     call ocosts(outfile,'(step2404)','Protective Equipment (M$)', step2404)
+     call ocosts(outfile,'(step2405)','Electrical Structures (M$)', step2405)
+     call ocosts(outfile,'(step2406)','Power and Control Wiring (M$)', step2406)
+     call ocosts(outfile,'(step2407)','Electric Lighting (M$)', step2407)
+     call ocosts(outfile,'(step2498)','Spares (M$)', step2498)
+     call ocosts(outfile,'(step2499)','Contingency (M$)', step2499)
      call oblnkl(outfile)
-     call ocosts(outfile,'(star24)','Total Account 24 Cost (M$)', star24)
+     call ocosts(outfile,'(step24)','Total Account 24 Cost (M$)', step24)
    end if
 
- end subroutine star_a24
+ end subroutine step_a24
 
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
- subroutine star_a25(outfile,iprint)
+ subroutine step_a25(outfile,iprint)
 
-     !+ad_name  star_a25
+     !+ad_name  step_a25
      !+ad_summ  Account 25 : Miscellaneous Plant Equipment
      !+ad_type  Subroutine
      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
@@ -1262,59 +1262,59 @@ contains
      !  Local variables
   
      real(kind(1.0D0)):: &
-     star2501, star2502, star2503, star2504, star2598, star2599
+     step2501, step2502, step2503, step2504, step2598, step2599
   
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-     star25 = 0.0D0
+     step25 = 0.0D0
      
      ! 25.01 Transport and Lifting Equipment
      ! Original STARFIRE value, scaling with thermal power
-     star2501 = 1.568D1 * (pthermmw / ptherm_star)**0.6D0
-     star25 = star25 + star2501
+     step2501 = 1.568D1 * (pthermmw / ptherm_star)**0.6D0
+     step25 = step25 + step2501
   
      ! 24.02 Air and Water Service System
      ! Original STARFIRE value, scaling with thermal power
-     star2502 = 1.235D1 * (pthermmw / ptherm_star)**0.6D0
-     star25 = star25 + star2502
+     step2502 = 1.235D1 * (pthermmw / ptherm_star)**0.6D0
+     step25 = step25 + step2502
   
      ! 24.03 Communications Equipment
      ! Original STARFIRE value, no scaling
-     star2503 = 6.22D0
-     star25 = star25 + star2503
+     step2503 = 6.22D0
+     step25 = step25 + step2503
   
      ! 24.04 Furnishing and Fixtures
      ! Original STARFIRE value, no scaling
-     star2504 = 7.5D-1
-     star25 = star25 + star2504
+     step2504 = 7.5D-1
+     step25 = step25 + step2504
   
      ! 24.98 Spares
      ! Original STARFIRE value, no scaling
-     star2598 = 4.5D-1 
-     star25 = star25 + star2598
+     step2598 = 4.5D-1 
+     step25 = step25 + step2598
   
      ! 24.99 Contingency
      ! STARFIRE 15%
-     star2599 = 1.5D-1 * star25
-     star25 = star25 + star2599
+     step2599 = 1.5D-1 * step25
+     step25 = step25 + step2599
   
      if ((iprint==1).and.(output_costs == 1)) then
        call oshead(outfile,'25. Miscellaneous Plant Equipment')
-       call ocosts(outfile,'(star2501)','Transport and Lifting Equipment (M$)', star2501)
-       call ocosts(outfile,'(star2502)','Air and Water Service System (M$)', star2502)
-       call ocosts(outfile,'(star2503)','Communications Equipment (M$)', star2503)
-       call ocosts(outfile,'(star2504)','Furnishing and Fixtures (M$)', star2504)
-       call ocosts(outfile,'(star2598)','Spares (M$)', star2598)
-       call ocosts(outfile,'(star2599)','Contingency (M$)', star2599)
+       call ocosts(outfile,'(step2501)','Transport and Lifting Equipment (M$)', step2501)
+       call ocosts(outfile,'(step2502)','Air and Water Service System (M$)', step2502)
+       call ocosts(outfile,'(step2503)','Communications Equipment (M$)', step2503)
+       call ocosts(outfile,'(step2504)','Furnishing and Fixtures (M$)', step2504)
+       call ocosts(outfile,'(step2598)','Spares (M$)', step2598)
+       call ocosts(outfile,'(step2599)','Contingency (M$)', step2599)
        call oblnkl(outfile)
-       call ocosts(outfile,'(star25)','Total Account 25 Cost (M$)', star25)
+       call ocosts(outfile,'(step25)','Total Account 25 Cost (M$)', step25)
      end if
   
-   end subroutine star_a25
+   end subroutine step_a25
 
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine coelc_star(outfile,iprint)
+  subroutine coelc_step(outfile,iprint)
 
     !+ad_name  coelc
     !+ad_summ  Routine to calculate the cost of electricity for a fusion power plant
@@ -1654,6 +1654,6 @@ contains
 
     end if
 
-  end subroutine coelc_star
+  end subroutine coelc_step
 
-end module costs_star_module
+end module costs_step_module

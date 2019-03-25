@@ -96,7 +96,7 @@ subroutine caller(xc,nvars)
   use buildings_module
   use costs_module
   use costs_2015_module
-  use costs_star_module
+  use costs_step_module
   use current_drive_module
   use divertor_module
   use divertor_ode
@@ -337,14 +337,14 @@ subroutine caller(xc,nvars)
   ! ---- | ------
   ! 0    |  1990 costs model
   ! 1    |  2015 Kovari model
-  ! 2    |  2019 STAR model
+  ! 2    |  2019 STEP model
 
   if (cost_model == 0) then
       call costs(nout,0)
   else if (cost_model == 1) then
       call costs_2015(0,0)
   else if (cost_model == 2) then
-     call costs_star(nout,0)
+     call costs_step(nout,0)
   end if
 
   ! FISPACT and LOCA model (not used) !
