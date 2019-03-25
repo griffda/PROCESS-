@@ -159,6 +159,7 @@ subroutine run_summary
   character(len = 60)  :: fom_string
   character(len = 14)  :: minmax_string
   character(len = 10)  :: eps_string
+  character :: minmax_sign
   include "com.msg"
   include "tag.num"
   include "untracked.info"
@@ -212,11 +213,13 @@ subroutine run_summary
 
      if (minmax > 0) then
       minmax_string = '  -- minimise '
+      minmax_sign = "+"
      else
       minmax_string = '  -- maximise '
+      minmax_sign = "-"
      end if
      fom_string = lablmm(abs(minmax))
-     call ocmmnt(outfile, '      Figure of merit  : '//integer2string(minmax)//minmax_string//fom_string) ! Figure of merit
+     call ocmmnt(outfile, '      Figure of merit  : '//minmax_sign//integer2string(abs(minmax))//minmax_string//fom_string) ! Figure of merit
      
      write(eps_string, '(ES8.2)') epsvmc
      call ocmmnt(outfile, ' Convergence parameter : '//eps_string)  !  Convergence parameter
