@@ -191,7 +191,7 @@ subroutine run_summary
      if (untracked > 0) then  ! tag number
        call ocmmnt(outfile, '  Tag No. : '//tagno//' code contains untracked changes')
      else
-       call ocmmnt(outfile, '  Tag No. : "'//tagno//'"')
+       call ocmmnt(outfile, '  Tag No. : '//tagno)
      end if
      call ocmmnt(outfile, '  Git log : '//COMMSG)  !  Last git com message
      call ocmmnt(outfile, progid(3))  !  date/time
@@ -227,10 +227,12 @@ subroutine run_summary
      call ostars(outfile, width)
   end do
 
+  call oblnkl(outfile)
   call ocmmnt(nout,'(Please include this header in any models, presentations and papers based on these results)')
   call oblnkl(nout)
   call ostars(nout, width)
   ! Issue #270
+  call oblnkl(outfile)
   call ocmmnt(nout,'Quantities listed in standard row format are labelled as follows in columns 112-114:')
   call ocmmnt(nout,'ITV : Active iteration variable (in any output blocks)')
   call ocmmnt(nout,'OP  : Calculated output quantity')
