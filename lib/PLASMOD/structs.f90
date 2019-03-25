@@ -19,6 +19,8 @@ module structs
       integer :: isiccir=0
 						integer :: isawt=1
 						integer :: iprocess=1
+						integer :: ifcoreraditv=0  !if 1, uses fcoreraditv as criterion on Xe
+						integer :: ifcdp=0         !if 1, uses fcdp as criterion on q_cd
     end type numerics_transp  
 
 
@@ -104,7 +106,8 @@ module structs
       real(kind(1.0D0)) :: pradedge,psync,pbrehms,pline,& 
   & psepe,psepi,Hcorr,piepv,pohm,rplas,dfuelreq,tfuelreq,hepumpreq, &
 	& qheat,qcd,qfus,pnbi,pech,peaux,piaux, & 
-	& fusionrate,alpharate,betaft,palpe,palpi,tauee,tauei,qtot,pfusdd
+	& fusionrate,alpharate,betaft,palpe,palpi,tauee,tauei,qtot,pfusdd, &
+	& npikpalmod=1.,xihepalmod=2.
  end type power_losses 
 
 

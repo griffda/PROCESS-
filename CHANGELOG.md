@@ -1,6 +1,18 @@
-# 1.0.15
+# 1.0.16
 
 > next release
+
+## Bug Fixes
+
+## Features
+
+- new command line argument `./process.exe help` provides help info
+
+## Minor Changes
+
+- For issue #379 constraint 52 now gives warning for iblanket=1
+
+# 1.0.15
 
 ## Bug Fixes
 - Added emultmw calculation to stellarator and fixed power balance errors (Issue #783)
@@ -19,6 +31,8 @@
 - I mode scalings for confinement time and L-I power threshold from Hubbard 2017.
 - New utility called `plot_profiles.py`. Plots T and n profiles for a list of given MFILES.
 - Can now setup the repo in `debug` mode for compilation. See `README.md` for instructions.
+- New scan variables - `impurity_ratio(9)` and `fgwsep`.
+- New constraint on CS peak field.
 
 ## Minor Changes
 - Explicitly state 1990 $ for old cost model

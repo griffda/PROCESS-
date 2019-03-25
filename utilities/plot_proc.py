@@ -651,7 +651,7 @@ def plot_tprofile(prof):
     xmin = 0
     xmax = 1
     ymin = 0
-    ymax = 35
+    ymax = 50
     prof.set_ylim([ymin, ymax])
     prof.set_xlim([xmin, xmax])
     prof.set_autoscaley_on(False)

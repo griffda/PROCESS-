@@ -102,13 +102,10 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   message(STATUS, "MSVC ")
 endif()
 
-
-set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} ${bounds}")
-#set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${dialect} -cpp -g -fcheck=bounds -Wconversion -Wunused-dummy-argument -Wunused-parameter")
-# set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fcheck=bounds -fbacktrace-Wconversion -Wunused-dummy-argument -Wunused")
+# Set default fortran compiler flags
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fcheck=bounds -fbacktrace")
-# -Wall -Wextra -Wunused   have been removed for convenience
 
+# Set custom compiler flags for particular files
 message("\nFlag configuration for files")
 file(GLOB FORTRAN_FILES ${FORT_SOURCE_DIR}/*.f90)
 foreach(file ${FORTRAN_FILES})
@@ -128,6 +125,7 @@ foreach(file ${FORTRAN_FILES})
     message("-- Use -fcheck=bounds -fbacktrace flags for --> " ${file})
     set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch")
   else()
+    # If debug mode chosen on command line turn on -Wall and -Wextra
     if(${debug} MATCHES ON)
       set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-Wall -Wextra -Wconversion -Wunused-dummy-argument -fcheck=bounds -fbacktrace -Wno-c-binding-type -Wno-unused-function")
     else()
@@ -140,19 +138,28 @@ message("-- COMPILE_FLAGS for all other fortran files = -Wconversion -Wunused-du
 message("\n")
 message("Fortran compiler used in this build will be -> ${CMAKE_Fortran_COMPILER_ID}")  # Must be after project(project_name)
 message("Fortran Flags are -> ${CMAKE_Fortran_FLAGS}")  # Must be after project(project_name)
+
 # The version number.
 set (process_VERSION_MAJOR 1)
 set (process_VERSION_MINOR 0)
+
 # Set the output folder where your program will be created
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+
+# Set library path
 set(CMAKE_LIBRARY_PATH /usr/lib)
+
+# Set build targets
+
+# Creating autodoc
 add_custom_target(autodoc
 COMMAND ${FORTRAN} -o autodoc autodoc.f90
 WORKING_DIRECTORY ${FORT_SOURCE_DIR}
   DEPENDS ${FORT_SOURCE_DIR}/autodoc.f90
-#  VERBATIM
 )
+
+# Create vardes HTML documentation
 add_custom_target(vardes
   COMMAND cat global_variables.f90 numerics.f90 | ./autodoc
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/documentation/html
@@ -163,6 +170,8 @@ add_custom_target(vardes
   DEPENDS autodoc
   WORKING_DIRECTORY ${FORT_SOURCE_DIR}
 )
+
+# Create all HTML documentation
 add_custom_target(html
   COMMAND cat *.f90 | ./autodoc
   COMMAND ${MOVE_FILE} vardes.html vardes_full.html
@@ -173,13 +182,14 @@ add_custom_target(html
   DEPENDS autodoc
   WORKING_DIRECTORY ${FORT_SOURCE_DIR}
 )
+
+# Create the PROCESS userguide PDF from LaTeX
 add_custom_target(userguide
   COMMAND pandoc --standalone ${HTML_DIR}/vardes.html --output ${HTML_DIR}/vardes.tex
   COMMAND pdflatex -halt-on-error ${HTML_DIR}/vardes.tex > ${DOC_DIR}/vardes.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/vardes.log"
-
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/process.tex > ${DOC_DIR}/userguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/userguide.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/process.tex > ${DOC_DIR}/userguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/userguide.log"
-  COMMAND ${MOVE_FILE} -t pdf process.pdf process.log
+  COMMAND ${MOVE_FILE} process.pdf process.log pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.out
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.lof
@@ -191,11 +201,13 @@ add_custom_target(userguide
   DEPENDS vardes ${DOC_DIR}/process.tex
   WORKING_DIRECTORY ${DOC_DIR}
 )
+
+# Create the PROCESS developer guide PDF from LaTeX
 add_custom_target(developerguide
   COMMAND pwd
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/developerguide > ${DOC_DIR}/devguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/devguide.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/developerguide > ${DOC_DIR}/devguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/devguide.log"
-  COMMAND ${MOVE_FILE} -t pdf developerguide.pdf developerguide.log
+  COMMAND ${MOVE_FILE} developerguide.pdf developerguide.log pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/developerguide.log
@@ -205,10 +217,12 @@ add_custom_target(developerguide
   DEPENDS ${DOC_DIR}/developerguide.tex
   WORKING_DIRECTORY ${DOC_DIR}
 )
+
+# Create the PROCESS utilities guide PDF from LaTeX
 add_custom_target(utilitiesdoc
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/utilitiesdoc > ${DOC_DIR}/utdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/utdoc.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/utilitiesdoc > ${DOC_DIR}/utdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/utdoc.log"
-  COMMAND ${MOVE_FILE} -t pdf utilitiesdoc.pdf utilitiesdoc.log
+  COMMAND ${MOVE_FILE} utilitiesdoc.pdf utilitiesdoc.log pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/utilitiesdoc.lot
@@ -217,12 +231,14 @@ add_custom_target(utilitiesdoc
   DEPENDS ${DOC_DIR}/utilitiesdoc.tex
   WORKING_DIRECTORY ${DOC_DIR}
 )
+
+# Create the PROCESS optimisation solver guide PDF from LaTeX
 add_custom_target(optsolverdoc
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/optsolverdoc > ${DOC_DIR}/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/optdoc.log"
   COMMAND bibtex optsolverdoc
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/optsolverdoc > ${DOC_DIR}/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/optdoc.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/optsolverdoc > ${DOC_DIR}/optdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/optdoc.log"
-  COMMAND ${MOVE_FILE} -t pdf optsolverdoc.pdf optsolverdoc.log
+  COMMAND ${MOVE_FILE} optsolverdoc.pdf optsolverdoc.log pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/optsolverdoc.log
@@ -234,12 +250,14 @@ add_custom_target(optsolverdoc
   DEPENDS ${DOC_DIR}/optsolverdoc.tex
   WORKING_DIRECTORY ${DOC_DIR}
 )
+
+# Create the PROCESS TF coil documentation PDF from LaTeX
 add_custom_target(tfdoc
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
   COMMAND bibtex tfdoc
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
   COMMAND pdflatex -halt-on-error ${DOC_DIR}/tfdoc > ${DOC_DIR}/tfdoc.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/tfdoc.log"
-  COMMAND ${MOVE_FILE} -f pdf tfdoc.pdf tfdoc.log
+  COMMAND ${MOVE_FILE} tfdoc.pdf tfdoc.log pdf
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.aux
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.lof
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.log
@@ -253,37 +271,35 @@ add_custom_target(tfdoc
   DEPENDS ${DOC_DIR}/tfdoc.tex
   WORKING_DIRECTORY ${DOC_DIR}
 )
+
+# Create all PROCESS documentation (HTML and PDF LaTeX)
 add_custom_target(doc
   COMMAND pwd
   COMMENT "Creating all documentation files"
   DEPENDS vardes html userguide developerguide utilitiesdoc optsolverdoc tfdoc
   WORKING_DIRECTORY ${DOC_DIR}
 )
+
+# Creates all PROCESS documentation (HTML and PDF LaTeX) and the Python dictionaries
 add_custom_target(all-builds
   COMMAND pwd
   COMMENT "Creating all documentation files"
   DEPENDS doc dicts
-#  WORKING_DIRECTORY ${DOC_DIR}
 )
-#foreach(pf_file ${pf_files})lot
-#  message(STATUS, ${pf_file})
-#  execute_process(
-#  COMMAND $ENV{PFUNIT}/bin/pFUnitParser.py test_utilities.pf test_utilities.F90
-#  WORKING_DIRECTORY ${TEST_DIR}
-#  )
-#endforeach()lot
+
+# Create test files
 add_custom_target(test-builds
-#include_directories("$(PFUNIT)/include/base.mk")
-#  COMMAND ${CMAKE_COMMAND} -E remove ${OBJ_DIR}/process.f90.o
-#  COMMAND cp ${BLD_DIR}/*.mod ${TElotST_DIR}
   COMMAND make tests
   COMMENT "building test files"
-#  DEPENDS doc dicts
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
+
+# Cleans bin directory
 add_custom_target(cleandoc
   COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/*
 )
+
+# ?
 set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
   ${FORT_SOURCE_DIR}/root.dir
   ${FORT_SOURCE_DIR}/tag.num
@@ -291,6 +307,8 @@ set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
   ${UTILITIES_DIR}/process_io_lib/process_dicts.py
   ${UTILITIES_DIR}/processgui/dicts/gui_dicts.py
 )
+
+# Create the Python dictionaries from FORTRAN source
 add_custom_target(dicts
   COMMAND ${CMAKE_COMMAND} -E touch process_io_lib/process_dicts.py
   COMMAND mv process_io_lib/process_dicts.py process_io_lib/process_dicts.py_prev
@@ -302,6 +320,8 @@ add_custom_target(dicts
   DEPENDS ${CMAKE_SOURCE_DIR}/root.dir
   VERBATIM
 )
+
+# Get Git log information to put latest commit message into executable
 execute_process(
  COMMAND git log -1 --format=oneline OUTPUT_VARIABLE COM_MSG
  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
@@ -309,6 +329,8 @@ execute_process(
 )
 string(SUBSTRING ${COM_MSG}, 41, 70, COM_MSG_PR)
 file(WRITE ${FORT_SOURCE_DIR}/com.msg "  character(len=*), parameter :: COMMSG = \"" ${COM_MSG_PR} "\"")
+
+# Get Git log information to put version number into executable
 execute_process(
  COMMAND git describe OUTPUT_VARIABLE TAG_NO
  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
@@ -316,28 +338,29 @@ execute_process(
 )
 file(WRITE ${FORT_SOURCE_DIR}/tag.num "  character(len=*), parameter :: tagno = \"" ${TAG_NO} "\"")
 
+# Check Git status for untracked changes and put info into executable
 execute_process(
  COMMAND git diff OUTPUT_VARIABLE UNTR_INFO
  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
  OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-
 string(LENGTH "${UNTR_INFO}" UNTR_LN)  # count no of words
 file(WRITE ${FORT_SOURCE_DIR}/untracked.info "  integer::untracked = " ${UNTR_LN} )
 
+# Create files for FORTRAN root and install directories
 file(WRITE ${FORT_SOURCE_DIR}/root.dir "      character(len=*), parameter :: ROOTDIR = \"" ${FORT_SOURCE_DIR} "\"\n")
 file(APPEND ${FORT_SOURCE_DIR}/root.dir "      character(len=*), parameter :: INSTALLDIR = \"" ${CMAKE_SOURCE_DIR} "\"")
 file(WRITE ${UTILITIES_DIR}/rootdir.py "ROOTDIR = '" ${FORT_SOURCE_DIR} "'")
 file(WRITE ${CMAKE_SOURCE_DIR}/test_suite/bindir.py "BINDIR = '" ${CMAKE_BINARY_DIR} "'")
 file(COPY ${FORT_SOURCE_DIR}/root.dir DESTINATION ${CMAKE_SOURCE_DIR})
-#file:///home/mkumar/process/lib/PLASMOD/e3m.f
 
+# Set output path
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+
+# Set PLASMOD source code directory
 set(PLSMOD_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/PLASMOD)
-# The following folder will be included
-#include_directories("${PROJECT_SOURCE_DIR}/source")
-#include_directories(${FORT_SOURCE_DIR} ${PLSMOD_SOURCE_DIR})
-#file(GLOB all_sources ${FORT_SOURCE_DIR}/*.f90 ${FORT_SOURCE_DIR}/*.f ${PLSMOD_SOURCE_DIR}/*.f ${PLSMOD_SOURCE_DIR}/*.f90)
+
+# The following folders will be included
 file(GLOB all_sources ${FORT_SOURCE_DIR}/*.f90 ${FORT_SOURCE_DIR}/*.f)
 list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/e3m.f)
 list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/equil.f90)
@@ -345,30 +368,42 @@ list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/grad_func.f90)
 list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/structs.f90)
 list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/transport_solver.f90)
 list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/trmodel.f90)
-set(autodoc_sources ${all_sources})  # for autodoc
-#file(GLOB_RECURSE sources ${FORT_SOURCE_DIR}/root.dir ${FORT_SOURCE_DIR}/*.f90 ${FORT_SOURCE_DIR}/*.for ${FORT_SOURCE_DIR}/*.f)
-#link_directories(/usr/lib)
+set(autodoc_sources ${all_sources})
+
+# Remove autodoc.f90 from compilation list
 list(REMOVE_ITEM all_sources ${FORT_SOURCE_DIR}/autodoc.f90)
-####
+
+# Remove process.f90 from compilation list
 list(REMOVE_ITEM all_sources ${FORT_SOURCE_DIR}/process.f90)
+
+# Create dynamic library/shared object
 add_library(PROCESS_calc_engine SHARED ${all_sources})
 set_target_properties(PROCESS_calc_engine PROPERTIES LINKER_LANGUAGE Fortran)
-# add the executable
-add_executable(process.exe ${FORT_SOURCE_DIR}/process.f90)
 
+# add the executable source file process.f90
+add_executable(process.exe ${FORT_SOURCE_DIR}/process.f90)
 set_target_properties(process.exe PROPERTIES LINKER_LANGUAGE Fortran)
+
 #####add_executable(process.exe ${all_sources})  one executable
+
+# Link the dynamic library/shared object with the executable
 target_link_libraries(process.exe PROCESS_calc_engine)
+
+# Link the lapack library for the testing software
 target_link_libraries(process.exe lapack)
-# Now set target for CPP exe
+
+# Setup for Google test software (CPP executable)
 if(DEFINED ENV{GTEST})
    add_executable(process_GTest.exe ${GTEST_DIR}/main_test.cpp)
    target_link_libraries(process_GTest.exe PROCESS_calc_engine)
    target_link_libraries(process_GTest.exe lapack)
    target_link_libraries(process_GTest.exe $ENV{GTEST}/lib/libgtest.a pthread)
 endif()
-#   target_compile_features(PROCESS_Testing PRIVATE cxx_std_17)
+
+# target_compile_features(PROCESS_Testing PRIVATE cxx_std_17)
 install(TARGETS process.exe DESTINATION ${CMAKE_SOURCE_DIR})
+
+# Post build commands for copying executable and dynamic library to source dir
 add_custom_command(TARGET process.exe
  POST_BUILD
  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}

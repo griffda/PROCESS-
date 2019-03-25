@@ -23,7 +23,7 @@ module global_variables
   !+ad_vars  icase : power plant type
   character(len=48) :: icase = 'Steady-state tokamak model'
   !+ad_vars  runtitle /Run Title/ : short descriptive title for the run
-  character(len=120) :: runtitle = &
+  character(len=180) :: runtitle = &
        "Run Title (change this line using input variable 'runtitle')"
 
   !+ad_vars  verbose /0/ : switch for turning on/off diagnostic messages:<UL>
@@ -963,6 +963,10 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_pfus = 0.0d0
   !+ad_vars  plasmod_eccdeff /0.3d0/ :: current drive multiplier: CD = eccdeff*PCD*TE/NE (not in use yet)
   real(kind(1.0D0)) :: plasmod_eccdeff = 0.3d0
+  !+ad_vars  plasmod_fcdp /-1.0d0/ :: (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power (iteration variable 147)
+  real(kind(1.0D0)) :: plasmod_fcdp = -1.0d0
+  !+ad_vars  plasmod_fradc /-1.0d0/ :: Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad) (iteration variable 148)
+  real(kind(1.0D0)) :: plasmod_fradc = -1.0d0
   !+ad_vars  plasmod_pech /0.0d0/ :: ech power (not in use yet)
   real(kind(1.0D0)) :: plasmod_pech = 0.0d0
   !+ad_vars  plasmod_gamcdothers /1.0d0/ :: efficiency multiplier for non-CD heating. If 0.0 pheat treated as if it had no current drive associated
@@ -2772,6 +2776,11 @@ module vacuum_variables
   real(kind(1.0D0)) :: vcdimax = 0.0D0
   !+ad_vars  vpumpn : number of high vacuum pumps
   integer :: vpumpn = 0
+  !+ad_vars  dwell_pump /0/ : switch for dwell pumping options:<UL>
+  !+ad_varc              <LI> = 0 pumping only during tdwell;
+  !+ad_varc              <LI> = 1 pumping only during tramp
+  !+ad_varc              <LI> = 2 pumping during tdwell + tramp</UL>
+  integer :: dwell_pump = 0
 
   !+ad_vars  <P><B>The following are used in the Battes, Day and Rohde pump-down model
   !+ad_varc  See "Basic considerations on the pump-down time in the dwell phase of a pulsed fusion DEMO"

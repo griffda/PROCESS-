@@ -1189,6 +1189,12 @@ contains
        case ('plasmod_pfus')
           call parse_real_variable('plasmod_pfus', plasmod_pfus, 0.0D0, 1.0D4, &
                'If 0. not used (otherwise controlled with Pauxheat)')
+       case ('plasmod_fcdp')
+          call parse_real_variable('plasmod_fcdp', plasmod_fcdp, -1.0D0, 1.0D0, &
+               '(P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power')
+       case ('plasmod_fradc')
+          call parse_real_variable('plasmod_fradc', plasmod_fradc, -1.0D0, 1.0D0, &
+               'Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)')
        case ('plasmod_contrpovs')
           call parse_real_variable('plasmod_contrpovs', plasmod_contrpovs, 0.0D0, 1.0D4, &
                'control power in Paux/lateral_area (MW/m2)')
@@ -2910,7 +2916,9 @@ contains
        case ('tn')
           call parse_real_variable('tn', tn, 1.0D0, 1.0D3, &
                'Neutral gas temp in chamber (K)')
-
+       case ('dwell_pump')
+               call parse_int_variable('dwell_pump', dwell_pump, 0, 2, &
+                    'switch for dwell pumping options')
        case ('pumpareafraction')
           call parse_real_variable('pumpareafraction', pumpareafraction, 1.0D-6, 1.0D0, &
                'Area of one pumping port as a fraction of plasma surface area')
@@ -3026,8 +3034,6 @@ contains
     end if
 
     nvar = no_iteration
-    write(*,*)no_constraints,' constraints (total).  ',nvar,' iteration variables'
-    write(*,*)nineqns, ' inequality constraints,  ', neqns, ' equality constraints'
 
     if (error .eqv. .True.) stop
 

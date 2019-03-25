@@ -1,51 +1,56 @@
-\documentclass[]{article}
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
 \else % if luatex or xelatex
-  \ifxetex
-    \usepackage{mathspec}
-  \else
-    \usepackage{fontspec}
-  \fi
-  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage[]{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
-\usepackage[unicode=true]{hyperref}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-            pdftitle={Variable Descriptor},
-            pdfborder={0 0 0},
-            breaklinks=true}
+  pdftitle={Variable Descriptor},
+  pdfborder={0 0 0},
+  breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
-\IfFileExists{parskip.sty}{%
-\usepackage{parskip}
-}{% else
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
-}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{0}
+\setcounter{secnumdepth}{-2}
 % Redefines (sub)paragraphs to behave more like sections
 \ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
 \fi
 \ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 
 % set default figure placement to htbp
@@ -60,8 +65,9 @@
 \begin{document}
 \maketitle
 
+\hypertarget{process-variable-descriptor-file-dated-20190315}{%
 \subsection{PROCESS Variable Descriptor File : dated
-20190107}\label{process-variable-descriptor-file-dated-20190107}
+20190315}\label{process-variable-descriptor-file-dated-20190315}}
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -77,7 +83,8 @@ so need not be initialised.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
-\subsubsection{\texorpdfstring{\href{global_variables.html}{global\_variables}}{global\_variables}}\label{global_variables}
+\hypertarget{global_variables}{%
+\subsubsection{\texorpdfstring{\href{global_variables.html}{global\_variables}}{global\_variables}}\label{global_variables}}
 
 \begin{itemize}
 \tightlist
@@ -101,7 +108,8 @@ so need not be initialised.
   maxcal /200/ : maximum number of VMCON iterations
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{constants.html}{constants}}{constants}}\label{constants}
+\hypertarget{constants}{%
+\subsubsection{\texorpdfstring{\href{constants.html}{constants}}{constants}}\label{constants}}
 
 \begin{itemize}
 \tightlist
@@ -121,12 +129,13 @@ so need not be initialised.
   umass FIX : unified atomic mass unit (kg)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{physics_variables.html}{physics\_variables}}{physics\_variables}}\label{physics_variables}
+\hypertarget{physics_variables}{%
+\subsubsection{\texorpdfstring{\href{physics_variables.html}{physics\_variables}}{physics\_variables}}\label{physics_variables}}
 
 \begin{itemize}
 \tightlist
 \item
-  ipnlaws /42/ FIX : number of energy confinement time scaling laws
+  ipnlaws /45/ FIX : number of energy confinement time scaling laws
 \item
   abeam : beam ion mass (amu)
 \item
@@ -212,15 +221,15 @@ so need not be initialised.
 \item
   dnprot : proton ash density (/m3)
 \item
-  dntau : plasma average ``n-tau'' (seconds/m3)
+  dntau : plasma average "n-tau" (seconds/m3)
 \item
   dnz : high Z ion density (/m3)
 \item
   ealphadt /3520.0/ FIX : alpha birth energy in D-T reaction (keV)
 \item
   epbetmax /1.38/ : maximum (eps*beta\_poloidal) (constraint equation 6)
-  revised (07/01/16) Issue \#346 ``Operation at the tokamak equilibrium
-  poloidal beta-limit in TFTR'' 1992 Nucl. Fusion 32 1468
+  revised (07/01/16) Issue \#346 "Operation at the tokamak equilibrium
+  poloidal beta-limit in TFTR" 1992 Nucl. Fusion 32 1468
 \item
   eps : inverse aspect ratio
 \item
@@ -244,14 +253,13 @@ so need not be initialised.
   area in neutron wall load calculation (iwalld=1)
 \item
   fgwped /0.85/ : fraction of Greenwald density to set as pedestal-top
-  density If \textless{}0, pedestal-top density set manually using neped
-  (ipedestal\textgreater{}=1) Needs to be \textgreater{}0 if ipedestal =
-  3 (iteration variable 145)
+  density If \textless0, pedestal-top density set manually using neped
+  (ipedestal\textgreater=1) Needs to be \textgreater0 if ipedestal = 3
+  (iteration variable 145)
 \item
   fgwsep /0.50/ : fraction of Greenwald density to set as separatrix
-  density If \textless{}0, separatrix density set manually using nesep
-  (ipedestal\textgreater{}=1) Needs to be \textgreater{}0 if ipedestal =
-  3
+  density If \textless0, separatrix density set manually using nesep
+  (ipedestal\textgreater=1) Needs to be \textgreater0 if ipedestal = 3
 \item
   fhe3 /0.0/ : helium-3 fuel fraction
 \item
@@ -260,8 +268,8 @@ so need not be initialised.
 \item
   fkzohm /1.0/ : Zohm elongation scaling adjustment factor (ishape=2, 3)
 \item
-  fplhsep /1.0/ : F-value for Psep \textgreater{}= Plh + Paux
-  (constraint equation 73)
+  fplhsep /1.0/ : F-value for Psep \textgreater= Plh + Paux (constraint
+  equation 73)
 \item
   ftrit /0.5/ : tritium fuel fraction
 \item
@@ -336,7 +344,9 @@ so need not be initialised.
   \item
     = 6 Todd empirical scaling II;
   \item
-    = 7 Connor-Hastie model
+    = 7 Connor-Hastie model;
+  \item
+    = 8 Sauter scaling allowing negative triangularity
   \end{itemize}
 \item
   idensl /7/ : switch for density limit to enforce (constraint equation
@@ -467,19 +477,18 @@ so need not be initialised.
 \item
   plasma\_res\_factor /1.0/ : plasma resistivity pre-factor
 \item
-  rhopedn /1.0/ : r/a of density pedestal (ipedestal\textgreater{}=1)
+  rhopedn /1.0/ : r/a of density pedestal (ipedestal\textgreater=1)
 \item
-  rhopedt /1.0/ : r/a of temperature pedestal
-  (ipedestal\textgreater{}=1)
+  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal\textgreater=1)
 \item
   tbeta /2.0/ : temperature profile index beta (ipedestal=1,2)
 \item
   teped /1.0/ : electron temperature of pedestal (keV)
-  (ipedestal\textgreater{}=1, ieped=0, calculated for ieped=1)
+  (ipedestal\textgreater=1, ieped=0, calculated for ieped=1)
 \item
   tesep /0.1/ : electron temperature at separatrix (keV)
-  (ipedestal\textgreater{}=1) calculated if reinke criterion is used
-  (icc = 78)
+  (ipedestal\textgreater=1) calculated if reinke criterion is used (icc
+  = 78)
 \item
   iprofile /1/ : switch for current profile consistency:
 
@@ -599,7 +608,13 @@ so need not be initialised.
   \item
     (41) Petty 2008 (H-mode)
   \item
-    (41) Lang et al. 2012 (H-mode)
+    (42) Lang et al. 2012 (H-mode)
+  \item
+    (43) Hubbard 2017 (I-mode) - nominal
+  \item
+    (44) Hubbard 2017 (I-mode) - lower bound
+  \item
+    (45) Hubbard 2017 (I-mode) - upper bound
   \end{itemize}
 \item
   iscrp /1/ : switch for plasma-first wall clearances:
@@ -715,6 +730,9 @@ so need not be initialised.
 \item
   phiint : internal plasma V-s
 \item
+  photon\_wall : Nominal mean radiation load on inside surface of
+  reactor (MW/m2)
+\item
   piepv : ion/electron equilibration power per volume (MW/m3)
 \item
   plascur : plasma current (A)
@@ -743,6 +761,8 @@ so need not be initialised.
 \item
   protonrate : proton production rate (particles/m3/sec)
 \item
+  psolradmw : SOL radiation power (MW) (stellarator only)
+\item
   psyncpv : synchrotron radiation power per volume (MW/m3)
 \item
   ilhthresh /6/ : switch for L-H mode power threshold scaling to use
@@ -751,7 +771,7 @@ so need not be initialised.
   plhthresh : L-H mode power threshold (MW) (chosen via ilhthresh, and
   enforced if constraint equation 15 is on)
 \item
-  pthrmw(14) : L-H power threshold for various scalings (MW):
+  pthrmw(18) : L-H power threshold for various scalings (MW):
 
   \begin{enumerate}
   \tightlist
@@ -783,6 +803,14 @@ so need not be initialised.
     Snipes 2000 scaling (closed divertor): upper bound
   \item
     Snipes 2000 scaling (closed divertor): lower bound
+  \item
+    Hubbard et al. 2012 L-I threshold scaling: nominal
+  \item
+    Hubbard et al. 2012 L-I threshold scaling: lower bound
+  \item
+    Hubbard et al. 2012 L-I threshold scaling: upper bound
+  \item
+    Hubbard et al. 2017 L-I threshold scaling
   \end{enumerate}
 \item
   ptremw : electron transport power (MW)
@@ -795,7 +823,7 @@ so need not be initialised.
 \item
   ptripv : ion transport power per volume (MW/m3)
 \item
-  q /3.0/ : safety factor `near' plasma edge (iteration variable 18):
+  q /3.0/ : safety factor 'near' plasma edge (iteration variable 18):
   equal to q95 (unless icurr = 2 (ST current scaling), in which case q =
   mean edge safety factor qbar)
 \item
@@ -810,6 +838,9 @@ so need not be initialised.
   qlim : lower limit for edge safety factor
 \item
   qstar : cylindrical safety factor
+\item
+  rad\_fraction : Radiation fraction = total radiation / total power
+  deposited in plasma
 \item
   ralpne /0.1/ : thermal alpha density / electron density (iteration
   variable 109) (calculated if ipedestal=3)
@@ -916,7 +947,8 @@ so need not be initialised.
   imprad\_model=1, only used in neutral beam stopping calc.)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{plasmod_variables.html}{plasmod\_variables}}{plasmod\_variables}}\label{plasmod_variables}
+\hypertarget{plasmod_variables}{%
+\subsubsection{\texorpdfstring{\href{plasmod_variables.html}{plasmod\_variables}}{plasmod\_variables}}\label{plasmod_variables}}
 
 \begin{itemize}
 \tightlist
@@ -1032,6 +1064,12 @@ so need not be initialised.
   plasmod\_eccdeff /0.3d0/ :: current drive multiplier: CD =
   eccdeff*PCD*TE/NE (not in use yet)
 \item
+  plasmod\_fcdp /-1.0d0/ :: (P\_CD - Pheat)/(Pmax-Pheat),i.e. ratio of
+  CD power over available power (iteration
+\item
+  plasmod\_fradc /-1.0d0/ :: Pline\_Xe / (Palpha + Paux - PlineAr -
+  Psync - Pbrad) (iteration variable 148)
+\item
   plasmod\_pech /0.0d0/ :: ech power (not in use yet)
 \item
   plasmod\_gamcdothers /1.0d0/ :: efficiency multiplier for non-CD
@@ -1074,7 +1112,8 @@ so need not be initialised.
   i\_flag :: Error flag for PLASMOD
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{current_drive_variables.html}{current\_drive\_variables}}{current\_drive\_variables}}\label{current_drive_variables}
+\hypertarget{current_drive_variables}{%
+\subsubsection{\texorpdfstring{\href{current_drive_variables.html}{current\_drive\_variables}}{current\_drive\_variables}}\label{current_drive_variables}}
 
 \begin{itemize}
 \tightlist
@@ -1168,7 +1207,7 @@ so need not be initialised.
   \item
     ECRH user input gamma
   \item
-    ECRH ``HARE'' model (E. Poli, Physics of Plasmas 2019)
+    ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
   \end{enumerate}
 \item
   irfcd /1/ : switch for current drive calculation:
@@ -1218,7 +1257,8 @@ so need not be initialised.
   centre
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{divertor_kallenbach_variables.html}{divertor\_kallenbach\_variables}}{divertor\_kallenbach\_variables}}\label{divertor_kallenbach_variables}
+\hypertarget{divertor_kallenbach_variables}{%
+\subsubsection{\texorpdfstring{\href{divertor_kallenbach_variables.html}{divertor\_kallenbach\_variables}}{divertor\_kallenbach\_variables}}\label{divertor_kallenbach_variables}}
 
 \begin{itemize}
 \tightlist
@@ -1296,7 +1336,8 @@ so need not be initialised.
   mach0 : Mach number at target (must be just less than 1)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{divertor_variables.html}{divertor\_variables}}{divertor\_variables}}\label{divertor_variables}
+\hypertarget{divertor_variables}{%
+\subsubsection{\texorpdfstring{\href{divertor_variables.html}{divertor\_variables}}{divertor\_variables}}\label{divertor_variables}}
 
 \begin{itemize}
 \tightlist
@@ -1374,7 +1415,7 @@ so need not be initialised.
   ppdivr : peak heat load at plate (with radiation) (MW/m2)
 \item
   prn1 /0.285/ : n-scrape-off / n-average plasma; (input for
-  ipedestal=0, = nesep/dene if ipedestal\textgreater{}=1)
+  ipedestal=0, = nesep/dene if ipedestal\textgreater=1)
 \item
   ptpdiv : peak temperature at the plate (eV)
 \item
@@ -1400,7 +1441,8 @@ so need not be initialised.
   zeffdiv /1.0/ : Zeff in the divertor region (if divdum /= 0)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{fwbs_variables.html}{fwbs\_variables}}{fwbs\_variables}}\label{fwbs_variables}
+\hypertarget{fwbs_variables}{%
+\subsubsection{\texorpdfstring{\href{fwbs_variables.html}{fwbs\_variables}}{fwbs\_variables}}\label{fwbs_variables}}
 
 \begin{itemize}
 \item
@@ -1575,9 +1617,9 @@ so need not be initialised.
   \begin{itemize}
   \tightlist
   \item
-    = 1 `small'
+    = 1 'small'
   \item
-    = 2 `large'
+    = 2 'large'
   \end{itemize}
 \item
   nflutf : peak fast neutron fluence on TF coil superconductor (n/m2)
@@ -1683,7 +1725,7 @@ so need not be initialised.
   channels OBSOLETE (m)
 \item
   fwcoolant /helium/ : first wall coolant (can be different from blanket
-  coolant) `helium' or `water' (27/11/2015)
+  coolant) 'helium' or 'water' (27/11/2015)
 \item
   fw\_wall /0.003/ : wall thickness of first wall coolant channels (m)
   (27/11/2015)
@@ -1699,7 +1741,7 @@ so need not be initialised.
   (27/11/2015)
 \item
   fwpressure /15.5e6/ : first wall coolant pressure (Pa)
-  (secondary\_cycle\textgreater{}1)
+  (secondary\_cycle\textgreater1)
 \item
   tpeak : peak first wall temperature (K) (27/11/2015)
 \item
@@ -1716,10 +1758,10 @@ so need not be initialised.
   temperature - not the coolant flow rate.)
 \item
   blpressure /15.5e6/ : blanket coolant pressure (Pa)
-  (secondary\_cycle\textgreater{}1) (27/11/2015)
+  (secondary\_cycle\textgreater1) (27/11/2015)
 \item
   inlet\_temp /573.0/ : inlet temperature of blanket coolant (K)
-  (secondary\_cycle\textgreater{}1) (27/11/2015)
+  (secondary\_cycle\textgreater1) (27/11/2015)
 \item
   outlet\_temp /823.0/ : outlet temperature of blanket coolant (K)
   (27/11/2015)
@@ -1727,7 +1769,7 @@ so need not be initialised.
   \begin{itemize}
   \tightlist
   \item
-    (secondary\_cycle\textgreater{}1);
+    (secondary\_cycle\textgreater1);
   \item
     input if coolwh=1 (helium), calculated if coolwh=2 (water)
   \end{itemize}
@@ -1736,19 +1778,19 @@ so need not be initialised.
   (27/11/2015)
 \item
   nblktmodpo /8/ : number of outboard blanket modules in poloidal
-  direction (secondary\_cycle\textgreater{}1)
+  direction (secondary\_cycle\textgreater1)
 \item
   nblktmodpi /7/ : number of inboard blanket modules in poloidal
-  direction (secondary\_cycle\textgreater{}1)
+  direction (secondary\_cycle\textgreater1)
 \item
   nblktmodto /48/ : number of outboard blanket modules in toroidal
-  direction (secondary\_cycle\textgreater{}1)
+  direction (secondary\_cycle\textgreater1)
 \item
   nblktmodti /32/ : number of inboard blanket modules in toroidal
-  direction (secondary\_cycle\textgreater{}1)
+  direction (secondary\_cycle\textgreater1)
 \item
   tfwmatmax /823.0/ : maximum temperature of first wall material (K)
-  (secondary\_cycle\textgreater{}1)
+  (secondary\_cycle\textgreater1)
 \item
   fw\_th\_conductivity /28.34/ : thermal conductivity of first wall
   material at 293 K (W/m/K) (Temperature dependence is as for
@@ -1774,7 +1816,7 @@ so need not be initialised.
   ptfnuc : nuclear heating in the TF coil (MW)
 \item
   ptfnucpm3 : nuclear heating in the TF coil (MW/m3)
-  (blktmodel\textgreater{}0)
+  (blktmodel\textgreater0)
 \item
   rdewex : cryostat radius (m)
 \item
@@ -1864,7 +1906,8 @@ so need not be initialised.
   etahtp /0.95/ : electrical efficiency of primary coolant pumps
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{primary_pumping_variables.html}{primary\_pumping\_variables}}{primary\_pumping\_variables}}\label{primary_pumping_variables}
+\hypertarget{primary_pumping_variables}{%
+\subsubsection{\texorpdfstring{\href{primary_pumping_variables.html}{primary\_pumping\_variables}}{primary\_pumping\_variables}}\label{primary_pumping_variables}}
 
 \begin{itemize}
 \tightlist
@@ -1891,7 +1934,8 @@ so need not be initialised.
   including heat exchanger and pipes (primary\_pum
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{pfcoil_variables.html}{pfcoil\_variables}}{pfcoil\_variables}}\label{pfcoil_variables}
+\hypertarget{pfcoil_variables}{%
+\subsubsection{\texorpdfstring{\href{pfcoil_variables.html}{pfcoil\_variables}}{pfcoil\_variables}}\label{pfcoil_variables}}
 
 \begin{itemize}
 \tightlist
@@ -2166,9 +2210,14 @@ so need not be initialised.
     - for groups j with ipfloc(j) = 3; zref(j) = ratio of height of coil
     group j to plasma minor radius
   \end{itemize}
+\item
+  bmaxcs\_lim : Central solenoid max field limit {[}T{]}
+\item
+  fbmaxcs : F-value for CS mmax field (cons. 79, itvar 149)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{tfcoil_variables.html}{tfcoil\_variables}}{tfcoil\_variables}}\label{tfcoil_variables}
+\hypertarget{tfcoil_variables}{%
+\subsubsection{\texorpdfstring{\href{tfcoil_variables.html}{tfcoil\_variables}}{tfcoil\_variables}}\label{tfcoil_variables}}
 
 \begin{itemize}
 \item
@@ -2417,9 +2466,9 @@ so need not be initialised.
   \begin{itemize}
   \tightlist
   \item
-    = `exponential' exponential quench with constant discharge resistor
+    = 'exponential' exponential quench with constant discharge resistor
   \item
-    = `linear' quench with constant voltage
+    = 'linear' quench with constant voltage
   \end{itemize}
 
   Only applies to REBCO magnet at present
@@ -2544,7 +2593,7 @@ so need not be initialised.
 \item
   vforce : vertical separating force on inboard leg/coil (N)
 \item
-  vftf /0.4/ : coolant fraction of TFC `cable' (itfsup=1), or of TFC leg
+  vftf /0.4/ : coolant fraction of TFC 'cable' (itfsup=1), or of TFC leg
   (itfsup=0)
 \item
   voltfleg : volume of each TF coil outboard leg (m3)
@@ -2650,7 +2699,8 @@ so need not be initialised.
   whttflgs : mass of the TF coil legs (kg)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{structure_variables.html}{structure\_variables}}{structure\_variables}}\label{structure_variables}
+\hypertarget{structure_variables}{%
+\subsubsection{\texorpdfstring{\href{structure_variables.html}{structure\_variables}}{structure\_variables}}\label{structure_variables}}
 
 \begin{itemize}
 \tightlist
@@ -2667,7 +2717,8 @@ so need not be initialised.
   gsmass : reactor core gravity support mass (kg)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{vacuum_variables.html}{vacuum\_variables}}{vacuum\_variables}}\label{vacuum_variables}
+\hypertarget{vacuum_variables}{%
+\subsubsection{\texorpdfstring{\href{vacuum_variables.html}{vacuum\_variables}}{vacuum\_variables}}\label{vacuum_variables}}
 
 \begin{itemize}
 \item
@@ -2676,15 +2727,15 @@ so need not be initialised.
   \begin{itemize}
   \tightlist
   \item
-    = `old' for old detailed ETR model;
+    = 'old' for old detailed ETR model;
   \item
-    = `simple' for simple steady-state model with comparison to ITER
+    = 'simple' for simple steady-state model with comparison to ITER
     cryopumps
   \end{itemize}
 \item
   niterpump : number of high vacuum pumps (real number), each with the
   throughput of one ITER cryopump (50 Pa m3 s-1), all operating at the
-  same time (vacuum\_model = `simple')
+  same time (vacuum\_model = 'simple')
 \item
   ntype /1/ : switch for vacuum pump type:
 
@@ -2720,8 +2771,8 @@ so need not be initialised.
   vpumpn : number of high vacuum pumps
 \item
   \textbf{The following are used in the Battes, Day and Rohde pump-down
-  model See ``Basic considerations on the pump-down time in the dwell
-  phase of a pulsed fusion DEMO''
+  model See "Basic considerations on the pump-down time in the dwell
+  phase of a pulsed fusion DEMO"
   http://dx.doi.org/10.1016/j.fusengdes.2015.07.011)
   (vacuum\_model=simple'):}
 \item
@@ -2745,7 +2796,8 @@ so need not be initialised.
   s per unit area (Pa m s-1)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{pf_power_variables.html}{pf\_power\_variables}}{pf\_power\_variables}}\label{pf_power_variables}
+\hypertarget{pf_power_variables}{%
+\subsubsection{\texorpdfstring{\href{pf_power_variables.html}{pf\_power\_variables}}{pf\_power\_variables}}\label{pf_power_variables}}
 
 \begin{itemize}
 \tightlist
@@ -2787,7 +2839,8 @@ so need not be initialised.
   poloidalpower : Poloidal power usage at time t (MW)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{heat_transport_variables.html}{heat\_transport\_variables}}{heat\_transport\_variables}}\label{heat_transport_variables}
+\hypertarget{heat_transport_variables}{%
+\subsubsection{\texorpdfstring{\href{heat_transport_variables.html}{heat\_transport\_variables}}{heat\_transport\_variables}}\label{heat_transport_variables}}
 
 \begin{itemize}
 \tightlist
@@ -2923,7 +2976,8 @@ so need not be initialised.
   vachtmw /0.5/ : vacuum pump power (MW)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{times_variables.html}{times\_variables}}{times\_variables}}\label{times_variables}
+\hypertarget{times_variables}{%
+\subsubsection{\texorpdfstring{\href{times_variables.html}{times\_variables}}{times\_variables}}\label{times_variables}}
 
 \begin{itemize}
 \tightlist
@@ -2967,7 +3021,7 @@ so need not be initialised.
   \item
     = 0, tohs = tramp = tqnch = Ip(MA)/0.5;
   \item
-    \textless{}\textgreater{}0, tohs = tohsin; tramp, tqnch are input
+    \textless\textgreater0, tohs = tohsin; tramp, tqnch are input
   \end{itemize}
 \item
   tpulse : pulse length = tohs + theat + tburn + tqnch
@@ -2977,7 +3031,8 @@ so need not be initialised.
   tramp /15.0/ : initial PF coil charge time (s); if pulsed, = tohs
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{buildings_variables.html}{buildings\_variables}}{buildings\_variables}}\label{buildings_variables}
+\hypertarget{buildings_variables}{%
+\subsubsection{\texorpdfstring{\href{buildings_variables.html}{buildings\_variables}}{buildings\_variables}}\label{buildings_variables}}
 
 \begin{itemize}
 \tightlist
@@ -3065,7 +3120,8 @@ so need not be initialised.
   wsvol : volume of warm shop building (m3)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{build_variables.html}{build\_variables}}{build\_variables}}\label{build_variables}
+\hypertarget{build_variables}{%
+\subsubsection{\texorpdfstring{\href{build_variables.html}{build\_variables}}{build\_variables}}\label{build_variables}}
 
 \begin{itemize}
 \tightlist
@@ -3079,22 +3135,22 @@ so need not be initialised.
   blareaob : outboard blanket surface area (m2)
 \item
   blbmith /0.17/ : inboard blanket box manifold thickness (m)
-  (blktmodel\textgreater{}0)
+  (blktmodel\textgreater0)
 \item
   blbmoth /0.27/ : outboard blanket box manifold thickness (m)
-  (blktmodel\textgreater{}0)
+  (blktmodel\textgreater0)
 \item
   blbpith /0.30/ : inboard blanket base plate thickness (m)
-  (blktmodel\textgreater{}0)
+  (blktmodel\textgreater0)
 \item
   blbpoth /0.35/ : outboard blanket base plate thickness (m)
-  (blktmodel\textgreater{}0)
+  (blktmodel\textgreater0)
 \item
   blbuith /0.365/ : inboard blanket breeding zone thickness (m)
-  (blktmodel\textgreater{}0) (iteration variable 90)
+  (blktmodel\textgreater0) (iteration variable 90)
 \item
   blbuoth /0.465/ : outboard blanket breeding zone thickness (m)
-  (blktmodel\textgreater{}0) (iteration variable 91)
+  (blktmodel\textgreater0) (iteration variable 91)
 \item
   blnkith /0.115/ : inboard blanket thickness (m); (calculated if
   blktmodel \textgreater{} 0) (=0.0 if iblnkith=0)
@@ -3266,7 +3322,8 @@ so need not be initialised.
   rspo : outboard strike point radius (m)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{cost_variables.html}{cost\_variables}}{cost\_variables}}\label{cost_variables}
+\hypertarget{cost_variables}{%
+\subsubsection{\texorpdfstring{\href{cost_variables.html}{cost\_variables}}{cost\_variables}}\label{cost_variables}}
 
 \begin{itemize}
 \tightlist
@@ -3309,7 +3366,7 @@ so need not be initialised.
 \item
   coecap : capital cost of electricity (m\$/kW-hr)
 \item
-  coefuelt : `fuel' (including replaceable components) contribution to
+  coefuelt : 'fuel' (including replaceable components) contribution to
   cost of electricity (m\$/kW-hr)
 \item
   coeoam : operation and maintenance contribution to cost of electricity
@@ -3345,7 +3402,7 @@ so need not be initialised.
   maintenance\_gen /0.05/ : Maintenance cost factor: All other
   components except coils, vacuum vessel, thermal shield, cryostat, land
 \item
-  amortization /13.6/ : amortization factor (fixed charge factor) ``A''
+  amortization /13.6/ : amortization factor (fixed charge factor) "A"
   (years)
 \item
   cost\_model /1/ : switch for cost model:
@@ -3551,7 +3608,7 @@ so need not be initialised.
   ucblbe /260.0/ : unit cost for blanket beryllium (\$/kg)
 \item
   ucblbreed /875.0/ : unit cost for breeder material (\$/kg)
-  (blktmodel\textgreater{}0)
+  (blktmodel\textgreater0)
 \item
   ucblli /875.0/ : unit cost for blanket lithium (\$/kg) (30\% Li6)
 \item
@@ -3719,7 +3776,8 @@ so need not be initialised.
   ucwst(4) /0.0,3.94,5.91,7.88/ : cost of waste disposal (M\$/y/1200MW)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{constraint_variables.html}{constraint\_variables}}{constraint\_variables}}\label{constraint_variables}
+\hypertarget{constraint_variables}{%
+\subsubsection{\texorpdfstring{\href{constraint_variables.html}{constraint\_variables}}{constraint\_variables}}\label{constraint_variables}}
 
 \begin{itemize}
 \tightlist
@@ -3900,7 +3958,7 @@ so need not be initialised.
   (constraint equation 59)
 \item
   nflutfmax /1.0e23/ : max fast neutron fluence on TF coil (n/m2)
-  (blktmodel\textgreater{}0) (constraint equation 53)
+  (blktmodel\textgreater0) (constraint equation 53)
 \item
   peakfactrad /3.33/ : peaking factor for radiation wall load
   (constraint equation 67)
@@ -3961,7 +4019,8 @@ so need not be initialised.
   tmax\_croco (constraint equation 74, iteration variable 141)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{stellarator_variables.html}{stellarator\_variables}}{stellarator\_variables}}\label{stellarator_variables}
+\hypertarget{stellarator_variables}{%
+\subsubsection{\texorpdfstring{\href{stellarator_variables.html}{stellarator\_variables}}{stellarator\_variables}}\label{stellarator_variables}}
 
 \begin{itemize}
 \tightlist
@@ -4032,7 +4091,8 @@ so need not be initialised.
   vporttmax : maximum available toroidal extent for vertical ports (m)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{pulse_variables.html}{pulse\_variables}}{pulse\_variables}}\label{pulse_variables}
+\hypertarget{pulse_variables}{%
+\subsubsection{\texorpdfstring{\href{pulse_variables.html}{pulse\_variables}}{pulse\_variables}}\label{pulse_variables}}
 
 \begin{itemize}
 \tightlist
@@ -4080,7 +4140,8 @@ so need not be initialised.
   \end{itemize}
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{startup_variables.html}{startup\_variables}}{startup\_variables}}\label{startup_variables}
+\hypertarget{startup_variables}{%
+\subsubsection{\texorpdfstring{\href{startup_variables.html}{startup\_variables}}{startup\_variables}}\label{startup_variables}}
 
 \begin{itemize}
 \tightlist
@@ -4101,7 +4162,8 @@ so need not be initialised.
   tign : electron temperature at ignition (start-up) (keV)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{fispact_variables.html}{fispact\_variables}}{fispact\_variables}}\label{fispact_variables}
+\hypertarget{fispact_variables}{%
+\subsubsection{\texorpdfstring{\href{fispact_variables.html}{fispact\_variables}}{fispact\_variables}}\label{fispact_variables}}
 
 \begin{itemize}
 \tightlist
@@ -4153,7 +4215,8 @@ so need not be initialised.
   fwtemp : outboard first wall temperature after a LOCA (K)
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{rebco_variables.html}{rebco\_variables}}{rebco\_variables}}\label{rebco_variables}
+\hypertarget{rebco_variables}{%
+\subsubsection{\texorpdfstring{\href{rebco_variables.html}{rebco\_variables}}{rebco\_variables}}\label{rebco_variables}}
 
 \begin{itemize}
 \tightlist
@@ -4188,9 +4251,11 @@ so need not be initialised.
   copper area \textless{} copperA\_m2\_max
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{resistive_material.html}{resistive\_material}}{resistive\_material}}\label{resistive_material}
+\hypertarget{resistive_material}{%
+\subsubsection{\texorpdfstring{\href{resistive_material.html}{resistive\_material}}{resistive\_material}}\label{resistive_material}}
 
-\subsubsection{\texorpdfstring{\href{reinke_variables.html}{reinke\_variables}}{reinke\_variables}}\label{reinke_variables}
+\hypertarget{reinke_variables}{%
+\subsubsection{\texorpdfstring{\href{reinke_variables.html}{reinke\_variables}}{reinke\_variables}}\label{reinke_variables}}
 
 \begin{itemize}
 \tightlist
@@ -4198,7 +4263,7 @@ so need not be initialised.
   impvardiv /9/ : index of impurity to be iterated for Reinke divertor
   detachment criterion
 \item
-  lhat /4.33/ : connection length factor L\textbar{}\textbar{} = lhat
+  lhat /4.33/ : connection length factor L\textbar\textbar{} = lhat
   qstar R for Reinke criterion, default value from Post et al. 1995 J.
   Nucl. Mat. 220-2 1014
 \item
@@ -4208,9 +4273,16 @@ so need not be initialised.
   fzactual : Actual impurity fraction of divertor impurity (impvardiv)
   in the SoL (taking impurity\_enrichment into account) (iteration
   variable 148)
+\item
+  reinke\_mode /0/ : Switch for Reinke criterion H/I mode
+\item
+  = 0 H-mode;
+\item
+  = 1 I-mode;
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\href{numerics.html}{numerics}}{numerics}}\label{numerics}
+\hypertarget{numerics}{%
+\subsubsection{\texorpdfstring{\href{numerics.html}{numerics}}{numerics}}\label{numerics}}
 
 \begin{itemize}
 \tightlist
@@ -4278,6 +4350,9 @@ so need not be initialised.
     (17) net electrical output
   \item
     (18) Null Figure of Merit
+  \item
+    (19) linear combination of big Q and pulse length (maximised) note:
+    FoM should be minimised only!
   \end{itemize}
 \item
   ncalls : number of function calls during solution
@@ -4469,7 +4544,7 @@ so need not be initialised.
   \item
     (72) central solenoid Tresca stress limit (itv 123 foh\_stress)
   \item
-    (73) Psep \textgreater{}= Plh + Paux (itv 137 (fplhsep))
+    (73) Psep \textgreater= Plh + Paux (itv 137 (fplhsep))
   \item
     (74) TFC quench \textless{} tmax\_croco (itv 141 (fcqt))
   \item
@@ -4482,6 +4557,8 @@ so need not be initialised.
   \item
     (78) Reinke criterion impurity fraction lower limit (itv 147
     freinke)
+  \item
+    (79) F-value for max peak CS field (itv 149 fbmaxcs)
   \end{itemize}
 \item
   ixc(ipnvars) /0/ : array defining which iteration variables to
@@ -4807,31 +4884,43 @@ so need not be initialised.
   \item
     (147) freinke : F-value for Reinke detachment criterion (constraint
     equation 78)
+  \item
+    (148) fzactual : fraction of impurity at SOL with Reinke detachment
+    criterion
+  \item
+    (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
+  \item
+    (150) plasmod\_fcdp : (P\_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD
+    power over available power
+  \item
+    (151) plasmod\_fradc : Pline\_Xe / (Palpha + Paux - PlineAr - Psync
+    - Pbrad)
+  \item
+    (152) fbmaxcs : Ratio of separatrix density to Greenwald density
   \end{itemize}
 \item
-  (148) fzactual : fraction of impurity at SOL with Reinke detachment
-  criterion
+  sqsumsq : sqrt of the sum of the square of the constraint residuals
+\item
+  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON
+  derivatives
+\item
+  epsvmc /1.0e-6/ : error tolerance for VMCON
+\item
+  factor /0.1/ : used in HYBRD for first step size
+\item
+  ftol /1.0e-4/ : error tolerance for HYBRD
+\item
+  boundl(ipnvars) /../ : lower bounds used on ixc variables during VMCON
+  optimisation runs
+\item
+  boundu(ipnvars) /../ : upper bounds used on ixc variables during VMCON
+  optimisation runs
 \end{itemize}
 
-sqsumsq : sqrt of the sum of the square of the constraint residuals
+\hypertarget{eqsolv}{%
+\subsubsection{\texorpdfstring{\href{eqsolv.html}{eqsolv}}{eqsolv}}\label{eqsolv}}
 
-epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON
-derivatives
-
-epsvmc /1.0e-6/ : error tolerance for VMCON
-
-factor /0.1/ : used in HYBRD for first step size
-
-ftol /1.0e-4/ : error tolerance for HYBRD
-
-boundl(ipnvars) /../ : lower bounds used on ixc variables during VMCON
-optimisation runs
-
-boundu(ipnvars) /../ : upper bounds used on ixc variables during VMCON
-optimisation runs
-
-\subsubsection{\texorpdfstring{\href{eqsolv.html}{eqsolv}}{eqsolv}}\label{eqsolv}
-
-\subsubsection{\texorpdfstring{\href{optimiz.html}{optimiz}}{optimiz}}\label{optimiz}
+\hypertarget{optimiz}{%
+\subsubsection{\texorpdfstring{\href{optimiz.html}{optimiz}}{optimiz}}\label{optimiz}}
 
 \end{document}

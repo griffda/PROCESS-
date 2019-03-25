@@ -91,6 +91,7 @@ program process
   logical :: inExist
   integer :: nargs
   integer :: file_name_length
+  integer, parameter :: width = 110
 
   !  Obtain a file prefix from a command line argument
   !  (uses Fortran 2003 routines)
@@ -102,7 +103,54 @@ program process
      call get_command_argument(1, fileprefix)
   end if
 
-  if (trim(fileprefix) == "") then
+  if (trim(fileprefix) == "help") then
+    call oblnkl(iotty)
+    call ostars(iotty, width)
+    call ocentr(iotty,'PROCESS', width)
+    call ocentr(iotty,'Power Reactor Optimisation Code', width)
+    call ostars(iotty, width)
+
+    ! Usage help
+    call osubhd(iotty,'# Usage')
+    call ocmmnt(iotty, "Running code with IN.DAT        : ./<path_to_executable/process.exe")
+    call ocmmnt(iotty, "Running code with named IN.DAT  : ./<path_to_executable/process.exe <path_to_input>/<file_prefix>IN.DAT")
+    call oblnkl(iotty)
+    call ocmmnt(iotty, "Help info                       : ./<path_to_executable/process.exe help")
+    call oblnkl(iotty)
+    call ocmmnt(iotty, "## Example Usage")
+    call oblnkl(iotty)
+    call ocmmnt(iotty, "Executable in current dir and input called IN.DAT in current dir  : ./process.exe")
+    call ocmmnt(iotty, "Executable in current dir and named input in current dir          : ./process.exe tokamak_IN.DAT")
+    call ocmmnt(iotty, "Executable in other dir and named input in other dir              : ./bin/process.exe ../../ITER_IN.DAT")
+    call ocmmnt(iotty, "Executable in other dir and input called IN.DAT in current dir    : ./bin/process.exe")
+
+    ! Input help
+    call osubhd(iotty,'# Input')
+    call ocmmnt(iotty, "Input file naming convention : <file_prefix>IN.DAT")
+    call oblnkl(iotty)
+    call ocmmnt(iotty, "## Input file syntax")
+    call oblnkl(iotty)
+    call ocmmnt(iotty, "Constraint equation             : icc = <constraint_number>")
+    call ocmmnt(iotty, "Iteration variable              : ixc = <iteration_variable_number>")
+    call ocmmnt(iotty, "Iteration variable lower bound  : boundl(<iteration_variable_number>) = <bound_value>")
+    call ocmmnt(iotty, "Iteration variable upper bound  : boundu(<iteration_variable_number>) = <bound_value>")
+    call ocmmnt(iotty, "Parameter                       : <parameter_name> = <parameter_value>")
+    call ocmmnt(iotty, "Array                           : <array_name>(<array_index>) = <index_value>")
+
+    ! Output help
+    call osubhd(iotty,'# Output')
+    call ocmmnt(iotty, "Output files naming convention : <file_prefix>OUT.DAT")
+    call ocmmnt(iotty, "                               : <file_prefix>MFILE.DAT")
+    call ocmmnt(iotty, "                               : <file_prefix>PLOT.DAT")
+
+    ! Contact info
+    call osubhd(iotty,'# Contact')
+    call ocmmnt(iotty, "James Morris  : james.morris2@ukaea.uk")
+    call ocmmnt(iotty, "Hanni Lux     : hanni.lux@ukaea.uk")
+    call ocmmnt(iotty, "GitLab        : git.ccfe.ac.uk")
+    call oblnkl(iotty)
+    stop
+  else if (trim(fileprefix) == "") then
     inFile = "IN.DAT"
   else
     file_name_length = LEN_TRIM(fileprefix)
@@ -161,9 +209,9 @@ program process
 
     DO
       read(100, fmtAppend, IOSTAT = iost) line
+      if(iost < 0) exit                   ! exit if End of line is reached in IN.DAT
       write(101, fmtAppend) trim(line)
       write(102, fmtAppend) trim(line)
-      if(iost < 0) exit                   ! exit if End of line is reached in IN.DAT
     END DO
     close(unit = 100)
     close(unit = 101)
