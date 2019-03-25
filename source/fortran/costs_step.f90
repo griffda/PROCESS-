@@ -85,7 +85,8 @@ module costs_step_module
 
   ! Scaling Properties
 
-  real(kind(1.0D0)) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star
+  real(kind(1.0D0)) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
+  rmajor_star, rminor_star
 
 contains
 
@@ -145,10 +146,12 @@ contains
 
     !  STARFIRE Reference Value
 
-    vfi_star = 5.1D3        ! Volume of Fusion Island (m3)
-    ptherm_star = 4.15D3    ! Thermal Power (MW)
-    pinjmw_star = 9.04D1    ! Auxiliary Power (MW)
-    fwarea_star = 7.8D2     ! First Wall Area (m2)
+    vfi_star = 5.1D3                    ! Volume of Fusion Island (m3)
+    ptherm_star = 4.15D3                ! Thermal Power (MW)
+    pinjmw_star = 9.04D1                ! Auxiliary Power (MW)
+    fwarea_star = 7.8D2                 ! First Wall Area (m2)
+    rmajor_star = 7.0D0                 ! Major Radius (m)
+    rminor_star = rmajor_star / 3.6D0   ! Minor Radius (m)
 
     if ((iprint==1).and.(output_costs == 1)) then
       call oheadr(outfile,'STEP Costing Model (1980 US$)')
@@ -559,7 +562,8 @@ contains
   
      real(kind(1.0D0)):: &
      step220101, step220102, step220103, step220104, step220105, &
-     step220106, step220107, step220108, step220109, step2201
+     step220106, step220107, step220108, step220109, step220110, &
+     step2201
   
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -617,6 +621,14 @@ contains
      ! Original STARFIRE value, no scaling
      step220109 = 2.82D0 
      step2201 = step2201 + step220109
+
+     ! 22.01.10 Divertor
+     ! Cost Model 0 cost for STARFIRE sized device
+     ! 58.62% increase between 1980 and 1990 
+     ! http://www.in2013dollars.com/1980-dollars-in-1990
+     ! Scaling with product of rmajor and rminor
+     step220110 = (2.658D1 /1.5862D0) * ((rmajor*rminor)/(rmajor_star*rminor_star)) 
+     step2201 = step2201 + step220110
   
      step22 = step22 + step2201
 
@@ -639,6 +651,7 @@ contains
        call ocosts(outfile,'(step220107)','Power Supplies (M$)', step220107)
        call ocosts(outfile,'(step220108)','Impurity Control (M$)', step220108)
        call ocosts(outfile,'(step220109)','ECRH Plasma Breakdown (M$)', step220109)
+       call ocosts(outfile,'(step220110)','Divertor (M$)', step220110)
        call oblnkl(outfile)
        call ocosts(outfile,'(step2201)','Total Account 22.01 Cost (M$)', step2201)
        call oblnkl(outfile)
