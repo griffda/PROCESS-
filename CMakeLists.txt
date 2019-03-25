@@ -107,7 +107,11 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 # Set default fortran compiler flags
-set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fcheck=bounds -fbacktrace")
+if(${dll} MATCHES ON)
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -fcheck=bounds -fbacktrace")
+elseif(${dll} MATCHES OFF)
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -cpp -g -pg -fcheck=bounds -fbacktrace")
+endif()
 
 # Set custom compiler flags for particular files
 message("\nFlag configuration for files")
