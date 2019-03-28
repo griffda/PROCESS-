@@ -93,7 +93,7 @@ baseline:baseline_2019_results:
  when: on_success  # Also default setting
  only:
   - develop
- stage: testing
+ stage: baseline
  script:
   - pwd
   - cd tracking/baseline_2019
