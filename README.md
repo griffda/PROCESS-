@@ -1,3 +1,5 @@
+[![pipeline status](https://git.ccfe.ac.uk/process/process/badges/develop/pipeline.svg)](https://git.ccfe.ac.uk/process/process/commits/develop)
+
 # PROCESS
 
 PROCESS is the reactor systems code at [CCFE](www.ccfe.ac.uk). More information on PROCESS
