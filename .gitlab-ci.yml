@@ -2,6 +2,7 @@ stages:
   - build
   - testing
   - jenkins
+  - baseline
 #This command is used for generating gtest results in Jenkins  ./bin/process_test.exe --gtest_output=xml:gtest_results.xml
 before_script:
 #  - apt-get install -y gfortran
@@ -72,7 +73,7 @@ testing:test_suite:
  tags:
   - freia
 
-testing:baseline_2019:
+testing:baseline_2019_run:
  when: on_success  # Also default setting
  only:
   - develop
@@ -81,6 +82,22 @@ testing:baseline_2019:
   - pwd
   - cd tracking/baseline_2019
   - ./../../bin/process.exe baseline_2019_IN.DAT
+ artifacts:
+   expire_in: 2 hrs
+   paths:
+     - tracking/baseline_2019/baseline_2019_MFILE.DAT
+ tags:
+  - freia
+
+baseline:baseline_2019_results:
+ when: on_success  # Also default setting
+ only:
+  - develop
+ stage: testing
+ script:
+  - pwd
+  - cd tracking/baseline_2019
+  - python ../../utilities/mfile_comparison.py -f baseline_2019_MFILE.DAT ref_baseline_MFILE.DAT --acc 1.0 --baseline
  tags:
   - freia
 
