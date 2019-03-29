@@ -129,6 +129,7 @@
 	 real(kind(1.0d0)), dimension(num%nxt+1) :: T_e0, T_i0, N_e0, xtrt, Fn0, Fe0, Fi0
   real(kind(1.0d0)), dimension(num%nxt+1) :: Fn, Fe, Fi
   real(kind(1.0d0)), dimension(num%nxt) :: xtr
+  real(kind(1.0d0)), dimension(num%nxt+1) :: xtr_e
   real(kind(1.0d0)), dimension(num%ntglf,num%nchannels) :: atglf,btglf
   real(kind(1.0d0)), dimension(num%nxt) :: q_tr, sh_tr
   real(kind(1.0d0)), dimension(num%nxt) :: gng, geg, gig, gng0, geg0, gig0, DdnVne, DdnVni, DdnVn
@@ -309,8 +310,9 @@ endif
   x = (/ (dx*(irho-1.), irho = 1, nx) /)
  	jped=nint(xb/dx) !pedestal top position
 ! reduced grid
-  x0=max(num%capa,x(2)) !this maybe revisited ... EFable
-  xtr = linspace(x0, xb, nxt) * amin  ! normalized minor radius for transport
+  xtr_e = linspace(0.d0, xb, nxt+1) * amin  ! normalized minor radius for transport
+  x0=xtr_e(2) !this maybe revisited ... EFable
+  xtr(1:nxt) = xtr_e(2:nxt+1)  ! normalized minor radius for transport
   xtrt(1:nxt) = xtr/amin
   xtrt(nxt+1) = 1.0d0
   xtrt = xtrt*amin
@@ -1446,10 +1448,10 @@ if(q_fus.gt.0.) q_fus=q_fus*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 !	write(*,*) qtot,psep,cxe,loss%pnbi,q_heat,q_cd,q_fus,PLH,dum2,tepr(1)
 
 !SOL MODEL below!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	if (comp%qdivt.gt.0.) then
-	!constraint: divertor temperature --> gives Ar in output
 !initialize
 	qdivt=0.d0
+	if (comp%qdivt.gt.0.) then
+	!constraint: divertor temperature --> gives Ar in output
 !T. Eich scaling
 	lambda_q=0.73e-3*btor**(-0.78)* &
 		&   (rpminor**2.*btor/(0.2*rpmajor*ip))**1.02* &
@@ -1737,7 +1739,7 @@ endif
   mhd%betapol=2.d0*mu_vacuum*1.d3*1.d19*e_charge*trapz(pressure*dv)/trapz(radp%bpol**2.d0*dv)
   mhd%torsurf=areat
   mhd%rli=2.d0*trapz(radp%bpol**2.d0*dv)/ &
-  & ((1.d6*geom%ip)**2.d0)/(4.*3.141592*1.d-7)**2.d0/rpmajor
+  & ((1.d6*geom%ip)**2.d0)/(4.*3.141592*1.d-7)**2.d0/rpmajor  !this values comes out a bit too big.... problem with q profile at edge...
  	mhd%qoh=q_oh(1)
  	mhd%betan = betan
   mhd%f_gwpedtop=neb/(1./(3.141592*rpminor**2.)*Ip*10)
@@ -1891,10 +1893,10 @@ endif
   write(2901,*) 'converged in iterations : ',jiter,num%etol,toleq,redo,loss%Pfus,mhd%vloop,T_e(1),tepr(1),&
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 !	if (jiter.gt.3) write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus
-  if (verbose==1) then
-    write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
-  end if
-!	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
+	if (verbose.eq.1) then
+		write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
+	endif
+	!	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 !	write(*,*) 'iter uloop',ip,fbs,fcd,2.15e-3*(4.3-0.6/geom%a)*radp%zeff*ip*(1.-fbs-fcd)* &
 	 & !rpmajor/(rpminor**2.*geom%k95)/(radp%av_Ten/10.d0)**1.5,mhd%vloop,radp%zeff,mhd%f_ni
