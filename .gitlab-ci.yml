@@ -101,6 +101,7 @@ baseline:baseline_2019_results:
   - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
   - cd tracking/baseline_2019
   - python ../../utilities/mfile_comparison.py -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT --acc 1.0 --baseline
+  - python ../../utilities/mfile_comparison.py -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT --acc 10.0 --baseline
  tags:
   - freia
 
