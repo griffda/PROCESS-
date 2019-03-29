@@ -628,6 +628,12 @@ contains
      ! http://www.in2013dollars.com/1980-dollars-in-1990
      ! Scaling with product of rmajor and rminor
      step220110 = (2.658D1 /1.5862D0) * ((rmajor*rminor)/(rmajor_star*rminor_star)) 
+     if (ifueltyp == 1) then
+         divcst = step220110
+         step220110 = 0.0D0
+     else
+         divcst = 0.0D0
+     end if
      step2201 = step2201 + step220110
   
      step22 = step22 + step2201
