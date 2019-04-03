@@ -624,6 +624,7 @@ def plot_nprofile(prof):
     prof.set_ylabel('ne / 1e19 m-3')
     prof.set_title('Density profile')
 
+    
     if ipedestal == 1:
         rhocore1 = np.linspace(0,0.95*rhopedn)
         rhocore2 = np.linspace(0.95*rhopedn,rhopedn)
@@ -642,6 +643,28 @@ def plot_nprofile(prof):
         ne = ne0 * (1-rho**2)**alphan
     ne = ne/1e19
     prof.plot(rho,ne)
+
+def plot_plasmod_nprofile(prof):
+    """Function to plot plasmod density profile
+    Arguments:
+      prof --> axis object to add plot to
+    """
+    xmin = 0
+    xmax = 1
+    ymin = 0
+    ymax = 20
+    prof.set_ylim([ymin, ymax])
+    prof.set_xlim([xmin, xmax])
+    prof.set_autoscaley_on(False)
+    prof.set_xlabel('r/a')
+    prof.set_ylabel('ne / 1e19 m-3')
+    prof.set_title('Density profile')
+    prof.plot(pmod_r,pmod_ne, label="plasmod $n_e$")
+    prof.plot(pmod_r,pmod_ni, label="plasmod $n_i$")
+    prof.plot(pmod_r,pmod_nt, label="plasmod $n_T$")
+    prof.plot(pmod_r,pmod_nd, label="plasmod $n_D$")
+    prof.legend()
+
 
 def plot_tprofile(prof):
     """Function to plot temperature profile
@@ -677,6 +700,25 @@ def plot_tprofile(prof):
         te = te0 * (1-rho**2)**alphat
     prof.plot(rho,te)
 
+def plot_plasmod_tprofile(prof):
+    """Function to plot plasmod temperature profile
+    Arguments:
+      prof --> axis object to add plot to
+    """
+    xmin = 0
+    xmax = 1
+    ymin = 0
+    ymax = 50
+    prof.set_ylim([ymin, ymax])
+    prof.set_xlim([xmin, xmax])
+    prof.set_autoscaley_on(False)
+    prof.set_xlabel('r/a')
+    prof.set_ylabel('Te / KeV')
+    prof.set_title('Temperature profile')
+    prof.plot(pmod_r,pmod_te, label="plasmod $T_e$")
+    prof.plot(pmod_r,pmod_ti, label="plasmod $T_i$")
+    prof.legend()
+
 def plot_qprofile(prof):
     """ Function to plot q profile, formula taken from Nevins bootstrap model.
 
@@ -700,6 +742,24 @@ def plot_qprofile(prof):
 
     prof.plot(rho,q_r_nevin, label="Nevins")
     prof.plot(rho,q_r_sauter, label="Sauter")
+    prof.legend()
+
+def plot_plasmod_qprofile(prof):
+    """Function to plot plasmod q profile
+    Arguments:
+      prof --> axis object to add plot to
+    """
+    xmin = 0
+    xmax = 1
+    ymin = 0
+    ymax = 10
+    prof.set_ylim([ymin, ymax])
+    prof.set_xlim([xmin, xmax])
+    prof.set_autoscaley_on(False)
+    prof.set_xlabel('r/a')
+    prof.set_ylabel('-')
+    prof.set_title('q profile')
+    prof.plot(pmod_r,pmod_q, label="plasmod $q(r/a)$")
     prof.legend()
 
 
@@ -1605,7 +1665,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     plot_info(axis, data, mfile_data, scan)
 
 
-def main(fig1, fig2, m_file_data, scan):
+def main(fig1, fig2, m_file_data, scan, plasmod=False):
     """Function to create radial and vertical build plot on given figure.
 
     Arguments:
@@ -1613,7 +1673,7 @@ def main(fig1, fig2, m_file_data, scan):
       fig2 --> figure object to add plot to.
       m_file_data --> MFILE.DAT data to read
       scan --> scan to read from MFILE.DAT
-
+      plasmod --> plasmod data or not
     """
 
     # Plot poloidal cross-section
@@ -1626,8 +1686,6 @@ def main(fig1, fig2, m_file_data, scan):
     # Plot PF coils
     plot_pf_coils(plot_1, m_file_data, scan)
 
-
-
     # Plot toroidal cross-section
     plot_2 = fig2.add_subplot(222, aspect='equal')
     #toroidal_cross_section(plot_2)
@@ -1639,14 +1697,22 @@ def main(fig1, fig2, m_file_data, scan):
 
     # Plot profiles
     plot_4 = fig2.add_subplot(234, aspect= 0.05)
-    plot_nprofile(plot_4)
+    if plasmod:
+        plot_plasmod_nprofile(plot_4)
+    else:
+        plot_nprofile(plot_4)
 
     plot_5 = fig2.add_subplot(235, aspect= 1/35)
-    plot_tprofile(plot_5)
+    if plasmod:
+        plot_plasmod_tprofile(plot_5)
+    else:
+        plot_tprofile(plot_5)
 
     plot_6 = fig2.add_subplot(236, aspect=1/10)
-    plot_qprofile(plot_6)
-
+    if plasmod:
+        plot_plasmod_qprofile(plot_6)
+    else:
+        plot_qprofile(plot_6)
 
     # Setup params for text plots
     plt.rcParams.update({'font.size': 8})
@@ -1919,6 +1985,8 @@ if __name__ == '__main__':
 
     parser.add_argument("-f", metavar='FILENAME', type=str,
                         default="", help='specify input/output file path')
+    parser.add_argument("-p", metavar='PLASMODFILE', type=str,
+                        default="", help='specify PLASMOD profile file')
 
     parser.add_argument("-s", "--show", help="show plot as well as saving figure",
                         action="store_true")
@@ -1990,6 +2058,38 @@ if __name__ == '__main__':
     q0 = m_file.data["q0"].get_scan(scan)
     q95 = m_file.data["q95"].get_scan(scan)
     kallenbach_switch = m_file.data["kallenbach_switch"].get_scan(scan)
+
+    # Radial position  -- 0
+    # Electron density -- 1
+    # Electron temperature -- 2
+    # Ion temperature -- 3
+    # Deuterium density -- 4
+    # Tritium density -- 5
+    # BS current density(MA/m^2) -- 6
+    # CD current dens(MA/m^2) -- 7
+    # Total current dens(MA/m^2) -- 8
+    # Poloidal current(R*Bp)(T.m) -- 9
+    # Safety factor q -- 10
+    # Volume (m^3) -- 11
+    # dVolume/dr (m^2) -- 12
+    # Plasma conductivity(MA/(V.m) -- 13
+    # Alpha press(keV*10^10 m^-3) -- 14
+    # Ion dens(10^19 m^-3) -- 15
+    # Poloidal flux (Wb) -- 16
+    if args.p != "":
+        plasmod_profiles = np.loadtxt(args.p).transpose()
+        pmod_r = plasmod_profiles[0]
+        pmod_ne = plasmod_profiles[1]
+        pmod_te = plasmod_profiles[2]
+        pmod_ti = plasmod_profiles[3]
+        pmod_nd = plasmod_profiles[4]
+        pmod_nt = plasmod_profiles[5]
+        pmod_q = plasmod_profiles[10]
+        pmod_ni = plasmod_profiles[15]
+        pmod_switch = True
+        print("plasmod!")
+    else:
+        pmod_switch = False
     
     # Build the dictionaries of radial and vertical build values and cumulative values
     radial = {} ; cumulative_radial = {}; subtotal = 0
@@ -2041,7 +2141,7 @@ if __name__ == '__main__':
     page2 = plt.figure(figsize=(12, 9), dpi=80)
 
     # run main
-    main(page1, page2, m_file, scan=scan)
+    main(page1, page2, m_file, scan=scan, plasmod=pmod_switch)
 
     # with bpdf.PdfPages(args.o) as pdf:
     with bpdf.PdfPages(args.f + "SUMMARY.pdf") as pdf:
