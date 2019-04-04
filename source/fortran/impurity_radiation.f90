@@ -123,7 +123,7 @@ module impurity_radiation_module
 
   !+ad_vars  impdir /'/home/PROCESS/[branch]/impuritydata'/ :
   !+ad_varc           Directory containing impurity radiation data files
-  character(len=180), public :: impdir = INSTALLDIR//'/data/impuritydata/'
+  character(len=200), public :: impdir = INSTALLDIR//'/data/impuritydata/'
 
   !+ad_vars  impvar : impurity to be iterated (deprecated)
   !+ad_varc                       variable number 102 is turned on
