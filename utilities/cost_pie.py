@@ -124,7 +124,7 @@ def new_cost_model():
 def step_cost_model():
     """
 
-    Plot pie chart for the orginal 1990 cost model.
+    Plot pie chart for the STEP cost model.
     Two plots produced: (1) Breakdown of the direct costs and (2) Direct, indirect, etc.
 
     """
@@ -134,10 +134,10 @@ def step_cost_model():
     step2201 = m_file.data["step2201"].get_scan(-1)         # Reactor Equipment
     step220101 = m_file.data["step220101"].get_scan(-1)     # Blanket and First Wall
     step220102 = m_file.data["step220102"].get_scan(-1)     # Shield
-    step22010301 = m_file.data["step22010301"].get_scan(-1) # TF
-    step22010302 = m_file.data["step22010302"].get_scan(-1) # PF
-    step22010303 = m_file.data["step22010303"].get_scan(-1) # CS
-    step22010304 = m_file.data["step22010304"].get_scan(-1) # Control
+    step22010301 = m_file.data["step22010301"].get_scan(-1) # TF Coils
+    step22010302 = m_file.data["step22010302"].get_scan(-1) # PF Coils
+    step22010303 = m_file.data["step22010303"].get_scan(-1) # Central Solenoid
+    step22010304 = m_file.data["step22010304"].get_scan(-1) # Control Coils
     step220103 = step22010301+step22010302+step22010303+step22010304 # Magnets
     step2202 = m_file.data["step2202"].get_scan(-1)         # Heat Transfer System
     step2203 = m_file.data["step2203"].get_scan(-1)         # Cryogenic Cooling System
@@ -155,17 +155,17 @@ def step_cost_model():
     step92 = m_file.data["step92"].get_scan(-1)     # Engineering and Costruction Management Services
     step93 = m_file.data["step93"].get_scan(-1)     # Other Costs
 
-    cindir = step91 + step92 + step93
-
     
     # Interest during construction is linked to ireactor = 1
     if "moneyint" in m_file.data.keys():
         moneyint = m_file.data["moneyint"].get_scan(-1) # Interest during Construction
-        labels2 = ['Plant Direct Cost', 'Indirect Cost', 'Interest during Construction']
-        sizes2 = [cdirt, cindir, moneyint]
+        labels2 = ['Plant Direct Cost', 'Construction Facilities,\n Equipment and\n Services', 'Engineering and\n Costruction Management\n Services',
+              'Other Costs', 'Interest during Construction']
+        sizes2 = [cdirt, step91, step92, step93, moneyint]
     else:
-        labels2 = ['Plant Direct Cost', 'Indirect Cost']
-        sizes2 = [cdirt, cindir]
+        labels2 = ['Plant Direct Cost', 'Construction Facilities,\n Equipment and\n Services', 'Engineering and\n Costruction Management\n Services',
+              'Other Costs']
+        sizes2 = [cdirt, step91, step92, step93]
 
     # Direct Cost Breakdown
     labels = ['Site and Buildings', 'Blanket and First Wall', 'Shield', 'Magnets',
