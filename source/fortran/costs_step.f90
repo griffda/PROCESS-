@@ -561,9 +561,9 @@ contains
      !  Local variables
   
      real(kind(1.0D0)):: &
-     step220101, step220102, step220103, step220104, step220105, &
-     step220106, step220107, step220108, step220109, step220110, &
-     step2201
+     step220101, step220102, step220104, step220105, step220106, &
+     step220107, step220108, step220109, step220110, step2201, &
+     step22010301, step22010302, step22010303, step22010304
   
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -583,10 +583,25 @@ contains
      step220102 = 1.8607D2 * (fwarea / fwarea_star)
      step2201 = step2201 + step220102
   
-     ! 22.01.03 Magnets
+     ! 22.01.03.01 TF Coils
      ! Original STARFIRE value, scaling with fusion island volume
-     step220103 = 1.7157D2 * (vfi / vfi_star)
-     step2201 = step2201 + step220103
+     step22010301 = 1.2572D2 * (vfi / vfi_star)
+     step2201 = step2201 + step22010301
+
+     ! 22.01.03.02 PF Coils
+     ! Original STARFIRE value, scaling with fusion island volume
+     step22010302 = 3.46D1 * (vfi / vfi_star)
+     step2201 = step2201 + step22010302
+
+     ! 22.01.03.03 Central Solenoid
+     ! Original STARFIRE value, scaling with fusion island volume
+     step22010303 = 7.25D0 * (vfi / vfi_star)
+     step2201 = step2201 + step22010303
+
+     ! 22.01.03.04 Control Coils
+     ! Original STARFIRE value, scaling with fusion island volume
+     step22010304 = 4.0D0 * (vfi / vfi_star)
+     step2201 = step2201 + step22010304
   
      ! 22.01.04 Auxiliary Heating and Current Drive
      ! Original STARFIRE value, scaling with auxiliary power
@@ -646,7 +661,10 @@ contains
          call ocosts(outfile,'(step220101)','Blanket and First Wall (Treated as Fuel) (M$)', step220101)
        end if
        call ocosts(outfile,'(step220102)','Shield (M$)', step220102)
-       call ocosts(outfile,'(step220103)','Magnets (M$)', step220103)
+       call ocosts(outfile,'(step22010301)','TF Coils (M$)', step22010301)
+       call ocosts(outfile,'(step22010302)','PF Coils (M$)', step22010302)
+       call ocosts(outfile,'(step22010303)','Central Solenoid (M$)', step22010303)
+       call ocosts(outfile,'(step22010304)','Control Coils (M$)', step22010304)
        if (ifueltyp==0)then
          call ocosts(outfile,'(step220104)','Auxiliary Heating and Current Drive (M$)', step220104)
        else if (ifueltyp==1)then
