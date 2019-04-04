@@ -1,5 +1,6 @@
 \documentclass[11pt,a4paper]{report}
 \usepackage{epsfig,colordvi,latexsym}
+\usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
@@ -102,7 +103,11 @@ Guide if changes are made to the source code!
 
 Described here are the general rules that apply when the Fortran source code
 is modified. See Section~\ref{sec:code_release} for instructions on how to
-commit changes to the \process\ Git repository and produce new releases. The variable descriptor file is generated from specially-formatted comment lines within the source code (see Section~\ref{sec:autodoc} for more details). Therefore, it is exceedingly important to keep these lines relevant and in sync with the variables they describe.
+commit changes to the \process\ Git repository and produce new releases. 
+The variable descriptor file is generated from specially-formatted comment 
+lines within the source code (see Section~\ref{sec:autodoc} for more details). 
+Therefore, it is exceedingly important to keep these lines relevant and in 
+sync with the variables they describe.
 
 \subsection{Changing the Fortran code}
 
@@ -110,6 +115,10 @@ Please ensure that the following rules are adhered to when modifying the
 \process\ source code:
 
 \begin{enumerate}
+
+\item New variables names should be as explicit as possible, even if they tends to get a bit long. More generaly follow the zen of python (you can find it in the following webpage \url{https://www.python.org/dev/peps/pep-0020/}).
+
+\item New routines, sub-routines or functions should be defined with one or several unitarity tests, setup using the pFUnit test suite documented in \url{http://pfunit.sourceforge.net/}.
 
 \item Keep the layout consistent in with the existing code,
   including indentation of clauses (\texttt{if}-statements, \texttt{do}-loops,
@@ -149,8 +158,14 @@ up-to-date, relevant and tidy. Please keep to the following guidelines
 whenever the source code is modified.
 \begin{enumerate}
 
-\item Use comments copiously in the code.
-
+\item Use comments copiously in the code, avoiding useless comments.
+	
+\item If a used equation is extracted from a published paper, refer explicitly to it,
+  citing the paper and equation number when possible (precise the page if no equation number is available, ). 
+  For example : \newline
+  \texttt{!! Ref eq : J. Johner, Fusion Science and Technology 56 (2011) 308-349, eq(18)}\newline
+  For equations taken from the PROCESS user manual, just indicate the page and the paragraph as the equation numbering might change with document updates.
+	
 \item Use the standard header layout, and do not omit any of the
   sections. Here is an example subprogram header:
 \footnotesize
@@ -216,7 +231,7 @@ whenever the source code is modified.
 
 \section{Input Parameters}
 
-Input parameters (see Userguide) are added to the code in the
+Input parameters (see User-guide) are added to the code in the
 following way:
 
 \begin{enumerate}
@@ -249,17 +264,20 @@ following way:
   double precision) and integer variables are treated differently, as are
   scalar quantities and arrays.
 
+\item Input variables names should be as explicit as possible, even if they 
+	tends to get a bit long.
 
 \end{enumerate}
 
 \section{Iteration Variables}
 
-New iteration variables (see Userguide and vardes.html) are added in the
+New iteration variables (see User-guide and vardes.html) are added in the
 same way as input parameters, with the following additions:
 
 \begin{enumerate}
 
 \item The name of an iteration variable must not be more than 14 characters long.
+  The variable name should be as be as explicit as possible within this constrain.
 
 \item Increment the parameter \texttt{ipnvars} in module \texttt{numerics} in
   source file \texttt{numerics.f90} in order to accommodate the new iteration
@@ -283,7 +301,7 @@ same way as input parameters, with the following additions:
 \item Modify the variable's description in its declaring module (which is
   likely to be in source file \texttt{global\_variables.f90}), to say that it
   is ``(iteration variable XXX)''
-
+	
 \end{enumerate}
 
 If an existing input parameter is now required to be an iteration variable,
@@ -304,6 +322,7 @@ to be given initial values or to be input, as they are calculated within the
 code. These should be added to the code in the following way:
 
 \begin{enumerate}
+\item The variable name should be as be as explicit as possible.
 
 \item Choose the most relevant module (usually one of those in source file
   \texttt{global\_variables.f90}). Keeping everything in alphabetical order
@@ -320,7 +339,7 @@ code. These should be added to the code in the following way:
 
 \section{Constraint Equations}
 
-Constraint equations (see UserGuide and vardes.html) are added to
+Constraint equations (see User-Guide and vardes.html) are added to
 \process\ in the following way:
 
 \begin{enumerate}
@@ -351,7 +370,7 @@ variable may also need to be added to the code.
 
 \section{Figures of Merit}
 
-New figures of merit (see UserGuide and vardes.html) are added to \process\ in
+New figures of merit (see User-Guide and vardes.html) are added to \process\ in
 the following way:
 
 \begin{enumerate}
@@ -375,7 +394,7 @@ the following way:
 
 \section{Scanning Variables}
 
-Scanning variables (see Userguide and vardes.html) are added to \process\ in
+Scanning variables (see User-guide and vardes.html) are added to \process\ in
 the following way:
 
 \begin{enumerate}
@@ -406,6 +425,8 @@ contributions of alternative or improved models and algorithms.
 We request that contributors provide the following information for any new models that they provide:
 
 \begin{itemize}
+	
+\item The name of the fortran files should be as explicit as possible and in agreement with the GUI structure. The following convention should be used: \texttt{moduleName.f90}, with \texttt{moduleName} being the name used in the GUI. If several \texttt{.f90} files are associated to one GUI module, identify the main \texttt{.f90} file, and name the other files \texttt{moduleName\_libName.f90} with \texttt{libName} being the chosen name for the library.
 
 \item A comprehensive description of the model; please provide a full list of
   references.
@@ -414,17 +435,59 @@ We request that contributors provide the following information for any new model
   allowed ranges, units.
 
 \item If possible, please cross-reference any input/output variables to
-  existing global variables listed in the variable descriptor file (see Userguide and vardes.html).
+  existing global variables listed in the variable descriptor file (see User-guide and vardes.html).
 
 \item Any new input parameters, iteration variables, constraint equations, figures of merit etc.
 
 \item A definition of any pre-requisites.
 
+\item  As many unitary test should be defined as possible, using the pFUnit test suite documented in \url{http://pfunit.sourceforge.net/}.
+
 \item Any available test data, code examples or test programs in any language.
 
 \end{itemize}
 
+
+
 \section{Code Structure}
+\label{sec:code_structure}
+
+\subsection{Directory structure}
+\label{sec:dir_structure}
+
+The folder structure for the PROCESS system prior to compilation is described below:
+
+
+\begin{quote}
+	\begin{verbatim}
+*-- CMakeLists.txt                      : Build and compile files
+*-- GNUmakefile                         : Build and compile pFUnit files
++-- lib                             : Libraries used in PROCESS
+|   +-- PLASMOD                         : PLASMOD lib files
++-- source                          : source files
+|   +-- Fortran                         : Fortran source files
+|   +-- cpp                             : C++ source files
++-- test_suite
+|   *-- ci_test_suite.py                : Python file for running test suite in Continuous integration system
+|   *-- ci_test_suite_functions.py      : Python functions  for running test suite in Continuous integration system
+|   *-- test_suite.py                   : Python file for running test suite by user on command line
+|   *-- test_suite_functions.py         : Python functions  for running test suite by user on command line
+|   +-- test_files                      : Input files for test suite
+|   +-- test_area                       : Output files for test suite
++-- test_files
+|   +-- pfunit_files                    : pFUnit test files
+|   +-- gtest_files                     : GTest test files
++-- utilities/                          : Python utilities files
++-- fispact/                                : fispact Data file
++-- data                                : Data files
+|   +-- fluids
+|   +-- h_data
+|   +-- lz_non_corona
+|   +-- lz_non_corona_14_elements
++-- documentation                       : Contain documentation files
+*-- IN.DAT                              : Sample PROCESS input file	
+	\end{verbatim}
+\end{quote}
 
 \subsection{Numerics modules}
 \label{sec:numerics_modules}
@@ -438,17 +501,20 @@ summarises the numerics source files.
 \begin{table}[tbph]
 \footnotesize
 \begin{center}
-\begin{tabular}{||l||l||} \hline
-source file   & description \\ \hline
-\texttt{caller.f90} & calls physics, engineering, building and cost routines \\
+\begin{tabular}{||l||l||} 
+\hline
+source file   & description \\ 
+\hline
+\texttt{caller.f90}                & calls physics, engineering, building and cost routines \\
 \texttt{constraint\_equations.f90} & defines the constraint equations \\
-\texttt{evaluators.f90} & function evaluators for HYBRD and \vmcon\ packages \\
-\texttt{iteration\_variables.f90} & adjusts values of iteration variables \\
-\texttt{maths\_library.f90} & miscellaneous `black-box' maths routines,
+\texttt{evaluators.f90}            & function evaluators for HYBRD and \vmcon\ packages \\
+\texttt{iteration\_variables.f90}  & adjusts values of iteration variables \\
+\texttt{maths\_library.f90}        & miscellaneous `black-box' maths routines,
 including HYBRD and \vmcon \\
-\texttt{numerics.f90} & numerics array definitions, and calling routines for
+\texttt{numerics.f90}              & numerics array definitions, and calling routines for
 HYBRD and \vmcon\ packages \\
-\texttt{scan.f90} & performs a parameter scan \\
+\texttt{quanc8.f90}                & 8 pannel newton cotes integration function \\
+\texttt{scan.f90}                  & performs a parameter scan \\
 \hline
 \end{tabular}
 \end{center}
@@ -469,20 +535,26 @@ source files.
 \begin{table}[tbph]
 \begin{center}
 
-\begin{tabular}{||l||l||} \hline
-source file   & description \\ \hline
-\texttt{current\_drive.f90} & current drive efficiency calculations \\
-\texttt{divertor.f90} & divertor model calculations\\
-\texttt{fispact.f90} & nuclide inventory/activation calculations \\
-\texttt{ife.f90} & inertial fusion energy physics/engineering \\
-\texttt{impurity\_radiation.f90} & radiation power calculations \\
-\texttt{physics.f90} & tokamak plasma and fusion calculations \\
-\texttt{plasma\_geometry.f90} & plasma geometry algorithms \\
-\texttt{plasma\_profiles.f90} & plasma density and temperature profile calculations \\
-\texttt{rfp.f90} & reversed field pinch physics/engineering \\
-\texttt{startup.f90} & plasma start-up auxiliary power requirements \\
-\texttt{stellarator.f90 } & stellarator-relevant physics/engineering \\
-\hline
+\begin{tabular}{||l||l||} 
+	\hline
+source file                          & description \\
+	\hline
+\texttt{current\_drive.f90}          & current drive efficiency calculations \\
+\texttt{divertor.f90}                & Kukushkin/Harrison divertor model     \\
+\texttt{divertor$\_$ode.f90}         & Kallenbach divertor model (1D) \\
+\texttt{fispact.f90}                 & nuclide inventory/activation calculations \\
+\texttt{hare.f90}                    & ECCD current drive using HARE \\
+\texttt{impurity\_radiation.f90}     & radiation power calculations \\
+\texttt{physics.f90}                 & tokamak plasma and fusion calculations \\
+\texttt{physics$\_$functions.f90}    & plasma physics parameters calculation called by \\
+                                     & \texttt{physics$\_$functions.f90}, \texttt{stellarator.f90} and \texttt{plasmod.f90}\\
+\texttt{plasma\_geometry.f90}        & plasma geometry algorithms \\
+\texttt{plasma\_profiles.f90}        & plasma density and temperature profile calculations \\
+\texttt{plasmod.f90}                 & interface with the PLASMOD transport code\\                                     
+\texttt{reinke$\_$module.f90}        & Reinke minimum impurity fraction for divertor protection calculation \\                                                    
+\texttt{startup.f90}                 & plasma start-up auxiliary power requirements \\
+\texttt{stellarator.f90}             & stellarator-relevant physics/engineering \\
+	\hline
 \end{tabular}
 \end{center}
 \caption[Summary of physics modules]
@@ -503,23 +575,27 @@ engineering source files.
 \begin{table}[tbph]
 \begin{center}
 
-\begin{tabular}{||l||l||} \hline
-source file     & description \\ \hline
-\texttt{availability.f90} & plant component lifetimes and overall availability \\
-\texttt{buildings.f90} & buildings calculations \\
-\texttt{fw.f90} & first wall calculations \\
-\texttt{hcpb.f90} & HCPB blanket and shield calculations \\
-\texttt{hcll.f90} & HCLL blanket and shield calculations \\
-\texttt{machine\_build.f90} & machine build calculations \\
-\texttt{pfcoil.f90} & PF coil calculations \\
-\texttt{plant\_power.f90} & heat transport and power balance calculations \\
-\texttt{pulse.f90} & pulsed power plant calculations \\
-\texttt{safety.f90} & steady-state temperatures after a LOCA event \\
-\texttt{sctfcoil.f90} & superconducting TF coil calculations \\
-\texttt{structure.f90} & support structure calculations \\
-\texttt{tfcoil.f90} & resistive TF coil calculations \\
-\texttt{vacuum.f90} & vacuum system calculations \\
-\hline
+\begin{tabular}{||l||l||}
+	\hline
+source file     & description \\ 
+	\hline
+\texttt{availability.f90}   	 & Plant component lifetimes and overall availability \\
+\texttt{buildings.f90}      	 & Buildings calculations \\
+\texttt{fw.f90}             	 & First wall calculations \\
+\texttt{hcpb.f90}           	 & HCPB blanket and shield calculations \\
+\texttt{hcll.f90}           	 & HCLL blanket and shield calculations \\
+\texttt{machine\_build.f90} 	 & Machine build calculations \\
+\texttt{pfcoil.f90}         	 & PF coil module \\
+\texttt{plant\_power.f90}        & Heat transport and power balance calculations \\
+\texttt{pulse.f90}               & Pulsed power plant calculations \\
+\texttt{safety.f90}              & Steady-state temperatures after a LOCA event \\
+\texttt{sctfcoil.f90}            & Superconducting TF coil module\\
+\texttt{stellarator$\_$fwbs.f90} & Stellarator HCPB breeding blankets \\
+\texttt{structure.f90}      	 & Support structure calculations \\
+\texttt{superconductors.f90}     & Supraconductor properties \\
+\texttt{tfcoil.f90}              & Resistive TF coil module \\
+\texttt{vacuum.f90}        		 & Vacuum system calculations \\
+	\hline
 \end{tabular}
 \end{center}
 \caption[Summary of engineering modules]
@@ -529,14 +605,28 @@ source file     & description \\ \hline
 \end{table}
 
 \subsection{Costing module}
+Two cost models are available:
+\begin{itemize}
+	\item the 1990 one contained in \texttt{costs.f90} performs all the cost calculations, 
+		including values in M\$ for each machine system, and the cost of electricity
+		in m\$/kWh. Normally, the machine costs are written to the output file; if
+		this is not required set switch \texttt{output\_costs = 0}. 
+	\item The Kovari 2015 one, contained in \texttt{costs$\_$2015.f90}, provides only the capital cost.
+\end{itemize}
 
-The costing module, \texttt{costs.f90}, performs all the cost calculations,
-including values in M\$ for each machine system, and the cost of electricity
-in m\$/kWh. Normally, the machine costs are written to the output file; if
-this is not required set switch \texttt{output\_costs = 0}.
+
+\subsection{Specific modules libraries}
+
+Several modules are only called by specific modules to load dedicated physical data or mathematical tools. Here a list of theses modules loaded by:
+\begin{itemize}
+	\item Hare module : \texttt{currn.f90}, \texttt{TorGA\_curgap.f90} and \texttt{green\_func\_ext.f90}
+	\item Kallenbach module : \texttt{kallenbach\_module.f90} (testing libraries), \texttt{read\_and\_get\_atomic\_data.f90},\ \texttt{read\_radiation.f90}
+	\item Reinke module : \texttt{read\_radiation.f90}
+	\item Supraconductor TF module : \texttt{ode.f90}
+\end{itemize}
+
 
 \subsection{Other modules}
-
 These modules perform miscellaneous tasks, such as initialisation of variables
 and file input / output. File \texttt{process.f90} contains the main program,
 and includes the overall controlling loop.
@@ -547,16 +637,20 @@ Table~\ref{tab:other_modules} summarises these modules.
 \begin{table}[tbph]
 \begin{center}
 
-\begin{tabular}{||l||l||} \hline
-source file     & description \\ \hline
-\texttt{error\_handling.f90} & centralised error handling module \\
-\texttt{fson\_library.f90} & library used to read in data from JSON-format files \\
+\begin{tabular}{||l||l||}
+	\hline
+source file     & description \\ 
+	\hline
+	
+\texttt{autodoc.f90}           & Automatic html \texttt{PROCESS} documentation generation \\
+\texttt{error\_handling.f90}   & centralised error handling module \\
+\texttt{fson\_library.f90}     & library used to read in data from JSON-format files \\
 \texttt{global\_variables.f90} & defines and initialises most shared variables \\
-\texttt{initial.f90} & checks self-consistency of input variables and switches \\
-\texttt{input.f90} & reads in user-defined settings from input file \\
-\texttt{output.f90} & utility routines to format output to file \\
-\texttt{process.f90} & main program and top-level calling routines \\
-\hline
+\texttt{initial.f90}           & checks self-consistency of input variables and switches \\
+\texttt{input.f90}             & reads in user-defined settings from input file \\
+\texttt{output.f90}            & utility routines to format output to file \\
+\texttt{process.f90}           & main program and top-level calling routines \\
+	\hline
 \end{tabular}
 \end{center}
 \caption[Summary of other modules]
@@ -568,113 +662,156 @@ source file     & description \\ \hline
 \mychapter{Code Management Tools}
 \label{chap:codetools}
 
-This chapter will be of interest to people involved in the continuing
+This chapter will be of interest to people involved in the continuing 
 maintenance of the \process\ source code. As stated elsewhere, the source code
 is maintained by CCFE, and resides in a Git repository on the CCFE servers.
 
-\section{Environment set-up (developers only)}
+
+\section{Initial access to the source code}
+\label{sec:getsource}
+
+To gain access to the \process\ source code Git repository, you need
+to be given permission to do so via the CCFE \texttt{GitLab} server.
+\begin{enumerate}
+	
+	\item Use a web browser to go to
+	\href{http://git.ccfe.ac.uk}{\texttt{http://git.ccfe.ac.uk}}
+	
+	\item Login using your normal CCFE computer login details.
+	
+	\item Assuming this is successful, contact the \texttt{GitLab} \process\
+	``Owner'' (currently James Morris james.morris2@ukaea.uk), who will add you to \texttt{GitLab} as a \process\ ``Developer''.
+	
+	\item (If this is your first access to \texttt{GitLab}, you may have to set up
+	SSH keys and a few other things; follow the instructions on screen.)
+	
+	\item Login to a Fusion Unix Network machine.
+	
+	\item \texttt{cd SomewhereAppropriate} (you choose!)
+	
+	\item
+	\texttt{git clone git@git.ccfe.ac.uk:process/process.git -b develop my\_develop}
+	This copies the \texttt{develop} branch of the repository into a local folder \texttt{my\_develop}, which will be created if it does not already exist.
+	\item \texttt{cd my\_develop}
+	
+	\item \texttt{git checkout develop}
+	
+	The sequence of commands above will provide you with a full copy of the \texttt{develop} branch of the \process\ source code, Python utilities and all
+	the documentation files.
+	
+\end{enumerate}
+
+
+\section{Environment set-up}
 \label{sec:run_environment_dev}
 
-Please note that this section is only relevant for people actually developing the \process\/ code, i.e. if you are interested in running a copy of the code from your local directory on the fusion unix network. For normal users please refer to the Userguide.
+Please note that this section is only relevant for people actually developing the \process\  code, i.e. if you are interested in running a copy of the code from your local directory on the fusion Unix network. For normal users please refer to the User-guide.
 
-To set up the environment to run the code, the user interface and the associated utilities (see Utilities Documentation), add the following lines to your \texttt{.bashrc} file.  This is a file in the user's home directory, assuming the bash Unix shell is being used.  Although hidden, it can be opened by issuing the relevant command, for example \texttt{gedit .bashrc}.
+To compile \process\ you must simply have:
+\begin{itemize}
+	\item \texttt{gfortran} to compile the main \process\ souces. The compilation will not work with ifort
+	\item \texttt{gcc} to compile the \process\ GUI
+	\item \texttt{python} to run the \process\ utilities.
+\end{itemize}
+
+If you are developing from the Freia CCFE cluster, please use the following commands to setup the environment for compilation and documentation generation:
 \begin{quote}
-\begin{verbatim}
-module swap python
-module unload NAG
-module unload boost
-
-If using default gfortran compiler instead of ifort:
-(module unload ifort/10.0.023)
-(module load gcc/4.8.2)
-
-export PYTHONPATH=$PYTHONPATH:/PATH_TO_LOCAL_PROCESS_DIRECTORY/utilities
-export PATH=$PATH:/PATH_TO_LOCAL_PROCESS_DIRECTORY
-export PATH=$PATH:/PATH_TO_LOCAL_PROCESS_DIRECTORY/utilities
-\end{verbatim}
+	\begin{verbatim}	
+	module unload ifort
+	module unload pgi
+	module load gfortran
+	module load texlive/2017
+	\end{verbatim}
 \end{quote}
 
-This loads and unloads the relevant modules and sets the path to the process and utilities executables as well as setting the correct path for the python libraries.
+It can be convenient to add the following lines to your \texttt{.bashrc} file\footnote{ This is a file in the user's home directory, assuming the bash Unix shell is being used. Although hidden, it can be opened by issuing the relevant command, for example \texttt{gedit .bashrc}.}, to avoid retyping them for each compilations.\newline
+
+If you are working from your local machine, you will have potentially to install the gcc and gfortran compilers manually. You will also have to install cmake and the google profiling software. For Linux Ubuntu users, it can be simply done using:
+
+\begin{quote}
+	\begin{verbatim}
+	sudo apt-get install gfortram
+	sudo apt-get install gcc
+	sudo apt-get install cmake
+	sudo apt-get install googletest
+	sudo apt-get install pdflatex
+	sudo apt-get install bibtex
+	\end{verbatim}
+\end{quote}
+
+Additional steps must be followed to install google test. Please gently ask J. Morris for this, he is the one!
 
 
-\section{The Makefile}
+\section{The CMakefile}
 \label{sec:makefile}
 
-In addition to its normal role for compilation, the makefile (named
-\texttt{Makefile}) includes a number of utility functions that perform tasks
-such as automatic generation of the code documentation, and the creation of a
-tar file containing the entire source code, its documentation files, and the
-input and output files. This has proved to be of great benefit in keeping all
-of the data from a given run together for archival purposes.
+To improve the portability of the \process\ code to different operating systems (Linux, Windows or Mac), its compilation is now done using cmake. The compilation, html code documentation, pdf manual generation, unitary test and profiling instructions are contained in the \texttt{CMakeLists.txt} file. This has proved to be of great benefit in keeping all of the data from a given run together for archival purposes. Different verbosity level options can be set.
 
 \subsection{Compilation}
 
-Compilation is trivially performed using the makefile. Currently, the
-available options are (type the following on the command line):
-\begin{tabbing}
-123\=12345678901234567890\= \kill
-\> \texttt{make ARCH=FUN} \> CCFE Fusion Unix Network (Intel Fortran ifort compiler) \\
-\> \texttt{make ARCH=GFORT} \> GNU Fortran compiler (gfortran; N.B.\ only versions
-4.6.3 or above) \\
-\> \texttt{make ARCH=JAC} \> JET Analysis Cluster (pgf95 compiler)
-\end{tabbing}
-The GNU gfortran compiler is the default option, so typing simply
-\texttt{make} will have the same effect as typing \texttt{make ARCH=GFORT}.
+The compilation on the Freia cluster can be done using CMake, with the following commands:
 
-The code is almost trivial to port to new architectures, by adding extra
-stanzas to the makefile as required.
+\begin{quote}
+	\begin{verbatim}
+	cmake3 -H. -Bbuild
+	cmake3 --build build
+	\end{verbatim}
+\end{quote}
 
-To force a full recompilation, type \texttt{make clean}. N.B.\ This will
-remove (without prompting) all ``backup'' files (\texttt{*\~}) as well as
-certain other files from the working directory. For additionaly information
-run \texttt{make help}.
+The first cmake command creates the folder and setup the compilation options, the second triggers the actual \process\ compilation. At the end of the compilation, a binary files folder \texttt{bin/} is created containing two executables \texttt{process.exe}, \texttt{process\_GTest.exe} allowing to run the \process\ code and its unitarity test, respectively and a sheared object (\texttt{.so}, called DDL in the windows environment), containing most of the \process\ code.\newline
+	
+To show all compiler warnings (\texttt{ -Wall} and \texttt{-Wextra}), add the \texttt{-Ddebug=ON} option flag to the first cmake command. To allow unitary tests on functions using local fortran variables, the \process\ code is compiled as a DLL (Dynamic Linl Libraries, \texttt{.so} files in C++). It can nevertheless be compiled as a single executable, adding the \texttt{-Ddll=OFF} option to the first cmake command.\newline
 
-Extra run-time diagnostics (array-bound checking, etc.) is turned on by
-default at present; the code is sufficiently quick to run that the performance
-penalty is barely noticeable. However, this can be turned off (beware\ldots
-results can change!), by adding \texttt{DEBUG=NO} to the relevant command
-above, i.e.\ type \verb+make ARCH=... DEBUG=NO+.  N.B.\ there must be no
-spaces either side of the \texttt{=} characters in any of the above commands.
-
-\subsection{Archiving utilities}
-
-The makefile can be used in a number of ways to pack the various file sets
-together into a single compressed tar file, for ease of portability and
-archiving.
-
+Several options on the second cmake command (\textcolor{gray}{}) can be used to:
 \begin{itemize}
-
-\item \texttt{make tar}: Typing this command produces a file
-  \texttt{process.tar.gz} that contains all of the source files, utility
-  programs and documentation files necessary to run the program from scratch
-  on a new machine or in a new directory. (Note that the input files \indat\
-  and \texttt{device.dat} are not included.) This is useful for transferring
-  new copies of source files, etc.\ into an existing directory already
-  containing a previous \process\ run, as the pre-existing customised input
-  files will not be overwritten. To extract the individual files again, copy
-  the file to the destination working directory and type
-  \verb+tar zxvf process.tar.gz+
-
-\item \texttt{make archive}: Typing this command produces a file
-  \texttt{process\_run.tar.gz} containing the working directory's input and
-  output files (\indat, \outdat, \plotdat, \mfile\ and \texttt{device.dat}
-  (which must exist to avoid an error message; see Section~\ref{sec:device}),
-  together with all of the source files, utility programs and documentation
-  files. These files together comprise the full set that define a given run,
-  and so the file produced by this command is suitable for long-term storage
-  for archival purposes. To extract the contents, type
-  \verb+tar zxvf process_run.tar.gz+
+	\item Generate the python dictionaries: \texttt{--target dicts}
+	\item Generate the pdf documentation: \texttt{--target doc}.
+	\item Generate the html documentation: \texttt{--target html}.
 \end{itemize}
+To clean build directory, simply remove it:
+\begin{quote}
+	\begin{verbatim}
+	rm -fr build 
+	\end{verbatim}
+\end{quote}
+	
+If the build is done on your local machine, use the same instruction replacing \texttt{cmake} by \texttt{cmake}\footnote{cmake3 is an alias used on the Freia cluster to precise the cmake version (3)}.\newline
 
-Note that each of the above commands will overwrite the given named tar file
-if one already exists in the working directory.
 
-\subsection{Code documentation}
+%\subsection{\textcolor{gray}{Archiving utilities}}
 
-The makefile can also be used to produce source code documentation, as
-described in the next section.
+%\textcolor{gray}{The makefile can be used in a number of ways to pack the various file sets
+%together into a single compressed tar file, for ease of portability and
+%archiving.}
 
-\section{Automatic Documentation}
+%\begin{itemize}
+
+%\item \textcolor{gray}{\texttt{make tar}: Typing this command produces a file
+%  \texttt{process.tar.gz} that contains all of the source files, utility
+%  programs and documentation files necessary to run the program from scratch
+%  on a new machine or in a new directory. (Note that the input files \indat\
+%  and \texttt{device.dat} are not included.) This is useful for transferring
+%  new copies of source files, etc.\ into an existing directory already
+%  containing a previous \process\ run, as the pre-existing customised input
+%  files will not be overwritten. To extract the individual files again, copy
+%  the file to the destination working directory and type}
+%  \verb+tar zxvf process.tar.gz+
+
+%\item \textcolor{gray}{\texttt{make archive}: Typing this command produces a file
+%  \texttt{process\_run.tar.gz} containing the working directory's input and
+%  output files (\indat, \outdat, \plotdat, \mfile\ and \texttt{device.dat}
+%  (which must exist to avoid an error message; see Section~\ref{sec:device}),
+%  together with all of the source files, utility programs and documentation
+%  files. These files together comprise the full set that define a given run,
+%  and so the file produced by this command is suitable for long-term storage
+%  for archival purposes. To extract the contents, type}
+%  \verb+tar zxvf process_run.tar.gz+
+%\end{itemize}
+
+%\textcolor{gray}{Note that each of the above commands will overwrite the given named tar file
+%if one already exists in the working directory.}
+
+\subsection{Automatic Documentation}
 \label{sec:autodoc}
 
 The \process\ source code is self-documenting to a degree, using an included
@@ -687,27 +824,66 @@ corresponding to the various \texttt{autodoc} tags should be
 self-explanatory. See also Section~\ref{sec:codemods}.
 
 The following files are used:
-\begin{verbatim}
-   autodoc.f90
-   adheader.src
-   adfooter.src
-\end{verbatim}
-To create the ($\sim 430$) html files from the source code, type
-\verb+make html+.  Then, point your favourite web browser to the file
-\texttt{process.html} or \texttt{calling\_tree.html} in the working
-directory. The variable descriptor file \texttt{vardes.html} is also produced at the same time (though it may be
-helpful to modify the file manually afterwards to remove empty sections from
-it).
 
-In addition, a full \LaTeX\/ User Guide , contained within
-\texttt{process.tex} and the other \texttt{.tex} files called from it, is
-rigorously maintained to ensure its continuing strict agreement with the
-evolving source code. To create an Adobe PDF file \texttt{process.pdf} from
-\texttt{process.tex} (and the associated PostScript figures), type
-\verb+make userguide+.
+\begin{quote}
+	\begin{verbatim}
+	autodoc.f90
+	adheader.src
+	adfooter.src
+	\end{verbatim}
+\end{quote}
 
-Finally, to produce both the html files and the User Guide in one go, simply
-type \verb+make doc+.
+
+To create the ($\sim 526$) html files from the source code, type
+
+\begin{quote}
+	\begin{verbatim}
+	cmake3 --build build --target html
+	\end{verbatim}
+\end{quote}
+
+This command will fill the following directory \texttt{documentation/html/} with one html file per fortran source code contained in \texttt{source/fortran} directory. Any html file can be opened by your favourite web browser. For example, to open the documentation of the main \process\ function just use
+
+\begin{quote}
+	\begin{verbatim}
+	cd documentation/html
+	firefox process.html
+	\end{verbatim}
+\end{quote}
+
+\subsection{\LaTeX\ documentation}
+\label{sec:tex_doc}
+
+In addition, a full \LaTeX\ documentation is and have to be maintained by the \process\ developpers:
+\begin{itemize}
+	\item A user guide contained within \texttt{process.tex}
+	\item A developper guide contained within \texttt{developerguide.tex}
+	\item A description of the \process\ solvers contained within \texttt{optsolverdoc.tex}
+	\item A description of the \process\ magnets modules contained within \texttt{optsolverdoc.tex}
+	\item A description of the \process\ python utilities contained within \texttt{utilitiesdoc.tex}
+\end{itemize}
+
+To generate the .pdf files, simply execute the following command:
+
+\begin{quote}
+	\begin{verbatim}
+		cmake3 --build build --target doc
+	\end{verbatim}
+\end{quote}
+
+All these files must be maintained in strict agreement with the evolution of the \process\ code. It is the developper responsability to update them when a change is commited in the different source codes.
+
+
+\subsection{Unitary test}
+A fortran unitarity test framework pFUnit, is implemented in the \process\ code. A documentation of this tool is available in \url{http://pfunit.sourceforge.net/}. The unitary test are configured using \texttt{*.pf} files contained in the \texttt{test\_files/pfunit\_files/} folder. The unitarity test are executed using: 
+
+\begin{quote}
+	\begin{verbatim}
+	cmake3 --build build --target test-build
+	\end{verbatim}
+\end{quote}
+\textcolor{red}{IS THE COMMAND RIGHT ??}
+
 
 \section{Code Updates and Release Procedure}
 \label{sec:code_release}
@@ -718,25 +894,62 @@ Git repository are to be made, and how new code releases are performed. It is
 assumed that readers have a working knowledge of Git commands.
 
 
+\subsection{Git workflow}
+The code management methodology is based on the so-called
+\href{https://www.atlassian.com/git/workflows#!workflow-gitflow}{``gitflow''}
+workflow. There are two main branches:
+\begin{itemize}
+	
+	\item \texttt{develop}, which is the basis for all code development work, and
+	changes are committed to it frequently.
+	
+	\item \texttt{master}, which contains official ``release'' versions of
+	\process, and is updated on a roughly three-monthly timescale.
+	
+\end{itemize}
+
+Development work on new models should use separate branches, named e.g.\
+\texttt{dev\_mynewmodel}, split from the \texttt{develop} branch. It is a very
+good idea to merge the \texttt{develop} branch into \texttt{dev\_mynewmodel}
+frequently during the course of the work, so that changes to the main branch
+are transferred to the new model's files with minimal effort.
+
+Once the new model has been finished and tested successfully (complete with full
+documentation --- see Section~\ref{sec:codemods}), the branch should be merged
+back into the \texttt{develop} branch.
+
+\Red{Note that typically development branches do not need version tagging as they should not be used in any production runs. However, e.g. for the DEMO baseline design a separate branch will be created to conserve the \process\/ output in the state when the baseline was fixed.}
+
+
+
 \subsection{Tagging}
 \label{sec:tagging}
+
 Tagging in \process\/ is used to document the version of the code any individual
 run has been performed with. This is necessary for proper provenance capture.
-Currently, only the gitlab commit number is unique, assuring full version control,
-but the \process\/ version tag documented in each output is not updated with
-each commit. From November 2016 onwards, we have changed our tagging system for
-the \process\/ versions (details see below). Any versions ending in {\bf .0} should
-be fully tested. How and when to tag versions is described in more detail in the
-upcoming sections detailing the code update and release procedures.
+Any version produced after 2016 takes the form x.y.z for internal development versions and takes the form x.y for external master releases:
 
-\subsubsection{Tagging in the development version}
-Instead of having a single revision number - as was previously the case - we will be following the convention where the {\it development} version of \process\/ gets tagged according the format {\bf MasterRelease.MajorModel.MinorChange}, i.e. '1.3.29', corresponds to the 29th minor update since the implementation of the 3rd new major model after the 1st master release with the new tagging format.
+\begin{center}
+	[major version].[minor version].[revision number]
+\end{center}
+with 
+\begin{itemize}
+	\item $[$major version$]$ - release containing numerous major changes
+	\item $[$minor version$]$ - medium change, i.e. new model, major bug fix
+	\item $[$revision number$]$ - weekly or on demand build/change 
+\end{itemize}
 
-\subsubsection{Tagging in the master version}
-The {\it master} version of \process\/ will be tagged according to the format {\bf MasterRelease.0} and will correspond to the same code version as the development version with {\bf MasterRelease.0.0}.
+Any development versions ending in .0 should be fully tested as they correspond to the public ones. For example the version 2.4 of the master version must corresponds to the 2.4.0 of the development version.
+
 
 \subsubsection{Tagging in a separate branch}
-This section covers tagging in e.g. the separate DEMO1 baseline branch and assures that while this branch can develop independently of the development branch, it still has unique version tagging and provenance capture. Tagging of a separate branch should be started when it is forked from develop. Hence, the initial tag should be {\bf BID\_MasterRelease.MajorModel.MinorChange}, where {\bf BID} is a short but informative branch identifier consisting of letters only. This allows for branching from the development version at any point. Ideally it does start from a fully tested version though! \Red{Manoj, please check that both characters as well as the new dot format are possible options for the autodoc tool!}
+This section covers tagging in e.g. the separate DEMO1 baseline branch and assures that while this branch can develop independently of the development branch, it still has unique version tagging and provenance capture. Tagging of a separate branch should be started when it is forked from develop. Hence, the initial tag should be 
+
+\begin{center}
+	[BID]\_[major version].[minor version].[revision number]
+\end{center}
+where [BID] is a short but informative branch identifier consisting of letters only. This allows for branching from the development version at any point. Ideally it does start from a fully tested version though!\newline
+\textcolor{red}{Manoj, please check that both characters as well as the new dot format are possible options for the autodoc tool!}
 
 \subsubsection{Tagging between manual tags}
 Between user tags Git will create tags in the following format:
@@ -754,71 +967,40 @@ This allows the user to checkout a specific commit between tagged versions.
 PROCESS now outputs this information into the `OUT.DAT` and `MFILE.DAT` and is
 updated upon compilation. This way each output file is trackable to a specific commit.
 
+\subsection{Git manipulations}
 
-\subsection{Initial access to the source code}
-\label{sec:getsource}
-
-To gain access to the \process\ source code Git repository, you need
-to be given permission to do so via the CCFE \texttt{GitLab} server.
-\begin{enumerate}
-
-\item Use a web browser to go to
-  \href{http://git.ccfe.ac.uk}{\texttt{http://git.ccfe.ac.uk}}
-
-\item Login using your normal CCFE computer login details.
-
-\item Assuming this is successful, contact the \texttt{GitLab} \process\
-  ``Owner'' (currently James Morris james.morris2@ukaea.uk), who will add you to \texttt{GitLab} as a \process\ ``Developer''.
-
-\item (If this is your first access to \texttt{GitLab}, you may have to set up
-  SSH keys and a few other things; follow the instructions on screen.)
-
-\item Login to a Fusion Unix Network machine.
-
-\item \texttt{cd SomewhereAppropriate} (you choose!)
-
-\item
-\texttt{git clone git@git.ccfe.ac.uk:process/process.git -b develop my\_develop}
-This copies the \texttt{develop} branch of the repository into a local folder \texttt{my\_develop}, which will be created if it does not already exist.
-\item \texttt{cd my\_develop}
-
-\item \texttt{git checkout develop}
-
-The sequence of commands above will provide you with a full copy of the \texttt{develop} branch of the \process\ source code, Python utilities and all
-the documentation files.
-
-\item \texttt{make all}\\
-This performs a full compilation and builds the executable, creates the User Guide, creates the python dictionaries and produces all the web-based documentation.
-
-\end{enumerate}
+\subsubsection{Commit logs}
+To see the commit messages you can use the \texttt{git log} command. There are various options
+described in table~\ref{tab:commit_log}:
 
 
-\subsection{Git workflow}
-
-The code management methodology is based on the so-called
-\href{https://www.atlassian.com/git/workflows#!workflow-gitflow}{``gitflow''}
-workflow. There are two main branches:
-\begin{itemize}
-
-\item \texttt{develop}, which is the basis for all code development work, and
-  changes are committed to it frequently.
-
-\item \texttt{master}, which contains official ``release'' versions of
-  \process, and is updated on a roughly three-monthly timescale.
-
-\end{itemize}
-
-Development work on new models should use separate branches, named e.g.\
-\texttt{dev\_mynewmodel}, split from the \texttt{develop} branch. It is a very
-good idea to merge the \texttt{develop} branch into \texttt{dev\_mynewmodel}
-frequently during the course of the work, so that changes to the main branch
-are transferred to the new model's files with minimal effort.
-
-Once the new model has been finished and tested successfully (complete with full
-documentation --- see Section~\ref{sec:codemods}), the branch should be merged
-back into the \texttt{develop} branch.
-
-\Red{Note that typically development branches do not need version tagging as they should not be used in any production runs. However, e.g. for the DEMO baseline design a separate branch will be created to conserve the \process\/ output in the state when the baseline was fixed.}
+\begin{table}[tbph]
+	%\footnotesize
+	\begin{center}
+		\begin{tabular}{@{}lll}
+			\hline \hline
+			\textbf{Command}                     & \textbf{Description}                     & \textbf{Example}           \\
+			\hline
+			\texttt{-(n)}                        & show the last \texttt{n} commits         & \texttt{git log -5}                 \\	
+			\texttt{--since} or \texttt{--after} & limits the logs to be from date given    & \texttt{git log --since "21-01-15"} \\	
+	               		                         & can use \texttt{number.scale} where      & \texttt{git log --since 2.weeks}    \\
+	               		                         & scale=year/month/week/day/minute         & \\	
+			\texttt{--until} or \texttt{--before}& limits the logs to be up to date given   & \texttt{git log --until "22-01-15"} \\	
+			\texttt{--author}                    & only shows commits from given author     & \texttt{git log --author "morrisj"} \\	
+			\texttt{--grep}                      & only show commits with a commit          & \texttt{git log --grep "magnet"}    \\
+		                                         & message containing the string given      & \\	
+			\texttt{--stat}                      & if you want to see some abbreviated      & \texttt{git log --stat}             \\
+			                                     & stats for each commit                    & \\
+			\texttt{--oneline}                   & Outputs commit number, date and          & \texttt{git log --oneline}          \\
+			                                     &  message to a single line                & \\ 	
+			\texttt{--graph}                     & display commits in a ASCI graph          & \texttt{git log --graph} \\	
+			\texttt{-S}                          & only show commits adding or removing     & \texttt{git log -S "find\_me"} \\
+			                                     & code matching the string                 & \\
+			\hline \hline
+		\end{tabular}\\
+		\caption{\label{tab:commit_log} \texttt{git log} option description.}
+	\end{center}
+\end{table}
 
 \subsubsection{Branching from \texttt{develop}}
 
@@ -960,13 +1142,18 @@ Section~\ref{sec:codemods}) and the code is fully tested.
 \item If you have changed any "use" statements in the code, or any compilation dependencies in the Makefile, run \\
 \texttt{make clean}
 
-\item \texttt{make all} \\
-This ensures that all the code and documentation compiles successfully.
+\item Check the code compilation and the html code documentation in a verbose mode
+\begin{center}
+	\begin{verbatim}
+	cmake3 -H. -Bbuild -Ddebug=ON
+	cmake3 --build buid --target html
+	cmake --build buid
+	\end{verbatim}
+\end{center}
 
 \item Run the input file(s) in the \texttt{tests} folder to ensure PROCESS runs correctly.
 
-\item
-Close all open editor windows.  The commit will not work otherwise.
+\item Close all opened editor windows. The commit will not work otherwise.
 
 \item   \texttt{git commit -a -m 'Type your message here'} \\
   This commits all modified tracked files. (Do not use quotation marks inside your message.)\\
@@ -1020,24 +1207,27 @@ executables and documentation should be performed. This is done as follows:
 \item \texttt{git pull}\\
 Updates the version stored in this folder to the version stored centrally.
 
-\item \texttt{make all}
-This is essential because the Git repository does not include any of the files generated in the compilation process.
+\item Re-compile the code. This is essential because the Git repository does not include any of the files generated in the compilation process.
+\begin{center}
+	\begin{verbatim}
+	cmake3 -H. -Bbuild
+	cmake3 --build buid
+	\end{verbatim}
+\end{center}
 
 \item \texttt{exit}  (to return to your own username again)
 
 \end{enumerate}
 
-The \texttt{make all} step performs the rebuild of the \texttt{process.exe} executable
+The \texttt{cmake} steps performs the rebuild of the \texttt{process.exe} executable
 file, updates the User Guide and all the html files, and recreates the Python
 dictionaries as required by the Python utilities.
-
 
 
 \mychapter{Graphical User Interface}
 To currently use the \process GUI, go through the following steps. This only works if you have at least reporter access on the project.
 
 \begin{enumerate}
-
 \item    Clone \texttt{Home} branch from the Gitlab.   \texttt{git clone --branch home git@git.ccfe.ac.uk:mkumar/PROCESS\_GUI.git folder\_name} . If \texttt{folder\_name} is not typed then it will create a folder \texttt{PROCESS\_GUI} and clone source code there.
 
 \item    Go to folder with source code where you will find a number of directory. Issue command   \texttt{qmake-qt5 PROCESS\_GUI.pro}  , which will generate Makefile for compilation.
