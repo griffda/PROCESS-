@@ -125,6 +125,8 @@ module physics_module
   real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
   real(kind(1.0D0)) :: total_loss_power        ! [W]
   real(kind(1.0D0)) :: total_energy_conf_time  ! [s]
+  real(kind(1.0D0)) :: ptarmw, lambdaio, drsep
+  real(kind(1.0D0)) :: fio, fLI, fLO, fUI, fUO, pLImw, pLOmw, pUImw, pUOmw
 
 
 contains
@@ -536,7 +538,11 @@ implicit none
        ! if double null configuration share the power 
        ! equally over the upper and lower divertor 
        if (idivrt == 2) then
-         pdivt = ftar*pdivt
+         if (ftar >= 0.5d0) then
+            pdivt = ftar*pdivt
+         else
+            pdivt = (1.0d0-ftar)*pdivt
+         end if
        end if
 
        !  The following line is unphysical, but prevents -ve sqrt argument
@@ -616,9 +622,14 @@ implicit none
     else
        if (idivrt == 2) then
          ! Double Null configuration in - including SoL radiation
-         photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea + &
-          (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea * ftar)
-         !photon_wall_core = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea
+         if (ftar >= 0.5d0) then
+            photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea + &
+            (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea * ftar)
+         else
+            photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea + &
+            (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea * (1.0d0 - ftar))
+         end if
+          !photon_wall_core = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea
          !photon_wall_sol = (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea * ftar)
          !write(*,*) 'photon_wall_core =', photon_wall_core, ', photon_wall_sol =', photon_wall_sol
        else
@@ -628,8 +639,44 @@ implicit none
        end if 
     end if
 
-
     peakradwallload = photon_wall *peakfactrad 
+
+    ! Calculate the target imbalances 
+    ! Double null only ! <- not for the first step
+    ! find the total power into the targets
+    if (ftar >= 0.5d0) then
+      ptarmw =  pdivt * (1 - rad_fraction_sol) / ftar 
+    else
+      ptarmw =  pdivt * (1 - rad_fraction_sol) / (1.0d0 - ftar)
+    end if
+    ! use ftar to find deltarsep
+    lambdaio = 1.57d-3
+    drsep = - 2.0d0 * 1.5d-3 * atanh(2.0d0 *(ftar - 0.5d0)) ! this needs updating
+    ! Find the innner and outer lower target imbalance
+    ! Parameters taken from double null machine 
+    ! D. Brunner et al 
+    ! fio = 0.25d0 * ( 1.0d0 - 1.0d0/(1.0d0+exp(drsep/lambdao))) ! this needs to be changed 
+    fio = 0.16d0 + (0.16d0 - 0.41d0) * (1.0d0 - ( 2.0d0 / (1.0d0 + exp(-(drsep/lambdaio)**2))))
+    if (idivrt == 2) then
+      ! Double Null configuration
+      ! Find all the power fractions accross the targets
+      fLI = ftar * fio
+      fLO = ftar * ( 1.0d0 - fio )
+      fUI = (1.0d0 - ftar ) * fio
+      fUO = (1.0d0 - ftar ) * ( 1.0d0 - fio )  
+      ! power into each target
+      pLImw = fLI * ptarmw
+      pLOmw = fLO * ptarmw
+      pUImw = fUI * ptarmw
+      pUOmw = fUO * ptarmw
+    else
+      ! Single null configuration
+      fLI = 1.0d0 - fio
+      fLO = fio
+      ! power into each target 
+      pLImw = fLI * ptarmw
+      pLOmw = fLO * ptarmw
+    end if
 
     ! Calculate some derived quantities that may not have been defined earlier
     total_loss_power = 1d6 * (falpha*palpmw+pchargemw+pohmmw+pinjmw)
@@ -4671,6 +4718,38 @@ implicit none
         '(peakradwallload)', peakradwallload, 'OP ')
     call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)', &
         '(wallmw)', wallmw, 'OP ')
+
+    call oblnkl(outfile)
+    call ovarre(outfile,'Power incident on the divertor targets (MW)', &
+        '(ptarmw)',ptarmw, 'OP ')
+    call ovarre(outfile, 'Fraction of power to the divertor with highest power load', &
+        '(ftar)', ftar, 'IP ')
+    call ovarre(outfile,'Outboard side heat flux decay length (m)', &
+        '(lambdaio)',lambdaio, 'OP ')
+    call ovarre(outfile,'Midplane seperation of the two magnetic closed flux surfaces (m)', &
+        '(drsep)',drsep, 'OP ')
+    call ovarre(outfile,'Fraction of power on the outer targets', &
+        '(fio)',fio, 'OP ')
+    call ovarre(outfile,'Fraction of power incident on the lower inner target', &
+        '(fLI)',fLI, 'OP ')
+    call ovarre(outfile,'Fraction of power incident on the lower outer target', &
+        '(fLO)',fLO, 'OP ')
+    if (idivrt == 2 ) then
+      call ovarre(outfile,'Fraction of power incident on the upper inner target', &
+       '(fUI)',fUI, 'OP ')
+     call ovarre(outfile,'Fraction of power incident on the upper outer target', &
+       '(fUO)',fUO, 'OP ')
+    end if
+    call ovarre(outfile,'Power incident on the lower inner target (MW)', &
+        '(pLImw)',pLImw, 'OP ')
+    call ovarre(outfile,'Power incident on the lower outer target (MW)', &
+        '(pLOmw)',pLOmw, 'OP ')
+    if (idivrt == 2) then    
+      call ovarre(outfile,'Power incident on the upper innner target (MW)', &
+           '(pUImw)',pUImw, 'OP ')
+      call ovarre(outfile,'Power incident on the upper outer target (MW)', &
+           '(pUOmw)',pUOmw, 'OP ')
+    end if
 
     call oblnkl(outfile)
     call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw, 'OP ')

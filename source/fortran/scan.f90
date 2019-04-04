@@ -878,7 +878,7 @@ contains
             vlab = 'fimp(13)' ; xlab = 'Xenon fraction'
         case (47)
             ftar = swp(iscn)
-            vlab = 'ftar' ; xlab = 'Maximum_divertor_power_fraction'
+            vlab = 'ftar' ; xlab = 'lower_divertor_power_fraction'
         case (48)
             rad_fraction_sol = swp(iscn)
             vlab = 'rad_fraction_sol' ; xlab = 'SoL radiation fraction'

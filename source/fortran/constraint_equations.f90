@@ -605,8 +605,12 @@ contains
             ! flhthresh |  f-value for L-H power threshold
             ! plhthresh |  L-H mode power threshold (MW)
             ! pdivt     |  power conducted to the divertor region (MW)
-            cc(i) = -(1.0D0 - ftar * flhthresh * plhthresh / (pdivt))
-
+            if (ftar >= 0.5d0) then
+               cc(i) = -(1.0D0 - ftar * flhthresh * plhthresh / (pdivt))
+            else
+               cc(i) = -(1.0D0 - (1.0d0-ftar) * flhthresh * plhthresh / (pdivt))
+            end if 
+            
             if (present(con)) then
                 con(i) = plhthresh
                 err(i) = plhthresh - 2.0D0 * pdivt / flhthresh

@@ -296,8 +296,8 @@ module physics_variables
   real(kind(1.0D0)) :: fbfe = 0.35D0
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: fdeut = 0.5D0
-  !+ad_vars  ftar  /0.5/ : fraction of power to the divertor with highest
-  !+ad_vars                power load (snull = 0 only)
+  !+ad_vars  ftar  /0.5/ : fraction of power to the  lower divertor in double null
+  !+ad_vars                configuration (snull = 0 only)
   real(kind(1.0D0)) :: ftar = 0.5D0
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
   !+ad_varc                 area in neutron wall load calculation (iwalld=1)
