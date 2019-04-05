@@ -11,6 +11,7 @@
 
 ## Minor Changes
 
+- Increased the number of scan points to 1000 (issue #809)
 - For issue #379 constraint 52 now gives warning for iblanket=1
 
 # 1.0.15

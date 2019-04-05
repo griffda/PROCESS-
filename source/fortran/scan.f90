@@ -64,8 +64,8 @@ module scan_module
 
   public
 
-  !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
-  integer, parameter :: ipnscns = 200
+  !+ad_vars  ipnscns /1000/ FIX : maximum number of scan points
+  integer, parameter :: ipnscns = 1000
 
   !+ad_vars  ipnscnv /45/ FIX : number of available scan variables
   integer, parameter :: ipnscnv = 47
