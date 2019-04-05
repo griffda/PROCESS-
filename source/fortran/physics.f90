@@ -3059,21 +3059,24 @@ implicit none
     !+ad_hist  13/11/14 PJK Modified iradloss usage
     !+ad_hist  17/06/15 MDK Added Murari scaling (40)
     !+ad_hist  02/11/16 HL  Added Petty, Lang scalings (41,42)
+    !+ad_hist  05/04/19 SK  IPB98 scalings errata from 2008 NF 48 099801  
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
     !+ad_docc    "ITER Physics Design Guidelines: 1989",
     !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990)
+    !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990)
     !+ad_docc  A. Murari et al 2015 Nucl. Fusion, 55, 073009
     !+ad_docc  C.C. Petty 2008 Phys. Plasmas, 15, 080501
     !+ad_docc  P.T. Lang et al. 2012 IAEA conference proceeding EX/P4-01
+    !+ad_docc    ITER physics basis Chapter 2, 1999 Nuclear Fusion 39 2175
+    !+ad_docc    Nuclear Fusion corrections, 2008 Nuclear Fusion 48 099801
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments
-
     integer, intent(in) :: iinvqd, isc, ignite
     real(kind(1.0D0)), intent(in) :: afuel, palpmw, aspect, bt, dene, &
          dnitot, dnla, eps, hfact, kappa, kappa95, pchargemw, pinjmw, &
@@ -3083,10 +3086,9 @@ implicit none
          tauee, taueff, tauei
 
     !  Local variables
-
     real(kind(1.0D0)) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
          n20,pcur,qhat,ratio,rll,str2,str5,taueena,tauit1,tauit2, &
-         term1,term2, h, qratio, nratio, nGW
+         term1,term2, h, qratio, nratio, nGW, kappaa_IPB
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3105,15 +3107,12 @@ implicit none
     tauei = 0.375D0*rminor**2/chii*str2
 
     !  Calculate heating power (MW)
-
     powerht = falpha*palpmw + pchargemw + pohmmw
 
     !  If the device is not ignited, add the injected auxiliary power
-
     if (ignite == 0) powerht = powerht + pinjmw
 
     !  Include the radiation as a loss term if requested
-
     if (iradloss == 0) then
        powerht = powerht - pradpv*vol
     else if (iradloss == 1) then
@@ -3123,28 +3122,25 @@ implicit none
     end if
 
     !  Ensure heating power is positive (shouldn't be necessary)
-
     powerht = max(powerht,1.0D-3)
 
     !  Line averaged electron density in scaled units
-
     dnla20 = dnla * 1.0D-20
     dnla19 = dnla * 1.0D-19
 
     !  Volume averaged electron density in units of 10**20 m**-3
-
     n20 = dene / 1.0D20
 
     !  Plasma current in MA
-
     pcur = plascur / 1.0D6
 
-    !  kappaa = plasma X-sectional area/(pi*rminor*rminor) by definition
-
+    ! Separatrix kappa defined with X-section for general use
     kappaa = xarea/(pi*rminor*rminor)
 
-    !  Calculate Neo-Alcator confinement time (used in several scalings)
+    ! Separatrix kappa defined with plasma volume for IPB scalings
+    kappaa_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
 
+    !  Calculate Neo-Alcator confinement time (used in several scalings)
     taueena = 0.07D0 * n20 * rminor * rmajor*rmajor * qstar
 
     !  For reference (see startup.f90):
@@ -3474,7 +3470,8 @@ implicit none
        rtaue = -0.66D0
 
     case (32)  !  IPB98(y), ELMy H-mode scaling
-       !  Nuclear Fusion 39 (1999) 2175
+       !  Data selection : full ITERH.DB3
+       !  Nuclear Fusion 39 (1999) 2175, Table 5
        tauee = hfact * 0.0365D0 * pcur**0.97D0 * bt**0.08D0 * &
             dnla19**0.41D0 * powerht**(-0.63D0) * rmajor**1.93D0 * &
             kappa**0.67D0 * aspect**(-0.23D0) * afuel**0.2D0
@@ -3484,40 +3481,44 @@ implicit none
        rtaue = -0.63D0
 
     case (33)  !  IPB98(y,1), ELMy H-mode scaling
-       !  Nuclear Fusion 39 (1999) 2175
+       !  Data selection : full ITERH.DB3
+       !  Nuclear Fusion 39 (1999) 2175, Table 5 
        tauee = hfact * 0.0503D0 * pcur**0.91D0 * bt**0.15D0 * &
             dnla19**0.44D0 * powerht**(-0.65D0) * rmajor**2.05D0 * &
-            kappaa**0.72D0 * aspect**(-0.57D0) * afuel**0.13D0
+            kappaa_IPB**0.72D0 * aspect**(-0.57D0) * afuel**0.13D0
        gtaue = 0.0D0
        ptaue = 0.44D0
        qtaue = 0.0D0
        rtaue = -0.65D0
 
     case (34)  !  IPB98(y,2), ELMy H-mode scaling
-       !  Nuclear Fusion 39 (1999) 2175
+       !  Data selection : ITERH.DB3, NBI only
+       !  Nuclear Fusion 39 (1999) 2175, Table 5
        tauee = hfact * 0.0562D0 * pcur**0.93D0 * bt**0.15D0 * &
             dnla19**0.41D0 * powerht**(-0.69D0) * rmajor**1.97D0 * &
-            kappaa**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
+            kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
        gtaue = 0.0D0
        ptaue = 0.41D0
        qtaue = 0.0D0
        rtaue = -0.69D0
 
     case (35)  !  IPB98(y,3), ELMy H-mode scaling
-       !  Nuclear Fusion 39 (1999) 2175
+       !  Data selection : ITERH.DB3, NBI only, no C-Mod
+       !  Nuclear Fusion 39 (1999) 2175, Table 5
        tauee = hfact * 0.0564D0 * pcur**0.88D0 * bt**0.07D0 * &
             dnla19**0.40D0 * powerht**(-0.69D0) * rmajor**2.15D0 * &
-            kappaa**0.78D0 * aspect**(-0.64D0) * afuel**0.20D0
+            kappaa_IPB**0.78D0 * aspect**(-0.64D0) * afuel**0.20D0
        gtaue = 0.0D0
        ptaue = 0.4D0
        qtaue = 0.0D0
        rtaue = -0.69D0
 
     case (36)  !  IPB98(y,4), ELMy H-mode scaling
-       !  Nuclear Fusion 39 (1999) 2175
+       !  Data selection : ITERH.DB3, NBI only, ITER like devices
+       !  Nuclear Fusion 39 (1999) 2175, Table 5
        tauee = hfact * 0.0587D0 * pcur**0.85D0 * bt**0.29D0 * &
             dnla19**0.39D0 * powerht**(-0.70D0) * rmajor**2.08D0 * &
-            kappaa**0.76D0 * aspect**(-0.69D0) * afuel**0.17D0
+            kappaa_IPB**0.76D0 * aspect**(-0.69D0) * afuel**0.17D0
        gtaue = 0.0D0
        ptaue = 0.39D0
        qtaue = 0.0D0
