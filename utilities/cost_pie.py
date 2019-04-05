@@ -140,11 +140,7 @@ def step_cost_model():
     step22010304 = m_file.data["step22010304"].get_scan(-1) # Control Coils
     step220103 = step22010301+step22010302+step22010303+step22010304 # Magnets
     step2202 = m_file.data["step2202"].get_scan(-1)         # Heat Transfer System
-    step2203 = m_file.data["step2203"].get_scan(-1)         # Cryogenic Cooling System
-    step2204 = m_file.data["step2204"].get_scan(-1)         # Waste Treatment and Disposal
-    step2205 = m_file.data["step2205"].get_scan(-1)         # Fuel Handling and Storage
-    step2206 = m_file.data["step2206"].get_scan(-1)         # Other Reactor Plant Equipment
-    step2207 = m_file.data["step2207"].get_scan(-1)         # Instrumentation and Control
+    step22 = m_file.data["step22"].get_scan(-1)             # Reactor Plant Equipment
     step23 = m_file.data["step23"].get_scan(-1)             # Turbine Plant Equipment
     step24 = m_file.data["step24"].get_scan(-1)             # Electric Plant Equipment
     step25 = m_file.data["step25"].get_scan(-1)             # Miscellaneous Plant Equipment
@@ -173,7 +169,7 @@ def step_cost_model():
         'Turbine Plant Equipment', 'Electric Plant Equipment', 'Miscellaneous Plant Equipment']
 
     sizes = [step20+step21, step220101, step220102, step220103, step2201-step220101-step220102-step220103,
-            step2202, step2203+step2204+step2205+step2206+step2207, step23, step24, step25]
+            step2202, step22-step2201-step2202, step23, step24, step25]
     
 
     # Setup figures

@@ -86,7 +86,7 @@ module costs_step_module
   ! Scaling Properties
 
   real(kind(1.0D0)) :: vfi, vfi_star, ptherm_star, pinjmw_star, fwarea_star, &
-  rmajor_star, rminor_star
+  rmajor_star, rminor_star, pth
 
 contains
 
@@ -143,13 +143,16 @@ contains
     !  Fusion Island Volume as defined by Sheffield & Milora (2016)
 
     vfi = pi * (rtot + 0.5D0*tfthko)**2 * (hpfu + hmax + tfcth)
+    pth = powfmw + emultmw + pinjwp
 
     !  STARFIRE Reference Value
 
-    vfi_star = 5.1D3                    ! Volume of Fusion Island (m3)
+!    vfi_star = 5.1D3                    ! Volume of Fusion Island (m3)
+    vfi_star = 6.737D3                  ! Volume of Fusion Island (m3)
     ptherm_star = 4.15D3                ! Thermal Power (MW)
     pinjmw_star = 9.04D1                ! Auxiliary Power (MW)
-    fwarea_star = 7.8D2                 ! First Wall Area (m2)
+!    fwarea_star = 7.8D2                 ! First Wall Area (m2)
+    fwarea_star = 9.42D2                ! First Wall Area (m2)
     rmajor_star = 7.0D0                 ! Major Radius (m)
     rminor_star = rmajor_star / 3.6D0   ! Minor Radius (m)
 
@@ -209,7 +212,7 @@ contains
       call ocosts(outfile,'(step93)','Other Costs (5%) (M$)',step93)
 
       call oshead(outfile,'Constructed Cost')
-      call ocosts(outfile,'(concost)','Constructed cost (M$)',concost)
+      call ocosts(outfile,'(concost)','Constructed Cost (M$)',concost)
     end if
 
     !  Cost of electricity
@@ -327,22 +330,22 @@ contains
 
    ! 21.03 Turbine Building
    ! Original STARFIRE value, scaling with thermal power
-   step2103 = 3.592D1 * (pthermmw / ptherm_star)**0.6D0
+   step2103 = 3.592D1 * (pth/ ptherm_star)**0.6D0
    step21 = step21 + step2103
 
    ! 21.04 Cooling System Structures
    ! Original STARFIRE value, scaling with thermal power
-   step2104 = 7.96D0 * (pthermmw / ptherm_star)**0.6D0
+   step2104 = 7.96D0 * (pth/ ptherm_star)**0.6D0
    step21 = step21 + step2104
 
    ! 21.05 Electrical Equipment and Power Supply Building
    ! Original STARFIRE value, scaling with thermal power
-   step2105 = 9.16D0 * (pthermmw / ptherm_star)**0.6D0
+   step2105 = 9.16D0 * (pth / ptherm_star)**0.6D0
    step21 = step21 + step2105
 
    ! 21.06 Auxiliary Services Building
    ! Original STARFIRE value, scaling with thermal power
-   step2106 = 3.26D0 * (pthermmw / ptherm_star)**0.6D0  
+   step2106 = 3.26D0 * (pth / ptherm_star)**0.6D0  
    step21 = step21 + step2106
 
    ! 21.07 Hot Cell
@@ -357,12 +360,12 @@ contains
 
    ! 21.09 Service Water Building
    ! Original STARFIRE value, scaling with thermal power
-   step2109 = 6.6D-1 * (pthermmw / ptherm_star)**0.6D0  
+   step2109 = 6.6D-1 * (pth / ptherm_star)**0.6D0  
    step21 = step21 + step2109
 
    ! 21.10 Fuel Handling and Storage Building
    ! Original STARFIRE value, scaling with thermal power
-   step2110 = 8.63D0 * (pthermmw / ptherm_star)**0.6D0  
+   step2110 = 8.63D0 * (pth / ptherm_star)**0.6D0  
    step21 = step21 + step2110
 
    ! 21.11 Control Room
@@ -382,7 +385,7 @@ contains
 
    ! 21.14 Site Service
    ! Original STARFIRE value, scaling with thermal power
-   step2114 = 8.7D-1 * (pthermmw / ptherm_star)**0.6D0  
+   step2114 = 8.7D-1 * (pth / ptherm_star)**0.6D0  
    step21 = step21 + step2114
 
    ! 21.15 Cryogenics and Inert Gas Storage Building
@@ -397,7 +400,7 @@ contains
 
    ! 21.17 Ventilation Stack
    ! Original STARFIRE value, scaling with thermal power
-   step2117 = 1.81D0 * (pthermmw / ptherm_star)**0.6D0  
+   step2117 = 1.81D0 * (pth / ptherm_star)**0.6D0  
    step21 = step21 + step2117
 
    ! 21.98 Spares
@@ -720,7 +723,7 @@ contains
      
      ! 22.02 Heat Transfer System
      ! Original STARFIRE value, scaling with first wall area
-     step2202 = 6.984D1 * (pthermmw / ptherm_star)**0.6D0  
+     step2202 = 6.984D1 * (pth / ptherm_star)**0.6D0  
   
      step22 = step22 + step2202
 
@@ -842,17 +845,17 @@ contains
      
      ! 22.04.01 Liquid Waste
      ! Original STARFIRE value, no scaling
-     step220401 = 1.7D0 * (pthermmw / ptherm_star)**0.6D0 
+     step220401 = 1.7D0 * (pth / ptherm_star)**0.6D0 
      step2204 = step2204 + step220401
   
      ! 22.04.02 Gaseous Waste
      ! Original STARFIRE value, no scaling
-     step220402 = 1.8D0 * (pthermmw / ptherm_star)**0.6D0 
+     step220402 = 1.8D0 * (pth / ptherm_star)**0.6D0 
      step2204 = step2204 + step220402
   
      ! 22.04.03 Solid Waste
      ! Original STARFIRE value, no scaling
-     step220403 = 1.3D0 * (pthermmw / ptherm_star)**0.6D0 
+     step220403 = 1.3D0 * (pth / ptherm_star)**0.6D0 
      step2204 = step2204 + step220403
   
   
@@ -970,7 +973,7 @@ contains
   
      ! 22.06.03 Coolant Storage
      ! Original STARFIRE value, scaling with thermal power
-     step220603 = 2.4D-1 * (pthermmw / ptherm_star)**0.6D0
+     step220603 = 2.4D-1 * (pth / ptherm_star)**0.6D0
      step2206 = step2206 + step220603
   
      ! 22.06.04 Gas System
@@ -990,12 +993,12 @@ contains
   
      ! 22.06.07 Closed Loop Coolant System
      ! Original STARFIRE value, scaling with thermal power
-     step220607 = 1.97D0 * (pthermmw / ptherm_star)**0.6D0
+     step220607 = 1.97D0 * (pth / ptherm_star)**0.6D0
      step2206 = step2206 + step220607
   
      ! 22.06.08 Standby Cooling System
      ! Original STARFIRE value, no scaling
-     step220608 = 1.16D0 * (pthermmw / ptherm_star)**0.6D0
+     step220608 = 1.16D0 * (pth / ptherm_star)**0.6D0
      step2206 = step2206 + step220608
   
      step22 = step22 + step2206
@@ -1108,32 +1111,32 @@ contains
    
    ! 23.01 Turbine Generators
    ! Original STARFIRE value, scaling with thermal power
-   step2301 = 7.733D1 * (pthermmw / ptherm_star)**0.6D0
+   step2301 = 7.733D1 * (pth / ptherm_star)**0.6D0
    step23 = step23 + step2301
 
    ! 23.02 Steam System
    ! Original STARFIRE value, scaling with thermal power
-   step2302 = 4.37D0 * (pthermmw / ptherm_star)**0.6D0
+   step2302 = 4.37D0 * (pth / ptherm_star)**0.6D0
    step23 = step23 + step2302
 
    ! 23.03 Heat Rejection
    ! Original STARFIRE value, scaling with thermal power
-   step2303 = 4.434D1 * (pthermmw / ptherm_star)**0.6D0
+   step2303 = 4.434D1 * (pth / ptherm_star)**0.6D0
    step23 = step23 + step2303
 
    ! 23.04 Condensing System
    ! Original STARFIRE value, scaling with thermal power
-   step2304 = 1.918D1 * (pthermmw / ptherm_star)**0.6D0
+   step2304 = 1.918D1 * (pth / ptherm_star)**0.6D0
    step23 = step23 + step2304
 
    ! 23.05 Feedwater Heating System
    ! Original STARFIRE value, scaling with thermal power
-   step2305 = 9.39D0 * (pthermmw / ptherm_star)**0.6D0
+   step2305 = 9.39D0 * (pth / ptherm_star)**0.6D0
    step23 = step23 + step2305
 
    ! 23.06 Other Turbine Equipment
    ! Original STARFIRE value, scaling with thermal power
-   step2306 = 5.084D1 * (pthermmw / ptherm_star)**0.6D0  
+   step2306 = 5.084D1 * (pth / ptherm_star)**0.6D0  
    step23 = step23 + step2306
 
    ! 23.07 Instrumentation and Control
@@ -1307,12 +1310,12 @@ contains
      
      ! 25.01 Transport and Lifting Equipment
      ! Original STARFIRE value, scaling with thermal power
-     step2501 = 1.568D1 * (pthermmw / ptherm_star)**0.6D0
+     step2501 = 1.568D1 * (pth / ptherm_star)**0.6D0
      step25 = step25 + step2501
   
      ! 24.02 Air and Water Service System
      ! Original STARFIRE value, scaling with thermal power
-     step2502 = 1.235D1 * (pthermmw / ptherm_star)**0.6D0
+     step2502 = 1.235D1 * (pth / ptherm_star)**0.6D0
      step25 = step25 + step2502
   
      ! 24.03 Communications Equipment

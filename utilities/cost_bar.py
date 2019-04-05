@@ -7,6 +7,9 @@ Can take multiple input files.
 Stuart Muldrew (stuart.muldrew@ukaea.uk)
 11/09/2018
 
+History
+04/04/2019 SIM Added comp_step
+
 """
 
 # Imported libraries
@@ -184,7 +187,7 @@ def comp_step():
 
     # Read cost data
     for id, item in enumerate(mfile_list):
-        cost = np.zeros(23)
+        cost = np.zeros(19)
         cost[0] = item.data["step20"].get_scan(-1)        # Land and Rights
         cost[1] = item.data["step21"].get_scan(-1)        # Building and Site Service Infrastructure
         cost[2] = item.data["step2201"].get_scan(-1)      # Reactor Equipment
@@ -195,19 +198,15 @@ def comp_step():
         cost[7] = item.data["step22010303"].get_scan(-1)  # Central Solenoid
         cost[8] = item.data["step22010304"].get_scan(-1)  # Control Coils
         cost[9] = item.data["step2202"].get_scan(-1)      # Heat Transfer System
-        cost[10] = item.data["step2203"].get_scan(-1)     # Cryogenic Cooling System
-        cost[11] = item.data["step2204"].get_scan(-1)     # Waste Treatment and Disposal
-        cost[12] = item.data["step2205"].get_scan(-1)     # Fuel Handling and Storage
-        cost[13] = item.data["step2206"].get_scan(-1)     # Other Reactor Plant Equipment
-        cost[14] = item.data["step2207"].get_scan(-1)     # Instrumentation and Control
-        cost[15] = item.data["step23"].get_scan(-1)       # Turbine Plant Equipment
-        cost[16] = item.data["step24"].get_scan(-1)       # Electric Plant Equipment
-        cost[17] = item.data["step25"].get_scan(-1)       # Miscellaneous Plant Equipment
-        cost[18] = item.data["cdirt"].get_scan(-1)        # Plant Direct Cost
-        cost[19] = item.data["step91"].get_scan(-1)       # Construction Facilities, Equipment and Services
-        cost[20] = item.data["step92"].get_scan(-1)       # Engineering and Costruction Management Services
-        cost[21] = item.data["step93"].get_scan(-1)       # Other Costs
-        cost[22] = item.data["moneyint"].get_scan(-1)     # Interest during Construction   
+        cost[10] = item.data["step22"].get_scan(-1)       # Reactor Plant Equipment
+        cost[11] = item.data["step23"].get_scan(-1)       # Turbine Plant Equipment
+        cost[12] = item.data["step24"].get_scan(-1)       # Electric Plant Equipment
+        cost[13] = item.data["step25"].get_scan(-1)       # Miscellaneous Plant Equipment
+        cost[14] = item.data["cdirt"].get_scan(-1)        # Plant Direct Cost
+        cost[15] = item.data["step91"].get_scan(-1)       # Construction Facilities, Equipment and Services
+        cost[16] = item.data["step92"].get_scan(-1)       # Engineering and Costruction Management Services
+        cost[17] = item.data["step93"].get_scan(-1)       # Other Costs
+        cost[18] = item.data["moneyint"].get_scan(-1)     # Interest during Construction   
         
         # Explain why moneyint is missing
         if "moneyint" not in item.data.keys():
@@ -219,10 +218,10 @@ def comp_step():
 
         # Simplify grouping
         sizes = [cost[0]+cost[1], cost[3], cost[4], cost[5]+cost[6]+cost[7]+cost[8],cost[2]-cost[3]-cost[4]-cost[5]-cost[6]-cost[7]-cost[8],
-        cost[9], cost[10]+cost[11]+cost[12]+cost[13]+cost[14], cost[15], cost[16], cost[17]]
+        cost[9], cost[10]-cost[2]-cost[9], cost[11], cost[12], cost[13]]
 
         # Direct, indirect costs etc. for second plot
-        sizes2 = [cost[18], cost[19], cost[20], cost[21], cost[22]]
+        sizes2 = [cost[14], cost[15], cost[16], cost[17], cost[18]]
 
         # Plot bar charts
         ax.bar(index + id*bar_width, sizes, bar_width, label=args.f[id])
