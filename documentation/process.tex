@@ -30,6 +30,7 @@
 \newcommand{\mfile}{\mbox{\texttt{MFILE.DAT}}}
 \newcommand{\outdat}{\mbox{\texttt{OUT.DAT}}}
 \newcommand{\plotdat}{\mbox{\texttt{PLOT.DAT}}}
+\newcommand{\radpdat}{\mbox{\texttt{RADP.DAT}}}
 \newcommand{\process}{\mbox{\texttt{PROCESS}}}
 \newcommand{\vmcon}{\mbox{\texttt{VMCON}}}
 \renewcommand{\vec}[1]{\boldsymbol{#1}}
@@ -37,9 +38,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-04 October 2017
+9 November 2018
 \hfill
-PROCESS version: 1.0.12
+PROCESS version: 1.0.14
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -64,7 +65,7 @@ PROCESS version: 1.0.12
 \vspace*{4cm}
 \begin{center}
 \Huge A User Guide\\ to the \\ PROCESS Fusion Reactor Systems Code\\
-~\\ \LARGE The PROCESS team: P.\ J.\ Knight, M.\ D.\ Kovari, H.\ Lux, J.\ Morris\\
+~\\ \LARGE The PROCESS team: P.\ J.\ Knight, M.\ D.\ Kovari, H.\ Lux, J.\ Morris, K.\ Ellis, S.\ I.\ Muldrew\\
 ~\\ \Large Culham Centre for Fusion Energy/ United Kingdom Atomic Energy Authority\\
 Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 \end{center}
@@ -594,7 +595,7 @@ these two possibilities is set using input parameter
 or \texttt{2} for ellipses.
 
 \begin{figure}[tbph]
-\epsfig{file=documentation/build_d.eps,width=170mm}
+\epsfig{file=figures/build_d.eps,width=170mm}
 \caption[Machine build for D-shaped major components]
 {\label{fig:build_d} \textit{Schematic diagram of the fusion
     power core of a typical tokamak power plant modelled by \process, showing
@@ -610,7 +611,7 @@ or \texttt{2} for ellipses.
 \end{figure}
 
 \begin{figure}[tbph]
-\epsfig{file=documentation/build_e.eps,width=170mm}
+\epsfig{file=figures/build_e.eps,width=170mm}
 \caption[Machine build for elliptical-shaped major components]
 {\label{fig:build_e} \textit{Schematic diagram of the fusion
     power core of a typical tokamak power plant modelled by \process. The
@@ -626,7 +627,7 @@ component sizes can be used as \textit{iteration variables}\/ (see
 Section~\ref{sec:itvars}) to help in the optimisation process.
 
 \begin{figure}[tbph]
-\epsfig{file=documentation/build_e_snd.eps,height=200mm}
+\epsfig{file=figures/build_e_snd.eps,height=200mm}
 \caption[Machine build for a single-null device]
 {\label{fig:buildsnd}
   \textit{Schematic diagram of the fusion power core of a typical tokamak
@@ -642,6 +643,7 @@ Section~\ref{sec:itvars}) to help in the optimisation process.
 \end{figure}
 
 \subsection{Plasma physics models}
+\label{sec:plasma_physics_models}
 
 By default, the plasma is assumed to have an up-down asymmetric, single null
 configuration (although this can be changed if desired --- see
@@ -996,7 +998,7 @@ Section~\ref{sec:iradloss}). Figure~\ref{fig:radiation} elucidates the
 radiation power contributions, while Figure~\ref{fig:powerflow1} shows how the radiation power propagates through the fusion power core.
 
 \begin{figure}[tbph]
-\epsfig{file=documentation/radiation.eps,width=170mm}
+\epsfig{file=figures/radiation.eps,width=170mm}
 \caption[Radiation power contributions] {\label{fig:radiation}
   \textit{Schematic diagram of the radiation power contributions and how they
     are split between core and edge radiation, for \texttt{imprad\_model = 1}.} }
@@ -1175,7 +1177,7 @@ Figure~\ref{fig:powerflow1} shows the flow of power as calculated by the code. (
 \ref{fig:powerflow3} shows an alternative view of the power transfer outside the reactor core.)
 
 \begin{figure}[tbph]
-\epsfig{file=documentation/powerflow1.eps,width=170mm}
+\epsfig{file=figures/powerflow1.eps,width=170mm}
 \caption[Power balance within the core plasma] {\label{fig:powerflow1}
   \textit{Power flows} }
 \end{figure}
@@ -1241,37 +1243,40 @@ for the scaling laws listed in Table~\ref{tab:power_thresholds}, in
 routine~\texttt{PTHRESH}.
 
 To enforce one of these scalings, use input parameter \texttt{ilhthresh} to
-select the scaling to use, and turn on constraint equation no.\ 23 with
-iteration variable no.\ 104 (\texttt{flhthresh}). By default, this will ensure
+select the scaling to use, and turn on constraint equation no.\ 15 with
+iteration variable no.\ 103 (\texttt{flhthresh}). By default, this will ensure
 that the power reaching the divertor is at least equal to the threshold power
 calculated for the chosen scaling, which is a necessary condition for
-H-mode. However, for L-mode it might be appropriate to set \texttt{boundl(104)
-  = 0.001, boundu(104) = 1.0}, which will ensure that the power threshold does
+H-mode. However, for L-mode it might be appropriate to set \texttt{boundl(103)
+  = 0.001, boundu(103) = 1.0}, which will ensure that the power threshold does
 not exceed the calculated value, and therefore the machine cannot reach
 H-mode.
 
 % Table summarising L-H power threshold scalings
-
 \begin{table}[tbph]
 \small
 \begin{center}
 \begin{tabular}{||c||l||l||} \hline
- & name & reference \\ \hline
-(1) & 1996 ITER scaling: nominal & ITER Physics Design Description Document, \\
-(2) & 1996 ITER scaling: upper bound & D. Boucher, p.2-2 \\
-(3) & 1996 ITER scaling: lower bound &  \\ \hline
-(4) & 1997 ITER scaling, excluding elongation & J. A. Snipes, ITER H-mode
+ & Name & Reference \\ \hline
+(1) & ITER 1996 scaling: nominal & ITER Physics Design Description Document, \\
+(2) & ITER 1996 scaling: upper bound & D. Boucher, p.2-2 \\
+(3) & ITER 1996 scaling: lower bound &  \\ \hline
+(4) & ITER 1997 scaling, excluding elongation & J. A. Snipes, ITER H-mode
 Threshold Database \\
-(5) & 1997 ITER scaling, including elongation &  Working Group, Controlled
+(5) & ITER 1997 scaling, including elongation &  Working Group, Controlled
 Fusion and Plasma \\
  & & Physics, 24th EPS Conference, Berchtesgaden, \\
  & & June 1997, vol.21A, part III, p.961 \\ \hline
-(6) & 2008 Martin scaling: nominal & Martin et al, 11th IAEA Tech. Meeting on
-H-mode \\
-(7) & 2008 Martin scaling: 95\% upper bound &  Physics and Transport Barriers,
-Journal of Physics: \\
-(8) & 2008 Martin scaling: 95\% lower bound & Conference Series \textbf{123}
-(2008) 012033 \\
+(6) & Martin 2008 scaling: nominal & Martin et al, 11th IAEA Tech. Meeting on\\
+(7) & Martin 2008 scaling: 95\% upper bound &  H-mode Physics and Transport Barriers, Journal \\
+(8) & Martin 2008 scaling: 95\% lower bound &  of Physics: Conference Series \textbf{123}
+(2008) 012033 \\ \hline
+(9) & Snipes 2000 scaling: nominal & J. A. Snipes and the International H-mode\\
+(10) & Snipes 2000 scaling: upper bound & Threshold Database Working Group,\\
+(11) & Snipes 2000 scaling: lower bound &  2000, Plasma Phys. Control. Fusion, 42, A299\\
+(12) & Snipes 2000 scaling (closed divertor): nominal & \\
+(13) & Snipes 2000 scaling (closed divertor): upper bound & \\
+(14) & Snipes 2000 scaling (closed divertor): lower bound & \\
 \hline
 \end{tabular}
 \end{center}
@@ -1311,6 +1316,94 @@ treats the scrape-off layer merely as a gap. Switch \texttt{iscrp} determines
 whether the inboard and outboard gaps should be calculated as 10\% of the
 plasma minor radius (\texttt{iscrp = 0}), or set equal to the input values
 \texttt{scrapli} and \texttt{scraplo} (\texttt{iscrp = 1}).
+
+\subsection{PLASMOD - 1D transport model}
+\label{sec:plasmod}
+
+The PLASMOD~\cite{PLASMOD} code is a one-dimensional, time-independent particle and energy transport model, which has some basis in the ASTRA~\cite{ASTRA} simulator. Even this simplified transport code leads to potentially much more accurate modelling of the fusion power generated when compared to the 0D approximations found elsewhere in \process. PLASMOD solves for a user-defined number of discrete points in the radial direction between the core of the plasma and the pedestal in order to create profiles which are not based on simple parameterizations.
+
+Switch \texttt{ipedestal = 2} requests that PLASMOD be run \textit{only after} \process\ has found a feasible solution, whereas if \texttt{ipedestal = 3} then PLASMOD is called during every \process\ iteration. It is recommended that \texttt{ipedestal = 3} be used, other than for testing purposes.
+
+PLASMOD is run in conjunction with many \process\ physics models, although certain constraints and iteration variables are not applicable when \texttt{ipedestal = 3}, as detailed in this section. Engineering models are unaffected, although naturally, results in all model-types are liable to change.
+
+\subsubsection*{PLASMOD inputs}
+User-defined inputs specific to PLASMOD have the prefix 'plasmod\_' and should be added to the \indat. These control various aspects of the transport simulation, from maximum number of iterations to be attempted to the current drive efficiency. For a complete list refer to the vardes.html file.
+
+\subsubsection*{PLASMOD switches}
+Here is a summary of sub-models which may be accessed by the user:
+
+\begin{itemize}
+\item \texttt{plasmod\_i\_equiltype} Equilibrium model: 1 - EMEQ, solve with sawteeth and inputted q95. 2 - EMEQ, solve with sawteeth and inputted Ip (not recommended).
+\item \texttt{plasmod\_i\_modeltype} Transport model: 1 - Simple gyrobohm scaling with imposed H factor $>$ 1. Other values give H factor as output. 111 - roughly calibrated to give H=1 for DEMO, but not fixed H.
+\item \texttt{plasmod\_iprocess} Sub-functions: 0 - use PLASMOD functions, 1 - use PROCESS functions.
+\item \texttt{plasmod\_i\_impmodel} Impurity model: 0 - fixed concentration, 1 - fixed concentration at pedestal top, then fixed density. 
+\item \texttt{plasmod\_isawt} Sawtooth modelling: 0 - none, 1 - solve with sawteeth.  
+\end{itemize}
+
+For more details refer to the vardes.html file.
+
+\subsubsection*{PROCESS physics models substituted by PLASMOD}
+With reference to the sections found in~\ref{sec:plasma_physics_models} this is a summary of key outputs from PLASMOD:
+
+\begin{itemize}
+\item Plasma geometry - $\kappa$ and $\delta$
+\item Fusion reactions - power from D + T, D + D, ???...interactions are calculated by PLASMOD
+\item Plasma profiles - all radial profiles are created by PLASMOD, including many not availabe in \process\ 0D: electron density, electron temperature, ion density, ion temperature, current density, bootstrap current, current from current drive, poloidal current, poloidal fluix, safety factor, plasma conductivity, alpha pressure...
+\end{itemize}
+
+\subsubsection*{PROCESS physics models used by PLASMOD}
+
+\begin{itemize}
+\item Pedestal pressure scaling (subroutine \texttt{p\_eped\_scaling})
+\item Radiation model for Bremsstrahlung (subroutine \texttt{impradprofile})
+\item L-mode to H-mode power threshold calculation (subroutine \texttt{pthresh})
+\item Fusion reaction rate calculation (function \texttt{bosch\_hale})
+\end{itemize}
+
+\subsubsection*{PROCESS physics models constrained when using PLASMOD}
+
+\begin{itemize}
+  
+\item The following constraint equations may not be used, as they are constrained within PLASMOD:
+  \subitem 1    Beta
+  \subitem 2    Global power balance
+  \subitem 5    Density upper limit
+  \subitem 15   LH power threshold limit
+  \subitem 24   Beta upper limit
+  \subitem 62   Ratio of particle to energy confinement time
+  \subitem 68   Pseparatrix * Bt / q*A*R
+  
+\item The following iteration variables may not be used, as they are outputs of PLASMOD:
+  \subitem 4    \texttt{te}
+  \subitem 5    \texttt{beta}
+  \subitem 6    \texttt{dene}
+  \subitem 9    \texttt{fdene}
+  \subitem 36   \texttt{fbetatry}
+  \subitem 44   \texttt{fvsbrnni}
+  \subitem 102  \texttt{fimpvar}
+  \subitem 103  \texttt{flhthresh}
+  \subitem 109  \texttt{ralpne}
+  \subitem 110  \texttt{ftaulimit}
+  \subitem 117  \texttt{fpsepbqar}
+
+\item If \texttt{plasmod\_i\_modeltype} $>$1 no constraint equations or iteration variables relating to beta may be applied (\texttt{icc = 6, 24, 48} and \texttt{ixc = 8, 36, 79}.
+
+\item If \texttt{plasmod\_i\_equiltype} $=$2 then \texttt{q} cannot be used as an iteration variable \texttt{ixc = 18}. N.B. This option is not recommended.
+  
+\item Only \texttt{ishape = 4} may be used.
+
+\item NBI heating must be applied with the flag \texttt{iefrf} set to model 5 (ITER neutral beam model) or model 8 (Culham neutral beam model); Electron/Ion Cyclotron heating is not currently available in PLASMOD.
+
+\item Switch \texttt{iradloss} must be set to 0.
+
+\item L-H mode power threshold scaling mode must be 2008 Martin scaling: nominal (\texttt{ilhthresh} = 6).
+
+\item Both \texttt{fgwsep} and \texttt{fgwped} must be given a value greater than 0, and \texttt{fgwped} must have the larger value.
+
+\item Control power may be defined by the user by setting either \texttt{contrpovs} or \texttt{contrpovr} (per unit area or unit distance respectively) to be non-zero, but not both.
+  
+
+\end{itemize}
 
 \subsection{Armour, first wall and breeding blanket}
 The surface facing the plasma is a thin layer of a material highly resistant to melting and erosion, such as tungsten, referred to "armour".  It is cooled by conduction to the first wall underneath.
@@ -1529,7 +1622,7 @@ the ratio of the outboard leg thickness to the inboard leg thickness
 to the inboard thickness.
 
 \begin{figure}[tbph]
-\epsfig{file=documentation/tokamak_tfcoil.eps,width=160mm}
+\epsfig{file=figures/tokamak_tfcoil.eps,width=160mm}
 \caption[Schematic diagram of the cross-section of a superconducting TF coil
 inner leg]
 {\label{fig:CICC}
@@ -1706,7 +1799,7 @@ flux swing necessary to maintain the plasma current (see
 Section~\ref{sec:ohcoil}).
 
 \begin{figure}[tbph]
-\epsfig{file=documentation/current_vs_time.eps,width=170mm}
+\epsfig{file=figures/current_vs_time.eps,width=170mm}
 \caption[Coil and plasma current waveforms]
 {\label{fig:current_vs_time}
   \textit{Plot showing schematically the current waveforms for the plasma, a
@@ -1889,7 +1982,7 @@ variable no.\ 33 (\texttt{fportsz}). The thickness of the beam duct walls may
 be set using input parameter \texttt{nbshield}.
 
 \begin{figure}[tbph]
-\epsfig{file=documentation/portsize.eps,width=160mm}
+\epsfig{file=figures/portsize.eps,width=160mm}
 \caption[Schematic diagram of the neutral beam access geometry]
 {\label{fig:portsize}
   \textit{Top-down schematic view of the neutral beam access geometry. The beam
@@ -2055,7 +2148,7 @@ iteration variable no.\ 63 (\texttt{ftpeak}).
 Figure~\ref{fig:powerflow3} summarises the power conversion mechanisms.
 
 \begin{figure}[tbph]
-\epsfig{file=documentation/powerflow3.eps,width=170mm}
+\epsfig{file=figures/powerflow3.eps,width=170mm}
 \caption[Power flow outside the fusion power plant core]
 {\label{fig:powerflow3} \textit{Schematic diagram of the flow of power beyond
     the fusion power core, showing the origin of the high-grade and waste
@@ -2391,7 +2484,7 @@ Section~\ref{sec:constraints}) should be used without modification:
 \end{description}
 
 \begin{figure}[tbph]
-\centerline{\epsfig{file=documentation/helias5b.eps,width=160mm}}
+\centerline{\epsfig{file=figures/helias5b.eps,width=160mm}}
 \caption[HELIAS 5-B Stellarator Power Plant Design]
 {\label{fig:helias5b}
   \textit{Fusion power core of the HELIAS 5-B conceptual power plant design
@@ -2521,7 +2614,7 @@ lines, naturally leading to a discontinuous divertor, with the individual
 plates being placed in a complex 3-D geometry; see Figure~\ref{fig:stelldiv}.
 
 \begin{figure}[tbph]
-\centerline{\epsfig{file=documentation/stelldiv.eps,width=160mm}}
+\centerline{\epsfig{file=figures/stelldiv.eps,width=160mm}}
 \caption[Stellarator island divertor configuration]
 {\label{fig:stelldiv}
   \textit{A five-period HELIAS plasma (specifically W7-X) with island divertor
@@ -2713,7 +2806,70 @@ The unplanned downtime for the blanket is based on the number of cycles it exper
 
 It is assumed that the vacuum system can be maintained in parallel with blanket replacement, so it does not contribute to the planned downtime.  The unplanned downtime is based on an assumed failure rate for a cryopump, and a specified total number of pumps, with some of them being redundant.  The resulting downtime can be reduced to a negligible level if there are several redundant pumps, but in addition, there is a fixed unavailability to allow for common mode failures affecting several pumps.
 
+\section{Electron Cyclotron Current Drive}
 
+A model for electron cyclotron current drive (ECCD) is implemented, known as HARE.  The model is described in the paper\cite{kovari_ECCD} and implemented through the source file \texttt{hare.f90}. 
+
+The switch for the current drive efficiency model \texttt{iefrf} is used to include the ECCD model. This is done by selecting \texttt{iefrf = 11} and including the new input variable \texttt{rho\_ecrh},  which is the normalised minor radius at which electron cyclotron current drive is maximum and which is also available as scan variable 43. The new input and output parameters used by HARE are summarised in table \ref{tab:ECCD}.
+
+\begin{table}[tbph]
+\begin{center}
+\begin{tabular}{||c|c||} \hline
+output parameter & description \\ \hline
+\texttt{rho\_ecrh} &  Normalised minor radius at which ECCD is maximum  \\
+\texttt{fshift}  & Frequency shift = wave frequency / cold cyclotron resonance \\
+ &  frequency on plasma axis \\
+\texttt{xf} & Optimum wave frequency for ECCD (GHz)  \\
+\texttt{enpa} &Nparallel \\
+\texttt{ftherm} & fT = Energy of resonant electrons / $k_BT_e$ at point of max absorption  \\
+\texttt{fpp} &  Ratio of energy of resonant electrons to $k_BT_e$ at pinch  point \\
+\texttt{ampperwatt} & Driven current per unit absorbed power (AW$^{-1}$)  \\
+\hline
+\end{tabular}
+\end{center}
+\caption[Output parameters produced by HARE]
+{\label{tab:ECCD}
+  \textit{Summary of the variables in PROCESS that relate to
+    the ECCD model HARE.}
+}
+\end{table}
+
+There is also a test, triggered by \texttt{run\_tests = 1}. If this test is triggered then one test of the physics in HARE is performed, this is done using the parameters shown in talbe \ref{tab:testpara}.
+
+\begin{table}[tbph]
+\begin{center}
+\begin{tabular}{||c|c||} \hline
+test parameter & value \\ \hline
+\texttt{dens} &  10.5e19  \\
+\texttt{bfield}  & 5.66 \\
+\texttt{R0} & 9.072e2 \\
+\texttt{a} & 2.920e2 \\
+\texttt{rho} & 0.1 \\
+\texttt{te} &  32. \\
+\texttt{zeff} & 2.e0  \\
+\hline
+\end{tabular}
+\end{center}
+\caption[Input parameters used by HARE test]
+{\label{tab:testpara}
+  \textit{Summary of the input variables used in HARE runtest subroutine.}
+}
+\end{table}
+
+The output in OUT.DAT is either \texttt{PASS: ECCD calculation using "HARE"} or we find the ouput for a test fail, with an example being
+\begin{quote}
+\begin{verbatim}
+FAIL: ECCD calculation using "HARE"
+fshift                1.42523289                9.990E+02
+xf                      225870909081              2.259E+11
+enpa                 0.73312287                7.331E-01
+ftherm               4.14743724                4.147E+00
+fpp                  8.0121430001              8.012E+00 
+cdeff                 -242.42583879            -2.424E+02
+ampperwatt          -4.2530060e-2            -4.253E-02
+\end{verbatim}
+\end{quote}
+Where here the first column is the output parameter, the second column is the test expected output parameter values and the final third is the resultant output of the HARE calculation. 
 
 \mychapter{Running \process}
 \label{chap:run}
@@ -2775,8 +2931,7 @@ and \textit{myrun}\mfile\ will be created in the current directory.
 The input file \indat\ is used to change the values of the physics,
 engineering and other code parameters from their default values, and to set up
 the numerics (constraint equations, iteration variables etc.) required to
-define the problem to be solved.  The user interface writes the input file, so
-it is not necessary to edit it directly.  Details of layout and format are in
+define the problem to be solved. Details of layout and format are in
 Appendix~\ref{app:infile}.
 
 If the code encounters a problem reading the input file, it will stop
@@ -2794,6 +2949,9 @@ contains most of the same data as \outdat\ but in a different format, and has
 been designed to be ``machine-readable'' by some of the utility programs
 described in the utilities documentation, to allow simple post-processing and
 graphical output to be produced easily.
+
+Radial profiles produced by PLASMOD (see section~\ref{sec:plasmod}) are stored in
+output file \radpdat. 
 
 \section{Optimisation mode}
 
@@ -3387,6 +3545,11 @@ P.\ J.\ Knight,
 \textit{``PROCESS 3020: Plant Availability Model''},
 Work File Note F/PL/PJK/PROCESS/CODE/043
 
+\bibitem{kovari_ECCD} 
+E.\ Poli, M.\ M\"{u}ller, H.\ Zohm, M.\ Kovari,
+\textit{"Fast evaluation of the current driven by electron cyclotron waves for reactor studies"},   
+Physics of Plasmas,
+
 \bibitem{git}
 \href{http://git-scm.com/}{Git version control system}
 \url{http://git-scm.com/}
@@ -3436,6 +3599,16 @@ R.\ Kemp, H.\ Lux, J.\ Morris, M.\ Kovari, P.\ Knight et al.,
 {EuroFusion Report EFDA\_D\_2M94N2 v1.0 - PMI-7.1-2, December 2014}
 \url{https://idm.euro-fusion.org/?uid=2M94N2\&version=v1.0\&action=get\_document}
 
+\bibitem{PLASMOD}
+E.\ Fable, C.\ Angioni, M.\ Siccinio, H.\ Zohm,
+\textit{``Plasma physics for fusion reactor system codes: Framework and model code''},
+Fusion Engineering and Design 130, 131-136 (2018)
+
+\bibitem{ASTRA}
+G.V.\ Pereverzev, P.N.\ Yushmanov,
+\textit{``ASTRA. Automated System for Transport Analysis in a Tokamak''},
+Garching: Max-Planck-Institut für Plasmaphysik (2002), presented at IPP 5/98 
+
 \end{thebibliography}
 
 \myappendix{The Input File}
@@ -3444,7 +3617,7 @@ R.\ Kemp, H.\ Lux, J.\ Morris, M.\ Kovari, P.\ Knight et al.,
 The input file \indat\ is used to change the values of the physics,
 engineering and other code parameters from their default values, and to set up
 the numerics (constraint equations, iteration variables etc.) required to
-define the problem to be solved.  The user interface writes the input file, so it is not necessary to edit it directly.
+define the problem to be solved.
 
 \subsection{Tokamak or stellarator?}
 \label{sec:device}
@@ -3479,10 +3652,6 @@ The following rules must be obeyed when writing an input file:
 
 \item Other spaces within a line, and trailing spaces, are ignored.
 
-\item Commas are not necessary between variables (but see below).
-
-\item Data can extend over more than one line.
-
 \item One-dimensional arrays can be explicitly subscripted, or unscripted, in
   which case the following element order is assumed: \texttt{A(1), A(2),
     A(3),...}
@@ -3492,18 +3661,16 @@ The following rules must be obeyed when writing an input file:
   is assumed: \texttt{B(1,1), B(2,1), B(3,1),...} The use of the input file to
   specify multiple dimension array elements is prone to error.
 
-\item Unscripted array elements must be separated by commas.
+\item Unindexed array elements must be separated by commas.
 
 \item Blank lines are allowed anywhere in the input file.
 
 \item Lines starting with a \texttt{*} are assumed to be comments.
 
 \item Comment lines starting with five or more asterisks (i.e.\
-  \texttt{*****}) are reproduced verbatim in the output file. This feature is not recommended, as these comments are likely to become out of date.  The user interface does not support this feature.
+  \texttt{*****}) are reproduced verbatim in the output file. This feature is not recommended, as these comments are likely to become out of date.
 
-\item In-line comments are \textit{usually}\/ ignored, but there can be
-  problems if one contains a comma (\texttt{,}). If this is the case, there
-  must also be a comma after the variable's value and before the comment.
+\item In-line comments are denoted by an asterisk (\texttt{*}).
 
 \end{enumerate}
 
@@ -3513,42 +3680,44 @@ lines, to help the user keep related variables together.
 The following is a valid fragment of an input file (the vertical lines are
 simply to help show the column alignment):
 \begin{center}
-\begin{tabular}{||l}
-$\!\!$\texttt{* This line is a comment that will not appear in the output} \\
-$\!\!$\texttt{***** This line is a comment that will appear in the output} \\
-$\!\!$\texttt{boundl(1) = 2.5,} \\
-$\!\!$\texttt{BOUNDU(10) = 3.,} \\
-$\!\!$\texttt{BOUNDU(45) = 1,} \\
-$\!\!$\texttt{* Another comment... Note that real values can be entered as if} \\
-$\!\!$\texttt{* they were integers, and vice versa (but it's not recommended...)} \\
-$\!\!$\texttt{epsfcn = 10.e-4,} \\
-$\!\!$\texttt{Ftol = 1.D-4,} \\
-$\!\!$\texttt{* The next line sets the first five elements of array icc:} \\
-$\!\!$\texttt{ICC =   2, 10, 11, 24, 31} \\
-$\!\!$\texttt{* The next line sets the first ten elements of array ixc:} \\
-$\!\!$\texttt{ixc =   10, 12, 3, 36, 48,} \\
-$\!\!$\hspace{15mm}\texttt{1, 2, 6, 13, 16,} \\
-$\!\!$\texttt{IOPTIMZ = 1,} \\
-$\!\!$\texttt{maxcal = 200} \\
-$\!\!$\texttt{ nsweep = 7} \\
-$\!\!$\texttt{NEQNS = 5,    This is an in-line comment} \\
-$\!\!$\texttt{NVAR = 10,    Another, but successfully containing a comma!} \\
-\end{tabular}
+  \begin{tabular}{||l}
+    $\!\!$\texttt{* This line is a comment that will not appear in the output} \\
+    $\!\!$\texttt{***** This line is a comment that will appear in the output} \\
+    $\!\!$\texttt{boundl(1) = 2.5} \\
+    $\!\!$\texttt{BOUNDU(10) = 3.} \\
+    $\!\!$\texttt{BOUNDU(45) = 1} \\
+    $\!\!$\texttt{* Another comment... Note that real values can be entered as if} \\
+    $\!\!$\texttt{* they were integers, and vice versa (but it's not recommended...)} \\
+    $\!\!$\texttt{epsfcn = 10.e-4} \\
+    $\!\!$\texttt{Ftol = 1.D-4} \\
+    $\!\!$\texttt{icc =   1 * Beta consistency constraint equation} \\
+    $\!\!$\texttt{icc =   2 * Global power balance constraint equation} \\
+    $\!\!$\texttt{icc =   11 * Radial build constraint equation} \\
+    $\!\!$\texttt{IOPTIMZ = 1,} \\
+    $\!\!$\texttt{maxcal = 200} \\
+    $\!\!$\texttt{ nsweep = 7} \\
+    $\!\!$\texttt{NEQNS = 5  *  This is an in-line comment} \\
+    $\!\!$\texttt{NVAR = 10  *  Another, containing punctuation...!} \\
+  \end{tabular}
 \end{center}
 
-The following are \textit{invalid}\/ entries in the input file
-(Q: Why?!):
+The following are \textit{invalid}\/ entries in the input file:
 \begin{center}
-\begin{tabular}{||l}
-$\!\!$\texttt{boundl(1,1) = 2.5,} \\
-$\!\!$\texttt{BOUNDU(N) = 3.,} \\
-$\!\!$\texttt{A line of `random' characters like this will clearly wreak havoc} \\
-$\!\!$\texttt{eps fcn = 10.e-4, ftol = 1.D-4} \\
-$\!\!$\texttt{epsvmc = 1.0 e-4} \\
-$\!\!$\texttt{ICC =   2  10  11  24  31} \\
-$\!\!$\texttt{IOPTIMZ = 1.0,  This will in fact be okay - but is not recommended} \\
-$\!\!$\texttt{NEQNS = 5    An in-line comment on a line with only one comma (,) character} \\
-\end{tabular}
+  \begin{tabular}{||l}
+    $\!\!$\texttt{Iteration values listed in one line, or continuing onto a second line} \\
+    $\!\!$\texttt{ixc =   10, 12, 3, 36, 48,} \\
+    $\!\!$\hspace{15mm}\texttt{1, 2, 6, 13, 16,} \\
+    
+    $\!\!$\texttt{boundl(1,1) = 2.5, } \\
+    $\!\!$\texttt{BOUNDU(N) = 3.,} \\
+    $\!\!$\texttt{A line of `random' characters like this will clearly wreak havoc} \\
+    
+    $\!\!$\texttt{eps fcn = 10.e-4, ftol = 1.D-4} \\
+    $\!\!$\texttt{epsvmc = 1.0 e-4} \\
+    $\!\!$\texttt{ICC =   2  10  11  24  31 * with or without comma separation} \\
+    $\!\!$\texttt{IOPTIMZ = 1.0,  A comment denoted by a comma (old behaviour)} \\
+    $\!\!$\texttt{NEQNS = 5    An in-line comment without an asterisk} \\
+  \end{tabular}
 \end{center}
 
 If the code encounters a problem reading the input file, it will stop immediately

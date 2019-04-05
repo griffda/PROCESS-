@@ -1,0 +1,174 @@
+'PROCESS_CREATE.catvbs
+'This script will modify a set of template CATIA files to the output from process code and generate a catia & step output with screendumps
+'Execution of this script can be performed in CATIA batch mode as follows
+'"C:\Program Files\Dassault Systemes\B23\win_b64\code\bin\CNEXT.exe"  -batch -macro "\\ccfepc\shared\CCFE\CentralEng\Groups\EDU\DesignOffice\Configuration_Management\DEMO\PROCESS_CAD_CODING\PROCESS_CREATE.catvbs" -env CATIA_V5R23.B23_PPT_EXPORT -direnv "\\ccfepc\shared\CCFE\CentralEng\Groups\EDU\DesignOffice\Configuration_Management\DEMO\PROCESS_CAD_CODING\CATSettings"
+'
+'Version 0.1 2014_02_10- Colin Woodley CCFE Design Office
+'Version 0.2 2014_04_02- Added volume export file output
+
+
+Language="VBSCRIPT"
+Sub CATMain()
+	On Error Resume Next
+	Dim infile, prefix, MainDoc
+	export_dir = "C:\PROCESS_CAD_CODING\export_dir\"
+	infile = "C:\PROCESS_CAD_CODING\STEP.CAD"
+	MainDoc = "C:\PROCESS_CAD_CODING\PROCESS\MULTI_SECTORS.CATProduct"
+
+	Sectors = InputBox ("How many sectors to visualise?")
+	MsgBox ("Sectors = " & Sectors)
+	
+	Dim oFileSys
+	Set oFilesys = CATIA.FileSystem
+	Set oText = oFilesys.GetFile(infile)
+	Set oTextin = oText.OpenAsTextStream("ForReading") 'Open the input text file
+	Dim arrLines(), i
+	i=0
+	Do Until oTextin.AtEndOfStream
+		Redim Preserve arrLines(i)
+		tmpStr = oTextin.Readline
+		If Left(tmpStr,1) <> "#" Then
+			If Len(tmpStr) <> 0 Then
+				arrLines(i) = tmpStr
+				i = i+1
+			End If
+		End If
+		If Instr(tmpStr,"Process Code")>0 Then 'Search the header 
+			tmpsplit=Split(tmpStr,":")
+			If instr(tmpStr,"Export Date")>0 Then	' Get the date
+				strDate=tmpsplit(1)
+			ElseIf instr(tmpStr,"Export ID")>0 Then	'Get the ID number
+				strID=tmpsplit(1)
+			End If
+		End If
+	Loop
+	oTextin.Close 'Close the input text file
+
+	'Create the export folder
+	strFolder = export_dir&strID&"_"&strDate
+	oFilesys.CreateFolder(strFolder)
+	'Create the export file
+	export_file = strFolder&"\"&strID&"_volume_data.txt"
+	oFilesys.CreateFile export_file, True
+	Set oTextout = oFilesys.GetFile(export_file)
+	Set oTextout1 = oTextout.OpenAsTextStream("ForWriting") 'Open the input text file
+	oTextout1.write "#"&strID&"-"&Date&VbLf
+	'Set CATIA Behaviours
+	CATIA.DisplayFileAlerts = False
+
+	' Open the template CATProduct and modify to the input file parameters
+	Set CATDoc = CATIA.Documents
+	CATDoc.Open(MainDoc) 
+	Set ActDoc = CATIA.ActiveDocument
+	CATIA.ActiveDocument.Product.ApplyWorkMode DESIGN_MODE
+
+	For a = 1 to CATDoc.Count 'Loop through the CATIA Documents in the session
+		If Instr(CATDoc.Item(a).Name,"CATPart")>1 Then 'Only proceed if its a CATPart
+			CATDoc.Item(a).Activate 'Activate the CATPart
+			Set tmpAct = CATIA.ActiveDocument
+			Set part2 = CATDoc.Item(a).Product 'for accessing the part properties
+			Set part1 = CATDoc.Item(a).Part 'for accessing the part geometries
+			Set parameters1 = part1.Parameters
+			For b = 1 to parameters1.Count ' Loop through the parameters in the CATPart
+				If Instr(parameters1.Item(b).Name,"\")=0 Then
+					For c = 0 to Ubound(arrLines) ' Loop through the process input file looking for a match in string
+						tmpLine = Split(arrLines(c)," = ") 'Split the input
+						'MsgBox "tmpline "&tmpLine(0)&" and "&tmpLine(1)
+						If UCASE(parameters1.Item(b).Name) = UCASE(tmpLine(0)) Then 'does the parameter match the input file?
+							'MsgBox "Matches! "&parameters1.Item(b).Name&" = "&tmpLine(0)
+							Set length1 = parameters1.Item(b) ' Set the parameter
+							If instr(tmpLine(1),"deg")=0 Then ' Is there a "deg" at the end of the string?
+								length1.Value = Replace(tmpLine(1)," m","")*1000 'Set the value of the Parameter - convert m to mm
+							Else
+								length1.Value = Replace(tmpLine(1)," deg","") 'Set the value of the Parameter in degrees
+							End If
+						End If
+					Next
+				End If
+			Next
+			' Check for the Geometric Set called "Plasma Arc Geometrical Set.1" and set the points
+			Err.Clear
+			Set hybBodies1 = part1.HybridBodies
+			Set hybBody1 = hybBodies1.Item("POINT_GEOMETRY")
+			If Err.Number = 0 Then 'Does the set exist
+			MsgBox "zzzzz"
+				For d = 0 to Ubound(arrLines) ' Loop through the process input file looking for "Point."
+					If Left(arrLines(d),6) = "Point." Then 'Does the array line start with "Point."
+						'MsgBox "found point"
+						tmpLinex = Split(arrLines(d)," = ") 'Split the input 
+						'MsgBox "tmpLinex "&tmpLinex(0)&" AND "&tmpLinex(1)
+						'tmp_yz = Split(arrLines(d),VbTab) ' Split the xy values by a tab
+						tmp_yz = Split(tmpLinex(1))
+						'MsgBox "point co-ord Y= "&tmp_yz(0)&" Z= "&tmp_yz(1)
+						Set hybridShapes1 = hybBody1.HybridShapes
+						Set hybridShapePoint = hybridShapes1.Item(tmpLinex(0))
+						Dim coord(2)
+						coord(0) = 0.000000
+						coord(1) = tmp_yz(0)*1000
+						coord(2) = tmp_yz(1)*1000
+						hybridShapePoint.SetCoordinates coord
+					End If
+				Next
+			End If
+			part1.Update
+			Set objRef = part1.CreateReferenceFromObject(part1.MainBody)
+			Set objSPAWkb = CATIA.ActiveDocument.GetWorkBench("SPAWorkbench")
+			Set objMeasurable = objSPAWkb.GetMeasurable(objRef)
+			oTextout1.write VbLf& part2.Nomenclature & VbTab & "=" & VbTab & objMeasurable.Volume & VbTab &" m^3"
+		End If
+	Next
+	oTextout1.Close 'Close the output file	
+	'Export image captures of the saved cameras
+	'CATIA.ActiveWindow.ActiveViewer.PutBackgroundColor Array(1, 1, 1) 'Set the background to white for the image grab
+	'Set objSpecWindow = CATIA.ActiveWindow
+	'objSpecWindow.WindowState = catWindowStateMaximized
+	'objSpecWindow.Layout = catWindowGeomOnly 'Hide the spec tree
+	'CATIA.StartCommand("Compass") ' Hide the compass
+	'CATIA.ActiveDocument.Selection.Clear()
+	'For cam = 1 to CATIA.ActiveDocument.Cameras.Count
+	'	Set TheCamera = CATIA.ActiveDocument.Cameras.Item(cam)
+	'	strCam = TheCamera.Name
+	'	If instr(strCam,"*")=0 Then
+	'		CATIA.ActiveWindow.ActiveViewer.Viewpoint3D = TheCamera
+	'		CATIA.ActiveWindow.ActiveViewer.CaptureToFile catCaptureFormatJPEG, strFolder&"\"&strID&"_"&strCam&".jpg"
+	'	End If
+	'Next
+	'Set settingControllers1 = CATIA.SettingControllers
+	'Set visualizationSettingAtt1 = settingControllers1.Item("CATVizVisualizationSettingCtrl")	
+	'visualizationSettingAtt1.SetBackgroundRGB 51, 51, 102 'Set the background back to normal
+	'visualizationSettingAtt1.SaveRepository
+	'Export the data and save copies of the CATIA files
+	
+	'Set the Instance Names
+	Set product1 = ActDoc.Product
+	Set products1 = product1.Products
+	str_Nom = product1.Nomenclature
+	product1.PartNumber = strID&"_"&str_Nom
+	For prod = 1 to products1.Count
+		Set product2 = products1.Item(prod)
+		str_Nom = product2.Nomenclature
+		product2.Name = strID&"_"&str_Nom 'Set the instance name
+		product2.PartNumber = strID&"_"&str_Nom 'Set the PartNumber field
+	Next
+	' Save the CATParts to a new ID & filename. Export into step format
+	For nDoc = 1 to CATIA.Documents.Count
+		CATIA.Documents.Item(nDoc).Activate
+		If Instr(CATIA.Documents.Item(nDoc).Name,".CATPart")>0 Then
+			CATIA.Documents.Item(nDoc).SaveAs strFolder&"\"&CATIA.Documents.Item(nDoc).Product.PartNumber
+			CATIA.Documents.Item(nDoc).ExportData strFolder&"\"&CATIA.Documents.Item(nDoc).Product.PartNumber&".stp", "stp"
+		End If
+	Next
+	' Save the CATProductto a new ID & filename. Export into Step format
+	For oDoc = 1 to CATIA.Documents.Count
+		If Instr(CATIA.Documents.Item(oDoc).Name,".CATProduct")>0 Then
+			CATIA.Documents.Item(oDoc).SaveAs strFolder&"\"&CATIA.Documents.Item(oDoc).Product.PartNumber
+			CATIA.Documents.Item(oDoc).ExportData strFolder&"\"&CATIA.Documents.Item(oDoc).Product.PartNumber&".stp", "stp"
+		End If
+	Next
+	'Change the CATIA settings back again
+	CATIA.DisplayFileAlerts = True
+	objSpecWindow.Layout = catWindowSpecsAndGeom
+	'ActDoc.Close
+End Sub
+
+

@@ -94,7 +94,7 @@ class MFileVariable(dict):
                                                            self.var_name,
                                                            scan_value))
 
-    def get_scan(self, scan_number=None):
+    def get_scan(self, scan_number):
         """Returns the value of a specific scan. For scan = -1 or None the last
         scan is given.
 
@@ -239,7 +239,7 @@ class MFile(object):
 
     def open_mfile(self):
         """Function to open MFILE.DAT"""
-        with open(self.filename, "r") as mfile:
+        with open(self.filename, "r",encoding="utf-8") as mfile:
             self.mfile_lines = mfile.readlines()
         
         for i in range(len(self.mfile_lines)):
@@ -562,7 +562,7 @@ def read_mplot_conf(filename="make_plot_dat.conf"):
 
     """
     # Open config file
-    with open(filename, "r") as conf_file:
+    with open(filename, "r", encoding="utf-8") as conf_file:
         conf_lines = conf_file.readlines()
         conf_params = []
 

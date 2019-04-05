@@ -1,0 +1,4926 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Variable Descriptor},
+  pdfborder={0 0 0},
+  breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-2}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+
+\title{Variable Descriptor}
+\date{}
+
+\begin{document}
+\maketitle
+
+\hypertarget{process-variable-descriptor-file-dated-20190315}{%
+\subsection{PROCESS Variable Descriptor File : dated
+20190315}\label{process-variable-descriptor-file-dated-20190315}}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+Variables labelled with FIX are initialised with the given default value
+(shown between / / characters), but currently are not available to be
+changed in the input file.
+
+All other variables shown with a default value (including arrays boundl,
+boundu and sweep) can be changed in the input file.
+
+Variables not shown with a default value are calculated within PROCESS,
+so need not be initialised.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\hypertarget{global_variables}{%
+\subsubsection{\texorpdfstring{\href{global_variables.html}{global\_variables}}{global\_variables}}\label{global_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  icase : power plant type
+\item
+  runtitle /Run Title/ : short descriptive title for the run
+\item
+  verbose /0/ : switch for turning on/off diagnostic messages:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 turn off diagnostics
+  \item
+    = 1 turn on diagnostics
+  \end{itemize}
+\item
+  run\_tests /0/ : Turns on built-in tests if set to 1
+\item
+  maxcal /200/ : maximum number of VMCON iterations
+\end{itemize}
+
+\hypertarget{constants}{%
+\subsubsection{\texorpdfstring{\href{constants.html}{constants}}{constants}}\label{constants}}
+
+\begin{itemize}
+\tightlist
+\item
+  degrad FIX : degrees to radians, = pi/180
+\item
+  echarge FIX : electron charge (C)
+\item
+  mproton FIX : proton mass (kg)
+\item
+  pi FIX : famous number
+\item
+  rmu0 FIX : permeability of free space, 4.pi x 10\^{}(-7) H/m
+\item
+  twopi FIX : 2 pi
+\item
+  umass FIX : unified atomic mass unit (kg)
+\end{itemize}
+
+\hypertarget{physics_variables}{%
+\subsubsection{\texorpdfstring{\href{physics_variables.html}{physics\_variables}}{physics\_variables}}\label{physics_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  ipnlaws /45/ FIX : number of energy confinement time scaling laws
+\item
+  abeam : beam ion mass (amu)
+\item
+  afuel : average mass of fuel portion of ions (amu)
+\item
+  aion : average mass of all ions (amu)
+\item
+  alphaj /1.0/ : current profile index; calculated from q0, q if
+  iprofile=1
+\item
+  alphan /0.25/ : density profile index
+\item
+  alphap : pressure profile index
+\item
+  alpharate : alpha particle production rate (particles/m3/sec)
+\item
+  alphat /0.5/ : temperature profile index
+\item
+  aspect /2.907/ : aspect ratio (iteration variable 1)
+\item
+  beamfus0 /1.0/ : multiplier for beam-background fusion calculation
+\item
+  beta /0.042/ : total plasma beta (iteration variable 5) (calculated if
+  ipedestal =3)
+\item
+  betaft : fast alpha beta component
+\item
+  betalim : allowable beta
+\item
+  betanb : neutral beam beta component
+\item
+  betap : poloidal beta
+\item
+  normalised\_total\_beta : normaised total beta
+\item
+  betbm0 /1.5/ : leading coefficient for NB beta fraction
+\item
+  bp : poloidal field (T)
+\item
+  bt /5.68/ : toroidal field on axis (T) (iteration variable 2)
+\item
+  btot : total toroidal + poloidal field (T)
+\item
+  burnup : fractional plasma burnup
+\item
+  bvert : vertical field at plasma (T)
+\item
+  cfe0 /0.0/ : seeded high-Z impurity fraction (n\_highZ / n\_e)
+  (imprad\_model=0 only) (iteration variable 43)
+\item
+  csawth /1.0/ : coeff. for sawteeth effects on burn V-s requirement
+\item
+  cvol /1.0/ : multiplying factor times plasma volume (normally=1)
+\item
+  cwrmax /1.35/ : maximum ratio of conducting wall distance to plasma
+  minor radius for vertical stability (constraint equation 23)
+\item
+  dene /9.8e19/ : electron density (/m3) (iteration variable 6)
+  (calculated if ipedestal=3)
+\item
+  deni : fuel ion density (/m3)
+\item
+  dlamee : electron-electron coulomb logarithm
+\item
+  dlamie : ion-electron coulomb logarithm
+\item
+  dlimit(7) : density limit (/m3) as calculated using various models
+\item
+  dnalp : thermal alpha density (/m3)
+\item
+  dnbeam : hot beam ion density, variable (/m3)
+\item
+  dnbeam2 : hot beam ion density from calculation (/m3)
+\item
+  dnbeta /3.5/ : (Troyon-like) coefficient for beta scaling; calculated
+  as (4.0*rli) if iprofile=1 (see also gtscale option)
+\item
+  dnelimt : density limit (/m3)
+\item
+  dnitot : total ion density (/m3)
+\item
+  dnla : line averaged electron density (/m3)
+\item
+  dnprot : proton ash density (/m3)
+\item
+  dntau : plasma average "n-tau" (seconds/m3)
+\item
+  dnz : high Z ion density (/m3)
+\item
+  ealphadt /3520.0/ FIX : alpha birth energy in D-T reaction (keV)
+\item
+  epbetmax /1.38/ : maximum (eps*beta\_poloidal) (constraint equation 6)
+  revised (07/01/16) Issue \#346 "Operation at the tokamak equilibrium
+  poloidal beta-limit in TFTR" 1992 Nucl. Fusion 32 1468
+\item
+  eps : inverse aspect ratio
+\item
+  faccd : fraction of plasma current produced by auxiliary current drive
+\item
+  facoh : fraction of plasma current produced inductively
+\item
+  falpe : fraction of alpha energy to electrons
+\item
+  falpha /0.95/ : fraction of alpha power deposited in plasma (Physics
+  of Energetic Ions, p.2489)
+\item
+  falpi : fraction of alpha power to ions
+\item
+  fbfe /0.35/ : fraction of high-Z radiation to Bremsstrahlung
+  (imprad\_model=0 only)
+\item
+  fdeut /0.5/ : deuterium fuel fraction
+\item
+  ffwal /0.92/ : factor to convert plasma surface area to first wall
+  area in neutron wall load calculation (iwalld=1)
+\item
+  fgwped /0.85/ : fraction of Greenwald density to set as pedestal-top
+  density If \textless0, pedestal-top density set manually using neped
+  (ipedestal\textgreater=1) Needs to be \textgreater0 if ipedestal = 3
+  (iteration variable 145)
+\item
+  fgwsep /0.50/ : fraction of Greenwald density to set as separatrix
+  density If \textless0, separatrix density set manually using nesep
+  (ipedestal\textgreater=1) Needs to be \textgreater0 if ipedestal = 3
+\item
+  fhe3 /0.0/ : helium-3 fuel fraction
+\item
+  figmer : physics figure of merit (= plascur*aspect**sbar, where
+  sbar=1)
+\item
+  fkzohm /1.0/ : Zohm elongation scaling adjustment factor (ishape=2, 3)
+\item
+  fplhsep /1.0/ : F-value for Psep \textgreater= Plh + Paux (constraint
+  equation 73)
+\item
+  ftrit /0.5/ : tritium fuel fraction
+\item
+  fusionrate : fusion reaction rate (reactions/m3/sec)
+\item
+  fvsbrnni /1.0/ : fraction of the plasma current produced by
+  non-inductive means (iteration variable 44)
+\item
+  gamma /0.4/ : Ejima coefficient for resistive startup V-s formula
+\item
+  gammaft : ratio of (fast alpha + neutral beam beta) to thermal beta
+\item
+  gtscale /0/ : switch for a/R scaling of dnbeta (iprofile=0 only):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 do not scale dnbeta with eps;
+  \item
+    = 1 scale dnbeta with eps
+  \end{itemize}
+\item
+  hfac(ipnlaws) : H factors for an ignited plasma for each energy
+  confinement time scaling law
+\item
+  hfact /1.0/ : H factor on energy confinement times, radiation
+  corrected (iteration variable 10). If ipedestal=2 or 3 and hfact = 0,
+  not used in PLASMOD (see also plasmod\_i\_modeltype)
+\item
+  taumax /10/ : Maximum allowed energy confinement time (s)
+\item
+  ibss /3/ : switch for bootstrap current scaling:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 ITER 1989 bootstrap scaling (high R/a only);
+  \item
+    = 2 for Nevins et al general scaling;
+  \item
+    = 3 for Wilson et al numerical scaling;
+  \item
+    = 4 for Sauter et al scaling
+  \end{itemize}
+\item
+  iculbl /0/ : switch for beta limit scaling (constraint equation 24):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 apply limit to total beta;
+  \item
+    = 1 apply limit to thermal beta;
+  \item
+    = 2 apply limit to thermal + neutral beam beta
+  \end{itemize}
+\item
+  icurr /4/ : switch for plasma current scaling to use:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 Peng analytic fit;
+  \item
+    = 2 Peng double null divertor scaling (ST);
+  \item
+    = 3 simple ITER scaling (k = 2.2, d = 0.6);
+  \item
+    = 4 later ITER scaling, a la Uckan;
+  \item
+    = 5 Todd empirical scaling I;
+  \item
+    = 6 Todd empirical scaling II;
+  \item
+    = 7 Connor-Hastie model;
+  \item
+    = 8 Sauter scaling allowing negative triangularity
+  \end{itemize}
+\item
+  idensl /7/ : switch for density limit to enforce (constraint equation
+  5):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 old ASDEX;
+  \item
+    = 2 Borrass model for ITER (I);
+  \item
+    = 3 Borrass model for ITER (II);
+  \item
+    = 4 JET edge radiation;
+  \item
+    = 5 JET simplified;
+  \item
+    = 6 Hugill-Murakami Mq limit;
+  \item
+    = 7 Greenwald limit
+  \end{itemize}
+\item
+  idivrt : number of divertors (calculated from snull)
+\item
+  ifalphap /1/ : switch for fast alpha pressure calculation:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 ITER physics rules (Uckan) fit;
+  \item
+    = 1 Modified fit (D. Ward) - better at high temperature
+  \end{itemize}
+\item
+  ifispact /0/ : switch for neutronics calculations:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 neutronics calculations turned off;
+  \item
+    = 1 neutronics calculations turned on
+  \end{itemize}
+\item
+  igeom /1/ : switch for plasma geometry calculation:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 original method (possibly based on Peng ST modelling);
+  \item
+    = 1 improved (and traceable) method
+  \end{itemize}
+\item
+  ignite /0/ : switch for ignition assumption:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 do not assume plasma ignition;
+  \item
+    = 1 assume ignited (but include auxiliary power in costs)
+  \end{itemize}
+
+  Obviously, ignite must be zero if current drive is required. If
+  ignite=1, any auxiliary power is assumed to be used only during plasma
+  start-up, and is excluded from all steady-state power balance
+  calculations.
+\item
+  iinvqd /1/ : switch for inverse quadrature in L-mode scaling laws 5
+  and 9:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 inverse quadrature not used;
+  \item
+    = 1 inverse quadrature with Neo-Alcator tau-E used
+  \end{itemize}
+\item
+  impc /1.0/ : carbon impurity multiplier (imprad\_model=0 only)
+\item
+  impo /1.0/ : oxygen impurity multiplier (imprad\_model=0 only)
+\item
+  ipedestal /1/ : switch for pedestal profiles:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 use original parabolic profiles;
+  \item
+    = 1 use pedestal profiles
+  \item
+    = 2 use pedestal profiles and run PLASMOD on final output
+  \item
+    = 3 use PLASMOD transport model only to calculate pedestal profiles
+  \end{itemize}
+\item
+  iscdens /0/ : switch for pedestal profiles: OBSOLETE
+\item
+  ieped /0/ : switch for scaling pedestal-top temperature with plasma
+  parameters:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 set pedestal-top temperature manually using teped;
+  \item
+    = 1 set pedestal-top temperature using EPED scaling; (PLASMOD
+    implementation of scaling within PLASMOD, ipedestal =2,3)
+  \item
+    https://idm.euro-fusion.org/?uid=2MSZ4T
+  \end{itemize}
+\item
+  eped\_sf /1.0/ : Adjustment factor for EPED scaling to reduce pedestal
+  temperature or pressure to mitigate o
+\item
+  neped /4.0e19/ : electron density of pedestal {[}m-3{]}
+  (ipedestal=1,2, calculated if 3)
+\item
+  nesep /3.0e19/ : electron density at separatrix {[}m-3{]}
+  (ipedestal=1,2, calculated if 3)
+\item
+  alpha\_crit : critical ballooning parameter value
+\item
+  nesep\_crit : critical electron density at separatrix {[}m-3{]}
+\item
+  plasma\_res\_factor /1.0/ : plasma resistivity pre-factor
+\item
+  rhopedn /1.0/ : r/a of density pedestal (ipedestal\textgreater=1)
+\item
+  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal\textgreater=1)
+\item
+  tbeta /2.0/ : temperature profile index beta (ipedestal=1,2)
+\item
+  teped /1.0/ : electron temperature of pedestal (keV)
+  (ipedestal\textgreater=1, ieped=0, calculated for ieped=1)
+\item
+  tesep /0.1/ : electron temperature at separatrix (keV)
+  (ipedestal\textgreater=1) calculated if reinke criterion is used (icc
+  = 78)
+\item
+  iprofile /1/ : switch for current profile consistency:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 use input values for alphaj, rli, dnbeta (but see gtscale
+    option);
+  \item
+    = 1 make these consistent with input q, q0 values (recommendation:
+    use icurr=4 with this option)
+  \end{itemize}
+\item
+  iradloss /1/ : switch for radiation loss term usage in power balance
+  (see User Guide):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 total power lost is scaling power plus radiation (needed for
+    ipedestal=2,3)
+  \item
+    = 1 total power lost is scaling power plus core radiation only
+  \item
+    = 2 total power lost is scaling power only, with no additional
+    allowance for radiation. This is not recommended for power plant
+    models.
+  \end{itemize}
+\item
+  isc /34 (=IPB98(y,2))/ : switch for energy confinement time scaling
+  law (see description in tauscl)
+\item
+  tauscl(ipnlaws) : labels describing energy confinement scaling laws:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    ( 1) Neo-Alcator (ohmic)
+  \item
+    ( 2) Mirnov (H-mode)
+  \item
+    ( 3) Merezkhin-Muhkovatov (L-mode)
+  \item
+    ( 4) Shimomura (H-mode)
+  \item
+    ( 5) Kaye-Goldston (L-mode)
+  \item
+    ( 6) ITER 89-P (L-mode)
+  \item
+    ( 7) ITER 89-O (L-mode)
+  \item
+    ( 8) Rebut-Lallia (L-mode)
+  \item
+    ( 9) Goldston (L-mode)
+  \item
+    (10) T10 (L-mode)
+  \item
+    (11) JAERI-88 (L-mode)
+  \item
+    (12) Kaye-Big Complex (L-mode)
+  \item
+    (13) ITER H90-P (H-mode)
+  \item
+    (14) ITER Mix (L-mode)
+  \item
+    (15) Riedel (L-mode)
+  \item
+    (16) Christiansen (L-mode)
+  \item
+    (17) Lackner-Gottardi (L-mode)
+  \item
+    (18) Neo-Kaye (L-mode)
+  \item
+    (19) Riedel (H-mode)
+  \item
+    (20) ITER H90-P amended (H-mode)
+  \item
+    (21) LHD (stellarator)
+  \item
+    (22) Gyro-reduced Bohm (stellarator)
+  \item
+    (23) Lackner-Gottardi (stellarator)
+  \item
+    (24) ITER-93H (H-mode)
+  \item
+    (25)
+  \item
+    (26) ITER H-97P ELM-free (H-mode)
+  \item
+    (27) ITER H-97P ELMy (H-mode)
+  \item
+    (28) ITER-96P (=ITER-97L) (L-mode)
+  \item
+    (29) Valovic modified ELMy (H-mode)
+  \item
+    (30) Kaye PPPL April 98 (L-mode)
+  \item
+    (31) ITERH-PB98P(y) (H-mode)
+  \item
+    (32) IPB98(y) (H-mode)
+  \item
+    (33) IPB98(y,1) (H-mode)
+  \item
+    (34) IPB98(y,2) (H-mode)
+  \item
+    (35) IPB98(y,3) (H-mode)
+  \item
+    (36) IPB98(y,4) (H-mode)
+  \item
+    (37) ISS95 (stellarator)
+  \item
+    (38) ISS04 (stellarator)
+  \item
+    (39) DS03 (H-mode)
+  \item
+    (40) Murari et al non-power law (H-mode)
+  \item
+    (41) Petty 2008 (H-mode)
+  \item
+    (42) Lang et al. 2012 (H-mode)
+  \item
+    (43) Hubbard 2017 (I-mode) - nominal
+  \item
+    (44) Hubbard 2017 (I-mode) - lower bound
+  \item
+    (45) Hubbard 2017 (I-mode) - upper bound
+  \end{itemize}
+\item
+  iscrp /1/ : switch for plasma-first wall clearances:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 use 10\% of rminor;
+  \item
+    = 1 use input (scrapli and scraplo)
+  \end{itemize}
+\item
+  ishape /0/ : switch for plasma cross-sectional shape calculation:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 use input kappa, triang to calculate 95\% values;
+  \item
+    = 1 scale qlim, kappa, triang with aspect ratio (ST);
+  \item
+    = 2 set kappa to the natural elongation value (Zohm ITER scaling),
+    triang input;
+  \item
+    = 3 set kappa to the natural elongation value (Zohm ITER scaling),
+    triang95 input;
+  \item
+    = 4 use input kappa95, triang95 to calculate separatrix values
+  \end{itemize}
+\item
+  itart /0/ : switch for spherical tokamak (ST) models:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 use conventional aspect ratio models;
+  \item
+    = 1 use spherical tokamak models
+  \end{itemize}
+\item
+  itartpf /0/ : switch for Spherical Tokamak PF models:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 use Peng and Strickler (1986) model;
+  \item
+    = 1 use conventional aspect ratio model
+  \end{itemize}
+\item
+  iwalld /1/ : switch for neutron wall load calculation:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 use scaled plasma surface area;
+  \item
+    = 2 use first wall area directly
+  \end{itemize}
+\item
+  kappa /1.792/ : plasma separatrix elongation (calculated if ishape
+  \textgreater{} 0)
+\item
+  kappa95 /1.6/ : plasma elongation at 95\% surface (calculated if
+  ishape \textless{} 4)
+\item
+  kappaa : plasma elongation calculated as xarea/(pi.a2)
+\item
+  ne0 : central electron density (/m3)
+\item
+  ni0 : central ion density (/m3)
+\item
+  p0 : central total plasma pressure (Pa)
+\item
+  palppv : alpha power per volume (MW/m3)
+\item
+  palpepv : alpha power per volume to electrons (MW/m3)
+\item
+  palpfwmw : alpha power escaping plasma and reaching first wall (MW)
+\item
+  palpipv : alpha power per volume to ions (MW/m3)
+\item
+  palpmw : alpha power (MW)
+\item
+  palpnb : alpha power from hot neutral beam ions (MW)
+\item
+  pbrempv : bremsstrahlung power per volume (MW/m3) (calculated only if
+  imprad\_model=1)
+\item
+  pchargemw : non-alpha charged particle fusion power (MW)
+\item
+  pchargepv : non-alpha charged particle fusion power per volume (MW/m3)
+\item
+  pcoef : profile factor (= n-weighted T / average T)
+\item
+  pcoreradmw : total core radiation power (MW)
+\item
+  pcoreradpv : total core radiation power per volume (MW/m3)
+\item
+  pdd : deuterium-deuterium fusion power (MW)
+\item
+  pdhe3 : deuterium-helium3 fusion power (MW)
+\item
+  pdivt : power to conducted to the divertor region (MW)
+\item
+  pdt : deuterium-tritium fusion power (MW)
+\item
+  pedgeradmw : edge radiation power (MW)
+\item
+  pedgeradpv : edge radiation power per volume (MW/m3)
+\item
+  pfuscmw : charged particle fusion power (MW)
+\item
+  phiint : internal plasma V-s
+\item
+  photon\_wall : Nominal mean radiation load on inside surface of
+  reactor (MW/m2)
+\item
+  piepv : ion/electron equilibration power per volume (MW/m3)
+\item
+  plascur : plasma current (A)
+\item
+  plinepv : line radiation power per volume (MW/m3) (calculated only if
+  imprad\_model=1)
+\item
+  pneutmw : neutron fusion power (MW)
+\item
+  pneutpv : neutron fusion power per volume (MW/m3)
+\item
+  pohmmw : ohmic heating power (MW)
+\item
+  pohmpv : ohmic heating power per volume (MW/m3)
+\item
+  powerht : heating power (= transport loss power) (MW) used in
+  confinement time calculation
+\item
+  powfmw : fusion power (MW)
+\item
+  pperim : plasma poloidal perimeter (m)
+\item
+  pradmw : total radiation power (MW)
+\item
+  pradpv : total radiation power per volume (MW/m3)
+\item
+  protonrate : proton production rate (particles/m3/sec)
+\item
+  psolradmw : SOL radiation power (MW) (stellarator only)
+\item
+  psyncpv : synchrotron radiation power per volume (MW/m3)
+\item
+  ilhthresh /6/ : switch for L-H mode power threshold scaling to use
+  (see pthrmw for list)
+\item
+  plhthresh : L-H mode power threshold (MW) (chosen via ilhthresh, and
+  enforced if constraint equation 15 is on)
+\item
+  pthrmw(18) : L-H power threshold for various scalings (MW):
+
+  \begin{enumerate}
+  \tightlist
+  \item
+    ITER 1996 scaling: nominal
+  \item
+    ITER 1996 scaling: upper bound
+  \item
+    ITER 1996 scaling: lower bound
+  \item
+    ITER 1997 scaling: excluding elongation
+  \item
+    ITER 1997 scaling: including elongation
+  \item
+    Martin 2008 scaling: nominal
+  \item
+    Martin 2008 scaling: 95\% upper bound
+  \item
+    Martin 2008 scaling: 95\% lower bound
+  \item
+    Snipes 2000 scaling: nominal
+  \item
+    Snipes 2000 scaling: upper bound
+  \item
+    Snipes 2000 scaling: lower bound
+  \item
+    Snipes 2000 scaling (closed divertor): nominal
+  \item
+    Snipes 2000 scaling (closed divertor): upper bound
+  \item
+    Snipes 2000 scaling (closed divertor): lower bound
+  \item
+    Hubbard et al. 2012 L-I threshold scaling: nominal
+  \item
+    Hubbard et al. 2012 L-I threshold scaling: lower bound
+  \item
+    Hubbard et al. 2012 L-I threshold scaling: upper bound
+  \item
+    Hubbard et al. 2017 L-I threshold scaling
+  \end{enumerate}
+\item
+  ptremw : electron transport power (MW)
+\item
+  ptrepv : electron transport power per volume (MW/m3)
+\item
+  ptrimw : ion transport power (MW)
+\item
+  pscalingmw : Total transport power from scaling law (MW)
+\item
+  ptripv : ion transport power per volume (MW/m3)
+\item
+  q /3.0/ : safety factor 'near' plasma edge (iteration variable 18):
+  equal to q95 (unless icurr = 2 (ST current scaling), in which case q =
+  mean edge safety factor qbar)
+\item
+  q0 /1.0/ : safety factor on axis
+\item
+  q95 : safety factor at 95\% surface
+\item
+  qfuel : plasma fuelling rate (nucleus-pairs/s)
+\item
+  tauratio /1.0/ : ratio of He and pellet particle confinement times
+\item
+  qlim : lower limit for edge safety factor
+\item
+  qstar : cylindrical safety factor
+\item
+  rad\_fraction : Radiation fraction = total radiation / total power
+  deposited in plasma
+\item
+  ralpne /0.1/ : thermal alpha density / electron density (iteration
+  variable 109) (calculated if ipedestal=3)
+\item
+  protium /0.0/ : Seeded protium density / electron density.
+\item
+  rli /0.9/ : plasma normalised internal inductance; calculated from
+  alphaj if iprofile=1
+\item
+  rlp : plasma inductance (H)
+\item
+  rmajor /8.14/ : plasma major radius (m) (iteration variable 3)
+\item
+  rminor : plasma minor radius (m)
+\item
+  rnbeam /0.005/ : hot beam density / n\_e (iteration variable 7)
+\item
+  rncne : n\_carbon / n\_e
+\item
+  rndfuel : fuel burnup rate (reactions/second)
+\item
+  rnfene : n\_highZ / n\_e
+\item
+  rnone : n\_oxygen / n\_e
+\item
+  rpfac : neo-classical correction factor to rplas
+\item
+  rplas : plasma resistance (ohm)
+\item
+  res\_time : plasma current resistive diffusion time (s)
+\item
+  sarea : plasma surface area
+\item
+  sareao : outboard plasma surface area
+\item
+  sf : shape factor = plasma poloidal perimeter / (2.pi.rminor)
+\item
+  snull /1/ : switch for single null / double null plasma:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 for double null;
+  \item
+    = 1 for single null (diverted side down)
+  \end{itemize}
+\item
+  ssync /0.6/ : synchrotron wall reflectivity factor
+\item
+  tauee : electron energy confinement time (sec)
+\item
+  taueff : global thermal energy confinement time (sec)
+\item
+  tauei : ion energy confinement time (sec)
+\item
+  taup : alpha particle confinement time (sec)
+\item
+  te /12.9/ : volume averaged electron temperature (keV) (iteration
+  variable 4) (calculated if ipedestal = 3)
+\item
+  te0 : central electron temperature (keV)
+\item
+  ten : density weighted average electron temperature (keV)
+\item
+  ti /12.9/ : volume averaged ion temperature (keV); N.B. calculated
+  from te if tratio \textgreater{} 0.0
+\item
+  ti0 : central ion temperature (keV)
+\item
+  tin : density weighted average ion temperature (keV)
+\item
+  tratio /1.0/ : ion temperature / electron temperature; used to
+  calculate ti if tratio \textgreater{} 0.0
+\item
+  triang /0.36/ : plasma separatrix triangularity (calculated if
+  ishape=1, 3 or 4)
+\item
+  triang95 /0.24/ : plasma triangularity at 95\% surface (calculated if
+  ishape \textless{} 3)
+\item
+  vol : plasma volume (m3)
+\item
+  vsbrn : V-s needed during flat-top (heat + burn times) (Wb)
+\item
+  vshift : plasma/device midplane vertical shift - single null
+\item
+  vsind : internal and external plasma inductance V-s (Wb)
+\item
+  vsres : resistive losses in startup V-s (Wb)
+\item
+  vsstt : total V-s needed (Wb)
+\item
+  wallmw : average neutron wall load (MW/m2)
+\item
+  wtgpd : mass of fuel used per day (g)
+\item
+  xarea : plasma cross-sectional area (m2)
+\item
+  zeff : plasma effective charge
+\item
+  zeffai : mass weighted plasma effective charge
+\item
+  zfear /0/ : high-Z impurity switch; 0=iron, 1=argon (if
+  imprad\_model=1, only used in neutral beam stopping calc.)
+\end{itemize}
+
+\hypertarget{plasmod_variables}{%
+\subsubsection{\texorpdfstring{\href{plasmod_variables.html}{plasmod\_variables}}{plasmod\_variables}}\label{plasmod_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  plasmod\_tol /1.0d-10/ : tolerance to be reached at each time step
+  (\%)
+\item
+  plasmod\_dtmin /0.05d0/ : min time step
+\item
+  plasmod\_dtmax /0.1d0/ : max time step
+\item
+  plasmod\_dt /0.01d0/ : time step
+\item
+  plasmod\_dtinc /2.0d0/ : decrease of dt
+\item
+  plasmod\_ainc /1.1d0/ : increase of dt
+\item
+  plasmod\_test /100000.0d0/ : max number of iterations
+\item
+  plasmod\_tolmin /10.1d0/ : multiplier of etolm which can not be
+  exceeded
+\item
+  plasmod\_eopt /0.15d0/ : exponent of jipperdo
+\item
+  plasmod\_dtmaxmin /0.15d0/ : exponent of jipperdo2
+\item
+  plasmod\_dtmaxmax /0.0d0/ : stabilizing coefficient
+\item
+  plasmod\_capa /0.1d0/ : first radial grid point
+\item
+  plasmod\_maxa /0.0d0/ : diagz 0 or 1
+\item
+  plasmod\_dgy /1.0d-5/ : Newton differential
+\item
+  plasmod\_iprocess /1/ : 0 - use PLASMOD functions, 1 - use PROCESS
+  functions
+\item
+  plasmod\_i\_modeltype /1/ : switch for the transport model
+
+  \begin{itemize}
+  \tightlist
+  \item
+    1 - Simple gyrobohm scaling with imposed H factor \textgreater{} 1.
+    Other values give H factor as output
+  \item
+    111 - roughly calibrated to give H=1 for DEMO, but not fixed H
+  \end{itemize}
+\item
+  plasmod\_i\_equiltype /1/ : 1 - EMEQ, solve with sawteeth and inputted
+  q95. 2 - EMEQ, solve with sawteeth and inputted Ip (not recommended!).
+\item
+  plasmod\_isawt /1/ : 0 - no sawteeth, 1 - solve with sawteeth.
+\item
+  plasmod\_nx /41/ : number of interpolated grid points
+\item
+  plasmod\_nxt /7/ : number of solved grid points
+\item
+  plasmod\_nchannels /3/ : leave this at 3
+\item
+  plasmod\_i\_impmodel /1/ : impurity model: 0 - fixed concentration, 1
+  - fixed concentration at pedestal top, then fixed density.
+\item
+  plasmod\_globtau(5) /5.0d0, 5.0d0, 7.0d0, 5.0d0, 1.0d0/ :
+  tauparticle/tauE for D, T, He, Xe, Ar (NOT used for Xe!)
+\item
+  plasmod\_psepplh\_sup /12000.0d0/ : Psep/PLH if above this, use Xe
+\item
+  plasmod\_qdivt /0.0d0/ : divertor heat flux in MW/m\^{}2, if 0, dont
+  use SOL model
+\item
+  plasmod\_imptype(3) /14, 13, 9/ : Impurities: element 1 - intrinsic
+  impurity, element 2 - Psep control, elem
+\item
+  plasmod\_qnbi\_psepfac /50.0d0/ : dqnbi/d(1-Psep/PLH)
+\item
+  plasmod\_cxe\_psepfac /1.0d-4/ : dcxe/d(1-Psep/PLH)
+\item
+  plasmod\_car\_qdivt /1.0d-4/ : dcar/d(qdivt)
+\item
+  plasmod\_maxpauxor /20.0d0/ : max allowed auxiliary power / R
+\item
+  plasmod\_x\_heat(2) /0.0d0/ : element 1 - nbi, element 2 - ech
+\item
+  plasmod\_x\_cd(2) /0.0d0/ : element 1 - nbi, element 2 - ech
+\item
+  plasmod\_x\_fus(2) /0.0d0/ : element 1 - nbi, element 2 - ech
+\item
+  plasmod\_x\_control(2) /0.0d0/ : element 1 - nbi, element 2 - ech
+\item
+  plasmod\_dx\_heat(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 -
+  ech
+\item
+  plasmod\_dx\_cd(2) /0.2d0, 0.03/ : element 1 - nbi, element 2 - ech
+\item
+  plasmod\_dx\_fus(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
+\item
+  plasmod\_dx\_control(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 -
+  ech
+\item
+  plasmod\_contrpovs /0.0d0/ :: control power in Paux/lateral\_area
+  (MW/m2)
+\item
+  plasmod\_contrpovr /0.0d0/ :: control power in Paux/R (MW/m)
+\item
+  plasmod\_nbi\_energy /1000.0d0/ :: In keV
+\item
+  plasmod\_v\_loop /-1.0d-6/ :: target loop voltage. If lower than -1.e5
+  do not use
+\item
+  plasmod\_pfus /0.0d0/ :: if 0. not used (otherwise controlled with
+  Pauxheat)
+\item
+  plasmod\_eccdeff /0.3d0/ :: current drive multiplier: CD =
+  eccdeff*PCD*TE/NE (not in use yet)
+\item
+  plasmod\_fcdp /-1.0d0/ :: (P\_CD - Pheat)/(Pmax-Pheat),i.e. ratio of
+  CD power over available power (iteration
+\item
+  plasmod\_fradc /-1.0d0/ :: Pline\_Xe / (Palpha + Paux - PlineAr -
+  Psync - Pbrad) (iteration variable 148)
+\item
+  plasmod\_pech /0.0d0/ :: ech power (not in use yet)
+\item
+  plasmod\_gamcdothers /1.0d0/ :: efficiency multiplier for non-CD
+  heating. If 0.0 pheat treated as if it had
+\item
+  plasmod\_chisawpos /-1.0d0/ :: position where artificial sawtooth
+  diffusivity is added, -1 - uses q=1 positi
+\item
+  plasmod\_chisaw /0.0d0/ :: artificial diffusivity in m\^{}2/s
+\item
+  plasmod\_sawpertau /1.0d-6/ :: ratio between sawtooth period and
+  confinement time
+\item
+  plasmod\_spellet /0.0d0/ :: pellet mass in units of D in 10\^{}19
+\item
+  plasmod\_fpellet /0.5d0/ :: pellet frequency in Hz
+\item
+  plasmod\_pedscal /1.0d0/ :: multiplication factor of the pedestal
+  scaling in PLASMOD can be used to scan the pedestal height.
+\item
+  geom :: Derived type containing all geometry information for PLASMOD
+\item
+  comp :: Derived type containing all composition information for
+  PLASMOD
+\item
+  ped :: Derived type containing all pedestal information for PLASMOD
+\item
+  inp0 :: Derived type containing miscellaneous input information for
+  PLASMOD
+\item
+  radp :: Derived type containing all radial profile information for
+  PLASMOD
+\item
+  mhd :: Derived type containing all mhd information for PLASMOD
+\item
+  loss :: Derived type containing all power loss information for PLASMOD
+\item
+  num :: Derived type containing all numerics information for PLASMOD
+\item
+  i\_flag :: Error flag for PLASMOD
+\end{itemize}
+
+\hypertarget{current_drive_variables}{%
+\subsubsection{\texorpdfstring{\href{current_drive_variables.html}{current\_drive\_variables}}{current\_drive\_variables}}\label{current_drive_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  beamwd /0.58/ : width of neutral beam duct where it passes between the
+  TF coils (m) (T Inoue et al, Design of neutral beam system for
+  ITER-FEAT,
+  \href{http://dx.doi.org/10.1016/S0920-3796(01)00339-8}{Fusion
+  Engineering and Design, Volumes 56-57, October 2001, Pages 517-521})
+\item
+  bigq : Fusion gain; P\_fusion / (P\_injection + P\_ohmic)
+\item
+  bootipf : bootstrap current fraction (enforced; see ibss)
+\item
+  bscfmax /0.9/ : maximum fraction of plasma current from bootstrap; if
+  bscfmax \textless{} 0, bootstrap fraction = abs(bscfmax)
+\item
+  bscf\_iter89 : bootstrap current fraction, ITER 1989 model
+\item
+  bscf\_nevins : bootstrap current fraction, Nevins et al model
+\item
+  bscf\_sauter : bootstrap current fraction, Sauter et al model
+\item
+  bscf\_wilson : bootstrap current fraction, Wilson et al model
+\item
+  cboot /1.0/ : bootstrap current fraction multiplier (ibss=1)
+\item
+  cnbeam : neutral beam current (A)
+\item
+  echpwr : ECH power (MW)
+\item
+  echwpow : ECH wall plug power (MW)
+\item
+  effcd : current drive efficiency (A/W)
+\item
+  enbeam /1.0e3/ : neutral beam energy (keV) (iteration variable 19)
+\item
+  etacd : auxiliary power wall plug to injector efficiency
+\item
+  etaech /0.3/ : ECH wall plug to injector efficiency
+\item
+  etalh /0.3/ : lower hybrid wall plug to injector efficiency
+\item
+  etanbi /0.3/ : neutral beam wall plug to injector efficiency
+\item
+  fpion : fraction of beam energy to ions
+\item
+  pnbitot : neutral beam power entering vacuum vessel
+\item
+  nbshinemw : neutral beam shine-through power
+\item
+  feffcd /1.0/ : current drive efficiency fudge factor (iteration
+  variable 47)
+\item
+  forbitloss /0.0/ : fraction of neutral beam power lost after
+  ionisation but before thermalisation (orbit loss fraction)
+\item
+  frbeam /1.05/ : R\_tangential / R\_major for neutral beam injection
+\item
+  ftritbm /1.0e-6/ : fraction of beam that is tritium
+\item
+  gamcd : normalised current drive efficiency (1.0e20 A/(W m\^{}2))
+\item
+  gamma\_ecrh /0.35/ : user input ECRH gamma (1.0e20 A/(W m\^{}2))
+\item
+  rho\_ecrh /0.1/ : normalised minor radius at which electron cyclotron
+  current drive is maximum
+\item
+  iefrf /5/ : switch for current drive efficiency model:
+
+  \begin{enumerate}
+  \tightlist
+  \item
+    Fenstermacher Lower Hybrid
+  \item
+    Ion Cyclotron current drive
+  \item
+    Fenstermacher ECH
+  \item
+    Ehst Lower Hybrid
+  \item
+    ITER Neutral Beam
+  \item
+    new Culham Lower Hybrid model
+  \item
+    new Culham ECCD model
+  \item
+    new Culham Neutral Beam model
+  \item
+    Empty (Oscillating field CD removed)
+  \item
+    ECRH user input gamma
+  \item
+    ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
+  \end{enumerate}
+\item
+  irfcd /1/ : switch for current drive calculation:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 turned off;
+  \item
+    = 1 turned on
+  \end{itemize}
+\item
+  nbshinef : neutral beam shine-through fraction
+\item
+  nbshield /0.5/ : neutral beam duct shielding thickness (m)
+\item
+  pheat /0.0/ : heating power not used for current drive (MW) (iteration
+  variable 11)
+\item
+  pinjalw /150.0/ : Maximum allowable value for injected power (MW)
+  (constraint equation 30)
+\item
+  pinjemw : auxiliary injected power to electrons (MW)
+\item
+  pinjimw : auxiliary injected power to ions (MW)
+\item
+  pinjmw : total auxiliary injected power (MW)
+\item
+  plhybd : lower hybrid injection power (MW)
+\item
+  pnbeam : neutral beam injection power (MW)
+\item
+  porbitlossmw : neutral beam power lost after ionisation but before
+  thermalisation (orbit loss power) (MW)
+\item
+  pwplh : lower hybrid wall plug power (MW)
+\item
+  pwpnb : neutral beam wall plug power (MW)
+\item
+  rtanbeam : neutral beam centreline tangency radius (m)
+\item
+  rtanmax : maximum tangency radius for centreline of beam (m)
+\item
+  taubeam : neutral beam e-decay lengths to plasma centre
+\item
+  tbeamin /3.0/ : permitted neutral beam e-decay lengths to plasma
+  centre
+\end{itemize}
+
+\hypertarget{divertor_kallenbach_variables}{%
+\subsubsection{\texorpdfstring{\href{divertor_kallenbach_variables.html}{divertor\_kallenbach\_variables}}{divertor\_kallenbach\_variables}}\label{divertor_kallenbach_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  kallenbach\_switch /0/ : Switch to turn on the 1D Kallenbach divertor
+  model (1=on, 0=off)
+\item
+  kallenbach\_tests /0/ : Switch to run tests of 1D Kallenbach divertor
+  model (1=on, 0=off)
+\item
+  target\_spread /0.003/ : Increase in SOL power fall-off length due to
+  spreading, mapped to OMP {[}m{]}
+\item
+  lambda\_q\_omp /0.002/ : SOL power fall-off length at the outer
+  midplane, perpendicular to field {[}m{]}
+\item
+  lcon\_factor /1.0/ : Correction factor for connection length from OMP
+  to divertor = connection length/(pi*q*rmajor)
+\item
+  netau\_sol /0.5/ : Parameter describing the departure from local
+  ionisation equilibrium in the SOL. {[}ms.1e20
+\item
+  targetangle /30.0/ : Angle between field-line and divertor target
+  (degrees)
+\item
+  ttarget /2.3/ : Plasma temperature adjacent to divertor sheath
+  {[}eV{]} (iteration variable 120)
+\item
+  qtargettotal /5.0e6/ : Power density on target including surface
+  recombination {[}W/m2{]} (iteration variable 124)
+\item
+  impurity\_enrichment(14) /5.0/ : Ratio of each impurity concentration
+  in SOL to confined plasma+ the enrichment for Argon is also propagated
+  for PLASMOD (ipedestal=3)
+\item
+  psep\_kallenbach : Power conducted through the separatrix, as
+  calculated by the divertor model {[}W{]} Not equal to pdivt unless
+  constraint is imposed.
+\item
+  teomp : separatrix temperature calculated by the Kallenbach divertor
+  model {[}eV{]}
+\item
+  neomp : Mean SOL density at OMP calculated by the Kallenbach divertor
+  model {[}m-3{]}
+\item
+  neratio /0.75/ : Ratio of mean SOL density at OMP to separatrix
+  density at OMP (iteration variable 121)
+\item
+  pressure0 : Total plasma pressure near target (thermal+dynamic)
+  {[}Pa{]}
+\item
+  fractionwidesol /0.1/ : Distance from target at which SOL gets broader
+  as a fraction of connection length
+\item
+  fmom : momentum factor {[}-{]}
+\item
+  totalpowerlost : Total power lost due to radiation, ionisation and
+  recombination {[}W{]}
+\item
+  impuritypowerlost : Power lost due to impurity radiation {[}W{]}
+\item
+  hydrogenicpowerlost : Power lost due to hydrogenic radiation {[}W{]}
+\item
+  exchangepowerlost : Power lost due to charge exchange {[}W{]}
+\item
+  ionisationpowerlost : Power lost due to electron impact ionisation
+  {[}W{]}
+\item
+  abserr\_sol : Absolute contribution to the error tolerance in the
+  Kallenbach divertor model
+\item
+  relerr\_sol : Relative contribution to the error tolerance in the
+  Kallenbach divertor model
+\item
+  mach0 : Mach number at target (must be just less than 1)
+\end{itemize}
+
+\hypertarget{divertor_variables}{%
+\subsubsection{\texorpdfstring{\href{divertor_variables.html}{divertor\_variables}}{divertor\_variables}}\label{divertor_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  adas : area divertor / area main plasma (along separatrix)
+\item
+  anginc /0.262/ : angle of incidence of field line on plate (rad)
+\item
+  betai /1.0/ : poloidal plane angle between divertor plate and leg,
+  inboard (rad)
+\item
+  betao /1.0/ : poloidal plane angle between divertor plate and leg,
+  outboard (rad)
+\item
+  bpsout /0.6/ : reference B\_p at outboard divertor strike point (T)
+\item
+  c1div /0.45/ : fitting coefficient to adjust ptpdiv, ppdiv
+\item
+  c2div /-7.0/ : fitting coefficient to adjust ptpdiv, ppdiv
+\item
+  c3div /0.54/ : fitting coefficient to adjust ptpdiv, ppdiv
+\item
+  c4div /-3.6/ : fitting coefficient to adjust ptpdiv, ppdiv
+\item
+  c5div /0.7/ : fitting coefficient to adjust ptpdiv, ppdiv
+\item
+  c6div /0.0/ : fitting coefficient to adjust ptpdiv, ppdiv
+\item
+  delld /1.0/ : coeff for power distribution along main plasma
+\item
+  dendiv : plasma density at divertor (10**20 /m3)
+\item
+  densin : density at plate (on separatrix) (10**20 /m3)
+\item
+  divclfr /0.3/ : divertor coolant fraction
+\item
+  divdens /1.0e4/ : divertor structure density (kg/m3)
+\item
+  divdum /0/ : switch for divertor Zeff model: 0=calc, 1=input
+\item
+  divfix /0.2/ : divertor structure vertical thickness (m)
+\item
+  divmas : divertor plate mass (kg)
+\item
+  divplt /0.035/ : divertor plate thickness (m) (from Spears, Sept 1990)
+\item
+  divsur : divertor surface area (m2)
+\item
+  fdfs /10.0/ : radial gradient ratio
+\item
+  fdiva /1.11/ : divertor area fudge factor (for ITER, Sept 1990)
+\item
+  fgamp /1.0/ : sheath potential factor (not used)
+\item
+  fhout : fraction of power to outboard divertor (for single null)
+\item
+  fififi /0.004/ : coefficient for gamdiv
+\item
+  frrp /0.4/ : fraction of radiated power to plate
+\item
+  hldiv : divertor heat load (MW/m2)
+\item
+  hldivlim /5.0/ : heat load limit (MW/m2)
+\item
+  ksic /0.8/ : power fraction for outboard double-null scrape-off plasma
+\item
+  lamp : power flow width (m)
+\item
+  minstang : minimum strike angle for heat flux calculation
+\item
+  omegan /1.0/ : pressure ratio (nT)\_plasma / (nT)\_scrape-off
+\item
+  omlarg : power spillage to private flux factor
+\item
+  ppdivr : peak heat load at plate (with radiation) (MW/m2)
+\item
+  prn1 /0.285/ : n-scrape-off / n-average plasma; (input for
+  ipedestal=0, = nesep/dene if ipedestal\textgreater=1)
+\item
+  ptpdiv : peak temperature at the plate (eV)
+\item
+  rconl : connection length ratio, outboard side
+\item
+  rlclolcn : ratio of collision length / connection length
+\item
+  rlenmax /0.5/ : maximum value for length ratio (rlclolcn) (eqn.22)
+\item
+  rsrd : effective separatrix/divertor radius ratio
+\item
+  tconl : main plasma connection length (m)
+\item
+  tdiv /2.0/ : temperature at divertor (eV) (input for stellarator only,
+  calculated for tokamaks)
+\item
+  tsep : temperature at the separatrix (eV)
+\item
+  xparain /2.1e3/ : parallel heat transport coefficient (m2/s)
+\item
+  xpertin /2.0/ : perpendicular heat transport coefficient (m2/s)
+\item
+  zeffdiv /1.0/ : Zeff in the divertor region (if divdum /= 0)
+\end{itemize}
+
+\hypertarget{fwbs_variables}{%
+\subsubsection{\texorpdfstring{\href{fwbs_variables.html}{fwbs\_variables}}{fwbs\_variables}}\label{fwbs_variables}}
+
+\begin{itemize}
+\item
+  bktlife : blanket lifetime (years)
+\item
+  coolmass : mass of water coolant (in shield, blanket, first wall,
+  divertor) (kg)
+\item
+  vvmass : vacuum vessel mass (kg)
+\item
+  denstl /7800.0/ : density of steel (kg/m3)
+\item
+  denw /19250.0/ : density of tungsten (kg/m3)
+\item
+  dewmkg : total mass of vacuum vessel + cryostat (kg)
+\item
+  emult /1.269/ : energy multiplication in blanket and shield
+\item
+  emultmw : power due to energy multiplication in blanket and shield
+  {[}MW{]}
+\item
+  fblss /0.09705/ : KIT blanket model: steel fraction of breeding zone
+\item
+  fdiv /0.115/ : area fraction taken up by divertor
+\item
+  fhcd /0.0/ : area fraction covered by heating/current drive apparatus
+  plus diagnostics
+\item
+  fhole /0.0/ : area fraction taken up by other holes (not used)
+\item
+  fwbsshape /2/ : first wall, blanket, shield and vacuum vessel shape:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 D-shaped (cylinder inboard + ellipse outboard);
+  \item
+    = 2 defined by two ellipses
+  \end{itemize}
+\item
+  fwlife : first wall full-power lifetime (y)
+\item
+  fwmass : first wall mass (kg)
+\item
+  fw\_armour\_mass : first wall armour mass (kg)
+\item
+  fw\_armour\_thickness /0.005/ : first wall armour thickness (m)
+\item
+  fw\_armour\_vol : first wall armour volume (m3)
+\item
+  iblanket /1/ : switch for blanket model:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 CCFE HCPB model;
+  \item
+    = 2 KIT HCPB model;
+  \item
+    = 3 CCFE HCPB model with Tritium Breeding Ratio calculation;
+  \item
+    = 4 KIT HCLL model
+  \end{itemize}
+\item
+  iblnkith /1/ : switch for inboard blanket:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 No inboard blanket (blnkith=0.0);
+  \item
+    = 1 Inboard blanket present
+  \end{itemize}
+\item
+  inuclear /0/ : switch for nuclear heating in the coils:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 Frances Fox model (default);
+  \item
+    = 1 Fixed by user (qnuc)
+  \end{itemize}
+\item
+  qnuc /0.0/ : nuclear heating in the coils (W) (inuclear=1)
+\item
+  li6enrich /30.0/ : lithium-6 enrichment of breeding material (\%)
+\item
+  pnucblkt : nuclear heating in the blanket (MW)
+\item
+  pnuccp : nuclear heating in the ST centrepost (MW)
+\item
+  pnucdiv : nuclear heating in the divertor (MW)
+\item
+  pnucfw : nuclear heating in the first wall (MW)
+\item
+  pnuchcd : nuclear heating in the HCD apparatus and diagnostics (MW)
+\item
+  pnucloss : nuclear heating lost via holes (MW)
+\item
+  pnucloss : nuclear heating to vacuum vessel and beyond(MW)
+\item
+  pnucshld : nuclear heating in the shield (MW)
+\item
+  whtblkt : mass of blanket (kg)
+\item
+  whtblss : mass of blanket - steel part (kg)
+\item
+  armour\_fw\_bl\_mass : Total mass of armour, first wall and blanket
+  (kg)
+\item
+  \textbf{The following are used only in the CCFE HCPB blanket model
+  (iblanket=1):}
+\item
+  breeder\_f /0.5/ : Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration
+  variable 108)
+\item
+  breeder\_multiplier /0.75/ : combined breeder/multipler fraction of
+  blanket by volume
+\item
+  vfcblkt /0.05295/ : He coolant fraction of blanket by volume (iblanket
+  = 1 or 3 (CCFE HCPB))
+\item
+  vfpblkt /0.1/ : He purge gas fraction of blanket by volume (iblanket =
+  1 or 3 (CCFE HCPB))
+\item
+  whtblli4sio4 : mass of lithium orthosilicate in blanket (kg) (iblanket
+  = 1 or 3 (CCFE HCPB))
+\item
+  whtbltibe12 : mass of titanium beryllide in blanket (kg) (iblanket = 1
+  or 3 (CCFE HCPB))
+\item
+  \textbf{The following are used in the KIT HCPB blanket model
+  (iblanket=2):}
+\item
+  breedmat /1/ : breeder material switch (iblanket=2 (KIT HCPB)):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 Lithium orthosilicate;
+  \item
+    = 2 Lithium methatitanate;
+  \item
+    = 3 Lithium zirconate
+  \end{itemize}
+\item
+  densbreed : density of breeder material (kg/m3) (iblanket=2 (KIT
+  HCPB))
+\item
+  fblbe /0.6/ : beryllium fraction of blanket by volume (if (iblanket=2
+  (KIT HCPB)), Be fraction of breeding zone)
+\item
+  fblbreed /0.154/ : breeder fraction of blanket breeding zone by volume
+  (iblanket=2 (KIT HCPB))
+\item
+  fblhebmi /0.40/ : helium fraction of inboard blanket box manifold by
+  volume (iblanket=2 (KIT HCPB))
+\item
+  fblhebmo /0.40/ : helium fraction of outboard blanket box manifold by
+  volume (iblanket=2 (KIT HCPB))
+\item
+  fblhebpi /0.6595/ : helium fraction of inboard blanket back plate by
+  volume (iblanket=2 (KIT HCPB))
+\item
+  fblhebpo /0.6713/ : helium fraction of outboard blanket back plate by
+  volume (iblanket=2 (KIT HCPB))
+\item
+  hcdportsize /1/ : size of heating/current drive ports (iblanket=2 (KIT
+  HCPB)):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 'small'
+  \item
+    = 2 'large'
+  \end{itemize}
+\item
+  nflutf : peak fast neutron fluence on TF coil superconductor (n/m2)
+  (iblanket=2 (KIT HCPB))
+\item
+  npdiv /2/ : number of divertor ports (iblanket=2 (KIT HCPB))
+\item
+  nphcdin /2/ : number of inboard ports for heating/current drive
+  (iblanket=2 (KIT HCPB))
+\item
+  nphcdout /2/ : number of outboard ports for heating/current drive
+  (iblanket=2 (KIT HCPB))
+\item
+  tbr : tritium breeding ratio (iblanket=2,3 (KIT HCPB/HCLL))
+\item
+  tritprate : tritium production rate (g/day) (iblanket=2 (KIT HCPB))
+\item
+  vvhemax : maximum helium concentration in vacuum vessel at end of
+  plant life (appm) (iblanket=2 (KIT HCPB))
+\item
+  wallpf /1.21/ : neutron wall load peaking factor (iblanket=2 (KIT
+  HCPB))
+\item
+  whtblbreed : mass of blanket - breeder part (kg) (iblanket=2 (KIT
+  HCPB))
+\item
+  whtblbe : mass of blanket - beryllium part (kg)
+\item
+  \textbf{CCFE HCPB model with Tritium Breeding Ratio calculation
+  (iblanket=3):}
+\item
+  tbrmin /1.1/ : minimum tritium breeding ratio (constraint equation 52)
+  (If iblanket=1, tbrmin=minimum 5-year time-averaged tritium breeding
+  ratio)
+\item
+  iblanket\_thickness /2/ : Blanket thickness switch:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 thin 0.53 m inboard, 0.91 m outboard
+  \item
+    = 2 medium 0.64 m inboard, 1.11 m outboard
+  \item
+    = 3 thick 0.75 m inboard, 1.30 m outboard
+  \end{itemize}
+\item
+  Do not set blnkith, blnkoth, fwith or fwoth when iblanket=3.
+\item
+  primary\_pumping /2/ : Switch for pumping power for primary coolant
+  (06/01/2016): (mechanical power only)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 User sets pump power directly (htpmw\_blkt, htpmw\_fw,
+    htpmw\_div, htpmw\_shld)
+  \item
+    = 1 User sets pump power as a fraction of thermal power (fpumpblkt,
+    fpumpfw, fpumpdiv, fpumpshld)
+  \item
+    = 2 Mechanical pumping power is calculated
+  \item
+    = 3 Mechanical pumping power is calculated using specified pressure
+    drop
+  \end{itemize}
+\item
+  (peak first wall temperature is only calculated if primary\_pumping =
+  2)
+\item
+  secondary\_cycle /0/ : Switch for power conversion cycle:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 Set efficiency for chosen blanket, from detailed models
+    (divertor heat not used)
+  \item
+    = 1 Set efficiency for chosen blanket, from detailed models
+    (divertor heat used)
+  \item
+    = 2 user input thermal-electric efficiency (etath)
+  \item
+    = 3 steam Rankine cycle
+  \item
+    = 4 supercritical CO2 cycle
+  \end{itemize}
+\item
+  coolwh : Blanket coolant (set via blkttype):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 helium;
+  \item
+    = 2 pressurized water
+  \end{itemize}
+\item
+  afwi /0.008/ : inner radius of inboard first wall/blanket coolant
+  channels OBSOLETE (m)
+\item
+  afwo /0.008/ : inner radius of outboard first wall/blanket coolant
+  channels OBSOLETE (m)
+\item
+  fwcoolant /helium/ : first wall coolant (can be different from blanket
+  coolant) 'helium' or 'water' (27/11/2015)
+\item
+  fw\_wall /0.003/ : wall thickness of first wall coolant channels (m)
+  (27/11/2015)
+\item
+  afw /0.006/ : radius of first wall cooling channels (m) (27/11/15)
+\item
+  pitch /0.020/ : pitch of first wall cooling channels (m) (27/11/15)
+\item
+  fwinlet /573/ : inlet temperature of first wall coolant (K)
+  (27/11/2015)
+\item
+  fwoutlet /823/ : outlet temperature of first wall coolant (K)
+  (27/11/2015)
+\item
+  fwpressure /15.5e6/ : first wall coolant pressure (Pa)
+  (secondary\_cycle\textgreater1)
+\item
+  tpeak : peak first wall temperature (K) (27/11/2015)
+\item
+  roughness /1e-6/ : first wall channel roughness epsilon (m)
+  (27/11/2015)
+\item
+  fw\_channel\_length /4.0/ : Length of a single first wall channel (all
+  in parallel) (m) (27/11/2015) (iteration variable 114, useful for
+  constraint equation 39)
+\item
+  peaking\_factor /1.0/ : peaking factor for first wall heat loads
+  (27/11/2015) (Applied separately to inboard and outboard loads.
+  Applies to both neutron and surface loads. Only used to calculate peak
+  temperature - not the coolant flow rate.)
+\item
+  blpressure /15.5e6/ : blanket coolant pressure (Pa)
+  (secondary\_cycle\textgreater1) (27/11/2015)
+\item
+  inlet\_temp /573.0/ : inlet temperature of blanket coolant (K)
+  (secondary\_cycle\textgreater1) (27/11/2015)
+\item
+  outlet\_temp /823.0/ : outlet temperature of blanket coolant (K)
+  (27/11/2015)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    (secondary\_cycle\textgreater1);
+  \item
+    input if coolwh=1 (helium), calculated if coolwh=2 (water)
+  \end{itemize}
+\item
+  coolp /15.5e6/ : blanket coolant pressure (Pa) stellarator ONLY
+  (27/11/2015)
+\item
+  nblktmodpo /8/ : number of outboard blanket modules in poloidal
+  direction (secondary\_cycle\textgreater1)
+\item
+  nblktmodpi /7/ : number of inboard blanket modules in poloidal
+  direction (secondary\_cycle\textgreater1)
+\item
+  nblktmodto /48/ : number of outboard blanket modules in toroidal
+  direction (secondary\_cycle\textgreater1)
+\item
+  nblktmodti /32/ : number of inboard blanket modules in toroidal
+  direction (secondary\_cycle\textgreater1)
+\item
+  tfwmatmax /823.0/ : maximum temperature of first wall material (K)
+  (secondary\_cycle\textgreater1)
+\item
+  fw\_th\_conductivity /28.34/ : thermal conductivity of first wall
+  material at 293 K (W/m/K) (Temperature dependence is as for
+  unirradiated Eurofer)
+\item
+  fvoldw /1.74/ : area coverage factor for vacuum vessel volume
+\item
+  fvolsi /1.0/ : area coverage factor for inboard shield volume
+\item
+  fvolso /0.64/ : area coverage factor for outboard shield volume
+\item
+  fwclfr /0.15/ : first wall coolant fraction (calculated if lpulse=1 or
+  ipowerflow=1)
+\item
+  praddiv : radiation power incident on the divertor (MW)
+\item
+  pradfw : radiation power incident on the divertor (MW)
+\item
+  pradhcd : radiation power incident on the divertor (MW)
+\item
+  pradloss : radiation power incident on the divertor (MW)
+\item
+  ptfnuc : nuclear heating in the TF coil (MW)
+\item
+  ptfnucpm3 : nuclear heating in the TF coil (MW/m3)
+  (blktmodel\textgreater0)
+\item
+  rdewex : cryostat radius (m)
+\item
+  zdewex : cryostat height (m)
+\item
+  rpf2dewar /0.5/ : radial distance between outer edge of largest
+  ipfloc=3 PF coil (or stellarator modular coil) and cryostat (m)
+\item
+  vdewex : cryostat volume (m3)
+\item
+  vdewin : vacuum vessel volume (m3)
+\item
+  vfshld /0.25/ : coolant void fraction in shield
+\item
+  volblkt : volume of blanket (m3)
+\item
+  volblkti : volume of inboard blanket (m3)
+\item
+  volblkto : volume of outboard blanket (m3)
+\item
+  volshld : volume of shield (m3)
+\item
+  whtshld : mass of shield (kg)
+\item
+  wpenshld : mass of the penetration shield (kg)
+\item
+  wtshldi : mass of inboard shield (kg)
+\item
+  wtshldo : mass of outboard shield (kg)
+\item
+  irefprop /1/ : obsolete
+\item
+  fblli2o /0.08/ : lithium oxide fraction of blanket by volume
+  (blktmodel=0)
+\item
+  fbllipb /0.68/ : lithium lead fraction of blanket by volume
+  (blktmodel=0)
+\item
+  fblvd /0.0/ : vanadium fraction of blanket by volume (blktmodel=0)
+\item
+  wtblli2o : mass of blanket - Li\_2O part (kg)
+\item
+  wtbllipb : mass of blanket - Li-Pb part (kg)
+\item
+  whtblvd : mass of blanket - vanadium part (kg)
+\item
+  whtblli : mass of blanket - lithium part (kg)
+\item
+  vfblkt /0.25/ : coolant void fraction in blanket (blktmodel=0),
+  (calculated if blktmodel \textgreater{} 0)
+\item
+  blktmodel /0/ : switch for blanket/tritium breeding model (but see
+  \texttt{iblanket}):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 original simple model;
+  \item
+    = 1 KIT model based on a helium-cooled pebble-bed blanket (HCPB)
+    reference design
+  \end{itemize}
+\item
+  declblkt /0.075/ : neutron power deposition decay length of blanket
+  structural material (m) (Stellarators only)
+\item
+  declfw /0.075/ : neutron power deposition decay length of first wall
+  structural material (m) (Stellarators only)
+\item
+  declshld /0.075/ : neutron power deposition decay length of shield
+  structural material (m) (Stellarators only)
+\item
+  blkttype /3/ : Switch for blanket type:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 WCLL; efficiency taken from WP13-DAS08-T02, EFDA\_D\_2M97B7
+  \item
+    = 2 HCLL; efficiency taken from WP12-DAS08-T01, EFDA\_D\_2LLNBX
+  \item
+    = 3 HCPB; efficiency taken from WP12-DAS08-T01, EFDA\_D\_2LLNBX
+  \end{itemize}
+\item
+  etaiso /0.85/ : isentropic efficiency of FW and blanket coolant pumps
+\item
+  etahtp /0.95/ : electrical efficiency of primary coolant pumps
+\end{itemize}
+
+\hypertarget{primary_pumping_variables}{%
+\subsubsection{\texorpdfstring{\href{primary_pumping_variables.html}{primary\_pumping\_variables}}{primary\_pumping\_variables}}\label{primary_pumping_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  gamma\_he /1.667/ FIX : ratio of specific heats for helium
+  (primary\_pumping=3)
+\item
+  cp\_he /5195/ FIX: specific heat capacity at constant pressure: helium
+  (primary\_pumping=3) {[}J/(kg.K){]}
+\item
+  t\_in\_bb /573.13/ FIX: temperature in FW and blanket coolant at
+  blanket entrance (primary\_pumping=3) {[}K{]}
+\item
+  t\_out\_bb /773.13/ FIX: temperature in FW and blanket coolant at
+  blanket exit (primary\_pumping=3) {[}K{]}
+\item
+  p\_he /8.0e6/ FIX: pressure in FW and blanket coolant at pump exit
+  (primary\_pumping=3) {[}Pa{]}
+\item
+  dp\_he /5.5e5/ FIX: pressure drop in FW and blanket coolant including
+  heat exchanger and pipes (primary\_pump
+\item
+  htpmw\_fw\_blkt : mechanical pumping power for FW and blanket
+  including heat exchanger and pipes (primary\_pum
+\end{itemize}
+
+\hypertarget{pfcoil_variables}{%
+\subsubsection{\texorpdfstring{\href{pfcoil_variables.html}{pfcoil\_variables}}{pfcoil\_variables}}\label{pfcoil_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  ngrpmx /8/ FIX : maximum number of groups of PF coils
+\item
+  nclsmx /2/ FIX : maximum number of PF coils in a given group
+\item
+  nptsmx /32/ FIX : maximum number of points across the midplane of the
+  plasma at which the field from the PF coils is fixed
+\item
+  nfixmx /64/ FIX : maximum number of fixed current PF coils
+\item
+  alfapf /5.0e-10/ : smoothing parameter used in PF coil current
+  calculation at the beginning of pulse (BoP)
+\item
+  alstroh /4.0D8/ : allowable hoop stress in Central Solenoid structural
+  material (Pa)
+\item
+  i\_cs\_stress /0/ : Switch for CS stress calculation:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 Hoop stress only;
+  \item
+    = 1 Hoop + Axial stress
+  \end{itemize}
+\item
+  areaoh : central solenoid cross-sectional area (m2)
+\item
+  awpoh : central solenoid conductor+void area (m2)
+\item
+  bmaxoh : maximum field in central solenoid at end of flat-top (EoF)
+  (T)
+\item
+  bmaxoh0 : maximum field in central solenoid at beginning of pulse (T)
+\item
+  bpf(ngc2) : peak field at coil i (T)
+\item
+  cohbop : central solenoid overall current density at beginning of
+  pulse (A/m2)
+\item
+  coheof /1.85e7/ : central solenoid overall current density at end of
+  flat-top (A/m2) (iteration variable 37)
+\item
+  cpt(ngc2,6) : current per turn in coil i at time j (A)
+\item
+  cptdin(ngc2) /4.0e4/: peak current per turn input for PF coil i (A)
+\item
+  curpfb(ngc2) : work array
+\item
+  curpff(ngc2) : work array
+\item
+  curpfs(ngc2) : work array
+\item
+  etapsu /0.9/ : Efficiency of ohmic heating
+\item
+  fcohbof : ratio of central solenoid overall current density at
+  beginning of flat-top / end of flat-top
+\item
+  fcohbop /0.9/ : ratio of central solenoid overall current density at
+  beginning of pulse / end of flat-top (iteration variable 41)
+\item
+  fcuohsu /0.7/ : copper fraction of strand in central solenoid
+\item
+  fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
+\item
+  ipfloc(ngc) /2,2,3/ : switch for locating scheme of PF coil group i:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 PF coil on top of central solenoid;
+  \item
+    = 2 PF coil on top of TF coil;
+  \item
+    = 3 PF coil outside of TF coil
+  \end{itemize}
+\item
+  ipfres /0/ : switch for PF coil type:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 superconducting PF coils;
+  \item
+    = 1 resistive PF coils
+  \end{itemize}
+\item
+  itr\_sum : total sum of I x turns x radius for all PF coils and CS
+  (Am)
+\item
+  isumatoh /1/ : switch for superconductor material in central solenoid:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 ITER Nb3Sn critical surface model with standard ITER parameters;
+  \item
+    = 2 Bi-2212 high temperature superconductor (range of validity T
+    \textless{} 20K, adjusted field b \textless{} 104 T, B
+    \textgreater{} 6 T);
+  \item
+    = 3 NbTi;
+  \item
+    = 4 ITER Nb3Sn model with user-specified parameters
+  \item
+    = 5 WST Nb3Sn parameterisation
+  \item
+    = 6 REBCO HTS parameterisation
+  \end{itemize}
+\item
+  isumatpf /1/ : switch for superconductor material in PF coils:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 ITER Nb3Sn critical surface model with standard ITER parameters;
+  \item
+    = 2 Bi-2212 high temperature superconductor (range of validity T
+    \textless{} 20K, adjusted field b \textless{} 104 T, B
+    \textgreater{} 6 T);
+  \item
+    = 3 NbTi;
+  \item
+    = 4 ITER Nb3Sn model with user-specified parameters
+  \item
+    = 5 WST Nb3Sn parameterisation
+  \end{itemize}
+\item
+  jscoh\_bop : central solenoid superconductor critical current density
+  (A/m2) at beginning-of-pulse
+\item
+  jscoh\_eof : central solenoid superconductor critical current density
+  (A/m2) at end-of-flattop
+\item
+  jstrandoh\_bop : central solenoid strand critical current density
+  (A/m2) at beginning-of-pulse
+\item
+  jstrandoh\_eof : central solenoid strand critical current density
+  (A/m2) at end-of-flattop
+\item
+  ncirt : number of PF circuits (including central solenoid and plasma)
+\item
+  ncls(ngrpmx+2) /1,1,2/ : number of PF coils in group j
+\item
+  nfxfh /7/ : number of filaments the top and bottom of the central
+  solenoid should be broken into during scaling (5 - 10 is good)
+\item
+  ngrp /3/ : number of groups of PF coils. Symmetric coil pairs should
+  all be in the same group
+\item
+  nohc : number of PF coils (excluding the central solenoid) + 1
+\item
+  ohhghf /0.71/ : central solenoid height / TF coil internal height
+\item
+  oh\_steel\_frac /0.5/ : central solenoid steel fraction (iteration
+  variable 122)
+\item
+  pfcaseth(ngc2) : steel case thickness for PF coil i (m)
+\item
+  pfclres /2.5e-8/ : PF coil resistivity (if ipfres=1) (Ohm-m)
+\item
+  pfmmax : mass of heaviest PF coil (tonnes)
+\item
+  pfrmax : radius of largest PF coil (m)
+\item
+  pfsec : PF Coil waste heat (MW)
+\item
+  pfwp : PF Coil wall-plug power requirements (MW)
+\item
+  powohres : central solenoid resistive power during flattop (W)
+\item
+  powpfres : total PF coil resistive losses during flattop (W)
+\item
+  ra(ngc2) : inner radius of coil i (m)
+\item
+  rb(ngc2) : outer radius of coil i (m)
+\item
+  ric(ngc2) : peak current in coil i (MA-turns)
+\item
+  rjconpf(ngc2) /3.0e7/ : average winding pack current density of PF
+  coil i (A/m2) at time of peak current in that coil (calculated for
+  ipfloc=1 coils)
+\item
+  rjohc : allowable central solenoid current density at end of flat-top
+  (A/m2)
+\item
+  rjohc0 : allowable central solenoid current density at beginning of
+  pulse (A/m2)
+\item
+  rjpfalw(ngc2) : allowable winding pack current density of PF coil i
+  (A/m2)
+\item
+  rohc : radius to the centre of the central solenoid (m)
+\item
+  routr /1.5/ : radial distance (m) from outboard TF coil leg to centre
+  of ipfloc=3 PF coils
+\item
+  rpf(ngc2) : radius of PF coil i (m)
+\item
+  rpf1 /0.0/ : offset (m) of radial position of ipfloc=1 PF coils from
+  being directly above the central solenoid
+\item
+  rpf2 /-1.63/ : offset (m) of radial position of ipfloc=2 PF coils from
+  being at rmajor (offset = rpf2*triang*rminor)
+\item
+  s\_tresca\_oh : Tresca stress coils/central solenoid {[}MPa{]}
+\item
+  sigpfcalw /500.0/ : maximum permissible tensile stress (MPa) in steel
+  coil cases for superconducting PF coils (ipfres=0)
+\item
+  sigpfcf /0.666/ : fraction of JxB hoop force supported by steel case
+  for superconducting PF coils (ipfres=0)
+\item
+  sxlg(ngc2,ngc2) : mutual inductance matrix (H)
+\item
+  tmargoh : Central solenoid temperature margin (K)
+\item
+  turns(ngc2) : number of turns in PF coil i
+\item
+  vf(ngc2) /0.3/ : winding pack void fraction of PF coil i for coolant
+\item
+  vfohc /0.3/ : void fraction of central solenoid conductor for coolant
+\item
+  vsbn : total flux swing available for burn (Wb)
+\item
+  vsefbn : flux swing from PF coils for burn (Wb)
+\item
+  vsefsu : flux swing from PF coils for startup (Wb)
+\item
+  vseft : total flux swing from PF coils (Wb)
+\item
+  vsoh : total flux swing from the central solenoid (Wb)
+\item
+  vsohbn : central solenoid flux swing for burn (Wb)
+\item
+  vsohsu : central solenoid flux swing for startup (Wb)
+\item
+  vssu : total flux swing for startup (Wb)
+\item
+  vstot : total flux swing for pulse (Wb)
+\item
+  waves(ngc2, 6) : used in current waveform of PF coils/central solenoid
+\item
+  whtpf : total mass of the PF coil conductor (kg)
+\item
+  whtpfs : total mass of the PF coil structure (kg)
+\item
+  wtc(ngc2) : conductor mass for PF coil i (kg)
+\item
+  wts(ngc2) : structure mass for PF coil i (kg)
+\item
+  zh(ngc2) : upper point of PF coil i (m)
+\item
+  zl(ngc2) : lower point of PF coil i (m)
+\item
+  zpf(ngc2) : z (height) location of PF coil i (m)
+\item
+  zref(ngrpmx) /../ : PF coil vertical positioning adjuster:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    - for groups j with ipfloc(j) = 1; zref(j) is ignored
+  \item
+    - for groups j with ipfloc(j) = 2 AND itart=1 (only); zref(j) is
+    distance of centre of PF coil from inside edge of TF coil (remember
+    that PF coils for STs lie within the TF coil)
+  \item
+    - for groups j with ipfloc(j) = 3; zref(j) = ratio of height of coil
+    group j to plasma minor radius
+  \end{itemize}
+\item
+  bmaxcs\_lim : Central solenoid max field limit {[}T{]}
+\item
+  fbmaxcs : F-value for CS mmax field (cons. 79, itvar 149)
+\end{itemize}
+
+\hypertarget{tfcoil_variables}{%
+\subsubsection{\texorpdfstring{\href{tfcoil_variables.html}{tfcoil\_variables}}{tfcoil\_variables}}\label{tfcoil_variables}}
+
+\begin{itemize}
+\item
+  acasetf : external case area per coil (inboard leg) (m2)
+\item
+  acasetfo : external case area per coil (outboard leg) (m2)
+\item
+  acndttf : area of the cable conduit (m2)
+\item
+  acond : conductor area (winding pack) (m2)
+\item
+  acstf : internal area of the cable space (m2)
+\item
+  insulation\_area : single turn insulation area (m2)
+\item
+  aiwp : winding pack insulation area (m2)
+\item
+  alstrtf /6.0D8/ : allowable Tresca stress in TF coil structural
+  material (Pa)
+\item
+  arealeg : outboard TF leg area (m2)
+\item
+  aswp : winding pack structure area (m2)
+\item
+  avwp : winding pack void (He coolant) area (m2)
+\item
+  awphec : winding pack He coil area (m2)
+\item
+  bcritsc /24.0/ : upper critical field (T) for Nb3Sn superconductor at
+  zero temperature and strain (isumattf=4, =bc20m)
+\item
+  bmaxtf : mean peak field at TF coil (T)
+\item
+  bmaxtfrp : peak field at TF conductor with ripple (T)
+\item
+  casestr : case strain
+\item
+  casthi /0.0/ : EITHER: inboard TF coil case plasma side thickness (m)
+  (calculated for stellarators)
+\item
+  casthi\_fraction /0.05/ : OR: inboard TF coil case plasma side
+  thickness as a fraction of tfcth
+\item
+  casths /0.0/ : EITHER: inboard TF coil sidewall case thickness (m)
+  (calculated for stellarators)
+\item
+  casths\_fraction /0.03/ : OR: inboard TF coil sidewall case thickness
+  as a fraction of tftort
+\item
+  conductor\_width : Width of square conductor (m)
+\item
+  leno : Dimension of each turn including inter-turn insulation (m)
+\item
+  leni : Dimension of space inside conductor (m)
+\item
+  acs : Area of space inside conductor (m2)
+\item
+  cdtfleg : TF outboard leg current density (A/m2) (resistive coils
+  only)
+\item
+  cforce : centering force on inboard leg (per coil) (N/m)
+\item
+  cph2o /4180.0/ FIX : specific heat capacity of water (J/kg/K)
+\item
+  cpttf /7.0e4/ : TF coil current per turn (A). (calculated for
+  stellarators) (calculated for integer-turn TF coils
+  i\_tf\_turns\_integer=1) (iteration variable 60)
+\item
+  cpttf\_max /9.0e4/ : Max TF coil current per turn {[}A{]}. (For
+  stellarators and i\_tf\_turns\_integer=1) (constraint equation 77)
+\item
+  dcase /8000.0/ : density of coil case (kg/m3)
+\item
+  dcond(6) /9000.0/ : density of superconductor type given by
+  isumattf/isumatoh/isumatpf (kg/m3)
+\item
+  dcondins /1800.0/ : density of conduit + ground-wall insulation
+  (kg/m3)
+\item
+  dcopper /8900.0/ : density of copper (kg/m3)
+\item
+  deflect : TF coil deflection at full field (m)
+\item
+  denh2o /985.0/ FIX : density of water (kg/m3)
+\item
+  dhecoil /0.005/ : diameter of He coil in TF winding (m)
+\item
+  estotf : stored energy per TF coil (GJ) OBSOLETE
+\item
+  estotftgj : total stored energy in the toroidal field (GJ)
+\item
+  eyins /2.0e10/ : insulator Young's modulus (Pa) (default value from
+  DDD11-2 v2 2 (2009))
+\item
+  eyoung(2) : work array used in stress calculation (Pa)
+\item
+  eystl /2.05e11/ : steel case Young's modulus (Pa) (default value from
+  DDD11-2 v2 2 (2009))
+\item
+  eywp /6.6e8/ : winding pack Young's modulus (Pa)
+\item
+  eyzwp : winding pack vertical Young's modulus (Pa) (tfc\_model=1)
+\item
+  farc4tf /0.7/ : factor to size height of point 4 on TF coil
+\item
+  fcutfsu /0.69/ : copper fraction of cable conductor (TF coils)
+  (iteration variable 59)
+\item
+  fhts /0.5/ : technology adjustment factor for critical current density
+  fit for isumat..=2 Bi-2212 superconductor, to describe the level of
+  technology assumed (i.e. to account for stress, fatigue, radiation, AC
+  losses, joints or manufacturing variations; 1.0 would be very
+  optimistic)
+\item
+  insstrain : radial strain in insulator (tfc\_model=1)
+\item
+  i\_tf\_tresca /0/ : switch for TF coil conduit Tresca stress
+  criterion:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 Tresca (no adjustment);
+  \item
+    = 1 Tresca with CEA adjustment factors (radial+2\%, vertical+60\%)
+  \end{itemize}
+\item
+  i\_tf\_turns\_integer /0/ : switch for TF coil integer/non-integer
+  turns
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 non-integer turns;
+  \item
+    = 1 integer turns
+  \end{itemize}
+\item
+  isumattf /1/ : switch for superconductor material in TF coils:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 ITER Nb3Sn critical surface model with standard ITER parameters;
+  \item
+    = 2 Bi-2212 high temperature superconductor (range of validity T
+    \textless{} 20K, adjusted field b \textless{} 104 T, B
+    \textgreater{} 6 T);
+  \item
+    = 3 NbTi;
+  \item
+    = 4 ITER Nb3Sn model with user-specified parameters
+  \item
+    = 5 WST Nb3Sn parameterisation
+  \item
+    = 6 REBCO HTS tape in CroCo strand
+  \end{itemize}
+\item
+  itfsup /1/ : switch for TF coil conductor model:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 copper;
+  \item
+    = 1 superconductor
+  \end{itemize}
+\item
+  jbus /1.25e6/ : bussing current density (A/m2)
+\item
+  jeff(2) : work array used in stress calculation (A/m2)
+\item
+  jwdgcrt : critical current density for winding pack (A/m2)
+\item
+  jwdgpro : allowable TF coil winding pack current density, for dump
+  temperature rise protection (A/m2)
+\item
+  jwptf : winding pack current density (A/m2)
+\item
+  n\_pancake /10/ : Number of pancakes in TF coil
+  (i\_tf\_turns\_integer=1)
+\item
+  n\_layer /20/ : Number of layers in TF coil (i\_tf\_turns\_integer=1)
+\item
+  oacdcp /1.4e7/ : overall current density in TF coil inboard legs
+  (A/m2) (iteration variable 12)
+\item
+  poisson /0.3/ : Poisson's ratio for TF stress calculation (assumed
+  constant over entire coil)
+\item
+  radtf(3) : work array used in stress calculation (m)
+\item
+  rbmax : radius of maximum TF B-field (m)
+\item
+  rhotfleg : TF coil leg resistance (ohm)
+\item
+  ripmax /1.0/ : maximum allowable toroidal field ripple amplitude at
+  plasma edge (\%)
+\item
+  ripple : peak/average toroidal field ripple at plasma edge (\%)
+\item
+  ritfc : total (summed) current in TF coils (A)
+\item
+  sigrad : radial TF coil stress (MPa)
+\item
+  sigrcon : radial stress in the conductor conduit (Pa)
+\item
+  sigrtf(2) : radial stress in TF coil regions (Pa)
+\item
+  sigtan : transverse TF coil stress (MPa)
+\item
+  sigtcon : tangential stress in the conductor conduit (Pa)
+\item
+  sigttf(2) : tangential stress in TF coil regions (Pa)
+\item
+  s\_tresca\_case : TF coil case Tresca stress (MPa)
+\item
+  s\_tresca\_cond : TF coil conduit Tresca stress (MPa)
+\item
+  s\_vmises\_case : TF coil case von Mises stress (MPa)
+\item
+  s\_vmises\_cond : TF coil conduit von Mises stress (MPa)
+\item
+  sigver : vertical TF coil stress (MPa)
+\item
+  sigvert : vertical tensile stress in TF coil (Pa)
+\item
+  sigvvall /9.3e7/ : allowable stress from TF quench in vacuum vessel
+  (Pa)
+\item
+  strncon\_cs /-0.005/ : strain in CS superconductor material (used in
+  Nb3Sn critical surface model, isumatoh=1, 4 or 5)
+\item
+  strncon\_pf /-0.005/ : strain in PF superconductor material (used in
+  Nb3Sn critical surface model, isumatph=1, 4 or 5)
+\item
+  strncon\_tf /-0.005/ : strain in TF superconductor material (used in
+  Nb3Sn critical surface model, isumattf=1, 4 or 5)
+\item
+  strtf1 : Constrained stress in TF conductor conduit (Pa)
+\item
+  strtf2 : Constrained stress in TF coil case (Pa)
+\item
+  quench\_model /exponential/ : switch for TF coil quench model:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 'exponential' exponential quench with constant discharge resistor
+  \item
+    = 'linear' quench with constant voltage
+  \end{itemize}
+
+  Only applies to REBCO magnet at present
+\item
+  quench\_detection\_ef /0.0/ : Electric field at which TF quench is
+  detected and discharge begins (V/m)
+\item
+  time1 : Time at which TF quench is detected (s)
+\item
+  taucq : allowable TF quench time (s)
+\item
+  tcritsc /16.0/ : critical temperature (K) for superconductor at zero
+  field and strain (isumattf=4, =tc0m)
+\item
+  tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s)
+  (iteration variable 56) For REBCO model, meaning depends on
+  quench\_model:
+\item
+  exponential quench : e-folding time (s)
+\item
+  linear quench : discharge time (s)
+\item
+  tfareain : area of inboard midplane TF legs (m2)
+\item
+  tfboreh : TF coil horizontal bore (m)
+\item
+  tfborev : vertical inner bore of TF coil (m)
+\item
+  tfbusl : TF coil bus length (m)
+\item
+  tfbusmas : TF coil bus mass (kg)
+\item
+  tfckw : available DC power for charging the TF coils (kW)
+\item
+  tfc\_model /1/ : switch for TF coil magnet stress model:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 simple model (solid copper coil)
+  \item
+    = 1 CCFE two-layer stress model; superconductor
+  \end{itemize}
+\item
+  tfcmw : peak power per TF power supply (MW)
+\item
+  tfcpmw : peak resistive TF coil inboard leg power (MW)
+\item
+  tfcryoarea : surface area of toroidal shells covering TF coils (m2)
+\item
+  tficrn : TF coil half-width - inner bore (m)
+\item
+  tfind : TF coil inductance (H)
+\item
+  tfinsgap /0.010/ : TF coil WP insertion gap (m)
+\item
+  tflegmw : TF coil outboard leg resistive power (MW)
+\item
+  tflegres /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
+\item
+  tfleng : TF coil circumference (m)
+\item
+  tfno /16.0/ : number of TF coils (default = 50 for stellarators)
+\item
+  tfocrn : TF coil half-width - outer bore (m)
+\item
+  tfsai : area of the inboard TF coil legs (m2)
+\item
+  tfsao : area of the outboard TF coil legs (m2)
+\item
+  tftmp /4.5/ : peak helium coolant temperature in TF coils and PF coils
+  (K)
+\item
+  tftort : TF coil toroidal thickness (m)
+\item
+  thicndut /8.0e-4/ : conduit insulation thickness (m)
+\item
+  layer\_ins /0/ : Additional insulation thickness between layers (m)
+\item
+  thkcas /0.3/ : inboard TF coil case outer (non-plasma side) thickness
+  (m) (iteration variable 57) (calculated for stellarators)
+\item
+  thkwp /0.0/ : radial thickness of winding pack (m) (iteration variable
+  140)
+\item
+  thwcndut /8.0e-3/ : TF coil conduit case thickness (m) (iteration
+  variable 58)
+\item
+  tinstf /0.018/ : ground insulation thickness surrounding winding pack
+  (m)
+\item
+  Includes allowance for 10 mm insertion gap. (calculated for
+  stellarators)
+\item
+  tmargmin\_tf /0/ : minimum allowable temperature margin : TF coils (K)
+\item
+  tmargmin\_cs /0/ : minimum allowable temperature margin : CS (K)
+\item
+  tmargmin /0/ : minimum allowable temperature margin : TFC AND CS (K)
+\item
+  temp\_margin : temperature margin (K)
+\item
+  tmargtf : TF coil temperature margin (K)
+\item
+  tmaxpro /150.0/ : maximum temp rise during a quench for protection (K)
+\item
+  tmax\_croco /200.0/ : CroCo strand: maximum permitted temp during a
+  quench (K)
+\item
+  tmax\_jacket /150.0/ : Jacket: maximum temp during a quench (K)
+\item
+  croco\_quench\_temperature : CroCo strand: Actual temp reached during
+  a quench (K)
+\item
+  tmpcry /4.5/ : coil temperature for cryogenic plant power calculation
+  (K)
+\item
+  turnstf : number of turns per TF coil
+\item
+  vdalw /20.0/ : max voltage across TF coil during quench (kV)
+  (iteration variable 52)
+\item
+  vforce : vertical separating force on inboard leg/coil (N)
+\item
+  vftf /0.4/ : coolant fraction of TFC 'cable' (itfsup=1), or of TFC leg
+  (itfsup=0)
+\item
+  voltfleg : volume of each TF coil outboard leg (m3)
+\item
+  vtfkv : TF coil voltage for resistive coil including bus (kV)
+\item
+  vtfskv : voltage across a TF coil during quench (kV)
+\item
+  whtcas : mass per coil of external case (kg)
+\item
+  whtcon : TF coil conductor mass per coil (kg)
+\item
+  whtconcu : copper mass in TF coil conductor (kg/coil)
+\item
+  whtconin : conduit insulation mass in TF coil conductor (kg/coil)
+\item
+  whtconsc : superconductor mass in TF coil cable (kg/coil)
+\item
+  whtconsh : steel conduit mass in TF coil conductor (kg/coil)
+\item
+  whtgw : mass of ground-wall insulation layer per coil (kg/coil)
+\item
+  whttf : total mass of the TF coils (kg)
+\item
+  windstrain : longitudinal strain in winding pack (tfc\_model=1)
+\item
+  wwp1 : width of first step of winding pack (m)
+\item
+  wwp2 : width of second step of winding pack (m)
+\item
+  \textbf{Superconducting TF coil shape parameters} (see also
+  farc4tf);\\
+  the TF inner surface top half is approximated by four circular arcs.
+  Arc 1 goes through points 1 and 2 on the inner surface. Arc 2 goes
+  through points 2 and 3, etc.
+\item
+  dthet(4) : angle of arc i (rad)
+\item
+  radctf(4) : radius of arc i (m)
+\item
+  xarc(5) : x location of arc point i on surface (m)
+\item
+  xctfc(4) : x location of arc centre i (m)
+\item
+  yarc(5) : y location of arc point i on surface (m)
+\item
+  yctfc(4) : y location of arc centre i (m)
+\item
+  tfa(4) : Horizontal radius of inside edge of TF coil (m)
+\item
+  tfb(4) : Vertical radius of inside edge of TF coil (m)
+\item
+  \textbf{Quantities relating to the spherical tokamak model (itart=1)}
+  (and in some cases, also to resistive TF coils, itfsup=0):
+\item
+  drtop /0.0/ : centrepost taper maximum radius adjustment (m)
+\item
+  dztop /0.0/ : centrepost taper height adjustment (m)
+\item
+  etapump /0.8/ : centrepost coolant pump efficiency
+\item
+  fcoolcp /0.3/ : coolant fraction of TF coil inboard legs (iteration
+  variable 23)
+\item
+  frhocp /1.0/ : centrepost resistivity enhancement factor
+\item
+  kcp /330.0/ FIX : thermal conductivity of centrepost (W/m/K)
+\item
+  kh2o /0.651/ FIX : thermal conductivity of water (W/m/K)
+\item
+  muh2o /4.71e-4/ FIX : water dynamic viscosity (kg/m/s)
+\item
+  ncool : number of centrepost coolant tubes
+\item
+  ppump : centrepost coolant pump power (W)
+\item
+  prescp : resistive power in the centrepost (W)
+\item
+  ptempalw /200.0/ : maximum peak centrepost temperature (C) (constraint
+  equation 44)
+\item
+  rcool /0.005/ : average radius of coolant channel (m) (iteration
+  variable 69)
+\item
+  rhocp : TF coil inboard leg resistivity (Ohm-m)
+\item
+  tcoolin /40.0/ : centrepost coolant inlet temperature (C)
+\item
+  tcpav /100.0/ : average temp of TF coil inboard leg conductor (C)
+  (resistive coils) (iteration variable 20)
+\item
+  tcpav2 : centrepost average temperature (C) (for consistency)
+\item
+  tcpmax : peak centrepost temperature (C)
+\item
+  vcool /20.0/ : max centrepost coolant flow speed at midplane (m/s)
+  (iteration variable 70)
+\item
+  volcp : total volume of TF coil inboard legs (m3)
+\item
+  whtcp : mass of TF coil inboard legs (kg)
+\item
+  whttflgs : mass of the TF coil legs (kg)
+\end{itemize}
+
+\hypertarget{structure_variables}{%
+\subsubsection{\texorpdfstring{\href{structure_variables.html}{structure\_variables}}{structure\_variables}}\label{structure_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  aintmass : intercoil structure mass (kg)
+\item
+  clgsmass : gravity support structure for TF coil, PF coil and
+  intercoil support systems (kg)
+\item
+  coldmass : total mass of components at cryogenic temperatures (kg)
+\item
+  fncmass : PF coil outer support fence mass (kg)
+\item
+  gsmass : reactor core gravity support mass (kg)
+\end{itemize}
+
+\hypertarget{vacuum_variables}{%
+\subsubsection{\texorpdfstring{\href{vacuum_variables.html}{vacuum\_variables}}{vacuum\_variables}}\label{vacuum_variables}}
+
+\begin{itemize}
+\item
+  vacuum\_model /old/ : switch for vacuum pumping model:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 'old' for old detailed ETR model;
+  \item
+    = 'simple' for simple steady-state model with comparison to ITER
+    cryopumps
+  \end{itemize}
+\item
+  niterpump : number of high vacuum pumps (real number), each with the
+  throughput of one ITER cryopump (50 Pa m3 s-1), all operating at the
+  same time (vacuum\_model = 'simple')
+\item
+  ntype /1/ : switch for vacuum pump type:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 for turbomolecular pump (magnetic bearing) with speed of 2.0
+    m3/s (1.95 for N2, 1.8 for He, 1.8 for DT);
+  \item
+    = 1 for compound cryopump with nominal speed of 10.0 m3/s (9.0 for
+    N2, 5.0 for He and 25.0 for DT)
+  \end{itemize}
+\item
+  nvduct : number of ducts (torus to pumps)
+\item
+  dlscal : vacuum system duct length scaling
+\item
+  pbase /5.0e-4/ : base pressure during dwell before gas pre-fill(Pa)
+\item
+  prdiv /0.36/ : divertor chamber pressure during burn (Pa)
+\item
+  pumptp /1.2155D22/ : Pump throughput (molecules/s) (default is ITER
+  value)
+\item
+  rat /1.3e-8/ : plasma chamber wall outgassing rate (Pa-m/s)
+\item
+  tn /300.0/ : neutral gas temperature in chamber (K)
+\item
+  vacdshm : mass of vacuum duct shield (kg)
+\item
+  vcdimax : diameter of duct passage (m)
+\item
+  vpumpn : number of high vacuum pumps
+\item
+  \textbf{The following are used in the Battes, Day and Rohde pump-down
+  model See "Basic considerations on the pump-down time in the dwell
+  phase of a pulsed fusion DEMO"
+  http://dx.doi.org/10.1016/j.fusengdes.2015.07.011)
+  (vacuum\_model=simple'):}
+\item
+  pumpareafraction /0.0203/ : area of one pumping port as a fraction of
+  plasma surface area
+\item
+  pumpspeedmax /27.3/ : maximum pumping speed per unit area for
+  deuterium \& tritium, molecular flow
+\item
+  pumpspeedfactor /0.167/ : effective pumping speed reduction factor due
+  to duct impedance
+\item
+  initialpressure /1.0/ : initial neutral pressure at the beginning of
+  the dwell phase (Pa)
+\item
+  pbase /5.0e-4/ : base pressure during dwell before gas pre-fill (Pa)
+\item
+  outgasindex /1.0/ : outgassing decay index
+\item
+  outgasfactor /0.0235/ : outgassing prefactor kw: outgassing rate at 1
+  s per unit area (Pa m s-1)
+\end{itemize}
+
+\hypertarget{pf_power_variables}{%
+\subsubsection{\texorpdfstring{\href{pf_power_variables.html}{pf\_power\_variables}}{pf\_power\_variables}}\label{pf_power_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  acptmax : average of currents in PF circuits (A)
+\item
+  ensxpfm : maximum stored energy in the PF circuits (MJ)
+\item
+  iscenr /2/ : Switch for PF coil energy storage option:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 all power from MGF (motor-generator flywheel) units;
+  \item
+    = 2 all pulsed power from line;
+  \item
+    = 3 PF power from MGF, heating from line
+  \end{itemize}
+
+  (In fact, options 1 and 3 are not treated differently)
+\item
+  pfckts : number of PF coil circuits
+\item
+  spfbusl : total PF coil circuit bus length (m)
+\item
+  spsmva : sum of PF power supply ratings (MVA)
+\item
+  srcktpm : sum of resistive PF coil power (kW)
+\item
+  vpfskv : PF coil voltage (kV)
+\item
+  peakpoloidalpower : Peak absolute rate of change of stored energy in
+  poloidal field (MW) (11/01/16)
+\item
+  maxpoloidalpower /1000/ : Maximum permitted absolute rate of change of
+  stored energy in poloidal field (MW)
+\item
+  poloidalpower : Poloidal power usage at time t (MW)
+\end{itemize}
+
+\hypertarget{heat_transport_variables}{%
+\subsubsection{\texorpdfstring{\href{heat_transport_variables.html}{heat\_transport\_variables}}{heat\_transport\_variables}}\label{heat_transport_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  baseel /5.0e6/ : base plant electric load (W)
+\item
+  crypmw : cryogenic plant power (MW)
+\item
+  etatf /0.9/ : AC to resistive power conversion for TF coils
+\item
+  etath /0.35/ : thermal to electric conversion efficiency if
+  secondary\_cycle=2; otherwise calculated
+\item
+  fachtmw : facility heat removal (MW)
+\item
+  fcsht : total baseline power required at all times (MW)
+\item
+  fgrosbop : scaled fraction of gross power to balance-of-plant
+\item
+  fmgdmw /0.0/ : power to mgf (motor-generator flywheel) units (MW)
+  (ignored if iscenr=2)
+\item
+  fpumpblkt /0.005/ : fraction of total blanket thermal power required
+  to drive the blanket coolant pumps (default assumes water coolant)
+  (secondary\_cycle=0)
+\item
+  fpumpdiv /0.005/ : fraction of total divertor thermal power required
+  to drive the divertor coolant pumps (default assumes water coolant)
+\item
+  fpumpfw /0.005/ : fraction of total first wall thermal power required
+  to drive the FW coolant pumps (default assumes water coolant)
+  (secondary\_cycle=0)
+\item
+  fpumpshld /0.005/ : fraction of total shield thermal power required to
+  drive the shield coolant pumps (default assumes water coolant)
+\item
+  htpmw\_min /0.0/ : Minimum total electrical power for primary coolant
+  pumps (MW) NOT RECOMMENDED
+\item
+  helpow : heat removal at cryogenic temperatures (W)
+\item
+  htpmw :: heat transport system electrical pump power (MW)
+\item
+  htpmw\_blkt /0.0/ : blanket coolant mechanical pumping power (MW)
+\item
+  htpmw\_div /0.0/ : divertor coolant mechanical pumping power (MW)
+\item
+  htpmw\_fw /0.0/ : first wall coolant mechanical pumping power (MW)
+\item
+  htpmw\_shld /.0/ : shield and vacuum vessel coolant mechanical pumping
+  power (MW)
+\item
+  htpsecmw : Waste power lost from primary coolant pumps (MW)
+\item
+  ipowerflow /1/ : switch for power flow model:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 pre-2014 version;
+  \item
+    = 1 comprehensive 2014 model
+  \end{itemize}
+\item
+  iprimnloss /0/ : switch for lost neutron power through holes destiny:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 does not contribute to energy generation cycle;
+  \item
+    = 1 contributes to energy generation cycle
+  \end{itemize}
+
+  (ipowerflow=0)
+\item
+  iprimshld /1/ : switch for shield thermal power destiny:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 does not contribute to energy generation cycle;
+  \item
+    = 1 contributes to energy generation cycle
+  \end{itemize}
+\item
+  nphx : number of primary heat exchangers
+\item
+  pacpmw : total pulsed power system load (MW)
+\item
+  peakmva : peak MVA requirement
+\item
+  pfwdiv : heat removal from first wall/divertor (MW)
+\item
+  pgrossmw : gross electric power (MW)
+\item
+  pinjht : power dissipated in heating and current drive system (MW)
+\item
+  pinjmax : maximum injector power during pulse (heating and
+  ramp-up/down phase) (MW)
+\item
+  pinjwp : injector wall plug power (MW)
+\item
+  pnetelmw : net electric power (MW)
+\item
+  precircmw : recirculating electric power (MW)
+\item
+  priheat : total thermal power removed from fusion core (MW)
+\item
+  psecdiv : Low-grade heat lost in divertor (MW)
+\item
+  psechcd : Low-grade heat lost into HCD apparatus (MW)
+\item
+  psechtmw : Low-grade heat (MW)
+\item
+  pseclossmw : Low-grade heat (VV + lost)(MW)
+\item
+  psecshld : Low-grade heat deposited in shield (MW)
+\item
+  pthermmw : High-grade heat useful for electric production (MW)
+\item
+  pwpm2 /150.0/ : base AC power requirement per unit floor area (W/m2)
+\item
+  tfacpd : total steady state TF coil AC power demand (MW)
+\item
+  tlvpmw : estimate of total low voltage power (MW)
+\item
+  trithtmw /15.0/ : power required for tritium processing (MW)
+\item
+  tturb : coolant temperature at turbine inlet (K) (secondary\_cycle =
+  3,4)
+\item
+  vachtmw /0.5/ : vacuum pump power (MW)
+\end{itemize}
+
+\hypertarget{times_variables}{%
+\subsubsection{\texorpdfstring{\href{times_variables.html}{times\_variables}}{times\_variables}}\label{times_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  pulsetimings /0.0/ : switch for pulse timings (if lpulse=1):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0, tohs = Ip(MA)/0.1 tramp, tqnch = input;
+  \item
+    = 1, tohs = iteration var or input. tramp/tqnch max of input or tohs
+  \end{itemize}
+\item
+  tburn /1000.0/ : burn time (s) (calculated if lpulse=1)
+\item
+  tburn0 : burn time (s) - used for internal consistency
+\item
+  tcycle : full cycle time (s)
+\item
+  tdown : down time (s)
+\item
+  tdwell /1800.0/ : time between pulses in a pulsed reactor (s)
+  (iteration variable 17)
+\item
+  theat /10.0/ : heating time, after current ramp up (s)
+\item
+  tim(6) : array of time points during plasma pulse (s)
+\item
+  timelabel(6) : array of time labels during plasma pulse (s)
+\item
+  intervallabel(6) : time intervals - as strings (s)
+\item
+  tohs /30.0/ : plasma current ramp-up time for current initiation (s)
+  (but calculated if lpulse=0) (iteration variable 65)
+\item
+  tohsin /0.0/ : switch for plasma current ramp-up time (if lpulse=0):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0, tohs = tramp = tqnch = Ip(MA)/0.5;
+  \item
+    \textless\textgreater0, tohs = tohsin; tramp, tqnch are input
+  \end{itemize}
+\item
+  tpulse : pulse length = tohs + theat + tburn + tqnch
+\item
+  tqnch /15.0/ : shut down time for PF coils (s); if pulsed, = tohs
+\item
+  tramp /15.0/ : initial PF coil charge time (s); if pulsed, = tohs
+\end{itemize}
+
+\hypertarget{buildings_variables}{%
+\subsubsection{\texorpdfstring{\href{buildings_variables.html}{buildings\_variables}}{buildings\_variables}}\label{buildings_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  admv /1.0e5/ : administration building volume (m3)
+\item
+  admvol : volume of administration buildings (m3)
+\item
+  clh1 /2.5/ : vertical clearance from TF coil to cryostat (m)
+  (calculated for tokamaks)
+\item
+  clh2 /15.0/ : clearance beneath TF coil to foundation (including
+  basement) (m)
+\item
+  conv /6.0e4/ : control building volume (m3)
+\item
+  convol : volume of control, protection and i\&c building (m3)
+\item
+  cryvol : volume of cryoplant building (m3)
+\item
+  efloor : effective total floor space (m2)
+\item
+  elevol : volume of electrical equipment building (m3)
+\item
+  esbldgm3 /1.0e3/ : volume of energy storage equipment building (m3)
+  (not used if lpulse=0)
+\item
+  fndt /2.0/ : foundation thickness (m)
+\item
+  hccl /5.0/ : clearance around components in hot cell (m)
+\item
+  hcwt /1.5/ : hot cell wall thickness (m)
+\item
+  mbvfac /2.8/ : maintenance building volume multiplication factor
+\item
+  pfbldgm3 /2.0e4/ : volume of PF coil power supply building (m3)
+\item
+  pibv /2.0e4/ : power injection building volume (m3)
+\item
+  rbrt /1.0/ : reactor building roof thickness (m)
+\item
+  rbvfac /1.6/ : reactor building volume multiplication factor
+\item
+  rbvol : reactor building volume (m3)
+\item
+  rbwt /2.0/ : reactor building wall thickness (m)
+\item
+  rmbvol : volume of maintenance and assembly building (m3)
+\item
+  row /4.0/ : clearance to building wall for crane operation (m)
+\item
+  rxcl /4.0/ : clearance around reactor (m)
+\item
+  shmf /0.5/ : fraction of shield mass per TF coil to be moved in the
+  maximum shield lift
+\item
+  shov /1.0e5/ : shops and warehouse volume (m3)
+\item
+  shovol :volume of shops and buildings for plant auxiliaries (m3)
+\item
+  stcl /3.0/ : clearance above crane to roof (m)
+\item
+  tfcbv /2.0e4/ : volume of TF coil power supply building (m3)
+  (calculated if TF coils are superconducting)
+\item
+  trcl /1.0/ : transportation clearance between components (m)
+\item
+  triv /4.0e4/ : volume of tritium, fuel handling and health physics
+  buildings (m3)
+\item
+  volnucb : sum of nuclear buildings volumes (m3)
+\item
+  volrci : internal volume of reactor building (m3)
+\item
+  wgt /5.0e5/ : reactor building crane capacity (kg) (calculated if 0 is
+  input)
+\item
+  wgt2 /1.0e5/ : hot cell crane capacity (kg) (calculated if 0 is input)
+\item
+  wrbi : distance from centre of machine to building wall (m), i.e.
+  reactor building half-width
+\item
+  wsvfac /1.9/ : warm shop building volume multiplication factor
+\item
+  wsvol : volume of warm shop building (m3)
+\end{itemize}
+
+\hypertarget{build_variables}{%
+\subsubsection{\texorpdfstring{\href{build_variables.html}{build\_variables}}{build\_variables}}\label{build_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  aplasmin /0.25/ : minimum minor radius (m)
+\item
+  blarea : blanket total surface area (m2)
+\item
+  blareaib : inboard blanket surface area (m2)
+\item
+  blareaob : outboard blanket surface area (m2)
+\item
+  blbmith /0.17/ : inboard blanket box manifold thickness (m)
+  (blktmodel\textgreater0)
+\item
+  blbmoth /0.27/ : outboard blanket box manifold thickness (m)
+  (blktmodel\textgreater0)
+\item
+  blbpith /0.30/ : inboard blanket base plate thickness (m)
+  (blktmodel\textgreater0)
+\item
+  blbpoth /0.35/ : outboard blanket base plate thickness (m)
+  (blktmodel\textgreater0)
+\item
+  blbuith /0.365/ : inboard blanket breeding zone thickness (m)
+  (blktmodel\textgreater0) (iteration variable 90)
+\item
+  blbuoth /0.465/ : outboard blanket breeding zone thickness (m)
+  (blktmodel\textgreater0) (iteration variable 91)
+\item
+  blnkith /0.115/ : inboard blanket thickness (m); (calculated if
+  blktmodel \textgreater{} 0) (=0.0 if iblnkith=0)
+\item
+  blnkoth /0.235/ : outboard blanket thickness (m); calculated if
+  blktmodel \textgreater{} 0
+\item
+  blnktth : top blanket thickness (m), = mean of inboard and outboard
+  blanket thicknesses
+\item
+  bore /1.42/ : central solenoid inboard radius (m) (iteration variable
+  29)
+\item
+  clhsf /4.268/ : cryostat lid height scaling factor (tokamaks)
+\item
+  ddwex /0.07/ : cryostat thickness (m)
+\item
+  ddwi /0.07/ : vacuum vessel thickness (TF coil / shield) (m)
+\item
+  fcspc /0.6/ : Fraction of space occupied by CS pre-compression
+  structure
+\item
+  fmsbc /0.0/ : Martensitic fraction of steel in (non-existent!) bucking
+  cylinder
+\item
+  fmsbl /0.0/ : Martensitic fraction of steel in blanket
+\item
+  fmsdwe /0.0/ : Martensitic fraction of steel in cryostat
+\item
+  fmsdwi /0.0/ : Martensitic fraction of steel in vacuum vessel
+\item
+  fmsfw /0.0/ : Martensitic fraction of steel in first wall
+\item
+  fmsoh /0.0/ : Martensitic fraction of steel in central solenoid
+\item
+  fmssh /0.0/ : Martensitic fraction of steel in shield
+\item
+  fmstf /0.0/ : Martensitic fraction of steel in TF coil
+\item
+  fseppc /3.5d8/ : Separation force in CS coil pre-compression structure
+\item
+  fwarea : first wall total surface area (m2)
+\item
+  fwareaib : inboard first wall surface area (m2)
+\item
+  fwareaob : outboard first wall surface area (m2)
+\item
+  fwith : inboard first wall thickness, initial estimate (m)
+\item
+  fwoth : outboard first wall thickness, initial estimate (m)
+\item
+  gapds /0.155/ : gap between inboard vacuum vessel and thermal shield
+  (m) (iteration variable 61)
+\item
+  gapoh /0.08/ : gap between central solenoid and TF coil (m) (iteration
+  variable 42)
+\item
+  gapomin /0.234/ : minimum gap between outboard vacuum vessel and TF
+  coil (m) (iteration variable 31)
+\item
+  gapsto : gap between outboard vacuum vessel and TF coil (m)
+\item
+  hmax : maximum (half-)height of TF coil (inside edge) (m)
+\item
+  hpfdif : difference in distance from midplane of upper and lower
+  portions of TF legs (non-zero for single-null devices) (m)
+\item
+  hpfu : height to top of (upper) TF coil leg (m)
+\item
+  hr1 : half-height of TF coil inboard leg straight section (m)
+\item
+  iohcl /1/ : switch for existence of central solenoid:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 central solenoid not present;
+  \item
+    = 1 central solenoid exists
+  \end{itemize}
+\item
+  iprecomp /1/ : switch for existence of central solenoid
+  pre-compression structure:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 no pre-compression structure;
+  \item
+    = 1 calculated pre-compression structure
+  \end{itemize}
+\item
+  ohcth /0.811/ : central solenoid thickness (m) (iteration variable 16)
+\item
+  precomp : CS coil precompression structure thickness (m)
+\item
+  rbld : sum of thicknesses to the major radius (m)
+\item
+  rinboard /0.651/ : plasma inboard radius (m) (consistency equation 29)
+\item
+  rsldi : radius to inboard shield (inside point) (m)
+\item
+  rsldo : radius to outboard shield (outside point) (m)
+\item
+  rtfcin : radius of centre of inboard TF leg (m)
+\item
+  rtot : radius to the centre of the outboard TF coil leg (m)
+\item
+  scrapli /0.14/ : gap between plasma and first wall, inboard side (m)
+  (used if iscrp=1) (iteration variable 73)
+\item
+  scraplo /0.15/ : gap between plasma and first wall, outboard side (m)
+  (used if iscrp=1) (iteration variable 74)
+\item
+  sharea : shield total surface area (m2)
+\item
+  shareaib : inboard shield surface area (m2)
+\item
+  shareaob : outboard shield surface area (m2)
+\item
+  shldith /0.69/ : inboard shield thickness (m) (iteration variable 93)
+\item
+  shldlth /0.7/ : lower (under divertor) shield thickness (m)
+\item
+  shldoth /1.05/ : outboard shield thickness (m) (iteration variable 94)
+\item
+  shldtth /0.60/ : upper/lower shield thickness (m); calculated if
+  blktmodel \textgreater{} 0
+\item
+  sigallpc /3.0d8/ : allowable stress in CSpre-compression structure
+  (Pa);
+\item
+  tfcth /1.173/ : inboard TF coil thickness, (centrepost for ST) (m)
+  (calculated for stellarators) (iteration variable 13)
+\item
+  tfcth : inboard TF coil thickness, (centrepost for ST) (m)
+  (calculated, NOT an iteration variable)
+\item
+  tfoffset : vertical distance between centre of TF coils and centre of
+  plasma (m)
+\item
+  tfootfi /1.19/ : TF coil outboard leg / inboard leg radial thickness
+  ratio (itfsup=0 only) (iteration variable 75)
+\item
+  tfthko : outboard TF coil thickness (m)
+\item
+  tftsgap /0.05/ : Minimum metal-to-metal gap between TF coil and
+  thermal shield (m)
+\item
+  thshield /0.05/ : TF-VV thermal shield thickness (m)
+\item
+  vgap2 /0.163/ : vertical gap between vacuum vessel and TF coil (m)
+\item
+  vgap /0.0/ : vertical gap between x-point and divertor (m) (if = 0, it
+  is calculated)
+\item
+  vgaptop /0.60/ : vertical gap between top of plasma and first wall (m)
+\item
+  vvblgap /0.05/ : gap between vacuum vessel and blanket (m)
+\item
+  plleni /1.0/ : length of inboard divertor plate (m)
+\item
+  plleno /1.0/ : length of outboard divertor plate (m)
+\item
+  plsepi /1.0/ : poloidal length, x-point to inboard strike point (m)
+\item
+  plsepo /1.5/ : poloidal length, x-point to outboard strike point (m)
+\item
+  rspo : outboard strike point radius (m)
+\end{itemize}
+
+\hypertarget{cost_variables}{%
+\subsubsection{\texorpdfstring{\href{cost_variables.html}{cost\_variables}}{cost\_variables}}\label{cost_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  abktflnc /5.0/ : allowable first wall/blanket neutron fluence
+  (MW-yr/m2) (blktmodel=0)
+\item
+  adivflnc /7.0/ : allowable divertor heat fluence (MW-yr/m2)
+\item
+  blkcst : blanket direct cost (M\$)
+\item
+  c221 : total account 221 cost (M\$) (first wall, blanket, shield,
+  support structure and divertor plates)
+\item
+  c222 : total account 222 cost (M\$) (TF coils + PF coils)
+\item
+  capcost : total capital cost including interest (M\$)
+\item
+  cconfix /80.0/ : fixed cost of superconducting cable (\$/m)
+\item
+  cconshpf /70.0/ : cost of PF coil steel conduit/sheath (\$/m)
+\item
+  cconshtf /75.0/ : cost of TF coil steel conduit/sheath (\$/m)
+\item
+  cdcost : current drive direct costs (M\$)
+\item
+  cdirt : total plant direct cost (M\$)
+\item
+  cdrlife : lifetime of heating/current drive system (y)
+\item
+  cfactr /0.75/ : Total plant availability fraction; input if iavail = 0
+\item
+  cpfact : Total plant capacity factor
+\item
+  cfind(4) /0.244,0.244,0.244,0.29/ : indirect cost factor (func of lsa)
+\item
+  cland /19.2/ : cost of land (M\$)
+\item
+  coe : cost of electricity (\$/MW-hr)
+\item
+  coecap : capital cost of electricity (m\$/kW-hr)
+\item
+  coefuelt : 'fuel' (including replaceable components) contribution to
+  cost of electricity (m\$/kW-hr)
+\item
+  coeoam : operation and maintenance contribution to cost of electricity
+  (m\$/kW-hr)
+\item
+  concost : plant construction cost (M\$)
+\item
+  costexp /0.8/ : cost exponent for scaling in 2015 costs model
+\item
+  costexp\_pebbles /0.6/ : cost exponent for pebbles in 2015 costs model
+\item
+  cost\_factor\_buildings /1.0/ : cost scaling factor for buildings
+\item
+  cost\_factor\_land /1.0/ : cost scaling factor for land
+\item
+  cost\_factor\_tf\_coils /1.0/ : cost scaling factor for TF coils
+\item
+  cost\_factor\_fwbs /1.0/ : cost scaling factor for fwbs
+\item
+  cost\_factor\_rh /1.0/ : cost scaling factor for remote handling
+\item
+  cost\_factor\_vv /1.0/ : cost scaling factor for vacuum vessel
+\item
+  cost\_factor\_bop /1.0/ : cost scaling factor for energy conversion
+  system
+\item
+  cost\_factor\_misc /1.0/ : cost scaling factor for remaining
+  subsystems
+\item
+  maintenance\_fwbs /0.2/ : Maintenance cost factor: first wall,
+  blanket, shield, divertor
+\item
+  maintenance\_gen /0.05/ : Maintenance cost factor: All other
+  components except coils, vacuum vessel, thermal shield, cryostat, land
+\item
+  amortization /13.6/ : amortization factor (fixed charge factor) "A"
+  (years)
+\item
+  cost\_model /1/ : switch for cost model:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 use \$ 1990 PROCESS model
+  \item
+    = 1 use \$ 2015 Kovari model
+  \end{itemize}
+\item
+  cowner /0.15/ : owner cost factor
+\item
+  cplife : lifetime of centrepost (y)
+\item
+  cpstcst : ST centrepost direct cost (M\$)
+\item
+  cpstflnc /10.0/ : allowable ST centrepost neutron fluence (MW-yr/m2)
+\item
+  crctcore : reactor core costs (categories 221, 222 and 223)
+\item
+  csi /16.0/ : allowance for site costs (M\$)
+\item
+  cturbb /380.0/ : cost of turbine building (M\$)
+\item
+  decomf /0.1/ : proportion of constructed cost required for
+  decommissioning fund
+\item
+  dintrt /0.0/ : diff between borrowing and saving interest rates
+\item
+  divcst : divertor direct cost (M\$)
+\item
+  divlife : lifetime of divertor (y)
+\item
+  dtlife /0.0/ : period prior to the end of the plant life that the
+  decommissioning fund is used (years)
+\item
+  fcap0 /1.165/ : average cost of money for construction of plant
+  assuming design/construction time of six years
+\item
+  fcap0cp /1.08/ : average cost of money for replaceable components
+  assuming lead time for these of two years
+\item
+  fcdfuel /0.1/ : fraction of current drive cost treated as fuel (if
+  ifueltyp = 1)
+\item
+  fcontng /0.195/ : project contingency factor
+\item
+  fcr0 /0.0966/ : fixed charge rate during construction
+\item
+  fkind /1.0/ : multiplier for Nth of a kind costs
+\item
+  fwallcst : first wall cost (M\$)
+\item
+  iavail /2/ : switch for plant availability model:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 use input value for cfactr;
+  \item
+    = 1 calculate cfactr using Taylor and Ward 1999 model;
+  \item
+    = 2 calculate cfactr using new (2015) model
+  \end{itemize}
+\item
+  avail\_min /0.75/ : Minimum availability (constraint equation 61)
+\item
+  tok\_build\_cost\_per\_vol /1283.0/ : Unit cost for tokamak complex
+  buildings, including building and site services (\$/m3)
+\item
+  light\_build\_cost\_per\_vol /270.0/ : Unit cost for unshielded
+  non-active buildings (\$/m3)
+\item
+  favail /1.0/ : F-value for minimum availability (constraint equation
+  61)
+\item
+  num\_rh\_systems /4/ : Number of remote handling systems (1-10)
+\item
+  conf\_mag /0.99/ : c parameter, which determines the temperature
+  margin at which magnet lifetime starts to d
+\item
+  div\_prob\_fail /0.0002/ : Divertor probability of failure (per op
+  day)
+\item
+  div\_umain\_time /0.25/ : Divertor unplanned maintenance time (years)
+\item
+  div\_nref /7000/ : Reference value for cycle cycle life of divertor
+\item
+  div\_nu /14000/ : The cycle when the divertor fails with 100\%
+  probability
+\item
+  fwbs\_nref /20000/ : Reference value for cycle life of blanket
+\item
+  fwbs\_nu /40000/ : The cycle when the blanket fails with 100\%
+  probability
+\item
+  fwbs\_prob\_fail /0.0002/ : Fwbs probability of failure (per op day)
+\item
+  fwbs\_umain\_time /0.25/ : Fwbs unplanned maintenance time (years)
+\item
+  redun\_vacp /25/ : Vacuum system pump redundancy level (\%)
+\item
+  redun\_vac : Number of redundant vacuum pumps
+\item
+  t\_operation : Operational time (yrs)
+\item
+  tbktrepl /0.5/ : time taken to replace blanket (y) (iavail=1)
+\item
+  tcomrepl /0.5/ : time taken to replace both blanket and divertor (y)
+  (iavail=1)
+\item
+  tdivrepl /0.25/ : time taken to replace divertor (y) (iavail=1)
+\item
+  uubop /0.02/ : unplanned unavailability factor for balance of plant
+  (iavail=1)
+\item
+  uucd /0.02/ : unplanned unavailability factor for current drive
+  (iavail=1)
+\item
+  uudiv /0.04/ : unplanned unavailability factor for divertor (iavail=1)
+\item
+  uufuel /0.02/ : unplanned unavailability factor for fuel system
+  (iavail=1)
+\item
+  uufw /0.04/ : unplanned unavailability factor for first wall
+  (iavail=1)
+\item
+  uumag /0.02/ : unplanned unavailability factor for magnets (iavail=1)
+\item
+  uuves /0.04/ : unplanned unavailability factor for vessel (iavail=1)
+\item
+  ifueltyp /0/ : switch:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 treat blanket divertor, first wall and fraction fcdfuel of CD
+    equipment as fuel cost;
+  \item
+    = 0 treat these as capital cost
+  \end{itemize}
+\item
+  ipnet /0/ : switch for net electric power calculation:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 scale so that always \textgreater{} 0;
+  \item
+    = 1 let go \textless{} 0 (no c-o-e)
+  \end{itemize}
+\item
+  ireactor /1/ : switch for net electric power and cost of electricity
+  calculations:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 do not calculate MW(electric) or c-o-e;
+  \item
+    = 1 calculate MW(electric) and c-o-e
+  \end{itemize}
+\item
+  lsa /4/ : level of safety assurance switch (generally, use 3 or 4):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 truly passively safe plant;
+  \item
+    = 2,3 in-between;
+  \item
+    = 4 like current fission plant
+  \end{itemize}
+\item
+  moneyint : interest portion of capital cost (M\$)
+\item
+  output\_costs /1/ : switch for costs output:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 do not write cost-related outputs to file;
+  \item
+    = 1 write cost-related outputs to file
+  \end{itemize}
+\item
+  ratecdol /0.0435/ : effective cost of money in constant dollars
+\item
+  tlife /30.0/ : plant life (years)
+\item
+  ucad /180.0/ FIX : unit cost for administration buildings (M\$/m3)
+\item
+  ucaf /1.5e6/ FIX : unit cost for aux facility power equipment (\$)
+\item
+  ucahts /31.0/ FIX : unit cost for aux heat transport equipment
+  (\$/W**exphts)
+\item
+  ucap /17.0/ FIX : unit cost of auxiliary transformer (\$/kVA)
+\item
+  ucblbe /260.0/ : unit cost for blanket beryllium (\$/kg)
+\item
+  ucblbreed /875.0/ : unit cost for breeder material (\$/kg)
+  (blktmodel\textgreater0)
+\item
+  ucblli /875.0/ : unit cost for blanket lithium (\$/kg) (30\% Li6)
+\item
+  ucblli2o /600.0/ : unit cost for blanket Li\_2O (\$/kg)
+\item
+  ucbllipb /10.3/ : unit cost for blanket Li-Pb (\$/kg) (30\% Li6)
+\item
+  ucblss /90.0/ : unit cost for blanket stainless steel (\$/kg)
+\item
+  ucblvd /200.0/ : unit cost for blanket vanadium (\$/kg)
+\item
+  ucbpmp /2.925e5/ FIX : vacuum system backing pump cost (\$)
+\item
+  ucbus /0.123/ : cost of aluminium bus for TF coil (\$/A-m)
+\item
+  uccase /50.0/ : cost of superconductor case (\$/kg)
+\item
+  ucco /350.0/ FIX : unit cost for control buildings (M\$/m3)
+\item
+  uccpcl1 /250.0/ : cost of high strength tapered copper (\$/kg)
+\item
+  uccpclb /150.0/ : cost of TF outboard leg plate coils (\$/kg)
+\item
+  uccpmp /3.9e5/ FIX : vacuum system cryopump cost (\$)
+\item
+  uccr /460.0/ FIX : unit cost for cryogenic building (M\$/vol)
+\item
+  uccry /9.3e4/ : heat transport system cryoplant costs (\$/W**expcry)
+\item
+  uccryo /32.0/ : unit cost for vacuum vessel (\$/kg)
+\item
+  uccu /75.0/ : unit cost for copper in superconducting cable (\$/kg)
+\item
+  ucdgen /1.7e6/ FIX : cost per 8 MW diesel generator (\$)
+\item
+  ucdiv /2.8e5/ : cost of divertor blade (\$)
+\item
+  ucdtc /13.0/ FIX : detritiation, air cleanup cost (\$/10000m3/hr)
+\item
+  ucduct /4.225e4/ FIX : vacuum system duct cost (\$/m)
+\item
+  ucech /3.0/ : ECH system cost (\$/W)
+\item
+  ucel /380.0/ FIX : unit cost for electrical equipment building
+  (M\$/m3)
+\item
+  uces1 /3.2e4/ FIX : MGF (motor-generator flywheel) cost factor
+  (\$/MVA**0.8)
+\item
+  uces2 /8.8e3/ FIX : MGF (motor-generator flywheel) cost factor
+  (\$/MJ**0.8)
+\item
+  ucf1 /2.23e7/ : cost of fuelling system (\$)
+\item
+  ucfnc /35.0/ : outer PF coil fence support cost (\$/kg)
+\item
+  ucfpr /4.4e7/ FIX : cost of 60g/day tritium processing unit (\$)
+\item
+  ucfuel /3.45/ : unit cost of D-T fuel (M\$/year/1200MW)
+\item
+  ucfwa /6.0e4/ FIX : first wall armour cost (\$/m2)
+\item
+  ucfwps /1.0e7/ FIX : first wall passive stabiliser cost (\$)
+\item
+  ucfws /5.3e4/ FIX : first wall structure cost (\$/m2)
+\item
+  ucgss /35.0/ FIX : cost of reactor structure (\$/kg)
+\item
+  uche3 /1.0e6/ : cost of helium-3 (\$/kg)
+\item
+  uchrs /87.9e6/ : cost of heat rejection system (\$)
+\item
+  uchts(2) /15.3,19.1/ : cost of heat transport system equipment per
+  loop (\$/W); dependent on coolant type (coolwh)
+\item
+  uciac /1.5e8/ : cost of instrumentation, control \& diagnostics (\$)
+\item
+  ucich /3.0/ : ICH system cost (\$/W)
+\item
+  ucint /35.0/ FIX : superconductor intercoil structure cost (\$/kg)
+\item
+  uclh /3.3/ : lower hybrid system cost (\$/W)
+\item
+  uclv /16.0/ FIX : low voltage system cost (\$/kVA)
+\item
+  ucmb /260.0/ FIX: unit cost for reactor maintenance building (M\$/m3)
+\item
+  ucme /1.25e8/ : cost of maintenance equipment (\$/)
+\item
+  ucmisc /2.5e7/ : miscellaneous plant allowance (\$)
+\item
+  ucnbi /3.3/ : NBI system cost (\$/W)
+\item
+  ucnbv /1000.0/ FIX : cost of nuclear building ventilation (\$/m3)
+\item
+  ucoam(4) /68.8,68.8,68.8,74.4/ : annual cost of operation and
+  maintenance (M\$/year/1200MW**0.5)
+\item
+  ucpens /32.0/ : penetration shield cost (\$/kg)
+\item
+  ucpfb /210.0/ : cost of PF coil buses (\$/kA/m)
+\item
+  ucpfbk /1.66e4/ : cost of PF coil DC breakers (\$/MVA)
+\item
+  ucpfbs /4.9e3/ : cost of PF burn power supplies (\$/kW**0.7)
+\item
+  ucpfcb /7.5e4/ : cost of PF coil AC breakers (\$/circuit)
+\item
+  ucpfdr1 /150.0/ : cost factor for dump resistors (\$/MJ)
+\item
+  ucpfic /1.0e4/ : cost of PF instrumentation and control (\$/channel)
+\item
+  ucpfps /3.5e4/ : cost of PF coil pulsed power supplies (\$/MVA)
+\item
+  ucphx /15.0/ FIX : primary heat transport cost (\$/W**exphts)
+\item
+  ucpp /48.0/ FIX : cost of primary power transformers (\$/kVA**0.9)
+\item
+  ucrb /400.0/ : cost of reactor building (M\$/m3)
+\item
+  ucsc(6) /600.0,600.0,300.0,600.0/ : cost of superconductor (\$/kg)
+\item
+  ucsh /115.0/ FIX : cost of shops and warehouses (M\$/m3)
+\item
+  ucshld /32.0/ : cost of shield structural steel (\$/kg)
+\item
+  ucswyd /1.84e7/ FIX : switchyard equipment costs (\$)
+\item
+  uctfbr /1.22/ : cost of TF coil breakers (\$/W**0.7)
+\item
+  uctfbus /100.0/ : cost of TF coil bus (\$/kg)
+\item
+  uctfdr /1.75e-4/ FIX : cost of TF coil dump resistors (\$/J)
+\item
+  uctfgr /5000.0/ FIX : additional cost of TF coil dump resistors
+  (\$/coil)
+\item
+  uctfic /1.0e4/ FIX : cost of TF coil instrumentation and control
+  (\$/coil/30)
+\item
+  uctfps /24.0/ : cost of TF coil power supplies (\$/W**0.7)
+\item
+  uctfsw /1.0/ : cost of TF coil slow dump switches (\$/A)
+\item
+  uctpmp /1.105e5/ FIX : cost of turbomolecular pump (\$)
+\item
+  uctr /370.0/ FIX : cost of tritium building (\$/m3)
+\item
+  ucturb(2) /230.0e6, 245.0e6/: cost of turbine plant equipment (\$)
+  (dependent on coolant type coolwh)
+\item
+  ucvalv /3.9e5/ FIX : vacuum system valve cost (\$)
+\item
+  ucvdsh /26.0/ FIX : vacuum duct shield cost (\$/kg)
+\item
+  ucviac /1.3e6/ FIX : vacuum system instrumentation and control cost
+  (\$)
+\item
+  ucwindpf /465.0/ : cost of PF coil superconductor windings (\$/m)
+\item
+  ucwindtf /480.0/ : cost of TF coil superconductor windings (\$/m)
+\item
+  ucws /460.0/ FIX : cost of active assembly shop (\$/m3)
+\item
+  ucwst(4) /0.0,3.94,5.91,7.88/ : cost of waste disposal (M\$/y/1200MW)
+\end{itemize}
+
+\hypertarget{constraint_variables}{%
+\subsubsection{\texorpdfstring{\href{constraint_variables.html}{constraint\_variables}}{constraint\_variables}}\label{constraint_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  auxmin /0.1/ : minimum auxiliary power (MW) (constraint equation 40)
+\item
+  betpmx /0.19/ : maximum poloidal beta (constraint equation 48)
+\item
+  bigqmin /10.0/ : minimum fusion gain Q (constraint equation 28)
+\item
+  bmxlim /12.0/ : maximum peak toroidal field (T) (constraint equation
+  25)
+\item
+  fauxmn /1.0/ : f-value for minimum auxiliary power (constraint
+  equation 40, iteration variable 64)
+\item
+  fbeta /1.0/ : f-value for epsilon beta-poloidal (constraint equation
+  6, iteration variable 8)
+\item
+  fbetap /1.0/ : f-value for poloidal beta (constraint equation 48,
+  iteration variable 79)
+\item
+  fbetatry /1.0/ : f-value for beta limit (constraint equation 24,
+  iteration variable 36)
+\item
+  fcpttf /1.0/ : f-value for TF coil current per turn upper limit
+  (constraint equation 77, iteration variable 146)
+\item
+  fcwr /1.0/ : f-value for conducting wall radius / rminor limit
+  (constraint equation 23, iteration variable 104)
+\item
+  fdene /1.0/ : f-value for density limit (constraint equation 5,
+  iteration variable 9) (invalid if ipedestal = 3)
+\item
+  fdivcol /1.0/ : f-value for divertor collisionality (constraint
+  equation 22, iteration variable 34)
+\item
+  fdtmp /1.0/ : f-value for first wall coolant temperature rise
+  (constraint equation 38, iteration variable 62)
+\item
+  fflutf /1.0/ : f-value for neutron fluence on TF coil (constraint
+  equation 53, iteration variable 92)
+\item
+  ffuspow /1.0/ : f-value for maximum fusion power (constraint equation
+  9, iteration variable 26)
+\item
+  fgamcd /1.0/ : f-value for current drive gamma (constraint equation
+  37, iteration variable 40)
+\item
+  fhldiv /1.0/ : f-value for divertor heat load (constraint equation 18,
+  iteration variable 27)
+\item
+  fiooic /0.5/ : f-value for TF coil operating current / critical
+  current ratio (constraint equation 33, iteration variable 50)
+\item
+  fipir /1.0/ : f-value for Ip/Irod limit (constraint equation 46,
+  iteration variable 72)
+\item
+  fjohc /1.0/ : f-value for central solenoid current at end-of-flattop
+  (constraint equation 26, iteration variable 38)
+\item
+  fjohc0 /1.0/ : f-value for central solenoid current at beginning of
+  pulse (constraint equation 27, iteration variable 39)
+\item
+  fjprot /1.0/ : f-value for TF coil winding pack current density
+  (constraint equation 35, iteration variable 53)
+\item
+  flhthresh /1.0/ : f-value for L-H power threshold (constraint equation
+  15, iteration variable 103)
+\item
+  fmva /1.0/ : f-value for maximum MVA (constraint equation 19,
+  iteration variable 30)
+\item
+  fnbshinef /1.0/ : f-value for maximum neutral beam shine-through
+  fraction (constraint equation 59, iteration variable 105)
+\item
+  fnesep /1.0/ : f-value for Eich critical separatrix density
+  (constraint equation 76, iteration variable 144)
+\item
+  foh\_stress /1.0/ : f-value for Tresca stress in Central Solenoid
+  (constraint equation 72, iteration variable 123)
+\item
+  fpeakb /1.0/ : f-value for maximum toroidal field (constraint equation
+  25, iteration variable 35)
+\item
+  fpinj /1.0/ : f-value for injection power (constraint equation 30,
+  iteration variable 46)
+\item
+  fpnetel /1.0/ : f-value for net electric power (constraint equation
+  16, iteration variable 25)
+\item
+  fportsz /1.0/ : f-value for neutral beam tangency radius limit
+  (constraint equation 20, iteration variable 33)
+\item
+  fpsepbqar /1.0/ : f-value for maximum Psep*Bt/qAR limit (constraint
+  equation 68, iteration variable 117)
+\item
+  fpsepr /1.0/ : f-value for maximum Psep/R limit (constraint equation
+  56, iteration variable 97)
+\item
+  fptemp /1.0/ : f-value for peak centrepost temperature (constraint
+  equation 44, iteration variable 68)
+\item
+  fptfnuc /1.0/ : f-value for maximum TF coil nuclear heating
+  (constraint equation 54, iteration variable 95)
+\item
+  fq /1.0/ : f-value for edge safety factor (constraint equation 45,
+  iteration variable 71)
+\item
+  fqval /1.0/ : f-value for Q (constraint equation 28, iteration
+  variable 45)
+\item
+  fradpwr /1.0/ : f-value for core radiation power limit (constraint
+  equation 17, iteration variable 28)
+\item
+  fradwall /1.0/ : f-value for upper limit on radiation wall load
+  (constr. equ. 67, iteration variable 116 )
+\item
+  freinke /1.0/ : f-value for Reinke detachment criterion (constr. equ.
+  78, iteration variable 147)
+\item
+  frminor /1.0/ : f-value for minor radius limit (constraint equation
+  21, iteration variable 32)
+\item
+  fstrcase /1.0/ : f-value for TF coil case stress (constraint equation
+  31, iteration variable 48)
+\item
+  fstrcond /1.0/ : f-value for TF coil conduit stress (constraint
+  equation 32, iteration variable 49)
+\item
+  ftaucq /1.0/ : f-value for calculated minimum TF quench time
+  (constraint equation 65, iteration variable 113)
+\item
+  ftbr /1.0/ : f-value for minimum tritium breeding ratio (constraint
+  equation 52, iteration variable 89)
+\item
+  ftburn /1.0/ : f-value for minimum burn time (constraint equation 13,
+  iteration variable 21)
+\item
+  ftcycl /1.0/ : f-value for cycle time (constraint equation 42,
+  iteration variable 67)
+\item
+  ftmargoh /1.0/ : f-value for central solenoid temperature margin
+  (constraint equation 60, iteration variable 106)
+\item
+  ftmargtf /1.0/ : f-value for TF coil temperature margin (constraint
+  equation 36, iteration variable 54)
+\item
+  ftohs /1.0/ : f-value for plasma current ramp-up time (constraint
+  equation 41, iteration variable 66)
+\item
+  ftpeak /1.0/ : f-value for first wall peak temperature (constraint
+  equation 39, iteration variable 63)
+\item
+  fvdump /1.0/ : f-value for dump voltage (constraint equation 34,
+  iteration variable 51)
+\item
+  fvs /1.0/ : f-value for flux-swing (V-s) requirement (STEADY STATE)
+  (constraint equation 12, iteration variable 15)
+\item
+  fvvhe /1.0/ : f-value for vacuum vessel He concentration limit
+  (iblanket = 2) (constraint equation 55, iteration variable 96)
+\item
+  fwalld /1.0/ : f-value for maximum wall load (constraint equation 8,
+  iteration variable 14)
+\item
+  fzeffmax /1.0/ : f-value for maximum zeff (constraint equation 64,
+  iteration variable 112)
+\item
+  gammax /2.0/ : maximum current drive gamma (constraint equation 37)
+\item
+  maxradwallload /1.0/ : Maximum permitted radiation wall load
+  (MW/m\^{}2) (constraint equation 67)
+\item
+  mvalim /40.0/ : maximum MVA limit (constraint equation 19)
+\item
+  nbshinefmax /1.0e-3/ : maximum neutral beam shine-through fraction
+  (constraint equation 59)
+\item
+  nflutfmax /1.0e23/ : max fast neutron fluence on TF coil (n/m2)
+  (blktmodel\textgreater0) (constraint equation 53)
+\item
+  peakfactrad /3.33/ : peaking factor for radiation wall load
+  (constraint equation 67)
+\item
+  peakradwallload : Peak radiation wall load (MW/m\^{}2) (constraint
+  equation 67)
+\item
+  pnetelin /1000.0/ : required net electric power (MW) (constraint
+  equation 16)
+\item
+  powfmax /1500.0/ : maximum fusion power (MW) (constraint equation 9)
+\item
+  psepbqarmax /9.5/ : maximum ratio of Psep*Bt/qAR (MWT/m) (constraint
+  equation 68)
+\item
+  pseprmax /25.0/ : maximum ratio of power crossing the separatrix to
+  plasma major radius (Psep/R) (MW/m) (constraint equation 56)
+\item
+  ptfnucmax /1.0e-3/ : maximum nuclear heating in TF coil (MW/m3)
+  (constraint equation 54)
+\item
+  tbrmin /1.1/ : minimum tritium breeding ratio (constraint equation 52)
+\item
+  tbrnmn /1.0/ : minimum burn time (s) (KE - no longer itv., see issue
+  706)
+\item
+  tcycmn : minimum cycle time (s) (constraint equation 42)
+\item
+  tohsmn : minimum plasma current ramp-up time (s) (constraint equation
+  41)
+\item
+  vvhealw /1.0/ : allowed maximum helium concentration in vacuum vessel
+  at end of plant life (appm) (iblanket =2) (constraint equation 55)
+\item
+  walalw /1.0/ : allowable wall-load (MW/m2) (constraint equation 8)
+\item
+  taulimit /5.0/ : Lower limit on taup/taueff the ratio of alpha
+  particle to energy confinement times (constraint equation 62)
+\item
+  ftaulimit /1.0/ : f-value for lower limit on taup/taueff the ratio of
+  alpha particle to energy confinement times (constraint equation 62,
+  iteration variable 110)
+\item
+  fniterpump /1.0/ : f-value for constraint that number of pumps
+  \textless{} tfno (constraint equation 63, iteration variable 111)
+\item
+  zeffmax /3.6/ : maximum value for Zeff (constraint equation 64)
+\item
+  fpoloidalpower /1.0/ : f-value for constraint on rate of change of
+  energy in poloidal field (constraint equation 66, iteration variable
+  115)
+\item
+  fpsep /1.0/ : f-value to ensure separatrix power is less than value
+  from Kallenbach divertor (Not required as constraint 69 is an
+  equality)
+\item
+  fcqt /1.0/ : f-value: TF coil quench temparature remains below
+  tmax\_croco (constraint equation 74, iteration variable 141)
+\end{itemize}
+
+\hypertarget{stellarator_variables}{%
+\subsubsection{\texorpdfstring{\href{stellarator_variables.html}{stellarator\_variables}}{stellarator\_variables}}\label{stellarator_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  istell /0/ : switch for stellarator option (set via
+  \texttt{device.dat}):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 use tokamak model;
+  \item
+    = 1 use stellarator model
+  \end{itemize}
+\item
+  bmn /0.001/ : relative radial field perturbation
+\item
+  f\_asym /1.0/ : divertor heat load peaking factor
+\item
+  f\_rad /0.85/ : radiated power fraction in SOL
+\item
+  f\_w /0.5/ : island size fraction factor
+\item
+  fdivwet /0.3333/ : wetted fraction of the divertor area
+\item
+  flpitch /0.001/ : field line pitch (rad)
+\item
+  hportamax : maximum available area for horizontal ports (m2)
+\item
+  hportpmax : maximum available poloidal extent for horizontal ports (m)
+\item
+  hporttmax : maximum available toroidal extent for horizontal ports (m)
+\item
+  iotabar /1.0/ : rotational transform (reciprocal of tokamak q) for
+  stellarator confinement time scaling laws
+\item
+  isthtr /3/ : switch for stellarator auxiliary heating method:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 electron cyclotron resonance heating;
+  \item
+    = 2 lower hybrid heating;
+  \item
+    = 3 neutral beam injection
+  \end{itemize}
+\item
+  m\_res /5/ : poloidal resonance number
+\item
+  n\_res /5/ : toroidal resonance number
+\item
+  shear /0.5/ : magnetic shear, derivative of iotabar
+\item
+  vmec\_info\_file /vmec\_info.dat/ : file containing general VMEC
+  settings
+\item
+  vmec\_rmn\_file /vmec\_Rmn.dat/ : file containing plasma boundary
+  R(m,n) Fourier components
+\item
+  vmec\_zmn\_file /vmec\_Zmn.dat/ : file containing plasma boundary
+  Z(m,n) Fourier components
+\item
+  vportamax : maximum available area for vertical ports (m2)
+\item
+  vportpmax : maximum available poloidal extent for vertical ports (m)
+\item
+  vporttmax : maximum available toroidal extent for vertical ports (m)
+\end{itemize}
+
+\hypertarget{pulse_variables}{%
+\subsubsection{\texorpdfstring{\href{pulse_variables.html}{pulse\_variables}}{pulse\_variables}}\label{pulse_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  bctmp /320.0/ : first wall bulk coolant temperature (C)
+\item
+  bfw : outer radius of each first wall structural tube (m) (0.5 *
+  average of fwith and fwoth)
+\item
+  dtstor /300.0/ : maximum allowable temperature change in stainless
+  steel thermal storage block (K) (istore=3)
+\item
+  istore /1/ : switch for thermal storage method:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 option 1 of Electrowatt report, AEA FUS 205;
+  \item
+    = 2 option 2 of Electrowatt report, AEA FUS 205;
+  \item
+    = 3 stainless steel block
+  \end{itemize}
+\item
+  itcycl /1/ : switch for first wall axial stress model:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 1 total axial constraint, no bending;
+  \item
+    = 2 no axial constraint, no bending;
+  \item
+    = 3 no axial constraint, bending
+  \end{itemize}
+\item
+  lpulse /0/ : switch for reactor model:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = 0 continuous operation;
+  \item
+    = 1 pulsed operation
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{startup_variables}{%
+\subsubsection{\texorpdfstring{\href{startup_variables.html}{startup\_variables}}{startup\_variables}}\label{startup_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  ftaue : factor in energy confinement time formula
+\item
+  gtaue : offset term in energy confinement time scaling
+\item
+  nign : electron density at ignition (start-up) (/m3)
+\item
+  ptaue : exponent for density term in energy confinement time formula
+\item
+  qtaue : exponent for temperature term in energy confinement time
+  formula
+\item
+  rtaue : exponent for power term in energy confinement time formula
+\item
+  tign : electron temperature at ignition (start-up) (keV)
+\end{itemize}
+
+\hypertarget{fispact_variables}{%
+\subsubsection{\texorpdfstring{\href{fispact_variables.html}{fispact\_variables}}{fispact\_variables}}\label{fispact_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  Fispact arrays with 3 elements contain the results at the following
+  times: (1) - at end of component life (2) - after 3 months cooling
+  time (3) - 100 years after end of plant life
+\item
+  bliact(3) : inboard blanket total activity (Bq)
+\item
+  bligdr(3) : inboard blanket total gamma dose rate (Sv/hr)
+\item
+  blihkw(3) : inboard blanket total heat output (kW)
+\item
+  bliizp : inboard blanket integrated zone power / neutron
+\item
+  blimzp : inboard blanket mean zone power density / neutron
+\item
+  bloact(3) : outboard blanket total activity (Bq)
+\item
+  blogdr(3) : outboard blanket total gamma dose rate (Sv/hr)
+\item
+  blohkw(3) : outboard blanket total heat output (kW)
+\item
+  bloizp : outboard blanket integrated zone power / neutron
+\item
+  blomzp : outboard blanket mean zone power density / neutron
+\item
+  fwiact(3) : inboard first wall total activity (Bq)
+\item
+  fwigdr(3) : inboard first wall total gamma dose rate (Sv/hr)
+\item
+  fwihkw(3) : inboard first wall total heat output (kW)
+\item
+  fwiizp : inboard first wall integrated zone power / neutron
+\item
+  fwimzp : inboard first wall mean zone power density/neutron
+\item
+  fwoact(3) : outboard first wall total activity (Bq)
+\item
+  fwogdr(3) : outboard first wall total gamma dose rate (Sv/hr)
+\item
+  fwohkw(3) : outboard first wall total heat output (kW)
+\item
+  fwoizp : outboard first wall integrated zone power / neutron
+\item
+  fwomzp : outboard first wall mean zone power density/neutron
+\item
+  fwtemp : outboard first wall temperature after a LOCA (K)
+\end{itemize}
+
+\hypertarget{rebco_variables}{%
+\subsubsection{\texorpdfstring{\href{rebco_variables.html}{rebco\_variables}}{rebco\_variables}}\label{rebco_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  rebco\_thickness /1.0e-6/ : thickness of REBCO layer in tape (m)
+  (iteration variable 138)
+\item
+  copper\_thick /100e-6/ : thickness of copper layer in tape (m)
+  (iteration variable 139)
+\item
+  hastelloy\_thickness /50/e-6 : thickness of Hastelloy layer in tape
+  (m)
+\item
+  tape\_width /3.75e-3/ : Mean width of tape (m)
+\item
+  croco\_od /10.4e-3/ : Outer diameter of CroCo strand (m)
+\item
+  croco\_id /5.4e-3/ : Inner diameter of CroCo copper tube (m)
+\item
+  copper\_bar /1.0/ : area of central copper bar, as a fraction of the
+  cable space
+\item
+  copper\_rrr /100.0/ : residual resistivity ratio copper in TF
+  superconducting cable
+\item
+  cable\_helium\_fraction /0.284/ : Helium area as a fraction of the
+  cable space.
+\item
+  copperA\_m2\_max /1e8/ : Maximum TF coil current / copper area (A/m2)
+\item
+  f\_copperA\_m2 /1/ : f-value for constraint 75: TF coil current /
+  copper area \textless{} copperA\_m2\_max
+\end{itemize}
+
+\hypertarget{resistive_material}{%
+\subsubsection{\texorpdfstring{\href{resistive_material.html}{resistive\_material}}{resistive\_material}}\label{resistive_material}}
+
+\hypertarget{reinke_variables}{%
+\subsubsection{\texorpdfstring{\href{reinke_variables.html}{reinke\_variables}}{reinke\_variables}}\label{reinke_variables}}
+
+\begin{itemize}
+\tightlist
+\item
+  impvardiv /9/ : index of impurity to be iterated for Reinke divertor
+  detachment criterion
+\item
+  lhat /4.33/ : connection length factor L\textbar\textbar{} = lhat
+  qstar R for Reinke criterion, default value from Post et al. 1995 J.
+  Nucl. Mat. 220-2 1014
+\item
+  fzmin : Minimum impurity fraction necessary for detachment This is the
+  impurity at the SOL/Div
+\item
+  fzactual : Actual impurity fraction of divertor impurity (impvardiv)
+  in the SoL (taking impurity\_enrichment into account) (iteration
+  variable 148)
+\item
+  reinke\_mode /0/ : Switch for Reinke criterion H/I mode
+\item
+  = 0 H-mode;
+\item
+  = 1 I-mode;
+\end{itemize}
+
+\hypertarget{numerics}{%
+\subsubsection{\texorpdfstring{\href{numerics.html}{numerics}}{numerics}}\label{numerics}}
+
+\begin{itemize}
+\tightlist
+\item
+  ipnvars FIX : total number of variables available for iteration
+\item
+  ipeqns FIX : number of constraint equations available
+\item
+  ipnfoms FIX : number of available figures of merit
+\item
+  ioptimz /1/ : code operation switch:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    = -1 for no optimisation, HYBRD only;
+  \item
+    = 0 for HYBRD and VMCON (not recommended);
+  \item
+    = 1 for optimisation, VMCON only
+  \end{itemize}
+\item
+  minmax /7/ : switch for figure-of-merit (see lablmm for descriptions)
+  negative =\textgreater{} maximise, positive =\textgreater{} minimise
+\item
+  lablmm(ipnfoms) : labels describing figures of merit:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    ( 1) major radius
+  \item
+    ( 2) not used
+  \item
+    ( 3) neutron wall load
+  \item
+    ( 4) P\_tf + P\_pf
+  \item
+    ( 5) fusion gain Q
+  \item
+    ( 6) cost of electricity
+  \item
+    ( 7) capital cost (direct cost if ireactor=0, constructed cost
+    otherwise)
+  \item
+    ( 8) aspect ratio
+  \item
+    ( 9) divertor heat load
+  \item
+    (10) toroidal field
+  \item
+    (11) total injected power
+  \item
+    (12) hydrogen plant capital cost OBSOLETE
+  \item
+    (13) hydrogen production rate OBSOLETE
+  \item
+    (14) pulse length
+  \item
+    (15) plant availability factor (N.B. requires iavail=1 to be set)
+  \item
+    (16) linear combination of major radius (minimised) and pulse length
+    (maximised) note: FoM should be minimised only!
+  \item
+    (17) net electrical output
+  \item
+    (18) Null Figure of Merit
+  \item
+    (19) linear combination of big Q and pulse length (maximised) note:
+    FoM should be minimised only!
+  \end{itemize}
+\item
+  ncalls : number of function calls during solution
+\item
+  neqns /0/ : number of equality constraints to be satisfied
+\item
+  nfev1 : number of calls to FCNHYB (HYBRD function caller) made
+\item
+  nfev2 : number of calls to FCNVMC1 (VMCON function caller) made
+\item
+  nineqns /0/ : number of inequality constraints VMCON must satisfy
+  (leave at zero for now)
+\item
+  nvar /16/ : number of iteration variables to use
+\item
+  nviter : number of VMCON iterations performed
+\item
+  icc(ipeqns) /0/ : array defining which constraint equations to
+  activate (see lablcc for descriptions)
+\item
+  active\_constraints(ipeqns) : Logical array showing which constraints
+  are active
+\item
+  lablcc(ipeqns) : labels describing constraint equations (corresponding
+  itvs)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    ( 1) Beta (consistency equation) (itv 5)
+  \item
+    ( 2) Global power balance (consistency equation) (itv
+    10,1,2,3,4,6,11)
+  \item
+    ( 3) Ion power balance DEPRECATED (itv 10,1,2,3,4,6,11)
+  \item
+    ( 4) Electron power balance DEPRECATED (itv 10,1,2,3,4,6,11)
+  \item
+    ( 5) Density upper limit (itv 9,1,2,3,4,5,6)
+  \item
+    ( 6) (Epsilon x beta poloidal) upper limit (itv 8,1,2,3,4,6)
+  \item
+    ( 7) Beam ion density (NBI) (consistency equation) (itv 7)
+  \item
+    ( 8) Neutron wall load upper limit (itv 14,1,2,3,4,6)
+  \item
+    ( 9) Fusion power upper limit (itv 26,1,2,3,4,6)
+  \item
+    (10) Toroidal field 1/R (consistency equation) (itv 12,1,2,3,13 )
+  \item
+    (11) Radial build (consistency equation) (itv 3,1,13,16,29,42,61)
+  \item
+    (12) Volt second lower limit (STEADY STATE) (itv 15,1,2,3)
+  \item
+    (13) Burn time lower limit (PULSE) (itv 21,1,16,17,29,42,44,61)
+  \item
+    (14) Neutral beam decay lengths to plasma centre (NBI) (consistency
+    equation)
+  \item
+    (15) LH power threshold limit (itv 103)
+  \item
+    (16) Net electric power lower limit (itv 25,1,2,3)
+  \item
+    (17) Radiation fraction upper limit (itv 28)
+  \item
+    (18) Divertor heat load upper limit (itv 27)
+  \item
+    (19) MVA upper limit (itv 30)
+  \item
+    (20) Neutral beam tangency radius upper limit (NBI) (itv 33,31,3,13)
+  \item
+    (21) Plasma minor radius lower limit (itv 32)
+  \item
+    (22) Divertor collisionality upper limit (itv 34,43)
+  \item
+    (23) Conducting shell to plasma minor radius ratio upper limit (itv
+    104,1,74)
+  \item
+    (24) Beta upper limit (itv 36,1,2,3,4,6,18)
+  \item
+    (25) Peak toroidal field upper limit (itv 35,3,13,29)
+  \item
+    (26) Central solenoid EOF current density upper limit (ipfres=0)
+    (itv 38,37,41,12)
+  \item
+    (27) Central solenoid BOP current density upper limit (ipfres=0)
+    (itv 39,37,41,12)
+  \item
+    (28) Fusion gain Q lower limit (itv 45,47,40)
+  \item
+    (29) Inboard radial build consistency (itv 3,1,13,16,29,42,61)
+  \item
+    (30) Injection power upper limit (itv 46,47,11)
+  \item
+    (31) TF coil case stress upper limit (SCTF) (itv
+    48,56,57,58,59,60,24)
+  \item
+    (32) TF coil conduit stress upper limit (SCTF) (itv
+    49,56,57,58,59,60,24)
+  \item
+    (33) I\_op / I\_critical (TF coil) (SCTF) (itv 50,56,57,58,59,60,24)
+  \item
+    (34) Dump voltage upper limit (SCTF) (itv 51,52,56,57,58,59,60,24)
+  \item
+    (35) J\_winding pack/J\_protection upper limit (SCTF) (itv
+    53,56,57,58,59,60,24)
+  \item
+    (36) TF coil temperature margin lower limit (SCTF) (itv
+    54,55,56,57,58,59,60,24)
+  \item
+    (37) Current drive gamma upper limit (itv 40,47)
+  \item
+    (38) First wall coolant temperature rise upper limit (itv 62)
+  \item
+    (39) First wall peak temperature upper limit (itv 63)
+  \item
+    (40) Start-up injection power lower limit (PULSE) (itv 64)
+  \item
+    (41) Plasma current ramp-up time lower limit (PULSE) (itv 66,65)
+  \item
+    (42) Cycle time lower limit (PULSE) (itv 67,65,17)
+  \item
+    (43) Average centrepost temperature (TART) (consistency equation)
+    (itv 69,70,13)
+  \item
+    (44) Peak centrepost temperature upper limit (TART) (itv 68,69,70)
+  \item
+    (45) Edge safety factor lower limit (TART) (itv 71,1,2,3)
+  \item
+    (46) Ip/Irod upper limit (TART) (itv 72,2,60)
+  \item
+    (47) NOT USED
+  \item
+    (48) Poloidal beta upper limit (itv 79,2,3,18)
+  \item
+    (49) NOT USED
+  \item
+    (50) NOT USED
+  \item
+    (51) Startup volt-seconds consistency (PULSE) (itv 16,29,3,1)
+  \item
+    (52) Tritium breeding ratio lower limit (itv 89,90,91)
+  \item
+    (53) Neutron fluence on TF coil upper limit (itv 92,93,94)
+  \item
+    (54) Peak TF coil nuclear heating upper limit (itv 95,93,94)
+  \item
+    (55) Vacuum vessel helium concentration upper limit iblanket =2 (itv
+    96,93,94)
+  \item
+    (56) Pseparatrix/Rmajor upper limit (itv 97,1,3,102)
+  \item
+    (57) NOT USED
+  \item
+    (58) NOT USED
+  \item
+    (59) Neutral beam shine-through fraction upper limit (NBI) (itv
+    105,6,19,4 )
+  \item
+    (60) Central solenoid temperature margin lower limit (SCTF) (itv
+    106)
+  \item
+    (61) Minimum availability value (itv 107)
+  \item
+    (62) taup/taueff the ratio of particle to energy confinement times
+    (itv 110)
+  \item
+    (63) The number of ITER-like vacuum pumps niterpump \textless{} tfno
+    (itv 111)
+  \item
+    (64) Zeff less than or equal to zeffmax (itv 112)
+  \item
+    (65) Dump time set by VV loads (itv 56, 113)
+  \item
+    (66) Limit on rate of change of energy in poloidal field (Use
+    iteration variable 65(tohs), 115)
+  \item
+    (67) Simple Radiation Wall load limit (itv 116, 102, 4,6)
+  \item
+    (68) Psep * Bt / qAR upper limit (itv 117)
+  \item
+    (69) ensure separatrix power = the value from Kallenbach divertor
+    (itv 118)
+  \item
+    (70) ensure that teomp = separatrix temperature in the pedestal
+    profile, (itv 119 (tesep))
+  \item
+    (71) ensure that neomp = separatrix density (nesep) x neratio
+  \item
+    (72) central solenoid Tresca stress limit (itv 123 foh\_stress)
+  \item
+    (73) Psep \textgreater= Plh + Paux (itv 137 (fplhsep))
+  \item
+    (74) TFC quench \textless{} tmax\_croco (itv 141 (fcqt))
+  \item
+    (75) TFC current/copper area \textless{} Maximum (itv 143
+    f\_copperA\_m2)
+  \item
+    (76) Eich critical separatrix density
+  \item
+    (77) TF coil current per turn upper limit
+  \item
+    (78) Reinke criterion impurity fraction lower limit (itv 147
+    freinke)
+  \item
+    (79) F-value for max peak CS field (itv 149 fbmaxcs)
+  \end{itemize}
+\item
+  ixc(ipnvars) /0/ : array defining which iteration variables to
+  activate (see lablxc for descriptions)
+\item
+  lablxc(ipnvars) : labels describing iteration variables (NEW:THERE ARE
+  NO DEFAULTS):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    ( 1) aspect
+  \item
+    ( 2) bt
+  \item
+    ( 3) rmajor
+  \item
+    ( 4) te
+  \item
+    ( 5) beta
+  \item
+    ( 6) dene
+  \item
+    ( 7) rnbeam
+  \item
+    ( 8) fbeta (f-value for equation 6)
+  \item
+    ( 9) fdene (f-value for equation 5)
+  \item
+    (10) hfact
+  \item
+    (11) pheat
+  \item
+    (12) oacdcp
+  \item
+    (13) tfcth (NOT RECOMMENDED)
+  \item
+    (14) fwalld (f-value for equation 8)
+  \item
+    (15) fvs (f-value for equation 12)
+  \item
+    (16) ohcth
+  \item
+    (17) tdwell
+  \item
+    (18) q
+  \item
+    (19) enbeam
+  \item
+    (20) tcpav
+  \item
+    (21) ftburn (f-value for equation 13)
+  \item
+    (22) NOT USED
+  \item
+    (23) fcoolcp
+  \item
+    (24) NOT USED
+  \item
+    (25) fpnetel (f-value for equation 16)
+  \item
+    (26) ffuspow (f-value for equation 9)
+  \item
+    (27) fhldiv (f-value for equation 18)
+  \item
+    (28) fradpwr (f-value for equation 17), total radiation fraction
+  \item
+    (29) bore
+  \item
+    (30) fmva (f-value for equation 19)
+  \item
+    (31) gapomin
+  \item
+    (32) frminor (f-value for equation 21)
+  \item
+    (33) fportsz (f-value for equation 20)
+  \item
+    (34) fdivcol (f-value for equation 22)
+  \item
+    (35) fpeakb (f-value for equation 25)
+  \item
+    (36) fbetatry (f-value for equation 24)
+  \item
+    (37) coheof
+  \item
+    (38) fjohc (f-value for equation 26)
+  \item
+    (39) fjohc0 (f-value for equation 27)
+  \item
+    (40) fgamcd (f-value for equation 37)
+  \item
+    (41) fcohbop
+  \item
+    (42) gapoh
+  \item
+    (43) cfe0
+  \item
+    (44) fvsbrnni
+  \item
+    (45) fqval (f-value for equation 28)
+  \item
+    (46) fpinj (f-value for equation 30)
+  \item
+    (47) feffcd
+  \item
+    (48) fstrcase (f-value for equation 31)
+  \item
+    (49) fstrcond (f-value for equation 32)
+  \item
+    (50) fiooic (f-value for equation 33)
+  \item
+    (51) fvdump (f-value for equation 34)
+  \item
+    (52) vdalw
+  \item
+    (53) fjprot (f-value for equation 35)
+  \item
+    (54) ftmargtf (f-value for equation 36)
+  \item
+    (55) obsolete
+  \item
+    (56) tdmptf
+  \item
+    (57) thkcas
+  \item
+    (58) thwcndut
+  \item
+    (59) fcutfsu
+  \item
+    (60) cpttf
+  \item
+    (61) gapds
+  \item
+    (62) fdtmp (f-value for equation 38)
+  \item
+    (63) ftpeak (f-value for equation 39)
+  \item
+    (64) fauxmn (f-value for equation 40)
+  \item
+    (65) tohs
+  \item
+    (66) ftohs (f-value for equation 41)
+  \item
+    (67) ftcycl (f-value for equation 42)
+  \item
+    (68) fptemp (f-value for equation 44)
+  \item
+    (69) rcool
+  \item
+    (70) vcool
+  \item
+    (71) fq (f-value for equation 45)
+  \item
+    (72) fipir (f-value for equation 46)
+  \item
+    (73) scrapli
+  \item
+    (74) scraplo
+  \item
+    (75) tfootfi
+  \item
+    (76) NOT USED
+  \item
+    (77) NOT USED
+  \item
+    (78) NOT USED
+  \item
+    (79) fbetap (f-value for equation 48)
+  \item
+    (80) NOT USED
+  \item
+    (81) NOT USED
+  \item
+    (82) NOT USED
+  \item
+    (83) NOT USED
+  \item
+    (84) NOT USED
+  \item
+    (85) NOT USED
+  \item
+    (86) NOT USED
+  \item
+    (87) NOT USED
+  \item
+    (88) NOT USED
+  \item
+    (89) ftbr (f-value for equation 52)
+  \item
+    (90) blbuith
+  \item
+    (91) blbuoth
+  \item
+    (92) fflutf (f-value for equation 53)
+  \item
+    (93) shldith
+  \item
+    (94) shldoth
+  \item
+    (95) fptfnuc (f-value for equation 54)
+  \item
+    (96) fvvhe (f-value for equation 55)
+  \item
+    (97) fpsepr (f-value for equation 56)
+  \item
+    (98) li6enrich
+  \item
+    (99) NOT USED
+  \item
+    (100) NOT USED
+  \item
+    (101) NOT USED
+  \item
+    (102) fimpvar
+  \item
+    (103) flhthresh (f-value for equation 15)
+  \item
+    (104) fcwr (f-value for equation 23)
+  \item
+    (105) fnbshinef (f-value for equation 59)
+  \item
+    (106) ftmargoh (f-value for equation 60)
+  \item
+    (107) favail (f-value for equation 61)
+  \item
+    (108) breeder\_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
+  \item
+    (109) ralpne: thermal alpha density / electron density
+  \item
+    (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha
+    particle to energy confinement times (f-value for equation 62)
+  \item
+    (111) fniterpump: f-value for constraint that number of vacuum pumps
+    \textless{} TF coils (f-value for equation 63)
+  \item
+    (112) fzeffmax: f-value for max Zeff (f-value for equation 64)
+  \item
+    (113) ftaucq: f-value for minimum quench time (f-value for equation
+    65)
+  \item
+    (114) fw\_channel\_length: Length of a single first wall channel
+  \item
+    (115) fpoloidalpower: f-value for max rate of change of energy in
+    poloidal field (f-value for equation 66)
+  \item
+    (116) fradwall: f-value for radiation wall load limit (eq. 67)
+  \item
+    (117) fpsepbqar: f-value for Psep*Bt/qar upper limit (eq. 68)
+  \item
+    (118) fpsep: f-value to ensure separatrix power is less than value
+    from Kallenbach divertor (f-value for equation 69)
+  \item
+    (119) tesep: separatrix temperature calculated by the Kallenbach
+    divertor model
+  \item
+    (120) ttarget: Plasma temperature adjacent to divertor sheath
+    {[}eV{]}
+  \item
+    (121) neratio: ratio of mean SOL density at OMP to separatrix
+    density at OMP
+  \item
+    (122) oh\_steel\_frac : streel fraction of Central Solenoid
+  \item
+    (123) foh\_stress : f-value for CS coil Tresca stress limit (f-value
+    for eq. 72)
+  \item
+    (124) qtargettotal : Power density on target including surface
+    recombination {[}W/m2{]}
+  \item
+    (125) fimp(3) : Beryllium density fraction relative to electron
+    density
+  \item
+    (126) fimp(4) : Carbon density fraction relative to electron density
+  \item
+    (127) fimp(5) : Nitrogen fraction relative to electron density
+  \item
+    (128) fimp(6) : Oxygen density fraction relative to electron density
+  \item
+    (129) fimp(7) : Neon density fraction relative to electron density
+  \item
+    (130) fimp(8) : Silicon density fraction relative to electron
+    density
+  \item
+    (131) fimp(9) : Argon density fraction relative to electron density
+  \item
+    (132) fimp(10) : Iron density fraction relative to electron density
+  \item
+    (133) fimp(11) : Nickel density fraction relative to electron
+    density
+  \item
+    (134) fimp(12) : Krypton density fraction relative to electron
+    density
+  \item
+    (135) fimp(13) : Xenon density fraction relative to electron density
+  \item
+    (136) fimp(14) : Tungsten density fraction relative to electron
+    density
+  \item
+    (137) fplhsep (f-value for equation 73)
+  \item
+    (138) rebco\_thickness : thickness of REBCO layer in tape (m)
+  \item
+    (139) copper\_thick : thickness of copper layer in tape (m)
+  \item
+    (140) thkwp : radial thickness of TFC winding pack (m)
+  \item
+    (141) fcqt : TF coil quench temperature \textless{} tmax\_croco
+    (f-value for equation 74)
+  \item
+    (142) nesep : electron density at separatrix {[}m-3{]}
+  \item
+    (143) f\_copperA\_m2 : TF coil current / copper area \textless{}
+    Maximum value (f-value for equation 75)
+  \item
+    (144) fnesep : Eich critical electron density at separatrix (f-value
+    for constraint equation 76)
+  \item
+    (145) fgwped : fraction of Greenwald density to set as pedestal-top
+    density
+  \item
+    (146) fcpttf : F-value for TF coil current per turn limit
+    (constraint equation 77)
+  \item
+    (147) freinke : F-value for Reinke detachment criterion (constraint
+    equation 78)
+  \item
+    (148) fzactual : fraction of impurity at SOL with Reinke detachment
+    criterion
+  \item
+    (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
+  \item
+    (150) plasmod\_fcdp : (P\_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD
+    power over available power
+  \item
+    (151) plasmod\_fradc : Pline\_Xe / (Palpha + Paux - PlineAr - Psync
+    - Pbrad)
+  \item
+    (152) fbmaxcs : Ratio of separatrix density to Greenwald density
+  \end{itemize}
+\item
+  sqsumsq : sqrt of the sum of the square of the constraint residuals
+\item
+  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON
+  derivatives
+\item
+  epsvmc /1.0e-6/ : error tolerance for VMCON
+\item
+  factor /0.1/ : used in HYBRD for first step size
+\item
+  ftol /1.0e-4/ : error tolerance for HYBRD
+\item
+  boundl(ipnvars) /../ : lower bounds used on ixc variables during VMCON
+  optimisation runs
+\item
+  boundu(ipnvars) /../ : upper bounds used on ixc variables during VMCON
+  optimisation runs
+\end{itemize}
+
+\hypertarget{eqsolv}{%
+\subsubsection{\texorpdfstring{\href{eqsolv.html}{eqsolv}}{eqsolv}}\label{eqsolv}}
+
+\hypertarget{optimiz}{%
+\subsubsection{\texorpdfstring{\href{optimiz.html}{optimiz}}{optimiz}}\label{optimiz}}
+
+\end{document}

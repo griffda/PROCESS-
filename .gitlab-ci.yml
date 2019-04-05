@@ -1,0 +1,109 @@
+stages:
+  - build
+  - testing
+  - jenkins
+  - baseline
+#This command is used for generating gtest results in Jenkins  ./bin/process_test.exe --gtest_output=xml:gtest_results.xml
+before_script:
+#  - apt-get install -y gfortran
+#  - apt-get install -y python3-numpy
+#  - apt-get install -y python3-scipy
+#  - apt-get install -y python3-matplotlib
+#  - apt-get install dos2unix
+  - export LOGNAME=root
+  - source /etc/profile.d/modules.sh
+  - module use /usr/local/modules/default
+  - module unload python
+  - module load python/3.3
+  - module load texlive/2017
+  - module unload ifort 
+  - module load gfortran
+#  - 
+  - echo ld_library_path=$LD_LIBRARY_PATH
+
+build:Make:
+# image: ukaea/ubuntu
+ only:
+  - develop
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - rm -rf build
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build
+# Now add trigger for PROCESS_Testing on GitLab CI               develop is PROCESS_Testing branch
+  - "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"  
+  - ls bin -lah
+  - echo "Test "
+ artifacts:
+   expire_in: 2 hrs
+   paths:
+     - bin/process.exe
+     - bin/libPROCESS_calc_engine.so
+ tags:
+  - freia
+build:vardes:
+
+ only:
+  - develop
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target vardes
+ artifacts:
+   expire_in: 2 hrs
+   paths:
+     - documentation/html/*.html
+ tags:
+  - freia
+testing:test_suite:
+ when: on_success  # Also default setting
+ only:
+  - develop
+ stage: testing
+ script:
+  - pwd
+  # Now trigger testing on Jenkins
+  - "curl -X POST http://mkumar:0eb1252f76a609d527edfbfdc0559eae@process-jenkins-ci.apps.l:8080/jenkins/job/PROCESS/build?token=MiLNGc-QvyEevhKK54go"
+ tags:
+  - freia
+
+testing:baseline_2019_run:
+ when: on_success  # Also default setting
+ only:
+  - develop
+ stage: testing
+ script:
+  - pwd
+  - cd tracking/baseline_2019
+  - ./../../bin/process.exe baseline_2019_IN.DAT
+ artifacts:
+   expire_in: 2 hrs
+   paths:
+     - tracking/baseline_2019/baseline_2019_MFILE.DAT
+ tags:
+  - freia
+
+baseline:baseline_2019_results:
+ when: on_success  # Also default setting
+ only:
+  - develop
+ stage: baseline
+ script:
+  - pwd
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target dicts
+  - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+  - cd tracking/baseline_2019
+  - python ../../utilities/mfile_comparison.py -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT --acc 1.0 --baseline
+  - python ../../utilities/mfile_comparison.py -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT --acc 10.0 --baseline
+ tags:
+  - freia
+
+#after_script:  # Now trigger testing
+#- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"

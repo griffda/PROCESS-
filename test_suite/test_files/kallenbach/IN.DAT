@@ -176,7 +176,7 @@ kallenbach_switch = 1 * Switch to turn on the 1d kallenbach divertor model (1=on
 kallenbach_tests = 0 * Switch to run tests of 1d kallenbach divertor model (1=on; 0=off)
 target_spread = 3.0e-3 * Increase in sol power fall-off length due to spreading; mapped to omp [m]
 lambda_q_omp = 0.002 * Sol power fall-off length at the outer midplane; perpendicular to field [m]
-netau    = 0.5 * Parameter describing the departure from local ionisation equilibrium in the sol; [ms;1e20/m3]
+netau_sol    = 0.5 * Parameter describing the departure from local ionisation equilibrium in the sol; [ms;1e20/m3]
 targetangle = 30.0 * Angle between field-line and divertor target (degrees)
 qtargettotal = 1671000.0 * Power density on target including surface recombination [w/m2]
 impurity_enrichment(1) = 0.0
@@ -265,7 +265,7 @@ isumatpf = 3 * Switch for superconductor material in pf coils;
 ncls     = 1,1,2,2, * Number of pf coils in group j
 ngrp     = 4 * Number of groups of pf coils;
 ohhghf   = 0.9 * Central solenoid height / tf coil internal height
-oh_steel_frac = 0.8242 * Central solenoid steel fraction (iteration variable 122)
+oh_steel_frac = 5.0649E-01  * Central solenoid steel fraction (iteration variable 122)
 rjconpf  = 1.1d7, 1.1d7, 6.d6, 6.d6, 8.d6, 8.0d6, 8.0d6, 8.0d6, * Average winding pack current density of pf coil i (a/m2)
 rpf2     = -1.825 * Offset (m) of radial position of ipfloc=2 pf coils
 zref(1) = 3.6

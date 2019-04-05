@@ -122,8 +122,8 @@ boundu(18) = 3.0
 ixc(21) = 102        * fimpvar * Impurity fraction to be used as fimp(impvar)
 boundl(102) = 0.0012
 boundu(102) = 0.01
-fimp(3) = 0.02   * Beryllium
-fimp(9) = 0.0016 * Argon 
+fimp(3) = 0.02   
+fimp(9) = 0.0016
 
 ixc(22) = 103        * flhthresh * F-value for l-h power threshold
 boundl(103) = 0.4

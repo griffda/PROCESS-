@@ -1,0 +1,6 @@
+<testsuite name="default_suite_name" errors="0" failures="0" pass="4" tests="4" time="1.1620">
+<testcase name="test_current_drive_variables_suite.test_iternb"/>
+<testcase name="test_physics_suite.test_subr"/>
+<testcase name="test_reinke_crit_module_suite.test_reinke_tsep"/>
+<testcase name="test_reinke_crit_module_suite.test_reinke_fzmin"/>
+</testsuite>

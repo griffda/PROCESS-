@@ -213,7 +213,7 @@ execution!', err, file=stderr)
             condense = condense.rstrip()
             lcase = condense.lower()
             if len(condense) > 0 and (condense[0] != "*"):
-                if 'comment' == lcase[:7]:
+                if lcase[:7] == 'comment':
                     self.comment = line[line.find("=")+1:]
                     configfile.close()
                     return True
@@ -526,7 +526,7 @@ class RunProcessConfig(ProcessConfig):
             condense = condense.rstrip()
             lcase = condense.lower()
             if len(condense) > 0 and (condense[0] != "*"):
-                if 'del_var_' == lcase[:8] and len(condense) > 8:
+                if lcase[:8] == 'del_var_'  and len(condense) > 8:
                     self.del_var += [condense[8:]]
 
         configfile.close()
@@ -991,14 +991,14 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         values < DICT_INPUT_BOUNDS[varname]['lb'],
                         values > DICT_INPUT_BOUNDS[varname]['ub']))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(logical_or(
                             values < DICT_INPUT_BOUNDS[varname]['lb'],
                             values > DICT_INPUT_BOUNDS[varname]['ub']))
                 else: #cutoff at 0 - typically negative values are meaningless
                     args = argwhere(values < 0.)
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(values < 0)
 
             elif u_dict['errortype'].lower() == 'uniform':
@@ -1019,7 +1019,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         values < DICT_INPUT_BOUNDS[varname]['lb'],
                         values > mean))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(logical_or(
                             values < DICT_INPUT_BOUNDS[varname]['lb'],
                             values > mean))
@@ -1027,7 +1027,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
                     args = argwhere(logical_or(values < 0.,
                                                values > mean))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(logical_or(values < 0.,
                                                    values > mean))
             elif u_dict['errortype'].lower() == 'upperhalfgaussian':
@@ -1039,14 +1039,14 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         values < mean,
                         values > DICT_INPUT_BOUNDS[varname]['ub']))
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(logical_or(
                             values < mean,
                             values > DICT_INPUT_BOUNDS[varname]['ub']))
                 else:
                     args = argwhere(values < mean)
                     while len(args) > 0:
-                        values[args] = normal(mean, std, len(args))
+                        values[args] = normal(mean, std, args.shape)
                         args = argwhere(values < mean)
 
             u_dict['samples'] = values
@@ -1087,20 +1087,69 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         with NetCDFWriter(self.wdir+"/uncertainties.nc", append=True,
                           overwrite=False) as ncdf_writer:
-            try:
-                ncdf_writer.write_data(m_file, in_dat, run_id,
-                                       save_vars=self.output_vars,
-                                       mfile_latest_scan_only=True,
-                                       ignore_unknowns=True)
-            except KeyError as err:
-                print('Error: You have specified an output variable that'
-                      ' does not exist in MFILE. If this is a valid PROCESS'
-                      ' variable, request it being  added to the MFILE output,'
-                      ' else check your spelling!', file=stderr)
-                print(err, file=stderr)
-                exit()
+            #try:
+            ncdf_writer.write_data(m_file, in_dat, run_id,
+                                   save_vars=self.output_vars,
+                                   ignore_unknowns=True)
+            #except KeyError as err:
+            #    print('Error: You have specified an output variable that'
+            #          ' does not exist in MFILE. If this is a valid PROCESS'
+            #          ' variable, request it being  added to the MFILE output,'
+            #          ' else check your spelling!', file=stderr)
+            #    print(err, file=stderr)
+            #    exit()
+
+    def write_error_summary(self, sample_index):
+
+        """ reads current MFILE and IN.DAT and adds specified output variables
+            to error summary file """
+
+        m_file = MFile(filename="MFILE.DAT")
+        nvar = int(m_file.data['nvar'].get_scan(-1))
+
+        
+        if sample_index == 0:
+            header = "#sample_index"
+
+            #Uncertain input variables
+            for u_dict in self.uncertainties:
+                header += ' {:10s}'.format(u_dict['varname'])
+
+            #normalised iteration varialbes
+            for i in range(1, nvar+1):
+                
+                label = m_file.data['nitvar{:03}'.format(i)].var_description
+                header += ' n_{0:8s}'.format(label.replace('_(range_normalised)', ''))
+
+            #error status, id and ifail
+            header += " error_status error_id ifail\n"
+            err_summary = open(self.wdir+'/UQ_error_summary.txt', 'w')
+            err_summary.write(header)
+        else:
+            err_summary = open(self.wdir+'/UQ_error_summary.txt', 'a+')
+
+        #Uncertain input variables
+        output = '{:12d}'.format(sample_index)
+        for u_dict in self.uncertainties:
+            output += ' {0:10f}'.format(u_dict['samples'][sample_index])
 
 
+        #normalised iteration variables
+        for i in range(1, nvar+1):
+            output += ' {0:10f}'.format(m_file.data['nitvar{:03}'.format(i)].get_scan(-1))
+            
+
+        #error status and id 
+        output += ' {0:13d} {1:8d}'.format(int(m_file.data['error_status'].get_scan(-1)),
+                                           int(m_file.data['error_id'].get_scan(-1)))
+        #ifail
+        if m_file.data['error_status'].get_scan(-1) < 3:
+            output += ' {:5d}\n'.format(int(m_file.data['ifail'].get_scan(-1)))
+        else:
+            output += '   -1\n'
+
+        err_summary.write(output)
+        err_summary.close()
 
 ################################################################################
 #class NdScanConfig(RunProcessConfig)
@@ -1138,9 +1187,9 @@ class NdScanConfig(Config, RunProcessConfig):
         'remove_scanvars_from_ixc': True,
         # Removes all scanning variables from the iteration variables
         #  of the IN.DAT file.
-        'smooth_itervars'              : False
+        'smooth_itervars'         : False
         # Activates data smoothing, which increases run time but reduces errors
-        }
+    }
 
     def __init__(self, configfilename="ndscan.json"):
 

@@ -90,9 +90,15 @@ def grep(file, regexp, flags=re.U):
     """
 
     lines = []
-    for line in open(file).readlines():
-        if re.search(regexp, line, flags):
+
+    try:
+     with open(file, "r", encoding="utf-8") as file_open:
+        for line in file_open.readlines():
+          if re.search(regexp, line, flags):
             lines.append(line)
+        file_open.close()
+    except OSError:
+      logging.warning("File : %s not found\n", file)
     return lines
 
 def grep_r(search_dir, regexp, flags=re.U, extension=""):
@@ -140,7 +146,7 @@ def find(search_dir, regexp, flags=re.U):
             if os.path.isdir(path):
                 continue
             try:
-                text = open(path).readlines()
+                text = open(path,"r",encoding="utf-8").readlines()
                 for line in text:
                     if re.search(regexp, line, flags):
                         files.append(path)
@@ -164,7 +170,7 @@ def slice_file(file, re1, re2):
             lines --> List of lines from file between re1 and re2 inclusive
     """
 
-    filetext = open(file).readlines()
+    filetext = open(file,"r",encoding="utf-8").readlines()
     start = None
     for i in range(len(filetext)):
         #look for first match
@@ -332,7 +338,7 @@ def dict_ixc2nsweep():
 
        Example of a fragment we are looking for:
            case (1)
-              aspect = sweep(iscan)
+              aspect = swp(iscn)
               vlabel = 'aspect = ' ; xlabel = 'Aspect_ratio'
 
        Example dictionary entry:
@@ -342,12 +348,12 @@ def dict_ixc2nsweep():
     di = {}
     file = SOURCEDIR + "/scan.f90"
     #slice the file to get the switch statement relating to nsweep
-    lines = slice_file(file, r"select case \(nsweep\)", r"case default")
+    lines = slice_file(file, r"select case \(nwp\)", r"case default")
 
     #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
     modlines = []
     for line in lines[1:-1]:
-        if "case" in line or "sweep(iscan)" in line:
+        if "case" in line or "swp(iscn)" in line:
             line = remove_comments(line).replace(' ', '')
             modlines.append(line)
 
@@ -364,7 +370,7 @@ def dict_ixc2nsweep():
             num = match.group(1)
             #if the case statement matched, get the variable name
             #from the next line
-            match_2 = re.match(r"(.*?)=sweep\(iscan\)", modlines[i+1])
+            match_2 = re.match(r"(.*?)=swp\(iscn\)", modlines[i+1])
             if not match_2:
                 logging.warning("Error in dict_ixc2nsweep\n")
             else:
@@ -575,18 +581,29 @@ def dict_default():
                 /(.*?)/         #capture whatever is between brackets
                                 #to group 3
               """
+    regexp1 = r"""
+                !\+ad_var(s|c)  #look for !+ad_var(s|c)
+
+#                /(.*?)/         #capture whatever is between brackets
+#                                #to group 3
+              """
     variables_lines = grep_r(SOURCEDIR, regexp, re.VERBOSE, ".f90")
+#    for line in variables_lines:
+#      logging.warning("Manoj variables_lines : %s\n", line)
     for line in variables_lines:
+#        logging.warning("Manoj : %s\n", line)
         if "FIX" in line:
             continue
         try:
             match = re.search(regexp, line.strip(), re.VERBOSE)
             name = match.group(2).strip()
             value_string = match.group(3).strip()
+#            logging.warning("value Manoj : name = %s , value_string = %s\n", name, value_string)
             if not "(" in name:
                 #if the variable is not an array
                 value = to_type(value_string)
                 di[name] = value
+                
             else:
                 #the variable is an array
                 #remove the brackets from name to get the array name
@@ -602,6 +619,7 @@ def dict_default():
 
         except (IndexError, AttributeError, AssertionError, TypeError):
             #anything that fails gets added to the warning list
+#            logging.warning("Manoj failedlines : %s\n", line)
             failedlines.append(line)
 
 
@@ -620,13 +638,18 @@ def dict_default():
             warn_string += "%s\n" % line.strip()
         logging.warning(warn_string)
 
+#    for key in di:
+#       logging.warning("Manoj key = %s  ", key)
+
     #check dict_default against input lines in input.f90. Report differences
     regexp2 = r"call parse_(real|int)_(array|variable)\((.*)"
     test = grep(SOURCEDIR + "/input.f90", regexp2)
     for line in test:
+#        logging.warning("Manoj test : %s\n", line)
         args = re.search(regexp2, line).group(3)
         try:
             name = args.split(',')[1].strip()
+#            logging.warning("Manoj name : %s\n", name)
             if name not in di:
                 di[name] = -1
                 logging.warning(" " + str(name) + " looks like an input " + \
@@ -816,17 +839,16 @@ def dict_nsweep2varname():
     It maps the sweep variable number to its variable name
     """
 
-
     di = {}
     file = SOURCEDIR + "/scan.f90"
 
     #slice the file to get the switch statement relating to nsweep
-    lines = slice_file(file, r"select case \(nsweep\)", r"case default")
+    lines = slice_file(file, r"select case \(nwp\)", r"case default")
 
     #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
     modlines = []
     for line in lines[1:-1]:
-        if "case" in line or "sweep(iscan)" in line:
+        if "case" in line or "swp(iscn)" in line:
             line = remove_comments(line).replace(' ', '')
             modlines.append(line)
 
@@ -835,7 +857,7 @@ def dict_nsweep2varname():
         no = line1.replace('case(', '')
         no = no.replace(')', '')
         line2 = modlines[i*2+1]
-        varname = line2.replace('=sweep(iscan)', '')
+        varname = line2.replace('=swp(iscn)', '')
         di[no] = varname
 
     return di
@@ -847,6 +869,9 @@ def print_header():
 
     #look for a line with 'Release Date'
     rel_dat_list = grep(SOURCEDIR + "/process.f90", "Release Date")
+    if len(rel_dat_list) == 0:       # for new file structure
+        rel_dat_list = grep(SOURCEDIR + "/main_module.f90", "Release Date")
+
     assert len(rel_dat_list) == 1
     dat_line = rel_dat_list[0]
     #the version number is right before 'Release Date'
@@ -903,7 +928,7 @@ PARAMETER_DEFAULTS = ["rmajor", "aspect", "rminor", "bt", "powfmw", "pnetelmw",
 NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']
 
 # PROCESS TF Coil types
-DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn", 5: "WST Nb3Sn", 6: "REBCO"}
+DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn", 5: "WST Nb3Sn", 6: "REBCO", 7: "YBCO"}
 
 # FIMP Values
 DICT_FIMP = {"fimp(1)":"Hydrogen (fraction calculated by code)",
@@ -1091,7 +1116,7 @@ def print_icc_module():
 
     file_loc = SOURCEDIR + "/constraint_equations.f90"
 
-    with open(file_loc) as f:
+    with open(file_loc,"r",encoding="utf-8") as f:
         lines = f.readlines()
 
     counter = 1
@@ -1116,7 +1141,7 @@ def print_icc_vars():
 
     file_loc = SOURCEDIR + "/constraint_equations.f90"
 
-    with open(file_loc) as f:
+    with open(file_loc,"r",encoding="utf-8") as f:
         lines = f.readlines()
 
     counter = 1
@@ -1164,5 +1189,11 @@ if __name__ == "__main__":
     ARGS = PARSER.parse_args()
 
     #SOURCEDIR = ARGS.dir
-
+    try:
+      file = open("SOURCEDIR/global_variables.f90","r",encoding="utf-8")
+#      for line in file.readlines():#open(/builds/process/process/global_variables.f90).readlines():
+#        logging.warning("in global_variables.f90 , line ** %s\n", line)
+      file.close()
+    except IOError:
+      logging.warning( "Could not open file!")
     print_all()
