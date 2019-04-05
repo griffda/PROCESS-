@@ -682,8 +682,12 @@ to be given permission to do so via the CCFE \texttt{GitLab} server.
 	\item Assuming this is successful, contact the \texttt{GitLab} \process\
 	``Owner'' (currently James Morris james.morris2@ukaea.uk), who will add you to \texttt{GitLab} as a \process\ ``Developer''.
 	
-	\item (If this is your first access to \texttt{GitLab}, you may have to set up
-	SSH keys and a few other things; follow the instructions on screen.)
+	\item If this is your first access to \texttt{GitLab}, you may have to set up
+	SSH keys. To do so, get back to \url{https://git.ccfe.ac.uk/} and click on your
+	profile on the top right corner, it will show a menu where you will have to click on
+	setting. On the left menu then click on SSH Keys and simply follow the instructions.
+	
+	click on on your profile picture 
 	
 	\item Login to a Fusion Unix Network machine.
 	
@@ -969,6 +973,8 @@ updated upon compilation. This way each output file is trackable to a specific c
 
 \subsection{Git manipulations}
 
+The git manipulations can be made with command lines or through the VS code editor that proposes many convenient features for Git. The VS code editor can be downloaded at \url{https://code.visualstudio.com/} for any platforms. Many extensions are available, we strongly recommand to unstall the fortran, C++, python, cmake and latex one are these languages are used in \process.
+
 \subsubsection{Commit logs}
 To see the commit messages you can use the \texttt{git log} command. There are various options
 described in table~\ref{tab:commit_log}:
@@ -1009,23 +1015,25 @@ assume that you are already in the \texttt{process} directory created above
 (Section~\ref{sec:getsource}).
 \begin{enumerate}
 
-\item \texttt{git checkout develop} (just to ensure that this is the branch
-  \textit{from which}\/ you will be branching)
+\item \texttt{git checkout develop} : to ensure that this is the branch
+      \textit{from which}\/ you will be branching.
 
-\item \texttt{git branch dev\_mynewmodel}
+\item \texttt{git branch dev\_mynewmodel} : Creates an empty local branch called \texttt{dev\_mynewmodel}.
 
-\item \texttt{git checkout dev\_mynewmodel}
+\item \texttt{git checkout dev\_mynewmodel} : load the branch that has been checked out in
+      the \texttt{dev\_mynewmodel} branch. This is a \textit{local} manipulation.
 
-\item \texttt{git push origin HEAD}  (updates the central \texttt{GitLab} repository)
+\item \texttt{git push origin HEAD} : updates the central \texttt{GitLab} repository. The
+      created branch will appear in the \process\ Git webpage 
 
 \end{enumerate}
 
 \subsubsection{Working on a new model}
 
-Edit your local copies of the files as necessary. Whenever you want to save
-the changes back to the repository (it is prudent to do this at the end of
-each working day, as well as when the changes are complete, the code compiles
-and all test runs are successful!), use the following commands:
+Edit your local copies of the files as necessary. A convenient free editor is Visual Studio (\url{https://visualstudio.microsoft.com}) as it has handful integrated Git property (easy commit, easy diff, integrated grep command etc..). Whenever you want to save the changes 
+back to the repository. It is prudent to do this at the end of each working day, as well
+as when the changes are complete, the code compiles and all test runs are successful. To
+perform a user commit, use the following commands:
 \begin{enumerate}
 
 \item \texttt{git status}  (this will show a list of modified files)
@@ -1046,8 +1054,31 @@ This commits all modified tracked files, and adds the message entered between si
 
 \item \texttt{git push} \\
 Copies the changes you have made locally to the version in the central \texttt{GitLab} repository.  This uses a merging process, but if no-one else has changed your branch then the central version will simply become a copy of your local version.
-
 \end{enumerate}
+
+If VS is used as text editor it much more convenient to do:
+\begin{enumerate}
+	\item Go to Source Control clicking the corresponding icon on the left panel (a Y with three empty circles on the ends) or using the following shortcut \texttt{Ctrl-Shift-G}. 
+	On the left panel will appear the list of all the files that :
+	\begin{itemize}
+		\item has been modified since the last committed version with a \textcolor{olive}{M} sign on the right of the filename,
+		\item has been added but untracked by Git with a \textcolor{gray}{U} sign
+		\item has been added and taken into account by the Git repository with a \textcolor{cyan}{A} sign.
+	\end{itemize}
+	
+	\item You can have a look at the differences of the modified files simply clicking on it on the list, it will show a dual text editor with on the left the last committed version and on the right the current file version, highlighting all the difference between the two!
+	
+	\item Commit the file version to your branch. For this simply do
+	\begin{itemize}
+		\item Verify if all the changes you made are compiling and executing flawlessly with meaningful physical result
+		\item Write a detailed and explicit description of the chances you are about to commit
+		\item Point your mouse on the file you want to commit and click on the + sign that appears.
+	\end{itemize}
+	
+	\item Update your branch is the common \process\ repository (\process\ Git webpage) using \texttt{git push}, as explained in the command ToDoList.
+\end{enumerate}
+
+
 
 \subsubsection{Merging \texttt{develop} into working branch}
 
@@ -1088,38 +1119,10 @@ This line was edited in develop branch
   \texttt{file1} etc.\ are the names of the files you removed conflicts
   from. Finally type \texttt{git commit} and edit the change log file.
 
-\item \texttt{git push} \\
-Updates the central repository.
+\item Submit a merge request using the \process\ git website to updates the central repository. The proposed update/upgrade will be verified by the assocoated responsible, currently James Morris.
 
 \end{enumerate}
 
-\subsubsection{Merging working branch back into \texttt{develop}}
-
-Once the work on a model has been completed, fully tested and documented, the
-working branch should be merged back into the \texttt{develop} branch. This is
-done almost exactly as in the previous section, but there are a few crucial
-differences:
-
-\begin{enumerate}
-
-\item Firstly, make sure you have committed your latest changes to the working
-  branch into the central \texttt{GitLab} repository.
-
-\item \texttt{git pull}\\
-Merges the version in the central repository into the local branch by copying over any changes that have been made in the version stored centrally.
-
-\item \texttt{git checkout dev\_mynewmodel}
-
-\item \texttt{git checkout develop}
-
-\item \texttt{git merge dev\_mynewmodel}
-
-\item Look for any conflicts and resolve them as described in the previous
-  section.
-
-\item \texttt{git push}
-
-\end{enumerate}
 
 \subsubsection{Committing changes to \texttt{develop}}
 

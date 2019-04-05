@@ -13,6 +13,10 @@
 
 - For issue #379 constraint 52 now gives warning for iblanket=1
 
+## Documentation update
+
+- Developper documentation update (code description/compilation/git instructions) 
+
 # 1.0.15
 
 ## Bug Fixes
