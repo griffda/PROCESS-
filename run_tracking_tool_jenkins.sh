@@ -1,42 +1,48 @@
 #
 tracking_jobs=("baseline_2018" "baseline_2019")
 #
+execute_process_run()
+{
 for track_job in ${tracking_jobs[*]}
 do
  echo "running $track_job"
- export PYTHONPATH=$PYTHONPATH:$PWD/utilities/
  IN_file=tracking/"$track_job"/"$track_job""_IN.DAT" 
  if [ -e "$IN_file" ]
  then
 #   cp tracking/"$track_job"/"$track_job""_IN.DAT" .
    cp "$IN_file" .
+   export PYTHONPATH=$PYTHONPATH:$PWD/utilities/
    ./process.exe "$track_job""_IN.DAT"
-   rm "$track_job"/"$track_job""_IN.DAT" .
-   cp "$track_job"" _MFILE.DAT" tracking
-   mv "$track_job""*" tracking/"$track_job"
+   rm "$track_job""_IN.DAT"
+   cp "$track_job""_MFILE.DAT" tracking
+   for file in $(ls ) 
+   do
+     if [[ -f "$file" && `echo $file | grep -c "$track_job" ` -gt 0 ]]
+     then
+       mv "$file" tracking/"$track_job"
+       echo "$file moved to -> tracking/"$track_job" "
+     fi
+   done
  fi
 done
-#cp tracking/baseline_2018/baseline_2018_IN.DAT .
-#./process.exe baseline_2018_IN.DAT
-#rm baseline_2018_IN.DAT
-#cp baseline_2018_MFILE.DAT tracking
-#mv baseline_2018* tracking/baseline_2018
-#
-#export PYTHONPATH=$PYTHONPATH:$PWD/utilities/
-#cp tracking/baseline_2019/baseline_2019_IN.DAT .
-#./process.exe baseline_2019_IN.DAT
-#rm baseline_2019_IN.DAT
-#cp baseline_2019_MFILE.DAT tracking
-#mv baseline_2019* tracking/baseline_2019
-#
-cd tracking
+}
 
-for track_job in ${tracking_jobs[*]}
-do
- python3.6 generate_tracking_data.py --mfile="$track_job""_MFILE.DAT" --jenkins="$track_job""_plot.csv" --sep="comma"
-done
-#python3.6 generate_tracking_data.py --mfile=baseline_2018_MFILE.DAT --jenkins=baseline_2018_plot.csv --sep="comma"
-#python3.6 generate_tracking_data.py --mfile=baseline_2019_MFILE.DAT --jenkins=baseline_2019_plot.csv --sep="comma"
-rm *_MFILE.DAT
-#rm baseline_2018_MFILE.DAT
-#rm baseline_2019_MFILE.DAT
+clean_tracking_jobs()
+{
+cd tracking
+ for track_job in ${tracking_jobs[*]}
+ do
+  python3.6 generate_tracking_data.py --mfile="$track_job""_MFILE.DAT" --jenkins="$track_job""_plot.csv" --sep="comma"
+ done
+   for file in $(ls ) 
+   do
+     if [[ -f "$file" && `echo $file | grep -c "_MFILE" ` -gt 0 ]]
+     then
+       rm "$file" 
+       echo "$file removed "
+     fi
+   done
+}
+
+execute_process_run
+clean_tracking_jobs
