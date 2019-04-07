@@ -98,7 +98,7 @@ def add_latest_parametric_entry(cargs, pdat):
 
     for var in TRACKING_LIST:
       first_val = pdat[var][0]
-      if(pdat[var].dtype == "float64"):# or pdat[var].dtype == "int64"):
+      if(pdat[var].dtype == "float64" and first_val != 0 ):# or pdat[var].dtype == "int64"):
 #        print(first_val)
         pdat[var] = pdat[var]/first_val
 #        print(var, pdat[var].dtype)
