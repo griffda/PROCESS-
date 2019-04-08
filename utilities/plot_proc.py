@@ -1107,7 +1107,13 @@ def plot_info(axis, data, mfile_data, scan):
     """
     eqpos = 0.7
     for i in range(len(data)):
-        axis.text(0, -i, data[i][1], ha='left', va='center')
+        colorflag = 'black'
+        if mfile_data.data[data[i][0]].exists:
+            if mfile_data.data[data[i][0]].var_flag == "ITV":
+                colorflag = 'red'
+            elif mfile_data.data[data[i][0]].var_flag == "OP":
+                colorflag = 'blue'
+        axis.text(0, -i, data[i][1],color=colorflag, ha='left', va='center')
         if isinstance(data[i][0], str):
             if data[i][0] == "":
                 axis.text(eqpos, -i, "\n",
@@ -1129,11 +1135,11 @@ def plot_info(axis, data, mfile_data, scan):
                     if "alpha" in data[i][0]:
                         value = str(float(value) + 1.0)
                     axis.text(eqpos, -i, '= ' + value + ' ' + data[i][2],
-                              ha='left', va='center')
+                              color=colorflag, ha='left', va='center')
                 else:
                     mfile_data.data[data[i][0]].get_scan(-1)
                     axis.text(eqpos, -i, "=" + "ERROR! Var missing",
-                              ha='left', va='center')
+                              color=colorflag, ha='left', va='center')
         else:
             dat = data[i][0]
             if isinstance(dat, str):
@@ -1141,7 +1147,7 @@ def plot_info(axis, data, mfile_data, scan):
             else:
                 value = "{:.4g}".format(data[i][0])
             axis.text(eqpos, -i, '= ' + value + ' ' + data[i][2],
-                      ha='left', va='center')
+                      color=colorflag, ha='left', va='center')
 
 def plot_header(axis, mfile_data, scan):
     """Function to plot header info: date, rutitle etc
