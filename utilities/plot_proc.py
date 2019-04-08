@@ -1250,6 +1250,13 @@ def plot_header(axis, mfile_data, scan):
                       'Number densities relative to electron density:',
                       ha='left', va='center')
         data2 = data2 + data
+    
+    axis.text(-0.05, -12.6, 'Colour Legend:', ha='left',
+                      va='center')
+    axis.text(0.0, -13.4, 'ITR', color = 'red' , ha='left',
+                      va='center')
+    axis.text(0.0, -14.2, 'OP', color = 'blue' , ha='left',
+                      va='center')
 
     plot_info(axis, data2, mfile_data, scan)
 
