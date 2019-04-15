@@ -700,6 +700,200 @@ def plot_qprofile(prof):
     prof.plot(rho,q_r_sauter, label="Sauter")
     prof.legend()
 
+def read_imprad_data(skiprows):
+    """ Function to read all data needed for creation of radiation profile
+    
+    Arguments:
+        skiprows --> number of rows to skip when reading impurity data files
+    """
+    label = ["H_", "He", "Be", "C_", "N_", "O_", "Ne", "Si", "Ar", "Fe", "Ni", "Kr", "Xe", "W_"]
+    lzdata = [0.0 for x in range(len(label))]
+    #DATAFILENAME = p DATAPATH +
+
+    for i in range(len(label)):
+        file = imp_path + label[i] + 'Lzdata.dat'
+        with open(file,"r",encoding="utf-8") as datafile:
+            # the three columns are T[keV] Lz[W m^3] Z_av
+            lzdata[i] = [line.split() for line in datafile]
+            lzdata[i] = lzdata[i][skiprows:]
+    
+    # then switch string to floats
+    impdata = np.array(lzdata,dtype=float)
+    return impdata
+
+def synchrotron_rad():
+    """ Function for Synchrotron radiation power calculation from Albajar, Nuclear Fusion 41 (2001) 665
+      Fidone, Giruzzi, Granata, Nuclear Fusion 41 (2001) 1755
+    
+    Arguments:
+    """   
+    #!  tbet is betaT in Albajar, not to be confused with plasma beta
+    
+    tbet = 2.0
+    #!  rpow is the(1-Rsyn) power dependence based on plasma shape
+    #!  (see Fidone)
+    rpow = 0.62
+    kap = vol / (2.0 * 3.1415**2 * rmajor * rminor**2)
+
+    #!  No account is taken of pedestal profiles here, other than use of
+    #!  the correct ne0 and te0...
+    de2o = 1.0e-20*ne0
+    pao = 6.04e3 * (rminor*de2o)/bt
+    gfun = 0.93 * (1.0 + 0.85*np.exp(-0.82 * rmajor/rminor))
+    kfun = (alphan + 3.87e0*alphat + 1.46)**(-0.79)
+    kfun = kfun * (1.98+alphat)**1.36 * tbet**2.14
+    kfun = kfun*(tbet**1.53 + 1.87*alphat - 0.16)**(-1.33)
+    dum = (1.0+0.12*(te0/(pao**0.41))*(1.0-ssync)**0.41)
+    #!  Very high T modification, from Fidone
+    dum = dum**(-1.51)
+
+    psync = 3.84e-8 * (1.0e0-ssync)**rpow * rmajor * rminor**1.38
+    psync = psync * kap**0.79 * bt**2.62 * de2o**0.38
+    psync = psync * te0 * (16.0+te0)**2.61 * dum * gfun * kfun
+
+    #!  psyncpv should be per unit volume
+    #Albajar gives it as total
+    psyncpv = psync/vol
+    print('psyncpv = ',psyncpv*vol) # matches the out.dat file
+
+    return psyncpv
+
+def plot_radprofile(prof, mfile_data, scan):
+    """ Function to plot radiation profile, formula taken from ???.
+
+    Arguments:
+      prof --> axis object to add plot to
+      mfile_data --> MFILE.DAT object
+      scan --> scan number to use
+    """
+    XMIN = 0
+    XMAX = 1
+    YMIN = 0
+    YMAX = 0.5 
+    prof.set_ylim([YMIN,YMAX])
+    prof.set_xlim([XMIN,XMAX])
+    prof.set_autoscaley_on(False)
+    prof.set_xlabel('r/a')
+    prof.set_ylabel('P_rad / MWm-3') 
+    prof.set_title('Radiation profile')
+
+    # read in the impurity data
+    imp_data = read_imprad_data(2)
+
+    # find impurity densities 
+    if mfile_data.data["imprad_model"].get_scan(scan) == 1:
+        imp_frac = np.array([mfile_data.data["fimp(01"].get_scan(scan),
+        mfile_data.data["fimp(02"].get_scan(scan),
+        mfile_data.data["fimp(03"].get_scan(scan),
+        mfile_data.data["fimp(04"].get_scan(scan),
+        mfile_data.data["fimp(05"].get_scan(scan),
+        mfile_data.data["fimp(06"].get_scan(scan),
+        mfile_data.data["fimp(07"].get_scan(scan),
+        mfile_data.data["fimp(08"].get_scan(scan),
+        mfile_data.data["fimp(09"].get_scan(scan),
+        mfile_data.data["fimp(10"].get_scan(scan),
+        mfile_data.data["fimp(11"].get_scan(scan),
+        mfile_data.data["fimp(12"].get_scan(scan),
+        mfile_data.data["fimp(13"].get_scan(scan),
+        mfile_data.data["fimp(14"].get_scan(scan)])
+
+    if ipedestal == 1:        
+        # Intialise the normalised radius
+        rhoped = (rhopedn + rhopedt) / 2.0
+        rhocore1 = np.linspace(0, 0.95*rhoped)
+        rhocore2 = np.linspace(0.95*rhoped, rhoped)
+        rhocore = np.append(rhocore1, rhocore2)
+        rhosep = np.linspace(rhoped, 1)
+        rho = np.append(rhocore, rhosep)
+        
+        # The density profile
+        ncore = neped + (ne0-neped) * (1-rhocore**2/rhopedn**2)**alphan
+        nsep = nesep + (neped-nesep) * (1-rhosep)/(1-min(0.9999, rhopedn))
+        ne = np.append(ncore, nsep)
+        
+        # The temperatue profile
+        tcore = teped + (te0-teped) * (1-(rhocore/rhopedt)**tbeta)**alphat
+        tsep = tesep + (teped-tesep)* (1-rhosep)/(1-min(0.9999,rhopedt))
+        te = np.append(tcore,tsep)
+
+        # Intailise the radiation profile arrays
+        pimpden = np.zeros([imp_data.shape[0],te.shape[0]])
+        pbremden = np.zeros([imp_data.shape[0],te.shape[0]])
+        lz = np.zeros([imp_data.shape[0],te.shape[0]])
+        prad = np.zeros(te.shape[0])
+        pbrem = np.zeros(te.shape[0])
+        Zav = np.zeros([imp_data.shape[0], te.shape[0]])
+        
+        #psyncpv = synchrotron_rad()
+
+        # Intailise the impurity radiation profile
+        for k in range(te.shape[0]):
+            for i in range(imp_data.shape[0]):
+                if te[k] <= imp_data[i][0][0]:
+                    lz[i][k] = imp_data[i][0][1]
+                elif te[k] >= imp_data[i][imp_data.shape[1]-1][0]:
+                    lz[i][k] = imp_data[i][imp_data.shape[1]-1][1]
+                else: 
+                    for j in range(imp_data.shape[1]-1):
+                        # Linear interpolation in log-log space
+                        if (te[k] > imp_data[i][j][0]) and (te[k] <= imp_data[i][j+1][0]):
+                            yi = np.log(imp_data[i][j][1])
+                            xi = np.log(imp_data[i][j][0])
+                            c = (np.log(imp_data[i][j+1][1])- yi) / (np.log(imp_data[i][j+1][0]) - xi)
+                            lz[i][k] = np.exp( yi + c * ( np.log(te[k]) - xi ) )
+                            #Zav[i][k] = imp_data[i][j][2] 
+                # The impurity radiation
+                pimpden[i][k] = imp_frac[i] * ne[k] * ne[k] * lz[i][k]
+                # The Bremsstrahlung
+                #pbremden[i][k] = imp_frac[i] * ne[k] * ne[k] * Zav[i][k] * Zav[i][k] * 5.355e-37 * np.sqrt(te[k])
+
+            for l in range(imp_data.shape[0]):
+                prad[k] = prad[k] + pimpden[l][k] * 2.0e-6
+                #pbrem[k] = pbrem[k] + pbremden[l][k] * 2.0e-6 
+        
+        #benchmark prad again outfile so mod prad
+        drho = np.array([rho[n+1] - rho[n] for n in range(te.shape[0]-1)])
+        pradint = (rho[1:] * prad[1:]) @ drho 
+        #pbremint = (rho[1:] * pbrem[1:]) @ drho 
+        #pradint = prad[1:] @ drho * 2.0e-5
+        #pbremint = pbrem[1:] @ drho * 2.0e-5
+
+    #print('prad = ',prad) 
+    #print('pbrem = ',pbrem)
+    #print(1.0e32*lz[12])
+    #print('pradpv = ',pradint)
+    #print('pbrempv = ',pbremint)
+    #print('pbremmw = ',pbremint*vol)
+    print('pradmw = ', pradint*vol, 'MW') # pimp = pline + pbrem
+
+    prof.plot(rho,prad, label="Total")
+    prof.plot(rho, pimpden[0]*2.0e-6, label='H')
+    prof.plot(rho, pimpden[1]*2.0e-6, label='He')
+    if imp_frac[2] > 1.0e-30:
+        prof.plot(rho, pimpden[2]*2.0e-6, label='Be')
+    if imp_frac[3] > 1.0e-30:
+        prof.plot(rho, pimpden[3]*2.0e-6, label='C')
+    if imp_frac[4] > 1.0e-30:
+        prof.plot(rho, pimpden[4]*2.0e-6, label='N')
+    if imp_frac[5] > 1.0e-30:
+        prof.plot(rho, pimpden[5]*2.0e-6, label='O')
+    if imp_frac[6] > 1.0e-30:
+        prof.plot(rho, pimpden[6]*2.0e-6, label='Ne')
+    if imp_frac[7] > 1.0e-30:
+        prof.plot(rho, pimpden[7]*2.0e-6, label='Si')
+    if imp_frac[8] > 1.0e-30:
+        prof.plot(rho, pimpden[8]*2.0e-6, label='Ar')
+    if imp_frac[9] > 1.0e-30:
+        prof.plot(rho, pimpden[9]*2.0e-6, label='Fe')
+    if imp_frac[10] > 1.0e-30:
+        prof.plot(rho, pimpden[2]*2.0e-6, label='Ni')
+    if imp_frac[11] > 1.0e-30:
+        prof.plot(rho, pimpden[2]*2.0e-6, label='Kr')
+    if imp_frac[12] > 1.0e-30:
+        prof.plot(rho, pimpden[12]*2.0e-6, label='Xe')
+    if imp_frac[13] > 1.0e-30:
+        prof.plot(rho, pimpden[13]*2.0e-6, label='W')
+    prof.legend()
 
 def plot_vacuum_vessel(axis, mfile_data, scan):
     """Function to plot vacuum vessel
@@ -1655,9 +1849,11 @@ def main(fig1, fig2, m_file_data, scan):
     plot_5 = fig2.add_subplot(235, aspect= 1/35)
     plot_tprofile(plot_5)
 
-    plot_6 = fig2.add_subplot(236, aspect=1/10)
-    plot_qprofile(plot_6)
+    plot_6 = fig2.add_subplot(236, aspect=2)
+    plot_radprofile(plot_6, m_file_data, scan)
 
+    #plot_7 = 
+    #plot_radprofile(plot_7)
 
     # Setup params for text plots
     plt.rcParams.update({'font.size': 8})
@@ -1936,6 +2132,9 @@ if __name__ == '__main__':
 
     parser.add_argument("-n", type=int, help="Which scan to plot?")
 
+    parser.add_argument("-p", metavar='DATAPATH',
+                        default="",  type=str, help="specify path to impurity data folder")
+
     args = parser.parse_args()
 
     # read MFILE
@@ -1948,6 +2147,11 @@ if __name__ == '__main__':
         scan = args.n
     else:
         scan = -1
+
+    if args.p != "":
+        imp_path = args.p
+    else:
+        imp_path = ""
 
     bore = m_file.data["bore"].get_scan(scan)
     ohcth = m_file.data["ohcth"].get_scan(scan)
@@ -2001,6 +2205,10 @@ if __name__ == '__main__':
     q0 = m_file.data["q0"].get_scan(scan)
     q95 = m_file.data["q95"].get_scan(scan)
     kallenbach_switch = m_file.data["kallenbach_switch"].get_scan(scan)
+    # rad profile
+    ssync = m_file.data["ssync"].get_scan(scan)
+    bt = m_file.data["bt"].get_scan(scan)
+    vol = m_file.data["vol"].get_scan(scan)
     
     # Build the dictionaries of radial and vertical build values and cumulative values
     radial = {} ; cumulative_radial = {}; subtotal = 0
