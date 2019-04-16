@@ -480,6 +480,7 @@ contains
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
      step22 = 0.0D0
+     step2298 = 0.0D0
   
      if ((iprint==1).and.(output_costs == 1)) then
        call oshead(outfile,'22. Reactor Plant Equipment')
@@ -487,7 +488,7 @@ contains
 
      !  Account 22.01 : Reactor Equipment
 
-     call step_a2201(outfile,iprint)
+     call step_a2201(step2298,outfile,iprint)
 
      !  Account 22.02 : Heat Transfer Systems
 
@@ -503,11 +504,11 @@ contains
 
      !  Account 22.05 : Fuel Handling and Storage
 
-     call step_a2205(outfile,iprint)
+     call step_a2205(step2298,outfile,iprint)
 
      !  Account 22.06 : Other Reactor Plant Equipment
 
-     call step_a2206(outfile,iprint)
+     call step_a2206(step2298,outfile,iprint)
 
      !  Account 22.07 : Instrumentation and Control
 
@@ -515,7 +516,7 @@ contains
 
      ! 22.98 Spares
      ! Original STARFIRE value, no scaling
-     step2298 = 6.638D1 
+     !step2298 = 6.638D1 
      step22 = step22 + step2298
   
      ! 21.99 Contingency
@@ -536,7 +537,7 @@ contains
 
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
- subroutine step_a2201(outfile,iprint)
+ subroutine step_a2201(step2298,outfile,iprint)
 
      !+ad_name  step_a2201
      !+ad_summ  Account 22.01 : Reactor Equipment
@@ -560,6 +561,7 @@ contains
      !  Arguments
   
      integer, intent(in) :: iprint,outfile
+     real(kind(1.0D0)), intent(inout) :: step2298
   
      !  Local variables
   
@@ -585,6 +587,7 @@ contains
      ! Original STARFIRE value, scaling with first wall area
      step220102 = 1.8607D2 * (fwarea / fwarea_star)
      step2201 = step2201 + step220102
+     step2298 = step2298 + 9.985D-2 *  step220102
   
      ! 22.01.03.01 TF Coils
      ! Original STARFIRE value, scaling with fusion island volume
@@ -595,16 +598,19 @@ contains
      ! Original STARFIRE value, scaling with fusion island volume
      step22010302 = 3.46D1 * (vfi / vfi_star)
      step2201 = step2201 + step22010302
+     step2298 = step2298 + 3.269D-1 * step22010302
 
      ! 22.01.03.03 Central Solenoid
      ! Original STARFIRE value, scaling with fusion island volume
      step22010303 = 7.25D0 * (vfi / vfi_star)
      step2201 = step2201 + step22010303
+     step2298 = step2298 + 6.124D-1 * step22010303
 
      ! 22.01.03.04 Control Coils
      ! Original STARFIRE value, scaling with fusion island volume
      step22010304 = 4.0D0 * (vfi / vfi_star)
      step2201 = step2201 + step22010304
+     step2298 = step2298 + 1.075D-1 * step22010304
   
      ! 22.01.04 Auxiliary Heating and Current Drive
      ! Original STARFIRE value, scaling with auxiliary power
@@ -614,16 +620,19 @@ contains
       cdcost = step220104
      end if
      step2201 = step2201 + step220104
+     step2298 = step2298 + 2.335D-1 * step220104
   
      ! 22.01.05 Primary Structure and Support
      ! Original STARFIRE value, no scaling
      step220105 = 5.274D1
      step2201 = step2201 + step220105
+     step2298 = step2298 + 6.824D-2 * step220105
   
      ! 22.01.06 Reactor Vacuum System
      ! Original STARFIRE value, no scaling
      step220106 = 4.86D0
      step2201 = step2201 + step220106
+     step2298 = step2298 + 1.893D-1 * step220106
   
      ! 22.01.07 Power Supplies
      ! Original STARFIRE value, no scaling
@@ -875,7 +884,7 @@ contains
 
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   subroutine step_a2205(outfile,iprint)
+   subroutine step_a2205(step2298,outfile,iprint)
 
      !+ad_name  step_a2205
      !+ad_summ  Account 22.05 : Fuel Handling and Storage
@@ -899,6 +908,7 @@ contains
      !  Arguments
   
      integer, intent(in) :: iprint,outfile
+     real(kind(1.0D0)), intent(inout) :: step2298
   
      !  Local variables
   
@@ -913,6 +923,7 @@ contains
      step2205 = 3.86D1 
   
      step22 = step22 + step2205
+     step2298 = step2298 + 5.026D-2 * step2205
 
      if ((iprint==1).and.(output_costs == 1)) then
        write(outfile,*) '******************* 22.05 Fuel Handling and Storage'
@@ -926,7 +937,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   subroutine step_a2206(outfile,iprint)
+   subroutine step_a2206(step2298,outfile,iprint)
 
      !+ad_name  step_a2206
      !+ad_summ  Account 22.06 : Other Reactor Plant Equipment
@@ -950,6 +961,7 @@ contains
      !  Arguments
   
      integer, intent(in) :: iprint,outfile
+     real(kind(1.0D0)), intent(inout) :: step2298
   
      !  Local variables
   
@@ -965,6 +977,7 @@ contains
      ! Original STARFIRE value, scaling with fusion island volume
      step220601 = 3.83D1 * (vfi / vfi_star)
      step2206 = step2206 + step220601
+     step2298 = step2298 + 4.308D-1 * step220601
   
      ! 22.06.02 Special Heating Systems
      ! Original STARFIRE value, no scaling
@@ -995,6 +1008,7 @@ contains
      ! Original STARFIRE value, scaling with thermal power
      step220607 = 1.97D0 * (pth / ptherm_star)**0.6D0
      step2206 = step2206 + step220607
+     step2298 = step2298 + 8.3D-1 * (pth / ptherm_star)**0.6D0
   
      ! 22.06.08 Standby Cooling System
      ! Original STARFIRE value, no scaling
@@ -1046,7 +1060,6 @@ contains
      !  Arguments
   
      integer, intent(in) :: iprint,outfile
-  
      !  Local variables
   
      real(kind(1.0D0)):: step2207
