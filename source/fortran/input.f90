@@ -331,6 +331,7 @@ contains
     !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
     !+ad_hist  22/06/18 SIM tfacpd now always an output
     !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
+    !+ad_hist  17/04/18 SIM Added step_ref
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -2538,6 +2539,9 @@ contains
        case ('fcontng')
           call parse_real_variable('fcontng', fcontng, 0.0D0, 1.0D0, &
                'Project contingency factor')
+       case ('step_ref')
+          call parse_real_array('step_ref', step_ref, isub1, 68, &
+               'Reference values for cost model 2', icode)
        case ('ucblbe')
           call parse_real_variable('ucblbe', ucblbe, 1.0D0, 1.0D3, &
                'Unit cost for blanket Be ($/kg)')

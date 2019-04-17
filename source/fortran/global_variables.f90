@@ -3495,6 +3495,7 @@ module cost_variables
   !+ad_hist  02/12/14 PJK Changed abktflnc, adivflnc default values
   !+ad_hist  10/12/14 PJK Removed ucihx
   !+ad_hist  05/01/15 JM  Added 2015 costs model variables
+  !+ad_hist  17/04/19 SIM Added step_ref
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3740,6 +3741,15 @@ module cost_variables
   integer :: output_costs = 1
   !+ad_vars  ratecdol /0.0435/ : effective cost of money in constant dollars
   real(kind(1.0D0)) :: ratecdol = 0.0435D0
+  !+ad_vars  step_ref(68) /.../ : Reference values for cost model 2
+  real(kind(1.0D0)), dimension(68) :: step_ref = &
+  (/ 3.0D0, 3.0D-1, 1.115D1, 1.5744D2, 3.592D1, 7.96D0, 9.16D0, 3.26D0, 5.369D1, &
+  1.88D0, 6.6D-1, 8.63D0, 3.1D0, 2.05D0, 8.7D-1, 8.7D-1, 9.1D-1, 3.1D-1, 1.81D0, &
+  8.236D1, 1.8607D2, 1.2572D2, 3.46D1, 7.25D0, 4.0D0, 3.349D1, 5.274D1, 4.86D0, &
+  5.29D1, 2.45D0, 2.82D0, 1.676D1, 6.984D1, 7.7D0, 3.6D0, 2.8D0, 8.0D-1, 1.7D0, &
+  1.8D0, 1.3D0, 3.86D1, 3.83D1, 0.0D0, 2.4D-1, 8.0D-2, 0.0D0, 2.0D0, 1.97D0, 1.16D0, &
+  2.341D1, 7.733D1, 4.37D0, 4.434D1, 1.918D1, 9.39D0, 5.084D1, 8.7D0, 1.239D1, &
+  1.704D1, 7.8D0, 2.11D0, 1.74D1, 3.599D1, 8.2D0, 1.568D1, 1.235D1, 6.22D0, 7.5D-1 /)
   !+ad_vars  tlife /30.0/ : plant life (years)
   real(kind(1.0D0)) :: tlife = 30.0D0
   !+ad_vars  ucad /180.0/ FIX : unit cost for administration buildings (M$/m3)
