@@ -405,7 +405,7 @@ contains
 
    ! 21.98 Spares
    ! Original STARFIRE value, no scaling
-   step2198 = 1.96D0 
+   step2198 = 6.541D-3 * step21
    step21 = step21 + step2198
 
    ! 21.99 Contingency
@@ -1159,7 +1159,7 @@ contains
 
    ! 23.98 Spares
    ! Original STARFIRE value, no scaling
-   step2398 = 3.0D0 
+   step2398 = 1.401D-2 * step23
    step23 = step23 + step2398
 
    ! 23.99 Contingency
@@ -1259,7 +1259,7 @@ contains
 
    ! 24.98 Spares
    ! Original STARFIRE value, no scaling
-   step2498 = 1.05D0 
+   step2498 = 1.0403D-2 * step24
    step24 = step24 + step2498
 
    ! 24.99 Contingency
@@ -1343,7 +1343,7 @@ contains
   
      ! 24.98 Spares
      ! Original STARFIRE value, no scaling
-     step2598 = 4.5D-1 
+     step2598 = 1.286D-2 * step25
      step25 = step25 + step2598
   
      ! 24.99 Contingency
