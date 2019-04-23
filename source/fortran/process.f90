@@ -69,7 +69,7 @@ program process
   use process_output
   use scan_module
   use numerics
-  use divertor_Kallenbach_variables, only:kallenbach_tests
+  use divertor_Kallenbach_variables, only: kallenbach_tests, kallenbach_scan_switch
   use main_module
 !  use output_module
   use init_module
@@ -171,12 +171,14 @@ program process
     ! These are distinct from the tests that are dependent on 'unit_test'.
     if (run_tests == 1) call runtests
 
-    if(kallenbach_tests==1) then
-      write(*,*)'Running test of Kallenbach divertor model.'
-      call Kallenbach_test()
-      !write(*,*)'Running parameter scan of Kallenbach divertor model.  Then stop.'
-      !call kallenbach_scan()
-      stop
+    if(kallenbach_tests == 1) then
+      call kallenbach_testing()
+      call exit(0)
+    endif
+
+    if(kallenbach_scan_switch == 1) then
+      call kallenbach_scan()
+      call exit(0)
     endif
 
      ! Call equation solver (HYBRD)

@@ -8,6 +8,10 @@
 
 - new command line argument `./process.exe help` provides help info
 - new CMake option `-Ddll=ON/OFF`. Default is `ON`. Useful for profiling with gprof 
+- Updated version of Kallenbach testing (now can run test case that matches Kallenbach 
+  paper or user defined inputs). See Userguide for more info.
+- Updated version of Kallenbach scanning (now can specify the variable to scan 
+  from a selection, number of scan points etc.). See Userguide for more info.
 
 ## Minor Changes
 

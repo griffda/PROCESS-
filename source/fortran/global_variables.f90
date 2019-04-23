@@ -1195,6 +1195,31 @@ module divertor_kallenbach_variables
   !+ad_vars  kallenbach_tests /0/ : Switch to run tests of 1D Kallenbach divertor model (1=on, 0=off)
   integer :: kallenbach_tests = 0
 
+  !+ad_vars  kallenbach_test_option /0/ : Switch to choose kallenbach test option: <UL>
+  !+ad_varc             <LI> = 0 Test case with user inputs;
+  !+ad_varc             <LI> = 1 Test case for Kallenbach paper;</UL>
+  integer :: kallenbach_test_option = 0
+
+  !+ad_vars  kallenbach_scan_switch /0/ : Switch to run scan of 1D Kallenbach divertor model (1=on, 0=off)
+  integer :: kallenbach_scan_switch = 0
+
+  !+ad_vars  kallenbach_scan_var /0/ : Switch for parameter to scan for kallenbach scan test:<UL>
+  !+ad_varc                  <LI> = 0 ttarget
+  !+ad_varc                  <LI> = 1 qtargettotal
+  !+ad_varc                  <LI> = 2 targetangle
+  !+ad_varc                  <LI> = 3 lambda_q_omp
+  !+ad_varc                  <LI> = 4 netau_sol
+  integer :: kallenbach_scan_var = 0
+  
+  !+ad_vars  kallenbach_scan_start /2.0/ : Start value for kallenbach scan parameter
+  real(kind(1.0D0)) :: kallenbach_scan_start = 2.0
+
+  !+ad_vars  kallenbach_scan_end /10.0/ : End value for kallenbach scan parameter
+  real(kind(1.0D0)) :: kallenbach_scan_end = 10.0
+
+  !+ad_vars  kallenbach_scan_num /1/ : Number of scans for kallenbach scan test
+  integer :: kallenbach_scan_num = 1
+
   !+ad_vars  target_spread /0.003/ : Increase in SOL power fall-off length due to spreading, mapped to OMP [m]
   real(kind(1.0D0)) :: target_spread = 0.003D0
 

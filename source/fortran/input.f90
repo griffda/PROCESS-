@@ -1340,7 +1340,24 @@ contains
        case ('kallenbach_tests')
           call parse_int_variable('kallenbach_tests', kallenbach_tests, 0, 1, &
                'Switch to turn on tests of the 1D Kallenbach divertor model (1=on, 0=off)')
-
+       case ('kallenbach_test_option')
+          call parse_int_variable('kallenbach_test_option', kallenbach_test_option, 0, 10, &
+               'Switch to choose testing option for the 1D Kallenbach divertor model')
+       case ('kallenbach_scan_switch')
+          call parse_int_variable('kallenbach_scan_switch', kallenbach_scan_switch, 0, 1, &
+               'Switch to turn on scan of the 1D Kallenbach divertor model (1=on, 0=off)')
+       case ('kallenbach_scan_var')
+          call parse_int_variable('kallenbach_scan_var', kallenbach_scan_var, 0, 10, &
+               'Scan parameter for kallenbach test scan')
+       case ('kallenbach_scan_start')
+          call parse_real_variable('kallenbach_scan_start', kallenbach_scan_start, 1.0D-10, 1.0D30, &
+               'Starting value for kallenbach scan')
+       case ('kallenbach_scan_end')
+          call parse_real_variable('kallenbach_scan_end', kallenbach_scan_end, 1.0D-10, 1.0D30, &
+               'End value for kallenbach scan')
+       case ('kallenbach_scan_num')
+          call parse_int_variable('kallenbach_scan_step', kallenbach_scan_num, 1, 1000, &
+               'Number of scan points for kallenbach scan')
        case ('targetangle')
           call parse_real_variable('targetangle', targetangle, 0.1D0, 90.0D0, &
                'Angle between field-line and divertor target (degrees)')
