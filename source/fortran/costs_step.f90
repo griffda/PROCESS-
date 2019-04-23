@@ -410,7 +410,7 @@ contains
 
    ! 21.99 Contingency
    ! STARFIRE 15%
-   step2199 = 1.5D-1 * step21
+   step2199 = step_con * step21
    step21 = step21 + step2199
 
    if ((iprint==1).and.(output_costs == 1)) then
@@ -521,7 +521,7 @@ contains
   
      ! 21.99 Contingency
      ! STARFIRE 15%
-     step2299 = 1.5D-1 * step22
+     step2299 = step_con * step22
      step22 = step22 + step2299
 
      if ((iprint==1).and.(output_costs == 1)) then
@@ -1164,7 +1164,7 @@ contains
 
    ! 23.99 Contingency
    ! STARFIRE 15%
-   step2399 = 1.5D-1 * step23
+   step2399 = step_con * step23
    step23 = step23 + step2399
 
    if ((iprint==1).and.(output_costs == 1)) then
@@ -1264,7 +1264,7 @@ contains
 
    ! 24.99 Contingency
    ! STARFIRE 15%
-   step2499 = 1.5D-1 * step24
+   step2499 = step_con * step24
    step24 = step24 + step2499
 
    if ((iprint==1).and.(output_costs == 1)) then
@@ -1348,7 +1348,7 @@ contains
   
      ! 24.99 Contingency
      ! STARFIRE 15%
-     step2599 = 1.5D-1 * step25
+     step2599 = step_con * step25
      step25 = step25 + step2599
   
      if ((iprint==1).and.(output_costs == 1)) then

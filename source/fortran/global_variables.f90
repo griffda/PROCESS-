@@ -3741,6 +3741,8 @@ module cost_variables
   integer :: output_costs = 1
   !+ad_vars  ratecdol /0.0435/ : effective cost of money in constant dollars
   real(kind(1.0D0)) :: ratecdol = 0.0435D0
+  !+ad_vars  step_con /0.15/ : Contingency Percentage
+  real(kind(1.0D0)) :: step_con = 1.5D-1
   !+ad_vars  step_ref(68) /.../ : Reference values for cost model 2
   real(kind(1.0D0)), dimension(68) :: step_ref = &
   (/ 3.0D0, 3.0D-1, 1.115D1, 1.5744D2, 3.592D1, 7.96D0, 9.16D0, 3.26D0, 5.369D1, &
