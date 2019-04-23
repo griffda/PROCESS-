@@ -202,16 +202,11 @@ contains
     call ovarre(nout, 'q95','(q)', q)
     call ovarre(nout, 'Plasma elongation','(kappa)', kappa)
     call ovarre(nout, 'Plasma triangularity','(triang)', triang)
-    call ovarre(nout, 'Increase in SOL power fall-off length due to spreading [m]',&
-                '(target_spread)', target_spread)
-    call ovarre(nout, 'SOL power fall-off length at the outer midplane [m]', &
-                '(lambda_q_omp)', lambda_q_omp)
-    call ovarre(nout, 'Parameter describing departure from local ionisation '&
-                'equil. in the sol; [ms;1e20/m3]','(netau_sol)', netau_sol)
-    call ovarre(nout, 'Angle between flux surface and divertor target [deg]',&
-                '(targetangle)', targetangle)
-    call ovarre(nout, 'Power density on target including surface recombination [w/m2]',&
-                '(qtargettotal)', qtargettotal)
+    call ovarre(nout, 'Increase in SOL power fall-off length due to spreading [m]','(target_spread)', target_spread)
+    call ovarre(nout, 'SOL power fall-off length at the outer midplane [m]','(lambda_q_omp)', lambda_q_omp)
+    call ovarre(nout, 'Parameter describing departure from local ionisation equil. in the sol; [ms;1e20/m3]','(netau_sol)', netau_sol)
+    call ovarre(nout, 'Angle between flux surface and divertor target [deg]','(targetangle)', targetangle)
+    call ovarre(nout, 'Power density on target including surface recombination [w/m2]','(qtargettotal)', qtargettotal)
     
     call divertor_Kallenbach(rmajor=rmajor, rminor=rminor, &
                             bt=bt, plascur=plascur, &
