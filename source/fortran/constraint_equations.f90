@@ -600,20 +600,16 @@ contains
           !#=#=# flhthresh, plhthresh
 
           ! check for divertor configuration
-          if (idivrt == 2) then
+          !if (idivrt == 2) then
             ! Double Null
             ! flhthresh |  f-value for L-H power threshold
             ! plhthresh |  L-H mode power threshold (MW)
             ! pdivt     |  power conducted to the divertor region (MW)
-            if (ftar >= 0.5d0) then
-               cc(i) = -(1.0D0 - ftar * flhthresh * plhthresh / (pdivt))
-            else
-               cc(i) = -(1.0D0 - (1.0d0-ftar) * flhthresh * plhthresh / (pdivt))
-            end if 
+               cc(i) = -(1.0D0 - flhthresh * plhthresh / (pdivt))
             
             if (present(con)) then
                 con(i) = plhthresh
-                err(i) = plhthresh - 2.0D0 * pdivt / flhthresh
+                err(i) = plhthresh -  pdivt / flhthresh
                 if (flhthresh > 1.0D0) then
                   symbol(i) = '>'
                 else
@@ -622,21 +618,21 @@ contains
                 units(i) = 'MW'
             end if
 
-          else
+          !else
             !Single null
-            cc(i) = -(1.0D0 - flhthresh * plhthresh / pdivt)
+          !  cc(i) = -(1.0D0 - flhthresh * plhthresh / pdivt)
 
-            if (present(con)) then
-                con(i) = plhthresh
-                err(i) = plhthresh - pdivt / flhthresh
-                if (flhthresh > 1.0D0) then
-                  symbol(i) = '>'
-                else
-                  symbol(i) = '<'
-                end if
-                units(i) = 'MW'
-            end if
-          end if 
+           ! if (present(con)) then
+           !     con(i) = plhthresh
+           !     err(i) = plhthresh - pdivt / flhthresh
+           !     if (flhthresh > 1.0D0) then
+           !       symbol(i) = '>'
+           !     else
+           !       symbol(i) = '<'
+           !     end if
+           !     units(i) = 'MW'
+            !end if
+          !end if 
 
 
        case (16)  ! Equation for net electric power lower limit
@@ -1361,14 +1357,25 @@ contains
           !             major radius (Psep/R) (MW/m)
           ! pdivt    |  power conducted to the divertor region (MW)
           ! rmajor   |  plasma major radius (m)
-          cc(i) = 1.0D0 - fpsepr * pseprmax / (pdivt/rmajor)
+         if (idivrt == 2) then  
+            cc(i) = 1.0D0 - fpsepr * pseprmax / (pdivmax/rmajor)   
 
-          if (present(con)) then
-             con(i) = pseprmax * (1.0D0 - cc(i))
-             err(i) = (pdivt/rmajor) * cc(i)
-             symbol(i) = '<'
-             units(i) = 'MW/m'
-          end if
+            if (present(con)) then
+               con(i) = pseprmax * (1.0D0 - cc(i))
+               err(i) = (pdivmax/rmajor) * cc(i)
+               symbol(i) = '<'
+               units(i) = 'MW/m'
+            end if
+         else
+            cc(i) = 1.0D0 - fpsepr * pseprmax / (pdivt/rmajor)
+
+            if (present(con)) then
+               con(i) = pseprmax * (1.0D0 - cc(i))
+               err(i) = (pdivt/rmajor) * cc(i)
+               symbol(i) = '<'
+               units(i) = 'MW/m'
+            end if
+         end if
 
        case (57)  ! Obsolete
         !#=# empty
@@ -1538,13 +1545,25 @@ contains
            ! q95             |  Safety factor q on 95% flux surface
            ! aspect          |  aspect ratio
            ! rmajor          |  plasma major radius (m)
-           cc(i) = 1.0d0 - fpsepbqar * psepbqarmax / ((pdivt*bt)/(q95*aspect*rmajor))
+           if (idivrt == 2) then
+              !Double null divertor configuration
+              cc(i) = 1.0d0 - fpsepbqar * psepbqarmax / ((pdivmax*bt)/(q95*aspect*rmajor))
 
-           if (present(con)) then
-             con(i) = psepbqarmax
-             err(i) = (pdivt*bt)/(q95*aspect*rmajor) - psepbqarmax
-             symbol(i) = '<'
-             units(i) = 'MWT/m'
+              if (present(con)) then
+                con(i) = psepbqarmax
+                err(i) = (pdivmax*bt)/(q95*aspect*rmajor) - psepbqarmax
+                symbol(i) = '<'
+                units(i) = 'MWT/m'
+              end if
+            else
+              cc(i) = 1.0d0 - fpsepbqar * psepbqarmax / ((pdivt*bt)/(q95*aspect*rmajor))
+
+              if (present(con)) then
+                con(i) = psepbqarmax
+                err(i) = (pdivt*bt)/(q95*aspect*rmajor) - psepbqarmax
+                symbol(i) = '<'
+                units(i) = 'MWT/m'
+              end if
            end if
 
 

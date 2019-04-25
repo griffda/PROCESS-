@@ -620,6 +620,12 @@ module physics_variables
   real(kind(1.0D0)) :: pdhe3 = 0.0D0
   !+ad_vars  pdivt : power to conducted to the divertor region (MW)
   real(kind(1.0D0)) :: pdivt = 0.0D0
+  !+ad_vars pdivl : power conducted to the lower divertor region (calculated if snull = 0) (MW)
+  real(kind(1.0D0)) :: pdivl = 0.0D0
+  !+ad_vars pdivu : power conducted to the upper divertor region (calculated if snull = 0) (MW)
+  real(kind(1.0D0)) :: pdivu = 0.0D0
+  !+ad_vars pdivmax : power conducted to the divertor with most load (calculated if snull = 0) (MW)
+  real(kind(1.0D0)) :: pdivmax = 0.0D0
   !+ad_vars  pdt : deuterium-tritium fusion power (MW)
   real(kind(1.0D0)) :: pdt = 0.0D0
   !+ad_vars  pedgeradmw : edge radiation power (MW)

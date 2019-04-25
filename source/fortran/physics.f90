@@ -535,21 +535,19 @@ implicit none
        end if
        pdivt = falpha*palpmw + pchargemw + pinj + pohmmw - pradmw
 
-       ! if double null configuration share the power 
-       ! equally over the upper and lower divertor 
-       if (idivrt == 2) then
-         if (ftar >= 0.5d0) then
-            pdivt = ftar*pdivt
-         else
-            pdivt = (1.0d0-ftar)*pdivt
-         end if
-       end if
-
        !  The following line is unphysical, but prevents -ve sqrt argument
        !  Should be obsolete if constraint eqn 17 is turned on
        pdivt = max(0.001D0, pdivt)
 
-    endif
+       ! if double null configuration share the power 
+       ! over the upper and lower divertor, where ftar gives
+       ! the factor of power conducted to the lower divertor
+       if (idivrt == 2) then 
+         pdivl = ftar * pdivt
+         pdivu = (1.0D0-ftar) * pdivt
+         pdivmax = max(pdivl, pdivu)
+       end if
+    end if
 
     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
     res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
@@ -560,9 +558,13 @@ implicit none
 
     !  Density limit
 
+    !if (idivrt == 2) then
+    !  call culdlm(bt,idensl,pdivmax,plascur,prn1,qstar,q95, &
+    !     rmajor,rminor,sarea,zeff,dlimit,dnelimt)
+    !else
     call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
          rmajor,rminor,sarea,zeff,dlimit,dnelimt)
-
+    !end if
 
     if (ipedestal .ne. 3) then
 
@@ -622,16 +624,8 @@ implicit none
     else
        if (idivrt == 2) then
          ! Double Null configuration in - including SoL radiation
-         if (ftar >= 0.5d0) then
-            photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea + &
-            (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea * ftar)
-         else
-            photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea + &
-            (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea * (1.0d0 - ftar))
-         end if
-          !photon_wall_core = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea
-         !photon_wall_sol = (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea * ftar)
-         !write(*,*) 'photon_wall_core =', photon_wall_core, ', photon_wall_sol =', photon_wall_sol
+         photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea + &
+         (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea)
        else
          ! Single null configuration - including SoL radaition
          photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea + &
@@ -644,11 +638,7 @@ implicit none
     ! Calculate the target imbalances 
     ! Double null only ! <- not for the first step
     ! find the total power into the targets
-    if (ftar >= 0.5d0) then
-      ptarmw =  pdivt * (1 - rad_fraction_sol) / ftar 
-    else
-      ptarmw =  pdivt * (1 - rad_fraction_sol) / (1.0d0 - ftar)
-    end if
+    ptarmw =  pdivt * (1.0D0 - rad_fraction_sol) 
     ! use ftar to find deltarsep
     lambdaio = 1.57d-3
     drsep = - 2.0d0 * 1.5d-3 * atanh(2.0d0 *(ftar - 0.5d0)) ! this needs updating
@@ -671,8 +661,8 @@ implicit none
       pUOmw = fUO * ptarmw
     else
       ! Single null configuration
-      fLI = 1.0d0 - fio
-      fLO = fio
+      fLI = fio
+      fLO = 1.0d0 - fio
       ! power into each target 
       pLImw = fLI * ptarmw
       pLOmw = fLO * ptarmw
@@ -2984,12 +2974,7 @@ implicit none
     !  Power per unit area crossing the plasma edge
     !  (excludes radiation and neutrons)
 
-    if (idivrt == 2) then
-      ! take total - not per divertor - for double null
-      qperp = pdivt/(ftar*sarea)
-      else 
       qperp = pdivt/sarea
-    end if
 
     !  Old ASDEX density limit formula
     !  This applies to the density at the plasma edge, so must be scaled
@@ -3029,12 +3014,7 @@ implicit none
        end if
        dlimit(4) = 0.0D0
     else
-       if (idivrt == 2) then
-          ! take total - not per divertor - for double null
-          dlim = 1.0D20 * sqrt(pdivt/(ftar*denom))
-       else
-          dlim = 1.0D20 * sqrt(pdivt/denom)
-       end if 
+       dlim = 1.0D20 * sqrt(pdivt/denom)
        dlimit(4) = dlim/prn1
     end if
 
@@ -3042,12 +3022,7 @@ implicit none
     !  This applies to the density at the plasma edge, so must be scaled
     !  to give the density limit applying to the average plasma density.
 
-    if (idivrt == 2) then
-      ! take total - not per divertor - for double null
-      dlim = 0.237D20 * bt * sqrt(pdivt/ftar)/rmajor
-    else
-      dlim = 0.237D20 * bt * sqrt(pdivt)/rmajor
-    end if
+    dlim = 0.237D20 * bt * sqrt(pdivt)/rmajor
     dlimit(5) = dlim/prn1
 
     !  Hugill-Murakami M.q limit
@@ -4722,7 +4697,7 @@ implicit none
     call oblnkl(outfile)
     call ovarre(outfile,'Power incident on the divertor targets (MW)', &
         '(ptarmw)',ptarmw, 'OP ')
-    call ovarre(outfile, 'Fraction of power to the divertor with highest power load', &
+    call ovarre(outfile, 'Fraction of power to the lower divertor', &
         '(ftar)', ftar, 'IP ')
     call ovarre(outfile,'Outboard side heat flux decay length (m)', &
         '(lambdaio)',lambdaio, 'OP ')
@@ -4778,8 +4753,15 @@ implicit none
        call oblnkl(outfile)
     end if
 
-    call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
-    call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivtbt/qar)', ((pdivt*bt)/(q95*aspect*rmajor)), 'OP ')
+    if (idivrt == 2) then
+      ! Double null divertor configuration
+      call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivmax/rmajor)',pdivmax/rmajor, 'OP ')
+      call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivmaxbt/qar)', ((pdivmax*bt)/(q95*aspect*rmajor)), 'OP ')
+    else
+      ! Single null divertor configuration
+      call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
+      call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivtbt/qar)', ((pdivt*bt)/(q95*aspect*rmajor)), 'OP ')
+    end if
 
     if (istell == 0) then
        call osubhd(outfile,'H-mode Power Threshold Scalings :')
