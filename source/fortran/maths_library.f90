@@ -2924,6 +2924,9 @@ contains
              b(j,i) = b(i,j)
           end do
        end do
+       
+       ! Writting the step results in OPT.DAT file
+        write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sqsumsq, conf, x       
 
     end do iteration
 
