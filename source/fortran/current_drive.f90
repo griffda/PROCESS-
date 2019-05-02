@@ -357,6 +357,7 @@ contains
     end if
 
     call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', '(pheat)', pheat)
+    call ovarre(outfile,'Power injected for current drive (MW)','(pcurrentdrivemw)', pinjmw - pheat) 
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq, 'OP ')
     call ovarre(outfile,'Auxiliary current drive (A)','(auxiliary_cd)',auxiliary_cd, 'OP ')
     call ovarre(outfile,'Current drive efficiency (A/W)','(effcd)',effcd, 'OP ')
