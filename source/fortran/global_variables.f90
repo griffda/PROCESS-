@@ -112,7 +112,7 @@ module physics_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  15/10/12 PJK Initial version of module
-  !+ad_hist  17/12/12 PJK Added zfear; modified impfe, cfe0, rnfene, fbfe comments
+  !+ad_hist  17/12/12 PJK modified impfe, cfe0, rnfene, fbfe comments
   !+ad_hist  18/12/12 PJK Added pthrmw(6 to 8)
   !+ad_hist  18/12/12 PJK Added snull; modified idivrt
   !+ad_hist  03/01/13 PJK Removed iculdl
@@ -136,8 +136,7 @@ module physics_variables
   !+ad_hist  02/04/14 PJK Added iprofile=1 recommendation to use icurr=4
   !+ad_hist  23/04/14 PJK Added bvert
   !+ad_hist  01/05/14 PJK Changed dnbeta, gtscale comments
-  !+ad_hist  14/05/14 PJK Modified impc, impo, cfe0, zfear comments;
-  !+ad_hisc               added pcorerad
+  !+ad_hist  14/05/14 PJK added pcorerad
   !+ad_hist  15/05/14 PJK Changed ffwal comment
   !+ad_hist  19/05/14 PJK Changed plrad to pedgerad; removed fradmin;
   !+ad_hisc               added iradloss
@@ -228,9 +227,6 @@ module physics_variables
   real(kind(1.0D0)) :: burnup = 0.0D0
   !+ad_vars  bvert : vertical field at plasma (T)
   real(kind(1.0D0)) :: bvert = 0.0D0
-  !+ad_vars  cfe0 /0.0/ : seeded high-Z impurity fraction (n_highZ / n_e)
-  !+ad_varc               (imprad_model=0 only) (iteration variable 43)
-  real(kind(1.0D0)) :: cfe0 = 0.0D0
   !+ad_vars  csawth /1.0/ : coeff. for sawteeth effects on burn V-s requirement
   real(kind(1.0D0)) :: csawth = 1.0D0
   !+ad_vars  cvol /1.0/ : multiplying factor times plasma volume (normally=1)
@@ -292,9 +288,6 @@ module physics_variables
   real(kind(1.0D0)) :: falpha = 0.95D0
   !+ad_vars  falpi : fraction of alpha power to ions
   real(kind(1.0D0)) :: falpi = 0.0D0
-  !+ad_vars  fbfe /0.35/ : fraction of high-Z radiation to Bremsstrahlung
-  !+ad_varc                (imprad_model=0 only)
-  real(kind(1.0D0)) :: fbfe = 0.35D0
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: fdeut = 0.5D0
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
@@ -400,10 +393,6 @@ module physics_variables
   !+ad_varc          <LI> = 0 inverse quadrature not used;
   !+ad_varc          <LI> = 1 inverse quadrature with Neo-Alcator tau-E used</UL>
   integer :: iinvqd = 1
-  !+ad_vars  impc /1.0/ : carbon impurity multiplier (imprad_model=0 only)
-  real(kind(1.0D0)) :: impc = 1.0D0
-  !+ad_vars  impo /1.0/ : oxygen impurity multiplier (imprad_model=0 only)
-  real(kind(1.0D0)) :: impo = 1.0D0
 
   !+ad_vars  ipedestal /1/ : switch for pedestal profiles:<UL>
   !+ad_varc             <LI> = 0 use original parabolic profiles;
@@ -608,7 +597,6 @@ module physics_variables
   !+ad_vars  palpnb : alpha power from hot neutral beam ions (MW)
   real(kind(1.0D0)) :: palpnb = 0.0D0
   !+ad_vars  pbrempv : bremsstrahlung power per volume (MW/m3)
-  !+ad_varc            (calculated only if imprad_model=1)
   real(kind(1.0D0)) :: pbrempv = 0.0D0
   !+ad_vars  pchargemw : non-alpha charged particle fusion power (MW)
   real(kind(1.0D0)) :: pchargemw = 0.0D0
@@ -643,7 +631,6 @@ module physics_variables
   !+ad_vars  plascur : plasma current (A)
   real(kind(1.0D0)) :: plascur = 0.0D0
   !+ad_vars  plinepv : line radiation power per volume (MW/m3)
-  !+ad_varc            (calculated only if imprad_model=1)
   real(kind(1.0D0)) :: plinepv = 0.0D0
   !+ad_vars  pneutmw : neutron fusion power (MW)
   real(kind(1.0D0)) :: pneutmw = 0.0D0
@@ -826,9 +813,6 @@ module physics_variables
   real(kind(1.0D0)) :: zeff = 0.0D0
   !+ad_vars  zeffai : mass weighted plasma effective charge
   real(kind(1.0D0)) :: zeffai = 0.0D0
-  !+ad_vars  zfear /0/ : high-Z impurity switch; 0=iron, 1=argon
-  !+ad_varc              (if imprad_model=1, only used in neutral beam stopping calc.)
-  integer :: zfear = 0
 
 end module physics_variables
 
@@ -1210,7 +1194,7 @@ module divertor_kallenbach_variables
   !+ad_varc                  <LI> = 3 lambda_q_omp
   !+ad_varc                  <LI> = 4 netau_sol
   integer :: kallenbach_scan_var = 0
-  
+
   !+ad_vars  kallenbach_scan_start /2.0/ : Start value for kallenbach scan parameter
   real(kind(1.0D0)) :: kallenbach_scan_start = 2.0
 

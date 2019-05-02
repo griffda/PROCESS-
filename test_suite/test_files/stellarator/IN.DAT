@@ -56,7 +56,7 @@ rmajor   = 22.0         *Plasma major radius (m)
 ssync    = 0.6          *Synchrotron wall reflectivity factor
 te       = 7.0          *Volume averaged electron temperature (keV)
 tratio   = 0.95         *Ion temperature / electron temperature
-zfear    = 0            *High-Z impurity switch (0: Iron)
+*zfear    = 0            *High-Z impurity switch (0: Iron)
 
 *--------------Stellarator Variables---------------*
 
@@ -127,7 +127,7 @@ etath    = 0.4          *Thermal to electric conversion efficiency; if seconday_
 
 *------------Impurity Radiation Module-------------*
 
-imprad_model = 1        *Switch for impurity radiation model
+*imprad_model = 1        *Switch for impurity radiation model
 coreradius = 0.6        *Normalised radius defining the 'core' region
 
 fimp(1)  = 1.0          *Hydrogen (fraction calculated by code)

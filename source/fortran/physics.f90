@@ -7,7 +7,6 @@ module physics_module
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  physics
-  !+ad_cont  betcom
   !+ad_cont  bootstrap_fraction_iter89
   !+ad_cont  bootstrap_fraction_nevins
   !+ad_cont  bootstrap_fraction_sauter
@@ -116,7 +115,7 @@ module physics_module
   implicit none
 
   private
-  public :: betcom,bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
+  public :: bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
        physics,plasma_composition,pohm,radpwr,rether, subr
 
   !  Module-level variables
@@ -131,7 +130,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 subroutine subr(a, b)
    implicit none
-   real, intent(in) :: a 
+   real, intent(in) :: a
    real, intent(out) :: b
    b = a
 end subroutine subr
@@ -150,7 +149,6 @@ end subroutine subr
     !+ad_desc  characteristics for a tokamak device.
     !+ad_prob  None
     !+ad_call  beamfus
-    !+ad_call  betcom
     !+ad_call  bootstrap_fraction_iter89
     !+ad_call  bootstrap_fraction_nevins
     !+ad_call  bootstrap_fraction_sauter
@@ -182,10 +180,6 @@ end subroutine subr
     !+ad_hist  07/10/96 PJK Added new ICULBL=2 option
     !+ad_hist  17/09/97 PJK Added Greenwald density limit (added arguments
     !+ad_hisc               to CULDLM)
-    !+ad_hist  01/04/98 PJK Changed PBREM to PRAD in argument list of PCOND,
-    !+ad_hisc               added DNLA and IGNITE to arguments of BETCOM
-    !+ad_hisc               and PCOND, and added other effects of IGNITE
-    !+ad_hist  24/04/98 PJK Added IMPC, IMPFE, IMPO to arguments of BETCOM
     !+ad_hist  30/06/98 PJK Added XAREA to arguments of PCOND
     !+ad_hist  17/07/98 PJK Added call to PTHRESH
     !+ad_hist  19/01/99 PJK Added POWERHT to argument list of PCOND
@@ -195,7 +189,6 @@ end subroutine subr
     !+ad_hisc               and switch ICULCR
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  17/12/12 PJK Added ZFEAR to argument lists of BETCOM, RADPWR
     !+ad_hist  18/12/12 PJK Added SAREA,AION to argument list of PTHRESH
     !+ad_hist  03/01/13 PJK Removed switch ICULDL and call to DENLIM
     !+ad_hist  11/04/13 PJK Removed switch IRES from POHM call
@@ -257,14 +250,8 @@ implicit none
     if (ipedestal .ne. 3) then
 
        !  Calculate plasma composition
-       if (imprad_model == 0) then
-          call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impo, &
-               ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
-               dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
-               zion,zfear)
-       else
-          call plasma_composition
-       end if
+       ! Issue #261 Remove old radiation model (imprad_model=0)
+       call plasma_composition
 
        !  Calculate plasma current
        call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
@@ -496,7 +483,7 @@ implicit none
 
        !  Calculate radiation power
 
-       call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
+       call radpwr(pbrempv,plinepv,psyncpv, &
             pcoreradpv,pedgeradpv,pradpv)
 
        pcoreradmw = pcoreradpv*vol
@@ -2431,236 +2418,6 @@ implicit none
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc, &
-       impo,ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee, &
-       dlamie,dnalp,dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone, &
-       rnfene,zeffai,zion,zfear)
-
-    !+ad_name  betcom
-    !+ad_summ  Calculates various plasma component fractional makeups
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  cfe0   : input real :  additional iron impurity fraction
-    !+ad_args  dene   : input real :  electron density (/m3)
-    !+ad_args  fdeut  : input real :  deuterium fraction of fuel
-    !+ad_args  ftrit  : input real :  tritium fraction of fuel
-    !+ad_args  fhe3   : input real :  helium-3 fraction of fuel
-    !+ad_args  ftritbm: input real :  tritium fraction of beam
-    !+ad_args  ignite : input integer :  switch for ignited calculation
-    !+ad_args  impc   : input real :  carbon impurity multiplier
-    !+ad_args  impo   : input real :  oxygen impurity multiplier
-    !+ad_args  ralpne : input real :  thermal alpha density / electron density
-    !+ad_args  rnbeam : input real :  hot beam density / electron density
-    !+ad_args  te     : input real :  electron temperature (keV)
-    !+ad_args  zfear  : input integer :  high-Z impurity switch; 0=iron, 1=argon
-    !+ad_args  abeam  : output real : beam ion mass (amu)
-    !+ad_args  afuel  : output real : average mass of fuel portion of ions (amu)
-    !+ad_args  aion   : output real : average mass of all ions (amu)
-    !+ad_args  deni   : output real : fuel ion density (/m3)
-    !+ad_args  dlamee : output real : electron-electron coulomb logarithm
-    !+ad_args  dlamie : output real : ion-electron coulomb logarithm
-    !+ad_args  dnalp  : output real : alpha ash density (/m3)
-    !+ad_args  dnbeam : output real : hot beam ion density (/m3)
-    !+ad_args  dnitot : output real : total ion density (/m3)
-    !+ad_args  dnprot : output real : proton ash density (/m3)
-    !+ad_args  dnz    : output real : high Z ion density (/m3)
-    !+ad_args  falpe  : output real : fraction of alpha energy to electrons
-    !+ad_args  falpi  : output real : fraction of alpha energy to ions
-    !+ad_args  rncne  : output real : carbon density / electron density
-    !+ad_args  rnfene : output real : iron density / electron density
-    !+ad_args  rnone  : output real : oxygen density / electron density
-    !+ad_args  zeff   : output real : plasma effective charge
-    !+ad_args  zeffai : output real : mass weighted plasma effective charge
-    !+ad_args  zion   : output real : density weighted charge
-    !+ad_desc  This subroutine determines the various plasma component
-    !+ad_desc  fractional makeups.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  06/12/95 PJK Added D-He3 calculations
-    !+ad_hist  01/04/98 PJK Added calculation of line-averaged density
-    !+ad_hisc               and effects of IGNITE
-    !+ad_hist  24/04/98 PJK Added IMPC, IMPFE, IMPO impurity multipliers
-    !+ad_hist  23/05/06 PJK Ensured that deni is positive
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  17/12/12 PJK Added ZFEAR coding, and updated AION and other
-    !+ad_hisc               high-Z impurity terms
-    !+ad_hist  03/07/13 PJK Amended ZEFFAI coding as per long-standing comment
-    !+ad_hist  24/07/13 PJK Clarified DNLA comment
-    !+ad_hist  10/09/13 PJK Clarified DENI calculation for D-He3;
-    !+ad_hist               modified dnprot calculation
-    !+ad_hist  11/09/13 PJK Removed idhe3, ftr usage
-    !+ad_hist  12/02/14 PJK Modified initial dnprot approximation
-    !+ad_hist  19/02/14 PJK Moved PCOEF and DNLA calculations elsewhere
-    !+ad_hist  28/07/14 PJK Added fix for problems due to carbon impurity
-    !+ad_hisc               scaling at low electron density
-    !+ad_hist  19/08/14 PJK Removed IMPFE argument
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
-    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: ignite, zfear
-    real(kind(1.0D0)), intent(in) :: cfe0, dene, fdeut, ftrit, fhe3, &
-         ftritbm, impc, impo, ralpne, rnbeam, te
-    real(kind(1.0D0)), intent(out) :: abeam, afuel, aion, deni, dlamee, &
-         dlamie, dnalp, dnbeam, dnitot, dnprot, dnz, falpe, falpi, &
-         rncne, rnfene, rnone, zeff, zeffai, zion
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: fc, f_highz, fo, m_highz, pc, znfuel, z_highz
-    integer :: first_call = 1
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Ion density components
-    !  ======================
-
-    !  Alpha ash portion
-
-    dnalp = dene * ralpne
-
-    !  Protons
-    !  This calculation will be wrong on the first call as the particle
-    !  production rates are evaluated later in the calling sequence
-    !  Issue #557 Allow protium impurity to be specified: 'protium'
-    !  This will override the calculated value which is a minimum.
-
-    if (alpharate < 1.0D-6) then  !  not calculated yet...
-       dnprot = max(protium*dene, dnalp * (fhe3 + 1.0D-3)) !  rough estimate
-    else
-       dnprot = max(protium*dene, dnalp * protonrate/alpharate)
-    end if
-
-
-    !  Beam hot ion component
-    !  If ignited, prevent beam fusion effects
-
-    if (ignite == 0) then
-       dnbeam = dene * rnbeam
-    else
-       dnbeam = 0.0D0
-    end if
-
-    !  Carbon portion (IPDG89)
-
-    fc = impc * (0.009D0 + 0.006D0 * (7.0D19/dene)**2.6D0)
-
-    !  The following should prevent problems at low electron density
-    !  dene with ion density deni becoming negative
-
-    if (fc > 0.05D0) then
-       fc = 0.05D0
-       call report_error(136)
-    end if
-
-    rncne = fc
-
-    !  Oxygen portion (IPDG89)
-
-    fo = impo * 0.001D0
-    rnone = fo
-
-    !  High-Z portion (formerly assumed to be iron)
-
-    f_highz = cfe0
-    rnfene = f_highz
-
-    if (zfear == 1) then  !  High-Z impurity is argon
-       z_highz = 18.0D0
-       m_highz = 40.0D0
-    else  !  Iron
-       z_highz = 26.0D0
-       m_highz = 56.0D0
-    end if
-
-    !  Fuel portion - conserve charge neutrality
-    !  znfuel is the sum of Zi.ni for the three fuel ions
-
-    znfuel = dene - 2.0D0*dnalp - dnprot - dnbeam - &
-         dene*(6.0D0*fc + 8.0D0*fo + z_highz*f_highz)
-
-    !  Fuel ion density, deni
-    !  For D-T-He3 mix, deni = nD + nT + nHe3, while znfuel = nD + nT + 2*nHe3
-    !  So deni = znfuel - nHe3 = znfuel - fhe3*deni
-
-    deni = znfuel/(1.0D0+fhe3)
-
-    !  Ensure that deni is never negative or zero
-
-    deni = max(deni,1.0D0)
-
-    !  Total ion density
-
-    dnz = dene * (fc + fo + f_highz)
-    dnitot = deni + dnz + dnalp + dnprot + dnbeam
-
-    !  Effective charge
-    !  True calculation should be sum(ni.Zi^2) / sum(ni.Zi),
-    !  but ne = sum(ni.Zi) through quasineutrality
-
-    zeff = (fdeut + ftrit)*deni/dene + 4.0D0*fhe3*deni/dene + &
-         dnbeam/dene + 4.0D0*ralpne + dnprot/dene + 36.0D0*fc + &
-         64.0D0*fo + z_highz*z_highz*f_highz
-
-    !  Define coulomb logarithm
-    !  (collisions: ion-electron, electron-electron)
-
-    dlamee = 31.0D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
-    dlamie = 31.3D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
-
-    !  Fraction of alpha energy to ions and electrons
-    !  From Max Fenstermacher
-    !  (used with electron and ion power balance equations only)
-    !  No consideration of pchargepv here...
-
-    !  pcoef now calculated in plasma_profiles, after the very first
-    !  call of betcom; use old parabolic profile estimate in this case
-
-    if (first_call == 1) then
-       pc = (1.0D0 + alphan)*(1.0D0 + alphat)/(1.0D0+alphan+alphat)
-       first_call = 0
-    else
-       pc = pcoef
-    end if
-
-    falpe = 0.88155D0 * exp(-te*pc/67.4036D0)
-    falpi = 1.0D0 - falpe
-
-    !  Average atomic masses
-
-    afuel = 2.0D0*fdeut + 3.0D0*ftrit + 3.0D0*fhe3
-    abeam = 2.0D0*(1.0D0-ftritbm) + 3.0D0*ftritbm
-
-    !  Density weighted masses and charges
-
-    aion = ( afuel*deni + 4.0D0*dnalp + dnprot + abeam*dnbeam + &
-         dene*(12.0D0*fc + 16.0D0*fo + m_highz*f_highz) )/ dnitot
-
-    zion = ( fdeut*deni + ftrit*deni + 2.0D0*fhe3*deni + &
-         2.0D0*dnalp + dnprot + dnbeam + dene * &
-         (6.0D0*fc + 8.0D0*fo + z_highz*f_highz) )/dnitot
-
-    zeffai = ( &
-         fdeut*deni/2.0D0 + ftrit*deni/3.0D0 + 4.0D0*fhe3*deni/3.0D0 + &
-         dnalp + dnprot + &
-         (1.0D0-ftritbm)*dnbeam/2.0D0 + ftritbm*dnbeam/3.0D0 + &
-         dene*(3.0D0*fc + 4.0D0*fo + (z_highz*z_highz/m_highz)*f_highz) &
-         ) / dene
-
-  end subroutine betcom
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   subroutine plasma_composition
 
     !+ad_name  plasma_composition
@@ -2671,8 +2428,8 @@ implicit none
     !+ad_args  None
     !+ad_desc  This subroutine determines the various plasma component
     !+ad_desc  fractional makeups. It is the replacement for the original
-    !+ad_desc  routine <CODE>betcom</CODE>, and is used in conjunction with
-    !+ad_desc  the new impurity radiation model
+    !+ad_desc  It is the replacement for the original routine <CODE>betcom</CODE>,
+    !+ad_desc  and is used in conjunction with the new impurity radiation model
     !+ad_prob  None
     !+ad_call  element2index
     !+ad_call  report_error
@@ -2778,11 +2535,13 @@ implicit none
 
     rncne = impurity_arr(element2index('C_'))%frac
     rnone = impurity_arr(element2index('O_'))%frac
-    if (zfear == 0) then
-       rnfene = impurity_arr(element2index('Fe'))%frac
-    else
-       rnfene = impurity_arr(element2index('Ar'))%frac
-    end if
+    ! Issue #261 Remove zfear.  Use the sum of Fe and Ar concentrations
+    ! if (zfear == 0) then
+    !    rnfene = impurity_arr(element2index('Fe'))%frac
+    ! else
+    !    rnfene = impurity_arr(element2index('Ar'))%frac
+    ! end if
+    rnfene = impurity_arr(element2index('Fe'))%frac + impurity_arr(element2index('Ar'))%frac
 
     !  Effective charge
     !  Calculation should be sum(ni.Zi^2) / sum(ni.Zi),
@@ -3040,8 +2799,7 @@ implicit none
     !+ad_hist  30/06/94 PJK Added stellarator scaling laws 20-23
     !+ad_hist  07/12/95 PJK Added pcharge to plasma input power
     !+ad_hist  14/11/97 PJK Added ITER-97 scaling laws (26,27)
-    !+ad_hist  01/04/98 PJK Added ITER-96P scaling law (28) and moved
-    !+ad_hisc               calculation of dnla into BETCOM instead
+    !+ad_hist  01/04/98 PJK Added ITER-96P scaling law (28)
     !+ad_hist  26/06/98 PJK Added scaling laws 29,30,31
     !+ad_hist  08/10/98 PJK Added scaling laws 32,33,34,35,36
     !+ad_hist  16/07/01 PJK Added KAPPAA to argument list
@@ -3617,7 +3375,7 @@ implicit none
       ptaue = 0.02D0
       qtaue = 0.0D0
       rtaue = -0.29D0
-    
+
     case (44)  !  Hubbard et al. 2017 I-mode confinement time scaling - lower
       tauee = 0.014D0 * (plascur/1.0D6)**0.60D0 * bt**0.70D0 * dnla20**(-0.03D0) &
               * powerht**(-0.33D0)
@@ -4229,7 +3987,6 @@ implicit none
     !+ad_hist  19/01/99 PJK Added powerht and minor word changes
     !+ad_hist  16/07/01 PJK Added kappaa
     !+ad_hist  20/09/11 PJK Initial F90 version
-    !+ad_hist  17/12/12 PJK Added ZFEAR lines
     !+ad_hist  18/12/12 PJK Added PTHRMW(6 to 8)
     !+ad_hist  03/01/13 PJK Removed ICULDL if-statement
     !+ad_hist  23/01/13 PJK Modified logic for stellarators and ignite=1
@@ -4502,35 +4259,24 @@ implicit none
     call ovarre(outfile,'Helium ion density (thermalised ions only) / electron density','(ralpne)',ralpne)
     call oblnkl(outfile)
 
-    call ovarin(outfile,'Plasma impurity model','(imprad_model)',imprad_model)
-    if (imprad_model == 0) then
-       call ocmmnt(outfile,'Original model; ITER 1989 Bremsstrahlung calculation')
-       call ovarre(outfile,'Carbon impurity concentration (%)','(rncne*100)',rncne*100)
-       call ovarre(outfile,'Oxygen impurity concentration (%)','(rnone*100)',rnone*100)
 
-       if (zfear == 1) then
-          call ovarre(outfile,'Argon impurity concentration (%)','(cfe0*100)',cfe0*100)
-       else
-          call ovarre(outfile,'Iron impurity concentration (%)','(cfe0*100)',cfe0*100)
-       end if
-    else
-       call ocmmnt(outfile,'New generalised impurity model')
-       call oblnkl(outfile)
-       call ocmmnt(outfile,'Plasma ion densities / electron density:')
-       do imp = 1,nimp
-          ! MDK Update fimp, as this will make the ITV output work correctly.
-          fimp(imp)=impurity_arr(imp)%frac
-          str1 = impurity_arr(imp)%label // ' concentration'
-          str2 = '(fimp('//int_to_string2(imp)//')'
-          ! MDK Add output flag for H which is calculated
-          if (imp==1) then
-            !call ovarre(outfile,str1,str2,impurity_arr(imp)%frac, 'OP ')
-            call ovarre(outfile,str1,str2,fimp(imp), 'OP ')
-          else
-            call ovarre(outfile,str1,str2,fimp(imp))
-          end if
-       end do
-    end if
+   call ocmmnt(outfile,'Impurities')
+   call oblnkl(outfile)
+   call ocmmnt(outfile,'Plasma ion densities / electron density:')
+   do imp = 1,nimp
+      ! MDK Update fimp, as this will make the ITV output work correctly.
+      fimp(imp)=impurity_arr(imp)%frac
+      str1 = impurity_arr(imp)%label // ' concentration'
+      str2 = '(fimp('//int_to_string2(imp)//')'
+      ! MDK Add output flag for H which is calculated
+      if (imp==1) then
+        !call ovarre(outfile,str1,str2,impurity_arr(imp)%frac, 'OP ')
+        call ovarre(outfile,str1,str2,fimp(imp), 'OP ')
+      else
+        call ovarre(outfile,str1,str2,fimp(imp))
+      end if
+   end do
+
     call ovarre(outfile,'Average mass of all ions (amu)','(aion)',aion, 'OP ')
     ! MDK Say which impurity is varied, if iteration variable fimpvar (102) is turned on
     !if (any(ixc == 102)) then
@@ -4635,17 +4381,13 @@ implicit none
     call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
 
     call osubhd(outfile,'Radiation Power (excluding SOL):')
-    if (imprad_model == 1) then
-       call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', pbrempv*vol, 'OP ')
-       call ovarre(outfile,'Line radiation power (MW)','(plinepv*vol)', plinepv*vol, 'OP ')
-    end if
+    call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', pbrempv*vol, 'OP ')
+    call ovarre(outfile,'Line radiation power (MW)','(plinepv*vol)', plinepv*vol, 'OP ')
     call ovarre(outfile,'Synchrotron radiation power (MW)','(psyncpv*vol)', psyncpv*vol, 'OP ')
     call ovarrf(outfile,'Synchrotron wall reflectivity factor','(ssync)',ssync)
-    if (imprad_model == 1) then
-       call ovarre(outfile,"Normalised minor radius defining 'core'", '(coreradius)',coreradius)
-       call ovarre(outfile,"Fraction of core radiation subtracted from P_L", &
-            '(coreradiationfraction)',coreradiationfraction)
-    end if
+    call ovarre(outfile,"Normalised minor radius defining 'core'", '(coreradius)',coreradius)
+    call ovarre(outfile,"Fraction of core radiation subtracted from P_L", &
+         '(coreradiationfraction)',coreradiationfraction)
     call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
     call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
     if (istell==1) then

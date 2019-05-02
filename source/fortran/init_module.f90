@@ -73,7 +73,7 @@ subroutine init
   call input
 
   !  Initialise impurity radiation data
-  if (imprad_model == 1) call initialise_imprad
+  call initialise_imprad
 
   !  Check input data for errors/ambiguities
   call check

@@ -129,7 +129,7 @@ alphan   = 0.25     *Density profile index
 alphat   = 0.5      *Temperature profile index
 aspect   = 1.75     *Aspect ratio
 bt       = 3.0      *Toroidal field on axis (T)
-cfe0     = 2.5E-4   *Seeded high-Z impurity fraction (n_highZ / n_e)
+*cfe0     = 2.5E-4   *Seeded high-Z impurity fraction (n_highZ / n_e)
 dnbeta   = 4.1      *(Troyon-like) coefficient for beta scaling
 epbetmax = 10.0     *Maximum (eps*beta_poloidal) (constraint equation 6)
 ibss     = 3        *Switch for bootstrap current scaling (3: Wilson numerical scaling)
@@ -261,7 +261,7 @@ ipowerflow = 0      *Switch for power flow model (0: pre-2014 version)
 
 *------------Impurity Radiation Variables----------*
 
-imprad_model = 1 * Switch for impurity radiation model
+*imprad_model = 1 * Switch for impurity radiation model
 coreradius = 0.75 * Normalised radius defining the 'core' region
 coreradiationfraction = 0.6 * fraction of radiation from core region lost
 
