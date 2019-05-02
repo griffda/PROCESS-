@@ -2152,7 +2152,7 @@ module pfcoil_variables
   real(kind(1.0D0)) :: vsohbn = 0.0D0
   !+ad_vars  vsohsu : central solenoid flux swing for startup (Wb)
   real(kind(1.0D0)) :: vsohsu = 0.0D0
-  !+ad_vars  vssu : total flux swing for startup (Wb)
+  !+ad_vars  vssu : total flux swing for startup (eqn 51 to enforce vssu=vsres+vsind) (Wb)
   real(kind(1.0D0)) :: vssu = 0.0D0
   !+ad_vars  vstot : total flux swing for pulse (Wb)
   real(kind(1.0D0)) :: vstot = 0.0D0
