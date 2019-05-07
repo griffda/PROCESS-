@@ -5,6 +5,9 @@ import matplotlib.lines  as mlines
 from process_io_lib import process_dicts as p_dicts
 
 """ Set of macro that plots information about the VMNCON optimization
+    WARNING : YOU HAVE TO CREATE THE PROCESS DICT IN ORDER TO USE THIS MACRO !!
+
+
     PART 1 : The file OPT.DAT is read
     _________________________________
     This file contains : 
@@ -20,33 +23,40 @@ from process_io_lib import process_dicts as p_dicts
         5) The variables values normalized to first the interation one |   x[]                  |   variables           [[]]
     _________________________________
 
+
     PART 2 : Plot
     _____________
     The pyplot routines 
-    1) Figure of merit plot :
+
+    Plot 1 : Figure of merit plot
        VMCON index evolution of the figure of merit
-    2) Convergence plot :
+
+    Plot 2 : Convergence plot :
        VMCON index evolution of 
         - The VMCON convergence parameter
         - The quadratic sum of the constraints residuals
         - The maximum between the VMCON convergence parameter and the constraints residual quadratic sum
           This quantity is the one USED to decide that optimizer has converged or not
-    3) Dominant constraints plots :
+
+    Plot 3 : Dominant constraints plots :
        The last VMCON iteration is used order to rank the constraints with their residual values and to plot the
        VMCON index evolution of
         - The n_ploted_const dominant constraints values (n_ploted_const is used defined)
         - The quadratic sum of the dominant constraints
         - The total quadratic sum of the constraints (sqsumsq)
        The difference of the two quadratic sums allow to check of any other variables contribute to the constaints for any step of the optimization
-    4) Selected constraint plot :
+
+    Plot 4 : Selected constraint plot :
        VMCON index evolution of
         - A constraint selected by its PROCESS number defined in vardes
         - The total quadratic sum of the constraints (sqsumsq)
        Help to focus on a given constraint ...
-    5) Major variable evolution
+
+    Plot 5 : Major variable evolution
        The variation amplitude of the optimization varaibles (max(var) - min(var)) is used to rank the variables and to plot the
        VMCON index evolution of the n_var_plots dominant variables (n_var_plots is used defined)
-    6) Selected vaiable pair trajectory plot
+
+    Plot 6 : Selected vaiable pair trajectory plot
        The x and y variables are selected using the PROCESS variable index defined in vardes
        The z axis also shows ln( max( sum, sqsumsq ) )
     
@@ -399,15 +409,13 @@ elif plot_var_spe_pair :
     ii_y_variable = variables_indexes.index(y_variable_selection)
 
     # Plot
-    ln_convergence_parameter = [ np.log(conv_param) for conv_param in convergence_parameter ] # the ln of the convergence parameter is taken for visibility isues
-    
+    ln_convergence_parameter = [ np.log10(conv_param) for conv_param in convergence_parameter ] # the ln of the convergence parameter is taken for visibility isues
     scat = plt.scatter( variables[ii_x_variable], variables[ii_y_variable], c=ln_convergence_parameter)
-    
     plt.plot(variables[ii_x_variable], variables[ii_y_variable], 'k-')
     plt.grid('true')
     plt.xlabel(p_dicts.DICT_IXC_SIMPLE[str(x_variable_selection)])
     plt.ylabel(p_dicts.DICT_IXC_SIMPLE[str(y_variable_selection)])
-    plt.colorbar(scat, ticks=None, label='$ln$(final conv)')
+    plt.colorbar(scat, ticks=None, label='$ln_{10}$(final conv)')
     plt.savefig('OPT_plots/var'+str(x_variable_selection)+'_vs_var'+str(y_variable_selection)+'.'+save_format, format=save_format)
     plt.show()
 # ------------------------------------
