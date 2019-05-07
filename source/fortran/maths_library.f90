@@ -2696,6 +2696,9 @@ contains
                ' Convergence parameter = ',sum
        end if
 
+       ! Writting the step results in OPT.DAT file
+       write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sum, sqsumsq, conf, x       
+
        !  Exit if both convergence criteria are satisfied
        !  (the original criterion, plus constraint residuals below the tolerance level)
        !  Temporarily set the two tolerances equal (should perhaps be an input parameter)
@@ -2924,10 +2927,6 @@ contains
              b(j,i) = b(i,j)
           end do
        end do
-       
-       ! Writting the step results in OPT.DAT file
-        write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sqsumsq, conf, x       
-
     end do iteration
 
   end subroutine vmcon

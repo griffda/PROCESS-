@@ -1275,8 +1275,8 @@ contains
     write(opt_file, '(I3,*(I4))') ixc_opt_out
     write(opt_file, *) ' '
     write(opt_file, *) ' '
-    write(opt_file, *) ' n VMCOM iter | Figure of merit | convergence parameter | constrains residual, and input values'
-    write(opt_file, '(A,*(I18))') '  niter          abs(objf)         sqsumsq ', icc_opt_out, ixc_opt_out 
+    write(opt_file, *) ' n VMCOM iter | Figure of merit | VMCON conv      | constrains quad sum |   residual, and input values'
+    write(opt_file, '(A,*(I18))') '  niter          abs(objf)         sum                sqsumsq ', icc_opt_out, ixc_opt_out 
  
     call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
          lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
