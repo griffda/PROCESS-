@@ -68,28 +68,44 @@ from process_io_lib import process_dicts as p_dicts
  """
 
 
-## Boolean swiches and parameters for plot selection
-# -----------------------------------
-# Convergence information
-plot_FoM  = False    # Figure of merit
-plot_conv = False    # Convergence
+#parser = argparse.ArgumentParser(description='Process some integers.')
+#parser.add_argument('integers', metavar='N', type=int, nargs='+',
+#                    help='an integer for the accumulator')
 
-# Dominant constraints
-plot_const_dom = False    
-n_ploted_const = int(4)
 
-# Selected constraint
-plot_const_spe       = False
-constraint_selection = int(8) # The constraint is selected using the PROCESS constraint number
 
-# Dominant variables
-plot_var_dom = False
-n_var_plots  = int(3)
 
-# Specific variable pair
-plot_var_spe_pair    = True
-x_variable_selection = int(38) # The variables are selected using the PROCESS variable number
-y_variable_selection = int(58) # The variables are selected using the PROCESS variable number
+#####################################################
+#####################################################
+##                 USER PARAMETERS                 ##
+#####################################################
+#####################################################
+# general plot selection :
+# - If the string containts 'FoM'      : Figure of merit evolution                   (Plot 1) 
+# - If the string containts 'conv'     : convergence crirteria evolution             (Plot 2)
+# - If the string containts 'domconst' : Dominant constraints residual evolution     (Plot 3)
+# - If the string containts 'domvar'   : Dominant variables evolution                (Plot 5)
+# - If the string containts 'allvar'   : Each variable evolution in specific file    (Plot 7)
+# - If the string containts 'allconst' : Each constraints evolution in specific file (Plot 8)
+# - If the string IS 'all'             : All the above plots are made
+
+
+plot_selection = 'domconst' 
+
+# Number of Domimant constraints / variables : default value : 3
+n_ploted_const = 10
+n_var_plots    = 50
+
+# Specific constraint selection using the PROCESS index
+# -1 means no specific constraint plotted (default value)
+# If the selected index is not used for the PROCESS run the list of used var is printed
+constraint_selection = -1 # The constraint is selected using the PROCESS constraint number
+
+# Specific variable pair selection using the PROCESS index
+# -1 means no dedicated pair plot done (default value for the 2 parameters)
+# If the selected index is not used for the PROCESS run the list of used var is printed
+x_variable_selection = 12 # The variables are selected using the PROCESS variable number
+y_variable_selection = 21 # The variables are selected using the PROCESS variable number
 
 # Plot option selection : color and line style
 # For more than 4 plots, the default 'm:' style is used
@@ -97,6 +113,28 @@ plot_opt = ['r-', 'b-', 'g-', 'm-']
 
 # Format used to save the plots
 save_format = 'eps'
+
+# Plot general font size
+axis_font_size = 14
+#####################################################
+#####################################################
+##               END USER PARAMETERS               ##
+#####################################################
+#####################################################
+
+
+
+
+## Boolean swiches and parameters for plot selection
+# -----------------------------------
+plot_FoM       = ( 'FoM'      in plot_selection ) or 'all' == plot_selection
+plot_conv      = ( 'conv'     in plot_selection ) or 'all' == plot_selection
+plot_const_dom = ( 'domconst' in plot_selection ) or 'all' == plot_selection
+plot_var_dom   = ( 'domvar'   in plot_selection ) or 'all' == plot_selection
+plot_var_all   = ( 'allvar'   in plot_selection ) or 'all' == plot_selection
+plot_const_all = ( 'allconst' in plot_selection ) or 'all' == plot_selection
+plot_const_spe    = int(-1) != constraint_selection
+plot_var_spe_pair = int(-1) != x_variable_selection and int(-1) != y_variable_selection
 # -----------------------------------
 
 
@@ -168,7 +206,8 @@ with open('../OPT.DAT', 'r') as opt_data :
         for ii_vmcon in range( 0, n_vmcon ) :
             variables[ii_variables].append( float(data[ii_vmcon][ii_variables+n_constraints+4]) )
     
-    variables = variables[:-1]
+    variables   = variables[:-1]
+    constraints = constraints[:-1]
     # ---------------------
 
 
@@ -196,12 +235,12 @@ if plot_FoM :
     x_max = n_vmcon+2
 
     # Cosmetics
-    plt.xlabel('$VMCON$ iteration')
-    plt.ylabel('Figure of merit')
+    plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
+    plt.ylabel('Figure of merit'  , fontsize = axis_font_size)
     plt.axis([ x_min, x_max, y_min, y_max ])
     plt.grid('true')
     plt.savefig('OPT_plots/FoM_evolution.'+save_format, format=save_format)
-    plt.show()
+    plt.close()
 # -----------------------------------
 
 
@@ -222,14 +261,14 @@ if plot_conv :
     plt.plot( [x_min,x_max], [tolerance, tolerance], 'k-')
 
     # Cosmetics
-    plt.legend(loc='upper right')
-    plt.xlabel('$VMCON$ iteration')
-    plt.ylabel('$\epsilon$')
+    plt.legend(loc='best')
+    plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
+    plt.ylabel('Criteria'         , fontsize = axis_font_size)
     plt.yscale('log')
     plt.axis([ x_min, x_max, y_min, y_max ])
     plt.grid('true')
     plt.savefig('OPT_plots/convergence_evolution.'+save_format, format=save_format)
-    plt.show()
+    plt.close()
 # --------------------------------
 
 
@@ -278,20 +317,29 @@ if plot_const_dom :
     # Plot
     for ii in range(0, n_ploted_const):
         constraint_name = p_dicts.DICT_ICC_FULL[str(constraints_indexes[dominant_constaints_indexes[ii]])]['name']
+        if n_ploted_const > 4 :
+            constraint_name = constraint_name[:15] 
+
         plt.plot( vmcon_indexes, constraints[dominant_constaints_indexes[ii]], plot_opt[ii], label=str(ii+1)+': '+constraint_name+' ('+str(constraints_indexes[dominant_constaints_indexes[ii]])+')')
     plt.plot( vmcon_indexes, dominant_quad_sum     , 'k--', label='dominant const quad sum ' )
     plt.plot( vmcon_indexes, constraints_quad_sum  , 'k:' , label='total const quad sum' )
     plt.plot( [x_min,x_max], [tolerance, tolerance], 'k-' )
 
     # Cosmetics
-    plt.legend(loc='upper right', bbox_to_anchor=(1.1, 1.05))
+    if n_ploted_const > 4 :
+        x_max *= 2
+        y_min = 1e-12
+        plt.legend(loc='upper right')
+    else :
+        plt.legend(loc='best')
+    
     plt.yscale('log')
-    plt.xlabel('$VMCON$ iteration')
-    plt.ylabel('Constraints')
+    plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
+    plt.ylabel('Constraint'       , fontsize = axis_font_size)
     plt.axis([ x_min, x_max, y_min, y_max ])
     plt.grid('true')
     plt.savefig('OPT_plots/constraints_evolution.'+save_format, format=save_format)
-    plt.show()
+    plt.close()
 # ------------------------------------------
 
 
@@ -319,14 +367,14 @@ elif plot_const_spe :
     plt.plot( [x_min,x_max], [tolerance, tolerance], 'k-' )
 
     # Cosmetics
-    plt.legend(loc='upper right', bbox_to_anchor=(1.1, 1.05))
+    plt.legend(loc='best')
     plt.yscale('log')
-    plt.ylabel('Constraints')
-    plt.xlabel('$VMCON$ iteration')
+    plt.ylabel('Constraints'      , fontsize = axis_font_size)
+    plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
     plt.axis([ x_min, x_max, y_min, y_max ])
     plt.grid('true')
     plt.savefig('OPT_plots/'+str(p_dicts.DICT_ICC_FULL[str(constraint_selection)]['name'])+'_dominant_constraints_evolution.'+save_format, format=save_format)
-    plt.show()
+    plt.close()
 # ----------------------------
 
 
@@ -354,12 +402,12 @@ if plot_var_dom :
         leg_label = '{} : {} ({})'.format(ii, p_dicts.DICT_IXC_SIMPLE[str(variables_indexes[ranked_variables_index[ii]])], variables_indexes[ranked_variables_index[ii]])
         plt.plot( vmcon_indexes, variables[ranked_variables_index[ii]], plot_opt[ii], label=leg_label)
 
-    plt.legend(loc='upper right', bbox_to_anchor=(1.1, 1.05))
-    plt.xlabel('$VMCON$ iteration')
-    plt.ylabel('variable')
+    plt.legend(loc='best')
+    plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
+    plt.ylabel('variable'         , fontsize = axis_font_size)
     plt.grid('true')
     plt.savefig('OPT_plots/'+str(n_var_plots)+'_dominant_variables_evolution.'+save_format, format=save_format)
-    plt.show()
+    plt.close()
 # ---------------------------------
 
 
@@ -384,12 +432,12 @@ if False :
         leg_label = 'X =  {} and Y = {}'.format(p_dicts.DICT_IXC_SIMPLE[str(x_var_index)], p_dicts.DICT_IXC_SIMPLE[str(y_var_index)])
         plt.plot( variables[ranked_variables_index[2*ii]], variables[ranked_variables_index[2*ii+1]], plot_opt[ii]+str('s'), label=leg_label)
 
-    plt.legend(loc='lower right')
-    plt.xlabel('X variable')
-    plt.ylabel('Y variable')
+    plt.legend(loc='best')
+    plt.xlabel('X variable', fontsize = axis_font_size)
+    plt.ylabel('Y variable', fontsize = axis_font_size)
     plt.grid('true')
     plt.savefig('OPT_plots/'+str(n_var_plots)+'_dominant_variable_pairs_path.'+save_format, format=save_format)
-    plt.show()
+    plt.close()
 ####################
 
 
@@ -413,10 +461,68 @@ elif plot_var_spe_pair :
     scat = plt.scatter( variables[ii_x_variable], variables[ii_y_variable], c=ln_convergence_parameter)
     plt.plot(variables[ii_x_variable], variables[ii_y_variable], 'k-')
     plt.grid('true')
-    plt.xlabel(p_dicts.DICT_IXC_SIMPLE[str(x_variable_selection)])
-    plt.ylabel(p_dicts.DICT_IXC_SIMPLE[str(y_variable_selection)])
-    plt.colorbar(scat, ticks=None, label='$ln_{10}$(final conv)')
+    plt.xlabel(p_dicts.DICT_IXC_SIMPLE[str(x_variable_selection)], fontsize = axis_font_size)
+    plt.ylabel(p_dicts.DICT_IXC_SIMPLE[str(y_variable_selection)], fontsize = axis_font_size)
+    plot_colorbar = plt.colorbar(scat)
+    plot_colorbar.set_label('$ln_{10}$(final conv)', size = axis_font_size)
     plt.savefig('OPT_plots/var'+str(x_variable_selection)+'_vs_var'+str(y_variable_selection)+'.'+save_format, format=save_format)
-    plt.show()
+    plt.close()
 # ------------------------------------
 
+
+## Plot 7 : plot all each inputs variables evolution 
+# --------------------------------------------------
+# Creating the folder containing the variables plots
+if plot_var_all :
+    if not os.path.isdir("OPT_plots/All_Var") :
+        os.mkdir('OPT_plots/All_Var')
+    
+    ii = 0
+    for variable in variables :
+
+        variable_name = p_dicts.DICT_IXC_SIMPLE[str(variables_indexes[ii])]
+        variable_name = variable_name.replace('(','').replace(')','')
+       
+        plt.plot( vmcon_indexes, variable, 'k-' )
+        plt.xlabel( '$VMCON$ iteration', fontsize = axis_font_size )
+        plt.ylabel( variable_name      , fontsize = axis_font_size )
+        plt.grid('true')
+        plt.savefig('OPT_plots/All_Var/{}_evolution.{}'.format(variable_name, save_format), format=save_format)    
+        plt.close()
+        ii += 1
+# --------------------------------------------------
+
+
+## Plot 8 : plot all each inputs constraint evolution 
+# ---------------------------------------------------
+# Creating the folder containing the variables plots
+if plot_const_all :
+    if not os.path.isdir("OPT_plots/All_Const") :
+        os.mkdir('OPT_plots/All_Const')
+    
+    # Ranges
+    x_min = 0
+    x_max = n_vmcon+2
+    y_min = 1e-12
+    y_max = 1.
+
+    ii = 0
+    for constraint in constraints :
+
+        constraint_name = p_dicts.DICT_ICC_FULL[str(constraints_indexes[ii])]['name']
+        plt.plot( vmcon_indexes, constraint            , 'r-' , label=constraint_name )
+        plt.plot( vmcon_indexes, constraints_quad_sum  , 'k--', label='const quad sum' )
+    
+        # Cosmetics
+        plt.xlabel( '$VMCON$ iteration', fontsize = axis_font_size )
+        plt.ylabel( constraint_name    , fontsize = axis_font_size )
+        plt.legend(loc='best')
+        plt.yscale('log')
+        plt.axis([ x_min, x_max, y_min, y_max ])
+        plt.grid('true')
+
+        constraint_name_f = constraint_name.replace(' ','_').replace(')','').replace('(','')
+        plt.savefig('OPT_plots/All_Const/{}_evolution.{}'.format(constraint_name_f, save_format), format=save_format)    
+        plt.close()
+        ii += 1
+# ---------------------------------------------------
