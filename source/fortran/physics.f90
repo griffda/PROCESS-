@@ -3606,13 +3606,8 @@ implicit none
        qtaue = 0.0D0
        rtaue = -0.74D0
 
-!  gtaue = offset term in tauee scaling
-    !  ptaue = exponent for density term in tauee scaling
-    !  qtaue = exponent for temperature term in tauee scaling
-    !  rtaue = exponent for power term in tauee scaling
-
     case (43)  !  Hubbard et al. 2017 I-mode confinement time scaling - nominal
-      tauee = 0.014D0 * (plascur/1.0D6)**0.68D0 * bt**0.77D0 * dnla20**0.02D0 &
+      tauee = hfact * 0.014D0 * (plascur/1.0D6)**0.68D0 * bt**0.77D0 * dnla20**0.02D0 &
               * powerht**(-0.29D0)
       gtaue = 0.0D0
       ptaue = 0.02D0
@@ -3620,20 +3615,20 @@ implicit none
       rtaue = -0.29D0
     
     case (44)  !  Hubbard et al. 2017 I-mode confinement time scaling - lower
-      tauee = 0.014D0 * (plascur/1.0D6)**0.60D0 * bt**0.70D0 * dnla20**(-0.03D0) &
+      tauee = hfact * 0.014D0 * (plascur/1.0D6)**0.60D0 * bt**0.70D0 * dnla20**(-0.03D0) &
               * powerht**(-0.33D0)
       gtaue = 0.0D0
-      ptaue = 0.02D0
+      ptaue = -0.03D0
       qtaue = 0.0D0
-      rtaue = -0.29D0
+      rtaue = -0.33D0
 
     case (45)  !  Hubbard et al. 2017 I-mode confinement time scaling - upper
-      tauee = 0.014D0 * (plascur/1.0D6)**0.76D0 * bt**0.84D0  * dnla20**0.07 &
+      tauee = hfact * 0.014D0 * (plascur/1.0D6)**0.76D0 * bt**0.84D0  * dnla20**0.07 &
               * powerht**(-0.25D0)
       gtaue = 0.0D0
-      ptaue = 0.02D0
+      ptaue = 0.07D0
       qtaue = 0.0D0
-      rtaue = -0.29D0
+      rtaue = -0.25D0
 
     case default
        idiags(1) = isc ; call report_error(81)
