@@ -16,7 +16,7 @@ from process_io_lib import process_dicts as p_dicts
     This file contains : 
      - The PROCESS id numers of 
         1) The constraints : constraints_indexes
-        2)
+        2) The variables   : variables_indexes
      - The evolution with each VMCON interation of 
                 Description                                            | variable name in vmcon | variables name in the macro 
         1) The figure of merit                                         |   abs(obj)             |   figures_of_merit     []
@@ -129,6 +129,7 @@ if __name__ == '__main__':
     convergence_parameter = []
     constraints           = [[]]
     variables             = [[]]
+    gradients             = [[]]
 
     # Opening the pandora box
     with open('../OPT.DAT', 'r') as opt_data :
@@ -185,10 +186,13 @@ if __name__ == '__main__':
         # Variables
         for ii_variables in range( 0, n_variables ) :
             variables.append([])
+            gradients.append([])
             for ii_vmcon in range( 0, n_vmcon ) :
-                variables[ii_variables].append( float(data[ii_vmcon][ii_variables+n_constraints+4]) )
-        
+                variables[ii_variables].append( float(data[ii_vmcon][ 4 + n_constraints + ii_variables ]) )
+                gradients[ii_variables].append( float(data[ii_vmcon][ 4 + n_constraints + n_variables + ii_variables ]) )
+
         variables   = variables[:-1]
+        gradients   = gradients[:-1]
         constraints = constraints[:-1]
         # ---------------------
 
