@@ -3066,11 +3066,13 @@ implicit none
     !+ad_docc    "ITER Physics Design Guidelines: 1989",
     !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990)
     !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990)
-    !+ad_docc  A. Murari et al 2015 Nucl. Fusion, 55, 073009
-    !+ad_docc  C.C. Petty 2008 Phys. Plasmas, 15, 080501
-    !+ad_docc  P.T. Lang et al. 2012 IAEA conference proceeding EX/P4-01
-    !+ad_docc    ITER physics basis Chapter 2, 1999 Nuclear Fusion 39 2175
-    !+ad_docc    Nuclear Fusion corrections, 2008 Nuclear Fusion 48 099801
+    !+ad_docs  A. Murari et al 2015 Nucl. Fusion, 55, 073009
+    !+ad_docs  C.C. Petty 2008 Phys. Plasmas, 15, 080501
+    !+ad_docs  P.T. Lang et al. 2012 IAEA conference proceeding EX/P4-01
+    !+ad_docs  ITER physics basis Chapter 2, 1999 Nuclear Fusion 39 2175
+    !+ad_docc  Nuclear Fusion corrections, 2008 Nuclear Fusion 48 099801
+    !+ad_docs  Menard 2019, Phil. Trans. R. Soc. A 377:20170440
+    !+ad_docs  Kaye et al. 2006, Nucl. Fusion 46 848
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3629,6 +3631,18 @@ implicit none
       ptaue = 0.07D0
       qtaue = 0.0D0
       rtaue = -0.25D0
+
+    case (46)  !  NSTX, ELMy H-mode scaling
+      !  NSTX scaling with IPB98(y,2) for other variables
+      !  Menard 2019, Phil. Trans. R. Soc. A 377:20170440
+      !  Kaye et al. 2006, Nucl. Fusion 46 848
+      tauee = hfact * 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
+           dnla19**0.44D0 * powerht**(-0.73D0) * rmajor**1.97D0 * &
+           kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
+      gtaue = 0.0D0
+      ptaue = 0.44D0
+      qtaue = 0.0D0
+      rtaue = -0.73D0
 
     case default
        idiags(1) = isc ; call report_error(81)

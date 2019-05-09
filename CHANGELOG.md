@@ -12,6 +12,7 @@
   paper or user defined inputs). See Userguide for more info.
 - Updated version of Kallenbach scanning (now can specify the variable to scan 
   from a selection, number of scan points etc.). See Userguide for more info.
+- Added NSTX confinement time scaling (#820)
 
 ## Minor Changes
 

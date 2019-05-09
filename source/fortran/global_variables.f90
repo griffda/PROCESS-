@@ -174,8 +174,8 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /45/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 45
+  !+ad_vars  ipnlaws /46/ FIX : number of energy confinement time scaling laws
+  integer, parameter :: ipnlaws = 46
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
@@ -515,7 +515,7 @@ module physics_variables
        'Lackner-Gottardi (stell)', &
   !+ad_varc  <LI> (24)  ITER-93H (H-mode)
        'ITER-93H             (H)', &
-  !+ad_varc  <LI> (25)
+  !+ad_varc  <LI> (25) OBSOLETE
        'TITAN RFP OBSOLETE      ', &
   !+ad_varc  <LI> (26)  ITER H-97P ELM-free (H-mode)
        'ITER H-97P ELM-free  (H)', &
@@ -555,8 +555,10 @@ module physics_variables
        'Hubbard 2017 - nom   (I)', &
   !+ad_varc  <LI> (44)  Hubbard 2017 (I-mode) - lower bound
        'Hubbard 2017 - lower (I)', &
-  !+ad_varc  <LI> (45)  Hubbard 2017 (I-mode) - upper bound</UL>
-       'Hubbard 2017 - upper (I)' /)
+  !+ad_varc  <LI> (45)  Hubbard 2017 (I-mode) - upper bound
+       'Hubbard 2017 - upper (I)', &
+  !+ad_varc  <LI> (46)  NSTX (H-mode; Spherical tokamak)</UL>
+       'NSTX (Spherical)     (H)' /)
 
   !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;
