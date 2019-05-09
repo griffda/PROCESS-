@@ -2353,7 +2353,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: eystl = 2.05D11
   !+ad_vars  eywp /6.6e8/ : winding pack Young's modulus (Pa)
   real(kind(1.0D0)) :: eywp = 6.6D8
-  !+ad_vars  eyzwp : winding pack vertical Young's modulus (Pa) (tfc_model=1)
+  !+ad_vars  eyzwp : winding pack vertical Young's modulus (Pa)
   real(kind(1.0D0)) :: eyzwp = 0.0D0
   !+ad_vars  farc4tf /0.7/ : factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: farc4tf = 0.7D0
@@ -2366,7 +2366,7 @@ module tfcoil_variables
   !+ad_varc               radiation, AC losses, joints or manufacturing variations;
   !+ad_varc               1.0 would be very optimistic)
   real(kind(1.0D0)) :: fhts = 0.5D0
-  !+ad_vars  insstrain : radial strain in insulator (tfc_model=1)
+  !+ad_vars  insstrain : radial strain in insulator
   real(kind(1.0D0)) :: insstrain = 0.0D0
   !+ad_vars  i_tf_tresca /0/ : switch for TF coil conduit Tresca stress criterion:<UL>
   !+ad_varc          <LI> = 0 Tresca (no adjustment);
@@ -2502,10 +2502,11 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfbusmas = 0.0D0
   !+ad_vars  tfckw :  available DC power for charging the TF coils (kW)
   real(kind(1.0D0)) :: tfckw = 0.0D0
-  !+ad_vars  tfc_model /1/ : switch for TF coil magnet stress model:<UL>
-  !+ad_varc                  <LI> = 0 simple model (solid copper coil)
-  !+ad_varc                  <LI> = 1 CCFE two-layer stress model; superconductor</UL>
-  integer :: tfc_model = 1
+! Issue #781
+!   !+ad_vars  tfc_model /1/ : switch for TF coil magnet stress model:<UL>
+!   !+ad_varc                  <LI> = 0 simple model (solid copper coil)
+!   !+ad_varc                  <LI> = 1 CCFE two-layer stress model; superconductor</UL>
+!   integer :: tfc_model = 1
   !+ad_vars  tfcmw : peak power per TF power supply (MW)
   real(kind(1.0D0)) :: tfcmw = 0.0D0
   !+ad_vars  tfcpmw : peak resistive TF coil inboard leg power (MW)
@@ -2611,7 +2612,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whtgw = 0.0D0
   !+ad_vars  whttf : total mass of the TF coils (kg)
   real(kind(1.0D0)) :: whttf = 0.0D0
-  !+ad_vars  windstrain : longitudinal strain in winding pack (tfc_model=1)
+  !+ad_vars  windstrain : longitudinal strain in winding pack
   real(kind(1.0D0)) :: windstrain = 0.0D0
   !+ad_vars  wwp1 : width of first step of winding pack (m)
   real(kind(1.0D0)) :: wwp1 = 0.0D0
