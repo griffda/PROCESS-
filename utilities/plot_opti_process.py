@@ -1,4 +1,6 @@
 import os
+import argparse
+from argparse import RawTextHelpFormatter
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.lines  as mlines
@@ -67,65 +69,37 @@ from process_io_lib import process_dicts as p_dicts
     _____________
  """
 
-
-#parser = argparse.ArgumentParser(description='Process some integers.')
-#parser.add_argument('integers', metavar='N', type=int, nargs='+',
-#                    help='an integer for the accumulator')
-
-
-
-
 #####################################################
+##            PARSING USER PARAMETERS              ##
 #####################################################
-##                 USER PARAMETERS                 ##
-#####################################################
-#####################################################
-# general plot selection :
-# - If the string containts 'FoM'      : Figure of merit evolution                   (Plot 1) 
-# - If the string containts 'conv'     : convergence crirteria evolution             (Plot 2)
-# - If the string containts 'domconst' : Dominant constraints residual evolution     (Plot 3)
-# - If the string containts 'domvar'   : Dominant variables evolution                (Plot 5)
-# - If the string containts 'allvar'   : Each variable evolution in specific file    (Plot 7)
-# - If the string containts 'allconst' : Each constraints evolution in specific file (Plot 8)
-# - If the string IS 'all'             : All the above plots are made
+# please execute 'python plot_opti_process.py -h' for input information
+# Option definition
+# -----------------
+parser = argparse.ArgumentParser( description='Plot optimization information', formatter_class=RawTextHelpFormatter )
+parser.add_argument('-p'  , '--plot_selec'    , nargs='?', default='all', help="Plot selection string :\n - If it containts 'FoM'      -> Figure of Merit plot \n - If it containts 'conv'     -> convergence criteria plot \n - If it containts 'domconst' -> dominant constraint plot\n - If it containts 'allconst' -> a plot for each constraint stored in All_Const/\n - If it containts 'domvar'   -> dominant variables plot \n - If it containts 'allvar'   -> a plot for each variable in All_Var/\n - If it containts 'all'      -> all the mentionned plots (default value)")
+parser.add_argument('-ndc', '--n_dom_const'   , nargs='?', default=3    , help="number of plotted dominant constaints (default=3)", type=int )
+parser.add_argument('-ndv', '--n_dom_var'     , nargs='?', default=4    , help="number of plotted dominant variables  (default=4)", type=int )
+parser.add_argument( '-ic', '--i_const'       , nargs='?', default=-1   , help="Selection of the constraint to be plotted (PROCESS number defined in vardes, default=-1)", type=int )
+parser.add_argument('-ixv', '--i_X_var'       , nargs='?', default=-1   , help="X variable on pair plot selection (PROCESS number defined in vardes, default=-1)", type=int )
+parser.add_argument('-iyv', '--i_Y_var'       , nargs='?', default=-1   , help="Y variable on pair plot selection (PROCESS number defined in vardes, default=-1)", type=int )
+parser.add_argument('-sf' , '--save_format'   , nargs='?', default='eps', help="output format (default='eps') " )
+parser.add_argument('-as' , '--axis_font_size', nargs='?', default=14   , help="Axis label font size selection (default=14)", type=int )
 
+# Option argument extraction
+# --------------------------
+args = parser.parse_args()
+plot_selection       = str(args.plot_selec)
+n_ploted_const       = int(args.n_dom_const)
+n_var_plots          = int(args.n_dom_var)
+constraint_selection = int(args.i_const)
+x_variable_selection = int(args.i_X_var)
+y_variable_selection = int(args.i_Y_var)
+save_format          = str(args.save_format)
 
-plot_selection = 'domconst' 
+# Hardcoded input : Plot option selection (color and line style)
+plot_opt = ['r-', 'b-', 'g-', 'm-','r--', 'b--', 'g--', 'm--','r:', 'b:', 'g:', 'm:']
 
-# Number of Domimant constraints / variables : default value : 3
-n_ploted_const = 10
-n_var_plots    = 50
-
-# Specific constraint selection using the PROCESS index
-# -1 means no specific constraint plotted (default value)
-# If the selected index is not used for the PROCESS run the list of used var is printed
-constraint_selection = -1 # The constraint is selected using the PROCESS constraint number
-
-# Specific variable pair selection using the PROCESS index
-# -1 means no dedicated pair plot done (default value for the 2 parameters)
-# If the selected index is not used for the PROCESS run the list of used var is printed
-x_variable_selection = 12 # The variables are selected using the PROCESS variable number
-y_variable_selection = 21 # The variables are selected using the PROCESS variable number
-
-# Plot option selection : color and line style
-# For more than 4 plots, the default 'm:' style is used
-plot_opt = ['r-', 'b-', 'g-', 'm-']
-
-# Format used to save the plots
-save_format = 'eps'
-
-# Plot general font size
-axis_font_size = 14
-#####################################################
-#####################################################
-##               END USER PARAMETERS               ##
-#####################################################
-#####################################################
-
-
-
-
-## Boolean swiches and parameters for plot selection
+## Boolean swiches for plot selection
 # -----------------------------------
 plot_FoM       = ( 'FoM'      in plot_selection ) or 'all' == plot_selection
 plot_conv      = ( 'conv'     in plot_selection ) or 'all' == plot_selection
@@ -133,9 +107,14 @@ plot_const_dom = ( 'domconst' in plot_selection ) or 'all' == plot_selection
 plot_var_dom   = ( 'domvar'   in plot_selection ) or 'all' == plot_selection
 plot_var_all   = ( 'allvar'   in plot_selection ) or 'all' == plot_selection
 plot_const_all = ( 'allconst' in plot_selection ) or 'all' == plot_selection
+
 plot_const_spe    = int(-1) != constraint_selection
 plot_var_spe_pair = int(-1) != x_variable_selection and int(-1) != y_variable_selection
-# -----------------------------------
+axis_font_size    = int(args.axis_font_size)
+#####################################################
+
+
+
 
 
 ## Step 1 : Extraction of relevant data
@@ -317,29 +296,30 @@ if plot_const_dom :
     # Plot
     for ii in range(0, n_ploted_const):
         constraint_name = p_dicts.DICT_ICC_FULL[str(constraints_indexes[dominant_constaints_indexes[ii]])]['name']
-        if n_ploted_const > 4 :
-            constraint_name = constraint_name[:15] 
+        if n_ploted_const > 5 :
+            constraint_name = constraint_name.replace('Central solenoid', 'CS').replace('central solenoid', 'CS')
+            constraint_name = constraint_name[:17] 
 
         plt.plot( vmcon_indexes, constraints[dominant_constaints_indexes[ii]], plot_opt[ii], label=str(ii+1)+': '+constraint_name+' ('+str(constraints_indexes[dominant_constaints_indexes[ii]])+')')
     plt.plot( vmcon_indexes, dominant_quad_sum     , 'k--', label='dominant const quad sum ' )
     plt.plot( vmcon_indexes, constraints_quad_sum  , 'k:' , label='total const quad sum' )
     plt.plot( [x_min,x_max], [tolerance, tolerance], 'k-' )
 
-    # Cosmetics
-    if n_ploted_const > 4 :
+    # Actions if the legend gets too big
+    if n_ploted_const > 5 :
         x_max *= 2
         y_min = 1e-12
-        plt.legend(loc='upper right')
-    else :
-        plt.legend(loc='best')
-    
+
+    # Cosmetics
+    plt.legend(loc='best')
     plt.yscale('log')
     plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
     plt.ylabel('Constraint'       , fontsize = axis_font_size)
     plt.axis([ x_min, x_max, y_min, y_max ])
     plt.grid('true')
     plt.savefig('OPT_plots/constraints_evolution.'+save_format, format=save_format)
-    plt.close()
+    plt.show()
+    # plt.close()
 # ------------------------------------------
 
 
@@ -374,6 +354,7 @@ elif plot_const_spe :
     plt.axis([ x_min, x_max, y_min, y_max ])
     plt.grid('true')
     plt.savefig('OPT_plots/'+str(p_dicts.DICT_ICC_FULL[str(constraint_selection)]['name'])+'_dominant_constraints_evolution.'+save_format, format=save_format)
+    # plt.show()
     plt.close()
 # ----------------------------
 
@@ -393,52 +374,29 @@ if plot_var_dom :
     # Select the two variables that vary the most and plot them
     ranked_variables_index = []
     variables_ranges = [ max(variable)-min(variable) for variable in variables ]
+
     for ii in range(0,n_variables):
         ranked_variables_index.append(variables_ranges.index(max(variables_ranges)))
         variables_ranges[ranked_variables_index[ii]] = -1.   
 
-    # Plot 1 : var vs vmcon
+    # Plot
     for ii in range(0, n_var_plots):
-        leg_label = '{} : {} ({})'.format(ii, p_dicts.DICT_IXC_SIMPLE[str(variables_indexes[ranked_variables_index[ii]])], variables_indexes[ranked_variables_index[ii]])
+        leg_label = '{} : {} ({})'.format(ii+1, p_dicts.DICT_IXC_SIMPLE[str(variables_indexes[ranked_variables_index[ii]])], variables_indexes[ranked_variables_index[ii]])
         plt.plot( vmcon_indexes, variables[ranked_variables_index[ii]], plot_opt[ii], label=leg_label)
 
+    # Action if the legend gets too big ...
+    if n_var_plots > 6 :
+        plt.xlim([0., int(1.8*float(n_vmcon))])
+    
+    # Cosmetics
     plt.legend(loc='best')
     plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
     plt.ylabel('variable'         , fontsize = axis_font_size)
     plt.grid('true')
-    plt.savefig('OPT_plots/'+str(n_var_plots)+'_dominant_variables_evolution.'+save_format, format=save_format)
-    plt.close()
+    plt.savefig('OPT_plots/dominant_variables_evolution.'+save_format, format=save_format)
+    plt.show()
+    # plt.close()
 # ---------------------------------
-
-
-# Plot X : Major variable pair path
-#####################################################
-# To be discussed !!
-####################
-if False :
-    if n_var_plots > len(plot_opt) :
-       for ii in range(0, n_var_plots - len(plot_opt)):
-            plot_opt.append('m:')
-
-    # Select the two variables that vary the most and plot them
-    ranked_variables_index = []
-    variables_ranges = [ max(variable)-min(variable) for variable in variables ]
-    for ii in range(0,n_variables):
-        ranked_variables_index.append(variables_ranges.index(max(variables_ranges)))
-        variables_ranges[ranked_variables_index[ii]] = -1.  
-    for ii in range(0, min(n_var_plots,3)):
-        x_var_index = variables_indexes[ranked_variables_index[2*ii  ]]
-        y_var_index = variables_indexes[ranked_variables_index[2*ii+1]]
-        leg_label = 'X =  {} and Y = {}'.format(p_dicts.DICT_IXC_SIMPLE[str(x_var_index)], p_dicts.DICT_IXC_SIMPLE[str(y_var_index)])
-        plt.plot( variables[ranked_variables_index[2*ii]], variables[ranked_variables_index[2*ii+1]], plot_opt[ii]+str('s'), label=leg_label)
-
-    plt.legend(loc='best')
-    plt.xlabel('X variable', fontsize = axis_font_size)
-    plt.ylabel('Y variable', fontsize = axis_font_size)
-    plt.grid('true')
-    plt.savefig('OPT_plots/'+str(n_var_plots)+'_dominant_variable_pairs_path.'+save_format, format=save_format)
-    plt.close()
-####################
 
 
 # Plot 6 : Specific variable pair path
