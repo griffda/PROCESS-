@@ -4701,9 +4701,11 @@ implicit none
         '(ftar)', ftar, 'IP ')
     call ovarre(outfile,'Outboard side heat flux decay length (m)', &
         '(lambdaio)',lambdaio, 'OP ')
-    call ovarre(outfile,'Midplane seperation of the two magnetic closed flux surfaces (m)', &
-        '(drsep)',drsep, 'OP ')
-    call ovarre(outfile,'Fraction of power on the outer targets', &
+    if (idivrt == 2) then
+      call ovarre(outfile,'Midplane seperation of the two magnetic closed flux surfaces (m)', &
+           '(drsep)',drsep, 'OP ')
+    end if 
+    call ovarre(outfile,'Fraction of power on the inner targets', &
         '(fio)',fio, 'OP ')
     call ovarre(outfile,'Fraction of power incident on the lower inner target', &
         '(fLI)',fLI, 'OP ')
@@ -4712,7 +4714,7 @@ implicit none
     if (idivrt == 2 ) then
       call ovarre(outfile,'Fraction of power incident on the upper inner target', &
        '(fUI)',fUI, 'OP ')
-     call ovarre(outfile,'Fraction of power incident on the upper outer target', &
+      call ovarre(outfile,'Fraction of power incident on the upper outer target', &
        '(fUO)',fUO, 'OP ')
     end if
     call ovarre(outfile,'Power incident on the lower inner target (MW)', &
