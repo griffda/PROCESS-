@@ -710,6 +710,7 @@ contains
     !+ad_name  cutfshape
     !+ad_summ  Calculates the TF coil shape
     !+ad_type  Subroutine
+    !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
     !+ad_desc  Calculates the shape of the INSIDE of the TF coil. The coil is
     !+ad_desc  given by a rectangular shape.
     !+ad_prob  None

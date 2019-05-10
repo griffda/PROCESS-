@@ -457,6 +457,9 @@ contains
 
    case (18)  !  Null figure of merit
       fc = 1d0
+   
+   case (19)  !  major radius/burn time
+      fc = sgn * ( -0.5d0 * (bigq/20.0D0) - 0.5d0 * (tburn/7200.d0) )
 
     case default
        idiags(1) = iab ; call report_error(24)

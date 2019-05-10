@@ -64,11 +64,11 @@ module scan_module
 
   public
 
-  !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
-  integer, parameter :: ipnscns = 200
+  !+ad_vars  ipnscns /1000/ FIX : maximum number of scan points
+  integer, parameter :: ipnscns = 1000
 
   !+ad_vars  ipnscnv /45/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 48
+  integer, parameter :: ipnscnv = 52
 
   !+ad_vars  scan_dim /1/ : 1-D or 2-D scan switch (1=1D, 2=2D)
   integer :: scan_dim = 1
@@ -123,11 +123,15 @@ module scan_module
   !+ad_varc          <LI> 41 blnkoth
   !+ad_varc          <LI> 42 Argon fraction fimp(9)
   !+ad_varc          <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum
-  !+ad_varc          <LI> 44 Allowable tresca stress in tf coil structural material
-  !+ad_varc          <LI> 45 Minimum allowable temperature margin ; tf coils 
-  !+ad_varc          <LI> 46 Xenon fraction fimp(13)
-  !+ad_varc          <LI> 47 Power fraction in DN Divertor ftar
-  !+ad_varc          <LI> 48 SoL radiation fraction </UL>
+  !+ad_varc          <LI> 44 Allowable tresca stress in tf coil structural material 
+  !+ad_varc          <LI> 45 Minimum allowable temperature margin ; tf coils
+  !+ad_varc          <LI> 46 boundu(150) fgwsep
+  !+ad_varc          <LI> 47 impurity_enrichment(9) Argon impurity enrichment
+  !+ad_varc          <LI> 48 TF coil - n_pancake (integer turn winding pack)
+  !+ad_varc          <LI> 49 TF coil - n_layer (integer turn winding pack)
+  !+ad_varc          <LI> 50 Xenon fraction fimp(13)
+  !+ad_varc          <LI> 51 Power fraction to lower DN Divertor ftar
+  !+ad_varc          <LI> 52 SoL radiation fraction </UL>
   integer :: nsweep = 1
 
   !+ad_vars  nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
@@ -873,13 +877,25 @@ contains
             tmargmin_tf = swp(iscn)
             vlab = 'tmargmin_tf' ; xlab = 'Minimum_allowable_temperature_margin'
         case (46)
+            boundu(152) = swp(iscn)
+            vlab = 'boundu(152)' ; xlab = 'Max allowable fgwsep'
+        case (47)
+            impurity_enrichment(9) = swp(iscn)
+            vlab = 'impurity_enrichment(9)' ; xlab = 'Argon SOL impurity enrichment'
+        case (48)
+            n_pancake = int(swp(iscn))
+            vlab = 'n_pancake' ; xlab = 'TF Coil - n_pancake'
+        case (49)
+            n_layer = int(swp(iscn))
+            vlab = 'n_layer' ; xlab = 'TF Coil - n_layer'
+        case (50)
             fimp(13) = swp(iscn)
             impurity_arr(13)%frac = fimp(13)
             vlab = 'fimp(13)' ; xlab = 'Xenon fraction'
-        case (47)
+        case (51)
             ftar = swp(iscn)
             vlab = 'ftar' ; xlab = 'lower_divertor_power_fraction'
-        case (48)
+        case (52)
             rad_fraction_sol = swp(iscn)
             vlab = 'rad_fraction_sol' ; xlab = 'SoL radiation fraction'
         case default

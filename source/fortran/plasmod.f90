@@ -260,6 +260,10 @@ contains
     !fvsbrnni can be an iteration variable!
     inp0%f_ni   = fvsbrnni !required fraction of non inductive current, if 0 dont use CD
 
+    !Iterations variables for PLASMOD - see issue #658
+    inp0%fcdp        = plasmod_fcdp !(P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power (PROCESS iteration variable 147)
+    comp%fcoreraditv = plasmod_fradc !Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad) (PROCESS iteration variable 148)
+    
     !Note that this is only a correct input on the second iteration!
     inp0%fpion = fpion ! Fraction of neutral beam energy to ions
 
@@ -866,7 +870,7 @@ contains
     
     file_name_length = LEN_TRIM(fileprefix)
     output_prefix = fileprefix(1:file_name_length-6)
-    outfile_radp = trim(output_prefix)//"_RADP.DAT"
+    outfile_radp = trim(output_prefix)//"RADP.DAT"
 
     open(unit = radp_file, file = outfile_radp, action = 'write')
     

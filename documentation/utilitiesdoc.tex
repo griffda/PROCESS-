@@ -44,9 +44,9 @@ innertopmargin=15pt, innerbottommargin=5pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-9 November 2018
+15 March 2019
 \hfill
-PROCESS version: 1.0.14
+PROCESS version: 1.0.15
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1075,6 +1075,24 @@ optional arguments:
 	
 \end{verbatim}
 \end{quote}
+
+\subsubsection{Profile plots (plot\_profiles.py)}
+
+This utility allows for plotting of the temperature and density profiles 
+of a number of MFILEs. The options are described below.
+
+\begin{mdframed}
+  \begin{verbatim}
+   
+    arguments:
+    -h, --help              show this help message and exit
+    -f MFILE [MFILE ...]    specify the llist of MFILEs to use
+    -s, --save              save as well as displaying the figure
+    -o,                     name of the output pdf file
+    -n N,                   scan number in MFILE to use
+  \end{verbatim}
+ \end{mdframed}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

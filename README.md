@@ -1,3 +1,5 @@
+[![pipeline status](https://git.ccfe.ac.uk/process/process/badges/develop/pipeline.svg)](https://git.ccfe.ac.uk/process/process/commits/develop)
+
 # PROCESS
 
 PROCESS is the reactor systems code at [CCFE](www.ccfe.ac.uk). More information on PROCESS
@@ -85,6 +87,8 @@ The folder structure for the PROCESS system prior to compilation is descibed bel
     - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where `folder_name`is the name of the folder which will be created when cloning the repository.  
 2. Inside the PROCESS directory, run CMAKE to build, compile and generate the executable and shared object
     - `cmake3 -H. -Bbuild`
+      - or `cmake3 -H. -Bbuild -Ddebug=ON` to use all compiler warnings (`-Wall` and `-Wextra`).
+      - or `cmake3 -H. -Bbuild -Ddll=OFF` to compile into single executable without dll.
     - `cmake3 --build build`
     - Step 2 will create a folder called `bin`, which contains three files: process.exe, process_GTest.exe and libPROCESS_calc_engine.so
 3. pFUnit unit test files are located in the folder _test_files/pfunit_files/_ with extension _.pf_. Use `make tests` from your home directory to run the pFUnit test suite   
@@ -121,10 +125,45 @@ Additionally
 
 - create input file IN.DAT
 - run `./process.exe`
+- run `./process.exe help` provides help page
 - results are output in OUT.DAT, MFILE.DAT
 - optionally, run the `utilities/run_process.py` script in conjunction with a config file to randomly vary the starting point of the input parameter set until a feasilble solution is found.
     - `run_process.py -f CONFIGFILE`
     - An example of the config file can be found in `documentation/pdf/utilitiesdoc.pdf`
+
+### Batch Mode on Freia
+
+If you want to run PROCESS as a batch job on Freia do the following:
+- create a folder in /common/scratch/ (e.g. `mkdir /common/scratch/process-batch`)
+- copy across `process.exe` and `libPROCESS_calc_engine.so` into the folder
+- copy your input file into the folder
+- create a job file. e.g. `touch process.cmd`.
+
+`process.cmd`  should contain the following:
+```
+# @ executable = ./process.exe
+# @ arguments = <input filename>_IN.DAT
+# @ input = /dev/null
+# @ output = /home/<username>/baseline_2019.out
+# @ error = /home/<username>/baseline_2019.err
+# @ initialdir = /common/scratch/<folder name>/
+# @ notify_user = <username>
+# @ notification = complete
+# @ queue
+
+```
+
+**NOTE: you need the empty line at the end of the file.**
+
+To run the job enter:
+```
+llsubmit process.cmd
+```
+
+To see the status of your job enter:
+```
+qstat
+```
 
 ## Development
 
@@ -280,6 +319,23 @@ updated upon compilation. This way each output file is trackable to a specific c
 | `git describe --tags`   | show the current tag  | 
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 | `git checkout tags/<tag name>` | checkout a specific tag |
+
+## Profiling
+
+To profile the code and investigate which parts of the code are using the most 
+computational time follow these steps:
+
+* Compile the code with the `dll=OFF` option.
+  *  `cmake3 -H. -Bbuild -Ddll=OFF`
+* Run the code
+* Enter the command 
+  * `gprof ./<path_to_executable>/process.exe --ignore-non-functions`
+
+## Troubleshooting
+
+If you encounter issues with file line endings when working between Windows and Linux. Run the command on Freia to convert the line endings to unix based line endings for a given file (create_dicts.py in this case).
+
+```dos2unix create_dicts.py```
 
 ## Contacts
 
