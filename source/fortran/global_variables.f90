@@ -23,7 +23,7 @@ module global_variables
   !+ad_vars  icase : power plant type
   character(len=48) :: icase = 'Steady-state tokamak model'
   !+ad_vars  runtitle /Run Title/ : short descriptive title for the run
-  character(len=120) :: runtitle = &
+  character(len=180) :: runtitle = &
        "Run Title (change this line using input variable 'runtitle')"
 
   !+ad_vars  verbose /0/ : switch for turning on/off diagnostic messages:<UL>
@@ -163,6 +163,7 @@ module physics_variables
   !+ad_hist  08/02/17 JM  Added fgwsep the fraction of Greenwald density to set as separatrix density
   !+ad_hist  08/02/17 JM  Gave teped, tesep, neped and nesep non-zero defaults
   !+ad_hist  02/05/18 SIM Added pthrmw(9-14)
+  !+ad_hist  17/01/19 SIM Moved photon_wall and rad_fraction to global from physics
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -173,8 +174,8 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /42/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 42
+  !+ad_vars  ipnlaws /45/ FIX : number of energy confinement time scaling laws
+  integer, parameter :: ipnlaws = 45
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
@@ -361,7 +362,8 @@ module physics_variables
   !+ad_varc         <LI> = 4 later ITER scaling, a la Uckan;
   !+ad_varc         <LI> = 5 Todd empirical scaling I;
   !+ad_varc         <LI> = 6 Todd empirical scaling II;
-  !+ad_varc         <LI> = 7 Connor-Hastie model</UL>
+  !+ad_varc         <LI> = 7 Connor-Hastie model;
+  !+ad_varc         <LI> = 8 Sauter scaling allowing negative triangularity</UL>
   integer :: icurr = 4
   !+ad_vars  idensl /7/ : switch for density limit to enforce (constraint equation 5):<UL>
   !+ad_varc          <LI> = 1 old ASDEX;
@@ -547,8 +549,14 @@ module physics_variables
        'Murari et al NPL     (H)', &
   !+ad_varc  <LI> (41)  Petty 2008 (H-mode)
        'Petty 2008           (H)', &
-  !+ad_varc  <LI> (41)  Lang et al. 2012 (H-mode)</UL>
-       'Lang et al. 2012     (H)' /)
+  !+ad_varc  <LI> (42)  Lang et al. 2012 (H-mode)
+       'Lang et al. 2012     (H)', &
+  !+ad_varc  <LI> (43)  Hubbard 2017 (I-mode) - nominal
+       'Hubbard 2017 - nom   (I)', &
+  !+ad_varc  <LI> (44)  Hubbard 2017 (I-mode) - lower bound
+       'Hubbard 2017 - lower (I)', &
+  !+ad_varc  <LI> (45)  Hubbard 2017 (I-mode) - upper bound</UL>
+       'Hubbard 2017 - upper (I)' /)
 
   !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;
@@ -628,6 +636,8 @@ module physics_variables
   real(kind(1.0D0)) :: pfuscmw = 0.0D0
   !+ad_vars  phiint : internal plasma V-s
   real(kind(1.0D0)) :: phiint = 0.0D0
+  !+ad_vars  photon_wall : Nominal mean radiation load on inside surface of reactor (MW/m2)
+  real(kind(1.0D0)) :: photon_wall = 0.0D0
   !+ad_vars  piepv : ion/electron equilibration power per volume (MW/m3)
   real(kind(1.0D0)) :: piepv = 0.0D0
   !+ad_vars  plascur : plasma current (A)
@@ -656,6 +666,8 @@ module physics_variables
   real(kind(1.0D0)) :: pradpv = 0.0D0
   !+ad_vars  protonrate : proton production rate (particles/m3/sec)
   real(kind(1.0D0)) :: protonrate = 0.0D0
+  !+ad_vars  psolradmw : SOL radiation power (MW) (stellarator only)
+  real(kind(1.0D0)) :: psolradmw = 0.0D0
   !+ad_vars  psyncpv : synchrotron radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: psyncpv = 0.0D0
   !+ad_vars  ilhthresh /6/ : switch for L-H mode power threshold scaling to use
@@ -664,7 +676,7 @@ module physics_variables
   !+ad_vars  plhthresh : L-H mode power threshold (MW)
   !+ad_varc              (chosen via ilhthresh, and enforced if constraint equation 15 is on)
   real(kind(1.0D0)) :: plhthresh = 0.0D0
-  !+ad_vars  pthrmw(14) : L-H power threshold for various scalings (MW): <OL>
+  !+ad_vars  pthrmw(18) : L-H power threshold for various scalings (MW): <OL>
   !+ad_varc         <LI> ITER 1996 scaling: nominal
   !+ad_varc         <LI> ITER 1996 scaling: upper bound
   !+ad_varc         <LI> ITER 1996 scaling: lower bound
@@ -678,8 +690,12 @@ module physics_variables
   !+ad_varc         <LI> Snipes 2000 scaling: lower bound
   !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): nominal
   !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): upper bound
-  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): lower bound</OL>
-  real(kind(1.0D0)), dimension(14) :: pthrmw = 0.0D0
+  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): lower bound
+  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: nominal
+  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: lower bound
+  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: upper bound
+  !+ad_varc         <LI> Hubbard et al. 2017 L-I threshold scaling</OL>
+  real(kind(1.0D0)), dimension(18) :: pthrmw = 0.0D0
   !+ad_vars  ptremw : electron transport power (MW)
   real(kind(1.0D0)) :: ptremw = 0.0D0
   !+ad_vars  ptrepv : electron transport power per volume (MW/m3)
@@ -709,6 +725,8 @@ module physics_variables
   real(kind(1.0D0)) :: qlim = 0.0D0
   !+ad_vars  qstar : cylindrical safety factor
   real(kind(1.0D0)) :: qstar = 0.0D0
+  !+ad_vars rad_fraction : Radiation fraction = total radiation / total power deposited in plasma
+  real(kind(1.0D0)) :: rad_fraction = 0.0D0
   !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
   !+ad_varc            (calculated if ipedestal=3)
   real(kind(1.0D0)) :: ralpne = 0.10D0
@@ -945,6 +963,10 @@ module plasmod_variables
   real(kind(1.0D0)) :: plasmod_pfus = 0.0d0
   !+ad_vars  plasmod_eccdeff /0.3d0/ :: current drive multiplier: CD = eccdeff*PCD*TE/NE (not in use yet)
   real(kind(1.0D0)) :: plasmod_eccdeff = 0.3d0
+  !+ad_vars  plasmod_fcdp /-1.0d0/ :: (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power (iteration variable 147)
+  real(kind(1.0D0)) :: plasmod_fcdp = -1.0d0
+  !+ad_vars  plasmod_fradc /-1.0d0/ :: Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad) (iteration variable 148)
+  real(kind(1.0D0)) :: plasmod_fradc = -1.0d0
   !+ad_vars  plasmod_pech /0.0d0/ :: ech power (not in use yet)
   real(kind(1.0D0)) :: plasmod_pech = 0.0d0
   !+ad_vars  plasmod_gamcdothers /1.0d0/ :: efficiency multiplier for non-CD heating. If 0.0 pheat treated as if it had no current drive associated
@@ -1172,6 +1194,31 @@ module divertor_kallenbach_variables
 
   !+ad_vars  kallenbach_tests /0/ : Switch to run tests of 1D Kallenbach divertor model (1=on, 0=off)
   integer :: kallenbach_tests = 0
+
+  !+ad_vars  kallenbach_test_option /0/ : Switch to choose kallenbach test option: <UL>
+  !+ad_varc             <LI> = 0 Test case with user inputs;
+  !+ad_varc             <LI> = 1 Test case for Kallenbach paper;</UL>
+  integer :: kallenbach_test_option = 0
+
+  !+ad_vars  kallenbach_scan_switch /0/ : Switch to run scan of 1D Kallenbach divertor model (1=on, 0=off)
+  integer :: kallenbach_scan_switch = 0
+
+  !+ad_vars  kallenbach_scan_var /0/ : Switch for parameter to scan for kallenbach scan test:<UL>
+  !+ad_varc                  <LI> = 0 ttarget
+  !+ad_varc                  <LI> = 1 qtargettotal
+  !+ad_varc                  <LI> = 2 targetangle
+  !+ad_varc                  <LI> = 3 lambda_q_omp
+  !+ad_varc                  <LI> = 4 netau_sol
+  integer :: kallenbach_scan_var = 0
+  
+  !+ad_vars  kallenbach_scan_start /2.0/ : Start value for kallenbach scan parameter
+  real(kind(1.0D0)) :: kallenbach_scan_start = 2.0
+
+  !+ad_vars  kallenbach_scan_end /10.0/ : End value for kallenbach scan parameter
+  real(kind(1.0D0)) :: kallenbach_scan_end = 10.0
+
+  !+ad_vars  kallenbach_scan_num /1/ : Number of scans for kallenbach scan test
+  integer :: kallenbach_scan_num = 1
 
   !+ad_vars  target_spread /0.003/ : Increase in SOL power fall-off length due to spreading, mapped to OMP [m]
   real(kind(1.0D0)) :: target_spread = 0.003D0
@@ -2105,7 +2152,7 @@ module pfcoil_variables
   real(kind(1.0D0)) :: vsohbn = 0.0D0
   !+ad_vars  vsohsu : central solenoid flux swing for startup (Wb)
   real(kind(1.0D0)) :: vsohsu = 0.0D0
-  !+ad_vars  vssu : total flux swing for startup (Wb)
+  !+ad_vars  vssu : total flux swing for startup (eqn 51 to enforce vssu=vsres+vsind) (Wb)
   real(kind(1.0D0)) :: vssu = 0.0D0
   !+ad_vars  vstot : total flux swing for pulse (Wb)
   real(kind(1.0D0)) :: vstot = 0.0D0
@@ -2135,6 +2182,12 @@ module pfcoil_variables
   !+ad_varc               height of coil group j to plasma minor radius</UL>
   real(kind(1.0D0)), dimension(ngrpmx) :: zref = (/3.6D0, 1.2D0, 2.5D0, &
        1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
+
+  !+ad_vars  bmaxcs_lim : Central solenoid max field limit [T]
+  real(kind(1.0D0)) :: bmaxcs_lim = 13.0
+  !+ad_vars  fbmaxcs : F-value for CS mmax field (cons. 79, itvar 149)
+  real(kind(1.0D0)) :: fbmaxcs = 13.0
+
 
 end module pfcoil_variables
 
@@ -2748,6 +2801,11 @@ module vacuum_variables
   real(kind(1.0D0)) :: vcdimax = 0.0D0
   !+ad_vars  vpumpn : number of high vacuum pumps
   integer :: vpumpn = 0
+  !+ad_vars  dwell_pump /0/ : switch for dwell pumping options:<UL>
+  !+ad_varc              <LI> = 0 pumping only during tdwell;
+  !+ad_varc              <LI> = 1 pumping only during tramp
+  !+ad_varc              <LI> = 2 pumping during tdwell + tramp</UL>
+  integer :: dwell_pump = 0
 
   !+ad_vars  <P><B>The following are used in the Battes, Day and Rohde pump-down model
   !+ad_varc  See "Basic considerations on the pump-down time in the dwell phase of a pulsed fusion DEMO"
@@ -4587,6 +4645,11 @@ module reinke_variables
   !+ad_varc             (impvardiv) in the SoL (taking impurity_enrichment
   !+ad_varc             into account) (iteration variable 148)
   real(kind(1.0D0)) :: fzactual = 0.001D0
+
+  !+ad_vars  reinke_mode /0/ : Switch for Reinke criterion H/I mode
+  !+ad_varc          <LI> = 0 H-mode;
+  !+ad_varc          <LI> = 1 I-mode;</UL>
+  integer       :: reinke_mode = 0
 
 end module reinke_variables
 

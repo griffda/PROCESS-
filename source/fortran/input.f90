@@ -666,7 +666,7 @@ contains
           write(outfile,*) ' '
           obsolete_var = .true.
        case ('ilhthresh')
-          call parse_int_variable('ilhthresh', ilhthresh, 1, 14, &
+          call parse_int_variable('ilhthresh', ilhthresh, 1, 18, &
                'Switch for L-H power threshold to enforce')
        case ('impc')
           call parse_real_variable('impc', impc, 0.0D0, 10.0D0, &
@@ -1189,6 +1189,12 @@ contains
        case ('plasmod_pfus')
           call parse_real_variable('plasmod_pfus', plasmod_pfus, 0.0D0, 1.0D4, &
                'If 0. not used (otherwise controlled with Pauxheat)')
+       case ('plasmod_fcdp')
+          call parse_real_variable('plasmod_fcdp', plasmod_fcdp, -1.0D0, 1.0D0, &
+               '(P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power')
+       case ('plasmod_fradc')
+          call parse_real_variable('plasmod_fradc', plasmod_fradc, -1.0D0, 1.0D0, &
+               'Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)')
        case ('plasmod_contrpovs')
           call parse_real_variable('plasmod_contrpovs', plasmod_contrpovs, 0.0D0, 1.0D4, &
                'control power in Paux/lateral_area (MW/m2)')
@@ -1334,7 +1340,24 @@ contains
        case ('kallenbach_tests')
           call parse_int_variable('kallenbach_tests', kallenbach_tests, 0, 1, &
                'Switch to turn on tests of the 1D Kallenbach divertor model (1=on, 0=off)')
-
+       case ('kallenbach_test_option')
+          call parse_int_variable('kallenbach_test_option', kallenbach_test_option, 0, 10, &
+               'Switch to choose testing option for the 1D Kallenbach divertor model')
+       case ('kallenbach_scan_switch')
+          call parse_int_variable('kallenbach_scan_switch', kallenbach_scan_switch, 0, 1, &
+               'Switch to turn on scan of the 1D Kallenbach divertor model (1=on, 0=off)')
+       case ('kallenbach_scan_var')
+          call parse_int_variable('kallenbach_scan_var', kallenbach_scan_var, 0, 10, &
+               'Scan parameter for kallenbach test scan')
+       case ('kallenbach_scan_start')
+          call parse_real_variable('kallenbach_scan_start', kallenbach_scan_start, 1.0D-10, 1.0D30, &
+               'Starting value for kallenbach scan')
+       case ('kallenbach_scan_end')
+          call parse_real_variable('kallenbach_scan_end', kallenbach_scan_end, 1.0D-10, 1.0D30, &
+               'End value for kallenbach scan')
+       case ('kallenbach_scan_num')
+          call parse_int_variable('kallenbach_scan_step', kallenbach_scan_num, 1, 1000, &
+               'Number of scan points for kallenbach scan')
        case ('targetangle')
           call parse_real_variable('targetangle', targetangle, 0.1D0, 90.0D0, &
                'Angle between field-line and divertor target (degrees)')
@@ -1957,6 +1980,13 @@ contains
 
           !  PF coil settings
 
+       case ('bmaxcs_lim')
+         call parse_real_variable('bmaxcs_lim', bmaxcs_lim, 0.01D0, 100.0D0, &
+               'Maximum allowed peak field on central solenoid')
+       case ('fbmaxcs')
+         call parse_real_variable('fbmaxcs', fbmaxcs, 0.01D0, 1.0D0, &
+               'F-value for max peak CS field (con. 79, itvar 149)')
+
        case ('alfapf')
           call parse_real_variable('alfapf', alfapf, 1.0D-12, 1.0D0, &
                'PF coil current smoothing parameter')
@@ -2103,16 +2133,16 @@ contains
           call parse_int_variable('primary_pumping', primary_pumping, 0, 3, &
                'Switch for pumping of primary coolant')
        case ('htpmw_blkt')
-          call parse_real_variable('htpmw_blkt', htpmw_blkt, 0.0D0, 2.0D2, &
+          call parse_real_variable('htpmw_blkt', htpmw_blkt, 0.0D0, 1.0D3, &
                'blanket coolant mechanical pumping power (MW)')
        case ('htpmw_div')
-          call parse_real_variable('htpmw_div', htpmw_div, 0.0D0, 1.0D2, &
+          call parse_real_variable('htpmw_div', htpmw_div, 0.0D0, 1.0D3, &
                'divertor coolant mechanical pumping power (MW)')
        case ('htpmw_fw')
-          call parse_real_variable('htpmw_fw', htpmw_fw, 0.0D0, 2.0D2, &
+          call parse_real_variable('htpmw_fw', htpmw_fw, 0.0D0, 1.0D3, &
                'first wall coolant mechanical pumping power (MW)')
        case ('htpmw_shld')
-          call parse_real_variable('htpmw_shld', htpmw_shld, 0.0D0, 1.0D2, &
+          call parse_real_variable('htpmw_shld', htpmw_shld, 0.0D0, 1.0D3, &
                'shield and vacuum vessel coolant mechanical pumping power (MW)')
 
 
@@ -2903,7 +2933,9 @@ contains
        case ('tn')
           call parse_real_variable('tn', tn, 1.0D0, 1.0D3, &
                'Neutral gas temp in chamber (K)')
-
+       case ('dwell_pump')
+               call parse_int_variable('dwell_pump', dwell_pump, 0, 2, &
+                    'switch for dwell pumping options')
        case ('pumpareafraction')
           call parse_real_variable('pumpareafraction', pumpareafraction, 1.0D-6, 1.0D0, &
                'Area of one pumping port as a fraction of plasma surface area')
@@ -2927,6 +2959,10 @@ contains
        case ('lhat')
           call parse_real_variable('lhat', lhat, 1.0D0, 1.5D1, &
                'connection length factor')
+
+       case ('reinke_mode')
+          call parse_int_variable('reinke_mode', reinke_mode, 0, 1, &
+               'Switch for Reinke Criterion mode (0=H, 1=I)')
 
        case ('impvardiv')
           call parse_int_variable('impvardiv', impvardiv, 3, nimp, &
@@ -3015,8 +3051,6 @@ contains
     end if
 
     nvar = no_iteration
-    write(*,*)no_constraints,' constraints (total).  ',nvar,' iteration variables'
-    write(*,*)nineqns, ' inequality constraints,  ', neqns, ' equality constraints'
 
     if (error .eqv. .True.) stop
 

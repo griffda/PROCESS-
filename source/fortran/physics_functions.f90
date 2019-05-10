@@ -63,7 +63,6 @@ contains
     !+ad_summ  L-mode to H-mode power threshold calculation
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  dene   : input real :  volume-averaged electron density (/m3)
     !+ad_args  dnla   : input real :  line-averaged electron density (/m3)
@@ -72,7 +71,7 @@ contains
     !+ad_args  kappa  : input real :  plasma elongation
     !+ad_args  sarea  : input real :  plasma surface area (m**2)
     !+ad_args  aion   : input real :  average mass of all ions (amu)
-    !+ad_args  pthrmw(14) : output real array : power threshold (different scalings)
+    !+ad_args  pthrmw(17) : output real array : power threshold (different scalings)
     !+ad_desc  This routine calculates the power threshold for the L-mode to
     !+ad_desc  H-mode transition.
     !+ad_prob  None
@@ -100,7 +99,7 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: dene,dnla,bt,rmajor,kappa,sarea,aion
-    real(kind(1.0D0)), dimension(14), intent(out) :: pthrmw
+    real(kind(1.0D0)), dimension(18), intent(out) :: pthrmw
 
     !  Local variables
 
@@ -169,6 +168,20 @@ contains
 
     pthrmw(14) = 0.733D0 * dnla20**0.439D0 * bt**0.472D0 * rmajor**1.433D0 &
                * (2.0D0/aion)
+
+    ! Hubbard et al. 2012 L-I threshold scaling
+
+    ! Nominal
+    pthrmw(15) = 2.11 * (plascur/1.0D6)**0.94 * dnla20**0.65
+
+    ! Lower bound
+    pthrmw(16) = 2.11 * (plascur/1.0D6)**0.70 * dnla20**0.47
+
+    ! Upper bound
+    pthrmw(17) = 2.11 * (plascur/1.0D6)**1.18 * dnla20**0.83
+
+    ! Hubbard et al. 2017 L-I threshold scaling
+    pthrmw(18) = 0.162 * dnla20 * sarea * (bt)**0.26
 
   end subroutine pthresh
 

@@ -94,17 +94,18 @@ module numerics
   use global_variables
   use constants
   use maths_library
+  use plasmod_variables
 
   implicit none
 
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 148
+  integer, parameter :: ipnvars = 152
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 78
+  integer, parameter :: ipeqns = 79
   !+ad_vars  ipnfoms FIX : number of available figures of merit
-  integer, parameter :: ipnfoms = 18
+  integer, parameter :: ipnfoms = 19
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
@@ -158,8 +159,11 @@ module numerics
        'min R0, max tau_burn. ', &
        !+ad_varc  <LI> (17) net electrical output
        'net electrical output.', &
-       !+ad_varc  <LI> (18) Null Figure of Merit </UL>
-       'Null figure of merit. '  &
+       !+ad_varc  <LI> (18) Null Figure of Merit
+       'Null figure of merit. ',  &
+       !+ad_varc  <LI> (19) linear combination of big Q and pulse length (maximised)
+       !+ad_varc              note: FoM should be minimised only!</UL>
+       'max Q, max t_burn.    ' &
         /)
   !+ad_vars  ncalls : number of function calls during solution
   integer :: ncalls = 0
@@ -351,8 +355,10 @@ module numerics
        'Eich critical separatrix density ',   &
        !+ad_varc  <LI> (77) TF coil current per turn upper limit 
        'TFC current per turn upper limit ',    &
-       !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)</UL>
-       'Reinke criterion fZ lower limit  '    &
+       !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)
+       'Reinke criterion fZ lower limit  ',   &
+       !+ad_varc  <LI> (79) F-value for max peak CS field (itv  149 fbmaxcs)</UL>
+       'Peak CS field upper limit        '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -665,10 +671,18 @@ module numerics
        'fgwped        ', &
        !+ad_varc  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)
        'fcpttf        ', &
-       !+ad_varc  <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)</UL>
+       !+ad_varc  <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)
        'freinke       ', &
-       !+ad_varc  <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion</UL>
-       'fzactual      ' &
+       !+ad_varc  <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion
+       'fzactual      ', &
+       !+ad_varc  <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
+       'fbmaxcs       ', &
+        !+ad_varc  <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power
+       'plasmod_fcdp  ', &
+       !+ad_varc  <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)
+       'plasmod_fradc ', &
+       !+ad_varc  <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density</UL>
+       'fgwsep        ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -834,7 +848,11 @@ module numerics
        0.500D0, &  !  145
        0.001D0, &  !  146
        0.001D0, &  !  147
-       1.00D-8  &  !  148
+       1.00D-8, &  !  148
+       0.001D0, &  !  149
+       0.000D0, &  !  150
+       0.001D0, &  !  151
+       0.001D0  &  !  152
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -987,7 +1005,11 @@ module numerics
        1.000D0, &  !  145
        1.000D0, &  !  146
        1.000D0, &  !  147
-       1.000D0  &  !  148
+       1.000D0, &  !  148
+       1.000D0, &  !  149
+       1.000D0, &  !  150
+       1.000D0, &  !  151
+       1.000D0  &  !  152
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

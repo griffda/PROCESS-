@@ -9,9 +9,14 @@
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{framed}
+\usepackage{mdframed}
+\definecolor{codeColour}{HTML}{F7F9FA}
+\definecolor{codeLine}{HTML}{E6E8EB}
+\mdfsetup{backgroundcolor=codeColour,  linecolor=codeLine,
+linewidth=3pt, topline=false, bottomline=false, rightline=false,
+innertopmargin=15pt, innerbottommargin=5pt}
+
 \usetikzlibrary{trees}
-
-
 
 \pretolerance=10000
 \topmargin=0mm
@@ -1109,11 +1114,11 @@ p.11 \\
 \texttt{29} & Valovic modified ELMy (H-mode) &  \\
 \texttt{30} & Kaye PPPL April 98 (L-mode) &  \\
 \texttt{31} & ITERH-PB98P(y) (H-mode) &  \\
-\texttt{32} & IPB98(y) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175 \\
-\texttt{33} & IPB98(y,1) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175 \\
-\texttt{34} & IPB98(y,2) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175 \\
-\texttt{35} & IPB98(y,3) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175 \\
-\texttt{36} & IPB98(y,4) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175 \\
+\texttt{32} & IPB98(y) (H-mode)   & Nuclear Fusion \textbf{39} (1999) p.2175, Table 5, \\
+\texttt{33} & IPB98(y,1) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175, Table 5, full data\\
+\texttt{34} & IPB98(y,2) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175, Table 5, NBI only\\
+\texttt{35} & IPB98(y,3) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175, Table 5, NBI only, no C-Mod\\
+\texttt{36} & IPB98(y,4) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175, Table 5, NBI only ITER like\\
 \texttt{37} & ISS95 (stellarator) & Nuclear Fusion \textbf{36} (1996) p.1063 \\
 \texttt{38} & ISS04 (stellarator) & Nuclear Fusion \textbf{45} (2005) p.1684 \\
 \texttt{39} & DS03 (H-mode) & Plasma Phys.\ Control.\ Fusion \textbf{50} (2008) 043001, equation 4.13 \\
@@ -3010,6 +3015,151 @@ optimisation mode and non-optimisation mode are:
 As before, the user must decide which constraint equations and iteration
 variables to activate.
 
+\section{Kallenbach Model}\label{sec:kallenbach}
+
+\subsection{Testing}
+
+The ability to test the Kallenbach model while not running all of PROCESS has 
+been implemented. To run the model the PROCESS IN.DAT file needs to contain the 
+following lines to turn on the testing functionality.
+
+\begin{mdframed}
+  \begin{verbatim}
+    * Switch to turn on the 1d kallenbach divertor model (1=on; 0=off)
+    kallenbach_switch = 1
+
+    * Switch to run tests of 1d kallenbach divertor model (1=on; 0=off)
+    kallenbach_tests = 1
+  \end{verbatim}
+\end{mdframed}
+
+ There are currently two testing options in PROCESS for the Kallenbach model. 
+ One is to use the test case that is supposed to match the Kallenbach paper and 
+ the other is to use user inputs from the IN.DAT file.
+
+\begin{mdframed}
+\begin{verbatim}
+  * Switch to choose which test case to use for kallenbach model
+  * 0 = user defined inputs
+  * 1 = Kallenbach paper test case
+  kallenbach_test_option = 0
+\end{verbatim}
+\end{mdframed}
+
+ If you select option 1 then you don't need any other lines in the IN.DAT (just 
+ the three lines described above). However, if you choose option 0 then the 
+ following inputs need to be given in addition to the above (example values 
+ are given).
+
+\begin{mdframed}
+\begin{verbatim}
+
+* Increase in sol power fall-off length due to spreading; mapped to omp [m]
+target_spread = 7.0e-3
+
+* Sol power fall-off length at the outer midplane; perpendicular to field [m]
+lambda_q_omp = 0.002
+
+* Parameter describing the departure from local ionisation equilibrium in 
+* the sol; [ms;1e20/m3]
+netau_sol    = 0.5
+
+* Target temperature [eV]
+ttarget = 2.3D0
+
+* Angle between flux surface and divertor target [degrees]
+targetangle = 30.0
+
+* Power density on target including surface recombination [w/m2]
+qtargettotal = 1671000.0 
+
+* Array of core impurity fractions
+fimp(3) = 0.0
+fimp(4) = 0.0
+fimp(5) = 0.0
+fimp(6) = 0.0
+fimp(7) = 0.0
+fimp(8) = 0.0
+fimp(9) = 2.353e-3
+fimp(10) = 0.0
+fimp(11) = 0.0
+fimp(12) = 0.0
+fimp(13) = 0.0
+fimp(14) = 5.5e-5
+
+* Array of ratio of SOL impurity concentration to core concentration
+impurity_enrichment(1) = 0.0 * H
+impurity_enrichment(2) = 1.0 * He
+impurity_enrichment(9) = 5.0 * Argon
+
+* Ratio of mean sol density at omp to separatrix density at omp
+neratio  = 0.9 
+
+* Distance from target at which sol gets broader as a fraction of 
+* connection length
+fractionwidesol = 0.1
+
+* Plasma temperature at target [eV]
+ttarget = 2.3
+
+* Plasma major radius [m]
+rmajor = 8.0D0
+
+* Aspect ratio
+aspect = 2.91
+
+* Toroidal field on-axis [T]
+bt = 4
+
+* Safety factor at edge
+q = 3.0D0
+
+* Plasma elongation
+kappa = 1.8
+
+* Plasma triangularity
+triang = 0.5
+
+* Electron temperature at separatrix [kev]
+tesep = 0.298
+\end{verbatim}
+\end{mdframed}
+
+\subsection{Scanning}
+
+To use the scanning functionality in the Kallenbach model you must include the 
+following options in the input file.
+
+\begin{mdframed}
+\begin{verbatim}
+  * Switch to turn on the 1d kallenbach divertor model (1=on; 0=off)
+  kallenbach_switch = 1
+
+  * Switch to run scans of 1d kallenbach divertor model (1=on; 0=off)
+  kallenbach_scan_switch = 1
+
+  * Switch to run tests of 1d kallenbach divertor model (1=on; 0=off)
+  kallenbach_tests = 0
+
+  * Parameter to scan
+  * 0 - ttarget
+  * 1 - qtargettotal
+  * 2 - targetangle
+  * 3 - lambda_q_omp
+  * 4 - netau_sol
+  kallenbach_scan_var = 0
+
+  * Scan start and end points
+  kallenbach_scan_start = 2.0
+  kallenbach_scan_end = 12.0
+  kallenbach_scan_num = 10
+
+\end{verbatim}
+\end{mdframed}
+
+After the following inputs the user should populate the IN.DAT with the same 
+inputs described in the previous section for 
+\texttt{kallenbach\_test\_option = 0}.
 
 \section{Troubleshooting}
 \label{sec:problems}

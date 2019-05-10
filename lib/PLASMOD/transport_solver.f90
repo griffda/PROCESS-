@@ -11,12 +11,13 @@
     use grad_func
     use structs
     use physics_functions_module
+    use global_variables
 
     implicit none
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
+!
 
 
 
@@ -108,16 +109,16 @@
 		 & cxe,car,nG, qedge, elong, trianpg, amin ,tsep, rpmajor,  rpminor, asppect, nlineavg
   real(kind(1.0d0)) :: tau_sol, V_sol, D_ped, V_ped, lambda_sol,pdtp,sv_dd,svdt
   real(kind(1.0d0)) :: rtor, yd, betaz, lint,taue,Qtot
-  real(kind(1.0d0)) :: Hfactor,chi00,chipow,Hnow,tau_scal,chifac,chifac0
+  real(kind(1.0d0)) :: Hfactor,hpalmod,npikpalmod,xihepalmod,chi00,chipow,Hnow,tau_scal,chifac,chifac0
   real(kind(1.0d0)) :: paion, NALPH,YVALP,YLLAME,yllami,yllama,YY6,YEPS,YVC, YY7,yv7 ,yv6 !fraction of D-T power deposited to ions, plus dummies
-  real(kind(1.0d0)) :: ts_alf,chepck,dum1,dum2,roc0,vloop0,fbs0,toleq0,pow_eq   !fraction of D-T power deposited to ions, plus dummies
+  real(kind(1.0d0)) :: ts_alf,chepck,dum1,dum2,dum31,roc0,vloop0,fbs0,toleq0,pow_eq   !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: aim1,aim2,aim3   !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: q_edge_in,f_ind_in,ip0 ,tepp0,tipp0,nepp0,fq  !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: elong95,trianpg95  !fraction of D-T power deposited to ions, plus dummies
   real(kind(1.0d0)) :: xb,teb,tib,neb,zmain,amain,toleq,fuelmix,fuelhe3
   real(kind(1.0d0)) :: roc,vloop,fbs,qf,qf0,sfus_he,sfus_he3,sfus_p,fcd,qdivt,q_heat,q_cd,q_fus,q_95,qtote,qtoti,w_e,w_i
   real(kind(1.0d0)) :: lambda_q,lparsep,ldiv,qpar,fx, t_plate,pres_fac,areat,plinexe,psepxe
-  real(kind(1.0d0)) :: ne_av,nela,PLH_th(14)
+  real(kind(1.0d0)) :: ne_av,nela,PLH_th(18)
   real(kind(1.0d0)), dimension(num%nx) :: theta_perim,dtheta,f_perim,p_dd
   real(kind(1.0d0)), dimension(num%nx) :: x, tepr, tipr, nepr, qinit, xr, Peaux, Piaux, nHe,nwol,nprot,nhe3, nXe, nNe, prxe, prne
   real(kind(1.0d0)), dimension(num%nx) :: prwol,snebm
@@ -128,6 +129,7 @@
 	 real(kind(1.0d0)), dimension(num%nxt+1) :: T_e0, T_i0, N_e0, xtrt, Fn0, Fe0, Fi0
   real(kind(1.0d0)), dimension(num%nxt+1) :: Fn, Fe, Fi
   real(kind(1.0d0)), dimension(num%nxt) :: xtr
+  real(kind(1.0d0)), dimension(num%nxt+1) :: xtr_e
   real(kind(1.0d0)), dimension(num%ntglf,num%nchannels) :: atglf,btglf
   real(kind(1.0d0)), dimension(num%nxt) :: q_tr, sh_tr
   real(kind(1.0d0)), dimension(num%nxt) :: gng, geg, gig, gng0, geg0, gig0, DdnVne, DdnVni, DdnVn
@@ -220,8 +222,11 @@ endif
 
   if (.not.allocated(radp%ne).or..not.allocated(radp%g2))    jiterext=1 !if nothing allocated, must be first call ever
 
-  if (geom%counter.eq.0.d0)   jiterext=1 !if geom%counter 0 --> first call ever
-
+		num%dt=num%dtmax
+  if (geom%counter.eq.0.d0) then
+				num%dt=num%dtmin
+		  jiterext=1 !if geom%counter 0 --> first call ever
+	endif
   !check if the machine has changed, major radius, current, anything
   chepck=0.d0
   if (geom%counter.ge.1.d0) then
@@ -237,6 +242,8 @@ endif
   if (geom%counter.ge.1..and.chepck.gt.0.1) then
    ! if machine has changed, restart from scratch guess
    write(*,*) 'machine has changed'
+		num%dt=num%dtmin
+	
    jiterext=1
   endif
 
@@ -259,7 +266,6 @@ endif
   redo = 0
   jnit = 0
   jiterextmax = 1
-		num%dt=num%dtmin
 
   !impurities mass ( to be substituted later by process)
   aim1=4.d0 !helium
@@ -304,8 +310,9 @@ endif
   x = (/ (dx*(irho-1.), irho = 1, nx) /)
  	jped=nint(xb/dx) !pedestal top position
 ! reduced grid
-  x0=max(num%capa,x(2)) !this maybe revisited ... EFable
-  xtr = linspace(x0, xb, nxt) * amin  ! normalized minor radius for transport
+  xtr_e = linspace(0.d0, xb, nxt+1) * amin  ! normalized minor radius for transport
+  x0=xtr_e(2) !this maybe revisited ... EFable
+  xtr(1:nxt) = xtr_e(2:nxt+1)  ! normalized minor radius for transport
   xtrt(1:nxt) = xtr/amin
   xtrt(nxt+1) = 1.0d0
   xtrt = xtrt*amin
@@ -511,6 +518,12 @@ endif
   tib = teb
   nsep = inp0%f_gws*nG
 
+	!peaking for 1st iteration
+		npikpalmod=loss%npikpalmod
+		xihepalmod=loss%xihepalmod
+
+
+
   !initialization of counters & tolerance
   jiter=1
   jnit=0
@@ -635,7 +648,7 @@ endif
 	Piaux = exp(-(x-inp0%x_control(1))**2/inp0%dx_control(1)**2.d0)
  Pnbi=Pnbi+inp0%q_control*Piaux/trapz(Piaux*dV);
 
-!nbi particle source
+!nbi particle source = nbi power density / (beam energy) = particle/s/m^3 in 1e19
 	snebm =pnbi/(e_charge*1.d19*inp0%nbi_energy/1.e3)
 
 !split between electrons and ions of NBI
@@ -696,7 +709,7 @@ if (num%iprocess.eq.0) then
 
 	prad = nXe*nepr*prxe + nne*nepr*prne+prwol*nwol*nepr !total Prad density
 
-!write(*,*) trapz(prwol*nwol*nepr*dV),zavwol(20)
+!write(*,*) prxe(1),nxe(1),nepr(1),trapz(prxe*nxe*nepr*dV),zavxe(1)
 
 !quasi-neutrality equations
 	nHe3 = fuelhe3*(nepr - nNe*zavne - nXe*zavxe - &
@@ -717,7 +730,8 @@ if (num%iprocess.eq.0) then
 
 !caluclate brehmstrahliuzng radiation
   PBRAD=5.06E-5*zepff*NEpr**2.d0*SQRT(TEpr)
-
+!	write(*,*) 'pbrad',zepff,nepr(1),tepr(1),pbrad(1),psync(1)
+!	write(*,*) 'pbrad',ndeut(1),ntrit(1),nhe(1),nhe3(1),nne(1),nxe(1),nprot(1),nwol(1)
 !this below is for synchrotron radiation computed in the loop
   totse(nx)=trapz(tepr*dV)/V(nx)
   totsi(nx)=trapz(nepr*dV)/V(nx)
@@ -822,8 +836,13 @@ yllama=1.d0
  DdnVni = 625.d0*interp1_ef(nx,nxt,xr, totSi/G1/vprime/nions, xtr)
 
 	! Fuelling
-	Sn = exp(-(x-0.85d0)**2 / 0.05d0)/1464.552  ! pellet functional form, scaled to give unity fueling
-	Sn = inp0%spellet*inp0%fpellet*Sn+snebm  ! pellet + added NBI fueling snebm
+	Sn = exp(-(x-0.7d0)**2 / (0.13d0)**2.)  ! pellet functional form, scaled to give unity fueling. The parameters x0 and dx should come from pellet scaling, but at the moment they are "universal" to x0=0.7 and dx=0.13
+	Sn=Sn/trapz(Sn*dv)
+
+! calculate pellet source to maintain pedestal top density, assume Dpedestal = 0.1 m^2/s (universal number)
+	inp0%spellet = 0.1*Vprime(nx)*G1(nx)/(1.-rhopedn)/rpminor*(neb-nsep) !geometry of last closed flux surface
+!	write(*,*) 'pellet ',nepr(1)/trapz(nepr*dv)*v(nx),trapz(snebm),inp0%spellet
+	Sn = 1.*inp0%spellet*Sn+1.*snebm  ! pellet + added NBI fueling snebm
 	totS = cumint1(Sn*dV) !cumulative integral
 !interpolate on transport grid
 	DdnVn = interp1(xr, totS/Vprime/G1, xtr)
@@ -843,7 +862,7 @@ yllama=1.d0
 			& nepr,tepr,nepr,0.5*nepr,0.*nepr,tipr,1.+0.*nepr,0.*nepr,2.5+0.*nepr,1./qprf,RHO,x*rpminor, &
 			& SHIF,k,d,0.*shif,0.*shif,0.*shif,0.*shif,IPOL,g1*vprime,vprime,1.+0.*vprime, &
 			& SHEAR,0.*nepr,0.*nepr,palpph,0.*nepr,0.*nepr,0.*nepr,y0, gy0, xtr,x, amin, rpmajor, btor,num%capA, q_tr, sh_tr, a, b, &
-			& Hfactor,chi00,chipow,Hnow,chifac0)
+			& Hfactor,chi00,chipow,Hnow,chifac0,npikpalmod,xihepalmod)
 
 !actual diffusivities adding stabilizing term num%dtmaxmax. G. V. Pereverzev and G. Corrigan method, CPC 2008
 	aa=a+num%dtmaxmax
@@ -882,6 +901,7 @@ yllama=1.d0
 
  if (i_diagz.eq.1)	write(*,*) 'matrix obtained'
 	if (i_diagz.eq.1) then
+!	pause
 		write(1441,'(4111E25.11)') xtrt,a(:,1),a(:,2),a(:,3),b(:,1),b(:,2),b(:,3), &
 		& c(:,1),c(:,2),c(:,3),y(:,1),y(:,2),y(:,3),chat(:,1),chat(:,2),chat(:,3),gy(:,1),gy(:,2),gy(:,3)
 		write(1447,'(4111E25.11)') x,tepr,tipr,nepr, &
@@ -934,12 +954,48 @@ yllama=1.d0
 	i_flag=0
 	return
 	endif
-!these chies are used only by transport model 0
 
-	if (i_modeltype.ne.1) then
-	 chifac0=1.d0  ! transport model gives H in output
+
+!these chies are used only by transport model 0
+        if (i_modeltype.ne.1.and.i_modeltype.ne.555) then 
+           chifac0=1.d0  ! transport model gives H in output
 	else
-  chifac0=max(0.01,chifac0+num%dt*(Hnow-Hfactor)/(1.+num%dt)) !imodeltype = 1: rescale transport to match H factor in input
+
+	Hpalmod=0.73*(neb/ng)**0.219 * &  !H factor scaling from Fpalmod
+	 & teb**0.434 * &
+		& rpmajor**(-0.867) * & 
+		& btor**(-0.937) * &
+	 & exp(-0.000535*(loss%pnbi)) * &
+		& exp(-0.000247*trapz((pradtot+pradedge)*dV)) * &
+		& q**0.948 * &
+		& (rpmajor/rpminor)**(1.685)
+
+	npikpalmod=0.24*(neb/ng)**(0.475) * &  !density peaking Fpalmod scaling
+	 & teb**(-0.4395) * &
+		& rpmajor**(0.6165) * & 
+		& btor**(1.887) * &
+	 & exp(0.0033*(loss%pnbi)) * &
+		& exp(-0.00091*trapz((pradtot+pradedge)*dV)) * &
+		& q**(-0.8741) * &     
+		& (rpmajor/rpminor)**(-0.534)   
+
+	xihepalmod=1.244*(neb/ng)**0.3210899 * &  !density peaking Fpalmod scaling
+	 & teb**(-0.284027) * &
+		& rpmajor**(0.0275) * & 
+		& btor**(-0.0276) * &
+	 & exp(-0.000123003*(loss%pnbi)) * &
+		& exp(-0.00046091*trapz((pradtot+pradedge)*dV)) * &
+		& q**(0.393344) * &       
+		& (rpmajor/rpminor)**(0.6623) 
+
+           if (i_modeltype.eq.555) then
+		Hfactor = Hpalmod
+           endif
+
+!write(*,*) 'check', teb,neb/ng,rpmajor,btor,(loss%pnbi+Qf),trapz((pradtot+pradedge)*dV),q,rpmajor/r
+!& Hnow,Hfactor,Hpalmod
+
+           chifac0=max(0.01,chifac0+num%dt*(Hnow-Hfactor)/(1.+num%dt)) !imodeltype = 1: rescale transport to match H factor in input
 	endif
 
 !initialize check on time stepping
@@ -952,10 +1008,10 @@ yllama=1.d0
 
 !time step control
 if (num%etol.lt.num%etolm*num%tolmin) then
-num%dt=min(num%dtmax,num%dt*num%Ainc)
+!num%dt=min(num%dtmax,num%dt*num%Ainc)
 endif
 if (num%etol.ge.num%etolm*num%tolmin) then
-num%dt=max(num%dtmin,num%dt/num%dtinc)
+!num%dt=max(num%dtmin,num%dt/num%dtinc)
 endif
 	if (i_diagz.eq.1) 	write(444,'(6E25.11)') num%etol0,num%etol,num%dt,pfus(nx),loss%pnbi,comp%cxe
 
@@ -1336,19 +1392,21 @@ dum2=min(dum2,comp%psep_r*rpmajor)
 	endif
 
 	if (PLH.gt.dum2) then
+	write(*,*) 'PLH, Psepcrit',plh,dum2
 	 write(*,*) 'PLH > Psep crit, not possible, stop, increase psepbqar or psepr'
 		stop
 	endif
 
 
 
-if (dum2.lt.1.d6.and.comp%fcoreraditv.lt.0.d0) then !do the calculation
+if (dum2.lt.1.d6.and.comp%fcoreraditv.lt.0.) then !do the calculation
 		cxe=max(0.,cxe+inp0%cxe_psepfac*(Psep-dum2)/dum2*num%dt/(1.+num%dt))
  if (q_heat.gt.0.) cxe=0.d0
 endif
 
-if (comp%fcoreraditv.ge.0.d0) then !if fcoreraditv is given , replace the above with this one
- 		cxe=max(0.,cxe+inp0%cxe_psepfac*(comp%fcoreraditv*(psepxe-dum2)/dum2-plinexe/dum2)*num%dt/(1.+num%dt))
+if (comp%fcoreraditv.ge.0.) then !if fcoreraditv is given , replace the above with this one
+			dum31=PLH*comp%psepplh_inf
+ 		cxe=max(0.,cxe+inp0%cxe_psepfac*(comp%fcoreraditv*(dum2-dum31)/dum31-(dum2-Psep)/dum31)*num%dt/(1.+num%dt))
  if (q_heat.gt.0.) cxe=0.d0
 endif
 
@@ -1364,6 +1422,11 @@ endif
 		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+&
 		& inp0%qnbi_psepfac*(vloop-inp0%V_loop)*num%dt/(1.+num%dt)))
 	endif
+
+
+!	write(*,*) inp0%fcdp,comp%fcoreraditv,q_cd,cxe,Psep/PLH,Psep*btor/q_95/geom%A/rpmajor,fcd+fbs, & 
+!	& (inp0%pheatmax-q_heat-q_fus-inp0%q_control),psepxe,dum31,dum2,plinexe
+
 
 !constraint: pfusion target
 	if (inp0%pfus.gt.0.) then
@@ -1382,11 +1445,13 @@ if(q_cd.gt.0.) q_cd=q_cd*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 if(q_fus.gt.0.) q_fus=q_fus*loss%pnbi/(q_heat+q_cd+q_fus+inp0%q_control)
 
 
+!	write(*,*) qtot,psep,cxe,loss%pnbi,q_heat,q_cd,q_fus,PLH,dum2,tepr(1)
+
 !SOL MODEL below!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	if (comp%qdivt.gt.0.) then
-	!constraint: divertor temperature --> gives Ar in output
 !initialize
 	qdivt=0.d0
+	if (comp%qdivt.gt.0.) then
+	!constraint: divertor temperature --> gives Ar in output
 !T. Eich scaling
 	lambda_q=0.73e-3*btor**(-0.78)* &
 		&   (rpminor**2.*btor/(0.2*rpmajor*ip))**1.02* &
@@ -1487,6 +1552,11 @@ endif
 	if (i_diagz.eq.1) 	write(*,*) 'ccar',car,qdivt,qpar
 	endif
 endif
+
+! trying divertor protection to test !!!!!!!!!!!!!!
+!	 car = max(0.,car+((qtot-qradedge)*inp0%car_qdivt-car)*num%dt/(1.+num%dt))
+!	 car = (qtot-qradedge)*inp0%car_qdivt
+!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -1499,6 +1569,8 @@ endif
 
 !END OF MODULE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+
+!	write(*,*) 'etol ',num%etol,cxe,tepr(1),Qtot,hfactor
 
 
 
@@ -1667,7 +1739,7 @@ endif
   mhd%betapol=2.d0*mu_vacuum*1.d3*1.d19*e_charge*trapz(pressure*dv)/trapz(radp%bpol**2.d0*dv)
   mhd%torsurf=areat
   mhd%rli=2.d0*trapz(radp%bpol**2.d0*dv)/ &
-  & ((1.d6*geom%ip)**2.d0)/(4.*3.141592*1.d-7)**2.d0/rpmajor
+  & ((1.d6*geom%ip)**2.d0)/(4.*3.141592*1.d-7)**2.d0/rpmajor  !this values comes out a bit too big.... problem with q profile at edge...
  	mhd%qoh=q_oh(1)
  	mhd%betan = betan
   mhd%f_gwpedtop=neb/(1./(3.141592*rpminor**2.)*Ip*10)
@@ -1704,6 +1776,8 @@ endif
   loss%Pfus = 5.0d0*trapz((pidt+pedt)*dV)
   loss%chifac0 = chifac0
   loss%pohm=ip*(1.-fbs-fcd)*vloop
+
+
   loss%rplas=vloop/(ip*(1.-fbs-fcd))/1.d6
   loss%psync=trapz(psync*dv)
   loss%pbrehms=trapz(pbrad*dv)
@@ -1729,6 +1803,8 @@ endif
  loss%tauee=w_e/qtote
  loss%tauei=w_i/qtoti
  loss%qtot=qtot
+ loss%npikpalmod=npikpalmod
+ loss%xihepalmod=xihepalmod
 
 	!perimeter
 	do i=1,num%nx
@@ -1810,21 +1886,24 @@ endif
   write(99,'(999E25.11)')   nne
   write(99,'(999E25.11)')   nxe
 		write(99,'(999E25.11)')   nxe*zavxe+nne*zavne+2*nhe
+  write(99,'(911E25.11)')   sn
   close(99)
   write(2901,*) 'vloop,q,ip : ',mhd%vloop,mhd%q,mhd%ip_out
   write(2901,*) 'Fusion power : ',loss%pfus
   write(2901,*) 'converged in iterations : ',jiter,num%etol,toleq,redo,loss%Pfus,mhd%vloop,T_e(1),tepr(1),&
        & mhd%equilcheck,mhd%f_ni,loss%H,loss%Hcorr,inp0%hfac_inp,Hfactor
 !	if (jiter.gt.3) write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus
-!	write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
-!	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
+	if (verbose.eq.1) then
+		write(*,*) "plasmod end ",jiter,mhd%vloop,loss%pfus,toleq,num%etol
+	endif
+	!	write(*,*) nx,nxequil,ip,q(nx),q_edge_in,q_95,qedge
 
 !	write(*,*) 'iter uloop',ip,fbs,fcd,2.15e-3*(4.3-0.6/geom%a)*radp%zeff*ip*(1.-fbs-fcd)* &
 	 & !rpmajor/(rpminor**2.*geom%k95)/(radp%av_Ten/10.d0)**1.5,mhd%vloop,radp%zeff,mhd%f_ni
 !stop
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+!	stop
 
 end subroutine plasmod_EF
 

@@ -107,7 +107,7 @@ contains
 
 
  !   character(len=120), save :: lzdir = trim(ROOTDIR//'/data/lz_non_corona_14_elements/')
-    character(len=120), save :: lzdir = trim(INSTALLDIR//'/data/lz_non_corona_14_elements/')
+    character(len=200), save :: lzdir = trim(INSTALLDIR//'/data/lz_non_corona_14_elements/')
     ! Find the index of the element.  Exclude hydrogen by starting at 2 (Helium)
     do i = 2, nimp
         if (imp_label(i) .eq. element) then

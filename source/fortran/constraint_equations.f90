@@ -19,7 +19,6 @@ module constraints
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
-
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -49,7 +48,6 @@ module constraints
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -62,7 +60,6 @@ module constraints
   use times_variables
   use vacuum_variables
 
-  
   implicit none
 
   public :: constraint_eqns
@@ -1261,7 +1258,8 @@ contains
           !#=# fwbs
           !#=#=# ftbr, tbrmin
 
-          ! TODO should this only be for certain blanket models?
+          ! If blanket model doesn't have TBR calculation then exit with error.
+          if (iblanket == 1) call report_error(216)
 
           ! ftbr   |  f-value for minimum tritium breeding ratio
           ! tbr |  tritium breeding ratio
@@ -1696,6 +1694,22 @@ contains
               symbol(i) = '>'
               units(i) = ''
            end if
+
+       case (79)  ! Equation for maximum CS field
+            !#=# pfcoil
+            !#=#=# fbmaxcs, bmaxoh, bmaxoh0, bmaxcs_lim
+  
+            ! fbmaxcs        |  f-value for CS max field
+            ! bmaxcs_lim     |  allowable CS field [T]
+            ! bmaxoh/bmaxoh0 |  peak CS field [T]
+            cc(i) = 1.0D0 - fbmaxcs * bmaxcs_lim/max(bmaxoh, bmaxoh0)
+  
+            if (present(con)) then
+               con(i) = bmaxcs_lim
+               err(i) = bmaxcs_lim * cc(i)
+               symbol(i) = '<'
+               units(i) = 'A/turn'
+            end if
 
        case default
 

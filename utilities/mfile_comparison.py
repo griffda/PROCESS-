@@ -10,6 +10,7 @@
 
 """
 
+import sys
 import scipy
 import argparse
 import process_io_lib.mfile as mf
@@ -28,6 +29,25 @@ DEFAULT_COMPARE_PARAMS = [
     "pnetelmw", "wallmw", "ralpne", "pcoreradmw", "pradmw",
     "pnucblkt", "pnucshld", "pdivt", "pheat", "bootipf",
     "faccd", "facoh", "gamnb", "enbeam", "powerht"]
+
+BASELINE_LIST = [
+    "procver", "time", "username", "tagno", "commsg", "ifail", "rmajor", 
+    "rminor", "aspect", "kappa", "kappa95", "triang", "triang95", "sarea", 
+    "vol", "tfno", "powfmw", "plascur/1d6", "bt", "q95", "beta", 
+    "normalised_thermal_beta", "normalised_total_beta",
+    "thermal_beta", "thermal_poloidal_beta", "te", "te0", "dene", "ne0",
+    "dnla_gw", "tesep", "nesep", "teped", "neped", "ieped", "zeff", "dnz",
+    "taueff", "hfact", "tauelaw", "ralpne", "wallmw", "pcoreradmw",
+    "psyncpv*vol", "pradmw", "pnucblkt", "pnucshld", "pdivt",
+    "divlife", "pthermmw", "bore", "ohcth",
+    "precomp", "gapoh", "tfcth", "deltf", "thshield", "gapds", "ddwi",
+    "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "scraplo", "fwoth",
+    "blnkoth", "shldoth", "gapsto", "tftsgap", "tfthko",
+    "etath", "pgrossmw", "pnetelmw", "pinjmw", "pheat", "bootipf", "faccd",
+    "facoh", "gamnb", "enbeam", "powerht", "pdivt",
+    "vssoft", "vstot", "tburn", "bmaxtf", "iooic", "tmarg", "tftmp",
+    "qtarget", "qtargetcomplete", "totalpowerlost"
+]
 
 BLANKET_COMPARE_PARAMS = [
     "blnkith", "blnkoth", "powfmw", "pnucblkt", "pnucfw",
@@ -49,6 +69,7 @@ def main(arg):
     :return:
     """
 
+    print_counter = 0
     n = 2
     mfile_list = list()
     for item in arg.f:
@@ -78,6 +99,9 @@ def main(arg):
     
     if arg.blanket:
         var_list = BLANKET_COMPARE_PARAMS
+
+    if arg.baseline:
+        var_list = BASELINE_LIST
 
     for v in var_list:
         if "normres" in v:
@@ -122,6 +146,7 @@ def main(arg):
                 wline = v + "\t" + des + "\t" + "\t" + str(values[0]) + "\t" + \
                     str(values[1]) + "\t" + str(round((norm_vals[1]-1)*100.0, 2)) + " %"
                 print(line)
+                print_counter += 1
                 if arg.save:
                     ofile.write(wline + "\n")
             elif b[1]:
@@ -132,6 +157,7 @@ def main(arg):
                 wline = v + "\t" + des + "\t" + str(values[0]) + "\t" + \
                     str(values[1]) + "\t" + str(round((norm_vals[1]-1)*100.0, 2)) + " %"
                 print(line)
+                print_counter += 1
                 if arg.save:
                     ofile.write(wline + "\n")
             else:
@@ -143,11 +169,18 @@ def main(arg):
                     str(values[1]) + "\t" + str(round((norm_vals[1]-1)*100.0, 2)) + " %"
                 if arg.verbose:
                     print(line)
+                    print_counter += 1
                     ofile.write(wline + "\n")
 
     if arg.save:
         ofile.close()
 
+    if arg.baseline:
+        if arg.acc >= 10.0:
+            if print_counter == 0:
+                sys.exit(0)
+            else:
+                sys.exit("Differences in baseline output by more than {0}%".format(arg.acc))
 
 if __name__ == "__main__":
 
@@ -169,6 +202,8 @@ if __name__ == "__main__":
     parser.add_argument('--verbose', type=float, default=0.0)
 
     parser.add_argument('--defaults', action="store_true")
+
+    parser.add_argument('--baseline', action="store_true")
 
     parser.add_argument('--blanket', action="store_true")
 

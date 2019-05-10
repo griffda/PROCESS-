@@ -562,10 +562,10 @@ subroutine check
         !If Reinke criterion is used need to enforce LH-threshold
         !using Martin scaling for consistency
         if (.not. ilhthresh == 6) then
-           call report_error(215)
+           call report_error(218)
         endif
         if  (.not. any(icc==15) .and. (ipedestal .ne. 3)) then
-           call report_error(215)
+           call report_error(218)
         endif
 
 
@@ -582,10 +582,10 @@ subroutine check
         !If Reinke criterion is used need to enforce LH-threshold
         !using Martin scaling for consistency
         if (.not. ilhthresh == 6) then
-           call report_error(215)
+           call report_error(218)
         endif
         if  (.not. any(icc==15) .and. (ipedestal .ne. 3)) then
-           call report_error(215)
+           call report_error(218)
         endif
 
         
