@@ -1212,7 +1212,7 @@ module divertor_kallenbach_variables
   !+ad_varc                  <LI> = 1 qtargettotal
   !+ad_varc                  <LI> = 2 targetangle
   !+ad_varc                  <LI> = 3 lambda_q_omp
-  !+ad_varc                  <LI> = 4 netau_sol
+  !+ad_varc                  <LI> = 4 netau_sol</UL>
   integer :: kallenbach_scan_var = 0
   
   !+ad_vars  kallenbach_scan_start /2.0/ : Start value for kallenbach scan parameter
