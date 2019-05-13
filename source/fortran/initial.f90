@@ -203,6 +203,7 @@ subroutine check
     !+ad_hist  24/11/14 PJK Set coolwh via blkttype
     !+ad_hist  25/02/15 JM  Changed blanket composition check to use new blanket model layout
     !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
+    !+ad_hist  13/05/19 SIM Added error flag for input confinement time with wrong scaling option
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -758,6 +759,12 @@ subroutine check
         end if
         tmargmin_tf = tmargmin
         tmargmin_cs = tmargmin
+     end if
+
+     if (tauee_in.ge.1.0D-10.and.isc.ne.48) then
+        ! Report error if confinement time is in the input
+        ! but the scaling to use it is not selected.
+        call report_error(217)
      end if
 
 

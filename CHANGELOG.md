@@ -13,6 +13,7 @@
 - Updated version of Kallenbach scanning (now can specify the variable to scan 
   from a selection, number of scan points etc.). See Userguide for more info.
 - Added NSTX and NSTX-Petty08 confinement time scalings (#820)
+- Added option to input the confinement time
 
 ## Minor Changes
 

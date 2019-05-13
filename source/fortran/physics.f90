@@ -3060,7 +3060,9 @@ implicit none
     !+ad_hist  17/06/15 MDK Added Murari scaling (40)
     !+ad_hist  02/11/16 HL  Added Petty, Lang scalings (41,42)
     !+ad_hist  05/04/19 SK  IPB98 scalings errata from 2008 NF 48 099801  
-    !+ad_hist  13/05/19 SIM Added NSTX and NSTX-Petty08 Hybrid scalings (#820)
+    !+ad_hist  09/05/19 SIM Added NSTX scaling (#820)
+    !+ad_hist  13/05/19 SIM Added NSTX-Petty08 Hybrid scaling (#820) and
+    !+ad_hisc               option for input value
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
@@ -3648,7 +3650,7 @@ implicit none
     case (47) ! NSTX-Petty08 Hybrid
       ! Linear interpolation between NSTX and Petty08 in eps
       ! Menard 2019, Phil. Trans. R. Soc. A 377:20170440
-      if (aspect.ge.2.5D0) then
+      if ((1.0D0/aspect).le.0.4D0) then
       ! Petty08, i.e. case (41)
         tauee = hfact * 0.052D0 * pcur**0.75D0 * bt**0.3D0 * &
               dnla19**0.32D0 * powerht**(-0.47D0) * rmajor**2.09D0 * &
@@ -3659,7 +3661,7 @@ implicit none
         qtaue = 0.0D0
         rtaue = -0.47D0
 
-      else if (aspect.le.1.7D0) then
+      else if ((1.0D0/aspect).ge.0.6D0) then
         ! NSTX, i.e.case (46)
         tauee = hfact * 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
               dnla19**0.44D0 * powerht**(-0.73D0) * rmajor**1.97D0 * &
@@ -3671,10 +3673,10 @@ implicit none
         rtaue = -0.73D0
 
       else
-        taunstx = 0.052D0 * pcur**0.75D0 * bt**0.3D0 * &
+        taupetty = 0.052D0 * pcur**0.75D0 * bt**0.3D0 * &
                 dnla19**0.32D0 * powerht**(-0.47D0) * rmajor**2.09D0 * &
                 kappaa**0.88D0 * aspect**(-0.84D0)
-        taupetty = hfact * 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
+        taunstx= 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
                 dnla19**0.44D0 * powerht**(-0.73D0) * rmajor**1.97D0 * &
                 kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
 
@@ -3688,6 +3690,14 @@ implicit none
         rtaue = ((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*(-0.47D0) + &
                 ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*(-0.73D0))
       end if
+
+    case (48) ! tauee is an input
+      tauee = hfact * tauee_in
+
+      gtaue = 0.0D0
+      ptaue = 0.0D0
+      qtaue = 0.0D0
+      rtaue = 0.0D0
 
     case default
        idiags(1) = isc ; call report_error(81)
@@ -4081,6 +4091,7 @@ implicit none
     !+ad_hist  20/05/14 PJK Changed prad to pcorerad
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  20/10/14 PJK Output power balances for H=1 instead of H=2
+    !+ad_hist  13/05/19 SIM Stopped writing values at iisc=47
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4114,7 +4125,7 @@ implicit none
 
     !  Calculate power balances for all scaling laws assuming H = 1
 
-    do iisc = 32,ipnlaws
+    do iisc = 32,47
        call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d1, &
             iinvqd,iisc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
             plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &

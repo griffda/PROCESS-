@@ -164,6 +164,7 @@ module physics_variables
   !+ad_hist  08/02/17 JM  Gave teped, tesep, neped and nesep non-zero defaults
   !+ad_hist  02/05/18 SIM Added pthrmw(9-14)
   !+ad_hist  17/01/19 SIM Moved photon_wall and rad_fraction to global from physics
+  !+ad_hist  13/05/19 SIM Added isc=46-48 and tauee_in
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -174,8 +175,8 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /47/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 47
+  !+ad_vars  ipnlaws /48/ FIX : number of energy confinement time scaling laws
+  integer, parameter :: ipnlaws = 48
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
@@ -559,8 +560,10 @@ module physics_variables
        'Hubbard 2017 - upper (I)', &
   !+ad_varc  <LI> (46)  NSTX (H-mode; Spherical tokamak)
        'NSTX (Spherical)     (H)', &
-  !+ad_varc  <LI> (47)  NSTX-Petty08 Hybrid (H-mode)</UL>
-       'NSTX-Petty08 Hybrid  (H)' /)
+  !+ad_varc  <LI> (47)  NSTX-Petty08 Hybrid (H-mode)
+       'NSTX-Petty08 Hybrid  (H)', &
+  !+ad_varc  <LI> (48)  Use input tauee_in </UL>
+       'Input tauee_in          ' /)
 
   !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;
@@ -779,6 +782,8 @@ module physics_variables
   real(kind(1.0D0)) :: ssync = 0.6D0
   !+ad_vars  tauee : electron energy confinement time (sec)
   real(kind(1.0D0)) :: tauee = 0.0D0
+  !+ad_vars  tauee_in /0.0/  : Input electron energy confinement time (sec) (isc=48 only)
+  real(kind(1.0D0)) :: tauee_in = 0.0D0
   !+ad_vars  taueff : global thermal energy confinement time (sec)
   real(kind(1.0D0)) :: taueff = 0.0D0
   !+ad_vars  tauei : ion energy confinement time (sec)
