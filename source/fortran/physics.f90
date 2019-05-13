@@ -3060,6 +3060,7 @@ implicit none
     !+ad_hist  17/06/15 MDK Added Murari scaling (40)
     !+ad_hist  02/11/16 HL  Added Petty, Lang scalings (41,42)
     !+ad_hist  05/04/19 SK  IPB98 scalings errata from 2008 NF 48 099801  
+    !+ad_hist  13/05/19 SIM Added NSTX and NSTX-Petty08 Hybrid scalings (#820)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
@@ -3090,7 +3091,7 @@ implicit none
     !  Local variables
     real(kind(1.0D0)) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
          n20,pcur,qhat,ratio,rll,str2,str5,taueena,tauit1,tauit2, &
-         term1,term2, h, qratio, nratio, nGW, kappaa_IPB
+         term1,term2, h, qratio, nratio, nGW, kappaa_IPB,taunstx,taupetty
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3643,6 +3644,50 @@ implicit none
       ptaue = 0.44D0
       qtaue = 0.0D0
       rtaue = -0.73D0
+
+    case (47) ! NSTX-Petty08 Hybrid
+      ! Linear interpolation between NSTX and Petty08 in eps
+      ! Menard 2019, Phil. Trans. R. Soc. A 377:20170440
+      if (aspect.ge.2.5D0) then
+      ! Petty08, i.e. case (41)
+        tauee = hfact * 0.052D0 * pcur**0.75D0 * bt**0.3D0 * &
+              dnla19**0.32D0 * powerht**(-0.47D0) * rmajor**2.09D0 * &
+              kappaa**0.88D0 * aspect**(-0.84D0)
+
+        gtaue = 0.0D0
+        ptaue = 0.32D0
+        qtaue = 0.0D0
+        rtaue = -0.47D0
+
+      else if (aspect.le.1.7D0) then
+        ! NSTX, i.e.case (46)
+        tauee = hfact * 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
+              dnla19**0.44D0 * powerht**(-0.73D0) * rmajor**1.97D0 * &
+              kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
+
+        gtaue = 0.0D0
+        ptaue = 0.44D0
+        qtaue = 0.0D0
+        rtaue = -0.73D0
+
+      else
+        taunstx = 0.052D0 * pcur**0.75D0 * bt**0.3D0 * &
+                dnla19**0.32D0 * powerht**(-0.47D0) * rmajor**2.09D0 * &
+                kappaa**0.88D0 * aspect**(-0.84D0)
+        taupetty = hfact * 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
+                dnla19**0.44D0 * powerht**(-0.73D0) * rmajor**1.97D0 * &
+                kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
+
+        tauee = hfact*((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*taunstx + &
+                 ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*taupetty)
+         
+        gtaue = 0.0D0
+        ptaue = ((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*0.32D0 + &
+                ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*0.44D0)
+        qtaue = 0.0D0
+        rtaue = ((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*(-0.47D0) + &
+                ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*(-0.73D0))
+      end if
 
     case default
        idiags(1) = isc ; call report_error(81)
