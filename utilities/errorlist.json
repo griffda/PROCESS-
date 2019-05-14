@@ -3,7 +3,7 @@
  "version":  [ "PROCESS version 1.0.15" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 221,
+ "n_errortypes": 222,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -225,6 +225,7 @@
   {"no": 218, "level": 2, "message": "REINKE IMPURITY MODEL: The Martin LH threshold scale is not being used and is recommned for the Reinke model"},
   {"no": 219, "level": 3, "message": "REINKE IMPURITY MODEL: tesep is calculated and cannot be an iteration variable for the Reinke model"},
   {"no": 220, "level": 1, "message": "CHECK: tauee_in is for use with isc=48 only"},
-  {"no": 221, "level": 2, "message": "CHECK: NSTX scaling is for A<1.7"}
+  {"no": 221, "level": 2, "message": "CHECK: NSTX scaling is for A<1.7"},
+  {"no": 222, "level": 3, "message": "CHECK: Lang 2012 confinement scaling cannot be used for spherical tokamaks due to wrong q"}
  ]
 }

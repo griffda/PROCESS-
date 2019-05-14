@@ -3592,17 +3592,14 @@ implicit none
 
     case (42) ! High density relevant confinement scaling
        ! P.T. Lang et al. 2012, IAEA conference proceeding EX/P4-01
-       ! Note that in the paper kappaa is defined as V/(2pi^2Ra^2)
-       ! which should be equivalent to our local definition assuming
-       ! V = 2piR * (X-sectional area)
        ! q should be q95: incorrect if icurr = 2 (ST current scaling)
        qratio = q/qstar
        ! Greenwald density in m^-3
        nGW = 1.0D14 * plascur/(pi*rminor*rminor)
        nratio = dnla/nGW
-       tauee = hfact * 6.94D-7 * pcur**1.3678D0 * bt**0.12D0 * &
-            dnla19**0.032236D0 * powerht**(-0.74D0) * rmajor**1.2345D0 * &
-            kappaa**0.37D0 * aspect**2.48205D0 * afuel**0.2D0 * &
+       tauee = hfact * 6.94D-7 * plascur**1.3678D0 * bt**0.12D0 * &
+            dnla**0.032236D0 * (powerht*1.0D6)**(-0.74D0) * rmajor**1.2345D0 * &
+            kappaa_IPB**0.37D0 * aspect**2.48205D0 * afuel**0.2D0 * &
             qratio**0.77D0 * aspect**(-0.9D0*log(aspect)) * &
             nratio**(-0.22D0*log(nratio))
 
