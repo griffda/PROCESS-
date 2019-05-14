@@ -1214,6 +1214,10 @@ contains
     integer, dimension(ipliwa) :: iwa
     integer, dimension(ipnvars) :: ilower,iupper
 
+    ! Array defined for optimizer data output only
+    integer, dimension(nvar)          :: ixc_opt_out
+    integer, dimension(neqns+nineqns) :: icc_opt_out
+
     real(kind(1.0D0)), parameter :: zero = 0.0D0
     real(kind(1.0D0)), parameter :: bfactor = 2.0D0
     real(kind(1.0D0)) :: xtol
@@ -1250,6 +1254,32 @@ contains
        xv(ii) = xcm(ii)
     end do
 
+    ! Write the VMCON setup in OPT.DAT
+    do ii = 1, m
+      icc_opt_out(ii) = icc(ii)
+    end do
+    do ii = 1, n
+      ixc_opt_out(ii) = ixc(ii)
+    end do
+    
+    write(opt_file, *) ' number of constrains'
+    write(opt_file, '(I4)') m
+    write(opt_file, *) ' '
+    write(opt_file, *) ' Constrains selection'
+    write(opt_file, '(I3,*(I4))') icc_opt_out
+    write(opt_file, *) ' '
+    write(opt_file, *) ' number of variables'
+    write(opt_file, '(I4)') n
+    write(opt_file, *) ' '
+    write(opt_file, *) ' Variables selection'    
+    write(opt_file, '(I3,*(I4))') ixc_opt_out
+    write(opt_file, *) ' '
+    write(opt_file, *) ' '
+    write(opt_file, *) ' n VMCOM iter | Figure of merit | VMCON conv      | constrains quad sum |   residual,   input values &
+                    &and  FoM input gradients'
+    write(opt_file, '(A,*(I18))') '  niter          abs(objf)         sum                sqsumsq ', icc_opt_out, ixc_opt_out&
+                    &, ixc_opt_out
+ 
     call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
          lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
          gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &

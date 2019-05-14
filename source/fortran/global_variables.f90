@@ -70,12 +70,13 @@ module constants
 
   public
 
-  ! MDK These moved here to prevent circular dependency
-  integer, parameter :: iotty = 6  !  Standard output unit identifier
-  integer, parameter :: nout = 11  !  Output file unit identifier
-  integer, parameter :: nplot = 12 !  Plot data file unit identifier
-  integer, parameter :: mfile = 13 !  Machine-optimised output file unit
-  integer, parameter :: vfile = 14 !  Verbose diagnostics file
+  ! File output indexes
+  integer, parameter :: iotty    = 6  !  Standard output unit identifier
+  integer, parameter :: nout     = 11 !  Output file unit identifier
+  integer, parameter :: nplot    = 12 !  Plot data file unit identifier
+  integer, parameter :: mfile    = 13 !  Machine-optimised output file unit
+  integer, parameter :: vfile    = 14 !  Verbose diagnostics file
+  integer, parameter :: opt_file = 15 !  Optimisation information output file number
 
   !+ad_vars  degrad FIX : degrees to radians, = pi/180
   real(kind(1.0D0)), parameter :: degrad = 0.01745329251D0
