@@ -624,7 +624,7 @@ implicit none
             netau_sol, tesep, impvardiv, impurity_arr, impurity_enrichment)
 
        if (fzmin >= 1.0D0) then
-          call report_error(216)
+          call report_error(217)
        endif
 
        write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', impurity_arr(impvardiv)%frac, ', ',  impvardiv
