@@ -557,16 +557,16 @@ subroutine check
         !If Reinke criterion is used tesep is calculated and cannot be an
         !iteration variable
         if (any(ixc == 119)) then
-           call report_error(214)
+           call report_error(219)
         endif
 
         !If Reinke criterion is used need to enforce LH-threshold
         !using Martin scaling for consistency
         if (.not. ilhthresh == 6) then
-           call report_error(215)
+           call report_error(218)
         endif
         if  (.not. any(icc==15) .and. (ipedestal .ne. 3)) then
-           call report_error(215)
+           call report_error(218)
         endif
 
 
@@ -577,16 +577,16 @@ subroutine check
         !If Reinke criterion is used tesep is calculated and cannot be an
         !iteration variable
         if (any(ixc == 119)) then
-           call report_error(214)
+           call report_error(219)
         endif
         
         !If Reinke criterion is used need to enforce LH-threshold
         !using Martin scaling for consistency
         if (.not. ilhthresh == 6) then
-           call report_error(215)
+           call report_error(218)
         endif
         if  (.not. any(icc==15) .and. (ipedestal .ne. 3)) then
-           call report_error(215)
+           call report_error(218)
         endif
 
         
@@ -764,7 +764,12 @@ subroutine check
      if (tauee_in.ge.1.0D-10.and.isc.ne.48) then
         ! Report error if confinement time is in the input
         ! but the scaling to use it is not selected.
-        call report_error(217)
+        call report_error(220)
+     end if
+
+     if (aspect.gt.1.7D0.and.isc.eq.46) then
+        ! NSTX scaling is for A<1.7
+        call report_error(221)
      end if
 
 
