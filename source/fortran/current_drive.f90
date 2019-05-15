@@ -770,12 +770,10 @@ contains
     !+ad_desc  for a hydrogen beam in a fusion plasma.
     !+ad_prob  The model does not take into account impurities other than
     !+ad_prob  carbon, oxygen and iron, so the results may be inaccurate
-    !+ad_prob  if <CODE>imprad_model = 1</CODE> and additional impurities
-    !+ad_prob  are present.
+    !+ad_prob  if additional impurities are present.
     !+ad_call  None
     !+ad_hist  15/06/92 PJK Initial upgraded version
     !+ad_hist  22/08/12 PJK Initial F90 version
-    !+ad_hist  24/06/14 PJK Added comment about imprad_model
     !+ad_stat  Okay
     !+ad_docs  Janev, Boley and Post, Nuclear Fusion 29 (1989) 2125
     !

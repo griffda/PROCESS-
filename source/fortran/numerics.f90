@@ -353,7 +353,7 @@ module numerics
        'TFC current/copper area < Max    ',    &
        !+ad_varc  <LI> (76) Eich critical separatrix density
        'Eich critical separatrix density ',   &
-       !+ad_varc  <LI> (77) TF coil current per turn upper limit 
+       !+ad_varc  <LI> (77) TF coil current per turn upper limit
        'TFC current per turn upper limit ',    &
        !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)
        'Reinke criterion fZ lower limit  ',   &
@@ -459,7 +459,7 @@ module numerics
        'fcohbop       ', &
        !+ad_varc  <LI> (42) gapoh
        'gapoh         ', &
-       !+ad_varc  <LI> (43) cfe0
+       !+ad_varc  <LI> (43) NOT USED
        'cfe0          ', &
        !+ad_varc  <LI> (44) fvsbrnni
        'fvsbrnni      ', &
@@ -877,7 +877,7 @@ module numerics
        1.000D8, &  !  17
        50.00D0, &  !  18
        1.000D6, &  !  19
-       3.000D2, &  !  20   SIM 09/10/18 Lowered to within input limit 
+       3.000D2, &  !  20   SIM 09/10/18 Lowered to within input limit
        1.000D0, &  !  21
        1.000D6, &  !  22   KE made tbrnmn obsolete 18/05/18
        0.500D0, &  !  23
@@ -1308,8 +1308,8 @@ contains
             liwa,ilower,iupper,bndl,bndu,convergence_parameter)
        epsfcn = epsfcn * 10.0D0 !reset value
     end if
-    
-    
+
+
     !  If VMCON has exited with error code 5 try another run using a multiple of
     !  the identity matrix as input for the Hessian b(n,n).
     !  Only do this if VMCON has not iterated (nviter=1).

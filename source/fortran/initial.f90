@@ -305,16 +305,13 @@ subroutine check
 
     !  Impurity fractions
 
-    if (imprad_model == 1) then
-        do imp = 1,nimp
-            impurity_arr(imp)%frac = fimp(imp)
-        end do
-    end if
-
+    do imp = 1,nimp
+        impurity_arr(imp)%frac = fimp(imp)
+    end do
 
     !  Warn if ion power balance equation is being used with the new radiation model
 
-    if ((imprad_model == 1).and.(any(icc == 3))) then
+    if (any(icc == 3)) then
         call report_error(138)
     end if
 
@@ -572,13 +569,13 @@ subroutine check
      endif
 
      if (any(icc == 78)) then
-        
+
         !If Reinke criterion is used tesep is calculated and cannot be an
         !iteration variable
         if (any(ixc == 119)) then
            call report_error(214)
         endif
-        
+
         !If Reinke criterion is used need to enforce LH-threshold
         !using Martin scaling for consistency
         if (.not. ilhthresh == 6) then
@@ -588,14 +585,14 @@ subroutine check
            call report_error(215)
         endif
 
-        
+
      endif
 
      !if using Reinke iteration variable fzactual, then assign to imp. array
      if (any(ixc == 148)) then
         impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
-     endif        
-     
+     endif
+
 
     !  Tight aspect ratio options
     ! ---------------------------
