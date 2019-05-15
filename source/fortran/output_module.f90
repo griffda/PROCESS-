@@ -248,12 +248,13 @@ subroutine output(outfile)
 
   ! Toroidal field coil superconductor model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  if ( itfsup /= 1 ) then
+     call tfspcall(outfile,1)
+  end if
 
-  call tfspcall(outfile,1)
 
   ! Tight aspect ratio machine model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   if (itart == 1) then
     call cntrpst(outfile,1)
   end if
