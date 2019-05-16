@@ -1309,87 +1309,50 @@ contains
     end if
     hshld = 0.5D0*(htop + hbot)
 
-    if ((itart == 1).or.(fwbsshape == 1)) then  !  D-shaped
 
-       !  Major radius to outer edge of inboard blanket
 
-       r1 = rsldi + shldith + blnkith
+    ! Cross-sections are assumed to be defined by two ellipses
 
-       !  Horizontal distance between inside edges of blanket,
-       !  i.e. outer radius of inboard part to inner radius of outboard part
+    !  Major radius to centre of inboard and outboard ellipses
+    !  (coincident in radius with top of plasma)
 
-       r2 = fwith + scrapli + 2.0D0*rminor + scraplo + fwoth
+    r1 = rmajor - rminor*triang
 
-       !  Calculate blanket surface area, assuming 100% coverage
+    !  Distance between r1 and outer edge of inboard blanket
 
-       call dshellarea(r1,r2,hblnkt,blareaib,blareaob,blarea)
+    r2 = r1 - (rsldi + shldith + blnkith)
 
-       !  Calculate blanket volumes, assuming 100% coverage
+    !  Distance between r1 and inner edge of outboard blanket
 
-       call dshellvol(r1,r2,hblnkt,blnkith,blnkoth,blnktth, &
-            volblkti,volblkto,volblkt)
+    r3 = (rsldo - shldoth - blnkoth) - r1
 
-       !  Major radius to outer edge of inboard shield
+    !  Calculate blanket surface area, assuming 100% coverage
 
-       r1 = rsldi + shldith
+    call eshellarea(r1,r2,r3,hblnkt,blareaib,blareaob,blarea)
 
-       !  Horizontal distance between inside edges of shield,
-       !  i.e. outer radius of inboard part to inner radius of outboard part
+    !  Calculate blanket volumes, assuming 100% coverage
 
-       r2 = blnkith + fwith + scrapli + 2.0D0*rminor + scraplo + fwoth + blnkoth
+    call eshellvol(r1,r2,r3,hblnkt,blnkith,blnkoth,blnktth, &
+                   volblkti,volblkto,volblkt)
 
-       !  Calculate shield surface area, assuming 100% coverage
+    !  Distance between r1 and outer edge of inboard shield
 
-       call dshellarea(r1,r2,hshld,shareaib,shareaob,sharea)
+    r2 = r1 - (rsldi + shldith)
 
-       !  Calculate shield volumes, assuming 100% coverage
+    !  Distance between r1 and inner edge of outboard shield
 
-       call dshellvol(r1,r2,hshld,shldith,shldoth,shldtth, &
+    r3 = (rsldo - shldoth) - r1
+
+    !  Calculate shield surface area, assuming 100% coverage
+
+    call eshellarea(r1,r2,r3,hshld,shareaib,shareaob,sharea)
+
+    !  Calculate shield volumes, assuming 100% coverage
+
+    call eshellvol(r1,r2,r3,hshld,shldith,shldoth,shldtth, &
             volshldi,volshldo,volshld)
 
-    else  !  Cross-sections are assumed to be defined by two ellipses
-
-       !  Major radius to centre of inboard and outboard ellipses
-       !  (coincident in radius with top of plasma)
-
-       r1 = rmajor - rminor*triang
-
-       !  Distance between r1 and outer edge of inboard blanket
-
-       r2 = r1 - (rsldi + shldith + blnkith)
-
-       !  Distance between r1 and inner edge of outboard blanket
-
-       r3 = (rsldo - shldoth - blnkoth) - r1
-
-       !  Calculate blanket surface area, assuming 100% coverage
-
-       call eshellarea(r1,r2,r3,hblnkt,blareaib,blareaob,blarea)
-
-        !  Calculate blanket volumes, assuming 100% coverage
-
-       call eshellvol(r1,r2,r3,hblnkt,blnkith,blnkoth,blnktth, &
-            volblkti,volblkto,volblkt)
-
-       !  Distance between r1 and outer edge of inboard shield
-
-       r2 = r1 - (rsldi + shldith)
-
-       !  Distance between r1 and inner edge of outboard shield
-
-       r3 = (rsldo - shldoth) - r1
-
-       !  Calculate shield surface area, assuming 100% coverage
-
-       call eshellarea(r1,r2,r3,hshld,shareaib,shareaob,sharea)
-
-       !  Calculate shield volumes, assuming 100% coverage
-
-       call eshellvol(r1,r2,r3,hshld,shldith,shldoth,shldtth, &
-            volshldi,volshldo,volshld)
-
-    end if
-
+   
     !  Apply area (and volume) coverage factors
 
     if (ipowerflow == 0) then
@@ -1470,17 +1433,7 @@ contains
        decay(6,2) = 15.25D0
        decay(7,2) = 17.25D0
 
-       !  TART centrepost nuclear heating. Estimate fraction hitting from a
-       !  point source at the plasma centre, and assume average path length
-       !  of 2*tfcth, and e-fold decay length of 0.08m (copper water mixture).
-
-       if (itart == 1) then
-          frachit = hmax / sqrt(hmax**2 + (rmajor-tfcth)**2 ) * &
-               atan(tfcth/(rmajor-tfcth) )/pi
-          pnuccp = pneutmw * frachit * (1.0D0 - exp(-2.0D0*tfcth/0.08D0))
-       else
-          pnuccp = 0.0D0
-       end if
+       pnuccp = 0.0D0
 
        !  Energy-multiplied neutron power
 
@@ -1584,17 +1537,7 @@ contains
 
     else  !  ipowerflow == 1
 
-       !  TART centrepost nuclear heating. Estimate fraction hitting from a
-       !  point source at the plasma centre, and assume average path length
-       !  of 2*tfcth, and e-fold decay length of 0.08m (copper water mixture).
-
-       if (itart == 1) then
-          frachit = hmax / sqrt(hmax**2 + (rmajor-tfcth)**2 ) * &
-               atan(tfcth/(rmajor-tfcth) )/pi
-          pnuccp = pneutmw * frachit * (1.0D0 - exp(-2.0D0*tfcth/0.08D0))
-       else
-          pnuccp = 0.0D0
-       end if
+       pnuccp = 0.0D0
 
        !  Neutron power incident on divertor
 
@@ -1891,49 +1834,28 @@ contains
     end if
     hvv = 0.5D0*(htop + hbot)
 
-    if ((itart == 1).or.(fwbsshape == 1)) then  !  D-shaped
+    !  Cross-section is assumed to be defined by two ellipses
 
-       !  Major radius to outer edge of inboard section
+    !  Major radius to centre of inboard and outboard ellipses
+    !  (coincident in radius with top of plasma)
 
-       r1 = rsldi
+    r1 = rmajor - rminor*triang
 
-       !  Horizontal distance between inside edges,
-       !  i.e. outer radius of inboard part to inner radius of outboard part
+    !  Distance between r1 and outer edge of inboard section
 
-       r2 = rsldo - r1
+    r2 = r1 - rsldi
 
-       !  Calculate volume, assuming 100% coverage
+    !  Distance between r1 and inner edge of outboard section
 
-       call dshellvol(r1,r2,hvv,ddwi,ddwi,ddwi,v1,v2,vdewin)
+    r3 = rsldo - r1
 
-       !  Apply area coverage factor
+    !  Calculate volume, assuming 100% coverage
 
-       vdewin = fvoldw*vdewin
+    call eshellvol(r1,r2,r3,hvv,ddwi,ddwi,ddwi,v1,v2,vdewin)
 
-    else  !  Cross-section is assumed to be defined by two ellipses
+    !  Apply area coverage factor
 
-       !  Major radius to centre of inboard and outboard ellipses
-       !  (coincident in radius with top of plasma)
-
-       r1 = rmajor - rminor*triang
-
-       !  Distance between r1 and outer edge of inboard section
-
-       r2 = r1 - rsldi
-
-       !  Distance between r1 and inner edge of outboard section
-
-       r3 = rsldo - r1
-
-       !  Calculate volume, assuming 100% coverage
-
-       call eshellvol(r1,r2,r3,hvv,ddwi,ddwi,ddwi,v1,v2,vdewin)
-
-       !  Apply area coverage factor
-
-       vdewin = fvoldw*vdewin
-
-    end if
+    vdewin = fvoldw*vdewin
 
     !  Vacuum vessel mass - original obscure calculation replaced
 
@@ -1971,10 +1893,7 @@ contains
          call ovarre(outfile,'Inboard side TF coil case thickness (m)', &
          '(hecan)',hecan)
 
-    if (itart == 1) then
-       call osubhd(outfile,'(Copper centrepost used)')
-       call ovarre(outfile,'Centrepost heating (MW)','(pnuccp)',pnuccp)
-    else if (blktmodel == 0) then
+    if (blktmodel == 0) then
        call osubhd(outfile,'TF coil nuclear parameters :')
        call ovarre(outfile,'Peak magnet heating (MW/m3)','(coilhtmx)', &
             coilhtmx)
