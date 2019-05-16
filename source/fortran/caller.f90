@@ -199,7 +199,7 @@ subroutine caller(xc,nvars)
 
   ! Toroidal field coil superconductor model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  if ( itfsup /= 1 ) then
+  if ( itfsup == 1 ) then
      call tfspcall(nout,0)
   end if 
 
