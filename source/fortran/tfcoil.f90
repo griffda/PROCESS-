@@ -219,11 +219,7 @@ contains
     deltf = (bore + ohcth + precomp + gapoh + tfcth) * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 
     ! Radius of outer edge of inboard TF coil leg (m)
-    if (itart == 1) then
-       rbmax = tfcth
-    else
-       rbmax = rsldi - gapds - ddwi - thshield - deltf
-    end if
+    rbmax = rsldi - gapds - ddwi - thshield - deltf
 
     ! Radius of inner edge of inboard TF coil leg (m)
     r1 = max(0.0D0, (rbmax - tfcth) )
@@ -291,7 +287,7 @@ contains
        rhocp = rhocp * frhocp
 
        !  Volume and resistive power losses of TART centrepost
-       call cpost(rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,volcp,prescp)
+       call cpost(rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,r1,volcp,prescp)
     end if
 
     ! ******
@@ -414,9 +410,12 @@ contains
     !  Local variables
     real(kind(1.0D0)) :: acool,acpav,amid,dcool,dpres,dtcncpav,dtconcpmx, &
          dtfilmav,dtiocool,fc,fricfac,h,lcool,nuselt,pcrt,presin,prndtl, &
-         psat,ptot,reyn,rmid,ro,roughrat,sum,tclmx,tclmxs,tcoolmx,tmarg,vcoolav
+         psat,ptot,reyn,rmid,ro,roughrat,sum,tclmx,tclmxs,tcoolmx,tmarg,vcoolav, &
+         rmid_in
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    
 
     !  Critical pressure in saturation pressure calculations (Pa)
     pcrt = 2.24D7
@@ -425,8 +424,9 @@ contains
     tmarg = 10.0D0
 
     !  Midplane radius and area
-    rmid = tfcth
-    amid = pi * rmid**2
+    rmid_in = max(0.0D0, (rbmax - tfcth) ) ! Radius of inner edge of inboard TF coil leg (m) 
+    rmid    = tfcth
+    amid    = pi * ( rmid**2 - rmid_in**2 )
 
     !  Average cross-sectional area
     acpav = volcp/(2.0D0*hmax)
@@ -533,7 +533,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cpost(rtop,ztop,rmid,hmax,curr,rho,fcool,volume,respow)
+  subroutine cpost(rtop,ztop,rmid,hmax,curr,rho,fcool,r_tfin_inleg,volume,respow)
 
     !+ad_name  cpost
     !+ad_summ  Calculates the volume and resistive power losses of a TART centrepost
@@ -549,6 +549,7 @@ contains
     !+ad_args  curr   : input real : Centrepost current (A)
     !+ad_args  rho    : input real : Centrepost resistivity (Ohm-m)
     !+ad_args  fcool  : input real : Coolant fraction of centrepost
+    !+ad_args  r_tfin_inleg : input real : Inner radius of the TF inner leg
     !+ad_args  volume : output real : Centrepost volume (m3)
     !+ad_args  respow : output real : Centrepost resistive power losses (W)
     !+ad_desc  This routine calculates the volume and resistive power losses
@@ -571,11 +572,12 @@ contains
     implicit none
 
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: rtop,ztop,rmid,hmax,curr,rho,fcool
+    real(kind(1.0D0)), intent(in) :: rtop,ztop,rmid,hmax,curr,rho,fcool,&
+                                      &r_tfin_inleg
     real(kind(1.0D0)), intent(out) :: volume,respow
 
     !  Local variables
-    real(kind(1.0D0)) :: r1,z1,x,y,rc,sum1,sum2,dz,r,z
+    real(kind(1.0D0)) :: r1,z1,x,y,rc,sum1,sum2,dz,r,z, a_tfin_hole
     real(kind(1.0D0)), dimension(0:100) :: yy
     integer :: ii
 
@@ -651,6 +653,9 @@ contains
     !  Calculate centrepost radius and cross-sectional area at each Z
     dz = 0.01D0*ztop
 
+    ! Area of the innner TF central hole
+    a_tfin_hole = pi*r_tfin_inleg**2
+
     do ii = 0,100
        z = dble(ii) * dz
        z = min(z,ztop)
@@ -664,7 +669,7 @@ contains
        end if
 
        !  Cross-sectional area at Z
-       yy(ii) = pi*r*r
+       yy(ii) = pi*r*r - a_tfin_hole
 
     end do
 
@@ -681,7 +686,7 @@ contains
 
     !  Centrepost volume (ignoring coolant fraction)
     volume = 2.0D0 * (sum1 + (hmax-ztop)*pi*rtop*rtop)
-
+    
     !  Resistive power losses
     respow = 2.0D0 * rho * curr*curr * (sum2 + (hmax-ztop)/(pi*rtop*rtop)) &
          / (1.0D0-fcool)

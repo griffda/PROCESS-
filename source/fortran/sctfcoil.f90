@@ -226,11 +226,7 @@ subroutine tf_coil_geometry()
     real(kind(1.0D0)) :: deltf
 
     ! Radial position of inner edge of inboard TF coil leg [m]
-    if (itart == 1) then
-        r_tf_inner = bore
-    else
-        r_tf_inner = bore + ohcth + precomp + gapoh
-    end if
+    r_tf_inner = bore + ohcth + precomp + gapoh
 
     ! Radial position of plasma-facing edge of TF coil inboard leg [m]
     r_tf_outer = r_tf_inner + tfcth
@@ -243,12 +239,8 @@ subroutine tf_coil_geometry()
     tftort = 2.0D0 * r_tf_outer*sin(theta_coil)
 
     ! Radial position of centre of inboard TF coil leg [m]
-    if (itart == 1) then
-        rtfcin = bore + 0.5D0*tfcth
-    else
-        rtfcin = bore + ohcth + precomp + gapoh + 0.5D0*tfcth
-    end if
-
+    rtfcin = bore + ohcth + precomp + gapoh + 0.5D0*tfcth
+ 
     ! Plasma-facing wall thickness if fraction option selected [m]
     if(casthi_is_fraction) casthi = casthi_fraction * tfcth
 
