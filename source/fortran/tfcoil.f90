@@ -216,7 +216,7 @@ contains
     ! Radial build
     ! ******
     ! Gap between inboard TF coil and thermal shield [m]
-    deltf = (bore + ohcth + precomp + gapoh + tfcth) * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    deltf = tftsgap
 
     ! Radius of outer edge of inboard TF coil leg (m)
     rbmax = rsldi - gapds - ddwi - thshield - deltf
@@ -226,9 +226,6 @@ contains
 
     ! Radius of centre of inboard TF coil leg (m)
     rtfcin = rbmax - 0.5D0*tfcth
-
-    ! Radius of inner edge of outboard TF coil leg (m)
-    rout = rtot - 0.5D0*tfcth
 
     ! Radius of outer edge of inboard TF coil leg (m)
     rin = rbmax
@@ -256,9 +253,6 @@ contains
     else
        cforce = bmaxtf * ritfc/(2.0D0*tfno)  !  N/m
     end if
-
-    ! Vertircal force
-    vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(rout/rin) / tfno 
     ! ******
 
 
@@ -296,6 +290,9 @@ contains
 
     ! Outboard leg information (per leg)
     ! ----------------------------------
+    ! Radius of inner edge of outboard TF coil leg (m)
+    rout = rtot - 0.5D0*tfcth
+    
     ! Cross-sectional area
     arealeg = tfthko*tftort
 
@@ -318,6 +315,9 @@ contains
     ! -----------------------------
     !  Bore (gap between inboard and outboard TF coil legs) (m)
     tfboreh = rtot - rbmax - 0.5D0*tfcth
+
+    ! Vertircal force
+    vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(rout/rin) / tfno 
 
     ! Current turn information 
     if (itart == 0) then ! CT case
