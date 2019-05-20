@@ -727,7 +727,7 @@ contains
 
     !  Thickness of centrepost + first wall at divertor height
 
-    r1 = rmajor - rminor*triang - 3.0D0*scrapli
+    r1 = rmajor - rminor*triang - 3.0D0*scrapli + drtop
 
     !  Outer radius of divertor region
 
