@@ -2492,9 +2492,9 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tdmptf = 10.0D0
   !+ad_vars  tfareain : area of inboard midplane TF legs (m2)
   real(kind(1.0D0)) :: tfareain = 0.0D0
-  !+ad_vars  tfboreh : TF coil horizontal bore (m)
+  !+ad_vars  tfboreh : TF coil horizontal inner bore (m)
   real(kind(1.0D0)) :: tfboreh = 0.0D0
-  !+ad_vars  tfborev : vertical inner bore of TF coil (m)
+  !+ad_vars  tfborev : TF coil vertical inner bore (m)
   real(kind(1.0D0)) :: tfborev = 0.0D0
   !+ad_vars  tfbusl : TF coil bus length (m)
   real(kind(1.0D0)) :: tfbusl = 0.0D0
@@ -2525,6 +2525,7 @@ module tfcoil_variables
   !+ad_vars  tfleng : TF coil circumference (m)
   real(kind(1.0D0)) :: tfleng = 0.0D0
   !+ad_vars  tfno /16.0/ : number of TF coils (default = 50 for stellarators)
+  !+ad_varc                number of TF coils outer legs for ST
   real(kind(1.0D0)) :: tfno = 16.0D0
   !+ad_vars  tfocrn : TF coil half-width - outer bore (m)
   real(kind(1.0D0)) :: tfocrn = 0.0D0
@@ -3447,7 +3448,7 @@ module build_variables
   real(kind(1.0D0)) :: sigallpc = 3.0D8
 
   ! Issue #514 Make tfcth an output not an iteration variable
-  !!!+ad_vars  tfcth /1.173/ : inboard TF coil thickness, (centrepost for ST) (m)
+  !!!+ad_vars  tfcth /1.173/ : inboard TF coil(s  ) thickness (m)
   !!!+ad_varc                (calculated for stellarators)
   !!!+ad_varc                (iteration variable 13)
   !real(kind(1.0D0)) :: tfcth = 1.173D0
@@ -3469,7 +3470,7 @@ module build_variables
   !+ad_vars  thshield /0.05/ : TF-VV thermal shield thickness (m)
   real(kind(1.0D0)) :: thshield = 0.05D0
 
-  !+ad_vars  vgap2 /0.163/ : vertical gap between vacuum vessel and TF coil (m)
+  !+ad_vars  vgap2 /0.163/ : vertical gap between vacuum vessel and thermal shields (m)
   real(kind(1.0D0)) :: vgap2 = 0.163D0
   ! Issue #481 Remove vgaptf
   !+ad_vars  vgap /0.0/ : vertical gap between x-point and divertor (m)

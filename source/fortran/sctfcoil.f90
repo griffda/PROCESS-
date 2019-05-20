@@ -255,16 +255,16 @@ subroutine tf_coil_geometry()
 
     ! TF coil vertical bore [m]
     tfborev = 2.0D0*(rminor*kappa + vgaptop + fwith + blnktth + vvblgap + &
-    shldtth + ddwi+ vgap2 + thshield + tftsgap + tfcth)
+    shldtth + ddwi+ vgap2 + thshield + tftsgap)
 
     ! Gap between inboard TF coil and thermal shield [m]
     deltf = (bore + ohcth + precomp + gapoh + tfcth) * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 
     ! TF coil horizontal bore [m]
-    tfboreh = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &
+    tfboreh = deltf + thshield + gapds + ddwi + shldith + vvblgap + &
     blnkith + fwith + scrapli + rminor + rminor + scraplo + fwoth + &
     blnkoth + vvblgap + shldoth + ddwi + gapsto + thshield + &
-    tftsgap + tfthko
+    tftsgap
 
 end subroutine tf_coil_geometry
 
