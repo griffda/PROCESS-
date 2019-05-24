@@ -2863,7 +2863,7 @@ module pf_power_variables
 
   public
 
-  !+ad_vars  acptmax : average of currents in PF circuits (A)
+  !+ad_vars  acptmax : average of currents in PF circuits (kA)
   real(kind(1.0D0)) :: acptmax = 0.0D0
   !+ad_vars  ensxpfm : maximum stored energy in the PF circuits (MJ)
   real(kind(1.0D0)) :: ensxpfm = 0.0D0
@@ -3884,9 +3884,9 @@ module cost_variables
        (/68.8D0, 68.8D0, 68.8D0, 74.4D0/)
   !+ad_vars  ucpens /32.0/ : penetration shield cost ($/kg)
   real(kind(1.0D0)) :: ucpens = 32.0D0
-  !+ad_vars  ucpfb /210.0/ : cost of PF coil buses ($/kA/m)
+  !+ad_vars  ucpfb /210.0/ : cost of PF coil buses ($/kA-m)
   real(kind(1.0D0)) :: ucpfb = 210.0D0
-  !+ad_vars  ucpfbk /1.66e4/ : cost of PF coil DC breakers ($/MVA)
+  !+ad_vars  ucpfbk /1.66e4/ : cost of PF coil DC breakers ($/MVA**0.7)
   real(kind(1.0D0)) :: ucpfbk = 1.66D4
   !+ad_vars  ucpfbs /4.9e3/ : cost of PF burn power supplies ($/kW**0.7)
   real(kind(1.0D0)) :: ucpfbs = 4.9D3
