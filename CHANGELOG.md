@@ -6,6 +6,7 @@
  
 - Fixed units issue with Lang et al. (2012) confinement scaling (#821)
 - Fixed issue with error numbering (#826)
+- Fixed issue with costing of TF coil dump resistors (#847)
 
 ## Features
 
@@ -23,6 +24,7 @@
 - Increased the number of scan points to 1000 (issue #809)
 - For issue #379 constraint 52 now gives warning for iblanket=1
 - Updated FNSF test case (#822)
+- Removed obsolete variable estotf (#199 #847)
 
 ## Documentation update
 

@@ -2245,6 +2245,7 @@ module tfcoil_variables
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  26/11/15 RK  Added variables for quench time calculation: taucq, sigvvall
   !+ad_hist  22/06/18 SIM Made cdtfleg an output instead of an input
+  !+ad_hist  24/05/19 SIM Removed estotf, previously marked obsolete (#199 #847)
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -2346,8 +2347,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: denh2o = 985.0D0
   !+ad_vars  dhecoil /0.005/ : diameter of He coil in TF winding (m)
   real(kind(1.0D0)) :: dhecoil = 0.005D0
-  !+ad_vars  estotf : stored energy per TF coil (GJ) OBSOLETE
-  real(kind(1.0D0)) :: estotf = 0.0D0
 
   !+ad_vars  estotftgj : total stored energy in the toroidal field (GJ)
   real(kind(1.0D0)) :: estotftgj = 0.0D0
