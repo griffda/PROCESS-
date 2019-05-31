@@ -14,7 +14,6 @@ module sctfcoil_module
 !+ad_cont  jcrit_nbti
 !+ad_cont  outtf
 !+ad_cont  sctfcoil
-!+ad_cont  sctfjalw
 !+ad_cont  sigvm
 !+ad_cont  stresscl
 !+ad_cont  tfcind
@@ -195,7 +194,7 @@ subroutine sctfcoil(outfile,iprint)
     estotftgj = 1.0D-9 * estotft
 
     ! Case thicknesses (inboard leg)
-    if (tfc_model == 0) thkcas = tfcth * 0.5D0
+    ! if (tfc_model == 0) thkcas = tfcth * 0.5D0
 
     ! Calculate TF coil areas and masses
     call tf_coil_area_and_masses
@@ -817,7 +816,6 @@ subroutine stresscl
     !+ad_call  eyngeff
     !+ad_call  eyngzwp
     !+ad_call  report_error
-    !+ad_call  sctfjalw
     !+ad_call  sigvm
     !+ad_call  two_layer_stress
     !+ad_stat  Okay
@@ -836,12 +834,12 @@ subroutine stresscl
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Simple stress model option
+    !  Simple stress model option.  REMOVED Issue #781
 
-    if (tfc_model == 0) then
-        call sctfjalw(bmaxtfrp,rtfcin,rtot,rbmax,(1.0D-6*alstrtf), tdmptf,jwdgcrt)
-        return
-    end if
+    ! if (tfc_model == 0) then
+    !     call sctfjalw(bmaxtfrp,rtfcin,rtot,rbmax,(1.0D-6*alstrtf), tdmptf,jwdgcrt)
+    !     return
+    ! end if
 
     !  Set up graded stress model call information
 
@@ -1255,57 +1253,57 @@ end function sigvm
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine sctfjalw(bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump,jtfalw)
+! subroutine sctfjalw(bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump,jtfalw)
 
-    !+ad_name  sctfjalw
-    !+ad_summ  Simple J(B) model for the superconducting TF Coil
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Galambos, FEDC/ORNL
-    !+ad_cont  N/A
-    !+ad_args  bmaxtf  : input real : peak field including ripple (T)
-    !+ad_args  rtfmi   : input real : mean inboard leg radius (m)
-    !+ad_args  rtfmo   : input real : mean outboard leg radius (m)
-    !+ad_args  rtf2    : input real : radius of inboard leg point nearest plasma (m)
-    !+ad_args  sigmatf : input real : allowable structure stress (MPa)
-    !+ad_args  tdump   : input real : dump time (s)
-    !+ad_args  jtfalw  : output real : overall allowable current density (A/m2)
-    !+ad_desc  This routine using a simple model to calculate the allowable
-    !+ad_desc  current density in a superconducting coil, given the magnetic
-    !+ad_desc  field and the allowable stress.
-    !+ad_desc  Programmed by J. Galambos from algorithms from J. Perkins.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  25/01/91 JG  Initial version
-    !+ad_hist  14/05/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     !+ad_name  sctfjalw
+!     !+ad_summ  Simple J(B) model for the superconducting TF Coil
+!     !+ad_type  Subroutine
+!     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+!     !+ad_auth  J Galambos, FEDC/ORNL
+!     !+ad_cont  N/A
+!     !+ad_args  bmaxtf  : input real : peak field including ripple (T)
+!     !+ad_args  rtfmi   : input real : mean inboard leg radius (m)
+!     !+ad_args  rtfmo   : input real : mean outboard leg radius (m)
+!     !+ad_args  rtf2    : input real : radius of inboard leg point nearest plasma (m)
+!     !+ad_args  sigmatf : input real : allowable structure stress (MPa)
+!     !+ad_args  tdump   : input real : dump time (s)
+!     !+ad_args  jtfalw  : output real : overall allowable current density (A/m2)
+!     !+ad_desc  This routine using a simple model to calculate the allowable
+!     !+ad_desc  current density in a superconducting coil, given the magnetic
+!     !+ad_desc  field and the allowable stress.
+!     !+ad_desc  Programmed by J. Galambos from algorithms from J. Perkins.
+!     !+ad_prob  None
+!     !+ad_call  None
+!     !+ad_hist  25/01/91 JG  Initial version
+!     !+ad_hist  14/05/12 PJK Initial F90 version
+!     !+ad_stat  Okay
+!     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+!     !
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+!     implicit none
 
-    !  Arguments
+!     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump
-    real(kind(1.0D0)), intent(out) :: jtfalw
+!     real(kind(1.0D0)), intent(in) :: bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump
+!     real(kind(1.0D0)), intent(out) :: jtfalw
 
-    !  Local variables
+!     !  Local variables
 
-    real(kind(1.0D0)), parameter :: tdumprf = 10.0D0  !  Reference dump time (s)
+!     real(kind(1.0D0)), parameter :: tdumprf = 10.0D0  !  Reference dump time (s)
 
-    real(kind(1.0D0)) :: sqrtdmp,temp1,temp2,temp3
+!     real(kind(1.0D0)) :: sqrtdmp,temp1,temp2,temp3
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    sqrtdmp = sqrt(tdump/tdumprf)
-    temp1 = 125.94D0*bmaxtf*rtf2 * log(rtfmo/rtfmi) / sigmatf
-    temp2 = 0.036D0*sqrt(bmaxtf) / (1.0D0-bmaxtf/23.0D0)**2
-    temp3 = 0.6D0 / (1.0D0 - (1.0D0 / (16.0D0 * (1.0D0 - bmaxtf/23.0D0)-5.0D0) ) )
+!     sqrtdmp = sqrt(tdump/tdumprf)
+!     temp1 = 125.94D0*bmaxtf*rtf2 * log(rtfmo/rtfmi) / sigmatf
+!     temp2 = 0.036D0*sqrt(bmaxtf) / (1.0D0-bmaxtf/23.0D0)**2
+!     temp3 = 0.6D0 / (1.0D0 - (1.0D0 / (16.0D0 * (1.0D0 - bmaxtf/23.0D0)-5.0D0) ) )
 
-    jtfalw = 152.0D6 / (temp1 + temp2*temp3 + sqrtdmp)
+!     jtfalw = 152.0D6 / (temp1 + temp2*temp3 + sqrtdmp)
 
-end subroutine sctfjalw
+! end subroutine sctfjalw
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1537,9 +1535,9 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf, 'OP ')
     call ovarre(outfile,'Overall current density (A/m2)','(oacdcp)',oacdcp)
 
-    if (tfc_model == 0) then
-        call ovarre(outfile,'Allowable overall current density (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
-    end if
+    ! if (tfc_model == 0) then
+    !     call ovarre(outfile,'Allowable overall current density (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
+    ! end if
 
     call osubhd(outfile,'General Coil Parameters :')
     call ovarre(outfile,'Number of TF coils','(tfno)',tfno)
@@ -1730,18 +1728,18 @@ subroutine outtf(outfile, peaktfflag)
         call oblnkl(outfile)
     end if
 
-    if (tfc_model == 0) then
-        call osubhd(outfile,'TF Coil Stresses (solid copper coil model) :')
-    else
-        call osubhd(outfile,'TF Coil Stresses (CCFE two-layer model) :')
-    end if
-    call ovarin(outfile,'TF coil model','(tfc_model)',tfc_model)
+    ! if (tfc_model == 0) then
+    !     call osubhd(outfile,'TF Coil Stresses (solid copper coil model) :')
+    ! else
+    call osubhd(outfile,'TF Coil Stresses (CCFE two-layer model) :')
+    ! end if
+    ! call ovarin(outfile,'TF coil model','(tfc_model)',tfc_model)
     call ovarre(outfile,'Allowable Tresca stress limit (Pa)','(alstrtf)',alstrtf)
     call ovarre(outfile,'Vertical stress (Pa)','(sigvert)',sigvert, 'OP ')
-    if (tfc_model == 1) then
-        call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(1))',sigrtf(1))
-        call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(1))',sigttf(1), 'OP ')
-    end if
+    ! if (tfc_model == 1) then
+    call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(1))',sigrtf(1))
+    call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(1))',sigttf(1), 'OP ')
+    ! end if
     call ovarre(outfile,'Conduit radial stress (Pa)','(sigrcon)',sigrcon, 'OP ')
     call ovarre(outfile,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon, 'OP ')
     call ovarin(outfile,'Tresca conduit stress criterion', '(i_tf_tresca)', i_tf_tresca, 'OP ')
@@ -1751,11 +1749,11 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'von Mises stress in case (Pa)', '(s_vmises_case)', s_vmises_case, 'OP ')
     call ovarre(outfile,'von Mises stress in conduit (Pa)', '(s_vmises_cond)', s_vmises_cond, 'OP ')
     call ovarre(outfile,'Peak radial deflection at midplane (m)','(deflect)',deflect, 'OP ')
-    if (tfc_model == 1) then
-        call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
-        call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
-        call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
-    end if
+    ! if (tfc_model == 1) then
+    call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
+    call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
+    call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
+    ! end if
 
 end subroutine outtf
 
@@ -1779,12 +1777,11 @@ subroutine tfspcall(outfile,iprint)
     !  Local variables
     real(kind(1.0D0)) :: aturn, tfes, vdump
 
-    !  Simple model
-
-    if (tfc_model == 0) then
-        vtfskv = 20.0D0
-        return
-    end if
+    ! Simple model REMOVED Issue #781
+    ! if (tfc_model == 0) then
+    !     vtfskv = 20.0D0
+    !     return
+    ! end if
 
     ! Stored energy (J) per coil (NOT a physical meaningful quantity)
     tfes = estotft / tfno

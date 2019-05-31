@@ -665,7 +665,8 @@ subroutine check
 
     !  Ensure that if TF coils are non-superconducting,
     !  only simple stress calculations are performed
-    if (itfsup == 0) tfc_model = 0
+    ! See Issue #781
+    ! if (itfsup == 0) tfc_model = 0
 
     ! TF coil
     ! -------

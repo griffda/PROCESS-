@@ -172,7 +172,8 @@ subroutine loadxc
      case (55) ; write(*,*) 'Iteration variable 55 is not supported.'
      case (56) ; xcm(i) = tdmptf
      case (57) ; xcm(i) = thkcas
-        if ((tfc_model == 0).or.(istell == 1)) call report_error(48)
+      !   if ((tfc_model == 0).or.(istell == 1)) call report_error(48)
+        if (istell == 1) call report_error(48)
      case (58) ; xcm(i) = thwcndut
      case (59) ; xcm(i) = fcutfsu
      case (60) ; xcm(i) = cpttf
