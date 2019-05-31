@@ -330,6 +330,7 @@ contains
     !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
     !+ad_hist  22/06/18 SIM tfacpd now always an output
     !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
+    !+ad_hist  13/05/19 SIM Added tauee_in
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -774,7 +775,9 @@ contains
        case ('te')
           call parse_real_variable('te', te, 1.0D0, 200.0D0, &
                'Electron temperature (keV)')
-
+       case ('tauee_in')
+           call parse_real_variable('tauee_in', tauee_in, 0.0D0, 100.0D0, &
+                    'Input electron energy confinement time (sec) (isc=48 only)')
        case ('taulimit')
           call parse_real_variable('taulimit', taulimit, 1.0D0, 100.0D0, &
                'Lower limit on taup/taueff the ratio of alpha particle to energy confinement times')

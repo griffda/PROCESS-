@@ -164,6 +164,7 @@ module physics_variables
   !+ad_hist  08/02/17 JM  Gave teped, tesep, neped and nesep non-zero defaults
   !+ad_hist  02/05/18 SIM Added pthrmw(9-14)
   !+ad_hist  17/01/19 SIM Moved photon_wall and rad_fraction to global from physics
+  !+ad_hist  13/05/19 SIM Added isc=46-48 and tauee_in
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -174,8 +175,8 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /45/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 45
+  !+ad_vars  ipnlaws /48/ FIX : number of energy confinement time scaling laws
+  integer, parameter :: ipnlaws = 48
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
@@ -505,7 +506,7 @@ module physics_variables
        'Lackner-Gottardi (stell)', &
   !+ad_varc  <LI> (24)  ITER-93H (H-mode)
        'ITER-93H             (H)', &
-  !+ad_varc  <LI> (25)
+  !+ad_varc  <LI> (25) OBSOLETE
        'TITAN RFP OBSOLETE      ', &
   !+ad_varc  <LI> (26)  ITER H-97P ELM-free (H-mode)
        'ITER H-97P ELM-free  (H)', &
@@ -545,8 +546,14 @@ module physics_variables
        'Hubbard 2017 - nom   (I)', &
   !+ad_varc  <LI> (44)  Hubbard 2017 (I-mode) - lower bound
        'Hubbard 2017 - lower (I)', &
-  !+ad_varc  <LI> (45)  Hubbard 2017 (I-mode) - upper bound</UL>
-       'Hubbard 2017 - upper (I)' /)
+  !+ad_varc  <LI> (45)  Hubbard 2017 (I-mode) - upper bound
+       'Hubbard 2017 - upper (I)', &
+  !+ad_varc  <LI> (46)  NSTX (H-mode; Spherical tokamak)
+       'NSTX (Spherical)     (H)', &
+  !+ad_varc  <LI> (47)  NSTX-Petty08 Hybrid (H-mode)
+       'NSTX-Petty08 Hybrid  (H)', &
+  !+ad_varc  <LI> (48)  Use input tauee_in </UL>
+       'Input tauee_in          ' /)
 
   !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;
@@ -763,6 +770,8 @@ module physics_variables
   real(kind(1.0D0)) :: ssync = 0.6D0
   !+ad_vars  tauee : electron energy confinement time (sec)
   real(kind(1.0D0)) :: tauee = 0.0D0
+  !+ad_vars  tauee_in /0.0/  : Input electron energy confinement time (sec) (isc=48 only)
+  real(kind(1.0D0)) :: tauee_in = 0.0D0
   !+ad_vars  taueff : global thermal energy confinement time (sec)
   real(kind(1.0D0)) :: taueff = 0.0D0
   !+ad_vars  tauei : ion energy confinement time (sec)
@@ -1193,7 +1202,7 @@ module divertor_kallenbach_variables
   !+ad_varc                  <LI> = 1 qtargettotal
   !+ad_varc                  <LI> = 2 targetangle
   !+ad_varc                  <LI> = 3 lambda_q_omp
-  !+ad_varc                  <LI> = 4 netau_sol
+  !+ad_varc                  <LI> = 4 netau_sol</UL>
   integer :: kallenbach_scan_var = 0
 
   !+ad_vars  kallenbach_scan_start /2.0/ : Start value for kallenbach scan parameter
@@ -2221,6 +2230,7 @@ module tfcoil_variables
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  26/11/15 RK  Added variables for quench time calculation: taucq, sigvvall
   !+ad_hist  22/06/18 SIM Made cdtfleg an output instead of an input
+  !+ad_hist  24/05/19 SIM Removed estotf, previously marked obsolete (#199 #847)
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -2322,8 +2332,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: denh2o = 985.0D0
   !+ad_vars  dhecoil /0.005/ : diameter of He coil in TF winding (m)
   real(kind(1.0D0)) :: dhecoil = 0.005D0
-  !+ad_vars  estotf : stored energy per TF coil (GJ) OBSOLETE
-  real(kind(1.0D0)) :: estotf = 0.0D0
 
   !+ad_vars  estotftgj : total stored energy in the toroidal field (GJ)
   real(kind(1.0D0)) :: estotftgj = 0.0D0
@@ -2840,7 +2848,7 @@ module pf_power_variables
 
   public
 
-  !+ad_vars  acptmax : average of currents in PF circuits (A)
+  !+ad_vars  acptmax : average of currents in PF circuits (kA)
   real(kind(1.0D0)) :: acptmax = 0.0D0
   !+ad_vars  ensxpfm : maximum stored energy in the PF circuits (MJ)
   real(kind(1.0D0)) :: ensxpfm = 0.0D0
@@ -3861,9 +3869,9 @@ module cost_variables
        (/68.8D0, 68.8D0, 68.8D0, 74.4D0/)
   !+ad_vars  ucpens /32.0/ : penetration shield cost ($/kg)
   real(kind(1.0D0)) :: ucpens = 32.0D0
-  !+ad_vars  ucpfb /210.0/ : cost of PF coil buses ($/kA/m)
+  !+ad_vars  ucpfb /210.0/ : cost of PF coil buses ($/kA-m)
   real(kind(1.0D0)) :: ucpfb = 210.0D0
-  !+ad_vars  ucpfbk /1.66e4/ : cost of PF coil DC breakers ($/MVA)
+  !+ad_vars  ucpfbk /1.66e4/ : cost of PF coil DC breakers ($/MVA**0.7)
   real(kind(1.0D0)) :: ucpfbk = 1.66D4
   !+ad_vars  ucpfbs /4.9e3/ : cost of PF burn power supplies ($/kW**0.7)
   real(kind(1.0D0)) :: ucpfbs = 4.9D3

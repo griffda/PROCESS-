@@ -162,6 +162,7 @@ contains
        !  The TF coil can be ramped up as slowly as you like
        !  (although this will affect the time to recover from a magnet quench).
        !     tfreacmw = 1.0D-6 * 1.0D9 * estotf/(tohs + tramp)
+       !                                 estotf(=estotftgj/tfno) has been removed (#199 #847)
        tfreacmw = 0.0D0
 
        !  Total power consumption (MW)

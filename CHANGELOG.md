@@ -3,6 +3,10 @@
 > next release
 
 ## Bug Fixes
+ 
+- Fixed units issue with Lang et al. (2012) confinement scaling (#821)
+- Fixed issue with error numbering (#826)
+- Fixed issue with costing of TF coil dump resistors (#847)
 
 ## Features
 
@@ -12,11 +16,15 @@
   paper or user defined inputs). See Userguide for more info.
 - Updated version of Kallenbach scanning (now can specify the variable to scan 
   from a selection, number of scan points etc.). See Userguide for more info.
+- Added NSTX and NSTX-Petty08 confinement time scalings (#820)
+- Added option to input the confinement time
 
 ## Minor Changes
 
 - Increased the number of scan points to 1000 (issue #809)
 - For issue #379 constraint 52 now gives warning for iblanket=1
+- Updated FNSF test case (#822)
+- Removed obsolete variable estotf (#199 #847)
 
 ## Documentation update
 

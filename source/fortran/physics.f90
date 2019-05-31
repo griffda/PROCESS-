@@ -611,7 +611,7 @@ implicit none
             netau_sol, tesep, impvardiv, impurity_arr, impurity_enrichment)
 
        if (fzmin >= 1.0D0) then
-          call report_error(216)
+          call report_error(217)
        endif
 
        write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', impurity_arr(impvardiv)%frac, ', ',  impvardiv
@@ -2818,17 +2818,22 @@ implicit none
     !+ad_hist  17/06/15 MDK Added Murari scaling (40)
     !+ad_hist  02/11/16 HL  Added Petty, Lang scalings (41,42)
     !+ad_hist  05/04/19 SK  IPB98 scalings errata from 2008 NF 48 099801  
+    !+ad_hist  09/05/19 SIM Added NSTX scaling (#820)
+    !+ad_hist  13/05/19 SIM Added NSTX-Petty08 Hybrid scaling (#820) and
+    !+ad_hisc               option for input value
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
     !+ad_docc    "ITER Physics Design Guidelines: 1989",
     !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990)
     !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990)
-    !+ad_docc  A. Murari et al 2015 Nucl. Fusion, 55, 073009
-    !+ad_docc  C.C. Petty 2008 Phys. Plasmas, 15, 080501
-    !+ad_docc  P.T. Lang et al. 2012 IAEA conference proceeding EX/P4-01
-    !+ad_docc    ITER physics basis Chapter 2, 1999 Nuclear Fusion 39 2175
-    !+ad_docc    Nuclear Fusion corrections, 2008 Nuclear Fusion 48 099801
+    !+ad_docs  A. Murari et al 2015 Nucl. Fusion, 55, 073009
+    !+ad_docs  C.C. Petty 2008 Phys. Plasmas, 15, 080501
+    !+ad_docs  P.T. Lang et al. 2012 IAEA conference proceeding EX/P4-01
+    !+ad_docs  ITER physics basis Chapter 2, 1999 Nuclear Fusion 39 2175
+    !+ad_docc  Nuclear Fusion corrections, 2008 Nuclear Fusion 48 099801
+    !+ad_docs  Menard 2019, Phil. Trans. R. Soc. A 377:20170440
+    !+ad_docs  Kaye et al. 2006, Nucl. Fusion 46 848
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2846,7 +2851,7 @@ implicit none
     !  Local variables
     real(kind(1.0D0)) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
          n20,pcur,qhat,ratio,rll,str2,str5,taueena,tauit1,tauit2, &
-         term1,term2, h, qratio, nratio, nGW, kappaa_IPB
+         term1,term2, h, qratio, nratio, nGW, kappaa_IPB,taunstx,taupetty
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3345,17 +3350,14 @@ implicit none
 
     case (42) ! High density relevant confinement scaling
        ! P.T. Lang et al. 2012, IAEA conference proceeding EX/P4-01
-       ! Note that in the paper kappaa is defined as V/(2pi^2Ra^2)
-       ! which should be equivalent to our local definition assuming
-       ! V = 2piR * (X-sectional area)
        ! q should be q95: incorrect if icurr = 2 (ST current scaling)
        qratio = q/qstar
        ! Greenwald density in m^-3
        nGW = 1.0D14 * plascur/(pi*rminor*rminor)
        nratio = dnla/nGW
-       tauee = hfact * 6.94D-7 * pcur**1.3678D0 * bt**0.12D0 * &
-            dnla19**0.032236D0 * powerht**(-0.74D0) * rmajor**1.2345D0 * &
-            kappaa**0.37D0 * aspect**2.48205D0 * afuel**0.2D0 * &
+       tauee = hfact * 6.94D-7 * plascur**1.3678D0 * bt**0.12D0 * &
+            dnla**0.032236D0 * (powerht*1.0D6)**(-0.74D0) * rmajor**1.2345D0 * &
+            kappaa_IPB**0.37D0 * aspect**2.48205D0 * afuel**0.2D0 * &
             qratio**0.77D0 * aspect**(-0.9D0*log(aspect)) * &
             nratio**(-0.22D0*log(nratio))
 
@@ -3364,13 +3366,8 @@ implicit none
        qtaue = 0.0D0
        rtaue = -0.74D0
 
-!  gtaue = offset term in tauee scaling
-    !  ptaue = exponent for density term in tauee scaling
-    !  qtaue = exponent for temperature term in tauee scaling
-    !  rtaue = exponent for power term in tauee scaling
-
     case (43)  !  Hubbard et al. 2017 I-mode confinement time scaling - nominal
-      tauee = 0.014D0 * (plascur/1.0D6)**0.68D0 * bt**0.77D0 * dnla20**0.02D0 &
+      tauee = hfact * 0.014D0 * (plascur/1.0D6)**0.68D0 * bt**0.77D0 * dnla20**0.02D0 &
               * powerht**(-0.29D0)
       gtaue = 0.0D0
       ptaue = 0.02D0
@@ -3378,20 +3375,84 @@ implicit none
       rtaue = -0.29D0
 
     case (44)  !  Hubbard et al. 2017 I-mode confinement time scaling - lower
-      tauee = 0.014D0 * (plascur/1.0D6)**0.60D0 * bt**0.70D0 * dnla20**(-0.03D0) &
+      tauee = hfact * 0.014D0 * (plascur/1.0D6)**0.60D0 * bt**0.70D0 * dnla20**(-0.03D0) &
               * powerht**(-0.33D0)
       gtaue = 0.0D0
-      ptaue = 0.02D0
+      ptaue = -0.03D0
       qtaue = 0.0D0
-      rtaue = -0.29D0
+      rtaue = -0.33D0
 
     case (45)  !  Hubbard et al. 2017 I-mode confinement time scaling - upper
-      tauee = 0.014D0 * (plascur/1.0D6)**0.76D0 * bt**0.84D0  * dnla20**0.07 &
+      tauee = hfact * 0.014D0 * (plascur/1.0D6)**0.76D0 * bt**0.84D0  * dnla20**0.07 &
               * powerht**(-0.25D0)
       gtaue = 0.0D0
-      ptaue = 0.02D0
+      ptaue = 0.07D0
       qtaue = 0.0D0
-      rtaue = -0.29D0
+      rtaue = -0.25D0
+
+    case (46)  !  NSTX, ELMy H-mode scaling
+      !  NSTX scaling with IPB98(y,2) for other variables
+      !  Menard 2019, Phil. Trans. R. Soc. A 377:20170440
+      !  Kaye et al. 2006, Nucl. Fusion 46 848
+      tauee = hfact * 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
+           dnla19**0.44D0 * powerht**(-0.73D0) * rmajor**1.97D0 * &
+           kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
+      gtaue = 0.0D0
+      ptaue = 0.44D0
+      qtaue = 0.0D0
+      rtaue = -0.73D0
+
+    case (47) ! NSTX-Petty08 Hybrid
+      ! Linear interpolation between NSTX and Petty08 in eps
+      ! Menard 2019, Phil. Trans. R. Soc. A 377:20170440
+      if ((1.0D0/aspect).le.0.4D0) then
+      ! Petty08, i.e. case (41)
+        tauee = hfact * 0.052D0 * pcur**0.75D0 * bt**0.3D0 * &
+              dnla19**0.32D0 * powerht**(-0.47D0) * rmajor**2.09D0 * &
+              kappaa**0.88D0 * aspect**(-0.84D0)
+
+        gtaue = 0.0D0
+        ptaue = 0.32D0
+        qtaue = 0.0D0
+        rtaue = -0.47D0
+
+      else if ((1.0D0/aspect).ge.0.6D0) then
+        ! NSTX, i.e.case (46)
+        tauee = hfact * 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
+              dnla19**0.44D0 * powerht**(-0.73D0) * rmajor**1.97D0 * &
+              kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
+
+        gtaue = 0.0D0
+        ptaue = 0.44D0
+        qtaue = 0.0D0
+        rtaue = -0.73D0
+
+      else
+        taupetty = 0.052D0 * pcur**0.75D0 * bt**0.3D0 * &
+                dnla19**0.32D0 * powerht**(-0.47D0) * rmajor**2.09D0 * &
+                kappaa**0.88D0 * aspect**(-0.84D0)
+        taunstx= 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
+                dnla19**0.44D0 * powerht**(-0.73D0) * rmajor**1.97D0 * &
+                kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
+
+        tauee = hfact*((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*taunstx + &
+                 ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*taupetty)
+         
+        gtaue = 0.0D0
+        ptaue = ((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*0.32D0 + &
+                ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*0.44D0)
+        qtaue = 0.0D0
+        rtaue = ((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*(-0.47D0) + &
+                ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*(-0.73D0))
+      end if
+
+    case (48) ! tauee is an input
+      tauee = hfact * tauee_in
+
+      gtaue = 0.0D0
+      ptaue = 0.0D0
+      qtaue = 0.0D0
+      rtaue = 0.0D0
 
     case default
        idiags(1) = isc ; call report_error(81)
@@ -3785,6 +3846,7 @@ implicit none
     !+ad_hist  20/05/14 PJK Changed prad to pcorerad
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  20/10/14 PJK Output power balances for H=1 instead of H=2
+    !+ad_hist  13/05/19 SIM Stopped writing values at iisc=47
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -3818,7 +3880,7 @@ implicit none
 
     !  Calculate power balances for all scaling laws assuming H = 1
 
-    do iisc = 32,ipnlaws
+    do iisc = 32,47
        call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d1, &
             iinvqd,iisc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
             plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
