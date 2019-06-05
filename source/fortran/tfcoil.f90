@@ -106,7 +106,7 @@ contains
     ! ------------------------------------
     !  Resistive TF coils
     if ( itfsup == 0 ) then  
-       call concoptf(outfile,0)
+       call concoptf(outfile,iprint)
 
     !  Superconducting TF coils
     else  
@@ -206,29 +206,30 @@ contains
     integer, intent(in) :: iprint,outfile
 
     !  Local variables
-    real(kind(1.0D0)) :: ltfleg,rmid,rtop,ztop
-    real(kind(1.0D0)) :: r1,rout,rin,tfcind1, deltf
+    real(kind(1.0D0)) :: r_tf_inner, r_tf_outer, rout
+    real(kind(1.0D0)) :: ltfleg, rmid, rtop, ztop
+    real(kind(1.0D0)) :: tfcind1, deltf
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
-
     ! Inner leg(s) quantities
     ! -----------------------
     ! Radial build
     ! ******
+    ! Radial position of inner edge of inboard TF coil leg [m]
+    r_tf_inner = bore + ohcth + precomp + gapoh
+    
+    ! Radial position of plasma-facing edge of TF coil inboard leg [m]
+    r_tf_outer = r_tf_inner + tfcth
+
+    ! Position of the maximum magnetic field 
+    ! No winding pack structure -> simply the innner legs plasma side radius
+    rbmax = r_tf_outer
+    
     ! Gap between inboard TF coil and thermal shield [m]
     deltf = tftsgap
 
-    ! Radius of outer edge of inboard TF coil leg (m)
-    rbmax = rsldi - gapds - ddwi - thshield - deltf
-
-    ! Radius of inner edge of inboard TF coil leg (m)
-    r1 = max(0.0D0, (rbmax - tfcth) )
-
-    ! Radius of centre of inboard TF coil leg (m)
-    rtfcin = rbmax - 0.5D0*tfcth
-
-    ! Radius of outer edge of inboard TF coil leg (m)
-    rin = rbmax
+    ! Radial position of centre of inboard TF coil leg [m]
+    rtfcin = r_tf_inner + 0.5D0*tfcth
     ! ******
 
 
@@ -236,7 +237,7 @@ contains
     tftort = 2.0D0 * rbmax*sin(pi/tfno)
 
     ! Inboard total cross-sectional area (m2)
-    tfareain = pi * (rbmax**2 - r1**2)
+    tfareain = pi * (r_tf_outer**2 - r_tf_inner**2)
 
 
     ! Inner legs physics
@@ -273,7 +274,7 @@ contains
     else  
        !  Radii and vertical height from midplane
        rtop = (rmajor - rminor*triang - fwith - 3.0D0*scrapli) + drtop
-       rmid = tfcth
+       rmid = r_tf_outer
        rtop = max(rtop, (rmid*1.01D0))
        ztop = (rminor * kappa) + dztop
 
@@ -281,7 +282,7 @@ contains
        rhocp = rhocp * frhocp
 
        !  Volume and resistive power losses of TART centrepost
-       call cpost(rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,r1,volcp,prescp)
+       call cpost(rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,r_tf_inner,volcp,prescp)
     end if
 
     ! ******
@@ -289,7 +290,7 @@ contains
 
 
     ! Outboard leg information (per leg)
-    ! ----------------------------------
+    ! ----------------------------------    
     ! Radius of inner edge of outboard TF coil leg (m)
     rout = rtot - 0.5D0*tfcth
     
@@ -317,7 +318,7 @@ contains
     tfboreh = rtot - rbmax - 0.5D0*tfcth
 
     ! Vertircal force
-    vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(rout/rin) / tfno 
+    vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(rout/r_tf_outer) / tfno 
 
     ! Current turn information 
     if (itart == 0) then ! CT case
@@ -341,7 +342,7 @@ contains
     sigver = 0.0D0
 
     ! Inductance
-    tfcind1 = hmax * rmu0/pi * log(rout/rin)
+    tfcind1 = hmax * rmu0/pi * log(rout/r_tf_outer)
 
     ! Stored energy per coil (GJ)
     estotf = 0.5D-9 * tfcind1 * ritfc**2 / tfno
