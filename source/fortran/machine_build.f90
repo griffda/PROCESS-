@@ -171,8 +171,12 @@ contains
     ! Radial build to tfcoil
     rbldtotf = bore + ohcth + precomp + gapoh + tfcth
 
-    ! Additional gap spacing due to flat surfaces of TF:
-    deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    ! Additional gap spacing due to flat surfaces of TF
+    if ( itfsup == 1 ) then
+      deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+   else
+      deltf = tftsgap
+   end if 
 
     !  Radial build to centre of plasma (should be equal to rmajor)
 
@@ -188,7 +192,7 @@ contains
     rsldo = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
 
     !  Thickness of outboard TF coil legs
-    if (itfsup == 0) then
+    if ( itfsup ==  0 ) then
        tfthko = tfootfi*tfcth
     else
        tfthko = tfcth

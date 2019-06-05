@@ -271,8 +271,12 @@
     ! Radial build to tfcoil
     rbldtotf = bore + ohcth + precomp + gapoh + tfcth
     
-    ! Additional gap spacing due to flat surfaces of TF:cd 
-    deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    ! Additional gap spacing due to flat surfaces of TF
+    if ( itfsup == 1 ) then
+       deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    else
+       deltf = tftsgap
+    end if 
 
     radmin(6) = radpls(5) + deltf
     radpls(6) = radmin(6)
@@ -441,7 +445,7 @@
     !  Inboard TF coil
     ! ----------------
     ! resistive copper TF coils
-    if (itfsup == 0) then  
+    if ( itfsup == 0 ) then  
       matfrc(5,5) = fcoolcp         ! Dummy 
       matfrc(5,7) = 1.0D0 - fcoolcp ! Copper
 
@@ -571,7 +575,7 @@
     ! Outboard TF coil
     ! ----------------
     !  resistive copper TF coils
-    if (itfsup == 0) then 
+    if ( itfsup == 0 ) then 
        matfrc(23,5) = vftf
        matfrc(23,7) = 1.0D0 - vftf
 
