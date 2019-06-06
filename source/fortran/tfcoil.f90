@@ -292,7 +292,7 @@ contains
     ! Outboard leg information (per leg)
     ! ----------------------------------    
     ! Radius of inner edge of outboard TF coil leg (m)
-    r_tf_outleg_in = rtot - 0.5D0*tfcth
+    r_tf_outleg_in = rtot - 0.5D0*tfthko
     
     ! Cross-sectional area
     arealeg = tfthko*tftort
@@ -315,7 +315,7 @@ contains
     ! Inner outter common quantities
     ! -----------------------------
     !  Bore (gap between inboard and outboard TF coil legs) (m)
-    tfboreh = rtot - rbmax - 0.5D0*tfcth
+    tfboreh = rtot - rbmax - 0.5D0*tfthko
 
     ! Vertircal force
     vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inleg_out) / tfno 

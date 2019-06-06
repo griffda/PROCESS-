@@ -192,7 +192,7 @@ contains
     rsldo = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
 
     !  Thickness of outboard TF coil legs
-    if ( itfsup ==  0 ) then
+    if ( itfsup /= 1 ) then
        tfthko = tfootfi*tfcth
     else
        tfthko = tfcth
