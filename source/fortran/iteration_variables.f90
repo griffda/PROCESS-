@@ -157,7 +157,7 @@ subroutine loadxc
      case (40) ; xcm(i) = fgamcd
      case (41) ; xcm(i) = fcohbop
      case (42) ; xcm(i) = gapoh
-     case (43) ; xcm(i) = cfe0
+     case (43) ; write(*,*) 'Iteration variable 43 is not supported.'
      case (44) ; xcm(i) = fvsbrnni
      case (45) ; xcm(i) = fqval
      case (46) ; xcm(i) = fpinj
@@ -172,7 +172,8 @@ subroutine loadxc
      case (55) ; write(*,*) 'Iteration variable 55 is not supported.'
      case (56) ; xcm(i) = tdmptf
      case (57) ; xcm(i) = thkcas
-        if ((tfc_model == 0).or.(istell == 1)) call report_error(48)
+      !   if ((tfc_model == 0).or.(istell == 1)) call report_error(48)
+        if (istell == 1) call report_error(48)
      case (58) ; xcm(i) = thwcndut
      case (59) ; xcm(i) = fcutfsu
      case (60) ; xcm(i) = cpttf
@@ -265,7 +266,7 @@ subroutine loadxc
      case (145) ; xcm(i) = fgwped
      case (146) ; xcm(i) = fcpttf
      case (147) ; xcm(i) = freinke
-     case (148) ; xcm(i) = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual   
+     case (148) ; xcm(i) = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual
      case (149) ; xcm(i) = fbmaxcs
      case (150) ; xcm(i) = plasmod_fcdp
      case (151) ; xcm(i) = plasmod_fradc
@@ -468,7 +469,7 @@ subroutine convxc(xc,nn)
      case (40) ; fgamcd    = xc(i)/scale(i)
      case (41) ; fcohbop   = xc(i)/scale(i)
      case (42) ; gapoh     = xc(i)/scale(i)
-     case (43) ; cfe0      = xc(i)/scale(i)
+     case (43) ; write(*,*) 'Iteration variable 43 is not supported.'
      case (44) ; fvsbrnni  = xc(i)/scale(i)
      case (45) ; fqval     = xc(i)/scale(i)
      case (46) ; fpinj     = xc(i)/scale(i)
@@ -581,7 +582,7 @@ subroutine convxc(xc,nn)
         write(*,*) 'fzactual = ', fzactual
      case (149) ; fbmaxcs = xc(i)/scale(i)
      case (150) ; plasmod_fcdp = xc(i)/scale(i)
-     case (151) ; plasmod_fradc = xc(i)/scale(i)  
+     case (151) ; plasmod_fradc = xc(i)/scale(i)
      case (152) ; fgwsep = xc(i)/scale(i)
 
      case default

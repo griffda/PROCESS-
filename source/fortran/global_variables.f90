@@ -70,12 +70,13 @@ module constants
 
   public
 
-  ! MDK These moved here to prevent circular dependency
-  integer, parameter :: iotty = 6  !  Standard output unit identifier
-  integer, parameter :: nout = 11  !  Output file unit identifier
-  integer, parameter :: nplot = 12 !  Plot data file unit identifier
-  integer, parameter :: mfile = 13 !  Machine-optimised output file unit
-  integer, parameter :: vfile = 14 !  Verbose diagnostics file
+  ! File output indexes
+  integer, parameter :: iotty    = 6  !  Standard output unit identifier
+  integer, parameter :: nout     = 11 !  Output file unit identifier
+  integer, parameter :: nplot    = 12 !  Plot data file unit identifier
+  integer, parameter :: mfile    = 13 !  Machine-optimised output file unit
+  integer, parameter :: vfile    = 14 !  Verbose diagnostics file
+  integer, parameter :: opt_file = 15 !  Optimisation information output file number
 
   !+ad_vars  degrad FIX : degrees to radians, = pi/180
   real(kind(1.0D0)), parameter :: degrad = 0.01745329251D0
@@ -112,7 +113,7 @@ module physics_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  15/10/12 PJK Initial version of module
-  !+ad_hist  17/12/12 PJK Added zfear; modified impfe, cfe0, rnfene, fbfe comments
+  !+ad_hist  17/12/12 PJK modified impfe, cfe0, rnfene, fbfe comments
   !+ad_hist  18/12/12 PJK Added pthrmw(6 to 8)
   !+ad_hist  18/12/12 PJK Added snull; modified idivrt
   !+ad_hist  03/01/13 PJK Removed iculdl
@@ -136,8 +137,7 @@ module physics_variables
   !+ad_hist  02/04/14 PJK Added iprofile=1 recommendation to use icurr=4
   !+ad_hist  23/04/14 PJK Added bvert
   !+ad_hist  01/05/14 PJK Changed dnbeta, gtscale comments
-  !+ad_hist  14/05/14 PJK Modified impc, impo, cfe0, zfear comments;
-  !+ad_hisc               added pcorerad
+  !+ad_hist  14/05/14 PJK added pcorerad
   !+ad_hist  15/05/14 PJK Changed ffwal comment
   !+ad_hist  19/05/14 PJK Changed plrad to pedgerad; removed fradmin;
   !+ad_hisc               added iradloss
@@ -164,6 +164,7 @@ module physics_variables
   !+ad_hist  08/02/17 JM  Gave teped, tesep, neped and nesep non-zero defaults
   !+ad_hist  02/05/18 SIM Added pthrmw(9-14)
   !+ad_hist  17/01/19 SIM Moved photon_wall and rad_fraction to global from physics
+  !+ad_hist  13/05/19 SIM Added isc=46-48 and tauee_in
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -174,8 +175,8 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /45/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 45
+  !+ad_vars  ipnlaws /48/ FIX : number of energy confinement time scaling laws
+  integer, parameter :: ipnlaws = 48
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
@@ -228,9 +229,6 @@ module physics_variables
   real(kind(1.0D0)) :: burnup = 0.0D0
   !+ad_vars  bvert : vertical field at plasma (T)
   real(kind(1.0D0)) :: bvert = 0.0D0
-  !+ad_vars  cfe0 /0.0/ : seeded high-Z impurity fraction (n_highZ / n_e)
-  !+ad_varc               (imprad_model=0 only) (iteration variable 43)
-  real(kind(1.0D0)) :: cfe0 = 0.0D0
   !+ad_vars  csawth /1.0/ : coeff. for sawteeth effects on burn V-s requirement
   real(kind(1.0D0)) :: csawth = 1.0D0
   !+ad_vars  cvol /1.0/ : multiplying factor times plasma volume (normally=1)
@@ -292,9 +290,6 @@ module physics_variables
   real(kind(1.0D0)) :: falpha = 0.95D0
   !+ad_vars  falpi : fraction of alpha power to ions
   real(kind(1.0D0)) :: falpi = 0.0D0
-  !+ad_vars  fbfe /0.35/ : fraction of high-Z radiation to Bremsstrahlung
-  !+ad_varc                (imprad_model=0 only)
-  real(kind(1.0D0)) :: fbfe = 0.35D0
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: fdeut = 0.5D0
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
@@ -400,10 +395,6 @@ module physics_variables
   !+ad_varc          <LI> = 0 inverse quadrature not used;
   !+ad_varc          <LI> = 1 inverse quadrature with Neo-Alcator tau-E used</UL>
   integer :: iinvqd = 1
-  !+ad_vars  impc /1.0/ : carbon impurity multiplier (imprad_model=0 only)
-  real(kind(1.0D0)) :: impc = 1.0D0
-  !+ad_vars  impo /1.0/ : oxygen impurity multiplier (imprad_model=0 only)
-  real(kind(1.0D0)) :: impo = 1.0D0
 
   !+ad_vars  ipedestal /1/ : switch for pedestal profiles:<UL>
   !+ad_varc             <LI> = 0 use original parabolic profiles;
@@ -515,7 +506,7 @@ module physics_variables
        'Lackner-Gottardi (stell)', &
   !+ad_varc  <LI> (24)  ITER-93H (H-mode)
        'ITER-93H             (H)', &
-  !+ad_varc  <LI> (25)
+  !+ad_varc  <LI> (25) OBSOLETE
        'TITAN RFP OBSOLETE      ', &
   !+ad_varc  <LI> (26)  ITER H-97P ELM-free (H-mode)
        'ITER H-97P ELM-free  (H)', &
@@ -555,8 +546,14 @@ module physics_variables
        'Hubbard 2017 - nom   (I)', &
   !+ad_varc  <LI> (44)  Hubbard 2017 (I-mode) - lower bound
        'Hubbard 2017 - lower (I)', &
-  !+ad_varc  <LI> (45)  Hubbard 2017 (I-mode) - upper bound</UL>
-       'Hubbard 2017 - upper (I)' /)
+  !+ad_varc  <LI> (45)  Hubbard 2017 (I-mode) - upper bound
+       'Hubbard 2017 - upper (I)', &
+  !+ad_varc  <LI> (46)  NSTX (H-mode; Spherical tokamak)
+       'NSTX (Spherical)     (H)', &
+  !+ad_varc  <LI> (47)  NSTX-Petty08 Hybrid (H-mode)
+       'NSTX-Petty08 Hybrid  (H)', &
+  !+ad_varc  <LI> (48)  Use input tauee_in </UL>
+       'Input tauee_in          ' /)
 
   !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;
@@ -608,7 +605,6 @@ module physics_variables
   !+ad_vars  palpnb : alpha power from hot neutral beam ions (MW)
   real(kind(1.0D0)) :: palpnb = 0.0D0
   !+ad_vars  pbrempv : bremsstrahlung power per volume (MW/m3)
-  !+ad_varc            (calculated only if imprad_model=1)
   real(kind(1.0D0)) :: pbrempv = 0.0D0
   !+ad_vars  pchargemw : non-alpha charged particle fusion power (MW)
   real(kind(1.0D0)) :: pchargemw = 0.0D0
@@ -643,7 +639,6 @@ module physics_variables
   !+ad_vars  plascur : plasma current (A)
   real(kind(1.0D0)) :: plascur = 0.0D0
   !+ad_vars  plinepv : line radiation power per volume (MW/m3)
-  !+ad_varc            (calculated only if imprad_model=1)
   real(kind(1.0D0)) :: plinepv = 0.0D0
   !+ad_vars  pneutmw : neutron fusion power (MW)
   real(kind(1.0D0)) :: pneutmw = 0.0D0
@@ -775,6 +770,8 @@ module physics_variables
   real(kind(1.0D0)) :: ssync = 0.6D0
   !+ad_vars  tauee : electron energy confinement time (sec)
   real(kind(1.0D0)) :: tauee = 0.0D0
+  !+ad_vars  tauee_in /0.0/  : Input electron energy confinement time (sec) (isc=48 only)
+  real(kind(1.0D0)) :: tauee_in = 0.0D0
   !+ad_vars  taueff : global thermal energy confinement time (sec)
   real(kind(1.0D0)) :: taueff = 0.0D0
   !+ad_vars  tauei : ion energy confinement time (sec)
@@ -826,9 +823,6 @@ module physics_variables
   real(kind(1.0D0)) :: zeff = 0.0D0
   !+ad_vars  zeffai : mass weighted plasma effective charge
   real(kind(1.0D0)) :: zeffai = 0.0D0
-  !+ad_vars  zfear /0/ : high-Z impurity switch; 0=iron, 1=argon
-  !+ad_varc              (if imprad_model=1, only used in neutral beam stopping calc.)
-  integer :: zfear = 0
 
 end module physics_variables
 
@@ -1208,9 +1202,9 @@ module divertor_kallenbach_variables
   !+ad_varc                  <LI> = 1 qtargettotal
   !+ad_varc                  <LI> = 2 targetangle
   !+ad_varc                  <LI> = 3 lambda_q_omp
-  !+ad_varc                  <LI> = 4 netau_sol
+  !+ad_varc                  <LI> = 4 netau_sol</UL>
   integer :: kallenbach_scan_var = 0
-  
+
   !+ad_vars  kallenbach_scan_start /2.0/ : Start value for kallenbach scan parameter
   real(kind(1.0D0)) :: kallenbach_scan_start = 2.0
 
@@ -2236,6 +2230,7 @@ module tfcoil_variables
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  26/11/15 RK  Added variables for quench time calculation: taucq, sigvvall
   !+ad_hist  22/06/18 SIM Made cdtfleg an output instead of an input
+  !+ad_hist  24/05/19 SIM Removed estotf, previously marked obsolete (#199 #847)
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -2337,8 +2332,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: denh2o = 985.0D0
   !+ad_vars  dhecoil /0.005/ : diameter of He coil in TF winding (m)
   real(kind(1.0D0)) :: dhecoil = 0.005D0
-  !+ad_vars  estotf : stored energy per TF coil (GJ) OBSOLETE
-  real(kind(1.0D0)) :: estotf = 0.0D0
 
   !+ad_vars  estotftgj : total stored energy in the toroidal field (GJ)
   real(kind(1.0D0)) :: estotftgj = 0.0D0
@@ -2353,7 +2346,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: eystl = 2.05D11
   !+ad_vars  eywp /6.6e8/ : winding pack Young's modulus (Pa)
   real(kind(1.0D0)) :: eywp = 6.6D8
-  !+ad_vars  eyzwp : winding pack vertical Young's modulus (Pa) (tfc_model=1)
+  !+ad_vars  eyzwp : winding pack vertical Young's modulus (Pa)
   real(kind(1.0D0)) :: eyzwp = 0.0D0
   !+ad_vars  farc4tf /0.7/ : factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: farc4tf = 0.7D0
@@ -2366,7 +2359,7 @@ module tfcoil_variables
   !+ad_varc               radiation, AC losses, joints or manufacturing variations;
   !+ad_varc               1.0 would be very optimistic)
   real(kind(1.0D0)) :: fhts = 0.5D0
-  !+ad_vars  insstrain : radial strain in insulator (tfc_model=1)
+  !+ad_vars  insstrain : radial strain in insulator
   real(kind(1.0D0)) :: insstrain = 0.0D0
   !+ad_vars  i_tf_tresca /0/ : switch for TF coil conduit Tresca stress criterion:<UL>
   !+ad_varc          <LI> = 0 Tresca (no adjustment);
@@ -2502,10 +2495,11 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfbusmas = 0.0D0
   !+ad_vars  tfckw :  available DC power for charging the TF coils (kW)
   real(kind(1.0D0)) :: tfckw = 0.0D0
-  !+ad_vars  tfc_model /1/ : switch for TF coil magnet stress model:<UL>
-  !+ad_varc                  <LI> = 0 simple model (solid copper coil)
-  !+ad_varc                  <LI> = 1 CCFE two-layer stress model; superconductor</UL>
-  integer :: tfc_model = 1
+! Issue #781
+!   !+ad_vars  tfc_model /1/ : switch for TF coil magnet stress model:<UL>
+!   !+ad_varc                  <LI> = 0 simple model (solid copper coil)
+!   !+ad_varc                  <LI> = 1 CCFE two-layer stress model; superconductor</UL>
+!   integer :: tfc_model = 1
   !+ad_vars  tfcmw : peak power per TF power supply (MW)
   real(kind(1.0D0)) :: tfcmw = 0.0D0
   !+ad_vars  tfcpmw : peak resistive TF coil inboard leg power (MW)
@@ -2612,7 +2606,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whtgw = 0.0D0
   !+ad_vars  whttf : total mass of the TF coils (kg)
   real(kind(1.0D0)) :: whttf = 0.0D0
-  !+ad_vars  windstrain : longitudinal strain in winding pack (tfc_model=1)
+  !+ad_vars  windstrain : longitudinal strain in winding pack
   real(kind(1.0D0)) :: windstrain = 0.0D0
   !+ad_vars  wwp1 : width of first step of winding pack (m)
   real(kind(1.0D0)) :: wwp1 = 0.0D0
@@ -2855,7 +2849,7 @@ module pf_power_variables
 
   public
 
-  !+ad_vars  acptmax : average of currents in PF circuits (A)
+  !+ad_vars  acptmax : average of currents in PF circuits (kA)
   real(kind(1.0D0)) :: acptmax = 0.0D0
   !+ad_vars  ensxpfm : maximum stored energy in the PF circuits (MJ)
   real(kind(1.0D0)) :: ensxpfm = 0.0D0
@@ -3876,9 +3870,9 @@ module cost_variables
        (/68.8D0, 68.8D0, 68.8D0, 74.4D0/)
   !+ad_vars  ucpens /32.0/ : penetration shield cost ($/kg)
   real(kind(1.0D0)) :: ucpens = 32.0D0
-  !+ad_vars  ucpfb /210.0/ : cost of PF coil buses ($/kA/m)
+  !+ad_vars  ucpfb /210.0/ : cost of PF coil buses ($/kA-m)
   real(kind(1.0D0)) :: ucpfb = 210.0D0
-  !+ad_vars  ucpfbk /1.66e4/ : cost of PF coil DC breakers ($/MVA)
+  !+ad_vars  ucpfbk /1.66e4/ : cost of PF coil DC breakers ($/MVA**0.7)
   real(kind(1.0D0)) :: ucpfbk = 1.66D4
   !+ad_vars  ucpfbs /4.9e3/ : cost of PF burn power supplies ($/kW**0.7)
   real(kind(1.0D0)) :: ucpfbs = 4.9D3

@@ -2434,6 +2434,7 @@ contains
     real(kind(1.0D0)), intent(in) :: tol
     real(kind(1.0D0)), dimension(n), intent(inout) :: x
     real(kind(1.0D0)), dimension(n) :: best_solution_vector
+    real(kind(1.0D0)), dimension(n) :: delta_var           ! For opt data extraction only
     real(kind(1.0D0)), dimension(n), intent(in) :: bndl,bndu
     real(kind(1.0D0)), dimension(n), intent(out) :: fgrd
     real(kind(1.0D0)), dimension(m), intent(out) :: conf
@@ -2446,7 +2447,6 @@ contains
     real(kind(1.0D0)), dimension(lb,lb), intent(inout) :: b
     real(kind(1.0D0)), dimension(*), intent(out) :: vlam,vmu,gm,bdl,bdu
     real(kind(1.0D0)), intent(out), optional :: sum
-
     !  Local variables
 
     integer :: i,j,k,mact,nfinit,nls,np1,np1j,npp,nqp,nsix,nsixi
@@ -2456,7 +2456,7 @@ contains
          fls,flsa,spgdel,temp,thcomp,theta
     real(kind(1.0D0)) :: best_sum_so_far = 999d0
     real(kind(1.0D0)) :: summ, sqsumsq, sqsumsq_tol
-    real(kind(1.0D0)) :: lowest_valid_fom
+    real(kind(1.0D0)) :: lowest_valid_fom    
     real(kind(1.0D0)), parameter :: zero = 0.0D0
     real(kind(1.0D0)), parameter :: cp1 = 0.1D0
     real(kind(1.0D0)), parameter :: cp2 = 0.2D0
@@ -2696,6 +2696,12 @@ contains
                ' Convergence parameter = ',sum
        end if
 
+       ! Writting the step results in OPT.DAT file
+       do i = 1, n
+         delta_var(i) = delta(i)
+       end do
+       write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sum, sqsumsq, conf, x, delta_var
+
        !  Exit if both convergence criteria are satisfied
        !  (the original criterion, plus constraint residuals below the tolerance level)
        !  Temporarily set the two tolerances equal (should perhaps be an input parameter)
@@ -2924,7 +2930,6 @@ contains
              b(j,i) = b(i,j)
           end do
        end do
-
     end do iteration
 
   end subroutine vmcon

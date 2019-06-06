@@ -1865,6 +1865,7 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  24/05/19 SIM Changed tfno*estotf to estotftgj for c22513 (#847)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1897,7 +1898,7 @@ contains
 
     !  Account 225.1.3 : TF coil dump resistors
 
-    c22513 = 1.0D-6 * (uctfdr*(tfno*estotf*1.0D9) + uctfgr * 0.5D0*tfno)
+    c22513 = 1.0D-6 * (1.0D9*uctfdr*estotftgj + uctfgr * 0.5D0*tfno)
     c22513 = fkind * c22513
 
     !  Account 225.1.4 : TF coil instrumentation and control

@@ -201,6 +201,7 @@ program process
     close(unit = nout)
     close(unit = nplot)
     close(unit = mfile)
+    close(unit = opt_file)
     if (verbose == 1) close(unit = vfile)
 
     open(unit = 100, FILE = inFile)

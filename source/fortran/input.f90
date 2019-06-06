@@ -227,7 +227,6 @@ contains
     !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
     !+ad_hist  03/10/12 PJK CENTORI version converted for PROCESS
     !+ad_hist  10/10/12 PJK Removed IVMS
-    !+ad_hist  17/12/12 PJK Added ZFEAR
     !+ad_hist  18/12/12 PJK Added SNULL; removed IDIVRT
     !+ad_hist  03/01/13 PJK Removed ICULDL (replaced with error trap)
     !+ad_hist  08/01/13 PJK Commented out ICULDL error trap for time being
@@ -274,7 +273,7 @@ contains
     !+ad_hist  08/05/14 PJK Changed PRP definition; removed ITFMOD;
     !+ad_hisc               replaced STRESS_MODEL with TFC_MODEL
     !+ad_hist  08/05/14 PJK Added BIGQMIN
-    !+ad_hist  13/05/14 PJK Added IMPRAD_MODEL, FIMP, CORERADIUS
+    !+ad_hist  13/05/14 PJK Added IMPRAD#MODEL, FIMP, CORERADIUS
     !+ad_hist  20/05/14 PJK Removed FRADMIN, added FRADPWR, IRADLOSS
     !+ad_hist  22/05/14 PJK PHEAT units changed to MW
     !+ad_hist  02/06/14 PJK Added IMPVAR, FIMPVAR
@@ -331,6 +330,7 @@ contains
     !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
     !+ad_hist  22/06/18 SIM tfacpd now always an output
     !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
+    !+ad_hist  13/05/19 SIM Added tauee_in
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -509,9 +509,6 @@ contains
        case ('bt')
           call parse_real_variable('bt', bt, 0.0D0, 30.0D0, &
                'Toroidal field on axis (T)')
-       case ('cfe0')
-          call parse_real_variable('cfe0', cfe0, 0.0D0, 10.0D0, &
-               'Additional Fe impurity fraction')
        case ('coreradius')
           call parse_real_variable('coreradius', coreradius, 0.0D0, 1.0D0, &
                'Normalised core radius')
@@ -543,9 +540,6 @@ contains
        case ('falpha')
           call parse_real_variable('falpha', falpha, 0.0D0, 1.0D0, &
                'Fraction of alpha power deposited to plasma')
-       case ('fbfe')
-          call parse_real_variable('fbfe', fbfe, 0.0D0, 1.0D0, &
-               'Fraction of Fe radn to Bremsstrahlung')
        case ('fdeut')
           call parse_real_variable('fdeut', fdeut, 0.0D0, 1.0D0, &
                'Deuterium fuel fraction')
@@ -668,18 +662,10 @@ contains
        case ('ilhthresh')
           call parse_int_variable('ilhthresh', ilhthresh, 1, 18, &
                'Switch for L-H power threshold to enforce')
-       case ('impc')
-          call parse_real_variable('impc', impc, 0.0D0, 10.0D0, &
-               'Carbon impurity multiplier')
        case ('impdir')
           call parse_string_variable('impdir', impdir, &
                'Directory containing impurity radiation data files')
-       case ('impo')
-          call parse_real_variable('impo', impo, 0.0D0, 10.0D0, &
-               'Oxygen impurity multiplier')
-       case ('imprad_model')
-          call parse_int_variable('imprad_model', imprad_model, 0, 1, &
-               'Switch for impurity radiation model')
+
        case ('impvar')
           call parse_int_variable('impvar', impvar, 3, nimp, &
                'Index for impurity fraction iteration variable')
@@ -789,7 +775,9 @@ contains
        case ('te')
           call parse_real_variable('te', te, 1.0D0, 200.0D0, &
                'Electron temperature (keV)')
-
+       case ('tauee_in')
+           call parse_real_variable('tauee_in', tauee_in, 0.0D0, 100.0D0, &
+                    'Input electron energy confinement time (sec) (isc=48 only)')
        case ('taulimit')
           call parse_real_variable('taulimit', taulimit, 1.0D0, 100.0D0, &
                'Lower limit on taup/taueff the ratio of alpha particle to energy confinement times')
@@ -812,9 +800,6 @@ contains
        case ('triang95')
           call parse_real_variable('triang95', triang95, 0.0D0, 1.0D0, &
                'Plasma 95% triangularity')
-       case ('zfear')
-          call parse_int_variable('zfear', zfear, 0, 1, &
-               'Switch for high-Z inpurity')
 
           !  Inequality settings
 
@@ -1838,7 +1823,7 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) 'ITFMOD is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
-          write(outfile,*) 'and replace it with TFC_MODEL'
+          ! write(outfile,*) 'and replace it with TFC_MODEL'
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
@@ -1909,9 +1894,9 @@ contains
        case ('tdmptf')
           call parse_real_variable('tdmptf', tdmptf, 0.1D0, 100.0D0, &
                'Dump time for TF coil (s)')
-       case ('tfc_model')
-          call parse_int_variable('tfc_model', tfc_model, 0, 1, &
-               'Switch for TF coil model')
+      !  case ('tfc_model')
+      !     call parse_int_variable('tfc_model', tfc_model, 0, 1, &
+      !          'Switch for TF coil model')
        case ('tfinsgap')
           call parse_real_variable('tfinsgap', tfinsgap, 1.0D-10, 1.0D-1, &
                'TF coil WP insertion gap (m)')
