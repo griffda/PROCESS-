@@ -12,7 +12,7 @@ module global_variables
   !+ad_desc  well-suited to any of the other 'variables' modules.
   !+ad_prob  None
   !+ad_call  None
-  !+ad_hist  15/10/12 PJK Initial version of module
+  !+ad_hist  15/10/12 PJK Initial version of moduler
   !+ad_hist  23/07/14 PJK Added runtitle; modified icase
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -3417,8 +3417,8 @@ module build_variables
   real(kind(1.0D0)) :: rsldi = 0.0D0
   !+ad_vars  rsldo : radius to outboard shield (outside point) (m)
   real(kind(1.0D0)) :: rsldo = 0.0D0
-  !+ad_vars  rtfcin : radius of centre of inboard TF leg (m)
-  real(kind(1.0D0)) :: rtfcin = 0.0D0
+  !+ad_vars  r_tf_inleg_mid : radius of centre of inboard TF leg (m)
+  real(kind(1.0D0)) :: r_tf_inleg_mid = 0.0D0
   !+ad_vars  rtot : radius to the centre of the outboard TF coil leg (m)
   real(kind(1.0D0)) :: rtot = 0.0D0
   !+ad_vars  scrapli /0.14/ : gap between plasma and first wall, inboard side (m)

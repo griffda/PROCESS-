@@ -30,6 +30,7 @@ module divertor_module
   use build_variables
   use constants
   use divertor_variables
+  use tfcoil_variables, only : drtop
   use error_handling
   use physics_variables
   use process_output
