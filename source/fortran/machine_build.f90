@@ -315,48 +315,26 @@ contains
     radius = radius + bore
     call obuild(outfile,'Machine bore',bore,radius,'(bore)')
     call ovarre(mfile,'Machine bore (m)','(bore)',bore)
-
-    if (itart == 1) then
-
-       radius = radius + tfcth
-       call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
-       call ovarre(mfile,'TF coil inboard leg radial thickness (m)','(tfcth)',tfcth)
-
-       radius = radius + deltf
-       call obuild(outfile,'Gap',deltf,radius,'(deltf)')
-       call ovarre(mfile,'TF coil inboard leg gap (m)','(deltf)',deltf)
-
-       radius = radius + gapoh
-       call obuild(outfile,'Gap',gapoh,radius,'(gapoh)')
-       call ovarre(mfile,'TF to CS radial gap (m)','(gapoh)',gapoh)
-
-       radius = radius + ohcth
-       call obuild(outfile,'Central solenoid',ohcth,radius,'(ohcth)')
-       call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
-
-    else       ! conventional aspect ratio tokamak
-
-       radius = radius + ohcth
-       call obuild(outfile,'Central solenoid',ohcth,radius,'(ohcth)')
-       call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
-
-       radius = radius + precomp
-       call obuild(outfile,'CS precompression',precomp,radius,'(precomp)')
-       call ovarre(mfile,'CS precompression (m)','(precomp)',precomp)
-
-       radius = radius + gapoh
-       call obuild(outfile,'Gap',gapoh,radius,'(gapoh)')
-       call ovarre(mfile,'CS to TF coil radial gap (m)','(gapoh)',gapoh)
-
-       radius = radius + tfcth
-       call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
-       call ovarre(mfile,'TF coil inboard leg (m)','(tfcth)',tfcth)
-
-       radius = radius + deltf
-       call obuild(outfile,'Gap',deltf,radius,'(deltf)')
-       call ovarre(mfile,'TF coil inboard leg gap (m)','(deltf)',deltf)
-
-    end if
+    
+    radius = radius + ohcth
+    call obuild(outfile,'Central solenoid',ohcth,radius,'(ohcth)')
+    call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
+    
+    radius = radius + precomp
+    call obuild(outfile,'CS precompression',precomp,radius,'(precomp)')
+    call ovarre(mfile,'CS precompression (m)','(precomp)',precomp)
+    
+    radius = radius + gapoh
+    call obuild(outfile,'Gap',gapoh,radius,'(gapoh)')
+    call ovarre(mfile,'CS precompresion to TF coil radial gap (m)','(gapoh)',gapoh)
+    
+    radius = radius + tfcth
+    call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
+    call ovarre(mfile,'TF coil inboard leg (m)','(tfcth)',tfcth)
+    
+    radius = radius + deltf
+    call obuild(outfile,'Gap',deltf,radius,'(deltf)')
+    call ovarre(mfile,'TF coil inboard leg inuslation gap (m)','(deltf)',deltf)
 
     radius = radius + thshield
     call obuild(outfile,'Thermal shield',thshield,radius,'(thshield)')

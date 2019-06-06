@@ -2318,7 +2318,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (itfsup == 0) then  !  Resistive coils
+    if (itfsup /= 1) then  !  Resistive coils
        coilhtmx = 0.0D0
        ptfiwp = 0.0D0
        ptfowp = 0.0D0

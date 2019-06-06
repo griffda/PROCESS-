@@ -2981,9 +2981,9 @@ contains
     rbcndut = thwcndut*0.75D0
 
     arealeg = tfcth*tftort  ! [m^2] overall coil cross-sectional area
-    rtfcin = rmajor - (0.5D0*tfcth+gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor)
+    r_tf_inleg_mid = rmajor - (0.5D0*tfcth+gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor)
     ! [m] radius of centre of inboard leg, average
-    rcoil = rtfcin + 0.5D0*tfcth  ! [m] radius of outer edge of inboard leg, average
+    rcoil = r_tf_inleg_mid + 0.5D0*tfcth  ! [m] radius of outer edge of inboard leg, average
     tfareain = tfno*tfcth*tftort  ! [m^2] Total area of all coil legs
     tfarea_sc = tfno*awptf        ! [m^2] Total area of all coil winding packs
     ritfc = tfno * I * 1.0D6      ! [A] Total current in ALL coils
@@ -3054,7 +3054,7 @@ contains
 
     ! [m^2] Total surface area of toroidal shells covering coils
 
-    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(rtfcin+rtot)
+    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inleg_mid+rtot)
 
     !  Masses of conductor constituents
 
@@ -3823,7 +3823,7 @@ contains
     call ovarre(outfile,'Total mass of coils (kg)','(whttf)',whttf)
 
     call osubhd(outfile,'Coil Geometry :')
-    call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin)
+    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inleg_mid)',r_tf_inleg_mid)
     call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
     call ovarre(outfile,'Clear horizontal bore (m)','(tfboreh)',tfboreh)

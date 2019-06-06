@@ -445,7 +445,7 @@
     !  Inboard TF coil
     ! ----------------
     ! resistive copper TF coils
-    if ( itfsup == 0 ) then  
+    if ( itfsup /= 1 ) then  
       matfrc(5,5) = fcoolcp         ! Dummy 
       matfrc(5,7) = 1.0D0 - fcoolcp ! Copper
 
@@ -575,7 +575,7 @@
     ! Outboard TF coil
     ! ----------------
     !  resistive copper TF coils
-    if ( itfsup == 0 ) then 
+    if ( itfsup /= 1 ) then 
        matfrc(23,5) = vftf
        matfrc(23,7) = 1.0D0 - vftf
 

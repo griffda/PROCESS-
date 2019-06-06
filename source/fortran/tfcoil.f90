@@ -229,7 +229,7 @@ contains
     deltf = tftsgap
 
     ! Radial position of centre of inboard TF coil leg [m]
-    rtfcin = r_tf_inleg_in + 0.5D0*tfcth
+    r_tf_inleg_mid = r_tf_inleg_in + 0.5D0*tfcth
     ! ******
 
 
@@ -712,7 +712,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    xarc(1) = rtfcin + tfcth/2.0d0
+    xarc(1) = r_tf_inleg_mid + tfcth/2.0d0
     xarc(2) = rtot - tfthko/2.0d0
     xarc(3) = xarc(2)
     xarc(4) = xarc(2)
