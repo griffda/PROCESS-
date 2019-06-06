@@ -334,7 +334,7 @@ contains
     
     radius = radius + deltf
     call obuild(outfile,'Gap',deltf,radius,'(deltf)')
-    call ovarre(mfile,'TF coil inboard leg inuslation gap (m)','(deltf)',deltf)
+    call ovarre(mfile,'TF coil inboard leg insulation gap (m)','(deltf)',deltf)
 
     radius = radius + thshield
     call obuild(outfile,'Thermal shield',thshield,radius,'(thshield)')
