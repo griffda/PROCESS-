@@ -2040,7 +2040,7 @@ implicit none
 
     case (9) ! FIESTA ST fit
 
-       fq = (0.716D-6) * (1.0D0 + 2.472D0*eps**2.866D0) * kappa95**2.144D0 * triang95**0.056D0
+       fq = 0.716D0 * (1.0D0 + 2.472D0*eps**2.866D0) * kappa95**2.144D0 * triang95**0.056D0
 
     case default
        idiags(1) = icurr ; call report_error(77)
