@@ -606,7 +606,7 @@ subroutine check
         ohcth  = 0.0D0
         iblnkith = 0
 
-        if (icurr /= 2) then
+        if (icurr /= 2 .and. icurr /= 9) then
             idiags(1) = icurr ; call report_error(37)
         end if
         iohcl  = 0

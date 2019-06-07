@@ -358,7 +358,8 @@ module physics_variables
   !+ad_varc         <LI> = 5 Todd empirical scaling I;
   !+ad_varc         <LI> = 6 Todd empirical scaling II;
   !+ad_varc         <LI> = 7 Connor-Hastie model;
-  !+ad_varc         <LI> = 8 Sauter scaling allowing negative triangularity</UL>
+  !+ad_varc         <LI> = 8 Sauter scaling allowing negative triangularity;
+  !+ad_varc         <LI> = 9 FIESTA ST fit </UL>
   integer :: icurr = 4
   !+ad_vars  idensl /7/ : switch for density limit to enforce (constraint equation 5):<UL>
   !+ad_varc          <LI> = 1 old ASDEX;

@@ -622,7 +622,7 @@ contains
           write(outfile,*) ' '
           obsolete_var = .true.
        case ('icurr')
-          call parse_int_variable('icurr', icurr, 1, 8, &
+          call parse_int_variable('icurr', icurr, 1, 9, &
                'Switch for plasma current scaling')
        case ('idensl')
           call parse_int_variable('idensl', idensl, 1, 7, &
