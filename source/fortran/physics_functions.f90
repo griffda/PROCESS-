@@ -1302,9 +1302,6 @@ subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pra
     else if (imprad_model == 1) then
        call imprad(pbrempv, plinepv, pimpcore, pimptot)
        pedgeradpv = pimptot - pimpcore
-       ! We approximate that all edge radiaiton is produced near
-       ! the X points, therefore to model double null we double the 
-       ! edge radiation
     else
        idiags(1) = imprad_model ; call report_error(82)
     end if

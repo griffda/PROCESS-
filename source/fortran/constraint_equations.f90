@@ -596,41 +596,21 @@ contains
           !#=# physics
           !#=#=# flhthresh, plhthresh
 
-          ! check for divertor configuration
-          !if (idivrt == 2) then
-            ! Double Null
-            ! flhthresh |  f-value for L-H power threshold
-            ! plhthresh |  L-H mode power threshold (MW)
-            ! pdivt     |  power conducted to the divertor region (MW)
-               cc(i) = -(1.0D0 - flhthresh * plhthresh / (pdivt))
+          ! flhthresh |  f-value for L-H power threshold
+          ! plhthresh |  L-H mode power threshold (MW)
+          ! pdivt     |  power conducted to the divertor region (MW)
+          cc(i) = -(1.0D0 - flhthresh * plhthresh / (pdivt))
             
-            if (present(con)) then
-                con(i) = plhthresh
-                err(i) = plhthresh -  pdivt / flhthresh
-                if (flhthresh > 1.0D0) then
-                  symbol(i) = '>'
-                else
-                  symbol(i) = '<'
-                end if
-                units(i) = 'MW'
-            end if
-
-          !else
-            !Single null
-          !  cc(i) = -(1.0D0 - flhthresh * plhthresh / pdivt)
-
-           ! if (present(con)) then
-           !     con(i) = plhthresh
-           !     err(i) = plhthresh - pdivt / flhthresh
-           !     if (flhthresh > 1.0D0) then
-           !       symbol(i) = '>'
-           !     else
-           !       symbol(i) = '<'
-           !     end if
-           !     units(i) = 'MW'
-            !end if
-          !end if 
-
+          if (present(con)) then
+             con(i) = plhthresh
+             err(i) = plhthresh -  pdivt / flhthresh
+             if (flhthresh > 1.0D0) then
+                symbol(i) = '>'
+             else
+                symbol(i) = '<'
+             end if
+             units(i) = 'MW'
+          end if
 
        case (16)  ! Equation for net electric power lower limit
           !#=# heat_transport
@@ -1572,8 +1552,7 @@ contains
            ! fpsep             | f-value for consistency of two values of separatrix power
            ! psep_kallenbach   | Power conducted through the separatrix, as calculated by the divertor model [W].
            ! pdivt             |  power to conducted to the divertor region (MW)
-           cc(i) = 1.0d0 - fpsep * (psep_kallenbach/1.0d6) / pdivmax
-           !cc(i) = 1.0d0 - (psep_kallenbach/1.0d6) / pdivt
+           cc(i) = 1.0d0 - (psep_kallenbach/1.0d6) / pdivt
 
            if (present(con)) then
              con(i) = psep_kallenbach/1.0d6

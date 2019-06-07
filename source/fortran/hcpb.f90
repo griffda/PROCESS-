@@ -268,19 +268,15 @@ contains
     if (idivrt == 2) then 
       ! Double Null Configuration 
       ! Power to the first wall (MW)
-      !pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
       pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * (1.0D0-2.0D0*fdiv) * pneutmw
 
       ! Power to the blanket (MW)
-      !pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
       pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult  * (1.0D0-2.0D0*fdiv) * pneutmw
     
       ! Power to the shield(MW)
-      !pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
       pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * (1.0D0-2.0D0*fdiv) * pneutmw
 
       ! Power to the TF coils (MW)
-      !ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
       ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult  * (1.0D0-2.0D0*fdiv) * pneutmw
     else
       ! Single Null Configuration
@@ -1119,7 +1115,6 @@ contains
     implicit none
     real(kind=double):: t_in_compressor, dt_he, fpump, pfactor, p_plasma
 
-    ! TODO - is this consistent with a double null machine?
     ! Radiation power incident on divertor (MW)
     if (idivrt == 2) then
       ! Double null configuration

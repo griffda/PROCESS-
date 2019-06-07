@@ -558,14 +558,8 @@ implicit none
     palpfwmw = palpmw * (1.0D0-falpha)
 
     !  Density limit
-
-    !if (idivrt == 2) then
-    !  call culdlm(bt,idensl,pdivmax,plascur,prn1,qstar,q95, &
-    !     rmajor,rminor,sarea,zeff,dlimit,dnelimt)
-    !else
     call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
          rmajor,rminor,sarea,zeff,dlimit,dnelimt)
-    !end if
 
     if (ipedestal .ne. 3) then
 
@@ -637,16 +631,14 @@ implicit none
     peakradwallload = photon_wall *peakfactrad 
 
     ! Calculate the target imbalances 
-    ! Double null only ! <- not for the first step
     ! find the total power into the targets
     ptarmw =  pdivt * (1.0D0 - rad_fraction_sol) 
     ! use ftar to find deltarsep
+    ! Parameters taken from double null machine 
+    ! D. Brunner et al 
     lambdaio = 1.57d-3
     drsep = - 2.0d0 * 1.5d-3 * atanh(2.0d0 *(ftar - 0.5d0)) ! this needs updating
     ! Find the innner and outer lower target imbalance
-    ! Parameters taken from double null machine 
-    ! D. Brunner et al 
-    ! fio = 0.25d0 * ( 1.0d0 - 1.0d0/(1.0d0+exp(drsep/lambdao))) ! this needs to be changed 
     fio = 0.16d0 + (0.16d0 - 0.41d0) * (1.0d0 - ( 2.0d0 / (1.0d0 + exp(-(drsep/lambdaio)**2))))
     if (idivrt == 2) then
       ! Double Null configuration
@@ -690,7 +682,6 @@ implicit none
        endif
 
        write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', impurity_arr(impvardiv)%frac, ', ',  impvardiv  
-       ! frac is zero, impvardiv is 9 which is default. However, the initial set value of impurity 9 is zero...need to set that impurity fraction to AT LEAST the min value, i.e. fzmin, see above
 
     endif
 
