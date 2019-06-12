@@ -265,7 +265,7 @@ contains
 
        call oshead(outfile,'Magnets')
 
-       if (itfsup == 0) then  !  Resistive TF coils
+       if (itfsup /= 1) then  !  Resistive TF coils
           if (itart == 1) then
              call ocosts(outfile,'(c22211)','Centrepost costs (M$)',c22211)
           else
@@ -1367,7 +1367,7 @@ contains
     cmlsa(3) = 0.9225D0
     cmlsa(4) = 1.0000D0
 
-    if (itfsup == 0) then  !  Resistive TF coils
+    if (itfsup /= 1) then  !  Resistive TF coils
 
        !  Account 222.1.1 : Inboard TF coil legs
 
@@ -1908,7 +1908,7 @@ contains
 
     !  Account 225.1.5 : TF coil bussing
 
-    if (itfsup == 0) then
+    if (itfsup /= 1) then
        c22515 = 1.0D-6 * uctfbus * tfbusmas
     else
        c22515 = 1.0D-6 * ucbus * cpttf * tfbusl
