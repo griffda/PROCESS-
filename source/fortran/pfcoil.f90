@@ -220,7 +220,12 @@ contains
     !  First break up Central Solenoid solenoid into 'filaments'
 
     !  Central Solenoid radius
-    rohc = bore + 0.5D0*ohcth
+
+    if (itart == 1) then
+       rohc = bore + tfcth + gapoh + 0.5D0*ohcth
+    else
+       rohc = bore + 0.5D0*ohcth
+    end if
 
     !  nfxf is the total no of filaments into which the Central Solenoid is split,
     !  if present
@@ -276,6 +281,7 @@ contains
        else if (ipfloc(j) == 2) then
 
           !  PF coil is on top of the TF coil
+
           do k = 1,ncls(j)
              rcls(j,k) = rmajor + rpf2*triang*rminor
              if (itart==1.and.itartpf==0) then
@@ -295,11 +301,12 @@ contains
        else if (ipfloc(j) == 3) then
 
           !  PF coil is radially outside the TF coil
+
           do k = 1,ncls(j)
              zcls(j,k) = rminor * zref(j) * signn(k)
              !  Coil radius follows TF coil curve for SC TF (D-shape)
              !  otherwise stacked for resistive TF (rectangle-shape)
-             if (itfsup /= 1) then
+             if (itfsup == 0) then
                  rcls(j,k) = rclsnorm
              else
                  rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2)
@@ -316,6 +323,7 @@ contains
     if (cohbop /= 0.0D0) then
 
        !  Find currents for plasma initiation to null field across plasma
+
        npts = 32  !  Number of test points across plasma midplane
        if (npts > nptsmx) then
           idiags(1) = npts ; idiags(2) = nptsmx
@@ -323,6 +331,7 @@ contains
        end if
 
        !  Position and B-field at each test point
+
        drpt = 2.0D0 * rminor / (npts-1)
        rpt0 = rmajor - rminor
 
@@ -334,6 +343,7 @@ contains
        end do
 
        !  Calculate currents in coils to produce the given field
+
        call efc(ngrpmx,nclsmx,nptsmx,nfixmx,lrow1,lcol1,npts,rpts, &
             zpts,brin,bzin,nfxf,rfxf,zfxf,cfxf,ngrp,ncls,rcls,zcls, &
             alfapf,bfix,gmat,bvec,rc,zc,cc,xc,umat,vmat,sigma, &
@@ -342,6 +352,7 @@ contains
     end if
 
     !  Simple coil current scaling for STs (good only for A < about 1.8)
+
     if (itart==1.and.itartpf==0) then
 
        do i = 1,ngrp
@@ -349,17 +360,20 @@ contains
           if (ipfloc(i) == 1) then
 
              !  PF coil is stacked on top of the Central Solenoid
+
              ccls(i) = 0.0D0
              idiags(1) = i ; call report_error(69)
 
           else if (ipfloc(i) == 2) then
 
              !  PF coil is on top of the TF coil
+
              ccls(i) = 0.3D0 * aspect**1.6D0 * plascur
 
           else if (ipfloc(i) == 3) then
 
              !  PF coil is radially outside the TF coil
+
              ccls(i) = -0.4D0 * plascur
 
           else
@@ -370,12 +384,14 @@ contains
        end do
 
        !  Vertical field (T)
+
        bvert = -1.0D-7 * plascur/rmajor * &
             (log(8.0D0*aspect) + betap + (rli/2.0D0) - 1.5D0)
 
     else
 
        !  Conventional aspect ratio scaling
+
        nfxf0 = 0 ; ngrp0 = 0 ; nocoil = 0
        do i = 1,ngrp
 

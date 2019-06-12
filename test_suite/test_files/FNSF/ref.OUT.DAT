@@ -12,15 +12,15 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : ./process.exe
+   Program : process.exe
    Version : 1.0.15   Release Date :: 2019-03-15
-   Tag No. : 1.0.15-87-g47436f87 code contains untracked changes
-   Git log : Merge branch '820-nstx' into 'develop',
- Date/time : 11 Jun 2019 16:34:20 +01:00(hh:mm) UTC
-      User : skahn
-  Computer : temppc
- Directory : /home/skahn/PROCESS/develop
-     Input :
+   Tag No. : 1.0.15-63-gffe804c9
+   Git log : Changed Lang 2012 scaling to SI units #821,
+ Date/time : 14 May 2019 15:07:14 +01:00(hh:mm) UTC
+      User : smuldrew
+  Computer : G0764
+ Directory : /home/smuldrew/test
+     Input : ref.IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -215,7 +215,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Density limit (enforced) (/m3)                                           (boundu(9)*dnelimt)       3.274E+20  OP 
  Helium ion density (thermalised ions only) / electron density            (ralpne)                  8.000E-02     
  
- Impurities
+ Plasma impurity model                                                    (imprad_model)                    1     
+ New generalised impurity model
  
  Plasma ion densities / electron density:
  H_ concentration                                                         (fimp(01)                 8.207E-01  OP 
@@ -522,7 +523,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Energy and Forces :
  
- Total stored energy in TF coils (GJ)                                     (estotftgj)               1.049E+00     
+ Total stored energy in TF coils (GJ)                                     (estotf*tfno)             1.049E+00     
  Vertical force on inboard leg (N)                                        (vforce)                  5.834E+06     
  Centering force on inboard leg (N/m)                                     (cforce)                  0.000E+00     
  Radial stress (MPa)                                                      (sigrad)                  5.275E+01     
@@ -555,28 +556,6 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
    3          3.818          0.000
    4          3.818         -4.121
    5          0.539         -4.121
- 
- ****************************************** Superconducting TF Coils ******************************************
- 
- Superconductor switch                                                    (isumat)                          1     
- Superconductor used: Nb3Sn
-   (ITER Jcrit model, standard parameters)
- Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
- Critical temperature at zero field and strain (K)                        (tc0m)                    1.606E+01     
- 
- Helium temperature at peak field (= superconductor temperature) (K)      (thelium)                 4.500E+00     
- Total helium fraction inside cable space                                 (fhetot)                   Infinity  OP 
- Copper fraction of conductor                                             (fcutfsu)                 6.900E-01     
- Strain on superconductor                                                 (strncon_tf)             -5.000E-03     
- Critical current density in superconductor (A/m2)                        (jcritsc)                       NaN  OP 
- Critical current density in strand (A/m2)                                (jcritstr)                      NaN  OP 
- Critical current density in winding pack (A/m2)                          (jwdgcrt)                       NaN  OP 
- Actual current density in winding pack (A/m2)                            (jwdgop)                  0.000E+00  OP 
- Minimum allowed temperature margin in superconductor (K)                 (tmargmin_tf)             0.000E+00     
- Actual temperature margin in superconductor (K)                          (tmarg)                         NaN  OP 
- Critical current (A)                                                     (icrit)                         NaN  OP 
- Actual current (A)                                                       (cpttf)                   2.125E+06  OP 
- Actual current / critical current                                        (iooic)                         NaN  OP 
  
  *************************************** Centrepost Coolant Parameters ****************************************
  
@@ -1289,8 +1268,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
 155     2   CHECK: boundl(6) has been raised to ensure dene > neped                         
  62     1   RADIALB: Ripple result may be inaccurate, as the fit has been extrapolated      
 143     1   RADIALB: (TF coil ripple calculation) (R+a)/rtot out of fitted range            
-157     2   SUPERCON: Temperature margin iteration exited prematurely                       
- Final error identifier                                                   (error_id)                      157     
+ Final error identifier                                                   (error_id)                      143     
  
  ******************************************* End of PROCESS Output ********************************************
  
@@ -1429,6 +1407,7 @@ alphan   = 0.25     *Density profile index
 alphat   = 0.5      *Temperature profile index
 aspect   = 1.75     *Aspect ratio
 bt       = 3.0      *Toroidal field on axis (T)
+cfe0     = 2.5E-4   *Seeded high-Z impurity fraction (n_highZ / n_e)
 dnbeta   = 4.1      *(Troyon-like) coefficient for beta scaling
 epbetmax = 10.0     *Maximum (eps*beta_poloidal) (constraint equation 6)
 ibss     = 3        *Switch for bootstrap current scaling (3: Wilson numerical scaling)
@@ -1560,6 +1539,7 @@ ipowerflow = 0      *Switch for power flow model (0: pre-2014 version)
 
 *------------Impurity Radiation Variables----------*
 
+imprad_model = 1 * Switch for impurity radiation model
 coreradius = 0.75 * Normalised radius defining the 'core' region
 coreradiationfraction = 0.6 * fraction of radiation from core region lost
 
