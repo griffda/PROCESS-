@@ -2,14 +2,13 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.15   "
- Date_of_run_____________________________________________________________ (date)________________________     "11/06/2019"
- Time_of_run_____________________________________________________________ (time)________________________     "16:02"
- User____________________________________________________________________ (username)____________________     "skahn"   
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.14   "
+ Date_of_run_____________________________________________________________ (date)________________________     "17/01/2019"
+ Time_of_run_____________________________________________________________ (time)________________________     "10:15"
+ User____________________________________________________________________ (username)____________________     "smuldrew"
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "HELIAS-5B                                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.15-87-g47436f87"                                                                               
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch '820-nstx' into 'develop',"                                                           
- Input_filename__________________________________________________________ (fileprefix)__________________     "                              "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.14-21-gfcbc9d4"                                                                                
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Made photon_wall and rad_fraction global variables. Added to stellarat"                            
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -43,7 +42,7 @@
  # Power Reactor Costs (1990 US$) #
  First_wall_/_blanket_life_(years)_______________________________________ (fwbllife)____________________      1.7552E+01    
  Divertor_life_(years)___________________________________________________ (divlife.)____________________      8.6920E+00    
- Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      1.0356E+02    
+ Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      1.0311E+02    
  # Detailed Costings (1990 US$) #
  Acc.22_multiplier_for_Nth_of_a_kind_____________________________________ (fkind)_______________________      1.0000E+00    
  Level_of_Safety_Assurance_______________________________________________ (lsa)_________________________              2    
@@ -102,10 +101,10 @@
  # Power Conditioning #
  TF_coil_power_supplies_cost_(M$)________________________________________ (c22511)______________________      8.4431E+00    
  TF_coil_breakers_cost_(M$)______________________________________________ (c22512)______________________      9.2416E-02    
- TF_coil_dump_resistors_cost_(M$)________________________________________ (c22513)______________________      2.6889E+01    
+ TF_coil_dump_resistors_cost_(M$)________________________________________ (c22513)______________________      1.2500E-01    
  TF_coil_instrumentation_and_control_(M$)________________________________ (c22514)______________________      1.5000E+01    
  TF_coil_bussing_cost_(M$)_______________________________________________ (c22515)______________________      2.0571E+02    
- Total,_TF_coil_power_costs_(M$)_________________________________________ (c2251)_______________________      2.5614E+02    
+ Total,_TF_coil_power_costs_(M$)_________________________________________ (c2251)_______________________      2.2937E+02    
  PF_coil_power_supplies_cost_(M$)________________________________________ (c22521)______________________      0.0000E+00    
  PF_coil_instrumentation_and_control_(M$)________________________________ (c22522)______________________      0.0000E+00    
  PF_coil_bussing_cost_(M$)_______________________________________________ (c22523)______________________      0.0000E+00    
@@ -115,7 +114,7 @@
  PF_coil_ac_breakers_cost_(M$)___________________________________________ (c22527)______________________      0.0000E+00    
  Total,_PF_coil_power_costs_(M$)_________________________________________ (c2252)_______________________      0.0000E+00    
  Total,_energy_storage_cost_(M$)_________________________________________ (c2253)_______________________      0.0000E+00    
- Total_account_225_cost_(M$)_____________________________________________ (c225)________________________      2.5614E+02    
+ Total_account_225_cost_(M$)_____________________________________________ (c225)________________________      2.2937E+02    
  # Heat Transport System #
  Pumps_and_piping_system_cost_(M$)_______________________________________ (cpp)_________________________      6.1277E+01    
  Primary_heat_exchanger_cost_(M$)________________________________________ (chx)_________________________      7.5984E+01    
@@ -135,7 +134,7 @@
  # Maintenance Equipment #
  Maintenance_equipment_cost_(M$)_________________________________________ (c229)________________________      3.0000E+02    
  # Total Account 22 Cost #
- Total_account_22_cost_(M$)______________________________________________ (c22)_________________________      4.1607E+03    
+ Total_account_22_cost_(M$)______________________________________________ (c22)_________________________      4.1340E+03    
  # Turbine Plant Equipment #
  Turbine_plant_equipment_cost_(M$)_______________________________________ (c23)_________________________      2.6002E+02    
  # Electric Plant Equipment #
@@ -150,19 +149,19 @@
  # Heat Rejection System #
  Heat_rejection_system_cost_(M$)_________________________________________ (c26)_________________________      7.1773E+01    
  # Plant Direct Cost #
- Plant_direct_cost_(M$)__________________________________________________ (cdirt)_______________________      5.5046E+03    
+ Plant_direct_cost_(M$)__________________________________________________ (cdirt)_______________________      5.4778E+03    
  # Reactor Core Cost #
  Reactor_core_cost_(M$)__________________________________________________ (crctcore)____________________      2.7513E+03    
  # Indirect Cost #
- Indirect_cost_(M$)______________________________________________________ (c9)__________________________      1.5446E+03    
+ Indirect_cost_(M$)______________________________________________________ (c9)__________________________      1.5371E+03    
  # Total Contingency #
- Total_contingency_(M$)__________________________________________________ (ccont)_______________________      1.0574E+03    
+ Total_contingency_(M$)__________________________________________________ (ccont)_______________________      1.0522E+03    
  # Constructed Cost #
- Constructed_cost_(M$)___________________________________________________ (concost)_____________________      8.1066E+03    
+ Constructed_cost_(M$)___________________________________________________ (concost)_____________________      8.0671E+03    
  # Interest during Construction #
- Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      1.2160E+03    
+ Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      1.2101E+03    
  # Total Capital Investment #
- Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      9.3225E+03    
+ Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      9.2772E+03    
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    
  Allowable_divertor_heat_fluence_(MW-yr/m2)______________________________ (adivflnc)____________________      2.5000E+01    
@@ -212,6 +211,7 @@
  Hot_beam_density_(/m3)__________________________________________________ (dnbeam)______________________      0.0000E+00 OP 
  Density_limit_from_scaling_(/m3)________________________________________ (dnelimt)_____________________      1.1118E+20 OP 
  Helium_ion_density_(thermalised_ions_only)_/_electron_density___________ (ralpne)______________________      1.0000E-01    
+ Plasma_impurity_model___________________________________________________ (imprad_model)________________              1    
  H__concentration________________________________________________________ (fimp(01)_____________________      7.9950E-01 OP 
  He_concentration________________________________________________________ (fimp(02)_____________________      1.0000E-01    
  Be_concentration________________________________________________________ (fimp(03)_____________________      0.0000E+00    
@@ -446,10 +446,7 @@
  Plasma_chamber_volume_(m3)______________________________________________ (volume)______________________      1.7814E+03 OP 
  Chamber_pressure_after_burn_(Pa)________________________________________ (pend)________________________      4.3292E-01 OP 
  Chamber_pressure_before_burn_(Pa)_______________________________________ (pstart)______________________      4.3292E-03    
- Allowable_pumping_time_switch___________________________________________ (dwell_pump)__________________              0    
  Dwell_time_between_burns_(s)____________________________________________ (tdwell.)_____________________      1.8000E+03    
- CS_ramp-up_time_burns_(s)_______________________________________________ (tramp.)______________________      0.0000E+00    
- Allowable_pumping_time_between_burns_(s)________________________________ (tpump)_______________________      1.8000E+03    
  Required_D-T_pump_speed_(m3/s)__________________________________________ (s(2))________________________      4.5576E+00 OP 
  D-T_pump_speed_provided_(m3/s)__________________________________________ (snet(2))_____________________      6.8140E+01 OP 
  Divertor_chamber_gas_pressure_(Pa)______________________________________ (prdiv)_______________________      3.6000E-01    
@@ -639,7 +636,7 @@ rmajor   = 22.0         *Plasma major radius (m)
 ssync    = 0.6          *Synchrotron wall reflectivity factor
 te       = 7.0          *Volume averaged electron temperature (keV)
 tratio   = 0.95         *Ion temperature / electron temperature
-*zfear    = 0            *High-Z impurity switch (0: Iron)
+zfear    = 0            *High-Z impurity switch (0: Iron)
 
 *--------------Stellarator Variables---------------*
 
@@ -710,7 +707,7 @@ etath    = 0.4          *Thermal to electric conversion efficiency; if seconday_
 
 *------------Impurity Radiation Module-------------*
 
-*imprad_model = 1        *Switch for impurity radiation model
+imprad_model = 1        *Switch for impurity radiation model
 coreradius = 0.6        *Normalised radius defining the 'core' region
 
 fimp(1)  = 1.0          *Hydrogen (fraction calculated by code)
@@ -776,4 +773,5 @@ tlife    = 40.0         *Plant life (years)
 ucblvd   = 280.0        *Unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0E5        *Cost of divertor blade ($)
 ucme     = 3.0E8        *Unit cost of maintenance equipment ($)
+
 

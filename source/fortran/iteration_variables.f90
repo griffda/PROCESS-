@@ -177,7 +177,7 @@ subroutine loadxc
      case (58) ; xcm(i) = thwcndut
      case (59) ; xcm(i) = fcutfsu
      case (60) ; xcm(i) = cpttf
-        if ((istell == 1).or.(itfsup /= 1)) call report_error(49)
+        if ((istell == 1).or.(itfsup == 0)) call report_error(49)
      case (61) ; xcm(i) = gapds
      case (62) ; xcm(i) = fdtmp
      case (63) ; xcm(i) = ftpeak

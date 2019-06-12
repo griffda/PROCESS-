@@ -225,6 +225,7 @@ ipowerflow = 0 * Switch for power flow model;
 
 *------------Impurity Radiation Module-------------*
 
+imprad_model = 1 * Switch for impurity radiation model;
 coreradius = 0.75 * Normalised radius defining the 'core' region
 coreradiationfraction = 0.6 * Fraction of radiation from 'core' region that is subtracted from the loss power
 fimp(1) = 1.0

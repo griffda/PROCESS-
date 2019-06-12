@@ -128,7 +128,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (itfsup /= 1) then  !  Non-superconducting TF coils
+    if (itfsup == 0) then  !  Non-superconducting TF coils
 
        !  TF coil bus length (m)
        !  Assume power supplies are 5m away

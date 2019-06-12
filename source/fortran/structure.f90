@@ -94,7 +94,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine struct(ai,r0,a,akappa,b0,itfsup,ipfres,tfboreh,tfhmax, &
+  subroutine struct(ai,r0,a,akappa,b0,itfsup,ipfres,boreh,tfhmax, &
        shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass, &
        dewmass,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
        gsm)
@@ -114,7 +114,7 @@ contains
     !+ad_argc                           are superconducting
     !+ad_args  ipfres : input integer : switch denoting whether PF coils
     !+ad_argc                           are resistive
-    !+ad_args  tfboreh : input real : TF coil horizontal bore (m)
+    !+ad_args  boreh : input real : TF coil horizontal bore (m)
     !+ad_args  tfhmax : input real : TF coil max height (m)
     !+ad_args  shldmass : input real : total mass of shield (kg)
     !+ad_args  dvrtmass : input real : total mass of divertor and assoc. structure (kg)
@@ -149,7 +149,7 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: ai,r0,a,akappa,b0,tfboreh,tfhmax, &
+    real(kind(1.0D0)), intent(in) :: ai,r0,a,akappa,b0,boreh,tfhmax, &
          shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass,dewmass
     integer, intent(in) :: outfile,iprint,itfsup,ipfres
     real(kind(1.0D0)), intent(out) :: fncmass,aintmass,clgsmass,coldmass,gsm
@@ -161,16 +161,20 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Outer PF coil fence (1990 ITER fit)
+
     fncmass = 2.1D-11*ai*ai*r0*akappa*a
 
     !  Intercoil support between TF coils to react overturning moment
     !  (scaled to 1990 ITER fit)
-    aintmass = 1.4D6 * (ai/2.2D7) * b0/4.85D0 * tfboreh**2/50.0D0
+
+    aintmass = 1.4D6 * (ai/2.2D7) * b0/4.85D0 * boreh**2/50.0D0
 
     !  Total mass of coils plus support plus vacuum vessel + cryostat
+
     coilmass = tfmass + pfmass + aintmass + dewmass
 
     !  Total mass of cooled components
+
     coldmass = 0.0D0
     if (itfsup == 1) coldmass = coldmass + tfmass + aintmass + dewmass
     if (ipfres /= 1) coldmass = coldmass + pfmass

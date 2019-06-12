@@ -12,34 +12,21 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : ./../../../bin/process.exe
-   Version : 1.0.15   Release Date :: 2019-03-15
-   Tag No. : 1.0.15-87-g47436f87 code contains untracked changes
-   Git log : Merge branch '820-nstx' into 'develop',
- Date/time : 11 Jun 2019 16:02:06 +01:00(hh:mm) UTC
-      User : skahn
-  Computer : temppc
- Directory : /home/skahn/PROCESS/develop/test_suite/test_files/stellarator
-     Input :
- Run title : HELIAS-5B
-  Run type : Reactor concept design: Stellarator model, (c) CCFE
+   Program : process.exe
+   Version : 1.0.14   Release Date :: 2018-11-09
+   Tag No. : "1.0.14-21-gfcbc9d4 Code used contains Untracked Changes"
+   Last commit message : "Made photon_wall and rad_fraction global variables. Added to stellarat"
+      User : smuldrew
+ Directory : /home/smuldrew/process/latest/test_suite/test_files/stellarator
  
  **************************************************************************************************************
  
-   Equality constraints : 04
- Inequality constraints : 00
-      Total constraints : 04
-    Iteration variables : 05
-         Max iterations : 100
-       Figure of merit  : +07  -- minimise capital cost.
-  Convergence parameter : 1.00E-06
- 
- **************************************************************************************************************
- 
+ PROCESS 1.0.14 : Run on 17 Jan 2019 10:15:17 +00:00(hh:mm) UTC by G0764
+ Reactor concept design: Stellarator model, (c) CCFE
+ HELIAS-5B
  (Please include this header in any models, presentations and papers based on these results)
  
  **************************************************************************************************************
- 
  Quantities listed in standard row format are labelled as follows in columns 112-114:
  ITV : Active iteration variable (in any output blocks)
  OP  : Calculated output quantity
@@ -97,15 +84,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  First wall / blanket life (years)                                        (fwbllife)                   17.552     
  Divertor life (years)                                                    (divlife.)                    8.692     
- Cost of electricity (m$/kWh)                                             (coe)                       103.562     
+ Cost of electricity (m$/kWh)                                             (coe)                       103.110     
  
  Power Generation Costs :
  
                                                                            Annual Costs, M$       COE, m$/kWh
 
- Capital Investment                                                                605.97               92.24
+ Capital Investment                                                                603.02               91.79
  Operation & Maintenance                                                            62.81                9.56
- Decommissioning Fund                                                                5.12                0.78
+ Decommissioning Fund                                                                5.10                0.78
  Fuel Charge Breakdown
 
      Blanket & first wall                                                    0.00                0.00
@@ -116,7 +103,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
      Waste Disposal                                                          3.60                0.55
  Total Fuel Cost                                                                     6.47                0.99
 
- Total Cost                                                                        680.37              103.56
+ Total Cost                                                                        677.39              103.11
  
  **************************************** Detailed Costings (1990 US$) ****************************************
  
@@ -193,10 +180,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  (c22511)            TF coil power supplies cost (M$)                                                              8.44
  (c22512)            TF coil breakers cost (M$)                                                                    0.09
- (c22513)            TF coil dump resistors cost (M$)                                                             26.89
+ (c22513)            TF coil dump resistors cost (M$)                                                              0.12
  (c22514)            TF coil instrumentation and control (M$)                                                     15.00
  (c22515)            TF coil bussing cost (M$)                                                                   205.71
- (c2251)             Total, TF coil power costs (M$)                                                             256.14
+ (c2251)             Total, TF coil power costs (M$)                                                             229.37
  (c22521)            PF coil power supplies cost (M$)                                                              0.00
  (c22522)            PF coil instrumentation and control (M$)                                                      0.00
  (c22523)            PF coil bussing cost (M$)                                                                     0.00
@@ -207,7 +194,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  (c2252)             Total, PF coil power costs (M$)                                                               0.00
  (c2253)             Total, energy storage cost (M$)                                                               0.00
  
- (c225)              Total account 225 cost (M$)                                                                 256.14
+ (c225)              Total account 225 cost (M$)                                                                 229.37
  
  **************************** Heat Transport System *****************************
  
@@ -239,7 +226,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  **************************** Total Account 22 Cost *****************************
  
- (c22)               Total account 22 cost (M$)                                                                 4160.72
+ (c22)               Total account 22 cost (M$)                                                                 4133.95
  
  *************************** Turbine Plant Equipment ****************************
  
@@ -265,7 +252,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                     5504.59
+ (cdirt)             Plant direct cost (M$)                                                                     5477.83
  
  ****************************** Reactor Core Cost *******************************
  
@@ -273,23 +260,23 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ******************************** Indirect Cost *********************************
  
- (c9)                Indirect cost (M$)                                                                         1544.59
+ (c9)                Indirect cost (M$)                                                                         1537.08
  
  ****************************** Total Contingency *******************************
  
- (ccont)             Total contingency (M$)                                                                     1057.38
+ (ccont)             Total contingency (M$)                                                                     1052.24
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed cost (M$)                                                                      8106.56
+ (concost)           Constructed cost (M$)                                                                      8067.14
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          1215.98
+ (moneyint)          Interest during construction (M$)                                                          1210.07
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                              9322.54
+ (capcost)           Total capital investment (M$)                                                              9277.21
  
  ********************************************* Plant Availability *********************************************
  
@@ -357,7 +344,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Density limit from scaling (/m3)                                         (dnelimt)                 1.112E+20  OP 
  Helium ion density (thermalised ions only) / electron density            (ralpne)                  1.000E-01     
  
- Impurities
+ Plasma impurity model                                                    (imprad_model)                    1     
+ New generalised impurity model
  
  Plasma ion densities / electron density:
  H_ concentration                                                         (fimp(01)                 7.995E-01  OP 
@@ -701,10 +689,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma chamber volume (m3)                                               (volume)                  1.781E+03  OP 
  Chamber pressure after burn (Pa)                                         (pend)                    4.329E-01  OP 
  Chamber pressure before burn (Pa)                                        (pstart)                  4.329E-03     
- Allowable pumping time switch                                            (dwell_pump)                      0     
  Dwell time between burns (s)                                             (tdwell.)                 1.800E+03     
- CS ramp-up time burns (s)                                                (tramp.)                  0.000E+00     
- Allowable pumping time between burns (s)                                 (tpump)                   1.800E+03     
  Required D-T pump speed (m3/s)                                           (s(2))                    4.558E+00  OP 
  D-T pump speed provided (m3/s)                                           (snet(2))                 6.814E+01  OP 
  
@@ -1005,7 +990,7 @@ rmajor   = 22.0         *Plasma major radius (m)
 ssync    = 0.6          *Synchrotron wall reflectivity factor
 te       = 7.0          *Volume averaged electron temperature (keV)
 tratio   = 0.95         *Ion temperature / electron temperature
-*zfear    = 0            *High-Z impurity switch (0: Iron)
+zfear    = 0            *High-Z impurity switch (0: Iron)
 
 *--------------Stellarator Variables---------------*
 
@@ -1076,7 +1061,7 @@ etath    = 0.4          *Thermal to electric conversion efficiency; if seconday_
 
 *------------Impurity Radiation Module-------------*
 
-*imprad_model = 1        *Switch for impurity radiation model
+imprad_model = 1        *Switch for impurity radiation model
 coreradius = 0.6        *Normalised radius defining the 'core' region
 
 fimp(1)  = 1.0          *Hydrogen (fraction calculated by code)
@@ -1142,4 +1127,5 @@ tlife    = 40.0         *Plant life (years)
 ucblvd   = 280.0        *Unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0E5        *Cost of divertor blade ($)
 ucme     = 3.0E8        *Unit cost of maintenance equipment ($)
+
 

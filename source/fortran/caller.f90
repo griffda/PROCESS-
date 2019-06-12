@@ -187,36 +187,33 @@ subroutine caller(xc,nvars)
      call vbuild(nout,0)
   endif
 
-
   ! startup model (not used) !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   !call startup(nout,0)  !  commented-out for speed reasons
 
-  
   ! Toroidal field coil model !
   call tfcoil(nout,0)
 
 
   ! Toroidal field coil superconductor model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  if ( itfsup == 1 ) then
-     call tfspcall(nout,0)
-  end if 
+
+  call tfspcall(nout,0)
 
   ! Poloidal field and Central Solenoid model
   call pfcoil
-
   ! Poloidal field coil inductance calculation
   call induct(nout,0)
-
   ! Volt-second capability of PF coil set
   call vsec
 
 
+
   ! Pulsed reactor model !
   !!!!!!!!!!!!!!!!!!!!!!!!
-  call pulse(nout,0)
 
+  call pulse(nout,0)
 
   ! Blanket model !
   !!!!!!!!!!!!!!!!!!
@@ -239,7 +236,6 @@ subroutine caller(xc,nvars)
   else if (iblanket == 4) then      ! KIT HCLL model
      call kit_hcll(nout, 0)
   end if
-
 
   ! Divertor Model !
   !!!!!!!!!!!!!!!!!!
@@ -268,9 +264,9 @@ subroutine caller(xc,nvars)
 
   end if
 
-
   ! Structure Model !
   !!!!!!!!!!!!!!!!!!!
+
   call strucall(nout,0)
 
   ! Tight aspect ratio machine model !
