@@ -209,7 +209,9 @@ subroutine ode ( f, neqn, y, t, tout, relerr, abserr, iflag, work, iwork )
   end if
 
   return
-end
+! SJP Issue #835
+! For Intel compliance add "end subroutine"
+end subroutine
 subroutine de ( f, neqn, y, t, tout, relerr, abserr, iflag, yy, wt, p, yp, &
   ypout, phi, alpha, beta, sig, v, w, g, phase1, psi, x, h, hold, start, &
   told, delsgn, ns, nornd, k, kold, isnold )
@@ -552,7 +554,9 @@ subroutine de ( f, neqn, y, t, tout, relerr, abserr, iflag, yy, wt, p, yp, &
   end do
 
   return
-end
+! SJP Issue #835
+! For Intel compliance add "end subroutine"
+end subroutine
 subroutine step ( x, y, f, neqn, h, eps, wt, start, hold, k, kold, crash, &
   phi, p, yp, psi, alpha, beta, sig, v, w, g, phase1, ns, nornd )
 
@@ -1172,7 +1176,9 @@ subroutine step ( x, y, f, neqn, h, eps, wt, start, hold, k, kold, crash, &
   h = hnew
 
   return
-end
+! SJP Issue #835
+! For Intel compliance add "end subroutine"
+end subroutine
 subroutine intrp ( x, y, xout, yout, ypout, neqn, kold, phi, psi )
 
 !*****************************************************************************80
@@ -1298,7 +1304,9 @@ subroutine intrp ( x, y, xout, yout, ypout, neqn, kold, phi, psi )
   yout(1:neqn) = y(1:neqn) + hi * yout(1:neqn)
 
   return
-end
+! SJP Issue #835
+! For Intel compliance add "end subroutine"
+end subroutine
 subroutine timestamp ( )
 
 !*****************************************************************************80
@@ -1376,6 +1384,8 @@ subroutine timestamp ( )
     d, trim ( month(m) ), y, h, ':', n, ':', s, '.', mm, trim ( ampm )
 
   return
-end
+! SJP Issue #835
+! For Intel compliance add "end subroutine"
+end subroutine
 
 end module ode_mod

@@ -959,7 +959,9 @@ real function dSn40Pb(T)
     dSn40Pb = 8400.0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function dSn40Pb
 !#####################################################################
 real function cSn40Pb(T)
     !#####################################################################
@@ -1037,7 +1039,9 @@ real function cSn40Pb(T)
     CC*TT**3/(1+TT/c)**nc + DD*TT**4/(1+TT/d)**nd
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function cSn40Pb
 !#####################################################################
 real function kSn40Pb(T)
     !#####################################################################
@@ -1106,7 +1110,9 @@ real function kSn40Pb(T)
     endif
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function kSn40Pb
 !#####################################################################
 real function rSn40Pb(T)
     !#####################################################################
@@ -1161,7 +1167,9 @@ real function rSn40Pb(T)
 
     !
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function rSn40Pb
 
 !#####################################################################
 !
@@ -1205,7 +1213,9 @@ real function dHastelloyC276(T)
     dHastelloyC276 = 8890.0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function dHastelloyC276
 !#####################################################################
 real(kind(1.0D0)) function cHastelloyC276(T)
     !#####################################################################
@@ -1254,7 +1264,9 @@ real(kind(1.0D0)) function cHastelloyC276(T)
     CC*TT**nc/(c+TT)**nc + DD*TT**nd/(d+TT)**nd
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function cHastelloyC276
 !#####################################################################
 real function kHastelloyC276(T)
     !#####################################################################
@@ -1297,7 +1309,9 @@ real function kHastelloyC276(T)
     kHastelloyC276 = p1*TT*(1+(TT/p2)**p4) / (1+(TT/p3)**p4)
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function kHastelloyC276
 !#####################################################################
 real function rHastelloyC276(T)
     !#####################################################################
@@ -1338,7 +1352,9 @@ real function rHastelloyC276(T)
     TT=max(TT,Tmin)
     rHastelloyC276 = A + B*TT + C*TT*TT
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function rHastelloyC276
 !#####################################################################
 !
 !                   COPPER PROPERTIES PACKAGE
@@ -1383,7 +1399,9 @@ real function dCu(T)
     !
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function dCu
 !#####################################################################
 real function cCu(T)
     !#####################################################################
@@ -1450,7 +1468,9 @@ real function cCu(T)
 
     !
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function cCu
 !#####################################################################
 real function kCu(T,B,RRR)
     !#####################################################################
@@ -1533,7 +1553,9 @@ real function kCu(T,B,RRR)
 
     kCu     = 1.0/(wt*magr)
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function kCu
 !#####################################################################
 real function rCu(T,B,RRR)
     !#####################################################################
@@ -1604,7 +1626,9 @@ real function rCu(T,B,RRR)
     rCu     = magr * rho0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function rCu
 !#####################################################################
 !
 ! Auxiliary functions and calculations
@@ -1699,7 +1723,9 @@ real function magrCu(T,B,RRR)
     magrCu  = magr+1.0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function magrCu
 
 !-----------------------------------------------------------------
 
