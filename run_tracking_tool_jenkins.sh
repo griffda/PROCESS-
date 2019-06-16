@@ -1,5 +1,29 @@
 #
+#
+#  first argument to this script is foler where reference data is saved
+
+#
+
+for i in "$@"
+do
+case $i in
+    -f=*|--folder=*)
+    ref_folder="${i#*=}"
+    mkdir -p ref_folder
+    ;;
+    --default)
+    DEFAULT=YES
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+done
+
+
+#tracking_jobs=("baseline_2018")
 tracking_jobs=("baseline_2018" "baseline_2019")
+
 #
 execute_process_run()
 {
@@ -32,7 +56,9 @@ clean_tracking_jobs()
 cd tracking
  for track_job in ${tracking_jobs[*]}
  do
-  python3.6 generate_tracking_data.py --mfile="$track_job""_MFILE.DAT" --jenkins="$track_job""_plot.csv" --sep="comma"
+   rm -f  "$track_job""_plot_data.csv"  # delete old plot data
+   rm -f  "$track_job""_tracking_data.csv"
+  python3.6 generate_tracking_data.py --project="$track_job" --ref_folder="$1" --sep="comma"
  done
    for file in $(ls ) 
    do
@@ -42,7 +68,27 @@ cd tracking
        echo "$file removed "
      fi
    done
+
+
+ for track_job in ${tracking_jobs[*]}
+ do
+   Trk_file="$1""/""$track_job""_tracking_data.csv" 
+
+   if [[ -f i"$Trk_file" ]]
+   then
+     chmod 666 "$Trk_file"
+     cp "$Trk_file" .
+   fi
+
+   ref_file="$1""/""$track_job""_ref_data.csv" 
+   if [[ -f i"$ref_file" ]]
+   then
+     chmod 666 "$ref_file"
+   fi
+ done
+
+
 }
 
 execute_process_run
-clean_tracking_jobs
+clean_tracking_jobs $ref_folder 
