@@ -225,7 +225,7 @@ htpmw_fw = 155 * first wall primary pumping power He (MW)
 
 *------------Impurity Radiation Module-------------*
 
-imprad_model = 1 * Switch for impurity radiation model;
+*imprad_model = 1 * Switch for impurity radiation model;
 coreradius = 0.75 * Normalised radius defining the 'core' region
 coreradiationfraction = 0.6 * fraction of radiation from 'core' region that is subtracted from the loss power
 fimp(1) = 1.0
@@ -297,8 +297,8 @@ idensl   = 7 * Switch for density limit to enforce (constraint equation 5);
 ifalphap = 1 * Switch for fast alpha pressure calculation;
 ifispact = 0 * Switch for neutronics calculations;
 iinvqd   = 1 * Switch for inverse quadrature in l-mode scaling laws 5 and 9;
-impc     = 0. * Carbon impurity multiplier (imprad_model=0 only)
-impo     = 0. * Oxygen impurity multiplier (imprad_model=0 only)
+*impc     = 0. * Carbon impurity multiplier (imprad_model=0 only)
+*impo     = 0. * Oxygen impurity multiplier (imprad_model=0 only)
 ipedestal = 1 * Switch for pedestal profiles;
 neped    = 0.678e20 * Electron density of pedestal (/m3) (ipedestal=1)
 nesep    = 0.2e20 * Electron density at separatrix (/m3) (ipedestal=1)
@@ -319,7 +319,7 @@ snull    = 1 * Switch for single null / double null plasma;
 ssync    = 0.6 * Synchrotron wall reflectivity factor
 te       = 13.07 * Volume averaged electron temperature (kev)
 triang   = 0.5 * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
-zfear    = 1 * High-z impurity switch; 0=iron; 1=argon
+**zfear    = 1 * High-z impurity switch; 0=iron; 1=argon
 
 maxradwallload = 0.5 * Maximum permitted radiation wall load (MW/m2)
 peakfactrad = 2.00 * peaking factor for radiation wall load

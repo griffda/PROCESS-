@@ -171,9 +171,9 @@ contains
 
        tfcind1 = hmax * rmu0/pi * log(rout/rin)
 
-       !  Stored energy per coil (GJ)
+       !  Stored energy (GJ)
 
-       estotf = 0.5D-9 * tfcind1 * ritfc**2 / tfno
+       estotftgj = 0.5D-9 * tfcind1 * ritfc**2 
 
     else  !  Superconducting TF coils
        call sctfcoil(outfile,iprint)
@@ -201,7 +201,7 @@ contains
        call ovarre(outfile,'Number of TF coil legs','(tfno)',tfno)
 
        call osubhd(outfile,'Energy and Forces :')
-       call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotf*tfno)',estotf*tfno)
+       call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj)
        call ovarre(outfile,'Vertical force on inboard leg (N)','(vforce)',vforce)
        call ovarre(outfile,'Centering force on inboard leg (N/m)','(cforce)',cforce)
        call ovarre(outfile,'Radial stress (MPa)','(sigrad)',sigrad)

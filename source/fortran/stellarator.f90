@@ -1025,7 +1025,6 @@ contains
     !+ad_desc  a stellarator device.
     !+ad_prob  None
     !+ad_call  beamfus
-    !+ad_call  betcom
     !+ad_call  palph
     !+ad_call  palph2
     !+ad_call  pcond
@@ -1038,14 +1037,6 @@ contains
     !+ad_hist  29/06/94 PJK Initial version
     !+ad_hist  16/01/96 PJK Modifications in the light of D-He3 changes
     !+ad_hisc               (idhe3 is always set to zero for stellarators)
-    !+ad_hist  10/06/96 PJK Added use of IWALLD in wall load calculation
-    !+ad_hist  01/04/98 PJK Modified BETCOM and PCOND calls
-    !+ad_hist  01/04/98 PJK Modified BETCOM call
-    !+ad_hist  24/04/98 PJK Modified BETCOM call
-    !+ad_hist  30/06/98 PJK Modified PCOND call
-    !+ad_hist  19/01/99 PJK Modified PCOND call
-    !+ad_hist  16/07/01 PJK Modified PCOND call
-    !+ad_hist  22/05/06 PJK Modified PALPH2 call
     !+ad_hist  20/09/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
@@ -1054,7 +1045,6 @@ contains
     !+ad_hist  17/10/12 PJK Added divertor_variables
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  17/12/12 PJK Added zfear to betcom, radpwr argument lists
     !+ad_hist  23/01/13 PJK Modified poloidal field calculation to use iotabar;
     !+ad_hisc               Changed PCOND q95 argument to iotabar
     !+ad_hist  12/06/13 PJK taup now global
@@ -1097,15 +1087,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Calculate plasma composition
-
-    if (imprad_model == 0) then
-       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impo, &
-            ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
-            dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
-            zion,zfear)
-    else
-       call plasma_composition
-    end if
+    ! Issue #261 Remove old radiation model
+    call plasma_composition
 
     !  Calculate density and temperature profile quantities
 
@@ -1172,9 +1155,7 @@ contains
     call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
     !  Calculate radiation power
-
-    call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
-         pcoreradpv,pedgeradpv,pradpv)
+    call radpwr(pbrempv,plinepv,psyncpv, pcoreradpv,pedgeradpv,pradpv)
 
     pcoreradmw = pcoreradpv*vol
     pedgeradmw = pedgeradpv*vol
