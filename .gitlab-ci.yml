@@ -89,7 +89,7 @@ testing:baseline_2019_run:
  tags:
   - freia
 
-baseline:tracking
+baseline:tracking:
  when: on_success  # Also default setting
  only:
 #  - merge_requests # Enable if Only merge request trigger tracking job
@@ -99,7 +99,6 @@ baseline:tracking
   - "curl -X POST http://mkumar:0eb1252f76a609d527edfbfdc0559eae@process-jenkins-ci.apps.l:8080/jenkins/job/PROCESS_Tracking/build?token=MiLNGc-QvyEevhKK54go"
  tags:
   - freia
-
 
 baseline:baseline_2019_results:
  when: on_success  # Also default setting
