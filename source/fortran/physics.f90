@@ -1950,6 +1950,7 @@ implicit none
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  02/06/16 RK  Added Sauter scaling for negative triangularity
     !+ad_hist  25/01/19 SIM Changed conhas call to kappa95 and triang95 (Issue #791)
+    !+ad_hist  06/06/19 SIM Added icurr=9 spherical tokamak option
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
@@ -2036,6 +2037,10 @@ implicit none
              (1.0d0 + 0.09d0 * triang + 0.16d0 * triang**2) * &
        (1.0d0 + 0.45d0 * triang * eps)/(1.0d0 - 0.74d0 * eps) * &
        (1.0d0 + 0.55d0 * (w07 - 1.0d0))
+
+    case (9) ! FIESTA ST fit
+
+       fq = 0.716D0 * (1.0D0 + 2.472D0*eps**2.866D0) * kappa95**2.144D0 * triang95**0.056D0
 
     case default
        idiags(1) = icurr ; call report_error(77)

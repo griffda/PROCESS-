@@ -41,7 +41,7 @@
   { "no": 34, "level": 3, "message": "ELEMENT2INDEX: Element with given label not found in impurity array" },
   { "no": 35, "level": 2, "message": "PIMPDEN: Impurity radiation model is inaccurate at such low temperatures" },
   { "no": 36, "level": 3, "message": "CHECK: Fuel ion fractions do not sum to 1.0; check fdeut, ftrit, fhe3 values" },
-  { "no": 37, "level": 2, "message": "CHECK: Usual current scaling for TARTs (icurr=2) is not being used" },
+  { "no": 37, "level": 2, "message": "CHECK: Usual current scaling for TARTs (icurr=2 or 9) is not being used" },
   { "no": 38, "level": 3, "message": "CHECK: ibss=1 is not a valid option for a TART device" },
   { "no": 39, "level": 3, "message": "CHECK: snull=1 is not a valid option for a TART device" },
   { "no": 40, "level": 3, "message": "CHECK: icurr=2 is not a valid option for a non-TART device" },
