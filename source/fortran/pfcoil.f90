@@ -510,14 +510,16 @@ contains
             / (hmax*ohhghf*2.0D0)
        dics = csflux / ddics
 
+       fcohbof = ((-ioheof * fcohbop) + dics)/ioheof
+       fcohbof = min(fcohbof,  1.0D0)  !  constrains abs(fcohbof) <= 1.0;
+       fcohbof = max(fcohbof, -1.0D0)  !  probably un-necessary
+
     else
        dics = 0.0D0
+       fcohbof = 1.0D0
        call report_error(71)
     end if
 
-    fcohbof = ((-ioheof * fcohbop) + dics)/ioheof
-    fcohbof = min(fcohbof,  1.0D0)  !  constrains abs(fcohbof) <= 1.0;
-    fcohbof = max(fcohbof, -1.0D0)  !  probably un-necessary
 
     !  Split groups of coils into one set containing ncl coils
 
