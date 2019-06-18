@@ -226,6 +226,6 @@
   {"no": 219, "level": 3, "message": "REINKE IMPURITY MODEL: tesep is calculated and cannot be an iteration variable for the Reinke model"},
   {"no": 220, "level": 1, "message": "CHECK: tauee_in is for use with isc=48 only"},
   {"no": 221, "level": 2, "message": "CHECK: NSTX scaling is for A<1.7"},
-  {"no": 222, "level": 3, "message": "CHECK: Lang 2012 confinement scaling cannot be used for spherical tokamaks due to wrong q"}
+  {"no": 222, "level": 3, "message": "CHECK: Lang 2012 confinement scaling cannot be used for icurr=2 due to wrong q"}
  ]
 }
