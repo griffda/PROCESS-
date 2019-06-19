@@ -327,7 +327,7 @@ contains
     ! Inner outter common quantities
     ! -----------------------------
     !  TF bore (gap between inboard and outboard TF coil legs) (m)
-    tfboreh = rtot - rbmax - 0.5D0*tfthko
+    tf_total_h_width = rtot - rbmax - 0.5D0*tfthko
 
     ! Vertircal force    
     ! The outer radius of the inner leg and the inner radius of the outer leg is taken

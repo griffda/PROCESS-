@@ -260,7 +260,7 @@ subroutine tf_coil_geometry()
     deltf = r_tf_outer * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 
     ! TF coil horizontal bore [m]
-    tfboreh = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &
+    tf_total_h_width = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &
     blnkith + fwith + scrapli + rminor + rminor + scraplo + fwoth + &
     blnkoth + vvblgap + shldoth + ddwi + gapsto + thshield + &
     tftsgap + tfthko

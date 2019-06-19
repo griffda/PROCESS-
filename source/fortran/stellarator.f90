@@ -2972,7 +2972,7 @@ contains
     rbmax = rcoil                 ! [m] radius of peak field occurrence, average
                                   !     N.B. different to tokamak SCTF calculation
     hmax = 0.5D0*h_max - tfcth    ! [m] maximum half-height of coil
-    tfboreh = D_coil              ! [m] estimated horizontal coil bore
+    tf_total_h_width = D_coil     ! [m] estimated horizontal coil bore
     tfborev = 2.0D0*hmax          ! [m] estimated vertical coil bore
     tfleng = U                    ! [m] estimated average length of a coil
 
@@ -3807,7 +3807,7 @@ contains
     call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inleg_mid)',r_tf_inleg_mid)
     call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
-    call ovarre(outfile,'Clear horizontal bore (m)','(tfboreh)',tfboreh)
+    call ovarre(outfile,'Clear horizontal bore (m)','(tf_total_h_width)',tf_total_h_width)
     call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
 
     call osubhd(outfile,'Conductor Information :')
