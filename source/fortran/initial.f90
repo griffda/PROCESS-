@@ -770,7 +770,7 @@ subroutine check
         call report_error(221)
      end if
 
-    if (itart.eq.1.and.isc.eq.42) then
+    if (icurr.eq.2.and.isc.eq.42) then
         call report_error(222)
     end if
 
