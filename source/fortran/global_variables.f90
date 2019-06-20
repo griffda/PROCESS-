@@ -2486,6 +2486,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tdmptf = 10.0D0
   !+ad_vars  tfareain : area of inboard midplane TF legs (m2)
   real(kind(1.0D0)) :: tfareain = 0.0D0
+  !+ad_vars  tfboreh : TF coil horizontal internal bore (resistive only) (m)
+  real(kind(1.0D0)) :: tfboreh = 0.0D0
   !+ad_vars  tf_total_h_width : TF coil horizontal inner bore (m)
   real(kind(1.0D0)) :: tf_total_h_width = 0.0D0
   !+ad_vars  tfborev : TF coil vertical inner bore (m)
