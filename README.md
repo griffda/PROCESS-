@@ -320,6 +320,17 @@ updated upon compilation. This way each output file is trackable to a specific c
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 | `git checkout tags/<tag name>` | checkout a specific tag |
 
+## Profiling
+
+To profile the code and investigate which parts of the code are using the most 
+computational time follow these steps:
+
+* Compile the code with the `dll=OFF` option.
+  *  `cmake3 -H. -Bbuild -Ddll=OFF`
+* Run the code
+* Enter the command 
+  * `gprof ./<path_to_executable>/process.exe --ignore-non-functions`
+
 ## Troubleshooting
 
 If you encounter issues with file line endings when working between Windows and Linux. Run the command on Freia to convert the line endings to unix based line endings for a given file (create_dicts.py in this case).

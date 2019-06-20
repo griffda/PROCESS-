@@ -1,7 +1,7 @@
 *************************************************************************
 *****                                                               *****
 *****        Fusion Nuclear Science Facility (FNSF)                 *****
-*****            Stuart Muldrew (25/06/2018)                        *****
+*****            Stuart Muldrew (14/05/2019)                        *****
 *****      Menard et al. (2016), Nucl. Fusion, 56, 106023           *****
 *****                                                               *****
 *****                                                               *****
@@ -50,7 +50,7 @@ ixc = 9             *fdene
 fdene = 0.75        *f-value for density limit (constraint equation 5)
 
 ixc = 10            *hfact
-hfact = 1.4423      *H factor on energy confinement times
+hfact = 1.3      *H factor on energy confinement times
 
 ixc = 12            *oacdcp
 oacdcp = 68522000.0 *Overall current density in TF coil inboard legs (A/m2)
@@ -63,8 +63,9 @@ ixc = 14            *fwalld
 fwalld = 0.10188    *f-value for maximum wall load
 
 ixc = 18            *q
-q = 7.3424          *Safety factor ‘near’ plasma edge
-boundl(18) = 3.0
+*q = 7.3424          *Safety factor ‘near’ plasma edge
+q=8.0
+boundl(18) = 7.0
 
 ixc = 20            *tcpav
 tcpav = 70.753      *Average temp of TF coil inboard leg conductor (C) (resistive coils)
@@ -231,7 +232,7 @@ fblss    = 0.25     *KIT blanket model: steel fraction of breeding zone
 fblvd    = 0.0      *Vanadium fraction of blanket by volume 
 fhole    = 0.0      *Area fraction taken up by other holes (not used)
 fwbsshape= 1        *First wall blanket shield and vacuum vessel shape (1 D-shaped (cylinder inboard + ellipse outboard))
-iblanket = 2        *Switch for blanket model (2: KIT HCPB model)
+iblanket = 1        *Switch for blanket model (2: CCFE HCPB model)
 
 *-----------------Cost Variables-------------------*
 

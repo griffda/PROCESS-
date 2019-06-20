@@ -361,25 +361,25 @@ contains
 
       !  Local variables
 
-      real(kind(1.0D0)) :: c1,c2,rc2,rci,vin,vout,zn
+      real(kind(1.0D0)) :: c1,c2,rc2,rc1,vin,vout,zn
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       zn = kap * a
 
-      rci = ( (r + a)**2 - (r - tri*a)**2 - zn**2) / &
+      c1 = ( (r + a)**2 - (r - tri*a)**2 - zn**2) / &
            (2.0D0 * (1.0D0+tri) * a)
-      c1 = r + a - rci
+      rc1 = r + a - c1
       vout = -0.66666666D0 * pi * zn**3 + 2.0D0 * pi * zn * &
-           (rci**2 + c1**2) + 2.0D0 * pi * rci * &
-           ( zn * sqrt(c1**2 - zn**2) + c1**2 * asin(zn/c1) )
+           (c1**2 + rc1**2) + 2.0D0 * pi * c1 * &
+           ( zn * sqrt(rc1**2 - zn**2) + rc1**2 * asin(zn/rc1) )
 
-      rc2 = (-(r - a)**2 + (r - tri*a)**2 + zn**2) / &
+      c2 = (-(r - a)**2 + (r - tri*a)**2 + zn**2) / &
            (2.0D0 * (1.0D0-tri) * a)
-      c2 = rc2 - r + a
+      rc2 = c2 - r + a
       vin = -0.66666D0 * pi * zn**3 + 2.0D0 * pi * zn * &
-           (c2**2 + rc2**2) - 2.0D0 * pi * rc2 * &
-           ( zn * sqrt(c2**2 - zn**2) + c2**2 * asin(zn/c2) )
+           (rc2**2 + c2**2) - 2.0D0 * pi * c2 * &
+           ( zn * sqrt(rc2**2 - zn**2) + rc2**2 * asin(zn/rc2) )
 
       fvol = vout - vin
 

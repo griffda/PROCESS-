@@ -1094,6 +1094,115 @@ of a number of MFILEs. The options are described below.
  \end{mdframed}
 
 
+\subsubsection{VMCON optimization plots (plot\_opti\_process.py)}
+
+Macro plotting a set of information about the \texttt{VMCON} optimization from an output file called \texttt{OPT.DAT}.\\
+The file contains 
+\begin{itemize}
+	\item The \process indexes of the constraints and the variables used for the considered run.
+	\item The variables described in table~\ref{tab:output_ploting:opt_plot_var} stored for each \texttt{VMCON} iteration. Please note that only one set of number is associated in per \texttt{VMCON} iteration.
+\end{itemize} 
+
+
+% Table summarising numerics modules in PROCESS
+\begin{table}[tbph]
+	\footnotesize
+	\begin{center}
+		\begin{tabular}{l|l|l} 
+			\hline
+			\hline
+			Variable description                     & \process code name & \texttt{VMCON} doc def \\ 
+			\hline			
+			Normalized figure of merit               & \texttt{abs(obj)}  & $f(x)$\\			
+			VMCON convergence criteria               & \texttt{sum}       & $\left| \nabla_x f(\vec{x}^{j-1})^T \cdot \vec{\delta}^{j} \right| +
+			\sum^m_{i=1}\left| \lambda^j_i c_i(\vec{x}^{j-1}) \right|$\\			
+			Constraints residual quadratic sums      & \texttt{sqsumsq}   & $\sqrt{\sum^{m}_{i=1} c^{2}_i(\vec{x}^{j-1})}$ \\			
+			Individual residual values               & \texttt{conf(i)}   & $c_i(\vec{x}^{j-1})$\\			
+			Normalized optimization variables values & \texttt{x(i)}      & $\vec{x}^{j-1}$\\
+			\hline
+			\hline
+		\end{tabular}
+	\end{center}
+	\caption{\label{tab:output_ploting:opt_plot_var} \textit{Variables stored in \texttt{OPT.DAT}.}}
+\end{table}
+
+The python plot routines proposes the following plots
+\begin{enumerate}
+	\item Figure of merit plot :\\ 
+	evolution of the figure of merit with the \texttt{VMCON} index
+	\item Convergence plot : \\
+	\texttt{VMCON} index evolution of 
+	\begin{itemize}
+		\item The \texttt{VMCON} convergence parameter 
+		\item The quadratic sum of the constraints residuals
+		\item The maximum between the VMCON convergence parameter and the constraints residual quadratic sum, actually used to test the \process convergence.
+	\end{itemize}
+	\item Dominant constraints plots : \\
+	The last \texttt{VMCON} iteration is used order to rank the constraints with their residual values. This allows to plot the \texttt{VMCON} index evolution of
+	\begin{itemize}
+		\item The $N_{const}^{dom}$ dominant constraints values ($N_{const}^{dom}$ can be used defined)
+		\item The quadratic sum of the dominant constraints
+		\item The total quadratic sum of the constraints
+	\end{itemize} 
+	The difference of the two quadratic sums allow to check of any other variables contribute to the constaints for any step of the optimization
+	\item Selected constraint plot : \\
+	Any constraints residual evolution can be plotted given its \process ID number. The associated plot will contains
+	\begin{itemize}
+		\item the selected constraint evolution
+		\item The total quadratic sum of the constraints
+	\end{itemize}
+	This allows a clearer visualization of a given constraint evolution.
+	\item Major variable evolution : \\
+	The variation amplitude of the optimization varaibles $\max(\vec{x}^{j-1}) - \min(\vec{x}^{j-1})$ is used to rank the variables. This allows to plot the \texttt{VMCON}.
+	index evolution of the $N_{const}^{var}$ dominant variables ($N_{const}^{dom}$ can be used defined).
+	\item Selected vaiable pair trajectory plot : \\
+	Any pair of variables can be selected using their \process ID defined in vardes, to plot the evolution of their trajectory. The color of each points corresponds to the value of the \process convergence criteria (on base 10 logarithm scale). 
+\end{enumerate}
+
+The use of the macro is described on the help option of the macro, shown for indicative purpose
+\begin{quote}
+	\begin{verbatim}
+	usage: plot_opti_process.py [-h] [-p [PLOT_SELEC]] [-ndc [N_DOM_CONST]]
+	[-ndv [N_DOM_VAR]] [-ic [I_CONST]]
+	[-ixv [I_X_VAR]] [-iyv [I_Y_VAR]]
+	[-sf [SAVE_FORMAT]] [-as [AXIS_FONT_SIZE]]
+
+	Plot optimization information
+	
+	optional arguments:
+	-h, --help            show this help message and exit
+	-p [PLOT_SELEC], --plot_selec [PLOT_SELEC]
+	Plot selection string :
+	 * If it containts 'FoM'      -> Figure of Merit plot 
+	 * If it containts 'conv'     -> convergence criteria plot 
+	 * If it containts 'domconst' -> dominant constraint plot
+	 * If it containts 'allconst' -> a plot for each constraint stored in All_Const/
+	 * If it containts 'domvar'   -> dominant variables plot 
+	 * If it containts 'allvar'   -> a plot for each variable in All_Var/
+	 * If it containts 'all'      -> all the mentionned plots (default value)
+	-ndc [N_DOM_CONST], --n_dom_const [N_DOM_CONST]
+	number of plotted dominant constaints (default=3)
+	-ndv [N_DOM_VAR], --n_dom_var [N_DOM_VAR]
+	number of plotted dominant variables  (default=4)
+	-ic [I_CONST], --i_const [I_CONST]
+	Selection of the constraint to be plotted (PROCESS number defined in vardes, default=-1)
+	-ixv [I_X_VAR], --i_X_var [I_X_VAR]
+	X variable on pair plot selection (PROCESS number defined in vardes, default=-1)
+	-iyv [I_Y_VAR], --i_Y_var [I_Y_VAR]
+	Y variable on pair plot selection (PROCESS number defined in vardes, default=-1)
+	-sf [SAVE_FORMAT], --save_format [SAVE_FORMAT]
+	output format (default='eps') 
+	-as [AXIS_FONT_SIZE], --axis_font_size [AXIS_FONT_SIZE]
+	Axis label font size selection (default=14)
+	\end{verbatim}
+\end{quote}
+
+The output can be defined in any visual data format supported by pyplot, the label font size can set. Please note that to select individual constraints or variable pair plots, it is enough to precise the \texttt{-ic} and the \texttt{-ixv/-iyv} pair, respectively.  \\
+
+If any modification of improvements are foreseen, please let us know.
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Uncertainty Tools}

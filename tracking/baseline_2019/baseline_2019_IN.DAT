@@ -211,7 +211,7 @@ iprimshld = 1 * Switch for shield thermal power destiny;
 
 *------------Impurity Radiation Module-------------*
 
-imprad_model = 1 * Switch for impurity radiation model;
+*imprad_model = 1 * Switch for impurity radiation model;
 coreradius = 0.75 * Normalised radius defining the 'core' region
 coreradiationfraction = 0. * Fraction of radiation from 'core' region that is subtracted from the loss power
 fimp(1) = 1.0
@@ -303,7 +303,7 @@ ssync    = 0.6 * Synchrotron wall reflectivity factor
 te       = 13.792 * Volume averaged electron temperature (kev)
 triang   = 0.5 * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
 triang95 = 0.333 * Plasma triangularity at 95% surface (calculated if ishape < 3)
-zfear    = 1 * High-z impurity switch; 0=iron; 1=argon
+*zfear    = 1 * High-z impurity switch; 0=iron; 1=argon
 
 *----------------Plasmod Variables-----------------*
 

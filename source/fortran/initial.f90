@@ -203,6 +203,7 @@ subroutine check
     !+ad_hist  24/11/14 PJK Set coolwh via blkttype
     !+ad_hist  25/02/15 JM  Changed blanket composition check to use new blanket model layout
     !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
+    !+ad_hist  13/05/19 SIM Added error flag for input confinement time with wrong scaling option
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -305,16 +306,13 @@ subroutine check
 
     !  Impurity fractions
 
-    if (imprad_model == 1) then
-        do imp = 1,nimp
-            impurity_arr(imp)%frac = fimp(imp)
-        end do
-    end if
-
+    do imp = 1,nimp
+        impurity_arr(imp)%frac = fimp(imp)
+    end do
 
     !  Warn if ion power balance equation is being used with the new radiation model
 
-    if ((imprad_model == 1).and.(any(icc == 3))) then
+    if (any(icc == 3)) then
         call report_error(138)
     end if
 
@@ -556,46 +554,46 @@ subroutine check
         !If Reinke criterion is used tesep is calculated and cannot be an
         !iteration variable
         if (any(ixc == 119)) then
-           call report_error(214)
+           call report_error(219)
         endif
 
         !If Reinke criterion is used need to enforce LH-threshold
         !using Martin scaling for consistency
         if (.not. ilhthresh == 6) then
-           call report_error(215)
+           call report_error(218)
         endif
         if  (.not. any(icc==15) .and. (ipedestal .ne. 3)) then
-           call report_error(215)
+           call report_error(218)
         endif
 
 
      endif
 
      if (any(icc == 78)) then
-        
+
         !If Reinke criterion is used tesep is calculated and cannot be an
         !iteration variable
         if (any(ixc == 119)) then
-           call report_error(214)
+           call report_error(219)
         endif
-        
+
         !If Reinke criterion is used need to enforce LH-threshold
         !using Martin scaling for consistency
         if (.not. ilhthresh == 6) then
-           call report_error(215)
+           call report_error(218)
         endif
         if  (.not. any(icc==15) .and. (ipedestal .ne. 3)) then
-           call report_error(215)
+           call report_error(218)
         endif
 
-        
+
      endif
 
      !if using Reinke iteration variable fzactual, then assign to imp. array
      if (any(ixc == 148)) then
         impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
-     endif        
-     
+     endif
+
 
     !  Tight aspect ratio options
     ! ---------------------------
@@ -608,7 +606,7 @@ subroutine check
         ohcth  = 0.0D0
         iblnkith = 0
 
-        if (icurr /= 2) then
+        if (icurr /= 2 .and. icurr /= 9) then
             idiags(1) = icurr ; call report_error(37)
         end if
         iohcl  = 0
@@ -668,7 +666,8 @@ subroutine check
 
     !  Ensure that if TF coils are non-superconducting,
     !  only simple stress calculations are performed
-    if (itfsup == 0) tfc_model = 0
+    ! See Issue #781
+    ! if (itfsup == 0) tfc_model = 0
 
     ! TF coil
     ! -------
@@ -760,7 +759,20 @@ subroutine check
         tmargmin_cs = tmargmin
      end if
 
+     if (tauee_in.ge.1.0D-10.and.isc.ne.48) then
+        ! Report error if confinement time is in the input
+        ! but the scaling to use it is not selected.
+        call report_error(220)
+     end if
 
+     if (aspect.gt.1.7D0.and.isc.eq.46) then
+        ! NSTX scaling is for A<1.7
+        call report_error(221)
+     end if
+
+    if (icurr.eq.2.and.isc.eq.42) then
+        call report_error(222)
+    end if
 
     errors_on = .false.
 

@@ -59,12 +59,9 @@ module impurity_radiation_module
   public :: initialise_imprad, impradprofile, z2index, element2index, fradcore
   public :: imp_dat, Zav_of_te
 
-  !+ad_vars  imprad_model /1/ : switch for impurity radiation model:<UL>
-  !+ad_varc               <LI>  = 0 original ITER 1989 model
-  !+ad_varc               <LI>  = 1 2014 multi-impurity, pedestal profile model </UL>
-  !+ad_varc  (Whichever model is used, it is recommended to turn on
+
+  !+ad_varc  (It is recommended to turn on
   !+ad_varc  constraint eqn.17 with iteration variable 28: fradpwr.)
-  integer, public :: imprad_model = 1
 
   !+ad_vars  nimp /14/ FIX : number of ion species in impurity radiation model
   integer, public, parameter :: nimp = 14
@@ -123,7 +120,7 @@ module impurity_radiation_module
 
   !+ad_vars  impdir /'/home/PROCESS/[branch]/impuritydata'/ :
   !+ad_varc           Directory containing impurity radiation data files
-  character(len=180), public :: impdir = INSTALLDIR//'/data/impuritydata/'
+  character(len=200), public :: impdir = INSTALLDIR//'/data/impuritydata/'
 
   !+ad_vars  impvar : impurity to be iterated (deprecated)
   !+ad_varc                       variable number 102 is turned on
@@ -352,10 +349,6 @@ contains
        call import_impdata(fullpath, len_tab, &
             impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3, impurity_arr(no)%Zav)
     else
-      !  call report_error(29)
-      !  imprad_model = 0
-      !  write(*,*) "#####   Imprad_model = 0   #####", label // 'Lzdata.dat', iexist, impdir
-      !  error = 1
        write(*,*) "# Warning :  Cannot find impurity data please check path."
        write(*,*) "# Error   :  Current path is: ", impdir
        stop
