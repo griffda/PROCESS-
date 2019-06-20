@@ -352,8 +352,12 @@ contains
     whtcp = volcp * dcopper * (1.0D0-fcoolcp)
 
     !  Total weight of TF coils
-
     whttf = whtcp + whttflgs
+
+    ! Inner outter common quantities
+    ! -----------------------------
+    !  TF bore (gap between inboard and outboard TF coil legs) (m)
+    tf_total_h_width = rtot - rbmax - 0.5D0*tfthko
 
     !  Stress information (radial, tangential, vertical)
 

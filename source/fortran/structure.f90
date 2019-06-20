@@ -85,7 +85,7 @@ contains
 
     twhtpf = whtpf + whtpfs
 
-    call struct(plascur,rmajor,rminor,kappa,bt,itfsup,ipfres,tfboreh, &
+    call struct(plascur,rmajor,rminor,kappa,bt,itfsup,ipfres,tf_total_h_width, &
          hmax,whtshld,divmas,twhtpf,whttf,fwmass,whtblkt,coolmass, &
          dewmkg,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
          gsmass)
@@ -94,7 +94,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine struct(ai,r0,a,akappa,b0,itfsup,ipfres,boreh,tfhmax, &
+  subroutine struct(ai,r0,a,akappa,b0,itfsup,ipfres,tf_h_width,tfhmax, &
        shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass, &
        dewmass,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
        gsm)
@@ -114,7 +114,7 @@ contains
     !+ad_argc                           are superconducting
     !+ad_args  ipfres : input integer : switch denoting whether PF coils
     !+ad_argc                           are resistive
-    !+ad_args  boreh : input real : TF coil horizontal bore (m)
+    !+ad_args  tf_h_width : input real : TF coil horizontal bore (m)
     !+ad_args  tfhmax : input real : TF coil max height (m)
     !+ad_args  shldmass : input real : total mass of shield (kg)
     !+ad_args  dvrtmass : input real : total mass of divertor and assoc. structure (kg)
@@ -149,7 +149,7 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: ai,r0,a,akappa,b0,boreh,tfhmax, &
+    real(kind(1.0D0)), intent(in) :: ai,r0,a,akappa,b0,tf_h_width,tfhmax, &
          shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass,dewmass
     integer, intent(in) :: outfile,iprint,itfsup,ipfres
     real(kind(1.0D0)), intent(out) :: fncmass,aintmass,clgsmass,coldmass,gsm
@@ -166,8 +166,7 @@ contains
 
     !  Intercoil support between TF coils to react overturning moment
     !  (scaled to 1990 ITER fit)
-
-    aintmass = 1.4D6 * (ai/2.2D7) * b0/4.85D0 * boreh**2/50.0D0
+    aintmass = 1.4D6 * (ai/2.2D7) * b0/4.85D0 * tf_h_width**2/50.0D0
 
     !  Total mass of coils plus support plus vacuum vessel + cryostat
 
