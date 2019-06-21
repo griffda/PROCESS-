@@ -483,6 +483,11 @@ contains
 
     anncap = capcost * fcr0
 
+! SJP Issue #836
+! Check for the condition when kwhpy=0
+
+    if (kwhpy < 1.0d-10) kwhpy=1.0d-10
+
     !  Cost of electricity due to plant capital cost
 
     coecap = 1.0D9 * anncap / kwhpy

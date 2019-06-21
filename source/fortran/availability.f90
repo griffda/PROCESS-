@@ -132,6 +132,11 @@ contains
         bktlife = min(fwlife, abktflnc/wallmw, tlife)
     end if
 
+! SJP Issue #834
+! Add a test for hldiv=0
+
+    if (hldiv < 1.0d-10) hldiv=1.0d-10
+
     ! Divertor lifetime (years)
     divlife = max(0.0, min(adivflnc/hldiv, tlife))
 
