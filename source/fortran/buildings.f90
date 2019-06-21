@@ -117,7 +117,7 @@ contains
 
     ! TF coil inner and outer radial position (m)
     tfro = rtot + 0.5D0*tfthko
-    tfri = rtfcin - 0.5D0*tfcth
+    tfri = r_tf_inleg_mid - 0.5D0*tfcth
 
     ! TF coil vertical height (m)
     tfh = (hmax + tfcth)*2.0D0

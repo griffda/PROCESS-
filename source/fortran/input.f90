@@ -1764,7 +1764,10 @@ contains
        case ('dcopper')
           call parse_real_variable('dcopper', dcopper, 8.0D3, 1.0D4, &
                'Density of copper (kg/m3)')
-       case ('dhecoil')
+       case ('dalu')
+          call parse_real_variable('dalu', dalu, 2.5D3, 3.0D4, &
+               'Density of Alumium (kg/m3)')
+      case ('dhecoil')
           call parse_real_variable('dhecoil', dhecoil, 0.0d0, 0.1d0, &
                'Diameter of He coil in TF winding (m)')
        case ('drtop')

@@ -613,8 +613,8 @@ subroutine check
         ipfloc(1) = 2
         ipfloc(2) = 3
         ipfloc(3) = 3
-        itfsup = 0
-
+        if ( itfsup == 1 ) itfsup = 0
+        
         if (ibss == 1) call report_error(38)
         if (snull == 1) call report_error(39)
 
@@ -667,7 +667,7 @@ subroutine check
     !  Ensure that if TF coils are non-superconducting,
     !  only simple stress calculations are performed
     ! See Issue #781
-    ! if (itfsup == 0) tfc_model = 0
+    ! if (itfsup /= 1) tfc_model = 0
 
     ! TF coil
     ! -------
