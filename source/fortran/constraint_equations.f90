@@ -1709,6 +1709,22 @@ contains
                units(i) = 'A/turn'
             end if
 
+       case (80)  ! Lower limit pdivt
+            !#=# physics
+            !#=#=# fpdivlim, pdivt
+  
+            ! fpdivlim |  f-value for lower limit on pdiv (psep)
+            ! pdiv       |  power crossing separatrix [W]
+            ! pdivtlim   |  Lower limit on pdivt (psep) [W]
+            cc(i) = 1.0D0 - fpdivlim * pdivt / pdivtlim
+
+            if (present(con)) then
+               con(i) = pdivtlim
+               err(i) = pdivt * cc(i)
+               symbol(i) = '>'
+               units(i) = ''
+            end if
+
        case default
 
           idiags(1) = icc(i)

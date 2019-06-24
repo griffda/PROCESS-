@@ -899,6 +899,9 @@ contains
        case ('fportsz')
           call parse_real_variable('fportsz', fportsz, 0.001D0, 10.0D0, &
                'F-value for port size')
+       case ('fpdivlim')
+          call parse_real_variable('fpdivlim', fpdivlim, 0.001D0, 1.0D0, &
+               'F-value for minimum pdivt')
        case ('fpsepr')
           call parse_real_variable('fpsepr', fpsepr, 0.001D0, 10.0D0, &
                'F-value for Psep/R limit')
@@ -1005,6 +1008,9 @@ contains
        case ('nflutfmax')
           call parse_real_variable('nflutfmax', nflutfmax, 1.0D22, 1.0D24, &
                'Max fast neutron fluence on TF coil (n/m2)')
+       case ('pdivtlim')
+          call parse_real_variable('pdivtlim', pdivtlim, 0.1D0, 1.0D3, &
+               'Minimum pdivt (MW) (con. 80, itvar. 153)')
        case ('peakfactrad')
           call parse_real_variable('peakfactrad', peakfactrad, 0.1D0, 10D0, &
                'peaking factor for radiation wall load')

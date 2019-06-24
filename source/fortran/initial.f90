@@ -238,7 +238,6 @@ subroutine check
     integer :: i,j,k,imp
     real(kind(1.0D0)) :: fsum
 
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     errors_on = .true.
@@ -305,7 +304,6 @@ subroutine check
     end if
 
     !  Impurity fractions
-
     do imp = 1,nimp
         impurity_arr(imp)%frac = fimp(imp)
     end do

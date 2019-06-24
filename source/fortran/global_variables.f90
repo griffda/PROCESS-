@@ -304,7 +304,6 @@ module physics_variables
   !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal>=1)
   !+ad_varc                  Needs to be >0 if ipedestal = 3
   real(kind(1.0D0)) :: fgwsep = 0.50D0
-
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
   real(kind(1.0D0)) :: fhe3 = 0.0D0
   !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar, where sbar=1)
@@ -313,6 +312,8 @@ module physics_variables
   real(kind(1.0D0)) :: fkzohm = 1.0D0
   !+ad_vars  fplhsep /1.0/ : F-value for Psep >= Plh + Paux (constraint equation 73)
   real(kind(1.0D0)) :: fplhsep = 1.0D0
+  !+ad_vars  fpdivlim /1.0/ : F-value for minimum pdivt (constraint equation 80)
+  real(kind(1.0D0)) :: fpdivlim = 1.0D0
   !+ad_vars  ftrit /0.5/ : tritium fuel fraction
   real(kind(1.0D0)) :: ftrit = 0.5D0
   !+ad_vars  fusionrate : fusion reaction rate (reactions/m3/sec)
@@ -4171,6 +4172,8 @@ module constraint_variables
   !+ad_varc                      (blktmodel>0)
   !+ad_varc                      (constraint equation 53)
   real(kind(1.0D0)) :: nflutfmax = 1.0D23
+  !+ad_vars  pdivtlim /150.0/  : Minimum pdivt [MW] (constraint equation 80)
+  real(kind(1.0D0)) :: pdivtlim = 150.0D0
   !+ad_vars  peakfactrad /3.33/  : peaking factor for radiation wall load
   !+ad_varc                       (constraint equation 67)
   real(kind(1.0D0)) :: peakfactrad = 3.33D0
