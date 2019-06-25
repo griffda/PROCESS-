@@ -485,11 +485,13 @@ endif
           ,pres_fac,areat,num%isawt,j_qeq1)
 										j_qeq1=0
   else !equilibrium updated using previous result as new guess, faster
+! SJP Issue #859
+! Correct radp%ipol array reference
     call compute_equil( &
                                 !input
           nx, jiterext-jiterext+1,i_equiltype, &
           x, radp%te, radp%ti, radp%ne, radp%nions, radp%palph, radp%cc, radp%g3,radp%qprof,radp%g2,radp%vp, &
-          rpmajor,rpminor,elong,trianpg,Ip,btor,betaz,lint,radp%ipol(nx),e_charge,mu_vacuum, &
+          rpmajor,rpminor,elong,trianpg,Ip,btor,betaz,lint,radp%ipol,e_charge,mu_vacuum, &
                                 !inout
           qedge,&
                                 !output
