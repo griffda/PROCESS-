@@ -1340,7 +1340,7 @@ endif
 ! SJP Issue #832
 ! Avoid FPE in first component of x as x(1)=0 and log(0)=-inf
 
-        sheari(2:) = gradient(log(qprf(2:)),log(x(2:)))
+        shear(2:) = gradient(log(qprf(2:)),log(x(2:)))
         shear(1)=0.0d0
 
         q_tr = interp1_ef(nx,nxt,x, qprf, xtr/xr(nx))
