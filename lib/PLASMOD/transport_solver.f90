@@ -181,6 +181,11 @@
 
 ! PRE-INITIALIZATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+! SJP Issue #832
+! Uninitialized variable.
+
+shear=0.0d0
+
 pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside equil.f90
 
 !create output directory if it oesnt exist
@@ -1331,7 +1336,13 @@ endif
         endif
 
 !some additional stuff
-        shear = gradient(log(qprf),log(x))
+
+! SJP Issue #832
+! Avoid FPE in first component of x as x(1)=0 and log(0)=-inf
+
+        sheari(2:) = gradient(log(qprf(2:)),log(x(2:)))
+        shear(1)=0.0d0
+
         q_tr = interp1_ef(nx,nxt,x, qprf, xtr/xr(nx))
         sh_tr = interp1_ef(nx,nxt,x, shear, xtr/xr(nx))
 !current fractions
