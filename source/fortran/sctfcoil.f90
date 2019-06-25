@@ -225,11 +225,7 @@ subroutine tf_coil_geometry()
     real(kind(1.0D0)) :: deltf
 
     ! Radial position of inner edge of inboard TF coil leg [m]
-    if (itart == 1) then
-        r_tf_inner = bore
-    else
-        r_tf_inner = bore + ohcth + precomp + gapoh
-    end if
+    r_tf_inner = bore + ohcth + precomp + gapoh
 
     ! Radial position of plasma-facing edge of TF coil inboard leg [m]
     r_tf_outer = r_tf_inner + tfcth
@@ -242,12 +238,8 @@ subroutine tf_coil_geometry()
     tftort = 2.0D0 * r_tf_outer*sin(theta_coil)
 
     ! Radial position of centre of inboard TF coil leg [m]
-    if (itart == 1) then
-        rtfcin = bore + 0.5D0*tfcth
-    else
-        rtfcin = bore + ohcth + precomp + gapoh + 0.5D0*tfcth
-    end if
-
+    r_tf_inleg_mid = r_tf_inner + 0.5D0*tfcth
+ 
     ! Plasma-facing wall thickness if fraction option selected [m]
     if(casthi_is_fraction) casthi = casthi_fraction * tfcth
 
@@ -262,16 +254,16 @@ subroutine tf_coil_geometry()
 
     ! TF coil vertical bore [m]
     tfborev = 2.0D0*(rminor*kappa + vgaptop + fwith + blnktth + vvblgap + &
-    shldtth + ddwi+ vgap2 + thshield + tftsgap + tfcth)
+    shldtth + ddwi+ vgap2 + thshield + tftsgap)
 
     ! Gap between inboard TF coil and thermal shield [m]
-    deltf = (bore + ohcth + precomp + gapoh + tfcth) * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    deltf = r_tf_outer * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 
     ! TF coil horizontal bore [m]
     tf_total_h_width = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &
     blnkith + fwith + scrapli + rminor + rminor + scraplo + fwoth + &
     blnkoth + vvblgap + shldoth + ddwi + gapsto + thshield + &
-    tftsgap + tfthko
+    tftsgap
 
 end subroutine tf_coil_geometry
 
@@ -618,7 +610,7 @@ subroutine tf_field_and_force()
     cforce = bmaxtf*ritfc/(2.0D0*tfno)
 
     ! Vertical force per leg [N]
-    vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * log(rtot/rtfcin) / tfno
+    vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * log(rtot/r_tf_inleg_mid) / tfno
 
 
 end subroutine tf_field_and_force
@@ -644,7 +636,7 @@ subroutine tf_coil_area_and_masses()
     ! = 2 * centroid coil length * 2 pi R, where R is average of i/b and o/b centres
     ! (This will possibly be used to replace 2*tfsai in the calculation of qss
     ! in subroutine cryo - not done at present.)
-    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(rtfcin+rtot)
+    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inleg_mid+rtot)
 
     ! Mass of case [kg]
 
@@ -835,9 +827,8 @@ subroutine stresscl
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Simple stress model option.  REMOVED Issue #781
-
     ! if (tfc_model == 0) then
-    !     call sctfjalw(bmaxtfrp,rtfcin,rtot,rbmax,(1.0D-6*alstrtf), tdmptf,jwdgcrt)
+    !     call sctfjalw(bmaxtfrp,r_tf_inleg_mid,rtot,rbmax,(1.0D-6*alstrtf), tdmptf,jwdgcrt)
     !     return
     ! end if
 
@@ -855,7 +846,7 @@ subroutine stresscl
     !  The first layer is the steel casing inboard of the winding pack,
     !  while the second layer is the winding pack itself.
 
-    radtf(1) = rtfcin - 0.5D0*tfcth
+    radtf(1) = r_tf_inleg_mid - 0.5D0*tfcth
     radtf(2) = rbmax - thkwp
     radtf(3) = rbmax
 
@@ -1326,7 +1317,7 @@ subroutine coilshap
     integer :: i
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    xarc(1) = rtfcin + tfcth/2.0d0
+    xarc(1) = r_tf_inleg_mid + tfcth/2.0d0
     xarc(2) = rmajor - rminor/5.0d0
     xarc(3) = rtot - tfcth/2.0d0
     xarc(4) = xarc(2)
@@ -1568,7 +1559,7 @@ subroutine outtf(outfile, peaktfflag)
     end if
 
     call osubhd(outfile,'Coil Geometry :')
-    call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin, 'OP ')
+    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inleg_mid)',r_tf_inleg_mid, 'OP ')
     call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot, 'OP ')
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
     call ovarre(outfile,'gap between inboard vacuum vessel and thermal shield (m)','(gapds)',gapds)
@@ -1718,11 +1709,11 @@ subroutine outtf(outfile, peaktfflag)
     call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
     radius = radius + casthi
     call obuild(outfile,'Coil case (plasma side)',casthi,radius,'(casthi)')
-    if(abs((radius - rtfcin - 0.5D0*tfcth)) < 1d-6)then
+    if(abs((radius - r_tf_inleg_mid - 0.5D0*tfcth)) < 1d-6)then
         call ocmmnt(outfile,'TF coil dimensions are consistent')
     else
         call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
-        call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',rtfcin + 0.5D0*tfcth)
+        call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inleg_mid + 0.5D0*tfcth)
         call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
         !thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
         call oblnkl(outfile)

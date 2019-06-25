@@ -12,7 +12,7 @@ module global_variables
   !+ad_desc  well-suited to any of the other 'variables' modules.
   !+ad_prob  None
   !+ad_call  None
-  !+ad_hist  15/10/12 PJK Initial version of module
+  !+ad_hist  15/10/12 PJK Initial version of moduler
   !+ad_hist  23/07/14 PJK Added runtitle; modified icase
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2328,6 +2328,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: dcondins = 1800.0D0
   !+ad_vars  dcopper /8900.0/ : density of copper (kg/m3)
   real(kind(1.0D0)) :: dcopper = 8900.0D0
+  !+ad_vars  dalu /8900.0/ : density of aluminium (kg/m3)
+  real(kind(1.0D0)) :: dalu = 2700.0D0
   !+ad_vars  deflect : TF coil deflection at full field (m)
   real(kind(1.0D0)) :: deflect = 0.0D0
   !+ad_vars  denh2o /985.0/ FIX : density of water (kg/m3)
@@ -2487,10 +2489,13 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tdmptf = 10.0D0
   !+ad_vars  tfareain : area of inboard midplane TF legs (m2)
   real(kind(1.0D0)) :: tfareain = 0.0D0
-  !+ad_vars  tfboreh : TF coil horizontal internal bore (resistive only) (m)
+
+  !+ad_vars  tfboreh : TF coil horizontal inner bore (m)
   real(kind(1.0D0)) :: tfboreh = 0.0D0
+
   !+ad_vars  tf_total_h_width : TF coil horizontal inner bore (m)
   real(kind(1.0D0)) :: tf_total_h_width = 0.0D0
+
   !+ad_vars  tfborev : TF coil vertical inner bore (m)
   real(kind(1.0D0)) :: tfborev = 0.0D0
   !+ad_vars  tfbusl : TF coil bus length (m)
@@ -2523,6 +2528,7 @@ module tfcoil_variables
   !+ad_vars  tfleng : TF coil circumference (m)
   real(kind(1.0D0)) :: tfleng = 0.0D0
   !+ad_vars  tfno /16.0/ : number of TF coils (default = 50 for stellarators)
+  !+ad_varc                number of TF coils outer legs for ST
   real(kind(1.0D0)) :: tfno = 16.0D0
   !+ad_vars  tfocrn : TF coil half-width - outer bore (m)
   real(kind(1.0D0)) :: tfocrn = 0.0D0
@@ -2656,8 +2662,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: fcoolcp = 0.3D0
   !+ad_vars  frhocp /1.0/ : centrepost resistivity enhancement factor
   real(kind(1.0D0)) :: frhocp = 1.0D0
-  !+ad_vars  kcp /330.0/ FIX : thermal conductivity of centrepost (W/m/K)
-  real(kind(1.0D0)) :: kcp = 330.0D0
+  !+ad_vars  k_copper /330.0/ FIX : Copper thermal conductivity (W/m/K)
+  real(kind(1.0D0)) :: k_copper = 330.0D0
   !+ad_vars  kh2o /0.651/ FIX : thermal conductivity of water (W/m/K)
   real(kind(1.0D0)) :: kh2o = 0.651D0
   !+ad_vars  muh2o /4.71e-4/ FIX : water dynamic viscosity (kg/m/s)
@@ -3414,8 +3420,8 @@ module build_variables
   real(kind(1.0D0)) :: rsldi = 0.0D0
   !+ad_vars  rsldo : radius to outboard shield (outside point) (m)
   real(kind(1.0D0)) :: rsldo = 0.0D0
-  !+ad_vars  rtfcin : radius of centre of inboard TF leg (m)
-  real(kind(1.0D0)) :: rtfcin = 0.0D0
+  !+ad_vars  r_tf_inleg_mid : radius of centre of inboard TF leg (m)
+  real(kind(1.0D0)) :: r_tf_inleg_mid = 0.0D0
   !+ad_vars  rtot : radius to the centre of the outboard TF coil leg (m)
   real(kind(1.0D0)) :: rtot = 0.0D0
   !+ad_vars  scrapli /0.14/ : gap between plasma and first wall, inboard side (m)
@@ -3445,7 +3451,7 @@ module build_variables
   real(kind(1.0D0)) :: sigallpc = 3.0D8
 
   ! Issue #514 Make tfcth an output not an iteration variable
-  !!!+ad_vars  tfcth /1.173/ : inboard TF coil thickness, (centrepost for ST) (m)
+  !!!+ad_vars  tfcth /1.173/ : inboard TF coil(s  ) thickness (m)
   !!!+ad_varc                (calculated for stellarators)
   !!!+ad_varc                (iteration variable 13)
   !real(kind(1.0D0)) :: tfcth = 1.173D0
@@ -3467,7 +3473,7 @@ module build_variables
   !+ad_vars  thshield /0.05/ : TF-VV thermal shield thickness (m)
   real(kind(1.0D0)) :: thshield = 0.05D0
 
-  !+ad_vars  vgap2 /0.163/ : vertical gap between vacuum vessel and TF coil (m)
+  !+ad_vars  vgap2 /0.163/ : vertical gap between vacuum vessel and thermal shields (m)
   real(kind(1.0D0)) :: vgap2 = 0.163D0
   ! Issue #481 Remove vgaptf
   !+ad_vars  vgap /0.0/ : vertical gap between x-point and divertor (m)
