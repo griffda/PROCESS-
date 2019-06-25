@@ -181,6 +181,16 @@
 
 ! PRE-INITIALIZATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+! SJP Issue #869
+! Initialise variables.
+
+nepr=0.0d0
+tepr=0.0d0
+Qf0=0.0d0
+neb=0.0d0
+nsep=0.0d0
+tipr=0.0d0
+
 pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside equil.f90
 
 !create output directory if it oesnt exist
