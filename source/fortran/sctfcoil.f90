@@ -263,7 +263,7 @@ subroutine tf_coil_geometry()
     tf_total_h_width = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &
     blnkith + fwith + scrapli + rminor + rminor + scraplo + fwoth + &
     blnkoth + vvblgap + shldoth + ddwi + gapsto + thshield + &
-    tftsgap
+    tftsgap + tfthko
 
 end subroutine tf_coil_geometry
 
