@@ -153,6 +153,7 @@ contains
     !+ad_hist  08/02/17 JM  Added constraint equations 69,70 and 71 for Kallenbach model
     !+ad_hist  27/02/17 JM  Added constraint equation 72 for Central Solenoid stress model
     !+ad_hist  20/04/17 JM  Added string tags to constraints
+    !+ad_hist  25/04/19 SK  Added new constraint equation (81) ensuring ne(0) > ne(ped)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1724,6 +1725,21 @@ contains
                symbol(i) = '>'
                units(i) = ''
             end if
+
+         case (81)  ! Constraint equation making sure that ne(0) > ne(ped)
+              !#=# physics
+              !#=#=# ne0, neped
+    
+              ! Make sure that the central density is larger that the pedestal one
+              ! ne0   | centre plasma electron density
+              ! neped | pedestal plasma electron density
+              cc(i) = 1.0D0 - fne0 * ne0/neped 
+              if (present(con)) then
+                 con(i) = fne0 * (1.0D0 - cc(i))
+                 err(i) = fne0 * cc(i)
+                 symbol(i) = '>'
+                 units(i) = '/m3'
+              end if
 
        case default
 

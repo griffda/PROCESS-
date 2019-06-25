@@ -101,9 +101,9 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 153
+  integer, parameter :: ipnvars = 154
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 80
+  integer, parameter :: ipeqns = 81
   !+ad_vars  ipnfoms FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 19
 
@@ -360,7 +360,9 @@ module numerics
        !+ad_varc  <LI> (79) F-value for max peak CS field (itv  149 fbmaxcs)</UL>
        'Peak CS field upper limit        ',   &
        !+ad_varc  <LI> (80) F-value for min pdivt (itv  153 fpdivlim)</UL>
-       'pdivt lower limit                '    &
+       'pdivt lower limit                ',   &
+       !+ad_varc  <LI> (81) F-value for ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
+       'ne0 > neped                      '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -686,6 +688,8 @@ module numerics
        !+ad_varc  <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density
        'fgwsep        ', &
        !+ad_varc  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)</UL>
+       'fpdivlim      ', &
+       !+ad_varc  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)</UL>
        'fpdivlim      ' &
        /)
 
@@ -857,7 +861,8 @@ module numerics
        0.000D0, &  !  150
        0.001D0, &  !  151
        0.001D0, &  !  152
-       0.001D0  &  !  153
+       0.001D0, &  !  153
+       0.001D0  &  !  154
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -1015,7 +1020,8 @@ module numerics
        1.000D0, &  !  150
        1.000D0, &  !  151
        1.000D0, &  !  152
-       1.000D0  &  !  153
+       1.000D0, &  !  153
+       1.000D0  &  !  154
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

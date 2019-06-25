@@ -12,7 +12,7 @@ module global_variables
   !+ad_desc  well-suited to any of the other 'variables' modules.
   !+ad_prob  None
   !+ad_call  None
-  !+ad_hist  15/10/12 PJK Initial version of moduler
+  !+ad_hist  15/10/12 PJK Initial version of module
   !+ad_hist  23/07/14 PJK Added runtitle; modified icase
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -312,8 +312,13 @@ module physics_variables
   real(kind(1.0D0)) :: fkzohm = 1.0D0
   !+ad_vars  fplhsep /1.0/ : F-value for Psep >= Plh + Paux (constraint equation 73)
   real(kind(1.0D0)) :: fplhsep = 1.0D0
+  
   !+ad_vars  fpdivlim /1.0/ : F-value for minimum pdivt (constraint equation 80)
   real(kind(1.0D0)) :: fpdivlim = 1.0D0
+
+  !+ad_vars  fne0 /1.0/ : F-value for minimum pdivt (constraint equation 81)
+  real(kind(1.0D0)) :: fne0 = 1.0D0
+
   !+ad_vars  ftrit /0.5/ : tritium fuel fraction
   real(kind(1.0D0)) :: ftrit = 0.5D0
   !+ad_vars  fusionrate : fusion reaction rate (reactions/m3/sec)
@@ -2326,9 +2331,11 @@ module tfcoil_variables
   real(kind(1.0D0)), dimension(6) :: dcond = 9000.0D0
   !+ad_vars  dcondins /1800.0/ : density of conduit + ground-wall insulation (kg/m3)
   real(kind(1.0D0)) :: dcondins = 1800.0D0
+
   !+ad_vars  dcopper /8900.0/ : density of copper (kg/m3)
   real(kind(1.0D0)) :: dcopper = 8900.0D0
-  !+ad_vars  dalu /8900.0/ : density of aluminium (kg/m3)
+
+  !+ad_vars  dalu /2700.0/ : density of aluminium (kg/m3)
   real(kind(1.0D0)) :: dalu = 2700.0D0
   !+ad_vars  deflect : TF coil deflection at full field (m)
   real(kind(1.0D0)) :: deflect = 0.0D0
