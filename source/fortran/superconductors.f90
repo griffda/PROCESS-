@@ -666,7 +666,7 @@ subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
     real(kind(1.0D0)), intent(in) ::jcritsc
     type(volume_fractions), intent(inout)::conductor
     type(supercon_strand), intent(inout)::croco_strand
-    real(kind(1.0D0)) :: d, scaling, croco_od, croco_thick !, conductor_width, thwcndut
+    real(kind(1.0D0)) :: d, scaling, croco_od, croco_thick
     ! Define local alias
     d = croco_od
     !d = conductor_width / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
@@ -685,7 +685,7 @@ subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
     stack_thickness = sqrt(croco_id**2 - tape_width**2)
     tapes = stack_thickness / tape_thickness
 
-    copper_area = pi * croco_thick * d - pi * croco_thick**2 & ! (d**2 - croco_id**2) /4 &   ! copper tube
+    copper_area = pi * croco_thick * d - pi * croco_thick**2 &  ! copper tube
                   + copper_thick*tape_width*tapes          ! copper in tape
     hastelloy_area = hastelloy_thickness * tape_width * tapes
     solder_area = pi / 4.0d0 * croco_id**2 - stack_thickness * tape_width
