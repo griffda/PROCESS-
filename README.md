@@ -117,6 +117,8 @@ During the compile and build steps, a number of files and folders are created. A
 Additionally
 
 - to make python dictionaries run `cmake3 --build build --target dicts`
+  - after creating dictionaries update your `PYTHONPATH` to point towards the utilities folder, e.g.:
+  - `export PYTHONPATH=$PYTHONPATH:/home/<user_name>/<path_to_process>/utilities/`
 - to make documentation run `cmake3 --build build --target doc`. (pdf compilation on UKAEA Freia machines 
   requires the following line in your `.bashrc` file: `module load texlive/2017`)
 - to make html files run `cmake3 --build build --target html`
