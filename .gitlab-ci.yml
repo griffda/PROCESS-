@@ -101,7 +101,7 @@ testing:baseline_2018_run:
  artifacts:
    expire_in: 2 hrs
    paths:
-     - tracking/baseline_2019/baseline_2018_MFILE.DAT
+     - tracking/baseline_2018/baseline_2018_MFILE.DAT
  tags:
   - freia
 
