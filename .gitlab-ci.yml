@@ -89,6 +89,22 @@ testing:baseline_2019_run:
  tags:
   - freia
 
+testing:baseline_2018_run:
+ when: on_success  # Also default setting
+ only:
+  - develop
+ stage: testing
+ script:
+  - pwd
+  - cd tracking/baseline_2018
+  - ./../../bin/process.exe baseline_2018_IN.DAT
+ artifacts:
+   expire_in: 2 hrs
+   paths:
+     - tracking/baseline_2019/baseline_2018_MFILE.DAT
+ tags:
+  - freia
+
 baseline:tracking:
  when: on_success  # Also default setting
  only:
@@ -113,6 +129,23 @@ baseline:baseline_2019_results:
   - cd tracking/baseline_2019
   - python ../../utilities/mfile_comparison.py -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT --acc 1.0 --baseline
   - python ../../utilities/mfile_comparison.py -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT --acc 10.0 --baseline
+ tags:
+  - freia
+
+
+baseline:baseline_2018_results:
+ when: on_success  # Also default setting
+ only:
+  - develop
+ stage: baseline
+ script:
+  - pwd
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target dicts
+  - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+  - cd tracking/baseline_2018
+  - python ../../utilities/mfile_comparison.py -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT --acc 1.0 --baseline
+  - python ../../utilities/mfile_comparison.py -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT --acc 10.0 --baseline
  tags:
   - freia
 
