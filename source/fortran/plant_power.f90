@@ -1203,9 +1203,24 @@ contains
     call osubhd(outfile,'Assumptions :')
 
     call ovarre(outfile,'Neutron power multiplication in blanket', '(emult)', emult)
-    call ovarre(outfile, 'Divertor area fraction of whole toroid surface', '(fdiv)', fdiv)
+    
+    if (idivrt == 2) then
+        ! Double null configuration
+        call ovarre(outfile, 'Double Null Divertor area fraction of whole toroid surface', '(2*fdiv)', 2.0D0*fdiv)
+    else
+        ! Single null configuration
+        call ovarre(outfile, 'Divertor area fraction of whole toroid surface', '(fdiv)', fdiv)
+    end if 
+
     call ovarre(outfile,'H/CD apparatus + diagnostics area fraction', '(fhcd)', fhcd)
-    call ovarre(outfile,'First wall area fraction ', '(1-fdiv-fhcd)', 1.0D0-fdiv-fhcd)
+    
+    if (idivrt == 2) then
+        ! Double null configuration
+        call ovarre(outfile,'First wall area fraction ', '(1-2*fdiv-fhcd)', 1.0D0-2.0D0*fdiv-fhcd)
+    else
+        ! Single null configuration
+        call ovarre(outfile,'First wall area fraction ', '(1-fdiv-fhcd)', 1.0D0-fdiv-fhcd)
+    end if
 
     call ovarin(outfile, 'Switch for pumping of primary coolant', '(primary_pumping)', primary_pumping)
     if (primary_pumping == 0) then
