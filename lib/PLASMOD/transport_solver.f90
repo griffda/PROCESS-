@@ -644,8 +644,11 @@ endif
 
 	! Powers section -- to be coupled otherwise to HandCD ultimately
 	! Auxiliary, ECH not used for no
-	Peaux = exp(-(x-inp0%x_heat(2))**2/inp0%dx_heat(2)**2.d0)
-	Pech=0.*Peaux/trapz(Peaux*dV);
+
+! SJP Issue #829
+! Peaux calculated later on
+
+Pech=0.0d0
 
 !sum over powers for NBI, assumed the only aux heating for now
 	Piaux = exp(-(x-inp0%x_heat(1))**2/inp0%dx_heat(1)**2.d0)
