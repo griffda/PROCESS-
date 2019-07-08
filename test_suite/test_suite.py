@@ -71,6 +71,15 @@ def main(args):
             # Output message to terminal
             print_message(key, tests[key])
 
+    errors = list()
+    for ky in drs.keys():
+        if "error_" not in ky:
+            if tests[ky].status == "ERROR":
+                errors.append(ky)
+
+    if len(errors) >= 1:
+        sys.exit("ERROR in test case(s) :: {0}".format(errors))
+
     # version number
     vrsn = get_version(tests)
 
