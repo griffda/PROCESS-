@@ -97,6 +97,21 @@ testing:test_suite:
  tags:
   - freia
 
+testing:test_suite_issue:
+ when: on_success  # Also default setting
+ only:
+  - /^issue-.*$/
+ stage: testing
+ script:
+  - pwd
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target dicts
+  - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+  - cd test_suite
+  - python test_suite.py
+ tags:
+  - freia
+
 testing:baseline_2019_run:
  when: on_success  # Also default setting
  only:
