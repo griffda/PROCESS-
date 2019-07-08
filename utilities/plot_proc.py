@@ -914,7 +914,7 @@ def plot_radprofile(prof, mfile_data, scan, impp):
         
         #benchmark prad again outfile so mod prad
         drho = np.array([rho[n+1] - rho[n] for n in range(te.shape[0]-1)])
-        pradint = (rho[1:] * prad[1:]) @ drho 
+        pradint = np.dot((rho[1:] * prad[1:]),drho)
         #pbremint = (rho[1:] * pbrem[1:]) @ drho 
         #pradint = prad[1:] @ drho * 2.0e-5
         #pbremint = pbrem[1:] @ drho * 2.0e-5
