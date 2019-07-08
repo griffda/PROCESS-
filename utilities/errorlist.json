@@ -3,7 +3,7 @@
  "version":  [ "PROCESS version 1.0.15" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 216,
+ "n_errortypes": 222,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -41,7 +41,7 @@
   { "no": 34, "level": 3, "message": "ELEMENT2INDEX: Element with given label not found in impurity array" },
   { "no": 35, "level": 2, "message": "PIMPDEN: Impurity radiation model is inaccurate at such low temperatures" },
   { "no": 36, "level": 3, "message": "CHECK: Fuel ion fractions do not sum to 1.0; check fdeut, ftrit, fhe3 values" },
-  { "no": 37, "level": 2, "message": "CHECK: Usual current scaling for TARTs (icurr=2) is not being used" },
+  { "no": 37, "level": 2, "message": "CHECK: Usual current scaling for TARTs (icurr=2 or 9) is not being used" },
   { "no": 38, "level": 3, "message": "CHECK: ibss=1 is not a valid option for a TART device" },
   { "no": 39, "level": 3, "message": "CHECK: snull=1 is not a valid option for a TART device" },
   { "no": 40, "level": 3, "message": "CHECK: icurr=2 is not a valid option for a non-TART device" },
@@ -220,6 +220,12 @@
   {"no": 213, "level": 2, "message": "NCORE: Central density is less than pedestal density"},
   {"no": 214, "level": 2, "message": "CHECK: Values of EPED scaling factor 'eped_sf' greater than 1 are not recommended"},
   {"no": 215, "level": 3, "message": "STELLARATOR: primary_pumping = 0 or 1 only"},
-  {"no": 215, "level": 3, "message": "CONSTRAINTS: Do not use tritium breeding ratio constraint 52 if iblanket=1"}
+  {"no": 216, "level": 3, "message": "CONSTRAINTS: Do not use tritium breeding ratio constraint 52 if iblanket=1"},
+  {"no": 217, "level": 2, "message": "REINKE IMPURITY MODEL: fzmin is greater than or equal to 1.0, this is at least notable"},
+  {"no": 218, "level": 2, "message": "REINKE IMPURITY MODEL: The Martin LH threshold scale is not being used and is recommned for the Reinke model"},
+  {"no": 219, "level": 3, "message": "REINKE IMPURITY MODEL: tesep is calculated and cannot be an iteration variable for the Reinke model"},
+  {"no": 220, "level": 1, "message": "CHECK: tauee_in is for use with isc=48 only"},
+  {"no": 221, "level": 2, "message": "CHECK: NSTX scaling is for A<1.7"},
+  {"no": 222, "level": 3, "message": "CHECK: Lang 2012 confinement scaling cannot be used for icurr=2 due to wrong q"}
  ]
 }

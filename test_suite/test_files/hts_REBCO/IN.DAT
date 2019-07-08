@@ -211,7 +211,7 @@ ipowerflow = 0 * Switch for power flow model;
 
 *------------Impurity Radiation Module-------------*
 
-imprad_model = 1 * Switch for impurity radiation model;
+*imprad_model = 1 * Switch for impurity radiation model;
 coreradius = 0.75 * Normalised radius defining the 'core' region
 coreradiationfraction = 0.6 * Fraction of radiation from 'core' region that is subtracted from the loss power
 fimp(1) = 1.0
@@ -311,8 +311,6 @@ lpulse   = 1 * Switch for reactor model;
 rebco_thickness = 1.33d-6 * Thickness of rebco layer in tape (m) (iteration variable 138)
 copper_thick = 40e-6 * Thickness of copper layer in tape (m) (iteration variable 139)
 hastelloy_thickness = 50.0d-6 * Thickness of hastelloy layer in tape (m)
-tape_width = 3.0e-3     * 3.75d-3 * Mean width of tape (m)
-croco_od = 10.4d-3 * Outer diameter of croco strand (m)
 copperA_m2_max = 1e8  * Maximum TF coil current / copper area (A/m2)
 f_copperA_m2 = 1 * f-value for constraint 75: TF coil current / copper area < copperA_m2_max
 

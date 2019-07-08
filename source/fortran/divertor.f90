@@ -30,6 +30,7 @@ module divertor_module
   use build_variables
   use constants
   use divertor_variables
+  use tfcoil_variables, only : drtop
   use error_handling
   use physics_variables
   use process_output
@@ -727,7 +728,7 @@ contains
 
     !  Thickness of centrepost + first wall at divertor height
 
-    r1 = rmajor - rminor*triang - 3.0D0*scrapli
+    r1 = rmajor - rminor*triang - 3.0D0*scrapli + drtop
 
     !  Outer radius of divertor region
 

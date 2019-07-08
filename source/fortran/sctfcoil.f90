@@ -14,7 +14,6 @@ module sctfcoil_module
 !+ad_cont  jcrit_nbti
 !+ad_cont  outtf
 !+ad_cont  sctfcoil
-!+ad_cont  sctfjalw
 !+ad_cont  sigvm
 !+ad_cont  stresscl
 !+ad_cont  tfcind
@@ -195,7 +194,7 @@ subroutine sctfcoil(outfile,iprint)
     estotftgj = 1.0D-9 * estotft
 
     ! Case thicknesses (inboard leg)
-    if (tfc_model == 0) thkcas = tfcth * 0.5D0
+    ! if (tfc_model == 0) thkcas = tfcth * 0.5D0
 
     ! Calculate TF coil areas and masses
     call tf_coil_area_and_masses
@@ -226,11 +225,7 @@ subroutine tf_coil_geometry()
     real(kind(1.0D0)) :: deltf
 
     ! Radial position of inner edge of inboard TF coil leg [m]
-    if (itart == 1) then
-        r_tf_inner = bore
-    else
-        r_tf_inner = bore + ohcth + precomp + gapoh
-    end if
+    r_tf_inner = bore + ohcth + precomp + gapoh
 
     ! Radial position of plasma-facing edge of TF coil inboard leg [m]
     r_tf_outer = r_tf_inner + tfcth
@@ -243,12 +238,8 @@ subroutine tf_coil_geometry()
     tftort = 2.0D0 * r_tf_outer*sin(theta_coil)
 
     ! Radial position of centre of inboard TF coil leg [m]
-    if (itart == 1) then
-        rtfcin = bore + 0.5D0*tfcth
-    else
-        rtfcin = bore + ohcth + precomp + gapoh + 0.5D0*tfcth
-    end if
-
+    r_tf_inleg_mid = r_tf_inner + 0.5D0*tfcth
+ 
     ! Plasma-facing wall thickness if fraction option selected [m]
     if(casthi_is_fraction) casthi = casthi_fraction * tfcth
 
@@ -263,13 +254,13 @@ subroutine tf_coil_geometry()
 
     ! TF coil vertical bore [m]
     tfborev = 2.0D0*(rminor*kappa + vgaptop + fwith + blnktth + vvblgap + &
-    shldtth + ddwi+ vgap2 + thshield + tftsgap + tfcth)
+    shldtth + ddwi+ vgap2 + thshield + tftsgap)
 
     ! Gap between inboard TF coil and thermal shield [m]
-    deltf = (bore + ohcth + precomp + gapoh + tfcth) * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    deltf = r_tf_outer * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 
     ! TF coil horizontal bore [m]
-    tfboreh = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &
+    tf_total_h_width = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &
     blnkith + fwith + scrapli + rminor + rminor + scraplo + fwoth + &
     blnkoth + vvblgap + shldoth + ddwi + gapsto + thshield + &
     tftsgap + tfthko
@@ -619,7 +610,7 @@ subroutine tf_field_and_force()
     cforce = bmaxtf*ritfc/(2.0D0*tfno)
 
     ! Vertical force per leg [N]
-    vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * log(rtot/rtfcin) / tfno
+    vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * log(rtot/r_tf_inleg_mid) / tfno
 
 
 end subroutine tf_field_and_force
@@ -645,7 +636,7 @@ subroutine tf_coil_area_and_masses()
     ! = 2 * centroid coil length * 2 pi R, where R is average of i/b and o/b centres
     ! (This will possibly be used to replace 2*tfsai in the calculation of qss
     ! in subroutine cryo - not done at present.)
-    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(rtfcin+rtot)
+    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inleg_mid+rtot)
 
     ! Mass of case [kg]
 
@@ -817,7 +808,6 @@ subroutine stresscl
     !+ad_call  eyngeff
     !+ad_call  eyngzwp
     !+ad_call  report_error
-    !+ad_call  sctfjalw
     !+ad_call  sigvm
     !+ad_call  two_layer_stress
     !+ad_stat  Okay
@@ -836,12 +826,11 @@ subroutine stresscl
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Simple stress model option
-
-    if (tfc_model == 0) then
-        call sctfjalw(bmaxtfrp,rtfcin,rtot,rbmax,(1.0D-6*alstrtf), tdmptf,jwdgcrt)
-        return
-    end if
+    !  Simple stress model option.  REMOVED Issue #781
+    ! if (tfc_model == 0) then
+    !     call sctfjalw(bmaxtfrp,r_tf_inleg_mid,rtot,rbmax,(1.0D-6*alstrtf), tdmptf,jwdgcrt)
+    !     return
+    ! end if
 
     !  Set up graded stress model call information
 
@@ -857,7 +846,7 @@ subroutine stresscl
     !  The first layer is the steel casing inboard of the winding pack,
     !  while the second layer is the winding pack itself.
 
-    radtf(1) = rtfcin - 0.5D0*tfcth
+    radtf(1) = r_tf_inleg_mid - 0.5D0*tfcth
     radtf(2) = rbmax - thkwp
     radtf(3) = rbmax
 
@@ -1255,57 +1244,57 @@ end function sigvm
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine sctfjalw(bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump,jtfalw)
+! subroutine sctfjalw(bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump,jtfalw)
 
-    !+ad_name  sctfjalw
-    !+ad_summ  Simple J(B) model for the superconducting TF Coil
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Galambos, FEDC/ORNL
-    !+ad_cont  N/A
-    !+ad_args  bmaxtf  : input real : peak field including ripple (T)
-    !+ad_args  rtfmi   : input real : mean inboard leg radius (m)
-    !+ad_args  rtfmo   : input real : mean outboard leg radius (m)
-    !+ad_args  rtf2    : input real : radius of inboard leg point nearest plasma (m)
-    !+ad_args  sigmatf : input real : allowable structure stress (MPa)
-    !+ad_args  tdump   : input real : dump time (s)
-    !+ad_args  jtfalw  : output real : overall allowable current density (A/m2)
-    !+ad_desc  This routine using a simple model to calculate the allowable
-    !+ad_desc  current density in a superconducting coil, given the magnetic
-    !+ad_desc  field and the allowable stress.
-    !+ad_desc  Programmed by J. Galambos from algorithms from J. Perkins.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  25/01/91 JG  Initial version
-    !+ad_hist  14/05/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     !+ad_name  sctfjalw
+!     !+ad_summ  Simple J(B) model for the superconducting TF Coil
+!     !+ad_type  Subroutine
+!     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+!     !+ad_auth  J Galambos, FEDC/ORNL
+!     !+ad_cont  N/A
+!     !+ad_args  bmaxtf  : input real : peak field including ripple (T)
+!     !+ad_args  rtfmi   : input real : mean inboard leg radius (m)
+!     !+ad_args  rtfmo   : input real : mean outboard leg radius (m)
+!     !+ad_args  rtf2    : input real : radius of inboard leg point nearest plasma (m)
+!     !+ad_args  sigmatf : input real : allowable structure stress (MPa)
+!     !+ad_args  tdump   : input real : dump time (s)
+!     !+ad_args  jtfalw  : output real : overall allowable current density (A/m2)
+!     !+ad_desc  This routine using a simple model to calculate the allowable
+!     !+ad_desc  current density in a superconducting coil, given the magnetic
+!     !+ad_desc  field and the allowable stress.
+!     !+ad_desc  Programmed by J. Galambos from algorithms from J. Perkins.
+!     !+ad_prob  None
+!     !+ad_call  None
+!     !+ad_hist  25/01/91 JG  Initial version
+!     !+ad_hist  14/05/12 PJK Initial F90 version
+!     !+ad_stat  Okay
+!     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+!     !
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+!     implicit none
 
-    !  Arguments
+!     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump
-    real(kind(1.0D0)), intent(out) :: jtfalw
+!     real(kind(1.0D0)), intent(in) :: bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump
+!     real(kind(1.0D0)), intent(out) :: jtfalw
 
-    !  Local variables
+!     !  Local variables
 
-    real(kind(1.0D0)), parameter :: tdumprf = 10.0D0  !  Reference dump time (s)
+!     real(kind(1.0D0)), parameter :: tdumprf = 10.0D0  !  Reference dump time (s)
 
-    real(kind(1.0D0)) :: sqrtdmp,temp1,temp2,temp3
+!     real(kind(1.0D0)) :: sqrtdmp,temp1,temp2,temp3
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    sqrtdmp = sqrt(tdump/tdumprf)
-    temp1 = 125.94D0*bmaxtf*rtf2 * log(rtfmo/rtfmi) / sigmatf
-    temp2 = 0.036D0*sqrt(bmaxtf) / (1.0D0-bmaxtf/23.0D0)**2
-    temp3 = 0.6D0 / (1.0D0 - (1.0D0 / (16.0D0 * (1.0D0 - bmaxtf/23.0D0)-5.0D0) ) )
+!     sqrtdmp = sqrt(tdump/tdumprf)
+!     temp1 = 125.94D0*bmaxtf*rtf2 * log(rtfmo/rtfmi) / sigmatf
+!     temp2 = 0.036D0*sqrt(bmaxtf) / (1.0D0-bmaxtf/23.0D0)**2
+!     temp3 = 0.6D0 / (1.0D0 - (1.0D0 / (16.0D0 * (1.0D0 - bmaxtf/23.0D0)-5.0D0) ) )
 
-    jtfalw = 152.0D6 / (temp1 + temp2*temp3 + sqrtdmp)
+!     jtfalw = 152.0D6 / (temp1 + temp2*temp3 + sqrtdmp)
 
-end subroutine sctfjalw
+! end subroutine sctfjalw
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1328,7 +1317,7 @@ subroutine coilshap
     integer :: i
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    xarc(1) = rtfcin + tfcth/2.0d0
+    xarc(1) = r_tf_inleg_mid + tfcth/2.0d0
     xarc(2) = rmajor - rminor/5.0d0
     xarc(3) = rtot - tfcth/2.0d0
     xarc(4) = xarc(2)
@@ -1537,9 +1526,9 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf, 'OP ')
     call ovarre(outfile,'Overall current density (A/m2)','(oacdcp)',oacdcp)
 
-    if (tfc_model == 0) then
-        call ovarre(outfile,'Allowable overall current density (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
-    end if
+    ! if (tfc_model == 0) then
+    !     call ovarre(outfile,'Allowable overall current density (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
+    ! end if
 
     call osubhd(outfile,'General Coil Parameters :')
     call ovarre(outfile,'Number of TF coils','(tfno)',tfno)
@@ -1570,7 +1559,7 @@ subroutine outtf(outfile, peaktfflag)
     end if
 
     call osubhd(outfile,'Coil Geometry :')
-    call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin, 'OP ')
+    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inleg_mid)',r_tf_inleg_mid, 'OP ')
     call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot, 'OP ')
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
     call ovarre(outfile,'gap between inboard vacuum vessel and thermal shield (m)','(gapds)',gapds)
@@ -1720,28 +1709,28 @@ subroutine outtf(outfile, peaktfflag)
     call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
     radius = radius + casthi
     call obuild(outfile,'Coil case (plasma side)',casthi,radius,'(casthi)')
-    if(abs((radius - rtfcin - 0.5D0*tfcth)) < 1d-6)then
+    if(abs((radius - r_tf_inleg_mid - 0.5D0*tfcth)) < 1d-6)then
         call ocmmnt(outfile,'TF coil dimensions are consistent')
     else
         call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
-        call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',rtfcin + 0.5D0*tfcth)
+        call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inleg_mid + 0.5D0*tfcth)
         call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
         !thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
         call oblnkl(outfile)
     end if
 
-    if (tfc_model == 0) then
-        call osubhd(outfile,'TF Coil Stresses (solid copper coil model) :')
-    else
-        call osubhd(outfile,'TF Coil Stresses (CCFE two-layer model) :')
-    end if
-    call ovarin(outfile,'TF coil model','(tfc_model)',tfc_model)
+    ! if (tfc_model == 0) then
+    !     call osubhd(outfile,'TF Coil Stresses (solid copper coil model) :')
+    ! else
+    call osubhd(outfile,'TF Coil Stresses (CCFE two-layer model) :')
+    ! end if
+    ! call ovarin(outfile,'TF coil model','(tfc_model)',tfc_model)
     call ovarre(outfile,'Allowable Tresca stress limit (Pa)','(alstrtf)',alstrtf)
     call ovarre(outfile,'Vertical stress (Pa)','(sigvert)',sigvert, 'OP ')
-    if (tfc_model == 1) then
-        call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(1))',sigrtf(1))
-        call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(1))',sigttf(1), 'OP ')
-    end if
+    ! if (tfc_model == 1) then
+    call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(1))',sigrtf(1))
+    call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(1))',sigttf(1), 'OP ')
+    ! end if
     call ovarre(outfile,'Conduit radial stress (Pa)','(sigrcon)',sigrcon, 'OP ')
     call ovarre(outfile,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon, 'OP ')
     call ovarin(outfile,'Tresca conduit stress criterion', '(i_tf_tresca)', i_tf_tresca, 'OP ')
@@ -1751,11 +1740,11 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'von Mises stress in case (Pa)', '(s_vmises_case)', s_vmises_case, 'OP ')
     call ovarre(outfile,'von Mises stress in conduit (Pa)', '(s_vmises_cond)', s_vmises_cond, 'OP ')
     call ovarre(outfile,'Peak radial deflection at midplane (m)','(deflect)',deflect, 'OP ')
-    if (tfc_model == 1) then
-        call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
-        call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
-        call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
-    end if
+    ! if (tfc_model == 1) then
+    call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
+    call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
+    call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
+    ! end if
 
 end subroutine outtf
 
@@ -1779,12 +1768,11 @@ subroutine tfspcall(outfile,iprint)
     !  Local variables
     real(kind(1.0D0)) :: aturn, tfes, vdump
 
-    !  Simple model
-
-    if (tfc_model == 0) then
-        vtfskv = 20.0D0
-        return
-    end if
+    ! Simple model REMOVED Issue #781
+    ! if (tfc_model == 0) then
+    !     vtfskv = 20.0D0
+    !     return
+    ! end if
 
     ! Stored energy (J) per coil (NOT a physical meaningful quantity)
     tfes = estotft / tfno
@@ -2117,7 +2105,6 @@ contains
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         !  Find critical current density in superconducting strand, jcritstr
-
         call jcrit_rebco(thelium,bmax,jcritsc,validity,iprint)
         ! acstf : Cable space - inside area (m2)
         ! Set new croco_od - allowing for scaling of croco_od
@@ -2130,7 +2117,7 @@ contains
         acndttf = conductor%jacket_area
         
         conductor%jacket_fraction = conductor%jacket_area / conductor%area
-        call croco(jcritsc,croco_strand,conductor,croco_od)
+        call croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
         copperA_m2 = iop / conductor%copper_area
         icrit = conductor%critical_current
         jcritstr = croco_strand%critical_current / croco_strand%area
@@ -2172,9 +2159,10 @@ contains
         call ovarre(outfile,'Thickness of copper layer in tape (m)','(copper_thick  )', copper_thick)
         call ovarre(outfile,'Thickness of Hastelloy layer in tape (m) ','(hastelloy_thickness)', hastelloy_thickness)
 
-        call ovarre(outfile,'Mean width of tape (m)','(tape_width)',tape_width)
-        call ovarre(outfile,'Outer diameter of CroCo copper tube (m) ','(croco_od)', croco_od)
-        call ovarre(outfile,'Inner diameter of CroCo copper tube (m) ','(croco_id)',croco_id)
+        call ovarre(outfile,'Mean width of tape (m)','(tape_width)', tape_width , 'OP ')
+        call ovarre(outfile,'Outer diameter of CroCo copper tube (m) ','(croco_od)', croco_od , 'OP ')
+        call ovarre(outfile,'Inner diameter of CroCo copper tube (m) ','(croco_id)',croco_id , 'OP ')
+        call ovarre(outfile,'Thickness of CroCo copper tube (m) ','(croco_thick)',croco_thick)
 
         call ovarre(outfile,'Thickness of each HTS tape ','(tape_thickness)',tape_thickness , 'OP ')
         call ovarre(outfile,'Thickness of stack of tapes (m) ','(stack_thickness)',stack_thickness , 'OP ')

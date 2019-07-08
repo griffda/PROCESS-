@@ -134,7 +134,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Allowable blanket neutron fluence (MW-yr/m2)                             (abktflnc)                5.000E+00     
  Allowable divertor heat fluence (MW-yr/m2)                               (adivflnc)                7.000E+00     
  First wall / blanket lifetime (years)                                    (bktlife)                 6.667E+00  OP 
- Divertor lifetime (years)                                                (divlife)                 3.000E+01  OP 
+ Divertor lifetime (years)                                                (divlife)                 8.675E-01  OP 
  Heating/CD system lifetime (years)                                       (cdrlife)                 6.667E+00  OP 
  Total plant lifetime (years)                                             (tlife)                   3.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     

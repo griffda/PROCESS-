@@ -44,10 +44,33 @@ build:Make:
      - bin/libPROCESS_calc_engine.so
  tags:
   - freia
+
+build:Make_issue:
+ only:
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - rm -rf build
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build
+  - ls bin -lah
+  - echo "Test "
+ artifacts:
+   expire_in: 2 hrs
+   paths:
+     - bin/process.exe
+     - bin/libPROCESS_calc_engine.so
+ tags:
+  - freia
+
 build:vardes:
 
  only:
   - develop
+  - /^issue-.*$/
  stage: build
  script:
   - pwd
@@ -61,6 +84,7 @@ build:vardes:
      - documentation/html/*.html
  tags:
   - freia
+
 testing:test_suite:
  when: on_success  # Also default setting
  only:
@@ -77,6 +101,7 @@ testing:baseline_2019_run:
  when: on_success  # Also default setting
  only:
   - develop
+  - /^issue-.*$/
  stage: testing
  script:
   - pwd
@@ -89,10 +114,39 @@ testing:baseline_2019_run:
  tags:
   - freia
 
+testing:baseline_2018_run:
+ when: on_success  # Also default setting
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: testing
+ script:
+  - pwd
+  - cd tracking/baseline_2018
+  - ./../../bin/process.exe baseline_2018_IN.DAT
+ artifacts:
+   expire_in: 2 hrs
+   paths:
+     - tracking/baseline_2018/baseline_2018_MFILE.DAT
+ tags:
+  - freia
+
+baseline:tracking:
+ when: on_success  # Also default setting
+ only:
+#  - merge_requests # Enable if Only merge request trigger tracking job
+  - develop
+ stage: baseline
+ script: # Now trigger job in Jenkins
+  - "curl -X POST http://mkumar:11e6783cdcc8e709d27e5376d2f57d8741@process-jenkins-ci.apps.l:8080/jenkins/job/PROCESS_Tracking/build?token=MiLNGc-QvyEevhKK54go"
+ tags:
+  - freia
+
 baseline:baseline_2019_results:
  when: on_success  # Also default setting
  only:
   - develop
+  - /^issue-.*$/
  stage: baseline
  script:
   - pwd
@@ -101,6 +155,24 @@ baseline:baseline_2019_results:
   - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
   - cd tracking/baseline_2019
   - python ../../utilities/mfile_comparison.py -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT --acc 1.0 --baseline
+  - python ../../utilities/mfile_comparison.py -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT --acc 10.0 --baseline
+ tags:
+  - freia
+
+baseline:baseline_2018_results:
+ when: on_success  # Also default setting
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: baseline
+ script:
+  - pwd
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target dicts
+  - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+  - cd tracking/baseline_2018
+  - python ../../utilities/mfile_comparison.py -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT --acc 1.0 --baseline
+  - python ../../utilities/mfile_comparison.py -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT --acc 10.0 --baseline
  tags:
   - freia
 

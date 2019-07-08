@@ -176,10 +176,11 @@ def main(arg):
         ofile.close()
 
     if arg.baseline:
-        if print_counter == 0:
-            sys.exit(0)
-        else:
-            sys.exit("Differences in baseline output by more than {0}%".format(arg.acc))
+        if arg.acc >= 10.0:
+            if print_counter == 0:
+                sys.exit(0)
+            else:
+                sys.exit("Differences in baseline output by more than {0}%".format(arg.acc))
 
 if __name__ == "__main__":
 

@@ -43,6 +43,7 @@ functions and subroutines within PROCESS. Googletest is also referred to as GTes
 On Freia, paths to PFUnit and GTEST can be set in your user profile (.bashrc) as 
 - `export PFUNIT=/home/PROCESS/testing_frameworks/pfunit_install/V_3-2_8`
 - `export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest`
+- `export PYTHONPATH=$PYTHONPATH:[path to process folder]/utilities`
 
 ## Directory Structure
 
@@ -116,6 +117,8 @@ During the compile and build steps, a number of files and folders are created. A
 Additionally
 
 - to make python dictionaries run `cmake3 --build build --target dicts`
+  - after creating dictionaries update your `PYTHONPATH` to point towards the utilities folder, e.g.:
+  - `export PYTHONPATH=$PYTHONPATH:/home/<user_name>/<path_to_process>/utilities/`
 - to make documentation run `cmake3 --build build --target doc`. (pdf compilation on UKAEA Freia machines 
   requires the following line in your `.bashrc` file: `module load texlive/2017`)
 - to make html files run `cmake3 --build build --target html`
@@ -319,6 +322,17 @@ updated upon compilation. This way each output file is trackable to a specific c
 | `git describe --tags`   | show the current tag  | 
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 | `git checkout tags/<tag name>` | checkout a specific tag |
+
+## Profiling
+
+To profile the code and investigate which parts of the code are using the most 
+computational time follow these steps:
+
+* Compile the code with the `dll=OFF` option.
+  *  `cmake3 -H. -Bbuild -Ddll=OFF`
+* Run the code
+* Enter the command 
+  * `gprof ./<path_to_executable>/process.exe --ignore-non-functions`
 
 ## Troubleshooting
 

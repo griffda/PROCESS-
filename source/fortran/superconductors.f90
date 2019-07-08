@@ -655,7 +655,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 end subroutine wstsc
 !--------------------------------------------------------------------------
 
-subroutine croco(jcritsc,croco_strand,conductor,croco_od)
+subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
 
     !+ad_name  croco
     !+ad_summ  "CroCo" (cross-conductor) strand and cable design for
@@ -666,22 +666,26 @@ subroutine croco(jcritsc,croco_strand,conductor,croco_od)
     real(kind(1.0D0)), intent(in) ::jcritsc
     type(volume_fractions), intent(inout)::conductor
     type(supercon_strand), intent(inout)::croco_strand
-    real(kind(1.0D0)) :: d, scaling, croco_od !, conductor_width, thwcndut
+    real(kind(1.0D0)) :: d, scaling, croco_od, croco_thick
     ! Define local alias
     d = croco_od
     !d = conductor_width / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
-    
+     
+    croco_id = d - 2.0d0 * croco_thick !scaling * 5.4d-3 
+    if (croco_id <= 0.0d0) then
+        write(*,*) 'Warning: negitive inner croco diameter!'
+        write(*,*)'croco_id =', croco_id, ',croco_thick = ', croco_thick, ', croco_od =', croco_od 
+    end if
     ! Define the scaling factor for the input REBCO variable
-    ! Ratio of new croco outer diameter and fixed base line value 
-    scaling = croco_od / 10.4d-3
+    ! Ratio of new croco inner diameter and fixed base line value
+    scaling = croco_id / 5.4d-3
     tape_width = scaling * 3.75d-3
-    croco_id = scaling * 5.4d-3
     ! Properties of a single strand
     tape_thickness = rebco_thickness + copper_thick + hastelloy_thickness
     stack_thickness = sqrt(croco_id**2 - tape_width**2)
     tapes = stack_thickness / tape_thickness
 
-    copper_area = pi / 4.0d0 * (d**2 - croco_id**2) &   ! copper tube
+    copper_area = pi * croco_thick * d - pi * croco_thick**2 &  ! copper tube
                   + copper_thick*tape_width*tapes          ! copper in tape
     hastelloy_area = hastelloy_thickness * tape_width * tapes
     solder_area = pi / 4.0d0 * croco_id**2 - stack_thickness * tape_width
@@ -959,7 +963,9 @@ real function dSn40Pb(T)
     dSn40Pb = 8400.0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function dSn40Pb
 !#####################################################################
 real function cSn40Pb(T)
     !#####################################################################
@@ -1037,7 +1043,9 @@ real function cSn40Pb(T)
     CC*TT**3/(1+TT/c)**nc + DD*TT**4/(1+TT/d)**nd
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function cSn40Pb
 !#####################################################################
 real function kSn40Pb(T)
     !#####################################################################
@@ -1106,7 +1114,9 @@ real function kSn40Pb(T)
     endif
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function kSn40Pb
 !#####################################################################
 real function rSn40Pb(T)
     !#####################################################################
@@ -1161,7 +1171,9 @@ real function rSn40Pb(T)
 
     !
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function rSn40Pb
 
 !#####################################################################
 !
@@ -1205,7 +1217,9 @@ real function dHastelloyC276(T)
     dHastelloyC276 = 8890.0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function dHastelloyC276
 !#####################################################################
 real(kind(1.0D0)) function cHastelloyC276(T)
     !#####################################################################
@@ -1254,7 +1268,9 @@ real(kind(1.0D0)) function cHastelloyC276(T)
     CC*TT**nc/(c+TT)**nc + DD*TT**nd/(d+TT)**nd
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function cHastelloyC276
 !#####################################################################
 real function kHastelloyC276(T)
     !#####################################################################
@@ -1297,7 +1313,9 @@ real function kHastelloyC276(T)
     kHastelloyC276 = p1*TT*(1+(TT/p2)**p4) / (1+(TT/p3)**p4)
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function kHastelloyC276
 !#####################################################################
 real function rHastelloyC276(T)
     !#####################################################################
@@ -1338,7 +1356,9 @@ real function rHastelloyC276(T)
     TT=max(TT,Tmin)
     rHastelloyC276 = A + B*TT + C*TT*TT
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function rHastelloyC276
 !#####################################################################
 !
 !                   COPPER PROPERTIES PACKAGE
@@ -1383,7 +1403,9 @@ real function dCu(T)
     !
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function dCu
 !#####################################################################
 real function cCu(T)
     !#####################################################################
@@ -1450,7 +1472,9 @@ real function cCu(T)
 
     !
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function cCu
 !#####################################################################
 real function kCu(T,B,RRR)
     !#####################################################################
@@ -1533,7 +1557,9 @@ real function kCu(T,B,RRR)
 
     kCu     = 1.0/(wt*magr)
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function kCu
 !#####################################################################
 real function rCu(T,B,RRR)
     !#####################################################################
@@ -1604,7 +1630,9 @@ real function rCu(T,B,RRR)
     rCu     = magr * rho0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function rCu
 !#####################################################################
 !
 ! Auxiliary functions and calculations
@@ -1699,7 +1727,9 @@ real function magrCu(T,B,RRR)
     magrCu  = magr+1.0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function magrCu
 
 !-----------------------------------------------------------------
 

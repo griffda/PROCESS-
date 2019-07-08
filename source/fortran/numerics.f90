@@ -101,9 +101,9 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 152
+  integer, parameter :: ipnvars = 153
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 79
+  integer, parameter :: ipeqns = 80
   !+ad_vars  ipnfoms FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 19
 
@@ -353,12 +353,14 @@ module numerics
        'TFC current/copper area < Max    ',    &
        !+ad_varc  <LI> (76) Eich critical separatrix density
        'Eich critical separatrix density ',   &
-       !+ad_varc  <LI> (77) TF coil current per turn upper limit 
+       !+ad_varc  <LI> (77) TF coil current per turn upper limit
        'TFC current per turn upper limit ',    &
        !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)
        'Reinke criterion fZ lower limit  ',   &
        !+ad_varc  <LI> (79) F-value for max peak CS field (itv  149 fbmaxcs)</UL>
-       'Peak CS field upper limit        '    &
+       'Peak CS field upper limit        ',   &
+       !+ad_varc  <LI> (80) F-value for min pdivt (itv  153 fpdivlim)</UL>
+       'pdivt lower limit                '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -459,7 +461,7 @@ module numerics
        'fcohbop       ', &
        !+ad_varc  <LI> (42) gapoh
        'gapoh         ', &
-       !+ad_varc  <LI> (43) cfe0
+       !+ad_varc  <LI> (43) NOT USED
        'cfe0          ', &
        !+ad_varc  <LI> (44) fvsbrnni
        'fvsbrnni      ', &
@@ -681,8 +683,10 @@ module numerics
        'plasmod_fcdp  ', &
        !+ad_varc  <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)
        'plasmod_fradc ', &
-       !+ad_varc  <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density</UL>
-       'fgwsep        ' &
+       !+ad_varc  <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density
+       'fgwsep        ', &
+       !+ad_varc  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)</UL>
+       'fpdivlim      ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -852,7 +856,8 @@ module numerics
        0.001D0, &  !  149
        0.000D0, &  !  150
        0.001D0, &  !  151
-       0.001D0  &  !  152
+       0.001D0, &  !  152
+       0.001D0  &  !  153
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -877,7 +882,7 @@ module numerics
        1.000D8, &  !  17
        50.00D0, &  !  18
        1.000D6, &  !  19
-       3.000D2, &  !  20   SIM 09/10/18 Lowered to within input limit 
+       3.000D2, &  !  20   SIM 09/10/18 Lowered to within input limit
        1.000D0, &  !  21
        1.000D6, &  !  22   KE made tbrnmn obsolete 18/05/18
        0.500D0, &  !  23
@@ -1009,7 +1014,8 @@ module numerics
        1.000D0, &  !  149
        1.000D0, &  !  150
        1.000D0, &  !  151
-       1.000D0  &  !  152
+       1.000D0, &  !  152
+       1.000D0  &  !  153
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
@@ -1214,6 +1220,10 @@ contains
     integer, dimension(ipliwa) :: iwa
     integer, dimension(ipnvars) :: ilower,iupper
 
+    ! Array defined for optimizer data output only
+    integer, dimension(nvar)          :: ixc_opt_out
+    integer, dimension(neqns+nineqns) :: icc_opt_out
+
     real(kind(1.0D0)), parameter :: zero = 0.0D0
     real(kind(1.0D0)), parameter :: bfactor = 2.0D0
     real(kind(1.0D0)) :: xtol
@@ -1250,6 +1260,32 @@ contains
        xv(ii) = xcm(ii)
     end do
 
+    ! Write the VMCON setup in OPT.DAT
+    do ii = 1, m
+      icc_opt_out(ii) = icc(ii)
+    end do
+    do ii = 1, n
+      ixc_opt_out(ii) = ixc(ii)
+    end do
+    
+    write(opt_file, *) ' number of constrains'
+    write(opt_file, '(I4)') m
+    write(opt_file, *) ' '
+    write(opt_file, *) ' Constrains selection'
+    write(opt_file, '(I3,*(I4))') icc_opt_out
+    write(opt_file, *) ' '
+    write(opt_file, *) ' number of variables'
+    write(opt_file, '(I4)') n
+    write(opt_file, *) ' '
+    write(opt_file, *) ' Variables selection'    
+    write(opt_file, '(I3,*(I4))') ixc_opt_out
+    write(opt_file, *) ' '
+    write(opt_file, *) ' '
+    write(opt_file, *) ' n VMCOM iter | Figure of merit | VMCON conv      | constrains quad sum |   residual,   input values &
+                    &and  FoM input gradients'
+    write(opt_file, '(A,*(I18))') '  niter          abs(objf)         sum                sqsumsq ', icc_opt_out, ixc_opt_out&
+                    &, ixc_opt_out
+ 
     call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
          lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
          gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
@@ -1278,8 +1314,8 @@ contains
             liwa,ilower,iupper,bndl,bndu,convergence_parameter)
        epsfcn = epsfcn * 10.0D0 !reset value
     end if
-    
-    
+
+
     !  If VMCON has exited with error code 5 try another run using a multiple of
     !  the identity matrix as input for the Hessian b(n,n).
     !  Only do this if VMCON has not iterated (nviter=1).

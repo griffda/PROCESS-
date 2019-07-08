@@ -181,6 +181,16 @@
 
 ! PRE-INITIALIZATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+! SJP Issue #869
+! Initialise variables.
+
+nepr=0.0d0
+tepr=0.0d0
+Qf0=0.0d0
+neb=0.0d0
+nsep=0.0d0
+tipr=0.0d0
+
 pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside equil.f90
 
 !create output directory if it oesnt exist
@@ -634,8 +644,11 @@ endif
 
 	! Powers section -- to be coupled otherwise to HandCD ultimately
 	! Auxiliary, ECH not used for no
-	Peaux = exp(-(x-inp0%x_heat(2))**2/inp0%dx_heat(2)**2.d0)
-	Pech=0.*Peaux/trapz(Peaux*dV);
+
+! SJP Issue #829
+! Peaux calculated later on
+
+Pech=0.0d0
 
 !sum over powers for NBI, assumed the only aux heating for now
 	Piaux = exp(-(x-inp0%x_heat(1))**2/inp0%dx_heat(1)**2.d0)
@@ -1142,30 +1155,32 @@ endif
               nii = nions
               yd = -0.8d0 * pi_g**2 * rpmajor
               sqeps = sqrt(ametr/rtor)
-              betpl = 4.0d0*1.6d-4*pi_g*(nel*tel + nii*tii)*(rtor/(btor*rho*(mux+0.000001)))**2
-             	betpl(1)=betpl(2)
-														betple = 4.0d0*1.6d-4*pi_g*(nel*tel)*(rtor/(btor*rho*(mux+0.000001)))**2
-														betple(1)=betple(2)
+
+! SJP Issue #830, #831
+! Corrects FPE caused by x(1)=0.0, ignore array first components
+! cubb(1) redfined later on
+
+              betpl(2:) = 4.0d0*1.6d-4*pi_g*(nel(2:)*tel(2:)+nii(2:)*tii(2:))*(rtor/(btor*rho(2:)*(mux(2:)+0.000001)))**2
+              betple(2:) = 4.0d0*1.6d-4*pi_g*(nel(2:)*tel(2:))*(rtor/(btor*rho(2:)*(mux(2:)+0.000001)))**2
               nuee = 670.0d0*coulg*nel/tel**1.5d0
-              nues = 6.921e-5*rpmajor*nepr*zepff*coulg/ &
-                   & abs(mux*tepr**2.d0*sqeps**3.d0)
+              nues(2:) = 6.921e-5*rpmajor*nepr(2:)*zepff(2:)*coulg(2:)/abs(mux(2:)*tepr(2:)**2.d0*sqeps(2:)**3.d0)
               zavg = nel/nii
               nui = (zepff*zmain**2*zavg)*nii*322.0d0/(tii**1.5d0 * sqrt(amain))
-              nuis = 3.2d-6*nui*rtor/(mux*sqeps**3 * sqrt(tii/amain))
-              tpf = 1.0d0 - (1.0d0-sqeps**2) * sqrt(1.0d0 - sqeps**2)/(1.0d0+1.46d0*sqeps)
-              zz = zepff
-              zft = tpf
-              ZDF = 1.+(0.55-0.1*ZFT)*SQRT(nues)
-              ZDF = ZDF + 0.45*(1.-ZFT)*nues/ZZ/SQRT(ZZ)
-              ZFT = ZFT/ZDF
-              dcsa=1.-(1.+0.36/ZZ)*ZFT
-              dcsa=dcsa+0.59/ZZ*ZFT*ZFT-0.23/ZZ*ZFT*ZFT*ZFT
+              nuis(2:) = 3.2d-6*nui(2:)*rtor/(mux(2:)*sqeps(2:)**3 * sqrt(tii(2:)/amain)) 
+              tpf(2:) = 1.0d0 - (1.0d0-sqeps(2:)**2) * sqrt(1.0d0 - sqeps(2:)**2)/(1.0d0+1.46d0*sqeps(2:))
+              zz(2:) = zepff(2:)
+              zft(2:) = tpf(2:)
+              ZDF(2:) = 1.+(0.55-0.1*ZFT(2:))*SQRT(nues(2:))
+              ZDF(2:) = ZDF(2:) + 0.45*(1.-ZFT(2:))*nues(2:)/ZZ(2:)/SQRT(ZZ(2:))
+              ZFT(2:) = ZFT(2:)/ZDF(2:)
+              dcsa(2:)=1.-(1.+0.36/ZZ(2:))*ZFT(2:)
+              dcsa(2:)=dcsa(2:)+0.59/ZZ(2:)*ZFT(2:)*ZFT(2:)-0.23/ZZ(2:)*ZFT(2:)*ZFT(2:)*ZFT(2:)
 !conductivity cc
               do jrad = 1, size(x)
                  cc(jrad) = 601.2d0 * tepr(jrad)**(1.5d0)*(0.76+zepff(jrad))/ &
                       & zepff(jrad)/(1.18+0.58*zepff(jrad))/coulg(jrad)
               end do
-              cc=cc*dcsa
+              cc(2:)=cc(2:)*dcsa(2:)
 
 	if (i_diagz.eq.1) 	write(*,*) 'cc',cc(1)
 
@@ -1177,58 +1192,54 @@ endif
 !Bootstrap current calculation
 
               !cubsfml!!
-              zz = zepff
-
-              zft = tpf
-              zdf = 1.0d0 + (1.0d0 - 0.1d0*zft) * sqrt(nues)
-              zdf = zdf + 0.5d0*(1.0d0 - zft) * nues/zz
-              zft = zft/zdf
-              dcsa = (1.0d0 + 1.4d0/(zz+1.0d0))*zft - 1.9d0/(zz+1.0d0)*zft*zft
-              dcsa = dcsa + (0.3d0*zft*zft + 0.2d0*zft*zft*zft) * zft/(zz+1.0d0)
-              dcsa = dcsa * betpl
+              zz(2:) = zepff(2:)
+              zft(2:) = tpf(2:)
+              zdf(2:) = 1.0d0 + (1.0d0 - 0.1d0*zft(2:)) * sqrt(nues(2:))
+              zdf(2:) = zdf(2:) + 0.5d0*(1.0d0 - zft(2:)) * nues(2:)/zz(2:)
+              zft(2:) = zft(2:)/zdf(2:)
+              dcsa(2:) = (1.0d0 + 1.4d0/(zz(2:)+1.0d0))*zft(2:) - 1.9d0/(zz(2:)+1.0d0)*zft(2:)*zft(2:)
+              dcsa(2:) = dcsa(2:) + (0.3d0*zft(2:)*zft(2:) + 0.2d0*zft(2:)*zft(2:)*zft(2:)) * zft(2:)/(zz(2:)+1.0d0)
+              dcsa(2:) = dcsa(2:) * betpl(2:)
 !write(*,*) 'zef',zeff,tpf,betpl,dcsa
-              zft = tpf
-              zdf = 1.0d0 + 0.26d0*(1.0d0-zft)*sqrt(nues)
-              zdf = zdf + 0.18d0 * (1.0d0 - 0.37d0*zft)*nues/sqrt(zz)
-              zfte = zft/zdf
-              zfte2 = zfte*zfte
-              zfte3 = zfte*zfte2
-              zfte4 = zfte*zfte3
+              zft(2:) = tpf(2:)
+              zdf(2:) = 1.0d0 + 0.26d0*(1.0d0-zft(2:))*sqrt(nues(2:))
+              zdf(2:) = zdf(2:) + 0.18d0 * (1.0d0 - 0.37d0*zft(2:))*nues(2:)/sqrt(zz(2:))
+              zfte(2:) = zft(2:)/zdf(2:)
+              zfte2(2:) = zfte(2:)*zfte(2:)
+              zfte3(2:) = zfte(2:)*zfte2(2:)
+              zfte4(2:) = zfte(2:)*zfte3(2:)
 
-              zdf = 1.0d0 + (1.0d0+0.6d0*zft) * sqrt(nues)
-              zdf = zdf + 0.85d0*(1.0d0 - 0.37d0*zft)*nues*(1.0d0+zz)
-              zfti = zft/zdf
-              zfti2 = zfti*zfti
-              zfti3 = zfti*zfti2
-              zfti4 = zfti*zfti3
+              zdf(2:) = 1.0d0 + (1.0d0+0.6d0*zft(2:)) * sqrt(nues(2:))
+              zdf(2:) = zdf(2:) + 0.85d0*(1.0d0 - 0.37d0*zft(2:))*nues(2:)*(1.0d0+zz(2:))
+              zfti(2:) = zft(2:)/zdf(2:)
+              zfti2(2:) = zfti(2:)*zfti(2:)
+              zfti3(2:) = zfti(2:)*zfti2(2:)
+              zfti4(2:) = zfti(2:)*zfti3(2:)
 
-              hcee = (0.05d0 + 0.62d0*zz)/zz/(1.0d0+0.44d0*zz)*(zfte-zfte4)
-              hcee = hcee + (zfte2 - zfte4 - 1.2d0*(zfte3-zfte4))/(1.0d0+0.22*zz)
-              hcee = hcee + 1.2d0/(1.0d0+0.5d0*zz)*zfte4
+              hcee(2:) = (0.05d0 + 0.62d0*zz(2:))/zz(2:)/(1.0d0+0.44d0*zz(2:))*(zfte(2:)-zfte4(2:))
+              hcee(2:) = hcee(2:) + (zfte2(2:) - zfte4(2:) - 1.2d0*(zfte3(2:)-zfte4(2:)))/(1.0d0+0.22*zz(2:))
+              hcee(2:) = hcee(2:) + 1.2d0/(1.0d0+0.5d0*zz(2:))*zfte4(2:)
 
-              hcei = -1.0d0*(0.56d0 + 1.93d0*zz)/zz/(1.0d0 + 0.44d0*zz)*(zfti-zfti4)
-              hcei = hcei + 4.95d0/(1.0d0 + 2.48d0*zz)*(zfti2 - zfti4 - 0.55d0*(zfti3-zfti4))
-              hcei = hcei - 1.2d0/(1.0d0 + 0.5d0*zz)*zfti4
+              hcei(2:) = -1.0d0*(0.56d0 + 1.93d0*zz(2:))/zz(2:)/(1.0d0 + 0.44d0*zz(2:))*(zfti(2:)-zfti4(2:))
+              hcei(2:) = hcei(2:) + 4.95d0/(1.0d0 + 2.48d0*zz(2:))*(zfti2(2:) - zfti4(2:) - 0.55d0*(zfti3(2:)-zfti4(2:)))
+              hcei(2:) = hcei(2:) - 1.2d0/(1.0d0 + 0.5d0*zz(2:))*zfti4(2:)
 
-              hcsa = (betple*(hcee + hcei) + dcsa/betpl*betple)
+              hcsa(2:) = (betple(2:)*(hcee(2:) + hcei(2:)) + dcsa(2:)/betpl(2:)*betple(2:))
 !write(*,*) hcsa
 
-              zdf = 1.0d0 + (1.0d0 - 0.1d0*zft)*sqrt(nues)
-              zdf = zdf + 0.5*(1.0d0 - 0.5d0*zft)*nues/zz
-              zfte = zft/zdf
+              zdf(2:) = 1.0d0 + (1.0d0 - 0.1d0*zft(2:))*sqrt(nues(2:))
+              zdf(2:) = zdf(2:) + 0.5*(1.0d0 - 0.5d0*zft(2:))*nues(2:)/zz(2:)
+              zfte(2:) = zft(2:)/zdf(2:)
+              xcsa(2:) = (1.0d0 + 1.4d0/(zz(2:)+1.0d0))*zfte(2:) - 1.9d0/(zz(2:)+1.0d0)*zfte(2:)**2
+              xcsa(2:) = xcsa(2:) + (0.3d0*zfte(2:)**2 + 0.2d0*zfte(2:)**3)*zfte(2:)/(zz(2:)+1.0d0)
 
-              xcsa = (1.0d0 + 1.4d0/(zz+1.0d0))*zfte - 1.9d0/(zz+1.0d0)*zfte**2
-              xcsa = xcsa + (0.3d0*zfte**2 + 0.2d0*zfte**3)*zfte/(zz+1.0d0)
-
-              a0 = -1.17d0*(1.0d0-zft)
-              a0 = a0/(1.0d0 - 0.22d0*zft - 0.19d0*zft*zft)
-
-              alp = (a0 + 0.25d0*(1.0d0 - zft**2)*sqrt(nuis))/(1.0d0+0.5d0*sqrt(nuis))
-              a1 = nuis**2 * zft**6
-              alp = (alp + 0.315d0*a1)/(1.0d0+0.15*a1)
-
-              xcsa = betpl*(1.0d0 - betple/betpl)*(xcsa*alp)
-              xcsa = xcsa + (1.0d0-betple/betpl)*dcsa
+              a0(2:) = -1.17d0*(1.0d0-zft(2:))
+              a0(2:) = a0(2:)/(1.0d0 - 0.22d0*zft(2:) - 0.19d0*zft(2:)*zft(2:))
+              alp(2:) = (a0(2:) + 0.25d0*(1.0d0 - zft(2:)**2)*sqrt(nuis(2:)))/(1.0d0+0.5d0*sqrt(nuis(2:)))
+              a1(2:) = nuis(2:)**2 * zft(2:)**6
+              alp(2:) = (alp(2:) + 0.315d0*a1(2:))/(1.0d0+0.15*a1(2:))
+              xcsa(2:) = betpl(2:)*(1.0d0 - betple(2:)/betpl(2:))*(xcsa(2:)*alp(2:))
+              xcsa(2:) = xcsa(2:) + (1.0d0-betple(2:)/betpl(2:))*dcsa(2:)
 
               ya = 2.0d0/(yd)
               dlogte = gradient1(log(tepr))/hro
@@ -1236,12 +1247,12 @@ endif
               dlogne = gradient1(log(nepr))/hro
               dpsi = gradient1(psi)/hro
 
-               cubb=0.5d0*(dcsa*dlogne+hcsa*dlogte+xcsa*dlogti)
- cubb=-btor/(0.2d0*pi_g*rtor)*rho*mux*cubb !cubb is Jbs in MA/m^2
+             cubb(2:)=0.5d0*(dcsa(2:)*dlogne(2:)+hcsa(2:)*dlogte(2:)+xcsa(2:)*dlogti(2:))
+             cubb(2:)=-btor/(0.2d0*pi_g*rtor)*rho(2:)*mux(2:)*cubb(2:) !cubb is Jbs in MA/m^2
 
               ! end of cubsfml
-	 cubb(1)=0.d0 !on axis is 0
-		cubb=max(0.d0,cubb) !do not allow negative bootstrap
+           cubb(1)=0.d0 !on axis is 0
+           cubb=max(0.d0,cubb) !do not allow negative bootstrap
 
            !assign present state to old, so that one can reverse if there are problems in equil
            dv0=dv
@@ -1868,10 +1879,15 @@ endif
   write(99,'(999E25.11)')   jcdr
   write(99,'(911E25.11)')   peaux
   write(99,'(911E25.11)')   piaux
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,2)+a_neo(1,2),a(:,2)+a_neo(:,2),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,3)+a_neo(1,3),a(:,3)+a_neo(:,3),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,1)+a_neo(1,1),a(:,1)+a_neo(:,1),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[b(1,1)+b_neo(1,1),b(:,1)+b_neo(:,1),0.d0],xr)
+
+! SJP Issue #833
+! Variables not used.
+
+!  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,2)+a_neo(1,2),a(:,2)+a_neo(:,2),0.1d0],xr)
+!  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,3)+a_neo(1,3),a(:,3)+a_neo(:,3),0.1d0],xr)
+!  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,1)+a_neo(1,1),a(:,1)+a_neo(:,1),0.1d0],xr)
+!  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[b(1,1)+b_neo(1,1),b(:,1)+b_neo(:,1),0.d0],xr)
+
   write(99,'(999E25.11)')   vprime !15
   write(99,'(999E25.11)')   g1 !16
   write(99,'(999E25.11)')   droda !17

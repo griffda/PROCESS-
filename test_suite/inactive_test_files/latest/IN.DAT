@@ -299,7 +299,7 @@ etahtp = 1.0 * mechanical pump wall-plug efficiency
 htpmw_fw = 155 * first wall primary pumping power He (MW)
 
 *------------Impurity Radiation Module-------------*
-imprad_model = 1 * Switch for impurity radiation model;
+* imprad_model = 1 * Switch for impurity radiation model;
 coreradius = 0.75 * Normalised radius defining the 'core' region
 coreradiationfraction = 0.6 * fraction of radiation from 'core' region that is subtracted from the loss pow
 fimp(1) = 1.0
