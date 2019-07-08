@@ -25,7 +25,6 @@ build:Make:
 # image: ukaea/ubuntu
  only:
   - develop
-  - /^issue-.*$/i
  stage: build
  script:
   - pwd
@@ -48,7 +47,7 @@ build:Make:
 
 build:Make_issue:
  only:
-  - /^issue-.*$/i
+  - /^issue-.*$/
  stage: build
  script:
   - pwd
@@ -71,7 +70,7 @@ build:vardes:
 
  only:
   - develop
-  - /^issue-.*$/i
+  - /^issue-.*$/
  stage: build
  script:
   - pwd
@@ -102,7 +101,7 @@ testing:baseline_2019_run:
  when: on_success  # Also default setting
  only:
   - develop
-  - /^issue-.*$/i
+  - /^issue-.*$/
  stage: testing
  script:
   - pwd
@@ -119,7 +118,7 @@ testing:baseline_2018_run:
  when: on_success  # Also default setting
  only:
   - develop
-  - /^issue-.*$/i
+  - /^issue-.*$/
  stage: testing
  script:
   - pwd
@@ -147,7 +146,7 @@ baseline:baseline_2019_results:
  when: on_success  # Also default setting
  only:
   - develop
-  - /^issue-.*$/i
+  - /^issue-.*$/
  stage: baseline
  script:
   - pwd
@@ -164,7 +163,7 @@ baseline:baseline_2018_results:
  when: on_success  # Also default setting
  only:
   - develop
-  - /^issue-.*$/i
+  - /^issue-.*$/
  stage: baseline
  script:
   - pwd
