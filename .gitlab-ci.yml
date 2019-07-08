@@ -105,6 +105,7 @@ testing:test_suite_issue:
  script:
   - pwd
   - cmake3 -H. -Bbuild
+  - cmake3 --build build
   - cmake3 --build build --target dicts
   - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
   - cd test_suite
