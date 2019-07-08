@@ -181,6 +181,16 @@
 
 ! PRE-INITIALIZATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+! SJP Issue #869
+! Initialise variables.
+
+nepr=0.0d0
+tepr=0.0d0
+Qf0=0.0d0
+neb=0.0d0
+nsep=0.0d0
+tipr=0.0d0
+
 pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside equil.f90
 
 !create output directory if it oesnt exist
@@ -634,8 +644,11 @@ endif
 
 	! Powers section -- to be coupled otherwise to HandCD ultimately
 	! Auxiliary, ECH not used for no
-	Peaux = exp(-(x-inp0%x_heat(2))**2/inp0%dx_heat(2)**2.d0)
-	Pech=0.*Peaux/trapz(Peaux*dV);
+
+! SJP Issue #829
+! Peaux calculated later on
+
+Pech=0.0d0
 
 !sum over powers for NBI, assumed the only aux heating for now
 	Piaux = exp(-(x-inp0%x_heat(1))**2/inp0%dx_heat(1)**2.d0)
@@ -1866,10 +1879,15 @@ endif
   write(99,'(999E25.11)')   jcdr
   write(99,'(911E25.11)')   peaux
   write(99,'(911E25.11)')   piaux
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,2)+a_neo(1,2),a(:,2)+a_neo(:,2),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,3)+a_neo(1,3),a(:,3)+a_neo(:,3),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,1)+a_neo(1,1),a(:,1)+a_neo(:,1),0.1d0],xr)
-  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[b(1,1)+b_neo(1,1),b(:,1)+b_neo(:,1),0.d0],xr)
+
+! SJP Issue #833
+! Variables not used.
+
+!  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,2)+a_neo(1,2),a(:,2)+a_neo(:,2),0.1d0],xr)
+!  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,3)+a_neo(1,3),a(:,3)+a_neo(:,3),0.1d0],xr)
+!  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[a(1,1)+a_neo(1,1),a(:,1)+a_neo(:,1),0.1d0],xr)
+!  write(99,'(999E25.11)')   interp1_ef(nxt+2,nx,[0.d0,xtr,rpminor],[b(1,1)+b_neo(1,1),b(:,1)+b_neo(:,1),0.d0],xr)
+
   write(99,'(999E25.11)')   vprime !15
   write(99,'(999E25.11)')   g1 !16
   write(99,'(999E25.11)')   droda !17

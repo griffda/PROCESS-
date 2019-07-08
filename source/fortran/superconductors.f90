@@ -655,7 +655,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 end subroutine wstsc
 !--------------------------------------------------------------------------
 
-subroutine croco(jcritsc,croco_strand,conductor,croco_od)
+subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
 
     !+ad_name  croco
     !+ad_summ  "CroCo" (cross-conductor) strand and cable design for
@@ -666,22 +666,26 @@ subroutine croco(jcritsc,croco_strand,conductor,croco_od)
     real(kind(1.0D0)), intent(in) ::jcritsc
     type(volume_fractions), intent(inout)::conductor
     type(supercon_strand), intent(inout)::croco_strand
-    real(kind(1.0D0)) :: d, scaling, croco_od !, conductor_width, thwcndut
+    real(kind(1.0D0)) :: d, scaling, croco_od, croco_thick
     ! Define local alias
     d = croco_od
     !d = conductor_width / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
-    
+     
+    croco_id = d - 2.0d0 * croco_thick !scaling * 5.4d-3 
+    if (croco_id <= 0.0d0) then
+        write(*,*) 'Warning: negitive inner croco diameter!'
+        write(*,*)'croco_id =', croco_id, ',croco_thick = ', croco_thick, ', croco_od =', croco_od 
+    end if
     ! Define the scaling factor for the input REBCO variable
-    ! Ratio of new croco outer diameter and fixed base line value 
-    scaling = croco_od / 10.4d-3
+    ! Ratio of new croco inner diameter and fixed base line value
+    scaling = croco_id / 5.4d-3
     tape_width = scaling * 3.75d-3
-    croco_id = scaling * 5.4d-3
     ! Properties of a single strand
     tape_thickness = rebco_thickness + copper_thick + hastelloy_thickness
     stack_thickness = sqrt(croco_id**2 - tape_width**2)
     tapes = stack_thickness / tape_thickness
 
-    copper_area = pi / 4.0d0 * (d**2 - croco_id**2) &   ! copper tube
+    copper_area = pi * croco_thick * d - pi * croco_thick**2 &  ! copper tube
                   + copper_thick*tape_width*tapes          ! copper in tape
     hastelloy_area = hastelloy_thickness * tape_width * tapes
     solder_area = pi / 4.0d0 * croco_id**2 - stack_thickness * tape_width

@@ -148,7 +148,6 @@ contains
     implicit none
 
     !  Arguments
-
     real(kind(1.0D0)), intent(in) :: ai,r0,a,akappa,b0,tf_h_width,tfhmax, &
          shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass,dewmass
     integer, intent(in) :: outfile,iprint,itfsup,ipfres
@@ -161,7 +160,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Outer PF coil fence (1990 ITER fit)
-
     fncmass = 2.1D-11*ai*ai*r0*akappa*a
 
     !  Intercoil support between TF coils to react overturning moment
@@ -169,11 +167,9 @@ contains
     aintmass = 1.4D6 * (ai/2.2D7) * b0/4.85D0 * tf_h_width**2/50.0D0
 
     !  Total mass of coils plus support plus vacuum vessel + cryostat
-
     coilmass = tfmass + pfmass + aintmass + dewmass
 
     !  Total mass of cooled components
-
     coldmass = 0.0D0
     if (itfsup == 1) coldmass = coldmass + tfmass + aintmass + dewmass
     if (ipfres /= 1) coldmass = coldmass + pfmass

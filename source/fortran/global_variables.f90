@@ -12,7 +12,7 @@ module global_variables
   !+ad_desc  well-suited to any of the other 'variables' modules.
   !+ad_prob  None
   !+ad_call  None
-  !+ad_hist  15/10/12 PJK Initial version of module
+  !+ad_hist  15/10/12 PJK Initial version of moduler
   !+ad_hist  23/07/14 PJK Added runtitle; modified icase
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -292,6 +292,9 @@ module physics_variables
   real(kind(1.0D0)) :: falpi = 0.0D0
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: fdeut = 0.5D0
+  !+ad_vars  ftar  /0.5/ : fraction of power to the  lower divertor in double null
+  !+ad_vars                configuration (snull = 0 only)
+  real(kind(1.0D0)) :: ftar = 0.5D0
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
   !+ad_varc                 area in neutron wall load calculation (iwalld=1)
   real(kind(1.0D0)) :: ffwal = 0.92D0
@@ -624,6 +627,12 @@ module physics_variables
   real(kind(1.0D0)) :: pdhe3 = 0.0D0
   !+ad_vars  pdivt : power to conducted to the divertor region (MW)
   real(kind(1.0D0)) :: pdivt = 0.0D0
+  !+ad_vars pdivl : power conducted to the lower divertor region (calculated if snull = 0) (MW)
+  real(kind(1.0D0)) :: pdivl = 0.0D0
+  !+ad_vars pdivu : power conducted to the upper divertor region (calculated if snull = 0) (MW)
+  real(kind(1.0D0)) :: pdivu = 0.0D0
+  !+ad_vars pdivmax : power conducted to the divertor with most load (calculated if snull = 0) (MW)
+  real(kind(1.0D0)) :: pdivmax = 0.0D0
   !+ad_vars  pdt : deuterium-tritium fusion power (MW)
   real(kind(1.0D0)) :: pdt = 0.0D0
   !+ad_vars  pedgeradmw : edge radiation power (MW)
@@ -722,6 +731,8 @@ module physics_variables
   real(kind(1.0D0)) :: qlim = 0.0D0
   !+ad_vars  qstar : cylindrical safety factor
   real(kind(1.0D0)) :: qstar = 0.0D0
+  !+ad_vars  rad_fraction_sol /0.8/ : SoL radiation fraction 
+  real(kind(1.0D0)) :: rad_fraction_sol = 0.8D0
   !+ad_vars rad_fraction : Radiation fraction = total radiation / total power deposited in plasma
   real(kind(1.0D0)) :: rad_fraction = 0.0D0
   !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
@@ -2328,6 +2339,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: dcondins = 1800.0D0
   !+ad_vars  dcopper /8900.0/ : density of copper (kg/m3)
   real(kind(1.0D0)) :: dcopper = 8900.0D0
+  !+ad_vars  dalu /8900.0/ : density of aluminium (kg/m3)
+  real(kind(1.0D0)) :: dalu = 2700.0D0
   !+ad_vars  deflect : TF coil deflection at full field (m)
   real(kind(1.0D0)) :: deflect = 0.0D0
   !+ad_vars  denh2o /985.0/ FIX : density of water (kg/m3)
@@ -2487,10 +2500,13 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tdmptf = 10.0D0
   !+ad_vars  tfareain : area of inboard midplane TF legs (m2)
   real(kind(1.0D0)) :: tfareain = 0.0D0
-  !+ad_vars  tfboreh : TF coil horizontal internal bore (resistive only) (m)
+
+  !+ad_vars  tfboreh : TF coil horizontal inner bore (m)
   real(kind(1.0D0)) :: tfboreh = 0.0D0
+
   !+ad_vars  tf_total_h_width : TF coil horizontal inner bore (m)
   real(kind(1.0D0)) :: tf_total_h_width = 0.0D0
+
   !+ad_vars  tfborev : TF coil vertical inner bore (m)
   real(kind(1.0D0)) :: tfborev = 0.0D0
   !+ad_vars  tfbusl : TF coil bus length (m)
@@ -2523,6 +2539,7 @@ module tfcoil_variables
   !+ad_vars  tfleng : TF coil circumference (m)
   real(kind(1.0D0)) :: tfleng = 0.0D0
   !+ad_vars  tfno /16.0/ : number of TF coils (default = 50 for stellarators)
+  !+ad_varc                number of TF coils outer legs for ST
   real(kind(1.0D0)) :: tfno = 16.0D0
   !+ad_vars  tfocrn : TF coil half-width - outer bore (m)
   real(kind(1.0D0)) :: tfocrn = 0.0D0
@@ -2656,8 +2673,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: fcoolcp = 0.3D0
   !+ad_vars  frhocp /1.0/ : centrepost resistivity enhancement factor
   real(kind(1.0D0)) :: frhocp = 1.0D0
-  !+ad_vars  kcp /330.0/ FIX : thermal conductivity of centrepost (W/m/K)
-  real(kind(1.0D0)) :: kcp = 330.0D0
+  !+ad_vars  k_copper /330.0/ FIX : Copper thermal conductivity (W/m/K)
+  real(kind(1.0D0)) :: k_copper = 330.0D0
   !+ad_vars  kh2o /0.651/ FIX : thermal conductivity of water (W/m/K)
   real(kind(1.0D0)) :: kh2o = 0.651D0
   !+ad_vars  muh2o /4.71e-4/ FIX : water dynamic viscosity (kg/m/s)
@@ -3414,8 +3431,8 @@ module build_variables
   real(kind(1.0D0)) :: rsldi = 0.0D0
   !+ad_vars  rsldo : radius to outboard shield (outside point) (m)
   real(kind(1.0D0)) :: rsldo = 0.0D0
-  !+ad_vars  rtfcin : radius of centre of inboard TF leg (m)
-  real(kind(1.0D0)) :: rtfcin = 0.0D0
+  !+ad_vars  r_tf_inleg_mid : radius of centre of inboard TF leg (m)
+  real(kind(1.0D0)) :: r_tf_inleg_mid = 0.0D0
   !+ad_vars  rtot : radius to the centre of the outboard TF coil leg (m)
   real(kind(1.0D0)) :: rtot = 0.0D0
   !+ad_vars  scrapli /0.14/ : gap between plasma and first wall, inboard side (m)
@@ -3445,7 +3462,7 @@ module build_variables
   real(kind(1.0D0)) :: sigallpc = 3.0D8
 
   ! Issue #514 Make tfcth an output not an iteration variable
-  !!!+ad_vars  tfcth /1.173/ : inboard TF coil thickness, (centrepost for ST) (m)
+  !!!+ad_vars  tfcth /1.173/ : inboard TF coil(s  ) thickness (m)
   !!!+ad_varc                (calculated for stellarators)
   !!!+ad_varc                (iteration variable 13)
   !real(kind(1.0D0)) :: tfcth = 1.173D0
@@ -3467,7 +3484,7 @@ module build_variables
   !+ad_vars  thshield /0.05/ : TF-VV thermal shield thickness (m)
   real(kind(1.0D0)) :: thshield = 0.05D0
 
-  !+ad_vars  vgap2 /0.163/ : vertical gap between vacuum vessel and TF coil (m)
+  !+ad_vars  vgap2 /0.163/ : vertical gap between vacuum vessel and thermal shields (m)
   real(kind(1.0D0)) :: vgap2 = 0.163D0
   ! Issue #481 Remove vgaptf
   !+ad_vars  vgap /0.0/ : vertical gap between x-point and divertor (m)
@@ -4530,13 +4547,15 @@ module rebco_variables
   real(kind(1.0D0)) :: copper_thick = 100.0D-6
   !+ad_vars  hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
   real(kind(1.0D0)) :: hastelloy_thickness = 50.0D-6
-  !+ad_vars  tape_width /3.75e-3/ : Mean width of tape (m)
-  real(kind(1.0D0)) :: tape_width = 3.75D-3
+  !+ad_vars  tape_width : Mean width of tape (m)
+  real(kind(1.0D0)) :: tape_width = 0.0D0
 
-  !+ad_vars  croco_od /10.4e-3/ : Outer diameter of CroCo strand (m)
-  real(kind(1.0D0)) :: croco_od = 10.4D-3
-  !+ad_vars  croco_id /5.4e-3/ : Inner diameter of CroCo copper tube (m)
-  real(kind(1.0D0)) :: croco_id = 5.4D-3
+  !+ad_vars  croco_od : Outer diameter of CroCo strand (m)
+  real(kind(1.0D0)) :: croco_od = 0.0D0
+  !+ad_vars  croco_id : Inner diameter of CroCo copper tube (m)
+  real(kind(1.0D0)) :: croco_id = 0.0D0
+  !+ad_vars  croco_thick /2.5e-3/ : Thickness of CroCo copper tube (m) (iteration variable 149)
+  real(kind(1.0D0)) :: croco_thick = 2.5D-3
 
   !!+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
   !real(kind(1.0D0)) :: copper_bar = 0.23d0

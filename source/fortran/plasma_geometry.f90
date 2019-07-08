@@ -159,8 +159,8 @@ contains
        sf = pperim / (2.0D0*pi*rminor)
 
        vol = cvol * fvol(rmajor,rminor,kappa,triang)
-
-       call surfa(rminor,rmajor,kappa,triang,sa,so)  !  [STAR Code]
+       
+       call surfa(rminor,rmajor,kappa,triang,sa,so)  !  [STAR Code]    
        sareao = so
        sarea = sa
 

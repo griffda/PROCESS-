@@ -184,6 +184,7 @@
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_hist  24/06/14 PJK Removed refs to bcylth
     !+ad_hist  08/09/14 PJK Simplistic changes for ipowerflow=1 model
+    !+ad_hist  16/05/19 SK Radial build made consistent (precompressor/thermal shield added)
     !+ad_stat  This routine is untested in F90...
     !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
     !+ad_docs  Strategic Studies Note 96/30, January 1997
@@ -208,11 +209,12 @@
     integer, intent(in) :: iprint,outfile
 
     !  Local variables
-
+    real(kind(1.0D0)) :: rbldtotf ! Radial build to tfcoil
+    real(kind(1.0D0)) :: deltf    ! TF - thermal shield gap due to flat surfaces of TF
     real(kind(1.0D0)) :: ac,as,av,a1
     integer :: i,k,ibc,itf,ioh
 
-    integer, parameter ::  nreg = 15, nmat = 13
+    integer, parameter ::  nreg = 24, nmat = 13
 
     !  Global variables passed via COMMON
 
@@ -223,8 +225,8 @@
     real(kind(1.0D0)), dimension(nreg,nmat) :: matfrc  !  material fractions in each region
     common/geom/radmin,radpls,radmid,matfrc,qvol
 
-    real(kind(1.0D0)) :: alpha  !  heat transfer coefficient at outer boundary
-    real(kind(1.0D0)) :: tair  !  ambient air temperature (K)
+    real(kind(1.0D0)) :: alpha    !  heat transfer coefficient at outer boundary
+    real(kind(1.0D0)) :: tair     !  ambient air temperature (K)
     integer :: npath  !  switch for heat rejection model:
     !                      0 = convection only
     !                      1 = convection + radiation
@@ -243,48 +245,118 @@
     npath = 0
 
     !  Radial build
+    ! -------------
+    ! Bore centre
+    radmin(1) = 1.0D-20
+    radpls(1) = radmin(1) + bore  
 
-    radmin(1)  = 1.0D-20
-    radpls(1)  = radmin(1) + bore
-    radmin(2)  = radpls(1)
+    ! CS coil
+    radmin(2) = radpls(1)
+    radpls(2) = radmin(2) + ohcth  
+    
+    ! CS precompresser
+    radmin(3) = radpls(2)
+    radpls(3) = radmin(3) + precomp
 
-    if (itart == 0) then
-       radpls(2) = radmin(2) + ohcth
-       radmin(3) = radpls(2) + gapoh
-       radpls(3) = radmin(3)
-       radmin(4) = radpls(3)
-       radpls(4) = radmin(4) + tfcth
+    ! Inner CS precompressor - TF gap
+    radmin(4) = radpls(3) + gapoh
+    radpls(4) = radmin(4)
+
+    ! Inner TF coil
+    radmin(5) = radpls(4)
+    radpls(5) = radmin(5) + tfcth
+
+    ! Inner TF - thermal shield gap
+    ! ******
+    ! Radial build to tfcoil
+    rbldtotf = bore + ohcth + precomp + gapoh + tfcth
+    
+    ! Additional gap spacing due to flat surfaces of TF
+    if ( itfsup == 1 ) then
+       deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
     else
-       radpls(2) = radmin(2)
-       radmin(3) = radpls(2)
-       radpls(3) = radmin(3) + tfcth
-       radmin(4) = radpls(3) + gapoh
-       radpls(4) = radmin(4) + ohcth
-    end if
+       deltf = tftsgap
+    end if 
 
-    radmin(5)  = radpls(4)
-    radpls(5)  = radmin(5) + ddwi
-    radmin(6)  = radpls(5) + gapds
-    radpls(6)  = radmin(6) + shldith
-    radmin(7)  = radpls(6)
-    radpls(7)  = radmin(7) + blnkith
-    radmin(8)  = radpls(7)
-    radpls(8)  = radmin(8) + fwith
-    radmin(9)  = radpls(8)
-    radpls(9)  = radmin(9) + scrapli + 2.0D0*rminor + scraplo
+    radmin(6) = radpls(5) + deltf
+    radpls(6) = radmin(6)
+    ! ******
+
+    ! Inner thermal shield 
+    radmin(7) = radpls(6)
+    radpls(7) = radmin(7) + thshield
+
+    ! Inner Thermal shiled - Vaccum vessel gap
+    radmin(8) = radpls(7) + gapds
+    radpls(8) = radmin(8)
+
+    ! Inner Vaccum vessel
+    radmin(9) = radpls(8)
+    radpls(9) = radmin(9) + ddwi
+
+    ! Inner neutron shield
     radmin(10) = radpls(9)
-    radpls(10) = radmin(10) + fwoth
-    radmin(11) = radpls(10)
-    radpls(11) = radmin(11) + blnkoth
-    radmin(12) = radpls(11)
-    radpls(12) = radmin(12) + shldoth
-    radmin(13) = radpls(12) + gapsto
-    radpls(13) = radmin(13) + ddwi
-    radmin(14) = radpls(13)
-    radpls(14) = radmin(14) + tfthko
-    radmin(15) = radpls(14) + 2.0D0
-    radpls(15) = radmin(15) + ddwex
+    radpls(10) = radmin(10) + shldith
 
+    ! Inner VV - (tritium breeding) blanket gap
+    radmin(11) = radpls(10) + vvblgap
+    radpls(11) = radmin(11)
+    
+    ! Inner (tritium breeding) blanket
+    radmin(12) = radpls(11)
+    radpls(12) = radmin(12) + blnkith
+
+    ! Inner first wall
+    radmin(13) = radpls(12)
+    radpls(13) = radmin(13) + fwith
+
+    ! Plasma (SOL+CORE)
+    radmin(14) = radpls(13)
+    radpls(14) = radmin(14) + scrapli + 2.0D0*rminor + scraplo
+
+    ! Outer first wall
+    radmin(15) = radpls(14)
+    radpls(15) = radmin(15) + fwoth
+
+    ! Outer (tritium breeding) blanket
+    radmin(16) = radpls(15)
+    radpls(16) = radmin(16) + blnkoth
+
+    ! Outer Blanket - VV gap
+    radmin(17) = radpls(16) + vvblgap
+    radpls(17) = radmin(17) 
+
+    ! Outer neutron shield
+    radmin(18) = radpls(17)
+    radpls(18) = radmin(18) + shldoth
+
+    ! Outer VV
+    radmin(19) = radpls(18)
+    radpls(19) = radmin(19) + ddwi
+
+    ! Outer VV - thermal shield gap 
+    radmin(20) = radpls(19) + gapsto
+    radpls(20) = radmin(20)
+
+    ! Outer thermal shield 
+    radmin(21) = radpls(20)
+    radpls(21) = radmin(21) + thshield
+
+    ! Outer themal shiled - TF gap
+    radmin(22) = radpls(21) + tftsgap
+    radpls(22) = radmin(22)
+
+    ! Outer TF coil
+    radmin(23) = radpls(22)
+    radpls(23) = radmin(23) + tfthko
+
+    ! Cryostat, 2 meters away from TF coil
+    radmin(24) = radpls(23) + 2.0D0
+    radpls(24) = radmin(24) + ddwex
+    ! -------------
+    
+   
+    ! Computing the middle radial position of each region and var initialization 
     do k = 1,nreg
        radmid(k) = 0.5D0 * (radmin(k) + radpls(k))
        qvol(k) = 0.0D0
@@ -292,7 +364,10 @@
           matfrc(k,i) = 0.0D0
        end do
     end do
+   
 
+    ! Layers compositions 
+    ! !!!!!!!!!!!!!!!!!!!
     !  Non-zero material fractions MATFRC(REGION,MATERIAL)
     !  The materials are:
     !  1  = Martensitic steel
@@ -310,228 +385,243 @@
     !  13 = NbTi superconductor
     !  This list should tally with that in block data BDCOND
 
-    !  Take account of different builds for TART and non-TART devices
-    !  IBC = bucking cylinder region number
-    !  ITF = inboard TF coil region number
-    !  IOH = Central Solenoid region number
-
-    if (itart == 0) then
-       ibc = 3
-       itf = 4
-       ioh = 2
-    else
-       ibc = 2
-       itf = 3
-       ioh = 4
-    end if
 
     !  Machine bore
-
+    ! -------------
     matfrc(1,5) = 1.0D0
+    ! -------------
+
 
     !  Central Solenoid
-
+    !------------------
     if (iohcl == 1) then
 
-       if (ipfres == 1) then  !  resistive PF coils
-          matfrc(ioh,5) = vfohc
-          matfrc(ioh,7) = 1.0D0 - vfohc
+       !  Copper resistive CS coils
+       ! ******
+       if (ipfres == 1) then  
+          matfrc(2,5) = vfohc
+          matfrc(2,7) = 1.0D0 - vfohc
+       ! ******
 
-       else  !  superconducting PF coils
-
+       !  superconducting CS coils
+       ! ******
+       else 
           !  Conductor + void areas
-
           a1 = (rb(nohc)-ra(nohc))*(zh(nohc)-zl(nohc))
           ac = a1 * (1.0D0 - vfohc)
           av = a1 * vfohc
 
           !  Steel cross-sectional area
-
           as = wts(nohc) / (2.0D0*pi*rpf(nohc) * denstl)
 
-          matfrc(ioh,1) = as / (ac+av+as) * fmsoh
-          matfrc(ioh,2) = as / (ac+av+as) * (1.0D0 - fmsoh)
-          matfrc(ioh,5) = av / (ac+av+as)
-          matfrc(ioh,7) = ac / (ac+av+as) * fcuohsu
+          matfrc(2,1) = as / (ac+av+as) * fmsoh
+          matfrc(2,2) = as / (ac+av+as) * (1.0D0 - fmsoh)
+          matfrc(2,5) = av / (ac+av+as)
+          matfrc(2,7) = ac / (ac+av+as) * fcuohsu
 
           if (isumatoh /= 3) then  !  treat generic superconductors like Nb3Sn
-             matfrc(ioh,12) = ac / (ac+av+as) * (1.0D0 - fcuohsu)
+             matfrc(2,12) = ac / (ac+av+as) * (1.0D0 - fcuohsu)
           else
-             matfrc(ioh,13) = ac / (ac+av+as) * (1.0D0 - fcuohsu)
+             matfrc(2,13) = ac / (ac+av+as) * (1.0D0 - fcuohsu)
           end if
-
        end if
-
+       ! ******
+    
+    ! No CS coils
+    ! ******
     else
-
-       matfrc(ioh,5) = 1.0D0
-
+       matfrc(2,5) = 1.0D0
     end if
+    ! ******
+    !------------------
 
-    !  Bucking cylinder
+    ! CS coil precompressor
+    matfrc(3,2) = 1.0D0    ! Austenistic steel
+    
+    ! CS coil precompressor - TF gap
+    matfrc(4,5) = 1.0D0    ! Dummy
 
-    matfrc(ibc,1) = fmsbc
-    matfrc(ibc,2) = 1.0D0 - fmsbc
 
     !  Inboard TF coil
+    ! ----------------
+    ! resistive copper TF coils
+    if ( itfsup /= 1 ) then  
+      matfrc(5,5) = fcoolcp         ! Dummy 
+      matfrc(5,7) = 1.0D0 - fcoolcp ! Copper
 
-    if (itfsup == 0) then  !  resistive TF coils
-       matfrc(itf,5) = fcoolcp
-       matfrc(itf,7) = 1.0D0 - fcoolcp
+    !  superconducting TF coils
+    else  
+      !  Approximate total cross-sectional area per coil
+      a1 = acasetf+acond+avwp+aswp
 
-    else  !  superconducting TF coils
+      matfrc(5,1) = (acasetf + aswp) / a1 * fmstf
+      matfrc(5,2) = (acasetf + aswp) / a1 * (1.0D0 - fmstf)
+      matfrc(5,5) = avwp / a1
+      matfrc(5,7) = acond / a1 * fcutfsu
 
-       !  Approximate total cross-sectional area per coil
+      if (isumattf /= 3) then  !  treat generic superconductors like Nb3Sn
+         matfrc(5,12) = acond / a1 * (1.0D0 - fcutfsu)
+      else
+         matfrc(5,13) = acond / a1 * (1.0D0 - fcutfsu)
+      end if
+   end if
+   ! ----------------
 
-       a1 = acasetf+acond+avwp+aswp
 
-       matfrc(itf,1) = (acasetf + aswp) / a1 * fmstf
-       matfrc(itf,2) = (acasetf + aswp) / a1 * (1.0D0 - fmstf)
-       matfrc(itf,5) = avwp / a1
-       matfrc(itf,7) = acond / a1 * fcutfsu
+    ! Inner TF - Thermal shield gap
+    matfrc(6,5) = 1.0D0    ! Dummy
 
-       if (isumattf /= 3) then  !  treat generic superconductors like Nb3Sn
-          matfrc(itf,12) = acond / a1 * (1.0D0 - fcutfsu)
-       else
-          matfrc(itf,13) = acond / a1 * (1.0D0 - fcutfsu)
-       end if
+    ! Inner Thermal shield (same composition as neutron shield)
+    matfrc(7,1) = (1.0D0 - vfshld) * fmssh
+    matfrc(7,2) = (1.0D0 - vfshld) * (1.0D0 - fmssh)
+    matfrc(7,5) = vfshld
 
-    end if
+    ! Inner Thermal shield - VV gap
+    matfrc(8,5) = 1.0D0    ! Dummy
 
-    !  Inboard vacuum vessel
+    ! Inner VV
+    matfrc(9,1) = fmsdwi
+    matfrc(9,2) = 1.0D0 - fmsdwi
 
-    matfrc(5,1) = fmsdwi
-    matfrc(5,2) = 1.0D0 - fmsdwi
+    !  Inner neutron shield (same composition as thermal shield)
+    matfrc(10,1) = (1.0D0 - vfshld) * fmssh
+    matfrc(10,2) = (1.0D0 - vfshld) * (1.0D0 - fmssh)
+    matfrc(10,5) = vfshld
 
-    !  Inboard shield
+    ! Inner VV + neutron shield - (tritium breeding) blanket gap 
+    matfrc(11,5) = 1.0D0    ! Dummy
 
-    matfrc(6,1) = (1.0D0 - vfshld) * fmssh
-    matfrc(6,2) = (1.0D0 - vfshld) * (1.0D0 - fmssh)
-    matfrc(6,5) = vfshld
 
     !  Inboard blanket
-
-    !if (lblnkt /= 1) then  !  Old blanket model
+    ! ----------------
+    !if (lblnkt /= 1) then 
+    !  Old blanket model
+    ! ******
     if (ipowerflow == 0) then
+       matfrc(12,1) = fblss * fmsbl
+       matfrc(12,2) = fblss * (1.0D0-fmsbl)
+       matfrc(12,4) = fblbe
+       matfrc(12,5) = vfblkt
+       matfrc(12,9) = fblli2o
+       matfrc(12,11) = fblvd
+    ! ******
 
-       matfrc(7,1) = fblss * fmsbl
-       matfrc(7,2) = fblss * (1.0D0-fmsbl)
-       matfrc(7,4) = fblbe
-       matfrc(7,5) = vfblkt
-       matfrc(7,9) = fblli2o
-       matfrc(7,11) = fblvd
-
-    else  !  New blanket model
-
+    !  New blanket model
+    ! ******
+    else  
+       !  Li2O/Be solid blanket
        if (blkttype == 3) then
+          matfrc(12,1) = fblss * fmsbl
+          matfrc(12,2) = fblss * (1.0D0-fmsbl)
+          matfrc(12,4) = fblbe
+          matfrc(12,5) = vfblkt
+          matfrc(12,9) = fblli2o
+          matfrc(12,11) = fblvd
 
-          !  Li2O/Be solid blanket
-
-          matfrc(7,1) = fblss * fmsbl
-          matfrc(7,2) = fblss * (1.0D0-fmsbl)
-          matfrc(7,4) = fblbe
-          matfrc(7,5) = vfblkt
-          matfrc(7,9) = fblli2o
-          matfrc(7,11) = fblvd
-
+       !  LiPb/Li liquid blanket
        else
-
-          !  LiPb/Li liquid blanket
-
-          matfrc(7,1) = fblss * fmsbl
-          matfrc(7,2) = fblss * (1.0D0-fmsbl)
-          matfrc(7,3) = fbllipb
-          matfrc(7,5) = vfblkt
-          matfrc(7,10) = fblli
-          matfrc(7,11) = fblvd
-
+          matfrc(12,1) = fblss * fmsbl
+          matfrc(12,2) = fblss * (1.0D0-fmsbl)
+          matfrc(12,3) = fbllipb
+          matfrc(12,5) = vfblkt
+          matfrc(12,10) = fblli
+          matfrc(12,11) = fblvd
        end if
-
     end if
+    ! ******
+    ! ----------------
+
 
     !  Inboard first wall
-
-    matfrc(8,1) = (1.0D0 - fwclfr) * fmsfw
-    matfrc(8,2) = (1.0D0 - fwclfr) * (1.0D0 - fmsfw)
-    matfrc(8,5) = fwclfr
+    matfrc(13,1) = (1.0D0 - fwclfr) * fmsfw
+    matfrc(13,2) = (1.0D0 - fwclfr) * (1.0D0 - fmsfw)
+    matfrc(13,5) = fwclfr
 
     !  Plasma
+    matfrc(14,6) = 1.0D0
 
-    matfrc(9,6) = 1.0D0
+    ! Outer first wall
+    matfrc(15,1) = (1.0D0 - fwclfr) * fmsfw
+    matfrc(15,2) = (1.0D0 - fwclfr) * (1.0D0 - fmsfw)
+    matfrc(15,5) = fwclfr
 
-    !  Outboard first wall
+    ! Outer blanket (same as inboard blanket)
+    matfrc(16,:) = matfrc(12,:)
 
-    matfrc(10,1) = (1.0D0 - fwclfr) * fmsfw
-    matfrc(10,2) = (1.0D0 - fwclfr) * (1.0D0 - fmsfw)
-    matfrc(10,5) = fwclfr
+    ! Outer blanket - neutron shield gap
+    matfrc(17,5) = 1.0D0  ! Dummy
 
-    !  Outboard blanket (same as inboard blanket)
+    ! Outer neutron shield
+    matfrc(18,1) = (1.0D0 - vfshld) * fmssh
+    matfrc(18,2) = (1.0D0 - vfshld) * (1.0D0 - fmssh)
+    matfrc(18,5) = vfshld
 
-    matfrc(11,:) = matfrc(7,:)
+    ! Outer VV
+    matfrc(19,1) = fmsdwi
+    matfrc(19,2) = 1.0D0 - fmsdwi
 
-    !  Outboard shield
+    ! Outer VV - thermal shield gap
+    matfrc(20,5) = 1.0D0   ! Dummy
 
-    matfrc(12,1) = (1.0D0 - vfshld) * fmssh
-    matfrc(12,2) = (1.0D0 - vfshld) * (1.0D0 - fmssh)
-    matfrc(12,5) = vfshld
+    ! Outer Thermal shield (same composition as neutron shield)
+    matfrc(21,1) = (1.0D0 - vfshld) * fmssh
+    matfrc(21,2) = (1.0D0 - vfshld) * (1.0D0 - fmssh)
+    matfrc(21,5) = vfshld
 
-    !  Outboard vacuum vessel
+    ! Outer thermal shield - TF coil gap
+    matfrc(22,5) = 1.0D0   ! Dummy
 
-    matfrc(13,1) = fmsdwi
-    matfrc(13,2) = 1.0D0 - fmsdwi
 
-    !  Outboard TF coil
+    ! Outboard TF coil
+    ! ----------------
+    !  resistive copper TF coils
+    if ( itfsup /= 1 ) then 
+       matfrc(23,5) = vftf
+       matfrc(23,7) = 1.0D0 - vftf
 
-    if (itfsup == 0) then  !  resistive TF coils
-
-       matfrc(14,5) = vftf
-       matfrc(14,7) = 1.0D0 - vftf
-
-    else  !  superconducting TF coils
-
+    ! superconducting TF coils
+    ! ******
+    else  
        !  Approximate total cross-sectional area per coil
        !  including enlargement factor for case thickness
-
        a1 = (acasetf*tfootfi)+acond+avwp+aswp
 
-       matfrc(14,1) = (acasetf*tfootfi + aswp) / a1 * fmstf
-       matfrc(14,2) = (acasetf*tfootfi + aswp) / a1 * (1.0D0 - fmstf)
-       matfrc(14,5) = avwp / a1
-       matfrc(14,7) = acond / a1 * fcutfsu
+       matfrc(23,1) = (acasetf*tfootfi + aswp) / a1 * fmstf
+       matfrc(23,2) = (acasetf*tfootfi + aswp) / a1 * (1.0D0 - fmstf)
+       matfrc(23,5) = avwp / a1
+       matfrc(23,7) = acond / a1 * fcutfsu
 
        if (isumattf /= 3) then  !  treat generic superconductors like Nb3Sn
-          matfrc(14,12) = acond / a1 * (1.0D0 - fcutfsu)
+          matfrc(23,12) = acond / a1 * (1.0D0 - fcutfsu)
        else
-          matfrc(14,13) = acond / a1 * (1.0D0 - fcutfsu)
+          matfrc(23,13) = acond / a1 * (1.0D0 - fcutfsu)
        end if
-
     end if
+    ! ******
+    ! ----------------
 
     !  External cryostat
+    matfrc(24,1) = fmsdwe
+    matfrc(24,2) = 1.0D0 - fmsdwe 
+    ! !!!!!!!!!!!!!!!!!!!
 
-    matfrc(15,1) = fmsdwe
-    matfrc(15,2) = 1.0D0 - fmsdwe
 
-    !  Non-zero decay heat powers (W) after 3 months
+    ! Non-zero decay heat powers (W) after 3 months
+    qvol(12) = blihkw(2) * 1.0D3  ! Inner blanket
+    qvol(13) = fwihkw(2) * 1.0D3  ! Inner FW
+    qvol(15) = fwohkw(2) * 1.0D3  ! Outer FW
+    qvol(16) = blohkw(2) * 1.0D3  ! Outer blanket
 
-    qvol(7)  = blihkw(2) * 1.0D3
-    qvol(8)  = fwihkw(2) * 1.0D3
-    qvol(10) = fwohkw(2) * 1.0D3
-    qvol(11) = blohkw(2) * 1.0D3
 
     !  Calculate the temperature at the plasma - outboard first wall
     !  interface (K)
-
     call blcyl3(fwtemp)
 
     !  Output section
-
     if (iprint == 1) then
-
        call oheadr(outfile,'Loss of Coolant Accident')
        call ovarre(outfile,'First wall temperature after 3 months (K)', &
             '(fwtemp)',fwtemp)
-
     end if
 
   contains
@@ -571,7 +661,7 @@
 
       !  Local variables
 
-      integer, parameter :: nreg = 15  !  dimensioning of radial nodes
+      integer, parameter :: nreg = 24  !  dimensioning of radial nodes
       integer, parameter :: nmat = 13  !  number of material types
 
       real(kind(1.0D0)), dimension(nreg) :: a1,a2,a3,aconst,avecon,averho, &
