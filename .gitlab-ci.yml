@@ -47,7 +47,6 @@ build:Make:
   - freia
 
 build:Make_issue:
-# image: ukaea/ubuntu
  only:
   - /^issue-.*$/i
  stage: build
