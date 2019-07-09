@@ -2558,7 +2558,9 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tftmp = 4.5D0
   ! ISSUE #508 Remove RFP option: frfpf, frfptf, sccufac
   !+ad_vars  tftort : TF coil toroidal thickness (m)
-  real(kind(1.0D0)) :: tftort = 4.5D0
+! SJP Issue #863
+! tftort physically to large, reduced to 1.0
+  real(kind(1.0D0)) :: tftort = 1.0D0
 
   !+ad_vars  thicndut /8.0e-4/ : conduit insulation thickness (m)
   real(kind(1.0D0)) :: thicndut = 8.0D-4
