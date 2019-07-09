@@ -29,10 +29,10 @@ import logging
 from sys import stderr
 LOG = logging.getLogger("mfile")
 
-try:
-    from fuzzywuzzy import process as fuzzysearch
-except ImportError:
-    LOG.info("Fuzzy variable name suggestions not available for MFile")
+# try:
+#     from fuzzywuzzy import process as fuzzysearch
+# except ImportError:
+#     LOG.info("Fuzzy variable name suggestions not available for MFile")
 
 try :
     import process_io_lib.process_dicts
@@ -319,15 +319,15 @@ class MFile(object):
             self.data[var_key] = var
             self.data[var_key].set_scan(1, value)
 
-    def suggest_variable(self, search_string, limit=3):
-        """
-        Return a list of possible variable matches for the given search_string
-        in this MFile.
-        limit is the maximum number of suggestions returned.
-        """
-        return [x[0] for x in fuzzysearch.extract(search_string,
-                                                  self.data.keys(),
-                                                  limit=limit)]
+    # def suggest_variable(self, search_string, limit=3):
+    #     """
+    #     Return a list of possible variable matches for the given search_string
+    #     in this MFile.
+    #     limit is the maximum number of suggestions returned.
+    #     """
+    #     return [x[0] for x in fuzzysearch.extract(search_string,
+    #                                               self.data.keys(),
+    #                                               limit=limit)]
 
 
 def sort_value(val):
