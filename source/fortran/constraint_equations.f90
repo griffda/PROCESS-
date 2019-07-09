@@ -53,8 +53,6 @@ module constraints
 
 contains
 
-   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
    subroutine constraint_eqns(m,cc,ieqn,con,err,symbol,units)
      !+ad_name  constraint_eqns
      !+ad_summ  Routine that formulates the constraint equations
@@ -139,6 +137,7 @@ contains
      !+ad_hist  08/02/17 JM  Added constraint equations 69,70 and 71 for Kallenbach model
      !+ad_hist  27/02/17 JM  Added constraint equation 72 for Central Solenoid stress model
      !+ad_hist  20/04/17 JM  Added string tags to constraints
+     !+ad_hist  25/04/19 SK  Added new constraint equation (81) ensuring ne(0) > ne(ped)
      !+ad_stat  Okay
      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
      !
@@ -346,7 +345,9 @@ contains
          case (79); call constraint_eqn_079(args)
          ! Lower limit pdivt
          case (80); call constraint_eqn_080(args)
-
+         ! Constraint equation making sure that ne(0) > ne(ped)
+         case (81); call constraint_eqn_081(args)
+         
        case default
 
          idiags(1) = icc(i)
@@ -2876,6 +2877,35 @@ contains
       args%units  = 'MW'
 
    end subroutine constraint_eqn_080
+
+   subroutine constraint_eqn_081(args)
+      !+ad_name  constraint_eqn_081
+      !+ad_summ  Make sure that the central density is larger that the pedestal one
+      !+ad_type  Subroutine
+      !+ad_auth  J Morris, Culham Science Centre
+      !+ad_args  args : output structure : residual error; constraint value; 
+      !+ad_argc  residual error in physical units; output string; units string
+      !+ad_desc  Lower limit pdivt
+      !+ad_desc  !#=# physics
+      !+ad_argc  !#=#=# ne0, neped
+      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !+ad_glos  fpdivlim : input : F-value for lower limit on pdivt (cons. 80, itvar 153)
+      !+ad_glos  pdivtlim : input : Minimum power crossing separatrix pdivt [MW]
+      !+ad_glos  pdivt : input : Power crossing separatrix [MW]
+      !+ad_glos  Make sure that the central density is larger that the pedestal one
+      !+ad_glos  ne0   : centre plasma electron density
+      !+ad_glos  neped : pedestal plasma electron density
+      use physics_variables, only: ne0, fne0, neped
+      implicit none
+
+      type (constraint_args_type), intent(out) :: args
+      args%cc     = 1.0D0 - fne0 * ne0/neped 
+      args%con    = fne0
+      args%err    = fne0 * args%cc
+      args%symbol = '>'
+      args%units  = '/m3'
+
+   end subroutine constraint_eqn_081
    
 end module constraints
 

@@ -272,6 +272,7 @@ subroutine loadxc
      case (151) ; xcm(i) = plasmod_fradc
      case (152) ; xcm(i) = fgwsep
      case (153) ; xcm(i) = fpdivlim
+     case (154) ; xcm(i) = fne0
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -586,6 +587,7 @@ subroutine convxc(xc,nn)
      case (151) ; plasmod_fradc = xc(i)/scale(i)
      case (152) ; fgwsep = xc(i)/scale(i)
      case (153) ; fpdivlim = xc(i)/scale(i)
+     case (154) ; fne0 = xc(i)/scale(i)
 
      case default
 
