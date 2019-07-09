@@ -10,10 +10,13 @@
 
 """
 
+import os
 import sys
 import argparse
 import process_io_lib.mfile as mf
 import matplotlib
+if os.name == 'posix' and "DISPLAY" not in os.environ:
+    matplotlib.use('Agg')
 matplotlib.rcParams["figure.max_open_warning"] = 40
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
