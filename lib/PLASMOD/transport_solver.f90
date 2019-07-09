@@ -181,9 +181,12 @@
 
 ! PRE-INITIALIZATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+! SJP Issue #832
+! Uninitialized variable.
+shear=0.0d0
+
 ! SJP Issue #869
 ! Initialise variables.
-
 nepr=0.0d0
 tepr=0.0d0
 Qf0=0.0d0
@@ -1344,7 +1347,13 @@ endif
         endif
 
 !some additional stuff
-        shear = gradient(log(qprf),log(x))
+
+! SJP Issue #832
+! Avoid FPE in first component of x as x(1)=0 and log(0)=-inf
+
+        shear(2:) = gradient(log(qprf(2:)),log(x(2:)))
+        shear(1)=0.0d0
+
         q_tr = interp1_ef(nx,nxt,x, qprf, xtr/xr(nx))
         sh_tr = interp1_ef(nx,nxt,x, shear, xtr/xr(nx))
 !current fractions
