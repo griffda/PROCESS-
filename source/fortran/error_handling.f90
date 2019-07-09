@@ -243,6 +243,12 @@ contains
        allocate(error_head)
        error_tail => error_head
     else
+
+! SJP Issue #867
+! Remove consecutive identical error messages
+
+       if (error_tail%id == error_id) return
+
        allocate(error_tail%ptr)
        error_tail => error_tail%ptr
     end if
