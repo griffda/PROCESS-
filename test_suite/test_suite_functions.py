@@ -656,6 +656,7 @@ def test_in_dat_lib(fs):
             file_name = "test_area/{0}/IN.DAT".format(key)
             # file_name = fs[key]["path"] + "IN.DAT"
             results.append(indat.test(file_name))
+            print(key, file_name, indat.test(file_name))
 
     sys.stdout = sys.__stdout__
 
@@ -709,15 +710,20 @@ def test_plot_proc(fs):
     msg = "Test ==>  {0:<40}".format("plot_proc.py")
 
     # check results
+    error_status = False
     if len(results) == results.count(True):
         lmsg = msg + "OK\n"
         msg += BColours.OKGREEN + "OK" + BColours.ENDC
     else:
         lmsg = msg + "ERROR\n"
         msg += BColours.FAIL + "ERROR" + BColours.ENDC
+        error_status = True
 
     print(msg)
     save_summary(lmsg)
+
+    if error_status:
+        sys.exit("plot_proc test_suite failure)
 
 
 class TestCase(object):
