@@ -334,6 +334,21 @@ computational time follow these steps:
 * Enter the command 
   * `gprof ./<path_to_executable>/process.exe --ignore-non-functions`
 
+## Code Coverage
+
+To perform a code coverage analysis of the souce code, perform the following steps.
+* Read the man page for gcov
+  * man gcov 
+* Compile and link code with the flags “-fprofile-arcs -ftest-coverage”
+  * *.gcno files will be created in the build directory
+* Run the code (./process.exe)
+  * *.gcda files will be created in the build directory
+* Generate the code cover analysis for the source files that you want to analyse
+  * gcov -a -c -d -f -l -p path_to/tfcoil.f90.gcda 
+  * gcov -a -c -d -f -l -p path_to/*.gcda
+* View the results
+  * vi *.gcov
+
 ## Troubleshooting
 
 If you encounter issues with file line endings when working between Windows and Linux. Run the command on Freia to convert the line endings to unix based line endings for a given file (create_dicts.py in this case).
