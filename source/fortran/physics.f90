@@ -121,9 +121,12 @@ module physics_module
   !  Module-level variables
 
   integer :: iscz
+  real(kind(1.0D0)) :: rad_fraction_core
   real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
   real(kind(1.0D0)) :: total_loss_power        ! [W]
   real(kind(1.0D0)) :: total_energy_conf_time  ! [s]
+  real(kind(1.0D0)) :: ptarmw, lambdaio, drsep
+  real(kind(1.0D0)) :: fio, fLI, fLO, fUI, fUO, pLImw, pLOmw, pUImw, pUOmw
 
 
 contains
@@ -471,7 +474,13 @@ implicit none
     if (iwalld == 1) then
        wallmw = ffwal * pneutmw / sarea
     else
-       wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
+       if (idivrt == 2) then
+         !Double null configuration
+         wallmw = (1.0D0-fhcd-2.0D0*fdiv)*pneutmw / fwarea
+       else
+         ! Single null Configuration
+         wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
+       end if 
     end if
 
     if (ipedestal .ne. 3) then ! otherwise replaced by PLASMOD variables
@@ -489,19 +498,7 @@ implicit none
        pcoreradmw = pcoreradpv*vol
        pedgeradmw = pedgeradpv*vol
        pradmw = pradpv*vol
-
     endif
-
-    ! MDK
-    !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
-    !  Note that 'fwarea' excludes these, so they have been added back in.
-    if (iwalld == 1) then
-       photon_wall = ffwal * pradmw / sarea
-    else
-       photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea
-    end if
-
-    peakradwallload = photon_wall * peakfactrad
 
     if (ipedestal .ne. 3) then
        !  Calculate ohmic power
@@ -530,7 +527,15 @@ implicit none
        !  Should be obsolete if constraint eqn 17 is turned on
        pdivt = max(0.001D0, pdivt)
 
-    endif
+       ! if double null configuration share the power 
+       ! over the upper and lower divertor, where ftar gives
+       ! the factor of power conducted to the lower divertor
+       if (idivrt == 2) then 
+         pdivl = ftar * pdivt
+         pdivu = (1.0D0-ftar) * pdivt
+         pdivmax = max(pdivl, pdivu)
+       end if
+    end if
 
     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
     res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
@@ -540,10 +545,8 @@ implicit none
     palpfwmw = palpmw * (1.0D0-falpha)
 
     !  Density limit
-
     call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
          rmajor,rminor,sarea,zeff,dlimit,dnelimt)
-
 
     if (ipedestal .ne. 3) then
 
@@ -595,9 +598,60 @@ implicit none
 
     call culblm(bt,dnbeta,plascur,rminor,betalim)
 
+    ! MDK
+    !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
+    !  Note that 'fwarea' excludes these, so they have been added back in.
+    if (iwalld == 1) then
+       photon_wall = ffwal * pradmw / sarea
+    else
+       if (idivrt == 2) then
+         ! Double Null configuration in - including SoL radiation
+         photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea + &
+         (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea)
+       else
+         ! Single null configuration - including SoL radaition
+         photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea + &
+         (1.0D0-fhcd-fdiv)*rad_fraction_sol*pdivt / fwarea
+       end if 
+    end if
+
+    peakradwallload = photon_wall *peakfactrad 
+
+    ! Calculate the target imbalances 
+    ! find the total power into the targets
+    ptarmw =  pdivt * (1.0D0 - rad_fraction_sol) 
+    ! use ftar to find deltarsep
+    ! Parameters taken from double null machine 
+    ! D. Brunner et al 
+    lambdaio = 1.57d-3
+    drsep = - 2.0d0 * 1.5d-3 * atanh(2.0d0 *(ftar - 0.5d0)) ! this needs updating
+    ! Find the innner and outer lower target imbalance
+    fio = 0.16d0 + (0.16d0 - 0.41d0) * (1.0d0 - ( 2.0d0 / (1.0d0 + exp(-(drsep/lambdaio)**2))))
+    if (idivrt == 2) then
+      ! Double Null configuration
+      ! Find all the power fractions accross the targets
+      fLI = ftar * fio
+      fLO = ftar * ( 1.0d0 - fio )
+      fUI = (1.0d0 - ftar ) * fio
+      fUO = (1.0d0 - ftar ) * ( 1.0d0 - fio )  
+      ! power into each target
+      pLImw = fLI * ptarmw
+      pLOmw = fLO * ptarmw
+      pUImw = fUI * ptarmw
+      pUOmw = fUO * ptarmw
+    else
+      ! Single null configuration
+      fLI = fio
+      fLO = 1.0d0 - fio
+      ! power into each target 
+      pLImw = fLI * ptarmw
+      pLOmw = fLO * ptarmw
+    end if
+
     ! Calculate some derived quantities that may not have been defined earlier
     total_loss_power = 1d6 * (falpha*palpmw+pchargemw+pohmmw+pinjmw)
-    rad_fraction = 1.0D6*pradmw / total_loss_power
+    rad_fraction_core = 1.0D6*pradmw / total_loss_power
+    rad_fraction = rad_fraction_core + (1.0d0 - rad_fraction_core) * rad_fraction_sol
     total_plasma_internal_energy = 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol
     total_energy_conf_time = total_plasma_internal_energy / total_loss_power
 
@@ -614,9 +668,7 @@ implicit none
           call report_error(217)
        endif
 
-       write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', impurity_arr(impvardiv)%frac, ', ',  impvardiv
-
-       ! frac is zero, impvardiv is 9 which is default. However, the initial set value of impurity 9 is zero...need to set that impurity fraction to AT LEAST the min value, i.e. fzmin, see above
+       write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', impurity_arr(impvardiv)%frac, ', ',  impvardiv  
 
     endif
 
@@ -1256,7 +1308,7 @@ implicit none
       !+ad_desc  where ni is the sum of all ion densities (thermal)
       !+ad_prob  PJK: I do not understand why it should be 4*pi*... instead
       !+ad_prob  of 8*pi*... Presumably it is because of a strange ASTRA
-      !+ad_prob  method similar to that noted above in the calculation of jboot.
+      !+ad_prob  method similar to that noted above in the caculation of jboot.
       !+ad_call  None
       !+ad_hist  15/05/14 PJK New routine, which includes the ion pressure contribution
       !+ad_stat  Okay
@@ -2680,7 +2732,7 @@ implicit none
     !  Power per unit area crossing the plasma edge
     !  (excludes radiation and neutrons)
 
-    qperp = pdivt/sarea
+      qperp = pdivt/sarea
 
     !  Old ASDEX density limit formula
     !  This applies to the density at the plasma edge, so must be scaled
@@ -4120,7 +4172,6 @@ implicit none
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     call oheadr(outfile,'Plasma')
-
     if (istell == 0) then
        select case (idivrt)
        case (0)
@@ -4462,6 +4513,10 @@ implicit none
         call ovarre(outfile,'SOL radiation power (MW)','(psolradmw)', psolradmw, 'OP ')
     end if
     call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')
+    call ovarre(outfile,'Core radiation fraction = total radiation in core / total power deposited in plasma', &
+        '(rad_fraction_core)', rad_fraction_core, 'OP ')
+    call ovarre(outfile,'SoL radiation fraction = total radiation in SoL / total power accross separatrix', &
+        '(rad_fraction_sol)', rad_fraction_sol, 'IP ')
     call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma', &
         '(rad_fraction)', rad_fraction, 'OP ')
     call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)', &
@@ -4474,6 +4529,40 @@ implicit none
         '(peakradwallload)', peakradwallload, 'OP ')
     call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)', &
         '(wallmw)', wallmw, 'OP ')
+
+    call oblnkl(outfile)
+    call ovarre(outfile,'Power incident on the divertor targets (MW)', &
+        '(ptarmw)',ptarmw, 'OP ')
+    call ovarre(outfile, 'Fraction of power to the lower divertor', &
+        '(ftar)', ftar, 'IP ')
+    call ovarre(outfile,'Outboard side heat flux decay length (m)', &
+        '(lambdaio)',lambdaio, 'OP ')
+    if (idivrt == 2) then
+      call ovarre(outfile,'Midplane seperation of the two magnetic closed flux surfaces (m)', &
+           '(drsep)',drsep, 'OP ')
+    end if 
+    call ovarre(outfile,'Fraction of power on the inner targets', &
+        '(fio)',fio, 'OP ')
+    call ovarre(outfile,'Fraction of power incident on the lower inner target', &
+        '(fLI)',fLI, 'OP ')
+    call ovarre(outfile,'Fraction of power incident on the lower outer target', &
+        '(fLO)',fLO, 'OP ')
+    if (idivrt == 2 ) then
+      call ovarre(outfile,'Fraction of power incident on the upper inner target', &
+       '(fUI)',fUI, 'OP ')
+      call ovarre(outfile,'Fraction of power incident on the upper outer target', &
+       '(fUO)',fUO, 'OP ')
+    end if
+    call ovarre(outfile,'Power incident on the lower inner target (MW)', &
+        '(pLImw)',pLImw, 'OP ')
+    call ovarre(outfile,'Power incident on the lower outer target (MW)', &
+        '(pLOmw)',pLOmw, 'OP ')
+    if (idivrt == 2) then    
+      call ovarre(outfile,'Power incident on the upper innner target (MW)', &
+           '(pUImw)',pUImw, 'OP ')
+      call ovarre(outfile,'Power incident on the upper outer target (MW)', &
+           '(pUOmw)',pUOmw, 'OP ')
+    end if
 
     call oblnkl(outfile)
     call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw, 'OP ')
@@ -4502,8 +4591,15 @@ implicit none
        call oblnkl(outfile)
     end if
 
-    call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
-    call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivtbt/qar)', ((pdivt*bt)/(q95*aspect*rmajor)), 'OP ')
+    if (idivrt == 2) then
+      ! Double null divertor configuration
+      call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivmax/rmajor)',pdivmax/rmajor, 'OP ')
+      call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivmaxbt/qar)', ((pdivmax*bt)/(q95*aspect*rmajor)), 'OP ')
+    else
+      ! Single null divertor configuration
+      call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
+      call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivtbt/qar)', ((pdivt*bt)/(q95*aspect*rmajor)), 'OP ')
+    end if
 
     if (istell == 0) then
        call osubhd(outfile,'H-mode Power Threshold Scalings :')

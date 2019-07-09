@@ -19,6 +19,7 @@
 - Added NSTX and NSTX-Petty08 confinement time scalings (#820)
 - Added option to input the confinement time
 - Added a new spherical tokamak plasma current relation based on FIESTA fitting
+- CI now runs on all branches named "issue-*"
 
 ## Minor Changes
 
