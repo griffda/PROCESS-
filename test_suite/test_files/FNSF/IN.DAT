@@ -63,7 +63,7 @@ ixc = 14            *fwalld
 fwalld = 0.10188    *f-value for maximum wall load
 
 ixc = 18            *q
-*q = 7.3424          *Safety factor ‘near’ plasma edge
+*q = 7.3424          *Safety factor 'near' plasma edge
 q=8.0
 boundl(18) = 7.0
 

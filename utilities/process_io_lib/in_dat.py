@@ -1192,13 +1192,13 @@ def test(f):
 
     :param f: file name to test
     """
-    # try:
-    i = InDat(filename=f)
-    i.write_in_dat(output_filename="test_out_IN.DAT")
-    subprocess.call(["rm", "test_out_IN.DAT"])
-    return True
-    # except:
-        # return False
+    try:
+        i = InDat(filename=f)
+        i.write_in_dat(output_filename="test_out_IN.DAT")
+        subprocess.call(["rm", "test_out_IN.DAT"])
+        return True
+    except:
+        return False
 
 
 if __name__ == "__main__":

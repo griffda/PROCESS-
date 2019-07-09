@@ -677,8 +677,6 @@ def test_in_dat_lib(fs):
     print(msg)
     save_summary(lmsg)
 
-    # print(results)
-    # print(files_in_order)
     if error_status:
         print(results)
         print(files_in_order)
