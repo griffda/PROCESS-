@@ -2105,7 +2105,6 @@ contains
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         !  Find critical current density in superconducting strand, jcritstr
-
         call jcrit_rebco(thelium,bmax,jcritsc,validity,iprint)
         ! acstf : Cable space - inside area (m2)
         ! Set new croco_od - allowing for scaling of croco_od
@@ -2118,7 +2117,7 @@ contains
         acndttf = conductor%jacket_area
         
         conductor%jacket_fraction = conductor%jacket_area / conductor%area
-        call croco(jcritsc,croco_strand,conductor,croco_od)
+        call croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
         copperA_m2 = iop / conductor%copper_area
         icrit = conductor%critical_current
         jcritstr = croco_strand%critical_current / croco_strand%area
@@ -2160,9 +2159,10 @@ contains
         call ovarre(outfile,'Thickness of copper layer in tape (m)','(copper_thick  )', copper_thick)
         call ovarre(outfile,'Thickness of Hastelloy layer in tape (m) ','(hastelloy_thickness)', hastelloy_thickness)
 
-        call ovarre(outfile,'Mean width of tape (m)','(tape_width)',tape_width)
-        call ovarre(outfile,'Outer diameter of CroCo copper tube (m) ','(croco_od)', croco_od)
-        call ovarre(outfile,'Inner diameter of CroCo copper tube (m) ','(croco_id)',croco_id)
+        call ovarre(outfile,'Mean width of tape (m)','(tape_width)', tape_width , 'OP ')
+        call ovarre(outfile,'Outer diameter of CroCo copper tube (m) ','(croco_od)', croco_od , 'OP ')
+        call ovarre(outfile,'Inner diameter of CroCo copper tube (m) ','(croco_id)',croco_id , 'OP ')
+        call ovarre(outfile,'Thickness of CroCo copper tube (m) ','(croco_thick)',croco_thick)
 
         call ovarre(outfile,'Thickness of each HTS tape ','(tape_thickness)',tape_thickness , 'OP ')
         call ovarre(outfile,'Thickness of stack of tapes (m) ','(stack_thickness)',stack_thickness , 'OP ')

@@ -292,6 +292,9 @@ module physics_variables
   real(kind(1.0D0)) :: falpi = 0.0D0
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: fdeut = 0.5D0
+  !+ad_vars  ftar  /0.5/ : fraction of power to the  lower divertor in double null
+  !+ad_vars                configuration (snull = 0 only)
+  real(kind(1.0D0)) :: ftar = 0.5D0
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
   !+ad_varc                 area in neutron wall load calculation (iwalld=1)
   real(kind(1.0D0)) :: ffwal = 0.92D0
@@ -629,6 +632,12 @@ module physics_variables
   real(kind(1.0D0)) :: pdhe3 = 0.0D0
   !+ad_vars  pdivt : power to conducted to the divertor region (MW)
   real(kind(1.0D0)) :: pdivt = 0.0D0
+  !+ad_vars pdivl : power conducted to the lower divertor region (calculated if snull = 0) (MW)
+  real(kind(1.0D0)) :: pdivl = 0.0D0
+  !+ad_vars pdivu : power conducted to the upper divertor region (calculated if snull = 0) (MW)
+  real(kind(1.0D0)) :: pdivu = 0.0D0
+  !+ad_vars pdivmax : power conducted to the divertor with most load (calculated if snull = 0) (MW)
+  real(kind(1.0D0)) :: pdivmax = 0.0D0
   !+ad_vars  pdt : deuterium-tritium fusion power (MW)
   real(kind(1.0D0)) :: pdt = 0.0D0
   !+ad_vars  pedgeradmw : edge radiation power (MW)
@@ -727,6 +736,8 @@ module physics_variables
   real(kind(1.0D0)) :: qlim = 0.0D0
   !+ad_vars  qstar : cylindrical safety factor
   real(kind(1.0D0)) :: qstar = 0.0D0
+  !+ad_vars  rad_fraction_sol /0.8/ : SoL radiation fraction 
+  real(kind(1.0D0)) :: rad_fraction_sol = 0.8D0
   !+ad_vars rad_fraction : Radiation fraction = total radiation / total power deposited in plasma
   real(kind(1.0D0)) :: rad_fraction = 0.0D0
   !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
@@ -4543,13 +4554,15 @@ module rebco_variables
   real(kind(1.0D0)) :: copper_thick = 100.0D-6
   !+ad_vars  hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
   real(kind(1.0D0)) :: hastelloy_thickness = 50.0D-6
-  !+ad_vars  tape_width /3.75e-3/ : Mean width of tape (m)
-  real(kind(1.0D0)) :: tape_width = 3.75D-3
+  !+ad_vars  tape_width : Mean width of tape (m)
+  real(kind(1.0D0)) :: tape_width = 0.0D0
 
-  !+ad_vars  croco_od /10.4e-3/ : Outer diameter of CroCo strand (m)
-  real(kind(1.0D0)) :: croco_od = 10.4D-3
-  !+ad_vars  croco_id /5.4e-3/ : Inner diameter of CroCo copper tube (m)
-  real(kind(1.0D0)) :: croco_id = 5.4D-3
+  !+ad_vars  croco_od : Outer diameter of CroCo strand (m)
+  real(kind(1.0D0)) :: croco_od = 0.0D0
+  !+ad_vars  croco_id : Inner diameter of CroCo copper tube (m)
+  real(kind(1.0D0)) :: croco_id = 0.0D0
+  !+ad_vars  croco_thick /2.5e-3/ : Thickness of CroCo copper tube (m) (iteration variable 149)
+  real(kind(1.0D0)) :: croco_thick = 2.5D-3
 
   !!+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
   !real(kind(1.0D0)) :: copper_bar = 0.23d0

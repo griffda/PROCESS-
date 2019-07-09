@@ -1304,7 +1304,7 @@ subroutine radpwr(pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pradpv)
 
     !  Total radiation power/volume
 
-    pradpv = pimptot + psyncpv  !  = pcoreradpv + pedgeradpv
+    pradpv = pimptot + psyncpv ! pcoreradpv + pedgeradpv !
 
   end subroutine radpwr
 

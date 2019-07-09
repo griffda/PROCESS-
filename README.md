@@ -117,6 +117,8 @@ During the compile and build steps, a number of files and folders are created. A
 Additionally
 
 - to make python dictionaries run `cmake3 --build build --target dicts`
+  - after creating dictionaries update your `PYTHONPATH` to point towards the utilities folder, e.g.:
+  - `export PYTHONPATH=$PYTHONPATH:/home/<user_name>/<path_to_process>/utilities/`
 - to make documentation run `cmake3 --build build --target doc`. (pdf compilation on UKAEA Freia machines 
   requires the following line in your `.bashrc` file: `module load texlive/2017`)
 - to make html files run `cmake3 --build build --target html`
@@ -331,6 +333,21 @@ computational time follow these steps:
 * Run the code
 * Enter the command 
   * `gprof ./<path_to_executable>/process.exe --ignore-non-functions`
+
+## Code Coverage
+
+To perform a code coverage analysis of the souce code, perform the following steps.
+* Read the man page for gcov
+  * man gcov 
+* Compile and link code with the flags “-fprofile-arcs -ftest-coverage”
+  * *.gcno files will be created in the build directory
+* Run the code (./process.exe)
+  * *.gcda files will be created in the build directory
+* Generate the code cover analysis for the source files that you want to analyse
+  * gcov -a -c -d -f -l -p path_to/tfcoil.f90.gcda 
+  * gcov -a -c -d -f -l -p path_to/*.gcda
+* View the results
+  * vi *.gcov
 
 ## Troubleshooting
 

@@ -1,7 +1,7 @@
 #
 #
 #  first argument to this script is foler where reference data is saved
-
+#  ./run_tracking_tool_jenkins.sh -f=/home/jenkins_ci/tracking_ref_data/
 #
 
 for i in "$@"
@@ -20,6 +20,7 @@ case $i in
 esac
 done
 
+export PYTHONPATH=$PYTHONPATH:$PWD/utilities/
 
 #tracking_jobs=("baseline_2018")
 tracking_jobs=("baseline_2018" "baseline_2019")
@@ -35,7 +36,6 @@ do
  then
 #   cp tracking/"$track_job"/"$track_job""_IN.DAT" .
    cp "$IN_file" .
-   export PYTHONPATH=$PYTHONPATH:$PWD/utilities/
    ./process.exe "$track_job""_IN.DAT"
    rm "$track_job""_IN.DAT"
    cp "$track_job""_MFILE.DAT" tracking
@@ -72,16 +72,16 @@ cd tracking
 
  for track_job in ${tracking_jobs[*]}
  do
-   Trk_file="$1""/""$track_job""_tracking_data.csv" 
+   Trk_file="$1""$track_job""_tracking_data.csv" 
 
-   if [[ -f i"$Trk_file" ]]
+   if [[ -f "$Trk_file" ]]
    then
      chmod 666 "$Trk_file"
      cp "$Trk_file" .
    fi
 
-   ref_file="$1""/""$track_job""_ref_data.csv" 
-   if [[ -f i"$ref_file" ]]
+   ref_file="$1""$track_job""_ref_data.csv" 
+   if [[ -f "$ref_file" ]]
    then
      chmod 666 "$ref_file"
    fi
