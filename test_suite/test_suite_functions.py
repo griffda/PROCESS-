@@ -723,7 +723,7 @@ def test_plot_proc(fs):
     save_summary(lmsg)
 
     if error_status:
-        sys.exit("plot_proc test_suite failure)
+        sys.exit("plot_proc test_suite failure")
 
 
 class TestCase(object):
