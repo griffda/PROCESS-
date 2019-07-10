@@ -358,6 +358,7 @@ contains
     pperim = geom%perim !Plasma poloidal perimeter (m)
     sf = pperim / (2.0D0*pi*rminor)
     vol = mhd%vp ! plasma volume (m^3)
+    ! write(*,*)'PLASMOD:           Plasma volume  ', vol
 
     !------------------------------------------------
     !Temperature outputs otherwise input or
