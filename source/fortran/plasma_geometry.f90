@@ -159,6 +159,7 @@ contains
        sf = pperim / (2.0D0*pi*rminor)
 
        vol = cvol * fvol(rmajor,rminor,kappa,triang)
+       ! write(*,*)'Subroutine geomty: Plasma volume  ', vol
        
        call surfa(rminor,rmajor,kappa,triang,sa,so)  !  [STAR Code]    
        sareao = so
@@ -180,6 +181,7 @@ contains
        !  Volume
 
        vol = cvol * xvol(rmajor,rminor,xi,thetai,xo,thetao)
+       ! write(*,*)'Subroutine geomty: Plasma volume  ', vol
 
        !  Surface area
 

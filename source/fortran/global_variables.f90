@@ -92,6 +92,8 @@ module constants
   real(kind(1.0D0)), parameter :: twopi = 6.2831853071795862D0
   !+ad_vars  umass FIX : unified atomic mass unit (kg)
   real(kind(1.0D0)), parameter :: umass = 1.660538921D-27
+  !+ad_vars  epsilon0 FIX : permittivity of free space (Farad/m)
+  real(kind(1.0D0)), parameter :: epsilon0 = 8.85418781D-12
 
 contains
 
@@ -596,6 +598,8 @@ module physics_variables
   real(kind(1.0D0)) :: kappa95 = 1.6D0
   !+ad_vars  kappaa : plasma elongation calculated as xarea/(pi.a2)
   real(kind(1.0D0)) :: kappaa = 0.0D0
+  !+ad_vars  kappaa_IPB : Volume measure of plasma elongation
+  real(kind(1.0D0)) :: kappaa_IPB = 0.d0
   !+ad_vars  ne0 : central electron density (/m3)
   real(kind(1.0D0)) :: ne0 = 0.0D0
   !+ad_vars  ni0 : central ion density (/m3)
