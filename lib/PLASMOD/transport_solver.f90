@@ -196,6 +196,10 @@ tipr=0.0d0
 
 pres_fac=1.d0 !pressure scaling coefficient to avoid emeq crashing, see inside equil.f90
 
+! SJP Issue #837
+
+nions=0.0d0
+
 !create output directory if it oesnt exist
 if (geom%counter.eq.0) then
 	inquire(file='./CHARTST', exist=dir_e)
