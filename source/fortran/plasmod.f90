@@ -357,8 +357,9 @@ contains
     kappaa   = xarea/(3.141592*rminor**2)
     pperim = geom%perim !Plasma poloidal perimeter (m)
     sf = pperim / (2.0D0*pi*rminor)
-    vol = mhd%vp ! plasma volume (m^3)
-    ! write(*,*)'PLASMOD:           Plasma volume  ', vol
+    ! Issue 879 remove the line in Plasmod that overwrites 'vol'
+    ! vol = mhd%vp ! plasma volume (m^3)
+    ! write(*,*)'convert_Plasmod2PROCESS: Plasma volume  ', vol
 
     !------------------------------------------------
     !Temperature outputs otherwise input or
