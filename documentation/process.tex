@@ -2902,7 +2902,8 @@ utilities (see utilities documentation), add the following lines to your \texttt
 \begin{quote}
 \begin{verbatim}
 module use /home/PROCESS/modules
-module swap python
+module unload python
+module load python/3.5.1
 module load process/master
 
 If using default gfortran compiler instead of ifort:

@@ -45,6 +45,7 @@ On Freia, paths to PFUnit and GTEST can be set in your user profile (.bashrc) as
 - `export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest`
 - `export PYTHONPATH=$PYTHONPATH:[path to process folder]/utilities`
 
+
 ## Directory Structure
 
 The folder structure for the PROCESS system prior to compilation is descibed below:
@@ -83,6 +84,8 @@ The folder structure for the PROCESS system prior to compilation is descibed bel
     - `module unload ifort`
     - `module unload pgi`
     - `module load gfortran`  
+    - `module unload python`
+    - `module load python/3.3`
 
 1. get repository
     - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where `folder_name`is the name of the folder which will be created when cloning the repository.  
