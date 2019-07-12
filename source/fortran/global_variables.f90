@@ -2018,7 +2018,7 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: curpff = 0.0D0
   !+ad_vars  curpfs(ngc2) : work array
   real(kind(1.0D0)), dimension(ngc2) :: curpfs = 0.0D0
-  !+ad_vars  etapsu /0.9/ : Efficiency of ohmic heating
+  !+ad_vars  etapsu /0.9/ : Efficiency of transfer of PF stored energy into or out of storage.
   real(kind(1.0D0)) :: etapsu = 0.9D0
   !+ad_vars  fcohbof : ratio of central solenoid overall current density at
   !+ad_varc            beginning of flat-top / end of flat-top
@@ -2098,10 +2098,10 @@ module pfcoil_variables
   real(kind(1.0D0)) :: pfmmax = 0.0D0
   !+ad_vars  pfrmax : radius of largest PF coil (m)
   real(kind(1.0D0)) :: pfrmax = 0.0D0
-  !+ad_vars  pfsec : PF Coil waste heat (MW)
-  real(kind(1.0D0)) :: pfsec = 0.0D0
-  !+ad_vars  pfwp : PF Coil wall-plug power requirements (MW)
-  real(kind(1.0D0)) :: pfwp = 0.0D0
+  ! !+ad_vars  pfsec : PF Coil waste heat (MW)
+  !  real(kind(1.0D0)) :: pfsec = 0.0D0
+  !+ad_vars  pfwpmw : Total mean wall plug power dissipated in PFC and CS power supplies.  Issue #713 (MW)
+  real(kind(1.0D0)) :: pfwpmw = 0.0D0
   !+ad_vars  powohres : central solenoid resistive power during flattop (W)
   real(kind(1.0D0)) :: powohres = 0.0D0
   !+ad_vars  powpfres : total PF coil resistive losses during flattop (W)
