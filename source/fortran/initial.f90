@@ -348,48 +348,35 @@ subroutine check
             boundu(4) = max(boundu(4), boundl(4))
         end if
 
-        !  Density checks:
-        !  not required if pedestal is set using Greenwald density (Issue #292)
+         !  Density checks
+         !  Case where pedestal density is set manually
+         ! ---------------
+         if ( (fgwped < 0) .or. (.not.any(ixc==145)) ) then
+    
+             ! Issue #589 Pedestal density is set manually using neped but it is less than nesep.
+             if ( neped < nesep ) then
+                 fdiags(1) = neped ; fdiags(2) = nesep
+                 call report_error(151)
+             end if  
 
-        if ((fgwped < 0) .and. (neped < nesep)) then
-            ! Issue #589 Pedestal density is set manually using neped but it is less than nesep.
-            fdiags(1) = neped ; fdiags(2) = nesep
-            call report_error(151)
-        end if
+             ! Issue #589 Pedestal density is set manually using neped,
+             ! but pedestal width = 0.
+             if ( (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7) ) then
+                 fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
+                 call report_error(152)
+             end if
+         end if 
 
-        if ((fgwped < 0) .and. (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7)) then
-            ! Issue #589 Pedestal density is set manually using neped,
-            ! but pedestal width = 0.
-            fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
-            call report_error(152)
-        end if
-
-        !  Core density should always be calculated (later) as being
-        !  higher than the pedestal density, if and only if the
-        !  volume-averaged density never drops below the pedestal
-        !  density. Prevent this by adjusting dene, and its lower bound
-        !  (which will only have an effect if this is an optimisation run)
-        !  Not required if pedestal is set using Greenwald density (Issue #292)
-
-        if ((fgwped < 0) .and. (dene <= neped)) then
-            fdiags(1) = dene ; fdiags(2) = neped
-            write(*,*)'dene = ', dene, 'boundl(6) = ', boundl(6), '  neped = ', neped
-            write(*,*)'Set dene = neped*1.001D0 '
-            dene = neped*1.001D0
-            call report_error(154)
+         ! Issue #862 : Variable ne0/neped ratio without constraint eq 81 (ne0>neped)
+         !  -> Potential hollowed density profile
+         if ( (ioptimz >= 0) .and. (.not.any(icc==81)) ) then
+             if ( any(ixc == 145 )) call report_error(154)
+             if ( any(ixc ==   6 )) call report_error(155)
          end if
-
-        if ((ioptimz >= 0).and.(any(ixc == 6)).and.(boundl(6) < neped*1.001D0)) then
-            call report_error(155)
-            write(*,*)'dene = ', dene, 'boundl(6) = ', boundl(6), '  neped = ', neped
-            write(*,*)'Set boundl(6) = neped*1.001D0'
-            boundl(6) = neped*1.001D0
-            boundu(6) = max(boundu(6), boundl(6))
-        end if
-
      end if
+     ! ---------------
 
-
+     
      ! Cannot use Psep/R and PsepB/qAR limits at the same time
      if(any(icc == 68) .and. any(icc == 56)) then
         call report_error(178)
@@ -599,9 +586,6 @@ subroutine check
     if (itart == 1) then
 
         icase  = 'Tight aspect ratio tokamak model'
-        bore   = 0.0D0
-        gapoh  = 0.0D0
-        ohcth  = 0.0D0
         iblnkith = 0
 
         if (icurr /= 2 .and. icurr /= 9) then
