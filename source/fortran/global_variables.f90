@@ -217,7 +217,7 @@ module physics_variables
   !+ad_vars  betap : poloidal beta
   real(kind(1.0D0)) :: betap = 0.0D0
   !+ad_vars  normalised_total_beta : normaised total beta
-  real(kind(1.0D0)) :: normalised_total_beta = 0.0D0
+  real(kind(1.0D0)), bind(C) :: normalised_total_beta = 0.0D0
 
   !+ad_vars  betbm0 /1.5/ : leading coefficient for NB beta fraction
   real(kind(1.0D0)) :: betbm0 = 1.5D0
@@ -427,8 +427,9 @@ module physics_variables
   integer :: ieped = 0
 
   ! Issue #730
-  !+ad_vars  eped_sf /1.0/ : Adjustment factor for EPED scaling to reduce pedestal temperature or pressure to mitigate or prevent ELMs
-  real(kind(1.0D0)) :: eped_sf = 1.0D0
+  !+ad_vars  eped_sf /1.0/ : Adjustment factor for EPED scaling to reduce 
+  !+ad_varc  pedestal temperature or pressure to mitigate or prevent ELMs
+  real(kind(1.0D0)), bind(C) :: eped_sf = 1.0D0
 
   !+ad_vars  neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1,2, calculated if 3)
   real(kind(1.0D0)) :: neped = 4.0D19
@@ -583,7 +584,7 @@ module physics_variables
   !+ad_vars  itart /0/ : switch for spherical tokamak (ST) models:<UL>
   !+ad_varc         <LI> = 0 use conventional aspect ratio models;
   !+ad_varc         <LI> = 1 use spherical tokamak models</UL>
-  integer :: itart = 0
+  integer, bind(C) :: itart = 0
   !+ad_vars  itartpf /0/ : switch for Spherical Tokamak PF models:<UL>
   !+ad_varc         <LI> = 0 use Peng and Strickler (1986) model;
   !+ad_varc         <LI> = 1 use conventional aspect ratio model</UL>
@@ -593,7 +594,7 @@ module physics_variables
   !+ad_varc          <LI> = 2 use first wall area directly</UL>
   integer :: iwalld = 1
   !+ad_vars  kappa /1.792/ : plasma separatrix elongation (calculated if ishape > 0)
-  real(kind(1.0D0)) :: kappa = 1.792D0
+  real(kind(1.0D0)), bind(C) :: kappa = 1.792D0
   !+ad_vars  kappa95 /1.6/ : plasma elongation at 95% surface (calculated if ishape < 4)
   real(kind(1.0D0)) :: kappa95 = 1.6D0
   !+ad_vars  kappaa : plasma elongation calculated as xarea/(pi.a2)
@@ -657,7 +658,7 @@ module physics_variables
   !+ad_vars  piepv : ion/electron equilibration power per volume (MW/m3)
   real(kind(1.0D0)) :: piepv = 0.0D0
   !+ad_vars  plascur : plasma current (A)
-  real(kind(1.0D0)) :: plascur = 0.0D0
+  real(kind(1.0D0)), bind(C) :: plascur = 0.0D0
   !+ad_vars  plinepv : line radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: plinepv = 0.0D0
   !+ad_vars  pneutmw : neutron fusion power (MW)
@@ -672,7 +673,7 @@ module physics_variables
   !+ad_varc            confinement time calculation
   real(kind(1.0D0)) :: powerht = 0.0D0
   !+ad_vars  powfmw : fusion power (MW)
-  real(kind(1.0D0)) :: powfmw = 0.0D0
+  real(kind(1.0D0)), bind(C) :: powfmw = 0.0D0
   !+ad_vars  pperim : plasma poloidal perimeter (m)
   real(kind(1.0D0)) :: pperim = 0.0D0
   !+ad_vars  pradmw : total radiation power (MW)
@@ -756,9 +757,9 @@ module physics_variables
   !+ad_vars  rlp : plasma inductance (H)
   real(kind(1.0D0)) :: rlp = 0.0D0
   !+ad_vars  rmajor /8.14/ : plasma major radius (m) (iteration variable 3)
-  real(kind(1.0D0)) :: rmajor = 8.14D0
+  real(kind(1.0D0)), bind(C) :: rmajor = 8.14D0
   !+ad_vars  rminor : plasma minor radius (m)
-  real(kind(1.0D0)) :: rminor = 0.0D0
+  real(kind(1.0D0)), bind(C) :: rminor = 0.0D0
   !+ad_vars  rnbeam /0.005/ : hot beam density / n_e (iteration variable 7)
   real(kind(1.0D0)) :: rnbeam = 0.005D0
   !+ad_vars  rncne : n_carbon / n_e
@@ -820,7 +821,7 @@ module physics_variables
   !+ad_varc                 used to calculate ti if tratio > 0.0
   real(kind(1.0D0)) :: tratio = 1.0D0
   !+ad_vars  triang /0.36/ : plasma separatrix triangularity (calculated if ishape=1, 3 or 4)
-  real(kind(1.0D0)) :: triang = 0.36D0
+  real(kind(1.0D0)), bind(C) :: triang = 0.36D0
   !+ad_vars  triang95 /0.24/ : plasma triangularity at 95% surface (calculated if ishape < 3)
   real(kind(1.0D0)) :: triang95 = 0.24D0
   !+ad_vars  vol : plasma volume (m3)
@@ -836,7 +837,7 @@ module physics_variables
   !+ad_vars  vsstt : total V-s needed (Wb)
   real(kind(1.0D0)) :: vsstt = 0.0D0
   !+ad_vars  wallmw : average neutron wall load (MW/m2)
-  real(kind(1.0D0)) :: wallmw = 0.0D0
+  real(kind(1.0D0)), bind(C) :: wallmw = 0.0D0
   !+ad_vars  wtgpd : mass of fuel used per day (g)
   real(kind(1.0D0)) :: wtgpd = 0.0D0
   !+ad_vars  xarea : plasma cross-sectional area (m2)
@@ -1399,7 +1400,7 @@ module divertor_variables
   !+ad_vars  frrp /0.4/ : fraction of radiated power to plate
   real(kind(1.0D0)) :: frrp = 0.4D0
   !+ad_vars  hldiv : divertor heat load (MW/m2)
-  real(kind(1.0D0)) :: hldiv = 0.0D0
+  real(kind(1.0D0)), bind(C) :: hldiv = 0.0D0
   !+ad_vars  hldivlim /5.0/ : heat load limit (MW/m2)
   real(kind(1.0D0)) :: hldivlim = 5.0D0
   !+ad_vars  ksic /0.8/ : power fraction for outboard double-null scrape-off plasma
@@ -1493,7 +1494,7 @@ module fwbs_variables
   ! General blanket parameters
 
   !+ad_vars  bktlife : blanket lifetime (years)
-  real(kind(1.0D0)) :: bktlife = 0.0D0
+  real(kind(1.0D0)), bind(C):: bktlife = 0.0D0
 
   !+ad_vars  coolmass : mass of water coolant (in shield, blanket,
   !+ad_varc             first wall, divertor) (kg)
@@ -1720,7 +1721,7 @@ module fwbs_variables
   !+ad_vars  coolwh : Blanket coolant (set via blkttype):<UL>
   !+ad_varc         <LI> = 1 helium;
   !+ad_varc         <LI> = 2 pressurized water</UL>
-  integer :: coolwh = 1
+  integer, bind(C) :: coolwh = 1
   !+ad_vars  afwi /0.008/ : inner radius of inboard first wall/blanket coolant channels OBSOLETE (m)
   real(kind(1.0D0)) :: afwi = 0.008D0
   !+ad_vars  afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels OBSOLETE (m)
@@ -2532,7 +2533,7 @@ module tfcoil_variables
 !   !+ad_varc                  <LI> = 1 CCFE two-layer stress model; superconductor</UL>
 !   integer :: tfc_model = 1
   !+ad_vars  tfcmw : peak power per TF power supply (MW)
-  real(kind(1.0D0)) :: tfcmw = 0.0D0
+  real(kind(1.0D0)), bind(C) :: tfcmw = 0.0D0
   !+ad_vars  tfcpmw : peak resistive TF coil inboard leg power (MW)
   real(kind(1.0D0)) :: tfcpmw = 0.0D0
   !+ad_vars  tfcryoarea : surface area of toroidal shells covering TF coils (m2)
@@ -2585,14 +2586,14 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tinstf = 0.018D0
 
   !+ad_vars  tmargmin_tf /0/ : minimum allowable temperature margin : TF coils (K)
-  real(kind(1.0D0)) :: tmargmin_tf = 0D0
+  real(kind(1.0D0)), bind(C) :: tmargmin_tf = 0D0
   !+ad_vars  tmargmin_cs /0/ : minimum allowable temperature margin : CS (K)
-  real(kind(1.0D0)) :: tmargmin_cs = 0D0
+  real(kind(1.0D0)), bind(C) :: tmargmin_cs = 0D0
   !+ad_vars  tmargmin /0/ : minimum allowable temperature margin : TFC AND CS (K)
   real(kind(1.0D0)) :: tmargmin = 0D0
 
   !+ad_vars  temp_margin  : temperature margin (K)
-  real(kind(1.0D0)) :: temp_margin = 0.00D0
+  real(kind(1.0D0)), bind(C) :: temp_margin = 0.00D0
   !+ad_vars  tmargtf :  TF coil temperature margin (K)
   real(kind(1.0D0)) :: tmargtf = 0.0D0
   !+ad_vars  tmaxpro /150.0/ : maximum temp rise during a quench for protection (K)
@@ -3046,13 +3047,13 @@ module heat_transport_variables
   !+ad_vars  pfwdiv : heat removal from first wall/divertor (MW)
   real(kind(1.0D0)) :: pfwdiv = 0.0D0
   !+ad_vars  pgrossmw : gross electric power (MW)
-  real(kind(1.0D0)) :: pgrossmw = 0.0D0
+  real(kind(1.0D0)), bind(C) :: pgrossmw = 0.0D0
   !+ad_vars  pinjht : power dissipated in heating and current drive system (MW)
   real(kind(1.0D0)) :: pinjht = 0.0D0
   !+ad_vars  pinjmax : maximum injector power during pulse (heating and ramp-up/down phase) (MW)
   real(kind(1.0D0)) :: pinjmax = 120.0D0
   !+ad_vars  pinjwp : injector wall plug power (MW)
-  real(kind(1.0D0)) :: pinjwp = 0.0D0
+  real(kind(1.0D0)), bind(C) :: pinjwp = 0.0D0
   !+ad_vars  pnetelmw : net electric power (MW)
   real(kind(1.0D0)) :: pnetelmw = 0.0D0
   !+ad_vars  precircmw : recirculating electric power (MW)
@@ -3073,7 +3074,7 @@ module heat_transport_variables
   !+ad_vars  psecshld : Low-grade heat deposited in shield (MW)
   real(kind(1.0D0)) :: psecshld = 0.0D0
   !+ad_vars  pthermmw : High-grade heat useful for electric production (MW)
-  real(kind(1.0D0)) :: pthermmw = 0.0D0
+  real(kind(1.0D0)), bind(C) :: pthermmw = 0.0D0
   !+ad_vars  pwpm2 /150.0/ : base AC power requirement per unit floor area (W/m2)
   real(kind(1.0D0)) :: pwpm2 = 150.0D0
   !+ad_vars  tfacpd : total steady state TF coil AC power demand (MW)
@@ -3127,7 +3128,7 @@ module times_variables
   !+ad_vars  tburn0 : burn time (s) - used for internal consistency
   real(kind(1.0D0)) :: tburn0 = 0.0D0
   !+ad_vars  tcycle : full cycle time (s)
-  real(kind(1.0D0)) :: tcycle = 0.0D0
+  real(kind(1.0D0)), bind(C) :: tcycle = 0.0D0
   !+ad_vars  tdown : down time (s)
   real(kind(1.0D0)) :: tdown = 0.0D0
   !+ad_vars  tdwell /1800.0/ : time between pulses in a pulsed reactor (s)
@@ -3559,9 +3560,9 @@ module cost_variables
 
   !+ad_vars  abktflnc /5.0/ : allowable first wall/blanket neutron
   !+ad_varc                    fluence (MW-yr/m2) (blktmodel=0)
-  real(kind(1.0D0)) :: abktflnc = 5.0D0
+  real(kind(1.0D0)), bind(C) :: abktflnc = 5.0D0
   !+ad_vars  adivflnc /7.0/ : allowable divertor heat fluence (MW-yr/m2)
-  real(kind(1.0D0)) :: adivflnc = 7.0D0
+  real(kind(1.0D0)), bind(C) :: adivflnc = 7.0D0
   !+ad_vars  blkcst : blanket direct cost (M$)
   real(kind(1.0D0)) :: blkcst = 0.0D0
   !+ad_vars  c221 : total account 221 cost (M$) (first wall, blanket, shield,
@@ -3580,9 +3581,9 @@ module cost_variables
   !+ad_vars  cdcost : current drive direct costs (M$)
   real(kind(1.0D0)) :: cdcost = 0.0D0
   !+ad_vars  cdirt : total plant direct cost (M$)
-  real(kind(1.0D0)) :: cdirt = 0.0D0
+  real(kind(1.0D0)), bind(C) :: cdirt = 0.0D0
   !+ad_vars  cdrlife : lifetime of heating/current drive system (y)
-  real(kind(1.0D0)) :: cdrlife = 0.0D0
+  real(kind(1.0D0)), bind(C) :: cdrlife = 0.0D0
   !+ad_vars  cfactr /0.75/ : Total plant availability fraction;
   !+ad_varc                  input if iavail = 0
   real(kind(1.0D0)) :: cfactr = 0.75D0
@@ -3642,13 +3643,13 @@ module cost_variables
   !+ad_varc          <LI> = 1 use $ 2015 Kovari model</UL>
   integer :: cost_model = 1
   !+ad_vars  cowner /0.15/ : owner cost factor
-  real(kind(1.0D0)) :: cowner = 0.15D0
+  real(kind(1.0D0)), bind(C) :: cowner = 0.15D0
   !+ad_vars  cplife : lifetime of centrepost (y)
   real(kind(1.0D0)) :: cplife = 0.0D0
   !+ad_vars  cpstcst : ST centrepost direct cost (M$)
   real(kind(1.0D0)) :: cpstcst = 0.0D0
   !+ad_vars  cpstflnc /10.0/ : allowable ST centrepost neutron fluence (MW-yr/m2)
-  real(kind(1.0D0)) :: cpstflnc = 10.0D0
+  real(kind(1.0D0)), bind(C) :: cpstflnc = 10.0D0
   !+ad_vars  crctcore : reactor core costs (categories 221, 222 and 223)
   real(kind(1.0D0)) :: crctcore = 0.0D0
   !+ad_vars  csi /16.0/ : allowance for site costs (M$)
@@ -3663,7 +3664,7 @@ module cost_variables
   !+ad_vars  divcst : divertor direct cost (M$)
   real(kind(1.0D0)) :: divcst = 0.0D0
   !+ad_vars  divlife : lifetime of divertor (y)
-  real(kind(1.0D0)) :: divlife = 0.0D0
+  real(kind(1.0D0)), bind(C) :: divlife = 0.0D0
   !+ad_vars  dtlife /0.0/ : period prior to the end of the plant life that
   !+ad_varc                 the decommissioning fund is used (years)
   real(kind(1.0D0)) :: dtlife = 0.0D0
@@ -3677,11 +3678,11 @@ module cost_variables
   !+ad_varc                  (if ifueltyp = 1)
   real(kind(1.0D0)) :: fcdfuel = 0.1D0
   !+ad_vars  fcontng /0.195/ : project contingency factor
-  real(kind(1.0D0)) :: fcontng = 0.195D0
+  real(kind(1.0D0)), bind(C) :: fcontng = 0.195D0
   !+ad_vars  fcr0 /0.0966/ : fixed charge rate during construction
   real(kind(1.0D0)) :: fcr0 = 0.0966D0
   !+ad_vars  fkind /1.0/ : multiplier for Nth of a kind costs
-  real(kind(1.0D0)) :: fkind = 1.0D0
+  real(kind(1.0D0)), bind(C) :: fkind = 1.0D0
   !+ad_vars  fwallcst : first wall cost (M$)
   real(kind(1.0D0)) :: fwallcst = 0.0D0
   !+ad_vars  iavail /2/ : switch for plant availability model:<UL>
@@ -3701,37 +3702,37 @@ module cost_variables
   !+ad_vars  favail /1.0/ : F-value for minimum availability (constraint equation 61)
   real(kind(1.0D0)) :: favail = 1.0D0
   !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
-  integer :: num_rh_systems = 4
+  integer, bind(C) :: num_rh_systems = 4
   !+ad_vars  conf_mag /0.99/ : c parameter, which determines the temperature margin at which magnet lifetime starts to decline
-  real(kind(1.0D0)) :: conf_mag = 0.99D0
+  real(kind(1.0D0)), bind(C) :: conf_mag = 0.99D0
   !+ad_vars  div_prob_fail /0.0002/ : Divertor probability of failure (per op day)
-  real(kind(1.0D0)) :: div_prob_fail = 0.0002D0
+  real(kind(1.0D0)), bind(C) :: div_prob_fail = 0.0002D0
   !+ad_vars  div_umain_time /0.25/ : Divertor unplanned maintenance time (years)
-  real(kind(1.0D0)) :: div_umain_time = 0.25D0
+  real(kind(1.0D0)), bind(C) :: div_umain_time = 0.25D0
 
   ! MDK
   !+ad_vars  div_nref /7000/ : Reference value for cycle cycle life of divertor
-  real(kind(1.0D0)) :: div_nref = 7000.0D0
+  real(kind(1.0D0)), bind(C) :: div_nref = 7000.0D0
   !+ad_vars  div_nu /14000/ : The cycle when the divertor fails with 100% probability
-  real(kind(1.0D0)) :: div_nu = 14000.0D0
+  real(kind(1.0D0)), bind(C) :: div_nu = 14000.0D0
 
 
   !+ad_vars  fwbs_nref /20000/ : Reference value for cycle life of blanket
-  real(kind(1.0D0)) :: fwbs_nref = 20000.0D0
+  real(kind(1.0D0)),bind(C) :: fwbs_nref = 20000.0D0
   !+ad_vars  fwbs_nu /40000/ : The cycle when the blanket fails with 100% probability
-  real(kind(1.0D0)) :: fwbs_nu = 40000.0D0
+  real(kind(1.0D0)), bind(C) :: fwbs_nu = 40000.0D0
 
 
   !+ad_vars  fwbs_prob_fail /0.0002/ : Fwbs probability of failure (per op day)
-  real(kind(1.0D0)) :: fwbs_prob_fail = 0.0002D0
+  real(kind(1.0D0)), bind(C) :: fwbs_prob_fail = 0.0002D0
   !+ad_vars  fwbs_umain_time /0.25/ : Fwbs unplanned maintenance time (years)
-  real(kind(1.0D0)) :: fwbs_umain_time = 0.25D0
+  real(kind(1.0D0)), bind(C) :: fwbs_umain_time = 0.25D0
   !+ad_vars  redun_vacp /25/ : Vacuum system pump redundancy level (%)
   real(kind(1.0D0)) :: redun_vacp = 25.0D0
   !+ad_vars  redun_vac : Number of redundant vacuum pumps
   integer :: redun_vac = 0
   !+ad_vars  t_operation : Operational time (yrs)
-  real(kind(1.0D0)) :: t_operation = 0.0D0
+  real(kind(1.0D0)), bind(C) :: t_operation = 0.0D0
   !+ad_vars  tbktrepl /0.5/ : time taken to replace blanket (y)
   !+ad_varc                 (iavail=1)
   real(kind(1.0D0)) :: tbktrepl = 0.5D0
@@ -3778,12 +3779,12 @@ module cost_variables
   !+ad_varc                 electricity calculations:<UL>
   !+ad_varc            <LI> = 0 do not calculate MW(electric) or c-o-e;
   !+ad_varc            <LI> = 1 calculate MW(electric) and c-o-e</UL>
-  integer :: ireactor = 1
+  integer, bind(C) :: ireactor = 1
   !+ad_vars  lsa /4/ : level of safety assurance switch (generally, use 3 or 4):<UL>
   !+ad_varc       <LI> = 1 truly passively safe plant;
   !+ad_varc       <LI> = 2,3 in-between;
   !+ad_varc       <LI> = 4 like current fission plant</UL>
-  integer :: lsa = 4
+  integer, bind(C) :: lsa = 4
   !+ad_vars  moneyint : interest portion of capital cost (M$)
   real(kind(1.0D0)) :: moneyint = 0.0D0
   !+ad_vars  output_costs /1/ : switch for costs output:<UL>
@@ -3793,7 +3794,7 @@ module cost_variables
   !+ad_vars  ratecdol /0.0435/ : effective cost of money in constant dollars
   real(kind(1.0D0)) :: ratecdol = 0.0435D0
   !+ad_vars  tlife /30.0/ : plant life (years)
-  real(kind(1.0D0)) :: tlife = 30.0D0
+  real(kind(1.0D0)), bind(C) :: tlife = 30.0D0
   !+ad_vars  ucad /180.0/ FIX : unit cost for administration buildings (M$/m3)
   real(kind(1.0D0)) :: ucad = 180.0D0
   !+ad_vars  ucaf /1.5e6/ FIX : unit cost for aux facility power equipment ($)
@@ -3873,12 +3874,12 @@ module cost_variables
   !+ad_vars  uche3 /1.0e6/ : cost of helium-3 ($/kg)
   real(kind(1.0D0)) :: uche3 = 1.0D6
   !+ad_vars  uchrs /87.9e6/ : cost of heat rejection system ($)
-  real(kind(1.0D0)) :: uchrs = 87.9D6
+  real(kind(1.0D0)), bind(C) :: uchrs = 87.9D6
   !+ad_vars  uchts(2) /15.3,19.1/ : cost of heat transport system equipment
   !+ad_varc                         per loop ($/W); dependent on coolant type (coolwh)
   real(kind(1.0D0)), dimension(2) :: uchts = (/15.3D0, 19.1D0/)
   !+ad_vars  uciac /1.5e8/ : cost of instrumentation, control & diagnostics ($)
-  real(kind(1.0D0)) :: uciac = 1.5D8
+  real(kind(1.0D0)), bind(C) :: uciac = 1.5D8
   !+ad_vars  ucich /3.0/ : ICH system cost ($/W)
   real(kind(1.0D0)) :: ucich = 3.0D0
   !+ad_vars  ucint /35.0/ FIX : superconductor intercoil structure cost ($/kg)
@@ -3890,9 +3891,9 @@ module cost_variables
   !+ad_vars  ucmb /260.0/ FIX: unit cost for reactor maintenance building (M$/m3)
   real(kind(1.0D0)) :: ucmb = 260.0D0
   !+ad_vars  ucme /1.25e8/ : cost of maintenance equipment ($/)
-  real(kind(1.0D0)) :: ucme = 1.25D8
+  real(kind(1.0D0)), bind(C) :: ucme = 1.25D8
   !+ad_vars  ucmisc /2.5e7/ : miscellaneous plant allowance ($)
-  real(kind(1.0D0)) :: ucmisc = 2.5D7
+  real(kind(1.0D0)), bind(C) :: ucmisc = 2.5D7
   !+ad_vars  ucnbi /3.3/ : NBI system cost ($/W)
   real(kind(1.0D0)) :: ucnbi = 3.3D0
   !+ad_vars  ucnbv /1000.0/ FIX : cost of nuclear building ventilation ($/m3)
@@ -3952,7 +3953,7 @@ module cost_variables
   real(kind(1.0D0)) :: uctr = 370.0D0
   !+ad_vars  ucturb(2) /230.0e6, 245.0e6/: cost of turbine plant equipment ($)
   !+ad_varc                               (dependent on coolant type coolwh)
-  real(kind(1.0D0)), dimension(2) :: ucturb = (/230.0D6, 245.0D6/)
+  real(kind(1.0D0)), dimension(2), bind(C) :: ucturb = (/230.0D6, 245.0D6/)
   !+ad_vars  ucvalv /3.9e5/ FIX : vacuum system valve cost ($)
   real(kind(1.0D0)) :: ucvalv = 3.9D5
   !+ad_vars  ucvdsh /26.0/ FIX : vacuum duct shield cost ($/kg)

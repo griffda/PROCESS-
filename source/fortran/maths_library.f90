@@ -424,7 +424,8 @@ contains
   end subroutine ellipke
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  real(kind(1.0D0))  function binomial(n,k) result(coefficient)
+  real(kind(1.0D0))  function binomial(n,k) result(coefficient) &
+  bind (C, name="maths_lib_binomial")
     ! This outputs a real approximation to the coefficient
     ! http://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
     implicit none

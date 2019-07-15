@@ -18,7 +18,7 @@ before_script:
   - module load texlive/2017
   - module unload ifort 
   - module load gfortran
-#  - 
+  - export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest
   - echo ld_library_path=$LD_LIBRARY_PATH
 
 build:Make:
@@ -41,6 +41,7 @@ build:Make:
    expire_in: 2 hrs
    paths:
      - bin/process.exe
+     - bin/process_GTest.exe
      - bin/libPROCESS_calc_engine.so
  tags:
   - freia
@@ -62,6 +63,7 @@ build:Make_issue:
    expire_in: 2 hrs
    paths:
      - bin/process.exe
+     - bin/process_GTest.exe
      - bin/libPROCESS_calc_engine.so
  tags:
   - freia
@@ -110,6 +112,19 @@ testing:test_suite_issue:
   - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
   - cd test_suite
   - python test_suite.py
+ tags:
+  - freia
+
+testing:unit_tests:
+ when: on_success  # Also default setting
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: testing
+ script:
+  - pwd
+  - ls bin/
+  - ./bin/process_GTest.exe
  tags:
   - freia
 
