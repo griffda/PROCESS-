@@ -326,6 +326,12 @@ updated upon compilation. This way each output file is trackable to a specific c
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 | `git checkout tags/<tag name>` | checkout a specific tag |
 
+## Unit Tests
+
+The PROCESS code uses Googletest framework for unit 
+testing. The instructions for adding unit tests is in the 
+repository file `unit-testing-guide.md` ([here](https://git.ccfe.ac.uk/process/process/blob/develop/unit-testing-guide.md))
+
 ## Profiling
 
 To profile the code and investigate which parts of the code are using the most 
