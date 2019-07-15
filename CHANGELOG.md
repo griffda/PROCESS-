@@ -1,6 +1,20 @@
-# 1.0.16
+# 1.0.17
 
 > next release
+> 
+## Bug Fixes
+ 
+
+## Features
+
+
+## Minor Changes
+
+
+## Documentation update
+
+
+# 1.0.16
 
 ## Bug Fixes
  
@@ -20,6 +34,7 @@
 - Added option to input the confinement time
 - Added a new spherical tokamak plasma current relation based on FIESTA fitting
 - CI now runs on all branches named "issue-*"
+- Unit tests incorporated into main branch
 
 ## Minor Changes
 
