@@ -7,9 +7,9 @@ instructions show how to implement a test.
 
 This will outline the procedure for adding a new basic test. The FORTRAN function to be added is one that calculates the binomial coefficient for a given n, k.
 
-$$
+```math
 \binom{n}{k} = \frac{n!}{k!(n-k)!}
-$$
+```
 
 This function is defined in `maths_library.f90` as
 
@@ -107,9 +107,9 @@ EXPECT_EQ(1.0, c);
 
 This asserts that we expect the outcome
 
-$$
+```math
 \binom{1}{1} = 1
-$$
+```
 
 It will report a failure otherwise. A failure in any test case will count as a 
 failed CI pipeline.
