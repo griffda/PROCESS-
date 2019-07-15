@@ -11,10 +11,42 @@ extern "C"
 {
    // Function prototype for accessing Fortran functions 
    double utilities_process_value(double *, double *);
+
+   // Evaluators
+   //-----------
    void evaluators_funfom(double *);
+
+   // Availability Module
+   //--------------------
+   void availability_calc_u_planned(int *, int *, double *);
+   void availability_calc_u_unplanned_magnets(int *,int *,double *);
+   void availability_calc_u_unplanned_divertor(int *, int *, double *);
+   void availability_calc_u_unplanned_fwbs(int *, int *, double *);
    void availability_calc_u_unplanned_hcd(double *);
+   void availability_calc_u_unplanned_bop(int *, int *, double *);
+
+   // Costs 1990 Module
+   //------------------
+   void costs_1990_acc228();
+   void costs_1990_acc229();
+   void costs_1990_acc23();
+   void costs_1990_acc25();
+   void costs_1990_acc26();
+   void costs_1990_acc9();
+
+   // Current Drive Module
+   //---------------------
    void current_drive_iternb(double *, double *, double *);
    void current_drive_cfnbi(double *, double *, double *, double *, double *, double *,double *, double *, double *);
+
+   // Maths Library
+   //--------------
+   double maths_lib_binomial(int *, int *);
+
+   // Physics functions module
+   //-------------------------
+   double test_t_eped_scaling();
+
 }
 
 
