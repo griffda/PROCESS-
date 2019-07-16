@@ -63,7 +63,7 @@ ixc = 14            *fwalld
 fwalld = 0.10188    *f-value for maximum wall load
 
 ixc = 18            *q
-*q = 7.3424          *Safety factor 'near' plasma edge
+*q = 7.3424          *Safety factor ‘near’ plasma edge
 q=8.0
 boundl(18) = 7.0
 
@@ -130,7 +130,6 @@ alphan   = 0.25     *Density profile index
 alphat   = 0.5      *Temperature profile index
 aspect   = 1.75     *Aspect ratio
 bt       = 3.0      *Toroidal field on axis (T)
-*cfe0     = 2.5E-4   *Seeded high-Z impurity fraction (n_highZ / n_e)
 dnbeta   = 4.1      *(Troyon-like) coefficient for beta scaling
 epbetmax = 10.0     *Maximum (eps*beta_poloidal) (constraint equation 6)
 ibss     = 3        *Switch for bootstrap current scaling (3: Wilson numerical scaling)
@@ -167,13 +166,15 @@ tburn    = 1000.0    *Burn time (s)
 tdwell   = 100.0    *Time between pulses in a pulsed reactor (s)
 
 *-----------------Build Variables------------------*
-
+bore     = 0.0      *central solenoid inboard radius (m)
+gapoh    = 0.0      *gap between central solenoid and TF coil (m)
+ohcth    = 0.0      *central solenoid thickness (m)
 blnkith  = 0.0      *Inboard blanket thickness (m)
 blnkoth  = 0.7      *Outboard blanket thickness (m)
 ddwi     = 0.0      *Vacuum vessel thickness (m)
 gapds    = 0.0      *Gap between inboard vacuum vessel and thermal shield (m)
 gapomin  = 0.0      *Minimum gap between outboard vacuum vessel and TF coil (m)
-iprecomp = 0        *Switch for existence of central solenoid pre-compression structure
+iprecomp = 0        *Switch for existence of central solenoid pre-compression structure (0: no pre-compression structure)
 scraplo  = 0.12     *Gap between plasma and first wall outboard side (m) 
 shldith  = 0.00     *Inboard shield thickness (m) 
 shldoth  = 0.25     *Outboard shield thickness (m)
@@ -196,7 +197,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 tflegres = 2.5E-8   *Resistivity of a TF coil leg (Ohm-m)
 tfno     = 12       *Number of TF coils
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
-vftf     = 0.2      *Coolant fraction of TFC 'cable' (itfsup=1) or of TFC leg (itfsup=0)
+vftf     = 0.2      *Coolant fraction of TFC ‘cable’ (itfsup=1) or of TFC leg (itfsup=0)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*
@@ -262,7 +263,6 @@ ipowerflow = 0      *Switch for power flow model (0: pre-2014 version)
 
 *------------Impurity Radiation Variables----------*
 
-*imprad_model = 1 * Switch for impurity radiation model
 coreradius = 0.75 * Normalised radius defining the 'core' region
 coreradiationfraction = 0.6 * fraction of radiation from core region lost
 
