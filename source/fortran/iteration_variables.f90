@@ -109,7 +109,6 @@ subroutine loadxc
 
   integer :: i
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   do i = 1,nvar
 
      select case (ixc(i))
@@ -279,6 +278,7 @@ subroutine loadxc
         call report_error(54)
 
      end select
+     
 
       ! Simple list of iteration variable names
       name_xc(i) = lablxc(ixc(i))

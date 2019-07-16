@@ -1234,6 +1234,7 @@ contains
        case ('beamwd')
           call parse_real_variable('beamwd', beamwd, 0.001D0, 5.0D0, &
                'Beam width (m)')
+
        case ('bscfmax')
           call parse_real_variable('bscfmax', bscfmax, -0.999D0, 0.999D0, &
                '(-fixed)/maximum Bootstrap fraction')
