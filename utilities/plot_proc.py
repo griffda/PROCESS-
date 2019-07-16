@@ -1924,7 +1924,8 @@ def main(fig1, fig2, m_file_data, scan, plasmod=False, imp="../data/impuritydata
     else:
         # plot_qprofile(plot_6)
         plot_6 = fig2.add_subplot(236, aspect=2)
-        plot_radprofile(plot_6, m_file_data, scan, imp)
+        if os.path.isdir(imp):
+            plot_radprofile(plot_6, m_file_data, scan, imp)
 
     #plot_7 = 
     #plot_radprofile(plot_7)
