@@ -2209,7 +2209,8 @@ if __name__ == '__main__':
     parser.add_argument("-n", type=int, help="Which scan to plot?")
 
     parser.add_argument("-p", metavar='DATAPATH',
-                        default="",  type=str, help="specify path to impurity data folder")
+                         default="",  type=str, help="specify path to impurity data folder")
+
 
     args = parser.parse_args()
 
@@ -2224,11 +2225,29 @@ if __name__ == '__main__':
     else:
         scan = -1
 
+    # Impurity radiation data folder
+    # ------------------------------
+    is_imp_path = False
+    imp_path = ""
+    
+    # Case where the used defined the path
     if args.p != "":
         imp_path = args.p
-    else:
-        imp_path = ""
 
+    # Default value using the PYTHONPATH variable to point to right impuritydata file
+    else :
+        for pypath in os.environ['PYTHONPATH'].split(':') :
+            if pypath == "" :
+                continue
+
+            imp_path = pypath[:-10]+"/data/impuritydata/"
+            if os.path.isdir(imp_path) :
+                break
+    
+    if not os.path.isdir(imp_path) :
+        print("Warning : No valid impurity folder found in the PYTHONPATH directories")
+    # ------------------------------
+    
     bore = m_file.data["bore"].get_scan(scan)
     ohcth = m_file.data["ohcth"].get_scan(scan)
     gapoh = m_file.data["gapoh"].get_scan(scan)
