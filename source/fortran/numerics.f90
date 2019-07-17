@@ -357,9 +357,9 @@ module numerics
        'TFC current per turn upper limit ',    &
        !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)
        'Reinke criterion fZ lower limit  ',   &
-       !+ad_varc  <LI> (79) F-value for max peak CS field (itv  149 fbmaxcs)</UL>
+       !+ad_varc  <LI> (79) F-value for max peak CS field (itv  149 fbmaxcs)
        'Peak CS field upper limit        ',   &
-       !+ad_varc  <LI> (80) F-value for min pdivt (itv  153 fpdivlim)</UL>
+       !+ad_varc  <LI> (80) F-value for min pdivt (itv  153 fpdivlim)
        'pdivt lower limit                ',   &
        !+ad_varc  <LI> (81) F-value for ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
        'ne0 > neped                      '    &
@@ -373,14 +373,11 @@ module numerics
   !+ad_varc               array defining which iteration variables to activate
   !+ad_varc               (see lablxc for descriptions)
   integer, dimension(ipnvars) :: ixc = 0
-
-  ! !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
-  ! !+ad_varc                   (NEW:THERE ARE NO DEFAULTS):<UL>
+  
   ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
   ! other python utilities, so they cannot easily be changed.
    character(len=14), dimension(ipnvars) :: lablxc = ''
-   ! Issue 287 initialization is now in initial.f90
-
+   ! Issue 287 iteration variables are now defined in module define_iteration_variables in iteration variables.f90
 
   character(len=14), dimension(:), allocatable :: name_xc
 

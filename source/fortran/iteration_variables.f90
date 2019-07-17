@@ -83,7 +83,7 @@ subroutine loadxc
   use constraint_variables
   use cost_variables
   use current_drive_variables
-  use define_iteration_variables 
+  use define_iteration_variables   
   use divertor_kallenbach_variables
   use divertor_variables
   use error_handling
@@ -947,7 +947,6 @@ module define_iteration_variables
    use times_variables
    implicit none; public
    contains
-   ! Iteration variables --------------------------------
    !+ad_vars  lablxc(ipnvars) : labels describing iteration variables<UL> 
    
    !---------------------------------
