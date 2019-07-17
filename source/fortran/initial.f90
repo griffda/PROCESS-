@@ -51,6 +51,7 @@ subroutine initial
     use stellarator_module
     use stellarator_variables
     use numerics
+    use define_iteration_variables
 
     implicit none
 
@@ -75,24 +76,24 @@ subroutine initial
     !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
     !+ad_varc                   (NEW:THERE ARE NO DEFAULTS):<UL> 
 
-       !+ad_varc  <LI> ( 1) aspect
-       lablxc(1) = 'aspect        '; boundl(1) = 1.100D0 ; boundu(1) = 10.00D0 
-       !+ad_varc  <LI> ( 2) bt
-       lablxc(2) = 'bt            '; boundl(2) = 0.010D0 ; boundu(2) = 30.00D0  
+       !+ad_varc  <LI> ( 1) aspect!!!
+       call init_itv_1
+       !+ad_varc  <LI> ( 2) bt!!!!
+       call init_itv_2  
        !+ad_varc  <LI> ( 3) rmajor
-       lablxc(3) = 'rmajor        '; boundl(3) = 0.100D0 ; boundu(3) = 50.00D0  
+       call init_itv_3
        !+ad_varc  <LI> ( 4) te
-       lablxc(4) = 'te            '; boundl(4) = 5.000D0 ; boundu(4) = 150.0D0  
+       call init_itv_4
        !+ad_varc  <LI> ( 5) beta
-       lablxc(5) = 'beta          '; boundl(5) = 0.001D0 ; boundu(5) = 1.000D0  
+       call init_itv_5
        !+ad_varc  <LI> ( 6) dene
-       lablxc(6) = 'dene          '; boundl(6) = 1.00D19 ; boundu(6) = 1.00D21  
+       call init_itv_6
        !+ad_varc  <LI> ( 7) rnbeam
-       lablxc(7) = 'rnbeam        '; boundl(7) = 1.00D-6 ; boundu(7) = 1.000D0  
+       call init_itv_7
        !+ad_varc  <LI> ( 8) fbeta (f-value for equation 6)
-       lablxc(8) = 'fbeta         '; boundl(8) = 0.001D0 ; boundu(8) = 1.000D0  
+       call init_itv_8  
        !+ad_varc  <LI> ( 9) fdene (f-value for equation 5)
-       lablxc(9) = 'fdene         '; boundl(9) =  0.001D0 ; boundu(9) = 1.000D0  
+       call init_itv_9 
        !+ad_varc  <LI> (10) hfact
        lablxc(10) = 'hfact         '; boundl(10) = 0.100D0 ; boundu(10) = 3.000D0  
        !+ad_varc  <LI> (11) pheat
