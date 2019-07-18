@@ -1159,11 +1159,12 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function t_eped_scaling()
+  function t_eped_scaling() bind(C, name="test_t_eped_scaling")
     !+ad_name  t_eped_scaling
     !+ad_summ  Scaling function for calculation of pedestal temperature
     !+ad_type  Function returning real
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This function calculates pedestal temperature using a scaling formula
@@ -1171,11 +1172,13 @@ contains
     !+ad_desc  Predictive pedestal modelling for DEMO,  Samuli Saarelma.
     !+ad_prob  None
     !+ad_call  None
+    !+ad_hist  15/07/19 JM  Add unit test
     !+ad_stat  Okay
     !+ad_docs  https://idm.euro-fusion.org/?uid=2MSZ4T
-    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: t_eped_scaling
+
     ! Scaling constant and exponents
     real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
 
@@ -1196,11 +1199,13 @@ contains
     ! Correction for single null and for ELMs = 0.65
     ! Elongation and triangularity are defined at the plasma boundary.
     ! Total normalised plasma beta is used.
+    t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * & 
+                      rmajor**a_r * kappa**a_kappa  * &
+                      normalised_total_beta**a_beta  * rminor**a_a
 
-    t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
-         kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
     !Issue #730 - add scaling factor to eped model
     t_eped_scaling = eped_sf * t_eped_scaling
+    
   end function t_eped_scaling
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1304,7 +1309,7 @@ subroutine radpwr(pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pradpv)
 
     !  Total radiation power/volume
 
-    pradpv = pimptot + psyncpv  !  = pcoreradpv + pedgeradpv
+    pradpv = pimptot + psyncpv ! pcoreradpv + pedgeradpv !
 
   end subroutine radpwr
 

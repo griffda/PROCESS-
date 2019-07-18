@@ -43,6 +43,8 @@ functions and subroutines within PROCESS. Googletest is also referred to as GTes
 On Freia, paths to PFUnit and GTEST can be set in your user profile (.bashrc) as 
 - `export PFUNIT=/home/PROCESS/testing_frameworks/pfunit_install/V_3-2_8`
 - `export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest`
+- `export PYTHONPATH=$PYTHONPATH:[path to process folder]/utilities`
+
 
 ## Directory Structure
 
@@ -82,6 +84,8 @@ The folder structure for the PROCESS system prior to compilation is descibed bel
     - `module unload ifort`
     - `module unload pgi`
     - `module load gfortran`  
+    - `module unload python`
+    - `module load python/3.3`
 
 1. get repository
     - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where `folder_name`is the name of the folder which will be created when cloning the repository.  
@@ -116,6 +120,8 @@ During the compile and build steps, a number of files and folders are created. A
 Additionally
 
 - to make python dictionaries run `cmake3 --build build --target dicts`
+  - after creating dictionaries update your `PYTHONPATH` to point towards the utilities folder, e.g.:
+  - `export PYTHONPATH=$PYTHONPATH:/home/<user_name>/<path_to_process>/utilities/`
 - to make documentation run `cmake3 --build build --target doc`. (pdf compilation on UKAEA Freia machines 
   requires the following line in your `.bashrc` file: `module load texlive/2017`)
 - to make html files run `cmake3 --build build --target html`
@@ -320,6 +326,12 @@ updated upon compilation. This way each output file is trackable to a specific c
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 | `git checkout tags/<tag name>` | checkout a specific tag |
 
+## Unit Tests
+
+The PROCESS code uses Googletest framework for unit 
+testing. The instructions for adding unit tests is in the 
+repository file `unit-testing-guide.md` ([here](https://git.ccfe.ac.uk/process/process/blob/develop/unit-testing-guide.md))
+
 ## Profiling
 
 To profile the code and investigate which parts of the code are using the most 
@@ -330,6 +342,68 @@ computational time follow these steps:
 * Run the code
 * Enter the command 
   * `gprof ./<path_to_executable>/process.exe --ignore-non-functions`
+
+## Code Coverage
+
+To perform a code coverage analysis of the source code, perform the following steps.
+* Read the man page for gcov
+  * `man gcov` 
+* Compile and link code with the flags `-fprofile-arcs -ftest-coverage`
+  * *`.gcno files will be created in the build directory`
+* Run the code (./process.exe)
+  * *`.gcda files will be created in the build directory`
+* Generate the code cover analysis for the source files that you want to analyse
+  * `gcov -a -c -d -f -l -p path_to/tfcoil.f90.gcda`
+  * `gcov -a -c -d -f -l -p path_to/*.gcda`
+* View the results
+  * `vi *.gcov`
+
+## CI Setup
+
+### Pre-testing setup
+
+The following part of the YAML file outlines the stages of the pipeline (build, testing, jenkins and baseline) and sets up the environment on the Freia image.
+
+```yaml
+stages:
+  - build
+  - testing
+  - jenkins
+  - baseline
+
+before_script:
+  - export LOGNAME=root
+  - source /etc/profile.d/modules.sh
+  - module use /usr/local/modules/default
+  - module unload python
+  - module load python/3.5.1
+  - module load texlive/2017
+  - module unload ifort 
+  - module load gfortran
+  - echo ld_library_path=$LD_LIBRARY_PATH
+```
+
+### CI setup example - running test suite
+
+The following YAML defines a test in the `testing` part of the pipeline called `test_suite_issues`. It only triggers `on_success` which means the previous stage of the pipeline has succeeded. It only runs on branches beginning with `issue-`. The `script` part of the setup outlines the commands to execute on Freia. The `tags` lets the CI system know what image to use.
+
+```yaml
+testing:test_suite_issue:
+ when: on_success  # Also default setting
+ only:
+  - /^issue-.*$/
+ stage: testing
+ script:
+  - pwd
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build
+  - cmake3 --build build --target dicts
+  - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+  - cd test_suite
+  - python test_suite.py
+ tags:
+  - freia
+```
 
 ## Troubleshooting
 

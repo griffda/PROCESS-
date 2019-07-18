@@ -541,6 +541,9 @@ contains
        case ('falpha')
           call parse_real_variable('falpha', falpha, 0.0D0, 1.0D0, &
                'Fraction of alpha power deposited to plasma')
+       case ('ftar')
+          call parse_real_variable('ftar', ftar, 0.0D0, 1.0D0, &
+               'Fraction of power to divertor with lower divertor in double null')
        case ('fdeut')
           call parse_real_variable('fdeut', fdeut, 0.0D0, 1.0D0, &
                'Deuterium fuel fraction')
@@ -742,6 +745,9 @@ contains
        case ('tauratio')
           call parse_real_variable('tauratio', tauratio, 0.1D0, 100.0D0, &
                'Ratio of He and pellet particle confinement times')
+       case ('rad_fraction_sol')
+          call parse_real_variable('rad_fraction_sol', rad_fraction_sol, 0.0D0, 1.0D0, &
+               'SoL radiation fraction')
        case ('ralpne')
           call parse_real_variable('ralpne', ralpne, 1.0D-12, 1.0D0, &
                'Thermal alpha density / electron density')
@@ -900,6 +906,9 @@ contains
        case ('fportsz')
           call parse_real_variable('fportsz', fportsz, 0.001D0, 10.0D0, &
                'F-value for port size')
+       case ('fpdivlim')
+          call parse_real_variable('fpdivlim', fpdivlim, 0.001D0, 1.0D0, &
+               'F-value for minimum pdivt')
        case ('fpsepr')
           call parse_real_variable('fpsepr', fpsepr, 0.001D0, 10.0D0, &
                'F-value for Psep/R limit')
@@ -979,9 +988,9 @@ contains
        case ('fpoloidalpower')
           call parse_real_variable('fpoloidalpower', fpoloidalpower, 0.001D0, 1.0D0, &
                'f-value for constraint on rate of change of energy in poloidal field')
-    !    case ('fpsep')
-    !       call parse_real_variable('fpsep', fpsep, 0.001D0, 1.0D0, &
-    !                    'f-value to ensure separatrix power is less than value from Kallen bach divertor')
+       case ('fpsep')
+           call parse_real_variable('fpsep', fpsep, 0.001D0, 1.0D0, &
+                        'f-value to ensure separatrix power is less than value from Kallen bach divertor')
        case ('fpsepbqar')
           call parse_real_variable('fpsepbqar', fpsepbqar, 0.001D0, 1.0D0, &
                        'f-value for TF coil quench temperature < tmax_croco (constraint equation 74)')
@@ -1006,6 +1015,9 @@ contains
        case ('nflutfmax')
           call parse_real_variable('nflutfmax', nflutfmax, 1.0D22, 1.0D24, &
                'Max fast neutron fluence on TF coil (n/m2)')
+       case ('pdivtlim')
+          call parse_real_variable('pdivtlim', pdivtlim, 0.1D0, 1.0D3, &
+               'Minimum pdivt (MW) (con. 80, itvar. 153)')
        case ('peakfactrad')
           call parse_real_variable('peakfactrad', peakfactrad, 0.1D0, 10D0, &
                'peaking factor for radiation wall load')
@@ -1684,9 +1696,9 @@ contains
           call parse_real_variable('bcritsc', bcritsc, 10.0D0, 50.0D0, &
                'Critical field for superconductor')
 
-       case ('tape_width')
-          call parse_real_variable('tape_width', tape_width, 0.0D0, 0.1D0, &
-               'Mean width of HTS tape in CroCo (m)')
+       !case ('tape_width')
+       !   call parse_real_variable('tape_width', tape_width, 0.0D0, 0.1D0, &
+       !       'Mean width of HTS tape in CroCo (m)')
 
        case ('rebco_thickness')
           call parse_real_variable('rebco_thickness', rebco_thickness, 0.01D-6, 100.0D-6, &
@@ -1694,12 +1706,15 @@ contains
        case ('hastelloy_thickness')
           call parse_real_variable('hastelloy_thickness', hastelloy_thickness, 0.01D-6, 1000.0D-6, &
                'hastelloy_thickness')
-       case ('croco_id')
-          call parse_real_variable('croco_id', croco_id, 0.0D0, 0.1D0, &
-               'croco_id')
-       case ('croco_od')
-          call parse_real_variable('croco_od', croco_od, 0.0D0, 0.1D0, &
-               'Outer diameter of CroCo strand (m)')
+      ! case ('croco_id')
+      !   call parse_real_variable('croco_id', croco_id, 0.0D0, 0.1D0, &
+      !       'croco_id')
+      ! case ('croco_od')
+      !    call parse_real_variable('croco_od', croco_od, 0.0D0, 0.1D0, &
+      !         'Outer diameter of CroCo strand (m)')
+       case ('croco_thick')
+          call parse_real_variable('croco_thick', croco_thick, 0.001D0, 0.1D0, &
+               'Thickness of CroCo copper tube (m)')
        case ('copper_thick')
           call parse_real_variable('copper_thick', copper_thick, 0.0D0, 1000.0D-6, &
                'copper_thick (m)')
@@ -1765,7 +1780,10 @@ contains
        case ('dcopper')
           call parse_real_variable('dcopper', dcopper, 8.0D3, 1.0D4, &
                'Density of copper (kg/m3)')
-       case ('dhecoil')
+       case ('dalu')
+          call parse_real_variable('dalu', dalu, 2.5D3, 3.0D4, &
+               'Density of Alumium (kg/m3)')
+      case ('dhecoil')
           call parse_real_variable('dhecoil', dhecoil, 0.0d0, 0.1d0, &
                'Diameter of He coil in TF winding (m)')
        case ('drtop')

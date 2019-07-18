@@ -644,6 +644,7 @@ def test_in_dat_lib(fs):
 
     # results list
     results = list()
+    files_in_order = list()
 
     # add to utilities.log
     amend_utility_log("in_dat.py")
@@ -654,6 +655,7 @@ def test_in_dat_lib(fs):
     for key in fs.keys():
         if "error_" not in key:
             file_name = "test_area/{0}/IN.DAT".format(key)
+            files_in_order.append(file_name)
             # file_name = fs[key]["path"] + "IN.DAT"
             results.append(indat.test(file_name))
 
@@ -663,16 +665,22 @@ def test_in_dat_lib(fs):
     msg = "Test ==>  {0:<40}".format("in_dat.py")
 
     # check results
+    error_status = False
     if len(results) == results.count(True):
         lmsg = msg + "OK\n"
         msg += BColours.OKGREEN + "OK" + BColours.ENDC
-
     else:
         lmsg = msg + "ERROR\n"
         msg += BColours.FAIL + "ERROR" + BColours.ENDC
+        error_status = True
 
     print(msg)
     save_summary(lmsg)
+
+    if error_status:
+        print(results)
+        print(files_in_order)
+        sys.exit("in_dat test_suite failure")
 
 
 def test_plot_proc(fs):
@@ -709,15 +717,20 @@ def test_plot_proc(fs):
     msg = "Test ==>  {0:<40}".format("plot_proc.py")
 
     # check results
+    error_status = False
     if len(results) == results.count(True):
         lmsg = msg + "OK\n"
         msg += BColours.OKGREEN + "OK" + BColours.ENDC
     else:
         lmsg = msg + "ERROR\n"
         msg += BColours.FAIL + "ERROR" + BColours.ENDC
+        error_status = True
 
     print(msg)
     save_summary(lmsg)
+
+    if error_status:
+        sys.exit("plot_proc test_suite failure")
 
 
 class TestCase(object):

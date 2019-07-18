@@ -44,9 +44,9 @@ innertopmargin=15pt, innerbottommargin=5pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-15 March 2019
+15 July 2019
 \hfill
-PROCESS version: 1.0.15
+PROCESS version: 1.0.16
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1455,7 +1455,8 @@ To submit a batch job, first create a file called e.g. myjob.cmd. It should cont
 # @ notification = complete
 # @ queue
 module use /home/PROCESS/modules
-module swap python
+module unload python
+module load python/3.3
 module load process/master
 \end{verbatim}
 Once you have created the file you can submit a batch job by typing

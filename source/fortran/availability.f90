@@ -132,6 +132,11 @@ contains
         bktlife = min(fwlife, abktflnc/wallmw, tlife)
     end if
 
+! SJP Issue #834
+! Add a test for hldiv=0
+
+    if (hldiv < 1.0d-10) hldiv=1.0d-10
+
     ! Divertor lifetime (years)
     divlife = max(0.0, min(adivflnc/hldiv, tlife))
 
@@ -364,7 +369,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_planned(outfile, iprint, u_planned)
+  subroutine calc_u_planned(outfile, iprint, u_planned) &
+   bind(C, name = "availability_calc_u_planned")
 
     !+ad_name  calc_u_planned
     !+ad_summ  Calculates the planned unavailability of the plant
@@ -433,10 +439,12 @@ contains
     ! The +2.0 at the end is for the 1 month cooldown and pump down at either end
     ! of the maintenance period
     mttr_blanket = (21.0D0 * num_rh_systems**(-0.9D0) + 2.0D0) / 12.0D0
+    
 
     ! Mean time to repair divertor is 70% of time taken to replace blanket
     ! This is taken from Oliver Crofts 2014 paper
     mttr_divertor = 0.7D0*mttr_blanket
+   
 
     !  Which component has the shorter life?
     if (divlife < bktlife) then
@@ -469,7 +477,7 @@ contains
     call ovarre(outfile,'Allowable divertor heat fluence (MW-yr/m2)', '(adivflnc)', adivflnc)
     call ovarre(outfile,'First wall / blanket lifetime (FPY)', '(bktlife)', bktlife, 'OP ')
     call ovarre(outfile,'Divertor lifetime (FPY)', '(divlife)', divlife, 'OP ')
-
+    
     call ovarin(outfile,'Number of remote handling systems', '(num_rh_systems)', num_rh_systems)
     call ovarre(outfile,'Time needed to replace divertor (years)', '(mttr_divertor)', mttr_divertor)
     call ovarre(outfile,'Time needed to replace blanket (years)', '(mttr_blanket)', mttr_blanket)
@@ -481,7 +489,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_magnets(outfile, iprint, u_unplanned_magnets)
+  subroutine calc_u_unplanned_magnets(outfile, iprint, u_unplanned_magnets) &
+   bind(C, name = "availability_calc_u_unplanned_magnets")
 
     !+ad_name  calc_u_unplanned_magnets
     !+ad_summ  Calculates the unplanned unavailability of the magnets
@@ -572,7 +581,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_divertor(outfile, iprint, u_unplanned_div)
+  subroutine calc_u_unplanned_divertor(outfile, iprint, u_unplanned_div) & 
+   bind(C, name = "availability_calc_u_unplanned_divertor")
 
     !+ad_name  calc_u_unplanned_divertor
     !+ad_summ  Calculates the unplanned unavailability of the divertor
@@ -623,7 +633,7 @@ contains
     if (div_nu <= div_nref) then
         write(*,*) 'div_nu <= div_nref'
         write(*,*) 'The cycle when the divertor fails with 100% probability <= Reference value for cycle life of divertor'
-        call ocmmnt(outfile,'EROROR: The cycle when the divertor fails with 100% probability&
+        call ocmmnt(outfile,'ERROR: The cycle when the divertor fails with 100% probability&
             & <= Reference value for cycle cycle life of divertor')
     end if
 
@@ -667,7 +677,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_fwbs(outfile, iprint, u_unplanned_fwbs)
+  subroutine calc_u_unplanned_fwbs(outfile, iprint, u_unplanned_fwbs) &
+   bind(C, name = "availability_calc_u_unplanned_fwbs")
 
     !+ad_name  calc_u_unplanned_fwbs
     !+ad_summ  Calculates the unplanned unavailability of the first wall and blanket
@@ -754,8 +765,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_bop(outfile, iprint, u_unplanned_bop)
-
+  subroutine calc_u_unplanned_bop(outfile, iprint, u_unplanned_bop) &
+   bind(c,name= "availability_calc_u_unplanned_bop")
     !+ad_name  calc_u_unplanned_bop
     !+ad_summ  Calculates the unplanned unavailability of the balance of plant
     !+ad_type  Subroutine
@@ -824,7 +835,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine calc_u_unplanned_hcd(u_unplanned_hcd) bind(C,name="availability_calc_u_unplanned_hcd")
+  subroutine calc_u_unplanned_hcd(u_unplanned_hcd) &
+   bind(C,name="availability_calc_u_unplanned_hcd")
 
     !+ad_name  calc_u_unplanned_fwbs
     !+ad_summ  Calculates the unplanned unavailability of the heating and current drive system

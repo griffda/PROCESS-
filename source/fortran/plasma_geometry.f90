@@ -149,49 +149,42 @@ contains
        scrapli = 0.1D0 * rminor
     end if
 
-    !  Double null configuration
+    !  Double null configuration (??? MDK)
 
-    if (igeom == 0) then
-
-       !  Use original methods
+    if (igeom == 0) then     !  Use original methods
 
        pperim = perim(rminor,kappa,triang)
        sf = pperim / (2.0D0*pi*rminor)
 
        vol = cvol * fvol(rmajor,rminor,kappa,triang)
-
-       call surfa(rminor,rmajor,kappa,triang,sa,so)  !  [STAR Code]
+       
+       call surfa(rminor,rmajor,kappa,triang,sa,so)  !  [STAR Code]    
        sareao = so
        sarea = sa
 
        xarea = xsect0(rminor,kappa,triang)
 
-    else
-
-       !  Find parameters of arcs describing plasma surfaces
+    else                      !  Find parameters of arcs describing plasma surfaces
 
        call xparam(rminor,kappa,triang,xi,thetai,xo,thetao)
 
        !  Poloidal perimeter
-
        pperim = 2.0D0 * ( xo*thetao + xi*thetai )
        sf = pperim / (2.0D0*pi*rminor)
 
        !  Volume
-
        vol = cvol * xvol(rmajor,rminor,xi,thetai,xo,thetao)
 
        !  Surface area
-
        call xsurf(rmajor,rminor,xi,thetai,xo,thetao,xsi,xso)
        sareao = xso
        sarea = xsi+xso
 
        !  Cross-sectional area
-
        xarea = xsecta(xi,thetai,xo,thetao)
 
     end if
+    ! write(*,*)'Subroutine geomty:    Plasma volume  ', vol
 
   contains
 

@@ -252,12 +252,13 @@ subroutine output(outfile)
 
   ! Toroidal field coil superconductor model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  if ( itfsup == 1 ) then
+     call tfspcall(outfile,1)
+  end if
 
-  call tfspcall(outfile,1)
 
   ! Tight aspect ratio machine model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   if (itart == 1) then
     call cntrpst(outfile,1)
   end if
@@ -270,7 +271,6 @@ subroutine output(outfile)
 
   ! Structure Model !
   !!!!!!!!!!!!!!!!!!!
-
   call strucall(outfile,1)
 
   ! Poloidal field coil inductance calculation
@@ -310,7 +310,6 @@ subroutine output(outfile)
 
   ! Toroidal field coil power model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   call tfpwr(outfile,1)
 
   ! Poloidal field coil power model !
@@ -318,7 +317,6 @@ subroutine output(outfile)
 
   ! Vacuum model !
   !!!!!!!!!!!!!!!!
-
   call vaccall(outfile,1)
 
   ! Buildings model !
@@ -328,14 +326,11 @@ subroutine output(outfile)
 
   ! Plant AC power requirements !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   call acpow(outfile,1)
 
   ! Plant heat transport pt 2 & 3 !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   call power2(outfile,1)
-
   call power3(nout,1)
 
 end subroutine output

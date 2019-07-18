@@ -238,7 +238,6 @@ subroutine check
     integer :: i,j,k,imp
     real(kind(1.0D0)) :: fsum
 
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     errors_on = .true.
@@ -305,7 +304,6 @@ subroutine check
     end if
 
     !  Impurity fractions
-
     do imp = 1,nimp
         impurity_arr(imp)%frac = fimp(imp)
     end do
@@ -613,8 +611,8 @@ subroutine check
         ipfloc(1) = 2
         ipfloc(2) = 3
         ipfloc(3) = 3
-        itfsup = 0
-
+        if ( itfsup == 1 ) itfsup = 0
+        
         if (ibss == 1) call report_error(38)
         if (snull == 1) call report_error(39)
 
@@ -667,7 +665,7 @@ subroutine check
     !  Ensure that if TF coils are non-superconducting,
     !  only simple stress calculations are performed
     ! See Issue #781
-    ! if (itfsup == 0) tfc_model = 0
+    ! if (itfsup /= 1) tfc_model = 0
 
     ! TF coil
     ! -------

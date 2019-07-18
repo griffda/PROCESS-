@@ -1,7 +1,6 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module costs_module
-
   !+ad_name  costs_module
   !+ad_summ  Module containing fusion power plant costing algorithms
   !+ad_type  Module
@@ -50,13 +49,11 @@ module costs_module
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
-
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
   !+ad_call  process_output
   !+ad_call  pulse_variables
-
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
@@ -76,17 +73,17 @@ module costs_module
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-
   use pfcoil_variables
   use physics_variables
   use pf_power_variables
   use process_output
   use pulse_variables
-
   use structure_variables
   use tfcoil_variables
   use times_variables
   use vacuum_variables
+  
+  use iso_c_binding
 
   implicit none
 
@@ -94,6 +91,8 @@ module costs_module
   public :: costs
 
   !  Various cost account values (M$)
+
+  real(kind(1.0D0)), public, bind(C) :: c228, c229, c23, c25, c26, cindrt, ccont
 
   real(kind(1.0D0)) :: &
        c21,c211,c212,c213,c214,c2141,c2142,c215,c216,c217,c2171, &
@@ -104,8 +103,8 @@ module costs_module
        c2242,c2243,c2244,c2245,c2246,c225,c2251,c22511,c22512,c22513, &
        c22514,c22515,c2252,c22521,c22522,c22523,c22524,c22525,c22526, &
        c22527,c2253,c226,c2261,c2262,c2263,c227,c2271,c2272,c2273, &
-       c2274,c228,c229,c23,c24,c241,c242,c243,c244,c245,c25,c26,ccont, &
-       chx,cindrt,cpp,cppa
+       c2274,c24,c241,c242,c243,c244,c245, &
+       chx,cpp,cppa
 
 contains
 
@@ -266,7 +265,7 @@ contains
 
        call oshead(outfile,'Magnets')
 
-       if (itfsup == 0) then  !  Resistive TF coils
+       if (itfsup /= 1) then  !  Resistive TF coils
           if (itart == 1) then
              call ocosts(outfile,'(c22211)','Centrepost costs (M$)',c22211)
           else
@@ -483,6 +482,11 @@ contains
     !  Annual cost of plant capital cost
 
     anncap = capcost * fcr0
+
+! SJP Issue #836
+! Check for the condition when kwhpy=0
+
+    if (kwhpy < 1.0d-10) kwhpy=1.0d-10
 
     !  Cost of electricity due to plant capital cost
 
@@ -1368,7 +1372,7 @@ contains
     cmlsa(3) = 0.9225D0
     cmlsa(4) = 1.0000D0
 
-    if (itfsup == 0) then  !  Resistive TF coils
+    if (itfsup /= 1) then  !  Resistive TF coils
 
        !  Account 222.1.1 : Inboard TF coil legs
 
@@ -1909,7 +1913,7 @@ contains
 
     !  Account 225.1.5 : TF coil bussing
 
-    if (itfsup == 0) then
+    if (itfsup /= 1) then
        c22515 = 1.0D-6 * uctfbus * tfbusmas
     else
        c22515 = 1.0D-6 * ucbus * cpttf * tfbusl
@@ -2140,7 +2144,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc226
-
     !+ad_name  acc226
     !+ad_summ  Account 226 : Heat transport system
     !+ad_type  Subroutine
@@ -2227,7 +2230,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc227
-
     !+ad_name  acc227
     !+ad_summ  Account 227 : Fuel handling
     !+ad_type  Subroutine
@@ -2264,12 +2266,12 @@ contains
 
     !  Account 227.2 : Fuel processing and purification
 
-       !  Previous calculation, using qfuel in Amps:
-       !  1.3 should have been afuel*umass/echarge*1000*s/day = 2.2
-       !wtgpd = burnup * qfuel * 1.3D0
+    !  Previous calculation, using qfuel in Amps:
+    !  1.3 should have been afuel*umass/echarge*1000*s/day = 2.2
+    !wtgpd = burnup * qfuel * 1.3D0
 
-       !  New calculation: 2 nuclei * reactions/sec * kg/nucleus * g/kg * sec/day
-       wtgpd = 2.0D0*rndfuel * afuel*umass*1000.0D0 * 86400.0D0
+    !  New calculation: 2 nuclei * reactions/sec * kg/nucleus * g/kg * sec/day
+    wtgpd = 2.0D0*rndfuel * afuel*umass*1000.0D0 * 86400.0D0
 
     !  Assumes that He3 costs same as tritium to process...
     c2272 = 1.0D-6 * ucfpr * (0.5D0 + 0.5D0*(wtgpd/60.0D0)**0.67D0)
@@ -2301,12 +2303,12 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc228
-
+  subroutine acc228() bind(C, name="costs_1990_acc228")
     !+ad_name  acc228
     !+ad_summ  Account 228 : Instrumentation and control
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This routine evaluates the Account 228 (instrumentation and
@@ -2316,18 +2318,13 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  12/07/19 JM  Add unit test
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    !  Arguments
-
-    !  Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     c228 = 1.0D-6 * uciac
     c228 = fkind * c228
@@ -2336,12 +2333,12 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc229
-
+  subroutine acc229() bind(C, name="costs_1990_acc229")
     !+ad_name  acc229
     !+ad_summ  Account 229 : Maintenance equipment
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This routine evaluates the Account 229 (maintenance equipment) costs.
@@ -2349,18 +2346,13 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  12/07/19 JM  Add unit test
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    !  Arguments
-
-    !  Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     c229 = 1.0D-6 * ucme
     c229 = fkind * c229
@@ -2369,12 +2361,12 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc23
-
+  subroutine acc23() bind(C, name="costs_1990_acc23")
     !+ad_name  acc23
     !+ad_summ  Account 23 : Turbine plant equipment
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This routine evaluates the Account 23 (turbine plant equipment) costs.
@@ -2383,14 +2375,13 @@ contains
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  08/09/14 PJK Changed costr to coolwh
+    !+ad_hist  12/07/19 JM  Add unit test
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    !  Arguments
 
     !  Local variables
 
@@ -2407,7 +2398,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc24
-
     !+ad_name  acc24
     !+ad_summ  Account 24 : Electric plant equipment
     !+ad_type  Subroutine
@@ -2425,8 +2415,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    !  Arguments
 
     !  Local variables
 
@@ -2472,12 +2460,12 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc25
-
+  subroutine acc25() bind(C, name="costs_1990_acc25")
     !+ad_name  acc25
     !+ad_summ  Account 25 : Miscellaneous plant equipment
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This routine evaluates the Account 25 (miscellaneous plant
@@ -2486,14 +2474,13 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  12/07/19 JM  Add unit test
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    !  Arguments
 
     !  Local variables
 
@@ -2514,12 +2501,12 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc26
-
+  subroutine acc26() bind(C, name="costs_1990_acc26")
     !+ad_name  acc26
     !+ad_summ  Account 26 : Heat rejection system
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This routine evaluates the Account 26 (heat rejection system) costs.
@@ -2529,6 +2516,7 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  12/07/19 JM  Add unit test
     !+ad_stat  Okay
     !+ad_docs  J. Delene, private communication, ORNL, June 1990
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2536,8 +2524,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    !  Arguments
 
     !  Local variables
 
@@ -2553,24 +2539,26 @@ contains
     cmlsa(3) = 0.9500D0
     cmlsa(4) = 1.0000D0
 
+    ! Calculate rejected heat for non-reactor (==0) and reactor (==1)
     if (ireactor == 0) then
        pwrrej = powfmw + pinjwp + tfcmw
     else
        pwrrej = pthermmw - pgrossmw
     end if
 
+    ! uchrs - reference cost of heat rejection system [$]
     c26 = 1.0D-6 * uchrs * pwrrej/2300.0D0 * cmlsa(lsa)
 
   end subroutine acc26
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc9
-
+  subroutine acc9() bind(C, name="costs_1990_acc9")
     !+ad_name  acc9
     !+ad_summ  Account 9 : Indirect cost and contingency allowances
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This routine evaluates the Account 9 (indirect cost and
@@ -2585,6 +2573,7 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  15/07/19 JM  Add unit test
     !+ad_stat  Okay
     !+ad_docs  J. Delene, private communication, ORNL, June 1990
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2592,12 +2581,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    !  Arguments
-
-    !  Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Indirect costs
 

@@ -24,6 +24,11 @@ module divertor_ode
   use physics_variables, only:  tesep_keV => tesep
   use divertor_ode_var
 
+! SJP Issue #834
+! Add access to variable hldiv
+
+  use divertor_variables, only : hldiv
+
   implicit none
 
   ! Module-level declarations !
@@ -824,6 +829,12 @@ do i = 2, nimp
     ! -----------------------------------------------------
 
     ! Output ----------------------------------------------
+
+! SJP Issue #834
+! Calculate hldiv from qtargetcomplete with the correct units
+
+    hldiv = (qtargettotal + qtarget_isotropic) * 1.0d-6
+
     if(iprint.eq.0) return
 
     ! Close divertor output and diagnostic .txt files

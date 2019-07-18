@@ -55,30 +55,6 @@ module physics_module
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
-  !+ad_hist  16/10/12 PJK Initial version of module
-  !+ad_hist  16/10/12 PJK Added constants
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added current_drive_module
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  30/10/12 PJK Added times_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  31/10/12 PJK Changed private/public lists
-  !+ad_hist  31/10/12 PJK Moved local common variables into module header
-  !+ad_hist  05/11/12 PJK Added pulse_variables
-  !+ad_hist  05/11/12 PJK Added startup_variables
-  !+ad_hist  06/11/12 PJK Inserted routines outplas, outtim from outplas.f90
-  !+ad_hist  03/01/13 PJK Removed denlim routine
-  !+ad_hist  23/01/13 PJK Added stellarator_variables
-  !+ad_hist  10/06/13 PJK Added tfcoil_variables
-  !+ad_hist  12/09/13 PJK Removed svfdt,svfdt_orig,fpower,ffus; added bosch_hale
-  !+ad_hist  19/02/14 PJK Added plasma_profiles
-  !+ad_hist  24/02/14 PJK Moved plasma_profiles etc into new profiles_module
-  !+ad_hist  26/03/14 PJK Renamed bootstrap fraction routines; added Sauter model
-  !+ad_hist  13/05/14 PJK Added plasma_composition routine, impurity_radiation_module
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_hist  01/10/14 PJK Added numerics
-  !+ad_hist  20/05/15 RK  Added iscdens, fgwped for pedestal density scaling
-  !+ad_hist  08/02/17 JM  Added Kallenbach model parameters
   !+ad_hist  17/01/19 SIM Made photon_wall and rad_fraction global variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -121,10 +97,15 @@ module physics_module
   !  Module-level variables
 
   integer :: iscz
+  real(kind(1.0D0)) :: rad_fraction_core
   real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
   real(kind(1.0D0)) :: total_loss_power        ! [W]
   real(kind(1.0D0)) :: total_energy_conf_time  ! [s]
-
+  real(kind(1.0D0)) :: ptarmw, lambdaio, drsep
+  real(kind(1.0D0)) :: fio, fLI, fLO, fUI, fUO, pLImw, pLOmw, pUImw, pUOmw
+  real(kind(1.0D0)) :: rho_star  
+  real(kind(1.0D0)) :: nu_star  
+  real(kind(1.0D0)) :: beta_mcdonald
 
 contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -172,51 +153,6 @@ end subroutine subr
     !+ad_call  rether
     !+ad_call  setupPlasmod
     !+ad_call  vscalc
-    !+ad_hist  20/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  04/12/95 PJK Added D-He3 relevant coding
-    !+ad_hist  14/05/96 PJK Modified poloidal beta used in bootstrap formula
-    !+ad_hisc               and added diamagnetic contribution
-    !+ad_hist  10/06/96 PJK Added use of IWALLD in wall load calculation
-    !+ad_hist  07/10/96 PJK Added new ICULBL=2 option
-    !+ad_hist  17/09/97 PJK Added Greenwald density limit (added arguments
-    !+ad_hisc               to CULDLM)
-    !+ad_hist  30/06/98 PJK Added XAREA to arguments of PCOND
-    !+ad_hist  17/07/98 PJK Added call to PTHRESH
-    !+ad_hist  19/01/99 PJK Added POWERHT to argument list of PCOND
-    !+ad_hist  16/07/01 PJK Added KAPPAA to argument list of PCOND
-    !+ad_hist  22/05/06 PJK Added IFALPHAP to argument list of PALPH2
-    !+ad_hist  10/11/11 PJK Initial F90 version; retired routine CURREN
-    !+ad_hisc               and switch ICULCR
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/12/12 PJK Added SAREA,AION to argument list of PTHRESH
-    !+ad_hist  03/01/13 PJK Removed switch ICULDL and call to DENLIM
-    !+ad_hist  11/04/13 PJK Removed switch IRES from POHM call
-    !+ad_hist  12/06/13 PJK TAUP now global
-    !+ad_hist  10/09/13 PJK Added FUSIONRATE,ALPHARATE,PROTONRATE to PALPH arguments
-    !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
-    !+ad_hist  27/11/13 PJK Added THEAT to VSCALC arguments
-    !+ad_hist  27/11/13 PJK Added PPERIM to CULCUR arguments
-    !+ad_hist  28/11/13 PJK Added PDTPV, PDHE3PV, PDDPV to PALPH arguments
-    !+ad_hist  28/11/13 PJK Added current profile consistency option;
-    !+ad_hist               Added IPROFILE, Q0, RLI to CULCUR arguments
-    !+ad_hist  19/02/14 PJK Added pedestal profile model
-    !+ad_hist  24/02/14 PJK Modified CULBST arguments
-    !+ad_hist  26/03/14 PJK Converted BOOTST to a function;
-    !+ad_hisc               introduced Sauter et al bootstrap model
-    !+ad_hist  08/05/14 PJK Modified PHYAUX arguments
-    !+ad_hist  14/05/14 PJK Added call to plasma_composition and new
-    !+ad_hisc               impurity radiation calculations
-    !+ad_hist  15/05/14 PJK Removed ffwal from iwalld=2 calculation
-    !+ad_hist  19/05/14 PJK Clarified pcorerad vs pbrem; plrad --> pedgerad
-    !+ad_hist  21/05/14 PJK Added ignite clause to pinj calculation
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  03/06/14 PJK Modifications for new power flow model
-    !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
-    !+ad_hisc               in first wall
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  19/08/14 PJK Removed impfe usage
-    !+ad_hist  01/10/14 PJK Added plhthresh
     !+ad_hist  01/04/15 JM  Added total transport power from scaling law
     !+ad_hist  11/09/15 MDK Resistive diffusion time
     !+ad_hist  10/11/16 HL  Added peakradwallload calculation
@@ -227,10 +163,7 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-implicit none
-
-    !  Arguments
-
+    implicit none
     !  Local variables
 
     real(kind(1.0D0)) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
@@ -238,6 +171,9 @@ implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    
+    ! Volume measure of plasma elongation (used by IPB scalings)
+    kappaa_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
 
     if (icurr == 2) then
        q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
@@ -471,7 +407,13 @@ implicit none
     if (iwalld == 1) then
        wallmw = ffwal * pneutmw / sarea
     else
-       wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
+       if (idivrt == 2) then
+         !Double null configuration
+         wallmw = (1.0D0-fhcd-2.0D0*fdiv)*pneutmw / fwarea
+       else
+         ! Single null Configuration
+         wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
+       end if 
     end if
 
     if (ipedestal .ne. 3) then ! otherwise replaced by PLASMOD variables
@@ -489,19 +431,7 @@ implicit none
        pcoreradmw = pcoreradpv*vol
        pedgeradmw = pedgeradpv*vol
        pradmw = pradpv*vol
-
     endif
-
-    ! MDK
-    !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
-    !  Note that 'fwarea' excludes these, so they have been added back in.
-    if (iwalld == 1) then
-       photon_wall = ffwal * pradmw / sarea
-    else
-       photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea
-    end if
-
-    peakradwallload = photon_wall * peakfactrad
 
     if (ipedestal .ne. 3) then
        !  Calculate ohmic power
@@ -530,7 +460,15 @@ implicit none
        !  Should be obsolete if constraint eqn 17 is turned on
        pdivt = max(0.001D0, pdivt)
 
-    endif
+       ! if double null configuration share the power 
+       ! over the upper and lower divertor, where ftar gives
+       ! the factor of power conducted to the lower divertor
+       if (idivrt == 2) then 
+         pdivl = ftar * pdivt
+         pdivu = (1.0D0-ftar) * pdivt
+         pdivmax = max(pdivl, pdivu)
+       end if
+    end if
 
     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
     res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
@@ -540,10 +478,8 @@ implicit none
     palpfwmw = palpmw * (1.0D0-falpha)
 
     !  Density limit
-
     call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
          rmajor,rminor,sarea,zeff,dlimit,dnelimt)
-
 
     if (ipedestal .ne. 3) then
 
@@ -595,9 +531,60 @@ implicit none
 
     call culblm(bt,dnbeta,plascur,rminor,betalim)
 
+    ! MDK
+    !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
+    !  Note that 'fwarea' excludes these, so they have been added back in.
+    if (iwalld == 1) then
+       photon_wall = ffwal * pradmw / sarea
+    else
+       if (idivrt == 2) then
+         ! Double Null configuration in - including SoL radiation
+         photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea + &
+         (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea)
+       else
+         ! Single null configuration - including SoL radaition
+         photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea + &
+         (1.0D0-fhcd-fdiv)*rad_fraction_sol*pdivt / fwarea
+       end if 
+    end if
+
+    peakradwallload = photon_wall *peakfactrad 
+
+    ! Calculate the target imbalances 
+    ! find the total power into the targets
+    ptarmw =  pdivt * (1.0D0 - rad_fraction_sol) 
+    ! use ftar to find deltarsep
+    ! Parameters taken from double null machine 
+    ! D. Brunner et al 
+    lambdaio = 1.57d-3
+    drsep = - 2.0d0 * 1.5d-3 * atanh(2.0d0 *(ftar - 0.5d0)) ! this needs updating
+    ! Find the innner and outer lower target imbalance
+    fio = 0.16d0 + (0.16d0 - 0.41d0) * (1.0d0 - ( 2.0d0 / (1.0d0 + exp(-(drsep/lambdaio)**2))))
+    if (idivrt == 2) then
+      ! Double Null configuration
+      ! Find all the power fractions accross the targets
+      fLI = ftar * fio
+      fLO = ftar * ( 1.0d0 - fio )
+      fUI = (1.0d0 - ftar ) * fio
+      fUO = (1.0d0 - ftar ) * ( 1.0d0 - fio )  
+      ! power into each target
+      pLImw = fLI * ptarmw
+      pLOmw = fLO * ptarmw
+      pUImw = fUI * ptarmw
+      pUOmw = fUO * ptarmw
+    else
+      ! Single null configuration
+      fLI = fio
+      fLO = 1.0d0 - fio
+      ! power into each target 
+      pLImw = fLI * ptarmw
+      pLOmw = fLO * ptarmw
+    end if
+
     ! Calculate some derived quantities that may not have been defined earlier
     total_loss_power = 1d6 * (falpha*palpmw+pchargemw+pohmmw+pinjmw)
-    rad_fraction = 1.0D6*pradmw / total_loss_power
+    rad_fraction_core = 1.0D6*pradmw / total_loss_power
+    rad_fraction = rad_fraction_core + (1.0d0 - rad_fraction_core) * rad_fraction_sol
     total_plasma_internal_energy = 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol
     total_energy_conf_time = total_plasma_internal_energy / total_loss_power
 
@@ -614,9 +601,7 @@ implicit none
           call report_error(217)
        endif
 
-       write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', impurity_arr(impvardiv)%frac, ', ',  impvardiv
-
-       ! frac is zero, impvardiv is 9 which is default. However, the initial set value of impurity 9 is zero...need to set that impurity fraction to AT LEAST the min value, i.e. fzmin, see above
+       write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', impurity_arr(impvardiv)%frac, ', ',  impvardiv  
 
     endif
 
@@ -1256,7 +1241,7 @@ implicit none
       !+ad_desc  where ni is the sum of all ion densities (thermal)
       !+ad_prob  PJK: I do not understand why it should be 4*pi*... instead
       !+ad_prob  of 8*pi*... Presumably it is because of a strange ASTRA
-      !+ad_prob  method similar to that noted above in the calculation of jboot.
+      !+ad_prob  method similar to that noted above in the caculation of jboot.
       !+ad_call  None
       !+ad_hist  15/05/14 PJK New routine, which includes the ion pressure contribution
       !+ad_stat  Okay
@@ -2680,7 +2665,7 @@ implicit none
     !  Power per unit area crossing the plasma edge
     !  (excludes radiation and neutrons)
 
-    qperp = pdivt/sarea
+      qperp = pdivt/sarea
 
     !  Old ASDEX density limit formula
     !  This applies to the density at the plasma edge, so must be scaled
@@ -2856,7 +2841,7 @@ implicit none
     !  Local variables
     real(kind(1.0D0)) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
          n20,pcur,qhat,ratio,rll,str2,str5,taueena,tauit1,tauit2, &
-         term1,term2, h, qratio, nratio, nGW, kappaa_IPB,taunstx,taupetty
+         term1,term2, h, qratio, nratio, nGW, taunstx,taupetty
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3961,17 +3946,6 @@ implicit none
     !+ad_desc  value of <CODE>hhh</CODE>, the confinement time H-factor.
     !+ad_prob  None
     !+ad_call  pcond
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  01/04/98 PJK Modified PCOND arguments, and adding coding for
-    !+ad_hisc               use of IGNITE
-    !+ad_hist  30/06/98 PJK Modified PCOND arguments
-    !+ad_hist  19/01/99 PJK Modified PCOND arguments
-    !+ad_hist  16/07/01 PJK Modified PCOND arguments
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  20/05/14 PJK Changed prad to pcorerad; introduced iradloss;
-    !+ad_hisc               Added falpha multiplier to palp term
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  13/11/14 PJK Modified iradloss usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -4047,52 +4021,6 @@ implicit none
     !+ad_call  ovarrf
     !+ad_call  ovarst
     !+ad_call  report_error
-    !+ad_hist  17/09/97 PJK Upgrade to higher standard of coding. Added
-    !+ad_hisc               Greenwald density limit
-    !+ad_hist  17/11/97 PJK Added additional beta diagnostics
-    !+ad_hist  01/04/98 PJK Added dnla to output, and comment about ignition
-    !+ad_hist  17/07/98 PJK Added power threshold scalings
-    !+ad_hist  19/01/99 PJK Added powerht and minor word changes
-    !+ad_hist  16/07/01 PJK Added kappaa
-    !+ad_hist  20/09/11 PJK Initial F90 version
-    !+ad_hist  18/12/12 PJK Added PTHRMW(6 to 8)
-    !+ad_hist  03/01/13 PJK Removed ICULDL if-statement
-    !+ad_hist  23/01/13 PJK Modified logic for stellarators and ignite=1
-    !+ad_hist  10/06/13 PJK Added ISHAPE=2 and other outputs
-    !+ad_hist  12/06/13 PJK Added plasma energy and other outputs
-    !+ad_hist  12/08/13 PJK Removed some stellarator-irrelevant outputs
-    !+ad_hist  30/09/13 PJK Added Psep/R output line
-    !+ad_hist  02/10/13 PJK Changed pcharge output description
-    !+ad_hist  14/11/13 PJK Corrected thermal energy outputs by 3/2
-    !+ad_hist  14/11/13 PJK Changed kappa95 output description
-    !+ad_hist  26/11/13 PJK Added taup/taueff ratio to output
-    !+ad_hist  28/11/13 PJK Added fuel-ion pair fusion power contributions to output
-    !+ad_hist  28/11/13 PJK Added icurr, iprofile information to output
-    !+ad_hist  20/02/14 PJK Added pedestal profile quantities
-    !+ad_hist  05/03/14 PJK Added on-axis values
-    !+ad_hist  06/03/14 PJK Added warning if pdivt=0.001;
-    !+ad_hisc               clarified ishape effects on kappa, triang
-    !+ad_hist  26/03/14 PJK Added all bootstrap current estimations
-    !+ad_hist  02/04/14 PJK Added confinement scaling law name to mfile
-    !+ad_hist  03/04/14 PJK Used ovarst to write out confinement scaling law name
-    !+ad_hist  23/04/14 PJK Added bvert
-    !+ad_hist  14/05/14 PJK Added impurity concentration info
-    !+ad_hist  21/05/14 PJK Added ignite
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  02/06/14 PJK Added fimpvar
-    !+ad_hist  05/06/14 PJK Rearranged power balance output
-    !+ad_hist  16/06/14 PJK Removed duplicate outputs
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  19/08/14 PJK Added dnla / Greenwald ratio
-    !+ad_hist  01/10/14 PJK Modified safety factor output statements
-    !+ad_hist  01/10/14 PJK Added plhthresh output
-    !+ad_hist  06/10/14 PJK Modified plhthresh output
-    !+ad_hist  11/11/14 PJK Added aion output
-    !+ad_hist  13/11/14 PJK Modified elong, triang outputs with ishape
-    !+ad_hist  13/11/14 PJK Modified iradloss usage
-    !+ad_hist  17/11/14 PJK Modified output to account for falpha, palpfwmw
-    !+ad_hist  18/11/14 PJK Corrected power balance output if ignite=1
     !+ad_hist  01/04/15 JM  Core plasma power balance removed
     !+ad_hist  05/08/15 MDK Output to say which impurity (if any) is an iteration variable.
     !+ad_hist  02/05/18 SIM Added pthrmw(9-14) and associated error warnings
@@ -4118,9 +4046,17 @@ implicit none
     real(kind(1.0D0)) :: fgwsep_out ! nesep/dlimit(7)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! Dimensionless plasma parameters. See reference below.    
+    nu_star = 1/rmu0  * (15.d0*echarge**4 * dlamie) / (4.d0*pi**1.5d0 * epsilon0**2) * &
+              vol**2 * rmajor**2 * bt * sqrt(eps) * dnla**3 * kappa           / &
+              (total_plasma_internal_energy**2 * plascur)
+
+   rho_star = sqrt(2.d0* mproton * aion * total_plasma_internal_energy / (3.d0 * vol * dnla) ) / &
+              (echarge * bt * eps * rmajor)
+
+   beta_mcdonald = 4.d0/3.d0 *rmu0 * total_plasma_internal_energy / (vol * bt**2) 
 
     call oheadr(outfile,'Plasma')
-
     if (istell == 0) then
        select case (idivrt)
        case (0)
@@ -4462,6 +4398,10 @@ implicit none
         call ovarre(outfile,'SOL radiation power (MW)','(psolradmw)', psolradmw, 'OP ')
     end if
     call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')
+    call ovarre(outfile,'Core radiation fraction = total radiation in core / total power deposited in plasma', &
+        '(rad_fraction_core)', rad_fraction_core, 'OP ')
+    call ovarre(outfile,'SoL radiation fraction = total radiation in SoL / total power accross separatrix', &
+        '(rad_fraction_sol)', rad_fraction_sol, 'IP ')
     call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma', &
         '(rad_fraction)', rad_fraction, 'OP ')
     call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)', &
@@ -4474,6 +4414,40 @@ implicit none
         '(peakradwallload)', peakradwallload, 'OP ')
     call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)', &
         '(wallmw)', wallmw, 'OP ')
+
+    call oblnkl(outfile)
+    call ovarre(outfile,'Power incident on the divertor targets (MW)', &
+        '(ptarmw)',ptarmw, 'OP ')
+    call ovarre(outfile, 'Fraction of power to the lower divertor', &
+        '(ftar)', ftar, 'IP ')
+    call ovarre(outfile,'Outboard side heat flux decay length (m)', &
+        '(lambdaio)',lambdaio, 'OP ')
+    if (idivrt == 2) then
+      call ovarre(outfile,'Midplane seperation of the two magnetic closed flux surfaces (m)', &
+           '(drsep)',drsep, 'OP ')
+    end if 
+    call ovarre(outfile,'Fraction of power on the inner targets', &
+        '(fio)',fio, 'OP ')
+    call ovarre(outfile,'Fraction of power incident on the lower inner target', &
+        '(fLI)',fLI, 'OP ')
+    call ovarre(outfile,'Fraction of power incident on the lower outer target', &
+        '(fLO)',fLO, 'OP ')
+    if (idivrt == 2 ) then
+      call ovarre(outfile,'Fraction of power incident on the upper inner target', &
+       '(fUI)',fUI, 'OP ')
+      call ovarre(outfile,'Fraction of power incident on the upper outer target', &
+       '(fUO)',fUO, 'OP ')
+    end if
+    call ovarre(outfile,'Power incident on the lower inner target (MW)', &
+        '(pLImw)',pLImw, 'OP ')
+    call ovarre(outfile,'Power incident on the lower outer target (MW)', &
+        '(pLOmw)',pLOmw, 'OP ')
+    if (idivrt == 2) then    
+      call ovarre(outfile,'Power incident on the upper innner target (MW)', &
+           '(pUImw)',pUImw, 'OP ')
+      call ovarre(outfile,'Power incident on the upper outer target (MW)', &
+           '(pUOmw)',pUOmw, 'OP ')
+    end if
 
     call oblnkl(outfile)
     call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw, 'OP ')
@@ -4502,8 +4476,15 @@ implicit none
        call oblnkl(outfile)
     end if
 
-    call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
-    call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivtbt/qar)', ((pdivt*bt)/(q95*aspect*rmajor)), 'OP ')
+    if (idivrt == 2) then
+      ! Double null divertor configuration
+      call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivmax/rmajor)',pdivmax/rmajor, 'OP ')
+      call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivmaxbt/qar)', ((pdivmax*bt)/(q95*aspect*rmajor)), 'OP ')
+    else
+      ! Single null divertor configuration
+      call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
+      call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivtbt/qar)', ((pdivt*bt)/(q95*aspect*rmajor)), 'OP ')
+    end if
 
     if (istell == 0) then
        call osubhd(outfile,'H-mode Power Threshold Scalings :')
@@ -4613,6 +4594,16 @@ implicit none
     call ovarrf(outfile,'Total energy confinement time including radiation loss (s)', &
          '(total_energy_conf_time)', total_energy_conf_time, 'OP ')
     call ocmmnt(outfile,'  (= stored energy including fast particles / loss power including radiation')
+
+    ! Issues 363 Output dimensionless plasma parameters MDK
+    call osubhd(outfile,'Dimensionless plasma parameters')
+    call ocmmnt(outfile,'For definitions see')
+    call ocmmnt(outfile,'Recent progress on the development and analysis of the ITPA global H-mode confinement database')
+    call ocmmnt(outfile,'D.C. McDonald et al, 2007 Nuclear Fusion v47, 147. (nu_star missing 1/mu0)')
+    call ovarre(outfile,'Normalized plasma pressure beta as defined by McDonald et al', '(beta_mcdonald)',beta_mcdonald,'OP ')
+    call ovarre(outfile,'Normalized ion Larmor radius', '(rho_star)', rho_star,'OP ')
+    call ovarre(outfile,'Normalized collisionality', '(nu_star)',nu_star,'OP ')
+    call ovarre(outfile,'Volume measure of elongation','(kappaa_IPB)',kappaa_IPB,'OP ')
 
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')

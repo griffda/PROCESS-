@@ -264,22 +264,34 @@ contains
         write(*,*)'pnucshld =', pnucshld, ' ptfnuc =', ptfnuc
     end if
 
-    ! Power to the first wall (MW)
-    !pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
-    pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
 
-    ! Power to the blanket (MW)
-    !pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
-    pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
+    if (idivrt == 2) then 
+      ! Double Null Configuration 
+      ! Power to the first wall (MW)
+      pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * (1.0D0-2.0D0*fdiv) * pneutmw
+
+      ! Power to the blanket (MW)
+      pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult  * (1.0D0-2.0D0*fdiv) * pneutmw
     
-    ! Power to the shield(MW)
-    !pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
-    pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
+      ! Power to the shield(MW)
+      pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * (1.0D0-2.0D0*fdiv) * pneutmw
 
-    ! Power to the TF coils (MW)
-    !ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
-    ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
+      ! Power to the TF coils (MW)
+      ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult  * (1.0D0-2.0D0*fdiv) * pneutmw
+    else
+      ! Single Null Configuration
+      ! Power to the first wall (MW)
+      pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
 
+      ! Power to the blanket (MW)
+      pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
+    
+      ! Power to the shield(MW)
+      pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
+
+      ! Power to the TF coils (MW)
+      ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
+    end if
     ! pnucdiv is not changed.
     ! The energy due to multiplication, by subtraction:
     !emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
@@ -758,7 +770,14 @@ contains
     implicit none
 
     ! Apply blanket coverage factors
-    blareaob = blarea*(1.0D0-fdiv-fhcd) - blareaib
+    if (idivrt == 2) then
+      ! double null configuration
+      blareaob = blarea*(1.0D0-2.0D0*fdiv-fhcd) - blareaib
+    else
+      ! single null configuration
+      blareaob = blarea*(1.0D0-fdiv-fhcd) - blareaib
+    end if
+    
     blarea = blareaib + blareaob
 
     volblkto = volblkt*(1.0D0-fdiv-fhcd) - volblkti
@@ -1065,8 +1084,13 @@ contains
     ! fdiv = 0.115D0
 
     ! Nuclear heating in the divertor just the neutron power times fdiv
-    pnucdiv = 0.8D0 * powfmw * fdiv
-
+    if (idivrt == 2) then
+      ! Double null configuration
+      pnucdiv = 0.8D0 * powfmw * 2.0D0*fdiv
+    else
+      ! single null configuration
+      pnucdiv = 0.8D0 * powfmw * fdiv
+    end if 
     ! No heating of the H & CD
     pnuchcd = 0.0D0
 
@@ -1091,9 +1115,14 @@ contains
     implicit none
     real(kind=double):: t_in_compressor, dt_he, fpump, pfactor, p_plasma
 
-    ! TODO - is this consistent with a double null machine?
     ! Radiation power incident on divertor (MW)
-    praddiv = pradmw * fdiv
+    if (idivrt == 2) then
+      ! Double null configuration
+      praddiv = pradmw * 2.0D0 *fdiv
+    else
+      ! single null configuration
+      praddiv = pradmw * fdiv
+    end if 
 
     ! Radiation power incident on HCD apparatus (MW)
     pradhcd = pradmw * fhcd
@@ -1540,7 +1569,13 @@ contains
       ptor = pi * ( 3.0D0*(a+b) - sqrt( (3.0D0*a + b)*(a + 3.0D0*b) ) )
 
       ! Calculate blanket poloidal length and segment, subtracting divertor length (m)
-      bllengo = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpo
+      if (idivrt == 2) then
+        ! Double null configuration
+        bllengo = 0.5D0*ptor * (1.0D0 - 2.0D0*fdiv) / nblktmodpo
+      else
+        ! single null configuration
+        bllengo = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpo
+      end if 
 
     ! shape defined by two half-ellipses
     else
@@ -1559,7 +1594,13 @@ contains
 
       ! Calculate inboard blanket poloidal length and segment, subtracting divertor length (m)
       ! Assume divertor lies between the two ellipses, so fraction fdiv still applies
-      bllengi = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpi
+      if (idivrt == 2) then
+        ! Double null configuration
+        bllengi = 0.5D0*ptor * (1.0D0 - 2.0D0*fdiv) / nblktmodpi
+      else
+        ! single null configuration
+        bllengi = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpi
+      end if
 
       ! Distance between r1 and inner edge of outboard first wall / blanket (m)
       a = rmajor + rminor + scraplo - r1
@@ -1568,7 +1609,13 @@ contains
       ptor = pi * ( 3.0D0*(a+b) - sqrt( (3.0D0*a + b)*(a + 3.0D0*b) ) )
 
       ! Calculate outboard blanket poloidal length and segment, subtracting divertor length (m)
-      bllengo = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpo
+      if (idivrt == 2) then
+        ! Double null configuration
+        bllengo = 0.5D0*ptor * (1.0D0 - 2.0D0*fdiv) / nblktmodpo
+      else
+        ! single null configuration
+        bllengo = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpo
+      end if
 
     end if
 
@@ -3645,7 +3692,14 @@ contains
     implicit none
 
     ! Apply blanket coverage factors
-    blareaob = blarea*(1.0D0-fdiv-fhcd) - blareaib
+    if (idivrt == 2) then
+      ! double null configuration
+      blareaob = blarea*(1.0D0-2.0D0*fdiv-fhcd) - blareaib
+    else 
+      ! single null configuration
+      blareaob = blarea*(1.0D0-fdiv-fhcd) - blareaib
+    end if
+    
     blarea = blareaib + blareaob
 
     volblkto = volblkt*(1.0D0-fdiv-fhcd) - volblkti

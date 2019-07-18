@@ -128,7 +128,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (itfsup == 0) then  !  Non-superconducting TF coils
+    if (itfsup /= 1) then  !  Non-superconducting TF coils
 
        !  TF coil bus length (m)
        !  Assume power supplies are 5m away
@@ -592,6 +592,8 @@ contains
         !  engxpc
     real(kind(1.0D0)), save :: pfbuspwr
     real(kind(1.0D0)), dimension(6) :: inductxcurrent,poloidalenergy
+    real(kind(1.0D0)), dimension(5) :: pfdissipation
+    real(kind(1.0D0)):: wall_plug_ohmicmw, pfpower, pfpowermw
     integer :: i,ic,ngrpt,ig,ipf,jjpf,jjpf2,jpf,time
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -661,8 +663,8 @@ contains
 
     jpf = 0
     poloidalenergy(:) = 0.0d0
-    do jjpf = 1,ngrpt
-       do jjpf2 = 1,ncls(jjpf)
+    do jjpf = 1,ngrpt           ! Loop over all groups of PF coils.
+       do jjpf2 = 1,ncls(jjpf)  ! Loop over all coils in each group 
           jpf = jpf + 1
           engx = 0.0D0
           inductxcurrent(:) = 0.0d0
@@ -686,21 +688,22 @@ contains
           end do
 
           !  Stored magnetic energy of the poloidal field at each time
+          ! 'time' is the time INDEX.  'tim' is the time.
           do time = 1,6
             poloidalenergy(time) = poloidalenergy(time) + 0.5D0 * inductxcurrent(time) * cpt(jpf,time)
           end do
-          do time = 1,5
-            ! Mean rate of change of stored energy between time and time+1
-            if(abs(tim(time+1)-tim(time)).gt.1.0d0) then
-                poloidalpower(time) = (poloidalenergy(time+1)-poloidalenergy(time)) / (tim(time+1)-tim(time))
-            else
-                ! Flag when an interval is small or zero MDK 30/11/16
-                poloidalpower(time) = 9.9d9
-            end if
+        !   do time = 1,5
+        !     ! Mean rate of change of stored energy between time and time+1
+        !     if(abs(tim(time+1)-tim(time)).gt.1.0d0) then
+        !         poloidalpower(time) = (poloidalenergy(time+1)-poloidalenergy(time)) / (tim(time+1)-tim(time))
+        !     else
+        !         ! Flag when an interval is small or zero MDK 30/11/16
+        !         poloidalpower(time) = 9.9d9
+        !     end if
 
-          end do
-          !engxpc = 0.5D0 * engx * cpt(jpf,5)
-          !ensxpf = ensxpf + engxpc
+        !   end do
+        !   !engxpc = 0.5D0 * engx * cpt(jpf,5)
+        !   !ensxpf = ensxpf + engxpc
 
           !  Resistive power in circuits at times tim(3) and tim(5) respectively (MW)
           powpfr = powpfr + turns(jpf) * cpt(jpf,3) * cktr(jjpf)/1.0D6
@@ -709,6 +712,34 @@ contains
 
        end do
     end do
+
+    do time = 1,5
+        ! Stored magnetic energy of the poloidal field at each time
+        ! 'time' is the time INDEX.  'tim' is the time.
+        ! Mean rate of change of stored energy between time and time+1
+        if(abs(tim(time+1)-tim(time)).gt.1.0d0) then
+            poloidalpower(time) = (poloidalenergy(time+1)-poloidalenergy(time)) / (tim(time+1)-tim(time))
+        else
+            ! Flag when an interval is small or zero MDK 30/11/16
+            poloidalpower(time) = 9.9d9
+        end if
+        ! Electrical energy dissipated in PFC power supplies as they increase or decrease the poloidal field energy
+        ! This assumes that the energy storage in the PFC power supply is lossless and that currents
+        ! in the coils can be varied without loss when there is no change in the energy in the poloidal field.
+        ! Energy is dissipated only when energy moves into or out of the store in the power supply.
+        ! Issue #713
+        pfdissipation(time) = abs( poloidalenergy(time+1)-poloidalenergy(time) ) * (1.d0/etapsu - 1.d0)
+    end do
+
+    ! Mean power dissipated
+    ! The flat top duration (time 4 to 5) is the denominator, as this is the time when electricity is generated.
+    if(tim(5)-tim(4).gt.1.0d0) then
+        pfpower = sum(pfdissipation(:)) / (tim(5) - tim(4))
+    else
+        ! Give up when an interval is small or zero.
+        pfpower = 0.d0
+    end if        
+    pfpowermw = pfpower / 1.d6
 
     !  Compute the maximum stored energy and the maximum dissipative
     !  energy in all the PF circuits over the entire cycle time, MJ
@@ -737,14 +768,19 @@ contains
        !  Average of the maximum currents in the PF circuits, kA
        acptmax = acptmax + 1.0D-3 * abs(cptdin(jpf))/pfckts
 
-    end do
+    end do    
 
-    !  PF Power requirements
-    !  Wall plug power (MW)
-    pfwp = pohmmw / etapsu
+    !  PF wall plug power dissipated in power supply for ohmic heating (MW)
+    !  This is additional to that required for moving stored energy around
+    !pfwpmw = pohmmw / etapsu
+    wall_plug_ohmicmw  = pohmmw * (1.d0 /etapsu - 1.d0) 
+    ! Total mean wall plug power dissipated in PFC and CS power supplies.  Issue #713
+    pfwpmw = wall_plug_ohmicmw + pfpowermw    
 
-    !  Secondary waste heat (MW)
-    pfsec = pfwp - pohmmw
+    ! Waste heat generated in PFC and CS power supplies (MW),
+    ! classed as "secondary waste heat"
+    ! pfsec = pfwpmw - pohmmw
+    ! pfsec = pfwpmw
 
     !  Output Section
     if (iprint == 0) return
@@ -756,6 +792,8 @@ contains
     call ovarre(outfile,'Total PF coil bus resistive power (kW)', '(pfbuspwr)',pfbuspwr, 'OP ')
     call ovarre(outfile,'Total PF coil resistive power (kW)', '(srcktpm)',srcktpm, 'OP ')
     call ovarre(outfile,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
+    call ovarre(outfile,'Efficiency of transfer of PF stored energy into or out of storage','(etapsu)',etapsu)
+    call ocmmnt(outfile,'(Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)')  
 
     call ovarre(outfile,'Maximum stored energy in poloidal field (MJ)', '(ensxpfm)',ensxpfm, 'OP ')
     call ovarre(outfile,'Peak absolute rate of change of stored energy in poloidal field (MW)',  &
@@ -1141,9 +1179,10 @@ contains
 
     !  Electrical power consumed by fusion power core systems
     !  (excluding heat transport pumps and auxiliary injection power system)
-    !  Added pfwp (waste heat from PF coil ohmic heating)
-    !pcoresystems = crypmw + fachtmw + helecmw + ppumpmw + tfacpd + trithtmw + vachtmw + pfwp
-    pcoresystems = crypmw + fachtmw + ppumpmw + tfacpd + trithtmw + vachtmw + pfwp
+    !  pfwpmw = Mean electrical energy dissipated in PFC power supplies as they 
+    !  increase or decrease the poloidal field energy AND extra due to ohmic heating
+    !  of the plasma.  Issue #713
+    pcoresystems = crypmw + fachtmw + ppumpmw + tfacpd + trithtmw + vachtmw + pfwpmw
 
     !  Total secondary heat
     !  (total low-grade heat rejected - does not contribute to power conversion cycle)
@@ -1203,9 +1242,24 @@ contains
     call osubhd(outfile,'Assumptions :')
 
     call ovarre(outfile,'Neutron power multiplication in blanket', '(emult)', emult)
-    call ovarre(outfile, 'Divertor area fraction of whole toroid surface', '(fdiv)', fdiv)
+    
+    if (idivrt == 2) then
+        ! Double null configuration
+        call ovarre(outfile, 'Double Null Divertor area fraction of whole toroid surface', '(2*fdiv)', 2.0D0*fdiv)
+    else
+        ! Single null configuration
+        call ovarre(outfile, 'Divertor area fraction of whole toroid surface', '(fdiv)', fdiv)
+    end if 
+
     call ovarre(outfile,'H/CD apparatus + diagnostics area fraction', '(fhcd)', fhcd)
-    call ovarre(outfile,'First wall area fraction ', '(1-fdiv-fhcd)', 1.0D0-fdiv-fhcd)
+    
+    if (idivrt == 2) then
+        ! Double null configuration
+        call ovarre(outfile,'First wall area fraction ', '(1-2*fdiv-fhcd)', 1.0D0-2.0D0*fdiv-fhcd)
+    else
+        ! Single null configuration
+        call ovarre(outfile,'First wall area fraction ', '(1-fdiv-fhcd)', 1.0D0-fdiv-fhcd)
+    end if
 
     call ovarin(outfile, 'Switch for pumping of primary coolant', '(primary_pumping)', primary_pumping)
     if (primary_pumping == 0) then
@@ -1485,9 +1539,9 @@ contains
     call ovarrf(outfile,'Electric power for tritium plant (MW)','(trithtmw)',trithtmw)
     call ovarrf(outfile,'Electric power for cryoplant (MW)','(crypmw)',crypmw, 'OP ')
     call ovarrf(outfile,'Electric power for TF coils (MW)','(tfacpd)',tfacpd, 'OP ')
-    call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwp)', pfwp, 'OP ')
+    call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwpmw)', pfwpmw, 'OP ')
     call ovarrf(outfile,'All other internal electric power requirements (MW)','(fachtmw)', fachtmw, 'OP ')
-    sum = pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwp
+    sum = pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwpmw
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
     call oblnkl(outfile)
     call ovarrf(outfile,'Gross electrical output* (MW)','(pgrossmw)',pgrossmw, 'OP ')

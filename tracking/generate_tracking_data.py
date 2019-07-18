@@ -1,5 +1,6 @@
 """
-python3.6 generate_tracking_data.py --project=baseline_2018 --ref_folder=/home/jenkins_ci/tracking_ref_data --sep="comma"
+python3.6 generate_tracking_data.py --project=baseline_2018 --ref_folder=/home/jenkins_ci/tracking_ref_data/ --sep="comma"
+python3.6 generate_tracking_data.py --project=baseline_2019 --ref_folder=/home/jenkins_ci/tracking_ref_data/ --sep="comma"
     Change tracking tool
 
     Manoj Kumar
@@ -14,13 +15,13 @@ import sys
 import os.path
 from collections import OrderedDict
 import argparse
-
+import datetime
 import pandas 
 from process_io_lib import mfile as mf
 
 # List of variables to be tracked
 TRACKING_LIST = [
-    "procver", "time", "username", "tagno", "commsg", "ifail",
+    "procver", "nviter", "time", "username", "tagno", "commsg", "ifail",
     "isweep", "nsweep", "rmajor", "rminor", "aspect", "kappa", "kappa95",
     "triang", "triang95", "sarea", "vol", "tfno", "powfmw", "plascur/1d6",
     "bt", "q95", "beta", "normalised_thermal_beta", "normalised_total_beta",
@@ -89,8 +90,11 @@ def add_mfile_to_database(cargs, pdat, mdat, scan_num):
 
     # Create new frame
     new_frame = pandas.DataFrame([new_entry], columns=TRACKING_LIST)
+    new_frame['date'] = datetime.datetime.now().strftime("%d-%B-%Y") # now.strftime("%Y-%m-%d %H:%M") 
+#    new_frame['date'] = 'Manoj1' 
     # Append frame to existing one
     new_pdat = pandas.concat([pdat, new_frame], sort=False, ignore_index=True)#, verify_integrity=False)
+    new_frame.drop('date', axis=1,inplace=True)
 
     if cargs.sep == "tab":
         sep = "\t"
