@@ -20,9 +20,7 @@ import logging
 logging.basicConfig(level=logging.CRITICAL)
 
 # PROCESS libraries
-# Uncommented in next commit !
-# sys.path.append(os.path.join(os.path.dirname(__file__), '../utilities/'))
-# Uncommented in next commit !
+sys.path.append(os.path.join(os.path.dirname(__file__), '../utilities/'))
 from process_io_lib.mfile import MFile
 
 # Constants

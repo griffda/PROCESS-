@@ -1885,6 +1885,15 @@ def main(fig1, fig2, m_file_data, scan, plasmod=False, imp="../data/impuritydata
       plasmod --> plasmod data or not
       imp --> path to impurity data
     """
+    
+    # Checking the impurity data folder
+    if os.path.isdir("../data/impuritydata/"):
+        imp = "../data/impuritydata/"
+    elif os.path.isdir("data/impuritydata/"):
+        imp = "data/impuritydata/"
+    else:
+        print("\033[91m Warning : Impossible to recover impurity data, try running the macro in the main/utility folder")
+        print("          -> No impurity plot done\033[0m")
 
     # Plot poloidal cross-section
     plot_1 = fig2.add_subplot(221, aspect='equal')
@@ -2209,8 +2218,6 @@ if __name__ == '__main__':
 
     parser.add_argument("-n", type=int, help="Which scan to plot?")
 
-    parser.add_argument("-p", metavar='DATAPATH',
-                         default="",  type=str, help="specify path to impurity data folder")
 
 
     args = parser.parse_args()
@@ -2226,28 +2233,6 @@ if __name__ == '__main__':
     else:
         scan = -1
 
-    # Impurity radiation data folder
-    # ------------------------------
-    is_imp_path = False
-    imp_path = ""
-    
-    # Case where the used defined the path
-    if args.p != "":
-        imp_path = args.p
-
-    # Default value using the PYTHONPATH variable to point to right impuritydata file
-    else :
-        for pypath in os.environ['PYTHONPATH'].split(':') :
-            if pypath == "" :
-                continue
-
-            imp_path = pypath[:-10]+"/data/impuritydata/"
-            if os.path.isdir(imp_path) :
-                break
-    
-    if not os.path.isdir(imp_path) :
-        print("Warning : No valid impurity folder found in the PYTHONPATH directories")
-    # ------------------------------
     
     bore = m_file.data["bore"].get_scan(scan)
     ohcth = m_file.data["ohcth"].get_scan(scan)
@@ -2388,7 +2373,7 @@ if __name__ == '__main__':
     page2 = plt.figure(figsize=(12, 9), dpi=80)
 
     # run main
-    main(page1, page2, m_file, scan=scan, plasmod=pmod_switch, imp=imp_path)
+    main(page1, page2, m_file, scan=scan, plasmod=pmod_switch)
 
     # with bpdf.PdfPages(args.o) as pdf:
     with bpdf.PdfPages(args.f + "SUMMARY.pdf") as pdf:
