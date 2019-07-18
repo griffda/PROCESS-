@@ -3622,8 +3622,8 @@ module cost_variables
   real(kind(1.0D0)) :: crctcore = 0.0D0
   !+ad_vars  csi /16.0/ : allowance for site costs (M$)
   real(kind(1.0D0)) :: csi = 16.0D0
-  !+ad_vars  cturbb /380.0/ : cost of turbine building (M$)
-  real(kind(1.0D0)) :: cturbb = 380.0D0
+  !+ad_vars  cturbb /38.0/ : cost of turbine building (M$)
+  real(kind(1.0D0)) :: cturbb = 38.0D0
   !+ad_vars  decomf /0.1/ : proportion of constructed cost required for
   !+ad_varc                 decommissioning fund
   real(kind(1.0D0)) :: decomf = 0.1D0
