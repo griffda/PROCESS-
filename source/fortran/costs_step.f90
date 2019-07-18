@@ -23,7 +23,7 @@ module costs_step_module
   !+ad_cont  coelc_step
   !+ad_args  N/A
   !+ad_desc  This module contains the STEP fusion power plant costing model,
-  !+ad_desc  developed by Nizar Ben Ayed, Stuart Muldrew and Tim Hender, based
+  !+ad_desc  developed by Nizar Ben Ayed, Tim Hender and Stuart Muldrew, based
   !+ad_desc  on the STARFIRE costing framework.
   !+ad_prob  None
   !+ad_call  build_variables
@@ -47,6 +47,8 @@ module costs_step_module
   !+ad_hist  28/02/19 SIM Initial version of module
   !+ad_stat  Okay
   !+ad_docs  STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
+  !+ad_docs  Sheffield et al. (1986), Fusion Technology, 9, 199
+  !+ad_docs  Sheffield & Milora (2016), Fusion Science and Technology, 70, 14
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -152,7 +154,7 @@ contains
     ! Output header
     if ((iprint==1).and.(output_costs == 1)) then
       call oheadr(outfile,'STEP Costing Model (1980 US$)')
-      call oheadr(outfile,'!!WARNING - Under development!! Do not use.')
+      call oheadr(outfile,'!!WARNING - Under development!! DO NOT USE!')
     end if
     
     ! Account 20 : Land and Rights
@@ -203,7 +205,7 @@ contains
     end if
 
     !  Cost of electricity
-    if ((ireactor == 1).and.(ipnet == 0)) call coelc_step(outfile,iprint)
+    ! if ((ireactor == 1).and.(ipnet == 0)) call coelc_step(outfile,iprint)
 
   end subroutine costs_step
 
