@@ -1343,6 +1343,7 @@ end function
 subroutine set_itv_102(ratio)
   real(kind(1.d0))::ratio
   fimpvar = ratio
+  impurity_arr(impvar)%frac = fimpvar
 end subroutine
 !---------------------------------
 subroutine init_itv_103
@@ -2077,12 +2078,15 @@ subroutine init_itv_148
 end subroutine
 
 real(kind(1.d0)) function itv_148()
-   itv_148 = fzactual
+   ! TODO This needs to be clarified!! MDK
+   ! It looks like fzactual is not really an iteration variable.
+   itv_148 = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual
 end function
 
 subroutine set_itv_148(ratio)
   real(kind(1.d0))::ratio
   fzactual = ratio
+  impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
 end subroutine
 !---------------------------------
 subroutine init_itv_149
@@ -2339,120 +2343,120 @@ subroutine loadxc
          case(38);  xcm(i) = itv_38()
          case(39);  xcm(i) = itv_39()
          case(40);  xcm(i) = itv_40()
-         ! case(41);  xcm(i) = itv_41()
-         ! case(42);  xcm(i) = itv_42()
-         ! case(43);  xcm(i) = itv_43()
-         ! case(44);  xcm(i) = itv_44()
-         ! case(45);  xcm(i) = itv_45()
-         ! case(46);  xcm(i) = itv_46()
-         ! case(47);  xcm(i) = itv_47()
-         ! case(48);  xcm(i) = itv_48()
-         ! case(49);  xcm(i) = itv_49()
-         ! case(50);  xcm(i) = itv_50()
-         ! case(51);  xcm(i) = itv_51()
-         ! case(52);  xcm(i) = itv_52()
-         ! case(53);  xcm(i) = itv_53()
-         ! case(54);  xcm(i) = itv_54()
-         ! case(55);  xcm(i) = itv_55()
-         ! case(56);  xcm(i) = itv_56()
-         ! case(57);  xcm(i) = itv_57()
-         ! case(58);  xcm(i) = itv_58()
-         ! case(59);  xcm(i) = itv_59()
-         ! case(60);  xcm(i) = itv_60()
-         ! case(61);  xcm(i) = itv_61()
-         ! case(62);  xcm(i) = itv_62()
-         ! case(63);  xcm(i) = itv_63()
-         ! case(64);  xcm(i) = itv_64()
-         ! case(65);  xcm(i) = itv_65()
-         ! case(66);  xcm(i) = itv_66()
-         ! case(67);  xcm(i) = itv_67()
-         ! case(68);  xcm(i) = itv_68()
-         ! case(69);  xcm(i) = itv_69()
-         ! case(70);  xcm(i) = itv_70()
-         ! case(71);  xcm(i) = itv_71()
-         ! case(72);  xcm(i) = itv_72()
-         ! case(73);  xcm(i) = itv_73()
-         ! case(74);  xcm(i) = itv_74()
-         ! case(75);  xcm(i) = itv_75()
-         ! case(76);  xcm(i) = itv_76()
-         ! case(77);  xcm(i) = itv_77()
-         ! case(78);  xcm(i) = itv_78()
-         ! case(79);  xcm(i) = itv_79()
-         ! case(80);  xcm(i) = itv_80()
-         ! case(81);  xcm(i) = itv_81()
-         ! case(82);  xcm(i) = itv_82()
-         ! case(83);  xcm(i) = itv_83()
-         ! case(84);  xcm(i) = itv_84()
-         ! case(85);  xcm(i) = itv_85()
-         ! case(86);  xcm(i) = itv_86()
-         ! case(87);  xcm(i) = itv_87()
-         ! case(88);  xcm(i) = itv_88()
-         ! case(89);  xcm(i) = itv_89()
-         ! case(90);  xcm(i) = itv_90()
-         ! case(91);  xcm(i) = itv_91()
-         ! case(92);  xcm(i) = itv_92()
-         ! case(93);  xcm(i) = itv_93()
-         ! case(94);  xcm(i) = itv_94()
-         ! case(95);  xcm(i) = itv_95()
-         ! case(96);  xcm(i) = itv_96()
-         ! case(97);  xcm(i) = itv_97()
-         ! case(98);  xcm(i) = itv_98()
-         ! case(99);  xcm(i) = itv_99()
-         ! case(100);  xcm(i) = itv_100()
-         ! case(101);  xcm(i) = itv_101()
-         ! case(102);  xcm(i) = itv_102()
-         ! case(103);  xcm(i) = itv_103()
-         ! case(104);  xcm(i) = itv_104()
-         ! case(105);  xcm(i) = itv_105()
-         ! case(106);  xcm(i) = itv_106()
-         ! case(107);  xcm(i) = itv_107()
-         ! case(108);  xcm(i) = itv_108()
-         ! case(109);  xcm(i) = itv_109()
-         ! case(110);  xcm(i) = itv_110()
-         ! case(111);  xcm(i) = itv_111()
-         ! case(112);  xcm(i) = itv_112()
-         ! case(113);  xcm(i) = itv_113()
-         ! case(114);  xcm(i) = itv_114()
-         ! case(115);  xcm(i) = itv_115()
-         ! case(116);  xcm(i) = itv_116()
-         ! case(117);  xcm(i) = itv_117()
-         ! case(118);  xcm(i) = itv_118()
-         ! case(119);  xcm(i) = itv_119()
-         ! case(120);  xcm(i) = itv_120()
-         ! case(121);  xcm(i) = itv_121()
-         ! case(122);  xcm(i) = itv_122()
-         ! case(123);  xcm(i) = itv_123()
-         ! case(124);  xcm(i) = itv_124()
-         ! case(125);  xcm(i) = itv_125()
-         ! case(126);  xcm(i) = itv_126()
-         ! case(127);  xcm(i) = itv_127()
-         ! case(128);  xcm(i) = itv_128()
-         ! case(129);  xcm(i) = itv_129()
-         ! case(130);  xcm(i) = itv_130()
-         ! case(131);  xcm(i) = itv_131()
-         ! case(132);  xcm(i) = itv_132()
-         ! case(133);  xcm(i) = itv_133()
-         ! case(134);  xcm(i) = itv_134()
-         ! case(135);  xcm(i) = itv_135()
-         ! case(136);  xcm(i) = itv_136()
-         ! case(137);  xcm(i) = itv_137()
-         ! case(138);  xcm(i) = itv_138()
-         ! case(139);  xcm(i) = itv_139()
-         ! case(140);  xcm(i) = itv_140()
-         ! case(141);  xcm(i) = itv_141()
-         ! case(142);  xcm(i) = itv_142()
-         ! case(143);  xcm(i) = itv_143()
-         ! case(144);  xcm(i) = itv_144()
-         ! case(145);  xcm(i) = itv_145()
-         ! case(146);  xcm(i) = itv_146()
-         ! case(147);  xcm(i) = itv_147()
-         ! case(148);  xcm(i) = itv_148()
-         ! case(149);  xcm(i) = itv_149()
-         ! case(150);  xcm(i) = itv_150()
-         ! case(151);  xcm(i) = itv_151()
-         ! case(152);  xcm(i) = itv_152()
-         ! case(153);  xcm(i) = itv_153()
-         ! case(154);  xcm(i) = itv_154()
+         case(41);  xcm(i) = itv_41()
+         case(42);  xcm(i) = itv_42()
+         case(43);  
+         case(44);  xcm(i) = itv_44()
+         case(45);  xcm(i) = itv_45()
+         case(46);  xcm(i) = itv_46()
+         case(47);  xcm(i) = itv_47()
+         case(48);  xcm(i) = itv_48()
+         case(49);  xcm(i) = itv_49()
+         case(50);  xcm(i) = itv_50()
+         case(51);  xcm(i) = itv_51()
+         case(52);  xcm(i) = itv_52()
+         case(53);  xcm(i) = itv_53()
+         case(54);  xcm(i) = itv_54()
+         case(55);  
+         case(56);  xcm(i) = itv_56()
+         case(57);  xcm(i) = itv_57(); if (istell == 1) call report_error(48)
+         case(58);  xcm(i) = itv_58()
+         case(59);  xcm(i) = itv_59()
+         case(60);  xcm(i) = itv_60(); if ((istell == 1).or.(itfsup /= 1)) call report_error(49)
+         case(61);  xcm(i) = itv_61()
+         case(62);  xcm(i) = itv_62()
+         case(63);  xcm(i) = itv_63()
+         case(64);  xcm(i) = itv_64()
+         case(65);  xcm(i) = itv_65(); if (lpulse /= 1) call report_error(50)
+         case(66);  xcm(i) = itv_66()
+         case(67);  xcm(i) = itv_67()
+         case(68);  xcm(i) = itv_68()
+         case(69);  xcm(i) = itv_69()
+         case(70);  xcm(i) = itv_70()
+         case(71);  xcm(i) = itv_71()
+         case(72);  xcm(i) = itv_72()
+         case(73);  xcm(i) = itv_73()
+         case(74);  xcm(i) = itv_74()
+         case(75);  xcm(i) = itv_75()
+         case(76);  
+         case(77);  
+         case(78);  
+         case(79);  xcm(i) = itv_79()
+         case(80);  
+         case(81);  
+         case(82);  
+         case(83);  
+         case(84);  
+         case(85);  
+         case(86);  
+         case(87);  
+         case(88);  
+         case(89);  xcm(i) = itv_89()
+         case(90);  xcm(i) = itv_90()
+         case(91);  xcm(i) = itv_91()
+         case(92);  xcm(i) = itv_92()
+         case(93);  xcm(i) = itv_93()
+         case(94);  xcm(i) = itv_94()
+         case(95);  xcm(i) = itv_95()
+         case(96);  xcm(i) = itv_96()
+         case(97);  xcm(i) = itv_97()
+         case(98);  xcm(i) = itv_98()
+         case(99);  
+         case(100);  
+         case(101);  
+         case(102);  xcm(i) = itv_102()
+         case(103);  xcm(i) = itv_103()
+         case(104);  xcm(i) = itv_104()
+         case(105);  xcm(i) = itv_105()
+         case(106);  xcm(i) = itv_106()
+         case(107);  xcm(i) = itv_107()
+         case(108);  xcm(i) = itv_108()
+         case(109);  xcm(i) = itv_109()
+         case(110);  xcm(i) = itv_110()
+         case(111);  xcm(i) = itv_111()
+         case(112);  xcm(i) = itv_112()
+         case(113);  xcm(i) = itv_113()
+         case(114);  xcm(i) = itv_114()
+         case(115);  xcm(i) = itv_115()
+         case(116);  xcm(i) = itv_116()
+         case(117);  xcm(i) = itv_117()
+         case(118);  xcm(i) = itv_118()
+         case(119);  xcm(i) = itv_119()
+         case(120);  xcm(i) = itv_120()
+         case(121);  xcm(i) = itv_121()
+         case(122);  xcm(i) = itv_122()
+         case(123);  xcm(i) = itv_123()
+         case(124);  xcm(i) = itv_124()
+         case(125);  xcm(i) = itv_125()
+         case(126);  xcm(i) = itv_126()
+         case(127);  xcm(i) = itv_127()
+         case(128);  xcm(i) = itv_128()
+         case(129);  xcm(i) = itv_129()
+         case(130);  xcm(i) = itv_130()
+         case(131);  xcm(i) = itv_131()
+         case(132);  xcm(i) = itv_132()
+         case(133);  xcm(i) = itv_133()
+         case(134);  xcm(i) = itv_134()
+         case(135);  xcm(i) = itv_135()
+         case(136);  xcm(i) = itv_136()
+         case(137);  xcm(i) = itv_137()
+         case(138);  xcm(i) = itv_138()
+         case(139);  xcm(i) = itv_139()
+         case(140);  xcm(i) = itv_140()
+         case(141);  xcm(i) = itv_141()
+         case(142);  xcm(i) = itv_142()
+         case(143);  xcm(i) = itv_143()
+         case(144);  xcm(i) = itv_144()
+         case(145);  xcm(i) = itv_145()
+         case(146);  xcm(i) = itv_146()
+         case(147);  xcm(i) = itv_147()
+         case(148);  xcm(i) = itv_148()
+         case(149);  xcm(i) = itv_149()
+         case(150);  xcm(i) = itv_150()
+         case(151);  xcm(i) = itv_151()
+         case(152);  xcm(i) = itv_152()
+         case(153);  xcm(i) = itv_153()
+         case(154);  xcm(i) = itv_154()
 
 
    !   case (10) ; xcm(i) = hfact
@@ -2487,124 +2491,124 @@ subroutine loadxc
    !   case (38) ; xcm(i) = fjohc
    !   case (39) ; xcm(i) = fjohc0
    !   case (40) ; xcm(i) = fgamcd
-     case (41) ; xcm(i) = fcohbop
-     case (42) ; xcm(i) = gapoh
-     case (43) ; write(*,*) 'Iteration variable 43 is not supported.'
-     case (44) ; xcm(i) = fvsbrnni
-     case (45) ; xcm(i) = fqval
-     case (46) ; xcm(i) = fpinj
-     case (47) ; xcm(i) = feffcd
-     case (48) ; xcm(i) = fstrcase
-     case (49) ; xcm(i) = fstrcond
-     case (50) ; xcm(i) = fiooic
-     case (51) ; xcm(i) = fvdump
-     case (52) ; xcm(i) = vdalw
-     case (53) ; xcm(i) = fjprot
-     case (54) ; xcm(i) = ftmargtf
-     case (55) ; write(*,*) 'Iteration variable 55 is not supported.'
-     case (56) ; xcm(i) = tdmptf
-     case (57) ; xcm(i) = thkcas
-      !   if ((tfc_model == 0).or.(istell == 1)) call report_error(48)
-        if (istell == 1) call report_error(48)
-     case (58) ; xcm(i) = thwcndut
-     case (59) ; xcm(i) = fcutfsu
-     case (60) ; xcm(i) = cpttf
-        if ((istell == 1).or.(itfsup /= 1)) call report_error(49)
-     case (61) ; xcm(i) = gapds
-     case (62) ; xcm(i) = fdtmp
-     case (63) ; xcm(i) = ftpeak
-     case (64) ; xcm(i) = fauxmn
-     case (65) ; xcm(i) = tohs
-        if (lpulse /= 1) call report_error(50)
-     case (66) ; xcm(i) = ftohs
-     case (67) ; xcm(i) = ftcycl
-     case (68) ; xcm(i) = fptemp
-     case (69) ; xcm(i) = rcool
-     case (70) ; xcm(i) = vcool
-     case (71) ; xcm(i) = fq
-     case (72) ; xcm(i) = fipir
-     case (73) ; xcm(i) = scrapli
-     case (74) ; xcm(i) = scraplo
-     case (75) ; xcm(i) = tfootfi
-     case (76) ; write(*,*) 'Iteration variable 76 is not supported.'
-     case (77) ; write(*,*) 'Iteration variable 77 is not supported.'
-     case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
-     case (79) ; xcm(i) = fbetap
-     case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
-     case (81) ; write(*,*) 'Iteration variable 81 is not supported.'
-     case (82) ; write(*,*) 'Iteration variable 82 is not supported.'
-     case (83) ; write(*,*) 'Iteration variable 83 is not supported.'
-     case (84) ; write(*,*) 'Iteration variable 84 is not supported.'
-     case (85) ; write(*,*) 'Iteration variable 85 is not supported.'
-     case (86) ; write(*,*) 'Iteration variable 86 is not supported.'
-     case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
-     case (88) ; write(*,*) 'Iteration variable 87 is not supported.'
-     case (89) ; xcm(i) = ftbr
-     case (90) ; xcm(i) = blbuith
-     case (91) ; xcm(i) = blbuoth
-     case (92) ; xcm(i) = fflutf
-     case (93) ; xcm(i) = shldith
-     case (94) ; xcm(i) = shldoth
-     case (95) ; xcm(i) = fptfnuc
-     case (96) ; xcm(i) = fvvhe
-     case (97) ; xcm(i) = fpsepr
-     case (98) ; xcm(i) = li6enrich
-     case (99) ; write(*,*) 'Iteration variable 99 is not supported.'
-     case (100) ; write(*,*) 'Iteration variable 100 is not supported.'
-     case (101) ; write(*,*) 'Iteration variable 101 is not supported.'
-     case (102) ; xcm(i) = impurity_arr(impvar)%frac
-     case (103) ; xcm(i) = flhthresh
-     case (104) ; xcm(i) = fcwr
-     case (105) ; xcm(i) = fnbshinef
-     case (106) ; xcm(i) = ftmargoh
-     case (107) ; xcm(i) = favail
-     case (108) ; xcm(i) = breeder_f
-     case (109) ; xcm(i) = ralpne
-     case (110) ; xcm(i) = ftaulimit
-     case (111) ; xcm(i) = fniterpump
-     case (112) ; xcm(i) = fzeffmax
-     case (113) ; xcm(i) = ftaucq
-     case (114) ; xcm(i) = fw_channel_length
-     case (115) ; xcm(i) = fpoloidalpower
-     case (116) ; xcm(i) = fradwall
-     case (117) ; xcm(i) = fpsepbqar
-     case (118) ; xcm(i) = fpsep
-     case (119) ; xcm(i) = tesep
-     case (120) ; xcm(i) = ttarget
-     case (121) ; xcm(i) = neratio
-     case (122) ; xcm(i) = oh_steel_frac
-     case (123) ; xcm(i) = foh_stress
-     case (124) ; xcm(i) = qtargettotal
-     case (125) ; xcm(i) = impurity_arr(3)%frac
-     case (126) ; xcm(i) = impurity_arr(4)%frac
-     case (127) ; xcm(i) = impurity_arr(5)%frac
-     case (128) ; xcm(i) = impurity_arr(6)%frac
-     case (129) ; xcm(i) = impurity_arr(7)%frac
-     case (130) ; xcm(i) = impurity_arr(8)%frac
-     case (131) ; xcm(i) = impurity_arr(9)%frac
-     case (132) ; xcm(i) = impurity_arr(10)%frac
-     case (133) ; xcm(i) = impurity_arr(11)%frac
-     case (134) ; xcm(i) = impurity_arr(12)%frac
-     case (135) ; xcm(i) = impurity_arr(13)%frac
-     case (136) ; xcm(i) = impurity_arr(14)%frac
-     case (137) ; xcm(i) = fplhsep
-     case (138) ; xcm(i) = rebco_thickness
-     case (139) ; xcm(i) = copper_thick
-     case (140) ; xcm(i) = thkwp
-     case (141) ; xcm(i) = fcqt
-     case (142) ; xcm(i) = nesep
-     case (143) ; xcm(i) = f_copperA_m2
-     case (144) ; xcm(i) = fnesep
-     case (145) ; xcm(i) = fgwped
-     case (146) ; xcm(i) = fcpttf
-     case (147) ; xcm(i) = freinke
-     case (148) ; xcm(i) = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual
-     case (149) ; xcm(i) = fbmaxcs
-     case (150) ; xcm(i) = plasmod_fcdp
-     case (151) ; xcm(i) = plasmod_fradc
-     case (152) ; xcm(i) = fgwsep
-     case (153) ; xcm(i) = fpdivlim
-     case (154) ; xcm(i) = fne0
+   !   case (41) ; xcm(i) = fcohbop
+   !   case (42) ; xcm(i) = gapoh
+   !   case (43) ; write(*,*) 'Iteration variable 43 is not supported.'
+   !   case (44) ; xcm(i) = fvsbrnni
+   !   case (45) ; xcm(i) = fqval
+   !   case (46) ; xcm(i) = fpinj
+   !   case (47) ; xcm(i) = feffcd
+   !   case (48) ; xcm(i) = fstrcase
+   !   case (49) ; xcm(i) = fstrcond
+   !   case (50) ; xcm(i) = fiooic
+   !   case (51) ; xcm(i) = fvdump
+   !   case (52) ; xcm(i) = vdalw
+   !   case (53) ; xcm(i) = fjprot
+   !   case (54) ; xcm(i) = ftmargtf
+   !   case (55) ; write(*,*) 'Iteration variable 55 is not supported.'
+   !   case (56) ; xcm(i) = tdmptf
+   !   case (57) ; xcm(i) = thkcas
+   !    !   if ((tfc_model == 0).or.(istell == 1)) call report_error(48)
+   !      if (istell == 1) call report_error(48)
+   !   case (58) ; xcm(i) = thwcndut
+   !   case (59) ; xcm(i) = fcutfsu
+   !   case (60) ; xcm(i) = cpttf
+   !      if ((istell == 1).or.(itfsup /= 1)) call report_error(49)
+   !   case (61) ; xcm(i) = gapds
+   !   case (62) ; xcm(i) = fdtmp
+   !   case (63) ; xcm(i) = ftpeak
+   !   case (64) ; xcm(i) = fauxmn
+   !   case (65) ; xcm(i) = tohs
+   !      if (lpulse /= 1) call report_error(50)
+   !   case (66) ; xcm(i) = ftohs
+   !   case (67) ; xcm(i) = ftcycl
+   !   case (68) ; xcm(i) = fptemp
+   !   case (69) ; xcm(i) = rcool
+   !   case (70) ; xcm(i) = vcool
+   !   case (71) ; xcm(i) = fq
+   !   case (72) ; xcm(i) = fipir
+   !   case (73) ; xcm(i) = scrapli
+   !   case (74) ; xcm(i) = scraplo
+   !   case (75) ; xcm(i) = tfootfi
+   !   case (76) ; write(*,*) 'Iteration variable 76 is not supported.'
+   !   case (77) ; write(*,*) 'Iteration variable 77 is not supported.'
+   !   case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
+   !   case (79) ; xcm(i) = fbetap
+   !   case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
+   !   case (81) ; write(*,*) 'Iteration variable 81 is not supported.'
+   !   case (82) ; write(*,*) 'Iteration variable 82 is not supported.'
+   !   case (83) ; write(*,*) 'Iteration variable 83 is not supported.'
+   !   case (84) ; write(*,*) 'Iteration variable 84 is not supported.'
+   !   case (85) ; write(*,*) 'Iteration variable 85 is not supported.'
+   !   case (86) ; write(*,*) 'Iteration variable 86 is not supported.'
+   !   case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
+   !   case (88) ; write(*,*) 'Iteration variable 87 is not supported.'
+   !   case (89) ; xcm(i) = ftbr
+   !   case (90) ; xcm(i) = blbuith
+   !   case (91) ; xcm(i) = blbuoth
+   !   case (92) ; xcm(i) = fflutf
+   !   case (93) ; xcm(i) = shldith
+   !   case (94) ; xcm(i) = shldoth
+   !   case (95) ; xcm(i) = fptfnuc
+   !   case (96) ; xcm(i) = fvvhe
+   !   case (97) ; xcm(i) = fpsepr
+   !   case (98) ; xcm(i) = li6enrich
+   !   case (99) ; write(*,*) 'Iteration variable 99 is not supported.'
+   !   case (100) ; write(*,*) 'Iteration variable 100 is not supported.'
+   !   case (101) ; write(*,*) 'Iteration variable 101 is not supported.'
+   !   case (102) ; xcm(i) = impurity_arr(impvar)%frac
+   !   case (103) ; xcm(i) = flhthresh
+   !   case (104) ; xcm(i) = fcwr
+   !   case (105) ; xcm(i) = fnbshinef
+   !   case (106) ; xcm(i) = ftmargoh
+   !   case (107) ; xcm(i) = favail
+   !   case (108) ; xcm(i) = breeder_f
+   !   case (109) ; xcm(i) = ralpne
+   !   case (110) ; xcm(i) = ftaulimit
+   !   case (111) ; xcm(i) = fniterpump
+   !   case (112) ; xcm(i) = fzeffmax
+   !   case (113) ; xcm(i) = ftaucq
+   !   case (114) ; xcm(i) = fw_channel_length
+   !   case (115) ; xcm(i) = fpoloidalpower
+   !   case (116) ; xcm(i) = fradwall
+   !   case (117) ; xcm(i) = fpsepbqar
+   !   case (118) ; xcm(i) = fpsep
+   !   case (119) ; xcm(i) = tesep
+   !   case (120) ; xcm(i) = ttarget
+   !   case (121) ; xcm(i) = neratio
+   !   case (122) ; xcm(i) = oh_steel_frac
+   !   case (123) ; xcm(i) = foh_stress
+   !   case (124) ; xcm(i) = qtargettotal
+   !   case (125) ; xcm(i) = impurity_arr(3)%frac
+   !   case (126) ; xcm(i) = impurity_arr(4)%frac
+   !   case (127) ; xcm(i) = impurity_arr(5)%frac
+   !   case (128) ; xcm(i) = impurity_arr(6)%frac
+   !   case (129) ; xcm(i) = impurity_arr(7)%frac
+   !   case (130) ; xcm(i) = impurity_arr(8)%frac
+   !   case (131) ; xcm(i) = impurity_arr(9)%frac
+   !   case (132) ; xcm(i) = impurity_arr(10)%frac
+   !   case (133) ; xcm(i) = impurity_arr(11)%frac
+   !   case (134) ; xcm(i) = impurity_arr(12)%frac
+   !   case (135) ; xcm(i) = impurity_arr(13)%frac
+   !   case (136) ; xcm(i) = impurity_arr(14)%frac
+   !   case (137) ; xcm(i) = fplhsep
+   !   case (138) ; xcm(i) = rebco_thickness
+   !   case (139) ; xcm(i) = copper_thick
+   !   case (140) ; xcm(i) = thkwp
+   !   case (141) ; xcm(i) = fcqt
+   !   case (142) ; xcm(i) = nesep
+   !   case (143) ; xcm(i) = f_copperA_m2
+   !   case (144) ; xcm(i) = fnesep
+   !   case (145) ; xcm(i) = fgwped
+   !   case (146) ; xcm(i) = fcpttf
+   !   case (147) ; xcm(i) = freinke
+   !   case (148) ; xcm(i) = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual
+   !   case (149) ; xcm(i) = fbmaxcs
+   !   case (150) ; xcm(i) = plasmod_fcdp
+   !   case (151) ; xcm(i) = plasmod_fradc
+   !   case (152) ; xcm(i) = fgwsep
+   !   case (153) ; xcm(i) = fpdivlim
+   !   case (154) ; xcm(i) = fne0
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -2805,241 +2809,241 @@ subroutine convxc(xc,nn)
      case (38);  call set_itv_38(ratio)
      case (39);  call set_itv_39(ratio)
      case (40);  call set_itv_40(ratio)
-   !   case (41);  call set_itv_41(ratio)
-   !   case (42);  call set_itv_42(ratio)
-   !   case (43);  call set_itv_43(ratio)
-   !   case (44);  call set_itv_44(ratio)
-   !   case (45);  call set_itv_45(ratio)
-   !   case (46);  call set_itv_46(ratio)
-   !   case (47);  call set_itv_47(ratio)
-   !   case (48);  call set_itv_48(ratio)
-   !   case (49);  call set_itv_49(ratio)
-   !   case (50);  call set_itv_50(ratio)
-   !   case (51);  call set_itv_51(ratio)
-   !   case (52);  call set_itv_52(ratio)
-   !   case (53);  call set_itv_53(ratio)
-   !   case (54);  call set_itv_54(ratio)
-   !   case (55);  call set_itv_55(ratio)
-   !   case (56);  call set_itv_56(ratio)
-   !   case (57);  call set_itv_57(ratio)
-   !   case (58);  call set_itv_58(ratio)
-   !   case (59);  call set_itv_59(ratio)
-   !   case (60);  call set_itv_60(ratio)
-   !   case (61);  call set_itv_61(ratio)
-   !   case (62);  call set_itv_62(ratio)
-   !   case (63);  call set_itv_63(ratio)
-   !   case (64);  call set_itv_64(ratio)
-   !   case (65);  call set_itv_65(ratio)
-   !   case (66);  call set_itv_66(ratio)
-   !   case (67);  call set_itv_67(ratio)
-   !   case (68);  call set_itv_68(ratio)
-   !   case (69);  call set_itv_69(ratio)
-   !   case (70);  call set_itv_70(ratio)
-   !   case (71);  call set_itv_71(ratio)
-   !   case (72);  call set_itv_72(ratio)
-   !   case (73);  call set_itv_73(ratio)
-   !   case (74);  call set_itv_74(ratio)
-   !   case (75);  call set_itv_75(ratio)
-   !   case (76);  call set_itv_76(ratio)
-   !   case (77);  call set_itv_77(ratio)
-   !   case (78);  call set_itv_78(ratio)
-   !   case (79);  call set_itv_79(ratio)
-   !   case (80);  call set_itv_80(ratio)
-   !   case (81);  call set_itv_81(ratio)
-   !   case (82);  call set_itv_82(ratio)
-   !   case (83);  call set_itv_83(ratio)
-   !   case (84);  call set_itv_84(ratio)
-   !   case (85);  call set_itv_85(ratio)
-   !   case (86);  call set_itv_86(ratio)
-   !   case (87);  call set_itv_87(ratio)
-   !   case (88);  call set_itv_88(ratio)
-   !   case (89);  call set_itv_89(ratio)
-   !   case (90);  call set_itv_90(ratio)
-   !   case (91);  call set_itv_91(ratio)
-   !   case (92);  call set_itv_92(ratio)
-   !   case (93);  call set_itv_93(ratio)
-   !   case (94);  call set_itv_94(ratio)
-   !   case (95);  call set_itv_95(ratio)
-   !   case (96);  call set_itv_96(ratio)
-   !   case (97);  call set_itv_97(ratio)
-   !   case (98);  call set_itv_98(ratio)
-   !   case (99);  call set_itv_99(ratio)
-   !   case (100);  call set_itv_100(ratio)
-   !   case (101);  call set_itv_101(ratio)
-   !   case (102);  call set_itv_102(ratio)
-   !   case (103);  call set_itv_103(ratio)
-   !   case (104);  call set_itv_104(ratio)
-   !   case (105);  call set_itv_105(ratio)
-   !   case (106);  call set_itv_106(ratio)
-   !   case (107);  call set_itv_107(ratio)
-   !   case (108);  call set_itv_108(ratio)
-   !   case (109);  call set_itv_109(ratio)
-   !   case (110);  call set_itv_110(ratio)
-   !   case (111);  call set_itv_111(ratio)
-   !   case (112);  call set_itv_112(ratio)
-   !   case (113);  call set_itv_113(ratio)
-   !   case (114);  call set_itv_114(ratio)
-   !   case (115);  call set_itv_115(ratio)
-   !   case (116);  call set_itv_116(ratio)
-   !   case (117);  call set_itv_117(ratio)
-   !   case (118);  call set_itv_118(ratio)
-   !   case (119);  call set_itv_119(ratio)
-   !   case (120);  call set_itv_120(ratio)
-   !   case (121);  call set_itv_121(ratio)
-   !   case (122);  call set_itv_122(ratio)
-   !   case (123);  call set_itv_123(ratio)
-   !   case (124);  call set_itv_124(ratio)
-   !   case (125);  call set_itv_125(ratio)
-   !   case (126);  call set_itv_126(ratio)
-   !   case (127);  call set_itv_127(ratio)
-   !   case (128);  call set_itv_128(ratio)
-   !   case (129);  call set_itv_129(ratio)
-   !   case (130);  call set_itv_130(ratio)
-   !   case (131);  call set_itv_131(ratio)
-   !   case (132);  call set_itv_132(ratio)
-   !   case (133);  call set_itv_133(ratio)
-   !   case (134);  call set_itv_134(ratio)
-   !   case (135);  call set_itv_135(ratio)
-   !   case (136);  call set_itv_136(ratio)
-   !   case (137);  call set_itv_137(ratio)
-   !   case (138);  call set_itv_138(ratio)
-   !   case (139);  call set_itv_139(ratio)
-   !   case (140);  call set_itv_140(ratio)
-   !   case (141);  call set_itv_141(ratio)
-   !   case (142);  call set_itv_142(ratio)
-   !   case (143);  call set_itv_143(ratio)
-   !   case (144);  call set_itv_144(ratio)
-   !   case (145);  call set_itv_145(ratio)
-   !   case (146);  call set_itv_146(ratio)
-   !   case (147);  call set_itv_147(ratio)
-   !   case (148);  call set_itv_148(ratio)
-   !   case (149);  call set_itv_149(ratio)
-   !   case (150);  call set_itv_150(ratio)
-   !   case (151);  call set_itv_151(ratio)
-   !   case (152);  call set_itv_152(ratio)
-   !   case (153);  call set_itv_153(ratio)
-   !   case (154);  call set_itv_154(ratio)
+     case (41);  call set_itv_41(ratio)
+     case (42);  call set_itv_42(ratio)
+     case (43);  
+     case (44);  call set_itv_44(ratio)
+     case (45);  call set_itv_45(ratio)
+     case (46);  call set_itv_46(ratio)
+     case (47);  call set_itv_47(ratio)
+     case (48);  call set_itv_48(ratio)
+     case (49);  call set_itv_49(ratio)
+     case (50);  call set_itv_50(ratio)
+     case (51);  call set_itv_51(ratio)
+     case (52);  call set_itv_52(ratio)
+     case (53);  call set_itv_53(ratio)
+     case (54);  call set_itv_54(ratio)
+     case (55);  
+     case (56);  call set_itv_56(ratio)
+     case (57);  call set_itv_57(ratio)
+     case (58);  call set_itv_58(ratio)
+     case (59);  call set_itv_59(ratio)
+     case (60);  call set_itv_60(ratio)
+     case (61);  call set_itv_61(ratio)
+     case (62);  call set_itv_62(ratio)
+     case (63);  call set_itv_63(ratio)
+     case (64);  call set_itv_64(ratio)
+     case (65);  call set_itv_65(ratio)
+     case (66);  call set_itv_66(ratio)
+     case (67);  call set_itv_67(ratio)
+     case (68);  call set_itv_68(ratio)
+     case (69);  call set_itv_69(ratio)
+     case (70);  call set_itv_70(ratio)
+     case (71);  call set_itv_71(ratio)
+     case (72);  call set_itv_72(ratio)
+     case (73);  call set_itv_73(ratio)
+     case (74);  call set_itv_74(ratio)
+     case (75);  call set_itv_75(ratio)
+     case (76);  
+     case (77);  
+     case (78);  
+     case (79);  call set_itv_79(ratio)
+     case (80);  
+     case (81);  
+     case (82);  
+     case (83);  
+     case (84);  
+     case (85);  
+     case (86);  
+     case (87);  
+     case (88);  
+     case (89);  call set_itv_89(ratio)
+     case (90);  call set_itv_90(ratio)
+     case (91);  call set_itv_91(ratio)
+     case (92);  call set_itv_92(ratio)
+     case (93);  call set_itv_93(ratio)
+     case (94);  call set_itv_94(ratio)
+     case (95);  call set_itv_95(ratio)
+     case (96);  call set_itv_96(ratio)
+     case (97);  call set_itv_97(ratio)
+     case (98);  call set_itv_98(ratio)
+     case (99);  
+     case (100);  
+     case (101);  
+     case (102);  call set_itv_102(ratio)
+     case (103);  call set_itv_103(ratio)
+     case (104);  call set_itv_104(ratio)
+     case (105);  call set_itv_105(ratio)
+     case (106);  call set_itv_106(ratio)
+     case (107);  call set_itv_107(ratio)
+     case (108);  call set_itv_108(ratio)
+     case (109);  call set_itv_109(ratio)
+     case (110);  call set_itv_110(ratio)
+     case (111);  call set_itv_111(ratio)
+     case (112);  call set_itv_112(ratio)
+     case (113);  call set_itv_113(ratio)
+     case (114);  call set_itv_114(ratio)
+     case (115);  call set_itv_115(ratio)
+     case (116);  call set_itv_116(ratio)
+     case (117);  call set_itv_117(ratio)
+     case (118);  call set_itv_118(ratio)
+     case (119);  call set_itv_119(ratio)
+     case (120);  call set_itv_120(ratio)
+     case (121);  call set_itv_121(ratio)
+     case (122);  call set_itv_122(ratio)
+     case (123);  call set_itv_123(ratio)
+     case (124);  call set_itv_124(ratio)
+     case (125);  call set_itv_125(ratio)
+     case (126);  call set_itv_126(ratio)
+     case (127);  call set_itv_127(ratio)
+     case (128);  call set_itv_128(ratio)
+     case (129);  call set_itv_129(ratio)
+     case (130);  call set_itv_130(ratio)
+     case (131);  call set_itv_131(ratio)
+     case (132);  call set_itv_132(ratio)
+     case (133);  call set_itv_133(ratio)
+     case (134);  call set_itv_134(ratio)
+     case (135);  call set_itv_135(ratio)
+     case (136);  call set_itv_136(ratio)
+     case (137);  call set_itv_137(ratio)
+     case (138);  call set_itv_138(ratio)
+     case (139);  call set_itv_139(ratio)
+     case (140);  call set_itv_140(ratio)
+     case (141);  call set_itv_141(ratio)
+     case (142);  call set_itv_142(ratio)
+     case (143);  call set_itv_143(ratio)
+     case (144);  call set_itv_144(ratio)
+     case (145);  call set_itv_145(ratio)
+     case (146);  call set_itv_146(ratio)
+     case (147);  call set_itv_147(ratio)
+     case (148);  call set_itv_148(ratio)
+     case (149);  call set_itv_149(ratio)
+     case (150);  call set_itv_150(ratio)
+     case (151);  call set_itv_151(ratio)
+     case (152);  call set_itv_152(ratio)
+     case (153);  call set_itv_153(ratio)
+     case (154);  call set_itv_154(ratio)
 
       
-     case (41) ; fcohbop   = xc(i)/scale(i)
-     case (42) ; gapoh     = xc(i)/scale(i)
-     case (43) ; write(*,*) 'Iteration variable 43 is not supported.'
-     case (44) ; fvsbrnni  = xc(i)/scale(i)
-     case (45) ; fqval     = xc(i)/scale(i)
-     case (46) ; fpinj     = xc(i)/scale(i)
-     case (47) ; feffcd    = xc(i)/scale(i)
-     case (48) ; fstrcase  = xc(i)/scale(i)
-     case (49) ; fstrcond  = xc(i)/scale(i)
-     case (50) ; fiooic    = xc(i)/scale(i)
-     case (51) ; fvdump    = xc(i)/scale(i)
-     case (52) ; vdalw     = xc(i)/scale(i)
-     case (53) ; fjprot    = xc(i)/scale(i)
-     case (54) ; ftmargtf  = xc(i)/scale(i)
-     case (55) ; write(*,*) 'Iteration variable 55 is not supported.'
-     case (56) ; tdmptf    = xc(i)/scale(i)
-     case (57) ; thkcas    = xc(i)/scale(i)
-     case (58) ; thwcndut  = xc(i)/scale(i)
-     case (59) ; fcutfsu   = xc(i)/scale(i)
-     case (60) ; cpttf     = xc(i)/scale(i)
-     case (61) ; gapds     = xc(i)/scale(i)
-     case (62) ; fdtmp     = xc(i)/scale(i)
-     case (63) ; ftpeak    = xc(i)/scale(i)
-     case (64) ; fauxmn    = xc(i)/scale(i)
-     case (65) ; tohs      = xc(i)/scale(i)
-     case (66) ; ftohs     = xc(i)/scale(i)
-     case (67) ; ftcycl    = xc(i)/scale(i)
-     case (68) ; fptemp    = xc(i)/scale(i)
-     case (69) ; rcool     = xc(i)/scale(i)
-     case (70) ; vcool     = xc(i)/scale(i)
-     case (71) ; fq        = xc(i)/scale(i)
-     case (72) ; fipir     = xc(i)/scale(i)
-     case (73) ; scrapli   = xc(i)/scale(i)
-     case (74) ; scraplo   = xc(i)/scale(i)
-     case (75) ; tfootfi   = xc(i)/scale(i)
-     case (76) ; write(*,*) 'Iteration variable 76 is not supported.'
-     case (77) ; write(*,*) 'Iteration variable 77 is not supported.'
-     case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
-     case (79) ; fbetap    = xc(i)/scale(i)
-     case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
-     case (81) ; write(*,*) 'Iteration variable 81 is not supported.'
-     case (82) ; write(*,*) 'Iteration variable 82 is not supported.'
-     case (83) ; write(*,*) 'Iteration variable 83 is not supported.'
-     case (84) ; write(*,*) 'Iteration variable 84 is not supported.'
-     case (85) ; write(*,*) 'Iteration variable 85 is not supported.'
-     case (86) ; write(*,*) 'Iteration variable 86 is not supported.'
-     case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
-     case (88) ; write(*,*) 'Iteration variable 88 is not supported.'
-     case (89) ; ftbr      = xc(i)/scale(i)
-     case (90) ; blbuith   = xc(i)/scale(i)
-     case (91) ; blbuoth   = xc(i)/scale(i)
-     case (92) ; fflutf    = xc(i)/scale(i)
-     case (93) ; shldith   = xc(i)/scale(i)
-     case (94) ; shldoth   = xc(i)/scale(i)
-     case (95) ; fptfnuc   = xc(i)/scale(i)
-     case (96) ; fvvhe     = xc(i)/scale(i)
-     case (97) ; fpsepr    = xc(i)/scale(i)
-     case (98) ; li6enrich = xc(i)/scale(i)
-     case (99) ; write(*,*) 'Iteration variable 99 is not supported.'
-     case (100); write(*,*) 'Iteration variable 100 is not supported.'
-     case (101); write(*,*) 'Iteration variable 101 is not supported.'
-     case (102)
-        fimpvar = xc(i)/scale(i)
-        impurity_arr(impvar)%frac = fimpvar
-     case (103) ; flhthresh = xc(i)/scale(i)
-     case (104) ; fcwr      = xc(i)/scale(i)
-     case (105) ; fnbshinef = xc(i)/scale(i)
-     case (106) ; ftmargoh  = xc(i)/scale(i)
-     case (107) ; favail    = xc(i)/scale(i)
-     case (108) ; breeder_f = xc(i)/scale(i)
-     case (109) ; ralpne    = xc(i)/scale(i)
-     case (110) ; ftaulimit = xc(i)/scale(i)
-     case (111) ; fniterpump = xc(i)/scale(i)
-     case (112) ; fzeffmax = xc(i)/scale(i)
-     case (113) ; ftaucq = xc(i)/scale(i)
-     case (114) ; fw_channel_length = xc(i)/scale(i)
-     case (115) ; fpoloidalpower = xc(i)/scale(i)
-     case (116) ; fradwall = xc(i)/scale(i)
-     case (117) ; fpsepbqar = xc(i)/scale(i)
-     case (118) ; fpsep = xc(i)/scale(i)
-     case (119) ; tesep = xc(i)/scale(i)
-     case (120) ; ttarget = xc(i)/scale(i)
-     case (121) ; neratio = xc(i)/scale(i)
-     case (122) ; oh_steel_frac = xc(i)/scale(i)
-     case (123) ; foh_stress = xc(i)/scale(i)
-     case (124) ; qtargettotal = xc(i)/scale(i)
-     case (125) ; impurity_arr(3)%frac = xc(i)/scale(i)
-     case (126) ; impurity_arr(4)%frac = xc(i)/scale(i)
-     case (127) ; impurity_arr(5)%frac = xc(i)/scale(i)
-     case (128) ; impurity_arr(6)%frac = xc(i)/scale(i)
-     case (129) ; impurity_arr(7)%frac = xc(i)/scale(i)
-     case (130) ; impurity_arr(8)%frac = xc(i)/scale(i)
-     case (131) ; impurity_arr(9)%frac = xc(i)/scale(i)
-     case (132) ; impurity_arr(10)%frac = xc(i)/scale(i)
-     case (133) ; impurity_arr(11)%frac = xc(i)/scale(i)
-     case (134) ; impurity_arr(12)%frac = xc(i)/scale(i)
-     case (135) ; impurity_arr(13)%frac = xc(i)/scale(i)
-     case (136) ; impurity_arr(14)%frac = xc(i)/scale(i)
-     case (137) ; fplhsep = xc(i)/scale(i)
-     case (138) ; rebco_thickness = xc(i)/scale(i)
-     case (139) ; copper_thick = xc(i)/scale(i)
-     case (140) ; thkwp = xc(i)/scale(i)
-     case (141) ; fcqt = xc(i)/scale(i)
-     case (142) ; nesep = xc(i)/scale(i)
-     case (143) ; f_copperA_m2 = xc(i)/scale(i)
-     case (144) ; fnesep = xc(i)/scale(i)
-     case (145) ; fgwped = xc(i)/scale(i)
-     case (146) ; fcpttf = xc(i)/scale(i)
-     case (147) ; freinke = xc(i)/scale(i)
-     case (148)
-        fzactual = xc(i)/scale(i)
-        impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
-        write(*,*) 'fzactual = ', fzactual
-     case (149) ; fbmaxcs = xc(i)/scale(i)
-     case (150) ; plasmod_fcdp = xc(i)/scale(i)
-     case (151) ; plasmod_fradc = xc(i)/scale(i)
-     case (152) ; fgwsep = xc(i)/scale(i)
-     case (153) ; fpdivlim = xc(i)/scale(i)
-     case (154) ; fne0 = xc(i)/scale(i)
+   !   case (41) ; fcohbop   = xc(i)/scale(i)
+   !   case (42) ; gapoh     = xc(i)/scale(i)
+   !   case (43) ; write(*,*) 'Iteration variable 43 is not supported.'
+   !   case (44) ; fvsbrnni  = xc(i)/scale(i)
+   !   case (45) ; fqval     = xc(i)/scale(i)
+   !   case (46) ; fpinj     = xc(i)/scale(i)
+   !   case (47) ; feffcd    = xc(i)/scale(i)
+   !   case (48) ; fstrcase  = xc(i)/scale(i)
+   !   case (49) ; fstrcond  = xc(i)/scale(i)
+   !   case (50) ; fiooic    = xc(i)/scale(i)
+   !   case (51) ; fvdump    = xc(i)/scale(i)
+   !   case (52) ; vdalw     = xc(i)/scale(i)
+   !   case (53) ; fjprot    = xc(i)/scale(i)
+   !   case (54) ; ftmargtf  = xc(i)/scale(i)
+   !   case (55) ; write(*,*) 'Iteration variable 55 is not supported.'
+   !   case (56) ; tdmptf    = xc(i)/scale(i)
+   !   case (57) ; thkcas    = xc(i)/scale(i)
+   !   case (58) ; thwcndut  = xc(i)/scale(i)
+   !   case (59) ; fcutfsu   = xc(i)/scale(i)
+   !   case (60) ; cpttf     = xc(i)/scale(i)
+   !   case (61) ; gapds     = xc(i)/scale(i)
+   !   case (62) ; fdtmp     = xc(i)/scale(i)
+   !   case (63) ; ftpeak    = xc(i)/scale(i)
+   !   case (64) ; fauxmn    = xc(i)/scale(i)
+   !   case (65) ; tohs      = xc(i)/scale(i)
+   !   case (66) ; ftohs     = xc(i)/scale(i)
+   !   case (67) ; ftcycl    = xc(i)/scale(i)
+   !   case (68) ; fptemp    = xc(i)/scale(i)
+   !   case (69) ; rcool     = xc(i)/scale(i)
+   !   case (70) ; vcool     = xc(i)/scale(i)
+   !   case (71) ; fq        = xc(i)/scale(i)
+   !   case (72) ; fipir     = xc(i)/scale(i)
+   !   case (73) ; scrapli   = xc(i)/scale(i)
+   !   case (74) ; scraplo   = xc(i)/scale(i)
+   !   case (75) ; tfootfi   = xc(i)/scale(i)
+   !   case (76) ; write(*,*) 'Iteration variable 76 is not supported.'
+   !   case (77) ; write(*,*) 'Iteration variable 77 is not supported.'
+   !   case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
+   !   case (79) ; fbetap    = xc(i)/scale(i)
+   !   case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
+   !   case (81) ; write(*,*) 'Iteration variable 81 is not supported.'
+   !   case (82) ; write(*,*) 'Iteration variable 82 is not supported.'
+   !   case (83) ; write(*,*) 'Iteration variable 83 is not supported.'
+   !   case (84) ; write(*,*) 'Iteration variable 84 is not supported.'
+   !   case (85) ; write(*,*) 'Iteration variable 85 is not supported.'
+   !   case (86) ; write(*,*) 'Iteration variable 86 is not supported.'
+   !   case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
+   !   case (88) ; write(*,*) 'Iteration variable 88 is not supported.'
+   !   case (89) ; ftbr      = xc(i)/scale(i)
+   !   case (90) ; blbuith   = xc(i)/scale(i)
+   !   case (91) ; blbuoth   = xc(i)/scale(i)
+   !   case (92) ; fflutf    = xc(i)/scale(i)
+   !   case (93) ; shldith   = xc(i)/scale(i)
+   !   case (94) ; shldoth   = xc(i)/scale(i)
+   !   case (95) ; fptfnuc   = xc(i)/scale(i)
+   !   case (96) ; fvvhe     = xc(i)/scale(i)
+   !   case (97) ; fpsepr    = xc(i)/scale(i)
+   !   case (98) ; li6enrich = xc(i)/scale(i)
+   !   case (99) ; write(*,*) 'Iteration variable 99 is not supported.'
+   !   case (100); write(*,*) 'Iteration variable 100 is not supported.'
+   !   case (101); write(*,*) 'Iteration variable 101 is not supported.'
+   !   case (102)
+   !      fimpvar = xc(i)/scale(i)
+   !      impurity_arr(impvar)%frac = fimpvar
+   !   case (103) ; flhthresh = xc(i)/scale(i)
+   !   case (104) ; fcwr      = xc(i)/scale(i)
+   !   case (105) ; fnbshinef = xc(i)/scale(i)
+   !   case (106) ; ftmargoh  = xc(i)/scale(i)
+   !   case (107) ; favail    = xc(i)/scale(i)
+   !   case (108) ; breeder_f = xc(i)/scale(i)
+   !   case (109) ; ralpne    = xc(i)/scale(i)
+   !   case (110) ; ftaulimit = xc(i)/scale(i)
+   !   case (111) ; fniterpump = xc(i)/scale(i)
+   !   case (112) ; fzeffmax = xc(i)/scale(i)
+   !   case (113) ; ftaucq = xc(i)/scale(i)
+   !   case (114) ; fw_channel_length = xc(i)/scale(i)
+   !   case (115) ; fpoloidalpower = xc(i)/scale(i)
+   !   case (116) ; fradwall = xc(i)/scale(i)
+   !   case (117) ; fpsepbqar = xc(i)/scale(i)
+   !   case (118) ; fpsep = xc(i)/scale(i)
+   !   case (119) ; tesep = xc(i)/scale(i)
+   !   case (120) ; ttarget = xc(i)/scale(i)
+   !   case (121) ; neratio = xc(i)/scale(i)
+   !   case (122) ; oh_steel_frac = xc(i)/scale(i)
+   !   case (123) ; foh_stress = xc(i)/scale(i)
+   !   case (124) ; qtargettotal = xc(i)/scale(i)
+   !   case (125) ; impurity_arr(3)%frac = xc(i)/scale(i)
+   !   case (126) ; impurity_arr(4)%frac = xc(i)/scale(i)
+   !   case (127) ; impurity_arr(5)%frac = xc(i)/scale(i)
+   !   case (128) ; impurity_arr(6)%frac = xc(i)/scale(i)
+   !   case (129) ; impurity_arr(7)%frac = xc(i)/scale(i)
+   !   case (130) ; impurity_arr(8)%frac = xc(i)/scale(i)
+   !   case (131) ; impurity_arr(9)%frac = xc(i)/scale(i)
+   !   case (132) ; impurity_arr(10)%frac = xc(i)/scale(i)
+   !   case (133) ; impurity_arr(11)%frac = xc(i)/scale(i)
+   !   case (134) ; impurity_arr(12)%frac = xc(i)/scale(i)
+   !   case (135) ; impurity_arr(13)%frac = xc(i)/scale(i)
+   !   case (136) ; impurity_arr(14)%frac = xc(i)/scale(i)
+   !   case (137) ; fplhsep = xc(i)/scale(i)
+   !   case (138) ; rebco_thickness = xc(i)/scale(i)
+   !   case (139) ; copper_thick = xc(i)/scale(i)
+   !   case (140) ; thkwp = xc(i)/scale(i)
+   !   case (141) ; fcqt = xc(i)/scale(i)
+   !   case (142) ; nesep = xc(i)/scale(i)
+   !   case (143) ; f_copperA_m2 = xc(i)/scale(i)
+   !   case (144) ; fnesep = xc(i)/scale(i)
+   !   case (145) ; fgwped = xc(i)/scale(i)
+   !   case (146) ; fcpttf = xc(i)/scale(i)
+   !   case (147) ; freinke = xc(i)/scale(i)
+   !   case (148)
+   !      fzactual = xc(i)/scale(i)
+   !      impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
+   !      write(*,*) 'fzactual = ', fzactual
+   !   case (149) ; fbmaxcs = xc(i)/scale(i)
+   !   case (150) ; plasmod_fcdp = xc(i)/scale(i)
+   !   case (151) ; plasmod_fradc = xc(i)/scale(i)
+   !   case (152) ; fgwsep = xc(i)/scale(i)
+   !   case (153) ; fpdivlim = xc(i)/scale(i)
+   !   case (154) ; fne0 = xc(i)/scale(i)
 
      case default
 
