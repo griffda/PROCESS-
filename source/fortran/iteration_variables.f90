@@ -18,6 +18,7 @@ module define_iteration_variables
    use tfcoil_variables
    use times_variables
    implicit none; public
+   real(kind(1.0d0))::DUMMY
    contains
    !+ad_vars  lablxc(ipnvars) : labels describing iteration variables<UL> 
    
@@ -2184,6 +2185,198 @@ subroutine set_itv_154(ratio)
   real(kind(1.d0))::ratio
   fpdivlim = ratio
 end subroutine
+!---------------------------------
+subroutine init_itv_155
+end subroutine
+
+real(kind(1.d0)) function itv_155()
+   itv_155 = DUMMY 
+end function
+
+subroutine set_itv_155(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_156
+end subroutine
+
+real(kind(1.d0)) function itv_156()
+   itv_156 = DUMMY 
+end function
+
+subroutine set_itv_156(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_157
+end subroutine
+
+real(kind(1.d0)) function itv_157()
+   itv_157 = DUMMY 
+end function
+
+subroutine set_itv_157(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_158
+end subroutine
+
+real(kind(1.d0)) function itv_158()
+   itv_158 = DUMMY 
+end function
+
+subroutine set_itv_158(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_159
+end subroutine
+
+real(kind(1.d0)) function itv_159()
+   itv_159 = DUMMY 
+end function
+
+subroutine set_itv_159(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_160
+end subroutine
+
+real(kind(1.d0)) function itv_160()
+   itv_160 = DUMMY 
+end function
+
+subroutine set_itv_160(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_161
+end subroutine
+
+real(kind(1.d0)) function itv_161()
+   itv_161 = DUMMY 
+end function
+
+subroutine set_itv_161(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_162
+end subroutine
+
+real(kind(1.d0)) function itv_162()
+   itv_162 = DUMMY 
+end function
+
+subroutine set_itv_162(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_163
+end subroutine
+
+real(kind(1.d0)) function itv_163()
+   itv_163 = DUMMY 
+end function
+
+subroutine set_itv_163(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_164
+end subroutine
+
+real(kind(1.d0)) function itv_164()
+   itv_164 = DUMMY 
+end function
+
+subroutine set_itv_164(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_165
+end subroutine
+
+real(kind(1.d0)) function itv_165()
+   itv_165 = DUMMY 
+end function
+
+subroutine set_itv_165(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_166
+end subroutine
+
+real(kind(1.d0)) function itv_166()
+   itv_166 = DUMMY 
+end function
+
+subroutine set_itv_166(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_167
+end subroutine
+
+real(kind(1.d0)) function itv_167()
+   itv_167 = DUMMY 
+end function
+
+subroutine set_itv_167(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_168
+end subroutine
+
+real(kind(1.d0)) function itv_168()
+   itv_168 = DUMMY 
+end function
+
+subroutine set_itv_168(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_169
+end subroutine
+
+real(kind(1.d0)) function itv_169()
+   itv_169 = DUMMY 
+end function
+
+subroutine set_itv_169(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
+!---------------------------------
+subroutine init_itv_170
+end subroutine
+
+real(kind(1.d0)) function itv_170()
+   itv_170 = DUMMY 
+end function
+
+subroutine set_itv_170(ratio)
+  real(kind(1.d0))::ratio
+  DUMMY = ratio
+end subroutine
 
 
 !+ad_varc  </UL>
@@ -2457,6 +2650,22 @@ subroutine loadxc
          case(152);  xcm(i) = itv_152()
          case(153);  xcm(i) = itv_153()
          case(154);  xcm(i) = itv_154()
+         case (155);  xcm(i) = itv_155()
+         case (156);  xcm(i) = itv_156()
+         case (157);  xcm(i) = itv_157()
+         case (158);  xcm(i) = itv_158()
+         case (159);  xcm(i) = itv_159()
+         case (160);  xcm(i) = itv_160()
+         case (161);  xcm(i) = itv_161()
+         case (162);  xcm(i) = itv_162()
+         case (163);  xcm(i) = itv_163()
+         case (164);  xcm(i) = itv_164()
+         case (165);  xcm(i) = itv_165()
+         case (166);  xcm(i) = itv_166()
+         case (167);  xcm(i) = itv_167()
+         case (168);  xcm(i) = itv_168()
+         case (169);  xcm(i) = itv_169()
+         case (170);  xcm(i) = itv_170()
 
 
    !   case (10) ; xcm(i) = hfact
@@ -2923,6 +3132,22 @@ subroutine convxc(xc,nn)
      case (152);  call set_itv_152(ratio)
      case (153);  call set_itv_153(ratio)
      case (154);  call set_itv_154(ratio)
+         case (155);  call set_itv_155(ratio)
+         case (156);  call set_itv_156(ratio)
+         case (157);  call set_itv_157(ratio)
+         case (158);  call set_itv_158(ratio)
+         case (159);  call set_itv_159(ratio)
+         case (160);  call set_itv_160(ratio)
+         case (161);  call set_itv_161(ratio)
+         case (162);  call set_itv_162(ratio)
+         case (163);  call set_itv_163(ratio)
+         case (164);  call set_itv_164(ratio)
+         case (165);  call set_itv_165(ratio)
+         case (166);  call set_itv_166(ratio)
+         case (167);  call set_itv_167(ratio)
+         case (168);  call set_itv_168(ratio)
+         case (169);  call set_itv_169(ratio)
+         case (170);  call set_itv_170(ratio)      
 
       
    !   case (41) ; fcohbop   = xc(i)/scale(i)
