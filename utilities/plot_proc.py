@@ -697,7 +697,9 @@ def plot_tprofile(prof):
         rho = np.append(rhocore,rhosep)
         te = np.append(tcore,tsep)
     else:
-        rho = np.linspace(0,1)
+        rho1 = np.linspace(0,0.95)
+        rho2 = np.linspace(0.95,1)
+        rho = np.append(rho1,rho2)
         te = te0 * (1-rho**2)**alphat
     prof.plot(rho,te)
 

@@ -605,13 +605,14 @@ source file     & description \\
 \end{table}
 
 \subsection{Costing module}
-Two cost models are available:
+Three cost models are available:
 \begin{itemize}
 	\item the 1990 one contained in \texttt{costs.f90} performs all the cost calculations, 
 		including values in M\$ for each machine system, and the cost of electricity
 		in m\$/kWh. Normally, the machine costs are written to the output file; if
 		this is not required set switch \texttt{output\_costs = 0}. 
 	\item The Kovari 2015 one, contained in \texttt{costs$\_$2015.f90}, provides only the capital cost.
+	\item A new cost model under development in \texttt{costs$\_$step.f90}
 \end{itemize}
 
 

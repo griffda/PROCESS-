@@ -326,10 +326,11 @@ contains
     !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
     !+ad_hist  12/01/18 KE  Added fnesep f-value for Eich crit. separatrix density
     !+ad_hist  15/02/18 SIM Made denw an input
-    !+ad_hist  22/06/18 SIM Made cdtfleg ann output instead of an input
+    !+ad_hist  22/06/18 SIM Made cdtfleg an output instead of an input
     !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
     !+ad_hist  22/06/18 SIM tfacpd now always an output
     !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
+    !+ad_hist  17/04/19 SIM Added step_ref
     !+ad_hist  13/05/19 SIM Added tauee_in
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
@@ -2558,6 +2559,9 @@ contains
        case ('fcontng')
           call parse_real_variable('fcontng', fcontng, 0.0D0, 1.0D0, &
                'Project contingency factor')
+       case ('step_ref')
+          call parse_real_array('step_ref', step_ref, isub1, 68, &
+               'Reference values for cost model 2', icode)
        case ('ucblbe')
           call parse_real_variable('ucblbe', ucblbe, 1.0D0, 1.0D3, &
                'Unit cost for blanket Be ($/kg)')
