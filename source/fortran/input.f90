@@ -993,12 +993,12 @@ contains
        case ('fpsepbqar')
           call parse_real_variable('fpsepbqar', fpsepbqar, 0.001D0, 1.0D0, &
                        'f-value for TF coil quench temperature < tmax_croco (constraint equation 74)')
-
        case ('fcqt')
           call parse_real_variable('fcqt', fcqt, 0.001D0, 1.0D0, &
                        'TF coil quench temparature remains below tmax_croco')
-
-
+       case ('fne0')
+          call parse_real_variable('fne0', fne0, 0.001D0, 1.0D0, &
+                       'Central electron temperature remains higher that the pedestal one')
        case ('gammax')
           call parse_real_variable('gammax', gammax, 0.01D0, 10.0D0, &
                'Maximum current drive gamma (A/W-m2)')
