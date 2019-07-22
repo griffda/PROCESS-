@@ -30,7 +30,9 @@ module define_iteration_variables
       boundu(1) = 10.00D0 
    end subroutine
 
-   real(kind(1.d0)) function itv_1(); itv_1 = aspect; end 
+   real(kind(1.d0)) function itv_1()
+      itv_1 = aspect
+   end function
    subroutine set_itv_1(ratio)
       real(kind(1.d0))::ratio
       aspect = ratio
@@ -1545,8 +1547,8 @@ subroutine init_itv_115
        !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field
        !+ad_varc             (f-value for equation 66)
        lablxc(115) = 'fpoloidalpower'
-      boundl(26) = 0.001D0
-      boundu(26) = 1.000D0
+      boundl(115) = 0.001D0
+      boundu(115) = 1.000D0
 end subroutine
 
 real(kind(1.d0)) function itv_115()
@@ -1711,12 +1713,12 @@ subroutine init_itv_125
 end subroutine
 
 real(kind(1.d0)) function itv_125()
-   itv_125 = fimp(03) 
+   itv_125 = impurity_arr(3)%frac 
 end function
 
 subroutine set_itv_125(ratio)
   real(kind(1.d0))::ratio
-  fimp(03) = ratio
+  impurity_arr(3)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_126
@@ -1727,12 +1729,12 @@ subroutine init_itv_126
 end subroutine
 
 real(kind(1.d0)) function itv_126()
-   itv_126 = fimp(04) 
+   itv_126 = impurity_arr(4)%frac 
 end function
 
 subroutine set_itv_126(ratio)
   real(kind(1.d0))::ratio
-  fimp(04) = ratio
+  impurity_arr(4)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_127
@@ -1743,12 +1745,12 @@ subroutine init_itv_127
 end subroutine
 
 real(kind(1.d0)) function itv_127()
-   itv_127 = fimp(05) 
+   itv_127 = impurity_arr(5)%frac 
 end function
 
 subroutine set_itv_127(ratio)
   real(kind(1.d0))::ratio
-  fimp(05) = ratio
+  impurity_arr(5)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_128
@@ -1759,12 +1761,12 @@ subroutine init_itv_128
 end subroutine
 
 real(kind(1.d0)) function itv_128()
-   itv_128 = fimp(06) 
+   itv_128 = impurity_arr(6)%frac 
 end function
 
 subroutine set_itv_128(ratio)
   real(kind(1.d0))::ratio
-  fimp(06) = ratio
+  impurity_arr(6)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_129
@@ -1775,12 +1777,12 @@ subroutine init_itv_129
 end subroutine
 
 real(kind(1.d0)) function itv_129()
-   itv_129 = fimp(07) 
+   itv_129 = impurity_arr(7)%frac 
 end function
 
 subroutine set_itv_129(ratio)
   real(kind(1.d0))::ratio
-  fimp(07) = ratio
+  impurity_arr(7)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_130
@@ -1791,12 +1793,12 @@ subroutine init_itv_130
 end subroutine
 
 real(kind(1.d0)) function itv_130()
-   itv_130 = fimp(08) 
+   itv_130 = impurity_arr(8)%frac 
 end function
 
 subroutine set_itv_130(ratio)
   real(kind(1.d0))::ratio
-  fimp(08) = ratio
+  impurity_arr(8)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_131
@@ -1807,12 +1809,12 @@ subroutine init_itv_131
 end subroutine
 
 real(kind(1.d0)) function itv_131()
-   itv_131 = fimp(09) 
+   itv_131 = impurity_arr(9)%frac 
 end function
 
 subroutine set_itv_131(ratio)
   real(kind(1.d0))::ratio
-  fimp(09) = ratio
+  impurity_arr(9)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_132
@@ -1823,12 +1825,12 @@ subroutine init_itv_132
 end subroutine
 
 real(kind(1.d0)) function itv_132()
-   itv_132 = fimp(10) 
+   itv_132 = impurity_arr(10)%frac 
 end function
 
 subroutine set_itv_132(ratio)
   real(kind(1.d0))::ratio
-  fimp(10) = ratio
+  impurity_arr(10)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_133
@@ -1839,12 +1841,12 @@ subroutine init_itv_133
 end subroutine
 
 real(kind(1.d0)) function itv_133()
-   itv_133 = fimp(11) 
+   itv_133 = impurity_arr(11)%frac 
 end function
 
 subroutine set_itv_133(ratio)
   real(kind(1.d0))::ratio
-  fimp(11) = ratio
+  impurity_arr(11)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_134
@@ -1855,12 +1857,12 @@ subroutine init_itv_134
 end subroutine
 
 real(kind(1.d0)) function itv_134()
-   itv_134 = fimp(12) 
+   itv_134 = impurity_arr(12)%frac 
 end function
 
 subroutine set_itv_134(ratio)
   real(kind(1.d0))::ratio
-  fimp(12) = ratio
+  impurity_arr(12)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_135
@@ -1871,12 +1873,12 @@ subroutine init_itv_135
 end subroutine
 
 real(kind(1.d0)) function itv_135()
-   itv_135 = fimp(13) 
+   itv_135 = impurity_arr(13)%frac 
 end function
 
 subroutine set_itv_135(ratio)
   real(kind(1.d0))::ratio
-  fimp(13) = ratio
+  impurity_arr(13)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_136
@@ -1887,12 +1889,12 @@ subroutine init_itv_136
 end subroutine
 
 real(kind(1.d0)) function itv_136()
-   itv_136 = fimp(14) 
+   itv_136 = impurity_arr(14)%frac 
 end function
 
 subroutine set_itv_136(ratio)
   real(kind(1.d0))::ratio
-  fimp(14) = ratio
+  impurity_arr(14)%frac = ratio
 end subroutine
 !---------------------------------
 subroutine init_itv_137

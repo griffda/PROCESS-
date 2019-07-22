@@ -65,10 +65,6 @@ subroutine initial
 
     call devtyp
 
-    !  Initialise stellarator parameters if necessary
-
-    if (istell == 1) call stinit
-
     !+ad_vars  boundl(ipnvars) /../ : lower bounds on iteration variables 
     !+ad_vars  boundu(ipnvars) /../ : upper bounds on iteration variables 
 
@@ -537,6 +533,11 @@ subroutine initial
     !    lablxc(153) = 'fpdivlim      '; boundl(153) = 0.001D0; boundu(153) = 1.000D0
     !    !+ad_varc  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)</UL>
     !    lablxc(154) = 'fpdivlim      '; boundl(154) = 0.001D0; boundu(154) = 1.000D0
+
+
+    !  Initialise stellarator parameters if necessary
+    !  This overrides some of the bounds of the tokamak parameters.
+    if (istell == 1) call stinit
 
 end subroutine initial
 
