@@ -4269,7 +4269,7 @@ end subroutine subr
    call ocmmnt(outfile,'Plasma ion densities / electron density:')
    do imp = 1,nimp
       ! MDK Update fimp, as this will make the ITV output work correctly.
-      fimp(imp)=impurity_arr(imp)%frac
+      fimp(imp) = impurity_arr(imp)%frac
       str1 = impurity_arr(imp)%label // ' concentration'
       str2 = '(fimp('//int_to_string2(imp)//')'
       ! MDK Add output flag for H which is calculated
