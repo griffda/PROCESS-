@@ -15,75 +15,6 @@ module numerics
   !+ad_prob  None
   !+ad_call  global_variables
   !+ad_call  maths_library
-  !+ad_hist  10/10/12 PJK Initial version of module
-  !+ad_hist  15/10/12 PJK Modified comment lines, and added default array values
-  !+ad_hist  06/11/12 PJK Modified comment lines
-  !+ad_hist  11/12/12 PJK Comment typo fixed
-  !+ad_hist  17/12/12 PJK New constraint equation 51 added
-  !+ad_hist  17/12/12 PJK New figure of merit 14 added
-  !+ad_hist  13/01/13 PJK Modified lablcc comment for eqn.47
-  !+ad_hist  31/01/13 PJK Changed FACTOR comment
-  !+ad_hist  11/04/13 PJK Listed explicitly the icc, ixc elements turned on
-  !+ad_hisc               by default; lowered boundu(rnbeam) to 1.0 from 1.0D20
-  !+ad_hist  04/06/13 PJK New constraint eqns 52-55 added; new iteration
-  !+ad_hisc               variables 89-96 added
-  !+ad_hist  11/06/13 PJK Changed eqn 41 description
-  !+ad_hist  19/06/13 PJK Changed eqn.23, var.28 descriptions
-  !+ad_hist  27/06/13 PJK Changed eqn.24 description
-  !+ad_hist  25/09/13 PJK Changed eqn.20 description
-  !+ad_hist  30/09/13 PJK New constraint eqn.56 added; new iteration variable
-  !+ad_hisc               97 added
-  !+ad_hist  18/11/13 PJK Changed boundl(25: fpnetel) to 0.001
-  !+ad_hist  18/11/13 PJK Changed various boundl, boundu values
-  !+ad_hist  28/11/13 PJK New iteration variable 98: li6enrich
-  !+ad_hist  17/12/13 PJK Added 'not recommended' comment for ioptimz=0
-  !+ad_hist  19/12/13 PJK Changed epsfcn description
-  !+ad_hist  12/02/14 PJK New figure of merit 15 added
-  !+ad_hist  13/02/14 PJK Expanded lablcc(56) to all 33 characters to
-  !+ad_hisc               prevent gfortran error message
-  !+ad_hist  26/02/14 PJK New constraint eqns 57,58 added; new iteration
-  !+ad_hisc               variables and 100 (ftfthko) added
-  !+ad_hist  27/02/14 PJK Modified nineqns comment
-  !+ad_hist  05/03/14 PJK Clarified lablcc descriptions
-  !+ad_hist  06/03/14 PJK Comment changes
-  !+ad_hist  30/04/14 PJK New iteration variable 101 (prp)
-  !+ad_hist  01/05/14 PJK Relabelled lablcc(28), lablmm(5)
-  !+ad_hist  08/05/14 PJK Changed boundu(101) (prp upper limit)
-  !+ad_hist  19/05/14 PJK Relabelled lablcc(15)
-  !+ad_hist  19/05/14 PJK Reassigned lablcc(17), lablxc(28: fradpwr)
-  !+ad_hist  02/06/14 PJK New iteration variable 102 (fimpvar)
-  !+ad_hist  30/06/14 PJK Changed boundl(11), boundu(11)
-  !+ad_hist  08/07/14 PJK Added verbose from global_variables
-  !+ad_hist  31/07/14 PJK Labelled constraints 57 and 58 as obsolete,
-  !+ad_hisc               also iteration variables 99, 100
-  !+ad_hist  17/09/14 PJK Changed default values
-  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
-  !+ad_hist  01/10/14 PJK Reassigned lablcc(15); new iteration variable 103
-  !+ad_hist  02/10/14 PJK Reassigned lablcc(23); new iteration variable 104
-  !+ad_hist  06/10/14 PJK New iteration variable 105; new constraint 59
-  !+ad_hist  13/10/14 PJK Changed boundu(50: fiooic) from 0.5 to 1.0
-  !+ad_hist  20/10/14 PJK Central Solenoid to CS
-  !+ad_hist  11/11/14 PJK New iteration variable 106; new constraint 60
-  !+ad_hist  13/11/14 PJK lablxc(106) corrected
-  !+ad_hist  25/11/14 PJK New iteration variable 107; new constraint 61
-  !+ad_hist  11/12/14 PJK Corrected lablcc(61) - all strings must be defined with
-  !+ad_hisc               the correct length as declared in the corresponding
-  !+ad_hisc               character(len=...) statement, otherwise
-  !+ad_hisc               compilation using gfortran fails
-  !+ad_hist  27/02/15 JM  Changed default values for boundu(4) and boundu & l (103)
-  !+ad_hist  27/05/15 MDK Added breeder_f as iteration variable 108
-  !+ad_hist  29/05/15 MDK Figure of merit 2 (P_fus P_in-total) has been replaced by "not used"
-  !+ad_hist  11/06/15 MDK Add active_constraints(ipeqns) : Boolean array showing which constraints are active.
-  !+ad_hist  05/08/15 MDK Add ralpne as an iteration variable. Constraint 62 on taup/taueff the ratio of particle to energy confinement times
-  !+ad_hist  26/08/15 MDK fniterpump as iteration variable 11, constraint 63 niterpump < tfno
-  !+ad_hist  18/11/15  RK Added new FoM for minimising RMAJOR and maximising TBURN and
-  !+ad_hisc               added constraint equation to limit Z_eff, including new iteration
-  !+ad_hisc		  variable 112 (fzeffmax)
-  !+ad_hist  26/11/15  RK New constraint equation for taucq
-  !+ad_hist  10/12/15  RK Net electrical output added as FoM
-  !+ad_hist  09/11/16 HL  Added new constraint 67, it. var. 116
-  !+ad_hist  19/01/17 JM  Added new constraint 68, it. var. 117
-  !+ad_hist  08/02/17 JM  Added new constraints 69,70, 71, it. var. 118, 119, 120 (Kallenbach)
   !+ad_hist  11/01/18 KE  Added new constraint eqn 76, Eich formula for nesep
   !+ad_hist  22/06/18 SIM cdtfleg (itv 24) no longer used
   !+ad_stat  Okay
@@ -101,7 +32,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 154
+  integer, parameter :: ipnvars = 170
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 81
   !+ad_vars  ipnfoms FIX : number of available figures of merit
@@ -395,323 +326,10 @@ module numerics
   !+ad_vars  boundl(ipnvars) /../ : lower bounds used on ixc variables during
   !+ad_varc                         VMCON optimisation runs
   real(kind(1.0D0)), dimension(ipnvars) :: boundl = 9.d-99
-!   real(kind(1.0D0)), dimension(ipnvars) :: boundl = (/ &
-!        1.100D0, &  !  1
-!        0.010D0, &  !  2
-!        0.100D0, &  !  3
-!        5.000D0, &  !  4
-!        0.001D0, &  !  5
-!        1.00D19, &  !  6
-!        1.00D-6, &  !  7
-!        0.001D0, &  !  8
-!        0.001D0, &  !  9
-!        0.100D0, &  !  10
-!        1.00D-3, &  !  11
-!        1.000D5, &  !  12
-!        0.100D0, &  !  13   MDK change from 1 to 0.1 25/05/2017
-!        0.001D0, &  !  14
-!        0.001D0, &  !  15
-!        0.010D0, &  !  16
-!        0.100D0, &  !  17
-!        2.000D0, &  !  18
-!        1.000D0, &  !  19
-!        40.00D0, &  !  20
-!        0.001D0, &  !  21
-!        0.001D0, &  !  22   KE made tbrnmn obsolete 18/05/18
-!        0.100D0, &  !  23
-!        1.000D4, &  !  24
-!        0.001D0, &  !  25
-!        0.001D0, &  !  26
-!        0.001D0, &  !  27
-!        0.001D0, &  !  28
-!        0.100D0, &  !  29
-!        0.010D0, &  !  30
-!        0.001D0, &  !  31
-!        0.001D0, &  !  32
-!        0.001D0, &  !  33
-!        0.001D0, &  !  34
-!        0.001D0, &  !  35
-!        0.001D0, &  !  36
-!        1.000D5, &  !  37
-!        0.010D0, &  !  38
-!        0.001D0, &  !  39
-!        0.001D0, &  !  40
-!        0.001D0, &  !  41
-!        0.001D0, &  !  42
-!        1.00D-6, &  !  43
-!        0.001D0, &  !  44
-!        0.001D0, &  !  45
-!        0.001D0, &  !  46
-!        0.001D0, &  !  47
-!        0.001D0, &  !  48
-!        0.001D0, &  !  49
-!        0.001D0, &  !  50
-!        0.001D0, &  !  51
-!        0.001D0, &  !  52
-!        0.001D0, &  !  53
-!        0.001D0, &  !  54
-!        0.001D0, &  !  55
-!        0.100D0, &  !  56
-!        0.050D0, &  !  57
-!        0.001D0, &  !  58
-!        0.001D0, &  !  59
-!        0.001D0, &  !  60
-!        0.001D0, &  !  61
-!        0.001D0, &  !  62
-!        0.001D0, &  !  63
-!        0.001D0, &  !  64
-!        0.100D0, &  !  65
-!        0.001D0, &  !  66
-!        0.001D0, &  !  67
-!        0.001D0, &  !  68
-!        0.001D0, &  !  69
-!        1.000D0, &  !  70
-!        0.001D0, &  !  71
-!        0.001D0, &  !  72
-!        0.001D0, &  !  73
-!        0.001D0, &  !  74
-!        0.200D0, &  !  75
-!        0.001D0, &  !  76
-!        0.050D0, &  !  77
-!        0.010D0, &  !  78
-!        0.001D0, &  !  79
-!        0.001D0, &  !  80
-!        1.000D5, &  !  81
-!        0.010D0, &  !  82
-!        1.000D0, &  !  83
-!        0.100D0, &  !  84
-!        1.000D6, &  !  85
-!        0.001D0, &  !  86
-!        1.000D0, &  !  87
-!        1.000D0, &  !  88
-!        0.001D0, &  !  89
-!        0.001D0, &  !  90
-!        0.001D0, &  !  91
-!        0.001D0, &  !  92
-!        0.001D0, &  !  93
-!        0.001D0, &  !  94
-!        0.001D0, &  !  95
-!        0.001D0, &  !  96
-!        0.001D0, &  !  97
-!        10.00D0, &  !  98
-!        0.001D0, &  !  99
-!        0.001D0, &  !  100
-!        1.00D-6, &  !  101
-!        1.00D-6, &  !  102
-!        1.000D0, &  !  103
-!        0.001D0, &  !  104
-!        0.001D0, &  !  105
-!        0.001D0, &  !  106
-!        0.001D0, &  !  107
-!        0.060D0, &  !  108
-!        0.050D0, &  !  109
-!        0.001D0, &  !  110
-!        0.001D0, &  !  111
-!        0.001D0, &  !  112
-!        0.001D0, &  !  113
-!        0.001D0, &  !  114
-!        0.001D0, &  !  115
-!        0.001D0, &  !  116
-!        0.001D0, &  !  117
-!        0.001D0, &  !  118
-!        0.000D0, &  !  119
-!        1.000D0, &  !  120
-!        0.001D0, &  !  121
-!        0.001D0, &  !  122
-!        0.001D0, &  !  123
-!        0.001D0, &  !  124
-!        1.00D-8, &  !  125
-!        1.00D-8, &  !  126
-!        1.00D-8, &  !  127
-!        1.00D-8, &  !  128
-!        1.00D-8, &  !  129
-!        1.00D-8, &  !  130
-!        1.00D-8, &  !  131
-!        1.00D-8, &  !  132
-!        1.00D-8, &  !  133
-!        1.00D-8, &  !  134
-!        1.00D-8, &  !  135
-!        1.00D-8, &  !  136
-!        0.001D0, &  !  137
-!        0.01D-6, &  !  138
-!        1.00D-6, &  !  139
-!        0.001D0, &  !  140
-!        0.001D0, &  !  141
-!        1.00D17, &  !  142
-!        0.001D0, &  !  143
-!        0.001D0, &  !  144
-!        0.500D0, &  !  145
-!        0.001D0, &  !  146
-!        0.001D0, &  !  147
-!        1.00D-8, &  !  148
-!        0.001D0, &  !  149
-!        0.000D0, &  !  150
-!        0.001D0, &  !  151
-!        0.001D0, &  !  152
-!        0.001D0, &  !  153
-!        0.001D0  &  !  154
-!        /)
 
-  ! !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
-  ! !+ad_varc                         VMCON optimisation runs
+  ! !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables 
   ! Issue #287 These bounds now defined in initial.f90
   real(kind(1.0D0)), dimension(ipnvars) :: boundu = 9.d99
-  !real(kind(1.0D0)), dimension(ipnvars) :: boundu = (/ &
-     !   10.00D0, &  !  1
-     !   30.00D0, &  !  2
-     !   50.00D0, &  !  3
-     !   150.0D0, &  !  4
-     !   1.000D0, &  !  5
-     !   1.00D21, &  !  6
-     !   1.000D0, &  !  7
-     !   1.000D0, &  !  8
-     !   1.000D0, &  !  9
-     !   3.000D0, &  !  10
-     !   1.000D3, &  !  11
-     !   1.500D8, &  !  12
-     !   5.000D0, &  !  13
-     !   1.000D0, &  !  14
-     !   1.000D0, &  !  15
-     !   10.00D0, &  !  16
-     !   1.000D8, &  !  17
-     !   50.00D0, &  !  18
-     !   1.000D6, &  !  19
-     !   3.000D2, &  !  20   SIM 09/10/18 Lowered to within input limit
-     !   1.000D0, &  !  21
-     !   1.000D6, &  !  22   KE made tbrnmn obsolete 18/05/18
-     !   0.500D0, &  !  23
-     !   1.000D8, &  !  24
-     !   1.000D0, &  !  25
-     !   1.000D0, &  !  26
-     !   1.000D0, &  !  27
-     !   0.990D0, &  !  28 Issue #219
-     !   10.00D0, &  !  29
-     !   1.000D0, &  !  30
-     !   1.000D1, &  !  31
-     !   1.000D0, &  !  32
-     !   1.000D0, &  !  33
-     !   1.000D0, &  !  34
-     !   1.000D0, &  !  35
-     !   1.000D0, &  !  36
-     !   1.000D8, &  !  37
-     !   1.000D0, &  !  38
-     !   1.000D0, &  !  39
-     !   1.000D0, &  !  40
-     !   1.000D0, &  !  41
-     !   10.00D0, &  !  42
-     !   3.00D-3, &  !  43
-     !   1.000D0, &  !  44
-     !   1.000D0, &  !  45
-     !   1.000D0, &  !  46
-     !   1.000D0, &  !  47
-     !   1.000D0, &  !  48
-     !   1.000D0, &  !  49
-     !   1.000D0, &  !  50
-     !   1.000D0, &  !  51
-     !   1.000D6, &  !  52
-     !   1.000D0, &  !  53
-     !   1.000D0, &  !  54
-     !   100.0D0, &  !  55
-     !   100.0D0, &  !  56
-     !   1.000D0, &  !  57
-     !   0.100D0, &  !  58
-     !   1.000D0, &  !  59
-     !   4.000D4, &  !  60
-     !   10.00D0, &  !  61
-     !   1.000D0, &  !  62
-     !   1.000D0, &  !  63
-     !   1.000D0, &  !  64
-     !   1.000D3, &  !  65
-     !   1.000D0, &  !  66
-     !   1.000D0, &  !  67
-     !   1.000D0, &  !  68
-     !   0.010D0, &  !  69
-     !   1.000D2, &  !  70
-     !   1.000D0, &  !  71
-     !   1.000D0, &  !  72
-     !   10.00D0, &  !  73
-     !   10.00D0, &  !  74
-     !   5.000D0, &  !  75
-     !   1.000D0, &  !  76
-     !   4.000D0, &  !  77
-     !   1.800D0, &  !  78
-     !   1.000D0, &  !  79
-     !   1.000D0, &  !  80
-     !   5.000D7, &  !  81
-     !   1.000D0, &  !  82
-     !   500.0D0, &  !  83
-     !   20.00D0, &  !  84
-     !   200.0D6, &  !  85
-     !   1.000D0, &  !  86
-     !   4.000D3, &  !  87
-     !   4.000D3, &  !  88
-     !   1.000D0, &  !  89
-     !   2.000D0, &  !  90
-     !   2.000D0, &  !  91
-     !   1.000D0, &  !  92
-     !   10.00D0, &  !  93
-     !   10.00D0, &  !  94
-     !   1.000D0, &  !  95
-     !   1.000D0, &  !  96
-     !   1.000D0, &  !  97
-     !   100.0D0, &  !  98
-     !   1.000D0, &  !  99
-     !   1.000D0, &  !  100
-     !   0.010D0, &  !  101
-     !   0.010D0, &  !  102
-     !   1.000D6, &  !  103
-     !   1.000D0, &  !  104
-     !   1.000D0, &  !  105
-     !   1.000D0, &  !  106
-     !   1.000D0, &  !  107
-     !   1.000D0, &  !  108
-     !   0.150D0, &  !  109
-     !   1.000D0, &  !  110
-     !   1.000D0, &  !  111
-     !   1.000D0, &  !  112
-     !   1.000D0, &  !  113
-     !   1.000D3, &  !  114
-     !   1.000D0, &  !  115
-     !   1.000D0, &  !  116
-     !   1.000D0, &  !  117
-     !   1.000D0, &  !  118
-     !   1.000D1, &  !  119
-     !   1.000D4, &  !  120
-     !   1.000D0, &  !  121
-     !   0.950D0, &  !  122
-     !   1.000D0, &  !  123
-     !   1.000D7, &  !  124
-     !   0.010D0, &  !  125
-     !   0.010D0, &  !  126
-     !   0.010D0, &  !  127
-     !   0.010D0, &  !  128
-     !   0.010D0, &  !  129
-     !   0.010D0, &  !  130
-     !   0.010D0, &  !  131
-     !   0.010D0, &  !  132
-     !   0.010D0, &  !  133
-     !   0.010D0, &  !  134
-     !   0.010D0, &  !  135
-     !   0.010D0, &  !  136
-     !   1.000D0, &  !  137
-     !   100.0D-6,&  !  138
-     !   1.00D-3, &  !  139
-     !   2.000D0, &  !  140
-     !   1.000D0, &  !  141
-     !   1.00D20, &  !  142
-     !   1.000D0, &  !  143
-     !   1.000D0, &  !  144
-     !   1.000D0, &  !  145
-     !   1.000D0, &  !  146
-     !   1.000D0, &  !  147
-     !   1.000D0, &  !  148
-     !   1.000D0, &  !  149
-     !   1.000D0, &  !  150
-     !   1.000D0, &  !  151
-     !   1.000D0, &  !  152
-     !   1.000D0, &  !  153
-     !   1.000D0  &  !  154
-     !   /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
   real(kind(1.0D0)), dimension(ipnvars) :: bondu = 0.0D0
@@ -722,7 +340,6 @@ module numerics
   real(kind(1.0D0)), dimension(ipnvars) :: xcm = 0.0D0
   real(kind(1.0D0)), dimension(ipnvars) :: xcs = 0.0D0
   real(kind(1.0D0)), dimension(ipvlam)  :: vlam = 0.0D0
-
 
 contains
 
@@ -802,7 +419,6 @@ contains
     !+ad_prob  None
     !+ad_call  fcnhyb
     !+ad_call  hybrd
-    !+ad_hist  27/07/11 PJK Initial F90 version
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -885,10 +501,6 @@ contains
     !+ad_call  fcnvmc1
     !+ad_call  fcnvmc2
     !+ad_call  vmcon
-    !+ad_hist  02/10/96 PJK Initial upgraded version
-    !+ad_hist  08/10/12 PJK Initial F90 version
-    !+ad_hist  10/10/12 PJK Added arguments fcnvmc1, fcnvmc2
-    !+ad_hist  26/02/14 PJK Added nviter argument to vmcon call
     !+ad_hist  27/02/14 PJK Corrected usage of m, meq in case of inequalities
     !+ad_hist  08/07/14 PJK Added attempt to fix problems if VMCON exits with ifail=5
     !+ad_stat  Okay
