@@ -591,7 +591,6 @@ subroutine check
         if (icurr /= 2 .and. icurr /= 9) then
             idiags(1) = icurr ; call report_error(37)
         end if
-        iohcl  = 0
         ipfloc(1) = 2
         ipfloc(2) = 3
         ipfloc(3) = 3
