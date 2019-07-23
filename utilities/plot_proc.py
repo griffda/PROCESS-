@@ -290,8 +290,8 @@ def poloidal_cross_section(axis, mfile_data, scan):
     ymax = 15
     axis.set_ylim([ymin, ymax])
     axis.set_xlim([xmin, xmax])
-    axis.set_autoscaley_on(False)
-    axis.set_autoscalex_on(False)
+    axis.set_autoscaley_on(True)
+    axis.set_autoscalex_on(True)
     axis.set_xlabel('R / m')
     axis.set_ylabel('Z / m')
     axis.set_title('Poloidal cross-section')
@@ -333,22 +333,22 @@ def color_key(axis):
     axis.set_autoscaley_on(False)
     axis.set_autoscalex_on(False)
 
-    axis.text(-5, 10, 'Central Solenoid', ha='left', va='top', size='medium')
+    axis.text(-5, 10, 'CS coil', ha='left', va='top', size='medium')
     axis.add_patch(patches.Rectangle([0.2, 9.7], 1, 0.4, lw=0,
                                      facecolor=solenoid))
 
-    axis.text(-5, 9, 'CS compression', ha='left', va='top', size='medium')
+    axis.text(-5, 9, 'CS comp', ha='left', va='top', size='medium')
     axis.add_patch(patches.Rectangle([0.2, 8.7], 1, 0.4, lw=0,
                                      facecolor=cscompression))
 
     axis.text(-5, 8, 'TF coil', ha='left', va='top', size='medium')
     axis.add_patch(patches.Rectangle([0.2, 7.7], 1, 0.4, lw=0, facecolor=tfc))
 
-    axis.text(-5, 7, 'Thermal shield', ha='left', va='top', size='medium')
+    axis.text(-5, 7, 'Th shield', ha='left', va='top', size='medium')
     axis.add_patch(patches.Rectangle([0.2, 6.7], 1, 0.4, lw=0,
                                      facecolor=thermal_shield))
 
-    axis.text(-5, 6, 'V. vessel & shield', ha='left', va='top', size='medium')
+    axis.text(-5, 6, 'VV & shield', ha='left', va='top', size='medium')
     axis.add_patch(patches.Rectangle([0.2, 5.7], 1, 0.4, lw=0,
                                      facecolor=vessel))
 
@@ -385,6 +385,13 @@ def toroidal_cross_section(axis, mfile_data, scan):
       mfile_data --> MFILE data object
       scan --> scan number to use
     """
+    
+    
+    # Check for Copper magnets
+    if "itfsup" in mfile_data.data.keys():
+        itfsup = mfile_data.data["itfsup"].get_scan(scan)
+    else:
+        itfsup = 1
 
     xmin = 0
     xmax = 20
@@ -392,8 +399,8 @@ def toroidal_cross_section(axis, mfile_data, scan):
     ymax = 20
     axis.set_ylim([ymin, ymax])
     axis.set_xlim([xmin, xmax])
-    axis.set_autoscaley_on(False)
-    axis.set_autoscalex_on(False)
+    axis.set_autoscaley_on(True)
+    axis.set_autoscalex_on(True)
     axis.set_xlabel('x / m')
     axis.set_ylabel('y / m')
     axis.set_title('Toroidal cross-section')
@@ -483,20 +490,24 @@ def toroidal_cross_section(axis, mfile_data, scan):
         # Overlay TF coil segments
         TF_outboard(axis, item, tfno=tfno, r3=r3, r4=r4, w=w, facecolor='cyan')
 
-    # Winding pack: inboard
-    rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp/2, wwp2/2, lw=0,
+    # Winding pack : inboard (superconducor only)
+    if itfsup is 1 :
+
+        # Inboard
+        rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp/2, wwp2/2, lw=0,
                              facecolor=winding)
-    axis.add_patch(rect)
-    rect = patches.Rectangle([r1 + thkcas +tinstf + thkwp/2, 0], thkwp/2,
+        axis.add_patch(rect)
+        rect = patches.Rectangle([r1 + thkcas +tinstf + thkwp/2, 0], thkwp/2,
                              wwp1/2, lw=0, facecolor=winding)
-    axis.add_patch(rect)
-    # Outboard
-    rect = patches.Rectangle([r3+casthi+tinstf, 0], thkwp/2, wwp1/2, lw=0,
-                             facecolor=winding)
-    axis.add_patch(rect)
-    rect = patches.Rectangle([r3+casthi+tinstf+thkwp/2, 0], thkwp/2, wwp2/2,
-                             lw=0, facecolor=winding)
-    axis.add_patch(rect)
+        axis.add_patch(rect)
+    
+        # Outboard
+        rect = patches.Rectangle([r3+casthi+tinstf, 0], thkwp/2, wwp1/2, lw=0,
+                               facecolor=winding)
+        axis.add_patch(rect)
+        rect = patches.Rectangle([r3+casthi+tinstf+thkwp/2, 0], thkwp/2, wwp2/2,
+                               lw=0, facecolor=winding)
+        axis.add_patch(rect)
 
     iefrf = mfile_data.data["iefrf"].get_scan(scan)
     if((iefrf == 5)or(iefrf==8)):
@@ -619,12 +630,13 @@ def plot_nprofile(prof):
     xmin = 0
     xmax = 1
     ymin = 0
-    ymax = 20
+    ymax = ne0*1e-19 * 1.1
+    # ymax = 20.
     prof.set_ylim([ymin, ymax])
     prof.set_xlim([xmin, xmax])
     prof.set_autoscaley_on(False)
     prof.set_xlabel('r/a')
-    prof.set_ylabel('ne / 1e19 m-3')
+    prof.set_ylabel('$n_{e}\cdot 10^{19}$ $[\mathrm{m}^{-3}]$')
     prof.set_title('Density profile')
 
     
@@ -660,7 +672,7 @@ def plot_plasmod_nprofile(prof):
     prof.set_xlim([xmin, xmax])
     prof.set_autoscaley_on(False)
     prof.set_xlabel('r/a')
-    prof.set_ylabel('ne / 1e19 m-3')
+    prof.set_ylabel('$n_{e}\cdot 10^{19} \mathrm{m}^{-3}$')
     prof.set_title('Density profile')
     prof.plot(pmod_r,pmod_ne, label="plasmod $n_e$")
     prof.plot(pmod_r,pmod_ni, label="plasmod $n_i$")
@@ -677,12 +689,13 @@ def plot_tprofile(prof):
     xmin = 0
     xmax = 1
     ymin = 0
-    ymax = 50
+    # ymax = 50
+    ymax = max(te0, teped) *1.1
     prof.set_ylim([ymin, ymax])
     prof.set_xlim([xmin, xmax])
-    prof.set_autoscaley_on(False)
+    # prof.set_autoscaley_on(True)
     prof.set_xlabel('r/a')
-    prof.set_ylabel('Te / keV')
+    prof.set_ylabel('$T_{e}$ [keV]')
     prof.set_title('Temperature profile')
 
     if ipedestal == 1:
@@ -837,9 +850,9 @@ def plot_radprofile(prof, mfile_data, scan, impp):
     YMAX = 0.5 
     prof.set_ylim([YMIN,YMAX])
     prof.set_xlim([XMIN,XMAX])
-    prof.set_autoscaley_on(False)
+    prof.set_autoscaley_on(True)
     prof.set_xlabel('r/a')
-    prof.set_ylabel('P_rad / MWm-3') 
+    prof.set_ylabel('$P_{\mathrm{rad}}$ $[\mathrm{MW.m}^{-3}]$') 
     prof.set_title('Radiation profile')
 
     # read in the impurity data
@@ -1308,6 +1321,9 @@ def plot_pf_coils(axis, mfile_data, scan):
     ohcth = mfile_data.data["ohcth"].get_scan(scan)
     ohdz = mfile_data.data["ohdz"].get_scan(scan)
 
+    print("Toc ohdz = {}".format(ohdz))
+
+
     # Check for Central Solenoid
     if "iohcl" in mfile_data.data.keys():
         iohcl = mfile_data.data["iohcl"].get_scan(scan)
@@ -1438,76 +1454,76 @@ def plot_header(axis, mfile_data, scan):
              [abs(int(mfile_data.data["minmax"].get_scan(-1)))],
              "Optimising:", "")]
 
-    if mfile_data.data["imprad_model"].get_scan(scan) == 1:
-        H = mfile_data.data["fimp(01"].get_scan(scan)
-        He = mfile_data.data["fimp(02"].get_scan(scan)
-        Be = mfile_data.data["fimp(03"].get_scan(scan)
-        C = mfile_data.data["fimp(04"].get_scan(scan)
-        N = mfile_data.data["fimp(05"].get_scan(scan)
-        O = mfile_data.data["fimp(06"].get_scan(scan)
-        Ne = mfile_data.data["fimp(07"].get_scan(scan)
-        Si = mfile_data.data["fimp(08"].get_scan(scan)
-        Ar = mfile_data.data["fimp(09"].get_scan(scan)
-        Fe = mfile_data.data["fimp(10"].get_scan(scan)
-        Ni = mfile_data.data["fimp(11"].get_scan(scan)
-        Kr = mfile_data.data["fimp(12"].get_scan(scan)
-        Xe = mfile_data.data["fimp(13"].get_scan(scan)
-        W = mfile_data.data["fimp(14"].get_scan(scan)
 
-        data = [("", "", ""), ("", "", "")]
-        count = 0
+    H = mfile_data.data["fimp(01"].get_scan(scan)
+    He = mfile_data.data["fimp(02"].get_scan(scan)
+    Be = mfile_data.data["fimp(03"].get_scan(scan)
+    C = mfile_data.data["fimp(04"].get_scan(scan)
+    N = mfile_data.data["fimp(05"].get_scan(scan)
+    O = mfile_data.data["fimp(06"].get_scan(scan)
+    Ne = mfile_data.data["fimp(07"].get_scan(scan)
+    Si = mfile_data.data["fimp(08"].get_scan(scan)
+    Ar = mfile_data.data["fimp(09"].get_scan(scan)
+    Fe = mfile_data.data["fimp(10"].get_scan(scan)
+    Ni = mfile_data.data["fimp(11"].get_scan(scan)
+    Kr = mfile_data.data["fimp(12"].get_scan(scan)
+    Xe = mfile_data.data["fimp(13"].get_scan(scan)
+    W = mfile_data.data["fimp(14"].get_scan(scan)
 
-        data = data +[(H, "D + T", "")]
+    data = [("", "", ""), ("", "", "")]
+    count = 0
+
+    data = data +[(H, "D + T", "")]
+    count += 1
+        
+    data = data +[(He, "He", "")]
+    count += 1
+    if Be > 1e-10:
+        data = data +[(Be, "Be", "")]
+        count += + 1
+    if C > 1e-10:
+        data = data +[(C, "C", "")]
         count += 1
-
-        data = data +[(He, "He", "")]
+    if N > 1e-10:
+        data = data +[(N, "N", "")]
         count += 1
-        if Be > 1e-10:
-            data = data +[(Be, "Be", "")]
-            count += + 1
-        if C > 1e-10:
-            data = data +[(C, "C", "")]
-            count += 1
-        if N > 1e-10:
-            data = data +[(N, "N", "")]
-            count += 1
-        if O > 1e-10:
-            data = data +[(O, "O", "")]
-            count += 1
-        if Ne > 1e-10:
-            data = data +[(Ne, "Ne", "")]
-            count += 1
-        if Si > 1e-10:
-            data = data +[(Si, "Si", "")]
-            count += 1
-        if Ar > 1e-10:
-            data = data +[(Ar, "Ar", "")]
-            count += 1
-        if Fe > 1e-10:
-            data = data +[(Fe, "Fe", "")]
-            count += 1
-        if Ni > 1e-10:
-            data = data +[(Ni, "Ni", "")]
-            count += 1
-        if Kr > 1e-10:
-            data = data +[(Kr, "Kr", "")]
-            count += 1
-        if Xe > 1e-10:
-            data = data +[(Xe, "Xe", "")]
-            count += 1
-        if W > 1e-10:
-            data = data +[(W, "W", "")]
-            count += 1
-
-        if count > 11:
-            data = [("", "", ""), ("", "", ""), ("", "More than 11 impurities", "")]
-        else:
-            axis.text(-0.05, -6.4, 'Plasma composition:', ha='left',
-                      va='center')
-            axis.text(-0.05, -7.2,
-                      'Number densities relative to electron density:',
-                      ha='left', va='center')
-        data2 = data2 + data
+    if O > 1e-10:
+        data = data +[(O, "O", "")]
+        count += 1
+    if Ne > 1e-10:
+        data = data +[(Ne, "Ne", "")]
+        count += 1
+    if Si > 1e-10:
+        data = data +[(Si, "Si", "")]
+        count += 1
+    if Ar > 1e-10:
+        data = data +[(Ar, "Ar", "")]
+        count += 1
+    if Fe > 1e-10:
+        data = data +[(Fe, "Fe", "")]
+        count += 1
+    if Ni > 1e-10:
+        data = data +[(Ni, "Ni", "")]
+        count += 1
+    if Kr > 1e-10:
+        data = data +[(Kr, "Kr", "")]
+        count += 1
+    if Xe > 1e-10:
+        data = data +[(Xe, "Xe", "")]
+        count += 1
+    if W > 1e-10:
+        data = data +[(W, "W", "")]
+        count += 1
+    
+    if count > 11:
+        data = [("", "", ""), ("", "", ""), ("", "More than 11 impurities", "")]
+    else:
+        axis.text(-0.05, -6.4, 'Plasma composition:', ha='left',
+                  va='center')
+        axis.text(-0.05, -7.2,
+                  'Number densities relative to electron density:',
+                  ha='left', va='center')
+    data2 = data2 + data
     
     axis.text(-0.05, -12.6, 'Colour Legend:', ha='left',
                       va='center')
@@ -1626,6 +1642,12 @@ def plot_magnetics_info(axis, mfile_data, scan):
 
     """
 
+    # Check for Copper magnets
+    if "itfsup" in m_file.data.keys():
+        itfsup = m_file.data["itfsup"].get_scan(scan)
+    else:
+        itfsup = 1
+
     xmin = 0
     xmax = 1
     ymin = -16
@@ -1675,24 +1697,47 @@ def plot_magnetics_info(axis, mfile_data, scan):
     vssoft = mfile_data.data["vsres"].get_scan(scan) + \
              mfile_data.data["vsind"].get_scan(scan)
 
-    data = [(pf_info[0][0], pf_info[0][1], "MA"),
-            (pf_info[1][0], pf_info[1][1], "MA"),
-            (pf_info_3_a, pf_info_3_b, "MA"),
-            (vssoft, "Startup flux swing", "Wb"),
-            ("vstot", "Available flux swing", "Wb"),
-            (tburn, "Burn time", "hrs"),
-            ("", "", ""),
-            ("#TF coil type is {}".format(tftype), "", ""),
-            ("bmaxtfrp", "Peak field at conductor (w. rip.)", "T"),
-            ("iooic", "I/I$_{\mathrm{crit}}$", ""),
-            ("tmarg", "Temperature margin", "K"),
-            ("s_tresca_cond", "Conduit Von Mises stress", "Pa"),
-            ("s_tresca_case", "Case Von Mises stress", "Pa"),
-            ("alstrtf", "Allowable stress", "Pa"),
-            ("whttf/tfno", "Mass per TF coil", "kg"),
-            ("", "", ""),
-            ("#Costs", "", ""),
-            ("coe", "Cost of electricity", "\$/MWh")]
+    if itfsup is 1:
+        data = [(pf_info[0][0], pf_info[0][1], "MA"),
+                (pf_info[1][0], pf_info[1][1], "MA"),
+                (pf_info_3_a, pf_info_3_b, "MA"),
+                (vssoft, "Startup flux swing", "Wb"),
+                ("vstot", "Available flux swing", "Wb"),
+                (tburn, "Burn time", "hrs"),
+                ("", "", ""),
+                ("#TF coil type is {}".format(tftype), "", ""),
+                ("bmaxtfrp", "Peak field at conductor (w. rip.)", "T"),
+                ("iooic", "I/I$_{\mathrm{crit}}$", ""),
+                ("tmargtf", "TF Temperature margin", "K"),
+                ("tmargoh", "CS Temperature margin", "K"),
+                ("s_tresca_cond", "Conduit Von Mises stress", "Pa"),
+                ("s_tresca_case", "Case Von Mises stress", "Pa"),
+                ("alstrtf", "Allowable stress", "Pa"),
+                ("whttf/tfno", "Mass per TF coil", "kg")]
+
+    else:
+        data = [(pf_info[0][0], pf_info[0][1], "MA"),
+                (pf_info[1][0], pf_info[1][1], "MA"),
+                (pf_info_3_a, pf_info_3_b, "MA"),
+                (vssoft, "Startup flux swing", "Wb"),
+                ("vstot", "Available flux swing", "Wb"),
+                (tburn, "Burn time", "hrs"),
+                ("", "", ""),
+                ("#TF coil type is {}".format(tftype), "", ""),
+
+                ("bmaxtf", "Peak field at conductor (w. rip.)", "T"),
+                ("ritfc", "TF coil currents sum", "A"),                
+                
+                ("", "", ""),
+                ("#TF coil forces/stresses", "", ""),
+                ("vforce", "Vertical forces", "N"),
+                ("cforce", "Centering forces", "N"),
+
+                ("", "", ""),
+                ("#TF centerpost colling", "", ""),
+                ("prescp", "Resisitive heating", "W"),
+                ("fcoolcp", "Centerpost cooling fraction", ""),
+                ("vcool", "Maximum coolant flow speed", "m/s")]
 
     plot_info(axis, data, mfile_data, scan)
 
@@ -1741,15 +1786,9 @@ def plot_power_info(axis, mfile_data, scan):
     plant_eff = 100.0 * (mfile_data.data["pnetelmw"].get_scan(scan) /
                          mfile_data.data["powfmw"].get_scan(scan))
 
-    imprad = mfile_data.data["imprad_model"].get_scan(scan)
-
-
     # Define appropriate pedestal and impurity parameters
-    if imprad == 1:
-        coredescription = ("coreradius", "Normalised radius of 'core' region", "")
-        impurity = ("coreradius", "Normalised radius of 'core' region", "")
-    else:
-        coredescription = ("", "Simple radiation model used", "")
+    coredescription = ("coreradius", "Normalised radius of 'core' region", "")
+    impurity = ("coreradius", "Normalised radius of 'core' region", "")
     if ipedestal == 1:
         ped_height = ("neped", "Electron density at pedestal", "m$^{-3}$")
         ped_pos =  ("rhopedn", "r/a at density pedestal", "")
@@ -1850,7 +1889,10 @@ def plot_current_drive_info(axis, mfile_data, scan):
             (pdivnr, r"$\frac{P_{\mathrm{div}}}{<n> R_{0}}$",
              r"$\times 10^{-20}$ MW m$^{2}$"),
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
-            (hstar, "H* (non-rad. corr.)", "")]
+            (hstar, "H* (non-rad. corr.)", ""),
+            ("", "", ""),
+            ("#Costs", "", ""),
+            ("coe", "Cost of electricity", "\$/MWh")]
     if nbi:
         data = [(pinjie, "Steady state auxiliary power", "MW"),
             ("pheat", "Power for heating only", "MW"),
@@ -1864,12 +1906,16 @@ def plot_current_drive_info(axis, mfile_data, scan):
             (pdivnr, r"$\frac{P_{\mathrm{div}}}{<n> R_{0}}$",
              r"$\times 10^{-20}$ MW m$^{2}$"),
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
-            (hstar, "H* (non-rad. corr.)", "")]
+            (hstar, "H* (non-rad. corr.)", ""),
+            ("", "", ""),
+            ("#Costs", "", ""),
+            ("coe", "Cost of electricity", "\$/MWh")]
 
-    data.append(("", "", ""))
-    data.append(("#Blanket Information", "", ""))
-    data.append(("tbr", "Tritium breeding ratio", ""))
-    data.append(("emult", "Energy multiplication in blanket", ""))
+
+    # data.append(("", "", ""))
+    # data.append(("#Blanket Information", "", ""))
+    # data.append(("tbr", "Tritium breeding ratio", ""))
+    # data.append(("emult", "Energy multiplication in blanket", ""))
 
     plot_info(axis, data, mfile_data, scan)
 
@@ -1915,24 +1961,24 @@ def main(fig1, fig2, m_file_data, scan, plasmod=False, imp="../data/impuritydata
     color_key(plot_3)
 
     # Plot profiles
-    plot_4 = fig2.add_subplot(234, aspect= 0.05)
+    plot_4 = fig2.add_subplot(234)#, aspect= 0.05)
     if plasmod:
         plot_plasmod_nprofile(plot_4)
     else:
         plot_nprofile(plot_4)
 
-    plot_5 = fig2.add_subplot(235, aspect= 1/35)
+    plot_5 = fig2.add_subplot(235) # , aspect= 1/35)
     if plasmod:
         plot_plasmod_tprofile(plot_5)
     else:
         plot_tprofile(plot_5)
 
     if plasmod:
-        plot_6 = fig2.add_subplot(236, aspect=1/10)
+        plot_6 = fig2.add_subplot(236) #, aspect=1/10)
         plot_plasmod_qprofile(plot_6)
     else:
         # plot_qprofile(plot_6)
-        plot_6 = fig2.add_subplot(236, aspect=2)
+        plot_6 = fig2.add_subplot(236) #, aspect=2)
         if os.path.isdir(imp):
             plot_radprofile(plot_6, m_file_data, scan, imp)
 
@@ -2017,10 +2063,17 @@ def test(f):
     :param f: filename to test
     """
 
+    # Check for Copper magnets
+    if "itfsup" in mfile_data.data.keys():
+        itfsup = mfile_data.data["itfsup"].get_scan(scan)
+    else:
+        itfsup = 1
+
     try:
         # read MFILE
         m_file = mf.MFile(filename=f)
         scan = -1
+
 
         global bore
         bore = m_file.data["bore"].get_scan(scan)
@@ -2067,16 +2120,23 @@ def test(f):
         zdewex = m_file.data["zdewex"].get_scan(scan)
         global tfno
         tfno = m_file.data["tfno"].get_scan(scan)
-        global wwp1
-        wwp1 = m_file.data["wwp1"].get_scan(scan)
-        global wwp2
-        wwp2 = m_file.data["wwp2"].get_scan(scan)
-        global thkwp
-        thkwp = m_file.data["thkwp"].get_scan(scan)
-        global tinstf
-        tinstf = m_file.data["tinstf"].get_scan(scan)
-        global thkcas
-        thkcas = m_file.data["thkcas"].get_scan(scan)
+
+        if itfsup is 1 : 
+            global wwp1
+            wwp1 = m_file.data["wwp1"].get_scan(scan)
+            global wwp2
+            wwp2 = m_file.data["wwp2"].get_scan(scan)
+            global thkwp
+            thkwp = m_file.data["thkwp"].get_scan(scan)
+            global tinstf
+            tinstf = m_file.data["tinstf"].get_scan(scan)
+            global thkcas
+            thkcas = m_file.data["thkcas"].get_scan(scan)
+
+            # To be re-inergrated to resistives when in-plane stresses is integrated
+            global casthi
+            casthi = m_file.data["casthi"].get_scan(scan)
+        
         global nbshield
         nbshield = m_file.data["nbshield"].get_scan(scan)
         global rtanbeam
@@ -2085,8 +2145,6 @@ def test(f):
         rtanmax = m_file.data["rtanmax"].get_scan(scan)
         global beamwd
         beamwd = m_file.data["beamwd"].get_scan(scan)
-        global casthi
-        casthi = m_file.data["casthi"].get_scan(scan)
         # # Pedestal profile parameters
         global ipedestal
         ipedestal = m_file.data["ipedestal"].get_scan(scan)
@@ -2233,7 +2291,12 @@ if __name__ == '__main__':
     else:
         scan = -1
 
-    
+    # Check for Copper magnets
+    if "itfsup" in m_file.data.keys():
+        itfsup = m_file.data["itfsup"].get_scan(scan)
+    else:
+        itfsup = 1
+
     bore = m_file.data["bore"].get_scan(scan)
     ohcth = m_file.data["ohcth"].get_scan(scan)
     gapoh = m_file.data["gapoh"].get_scan(scan)
@@ -2256,17 +2319,24 @@ if __name__ == '__main__':
     rdewex = m_file.data["rdewex"].get_scan(scan)
     zdewex = m_file.data["zdewex"].get_scan(scan)
     ddwex = m_file.data["ddwex"].get_scan(scan)
+
+    # Magnets related
     tfno = m_file.data["tfno"].get_scan(scan)
-    wwp1 = m_file.data["wwp1"].get_scan(scan)
-    wwp2 = m_file.data["wwp2"].get_scan(scan)
-    thkwp = m_file.data["thkwp"].get_scan(scan)
-    tinstf = m_file.data["tinstf"].get_scan(scan)
-    thkcas = m_file.data["thkcas"].get_scan(scan)
+    if itfsup is 1: # If superconducting magnets 
+        wwp1 = m_file.data["wwp1"].get_scan(scan)
+        wwp2 = m_file.data["wwp2"].get_scan(scan)
+        thkwp = m_file.data["thkwp"].get_scan(scan)
+        tinstf = m_file.data["tinstf"].get_scan(scan)
+        thkcas = m_file.data["thkcas"].get_scan(scan)
+        
+        # To be re-inergrated to resistives when in-plane stresses is integrated
+        casthi = m_file.data["casthi"].get_scan(scan)
+    
     nbshield = m_file.data["nbshield"].get_scan(scan)
     rtanbeam = m_file.data["rtanbeam"].get_scan(scan)
     rtanmax = m_file.data["rtanmax"].get_scan(scan)
     beamwd = m_file.data["beamwd"].get_scan(scan)
-    casthi = m_file.data["casthi"].get_scan(scan)
+
     # Pedestal profile parameters
     ipedestal = m_file.data["ipedestal"].get_scan(scan)
     neped = m_file.data["neped"].get_scan(scan)
