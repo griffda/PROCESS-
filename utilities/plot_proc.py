@@ -275,7 +275,7 @@ def cumulative_radial_build2(section, mfile_data, scan):
     return (cumulative_build, previous)
 
 
-def poloidal_cross_section(axis, mfile_data, scan):
+def poloidal_cross_section(axis, mfile_data, scan, demo_ranges):
     """Function to plot poloidal cross-section
 
     Arguments:
@@ -284,14 +284,7 @@ def poloidal_cross_section(axis, mfile_data, scan):
       scan --> scan number to use
 
     """
-    xmin = 0
-    xmax = 20
-    ymin = -15
-    ymax = 15
-    axis.set_ylim([ymin, ymax])
-    axis.set_xlim([xmin, xmax])
-    axis.set_autoscaley_on(True)
-    axis.set_autoscalex_on(True)
+
     axis.set_xlabel('R / m')
     axis.set_ylabel('Z / m')
     axis.set_title('Poloidal cross-section')
@@ -304,6 +297,22 @@ def poloidal_cross_section(axis, mfile_data, scan):
     plot_plasma(axis, mfile_data, scan)
     plot_centre_cross(axis, mfile_data, scan)
     plot_cryostat(axis, mfile_data, scan)
+
+    plot_tf_coils(axis, mfile_data, scan)
+    plot_pf_coils(axis, mfile_data, scan)
+
+    # Ranges 
+    # ---
+    # DEMO : Fixed ranges for comparison   
+    if demo_ranges :
+        axis.set_ylim([-15, 15])
+        axis.set_xlim([  0, 20])
+    
+    # Adapatative ranges
+    else :
+        axis.set_xlim([0, axis.get_xlim()[1]])
+    # ---
+
 
 def plot_cryostat(axis, mfile_data, scan):
     """Function to plot cryostat in poloidal cross-section"""
@@ -378,7 +387,7 @@ def color_key(axis):
 
 
 
-def toroidal_cross_section(axis, mfile_data, scan):
+def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
     """Function to plot toroidal cross-section
     Arguments:
       axis --> axis object to add plot to
@@ -393,14 +402,6 @@ def toroidal_cross_section(axis, mfile_data, scan):
     else:
         itfsup = 1
 
-    xmin = 0
-    xmax = 20
-    ymin = 0
-    ymax = 20
-    axis.set_ylim([ymin, ymax])
-    axis.set_xlim([xmin, xmax])
-    axis.set_autoscaley_on(True)
-    axis.set_autoscalex_on(True)
     axis.set_xlabel('x / m')
     axis.set_ylabel('y / m')
     axis.set_title('Toroidal cross-section')
@@ -534,6 +535,20 @@ def toroidal_cross_section(axis, mfile_data, scan):
         y = ycorner + c * np.sin(beta) - nbshield * np.sin(beta)
         axis.plot([xouter, x], [youter, y], linestyle='dotted', color='black')
 
+    # Ranges 
+    # ---
+    # DEMO : Fixed ranges for comparison   
+    if demo_ranges:
+        axis.set_ylim([0, 20])
+        axis.set_xlim([0, 20])
+    
+    # Adapatative ranges
+    else:
+        axis.set_ylim([0., axis.get_ylim()[1]])
+        axis.set_xlim([0., axis.get_xlim()[1]])
+    # ---
+
+
 
 def TF_outboard(axis, item, tfno, r3, r4, w, facecolor):
     spacing = 2*np.pi/tfno
@@ -622,19 +637,12 @@ def ellips_fill(axis, a1=0, a2=0, b1=0, b2=0, x0=0, y0=0, ang1=0, ang2=rtangle, 
     axis.add_patch(patch)
 
 
-def plot_nprofile(prof):
+def plot_nprofile(prof, demo_ranges):
     """Function to plot density profile
     Arguments:
       prof --> axis object to add plot to
     """
-    xmin = 0
-    xmax = 1
-    ymin = 0
-    ymax = ne0*1e-19 * 1.1
-    # ymax = 20.
-    prof.set_ylim([ymin, ymax])
-    prof.set_xlim([xmin, xmax])
-    prof.set_autoscaley_on(False)
+
     prof.set_xlabel('r/a')
     prof.set_ylabel('$n_{e}\cdot 10^{19}$ $[\mathrm{m}^{-3}]$')
     prof.set_title('Density profile')
@@ -659,18 +667,26 @@ def plot_nprofile(prof):
     ne = ne/1e19
     prof.plot(rho,ne)
 
-def plot_plasmod_nprofile(prof):
+    # Ranges 
+    # ---
+    # DEMO : Fixed ranges for comparison 
+    prof.set_xlim([0,  1])
+    if demo_ranges:
+        prof.set_ylim([0, 20])
+    
+    # Adapatative ranges
+    else :         
+        prof.set_ylim([0, prof.get_ylim()[1]])
+    # ---
+
+
+
+def plot_plasmod_nprofile(prof, demo_ranges):
     """Function to plot plasmod density profile
     Arguments:
       prof --> axis object to add plot to
     """
-    xmin = 0
-    xmax = 1
-    ymin = 0
-    ymax = 20
-    prof.set_ylim([ymin, ymax])
-    prof.set_xlim([xmin, xmax])
-    prof.set_autoscaley_on(False)
+
     prof.set_xlabel('r/a')
     prof.set_ylabel('$n_{e}\cdot 10^{19} \mathrm{m}^{-3}$')
     prof.set_title('Density profile')
@@ -680,20 +696,25 @@ def plot_plasmod_nprofile(prof):
     prof.plot(pmod_r,pmod_nd, label="plasmod $n_D$")
     prof.legend()
 
+    # Ranges 
+    # ---
+    # DEMO : Fixed ranges for comparison 
+    prof.set_xlim([0,  1])
+    if demo_ranges:
+        prof.set_ylim([0, 20])
+    
+    # Adapatative ranges
+    else :         
+        prof.set_ylim([0, prof.get_ylim()[1]])
+    # ---
 
-def plot_tprofile(prof):
+
+def plot_tprofile(prof, demo_ranges):
     """Function to plot temperature profile
     Arguments:
       prof --> axis object to add plot to
     """
-    xmin = 0
-    xmax = 1
-    ymin = 0
-    # ymax = 50
-    ymax = max(te0, teped) *1.1
-    prof.set_ylim([ymin, ymax])
-    prof.set_xlim([xmin, xmax])
-    # prof.set_autoscaley_on(True)
+
     prof.set_xlabel('r/a')
     prof.set_ylabel('$T_{e}$ [keV]')
     prof.set_title('Temperature profile')
@@ -714,38 +735,51 @@ def plot_tprofile(prof):
         te = te0 * (1-rho**2)**alphat
     prof.plot(rho,te)
 
+    # Ranges 
+    # ---
+    prof.set_xlim([ 0, 1])
+    # DEMO : Fixed ranges for comparison   
+    if demo_ranges :
+        prof.set_ylim([ 0, 50])
+    
+    # Adapatative ranges
+    else :
+        prof.set_ylim([0, prof.get_ylim()[1]])
+    # ---
+
+
 def plot_plasmod_tprofile(prof):
     """Function to plot plasmod temperature profile
     Arguments:
       prof --> axis object to add plot to
     """
-    xmin = 0
-    xmax = 1
-    ymin = 0
-    ymax = 50
-    prof.set_ylim([ymin, ymax])
-    prof.set_xlim([xmin, xmax])
-    prof.set_autoscaley_on(False)
+
     prof.set_xlabel('r/a')
-    prof.set_ylabel('Te / KeV')
+    prof.set_ylabel('$T_{e}$ [keV]')
     prof.set_title('Temperature profile')
     prof.plot(pmod_r,pmod_te, label="plasmod $T_e$")
     prof.plot(pmod_r,pmod_ti, label="plasmod $T_i$")
     prof.legend()
 
-def plot_qprofile(prof):
+    # Ranges 
+    # ---
+    prof.set_xlim([ 0, 1])
+    # DEMO : Fixed ranges for comparison   
+    if demo_ranges :
+        prof.set_ylim([ 0, 50])
+    
+    # Adapatative ranges
+    else :
+        prof.set_ylim([0, prof.get_ylim()[1]])
+    # ---
+
+def plot_qprofile(prof, demo_ranges):
     """ Function to plot q profile, formula taken from Nevins bootstrap model.
 
     Arguments:
       prof --> axis object to add plot to
     """
-    XMIN = 0
-    XMAX = 1
-    YMIN = 0
-    YMAX = 10
-    prof.set_ylim([YMIN, YMAX])
-    prof.set_xlim([XMIN, XMAX])
-    prof.set_autoscaley_on(False)
+
     prof.set_xlabel('r/a')
     prof.set_ylabel('q(r)')
     prof.set_title("q profile")
@@ -758,23 +792,42 @@ def plot_qprofile(prof):
     prof.plot(rho,q_r_sauter, label="Sauter")
     prof.legend()
 
-def plot_plasmod_qprofile(prof):
+    # Ranges 
+    # ---
+    prof.set_xlim([ 0, 1])
+    # DEMO : Fixed ranges for comparison   
+    if demo_ranges :
+        prof.set_ylim([ 0, 10])
+    
+    # Adapatative ranges
+    else :
+        prof.set_ylim([0, prof.get_ylim()[1]])
+    # ---
+
+def plot_plasmod_qprofile(prof, demo_ranges):
     """Function to plot plasmod q profile
     Arguments:
       prof --> axis object to add plot to
     """
-    xmin = 0
-    xmax = 1
-    ymin = 0
-    ymax = 10
-    prof.set_ylim([ymin, ymax])
-    prof.set_xlim([xmin, xmax])
-    prof.set_autoscaley_on(False)
+
     prof.set_xlabel('r/a')
     prof.set_ylabel('-')
     prof.set_title('q profile')
     prof.plot(pmod_r,pmod_q, label="plasmod $q(r/a)$")
     prof.legend()
+
+    # Ranges 
+    # ---
+    prof.set_xlim([ 0, 1])
+    # DEMO : Fixed ranges for comparison   
+    if demo_ranges :
+        prof.set_ylim([ 0, 10])
+    
+    # Adapatative ranges
+    else :
+        prof.set_ylim([0, prof.get_ylim()[1]])
+    # ---
+
 
 def read_imprad_data(skiprows, data_path):
     """ Function to read all data needed for creation of radiation profile
@@ -835,7 +888,7 @@ def synchrotron_rad():
 
     return psyncpv
 
-def plot_radprofile(prof, mfile_data, scan, impp):
+def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
     """ Function to plot radiation profile, formula taken from ???.
 
     Arguments:
@@ -844,13 +897,7 @@ def plot_radprofile(prof, mfile_data, scan, impp):
       scan --> scan number to use
       impp --> impurity path
     """
-    XMIN = 0
-    XMAX = 1
-    YMIN = 0
-    YMAX = 0.5 
-    prof.set_ylim([YMIN,YMAX])
-    prof.set_xlim([XMIN,XMAX])
-    prof.set_autoscaley_on(True)
+
     prof.set_xlabel('r/a')
     prof.set_ylabel('$P_{\mathrm{rad}}$ $[\mathrm{MW.m}^{-3}]$') 
     prof.set_title('Radiation profile')
@@ -971,6 +1018,19 @@ def plot_radprofile(prof, mfile_data, scan, impp):
     if imp_frac[13] > 1.0e-30:
         prof.plot(rho, pimpden[13]*2.0e-6, label='W')
     prof.legend()
+
+    # Ranges 
+    # ---
+    prof.set_xlim([ 0, 1])
+    # DEMO : Fixed ranges for comparison   
+    if demo_ranges :
+        prof.set_ylim([ 0, 0.5])
+    
+    # Adapatative ranges
+    else :
+        prof.set_ylim([0, prof.get_ylim()[1]])
+    # ---
+
 
 def plot_vacuum_vessel(axis, mfile_data, scan):
     """Function to plot vacuum vessel
@@ -1321,9 +1381,6 @@ def plot_pf_coils(axis, mfile_data, scan):
     ohcth = mfile_data.data["ohcth"].get_scan(scan)
     ohdz = mfile_data.data["ohdz"].get_scan(scan)
 
-    print("Toc ohdz = {}".format(ohdz))
-
-
     # Check for Central Solenoid
     if "iohcl" in mfile_data.data.keys():
         iohcl = mfile_data.data["iohcl"].get_scan(scan)
@@ -1643,8 +1700,8 @@ def plot_magnetics_info(axis, mfile_data, scan):
     """
 
     # Check for Copper magnets
-    if "itfsup" in m_file.data.keys():
-        itfsup = m_file.data["itfsup"].get_scan(scan)
+    if "itfsup" in mfile_data.data.keys():
+        itfsup = mfile_data.data["itfsup"].get_scan(scan)
     else:
         itfsup = 1
 
@@ -1920,7 +1977,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     plot_info(axis, data, mfile_data, scan)
 
 
-def main(fig1, fig2, m_file_data, scan, plasmod=False, imp="../data/impuritydata/"):
+def main(fig1, fig2, m_file_data, scan, plasmod=False, imp="../data/impuritydata/", demo_ranges=False):
     """Function to create radial and vertical build plot on given figure.
 
     Arguments:
@@ -1931,7 +1988,7 @@ def main(fig1, fig2, m_file_data, scan, plasmod=False, imp="../data/impuritydata
       plasmod --> plasmod data or not
       imp --> path to impurity data
     """
-    
+
     # Checking the impurity data folder
     if os.path.isdir("../data/impuritydata/"):
         imp = "../data/impuritydata/"
@@ -1943,44 +2000,38 @@ def main(fig1, fig2, m_file_data, scan, plasmod=False, imp="../data/impuritydata
 
     # Plot poloidal cross-section
     plot_1 = fig2.add_subplot(221, aspect='equal')
-    poloidal_cross_section(plot_1, m_file_data, scan)
-
-    # Plot TF coils
-    plot_tf_coils(plot_1, m_file_data, scan)
-
-    # Plot PF coils
-    plot_pf_coils(plot_1, m_file_data, scan)
+    poloidal_cross_section(plot_1, m_file_data, scan, demo_ranges)
 
     # Plot toroidal cross-section
     plot_2 = fig2.add_subplot(222, aspect='equal')
-    #toroidal_cross_section(plot_2)
-    toroidal_cross_section(plot_2, m_file_data, scan)
+    toroidal_cross_section(plot_2, m_file_data, scan, demo_ranges)
 
     # Plot color key
     plot_3 = fig2.add_subplot(241)
     color_key(plot_3)
 
-    # Plot profiles
+    # Plot density profiles
     plot_4 = fig2.add_subplot(234)#, aspect= 0.05)
     if plasmod:
-        plot_plasmod_nprofile(plot_4)
+        plot_plasmod_nprofile(plot_4, demo_ranges)
     else:
-        plot_nprofile(plot_4)
+        plot_nprofile(plot_4, demo_ranges)
 
+    # Plot temperature profiles
     plot_5 = fig2.add_subplot(235) # , aspect= 1/35)
     if plasmod:
-        plot_plasmod_tprofile(plot_5)
+        plot_plasmod_tprofile(plot_5, demo_ranges)
     else:
-        plot_tprofile(plot_5)
+        plot_tprofile(plot_5, demo_ranges)
 
     if plasmod:
         plot_6 = fig2.add_subplot(236) #, aspect=1/10)
-        plot_plasmod_qprofile(plot_6)
+        plot_plasmod_qprofile(plot_6, demo_ranges)
     else:
         # plot_qprofile(plot_6)
         plot_6 = fig2.add_subplot(236) #, aspect=2)
         if os.path.isdir(imp):
-            plot_radprofile(plot_6, m_file_data, scan, imp)
+            plot_radprofile(plot_6, m_file_data, scan, imp, demo_ranges)
 
     #plot_7 = 
     #plot_radprofile(plot_7)
@@ -2048,12 +2099,12 @@ def save_plots(m_file_data, scan):
     # Plot profiles
     fig = plt.figure(figsize=(12,9), dpi=80)
     plot = fig.add_subplot(223, aspect= 0.05)
-    plot_nprofile(plot)
+    plot_nprofile(plot, demo_ranges)
     fig.savefig('nprofile.svg', format='svg', dpi=1200)
 
     fig = plt.figure(figsize=(12,9), dpi=80)
     plot = fig.add_subplot(224, aspect= 1/35)
-    plot_tprofile(plot)
+    plot_tprofile(plot, demo_ranges)
     fig.savefig('tprofile.svg', format='svg', dpi=1200)
 
 
@@ -2063,17 +2114,16 @@ def test(f):
     :param f: filename to test
     """
 
-    # Check for Copper magnets
-    if "itfsup" in mfile_data.data.keys():
-        itfsup = mfile_data.data["itfsup"].get_scan(scan)
-    else:
-        itfsup = 1
-
     try:
         # read MFILE
         m_file = mf.MFile(filename=f)
         scan = -1
 
+        # Check for Copper magnets
+        if "itfsup" in m_file.data.keys():
+            itfsup = m_file.data["itfsup"].get_scan(scan)
+        else:
+            itfsup = 1
 
         global bore
         bore = m_file.data["bore"].get_scan(scan)
@@ -2255,7 +2305,7 @@ def test(f):
 
         return True
     except:
-        print(f)
+        print("FTest failure for file : {}".format(f))
         return False
 
 
@@ -2276,6 +2326,8 @@ if __name__ == '__main__':
 
     parser.add_argument("-n", type=int, help="Which scan to plot?")
 
+    parser.add_argument("-d", "--DEMO_ranges", help="Uses the DEMO dimensions as ranges for all graphics", 
+                        action="store_true")
 
 
     args = parser.parse_args()
@@ -2290,6 +2342,11 @@ if __name__ == '__main__':
         scan = args.n
     else:
         scan = -1
+
+    if args.DEMO_ranges:
+        demo_ranges = True
+    else:
+        demo_ranges = False
 
     # Check for Copper magnets
     if "itfsup" in m_file.data.keys():
@@ -2443,7 +2500,7 @@ if __name__ == '__main__':
     page2 = plt.figure(figsize=(12, 9), dpi=80)
 
     # run main
-    main(page1, page2, m_file, scan=scan, plasmod=pmod_switch)
+    main(page1, page2, m_file, scan=scan, plasmod=pmod_switch, demo_ranges=demo_ranges)
 
     # with bpdf.PdfPages(args.o) as pdf:
     with bpdf.PdfPages(args.f + "SUMMARY.pdf") as pdf:
