@@ -33,6 +33,23 @@ except ImportError:
           " 'make dicts'!")
     exit()
 
+# Get repository root directory
+import  pathlib
+import time
+timeout = time.time() + 10   # 10 seconds
+found_root = False
+back = "../"
+while not found_root:
+    if time.time() > timeout:
+        print("Can't find repository root. Make sure utility is being run "
+              "inside a PROCESS repository clone")
+        break
+    else:
+        my_file = pathlib.Path(back + ".gitignore")
+        if my_file.is_file():
+            found_root = True
+            REPO_ROOT = back
+        back += "../"
 
 solenoid = 'pink'
 cscompression = 'red'
@@ -1990,10 +2007,9 @@ def main(fig1, fig2, m_file_data, scan, plasmod=False, imp="../data/impuritydata
     """
 
     # Checking the impurity data folder
-    if os.path.isdir("../data/impuritydata/"):
-        imp = "../data/impuritydata/"
-    elif os.path.isdir("data/impuritydata/"):
-        imp = "data/impuritydata/"
+    data_folder= REPO_ROOT+"data/impuritydata/"
+    if os.path.isdir(data_folder):
+        imp = data_folder
     else:
         print("\033[91m Warning : Impossible to recover impurity data, try running the macro in the main/utility folder")
         print("          -> No impurity plot done\033[0m")
