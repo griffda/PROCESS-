@@ -184,7 +184,7 @@ module physics_variables
   real(kind(1.0D0)) :: abeam = 0.0D0
 
   !+ad_vars  afuel : average mass of fuel portion of ions (amu)
-  real(kind(1.0D0)) :: afuel = 0.0D0
+  real(kind(1.0D0)), bind(C) :: afuel = 0.0D0
 
   !+ad_vars  aion : average mass of all ions (amu)
   real(kind(1.0D0)) :: aion = 0.0D0
@@ -325,7 +325,7 @@ module physics_variables
   real(kind(1.0D0)) :: fne0 = 1.0D0
 
   !+ad_vars  ftrit /0.5/ : tritium fuel fraction
-  real(kind(1.0D0)) :: ftrit = 0.5D0
+  real(kind(1.0D0)), bind(C) :: ftrit = 0.5D0
   !+ad_vars  fusionrate : fusion reaction rate (reactions/m3/sec)
   real(kind(1.0D0)) :: fusionrate = 0.0D0
   !+ad_vars  fvsbrnni /1.0/ : fraction of the plasma current produced by
@@ -765,7 +765,7 @@ module physics_variables
   !+ad_vars  rncne : n_carbon / n_e
   real(kind(1.0D0)) :: rncne = 0.0D0
   !+ad_vars  rndfuel : fuel burnup rate (reactions/second)
-  real(kind(1.0D0)) :: rndfuel = 0.0D0
+  real(kind(1.0D0)), bind(C) :: rndfuel = 0.0D0
   !+ad_vars  rnfene : n_highZ / n_e
   real(kind(1.0D0)) :: rnfene = 0.0D0
   !+ad_vars  rnone : n_oxygen / n_e
@@ -839,7 +839,7 @@ module physics_variables
   !+ad_vars  wallmw : average neutron wall load (MW/m2)
   real(kind(1.0D0)), bind(C) :: wallmw = 0.0D0
   !+ad_vars  wtgpd : mass of fuel used per day (g)
-  real(kind(1.0D0)) :: wtgpd = 0.0D0
+  real(kind(1.0D0)), bind(C) :: wtgpd = 0.0D0
   !+ad_vars  xarea : plasma cross-sectional area (m2)
   real(kind(1.0D0)) :: xarea = 0.0D0
   !+ad_vars  zeff : plasma effective charge
@@ -1576,7 +1576,7 @@ module fwbs_variables
   real(kind(1.0D0)) :: li6enrich = 30.0D0
 
   !+ad_vars  pnucblkt : nuclear heating in the blanket (MW)
-  real(kind(1.0D0)) :: pnucblkt = 0.0D0
+  real(kind(1.0D0)), bind(C) :: pnucblkt = 0.0D0
 
   !+ad_vars  pnuccp : nuclear heating in the ST centrepost (MW)
   real(kind(1.0D0)) :: pnuccp = 0.0D0
@@ -1597,7 +1597,7 @@ module fwbs_variables
   real(kind(1.0D0)) :: pnucvvplus = 0.0D0
 
   !+ad_vars  pnucshld : nuclear heating in the shield (MW)
-  real(kind(1.0D0)) :: pnucshld = 0.0D0
+  real(kind(1.0D0)), bind(C) :: pnucshld = 0.0D0
 
   !+ad_vars  whtblkt : mass of blanket (kg)
   real(kind(1.0D0)) :: whtblkt = 0.0D0
@@ -1916,17 +1916,17 @@ module primary_pumping_variables
 
   ! Issue #503
   !+ad_vars  gamma_he /1.667/ FIX : ratio of specific heats for helium (primary_pumping=3)
-  real(kind(1.0D0)) :: gamma_he = 1.667D0
+  real(kind(1.0D0)), parameter :: gamma_he = 1.667D0
   !+ad_vars  cp_he /5195/ FIX: specific heat capacity at constant pressure: helium (primary_pumping=3) [J/(kg.K)]
-  real(kind(1.0D0)) :: cp_he = 5195.0D0
+  real(kind(1.0D0)), parameter :: cp_he = 5195.0D0
   !+ad_vars  t_in_bb /573.13/ FIX: temperature in FW and blanket coolant at blanket entrance (primary_pumping=3) [K]
-  real(kind(1.0D0)) :: t_in_bb =573.13D0
+  real(kind(1.0D0)), parameter :: t_in_bb =573.13D0
   !+ad_vars  t_out_bb /773.13/ FIX: temperature in FW and blanket coolant at blanket exit (primary_pumping=3) [K]
-  real(kind(1.0D0)) :: t_out_bb =773.13D0
+  real(kind(1.0D0)), parameter :: t_out_bb =773.13D0
   !+ad_vars  p_he /8.0e6/ FIX: pressure in FW and blanket coolant at pump exit (primary_pumping=3) [Pa]
-  real(kind(1.0D0)) :: p_he =8.0D6
+  real(kind(1.0D0)), parameter :: p_he =8.0D6
   !+ad_vars  dp_he /5.5e5/ FIX: pressure drop in FW and blanket coolant including heat exchanger and pipes (primary_pumping=3) [Pa]
-  real(kind(1.0D0)) :: dp_he =5.5D5
+  real(kind(1.0D0)), parameter :: dp_he =5.5D5
   !+ad_vars  htpmw_fw_blkt : mechanical pumping power for FW and blanket including heat exchanger and pipes (primary_pumping=3) [MW]
   real(kind(1.0D0)) :: htpmw_fw_blkt = 0.0d0
 
@@ -2328,7 +2328,7 @@ module tfcoil_variables
   !+ad_vars  cforce : centering force on inboard leg (per coil) (N/m)
   real(kind(1.0D0)) :: cforce = 0.0D0
   !+ad_vars  cph2o /4180.0/ FIX : specific heat capacity of water (J/kg/K)
-  real(kind(1.0D0)) :: cph2o = 4180.0D0
+  real(kind(1.0D0)), parameter :: cph2o = 4180.0D0
 
   !+ad_vars  cpttf /7.0e4/ : TF coil current per turn (A).
   !+ad_varc                  (calculated for stellarators)
@@ -2356,7 +2356,7 @@ module tfcoil_variables
   !+ad_vars  deflect : TF coil deflection at full field (m)
   real(kind(1.0D0)) :: deflect = 0.0D0
   !+ad_vars  denh2o /985.0/ FIX : density of water (kg/m3)
-  real(kind(1.0D0)) :: denh2o = 985.0D0
+  real(kind(1.0D0)), parameter :: denh2o = 985.0D0
   !+ad_vars  dhecoil /0.005/ : diameter of He coil in TF winding (m)
   real(kind(1.0D0)) :: dhecoil = 0.005D0
 
@@ -2560,7 +2560,7 @@ module tfcoil_variables
   !+ad_vars  tfsao : area of the outboard TF coil legs (m2)
   real(kind(1.0D0)) :: tfsao = 0.0D0
   !+ad_vars  tftmp /4.5/ : peak helium coolant temperature in TF coils and PF coils (K)
-  real(kind(1.0D0)) :: tftmp = 4.5D0
+  real(kind(1.0D0)), bind(C) :: tftmp = 4.5D0
   ! ISSUE #508 Remove RFP option: frfpf, frfptf, sccufac
   !+ad_vars  tftort : TF coil toroidal thickness (m)
 ! SJP Issue #863
@@ -2688,11 +2688,11 @@ module tfcoil_variables
   !+ad_vars  frhocp /1.0/ : centrepost resistivity enhancement factor
   real(kind(1.0D0)) :: frhocp = 1.0D0
   !+ad_vars  k_copper /330.0/ FIX : Copper thermal conductivity (W/m/K)
-  real(kind(1.0D0)) :: k_copper = 330.0D0
+  real(kind(1.0D0)), parameter :: k_copper = 330.0D0
   !+ad_vars  kh2o /0.651/ FIX : thermal conductivity of water (W/m/K)
-  real(kind(1.0D0)) :: kh2o = 0.651D0
+  real(kind(1.0D0)), parameter :: kh2o = 0.651D0
   !+ad_vars  muh2o /4.71e-4/ FIX : water dynamic viscosity (kg/m/s)
-  real(kind(1.0D0)) :: muh2o = 4.71D-4
+  real(kind(1.0D0)), parameter :: muh2o = 4.71D-4
   !+ad_vars  ncool : number of centrepost coolant tubes
   real(kind(1.0D0)) :: ncool = 0.0D0
   !+ad_vars  ppump : centrepost coolant pump power (W)
@@ -2964,7 +2964,7 @@ module heat_transport_variables
   !+ad_vars  baseel /5.0e6/ : base plant electric load (W)
   real(kind(1.0D0)) :: baseel = 5.0D6
   !+ad_vars  crypmw : cryogenic plant power (MW)
-  real(kind(1.0D0)) :: crypmw = 0.0D0
+  real(kind(1.0D0)), bind(C) :: crypmw = 0.0D0
 
   !+ad_vars  etatf /0.9/ : AC to resistive power conversion for TF coils
   real(kind(1.0D0)) :: etatf = 0.9D0
@@ -2972,9 +2972,9 @@ module heat_transport_variables
   !+ad_varc                 if secondary_cycle=2; otherwise calculated
   real(kind(1.0D0)) :: etath = 0.35D0
   !+ad_vars  fachtmw : facility heat removal (MW)
-  real(kind(1.0D0)) :: fachtmw = 0.0D0
+  real(kind(1.0D0)), bind(C) :: fachtmw = 0.0D0
   !+ad_vars  fcsht : total baseline power required at all times (MW)
-  real(kind(1.0D0)) :: fcsht = 0.0D0
+  real(kind(1.0D0)), bind(C) :: fcsht = 0.0D0
   !+ad_vars  fgrosbop : scaled fraction of gross power to balance-of-plant
   real(kind(1.0D0)) :: fgrosbop = 0.0D0
   !+ad_vars  fmgdmw /0.0/ : power to mgf (motor-generator flywheel) units (MW)
@@ -3000,7 +3000,7 @@ module heat_transport_variables
   real(kind(1.0D0)) :: htpmw_min = 0.0D0
 
   !+ad_vars  helpow : heat removal at cryogenic temperatures (W)
-  real(kind(1.0D0)) :: helpow = 0.0D0
+  real(kind(1.0D0)), bind(C) :: helpow = 0.0D0
   !+ad_vars  htpmw  :: heat transport system electrical pump power (MW)
   real(kind(1.0D0)) :: htpmw = 0.0D0
   !+ad_vars  htpmw_blkt /0.0/ : blanket coolant mechanical pumping power (MW)
@@ -3039,17 +3039,17 @@ module heat_transport_variables
 
 
   !+ad_vars  nphx : number of primary heat exchangers
-  integer :: nphx = 0
+  integer, bind(C) :: nphx = 0
   !+ad_vars  pacpmw : total pulsed power system load (MW)
-  real(kind(1.0D0)) :: pacpmw = 0.0D0
+  real(kind(1.0D0)), bind(C) :: pacpmw = 0.0D0
   !+ad_vars  peakmva : peak MVA requirement
   real(kind(1.0D0)) :: peakmva = 0.0D0
   !+ad_vars  pfwdiv : heat removal from first wall/divertor (MW)
-  real(kind(1.0D0)) :: pfwdiv = 0.0D0
+  real(kind(1.0D0)), bind(C) :: pfwdiv = 0.0D0
   !+ad_vars  pgrossmw : gross electric power (MW)
   real(kind(1.0D0)), bind(C) :: pgrossmw = 0.0D0
   !+ad_vars  pinjht : power dissipated in heating and current drive system (MW)
-  real(kind(1.0D0)) :: pinjht = 0.0D0
+  real(kind(1.0D0)), bind(C) :: pinjht = 0.0D0
   !+ad_vars  pinjmax : maximum injector power during pulse (heating and ramp-up/down phase) (MW)
   real(kind(1.0D0)) :: pinjmax = 120.0D0
   !+ad_vars  pinjwp : injector wall plug power (MW)
@@ -3080,13 +3080,13 @@ module heat_transport_variables
   !+ad_vars  tfacpd : total steady state TF coil AC power demand (MW)
   real(kind(1.0D0)) :: tfacpd = 0.0D0
   !+ad_vars  tlvpmw : estimate of total low voltage power (MW)
-  real(kind(1.0D0)) :: tlvpmw = 0.0D0
+  real(kind(1.0D0)), bind(C) :: tlvpmw = 0.0D0
   !+ad_vars  trithtmw /15.0/ : power required for tritium processing (MW)
-  real(kind(1.0D0)) :: trithtmw = 15.0D0
+  real(kind(1.0D0)), bind(C) :: trithtmw = 15.0D0
   !+ad_vars  tturb : coolant temperature at turbine inlet (K) (secondary_cycle = 3,4)
   real(kind(1.0D0)) :: tturb = 0.0D0
   !+ad_vars  vachtmw /0.5/ : vacuum pump power (MW)
-  real(kind(1.0D0)) :: vachtmw = 0.5D0
+  real(kind(1.0D0)), bind(C) :: vachtmw = 0.5D0
 
 end module heat_transport_variables
 
@@ -3267,7 +3267,7 @@ module buildings_variables
   !+ad_vars  volnucb : sum of nuclear buildings volumes (m3)
   real(kind(1.0D0)) :: volnucb = 0.0D0
   !+ad_vars  volrci : internal volume of reactor building (m3)
-  real(kind(1.0D0)) :: volrci = 0.0D0
+  real(kind(1.0D0)), bind(C) :: volrci = 0.0D0
   !+ad_vars  wgt /5.0e5/ : reactor building crane capacity (kg)
   !+ad_varc                (calculated if 0 is input)
   real(kind(1.0D0)) :: wgt = 5.0D5
@@ -3280,7 +3280,7 @@ module buildings_variables
   !+ad_vars  wsvfac /1.9/ : warm shop building volume multiplication factor
   real(kind(1.0D0)) :: wsvfac = 1.9D0
   !+ad_vars  wsvol : volume of warm shop building (m3)
-  real(kind(1.0D0)) :: wsvol = 0.0D0
+  real(kind(1.0D0)), bind(C) :: wsvol = 0.0D0
 
 end module buildings_variables
 
@@ -3694,13 +3694,11 @@ module cost_variables
   integer :: iavail= 2
   !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 61)
   real(kind(1.0D0)) :: avail_min = 0.75D0
-
   !+ad_vars  tok_build_cost_per_vol /1283.0/ : Unit cost for tokamak complex buildings,
   !+ad_varc                                    including building and site services ($/m3)
   real(kind(1.0D0)) :: tok_build_cost_per_vol = 1283.0D0
   !+ad_vars  light_build_cost_per_vol /270.0/ : Unit cost for unshielded non-active buildings ($/m3)
   real(kind(1.0D0)) :: light_build_cost_per_vol = 270.0D0
-
   !+ad_vars  favail /1.0/ : F-value for minimum availability (constraint equation 61)
   real(kind(1.0D0)) :: favail = 1.0D0
   !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
@@ -3711,20 +3709,14 @@ module cost_variables
   real(kind(1.0D0)), bind(C) :: div_prob_fail = 0.0002D0
   !+ad_vars  div_umain_time /0.25/ : Divertor unplanned maintenance time (years)
   real(kind(1.0D0)), bind(C) :: div_umain_time = 0.25D0
-
-  ! MDK
   !+ad_vars  div_nref /7000/ : Reference value for cycle cycle life of divertor
   real(kind(1.0D0)), bind(C) :: div_nref = 7000.0D0
   !+ad_vars  div_nu /14000/ : The cycle when the divertor fails with 100% probability
   real(kind(1.0D0)), bind(C) :: div_nu = 14000.0D0
-
-
   !+ad_vars  fwbs_nref /20000/ : Reference value for cycle life of blanket
   real(kind(1.0D0)),bind(C) :: fwbs_nref = 20000.0D0
   !+ad_vars  fwbs_nu /40000/ : The cycle when the blanket fails with 100% probability
   real(kind(1.0D0)), bind(C) :: fwbs_nu = 40000.0D0
-
-
   !+ad_vars  fwbs_prob_fail /0.0002/ : Fwbs probability of failure (per op day)
   real(kind(1.0D0)), bind(C) :: fwbs_prob_fail = 0.0002D0
   !+ad_vars  fwbs_umain_time /0.25/ : Fwbs unplanned maintenance time (years)
@@ -3765,7 +3757,6 @@ module cost_variables
   !+ad_vars  uuves /0.04/ : unplanned unavailability factor for vessel
   !+ad_varc                 (iavail=1)
   real(kind(1.0D0)) :: uuves = 0.04D0
-
   !+ad_vars  ifueltyp /0/ : switch:<UL>
   !+ad_varc            <LI> = 1 treat blanket divertor, first wall and
   !+ad_varc                     fraction fcdfuel of CD equipment as fuel cost;
@@ -3775,8 +3766,6 @@ module cost_variables
   !+ad_varc         <LI> = 0 scale so that always > 0;
   !+ad_varc         <LI> = 1 let go < 0 (no c-o-e)</UL>
   integer :: ipnet = 0
-
-
   !+ad_vars  ireactor /1/ : switch for net electric power and cost of
   !+ad_varc                 electricity calculations:<UL>
   !+ad_varc            <LI> = 0 do not calculate MW(electric) or c-o-e;
@@ -3809,13 +3798,13 @@ module cost_variables
   !+ad_vars  tlife /30.0/ : plant life (years)
   real(kind(1.0D0)), bind(C) :: tlife = 30.0D0
   !+ad_vars  ucad /180.0/ FIX : unit cost for administration buildings (M$/m3)
-  real(kind(1.0D0)) :: ucad = 180.0D0
+  real(kind(1.0D0)), parameter :: ucad = 180.0D0
   !+ad_vars  ucaf /1.5e6/ FIX : unit cost for aux facility power equipment ($)
-  real(kind(1.0D0)) :: ucaf = 1.5D6
+  real(kind(1.0D0)), parameter :: ucaf = 1.5D6
   !+ad_vars  ucahts /31.0/ FIX : unit cost for aux heat transport equipment ($/W**exphts)
-  real(kind(1.0D0)) :: ucahts = 31.0D0
+  real(kind(1.0D0)), parameter :: ucahts = 31.0D0
   !+ad_vars  ucap /17.0/ FIX : unit cost of auxiliary transformer ($/kVA)
-  real(kind(1.0D0)) :: ucap = 17.0D0
+  real(kind(1.0D0)), parameter :: ucap = 17.0D0
   !+ad_vars  ucblbe /260.0/ : unit cost for blanket beryllium ($/kg)
   real(kind(1.0D0)) :: ucblbe = 260.0D0
   !+ad_vars  ucblbreed /875.0/ : unit cost for breeder material ($/kg) (blktmodel>0)
@@ -3831,59 +3820,59 @@ module cost_variables
   !+ad_vars  ucblvd /200.0/ : unit cost for blanket vanadium ($/kg)
   real(kind(1.0D0)) :: ucblvd = 200.0D0
   !+ad_vars  ucbpmp /2.925e5/ FIX : vacuum system backing pump cost ($)
-  real(kind(1.0D0)) :: ucbpmp = 2.925D5
+  real(kind(1.0D0)), parameter :: ucbpmp = 2.925D5
   !+ad_vars  ucbus /0.123/ : cost of aluminium bus for TF coil ($/A-m)
   real(kind(1.0D0)) :: ucbus = 0.123D0
   !+ad_vars  uccase /50.0/ : cost of superconductor case ($/kg)
   real(kind(1.0D0)) :: uccase = 50.0D0
   !+ad_vars  ucco /350.0/ FIX : unit cost for control buildings (M$/m3)
-  real(kind(1.0D0)) :: ucco = 350.0D0
+  real(kind(1.0D0)), parameter :: ucco = 350.0D0
   !+ad_vars  uccpcl1 /250.0/ : cost of high strength tapered copper ($/kg)
   real(kind(1.0D0)) :: uccpcl1 = 250.0D0
   !+ad_vars  uccpclb /150.0/ : cost of TF outboard leg plate coils ($/kg)
   real(kind(1.0D0)) :: uccpclb = 150.0D0
   !+ad_vars  uccpmp /3.9e5/ FIX : vacuum system cryopump cost ($)
-  real(kind(1.0D0)) :: uccpmp = 3.9D5
+  real(kind(1.0D0)), parameter :: uccpmp = 3.9D5
   !+ad_vars  uccr /460.0/ FIX : unit cost for cryogenic building (M$/vol)
-  real(kind(1.0D0)) :: uccr = 460.0D0
+  real(kind(1.0D0)), parameter :: uccr = 460.0D0
   !+ad_vars  uccry /9.3e4/ : heat transport system cryoplant costs ($/W**expcry)
-  real(kind(1.0D0)) :: uccry = 9.3D4
+  real(kind(1.0D0)), bind(C) :: uccry = 9.3D4
   !+ad_vars  uccryo /32.0/ : unit cost for vacuum vessel ($/kg)
   real(kind(1.0D0)) :: uccryo = 32.0D0
   !+ad_vars  uccu /75.0/ : unit cost for copper in superconducting cable ($/kg)
   real(kind(1.0D0)) :: uccu = 75.0D0
   !+ad_vars  ucdgen /1.7e6/ FIX : cost per 8 MW diesel generator ($)
-  real(kind(1.0D0)) :: ucdgen = 1.7D6
+  real(kind(1.0D0)), parameter :: ucdgen = 1.7D6
   !+ad_vars  ucdiv /2.8e5/ : cost of divertor blade ($)
   real(kind(1.0D0)) :: ucdiv = 2.8D5
   !+ad_vars  ucdtc /13.0/ FIX : detritiation, air cleanup cost ($/10000m3/hr)
-  real(kind(1.0D0)) :: ucdtc = 13.0D0
+  real(kind(1.0D0)), parameter :: ucdtc = 13.0D0
   !+ad_vars  ucduct /4.225e4/ FIX : vacuum system duct cost ($/m)
-  real(kind(1.0D0)) :: ucduct = 4.225D4
+  real(kind(1.0D0)), parameter :: ucduct = 4.225D4
   !+ad_vars  ucech /3.0/ : ECH system cost ($/W)
   real(kind(1.0D0)) :: ucech = 3.0D0
   !+ad_vars  ucel /380.0/ FIX : unit cost for electrical equipment building (M$/m3)
-  real(kind(1.0D0)) :: ucel = 380.0D0
+  real(kind(1.0D0)), parameter :: ucel = 380.0D0
   !+ad_vars  uces1 /3.2e4/ FIX : MGF (motor-generator flywheel) cost factor ($/MVA**0.8)
-  real(kind(1.0D0)) :: uces1 = 3.2D4
+  real(kind(1.0D0)), parameter :: uces1 = 3.2D4
   !+ad_vars  uces2 /8.8e3/ FIX : MGF (motor-generator flywheel) cost factor ($/MJ**0.8)
-  real(kind(1.0D0)) :: uces2 = 8.8D3
+  real(kind(1.0D0)), parameter :: uces2 = 8.8D3
   !+ad_vars  ucf1 /2.23e7/ : cost of fuelling system ($)
-  real(kind(1.0D0)) :: ucf1 = 2.23D7
+  real(kind(1.0D0)), bind(C) :: ucf1 = 2.23D7
   !+ad_vars  ucfnc /35.0/ : outer PF coil fence support cost ($/kg)
   real(kind(1.0D0)) :: ucfnc = 35.0D0
   !+ad_vars  ucfpr /4.4e7/ FIX : cost of 60g/day tritium processing unit ($)
-  real(kind(1.0D0)) :: ucfpr = 4.4D7
+  real(kind(1.0D0)), parameter :: ucfpr = 4.4D7
   !+ad_vars  ucfuel /3.45/ : unit cost of D-T fuel (M$/year/1200MW)
   real(kind(1.0D0)) :: ucfuel = 3.45D0
   !+ad_vars  ucfwa /6.0e4/ FIX : first wall armour cost ($/m2)
-  real(kind(1.0D0)) :: ucfwa = 6.0D4
+  real(kind(1.0D0)), parameter :: ucfwa = 6.0D4
   !+ad_vars  ucfwps /1.0e7/ FIX : first wall passive stabiliser cost ($)
-  real(kind(1.0D0)) :: ucfwps = 1.0D7
+  real(kind(1.0D0)), parameter :: ucfwps = 1.0D7
   !+ad_vars  ucfws /5.3e4/ FIX : first wall structure cost ($/m2)
-  real(kind(1.0D0)) :: ucfws = 5.3D4
+  real(kind(1.0D0)), parameter :: ucfws = 5.3D4
   !+ad_vars  ucgss /35.0/ FIX : cost of reactor structure ($/kg)
-  real(kind(1.0D0)) :: ucgss = 35.0D0
+  real(kind(1.0D0)), parameter :: ucgss = 35.0D0
   !+ad_vars  uche3 /1.0e6/ : cost of helium-3 ($/kg)
   real(kind(1.0D0)) :: uche3 = 1.0D6
   !+ad_vars  uchrs /87.9e6/ : cost of heat rejection system ($)
@@ -3896,13 +3885,13 @@ module cost_variables
   !+ad_vars  ucich /3.0/ : ICH system cost ($/W)
   real(kind(1.0D0)) :: ucich = 3.0D0
   !+ad_vars  ucint /35.0/ FIX : superconductor intercoil structure cost ($/kg)
-  real(kind(1.0D0)) :: ucint = 35.0D0
+  real(kind(1.0D0)), parameter :: ucint = 35.0D0
   !+ad_vars  uclh /3.3/ : lower hybrid system cost ($/W)
   real(kind(1.0D0)) :: uclh = 3.3D0
   !+ad_vars  uclv /16.0/ FIX : low voltage system cost ($/kVA)
-  real(kind(1.0D0)) :: uclv = 16.0D0
+  real(kind(1.0D0)), parameter :: uclv = 16.0D0
   !+ad_vars  ucmb /260.0/ FIX: unit cost for reactor maintenance building (M$/m3)
-  real(kind(1.0D0)) :: ucmb = 260.0D0
+  real(kind(1.0D0)), parameter :: ucmb = 260.0D0
   !+ad_vars  ucme /1.25e8/ : cost of maintenance equipment ($/)
   real(kind(1.0D0)), bind(C) :: ucme = 1.25D8
   !+ad_vars  ucmisc /2.5e7/ : miscellaneous plant allowance ($)
@@ -3910,7 +3899,7 @@ module cost_variables
   !+ad_vars  ucnbi /3.3/ : NBI system cost ($/W)
   real(kind(1.0D0)) :: ucnbi = 3.3D0
   !+ad_vars  ucnbv /1000.0/ FIX : cost of nuclear building ventilation ($/m3)
-  real(kind(1.0D0)) :: ucnbv = 1000.0D0
+  real(kind(1.0D0)), parameter :: ucnbv = 1000.0D0
   !+ad_vars  ucoam(4) /68.8,68.8,68.8,74.4/ : annual cost of operation and
   !+ad_varc                                   maintenance (M$/year/1200MW**0.5)
   real(kind(1.0D0)), dimension(4) :: ucoam = &
@@ -3932,53 +3921,53 @@ module cost_variables
   !+ad_vars  ucpfps /3.5e4/ : cost of PF coil pulsed power supplies ($/MVA)
   real(kind(1.0D0)) :: ucpfps = 3.5D4
   !+ad_vars  ucphx /15.0/ FIX : primary heat transport cost ($/W**exphts)
-  real(kind(1.0D0)) :: ucphx = 15.0D0
+  real(kind(1.0D0)), parameter :: ucphx = 15.0D0
   !+ad_vars  ucpp /48.0/ FIX : cost of primary power transformers ($/kVA**0.9)
-  real(kind(1.0D0)) :: ucpp = 48.0D0
+  real(kind(1.0D0)), parameter :: ucpp = 48.0D0
   !+ad_vars  ucrb /400.0/ : cost of reactor building (M$/m3)
   real(kind(1.0D0)) :: ucrb = 400.0D0
   !+ad_vars  ucsc(6) /600.0,600.0,300.0,600.0/ : cost of superconductor ($/kg)
   real(kind(1.0D0)), dimension(6) :: ucsc = &
        (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0/)
   !+ad_vars  ucsh /115.0/ FIX : cost of shops and warehouses (M$/m3)
-  real(kind(1.0D0)) :: ucsh = 115.0D0
+  real(kind(1.0D0)), parameter :: ucsh = 115.0D0
   !+ad_vars  ucshld /32.0/ : cost of shield structural steel ($/kg)
   real(kind(1.0D0)) :: ucshld = 32.0D0
   !+ad_vars  ucswyd /1.84e7/ FIX : switchyard equipment costs ($)
-  real(kind(1.0D0)) :: ucswyd = 1.84D7
+  real(kind(1.0D0)), parameter :: ucswyd = 1.84D7
   !+ad_vars  uctfbr /1.22/ : cost of TF coil breakers ($/W**0.7)
   real(kind(1.0D0)) :: uctfbr = 1.22D0
   !+ad_vars  uctfbus /100.0/ : cost of TF coil bus ($/kg)
   real(kind(1.0D0)) :: uctfbus = 100.0D0
   !+ad_vars  uctfdr /1.75e-4/ FIX : cost of TF coil dump resistors ($/J)
-  real(kind(1.0D0)) :: uctfdr = 1.75D-4
+  real(kind(1.0D0)), parameter :: uctfdr = 1.75D-4
   !+ad_vars  uctfgr /5000.0/ FIX : additional cost of TF coil dump resistors ($/coil)
-  real(kind(1.0D0)) :: uctfgr = 5000.0D0
+  real(kind(1.0D0)), parameter :: uctfgr = 5000.0D0
   !+ad_vars  uctfic /1.0e4/ FIX : cost of TF coil instrumentation and control ($/coil/30)
-  real(kind(1.0D0)) :: uctfic = 1.0D4
+  real(kind(1.0D0)), parameter :: uctfic = 1.0D4
   !+ad_vars  uctfps /24.0/ : cost of TF coil power supplies ($/W**0.7)
   real(kind(1.0D0)) :: uctfps = 24.0D0
   !+ad_vars  uctfsw /1.0/ : cost of TF coil slow dump switches ($/A)
   real(kind(1.0D0)) :: uctfsw = 1.0D0
   !+ad_vars  uctpmp /1.105e5/ FIX : cost of turbomolecular pump ($)
-  real(kind(1.0D0)) :: uctpmp = 1.105D5
+  real(kind(1.0D0)), parameter :: uctpmp = 1.105D5
   !+ad_vars  uctr /370.0/ FIX : cost of tritium building ($/m3)
-  real(kind(1.0D0)) :: uctr = 370.0D0
+  real(kind(1.0D0)), parameter :: uctr = 370.0D0
   !+ad_vars  ucturb(2) /230.0e6, 245.0e6/: cost of turbine plant equipment ($)
   !+ad_varc                               (dependent on coolant type coolwh)
   real(kind(1.0D0)), dimension(2), bind(C) :: ucturb = (/230.0D6, 245.0D6/)
   !+ad_vars  ucvalv /3.9e5/ FIX : vacuum system valve cost ($)
-  real(kind(1.0D0)) :: ucvalv = 3.9D5
+  real(kind(1.0D0)), parameter :: ucvalv = 3.9D5
   !+ad_vars  ucvdsh /26.0/ FIX : vacuum duct shield cost ($/kg)
-  real(kind(1.0D0)) :: ucvdsh = 26.0D0
+  real(kind(1.0D0)), parameter :: ucvdsh = 26.0D0
   !+ad_vars  ucviac /1.3e6/ FIX : vacuum system instrumentation and control cost ($)
-  real(kind(1.0D0)) :: ucviac = 1.3D6
+  real(kind(1.0D0)), parameter :: ucviac = 1.3D6
   !+ad_vars  ucwindpf /465.0/ : cost of PF coil superconductor windings ($/m)
   real(kind(1.0D0)) :: ucwindpf = 465.0D0
   !+ad_vars  ucwindtf /480.0/ : cost of TF coil superconductor windings ($/m)
   real(kind(1.0D0)) :: ucwindtf = 480.0D0
   !+ad_vars  ucws /460.0/ FIX : cost of active assembly shop ($/m3)
-  real(kind(1.0D0)) :: ucws = 460.0D0
+  real(kind(1.0D0)), parameter :: ucws = 460.0D0
   !+ad_vars  ucwst(4) /0.0,3.94,5.91,7.88/ : cost of waste disposal (M$/y/1200MW)
   real(kind(1.0D0)), dimension(4) :: ucwst = &
        (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
