@@ -20,6 +20,7 @@ import logging
 logging.basicConfig(level=logging.CRITICAL)
 
 # PROCESS libraries
+sys.path.append(os.path.join(os.path.dirname(__file__), '../utilities/'))
 from process_io_lib.mfile import MFile
 
 # Constants
@@ -60,7 +61,8 @@ def welcome_print(df, ars):
     # welcome to terminal
     print(BColours.BOLD + "\nPROCESS Test Suite" + BColours.ENDC)
     print("Date: {0}".format(datetime.date.today()))
-    print("Diff set to:" + " {0}%\n".format(df) +
+    if not ars.utilities :
+        print("Diff set to:" + " {0}%\n".format(df) +
           BColours.ENDC)
     print("Using reference folder: " + BColours.BOLD + "{0}\n".format(ars.ref)
           + BColours.ENDC)
@@ -127,7 +129,7 @@ def get_file_info(ar):
 
     # List of directories in the reference folder
     dirs = os.listdir(ar.ref)
-
+    
     # File information in dictionary form
     file_info = dict()
 
@@ -558,12 +560,12 @@ def amend_utility_log(u):
     f.close()
 
 
-def test_utilities(file_dict):
+def test_utilities(file_dict, utils_only):
     """Testing python utilities for PROCESS
 
     :param file_dict: dictionary of the test files for PROCESS.
     """
-
+    
     # utility testing message to terminal and summary.log
     print(BColours.BOLD + "\nUtilities and Python libraries testing\n" +
           BColours.ENDC)
@@ -574,16 +576,16 @@ def test_utilities(file_dict):
     save_summary("\n\nCheck utilities.log for warnings and errors.\n\n")
 
     # test mfile.py library
-    test_mfile_lib(file_dict)
+    test_mfile_lib(file_dict, utils_only)
 
     # test in_dat.py library
-    test_in_dat_lib(file_dict)
+    test_in_dat_lib(file_dict, utils_only)
 
     # test make_plot_dat
     # TODO test_make_plot_dat(file_dict)
 
     # test plot_proc.py
-    test_plot_proc(file_dict)
+    test_plot_proc(file_dict, utils_only)
 
     # test convert_in_dat.py
     # TODO test_convert_in_dat(file_dict)
@@ -594,7 +596,7 @@ def test_utilities(file_dict):
     return
 
 
-def test_mfile_lib(fs):
+def test_mfile_lib(fs, utils_only):
     """Test the PROCESS mfile library
 
     :param fs: files to test
@@ -613,7 +615,10 @@ def test_mfile_lib(fs):
     # test all MFILEs
     for key in fs.keys():
         if "error_" not in key:
-            file_name = "test_area/{0}/new.MFILE.DAT".format(key)
+            if utils_only:
+                file_name = "test_files/{0}/ref.MFILE.DAT".format(key)
+            else:
+                file_name = "test_area/{0}/new.MFILE.DAT".format(key)
             results.append(mf.test(file_name))
 
     sys.stdout = sys.__stdout__
@@ -634,7 +639,7 @@ def test_mfile_lib(fs):
     save_summary(lmsg)
 
 
-def test_in_dat_lib(fs):
+def test_in_dat_lib(fs, utils_only):
     """Test the PROCESS in_dat library
 
     :param fs: files to test
@@ -654,7 +659,10 @@ def test_in_dat_lib(fs):
     # test all MFILEs
     for key in fs.keys():
         if "error_" not in key:
-            file_name = "test_area/{0}/IN.DAT".format(key)
+            if utils_only:
+                file_name = "test_files/{0}/ref.IN.DAT".format(key)
+            else:
+                file_name = "test_area/{0}/IN.DAT".format(key)
             files_in_order.append(file_name)
             # file_name = fs[key]["path"] + "IN.DAT"
             results.append(indat.test(file_name))
@@ -683,7 +691,7 @@ def test_in_dat_lib(fs):
         sys.exit("in_dat test_suite failure")
 
 
-def test_plot_proc(fs):
+def test_plot_proc(fs, utils_only):
     """Test the PROCESS in_dat library
 
     :param fs: files to test
@@ -703,7 +711,10 @@ def test_plot_proc(fs):
     for key in fs.keys():
         if "error_" not in key:
             if "stellarator" not in key:
-                file_name = "test_area/{0}/new.MFILE.DAT".format(key)
+                if utils_only:
+                    file_name = "test_files/{0}/ref.MFILE.DAT".format(key)
+                else:
+                    file_name = "test_area/{0}/new.MFILE.DAT".format(key)
                 # file_name = fs[key]["path"] + "new.MFILE.DAT"
                 results.append(pp.test(file_name))
 

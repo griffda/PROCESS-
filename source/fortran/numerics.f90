@@ -280,10 +280,10 @@ module numerics
        'Start-up inj. power lower limit  ', &
        !+ad_varc  <LI> (41) Plasma current ramp-up time lower limit (PULSE) (itv  66,65)
        'Plasma curr. ramp time lower lim ', &
-       !+ad_varc  <LI> (42) Cycle time lower limit (PULSE) (itv 67,65,17)
+       !+ad_varc  <LI> (42) Cycle time lower limit (PULSE) (itv 17,67,65)
        'Cycle time lower limit           ', &
        !+ad_varc  <LI> (43) Average centrepost temperature
-       !+ad_varc            (TART) (consistency equation) (itv 69,70,13)
+       !+ad_varc            (TART) (consistency equation) (itv 13,20,69,70)
        'Average centrepost temperature   ', &
        !+ad_varc  <LI> (44) Peak centrepost temperature upper limit (TART) (itv 68,69,70)
        'Peak centrepost temp. upper limit', &
@@ -357,11 +357,11 @@ module numerics
        'TFC current per turn upper limit ',    &
        !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)
        'Reinke criterion fZ lower limit  ',   &
-       !+ad_varc  <LI> (79) F-value for max peak CS field (itv  149 fbmaxcs)</UL>
+       !+ad_varc  <LI> (79) Peak CS field upper limit (itv  149 fbmaxcs)
        'Peak CS field upper limit        ',   &
-       !+ad_varc  <LI> (80) F-value for min pdivt (itv  153 fpdivlim)</UL>
+       !+ad_varc  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)
        'pdivt lower limit                ',   &
-       !+ad_varc  <LI> (81) F-value for ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
+       !+ad_varc  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
        'ne0 > neped                      '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
@@ -687,10 +687,10 @@ module numerics
        'plasmod_fradc ', &
        !+ad_varc  <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density
        'fgwsep        ', &
-       !+ad_varc  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)</UL>
+       !+ad_varc  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)
        'fpdivlim      ', &
        !+ad_varc  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)</UL>
-       'fpdivlim      ' &
+       'fne0          ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc

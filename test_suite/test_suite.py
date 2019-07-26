@@ -30,64 +30,66 @@ def main(args):
     drs = get_file_info(args)
 
     # Print start of tests message
-    msg = BColours.BOLD + "PROCESS Test Cases\n" + BColours.ENDC
-    print(msg)
-    log_msg = "\nPROCESS Test Cases\n\n"
-    save_summary(log_msg)
+    utils_only = args.utilities
+    if not utils_only : 
+        msg = BColours.BOLD + "PROCESS Test Cases\n" + BColours.ENDC
+        print(msg)
+        log_msg = "\nPROCESS Test Cases\n\n"
+        save_summary(log_msg)
 
-    # setup test_area executable
-    setup_executable()
+        # setup test_area executable
+        setup_executable()
 
-    # dictionary for test cases
-    tests = dict()
+        # dictionary for test cases
+        tests = dict()
 
-    # Go through and test each case
-    for key in drs.keys():
+        # Go through and test each case
+        for key in drs.keys():
+            
+            if "error_" in key:
 
-        if "error_" in key:
-
-            if args.debug:
+                if args.debug:
+                    # initiate test object for the test case
+                    tests[key] = TestCase(key, drs[key], difference, args)
+    
+    
+                    # run test
+                    tests[key].user_run_test()
+    
+                    # Output message to terminal
+                    print_message(key, tests[key])
+    
+                else:
+                    pass
+            else:
+    
                 # initiate test object for the test case
                 tests[key] = TestCase(key, drs[key], difference, args)
-
-
+    
                 # run test
+                print("Starting test ==>  {0:<40}".format(key))
                 tests[key].user_run_test()
-
+    
                 # Output message to terminal
                 print_message(key, tests[key])
-
-            else:
-                pass
-        else:
-
-            # initiate test object for the test case
-            tests[key] = TestCase(key, drs[key], difference, args)
-
-            # run test
-            print("Starting test ==>  {0:<40}".format(key))
-            tests[key].user_run_test()
-
-            # Output message to terminal
-            print_message(key, tests[key])
-
-    errors = list()
-    for ky in drs.keys():
-        if "error_" not in ky:
-            if tests[ky].status == "ERROR":
-                errors.append(ky)
-
-    if len(errors) >= 1:
-        sys.exit("ERROR in test case(s) :: {0}".format(errors))
-
-    # version number
-    vrsn = get_version(tests)
-
-    # Closing messages
-    close_print(vrsn)
+    
+        errors = list()
+        for ky in drs.keys():
+            if "error_" not in ky:
+                if tests[ky].status == "ERROR":
+                    errors.append(ky)
+    
+        if len(errors) >= 1:
+            sys.exit("ERROR in test case(s) :: {0}".format(errors))
+    
+        # version number
+        vrsn = get_version(tests)
+    
+        # Closing messages
+        close_print(vrsn)
 
     # test utilities
-    test_utilities(drs)
+    test_utilities(drs, utils_only)
 
     # move summary
     move_summary()
@@ -107,7 +109,8 @@ def main(args):
         print("\nTest run saved to folder 'test_{0}'".format(vrsn))
 
     # cleanup
-    clean_up(drs)
+    if not utils_only:
+        clean_up(drs)
 
     # if option given to overwrite reference cases with new output.
     if args.overwrite:
@@ -140,6 +143,9 @@ if __name__ == "__main__":
 
     parser.add_argument("-r", "--ref", help="Set reference folder. Default ="
                         "test_files", type=str, default="test_files")
+
+    parser.add_argument("-u", "--utilities", help="Test utilities only", 
+                        action="store_true")
 
     ag = parser.parse_args()
     main(ag)
