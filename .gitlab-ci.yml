@@ -87,6 +87,19 @@ build:vardes:
  tags:
   - freia
 
+testing:unit_tests:
+ when: on_success  # Also default setting
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: testing
+ script:
+  - pwd
+  - ls bin/
+  - ./bin/process_GTest.exe
+ tags:
+  - freia
+
 testing:test_suite:
  when: on_success  # Also default setting
  only:
@@ -102,6 +115,7 @@ testing:test_suite:
 testing:test_suite_issue:
  when: on_success  # Also default setting
  only:
+  - develop
   - /^issue-.*$/
  stage: testing
  script:
@@ -112,19 +126,6 @@ testing:test_suite_issue:
   - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
   - cd test_suite
   - python test_suite.py
- tags:
-  - freia
-
-testing:unit_tests:
- when: on_success  # Also default setting
- only:
-  - develop
-  - /^issue-.*$/
- stage: testing
- script:
-  - pwd
-  - ls bin/
-  - ./bin/process_GTest.exe
  tags:
   - freia
 

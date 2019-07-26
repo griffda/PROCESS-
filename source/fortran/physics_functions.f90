@@ -1247,11 +1247,12 @@ contains
     ! Correction for single null and for ELMs = 0.65
     ! Elongation and triangularity are defined at the plasma boundary.
     ! Total normalised plasma beta is used.
-
     p_eped_scaling =  0.65d0 * c0 * delta_pl**a_delta * ip_pl**a_ip * rmajor**a_r * &
          kappa_pl**a_kappa  * betan_pl**a_beta * rminor**a_a
+
     !Issue #730 - add scaling factor to eped model
     p_eped_scaling = eped_sf * p_eped_scaling
+
   end function p_eped_scaling
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

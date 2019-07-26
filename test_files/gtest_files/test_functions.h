@@ -27,9 +27,21 @@ extern "C"
 
    // Costs 1990 Module
    //------------------
+   void costs_1990_acc2261();
+   void costs_1990_acc2262();
+   void costs_1990_acc2263();
+   void costs_1990_acc2271();
+   void costs_1990_acc2272();
+   void costs_1990_acc2273();
+   void costs_1990_acc2274();
    void costs_1990_acc228();
    void costs_1990_acc229();
    void costs_1990_acc23();
+   void costs_1990_acc241();
+   void costs_1990_acc242();
+   void costs_1990_acc243();
+   void costs_1990_acc244();
+   void costs_1990_acc245();
    void costs_1990_acc25();
    void costs_1990_acc26();
    void costs_1990_acc9();
