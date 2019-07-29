@@ -24,7 +24,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../utilities/'))
 from process_io_lib.mfile import MFile
 
 # Constants
-EXCLUSIONS = ["normres", "nitvar", "itvar", "xcm"]
+EXCLUSIONS = ["normres", "nitvar", "itvar", "xcm", "sigrtf(1)", "balance", 
+              "convergence_parameter"]
 
 # *********************************** #
 
@@ -365,6 +366,7 @@ def copy_test_to_test_area(test_name, test_status, ars):
 
     # diff.log
     if test_status == "DIFF":
+        subprocess.call(["cat", "diff.log"])
         subprocess.call(["mv", "diff.log", "test_area/{0}/".format(test_name)])
 
 
@@ -871,6 +873,7 @@ class TestCase(object):
             # output differences to diff.log
             write_diff_log(self.test, self.diff, self.diffs, self.diff_num,
                            self.only_ref, self.only_new)
+            
         # copy files to test_area
         copy_test_to_test_area(self.test, self.status, self.arguments)
 
