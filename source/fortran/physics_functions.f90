@@ -479,64 +479,59 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: betath, fact, fact2
+    real(kind(1.0D0)) :: betath, fact, fact2, palppv_no_nb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Add neutral beam alpha power / volume
+    ! Store the palppv value without the NB alpha power
+    palppv_no_nb = palppv
 
+    !  Add neutral beam alpha power / volume
     palppv = palppv + palpnb/vol
 
     !  Add extra neutron power
-
     pneutpv = pneutpv + 4.0D0*palpnb/vol
 
     !  Total alpha power
-
     palpmw = palppv*vol
 
     !  Total non-alpha charged particle power
-
     pchargemw = pchargepv*vol
 
     !  Total neutron power
-
     pneutmw = pneutpv*vol
 
     !  Total fusion power
-
     powfmw = palpmw + pneutmw + pchargemw
 
     !  Charged particle fusion power
-
     pfuscmw = palpmw + pchargemw
 
     !  Alpha power to electrons and ions (used with electron
     !  and ion power balance equations only)
     !  No consideration of pchargepv here...
-
     palpipv = falpha * palppv*falpi
     palpepv = falpha * palppv*falpe
 
     !  Determine average fast alpha density
-
     if (fdeut < 1.0D0) then
 
        betath = 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/(bt**2 + bp**2)
 
+       ! IPDG89 fast alpha scaling
        if (ifalphap == 0) then
-          !  IPDG89 fast alpha scaling
           fact = min( 0.30D0, &
                0.29D0*(deni/dene)**2 * ( (ten+tin)/20.0D0 - 0.37D0) )
+
+       ! Modified scaling, D J Ward
        else
-          !  Modified scaling, D J Ward
           fact = min( 0.30D0, &
                0.26D0*(deni/dene)**2 * &
                sqrt( max(0.0D0, ((ten+tin)/20.0D0 - 0.65D0)) ) )
        end if
 
        fact = max(fact,0.0D0)
-       fact2 = palppv/(palppv-(palpnb/vol))
+       fact2 = palppv / palppv_no_nb
        betaft = betath * fact*fact2
 
     else  !  negligible alpha production, palppv = palpnb = 0
