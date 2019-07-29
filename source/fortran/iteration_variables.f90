@@ -21,7 +21,7 @@ subroutine loadxc
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
-
+  !+ad_call  ife_variables
   !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
@@ -72,8 +72,10 @@ subroutine loadxc
   !+ad_hist  27/02/17 JM  Added foh_stress (123)
   !+ad_hist  15/03/17 MDK  Added qtargettotal (124)
   !+ad_hist  17/03/17 MDK  Added impurities fimp(3-14) (125-136)
+  !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
   !+ad_hist  12/01/18 KE  Added fnesep (144)
   !+ad_hist  22/06/18 SIM cdtfleg (itv 24) no longer used
+  !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -88,6 +90,7 @@ subroutine loadxc
   use error_handling
   use fwbs_variables
   use heat_transport_variables
+  use ife_variables
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
@@ -199,12 +202,12 @@ subroutine loadxc
      case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
      case (79) ; xcm(i) = fbetap
      case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
-     case (81) ; write(*,*) 'Iteration variable 81 is not supported.'
-     case (82) ; write(*,*) 'Iteration variable 82 is not supported.'
-     case (83) ; write(*,*) 'Iteration variable 83 is not supported.'
-     case (84) ; write(*,*) 'Iteration variable 84 is not supported.'
-     case (85) ; write(*,*) 'Iteration variable 85 is not supported.'
-     case (86) ; write(*,*) 'Iteration variable 86 is not supported.'
+     case (81) ; xcm(i) = edrive
+     case (82) ; xcm(i) = drveff
+     case (83) ; xcm(i) = tgain
+     case (84) ; xcm(i) = chrad
+     case (85) ; xcm(i) = pdrive
+     case (86) ; xcm(i) = frrmax
      case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
      case (88) ; write(*,*) 'Iteration variable 87 is not supported.'
      case (89) ; xcm(i) = ftbr
@@ -348,7 +351,7 @@ subroutine convxc(xc,nn)
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
-
+  !+ad_call  ife_variables
   !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
@@ -386,7 +389,9 @@ subroutine convxc(xc,nn)
   !+ad_hist  19/01/17 JM  Added fpsepbqar (117)
   !+ad_hist  08/02/17 JM  Added fpsep, tesep, ttarget (118, 119, 120)
   !+ad_hist  22/02/17 JM  Added neratio (121)
+  !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
   !+ad_hist  12/01/18 KE  Added fnesep (144)
+  !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -401,7 +406,7 @@ subroutine convxc(xc,nn)
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-
+  use ife_variables
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
@@ -509,12 +514,12 @@ subroutine convxc(xc,nn)
      case (78) ; write(*,*) 'Iteration variable 78 is not supported.'
      case (79) ; fbetap    = xc(i)/scale(i)
      case (80) ; write(*,*) 'Iteration variable 80 is not supported.'
-     case (81) ; write(*,*) 'Iteration variable 81 is not supported.'
-     case (82) ; write(*,*) 'Iteration variable 82 is not supported.'
-     case (83) ; write(*,*) 'Iteration variable 83 is not supported.'
-     case (84) ; write(*,*) 'Iteration variable 84 is not supported.'
-     case (85) ; write(*,*) 'Iteration variable 85 is not supported.'
-     case (86) ; write(*,*) 'Iteration variable 86 is not supported.'
+     case (81) ; edrive    = xc(i)/scale(i)
+     case (82) ; drveff    = xc(i)/scale(i)
+     case (83) ; tgain     = xc(i)/scale(i)
+     case (84) ; chrad     = xc(i)/scale(i)
+     case (85) ; pdrive    = xc(i)/scale(i)
+     case (86) ; frrmax    = xc(i)/scale(i)
      case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
      case (88) ; write(*,*) 'Iteration variable 88 is not supported.'
      case (89) ; ftbr      = xc(i)/scale(i)

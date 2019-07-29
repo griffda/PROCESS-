@@ -3,7 +3,7 @@
  "version":  [ "PROCESS version 1.0.16" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 222,
+ "n_errortypes": 224,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -226,6 +226,8 @@
   {"no": 219, "level": 3, "message": "REINKE IMPURITY MODEL: tesep is calculated and cannot be an iteration variable for the Reinke model"},
   {"no": 220, "level": 1, "message": "CHECK: tauee_in is for use with isc=48 only"},
   {"no": 221, "level": 2, "message": "CHECK: NSTX scaling is for A<1.7"},
-  {"no": 222, "level": 3, "message": "CHECK: Lang 2012 confinement scaling cannot be used for icurr=2 due to wrong q"}
+  {"no": 222, "level": 3, "message": "CHECK: Lang 2012 confinement scaling cannot be used for icurr=2 due to wrong q"},
+  {"no": 223, "level": 3, "message": "RFP: RFP no longer available."},
+  {"no": 224, "level": 3, "message": "CE50: Constraint Equation 50 is for IFE only."},
  ]
 }
