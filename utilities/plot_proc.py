@@ -38,7 +38,7 @@ import  pathlib
 import time
 timeout = time.time() + 10   # 10 seconds
 found_root = False
-back = "../"
+back = ""
 while not found_root:
     if time.time() > timeout:
         print("Can't find repository root. Make sure utility is being run "
@@ -48,7 +48,10 @@ while not found_root:
         my_file = pathlib.Path(back + ".gitignore")
         if my_file.is_file():
             found_root = True
-            REPO_ROOT = back
+            if back == "":
+                REPO_ROOT = "."
+            else:
+                REPO_ROOT = back
         back += "../"
 
 solenoid = 'pink'

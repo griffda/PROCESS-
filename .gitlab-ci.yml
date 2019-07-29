@@ -3,6 +3,7 @@ stages:
   - testing
   - jenkins
   - baseline
+  - standards
 #This command is used for generating gtest results in Jenkins  ./bin/process_test.exe --gtest_output=xml:gtest_results.xml
 before_script:
 #  - apt-get install -y gfortran
@@ -210,3 +211,15 @@ baseline:baseline_2018_results:
 
 #after_script:  # Now trigger testing
 #- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"
+
+standards:line_length:
+ when: on_success  # Also default setting
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: standards
+ script:
+  - pwd
+  - python utilities/line_length_standard.py
+ tags:
+  - freia
