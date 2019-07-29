@@ -12,14 +12,14 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : ./../../../bin/process.exe
-   Version : 1.0.15   Release Date :: 2019-03-15
-   Tag No. : 1.0.15-87-g47436f87 code contains untracked changes
-   Git log : Merge branch '820-nstx' into 'develop',
- Date/time : 11 Jun 2019 16:02:06 +01:00(hh:mm) UTC
-      User : skahn
-  Computer : temppc
- Directory : /home/skahn/PROCESS/develop/test_suite/test_files/stellarator
+   Program : ./process.exe
+   Version : 1.0.16   Release Date :: 2019-07-15
+   Tag No. : 1.0.16-52-ga997a230
+   Git log : Merge branch 'issue-ci-tweak' into 'develop',
+ Date/time : 29 Jul 2019 15:02:08 +01:00(hh:mm) UTC
+      User : morrisj
+  Computer : claptrap.ccfepc.ccfe.ac.uk
+ Directory : /Users/morrisj/Work/process/test_suite_ref_reset/test_suite
      Input :
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
@@ -97,15 +97,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  First wall / blanket life (years)                                        (fwbllife)                   17.552     
  Divertor life (years)                                                    (divlife.)                    8.692     
- Cost of electricity (m$/kWh)                                             (coe)                       103.562     
+ Cost of electricity (m$/kWh)                                             (coe)                        98.708     
  
  Power Generation Costs :
  
                                                                            Annual Costs, M$       COE, m$/kWh
 
- Capital Investment                                                                605.97               92.24
+ Capital Investment                                                                574.34               87.42
  Operation & Maintenance                                                            62.81                9.56
- Decommissioning Fund                                                                5.12                0.78
+ Decommissioning Fund                                                                4.86                0.74
  Fuel Charge Breakdown
 
      Blanket & first wall                                                    0.00                0.00
@@ -116,16 +116,19 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
      Waste Disposal                                                          3.60                0.55
  Total Fuel Cost                                                                     6.47                0.99
 
- Total Cost                                                                        680.37              103.56
+ Total Cost                                                                        648.47               98.71
  
  **************************************** Detailed Costings (1990 US$) ****************************************
  
  Acc.22 multiplier for Nth of a kind                                      (fkind)                   1.000E+00     
  Level of Safety Assurance                                                (lsa)                             2     
  
+ 
+ ************************ Structures and Site Facilities ************************
+ 
  (c211)              Site improvements, facilities, land (M$)                                                     32.64
  (c212)              Reactor building cost (M$)                                                                  440.42
- (c213)              Turbine building cost (M$)                                                                  319.20
+ (c213)              Turbine building cost (M$)                                                                   31.92
  (c2141)             Reactor maintenance building cost (M$)                                                       54.21
  (c2142)             Warm shop cost (M$)                                                                          35.30
  (c215)              Tritium building cost (M$)                                                                   12.43
@@ -135,7 +138,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  (c2173)             Shop and warehouses cost (M$)                                                                 9.66
  (c2174)             Cryogenic building cost (M$)                                                                  7.37
  
- (c21)               Total account 21 cost (M$)                                                                  959.47
+ (c21)               Total account 21 cost (M$)                                                                  672.19
  
  ******************************* Reactor Systems ********************************
  
@@ -265,7 +268,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                     5504.59
+ (cdirt)             Plant direct cost (M$)                                                                     5217.31
  
  ****************************** Reactor Core Cost *******************************
  
@@ -273,23 +276,23 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ******************************** Indirect Cost *********************************
  
- (c9)                Indirect cost (M$)                                                                         1544.59
+ (c9)                Indirect cost (M$)                                                                         1463.98
  
  ****************************** Total Contingency *******************************
  
- (ccont)             Total contingency (M$)                                                                     1057.38
+ (ccont)             Total contingency (M$)                                                                     1002.19
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed cost (M$)                                                                      8106.56
+ (concost)           Constructed cost (M$)                                                                      7683.48
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          1215.98
+ (moneyint)          Interest during construction (M$)                                                          1152.52
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                              9322.54
+ (capcost)           Total capital investment (M$)                                                              8836.00
  
  ********************************************* Plant Availability *********************************************
  
@@ -411,12 +414,23 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Edge radiation power (MW)                                                (pedgeradmw)              1.131E+02  OP 
  SOL radiation power (MW)                                                 (psolradmw)               2.770E+02  OP 
  Total radiation power (MW)                                               (pradmw)                  5.187E+02  OP 
+ Core radiation fraction = total radiation in core / total power deposite (rad_fraction_core)       0.000E+00  OP 
+ SoL radiation fraction = total radiation in SoL / total power accross se (rad_fraction_sol)        8.000E-01  IP 
  Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            9.139E-01  OP 
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             2.481E-01  OP 
  Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
  Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
  Peak radiation wall load (MW/m^2)                                        (peakradwallload)         8.263E-01  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  1.140E+00  OP 
+ 
+ Power incident on the divertor targets (MW)                              (ptarmw)                  0.000E+00  OP 
+ Fraction of power to the lower divertor                                  (ftar)                    5.000E-01  IP 
+ Outboard side heat flux decay length (m)                                 (lambdaio)                0.000E+00  OP 
+ Fraction of power on the inner targets                                   (fio)                     0.000E+00  OP 
+ Fraction of power incident on the lower inner target                     (fLI)                     0.000E+00  OP 
+ Fraction of power incident on the lower outer target                     (fLO)                     0.000E+00  OP 
+ Power incident on the lower inner target (MW)                            (pLImw)                   0.000E+00  OP 
+ Power incident on the lower outer target (MW)                            (pLOmw)                   0.000E+00  OP 
  
  Ohmic heating power (MW)                                                 (pohmmw)                  0.000E+00  OP 
  Fraction of alpha power deposited in plasma                              (falpha)                      0.950  OP 
@@ -454,6 +468,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Lower limit on taup/taueff                                               (taulimit)                    5.000     
  Total energy confinement time including radiation loss (s)               (total_energy_conf_t          0.000  OP 
    (= stored energy including fast particles / loss power including radiation
+ 
+ Dimensionless plasma parameters
+ 
+ For definitions see
+ Recent progress on the development and analysis of the ITPA global H-mode confinement database
+ D.C. McDonald et al, 2007 Nuclear Fusion v47, 147. (nu_star missing 1/mu0)
+ Normalized plasma pressure beta as defined by McDonald et al             (beta_mcdonald)           0.000E+00  OP 
+ Normalized ion Larmor radius                                             (rho_star)                0.000E+00  OP 
+ Normalized collisionality                                                (nu_star)                  Infinity  OP 
+ Volume measure of elongation                                             (kappaa_IPB)              1.000E+00  OP 
  
  Fuelling :
  
@@ -549,10 +573,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Coil Geometry :
  
- Inboard leg centre radius (m)                                            (rtfcin)                  1.808E+01     
+ Inboard leg centre radius (m)                                            (r_tf_inleg_mid)          1.808E+01     
  Outboard leg centre radius (m)                                           (rtot)                    2.647E+01     
  Maximum inboard edge height (m)                                          (hmax)                    5.231E+00     
- Clear horizontal bore (m)                                                (tfboreh)                 5.499E+00     
+ Clear horizontal bore (m)                                                (tf_total_h_width)        5.499E+00     
  Clear vertical bore (m)                                                  (tfborev)                 1.046E+01     
  
  Conductor Information :
@@ -908,7 +932,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Electric power for tritium plant (MW)                                    (trithtmw)                   15.000     
  Electric power for cryoplant (MW)                                        (crypmw)                     59.324  OP 
  Electric power for TF coils (MW)                                         (tfacpd)                     60.859  OP 
- Electric power for PF coils (MW)                                         (pfwp)                        0.000  OP 
+ Electric power for PF coils (MW)                                         (pfwpmw)                      0.000  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                    55.448  OP 
  Total (MW)                                                                                          1391.131  OP 
  

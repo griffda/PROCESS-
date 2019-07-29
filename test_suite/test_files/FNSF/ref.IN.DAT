@@ -63,7 +63,7 @@ ixc = 14            *fwalld
 fwalld = 0.10188    *f-value for maximum wall load
 
 ixc = 18            *q
-*q = 7.3424          *Safety factor ‘near’ plasma edge
+*q = 7.3424          *Safety factor 'near' plasma edge
 q=8.0
 boundl(18) = 7.0
 
@@ -166,7 +166,9 @@ tburn    = 1000.0    *Burn time (s)
 tdwell   = 100.0    *Time between pulses in a pulsed reactor (s)
 
 *-----------------Build Variables------------------*
-
+bore     = 0.0      *central solenoid inboard radius (m)
+gapoh    = 0.0      *gap between central solenoid and TF coil (m)
+ohcth    = 0.0      *central solenoid thickness (m)
 blnkith  = 0.0      *Inboard blanket thickness (m)
 blnkoth  = 0.7      *Outboard blanket thickness (m)
 ddwi     = 0.0      *Vacuum vessel thickness (m)
@@ -195,7 +197,7 @@ ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma
 tflegres = 2.5E-8   *Resistivity of a TF coil leg (Ohm-m)
 tfno     = 12       *Number of TF coils
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
-vftf     = 0.2      *Coolant fraction of TFC ‘cable’ (itfsup=1) or of TFC leg (itfsup=0)
+vftf     = 0.2      *Coolant fraction of TFC 'cable' (itfsup=1) or of TFC leg (itfsup=0)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*
