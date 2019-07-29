@@ -37,6 +37,24 @@ while not found_root:
                 REPO_ROOT = back
         back += "../"
 
+# Set line limit
+LINE_LIMIT = 100
+
+# Paths and files to check
+CHECK_LIST = {
+    "fortran" :{
+        "path" : REPO_ROOT+"/source/fortran/",
+        "extension" : ".f90"
+    },
+    "python" :{
+        "path" : REPO_ROOT+"/utilities/",
+        "extension" : ".py"
+    },
+    "latex" :{
+        "path" : REPO_ROOT+"/documentation/",
+        "extension" : ".tex"
+    }
+}
 
 if __name__ == "__main__":
 
@@ -65,65 +83,30 @@ if __name__ == "__main__":
     LINE_COUNT = 0
     FILE_COUNT = 0
 
-    # Check main FORTRAN
-    fort_path = REPO_ROOT+"/source/fortran/"
-    for filename in os.listdir(fort_path):
-        if ".f90" in filename:
-            FORT_STATUS = True
-            print("")
-            print(filename)
-            file_lines = open(fort_path + filename, "r").readlines()
-            counter = 0
-            for line in file_lines:
-                counter += 1
-                if len(line) > 100:
-                    print("|-- {0} :: line :: {1} :: length={2}".
-                          format(filename, counter, len(line)))
-                    STATUS = False
-                    LINE_COUNT += 1
-                    if FORT_STATUS:
-                        FILE_COUNT += 1
-                    FORT_STATUS = False
-
-    # Check Python
-    py_path = REPO_ROOT+"/utilities/"
-    for filename in os.listdir(py_path):
-        if ".py" in filename:
-            PY_STATUS = True
-            print("")
-            print(filename)
-            file_lines = open(py_path + filename, "r").readlines()
-            counter = 0
-            for line in file_lines:
-                counter += 1
-                if len(line) > 100:
-                    print("|-- {0} :: line :: {1} :: length={2}".
-                          format(filename, counter, len(line)))
-                    STATUS = False
-                    LINE_COUNT += 1
-                    if PY_STATUS:
-                        FILE_COUNT += 1
-                    PY_STATUS = False
-
-    # # Check Latex
-    tex_path = REPO_ROOT+"/documentation/"
-    for filename in os.listdir(tex_path):
-        if ".tex" in filename:
-            TEX_STATUS = True
-            print("")
-            print(filename)
-            file_lines = open(tex_path + filename, "r").readlines()
-            counter = 0
-            for line in file_lines:
-                counter += 1
-                if len(line) > 100:
-                    print("|-- {0} :: line :: {1} :: length={2}".
-                          format(filename, counter, len(line)))
-                    STATUS = False
-                    LINE_COUNT += 1
-                    if TEX_STATUS:
-                        FILE_COUNT += 1
-                    TEX_STATUS = False
+    # Check each entry in CHECK_LIST
+    for key in CHECK_LIST.keys():
+        print("")
+        print("# Checking {0} files".format(key))
+        print("")
+        check_path = CHECK_LIST[key]["path"]
+        for filename in os.listdir(check_path):
+            if CHECK_LIST[key]["extension"] in filename:
+                FORT_STATUS = True
+                print("")
+                print(filename)
+                file_lines = open(check_path + filename, "r", 
+                                  encoding="UTF-8").readlines()
+                counter = 0
+                for line in file_lines:
+                    counter += 1
+                    if len(line) > LINE_LIMIT:
+                        print("|-- {0:30} :: line :: {1:<5} :: length = {2:<10}".
+                             format(filename, counter, len(line)))
+                        STATUS = False
+                        LINE_COUNT += 1
+                        if FORT_STATUS:
+                            FILE_COUNT += 1
+                        FORT_STATUS = False
 
     # if STATUS:
     #     sys.exit(0)
