@@ -661,13 +661,14 @@ def test_in_dat_lib(fs, utils_only):
     # test all MFILEs
     for key in fs.keys():
         if "error_" not in key:
-            if utils_only:
-                file_name = "test_files/{0}/ref.IN.DAT".format(key)
-            else:
-                file_name = "test_area/{0}/IN.DAT".format(key)
-            files_in_order.append(file_name)
-            # file_name = fs[key]["path"] + "IN.DAT"
-            results.append(indat.test(file_name))
+            if "IFE" not in key:
+                if utils_only:
+                    file_name = "test_files/{0}/ref.IN.DAT".format(key)
+                else:
+                    file_name = "test_area/{0}/IN.DAT".format(key)
+                files_in_order.append(file_name)
+                # file_name = fs[key]["path"] + "IN.DAT"
+                results.append(indat.test(file_name))
 
     sys.stdout = sys.__stdout__
 
@@ -713,12 +714,13 @@ def test_plot_proc(fs, utils_only):
     for key in fs.keys():
         if "error_" not in key:
             if "stellarator" not in key:
-                if utils_only:
-                    file_name = "test_files/{0}/ref.MFILE.DAT".format(key)
-                else:
-                    file_name = "test_area/{0}/new.MFILE.DAT".format(key)
-                # file_name = fs[key]["path"] + "new.MFILE.DAT"
-                results.append(pp.test(file_name))
+                if "IFE" not in key:
+                    if utils_only:
+                        file_name = "test_files/{0}/ref.MFILE.DAT".format(key)
+                    else:
+                        file_name = "test_area/{0}/new.MFILE.DAT".format(key)
+                    # file_name = fs[key]["path"] + "new.MFILE.DAT"
+                    results.append(pp.test(file_name))
 
             # if results[-1]:
             #    subprocess.call(["mv", "ref.SUMMARY.pdf", "test_area/{0}/".
@@ -793,6 +795,10 @@ class TestCase(object):
             subprocess.call(["cp {0} .".format(self.path + "vmec_Zmn.dat")],
                             shell=True)
 
+        if self.test == "IFE":
+            subprocess.call(["cp {0} .".format(self.path + "device.dat")],
+                            shell=True)
+
         # run PROCESS
         subprocess.call(["cp {0} .".format(self.path + "IN.DAT")],
                         shell=True)
@@ -804,6 +810,9 @@ class TestCase(object):
             subprocess.call(["rm vmec_info.dat"], shell=True)
             subprocess.call(["rm vmec_Rmn.dat"], shell=True)
             subprocess.call(["rm vmec_Zmn.dat"], shell=True)
+
+        if self.test == "IFE":
+            subprocess.call(["rm device.dat"], shell=True)
 
         # check PROCESS call exit code
         if self.process_exit_code != 0:

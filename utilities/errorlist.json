@@ -228,6 +228,6 @@
   {"no": 221, "level": 2, "message": "CHECK: NSTX scaling is for A<1.7"},
   {"no": 222, "level": 3, "message": "CHECK: Lang 2012 confinement scaling cannot be used for icurr=2 due to wrong q"},
   {"no": 223, "level": 3, "message": "RFP: RFP no longer available."},
-  {"no": 224, "level": 3, "message": "CE50: Constraint Equation 50 is for IFE only."},
+  {"no": 224, "level": 3, "message": "CE50: Constraint Equation 50 is for IFE only."}
  ]
 }
