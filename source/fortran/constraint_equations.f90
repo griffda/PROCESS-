@@ -2034,7 +2034,7 @@ contains
       type (constraint_args_type), intent(out) :: args
 
       if (ife /= 1) then
-         call report_error(224)
+         call report_error(12)
       end if
 
       args%cc =  1.0D0 - frrmax * rrmax/reprat
