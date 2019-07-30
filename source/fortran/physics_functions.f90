@@ -33,24 +33,18 @@ module physics_functions_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
-!  use divertor_ode, only: impurity_concs
-!  use divertor_kallenbach_variables, only: impurity_enrichment
   use error_handling
   use impurity_radiation_module
   use maths_library
   use physics_variables
   use profiles_module
   use read_and_get_atomic_data
-!  use reinke_variables
 
   implicit none
 
-  !private
-  public :: beamfus,palph,palph2
+  public :: beamfus, palph, palph2
 
   !  Module-level variables
-
-  !integer ::
   real(kind(1.0D0)) :: vcritx
 
 contains
@@ -1257,7 +1251,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine radpwr(pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pradpv)
+  subroutine radpwr(pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pradpv)
 
     !+ad_name  radpwr
     !+ad_summ  Radiation power interface routine
@@ -1477,5 +1471,95 @@ subroutine radpwr(pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pradpv)
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  function plasma_elongation_IPB() &
+     bind (C, name="test_plasma_elongation_IPB")
+     !+ad_name  plasma_elongation_IPB
+     !+ad_summ  Volume measure of plasma elongation using the IPB definition
+     !+ad_type  Subroutine
+     !+ad_auth  H Lux, CCFE, Culham Science Centre
+     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+     !+ad_cont  N/A
+     !+ad_desc  Routine to calculate vol measure of plasma elongation for IPB98
+     !+ad_prob  None
+     !+ad_hist  30/07/19 JM  Initial version of routine
+     !+ad_docs  Otto Kardaun et al 2008 Nucl. Fusion 48 099801
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     
+     ! Module variables
+     use physics_variables, only : vol, rminor, rmajor
+     use constants, only : pi
+
+     ! Return value
+     real(kind(1.0D0)) :: plasma_elongation_IPB
+
+     ! Volume measure of plasma elongation (used by IPB scalings)
+     plasma_elongation_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
+
+  end function plasma_elongation_IPB
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function total_mag_field() &
+     bind (C, name="test_total_mag_field")
+     !+ad_name  total_mag_field
+     !+ad_summ  Calculates the total magnetic field
+     !+ad_type  Subroutine
+     !+ad_auth  J. Morris, CCFE, Culham Science Centre
+     !+ad_hist  30/07/19 JM  Initial version of routine
+     
+     ! Module variables
+     use physics_variables, only : bt, bp
+
+     ! Return value
+     real(kind(1.0D0)) :: total_mag_field
+
+     ! Volume measure of plasma elongation (used by IPB scalings)
+     total_mag_field = sqrt(bt**2 + bp**2)
+
+  end function total_mag_field
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function beta_poloidal() &
+     bind (C, name="test_beta_poloidal")
+     !+ad_name  beta_poloidal
+     !+ad_summ  Calculates beta poloidal
+     !+ad_type  Subroutine
+     !+ad_auth  J. Morris, CCFE, Culham Science Centre
+     !+ad_hist  30/07/19 JM  Initial version of routine
+     
+     ! Module variables
+     use physics_variables, only : btot, bp, beta
+
+     ! Return value
+     real(kind(1.0D0)) :: beta_poloidal
+
+     ! Volume measure of plasma elongation (used by IPB scalings)
+     beta_poloidal = beta * ( btot/bp )**2
+
+  end function beta_poloidal
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function res_diff_time() &
+     bind (C, name="test_res_diff_time")
+     !+ad_name  res_diff_time
+     !+ad_summ  Calculates resistive diffusion time
+     !+ad_type  Subroutine
+     !+ad_auth  J. Morris, CCFE, Culham Science Centre
+     !+ad_hist  30/07/19 JM  Initial version of routine
+     
+     ! Module variables
+     use physics_variables, only : rmajor, rplas, kappa95
+     use constants, only : rmu0
+
+     ! Return value
+     real(kind(1.0D0)) :: res_diff_time
+
+     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
+     res_diff_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
+
+  end function res_diff_time
 
 end module physics_functions_module

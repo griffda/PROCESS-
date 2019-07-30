@@ -173,15 +173,13 @@ end subroutine subr
 
     
     ! Volume measure of plasma elongation (used by IPB scalings)
-    kappaa_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
+    kappaa_IPB = plasma_elongation_IPB()
 
     if (icurr == 2) then
        q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
     else
        q95 = q  !  i.e. input (or iteration variable) value
     end if
-
-
 
     if (ipedestal .ne. 3) then
 
@@ -263,11 +261,13 @@ end subroutine subr
 
     endif
 
-    btot = sqrt(bt**2 + bp**2)
-    betap = beta * ( btot/bp )**2
+    ! Calculate total magnetic field [T]
+    btot = total_mag_field()
+
+    ! Calculate beta poloidal [-]
+    betap = beta_poloidal()
 
     !  Set PF coil ramp times
-
     if (lpulse /= 1) then
 
        if (tohsin == 0.0D0) then
@@ -298,22 +298,18 @@ end subroutine subr
     !  Reset second tburn value (tburn0).
     !  This is used to ensure that the burn time is used consistently;
     !  see convergence loop in fcnvmc1, evaluators.f90
-
     tburn0 = tburn
 
     !  Pulse and down times : The reactor is assumed to be 'down'
     !  at all times outside of the plasma current flat-top period.
     !  The pulse length is the duration of non-zero plasma current
-
     tpulse = tohs + theat + tburn + tqnch
     tdown  = tramp + tohs + tqnch + tdwell
 
     !  Total cycle time
-
     tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
     !  Calculate bootstrap current fraction using various models
-
     bscf_iter89 = bootstrap_fraction_iter89(aspect,beta,btot,cboot,plascur, &
          q95,q0,rmajor,vol)
 
@@ -471,10 +467,9 @@ end subroutine subr
     end if
 
     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
-    res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
+    res_time = res_diff_time()
 
     !  Power transported to the first wall by escaped alpha particles
-
     palpfwmw = palpmw * (1.0D0-falpha)
 
     !  Density limit
@@ -514,7 +509,6 @@ end subroutine subr
     !!!!vscal and phyaux should be replaced by PLASMOD output ipedestal 3 - is this done?
 
     !  Calculate beta limit
-
     if (iprofile == 0) then
 
        if (gtscale == 1) then
@@ -525,7 +519,6 @@ end subroutine subr
     else
        !  Relation between beta limit and plasma internal inductance
        !  Hartmann and Zohm
-
        dnbeta = 4.0D0 * rli
     end if
 
@@ -601,7 +594,8 @@ end subroutine subr
           call report_error(217)
        endif
 
-       write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', impurity_arr(impvardiv)%frac, ', ',  impvardiv  
+       write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', &
+         impurity_arr(impvardiv)%frac, ', ',  impvardiv  
 
     endif
 
@@ -658,7 +652,8 @@ end subroutine subr
   end subroutine physics
 
 
-     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   function eped_warning()
       ! Issue #413.  MDK 26/2/18: improved output
       character(len=100) :: eped_warning, info_string
@@ -2067,7 +2062,7 @@ end subroutine subr
 
   contains
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     function plasc(qbar,aspect,rminor,bt,kappa,delta)
 

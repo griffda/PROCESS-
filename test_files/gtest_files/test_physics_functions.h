@@ -75,3 +75,84 @@ TEST(Physics_functions, t_eped_scaling_high) {
 
     EXPECT_NEAR(t_eped, 5.3955, 0.001);
 }
+
+TEST(Physics_functions, plasma_elongation_IPB) { 
+
+    // module and global variables
+    extern double rminor, rmajor, vol;
+
+    double kappaa_IPB;
+
+    // Plasma major radius [m]
+    rmajor = 9.137;
+
+    // Plasma minor radius [m]
+    rminor = 2.947;
+
+    // Plasma volume [m3]
+    vol = 2634.0;
+
+    kappaa_IPB = test_plasma_elongation_IPB();
+
+    EXPECT_NEAR(kappaa_IPB, 1.682, 0.001);
+}
+
+TEST(Physics_functions, total_mag_field) { 
+
+    // module and global variables
+    extern double bt, bp;
+
+    double btot;
+
+    // Toroidal magnetic field on-axis [T]
+    bt = 5.278;
+
+    // Poloidal magnetic field on-axis [T]
+    bp = 0.852;
+
+    btot = test_total_mag_field();
+
+    EXPECT_NEAR(btot, 5.347, 0.001);
+}
+
+TEST(Physics_functions, beta_poloidal) { 
+
+    // module and global variables
+    extern double btot, beta, bp;
+
+    double betap;
+
+    // Total magnetic field [T]
+    btot = 5.347;
+
+    // Plasma beta
+    beta = 0.0307;
+
+    // Poloidal magnetic field on-axis [T]
+    bp = 0.852;
+
+    betap = test_beta_poloidal();
+
+    EXPECT_NEAR(betap, 1.209, 0.001);
+}
+
+TEST(Physics_functions, res_diff_time) { 
+
+    // module and global variables
+    extern double rmajor, rplas, kappa95;
+
+    double res_time;
+
+    // Plasma major radius [m]
+    rmajor = 9.137;
+
+    // plasma resistance (ohm)
+    rplas = 2.909e-9;
+
+    // Plasma elongation at 95% flux surface
+    kappa95 = 1.650;
+
+    res_time = test_res_diff_time();
+
+    EXPECT_NEAR(res_time, 4784.3, 0.1);
+}
