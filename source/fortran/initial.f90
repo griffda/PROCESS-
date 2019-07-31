@@ -583,7 +583,7 @@ subroutine check
     !  Tight aspect ratio options
     ! ---------------------------
 
-    if (itart == 1) then
+     if (itart == 1) then
 
         icase  = 'Tight aspect ratio tokamak model'
         iblnkith = 0
@@ -595,8 +595,9 @@ subroutine check
         ipfloc(2) = 3
         ipfloc(3) = 3
         if ( itfsup == 1 ) itfsup = 0
-        
-        if (ibss == 1) call report_error(38)
+        if ( itfsup == 2 ) tcpav  = -243.15D0  ! Initialize at low temperatures for cryoaluminium centerpost (30 K)
+
+        if (ibss  == 1) call report_error(38)
         if (snull == 1) call report_error(39)
 
     else

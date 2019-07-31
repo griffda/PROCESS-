@@ -1847,7 +1847,7 @@ contains
           write(outfile,*) ' '
           obsolete_var = .true.
        case ('itfsup')
-          call parse_int_variable('itfsup', itfsup, 0, 1, &
+          call parse_int_variable('itfsup', itfsup, 0, 2, &
                'Switch for TF coil type')
        case ('jbus')
           call parse_real_variable('jbus', jbus, 1.0D4, 1.0D8, &
@@ -1881,7 +1881,7 @@ contains
           call parse_real_variable('poisson', poisson, 0.0D0, 1.0D0, &
                'Poissons ratio for TF stress calc.')
        case ('ptempalw')
-          call parse_real_variable('ptempalw', ptempalw, 50.0D0, 300.0D0, &
+          call parse_real_variable('ptempalw', ptempalw, -253.15D0, 300.0D0, &
                'Maximum peak centrepost temp. (C)')
        case ('rcool')
           call parse_real_variable('rcool', rcool, 1.0D-6, 1.0D0, &
@@ -1902,10 +1902,10 @@ contains
           call parse_real_variable('strncon_tf', strncon_tf, -0.02D0, 0.02D0, &
                'Strain in TF superconductor material')
        case ('tcoolin')
-          call parse_real_variable('tcoolin', tcoolin, -273.1D0, 100.0D0, &
+          call parse_real_variable('tcoolin', tcoolin, -269.15D0, 100.0D0, &
                'Centrepost coolant inlet temperature')
        case ('tcpav')
-          call parse_real_variable('tcpav', tcpav, -200.0D0, 300.0D0, &
+          call parse_real_variable('tcpav', tcpav, -269.15D0, 300.0D0, &
                'Average centrepost coolant temperature')
        case ('tcritsc')
           call parse_real_variable('tcritsc', tcritsc, 1.0D0, 300.0D0, &
