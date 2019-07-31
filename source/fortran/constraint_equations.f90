@@ -2882,16 +2882,13 @@ contains
       !+ad_name  constraint_eqn_081
       !+ad_summ  Make sure that the central density is larger that the pedestal one
       !+ad_type  Subroutine
-      !+ad_auth  J Morris, Culham Science Centre
+      !+ad_auth  S Kahn, Culham Science Centre
       !+ad_args  args : output structure : residual error; constraint value; 
       !+ad_argc  residual error in physical units; output string; units string
       !+ad_desc  Lower limit pdivt
       !+ad_desc  !#=# physics
       !+ad_argc  !#=#=# ne0, neped
       !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fpdivlim : input : F-value for lower limit on pdivt (cons. 80, itvar 153)
-      !+ad_glos  pdivtlim : input : Minimum power crossing separatrix pdivt [MW]
-      !+ad_glos  pdivt : input : Power crossing separatrix [MW]
       !+ad_glos  Make sure that the central density is larger that the pedestal one
       !+ad_glos  ne0   : centre plasma electron density
       !+ad_glos  neped : pedestal plasma electron density
