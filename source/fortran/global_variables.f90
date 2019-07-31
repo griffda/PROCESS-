@@ -3445,10 +3445,16 @@ module build_variables
   real(kind(1.0D0)) :: rsldi = 0.0D0
   !+ad_vars  rsldo : radius to outboard shield (outside point) (m)
   real(kind(1.0D0)) :: rsldo = 0.0D0
+
+  !+ad_vars  r_tf_inleg_in : Inner edge radius of the TF inboard legs (m)
+  real(kind(1.0D0)) :: r_tf_inleg_in = 0.0D0
+
   !+ad_vars  r_tf_inleg_mid : radius of centre of inboard TF leg (m)
   real(kind(1.0D0)) :: r_tf_inleg_mid = 0.0D0
-  !+ad_vars  rtot : radius to the centre of the outboard TF coil leg (m)
-  real(kind(1.0D0)) :: rtot = 0.0D0
+  
+  !+ad_vars  r_tf_inleg_in : Outer edge radius of the TF inboard legs (m)
+  real(kind(1.0D0)) :: r_tf_inleg_out = 0.0D0
+
   !+ad_vars  scrapli /0.14/ : gap between plasma and first wall, inboard side (m)
   !+ad_varc                   (used if iscrp=1) (iteration variable 73)
   real(kind(1.0D0)) :: scrapli = 0.14D0

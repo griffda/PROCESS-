@@ -208,7 +208,7 @@ contains
     integer, intent(in) :: iprint,outfile
 
     !  Local variables
-    real(kind(1.0D0)) :: r_tf_inleg_in, r_tf_inleg_out, r_tf_outleg_in
+    real(kind(1.0D0)) :: r_tf_outleg_in
     real(kind(1.0D0)) :: ltfleg, rmid, rtop, ztop, tcpav_kelvin
     real(kind(1.0D0)) :: tfcind1, deltf
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -458,10 +458,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     
-
-    !  Critical pressure in saturation pressure calculations (Pa)
-    pcrt = 2.24D7
-
     !  Temperature margin used in calculations (K)
     tmarg = 10.0D0
 
@@ -507,13 +503,13 @@ contains
     ! **************
     else if ( itfsup ==  2 ) then
        tcool_calc = tcoolin + 273.15D0  ! K
-       
+
        ! If T < 4 K -> Extrapolated data
        if ( tcool_calc < 4.0D0 ) write(*,*) 'WARNING : Helium properties extrapolated below K'
  
        ! Infinitesimal power deposition
        dptot = ptot / real( n_tcool_it, kind(1.0D0) )
- 
+
        do ii = 1, n_tcool_it
 
           ! Helium density and thermal capacity
@@ -540,7 +536,7 @@ contains
           end if
           coolant_cp = coolant_cp*1.0D3 ! conversion to K/(kg.K)
           ! ******
-                   
+
           ! Temperature infinitesimal increase
           tcool_calc = tcool_calc + dptot / (coolant_density*vcoolav*acool*coolant_cp)
        end do
@@ -645,6 +641,9 @@ contains
 
     dpres = fricfac * (lcool/dcool) * coolant_density * 0.5D0*vcool**2
     ppump = dpres * acool * vcool / etapump
+
+    !  Critical pressure in saturation pressure calculations (Pa)
+    pcrt = 2.24D7
 
     ! Saturation pressure
     ! Ref : Keenan, Keyes, Hill, Moore, steam tables, Wiley & Sons, 1969
