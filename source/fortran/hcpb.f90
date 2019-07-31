@@ -236,7 +236,7 @@ contains
 
     ! Centrepost heating for a ST machine
     if (itart == 1) then
-        pnuccp = st_centrepost_nuclear_heating(pneutmw,hmax,tfcth)
+        pnuccp = st_centrepost_nuclear_heating(pneutmw,hmax,r_tf_inleg_out)
     else
         pnuccp = 0.0D0
     end if
