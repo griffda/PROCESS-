@@ -58,9 +58,12 @@ extern "C"
    // Physics functions module
    //-------------------------
    double test_t_eped_scaling();
-
+   double test_plasma_elongation_IPB();
+   double test_total_mag_field();
+   double test_beta_poloidal();
+   double test_res_diff_time();
+   
 }
-
 
 int elapsed_time(const char* filename)
 {

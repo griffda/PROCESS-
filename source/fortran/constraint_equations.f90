@@ -2885,13 +2885,14 @@ contains
       !+ad_auth  S Kahn, Culham Science Centre
       !+ad_args  args : output structure : residual error; constraint value; 
       !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Lower limit pdivt
+      !+ad_desc  Lower limit ne0 > neped
       !+ad_desc  !#=# physics
       !+ad_argc  !#=#=# ne0, neped
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  Make sure that the central density is larger that the pedestal one
-      !+ad_glos  ne0   : centre plasma electron density
-      !+ad_glos  neped : pedestal plasma electron density
+      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be 
+      !+ad_desc  assigned only if present.
+      !+ad_glos  fne0  : input : F-value for constraint on ne0 > neped 
+      !+ad_glos  ne0   : input : Central electron density [m-3]
+      !+ad_glos  neped : input : Electron density at pedestal [m-3]
       use physics_variables, only: ne0, fne0, neped
       implicit none
 
