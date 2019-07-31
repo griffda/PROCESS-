@@ -8,12 +8,12 @@
  
    Program : ./process.exe
    Version : 1.0.16   Release Date :: 2019-07-15
-   Tag No. : 1.0.16-52-ga997a230
-   Git log : Merge branch 'issue-ci-tweak' into 'develop',
- Date/time : 29 Jul 2019 15:01:41 +01:00(hh:mm) UTC
-      User : morrisj
-  Computer : claptrap.ccfepc.ccfe.ac.uk
- Directory : /Users/morrisj/Work/process/test_suite_ref_reset/test_suite
+   Tag No. : 1.0.16-48-gc529afd6 code contains untracked changes
+   Git log : Add line length check into CI - currently doesn't fail if lines length
+ Date/time : 31 Jul 2019 13:25:28 +01:00(hh:mm) UTC
+      User : skahn
+  Computer : temppc
+ Directory : /home/skahn/PROCESS/error_handling/test_suite
      Input :
  Run title : demo 1 model for cost paper
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
@@ -134,7 +134,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
     1  Beta consistency                      =  3.4718E-02              4.8223E-11                -1.3890E-09
     2  Global power balance consistency      =  1.7356E-01 MW/m3       -3.8345E-10 MW/m3           2.2093E-09
-    3  Density upper limit                   <  8.8407E+19 /m3          4.4906E+09 /m3             5.0795E-11
+    3  Density upper limit                   <  8.8407E+19 /m3          4.4908E+09 /m3             5.0797E-11
     4  Beam ion density consistency          =  1.2575E+17 /m3          2.1567E+08 /m3            -1.7151E-09
     5  Neutron wall load upper limit         <  1.0201E+00 MW/m2        1.0413E-08 MW/m2           1.0208E-08
     6  Toroidal field 1/R consistency        =  4.6987E+01 T.m         -1.9363E-08 T.m             4.1208E-10
@@ -149,9 +149,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    15  Injection power upper limit           <  5.0000E+01 MW          -3.3231E-08 MW              6.6461E-10
    16  TF coil case stress upper limit       <  5.5000E+08 Pa           1.4113E+00 Pa              2.5660E-09
    17  TF coil conduit stress upper lim      <  5.5000E+08 Pa           1.5360E+00 Pa              2.7927E-09
-   18  I_op / I_critical (TF coil)           <  5.5922E+07 A/m2        -3.4865E-02 A/m2            1.2469E-09
+   18  I_op / I_critical (TF coil)           <  5.5922E+07 A/m2        -3.4864E-02 A/m2            1.2469E-09
    19  Dump voltage upper limit              <  1.2650E+01 V            7.2394E-08 V               5.7228E-09
-   20  J_winding pack/J_protection limit     <  2.7961E+07 A/m2         0.0000E+00 A/m2            5.6918E-10
+   20  J_winding pack/J_protection limit     <  2.7961E+07 A/m2         0.0000E+00 A/m2            5.6917E-10
    21  Tritium breeding ratio lower lim      >  1.1500E+00              2.8672E-05                -2.4933E-05
    22  Psep / R upper limit                  <  1.7000E+01 MW/m        -3.6089E-07 MW/m            2.1229E-08
  
@@ -673,7 +673,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
  Plasma lower triangularity                                               (tril)                        0.500  OP 
  Plasma elongation                                                        (kappa.)                      1.781  OP 
- TF coil vertical offset (m)                                              (tfoffset)                   -0.616  OP 
+ TF coil vertical offset (m)                                              (tfoffset)                   -0.617  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.230  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                         9.900  OP 
  Plasma lower X-pt, radial (m)                                            (rxpt)                        7.525  OP 
@@ -989,7 +989,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -7.679E+06 -7.679E+06 -7.679E+06  0.000E+00
    5         0.000E+00  0.000E+00 -4.975E+06 -4.975E+06 -4.975E+06  0.000E+00
    6         0.000E+00  0.000E+00 -4.975E+06 -4.975E+06 -4.975E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00 -2.628E-08  0.000E+00
+   7         0.000E+00  0.000E+00 -3.285E-09 -3.285E-09  2.628E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.330E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.061E-01  OP 

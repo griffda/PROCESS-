@@ -3,12 +3,12 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.16   "
- Date_of_run_____________________________________________________________ (date)________________________     "29/07/2019"
- Time_of_run_____________________________________________________________ (time)________________________     "15:02"
- User____________________________________________________________________ (username)____________________     "morrisj" 
+ Date_of_run_____________________________________________________________ (date)________________________     "31/07/2019"
+ Time_of_run_____________________________________________________________ (time)________________________     "13:25"
+ User____________________________________________________________________ (username)____________________     "skahn"   
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.16-52-ga997a230"                                                                               
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch 'issue-ci-tweak' into 'develop',"                                                     
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.16-48-gc529afd6"                                                                               
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Add line length check into CI - currently doesn't fail if lines length"                            
  Input_filename__________________________________________________________ (fileprefix)__________________     "                              "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
@@ -82,22 +82,22 @@
  flhthresh_(range_normalised)____________________________________________ (nitvar020)___________________      1.0462E-06    
  fimp(13)________________________________________________________________ (itvar021)____________________      3.8910E-04    
  fimp(13)_(final_value/initial_value)____________________________________ (xcm021)______________________      8.8432E-01    
- fimp(13)_(range_normalised)_____________________________________________ (nitvar021)___________________      1.0166E-17    
+ fimp(13)_(range_normalised)_____________________________________________ (nitvar021)___________________      1.5248E-17    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________      2.3624E-07    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -5.0248E-07    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      2.6779E-13    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      2.6690E-13    
  Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      2.0985E-06    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________     -3.8233E-07    
  Fusion_power_upper_limit__________normalised_residue____________________ (normres006)__________________     -3.8213E-07    
- Toroidal_field_1/R_consistency____normalised_residue____________________ (normres007)__________________      1.3323E-15    
- Radial_build_consistency__________normalised_residue____________________ (normres008)__________________      2.2204E-16    
+ Toroidal_field_1/R_consistency____normalised_residue____________________ (normres007)__________________      5.1070E-15    
+ Radial_build_consistency__________normalised_residue____________________ (normres008)__________________     -4.4409E-16    
  L-H_power_threshold_limit_________normalised_residue____________________ (normres009)__________________      6.3003E-06    
  Radiation_fraction_upper_limit____normalised_residue____________________ (normres010)__________________      1.6209E-06    
  Beta_upper_limit__________________normalised_residue____________________ (normres011)__________________      2.1695E-08    
  Injection_power_upper_limit_______normalised_residue____________________ (normres012)__________________      2.0989E-06    
  Average_centrepost_temperature____normalised_residue____________________ (normres013)__________________     -3.0796E-08    
  Peak_centrepost_temp._upper_limit_normalised_residue____________________ (normres014)__________________     -4.1184E-08    
- Ip/Irod_upper_limit_______________normalised_residue____________________ (normres015)__________________     -2.2204E-16    
+ Ip/Irod_upper_limit_______________normalised_residue____________________ (normres015)__________________     -3.1086E-15    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres016)__________________     -6.3009E-06    
  # Final Feasible Point #
  # Plant Availability #
