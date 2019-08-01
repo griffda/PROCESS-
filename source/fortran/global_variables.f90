@@ -2450,8 +2450,8 @@ module tfcoil_variables
   real(kind(1.0D0)), dimension(3) :: radtf = 0.0D0
   !+ad_vars  rbmax : radius of maximum TF B-field (m)
   real(kind(1.0D0)) :: rbmax = 0.0D0
-  !+ad_vars  rhotfleg : TF coil leg resistance (ohm)
-  real(kind(1.0D0)) :: rhotfleg = 0.0D0
+  !+ad_vars  tflegres : TF coil leg resistance (ohm)
+  real(kind(1.0D0)) :: tflegres = 0.0D0
   !+ad_vars  ripmax /1.0/ : maximum allowable toroidal field ripple amplitude
   !+ad_varc                 at plasma edge (%)
   real(kind(1.0D0)) :: ripmax = 1.0D0
@@ -2558,8 +2558,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfinsgap = 0.010D0
   !+ad_vars  tflegmw : TF coil outboard leg resistive power (MW)
   real(kind(1.0D0)) :: tflegmw = 0.0D0
-  !+ad_vars  tflegres /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
-  real(kind(1.0D0)) :: tflegres = 2.5D-8
+  !+ad_vars  rhotfleg /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
+  real(kind(1.0D0)) :: rhotfleg = -1.0D0 ! 2.5D-8
   !+ad_vars  tfleng : TF coil circumference (m)
   real(kind(1.0D0)) :: tfleng = 0.0D0
   !+ad_vars  tfno /16.0/ : number of TF coils (default = 50 for stellarators)
