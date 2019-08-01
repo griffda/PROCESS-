@@ -84,8 +84,10 @@ module numerics
   !+ad_hist  09/11/16 HL  Added new constraint 67, it. var. 116
   !+ad_hist  19/01/17 JM  Added new constraint 68, it. var. 117
   !+ad_hist  08/02/17 JM  Added new constraints 69,70, 71, it. var. 118, 119, 120 (Kallenbach)
+  !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
   !+ad_hist  11/01/18 KE  Added new constraint eqn 76, Eich formula for nesep
   !+ad_hist  22/06/18 SIM cdtfleg (itv 24) no longer used
+  !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -297,7 +299,7 @@ module numerics
        'Poloidal beta upper limit        ', &
        !+ad_varc  <LI> (49) NOT USED
        'RFP reversal parameter < 0       ', &
-       !+ad_varc  <LI> (50) NOT USED
+       !+ad_varc  <LI> (50) IFE repetition rate upper limit (IFE)
        'IFE repetition rate upper limit  ', &
        !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE) (itv 16,29,3,1)
        'Startup volt-seconds consistency ', &
@@ -539,17 +541,17 @@ module numerics
        'fbetap        ', &
        !+ad_varc  <LI> (80) NOT USED
        'frfpf         ', &
-       !+ad_varc  <LI> (81) NOT USED
+       !+ad_varc  <LI> (81) edrive
        'edrive        ', &
-       !+ad_varc  <LI> (82) NOT USED
+       !+ad_varc  <LI> (82) drveff
        'drveff        ', &
-       !+ad_varc  <LI> (83) NOT USED
+       !+ad_varc  <LI> (83) tgain
        'tgain         ', &
-       !+ad_varc  <LI> (84) NOT USED
+       !+ad_varc  <LI> (84) chrad
        'chrad         ', &
-       !+ad_varc  <LI> (85) NOT USED
+       !+ad_varc  <LI> (85) pdrive
        'pdrive        ', &
-       !+ad_varc  <LI> (86) NOT USED
+       !+ad_varc  <LI> (86) frrmax (f-value for equation 50)
        'frrmax        ', &
        !+ad_varc  <LI> (87) NOT USED
        'helecmw       ', &
