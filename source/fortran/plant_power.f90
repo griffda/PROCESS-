@@ -139,13 +139,13 @@ contains
        abus = cpttf/jbus
 
        !  Bus resistance (ohm)
-       rhobus = tflegres * tfbusl/abus
+       rhobus = rhotfleg * tfbusl/abus
 
        !  Bus mass (kg)
        tfbusmas = tfbusl * abus * dcopper
 
        !  Total maximum impedance MDK actually just fixed resistance
-       ztot = tfno*rhotfleg + (prescp/ritfc**2) + rhobus
+       ztot = tfno*tflegres + (prescp/ritfc**2) + rhobus
 
        !  No reactive portion of the voltage is included here - assume long ramp times
        !  MDK This is steady state voltage, not "peak" voltage
@@ -153,7 +153,7 @@ contains
 
        !  Resistive powers (MW):
        tfcpmw  = 1.0D-6 * prescp  !  inboard legs
-       tflegmw = 1.0D-6 * (ritfc/tfno)**2 * rhotfleg * tfno  !  outboard legs
+       tflegmw = 1.0D-6 * (ritfc/tfno)**2 * tflegres * tfno  !  outboard legs
        tfbusmw = 1.0D-6 * cpttf**2 * rhobus  !  TF coil bus
 
        !  TF coil reactive power
@@ -245,7 +245,7 @@ contains
 
       itfka = 1.0D-3 * cpttf
 
-      call tfcpwr(outfile,iprint,tfno,ettfmj,itfka,rhotfleg, &
+      call tfcpwr(outfile,iprint,tfno,ettfmj,itfka,tflegres, &
            vtfskv,rmajor,tfckw,tfbusl,drarea,tfcbv,tfacpd)
 
     end subroutine tfpwcall

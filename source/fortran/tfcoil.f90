@@ -309,25 +309,22 @@ contains
     ! Cross-sectional area
     arealeg = tfthko*tftort
 
-    ! Outboard leg current density
-    cdtfleg = ritfc/(tfno * arealeg)
-
-    !  Total weight of TF coils
-    whttf = whtcp + whttflgs
-
-    ! Inner outter common quantities
-    ! -----------------------------
-
-    !  Stress information (radial, tangential, vertical)
     ! Length of leg centre-line (N.B. this assumes rectangular shaped
     ! coils, not D-shaped)
     ltfleg = hmax + hpfu + 2.0D0*(rtot - rbmax)
 
-    ! Volume
+    ! Volume of the TF legs
     voltfleg = ltfleg * arealeg
 
+    ! Outboard leg current density
+    cdtfleg = ritfc/(tfno * arealeg)
+
     ! Resistance
-    rhotfleg = ltfleg * tflegres/arealeg
+    if ( abs( rhotfleg + 1 ) < epsilon(rhotfleg) ) rhotfleg = rhocp
+    tflegres = ltfleg * rhotfleg/arealeg
+    
+    !  Total weight of TF coils
+    whttf = whtcp + whttflgs
     ! ----------------------------------
 
 
@@ -403,7 +400,7 @@ contains
     call ovarre(outfile,'Mass of outboard legs (kg)','(whttflgs)',whttflgs)
     call ovarre(outfile,'Total TF coil mass (kg)','(whttf)',whttf)
     call ovarre(outfile,'Inboard leg resistive power (W)','(prescp)',prescp)
-    call ovarre(outfile,'Outboard leg resistance per coil (ohm)','(rhotfleg)',rhotfleg)
+    call ovarre(outfile,'Outboard leg resistance per coil (ohm)','(tflegres)',tflegres)
     call ovarre(outfile,'Average inboard leg temperature (C)','(tcpav)',tcpav)
     ! ---------------------------------------------
 
