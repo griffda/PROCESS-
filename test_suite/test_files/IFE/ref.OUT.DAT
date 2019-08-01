@@ -1,7 +1,7 @@
  *************************************************************************   
  *****                                                               *****   
  *****               OSIRIS Inertial Fusion Plant                    *****   
- *****               Stuart Muldrew (29/07/2019)                     *****   
+ *****               Stuart Muldrew (01/08/2019)                     *****   
  *****               Based on run by Peter Knight                    *****   
  *****                                                               *****   
  *****                                                               *****   
@@ -12,15 +12,15 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : /Users/smuldrew/process/issue-ife/process.exe
+   Program : ./process.exe
    Version : 1.0.16   Release Date :: 2019-07-15
-   Tag No. : 1.0.16-47-g3a0a6e86 code contains untracked changes
-   Git log : Merge branch 'issue-883' into 'develop',
- Date/time : 29 Jul 2019 19:42:24 +01:00(hh:mm) UTC
+   Tag No. : 1.0.16-68-g9b4c761e code contains untracked changes
+   Git log : Merge develop into issue-907,
+ Date/time :  1 Aug 2019 17:13:58 +01:00(hh:mm) UTC
       User : smuldrew
   Computer : J0670-iMac
- Directory : /Users/smuldrew/IFE/Run
-     Input : IFE_IN.DAT
+ Directory : /Users/smuldrew/process/develop/test_suite
+     Input :
  Run title : IFE_001
   Run type : Reactor concept design: Inertial Fusion model, (c) CCFE
  
@@ -141,6 +141,7 @@
  (c22125)            Blanket carbon cloth cost (M$)                                                                1.43
  (c22126)            Blanket concrete cost (M$)                                                                    0.00
  (c22127)            Blanket FLiBe cost (M$)                                                                      78.90
+ (c22128)            Blanket lithium cost (M$)                                                                     0.00
  (c2212)             Blanket total cost (M$)                                                                       0.00
  (c22131)            Bulk shield cost (M$)                                                                        34.15
  (c22132)            Penetration shielding cost (M$)                                                               0.00
@@ -316,12 +317,14 @@ Li2O      0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00
 concrete  0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00
 helium    0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00
 xenon     0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00
+lithium   0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00
  
  **************************************** First Wall, Blanket, Shield *****************************************
  
  First wall area (m2)                                                     (fwarea)                  1.880E+02     
  First wall mass (kg)                                                     (fwmass)                  2.057E+04     
  Blanket mass (kg)                                                        (whtblkt)                 3.480E+05     
+ Blanket lithium mass (kg)                                                (whtblli)                 0.000E+00     
  Total mass of FLiBe (kg)                                                 (mflibe)                  9.393E+05     
  Shield mass (kg)                                                         (whtshld)                 1.067E+06     
  
@@ -398,7 +401,7 @@ xenon     0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00
 *************************************************************************
 *****                                                               *****
 *****               OSIRIS Inertial Fusion Plant                    *****
-*****               Stuart Muldrew (29/07/2019)                     *****
+*****               Stuart Muldrew (01/08/2019)                     *****
 *****               Based on run by Peter Knight                    *****
 *****                                                               *****
 *****                                                               *****
@@ -406,7 +409,7 @@ xenon     0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00 0.00E+00
 
 *---------------Constraint Equations---------------*
 
-icc = 16               *IFE repetition rate upper limit (IFE)
+icc = 16               *Net electric power lower limit
 
 *---------------Iteration Variables----------------*
 ixc = 81               *edrive
@@ -452,6 +455,9 @@ blmatf(21)  = 0.0000   *Blanket material fraction (lower helium)
 blmatf(22)  = 0.0000   *Blanket material fraction (radial xenon)
 blmatf(23)  = 0.0000   *Blanket material fraction (upper xenon)
 blmatf(24)  = 0.0000   *Blanket material fraction (lower xenon)
+blmatf(25)  = 0.0000   *Blanket material fraction (radial lithium)
+blmatf(26)  = 0.0000   *Blanket material fraction (upper lithium)
+blmatf(27)  = 0.0000   *Blanket material fraction (lower lithium)
 
 chdzl       = 3.1      *Vertical thickness of IFE chamber below centre (m)
 chdzu       = 3.7      *Vertical thickness of IFE chamber above centre (m)
@@ -487,6 +493,9 @@ fwmatf(21)  = 0.0000   *First wall material fraction (lower helium)
 fwmatf(22)  = 0.0000   *First wall material fraction (radial xenon)
 fwmatf(23)  = 0.0000   *First wall material fraction (upper xenon)
 fwmatf(24)  = 0.0000   *First wall material fraction (lower xenon)
+fwmatf(25)  = 0.0000   *First wall material fraction (radial lithium)
+fwmatf(26)  = 0.0000   *First wall material fraction (upper lithium)
+fwmatf(27)  = 0.0000   *First wall material fraction (lower lithium)
 
 pdrive      = 23.1D6   *IFE driver power reaching target (W)
 shdr        = 0.2      *Radial thickness of IFE shield (m)
@@ -517,6 +526,9 @@ shmatf(21)  = 0.0000   *Shield material fraction (lower helium)
 shmatf(22)  = 0.0000   *Shield material fraction (radial xenon)
 shmatf(23)  = 0.0000   *Shield material fraction (upper xenon)
 shmatf(24)  = 0.0000   *Shield material fraction (lower xenon)
+shmatf(25)  = 0.0000   *Shield material fraction (radial lithium)
+shmatf(26)  = 0.0000   *Shield material fraction (upper lithium)
+shmatf(27)  = 0.0000   *Shield material fraction (lower lithium)
 
 v1dr        = 0.005    *Radial thickness of IFE void between first wall and blanket (m)
 v1dzl       = 1.75     *Vertical thickness of IFE void 1 below chamber (m)
@@ -546,6 +558,9 @@ v1matf(21)  = 0.0000   *Void 1 material fraction (lower helium)
 v1matf(22)  = 0.0000   *Void 1 material fraction (radial xenon)
 v1matf(23)  = 0.0000   *Void 1 material fraction (upper xenon)
 v1matf(24)  = 0.0000   *Void 1 material fraction (lower xenon)
+v1matf(25)  = 0.0000   *Void 1 material fraction (radial lithium)
+v1matf(26)  = 0.0000   *Void 1 material fraction (upper lithium)
+v1matf(27)  = 0.0000   *Void 1 material fraction (lower lithium)
 
 v2dr        = 2.19     *Radial thickness of IFE void between blanket and shield (m)
 v2dzl       = 0.0      *Vertical thickness of IFE void 2 below chamber (m)
@@ -575,6 +590,9 @@ v2matf(21)  = 0.0000   *Void 2 material fraction (lower helium)
 v2matf(22)  = 0.0000   *Void 2 material fraction (radial xenon)
 v2matf(23)  = 0.0000   *Void 2 material fraction (upper xenon)
 v2matf(24)  = 0.0000   *Void 2 material fraction (lower xenon)
+v2matf(25)  = 0.0000   *Void 2 material fraction (radial lithium)
+v2matf(26)  = 0.0000   *Void 2 material fraction (upper lithium)
+v2matf(27)  = 0.0000   *Void 2 material fraction (lower lithium)
 
 v3dr        = 3.5      *Radial thickness of IFE void outside shield (m)
 v3dzl       = 0.0      *Vertical thickness of IFE void 3 below chamber (m)
@@ -604,6 +622,9 @@ v3matf(21)  = 0.0000   *Void 3 material fraction (lower helium)
 v3matf(22)  = 0.0000   *Void 3 material fraction (radial xenon)
 v3matf(23)  = 0.0000   *Void 3 material fraction (upper xenon)
 v3matf(24)  = 0.0000   *Void 3 material fraction (lower xenon)
+v3matf(25)  = 0.0000   *Void 3 material fraction (radial lithium)
+v3matf(26)  = 0.0000   *Void 3 material fraction (upper lithium)
+v3matf(27)  = 0.0000   *Void 3 material fraction (lower lithium)
 
 *------------------FWBS Variables------------------*
 emult       = 1.26     *Energy multiplication in blanket and shield

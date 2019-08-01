@@ -1323,6 +1323,15 @@ contains
          (shmatv(1,7)+shmatv(2,7)+shmatv(3,7)), &
          (v3matv(1,7)+v3matv(2,7)+v3matv(3,7))
 
+    write(outfile,'(A9,7(1pe9.2))') 'lithium  ', &
+         chmatv(8), &
+         (fwmatv(1,8)+fwmatv(2,8)+fwmatv(3,8)), &
+         (v1matv(1,8)+v1matv(2,8)+v1matv(3,8)), &
+         (blmatv(1,8)+blmatv(2,8)+blmatv(3,8)), &
+         (v2matv(1,8)+v2matv(2,8)+v2matv(3,8)), &
+         (shmatv(1,8)+shmatv(2,8)+shmatv(3,8)), &
+         (v3matv(1,8)+v3matv(2,8)+v3matv(3,8))
+
   contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1431,9 +1440,9 @@ contains
 
      !  Second void
 
-     v2vol(1) = pi * (r5*r5 - r4*r4) * (zu4 + zl4)
-     v2vol(2) = pi * r5*r5 * (zu5 - zu4)
-     v2vol(3) = pi * r5*r5 * (zl5 - zl4)
+     v2vol(1) = pi * (r5*r5 - r4*r4) * (chdzl+chdzu)
+     v2vol(2) = 0.0D0
+     v2vol(3) = 0.0D0
 
      !  Shield
 
@@ -2099,6 +2108,7 @@ contains
     !  5 = concrete
     !  6 = helium (at typical coolant temperatures)
     !  7 = xenon (taken as ten times the normal tabulated value)
+    !  8 = lithium (liquid, source Wikipedia)
 
     matden(0) = 0.0D0
     matden(1) = denstl
@@ -2108,6 +2118,7 @@ contains
     matden(5) = 2400.0D0
     matden(6) = 1.517D0
     matden(7) = 55.0D0
+    matden(8) = 512.0D0
 
     !  Material masses
 
@@ -2143,9 +2154,11 @@ contains
     whtblvd = 0.0D0
     whtblss = 0.0D0
     wtblli2o = 0.0D0
+    whtblli = 0.0D0
     do j = 1,3
        whtblss = whtblss + blmatm(j,1)
        wtblli2o = wtblli2o + blmatm(j,4)
+       whtblli = whtblli + blmatm(j,8)
     end do
 
     !  Total mass of FLiBe
@@ -2168,10 +2181,11 @@ contains
 
     mflibe = mflibe / (1.0D0 - fbreed)
     wtblli2o = wtblli2o / (1.0D0 - fbreed)
+    whtblli = whtblli / (1.0D0 - fbreed)
 
     !  Blanket and first wall lifetimes (HYLIFE-II: = plant life)
 
-    if (ifetyp == 3) THEN
+    if ((ifetyp == 3).or.(ifetyp == 4)) THEN
        life = tlife
     else
        life = min( tlife, abktflnc/(wallmw*cfactr) )
@@ -2193,6 +2207,7 @@ contains
     call ovarre(outfile,'First wall area (m2)','(fwarea)',fwarea)
     call ovarre(outfile,'First wall mass (kg)','(fwmass)',fwmass)
     call ovarre(outfile,'Blanket mass (kg)','(whtblkt)',whtblkt)
+    call ovarre(outfile,'Blanket lithium mass (kg)','(whtblli)',whtblli)
     call ovarre(outfile,'Total mass of FLiBe (kg)','(mflibe)',mflibe)
     call ovarre(outfile,'Shield mass (kg)','(whtshld)',whtshld)
 
@@ -2256,7 +2271,7 @@ contains
     !  and provide the energy multiplication as though it were a
     !  conventional blanket
 
-    if (ifetyp /= 3) then
+    if ((ifetyp /= 3).or.(ifetyp /= 3)) then
        pfwdiv = 0.24D0 * pthermmw
        pnucblkt = pthermmw - pfwdiv
     else

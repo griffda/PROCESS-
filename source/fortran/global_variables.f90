@@ -4408,7 +4408,7 @@ module ife_variables
      !+ad_varc  <LI>         = 3 below chamber</UL>
      !+ad_varc  and 'material' is defined as described in maxmat below.<P>
    
-     !+ad_vars  maxmat /7/ FIX : total number of materials in IFE device.
+     !+ad_vars  maxmat /8/ FIX : total number of materials in IFE device.
      !+ad_varc                   Material numbers are as follows:<UL>
      !+ad_varc              <LI> = 0 void;
      !+ad_varc              <LI> = 1 steel;
@@ -4417,8 +4417,9 @@ module ife_variables
      !+ad_varc              <LI> = 4 lithium oxide Li2O;
      !+ad_varc              <LI> = 5 concrete;
      !+ad_varc              <LI> = 6 helium;
-     !+ad_varc              <LI> = 7 xenon</UL>
-     integer, parameter ::  maxmat = 7
+     !+ad_varc              <LI> = 7 xenon;
+     !+ad_varc              <LI> = 8 lithium </UL>
+     integer, parameter ::  maxmat = 8
    
      !+ad_vars  bldr /1.0/ : radial thickness of IFE blanket (m)
      real(kind(1.0D0)) :: bldr   = 1.0D0
@@ -4435,6 +4436,7 @@ module ife_variables
           0.20D0,0.20D0,0.20D0, &
           0.0D0, 0.0D0, 0.0D0,  &
           0.30D0,0.30D0,0.30D0, &
+          0.0D0,0.0D0,0.0D0,    &
           0.0D0, 0.0D0, 0.0D0  /), shape(blmatf))
      !+ad_vars  blmatm(3,0:maxmat) : IFE blanket material masses (kg)
      real(kind(1.0D0)), dimension(3,0:maxmat) :: blmatm = 0.0D0
@@ -4456,7 +4458,7 @@ module ife_variables
      real(kind(1.0D0)) :: chdzu = 9.0D0
      !+ad_vars  chmatf(0:maxmat) : IFE chamber material fractions
      real(kind(1.0D0)), dimension(0:maxmat) :: chmatf = &
-          (/1.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0/)
+          (/1.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0/)
      !+ad_vars  chmatm(0:maxmat) : IFE chamber material masses (kg)
      real(kind(1.0D0)), dimension(0:maxmat) :: chmatm = 0.0D0
      !+ad_vars  chmatv(0:maxmat) : IFE chamber material volumes (m3)
@@ -4506,6 +4508,7 @@ module ife_variables
           0.05D0,0.05D0,0.05D0, &
           0.0D0, 0.0D0, 0.0D0,  &
           0.95D0,0.95D0,0.95D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
           0.0D0, 0.0D0, 0.0D0,  &
           0.0D0, 0.0D0, 0.0D0,  &
           0.0D0, 0.0D0, 0.0D0,  &
@@ -4587,6 +4590,7 @@ module ife_variables
           0.0D0, 0.0D0, 0.0D0,  &
           0.665D0,0.665D0,0.665D0, &
           0.095D0,0.095D0,0.095D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
           0.0D0, 0.0D0, 0.0D0  /), shape(shmatf))
      !+ad_vars  shmatm(3,0:maxmat) : IFE shield material masses (kg)
      real(kind(1.0D0)), dimension(3,0:maxmat) :: shmatm = 0.0D0
@@ -4628,6 +4632,7 @@ module ife_variables
           0.0D0, 0.0D0, 0.0D0, &
           0.0D0, 0.0D0, 0.0D0, &
           0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
           0.0D0, 0.0D0, 0.0D0  /), shape(v1matf))
      !+ad_vars  v1matm(3,0:maxmat) : IFE void 1 material masses (kg)
      real(kind(1.0D0)), dimension(3,0:maxmat) :: v1matm = 0.0D0
@@ -4650,6 +4655,7 @@ module ife_variables
           0.0D0, 0.0D0, 0.0D0, &
           0.0D0, 0.0D0, 0.0D0, &
           0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
           0.0D0, 0.0D0, 0.0D0  /), shape(v2matf))
      !+ad_vars  v2matm(3,0:maxmat) : IFE void 2 material masses (kg)
      real(kind(1.0D0)), dimension(3,0:maxmat) :: v2matm = 0.0D0
@@ -4666,6 +4672,7 @@ module ife_variables
      !+ad_vars  v3matf(3,0:maxmat) /.../ : IFE void 3 material fractions
      real(kind(1.0D0)), dimension(3,0:maxmat) :: v3matf = reshape( (/ &
           1.0D0, 1.0D0, 1.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
           0.0D0, 0.0D0, 0.0D0, &
           0.0D0, 0.0D0, 0.0D0, &
           0.0D0, 0.0D0, 0.0D0, &
