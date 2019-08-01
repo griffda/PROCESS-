@@ -1608,30 +1608,42 @@ module fwbs_variables
   !+ad_vars  armour_fw_bl_mass : Total mass of armour, first wall and blanket (kg)
   real(kind(1.0D0)) :: armour_fw_bl_mass = 0.0D0
 
-  ! CCFE HCPB Blanket Model (with or without TBR calculation)
 
+  ! CCFE HCPB Blanket Model (with or without TBR calculation)
+  ! ----------
   !+ad_vars  <P><B>The following are used only in the CCFE HCPB blanket model
   !+ad_varc  (iblanket=1):</B><P>
 
   !+ad_vars  breeder_f /0.5/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
   real(kind(1.0D0)) :: breeder_f = 0.5D0
+  
   !+ad_vars  breeder_multiplier /0.75/ : combined breeder/multipler fraction of blanket by volume
   real(kind(1.0D0)) :: breeder_multiplier = 0.75D0
+  
   !+ad_vars  vfcblkt /0.05295/ : He coolant fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: vfcblkt = 0.05295D0
+  
   !+ad_vars  vfpblkt /0.1/ : He purge gas fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: vfpblkt = 0.1D0
+
   !+ad_vars  whtblli4sio4 : mass of lithium orthosilicate in blanket (kg)
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: whtblli4sio4 = 0.0D0
+  
   !+ad_vars  whtbltibe12 : mass of titanium beryllide in blanket (kg)
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: whtbltibe12 = 0.0D0
 
-  !  KIT HCPB blanket model
+  !+ad_vars  f_neut_shield : Fraction of nuclear power shielded before the CP magnet (ST)
+  !+ad_varc                  ( neut_absorb = -1 --> a fit on simplified MCNP neutronic
+  !+ad_varc                    calculation is used assuming water cooled (13%) tungesten carbyde )
+  real(kind(1.0D0)) :: f_neut_shield = -1.0D0
+  ! ----------
 
+
+  !  KIT HCPB blanket model
   !+ad_vars  <P><B>The following are used in the KIT HCPB blanket model
   !+ad_varc  (iblanket=2):</B><P>
 

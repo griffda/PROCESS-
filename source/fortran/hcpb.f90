@@ -213,8 +213,12 @@ contains
 
     ! Arguments !
     !!!!!!!!!!!!!
-
+    ! Inputs
     integer, intent(in) :: iprint, outfile
+
+    ! Internal
+    real(kind=double) :: r_sh_inboard_out
+    !!!!!!!!!!!!!
 
     !  Assign module private variables to iprint and outfile
     ip = iprint
@@ -236,7 +240,10 @@ contains
 
     ! Centrepost heating for a ST machine
     if (itart == 1) then
-        pnuccp = st_centrepost_nuclear_heating(pneutmw,hmax,r_tf_inleg_out)
+
+        ! Outer radius of the inborad neutronic shield (centra heigt of the CP)
+        r_sh_inboard_out = r_tf_inleg_out + thshield + gapds + shldith
+        pnuccp = st_centrepost_nuclear_heating( pneutmw, hmax, r_sh_inboard_out )
     else
         pnuccp = 0.0D0
     end if
@@ -1759,17 +1766,46 @@ contains
     ! nuclear heating in the ST centrepost (MW)
     real(kind=double) :: pnuccp
 
-    ! Fraction of neutrons that hit the centrepost
-    real(kind=double) :: frachit
+    ! Fraction of neutrons that hit the centrepost shield
+    real(kind=double) :: f_neut_geom
+
+    ! Fraction of neutron power actually absobed by the magnet system
+    real(kind=double) :: f_neut_absorb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Fraction of neutrons that hit the centre post
-    frachit = cphalflen / sqrt(cphalflen**2 + (rmajor-cpradius)**2 ) * &
+    ! Fraction of neutrons that hit the centre post neutronic shield [MW]
+    f_neut_geom = cphalflen / sqrt(cphalflen**2 + (rmajor-cpradius)**2 ) * &
          atan(cpradius/(rmajor-cpradius) )/pi
 
-    ! Nuclear heating in the ST centrepost (MW)
-    pnuccp = pneut * frachit * (1.0D0 - exp(-2.0D0*cpradius/0.08D0))
+    ! Remaining nuclear power the after the neutronic shield [MW]
+    ! Calculated with 1 GW (0.8 GW of Pneut) ST confinguration (internal results)
+    ! Tungsten carbyde with 13% water cooling fraction is for the calculations
+    if ( abs( f_neut_shield + 1.0D0 ) < epsilon(f_neut_shield) ) then
+
+      ! Testing if the fit is used in the shield thickness interpolation range
+      if ( ( shldith < 0.2D0 ) .or. ( shldith > 0.35D0 ) ) then
+        fdiags(1) = shldith
+        call report_error(229)
+      end if
+
+      ! No shielding scenario
+      if ( abs(shldith) < epsilon(shldith) ) then 
+        f_neut_shield = 1.0D0
+      end if
+  
+      ! Shielding
+      else 
+        f_neut_shield = exp( 3.882D0 - 16.69D0*shldith ) / ( 800.0D0 * f_neut_geom )
+    end if 
+
+    ! Fraction of the nuclear power absorbed by the centrepost magnets
+    ! Rem : Steel structures absobtion negelected
+    ! Rem : 0.08 m e-folding decay length valid for COPPER ONLY
+    f_neut_absorb = 1.0D0 - exp( -2.0D0*tfcth / 0.08D0) 
+    
+    ! Nuclear power absorbed by the TF magnet system
+    pnuccp = pneut * f_neut_geom * f_neut_shield * f_neut_absorb
 
   end function st_centrepost_nuclear_heating
 

@@ -2330,11 +2330,11 @@ contains
        case ('li6enrich')
           call parse_real_variable('li6enrich', li6enrich, 7.40D0, 100.0D0, &
                'Li-6 enrichment')
+       
+       ! CCFE hcpb BB module (also includes the CP shielding for ST)
        case ('breeder_f')
           call parse_real_variable('breeder_f', breeder_f, 0.00D0, 1.0D0, &
                'Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)')
-
-
        case ('breeder_multiplier')
           call parse_real_variable('breeder_multiplier', breeder_multiplier, 0.0D0, 1.0D0, &
                'combined breeder/multipler fraction of blanket by volume')
@@ -2344,8 +2344,9 @@ contains
        case ('vfpblkt')
           call parse_real_variable('vfpblkt', vfpblkt, 0.0D0, 1.0D0, &
                'He purge gas fraction of blanket by volume')
-
-
+       case ('f_neut_shield')
+         call parse_real_variable('f_neut_shield', f_neut_shield, 0.0D0, 1.0D0, &
+              'He purge gas fraction of blanket by volume')
 
        case ('iblanket_thickness')
           call parse_int_variable('iblanket_thickness', iblanket_thickness, 1, 3, &
