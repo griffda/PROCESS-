@@ -118,12 +118,10 @@ contains
     implicit none
 
     !  Arguments
-
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-
-    real(kind(1.0D0)) :: abus,tfbusres,ztot,tfbusmw,tfreacmw
+    real(kind(1.0D0)) :: abus, tfbusres, rhotfbus, ztot, tfbusmw, tfreacmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -139,7 +137,8 @@ contains
        abus = cpttf/jbus
 
        !  Bus resistance (ohm)
-       tfbusres = rhotfleg * tfbusl/abus
+       rhotfbus = rhotfleg! 0.0D0 ! 
+       tfbusres = rhotfbus * tfbusl/abus
 
        !  Bus mass (kg)
        tfbusmas = tfbusl * abus * dcopper

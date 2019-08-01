@@ -1788,16 +1788,13 @@ contains
         fdiags(1) = shldith
         call report_error(229)
       end if
-
-      ! No shielding scenario
-      if ( abs(shldith) < epsilon(shldith) ) then 
-        f_neut_shield = 1.0D0
-      end if
   
       ! Shielding
-      else 
-        f_neut_shield = exp( 3.882D0 - 16.69D0*shldith ) / ( 800.0D0 * f_neut_geom )
-    end if 
+      f_neut_shield = exp( 3.882D0 - 16.69D0*shldith ) / ( 800.0D0 * f_neut_geom )
+    
+      ! Correcting for fraction larger than 1 ...
+      if ( f_neut_shield > 1.0D0 ) f_neut_shield = 1.0D0    
+    end if
 
     ! Fraction of the nuclear power absorbed by the centrepost magnets
     ! Rem : Steel structures absobtion negelected
