@@ -123,7 +123,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: abus,rhobus,ztot,tfbusmw,tfreacmw
+    real(kind(1.0D0)) :: abus,tfbusres,ztot,tfbusmw,tfreacmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -139,13 +139,13 @@ contains
        abus = cpttf/jbus
 
        !  Bus resistance (ohm)
-       rhobus = rhotfleg * tfbusl/abus
+       tfbusres = rhotfleg * tfbusl/abus
 
        !  Bus mass (kg)
        tfbusmas = tfbusl * abus * dcopper
 
        !  Total maximum impedance MDK actually just fixed resistance
-       ztot = tfno*tflegres + (prescp/ritfc**2) + rhobus
+       ztot = tfno*tflegres + (prescp/ritfc**2) + tfbusres
 
        !  No reactive portion of the voltage is included here - assume long ramp times
        !  MDK This is steady state voltage, not "peak" voltage
@@ -154,7 +154,7 @@ contains
        !  Resistive powers (MW):
        tfcpmw  = 1.0D-6 * prescp  !  inboard legs
        tflegmw = 1.0D-6 * (ritfc/tfno)**2 * tflegres * tfno  !  outboard legs
-       tfbusmw = 1.0D-6 * cpttf**2 * rhobus  !  TF coil bus
+       tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus
 
        !  TF coil reactive power
        !  Set reactive power to 0, since ramp up can be long
@@ -181,7 +181,7 @@ contains
     if (iprint == 0) return
     ! Clarify that these outputs are for resistive coils only
     call oheadr(outfile,'Resistive TF Coil Power Conversion')
-    call ovarre(outfile,'Bus resistance (ohm)','(rhobus)',rhobus, 'OP ')
+    call ovarre(outfile,'Bus resistance (ohm)','(tfbusres)',tfbusres, 'OP ')
     call ovarre(outfile,'Bus current density (A/m2)','(jbus)',jbus)
     call ovarre(outfile,'Bus length - all coils (m)','(tfbusl)',tfbusl)
     call ovarre(outfile,'Bus mass (kg)','(tfbusmas)',tfbusmas, 'OP ')
