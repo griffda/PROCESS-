@@ -355,9 +355,16 @@ execute_process(
 string(LENGTH "${UNTR_INFO}" UNTR_LN)  # count no of words
 file(WRITE ${FORT_SOURCE_DIR}/untracked.info "  integer::untracked = " ${UNTR_LN} )
 
+# Set the REFPROP source code directory
+set(REFPROP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/REFPROP)
+
 # Create files for FORTRAN root and install directories
 file(WRITE ${FORT_SOURCE_DIR}/root.dir "      character(len=*), parameter :: ROOTDIR = \"" ${FORT_SOURCE_DIR} "\"\n")
 file(APPEND ${FORT_SOURCE_DIR}/root.dir "      character(len=*), parameter :: INSTALLDIR = \"" ${CMAKE_SOURCE_DIR} "\"")
+
+file(WRITE ${REFPROP_SOURCE_DIR}/root.dir "      character(len=*), parameter :: ROOTDIR = \"" ${FORT_SOURCE_DIR} "\"\n")
+file(APPEND ${REFPROP_SOURCE_DIR}/root.dir "      character(len=*), parameter :: INSTALLDIR = \"" ${CMAKE_SOURCE_DIR} "\"")
+
 file(WRITE ${UTILITIES_DIR}/rootdir.py "ROOTDIR = '" ${FORT_SOURCE_DIR} "'")
 file(WRITE ${CMAKE_SOURCE_DIR}/test_suite/bindir.py "BINDIR = '" ${CMAKE_BINARY_DIR} "'")
 file(COPY ${FORT_SOURCE_DIR}/root.dir DESTINATION ${CMAKE_SOURCE_DIR})
@@ -376,6 +383,8 @@ list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/grad_func.f90)
 list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/structs.f90)
 list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/transport_solver.f90)
 list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/trmodel.f90)
+list(APPEND all_sources ${REFPROP_SOURCE_DIR}/refprop.f)
+list(APPEND all_sources ${REFPROP_SOURCE_DIR}/refprop_interface.f90)
 set(autodoc_sources ${all_sources})
 
 # Remove autodoc.f90 from compilation list

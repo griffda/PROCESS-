@@ -53,7 +53,6 @@ module power_module
   use cost_variables
   use current_drive_variables
   use error_handling
-  !use fwbs_module
   use fwbs_variables
   use heat_transport_variables
   use pf_power_variables

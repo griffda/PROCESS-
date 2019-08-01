@@ -207,7 +207,7 @@ module physics_variables
   real(kind(1.0D0)) :: beamfus0 = 1.0D0
   !+ad_vars  beta /0.042/ : total plasma beta (iteration variable 5)
   !+ad_varc             (calculated if ipedestal =3)
-  real(kind(1.0D0)) :: beta = 0.042D0
+  real(kind(1.0D0)), bind(C) :: beta = 0.042D0
   !+ad_vars  betaft : fast alpha beta component
   real(kind(1.0D0)) :: betaft = 0.0D0
   !+ad_vars  betalim : allowable beta
@@ -222,11 +222,11 @@ module physics_variables
   !+ad_vars  betbm0 /1.5/ : leading coefficient for NB beta fraction
   real(kind(1.0D0)) :: betbm0 = 1.5D0
   !+ad_vars  bp : poloidal field (T)
-  real(kind(1.0D0)) :: bp = 0.0D0
+  real(kind(1.0D0)), bind(C) :: bp = 0.0D0
   !+ad_vars  bt /5.68/ : toroidal field on axis (T) (iteration variable 2)
-  real(kind(1.0D0)) :: bt = 5.68D0
+  real(kind(1.0D0)), bind(C) :: bt = 5.68D0
   !+ad_vars  btot : total toroidal + poloidal field (T)
-  real(kind(1.0D0)) :: btot = 0.0D0
+  real(kind(1.0D0)), bind(C) :: btot = 0.0D0
   !+ad_vars  burnup : fractional plasma burnup
   real(kind(1.0D0)) :: burnup = 0.0D0
   !+ad_vars  bvert : vertical field at plasma (T)
@@ -596,7 +596,7 @@ module physics_variables
   !+ad_vars  kappa /1.792/ : plasma separatrix elongation (calculated if ishape > 0)
   real(kind(1.0D0)), bind(C) :: kappa = 1.792D0
   !+ad_vars  kappa95 /1.6/ : plasma elongation at 95% surface (calculated if ishape < 4)
-  real(kind(1.0D0)) :: kappa95 = 1.6D0
+  real(kind(1.0D0)), bind(C) :: kappa95 = 1.6D0
   !+ad_vars  kappaa : plasma elongation calculated as xarea/(pi.a2)
   real(kind(1.0D0)) :: kappaa = 0.0D0
   !+ad_vars  kappaa_IPB : Volume measure of plasma elongation
@@ -773,7 +773,7 @@ module physics_variables
   !+ad_vars  rpfac : neo-classical correction factor to rplas
   real(kind(1.0D0)) :: rpfac = 0.0D0
   !+ad_vars  rplas : plasma resistance (ohm)
-  real(kind(1.0D0)) :: rplas = 0.0D0
+  real(kind(1.0D0)), bind(C) :: rplas = 0.0D0
 
   !+ad_vars  res_time : plasma current resistive diffusion time (s)
   real(kind(1.0D0)) :: res_time = 0.0D0
@@ -825,7 +825,7 @@ module physics_variables
   !+ad_vars  triang95 /0.24/ : plasma triangularity at 95% surface (calculated if ishape < 3)
   real(kind(1.0D0)) :: triang95 = 0.24D0
   !+ad_vars  vol : plasma volume (m3)
-  real(kind(1.0D0)) :: vol = 0.0D0
+  real(kind(1.0D0)), bind(C) :: vol = 0.0D0
   !+ad_vars  vsbrn : V-s needed during flat-top (heat + burn times) (Wb)
   real(kind(1.0D0)) :: vsbrn = 0.0D0
   !+ad_vars  vshift : plasma/device midplane vertical shift - single null
@@ -3124,18 +3124,18 @@ module times_variables
   !+ad_varc            <LI> = 1, tohs = iteration var or input. tramp/tqnch max of input or tohs</UL>
   real(kind(1.0D0)) :: pulsetimings = 1.0D0
   !+ad_vars  tburn /1000.0/ : burn time (s) (calculated if lpulse=1)
-  real(kind(1.0D0)) :: tburn = 1000.0D0
+  real(kind(1.0D0)), bind(C) :: tburn = 1000.0D0
   !+ad_vars  tburn0 : burn time (s) - used for internal consistency
   real(kind(1.0D0)) :: tburn0 = 0.0D0
   !+ad_vars  tcycle : full cycle time (s)
   real(kind(1.0D0)), bind(C) :: tcycle = 0.0D0
   !+ad_vars  tdown : down time (s)
-  real(kind(1.0D0)) :: tdown = 0.0D0
+  real(kind(1.0D0)), bind(C) :: tdown = 0.0D0
   !+ad_vars  tdwell /1800.0/ : time between pulses in a pulsed reactor (s)
   !+ad_varc                   (iteration variable 17)
-  real(kind(1.0D0)) :: tdwell = 1800.0D0
+  real(kind(1.0D0)), bind(C) :: tdwell = 1800.0D0
   !+ad_vars  theat /10.0/ : heating time, after current ramp up (s)
-  real(kind(1.0D0)) :: theat = 10.0D0
+  real(kind(1.0D0)), bind(C) :: theat = 10.0D0
   !+ad_vars  tim(6) : array of time points during plasma pulse (s)
   real(kind(1.0D0)), dimension(6) :: tim = 0.0D0
   !+ad_vars  timelabel(6) : array of time labels during plasma pulse (s)
@@ -3154,7 +3154,7 @@ module times_variables
   !+ad_vars  tohs /30.0/ : plasma current ramp-up time for current initiation (s)
   !+ad_varc                (but calculated if lpulse=0)
   !+ad_varc                (iteration variable 65)
-  real(kind(1.0D0)) :: tohs = 30.0D0
+  real(kind(1.0D0)), bind(C) :: tohs = 30.0D0
   !+ad_vars  tohsin /0.0/ : switch for plasma current ramp-up time (if lpulse=0):<UL>
   !+ad_varc            <LI> = 0, tohs = tramp = tqnch = Ip(MA)/0.5;
   !+ad_varc            <LI> <>0, tohs = tohsin; tramp, tqnch are input</UL>
