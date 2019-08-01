@@ -6,7 +6,7 @@
  
 
 ## Features
-
+- Restored IFE (Issue #901)
 
 ## Minor Changes
 
