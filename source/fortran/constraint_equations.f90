@@ -138,6 +138,7 @@ contains
      !+ad_hist  27/02/17 JM  Added constraint equation 72 for Central Solenoid stress model
      !+ad_hist  20/04/17 JM  Added string tags to constraints
      !+ad_hist  25/04/19 SK  Added new constraint equation (81) ensuring ne(0) > ne(ped)
+     !+ad_hist  29/07/19 SIM Restored equation 50 (Issue #901)
      !+ad_stat  Okay
      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
      !
@@ -283,7 +284,7 @@ contains
          case (48); call constraint_eqn_048(args)  
 	      ! Issue #508 Remove RFP option Equation to ensure reversal parameter F is negative
          case (49); call constraint_eqn_049(args)
-         ! Issue #508 Remove IFE option: Equation for repetition rate upper limit
+         ! IFE option: Equation for repetition rate upper limit
          case (50); call constraint_eqn_050(args)
 	      ! Equation to enforce startup flux = available startup flux
          case (51); call constraint_eqn_051(args)  
@@ -2020,16 +2021,27 @@ contains
 
    subroutine constraint_eqn_050(args)
       !+ad_name  constraint_eqn_050
-      !+ad_summ  Issue #508 Remove IFE option: Equation for repetition rate upper limit
+      !+ad_summ  IFE option: Equation for repetition rate upper limit
       !+ad_type  Subroutine
       !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_desc  Issue #508 Remove IFE option: Equation for repetition rate upper limit
-      !+ad_desc    #=# empty
-      !+ad_desc    #=#=# empty
-      ! Dummy formal arguments, just to comply with the subroutine interface
+      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+      !+ad_desc  IFE option: Equation for repetition rate upper limit
+      !+ad_desc    #=# IFE
+      !+ad_desc    #=#=# frrmax, rrmax
+      !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
+      use ife_variables, only: frrmax, ife, rrmax, reprat
+      implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')
+      if (ife /= 1) then
+         call report_error(12)
+      end if
+
+      args%cc =  1.0D0 - frrmax * rrmax/reprat
+      args%con = rrmax * (1.0D0 - args%cc)
+      args%err = reprat * args%cc
+      args%symbol = '<'
+      args%units = 'Hz'
 
    end subroutine constraint_eqn_050
 
@@ -2120,12 +2132,12 @@ contains
 
    subroutine constraint_eqn_054(args)
       !+ad_name  constraint_eqn_054
-      !+ad_summ  Equation for peak TF coil nuclear heating upper limi
+      !+ad_summ  Equation for peak TF coil nuclear heating upper limit
       !+ad_type  Subroutine
       !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
       !+ad_args  args : output structure : residual error; constraint value; 
       !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for peak TF coil nuclear heating upper limi
+      !+ad_desc  Equation for peak TF coil nuclear heating upper limit
       !+ad_desc    #=# fwbs
       !+ad_desc    #=#=# fptfnuc, ptfnucmax
       !+ad_desc  and hence also optional here.

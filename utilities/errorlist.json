@@ -3,7 +3,7 @@
  "version":  [ "PROCESS version 1.0.16" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 227,
+ "n_errortypes": 228,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -231,6 +231,7 @@
   {"no": 224, "level": 2, "message": "[fw.f90][fw_temp] First wall temperature (temp_k) out of range : [100-1500] K"},
   {"no": 225, "level": 2, "message": "[fw.f90][heat_transfer] Reynolds number out of range : [3e3-5000e3]"},
   {"no": 226, "level": 2, "message": "[fw.f90][heat_transfer] Prandtl number out of range : [0.5-2000]"},
-  {"no": 227, "level": 2, "message": "[fw.f90][heat_transfer] Negative Darcy friction factor (f) "}
+  {"no": 227, "level": 2, "message": "[fw.f90][heat_transfer] Negative Darcy friction factor (f) "},
+  {"no": 228, "level": 3, "message": "RFP: RFP no longer available."}
  ]
 }

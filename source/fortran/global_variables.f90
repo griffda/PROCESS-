@@ -1530,7 +1530,7 @@ module fwbs_variables
   !+ad_varc               apparatus plus diagnostics
   real(kind(1.0D0)) :: fhcd = 0.0D0
 
-  !+ad_vars  fhole /0.0/ : area fraction taken up by other holes (not used)
+  !+ad_vars  fhole /0.0/ : area fraction taken up by other holes (IFE)
   real(kind(1.0D0)) :: fhole = 0.0D0
 
   !+ad_vars  fwbsshape /2/ : first wall, blanket, shield and vacuum vessel shape:<UL>
@@ -3901,7 +3901,7 @@ module cost_variables
   real(kind(1.0D0)), parameter :: uclv = 16.0D0
   !+ad_vars  ucmb /260.0/ FIX: unit cost for reactor maintenance building (M$/m3)
   real(kind(1.0D0)), parameter :: ucmb = 260.0D0
-  !+ad_vars  ucme /1.25e8/ : cost of maintenance equipment ($/)
+  !+ad_vars  ucme /1.25e8/ : cost of maintenance equipment ($)
   real(kind(1.0D0)), bind(C) :: ucme = 1.25D8
   !+ad_vars  ucmisc /2.5e7/ : miscellaneous plant allowance ($)
   real(kind(1.0D0)), bind(C) :: ucmisc = 2.5D7
@@ -4380,7 +4380,343 @@ end module stellarator_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ! Issue #508 Remove RFP option: module rfp_variables
-! Issue #508 Remove IFE option: module ife_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+module ife_variables
+
+     !+ad_name  ife_variables
+     !+ad_summ  Module containing global variables relating to the
+     !+ad_summ  inertial fusion energy model
+     !+ad_type  Module
+     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+     !+ad_cont  N/A
+     !+ad_args  N/A
+     !+ad_desc  This module contains global variables relating to the
+     !+ad_desc  inertial fusion energy model.
+     !+ad_prob  None
+     !+ad_call  None
+     !+ad_hist  05/11/12 PJK Initial version of module
+     !+ad_hist  25/06/13 PJK Modified declaration of rank-2 arrays to be
+     !+ad_hist               standard-conforming
+     !+ad_hist  08/05/17 MDK Removed from PROCESS (Issue #508)
+     !+ad_hist  29/07/19 SIM Returned to PROCESS (Issue #901)
+     !+ad_stat  Okay
+     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   
+     implicit none
+   
+     public
+   
+     !+ad_vars  Default IFE builds and material volumes are those for the SOMBRERO device.
+     !+ad_varc  The 2-dimensional arrays have indices (region, material), where<UL>
+     !+ad_varc  <LI>'region' = 1 radially outside chamber
+     !+ad_varc  <LI>         = 2 above chamber
+     !+ad_varc  <LI>         = 3 below chamber</UL>
+     !+ad_varc  and 'material' is defined as described in maxmat below.<P>
+   
+     !+ad_vars  maxmat /7/ FIX : total number of materials in IFE device.
+     !+ad_varc                   Material numbers are as follows:<UL>
+     !+ad_varc              <LI> = 0 void;
+     !+ad_varc              <LI> = 1 steel;
+     !+ad_varc              <LI> = 2 carbon cloth;
+     !+ad_varc              <LI> = 3 FLiBe;
+     !+ad_varc              <LI> = 4 lithium oxide Li2O;
+     !+ad_varc              <LI> = 5 concrete;
+     !+ad_varc              <LI> = 6 helium;
+     !+ad_varc              <LI> = 7 xenon</UL>
+     integer, parameter ::  maxmat = 7
+   
+     !+ad_vars  bldr /1.0/ : radial thickness of IFE blanket (m)
+     real(kind(1.0D0)) :: bldr   = 1.0D0
+     !+ad_vars  bldzl /4.0/ : vertical thickness of IFE blanket below chamber (m)
+     real(kind(1.0D0)) :: bldzl  = 4.0D0
+     !+ad_vars  bldzu /4.0/ : vertical thickness of IFE blanket above chamber (m)
+     real(kind(1.0D0)) :: bldzu  = 4.0D0
+     !+ad_vars  blmatf(3,0:maxmat) /.../ : IFE blanket material fractions
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: blmatf = reshape( (/ &
+          0.05D0,0.05D0,0.05D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.45D0,0.45D0,0.45D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.20D0,0.20D0,0.20D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.30D0,0.30D0,0.30D0, &
+          0.0D0, 0.0D0, 0.0D0  /), shape(blmatf))
+     !+ad_vars  blmatm(3,0:maxmat) : IFE blanket material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: blmatm = 0.0D0
+     !+ad_vars  blmatv(3,0:maxmat) : IFE blanket material volumes (m3)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: blmatv = 0.0D0
+     !+ad_vars  blvol(3) : IFE blanket volume (m3)
+     real(kind(1.0D0)), dimension(3) :: blvol = 0.0D0
+     !+ad_vars  cdriv0 /154.3/ : IFE generic/laser driver cost at edrive=0 (M$)
+     real(kind(1.0D0)) :: cdriv0 = 154.3D0
+     !+ad_vars  cdriv1 /163.2/ : IFE low energy heavy ion beam driver cost
+     !+ad_varc                   extrapolated to edrive=0 (M$)
+     real(kind(1.0D0)) :: cdriv1 = 163.2D0
+     !+ad_vars  cdriv2 /244.9/ : IFE high energy heavy ion beam driver cost
+     !+ad_varc                   extrapolated to edrive=0 (M$)
+     real(kind(1.0D0)) :: cdriv2 = 244.9D0
+     !+ad_vars  chdzl /9.0/ : vertical thickness of IFE chamber below centre (m)
+     real(kind(1.0D0)) :: chdzl = 9.0D0
+     !+ad_vars  chdzu /9.0/ : vertical thickness of IFE chamber above centre (m)
+     real(kind(1.0D0)) :: chdzu = 9.0D0
+     !+ad_vars  chmatf(0:maxmat) : IFE chamber material fractions
+     real(kind(1.0D0)), dimension(0:maxmat) :: chmatf = &
+          (/1.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0/)
+     !+ad_vars  chmatm(0:maxmat) : IFE chamber material masses (kg)
+     real(kind(1.0D0)), dimension(0:maxmat) :: chmatm = 0.0D0
+     !+ad_vars  chmatv(0:maxmat) : IFE chamber material volumes (m3)
+     real(kind(1.0D0)), dimension(0:maxmat) :: chmatv = 0.0D0
+     !+ad_vars  chrad /6.5/ : radius of IFE chamber (m)
+     !+ad_varc                (iteration variable 84)
+     real(kind(1.0D0)) :: chrad = 6.5D0
+     !+ad_vars  chvol : IFE chamber volume (m3)
+     real(kind(1.0D0)) :: chvol = 0.0D0
+     !+ad_vars  dcdrv0 /111.4/ : IFE generic/laser driver cost gradient (M$/MJ)
+     real(kind(1.0D0)) :: dcdrv0 = 111.4D0
+     !+ad_vars  dcdrv1 /78.0/ : HIB driver cost gradient at low energy (M$/MJ)
+     real(kind(1.0D0)) :: dcdrv1 = 78.0D0
+     !+ad_vars  dcdrv2 /59.9/ : HIB driver cost gradient at high energy (M$/MJ)
+     real(kind(1.0D0)) :: dcdrv2 = 59.9D0
+     !+ad_vars  drveff /0.28/ : IFE driver wall plug to target efficiency (ifedrv=0)
+     !+ad_varc                  (iteration variable 82)
+     real(kind(1.0D0)) :: drveff = 0.28D0
+     !+ad_vars  edrive /5.0D6/ : IFE driver energy (J)
+     !+ad_varc                   (iteration variable 81)
+     real(kind(1.0D0)) :: edrive = 5.0D6
+     !+ad_vars  etadrv : IFE driver wall plug to target efficiency
+     real(kind(1.0D0)) :: etadrv = 0.0D0
+     !+ad_vars  etave(10) : IFE driver efficiency vs driver energy (ifedrv=-1)
+     real(kind(1.0D0)), dimension(10) :: etave = (/ &
+          0.082D0,0.079D0,0.076D0,0.073D0,0.069D0, &
+          0.066D0,0.062D0,0.059D0,0.055D0,0.051D0 /)
+     !+ad_vars  fauxbop /0.06/ : fraction of gross electric power to balance-of-plant (IFE)
+     real(kind(1.0D0)) :: fauxbop = 0.06D0
+     !+ad_vars  fbreed /0.51/ : fraction of breeder external to device core
+     real(kind(1.0D0)) :: fbreed = 0.51D0
+     !+ad_vars  fburn /0.3333/ : IFE burn fraction (fraction of tritium fused/target)
+     real(kind(1.0D0)) :: fburn  = 0.3333D0
+     !+ad_vars  flirad /0.78/ : radius of FLiBe inlet (m) (ifetyp=3)
+     real(kind(1.0D0)) :: flirad = 0.78D0
+     !+ad_vars  frrmax /1.0/ : f-value for maximum IFE repetition rate
+     !+ad_varc                 (constraint equation 50, iteration variable 86)
+     real(kind(1.0D0)) :: frrmax = 1.0D0
+     !+ad_vars  fwdr /0.01/ : radial thickness of IFE first wall (m)
+     real(kind(1.0D0)) :: fwdr = 0.01D0
+     !+ad_vars  fwdzl /0.01/ : vertical thickness of IFE first wall below chamber (m)
+     real(kind(1.0D0)) :: fwdzl = 0.01D0
+     !+ad_vars  fwdzu /0.01/ : vertical thickness of IFE first wall above chamber (m)
+     real(kind(1.0D0)) :: fwdzu = 0.01D0
+     !+ad_vars  fwmatf(3,0:maxmat) /.../ : IFE first wall material fractions
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: fwmatf = reshape( (/ &
+          0.05D0,0.05D0,0.05D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.95D0,0.95D0,0.95D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0  /), shape(fwmatf))
+     !+ad_vars  fwmatm(3,0:maxmat) : IFE first wall material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: fwmatm = 0.0D0
+     !+ad_vars  fwmatv(3,0:maxmat) : IFE first wall material volumes (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: fwmatv = 0.0D0
+     !+ad_vars  fwvol(3) : IFE first wall volume (m3)
+     real(kind(1.0D0)), dimension(3) :: fwvol = 0.0D0
+     !+ad_vars  gain : IFE target gain
+     real(kind(1.0D0)) :: gain = 0.0D0
+     !+ad_vars  gainve(10) /.../ : IFE target gain vs driver energy (ifedrv=-1)
+     real(kind(1.0D0)), dimension(10) :: gainve = (/ &
+           60.0D0, 95.0D0,115.0D0,125.0D0,133.0D0, &
+          141.0D0,152.0D0,160.0D0,165.0D0,170.0D0 /)
+     !+ad_vars  htpmw_ife /0.0/ : IFE heat transport system electrical pump power (MW)
+     real(kind(1.0D0)) :: htpmw_ife = 0.0D0         
+     !+ad_vars  ife /0/ : switch for IFE option
+     !+ad_varc            (set via <CODE>device.dat</CODE>):<UL>
+     !+ad_varc       <LI> = 0 use tokamak, RFP or stellarator model;
+     !+ad_varc       <LI> = 1 use IFE model</UL>
+     integer :: ife = 0
+     !+ad_vars  ifedrv /2/ : switch for type of IFE driver:<UL>
+     !+ad_varc          <LI> = -1 use gainve, etave for gain and driver efficiency;
+     !+ad_varc          <LI> =  0 use tgain, drveff for gain and driver efficiency;
+     !+ad_varc          <LI> =  1 use laser driver based on SOMBRERO design;
+     !+ad_varc          <LI> =  2 use heavy ion beam driver based on OSIRIS</UL>
+     integer :: ifedrv = 2
+     !+ad_vars  ifetyp /0/ : switch for type of IFE device build:<UL>
+     !+ad_varc          <LI> = 0 generic (cylindrical) build;
+     !+ad_varc          <LI> = 1 OSIRIS-like build;
+     !+ad_varc          <LI> = 2 SOMBRERO-like build;
+     !+ad_varc          <LI> = 3 HYLIFE-II-like build</UL>
+     integer :: ifetyp = 0
+     !+ad_vars  mcdriv /1.0/ : IFE driver cost multiplier
+     real(kind(1.0D0)) :: mcdriv = 1.0D0
+     !+ad_vars  mflibe : total mass of FLiBe (kg)
+     real(kind(1.0D0)) :: mflibe = 0.0D0
+     !+ad_vars  pdrive /23.0D6/ : IFE driver power reaching target (W)
+     !+ad_varc                    (iteration variable 85)
+     real(kind(1.0D0)) :: pdrive = 23.0D6
+     !+ad_vars  pifecr /10.0/ : IFE cryogenic power requirements (MW)
+     real(kind(1.0D0)) :: pifecr = 10.0D0
+     !+ad_vars  ptargf /2.0/ : IFE target factory power at 6 Hz repetition rate (MW)
+     real(kind(1.0D0)) :: ptargf = 2.0D0
+     !+ad_vars  r1 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r1 = 0.0D0
+     !+ad_vars  r2 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r2 = 0.0D0
+     !+ad_vars  r3 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r3 = 0.0D0
+     !+ad_vars  r4 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r4 = 0.0D0
+     !+ad_vars  r5 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r5 = 0.0D0
+     !+ad_vars  r6 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r6 = 0.0D0
+     !+ad_vars  r7 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r7 = 0.0D0
+     !+ad_vars  reprat : IFE driver repetition rate (Hz)
+     real(kind(1.0D0)) :: reprat = 0.0D0
+     !+ad_vars  rrmax /20.0/ : maximum IFE repetition rate (Hz)
+     real(kind(1.0D0)) :: rrmax = 20.0D0
+     !+ad_vars  shdr /1.7/ : radial thickness of IFE shield (m)
+     real(kind(1.0D0)) :: shdr = 1.7D0
+     !+ad_vars  shdzl /5.0/ : vertical thickness of IFE shield below chamber (m)
+     real(kind(1.0D0)) :: shdzl = 5.0D0
+     !+ad_vars  shdzu /5.0/ : vertical thickness of IFE shield above chamber (m)
+     real(kind(1.0D0)) :: shdzu  = 5.0D0
+     !+ad_vars  shmatf(3,0:maxmat) /.../ : IFE shield material fractions
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: shmatf = reshape( (/ &
+          0.05D0,0.05D0,0.05D0, &
+          0.19D0,0.19D0,0.19D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.665D0,0.665D0,0.665D0, &
+          0.095D0,0.095D0,0.095D0, &
+          0.0D0, 0.0D0, 0.0D0  /), shape(shmatf))
+     !+ad_vars  shmatm(3,0:maxmat) : IFE shield material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: shmatm = 0.0D0
+     !+ad_vars  shmatv(3,0:maxmat) : IFE shield material volumes (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: shmatv = 0.0D0
+     !+ad_vars  shvol(3) : IFE shield volume (m3)
+     real(kind(1.0D0)), dimension(3) :: shvol = 0.0D0
+     !+ad_vars  sombdr /2.7/ : radius of cylindrical blanket section below chamber (ifetyp=2)
+     real(kind(1.0D0)) :: sombdr = 2.7D0
+     !+ad_vars  somtdr /2.7/ : radius of cylindrical blanket section above chamber (ifetyp=2)
+     real(kind(1.0D0)) :: somtdr = 2.7D0
+     !+ad_vars  tdspmw /0.01/ FIX : IFE target delivery system power (MW)
+     real(kind(1.0D0)) :: tdspmw = 0.01D0
+     !+ad_vars  tfacmw : IFE target factory power (MW)
+     real(kind(1.0D0)) :: tfacmw = 0.0D0
+     !+ad_vars  tgain /85.0/ : IFE target gain (if ifedrv = 0)
+     !+ad_varc                 (iteration variable 83)
+     real(kind(1.0D0)) :: tgain = 85.0D0
+     !+ad_vars  uccarb /50.0/ : cost of carbon cloth ($/kg)
+     real(kind(1.0D0)) :: uccarb = 50.0D0
+     !+ad_vars  ucconc /0.1/ : cost of concrete ($/kg)
+     real(kind(1.0D0)) :: ucconc = 0.1D0
+     !+ad_vars  ucflib /84.0/ : cost of FLiBe ($/kg)
+     real(kind(1.0D0)) :: ucflib = 84.0D0
+     !+ad_vars  uctarg /0.3/ : cost of IFE target ($/target)
+     real(kind(1.0D0)) :: uctarg = 0.3D0
+     !+ad_vars  v1dr /0.0/ : radial thickness of IFE void between first wall and blanket (m)
+     real(kind(1.0D0)) :: v1dr = 0.0D0
+     !+ad_vars  v1dzl /0.0/ : vertical thickness of IFE void 1 below chamber (m)
+     real(kind(1.0D0)) :: v1dzl = 0.0D0
+     !+ad_vars  v1dzu /0.0/ : vertical thickness of IFE void 1 above chamber (m)
+     real(kind(1.0D0)) :: v1dzu = 0.0D0
+     !+ad_vars  v1matf(3,0:maxmat) /.../ : IFE void 1 material fractions
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v1matf = reshape( (/ &
+          1.0D0, 1.0D0, 1.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0  /), shape(v1matf))
+     !+ad_vars  v1matm(3,0:maxmat) : IFE void 1 material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v1matm = 0.0D0
+     !+ad_vars  v1matv(3,0:maxmat) : IFE void 1 material volumes (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v1matv = 0.0D0
+     !+ad_vars  v1vol(3) : IFE void 1 volume (m3)
+     real(kind(1.0D0)), dimension(3) :: v1vol = 0.0D0
+     !+ad_vars  v2dr /2.0/ : radial thickness of IFE void between blanket and shield (m)
+     real(kind(1.0D0)) :: v2dr = 2.0D0
+     !+ad_vars  v2dzl /7.0/ : vertical thickness of IFE void 2 below chamber (m)
+     real(kind(1.0D0)) :: v2dzl = 7.0D0
+     !+ad_vars  v2dzu /7.0/ : vertical thickness of IFE void 2 above chamber (m)
+     real(kind(1.0D0)) :: v2dzu = 7.0D0
+     !+ad_vars  v2matf(3,0:maxmat) /.../ : IFE void 2 material fractions
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v2matf = reshape( (/ &
+          1.0D0, 1.0D0, 1.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0  /), shape(v2matf))
+     !+ad_vars  v2matm(3,0:maxmat) : IFE void 2 material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v2matm = 0.0D0
+     !+ad_vars  v2matv(3,0:maxmat) : IFE void 2 material volumes (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v2matv = 0.0D0
+     !+ad_vars  v2vol(3) : IFE void 2 volume (m3)
+     real(kind(1.0D0)), dimension(3) :: v2vol = 0.0D0
+     !+ad_vars  v3dr /43.3/ : radial thickness of IFE void outside shield (m)
+     real(kind(1.0D0)) :: v3dr   = 43.3D0
+     !+ad_vars  v3dzl /30.0/ : vertical thickness of IFE void 3 below chamber (m)
+     real(kind(1.0D0)) :: v3dzl  = 30.0D0
+     !+ad_vars  v3dzu /20.0/ : vertical thickness of IFE void 3 above chamber (m)
+     real(kind(1.0D0)) :: v3dzu  = 20.0D0
+     !+ad_vars  v3matf(3,0:maxmat) /.../ : IFE void 3 material fractions
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v3matf = reshape( (/ &
+          1.0D0, 1.0D0, 1.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0  /), shape(v3matf))
+     !+ad_vars  v3matm(3,0:maxmat) : IFE void 3 material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v3matm = 0.0D0
+     !+ad_vars  v3matv(3,0:maxmat) : IFE void 3 material volumes (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v3matv = 0.0D0
+     !+ad_vars  v3vol(3) : IFE void 3 volume (m3)
+     real(kind(1.0D0)), dimension(3) :: v3vol = 0.0D0
+     !+ad_vars  zl1 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl1 = 0.0D0
+     !+ad_vars  zl2 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl2 = 0.0D0
+     !+ad_vars  zl3 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl3 = 0.0D0
+     !+ad_vars  zl4 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl4 = 0.0D0
+     !+ad_vars  zl5 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl5 = 0.0D0
+     !+ad_vars  zl6 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl6 = 0.0D0
+     !+ad_vars  zl7 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl7 = 0.0D0
+     !+ad_vars  zu1 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu1 = 0.0D0
+     !+ad_vars  zu2 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu2 = 0.0D0
+     !+ad_vars  zu3 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu3 = 0.0D0
+     !+ad_vars  zu4 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu4 = 0.0D0
+     !+ad_vars  zu5 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu5 = 0.0D0
+     !+ad_vars  zu6 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu6 = 0.0D0
+     !+ad_vars  zu7 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu7 = 0.0D0
+   
+   end module ife_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

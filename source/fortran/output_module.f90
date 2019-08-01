@@ -19,8 +19,8 @@ subroutine output(outfile)
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
-
-
+  !+ad_call  ife_module
+  !+ad_call  ife_variables
   !+ad_call  pfcoil_module
   !+ad_call  physics_module
   !+ad_call  physics_variables
@@ -77,6 +77,7 @@ subroutine output(outfile)
   !+ad_hist  09/07/14 PJK Turned on error handling
   !+ad_hist  07/06/16  JM Added some extra comments
   !+ad_hist  27/02/2018 KE Added plasmod output routine
+  !+ad_hist  28/07/2019 SIM Restored IFE
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -97,6 +98,8 @@ subroutine output(outfile)
   use error_handling
   use fwbs_module
   use fwbs_variables
+  use ife_module
+  use ife_variables
   use pfcoil_module
   use physics_module
   use physics_variables
@@ -136,6 +139,12 @@ subroutine output(outfile)
   if (istell /= 0) then
      call stout(outfile)
      return
+  end if
+
+  !  Call IFE output routine instead if relevant
+  if (ife /= 0) then
+   call ifeout(outfile)
+   return
   end if
 
   ! Costs model !

@@ -84,19 +84,24 @@ subroutine devtyp
     !+ad_desc  is to be modelled. If the file is not present in the current
     !+ad_desc  directory, a standard tokamak model is assumed.
     !+ad_prob  None
-
+    !+ad_call  error_handling
+    !+ad_call  ife_variables
     !+ad_call  stellarator_variables
     !+ad_hist  27/02/96 PJK Initial version
     !+ad_hist  08/10/96 PJK Fixed error: (istell.gt.2) should be (idev.gt.2)
     !+ad_hist  14/03/97 PJK idev=3 ==> inertial fusion power plant
     !+ad_hist  19/09/12 PJK Initial F90 version
     !+ad_hist  04/11/16 MK Added check for content of device file
+    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
+    use error_handling
+    use global_variables
+    use ife_variables
     use stellarator_variables
 
     implicit none
@@ -112,6 +117,7 @@ subroutine devtyp
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     devFile = 'device.dat'
     istell = 0
+    ife    = 0
     idev   = 0      ! Default value MK
 
     !  Read a second input file. If the file does not exist or
@@ -136,7 +142,10 @@ subroutine devtyp
             istell = 1
 
         case (2)  !  ! ISSUE #508 Remove RFP option
-        case (3)  !  ISSUE #508 Remove Inertial Fusion Energy model
+            call report_error(228)
+        case (3)  !  Inertial Fusion Energy model
+            ife = 1
+            icase = 'Inertial Fusion model'
 
         case default  !  Tokamak model
             continue
@@ -204,6 +213,7 @@ subroutine check
     !+ad_hist  25/02/15 JM  Changed blanket composition check to use new blanket model layout
     !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
     !+ad_hist  13/05/19 SIM Added error flag for input confinement time with wrong scaling option
+    !+ad_hist  29/07/19 SIM Stopped plasma check for IFE
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -217,8 +227,8 @@ subroutine check
     use fwbs_variables
     use global_variables
     use heat_transport_variables
+    use ife_variables
     use impurity_radiation_module
-
     use numerics
     use pfcoil_variables
     use physics_variables
@@ -316,6 +326,7 @@ subroutine check
 
     !  Plasma profile consistency checks
 
+    if (ife /= 1) then
     if (ipedestal == 1 .or. ipedestal == 2) then
 
         !  Temperature checks
@@ -373,6 +384,7 @@ subroutine check
              if ( any(ixc == 145 )) call report_error(154)
              if ( any(ixc ==   6 )) call report_error(155)
          end if
+     end if
      end if
      ! ---------------
 
