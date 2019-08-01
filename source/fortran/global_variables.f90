@@ -4540,7 +4540,8 @@ module ife_variables
      !+ad_varc          <LI> = 0 generic (cylindrical) build;
      !+ad_varc          <LI> = 1 OSIRIS-like build;
      !+ad_varc          <LI> = 2 SOMBRERO-like build;
-     !+ad_varc          <LI> = 3 HYLIFE-II-like build</UL>
+     !+ad_varc          <LI> = 3 HYLIFE-II-like build;
+     !+ad_varc          <LI> = 4 2019 build</UL>
      integer :: ifetyp = 0
      !+ad_vars  mcdriv /1.0/ : IFE driver cost multiplier
      real(kind(1.0D0)) :: mcdriv = 1.0D0

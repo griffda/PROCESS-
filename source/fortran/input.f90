@@ -3114,7 +3114,7 @@ contains
           call parse_int_variable('ifedrv', ifedrv, -1, 2, &
                     'IFE driver type')
        case ('ifetyp')
-          call parse_int_variable('ifetyp', ifetyp, 0, 3, &
+          call parse_int_variable('ifetyp', ifetyp, 0, 4, &
                     'IFE device build type')
        case ('mcdriv')
           call parse_real_variable('mcdriv', mcdriv, 0.1D0, 10.0D0, &
