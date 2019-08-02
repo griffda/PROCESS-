@@ -2711,23 +2711,31 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ppump = 0.0D0
   !+ad_vars  prescp : resistive power in the centrepost (W)
   real(kind(1.0D0)) :: prescp = 0.0D0
-  !+ad_vars  ptempalw /200.0/ : maximum peak centrepost temperature (C)
+
+  !+ad_vars  ptempalw /473.15/ : maximum peak centrepost temperature (K)
   !+ad_varc                     (constraint equation 44)
-  real(kind(1.0D0)) :: ptempalw = 200.0D0
+  real(kind(1.0D0)) :: ptempalw = 473.15D0   ! 200 C
+
   !+ad_vars  rcool /0.005/ : average radius of coolant channel (m)
   !+ad_varc                  (iteration variable 69)
   real(kind(1.0D0)) :: rcool = 0.005D0
+
   !+ad_vars  rhocp : TF coil inboard leg resistivity (Ohm-m)
   real(kind(1.0D0)) :: rhocp = 0.0D0
-  !+ad_vars  tcoolin /40.0/ : centrepost coolant inlet temperature (C)
-  real(kind(1.0D0)) :: tcoolin = 40.0D0
-  !+ad_vars  tcpav /100.0/ : average temp of TF coil inboard leg conductor (C)
+
+  !+ad_vars  tcoolin /313.15/ : centrepost coolant inlet temperature (K)
+  real(kind(1.0D0)) :: tcoolin = 313.15D0   ! 40 C
+
+  !+ad_vars  tcpav /373.15/ : average temp of TF coil inboard leg conductor (K)
   !+ad_varc                  (resistive coils) (iteration variable 20)
-  real(kind(1.0D0)) :: tcpav = 100.0D0
-  !+ad_vars  tcpav2 : centrepost average temperature (C) (for consistency)
+  real(kind(1.0D0)) :: tcpav = 373.15D0     ! 100 C
+
+  !+ad_vars  tcpav2 : centrepost average temperature (K) (for consistency)
   real(kind(1.0D0)) :: tcpav2 = 0.0D0
-  !+ad_vars  tcpmax : peak centrepost temperature (C)
+
+  !+ad_vars  tcpmax : peak centrepost temperature (K)
   real(kind(1.0D0)) :: tcpmax = 0.0D0
+  
   !+ad_vars  vcool /20.0/ : max centrepost coolant flow speed at midplane (m/s)
   !+ad_varc                 (iteration variable 70)
   real(kind(1.0D0)) :: vcool = 20.0D0

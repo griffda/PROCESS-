@@ -209,7 +209,7 @@ contains
 
     !  Local variables
     real(kind(1.0D0)) :: r_tf_outleg_in
-    real(kind(1.0D0)) :: ltfleg, rmid, rtop, ztop, tcpav_kelvin
+    real(kind(1.0D0)) :: ltfleg, rmid, rtop, ztop
     real(kind(1.0D0)) :: tfcind1, deltf
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
@@ -266,12 +266,11 @@ contains
     ! ******
     ! Copper resistivity (0.92 factor for glidcop C15175)
     if ( itfsup == 0 ) then
-    rhocp = 1.0D-8 * (1.72D0 + 0.0039D0*tcpav) / 0.92D0
+    rhocp = 1.0D-8 * ( 1.72D0 + 0.0039D0*(tcpav - 273.15D0) ) / 0.92D0
 
     ! Aluminium cryogenic resistivity
    else if ( itfsup == 2 ) then
-      tcpav_kelvin = tcpav + 273.15  
-      rhocp = 2.00016D-14*tcpav_kelvin**3 - 6.75384D-13*tcpav_kelvin**2 + 8.89159D-12*tcpav_kelvin
+      rhocp = 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav
    end if
 
     ! Conventionnal tokamak (geometry invariant with hight)
@@ -401,7 +400,7 @@ contains
     call ovarre(outfile,'Total TF coil mass (kg)','(whttf)',whttf)
     call ovarre(outfile,'Inboard leg resistive power (W)','(prescp)',prescp)
     call ovarre(outfile,'Outboard leg resistance per coil (ohm)','(tflegres)',tflegres)
-    call ovarre(outfile,'Average inboard leg temperature (C)','(tcpav)',tcpav)
+    call ovarre(outfile,'Average inboard leg temperature (K)','(tcpav)',tcpav)
     ! ---------------------------------------------
 
   end subroutine concoptf
@@ -447,7 +446,7 @@ contains
          dtfilmav,dtiocool,fc,fricfac,h,lcool,nuselt,pcrt,presin,prndtl, &
          psat,ptot,reyn,rmid,ro,roughrat,sum,tclmx,tclmxs,tcoolmx,tmarg,vcoolav, &
          rmid_in, coolant_density, coolant_th_cond, coolant_visco, coolant_cp,&
-         conductor_th_cond, dptot, tcool_calc, tcpav_k
+         conductor_th_cond, dptot, tcool_calc
    
     integer, parameter :: n_tcool_it = 20
     integer :: ii
@@ -499,7 +498,7 @@ contains
     ! Helium coolant
     ! **************
     else if ( itfsup ==  2 ) then
-       tcool_calc = tcoolin + 273.15D0  ! K
+       tcool_calc = tcoolin ! K
 
        ! If T < 4 K -> Extrapolated data
        if ( tcool_calc < 4.0D0 ) write(*,*) 'WARNING : Helium properties extrapolated below K'
@@ -539,7 +538,7 @@ contains
        end do
  
        ! Getting the global in-outlet temperature increase 
-       dtiocool = tcool_calc - tcoolin - 273.15D0
+       dtiocool = tcool_calc - tcoolin
     end if
     ! **************
     ! **********************************************
@@ -605,10 +604,9 @@ contains
     
     ! Cryogenic aluminium 
     else if ( itfsup ==  2 ) then
-       tcpav_k = tcpav + 273.15  ! Celsius to Kelvin conversion
 
        ! Ref : R.W. Powel, National Standard Reference Data Series, nov 25 1966 (homemade fit 15 < T < 60 K)
-       conductor_th_cond = 16332.2073D0 - 776.91775*tcpav_k + 13.405688D0*tcpav_k**2 - 8.01D-02*tcpav_k**3 ! W/(m.K)
+       conductor_th_cond = 16332.2073D0 - 776.91775*tcpav + 13.405688D0*tcpav**2 - 8.01D-02*tcpav**3 ! W/(m.K)
     end if 
     ! ******
 
@@ -676,12 +674,12 @@ contains
     call ovarre(outfile,'Resistive heating (W)','(prescp)',prescp)
 
     call osubhd(outfile,'Temperatures :')
-    call ovarre(outfile,'Input coolant temperature (C)','(tcoolin)',tcoolin)
-    call ovarre(outfile,'Input-output coolant temperature rise (C)','(dtiocool)',dtiocool)
+    call ovarre(outfile,'Input coolant temperature (K)','(tcoolin)',tcoolin)
+    call ovarre(outfile,'Input-output coolant temperature rise (K)','(dtiocool)',dtiocool)
     call ovarre(outfile,'Film temperature rise (C)','(dtfilmav)',dtfilmav)
     call ovarre(outfile,'Average temp gradient in conductor (K/m)','(dtcncpav)',dtcncpav)
-    call ovarre(outfile,'Average centrepost temperature (C)','(tcpav2)',tcpav2)
-    call ovarre(outfile,'Peak centrepost temperature (C)','(tcpmax)',tcpmax)
+    call ovarre(outfile,'Average centrepost temperature (K)','(tcpav2)',tcpav2)
+    call ovarre(outfile,'Peak centrepost temperature (K)','(tcpmax)',tcpmax)
 
     call osubhd(outfile,'Pump Power :')
     call ovarre(outfile,'Coolant pressure drop (Pa)','(dpres)',dpres)

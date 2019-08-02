@@ -68,7 +68,9 @@ q=8.0
 boundl(18) = 7.0
 
 ixc = 20            *tcpav
-tcpav = 70.753      *Average temp of TF coil inboard leg conductor (C) (resistive coils)
+tcpav = 313.903     *Average temp of TF coil inboard leg conductor (C) (resistive coils)
+boundl(20) = 303.15
+boundu(20) = 373.15
 
 ixc = 23            *fcoolcp
 fcoolcp = 0.41433   *Coolant fraction of TF coil inboard legs
@@ -191,7 +193,7 @@ vvblgap  = 0.0      *Gap between vacuum vessel and blanket (m)
 cpttf    = 9.0E4    *TF coil current per turn (A)
 frhocp   = 1.0      *Centrepost resistivity enhancement factor 
 itfsup   = 0        *Switch for TF coil conductor model (0: copper) 
-ptempalw = 200.0    *Maximum peak centrepost temperature (C) (constraint equation 44)
+ptempalw = 473.15   *Maximum peak centrepost temperature (C) (constraint equation 44)
 rcool    = 3.0E-3   *Average radius of coolant channel (m) 
 ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma edge (%)
 rhotfleg = 2.5E-8   *Resistivity of a TF coil leg (Ohm-m)

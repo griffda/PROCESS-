@@ -1840,16 +1840,33 @@ contains
       !+ad_gloc         <LI> = 1 use spherical tokamak models</UL>
       use tfcoil_variables, only: tcpav, tcpav2
       use physics_variables, only: itart
+      use tfcoil_variables, only:  itfsup
+
       implicit none
       type (constraint_args_type), intent(out) :: args
 
       ! if the machine isn't a ST then report error
       if (itart == 0) call report_error(7)
+
+      ! For some reasons these lines are needed to make VMCON CONVERGE ....
+      if ( itfsup == 0 ) then ! Copper case
+         tcpav = tcpav - 273.15D0
+         tcpav2 = tcpav2 - 273.15D0
+      end if
+
       args%cc =   1.0D0 - tcpav/tcpav2
       args%con = tcpav2 * (1.0D0 - args%cc)
       args%err = tcpav2 * args%cc
       args%symbol = '='
       args%units = 'deg C'
+
+      ! For some reasons these lines are needed to make VMCON CONVERGE ....
+      if ( itfsup == 0 ) then ! Copper case
+         tcpav = tcpav + 273.15D0
+         tcpav2 = tcpav2 + 273.15D0
+      end if
+
+
 
    end subroutine constraint_eqn_043
 
@@ -1866,24 +1883,38 @@ contains
       !+ad_desc  and hence also optional here.
       !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fptemp : input real : f-value for peak centrepost temperature
-      !+ad_glos  ptempalw : input real : maximum peak centrepost temperature (C) 
-      !+ad_glos  tcpmax : input real :  peak centrepost temperature (C)
+      !+ad_glos  ptempalw : input real : maximum peak centrepost temperature (K) 
+      !+ad_glos  tcpmax : input real :  peak centrepost temperature (K)
       !+ad_glos  itart : input integer : switch for spherical tokamak (ST) models:<UL>
       !+ad_gloc         <LI> = 0 use conventional aspect ratio models;
       !+ad_gloc         <LI> = 1 use spherical tokamak models</UL>
       use constraint_variables, only: fptemp
       use tfcoil_variables, only: ptempalw, tcpmax
       use physics_variables, only: itart
+      use tfcoil_variables, only:  itfsup
       implicit none
       type (constraint_args_type), intent(out) :: args
 
       ! if the machine isn't a ST then report error
       if (itart == 0) call report_error(8)
+
+      ! For some reasons these lines are needed to make VMCON CONVERGE ....
+      if ( itfsup == 0 ) then ! Copper case
+         ptempalw = ptempalw - 273.15D0
+         tcpmax = tcpmax - 273.15D0
+      end if
+
       args%cc =   1.0D0 - fptemp * ptempalw / tcpmax
       args%con = ptempalw * (1.0D0 - args%cc)
       args%err = tcpmax * args%cc
       args%symbol = '<'
       args%units = 'deg C'
+
+      ! For some reasons these lines are needed to make VMCON CONVERGE ....
+      if ( itfsup == 0 ) then ! Copper case
+         ptempalw = ptempalw + 273.15D0
+         tcpmax = tcpmax + 273.15D0
+      end if
 
    end subroutine constraint_eqn_044
 

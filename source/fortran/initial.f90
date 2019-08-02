@@ -607,7 +607,7 @@ subroutine check
         ipfloc(2) = 3
         ipfloc(3) = 3
         if ( itfsup == 1 ) itfsup = 0
-        if ( itfsup == 2 ) tcpav  = -243.15D0  ! Initialize at low temperatures for cryoaluminium centerpost (30 K)
+        if ( itfsup == 2 ) tcpav  = 20.0D0  ! Initialize at low temperatures for cryoaluminium centerpost (20 K)
 
         if (ibss  == 1) call report_error(38)
         if (snull == 1) call report_error(39)

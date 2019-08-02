@@ -730,7 +730,7 @@ module numerics
        0.100D0, &  !  17
        2.000D0, &  !  18
        1.000D0, &  !  19
-       40.00D0, &  !  20
+       4.000D0, &  !  20   
        0.001D0, &  !  21
        0.001D0, &  !  22   KE made tbrnmn obsolete 18/05/18
        0.100D0, &  !  23
@@ -889,7 +889,7 @@ module numerics
        1.000D8, &  !  17
        50.00D0, &  !  18
        1.000D6, &  !  19
-       3.000D2, &  !  20   SIM 09/10/18 Lowered to within input limit
+       5.732D2, &  !  20   SIM 09/10/18 Lowered to within input limit
        1.000D0, &  !  21
        1.000D6, &  !  22   KE made tbrnmn obsolete 18/05/18
        0.500D0, &  !  23
