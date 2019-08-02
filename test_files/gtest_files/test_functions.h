@@ -62,6 +62,11 @@ extern "C"
    double test_total_mag_field();
    double test_beta_poloidal();
    double test_res_diff_time();
+
+   // IFE module
+   //-------------------------
+   void c_ifetgt();
+
    
 }
 

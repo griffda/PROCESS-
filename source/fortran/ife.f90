@@ -2019,7 +2019,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ifetgt
+  subroutine ifetgt() bind(C, name="c_ifetgt")
 
     !+ad_name  ifetgt
     !+ad_summ  Routine to calculate the power requirements of the target
