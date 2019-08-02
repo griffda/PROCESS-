@@ -3122,12 +3122,18 @@ contains
        case ('pdrive')
           call parse_real_variable('pdrive', pdrive, 1.0D6, 200.0D6, &
                     'IFE driver power to target (W)')
+       case ('pfusife')
+          call parse_real_variable('pfusife', pfusife, 0.0D0, 1.0D4, &
+                    'IFE input fusion power (MW) (ifedrv=3 only)')
        case ('pifecr')
           call parse_real_variable('pifecr', pifecr, 0.0D0, 100.0D0, &
                     'IFE cryogenic power (MW)')
        case ('ptargf')
           call parse_real_variable('ptargf', ptargf, 0.1D0, 100.0D0, &
                     'IFE target factory power at 6Hz (MW)')
+       case ('rrin')
+          call parse_real_variable('rrin', rrin, 0.1D0, 50.0D0, &
+                     'Input IFE repetition rate (Hz) (ifedrv=3 only)')
        case ('rrmax')
           call parse_real_variable('rrmax', rrmax, 1.0D0, 50.0D0, &
                     'Maximum IFE repetition rate (Hz)')

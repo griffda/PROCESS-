@@ -276,6 +276,8 @@ subroutine loadxc
      case (152) ; xcm(i) = fgwsep
      case (153) ; xcm(i) = fpdivlim
      case (154) ; xcm(i) = fne0
+     case (155) ; xcm(i) = pfusife
+     case (156) ; xcm(i) = rrin
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -593,6 +595,8 @@ subroutine convxc(xc,nn)
      case (152) ; fgwsep = xc(i)/scale(i)
      case (153) ; fpdivlim = xc(i)/scale(i)
      case (154) ; fne0 = xc(i)/scale(i)
+     case (155) ; pfusife = xc(i)/scale(i)
+     case (156) ; rrin = xc(i)/scale(i)
 
      case default
 

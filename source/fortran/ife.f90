@@ -317,10 +317,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Repetition rate
-
-    reprat = pdrive / edrive
-
     !  Driver calculations
 
     select case (ifedrv)
@@ -360,15 +356,29 @@ contains
        call iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
             nbeams,qion,sigma,sigma0,tauf,theta,vi,gain,etadrv)
 
+    case(3)
+       etadrv = drveff
+       
     case default
        idiags(1) = ifedrv
        call report_error(127)
 
     end select
 
-    !  Fusion power (MW)
+    if (ifedrv /= 3) then
+        !  Repetition rate (Hz)
+        reprat = pdrive / edrive
+        !  Fusion power (MW)
+        powfmw = 1.0D-6 * pdrive * gain
 
-    powfmw = 1.0D-6 * pdrive * gain
+    else
+        !  Driver Power
+        reprat = rrin
+        pdrive = reprat * edrive
+        !  Gain
+        powfmw = pfusife
+        gain = powfmw / (1.0D-6 * pdrive)
+    end if
 
     !  Wall load (assume total fusion power applies)
 

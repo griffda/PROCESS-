@@ -103,7 +103,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 154
+  integer, parameter :: ipnvars = 156
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 81
   !+ad_vars  ipnfoms FIX : number of available figures of merit
@@ -691,8 +691,12 @@ module numerics
        'fgwsep        ', &
        !+ad_varc  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)
        'fpdivlim      ', &
-       !+ad_varc  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)</UL>
-       'fne0          ' &
+       !+ad_varc  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)
+       'fne0          ', &
+       !+ad_varc  <LI> (155) pfusife : IFE input fusion power (MW) (ifedrv=3 only)
+       'pfusife       ', &
+       !+ad_varc  <LI> (156) rrin : IFE repetition rate (Hz) (ifedrv=3 only)</UL>
+       'rrin          ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -864,7 +868,9 @@ module numerics
        0.001D0, &  !  151
        0.001D0, &  !  152
        0.001D0, &  !  153
-       0.001D0  &  !  154
+       0.001D0, &  !  154
+       5.000D2, &  !  155
+       1.000D0  &  !  156
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -1023,7 +1029,9 @@ module numerics
        1.000D0, &  !  151
        1.000D0, &  !  152
        1.000D0, &  !  153
-       1.000D0  &  !  154
+       1.000D0, &  !  154
+       3.000D3, &  !  155
+       1.000D1  &  !  156
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

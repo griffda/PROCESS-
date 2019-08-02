@@ -4474,7 +4474,7 @@ module ife_variables
      real(kind(1.0D0)) :: dcdrv1 = 78.0D0
      !+ad_vars  dcdrv2 /59.9/ : HIB driver cost gradient at high energy (M$/MJ)
      real(kind(1.0D0)) :: dcdrv2 = 59.9D0
-     !+ad_vars  drveff /0.28/ : IFE driver wall plug to target efficiency (ifedrv=0)
+     !+ad_vars  drveff /0.28/ : IFE driver wall plug to target efficiency (ifedrv=0,3)
      !+ad_varc                  (iteration variable 82)
      real(kind(1.0D0)) :: drveff = 0.28D0
      !+ad_vars  edrive /5.0D6/ : IFE driver energy (J)
@@ -4537,7 +4537,8 @@ module ife_variables
      !+ad_varc          <LI> = -1 use gainve, etave for gain and driver efficiency;
      !+ad_varc          <LI> =  0 use tgain, drveff for gain and driver efficiency;
      !+ad_varc          <LI> =  1 use laser driver based on SOMBRERO design;
-     !+ad_varc          <LI> =  2 use heavy ion beam driver based on OSIRIS</UL>
+     !+ad_varc          <LI> =  2 use heavy ion beam driver based on OSIRIS;
+     !+ad_varc          <LI> =  3 Input pfusife, rrin and drveff</UL>
      integer :: ifedrv = 2
      !+ad_vars  ifetyp /0/ : switch for type of IFE device build:<UL>
      !+ad_varc          <LI> = 0 generic (cylindrical) build;
@@ -4553,6 +4554,8 @@ module ife_variables
      !+ad_vars  pdrive /23.0D6/ : IFE driver power reaching target (W)
      !+ad_varc                    (iteration variable 85)
      real(kind(1.0D0)) :: pdrive = 23.0D6
+     !+ad_vars  pfusife /1000.0/ : IFE input fusion power (MW) (ifedrv=3 only; itv 155)
+     real(kind(1.0D0)) :: pfusife = 1000.0D0
      !+ad_vars  pifecr /10.0/ : IFE cryogenic power requirements (MW)
      real(kind(1.0D0)) :: pifecr = 10.0D0
      !+ad_vars  ptargf /2.0/ : IFE target factory power at 6 Hz repetition rate (MW)
@@ -4573,6 +4576,8 @@ module ife_variables
      real(kind(1.0D0)) :: r7 = 0.0D0
      !+ad_vars  reprat : IFE driver repetition rate (Hz)
      real(kind(1.0D0)) :: reprat = 0.0D0
+     !+ad_vars  rrin /6.0/ : Input IFE repetition rate (Hz) (ifedrv=3 only; itv 156)
+     real(kind(1.0D0)) :: rrin = 6.0D0
      !+ad_vars  rrmax /20.0/ : maximum IFE repetition rate (Hz)
      real(kind(1.0D0)) :: rrmax = 20.0D0
      !+ad_vars  shdr /1.7/ : radial thickness of IFE shield (m)
