@@ -1230,10 +1230,10 @@ contains
         call obuild(outfile,'Chamber',chdzu,zu1)
         call obuild(outfile,'First Wall',fwdzu,zu2)
         call obuild(outfile,'Void 1',v1dzu,zu3)
-        call obuild(outfile,'Blanket',bldzu,zu4)
-        call obuild(outfile,'Void 2',v2dzu,zu5)
-        call obuild(outfile,'Shield',shdzu,zu6)
-        call obuild(outfile,'Void 3',v3dzu+bldzu,zu7+bldzu)
+        call obuild(outfile,'Blanket',bldzu,zu4-bldzu)
+        call obuild(outfile,'Void 2',v2dzu,zu5-bldzu)
+        call obuild(outfile,'Shield',shdzu,zu6-bldzu)
+        call obuild(outfile,'Void 3',v3dzu+bldzu,zu7-bldzu)
 
         call oheadr(outfile,'Vertical Build - Edge')
         write(outfile,30)
@@ -1249,10 +1249,10 @@ contains
         call obuild(outfile,'Chamber',chdzu,zu1)
         call obuild(outfile,'First Wall',fwdzu,zu2)
         call obuild(outfile,'Void 1',v1dzu,zu3)
-        call obuild(outfile,'Blanket',bldzu,zu4+bldzu)
-        call obuild(outfile,'Void 2',v2dzu,zu5+bldzu)
-        call obuild(outfile,'Shield',shdzu,zu6+bldzu)
-        call obuild(outfile,'Void 3',v3dzu,zu7+bldzu)
+        call obuild(outfile,'Blanket',bldzu,zu4)
+        call obuild(outfile,'Void 2',v2dzu,zu5)
+        call obuild(outfile,'Shield',shdzu,zu6)
+        call obuild(outfile,'Void 3',v3dzu,zu7)
 
     end if   
 
@@ -1412,7 +1412,7 @@ contains
      zu1 = chdzu
      zu2 = zu1 + fwdzu
      zu3 = zu2 + v1dzu
-     zu4 = zu3 ! Blanket is pools radially out from midplane
+     zu4 = zu3 + bldzu
      zu5 = zu4 + v2dzu
      zu6 = zu5 + shdzu
      zu7 = zu6 + v3dzu
@@ -1468,7 +1468,7 @@ contains
      !  Third void
 
      v3vol(1) = pi * (r7*r7 - r6*r6) * (zu6 + zl6)
-     v3vol(2) = pi * r7*r7 * (zu7 - zu6)
+     v3vol(2) = pi * r7*r7 * (zu7 - zu6) + pi * ((r1-shdzu)*(r1-shdzu) - flirad*flirad) * bldzu
      v3vol(3) = pi * r7*r7 * (zl7 - zl6)
 
      !  Material volumes
