@@ -1230,10 +1230,10 @@ contains
         call obuild(outfile,'Chamber',chdzu,zu1)
         call obuild(outfile,'First Wall',fwdzu,zu2)
         call obuild(outfile,'Void 1',v1dzu,zu3)
-        call obuild(outfile,'Blanket',bldzu,zu4-bldzu)
+        call obuild(outfile,'Blanket',bldzu-bldzu,zu4-bldzu)
         call obuild(outfile,'Void 2',v2dzu,zu5-bldzu)
         call obuild(outfile,'Shield',shdzu,zu6-bldzu)
-        call obuild(outfile,'Void 3',v3dzu+bldzu,zu7-bldzu)
+        call obuild(outfile,'Void 3',v3dzu+bldzu,zu7)
 
         call oheadr(outfile,'Vertical Build - Edge')
         write(outfile,30)

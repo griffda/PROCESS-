@@ -4492,7 +4492,7 @@ module ife_variables
      real(kind(1.0D0)) :: fbreed = 0.51D0
      !+ad_vars  fburn /0.3333/ : IFE burn fraction (fraction of tritium fused/target)
      real(kind(1.0D0)) :: fburn  = 0.3333D0
-     !+ad_vars  flirad /0.78/ : radius of FLiBe inlet (m) (ifetyp=3)
+     !+ad_vars  flirad /0.78/ : radius of FLiBe/lithium inlet (m) (ifetyp=3,4)
      real(kind(1.0D0)) :: flirad = 0.78D0
      !+ad_vars  frrmax /1.0/ : f-value for maximum IFE repetition rate
      !+ad_varc                 (constraint equation 50, iteration variable 86)
