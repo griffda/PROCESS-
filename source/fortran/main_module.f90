@@ -200,7 +200,11 @@ subroutine run_summary
      call ocmmnt(outfile, progid(4))  !  user
      call ocmmnt(outfile, progid(5))  !  computer
      call ocmmnt(outfile, progid(6))  !  directory
-     call ocmmnt(outfile, '    Input : '//trim(fileprefix))  !  input file name
+     if (trim(fileprefix) == "") then
+       call ocmmnt(outfile, '    Input : IN.DAT')  !  input file name
+     else
+       call ocmmnt(outfile, '    Input : '//trim(fileprefix))  !  input file name
+     end if
      call ocmmnt(outfile, 'Run title : '//trim(runtitle))   ! run title
      call ocmmnt(outfile, ' Run type : Reactor concept design: '// trim(icase) // ', (c) CCFE')
 
