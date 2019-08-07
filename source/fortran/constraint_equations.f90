@@ -2536,7 +2536,7 @@ contains
       !+ad_argc  residual error in physical units; output string; units string
       !+ad_desc  Ensure separatrix power is less than value from Kallenbach divertor
       !+ad_desc    #=# divertor_kallenbach
-      !+ad_desc    #=#=# psep_kallenbach
+      !+ad_desc    #=#=# consistency, psep_kallenbach
       !+ad_desc  fpsep has been removed from the equation.
       !+ad_desc  and hence also optional here.
       !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.

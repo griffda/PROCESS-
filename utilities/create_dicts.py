@@ -412,94 +412,49 @@ def dict_ixc_full():
        lower bounds.
 
        Example of a lablxc line we are looking for:
-           !+ad_varc  <LI> ( 5) * beta
+           lablxc(1) = 'aspect        '
 
        Example of a boundl line we are looking for:
-           0.001D0, &  !  5
+           boundl(1) = 0.0D0
 
        Example of a boundu line we are looking for:
-           1.000D0, &  !  5
+           boundu(1) = 1.0D0
 
        Example dictionary entry:
            DICT_IXC_FULL['5'] = {'name' : 'beta', 'lb' : 0.001, 'ub' : 1.0}
     """
 
-    di = {}
+    with open(SOURCEDIR + "/iteration_variables.f90") as myFile:
+        lines = myFile.readlines()
 
-    #get slice of file from 'lablxc = (/' to '/)'
-    lxctext = slice_file(SOURCEDIR + "/numerics.f90", r"lablxc = \(/", r"/\)")
+    ixc_full = dict()
 
-    regexp = r"""
-               !\+ad_varc       #look for !+ad_varc
+    for lline in lines:
+        if "subroutine init_itv_" in lline and "end" not in lline:
+            itv_num = lline.split("_")[-1].strip("\n").replace(" ", "")
+            ixc_full[itv_num] = dict()
 
-               .*?              #irrelevant stuff until open brackets
+    for line in lines:
 
-               \(\s*(\d+)\s*\)  #an integer in brackets possibly bounded by
-                                #whitespace. Capture the number in group 1
+        if "lablxc" in line and "=" in line:
+            if "lablxc(i)" not in line and "lablxc(ixc(i))" not in line:
+                labl_num = line.split("(")[1].split(")")[0]
+                labl = line.split("=")[-1].strip("\n").replace(" ", "").replace("'", "")
+                ixc_full[labl_num]["name"] = labl
+        
+        if "boundl(" in line and "=" in line:
+            if "boundl(i)" not in line and "boundl(ixc(i))" not in line:
+                boundl_num = line.split("(")[1].split(")")[0]
+                boundl_val = line.split("=")[-1].strip("\n").lower().replace("d", "e")
+                ixc_full[boundl_num]["lb"]= float(boundl_val)
+    
+        if "boundu(" in line and "=" in line:
+            if "boundu(i)" not in line and "boundu(ixc(i))" not in line:
+                boundu_num = line.split("(")[1].split(")")[0]
+                boundu_val = line.split("=")[-1].strip("\n").lower().replace("d", "e")
+                ixc_full[boundu_num]["ub"]= float(boundu_val)
 
-               \s*\*?\s*        #whitespace and a possible asterix
-
-               ([\w ]+)        #the name of the variable should be captured
-                               #in group 2
-              """
-    lxc = []
-    #ignore first and last lines
-    for line in lxctext[1:-1]:
-        match = re.search(regexp, line, re.VERBOSE)
-        if match:
-            num = int(match.group(1))
-            name = match.group(2).strip()
-            if "fimp(" in line:
-                name = "fimp(" + line.split("fimp(")[-1].split(")")[0] + ")"
-            lxc.append(name)
-            assert num == len(lxc)
-
-
-    #get slice of file from 'boundu = (/' to '/)'
-    boundutext = slice_file(SOURCEDIR + "/numerics.f90", \
-                                r"boundu = \(/", r"/\)")
-    regexp = r"""
-                ([\d\.D-]+)     #fortran style floating point number contains
-                                #digits, '.', 'D' or '-' characters. Capture to
-                                #group 1
-
-                .*?             #irrelevant stuff
-
-                !\s*            #comment begins
-
-                (\d+)           #capture ixc no. to group 2
-              """
-
-    boundu = []
-    #ignore first and last lines
-    for line in boundutext[1:-1]:
-        match = re.search(regexp, line, re.VERBOSE)
-        if match:
-            val = float(match.group(1).replace('D', 'e'))
-            num = int(match.group(2))
-            boundu.append(val)
-            assert num == len(boundu)
-
-    #get slice of file from 'boundl = (/' to '/)'
-    boundltext = slice_file(SOURCEDIR + "/numerics.f90", \
-                            r"boundl = \(/", r"/\)")
-    boundl = []
-    #ignore first and last lines
-    for line in boundltext[1:-1]:
-        match = re.search(regexp, line, re.VERBOSE)
-        if match:
-            val = float(match.group(1).replace('D', 'e'))
-            num = int(match.group(2))
-            boundl.append(val)
-            assert num == len(boundl)
-
-    assert len(lxc) == len(boundu) and len(lxc) == len(boundl)
-    for i in range(len(lxc)):
-        assert boundl[i] <= boundu[i]
-        assign = {"name" : lxc[i], "lb" : boundl[i], "ub" : boundu[i]}
-        di[str(i+1)] = assign
-
-    return di
+    return ixc_full
 
 
 def dict_icc_full():
@@ -623,9 +578,9 @@ def dict_default():
             failedlines.append(line)
 
 
-    #get boundl and boundu from fortran
-    di["boundl"] = get_array_from_fortran("boundl")
-    di["boundu"] = get_array_from_fortran("boundu")
+    # get boundl and boundu from fortran
+    # di["boundl"] = get_array_from_fortran("boundl")
+    # di["boundu"] = get_array_from_fortran("boundu")
 
     #add the fixed values
     for name, value in FIXEDDEFS.items():
@@ -1121,7 +1076,7 @@ def print_icc_module():
 
     counter = 1
     for line in lines:
-        if "!#=# " in line:
+        if "#=# " in line:
             module = line.split("#=#")[-1].replace(" ", "").strip("\n")
             icc_modules[str(counter)] = module
             counter += 1
@@ -1146,8 +1101,8 @@ def print_icc_vars():
 
     counter = 1
     for line in lines:
-        if "!#=#=#" in line:
-            vars = line.split("!#=#=#")[-1].replace(" ", "").strip("\n").split(",")
+        if "#=#=#" in line:
+            vars = line.split("#=#=#")[-1].replace(" ", "").strip("\n").split(",")
             if vars[0] != "consistency" and vars[0] != "empty":
                 f_value = vars[0]
                 cons_var = vars[1]

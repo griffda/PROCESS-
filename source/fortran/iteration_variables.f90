@@ -1,4 +1,6 @@
 module define_iteration_variables
+   ! Module to define iteration variables
+
    use build_variables
    use constraint_variables
    use cost_variables
@@ -19,2465 +21,2830 @@ module define_iteration_variables
    use stellarator_variables
    use tfcoil_variables
    use times_variables
-   implicit none; public
-   real(kind(1.0d0))::DUMMY
-   contains
-   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables<UL> 
+
+   implicit none
+
+   public
+
+   real(kind(1.0D0)) :: DUMMY
+
+contains
+   
+   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables<UL>
    
    !---------------------------------
+
    subroutine init_itv_1
       !+ad_varc  <LI> ( 1) aspect
       lablxc(1) = 'aspect        '
       boundl(1) = 1.100D0
       boundu(1) = 10.00D0 
-   end subroutine
+   end subroutine init_itv_1
 
    real(kind(1.d0)) function itv_1()
       itv_1 = aspect
-   end function
+   end function itv_1
+
    subroutine set_itv_1(ratio)
-      real(kind(1.d0))::ratio
+      real(kind(1.d0)) :: ratio
       aspect = ratio
-   end subroutine
+   end subroutine set_itv_1
+
    !---------------------------------
+
    subroutine init_itv_2
       !+ad_varc  <LI> ( 2) bt
       lablxc(2) = 'bt            '
       boundl(2) = 0.010D0 
       boundu(2) = 30.00D0
-   end subroutine
+   end subroutine init_itv_2
 
-   real(kind(1.d0)) function itv_2(); itv_2 = bt; end 
+   real(kind(1.d0)) function itv_2()
+      itv_2 = bt
+   end function itv_2
+
    subroutine set_itv_2(ratio)
-      real(kind(1.d0))::ratio
+      real(kind(1.d0)) :: ratio
       bt = ratio
-   end subroutine
-  !---------------------------------
-  subroutine init_itv_3
-       !+ad_varc  <LI> ( 3) rmajor
-       lablxc(3) = 'rmajor        '
+   end subroutine set_itv_2
+
+   !---------------------------------
+
+   subroutine init_itv_3
+      !+ad_varc  <LI> ( 3) rmajor
+      lablxc(3) = 'rmajor        '
       boundl(3) = 0.100D0 
       boundu(3) = 50.00D0  
-  end subroutine
+   end subroutine init_itv_3
 
-  real(kind(1.d0)) function itv_3(); itv_3 = rmajor; end
+   real(kind(1.d0)) function itv_3()
+      itv_3 = rmajor
+   end function itv_3
 
-  subroutine set_itv_3(ratio)
-    real(kind(1.d0))::ratio
-    rmajor = ratio
-  end subroutine
-  !---------------------------------
-  subroutine init_itv_4
-       !+ad_varc  <LI> ( 4) te
-       lablxc(4) = 'te            '
+   subroutine set_itv_3(ratio)
+      real(kind(1.d0)) :: ratio
+      rmajor = ratio
+   end subroutine set_itv_3
+
+   !---------------------------------
+
+   subroutine init_itv_4
+      !+ad_varc  <LI> ( 4) te
+      lablxc(4) = 'te            '
       boundl(4) = 5.000D0 
       boundu(4) = 150.0D0  
-  end subroutine
+   end subroutine init_itv_4
 
-  real(kind(1.d0)) function itv_4(); itv_4 = te; end
+   real(kind(1.d0)) function itv_4()
+      itv_4 = te
+   end function itv_4
 
-  subroutine set_itv_4(ratio)
-    real(kind(1.d0))::ratio
-    te = ratio
-  end subroutine
-  !---------------------------------
-  subroutine init_itv_5
-       !+ad_varc  <LI> ( 5) beta
-       lablxc(5) = 'beta          '
+   subroutine set_itv_4(ratio)
+      real(kind(1.d0)) :: ratio
+      te = ratio
+   end subroutine
+
+   !---------------------------------
+
+   subroutine init_itv_5
+      !+ad_varc  <LI> ( 5) beta
+      lablxc(5) = 'beta          '
       boundl(5) = 0.001D0 
       boundu(5) = 1.000D0  
-  end subroutine
+   end subroutine init_itv_5
 
-  real(kind(1.d0)) function itv_5(); itv_5 = beta; end
+   real(kind(1.d0)) function itv_5()
+      itv_5 = beta
+   end function itv_5
 
-  subroutine set_itv_5(ratio)
-    real(kind(1.d0))::ratio
-    beta = ratio
-  end subroutine
-  !---------------------------------
-  subroutine init_itv_6
-       !+ad_varc  <LI> ( 6) dene
-       lablxc(6) = 'dene          '
+   subroutine set_itv_5(ratio)
+      real(kind(1.d0)) :: ratio
+      beta = ratio
+   end subroutine
+
+   !---------------------------------
+
+   subroutine init_itv_6
+      !+ad_varc  <LI> ( 6) dene
+      lablxc(6) = 'dene          '
       boundl(6) = 1.00D19 
       boundu(6) = 1.00D21 
-  end subroutine
+   end subroutine init_itv_6
 
-  real(kind(1.d0)) function itv_6(); itv_6 = dene; end
+   real(kind(1.d0)) function itv_6()
+      itv_6 = dene
+   end function itv_6
 
-  subroutine set_itv_6(ratio)
-    real(kind(1.d0))::ratio
-    dene = ratio
-  end subroutine
-  !---------------------------------
-  subroutine init_itv_7
-       !+ad_varc  <LI> ( 7) rnbeam
-       lablxc(7) = 'rnbeam        '
+   subroutine set_itv_6(ratio)
+      real(kind(1.d0)) :: ratio
+      dene = ratio
+   end subroutine set_itv_6
+
+   !---------------------------------
+
+   subroutine init_itv_7
+      !+ad_varc  <LI> ( 7) rnbeam
+      lablxc(7) = 'rnbeam        '
       boundl(7) = 1.00D-6 
       boundu(7) = 1.000D0
-  end subroutine
+   end subroutine init_itv_7
 
-  real(kind(1.d0)) function itv_7(); itv_7 = rnbeam; end
+   real(kind(1.d0)) function itv_7()
+      itv_7 = rnbeam
+   end function itv_7
 
-  subroutine set_itv_7(ratio)
-    real(kind(1.d0))::ratio
-    rnbeam = ratio
-  end subroutine
-  !---------------------------------
-  subroutine init_itv_8
-       !+ad_varc  <LI> ( 8) fbeta (f-value for equation 6)
-       lablxc(8) = 'fbeta         '
+   subroutine set_itv_7(ratio)
+      real(kind(1.d0)) :: ratio
+      rnbeam = ratio
+   end subroutine set_itv_7
+
+   !---------------------------------
+
+   subroutine init_itv_8
+      !+ad_varc  <LI> ( 8) fbeta (f-value for equation 6)
+      lablxc(8) = 'fbeta         '
       boundl(8) = 0.001D0 
       boundu(8) = 1.000D0  
-  end subroutine
+   end subroutine init_itv_8
 
-  real(kind(1.d0)) function itv_8(); itv_8 = fbeta; end
+   real(kind(1.d0)) function itv_8()
+      itv_8 = fbeta
+   end function itv_8
 
-  subroutine set_itv_8(ratio)
-    real(kind(1.d0))::ratio
-    fbeta = ratio
-  end subroutine
-  !---------------------------------
-  subroutine init_itv_9  
-       !+ad_varc  <LI> ( 9) fdene (f-value for equation 5)
-       lablxc(9) = 'fdene         '
-      boundl(9) =  0.001D0 
+   subroutine set_itv_8(ratio)
+      real(kind(1.d0)) :: ratio
+      fbeta = ratio
+   end subroutine set_itv_8
+
+   !---------------------------------
+
+   subroutine init_itv_9  
+      !+ad_varc  <LI> ( 9) fdene (f-value for equation 5)
+      lablxc(9) = 'fdene         '
+      boundl(9) = 0.001D0 
       boundu(9) = 1.000D0
-  end subroutine
+   end subroutine init_itv_9
 
-  real(kind(1.d0)) function itv_9(); itv_9 = fdene; end
+   real(kind(1.d0)) function itv_9()
+      itv_9 = fdene
+   end function itv_9
 
-  subroutine set_itv_9(ratio)
-    real(kind(1.d0))::ratio
-    fdene = ratio
-  end subroutine
+   subroutine set_itv_9(ratio)
+      real(kind(1.d0)) :: ratio
+      fdene = ratio
+   end subroutine set_itv_9
+   
+   !---------------------------------
 
-!---------------------------------
-subroutine init_itv_10
-       !+ad_varc  <LI> (10) hfact
-       lablxc(10) = 'hfact         '
+   subroutine init_itv_10
+      !+ad_varc  <LI> (10) hfact
+      lablxc(10) = 'hfact         '
       boundl(10) = 0.100D0 
       boundu(10) = 3.000D0  
-end subroutine
+   end subroutine init_itv_10
 
-real(kind(1.d0)) function itv_10()
-   itv_10 =  hfact
-end function
+   real(kind(1.d0)) function itv_10()
+      itv_10 = hfact
+   end function itv_10
 
-subroutine set_itv_10(ratio)
-  real(kind(1.d0))::ratio
-   hfact = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_11 
-       !+ad_varc  <LI> (11) pheat
-       lablxc(11) = 'pheat         '
+   subroutine set_itv_10(ratio)
+      real(kind(1.d0)) :: ratio
+      hfact = ratio
+   end subroutine set_itv_10
+   
+   !---------------------------------
+
+   subroutine init_itv_11 
+      !+ad_varc  <LI> (11) pheat
+      lablxc(11) = 'pheat         '
       boundl(11) = 1.00D-3 
       boundu(11) = 1.000D3
-end subroutine
+   end subroutine init_itv_11
 
-real(kind(1.d0)) function itv_11()
-   itv_11 =  pheat
-end function
+   real(kind(1.d0)) function itv_11()
+      itv_11 = pheat
+   end function itv_11
 
-subroutine set_itv_11(ratio)
-  real(kind(1.d0))::ratio
-   pheat = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_12
-       !+ad_varc  <LI> (12) oacdcp
-       lablxc(12) = 'oacdcp        '
+   subroutine set_itv_11(ratio)
+      real(kind(1.d0)) :: ratio
+      pheat = ratio
+   end subroutine set_itv_11
+   
+   !---------------------------------
+
+   subroutine init_itv_12
+      !+ad_varc  <LI> (12) oacdcp
+      lablxc(12) = 'oacdcp        '
       boundl(12) = 1.000D5 
       boundu(12) =  1.500D8 
-end subroutine
+   end subroutine init_itv_12
 
-real(kind(1.d0)) function itv_12()
-   itv_12 =  oacdcp
-end function
+   real(kind(1.d0)) function itv_12()
+      itv_12 = oacdcp
+   end function itv_12
 
-subroutine set_itv_12(ratio)
-  real(kind(1.d0))::ratio
-   oacdcp = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_13
-       !+ad_varc  <LI> (13) tfcth (NOT RECOMMENDED)
-       lablxc(13) = 'tfcth         '
+   subroutine set_itv_12(ratio)
+      real(kind(1.d0)) :: ratio
+      oacdcp = ratio
+   end subroutine set_itv_12
+
+   !---------------------------------
+
+   subroutine init_itv_13
+      !+ad_varc  <LI> (13) tfcth (NOT RECOMMENDED)
+      lablxc(13) = 'tfcth         '
       boundl(13) = 0.100D0 
       boundu(13) = 5.000D0
-end subroutine
+   end subroutine init_itv_13
 
-real(kind(1.d0)) function itv_13()
-   itv_13 =  tfcth
-   if (istell == 1) call report_error(46)   
-end function
+   real(kind(1.d0)) function itv_13()
+      itv_13 = tfcth
+      if (istell == 1) then 
+         call report_error(46)   
+      end if
+   end function itv_13
 
-subroutine set_itv_13(ratio)
-  real(kind(1.d0))::ratio
-   tfcth = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_14
-       !+ad_varc  <LI> (14) fwalld (f-value for equation 8)
-       lablxc(14) = 'fwalld        '
+   subroutine set_itv_13(ratio)
+      real(kind(1.d0)) :: ratio
+      tfcth = ratio
+   end subroutine set_itv_13
+
+   !---------------------------------
+
+   subroutine init_itv_14
+      !+ad_varc  <LI> (14) fwalld (f-value for equation 8)
+      lablxc(14) = 'fwalld        '
       boundl(14) = 0.001D0 
       boundu(14) = 1.000D0
-end subroutine
+   end subroutine init_itv_14
 
-real(kind(1.d0)) function itv_14()
-   itv_14 =  fwalld
-end function
+   real(kind(1.d0)) function itv_14()
+      itv_14 = fwalld
+   end function itv_14
 
-subroutine set_itv_14(ratio)
-  real(kind(1.d0))::ratio
-   fwalld = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_15
-       !+ad_varc  <LI> (15) fvs (f-value for equation 12)
-       lablxc(15) = 'fvs           '
+   subroutine set_itv_14(ratio)
+      real(kind(1.d0)) :: ratio
+      fwalld = ratio
+   end subroutine set_itv_14
+
+   !---------------------------------
+
+   subroutine init_itv_15
+      !+ad_varc  <LI> (15) fvs (f-value for equation 12)
+      lablxc(15) = 'fvs           '
       boundl(15) = 0.001D0 
       boundu(15) = 1.000
-end subroutine
+   end subroutine init_itv_15
 
-real(kind(1.d0)) function itv_15()
-   itv_15 =  fvs
-end function
+   real(kind(1.d0)) function itv_15()
+      itv_15 = fvs
+   end function itv_15
 
-subroutine set_itv_15(ratio)
-  real(kind(1.d0))::ratio
-   fvs = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_16
-       !+ad_varc  <LI> (16) ohcth
-       lablxc(16) = 'ohcth         '
+   subroutine set_itv_15(ratio)
+      real(kind(1.d0)) :: ratio
+      fvs = ratio
+   end subroutine set_itv_15
+
+   !---------------------------------
+
+   subroutine init_itv_16
+      !+ad_varc  <LI> (16) ohcth
+      lablxc(16) = 'ohcth         '
       boundl(16) = 0.010D0 
       boundu(16) = 10.00D0
-end subroutine
+   end subroutine init_itv_16
 
-real(kind(1.d0)) function itv_16()
-   itv_16 =  ohcth
-end function
+   real(kind(1.d0)) function itv_16()
+      itv_16 = ohcth
+   end function itv_16
 
-subroutine set_itv_16(ratio)
-  real(kind(1.d0))::ratio
-   ohcth = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_17
-       !+ad_varc  <LI> (17) tdwell
-       lablxc(17) = 'tdwell        '
+   subroutine set_itv_16(ratio)
+      real(kind(1.d0)) :: ratio
+      ohcth = ratio
+   end subroutine set_itv_16
+
+   !---------------------------------
+
+   subroutine init_itv_17
+      !+ad_varc  <LI> (17) tdwell
+      lablxc(17) = 'tdwell        '
       boundl(17) = 0.100D0 
       boundu(17) = 1.000D8
-end subroutine
+   end subroutine init_itv_17
 
-real(kind(1.d0)) function itv_17()
-   itv_17 =  tdwell
-end function
+   real(kind(1.d0)) function itv_17()
+      itv_17 = tdwell
+   end function itv_17
 
-subroutine set_itv_17(ratio)
-  real(kind(1.d0))::ratio
-   tdwell = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_18
-       !+ad_varc  <LI> (18) q
-       lablxc(18) = 'q             '
+   subroutine set_itv_17(ratio)
+      real(kind(1.d0)) :: ratio
+      tdwell = ratio
+   end subroutine set_itv_17
+
+   !---------------------------------
+
+   subroutine init_itv_18
+      !+ad_varc  <LI> (18) q
+      lablxc(18) = 'q             '
       boundl(18) = 2.000D0 
       boundu(18) = 50.00D0
-end subroutine
+   end subroutine init_itv_18
 
-real(kind(1.d0)) function itv_18()
-   itv_18 =  q
-end function
+   real(kind(1.d0)) function itv_18()
+      itv_18 = q
+   end function itv_18
 
-subroutine set_itv_18(ratio)
-  real(kind(1.d0))::ratio
-   q = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_19
-       !+ad_varc  <LI> (19) enbeam
-       lablxc(19) = 'enbeam        '
+   subroutine set_itv_18(ratio)
+      real(kind(1.d0)) :: ratio
+      q = ratio
+   end subroutine set_itv_18
+
+   !---------------------------------
+
+   subroutine init_itv_19
+      !+ad_varc  <LI> (19) enbeam
+      lablxc(19) = 'enbeam        '
       boundl(19) = 1.000D0 
       boundu(19) = 1.000D6
-end subroutine
+   end subroutine init_itv_19
 
-real(kind(1.d0)) function itv_19()
-   itv_19 =  enbeam
-end function
+   real(kind(1.d0)) function itv_19()
+      itv_19 = enbeam
+   end function itv_19
 
-subroutine set_itv_19(ratio)
-  real(kind(1.d0))::ratio
-  enbeam = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_20
-       !+ad_varc  <LI> (20) tcpav
-       lablxc(20) = 'tcpav         '
+   subroutine set_itv_19(ratio)
+      real(kind(1.d0)) :: ratio
+      enbeam = ratio
+   end subroutine
+
+   !---------------------------------
+
+   subroutine init_itv_20
+      !+ad_varc  <LI> (20) tcpav
+      lablxc(20) = 'tcpav         '
       boundl(20) = 40.00D0 
       boundu(20) = 3.000D2
-end subroutine
+   end subroutine init_itv_20
 
-real(kind(1.d0)) function itv_20()
-   itv_20 = tcpav 
-end function
+   real(kind(1.d0)) function itv_20()
+      itv_20 = tcpav 
+   end function itv_20
 
-subroutine set_itv_20(ratio)
-  real(kind(1.d0))::ratio
-  tcpav = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_21
-       !+ad_varc  <LI> (21) ftburn (f-value for equation 13)
-       lablxc(21) = 'ftburn        '
+   subroutine set_itv_20(ratio)
+      real(kind(1.d0)) :: ratio
+      tcpav = ratio
+   end subroutine set_itv_20
+
+   !---------------------------------
+
+   subroutine init_itv_21
+      !+ad_varc  <LI> (21) ftburn (f-value for equation 13)
+      lablxc(21) = 'ftburn        '
       boundl(21) = 0.001D0 
       boundu(21) = 1.000D0
-end subroutine
+   end subroutine init_itv_21
 
-real(kind(1.d0)) function itv_21()
-   itv_21 =  ftburn
-end function
+   real(kind(1.d0)) function itv_21()
+      itv_21 = ftburn
+   end function itv_21
 
-subroutine set_itv_21(ratio)
-  real(kind(1.d0))::ratio
-  ftburn = ratio
-end subroutine
-!---------------------------------
-!+ad_varc  <LI> (22) NOT USED
-real(kind(1.d0)) function itv_22()
-   write(*,*) 'Iteration variable 22 is no longer in use.'   
-end function
-!---------------------------------
-subroutine init_itv_23
-       !+ad_varc  <LI> (23) fcoolcp
-       lablxc(23) = 'fcoolcp       '
+   subroutine set_itv_21(ratio)
+      real(kind(1.d0)) :: ratio
+      ftburn = ratio
+   end subroutine set_itv_21
+   
+   !---------------------------------
+
+   !+ad_varc  <LI> (22) NOT USED
+   real(kind(1.d0)) function itv_22()
+      write(*,*) 'Iteration variable 22 is no longer in use.'   
+   end function itv_22
+
+   !---------------------------------
+
+   subroutine init_itv_23
+      !+ad_varc  <LI> (23) fcoolcp
+      lablxc(23) = 'fcoolcp       '
       boundl(23) = 0.100D0 
       boundu(23) = 0.500D0
-end subroutine
+   end subroutine init_itv_23
 
-real(kind(1.d0)) function itv_23()
-   itv_23 =  fcoolcp
-end function
+   real(kind(1.d0)) function itv_23()
+      itv_23 = fcoolcp
+   end function itv_23
 
-subroutine set_itv_23(ratio)
-  real(kind(1.d0))::ratio
-  fcoolcp = ratio
-end subroutine
-!---------------------------------!---------------------------------
-!+ad_varc  <LI> (24) NOT USED
-real(kind(1.d0)) function itv_24()
-   write(*,*) 'Iteration variable 24 is no longer in use.'
-end function
-!---------------------------------
-subroutine init_itv_25
-       !+ad_varc  <LI> (25) fpnetel (f-value for equation 16)
-       lablxc(25) = 'fpnetel       '
+   subroutine set_itv_23(ratio)
+      real(kind(1.d0)) :: ratio
+      fcoolcp = ratio
+   end subroutine set_itv_23
+
+   !---------------------------------
+
+   !+ad_varc  <LI> (24) NOT USED
+   real(kind(1.d0)) function itv_24()
+      write(*,*) 'Iteration variable 24 is no longer in use.'
+   end function itv_24
+
+   !---------------------------------
+
+   subroutine init_itv_25
+      !+ad_varc  <LI> (25) fpnetel (f-value for equation 16)
+      lablxc(25) = 'fpnetel       '
       boundl(25) = 0.001D0
       boundu(25) = 1.000D0
-end subroutine
+   end subroutine init_itv_25
 
-real(kind(1.d0)) function itv_25()
-   itv_25 =  fpnetel
-end function
+   real(kind(1.d0)) function itv_25()
+      itv_25 = fpnetel
+   end function itv_25
 
-subroutine set_itv_25(ratio)
-  real(kind(1.d0))::ratio
-  fpnetel = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_26
-       !+ad_varc  <LI> (26) ffuspow (f-value for equation 9)
-       lablxc(26) = 'ffuspow       '
+   subroutine set_itv_25(ratio)
+      real(kind(1.d0)) :: ratio
+      fpnetel = ratio
+   end subroutine set_itv_25
+
+   !---------------------------------
+
+   subroutine init_itv_26
+      !+ad_varc  <LI> (26) ffuspow (f-value for equation 9)
+      lablxc(26) = 'ffuspow       '
       boundl(26) = 0.001D0
       boundu(26) = 1.000D0
-end subroutine
+   end subroutine init_itv_26
 
-real(kind(1.d0)) function itv_26()
-   itv_26 =  ffuspow
-end function
+   real(kind(1.d0)) function itv_26()
+      itv_26 = ffuspow
+   end function itv_26
 
-subroutine set_itv_26(ratio)
-  real(kind(1.d0))::ratio
-  ffuspow = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_27
-       !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
-       lablxc(27) = 'fhldiv        ';  boundl(27) = 0.001D0
+   subroutine set_itv_26(ratio)
+      real(kind(1.d0)) :: ratio
+      ffuspow = ratio
+   end subroutine set_itv_26
+
+   !---------------------------------
+
+   subroutine init_itv_27
+      !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
+      lablxc(27) = 'fhldiv        '
+      boundl(27) = 0.001D0
       boundu(27) = 1.000D0
-end subroutine
+   end subroutine init_itv_27
 
-real(kind(1.d0)) function itv_27()
-   itv_27 =  fhldiv
-end function
+   real(kind(1.d0)) function itv_27()
+      itv_27 =  fhldiv
+   end function itv_27
 
-subroutine set_itv_27(ratio)
-  real(kind(1.d0))::ratio
-  fhldiv = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_28
-       !+ad_varc  <LI> (28) fradpwr (f-value for equation 17), total radiation fraction
-       lablxc(28) = 'fradpwr       '
+   subroutine set_itv_27(ratio)
+      real(kind(1.d0)) :: ratio
+      fhldiv = ratio
+   end subroutine set_itv_27
+
+   !---------------------------------
+
+   subroutine init_itv_28
+      !+ad_varc  <LI> (28) fradpwr (f-value for equation 17), total radiation fraction
+      lablxc(28) = 'fradpwr       '
       boundl(28) = 0.001D0
       boundu(28) = 0.990D0
-end subroutine
+   end subroutine init_itv_28
 
-real(kind(1.d0)) function itv_28()
-   itv_28 =  fradpwr
-end function
+   real(kind(1.d0)) function itv_28()
+      itv_28 = fradpwr
+   end function itv_28
 
-subroutine set_itv_28(ratio)
-  real(kind(1.d0))::ratio
-  fradpwr = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_29
-       !+ad_varc  <LI> (29) bore
-       lablxc(29) = 'bore          '
+   subroutine set_itv_28(ratio)
+      real(kind(1.d0)) :: ratio
+      fradpwr = ratio
+   end subroutine set_itv_28
+
+   !---------------------------------
+
+   subroutine init_itv_29
+      !+ad_varc  <LI> (29) bore
+      lablxc(29) = 'bore          '
       boundl(29) = 0.100D0
       boundu(29) = 10.00D0
-end subroutine
+   end subroutine init_itv_29
 
-real(kind(1.d0)) function itv_29()
-   itv_29 =  bore
-end function
+   real(kind(1.d0)) function itv_29()
+      itv_29 = bore
+   end function itv_29
 
-subroutine set_itv_29(ratio)
-  real(kind(1.d0))::ratio
-  bore = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_30
-       !+ad_varc  <LI> (30) fmva (f-value for equation 19)
-       lablxc(30) = 'fmva          '
+   subroutine set_itv_29(ratio)
+      real(kind(1.d0)) :: ratio
+      bore = ratio
+   end subroutine set_itv_29
+
+   !---------------------------------
+
+   subroutine init_itv_30
+      !+ad_varc  <LI> (30) fmva (f-value for equation 19)
+      lablxc(30) = 'fmva          '
       boundl(30) = 0.010D0
       boundu(30) = 1.000D0
-end subroutine
+   end subroutine init_itv_30
 
-real(kind(1.d0)) function itv_30()
-   itv_30 =  fmva
-end function
+   real(kind(1.d0)) function itv_30()
+      itv_30 = fmva
+   end function itv_30
 
-subroutine set_itv_30(ratio)
-  real(kind(1.d0))::ratio
-  fmva = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_31
-       !+ad_varc  <LI> (31) gapomin
-       lablxc(31) = 'gapomin       '
+   subroutine set_itv_30(ratio)
+      real(kind(1.d0)) :: ratio
+      fmva = ratio
+   end subroutine set_itv_30
+
+   !---------------------------------
+
+   subroutine init_itv_31
+      !+ad_varc  <LI> (31) gapomin
+      lablxc(31) = 'gapomin       '
       boundl(31) = 0.001D0
       boundu(31) = 1.000D1
-end subroutine
+   end subroutine init_itv_31
 
-real(kind(1.d0)) function itv_31()
-   itv_31 =  gapomin
-end function
+   real(kind(1.d0)) function itv_31()
+      itv_31 = gapomin
+   end function itv_31
 
-subroutine set_itv_31(ratio)
-  real(kind(1.d0))::ratio
-  gapomin = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_32
-       !+ad_varc  <LI> (32) frminor (f-value for equation 21)
-       lablxc(32) = 'frminor       '
+   subroutine set_itv_31(ratio)
+      real(kind(1.d0)) :: ratio
+      gapomin = ratio
+   end subroutine set_itv_31
+
+   !---------------------------------
+
+   subroutine init_itv_32
+      !+ad_varc  <LI> (32) frminor (f-value for equation 21)
+      lablxc(32) = 'frminor       '
       boundl(32) = 0.001D0
       boundu(32) = 1.000D0
-end subroutine
+   end subroutine init_itv_32
 
-real(kind(1.d0)) function itv_32()
-   itv_32 =  frminor
-end function
+   real(kind(1.d0)) function itv_32()
+      itv_32 = frminor
+   end function itv_32
 
-subroutine set_itv_32(ratio)
-  real(kind(1.d0))::ratio
-  frminor = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_33
-       !+ad_varc  <LI> (33) fportsz (f-value for equation 20)
-       lablxc(33) = 'fportsz       '
+   subroutine set_itv_32(ratio)
+      real(kind(1.d0)) :: ratio
+      frminor = ratio
+   end subroutine set_itv_32
+   
+   !---------------------------------
+
+   subroutine init_itv_33
+      !+ad_varc  <LI> (33) fportsz (f-value for equation 20)
+      lablxc(33) = 'fportsz       '
       boundl(33) = 0.001D0
       boundu(33) = 1.000D0
-end subroutine
+   end subroutine init_itv_33
 
-real(kind(1.d0)) function itv_33()
-   itv_33 =  fportsz
-end function
+   real(kind(1.d0)) function itv_33()
+      itv_33 = fportsz
+   end function itv_33
 
-subroutine set_itv_33(ratio)
-  real(kind(1.d0))::ratio
-  fportsz = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_34
-       !+ad_varc  <LI> (34) fdivcol (f-value for equation 22)
-       lablxc(34) = 'fdivcol       '
+   subroutine set_itv_33(ratio)
+      real(kind(1.d0)) :: ratio
+      fportsz = ratio
+   end subroutine set_itv_33
+
+   !---------------------------------
+
+   subroutine init_itv_34
+      !+ad_varc  <LI> (34) fdivcol (f-value for equation 22)
+      lablxc(34) = 'fdivcol       '
       boundl(34) = 0.001D0
       boundu(34) = 1.000D0
-end subroutine
+   end subroutine init_itv_34
 
-real(kind(1.d0)) function itv_34()
-   itv_34 =  fdivcol
-end function
+   real(kind(1.d0)) function itv_34()
+      itv_34 = fdivcol
+   end function itv_34
 
-subroutine set_itv_34(ratio)
-  real(kind(1.d0))::ratio
-  fdivcol = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_35
-       !+ad_varc  <LI> (35) fpeakb (f-value for equation 25)
-       lablxc(35) = 'fpeakb        '
+   subroutine set_itv_34(ratio)
+      real(kind(1.d0)) :: ratio
+      fdivcol = ratio
+   end subroutine set_itv_34
+
+   !---------------------------------
+
+   subroutine init_itv_35
+      !+ad_varc  <LI> (35) fpeakb (f-value for equation 25)
+      lablxc(35) = 'fpeakb        '
       boundl(35) = 0.001D0
       boundu(35) = 1.000D0
-end subroutine
+   end subroutine init_itv_35
 
-real(kind(1.d0)) function itv_35()
-   itv_35 =  fpeakb
-end function
+   real(kind(1.d0)) function itv_35()
+      itv_35 = fpeakb
+   end function itv_35
 
-subroutine set_itv_35(ratio)
-  real(kind(1.d0))::ratio
-  fpeakb = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_36
-       !+ad_varc  <LI> (36) fbetatry (f-value for equation 24)
-       lablxc(36) = 'fbetatry      '
+   subroutine set_itv_35(ratio)
+      real(kind(1.d0)) :: ratio
+      fpeakb = ratio
+   end subroutine set_itv_35
+
+   !---------------------------------
+
+   subroutine init_itv_36
+      !+ad_varc  <LI> (36) fbetatry (f-value for equation 24)
+      lablxc(36) = 'fbetatry      '
       boundl(36) = 0.001D0
       boundu(36) = 1.000D0
-end subroutine
+   end subroutine init_itv_36
 
-real(kind(1.d0)) function itv_36()
-   itv_36 =  fbetatry
-end function
+   real(kind(1.d0)) function itv_36()
+      itv_36 = fbetatry
+   end function itv_36
 
-subroutine set_itv_36(ratio)
-  real(kind(1.d0))::ratio
-  fbetatry = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_37
-       !+ad_varc  <LI> (37) coheof
-       lablxc(37) = 'coheof        '
+   subroutine set_itv_36(ratio)
+      real(kind(1.d0)) :: ratio
+      fbetatry = ratio
+   end subroutine set_itv_36
+
+   !---------------------------------
+
+   subroutine init_itv_37
+      !+ad_varc  <LI> (37) coheof
+      lablxc(37) = 'coheof        '
       boundl(37) = 1.000D5
       boundu(37) = 1.000D8
-end subroutine
+   end subroutine init_itv_37
 
-real(kind(1.d0)) function itv_37()
-   itv_37 =  coheof
-end function
+   real(kind(1.d0)) function itv_37()
+      itv_37 = coheof
+   end function itv_37
 
-subroutine set_itv_37(ratio)
-  real(kind(1.d0))::ratio
-  coheof = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_38
-       !+ad_varc  <LI> (38) fjohc (f-value for equation 26)
-       lablxc(38) = 'fjohc         '
+   subroutine set_itv_37(ratio)
+      real(kind(1.d0)) :: ratio
+      coheof = ratio
+   end subroutine set_itv_37
+
+   !---------------------------------
+
+   subroutine init_itv_38
+      !+ad_varc  <LI> (38) fjohc (f-value for equation 26)
+      lablxc(38) = 'fjohc         '
       boundl(38) = 0.010D0
       boundu(38) = 1.000D0
-end subroutine
+   end subroutine init_itv_38
 
-real(kind(1.d0)) function itv_38()
-   itv_38 =  fjohc
-end function
+   real(kind(1.d0)) function itv_38()
+      itv_38 = fjohc
+   end function itv_38
 
-subroutine set_itv_38(ratio)
-  real(kind(1.d0))::ratio
-  fjohc = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_39
-       !+ad_varc  <LI> (39) fjohc0 (f-value for equation 27)
-       lablxc(39) = 'fjohc0        '
+   subroutine set_itv_38(ratio)
+      real(kind(1.d0)) :: ratio
+      fjohc = ratio
+   end subroutine set_itv_38
+   
+   !---------------------------------
+
+   subroutine init_itv_39
+      !+ad_varc  <LI> (39) fjohc0 (f-value for equation 27)
+      lablxc(39) = 'fjohc0        '
       boundl(39) = 0.001D0
       boundu(39) = 1.000D0
-end subroutine
+   end subroutine init_itv_39
 
-real(kind(1.d0)) function itv_39()
-   itv_39 =  fjohc0
-end function
+   real(kind(1.d0)) function itv_39()
+      itv_39 = fjohc0
+   end function itv_39
 
-subroutine set_itv_39(ratio)
-  real(kind(1.d0))::ratio
-  fjohc0 = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_40
-       !+ad_varc  <LI> (40) fgamcd (f-value for equation 37)
-       lablxc(40) = 'fgamcd        '
+   subroutine set_itv_39(ratio)
+      real(kind(1.d0)) :: ratio
+      fjohc0 = ratio
+   end subroutine set_itv_39
+
+   !---------------------------------
+
+   subroutine init_itv_40
+      !+ad_varc  <LI> (40) fgamcd (f-value for equation 37)
+      lablxc(40) = 'fgamcd        '
       boundl(40) = 0.001D0
       boundu(40) = 1.000D0
-end subroutine
+   end subroutine init_itv_40
 
-real(kind(1.d0)) function itv_40()
-   itv_40 =  fgamcd
-end function
+   real(kind(1.d0)) function itv_40()
+      itv_40 = fgamcd
+   end function itv_40
 
-subroutine set_itv_40(ratio)
-  real(kind(1.d0))::ratio
-  fgamcd = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_41
-       !+ad_varc  <LI> (41) fcohbop
-       lablxc(41) = 'fcohbop       '
+   subroutine set_itv_40(ratio)
+      real(kind(1.d0)) :: ratio
+      fgamcd = ratio
+   end subroutine set_itv_40
+   
+   !---------------------------------
+
+   subroutine init_itv_41
+      !+ad_varc  <LI> (41) fcohbop
+      lablxc(41) = 'fcohbop       '
       boundl(41) = 0.001D0
       boundu(41) = 1.000D0
-end subroutine
+   end subroutine init_itv_41
 
-real(kind(1.d0)) function itv_41()
-   itv_41 =  fcohbop
-end function
+   real(kind(1.d0)) function itv_41()
+      itv_41 = fcohbop
+   end function itv_41
 
-subroutine set_itv_41(ratio)
-  real(kind(1.d0))::ratio
-  fcohbop = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_42
-       !+ad_varc  <LI> (42) gapoh
-       lablxc(42) = 'gapoh         '
+   subroutine set_itv_41(ratio)
+      real(kind(1.d0)) :: ratio
+      fcohbop = ratio
+   end subroutine set_itv_41
+
+   !---------------------------------
+
+   subroutine init_itv_42
+      !+ad_varc  <LI> (42) gapoh
+      lablxc(42) = 'gapoh         '
       boundl(42) = 0.001D0
       boundu(42) = 10.00D0
-end subroutine
+   end subroutine init_itv_42
 
-real(kind(1.d0)) function itv_42()
-   itv_42 =  gapoh
-end function
+   real(kind(1.d0)) function itv_42()
+      itv_42 = gapoh
+   end function
 
-subroutine set_itv_42(ratio)
-  real(kind(1.d0))::ratio
-  gapoh = ratio
-end subroutine
-!---------------------------------
-!+ad_varc  <LI> (43) NOT USED
-real(kind(1.d0)) function itv_43()
-   write(*,*) 'Iteration variable 43 is no longer in use.'   
-end function
-!---------------------------------
-subroutine init_itv_44
-       !+ad_varc  <LI> (44) fvsbrnni
-       lablxc(44) = 'fvsbrnni      '
+   subroutine set_itv_42(ratio)
+      real(kind(1.d0)) :: ratio
+      gapoh = ratio
+   end subroutine set_itv_42
+
+   !---------------------------------
+
+   !+ad_varc  <LI> (43) NOT USED
+   real(kind(1.d0)) function itv_43()
+      write(*,*) 'Iteration variable 43 is no longer in use.'   
+   end function itv_43
+
+   !---------------------------------
+
+   subroutine init_itv_44
+      !+ad_varc  <LI> (44) fvsbrnni
+      lablxc(44) = 'fvsbrnni      '
       boundl(44) = 0.001D0
       boundu(44) = 1.000D0
-end subroutine
+   end subroutine init_itv_44
 
-real(kind(1.d0)) function itv_44()
-   itv_44 =  fvsbrnni
-end function
+   real(kind(1.d0)) function itv_44()
+      itv_44 = fvsbrnni
+   end function itv_44
 
-subroutine set_itv_44(ratio)
-  real(kind(1.d0))::ratio
- fvsbrnni  = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_45
-       !+ad_varc  <LI> (45) fqval (f-value for equation 28)
-       lablxc(45) = 'fqval         '
+   subroutine set_itv_44(ratio)
+      real(kind(1.d0)) :: ratio
+      fvsbrnni = ratio
+   end subroutine set_itv_44
+
+   !---------------------------------
+
+   subroutine init_itv_45
+      !+ad_varc  <LI> (45) fqval (f-value for equation 28)
+      lablxc(45) = 'fqval         '
       boundl(45) = 0.001D0
       boundu(45) = 1.000D0
-end subroutine
+   end subroutine init_itv_45
 
-real(kind(1.d0)) function itv_45()
-   itv_45 =  fqval
-end function
+   real(kind(1.d0)) function itv_45()
+      itv_45 = fqval
+   end function itv_45
 
-subroutine set_itv_45(ratio)
-  real(kind(1.d0))::ratio
-  fqval = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_46
-       !+ad_varc  <LI> (46) fpinj (f-value for equation 30)
-       lablxc(46) = 'fpinj         '
+   subroutine set_itv_45(ratio)
+      real(kind(1.d0)) :: ratio
+      fqval = ratio
+   end subroutine set_itv_45
+
+   !---------------------------------
+
+   subroutine init_itv_46
+      !+ad_varc  <LI> (46) fpinj (f-value for equation 30)
+      lablxc(46) = 'fpinj         '
       boundl(46) = 0.001D0
       boundu(46) = 1.000D0
-end subroutine
+   end subroutine init_itv_46
 
-real(kind(1.d0)) function itv_46()
-   itv_46 =  fpinj
-end function
+   real(kind(1.d0)) function itv_46()
+      itv_46 = fpinj
+   end function
 
-subroutine set_itv_46(ratio)
-  real(kind(1.d0))::ratio
-  fpinj = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_47
-       !+ad_varc  <LI> (47) feffcd
+   subroutine set_itv_46(ratio)
+      real(kind(1.d0)) :: ratio
+      fpinj = ratio
+   end subroutine set_itv_46
+
+   !---------------------------------
+
+   subroutine init_itv_47
+      !+ad_varc  <LI> (47) feffcd
        lablxc(47) = 'feffcd        '
       boundl(47) = 0.001D0
       boundu(47) = 1.000D0
-end subroutine
+   end subroutine init_itv_47
 
-real(kind(1.d0)) function itv_47()
-   itv_47 = feffcd 
-end function
+   real(kind(1.d0)) function itv_47()
+      itv_47 = feffcd 
+   end function itv_47
 
-subroutine set_itv_47(ratio)
-  real(kind(1.d0))::ratio
-  feffcd = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_48
-       !+ad_varc  <LI> (48) fstrcase (f-value for equation 31)
-       lablxc(48) = 'fstrcase      '
+   subroutine set_itv_47(ratio)
+      real(kind(1.d0)) :: ratio
+      feffcd = ratio
+   end subroutine set_itv_47
+
+   !---------------------------------
+
+   subroutine init_itv_48
+      !+ad_varc  <LI> (48) fstrcase (f-value for equation 31)
+      lablxc(48) = 'fstrcase      '
       boundl(48) = 0.001D0
       boundu(48) = 1.000D0
-end subroutine
+   end subroutine init_itv_48
 
-real(kind(1.d0)) function itv_48()
-   itv_48 =  fstrcase
-end function
+   real(kind(1.d0)) function itv_48()
+      itv_48 = fstrcase
+   end function itv_48
 
-subroutine set_itv_48(ratio)
-  real(kind(1.d0))::ratio
-  fstrcase = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_49
-       !+ad_varc  <LI> (49) fstrcond (f-value for equation 32)
-       lablxc(49) = 'fstrcond      '
+   subroutine set_itv_48(ratio)
+      real(kind(1.d0)) :: ratio
+      fstrcase = ratio
+   end subroutine set_itv_48
+
+   !---------------------------------
+
+   subroutine init_itv_49
+      !+ad_varc  <LI> (49) fstrcond (f-value for equation 32)
+      lablxc(49) = 'fstrcond      '
       boundl(49) = 0.001D0
       boundu(49) = 1.000D0
-end subroutine
+   end subroutine init_itv_49
 
-real(kind(1.d0)) function itv_49()
-   itv_49 =  fstrcond
-end function
+   real(kind(1.d0)) function itv_49()
+      itv_49 = fstrcond
+   end function itv_49
 
-subroutine set_itv_49(ratio)
-  real(kind(1.d0))::ratio
-  fstrcond = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_50
-       !+ad_varc  <LI> (50) fiooic (f-value for equation 33)
-       lablxc(50) = 'fiooic        '
+   subroutine set_itv_49(ratio)
+      real(kind(1.d0)) :: ratio
+      fstrcond = ratio
+   end subroutine set_itv_49
+
+   !---------------------------------
+
+   subroutine init_itv_50
+      !+ad_varc  <LI> (50) fiooic (f-value for equation 33)
+      lablxc(50) = 'fiooic        '
       boundl(50) = 0.001D0
       boundu(50) = 1.000D0
-end subroutine
+   end subroutine init_itv_50
 
-real(kind(1.d0)) function itv_50()
-   itv_50 =  fiooic
-end function
+   real(kind(1.d0)) function itv_50()
+      itv_50 = fiooic
+   end function itv_50
 
-subroutine set_itv_50(ratio)
-  real(kind(1.d0))::ratio
-  fiooic = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_51
-       !+ad_varc  <LI> (51) fvdump (f-value for equation 34)
-       lablxc(51) = 'fvdump        '
+   subroutine set_itv_50(ratio)
+      real(kind(1.d0)) :: ratio
+      fiooic = ratio
+   end subroutine set_itv_50
+   
+   !---------------------------------
+
+   subroutine init_itv_51
+      !+ad_varc  <LI> (51) fvdump (f-value for equation 34)
+      lablxc(51) = 'fvdump        '
       boundl(51) = 0.001D0
       boundu(51) = 1.000D0
-end subroutine
+   end subroutine init_itv_51
 
-real(kind(1.d0)) function itv_51()
-   itv_51 =  fvdump
-end function
+   real(kind(1.d0)) function itv_51()
+      itv_51 = fvdump
+   end function
 
-subroutine set_itv_51(ratio)
-  real(kind(1.d0))::ratio
-  fvdump = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_52
-       !+ad_varc  <LI> (52) vdalw
-       lablxc(52) = 'vdalw         '
+   subroutine set_itv_51(ratio)
+      real(kind(1.d0)) :: ratio
+      fvdump = ratio
+   end subroutine set_itv_51
+
+   !---------------------------------
+
+   subroutine init_itv_52
+      !+ad_varc  <LI> (52) vdalw
+      lablxc(52) = 'vdalw         '
       boundl(52) = 0.001D0
       boundu(52) = 1.000D6
-end subroutine
+   end subroutine init_itv_52
 
-real(kind(1.d0)) function itv_52()
-   itv_52 =  vdalw
-end function
+   real(kind(1.d0)) function itv_52()
+      itv_52 =  vdalw
+   end function itv_52
 
-subroutine set_itv_52(ratio)
-  real(kind(1.d0))::ratio
-  vdalw = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_53
-       !+ad_varc  <LI> (53) fjprot (f-value for equation 35)
-       lablxc(53) = 'fjprot        '
+   subroutine set_itv_52(ratio)
+      real(kind(1.d0)) :: ratio
+      vdalw = ratio
+   end subroutine set_itv_52
+   
+   !---------------------------------
+
+   subroutine init_itv_53
+      !+ad_varc  <LI> (53) fjprot (f-value for equation 35)
+      lablxc(53) = 'fjprot        '
       boundl(53) = 0.001D0
       boundu(53) = 1.000D0
-end subroutine
+   end subroutine init_itv_53
 
-real(kind(1.d0)) function itv_53()
-   itv_53 = fjprot 
-end function
+   real(kind(1.d0)) function itv_53()
+      itv_53 = fjprot 
+   end function itv_53
 
-subroutine set_itv_53(ratio)
-  real(kind(1.d0))::ratio
-  fjprot = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_54
-       !+ad_varc  <LI> (54) ftmargtf (f-value for equation 36)
-       lablxc(54) = 'ftmargtf      '
+   subroutine set_itv_53(ratio)
+      real(kind(1.d0)) :: ratio
+      fjprot = ratio
+   end subroutine
+
+   !---------------------------------
+
+   subroutine init_itv_54
+      !+ad_varc  <LI> (54) ftmargtf (f-value for equation 36)
+      lablxc(54) = 'ftmargtf      '
       boundl(54) = 0.001D0
       boundu(54) = 1.000D0
-end subroutine
+   end subroutine init_itv_54
 
-real(kind(1.d0)) function itv_54()
-   itv_54 = ftmargtf 
-end function
+   real(kind(1.d0)) function itv_54()
+      itv_54 = ftmargtf 
+   end function itv_54
 
-subroutine set_itv_54(ratio)
-  real(kind(1.d0))::ratio
-  ftmargtf = ratio
-end subroutine
-!---------------------------------
-!+ad_varc  <LI> (55) NOT USED
-real(kind(1.d0)) function itv_55()
-   write(*,*) 'Iteration variable 55 is no longer in use.'   
-end function
-!---------------------------------
-subroutine init_itv_56
-       !+ad_varc  <LI> (56) tdmptf
-       lablxc(56) = 'tdmptf        '
+   subroutine set_itv_54(ratio)
+      real(kind(1.d0)) :: ratio
+      ftmargtf = ratio
+   end subroutine set_itv_54
+
+   !---------------------------------
+
+   !+ad_varc  <LI> (55) NOT USED
+   real(kind(1.d0)) function itv_55()
+      write(*,*) 'Iteration variable 55 is no longer in use.'   
+   end function itv_55
+
+   !---------------------------------
+
+   subroutine init_itv_56
+      !+ad_varc  <LI> (56) tdmptf
+      lablxc(56) = 'tdmptf        '
       boundl(56) = 0.100D0
       boundu(56) = 100.0D0
-end subroutine
+   end subroutine init_itv_56
 
-real(kind(1.d0)) function itv_56()
-   itv_56 = tdmptf 
-end function
+   real(kind(1.d0)) function itv_56()
+      itv_56 = tdmptf
+   end function itv_56
 
-subroutine set_itv_56(ratio)
-  real(kind(1.d0))::ratio
-  tdmptf = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_57
-       !+ad_varc  <LI> (57) thkcas
-       lablxc(57) = 'thkcas        '
+   subroutine set_itv_56(ratio)
+      real(kind(1.d0)) :: ratio
+      tdmptf = ratio
+   end subroutine set_itv_56
+
+   !---------------------------------
+
+   subroutine init_itv_57
+      !+ad_varc  <LI> (57) thkcas
+      lablxc(57) = 'thkcas        '
       boundl(57) = 0.050D0
       boundu(57) = 1.000D0
-end subroutine
+   end subroutine init_itv_57
 
-real(kind(1.d0)) function itv_57()
-   itv_57 = thkcas 
-   if (istell == 1) call report_error(48)
-end function
+   real(kind(1.d0)) function itv_57()
+      itv_57 = thkcas 
+      if (istell == 1) then
+         call report_error(48)
+      end if
+   end function itv_57
 
-subroutine set_itv_57(ratio)
-  real(kind(1.d0))::ratio
-  thkcas = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_58
-       !+ad_varc  <LI> (58) thwcndut
-       lablxc(58) = 'thwcndut      '
+   subroutine set_itv_57(ratio)
+      real(kind(1.d0)) :: ratio
+      thkcas = ratio
+   end subroutine
+
+   !---------------------------------
+
+   subroutine init_itv_58
+      !+ad_varc  <LI> (58) thwcndut
+      lablxc(58) = 'thwcndut      '
       boundl(58) = 0.001D0
       boundu(58) = 0.100D0
-end subroutine
+   end subroutine init_itv_58
 
-real(kind(1.d0)) function itv_58()
-   itv_58 = thwcndut 
-end function
+   real(kind(1.d0)) function itv_58()
+      itv_58 = thwcndut 
+   end function itv_58
 
-subroutine set_itv_58(ratio)
-  real(kind(1.d0))::ratio
-  thwcndut = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_59
-       !+ad_varc  <LI> (59) fcutfsu
-       lablxc(59) = 'fcutfsu       '
+   subroutine set_itv_58(ratio)
+      real(kind(1.d0)) :: ratio
+      thwcndut = ratio
+   end subroutine set_itv_58
+
+   !---------------------------------
+
+   subroutine init_itv_59
+      !+ad_varc  <LI> (59) fcutfsu
+      lablxc(59) = 'fcutfsu       '
       boundl(59) = 0.001D0
       boundu(59) = 1.000D0
-end subroutine
+   end subroutine init_itv_59
 
-real(kind(1.d0)) function itv_59()
-   itv_59 = fcutfsu 
-end function
+   real(kind(1.d0)) function itv_59()
+      itv_59 = fcutfsu 
+   end function itv_59
 
-subroutine set_itv_59(ratio)
-  real(kind(1.d0))::ratio
-  fcutfsu = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_60
-       !+ad_varc  <LI> (60) cpttf
-       lablxc(60) = 'cpttf         '
+   subroutine set_itv_59(ratio)
+      real(kind(1.d0)) :: ratio
+      fcutfsu = ratio
+   end subroutine set_itv_59
+
+   !---------------------------------
+
+   subroutine init_itv_60
+      !+ad_varc  <LI> (60) cpttf
+      lablxc(60) = 'cpttf         '
       boundl(60) = 0.001D0
       boundu(60) = 4.000D4
-end subroutine
+   end subroutine init_itv_60
 
-real(kind(1.d0)) function itv_60()
-   itv_60 = cpttf 
-   if ((istell == 1).or.(itfsup /= 1)) call report_error(49)
-end function
+   real(kind(1.d0)) function itv_60()
+      itv_60 = cpttf 
+      if ((istell == 1).or.(itfsup /= 1)) then
+         call report_error(49)
+      end if
+   end function itv_60
 
-subroutine set_itv_60(ratio)
-  real(kind(1.d0))::ratio
-  cpttf = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_61
-       !+ad_varc  <LI> (61) gapds
-       lablxc(61) = 'gapds         '
+   subroutine set_itv_60(ratio)
+      real(kind(1.d0)) :: ratio
+      cpttf = ratio
+   end subroutine set_itv_60
+
+   !---------------------------------
+
+   subroutine init_itv_61
+      !+ad_varc  <LI> (61) gapds
+      lablxc(61) = 'gapds         '
       boundl(61) = 0.001D0
       boundu(61) = 10.00D0
-end subroutine
+   end subroutine init_itv_61
 
-real(kind(1.d0)) function itv_61()
-   itv_61 = gapds 
-end function
+   real(kind(1.d0)) function itv_61()
+      itv_61 = gapds 
+   end function itv_61
 
-subroutine set_itv_61(ratio)
-  real(kind(1.d0))::ratio
-  gapds = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_62
-       !+ad_varc  <LI> (62) fdtmp (f-value for equation 38)
-       lablxc(62) = 'fdtmp         '
+   subroutine set_itv_61(ratio)
+      real(kind(1.d0)) :: ratio
+      gapds = ratio
+   end subroutine set_itv_61
+
+   !---------------------------------
+
+   subroutine init_itv_62
+      !+ad_varc  <LI> (62) fdtmp (f-value for equation 38)
+      lablxc(62) = 'fdtmp         '
       boundl(62) = 0.001D0
       boundu(62) = 1.000D0
-end subroutine
+   end subroutine init_itv_62
 
-real(kind(1.d0)) function itv_62()
-   itv_62 = fdtmp 
-end function
+   real(kind(1.d0)) function itv_62()
+      itv_62 = fdtmp 
+   end function itv_62
 
-subroutine set_itv_62(ratio)
-  real(kind(1.d0))::ratio
-  fdtmp = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_63
-       !+ad_varc  <LI> (63) ftpeak (f-value for equation 39)
-       lablxc(63) = 'ftpeak        '
+   subroutine set_itv_62(ratio)
+      real(kind(1.d0)) :: ratio
+      fdtmp = ratio
+   end subroutine set_itv_62
+
+   !---------------------------------
+
+   subroutine init_itv_63
+      !+ad_varc  <LI> (63) ftpeak (f-value for equation 39)
+      lablxc(63) = 'ftpeak        '
       boundl(63) = 0.001D0
       boundu(63) = 1.000D0
-end subroutine
+   end subroutine init_itv_63
 
-real(kind(1.d0)) function itv_63()
-   itv_63 = ftpeak 
-end function
+   real(kind(1.d0)) function itv_63()
+      itv_63 = ftpeak 
+   end function itv_63
 
-subroutine set_itv_63(ratio)
-  real(kind(1.d0))::ratio
-  ftpeak = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_64
-       !+ad_varc  <LI> (64) fauxmn (f-value for equation 40)
-       lablxc(64) = 'fauxmn        '
+   subroutine set_itv_63(ratio)
+      real(kind(1.d0)) :: ratio
+      ftpeak = ratio
+   end subroutine set_itv_63
+
+   !---------------------------------
+
+   subroutine init_itv_64
+      !+ad_varc  <LI> (64) fauxmn (f-value for equation 40)
+      lablxc(64) = 'fauxmn        '
       boundl(64) = 0.001D0
       boundu(64) = 1.000D0
-end subroutine
+   end subroutine init_itv_64
 
-real(kind(1.d0)) function itv_64()
-   itv_64 = fauxmn 
-end function
+   real(kind(1.d0)) function itv_64()
+      itv_64 = fauxmn 
+   end function itv_64
 
-subroutine set_itv_64(ratio)
-  real(kind(1.d0))::ratio
-  fauxmn = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_65
-       !+ad_varc  <LI> (65) tohs
-       lablxc(65) = 'tohs          '
+   subroutine set_itv_64(ratio)
+      real(kind(1.d0)) :: ratio
+      fauxmn = ratio
+   end subroutine set_itv_64
+
+   !---------------------------------
+   
+   subroutine init_itv_65
+      !+ad_varc  <LI> (65) tohs
+      lablxc(65) = 'tohs          '
       boundl(65) = 0.100D0
       boundu(65) = 1.000D3
-end subroutine
+   end subroutine init_itv_65
 
-real(kind(1.d0)) function itv_65()
-   itv_65 = tohs 
-   if (lpulse /= 1) call report_error(50)
-end function
+   real(kind(1.d0)) function itv_65()
+      itv_65 = tohs 
+      if (lpulse /= 1) then
+         call report_error(50)
+      end if
+   end function itv_65
 
-subroutine set_itv_65(ratio)
-  real(kind(1.d0))::ratio
-  tohs = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_66
-       !+ad_varc  <LI> (66) ftohs (f-value for equation 41)
-       lablxc(66) = 'ftohs         '
+   subroutine set_itv_65(ratio)
+      real(kind(1.d0)) :: ratio
+      tohs = ratio
+   end subroutine set_itv_65
+
+   !---------------------------------
+
+   subroutine init_itv_66
+      !+ad_varc  <LI> (66) ftohs (f-value for equation 41)
+      lablxc(66) = 'ftohs         '
       boundl(66) = 0.001D0
       boundu(66) = 1.000D0
-end subroutine
+   end subroutine init_itv_66
 
-real(kind(1.d0)) function itv_66()
-   itv_66 = ftohs 
-end function
+   real(kind(1.d0)) function itv_66()
+      itv_66 = ftohs 
+   end function itv_66
 
-subroutine set_itv_66(ratio)
-  real(kind(1.d0))::ratio
-  ftohs = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_67
-       !+ad_varc  <LI> (67) ftcycl (f-value for equation 42)
-       lablxc(67) = 'ftcycl        '
+   subroutine set_itv_66(ratio)
+      real(kind(1.d0)) :: ratio
+      ftohs = ratio
+   end subroutine set_itv_66
+   
+   !---------------------------------
+
+   subroutine init_itv_67
+      !+ad_varc  <LI> (67) ftcycl (f-value for equation 42)
+      lablxc(67) = 'ftcycl        '
       boundl(67) = 0.001D0
       boundu(67) = 1.000D0
-end subroutine
+   end subroutine init_itv_67
 
-real(kind(1.d0)) function itv_67()
-   itv_67 = ftcycl 
-end function
+   real(kind(1.d0)) function itv_67()
+      itv_67 = ftcycl 
+   end function itv_67
 
-subroutine set_itv_67(ratio)
-  real(kind(1.d0))::ratio
-  ftcycl = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_68
-       !+ad_varc  <LI> (68) fptemp (f-value for equation 44)
-       lablxc(68) = 'fptemp        '
+   subroutine set_itv_67(ratio)
+      real(kind(1.d0)) :: ratio
+      ftcycl = ratio
+   end subroutine set_itv_67
+
+   !---------------------------------
+
+   subroutine init_itv_68
+      !+ad_varc  <LI> (68) fptemp (f-value for equation 44)
+      lablxc(68) = 'fptemp        '
       boundl(68) = 0.001D0
       boundu(68) = 1.000D0
-end subroutine
+   end subroutine init_itv_68
 
-real(kind(1.d0)) function itv_68()
-   itv_68 = fptemp 
-end function
+   real(kind(1.d0)) function itv_68()
+      itv_68 = fptemp 
+   end function itv_68
 
-subroutine set_itv_68(ratio)
-  real(kind(1.d0))::ratio
-  fptemp= ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_69
-       !+ad_varc  <LI> (69) rcool
-       lablxc(69) = 'rcool         '
+   subroutine set_itv_68(ratio)
+      real(kind(1.d0)) :: ratio
+      fptemp= ratio
+   end subroutine set_itv_68
+
+   !---------------------------------
+
+   subroutine init_itv_69
+      !+ad_varc  <LI> (69) rcool
+      lablxc(69) = 'rcool         '
       boundl(69) = 0.001D0
       boundu(69) = 0.010D0
-end subroutine
+   end subroutine init_itv_69
 
-real(kind(1.d0)) function itv_69()
-   itv_69 = rcool 
-end function
+   real(kind(1.d0)) function itv_69()
+      itv_69 = rcool 
+   end function itv_69
 
-subroutine set_itv_69(ratio)
-  real(kind(1.d0))::ratio
-  rcool = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_70
-       !+ad_varc  <LI> (70) vcool
-       lablxc(70) = 'vcool         '
+   subroutine set_itv_69(ratio)
+      real(kind(1.d0)) :: ratio
+      rcool = ratio
+   end subroutine set_itv_69
+
+   !---------------------------------
+
+   subroutine init_itv_70
+      !+ad_varc  <LI> (70) vcool
+      lablxc(70) = 'vcool         '
       boundl(70) = 1.000D0
       boundu(70) = 1.000D2
-end subroutine
+   end subroutine init_itv_70
 
-real(kind(1.d0)) function itv_70()
-   itv_70 = vcool 
-end function
+   real(kind(1.d0)) function itv_70()
+      itv_70 = vcool 
+   end function itv_70
 
-subroutine set_itv_70(ratio)
-  real(kind(1.d0))::ratio
-  vcool = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_71
-       !+ad_varc  <LI> (71) fq (f-value for equation 45)
-       lablxc(71) = 'fq            '
+   subroutine set_itv_70(ratio)
+      real(kind(1.d0)) :: ratio
+      vcool = ratio
+   end subroutine set_itv_70
+
+   !---------------------------------
+
+   subroutine init_itv_71
+      !+ad_varc  <LI> (71) fq (f-value for equation 45)
+      lablxc(71) = 'fq            '
       boundl(71) = 0.001D0
       boundu(71) = 1.000D0
-end subroutine
+   end subroutine init_itv_71
 
-real(kind(1.d0)) function itv_71()
-   itv_71 = fq 
-end function
+   real(kind(1.d0)) function itv_71()
+      itv_71 = fq 
+   end function itv_71
 
-subroutine set_itv_71(ratio)
-  real(kind(1.d0))::ratio
-  fq = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_72
-       !+ad_varc  <LI> (72) fipir (f-value for equation 46)
-       lablxc(72) = 'fipir         '
+   subroutine set_itv_71(ratio)
+      real(kind(1.d0)) :: ratio
+      fq = ratio
+   end subroutine set_itv_71
+
+   !---------------------------------
+
+   subroutine init_itv_72
+      !+ad_varc  <LI> (72) fipir (f-value for equation 46)
+      lablxc(72) = 'fipir         '
       boundl(72) = 0.001D0
       boundu(72) = 1.000D0
-end subroutine
+   end subroutine init_itv_72
 
-real(kind(1.d0)) function itv_72()
-   itv_72 = fipir 
-end function
+   real(kind(1.d0)) function itv_72()
+      itv_72 = fipir 
+   end function itv_72
 
-subroutine set_itv_72(ratio)
-  real(kind(1.d0))::ratio
-  fipir = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_73
-       !+ad_varc  <LI> (73) scrapli
-       lablxc(73) = 'scrapli       '
+   subroutine set_itv_72(ratio)
+      real(kind(1.d0)) :: ratio
+      fipir = ratio
+   end subroutine set_itv_72
+
+   !---------------------------------
+
+   subroutine init_itv_73
+      !+ad_varc  <LI> (73) scrapli
+      lablxc(73) = 'scrapli       '
       boundl(73) = 0.001D0
       boundu(73) = 10.00D0
-end subroutine
+   end subroutine init_itv_73
 
-real(kind(1.d0)) function itv_73()
-   itv_73 = scrapli 
-end function
+   real(kind(1.d0)) function itv_73()
+      itv_73 = scrapli 
+   end function itv_73
 
-subroutine set_itv_73(ratio)
-  real(kind(1.d0))::ratio
-  scrapli = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_74
-       !+ad_varc  <LI> (74) scraplo
-       lablxc(74) = 'scraplo       '
+   subroutine set_itv_73(ratio)
+      real(kind(1.d0)) :: ratio
+      scrapli = ratio
+   end subroutine set_itv_73
+
+   !---------------------------------
+
+   subroutine init_itv_74
+      !+ad_varc  <LI> (74) scraplo
+      lablxc(74) = 'scraplo       '
       boundl(74) = 0.001D0
       boundu(74) = 10.00D0
-end subroutine
+   end subroutine init_itv_74
 
-real(kind(1.d0)) function itv_74()
-   itv_74 = scraplo 
-end function
+   real(kind(1.d0)) function itv_74()
+      itv_74 = scraplo 
+   end function itv_74
 
-subroutine set_itv_74(ratio)
-  real(kind(1.d0))::ratio
-  scraplo = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_75
-       !+ad_varc  <LI> (75) tfootfi
-       lablxc(75) = 'tfootfi       '
+   subroutine set_itv_74(ratio)
+      real(kind(1.d0)) :: ratio
+      scraplo = ratio
+   end subroutine set_itv_74
+
+   !---------------------------------
+
+   subroutine init_itv_75
+      !+ad_varc  <LI> (75) tfootfi
+      lablxc(75) = 'tfootfi       '
       boundl(75) = 0.200D0
       boundu(75) = 5.000D0
-end subroutine
+   end subroutine init_itv_75
 
-real(kind(1.d0)) function itv_75()
-   itv_75 = tfootfi 
-end function
+   real(kind(1.d0)) function itv_75()
+      itv_75 = tfootfi 
+   end function itv_75
 
-subroutine set_itv_75(ratio)
-  real(kind(1.d0))::ratio
-  tfootfi = ratio
-end subroutine
-!---------------------------------
-!+ad_varc  <LI> (76) NOT USED
-real(kind(1.d0)) function itv_76()
-   write(*,*) 'Iteration variable 76 is no longer in use.'   
-end function!---------------------------------
-!+ad_varc  <LI> (77) NOT USED
-real(kind(1.d0)) function itv_77()
-   write(*,*) 'Iteration variable 77 is no longer in use.'   
-end function!---------------------------------
-!+ad_varc  <LI> (78) NOT USED
-real(kind(1.d0)) function itv_78()
-   write(*,*) 'Iteration variable 78 is no longer in use.'   
-end function 
-!---------------------------------
-subroutine init_itv_79
-       !+ad_varc  <LI> (79) fbetap (f-value for equation 48)
-       lablxc(79) = 'fbetap        '
+   subroutine set_itv_75(ratio)
+      real(kind(1.d0)) :: ratio
+      tfootfi = ratio
+   end subroutine set_itv_75
+
+   !---------------------------------
+
+   !+ad_varc  <LI> (76) NOT USED
+   real(kind(1.d0)) function itv_76()
+      write(*,*) 'Iteration variable 76 is no longer in use.'   
+   end function itv_76
+   
+   !---------------------------------
+
+   !+ad_varc  <LI> (77) NOT USED
+   real(kind(1.d0)) function itv_77()
+      write(*,*) 'Iteration variable 77 is no longer in use.'   
+   end function itv_77
+   
+   !---------------------------------
+
+   !+ad_varc  <LI> (78) NOT USED
+   real(kind(1.d0)) function itv_78()
+      write(*,*) 'Iteration variable 78 is no longer in use.'   
+   end function  itv_78
+
+   !---------------------------------
+
+   subroutine init_itv_79
+      !+ad_varc  <LI> (79) fbetap (f-value for equation 48)
+      lablxc(79) = 'fbetap        '
       boundl(79) = 0.001D0
       boundu(79) = 1.000D0
-end subroutine
+   end subroutine init_itv_79
 
-real(kind(1.d0)) function itv_79()
-   itv_79 = fbetap 
-end function
+   real(kind(1.d0)) function itv_79()
+      itv_79 = fbetap 
+   end function itv_79
 
-subroutine set_itv_79(ratio)
-  real(kind(1.d0))::ratio
-  fbetap = ratio
-end subroutine
-!---------------------------------
-!+ad_varc  <LI> (80) NOT USED
-real(kind(1.d0)) function itv_80()
-   write(*,*) 'Iteration variable 80 is no longer in use.'   
-end function
-! 80 - 88 not used
-!---------------------------------
-subroutine init_itv_89
-       !+ad_varc  <LI> (89) ftbr (f-value for equation 52)
-       lablxc(89) = 'ftbr          '
+   subroutine set_itv_79(ratio)
+      real(kind(1.d0)) :: ratio
+      fbetap = ratio
+   end subroutine set_itv_79
+
+   !---------------------------------
+   
+   !+ad_varc  <LI> (80) NOT USED
+   real(kind(1.d0)) function itv_80()
+      write(*,*) 'Iteration variable 80 is no longer in use.'   
+   end function itv_80
+
+   !---------------------------------
+
+   !+ad_varc  <LI> (81) NOT USED
+   !+ad_varc  <LI> (82) NOT USED
+   !+ad_varc  <LI> (83) NOT USED
+   !+ad_varc  <LI> (84) NOT USED
+   !+ad_varc  <LI> (85) NOT USED
+   !+ad_varc  <LI> (86) NOT USED
+   !+ad_varc  <LI> (87) NOT USED
+   !+ad_varc  <LI> (88) NOT USED
+
+   !---------------------------------
+
+   subroutine init_itv_89
+      !+ad_varc  <LI> (89) ftbr (f-value for equation 52)
+      lablxc(89) = 'ftbr          '
       boundl(89) = 0.001D0
       boundu(89) = 1.000D0
-end subroutine
+   end subroutine init_itv_89
 
-real(kind(1.d0)) function itv_89()
-   itv_89 = ftbr 
-end function
+   real(kind(1.d0)) function itv_89()
+      itv_89 = ftbr 
+   end function itv_89
 
-subroutine set_itv_89(ratio)
-  real(kind(1.d0))::ratio
-  ftbr = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_90
-       !+ad_varc  <LI> (90) blbuith
-       lablxc(90) = 'blbuith       '
+   subroutine set_itv_89(ratio)
+      real(kind(1.d0)) :: ratio
+      ftbr = ratio
+   end subroutine set_itv_89
+
+   !---------------------------------
+
+   subroutine init_itv_90
+      !+ad_varc  <LI> (90) blbuith
+      lablxc(90) = 'blbuith       '
       boundl(90) = 0.001D0
       boundu(90) = 2.000D0
-end subroutine
+   end subroutine init_itv_90
 
-real(kind(1.d0)) function itv_90()
-   itv_90 = blbuith 
-end function
+   real(kind(1.d0)) function itv_90()
+      itv_90 = blbuith 
+   end function itv_90
 
-subroutine set_itv_90(ratio)
-  real(kind(1.d0))::ratio
-  blbuith = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_91
-       !+ad_varc  <LI> (91) blbuoth
-       lablxc(91) = 'blbuoth       '
+   subroutine set_itv_90(ratio)
+      real(kind(1.d0)) :: ratio
+      blbuith = ratio
+   end subroutine set_itv_90
+
+   !---------------------------------
+
+   subroutine init_itv_91
+      !+ad_varc  <LI> (91) blbuoth
+      lablxc(91) = 'blbuoth       '
       boundl(91) = 0.001D0
       boundu(91) = 2.000D0
-end subroutine
+   end subroutine init_itv_91
 
-real(kind(1.d0)) function itv_91()
-   itv_91 = blbuoth 
-end function
+   real(kind(1.d0)) function itv_91()
+      itv_91 = blbuoth 
+   end function itv_91
 
-subroutine set_itv_91(ratio)
-  real(kind(1.d0))::ratio
-  blbuoth = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_92
-       !+ad_varc  <LI> (92) fflutf (f-value for equation 53)
-       lablxc(92) = 'fflutf        '
+   subroutine set_itv_91(ratio)
+      real(kind(1.d0)) :: ratio
+      blbuoth = ratio
+   end subroutine set_itv_91
+
+   !---------------------------------
+
+   subroutine init_itv_92
+      !+ad_varc  <LI> (92) fflutf (f-value for equation 53)
+      lablxc(92) = 'fflutf        '
       boundl(92) = 0.001D0
       boundu(92) = 1.000D0
-end subroutine
+   end subroutine init_itv_92
 
-real(kind(1.d0)) function itv_92()
-   itv_92 = fflutf 
-end function
+   real(kind(1.d0)) function itv_92()
+      itv_92 = fflutf 
+   end function itv_92
 
-subroutine set_itv_92(ratio)
-  real(kind(1.d0))::ratio
-  fflutf = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_93
-       !+ad_varc  <LI> (93) shldith
-       lablxc(93) = 'shldith       '
+   subroutine set_itv_92(ratio)
+      real(kind(1.d0)) :: ratio
+      fflutf = ratio
+   end subroutine set_itv_92
+
+   !---------------------------------
+
+   subroutine init_itv_93
+      !+ad_varc  <LI> (93) shldith
+      lablxc(93) = 'shldith       '
       boundl(93) = 0.001D0
       boundu(93) = 10.00D0
-end subroutine
+   end subroutine init_itv_93
 
-real(kind(1.d0)) function itv_93()
-   itv_93 = shldith 
-end function
+   real(kind(1.d0)) function itv_93()
+      itv_93 = shldith 
+   end function itv_93
 
-subroutine set_itv_93(ratio)
-  real(kind(1.d0))::ratio
-  shldith = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_94
-       !+ad_varc  <LI> (94) shldoth
-       lablxc(94) = 'shldoth       '
+   subroutine set_itv_93(ratio)
+      real(kind(1.d0)) :: ratio
+      shldith = ratio
+   end subroutine set_itv_93
+
+   !---------------------------------
+
+   subroutine init_itv_94
+      !+ad_varc  <LI> (94) shldoth
+      lablxc(94) = 'shldoth       '
       boundl(94) = 0.001D0
       boundu(94) = 10.00D0
-end subroutine
+   end subroutine init_itv_94
 
-real(kind(1.d0)) function itv_94()
-   itv_94 = shldoth 
-end function
+   real(kind(1.d0)) function itv_94()
+      itv_94 = shldoth 
+   end function itv_94
 
-subroutine set_itv_94(ratio)
-  real(kind(1.d0))::ratio
-  shldoth = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_95
-       !+ad_varc  <LI> (95) fptfnuc (f-value for equation 54)
-       lablxc(95) = 'fptfnuc       '
+   subroutine set_itv_94(ratio)
+      real(kind(1.d0)) :: ratio
+      shldoth = ratio
+   end subroutine set_itv_94
+
+   !---------------------------------
+
+   subroutine init_itv_95
+      !+ad_varc  <LI> (95) fptfnuc (f-value for equation 54)
+      lablxc(95) = 'fptfnuc       '
       boundl(95) = 0.001D0
       boundu(95) = 1.000D0
-end subroutine
+   end subroutine init_itv_95
 
-real(kind(1.d0)) function itv_95()
-   itv_95 = fptfnuc 
-end function
+   real(kind(1.d0)) function itv_95()
+      itv_95 = fptfnuc 
+   end function itv_95
 
-subroutine set_itv_95(ratio)
-  real(kind(1.d0))::ratio
-  fptfnuc = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_96
-       !+ad_varc  <LI> (96) fvvhe (f-value for equation 55)
-       lablxc(96) = 'fvvhe         '
+   subroutine set_itv_95(ratio)
+      real(kind(1.d0)) :: ratio
+      fptfnuc = ratio
+   end subroutine set_itv_95
+
+   !---------------------------------
+
+   subroutine init_itv_96
+      !+ad_varc  <LI> (96) fvvhe (f-value for equation 55)
+      lablxc(96) = 'fvvhe         '
       boundl(96) = 0.001D0
       boundu(96) = 1.000D0
-end subroutine
+   end subroutine init_itv_96
 
-real(kind(1.d0)) function itv_96()
-   itv_96 = fvvhe 
-end function
+   real(kind(1.d0)) function itv_96()
+      itv_96 = fvvhe 
+   end function itv_96
 
-subroutine set_itv_96(ratio)
-  real(kind(1.d0))::ratio
-  fvvhe = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_97
-       !+ad_varc  <LI> (97) fpsepr (f-value for equation 56)
-       lablxc(97) = 'fpsepr        '
+   subroutine set_itv_96(ratio)
+      real(kind(1.d0)) :: ratio
+      fvvhe = ratio
+   end subroutine set_itv_96
+
+   !---------------------------------
+
+   subroutine init_itv_97
+      !+ad_varc  <LI> (97) fpsepr (f-value for equation 56)
+      lablxc(97) = 'fpsepr        '
       boundl(97) = 0.001D0
       boundu(97) = 1.000D0
-end subroutine
+   end subroutine init_itv_97
 
-real(kind(1.d0)) function itv_97()
-   itv_97 = fpsepr 
-end function
+   real(kind(1.d0)) function itv_97()
+      itv_97 = fpsepr 
+   end function itv_97
 
-subroutine set_itv_97(ratio)
-  real(kind(1.d0))::ratio
-  fpsepr = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_98
-       !+ad_varc  <LI> (98) li6enrich
+   subroutine set_itv_97(ratio)
+      real(kind(1.d0)) :: ratio
+      fpsepr = ratio
+   end subroutine set_itv_97
+
+   !---------------------------------
+
+   subroutine init_itv_98
+      !+ad_varc  <LI> (98) li6enrich
        lablxc(98) = 'li6enrich     '
       boundl(98) = 10.00D0
       boundu(98) = 100.0D0
-end subroutine
+   end subroutine init_itv_98
 
-real(kind(1.d0)) function itv_98()
-   itv_98 = li6enrich 
-end function
+   real(kind(1.d0)) function itv_98()
+      itv_98 = li6enrich 
+   end function itv_98
 
-subroutine set_itv_98(ratio)
-  real(kind(1.d0))::ratio
-  li6enrich = ratio
-end subroutine
-!---------------------------------
-! 99 - 101 not used
-!---------------------------------
-subroutine init_itv_102
-       !+ad_varc  <LI> (102) fimpvar
-       lablxc(102) = 'fimpvar       '
+   subroutine set_itv_98(ratio)
+      real(kind(1.d0)) :: ratio
+      li6enrich = ratio
+   end subroutine set_itv_98
+
+   !---------------------------------
+
+   !+ad_varc  <LI> (99) NOT USED
+   !+ad_varc  <LI> (100) NOT USED
+   !+ad_varc  <LI> (101) NOT USED
+
+   !---------------------------------
+
+   subroutine init_itv_102
+      !+ad_varc  <LI> (102) fimpvar
+      lablxc(102) = 'fimpvar       '
       boundl(102) = 1.00D-6
       boundu(102) = 0.010D0
-end subroutine
+   end subroutine init_itv_102
 
-real(kind(1.d0)) function itv_102()
-   itv_102 =  impurity_arr(impvar)%frac
-end function
+   real(kind(1.d0)) function itv_102()
+      itv_102 =  impurity_arr(impvar)%frac
+   end function itv_102
 
-subroutine set_itv_102(ratio)
-  real(kind(1.d0))::ratio
-  fimpvar = ratio
-  impurity_arr(impvar)%frac = fimpvar
-end subroutine
-!---------------------------------
-subroutine init_itv_103
-       !+ad_varc  <LI> (103) flhthresh (f-value for equation 15)
-       lablxc(103) = 'flhthresh     '
+   subroutine set_itv_102(ratio)
+      real(kind(1.d0)) :: ratio
+      fimpvar = ratio
+      impurity_arr(impvar)%frac = fimpvar
+   end subroutine set_itv_102
+
+   !---------------------------------
+
+   subroutine init_itv_103
+      !+ad_varc  <LI> (103) flhthresh (f-value for equation 15)
+      lablxc(103) = 'flhthresh     '
       boundl(103) = 1.000D0
       boundu(103) = 1.000D6
-end subroutine
+   end subroutine init_itv_103
 
-real(kind(1.d0)) function itv_103()
-   itv_103 = flhthresh 
-end function
+   real(kind(1.d0)) function itv_103()
+      itv_103 = flhthresh 
+   end function itv_103
 
-subroutine set_itv_103(ratio)
-  real(kind(1.d0))::ratio
-  flhthresh = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_104
-       !+ad_varc  <LI> (104) fcwr (f-value for equation 23)
-       lablxc(104) = 'fcwr          '
+   subroutine set_itv_103(ratio)
+      real(kind(1.d0)) :: ratio
+      flhthresh = ratio
+   end subroutine set_itv_103
+
+   !---------------------------------
+
+   subroutine init_itv_104
+      !+ad_varc  <LI> (104) fcwr (f-value for equation 23)
+      lablxc(104) = 'fcwr          '
       boundl(104) = 0.001D0
       boundu(104) = 1.000D0
-end subroutine
+   end subroutine init_itv_104
 
-real(kind(1.d0)) function itv_104()
-   itv_104 = fcwr 
-end function
+   real(kind(1.d0)) function itv_104()
+      itv_104 = fcwr 
+   end function itv_104
 
-subroutine set_itv_104(ratio)
-  real(kind(1.d0))::ratio
-  fcwr = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_105
-       !+ad_varc  <LI> (105) fnbshinef (f-value for equation 59)
-       lablxc(105) = 'fnbshinef     '
+   subroutine set_itv_104(ratio)
+      real(kind(1.d0)) :: ratio
+      fcwr = ratio
+   end subroutine set_itv_104
+
+   !---------------------------------
+
+   subroutine init_itv_105
+      !+ad_varc  <LI> (105) fnbshinef (f-value for equation 59)
+      lablxc(105) = 'fnbshinef     '
       boundl(105) = 0.001D0
       boundu(105) = 1.000D0
-end subroutine
+   end subroutine init_itv_105
 
-real(kind(1.d0)) function itv_105()
-   itv_105 = fnbshinef 
-end function
+   real(kind(1.d0)) function itv_105()
+      itv_105 = fnbshinef 
+   end function itv_105
 
-subroutine set_itv_105(ratio)
-  real(kind(1.d0))::ratio
-  fnbshinef = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_106
-       !+ad_varc  <LI> (106) ftmargoh (f-value for equation 60)
-       lablxc(106) = 'ftmargoh      '
+   subroutine set_itv_105(ratio)
+      real(kind(1.d0)) :: ratio
+      fnbshinef = ratio
+   end subroutine set_itv_105
+
+   !---------------------------------
+   
+   subroutine init_itv_106
+      !+ad_varc  <LI> (106) ftmargoh (f-value for equation 60)
+      lablxc(106) = 'ftmargoh      '
       boundl(106) = 0.001D0
       boundu(106) = 1.000D0
-end subroutine
+   end subroutine init_itv_106
 
-real(kind(1.d0)) function itv_106()
-   itv_106 = ftmargoh 
-end function
+   real(kind(1.d0)) function itv_106()
+      itv_106 = ftmargoh 
+   end function itv_106
 
-subroutine set_itv_106(ratio)
-  real(kind(1.d0))::ratio
-  ftmargoh = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_107
-       !+ad_varc  <LI> (107) favail (f-value for equation 61)
-       lablxc(107) = 'favail        '
+   subroutine set_itv_106(ratio)
+      real(kind(1.d0)) :: ratio
+      ftmargoh = ratio
+   end subroutine set_itv_106
+
+   !---------------------------------
+
+   subroutine init_itv_107
+      !+ad_varc  <LI> (107) favail (f-value for equation 61)
+      lablxc(107) = 'favail        '
       boundl(107) = 0.001D0
       boundu(107) = 1.000D0
-end subroutine
+   end subroutine init_itv_107
 
-real(kind(1.d0)) function itv_107()
-   itv_107 = favail 
-end function
+   real(kind(1.d0)) function itv_107()
+      itv_107 = favail 
+   end function itv_107
 
-subroutine set_itv_107(ratio)
-  real(kind(1.d0))::ratio
-  favail = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_108
-       !+ad_varc  <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
-       lablxc(108) = 'breeder_f     '
+   subroutine set_itv_107(ratio)
+      real(kind(1.d0)) :: ratio
+      favail = ratio
+   end subroutine set_itv_107
+
+   !---------------------------------
+
+   subroutine init_itv_108
+      !+ad_varc  <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
+      lablxc(108) = 'breeder_f     '
       boundl(108) = 0.060D0
       boundu(108) = 1.000D0
-end subroutine
+   end subroutine init_itv_108
 
-real(kind(1.d0)) function itv_108()
-   itv_108 = breeder_f 
-end function
+   real(kind(1.d0)) function itv_108()
+      itv_108 = breeder_f 
+   end function itv_108
 
-subroutine set_itv_108(ratio)
-  real(kind(1.d0))::ratio
-  breeder_f = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_109
-       !+ad_varc  <LI> (109) ralpne: thermal alpha density / electron density
-       lablxc(109) = 'ralpne        '
+   subroutine set_itv_108(ratio)
+      real(kind(1.d0)) :: ratio
+      breeder_f = ratio
+   end subroutine set_itv_108
+
+   !---------------------------------
+
+   subroutine init_itv_109
+      !+ad_varc  <LI> (109) ralpne: thermal alpha density / electron density
+      lablxc(109) = 'ralpne        '
       boundl(109) = 0.050D0
       boundu(109) = 0.150D0
-end subroutine
+   end subroutine init_itv_109
 
-real(kind(1.d0)) function itv_109()
-   itv_109 = ralpne 
-end function
+   real(kind(1.d0)) function itv_109()
+      itv_109 = ralpne 
+   end function itv_109
 
-subroutine set_itv_109(ratio)
-  real(kind(1.d0))::ratio
-  ralpne = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_110
-       !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha particle
-       !+ad_varc       to energy confinement times (f-value for equation 62)
-       lablxc(110) = 'ftaulimit     '
+   subroutine set_itv_109(ratio)
+      real(kind(1.d0)) :: ratio
+      ralpne = ratio
+   end subroutine set_itv_109
+
+   !---------------------------------
+   
+   subroutine init_itv_110
+      !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha 
+      !+ad_varc       particle to energy confinement times (f-value for equation 62)
+      lablxc(110) = 'ftaulimit     '
       boundl(110) = 0.001D0
       boundu(110) = 1.000D0
-end subroutine
+   end subroutine init_itv_110
 
-real(kind(1.d0)) function itv_110()
-   itv_110 = ftaulimit 
-end function
+   real(kind(1.d0)) function itv_110()
+      itv_110 = ftaulimit 
+   end function itv_110
 
-subroutine set_itv_110(ratio)
-  real(kind(1.d0))::ratio
-  ftaulimit = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_111
-       !+ad_varc  <LI> (111) fniterpump: f-value for constraint that
-       !+ad_varc       number of vacuum pumps <  TF coils (f-value for equation 63)
-       lablxc(111) = 'fniterpump    '
+   subroutine set_itv_110(ratio)
+      real(kind(1.d0)) :: ratio
+      ftaulimit = ratio
+   end subroutine set_itv_110
+
+   !---------------------------------
+
+   subroutine init_itv_111
+      !+ad_varc  <LI> (111) fniterpump: f-value for constraint that number
+      !+ad_varc        of vacuum pumps <  TF coils (f-value for equation 63)
+      lablxc(111) = 'fniterpump    '
       boundl(111) = 0.001D0
       boundu(111) = 1.000D0
-end subroutine
+   end subroutine init_itv_111
 
-real(kind(1.d0)) function itv_111()
-   itv_111 = fniterpump 
-end function
+   real(kind(1.d0)) function itv_111()
+      itv_111 = fniterpump 
+   end function itv_111
 
-subroutine set_itv_111(ratio)
-  real(kind(1.d0))::ratio
-  fniterpump = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_112
-       !+ad_varc  <LI> (112) fzeffmax: f-value for max Zeff (f-value for equation 64)
-       lablxc(112) = 'fzeffmax      '
+   subroutine set_itv_111(ratio)
+      real(kind(1.d0)) :: ratio
+      fniterpump = ratio
+   end subroutine set_itv_111
+
+   !---------------------------------
+
+   subroutine init_itv_112
+      !+ad_varc  <LI> (112) fzeffmax: f-value for max Zeff (f-value for equation 64)
+      lablxc(112) = 'fzeffmax      '
       boundl(112) = 0.001D0
       boundu(112) = 1.000D0
-end subroutine
+   end subroutine init_itv_112
 
-real(kind(1.d0)) function itv_112()
-   itv_112 =  fzeffmax
-end function
+   real(kind(1.d0)) function itv_112()
+      itv_112 =  fzeffmax
+   end function itv_112
 
-subroutine set_itv_112(ratio)
-  real(kind(1.d0))::ratio
-  fzeffmax = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_113
-       !+ad_varc  <LI> (113) ftaucq: f-value for minimum quench time (f-value for equation 65)
-       lablxc(113) = 'ftaucq        '
+   subroutine set_itv_112(ratio)
+      real(kind(1.d0)) :: ratio
+      fzeffmax = ratio
+   end subroutine set_itv_112
+
+   !---------------------------------
+
+   subroutine init_itv_113
+      !+ad_varc  <LI> (113) ftaucq: f-value for minimum quench time (f-value for equation 65)
+      lablxc(113) = 'ftaucq        '
       boundl(113) = 0.001D0
       boundu(113) = 1.000D0
-end subroutine
+   end subroutine init_itv_113
 
-real(kind(1.d0)) function itv_113()
-   itv_113 = ftaucq 
-end function
+   real(kind(1.d0)) function itv_113()
+      itv_113 = ftaucq 
+   end function itv_113
 
-subroutine set_itv_113(ratio)
-  real(kind(1.d0))::ratio
-  ftaucq = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_114
-       !+ad_varc  <LI> (114) fw_channel_length: Length of a single first wall channel
-       lablxc(114) = 'fw_channel_length  '
+   subroutine set_itv_113(ratio)
+      real(kind(1.d0)) :: ratio
+      ftaucq = ratio
+   end subroutine set_itv_113
+
+   !---------------------------------
+
+   subroutine init_itv_114
+      !+ad_varc  <LI> (114) fw_channel_length: Length of a single first wall channel
+      lablxc(114) = 'fw_channel_length  '
       boundl(114) = 0.001D0
       boundu(114) = 1.000D3
-end subroutine
+   end subroutine init_itv_114
 
-real(kind(1.d0)) function itv_114()
-   itv_114 = fw_channel_length
-end function
+   real(kind(1.d0)) function itv_114()
+      itv_114 = fw_channel_length
+   end function itv_114
 
-subroutine set_itv_114(ratio)
-  real(kind(1.d0))::ratio
-  fw_channel_length = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_115
-       !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field
-       !+ad_varc             (f-value for equation 66)
-       lablxc(115) = 'fpoloidalpower'
+   subroutine set_itv_114(ratio)
+      real(kind(1.d0)) :: ratio
+      fw_channel_length = ratio
+   end subroutine set_itv_114
+
+   !---------------------------------
+
+   subroutine init_itv_115
+      !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of 
+      !+ad_varc             energy in poloidal field (f-value for equation 66)
+      lablxc(115) = 'fpoloidalpower'
       boundl(115) = 0.001D0
       boundu(115) = 1.000D0
-end subroutine
+   end subroutine init_itv_115
 
-real(kind(1.d0)) function itv_115()
-   itv_115 = fpoloidalpower 
-end function
+   real(kind(1.d0)) function itv_115()
+      itv_115 = fpoloidalpower 
+   end function itv_115
 
-subroutine set_itv_115(ratio)
-  real(kind(1.d0))::ratio
-  fpoloidalpower = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_116
-       !+ad_varc  <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)
-       lablxc(116) = 'fradwall      '
+   subroutine set_itv_115(ratio)
+      real(kind(1.d0)) :: ratio
+      fpoloidalpower = ratio
+   end subroutine set_itv_115
+
+   !---------------------------------
+
+   subroutine init_itv_116
+      !+ad_varc  <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)
+      lablxc(116) = 'fradwall      '
       boundl(116) = 0.001D0
       boundu(116) = 1.000D0
-end subroutine
+   end subroutine init_itv_116
 
-real(kind(1.d0)) function itv_116()
-   itv_116 = fradwall 
-end function
+   real(kind(1.d0)) function itv_116()
+      itv_116 = fradwall 
+   end function itv_116
 
-subroutine set_itv_116(ratio)
-  real(kind(1.d0))::ratio
-  fradwall = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_117
-       !+ad_varc  <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)
-       lablxc(117) = 'fpsepbqar     '
+   subroutine set_itv_116(ratio)
+      real(kind(1.d0)) :: ratio
+      fradwall = ratio
+   end subroutine set_itv_116
+
+   !---------------------------------
+
+   subroutine init_itv_117
+      !+ad_varc  <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)
+      lablxc(117) = 'fpsepbqar     '
       boundl(117) = 0.001D0
       boundu(117) = 1.000D0
-end subroutine
+   end subroutine init_itv_117
 
-real(kind(1.d0)) function itv_117()
-   itv_117 = fpsepbqar 
-end function
+   real(kind(1.d0)) function itv_117()
+      itv_117 = fpsepbqar 
+   end function itv_117
 
-subroutine set_itv_117(ratio)
-  real(kind(1.d0))::ratio
-  fpsepbqar = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_118
-       !+ad_varc  <LI> (118) fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
-       !+ad_varc            (f-value for equation 69)
+   subroutine set_itv_117(ratio)
+      real(kind(1.d0)) :: ratio
+      fpsepbqar = ratio
+   end subroutine set_itv_117
+
+   !---------------------------------
+
+   subroutine init_itv_118
+      !+ad_varc  <LI> (118) fpsep: f-value to ensure separatrix power is less than
+      !+ad_varc             value from Kallenbach divertor (f-value for equation 69)
        lablxc(118) = 'fpsep         '
       boundl(118) = 0.001D0
       boundu(118) = 1.000D0
-end subroutine
+   end subroutine init_itv_118
 
-real(kind(1.d0)) function itv_118()
-   itv_118 = fpsep 
-end function
+   real(kind(1.d0)) function itv_118()
+      itv_118 = fpsep 
+   end function itv_118
 
-subroutine set_itv_118(ratio)
-  real(kind(1.d0))::ratio
-  fpsep = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_119
-       !+ad_varc  <LI> (119) tesep:  separatrix temperature calculated by the Kallenbach divertor model
-       lablxc(119) = 'tesep         '
+   subroutine set_itv_118(ratio)
+      real(kind(1.d0)) :: ratio
+      fpsep = ratio
+   end subroutine set_itv_118
+
+   !---------------------------------
+
+   subroutine init_itv_119
+      !+ad_varc  <LI> (119) tesep:  separatrix temperature calculated by the Kallenbach divertor model
+      lablxc(119) = 'tesep         '
       boundl(119) = 0.000D0
       boundu(119) = 1.000D1
-end subroutine
+   end subroutine init_itv_119
 
-real(kind(1.d0)) function itv_119()
-   itv_119 = tesep 
-end function
+   real(kind(1.d0)) function itv_119()
+      itv_119 = tesep 
+   end function itv_119
 
-subroutine set_itv_119(ratio)
-  real(kind(1.d0))::ratio
-  tesep = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_120
-       !+ad_varc  <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]
-       lablxc(120) = 'ttarget       '
+   subroutine set_itv_119(ratio)
+   real(kind(1.d0)) :: ratio
+   tesep = ratio
+   end subroutine set_itv_119
+
+   !---------------------------------
+
+   subroutine init_itv_120
+      !+ad_varc  <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]
+      lablxc(120) = 'ttarget       '
       boundl(120) = 1.000D0
       boundu(120) = 1.000D4
-end subroutine
+   end subroutine init_itv_120
 
-real(kind(1.d0)) function itv_120()
-   itv_120 =  ttarget
-end function
+   real(kind(1.d0)) function itv_120()
+      itv_120 =  ttarget
+   end function itv_120
 
-subroutine set_itv_120(ratio)
-  real(kind(1.d0))::ratio
-  ttarget = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_121
-       !+ad_varc  <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP
-       lablxc(121) = 'neratio       '
+   subroutine set_itv_120(ratio)
+      real(kind(1.d0)) :: ratio
+      ttarget = ratio
+   end subroutine set_itv_120
+
+   !---------------------------------
+
+   subroutine init_itv_121
+      !+ad_varc  <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP
+      lablxc(121) = 'neratio       '
       boundl(121) = 0.001D0
       boundu(121) = 1.000D0
-end subroutine
+   end subroutine init_itv_121
 
-real(kind(1.d0)) function itv_121()
-   itv_121 =  neratio
-end function
+   real(kind(1.d0)) function itv_121()
+      itv_121 =  neratio
+   end function itv_121
 
-subroutine set_itv_121(ratio)
-  real(kind(1.d0))::ratio
-  neratio = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_122
-       !+ad_varc  <LI> (122) oh_steel_frac : streel fraction of Central Solenoid
-       lablxc(122) = 'oh_steel_frac '
+   subroutine set_itv_121(ratio)
+      real(kind(1.d0)) :: ratio
+      neratio = ratio
+   end subroutine set_itv_121
+
+   !---------------------------------
+
+   subroutine init_itv_122
+      !+ad_varc  <LI> (122) oh_steel_frac : streel fraction of Central Solenoid
+      lablxc(122) = 'oh_steel_frac '
       boundl(122) = 0.001D0
       boundu(122) = 0.950D0
-end subroutine
+   end subroutine init_itv_122
 
-real(kind(1.d0)) function itv_122()
-   itv_122 = oh_steel_frac 
-end function
+   real(kind(1.d0)) function itv_122()
+      itv_122 = oh_steel_frac 
+   end function itv_122
 
-subroutine set_itv_122(ratio)
-  real(kind(1.d0))::ratio
-  oh_steel_frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_123
-       !+ad_varc  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit (f-value for eq. 72)
-       lablxc(123) = 'foh_stress    '
+   subroutine set_itv_122(ratio)
+      real(kind(1.d0)) :: ratio
+      oh_steel_frac = ratio
+   end subroutine set_itv_122
+
+   !---------------------------------
+
+   subroutine init_itv_123
+      !+ad_varc  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit (f-value for eq. 72)
+      lablxc(123) = 'foh_stress    '
       boundl(123) = 0.001D0
       boundu(123) = 1.000D0
-end subroutine
+   end subroutine init_itv_123
 
-real(kind(1.d0)) function itv_123()
-   itv_123 = foh_stress 
-end function
+   real(kind(1.d0)) function itv_123()
+      itv_123 = foh_stress 
+   end function itv_123
 
-subroutine set_itv_123(ratio)
-  real(kind(1.d0))::ratio
-  foh_stress = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_124
-       !+ad_varc  <LI> (124) qtargettotal : Power density on target including surface recombination [W/m2]
-       lablxc(124) = 'qtargettotal  '
+   subroutine set_itv_123(ratio)
+      real(kind(1.d0)) :: ratio
+      foh_stress = ratio
+   end subroutine set_itv_123
+
+   !---------------------------------
+
+   subroutine init_itv_124
+      !+ad_varc  <LI> (124) qtargettotal : Power density on target including surface recombination [W/m2]
+      lablxc(124) = 'qtargettotal  '
       boundl(124) = 0.001D0
       boundu(124) = 1.000D7
-end subroutine
+   end subroutine init_itv_124
 
-real(kind(1.d0)) function itv_124()
-   itv_124 = qtargettotal 
-end function
+   real(kind(1.d0)) function itv_124()
+      itv_124 = qtargettotal 
+   end function itv_124
 
-subroutine set_itv_124(ratio)
-  real(kind(1.d0))::ratio
-  qtargettotal = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_125
-       !+ad_varc  <LI> (125) fimp(3) :  Beryllium density fraction relative to electron density
-       lablxc(125) = 'fimp(03)      '
+   subroutine set_itv_124(ratio)
+      real(kind(1.d0)) :: ratio
+      qtargettotal = ratio
+   end subroutine set_itv_124
+
+   !---------------------------------
+
+   subroutine init_itv_125
+      !+ad_varc  <LI> (125) fimp(3) :  Beryllium density fraction relative to electron density
+      lablxc(125) = 'fimp(03)      '
       boundl(125) = 1.00D-8
       boundu(125) = 0.010D0
-end subroutine
+   end subroutine init_itv_125
 
-real(kind(1.d0)) function itv_125()
-   itv_125 = impurity_arr(3)%frac 
-end function
+   real(kind(1.d0)) function itv_125()
+      itv_125 = impurity_arr(3)%frac 
+   end function itv_125
 
-subroutine set_itv_125(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(3)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_126
-       !+ad_varc  <LI> (126) fimp(4) :  Carbon density fraction relative to electron density
-       lablxc(126) = 'fimp(04)      '
+   subroutine set_itv_125(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(3)%frac = ratio
+   end subroutine set_itv_125
+
+   !---------------------------------
+
+   subroutine init_itv_126
+      !+ad_varc  <LI> (126) fimp(4) :  Carbon density fraction relative to electron density
+      lablxc(126) = 'fimp(04)      '
       boundl(126) = 1.00D-8
       boundu(126) = 0.010D0
-end subroutine
+   end subroutine init_itv_126
 
-real(kind(1.d0)) function itv_126()
-   itv_126 = impurity_arr(4)%frac 
-end function
+   real(kind(1.d0)) function itv_126()
+      itv_126 = impurity_arr(4)%frac 
+   end function itv_126
 
-subroutine set_itv_126(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(4)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_127
-       !+ad_varc  <LI> (127) fimp(5) :  Nitrogen fraction relative to electron density
-       lablxc(127) = 'fimp(05)      '
+   subroutine set_itv_126(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(4)%frac = ratio
+   end subroutine set_itv_126
+
+   !---------------------------------
+
+   subroutine init_itv_127
+      !+ad_varc  <LI> (127) fimp(5) :  Nitrogen fraction relative to electron density
+      lablxc(127) = 'fimp(05)      '
       boundl(127) = 1.00D-8
       boundu(127) = 0.010D0
-end subroutine
+   end subroutine init_itv_127
 
-real(kind(1.d0)) function itv_127()
-   itv_127 = impurity_arr(5)%frac 
-end function
+   real(kind(1.d0)) function itv_127()
+      itv_127 = impurity_arr(5)%frac 
+   end function itv_127
 
-subroutine set_itv_127(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(5)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_128
-       !+ad_varc  <LI> (128) fimp(6) :  Oxygen density fraction relative to electron density
-       lablxc(128) = 'fimp(06)      '
+   subroutine set_itv_127(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(5)%frac = ratio
+   end subroutine set_itv_127
+
+   !---------------------------------
+
+   subroutine init_itv_128
+      !+ad_varc  <LI> (128) fimp(6) :  Oxygen density fraction relative to electron density
+      lablxc(128) = 'fimp(06)      '
       boundl(128) = 1.00D-8
       boundu(128) = 0.010D0
-end subroutine
+   end subroutine init_itv_128
 
-real(kind(1.d0)) function itv_128()
-   itv_128 = impurity_arr(6)%frac 
-end function
+   real(kind(1.d0)) function itv_128()
+      itv_128 = impurity_arr(6)%frac 
+   end function itv_128
 
-subroutine set_itv_128(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(6)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_129
-       !+ad_varc  <LI> (129) fimp(7) :  Neon density fraction relative to electron density
-       lablxc(129) = 'fimp(07)      '
+   subroutine set_itv_128(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(6)%frac = ratio
+   end subroutine set_itv_128
+
+   !---------------------------------
+
+   subroutine init_itv_129
+      !+ad_varc  <LI> (129) fimp(7) :  Neon density fraction relative to electron density
+      lablxc(129) = 'fimp(07)      '
       boundl(129) = 1.00D-8
       boundu(129) = 0.010D0
-end subroutine
+   end subroutine init_itv_129
 
-real(kind(1.d0)) function itv_129()
-   itv_129 = impurity_arr(7)%frac 
-end function
+   real(kind(1.d0)) function itv_129()
+      itv_129 = impurity_arr(7)%frac 
+   end function itv_129
 
-subroutine set_itv_129(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(7)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_130
-       !+ad_varc  <LI> (130) fimp(8) :  Silicon density fraction relative to electron density
-       lablxc(130) = 'fimp(08)      '
+   subroutine set_itv_129(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(7)%frac = ratio
+   end subroutine set_itv_129
+
+   !---------------------------------
+
+   subroutine init_itv_130
+      !+ad_varc  <LI> (130) fimp(8) :  Silicon density fraction relative to electron density
+      lablxc(130) = 'fimp(08)      '
       boundl(130) = 1.00D-8
       boundu(130) = 0.010D0
-end subroutine
+   end subroutine init_itv_130
 
-real(kind(1.d0)) function itv_130()
-   itv_130 = impurity_arr(8)%frac 
-end function
+   real(kind(1.d0)) function itv_130()
+      itv_130 = impurity_arr(8)%frac 
+   end function itv_130
 
-subroutine set_itv_130(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(8)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_131
-       !+ad_varc  <LI> (131) fimp(9) :  Argon density fraction relative to electron density
-       lablxc(131) = 'fimp(09)      '
+   subroutine set_itv_130(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(8)%frac = ratio
+   end subroutine set_itv_130
+
+   !---------------------------------
+
+   subroutine init_itv_131
+      !+ad_varc  <LI> (131) fimp(9) :  Argon density fraction relative to electron density
+      lablxc(131) = 'fimp(09)      '
       boundl(131) = 1.00D-8
       boundu(131) = 0.010D0
-end subroutine
+   end subroutine init_itv_131
 
-real(kind(1.d0)) function itv_131()
-   itv_131 = impurity_arr(9)%frac 
-end function
+   real(kind(1.d0)) function itv_131()
+      itv_131 = impurity_arr(9)%frac 
+   end function itv_131
 
-subroutine set_itv_131(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(9)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_132
-       !+ad_varc  <LI> (132) fimp(10) :  Iron density fraction relative to electron density
-       lablxc(132) = 'fimp(10)      '
+   subroutine set_itv_131(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(9)%frac = ratio
+   end subroutine set_itv_131
+
+   !---------------------------------
+
+   subroutine init_itv_132
+      !+ad_varc  <LI> (132) fimp(10) :  Iron density fraction relative to electron density
+      lablxc(132) = 'fimp(10)      '
       boundl(132) = 1.00D-8
       boundu(132) = 0.010D0
-end subroutine
+   end subroutine init_itv_132
 
-real(kind(1.d0)) function itv_132()
-   itv_132 = impurity_arr(10)%frac 
-end function
+   real(kind(1.d0)) function itv_132()
+      itv_132 = impurity_arr(10)%frac 
+   end function itv_132
 
-subroutine set_itv_132(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(10)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_133
-       !+ad_varc  <LI> (133) fimp(11) :  Nickel density fraction relative to electron density
-       lablxc(133) = 'fimp(11)      '
+   subroutine set_itv_132(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(10)%frac = ratio
+   end subroutine set_itv_132
+
+   !---------------------------------
+
+   subroutine init_itv_133
+      !+ad_varc  <LI> (133) fimp(11) :  Nickel density fraction relative to electron density
+      lablxc(133) = 'fimp(11)      '
       boundl(133) = 1.00D-8
       boundu(133) = 0.010D0
-end subroutine
+   end subroutine init_itv_133
 
-real(kind(1.d0)) function itv_133()
-   itv_133 = impurity_arr(11)%frac 
-end function
+   real(kind(1.d0)) function itv_133()
+      itv_133 = impurity_arr(11)%frac 
+   end function itv_133
 
-subroutine set_itv_133(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(11)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_134
-       !+ad_varc  <LI> (134) fimp(12) :  Krypton density fraction relative to electron density
-       lablxc(134) = 'fimp(12)      '
+   subroutine set_itv_133(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(11)%frac = ratio
+   end subroutine set_itv_133
+
+   !---------------------------------
+
+   subroutine init_itv_134
+      !+ad_varc  <LI> (134) fimp(12) :  Krypton density fraction relative to electron density
+      lablxc(134) = 'fimp(12)      '
       boundl(134) = 1.00D-8
       boundu(134) = 0.010D0
-end subroutine
+   end subroutine init_itv_134
 
-real(kind(1.d0)) function itv_134()
-   itv_134 = impurity_arr(12)%frac 
-end function
+   real(kind(1.d0)) function itv_134()
+      itv_134 = impurity_arr(12)%frac 
+   end function itv_134
 
-subroutine set_itv_134(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(12)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_135
-       !+ad_varc  <LI> (135) fimp(13) :  Xenon density fraction relative to electron density
-       lablxc(135) = 'fimp(13)      '
+   subroutine set_itv_134(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(12)%frac = ratio
+   end subroutine set_itv_134
+
+   !---------------------------------
+
+   subroutine init_itv_135
+      !+ad_varc  <LI> (135) fimp(13) :  Xenon density fraction relative to electron density
+      lablxc(135) = 'fimp(13)      '
       boundl(135) = 1.00D-8
       boundu(135) = 0.010D0
-end subroutine
+   end subroutine init_itv_135
 
-real(kind(1.d0)) function itv_135()
-   itv_135 = impurity_arr(13)%frac 
-end function
+   real(kind(1.d0)) function itv_135()
+      itv_135 = impurity_arr(13)%frac 
+   end function itv_135
 
-subroutine set_itv_135(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(13)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_136
-       !+ad_varc  <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density
-       lablxc(136) = 'fimp(14)      '
+   subroutine set_itv_135(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(13)%frac = ratio
+   end subroutine set_itv_135
+
+   !---------------------------------
+
+   subroutine init_itv_136
+      !+ad_varc  <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density
+      lablxc(136) = 'fimp(14)      '
       boundl(136) = 1.00D-8
       boundu(136) = 0.010D0
-end subroutine
+   end subroutine init_itv_136
 
-real(kind(1.d0)) function itv_136()
-   itv_136 = impurity_arr(14)%frac 
-end function
+   real(kind(1.d0)) function itv_136()
+      itv_136 = impurity_arr(14)%frac 
+   end function itv_136
 
-subroutine set_itv_136(ratio)
-  real(kind(1.d0))::ratio
-  impurity_arr(14)%frac = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_137
-       !+ad_varc  <LI> (137) fplhsep (f-value for equation 73)
-       lablxc(137) = 'fplhsep       '
+   subroutine set_itv_136(ratio)
+      real(kind(1.d0)) :: ratio
+      impurity_arr(14)%frac = ratio
+   end subroutine set_itv_136
+
+   !---------------------------------
+
+   subroutine init_itv_137
+      !+ad_varc  <LI> (137) fplhsep (f-value for equation 73)
+      lablxc(137) = 'fplhsep       '
       boundl(137) = 0.001D0
       boundu(137) = 1.000D0
-end subroutine
+   end subroutine init_itv_137
 
-real(kind(1.d0)) function itv_137()
-   itv_137 = fplhsep 
-end function
+   real(kind(1.d0)) function itv_137()
+      itv_137 = fplhsep 
+   end function itv_137
 
-subroutine set_itv_137(ratio)
-  real(kind(1.d0))::ratio
-  fplhsep = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_138
-       !+ad_varc  <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
-       lablxc(138) = 'rebco_thicknes'
+   subroutine set_itv_137(ratio)
+      real(kind(1.d0)) :: ratio
+      fplhsep = ratio
+   end subroutine set_itv_137
+
+   !---------------------------------
+
+   subroutine init_itv_138
+      !+ad_varc  <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
+      lablxc(138) = 'rebco_thicknes'
       boundl(138) = 0.01D-6
       boundu(138) = 100.0D-6
-end subroutine
+   end subroutine init_itv_138
 
-real(kind(1.d0)) function itv_138()
-   itv_138 = fplhsep 
-end function
+   real(kind(1.d0)) function itv_138()
+      itv_138 = fplhsep 
+   end function itv_138
 
-subroutine set_itv_138(ratio)
-  real(kind(1.d0))::ratio
-  fplhsep = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_139
-       !+ad_varc  <LI> (139) copper_thick : thickness of copper layer in tape (m)
-       lablxc(139) = 'copper_thick  '
+   subroutine set_itv_138(ratio)
+      real(kind(1.d0)) :: ratio
+      fplhsep = ratio
+   end subroutine set_itv_138
+
+   !---------------------------------
+
+   subroutine init_itv_139
+      !+ad_varc  <LI> (139) copper_thick : thickness of copper layer in tape (m)
+      lablxc(139) = 'copper_thick  '
       boundl(139) = 1.00D-6
       boundu(139) = 1.00D-3
-end subroutine
+   end subroutine init_itv_139
 
-real(kind(1.d0)) function itv_139()
-   itv_139 = copper_thick 
-end function
+   real(kind(1.d0)) function itv_139()
+      itv_139 = copper_thick 
+   end function itv_139
 
-subroutine set_itv_139(ratio)
-  real(kind(1.d0))::ratio
-  copper_thick = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_140
-       !+ad_varc  <LI> (140) thkwp : radial thickness of TFC winding pack (m)
-       lablxc(140) = 'thkwp         '
+   subroutine set_itv_139(ratio)
+      real(kind(1.d0)) :: ratio
+      copper_thick = ratio
+   end subroutine set_itv_139
+
+   !---------------------------------
+
+   subroutine init_itv_140
+      !+ad_varc  <LI> (140) thkwp : radial thickness of TFC winding pack (m)
+      lablxc(140) = 'thkwp         '
       boundl(140) = 0.001D0
       boundu(140) = 2.000D0
-end subroutine
+   end subroutine init_itv_140
 
-real(kind(1.d0)) function itv_140()
-   itv_140 = thkwp 
-end function
+   real(kind(1.d0)) function itv_140()
+      itv_140 = thkwp 
+   end function itv_140
 
-subroutine set_itv_140(ratio)
-  real(kind(1.d0))::ratio
-  thkwp = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_141
-       !+ad_varc  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
-       lablxc(141) = 'fcqt          '
+   subroutine set_itv_140(ratio)
+      real(kind(1.d0)) :: ratio
+      thkwp = ratio
+   end subroutine set_itv_140
+
+   !---------------------------------
+
+   subroutine init_itv_141
+      !+ad_varc  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
+      lablxc(141) = 'fcqt          '
       boundl(141) = 0.001D0
       boundu(141) = 1.000D0
-end subroutine
+   end subroutine init_itv_141
 
-real(kind(1.d0)) function itv_141()
-   itv_141 = fcqt 
-end function
+   real(kind(1.d0)) function itv_141()
+      itv_141 = fcqt 
+   end function itv_141
 
-subroutine set_itv_141(ratio)
-  real(kind(1.d0))::ratio
-  fcqt = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_142
-       !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
-       lablxc(142) = 'nesep         '
+   subroutine set_itv_141(ratio)
+      real(kind(1.d0)) :: ratio
+      fcqt = ratio
+   end subroutine set_itv_141
+
+   !---------------------------------
+
+   subroutine init_itv_142
+      !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
+      lablxc(142) = 'nesep         '
       boundl(142) = 1.00D17
       boundu(142) = 1.00D20
-end subroutine
+   end subroutine init_itv_142
 
-real(kind(1.d0)) function itv_142()
-   itv_142 = nesep 
-end function
+   real(kind(1.d0)) function itv_142()
+      itv_142 = nesep 
+   end function itv_142
 
-subroutine set_itv_142(ratio)
-  real(kind(1.d0))::ratio
-  nesep = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_143
-       !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75)
-       lablxc(143) = 'f_copperA_m2  '
+   subroutine set_itv_142(ratio)
+      real(kind(1.d0)) :: ratio
+      nesep = ratio
+   end subroutine set_itv_142
+
+   !---------------------------------
+
+   subroutine init_itv_143
+      !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value
+      !+ad_varc             (f-value for equation 75)
+      lablxc(143) = 'f_copperA_m2  '
       boundl(143) = 0.001D0
       boundu(143) = 1.000D0
-end subroutine
+   end subroutine init_itv_143
 
-real(kind(1.d0)) function itv_143()
-   itv_143 = f_copperA_m2 
-end function
+   real(kind(1.d0)) function itv_143()
+      itv_143 = f_copperA_m2 
+   end function itv_143
 
-subroutine set_itv_143(ratio)
-  real(kind(1.d0))::ratio
-  f_copperA_m2 = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_144
-       !+ad_varc  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]
-       lablxc(144) = 'fnesep        '
+   subroutine set_itv_143(ratio)
+      real(kind(1.d0)) :: ratio
+      f_copperA_m2 = ratio
+   end subroutine set_itv_143
+
+   !---------------------------------
+
+   subroutine init_itv_144
+      !+ad_varc  <LI> (144) fnesep : Eich critical electron density at separatrix 
+      !+ad_varc                      (f-value for constraint equation 76) [m-3]
+      lablxc(144) = 'fnesep        '
       boundl(144) = 0.001D0
       boundu(144) = 1.000D0
-end subroutine
+   end subroutine init_itv_144
 
-real(kind(1.d0)) function itv_144()
-   itv_144 = fnesep 
-end function
+   real(kind(1.d0)) function itv_144()
+      itv_144 = fnesep 
+   end function itv_144
 
-subroutine set_itv_144(ratio)
-  real(kind(1.d0))::ratio
-  fnesep = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_145
-       !+ad_varc  <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density
-       lablxc(145) = 'fgwped        '
+   subroutine set_itv_144(ratio)
+      real(kind(1.d0)) :: ratio
+      fnesep = ratio
+   end subroutine set_itv_144
+
+   !---------------------------------
+
+   subroutine init_itv_145
+      !+ad_varc  <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density
+      lablxc(145) = 'fgwped        '
       boundl(145) = 0.500D0
       boundu(145) = 1.000D0
-end subroutine
+   end subroutine init_itv_145
 
-real(kind(1.d0)) function itv_145()
-   itv_145 = fgwped 
-end function
+   real(kind(1.d0)) function itv_145()
+      itv_145 = fgwped 
+   end function itv_145
 
-subroutine set_itv_145(ratio)
-  real(kind(1.d0))::ratio
-  fgwped = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_146
-       !+ad_varc  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)
-       lablxc(146) = 'fcpttf        '
+   subroutine set_itv_145(ratio)
+      real(kind(1.d0)) :: ratio
+      fgwped = ratio
+   end subroutine set_itv_145
+
+   !---------------------------------
+
+   subroutine init_itv_146
+      !+ad_varc  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)
+      lablxc(146) = 'fcpttf        '
       boundl(146) = 0.001D0
       boundu(146) = 1.000D0
-end subroutine
+   end subroutine init_itv_146
 
-real(kind(1.d0)) function itv_146()
-   itv_146 = fcpttf 
-end function
+   real(kind(1.d0)) function itv_146()
+      itv_146 = fcpttf 
+   end function itv_146
 
-subroutine set_itv_146(ratio)
-  real(kind(1.d0))::ratio
-  fcpttf = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_147
-       !+ad_varc  <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)
-       lablxc(147) = 'freinke       '
+   subroutine set_itv_146(ratio)
+      real(kind(1.d0)) :: ratio
+      fcpttf = ratio
+   end subroutine set_itv_146
+
+   !---------------------------------
+
+   subroutine init_itv_147
+      !+ad_varc  <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)
+      lablxc(147) = 'freinke       '
       boundl(147) = 0.001D0
       boundu(147) = 1.000D0
-end subroutine
+   end subroutine init_itv_147
 
-real(kind(1.d0)) function itv_147()
-   itv_147 = freinke 
-end function
+   real(kind(1.d0)) function itv_147()
+      itv_147 = freinke 
+   end function itv_147
 
-subroutine set_itv_147(ratio)
-  real(kind(1.d0))::ratio
-  freinke = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_148
-       !+ad_varc  <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion
-       lablxc(148) = 'fzactual      '
+   subroutine set_itv_147(ratio)
+      real(kind(1.d0)) :: ratio
+      freinke = ratio
+   end subroutine set_itv_147
+
+   !---------------------------------
+
+   subroutine init_itv_148
+      !+ad_varc  <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion
+      lablxc(148) = 'fzactual      '
       boundl(148) = 1.00D-8
       boundu(148) = 1.000D0
-end subroutine
+   end subroutine init_itv_148
 
-real(kind(1.d0)) function itv_148()
-   ! TODO This needs to be clarified!! MDK
-   ! It looks like fzactual is not really an iteration variable.
-   itv_148 = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual
-end function
+   real(kind(1.d0)) function itv_148()
+      ! TODO This needs to be clarified!! MDK
+      ! It looks like fzactual is not really an iteration variable.
+      itv_148 = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual
+   end function itv_148
 
-subroutine set_itv_148(ratio)
-  real(kind(1.d0))::ratio
-  fzactual = ratio
-  impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
-end subroutine
-!---------------------------------
-subroutine init_itv_149
-       !+ad_varc  <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
-       lablxc(149) = 'fbmaxcs       '
+   subroutine set_itv_148(ratio)
+      real(kind(1.d0)) :: ratio
+      fzactual = ratio
+      impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
+   end subroutine set_itv_148
+
+   !---------------------------------
+
+   subroutine init_itv_149
+      !+ad_varc  <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
+      lablxc(149) = 'fbmaxcs       '
       boundl(149) = 0.001D0
       boundu(149) = 1.000D0
-end subroutine
+   end subroutine init_itv_149
 
-real(kind(1.d0)) function itv_149()
-   itv_149 = fbmaxcs 
-end function
+   real(kind(1.d0)) function itv_149()
+      itv_149 = fbmaxcs 
+   end function itv_149
 
-subroutine set_itv_149(ratio)
-  real(kind(1.d0))::ratio
-  fbmaxcs = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_150
-        !+ad_varc  <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power
-       lablxc(150) = 'plasmod_fcdp  '
+   subroutine set_itv_149(ratio)
+      real(kind(1.d0)) :: ratio
+      fbmaxcs = ratio
+   end subroutine set_itv_149
+
+   !---------------------------------
+
+   subroutine init_itv_150
+      !+ad_varc  <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat) 
+      !+ad_varc             i.e. ratio of CD power over available power
+      lablxc(150) = 'plasmod_fcdp  '
       boundl(150) = 0.000D0
       boundu(150) = 1.000D0
-end subroutine
+   end subroutine init_itv_150
 
-real(kind(1.d0)) function itv_150()
-   itv_150 = plasmod_fcdp 
-end function
+   real(kind(1.d0)) function itv_150()
+      itv_150 = plasmod_fcdp 
+   end function itv_150
 
-subroutine set_itv_150(ratio)
-  real(kind(1.d0))::ratio
-  plasmod_fcdp = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_151
-       !+ad_varc  <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)
-       lablxc(151) = 'plasmod_fradc '
+   subroutine set_itv_150(ratio)
+      real(kind(1.d0)) :: ratio
+      plasmod_fcdp = ratio
+   end subroutine set_itv_150
+
+   !---------------------------------
+
+   subroutine init_itv_151
+      !+ad_varc  <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)
+      lablxc(151) = 'plasmod_fradc '
       boundl(151) = 0.001D0
       boundu(151) = 1.000D0
-end subroutine
+   end subroutine init_itv_151
 
-real(kind(1.d0)) function itv_151()
-   itv_151 = plasmod_fradc 
-end function
+   real(kind(1.d0)) function itv_151()
+      itv_151 = plasmod_fradc 
+   end function itv_151
 
-subroutine set_itv_151(ratio)
-  real(kind(1.d0))::ratio
-  plasmod_fradc = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_152
-       !+ad_varc  <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density
-       lablxc(152) = 'fgwsep        '
+   subroutine set_itv_151(ratio)
+      real(kind(1.d0)) :: ratio
+      plasmod_fradc = ratio
+   end subroutine set_itv_151
+
+   !---------------------------------
+
+   subroutine init_itv_152
+      !+ad_varc  <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density
+      lablxc(152) = 'fgwsep        '
       boundl(152) = 0.001D0
       boundu(152) = 1.000D0
-end subroutine
+   end subroutine init_itv_152
 
-real(kind(1.d0)) function itv_152()
-   itv_152 = fgwsep 
-end function
+   real(kind(1.d0)) function itv_152()
+      itv_152 = fgwsep 
+   end function itv_152
 
-subroutine set_itv_152(ratio)
-  real(kind(1.d0))::ratio
-  fgwsep = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_153
-       !+ad_varc  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)
-       lablxc(153) = 'fpdivlim      '
+   subroutine set_itv_152(ratio)
+      real(kind(1.d0)) :: ratio
+      fgwsep = ratio
+   end subroutine set_itv_152
+
+   !---------------------------------
+
+   subroutine init_itv_153
+      !+ad_varc  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)
+      lablxc(153) = 'fpdivlim      '
       boundl(153) = 0.001D0
       boundu(153) = 1.000D0
-end subroutine
+   end subroutine init_itv_153
 
-real(kind(1.d0)) function itv_153()
-   itv_153 = fpdivlim
-end function
+   real(kind(1.d0)) function itv_153()
+      itv_153 = fpdivlim
+   end function itv_153
 
-subroutine set_itv_153(ratio)
-  real(kind(1.d0))::ratio
-  fpdivlim = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_154
-       !+ad_varc  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)
-       lablxc(154) = 'fpdivlim      ' 
+   subroutine set_itv_153(ratio)
+      real(kind(1.d0)) :: ratio
+      fpdivlim = ratio
+   end subroutine set_itv_153
+
+   !---------------------------------
+
+   subroutine init_itv_154
+      !+ad_varc  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)
+      lablxc(154) = 'fne0          ' 
       boundl(154) = 0.001D0
       boundu(154) = 1.000D0
-end subroutine
+   end subroutine init_itv_154
 
-real(kind(1.d0)) function itv_154()
-   itv_154 = fpdivlim 
-end function
+   real(kind(1.d0)) function itv_154()
+      itv_154 = fpdivlim 
+   end function itv_154
 
-subroutine set_itv_154(ratio)
-  real(kind(1.d0))::ratio
-  fpdivlim = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_155
-!+ad_varc  <LI> (155) DUMMY : Description
-   lablxc(155) = 'DUMMY         '
-   boundl(155) = 1.0d-99
-   boundu(155) = 1.0d99
-end subroutine
+   subroutine set_itv_154(ratio)
+      real(kind(1.d0)) :: ratio
+      fpdivlim = ratio
+   end subroutine set_itv_154
 
-real(kind(1.d0)) function itv_155()
-   itv_155 = DUMMY 
-end function
+   !---------------------------------
 
-subroutine set_itv_155(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_156
-!+ad_varc  <LI> (156) DUMMY : Description
-   lablxc(156) = 'DUMMY         '
-   boundl(156) = 1.0d-99
-   boundu(156) = 1.0d99
-end subroutine
+   subroutine init_itv_155
+      !+ad_varc  <LI> (155) DUMMY : Description
+      lablxc(155) = 'DUMMY         '
+      boundl(155) = 1.0d-99
+      boundu(155) = 1.0d99
+   end subroutine init_itv_155
 
-real(kind(1.d0)) function itv_156()
-   itv_156 = DUMMY 
-end function
+   real(kind(1.d0)) function itv_155()
+      itv_155 = DUMMY 
+   end function itv_155
 
-subroutine set_itv_156(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_157
-!+ad_varc  <LI> (157) DUMMY : Description
-   lablxc(157) = 'DUMMY         '
-   boundl(157) = 1.0d-99
-   boundu(157) = 1.0d99
-end subroutine
+   subroutine set_itv_155(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_155
 
-real(kind(1.d0)) function itv_157()
-   itv_157 = DUMMY 
-end function
+   !---------------------------------
 
-subroutine set_itv_157(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_158
-!+ad_varc  <LI> (158) DUMMY : Description
-   lablxc(158) = 'DUMMY         '
-   boundl(158) = 1.0d-99
-   boundu(158) = 1.0d99
-end subroutine
+   subroutine init_itv_156
+      !+ad_varc  <LI> (156) DUMMY : Description
+      lablxc(156) = 'DUMMY         '
+      boundl(156) = 1.0d-99
+      boundu(156) = 1.0d99
+   end subroutine init_itv_156
 
-real(kind(1.d0)) function itv_158()
-   itv_158 = DUMMY 
-end function
+   real(kind(1.d0)) function itv_156()
+      itv_156 = DUMMY 
+   end function itv_156
 
-subroutine set_itv_158(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_159
-!+ad_varc  <LI> (159) DUMMY : Description
-   lablxc(159) = 'DUMMY         '
-   boundl(159) = 1.0d-99
-   boundu(159) = 1.0d99
-end subroutine
+   subroutine set_itv_156(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_156
 
-real(kind(1.d0)) function itv_159()
-   itv_159 = DUMMY 
-end function
+   !---------------------------------
 
-subroutine set_itv_159(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_160
-!+ad_varc  <LI> (160) DUMMY : Description
-   lablxc(160) = 'DUMMY         '
-   boundl(160) = 1.0d-99
-   boundu(160) = 1.0d99
-end subroutine
+   subroutine init_itv_157
+      !+ad_varc  <LI> (157) DUMMY : Description
+      lablxc(157) = 'DUMMY         '
+      boundl(157) = 1.0d-99
+      boundu(157) = 1.0d99
+   end subroutine init_itv_157
 
-real(kind(1.d0)) function itv_160()
-   itv_160 = DUMMY 
-end function
+   real(kind(1.d0)) function itv_157()
+      itv_157 = DUMMY 
+   end function itv_157
 
-subroutine set_itv_160(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_161
-!+ad_varc  <LI> (161) DUMMY : Description
-   lablxc(161) = 'DUMMY         '
-   boundl(161) = 1.0d-99
-   boundu(161) = 1.0d99
-end subroutine
+   subroutine set_itv_157(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_157
 
-real(kind(1.d0)) function itv_161()
-   itv_161 = DUMMY 
-end function
+   !---------------------------------
 
-subroutine set_itv_161(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_162
-!+ad_varc  <LI> (162) DUMMY : Description
-   lablxc(162) = 'DUMMY         '
-   boundl(162) = 1.0d-99
-   boundu(162) = 1.0d99
-end subroutine
+   subroutine init_itv_158
+      !+ad_varc  <LI> (158) DUMMY : Description
+      lablxc(158) = 'DUMMY         '
+      boundl(158) = 1.0d-99
+      boundu(158) = 1.0d99
+   end subroutine init_itv_158
 
-real(kind(1.d0)) function itv_162()
-   itv_162 = DUMMY 
-end function
+   real(kind(1.d0)) function itv_158()
+      itv_158 = DUMMY 
+   end function itv_158
 
-subroutine set_itv_162(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_163
-!+ad_varc  <LI> (163) DUMMY : Description
-   lablxc(163) = 'DUMMY         '
-   boundl(163) = 1.0d-99
-   boundu(163) = 1.0d99
-end subroutine
+   subroutine set_itv_158(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_158
 
-real(kind(1.d0)) function itv_163()
-   itv_163 = DUMMY 
-end function
+   !---------------------------------
 
-subroutine set_itv_163(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_164
-!+ad_varc  <LI> (164) DUMMY : Description
-   lablxc(164) = 'DUMMY         '
-   boundl(164) = 1.0d-99
-   boundu(164) = 1.0d99
-end subroutine
+   subroutine init_itv_159
+      !+ad_varc  <LI> (159) DUMMY : Description
+      lablxc(159) = 'DUMMY         '
+      boundl(159) = 1.0d-99
+      boundu(159) = 1.0d99
+   end subroutine init_itv_159
 
-real(kind(1.d0)) function itv_164()
-   itv_164 = DUMMY 
-end function
+   real(kind(1.d0)) function itv_159()
+      itv_159 = DUMMY 
+   end function itv_159
 
-subroutine set_itv_164(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_165
-!+ad_varc  <LI> (165) DUMMY : Description
-   lablxc(165) = 'DUMMY         '
-   boundl(165) = 1.0d-99
-   boundu(165) = 1.0d99
-end subroutine
+   subroutine set_itv_159(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_159
 
-real(kind(1.d0)) function itv_165()
-   itv_165 = DUMMY 
-end function
+   !---------------------------------
 
-subroutine set_itv_165(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_166
-!+ad_varc  <LI> (166) DUMMY : Description
-   lablxc(166) = 'DUMMY         '
-   boundl(166) = 1.0d-99
-   boundu(166) = 1.0d99
-end subroutine
+   subroutine init_itv_160
+      !+ad_varc  <LI> (160) DUMMY : Description
+      lablxc(160) = 'DUMMY         '
+      boundl(160) = 1.0d-99
+      boundu(160) = 1.0d99
+   end subroutine init_itv_160
 
-real(kind(1.d0)) function itv_166()
-   itv_166 = DUMMY 
-end function
+   real(kind(1.d0)) function itv_160()
+      itv_160 = DUMMY 
+   end function itv_160
 
-subroutine set_itv_166(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_167
-!+ad_varc  <LI> (167) DUMMY : Description
-   lablxc(167) = 'DUMMY         '
-   boundl(167) = 1.0d-99
-   boundu(167) = 1.0d99
-end subroutine
+   subroutine set_itv_160(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_160
 
-real(kind(1.d0)) function itv_167()
-   itv_167 = DUMMY 
-end function
+   !---------------------------------
 
-subroutine set_itv_167(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_168
-!+ad_varc  <LI> (168) DUMMY : Description
-   lablxc(168) = 'DUMMY         '
-   boundl(168) = 1.0d-99
-   boundu(168) = 1.0d99
-end subroutine
+   subroutine init_itv_161
+      !+ad_varc  <LI> (161) DUMMY : Description
+      lablxc(161) = 'DUMMY         '
+      boundl(161) = 1.0d-99
+      boundu(161) = 1.0d99
+   end subroutine init_itv_161
 
-real(kind(1.d0)) function itv_168()
-   itv_168 = DUMMY 
-end function
+   real(kind(1.d0)) function itv_161()
+      itv_161 = DUMMY 
+   end function itv_161
 
-subroutine set_itv_168(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_169
-!+ad_varc  <LI> (169) DUMMY : Description
-   lablxc(169) = 'DUMMY         '
-   boundl(169) = 1.0d-99
-   boundu(169) = 1.0d99
-end subroutine
+   subroutine set_itv_161(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_161
 
-real(kind(1.d0)) function itv_169()
-   itv_169 = DUMMY 
-end function
+   !---------------------------------
 
-subroutine set_itv_169(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
-!---------------------------------
-subroutine init_itv_170
-!+ad_varc  <LI> (170) DUMMY : Description
-   lablxc(170) = 'DUMMY         '
-   boundl(170) = 1.0d-99
-   boundu(170) = 1.0d99
-end subroutine
+   subroutine init_itv_162
+      !+ad_varc  <LI> (162) DUMMY : Description
+      lablxc(162) = 'DUMMY         '
+      boundl(162) = 1.0d-99
+      boundu(162) = 1.0d99
+   end subroutine init_itv_162
 
-real(kind(1.d0)) function itv_170()
-   itv_170 = DUMMY 
-end function
+   real(kind(1.d0)) function itv_162()
+      itv_162 = DUMMY 
+   end function itv_162
 
-subroutine set_itv_170(ratio)
-  real(kind(1.d0))::ratio
-  DUMMY = ratio
-end subroutine
+   subroutine set_itv_162(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_162
 
+   !---------------------------------
 
+   subroutine init_itv_163
+      !+ad_varc  <LI> (163) DUMMY : Description
+      lablxc(163) = 'DUMMY         '
+      boundl(163) = 1.0d-99
+      boundu(163) = 1.0d99
+   end subroutine init_itv_163
 
+   real(kind(1.d0)) function itv_163()
+      itv_163 = DUMMY 
+   end function itv_163
+
+   subroutine set_itv_163(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_163
+
+   !---------------------------------
+
+   subroutine init_itv_164
+      !+ad_varc  <LI> (164) DUMMY : Description
+      lablxc(164) = 'DUMMY         '
+      boundl(164) = 1.0d-99
+      boundu(164) = 1.0d99
+   end subroutine init_itv_164
+
+   real(kind(1.d0)) function itv_164()
+      itv_164 = DUMMY 
+   end function itv_164
+
+   subroutine set_itv_164(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_164
+
+   !---------------------------------
+
+   subroutine init_itv_165
+      !+ad_varc  <LI> (165) DUMMY : Description
+      lablxc(165) = 'DUMMY         '
+      boundl(165) = 1.0d-99
+      boundu(165) = 1.0d99
+   end subroutine init_itv_165
+
+   real(kind(1.d0)) function itv_165()
+      itv_165 = DUMMY 
+   end function itv_165
+
+   subroutine set_itv_165(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine  set_itv_165
+
+   !---------------------------------
+
+   subroutine init_itv_166
+      !+ad_varc  <LI> (166) DUMMY : Description
+      lablxc(166) = 'DUMMY         '
+      boundl(166) = 1.0d-99
+      boundu(166) = 1.0d99
+   end subroutine init_itv_166
+
+   real(kind(1.d0)) function itv_166()
+      itv_166 = DUMMY 
+   end function itv_166
+
+   subroutine set_itv_166(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_166
+
+   !---------------------------------
+
+   subroutine init_itv_167
+      !+ad_varc  <LI> (167) DUMMY : Description
+      lablxc(167) = 'DUMMY         '
+      boundl(167) = 1.0d-99
+      boundu(167) = 1.0d99
+   end subroutine init_itv_167
+
+   real(kind(1.d0)) function itv_167()
+      itv_167 = DUMMY 
+   end function itv_167
+
+   subroutine set_itv_167(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_167
+
+   !---------------------------------
+
+   subroutine init_itv_168
+      !+ad_varc  <LI> (168) DUMMY : Description
+      lablxc(168) = 'DUMMY         '
+      boundl(168) = 1.0d-99
+      boundu(168) = 1.0d99
+   end subroutine init_itv_168
+
+   real(kind(1.d0)) function itv_168()
+      itv_168 = DUMMY 
+   end function itv_168
+
+   subroutine set_itv_168(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_168
+
+   !---------------------------------
+
+   subroutine init_itv_169
+      !+ad_varc  <LI> (169) DUMMY : Description
+      lablxc(169) = 'DUMMY         '
+      boundl(169) = 1.0d-99
+      boundu(169) = 1.0d99
+   end subroutine init_itv_169
+
+   real(kind(1.d0)) function itv_169()
+      itv_169 = DUMMY 
+   end function itv_169
+
+   subroutine set_itv_169(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_169
+
+   !---------------------------------
+
+   subroutine init_itv_170
+      !+ad_varc  <LI> (170) DUMMY : Description
+      lablxc(170) = 'DUMMY         '
+      boundl(170) = 1.0d-99
+      boundu(170) = 1.0d99
+   end subroutine init_itv_170
+
+   real(kind(1.d0)) function itv_170()
+      itv_170 = DUMMY 
+   end function itv_170
+
+   subroutine set_itv_170(ratio)
+      real(kind(1.d0)) :: ratio
+      DUMMY = ratio
+   end subroutine set_itv_170
 
 !+ad_varc  </UL>
 end module define_iteration_variables
