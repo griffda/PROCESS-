@@ -399,11 +399,11 @@ pages:
   stage: pages
   script:
    - pwd
-   - mkdir public
    - cmake3 -H. -Bbuild
    - cmake3 --build build --target html
    - mkdir public
    - cp documentation/html/*.html public/
+   - cp documentation/html/vardes_full.html public/index.html
   artifacts:
     paths:
     - public
