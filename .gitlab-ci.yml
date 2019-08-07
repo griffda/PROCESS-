@@ -17,6 +17,7 @@ stages:
   - jenkins
   - baseline
   - standards
+  - pages
 
 before_script:
   - export LOGNAME=root
@@ -60,7 +61,7 @@ make:
  tags:
   - freia
 
-make_gitlab:
+make_default:
  only:
   - /^issue-.*$/
  stage: build
@@ -82,7 +83,22 @@ make_gitlab:
  tags:
   - freia
 
-build_vardes:
+make_doc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target doc
+ tags:
+  - freia
+
+make_vardes:
 
  only:
   - develop
@@ -101,6 +117,110 @@ build_vardes:
  tags:
   - freia
 
+make_dicts:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target dicts
+ tags:
+  - freia
+
+make_html:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target html
+ tags:
+  - freia
+
+make_userguide:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target userguide
+ tags:
+  - freia
+
+make_developerguide:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target developerguide
+ tags:
+  - freia
+
+make_utilitiesdoc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target utilitiesdoc
+ tags:
+  - freia
+
+make_optsolverdoc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target optsolverdoc
+ tags:
+  - freia
+
+make_tfdoc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target tfdoc
+ tags:
+  - freia
 
 # Testing stage 
 #--------------
@@ -257,7 +377,7 @@ baseline_2018_results:
 #----------------
 
 line_length:
- when: on_success  # Also default setting
+ when: on_success
  only:
   - develop
   - /^issue-.*$/
@@ -267,6 +387,27 @@ line_length:
   - python utilities/line_length_standard.py
  tags:
   - freia
+
+# Pages
+#------
+
+pages:
+  when: on_success
+  only:
+    - develop
+  stage: pages
+  script:
+   - pwd
+   - cmake3 -H. -Bbuild
+   - cmake3 --build build --target html
+   - mkdir public
+   - cp documentation/html/*.html public/
+   - cp documentation/html/vardes_full.html public/index.html
+  artifacts:
+    paths:
+    - public
+  tags:
+    - freia
 
 # Old bits
 #---------

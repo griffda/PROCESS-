@@ -346,6 +346,14 @@ execute_process(
 )
 file(WRITE ${FORT_SOURCE_DIR}/tag.num "  character(len=*), parameter :: tagno = \"" ${TAG_NO} "\"")
 
+# Get git branch name
+execute_process(
+ COMMAND git rev-parse --abbrev-ref HEAD OUTPUT_VARIABLE GIT_BRANCH
+ WORKING_DIRECTORY ${FORT_SOURCE_DIR}
+ OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+file(WRITE ${FORT_SOURCE_DIR}/branch.name "  character(len=*), parameter :: branch_name = \"" ${GIT_BRANCH} "\"")
+
 # Check Git status for untracked changes and put info into executable
 execute_process(
  COMMAND git diff OUTPUT_VARIABLE UNTR_INFO
