@@ -40,7 +40,7 @@ TEST(Costs_1990, acc2261_coolant_He_lsa_1) {
     // Number of primary heat exchangers
     nphx = 3;
 
-    costs_1990_acc2261();
+    c_acc2261();
 
     EXPECT_NEAR(c2261, 49.68, 0.01);
 }
@@ -75,7 +75,7 @@ TEST(Costs_1990, acc2261_coolant_H2O_lsa_1) {
     // Number of primary heat exchangers
     nphx = 3;
 
-    costs_1990_acc2261();
+    c_acc2261();
 
     EXPECT_NEAR(c2261, 53.85, 0.01);
 }
@@ -109,7 +109,7 @@ TEST(Costs_1990, acc2262_fkind_1_lsa_4) {
     // Facility heat removal [MW]
     fachtmw = 64.835;
 
-    costs_1990_acc2262();
+    c_acc2262();
 
     EXPECT_NEAR(c2262, 29.408, 0.01);
 }
@@ -137,7 +137,7 @@ TEST(Costs_1990, acc2263_fkind_1_lsa_4) {
     // Heat removed at cryogenic temperatures [W]
     helpow = 80.980e3;
 
-    costs_1990_acc2263();
+    c_acc2263();
 
     EXPECT_NEAR(c2263, 180.76, 0.01);
 }
@@ -154,7 +154,7 @@ TEST(Costs_1990, acc2271_fkind_1) {
     // cost of fuelling system user input
     ucf1 = 2.23e7;
 
-    costs_1990_acc2271();
+    c_acc2271();
 
     EXPECT_NEAR(c2271, 22.3, 0.01);
 }
@@ -175,7 +175,7 @@ TEST(Costs_1990, acc2272_fkind_1) {
     // average mass of fuel portion of ions [amu]
     afuel = 2.5;
 
-    costs_1990_acc2272();
+    c_acc2272();
 
     EXPECT_NEAR(c2272, 114.707, 0.01);
 }
@@ -189,7 +189,7 @@ TEST(Costs_1990, acc2273_ttrit_low) {
     // Fuel tritium fraction
     ftrit = 0.0001;
 
-    costs_1990_acc2273();
+    c_acc2273();
 
     EXPECT_NEAR(c2273, 0.0, 0.00001);
 }
@@ -210,7 +210,7 @@ TEST(Costs_1990, acc2273_ttrit_high) {
     // Volume of warm shop building [m3]
     wsvol = 132304.1;
 
-    costs_1990_acc2273();
+    c_acc2273();
 
     EXPECT_NEAR(c2273, 74.12, 0.01);
 }
@@ -231,7 +231,7 @@ TEST(Costs_1990, acc2274_fkind_1) {
     // Volume of warm shop building [m3]
     wsvol = 132304.1;
 
-    costs_1990_acc2274();
+    c_acc2274();
 
     EXPECT_NEAR(c2274, 84.10, 0.01);
 }
@@ -245,7 +245,7 @@ TEST(Costs_1990, acc228_fkind_1) {
     // Nth of kind multiplier
     fkind = 1;
 
-    costs_1990_acc228();
+    c_acc228();
 
     EXPECT_NEAR(c228, 150.0, 0.01);
 }
@@ -259,7 +259,7 @@ TEST(Costs_1990, acc228_fkind_0_5) {
     // Nth of kind multiplier
     fkind = 0.5;
 
-    costs_1990_acc228();
+    c_acc228();
 
     EXPECT_NEAR(c228, 75.0, 0.01);
 }
@@ -273,7 +273,7 @@ TEST(Costs_1990, acc229_fkind_1) {
     // Nth of kind multiplier
     fkind = 1;
 
-    costs_1990_acc229();
+    c_acc229();
 
     EXPECT_NEAR(c229, 125.0, 0.01);
 }
@@ -287,7 +287,7 @@ TEST(Costs_1990, acc229_fkind_0_5) {
     // Nth of kind multiplier
     fkind = 0.5;
 
-    costs_1990_acc229();
+    c_acc229();
 
     EXPECT_NEAR(c229, 62.5, 0.01);
 }
@@ -306,7 +306,7 @@ TEST(Costs_1990, acc23_he_coolant) {
     // Reference value 1200 MW
     pgrossmw = 1200.0;
 
-    costs_1990_acc23();
+    c_acc23();
 
     EXPECT_NEAR(c23, 230, 0.01);
 }
@@ -325,7 +325,7 @@ TEST(Costs_1990, acc23_h2o_coolant) {
     // Reference value 1200 MW
     pgrossmw = 1200.0;
 
-    costs_1990_acc23();
+    c_acc23();
 
     EXPECT_NEAR(c23, 245, 0.01);
 }
@@ -340,7 +340,7 @@ TEST(Costs_1990, acc241_lsa_4) {
     // Level of safety assurance
     lsa = 4;
 
-    costs_1990_acc241();
+    c_acc241();
 
     EXPECT_NEAR(c241, 18.4, 0.01);
 }
@@ -362,7 +362,7 @@ TEST(Costs_1990, acc242_lsa_4) {
     // Total baseline power required at all times [MW]
     fcsht = 65.0;
 
-    costs_1990_acc242();
+    c_acc242();
 
     EXPECT_NEAR(c242, 9.06, 0.01);
 }
@@ -381,7 +381,7 @@ TEST(Costs_1990, acc243_lsa_4) {
     // Estimate of total low-voltage power [MW]
     tlvpmw = 403.8;
 
-    costs_1990_acc243();
+    c_acc243();
 
     EXPECT_NEAR(c243, 8.08, 0.01);
 }
@@ -396,7 +396,7 @@ TEST(Costs_1990, acc244_lsa_4) {
     // Safety assurance factor
     lsa = 4;
 
-    costs_1990_acc244();
+    c_acc244();
 
     EXPECT_NEAR(c244, 6.80, 0.01);
 }
@@ -411,7 +411,7 @@ TEST(Costs_1990, acc245_lsa_4) {
     // Safety assurance factor
     lsa = 4;
 
-    costs_1990_acc245();
+    c_acc245();
 
     EXPECT_NEAR(c245, 1.5, 0.01);
 }
@@ -429,7 +429,7 @@ TEST(Costs_1990, acc25_lsa_4) {
     // Miscellaneous plant allowance [$]
     ucmisc = 2.5e7;
 
-    costs_1990_acc25();
+    c_acc25();
 
     EXPECT_NEAR(c25, 25, 0.01);
 }
@@ -444,7 +444,7 @@ TEST(Costs_1990, acc25_lsa_1) {
     lsa = 1;
     ucmisc = 2.5e7;
 
-    costs_1990_acc25();
+    c_acc25();
 
     EXPECT_NEAR(c25, 19.25, 0.01);
 }
@@ -471,7 +471,7 @@ TEST(Costs_1990, acc26_ireactor_0_ref) {
     // Peak power per TF power supply [MW]
     tfcmw = 50.0;
 
-    costs_1990_acc26();
+    c_acc26();
 
     // Reference case is for rejected power = 2300 MW
     EXPECT_NEAR(c26, 87.9, 0.01);
@@ -496,7 +496,7 @@ TEST(Costs_1990, acc26_ireactor_1_ref) {
     // Gross electrical power generated [MW]
     pgrossmw = 700.0;
 
-    costs_1990_acc26();
+    c_acc26();
 
     // Reference case is for rejected power = 2300 MW
     EXPECT_NEAR(c26, 87.9, 0.01);
@@ -518,7 +518,7 @@ TEST(Costs_1990, acc9_indirt_lsa_4) {
     // Owner costs
     cowner = 0.15;
 
-    costs_1990_acc9();
+    c_acc9();
 
     EXPECT_NEAR(cindrt, 10005.0, 0.1);
 }
@@ -542,7 +542,7 @@ TEST(Costs_1990, acc9_ccont_lsa_4) {
     // Contingency factor
     fcontng = 0.195;
 
-    costs_1990_acc9();
+    c_acc9();
 
     EXPECT_NEAR(ccont, 7800.98, 0.1);
 }

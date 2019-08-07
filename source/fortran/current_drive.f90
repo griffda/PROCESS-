@@ -457,7 +457,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine iternb(effnbss,fpion,fshine) bind(C, name="current_drive_iternb")
+  subroutine iternb(effnbss,fpion,fshine) bind(C, name="c_iternb")
 
     !+ad_name  iternb
     !+ad_summ  Routine to calculate ITER Neutral Beam current drive parameters
@@ -624,7 +624,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion) bind(C, name="current_drive_cfnbi")
+  subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion) bind(C, name="c_cfnbi")
 
     !+ad_name  cfnbi
     !+ad_summ  Routine to calculate the fraction of the fast particle energy

@@ -1153,7 +1153,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function t_eped_scaling() bind(C, name="test_t_eped_scaling")
+  function t_eped_scaling() bind(C, name="c_t_eped_scaling")
     !+ad_name  t_eped_scaling
     !+ad_summ  Scaling function for calculation of pedestal temperature
     !+ad_type  Function returning real
@@ -1472,7 +1472,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function plasma_elongation_IPB() &
-     bind (C, name="test_plasma_elongation_IPB")
+     bind (C, name="c_plasma_elongation_IPB")
      !+ad_name  plasma_elongation_IPB
      !+ad_summ  Volume measure of plasma elongation using the IPB definition
      !+ad_type  Subroutine
@@ -1501,7 +1501,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function total_mag_field() &
-     bind (C, name="test_total_mag_field")
+     bind (C, name="c_total_mag_field")
      !+ad_name  total_mag_field
      !+ad_summ  Calculates the total magnetic field
      !+ad_type  Subroutine
@@ -1522,7 +1522,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function beta_poloidal() &
-     bind (C, name="test_beta_poloidal")
+     bind (C, name="c_beta_poloidal")
      !+ad_name  beta_poloidal
      !+ad_summ  Calculates beta poloidal
      !+ad_type  Subroutine
@@ -1543,7 +1543,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function res_diff_time() &
-     bind (C, name="test_res_diff_time")
+     bind (C, name="c_res_diff_time")
      !+ad_name  res_diff_time
      !+ad_summ  Calculates resistive diffusion time
      !+ad_type  Subroutine

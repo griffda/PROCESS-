@@ -15,7 +15,7 @@ This function is defined in `maths_library.f90` as
 
 ```fortran
 real(kind(1.0D0))  function binomial(n,k) result(coefficient) &
-  bind (C, name="maths_lib_binomial")
+  bind (C, name="c_binomial")
   
   ! This outputs a real approximation to the coefficient
   implicit none
@@ -73,7 +73,7 @@ TEST(Maths_library, binomial_1) {
    int n = 1;
    int k = 1;
    double c;
-   c = maths_lib_binomial(&n, &k);
+   c = c_binomial(&n, &k);
    EXPECT_EQ(1.0, c);
 }
 ```
@@ -94,7 +94,7 @@ double c;
 The test is then called using the `name` given in the C `bind` statement from the function declaration in `maths_library.f90`.
 
 ```c++
-c = maths_lib_binomial(&n, &k);
+c = c_binomial(&n, &k);
 ```
 
 The two local variables `n` and `k` are passed by reference so hence the `&` before the name.
@@ -122,21 +122,21 @@ Below is the part of `test_functions.h` that needs to be modified to add the new
 extern "C"
 {
    // Function prototype for accessing Fortran functions 
-   double utilities_process_value(double *, double *);
-   void evaluators_funfom(double *);
-   void availability_calc_u_unplanned_hcd(double *);
-   void current_drive_iternb(double *, double *, double *);
-   void current_drive_cfnbi(double *, double *, double *, double *, double *, double *,double *, double *, double *);
+   double c_process_value_cpp(double *, double *);
+   void c_funfom(double *);
+   void c_calc_u_unplanned_hcd(double *);
+   void c_iternb(double *, double *, double *);
+   void c_cfnbi(double *, double *, double *, double *, double *, double *,double *, double *, double *);
 
    // new entry
-   double maths_lib_binomial(int *, int *);
+   double c_binomial(int *, int *);
 }
 ```
 
 The final line
 
 ```c++
-double maths_lib_binomial(int *, int *);
+double c_binomial(int *, int *);
 ```
 
 Tells the Googletest C++ framework about the binomial function, referring to the `bind` name that was given. It also tells the framework what arguments to expect (to integer pointers) and what value the function returns (`double`). If the subroutine didn't return a value one would declare is as `void <subroutine_name>`.
@@ -183,7 +183,7 @@ The subroutine is declared as
 
 ```fortran
 subroutine calc_u_unplanned_bop(outfile, iprint, u_unplanned_bop) &
-    bind(C, name="availability_calc_u_unplanned_bop")
+    bind(C, name="c_calc_u_unplanned_bop")
 ```
 
 Like the `maths_library.f90` example it requires a C `bind` statement to be added. The subroutine takes three arguments
@@ -259,7 +259,7 @@ TEST(Availability, calc_u_unplanned_bop) {
    extern double t_operation;
    t_operation = 25.0;
 
-   availability_calc_u_unplanned_bop(&a, &b, &result);
+   c_calc_u_unplanned_bop(&a, &b, &result);
    EXPECT_NEAR(result, 0.009, 0.0005);
 }
 ```
@@ -269,7 +269,7 @@ TEST(Availability, calc_u_unplanned_bop) {
 And add an entry in `test_functions.h` as before
 
 ```c++
-void availability_calc_u_unplanned_bop(int *, int *, double *);
+void c_calc_u_unplanned_bop(int *, int *, double *);
 ```
 
 ## Result

@@ -337,7 +337,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine funfom(fc) bind(C, name="evaluators_funfom")
+  subroutine funfom(fc) bind(C, name="c_funfom")
 
     !+ad_name  funfom
     !+ad_summ  Objective function evaluator for VMCON

@@ -37,7 +37,7 @@ TEST(Physics_functions, t_eped_scaling_low) {
     // eped_sf
     eped_sf = 1.0;
 
-    t_eped = test_t_eped_scaling();
+    t_eped = c_t_eped_scaling();
 
     EXPECT_NEAR(t_eped, 1.7134, 0.001);
 }
@@ -71,7 +71,7 @@ TEST(Physics_functions, t_eped_scaling_high) {
     // eped_sf
     eped_sf = 1.0;
 
-    t_eped = test_t_eped_scaling();
+    t_eped = c_t_eped_scaling();
 
     EXPECT_NEAR(t_eped, 5.3955, 0.001);
 }
@@ -92,7 +92,7 @@ TEST(Physics_functions, plasma_elongation_IPB) {
     // Plasma volume [m3]
     vol = 2634.0;
 
-    kappaa_IPB = test_plasma_elongation_IPB();
+    kappaa_IPB = c_plasma_elongation_IPB();
 
     EXPECT_NEAR(kappaa_IPB, 1.682, 0.001);
 }
@@ -110,7 +110,7 @@ TEST(Physics_functions, total_mag_field) {
     // Poloidal magnetic field on-axis [T]
     bp = 0.852;
 
-    btot = test_total_mag_field();
+    btot = c_total_mag_field();
 
     EXPECT_NEAR(btot, 5.347, 0.001);
 }
@@ -131,7 +131,7 @@ TEST(Physics_functions, beta_poloidal) {
     // Poloidal magnetic field on-axis [T]
     bp = 0.852;
 
-    betap = test_beta_poloidal();
+    betap = c_beta_poloidal();
 
     EXPECT_NEAR(betap, 1.209, 0.001);
 }
@@ -152,7 +152,7 @@ TEST(Physics_functions, res_diff_time) {
     // Plasma elongation at 95% flux surface
     kappa95 = 1.650;
 
-    res_time = test_res_diff_time();
+    res_time = c_res_diff_time();
 
     EXPECT_NEAR(res_time, 4784.3, 0.1);
 }
