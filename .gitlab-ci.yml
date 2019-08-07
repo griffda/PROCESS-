@@ -395,7 +395,6 @@ pages:
   when: on_success
   only:
     - develop
-    - /^issue-.*$/
   stage: pages
   script:
    - pwd
