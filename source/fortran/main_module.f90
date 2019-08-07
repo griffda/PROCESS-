@@ -162,6 +162,7 @@ subroutine run_summary
   character :: minmax_sign
   include "com.msg"
   include "tag.num"
+  include "branch.name"
   include "untracked.info"
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -193,6 +194,7 @@ subroutine run_summary
      else
        call ocmmnt(outfile, '  Tag No. : '//tagno)
      end if
+     call ocmmnt(outfile, '   Branch : '//branch_name) 
      call ocmmnt(outfile, '  Git log : '//COMMSG)  !  Last git com message
      call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
@@ -264,6 +266,9 @@ subroutine run_summary
 
   rstring = '"'//tagno//'"'
   call ovarst(mfile,'PROCESS tag number','(tagno)',rstring)
+
+  rstring = '"'//branch_name//'"'
+  call ovarst(mfile,'PROCESS git branch name','(branch_name)',rstring)
 
   rstring = '"'//COMMSG//'"'
   call ovarst(mfile,'PROCESS last commit message','(commsg)',rstring)

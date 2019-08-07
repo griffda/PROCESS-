@@ -17,6 +17,7 @@ stages:
   - jenkins
   - baseline
   - standards
+  - pages
 
 before_script:
   - export LOGNAME=root
@@ -60,7 +61,7 @@ make:
  tags:
   - freia
 
-make_gitlab:
+make_default:
  only:
   - /^issue-.*$/
  stage: build
@@ -376,7 +377,7 @@ baseline_2018_results:
 #----------------
 
 line_length:
- when: on_success  # Also default setting
+ when: on_success
  only:
   - develop
   - /^issue-.*$/
@@ -386,6 +387,28 @@ line_length:
   - python utilities/line_length_standard.py
  tags:
   - freia
+
+# Pages
+#------
+
+pages:
+  when: on_success
+  only:
+    - develop
+    - /^issue-.*$/
+  stage: pages
+  script:
+   - pwd
+   - mkdir public
+   - cmake3 -H. -Bbuild
+   - cmake3 --build build --target html
+   - mkdir public
+   - cp documentation/html/*.html public/
+  artifacts:
+    paths:
+    - public
+  tags:
+    - freia
 
 # Old bits
 #---------
