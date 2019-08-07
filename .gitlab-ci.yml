@@ -82,7 +82,22 @@ make_gitlab:
  tags:
   - freia
 
-build_vardes:
+make_doc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target doc
+ tags:
+  - freia
+
+make_vardes:
 
  only:
   - develop
@@ -101,6 +116,110 @@ build_vardes:
  tags:
   - freia
 
+make_dicts:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target dicts
+ tags:
+  - freia
+
+make_html:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target html
+ tags:
+  - freia
+
+make_userguide:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target userguide
+ tags:
+  - freia
+
+make_developerguide:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target developerguide
+ tags:
+  - freia
+
+make_utilitiesdoc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target utilitiesdoc
+ tags:
+  - freia
+
+make_optsolverdoc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target optsolverdoc
+ tags:
+  - freia
+
+make_tfdoc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target tfdoc
+ tags:
+  - freia
 
 # Testing stage 
 #--------------
