@@ -180,98 +180,97 @@ def plot_simplified_sankey(mfilename='MFILE.DAT'):
     pinjmw = m_file.data['pinjmw'].get_scan(-1)
     pohmmw = m_file.data['pohmmw'].get_scan(-1)
     
-    fig = figure()
-    ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[],frameon=False)
-    sankey = Sankey(ax=ax, unit='MW', format='%1.0f',scale = 1./(powfmw+pinjmw+pohmmw))
+    x_adj,y_adj = 0,0 #Adjustment factors in the x and y direction for second loop
 
-    #PLASMA
-    totalplasma = powfmw+pinjmw+pohmmw
-    
-    PLASMA = [powfmw, pinjmw+pohmmw,-totalplasma  ]
-    sankey.add(flows=PLASMA, orientations=[0, -1, 0],
-               labels=['Fusion Power','Plasma Heating','Plasma'])
+    for _ in range(2):
+        fig = figure()
+        ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[],frameon=False)
+        sankey = Sankey(ax=ax, unit='MW', format='%1.0f',scale = 1./(powfmw+pinjmw+pohmmw))
 
-    #Components
-    emultmw = m_file.data['emultmw'].get_scan(-1)
-    pnucblkt = m_file.data['pnucblkt'].get_scan(-1)
-    pnucdiv = m_file.data['pnucdiv'].get_scan(-1)
-    pnucfw = m_file.data['pnucfw'].get_scan(-1)
-    pnucshld = m_file.data['pnucshld'].get_scan(-1)
-    ptfnuc = m_file.data['ptfnuc'].get_scan(-1)
-    pdivt = m_file.data['pdivt'].get_scan(-1)
-    pradmw = m_file.data['pradmw'].get_scan(-1)
-    praddiv = pradmw * m_file.data['fdiv'].get_scan(-1)
-    pradhcd = pradmw * m_file.data['fhcd'].get_scan(-1)
-    pradfw = pradmw -praddiv -pradhcd
-    
-    totalblktetc = pnucfw+pnucblkt+pnucshld+pradfw-emultmw
-    totaldivetc = pdivt+pnucdiv+praddiv+ptfnuc+pradhcd
-    
-    COMPONENTS = [totalplasma,-totaldivetc, -totalblktetc ]
-    if sqrt(sum(COMPONENTS)**2) > 2:
-        print("components power balance", totalplasma,-totaldivetc-totalblktetc)
-    sankey.add(flows=COMPONENTS, orientations=[0, 1, 0],
-               prior=0, connect=(2, 0),
-               labels=[None,'Non-Electricity Producing Comp.','Blanket/etc.'])
-
-
-    #Blankets etc.
-    #Pumping power has been neglected
-    pthermmw = m_file.data['pthermmw'].get_scan(-1)
-    
-    BLANKETSETC = [totalblktetc, emultmw, -pthermmw]
-    if sqrt(sum(BLANKETSETC)**2) > 2:
-        print("blankets etc. power balance", totalblktetc+emultmw, -pthermmw)
-    sankey.add(flows=BLANKETSETC, orientations=[0, -1, -1],
-               prior=1, connect=(2, 0),
-               labels=[None,'Energy Mult.','Primary Heat'])
-
-
-    pgrossmw = m_file.data['pgrossmw'].get_scan(-1)
-    PRIMARY = [pthermmw, -pgrossmw, -pthermmw+pgrossmw]
-    sankey.add(flows=PRIMARY, orientations=[0, -1, 0],
-               prior=2, connect=(2, 0),
-               labels=[None,'Gross electric','Losses'])
-    
-
-    pnetelmw = m_file.data['pnetelmw'].get_scan(-1)
-    precircmw = pgrossmw-pnetelmw
-    NET = [pgrossmw,-pnetelmw,-precircmw]
-    sankey.add(flows=NET, orientations=[0, 1, 0],
-               prior=3, connect=(1, 0),
-               labels=[None,'Net electric','Recirc. Power'])
-
-    crypmw = m_file.data['crypmw'].get_scan(-1)
-    fachtmw = m_file.data['fachtmw'].get_scan(-1)
-    itart = m_file.data['itart'].get_scan(-1)
-    if itart == 1 :
-        ppumpmw = m_file.data['ppump'].get_scan(-1)/1e6 #for STs only
-    tfacpd = m_file.data['tfacpd'].get_scan(-1)
-    trithtmw = m_file.data['trithtmw'].get_scan(-1)
-    vachtmw = m_file.data['vachtmw'].get_scan(-1)
-    pfwp = m_file.data['pfwp'].get_scan(-1)
-    pcoresystems = crypmw + fachtmw + tfacpd + trithtmw + vachtmw + pfwp
-    if itart == 1 :
-        pcoresystems = pcoresystems + ppumpmw
-    pinjwp = m_file.data['pinjwp'].get_scan(-1)
-    htpmw = m_file.data['htpmw'].get_scan(-1)
-    RECIRC = [precircmw, -pcoresystems-htpmw, -pinjwp]
-    if sum(RECIRC)**2 > 2:
-        print('Recirc. Power Balance', precircmw, -pcoresystems-pinjwp-htpmw)
+        #PLASMA
+        totalplasma = powfmw+pinjmw+pohmmw
         
-    sankey.add(flows=RECIRC, orientations=[0, 1, 0],
-               prior=4, connect=(2, 0),
-               labels=[None,'Core Systems', 'Heating System'])
+        PLASMA = [powfmw, pinjmw+pohmmw,-totalplasma  ]
+        sankey.add(flows=PLASMA, orientations=[0, -1, 0], trunklength=1. + 0.5*x_adj,
+                labels=['Fusion Power','Plasma Heating','Plasma'])
 
-    HCD = [pinjwp,-pinjmw,-pinjwp+pinjmw]
-    sankey.add(flows=HCD, orientations=[0, -1, 0],
-               prior=5, connect=(2, 0),
-               labels=[None,None, 'Losses'],
-               #This is a fudge only working for STEP,
-               #as Python does not have second connections!
-               #Needs a more generic version.
-               pathlengths=0.97,trunklength=0.98)
-    
-    
-    diagrams = sankey.finish()
-    fig.tight_layout()
+        #Components
+        emultmw = m_file.data['emultmw'].get_scan(-1)
+        pnucblkt = m_file.data['pnucblkt'].get_scan(-1)
+        pnucdiv = m_file.data['pnucdiv'].get_scan(-1)
+        pnucfw = m_file.data['pnucfw'].get_scan(-1)
+        pnucshld = m_file.data['pnucshld'].get_scan(-1)
+        ptfnuc = m_file.data['ptfnuc'].get_scan(-1)
+        pdivt = m_file.data['pdivt'].get_scan(-1)
+        pradmw = m_file.data['pradmw'].get_scan(-1)
+        praddiv = pradmw * m_file.data['fdiv'].get_scan(-1)
+        pradhcd = pradmw * m_file.data['fhcd'].get_scan(-1)
+        pradfw = pradmw -praddiv -pradhcd
+        
+        totalblktetc = pnucfw+pnucblkt+pnucshld+pradfw-emultmw
+        totaldivetc = pdivt+pnucdiv+praddiv+ptfnuc+pradhcd
+        
+        COMPONENTS = [totalplasma,-totaldivetc, -totalblktetc ]
+        if sqrt(sum(COMPONENTS)**2) > 2:
+            print("components power balance", totalplasma,-totaldivetc-totalblktetc)
+        sankey.add(flows=COMPONENTS, orientations=[0, 1, 0],
+                prior=0, connect=(2, 0), trunklength=1. + 0.5*x_adj,
+                labels=[None,'Non-Electricity Producing Comp.','Blanket/etc.'])
+
+
+        #Blankets etc.
+        #Pumping power has been neglected
+        pthermmw = m_file.data['pthermmw'].get_scan(-1)
+        
+        BLANKETSETC = [totalblktetc, emultmw, -pthermmw]
+        if sqrt(sum(BLANKETSETC)**2) > 2:
+            print("blankets etc. power balance", totalblktetc+emultmw, -pthermmw)
+        sankey.add(flows=BLANKETSETC, orientations=[0, -1, -1],
+                prior=1, connect=(2, 0),
+                labels=[None,'Energy Mult.','Primary Heat'])
+
+
+        pgrossmw = m_file.data['pgrossmw'].get_scan(-1)
+        PRIMARY = [pthermmw, -pgrossmw, -pthermmw+pgrossmw]
+        sankey.add(flows=PRIMARY, orientations=[0, -1, 0],
+                prior=2, connect=(2, 0),
+                labels=[None,'Gross electric','Losses'])
+        
+
+        pnetelmw = m_file.data['pnetelmw'].get_scan(-1)
+        precircmw = pgrossmw-pnetelmw
+        NET = [pgrossmw,-pnetelmw,-precircmw]
+        sankey.add(flows=NET, orientations=[0, 1, 0],
+                prior=3, connect=(1, 0),
+                labels=[None,'Net electric','Recirc. Power'])
+
+        crypmw = m_file.data['crypmw'].get_scan(-1)
+        fachtmw = m_file.data['fachtmw'].get_scan(-1)
+        itart = m_file.data['itart'].get_scan(-1)
+        if itart == 1 :
+            ppumpmw = m_file.data['ppump'].get_scan(-1)/1e6 #for STs only
+        tfacpd = m_file.data['tfacpd'].get_scan(-1)
+        trithtmw = m_file.data['trithtmw'].get_scan(-1)
+        vachtmw = m_file.data['vachtmw'].get_scan(-1)
+        pfwp = m_file.data['pfwp'].get_scan(-1)
+        pcoresystems = crypmw + fachtmw + tfacpd + trithtmw + vachtmw + pfwp
+        if itart == 1 :
+            pcoresystems = pcoresystems + ppumpmw
+        pinjwp = m_file.data['pinjwp'].get_scan(-1)
+        htpmw = m_file.data['htpmw'].get_scan(-1)
+        RECIRC = [precircmw, -pcoresystems-htpmw, -pinjwp]
+        if sum(RECIRC)**2 > 2:
+            print('Recirc. Power Balance', precircmw, -pcoresystems-pinjwp-htpmw)
+            
+        sankey.add(flows=RECIRC, orientations=[0, 1, 0],
+                prior=4, connect=(2, 0),
+                labels=[None,'Core Systems', 'Heating System'])
+
+        HCD = [pinjwp,-pinjmw,-pinjwp+pinjmw]
+        sankey.add(flows=HCD, orientations=[0, -1, 0],
+                prior=5, connect=(2, 0), pathlengths = [0.5,1.0+y_adj,0.5],
+                labels=[None,None, 'Losses'])
+        
+        diagrams = sankey.finish()
+        fig.tight_layout()
+        x_adj,y_adj = diagrams[0].tips[1] - diagrams[6].tips[1]
