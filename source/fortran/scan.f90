@@ -1027,9 +1027,10 @@ contains
   call ocmmnt(nout,'PROCESS has performed a VMCON (optimisation) run.')
   if (ifail /= 1) then
      !call ocmmnt(nout,'but could not find a feasible set of parameters.')
-     call oheadr(nout,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
+    !  call oheadr(nout,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
+    !  call ovarin(iotty,'VMCON error flag (ifail)','',ifail)
+     call ovarin(nout,'VMCON error flag','(ifail)',ifail)
      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
-     call ovarin(iotty,'VMCON error flag (ifail)','',ifail)
      call oblnkl(iotty)
 
      idiags(1) = ifail ; call report_error(132)
@@ -1070,9 +1071,9 @@ contains
   call ovarin(nout,'Number of constraints (total)','(neqns+nineqns)',neqns+nineqns)
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
   call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
-  if (ifail /= 1) then
-     call ovarin(nout,'VMCON error flag','(ifail)',ifail)
-  end if
+!   if (ifail /= 1) then
+!      call ovarin(nout,'VMCON error flag','(ifail)',ifail)
+!   end if
 
   call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
   call ovarre(nout,'VMCON convergence parameter','(convergence_parameter)',convergence_parameter, 'OP ')
