@@ -271,7 +271,7 @@ test_suite_gitlab:
 baseline_2019_run:
  when: on_success  # Also default setting
  only:
-  # - develop
+  - develop
   - /^issue-.*$/
  stage: testing
  script:
@@ -391,51 +391,51 @@ line_length:
 # Pages
 #------
 
-# pages:
-#   when: on_success
-#   only:
-#     - develop
-#   stage: pages
-#   script:
-#    - pwd
-#    - cmake3 -H. -Bbuild
-#    - cmake3 --build build --target html
-#    - mkdir public
-#    - cp documentation/html/*.html public/
-#    - cp documentation/html/vardes_full.html public/index.html
-#   artifacts:
-#     paths:
-#     - public
-#   tags:
-#     - freia
-
 pages:
-  before_script:
-    - ''
   when: on_success
   only:
     - develop
   stage: pages
-  image: ubuntu
   script:
    - pwd
-   - apt-get update
-   - apt-get install -y python3-dev python3-pip pandoc cmake
-   - pip3 install --upgrade pip
-   - pip3 install mkdocs
-   - pip3 install mkdocs-material
-   - pip3 install pymdown-extensions
    - cmake3 -H. -Bbuild
-   - cmake3 --build build --target vardes
+   - cmake3 --build build --target html
    - mkdir public
-   - pandoc documentation/html/vardes.html -f html -t markdown -o documentation/proc-pages/vardes.md
-   - mkdocs build
-   - mv site public
+   - cp documentation/html/*.html public/
+   - cp documentation/html/vardes_full.html public/index.html
   artifacts:
     paths:
     - public
   tags:
     - freia
+
+# pages:
+#   before_script:
+#     - ''
+#   when: on_success
+#   only:
+#     - develop
+#   stage: pages
+#   image: ubuntu
+#   script:
+#    - pwd
+#    - apt-get update
+#    - apt-get install -y python3-dev python3-pip pandoc cmake
+#    - pip3 install --upgrade pip
+#    - pip3 install mkdocs
+#    - pip3 install mkdocs-material
+#    - pip3 install pymdown-extensions
+#    - cmake3 -H. -Bbuild
+#    - cmake3 --build build --target vardes
+#    - mkdir public
+#    - pandoc documentation/html/vardes.html -f html -t markdown -o documentation/proc-pages/vardes.md
+#    - mkdocs build
+#    - mv site public
+#   artifacts:
+#     paths:
+#     - public
+#   tags:
+#     - freia
 
 # Old bits
 #---------
