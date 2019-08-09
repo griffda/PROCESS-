@@ -395,13 +395,14 @@ module physics_variables
   !+ad_varc         <LI> = 0 original method (possibly based on Peng ST modelling);
   !+ad_varc         <LI> = 1 improved (and traceable) method</UL>
   integer :: igeom = 1
-  !+ad_vars  ignite /0/ : switch for ignition assumption:<UL>
+  !+ad_vars  ignite /0/ : switch for ignition assumption. Obviously, ignite must 
+  !+ad_varc               be zero if current drive is required. If ignite is 1, any 
+  !+ad_varc               auxiliary power is assumed to be used only during plasma 
+  !+ad_varc               start-up, and is excluded from all steady-state power 
+  !+ad_varc               balance calculations.<UL>
   !+ad_varc          <LI> = 0 do not assume plasma ignition;
   !+ad_varc          <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
-  !+ad_varc       Obviously, ignite must be zero if current drive is required.
-  !+ad_varc       If ignite=1, any auxiliary power is assumed to be used only
-  !+ad_varc       during plasma start-up, and is excluded from all steady-state
-  !+ad_varc       power balance calculations.
+  !+ad_varc  
   integer :: ignite = 0
   !+ad_vars  iinvqd /1/ : switch for inverse quadrature in L-mode scaling laws 5 and 9:<UL>
   !+ad_varc          <LI> = 0 inverse quadrature not used;
@@ -2488,10 +2489,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: strtf2 = 0.0D0
 
   ! Issue #522: Quench models
-  !+ad_vars  quench_model /exponential/ : switch for TF coil quench model:<UL>
+  !+ad_vars  quench_model /exponential/ : switch for TF coil quench model,
+  !+ad_varc                    Only applies to REBCO magnet at present.<UL>
   !+ad_varc                  <LI> = 'exponential' exponential quench with constant discharge resistor
   !+ad_varc                  <LI> = 'linear' quench with constant voltage</UL>
-  !+ad_varc                    Only applies to REBCO magnet at present
   character(len=12) :: quench_model = 'exponential'
 
   !+ad_vars  quench_detection_ef /0.0/ : Electric field at which TF quench is detected and discharge begins (V/m)
@@ -3023,20 +3024,16 @@ module heat_transport_variables
   !+ad_varc              <LI> = 0 pre-2014 version;
   !+ad_varc              <LI> = 1 comprehensive 2014 model</UL>
   integer :: ipowerflow = 1
-  !+ad_vars  iprimnloss /0/ : switch for lost neutron power through holes destiny:<UL>
+  !+ad_vars  iprimnloss /0/ : switch for lost neutron power through holes destiny (ipowerflow=0):<UL>
   !+ad_varc              <LI> = 0 does not contribute to energy generation cycle;
   !+ad_varc              <LI> = 1 contributes to energy generation cycle</UL>
-  !+ad_varc              (ipowerflow=0)
   integer :: iprimnloss = 0
 
   ! KEEP
   !+ad_vars  iprimshld /1/ : switch for shield thermal power destiny:<UL>
   !+ad_varc             <LI> = 0 does not contribute to energy generation cycle;
   !+ad_varc             <LI> = 1 contributes to energy generation cycle</UL>
-  !+ad_varc
   integer :: iprimshld = 1
-
-
 
   !+ad_vars  nphx : number of primary heat exchangers
   integer, bind(C) :: nphx = 0
@@ -4402,11 +4399,11 @@ module ife_variables
      public
    
      !+ad_vars  Default IFE builds and material volumes are those for the SOMBRERO device.
-     !+ad_varc  The 2-dimensional arrays have indices (region, material), where<UL>
+     !+ad_varc  The 2-dimensional arrays have indices (region, material), where 'region'
+     !+ad_varc  is the region and maxmat is the 'material'<UL>
      !+ad_varc  <LI>'region' = 1 radially outside chamber
      !+ad_varc  <LI>         = 2 above chamber
      !+ad_varc  <LI>         = 3 below chamber</UL>
-     !+ad_varc  and 'material' is defined as described in maxmat below.<P>
    
      !+ad_vars  maxmat /7/ FIX : total number of materials in IFE device.
      !+ad_varc                   Material numbers are as follows:<UL>
