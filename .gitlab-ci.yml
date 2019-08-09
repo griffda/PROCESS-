@@ -271,7 +271,7 @@ test_suite_gitlab:
 baseline_2019_run:
  when: on_success  # Also default setting
  only:
-  - develop
+  # - develop
   - /^issue-.*$/
  stage: testing
  script:
@@ -412,6 +412,7 @@ line_length:
 pages:
   before_script:
     - ''
+  when: on_success
   only:
     - develop
   stage: pages
