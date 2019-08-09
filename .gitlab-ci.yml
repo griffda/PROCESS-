@@ -412,18 +412,18 @@ line_length:
 pages:
   before_script:
     - ''
-  when: on_success
   only:
     - develop
   stage: pages
-  image: ukaea/ubuntu
+  image: ubuntu
   script:
    - pwd
    - apt-get update
-   - apt-get install -y python-dev python-pip pandoc cmake
-   - pip install mkdocs
-   - pip install mkdocs-material
-   - pip install pymdown-extensions
+   - apt-get install -y python3-dev python3-pip pandoc cmake
+   - pip3 install --upgrade pip
+   - pip3 install mkdocs
+   - pip3 install mkdocs-material
+   - pip3 install pymdown-extensions
    - cmake3 -H. -Bbuild
    - cmake3 --build build --target vardes
    - mkdir public
