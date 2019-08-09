@@ -68,7 +68,9 @@ q=8.0
 boundl(18) = 7.0
 
 ixc = 20            *tcpav
-tcpav = 343.903     *Average temp of TF coil inboard leg conductor (C) (resistive coils)
+tcpav = 313.903     *Average temp of TF coil inboard leg conductor (C) (resistive coils)
+boundl(20) = 303.15
+boundu(20) = 373.15
 
 ixc = 23            *fcoolcp
 fcoolcp = 0.41433   *Coolant fraction of TF coil inboard legs

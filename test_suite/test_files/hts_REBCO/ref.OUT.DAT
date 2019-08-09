@@ -6,13 +6,14 @@
  
    Program : ./process.exe
    Version : 1.0.16   Release Date :: 2019-07-15
-   Tag No. : 1.0.16-48-gc529afd6 code contains untracked changes
-   Git log : Add line length check into CI - currently doesn't fail if lines length
- Date/time : 31 Jul 2019 13:25:34 +01:00(hh:mm) UTC
-      User : skahn
-  Computer : temppc
- Directory : /home/skahn/PROCESS/error_handling/test_suite
-     Input :
+   Tag No. : 1.0.16-99-gd70c72e2
+    Branch : issue-899-error_handling
+   Git log : Merge branch develop into issue-899-error_handling,
+ Date/time :  9 Aug 2019 17:23:58 +01:00(hh:mm) UTC
+      User : morrisj
+  Computer : claptrap.ccfepc.ccfe.ac.uk
+ Directory : /Users/morrisj/Work/process/merge_149/test_suite
+     Input : IN.DAT
  Run title : HTS model using "CroCo" conductor, based on KIT design
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -49,8 +50,8 @@
  Number of constraints (total)                                            (neqns+nineqns)                  21     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 1.799E-06  OP 
- VMCON convergence parameter                                              (convergence_parameter)   3.390E-07  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 1.773E-06  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   3.309E-07  OP 
  Number of VMCON iterations                                               (nviter)                         46  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -122,27 +123,27 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.4933E-02              6.5405E-14                -1.8723E-12
-    2  Global power balance consistency      =  1.9850E-01 MW/m3        4.9212E-12 MW/m3          -2.4792E-11
-    3  Density upper limit                   <  9.1126E+19 /m3          4.9660E+07 /m3             5.4490E-13
-    4  Neutron wall load upper limit         <  1.1928E+00 MW/m2       -2.2610E-11 MW/m2          -1.8955E-11
-    5  Toroidal field 1/R consistency        =  4.8828E+01 T.m         -9.7493E-10 T.m             1.9966E-11
-    6  Radial build consistency              =  9.0085E+00 m           -6.7890E-12 m               7.5362E-13
-    7  Burn time lower limit                 >  7.2000E+03 sec         -4.0408E-03 sec             5.6122E-07
-    8  L-H power threshold limit             >  1.1845E+02 MW          -4.9217E-08 MW              4.1551E-10
-    9  Net electric power lower limit        >  5.0000E+02 MW          -8.0173E-05 MW             -1.6035E-07
-   10  Beta upper limit                      <  5.6067E-02              6.0209E-14                 1.0738E-12
-   11  Injection power upper limit           <  5.0000E+01 MW          -3.0433E-10 MW              6.0865E-12
-   12  TF coil case stress upper limit       <  6.0000E+08 Pa           3.2924E+00 Pa              5.4873E-09
-   13  TF coil conduit stress upper lim      <  6.0000E+08 Pa           4.0404E+00 Pa              6.7339E-09
-   14  I_op / I_critical (TF coil)           <  3.7857E+07 A/m2        -1.3083E-03 A/m2            4.6883E-11
-   15  Dump voltage upper limit              <  1.0000E+01 V            6.4354E+00 V               1.5561E-08
-   16  TF coil temp. margin lower limit      >  1.0000E+01 K           -2.1090E-09 K               2.1090E-10
-   17  CS temperature margin lower limit     >  1.5000E+00 K           -2.5548E-06 K               1.7032E-06
-   18  Dump time set by VV stress            >  2.5114E+01 s           -4.0009E+01 s              -6.7144E-10
-   19  Upper Lim. on Psep * Bt / q A R       <  9.1000E+00 MWT/m        3.7310E-09 MWT/m          -4.1000E-10
-   20  CS Tresca stress limit                <  6.0000E+08 Pa           2.1557E+00 Pa              3.5928E-09
-   21  TFC current/copper area < Max         <  1.0000E+08 A/m2        -2.4472E-03 A/m2            2.4472E-11
+    1  Beta consistency                      =  3.4933E-02              8.7104E-14                -2.4934E-12
+    2  Global power balance consistency      =  1.9850E-01 MW/m3        4.6482E-12 MW/m3          -2.3417E-11
+    3  Density upper limit                   <  9.1126E+19 /m3          5.0233E+07 /m3             5.5134E-13
+    4  Neutron wall load upper limit         <  1.1928E+00 MW/m2       -1.6953E-11 MW/m2          -1.4212E-11
+    5  Toroidal field 1/R consistency        =  4.8828E+01 T.m         -9.3890E-10 T.m             1.9229E-11
+    6  Radial build consistency              =  9.0085E+00 m           -6.7110E-12 m               7.4496E-13
+    7  Burn time lower limit                 >  7.2000E+03 sec         -4.0221E-03 sec             5.5863E-07
+    8  L-H power threshold limit             >  1.1845E+02 MW          -4.7221E-08 MW              3.9865E-10
+    9  Net electric power lower limit        >  5.0000E+02 MW          -7.7724E-05 MW             -1.5545E-07
+   10  Beta upper limit                      <  5.6067E-02              2.1518E-14                 3.8392E-13
+   11  Injection power upper limit           <  5.0000E+01 MW          -3.0571E-10 MW              6.1142E-12
+   12  TF coil case stress upper limit       <  6.0000E+08 Pa          -8.5279E+01 Pa             -1.4213E-07
+   13  TF coil conduit stress upper lim      <  6.0000E+08 Pa          -2.2590E+02 Pa             -3.7650E-07
+   14  I_op / I_critical (TF coil)           <  3.7857E+07 A/m2        -1.2566E-03 A/m2            4.5032E-11
+   15  Dump voltage upper limit              <  1.0000E+01 V            6.4354E+00 V               1.5309E-08
+   16  TF coil temp. margin lower limit      >  1.0000E+01 K           -2.0403E-09 K               2.0403E-10
+   17  CS temperature margin lower limit     >  1.5000E+00 K           -2.4429E-06 K               1.6286E-06
+   18  Dump time set by VV stress            >  2.5114E+01 s           -4.0009E+01 s              -6.7561E-10
+   19  Upper Lim. on Psep * Bt / q A R       <  9.1000E+00 MWT/m        3.5881E-09 MWT/m          -3.9430E-10
+   20  CS Tresca stress limit                <  6.0000E+08 Pa           2.0445E+00 Pa              3.4074E-09
+   21  TFC current/copper area < Max         <  1.0000E+08 A/m2        -2.3614E-03 A/m2            2.3614E-11
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -687,7 +688,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.000E+08     
  Vertical stress (Pa)                                                     (sigvert)                 2.313E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))               2.442E-08     
+ Case radial stress (Pa)                                                  (sigrtf(1))               4.885E-08     
  Case tangential stress (Pa)                                              (sigttf(1))              -3.687E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -2.970E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.839E+08  OP 
@@ -896,7 +897,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -8.146E+06 -8.146E+06 -8.146E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.546E+06 -5.546E+06 -5.546E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.546E+06 -5.546E+06 -5.546E+06  0.000E+00
-   7         0.000E+00  0.000E+00  3.476E-09  3.476E-09  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.116E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.103E-01  OP 

@@ -3,12 +3,13 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.16   "
- Date_of_run_____________________________________________________________ (date)________________________     "31/07/2019"
- Time_of_run_____________________________________________________________ (time)________________________     "13:24"
- User____________________________________________________________________ (username)____________________     "skahn"   
+ Date_of_run_____________________________________________________________ (date)________________________     "09/08/2019"
+ Time_of_run_____________________________________________________________ (time)________________________     "17:25"
+ User____________________________________________________________________ (username)____________________     "morrisj" 
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "demo 1 vacuum model test                                                                           
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.16-48-gc529afd6"                                                                               
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Add line length check into CI - currently doesn't fail if lines length"                            
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.16-99-gd70c72e2"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-899-error_handling"                                                                          
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch develop into issue-899-error_handling,"                                               
  Input_filename__________________________________________________________ (fileprefix)__________________     "                              "
  Number_of_scan_points___________________________________________________ (isweep)______________________              1    
  Scanning_variable_number________________________________________________ (nsweep)______________________              3    
@@ -62,7 +63,7 @@
  ohcth_(range_normalised)________________________________________________ (nitvar012)___________________      2.1409E-01    
  q_______________________________________________________________________ (itvar013)____________________      3.0000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm013)______________________      9.2974E-01    
- q_(range_normalised)____________________________________________________ (nitvar013)___________________      3.3238E-17    
+ q_(range_normalised)____________________________________________________ (nitvar013)___________________      1.4773E-17    
  ftburn__________________________________________________________________ (itvar014)____________________      1.0000E+00    
  ftburn_(final_value/initial_value)______________________________________ (xcm014)______________________      1.0000E+00    
  ftburn_(range_normalised)_______________________________________________ (nitvar014)___________________      1.0000E+00    
@@ -146,8 +147,8 @@
  fniterpump_(range_normalised)___________________________________________ (nitvar040)___________________      7.8215E-01    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -1.3791E-09    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      2.1961E-09    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      5.4941E-11    
- Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________     -1.6974E-09    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      5.4940E-11    
+ Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________     -1.6973E-09    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________      1.0133E-08    
  Toroidal_field_1/R_consistency____normalised_residue____________________ (normres006)__________________      4.0540E-10    
  Radial_build_consistency__________normalised_residue____________________ (normres007)__________________      1.5194E-10    
@@ -158,7 +159,7 @@
  Beta_upper_limit__________________normalised_residue____________________ (normres012)__________________     -1.5561E-09    
  CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres013)__________________      3.8654E-06    
  CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres014)__________________      3.6762E-06    
- Injection_power_upper_limit_______normalised_residue____________________ (normres015)__________________      6.5401E-10    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres015)__________________      6.5402E-10    
  TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres016)__________________      1.6335E-09    
  TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres017)__________________      1.8018E-09    
  I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres018)__________________      1.2265E-09    
@@ -166,7 +167,7 @@
  J_winding_pack/J_protection_limit_normalised_residue____________________ (normres020)__________________      5.5723E-10    
  Tritium_breeding_ratio_lower_lim__normalised_residue____________________ (normres021)__________________     -2.4330E-05    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres022)__________________      2.1099E-08    
- number_of_ITER-like_vacuum_pumps__normalised_residue____________________ (normres023)__________________     -0.0000E+00    
+ number_of_ITER-like_vacuum_pumps__normalised_residue____________________ (normres023)__________________     -1.1102E-16    
  # Final Feasible Point #
  # Estimate of "overnight" capital cost for a first of kind power plant (2014 M$) #
  # Buildings (M$) #
