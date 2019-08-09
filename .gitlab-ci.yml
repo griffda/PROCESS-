@@ -410,6 +410,8 @@ line_length:
 #     - freia
 
 pages:
+  before_script:
+    - ''
   when: on_success
   only:
     - develop
