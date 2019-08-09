@@ -114,12 +114,16 @@ def  get_variable_range(itervars, factor, wdir='.'):
             elif value > DICT_IXC_BOUNDS[varname]['ub']:
                 value = DICT_IXC_BOUNDS[varname]['ub']
 
-            lbs += [max(value/factor, DICT_IXC_BOUNDS[varname]['lb'])]
-            ubs += [min(value*factor, DICT_IXC_BOUNDS[varname]['ub'])]
+            if value > 0 :
+                lbs += [max(value/factor, DICT_IXC_BOUNDS[varname]['lb'])]
+                ubs += [min(value*factor, DICT_IXC_BOUNDS[varname]['ub'])]
+            else :
+                lbs += [min(value/factor, DICT_IXC_BOUNDS[varname]['lb'])]
+                ubs += [max(value*factor, DICT_IXC_BOUNDS[varname]['ub'])]
 
         if lbs[-1] > ubs[-1]:
-            print('Error: Iteration variable {} has BOUNDL={.f} >\
- BOUNDU={.f}\n Update process_dicts or input file!'.format(varname,
+            print('Error: Iteration variable {0} has BOUNDL={1} >\
+ BOUNDU={2}\n Update process_dicts or input file!'.format(varname,
                                                            lbs[-1], ubs[-1]),
                   file=stderr)
 

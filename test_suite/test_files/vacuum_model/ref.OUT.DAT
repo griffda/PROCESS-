@@ -7,13 +7,14 @@
  
    Program : ./process.exe
    Version : 1.0.16   Release Date :: 2019-07-15
-   Tag No. : 1.0.16-52-ga997a230
-   Git log : Merge branch 'issue-ci-tweak' into 'develop',
- Date/time : 29 Jul 2019 15:02:53 +01:00(hh:mm) UTC
+   Tag No. : 1.0.16-99-gd70c72e2
+    Branch : issue-899-error_handling
+   Git log : Merge branch develop into issue-899-error_handling,
+ Date/time :  9 Aug 2019 17:25:22 +01:00(hh:mm) UTC
       User : morrisj
   Computer : claptrap.ccfepc.ccfe.ac.uk
- Directory : /Users/morrisj/Work/process/test_suite_ref_reset/test_suite
-     Input :
+ Directory : /Users/morrisj/Work/process/merge_149/test_suite
+     Input : IN.DAT
  Run title : demo 1 vacuum model test
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -149,12 +150,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    15  Injection power upper limit           <  5.0000E+01 MW          -3.2701E-08 MW              6.5402E-10
    16  TF coil case stress upper limit       <  5.5000E+08 Pa           8.9842E-01 Pa              1.6335E-09
    17  TF coil conduit stress upper lim      <  5.5000E+08 Pa           9.9097E-01 Pa              1.8018E-09
-   18  I_op / I_critical (TF coil)           <  5.5922E+07 A/m2        -3.4294E-02 A/m2            1.2265E-09
+   18  I_op / I_critical (TF coil)           <  5.5922E+07 A/m2        -3.4293E-02 A/m2            1.2265E-09
    19  Dump voltage upper limit              <  1.2650E+01 V            3.4192E-08 V               2.7029E-09
    20  J_winding pack/J_protection limit     <  2.7961E+07 A/m2         0.0000E+00 A/m2            5.5723E-10
    21  Tritium breeding ratio lower lim      >  1.1500E+00              2.7979E-05                -2.4330E-05
    22  Psep / R upper limit                  <  1.7000E+01 MW/m        -3.5869E-07 MW/m            2.1099E-08
-   23  number of ITER-like vacuum pumps      <  1.8000E+01              3.9968E-15                -2.2204E-16
+   23  number of ITER-like vacuum pumps      <  1.8000E+01              1.9984E-15                -1.1102E-16
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -674,7 +675,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
  Plasma lower triangularity                                               (tril)                        0.500  OP 
  Plasma elongation                                                        (kappa.)                      1.781  OP 
- TF coil vertical offset (m)                                              (tfoffset)                   -0.617  OP 
+ TF coil vertical offset (m)                                              (tfoffset)                   -0.616  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.230  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                         9.900  OP 
  Plasma lower X-pt, radial (m)                                            (rxpt)                        7.525  OP 
@@ -809,7 +810,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 5.500E+08     
  Vertical stress (Pa)                                                     (sigvert)                 2.118E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))               2.442E-08     
+ Case radial stress (Pa)                                                  (sigrtf(1))               0.000E+00     
  Case tangential stress (Pa)                                              (sigttf(1))              -3.382E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -3.057E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.421E+08  OP 
@@ -990,7 +991,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -7.679E+06 -7.679E+06 -7.679E+06  0.000E+00
    5         0.000E+00  0.000E+00 -4.975E+06 -4.975E+06 -4.975E+06  0.000E+00
    6         0.000E+00  0.000E+00 -4.975E+06 -4.975E+06 -4.975E+06  0.000E+00
-   7         0.000E+00  0.000E+00 -3.286E-09 -3.286E-09  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00  3.286E-09  3.286E-09  0.000E+00  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.330E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.061E-01  OP 

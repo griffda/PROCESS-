@@ -3,12 +3,13 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.16   "
- Date_of_run_____________________________________________________________ (date)________________________     "29/07/2019"
- Time_of_run_____________________________________________________________ (time)________________________     "15:01"
+ Date_of_run_____________________________________________________________ (date)________________________     "09/08/2019"
+ Time_of_run_____________________________________________________________ (time)________________________     "17:24"
  User____________________________________________________________________ (username)____________________     "morrisj" 
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     ""CFETR small (5.7m) reference file"                                                                
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.16-52-ga997a230"                                                                               
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch 'issue-ci-tweak' into 'develop',"                                                     
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.16-99-gd70c72e2"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-899-error_handling"                                                                          
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch develop into issue-899-error_handling,"                                               
  Input_filename__________________________________________________________ (fileprefix)__________________     "                              "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
@@ -17,8 +18,8 @@
  Number_of_constraints_(total)___________________________________________ (neqns+nineqns)_______________             24    
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________             10    
- Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      7.7628E-10 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      1.3474E-22 OP 
+ Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      7.7627E-10 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      1.3460E-22 OP 
  Number_of_VMCON_iterations______________________________________________ (nviter)______________________             12 OP 
  te______________________________________________________________________ (itvar001)____________________      9.1075E+00    
  te_(final_value/initial_value)__________________________________________ (xcm001)______________________      7.0600E-01    
@@ -145,25 +146,25 @@
  fbetatry_(range_normalised)_____________________________________________ (nitvar041)___________________      7.8324E-01    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -3.3300E-07    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      8.3249E-07    
- Toroidal_field_1/R_consistency____normalised_residue____________________ (normres003)__________________      2.2204E-16    
- TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres004)__________________      1.3545E-14    
- Density_upper_limit_______________normalised_residue____________________ (normres005)__________________      4.4409E-16    
- Radial_build_consistency__________normalised_residue____________________ (normres006)__________________      2.2204E-16    
+ Toroidal_field_1/R_consistency____normalised_residue____________________ (normres003)__________________      6.6613E-16    
+ TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres004)__________________      1.1768E-14    
+ Density_upper_limit_______________normalised_residue____________________ (normres005)__________________      2.2204E-16    
+ Radial_build_consistency__________normalised_residue____________________ (normres006)__________________     -0.0000E+00    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres007)__________________      4.2805E-06    
  Injection_power_upper_limit_______normalised_residue____________________ (normres008)__________________     -3.5618E-06    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres009)__________________      9.1316E-07    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres010)__________________      2.6645E-15    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres011)__________________      1.5543E-15    
- J_winding_pack/J_protection_limit_normalised_residue____________________ (normres012)__________________      2.2204E-15    
- I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres013)__________________      3.5527E-15    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres010)__________________      1.9984E-15    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres011)__________________      6.6613E-16    
+ J_winding_pack/J_protection_limit_normalised_residue____________________ (normres012)__________________      8.8818E-16    
+ I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres013)__________________      2.8866E-15    
  Radiation_fraction_upper_limit____normalised_residue____________________ (normres014)__________________     -2.6855E-06    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres015)__________________      1.7764E-15    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres015)__________________      2.2204E-15    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres016)__________________     -0.0000E+00    
  L-H_power_threshold_limit_________normalised_residue____________________ (normres017)__________________     -4.2807E-06    
- CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres018)__________________     -1.1102E-15    
- CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres019)__________________     -1.6653E-15    
+ CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres018)__________________      2.2204E-16    
+ CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres019)__________________     -1.1102E-15    
  taup/taueff_______________________normalised_residue____________________ (normres020)__________________     -1.2288E-06    
- Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres021)__________________      6.6613E-16    
+ Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres021)__________________      4.4409E-16    
  Beam_ion_density_consistency______normalised_residue____________________ (normres022)__________________     -3.5621E-06    
  Beta_upper_limit__________________normalised_residue____________________ (normres023)__________________     -5.5511E-16    
  Fusion_power_upper_limit__________normalised_residue____________________ (normres024)__________________      9.1274E-07    
@@ -560,7 +561,7 @@
  External_case_mass_per_coil_(kg)________________________________________ (whtcas)______________________      2.9536E+05 OP 
  Allowable_Tresca_stress_limit_(Pa)______________________________________ (alstrtf)_____________________      5.9200E+08    
  Vertical_stress_(Pa)____________________________________________________ (sigvert)_____________________      1.3670E+08 OP 
- Case_radial_stress_(Pa)_________________________________________________ (sigrtf(1))___________________      2.4424E-08    
+ Case_radial_stress_(Pa)_________________________________________________ (sigrtf(1))___________________      0.0000E+00    
  Case_tangential_stress_(Pa)_____________________________________________ (sigttf(1))___________________     -2.3432E+08 OP 
  Conduit_radial_stress_(Pa)______________________________________________ (sigrcon)_____________________     -1.0268E+08 OP 
  Conduit_tangential_stress_(Pa)__________________________________________ (sigtcon)_____________________     -1.7650E+08 OP 

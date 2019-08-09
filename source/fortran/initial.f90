@@ -142,7 +142,7 @@ subroutine devtyp
             istell = 1
 
         case (2)  !  ! ISSUE #508 Remove RFP option
-            call report_error(223)
+            call report_error(228)
         case (3)  !  Inertial Fusion Energy model
             ife = 1
             icase = 'Inertial Fusion model'
@@ -595,7 +595,7 @@ subroutine check
     !  Tight aspect ratio options
     ! ---------------------------
 
-    if (itart == 1) then
+     if (itart == 1) then
 
         icase  = 'Tight aspect ratio tokamak model'
         iblnkith = 0
@@ -607,8 +607,9 @@ subroutine check
         ipfloc(2) = 3
         ipfloc(3) = 3
         if ( itfsup == 1 ) itfsup = 0
-        
-        if (ibss == 1) call report_error(38)
+        if ( itfsup == 2 ) tcpav  = 20.0D0  ! Initialize at low temperatures for cryoaluminium centerpost (20 K)
+
+        if (ibss  == 1) call report_error(38)
         if (snull == 1) call report_error(39)
 
     else

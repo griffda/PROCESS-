@@ -49,7 +49,7 @@ while not found_root:
         if my_file.is_file():
             found_root = True
             if back == "":
-                REPO_ROOT = "."
+                REPO_ROOT = ""
             else:
                 REPO_ROOT = back
         back += "../"

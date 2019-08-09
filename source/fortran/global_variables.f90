@@ -1609,30 +1609,42 @@ module fwbs_variables
   !+ad_vars  armour_fw_bl_mass : Total mass of armour, first wall and blanket (kg)
   real(kind(1.0D0)) :: armour_fw_bl_mass = 0.0D0
 
-  ! CCFE HCPB Blanket Model (with or without TBR calculation)
 
+  ! CCFE HCPB Blanket Model (with or without TBR calculation)
+  ! ----------
   !+ad_vars  <P><B>The following are used only in the CCFE HCPB blanket model
   !+ad_varc  (iblanket=1):</B><P>
 
   !+ad_vars  breeder_f /0.5/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
   real(kind(1.0D0)) :: breeder_f = 0.5D0
+  
   !+ad_vars  breeder_multiplier /0.75/ : combined breeder/multipler fraction of blanket by volume
   real(kind(1.0D0)) :: breeder_multiplier = 0.75D0
+  
   !+ad_vars  vfcblkt /0.05295/ : He coolant fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: vfcblkt = 0.05295D0
+  
   !+ad_vars  vfpblkt /0.1/ : He purge gas fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: vfpblkt = 0.1D0
+
   !+ad_vars  whtblli4sio4 : mass of lithium orthosilicate in blanket (kg)
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: whtblli4sio4 = 0.0D0
+  
   !+ad_vars  whtbltibe12 : mass of titanium beryllide in blanket (kg)
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: whtbltibe12 = 0.0D0
 
-  !  KIT HCPB blanket model
+  !+ad_vars  f_neut_shield : Fraction of nuclear power shielded before the CP magnet (ST)
+  !+ad_varc                  ( neut_absorb = -1 --> a fit on simplified MCNP neutronic
+  !+ad_varc                    calculation is used assuming water cooled (13%) tungesten carbyde )
+  real(kind(1.0D0)) :: f_neut_shield = -1.0D0
+  ! ----------
 
+
+  !  KIT HCPB blanket model
   !+ad_vars  <P><B>The following are used in the KIT HCPB blanket model
   !+ad_varc  (iblanket=2):</B><P>
 
@@ -2439,8 +2451,8 @@ module tfcoil_variables
   real(kind(1.0D0)), dimension(3) :: radtf = 0.0D0
   !+ad_vars  rbmax : radius of maximum TF B-field (m)
   real(kind(1.0D0)) :: rbmax = 0.0D0
-  !+ad_vars  rhotfleg : TF coil leg resistance (ohm)
-  real(kind(1.0D0)) :: rhotfleg = 0.0D0
+  !+ad_vars  tflegres : TF coil leg resistance (ohm)
+  real(kind(1.0D0)) :: tflegres = 0.0D0
   !+ad_vars  ripmax /1.0/ : maximum allowable toroidal field ripple amplitude
   !+ad_varc                 at plasma edge (%)
   real(kind(1.0D0)) :: ripmax = 1.0D0
@@ -2547,8 +2559,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfinsgap = 0.010D0
   !+ad_vars  tflegmw : TF coil outboard leg resistive power (MW)
   real(kind(1.0D0)) :: tflegmw = 0.0D0
-  !+ad_vars  tflegres /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
-  real(kind(1.0D0)) :: tflegres = 2.5D-8
+  !+ad_vars  rhotfleg /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
+  real(kind(1.0D0)) :: rhotfleg = -1.0D0 ! 2.5D-8
   !+ad_vars  tfleng : TF coil circumference (m)
   real(kind(1.0D0)) :: tfleng = 0.0D0
   !+ad_vars  tfno /16.0/ : number of TF coils (default = 50 for stellarators)
@@ -2700,23 +2712,31 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ppump = 0.0D0
   !+ad_vars  prescp : resistive power in the centrepost (W)
   real(kind(1.0D0)) :: prescp = 0.0D0
-  !+ad_vars  ptempalw /200.0/ : maximum peak centrepost temperature (C)
+
+  !+ad_vars  ptempalw /473.15/ : maximum peak centrepost temperature (K)
   !+ad_varc                     (constraint equation 44)
-  real(kind(1.0D0)) :: ptempalw = 200.0D0
+  real(kind(1.0D0)) :: ptempalw = 473.15D0   ! 200 C
+
   !+ad_vars  rcool /0.005/ : average radius of coolant channel (m)
   !+ad_varc                  (iteration variable 69)
   real(kind(1.0D0)) :: rcool = 0.005D0
+
   !+ad_vars  rhocp : TF coil inboard leg resistivity (Ohm-m)
   real(kind(1.0D0)) :: rhocp = 0.0D0
-  !+ad_vars  tcoolin /40.0/ : centrepost coolant inlet temperature (C)
-  real(kind(1.0D0)) :: tcoolin = 40.0D0
-  !+ad_vars  tcpav /100.0/ : average temp of TF coil inboard leg conductor (C)
+
+  !+ad_vars  tcoolin /313.15/ : centrepost coolant inlet temperature (K)
+  real(kind(1.0D0)) :: tcoolin = 313.15D0   ! 40 C
+
+  !+ad_vars  tcpav /373.15/ : average temp of TF coil inboard leg conductor (K)
   !+ad_varc                  (resistive coils) (iteration variable 20)
-  real(kind(1.0D0)) :: tcpav = 100.0D0
-  !+ad_vars  tcpav2 : centrepost average temperature (C) (for consistency)
+  real(kind(1.0D0)) :: tcpav = 373.15D0     ! 100 C
+
+  !+ad_vars  tcpav2 : centrepost average temperature (K) (for consistency)
   real(kind(1.0D0)) :: tcpav2 = 0.0D0
-  !+ad_vars  tcpmax : peak centrepost temperature (C)
+
+  !+ad_vars  tcpmax : peak centrepost temperature (K)
   real(kind(1.0D0)) :: tcpmax = 0.0D0
+  
   !+ad_vars  vcool /20.0/ : max centrepost coolant flow speed at midplane (m/s)
   !+ad_varc                 (iteration variable 70)
   real(kind(1.0D0)) :: vcool = 20.0D0
@@ -3442,10 +3462,19 @@ module build_variables
   real(kind(1.0D0)) :: rsldi = 0.0D0
   !+ad_vars  rsldo : radius to outboard shield (outside point) (m)
   real(kind(1.0D0)) :: rsldo = 0.0D0
+
+  !+ad_vars  r_tf_inleg_in : Inner edge radius of the TF inboard legs (m)
+  real(kind(1.0D0)) :: r_tf_inleg_in = 0.0D0
+
   !+ad_vars  r_tf_inleg_mid : radius of centre of inboard TF leg (m)
   real(kind(1.0D0)) :: r_tf_inleg_mid = 0.0D0
+  
+  !+ad_vars  r_tf_inleg_in : Outer edge radius of the TF inboard legs (m)
+  real(kind(1.0D0)) :: r_tf_inleg_out = 0.0D0
+	
   !+ad_vars  rtot : radius to the centre of the outboard TF coil leg (m)
   real(kind(1.0D0)) :: rtot = 0.0D0
+
   !+ad_vars  scrapli /0.14/ : gap between plasma and first wall, inboard side (m)
   !+ad_varc                   (used if iscrp=1) (iteration variable 73)
   real(kind(1.0D0)) :: scrapli = 0.14D0

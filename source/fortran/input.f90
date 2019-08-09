@@ -1850,7 +1850,7 @@ contains
           write(outfile,*) ' '
           obsolete_var = .true.
        case ('itfsup')
-          call parse_int_variable('itfsup', itfsup, 0, 1, &
+          call parse_int_variable('itfsup', itfsup, 0, 2, &
                'Switch for TF coil type')
        case ('jbus')
           call parse_real_variable('jbus', jbus, 1.0D4, 1.0D8, &
@@ -1884,8 +1884,8 @@ contains
           call parse_real_variable('poisson', poisson, 0.0D0, 1.0D0, &
                'Poissons ratio for TF stress calc.')
        case ('ptempalw')
-          call parse_real_variable('ptempalw', ptempalw, 50.0D0, 300.0D0, &
-               'Maximum peak centrepost temp. (C)')
+          call parse_real_variable('ptempalw', ptempalw, 4.0D0, 573.15D0, &
+               'Maximum peak centrepost temp. (K)')
        case ('rcool')
           call parse_real_variable('rcool', rcool, 1.0D-6, 1.0D0, &
                'Centrepost coolant channel radius')
@@ -1905,11 +1905,11 @@ contains
           call parse_real_variable('strncon_tf', strncon_tf, -0.02D0, 0.02D0, &
                'Strain in TF superconductor material')
        case ('tcoolin')
-          call parse_real_variable('tcoolin', tcoolin, -273.1D0, 100.0D0, &
-               'Centrepost coolant inlet temperature')
+          call parse_real_variable('tcoolin', tcoolin, 4.0D0, 373.15D0, &
+               'Centrepost coolant inlet temperature (K)')
        case ('tcpav')
-          call parse_real_variable('tcpav', tcpav, -200.0D0, 300.0D0, &
-               'Average centrepost coolant temperature')
+          call parse_real_variable('tcpav', tcpav, 4.0D0, 573.15D0, &
+               'Average centrepost coolant temperature (K)')
        case ('tcritsc')
           call parse_real_variable('tcritsc', tcritsc, 1.0D0, 300.0D0, &
                'Critical temperature for superconductor')
@@ -1922,8 +1922,8 @@ contains
        case ('tfinsgap')
           call parse_real_variable('tfinsgap', tfinsgap, 1.0D-10, 1.0D-1, &
                'TF coil WP insertion gap (m)')
-       case ('tflegres')
-          call parse_real_variable('tflegres', tflegres, 1.0D-10, 1.0D-5, &
+       case ('rhotfleg')
+          call parse_real_variable('rhotfleg', rhotfleg, 1.0D-10, 1.0D-5, &
                'TF coil leg resistivity (ohm-m)')
        case ('tfno')
           call parse_real_variable('tfno', tfno, 0.0D0, 100.0D0, &
@@ -2330,11 +2330,11 @@ contains
        case ('li6enrich')
           call parse_real_variable('li6enrich', li6enrich, 7.40D0, 100.0D0, &
                'Li-6 enrichment')
+       
+       ! CCFE hcpb BB module (also includes the CP shielding for ST)
        case ('breeder_f')
           call parse_real_variable('breeder_f', breeder_f, 0.00D0, 1.0D0, &
                'Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)')
-
-
        case ('breeder_multiplier')
           call parse_real_variable('breeder_multiplier', breeder_multiplier, 0.0D0, 1.0D0, &
                'combined breeder/multipler fraction of blanket by volume')
@@ -2344,8 +2344,9 @@ contains
        case ('vfpblkt')
           call parse_real_variable('vfpblkt', vfpblkt, 0.0D0, 1.0D0, &
                'He purge gas fraction of blanket by volume')
-
-
+       case ('f_neut_shield')
+         call parse_real_variable('f_neut_shield', f_neut_shield, 0.0D0, 1.0D0, &
+              'He purge gas fraction of blanket by volume')
 
        case ('iblanket_thickness')
           call parse_int_variable('iblanket_thickness', iblanket_thickness, 1, 3, &
