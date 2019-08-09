@@ -425,7 +425,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   real(kind(1.0D0))  function binomial(n,k) result(coefficient) &
-  bind (C, name="maths_lib_binomial")
+  bind (C, name="c_binomial")
     ! This outputs a real approximation to the coefficient
     ! http://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
     implicit none

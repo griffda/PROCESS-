@@ -7,6 +7,12 @@ can be found on the PROCESS [webpage](http://www.ccfe.ac.uk/powerplants.aspx).
 
 ## Documentation
 
+### HTML
+
+The HTML generated from the source code is hosted via GitLab Pages 
+[here](http://process.gitpages.ccfe.ac.uk/process). The `vardes_full.html` is 
+the index page.
+
 ### User guide
 To read about how the code works and the modules in it see the
 [user guide](http://www.ccfe.ac.uk/assets/Documents/Other/process.pdf)

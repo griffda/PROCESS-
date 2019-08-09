@@ -2343,7 +2343,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2261() bind(C, name="costs_1990_acc2261")
+  subroutine acc2261() bind(C, name="c_acc2261")
     !+ad_name  acc2261
     !+ad_summ  Account 2261 : Reactor cooling system
     !+ad_type  Subroutine
@@ -2390,7 +2390,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2262() bind(C, name="costs_1990_acc2262")
+  subroutine acc2262() bind(C, name="c_acc2262")
     !+ad_name  acc2262
     !+ad_summ  Account 2262 : Auxiliary component cooling
     !+ad_type  Subroutine
@@ -2436,7 +2436,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2263() bind(C, name="costs_1990_acc2263")
+  subroutine acc2263() bind(C, name="c_acc2263")
     !+ad_name  acc2263
     !+ad_summ  Account 2263 : Cryogenic system
     !+ad_type  Subroutine
@@ -2503,7 +2503,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2271() bind(C, name="costs_1990_acc2271")
+  subroutine acc2271() bind(C, name="c_acc2271")
     !+ad_name  acc2271
     !+ad_summ  Account 2271 : Fuelling system
     !+ad_type  Subroutine
@@ -2533,7 +2533,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2272() bind(C, name="costs_1990_acc2272")
+  subroutine acc2272() bind(C, name="c_acc2272")
     !+ad_name  acc2272
     !+ad_summ  Account 2272 : Fuel processing and purification
     !+ad_type  Subroutine
@@ -2576,7 +2576,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2273() bind(C, name="costs_1990_acc2273")
+  subroutine acc2273() bind(C, name="c_acc2273")
     !+ad_name  acc2273
     !+ad_summ  Account 2273 : Atmospheric recovery systems
     !+ad_type  Subroutine
@@ -2615,7 +2615,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc2274() bind(C, name="costs_1990_acc2274")
+  subroutine acc2274() bind(C, name="c_acc2274")
     !+ad_name  acc2274
     !+ad_summ  Account 2274 : Nuclear building ventilation
     !+ad_type  Subroutine
@@ -2641,7 +2641,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc228() bind(C, name="costs_1990_acc228")
+  subroutine acc228() bind(C, name="c_acc228")
     !+ad_name  acc228
     !+ad_summ  Account 228 : Instrumentation and control
     !+ad_type  Subroutine
@@ -2671,7 +2671,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc229() bind(C, name="costs_1990_acc229")
+  subroutine acc229() bind(C, name="c_acc229")
     !+ad_name  acc229
     !+ad_summ  Account 229 : Maintenance equipment
     !+ad_type  Subroutine
@@ -2699,7 +2699,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc23() bind(C, name="costs_1990_acc23")
+  subroutine acc23() bind(C, name="c_acc23")
     !+ad_name  acc23
     !+ad_summ  Account 23 : Turbine plant equipment
     !+ad_type  Subroutine
@@ -2763,7 +2763,7 @@ contains
  
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc241() bind(C, name="costs_1990_acc241")
+  subroutine acc241() bind(C, name="c_acc241")
     !+ad_name  acc241
     !+ad_summ  Account 241 : Electric plant equipment - switchyard
     !+ad_type  Subroutine
@@ -2798,7 +2798,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc242() bind(C, name="costs_1990_acc242")
+  subroutine acc242() bind(C, name="c_acc242")
     !+ad_name  acc242
     !+ad_summ  Account 242 : Electric plant equipment - Transformers
     !+ad_type  Subroutine
@@ -2837,7 +2837,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc243() bind(C, name="costs_1990_acc243")
+  subroutine acc243() bind(C, name="c_acc243")
     !+ad_name  acc243
     !+ad_summ  Account 243 : Electric plant equipment - Low voltage
     !+ad_type  Subroutine
@@ -2873,7 +2873,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc244() bind(C, name="costs_1990_acc244")
+  subroutine acc244() bind(C, name="c_acc244")
     !+ad_name  acc244
     !+ad_summ  Account 244 : Electric plant equipment - Diesel generators
     !+ad_type  Subroutine
@@ -2908,7 +2908,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc245() bind(C, name="costs_1990_acc245")
+  subroutine acc245() bind(C, name="c_acc245")
     !+ad_name  acc245
     !+ad_summ  Account 245 : Electric plant equipment - Aux facility power
     !+ad_type  Subroutine
@@ -2943,7 +2943,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc25() bind(C, name="costs_1990_acc25")
+  subroutine acc25() bind(C, name="c_acc25")
     !+ad_name  acc25
     !+ad_summ  Account 25 : Miscellaneous plant equipment
     !+ad_type  Subroutine
@@ -2984,7 +2984,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc26() bind(C, name="costs_1990_acc26")
+  subroutine acc26() bind(C, name="c_acc26")
     !+ad_name  acc26
     !+ad_summ  Account 26 : Heat rejection system
     !+ad_type  Subroutine
@@ -3036,7 +3036,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc9() bind(C, name="costs_1990_acc9")
+  subroutine acc9() bind(C, name="c_acc9")
     !+ad_name  acc9
     !+ad_summ  Account 9 : Indirect cost and contingency allowances
     !+ad_type  Subroutine

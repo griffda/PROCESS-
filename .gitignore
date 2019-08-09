@@ -18,6 +18,9 @@
 /test_suite/test_area/
 /build/*
 /bin/*
+site/*
+*.name
+.DS_store
 *__pycache__
 *.pyc
 *.dvi
