@@ -11,8 +11,8 @@ nav:
     - Physics Models:
         - Plasma: physics-models/plasma.md
     - Engineering Models:
-        - TF Coil : end-models/tf-coil.md
-    # - About: about.md
+        - TF Coil : eng-models/tf-coil.md
+    - About: about.md
     - Variable Descriptions: vardes.md
 
 repo_url: https://git.ccfe.ac.uk/process/process.git
