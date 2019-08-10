@@ -408,6 +408,7 @@ pages:
    - cmake -H. -Bbuild
    - cmake --build build --target vardes
    - pandoc documentation/html/vardes.html -f html -t markdown -o documentation/proc-pages/vardes.md
+   - python documentation/proc-pages/scripts/sort_vardes.py documentation/proc-pages/vardes.md
    - mkdocs build
    - ls site
    - mv site public
