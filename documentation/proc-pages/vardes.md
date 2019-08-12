@@ -1,8 +1,8 @@
-PROCESS Variable Descriptor File : dated 20190808
+# PROCESS Variable Descriptions 2019.08.10
+
 -------------------------------------------------
 
-------------------------------------------------------------------------
-
+## Introduction
 Variables labelled with FIX are initialised with the given default value
 (shown between / / characters), but currently are not available to be
 changed in the input file.
@@ -15,8 +15,7 @@ so need not be initialised.
 
 ------------------------------------------------------------------------
 
-### [global\_variables](global_variables.html)
-
+### global variables
 -   icase : power plant type
 -   runtitle /Run Title/ : short descriptive title for the run
 -   verbose /0/ : switch for turning on/off diagnostic messages:
@@ -25,8 +24,7 @@ so need not be initialised.
 -   run\_tests /0/ : Turns on built-in tests if set to 1
 -   maxcal /200/ : maximum number of VMCON iterations
 
-### [constants](constants.html)
-
+### constants
 -   degrad FIX : degrees to radians, = pi/180
 -   echarge FIX : electron charge (C)
 -   mproton FIX : proton mass (kg)
@@ -36,8 +34,7 @@ so need not be initialised.
 -   umass FIX : unified atomic mass unit (kg)
 -   epsilon0 FIX : permittivity of free space (Farad/m)
 
-### [physics\_variables](physics_variables.html)
-
+### physics variables
 -   ipnlaws /48/ FIX : number of energy confinement time scaling laws
 -   abeam : beam ion mass (amu)
 -   afuel : average mass of fuel portion of ions (amu)
@@ -442,8 +439,7 @@ so need not be initialised.
 -   zeff : plasma effective charge
 -   zeffai : mass weighted plasma effective charge
 
-### [plasmod\_variables](plasmod_variables.html)
-
+### plasmod variables
 -   plasmod\_tol /1.0d-10/ : tolerance to be reached at each time step
     (%)
 -   plasmod\_dtmin /0.05d0/ : min time step
@@ -537,8 +533,7 @@ so need not be initialised.
 -   num :: Derived type containing all numerics information for PLASMOD
 -   i\_flag :: Error flag for PLASMOD
 
-### [current\_drive\_variables](current_drive_variables.html)
-
+### current drive variables
 -   beamwd /0.58/ : width of neutral beam duct where it passes between
     the TF coils (m) (T Inoue et al, Design of neutral beam system for
     ITER-FEAT, [Fusion Engineering and Design, Volumes 56-57, October
@@ -611,8 +606,7 @@ so need not be initialised.
 -   tbeamin /3.0/ : permitted neutral beam e-decay lengths to plasma
     centre
 
-### [divertor\_kallenbach\_variables](divertor_kallenbach_variables.html)
-
+### divertor kallenbach variables
 -   kallenbach\_switch /0/ : Switch to turn on the 1D Kallenbach
     divertor model (1=on, 0=off)
 -   kallenbach\_tests /0/ : Switch to run tests of 1D Kallenbach
@@ -679,8 +673,7 @@ so need not be initialised.
     Kallenbach divertor model
 -   mach0 : Mach number at target (must be just less than 1)
 
-### [divertor\_variables](divertor_variables.html)
-
+### divertor variables
 -   adas : area divertor / area main plasma (along separatrix)
 -   anginc /0.262/ : angle of incidence of field line on plate (rad)
 -   betai /1.0/ : poloidal plane angle between divertor plate and leg,
@@ -735,8 +728,7 @@ so need not be initialised.
 -   xpertin /2.0/ : perpendicular heat transport coefficient (m2/s)
 -   zeffdiv /1.0/ : Zeff in the divertor region (if divdum /= 0)
 
-### [fwbs\_variables](fwbs_variables.html)
-
+### fwbs variables
 -   bktlife : blanket lifetime (years)
 -   coolmass : mass of water coolant (in shield, blanket, first wall,
     divertor) (kg)
@@ -800,6 +792,10 @@ so need not be initialised.
     (iblanket = 1 or 3 (CCFE HCPB))
 -   whtbltibe12 : mass of titanium beryllide in blanket (kg) (iblanket =
     1 or 3 (CCFE HCPB))
+-   f\_neut\_shield : Fraction of nuclear power shielded before the CP
+    magnet (ST) ( neut\_absorb = -1 \--\> a fit on simplified MCNP
+    neutronic calculation is used assuming water cooled (13%) tungesten
+    carbyde )
 -   **The following are used in the KIT HCPB blanket model
     (iblanket=2):**
 
@@ -980,8 +976,7 @@ so need not be initialised.
     pumps
 -   etahtp /0.95/ : electrical efficiency of primary coolant pumps
 
-### [primary\_pumping\_variables](primary_pumping_variables.html)
-
+### primary pumping variables
 -   gamma\_he /1.667/ FIX : ratio of specific heats for helium
     (primary\_pumping=3)
 -   cp\_he /5195/ FIX: specific heat capacity at constant pressure:
@@ -997,8 +992,7 @@ so need not be initialised.
 -   htpmw\_fw\_blkt : mechanical pumping power for FW and blanket
     including heat exchanger and pipes (primary\_pum
 
-### [pfcoil\_variables](pfcoil_variables.html)
-
+### pfcoil variables
 -   ngrpmx /8/ FIX : maximum number of groups of PF coils
 -   nclsmx /2/ FIX : maximum number of PF coils in a given group
 -   nptsmx /32/ FIX : maximum number of points across the midplane of
@@ -1150,8 +1144,7 @@ so need not be initialised.
 -   bmaxcs\_lim : Central solenoid max field limit \[T\]
 -   fbmaxcs : F-value for CS mmax field (cons. 79, itvar 149)
 
-### [tfcoil\_variables](tfcoil_variables.html)
-
+### tfcoil variables
 -   acasetf : external case area per coil (inboard leg) (m2)
 -   acasetfo : external case area per coil (outboard leg) (m2)
 -   acndttf : area of the cable conduit (m2)
@@ -1254,7 +1247,7 @@ so need not be initialised.
     constant over entire coil)
 -   radtf(3) : work array used in stress calculation (m)
 -   rbmax : radius of maximum TF B-field (m)
--   rhotfleg : TF coil leg resistance (ohm)
+-   tflegres : TF coil leg resistance (ohm)
 -   ripmax /1.0/ : maximum allowable toroidal field ripple amplitude at
     plasma edge (%)
 -   ripple : peak/average toroidal field ripple at plasma edge (%)
@@ -1314,7 +1307,7 @@ so need not be initialised.
 -   tfind : TF coil inductance (H)
 -   tfinsgap /0.010/ : TF coil WP insertion gap (m)
 -   tflegmw : TF coil outboard leg resistive power (MW)
--   tflegres /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
+-   rhotfleg /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
 -   tfleng : TF coil circumference (m)
 -   tfno /16.0/ : number of TF coils (default = 50 for stellarators)
     number of TF coils outer legs for ST
@@ -1399,24 +1392,23 @@ so need not be initialised.
 -   ncool : number of centrepost coolant tubes
 -   ppump : centrepost coolant pump power (W)
 -   prescp : resistive power in the centrepost (W)
--   ptempalw /200.0/ : maximum peak centrepost temperature (C)
+-   ptempalw /473.15/ : maximum peak centrepost temperature (K)
     (constraint equation 44)
 -   rcool /0.005/ : average radius of coolant channel (m) (iteration
     variable 69)
 -   rhocp : TF coil inboard leg resistivity (Ohm-m)
--   tcoolin /40.0/ : centrepost coolant inlet temperature (C)
--   tcpav /100.0/ : average temp of TF coil inboard leg conductor (C)
+-   tcoolin /313.15/ : centrepost coolant inlet temperature (K)
+-   tcpav /373.15/ : average temp of TF coil inboard leg conductor (K)
     (resistive coils) (iteration variable 20)
--   tcpav2 : centrepost average temperature (C) (for consistency)
--   tcpmax : peak centrepost temperature (C)
+-   tcpav2 : centrepost average temperature (K) (for consistency)
+-   tcpmax : peak centrepost temperature (K)
 -   vcool /20.0/ : max centrepost coolant flow speed at midplane (m/s)
     (iteration variable 70)
 -   volcp : total volume of TF coil inboard legs (m3)
 -   whtcp : mass of TF coil inboard legs (kg)
 -   whttflgs : mass of the TF coil legs (kg)
 
-### [structure\_variables](structure_variables.html)
-
+### structure variables
 -   aintmass : intercoil structure mass (kg)
 -   clgsmass : gravity support structure for TF coil, PF coil and
     intercoil support systems (kg)
@@ -1424,8 +1416,7 @@ so need not be initialised.
 -   fncmass : PF coil outer support fence mass (kg)
 -   gsmass : reactor core gravity support mass (kg)
 
-### [vacuum\_variables](vacuum_variables.html)
-
+### vacuum variables
 -   vacuum\_model /old/ : switch for vacuum pumping model:
     -   = \'old\' for old detailed ETR model;
     -   = \'simple\' for simple steady-state model with comparison to
@@ -1472,8 +1463,7 @@ so need not be initialised.
 -   outgasfactor /0.0235/ : outgassing prefactor kw: outgassing rate at
     1 s per unit area (Pa m s-1)
 
-### [pf\_power\_variables](pf_power_variables.html)
-
+### pf power variables
 -   acptmax : average of currents in PF circuits (kA)
 -   ensxpfm : maximum stored energy in the PF circuits (MJ)
 -   iscenr /2/ : Switch for PF coil energy storage option:
@@ -1493,8 +1483,7 @@ so need not be initialised.
     of stored energy in poloidal field (MW)
 -   poloidalpower : Poloidal power usage at time t (MW)
 
-### [heat\_transport\_variables](heat_transport_variables.html)
-
+### heat transport variables
 -   baseel /5.0e6/ : base plant electric load (W)
 -   crypmw : cryogenic plant power (MW)
 -   etatf /0.9/ : AC to resistive power conversion for TF coils
@@ -1561,8 +1550,7 @@ so need not be initialised.
     3,4)
 -   vachtmw /0.5/ : vacuum pump power (MW)
 
-### [times\_variables](times_variables.html)
-
+### times variables
 -   pulsetimings /0.0/ : switch for pulse timings (if lpulse=1):
     -   = 0, tohs = Ip(MA)/0.1 tramp, tqnch = input;
     -   = 1, tohs = iteration var or input. tramp/tqnch max of input or
@@ -1586,8 +1574,7 @@ so need not be initialised.
 -   tqnch /15.0/ : shut down time for PF coils (s); if pulsed, = tohs
 -   tramp /15.0/ : initial PF coil charge time (s); if pulsed, = tohs
 
-### [buildings\_variables](buildings_variables.html)
-
+### buildings variables
 -   admv /1.0e5/ : administration building volume (m3)
 -   admvol : volume of administration buildings (m3)
 -   clh1 /2.5/ : vertical clearance from TF coil to cryostat (m)
@@ -1635,8 +1622,7 @@ so need not be initialised.
 -   wsvfac /1.9/ : warm shop building volume multiplication factor
 -   wsvol : volume of warm shop building (m3)
 
-### [build\_variables](build_variables.html)
-
+### build variables
 -   aplasmin /0.25/ : minimum minor radius (m)
 -   blarea : blanket total surface area (m2)
 -   blareaib : inboard blanket surface area (m2)
@@ -1709,7 +1695,9 @@ so need not be initialised.
     equation 29)
 -   rsldi : radius to inboard shield (inside point) (m)
 -   rsldo : radius to outboard shield (outside point) (m)
+-   r\_tf\_inleg\_in : Inner edge radius of the TF inboard legs (m)
 -   r\_tf\_inleg\_mid : radius of centre of inboard TF leg (m)
+-   r\_tf\_inleg\_in : Outer edge radius of the TF inboard legs (m)
 -   rtot : radius to the centre of the outboard TF coil leg (m)
 -   scrapli /0.14/ : gap between plasma and first wall, inboard side (m)
     (used if iscrp=1) (iteration variable 73)
@@ -1752,8 +1740,7 @@ so need not be initialised.
 -   plsepo /1.5/ : poloidal length, x-point to outboard strike point (m)
 -   rspo : outboard strike point radius (m)
 
-### [cost\_variables](cost_variables.html)
-
+### cost variables
 -   abktflnc /5.0/ : allowable first wall/blanket neutron fluence
     (MW-yr/m2) (blktmodel=0)
 -   adivflnc /7.0/ : allowable divertor heat fluence (MW-yr/m2)
@@ -1997,8 +1984,7 @@ so need not be initialised.
 -   ucwst(4) /0.0,3.94,5.91,7.88/ : cost of waste disposal
     (M\$/y/1200MW)
 
-### [constraint\_variables](constraint_variables.html)
-
+### constraint variables
 -   auxmin /0.1/ : minimum auxiliary power (MW) (constraint equation 40)
 -   betpmx /0.19/ : maximum poloidal beta (constraint equation 48)
 -   bigqmin /10.0/ : minimum fusion gain Q (constraint equation 28)
@@ -2158,8 +2144,7 @@ so need not be initialised.
 -   fcqt /1.0/ : f-value: TF coil quench temparature remains below
     tmax\_croco (constraint equation 74, iteration variable 141)
 
-### [stellarator\_variables](stellarator_variables.html)
-
+### stellarator variables
 -   istell /0/ : switch for stellarator option (set via `device.dat`):
     -   = 0 use tokamak model;
     -   = 1 use stellarator model
@@ -2193,8 +2178,7 @@ so need not be initialised.
 -   vportpmax : maximum available poloidal extent for vertical ports (m)
 -   vporttmax : maximum available toroidal extent for vertical ports (m)
 
-### [ife\_variables](ife_variables.html)
-
+### ife variables
 -   Default IFE builds and material volumes are those for the SOMBRERO
     device. The 2-dimensional arrays have indices (region, material),
     where \'region\' is the region and maxmat is the \'material\'
@@ -2344,8 +2328,7 @@ so need not be initialised.
 -   zu6 : IFE vertical build above centre (m)
 -   zu7 : IFE vertical build above centre (m)
 
-### [pulse\_variables](pulse_variables.html)
-
+### pulse variables
 -   bctmp /320.0/ : first wall bulk coolant temperature (C)
 -   bfw : outer radius of each first wall structural tube (m) (0.5 \*
     average of fwith and fwoth)
@@ -2363,8 +2346,7 @@ so need not be initialised.
     -   = 0 continuous operation;
     -   = 1 pulsed operation
 
-### [startup\_variables](startup_variables.html)
-
+### startup variables
 -   ftaue : factor in energy confinement time formula
 -   gtaue : offset term in energy confinement time scaling
 -   nign : electron density at ignition (start-up) (/m3)
@@ -2374,8 +2356,7 @@ so need not be initialised.
 -   rtaue : exponent for power term in energy confinement time formula
 -   tign : electron temperature at ignition (start-up) (keV)
 
-### [fispact\_variables](fispact_variables.html)
-
+### fispact variables
 -   Fispact arrays with 3 elements contain the results at the following
     times: (1) - at end of component life (2) - after 3 months cooling
     time (3) - 100 years after end of plant life
@@ -2401,8 +2382,7 @@ so need not be initialised.
 -   fwomzp : outboard first wall mean zone power density/neutron
 -   fwtemp : outboard first wall temperature after a LOCA (K)
 
-### [rebco\_variables](rebco_variables.html)
-
+### rebco variables
 -   rebco\_thickness /1.0e-6/ : thickness of REBCO layer in tape (m)
     (iteration variable 138)
 -   copper\_thick /100e-6/ : thickness of copper layer in tape (m)
@@ -2425,10 +2405,8 @@ so need not be initialised.
 -   f\_copperA\_m2 /1/ : f-value for constraint 75: TF coil current /
     copper area \< copperA\_m2\_max
 
-### [resistive\_material](resistive_material.html)
-
-### [reinke\_variables](reinke_variables.html)
-
+### resistive material
+### reinke variables
 -   impvardiv /9/ : index of impurity to be iterated for Reinke divertor
     detachment criterion
 -   lhat /4.33/ : connection length factor L\|\| = lhat qstar R for
@@ -2443,8 +2421,7 @@ so need not be initialised.
 -   = 0 H-mode;
 -   = 1 I-mode;
 
-### [numerics](numerics.html)
-
+### numerics
 -   ipnvars FIX : total number of variables available for iteration
 -   ipeqns FIX : number of constraint equations available
 -   ipnfoms FIX : number of available figures of merit
@@ -2773,12 +2750,9 @@ so need not be initialised.
 -   boundu(ipnvars) /../ : upper bounds used on ixc variables during
     VMCON optimisation runs
 
-### [eqsolv](eqsolv.html)
-
-### [optimiz](optimiz.html)
-
-### [impurity\_radiation\_module](impurity_radiation_module.html)
-
+### eqsolv
+### optimiz
+### impurity radiation module
 (It is recommended to turn on constraint eqn.17 with iteration variable
 28: fradpwr.)
 
@@ -2812,28 +2786,17 @@ so need not be initialised.
 -   impvar : impurity to be iterated (deprecated) variable number 102 is
     turned on
 
-### [initialise\_imprad](initialise_imprad.html)
-
-### [init\_imp\_element](init_imp_element.html)
-
-### [import\_impdata](import_impdata.html)
-
-### [z2index](z2index.html)
-
-### [element2index](element2index.html)
-
-### [impradprofile](impradprofile.html)
-
-### [pbremden](pbremden.html)
-
-### [pimpden](pimpden.html)
-
-### [fradcore](fradcore.html)
-
-### [Zav\_of\_te](Zav_of_te.html)
-
-### [scan\_module](scan_module.html)
-
+### initialise imprad
+### init imp element
+### import impdata
+### z2index
+### element2index
+### impradprofile
+### pbremden
+### pimpden
+### fradcore
+### Zav of te
+### scan module
 -   ipnscns /1000/ FIX : maximum number of scan points
 -   ipnscnv /45/ FIX : number of available scan variables
 -   scan\_dim /1/ : 1-D or 2-D scan switch (1=1D, 2=2D)
@@ -2897,12 +2860,8 @@ so need not be initialised.
 -   sweep(ipnscns) /../: actual values to use in scan
 -   sweep\_2(ipnscns) /../: actual values to use in 2D scan
 
-### [scan](scan.html)
-
-### [scan\_1d](scan_1d.html)
-
-### [scan\_2d](scan_2d.html)
-
-### [scan\_select](scan_select.html)
-
-### [doopt](doopt.html)
+### scan
+### scan 1d
+### scan 2d
+### scan select
+### doopt

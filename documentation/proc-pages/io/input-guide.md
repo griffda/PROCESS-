@@ -9,7 +9,7 @@ If the code encounters a problem reading the input file, it will stop immediatel
 with an error message. The last line of the output file `OUT.DAT` may give an 
 indication of where in the input file the problem lies.
 
-## File naming convention
+## File Naming Convention
 
 The default PROCESS input file name is `IN.DAT`. The user can provide a named 
 input file, that will produce named output files, provided the last 6 characters 
@@ -150,6 +150,45 @@ one can add a `*` to the beginning of the line, as below:
 !!! Note "Variable Descriptions"
     A full list of possible inputs is given in the PROCESS `html` documentation 
     file `vardes.html` and on the variable description page [here](vardes.md).
+
+## Scan
+
+One of a number of variables can be scanned during the course of a PROCESS
+run. This option provides a method of determining the sensitivity of the
+results to different input assumptions. The user specifies which variable is
+to be scanned with
+
+```
+nsweep = 1 
+isweep = 4
+sweep = 2.8, 2.9, 3.0, 3.1
+```
+
+where `nsweep` is the scan variable chosen (see [variable descriptions](vasrdes.md)),
+`isweep` is the number of scan points and `sweep` is the array of scan values. There 
+is the option to have a 2-D scan in PROCESS using the switch `scan_dim = 2` as below
+
+```
+scan_dim = 2
+
+nweep = 1
+isweep = 4
+sweep = 2.8, 2.9, 3.0, 3.1
+
+nweep_2 = 4
+isweep_2 = 4
+sweep_2 = 1.0, 1.1, 1.2, 1.3
+```
+
+Where the scan parameters have duplicate names with `_2` for the second scan 
+dimension.
+
+The results from the previous scan point are used as the input to the next
+scan point. The output files contain all of the scan points for a given run.
+
+!!! Note "Note"
+    For obvious reasons, the active scanning variable must not also be an active
+    iteration variable.
 
 ## Example
 

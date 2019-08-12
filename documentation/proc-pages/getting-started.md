@@ -1,5 +1,5 @@
 
-# Software requirements
+# Software Requirements
 
 | Software | Version |
 | - | - |
@@ -53,7 +53,7 @@ The folder structure for the PROCESS system prior to compilation is described be
 +-- IN.DAT                              : Sample PROCESS input file
 ```
 
-# Clone repository
+# Clone Repository
 
 To clone the default branch (develop) from the remote enter:
 
@@ -73,7 +73,7 @@ git clone git@git.ccfe.ac.uk:process/process.git -b <branch_name> <folder_name>
 Where `<branch_name>`is the name of the branch to checkout from the remote 
 repository.
 
-# Compile code
+# Compiling the Code
 
 !!! Note "On Freia cluster"
     Replace the `cmake` commands below with `cmake3`
@@ -110,7 +110,7 @@ This step will create a folder called `bin`, which contains three files
 - `process_GTest.exe`
 - `libPROCESS_calc_engine.so`
 
-## Custom build targets
+## Custom Build Targets
 
 ```bash
 cmake --build build --target <target_name>

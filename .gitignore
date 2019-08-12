@@ -61,3 +61,6 @@ lib/PLASMOD/*.DAT
 /lib/PLASMOD/output_list.txt
 /lib/PLASMOD/KE*
 /utilities/run_process.conf
+*.fdb_latexmk
+*.fls
+*.gz

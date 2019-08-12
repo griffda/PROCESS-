@@ -91,7 +91,7 @@ equations.
 
 ...
 
-## Figure of merit
+## Figure of Merit
 
 In optimisation mode, PROCESS finds the self-consistent set of iteration 
 variable values that maximises or minimises a certain function of them, 
