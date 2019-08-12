@@ -102,8 +102,8 @@ higher than that for D-T, it is necessary to take into account the following
 D-D reactions, which have significant reaction rates at such temperatures:
 
 $$\begin{eqnarray*}
-\mathrm{D + D}  | \Longrightarrow  | \mathrm{^{3}He + n + 3.27 \,MeV} \\
-\mathrm{D + D}  | \Longrightarrow  | \mathrm{T + p + 4.03 \,MeV}
+\mathrm{D + D}  & \Longrightarrow  & \mathrm{^{3}He + n + 3.27 \,MeV} \\
+\mathrm{D + D}  & \Longrightarrow  & \mathrm{T + p + 4.03 \,MeV}
 \end{eqnarray*}$$
 
 Also, as tritium is produced by the latter reaction, D-T fusion is also
@@ -123,10 +123,10 @@ The fractional composition of the 'fuel' ions (D, T and $^3$He) is
 controlled using the three variables `fdeut`, `ftrit` and `fhe3`, respectively:
 
 $$\begin{eqnarray*}
-n_{\mbox{fuel}}  | =  | n_D + n_T + n_{\mathrm{^{3}He}}  \;\;\; \mbox{particles/m$^3$} \\
-n_D  | =  | \mathtt{fdeut} \, n_{\mbox{fuel}} \\
-n_T  | =  | \mathtt{ftrit} \, n_{\mbox{fuel}} \\
-n_{\mathrm{^{3}He}}  | =  | \mathtt{fhe3} \, n_{\mbox{fuel}}
+n_{\mbox{fuel}}  & =  & n_D + n_T + n_{\mathrm{^{3}He}}  \;\;\; \mbox{particles/m$^3$} \\
+n_D  & = & \mathtt{fdeut} \, n_{\mbox{fuel}} \\
+n_T  & = & \mathtt{ftrit} \, n_{\mbox{fuel}} \\
+n_{\mathrm{^{3}He}} & = & \mathtt{fhe3} \, n_{\mbox{fuel}}
 \end{eqnarray*}$$
 
 PROCESS checks that $fdeut + ftrit + fhe3 = 1.0$, and stops with an error 
@@ -138,9 +138,9 @@ If switch `ipedestal = 0`, the plasma profiles are assumed to be parabolic,
 i.e.they are of the form
 
 $$\begin{eqnarray}
-\mbox{Density : } n(\rho)  | =  | n_0 \left( 1 - \rho^2 \right)^{\alpha_n} \\
-\mbox{Temperature : } T(\rho)  | =  | T_0 \left( 1 - \rho^2 \right)^{\alpha_T} \\
-\mbox{Current : } J(r)  | =  | J_0 \left( 1 - \rho^2 \right)^{\alpha_J}
+\mbox{Density : } n(\rho) & = & n_0 \left( 1 - \rho^2 \right)^{\alpha_n} \\
+\mbox{Temperature : } T(\rho) & = & T_0 \left( 1 - \rho^2 \right)^{\alpha_T} \\
+\mbox{Current : } J(r) & = & J_0 \left( 1 - \rho^2 \right)^{\alpha_J}
 \end{eqnarray}$$
 
 where $\rho = r/a$, and $a$ is the plasma minor radius. This gives
@@ -158,11 +158,11 @@ temperature profiles to include a pedestal, using the forms specified in [^6]:
 $$\begin{equation}
 \mbox{density:} \qquad n(\rho) = \left\{ 
 \begin{aligned}
-    |n_{ped} + (n_0 - n_{ped}) \left( 1 -
+    & n_{ped} + (n_0 - n_{ped}) \left( 1 -
     \frac{\rho^2}{\rho_{ped,n}^2}\right)^{\alpha_n}
-   |\qquad 0 \leq \rho \leq \rho_{ped,n} \\
-   |n_{sep} + (n_{ped} - n_{sep})\left( \frac{1- \rho}{1-\rho_{ped,n}}\right)
-   |\qquad \rho_{ped,n} < \rho \leq 1
+   & \qquad 0 \leq \rho \leq \rho_{ped,n} \\
+   & n_{sep} + (n_{ped} - n_{sep})\left( \frac{1- \rho}{1-\rho_{ped,n}}\right)
+   & \qquad \rho_{ped,n} < \rho \leq 1
 \end{aligned}
 \right.
 \end{equation}$$
@@ -170,10 +170,10 @@ $$\begin{equation}
 $$\begin{equation}
 \mbox{temperature:} \qquad T(\rho) = \left\{ 
 \begin{aligned}
-   |T_{ped} + (T_0 - T_{ped}) \left( 1 - \frac{\rho^{\beta_T}}
-    {\rho_{ped,T}^{\beta_T}}\right)^{\alpha_T}  |\qquad 0 \leq \rho \leq \rho_{ped,T} \\
-   |T_{sep} + (T_{ped} - T_{sep})\left( \frac{1- \rho}{1-\rho_{ped,T}}\right)
-   |\qquad \rho_{ped,T} < \rho \leq 1
+   & T_{ped} + (T_0 - T_{ped}) \left( 1 - \frac{\rho^{\beta_T}}
+    {\rho_{ped,T}^{\beta_T}}\right)^{\alpha_T}  & \qquad 0 \leq \rho \leq \rho_{ped,T} \\
+   & T_{sep} + (T_{ped} - T_{sep})\left( \frac{1- \rho}{1-\rho_{ped,T}}\right)
+   & \qquad \rho_{ped,T} < \rho \leq 1
 \end{aligned}
 \right.
 \end{equation}$$
@@ -192,9 +192,9 @@ The density at the centre is given by
 
 $$\begin{eqnarray}
   \nonumber
-  n_0  |=  | \frac{1}{3\rho_{ped,n}^2} \left[3\langle n\rangle (1+\alpha_n)
+  n_0 & = & \frac{1}{3\rho_{ped,n}^2} \left[3\langle n\rangle (1+\alpha_n)
     + n_{sep} (1+\alpha_n) (-2 + \rho_{ped,n} + \rho_{ped,n}^2) \right.\\
-   | | \left. - n_{ped}\left( (1 + \alpha_n)(1+ \rho_{ped,n}) + (\alpha_n -2)
+   & & \left. - n_{ped}\left( (1 + \alpha_n)(1+ \rho_{ped,n}) + (\alpha_n -2)
     \rho_{ped,n}^2 \right) \right]
 \end{eqnarray}$$
 
@@ -212,12 +212,12 @@ with
 $$\begin{equation}
 \gamma = \left\{ 
 \begin{aligned}
-   |\frac{ -\Gamma(1+\alpha_T+2/\beta_T)}
+  & \frac{ -\Gamma(1+\alpha_T+2/\beta_T)}
   {\rho_{ped,T}^2 \, \Gamma(1+\alpha_T) \, \Gamma((2+\beta_T)/\beta_T)}
-   |\qquad \text{for integer } \alpha_T \\
-   |\frac{\Gamma(-\alpha_T)\sin(\pi\alpha)\, \Gamma(1+\alpha_T+2/\beta_T)}
+  &\qquad \text{for integer } \alpha_T \\
+  &\frac{\Gamma(-\alpha_T)\sin(\pi\alpha)\, \Gamma(1+\alpha_T+2/\beta_T)}
   {\pi\rho_{ped,T}^2 \, \Gamma((2+\beta_T)/\beta_T)}
-   |\qquad \text{for non-integer } \alpha_T
+  &\qquad \text{for non-integer } \alpha_T
 \end{aligned}
 \right.
 \end{equation}$$
@@ -268,12 +268,12 @@ contribution from the fast alpha particles, there are two options 1[^8] and
 2[^10]:
 
 $$\begin{eqnarray}
-\frac{\beta_{\alpha}}{\beta_{th}}  | =  | 0.29 \, \left( \langle T_{10} \rangle -
+\frac{\beta_{\alpha}}{\beta_{th}} & = & 0.29 \, \left( \langle T_{10} \rangle -
   0.37 \right) \, \left( \frac{n_{DT}}{n_e} \right)^2
-\hspace{20mm}  | \mbox{ifalphap = 0} \\
-\frac{\beta_{\alpha}}{\beta_{th}}  | =  | 0.26 \, \left( \langle T_{10} \rangle -
+\hspace{20mm} & \mbox{ifalphap = 0} \\
+\frac{\beta_{\alpha}}{\beta_{th}} & = & 0.26 \, \left( \langle T_{10} \rangle -
   0.65 \right)^{0.5} \, \left( \frac{n_{DT}}{n_e} \right)^2
-\hspace{16mm}  | \mbox{ifalphap = 1 (default)}
+\hspace{16mm} & \mbox{ifalphap = 1 (default)}
 \end{eqnarray}$$
 
 The latter model is a better estimate at higher temperatures.
