@@ -6,24 +6,24 @@ as modelled by PROCESS. This is the so-called 'build' of the machine, the
 relative locations of the major components is shown below. 
 
 <figure>
+    <center>
     <img src="/img/build_d.eps" alt="tokamak-layout-d" 
     title="Machine build for D-shaped major components" 
     width="650" height="100" />
-    <center>
-        <br>
-        <figcaption><i>Figure 1: Machine build for D-shaped major components</i></figcaption>
-        <br>
+    <br><br>
+    <figcaption><i>Figure 1: Machine build for D-shaped major components</i></figcaption>
+    <br>
     </center>
 </figure>
 
 <figure>
+    <center>
     <img src="/img/build_e.eps" alt="tokamak-layout-e" 
     title="Machine build for elliptical major components" 
     width="650" height="100" />
-    <center>
-        <br>
-        <figcaption><i>Figure 2: Machine build for elliptical major components</i></figcaption>
-        <br>
+    <br><br>
+    <figcaption><i>Figure 2: Machine build for elliptical major components</i></figcaption>
+    <br>
     </center>
 </figure>
 
@@ -34,14 +34,14 @@ assumed to be up-down symmetrical (by default; the vertical build is slightly
 different for single null plasma devices (see Figure 3 below).
 
 <figure>
+    <center>
     <img src="/img/build_e_snd.eps" alt="tokamak-layout-e-sn" 
     title="Machine build for elliptiacal major components single-null" 
     width="650" height="100" />
-    <center>
-        <br>
-        <figcaption><i>Figure 3: Machine build for elliptical major components 
-        single-null</i></figcaption>
-        <br>
+    <br><br>
+    <figcaption><i>Figure 3: Machine build for elliptical major components 
+    single-null</i></figcaption>
+    <br>
     </center>
 </figure>
 
