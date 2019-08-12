@@ -6,14 +6,14 @@ as modelled by PROCESS. This is the so-called 'build' of the machine, the
 relative locations of the major components is shown below. 
 
 <figure>
-    <center>
+    <!-- <center> -->
     <img src="/img/build_d.eps" alt="tokamak-layout-d" 
     title="Machine build for D-shaped major components" 
     width="650" height="100" />
     <br><br>
     <figcaption><i>Figure 1: Machine build for D-shaped major components</i></figcaption>
     <br>
-    </center>
+    <!-- </center> -->
 </figure>
 
 <figure>

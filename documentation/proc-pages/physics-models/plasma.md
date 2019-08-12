@@ -158,7 +158,7 @@ temperature profiles to include a pedestal, using the forms specified in [^6]:
 $$\begin{equation}
 \mbox{density:} \qquad n(\rho) = \left\{ 
 \begin{aligned}
-   |n_{ped} + (n_0 - n_{ped}) \left( 1 -
+    |n_{ped} + (n_0 - n_{ped}) \left( 1 -
     \frac{\rho^2}{\rho_{ped,n}^2}\right)^{\alpha_n}
    |\qquad 0 \leq \rho \leq \rho_{ped,n} \\
    |n_{sep} + (n_{ped} - n_{sep})\left( \frac{1- \rho}{1-\rho_{ped,n}}\right)
