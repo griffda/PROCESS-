@@ -1,27 +1,6 @@
-# About
+# Introduction
 
-$$
-x_1 = y_2
-$$
+## Snippets
 
-^^aaa^^
-
-==highlight a new highlight==
-
-{++what?++}
-{-- what? --}
-
-??? success
-   Content.
-
-???+ Note "summary"
-    what?
-
-???+ Note "Code information"
-    What?
-
-    ```fortran
-    function func(x)
-        func = x*x
-        real :: y
-    ```
+Snippets for the PROCESS repositry can be found 
+[here](https://git.ccfe.ac.uk/process/process/snippets)

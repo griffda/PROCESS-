@@ -50,7 +50,7 @@ Some constraints have `f-value` variables. These are set as iteration variables,
 which are discussed below.
 
 !!! Note "Constraints"
-    See [solver](solver-guide.md) page for more info
+    See [solver](/solver-guide/index.html) page for more info
 
 ## Iteration Variables
 
@@ -83,7 +83,7 @@ is selected as an iteration variable, it will be adjusted by the code. The value
 the default, if no value is specified), will be used as the starting value.
 
 !!! Note "Constraints"
-    See [solver](solver-guide.md) page for more info
+    See [solver](/solver-guide/index.html) page for more info
 
 ## Bounds
 
@@ -114,8 +114,7 @@ ioptimz  = 1 * for optimisation VMCON only
 ```
 
 In this case, the `VMCON` optimisation solver. The user can also input what value 
-to use as the figure of merit for the run (see [figure of merit](code/figure-of-merit) 
-page).
+to use as the figure of merit for the run.
 
 ```
 minmax   = 1 * Switch for figure-of-merit (see lablmm for descriptions)
@@ -149,7 +148,7 @@ one can add a `*` to the beginning of the line, as below:
 
 !!! Note "Variable Descriptions"
     A full list of possible inputs is given in the PROCESS `html` documentation 
-    file `vardes.html` and on the variable description page [here](vardes.md).
+    file `vardes.html` and on the variable description page [here](../../vardes/index.html).
 
 ## Scan
 
@@ -164,7 +163,7 @@ isweep = 4
 sweep = 2.8, 2.9, 3.0, 3.1
 ```
 
-where `nsweep` is the scan variable chosen (see [variable descriptions](vasrdes.md)),
+where `nsweep` is the scan variable chosen (see [variable descriptions](../../vardes/index.html)),
 `isweep` is the number of scan points and `sweep` is the array of scan values. There 
 is the option to have a 2-D scan in PROCESS using the switch `scan_dim = 2` as below
 
