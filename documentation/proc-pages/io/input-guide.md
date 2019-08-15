@@ -50,7 +50,7 @@ Some constraints have `f-value` variables. These are set as iteration variables,
 which are discussed below.
 
 !!! Note "Constraints"
-    See [solver](/solver-guide/index.html) page for more info
+    See [solver](../../solver-guide/index.html) page for more info
 
 ## Iteration Variables
 
@@ -83,7 +83,7 @@ is selected as an iteration variable, it will be adjusted by the code. The value
 the default, if no value is specified), will be used as the starting value.
 
 !!! Note "Constraints"
-    See [solver](/solver-guide/index.html) page for more info
+    See [solver](../../solver-guide/index.html) page for more info
 
 ## Bounds
 

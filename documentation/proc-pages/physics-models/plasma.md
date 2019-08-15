@@ -612,6 +612,8 @@ whether the inboard and outboard gaps should be calculated as 10% of the
 plasma minor radius (`iscrp = 0`), or set equal to the input values `scrapli` 
 and `scraplo` (`iscrp = 1`).
 
+
+
 [^1]: J.D. Galambos, 'STAR Code : Spherical Tokamak Analysis and Reactor Code',
 Unpublished internal Oak Ridge document.
 [^2]: H. Zohm et al, 'On the Physics Guidelines for a Tokamak DEMO',

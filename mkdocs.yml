@@ -12,6 +12,7 @@ nav:
     - Solver: solver-guide.md
     - Physics Models:
         - Plasma: physics-models/plasma.md
+        - PLASMOD: physics-models/plasmod.md
     - Engineering Models:
         - Machine Build: eng-models/machine-build.md
         - TF Coil : eng-models/tf-coil.md
