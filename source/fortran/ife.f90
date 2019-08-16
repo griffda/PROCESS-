@@ -1380,11 +1380,11 @@ contains
 
      ! Check input
      if ((fwdr.gt.1.0D-9).or.(v1dr.gt.1.0d-9)) then
-          call report_error(224)
+          call report_error(230)
      else if ((fwdzu.gt.1.0D-9).or.(v1dzu.gt.1.0D-9).or.(v2dzu.gt.1.0D-9)) then
-          call report_error(225)
+          call report_error(231)
      else if ((fwdzl.gt.1.0D-9).or.(v1dzl.gt.1.0d-9).or.(v2dzu.gt.1.0D-9)) then
-          call report_error(226)
+          call report_error(232)
      end if
      
      !  Radial build
