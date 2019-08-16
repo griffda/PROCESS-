@@ -1493,22 +1493,31 @@ contains
     call ovarrf(outfile,'Alpha power deposited in plasma (MW)','(falpha*palpmw)',falpha*palpmw, 'OP ')
     call ovarrf(outfile,'Power from charged products of DD and/or D-He3 fusion (MW)','(pchargemw.)',pchargemw, 'OP ')
     call ovarrf(outfile,'Ohmic heating (MW)','(pohmmw.)',pohmmw, 'OP ')
-    call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
-    call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
-    call oblnkl(outfile)
-    if (abs(sum - (falpha*palpmw+pchargemw+pohmmw+pinjmw)) > 5.0D0) then
-       write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
-    call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
-    end if
+    !if (ignite == 1) then
+    !    call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw, 'OP ')
+    !    call oblnkl(outfile)
+    !    if (abs(sum - (falpha*palpmw+pchargemw+pohmmw)) > 5.0D0) then
+    !        write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
+    !    call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
+    !    end if
+    !else
+        call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinj, 'OP ')
+        call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinj, 'OP ')
+        call oblnkl(outfile)
+        if (abs(sum - (falpha*palpmw+pchargemw+pohmmw+pinj)) > 5.0D0) then
+            write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
+        call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
+        end if
+    !end if 
 
     call ocmmnt(outfile,'Power Balance for Reactor - Summary :')
     call ocmmnt(outfile,'-------------------------------------')
     call ovarrf(outfile,'Fusion power (MW)','(powfmw.)',powfmw, 'OP ')
     call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
-    call ovarrf(outfile,'Injected power (MW)','(pinjmw.)',pinjmw, 'OP ')
+    call ovarrf(outfile,'Injected power (MW)','(pinjmw.)',pinj, 'OP ')
     call ovarrf(outfile,'Ohmic power (MW)','(pohmmw.)',pohmmw, 'OP ')
     call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech, 'OP ')
-    sum = powfmw+emultmw+pinjmw+htpmw_mech+pohmmw
+    sum = powfmw+emultmw+pinj+htpmw_mech+pohmmw
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
     call oblnkl(outfile)
     !call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw, 'OP ')
