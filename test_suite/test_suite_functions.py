@@ -25,7 +25,7 @@ from process_io_lib.mfile import MFile
 
 # Constants
 EXCLUSIONS = ["normres", "nitvar", "itvar", "xcm", "sigrtf(1)", "balance", 
-              "convergence_parameter"]
+              "convergence_parameter", "branch_name"]
 
 # *********************************** #
 
@@ -830,7 +830,7 @@ class TestCase(object):
         new_mfile = MFile("{0}".format("MFILE.DAT"))
 
         # get process version number
-        self.proc_ver = new_mfile.data["procver"].get_scan(-1)
+        self.proc_ver = new_mfile.data["tagno"].get_scan(-1)
 
         # check ifail
         self.ifail = new_mfile.data["ifail"].get_scan(-1)

@@ -119,6 +119,10 @@ contains
     !!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: dene20, effnbss, effrfss, gamnb, gamrf, power1
+    real(kind(1.0D0)) :: effcdfix, effrfssfix, effnbssfix, pinjwp1
+    real(kind(1.0D0)) :: pnbitotfix, nbshinemwfix, porbitlossmwfix, cnbeamfix
+    real(kind(1.0D0)) :: pinjimw1, pinjemw1, pinjimwfix, pinjemwfix, pinjmw1, pinjmwfix 
+    real(kind(1.0D0)) :: auxiliary_cdfix, faccdfix, gamcdfix
     real(kind(1.0D0)) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
     real(kind(1.0D0)) :: dens_at_rho, te_at_rho
     logical :: Temperature_capped
@@ -130,8 +134,31 @@ contains
     pnbeam = 0.0D0
     plhybd = 0.0D0
     cnbeam = 0.0D0
+    cnbeamfix = 0.0D0
     porbitlossmw = 0.0D0
+    porbitlossmwfix = 0.0D0
 
+    pinjmw1 = 0.0
+    pinjmwfix = 0.0
+    pinjimw1 = 0.0
+    pinjemw1 = 0.0
+    pinjemwfix = 0.0 
+    pinjimwfix = 0.0 
+    auxiliary_cdfix = 0.0
+    faccdfix = 0.0
+
+    ! To stop issues with input file we force
+    ! zero secondary heating if no injection method  
+    if (iefrffix == 0) then
+      pheatfix = 0.0
+    end if
+
+    ! check for unphysically large heating in
+    ! secondary injected power source
+    if (pheatfix > pinjfixmw) then
+      pheatfix = pinjfixmw
+    end if 
+    
     ! irfcd |  switch for current drive calculation
     ! = 0   |  turned off
     ! = 1   |  turned on
@@ -139,6 +166,158 @@ contains
 
        ! put electron density in desired units (10^-20 m-3)
        dene20 = dene * 1.0D-20
+
+       ! If present we must calculate second current drive
+       ! efficiencies in units of Amps/Watt using the fixed
+       ! values from user input
+       ! iefrffix |  switch for fixed current drive efficiency model
+       select case (iefrffix)
+
+       case(0) ! second current drive not present
+
+       case (1)  ! Fenstermacher Lower Hybrid model
+
+          effrfssfix = (0.36D0 * (1.0D0 + (te/25.0D0)**1.16D0)) / &
+               (rmajor*dene20) * feffcd
+          effcdfix = effrfssfix
+
+       case (2)  ! Ion-Cyclotron current drive
+
+          effrfssfix = 0.63D0 * 0.1D0*ten / (2.0D0 + zeff) / &
+               (rmajor*dene20) * feffcd
+          effcdfix = effrfssfix
+
+       case (3)  ! Fenstermacher Electron Cyclotron Resonance model
+
+          effrfssfix = 0.21D0 * ten/ (rmajor * dene20 * dlamee) * feffcd
+          effcdfix = effrfssfix
+
+       case (4)  ! Ehst Lower Hybrid / Fast Wave current drive
+
+          effrfssfix = te**0.77D0 * (0.034D0 + 0.196D0 * beta) / &
+               (rmajor*dene20) * ( 32.0D0/(5.0D0+zeff) + 2.0D0 + &
+               (12.0D0*(6.0D0+zeff))/(5.0D0+zeff)/(3.0D0+zeff) + &
+               3.76D0/zeff) / 12.507D0 * feffcd
+          effcdfix = effrfssfix
+
+       case (5)  ! ITER Neutral Beam current drive
+
+          call iternb(effnbss,fpion,nbshinef)
+          effnbssfix = effnbss * feffcd
+          effcdfix = effnbssfix
+
+       case (6)  ! Culham Lower Hybrid current drive model
+
+          call cullhy(effrfss)
+          effrfssfix = effrfss * feffcd
+          effcdfix = effrfssfix
+
+       case (7)  ! Culham ECCD model
+
+          call culecd(effrfss)
+          effrfssfix = effrfss * feffcd
+          effcdfix = effrfssfix
+
+       case (8)  ! Culham Neutral Beam model
+
+          call culnbi(effnbss,fpion,nbshinef)
+          effnbssfix = effnbss * feffcd
+          effcdfix = effnbssfix
+
+       case (9)  ! Issue #508 Remove RFP option  Oscillating Field CD model
+
+       case (10)  ! ECRH user input gamma
+
+          gamcd = gamma_ecrh
+          effrfssfix = gamcd / (dene20 * rmajor)
+          !etacd = etaech
+          effcdfix = effrfssfix
+
+       case (11)  ! ECRH Poli model "HARE"
+          ! Density and temperature at the requested radius of maximum current drive
+          dens_at_rho = nprofile(rho_ecrh, rhopedn, ne0, neped, nesep, alphan)
+          te_at_rho = tprofile(rho_ecrh,rhopedt,te0,teped,tesep,alphat,tbeta)
+          call hare_calc(dens_at_rho,bt, rmajor,rminor,rho_ecrh,te_at_rho, zeff, &
+                                 fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt,  &
+                                 Temperature_capped)
+          ! HARE generates negative current.
+          ampperwatt = abs(ampperwatt)
+          cdeff = abs(cdeff)
+          effcdfix = ampperwatt
+          gamcd = effcdfix * dene20 * rmajor
+          effrfssfix = effcdfix
+
+       case default
+          idiags(1) = iefrffix
+          call report_error(126)
+
+       end select
+
+       ! find the current drive wall plug and injected powers (MW)
+       ! and efficiencies for secondary current drive mechanisms
+       ! using the fixed injected power from the user input 
+       select case (iefrffix)
+
+       case (1,2,4,6)  ! LHCD or ICCD
+
+          !  Injected power
+          pinjemwfix = pinjfixmw
+          !  Wall plug power
+          pinjwpfix = pinjfixmw / etalh
+          !  Wall plug to injector efficiency
+          etacdfix = etalh
+          !  Normalised current drive efficiency gamma
+          gamcdfix = effrfssfix * (dene20 * rmajor)
+          ! the fixed auxiliary current
+          auxiliary_cdfix = effrfssfix * ( pinjfixmw - pheatfix) * 1.0d6
+          faccdfix = auxiliary_cdfix / plascur
+
+       case (3,7,10,11)  ! ECCD
+
+          pinjimwfix = 0.0D0
+          pinjemwfix = pinjfixmw
+          pinjwpfix = pinjfixmw / etaech
+          etacdfix = etaech
+          auxiliary_cdfix = effrfssfix * ( pinjfixmw - pheatfix) * 1.0d6
+          faccdfix = auxiliary_cdfix / plascur
+
+       case (5,8)  ! NBCD
+
+          ! Account for first orbit losses
+          ! (power due to particles that are ionised but not thermalised) [MW]:
+          ! This includes a second order term in shinethrough*(first orbit loss)
+          forbitloss = min(0.999,forbitloss) ! Should never be needed
+
+          if(ipedestal.ne.3)then  ! When not using PLASMOD
+             pnbitotfix = pinjfixmw / (1.0D0-forbitloss+forbitloss*nbshinef)
+          else
+             ! Netural beam power calculated by PLASMOD
+             pnbitotfix = pinjmw / (1.0D0-forbitloss+forbitloss*nbshinef)
+          endif
+
+          ! Shinethrough power (atoms that are not ionised) [MW]:
+          nbshinemwfix = pnbitotfix * nbshinef
+
+          ! First orbit loss
+          porbitlossmwfix = forbitloss * (pnbitotfix - nbshinemwfix)
+
+          ! Power deposited
+          pinjmwfix = pnbitotfix - nbshinemwfix - porbitlossmwfix
+          pinjimwfix = pinjmwfix * fpion
+          pinjemwfix = pinjmwfix * (1.0D0-fpion)
+
+          pwpnb = pnbitotfix/etanbi ! neutral beam wall plug power
+          pinjwpfix = pwpnb
+          etacdfix = etanbi
+          gamnb = effnbssfix * (dene20 * rmajor)
+          gamcdfix = gamnb
+          cnbeamfix = 1.0D-3 * (pnbitotfix*1.0D6) / enbeam !  Neutral beam current (A)
+          auxiliary_cdfix = effnbssfix * ( pinjfixmw - pheatfix) * 1.0d6
+          faccdfix = auxiliary_cdfix / plascur
+
+       case (9)  ! OFCD - RFP option removed in PROCESS (issue #508)
+
+       end select
 
        ! Calculate current drive efficiencies in units of Amps/Watt.
        ! iefrf |  switch for current drive efficiency model
@@ -230,13 +409,13 @@ contains
        case (1,2,4,6)  ! LHCD or ICCD
 
           !  Injected power
-          plhybd = 1.0D-6 * faccd * plascur / effrfss + pheat
-          pinjimw = 0.0D0
-          pinjemw = plhybd
+          plhybd = 1.0D-6 * (faccd - faccdfix) * plascur / effrfss + pheat
+          pinjimw1 = 0.0D0
+          pinjemw1 = plhybd
 
           !  Wall plug power
           pwplh = plhybd / etalh
-          pinjwp = pwplh
+          pinjwp1 = pwplh
 
           !  Wall plug to injector efficiency
           etacd = etalh
@@ -245,19 +424,19 @@ contains
           gamrf = effrfss * (dene20 * rmajor)
           gamcd = gamrf
 
-      case (3,7,10,11)  ! ECCD
+       case (3,7,10,11)  ! ECCD
 
-          echpwr = 1.0D-6 * faccd * plascur / effrfss + pheat
-          pinjimw = 0.0D0
-          pinjemw = echpwr
+          echpwr = 1.0D-6 * (faccd - faccdfix) * plascur / effrfss + pheat
+          pinjimw1 = 0.0D0
+          pinjemw1 = echpwr
           echwpow = echpwr / etaech
-          pinjwp = echwpow
+          pinjwp1 = echwpow
           etacd = etaech
 
        case (5,8)  ! NBCD
 
           ! MDK. See Gitlab issue #248, and scanned note.
-          power1 = 1.0D-6 * faccd * plascur / effnbss + pheat
+          power1 = 1.0D-6 * (faccd - faccdfix) * plascur / effnbss + pheat
 
           ! Account for first orbit losses
           ! (power due to particles that are ionised but not thermalised) [MW]:
@@ -278,31 +457,36 @@ contains
           porbitlossmw = forbitloss * (pnbitot - nbshinemw)
 
           ! Power deposited
-          pinjmw = pnbitot - nbshinemw - porbitlossmw
-          pinjimw = pinjmw * fpion
-          pinjemw = pinjmw * (1.0D0-fpion)
+          pinjmw1 = pnbitot - nbshinemw - porbitlossmw
+          pinjimw1 = pinjmw1 * fpion
+          pinjemw1 = pinjmw1 * (1.0D0-fpion)
 
           pwpnb = pnbitot/etanbi ! neutral beam wall plug power
-          pinjwp = pwpnb
+          pinjwp1 = pwpnb
           etacd = etanbi
           gamnb = effnbss * (dene20 * rmajor)
           gamcd = gamnb
           cnbeam = 1.0D-3 * (pnbitot*1.0D6) / enbeam !  Neutral beam current (A)
 
-!	  write(*,*) power1,fpion,pwpnb,pinjwp,etacd,gamnb,gamcd,cnbeam
+
 
        case (9)  ! OFCD - RFP option removed in PROCESS (issue #508)
 
        end select
 
+       ! Total injected power
+       ! sum contributions from primary and secondary systems
+       pinjmw = pinjemw1 + pinjimw1 + pinjemwfix + pinjimwfix 
+       pinjmw1 = pinjemw1 + pinjimw1
+       pinjmwfix = pinjemwfix + pinjimwfix
+       pinjemw = pinjemw1 + pinjemwfix
+       pinjimw = pinjimw1 + pinjimwfix
+       pinjwp = pinjwp1 + pinjwpfix
+
        ! Reset injected power to zero for ignited plasma (fudge)
        if (ignite == 1) then
            pinjwp = 0.0D0
        end if
-
-       ! Total injected power
-
-       pinjmw = pinjemw + pinjimw
 
        ! Ratio of fusion to input (injection+ohmic) power
        if (abs(pinjmw + porbitlossmw + pohmmw) < 1.0D-6) then
@@ -332,7 +516,7 @@ contains
        call ocmmnt(outfile,'Lower Hybrid Current Drive')
     case (2)
        call ocmmnt(outfile,'Ion Cyclotron Current Drive')
-    case (3,7)
+    case (3,7,11)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive')
     case (5,8)
        call ocmmnt(outfile,'Neutral Beam Current Drive')
@@ -343,6 +527,28 @@ contains
     end select
 
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
+
+    if (iefrffix.NE.0) then 
+      select case (iefrffix)
+
+      case (1,4,6)
+          call ocmmnt(outfile,'Lower Hybrid Current Drive')
+      case (2)
+          call ocmmnt(outfile,'Ion Cyclotron Current Drive')
+      case (3,7)
+          call ocmmnt(outfile,'Electron Cyclotron Current Drive')
+      case (5,8)
+          call ocmmnt(outfile,'Neutral Beam Current Drive')
+      case (9)
+          ! RFP option removed in PROCESS (issue #508)
+      case (10)
+          call ocmmnt(outfile,'Electron Cyclotron Current Drive (user input gamma_CD)')
+      case(11)
+          call ocmmnt(outfile,'Electron Cyclotron Current Drive (HARE)')
+      end select
+
+      call ovarin(outfile,'Secondary current drive efficiency model','(iefrffix)',iefrffix)
+    end if 
 
     if (ignite == 1) then
        call ocmmnt(outfile, &
@@ -356,14 +562,27 @@ contains
        call ocmmnt(outfile,'and non-inductive means.')
     end if
 
-    call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', '(pheat)', pheat)
-    call ovarre(outfile,'Power injected for current drive (MW)','(pcurrentdrivemw)', pinjmw - pheat) 
+    call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', '(pheat)', pheat + pheatfix)
+    call ovarre(outfile,'Power injected for current drive (MW)','(pcurrentdrivemw)', pinjmw - pheat - pheatfix) 
+    if (iefrffix.NE.0) then
+      call ovarre(outfile,'Power injected for main current drive (MW)','(pcurrentdrivemw1)', pinjmw1 - pheat) 
+      call ovarre(outfile,'Power injected for secondary current drive (MW)','(pcurrentdrivemw2)', pinjmwfix - pheatfix) 
+    end if
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq, 'OP ')
     call ovarre(outfile,'Auxiliary current drive (A)','(auxiliary_cd)',auxiliary_cd, 'OP ')
+    if (iefrffix.ne.0) then
+      call ovarre(outfile,'Secondary auxiliary current drive (A)','(auxiliary_cdfix)',auxiliary_cdfix, 'OP ')
+    end if
     call ovarre(outfile,'Current drive efficiency (A/W)','(effcd)',effcd, 'OP ')
     call ovarre(outfile,'Normalised current drive efficiency, gamma (10^20 A/W-m2)', &
          '(gamcd)',gamcd, 'OP ')
     call ovarre(outfile,'Wall plug to injector efficiency','(etacd)',etacd)
+    if (iefrffix.NE.0) then
+      call ovarre(outfile,'Secondary current drive efficiency (A/W)','(effcdfix)',effcdfix, 'OP ')
+      call ovarre(outfile,'Seconday wall plug to injector efficiency','(etacdfix)',etacdfix)
+      call ovarre(outfile,'Normalised secondary current drive efficiency, gamma (10^20 A/W-m2)', &
+         '(gamcdfix)',gamcdfix, 'OP ')
+    end if 
 
     call osubhd(outfile,'Fractions of current drive :')
     call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf, 'OP ')
@@ -385,6 +604,9 @@ contains
     call oblnkl(outfile)
 
     if (abs(plhybd) > 1.0D-8) then
+       !if (iefrffix.NE.0) then ! needs updating 
+       !  call ovarre(outfile,'Secondary RF efficiency (A/W)','(effrfssfix)',effrfssfix, 'OP ')
+       !end if 
        call ovarre(outfile,'RF efficiency (A/W)','(effrfss)',effrfss, 'OP ')
        call ovarre(outfile,'RF gamma (10^20 A/W-m2)','(gamrf)',gamrf, 'OP ')
        call ovarre(outfile,'Lower hybrid injected power (MW)','(plhybd)',plhybd, 'OP ')
@@ -394,10 +616,20 @@ contains
 
     ! MDK rearranged and added nbshinemw
     !if (abs(pnbeam) > 1.0D-8) then
-    if ((iefrf == 5).or.(iefrf== 8)) then
+    if ((iefrf == 5).or.(iefrf== 8).or.(iefrffix == 5).or.(iefrffix == 8)) then
        call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
-       call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam, 'OP ')
-       call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss, 'OP ')
+       if ((iefrf == 5).or.(iefrf == 8)) then
+         call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam, 'OP ')
+       end if
+       if ((iefrffix == 5).or.(iefrffix == 8)) then
+         call ovarre(outfile,'Secondary fixed neutral beam current (A)','(cnbeamfix)',cnbeamfix, 'OP ')
+       end if
+       if ((iefrf == 5).or.(iefrf == 8)) then
+         call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss, 'OP ')
+       end if 
+       if ((iefrffix == 5).or.(iefrffix == 8)) then
+         call ovarre(outfile,'Secondary fixed beam efficiency (A/W)','(effnbssfix)',effnbssfix, 'OP ')
+       end if
        call ovarre(outfile,'Beam gamma (10^20 A/W-m2)','(gamnb)',gamnb, 'OP ')
        call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)',etanbi)
        call ovarre(outfile,'Beam decay lengths to centre','(taubeam)',taubeam, 'OP ')
@@ -407,14 +639,29 @@ contains
        call oblnkl(outfile)
        call ocmmnt(outfile,'Neutral beam power balance :')
        call ocmmnt(outfile,'----------------------------')
-       call ovarrf(outfile,'Beam first orbit loss power (MW)','(porbitlossmw)', porbitlossmw, 'OP ')
-       call ovarrf(outfile,'Beam shine-through power [MW]','(nbshinemw)',nbshinemw, 'OP ')
-       call ovarrf(outfile,'Beam power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
-       call ovarrf(outfile,'Maximum allowable beam power (MW)','(pinjalw)',pinjalw)
-       call ovarrf(outfile,'Total (MW)', &
-                           '(porbitlossmw+nbshinemw+pinjmw)',porbitlossmw+nbshinemw+pinjmw)
-       call oblnkl(outfile)
-       call ovarrf(outfile,'Beam power entering vacuum vessel (MW)','(pnbitot)',pnbitot, 'OP ')
+       if ((iefrf == 5).or.(iefrf == 8)) then
+         call ovarrf(outfile,'Beam first orbit loss power (MW)','(porbitlossmw)', porbitlossmw, 'OP ')
+         call ovarrf(outfile,'Beam shine-through power [MW]','(nbshinemw)',nbshinemw, 'OP ')
+         call ovarrf(outfile,'Beam power deposited in plasma (MW)','(pinjmw)',pinjmw1, 'OP ')
+         call ovarrf(outfile,'Maximum allowable beam power (MW)','(pinjalw)',pinjalw) 
+         call ovarrf(outfile,'Total (MW)', &
+                           '(porbitlossmw+nbshinemw+pinjmw)',porbitlossmw+nbshinemw+pinjmw1)
+         call oblnkl(outfile)
+         call ovarrf(outfile,'Beam power entering vacuum vessel (MW)','(pnbitot)',pnbitot, 'OP ')
+       end if 
+       if ((iefrffix == 5).or.(iefrffix == 8)) then
+         call oblnkl(outfile)
+         call ocmmnt(outfile,'Secondary fixed neutral beam power balance :')
+         call ocmmnt(outfile,'----------------------------')
+         call ovarrf(outfile,'Secondary fixed beam first orbit loss power (MW)','(porbitlossmwfix)', porbitlossmwfix, 'OP ')
+         call ovarrf(outfile,'Secondary fixed beam shine-through power [MW]','(nbshinemwfix)',nbshinemwfix, 'OP ')
+         call ovarrf(outfile,'Secondary fixed beam power deposited in plasma (MW)','(pinjmwfix)',pinjmwfix, 'OP ') 
+         call ovarrf(outfile,'Maximum allowable beam power (MW)','(pinjalw)',pinjalw) 
+         call ovarrf(outfile,'Secondary fixed total (MW)', &
+                           '(porbitlossmwfixed+nbshinemwfix+pinjmwfix)',porbitlossmwfix+nbshinemwfix+pinjmwfix)
+         call oblnkl(outfile) 
+         call ovarrf(outfile,'Secondary beam power entering vacuum vessel (MW)','(pnbitotfix)',pnbitotfix, 'OP ')
+       end if
        call oblnkl(outfile)
 
        call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion, 'OP ')
@@ -430,8 +677,15 @@ contains
        call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
        call ovarre(outfile,'ECH wall plug power (MW)','(echwpow)',echwpow, 'OP ')
     end if
+    if (abs(pinjfixmw) > 1.0D-8) then 
+       call ovarrf(outfile,'Fixed ECRH power (MW)','(pinjmwfix)',pinjmwfix)
+       call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
+       call ovarre(outfile,'Secondary fixed ECH wall plug power (MW)','(pinjwpfix)',pinjwpfix, 'OP ')
+    end if
 
-    if (iefrf == 11) then  ! HARE ECRH
+
+    if ((iefrf == 11).or.(iefrffix == 11)) then  ! HARE ECRH
+        call oblnkl(outfile)
         call ocmmnt(nout,'ECCD results from "HARE" ')
         call ocmmnt(nout,'("Fast evaluation of the current driven by electron &
                           &cyclotron waves for reactor studies", E. Poli)')
@@ -457,7 +711,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine iternb(effnbss,fpion,fshine) bind(C, name="current_drive_iternb")
+  subroutine iternb(effnbss,fpion,fshine) bind(C, name="c_iternb")
 
     !+ad_name  iternb
     !+ad_summ  Routine to calculate ITER Neutral Beam current drive parameters
@@ -624,7 +878,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion) bind(C, name="current_drive_cfnbi")
+  subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion) bind(C, name="c_cfnbi")
 
     !+ad_name  cfnbi
     !+ad_summ  Routine to calculate the fraction of the fast particle energy

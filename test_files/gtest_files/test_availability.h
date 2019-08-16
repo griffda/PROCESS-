@@ -11,7 +11,7 @@
 TEST(Availability, calc_u_unplanned_hcd) { 
    double a = 0.0;
    double b = 0.02;
-   availability_calc_u_unplanned_hcd(&a);
+   c_calc_u_unplanned_hcd(&a);
 //    ASSERT_LT(14.711, val);
 //    ASSERT_GT(14.71, val);
 //    EXPECT_EQ(14.71, val);
@@ -28,7 +28,7 @@ TEST(Availability, calc_u_unplanned_bop) {
    extern double t_operation;
    t_operation = 25.0;
 
-   availability_calc_u_unplanned_bop(&a, &b, &result);
+   c_calc_u_unplanned_bop(&a, &b, &result);
    EXPECT_NEAR(result, 0.009, 0.0005);
 }
 
@@ -56,7 +56,7 @@ TEST(Availability, calc_u_planned_nominal){
       wallmw = 1.0;
       hldiv = 10.0;
 
-   availability_calc_u_planned(&a, &b, &result);
+   c_calc_u_planned(&a, &b, &result);
    EXPECT_NEAR(result, 0.3 ,0.05);
 }
 
@@ -85,7 +85,7 @@ TEST(Availability, calc_u_planned_nominal_ST){
       itart = 1;
 
 
-   availability_calc_u_planned(&a, &b, &result);
+   c_calc_u_planned(&a, &b, &result);
    EXPECT_NEAR(result, 0.03 ,0.005);
 }
 
@@ -107,7 +107,7 @@ TEST(Availability, calc_u_unplanned_magnets_no_degredation){
    conf_mag = 1.0;         
 
 
-   availability_calc_u_unplanned_magnets(&a, &b, &result);
+   c_calc_u_unplanned_magnets(&a, &b, &result);
    EXPECT_NEAR(result, 0.02 ,0.005);
 }
 
@@ -129,7 +129,7 @@ TEST(Availability, calc_u_unplanned_magnets_no_degredation_conf){
    conf_mag = 0.8;         
 
 
-   availability_calc_u_unplanned_magnets(&a, &b, &result);
+   c_calc_u_unplanned_magnets(&a, &b, &result);
    EXPECT_NEAR(result, 0.02 ,0.005);
 }
 
@@ -151,7 +151,7 @@ TEST(Availability, calc_u_unplanned_magnets_degredation_conf){
    conf_mag = 0.8;         
 
 
-   availability_calc_u_unplanned_magnets(&a, &b, &result);
+   c_calc_u_unplanned_magnets(&a, &b, &result);
    EXPECT_NEAR(result, 0.03 ,0.005);
 }
 
@@ -167,7 +167,7 @@ TEST(Availability, calc_u_unplanned_divertor_below_nref){
    tcycle = 9000;
 
 
-   availability_calc_u_unplanned_divertor(&a, &b, &result);
+   c_calc_u_unplanned_divertor(&a, &b, &result);
    EXPECT_NEAR(result, 0.02 ,0.005);
 }
 
@@ -183,7 +183,7 @@ TEST(Availability, calc_u_unplanned_divertor_above_nu){
    tcycle = 9000;
 
 
-   availability_calc_u_unplanned_divertor(&a, &b, &result);
+   c_calc_u_unplanned_divertor(&a, &b, &result);
    EXPECT_NEAR(result, 1 ,0);
 }
 
@@ -199,7 +199,7 @@ TEST(Availability, calc_u_unplanned_divertor_between){
    tcycle = 9000;
 
 
-   availability_calc_u_unplanned_divertor(&a, &b, &result);
+   c_calc_u_unplanned_divertor(&a, &b, &result);
    EXPECT_NEAR(result, 0.1 ,0.05);
 }
 
@@ -215,7 +215,7 @@ TEST(Availability, calc_u_unplanned_fwbs_below_nref){
    tcycle = 9000;
 
 
-   availability_calc_u_unplanned_fwbs(&a, &b, &result);
+   c_calc_u_unplanned_fwbs(&a, &b, &result);
    EXPECT_NEAR(result, 0.02 ,0.005);
 }
 
@@ -231,7 +231,7 @@ TEST(Availability, calc_u_unplanned_fwbs_above_nu){
    tcycle = 9000;
 
 
-   availability_calc_u_unplanned_fwbs(&a, &b, &result);
+   c_calc_u_unplanned_fwbs(&a, &b, &result);
    EXPECT_NEAR(result, 1 ,0);
 }
 
@@ -247,6 +247,6 @@ TEST(Availability, calc_u_unplanned_fwbs_between){
    tcycle = 9000;
 
 
-   availability_calc_u_unplanned_fwbs(&a, &b, &result);
+   c_calc_u_unplanned_fwbs(&a, &b, &result);
    EXPECT_NEAR(result, 0.1 ,0.005);
 }

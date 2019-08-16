@@ -395,13 +395,14 @@ module physics_variables
   !+ad_varc         <LI> = 0 original method (possibly based on Peng ST modelling);
   !+ad_varc         <LI> = 1 improved (and traceable) method</UL>
   integer :: igeom = 1
-  !+ad_vars  ignite /0/ : switch for ignition assumption:<UL>
+  !+ad_vars  ignite /0/ : switch for ignition assumption. Obviously, ignite must 
+  !+ad_varc               be zero if current drive is required. If ignite is 1, any 
+  !+ad_varc               auxiliary power is assumed to be used only during plasma 
+  !+ad_varc               start-up, and is excluded from all steady-state power 
+  !+ad_varc               balance calculations.<UL>
   !+ad_varc          <LI> = 0 do not assume plasma ignition;
   !+ad_varc          <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
-  !+ad_varc       Obviously, ignite must be zero if current drive is required.
-  !+ad_varc       If ignite=1, any auxiliary power is assumed to be used only
-  !+ad_varc       during plasma start-up, and is excluded from all steady-state
-  !+ad_varc       power balance calculations.
+  !+ad_varc  
   integer :: ignite = 0
   !+ad_vars  iinvqd /1/ : switch for inverse quadrature in L-mode scaling laws 5 and 9:<UL>
   !+ad_varc          <LI> = 0 inverse quadrature not used;
@@ -1100,6 +1101,8 @@ module current_drive_variables
   real(kind(1.0D0)) :: enbeam = 1.0D3
   !+ad_vars  etacd : auxiliary power wall plug to injector efficiency
   real(kind(1.0D0)) :: etacd = 0.0D0
+  !+ad_vars  etacdfix : secondary auxiliary power wall plug to injector efficiency
+  real(kind(1.0D0)) :: etacdfix = 0.0D0
   !+ad_vars  etaech /0.3/ : ECH wall plug to injector efficiency
   real(kind(1.0D0)) :: etaech = 0.3D0
   !+ad_vars  etalh /0.3/ : lower hybrid wall plug to injector efficiency
@@ -1141,6 +1144,20 @@ module current_drive_variables
   !+ad_varc         <LI> ECRH user input gamma
   !+ad_varc         <LI> ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </OL>
   integer :: iefrf = 5
+  !+ad_vars  iefrffix /0/ : switch for 2nd current drive efficiency model <UL>
+  !+ad_varc         <LI> = 0 No fixed current drive
+  !+ad_varc         <LI> = 1 Fenstermacher Lower Hybrid
+  !+ad_varc         <LI> = 2 Ion Cyclotron current drive
+  !+ad_varc         <LI> = 3 Fenstermacher ECH
+  !+ad_varc         <LI> = 4 Ehst Lower Hybrid
+  !+ad_varc         <LI> = 5 ITER Neutral Beam
+  !+ad_varc         <LI> = 6 new Culham Lower Hybrid model
+  !+ad_varc         <LI> = 7 new Culham ECCD model
+  !+ad_varc         <LI> = 8 new Culham Neutral Beam model
+  !+ad_varc         <LI> = 9 Empty (Oscillating field CD removed)
+  !+ad_varc         <LI> = 10 ECRH user input gamma
+  !+ad_varc         <LI> = 11 ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </UL>
+  integer :: iefrffix = 0 
   !+ad_vars  irfcd /1/ : switch for current drive calculation:<UL>
   !+ad_varc         <LI> = 0 turned off;
   !+ad_varc         <LI> = 1 turned on</UL>
@@ -1152,6 +1169,8 @@ module current_drive_variables
   !+ad_vars  pheat /0.0/ : heating power not used for current drive (MW)
   !+ad_varc                (iteration variable 11)
   real(kind(1.0D0)) :: pheat = 0.0D0
+  !+ad_vars  pheatfix /0.0/ : secondary fixed heating power not used for current drive (MW)
+  real(kind(1.0D0)) :: pheatfix = 0.0D0
   !+ad_vars  pinjalw /150.0/ : Maximum allowable value for injected power (MW)
   !+ad_varc                   (constraint equation 30)
   real(kind(1.0D0)) :: pinjalw = 150.0D0
@@ -1161,6 +1180,8 @@ module current_drive_variables
   real(kind(1.0D0)) :: pinjimw = 0.0D0
   !+ad_vars  pinjmw : total auxiliary injected power (MW)
   real(kind(1.0D0)) :: pinjmw = 0.0D0
+  !+ad_vars  pinjfixmw : secondary total fixed auxiliary injected power (MW)
+  real(kind(1.0D0))  :: pinjfixmw = 0.0D0
   !+ad_vars  plhybd : lower hybrid injection power (MW)
   real(kind(1.0D0)) :: plhybd = 0.0D0
   !+ad_vars  pnbeam : neutral beam injection power (MW)
@@ -1608,30 +1629,42 @@ module fwbs_variables
   !+ad_vars  armour_fw_bl_mass : Total mass of armour, first wall and blanket (kg)
   real(kind(1.0D0)) :: armour_fw_bl_mass = 0.0D0
 
-  ! CCFE HCPB Blanket Model (with or without TBR calculation)
 
+  ! CCFE HCPB Blanket Model (with or without TBR calculation)
+  ! ----------
   !+ad_vars  <P><B>The following are used only in the CCFE HCPB blanket model
   !+ad_varc  (iblanket=1):</B><P>
 
   !+ad_vars  breeder_f /0.5/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
   real(kind(1.0D0)) :: breeder_f = 0.5D0
+  
   !+ad_vars  breeder_multiplier /0.75/ : combined breeder/multipler fraction of blanket by volume
   real(kind(1.0D0)) :: breeder_multiplier = 0.75D0
+  
   !+ad_vars  vfcblkt /0.05295/ : He coolant fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: vfcblkt = 0.05295D0
+  
   !+ad_vars  vfpblkt /0.1/ : He purge gas fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: vfpblkt = 0.1D0
+
   !+ad_vars  whtblli4sio4 : mass of lithium orthosilicate in blanket (kg)
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: whtblli4sio4 = 0.0D0
+  
   !+ad_vars  whtbltibe12 : mass of titanium beryllide in blanket (kg)
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: whtbltibe12 = 0.0D0
 
-  !  KIT HCPB blanket model
+  !+ad_vars  f_neut_shield : Fraction of nuclear power shielded before the CP magnet (ST)
+  !+ad_varc                  ( neut_absorb = -1 --> a fit on simplified MCNP neutronic
+  !+ad_varc                    calculation is used assuming water cooled (13%) tungesten carbyde )
+  real(kind(1.0D0)) :: f_neut_shield = -1.0D0
+  ! ----------
 
+
+  !  KIT HCPB blanket model
   !+ad_vars  <P><B>The following are used in the KIT HCPB blanket model
   !+ad_varc  (iblanket=2):</B><P>
 
@@ -2438,8 +2471,8 @@ module tfcoil_variables
   real(kind(1.0D0)), dimension(3) :: radtf = 0.0D0
   !+ad_vars  rbmax : radius of maximum TF B-field (m)
   real(kind(1.0D0)) :: rbmax = 0.0D0
-  !+ad_vars  rhotfleg : TF coil leg resistance (ohm)
-  real(kind(1.0D0)) :: rhotfleg = 0.0D0
+  !+ad_vars  tflegres : TF coil leg resistance (ohm)
+  real(kind(1.0D0)) :: tflegres = 0.0D0
   !+ad_vars  ripmax /1.0/ : maximum allowable toroidal field ripple amplitude
   !+ad_varc                 at plasma edge (%)
   real(kind(1.0D0)) :: ripmax = 1.0D0
@@ -2488,10 +2521,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: strtf2 = 0.0D0
 
   ! Issue #522: Quench models
-  !+ad_vars  quench_model /exponential/ : switch for TF coil quench model:<UL>
+  !+ad_vars  quench_model /exponential/ : switch for TF coil quench model,
+  !+ad_varc                    Only applies to REBCO magnet at present.<UL>
   !+ad_varc                  <LI> = 'exponential' exponential quench with constant discharge resistor
   !+ad_varc                  <LI> = 'linear' quench with constant voltage</UL>
-  !+ad_varc                    Only applies to REBCO magnet at present
   character(len=12) :: quench_model = 'exponential'
 
   !+ad_vars  quench_detection_ef /0.0/ : Electric field at which TF quench is detected and discharge begins (V/m)
@@ -2546,8 +2579,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfinsgap = 0.010D0
   !+ad_vars  tflegmw : TF coil outboard leg resistive power (MW)
   real(kind(1.0D0)) :: tflegmw = 0.0D0
-  !+ad_vars  tflegres /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
-  real(kind(1.0D0)) :: tflegres = 2.5D-8
+  !+ad_vars  rhotfleg /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
+  real(kind(1.0D0)) :: rhotfleg = -1.0D0 ! 2.5D-8
   !+ad_vars  tfleng : TF coil circumference (m)
   real(kind(1.0D0)) :: tfleng = 0.0D0
   !+ad_vars  tfno /16.0/ : number of TF coils (default = 50 for stellarators)
@@ -2699,23 +2732,31 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ppump = 0.0D0
   !+ad_vars  prescp : resistive power in the centrepost (W)
   real(kind(1.0D0)) :: prescp = 0.0D0
-  !+ad_vars  ptempalw /200.0/ : maximum peak centrepost temperature (C)
+
+  !+ad_vars  ptempalw /473.15/ : maximum peak centrepost temperature (K)
   !+ad_varc                     (constraint equation 44)
-  real(kind(1.0D0)) :: ptempalw = 200.0D0
+  real(kind(1.0D0)) :: ptempalw = 473.15D0   ! 200 C
+
   !+ad_vars  rcool /0.005/ : average radius of coolant channel (m)
   !+ad_varc                  (iteration variable 69)
   real(kind(1.0D0)) :: rcool = 0.005D0
+
   !+ad_vars  rhocp : TF coil inboard leg resistivity (Ohm-m)
   real(kind(1.0D0)) :: rhocp = 0.0D0
-  !+ad_vars  tcoolin /40.0/ : centrepost coolant inlet temperature (C)
-  real(kind(1.0D0)) :: tcoolin = 40.0D0
-  !+ad_vars  tcpav /100.0/ : average temp of TF coil inboard leg conductor (C)
+
+  !+ad_vars  tcoolin /313.15/ : centrepost coolant inlet temperature (K)
+  real(kind(1.0D0)) :: tcoolin = 313.15D0   ! 40 C
+
+  !+ad_vars  tcpav /373.15/ : average temp of TF coil inboard leg conductor (K)
   !+ad_varc                  (resistive coils) (iteration variable 20)
-  real(kind(1.0D0)) :: tcpav = 100.0D0
-  !+ad_vars  tcpav2 : centrepost average temperature (C) (for consistency)
+  real(kind(1.0D0)) :: tcpav = 373.15D0     ! 100 C
+
+  !+ad_vars  tcpav2 : centrepost average temperature (K) (for consistency)
   real(kind(1.0D0)) :: tcpav2 = 0.0D0
-  !+ad_vars  tcpmax : peak centrepost temperature (C)
+
+  !+ad_vars  tcpmax : peak centrepost temperature (K)
   real(kind(1.0D0)) :: tcpmax = 0.0D0
+  
   !+ad_vars  vcool /20.0/ : max centrepost coolant flow speed at midplane (m/s)
   !+ad_varc                 (iteration variable 70)
   real(kind(1.0D0)) :: vcool = 20.0D0
@@ -3023,20 +3064,16 @@ module heat_transport_variables
   !+ad_varc              <LI> = 0 pre-2014 version;
   !+ad_varc              <LI> = 1 comprehensive 2014 model</UL>
   integer :: ipowerflow = 1
-  !+ad_vars  iprimnloss /0/ : switch for lost neutron power through holes destiny:<UL>
+  !+ad_vars  iprimnloss /0/ : switch for lost neutron power through holes destiny (ipowerflow=0):<UL>
   !+ad_varc              <LI> = 0 does not contribute to energy generation cycle;
   !+ad_varc              <LI> = 1 contributes to energy generation cycle</UL>
-  !+ad_varc              (ipowerflow=0)
   integer :: iprimnloss = 0
 
   ! KEEP
   !+ad_vars  iprimshld /1/ : switch for shield thermal power destiny:<UL>
   !+ad_varc             <LI> = 0 does not contribute to energy generation cycle;
   !+ad_varc             <LI> = 1 contributes to energy generation cycle</UL>
-  !+ad_varc
   integer :: iprimshld = 1
-
-
 
   !+ad_vars  nphx : number of primary heat exchangers
   integer, bind(C) :: nphx = 0
@@ -3054,6 +3091,8 @@ module heat_transport_variables
   real(kind(1.0D0)) :: pinjmax = 120.0D0
   !+ad_vars  pinjwp : injector wall plug power (MW)
   real(kind(1.0D0)), bind(C) :: pinjwp = 0.0D0
+  !+ad_vars  pinjwpfix : secondary injector wall plug power (MW)
+  real(kind(1.0D0)) :: pinjwpfix = 0.0D0
   !+ad_vars  pnetelmw : net electric power (MW)
   real(kind(1.0D0)) :: pnetelmw = 0.0D0
   !+ad_vars  precircmw : recirculating electric power (MW)
@@ -3445,10 +3484,19 @@ module build_variables
   real(kind(1.0D0)) :: rsldi = 0.0D0
   !+ad_vars  rsldo : radius to outboard shield (outside point) (m)
   real(kind(1.0D0)) :: rsldo = 0.0D0
+
+  !+ad_vars  r_tf_inleg_in : Inner edge radius of the TF inboard legs (m)
+  real(kind(1.0D0)) :: r_tf_inleg_in = 0.0D0
+
   !+ad_vars  r_tf_inleg_mid : radius of centre of inboard TF leg (m)
   real(kind(1.0D0)) :: r_tf_inleg_mid = 0.0D0
+  
+  !+ad_vars  r_tf_inleg_in : Outer edge radius of the TF inboard legs (m)
+  real(kind(1.0D0)) :: r_tf_inleg_out = 0.0D0
+	
   !+ad_vars  rtot : radius to the centre of the outboard TF coil leg (m)
   real(kind(1.0D0)) :: rtot = 0.0D0
+
   !+ad_vars  scrapli /0.14/ : gap between plasma and first wall, inboard side (m)
   !+ad_varc                   (used if iscrp=1) (iteration variable 73)
   real(kind(1.0D0)) :: scrapli = 0.14D0
@@ -4402,11 +4450,11 @@ module ife_variables
      public
    
      !+ad_vars  Default IFE builds and material volumes are those for the SOMBRERO device.
-     !+ad_varc  The 2-dimensional arrays have indices (region, material), where<UL>
+     !+ad_varc  The 2-dimensional arrays have indices (region, material), where 'region'
+     !+ad_varc  is the region and maxmat is the 'material'<UL>
      !+ad_varc  <LI>'region' = 1 radially outside chamber
      !+ad_varc  <LI>         = 2 above chamber
      !+ad_varc  <LI>         = 3 below chamber</UL>
-     !+ad_varc  and 'material' is defined as described in maxmat below.<P>
    
      !+ad_vars  maxmat /8/ FIX : total number of materials in IFE device.
      !+ad_varc                   Material numbers are as follows:<UL>

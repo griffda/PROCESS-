@@ -26,6 +26,7 @@
 from collections import OrderedDict
 import operator
 import logging
+import sys
 from sys import stderr
 LOG = logging.getLogger("mfile")
 
@@ -617,4 +618,8 @@ def test(f):
     return True
 
 # if __name__ == "__main__":
-#     test("MFILE.DAT")
+    # filename = sys.argv[1]
+    # m = MFile(filename)
+    # print(m.data["rmajor"].get_number_of_scans())
+    # print(m.data["rmajor"].get_scans())
+    # print(m.data["rmajor"].get_scan(2))

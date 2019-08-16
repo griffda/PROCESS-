@@ -118,12 +118,10 @@ contains
     implicit none
 
     !  Arguments
-
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-
-    real(kind(1.0D0)) :: abus,rhobus,ztot,tfbusmw,tfreacmw
+    real(kind(1.0D0)) :: abus, tfbusres, rhotfbus, ztot, tfbusmw, tfreacmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -139,13 +137,14 @@ contains
        abus = cpttf/jbus
 
        !  Bus resistance (ohm)
-       rhobus = tflegres * tfbusl/abus
+       rhotfbus = rhotfleg! 0.0D0 ! 
+       tfbusres = rhotfbus * tfbusl/abus
 
        !  Bus mass (kg)
        tfbusmas = tfbusl * abus * dcopper
 
        !  Total maximum impedance MDK actually just fixed resistance
-       ztot = tfno*rhotfleg + (prescp/ritfc**2) + rhobus
+       ztot = tfno*tflegres + (prescp/ritfc**2) + tfbusres
 
        !  No reactive portion of the voltage is included here - assume long ramp times
        !  MDK This is steady state voltage, not "peak" voltage
@@ -153,8 +152,8 @@ contains
 
        !  Resistive powers (MW):
        tfcpmw  = 1.0D-6 * prescp  !  inboard legs
-       tflegmw = 1.0D-6 * (ritfc/tfno)**2 * rhotfleg * tfno  !  outboard legs
-       tfbusmw = 1.0D-6 * cpttf**2 * rhobus  !  TF coil bus
+       tflegmw = 1.0D-6 * (ritfc/tfno)**2 * tflegres * tfno  !  outboard legs
+       tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus
 
        !  TF coil reactive power
        !  Set reactive power to 0, since ramp up can be long
@@ -181,7 +180,7 @@ contains
     if (iprint == 0) return
     ! Clarify that these outputs are for resistive coils only
     call oheadr(outfile,'Resistive TF Coil Power Conversion')
-    call ovarre(outfile,'Bus resistance (ohm)','(rhobus)',rhobus, 'OP ')
+    call ovarre(outfile,'Bus resistance (ohm)','(tfbusres)',tfbusres, 'OP ')
     call ovarre(outfile,'Bus current density (A/m2)','(jbus)',jbus)
     call ovarre(outfile,'Bus length - all coils (m)','(tfbusl)',tfbusl)
     call ovarre(outfile,'Bus mass (kg)','(tfbusmas)',tfbusmas, 'OP ')
@@ -245,7 +244,7 @@ contains
 
       itfka = 1.0D-3 * cpttf
 
-      call tfcpwr(outfile,iprint,tfno,ettfmj,itfka,rhotfleg, &
+      call tfcpwr(outfile,iprint,tfno,ettfmj,itfka,tflegres, &
            vtfskv,rmajor,tfckw,tfbusl,drarea,tfcbv,tfacpd)
 
     end subroutine tfpwcall
@@ -1494,22 +1493,31 @@ contains
     call ovarrf(outfile,'Alpha power deposited in plasma (MW)','(falpha*palpmw)',falpha*palpmw, 'OP ')
     call ovarrf(outfile,'Power from charged products of DD and/or D-He3 fusion (MW)','(pchargemw.)',pchargemw, 'OP ')
     call ovarrf(outfile,'Ohmic heating (MW)','(pohmmw.)',pohmmw, 'OP ')
-    call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
-    call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
-    call oblnkl(outfile)
-    if (abs(sum - (falpha*palpmw+pchargemw+pohmmw+pinjmw)) > 5.0D0) then
-       write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
-    call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
-    end if
+    !if (ignite == 1) then
+    !    call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw, 'OP ')
+    !    call oblnkl(outfile)
+    !    if (abs(sum - (falpha*palpmw+pchargemw+pohmmw)) > 5.0D0) then
+    !        write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
+    !    call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
+    !    end if
+    !else
+        call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinj, 'OP ')
+        call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinj, 'OP ')
+        call oblnkl(outfile)
+        if (abs(sum - (falpha*palpmw+pchargemw+pohmmw+pinj)) > 5.0D0) then
+            write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
+        call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
+        end if
+    !end if 
 
     call ocmmnt(outfile,'Power Balance for Reactor - Summary :')
     call ocmmnt(outfile,'-------------------------------------')
     call ovarrf(outfile,'Fusion power (MW)','(powfmw.)',powfmw, 'OP ')
     call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
-    call ovarrf(outfile,'Injected power (MW)','(pinjmw.)',pinjmw, 'OP ')
+    call ovarrf(outfile,'Injected power (MW)','(pinjmw.)',pinj, 'OP ')
     call ovarrf(outfile,'Ohmic power (MW)','(pohmmw.)',pohmmw, 'OP ')
     call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech, 'OP ')
-    sum = powfmw+emultmw+pinjmw+htpmw_mech+pohmmw
+    sum = powfmw+emultmw+pinj+htpmw_mech+pohmmw
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
     call oblnkl(outfile)
     !call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw, 'OP ')

@@ -49,7 +49,7 @@ while not found_root:
         if my_file.is_file():
             found_root = True
             if back == "":
-                REPO_ROOT = "."
+                REPO_ROOT = ""
             else:
                 REPO_ROOT = back
         back += "../"
@@ -943,6 +943,16 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
     mfile_data.data["fimp(13"].get_scan(scan),
     mfile_data.data["fimp(14"].get_scan(scan)])
 
+    if ipedestal == 0:
+        # Intialise the radius
+        rho = np.linspace(0,1.0)
+        
+        # The density profile
+        ne = ne0 * (1 - rho**2 )**alphan 
+        
+        # The temperature profile
+        te = te0 * (1 - rho**2 )**alphat
+
     if ipedestal == 1:        
         # Intialise the normalised radius
         rhoped = (rhopedn + rhopedt) / 2.0
@@ -962,47 +972,47 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
         tsep = tesep + (teped-tesep)* (1-rhosep)/(1-min(0.9999,rhopedt))
         te = np.append(tcore,tsep)
 
-        # Intailise the radiation profile arrays
-        pimpden = np.zeros([imp_data.shape[0],te.shape[0]])
-        pbremden = np.zeros([imp_data.shape[0],te.shape[0]])
-        lz = np.zeros([imp_data.shape[0],te.shape[0]])
-        prad = np.zeros(te.shape[0])
-        pbrem = np.zeros(te.shape[0])
-        Zav = np.zeros([imp_data.shape[0], te.shape[0]])
+    # Intailise the radiation profile arrays
+    pimpden = np.zeros([imp_data.shape[0],te.shape[0]])
+    pbremden = np.zeros([imp_data.shape[0],te.shape[0]])
+    lz = np.zeros([imp_data.shape[0],te.shape[0]])
+    prad = np.zeros(te.shape[0])
+    pbrem = np.zeros(te.shape[0])
+    Zav = np.zeros([imp_data.shape[0], te.shape[0]])
         
-        #psyncpv = synchrotron_rad()
+    #psyncpv = synchrotron_rad()
 
-        # Intailise the impurity radiation profile
-        for k in range(te.shape[0]):
-            for i in range(imp_data.shape[0]):
-                if te[k] <= imp_data[i][0][0]:
-                    lz[i][k] = imp_data[i][0][1]
-                elif te[k] >= imp_data[i][imp_data.shape[1]-1][0]:
-                    lz[i][k] = imp_data[i][imp_data.shape[1]-1][1]
-                else: 
-                    for j in range(imp_data.shape[1]-1):
-                        # Linear interpolation in log-log space
-                        if (te[k] > imp_data[i][j][0]) and (te[k] <= imp_data[i][j+1][0]):
-                            yi = np.log(imp_data[i][j][1])
-                            xi = np.log(imp_data[i][j][0])
-                            c = (np.log(imp_data[i][j+1][1])- yi) / (np.log(imp_data[i][j+1][0]) - xi)
-                            lz[i][k] = np.exp( yi + c * ( np.log(te[k]) - xi ) )
-                            #Zav[i][k] = imp_data[i][j][2] 
-                # The impurity radiation
-                pimpden[i][k] = imp_frac[i] * ne[k] * ne[k] * lz[i][k]
-                # The Bremsstrahlung
-                #pbremden[i][k] = imp_frac[i] * ne[k] * ne[k] * Zav[i][k] * Zav[i][k] * 5.355e-37 * np.sqrt(te[k])
+    # Intailise the impurity radiation profile
+    for k in range(te.shape[0]):
+        for i in range(imp_data.shape[0]):
+            if te[k] <= imp_data[i][0][0]:
+                lz[i][k] = imp_data[i][0][1]
+            elif te[k] >= imp_data[i][imp_data.shape[1]-1][0]:
+                lz[i][k] = imp_data[i][imp_data.shape[1]-1][1]
+            else: 
+                for j in range(imp_data.shape[1]-1):
+                    # Linear interpolation in log-log space
+                    if (te[k] > imp_data[i][j][0]) and (te[k] <= imp_data[i][j+1][0]):
+                        yi = np.log(imp_data[i][j][1])
+                        xi = np.log(imp_data[i][j][0])
+                        c = (np.log(imp_data[i][j+1][1])- yi) / (np.log(imp_data[i][j+1][0]) - xi)
+                        lz[i][k] = np.exp( yi + c * ( np.log(te[k]) - xi ) )
+                        #Zav[i][k] = imp_data[i][j][2] 
+            # The impurity radiation
+            pimpden[i][k] = imp_frac[i] * ne[k] * ne[k] * lz[i][k]
+            # The Bremsstrahlung
+            #pbremden[i][k] = imp_frac[i] * ne[k] * ne[k] * Zav[i][k] * Zav[i][k] * 5.355e-37 * np.sqrt(te[k])
 
-            for l in range(imp_data.shape[0]):
-                prad[k] = prad[k] + pimpden[l][k] * 2.0e-6
-                #pbrem[k] = pbrem[k] + pbremden[l][k] * 2.0e-6 
+        for l in range(imp_data.shape[0]):
+            prad[k] = prad[k] + pimpden[l][k] * 2.0e-6
+            #pbrem[k] = pbrem[k] + pbremden[l][k] * 2.0e-6 
         
-        #benchmark prad again outfile so mod prad
-        drho = np.array([rho[n+1] - rho[n] for n in range(te.shape[0]-1)])
-        pradint = np.dot((rho[1:] * prad[1:]),drho)
-        #pbremint = (rho[1:] * pbrem[1:]) @ drho 
-        #pradint = prad[1:] @ drho * 2.0e-5
-        #pbremint = pbrem[1:] @ drho * 2.0e-5
+    #benchmark prad again outfile so mod prad
+    drho = np.array([rho[n+1] - rho[n] for n in range(te.shape[0]-1)])
+    pradint = np.dot((rho[1:] * prad[1:]),drho)
+    #pbremint = (rho[1:] * pbrem[1:]) @ drho 
+    #pradint = prad[1:] @ drho * 2.0e-5
+    #pbremint = pbrem[1:] @ drho * 2.0e-5
 
     #print('prad = ',prad) 
     #print('pbrem = ',pbrem)
@@ -1032,9 +1042,9 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
     if imp_frac[9] > 1.0e-30:
         prof.plot(rho, pimpden[9]*2.0e-6, label='Fe')
     if imp_frac[10] > 1.0e-30:
-        prof.plot(rho, pimpden[2]*2.0e-6, label='Ni')
+        prof.plot(rho, pimpden[10]*2.0e-6, label='Ni')
     if imp_frac[11] > 1.0e-30:
-        prof.plot(rho, pimpden[2]*2.0e-6, label='Kr')
+        prof.plot(rho, pimpden[11]*2.0e-6, label='Kr')
     if imp_frac[12] > 1.0e-30:
         prof.plot(rho, pimpden[12]*2.0e-6, label='Xe')
     if imp_frac[13] > 1.0e-30:

@@ -473,64 +473,59 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: betath, fact, fact2
+    real(kind(1.0D0)) :: betath, fact, fact2, palppv_no_nb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Add neutral beam alpha power / volume
+    ! Store the palppv value without the NB alpha power
+    palppv_no_nb = palppv
 
+    !  Add neutral beam alpha power / volume
     palppv = palppv + palpnb/vol
 
     !  Add extra neutron power
-
     pneutpv = pneutpv + 4.0D0*palpnb/vol
 
     !  Total alpha power
-
     palpmw = palppv*vol
 
     !  Total non-alpha charged particle power
-
     pchargemw = pchargepv*vol
 
     !  Total neutron power
-
     pneutmw = pneutpv*vol
 
     !  Total fusion power
-
     powfmw = palpmw + pneutmw + pchargemw
 
     !  Charged particle fusion power
-
     pfuscmw = palpmw + pchargemw
 
     !  Alpha power to electrons and ions (used with electron
     !  and ion power balance equations only)
     !  No consideration of pchargepv here...
-
     palpipv = falpha * palppv*falpi
     palpepv = falpha * palppv*falpe
 
     !  Determine average fast alpha density
-
     if (fdeut < 1.0D0) then
 
        betath = 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/(bt**2 + bp**2)
 
+       ! IPDG89 fast alpha scaling
        if (ifalphap == 0) then
-          !  IPDG89 fast alpha scaling
           fact = min( 0.30D0, &
                0.29D0*(deni/dene)**2 * ( (ten+tin)/20.0D0 - 0.37D0) )
+
+       ! Modified scaling, D J Ward
        else
-          !  Modified scaling, D J Ward
           fact = min( 0.30D0, &
                0.26D0*(deni/dene)**2 * &
                sqrt( max(0.0D0, ((ten+tin)/20.0D0 - 0.65D0)) ) )
        end if
 
        fact = max(fact,0.0D0)
-       fact2 = palppv/(palppv-(palpnb/vol))
+       fact2 = palppv / palppv_no_nb
        betaft = betath * fact*fact2
 
     else  !  negligible alpha production, palppv = palpnb = 0
@@ -1153,7 +1148,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function t_eped_scaling() bind(C, name="test_t_eped_scaling")
+  function t_eped_scaling() bind(C, name="c_t_eped_scaling")
     !+ad_name  t_eped_scaling
     !+ad_summ  Scaling function for calculation of pedestal temperature
     !+ad_type  Function returning real
@@ -1472,7 +1467,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function plasma_elongation_IPB() &
-     bind (C, name="test_plasma_elongation_IPB")
+     bind (C, name="c_plasma_elongation_IPB")
      !+ad_name  plasma_elongation_IPB
      !+ad_summ  Volume measure of plasma elongation using the IPB definition
      !+ad_type  Subroutine
@@ -1501,7 +1496,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function total_mag_field() &
-     bind (C, name="test_total_mag_field")
+     bind (C, name="c_total_mag_field")
      !+ad_name  total_mag_field
      !+ad_summ  Calculates the total magnetic field
      !+ad_type  Subroutine
@@ -1522,7 +1517,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function beta_poloidal() &
-     bind (C, name="test_beta_poloidal")
+     bind (C, name="c_beta_poloidal")
      !+ad_name  beta_poloidal
      !+ad_summ  Calculates beta poloidal
      !+ad_type  Subroutine
@@ -1543,7 +1538,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function res_diff_time() &
-     bind (C, name="test_res_diff_time")
+     bind (C, name="c_res_diff_time")
      !+ad_name  res_diff_time
      !+ad_summ  Calculates resistive diffusion time
      !+ad_type  Subroutine

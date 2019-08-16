@@ -18,6 +18,9 @@
 /test_suite/test_area/
 /build/*
 /bin/*
+site/*
+*.name
+.DS_store
 *__pycache__
 *.pyc
 *.dvi
@@ -58,3 +61,6 @@ lib/PLASMOD/*.DAT
 /lib/PLASMOD/output_list.txt
 /lib/PLASMOD/KE*
 /utilities/run_process.conf
+*.fdb_latexmk
+*.fls
+*.gz
