@@ -1278,6 +1278,9 @@ contains
        case ('iefrf')
           call parse_int_variable('iefrf', iefrf, 1, 11, &
                'Switch for curr drive efficiency model')
+       case ('iefrffix')
+          call parse_int_variable('iefrffix', iefrffix, 0, 11, &
+               'Switch for 2nd curr drive efficiency model')
        case ('irfcd')
           call parse_int_variable('irfcd', irfcd, 0, 1, &
                'Switch for current drive calculation')
@@ -1287,9 +1290,15 @@ contains
        case ('pheat')
           call parse_real_variable('pheat', pheat, 0.0D0, 1.0D3, &
                'Heating power not used for C.D. (MW)')
+       case ('pheatfix')
+          call parse_real_variable('pheatfix', pheatfix, 0.0D0, 1.0D3, &
+               'Secondary fixed heating power not used for C.D. (MW)')
        case ('pinjalw')
           call parse_real_variable('pinjalw', pinjalw, 0.0D0, 1.0D3, &
                'Maximum allowed injection power (MW)')
+       case ('pinjfixmw')
+          call parse_real_variable('pinjfixmw', pinjfixmw, 0.0D0, 1.0D3, &
+               'Secondary auxiliary injection power (MW)')
        case ('tbeamin')
           call parse_real_variable('tbeamin', tbeamin, 0.0D0, 10.0D0, &
                'No of NB decay lengths to plas centre')

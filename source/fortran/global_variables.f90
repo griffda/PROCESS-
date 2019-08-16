@@ -1101,6 +1101,8 @@ module current_drive_variables
   real(kind(1.0D0)) :: enbeam = 1.0D3
   !+ad_vars  etacd : auxiliary power wall plug to injector efficiency
   real(kind(1.0D0)) :: etacd = 0.0D0
+  !+ad_vars  etacdfix : secondary auxiliary power wall plug to injector efficiency
+  real(kind(1.0D0)) :: etacdfix = 0.0D0
   !+ad_vars  etaech /0.3/ : ECH wall plug to injector efficiency
   real(kind(1.0D0)) :: etaech = 0.3D0
   !+ad_vars  etalh /0.3/ : lower hybrid wall plug to injector efficiency
@@ -1142,6 +1144,20 @@ module current_drive_variables
   !+ad_varc         <LI> ECRH user input gamma
   !+ad_varc         <LI> ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </OL>
   integer :: iefrf = 5
+  !+ad_vars  iefrffix /0/ : switch for 2nd current drive efficiency model <UL>
+  !+ad_varc         <LI> = 0 No fixed current drive
+  !+ad_varc         <LI> = 1 Fenstermacher Lower Hybrid
+  !+ad_varc         <LI> = 2 Ion Cyclotron current drive
+  !+ad_varc         <LI> = 3 Fenstermacher ECH
+  !+ad_varc         <LI> = 4 Ehst Lower Hybrid
+  !+ad_varc         <LI> = 5 ITER Neutral Beam
+  !+ad_varc         <LI> = 6 new Culham Lower Hybrid model
+  !+ad_varc         <LI> = 7 new Culham ECCD model
+  !+ad_varc         <LI> = 8 new Culham Neutral Beam model
+  !+ad_varc         <LI> = 9 Empty (Oscillating field CD removed)
+  !+ad_varc         <LI> = 10 ECRH user input gamma
+  !+ad_varc         <LI> = 11 ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </UL>
+  integer :: iefrffix = 0 
   !+ad_vars  irfcd /1/ : switch for current drive calculation:<UL>
   !+ad_varc         <LI> = 0 turned off;
   !+ad_varc         <LI> = 1 turned on</UL>
@@ -1153,6 +1169,8 @@ module current_drive_variables
   !+ad_vars  pheat /0.0/ : heating power not used for current drive (MW)
   !+ad_varc                (iteration variable 11)
   real(kind(1.0D0)) :: pheat = 0.0D0
+  !+ad_vars  pheatfix /0.0/ : secondary fixed heating power not used for current drive (MW)
+  real(kind(1.0D0)) :: pheatfix = 0.0D0
   !+ad_vars  pinjalw /150.0/ : Maximum allowable value for injected power (MW)
   !+ad_varc                   (constraint equation 30)
   real(kind(1.0D0)) :: pinjalw = 150.0D0
@@ -1162,6 +1180,8 @@ module current_drive_variables
   real(kind(1.0D0)) :: pinjimw = 0.0D0
   !+ad_vars  pinjmw : total auxiliary injected power (MW)
   real(kind(1.0D0)) :: pinjmw = 0.0D0
+  !+ad_vars  pinjfixmw : secondary total fixed auxiliary injected power (MW)
+  real(kind(1.0D0))  :: pinjfixmw = 0.0D0
   !+ad_vars  plhybd : lower hybrid injection power (MW)
   real(kind(1.0D0)) :: plhybd = 0.0D0
   !+ad_vars  pnbeam : neutral beam injection power (MW)
@@ -3071,6 +3091,8 @@ module heat_transport_variables
   real(kind(1.0D0)) :: pinjmax = 120.0D0
   !+ad_vars  pinjwp : injector wall plug power (MW)
   real(kind(1.0D0)), bind(C) :: pinjwp = 0.0D0
+  !+ad_vars  pinjwpfix : secondary injector wall plug power (MW)
+  real(kind(1.0D0)) :: pinjwpfix = 0.0D0
   !+ad_vars  pnetelmw : net electric power (MW)
   real(kind(1.0D0)) :: pnetelmw = 0.0D0
   !+ad_vars  precircmw : recirculating electric power (MW)
