@@ -113,7 +113,7 @@ module costs_module
        c22223,c22224,c2223,c223,c2231,c2232,c2233,c2234,c224,c2241, &
        c2242,c2243,c2244,c2245,c2246,c225,c2251,c22511,c22512,c22513, &
        c22514,c22515,c2252,c22521,c22522,c22523,c22524,c22525,c22526, &
-       c22527,c2253,chx,cpp,cppa
+       c22527,c2253,chx,cpp,cppa, c22128
 
 contains
 
@@ -259,6 +259,7 @@ contains
       call ocosts(outfile,'(c22125)','Blanket carbon cloth cost (M$)',c22125)
       call ocosts(outfile,'(c22126)','Blanket concrete cost (M$)',c22126)
       call ocosts(outfile,'(c22127)','Blanket FLiBe cost (M$)',c22127)
+      call ocosts(outfile,'(c22128)','Blanket lithium cost (M$)',c22128)
     end if
     call ocosts(outfile,'(c2212)','Blanket total cost (M$)',c2212)
     call ocosts(outfile,'(c22131)','Bulk shield cost (M$)',c22131)
@@ -1189,8 +1190,8 @@ contains
 
     else
 
-       !  IFE blanket; materials present are Li2O, steel, carbon, concrete
-       !  and FLiBe
+       !  IFE blanket; materials present are Li2O, steel, carbon, concrete,
+       !  FLiBe and lithium 
   
        c22121 = 0.0D0
        c22122 = 1.0D-6 * wtblli2o * ucblli2o
@@ -1199,6 +1200,7 @@ contains
        c22125 = 1.0D-6 * uccarb * (blmatm(1,2)+blmatm(2,2)+blmatm(3,2))
        c22126 = 1.0D-6 * ucconc * (blmatm(1,5)+blmatm(2,5)+blmatm(3,5))
        c22127 = 1.0D-6 * ucflib * mflibe
+       c22128 = 1.0D-6 * ucblli * whtblli
   
     end if
 

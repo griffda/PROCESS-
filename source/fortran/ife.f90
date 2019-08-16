@@ -317,10 +317,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Repetition rate
-
-    reprat = pdrive / edrive
-
     !  Driver calculations
 
     select case (ifedrv)
@@ -360,15 +356,29 @@ contains
        call iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
             nbeams,qion,sigma,sigma0,tauf,theta,vi,gain,etadrv)
 
+    case(3)
+       etadrv = drveff
+       
     case default
        idiags(1) = ifedrv
        call report_error(127)
 
     end select
 
-    !  Fusion power (MW)
+    if (ifedrv /= 3) then
+        !  Repetition rate (Hz)
+        reprat = pdrive / edrive
+        !  Fusion power (MW)
+        powfmw = 1.0D-6 * pdrive * gain
 
-    powfmw = 1.0D-6 * pdrive * gain
+    else
+        !  Driver Power
+        reprat = rrin
+        pdrive = reprat * edrive
+        !  Gain
+        powfmw = pfusife
+        gain = powfmw / (1.0D-6 * pdrive)
+    end if
 
     !  Wall load (assume total fusion power applies)
 
@@ -379,6 +389,17 @@ contains
        phi = 0.5D0*pi + atan(zl1/r1)
        sang = 1.0D0 - cos(phi)
        wallmw = powfmw * 0.5D0*sang / fwarea
+
+    else if (ifetyp == 4) then
+    
+       ! 2019 build only has first wall at the top which has a tube at
+       ! its centre.  This calculates solid angle and removes tube.
+       
+       phi = atan(r1/zu1)
+       sang = 1.0D0 - cos(phi)
+       phi = atan(flirad/zu1)
+       sang = sang - (1.0D0 - cos(phi))
+       wallmw = powfmw * sang / fwarea
 
     else
        wallmw = powfmw / fwarea
@@ -1115,6 +1136,7 @@ contains
     !+ad_call  oheadr
     !+ad_call  osibld
     !+ad_call  sombld
+    !+ad_call  bld2019
     !+ad_hist  21/03/97 PJK Initial version
     !+ad_hist  24/09/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
@@ -1122,6 +1144,7 @@ contains
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  31/07/19 SIM Added bld2019 (Issue #907)
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.52
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1145,6 +1168,8 @@ contains
        call sombld
     case (3)  !  HYLIFE-II-type device
        call hylbld
+    case (4)  !  2019 device
+       call bld2019
     case default  !  Generic device
        call genbld
     end select
@@ -1166,25 +1191,70 @@ contains
     call obuild(outfile,'Shield',shdr,r6)
     call obuild(outfile,'Void 3',v3dr,r7)
 
-    call oheadr(outfile,'Vertical Build')
-    write(outfile,30)
 30  format(T43,'Thickness (m)',T60,'Height (m)')
 
-    call obuild(outfile,'Base of device',0.0D0,-zl7)
-    call obuild(outfile,'Void 3',v3dzl,-zl6)
-    call obuild(outfile,'Shield',shdzl,-zl5)
-    call obuild(outfile,'Void 2',v2dzl,-zl4)
-    call obuild(outfile,'Blanket',bldzl,-zl3)
-    call obuild(outfile,'Void 1',v1dzl,-zl2)
-    call obuild(outfile,'First Wall',fwdzl,-zl1)
-    call obuild(outfile,'Chamber',chdzl,0.0D0)
-    call obuild(outfile,'Chamber',chdzu,zu1)
-    call obuild(outfile,'First Wall',fwdzu,zu2)
-    call obuild(outfile,'Void 1',v1dzu,zu3)
-    call obuild(outfile,'Blanket',bldzu,zu4)
-    call obuild(outfile,'Void 2',v2dzu,zu5)
-    call obuild(outfile,'Shield',shdzu,zu6)
-    call obuild(outfile,'Void 3',v3dzu,zu7)
+    if (ifetyp /= 4) then
+        
+        call oheadr(outfile,'Vertical Build')
+        write(outfile,30)
+        
+        call obuild(outfile,'Base of device',0.0D0,-zl7)
+        call obuild(outfile,'Void 3',v3dzl,-zl6)
+        call obuild(outfile,'Shield',shdzl,-zl5)
+        call obuild(outfile,'Void 2',v2dzl,-zl4)
+        call obuild(outfile,'Blanket',bldzl,-zl3)
+        call obuild(outfile,'Void 1',v1dzl,-zl2)
+        call obuild(outfile,'First Wall',fwdzl,-zl1)
+        call obuild(outfile,'Chamber',chdzl,0.0D0)
+        call obuild(outfile,'Chamber',chdzu,zu1)
+        call obuild(outfile,'First Wall',fwdzu,zu2)
+        call obuild(outfile,'Void 1',v1dzu,zu3)
+        call obuild(outfile,'Blanket',bldzu,zu4)
+        call obuild(outfile,'Void 2',v2dzu,zu5)
+        call obuild(outfile,'Shield',shdzu,zu6)
+        call obuild(outfile,'Void 3',v3dzu,zu7)
+
+    else
+
+        call oheadr(outfile,'Vertical Build - Midplane')
+        write(outfile,30)
+
+        call obuild(outfile,'Base of device',0.0D0,-zl7)
+        call obuild(outfile,'Void 3',v3dzl,-zl6)
+        call obuild(outfile,'Shield',shdzl,-zl5)
+        call obuild(outfile,'Void 2',v2dzl,-zl4)
+        call obuild(outfile,'Blanket',bldzl,-zl3)
+        call obuild(outfile,'Void 1',v1dzl,-zl2)
+        call obuild(outfile,'First Wall',fwdzl,-zl1)
+        call obuild(outfile,'Chamber',chdzl,0.0D0)
+        call obuild(outfile,'Chamber',chdzu,zu1)
+        call obuild(outfile,'First Wall',fwdzu,zu2)
+        call obuild(outfile,'Void 1',v1dzu,zu3)
+        call obuild(outfile,'Blanket',bldzu-bldzu,zu4-bldzu)
+        call obuild(outfile,'Void 2',v2dzu,zu5-bldzu)
+        call obuild(outfile,'Shield',shdzu,zu6-bldzu)
+        call obuild(outfile,'Void 3',v3dzu+bldzu,zu7)
+
+        call oheadr(outfile,'Vertical Build - Edge')
+        write(outfile,30)
+
+        call obuild(outfile,'Base of device',0.0D0,-zl7)
+        call obuild(outfile,'Void 3',v3dzl,-zl6)
+        call obuild(outfile,'Shield',shdzl,-zl5)
+        call obuild(outfile,'Void 2',v2dzl,-zl4)
+        call obuild(outfile,'Blanket',bldzl,-zl3)
+        call obuild(outfile,'Void 1',v1dzl,-zl2)
+        call obuild(outfile,'First Wall',fwdzl,-zl1)
+        call obuild(outfile,'Chamber',chdzl,0.0D0)
+        call obuild(outfile,'Chamber',chdzu,zu1)
+        call obuild(outfile,'First Wall',fwdzu,zu2)
+        call obuild(outfile,'Void 1',v1dzu,zu3)
+        call obuild(outfile,'Blanket',bldzu,zu4)
+        call obuild(outfile,'Void 2',v2dzu,zu5)
+        call obuild(outfile,'Shield',shdzu,zu6)
+        call obuild(outfile,'Void 3',v3dzu,zu7)
+
+    end if   
 
     !  Print matrix of material volumes
 
@@ -1263,7 +1333,168 @@ contains
          (shmatv(1,7)+shmatv(2,7)+shmatv(3,7)), &
          (v3matv(1,7)+v3matv(2,7)+v3matv(3,7))
 
+    write(outfile,'(A9,7(1pe9.2))') 'lithium  ', &
+         chmatv(8), &
+         (fwmatv(1,8)+fwmatv(2,8)+fwmatv(3,8)), &
+         (v1matv(1,8)+v1matv(2,8)+v1matv(3,8)), &
+         (blmatv(1,8)+blmatv(2,8)+blmatv(3,8)), &
+         (v2matv(1,8)+v2matv(2,8)+v2matv(3,8)), &
+         (shmatv(1,8)+shmatv(2,8)+shmatv(3,8)), &
+         (v3matv(1,8)+v3matv(2,8)+v3matv(3,8))
+
   contains
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine bld2019
+
+     !+ad_name  bld2019
+     !+ad_summ  Routine to create the build of a 2019 inertial fusion energy
+     !+ad_summ  device, and to calculate the material volumes for the device core
+     !+ad_type  Subroutine
+     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+     !+ad_cont  None
+     !+ad_args  None
+     !+ad_desc  This routine constructs the build of a modern inertial fusion energy
+     !+ad_desc  device, assumed to be cylindrically-symmetric, with a pool at bottom
+     !+ad_desc  and top corners and with a lower shield at the centre.  See diagram
+     !+ad_desc  attached to Issue #907.
+     !+ad_prob  None
+     !+ad_call  None
+     !+ad_hist  31/07/19 SIM Initial version
+     !+ad_stat  Okay
+     !+ad_docs  Issue #907
+     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+     implicit none
+
+     !  Arguments
+
+     !  Local variables
+
+     integer :: i,j
+
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+     ! Check input
+     if ((fwdr.gt.1.0D-9).or.(v1dr.gt.1.0d-9)) then
+          call report_error(230)
+     else if ((fwdzu.gt.1.0D-9).or.(v1dzu.gt.1.0D-9).or.(v2dzu.gt.1.0D-9)) then
+          call report_error(231)
+     else if ((fwdzl.gt.1.0D-9).or.(v1dzl.gt.1.0d-9).or.(v2dzu.gt.1.0D-9)) then
+          call report_error(232)
+     end if
+     
+     !  Radial build
+
+     r1 = chrad
+     r2 = r1 + fwdr
+     r3 = r2 + v1dr
+     r4 = r3 + bldr
+     r5 = r4 + v2dr
+     r6 = r5 + shdr
+     r7 = r6 + v3dr
+
+     !  Vertical build (below midplane)
+
+     zl1 = chdzl
+     zl2 = zl1 + fwdzl
+     zl3 = zl2 + v1dzl
+     zl4 = zl3 + bldzl
+     zl5 = zl4 + v2dzl
+     zl6 = zl5 + shdzl
+     zl7 = zl6 + v3dzl
+
+     !  Vertical build (above midplane)
+
+     zu1 = chdzu
+     zu2 = zu1 + fwdzu
+     zu3 = zu2 + v1dzu
+     zu4 = zu3 + bldzu
+     zu5 = zu4 + v2dzu
+     zu6 = zu5 + shdzu
+     zu7 = zu6 + v3dzu
+
+     !  Component volumes
+     !  The following notation applies below:
+     !  J=1 : side part
+     !  J=2 : top part
+     !  J=3 : bottom part
+
+     !  Chamber
+
+     chvol = pi * r1*r1 * (zu1 + zl1)
+
+     !  First wall
+
+     fwvol(1) = pi * (r2*r2 - r1*r1) * (zu1 + zl1)
+     fwvol(2) = pi * r2*r2 * (zu2 - zu1)
+     fwvol(3) = pi * r2*r2 * (zl2 - zl1)
+
+     !  First void
+
+     v1vol(1) = pi * (r3*r3 - r2*r2) * (zu2 + zl2)
+     v1vol(2) = pi * r3*r3 * (zu3 - zu2)
+     v1vol(3) = pi * r3*r3 * (zl3 - zl2)
+
+     !  Blanket
+     !  Radial Blanket - between void 2 and chamber 
+     blvol(1) = pi * (r4*r4 - r3*r3) * (zu3 + zl3)
+     !  Upper Blanket - Pool radially between shield and
+     !  chamber of input height.
+     blvol(2) = pi * (r5*r5 - r3*r3) * bldzu
+     !  Lower Blanket - Pool filling base of device
+     blvol(3) = pi * r5*r5 * (zl4 - zl3)
+
+     !  Second void
+
+     v2vol(1) = pi * (r5*r5 - r4*r4) * (chdzl+chdzu)
+     v2vol(2) = 0.0D0
+     v2vol(3) = 0.0D0
+
+     !  Shield
+
+     shvol(1) = pi * (r6*r6 - r5*r5) * (zu5 + zl5)
+     ! Top Section is in three parts to account for the dip at 
+     ! the centre.  The first is the horizontal top, the second is the
+     ! horizontal 
+     shvol(2) = pi * (((r6*r6 - (chrad-shdr)*(chrad-shdr)) * shdzu) &
+                + ((r1*r1 - flirad*flirad) * shdzu) &
+                + ( (r1*r1 - (r1-shdzu)*(r1-shdzu)) *(bldzu-shdzu) ))
+     shvol(3) = pi * r6*r6 * (zl6 - zl5)
+
+     !  Third void
+
+     v3vol(1) = pi * (r7*r7 - r6*r6) * (zu6 + zl6)
+     v3vol(2) = pi * r7*r7 * (zu7 - zu6) + pi * ((r1-shdzu)*(r1-shdzu) - flirad*flirad) * bldzu
+     v3vol(3) = pi * r7*r7 * (zl7 - zl6)
+
+     !  Material volumes
+
+     do i = 0,maxmat
+        chmatv(i) = max(0.0D0, chvol * chmatf(i))
+        do j = 1,3
+           fwmatv(j,i) = max(0.0D0, fwvol(j) * fwmatf(j,i))
+           v1matv(j,i) = max(0.0D0, v1vol(j) * v1matf(j,i))
+           blmatv(j,i) = max(0.0D0, blvol(j) * blmatf(j,i))
+           v2matv(j,i) = max(0.0D0, v2vol(j) * v2matf(j,i))
+           shmatv(j,i) = max(0.0D0, shvol(j) * shmatf(j,i))
+           v3matv(j,i) = max(0.0D0, v3vol(j) * v3matf(j,i))
+        end do
+     end do
+
+     !  First wall area
+     !  The chamber is surrounded by liquid on three sides
+     !  with only the top being solid.  This is considered part
+     !  of the shield. There is a target injector tube at the 
+     !  centre of this area. 
+     fwarea = pi * (r1*r1 - flirad*flirad)
+
+   end subroutine bld2019
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1788,7 +2019,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ifetgt
+  subroutine ifetgt() bind(C, name="c_ifetgt")
 
     !+ad_name  ifetgt
     !+ad_summ  Routine to calculate the power requirements of the target
@@ -1887,6 +2118,7 @@ contains
     !  5 = concrete
     !  6 = helium (at typical coolant temperatures)
     !  7 = xenon (taken as ten times the normal tabulated value)
+    !  8 = lithium (liquid, source Wikipedia)
 
     matden(0) = 0.0D0
     matden(1) = denstl
@@ -1896,6 +2128,7 @@ contains
     matden(5) = 2400.0D0
     matden(6) = 1.517D0
     matden(7) = 55.0D0
+    matden(8) = 512.0D0
 
     !  Material masses
 
@@ -1931,9 +2164,11 @@ contains
     whtblvd = 0.0D0
     whtblss = 0.0D0
     wtblli2o = 0.0D0
+    whtblli = 0.0D0
     do j = 1,3
        whtblss = whtblss + blmatm(j,1)
        wtblli2o = wtblli2o + blmatm(j,4)
+       whtblli = whtblli + blmatm(j,8)
     end do
 
     !  Total mass of FLiBe
@@ -1956,10 +2191,11 @@ contains
 
     mflibe = mflibe / (1.0D0 - fbreed)
     wtblli2o = wtblli2o / (1.0D0 - fbreed)
+    whtblli = whtblli / (1.0D0 - fbreed)
 
     !  Blanket and first wall lifetimes (HYLIFE-II: = plant life)
 
-    if (ifetyp == 3) THEN
+    if ((ifetyp == 3).or.(ifetyp == 4)) THEN
        life = tlife
     else
        life = min( tlife, abktflnc/(wallmw*cfactr) )
@@ -1981,6 +2217,7 @@ contains
     call ovarre(outfile,'First wall area (m2)','(fwarea)',fwarea)
     call ovarre(outfile,'First wall mass (kg)','(fwmass)',fwmass)
     call ovarre(outfile,'Blanket mass (kg)','(whtblkt)',whtblkt)
+    call ovarre(outfile,'Blanket lithium mass (kg)','(whtblli)',whtblli)
     call ovarre(outfile,'Total mass of FLiBe (kg)','(mflibe)',mflibe)
     call ovarre(outfile,'Shield mass (kg)','(whtshld)',whtshld)
 
@@ -2044,7 +2281,7 @@ contains
     !  and provide the energy multiplication as though it were a
     !  conventional blanket
 
-    if (ifetyp /= 3) then
+    if ((ifetyp /= 3).or.(ifetyp /= 3)) then
        pfwdiv = 0.24D0 * pthermmw
        pnucblkt = pthermmw - pfwdiv
     else

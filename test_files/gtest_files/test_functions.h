@@ -62,7 +62,11 @@ extern "C"
    double c_total_mag_field();
    double c_beta_poloidal();
    double c_res_diff_time();
-   
+  
+   // IFE module
+   //-------------------------
+   void c_ifetgt();
+
 }
 
 int elapsed_time(const char* filename)
