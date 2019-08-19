@@ -30,7 +30,7 @@ module plasma_geometry_module
   implicit none
 
   private
-  public :: geomty, perim
+  public :: geomty, perim, xparam
 
 contains
 
@@ -380,67 +380,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine xparam(a,kap,tri,xi,thetai,xo,thetao)
-
-      !+ad_name  xparam
-      !+ad_summ  Routine to find parameters used for calculating geometrical
-      !+ad_summ  properties for double-null plasmas
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  a      : input real :  plasma minor radius (m)
-      !+ad_args  kap    : input real :  plasma separatrix elongation
-      !+ad_args  tri    : input real :  plasma separatrix triangularity
-      !+ad_args  xi     : output real : radius of arc describing inboard surface (m)
-      !+ad_args  thetai : output real : half-angle of arc describing inboard surface
-      !+ad_args  xo     : output real : radius of arc describing outboard surface (m)
-      !+ad_args  thetao : output real : half-angle of arc describing outboard surface
-      !+ad_desc  This function finds plasma geometrical parameters, using the
-      !+ad_desc  revolution of two intersecting arcs around the device centreline.
-      !+ad_desc  This calculation is appropriate for plasmas with a separatrix.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  18/01/99 PJK Initial upgraded version
-      !+ad_hist  16/07/01 PJK Correction of sign of TRI in XI
-      !+ad_hist  14/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  F/MI/PJK/LOGBOOK14, p.42
-      !+ad_docs  F/PL/PJK/PROCESS/CODE/047
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-      !
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      implicit none
-
-      !  Arguments
-
-      real(kind(1.0D0)), intent(in) :: a,kap,tri
-      real(kind(1.0D0)), intent(out) :: xi,thetai,xo,thetao
-
-      !  Local variables
-
-      real(kind(1.0D0)) :: denomi,denomo,n,t
-
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      !  Find radius and half-angle of inboard arc
-
-      t = 1.0D0 - tri
-      denomi = (kap**2 - t**2)/(2.0D0*t)
-      thetai = atan(kap/denomi)
-      xi = a * (denomi + 1.0D0 - tri )
-
-      !  Find radius and half-angle of outboard arc
-
-      n = 1.0D0 + tri
-      denomo = (kap**2 - n**2)/(2.0D0*n)
-      thetao = atan(kap/denomo)
-      xo = a * (denomo + 1.0D0 + tri )
-
-    end subroutine xparam
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     function xsecta(xi,thetai,xo,thetao)
 
       !+ad_name  xsecta
@@ -655,5 +594,67 @@ contains
     perim = 2.0D0 * ( xlo*thetao + xli*thetai)
 
   end function perim
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine xparam(a,kap,tri,xi,thetai,xo,thetao)
+
+    !+ad_name  xparam
+    !+ad_summ  Routine to find parameters used for calculating geometrical
+    !+ad_summ  properties for double-null plasmas
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  a      : input real :  plasma minor radius (m)
+    !+ad_args  kap    : input real :  plasma separatrix elongation
+    !+ad_args  tri    : input real :  plasma separatrix triangularity
+    !+ad_args  xi     : output real : radius of arc describing inboard surface (m)
+    !+ad_args  thetai : output real : half-angle of arc describing inboard surface
+    !+ad_args  xo     : output real : radius of arc describing outboard surface (m)
+    !+ad_args  thetao : output real : half-angle of arc describing outboard surface
+    !+ad_desc  This function finds plasma geometrical parameters, using the
+    !+ad_desc  revolution of two intersecting arcs around the device centreline.
+    !+ad_desc  This calculation is appropriate for plasmas with a separatrix.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  18/01/99 PJK Initial upgraded version
+    !+ad_hist  16/07/01 PJK Correction of sign of TRI in XI
+    !+ad_hist  14/11/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  F/MI/PJK/LOGBOOK14, p.42
+    !+ad_docs  F/PL/PJK/PROCESS/CODE/047
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: a,kap,tri
+    real(kind(1.0D0)), intent(out) :: xi,thetai,xo,thetao
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: denomi,denomo,n,t
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Find radius and half-angle of inboard arc
+
+    t = 1.0D0 - tri
+    denomi = (kap**2 - t**2)/(2.0D0*t)
+    thetai = atan(kap/denomi)
+    xi = a * (denomi + 1.0D0 - tri )
+
+    !  Find radius and half-angle of outboard arc
+
+    n = 1.0D0 + tri
+    denomo = (kap**2 - n**2)/(2.0D0*n)
+    thetao = atan(kap/denomo)
+    xo = a * (denomo + 1.0D0 + tri )
+
+  end subroutine xparam
+
 
 end module plasma_geometry_module
