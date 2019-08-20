@@ -82,7 +82,7 @@ This is a summary of key outputs from PLASMOD:
 The following constraint equations may not be used, as they are constrained within PLASMOD:
 
 | `icc` | Description |
-| - | - |
+| :-: | - |
 | 1  | Beta |
 | 2  | Global power balance |
 | 5  | Density upper limit |
@@ -94,7 +94,7 @@ The following constraint equations may not be used, as they are constrained with
 The following iteration variables may not be used, as they are outputs of PLASMOD:
 
 | `ixc` | Variable Name |
-| - | - |
+| :-: | - |
 | 4   | `te` |
 | 5   | `beta` |
 | 6   | `dene` |

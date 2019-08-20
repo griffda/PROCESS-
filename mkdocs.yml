@@ -15,6 +15,7 @@ nav:
         - PLASMOD: physics-models/plasmod.md
     - Engineering Models:
         - Machine Build: eng-models/machine-build.md
+        - First Wall/Blanket: eng-models/fw-blanket.md
         - TF Coil : eng-models/tf-coil.md
     - Development: 
         Tools: development/tools.md
