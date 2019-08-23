@@ -387,7 +387,7 @@ contains
     if (iprint == 0) return
 
     !  Output section
-    call osubhd(outfile,'Conventional Copper TF Coil Information :')
+    call oheadr(outfile,'Copper TF Coil Information')
     call ovarin(outfile,'Copper TF coil','(itfsup)',itfsup)
     call ovarre(outfile,'Inboard leg current density (A/m2)','(oacdcp)',oacdcp)
     call ovarre(outfile,'Outboard leg current density (A/m2)','(cdtfleg)',cdtfleg)
@@ -401,6 +401,13 @@ contains
     call ovarre(outfile,'Inboard leg resistive power (W)','(prescp)',prescp)
     call ovarre(outfile,'Outboard leg resistance per coil (ohm)','(tflegres)',tflegres)
     call ovarre(outfile,'Average inboard leg temperature (K)','(tcpav)',tcpav)
+    if (itart==1) then
+      call osubhd(outfile,'Tapered Centrepost Dimensions:')
+      call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(rmid)',rmid)
+      call ovarre(outfile,'Radius of the ends of the centrepost (m)','(rtop)',rtop)
+      call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(ztop)',ztop)
+      call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax)
+    end if
     ! ---------------------------------------------
 
   end subroutine concoptf
