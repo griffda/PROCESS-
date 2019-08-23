@@ -143,9 +143,6 @@ contains
        call ovarre(outfile,'Radial stress (MPa)','(sigrad)',sigrad)
        call ovarre(outfile,'Transverse stress (MPa)','(sigtan)',sigtan)
        call ovarre(outfile,'Vertical stress (MPa)','(sigver)',sigver)
-
-       call concoptf(outfile,iprint)
-
        call oblnkl(outfile)
        call ocmmnt(outfile,'TF coil inner surface shape is given by a rectangle with the')
        call ocmmnt(outfile,'following inner points (Note that this does not account')
