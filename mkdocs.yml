@@ -17,6 +17,8 @@ nav:
         - Machine Build: eng-models/machine-build.md
         - First Wall/Blanket: eng-models/fw-blanket.md
         - TF Coil : eng-models/tf-coil.md
+        - Shield : eng-models/shield.md
+        - Divertor : eng-models/divertor.md
     - Development: 
         Tools: development/tools.md
         Standards: development/standards.md

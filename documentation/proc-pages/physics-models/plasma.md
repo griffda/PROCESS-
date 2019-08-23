@@ -345,7 +345,7 @@ radiation power contributions.
 
 <figure>
     <center>
-    <img src="../../img/radiation.eps" alt="radiation" 
+    <img src="../../img/radiation.png" alt="radiation" 
     title="Schematic diagram of radiation power contributions" 
     width="650" height="100" />
     <br><br>
@@ -504,7 +504,7 @@ Figure 2 below shows the flow of power as calculated by the code.
 
 <figure>
     <center>
-    <img src="../../img/powerflow1.eps" alt="powerflow" 
+    <img src="../../img/powerflow1.png" alt="powerflow" 
     title="Power balance within the core plasma" 
     width="650" height="100" />
     <br><br>
