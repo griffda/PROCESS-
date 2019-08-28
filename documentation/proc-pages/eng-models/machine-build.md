@@ -6,19 +6,19 @@ as modelled by PROCESS. This is the so-called 'build' of the machine, the
 relative locations of the major components is shown below. 
 
 <figure>
-    <!-- <center> -->
-    <img src="../../img/build_d.eps" alt="tokamak-layout-d" 
+    <center>
+    <img src="../../img/build_d.png" alt="tokamak-layout-d" 
     title="Machine build for D-shaped major components" 
     width="650" height="100" />
     <br><br>
     <figcaption><i>Figure 1: Machine build for D-shaped major components</i></figcaption>
     <br>
-    <!-- </center> -->
+    </center>
 </figure>
 
 <figure>
     <center>
-    <img src="../../img/build_e.eps" alt="tokamak-layout-e" 
+    <img src="../../img/build_e.png" alt="tokamak-layout-e" 
     title="Machine build for elliptical major components" 
     width="650" height="100" />
     <br><br>
@@ -35,7 +35,7 @@ different for single null plasma devices (see Figure 3 below).
 
 <figure>
     <center>
-    <img src="../../img/build_e_snd.eps" alt="tokamak-layout-e-sn" 
+    <img src="../../img/build_e_snd.png" alt="tokamak-layout-e-sn" 
     title="Machine build for elliptiacal major components single-null" 
     width="650" height="100" />
     <br><br>
