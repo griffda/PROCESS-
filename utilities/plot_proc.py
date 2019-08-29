@@ -395,7 +395,7 @@ def color_key(axis):
 
     axis.text(-5, 2, 'PF coils', ha='left', va='top', size='medium')
     axis.add_patch(patches.Rectangle([0.2, 1.7], 1, 0.4, lw=1,
-                                     facecolor='none'))
+                                     facecolor='none',edgecolor='black'))
 
     axis.text(-5, 1, 'NB duct shield', ha='left', va='top', size='medium')
     axis.add_patch(patches.Rectangle([0.2, 0.7], 1, 0.4, lw=0,

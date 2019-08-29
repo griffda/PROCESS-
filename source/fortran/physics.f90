@@ -2020,7 +2020,7 @@ end subroutine subr
 
     case (9) ! FIESTA ST fit
 
-       fq = 0.716D0 * (1.0D0 + 2.472D0*eps**2.866D0) * kappa95**2.144D0 * triang95**0.056D0
+       fq = 0.704D0 * (1.0D0 + 2.440D0*eps**2.736D0) * kappa95**2.154D0 * triang95**0.060D0
 
     case default
        idiags(1) = icurr ; call report_error(77)
@@ -2050,7 +2050,7 @@ end subroutine subr
 
     !  Calculate the poloidal field
 
-    bp = bpol(itart,plascur,qpsi,asp,bt,kappa,triang,pperim)
+    bp = bpol(icurr,plascur,qpsi,asp,bt,kappa,triang,pperim)
 
     !  Ensure current profile consistency, if required
     !  This is as described in Hartmann and Zohm only if icurr = 4 as well...
@@ -2254,7 +2254,7 @@ end subroutine subr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function bpol(itart,ip,qbar,aspect,bt,kappa,delta,perim)
+  function bpol(icurr,ip,qbar,aspect,bt,kappa,delta,perim)
 
     !+ad_name  bpol
     !+ad_summ  Function to calculate poloidal field
@@ -2262,7 +2262,7 @@ end subroutine subr
     !+ad_auth  J Galambos, FEDC/ORNL
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  itart  : input integer : Switch for tight aspect ratio tokamaks
+    !+ad_args  icurr  : input integer : current scaling model to use
     !+ad_args  ip     : input real :  plasma current (A)
     !+ad_args  qbar   : input real :  edge q-bar
     !+ad_args  aspect : input real :  plasma aspect ratio
@@ -2279,6 +2279,7 @@ end subroutine subr
     !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  10/11/11 PJK Initial F90 version
     !+ad_hist  27/11/13 PJK Added conventional aspect ratio coding
+    !+ad_hist  21/08/19 SIM Changed the switch to be on icurr not itart
     !+ad_stat  Okay
     !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
     !+ad_docc  unpublished internal Oak Ridge document
@@ -2293,7 +2294,7 @@ end subroutine subr
 
     !  Arguments
 
-    integer, intent(in) :: itart
+    integer, intent(in) :: icurr
     real(kind(1.0D0)), intent(in) :: aspect,bt,delta,ip,kappa,perim,qbar
 
     !  Local variables
@@ -2302,7 +2303,7 @@ end subroutine subr
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (itart == 0) then
+    if (icurr /= 2) then
 
        !  Stoke's Law
 
