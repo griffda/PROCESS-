@@ -3,7 +3,7 @@
  "version":  [ "PROCESS version 1.0.16" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 232,
+ "n_errortypes": 235,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -42,8 +42,8 @@
   { "no": 35, "level": 2, "message": "PIMPDEN: Impurity radiation model is inaccurate at such low temperatures" },
   { "no": 36, "level": 3, "message": "CHECK: Fuel ion fractions do not sum to 1.0; check fdeut, ftrit, fhe3 values" },
   { "no": 37, "level": 2, "message": "CHECK: Usual current scaling for TARTs (icurr=2 or 9) is not being used" },
-  { "no": 38, "level": 3, "message": "CHECK: ibss=1 is not a valid option for a TART device" },
-  { "no": 39, "level": 3, "message": "CHECK: snull=1 is not a valid option for a TART device" },
+  { "no": 38, "level": 3, "message": "CHECK: Invalid boostrap current law for ST, do not use ibss = 1" },
+  { "no": 39, "level": 3, "message": "CHECK: Double null not (yet) implemented for ST, use snull = 0 (single null)" },
   { "no": 40, "level": 3, "message": "CHECK: icurr=2 is not a valid option for a non-TART device" },
   { "no": 41, "level": 3, "message": "CHECK: ncls(i) .ne. 2 is not a valid option except for (ipfloc = 2)" },
   { "no": 42, "level": 3, "message": "CHECK: Only 1 divertor coil (ipfloc = 2) is not a valid configuration" },
@@ -236,6 +236,9 @@
   {"no": 229, "level": 2, "message": "[hcpb.f90][st_centrepost_nuclear_heating] Centrepost shiled thickness out of the neutronics fit range : [0.2-0.35] m"},
   {"no": 230, "level": 3, "message": "BLD2019: fwdr and v1dr should be zero for 2019 IFE build."},
   {"no": 231, "level": 3, "message": "BLD2019: fwdzu, v1dzu and v2dzu should be zero for 2019 IFE build."},
-  {"no": 232, "level": 3, "message": "BLD2019: fwdzl, v1dzl and v2dzl should be zero for 2019 IFE build."}
+  {"no": 232, "level": 3, "message": "BLD2019: fwdzl, v1dzl and v2dzl should be zero for 2019 IFE build."},
+  {"no": 233, "level": 3, "message": "CHECK: Superconductor TF not implemented for ST, try itfsup = 0 or 2."},
+  {"no": 234, "level": 3, "message": "CHECK: Coolant temperature (tcoolin) cannot be < 0 C (273.15 K) for water cooled copper magents."},
+  {"no": 235, "level": 3, "message": "CHECK: Coolant temperature (tcoolin) should be > 50 K for the cryo-al resistivity to be defined."}
  ]
 }

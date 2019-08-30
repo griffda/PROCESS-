@@ -2747,11 +2747,12 @@ module tfcoil_variables
   !+ad_vars  tcoolin /313.15/ : centrepost coolant inlet temperature (K)
   real(kind(1.0D0)) :: tcoolin = 313.15D0   ! 40 C
 
-  !+ad_vars  tcpav /373.15/ : average temp of TF coil inboard leg conductor (K)
-  !+ad_varc                  (resistive coils) (iteration variable 20)
+  !+ad_vars  tcpav /373.15/ : Assumed temperature of centrepost called CP (K)
+  !+ad_varc                   Only used for resistive coils to compute the resisitive heating 
+  !+ad_varc                   Must be an iteration variable for ST (itart == 1) (iteration variable 20)
   real(kind(1.0D0)) :: tcpav = 373.15D0     ! 100 C
 
-  !+ad_vars  tcpav2 : centrepost average temperature (K) (for consistency)
+  !+ad_vars  tcpav2 : Computed centrepost average temperature (K) (for consistency)
   real(kind(1.0D0)) :: tcpav2 = 0.0D0
 
   !+ad_vars  tcpmax : peak centrepost temperature (K)
