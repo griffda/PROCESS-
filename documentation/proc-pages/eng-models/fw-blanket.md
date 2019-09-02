@@ -135,48 +135,34 @@ A few other input parameters are useful for tuning purposes, as follows:
 
 #### KIT model outputs and available constraints
 
+The KIT blanket model has the following available constraints
+
+| Constraint No. | F-value   | F-value No. | Limit       | Description |
+| :------------: | :-------: | :---------: | :---------: | ----------- | 
+| 52             | `ftbr`    | 89          | `tbrmin`    | Min required `tbr` |
+| 53             | `fflutf`  | 92          | `nflutfmax` | Max allowed TF fluence |
+| 54             | `fptfnuc` | 95          | `ptfnucmax` | Max allowed heating of TF coils |
+| 55             | `fvvhe`   | 96          | `vvhealw`   | Max allowed He concentration in VV |
+
 The KIT blanket neutronics model provides the following outputs:
 
-\item The total nuclear power deposited in the blanket and shield,
-  \texttt{pnucblkt} and \texttt{pnucshld}, respectively, and the energy
-  multiplication factor in the blanket, \texttt{emult} aref calculated.
-
-\item The tritium breeding ratio, \texttt{tbr}. This can be constrained to be
-  no less than a certain value \texttt{tbrmin} for tritium self-sufficiency by
-  turning on constraint equation no.\ 52 with iteration variable no.\ 89
-  (\texttt{ftbr}). The inboard and outboard blanket BZ thicknesses,
-  \texttt{blbuith} and \texttt{blbuoth} can also be used as iteration
-  variables (90 and 91, respectively) to help the constraint to be met.
-
-\item The tritium production rate in grammes/day is calculated.
-
-\item The fast neutron fluence (neutrons/m$^2$) on the TF coils is
-  calculated. The peak value of this quantity may be constrained to be no more
-  than a maximum value \texttt{nflutfmax} by turning on constraint equation
-  no.\ 53 with iteration variable no.\ 92 (\texttt{fflutf}). The inboard and
-  outboard shield thicknesses, \texttt{shldith} and \texttt{shldoth} can also
-  be used as iteration variables (93 and 94, respectively) to help the
-  constraint to be met. (Note that in this calculation the TF coil case
-  surrounding the superconductor winding pack is ignored.)
-
-\item The nuclear heating power (MW/m$^3$) on the inboard and outboard TF
-  coils is calculated. Again, this can be limited to be no more than a maximum
-  value \texttt{ptfnucmax} by turning on constraint equation no.\ 54 with
-  iteration variable no.\ 95 (\texttt{fptfnuc}). The inboard and outboard
-  shield thicknesses also help this constraint to be met.  (Note that in this
-  calculation the TF coil case surrounding the superconductor winding pack is
-  ignored.) This constraint equation may also be used with \texttt{blktmodel =
-    0}.
-
-\item The helium concentration in the vacuum vessel at the end of the plant
-  lifetime is calculated. This needs to be constrained for re-weldability
-  purposes, and can be kept below a maximum value \texttt{vvhealw} by turning
-  on constraint equation no.\ 55 with iteration variable no.\ 96
-  (\texttt{fvvhe}).
-
-\item The blanket lifetime is calculated, assuming a maximum allowable level
-  of neutron damage to its steel of 60~dpa (currently not adjustable). (For
-  the \texttt{blktmodel = 0} model, the allowable blanket fluence
-  \texttt{abktflnc} in MW-years/m$^2$ may be input.)
-
-\end{itemize}
+| Output      | Units    | Itvar. | Description |
+| :---------: | :------: | ------ | ----------- |
+| `pnucblkt`  | MW       | -      | Total nuclear power deposited in blanket |
+| `pnucshld`  | MW       | -      | Total nuclear power deposited in shield | 
+| `emult`     | -        | -      | The energy multiplication factor in the blanket |
+| `tbr`       | -        | -      | Tritium breeding ratio |
+| `blbuith`   | m        | 90     | Inboard blanket thickness |
+| `blbuoth`   | m        | 91     | Outboard blanket thickness |
+| `tritprate` | -        | -      | The tritium production rate in grammes/day is calculated. |
+| `nflutfi`   | n/m$^2$  | -      | The fast neutron fluence on the inboard TF coils |
+| `nflutfo`   | n/m$^2$  | -      | The fast neutron fluence on the inboard TF coils |
+| `shldith`   | m        | 93     | Inboard shield thickness |
+| `shldoth`   | m        | 94     | Outboard shield thickness |
+| `pnuctfi`   | MW/m$^3$ | -      | Nuclear heating power on inboard TF coil |
+| `pnuctfo`   | MW/m$^3$ | -      | Nuclear heating power on outboard TF coil |
+| `vvhemini`  | appm     | -      | Min He concentration in the inboard VV at the end of the plant lifetime |
+| `vvhemaxi`  | appm     | -      | Max He concentration in the inboard VV at the end of the plant lifetime |
+| `vvhemino`  | appm     | -      | Min He concentration in the outboard VV at the end of the plant lifetime |
+| `vvhemaxo`  | appm     | -      | Max He concentration in the outboard VV at the end of the plant lifetime |
+| `bktlife`   | fp-yrs   | -      | Blanket lifetime in full power years assuming max damage ~60 dpa|
