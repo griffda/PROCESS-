@@ -3,48 +3,58 @@ Library of Sankey plotting routine
 
 Author: Hanni Lux (Hanni.Lux@ukaea.uk)
         Matti Coleman (Matti.Coleman@ukaea.uk)
+Updated 08/08/2019: Adam Brown (adam.brown@ukaea.uk) 
 """
 
 from numpy import sqrt
 from matplotlib.sankey import Sankey
-from matplotlib.pyplot import figure
+import matplotlib.pyplot as plt
 from process_io_lib.mfile import MFile
 
 def plot_sankey(mfilename='MFILE.DAT'):
 
+
     """ Plots the power flow from PROCESS as a Sankey Diagram
         for ipowerflow=1 comprehensive 2014 model """
 
-    print('WARNING: This option is not yet completely implemented!',
-          'Please use the -s simplified option instead!')
 
     m_file = MFile(mfilename)
 
-    powfmw = m_file.data['powfmw'].get_scan(-1)
-    pinjmw = m_file.data['pinjmw'].get_scan(-1)
-    pohmmw = m_file.data['pohmmw'].get_scan(-1)
-    
-    fig = figure()
-    ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[])
+
+    powfmw  = m_file.data['powfmw' ].get_scan(-1)
+    pinjmw  = m_file.data['pinjmw' ].get_scan(-1)
+    pohmmw  = m_file.data['pohmmw' ].get_scan(-1)
+
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[], frameon=False, title="Full Sankey Diagram")
     sankey = Sankey(ax=ax, unit='MW', format='%1.0f',scale = 1./(powfmw+pinjmw+pohmmw))
 
+
     #PLASMA - 0
+
     pneutmw = m_file.data['pneutmw'].get_scan(-1)
-    palpmw = m_file.data['palpmw'].get_scan(-1)
-    
-    PLASMA = [powfmw, pinjmw, pohmmw, -pneutmw, -palpmw-pinjmw]
-    if sqrt(sum(PLASMA)**2) > 2:
+    palpmw  = m_file.data['palpmw' ].get_scan(-1)
+    PLASMA = [powfmw, pinjmw, pohmmw, -pneutmw, -palpmw, -pinjmw]
+
+    """if sqrt(sum(PLASMA)**2) > 2:
         print('PLASMA power balance', powfmw+pinjmw+pohmmw, -pneutmw-palpmw-pinjmw)
-        exit()
-    sankey.add(flows=PLASMA, orientations=[0, -1, 0, 0, -1],
-               labels=['Fusion Power','H&CD', 'Ohmic', 'Neutrons','He4+Aux'])
+        exit()"""
+
+
+    sankey.add(flows=PLASMA,
+               facecolor="yellow",
+               orientations=[0, -1, -1, 0, 1, 1],
+               labels=['Fusion Power','H&CD', 'Ohmic', 'Neutrons','He4+Aux','H&CD'],
+               pathlengths=0.25)
 
     #HCD -1
     pinjht = m_file.data['pinjht'].get_scan(-1)
     
     HCD = [pinjht+pinjmw, -pinjmw,-pinjht]
     assert(sum(HCD)**2 < 0.5)
-    sankey.add(flows=HCD, orientations=[-1, 1, -1],
+    sankey.add(flows=HCD,
+               orientations=[-1, 1, -1],
                prior=0, connect=(1, 1),
                labels=['H&CD power', None,"H&CD losses"])
 
@@ -73,7 +83,7 @@ def plot_sankey(mfilename='MFILE.DAT'):
                    labels=[None,'Energy Multiplication',"Blanket", "Divertor",
                            "First Wall", "TFcoils"])
 
-    #Radiation- 3
+    """#Radiation- 3
     pradmw = m_file.data['pradmw'].get_scan(-1)
     pdivt = m_file.data['pdivt'].get_scan(-1)
     praddiv = pradmw * m_file.data['fdiv'].get_scan(-1)
@@ -158,13 +168,13 @@ def plot_sankey(mfilename='MFILE.DAT'):
 
     #Low Grade heat
     #htpmw = m_file.data['htpmw'].get_scan(-1)
-    psechtmw = m_file.data['psechtmw'].get_scan(-1)
+    psechtmw = m_file.data['psechtmw'].get_scan(-1)"""
 
     
 
     diagrams = sankey.finish()
     fig.tight_layout()
-
+    plt.show()
 
     
 ########################################################
@@ -183,16 +193,18 @@ def plot_simplified_sankey(mfilename='MFILE.DAT'):
     x_adj,y_adj = 0,0 #Adjustment factors in the x and y direction for second loop
 
     for _ in range(2):
-        fig = figure()
-        ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[],frameon=False)
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[], frameon=False, title="Simplified Sankey Diagram")
         sankey = Sankey(ax=ax, unit='MW', format='%1.0f',scale = 1./(powfmw+pinjmw+pohmmw))
 
         #PLASMA
         totalplasma = powfmw+pinjmw+pohmmw
         
-        PLASMA = [powfmw, pinjmw+pohmmw,-totalplasma  ]
-        sankey.add(flows=PLASMA, orientations=[0, -1, 0], trunklength=1. + 0.5*x_adj,
-                labels=['Fusion Power','Plasma Heating','Plasma'])
+        PLASMA = [powfmw, pinjmw+pohmmw,-totalplasma]
+        sankey.add(flows=PLASMA,
+                   orientations=[0, -1, 0],
+                   trunklength=1. + 0.5*x_adj,
+                   labels=['Fusion Power','Plasma Heating','Plasma'])
 
         #Components
         emultmw = m_file.data['emultmw'].get_scan(-1)
@@ -252,8 +264,8 @@ def plot_simplified_sankey(mfilename='MFILE.DAT'):
         tfacpd = m_file.data['tfacpd'].get_scan(-1)
         trithtmw = m_file.data['trithtmw'].get_scan(-1)
         vachtmw = m_file.data['vachtmw'].get_scan(-1)
-        pfwp = m_file.data['pfwp'].get_scan(-1)
-        pcoresystems = crypmw + fachtmw + tfacpd + trithtmw + vachtmw + pfwp
+        pfwpmw = m_file.data['pfwpmw'].get_scan(-1)
+        pcoresystems = crypmw + fachtmw + tfacpd + trithtmw + vachtmw + pfwpmw
         if itart == 1 :
             pcoresystems = pcoresystems + ppumpmw
         pinjwp = m_file.data['pinjwp'].get_scan(-1)

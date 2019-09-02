@@ -106,6 +106,7 @@ module physics_module
   real(kind(1.0D0)) :: rho_star  
   real(kind(1.0D0)) :: nu_star  
   real(kind(1.0D0)) :: beta_mcdonald
+  real(kind(1.0D0)) :: itart_r
 
 contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4066,6 +4067,14 @@ end subroutine subr
     else
        call ocmmnt(outfile,'Plasma configuration = stellarator')
     end if
+
+    if (itart == 0) then
+       itart_r = itart
+       call ovarrf(outfile,'Tokamak aspect ratio = Conventional, itart = 0','(itart)',itart_r)
+    else if (itart == 1) then
+       itart_r = itart
+      call ovarrf(outfile,'Tokamak aspect ratio = Spherical, itart = 1','(itart)',itart_r)
+   end if
 
     call osubhd(outfile,'Plasma Geometry :')
     call ovarrf(outfile,'Major radius (m)','(rmajor)',rmajor)
