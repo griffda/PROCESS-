@@ -37,7 +37,8 @@ from process_io_lib.process_dicts import DICT_DESCRIPTIONS
 from process_io_lib.process_dicts import DICT_DEFAULT
 
 # ioptimz values
-ioptimz_des = {"-1": "for no optimisation HYBRD only",
+ioptimz_des = {"-2": "for no optimisation, no VMCOM or HYBRD",
+               "-1": "for no optimisation HYBRD only",
                "0": "for HYBRD and VMCON (not recommended)",
                "1": "for optimisation VMCON only"}
 

@@ -114,6 +114,7 @@ module numerics
   integer, parameter :: ipvp1   = ipnvars+1
 
   !+ad_vars  ioptimz /1/ : code operation switch:<UL>
+  !+ad_varc           <LI> = -2 for no optimisation, no VMCOM or HYBRD;
   !+ad_varc           <LI> = -1 for no optimisation, HYBRD only;
   !+ad_varc           <LI> = 0  for HYBRD and VMCON (not recommended);
   !+ad_varc           <LI> = 1  for optimisation, VMCON only</UL>
