@@ -626,7 +626,7 @@ subroutine check
         if ( itfsup == 0 .and. tcoolin < 273.15D0 ) call report_error(234)
 
         ! Too large temperatures leading to out of range resisitivity model
-        if ( itfsup == 0 .and. tcoolin > 50.0D0 ) call report_error(235)
+        if ( itfsup == 2 .and. tcoolin > 50.0D0 ) call report_error(235)
 
         ! Check if the boostrap current selection is addapted to ST
         if (ibss  == 1) call report_error(38)
