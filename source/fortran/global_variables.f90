@@ -4469,8 +4469,10 @@ module ife_variables
      !+ad_varc              <LI> = 8 lithium </UL>
      integer, parameter ::  maxmat = 8
    
-     !+ad_vars  bldr /1.0/ : radial thickness of IFE blanket (m)
+     !+ad_vars  bldr /1.0/ : radial thickness of IFE blanket (m; calculated if ifetyp=4)
      real(kind(1.0D0)) :: bldr   = 1.0D0
+     !+ad_vars  bldrc /1.0/ : radial thickness of IFE curtain (m; ifetyp=4)
+     real(kind(1.0D0)) :: bldrc   = 1.0D0
      !+ad_vars  bldzl /4.0/ : vertical thickness of IFE blanket below chamber (m)
      real(kind(1.0D0)) :: bldzl  = 4.0D0
      !+ad_vars  bldzu /4.0/ : vertical thickness of IFE blanket above chamber (m)
@@ -4530,6 +4532,8 @@ module ife_variables
      real(kind(1.0D0)) :: edrive = 5.0D6
      !+ad_vars  etadrv : IFE driver wall plug to target efficiency
      real(kind(1.0D0)) :: etadrv = 0.0D0
+     !+ad_vars  etali /0.40/ : IFE lithium pump wall plug efficiency (ifetyp=4)
+     real(kind(1.0D0)) :: etali = 0.4D0
      !+ad_vars  etave(10) : IFE driver efficiency vs driver energy (ifedrv=-1)
      real(kind(1.0D0)), dimension(10) :: etave = (/ &
           0.082D0,0.079D0,0.076D0,0.073D0,0.069D0, &
@@ -4595,6 +4599,8 @@ module ife_variables
      !+ad_varc          <LI> = 3 HYLIFE-II-like build;
      !+ad_varc          <LI> = 4 2019 build</UL>
      integer :: ifetyp = 0
+     !+ad_vars  lipmw : IFE lithium pump power (MW; ifetyp=4)
+     real(kind(1.0D0)) :: lipmw = 0.0D0
      !+ad_vars  mcdriv /1.0/ : IFE driver cost multiplier
      real(kind(1.0D0)) :: mcdriv = 1.0D0
      !+ad_vars  mflibe : total mass of FLiBe (kg)
@@ -4655,6 +4661,8 @@ module ife_variables
      real(kind(1.0D0)) :: sombdr = 2.7D0
      !+ad_vars  somtdr /2.7/ : radius of cylindrical blanket section above chamber (ifetyp=2)
      real(kind(1.0D0)) :: somtdr = 2.7D0
+     !+ad_vars  taufall : Lithium Fall Time (s)
+     real(kind(1.0D0)) :: taufall = 0.0D0
      !+ad_vars  tdspmw /0.01/ FIX : IFE target delivery system power (MW)
      real(kind(1.0D0)) :: tdspmw = 0.01D0
      !+ad_vars  tfacmw : IFE target factory power (MW)

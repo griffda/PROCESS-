@@ -1362,6 +1362,7 @@ contains
      !+ad_prob  None
      !+ad_call  None
      !+ad_hist  31/07/19 SIM Initial version
+     !+ad_hist  03/09/19 SIM Added lithium pump and curtain sizing
      !+ad_stat  Okay
      !+ad_docs  Issue #907
      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1375,6 +1376,7 @@ contains
      !  Local variables
 
      integer :: i,j
+     real(kind(1.0D0)), save :: g, vel, acurt, mdot
 
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1387,6 +1389,41 @@ contains
           call report_error(232)
      end if
      
+     ! Lithium Pump 
+
+     ! Acceleration due to gravity (m/s^2)
+     g = 9.81D0
+
+     ! Velocity
+     vel = sqrt(2.0D0*g*(chdzl+chdzu+bldzu))
+
+     ! Lithium Fraction
+     blmatf(1,8) = 0.91*sqrt(bldzu/(chdzl+chdzu+bldzu))
+     blmatf(1,0) = 1.0D0 - blmatf(1,8)
+
+     ! Spatial Thickness
+     bldr = bldrc / blmatf(1,8)
+
+     ! Area
+     acurt = pi * ((chrad+bldr)**2.0D0-chrad**2.0D0)
+
+     ! Mass Flow
+     mdot = 512.0D0 * vel * blmatf(1,8) * acurt
+
+     ! Pump Power (MW)
+     lipmw = 1.0D-6 * mdot * g * (chdzl+chdzu+bldzu+bldzl) / etali
+
+     ! Fall Time
+     taufall = 2.0D0 * (chdzl+chdzu+bldzu) / vel
+
+     rrmax = 1.0D0 / taufall
+
+     ! TBR
+     tbr = 3.7418D0 * (1.0D0 / (1.0D0 + exp(-2.6366D0 * bldrc)) - 0.5D0)
+
+     ! Energy Multiplication
+     emult = 2.2414D0 * (1.0D0 / (1.0D0 + exp(-3.0038D0 * bldrc)) - 0.5D0)
+
      !  Radial build
 
      r1 = chrad
@@ -1415,6 +1452,9 @@ contains
      zu4 = zu3 + bldzu
      zu5 = zu4 + v2dzu
      zu6 = zu5 + shdzu
+
+     v3dzu = (zu6+zl6) + trcl + stcl + 5.1D0 + 9.41D-6 * 1.0D5
+
      zu7 = zu6 + v3dzu
 
      !  Component volumes
@@ -2281,7 +2321,7 @@ contains
     !  and provide the energy multiplication as though it were a
     !  conventional blanket
 
-    if ((ifetyp /= 3).or.(ifetyp /= 3)) then
+    if ((ifetyp /= 3).or.(ifetyp /= 4)) then
        pfwdiv = 0.24D0 * pthermmw
        pnucblkt = pthermmw - pfwdiv
     else
@@ -2368,12 +2408,12 @@ contains
     !  Power needed per floor area, MW/m2
 
     pmwpm2 = pwpm2 * 1.0D-6
-
+    
     !  Total pulsed power system load, MW
 
     pacpmw = crypmw + vachtmw + tdspmw + tfacmw + &
          (htpmw_ife*reprat/6.0D0) + trithtmw + pinjwp + basemw + &
-         (efloor*pmwpm2)
+         (efloor*pmwpm2) + lipmw
 
     !  Total baseline power to facility loads, MW
 
@@ -2405,6 +2445,9 @@ contains
     call ovarre(outfile,'Cryogenic comp motors (MW)','(crypmw)',crypmw)
     call ovarre(outfile,'Heat transport system pump motors (MW)', &
          '(htpmw_ife*reprat/6)',htpmw_ife*reprat/6.0D0)
+    if (ifetyp.eq.4) then
+        call ovarre(outfile,'Lithium Pump Power (MW)','(lipmw)',lipmw)
+    end if
     call oblnkl(outfile)
     call ovarre(outfile,'Total pulsed power (MW)','(pacpmw)',pacpmw)
     call ovarre(outfile,'Total base power reqd at all times (MW)', &
@@ -2512,6 +2555,10 @@ contains
     call ovarre(outfile,'Fusion power escaping via holes (MW)', &
          '(pnucloss)',pnucloss)
     call ovarre(outfile,'Power multiplication factor','(emult)',emult)
+    if (ifetyp.eq.4) then
+        call ovarre(outfile,'Tritium Breeding Ratio','(tbr)',tbr)
+        call ovarre(outfile,'Lithium Fall Time (s)','(taufall)',taufall)
+    end if
     call ovarre(outfile,'Driver wall plug power (MW)','(pinjwp)' &
          ,pinjwp)
     call ovarre(outfile,'First wall nuclear heating (MW)','(pfwdiv)', &
