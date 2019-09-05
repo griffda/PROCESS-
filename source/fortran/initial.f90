@@ -592,29 +592,52 @@ subroutine check
      endif
 
 
-    !  Tight aspect ratio options
-    ! ---------------------------
-
+    !  Tight aspect ratio options (ST)
+    ! --------------------------------
      if (itart == 1) then
 
         icase  = 'Tight aspect ratio tokamak model'
+
+        ! Forcing that no inboard breeding blanket is used
         iblnkith = 0
 
+        ! Check if the choice of plasma current is addapted for ST
+        ! 2 : Peng Ip scaling (See STAR code documentation)
+        ! 9 : Fiesta Ip scaling
         if (icurr /= 2 .and. icurr /= 9) then
             idiags(1) = icurr ; call report_error(37)
         end if
+
+        ! Location of the TF coils 
+        ! 2 : PF coil on top of TF coil;
+        ! 3 : PF coil outside of TF coil</UL>
         ipfloc(1) = 2
         ipfloc(2) = 3
         ipfloc(3) = 3
-        if ( itfsup == 1 ) itfsup = 0
-        if ( itfsup == 2 ) tcpav  = 20.0D0  ! Initialize at low temperatures for cryoaluminium centerpost (20 K)
 
+        ! Call a lvl 3 error if superconductor magnets are used
+        if ( itfsup == 1 ) call report_error(233)
+
+        ! Initialize the CP conductor temperature to cryogenic temperatire for cryo-al magnets (20 K)
+        if ( itfsup == 2 ) tcpav  = 20.0D0
+
+        ! Check if the initial centrepost coolant loop adapted to the magnet technology
+        ! Ice cannot flow so tcoolin > 273.15 K 
+        if ( itfsup == 0 .and. tcoolin < 273.15D0 ) call report_error(234)
+
+        ! Too large temperatures leading to out of range resisitivity model
+        if ( itfsup == 2 .and. tcoolin > 50.0D0 ) call report_error(235)
+
+        ! Check if the boostrap current selection is addapted to ST
         if (ibss  == 1) call report_error(38)
+
+        ! Check if a single null divertor is used (double null not yet implemented)
         if (snull == 1) call report_error(39)
+    ! --------------------------------
 
     else
 
-        if (icurr == 2) call report_error(40)
+        if (icurr == 2 .or. icurr == 9) call report_error(40)
 
         if (snull == 0) then
             idivrt = 2
