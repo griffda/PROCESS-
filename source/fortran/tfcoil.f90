@@ -332,8 +332,8 @@ contains
     ! Vertircal force    
     ! The outer radius of the inner leg and the inner radius of the outer leg is taken
     ! vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inleg_out) / tfno 
-    vforce = 0.25D0 * bmaxtf * ritfc / tfno * ( 0.5D0 * tfcth +                     &         ! Inner leg side component 
-                                              & r_tf_inleg_out * log(r_tf_outleg_in/r_tf_inleg_out) + &         ! TF bore component
+    vforce = 0.25D0 * bmaxtf * ritfc / tfno * ( 0.5D0 * tfcth +                                       &     ! Inner leg side component 
+                                              & r_tf_inleg_out * log(r_tf_outleg_in/r_tf_inleg_out) + &     ! TF bore component
                                               & 0.5D0 * tfcth*tfootfi * (r_tf_inleg_out/r_tf_outleg_in) )   ! Outer leg side component
 
     ! Current turn information 
@@ -635,8 +635,8 @@ contains
     !  Thermal hydraulics: friction factor from Z. Olujic, Chemical
     !  Engineering, Dec. 1981, p. 91
     roughrat = 4.6D-5 / dcool
-    fricfac  = 1.0D0/ (-2.0D0 * log(roughrat/3.7D0 - 5.02D0/reyn * &
-         log( roughrat/3.7D0 + 14.5D0/reyn) ) )**2
+    fricfac  = 1.0D0/ (-2.0D0 * log10(roughrat/3.7D0 - 5.02D0/reyn * &
+         log10( roughrat/3.7D0 + 14.5D0/reyn) ) )**2
 
     dpres = fricfac * (lcool/dcool) * coolant_density * 0.5D0*vcool**2
     ppump = dpres * acool * vcool / etapump
