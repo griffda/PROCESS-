@@ -47,6 +47,6 @@ if __name__ == '__main__':
     else:
         plot_sankey(ARGS.mfile)
         savefig("SankeyPowerFlow."+ARGS.end)
-    """
-    show()
-    """
+    
+    #show()
+    
