@@ -49,6 +49,7 @@ module costs_module
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  ife_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
@@ -72,6 +73,7 @@ module costs_module
   use divertor_variables
   use error_handling
   use fwbs_variables
+  use ife_variables
   use heat_transport_variables
   use pfcoil_variables
   use physics_variables
@@ -91,8 +93,17 @@ module costs_module
   public :: costs
 
   !  Various cost account values (M$)
-
   real(kind(1.0D0)), public, bind(C) :: c228, c229, c23, c25, c26, cindrt, ccont
+
+  !  Account 226 - Heat transport system 
+  real(kind(1.0D0)), protected, public, bind(C) :: c226, c2261, c2262, c2263
+
+  !  Account 227 - Fuel handling
+  real(kind(1.0D0)), public, bind(C) :: c227, c2271, c2272, c2273, c2274
+
+  !  Account 24 - electrical plant equipment
+  real(kind(1.0D0)), public, bind(C) :: c24, c241, c242, c243, c244, c245
+
 
   real(kind(1.0D0)) :: &
        c21,c211,c212,c213,c214,c2141,c2142,c215,c216,c217,c2171, &
@@ -102,9 +113,7 @@ module costs_module
        c22223,c22224,c2223,c223,c2231,c2232,c2233,c2234,c224,c2241, &
        c2242,c2243,c2244,c2245,c2246,c225,c2251,c22511,c22512,c22513, &
        c22514,c22515,c2252,c22521,c22522,c22523,c22524,c22525,c22526, &
-       c22527,c2253,c226,c2261,c2262,c2263,c227,c2271,c2272,c2273, &
-       c2274,c24,c241,c242,c243,c244,c245, &
-       chx,cpp,cppa
+       c22527,c2253,chx,cpp,cppa, c22128
 
 contains
 
@@ -152,7 +161,9 @@ contains
     !+ad_hist  08/09/14 PJK Modified blanket costs for ipowerflow=1 model
     !+ad_hist  03/11/14 PJK Clarified ipowerflow, blkttype logic
     !+ad_hist  17/11/14 PJK Added output_costs switch
+    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
     !+ad_hist  06/09/18 SIM Added variable name output to MFILE
+    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -162,51 +173,46 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: iprint,outfile
+    integer, intent(in) :: iprint, outfile
 
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Account 21 : Structures and site facilities
-
     call acc21
 
     !  Account 22 : Fusion power island
-
     call acc22
 
     !  Account 23 : Turbine plant equipment
-
     call acc23
 
     !  Account 24 : Electric plant equipment
-
-    call acc24
+    call acc241    ! Account 241 : Switchyard
+    call acc242    ! Account 242 : Transformers
+    call acc243    ! Account 243 : Low voltage
+    call acc244    ! Account 244 : Diesel generators
+    call acc245    ! Account 245 : Auxiliary facility power equipment
+    call acc24     ! Account 24  : Total
 
     !  Account 25 : Miscellaneous plant equipment
-
     call acc25
 
     !  Account 26 : Heat rejection system
-
     call acc26
 
     !  Total plant direct cost
-
     !cdirt = c21 + c22 + c23 + c24 + c25 + c26 + chplant
     cdirt = c21 + c22 + c23 + c24 + c25 + c26
 
     !  Account 9 : Indirect cost and project contingency
-
     call acc9
 
     !  Constructed cost
-
     concost = cdirt + cindrt + ccont
 
     !  Cost of electricity
-
     if ((ireactor == 1).and.(ipnet == 0)) call coelc(outfile,iprint)
 
     if ((iprint == 0).or.(output_costs == 0)) return
@@ -218,6 +224,7 @@ contains
          fkind)
     call ovarin(outfile,'Level of Safety Assurance','(lsa)',lsa)
     call oblnkl(outfile)
+    call oshead(outfile,'Structures and Site Facilities')
     call ocosts(outfile,'(c211)','Site improvements, facilities, land (M$)',c211)
     call ocosts(outfile,'(c212)','Reactor building cost (M$)',c212)
     call ocosts(outfile,'(c213)','Turbine building cost (M$)',c213)
@@ -234,7 +241,7 @@ contains
 
     call oshead(outfile,'Reactor Systems')
     call ocosts(outfile,'(c2211)','First wall cost (M$)',c2211)
-
+    if (ife /= 1) then
     if ((ipowerflow == 0).or.(blkttype == 3)) then
       call ocosts(outfile,'(c22121)','Blanket beryllium cost (M$)',c22121)
       call ocosts(outfile,'(c22122)','Blanket breeder material cost (M$)',c22122)
@@ -244,7 +251,16 @@ contains
     end if
     call ocosts(outfile,'(c22123)','Blanket stainless steel cost (M$)',c22123)
     call ocosts(outfile,'(c22124)','Blanket vanadium cost (M$)',c22124)
-
+    else  !  IFE
+      call ocosts(outfile,'(c22121)','Blanket beryllium cost (M$)',c22121)
+      call ocosts(outfile,'(c22122)','Blanket lithium oxide cost (M$)',c22122)
+      call ocosts(outfile,'(c22123)','Blanket stainless steel cost (M$)',c22123)
+      call ocosts(outfile,'(c22124)','Blanket vanadium cost (M$)',c22124)
+      call ocosts(outfile,'(c22125)','Blanket carbon cloth cost (M$)',c22125)
+      call ocosts(outfile,'(c22126)','Blanket concrete cost (M$)',c22126)
+      call ocosts(outfile,'(c22127)','Blanket FLiBe cost (M$)',c22127)
+      call ocosts(outfile,'(c22128)','Blanket lithium cost (M$)',c22128)
+    end if
     call ocosts(outfile,'(c2212)','Blanket total cost (M$)',c2212)
     call ocosts(outfile,'(c22131)','Bulk shield cost (M$)',c22131)
     call ocosts(outfile,'(c22132)','Penetration shielding cost (M$)',c22132)
@@ -261,6 +277,8 @@ contains
 
     call oblnkl(outfile)
     call ocosts(outfile,'(c221)','Total account 221 cost (M$)',c221)
+
+    if (ife /= 1) then
 
        call oshead(outfile,'Magnets')
 
@@ -300,12 +318,17 @@ contains
        call oblnkl(outfile)
        call ocosts(outfile,'(c222)','Total account 222 cost (M$)',c222)
 
+    end if
+
        call oshead(outfile,'Power Injection')
 
+    if (ife == 1) then
+         call ocosts(outfile,'(c2231)','IFE driver system cost (M$)',c2231)
+    else
        call ocosts(outfile,'(c2231)','ECH system cost (M$)',c2231)
        call ocosts(outfile,'(c2232)','Lower hybrid system cost (M$)',c2232)
        call ocosts(outfile,'(c2233)','Neutral beam system cost (M$)',c2233)
-
+    end if
     call oblnkl(outfile)
     call ocosts(outfile,'(c223)','Total account 223 cost (M$)',c223)
 
@@ -319,6 +342,7 @@ contains
     call oblnkl(outfile)
     call ocosts(outfile,'(c224)','Total account 224 cost (M$)',c224)
 
+    if (ife /= 1) then
        call oshead(outfile,'Power Conditioning')
        call ocosts(outfile,'(c22511)','TF coil power supplies cost (M$)',c22511)
        call ocosts(outfile,'(c22512)','TF coil breakers cost (M$)',c22512)
@@ -339,6 +363,7 @@ contains
        call ocosts(outfile,'(c2253)','Total, energy storage cost (M$)',c2253)
        call oblnkl(outfile)
        call ocosts(outfile,'(c225)','Total account 225 cost (M$)',c225)
+    end if
 
     call oshead(outfile,'Heat Transport System')
     call ocosts(outfile,'(cpp)','Pumps and piping system cost (M$)',cpp)
@@ -442,6 +467,8 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  12/11/14 PJK tburn factor incorporated into cost of electricity
     !+ad_hist  17/11/14 PJK Added output_costs switch
+    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -465,7 +492,11 @@ contains
 
     !  Number of kWh generated each year
 
-    kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * tburn/tcycle
+    if (ife == 1) then
+       kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr
+    else
+       kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * tburn/tcycle
+    end if
 
     !  Costs due to reactor plant
     !  ==========================
@@ -520,6 +551,11 @@ contains
     !  Costs due to divertor renewal
     !  =============================
 
+    if (ife == 1) then
+      anndiv = 0.0D0
+      coediv = 0.0D0
+    else
+
        !  Compound interest factor
 
        fefdiv = (1.0D0 + ratecdol)**divlife
@@ -537,10 +573,12 @@ contains
 
        coediv = 1.0D9 * anndiv / kwhpy
 
+    end if
+
     !  Costs due to centrepost renewal
     !  ===============================
 
-    if (itart == 1) then
+    if ((itart == 1).and.(ife /= 1)) then
 
        !  Compound interest factor
 
@@ -630,9 +668,13 @@ contains
 
     !  Annual cost of fuel
 
+    if (ife /= 1) then
        !  Sum D-T fuel cost and He3 fuel cost
        annfuel = ucfuel * pnetelmw/1200.0D0 + &
             1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * 365.0D0 * cfactr
+    else
+       annfuel = 1.0D-6 * uctarg * reprat * 3.1536D7 * cfactr
+    end if
 
     !  Cost of electricity due to reactor fuel
 
@@ -696,11 +738,12 @@ contains
     call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)', &
          fwbllife)
 
-
+    if (ife /= 1) then
        call ovarrf(outfile,'Divertor life (years)','(divlife.)',divlife)
        if (itart == 1) then
           call ovarrf(outfile,'Centrepost life (years)','(cplife.)',cplife)
        end if
+    end if
 
 
     call ovarrf(outfile,'Cost of electricity (m$/kWh)','(coe)',coe)
@@ -748,7 +791,7 @@ contains
             '(fwallcst)',fwallcst)
        call ovarrf(outfile,'Blanket direct capital cost (M$)', &
             '(blkcst)',blkcst)
-
+       if (ife /= 1) then
           call ovarrf(outfile,'Divertor direct capital cost (M$)', &
                '(divcst)',divcst)
           if (itart == 1) then
@@ -759,7 +802,12 @@ contains
                '',cdcost*fcdfuel/(1.0D0-fcdfuel))
           call ovarrf(outfile,'Fraction of CD cost --> fuel cost', &
                '(fcdfuel)',fcdfuel)
-
+       else
+          call ovarrf(outfile,'IFE driver system direct cap cost (M$)', &
+                    '',cdcost*fcdfuel/(1.0D0-fcdfuel))
+          call ovarrf(outfile,'Fraction of driver cost --> fuel cost', &
+                    '(fcdfuel)',fcdfuel)
+       end if
     end if
 
   end subroutine coelc
@@ -860,11 +908,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc22
-
     !+ad_name  acc22
     !+ad_summ  Account 22 : Fusion power island
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This routine evaluates the Account 22 (fusion power island
@@ -881,6 +929,7 @@ contains
     !+ad_call  acc229
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  19/07/19 JM  Add unit tests
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -888,54 +937,44 @@ contains
 
     implicit none
 
-    !  Arguments
-
-    !  Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     !  Account 221 : Reactor
-
     call acc221
 
     !  Account 222 : Magnets
-
     call acc222
 
     !  Account 223 : Power injection
-
     call acc223
 
     !  Account 224 : Vacuum system
-
     call acc224
 
     !  Account 225 : Power conditioning
-
     call acc225
 
     !  Account 226 : Heat transport system
-
-    call acc226
+    call acc2261    !  Account 2261 : Reactor cooling system
+    call acc2262    !  Account 2262 : Auxiliary component coolin
+    call acc2263    !  Account 2263 : Cryogenic system
+    call acc226     !  Account 226  : Total
 
     !  Account 227 : Fuel handling
-
-    call acc227
+    call acc2271    !  Account 2271 : Fuelling system
+    call acc2272    !  Account 2272 : Fuel processing and purification
+    call acc2273    !  Account 2273 : Atmospheric recovery systems
+    call acc2274    !  Account 2274 : Nuclear building ventilation
+    call acc227     !  Account 227  : Total
 
     !  Account 228 : Instrumentation and control
-
     call acc228
 
     !  Account 229 : Maintenance equipment
-
     call acc229
 
     !  Reactor core costs
-
     crctcore = c221 + c222 + c223
 
     !  Total account 22
-
     c22 = c221 + c222 + c223 + c224 + c225 + c226 + c227 + c228 + c229
 
   end subroutine acc22
@@ -1022,6 +1061,8 @@ contains
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  03/12/13 PJK Removed old comment about ucfwps; multiplied
     !+ad_hisc               all terms by cmlsa, not just the ucfwps term
+    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1037,6 +1078,11 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    !  IFE plant material unit costs
+    !  uccarb   : carbon cloth cost $/kg [50.0]
+    !  ucconc   : concrete cost $/kg [0.1]
+    !  fwmatm(J,I) : mass of material I in region J of first wall
+
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.5000D0
@@ -1044,7 +1090,15 @@ contains
     cmlsa(3) = 0.8750D0
     cmlsa(4) = 1.0000D0
 
-    c2211 = 1.0D-6 * cmlsa(lsa) * ((ucfwa+ucfws)*fwarea + ucfwps)
+    if (ife /= 1) then
+        c2211 = 1.0D-6 * cmlsa(lsa) * ((ucfwa+ucfws)*fwarea + ucfwps)
+    else
+        c2211 = 1.0D-6 * cmlsa(lsa) * ( &
+              ucblss   * (fwmatm(1,1)+fwmatm(2,1)+fwmatm(3,1)) + &
+              uccarb   * (fwmatm(1,2)+fwmatm(2,2)+fwmatm(3,2)) + &
+              ucblli2o * (fwmatm(1,4)+fwmatm(2,4)+fwmatm(3,4)) + &
+              ucconc   * (fwmatm(1,5)+fwmatm(2,5)+fwmatm(3,5)) )
+    end if
 
     c2211 = fkind * c2211
 
@@ -1076,6 +1130,8 @@ contains
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  03/06/13 PJK Added blktmodel>0 breeder cost
     !+ad_hist  08/09/14 PJK Added blanket costs for ipowerflow=1 model
+    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1091,6 +1147,13 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    !  IFE unit costs
+    !  uccarb   : carbon cloth [50.0]
+    !  ucconc   : concrete [0.1]
+    !  ucflib   : FLiBe [84.0]
+    !  mflibe   : Total mass of FLiBe (kg)
+    !  blmatm(J,I) : mass of material I in region J of blanket
+
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.5000D0
@@ -1098,7 +1161,7 @@ contains
     cmlsa(3) = 0.8750D0
     cmlsa(4) = 1.0000D0
 
-
+    if (ife /= 1) then
 
        if (ipowerflow == 0) then
           c22121 = 1.0D-6 * whtblbe * ucblbe
@@ -1124,6 +1187,22 @@ contains
        c22125 = 0.0D0
        c22126 = 0.0D0
        c22127 = 0.0D0
+
+    else
+
+       !  IFE blanket; materials present are Li2O, steel, carbon, concrete,
+       !  FLiBe and lithium 
+  
+       c22121 = 0.0D0
+       c22122 = 1.0D-6 * wtblli2o * ucblli2o
+       c22123 = 1.0D-6 * whtblss * ucblss
+       c22124 = 0.0D0
+       c22125 = 1.0D-6 * uccarb * (blmatm(1,2)+blmatm(2,2)+blmatm(3,2))
+       c22126 = 1.0D-6 * ucconc * (blmatm(1,5)+blmatm(2,5)+blmatm(3,5))
+       c22127 = 1.0D-6 * ucflib * mflibe
+       c22128 = 1.0D-6 * ucblli * whtblli
+  
+    end if
 
     c22121 = fkind * c22121 * cmlsa(lsa)
     c22122 = fkind * c22122 * cmlsa(lsa)
@@ -1160,6 +1239,8 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1175,6 +1256,11 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    !  IFE unit costs
+    !  uccarb   : carbon cloth [50.0]
+    !  ucconc   : concrete [0.1]
+    !  shmatm(J,I) : mass of material I in region J of shield
+
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.5000D0
@@ -1182,12 +1268,24 @@ contains
     cmlsa(3) = 0.8750D0
     cmlsa(4) = 1.0000D0
 
+    if (ife /= 1) then
        c22131 = 1.0D-6 * whtshld * ucshld * cmlsa(lsa)
+    else
+       c22131 = 1.0D-6 * cmlsa(lsa) * ( &
+              ucshld *   (shmatm(1,1)+shmatm(2,1)+shmatm(3,1)) + &
+              uccarb *   (shmatm(1,2)+shmatm(2,2)+shmatm(3,2)) + &
+              ucblli2o * (shmatm(1,4)+shmatm(2,4)+shmatm(3,4)) + &
+              ucconc *   (shmatm(1,5)+shmatm(2,5)+shmatm(3,5)) )
+    end if
 
     c22131 = fkind * c22131
 
     !  Penetration shield assumed to be typical steel plate
+    if (ife /= 1) then
        c22132 = 1.0D-6 * wpenshld * ucpens * cmlsa(lsa)
+    else
+       c22132 = 0.0D0
+    end if
 
     c22132 = fkind * c22132
 
@@ -1259,6 +1357,8 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1268,6 +1368,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    if (ife /= 1) then
        c2215 = 1.0D-6 * divsur * ucdiv
        c2215 = fkind * c2215
 
@@ -1277,6 +1378,10 @@ contains
        else
           divcst = 0.0D0
        end if
+    else
+       c2215 = 0.0D0
+       divcst = 0.0D0
+    end if
 
   end subroutine acc2215
 
@@ -1298,6 +1403,8 @@ contains
     !+ad_call  acc2223
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1310,6 +1417,11 @@ contains
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (ife == 1) then
+      c222 = 0.0D0
+      return
+    end if
 
     !  Account 222.1 : TF magnet assemblies
 
@@ -1685,6 +1797,8 @@ contains
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  22/05/14 PJK Powers now in MW instead of W
     !+ad_hist  17/09/15 MDK #327 Neutral beam cost now depends on pnbitot
+    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1697,9 +1811,24 @@ contains
     !  Local variables
 
     real(kind(1.0D0)), parameter :: exprf = 1.0D0
+    real(kind(1.0D0)) :: switch
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    !  IFE costs (deflated to 1990 dollars) taken from
+    !  Meier and Bieri (OSIRIS heavy ion beam), Fus Tech 21 (1992) 1547
+    !  Meier and von Rosenberg (SOMBRERO laser), Fus Tech 21 (1992) 1552
+    !  cdriv0   : IFE generic/laser driver cost at edrive=0 (M$) [154.3]
+    !  dcdrv0   : generic/laser driver cost gradient (M$/MJ) [111.4]
+    !  cdriv1   : IFE low energy heavy ion beam driver cost
+    !             extrapolated to edrive=0 (M$) [163.2]
+    !  dcdrv1   : HIB driver cost gradient at low energy (M$/MJ) [78.0]
+    !  cdriv2   : IFE high energy heavy ion beam driver cost
+    !             extrapolated to edrive=0 (M$) [244.9]
+    !  dcdrv2   : HIB driver cost gradient at high energy (M$/MJ) [59.9]
+    !  mcdriv   : IFE driver cost multiplier [1.0]
+
+    if (ife /= 1) then
 
            !  Account 223.1 : ECH
 
@@ -1724,6 +1853,35 @@ contains
        c2233 = 1.0D-6 * ucnbi * (1.0D6*pnbitot)**exprf
        if (ifueltyp == 1) c2233 = (1.0D0-fcdfuel) * c2233
        c2233 = fkind * c2233
+
+    else
+
+       !  IFE driver costs (depends on driver type)
+       !  Assume offset linear form for generic and SOMBRERO types,
+       !  or one of two offset linear forms for OSIRIS type
+  
+       if (ifedrv /= 2) then
+          c2231 = mcdriv * (cdriv0 + dcdrv0*1.0D-6*edrive)
+       else
+          if (dcdrv1 <= dcdrv2) then
+             switch = 0.0D0
+          else
+             switch = (cdriv2-cdriv1)/(dcdrv1-dcdrv2)
+          end if
+          if (edrive <= switch) then
+             c2231 = mcdriv * (cdriv1 + dcdrv1*1.0D-6*edrive)
+          else
+             c2231 = mcdriv * (cdriv2 + dcdrv2*1.0D-6*edrive)
+          end if
+       end if
+  
+       if (ifueltyp == 1) c2231 = (1.0D0-fcdfuel) * c2231
+       c2231 = fkind * c2231
+       c2232 = 0.0D0
+       c2233 = 0.0D0
+       c2234 = 0.0D0
+  
+    end if
 
     !  Total account 223
 
@@ -1820,6 +1978,8 @@ contains
     !+ad_call  acc2253
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1832,6 +1992,10 @@ contains
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (ife == 1) then
+       c225 = 0.0D0
+    else
 
        !  Account 225.1 : TF coil power conditioning
 
@@ -1848,6 +2012,9 @@ contains
        !  Total account 225
 
        c225 = c2251 + c2252 + c2253
+
+    end if
+
   end subroutine acc225
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2162,63 +2329,13 @@ contains
     !+ad_hist  08/09/14 PJK Changed costr to coolwh
     !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
     !+ad_hisc               deleted references to intermediate heat exchangers
+    !+ad_hist  18/07/19 JM  Move to separate subroutines for unit tests
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    !  Arguments
-
-    !  Local variables
-
-    real(kind(1.0D0)), parameter :: exphts = 0.7D0
-    real(kind(1.0D0)), parameter :: expcry = 0.67D0
-    real(kind(1.0D0)), dimension(4) :: cmlsa
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Cost multiplier for Level of Safety Assurance
-
-    cmlsa(1) = 0.4000D0
-    cmlsa(2) = 0.7000D0
-    cmlsa(3) = 0.8500D0
-    cmlsa(4) = 1.0000D0
-
-    !  Account 226.1 : Reactor cooling system
-
-    !  Pumps and piping system
-    !  N.B. with blktmodel > 0, the blanket is assumed to be helium-cooled,
-    !  but the shield etc. is water-cooled (coolwh=2). Therefore, a slight
-    !  inconsistency exists here...
-
-    cpp = 1.0D-6 * uchts(coolwh) * ( (1.0D6*pfwdiv)**exphts + &
-         (1.0D6*pnucblkt)**exphts + (1.0D6*pnucshld)**exphts)
-    cpp = fkind * cpp * cmlsa(lsa)
-
-    !  Primary heat exchangers
-
-    chx = 1.0D-6 * ucphx * nphx * (1.0D6*pthermmw/nphx)**exphts
-    chx = fkind * chx * cmlsa(lsa)
-
-    c2261 = chx + cpp
-
-    !  Account 226.2 : Auxiliary component cooling
-
-    !  Pumps and piping system
-
-    cppa = 1.0D-6 * ucahts * ( (1.0D6*pinjht)**exphts + &
-         (1.0D6*crypmw)**exphts + (1.0D6*vachtmw)**exphts + &
-         (1.0D6*trithtmw)**exphts + (1.0D6*fachtmw)**exphts )
-
-    cppa = fkind * cppa * cmlsa(lsa)
-    c2262 = cppa
-
-    !  Account 226.3 : Cryogenic system
-
-    c2263 = 1.0D-6 * uccry * 4.5D0/tftmp * helpow**expcry
-    c2263 = fkind * c2263 * cmlsa(lsa)
 
     !  Total account 226
 
@@ -2227,6 +2344,136 @@ contains
   end subroutine acc226
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc2261() bind(C, name="c_acc2261")
+    !+ad_name  acc2261
+    !+ad_summ  Account 2261 : Reactor cooling system
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 2261 - 
+    !+ad_hist  16/07/19 JM  Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Local variables
+    real(kind(1.0D0)), parameter :: exphts = 0.7D0
+    real(kind(1.0D0)), dimension(4) :: cmlsa
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Cost multiplier for Level of Safety Assurance
+    cmlsa(1) = 0.4000D0
+    cmlsa(2) = 0.7000D0
+    cmlsa(3) = 0.8500D0
+    cmlsa(4) = 1.0000D0
+
+    !  Pumps and piping system
+    !  N.B. with blktmodel > 0, the blanket is assumed to be helium-cooled,
+    !  but the shield etc. is water-cooled (coolwh=2). Therefore, a slight
+    !  inconsistency exists here...
+    cpp = 1.0D-6 * uchts(coolwh) * ( (1.0D6*pfwdiv)**exphts + &
+         (1.0D6*pnucblkt)**exphts + (1.0D6*pnucshld)**exphts)
+
+    cpp = fkind * cpp * cmlsa(lsa)
+
+    !  Primary heat exchangers
+    chx = 1.0D-6 * ucphx * nphx * (1.0D6*pthermmw/nphx)**exphts
+    chx = fkind * chx * cmlsa(lsa)
+
+    c2261 = chx + cpp
+
+  end subroutine acc2261
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc2262() bind(C, name="c_acc2262")
+    !+ad_name  acc2262
+    !+ad_summ  Account 2262 : Auxiliary component cooling
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 2262 - Auxiliary component cooling
+    !+ad_hist  16/07/19 JM  Initial F90 version
+    !+ad_hist  29/07/19 SIM Added IFE (Issue #901)
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none 
+
+    !  Local variables
+    real(kind(1.0D0)), parameter :: exphts = 0.7D0
+    real(kind(1.0D0)), dimension(4) :: cmlsa
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Cost multiplier for Level of Safety Assurance
+    cmlsa(1) = 0.4000D0
+    cmlsa(2) = 0.7000D0
+    cmlsa(3) = 0.8500D0
+    cmlsa(4) = 1.0000D0
+
+    !  Pumps and piping system
+    cppa = 1.0D-6 * ucahts * ( (1.0D6*pinjht)**exphts + &
+         (1.0D6*crypmw)**exphts + (1.0D6*vachtmw)**exphts + &
+         (1.0D6*trithtmw)**exphts + (1.0D6*fachtmw)**exphts )
+
+    if (ife == 1) cppa = cppa + 1.0D-6 * ucahts * ( &
+         (1.0D6*tdspmw)**exphts + (1.0D6*tfacmw)**exphts )
+
+    !  Apply Nth kind and safety assurance factors
+    cppa = fkind * cppa * cmlsa(lsa)
+
+    c2262 = cppa
+
+  end subroutine acc2262
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc2263() bind(C, name="c_acc2263")
+    !+ad_name  acc2263
+    !+ad_summ  Account 2263 : Cryogenic system
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 2263 - Cryogenic system
+    !+ad_hist  16/07/19 JM  Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Local variables
+    real(kind(1.0D0)), parameter :: expcry = 0.67D0
+    real(kind(1.0D0)), dimension(4) :: cmlsa
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Cost multiplier for Level of Safety Assurance
+    cmlsa(1) = 0.4000D0
+    cmlsa(2) = 0.7000D0
+    cmlsa(3) = 0.8500D0
+    cmlsa(4) = 1.0000D0
+
+    c2263 = 1.0D-6 * uccry * 4.5D0/tftmp * helpow**expcry
+
+    !  Apply Nth kind and safety factors
+    c2263 = fkind * c2263 * cmlsa(lsa)
+
+  end subroutine acc2263
+
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc227
     !+ad_name  acc227
@@ -2243,6 +2490,7 @@ contains
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  12/06/13 PJK Modified wtgpd calculation with new rndfuel definition
     !+ad_hist  11/09/13 PJK Changed logic for detritiation costs
+    !+ad_hist  18/07/19 JM  Moved to separate subroutines for unit tests
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2250,7 +2498,101 @@ contains
 
     implicit none
 
-    !  Arguments
+    !  Total account 227
+    c227 = c2271 + c2272 + c2273 + c2274
+
+  end subroutine acc227
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc2271() bind(C, name="c_acc2271")
+    !+ad_name  acc2271
+    !+ad_summ  Account 2271 : Fuelling system
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 2271 - Fuelling system
+    !+ad_hist  16/07/19 JM  Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Local variables
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Account 227.1 : Fuelling system
+    c2271 = 1.0D-6 * ucf1
+
+    !  Apply Nth kind factor
+    c2271 = fkind * c2271
+  
+  end subroutine acc2271
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc2272() bind(C, name="c_acc2272")
+    !+ad_name  acc2272
+    !+ad_summ  Account 2272 : Fuel processing and purification
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 2272 - Fuel processing
+    !+ad_hist  16/07/19 JM  Initial F90 version
+    !+ad_hist  29/07/19 SIM Added IFE (Issue #901)
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) targtm
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (ife /= 1) then
+       !  Previous calculation, using qfuel in Amps:
+       !  1.3 should have been afuel*umass/echarge*1000*s/day = 2.2
+       !wtgpd = burnup * qfuel * 1.3D0
+
+       !  New calculation: 2 nuclei * reactions/sec * kg/nucleus * g/kg * sec/day
+       wtgpd = 2.0D0*rndfuel * afuel*umass*1000.0D0 * 86400.0D0
+    else
+       targtm = gain * edrive * 3.0D0 * 1.67D-27 * 1.0D3 / &
+              (1.602D-19 * 17.6D6 * fburn)
+       wtgpd = targtm * reprat * 86400.0D0
+    end if
+
+    !  Assumes that He3 costs same as tritium to process...
+    c2272 = 1.0D-6 * ucfpr * (0.5D0 + 0.5D0*(wtgpd/60.0D0)**0.67D0)
+
+    c2272 = fkind * c2272
+ 
+  end subroutine acc2272
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc2273() bind(C, name="c_acc2273")
+    !+ad_name  acc2273
+    !+ad_summ  Account 2273 : Atmospheric recovery systems
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 2273 - Atmospheric recovery systems
+    !+ad_hist  16/07/19 JM  Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
 
     !  Local variables
 
@@ -2258,26 +2600,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Account 227.1 : Fuelling system
-
-    c2271 = 1.0D-6 * ucf1
-    c2271 = fkind * c2271
-
-    !  Account 227.2 : Fuel processing and purification
-
-    !  Previous calculation, using qfuel in Amps:
-    !  1.3 should have been afuel*umass/echarge*1000*s/day = 2.2
-    !wtgpd = burnup * qfuel * 1.3D0
-
-    !  New calculation: 2 nuclei * reactions/sec * kg/nucleus * g/kg * sec/day
-    wtgpd = 2.0D0*rndfuel * afuel*umass*1000.0D0 * 86400.0D0
-
-    !  Assumes that He3 costs same as tritium to process...
-    c2272 = 1.0D-6 * ucfpr * (0.5D0 + 0.5D0*(wtgpd/60.0D0)**0.67D0)
-    c2272 = fkind * c2272
-
-    !  Account 227.3 : Atmospheric recovery systems
-
+    ! ? 
     cfrht = 1.0D5
 
     !  No detritiation needed if purely D-He3 reaction
@@ -2287,22 +2610,40 @@ contains
     else
        c2273 = 0.0D0
     end if
+
     c2273 = fkind * c2273
 
-    !  Account 227.4 : Nuclear building ventilation
-
-    c2274 = 1.0D-6 * ucnbv * (volrci + wsvol)**0.8D0
-    c2274 = fkind * c2274
-
-    !  Total account 227
-
-    c227 = c2271 + c2272 + c2273 + c2274
-
-  end subroutine acc227
+  end subroutine acc2273
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc228() bind(C, name="costs_1990_acc228")
+  subroutine acc2274() bind(C, name="c_acc2274")
+    !+ad_name  acc2274
+    !+ad_summ  Account 2274 : Nuclear building ventilation
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 2274 - Nuclear building ventilation
+    !+ad_hist  18/07/19 JM  Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Account 227.4 : Nuclear building ventilation
+    c2274 = 1.0D-6 * ucnbv * (volrci + wsvol)**0.8D0
+
+    !  Apply Nth kind factor
+    c2274 = fkind * c2274
+
+  end subroutine acc2274
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc228() bind(C, name="c_acc228")
     !+ad_name  acc228
     !+ad_summ  Account 228 : Instrumentation and control
     !+ad_type  Subroutine
@@ -2332,7 +2673,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc229() bind(C, name="costs_1990_acc229")
+  subroutine acc229() bind(C, name="c_acc229")
     !+ad_name  acc229
     !+ad_summ  Account 229 : Maintenance equipment
     !+ad_type  Subroutine
@@ -2360,7 +2701,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc23() bind(C, name="costs_1990_acc23")
+  subroutine acc23() bind(C, name="c_acc23")
     !+ad_name  acc23
     !+ad_summ  Account 23 : Turbine plant equipment
     !+ad_type  Subroutine
@@ -2396,11 +2737,12 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc24
+  subroutine acc24() bind(C, name="costs_1990_acc24")
     !+ad_name  acc24
     !+ad_summ  Account 24 : Electric plant equipment
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This routine evaluates the Account 24 (electric plant equipment) costs.
@@ -2408,6 +2750,65 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  12/07/19 JM  Add unit test
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Total account 24
+    c24 = c241 + c242 + c243 + c244 + c245
+
+  end subroutine acc24
+ 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc241() bind(C, name="c_acc241")
+    !+ad_name  acc241
+    !+ad_summ  Account 241 : Electric plant equipment - switchyard
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 241 - switchyard
+    !+ad_hist  15/07/19 JM  Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Local variables
+
+    real(kind(1.0D0)), dimension(4) :: cmlsa
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Cost multiplier for Level of Safety Assurance electrical
+    cmlsa(1) = 0.5700D0
+    cmlsa(2) = 0.7850D0
+    cmlsa(3) = 0.8925D0
+    cmlsa(4) = 1.0000D0
+
+    !  Account 241 : Switchyard
+    c241 = 1.0D-6 * ucswyd * cmlsa(lsa)
+   
+  end subroutine acc241
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc242() bind(C, name="c_acc242")
+    !+ad_name  acc242
+    !+ad_summ  Account 242 : Electric plant equipment - Transformers
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 242 - Transformers
+    !+ad_hist  15/07/19 JM  Initial F90 version
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2422,44 +2823,129 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Cost multiplier for Level of Safety Assurance
-
+    !  Cost multiplier for Level of Safety Assurance electrical
     cmlsa(1) = 0.5700D0
     cmlsa(2) = 0.7850D0
     cmlsa(3) = 0.8925D0
     cmlsa(4) = 1.0000D0
 
-    !  Account 241 : Switchyard
-
-    c241 = 1.0D-6 * ucswyd * cmlsa(lsa)
-
     !  Account 242 : Transformers
-
     c242 = 1.0D-6 * (ucpp*(pacpmw*1.0D3)**expepe + ucap*(fcsht*1.0D3))
+
+    !  Apply safety assurance factor
     c242 = c242 * cmlsa(lsa)
-
-    !  Account 243 : Low voltage
-    !  (include 0.8 factor for transformer efficiency)
-
-    c243 = 1.0D-6 * uclv * tlvpmw * 1.0D3 / 0.8D0 * cmlsa(lsa)
-
-    !  Account 244 : Diesel generator (8 MW per generator,  assume 4 )
-
-    c244 = 1.0D-6 * ucdgen * 4.0D0 * cmlsa(lsa)
-
-    !  Account 245 : Auxiliary facility power needs
-
-    c245 = 1.0D-6 * ucaf * cmlsa(lsa)
-
-    !  Total account 24
-
-    c24 = c241 + c242 + c243 + c244 + c245
-
-  end subroutine acc24
+ 
+  end subroutine acc242
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc25() bind(C, name="costs_1990_acc25")
+  subroutine acc243() bind(C, name="c_acc243")
+    !+ad_name  acc243
+    !+ad_summ  Account 243 : Electric plant equipment - Low voltage
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 243 - Low voltage
+    !+ad_hist  15/07/19 JM  Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Local variables
+
+    real(kind(1.0D0)), dimension(4) :: cmlsa
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Cost multiplier for Level of Safety Assurance electrical
+    cmlsa(1) = 0.5700D0
+    cmlsa(2) = 0.7850D0
+    cmlsa(3) = 0.8925D0
+    cmlsa(4) = 1.0000D0
+
+    !  Account 243 : Low voltage
+    !  (include 0.8 factor for transformer efficiency)
+    c243 = 1.0D-6 * uclv * tlvpmw * 1.0D3 / 0.8D0 * cmlsa(lsa)
+
+  end subroutine acc243
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc244() bind(C, name="c_acc244")
+    !+ad_name  acc244
+    !+ad_summ  Account 244 : Electric plant equipment - Diesel generators
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 244 - Diesel generators
+    !+ad_hist  15/07/19 JM  Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Local variables
+
+    real(kind(1.0D0)), dimension(4) :: cmlsa
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Cost multiplier for Level of Safety Assurance electrical
+    cmlsa(1) = 0.5700D0
+    cmlsa(2) = 0.7850D0
+    cmlsa(3) = 0.8925D0
+    cmlsa(4) = 1.0000D0
+
+    !  Account 244 : Diesel generator (8 MW per generator,  assume 4 )
+    c244 = 1.0D-6 * ucdgen * 4.0D0 * cmlsa(lsa)
+
+  end subroutine acc244
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc245() bind(C, name="c_acc245")
+    !+ad_name  acc245
+    !+ad_summ  Account 245 : Electric plant equipment - Aux facility power
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine evaluates the Account 245 - Aux facility power
+    !+ad_hist  15/07/19 JM  Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Local variables
+
+    real(kind(1.0D0)), dimension(4) :: cmlsa
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Cost multiplier for Level of Safety Assurance electrical
+    cmlsa(1) = 0.5700D0
+    cmlsa(2) = 0.7850D0
+    cmlsa(3) = 0.8925D0
+    cmlsa(4) = 1.0000D0
+
+    !  Account 245 : Auxiliary facility power needs
+    c245 = 1.0D-6 * ucaf * cmlsa(lsa)
+
+  end subroutine acc245
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine acc25() bind(C, name="c_acc25")
     !+ad_name  acc25
     !+ad_summ  Account 25 : Miscellaneous plant equipment
     !+ad_type  Subroutine
@@ -2500,7 +2986,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc26() bind(C, name="costs_1990_acc26")
+  subroutine acc26() bind(C, name="c_acc26")
     !+ad_name  acc26
     !+ad_summ  Account 26 : Heat rejection system
     !+ad_type  Subroutine
@@ -2552,7 +3038,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine acc9() bind(C, name="costs_1990_acc9")
+  subroutine acc9() bind(C, name="c_acc9")
     !+ad_name  acc9
     !+ad_summ  Account 9 : Indirect cost and contingency allowances
     !+ad_type  Subroutine

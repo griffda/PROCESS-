@@ -2,13 +2,14 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.15   "
- Date_of_run_____________________________________________________________ (date)________________________     "11/06/2019"
- Time_of_run_____________________________________________________________ (time)________________________     "16:02"
- User____________________________________________________________________ (username)____________________     "skahn"   
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "1.0.16   "
+ Date_of_run_____________________________________________________________ (date)________________________     "09/08/2019"
+ Time_of_run_____________________________________________________________ (time)________________________     "17:24"
+ User____________________________________________________________________ (username)____________________     "morrisj" 
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "HELIAS-5B                                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.15-87-g47436f87"                                                                               
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch '820-nstx' into 'develop',"                                                           
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "1.0.16-99-gd70c72e2"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "issue-899-error_handling"                                                                          
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch develop into issue-899-error_handling,"                                               
  Input_filename__________________________________________________________ (fileprefix)__________________     "                              "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
@@ -43,13 +44,14 @@
  # Power Reactor Costs (1990 US$) #
  First_wall_/_blanket_life_(years)_______________________________________ (fwbllife)____________________      1.7552E+01    
  Divertor_life_(years)___________________________________________________ (divlife.)____________________      8.6920E+00    
- Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      1.0356E+02    
+ Cost_of_electricity_(m$/kWh)____________________________________________ (coe)_________________________      9.8708E+01    
  # Detailed Costings (1990 US$) #
  Acc.22_multiplier_for_Nth_of_a_kind_____________________________________ (fkind)_______________________      1.0000E+00    
  Level_of_Safety_Assurance_______________________________________________ (lsa)_________________________              2    
+ # Structures and Site Facilities #
  Site_improvements,_facilities,_land_(M$)________________________________ (c211)________________________      3.2640E+01    
  Reactor_building_cost_(M$)______________________________________________ (c212)________________________      4.4042E+02    
- Turbine_building_cost_(M$)______________________________________________ (c213)________________________      3.1920E+02    
+ Turbine_building_cost_(M$)______________________________________________ (c213)________________________      3.1920E+01    
  Reactor_maintenance_building_cost_(M$)__________________________________ (c2141)_______________________      5.4209E+01    
  Warm_shop_cost_(M$)_____________________________________________________ (c2142)_______________________      3.5298E+01    
  Tritium_building_cost_(M$)______________________________________________ (c215)________________________      1.2432E+01    
@@ -58,7 +60,7 @@
  Control_room_buildings_cost_(M$)________________________________________ (c2172)_______________________      1.7640E+01    
  Shop_and_warehouses_cost_(M$)___________________________________________ (c2173)_______________________      9.6600E+00    
  Cryogenic_building_cost_(M$)____________________________________________ (c2174)_______________________      7.3709E+00    
- Total_account_21_cost_(M$)______________________________________________ (c21)_________________________      9.5947E+02    
+ Total_account_21_cost_(M$)______________________________________________ (c21)_________________________      6.7219E+02    
  # Reactor Systems #
  First_wall_cost_(M$)____________________________________________________ (c2211)_______________________      1.6977E+02    
  Blanket_beryllium_cost_(M$)_____________________________________________ (c22121)______________________      2.4565E+02    
@@ -150,19 +152,19 @@
  # Heat Rejection System #
  Heat_rejection_system_cost_(M$)_________________________________________ (c26)_________________________      7.1773E+01    
  # Plant Direct Cost #
- Plant_direct_cost_(M$)__________________________________________________ (cdirt)_______________________      5.5046E+03    
+ Plant_direct_cost_(M$)__________________________________________________ (cdirt)_______________________      5.2173E+03    
  # Reactor Core Cost #
  Reactor_core_cost_(M$)__________________________________________________ (crctcore)____________________      2.7513E+03    
  # Indirect Cost #
- Indirect_cost_(M$)______________________________________________________ (c9)__________________________      1.5446E+03    
+ Indirect_cost_(M$)______________________________________________________ (c9)__________________________      1.4640E+03    
  # Total Contingency #
- Total_contingency_(M$)__________________________________________________ (ccont)_______________________      1.0574E+03    
+ Total_contingency_(M$)__________________________________________________ (ccont)_______________________      1.0022E+03    
  # Constructed Cost #
- Constructed_cost_(M$)___________________________________________________ (concost)_____________________      8.1066E+03    
+ Constructed_cost_(M$)___________________________________________________ (concost)_____________________      7.6835E+03    
  # Interest during Construction #
- Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      1.2160E+03    
+ Interest_during_construction_(M$)_______________________________________ (moneyint)____________________      1.1525E+03    
  # Total Capital Investment #
- Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      9.3225E+03    
+ Total_capital_investment_(M$)___________________________________________ (capcost)_____________________      8.8360E+03    
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    
  Allowable_divertor_heat_fluence_(MW-yr/m2)______________________________ (adivflnc)____________________      2.5000E+01    
@@ -253,12 +255,22 @@
  Edge_radiation_power_(MW)_______________________________________________ (pedgeradmw)__________________      1.1305E+02 OP 
  SOL_radiation_power_(MW)________________________________________________ (psolradmw)___________________      2.7704E+02 OP 
  Total_radiation_power_(MW)______________________________________________ (pradmw)______________________      5.1869E+02 OP 
+ Core_radiation_fraction_=_total_radiation_in_core_/_total_power_deposite (rad_fraction_core)___________      0.0000E+00 OP 
+ SoL_radiation_fraction_=_total_radiation_in_SoL_/_total_power_accross_se (rad_fraction_sol)____________      8.0000E-01 IP 
  Radiation_fraction_=_total_radiation_/_total_power_deposited_in_plasma__ (rad_fraction)________________      9.1386E-01 OP 
  Nominal_mean_radiation_load_on_inside_surface_of_reactor_(MW/m2)________ (photon_wall)_________________      2.4813E-01 OP 
  Peaking_factor_for_radiation_wall_load__________________________________ (peakfactrad)_________________      3.3300E+00 IP 
  Maximum_permitted_radiation_wall_load_(MW/m^2)__________________________ (maxradwallload)______________      1.0000E+00 IP 
  Peak_radiation_wall_load_(MW/m^2)_______________________________________ (peakradwallload)_____________      8.2627E-01 OP 
  Nominal_mean_neutron_load_on_inside_surface_of_reactor_(MW/m2)__________ (wallmw)______________________      1.1395E+00 OP 
+ Power_incident_on_the_divertor_targets_(MW)_____________________________ (ptarmw)______________________      0.0000E+00 OP 
+ Fraction_of_power_to_the_lower_divertor_________________________________ (ftar)________________________      5.0000E-01 IP 
+ Outboard_side_heat_flux_decay_length_(m)________________________________ (lambdaio)____________________      0.0000E+00 OP 
+ Fraction_of_power_on_the_inner_targets__________________________________ (fio)_________________________      0.0000E+00 OP 
+ Fraction_of_power_incident_on_the_lower_inner_target____________________ (fLI)_________________________      0.0000E+00 OP 
+ Fraction_of_power_incident_on_the_lower_outer_target____________________ (fLO)_________________________      0.0000E+00 OP 
+ Power_incident_on_the_lower_inner_target_(MW)___________________________ (pLImw)_______________________      0.0000E+00 OP 
+ Power_incident_on_the_lower_outer_target_(MW)___________________________ (pLOmw)_______________________      0.0000E+00 OP 
  Ohmic_heating_power_(MW)________________________________________________ (pohmmw)______________________      0.0000E+00 OP 
  Fraction_of_alpha_power_deposited_in_plasma_____________________________ (falpha)______________________      9.5000E-01    
  Fraction_of_alpha_power_to_electrons____________________________________ (falpe)_______________________      7.8112E-01    
@@ -285,6 +297,10 @@
  Alpha_particle/energy_confinement_time_ratio____________________________ (taup/taueff)_________________      1.1441E+01    
  Lower_limit_on_taup/taueff______________________________________________ (taulimit)____________________      5.0000E+00    
  Total_energy_confinement_time_including_radiation_loss_(s)______________ (total_energy_conf_time)______      0.0000E+00    
+ Normalized_plasma_pressure_beta_as_defined_by_McDonald_et_al____________ (beta_mcdonald)_______________      0.0000E+00 OP 
+ Normalized_ion_Larmor_radius____________________________________________ (rho_star)____________________      0.0000E+00 OP 
+ Normalized_collisionality_______________________________________________ (nu_star)_____________________        Infinity OP 
+ Volume_measure_of_elongation____________________________________________ (kappaa_IPB)__________________      1.0000E+00 OP 
  Ratio_of_He_and_pellet_particle_confinement_times_______________________ (tauratio)____________________      1.0000E+00    
  Fuelling_rate_(nucleus-pairs/s)_________________________________________ (qfuel)_______________________      5.3038E+21 OP 
  Fuel_burn-up_rate_(reactions/s)_________________________________________ (rndfuel)_____________________      1.0616E+21 OP 
@@ -344,10 +360,10 @@
  Maximum_field_on_superconductor_(T)_____________________________________ (bmaxtf)______________________      1.2116E+01    
  Total_Stored_energy_(GJ)________________________________________________ (estotftgj)___________________      1.5294E+02    
  Total_mass_of_coils_(kg)________________________________________________ (whttf)_______________________      9.6351E+06    
- Inboard_leg_centre_radius_(m)___________________________________________ (rtfcin)______________________      1.8082E+01    
+ Inboard_leg_centre_radius_(m)___________________________________________ (r_tf_inleg_mid)______________      1.8082E+01    
  Outboard_leg_centre_radius_(m)__________________________________________ (rtot)________________________      2.6468E+01    
  Maximum_inboard_edge_height_(m)_________________________________________ (hmax)________________________      5.2311E+00    
- Clear_horizontal_bore_(m)_______________________________________________ (tfboreh)_____________________      5.4988E+00    
+ Clear_horizontal_bore_(m)_______________________________________________ (tf_total_h_width)____________      5.4988E+00    
  Clear_vertical_bore_(m)_________________________________________________ (tfborev)_____________________      1.0462E+01    
  Superconductor_mass_per_coil_(kg)_______________________________________ (whtconsc)____________________      2.5663E+04    
  Copper_mass_per_coil_(kg)_______________________________________________ (whtconcu)____________________      5.6487E+04    
@@ -558,7 +574,7 @@
  Electric_power_for_tritium_plant_(MW)___________________________________ (trithtmw)____________________      1.5000E+01    
  Electric_power_for_cryoplant_(MW)_______________________________________ (crypmw)______________________      5.9324E+01    
  Electric_power_for_TF_coils_(MW)________________________________________ (tfacpd)______________________      6.0859E+01    
- Electric_power_for_PF_coils_(MW)________________________________________ (pfwp)________________________      0.0000E+00    
+ Electric_power_for_PF_coils_(MW)________________________________________ (pfwpmw)______________________      0.0000E+00    
  All_other_internal_electric_power_requirements_(MW)_____________________ (fachtmw)_____________________      5.5448E+01    
  Total_(MW)______________________________________________________________ ______________________________      1.3911E+03    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      1.3911E+03    

@@ -19,6 +19,7 @@ module fw_module
 
   use constants
   use global_variables
+  use error_handling
   use fwbs_variables
   use refprop_interface
   use process_output
@@ -172,26 +173,19 @@ contains
     heat_transfer = nusselt * kf / (2.0d0*radius)
 
     ! Check that Reynolds number is in valid range for the Gnielinski correlation
-    if ((reynolds <= 3000.0d0).or.(reynolds>5.0d6)) call write_errors
+    if ( ( reynolds <= 3000.0d0 ).or.( reynolds > 5.0d6 ) ) then 
+      fdiags(1) = reynolds
+      call report_error(225)
+    end if
 
     ! Check that Prandtl number is in valid range for the Gnielinski correlation
-    if ((f<=0.0d0).or.(pr<=0.0d0).or.(pr<0.5d0).or.(pr>2000.0d0)) call write_errors
+    if ( ( pr < 0.5d0 ).or.( pr > 2000.0d0) ) then 
+      fdiags(1) = pr
+      call report_error(226)
+    end if
 
-    contains
-
-      subroutine write_errors
-        write(*,*)'Problem in heat_transfer'
-        write(*,*)'masflx = ', masflx
-        write(*,*)'rhof = ', rhof
-        write(*,*)'radius = ', radius
-        write(*,*)'cf = ', cf
-        write(*,*)'kf = ', kf
-        write(*,*)'velocity = ', velocity
-        write(*,*)'reynolds = ', reynolds
-        write(*,*)'Prandtl = ', pr
-        write(*,*)'nusselt = ', nusselt
-        write(*,*)'heat_transfer = ', heat_transfer
-      end subroutine
+    ! Check that the Darcy friction factor is in valid range for the Gnielinski correlation
+    if ( f <= 0.0d0 ) call report_error(227)
 
   end function heat_transfer
 
@@ -425,9 +419,11 @@ contains
     temp_k = (fwoutlet + tpeak) / 2.0d0   ! (K)
 
     ! Print debug info if temperature too low/high or NaN/Inf
-    if ((temp_k <= 100.0d0).or.(temp_k>1500.0d0).or.(temp_k/=temp_k)) then
-        write(*,*) 'temp_k = ', temp_k, 'fwoutlet = ', fwoutlet, 'tpeak = ', tpeak
-        stop
+    if ( temp_k /= temp_k ) then 
+      call report_error(223)
+    else if ( (temp_k <= 100.0d0 ).or.( temp_k > 1500.0d0 ) ) then
+      fdiags(1) = temp_k
+      call report_error(224)
     end if
 
     ! Thermal conductivity of first wall material (W/m.K)

@@ -1,7 +1,7 @@
 *************************************************************************
 *****                                                               *****
 *****        Fusion Nuclear Science Facility (FNSF)                 *****
-*****            Stuart Muldrew (14/05/2019)                        *****
+*****            Stuart Muldrew (23/08/2019)                        *****
 *****      Menard et al. (2016), Nucl. Fusion, 56, 106023           *****
 *****                                                               *****
 *****                                                               *****
@@ -28,10 +28,10 @@ icc = 56            *Pseparatrix / Rmajor upper limit
 
 *---------------Iteration Variables----------------*
 
-ixc = 3             *rmajor
+*ixc = 3             *rmajor
 rmajor = 1.7        *Plasma major radius (m)
-boundl(3) = 1.69
-boundu(3) = 1.7
+*boundl(3) = 1.69
+*boundu(3) = 1.7
 
 ixc = 4             *te
 te = 7.4358         *Volume averaged electron temperature (keV)
@@ -63,12 +63,14 @@ ixc = 14            *fwalld
 fwalld = 0.10188    *f-value for maximum wall load
 
 ixc = 18            *q
-*q = 7.3424          *Safety factor ‘near’ plasma edge
+*q = 7.3424          *Safety factor 'near' plasma edge
 q=8.0
-boundl(18) = 7.0
+boundl(18) = 6.1
 
 ixc = 20            *tcpav
-tcpav = 70.753      *Average temp of TF coil inboard leg conductor (C) (resistive coils)
+tcpav = 313.903     *Average temp of TF coil inboard leg conductor (C) (resistive coils)
+boundl(20) = 303.15
+boundu(20) = 373.15
 
 ixc = 23            *fcoolcp
 fcoolcp = 0.41433   *Coolant fraction of TF coil inboard legs
@@ -130,13 +132,14 @@ alphan   = 0.25     *Density profile index
 alphat   = 0.5      *Temperature profile index
 aspect   = 1.75     *Aspect ratio
 bt       = 3.0      *Toroidal field on axis (T)
-dnbeta   = 4.1      *(Troyon-like) coefficient for beta scaling
+dnbeta   = 6.0      *(Troyon-like) coefficient for beta scaling
 epbetmax = 10.0     *Maximum (eps*beta_poloidal) (constraint equation 6)
 ibss     = 3        *Switch for bootstrap current scaling (3: Wilson numerical scaling)
-iculbl   = 2        *Switch for beta limit scaling (CE 24) (2: apply limit to thermal + neutral beam beta)
-icurr    = 2        *Switch for plasma current scaling to use (2: Peng double null divertor scaling (ST))
+iculbl   = 0        *Switch for beta limit scaling (CE 24) (2: apply limit to thermal + neutral beam beta)
+icurr    = 9        *Switch for plasma current scaling to use (2: Peng double null divertor scaling (ST))
 idensl   = 7        *Switch for density limit to enforce (CE 5) (7: Greenwald limit)
 igeom    = 0        *Switch for plasma geometry calculation (0: original method)
+iohcl    = 0        *Switch for existence of central solenoid
 iprofile = 0        *Switch for current profile consistency (0: use input values for alphaj rli dnbeta)
 itart    = 1        *Switch for spherical tokamak (ST) models (1: use spherical tokamak models)
 kappa    = 2.75     *Plasma separatrix elongation
@@ -166,7 +169,9 @@ tburn    = 1000.0    *Burn time (s)
 tdwell   = 100.0    *Time between pulses in a pulsed reactor (s)
 
 *-----------------Build Variables------------------*
-
+bore     = 0.0      *central solenoid inboard radius (m)
+gapoh    = 0.0      *gap between central solenoid and TF coil (m)
+ohcth    = 0.0      *central solenoid thickness (m)
 blnkith  = 0.0      *Inboard blanket thickness (m)
 blnkoth  = 0.7      *Outboard blanket thickness (m)
 ddwi     = 0.0      *Vacuum vessel thickness (m)
@@ -189,13 +194,13 @@ vvblgap  = 0.0      *Gap between vacuum vessel and blanket (m)
 cpttf    = 9.0E4    *TF coil current per turn (A)
 frhocp   = 1.0      *Centrepost resistivity enhancement factor 
 itfsup   = 0        *Switch for TF coil conductor model (0: copper) 
-ptempalw = 200.0    *Maximum peak centrepost temperature (C) (constraint equation 44)
+ptempalw = 473.15   *Maximum peak centrepost temperature (C) (constraint equation 44)
 rcool    = 3.0E-3   *Average radius of coolant channel (m) 
 ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma edge (%)
-tflegres = 2.5E-8   *Resistivity of a TF coil leg (Ohm-m)
+rhotfleg = 2.5E-8   *Resistivity of a TF coil leg (Ohm-m)
 tfno     = 12       *Number of TF coils
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
-vftf     = 0.2      *Coolant fraction of TFC ‘cable’ (itfsup=1) or of TFC leg (itfsup=0)
+vftf     = 0.2      *Coolant fraction of TFC 'cable' (itfsup=1) or of TFC leg (itfsup=0)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*

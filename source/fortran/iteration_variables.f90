@@ -2559,41 +2559,47 @@ contains
    end subroutine set_itv_154
 
    !---------------------------------
-
+   
    subroutine init_itv_155
-      !+ad_varc  <LI> (155) DUMMY : Description
-      lablxc(155) = 'DUMMY         '
-      boundl(155) = 1.0d-99
-      boundu(155) = 1.0d99
+      !+ad_varc  <LI> (155) pfusife : IFE input fusion power (MW) (ifedrv=3 only)
+      lablxc(155) = 'pfusife       '
+      boundl(155) = 5.000d2
+      boundu(155) = 3.000d3
    end subroutine init_itv_155
-
+   
    real(kind(1.d0)) function itv_155()
-      itv_155 = DUMMY 
+      use ife_variables, only: pfusife
+      itv_155 = pfusife 
    end function itv_155
 
    subroutine set_itv_155(ratio)
+      use ife_variables, only: pfusife
       real(kind(1.d0)) :: ratio
-      DUMMY = ratio
+      pfusife = ratio
    end subroutine set_itv_155
 
-   !---------------------------------
+!---------------------------------
 
    subroutine init_itv_156
-      !+ad_varc  <LI> (156) DUMMY : Description
-      lablxc(156) = 'DUMMY         '
-      boundl(156) = 1.0d-99
-      boundu(156) = 1.0d99
+      !+ad_varc  <LI> (156) rrin : Input IFE repetition rate (Hz) (ifedrv=3 only)
+      lablxc(156) = 'rrin          '
+      boundl(156) = 1.000d0
+      boundu(156) = 1.000d1
    end subroutine init_itv_156
 
    real(kind(1.d0)) function itv_156()
-      itv_156 = DUMMY 
+      use ife_variables, only: rrin
+      itv_156 = rrin 
    end function itv_156
 
    subroutine set_itv_156(ratio)
+      use ife_variables, only: rrin
       real(kind(1.d0)) :: ratio
-      DUMMY = ratio
+      rrin = ratio
    end subroutine set_itv_156
 
+   !---------------------------------
+   ! DUMMY variables below here
    !---------------------------------
 
    subroutine init_itv_157
@@ -2851,7 +2857,6 @@ end module define_iteration_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine loadxc
-
   !+ad_name  loadxc
   !+ad_summ  Routine to load the physics and engineering variables into the
   !+ad_summ  optimisation variables array
@@ -2862,29 +2867,6 @@ subroutine loadxc
   !+ad_args  None
   !+ad_desc  This subroutine loads the physics and engineering variables
   !+ad_desc  into the optimisation variables array <CODE>XCM</CODE>.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  constraint_variables
-  !+ad_call  cost_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  heat_transport_variables
-
-  !+ad_call  impurity_radiation_module
-  !+ad_call  numerics
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-
-  !+ad_call  stellarator_variables
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_call  pulse_variables
-  !+ad_call  report_error
-  !+ad_hist  22/06/18 SIM cdtfleg (itv 24) no longer used
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2898,6 +2880,7 @@ subroutine loadxc
   use error_handling
   use fwbs_variables
   use heat_transport_variables
+  use ife_variables
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
@@ -2919,162 +2902,163 @@ subroutine loadxc
   do i = 1,nvar
 
      select case (ixc(i))
-         case(1);  xcm(i) = itv_1()
-         case(2);  xcm(i) = itv_2()
-         case(3);  xcm(i) = itv_3()
-         case(4);  xcm(i) = itv_4()
-         case(5);  xcm(i) = itv_5()
-         case(6);  xcm(i) = itv_6()
-         case(7);  xcm(i) = itv_7()
-         case(8);  xcm(i) = itv_8()
-         case(9);  xcm(i) = itv_9()
-         case(10);  xcm(i) = itv_10()
-         case(11);  xcm(i) = itv_11()
-         case(12);  xcm(i) = itv_12()
-         case(13);  xcm(i) = itv_13()
-         case(14);  xcm(i) = itv_14()
-         case(15);  xcm(i) = itv_15()
-         case(16);  xcm(i) = itv_16()
-         case(17);  xcm(i) = itv_17()
-         case(18);  xcm(i) = itv_18()
-         case(19);  xcm(i) = itv_19()
-         case(20);  xcm(i) = itv_20()
-         case(21);  xcm(i) = itv_21()
-         case(22);  xcm(i) = itv_22()
-         case(23);  xcm(i) = itv_23()
-         case(24);  xcm(i) = itv_24()
-         case(25);  xcm(i) = itv_25()
-         case(26);  xcm(i) = itv_26()
-         case(27);  xcm(i) = itv_27()
-         case(28);  xcm(i) = itv_28()
-         case(29);  xcm(i) = itv_29()
-         case(30);  xcm(i) = itv_30()
-         case(31);  xcm(i) = itv_31()
-         case(32);  xcm(i) = itv_32()
-         case(33);  xcm(i) = itv_33()
-         case(34);  xcm(i) = itv_34()
-         case(35);  xcm(i) = itv_35()
-         case(36);  xcm(i) = itv_36()
-         case(37);  xcm(i) = itv_37()
-         case(38);  xcm(i) = itv_38()
-         case(39);  xcm(i) = itv_39()
-         case(40);  xcm(i) = itv_40()
-         case(41);  xcm(i) = itv_41()
-         case(42);  xcm(i) = itv_42()
-         case(43);  xcm(i) = itv_43()
-         case(44);  xcm(i) = itv_44()
-         case(45);  xcm(i) = itv_45()
-         case(46);  xcm(i) = itv_46()
-         case(47);  xcm(i) = itv_47()
-         case(48);  xcm(i) = itv_48()
-         case(49);  xcm(i) = itv_49()
-         case(50);  xcm(i) = itv_50()
-         case(51);  xcm(i) = itv_51()
-         case(52);  xcm(i) = itv_52()
-         case(53);  xcm(i) = itv_53()
-         case(54);  xcm(i) = itv_54()
-         case(55);  xcm(i) = itv_55()
-         case(56);  xcm(i) = itv_56()
-         case(57);  xcm(i) = itv_57()
-         case(58);  xcm(i) = itv_58()
-         case(59);  xcm(i) = itv_59()
-         case(60);  xcm(i) = itv_60()
-         case(61);  xcm(i) = itv_61()
-         case(62);  xcm(i) = itv_62()
-         case(63);  xcm(i) = itv_63()
-         case(64);  xcm(i) = itv_64()
-         case(65);  xcm(i) = itv_65()
-         case(66);  xcm(i) = itv_66()
-         case(67);  xcm(i) = itv_67()
-         case(68);  xcm(i) = itv_68()
-         case(69);  xcm(i) = itv_69()
-         case(70);  xcm(i) = itv_70()
-         case(71);  xcm(i) = itv_71()
-         case(72);  xcm(i) = itv_72()
-         case(73);  xcm(i) = itv_73()
-         case(74);  xcm(i) = itv_74()
-         case(75);  xcm(i) = itv_75()
-         case(76);  xcm(i) = itv_76()
-         case(77);  xcm(i) = itv_77()
-         case(78);  xcm(i) = itv_78()
-         case(79);  xcm(i) = itv_79()
-         case(80);  xcm(i) = itv_80()
-         case(81);  
-         case(82);  
-         case(83);  
-         case(84);  
-         case(85);  
-         case(86);  
-         case(87);  
-         case(88);  
-         case(89);  xcm(i) = itv_89()
-         case(90);  xcm(i) = itv_90()
-         case(91);  xcm(i) = itv_91()
-         case(92);  xcm(i) = itv_92()
-         case(93);  xcm(i) = itv_93()
-         case(94);  xcm(i) = itv_94()
-         case(95);  xcm(i) = itv_95()
-         case(96);  xcm(i) = itv_96()
-         case(97);  xcm(i) = itv_97()
-         case(98);  xcm(i) = itv_98()
-         case(99);  
-         case(100);  
-         case(101);  
-         case(102);  xcm(i) = itv_102()
-         case(103);  xcm(i) = itv_103()
-         case(104);  xcm(i) = itv_104()
-         case(105);  xcm(i) = itv_105()
-         case(106);  xcm(i) = itv_106()
-         case(107);  xcm(i) = itv_107()
-         case(108);  xcm(i) = itv_108()
-         case(109);  xcm(i) = itv_109()
-         case(110);  xcm(i) = itv_110()
-         case(111);  xcm(i) = itv_111()
-         case(112);  xcm(i) = itv_112()
-         case(113);  xcm(i) = itv_113()
-         case(114);  xcm(i) = itv_114()
-         case(115);  xcm(i) = itv_115()
-         case(116);  xcm(i) = itv_116()
-         case(117);  xcm(i) = itv_117()
-         case(118);  xcm(i) = itv_118()
-         case(119);  xcm(i) = itv_119()
-         case(120);  xcm(i) = itv_120()
-         case(121);  xcm(i) = itv_121()
-         case(122);  xcm(i) = itv_122()
-         case(123);  xcm(i) = itv_123()
-         case(124);  xcm(i) = itv_124()
-         case(125);  xcm(i) = itv_125()
-         case(126);  xcm(i) = itv_126()
-         case(127);  xcm(i) = itv_127()
-         case(128);  xcm(i) = itv_128()
-         case(129);  xcm(i) = itv_129()
-         case(130);  xcm(i) = itv_130()
-         case(131);  xcm(i) = itv_131()
-         case(132);  xcm(i) = itv_132()
-         case(133);  xcm(i) = itv_133()
-         case(134);  xcm(i) = itv_134()
-         case(135);  xcm(i) = itv_135()
-         case(136);  xcm(i) = itv_136()
-         case(137);  xcm(i) = itv_137()
-         case(138);  xcm(i) = itv_138()
-         case(139);  xcm(i) = itv_139()
-         case(140);  xcm(i) = itv_140()
-         case(141);  xcm(i) = itv_141()
-         case(142);  xcm(i) = itv_142()
-         case(143);  xcm(i) = itv_143()
-         case(144);  xcm(i) = itv_144()
-         case(145);  xcm(i) = itv_145()
-         case(146);  xcm(i) = itv_146()
-         case(147);  xcm(i) = itv_147()
-         case(148);  xcm(i) = itv_148()
-         case(149);  xcm(i) = itv_149()
-         case(150);  xcm(i) = itv_150()
-         case(151);  xcm(i) = itv_151()
-         case(152);  xcm(i) = itv_152()
-         case(153);  xcm(i) = itv_153()
-         case(154);  xcm(i) = itv_154()
+         case (1);  xcm(i) = itv_1()
+         case (2);  xcm(i) = itv_2()
+         case (3);  xcm(i) = itv_3()
+         case (4);  xcm(i) = itv_4()
+         case (5);  xcm(i) = itv_5()
+         case (6);  xcm(i) = itv_6()
+         case (7);  xcm(i) = itv_7()
+         case (8);  xcm(i) = itv_8()
+         case (9);  xcm(i) = itv_9()
+         case (10);  xcm(i) = itv_10()
+         case (11);  xcm(i) = itv_11()
+         case (12);  xcm(i) = itv_12()
+         case (13);  xcm(i) = itv_13()
+         case (14);  xcm(i) = itv_14()
+         case (15);  xcm(i) = itv_15()
+         case (16);  xcm(i) = itv_16()
+         case (17);  xcm(i) = itv_17()
+         case (18);  xcm(i) = itv_18()
+         case (19);  xcm(i) = itv_19()
+         case (20);  xcm(i) = itv_20()
+         case (21);  xcm(i) = itv_21()
+         case (22);  xcm(i) = itv_22()
+         case (23);  xcm(i) = itv_23()
+         case (24);  xcm(i) = itv_24()
+         case (25);  xcm(i) = itv_25()
+         case (26);  xcm(i) = itv_26()
+         case (27);  xcm(i) = itv_27()
+         case (28);  xcm(i) = itv_28()
+         case (29);  xcm(i) = itv_29()
+         case (30);  xcm(i) = itv_30()
+         case (31);  xcm(i) = itv_31()
+         case (32);  xcm(i) = itv_32()
+         case (33);  xcm(i) = itv_33()
+         case (34);  xcm(i) = itv_34()
+         case (35);  xcm(i) = itv_35()
+         case (36);  xcm(i) = itv_36()
+         case (37);  xcm(i) = itv_37()
+         case (38);  xcm(i) = itv_38()
+         case (39);  xcm(i) = itv_39()
+         case (40);  xcm(i) = itv_40()
+         case (41);  xcm(i) = itv_41()
+         case (42);  xcm(i) = itv_42()
+         case (43);  xcm(i) = itv_43()
+         case (44);  xcm(i) = itv_44()
+         case (45);  xcm(i) = itv_45()
+         case (46);  xcm(i) = itv_46()
+         case (47);  xcm(i) = itv_47()
+         case (48);  xcm(i) = itv_48()
+         case (49);  xcm(i) = itv_49()
+         case (50);  xcm(i) = itv_50()
+         case (51);  xcm(i) = itv_51()
+         case (52);  xcm(i) = itv_52()
+         case (53);  xcm(i) = itv_53()
+         case (54);  xcm(i) = itv_54()
+         case (55);  xcm(i) = itv_55()
+         case (56);  xcm(i) = itv_56()
+         case (57);  xcm(i) = itv_57()
+         case (58);  xcm(i) = itv_58()
+         case (59);  xcm(i) = itv_59()
+         case (60);  xcm(i) = itv_60()
+         case (61);  xcm(i) = itv_61()
+         case (62);  xcm(i) = itv_62()
+         case (63);  xcm(i) = itv_63()
+         case (64);  xcm(i) = itv_64()
+         case (65);  xcm(i) = itv_65()
+         case (66);  xcm(i) = itv_66()
+         case (67);  xcm(i) = itv_67()
+         case (68);  xcm(i) = itv_68()
+         case (69);  xcm(i) = itv_69()
+         case (70);  xcm(i) = itv_70()
+         case (71);  xcm(i) = itv_71()
+         case (72);  xcm(i) = itv_72()
+         case (73);  xcm(i) = itv_73()
+         case (74);  xcm(i) = itv_74()
+         case (75);  xcm(i) = itv_75()
+         case (76);  xcm(i) = itv_76()
+         case (77);  xcm(i) = itv_77()
+         case (78);  xcm(i) = itv_78()
+         case (79);  xcm(i) = itv_79()
+         case (80);  xcm(i) = itv_80()
+         case (81);  
+         case (82);  
+         case (83);  
+         case (84);  
+         case (85);  
+         case (86);  
+         case (87);  
+         case (88);  
+         case (89);  xcm(i) = itv_89()
+         case (90);  xcm(i) = itv_90()
+         case (91);  xcm(i) = itv_91()
+         case (92);  xcm(i) = itv_92()
+         case (93);  xcm(i) = itv_93()
+         case (94);  xcm(i) = itv_94()
+         case (95);  xcm(i) = itv_95()
+         case (96);  xcm(i) = itv_96()
+         case (97);  xcm(i) = itv_97()
+         case (98);  xcm(i) = itv_98()
+         case (99);  
+         case (100);  
+         case (101);  
+         case (102);  xcm(i) = itv_102()
+         case (103);  xcm(i) = itv_103()
+         case (104);  xcm(i) = itv_104()
+         case (105);  xcm(i) = itv_105()
+         case (106);  xcm(i) = itv_106()
+         case (107);  xcm(i) = itv_107()
+         case (108);  xcm(i) = itv_108()
+         case (109);  xcm(i) = itv_109()
+         case (110);  xcm(i) = itv_110()
+         case (111);  xcm(i) = itv_111()
+         case (112);  xcm(i) = itv_112()
+         case (113);  xcm(i) = itv_113()
+         case (114);  xcm(i) = itv_114()
+         case (115);  xcm(i) = itv_115()
+         case (116);  xcm(i) = itv_116()
+         case (117);  xcm(i) = itv_117()
+         case (118);  xcm(i) = itv_118()
+         case (119);  xcm(i) = itv_119()
+         case (120);  xcm(i) = itv_120()
+         case (121);  xcm(i) = itv_121()
+         case (122);  xcm(i) = itv_122()
+         case (123);  xcm(i) = itv_123()
+         case (124);  xcm(i) = itv_124()
+         case (125);  xcm(i) = itv_125()
+         case (126);  xcm(i) = itv_126()
+         case (127);  xcm(i) = itv_127()
+         case (128);  xcm(i) = itv_128()
+         case (129);  xcm(i) = itv_129()
+         case (130);  xcm(i) = itv_130()
+         case (131);  xcm(i) = itv_131()
+         case (132);  xcm(i) = itv_132()
+         case (133);  xcm(i) = itv_133()
+         case (134);  xcm(i) = itv_134()
+         case (135);  xcm(i) = itv_135()
+         case (136);  xcm(i) = itv_136()
+         case (137);  xcm(i) = itv_137()
+         case (138);  xcm(i) = itv_138()
+         case (139);  xcm(i) = itv_139()
+         case (140);  xcm(i) = itv_140()
+         case (141);  xcm(i) = itv_141()
+         case (142);  xcm(i) = itv_142()
+         case (143);  xcm(i) = itv_143()
+         case (144);  xcm(i) = itv_144()
+         case (145);  xcm(i) = itv_145()
+         case (146);  xcm(i) = itv_146()
+         case (147);  xcm(i) = itv_147()
+         case (148);  xcm(i) = itv_148()
+         case (149);  xcm(i) = itv_149()
+         case (150);  xcm(i) = itv_150()
+         case (151);  xcm(i) = itv_151()
+         case (152);  xcm(i) = itv_152()
+         case (153);  xcm(i) = itv_153()
+         case (154);  xcm(i) = itv_154()
          case (155);  xcm(i) = itv_155()
          case (156);  xcm(i) = itv_156()
+         ! DUMMY Cases
          case (157);  xcm(i) = itv_157()
          case (158);  xcm(i) = itv_158()
          case (159);  xcm(i) = itv_159()
@@ -3156,26 +3140,6 @@ subroutine convxc(xc,nn)
   !+ad_args  nn : input integer : number of iteration variables
   !+ad_desc  This subroutine converts the scaled iteration variables back to
   !+ad_desc  their real values.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  constraint_variables
-  !+ad_call  cost_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  heat_transport_variables
-
-  !+ad_call  impurity_radiation_module
-  !+ad_call  numerics
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_call  report_error
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3189,7 +3153,7 @@ subroutine convxc(xc,nn)
   use error_handling
   use fwbs_variables
   use heat_transport_variables
-
+  use ife_variables
   use impurity_radiation_module
   use numerics
   use pfcoil_variables
@@ -3218,163 +3182,163 @@ subroutine convxc(xc,nn)
      ratio = xc(i)/scale(i)
 
      select case (ixc(i))
-
-     case (1);  call set_itv_1(ratio)
-     case (2);  call set_itv_2(ratio)
-     case (3);  call set_itv_3(ratio)
-     case (4);  call set_itv_4(ratio)
-     case (5);  call set_itv_5(ratio)
-     case (6);  call set_itv_6(ratio)
-     case (7);  call set_itv_7(ratio)
-     case (8);  call set_itv_8(ratio)
-     case (9);  call set_itv_9(ratio)
-     case (10);  call set_itv_10(ratio)
-     case (11);  call set_itv_11(ratio)
-     case (12);  call set_itv_12(ratio)
-     case (13);  call set_itv_13(ratio)
-     case (14);  call set_itv_14(ratio)
-     case (15);  call set_itv_15(ratio)
-     case (16);  call set_itv_16(ratio)
-     case (17);  call set_itv_17(ratio)
-     case (18);  call set_itv_18(ratio)
-     case (19);  call set_itv_19(ratio)
-     case (20);  call set_itv_20(ratio)
-     case (21);  call set_itv_21(ratio)
-     case (22);  
-     case (23);  call set_itv_23(ratio)
-     case (24);  
-     case (25);  call set_itv_25(ratio)
-     case (26);  call set_itv_26(ratio)
-     case (27);  call set_itv_27(ratio)
-     case (28);  call set_itv_28(ratio)
-     case (29);  call set_itv_29(ratio)
-     case (30);  call set_itv_30(ratio)
-     case (31);  call set_itv_31(ratio)
-     case (32);  call set_itv_32(ratio)
-     case (33);  call set_itv_33(ratio)
-     case (34);  call set_itv_34(ratio)
-     case (35);  call set_itv_35(ratio)
-     case (36);  call set_itv_36(ratio)
-     case (37);  call set_itv_37(ratio)
-     case (38);  call set_itv_38(ratio)
-     case (39);  call set_itv_39(ratio)
-     case (40);  call set_itv_40(ratio)
-     case (41);  call set_itv_41(ratio)
-     case (42);  call set_itv_42(ratio)
-     case (43);  
-     case (44);  call set_itv_44(ratio)
-     case (45);  call set_itv_45(ratio)
-     case (46);  call set_itv_46(ratio)
-     case (47);  call set_itv_47(ratio)
-     case (48);  call set_itv_48(ratio)
-     case (49);  call set_itv_49(ratio)
-     case (50);  call set_itv_50(ratio)
-     case (51);  call set_itv_51(ratio)
-     case (52);  call set_itv_52(ratio)
-     case (53);  call set_itv_53(ratio)
-     case (54);  call set_itv_54(ratio)
-     case (55);  
-     case (56);  call set_itv_56(ratio)
-     case (57);  call set_itv_57(ratio)
-     case (58);  call set_itv_58(ratio)
-     case (59);  call set_itv_59(ratio)
-     case (60);  call set_itv_60(ratio)
-     case (61);  call set_itv_61(ratio)
-     case (62);  call set_itv_62(ratio)
-     case (63);  call set_itv_63(ratio)
-     case (64);  call set_itv_64(ratio)
-     case (65);  call set_itv_65(ratio)
-     case (66);  call set_itv_66(ratio)
-     case (67);  call set_itv_67(ratio)
-     case (68);  call set_itv_68(ratio)
-     case (69);  call set_itv_69(ratio)
-     case (70);  call set_itv_70(ratio)
-     case (71);  call set_itv_71(ratio)
-     case (72);  call set_itv_72(ratio)
-     case (73);  call set_itv_73(ratio)
-     case (74);  call set_itv_74(ratio)
-     case (75);  call set_itv_75(ratio)
-     case (76);  
-     case (77);  
-     case (78);  
-     case (79);  call set_itv_79(ratio)
-     case (80);  
-     case (81);  
-     case (82);  
-     case (83);  
-     case (84);  
-     case (85);  
-     case (86);  
-     case (87);  
-     case (88);  
-     case (89);  call set_itv_89(ratio)
-     case (90);  call set_itv_90(ratio)
-     case (91);  call set_itv_91(ratio)
-     case (92);  call set_itv_92(ratio)
-     case (93);  call set_itv_93(ratio)
-     case (94);  call set_itv_94(ratio)
-     case (95);  call set_itv_95(ratio)
-     case (96);  call set_itv_96(ratio)
-     case (97);  call set_itv_97(ratio)
-     case (98);  call set_itv_98(ratio)
-     case (99);  
-     case (100);  
-     case (101);  
-     case (102);  call set_itv_102(ratio)
-     case (103);  call set_itv_103(ratio)
-     case (104);  call set_itv_104(ratio)
-     case (105);  call set_itv_105(ratio)
-     case (106);  call set_itv_106(ratio)
-     case (107);  call set_itv_107(ratio)
-     case (108);  call set_itv_108(ratio)
-     case (109);  call set_itv_109(ratio)
-     case (110);  call set_itv_110(ratio)
-     case (111);  call set_itv_111(ratio)
-     case (112);  call set_itv_112(ratio)
-     case (113);  call set_itv_113(ratio)
-     case (114);  call set_itv_114(ratio)
-     case (115);  call set_itv_115(ratio)
-     case (116);  call set_itv_116(ratio)
-     case (117);  call set_itv_117(ratio)
-     case (118);  call set_itv_118(ratio)
-     case (119);  call set_itv_119(ratio)
-     case (120);  call set_itv_120(ratio)
-     case (121);  call set_itv_121(ratio)
-     case (122);  call set_itv_122(ratio)
-     case (123);  call set_itv_123(ratio)
-     case (124);  call set_itv_124(ratio)
-     case (125);  call set_itv_125(ratio)
-     case (126);  call set_itv_126(ratio)
-     case (127);  call set_itv_127(ratio)
-     case (128);  call set_itv_128(ratio)
-     case (129);  call set_itv_129(ratio)
-     case (130);  call set_itv_130(ratio)
-     case (131);  call set_itv_131(ratio)
-     case (132);  call set_itv_132(ratio)
-     case (133);  call set_itv_133(ratio)
-     case (134);  call set_itv_134(ratio)
-     case (135);  call set_itv_135(ratio)
-     case (136);  call set_itv_136(ratio)
-     case (137);  call set_itv_137(ratio)
-     case (138);  call set_itv_138(ratio)
-     case (139);  call set_itv_139(ratio)
-     case (140);  call set_itv_140(ratio)
-     case (141);  call set_itv_141(ratio)
-     case (142);  call set_itv_142(ratio)
-     case (143);  call set_itv_143(ratio)
-     case (144);  call set_itv_144(ratio)
-     case (145);  call set_itv_145(ratio)
-     case (146);  call set_itv_146(ratio)
-     case (147);  call set_itv_147(ratio)
-     case (148);  call set_itv_148(ratio)
-     case (149);  call set_itv_149(ratio)
-     case (150);  call set_itv_150(ratio)
-     case (151);  call set_itv_151(ratio)
-     case (152);  call set_itv_152(ratio)
-     case (153);  call set_itv_153(ratio)
-     case (154);  call set_itv_154(ratio)
+         case (1);  call set_itv_1(ratio)
+         case (2);  call set_itv_2(ratio)
+         case (3);  call set_itv_3(ratio)
+         case (4);  call set_itv_4(ratio)
+         case (5);  call set_itv_5(ratio)
+         case (6);  call set_itv_6(ratio)
+         case (7);  call set_itv_7(ratio)
+         case (8);  call set_itv_8(ratio)
+         case (9);  call set_itv_9(ratio)
+         case (10);  call set_itv_10(ratio)
+         case (11);  call set_itv_11(ratio)
+         case (12);  call set_itv_12(ratio)
+         case (13);  call set_itv_13(ratio)
+         case (14);  call set_itv_14(ratio)
+         case (15);  call set_itv_15(ratio)
+         case (16);  call set_itv_16(ratio)
+         case (17);  call set_itv_17(ratio)
+         case (18);  call set_itv_18(ratio)
+         case (19);  call set_itv_19(ratio)
+         case (20);  call set_itv_20(ratio)
+         case (21);  call set_itv_21(ratio)
+         case (22);  
+         case (23);  call set_itv_23(ratio)
+         case (24);  
+         case (25);  call set_itv_25(ratio)
+         case (26);  call set_itv_26(ratio)
+         case (27);  call set_itv_27(ratio)
+         case (28);  call set_itv_28(ratio)
+         case (29);  call set_itv_29(ratio)
+         case (30);  call set_itv_30(ratio)
+         case (31);  call set_itv_31(ratio)
+         case (32);  call set_itv_32(ratio)
+         case (33);  call set_itv_33(ratio)
+         case (34);  call set_itv_34(ratio)
+         case (35);  call set_itv_35(ratio)
+         case (36);  call set_itv_36(ratio)
+         case (37);  call set_itv_37(ratio)
+         case (38);  call set_itv_38(ratio)
+         case (39);  call set_itv_39(ratio)
+         case (40);  call set_itv_40(ratio)
+         case (41);  call set_itv_41(ratio)
+         case (42);  call set_itv_42(ratio)
+         case (43);  
+         case (44);  call set_itv_44(ratio)
+         case (45);  call set_itv_45(ratio)
+         case (46);  call set_itv_46(ratio)
+         case (47);  call set_itv_47(ratio)
+         case (48);  call set_itv_48(ratio)
+         case (49);  call set_itv_49(ratio)
+         case (50);  call set_itv_50(ratio)
+         case (51);  call set_itv_51(ratio)
+         case (52);  call set_itv_52(ratio)
+         case (53);  call set_itv_53(ratio)
+         case (54);  call set_itv_54(ratio)
+         case (55);  
+         case (56);  call set_itv_56(ratio)
+         case (57);  call set_itv_57(ratio)
+         case (58);  call set_itv_58(ratio)
+         case (59);  call set_itv_59(ratio)
+         case (60);  call set_itv_60(ratio)
+         case (61);  call set_itv_61(ratio)
+         case (62);  call set_itv_62(ratio)
+         case (63);  call set_itv_63(ratio)
+         case (64);  call set_itv_64(ratio)
+         case (65);  call set_itv_65(ratio)
+         case (66);  call set_itv_66(ratio)
+         case (67);  call set_itv_67(ratio)
+         case (68);  call set_itv_68(ratio)
+         case (69);  call set_itv_69(ratio)
+         case (70);  call set_itv_70(ratio)
+         case (71);  call set_itv_71(ratio)
+         case (72);  call set_itv_72(ratio)
+         case (73);  call set_itv_73(ratio)
+         case (74);  call set_itv_74(ratio)
+         case (75);  call set_itv_75(ratio)
+         case (76);  
+         case (77);  
+         case (78);  
+         case (79);  call set_itv_79(ratio)
+         case (80);  
+         case (81);  
+         case (82);  
+         case (83);  
+         case (84);  
+         case (85);  
+         case (86);  
+         case (87);  
+         case (88);  
+         case (89);  call set_itv_89(ratio)
+         case (90);  call set_itv_90(ratio)
+         case (91);  call set_itv_91(ratio)
+         case (92);  call set_itv_92(ratio)
+         case (93);  call set_itv_93(ratio)
+         case (94);  call set_itv_94(ratio)
+         case (95);  call set_itv_95(ratio)
+         case (96);  call set_itv_96(ratio)
+         case (97);  call set_itv_97(ratio)
+         case (98);  call set_itv_98(ratio)
+         case (99);  
+         case (100);  
+         case (101);  
+         case (102);  call set_itv_102(ratio)
+         case (103);  call set_itv_103(ratio)
+         case (104);  call set_itv_104(ratio)
+         case (105);  call set_itv_105(ratio)
+         case (106);  call set_itv_106(ratio)
+         case (107);  call set_itv_107(ratio)
+         case (108);  call set_itv_108(ratio)
+         case (109);  call set_itv_109(ratio)
+         case (110);  call set_itv_110(ratio)
+         case (111);  call set_itv_111(ratio)
+         case (112);  call set_itv_112(ratio)
+         case (113);  call set_itv_113(ratio)
+         case (114);  call set_itv_114(ratio)
+         case (115);  call set_itv_115(ratio)
+         case (116);  call set_itv_116(ratio)
+         case (117);  call set_itv_117(ratio)
+         case (118);  call set_itv_118(ratio)
+         case (119);  call set_itv_119(ratio)
+         case (120);  call set_itv_120(ratio)
+         case (121);  call set_itv_121(ratio)
+         case (122);  call set_itv_122(ratio)
+         case (123);  call set_itv_123(ratio)
+         case (124);  call set_itv_124(ratio)
+         case (125);  call set_itv_125(ratio)
+         case (126);  call set_itv_126(ratio)
+         case (127);  call set_itv_127(ratio)
+         case (128);  call set_itv_128(ratio)
+         case (129);  call set_itv_129(ratio)
+         case (130);  call set_itv_130(ratio)
+         case (131);  call set_itv_131(ratio)
+         case (132);  call set_itv_132(ratio)
+         case (133);  call set_itv_133(ratio)
+         case (134);  call set_itv_134(ratio)
+         case (135);  call set_itv_135(ratio)
+         case (136);  call set_itv_136(ratio)
+         case (137);  call set_itv_137(ratio)
+         case (138);  call set_itv_138(ratio)
+         case (139);  call set_itv_139(ratio)
+         case (140);  call set_itv_140(ratio)
+         case (141);  call set_itv_141(ratio)
+         case (142);  call set_itv_142(ratio)
+         case (143);  call set_itv_143(ratio)
+         case (144);  call set_itv_144(ratio)
+         case (145);  call set_itv_145(ratio)
+         case (146);  call set_itv_146(ratio)
+         case (147);  call set_itv_147(ratio)
+         case (148);  call set_itv_148(ratio)
+         case (149);  call set_itv_149(ratio)
+         case (150);  call set_itv_150(ratio)
+         case (151);  call set_itv_151(ratio)
+         case (152);  call set_itv_152(ratio)
+         case (153);  call set_itv_153(ratio)
+         case (154);  call set_itv_154(ratio)
          case (155);  call set_itv_155(ratio)
          case (156);  call set_itv_156(ratio)
+         ! DUMMY Cases
          case (157);  call set_itv_157(ratio)
          case (158);  call set_itv_158(ratio)
          case (159);  call set_itv_159(ratio)
@@ -3390,8 +3354,8 @@ subroutine convxc(xc,nn)
          case (169);  call set_itv_169(ratio)
          case (170);  call set_itv_170(ratio)      
 
-     case default
-        call report_error(57)
+         case default
+            call report_error(57)
 
      end select
 

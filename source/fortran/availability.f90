@@ -14,11 +14,10 @@ module availability_module
   !+ad_call  cost_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
-
+  !+ad_call  ife_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pulse_variables
-
   !+ad_call  times_variables
   !+ad_call  vacuum_variables
   !+ad_call  maths_library
@@ -27,6 +26,8 @@ module availability_module
   !+ad_hist  18/12/14 JM  Update availability calculation with corrections
   !+ad_hist  09/02/15 JM  Update to divertor and blanket models
   !+ad_hist  20/05/16 JM  Tidy
+  !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+  !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -38,11 +39,10 @@ module availability_module
   use cost_variables
   use divertor_variables
   use fwbs_variables
-
+  use ife_variables
   use physics_variables
   use process_output
   use pulse_variables
-
   use tfcoil_variables
   use times_variables
   use vacuum_variables
@@ -122,6 +122,8 @@ contains
     ! Full power lifetime (in years) !
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    if (ife /= 1) then
+
     ! First wall / blanket lifetime (years)
 
     ! TODO MDK Do this calculation whatever the value of blktmodel (whatever that is)
@@ -143,6 +145,8 @@ contains
     ! Centrepost lifetime (years) (ST machines only)
     if (itart == 1) then
       cplife = min(cpstflnc/wallmw, tlife)
+    end if
+
     end if
 
     ! Plant Availability (iavail=0,1) !
@@ -193,6 +197,8 @@ contains
 
     ! Modify lifetimes to take account of the availability
 
+    if (ife /= 1) then
+
        ! First wall / blanket
        if (bktlife < tlife) then
           bktlife = min( bktlife/cfactr, tlife )
@@ -207,6 +213,8 @@ contains
        if ((itart == 1).and.(cplife < tlife)) then
           cplife = min( cplife/cfactr, tlife )
        end if
+
+    end if
 
     ! Current drive system lifetime (assumed equal to first wall and blanket lifetime)
     cdrlife = bktlife
@@ -370,7 +378,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine calc_u_planned(outfile, iprint, u_planned) &
-   bind(C, name = "availability_calc_u_planned")
+   bind(C, name = "c_calc_u_planned")
 
     !+ad_name  calc_u_planned
     !+ad_summ  Calculates the planned unavailability of the plant
@@ -490,7 +498,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine calc_u_unplanned_magnets(outfile, iprint, u_unplanned_magnets) &
-   bind(C, name = "availability_calc_u_unplanned_magnets")
+   bind(C, name = "c_calc_u_unplanned_magnets")
 
     !+ad_name  calc_u_unplanned_magnets
     !+ad_summ  Calculates the unplanned unavailability of the magnets
@@ -582,7 +590,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine calc_u_unplanned_divertor(outfile, iprint, u_unplanned_div) & 
-   bind(C, name = "availability_calc_u_unplanned_divertor")
+   bind(C, name = "c_calc_u_unplanned_divertor")
 
     !+ad_name  calc_u_unplanned_divertor
     !+ad_summ  Calculates the unplanned unavailability of the divertor
@@ -678,7 +686,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine calc_u_unplanned_fwbs(outfile, iprint, u_unplanned_fwbs) &
-   bind(C, name = "availability_calc_u_unplanned_fwbs")
+   bind(C, name = "c_calc_u_unplanned_fwbs")
 
     !+ad_name  calc_u_unplanned_fwbs
     !+ad_summ  Calculates the unplanned unavailability of the first wall and blanket
@@ -766,7 +774,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine calc_u_unplanned_bop(outfile, iprint, u_unplanned_bop) &
-   bind(c,name= "availability_calc_u_unplanned_bop")
+   bind(c,name= "c_calc_u_unplanned_bop")
     !+ad_name  calc_u_unplanned_bop
     !+ad_summ  Calculates the unplanned unavailability of the balance of plant
     !+ad_type  Subroutine
@@ -836,7 +844,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine calc_u_unplanned_hcd(u_unplanned_hcd) &
-   bind(C,name="availability_calc_u_unplanned_hcd")
+   bind(C,name="c_calc_u_unplanned_hcd")
 
     !+ad_name  calc_u_unplanned_fwbs
     !+ad_summ  Calculates the unplanned unavailability of the heating and current drive system

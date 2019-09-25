@@ -1,0 +1,55 @@
+site_name: PROCESS
+docs_dir: "documentation/proc-pages/"
+nav:
+    - Home: index.md
+    - Getting Started: getting-started.md
+    - I/O: 
+        - Input: io/input-guide.md
+        - Output: io/output-guide.md
+        - Utilities: io/utilities-guide.md
+        - Python Libraries: io/python-lib-guide.md
+        - Variable Descriptions: vardes.md
+    - Solver: solver-guide.md
+    - Physics Models:
+        - Plasma: physics-models/plasma.md
+        - PLASMOD: physics-models/plasmod.md
+    - Engineering Models:
+        - Machine Build: eng-models/machine-build.md
+        - First Wall/Blanket: eng-models/fw-blanket.md
+        - TF Coil : eng-models/tf-coil.md
+        - Shield : eng-models/shield.md
+        - Divertor : eng-models/divertor.md
+    - Development: 
+        Tools: development/tools.md
+        Standards: development/standards.md
+        Continuous Integration: development/ci-guide.md
+        Unit Tests: development/unit-tests.md
+    - FORD docs: ford_site/index.html
+
+repo_url: https://git.ccfe.ac.uk/process/process.git
+
+theme: 
+    # name: material
+    name: readthedocs
+
+extra_javascript:
+  - "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?\
+    config=TeX-MML-AM_CHTML"
+
+markdown_extensions:
+  - footnotes
+  - admonition
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde

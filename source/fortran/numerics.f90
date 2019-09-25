@@ -1,24 +1,14 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module numerics
-
   !+ad_name  numerics
   !+ad_summ  Module containing callers to the main equation solvers
   !+ad_summ  HYBRD and VMCON
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  eqsolv
-  !+ad_cont  optimiz
-  !+ad_args  N/A
   !+ad_desc  This module contains the primary numerics variables and the
   !+ad_desc  calling routines for the two equation solvers in the code.
   !+ad_prob  None
-  !+ad_call  global_variables
-  !+ad_call  maths_library
-  !+ad_hist  11/01/18 KE  Added new constraint eqn 76, Eich formula for nesep
-  !+ad_hist  22/06/18 SIM cdtfleg (itv 24) no longer used
-  !+ad_stat  Okay
-  !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -211,10 +201,10 @@ module numerics
        'Start-up inj. power lower limit  ', &
        !+ad_varc  <LI> (41) Plasma current ramp-up time lower limit (PULSE) (itv  66,65)
        'Plasma curr. ramp time lower lim ', &
-       !+ad_varc  <LI> (42) Cycle time lower limit (PULSE) (itv 67,65,17)
+       !+ad_varc  <LI> (42) Cycle time lower limit (PULSE) (itv 17,67,65)
        'Cycle time lower limit           ', &
        !+ad_varc  <LI> (43) Average centrepost temperature
-       !+ad_varc            (TART) (consistency equation) (itv 69,70,13)
+       !+ad_varc            (TART) (consistency equation) (itv 13,20,69,70)
        'Average centrepost temperature   ', &
        !+ad_varc  <LI> (44) Peak centrepost temperature upper limit (TART) (itv 68,69,70)
        'Peak centrepost temp. upper limit', &
@@ -228,7 +218,7 @@ module numerics
        'Poloidal beta upper limit        ', &
        !+ad_varc  <LI> (49) NOT USED
        'RFP reversal parameter < 0       ', &
-       !+ad_varc  <LI> (50) NOT USED
+       !+ad_varc  <LI> (50) IFE repetition rate upper limit (IFE)
        'IFE repetition rate upper limit  ', &
        !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE) (itv 16,29,3,1)
        'Startup volt-seconds consistency ', &
@@ -288,11 +278,11 @@ module numerics
        'TFC current per turn upper limit ',    &
        !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)
        'Reinke criterion fZ lower limit  ',   &
-       !+ad_varc  <LI> (79) F-value for max peak CS field (itv  149 fbmaxcs)
+       !+ad_varc  <LI> (79) Peak CS field upper limit (itv  149 fbmaxcs)
        'Peak CS field upper limit        ',   &
-       !+ad_varc  <LI> (80) F-value for min pdivt (itv  153 fpdivlim)
+       !+ad_varc  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)
        'pdivt lower limit                ',   &
-       !+ad_varc  <LI> (81) F-value for ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
+       !+ad_varc  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
        'ne0 > neped                      '    &
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
@@ -307,8 +297,8 @@ module numerics
   
   ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
   ! other python utilities, so they cannot easily be changed.
-   character(len=14), dimension(ipnvars) :: lablxc = ''
-   ! Issue 287 iteration variables are now defined in module define_iteration_variables in iteration variables.f90
+  character(len=14), dimension(ipnvars) :: lablxc = ''
+  ! Issue 287 iteration variables are now defined in module define_iteration_variables in iteration variables.f90
 
   character(len=14), dimension(:), allocatable :: name_xc
 

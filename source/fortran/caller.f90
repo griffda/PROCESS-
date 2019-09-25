@@ -21,8 +21,8 @@ subroutine caller(xc,nvars)
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
-
-
+  !+ad_call  ife_module
+  !+ad_call  ife_variables
   !+ad_call  kit_hcpb_module
   !+ad_call  numerics
   !+ad_call  pfcoil_module
@@ -32,8 +32,6 @@ subroutine caller(xc,nvars)
   !+ad_call  power_module
   !+ad_call  process_output
   !+ad_call  pulse_module
-
-
   !+ad_call  sctfcoil_module
   !+ad_call  startup_module
   !+ad_call  stellarator_module
@@ -86,6 +84,8 @@ subroutine caller(xc,nvars)
   !+ad_hist  13/03/15 JM  Changed calling of blanket models and import of blanket modules
   !+ad_hist  20/05/16 JM  Added more detailed comments to the caller
   !+ad_hist  10/02/17 JM  Added divertor Kallenbach divertor model
+  !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+  !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -96,11 +96,14 @@ subroutine caller(xc,nvars)
   use buildings_module
   use costs_module
   use costs_2015_module
+  use costs_step_module
   use current_drive_module
   use divertor_module
   use divertor_ode
   use divertor_Kallenbach_variables
   use fwbs_variables
+  use ife_module
+  use ife_variables
   use numerics
   use pfcoil_module
   use physics_module
@@ -109,8 +112,6 @@ subroutine caller(xc,nvars)
   use power_module
   use process_output
   use pulse_module
-
-
   use sctfcoil_module
   use startup_module
   use stellarator_module
@@ -157,6 +158,14 @@ subroutine caller(xc,nvars)
   if (istell /= 0) then
      call stcall
      return
+  end if
+
+  !  Inertial Fusion Energy calls !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (ife /= 0) then
+    call ifecll
+    return
   end if
 
   !  Tokamak calls !
@@ -299,12 +308,10 @@ subroutine caller(xc,nvars)
 
   call vaccall(nout,0)
 
-  ! Buildings model (1990 costs model only) !
+  ! Buildings model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  if (cost_model==0) then
-     call bldgcall(nout,0)
-  end if
+  call bldgcall(nout,0)
 
   ! Plant AC power requirements !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -342,11 +349,14 @@ subroutine caller(xc,nvars)
   ! ---- | ------
   ! 0    |  1990 costs model
   ! 1    |  2015 Kovari model
+  ! 2    |  2019 STEP model
 
-  if (cost_model == 1) then
-     call costs_2015(0,0)
-  else
-     call costs(nout,0)
+  if (cost_model == 0) then
+      call costs(nout,0)
+  else if (cost_model == 1) then
+      call costs_2015(0,0)
+  else if (cost_model == 2) then
+     call costs_step(nout,0)
   end if
 
   ! FISPACT and LOCA model (not used) !

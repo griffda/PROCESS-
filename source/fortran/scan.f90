@@ -59,7 +59,7 @@ module scan_module
   use fwbs_variables
   use divertor_kallenbach_variables
   use final_module
-  
+
   implicit none
 
   public
@@ -123,7 +123,7 @@ module scan_module
   !+ad_varc          <LI> 41 blnkoth
   !+ad_varc          <LI> 42 Argon fraction fimp(9)
   !+ad_varc          <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum
-  !+ad_varc          <LI> 44 Allowable tresca stress in tf coil structural material 
+  !+ad_varc          <LI> 44 Allowable tresca stress in tf coil structural material
   !+ad_varc          <LI> 45 Minimum allowable temperature margin ; tf coils
   !+ad_varc          <LI> 46 boundu(150) fgwsep
   !+ad_varc          <LI> 47 impurity_enrichment(9) Argon impurity enrichment
@@ -468,7 +468,7 @@ contains
     integer, parameter :: width = 110
     character(len=25), dimension(noutvars), save :: plabel
     real(kind(1.0D0)), dimension(noutvars,ipnscns) :: outvar
-    integer :: ifail, iscan, ivar, iscan_1, iscan_2
+    integer :: ifail, iscan, ivar, iscan_1, iscan_2, iscan_R
     logical :: first_call = .TRUE.
     real(kind(1.0D0)), dimension(ipnscns) :: sweep_1_vals, sweep_2_vals
 
@@ -575,18 +575,22 @@ contains
     do iscan_1 = 1, isweep
 
         do iscan_2 = 1, isweep_2
-
+            if (mod(iscan_1,2)==0) then
+                iscan_R = isweep_2 - iscan_2 + 1
+            else
+                iscan_R = iscan_2
+            end if
             ! Makes iscan available globally (read-only)
             iscan_global = iscan
 
             call scan_select(nsweep, sweep, iscan_1, vlabel, xlabel)
-            call scan_select(nsweep_2, sweep_2, iscan_2, vlabel_2, xlabel_2)
+            call scan_select(nsweep_2, sweep_2, iscan_R, vlabel_2, xlabel_2)
 
             ! Write banner to output file
             call oblnkl(nout)
             call ostars(nout,width)
             write(nout,10) iscan, isweep*isweep_2, trim(vlabel), &
-                sweep(iscan_1), trim(vlabel_2), sweep_2(iscan_2)
+                sweep(iscan_1), trim(vlabel_2), sweep_2(iscan_R)
         ! 10    format(a, i2, a, i2, 5a, 1pe10.3, a)
         10  format(' ***** 2D scan point ', i3, ' of ', i3, ' : ', a, ' = ', &
                    1pe10.3, ' and ', a, ' = ', 1pe10.3, ' *****')
@@ -598,7 +602,7 @@ contains
 
             ! Call the optimization routine VMCON at this scan point
             write(*,20) iscan, trim(xlabel), trim(vlabel), sweep(iscan_1), &
-                trim(xlabel_2), trim(vlabel_2), sweep_2(iscan_2)
+                trim(xlabel_2), trim(vlabel_2), sweep_2(iscan_R)
             ! 20     format(a,i2,a,4a,1pe10.3)
         20  format('Starting scan point ', i3, ': ', a, ', ', a, ' = ', &
                    1pe10.3, ' and ', a, ', ', a, ' = ', 1pe10.3)
@@ -699,7 +703,7 @@ contains
             outvar(83,iscan) = teped
 
             sweep_1_vals(iscan) = sweep(iscan_1)
-            sweep_2_vals(iscan) = sweep_2(iscan_2)
+            sweep_2_vals(iscan) = sweep_2(iscan_R)
             iscan = iscan + 1
         end do  !  End of scanning loop
     end do  !  End of scanning loop
@@ -1027,9 +1031,10 @@ contains
   call ocmmnt(nout,'PROCESS has performed a VMCON (optimisation) run.')
   if (ifail /= 1) then
      !call ocmmnt(nout,'but could not find a feasible set of parameters.')
-     call oheadr(nout,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
+    !  call oheadr(nout,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
+    !  call ovarin(iotty,'VMCON error flag (ifail)','',ifail)
+     call ovarin(nout,'VMCON error flag','(ifail)',ifail)
      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
-     call ovarin(iotty,'VMCON error flag (ifail)','',ifail)
      call oblnkl(iotty)
 
      idiags(1) = ifail ; call report_error(132)
@@ -1070,9 +1075,9 @@ contains
   call ovarin(nout,'Number of constraints (total)','(neqns+nineqns)',neqns+nineqns)
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
   call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
-  if (ifail /= 1) then
-     call ovarin(nout,'VMCON error flag','(ifail)',ifail)
-  end if
+!   if (ifail /= 1) then
+!      call ovarin(nout,'VMCON error flag','(ifail)',ifail)
+!   end if
 
   call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
   call ovarre(nout,'VMCON convergence parameter','(convergence_parameter)',convergence_parameter, 'OP ')

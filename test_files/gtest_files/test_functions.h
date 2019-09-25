@@ -10,45 +10,64 @@ int min_int = std::numeric_limits<int>::min();
 extern "C"
 {
    // Function prototype for accessing Fortran functions 
-   double utilities_process_value(double *, double *);
+   double c_process_value_cpp(double *, double *);
 
    // Evaluators
    //-----------
-   void evaluators_funfom(double *);
+   void c_funfom(double *);
 
    // Availability Module
    //--------------------
-   void availability_calc_u_planned(int *, int *, double *);
-   void availability_calc_u_unplanned_magnets(int *,int *,double *);
-   void availability_calc_u_unplanned_divertor(int *, int *, double *);
-   void availability_calc_u_unplanned_fwbs(int *, int *, double *);
-   void availability_calc_u_unplanned_hcd(double *);
-   void availability_calc_u_unplanned_bop(int *, int *, double *);
+   void c_calc_u_planned(int *, int *, double *);
+   void c_calc_u_unplanned_magnets(int *,int *,double *);
+   void c_calc_u_unplanned_divertor(int *, int *, double *);
+   void c_calc_u_unplanned_fwbs(int *, int *, double *);
+   void c_calc_u_unplanned_hcd(double *);
+   void c_calc_u_unplanned_bop(int *, int *, double *);
 
    // Costs 1990 Module
    //------------------
-   void costs_1990_acc228();
-   void costs_1990_acc229();
-   void costs_1990_acc23();
-   void costs_1990_acc25();
-   void costs_1990_acc26();
-   void costs_1990_acc9();
+   void c_acc2261();
+   void c_acc2262();
+   void c_acc2263();
+   void c_acc2271();
+   void c_acc2272();
+   void c_acc2273();
+   void c_acc2274();
+   void c_acc228();
+   void c_acc229();
+   void c_acc23();
+   void c_acc241();
+   void c_acc242();
+   void c_acc243();
+   void c_acc244();
+   void c_acc245();
+   void c_acc25();
+   void c_acc26();
+   void c_acc9();
 
    // Current Drive Module
    //---------------------
-   void current_drive_iternb(double *, double *, double *);
-   void current_drive_cfnbi(double *, double *, double *, double *, double *, double *,double *, double *, double *);
+   void c_iternb(double *, double *, double *);
+   void c_cfnbi(double *, double *, double *, double *, double *, double *,double *, double *, double *);
 
    // Maths Library
    //--------------
-   double maths_lib_binomial(int *, int *);
+   double c_binomial(int *, int *);
 
    // Physics functions module
    //-------------------------
-   double test_t_eped_scaling();
+   double c_t_eped_scaling();
+   double c_plasma_elongation_IPB();
+   double c_total_mag_field();
+   double c_beta_poloidal();
+   double c_res_diff_time();
+  
+   // IFE module
+   //-------------------------
+   void c_ifetgt();
 
 }
-
 
 int elapsed_time(const char* filename)
 {

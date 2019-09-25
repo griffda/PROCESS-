@@ -2,7 +2,7 @@ TEST(Current_drive, iternb) {
    double a = 0.01;
    double b = 0.01;
    double c = 0.0;
-   current_drive_iternb(&a, &b, &c);
+   c_iternb(&a, &b, &c);
 //    ASSERT_LT(14.711, val);
 //    ASSERT_GT(14.71, val);
 //    EXPECT_EQ(14.71, val);
@@ -23,7 +23,7 @@ TEST(Current_drive, cfnbi) {
    double xlmbda = 0.01;
    double fpion = 0.0;
 
-   current_drive_cfnbi(&afast, &efast, &te, &ne, &nd, &nt, &zeffai, &xlmbda, &fpion);
+   c_cfnbi(&afast, &efast, &te, &ne, &nd, &nt, &zeffai, &xlmbda, &fpion);
 //    ASSERT_LT(14.711, val);
 //    ASSERT_GT(14.71, val);
 //    EXPECT_EQ(14.71, val);

@@ -138,6 +138,7 @@ contains
      !+ad_hist  27/02/17 JM  Added constraint equation 72 for Central Solenoid stress model
      !+ad_hist  20/04/17 JM  Added string tags to constraints
      !+ad_hist  25/04/19 SK  Added new constraint equation (81) ensuring ne(0) > ne(ped)
+     !+ad_hist  29/07/19 SIM Restored equation 50 (Issue #901)
      !+ad_stat  Okay
      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
      !
@@ -283,7 +284,7 @@ contains
          case (48); call constraint_eqn_048(args)  
 	      ! Issue #508 Remove RFP option Equation to ensure reversal parameter F is negative
          case (49); call constraint_eqn_049(args)
-         ! Issue #508 Remove IFE option: Equation for repetition rate upper limit
+         ! IFE option: Equation for repetition rate upper limit
          case (50); call constraint_eqn_050(args)
 	      ! Equation to enforce startup flux = available startup flux
          case (51); call constraint_eqn_051(args)  
@@ -1839,16 +1840,33 @@ contains
       !+ad_gloc         <LI> = 1 use spherical tokamak models</UL>
       use tfcoil_variables, only: tcpav, tcpav2
       use physics_variables, only: itart
+      use tfcoil_variables, only:  itfsup
+
       implicit none
       type (constraint_args_type), intent(out) :: args
 
       ! if the machine isn't a ST then report error
       if (itart == 0) call report_error(7)
+
+      ! For some reasons these lines are needed to make VMCON CONVERGE ....
+      if ( itfsup == 0 ) then ! Copper case
+         tcpav = tcpav - 273.15D0
+         tcpav2 = tcpav2 - 273.15D0
+      end if
+
       args%cc =   1.0D0 - tcpav/tcpav2
       args%con = tcpav2 * (1.0D0 - args%cc)
       args%err = tcpav2 * args%cc
       args%symbol = '='
       args%units = 'deg C'
+
+      ! For some reasons these lines are needed to make VMCON CONVERGE ....
+      if ( itfsup == 0 ) then ! Copper case
+         tcpav = tcpav + 273.15D0
+         tcpav2 = tcpav2 + 273.15D0
+      end if
+
+
 
    end subroutine constraint_eqn_043
 
@@ -1865,24 +1883,38 @@ contains
       !+ad_desc  and hence also optional here.
       !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fptemp : input real : f-value for peak centrepost temperature
-      !+ad_glos  ptempalw : input real : maximum peak centrepost temperature (C) 
-      !+ad_glos  tcpmax : input real :  peak centrepost temperature (C)
+      !+ad_glos  ptempalw : input real : maximum peak centrepost temperature (K) 
+      !+ad_glos  tcpmax : input real :  peak centrepost temperature (K)
       !+ad_glos  itart : input integer : switch for spherical tokamak (ST) models:<UL>
       !+ad_gloc         <LI> = 0 use conventional aspect ratio models;
       !+ad_gloc         <LI> = 1 use spherical tokamak models</UL>
       use constraint_variables, only: fptemp
       use tfcoil_variables, only: ptempalw, tcpmax
       use physics_variables, only: itart
+      use tfcoil_variables, only:  itfsup
       implicit none
       type (constraint_args_type), intent(out) :: args
 
       ! if the machine isn't a ST then report error
       if (itart == 0) call report_error(8)
+
+      ! For some reasons these lines are needed to make VMCON CONVERGE ....
+      if ( itfsup == 0 ) then ! Copper case
+         ptempalw = ptempalw - 273.15D0
+         tcpmax = tcpmax - 273.15D0
+      end if
+
       args%cc =   1.0D0 - fptemp * ptempalw / tcpmax
       args%con = ptempalw * (1.0D0 - args%cc)
       args%err = tcpmax * args%cc
       args%symbol = '<'
       args%units = 'deg C'
+
+      ! For some reasons these lines are needed to make VMCON CONVERGE ....
+      if ( itfsup == 0 ) then ! Copper case
+         ptempalw = ptempalw + 273.15D0
+         tcpmax = tcpmax + 273.15D0
+      end if
 
    end subroutine constraint_eqn_044
 
@@ -2020,16 +2052,27 @@ contains
 
    subroutine constraint_eqn_050(args)
       !+ad_name  constraint_eqn_050
-      !+ad_summ  Issue #508 Remove IFE option: Equation for repetition rate upper limit
+      !+ad_summ  IFE option: Equation for repetition rate upper limit
       !+ad_type  Subroutine
       !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_desc  Issue #508 Remove IFE option: Equation for repetition rate upper limit
-      !+ad_desc    #=# empty
-      !+ad_desc    #=#=# empty
-      ! Dummy formal arguments, just to comply with the subroutine interface
+      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
+      !+ad_desc  IFE option: Equation for repetition rate upper limit
+      !+ad_desc    #=# IFE
+      !+ad_desc    #=#=# frrmax, rrmax
+      !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
+      use ife_variables, only: frrmax, ife, rrmax, reprat
+      implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')
+      if (ife /= 1) then
+         call report_error(12)
+      end if
+
+      args%cc =  1.0D0 - frrmax * rrmax/reprat
+      args%con = rrmax * (1.0D0 - args%cc)
+      args%err = reprat * args%cc
+      args%symbol = '<'
+      args%units = 'Hz'
 
    end subroutine constraint_eqn_050
 
@@ -2120,12 +2163,12 @@ contains
 
    subroutine constraint_eqn_054(args)
       !+ad_name  constraint_eqn_054
-      !+ad_summ  Equation for peak TF coil nuclear heating upper limi
+      !+ad_summ  Equation for peak TF coil nuclear heating upper limit
       !+ad_type  Subroutine
       !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
       !+ad_args  args : output structure : residual error; constraint value; 
       !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for peak TF coil nuclear heating upper limi
+      !+ad_desc  Equation for peak TF coil nuclear heating upper limit
       !+ad_desc    #=# fwbs
       !+ad_desc    #=#=# fptfnuc, ptfnucmax
       !+ad_desc  and hence also optional here.
@@ -2882,19 +2925,17 @@ contains
       !+ad_name  constraint_eqn_081
       !+ad_summ  Make sure that the central density is larger that the pedestal one
       !+ad_type  Subroutine
-      !+ad_auth  J Morris, Culham Science Centre
+      !+ad_auth  S Kahn, Culham Science Centre
       !+ad_args  args : output structure : residual error; constraint value; 
       !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Lower limit pdivt
+      !+ad_desc  Lower limit ne0 > neped
       !+ad_desc  !#=# physics
       !+ad_argc  !#=#=# ne0, neped
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fpdivlim : input : F-value for lower limit on pdivt (cons. 80, itvar 153)
-      !+ad_glos  pdivtlim : input : Minimum power crossing separatrix pdivt [MW]
-      !+ad_glos  pdivt : input : Power crossing separatrix [MW]
-      !+ad_glos  Make sure that the central density is larger that the pedestal one
-      !+ad_glos  ne0   : centre plasma electron density
-      !+ad_glos  neped : pedestal plasma electron density
+      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be 
+      !+ad_desc  assigned only if present.
+      !+ad_glos  fne0  : input : F-value for constraint on ne0 > neped 
+      !+ad_glos  ne0   : input : Central electron density [m-3]
+      !+ad_glos  neped : input : Electron density at pedestal [m-3]
       use physics_variables, only: ne0, fne0, neped
       implicit none
 

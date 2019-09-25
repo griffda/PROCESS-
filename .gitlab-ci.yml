@@ -1,15 +1,25 @@
+#
+#  GitLab CI configuration file for PROCESS repository
+#
+#  J. Morris
+#  M. Kumar
+#
+#  UKAEA
+#  29/07/19
+#
+#-----------------------------------------------------
+
+# List of build stages
+
 stages:
   - build
   - testing
   - jenkins
   - baseline
-#This command is used for generating gtest results in Jenkins  ./bin/process_test.exe --gtest_output=xml:gtest_results.xml
+  - standards
+  - pages
+
 before_script:
-#  - apt-get install -y gfortran
-#  - apt-get install -y python3-numpy
-#  - apt-get install -y python3-scipy
-#  - apt-get install -y python3-matplotlib
-#  - apt-get install dos2unix
   - export LOGNAME=root
   - source /etc/profile.d/modules.sh
   - module use /usr/local/modules/default
@@ -21,7 +31,11 @@ before_script:
   - export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest
   - echo ld_library_path=$LD_LIBRARY_PATH
 
-build:Make:
+
+# Build stage 
+#------------
+
+make:
 # image: ukaea/ubuntu
  only:
   - develop
@@ -33,8 +47,9 @@ build:Make:
   - rm -rf build
   - cmake3 -H. -Bbuild
   - cmake3 --build build
-# Now add trigger for PROCESS_Testing on GitLab CI               develop is PROCESS_Testing branch
-  - "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"  
+  # Trigger for PROCESS_Testing on GitLab CI develop is PROCESS_Testing branch
+  - "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop \
+    https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"  
   - ls bin -lah
   - echo "Test "
  artifacts:
@@ -46,7 +61,7 @@ build:Make:
  tags:
   - freia
 
-build:Make_issue:
+make_default:
  only:
   - /^issue-.*$/
  stage: build
@@ -68,7 +83,22 @@ build:Make_issue:
  tags:
   - freia
 
-build:vardes:
+make_doc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target doc
+ tags:
+  - freia
+
+make_vardes:
 
  only:
   - develop
@@ -87,7 +117,128 @@ build:vardes:
  tags:
   - freia
 
-testing:test_suite:
+make_dicts:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target dicts
+ tags:
+  - freia
+
+make_html:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target html
+ tags:
+  - freia
+
+make_userguide:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target userguide
+ tags:
+  - freia
+
+make_developerguide:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target developerguide
+ tags:
+  - freia
+
+make_utilitiesdoc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target utilitiesdoc
+ tags:
+  - freia
+
+make_optsolverdoc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target optsolverdoc
+ tags:
+  - freia
+
+make_tfdoc:
+
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: build
+ script:
+  - pwd
+  - gcc --version
+  - ls -lah
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build --target tfdoc
+ tags:
+  - freia
+
+# Testing stage 
+#--------------
+
+unit_tests:
+ when: on_success  # Also default setting
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: testing
+ script:
+  - pwd
+  - ls bin/
+  - ./bin/process_GTest.exe
+ tags:
+  - freia
+
+test_suite:
  when: on_success  # Also default setting
  only:
   - develop
@@ -95,13 +246,15 @@ testing:test_suite:
  script:
   - pwd
   # Now trigger testing on Jenkins
-  - "curl -X POST http://mkumar:0eb1252f76a609d527edfbfdc0559eae@process-jenkins-ci.apps.l:8080/jenkins/job/PROCESS/build?token=MiLNGc-QvyEevhKK54go"
+  - "curl -X POST http://mkumar:0eb1252f76a609d527edfbfdc0559eae@process-\
+    jenkins-ci.apps.l:8080/jenkins/job/PROCESS/build?token=MiLNGc-QvyEevhKK54go"
  tags:
   - freia
 
-testing:test_suite_issue:
+test_suite_gitlab:
  when: on_success  # Also default setting
  only:
+  - develop
   - /^issue-.*$/
  stage: testing
  script:
@@ -115,20 +268,7 @@ testing:test_suite_issue:
  tags:
   - freia
 
-testing:unit_tests:
- when: on_success  # Also default setting
- only:
-  - develop
-  - /^issue-.*$/
- stage: testing
- script:
-  - pwd
-  - ls bin/
-  - ./bin/process_GTest.exe
- tags:
-  - freia
-
-testing:baseline_2019_run:
+baseline_2019_run:
  when: on_success  # Also default setting
  only:
   - develop
@@ -145,7 +285,7 @@ testing:baseline_2019_run:
  tags:
   - freia
 
-testing:baseline_2018_run:
+baseline_2018_run:
  when: on_success  # Also default setting
  only:
   - develop
@@ -162,18 +302,24 @@ testing:baseline_2018_run:
  tags:
   - freia
 
-baseline:tracking:
+
+# Baseline stage 
+#---------------
+
+baseline_tracking:
  when: on_success  # Also default setting
  only:
 #  - merge_requests # Enable if Only merge request trigger tracking job
   - develop
  stage: baseline
  script: # Now trigger job in Jenkins
-  - "curl -X POST http://mkumar:11e6783cdcc8e709d27e5376d2f57d8741@process-jenkins-ci.apps.l:8080/jenkins/job/PROCESS_Tracking/build?token=MiLNGc-QvyEevhKK54go"
+  - "curl -X POST http://mkumar:11e6783cdcc8e709d27e5376d2f57d8741@process-\
+    jenkins-ci.apps.l:8080/jenkins/job/PROCESS_Tracking/build?token=MiLNGc-\
+    QvyEevhKK54go"
  tags:
   - freia
 
-baseline:baseline_2019_results:
+baseline_2019_results:
  when: on_success  # Also default setting
  only:
   - develop
@@ -185,13 +331,24 @@ baseline:baseline_2019_results:
   - cmake3 --build build --target dicts
   - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
   - cd tracking/baseline_2019
-  - python ../../utilities/mfile_comparison.py -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT --acc 1.0 --baseline
-  - python ../../utilities/mfile_comparison.py -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT --acc 10.0 --baseline
+  - > 
+    python ../../utilities/mfile_comparison.py 
+    -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
+    --acc 1.0 
+    --baseline
+  - > 
+    python ../../utilities/mfile_comparison.py 
+    -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
+    --acc 10.0 
+    --baseline
  tags:
   - freia
 
-baseline:baseline_2018_results:
- when: on_success  # Also default setting
+# Check the baseline 2018 test results for discrepancies at:
+#   -  1% 
+#   - 10%
+baseline_2018_results:
+ when: on_success
  only:
   - develop
   - /^issue-.*$/
@@ -202,10 +359,80 @@ baseline:baseline_2018_results:
   - cmake3 --build build --target dicts
   - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
   - cd tracking/baseline_2018
-  - python ../../utilities/mfile_comparison.py -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT --acc 1.0 --baseline
-  - python ../../utilities/mfile_comparison.py -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT --acc 10.0 --baseline
+  - >
+    python ../../utilities/mfile_comparison.py 
+    -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
+    --acc 1.0 
+    --baseline
+  - > 
+    python ../../utilities/mfile_comparison.py 
+    -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
+    --acc 10.0 
+    --baseline
  tags:
   - freia
 
+
+# Standards stage 
+#----------------
+
+line_length:
+ when: on_success
+ only:
+  - develop
+  - /^issue-.*$/
+ stage: standards
+ script:
+  - pwd
+  - python utilities/line_length_standard.py
+ tags:
+  - freia
+
+# Pages
+#------
+
+pages:
+  before_script:
+    - "export LOGNAME=root"
+  when: on_success
+  only:
+    - develop
+    - ford_docs
+  stage: pages
+  script:
+   - pwd
+   - apt-get update
+   - apt-get install -y python-dev python-pip pandoc cmake gcc gfortran graphviz
+   - pip install mkdocs
+   - pip install mkdocs-material
+   - pip install pymdown-extensions
+   - cmake -H. -Bbuild
+   - cmake --build build --target vardes
+   - pandoc documentation/html/vardes.html -f html -t markdown -o documentation/proc-pages/vardes.md
+   - python documentation/proc-pages/scripts/sort_vardes.py documentation/proc-pages/vardes.md
+   - mkdocs build
+   
+   # FORD documentation
+   - rm -rf ../ford # Need to clone to empty dir
+   - git clone https://github.com/Fortran-FOSS-Programmers/ford ../ford
+   - pip install ../ford
+   - ford documentation/ford/index.md
+   
+   # Publish the MkDocs and FORD sites
+   - ls site
+   - mv site public
+   - mv ford_site public
+   - ls public
+  artifacts:
+    paths:
+    - public
+
+# Old bits
+#---------
+
+# This command is used for generating gtest results in Jenkins  
+# ./bin/process_test.exe --gtest_output=xml:gtest_results.xml
+
 #after_script:  # Now trigger testing
-#- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"
+#- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop 
+# https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"

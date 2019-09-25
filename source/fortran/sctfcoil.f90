@@ -80,8 +80,6 @@ real(kind(1.0D0)), private :: awpc
 ! Total cross-sectional area of winding pack [m2]
 real(kind(1.0D0)), private :: awptf
 
-! Radial position of inner/outer edge of inboard leg [m]
-real(kind(1.0D0)), private :: r_tf_inner, r_tf_outer
 
 ! Radial position of inner/outer edge and centre of winding pack [m]
 real(kind(1.0D0)), private :: r_wp_inner, r_wp_outer, r_wp_centre
@@ -225,20 +223,20 @@ subroutine tf_coil_geometry()
     real(kind(1.0D0)) :: deltf
 
     ! Radial position of inner edge of inboard TF coil leg [m]
-    r_tf_inner = bore + ohcth + precomp + gapoh
+    r_tf_inleg_in = bore + ohcth + precomp + gapoh
 
     ! Radial position of plasma-facing edge of TF coil inboard leg [m]
-    r_tf_outer = r_tf_inner + tfcth
+    r_tf_inleg_out = r_tf_inleg_in + tfcth
 
     ! Half toroidal angular extent of a single TF coil inboard leg
     theta_coil = pi/tfno
     tan_theta_coil = tan(theta_coil)
 
     ! TF coil width in toroidal direction at inboard leg outer edge [m]
-    tftort = 2.0D0 * r_tf_outer*sin(theta_coil)
+    tftort = 2.0D0 * r_tf_inleg_out*sin(theta_coil)
 
     ! Radial position of centre of inboard TF coil leg [m]
-    r_tf_inleg_mid = r_tf_inner + 0.5D0*tfcth
+    r_tf_inleg_mid = r_tf_inleg_in + 0.5D0*tfcth
  
     ! Plasma-facing wall thickness if fraction option selected [m]
     if(casthi_is_fraction) casthi = casthi_fraction * tfcth
@@ -247,7 +245,7 @@ subroutine tf_coil_geometry()
     if(tfc_sidewall_is_fraction) casths = casths_fraction * tftort
 
     ! Annular area of midplane containing TF coil inboard legs
-    tfareain = pi * (r_tf_outer**2 - r_tf_inner**2)
+    tfareain = pi * (r_tf_inleg_out**2 - r_tf_inleg_in**2)
 
     ! Area of rectangular cross-section TF outboard leg [m2]
     arealeg = tftort * tfthko
@@ -257,7 +255,7 @@ subroutine tf_coil_geometry()
     shldtth + ddwi+ vgap2 + thshield + tftsgap)
 
     ! Gap between inboard TF coil and thermal shield [m]
-    deltf = r_tf_outer * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    deltf = r_tf_inleg_out * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 
     ! TF coil horizontal bore [m]
     tf_total_h_width = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &
@@ -288,7 +286,7 @@ subroutine tf_winding_pack()
     thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
 
     ! Radial position of inner edge of winding pack [m]
-    r_wp_inner = r_tf_inner + thkcas
+    r_wp_inner = r_tf_inleg_in + thkcas
 
     ! Radial position of outer edge of winding pack [m]
     r_wp_outer = r_wp_inner + thkwp
@@ -300,7 +298,7 @@ subroutine tf_winding_pack()
     tfc_current = ritfc/tfno
 
     ! Radius of geometrical centre of winding pack [m]
-    r_wp_centre = r_tf_outer - casthi - tfinsgap - tinstf - 0.5D0*thkwp
+    r_wp_centre = r_tf_inleg_out - casthi - tfinsgap - tinstf - 0.5D0*thkwp
 
     ! Thickness of winding pack section at R > r_wp_centre [m]
     wwp1 = 2.0D0 * (r_wp_centre*tan_theta_coil - casths - tinstf - tfinsgap)
@@ -438,7 +436,7 @@ subroutine tf_integer_winding_pack()
     thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
 
     ! Radial position of inner edge of winding pack [m]
-    r_wp_inner = r_tf_inner + thkcas
+    r_wp_inner = r_tf_inleg_in + thkcas
 
     ! Radial position of outner edge of winding pack [m]
     r_wp_outer = r_wp_inner + thkwp
@@ -450,7 +448,7 @@ subroutine tf_integer_winding_pack()
     tfc_current = ritfc/tfno
 
     ! Radius of geometrical centre of winding pack [m]
-    r_wp_centre = r_tf_outer - casthi - tfinsgap - tinstf - 0.5D0*thkwp
+    r_wp_centre = r_tf_inleg_out - casthi - tfinsgap - tinstf - 0.5D0*thkwp
 
     ! TF coil width at inner egde of winding pack toroidal direction [m]
     t_tf_at_wp = 2.0D0 * r_wp_inner*sin(theta_coil)
@@ -601,7 +599,7 @@ subroutine tf_field_and_force()
 
     ! Radial position of peak toroidal field (assuming axisymmetry) [m]
     ! (assumed to be at the outer edge of the winding pack)
-    rbmax = r_tf_outer - casthi
+    rbmax = r_tf_inleg_out - casthi
 
     ! Nominal axisymmetric peak toroidal field (excluding ripple) [T]
     bmaxtf = 2.0D-7 * ritfc / rbmax
@@ -625,8 +623,8 @@ subroutine tf_coil_area_and_masses()
 
     ! Surface areas (for cryo system) [m2]
     ! tfsai, tfsao are retained for the (obsolescent) TF coil nuclear heating calculation
-    wbtf = r_tf_outer*sin(theta_coil) - r_tf_inner*tan_theta_coil
-    tfocrn = r_tf_inner * tan_theta_coil
+    wbtf = r_tf_inleg_out*sin(theta_coil) - r_tf_inleg_in*tan_theta_coil
+    tfocrn = r_tf_inleg_in * tan_theta_coil
     tficrn = tfocrn + wbtf
     tfsai = 4.0D0 * tfno * tficrn * hr1
     tfsao = 2.0D0 * tfno * tficrn * (tfleng - 2.0D0*hr1)

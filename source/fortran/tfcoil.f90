@@ -143,9 +143,6 @@ contains
        call ovarre(outfile,'Radial stress (MPa)','(sigrad)',sigrad)
        call ovarre(outfile,'Transverse stress (MPa)','(sigtan)',sigtan)
        call ovarre(outfile,'Vertical stress (MPa)','(sigver)',sigver)
-
-       call concoptf(outfile,iprint)
-
        call oblnkl(outfile)
        call ocmmnt(outfile,'TF coil inner surface shape is given by a rectangle with the')
        call ocmmnt(outfile,'following inner points (Note that this does not account')
@@ -208,8 +205,8 @@ contains
     integer, intent(in) :: iprint,outfile
 
     !  Local variables
-    real(kind(1.0D0)) :: r_tf_inleg_in, r_tf_inleg_out, r_tf_outleg_in
-    real(kind(1.0D0)) :: ltfleg, rmid, rtop, ztop, tcpav_kelvin
+    real(kind(1.0D0)) :: r_tf_outleg_in
+    real(kind(1.0D0)) :: ltfleg, rmid, rtop, ztop
     real(kind(1.0D0)) :: tfcind1, deltf
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
@@ -266,12 +263,11 @@ contains
     ! ******
     ! Copper resistivity (0.92 factor for glidcop C15175)
     if ( itfsup == 0 ) then
-    rhocp = 1.0D-8 * (1.72D0 + 0.0039D0*tcpav) / 0.92D0
+    rhocp = 1.0D-8 * ( 1.72D0 + 0.0039D0*(tcpav - 273.15D0) ) / 0.92D0
 
     ! Aluminium cryogenic resistivity
    else if ( itfsup == 2 ) then
-      tcpav_kelvin = tcpav + 273.15  
-      rhocp = 2.00016D-14*tcpav_kelvin**3 - 6.75384D-13*tcpav_kelvin**2 + 8.89159D-12*tcpav_kelvin
+      rhocp = 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav
    end if
 
     ! Conventionnal tokamak (geometry invariant with hight)
@@ -309,25 +305,22 @@ contains
     ! Cross-sectional area
     arealeg = tfthko*tftort
 
-    ! Outboard leg current density
-    cdtfleg = ritfc/(tfno * arealeg)
-
-    !  Total weight of TF coils
-    whttf = whtcp + whttflgs
-
-    ! Inner outter common quantities
-    ! -----------------------------
-
-    !  Stress information (radial, tangential, vertical)
     ! Length of leg centre-line (N.B. this assumes rectangular shaped
     ! coils, not D-shaped)
     ltfleg = hmax + hpfu + 2.0D0*(rtot - rbmax)
 
-    ! Volume
+    ! Volume of the TF legs
     voltfleg = ltfleg * arealeg
 
+    ! Outboard leg current density
+    cdtfleg = ritfc/(tfno * arealeg)
+
     ! Resistance
-    rhotfleg = ltfleg * tflegres/arealeg
+    if ( abs( rhotfleg + 1 ) < epsilon(rhotfleg) ) rhotfleg = rhocp
+    tflegres = ltfleg * rhotfleg/arealeg
+    
+    !  Total weight of TF coils
+    whttf = whtcp + whttflgs
     ! ----------------------------------
 
 
@@ -339,8 +332,8 @@ contains
     ! Vertircal force    
     ! The outer radius of the inner leg and the inner radius of the outer leg is taken
     ! vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inleg_out) / tfno 
-    vforce = 0.25D0 * bmaxtf * ritfc / tfno * ( 0.5D0 * tfcth +                     &         ! Inner leg side component 
-                                              & r_tf_inleg_out * log(r_tf_outleg_in/r_tf_inleg_out) + &         ! TF bore component
+    vforce = 0.25D0 * bmaxtf * ritfc / tfno * ( 0.5D0 * tfcth +                                       &     ! Inner leg side component 
+                                              & r_tf_inleg_out * log(r_tf_outleg_in/r_tf_inleg_out) + &     ! TF bore component
                                               & 0.5D0 * tfcth*tfootfi * (r_tf_inleg_out/r_tf_outleg_in) )   ! Outer leg side component
 
     ! Current turn information 
@@ -391,7 +384,7 @@ contains
     if (iprint == 0) return
 
     !  Output section
-    call osubhd(outfile,'Conventional Copper TF Coil Information :')
+    call oheadr(outfile,'Copper TF Coil Information')
     call ovarin(outfile,'Copper TF coil','(itfsup)',itfsup)
     call ovarre(outfile,'Inboard leg current density (A/m2)','(oacdcp)',oacdcp)
     call ovarre(outfile,'Outboard leg current density (A/m2)','(cdtfleg)',cdtfleg)
@@ -403,8 +396,15 @@ contains
     call ovarre(outfile,'Mass of outboard legs (kg)','(whttflgs)',whttflgs)
     call ovarre(outfile,'Total TF coil mass (kg)','(whttf)',whttf)
     call ovarre(outfile,'Inboard leg resistive power (W)','(prescp)',prescp)
-    call ovarre(outfile,'Outboard leg resistance per coil (ohm)','(rhotfleg)',rhotfleg)
-    call ovarre(outfile,'Average inboard leg temperature (C)','(tcpav)',tcpav)
+    call ovarre(outfile,'Outboard leg resistance per coil (ohm)','(tflegres)',tflegres)
+    call ovarre(outfile,'Average inboard leg temperature (K)','(tcpav)',tcpav)
+    if (itart==1) then
+      call osubhd(outfile,'Tapered Centrepost Dimensions:')
+      call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(rmid)',rmid)
+      call ovarre(outfile,'Radius of the ends of the centrepost (m)','(rtop)',rtop)
+      call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(ztop)',ztop)
+      call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax)
+    end if
     ! ---------------------------------------------
 
   end subroutine concoptf
@@ -450,7 +450,7 @@ contains
          dtfilmav,dtiocool,fc,fricfac,h,lcool,nuselt,pcrt,presin,prndtl, &
          psat,ptot,reyn,rmid,ro,roughrat,sum,tclmx,tclmxs,tcoolmx,tmarg,vcoolav, &
          rmid_in, coolant_density, coolant_th_cond, coolant_visco, coolant_cp,&
-         conductor_th_cond, dptot, tcool_calc, tcpav_k
+         conductor_th_cond, dptot, tcool_calc
    
     integer, parameter :: n_tcool_it = 20
     integer :: ii
@@ -458,10 +458,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     
-
-    !  Critical pressure in saturation pressure calculations (Pa)
-    pcrt = 2.24D7
-
     !  Temperature margin used in calculations (K)
     tmarg = 10.0D0
 
@@ -506,14 +502,14 @@ contains
     ! Helium coolant
     ! **************
     else if ( itfsup ==  2 ) then
-       tcool_calc = tcoolin + 273.15D0  ! K
-       
+       tcool_calc = tcoolin ! K
+
        ! If T < 4 K -> Extrapolated data
        if ( tcool_calc < 4.0D0 ) write(*,*) 'WARNING : Helium properties extrapolated below K'
  
        ! Infinitesimal power deposition
        dptot = ptot / real( n_tcool_it, kind(1.0D0) )
- 
+
        do ii = 1, n_tcool_it
 
           ! Helium density and thermal capacity
@@ -540,13 +536,13 @@ contains
           end if
           coolant_cp = coolant_cp*1.0D3 ! conversion to K/(kg.K)
           ! ******
-                   
+
           ! Temperature infinitesimal increase
           tcool_calc = tcool_calc + dptot / (coolant_density*vcoolav*acool*coolant_cp)
        end do
  
        ! Getting the global in-outlet temperature increase 
-       dtiocool = tcool_calc - tcoolin - 273.15D0
+       dtiocool = tcool_calc - tcoolin
     end if
     ! **************
     ! **********************************************
@@ -612,10 +608,9 @@ contains
     
     ! Cryogenic aluminium 
     else if ( itfsup ==  2 ) then
-       tcpav_k = tcpav + 273.15  ! Celsius to Kelvin conversion
 
        ! Ref : R.W. Powel, National Standard Reference Data Series, nov 25 1966 (homemade fit 15 < T < 60 K)
-       conductor_th_cond = 16332.2073D0 - 776.91775*tcpav_k + 13.405688D0*tcpav_k**2 - 8.01D-02*tcpav_k**3 ! W/(m.K)
+       conductor_th_cond = 16332.2073D0 - 776.91775*tcpav + 13.405688D0*tcpav**2 - 8.01D-02*tcpav**3 ! W/(m.K)
     end if 
     ! ******
 
@@ -640,11 +635,14 @@ contains
     !  Thermal hydraulics: friction factor from Z. Olujic, Chemical
     !  Engineering, Dec. 1981, p. 91
     roughrat = 4.6D-5 / dcool
-    fricfac  = 1.0D0/ (-2.0D0 * log(roughrat/3.7D0 - 5.02D0/reyn * &
-         log( roughrat/3.7D0 + 14.5D0/reyn) ) )**2
+    fricfac  = 1.0D0/ (-2.0D0 * log10(roughrat/3.7D0 - 5.02D0/reyn * &
+         log10( roughrat/3.7D0 + 14.5D0/reyn) ) )**2
 
     dpres = fricfac * (lcool/dcool) * coolant_density * 0.5D0*vcool**2
     ppump = dpres * acool * vcool / etapump
+
+    !  Critical pressure in saturation pressure calculations (Pa)
+    pcrt = 2.24D7
 
     ! Saturation pressure
     ! Ref : Keenan, Keyes, Hill, Moore, steam tables, Wiley & Sons, 1969
@@ -680,12 +678,12 @@ contains
     call ovarre(outfile,'Resistive heating (W)','(prescp)',prescp)
 
     call osubhd(outfile,'Temperatures :')
-    call ovarre(outfile,'Input coolant temperature (C)','(tcoolin)',tcoolin)
-    call ovarre(outfile,'Input-output coolant temperature rise (C)','(dtiocool)',dtiocool)
+    call ovarre(outfile,'Input coolant temperature (K)','(tcoolin)',tcoolin)
+    call ovarre(outfile,'Input-output coolant temperature rise (K)','(dtiocool)',dtiocool)
     call ovarre(outfile,'Film temperature rise (C)','(dtfilmav)',dtfilmav)
     call ovarre(outfile,'Average temp gradient in conductor (K/m)','(dtcncpav)',dtcncpav)
-    call ovarre(outfile,'Average centrepost temperature (C)','(tcpav2)',tcpav2)
-    call ovarre(outfile,'Peak centrepost temperature (C)','(tcpmax)',tcpmax)
+    call ovarre(outfile,'Average centrepost temperature (K)','(tcpav2)',tcpav2)
+    call ovarre(outfile,'Peak centrepost temperature (K)','(tcpmax)',tcpmax)
 
     call osubhd(outfile,'Pump Power :')
     call ovarre(outfile,'Coolant pressure drop (Pa)','(dpres)',dpres)

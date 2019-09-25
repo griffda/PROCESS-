@@ -141,7 +141,7 @@ addition, many of the mathematical routines have been taken from a number of
 different well-established source libraries.
 
 A great deal of effort was expended at Culham on the code's arrival from ORNL in the early
-1990s to upgrade and extend the code, including the addition of machines based on the stellarator, reversed field pinch and inertial confinement concepts. However, in 2017 the reversed field pinch, the inertial confinement concept and the hydrogen plant models have been retired due to lack of use.
+1990s to upgrade and extend the code, including the addition of machines based on the stellarator, reversed field pinch and inertial confinement concepts. However, in 2017 the reversed field pinch, the inertial confinement concept and the hydrogen plant models have been retired due to lack of use.  The Inertial Confinement model was restored in 2019.
 
 \process\ is being developed actively. This User Guide is updated in parallel with the 
 code itself to ensure that the documentation remains consistent with
@@ -2414,57 +2414,6 @@ but augments it with an additional boiler. This may be used for machine down
 times of up to 300~seconds. Finally, if \texttt{istore = 3}, a large stainless
 steel block acts as the thermal storage medium.
 
-\section{Hydrogen Production Facility}
-\label{sec:hplant}
-
-Fusion power plants have been mooted as a means of producing hydrogen for use
-in fuel cells for cars, for instance. \process\ includes options to enable
-the plant to produce hydrogen using a number of different processes.
-
-To include the production of hydrogen by the power plant, it is necessary to
-set the switch \texttt{ihplant}, as follows:
-\begin{description}
-\item [\texttt{ihplant = 0} :] No hydrogen production (default)
-\item [\texttt{ihplant = 1} :] Hydrogen production by low temperature electrolysis
-\item [\texttt{ihplant = 2} :] Hydrogen production by endothermic high
-  temperature electrolysis
-\item [\texttt{ihplant = 3} :] Hydrogen production by exothermic high
-  temperature electrolysis
-\item [\texttt{ihplant = 4} :] Hydrogen production by thermo-chemical processes
-\end{description}
-Table~\ref{tab:hplant} describes the additional options available for each of
-the types of hydrogen production given above. The different processes use
-either electrical power or thermal power directly, so the required inputs
-differ. Variable \texttt{helecmw} (iteration variable no.\ 87) is the
-electrical power in MW required for hydrogen production, while
-\texttt{hthermmw} (iteration variable no.\ 88) is the thermal power
-required. Note that \texttt{hthermmw} must not be used as an iteration
-variable if $\mathtt{ihplant \not= 4}$, as it will be calculated from the
-required electrical power instead. Similarly, \texttt{helecmw} must not be
-used as an iteration variable if \texttt{ihplant = 4}.
-
-\begin{table}[tbph]
-\begin{center}
-\begin{tabular}{||c|c|c|c||} \hline
-hydrogen plant option & \texttt{helecmw} & \texttt{hthermmw} & efficiency
-variable \\ \hline
-\texttt{ihplant=1} & input & zero & \texttt{etahlte} \\
-\texttt{ihplant=2} & input & calculated & \texttt{etahten} \\
-\texttt{ihplant=3} & input & calculated & \texttt{etahtex} \\
-\texttt{ihplant=4} & zero & input & \texttt{etahth} \\
-\hline
-\end{tabular}
-\end{center}
-\caption[Variables used in the hydrogen plant model]
-{\label{tab:hplant}
-  \textit{Summary of the variables in PROCESS that relate to
-    the different hydrogen plant processes.}
-}
-\end{table}
-The efficiency variables given in Table~\ref{tab:hplant} are all input
-parameters, and are the factors to be used to convert the value of
-\texttt{helecmw} to the amount of hydrogen produced (in MW equivalent); these
-can be greater than unity in all cases except \texttt{ihplant = 4}.
 
 \section{Stellarator Model}
 
@@ -2711,7 +2660,62 @@ certain iteration variables (\texttt{tfcth}, no.\ 13; \texttt{thkcas}, no.\
 on in the input file as they are calculated self-consistently; the code will
 stop with an error message if this is attempted.
 
+\section{Inertial Fusion Energy Model}
+\label{sec:ife}
 
+As well as magnetic confinement devices, \process\ has the ability to model
+inertial fusion plants, in which a laser or ion beam is used to ignite a
+target pellet containing the fusion fuel.
+
+To activate the inertial fusion energy (IFE) coding, it is necessary to create
+a file \texttt{device.dat}, containing the single character \texttt{3} in the
+first row, in the working directory (see Section~\ref{sec:infile}). This has
+the effect of setting the internally-used switch \texttt{ife = 1}. If the file
+is absent, or its first character is set to something other than \texttt{3},
+the IFE model is not used, and \texttt{ife} is set to \texttt{0}.
+
+The IFE model~\cite{process_ife} is controlled using two additional switches.
+\begin{description}
+\item [\texttt{ifetyp = 0} :] Generic device build
+\item [\texttt{ifetyp = 1} :] OSIRIS-type device build~\cite{osiris1,osiris2,osiris3}
+\item [\texttt{ifetyp = 2} :] SOMBRERO-type device build~\cite{sombrero1,sombrero2}
+\item [\texttt{ifetyp = 3} :] HYLIFE-II-type device build~\cite{hylife1,hylife2,hylife3}
+\item [\texttt{ifetyp = 4} :] 2019 device build
+\end{description}
+Switch \texttt{ifetyp} defines the type of device that is assumed; this varies
+widely between different conceptual designs. The generic type assumes a
+cylindrically symmetric device, while the other types are approximations to
+the builds of the given conceptual machines~\cite{ife_build}. In general, the
+build from the centre of the device (at the target ignition location) is in
+the order: chamber, first wall, gap, blanket, gap, shield, gap, building
+wall. The user specifies the thicknesses of these regions, and also the
+materials that are present and in what proportions.%%% \Red{[expand one day]} %%%
+\begin{description}
+\item [\texttt{ifedrv = -1} :] Driver efficiency and target gain are input as
+  functions of driver energy
+\item [\texttt{ifedrv = 0} :] Driver efficiency and target gain are input
+\item [\texttt{ifedrv = 1} :] SOMBRERO laser drive efficiency and target gain assumed
+\item [\texttt{ifedrv = 2} :] OSIRIS heavy ion beam driver efficiency and
+  target gain are assumed~\cite{ife_driver}
+\end{description}
+Switch \texttt{ifedrv} defines how the code calculates the driver efficiency
+and target gain --- these are the primary outputs required from the physics
+part of the model. For the SOMBRERO and OSIRIS cases (\texttt{ifedrv = 1} and
+\texttt{ifedrv = 2}, respectively) the driver efficiency and gain are
+calculated from curves of these parameters as functions of the driver
+energy. For the \texttt{ifedrv = -1} case, the user provides the driver
+efficiency and target gain versus driver energy, via the two arrays
+\texttt{etave(1:10)} and \texttt{gainve(1:10)} respectively; the element number
+corresponds to the driver energy in MJ, and outside the range 1--10~MJ the
+curves are extrapolated linearly. Finally, for the \texttt{ifedrv = 0} case,
+the user inputs single values for the driver efficiency (\texttt{drveff}) and
+target gain (\texttt{tgain}).
+
+Constraint equation no.\ 50 can be turned on to enable the ignition repetition
+rate to remain below a user-specified upper limit (\texttt{rrmax}); iteration
+variable no.\ 86 (\texttt{frrmax}) is the associated f-value. The other iteration variables relevant for the
+IFE model are nos.~81--85 (\texttt{edrive}, \texttt{drveff}, \texttt{tgain},
+\texttt{chrad} and \texttt{pdrive}).
 
 \section{Safety and Environment Models}
 
@@ -3664,6 +3668,64 @@ F.\ Warmer,
 \textit{``Stellarator Modular Coil model for the systems code PROCESS''},
 IPP Greifswald, Germany, internal note, 31/07/2013
 
+\bibitem{process_ife}
+P.\ J.\ Knight,
+\textit{``PROCESS 3009: Incorporation of Inertial Fusion Energy Model''},
+Work File Note F/MI/PJK/PROCESS/CODE/032
+
+\bibitem{osiris1}
+Bourque et al.,
+\textit{``Overview of the OSIRIS IFE Reactor Conceptual Design''},
+Fusion Technology \textbf{21} (1992) 1465
+
+\bibitem{osiris2}
+Meier and Bieri,
+\textit{``Economic Modeling and Parametric Studies for OSIRIS --- a HIB-Driven
+  IFE Power Plant''},
+Fusion Technology \textbf{21} (1992) 1547
+
+\bibitem{osiris3}
+Ghose et al.,
+\textit{``BOP Designs for OSIRIS and SOMBRERO IFE Reactor Plants''},
+Fusion Technology \textbf{21} (1992) 1501
+
+\bibitem{sombrero1}
+Sviatoslavsky et al.,
+\textit{``A KrF Laser Driven Inertial Fusion Reactor SOMBRERO''},
+Fusion Technology \textbf{21} (1992) 1470
+
+\bibitem{sombrero2}
+Meier and Bieri,
+\textit{``Economic Modeling and Parametric Studies for SOMBRERO --- a Laser-Driven
+  IFE Power Plant''},
+Fusion Technology \textbf{21} (1992) 1552
+
+\bibitem{hylife1}
+Moir et al.,
+\textit{``HYLIFE-II: A Molten-Salt Inertial Fusion Energy Power Plant Design
+  --- Final Report''},
+Fusion Technology \textbf{25} (1994) 5
+
+\bibitem{hylife2}
+Moir,
+\textit{``HYLIFE-II Inertial Fusion Energy Power Plant Design''},
+Fusion Technology \textbf{21} (1992) 1475
+
+\bibitem{hylife3}
+Hoffman and Lee,
+\textit{``Performance and Cost of the HYLIFE-II Balance of Plant''},
+Fusion Technology \textbf{21} (1992) 1475
+
+\bibitem{ife_build}
+P.\ J.\ Knight,
+\textit{``PROCESS IFE Build Details''},
+F/MI/PJK/LOGBOOK12, pp.\ 52, 53, 56, 57
+
+\bibitem{ife_driver}
+Bieri and Meier,
+\textit{``Heavy-Ion Driver Parametric Studies and Choice of a Base 5~MJ Driver
+  Design''},
+Fusion Technology \textbf{21} (1992) 1557
 
 \bibitem{FISPACT}
 N.\ P.\ Taylor, R.\ A.\ Forrest, P.\ J.\ Knight and L.\ J.\ Baker,
@@ -3765,6 +3827,7 @@ Fusion Engineering and Design 130, 131-136 (2018)
 G.V.\ Pereverzev, P.N.\ Yushmanov,
 \textit{``ASTRA. Automated System for Transport Analysis in a Tokamak''},
 Garching: Max-Planck-Institut für Plasmaphysik (2002), presented at IPP 5/98 
+
 
 \end{thebibliography}
 

@@ -556,19 +556,24 @@ subroutine devtyp
     !+ad_desc  is to be modelled. If the file is not present in the current
     !+ad_desc  directory, a standard tokamak model is assumed.
     !+ad_prob  None
-
+    !+ad_call  error_handling
+    !+ad_call  ife_variables
     !+ad_call  stellarator_variables
     !+ad_hist  27/02/96 PJK Initial version
     !+ad_hist  08/10/96 PJK Fixed error: (istell.gt.2) should be (idev.gt.2)
     !+ad_hist  14/03/97 PJK idev=3 ==> inertial fusion power plant
     !+ad_hist  19/09/12 PJK Initial F90 version
     !+ad_hist  04/11/16 MK Added check for content of device file
+    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
+    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
+    use error_handling
+    use global_variables
+    use ife_variables
     use stellarator_variables
 
     implicit none
@@ -584,6 +589,7 @@ subroutine devtyp
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     devFile = 'device.dat'
     istell = 0
+    ife    = 0
     idev   = 0      ! Default value MK
 
     !  Read a second input file. If the file does not exist or
@@ -608,7 +614,10 @@ subroutine devtyp
             istell = 1
 
         case (2)  !  ! ISSUE #508 Remove RFP option
-        case (3)  !  ISSUE #508 Remove Inertial Fusion Energy model
+            call report_error(228)
+        case (3)  !  Inertial Fusion Energy model
+            ife = 1
+            icase = 'Inertial Fusion model'
 
         case default  !  Tokamak model
             continue
@@ -676,6 +685,7 @@ subroutine check
     !+ad_hist  25/02/15 JM  Changed blanket composition check to use new blanket model layout
     !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
     !+ad_hist  13/05/19 SIM Added error flag for input confinement time with wrong scaling option
+    !+ad_hist  29/07/19 SIM Stopped plasma check for IFE
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -689,8 +699,8 @@ subroutine check
     use fwbs_variables
     use global_variables
     use heat_transport_variables
+    use ife_variables
     use impurity_radiation_module
-
     use numerics
     use pfcoil_variables
     use physics_variables
@@ -788,6 +798,7 @@ subroutine check
 
     !  Plasma profile consistency checks
 
+    if (ife /= 1) then
     if (ipedestal == 1 .or. ipedestal == 2) then
 
         !  Temperature checks
@@ -820,48 +831,36 @@ subroutine check
             boundu(4) = max(boundu(4), boundl(4))
         end if
 
-        !  Density checks:
-        !  not required if pedestal is set using Greenwald density (Issue #292)
+         !  Density checks
+         !  Case where pedestal density is set manually
+         ! ---------------
+         if ( (fgwped < 0) .or. (.not.any(ixc==145)) ) then
+    
+             ! Issue #589 Pedestal density is set manually using neped but it is less than nesep.
+             if ( neped < nesep ) then
+                 fdiags(1) = neped ; fdiags(2) = nesep
+                 call report_error(151)
+             end if  
 
-        if ((fgwped < 0) .and. (neped < nesep)) then
-            ! Issue #589 Pedestal density is set manually using neped but it is less than nesep.
-            fdiags(1) = neped ; fdiags(2) = nesep
-            call report_error(151)
-        end if
+             ! Issue #589 Pedestal density is set manually using neped,
+             ! but pedestal width = 0.
+             if ( (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7) ) then
+                 fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
+                 call report_error(152)
+             end if
+         end if 
 
-        if ((fgwped < 0) .and. (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7)) then
-            ! Issue #589 Pedestal density is set manually using neped,
-            ! but pedestal width = 0.
-            fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
-            call report_error(152)
-        end if
-
-        !  Core density should always be calculated (later) as being
-        !  higher than the pedestal density, if and only if the
-        !  volume-averaged density never drops below the pedestal
-        !  density. Prevent this by adjusting dene, and its lower bound
-        !  (which will only have an effect if this is an optimisation run)
-        !  Not required if pedestal is set using Greenwald density (Issue #292)
-
-        if ((fgwped < 0) .and. (dene <= neped)) then
-            fdiags(1) = dene ; fdiags(2) = neped
-            write(*,*)'dene = ', dene, 'boundl(6) = ', boundl(6), '  neped = ', neped
-            write(*,*)'Set dene = neped*1.001D0 '
-            dene = neped*1.001D0
-            call report_error(154)
+         ! Issue #862 : Variable ne0/neped ratio without constraint eq 81 (ne0>neped)
+         !  -> Potential hollowed density profile
+         if ( (ioptimz >= 0) .and. (.not.any(icc==81)) ) then
+             if ( any(ixc == 145 )) call report_error(154)
+             if ( any(ixc ==   6 )) call report_error(155)
          end if
-
-        if ((ioptimz >= 0).and.(any(ixc == 6)).and.(boundl(6) < neped*1.001D0)) then
-            call report_error(155)
-            write(*,*)'dene = ', dene, 'boundl(6) = ', boundl(6), '  neped = ', neped
-            write(*,*)'Set boundl(6) = neped*1.001D0'
-            boundl(6) = neped*1.001D0
-            boundu(6) = max(boundu(6), boundl(6))
-        end if
-
      end if
+     end if
+     ! ---------------
 
-
+     
      ! Cannot use Psep/R and PsepB/qAR limits at the same time
      if(any(icc == 68) .and. any(icc == 56)) then
         call report_error(178)
@@ -1066,32 +1065,52 @@ subroutine check
      endif
 
 
-    !  Tight aspect ratio options
-    ! ---------------------------
-
-    if (itart == 1) then
+    !  Tight aspect ratio options (ST)
+    ! --------------------------------
+     if (itart == 1) then
 
         icase  = 'Tight aspect ratio tokamak model'
-        bore   = 0.0D0
-        gapoh  = 0.0D0
-        ohcth  = 0.0D0
+
+        ! Forcing that no inboard breeding blanket is used
         iblnkith = 0
 
+        ! Check if the choice of plasma current is addapted for ST
+        ! 2 : Peng Ip scaling (See STAR code documentation)
+        ! 9 : Fiesta Ip scaling
         if (icurr /= 2 .and. icurr /= 9) then
             idiags(1) = icurr ; call report_error(37)
         end if
-        iohcl  = 0
+
+        ! Location of the TF coils 
+        ! 2 : PF coil on top of TF coil;
+        ! 3 : PF coil outside of TF coil</UL>
         ipfloc(1) = 2
         ipfloc(2) = 3
         ipfloc(3) = 3
-        if ( itfsup == 1 ) itfsup = 0
-        
-        if (ibss == 1) call report_error(38)
+
+        ! Call a lvl 3 error if superconductor magnets are used
+        if ( itfsup == 1 ) call report_error(233)
+
+        ! Initialize the CP conductor temperature to cryogenic temperatire for cryo-al magnets (20 K)
+        if ( itfsup == 2 ) tcpav  = 20.0D0
+
+        ! Check if the initial centrepost coolant loop adapted to the magnet technology
+        ! Ice cannot flow so tcoolin > 273.15 K 
+        if ( itfsup == 0 .and. tcoolin < 273.15D0 ) call report_error(234)
+
+        ! Too large temperatures leading to out of range resisitivity model
+        if ( itfsup == 2 .and. tcoolin > 50.0D0 ) call report_error(235)
+
+        ! Check if the boostrap current selection is addapted to ST
+        if (ibss  == 1) call report_error(38)
+
+        ! Check if a single null divertor is used (double null not yet implemented)
         if (snull == 1) call report_error(39)
+    ! --------------------------------
 
     else
 
-        if (icurr == 2) call report_error(40)
+        if (icurr == 2 .or. icurr == 9) call report_error(40)
 
         if (snull == 0) then
             idivrt = 2

@@ -7,6 +7,12 @@ can be found on the PROCESS [webpage](http://www.ccfe.ac.uk/powerplants.aspx).
 
 ## Documentation
 
+### HTML
+
+The HTML generated from the source code is hosted via GitLab Pages 
+[here](http://process.gitpages.ccfe.ac.uk/process). The `vardes_full.html` is 
+the index page.
+
 ### User guide
 To read about how the code works and the modules in it see the
 [user guide](http://www.ccfe.ac.uk/assets/Documents/Other/process.pdf)
@@ -41,9 +47,11 @@ PROCESS calculation modules are primarly written in Fortran. Python is used for 
 functions and subroutines within PROCESS. Googletest is also referred to as GTest in this document.
 
 On Freia, paths to PFUnit and GTEST can be set in your user profile (.bashrc) as 
-- `export PFUNIT=/home/PROCESS/testing_frameworks/pfunit_install/V_3-2_8`
-- `export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest`
-- `export PYTHONPATH=$PYTHONPATH:[path to process folder]/utilities`
+```bash
+export PFUNIT=/home/PROCESS/testing_frameworks/pfunit_install/V_3-2_8
+export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest
+export PYTHONPATH=$PYTHONPATH:[path to process folder]/utilities
+```
 
 
 ## Directory Structure
@@ -80,12 +88,17 @@ The folder structure for the PROCESS system prior to compilation is descibed bel
 ```
 
 ## Build Steps
-- When using Freia, it is recommended to load `gfortran` and unload `ifort` or other Fortran compilers explicitly before build:
-    - `module unload ifort`
-    - `module unload pgi`
-    - `module load gfortran`  
-    - `module unload python`
-    - `module load python/3.3`
+
+When using Freia, it is recommended to load `gfortran` and unload `ifort` or 
+other Fortran compilers explicitly before build. These commands can be included 
+in your .bashrc file.
+```bash
+module unload ifort
+module unload pgi
+module load gfortran
+module unload python
+module load python/3.3
+```
 
 1. get repository
     - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where `folder_name`is the name of the folder which will be created when cloning the repository.  

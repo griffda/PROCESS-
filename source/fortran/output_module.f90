@@ -19,8 +19,8 @@ subroutine output(outfile)
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
-
-
+  !+ad_call  ife_module
+  !+ad_call  ife_variables
   !+ad_call  pfcoil_module
   !+ad_call  physics_module
   !+ad_call  physics_variables
@@ -77,6 +77,7 @@ subroutine output(outfile)
   !+ad_hist  09/07/14 PJK Turned on error handling
   !+ad_hist  07/06/16  JM Added some extra comments
   !+ad_hist  27/02/2018 KE Added plasmod output routine
+  !+ad_hist  28/07/2019 SIM Restored IFE
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -87,6 +88,7 @@ subroutine output(outfile)
   use buildings_module
   use costs_module
   use costs_2015_module
+  use costs_step_module
   use cost_variables
   use current_drive_module
   use divertor_kallenbach_variables
@@ -96,6 +98,8 @@ subroutine output(outfile)
   use error_handling
   use fwbs_module
   use fwbs_variables
+  use ife_module
+  use ife_variables
   use pfcoil_module
   use physics_module
   use physics_variables
@@ -137,6 +141,12 @@ subroutine output(outfile)
      return
   end if
 
+  !  Call IFE output routine instead if relevant
+  if (ife /= 0) then
+   call ifeout(outfile)
+   return
+  end if
+
   ! Costs model !
   !!!!!!!!!!!!!!!
 
@@ -145,11 +155,14 @@ subroutine output(outfile)
   ! ---- | ------
   ! 0    |  1990 costs model
   ! 1    |  2015 Kovari model
+  ! 2    |  2019 STEP model
 
-  if (cost_model == 1) then
+  if (cost_model == 0) then
+      call costs(outfile,1)
+  else if (cost_model == 1) then
      call costs_2015(outfile,1)
-  else
-     call costs(outfile,1)
+  else if (cost_model == 2) then
+     call costs_step(outfile,1)
   end if
 
   ! Availability model !
@@ -315,11 +328,10 @@ subroutine output(outfile)
   !!!!!!!!!!!!!!!!
   call vaccall(outfile,1)
 
-  ! Buildings model (1990 costs model only) !
+  ! Buildings model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  if (cost_model==0) then
-    call bldgcall(outfile,1)
-  end if
+
+  call bldgcall(outfile,1)
 
   ! Plant AC power requirements !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
