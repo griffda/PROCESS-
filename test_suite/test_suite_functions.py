@@ -867,6 +867,7 @@ class TestCase(object):
             return True
 
         return False
+
     def user_run_test(self):
         """ Run PROCESS test by user
         This function will call run_test
@@ -874,6 +875,7 @@ class TestCase(object):
         files appropriately.
         """
         self.run_test()
+
         if self.check_diff_status():
 
             # change test status
@@ -887,6 +889,7 @@ class TestCase(object):
         copy_test_to_test_area(self.test, self.status, self.arguments)
 
         return
+
     def CI_run_test(self):
         """ Run PROCESS test by user
         This function will call run_test
@@ -945,7 +948,6 @@ def main(args):
             if args.debug:
                 # initiate test object for the test case
                 tests[key] = TestCase(key, drs[key], difference, args)
-
 
                 # run test
                 tests[key].user_run_test()

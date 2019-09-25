@@ -1398,12 +1398,126 @@ contains
 
    !---------------------------------
 
-   !+ad_varc  <LI> (81) NOT USED
-   !+ad_varc  <LI> (82) NOT USED
-   !+ad_varc  <LI> (83) NOT USED
-   !+ad_varc  <LI> (84) NOT USED
-   !+ad_varc  <LI> (85) NOT USED
-   !+ad_varc  <LI> (86) NOT USED
+   subroutine init_itv_81
+      !+ad_varc  <LI> (81) edrive
+      lablxc(81) = 'edrive        '
+      boundl(81) = 1.000d5
+      boundu(81) = 5.000d7
+   end subroutine init_itv_81
+
+   real(kind(1.d0)) function itv_81()
+      use ife_variables, only: edrive
+      itv_81 = edrive
+   end function itv_81
+
+   subroutine set_itv_81(ratio)
+      use ife_variables, only: edrive
+      real(kind(1.d0)) :: ratio
+      edrive = ratio
+   end subroutine set_itv_81
+
+   !---------------------------------
+
+   subroutine init_itv_82
+      !+ad_varc  <LI> (82) drveff
+      lablxc(82) = 'drveff        '
+      boundl(82) = 0.010D0
+      boundu(82) = 1.000D0
+   end subroutine init_itv_82
+
+   real(kind(1.d0)) function itv_82()
+      use ife_variables, only: drveff
+      itv_82 = drveff
+   end function itv_82
+
+   subroutine set_itv_82(ratio)
+      use ife_variables, only: drveff
+      real(kind(1.d0)) :: ratio
+      drveff = ratio
+   end subroutine set_itv_82
+
+   !---------------------------------
+
+   subroutine init_itv_83
+      !+ad_varc  <LI> (83) tgain
+      lablxc(83) = 'tgain         '
+      boundl(83) = 1.000D0
+      boundu(83) = 500.0D0
+   end subroutine init_itv_83
+
+   real(kind(1.d0)) function itv_83()
+      use ife_variables, only: tgain
+      itv_83 = tgain
+   end function itv_83
+
+   subroutine set_itv_83(ratio)
+      use ife_variables, only: tgain
+      real(kind(1.d0)) :: ratio
+      tgain = ratio
+   end subroutine set_itv_83
+
+   !---------------------------------
+
+   subroutine init_itv_84
+      !+ad_varc  <LI> (84) chrad
+      lablxc(84) = 'chrad         '
+      boundl(84) = 0.100D0
+      boundu(84) = 20.00D0
+   end subroutine init_itv_84
+
+   real(kind(1.d0)) function itv_84()
+      use ife_variables, only: chrad
+      itv_84 = chrad
+   end function itv_84
+
+   subroutine set_itv_84(ratio)
+      use ife_variables, only: chrad
+      real(kind(1.d0)) :: ratio
+      chrad = ratio
+   end subroutine set_itv_84
+
+   !---------------------------------
+
+   subroutine init_itv_85
+      !+ad_varc  <LI> (85) pdrive
+      lablxc(85) = 'pdrive        '
+      boundl(85) = 1.000D6
+      boundu(85) = 200.0D6
+   end subroutine init_itv_85
+
+   real(kind(1.d0)) function itv_85()
+      use ife_variables, only: pdrive
+      itv_85 = pdrive
+   end function itv_85
+
+   subroutine set_itv_85(ratio)
+      use ife_variables, only: pdrive
+      real(kind(1.d0)) :: ratio
+      pdrive = ratio
+   end subroutine set_itv_85
+
+   !---------------------------------
+
+   subroutine init_itv_86
+      !+ad_varc  <LI> (86) frrmax (f-value for equation 50)
+      lablxc(86) = 'frrmax        '
+      boundl(86) = 0.001D0
+      boundu(86) = 1.000D0
+   end subroutine init_itv_86
+
+   real(kind(1.d0)) function itv_86()
+      use ife_variables, only: frrmax
+      itv_86 = frrmax
+   end function itv_86
+
+   subroutine set_itv_86(ratio)
+      use ife_variables, only: frrmax
+      real(kind(1.d0)) :: ratio
+      frrmax = ratio
+   end subroutine set_itv_86
+
+   !---------------------------------
+
    !+ad_varc  <LI> (87) NOT USED
    !+ad_varc  <LI> (88) NOT USED
 
@@ -2982,12 +3096,12 @@ subroutine loadxc
          case (78);  xcm(i) = itv_78()
          case (79);  xcm(i) = itv_79()
          case (80);  xcm(i) = itv_80()
-         case (81);  
-         case (82);  
-         case (83);  
-         case (84);  
-         case (85);  
-         case (86);  
+         case (81);  xcm(i) = itv_81()
+         case (82);  xcm(i) = itv_82()
+         case (83);  xcm(i) = itv_83()
+         case (84);  xcm(i) = itv_84()
+         case (85);  xcm(i) = itv_85()
+         case (86);  xcm(i) = itv_86()
          case (87);  
          case (88);  
          case (89);  xcm(i) = itv_89()
@@ -3262,12 +3376,12 @@ subroutine convxc(xc,nn)
          case (78);  
          case (79);  call set_itv_79(ratio)
          case (80);  
-         case (81);  
-         case (82);  
-         case (83);  
-         case (84);  
-         case (85);  
-         case (86);  
+         case (81);  call set_itv_81(ratio)
+         case (82);  call set_itv_82(ratio)
+         case (83);  call set_itv_83(ratio)
+         case (84);  call set_itv_84(ratio)
+         case (85);  call set_itv_85(ratio)
+         case (86);  call set_itv_86(ratio)
          case (87);  
          case (88);  
          case (89);  call set_itv_89(ratio)
