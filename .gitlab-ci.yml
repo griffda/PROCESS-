@@ -9,8 +9,6 @@
 #
 #-----------------------------------------------------
 
-# List of build stages
-
 stages:
   - build
   - testing
