@@ -271,46 +271,40 @@ following way:
 
 \section{Iteration Variables}
 
-New iteration variables (see User-guide and vardes.html) are added in the
+The format for defining iteration variables has CHANGED.  These are added in the
 same way as input parameters, with the following additions:
 
 \begin{enumerate}
 
 \item The name of an iteration variable must not be more than 14 characters long.
-  The variable name should be as be as explicit as possible within this constrain.
+  The variable name should be as be as explicit as possible within this constraint.
 
-\item Increment the parameter \texttt{ipnvars} in module \texttt{numerics} in
-  source file \texttt{numerics.f90} in order to accommodate the new iteration
-  variable.
+\item The parameter \texttt{ipnvars} in module \texttt{numerics} in
+  \texttt{numerics.f90} will normally be greater than 
+  the actual number of iteration variables, and does not need to be changed.
 
-\item Add an additional line to the initialisation of the array \texttt{ixc}
-  in module \texttt{numerics} in source file \texttt{numerics.f90}.
+\item Utilise the next available block of code in module \texttt{define\_iteration\_variables} in 
+\texttt{numerics.f90}.
 
-\item Assign sensible values for the variable's bounds to the relevant
-  elements in arrays \texttt{boundl} and \texttt{boundu} in module
-  \texttt{numerics} in source file \texttt{numerics.f90}.
+\item Assign values for the variable's lower and upper bounds to the relevant
+  elements in arrays \texttt{boundl} and \texttt{boundu}.
 
-\item Assign the relevant element of character array \texttt{lablxc} to the
-  name of the variable, in module \texttt{numerics} in source file
-  \texttt{numerics.f90}.
+\item Paste the variable name in the relevant places in the code block in place 
+of the word 'DUMMY'.
 
-\item Add the variable to routines \texttt{LOADXC} and \texttt{CONVXC} in
-  source file \texttt{iteration\_variables.f90}, mimicking the way that the
-  existing iteration variables are coded.
+\item Ensure that the relevant element of character array \texttt{lablxc} is exactly 14 
+characters long.
 
-\item Modify the variable's description in its declaring module (which is
-  likely to be in source file \texttt{global\_variables.f90}), to say that it
-  is ``(iteration variable XXX)''
+\item If the variable is declared in a module not listed at the the top of 
+\texttt{module define\_iteration\_variables} then it is best to place the required use statement
+in the relevant function \texttt{itv\_XX} and subroutine \texttt{set\_itv\_XX)}.
 	
 \end{enumerate}
-
-If an existing input parameter is now required to be an iteration variable,
-then simply carry out the tasks mentioned here.
 
 It should be noted that iteration variables must not be reset elsewhere in the
 code. That is, they may only be assigned new values when originally
 initialised (in the relevant module, or in the input file if required), and in
-routine \texttt{CONVXC} where the iteration process itself is performed.
+the \texttt{subroutine set\_itv\_XX} where the iteration process itself is performed.
 Otherwise, the numerical procedure cannot adjust the value as it requires, and
 the program will fail.
 

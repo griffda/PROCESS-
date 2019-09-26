@@ -2782,32 +2782,6 @@ end subroutine subr
     !+ad_desc  transport power loss terms.
     !+ad_prob  None
     !+ad_call  report_error
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  30/06/94 PJK Added stellarator scaling laws 20-23
-    !+ad_hist  07/12/95 PJK Added pcharge to plasma input power
-    !+ad_hist  14/11/97 PJK Added ITER-97 scaling laws (26,27)
-    !+ad_hist  01/04/98 PJK Added ITER-96P scaling law (28)
-    !+ad_hist  26/06/98 PJK Added scaling laws 29,30,31
-    !+ad_hist  08/10/98 PJK Added scaling laws 32,33,34,35,36
-    !+ad_hist  16/07/01 PJK Added KAPPAA to argument list
-    !+ad_hist  23/05/06 PJK Ensured that powerht is always positive
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  23/01/13 PJK Added stellarator scaling laws 37,38
-    !+ad_hist  07/11/13 PJK Modified prad description
-    !+ad_hist  20/05/14 PJK Changed prad argument to pcorerad;
-    !+ad_hisc               introduced iradloss switch;
-    !+ad_hisc               added falpha multiplier to alpmw term
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  03/06/14 PJK Changed pchargepv usage to pchargemw
-    !+ad_hist  17/06/14 PJK Added scaling law 39
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  13/11/14 PJK Modified iradloss usage
-    !+ad_hist  17/06/15 MDK Added Murari scaling (40)
-    !+ad_hist  02/11/16 HL  Added Petty, Lang scalings (41,42)
-    !+ad_hist  05/04/19 SK  IPB98 scalings errata from 2008 NF 48 099801  
-    !+ad_hist  09/05/19 SIM Added NSTX scaling (#820)
-    !+ad_hist  13/05/19 SIM Added NSTX-Petty08 Hybrid scaling (#820) and
-    !+ad_hisc               option for input value
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
@@ -3502,11 +3476,6 @@ end subroutine subr
     !+ad_desc  other related items.
     !+ad_prob  None
     !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Removed rmu0 from argument list
-    !+ad_hist  11/06/13 PJK Removed 1.25 enhancement in rlp formula
-    !+ad_hist  27/11/13 PJK Added theat to tburn in vsbrn calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -3598,13 +3567,6 @@ end subroutine subr
     !+ad_desc  needed by other parts of the code
     !+ad_prob  None
     !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  07/12/95 PJK Added D-He3 calculations
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  12/06/13 PJK Changed rndfuel, qfuel units from Amps
-    !+ad_hist  10/09/13 PJK Modified fusion reaction rate calculation
-    !+ad_hist  11/09/13 PJK Modified burnup calculation + comments
-    !+ad_hist  08/05/14 PJK Modified taup calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -3687,9 +3649,6 @@ end subroutine subr
     !+ad_desc  ions and electrons.
     !+ad_prob  No account is taken of pedestal profiles.
     !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  03/07/13 PJK Changed zeffai description
     !+ad_stat  Okay
     !+ad_docs  Unknown origin
     !
@@ -3745,11 +3704,6 @@ end subroutine subr
     !+ad_desc  alphaj = 1.5, aspect = 2.5 -- 4.
     !+ad_prob  Therefore, no account is taken of pedestal profiles.
     !+ad_call  report_error
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  25/07/11 PJK Correction to facoh coding
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  11/04/13 PJK Removed ires argument
-    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
@@ -3822,17 +3776,6 @@ end subroutine subr
     !+ad_call  oblnkl
     !+ad_call  osubhd
     !+ad_call  pcond
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  01/04/98 PJK Modified PCOND arguments
-    !+ad_hist  30/06/98 PJK Modified PCOND arguments
-    !+ad_hist  19/01/99 PJK Modified PCOND arguments
-    !+ad_hist  17/07/01 PJK Modified PCOND arguments
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  20/05/14 PJK Changed prad to pcorerad
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  20/10/14 PJK Output power balances for H=1 instead of H=2
     !+ad_hist  13/05/19 SIM Stopped writing values at iisc=47
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -4274,7 +4217,7 @@ end subroutine subr
    call ocmmnt(outfile,'Plasma ion densities / electron density:')
    do imp = 1,nimp
       ! MDK Update fimp, as this will make the ITV output work correctly.
-      fimp(imp)=impurity_arr(imp)%frac
+      fimp(imp) = impurity_arr(imp)%frac
       str1 = impurity_arr(imp)%label // ' concentration'
       str2 = '(fimp('//int_to_string2(imp)//')'
       ! MDK Add output flag for H which is calculated
