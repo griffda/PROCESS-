@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from process_io_lib.mfile import MFile
 
 
-def plot_sankey(mfilename='MFILE.DAT'): # Plots the power flow from PROCESS as a Sankey Diagram
+def plot_sankey(mfilename="MFILE.DAT",): # Plots the power flow from PROCESS as a Sankey Diagram
 
 
     # ------------------------------- Pulling values from the MFILE -------------------------------
@@ -22,190 +22,373 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plots the power flow from PROCESS as a
     m_file = MFile(mfilename)
 
     # Used in [PLASMA]
-    powfmw  = m_file.data['powfmw' ].get_scan(-1) # Fusion power (MW)
-    pinjmw  = m_file.data['pinjmw' ].get_scan(-1) # Total auxiliary injected power (MW)
-    pohmmw  = m_file.data['pohmmw' ].get_scan(-1) # Ohmic heating power (MW)
+    powfmw = m_file.data["powfmw"].get_scan(-1) # Fusion power (MW)
+    pinjmw = m_file.data["pinjmw"].get_scan(-1) # Total auxiliary injected power (MW)
+    pohmmw = m_file.data["pohmmw"].get_scan(-1) # Ohmic heating power (MW)
     totalplasma = powfmw+pinjmw+pohmmw # Total Power in plasma (MW)
-    pneutmw = m_file.data['pneutmw'].get_scan(-1) # Neutron fusion power (MW)
-    palpmw  = m_file.data['palpmw' ].get_scan(-1) # Alpha power (MW)
-    pchargemw  = m_file.data['pchargemw' ].get_scan(-1) # Non-alpha charged particle power (MW)
+    pneutmw = m_file.data["pneutmw"].get_scan(-1) # Neutron fusion power (MW)
+    pchargemw = m_file.data["pchargemw"].get_scan(-1) # Non-alpha charged particle power (MW)
+    pcharohmmw = pchargemw + pohmmw # The ohmic and charged particle power (MW)
+    palpmw = m_file.data["palpmw"].get_scan(-1) # Alpha power (MW)
+    palpinjmw = palpmw + pinjmw # Alpha particle and HC&D power (MW)
+
+    # Used in [NEUTRONICS]
+    emultmw = m_file.data["emultmw"].get_scan(-1) # Energy multiplication in blanket (MW)
+    pnucblkt = m_file.data["pnucblkt"].get_scan(-1) # Total Nuclear heating in the blanket (MW)
+    pnucemblkt = pnucblkt-emultmw # External nuclear heating in blanket (MW)
+    pnucdiv = m_file.data["pnucdiv"].get_scan(-1) # Nuclear heating in the divertor (MW)
+    pnucfw = m_file.data["pnucfw"].get_scan(-1) # Nuclear heating in the first wall (MW)
+    pnucshld = m_file.data["pnucshld"].get_scan(-1) # Nuclear heating in the shield (MW)
+    ptfnuc = m_file.data["ptfnuc"].get_scan(-1) # Nuclear heating in the TF coil (MW)
+
+    # Used in [CHARGEP]
+    pdivt = m_file.data["pdivt"].get_scan(-1) # Charged particle power deposited on divertor (MW)
+    falpha = m_file.data["falpha"].get_scan(-1) # Fraction of alpha power deposited in plasma
+    palpfwmw = palpmw*(1-falpha) # Alpha particles hitting first wall (MW)
+    pradmw = m_file.data['pradmw'].get_scan(-1) # Total radiation Power (MW)
+
+    # Used in [RADIATION]
+    praddiv = pradmw * m_file.data["fdiv"].get_scan(-1) # Radiation deposited on the divertor (MW)
+    pradhcd = pradmw * m_file.data["fhcd"].get_scan(-1) # Radiation deposited on HCD (MW)
+    pradfw = pradmw-praddiv-pradhcd # Radiation deposited in the FW (MW)
+
+    # Used in [DIVERTOR]
+    htpmw_div = m_file.data['htpmw_div'].get_scan(-1) # Divertor coolant pumping power
+    pthermdiv = m_file.data["pthermdiv"].get_scan(-1) # Total power extracted from divertor (MW)
+
+    # Used in [FIRST_WALL]
+    pthermfw_blkt = m_file.data["pthermfw_blkt"].get_scan(-1) # Power extracted blanket & FW (MW)
+    htpmw_fw_blkt = m_file.data["htpmw_fw_blkt"].get_scan(-1) # Pump Power in FW and blanket (MW)
+    htpmwblkt = htpmw_fw_blkt / 2 # Pump power in blanket (MW)
+    htpmwfw = htpmw_fw_blkt / 2 # Pump power in FW (MW)
+    pthermfw = pthermfw_blkt - htpmwblkt - pnucblkt # Power extracted 1st wall (MW)
+    #porbitloss = m_file.data['porbitloss'].get_scan(-1) # Charged P. on FW before thermalising
+    #nbshinemw = m_file.data['nbshinemw'].get_scan(-1) # Injection shine-through to 1st wall
+
+    # Used in [BLANKET]
+    pthermblkt = pthermfw_blkt - htpmwfw - pnucfw - pradfw - palpfwmw # Power extracted blanket (MW)
+
+    # Used in [SHIELD]
+    htpmw_shld = m_file.data['htpmw_shld'].get_scan(-1) # Coolant pumping power (MW)
+    pthermshld = m_file.data['pthermshld'].get_scan(-1) # Total power from shield (MW)
+
+    # Used in [HEAT]
+    pthermmw = m_file.data['pthermmw'].get_scan(-1) # Total thermal power (MW)
+
+    # Used in [GROSS]
+    etath = m_file.data['etath'].get_scan(-1) # Thermal to electricity conversion (MW)
+    pelectloss = pthermmw * (1 - etath) # Power lost in electricity conversion (MW)
+    pgrossmw = m_file.data['pgrossmw'].get_scan(-1) # Gross electricity (MW)
 
     # Used in [HCD]
-    pinjht = m_file.data['pinjht'].get_scan(-1) # Power dissipated in HCD system (MW)
-
-    #Used in [NEUTRONICS]
-    emultmw = m_file.data['emultmw'].get_scan(-1) # Power due to energy multiplication in blanket and shield [MW]
-    pnucblkt = m_file.data['pnucblkt'].get_scan(-1) # Nuclear heating in the blanket (MW)
-    pnucdiv = m_file.data['pnucdiv'].get_scan(-1) # Nuclear heating in the divertor (MW)
-    pnucfw = m_file.data['pnucfw'].get_scan(-1) # Nuclear heating in the first wall (MW)
-    pnucshld = m_file.data['pnucshld'].get_scan(-1) # Nuclear heating in the shield (MW)
-    ptfnuc = m_file.data['ptfnuc'].get_scan(-1) # Nuclear heating in the TF coil (MW)
+    pinjht = m_file.data["pinjht"].get_scan(-1) # Power dissipated in HCD system (MW)
 
 
-    # The visual settings of the Sankey Plot
-    plt.rcParams.update({'font.size': 9})
-    fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[], frameon=False)
-    sankey = Sankey(ax=ax, unit='MW', margin=0.0, format='%1.0f',scale = 1./(totalplasma))
+    # Initialising x and y variables for adjusting 'Plasma Heating' branch tip location
+    x_adj_1, y_adj_1 = 0,0
+    x_adj_2, y_adj_2 = 0,0
+    x_adj_3, y_adj_3 = 0,0
 
 
-    # ----------------------------------------- PLASMA - 0 ----------------------------------------
-
-    FUSION = [powfmw, -pneutmw, -pchargemw, -palpmw]
-    # Fusion, Injected, ohmic, -neutrons, -non-alpha charged particles, -alphas
-    PLASMA = [powfmw, pinjmw, pohmmw, -pneutmw, -pchargemw, -palpmw]
-    # Checking to see if the fusion components balance
-    if sqrt(sum(FUSION)**2) > 2:
-        print('FUSION power balance', powfmw, -pneutmw-palpmw-pchargemw)
-        exit()
-    # Checking to see if the input and output plasma power flows differ
-    if sqrt(sum(PLASMA)**2) > 2:
-        print('PLASMA power balance', powfmw+pinjmw+pohmmw, -pneutmw-palpmw-pchargemw)
-    # exit()
-    sankey.add(flows=PLASMA,
-               # [right(in), down(in), down(in), right(out), up(out)]
-               orientations=[0, -1, -1, 0, 0, 0],
-               trunklength=0.8,
-               pathlengths=[0.2, 0.25, 0.25, 0.0, 0.25, 0.25],
-               labels=['Fusion Power','H&CD', 'Ohmic', 'Neutrons', 'Charged particles', 'Alphas'])
+    # Loop 1 to get 'Plasma Heating' branch tip coords; loop 2 to match 'PLASMA' branch
+    for _ in range(2):
 
 
-    # ------------------------------------------- HCD - 1 -----------------------------------------
-
-    # HCD loss + injected, -injected, -HCD loss
-    HCD = [pinjht+pinjmw, -pinjmw, -pinjht]
-    assert(sum(HCD)**2 < 0.5)
-    sankey.add(flows=HCD,
-               orientations=[-1, 1, -1], # [down(in), up(out), down(out)]
-               prior=0, # PLASMA
-               connect=(1, 1), # None --> H&CD
-               trunklength=0.5,
-               pathlengths=[0.25, 0.25, 0.25],
-               labels=['H&CD power', None, 'H&CD losses'])
+        # The visual settings of the Sankey Plot
+        plt.rcParams.update({"font.size": 9})
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[], frameon=False)
+        sankey = Sankey(ax=ax, unit="MW", margin=0.5, format="%1.0f", scale = 1./(totalplasma))
 
 
-    # -------------------- NEUTRONICS - 2 -------------------
+        # --------------------------------------- PLASMA - 0 --------------------------------------
 
-    # Include nuclear heating in shield
-    if pnucshld > 0.5 :
-        NEUTRONS = [pneutmw, emultmw, -pnucblkt, -pnucdiv, -pnucfw, -pnucshld, -ptfnuc]
-        assert (sum(NEUTRONS)**2 < 0.5), "Neutron sum < 0.5"
+        # Fusion, Injected, Ohmic, -Charged P.-Ohmic, -Alphas-Injected, -Neutrons
+        PLASMA = [powfmw, pinjmw, pohmmw, -pcharohmmw, -palpinjmw, -pneutmw]
+        sankey.add(flows=PLASMA,
+                   # [left(in), down(in), down(in), up(out), up(out), right(out)]
+                   orientations=[0, -1, -1, 1, 1, 0],
+                   trunklength=0.5,
+                   pathlengths=[0.5, 0.25, 0.25, 0.75, 0.25+0.5*y_adj_1, 0.0],
+                   #labels=["Fusion","H&CD", "Ohmic", "Charged P.", "Alphas", "Neutrons"])
+                   labels=[None, None, None, None, None, None])
+
+        # Check to see if the fusion components balance
+        if _ == 0:
+            if sqrt(sum(PLASMA)**2) > 0.1:
+                print("FUSION power balance =", sum(PLASMA), "\n")
+                exit()
+
+        if _ == 1: print(sankey.finish()[0])
+        if _ == 1: print(sankey.finish()[0].patch)
+        if _ == 1: print(type(sankey.finish()[0].patch))
+
+
+        # ------------------------------------- NEUTRONICS - 1 ------------------------------------
+
+        # Neutrons, -Divertor, -1st wall, -Shield, -TF coils, -Blanket+Energy Mult.
+        NEUTRONS = [pneutmw, -pnucdiv, -pnucfw, -pnucshld, -ptfnuc, -pnucemblkt]
         sankey.add(flows=NEUTRONS,
-                   orientations=[0, 1, 0, -1, -1, 1, 1],
-                   prior=0, connect=(3, 0),
-                   labels=[None,'Energy Multiplication',"Blanket", "Divertor", "First Wall", "Shield", "TF coils"])
+                   # left(in), up(out), up(out), up(out), up(out), right(out)
+                   orientations=[0, 1, 1, 1, 1, 0],
+                   trunklength=0.5,
+                   pathlengths=[0.3, 0.25, 0.25, 0.25, 0.25, 0.15],
+                   prior=0, # PLASMA
+                   connect=(5, 0), # Neutrons
+                   #labels=["Neutrons", "Divertor", "1st Wall", "Shield", "TF coils", "Blanket"])
+                   labels=[None, None, None, None, None, None])
 
-    # Do not include nuclear heating in shield
-    else:
-        NEUTRONS = [pneutmw, emultmw, -pnucblkt, -pnucdiv, -pnucfw, -ptfnuc]
-        assert (sum(NEUTRONS)**2 < 0.5), "Neutron sum < 0.5"
-        sankey.add(flows=NEUTRONS,
-                   orientations=[0, 1, 0, -1, -1, 1],
-                   prior=0, connect=(2, 0),
-                   labels=[None,'Energy Multiplication',"Blanket", "Divertor", "First Wall", "TFcoils"])
+        # Checking to see if the neutronics components balance
+        if _ == 0:
+            if sqrt(sum(NEUTRONS)**2) > 0.1:
+                print("NEUTRONS power balance =", sum(NEUTRONS), "\n")
+                exit()
 
-
-
-    #Radiation- 3
-    pradmw = m_file.data['pradmw'].get_scan(-1)
-    pdivt = m_file.data['pdivt'].get_scan(-1)
-    praddiv = pradmw * m_file.data['fdiv'].get_scan(-1)
-    pradhcd = pradmw * m_file.data['fhcd'].get_scan(-1)
-    pradfw = pradmw -praddiv -pradhcd
-
-    falpha = 1. #m_file.data['falpha'].get_scan(-1) #Fraction of alpha power dep. in plasma
-    
-    if pradhcd > 0.5 :
-        RADIATION = [falpha*palpmw + pinjmw, -praddiv,-pradfw,-pradhcd, -pdivt]
-        sankey.add(flows=RADIATION, orientations=[0,1,1, 1, 0],
-                   prior=0, connect=(4, 0),
-                   labels=[None,'Rad. Div', 'Rad.FW', 'Rad. HCD', "Charged Particles"])
-    else :
-        RADIATION = [palpmw*falpha + pinjmw, -praddiv,-pradfw, -pdivt]
-        sankey.add(flows=RADIATION, orientations=[0,1,1, 0],
-                   prior=0, connect=(4, 0),
-                   labels=[None,'Rad. Div', 'Rad.FW', "Charged Particles"])
+        # Check to see if connections balance
+        if _ == 0:
+            check = sankey.finish()
+            diff1_1 = check[0].flows[5]+check[1].flows[0]
+            plt.close()
+            if diff1_1 > 0.1:
+                print("Neutrons [0][5] and [1][0] difference =", diff1_1)
+                exit()
 
 
-    if sqrt(sum(RADIATION)**2) > 2 :
-        print('RADIATION power balance',palpmw + pinjmw, -pradmw -pdivt)
+        # --------------------------------- CHARGED PARTICLES - 2 ---------------------------------
+
+        # Charge P.+Ohmic, Alpha+Injected, -Divertor, -1st Wall, -Photons
+        CHARGEDP = [pcharohmmw, palpinjmw, -pdivt, -palpfwmw, -pradmw]
+        sankey.add(flows=CHARGEDP,
+                   # down(in), down(in), up(out), up(out), right(out)
+                   orientations=[-1, -1, 1, -1, 0],
+                   trunklength=0.5,
+                   pathlengths=[0.75, 0.25+0.5*y_adj_1, 0.25, 0.25, 0.25],
+                   prior=0, # PLASMA
+                   connect=(3, 0), # Charged P.+Ohmic
+                   #labels=["Charged P.", "Alphas", "Divertor", "1st Wall", "Photons"])
+                   labels=[None, None, None, None, None])
+
+        if _ == 0:
+            if sqrt(sum(CHARGEDP)**2) > 0.1 :
+                print("CHARGEDP power balance =", sum(CHARGEDP))
+                exit()
+
+        # Check to see if connections balance
+        if _ == 0:
+            check = sankey.finish()
+            diff2_1 = check[0].flows[3]+check[2].flows[0]
+            diff2_2 = check[0].flows[4]+check[2].flows[1]
+            plt.close()
+            if diff2_1 > 0.1:
+                print("Charged P.+Ohmic [0][3] and [2][0] difference =", diff2_1)
+                exit()
+            if diff2_2 > 0.1:
+                print("Alphas+Injected [0][4] and [2][1] difference =", diff2_2)
+                exit()
+
+
+        # ------------------------------------- RADIATION - 3 -------------------------------------
+
+        # Photons, -1st Wall, -Divertor, -H&CD
+        RADIATION = [pradmw, -pradfw, -praddiv, -pradhcd]
+        sankey.add(flows=RADIATION,
+                   # right(in), up(out), up(out), up(out)
+                   orientations=[0, -1, 1, 1,],
+                   trunklength=0.5,
+                   pathlengths=[0.25, 0.25, 0.25, 0.25],
+                   prior=2, # CHARGED PARTICLES
+                   connect=(4, 0), # Charged P.
+                   #labels=["Photons", "1st Wall", "Divertor", "H&CD"])
+                   labels=[None, None, None, None])
+
+        if _ == 0:
+            if sqrt(sum(RADIATION)**2) > 0.1 :
+                print("RADIATION power balance =", sum(RADIATION))
+                exit()
+
+        if _ == 0:
+            check = sankey.finish()
+            diff3_1 = check[2].flows[4]+check[3].flows[0]
+            plt.close()
+            if diff3_1 > 0.1:
+                print("Photons [2][4] and [3][0] difference =", diff3_1)
+                exit()
+
+
+        # -------------------------------------- DIVERTOR - 4 -------------------------------------
+
+        # Charged P., Neutrons, Photons, Coolant Pumping, Total Divertor
+        DIVERTOR = [pdivt, pnucdiv, praddiv, htpmw_div, -pthermdiv]
+        sankey.add(flows=DIVERTOR,
+                   # down(in), up(in), down(in), up(in), right(out)
+                   orientations=[-1, -1, -1, -1, 0],
+                   trunklength=0.5,
+                   pathlengths=[0.25, 0.25, 0.25, 0.25-0.5*y_adj_2, 0.25],
+                   prior=2, # CHARGED PARTICLES
+                   connect=(2,0), # Charged P. --> None
+                   #labels=["Charged P.", "Neutrons", "Photons", "Coolant Pumping", "Divertor Power"])
+                   labels=[None, None, None, None, None])
         
-    #Blanket -4
-    htpmw_blkt = m_file.data['htpmw_blkt'].get_scan(-1) #coolant pumping power
-    pthermblkt = pnucblkt + htpmw_blkt
-    BLANKET = [pnucblkt,htpmw_blkt, -pthermblkt]
-    sankey.add(flows=BLANKET, orientations=[0, 1, 0],
-               prior=2, connect=(2, 0),
-               labels=[None,'Coolant Pumping',""])
-    
-    #Divertor
-    pthermdiv = m_file.data['pthermdiv'].get_scan(-1)
-    htpmw_div = m_file.data['htpmw_div'].get_scan(-1)
-    DIVERTOR = [pdivt, pnucdiv, praddiv, htpmw_div, -pthermdiv]
-    sankey.add(flows=DIVERTOR, orientations=[-1, -1,-1, 0,0],
-               prior=2, connect=(3, 1),
-               labels=[None, None,'Radiation','Coolant Pumping',""])
+        if _ == 0:
+            if sqrt(sum(DIVERTOR)**2) > 0.1 :
+                print("DIVERTOR power balance =", sum(DIVERTOR))
+                exit()
+
+        if _ == 0:
+            check = sankey.finish()
+            diff4_1 = check[1].flows[1]+check[4].flows[0]
+            diff4_2 = check[2].flows[3]+check[4].flows[3]
+            plt.close()
+            if diff4_1 > 0.1:
+                print("Neutrons [1][1] and [4][0] difference =", diff4_1)
+                exit()
+            if diff4_2 > 0.1:
+                print("Charged P. [2][3] and [4][3] difference =", diff4_2)
+                exit()
 
 
-    #First Wall
-    #losses from heating system to first wall
-    nbshinemw = m_file.data['nbshinemw'].get_scan(-1)
-    #forbitloss =  m_file.data['forbitloss'].get_scan(-1)
-    pnbitot = m_file.data['pnbitot'].get_scan(-1)
-    #porbitloss = forbitloss * (pnbitot - nbshinemw)
+        # ---------------------------------------- 1ST WALL - 5 ---------------------------------------
 
-    #hcdlosses = nbshinemw+porbitloss
-    #iprimshld = m_file.data['iprimshld'].get_scan(-1)
-    #if iprimshld == 1:
-    
-    FW = []
-    
-    
-    #Shield
-    if pnucshld > 0.5 :
-        htpmw_shld = m_file.data['htpmw_shld'].get_scan(-1) #coolant pumping power
-        pthermshld = m_file.data['pthermshld'].get_scan(-1)
+        # Alphas, Neutrons, Photons, Coolant Pumping, Total 1st Wall
+        FIRST_WALL = [palpfwmw, pnucfw, pradfw, htpmwfw, -pthermfw]
+        sankey.add(flows=FIRST_WALL,
+                   orientations=[0, -1, 1, -1, 0],
+                   trunklength=0.5,
+                   pathlengths=[0.25, 0.25, 0.25, 0.25, 0.25],
+                   prior=1,
+                   connect=(2,1),
+                   #labels=["Alphas", "Neutrons", "Radiation", "Coolant Pumping", "FW Power"])
+                   labels=[None, None, None, None, None])
+
+        if _ == 0:
+            if sqrt(sum(FIRST_WALL)**2) > 0.1:
+                print("FIRST_WALL power balance =", sum(FIRST_WALL))
+                exit()
+
+
+        """# -------------------------------------- BLANKET - 6 --------------------------------------
+
+        # Blanket - Energy mult., Energy Mult., pumping power, Blanket
+        BLANKET = [pnucemblkt, emultmw, htpmwblkt, -pthermblkt]
+        sankey.add(flows=BLANKET,
+                   # left(in), down(in), down(in), right(out)
+                   orientations=[0, -1, -1, 0],
+                   trunklength=0.5,
+                   pathlengths=[0.25, 0.25, 0.25, 0.25],
+                   #prior=1, # NEUTRONICS
+                   #connect=(1, 0), # Blanket --> None
+                   labels=[None, "Energy Mult.", "Coolant Pumping", "Blanket"])
+
+        # Checking to see if the blanket components balance
+        if _ == 0:
+            if sqrt(sum(BLANKET)**2) > 0.1:
+                print("BLANKET power balance =", sum(BLANKET), "\n")
+                exit()
+
+        # Check to see if connections balance
+        if _ == 0:
+            check = sankey.finish()
+            diff = check[1].flows[1]+check[3].flows[0]
+            if diff > 0.1:
+                print("The difference between [1][1] and [3][0] =", diff)
+                exit()"""
+
+
+        """# --------------------------------------- SHIELD - 7 --------------------------------------
+
+        # Neutrons, Coolant pumping, Total power
         SHIELD = [pnucshld, htpmw_shld, -pthermshld]
-        sankey.add(flows=SHIELD, orientations=[-1, -1, 1],
-                   prior=2, connect=(5, 0),
-                   labels=[None,'Coolant Pumping',""])
-        
-    #Primary high grade heat
-    secondary_cycle = int(m_file.data['secondary_cycle'].get_scan(-1))
-    pthermmw = m_file.data['pthermmw'].get_scan(-1)
-    pthermfw_blkt = m_file.data['pthermfw_blkt'].get_scan(-1)
+        sankey.add(flows=SHIELD,
+                   orientations=[-1, -1, 1],
+                   trunklength=0.5,
+                   pathlengths=[0.25, 0.25 ,0.25],
+                   #prior=2,
+                   #connect=(5, 0),
+                   labels=["Neutrons", "Coolant Pumping", "Shield Power"])
 
-    #iprimshld = m_file.data['iprimshld'].get_scan(-1)
+        if _ == 0:
+            if sqrt(sum(SHIELD)**2) > 0.1:
+                print("SHIELD power balance =", sum(SHIELD))
+                exit()"""
 
-    if secondary_cycle == 0:
-        # FW+Blanket, Shield
-        PRIMARY = [pthermfw_blkt, pthermmw-pthermfw_blkt, -pthermmw]
-        #sankey.add(flows=BLANKET, orientations=[0,1 , 0],
-               #prior=3, connect=(2, 0),
-        #       labels=[None, None,"Primary High Grade Heat"])
-    else:
-        PRIMARY = [-pthermmw, pthermfw_blkt, pthermmw-pthermfw_blkt, pthermdiv]
-        sankey.add(flows=BLANKET, orientations=[0, 1, 0],
-               prior=3, connect=(2, 0),
-               labels=[None,'FW+Blanket',"Shield", "Divertor"])
 
-    #Low Grade heat
-    #htpmw = m_file.data['htpmw'].get_scan(-1)
-    psechtmw = m_file.data['psechtmw'].get_scan(-1)"""
+        """# ------------------------------------ PRIMARY HEAT - 7 -----------------------------------
 
-    
+        # 1st wall, Blanket, Shield, Divertor, Total thermal power
+        HEAT = [pthermfw, pthermblkt, pthermshld, pthermdiv, -pthermmw]
+        sankey.add(flows=HEAT,
+                   orientations=[1, 0, -1, 1, 0],
+                   trunklength=0.5,
+                   pathlengths=[0.25, 0.25 ,0.25, 0.25, 0.25],
+                   #prior=2,
+                   #connect=(5, 0),
+                   labels=["1st Wall", "Blanket", "Shield", "Divertor", "Total Power"])
 
-    diagrams = sankey.finish()
-    fig.tight_layout()
+        if _ == 0:
+            if sqrt(sum(HEAT)**2) > 0.1:
+                print("PRIMARY power balance =", sum(HEAT))
+                exit()"""
+
+
+        """# ------------------------------- ELECTRICITY CONVERSION - 8 ------------------------------
+
+        # Total thermal, Elctricty conversion loss, Gross Electricity
+        GROSS = [pthermmw, -pelectloss, -pgrossmw]
+        sankey.add(flows=GROSS,
+                   orientations=[0, -1, 0],
+                   trunklength=0.5,
+                   pathlengths=[0.25, 0.25 ,0.25],
+                   #prior=2,
+                   #connect=(5, 0),
+                   labels=["Thermal Power", "Conversion loss", "Gross Electricity"])
+
+        if _ == 0:
+            if sqrt(sum(GROSS)**2) > 0.1:
+                print("GROSS power balance =", sum(GROSS))
+                exit()"""
+
+
+        # ------------------------------ RECIRCULATED ELECTRICITY - 9 -----------------------------
+
+
+
+
+        """# ---------------------------------------- HCD - 11 ----------------------------------------
+
+        # HCD loss + injected, -injected, -HCD loss
+        HCD = [pinjht+pinjmw, -pinjmw, -pinjht]
+        assert(sum(HCD)**2 < 0.5)
+        sankey.add(flows=HCD,
+                   # [down(in), up(out), down(out)]
+                   orientations=[-1, 1, -1],
+                   #prior=0, # PLASMA
+                   #connect=(1, 1), # H&CD --> None
+                   trunklength=0.5,
+                   pathlengths=[0.25, 0.25, 0.25],
+                   labels=['H&CD power', None, 'H&CD loss'])"""
+
+
+        diagrams = sankey.finish()
+        fig.tight_layout()
+
+
+        if _ == 0:
+            plt.close()
+
+        # Matching PLASMA and CHARGED PARTICLES 'Alphas' branches
+        #x_adj_1, y_adj_1 = diagrams[2].tips[1] - diagrams[0].tips[4]
+        # Matching CHARGED PARTICLES and DIVERTOR 'Charged P.' branches
+        #x_adj_2, y_adj_2 = diagrams[4].tips[3] - diagrams[2].tips[3]
+        #x_adj_3, y_adj_3 = diagrams[3].tips[3] - diagrams[4].tips[0]
 
 
 # --------------------------------------- Label Positioning ---------------------------------------
 
     # Munipulating the positioning of the branch labels
     # -ve to left and down; +ve to right and up
-    # Using branch widths to adjust label positioning
+    # pos[0] = x-axis; pos[1] = y-axis
 
-    for d in diagrams:
+    """for d in diagrams:
         y = 0
         for t in d.texts:
             pos = tuple(np.ndarray.tolist(d.tips[y]))
@@ -215,24 +398,44 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plots the power flow from PROCESS as a
                 t.set_position((pos[0]-0.2,pos[1]))
             if t == diagrams[0].texts[1]: # H&CD
                 t.set_horizontalalignment('right')
-                t.set_position((pos[0]-0.5*((pinjmw)/totalplasma)-0.1,pos[1]))
+                t.set_position((pos[0]-0.5*(pinjmw/totalplasma)-0.05,pos[1]))
             if t == diagrams[0].texts[2]: # Ohmic
                 t.set_horizontalalignment('left')
-                t.set_position((pos[0]+0.5*((pohmmw)/totalplasma)+0.1,pos[1]))
+                t.set_position((pos[0]+0.5*(pohmmw/totalplasma)+0.05,pos[1]))
             if t == diagrams[0].texts[3]: # Neutrons
                 t.set_horizontalalignment('right')
                 t.set_position((pos[0]-0.2,pos[1]))
-            if t == diagrams[0].texts[4]: # He4+Aux
-                t.set_horizontalalignment('center')
-                t.set_position((pos[0],pos[1]+0.15))
+            if t == diagrams[0].texts[4]: # Charged Particles
+                t.set_horizontalalignment('right')
+                t.set_position((pos[0]-0.5*(pchargemw/totalplasma)-0.05,pos[1]))
+            if t == diagrams[0].texts[5]: # Alphas
+                t.set_horizontalalignment('left')
+                t.set_position((pos[0]+0.5*(palpmw/totalplasma)+0.05,pos[1]-0.1))
             if t == diagrams[1].texts[0]: # H&CD power
+                t.set_horizontalalignment('right')
+                t.set_position((pos[0]-0.5*((pinjht+pinjmw)/totalplasma)-0.05,pos[1]))
+            if t == diagrams[1].texts[2]: # H&CD losses
+                t.set_horizontalalignment('left')
+                t.set_position((pos[0]+(pinjht/totalplasma)+0.05,pos[1]))
+            if t == diagrams[2].texts[1]: # Energy Multiplication
                 t.set_horizontalalignment('center')
                 t.set_position((pos[0],pos[1]-0.2))
-            if t == diagrams[1].texts[2]: # H&CD losses
-                t.set_horizontalalignment('center')
-                t.set_position((pos[0],pos[1]-0.1))
-            y += 1
-
+            if t == diagrams[2].texts[2]: # Blanket
+                t.set_horizontalalignment('right')
+                t.set_position((pos[0]-0.2,pos[1]))
+            if t == diagrams[2].texts[3]: # Divertor
+                t.set_horizontalalignment('right')
+                t.set_position((pos[0]-0.5*(pnucdiv/totalplasma)-0.1,pos[1]))
+            if t == diagrams[3].texts[2]: # Rad.FW
+                t.set_horizontalalignment('right')
+                t.set_position((pos[0],pos[1]+0.5*(pradfw/totalplasma)+0.15))
+            if t == diagrams[3].texts[3]: # Charged P.
+                t.set_horizontalalignment('left')
+                t.set_position((pos[0]+0.5*((pdivt+palpfwmw)/totalplasma)+0.1,pos[1]+0.05))
+            if t == diagrams[3].texts[4]: # Rad. Div.
+                t.set_horizontalalignment('right')
+                t.set_position((pos[0]-0.5*(praddiv/totalplasma)-0.1,pos[1]))
+            y += 1"""
 
 
 ####################################################################################################
@@ -430,14 +633,14 @@ def plot_simplified_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow 
         fig.tight_layout()
 
         # Difference in branch tip locations for 'Plasma Heating'
-        x_adj, y_adj = diagrams[0].tips[1] - diagrams[6].tips[1] 
+        x_adj, y_adj = diagrams[0].tips[1] - diagrams[6].tips[1]
 
 
 # --------------------------------------- Label Positioning ---------------------------------------
 
     # Munipulating the positioning of the branch labels
     # -ve to left and down; +ve to right and up
-    # Using branch widths to adjust label positioning
+    # pos[0] = x-axis; pos[1] = y-axis
     for d in diagrams:
         y = 0
         for t in d.texts:
@@ -461,7 +664,7 @@ def plot_simplified_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow 
                 t.set_position((pos[0]-0.25,pos[1]))
             if t == diagrams[3].texts[1]: # Gross Electric
                 t.set_horizontalalignment('right')
-                t.set_position((pos[0]-0.5*((pgrossmw)/totalplasma)-0.1,pos[1]+0.1))
+                t.set_position((pos[0]-0.5*(pgrossmw/totalplasma)-0.1,pos[1]+0.1))
             if t == diagrams[3].texts[2]: # Losses
                 t.set_horizontalalignment('right')
                 t.set_position((pos[0]-0.2,pos[1]))
@@ -483,12 +686,12 @@ def plot_simplified_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow 
                 t.set_position((pos[0],pos[1]-0.2))
             if t == diagrams[5].texts[2]: # Heating System
                 if pnetelmw >= 1:
-                    t.set_position((pos[0]+0.15,pos[1]+0.5*((pinjwp)/totalplasma)+0.2))
+                    t.set_position((pos[0]+0.15,pos[1]+0.5*(pinjwp/totalplasma)+0.2))
                 if pnetelmw < 1:
-                    t.set_position((pos[0]+0.15,pos[1]+0.5*((pinjwp)/totalplasma)+0.2))
+                    t.set_position((pos[0]+0.15,pos[1]+0.5*(pinjwp/totalplasma)+0.2))
             if t == diagrams[6].texts[1]: # Plasma Heating
                 t.set_horizontalalignment('left')
-                t.set_position((pos[0]+0.5*((pinjmw)/totalplasma)+0.1,pos[1]-0.05))
+                t.set_position((pos[0]+0.5*(pinjmw/totalplasma)+0.1,pos[1]-0.05))
             if t == diagrams[6].texts[2]: # Losses
                 t.set_horizontalalignment('left')
                 t.set_position((pos[0]+0.15,pos[1]-0.5*((pinjwp-pinjmw)/totalplasma)-0.2))
