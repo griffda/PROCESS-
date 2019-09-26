@@ -106,7 +106,7 @@ ixc = 124 * qtargettotal
 boundl(124) = 1.0d6
 boundu(124) = 10.0d6
 ixc = 135 * fimp(13)
-boundl(135) = 1.0d-10
+boundl(135) = 1.0d-8
 boundu(135) = 0.01
 
 *-----------------Build Variables------------------*
@@ -212,7 +212,7 @@ etahtp   = 1.0 * Electrical efficiency of primary coolant pumps
 *-----------------Global Variables-----------------*
 
 runtitle = kallenbach divertor model * Short descriptive title for the run
-maxcal   = 100 * Maximum number of vmcon iterations
+maxcal   = 50 * Maximum number of vmcon iterations
 
 *-------------Heat Transport Variables-------------*
 
@@ -247,7 +247,7 @@ fimp(14) = 5e-05
 
 ioptimz  = 1 * for optimisation VMCON only
 minmax   = 1 * Switch for figure-of-merit (see lablmm for descriptions)
-epsvmc   = 1.0e-6 * Error tolerance for vmcon
+epsvmc   = 5.0e-6 * Error tolerance for vmcon
 
 *----------------Pf Power Variables----------------*
 
