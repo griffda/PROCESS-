@@ -1,5 +1,7 @@
-module define_iteration_variables
-   ! Module to define iteration variables
+module define_iteration_variables 
+   !+ad_name  define_iteration_variables
+   !+ad_summ  Module to define iteration variables
+   !+ad_type  Module
 
    use build_variables
    use constraint_variables
@@ -31,10 +33,10 @@ module define_iteration_variables
 contains
    
    !+ad_vars  lablxc(ipnvars) : labels describing iteration variables<UL>
-   
-   !---------------------------------
 
-   subroutine init_itv_1
+!---------------------------------
+
+subroutine init_itv_1
       !+ad_varc  <LI> ( 1) aspect
       lablxc(1) = 'aspect        '
       boundl(1) = 1.100D0

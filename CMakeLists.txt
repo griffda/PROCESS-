@@ -169,7 +169,7 @@ WORKING_DIRECTORY ${FORT_SOURCE_DIR}
 
 # Create vardes HTML documentation
 add_custom_target(vardes
-  COMMAND cat global_variables.f90 numerics.f90 impurity_radiation.f90 scan.f90 error_handlings.f90 | ./autodoc
+  COMMAND cat global_variables.f90 iteration_variables.f90 numerics.f90 impurity_radiation.f90 scan.f90 error_handlings.f90 | ./autodoc
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/documentation/html
   COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/autodoc_data.mod
   COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/calltree_data.mod

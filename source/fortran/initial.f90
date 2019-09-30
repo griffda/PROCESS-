@@ -69,7 +69,6 @@ subroutine initial
     !+ad_vars  boundu(ipnvars) /../ : upper bounds on iteration variables 
 
     ! Issue #287  The initialization subroutines for the iteration variables are called
-    !!  !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
     call init_itv_1       
     call init_itv_2
     call init_itv_3
