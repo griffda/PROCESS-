@@ -4502,6 +4502,8 @@ module ife_variables
      !+ad_vars  cdriv2 /244.9/ : IFE high energy heavy ion beam driver cost
      !+ad_varc                   extrapolated to edrive=0 (M$)
      real(kind(1.0D0)) :: cdriv2 = 244.9D0
+     !+ad_vars  cdriv3 /1.463/ : IFE driver cost ($/J wall plug) (ifedrv==3)
+     real(kind(1.0D0)) :: cdriv3 = 1.463D0
      !+ad_vars  chdzl /9.0/ : vertical thickness of IFE chamber below centre (m)
      real(kind(1.0D0)) :: chdzl = 9.0D0
      !+ad_vars  chdzu /9.0/ : vertical thickness of IFE chamber above centre (m)
