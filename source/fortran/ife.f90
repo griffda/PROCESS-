@@ -399,7 +399,7 @@ contains
        sang = 1.0D0 - cos(phi)
        phi = atan(flirad/zu1)
        sang = sang - (1.0D0 - cos(phi))
-       wallmw = powfmw * sang / fwarea
+       wallmw = powfmw * 0.5D0*sang / fwarea
 
     else
        wallmw = powfmw / fwarea
@@ -1184,12 +1184,19 @@ contains
 
     call obuild(outfile,'Device centreline',0.0D0,0.0D0)
     call obuild(outfile,'Chamber',chrad,r1)
+    call ovarre(mfile,'Chamber (m)','(chrad)',chrad)
     call obuild(outfile,'First Wall',fwdr,r2)
+    call ovarre(mfile,'First Wall (m)','(fwdr)',fwdr)
     call obuild(outfile,'Void 1',v1dr,r3)
+    call ovarre(mfile,'Void 1 (m)','(v1dr)',v1dr)
     call obuild(outfile,'Blanket',bldr,r4)
+    call ovarre(mfile,'Blanket (m)','(bldr)',bldr)
     call obuild(outfile,'Void 2',v2dr,r5)
+    call ovarre(mfile,'Void 2 (m)','(v2dr)',v2dr)
     call obuild(outfile,'Shield',shdr,r6)
+    call ovarre(mfile,'Shield (m)','(shdr)',shdr)
     call obuild(outfile,'Void 3',v3dr,r7)
+    call ovarre(mfile,'Void 3 (m)','(v3dr)',v3dr)
 
 30  format(T43,'Thickness (m)',T60,'Height (m)')
 
@@ -1240,19 +1247,33 @@ contains
 
         call obuild(outfile,'Base of device',0.0D0,-zl7)
         call obuild(outfile,'Void 3',v3dzl,-zl6)
+        call ovarre(mfile,'Void 3 lower (m)','(v3dzl)',v3dzl)
         call obuild(outfile,'Shield',shdzl,-zl5)
+        call ovarre(mfile,'Shield lower (m)','(shdzl)',shdzl)
         call obuild(outfile,'Void 2',v2dzl,-zl4)
+        call ovarre(mfile,'Void 2 lower (m)','(v2dzl)',v2dzl)
         call obuild(outfile,'Blanket',bldzl,-zl3)
+        call ovarre(mfile,'Blanket lower (m)','(bldzl)',bldzl)
         call obuild(outfile,'Void 1',v1dzl,-zl2)
+        call ovarre(mfile,'Void 1 lower (m)','(v1dzl)',v1dzl)
         call obuild(outfile,'First Wall',fwdzl,-zl1)
+        call ovarre(mfile,'First Wall lower (m)','(fwdzl)',fwdzl)
         call obuild(outfile,'Chamber',chdzl,0.0D0)
+        call ovarre(mfile,'Chamber lower (m)','(chdzl)',chdzl)
         call obuild(outfile,'Chamber',chdzu,zu1)
+        call ovarre(mfile,'Chamber upper (m)','(chdzu)',chdzu)
         call obuild(outfile,'First Wall',fwdzu,zu2)
+        call ovarre(mfile,'First Wall upper (m)','(fwdzu)',fwdzu)
         call obuild(outfile,'Void 1',v1dzu,zu3)
+        call ovarre(mfile,'Void 1 upper (m)','(v1dzu)',v1dzu)
         call obuild(outfile,'Blanket',bldzu,zu4)
+        call ovarre(mfile,'Blanket upper (m)','(bldzu)',bldzu)
         call obuild(outfile,'Void 2',v2dzu,zu5)
+        call ovarre(mfile,'Void 2 upper (m)','(v2dzu)',v2dzu)
         call obuild(outfile,'Shield',shdzu,zu6)
+        call ovarre(mfile,'Shield upper (m)','(shdzu)',shdzu)
         call obuild(outfile,'Void 3',v3dzu,zu7)
+        call ovarre(mfile,'Void 3 upper (m)','(v3dzu)',v3dzu)
 
     end if   
 
@@ -1395,10 +1416,10 @@ contains
      g = 9.81D0
 
      ! Velocity
-     vel = sqrt(2.0D0*g*(chdzl+chdzu+bldzu))
+     vel = sqrt(2.0D0*g*(chdzu+bldzu))
 
      ! Lithium Fraction
-     blmatf(1,8) = 0.91*sqrt(bldzu/(chdzl+chdzu+bldzu))
+     blmatf(1,8) = 0.91*sqrt(bldzu/(chdzu+bldzu))
      blmatf(1,0) = 1.0D0 - blmatf(1,8)
 
      ! Spatial Thickness
@@ -2321,7 +2342,7 @@ contains
     !  and provide the energy multiplication as though it were a
     !  conventional blanket
 
-    if ((ifetyp /= 3).or.(ifetyp /= 4)) then
+    if ((ifetyp /= 3).and.(ifetyp /= 4)) then
        pfwdiv = 0.24D0 * pthermmw
        pnucblkt = pthermmw - pfwdiv
     else
