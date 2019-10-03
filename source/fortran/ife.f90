@@ -1397,7 +1397,7 @@ contains
      !  Local variables
 
      integer :: i,j
-     real(kind(1.0D0)), save :: g, vel, acurt, mdot
+     real(kind(1.0D0)), save :: g, vel, acurt, mdot, phi, sang, li_frac
 
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1439,11 +1439,19 @@ contains
 
      rrmax = 1.0D0 / taufall
 
+     ! TBR and Emult model was for spherical lithium
+     ! Remove reactor head
+     phi = atan(r1/zu1)
+     sang = 1.0D0 - cos(phi)
+     li_frac = 1.0D0 - 0.5D0 * sang
+
      ! TBR
      tbr = 3.7418D0 * (1.0D0 / (1.0D0 + exp(-2.6366D0 * bldrc)) - 0.5D0)
+     tbr = tbr * li_frac
 
      ! Energy Multiplication
      emult = 2.2414D0 * (1.0D0 / (1.0D0 + exp(-3.0038D0 * bldrc)) - 0.5D0)
+     emult = emult * li_frac
 
      !  Radial build
 
