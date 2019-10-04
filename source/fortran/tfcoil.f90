@@ -282,12 +282,11 @@ contains
 
     ! Conventionnal tokamak (geometry invariant with hight)
     if (itart == 0) then 
-       volcp = 2.0D0 * tfareain * hmax  !  volume
+       volcp = 2.0D0 * tfareain * ( hmax + tfthko ) !  volume
 
-      !  Inner legs resistive power losses
-      prescp = rhocp * ( ritfc/(tfareain*(1.0D0-fcoolcp)) )**2 &
-             * volcp * (1.0D0-fcoolcp)
-
+       !  Inner legs resistive power losses
+       prescp = rhocp * ritfc**2 * 2.0D0 * ( hmax + tfthko ) / ( tfareain * (1.0D0-fcoolcp) )
+      
     !  Spherical Tokamak (larger diameter at top/bottom)
     else  
        !  Radii and vertical height from midplane
@@ -298,7 +297,7 @@ contains
        rhocp = rhocp * frhocp
 
        !  Volume and resistive power losses of TART centrepost
-       call cpost(rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,r_tf_inleg_in,volcp,prescp)
+       call cpost(rtop,ztop,rmid,hmax+tfthko,ritfc,rhocp,fcoolcp,r_tf_inleg_in,volcp,prescp)
     end if
 
     ! ******
@@ -316,7 +315,11 @@ contains
     ! Length of leg centre-line (N.B. this assumes rectangular shaped
     ! coils, not D-shaped)
     ! A more comprehensive calculation will be present in next of the module
-    ltfleg = hmax + hpfu + 2.0D0*(rtot - rbmax)
+    if ( itart == 1 ) then
+       ltfleg = hmax + hpfu + 2.0D0 * ( rtot - rtop )
+    else 
+       ltfleg = hmax + hpfu + 2.0D0 * ( rtot - r_tf_inleg_out )
+    end if
 
     ! Volume of the TF legs
     voltfleg = ltfleg * arealeg
@@ -328,8 +331,6 @@ contains
     if ( abs( rhotfleg + 1 ) < epsilon(rhotfleg) ) rhotfleg = rhocp
     tflegres = ltfleg * rhotfleg/arealeg
     
-    !  Total weight of TF coils
-    whttf = whtcp + whttflgs
     ! ----------------------------------
 
 
@@ -365,12 +366,15 @@ contains
        whttf = whtcp + whttflgs                              ! total
 
     ! Aluminium
-      else if ( itfsup == 2 ) then
-        whttflgs = voltfleg * tfno * (1.0D0 - vftf) * dalu  ! outer legs
-        whtcp = volcp * (1.0D0 - fcoolcp) * dalu            ! inner legs
-        whttf = whtcp + whttflgs                            ! total
-      end if
-      ! ******
+    else if ( itfsup == 2 ) then
+       whttflgs = voltfleg * tfno * (1.0D0 - vftf) * dalu  ! outer legs
+       whtcp = volcp * (1.0D0 - fcoolcp) * dalu            ! inner legs
+       whttf = whtcp + whttflgs                            ! total
+    end if
+
+    !  Total weight of TF coils
+    whttf = whtcp + whttflgs
+    ! ******
 
 
     ! Stress information (radial, tangential, vertical)
@@ -381,7 +385,7 @@ contains
 
     ! Inductance 
     ! S.K. : COMPUTED WITH AN INTEGRAL IN THE SC CASE
-    tfcind1 = hmax * rmu0/pi * log(r_tf_outleg_in/r_tf_inleg_out)
+    tfcind1 = (hmax + tfthko) * rmu0/pi * log(r_tf_outleg_in/r_tf_inleg_out)
 
     ! Stored energy (GJ)
     estotftgj = 0.5D-9 * tfcind1 * ritfc**2 
@@ -412,7 +416,7 @@ contains
       call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(rmid)',rmid)
       call ovarre(outfile,'Radius of the ends of the centrepost (m)','(rtop)',rtop)
       call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(ztop)',ztop)
-      call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax)
+      call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax + tfthko)
     end if
     ! ---------------------------------------------
 
@@ -476,12 +480,12 @@ contains
     amid    = pi * ( rmid**2 - rmid_in**2 )
 
     !  Average cross-sectional area
-    acpav = volcp/(2.0D0*hmax)
+    acpav = volcp/(2.0D0*(hmax + tfthko))
 
     !  Coolant channels:
-    acool = acpav * fcoolcp  !  Cross-sectional area
-    dcool = 2.0D0 * rcool    !  Diameter
-    lcool = 2.0D0 * hmax     !  Length
+    acool = acpav * fcoolcp         !  Cross-sectional area
+    dcool = 2.0D0 * rcool           !  Diameter
+    lcool = 2.0D0 * (hmax + tfthko) !  Length
     ncool = acool/( pi * rcool**2)  !  Number
 
     ro = sqrt ( acpav/(pi*ncool) )
