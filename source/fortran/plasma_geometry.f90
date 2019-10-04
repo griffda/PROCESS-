@@ -143,7 +143,6 @@ contains
     end select
 
     !  Scrape-off layer thicknesses
-
     if (iscrp == 0) then
        scraplo = 0.1D0 * rminor
        scrapli = 0.1D0 * rminor

@@ -3362,12 +3362,22 @@ module build_variables
 
   !+ad_vars  aplasmin /0.25/ : minimum minor radius (m)
   real(kind(1.0D0)) :: aplasmin = 0.25D0
+
+
+  ! Blanket related build variables
+  ! -------------------------------
   !+ad_vars  blarea : blanket total surface area (m2)
+  ! To be changed
   real(kind(1.0D0)) :: blarea = 0.0D0
+
   !+ad_vars  blareaib : inboard blanket surface area (m2)
+  ! To be changed
   real(kind(1.0D0)) :: blareaib = 0.0D0
+
   !+ad_vars  blareaob : outboard blanket surface area (m2)
+  ! To be changed
   real(kind(1.0D0)) :: blareaob = 0.0D0
+
   !+ad_vars  blbmith /0.17/ : inboard blanket box manifold thickness (m)
   !+ad_varc                    (blktmodel>0)
   real(kind(1.0D0)) :: blbmith = 0.17D0
@@ -3377,7 +3387,7 @@ module build_variables
   !+ad_vars  blbpith /0.30/ : inboard blanket base plate thickness (m)
   !+ad_varc                    (blktmodel>0)
   real(kind(1.0D0)) :: blbpith = 0.30D0
-  !+ad_vars  blbpoth /0.35/ : outboard blanket base plate thickness (m)
+  !+ad_vars  blbpoth /0.35/ : outboard blanket bas plate thickness (m)
   !+ad_varc                    (blktmodel>0)
   real(kind(1.0D0)) :: blbpoth = 0.35D0
   !+ad_vars  blbuith /0.365/ : inboard blanket breeding zone thickness (m)
@@ -3388,19 +3398,32 @@ module build_variables
   !+ad_varc                    (blktmodel>0)
   !+ad_varc                    (iteration variable 91)
   real(kind(1.0D0)) :: blbuoth = 0.465D0
+
   !+ad_vars  blnkith /0.115/ : inboard blanket thickness (m);
   !+ad_varc                    (calculated if blktmodel > 0)
   !+ad_varc                    (=0.0 if iblnkith=0)
+  ! To be changed
   real(kind(1.0D0)) :: blnkith = 0.115D0
+
   !+ad_vars  blnkoth /0.235/ : outboard blanket thickness (m);
   !+ad_varc                    calculated if blktmodel > 0
+  ! To be changed
   real(kind(1.0D0)) :: blnkoth = 0.235D0
+
   !+ad_vars  blnktth : top blanket thickness (m),
   !+ad_varc            = mean of inboard and outboard blanket thicknesses
   real(kind(1.0D0)) :: blnktth = 0.0D0
+
+  ! End blanket build var
+  ! -------------------------------
+
+
+
   !+ad_vars  bore /1.42/ : central solenoid inboard radius (m)
   !+ad_varc                (iteration variable 29)
+  ! To be changed
   real(kind(1.0D0)) :: bore = 1.42D0
+
   !+ad_vars  clhsf /4.268/ : cryostat lid height scaling factor (tokamaks)
   real(kind(1.0D0)) :: clhsf = 4.268D0
   !+ad_vars  ddwex /0.07/ : cryostat thickness (m)
@@ -3427,6 +3450,8 @@ module build_variables
   real(kind(1.0D0)) :: fmstf = 0.0D0
   !+ad_vars  fseppc /3.5d8/ : Separation force in CS coil pre-compression structure
   real(kind(1.0D0)) :: fseppc = 3.5D8
+
+
   !+ad_vars  fwarea : first wall total surface area (m2)
   real(kind(1.0D0)) :: fwarea = 0.0D0
   !+ad_vars  fwareaib : inboard first wall surface area (m2)
@@ -3451,8 +3476,10 @@ module build_variables
   real(kind(1.0D0)) :: gapomin = 0.234D0
   !+ad_vars  gapsto : gap between outboard vacuum vessel and TF coil (m)
   real(kind(1.0D0)) :: gapsto = 0.0D0
+
   !+ad_vars  hmax : maximum (half-)height of TF coil (inside edge) (m)
   real(kind(1.0D0)) :: hmax = 0.0D0
+
   !+ad_vars  hpfdif : difference in distance from midplane of upper and lower
   !+ad_varc           portions of TF legs (non-zero for single-null devices) (m)
   real(kind(1.0D0)) :: hpfdif = 0.0D0
@@ -3473,7 +3500,9 @@ module build_variables
 
   !+ad_vars  ohcth /0.811/ : central solenoid thickness (m)
   !+ad_varc                 (iteration variable 16)
+  ! To be changed
   real(kind(1.0D0)) :: ohcth = 0.811D0
+
   !+ad_vars  precomp : CS coil precompression structure thickness (m)
   real(kind(1.0D0)) :: precomp = 0.0D0
   !+ad_vars  rbld : sum of thicknesses to the major radius (m)
@@ -3486,15 +3515,12 @@ module build_variables
   !+ad_vars  rsldo : radius to outboard shield (outside point) (m)
   real(kind(1.0D0)) :: rsldo = 0.0D0
 
-  !+ad_vars  r_tf_inleg_in : Inner edge radius of the TF inboard legs (m)
-  real(kind(1.0D0)) :: r_tf_inleg_in = 0.0D0
-
-  !+ad_vars  r_tf_inleg_mid : radius of centre of inboard TF leg (m)
+  !+ad_vars  r_tf_inleg_mid : Mid-plane Outer radius of centre of inboard TF leg (m)
   real(kind(1.0D0)) :: r_tf_inleg_mid = 0.0D0
+       
+  !+ad_vars  rtop : Top outer radius of centre of the centropost (ST only) (m)
+  real(kind(1.0D0)) :: rtop = 0.0D0
   
-  !+ad_vars  r_tf_inleg_in : Outer edge radius of the TF inboard legs (m)
-  real(kind(1.0D0)) :: r_tf_inleg_out = 0.0D0
-	
   !+ad_vars  rtot : radius to the centre of the outboard TF coil leg (m)
   real(kind(1.0D0)) :: rtot = 0.0D0
 
@@ -3532,6 +3558,7 @@ module build_variables
 
   !+ad_vars  tfcth : inboard TF coil thickness, (centrepost for ST) (m)
   !+ad_varc                (calculated, NOT an iteration variable)
+  !  To be changed
   real(kind(1.0D0)) :: tfcth = 0.0D0
 
   !+ad_vars  tfoffset : vertical distance between centre of TF coils and centre of plasma (m)

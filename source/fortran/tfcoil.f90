@@ -1,3 +1,5 @@
+! THIS MODULE IS MEANT TO BE SOON REPLACED BY A REFACTORED VERSION 
+! WITH CONSISTENT GEOMETRIES AND PHYSICS
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module tfcoil_module
@@ -35,7 +37,7 @@ module tfcoil_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use build_module
-  use build_variables
+  use build_variables, only : r_tf_inleg_mid, hmax, rtot, rtop, tfcth, tfthko, bore, hpfu
   use constants
   use error_handling
   use fwbs_variables
@@ -45,7 +47,16 @@ module tfcoil_module
   use tfcoil_variables
 
   private
+  
+  ! Radial position of plasma-facing edge of TF coil outboard leg [m]
+  real(kind(1.0D0)), private :: r_tf_inleg_in
+
+  ! Radial position of plasma-facing edge of TF coil inboard leg [m]
+  real(kind(1.0D0)), private :: r_tf_inleg_out
+
   public :: tfcoil, cntrpst
+
+
 
 contains
 
@@ -206,8 +217,8 @@ contains
 
     !  Local variables
     real(kind(1.0D0)) :: r_tf_outleg_in
-    real(kind(1.0D0)) :: ltfleg, rmid, rtop, ztop
-    real(kind(1.0D0)) :: tfcind1, deltf
+    real(kind(1.0D0)) :: ltfleg, rmid, ztop, rtop
+    real(kind(1.0D0)) :: tfcind1
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
 
@@ -217,19 +228,14 @@ contains
     ! -----------------------
     ! Radial build
     ! ******
-    ! Radial position of inner edge of inboard TF coil leg [m]
-    r_tf_inleg_in = bore + ohcth + precomp + gapoh
+    ! Radial position of inner/outer edge of inboard TF coil leg [m]
+    r_tf_inleg_in  = r_tf_inleg_mid - 0.5D0 * tfcth
+    r_tf_inleg_out = r_tf_inleg_mid + 0.5D0 * tfcth
     
-    ! Radial position of plasma-facing edge of TF coil inboard leg [m]
-    r_tf_inleg_out = r_tf_inleg_in + tfcth
-
     ! Position of the maximum magnetic field 
     ! No winding pack structure -> simply the innner legs plasma side radius
     rbmax = r_tf_inleg_out
     
-    ! Gap between inboard TF coil and thermal shield [m]
-    deltf = tftsgap
-
     ! Radial position of centre of inboard TF coil leg [m]
     r_tf_inleg_mid = r_tf_inleg_in + 0.5D0*tfcth
     ! ******
@@ -251,10 +257,10 @@ contains
     bmaxtf = 2.0D-7 * ritfc / rbmax
 
     !  Centering force
-    if (bore == 0.0D0) then
+    if ( bore == 0.0D0 ) then
        cforce = 0.0D0
     else
-       cforce = bmaxtf * ritfc/(2.0D0*tfno)  !  N/m
+       cforce = 0.5D0 * bmaxtf * ritfc / tfno  !  N/m
     end if
     ! ******
 
@@ -281,9 +287,7 @@ contains
     !  Spherical Tokamak (larger diameter at top/bottom)
     else  
        !  Radii and vertical height from midplane
-       rtop = (rmajor - rminor*triang - fwith - 3.0D0*scrapli) + drtop
        rmid = r_tf_inleg_out
-       rtop = max(rtop, (rmid*1.01D0))
        ztop = (rminor * kappa) + dztop
 
        !  Resistivity enhancement factor
@@ -307,6 +311,7 @@ contains
 
     ! Length of leg centre-line (N.B. this assumes rectangular shaped
     ! coils, not D-shaped)
+    ! A more comprehensive calculation will be present in next of the module
     ltfleg = hmax + hpfu + 2.0D0*(rtot - rbmax)
 
     ! Volume of the TF legs
@@ -334,7 +339,7 @@ contains
     ! vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inleg_out) / tfno 
     vforce = 0.25D0 * bmaxtf * ritfc / tfno * ( 0.5D0 * tfcth +                                       &     ! Inner leg side component 
                                               & r_tf_inleg_out * log(r_tf_outleg_in/r_tf_inleg_out) + &     ! TF bore component
-                                              & 0.5D0 * tfcth*tfootfi * (r_tf_inleg_out/r_tf_outleg_in) )   ! Outer leg side component
+                                              & 0.5D0 * tfthko * (r_tf_inleg_out/r_tf_outleg_in) )   ! Outer leg side component
 
     ! Current turn information 
     if (itart == 0) then ! CT case
@@ -879,8 +884,8 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    xarc(1) = r_tf_inleg_mid + tfcth/2.0d0
-    xarc(2) = rtot - tfthko/2.0d0
+    xarc(1) = r_tf_inleg_mid + 0.5D0*tfcth
+    xarc(2) = rtot - 0.5D0*tfthko
     xarc(3) = xarc(2)
     xarc(4) = xarc(2)
     xarc(5) = xarc(1)

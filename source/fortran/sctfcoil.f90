@@ -80,6 +80,11 @@ real(kind(1.0D0)), private :: awpc
 ! Total cross-sectional area of winding pack [m2]
 real(kind(1.0D0)), private :: awptf
 
+  ! Radial position of plasma-facing edge of TF coil outboard leg [m]
+real(kind(1.0D0)), private :: r_tf_inleg_in
+
+! Radial position of plasma-facing edge of TF coil inboard leg [m]
+real(kind(1.0D0)), private :: r_tf_inleg_out
 
 ! Radial position of inner/outer edge and centre of winding pack [m]
 real(kind(1.0D0)), private :: r_wp_inner, r_wp_outer, r_wp_centre
@@ -222,12 +227,11 @@ subroutine tf_coil_geometry()
     !----------------
     real(kind(1.0D0)) :: deltf
 
-    ! Radial position of inner edge of inboard TF coil leg [m]
-    r_tf_inleg_in = bore + ohcth + precomp + gapoh
-
-    ! Radial position of plasma-facing edge of TF coil inboard leg [m]
-    r_tf_inleg_out = r_tf_inleg_in + tfcth
-
+    
+    ! Radial position of inner/outer edge of inboard TF coil leg [m]
+    r_tf_inleg_in  = r_tf_inleg_mid - 0.5D0 * tfcth
+    r_tf_inleg_out = r_tf_inleg_mid + 0.5D0 * tfcth
+    
     ! Half toroidal angular extent of a single TF coil inboard leg
     theta_coil = pi/tfno
     tan_theta_coil = tan(theta_coil)
@@ -253,7 +257,7 @@ subroutine tf_coil_geometry()
     ! TF coil vertical bore [m]
     tfborev = 2.0D0*(rminor*kappa + vgaptop + fwith + blnktth + vvblgap + &
     shldtth + ddwi+ vgap2 + thshield + tftsgap)
-
+  
     ! Gap between inboard TF coil and thermal shield [m]
     deltf = r_tf_inleg_out * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 

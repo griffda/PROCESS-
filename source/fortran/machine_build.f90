@@ -140,19 +140,16 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Calculate total blanket thicknesses if blktmodel > 0
-
-    if (blktmodel > 0) then
+    if ( blktmodel > 0 ) then
        blnkith = blbuith + blbmith + blbpith
        blnkoth = blbuoth + blbmoth + blbpoth
        shldtth = 0.5D0*(shldith+shldoth)
     end if
 
     !  Top/bottom blanket thickness
-
     blnktth = 0.5D0*(blnkith+blnkoth)
 
     !  Check if vgaptop has been set too small
-
     vgaptop = max(0.5d0*(scrapli+scraplo), vgaptop)
 
     ! Calculate pre-compression structure thickness is iprecomp=1
@@ -169,26 +166,33 @@ contains
     endif
 
     ! Radial build to tfcoil
-    rbldtotf = bore + ohcth + precomp + gapoh + tfcth
+    r_tf_inleg_mid = bore + ohcth + precomp + gapoh + 0.5D0*tfcth
+    rbldtotf = r_tf_inleg_mid + 0.5D0*tfcth
 
     ! Additional gap spacing due to flat surfaces of TF
     if ( itfsup == 1 ) then
       deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
-   else
+    else
       deltf = tftsgap
-   end if 
+    end if 
+
+    ! Radius of the centrepost at the top of the machine
+    if ( itart == 1 ) then
+       rtop = rmajor - rminor * triang - ( deltf + thshield + gapds + ddwi + &
+            & shldith + vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
+       rtop = max( rtop, ( r_tf_inleg_mid + 0.5D0*tfcth ) * 1.01D0 )    
+    else
+       rtop = r_tf_inleg_mid + 0.5D0*tfcth
+    end if 
 
     !  Radial build to centre of plasma (should be equal to rmajor)
-
     rbld = rbldtotf + deltf + thshield + gapds + ddwi + &
          shldith + vvblgap + blnkith + fwith + scrapli + rminor
 
     !  Radius to inner edge of inboard shield
-
     rsldi = rmajor - rminor - scrapli - fwith - blnkith - shldith
 
     !  Radius to outer edge of outboard shield
-
     rsldo = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
 
     !  Thickness of outboard TF coil legs
@@ -233,7 +237,6 @@ contains
     if ((itart == 1).or.(fwbsshape == 1)) then  !  D-shaped
 
        !  Major radius to outer edge of inboard section
-
        r1 = rmajor - rminor - scrapli
 
        !  Horizontal distance between inside edges,
@@ -242,7 +245,6 @@ contains
        r2 = (rmajor + rminor + scraplo) - r1
 
        !  Calculate surface area, assuming 100% coverage
-
        call dshellarea(r1,r2,hfw,fwareaib,fwareaob,fwarea)
 
     else  !  Cross-section is assumed to be defined by two ellipses
