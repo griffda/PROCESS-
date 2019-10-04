@@ -392,15 +392,20 @@ line_length:
 pages:
   before_script:
     - "export LOGNAME=root"
+    # Python3 uses the locale to choose the file encoding it uses
+    # Without this it will use ASCII encoding and Ford will fail
+    - export LANG="C.UTF-8"
   when: on_success
   only:
     - develop
     - ford_docs
+    - ford_dicts
   stage: pages
   script:
    - pwd
    - apt-get update
    - apt-get install -y python-dev python-pip pandoc cmake gcc gfortran graphviz
+   - apt-get install -y python3-pip
    - pip install mkdocs
    - pip install mkdocs-material
    - pip install pymdown-extensions
@@ -411,11 +416,15 @@ pages:
    - mkdocs build
    
    # FORD documentation
-   - rm -rf ../ford # Need to clone to empty dir
-   - git clone https://github.com/Fortran-FOSS-Programmers/ford ../ford
-   - pip install ../ford
+   - cd ..
+   - rm -rf ford # Need to clone to empty dir
+   - git clone https://github.com/jonMaddockUkaea/ford.git ford
+   - cd ford
+   - git checkout export_project
+   - pip3 install .
+   - cd ../process
    - ford documentation/ford/index.md
-   
+
    # Publish the MkDocs and FORD sites
    - ls site
    - mv site public
