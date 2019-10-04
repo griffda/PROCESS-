@@ -362,13 +362,13 @@ contains
     ! Copper
     if ( itfsup == 0 ) then
        whttflgs = voltfleg * tfno * (1.0D0 - vftf) * dcopper ! outer legs
-       whtcp = volcp * (1.0D0 - fcoolcp) * dcopper           ! inner legs
+       whtcp = volcp * dcopper                               ! inner legs
        whttf = whtcp + whttflgs                              ! total
 
     ! Aluminium
     else if ( itfsup == 2 ) then
        whttflgs = voltfleg * tfno * (1.0D0 - vftf) * dalu  ! outer legs
-       whtcp = volcp * (1.0D0 - fcoolcp) * dalu            ! inner legs
+       whtcp = volcp * dalu                                ! inner legs
        whttf = whtcp + whttflgs                            ! total
     end if
 
@@ -758,7 +758,7 @@ contains
     real(kind(1.0D0)), intent(out) :: volume,respow
 
     !  Local variables
-    real(kind(1.0D0)) :: r1,z1,x,y,rc,sum1,sum2,dz,r,z, a_tfin_hole
+    real(kind(1.0D0)) :: r1,z1,x,y,rc,sum1,sum2,dz,r,z, a_tfin_hole, a_cp_cool
     real(kind(1.0D0)), dimension(0:100) :: yy
     integer :: ii
 
@@ -836,6 +836,9 @@ contains
 
     ! Area of the innner TF central hole
     a_tfin_hole = pi*r_tfin_inleg**2
+    
+    ! Coolant area (invariant with z)
+    a_cp_cool = tfareain * fcool
 
     do ii = 0,100
        z = dble(ii) * dz
@@ -850,7 +853,7 @@ contains
        end if
 
        !  Cross-sectional area at Z
-       yy(ii) = pi*r*r - a_tfin_hole
+       yy(ii) = pi*r**2 - a_tfin_hole - a_cp_cool
 
     end do
 
@@ -866,11 +869,10 @@ contains
     sum2 = 0.5D0*dz * ( 1.0D0/yy(0) + 1.0D0/yy(100) + 2.0D0*sum2 )
 
     !  Centrepost volume (ignoring coolant fraction)
-    volume = 2.0D0 * (sum1 + (hmax-ztop)*pi*rtop*rtop)
+    volume = 2.0D0 * (sum1 + (hmax-ztop)*(pi*rtop**2 - a_cp_cool - a_tfin_hole ))
     
     !  Resistive power losses
-    respow = 2.0D0 * rho * curr*curr * (sum2 + (hmax-ztop)/(pi*rtop*rtop)) &
-         / (1.0D0-fcool)
+    respow = 2.0D0 * rho * curr**2 * (sum2 + (hmax-ztop)/(pi*rtop**2 - a_cp_cool - a_tfin_hole ))
     ! --------------------------------------------------------------------
   end subroutine cpost
 
