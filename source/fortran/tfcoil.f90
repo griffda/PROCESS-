@@ -241,8 +241,12 @@ contains
     ! ******
 
 
-    ! Toroidal thickness of TF coil (m)
-    tftort = 2.0D0 * r_tf_inleg_out*sin(pi/tfno)
+    ! Toroidal thickness of TF coil outer leg [m]
+    if ( itart == 1 ) then
+       tftort = 2.0D0 * rtop * sin(pi/tfno)
+    else 
+       tftort = 2.0D0 * r_tf_inleg_out*sin(pi/tfno)
+    end if
 
     ! Inboard total cross-sectional area (m2)
     tfareain = pi * (r_tf_inleg_out**2 - r_tf_inleg_in**2)
@@ -306,7 +310,7 @@ contains
     ! Radius of inner edge of outboard TF coil leg (m)
     r_tf_outleg_in = rtot - 0.5D0*tfthko
     
-    ! Cross-sectional area
+    ! Outer leg cross-sectional area 
     arealeg = tfthko*tftort
 
     ! Length of leg centre-line (N.B. this assumes rectangular shaped
