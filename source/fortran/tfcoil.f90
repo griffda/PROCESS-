@@ -651,6 +651,14 @@ contains
     fricfac  = 1.0D0/ (-2.0D0 * log10(roughrat/3.7D0 - 5.02D0/reyn * &
          log10( roughrat/3.7D0 + 14.5D0/reyn) ) )**2
 
+    ! Pumping efficiency
+    if      ( itfsup == 0 ) then ! Water cooled
+      etapump = 0.8D0
+    else if ( itfsup == 2 ) then ! Cryogenic helium
+      etapump = 0.6D0
+    end if
+
+    ! Pressure drop calculation
     dpres = fricfac * (lcool/dcool) * coolant_density * 0.5D0*vcool**2
     ppump = dpres * acool * vcool / etapump
 
