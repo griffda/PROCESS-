@@ -547,10 +547,9 @@ def get_array_from_fortran(array_name):
     return value
 
 def dict_ixc2nsweep():
-    """Returns a dict containing two dicts, one mapping ixc_no to nsweep_no, 
-    and the other mapping nsweep_no to ixc_no, if both exist for a particular 
-    variable. Looks in scan.f90 for mapping from nsweep_no to iteration 
-    variable name, and uses ixc_full to map variable name to ixc_no.
+    """Returns a dict mapping ixc_no to nsweep_no, if both exist for a 
+    particular variable. Looks in scan.f90 for mapping from nsweep_no to 
+    iteration variable name, and uses ixc_full to map variable name to ixc_no.
 
     Example of a fragment we are looking for:
         case (1)
@@ -561,7 +560,7 @@ def dict_ixc2nsweep():
         DICT_IXC2NSWEEP['1'] = '1'
     """
 
-    di = {}
+    ixc2nsweep = {}
     file = SOURCEDIR + "/scan.f90"
     #slice the file to get the switch statement relating to nsweep
     lines = slice_file(file, r"select case \(nwp\)", r"case default")
@@ -593,14 +592,18 @@ def dict_ixc2nsweep():
                 name = match_2.group(1)
                 if name in ixc_simple_rev:
                     ixcnum = ixc_simple_rev[name]
-                    di[ixcnum] = num
+                    ixc2nsweep[ixcnum] = num
 
-    # Return two dicts, mapping both ways
-    ixc2nsweep = di
+    return ixc2nsweep
+
+def dict_nsweep2ixc():
+    """Returns a dict mapping nsweep_no to ixc_no; the inverse of 
+    dict_ixc2nsweep"""
+
+    # Use dict_ixc2nsweep from output_dict to produce dict_nsweep2ixc
+    ixc2nsweep = output_dict['DICT_IXC2NSWEEP']
     nsweep2ixc = {b:a for a, b in ixc2nsweep.items()}
-    dicts = {'DICT_IXC2NSWEEP': ixc2nsweep, 'DICT_NSWEEP2IXC': nsweep2ixc}
-    return dicts
-
+    return nsweep2ixc
 
 def dict_var_type():
     """Function to return a dictionary mapping variable name to variable type
@@ -623,58 +626,6 @@ def dict_var_type():
         scalar = re.search(regexp, line).group(2)
         di[name] = var_type + "_" + scalar
     return di
-
-def dict_ixc_full():
-    """Function to return a dictionary matching str(ixc_no) to a dictionary
-       containing the name, lower and upper bounds of that variable. Looks in
-       numerics.f90 at !+ad_varc lines in lablxc to get ixc_no and
-       variable names, and looks at boundu and boundl for upper and
-       lower bounds.
-
-       Example of a lablxc line we are looking for:
-           lablxc(1) = 'aspect        '
-
-       Example of a boundl line we are looking for:
-           boundl(1) = 0.0D0
-
-       Example of a boundu line we are looking for:
-           boundu(1) = 1.0D0
-
-       Example dictionary entry:
-           DICT_IXC_FULL['5'] = {'name' : 'beta', 'lb' : 0.001, 'ub' : 1.0}
-    """
-
-    with open(SOURCEDIR + "/iteration_variables.f90") as myFile:
-        lines = myFile.readlines()
-
-    ixc_full = dict()
-
-    for lline in lines:
-        if "subroutine init_itv_" in lline and "end" not in lline:
-            itv_num = lline.split("_")[-1].strip("\n").replace(" ", "")
-            ixc_full[itv_num] = dict()
-
-    for line in lines:
-
-        if "lablxc" in line and "=" in line:
-            if "lablxc(i)" not in line and "lablxc(ixc(i))" not in line:
-                labl_num = line.split("(")[1].split(")")[0]
-                labl = line.split("=")[-1].strip("\n").replace(" ", "").replace("'", "")
-                ixc_full[labl_num]["name"] = labl
-        
-        if "boundl(" in line and "=" in line:
-            if "boundl(i)" not in line and "boundl(ixc(i))" not in line:
-                boundl_num = line.split("(")[1].split(")")[0]
-                boundl_val = line.split("=")[-1].strip("\n").lower().replace("d", "e")
-                ixc_full[boundl_num]["lb"]= float(boundl_val)
-    
-        if "boundu(" in line and "=" in line:
-            if "boundu(i)" not in line and "boundu(ixc(i))" not in line:
-                boundu_num = line.split("(")[1].split(")")[0]
-                boundu_val = line.split("=")[-1].strip("\n").lower().replace("d", "e")
-                ixc_full[boundu_num]["ub"]= float(boundu_val)
-
-    return ixc_full
 
 def dict_icc_full():
     """Function to return a dictionary matching str(icc_no) to a dictionary
@@ -804,15 +755,61 @@ def dict_nsweep2varname():
 
     return di
 
-def dict_ixc():
-    """Returns a dict containing:
-        DICT_IXC_FULL: Dictionary mapping ixc no to name and bounds
-        DICT_IXC_BOUNDS: Dictionary mapping iteration variable name to bounds
-        DICT_IXC_DEFAULT: Dictionary mapping iteration variable name to default value
-        DICT_IXC_SIMPLE: Dictionary mapping ixc no to iteration variable name
-        DICT_IXC_SIMPLE_REV: Dictionary mapping iteration variable name to ixc no
+def dict_ixc_full():
+    """Function to return a dictionary matching str(ixc_no) to a dictionary
+       containing the name, lower and upper bounds of that variable. Looks in
+       numerics.f90 at !+ad_varc lines in lablxc to get ixc_no and
+       variable names, and looks at boundu and boundl for upper and
+       lower bounds.
+
+       Example of a lablxc line we are looking for:
+           lablxc(1) = 'aspect        '
+
+       Example of a boundl line we are looking for:
+           boundl(1) = 0.0D0
+
+       Example of a boundu line we are looking for:
+           boundu(1) = 1.0D0
+
+       Example dictionary entry:
+           DICT_IXC_FULL['5'] = {'name' : 'beta', 'lb' : 0.001, 'ub' : 1.0}
     """
-    ixc_full = dict_ixc_full()
+
+    with open(SOURCEDIR + "/iteration_variables.f90") as myFile:
+        lines = myFile.readlines()
+
+    ixc_full = dict()
+
+    for lline in lines:
+        if "subroutine init_itv_" in lline and "end" not in lline:
+            itv_num = lline.split("_")[-1].strip("\n").replace(" ", "")
+            ixc_full[itv_num] = dict()
+
+    for line in lines:
+
+        if "lablxc" in line and "=" in line:
+            if "lablxc(i)" not in line and "lablxc(ixc(i))" not in line:
+                labl_num = line.split("(")[1].split(")")[0]
+                labl = line.split("=")[-1].strip("\n").replace(" ", "").replace("'", "")
+                ixc_full[labl_num]["name"] = labl
+        
+        if "boundl(" in line and "=" in line:
+            if "boundl(i)" not in line and "boundl(ixc(i))" not in line:
+                boundl_num = line.split("(")[1].split(")")[0]
+                boundl_val = line.split("=")[-1].strip("\n").lower().replace("d", "e")
+                ixc_full[boundl_num]["lb"]= float(boundl_val)
+    
+        if "boundu(" in line and "=" in line:
+            if "boundu(i)" not in line and "boundu(ixc(i))" not in line:
+                boundu_num = line.split("(")[1].split(")")[0]
+                boundu_val = line.split("=")[-1].strip("\n").lower().replace("d", "e")
+                ixc_full[boundu_num]["ub"]= float(boundu_val)
+
+    return ixc_full
+
+def dict_ixc_bounds():
+    # Returns dictionary mapping iteration variable name to bounds
+    ixc_full = output_dict['DICT_IXC_FULL']
     ixc_bounds = {}
     for key, value in ixc_full.items():
         lb = value["lb"]
@@ -820,12 +817,13 @@ def dict_ixc():
         temp = {"lb" : lb, "ub" : ub}
         ixc_bounds[value["name"]] = temp
 
-    ixc_default = {}
-    # Could do better: access to other dynamically-created dicts
-    default = output_dict['DICT_DEFAULT']
+    return ixc_bounds
 
-    if default['fcpttf']:
-        print('')
+def dict_ixc_default():
+    # Returns dictionary mapping iteration variable name to default value
+    ixc_default = {}
+    default = output_dict['DICT_DEFAULT']
+    ixc_full = output_dict['DICT_IXC_FULL']
 
     for key, value in ixc_full.items():
         name = value["name"]
@@ -836,20 +834,23 @@ def dict_ixc():
             logging.warning("print_dict_ixc could not find %s"\
                             " in DICT_DEFAULT\n", name)
 
+    return ixc_default
+    
+def dict_ixc_simple():
+    # Returns dictionary mapping ixc no to iteration variable name
     ixc_simple = {}
+    ixc_full = output_dict['DICT_IXC_FULL']
     for key, value in ixc_full.items():
         ixc_simple[key] = value["name"]
 
-    ixc_simple_rev = {b:a for a, b in ixc_simple.items()}
+    return ixc_simple
 
-    dicts = {
-        'DICT_IXC_FULL': ixc_full,
-        'DICT_IXC_BOUNDS': ixc_bounds,
-        'DICT_IXC_DEFAULT': ixc_default,
-        'DICT_IXC_SIMPLE': ixc_simple,
-        'DICT_IXC_SIMPLE_REV': ixc_simple_rev
-    }
-    return dicts
+def dict_ixc_simple_rev():
+    # Returns dictionary mapping iteration variable name to ixc no
+    ixc_simple = output_dict['DICT_IXC_SIMPLE']
+    ixc_simple_rev = {b:a for a, b in ixc_simple.items()}
+    
+    return ixc_simple_rev
 
 def create_dicts(project):
     # There are 3 sources of dicts: from the Ford project object, from the 
@@ -859,6 +860,8 @@ def create_dicts(project):
     # Different dict objects, e.g. variable descriptions
     
     # Make dict objects
+    # Some dicts depend on other dicts already existing in output_dicts, so
+    # be careful if changing the order!
     dict_objects.extend([
         VariableDescriptions(project),
         DefaultValues(project),
@@ -873,19 +876,13 @@ def create_dicts(project):
         SourceDictionary('DICT_NSWEEP2VARNAME', dict_nsweep2varname),
         SourceDictionary('DICT_VAR_TYPE', dict_var_type),
         SourceDictionary('DICT_ICC_FULL', dict_icc_full),
-        MultipleSourceDictionary([
-            'DICT_IXC2NSWEEP',
-            'DICT_NSWEEP2IXC'
-            ], dict_ixc2nsweep
-        ),
-        MultipleSourceDictionary([
-            'DICT_IXC_FULL',
-            'DICT_IXC_BOUNDS',
-            'DICT_IXC_DEFAULT',
-            'DICT_IXC_SIMPLE',
-            'DICT_IXC_SIMPLE_REV'
-            ], dict_ixc
-        )
+        SourceDictionary('DICT_IXC2NSWEEP', dict_ixc2nsweep),
+        SourceDictionary('DICT_NSWEEP2IXC', dict_nsweep2ixc),
+        SourceDictionary('DICT_IXC_FULL', dict_ixc_full),
+        SourceDictionary('DICT_IXC_BOUNDS', dict_ixc_bounds),
+        SourceDictionary('DICT_IXC_DEFAULT', dict_ixc_default),
+        SourceDictionary('DICT_IXC_SIMPLE', dict_ixc_simple),
+        SourceDictionary('DICT_IXC_SIMPLE_REV', dict_ixc_simple_rev)
     ])
 
     # Make individual dicts within dict objects, process, then add to output_dict
