@@ -217,7 +217,7 @@ contains
 
     !  Local variables
     real(kind(1.0D0)) :: r_tf_outleg_in
-    real(kind(1.0D0)) :: ltfleg, rmid, ztop, rtop
+    real(kind(1.0D0)) :: ltfleg, rmid, ztop
     real(kind(1.0D0)) :: tfcind1
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     

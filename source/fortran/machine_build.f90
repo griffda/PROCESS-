@@ -178,9 +178,16 @@ contains
 
     ! Radius of the centrepost at the top of the machine
     if ( itart == 1 ) then
+
        rtop = rmajor - rminor * triang - ( deltf + thshield + gapds + ddwi + &
             & shldith + vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
-       rtop = max( rtop, ( r_tf_inleg_mid + 0.5D0*tfcth ) * 1.01D0 )    
+       rtop = max( rtop, ( r_tf_inleg_mid + 0.5D0*tfcth ) * 1.01D0 ) 
+       
+       if (rtop <= 0.0D0) then
+         fdiags(1) = rtop ; call report_error(115)
+       end if
+    
+       !write(*,*) ' rtop = ' , rtop
     else
        rtop = r_tf_inleg_mid + 0.5D0*tfcth
     end if 
