@@ -695,7 +695,7 @@ def dict_icc_full():
     lcctext = slice_file(SOURCEDIR + "/numerics.f90", r"lablcc = \(/", r"/\)")
 
     regexp = r"""
-               !\+ad_varc       #look for !+ad_varc
+               !!               #var comment begins with !!
 
                .*?              #irrelevant stuff until open brackets
 
