@@ -899,6 +899,15 @@ def create_dicts(project):
     with open(DICTS_FILE_PATH, 'w') as dicts_file:
         json.dump(output_dict, dicts_file, indent=4, sort_keys=True)
 
+def get_dicts():
+    # Return loaded dicts from the JSON file for use in utilities
+    try:
+        with open(DICTS_FILE_PATH, 'r') as dicts_file:
+            return json.load(dicts_file)
+    except:
+        print("Error loading the dicts JSON file")
+        exit()
+        
 ################################################################
 # Comment out for now: not much point in running from terminal
 # as the Ford project object would be missing, which is now essential. 

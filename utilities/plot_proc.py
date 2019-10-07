@@ -26,23 +26,16 @@ from matplotlib.path import Path
 import matplotlib.patches as patches
 
 import numpy as np
-import json
-# try:
-#     # import process_io_lib.process_dicts as proc_dict
-# except ImportError:
-#     print("The Python dictionaries have not yet been created. Please run",
-#           " 'make dicts'!")
-#     exit()
-
-# Load dicts from process_dicts.json instead
-DICTS_FILE_PATH = os.path.join(os.path.dirname(__file__),
-    'process_io_lib/process_dicts.json')
-dicts_file = open(DICTS_FILE_PATH, 'r')
-proc_dict = json.load(dicts_file)
 
 # Get repository root directory
 import  pathlib
 import time
+
+from create_dicts import get_dicts
+
+# Load dicts from dicts JSON file
+proc_dict = get_dicts()
+
 timeout = time.time() + 10   # 10 seconds
 found_root = False
 back = ""
