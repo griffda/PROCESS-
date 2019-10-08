@@ -110,15 +110,16 @@ DICT_OPTIMISATION_VARS = {
 
 output_dict = {}
 # Dict of nested dicts e.g. output_dict['DICT_DESCRIPTIONS'] = {descriptions_dict}
-# Dicts stored in output_dict are used to create other derivative dicts; 
-# Todo: perhaps this could be improved?
+# Dicts stored in output_dict are used to create other derivative dicts 
 
 # Classes for the various dictionary types
 class Dictionary(object):
     # Base Dictionary class for all dicts
-    def __init__(self):
-        self.name = None # Becomes the key for this particular dict in the output dict
-        self.dict = {} # Contains this particular dict
+    def __init__(self, name):
+        self.name = name # Dict name
+        self.dict = {} # Contains the dict
+        self.dict[self.name] = {} # Structures this dict: key = dict name, 
+        # value = nested dict of variable info
 
     def pre_process(self):
         # Perform any processing before making the dict
@@ -138,16 +139,15 @@ class Dictionary(object):
 
 class ProjectDictionary(Dictionary):
     # Dicts that rely on the Ford project object
-    def __init__(self, project):
-        Dictionary.__init__(self)
+    def __init__(self, name, project, value_type):
+        Dictionary.__init__(self, name)
         self.project = project # The Ford project object
-        self.value_type = None # The attribute in the project to make a dict for
+        self.value_type = value_type
+        # The attribute in the project to make a dict for
 
     def make_dict(self):
-        # Create a dict: key = dict name, value = nested dict of variable info
-        self.dict[self.name] = {}
-        
-        # Assign the variable name key to the value of an attribute of the var object
+        # Assign the variable name key to the value of an attribute of 
+        # the var object in the project ([var_name] = some_value_of_var)
         for module in self.project.modules:
             for var in module.variables:
                 self.dict[self.name][var.name] = getattr(var, self.value_type)
@@ -155,43 +155,31 @@ class ProjectDictionary(Dictionary):
 class SourceDictionary(Dictionary):
     # Dictionary created from Fortran source
     def __init__(self, name, dict_creator_func):
-        Dictionary.__init__(self)
-        self.name = name
+        Dictionary.__init__(self, name)
         # Function that creates the dict
-        self.dict_creator_func = dict_creator_func 
-
-    def make_dict(self):
-        self.dict[self.name] = self.dict_creator_func()
-
-class MultipleSourceDictionary(Dictionary):
-    # Creates dict containing multiple nested dicts that rely on each other
-    # during creation in the dict_creator_func
-    def __init__(self, names, dict_creator_func):
-        Dictionary.__init__(self)
-        self.names = names
         self.dict_creator_func = dict_creator_func
 
     def make_dict(self):
-        returned_dicts = self.dict_creator_func()
-        for name in self.names:
-            self.dict[name] = returned_dicts[name]
+        # Make entire nested dict from function
+        self.dict[self.name] = self.dict_creator_func()
 
 class HardcodedDictionary(Dictionary):
     # Dictionary created from a hardcoded dict in this file
     def __init__(self, name, hardcoded_dict):
-        Dictionary.__init__(self)
-        self.name = name
+        Dictionary.__init__(self, name)
+        self.dict[self.name] = None
+        # Hardcoded value isn't always a dict; override to None to allow the 
+        # value to be set to any type
         self.hardcoded_dict = hardcoded_dict
 
     def make_dict(self):
+        # Set the nested value to a hardcoded int, list or dict
         self.dict[self.name] = self.hardcoded_dict
 
 class VariableDescriptions(ProjectDictionary):
     # Dictionary of variable descriptions
     def __init__(self, project):
-        ProjectDictionary.__init__(self, project)
-        self.name = 'DICT_DESCRIPTIONS'
-        self.value_type = 'doc'
+        ProjectDictionary.__init__(self, 'DICT_DESCRIPTIONS', project, 'doc')
 
     def pre_process(self):
         # Todo
@@ -210,8 +198,6 @@ class VariableDescriptions(ProjectDictionary):
                 var.doc = re.sub('</?p>', '', var.doc)
 
     def make_dict(self):
-        self.dict[self.name] = {}
-        
         # Assign the case-lowered variable name key to the var description
         for module in self.project.modules:
             for var in module.variables:
@@ -220,9 +206,7 @@ class VariableDescriptions(ProjectDictionary):
 class DefaultValues(ProjectDictionary):
     # Dictionary of default values of variables
     def __init__(self, project):
-        ProjectDictionary.__init__(self, project)
-        self.name = 'DICT_DEFAULT'
-        self.value_type = 'initial'
+        ProjectDictionary.__init__(self, 'DICT_DEFAULT', project, 'initial')
 
     def post_process(self):
         # Most default values are numbers saved as strings, but some 
@@ -279,9 +263,7 @@ class DefaultValues(ProjectDictionary):
 class Modules(ProjectDictionary):
     # Dictionary mapping modules to arrays of its module-level variables
     def __init__(self, project):
-        ProjectDictionary.__init__(self, project)
-        self.name = 'DICT_MODULE'
-        self.value_type = 'name'
+        ProjectDictionary.__init__(self, 'DICT_MODULE', project, 'name')
 
     def pre_process(self):
         # Prettify module names, as done previously
@@ -290,10 +272,6 @@ class Modules(ProjectDictionary):
             module.name = module.name.replace('_', ' ').title()
 
     def make_dict(self):
-        # Produce dict of the form:
-        # modules_dict[module_name] = [array_of_module_level_variables]
-        self.dict[self.name] = {}
-
         for module in self.project.modules:
             # Create individual module dict
             self.dict[self.name][module.name] = []
