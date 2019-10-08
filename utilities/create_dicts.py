@@ -121,10 +121,6 @@ class Dictionary(object):
         self.dict[self.name] = {} # Structures this dict: key = dict name, 
         # value = nested dict of variable info
 
-    def pre_process(self):
-        # Perform any processing before making the dict
-        pass
-
     def make_dict(self):
         # Make the dictionary
         pass
@@ -181,27 +177,17 @@ class VariableDescriptions(ProjectDictionary):
     def __init__(self, project):
         ProjectDictionary.__init__(self, 'DICT_DESCRIPTIONS', project, 'doc')
 
-    def pre_process(self):
-        # Todo
-        # The names are case-lowered in the original dict_descriptions()
-        # This is still required; maybe better to fix downstream (i.e. in utils)
-        # to remove this requirement
-        # Need to lower only locally; only DICT_DESCRIPTIONS needs lowering
-        # Other dicts (like default and ixc_default) rely on non-lowered entries
-        # in DICT_DESCRIPTIONS
-        # Hence use var.name2 for lowered entries (for now)
-
-        for module in self.project.modules:
-            for var in module.variables:
-                var.name2 = var.name.lower()
-                # Strip the <p> and </p> tags; not required in output
-                var.doc = re.sub('</?p>', '', var.doc)
-
     def make_dict(self):
-        # Assign the case-lowered variable name key to the var description
+        # Assign the variable name key to the var description
         for module in self.project.modules:
             for var in module.variables:
-                self.dict[self.name][var.name2] = getattr(var, self.value_type)
+                self.dict[self.name][var.name] = getattr(var, self.value_type)
+
+    def post_process(self):
+        for var_name, var_desc in self.dict[self.name].items():
+            # Strip the <p> and </p> tags from the description; not 
+            # required in output
+            self.dict[self.name][var_name] = re.sub('</?p>', '', var_desc)
 
 class DefaultValues(ProjectDictionary):
     # Dictionary of default values of variables
@@ -264,12 +250,6 @@ class Modules(ProjectDictionary):
     # Dictionary mapping modules to arrays of its module-level variables
     def __init__(self, project):
         ProjectDictionary.__init__(self, 'DICT_MODULE', project, 'name')
-
-    def pre_process(self):
-        # Prettify module names, as done previously
-        # Todo: is this necessary?
-        for module in self.project.modules:
-            module.name = module.name.replace('_', ' ').title()
 
     def make_dict(self):
         for module in self.project.modules:
@@ -865,7 +845,6 @@ def create_dicts(project):
 
     # Make individual dicts within dict objects, process, then add to output_dict
     for dict_object in dict_objects:
-        dict_object.pre_process()
         dict_object.make_dict()
         dict_object.post_process()
         dict_object.publish()
