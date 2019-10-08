@@ -200,8 +200,7 @@ class DefaultValues(ProjectDictionary):
         # Attempt to convert strings to sci notation: 1.57812D3 to 1.578E+03
         working_dict = self.dict[self.name]
 
-        for key in working_dict:
-            value = working_dict[key]
+        for key, value in working_dict.items():
             if value:
                 # Guard against None
                 # Is it a list?
@@ -225,7 +224,7 @@ class DefaultValues(ProjectDictionary):
             value = '{:.3E}'.format(value)
             return value
         except:
-            # Maybe log here
+            # Failed conversion; don't change anything
             return original_value
 
     def convert_list_to_sci_not(self, working_list):
