@@ -1,24 +1,18 @@
-#!/usr/bin/env python3
-
 """
-   This is a program to automatically produce the process_dicts.py file
-   used by PROCESS utility programs written in python. It does this by
-   scanning the fortran source code. Most dictionaries are created using
-   !+ad_vars and !+ad_varc comments that are used to produce the VarDes file
-   so the output of this program should be consistent with the VarDes.
+   This module produces the process_dicts.json file used by PROCESS Python 
+   utilities. The Ford documentation program reads in the PROCESS source, 
+   creates a project object which contains the structure of PROCESS used for
+   documenting the code within Ford, and then calls 
+   create_dicts.create_dicts(project). This module then creates dictionaries
+   of variables which are used by the Python utilities. The dicts are created 
+   from hardcoded values, PROCESS source parsing and the Ford project object, 
+   and then dumped into the JSON file for later use.
 
-   The program prints genuine output to stdout and warnings to stderr, so
-   stdout should be redirected to the intended dictionary file name.
-   ./create_dicts.py > process_dicts.py
+   Utilities can then call create_dicts.get_dicts() to load the dicts from the
+   saved JSON file and use them.
 
-   For a list of dictionaries this program currently produces, see the function
-   print_header()
-
-   Tom Miller, August-September 2014
-
-   P J Knight:
-   25/09/2014 Modified SOURCEDIR usage to use ROOTDIR
-
+   This ultimately provides Python utilities with the ability to access variable
+   information in the PROCESS Fortran source code.
 """
 
 import re
@@ -38,19 +32,6 @@ SOURCEDIR = ROOTDIR
 # Path to the process_dicts.json output file
 DICTS_FILE_PATH = os.path.join(os.path.dirname(__file__),
     'process_io_lib/process_dicts.json')
-
-#These two dictionaries are used to help DICT_DEFAULT. FIXEDVALS is a list of
-#integers that occur as constant array lengths in the fortran code eg.
-#!+ad_vars  cptdin(ngc2) /4.0e4/: current per turn input for PF coil i (A)
-#This allows the function interpret_array to expand arrays to the correct length
-
-#FIXEDDEFS are hard coded default values of variables that are inserted into
-#DICT_DEFAULT. This is used for adding important variables to the dictionary
-#that the script fails to parse.
-FIXEDVALS = {"ngc2" : 18, "nimp" : 14}
-FIXEDDEFS = {"impdir" : ROOTDIR+"/data/impuritydata",
-             "sweep" : [0.0] * 200
-            }
 
 # Variables, arrays and dictionaries that aren't read from the source files so
 # have to be hard coded
@@ -109,7 +90,8 @@ DICT_OPTIMISATION_VARS = {
     }
 
 output_dict = {}
-# Dict of nested dicts e.g. output_dict['DICT_DESCRIPTIONS'] = {descriptions_dict}
+# Dict of nested dicts e.g. output_dict['DICT_DESCRIPTIONS'] = 
+# {descriptions_dict}
 # Dicts stored in output_dict are used to create other derivative dicts 
 
 # Classes for the various dictionary types
@@ -311,61 +293,6 @@ def grep(file, regexp, flags=re.U):
       logging.warning("File : %s not found\n", file)
     return lines
 
-def grep_r(search_dir, regexp, flags=re.U, extension=""):
-    """Implements an in-python grep through every file in the given directory
-       No longer recursive. Returns the lines that match as a list.
-       Args:
-            search_dir --> Directory name
-            regexp --> Regular expression to search for
-            flags --> re flags to use in search. Default is re.U which has
-                        no effect
-            extension --> only search through files with this suffix extension
-       Returns:
-            lines --> List of matching lines
-    """
-
-    lines = []
-    for file in os.listdir(search_dir):
-        path = search_dir + "/" + file
-        if os.path.isdir(path):  #  ignore subdirectories
-            continue
-        if not file.endswith(extension):
-            continue
-        try:
-            lines += grep(path, regexp, flags)
-        except UnicodeDecodeError:
-            #this occurs when attempting to read binary files
-            continue
-    return lines
-
-def find(search_dir, regexp, flags=re.U):
-    """Searches through the search_dir to find files
-       that contain regexp. Returns matching files as a list
-       Args:
-            search_dir --> Path to directory to search
-            regexp --> regular expression to match to
-            flags --> regular expression flags to modify search
-       Returns:
-            files --> List of matching file paths
-
-    """
-    files = []
-    for file in os.listdir(search_dir):
-        if 'f90' in file:
-            path = search_dir + "/" + file
-            if os.path.isdir(path):
-                continue
-            try:
-                text = open(path,"r",encoding="utf-8").readlines()
-                for line in text:
-                    if re.search(regexp, line, flags):
-                        files.append(path)
-                        break
-            except UnicodeDecodeError:
-                continue
-
-    return files
-
 def slice_file(file, re1, re2):
     """Returns a slice of a file that is bounded by lines containing a
        substring matching the given regular expressions. The first match
@@ -421,87 +348,6 @@ def remove_comments(line):
     if line[-1] == "&":
         line = line[:-1]
     return line
-
-def interpret_array(name, value):
-    """Function that interprets an array listed in the VarDes style
-       and returns the corresponding python list. Will pad out with last value
-       to correct length if it finds '..' or '...' at end of list or length of
-       value is less than the expected length. Checks that every element of
-       the list is the same type.
-       Args:
-            name --> Name of array and size eg. 'dcond(4)' or 'cptdin(ngc2)'
-            value --> String value of array eg. '1,2,3' or '4.0D4, ...'
-       Returns:
-            ret --> Interpreted array
-    """
-
-    #get the expected size of the array if possible
-    #if the substring between the brackets is a variable name rather than
-    #an integer this will only work if the variable name appears in FIXEDVALS.
-    #If it doesn't work, size will remain a string
-    match = re.search(r"\w+\((.*?)\)", name)
-    sizestr = match.group(1)
-
-    if sizestr in FIXEDVALS:
-        size = FIXEDVALS[sizestr]
-    else:
-        size = int(sizestr)
-
-    list_string = value.split(',')
-    if isinstance(size, int) and len(list_string) > size:
-        logging.warning("length of %s is > than %i for %s in" + \
-                        " interpret_array\n", value, size, name)
-        raise IndexError
-
-    if list_string[-1] == ".." or list_string[-1] == "...":
-        assert len(list_string) > 1
-        list_string = list_string[:-1]
-
-    #if we know how big the array should be and list_string is currently too
-    #small, pad it out with it's last value
-    if isinstance(size, int) and len(list_string) != size:
-        list_string += [list_string[-1]] * (size - len(list_string))
-
-    ret = [to_type(x) for x in list_string]
-
-    #check all elements of array have same type
-    list_type = type(ret[0])
-    assert all(isinstance(y, list_type) for y in ret)
-
-    return ret
-
-def get_array_from_fortran(array_name):
-    """Attempts to find a value for array_name by looking for an assignment
-       statement in the fortran.
-       Args:
-            array_name: Name of array to find eg. boundl
-       Returns:
-            value: Default value of array_name
-
-    """
-    rexp = array_name + r" = \(/"
-    # find files that look like they have an assignment in
-    filelist = find(SOURCEDIR, rexp)
-    if len(filelist) > 1:
-        print('The regular expression ', rexp,
-              '\n  does not appear exactly once in the folder \n', SOURCEDIR,
-              '\n The list of files is ', filelist, file=sys.stderr)
-    assert(len(filelist) == 1)
-    # slice the file between the parenthesis
-    arr = slice_file(filelist[0], rexp, r"/\)")
-
-    arr = [remove_comments(x) for x in arr]
-    # combine whole array onto one line
-    array_line = "".join(arr)
-    # regex that gets the string between the brackets
-    array_regex = rexp + r"(.*?)/\)"
-    val_string = re.search(array_regex, array_line).group(1)
-    # split the string and convert it to the correct type
-    value = [to_type(x) for x in val_string.split(",")]
-
-    list_type = type(value[0])
-    assert all(isinstance(y, list_type) for y in value)
-    return value
 
 def dict_ixc2nsweep():
     """Returns a dict mapping ixc_no to nsweep_no, if both exist for a 
@@ -671,23 +517,9 @@ def dict_input_bounds():
 
     return di
 
-def remove_tags(line):
-    """Removes some html tags that appear in autodoc comments
-
-    """
-    line = line.replace("<LI>", "")
-    line = line.replace("<UL>", "")
-    line = line.replace("</UL>", "")
-    line = line.replace("<OL>", "")
-    line = line.replace("</OL>", "")
-    return line
-
 def dict_nsweep2varname():
-
-    """
-    This function creates the nsweep2varname dictionary from the fortran code
-    It maps the sweep variable number to its variable name
-    """
+    # This function creates the nsweep2varname dictionary from the fortran code
+    # It maps the sweep variable number to its variable name
 
     di = {}
     file = SOURCEDIR + "/scan.f90"
@@ -853,39 +685,10 @@ def create_dicts(project):
         json.dump(output_dict, dicts_file, indent=4, sort_keys=True)
 
 def get_dicts():
-    # Return loaded dicts from the JSON file for use in utilities
+    # Return dicts loaded from the JSON file for use in Python utilities
     try:
         with open(DICTS_FILE_PATH, 'r') as dicts_file:
             return json.load(dicts_file)
     except:
         print("Error loading the dicts JSON file")
         exit()
-        
-################################################################
-# Comment out for now: not much point in running from terminal
-# as the Ford project object would be missing, which is now essential. 
-# Just run from Ford instead. Could get Ford to create a JSON Project object
-# which would allow independent terminal running again
-
-# if __name__ == "__main__":
-
-#     desc = "Creates a python dictionary file for use by utility programs. " + \
-#            "Prints to stdout. Redirect to output file using '>'"
-#     PARSER = argparse.ArgumentParser(description=desc)
-
-#     #PARSER.add_argument("dir", help="PROCESS source directory", \
-#     #                    nargs="?", default=".")
-
-#     ARGS = PARSER.parse_args()
-
-#     #SOURCEDIR = ARGS.dir
-#     try:
-#       file = open("SOURCEDIR/global_variables.f90","r",encoding="utf-8")
-# #      for line in file.readlines():#open(/builds/process/process/global_variables.f90).readlines():
-# #        logging.warning("in global_variables.f90 , line ** %s\n", line)
-#       file.close()
-#     except IOError:
-#       logging.warning( "Could not open file!")
-    
-#     # If called from terminal
-#     print_all()
