@@ -416,6 +416,8 @@ pages:
    - mkdocs build
    
    # FORD documentation
+   # Ensure FORD can find create_dicts.py inside Process
+   - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
    - cd ..
    - rm -rf ford # Need to clone to empty dir
    - git clone https://github.com/jonMaddockUkaea/ford.git ford
