@@ -2730,8 +2730,12 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ncool = 0.0D0
   !+ad_vars  ppump : centrepost coolant pump power (W)
   real(kind(1.0D0)) :: ppump = 0.0D0
+  
   !+ad_vars  prescp : resistive power in the centrepost (W)
   real(kind(1.0D0)) :: prescp = 0.0D0
+
+  !+ad_vars  presleg : resistive power in all TF legs (W)
+  real(kind(1.0D0)) :: presleg = 0.0D0
 
   !+ad_vars  ptempalw /473.15/ : maximum peak centrepost temperature (K)
   !+ad_varc                     (constraint equation 44)
@@ -2746,6 +2750,9 @@ module tfcoil_variables
 
   !+ad_vars  tcoolin /313.15/ : centrepost coolant inlet temperature (K)
   real(kind(1.0D0)) :: tcoolin = 313.15D0   ! 40 C
+
+  !+ad_vars dtiocool : inlet / outlet TF coil coolant temperature rise (K)  
+  real(kind(1.0D0)) :: dtiocool = 0.0D0
 
   !+ad_vars  tcpav /373.15/ : Assumed temperature of centrepost called CP (K)
   !+ad_varc                   Only used for resistive coils to compute the resisitive heating 

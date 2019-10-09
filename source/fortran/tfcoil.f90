@@ -327,10 +327,11 @@ contains
     ! Outboard leg current density
     cdtfleg = ritfc/(tfno * arealeg)
 
-    ! Resistance
+    ! Resistive power
+    ! Rem : Assuming the same CP-leg resistivity (as rhotfleg = -1 by default)
     if ( abs( rhotfleg + 1 ) < epsilon(rhotfleg) ) rhotfleg = rhocp
     tflegres = ltfleg * rhotfleg/arealeg
-    
+    presleg  = (ritfc/tfno)**2 * tflegres * tfno 
     ! ----------------------------------
 
 
@@ -460,7 +461,7 @@ contains
 
     !  Local variables
     real(kind(1.0D0)) :: acool,acpav,amid,dcool,dpres,dtcncpav,dtconcpmx, &
-         dtfilmav,dtiocool,fc,fricfac,h,lcool,nuselt,pcrt,presin,prndtl, &
+         dtfilmav,fc,fricfac,h,lcool,nuselt,pcrt,presin,prndtl, &
          psat,ptot,reyn,rmid,ro,roughrat,sum,tclmx,tclmxs,tcoolmx,tmarg,vcoolav, &
          rmid_in, coolant_density, coolant_th_cond, coolant_visco, coolant_cp,&
          conductor_th_cond, dptot, tcool_calc

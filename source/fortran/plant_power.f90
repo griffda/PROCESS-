@@ -151,9 +151,9 @@ contains
        vtfkv = 1.0D-3 * ztot * cpttf/tfno
 
        !  Resistive powers (MW):
-       tfcpmw  = 1.0D-6 * prescp  !  inboard legs
-       tflegmw = 1.0D-6 * (ritfc/tfno)**2 * tflegres * tfno  !  outboard legs
-       tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus
+       tfcpmw  = 1.0D-6 * prescp   !  inboard legs
+       tflegmw = 1.0D-6 * presleg  !  outboard legs
+       tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus => Dodgy !
 
        !  TF coil reactive power
        !  Set reactive power to 0, since ramp up can be long
@@ -988,6 +988,12 @@ contains
 
     implicit none
 
+    ! Cryo-aluminium coolant average temperature
+    real(kind(1.0D0)) :: t_tf_cryoal_cool_av = 0.0D0
+
+    ! Cryo-aluminium cryoplant power consumption
+    real(kind(1.0D0)) :: p_tf_cryoal_cryo = 0.0D0
+
     !------------------------------------------------------------------------------------
     !- Collate pumping powers
     !------------------------------------------------------------------------------------
@@ -1090,14 +1096,34 @@ contains
     end if
 
     !  Cryogenic power
-    if ((itfsup /= 1).and.(ipfres == 1)) then  !  no superconducting coils
-       helpow = 0.0D0
-    else
-       call cryo(itfsup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, tfno, helpow)
+    ! ---
+    ! Initialisation (unchanged if all coil resisitive)
+    helpow = 0.0D0
+    crypmw = 0.0D0
+    
+    ! Superconductors TF/PF cryogenic cooling
+    if ( itfsup == 1 .or. ipfres == 0 ) then
+        ! helpow calculation
+        call cryo(itfsup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, tfno, helpow)
+
+        ! Use 13% of ideal Carnot efficiency to fit J. Miller estimate
+        ! Rem SK : This ITER efficiency is very low compare to the Strowbridge curve
+        !          any reasons why? 
+        crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(0.13D0*tmpcry) * helpow   
     end if
 
-    !  Use 13% of ideal Carnot efficiency to fit J. Miller estimate
-    crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(0.13D0*tmpcry) * helpow
+    ! Cryogenic aluminium 
+    ! Rem : The carnot efficiency is assumed at 40% as this is a conservative assumption since a 50%
+    !       has been deduced from detailed studies
+    ! Rem : Nuclear heating on the outer legs assumed to be negligible
+    ! Rem : To be updated with 2 cooling loops for TART designs
+    if ( itfsup == 2 ) then
+        t_tf_cryoal_cool_av = tcoolin + 0.5D0*dtiocool
+        p_tf_cryoal_cryo = (293.0D0 - t_tf_cryoal_cool_av)/(0.4D0*t_tf_cryoal_cool_av) * &
+                           ( prescp + presleg + pnuccp * 1.0D6 )
+        crypmw = crypmw + 1.0D-6 * p_tf_cryoal_cryo
+    end if
+
 
   end subroutine power1
 
@@ -1166,7 +1192,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Centrepost coolant pump power (ST)
-    if (itart == 1) then
+    if ( itart == 1 .and. itfsup == 0 ) then
         ppumpmw = 1.0D-6 * ppump
     else
         ppumpmw = 0.0D0
@@ -1837,10 +1863,10 @@ contains
 
     !  Steady state loads (W)
     qss = 4.3D-4 * coldmass
-    if (itfsup == 1) qss = qss + 2.0D0*tfsai
+    if ( itfsup == 1 ) qss = qss + 2.0D0*tfsai
 
     !  Nuclear heating of TF coils (W) (zero if resistive)
-    if(inuclear==0.and.itfsup == 1) qnuc = 1.0D6 * ptfnuc
+    if( inuclear == 0 .and. itfsup == 1) qnuc = 1.0D6 * ptfnuc
     ! Issue #511: if inuclear = 1 then qnuc is input.
 
     !  AC losses
