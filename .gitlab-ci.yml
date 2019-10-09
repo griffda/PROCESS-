@@ -422,7 +422,6 @@ pages:
    - rm -rf ford # Need to clone to empty dir
    - git clone https://github.com/jonMaddockUkaea/ford.git ford
    - cd ford
-   - git checkout export_project
    - pip3 install .
    - cd ../process
    - ford documentation/ford/index.md
