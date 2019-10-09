@@ -1763,7 +1763,7 @@ contains
     ! Local variables !
     !!!!!!!!!!!!!!!!!!!
 
-    ! nuclear heating in the ST centrepost (MW)
+    ! nuclear heating in the ST centrepost [MW]
     real(kind(1.0D0)) :: pnuccp
 
     ! Fraction of neutrons that hit the centrepost shield
@@ -1774,35 +1774,33 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Fraction of neutrons that hit the centre post neutronic shield [MW]
-    f_neut_geom = cphalflen / sqrt(cphalflen**2 + (rmajor-cpradius)**2 ) * &
-         atan(cpradius/(rmajor-cpradius) )/pi
+    ! Copper CP
+    ! ---------
+    ! No shileding integrated
+    ! Nuclear heating from solid angle fraction and neutron mean free path in copper
+    ! Rem SK : This calculation must be replaced by neutronics with shielding
+    if ( itfsup == 0 ) then
 
-    ! Remaining nuclear power the after the neutronic shield [MW]
-    ! Calculated with 1 GW (0.8 GW of Pneut) ST confinguration (internal results)
-    ! Tungsten carbyde with 13% water cooling fraction is for the calculations
-    if ( abs( f_neut_shield + 1.0D0 ) < epsilon(f_neut_shield) ) then
+      ! Fraction of neutrons that hit the centre post neutronic shield
+      f_neut_geom = cphalflen / sqrt(cphalflen**2 + (rmajor-cpradius)**2 ) * &
+           atan(cpradius/(rmajor-cpradius) )/pi
 
-      ! Testing if the fit is used in the shield thickness interpolation range
-      if ( ( shldith < 0.2D0 ) .or. ( shldith > 0.35D0 ) ) then
-        fdiags(1) = shldith
-        call report_error(229)
-      end if
-  
-      ! Shielding
-      f_neut_shield = exp( 3.882D0 - 16.69D0*shldith ) / ( 800.0D0 * f_neut_geom )
+      ! Fraction of the nuclear power absorbed by the copper centrepost (0.08 m e-folding decay length)
+      f_neut_absorb = 1.0D0 - exp( -2.0D0*tfcth / 0.08D0) 
     
-      ! Correcting for fraction larger than 1 ...
-      if ( f_neut_shield > 1.0D0 ) f_neut_shield = 1.0D0    
-    end if
+      ! Nuclear power
+      pnuccp = pneut * f_neut_geom * f_neut_shield * f_neut_absorb
+      ! ---------
 
-    ! Fraction of the nuclear power absorbed by the centrepost magnets
-    ! Rem : Steel structures absobtion negelected
-    ! Rem : 0.08 m e-folding decay length valid for COPPER ONLY
-    f_neut_absorb = 1.0D0 - exp( -2.0D0*tfcth / 0.08D0) 
-    
-    ! Nuclear power absorbed by the TF magnet system
-    pnuccp = pneut * f_neut_geom * f_neut_shield * f_neut_absorb
+
+    ! Aluminium CP
+    ! ------------
+    ! From Pfus = 1 GW ST neutronic calculations assuming
+    ! Tungsten carbyde with 13% water cooling fraction
+    else if ( itfsup == 2 ) then
+      pnuccp = ( pneutmw / 800.0D0 ) * exp( 3.882D0 - 16.69D0*shldith )
+    end if 
+    ! ------------
 
   end function st_centrepost_nuclear_heating
 
