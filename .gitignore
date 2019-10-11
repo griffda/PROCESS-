@@ -65,3 +65,4 @@ lib/PLASMOD/*.DAT
 *.fls
 *.gz
 ford_site/
+lib/ford
