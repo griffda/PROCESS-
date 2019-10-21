@@ -321,7 +321,7 @@ add_custom_target(dicts
   # Install Process-customised FORD
   COMMAND rm -rf ford
   COMMAND git clone https://github.com/jonMaddockUkaea/ford.git ford
-  COMMAND pip3 install ford/
+  COMMAND pip3 install ford/ --user
   # Add the utilities dir to the PYTHONPATH, so FORD can run create_dicts.py
   # Then run FORD on a "fast" md file, which doesn't make graphs or a search index
   # These are wanted for making docs, but not when making dicts quickly
