@@ -15,10 +15,24 @@ nav:
         - PLASMOD: physics-models/plasmod.md
     - Engineering Models:
         - Machine Build: eng-models/machine-build.md
+        - Structural Components: eng-models/structural-components.md
+        - Buildings: eng-models/buildings.md
         - First Wall/Blanket: eng-models/fw-blanket.md
         - TF Coil : eng-models/tf-coil.md
+        - PF Coil : eng-models/pf-coil.md
+        - Central Solenoid : eng-models/central-solenoid.md
         - Shield : eng-models/shield.md
         - Divertor : eng-models/divertor.md
+        - Power conversion and heat dissipation systems: eng-models/power-conversion-and-heat-dissipation-systems.md
+        - Auxiliary Power Systems: eng-models/auxiliary-power-systems.md
+        - Cryostat and vacuum system: eng-models/cryostat-and-vacuum-system.md
+    - Misc:
+        Spherical Tokamak: misc/spherical-tokamak.md
+        Pulsed Plant Operation: misc/pulsed-plant.md
+        Stellarator Model: misc/stellarator.md
+        Inertial Fusion Energy Model: misc/inertial.md
+        Safety and Environment Models: misc/safety.md
+        Cost models: misc/cost-models.md
     - Development: 
         Tools: development/tools.md
         Standards: development/standards.md
