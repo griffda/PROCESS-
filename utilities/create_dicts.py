@@ -176,6 +176,45 @@ class DefaultValues(ProjectDictionary):
     def __init__(self, project):
         ProjectDictionary.__init__(self, 'DICT_DEFAULT', project, 'initial')
 
+    def make_dict(self):
+        # Assign the variable name key to the initial value of the variable
+        # [var_name] = initial_value
+        for module in self.project.modules:
+            for var in module.variables:
+                self.dict[self.name][var.name] = self.process_initial_value(var)
+
+    def process_initial_value(self, var):
+        # The initial value could be an array that hasn't been picked up by Ford
+        # Ford can't handle implicit array initialisation
+        # e.g. real(kind(1.0D0)), dimension(14) :: impurity_enrichment = 5.0D0
+        # Ford's initial variable value is 5.0D0, but should be an array of 
+        # 14 5.0D0 values
+        if var.initial and var.initial.find('(/') == -1:
+            # Initial value isn't curently an array
+            for attrib in var.attribs:
+                # Does the variable have a dimension attribute? i.e. is it
+                # actually an array?
+                # attrib is potentially of the form "dimension(size)"
+                match = re.match(r"dimension\((\d+)\)", attrib)
+                # 1st capturing group matches any number of digits for the size
+                if match:
+                    # Therefore the variable's initial value should be an array
+                    # Change the initial value to be an array
+
+                    # Get size of array
+                    # This will only work if size is a hardcoded int
+                    # Extend to case where size is another var?
+                    size = match.group(1)
+                    size = int(size)
+
+                    # Replace the initial value with an array of intial values
+                    # of length size
+                    var.initial = [var.initial for i in range(size)]
+
+        # Return either the original initial value (which could be an array or 
+        # not), or the modified initial value, which is now an array          
+        return var.initial
+
     def post_process(self):
         # Most default values are numbers saved as strings, but some 
         # are lists of these
