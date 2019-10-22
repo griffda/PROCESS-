@@ -181,32 +181,35 @@ class DefaultValues(ProjectDictionary):
         # [var_name] = initial_value
         for module in self.project.modules:
             for var in module.variables:
-                self.dict[self.name][var.name] = self.process_initial_value(var)
+                self.dict[self.name][var.name] = self.process_initial_value(
+                    module.variables, var)
 
-    def process_initial_value(self, var):
+    def process_initial_value(self, module_vars, var):
         # The initial value could be an array that hasn't been picked up by Ford
         # Ford can't handle implicit array initialisation
         # e.g. real(kind(1.0D0)), dimension(14) :: impurity_enrichment = 5.0D0
         # Ford's initial variable value is 5.0D0, but should be an array of 
         # 14 5.0D0 values
+        
+        # module_vars: all module-level variables in a given module
+        # var: current variable for initial value processing
+
         if var.initial and var.initial.find('(/') == -1:
-            # Initial value isn't curently an array
+            # Initial value isn't currently an array
             for attrib in var.attribs:
                 # Does the variable have a dimension attribute? i.e. is it
                 # actually an array?
-                # attrib is potentially of the form "dimension(size)"
-                match = re.match(r"dimension\((\d+)\)", attrib)
-                # 1st capturing group matches any number of digits for the size
-                if match:
+                # Interested in attrib of the form "dimension(size)"
+                
+                # Check for size being a hardcoded int first
+                size = self.find_int_array_dimension(attrib)
+                
+                if size is None:
+                    # Check for size being a variable
+                    size = self.find_var_array_dimension(attrib, module_vars)
+
+                if size:            
                     # Therefore the variable's initial value should be an array
-                    # Change the initial value to be an array
-
-                    # Get size of array
-                    # This will only work if size is a hardcoded int
-                    # Extend to case where size is another var?
-                    size = match.group(1)
-                    size = int(size)
-
                     # Replace the initial value with an array of intial values
                     # of length size
                     var.initial = [var.initial for i in range(size)]
@@ -214,6 +217,44 @@ class DefaultValues(ProjectDictionary):
         # Return either the original initial value (which could be an array or 
         # not), or the modified initial value, which is now an array          
         return var.initial
+
+    def find_int_array_dimension(self, attrib):
+        # Attempt to find the size of an array given its dimension attribute
+        # with a hardcoded integer argument
+        size = None
+        match = re.match(r"dimension\((\d+)\)", attrib)
+        # 1st capturing group matches any number of digits for the size
+        if match:
+            # dimension argument is a hardcoded number
+            size = int(match.group(1))
+
+        return size
+
+    def find_var_array_dimension(self, attrib, module_vars):
+        # Attempt to find the size of an array given its dimension attribute
+        # with a variable argument
+        size = None
+        match = re.match(r"dimension\((\w+)\)", attrib)
+        # 1st capturing group matches any number of word characters
+        # for size: i.e. a variable name
+        if match:
+            # The array size is a variable or an expression
+            size_arg = match.group(1)
+            # Now look up the initial value of that variable within the current
+            # module in the Ford project object
+            for var in module_vars:
+                if var.name == size_arg:
+                    try:
+                        size = int(var.initial)
+                        break
+                    except ValueError:
+                        pass
+
+            # If size_arg doesn't match a var.name or var.initial can't be
+            # converted to int: they probably aren't a numerical value and 
+            # require further evaluation, e.g. var.initial = ngc+2
+            # Too complicated and probably not worth it: ignore
+        return size
 
     def post_process(self):
         # Most default values are numbers saved as strings, but some 
