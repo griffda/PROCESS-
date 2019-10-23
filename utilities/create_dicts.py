@@ -259,7 +259,7 @@ class DefaultValues(ProjectDictionary):
     def post_process(self):
         # Most default values are numbers saved as strings, but some 
         # are lists of these
-        # Attempt to convert strings to sci notation: 1.57812D3 to 1.578E+03
+        # Attempt to convert strings to floats: 1.57812D3 to 1578.12
         working_dict = self.dict[self.name]
 
         for key, value in working_dict.items():
@@ -268,14 +268,14 @@ class DefaultValues(ProjectDictionary):
                 # Is it a list?
                 if type(value) is list or value[0:2] == "(/":
                     # Ford's arrays begin with "(/"
-                    value = self.convert_list_to_sci_not(value)
+                    value = self.convert_list_to_floats(value)
                 else:
-                    value = self.convert_value_to_sci_not(value)
+                    value = self.convert_value_to_float(value)
 
                 working_dict[key] = value
 
-    def convert_value_to_sci_not(self, value):
-        # Convert a value to scientific notation: 1D3 to 1E+03
+    def convert_value_to_float(self, value):
+        # Convert a value to float: 1D3 to 1000
         original_value = value
 
         # Might not convert successfully; in which case return original value
@@ -283,16 +283,15 @@ class DefaultValues(ProjectDictionary):
             value = value.lower()
             value = value.replace('d', 'E')
             value = float(value)
-            value = '{:.3E}'.format(value)
             return value
         except:
             # Failed conversion; don't change anything
             return original_value
 
-    def convert_list_to_sci_not(self, working_list):
+    def convert_list_to_floats(self, working_list):
         # Change the formatting for lists
         # Change Ford string "(/1D3, 4D2, 2D7/)" or regular list [1D3, 4D2, 2D7]
-        # to Python scientific notation list ['1E+03', '4E+02', '2E+07']
+        # to Python list of floats [1000, 400, 20000000]
         processed_list = []
 
         if type(working_list) is not list:
@@ -301,9 +300,9 @@ class DefaultValues(ProjectDictionary):
             working_list = working_list.replace('/)', '')
             working_list = working_list.split(', ')
 
-        # Convert list values to scientific notation
+        # Convert list values to floats
         for value in working_list:
-            value = self.convert_value_to_sci_not(value)
+            value = self.convert_value_to_float(value)
             processed_list.append(value)
         return processed_list
 
