@@ -15,7 +15,7 @@ the index page.
 
 ### User guide
 To read about how the code works and the modules in it see the
-[user guide](http://www.ccfe.ac.uk/assets/Documents/Other/process.pdf)
+[documentation pages]( http://process.gitpages.ccfe.ac.uk/process)
 
 ### Physics paper
 
