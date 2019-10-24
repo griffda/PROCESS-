@@ -4,7 +4,7 @@
 
 `PROCESS` has the ability to perform studies on tokamaks in the low aspect ration regime (major radius $\leq$ 2 $\times$ minor radius). The physics and engineering issues[^1] associated with these machines are somewhat different from those of conventional aspect ratio, and this is reflected by the following special models[^2] in `PROCESS`.
 
-1. The inboard build of a spherical tokamak (ST) is very different from that in a conventional tokamak. Ther is no inboard blanket (and possibly no inboard shield), and the inboard TF coil legs are replaced by a single centrepost. The radial build is altered so that, starting from the centreline (*R* = 0), the component order is: TF coil, gap, central solenoid, vacuum vessel, and then continuing as in Figure 1 (a D-shaped cross-section is assumed for the first wall, blanket, shield and vacuum vessel). <br></br>
+1. The inboard build of a spherical tokamak (ST) is very different from that in a conventional tokamak. There is no inboard blanket (and possibly no inboard shield), and the inboard TF coil legs are replaced by a single centrepost. The radial build is altered so that, starting from the centreline (*R* = 0), the component order is: TF coil, gap, central solenoid, vacuum vessel, and then continuing as in Figure 1 (a D-shaped cross-section is assumed for the first wall, blanket, shield and vacuum vessel).<br>
 
     <figure>
         <center>
@@ -18,11 +18,11 @@
         </center>
     </figure>
 
-2. Spherical tokamaks have resistive TF coils that combine into a single centrepost at the centre of the machine. The centrepost is constructed from copper (as are the outboard TF coil sections), and tapered lengthways so that it is narrowest at the midplane of the device. Routine `CNTRPST` calculates various parameters relevant to the centrepost, including the pump pressure, maximum temperature and pip radius, and these may be limited using constraint equations 43 to 45 of required:
+2. Spherical tokamaks have resistive TF coils that combine into a single centrepost at the centre of the machine. The centrepost is constructed from copper (as are the outboard TF coil sections), and tapered length ways so that it is narrowest at the midplane of the device. Routine `CNTRPST` calculates various parameters relevant to the centrepost, including the pump pressure, maximum temperature and pip radius, and these may be limited using constraint equations 43 to 45 of required:
     * Equation 43 is a consistency equation for the average centrepost temperature.
     * Equation 44 can be used to limit the peak centrepost temperature to a maximum value (`ptempalw`) using iteration variable no. 68 (`fptemp`).
     * Equation 45 can be used to force a lower; limit to the edge safety factor *q$_{lim}$* using iteration variable no. 71 (`fq`).
-    Equation 46 can be used to applyan upper limit to the ratio of plasma current to TF coil ("rod") current , using iteration variable no. 72 (`fipir`)<br></br>
+    Equation 46 can be used to apply an upper limit to the ratio of plasma current to TF coil ("rod") current , using iteration variable no. 72 (`fipir`)<br></br>
 
 3. A gaseous divertor model is used, and a simple divertor heat load calculation is employed, rather than the more complex divertor model assumed for conventional aspect ratio tokamaks. <br></br>
 
@@ -69,12 +69,12 @@ Switch `itart` provides overall control of the ST switches within the code, and 
     title="Schematic diagram of the Power Core radial build" 
     width="650" height="100" />
     <br><br>
-    <figcaption><i>Figure 3: Schematic diagram of the fusion power core of a typical tokamak power plant modelled by `PROCESS`. The first wall, blanket, shield and vacuum vessel cross-sectional shapes are each assumed to be dfined by two ellipses (chosen by setting switch `fwbsshape=2`) - compare Figure 2.
+    <figcaption><i>Figure 3: Schematic diagram of the fusion power core of a typical tokamak power plant modelled by `PROCESS`. The first wall, blanket, shield and vacuum vessel cross-sectional shapes are each assumed to be defined by two ellipses (chosen by setting switch `fwbsshape=2`) - compare Figure 2.
     </i></figcaption>
     <br>
     </center>
 </figure>
 
-[^1]: Y-K. M. Peng and J. B. Hicks, *"Engineering Feasibility of Tight Aspect Ratio Tokamak (Spherical Torus) Reactors"*, AEA Fusion Report AEA FUS 64 (1990)
-[^2]: J. D. Galambos, *"STAR Code : Spherical Tokamak Analysis and Reactor Code", Unpublished internal Oak Ridge document. A copy exists in the `PROCESS` Project Work File[^3].
-[^3]: P. J. Knight, *"`PROCESS` Reactor Systems Code"*, AEA Fusion Project Work File, F/RS/CIRE5523/PWF (1992)
+[^1]: Y-K. M. Peng and J. B. Hicks, *"Engineering Feasibility of Tight Aspect Ratio Tokamak (Spherical Torus) Reactors"*, AEA Fusion Report AEA FUS 64 (1990)<br>
+[^2]: J. D. Galambos, *"STAR Code : Spherical Tokamak Analysis and Reactor Code", Unpublished internal Oak Ridge document. A copy exists in the `PROCESS` Project Work File[^3].<br>
+[^3]: P. J. Knight, *"`PROCESS` Reactor Systems Code"*, AEA Fusion Project Work File, F/RS/CIRE5523/PWF (1992)<br>

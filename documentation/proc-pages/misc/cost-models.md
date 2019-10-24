@@ -16,18 +16,18 @@ The first wall, blanket, divertor, centrepost (if present) and current drive sys
 
 If the switch `ireactor = 0`, no cost of electricity calculation is performed. If `ireactor = 1`, then the cost of electricity is evaluated, with the value quoted in units of $/MWh.
 
-The net electric power is calculated in routine `POWER` It is possible that the net electric power can become negative due to a high recirculating power. Switch `ipnet` determines whether the net electric power is scaled to always reamin positive (`ipnet = 0`, or whether it is allowed to become negative (`ipnet = 1), in which case no cost of electricity calculation is performed.
+The net electric power is calculated in routine `POWER` It is possible that the net electric power can become negative due to a high recirculating power. Switch `ipnet` determines whether the net electric power is scaled to always reamin positive (`ipnet = 0`, or whether it is allowed to become negative (`ipnet = 1`), in which case no cost of electricity calculation is performed.
 
 ## 2015 Kovari model (`cost_model = 1`)
 
-This model[^8] provides only captial cost, and it is not currently suitable for estimating the cost of electricity. *N<sup>th</sup>*-of-a-kind factors, level of safety assurance factors, and blanket replacement costs are not included. The mean electric output is calculated using the capacity factor, which takes account of the availability and the dwell time for a pulsed reactor. The capital cost divided by the mean electric output is a useful comparison parameter.
+This model[^8] provides only capital cost, and it is not currently suitable for estimating the cost of electricity. *N<sup>th</sup>*-of-a-kind factors, level of safety assurance factors, and blanket replacement costs are not included. The mean electric output is calculated using the capacity factor, which takes account of the availability and the dwell time for a pulsed reactor. The capital cost divided by the mean electric output is a useful comparison parameter.
 
-[^1]: R. L. Reid and Y-K. M. Peng, *"Potential Minimum Cost of Electricity of Superconducting Coil Tokamak Power Reactors"*, Proceedings of 13th IEEE Symposium on Fusion Engineering, Knoxville, Tennessee, October 1989, p. 258
-[^2]: R. L. Reid et al., *"ETR/ITER Systems Code"*, Oak Ridge Report ORNL/FEDC-87/7 (1988)
-[^3]: J. Sheeld et al., *"Cost Assessment of a Generic Magnetic Fusion Reactor"*, Fusion Technology **9** (1986) 199
-[^4]: S. Thompson, *"Systems Code Cost Accounting"*, memo FEDC-M-88-SE,-004 (1988)
-[^5]: J. D. Galambos, *"STAR Code : Spherical Tokamak Analysis and Reactor Code"*, Unpublished internal Oak Ridge document. A copy exists in the `PROCESS` Project Work File [^9].
-[^6]: J. D. Galambos, L. J. Perkins, S. W. Haney and J. Mandrekas, *Nuclear Fusion*, **35** (1995) 551
-[^7]: J. P. Holdren et al., *"Report of the Senior Committee on Environmental Safety and Economic Aspects of Magnetic Fusion Energy"*, Fusion Technology, **13** (1988) 7
-[^8]: M. Kovari et al., *"The cost of a fusion power plant: extrapolation from ITER"*, in preparation (2015)
+[^1]: R. L. Reid and Y-K. M. Peng, *"Potential Minimum Cost of Electricity of Superconducting Coil Tokamak Power Reactors"*, Proceedings of 13th IEEE Symposium on Fusion Engineering, Knoxville, Tennessee, October 1989, p. 258<br>
+[^2]: R. L. Reid et al., *"ETR/ITER Systems Code"*, Oak Ridge Report ORNL/FEDC-87/7 (1988)<br>
+[^3]: J. Sheeld et al., *"Cost Assessment of a Generic Magnetic Fusion Reactor"*, Fusion Technology **9** (1986) 199<br>
+[^4]: S. Thompson, *"Systems Code Cost Accounting"*, memo FEDC-M-88-SE,-004 (1988)<br>
+[^5]: J. D. Galambos, *"STAR Code : Spherical Tokamak Analysis and Reactor Code"*, Unpublished internal Oak Ridge document. A copy exists in the `PROCESS` Project Work File [^9].<br>
+[^6]: J. D. Galambos, L. J. Perkins, S. W. Haney and J. Mandrekas, *Nuclear Fusion*, **35** (1995) 551<br>
+[^7]: J. P. Holdren et al., *"Report of the Senior Committee on Environmental Safety and Economic Aspects of Magnetic Fusion Energy"*, Fusion Technology, **13** (1988) 7<br>
+[^8]: M. Kovari et al., *"The cost of a fusion power plant: extrapolation from ITER"*, in preparation (2015)<br>
 [^9]: P. J. Knight, *"PROCESS Reactor Systems Code"*, AEA Fusion Project Work File, F/RS/CIRE5523/PWF (1992)

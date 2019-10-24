@@ -88,7 +88,7 @@ Although the divertor has the same function in both stellarators and tokamaks, t
 
 ![alt text](../../img/stelldiv.png "Five-period HELIAS plasma")
 
-*Figure 2: A five-period HELIAS plasma (specifically W7-X) with island divertor plates shown in red*
+Figure 2: *A five-period HELIAS plasma (specifically W7-X) with island divertor plates shown in red*
 
 Rather than trying to describe the complex physics with a two-point scrape-off layer model as is used for tokamaks, the stellarator divertor model[^3] is based on fundamental principles which relate the power crossing the separatrix with an effective wetted area on the divertor plates allowing the code to estimate the heat load delivered to the divertor. A basic island divertor model is used which assumes diffusive cross-field transport and high radiation at the X-point.
 

@@ -32,7 +32,15 @@ nav:
         Stellarator Model: misc/stellarator.md
         Inertial Fusion Energy Model: misc/inertial.md
         Safety and Environment Models: misc/safety.md
-        Cost models: misc/cost-models.md
+        Cost Models: misc/cost-models.md
+        Plant Availability: misc/plant.md
+        Electron Cyclotron Current Drive: misc/CD.md
+        Equation Solvers: misc/equation-solver.md
+    - Plasma Scenarios:
+        I Mode: plasma/i-mode.md
+        QH Mode: plasma/qh-mode.md
+        L Mode: plasma/l-mode.md
+        Hybrid Scenario: plasma/hybrid-scenario.md 
     - Development: 
         Tools: development/tools.md
         Standards: development/standards.md
