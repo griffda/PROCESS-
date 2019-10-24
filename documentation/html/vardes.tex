@@ -1,49 +1,57 @@
-% Options for packages loaded elsewhere
-\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
 \PassOptionsToPackage{hyphens}{url}
 %
-\documentclass[
-]{article}
+\documentclass[]{article}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provide euro and other symbols
-\else % if luatex or xetex
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
   \usepackage{unicode-math}
-  \defaultfontfeatures{Scale=MatchLowercase}
-  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
 \fi
-% Use upquote if available, for straight quotes in verbatim environments
+% use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-\IfFileExists{microtype.sty}{% use microtype if available
-  \usepackage[]{microtype}
-  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\makeatletter
-\@ifundefined{KOMAClassName}{% if non-KOMA class
-  \IfFileExists{parskip.sty}{%
-    \usepackage{parskip}
-  }{% else
-    \setlength{\parindent}{0pt}
-    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
-}{% if KOMA class
-  \KOMAoptions{parskip=half}}
-\makeatother
-\usepackage{xcolor}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
 \hypersetup{
-  pdftitle={Variable Descriptor},
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-\urlstyle{same} % disable monospaced font for URLs
-\setlength{\emergencystretch}{3em} % prevent overfull lines
+            pdftitle={Variable Descriptor},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
 
 \title{Variable Descriptor}
 \date{}
@@ -51,9 +59,9 @@
 \begin{document}
 \maketitle
 
-\hypertarget{process-variable-descriptor-file-dated-20190715}{%
+\hypertarget{process-variable-descriptor-file-dated-20190723}{%
 \subsection{PROCESS Variable Descriptor File : dated
-20190715}\label{process-variable-descriptor-file-dated-20190715}}
+20190723}\label{process-variable-descriptor-file-dated-20190723}}
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -239,13 +247,14 @@ so need not be initialised.
   area in neutron wall load calculation (iwalld=1)
 \item
   fgwped /0.85/ : fraction of Greenwald density to set as pedestal-top
-  density If \textless0, pedestal-top density set manually using neped
-  (ipedestal\textgreater=1) Needs to be \textgreater0 if ipedestal = 3
-  (iteration variable 145)
+  density If \textless{}0, pedestal-top density set manually using neped
+  (ipedestal\textgreater{}=1) Needs to be \textgreater{}0 if ipedestal =
+  3 (iteration variable 145)
 \item
   fgwsep /0.50/ : fraction of Greenwald density to set as separatrix
-  density If \textless0, separatrix density set manually using nesep
-  (ipedestal\textgreater=1) Needs to be \textgreater0 if ipedestal = 3
+  density If \textless{}0, separatrix density set manually using nesep
+  (ipedestal\textgreater{}=1) Needs to be \textgreater{}0 if ipedestal =
+  3
 \item
   fhe3 /0.0/ : helium-3 fuel fraction
 \item
@@ -254,8 +263,8 @@ so need not be initialised.
 \item
   fkzohm /1.0/ : Zohm elongation scaling adjustment factor (ishape=2, 3)
 \item
-  fplhsep /1.0/ : F-value for Psep \textgreater= Plh + Paux (constraint
-  equation 73)
+  fplhsep /1.0/ : F-value for Psep \textgreater{}= Plh + Paux
+  (constraint equation 73)
 \item
   fpdivlim /1.0/ : F-value for minimum pdivt (constraint equation 80)
 \item
@@ -465,18 +474,19 @@ so need not be initialised.
 \item
   plasma\_res\_factor /1.0/ : plasma resistivity pre-factor
 \item
-  rhopedn /1.0/ : r/a of density pedestal (ipedestal\textgreater=1)
+  rhopedn /1.0/ : r/a of density pedestal (ipedestal\textgreater{}=1)
 \item
-  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal\textgreater=1)
+  rhopedt /1.0/ : r/a of temperature pedestal
+  (ipedestal\textgreater{}=1)
 \item
   tbeta /2.0/ : temperature profile index beta (ipedestal=1,2)
 \item
   teped /1.0/ : electron temperature of pedestal (keV)
-  (ipedestal\textgreater=1, ieped=0, calculated for ieped=1)
+  (ipedestal\textgreater{}=1, ieped=0, calculated for ieped=1)
 \item
   tesep /0.1/ : electron temperature at separatrix (keV)
-  (ipedestal\textgreater=1) calculated if reinke criterion is used (icc
-  = 78)
+  (ipedestal\textgreater{}=1) calculated if reinke criterion is used
+  (icc = 78)
 \item
   iprofile /1/ : switch for current profile consistency:
 
@@ -1458,7 +1468,7 @@ so need not be initialised.
   ppdivr : peak heat load at plate (with radiation) (MW/m2)
 \item
   prn1 /0.285/ : n-scrape-off / n-average plasma; (input for
-  ipedestal=0, = nesep/dene if ipedestal\textgreater=1)
+  ipedestal=0, = nesep/dene if ipedestal\textgreater{}=1)
 \item
   ptpdiv : peak temperature at the plate (eV)
 \item
@@ -1784,7 +1794,7 @@ so need not be initialised.
   (27/11/2015)
 \item
   fwpressure /15.5e6/ : first wall coolant pressure (Pa)
-  (secondary\_cycle\textgreater1)
+  (secondary\_cycle\textgreater{}1)
 \item
   tpeak : peak first wall temperature (K) (27/11/2015)
 \item
@@ -1801,10 +1811,10 @@ so need not be initialised.
   temperature - not the coolant flow rate.)
 \item
   blpressure /15.5e6/ : blanket coolant pressure (Pa)
-  (secondary\_cycle\textgreater1) (27/11/2015)
+  (secondary\_cycle\textgreater{}1) (27/11/2015)
 \item
   inlet\_temp /573.0/ : inlet temperature of blanket coolant (K)
-  (secondary\_cycle\textgreater1) (27/11/2015)
+  (secondary\_cycle\textgreater{}1) (27/11/2015)
 \item
   outlet\_temp /823.0/ : outlet temperature of blanket coolant (K)
   (27/11/2015)
@@ -1812,7 +1822,7 @@ so need not be initialised.
   \begin{itemize}
   \tightlist
   \item
-    (secondary\_cycle\textgreater1);
+    (secondary\_cycle\textgreater{}1);
   \item
     input if coolwh=1 (helium), calculated if coolwh=2 (water)
   \end{itemize}
@@ -1821,19 +1831,19 @@ so need not be initialised.
   (27/11/2015)
 \item
   nblktmodpo /8/ : number of outboard blanket modules in poloidal
-  direction (secondary\_cycle\textgreater1)
+  direction (secondary\_cycle\textgreater{}1)
 \item
   nblktmodpi /7/ : number of inboard blanket modules in poloidal
-  direction (secondary\_cycle\textgreater1)
+  direction (secondary\_cycle\textgreater{}1)
 \item
   nblktmodto /48/ : number of outboard blanket modules in toroidal
-  direction (secondary\_cycle\textgreater1)
+  direction (secondary\_cycle\textgreater{}1)
 \item
   nblktmodti /32/ : number of inboard blanket modules in toroidal
-  direction (secondary\_cycle\textgreater1)
+  direction (secondary\_cycle\textgreater{}1)
 \item
   tfwmatmax /823.0/ : maximum temperature of first wall material (K)
-  (secondary\_cycle\textgreater1)
+  (secondary\_cycle\textgreater{}1)
 \item
   fw\_th\_conductivity /28.34/ : thermal conductivity of first wall
   material at 293 K (W/m/K) (Temperature dependence is as for
@@ -1859,7 +1869,7 @@ so need not be initialised.
   ptfnuc : nuclear heating in the TF coil (MW)
 \item
   ptfnucpm3 : nuclear heating in the TF coil (MW/m3)
-  (blktmodel\textgreater0)
+  (blktmodel\textgreater{}0)
 \item
   rdewex : cryostat radius (m)
 \item
@@ -3082,7 +3092,7 @@ so need not be initialised.
   \item
     = 0, tohs = tramp = tqnch = Ip(MA)/0.5;
   \item
-    \textless\textgreater0, tohs = tohsin; tramp, tqnch are input
+    \textless{}\textgreater{}0, tohs = tohsin; tramp, tqnch are input
   \end{itemize}
 \item
   tpulse : pulse length = tohs + theat + tburn + tqnch
@@ -3196,22 +3206,22 @@ so need not be initialised.
   blareaob : outboard blanket surface area (m2)
 \item
   blbmith /0.17/ : inboard blanket box manifold thickness (m)
-  (blktmodel\textgreater0)
+  (blktmodel\textgreater{}0)
 \item
   blbmoth /0.27/ : outboard blanket box manifold thickness (m)
-  (blktmodel\textgreater0)
+  (blktmodel\textgreater{}0)
 \item
   blbpith /0.30/ : inboard blanket base plate thickness (m)
-  (blktmodel\textgreater0)
+  (blktmodel\textgreater{}0)
 \item
   blbpoth /0.35/ : outboard blanket base plate thickness (m)
-  (blktmodel\textgreater0)
+  (blktmodel\textgreater{}0)
 \item
   blbuith /0.365/ : inboard blanket breeding zone thickness (m)
-  (blktmodel\textgreater0) (iteration variable 90)
+  (blktmodel\textgreater{}0) (iteration variable 90)
 \item
   blbuoth /0.465/ : outboard blanket breeding zone thickness (m)
-  (blktmodel\textgreater0) (iteration variable 91)
+  (blktmodel\textgreater{}0) (iteration variable 91)
 \item
   blnkith /0.115/ : inboard blanket thickness (m); (calculated if
   blktmodel \textgreater{} 0) (=0.0 if iblnkith=0)
@@ -3670,7 +3680,7 @@ so need not be initialised.
   ucblbe /260.0/ : unit cost for blanket beryllium (\$/kg)
 \item
   ucblbreed /875.0/ : unit cost for breeder material (\$/kg)
-  (blktmodel\textgreater0)
+  (blktmodel\textgreater{}0)
 \item
   ucblli /875.0/ : unit cost for blanket lithium (\$/kg) (30\% Li6)
 \item
@@ -4020,7 +4030,7 @@ so need not be initialised.
   (constraint equation 59)
 \item
   nflutfmax /1.0e23/ : max fast neutron fluence on TF coil (n/m2)
-  (blktmodel\textgreater0) (constraint equation 53)
+  (blktmodel\textgreater{}0) (constraint equation 53)
 \item
   pdivtlim /150.0/ : Minimum pdivt {[}MW{]} (constraint equation 80)
 \item
@@ -4330,7 +4340,7 @@ so need not be initialised.
   impvardiv /9/ : index of impurity to be iterated for Reinke divertor
   detachment criterion
 \item
-  lhat /4.33/ : connection length factor L\textbar\textbar{} = lhat
+  lhat /4.33/ : connection length factor L\textbar{}\textbar{} = lhat
   qstar R for Reinke criterion, default value from Post et al. 1995 J.
   Nucl. Mat. 220-2 1014
 \item
@@ -4611,7 +4621,7 @@ so need not be initialised.
   \item
     (72) central solenoid Tresca stress limit (itv 123 foh\_stress)
   \item
-    (73) Psep \textgreater= Plh + Paux (itv 137 (fplhsep))
+    (73) Psep \textgreater{}= Plh + Paux (itv 137 (fplhsep))
   \item
     (74) TFC quench \textless{} tmax\_croco (itv 141 (fcqt))
   \item
@@ -4626,367 +4636,32 @@ so need not be initialised.
     freinke)
   \item
     (79) F-value for max peak CS field (itv 149 fbmaxcs)
+  \item
+    (80) F-value for min pdivt (itv 153 fpdivlim)
+  \item
+    (81) F-value for ne(0) \textgreater{} ne(ped) constraint (itv 154
+    fne0)
   \end{itemize}
 \item
-  (80) F-value for min pdivt (itv 153 fpdivlim)
+  ixc(ipnvars) /0/ : array defining which iteration variables to
+  activate (see lablxc for descriptions)
+\item
+  sqsumsq : sqrt of the sum of the square of the constraint residuals
+\item
+  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON
+  derivatives
+\item
+  epsvmc /1.0e-6/ : error tolerance for VMCON
+\item
+  factor /0.1/ : used in HYBRD for first step size
+\item
+  ftol /1.0e-4/ : error tolerance for HYBRD
+\item
+  boundl(ipnvars) /../ : lower bounds used on ixc variables during VMCON
+  optimisation runs
+\item
+  boundu(ipnvars) /../ : upper bounds used on ixc variables
 \end{itemize}
-
-(81) F-value for ne(0) \textgreater{} ne(ped) constraint (itv 154 fne0)
-
-ixc(ipnvars) /0/ : array defining which iteration variables to activate
-(see lablxc for descriptions)
-
-lablxc(ipnvars) : labels describing iteration variables (NEW:THERE ARE
-NO DEFAULTS):
-
-\begin{itemize}
-\tightlist
-\item
-  ( 1) aspect
-\item
-  ( 2) bt
-\item
-  ( 3) rmajor
-\item
-  ( 4) te
-\item
-  ( 5) beta
-\item
-  ( 6) dene
-\item
-  ( 7) rnbeam
-\item
-  ( 8) fbeta (f-value for equation 6)
-\item
-  ( 9) fdene (f-value for equation 5)
-\item
-  (10) hfact
-\item
-  (11) pheat
-\item
-  (12) oacdcp
-\item
-  (13) tfcth (NOT RECOMMENDED)
-\item
-  (14) fwalld (f-value for equation 8)
-\item
-  (15) fvs (f-value for equation 12)
-\item
-  (16) ohcth
-\item
-  (17) tdwell
-\item
-  (18) q
-\item
-  (19) enbeam
-\item
-  (20) tcpav
-\item
-  (21) ftburn (f-value for equation 13)
-\item
-  (22) NOT USED
-\item
-  (23) fcoolcp
-\item
-  (24) NOT USED
-\item
-  (25) fpnetel (f-value for equation 16)
-\item
-  (26) ffuspow (f-value for equation 9)
-\item
-  (27) fhldiv (f-value for equation 18)
-\item
-  (28) fradpwr (f-value for equation 17), total radiation fraction
-\item
-  (29) bore
-\item
-  (30) fmva (f-value for equation 19)
-\item
-  (31) gapomin
-\item
-  (32) frminor (f-value for equation 21)
-\item
-  (33) fportsz (f-value for equation 20)
-\item
-  (34) fdivcol (f-value for equation 22)
-\item
-  (35) fpeakb (f-value for equation 25)
-\item
-  (36) fbetatry (f-value for equation 24)
-\item
-  (37) coheof
-\item
-  (38) fjohc (f-value for equation 26)
-\item
-  (39) fjohc0 (f-value for equation 27)
-\item
-  (40) fgamcd (f-value for equation 37)
-\item
-  (41) fcohbop
-\item
-  (42) gapoh
-\item
-  (43) NOT USED
-\item
-  (44) fvsbrnni
-\item
-  (45) fqval (f-value for equation 28)
-\item
-  (46) fpinj (f-value for equation 30)
-\item
-  (47) feffcd
-\item
-  (48) fstrcase (f-value for equation 31)
-\item
-  (49) fstrcond (f-value for equation 32)
-\item
-  (50) fiooic (f-value for equation 33)
-\item
-  (51) fvdump (f-value for equation 34)
-\item
-  (52) vdalw
-\item
-  (53) fjprot (f-value for equation 35)
-\item
-  (54) ftmargtf (f-value for equation 36)
-\item
-  (55) obsolete
-\item
-  (56) tdmptf
-\item
-  (57) thkcas
-\item
-  (58) thwcndut
-\item
-  (59) fcutfsu
-\item
-  (60) cpttf
-\item
-  (61) gapds
-\item
-  (62) fdtmp (f-value for equation 38)
-\item
-  (63) ftpeak (f-value for equation 39)
-\item
-  (64) fauxmn (f-value for equation 40)
-\item
-  (65) tohs
-\item
-  (66) ftohs (f-value for equation 41)
-\item
-  (67) ftcycl (f-value for equation 42)
-\item
-  (68) fptemp (f-value for equation 44)
-\item
-  (69) rcool
-\item
-  (70) vcool
-\item
-  (71) fq (f-value for equation 45)
-\item
-  (72) fipir (f-value for equation 46)
-\item
-  (73) scrapli
-\item
-  (74) scraplo
-\item
-  (75) tfootfi
-\item
-  (76) NOT USED
-\item
-  (77) NOT USED
-\item
-  (78) NOT USED
-\item
-  (79) fbetap (f-value for equation 48)
-\item
-  (80) NOT USED
-\item
-  (81) NOT USED
-\item
-  (82) NOT USED
-\item
-  (83) NOT USED
-\item
-  (84) NOT USED
-\item
-  (85) NOT USED
-\item
-  (86) NOT USED
-\item
-  (87) NOT USED
-\item
-  (88) NOT USED
-\item
-  (89) ftbr (f-value for equation 52)
-\item
-  (90) blbuith
-\item
-  (91) blbuoth
-\item
-  (92) fflutf (f-value for equation 53)
-\item
-  (93) shldith
-\item
-  (94) shldoth
-\item
-  (95) fptfnuc (f-value for equation 54)
-\item
-  (96) fvvhe (f-value for equation 55)
-\item
-  (97) fpsepr (f-value for equation 56)
-\item
-  (98) li6enrich
-\item
-  (99) NOT USED
-\item
-  (100) NOT USED
-\item
-  (101) NOT USED
-\item
-  (102) fimpvar
-\item
-  (103) flhthresh (f-value for equation 15)
-\item
-  (104) fcwr (f-value for equation 23)
-\item
-  (105) fnbshinef (f-value for equation 59)
-\item
-  (106) ftmargoh (f-value for equation 60)
-\item
-  (107) favail (f-value for equation 61)
-\item
-  (108) breeder\_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
-\item
-  (109) ralpne: thermal alpha density / electron density
-\item
-  (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha
-  particle to energy confinement times (f-value for equation 62)
-\item
-  (111) fniterpump: f-value for constraint that number of vacuum pumps
-  \textless{} TF coils (f-value for equation 63)
-\item
-  (112) fzeffmax: f-value for max Zeff (f-value for equation 64)
-\item
-  (113) ftaucq: f-value for minimum quench time (f-value for equation
-  65)
-\item
-  (114) fw\_channel\_length: Length of a single first wall channel
-\item
-  (115) fpoloidalpower: f-value for max rate of change of energy in
-  poloidal field (f-value for equation 66)
-\item
-  (116) fradwall: f-value for radiation wall load limit (eq. 67)
-\item
-  (117) fpsepbqar: f-value for Psep*Bt/qar upper limit (eq. 68)
-\item
-  (118) fpsep: f-value to ensure separatrix power is less than value
-  from Kallenbach divertor (f-value for equation 69)
-\item
-  (119) tesep: separatrix temperature calculated by the Kallenbach
-  divertor model
-\item
-  (120) ttarget: Plasma temperature adjacent to divertor sheath {[}eV{]}
-\item
-  (121) neratio: ratio of mean SOL density at OMP to separatrix density
-  at OMP
-\item
-  (122) oh\_steel\_frac : streel fraction of Central Solenoid
-\item
-  (123) foh\_stress : f-value for CS coil Tresca stress limit (f-value
-  for eq. 72)
-\item
-  (124) qtargettotal : Power density on target including surface
-  recombination {[}W/m2{]}
-\item
-  (125) fimp(3) : Beryllium density fraction relative to electron
-  density
-\item
-  (126) fimp(4) : Carbon density fraction relative to electron density
-\item
-  (127) fimp(5) : Nitrogen fraction relative to electron density
-\item
-  (128) fimp(6) : Oxygen density fraction relative to electron density
-\item
-  (129) fimp(7) : Neon density fraction relative to electron density
-\item
-  (130) fimp(8) : Silicon density fraction relative to electron density
-\item
-  (131) fimp(9) : Argon density fraction relative to electron density
-\item
-  (132) fimp(10) : Iron density fraction relative to electron density
-\item
-  (133) fimp(11) : Nickel density fraction relative to electron density
-\item
-  (134) fimp(12) : Krypton density fraction relative to electron density
-\item
-  (135) fimp(13) : Xenon density fraction relative to electron density
-\item
-  (136) fimp(14) : Tungsten density fraction relative to electron
-  density
-\item
-  (137) fplhsep (f-value for equation 73)
-\item
-  (138) rebco\_thickness : thickness of REBCO layer in tape (m)
-\item
-  (139) copper\_thick : thickness of copper layer in tape (m)
-\item
-  (140) thkwp : radial thickness of TFC winding pack (m)
-\item
-  (141) fcqt : TF coil quench temperature \textless{} tmax\_croco
-  (f-value for equation 74)
-\item
-  (142) nesep : electron density at separatrix {[}m-3{]}
-\item
-  (143) f\_copperA\_m2 : TF coil current / copper area \textless{}
-  Maximum value (f-value for equation 75)
-\item
-  (144) fnesep : Eich critical electron density at separatrix (f-value
-  for constraint equation 76)
-\item
-  (145) fgwped : fraction of Greenwald density to set as pedestal-top
-  density
-\item
-  (146) fcpttf : F-value for TF coil current per turn limit (constraint
-  equation 77)
-\item
-  (147) freinke : F-value for Reinke detachment criterion (constraint
-  equation 78)
-\item
-  (148) fzactual : fraction of impurity at SOL with Reinke detachment
-  criterion
-\item
-  (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
-\item
-  (150) plasmod\_fcdp : (P\_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD
-  power over available power
-\item
-  (151) plasmod\_fradc : Pline\_Xe / (Palpha + Paux - PlineAr - Psync -
-  Pbrad)
-\item
-  (152) fbmaxcs : Ratio of separatrix density to Greenwald density
-\item
-  (153) fpdivlim : F-value for minimum pdivt (con. 80)
-\end{itemize}
-
-(154) fne0 : F-value for ne(0) \textgreater{} ne(ped) (con. 81)
-
-sqsumsq : sqrt of the sum of the square of the constraint residuals
-
-epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON
-derivatives
-
-epsvmc /1.0e-6/ : error tolerance for VMCON
-
-factor /0.1/ : used in HYBRD for first step size
-
-ftol /1.0e-4/ : error tolerance for HYBRD
-
-boundl(ipnvars) /../ : lower bounds used on ixc variables during VMCON
-optimisation runs
-
-boundu(ipnvars) /../ : upper bounds used on ixc variables during VMCON
-optimisation runs
 
 \hypertarget{eqsolv}{%
 \subsubsection{\texorpdfstring{\href{eqsolv.html}{eqsolv}}{eqsolv}}\label{eqsolv}}

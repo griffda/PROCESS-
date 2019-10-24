@@ -97,17 +97,6 @@ ixc = 123 * foh_stress
 ixc = 109 * ralpne
 ixc = 110 * ftaulimit
 
-scan_dim = 2
-
-isweep = 3
-nsweep = 17
-sweep = 11.5, 12.5, 13.5
-
-isweep_2 = 13
-nsweep_2 = 1
-sweep_2 = 2.80, 2.82, 2.84, 2.86, 2.88, 2.90, 2.92, 2.94, 2.96, 2.98, 3.00, 3.02, 3.04
-
-
 
 *-----------------Build Variables------------------*
 

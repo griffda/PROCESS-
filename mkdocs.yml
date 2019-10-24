@@ -24,6 +24,7 @@ nav:
         Standards: development/standards.md
         Continuous Integration: development/ci-guide.md
         Unit Tests: development/unit-tests.md
+    - FORD docs: ford_site/index.html
 
 repo_url: https://git.ccfe.ac.uk/process/process.git
 

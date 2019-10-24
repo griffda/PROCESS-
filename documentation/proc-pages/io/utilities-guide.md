@@ -109,3 +109,32 @@ config file
 | - | - |
 | `-h --help` | show help message and exit |
 | `-f CONFIGFILE --configfile CONFIGFILE` | configuration file, default = run_process.conf |
+
+## Sankey Diagram
+
+> `./utilities/plot_sankey.py`
+
+The power flows of the power plant will be extracted from MFILE.DAT and used to populate a
+Sankey diagram. The diagram will start from the initial fusion power and show all of the inputs 
+and outputs for the power flows. The Recirculated will finish to connect with the initial
+fusion power.
+
+### Usage
+
+```
+python plot_sankey.py [-h] [-e END] [-f MFILE] [-s]
+```
+
+### Output
+
+A .pdf file is created called 'SankeyPowerFlow.pdf', and 'SankeyPowerFlow_simplified.pdf' if
+the -s option is used, in the directory the utility was run. 
+
+### Options
+
+| Argument | Description |
+| - | - |
+| `-h --help`       | show help message and exit      |
+| `-e --end`        | file format, default = pdf      |
+| `-f --mfile`      | mfile name, default = MFILE.DAT |
+| `-s, --simplified`| Plot a simplified version       |

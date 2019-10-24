@@ -50,6 +50,8 @@ subroutine initial
     use process_output
     use stellarator_module
     use stellarator_variables
+    use numerics
+    use define_iteration_variables
 
     implicit none
 
@@ -63,8 +65,477 @@ subroutine initial
 
     call devtyp
 
-    !  Initialise stellarator parameters if necessary
+    !+ad_vars  boundl(ipnvars) /../ : lower bounds on iteration variables 
+    !+ad_vars  boundu(ipnvars) /../ : upper bounds on iteration variables 
 
+    ! Issue #287  The initialization subroutines for the iteration variables are called
+    call init_itv_1       
+    call init_itv_2
+    call init_itv_3
+    call init_itv_4
+    call init_itv_5
+    call init_itv_6
+    call init_itv_7
+    call init_itv_8
+    call init_itv_9
+    call init_itv_10
+    call init_itv_11
+    call init_itv_12
+    call init_itv_13
+    call init_itv_14
+    call init_itv_15
+    call init_itv_16
+    call init_itv_17
+    call init_itv_18
+    call init_itv_19
+    call init_itv_20
+    call init_itv_21
+    
+    call init_itv_23
+    
+    call init_itv_25
+    call init_itv_26
+    call init_itv_27
+    call init_itv_28
+    call init_itv_29
+    call init_itv_30
+    call init_itv_31
+    call init_itv_32
+    call init_itv_33
+    call init_itv_34
+    call init_itv_35
+    call init_itv_36
+    call init_itv_37
+    call init_itv_38
+    call init_itv_39
+    call init_itv_40
+    call init_itv_41
+    call init_itv_42
+    
+    call init_itv_44
+    call init_itv_45
+    call init_itv_46
+    call init_itv_47
+    call init_itv_48
+    call init_itv_49
+    call init_itv_50
+    call init_itv_51
+    call init_itv_52
+    call init_itv_53
+    call init_itv_54
+    
+    call init_itv_56
+    call init_itv_57
+    call init_itv_58
+    call init_itv_59
+    call init_itv_60
+    call init_itv_61
+    call init_itv_62
+    call init_itv_63
+    call init_itv_64
+    call init_itv_65
+    call init_itv_66
+    call init_itv_67
+    call init_itv_68
+    call init_itv_69
+    call init_itv_70
+    call init_itv_71
+    call init_itv_72
+    call init_itv_73
+    call init_itv_74
+    call init_itv_75
+    
+    
+    
+    call init_itv_79
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    call init_itv_89
+    call init_itv_90
+    call init_itv_91
+    call init_itv_92
+    call init_itv_93
+    call init_itv_94
+    call init_itv_95
+    call init_itv_96
+    call init_itv_97
+    call init_itv_98
+    !Not used
+    call init_itv_102
+    call init_itv_103
+    call init_itv_104
+    call init_itv_105
+    call init_itv_106
+    call init_itv_107
+    call init_itv_108
+    call init_itv_109
+    call init_itv_110
+    call init_itv_111
+    call init_itv_112
+    call init_itv_113
+    call init_itv_114
+    call init_itv_115
+    call init_itv_116
+    call init_itv_117
+    call init_itv_118
+    call init_itv_119
+    call init_itv_120
+    call init_itv_121
+    call init_itv_122
+    call init_itv_123
+    call init_itv_124
+    call init_itv_125
+    call init_itv_126
+    call init_itv_127
+    call init_itv_128
+    call init_itv_129
+    call init_itv_130
+    call init_itv_131
+    call init_itv_132
+    call init_itv_133
+    call init_itv_134
+    call init_itv_135
+    call init_itv_136
+    call init_itv_137
+    call init_itv_138
+    call init_itv_139
+    call init_itv_140
+    call init_itv_141
+    call init_itv_142
+    call init_itv_143
+    call init_itv_144
+    call init_itv_145
+    call init_itv_146
+    call init_itv_147
+    call init_itv_148
+    call init_itv_149
+    call init_itv_150
+    call init_itv_151
+    call init_itv_152
+    call init_itv_153
+    call init_itv_154
+    call init_itv_155
+    call init_itv_156
+    call init_itv_157
+    call init_itv_158
+    call init_itv_159
+    call init_itv_160
+    call init_itv_161
+    call init_itv_162
+    call init_itv_163
+    call init_itv_164
+    call init_itv_165
+    call init_itv_166
+    call init_itv_167
+    call init_itv_168
+    call init_itv_169
+    call init_itv_170
+
+
+    !    !+ad_varc  <LI> ( 1) aspect!!!
+    !    call init_itv_1
+    !    !+ad_varc  <LI> ( 2) bt!!!!
+    !    call init_itv_2  
+    !    !+ad_varc  <LI> ( 3) rmajor
+    !    call init_itv_3
+    !    !+ad_varc  <LI> ( 4) te
+    !    call init_itv_4
+    !    !+ad_varc  <LI> ( 5) beta
+    !    call init_itv_5
+    !    !+ad_varc  <LI> ( 6) dene
+    !    call init_itv_6
+    !    !+ad_varc  <LI> ( 7) rnbeam
+    !    call init_itv_7
+    !    !+ad_varc  <LI> ( 8) fbeta (f-value for equation 6)
+    !    call init_itv_8  
+    !    !+ad_varc  <LI> ( 9) fdene (f-value for equation 5)
+    !    call init_itv_9 
+    !    !+ad_varc  <LI> (10) hfact
+    !    lablxc(10) = 'hfact         '; boundl(10) = 0.100D0 ; boundu(10) = 3.000D0  
+    !    !+ad_varc  <LI> (11) pheat
+    !    lablxc(11) = 'pheat         '; boundl(11) = 1.00D-3 ; boundu(11) = 1.000D3  
+    !    !+ad_varc  <LI> (12) oacdcp
+    !    lablxc(12) = 'oacdcp        '; boundl(12) = 1.000D5 ; boundu(12) =  1.500D8 
+    !    !+ad_varc  <LI> (13) tfcth (NOT RECOMMENDED)
+    !    lablxc(13) = 'tfcth         '; boundl(13) = 0.100D0 ; boundu(13) = 5.000D0
+    !    !+ad_varc  <LI> (14) fwalld (f-value for equation 8)
+    !    lablxc(14) = 'fwalld        '; boundl(14) = 0.001D0 ; boundu(14) = 1.000D0
+    !    !+ad_varc  <LI> (15) fvs (f-value for equation 12)
+    !    lablxc(15) = 'fvs           '; boundl(15) = 0.001D0 ; boundu(15) = 1.000D0
+    !    !+ad_varc  <LI> (16) ohcth
+    !    lablxc(16) = 'ohcth         '; boundl(16) = 0.010D0 ; boundu(16) = 10.00D0
+    !    !+ad_varc  <LI> (17) tdwell
+    !    lablxc(17) = 'tdwell        '; boundl(17) = 0.100D0 ; boundu(17) = 1.000D8
+    !    !+ad_varc  <LI> (18) q
+    !    lablxc(18) = 'q             '; boundl(18) = 2.000D0 ; boundu(18) = 50.00D0
+    !    !+ad_varc  <LI> (19) enbeam
+    !    lablxc(19) = 'enbeam        '; boundl(19) = 1.000D0 ; boundu(19) = 1.000D6
+    !    !+ad_varc  <LI> (20) tcpav
+    !    lablxc(20) = 'tcpav         '; boundl(20) = 40.00D0 ; boundu(20) = 3.000D2
+    !    !+ad_varc  <LI> (21) ftburn (f-value for equation 13)
+    !    lablxc(21) = 'ftburn        '; boundl(21) = 0.001D0 ; boundu(21) = 1.000D0
+    !    !+ad_varc  <LI> (22) NOT USED
+    !    !+ad_varc  <LI> (23) fcoolcp
+    !    lablxc(23) = 'fcoolcp       '; boundl(23) = 0.100D0 ; boundu(23) = 0.500D0
+    !    !+ad_varc  <LI> (24) NOT USED
+    !    !+ad_varc  <LI> (25) fpnetel (f-value for equation 16)
+    !    lablxc(25) = 'fpnetel       '; boundl(25) = 0.001D0; boundu(25) = 1.000D0
+    !    !+ad_varc  <LI> (26) ffuspow (f-value for equation 9)
+    !    lablxc(26) = 'ffuspow       '; boundl(26) = 0.001D0; boundu(26) = 1.000D0
+    !    !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
+    !    lablxc(27) = 'fhldiv        ';  boundl(27) = 0.001D0; boundu(27) = 1.000D0
+    !    !+ad_varc  <LI> (28) fradpwr (f-value for equation 17), total radiation fraction
+    !    lablxc(28) = 'fradpwr       '; boundl(28) = 0.001D0; boundu(28) = 0.990D0
+    !    !+ad_varc  <LI> (29) bore
+    !    lablxc(29) = 'bore          '; boundl(29) = 0.100D0; boundu(29) = 10.00D0
+    !    !+ad_varc  <LI> (30) fmva (f-value for equation 19)
+    !    lablxc(30) = 'fmva          '; boundl(30) = 0.010D0; boundu(30) = 1.000D0
+    !    !+ad_varc  <LI> (31) gapomin
+    !    lablxc(31) = 'gapomin       '; boundl(31) = 0.001D0; boundu(31) = 1.000D1
+    !    !+ad_varc  <LI> (32) frminor (f-value for equation 21)
+    !    lablxc(32) = 'frminor       '; boundl(32) = 0.001D0; boundu(32) = 1.000D0
+    !    !+ad_varc  <LI> (33) fportsz (f-value for equation 20)
+    !    lablxc(33) = 'fportsz       '; boundl(33) = 0.001D0; boundu(33) = 1.000D0
+    !    !+ad_varc  <LI> (34) fdivcol (f-value for equation 22)
+    !    lablxc(34) = 'fdivcol       '; boundl(34) = 0.001D0; boundu(34) = 1.000D0
+    !    !+ad_varc  <LI> (35) fpeakb (f-value for equation 25)
+    !    lablxc(35) = 'fpeakb        '; boundl(35) = 0.001D0; boundu(35) = 1.000D0
+    !    !+ad_varc  <LI> (36) fbetatry (f-value for equation 24)
+    !    lablxc(36) = 'fbetatry      '; boundl(36) = 0.001D0; boundu(36) = 1.000D0
+    !    !+ad_varc  <LI> (37) coheof
+    !    lablxc(37) = 'coheof        '; boundl(37) = 1.000D5; boundu(37) = 1.000D8
+    !    !+ad_varc  <LI> (38) fjohc (f-value for equation 26)
+    !    lablxc(38) = 'fjohc         '; boundl(38) = 0.010D0; boundu(38) = 1.000D0
+    !    !+ad_varc  <LI> (39) fjohc0 (f-value for equation 27)
+    !    lablxc(39) = 'fjohc0        '; boundl(39) = 0.001D0; boundu(39) = 1.000D0
+    !    !+ad_varc  <LI> (40) fgamcd (f-value for equation 37)
+    !    lablxc(40) = 'fgamcd        '; boundl(40) = 0.001D0; boundu(40) = 1.000D0
+    !    !+ad_varc  <LI> (41) fcohbop
+    !    lablxc(41) = 'fcohbop       '; boundl(41) = 0.001D0; boundu(41) = 1.000D0
+    !    !+ad_varc  <LI> (42) gapoh
+    !    lablxc(42) = 'gapoh         '; boundl(42) = 0.001D0; boundu(42) = 10.00D0
+    !    !+ad_varc  <LI> (43) NOT USED
+    !    !+ad_varc  <LI> (44) fvsbrnni
+    !    lablxc(44) = 'fvsbrnni      '; boundl(44) = 0.001D0; boundu(44) = 1.000D0
+    !    !+ad_varc  <LI> (45) fqval (f-value for equation 28)
+    !    lablxc(45) = 'fqval         '; boundl(45) = 0.001D0; boundu(45) = 1.000D0
+    !    !+ad_varc  <LI> (46) fpinj (f-value for equation 30)
+    !    lablxc(46) = 'fpinj         '; boundl(46) = 0.001D0; boundu(46) = 1.000D0
+    !    !+ad_varc  <LI> (47) feffcd
+    !    lablxc(47) = 'feffcd        '; boundl(47) = 0.001D0; boundu(47) = 1.000D0
+    !    !+ad_varc  <LI> (48) fstrcase (f-value for equation 31)
+    !    lablxc(48) = 'fstrcase      '; boundl(48) = 0.001D0; boundu(48) = 1.000D0
+    !    !+ad_varc  <LI> (49) fstrcond (f-value for equation 32)
+    !    lablxc(49) = 'fstrcond      '; boundl(49) = 0.001D0; boundu(49) = 1.000D0
+    !    !+ad_varc  <LI> (50) fiooic (f-value for equation 33)
+    !    lablxc(50) = 'fiooic        '; boundl(50) = 0.001D0; boundu(50) = 1.000D0
+    !    !+ad_varc  <LI> (51) fvdump (f-value for equation 34)
+    !    lablxc(51) = 'fvdump        '; boundl(51) = 0.001D0; boundu(51) = 1.000D0
+    !    !+ad_varc  <LI> (52) vdalw
+    !    lablxc(52) = 'vdalw         '; boundl(52) = 0.001D0; boundu(52) = 1.000D6
+    !    !+ad_varc  <LI> (53) fjprot (f-value for equation 35)
+    !    lablxc(53) = 'fjprot        '; boundl(53) = 0.001D0; boundu(53) = 1.000D0
+    !    !+ad_varc  <LI> (54) ftmargtf (f-value for equation 36)
+    !    lablxc(54) = 'ftmargtf      '; boundl(54) = 0.001D0; boundu(54) = 1.000D0
+    !    !+ad_varc  <LI> (55) obsolete
+    !    !+ad_varc  <LI> (56) tdmptf
+    !    lablxc(56) = 'tdmptf        '; boundl(56) = 0.100D0; boundu(56) = 100.0D0
+    !    !+ad_varc  <LI> (57) thkcas
+    !    lablxc(57) = 'thkcas        '; boundl(57) = 0.050D0; boundu(57) = 1.000D0
+    !    !+ad_varc  <LI> (58) thwcndut
+    !    lablxc(58) = 'thwcndut      '; boundl(58) = 0.001D0; boundu(58) = 0.100D0
+    !    !+ad_varc  <LI> (59) fcutfsu
+    !    lablxc(59) = 'fcutfsu       '; boundl(59) = 0.001D0; boundu(59) = 1.000D0
+    !    !+ad_varc  <LI> (60) cpttf
+    !    lablxc(60) = 'cpttf         '; boundl(60) = 0.001D0; boundu(60) = 4.000D4
+    !    !+ad_varc  <LI> (61) gapds
+    !    lablxc(61) = 'gapds         '; boundl(61) = 0.001D0; boundu(61) = 10.00D0
+    !    !+ad_varc  <LI> (62) fdtmp (f-value for equation 38)
+    !    lablxc(62) = 'fdtmp         '; boundl(62) = 0.001D0; boundu(62) = 1.000D0
+    !    !+ad_varc  <LI> (63) ftpeak (f-value for equation 39)
+    !    lablxc(63) = 'ftpeak        '; boundl(63) = 0.001D0; boundu(63) = 1.000D0
+    !    !+ad_varc  <LI> (64) fauxmn (f-value for equation 40)
+    !    lablxc(64) = 'fauxmn        '; boundl(64) = 0.001D0; boundu(64) = 1.000D0
+    !    !+ad_varc  <LI> (65) tohs
+    !    lablxc(65) = 'tohs          '; boundl(65) = 0.100D0; boundu(65) = 1.000D3
+    !    !+ad_varc  <LI> (66) ftohs (f-value for equation 41)
+    !    lablxc(66) = 'ftohs         '; boundl(66) = 0.001D0; boundu(66) = 1.000D0
+    !    !+ad_varc  <LI> (67) ftcycl (f-value for equation 42)
+    !    lablxc(67) = 'ftcycl        '; boundl(67) = 0.001D0; boundu(67) = 1.000D0
+    !    !+ad_varc  <LI> (68) fptemp (f-value for equation 44)
+    !    lablxc(68) = 'fptemp        '; boundl(68) = 0.001D0; boundu(68) = 1.000D0
+    !    !+ad_varc  <LI> (69) rcool
+    !    lablxc(69) = 'rcool         '; boundl(69) = 0.001D0; boundu(69) = 0.010D0
+    !    !+ad_varc  <LI> (70) vcool
+    !    lablxc(70) = 'vcool         '; boundl(70) = 1.000D0; boundu(70) = 1.000D2
+    !    !+ad_varc  <LI> (71) fq (f-value for equation 45)
+    !    lablxc(71) = 'fq            '; boundl(71) = 0.001D0; boundu(71) = 1.000D0
+    !    !+ad_varc  <LI> (72) fipir (f-value for equation 46)
+    !    lablxc(72) = 'fipir         '; boundl(72) = 0.001D0; boundu(72) = 1.000D0
+    !    !+ad_varc  <LI> (73) scrapli
+    !    lablxc(73) = 'scrapli       '; boundl(73) = 0.001D0; boundu(73) = 10.00D0
+    !    !+ad_varc  <LI> (74) scraplo
+    !    lablxc(74) = 'scraplo       '; boundl(74) = 0.001D0; boundu(74) = 10.00D0
+    !    !+ad_varc  <LI> (75) tfootfi
+    !    lablxc(75) = 'tfootfi       '; boundl(75) = 0.200D0; boundu(75) = 5.000D0
+    !    !+ad_varc  <LI> (76) NOT USED
+    !    !+ad_varc  <LI> (77) NOT USED
+    !    !+ad_varc  <LI> (78) NOT USED
+    !    !+ad_varc  <LI> (79) fbetap (f-value for equation 48)
+    !    lablxc(79) = 'fbetap        '; boundl(79) = 0.001D0; boundu(79) = 1.000D0
+    !    !+ad_varc  <LI> (80) NOT USED
+    !    !+ad_varc  <LI> (81) NOT USED
+    !    !+ad_varc  <LI> (82) NOT USED
+    !    !+ad_varc  <LI> (83) NOT USED
+    !    !+ad_varc  <LI> (84) NOT USED
+    !    !+ad_varc  <LI> (85) NOT USED
+    !    !+ad_varc  <LI> (86) NOT USED
+    !    !+ad_varc  <LI> (87) NOT USED
+    !    !+ad_varc  <LI> (88) NOT USED
+    !    !+ad_varc  <LI> (89) ftbr (f-value for equation 52)
+    !    lablxc(89) = 'ftbr          '; boundl(89) = 0.001D0; boundu(89) = 1.000D0
+    !    !+ad_varc  <LI> (90) blbuith
+    !    lablxc(90) = 'blbuith       '; boundl(90) = 0.001D0; boundu(90) = 2.000D0
+    !    !+ad_varc  <LI> (91) blbuoth
+    !    lablxc(91) = 'blbuoth       '; boundl(91) = 0.001D0; boundu(91) = 2.000D0
+    !    !+ad_varc  <LI> (92) fflutf (f-value for equation 53)
+    !    lablxc(92) = 'fflutf        '; boundl(92) = 0.001D0; boundu(92) = 1.000D0
+    !    !+ad_varc  <LI> (93) shldith
+    !    lablxc(93) = 'shldith       '; boundl(93) = 0.001D0; boundu(93) = 10.00D0
+    !    !+ad_varc  <LI> (94) shldoth
+    !    lablxc(94) = 'shldoth       '; boundl(94) = 0.001D0; boundu(94) = 10.00D0
+    !    !+ad_varc  <LI> (95) fptfnuc (f-value for equation 54)
+    !    lablxc(95) = 'fptfnuc       '; boundl(95) = 0.001D0; boundu(95) = 1.000D0
+    !    !+ad_varc  <LI> (96) fvvhe (f-value for equation 55)
+    !    lablxc(96) = 'fvvhe         '; boundl(96) = 0.001D0; boundu(96) = 1.000D0
+    !    !+ad_varc  <LI> (97) fpsepr (f-value for equation 56)
+    !    lablxc(97) = 'fpsepr        '; boundl(97) = 0.001D0; boundu(97) = 1.000D0
+    !    !+ad_varc  <LI> (98) li6enrich
+    !    lablxc(98) = 'li6enrich     '; boundl(98) = 10.00D0; boundu(98) = 100.0D0
+    !    !+ad_varc  <LI> (99) NOT USED
+    !    !+ad_varc  <LI> (100) NOT USED
+    !    !+ad_varc  <LI> (101) NOT USED
+    !    !+ad_varc  <LI> (102) fimpvar
+    !    lablxc(102) = 'fimpvar       '; boundl(102) = 1.00D-6; boundu(102) = 0.010D0
+    !    !+ad_varc  <LI> (103) flhthresh (f-value for equation 15)
+    !    lablxc(103) = 'flhthresh     '; boundl(103) = 1.000D0; boundu(103) = 1.000D6
+    !    !+ad_varc  <LI> (104) fcwr (f-value for equation 23)
+    !    lablxc(104) = 'fcwr          '; boundl(104) = 0.001D0; boundu(104) = 1.000D0
+    !    !+ad_varc  <LI> (105) fnbshinef (f-value for equation 59)
+    !    lablxc(105) = 'fnbshinef     '; boundl(105) = 0.001D0; boundu(105) = 1.000D0
+    !    !+ad_varc  <LI> (106) ftmargoh (f-value for equation 60)
+    !    lablxc(106) = 'ftmargoh      '; boundl(106) = 0.001D0; boundu(106) = 1.000D0
+    !    !+ad_varc  <LI> (107) favail (f-value for equation 61)
+    !    lablxc(107) = 'favail        '; boundl(107) = 0.001D0; boundu(107) = 1.000D0
+    !    !+ad_varc  <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
+    !    lablxc(108) = 'breeder_f     '; boundl(108) = 0.060D0; boundu(108) = 1.000D0
+    !    !+ad_varc  <LI> (109) ralpne: thermal alpha density / electron density
+    !    lablxc(109) = 'ralpne        '; boundl(109) = 0.050D0; boundu(109) = 0.150D0
+    !    !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha particle
+    !    !+ad_varc       to energy confinement times (f-value for equation 62)
+    !    lablxc(110) = 'ftaulimit     '; boundl(110) = 0.001D0; boundu(110) = 1.000D0
+    !    !+ad_varc  <LI> (111) fniterpump: f-value for constraint that
+    !    !+ad_varc       number of vacuum pumps <  TF coils (f-value for equation 63)
+    !    lablxc(111) = 'fniterpump    '; boundl(111) = 0.001D0; boundu(111) = 1.000D0
+    !    !+ad_varc  <LI> (112) fzeffmax: f-value for max Zeff (f-value for equation 64)
+    !    lablxc(112) = 'fzeffmax      '; boundl(112) = 0.001D0; boundu(112) = 1.000D0
+    !    !+ad_varc  <LI> (113) ftaucq: f-value for minimum quench time (f-value for equation 65)
+    !    lablxc(113) = 'ftaucq        '; boundl(113) = 0.001D0; boundu(113) = 1.000D0
+    !    !+ad_varc  <LI> (114) fw_channel_length: Length of a single first wall channel
+    !    lablxc(114) = 'fw_channel_l  '; boundl(114) = 0.001D0; boundu(114) = 1.000D3
+    !    !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field
+    !    !+ad_varc             (f-value for equation 66)
+    !    lablxc(115) = 'fpoloidalpower'; boundl(26) = 0.001D0; boundu(26) = 1.000D0
+    !    !+ad_varc  <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)
+    !    lablxc(116) = 'fradwall      '; boundl(116) = 0.001D0; boundu(116) = 1.000D0
+    !    !+ad_varc  <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)
+    !    lablxc(117) = 'fpsepbqar     '; boundl(117) = 0.001D0; boundu(117) = 1.000D0
+    !    !+ad_varc  <LI> (118) fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
+    !    !+ad_varc            (f-value for equation 69)
+    !    lablxc(118) = 'fpsep         '; boundl(118) = 0.001D0; boundu(118) = 1.000D0
+    !    !+ad_varc  <LI> (119) tesep:  separatrix temperature calculated by the Kallenbach divertor model
+    !    lablxc(119) = 'tesep         '; boundl(119) = 0.000D0; boundu(119) = 1.000D1
+    !    !+ad_varc  <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]
+    !    lablxc(120) = 'ttarget       '; boundl(120) = 1.000D0; boundu(120) = 1.000D4
+    !    !+ad_varc  <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP
+    !    lablxc(121) = 'neratio       '; boundl(121) = 0.001D0; boundu(121) = 1.000D0
+    !    !+ad_varc  <LI> (122) oh_steel_frac : streel fraction of Central Solenoid
+    !    lablxc(122) = 'oh_steel_frac '; boundl(122) = 0.001D0; boundu(122) = 0.950D0
+    !    !+ad_varc  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit (f-value for eq. 72)
+    !    lablxc(123) = 'foh_stress    '; boundl(123) = 0.001D0; boundu(123) = 1.000D0
+    !    !+ad_varc  <LI> (124) qtargettotal : Power density on target including surface recombination [W/m2]
+    !    lablxc(124) = 'qtargettotal  '; boundl(124) = 0.001D0; boundu(124) = 1.000D7
+    !    !+ad_varc  <LI> (125) fimp(3) :  Beryllium density fraction relative to electron density
+    !    lablxc(125) = 'fimp(03)      '; boundl(125) = 1.00D-8; boundu(125) = 0.010D0
+    !    !+ad_varc  <LI> (126) fimp(4) :  Carbon density fraction relative to electron density
+    !    lablxc(126) = 'fimp(04)      '; boundl(126) = 1.00D-8; boundu(126) = 0.010D0
+    !    !+ad_varc  <LI> (127) fimp(5) :  Nitrogen fraction relative to electron density
+    !    lablxc(127) = 'fimp(05)      '; boundl(127) = 1.00D-8; boundu(127) = 0.010D0
+    !    !+ad_varc  <LI> (128) fimp(6) :  Oxygen density fraction relative to electron density
+    !    lablxc(128) = 'fimp(06)      '; boundl(128) = 1.00D-8; boundu(128) = 0.010D0
+    !    !+ad_varc  <LI> (129) fimp(7) :  Neon density fraction relative to electron density
+    !    lablxc(129) = 'fimp(07)      '; boundl(129) = 1.00D-8; boundu(129) = 0.010D0
+    !    !+ad_varc  <LI> (130) fimp(8) :  Silicon density fraction relative to electron density
+    !    lablxc(130) = 'fimp(08)      '; boundl(130) = 1.00D-8; boundu(130) = 0.010D0
+    !    !+ad_varc  <LI> (131) fimp(9) :  Argon density fraction relative to electron density
+    !    lablxc(131) = 'fimp(09)      '; boundl(131) = 1.00D-8; boundu(131) = 0.010D0
+    !    !+ad_varc  <LI> (132) fimp(10) :  Iron density fraction relative to electron density
+    !    lablxc(132) = 'fimp(10)      '; boundl(132) = 1.00D-8; boundu(132) = 0.010D0
+    !    !+ad_varc  <LI> (133) fimp(11) :  Nickel density fraction relative to electron density
+    !    lablxc(133) = 'fimp(11)      '; boundl(133) = 1.00D-8; boundu(133) = 0.010D0
+    !    !+ad_varc  <LI> (134) fimp(12) :  Krypton density fraction relative to electron density
+    !    lablxc(134) = 'fimp(12)      '; boundl(134) = 1.00D-8; boundu(134) = 0.010D0
+    !    !+ad_varc  <LI> (135) fimp(13) :  Xenon density fraction relative to electron density
+    !    lablxc(135) = 'fimp(13)      '; boundl(135) = 1.00D-8; boundu(135) = 0.010D0
+    !    !+ad_varc  <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density
+    !    lablxc(136) = 'fimp(14)      '; boundl(136) = 1.00D-8; boundu(136) = 0.010D0
+    !    !+ad_varc  <LI> (137) fplhsep (f-value for equation 73)
+    !    lablxc(137) = 'fplhsep       '; boundl(137) = 0.001D0; boundu(137) = 1.000D0
+    !    !+ad_varc  <LI> (138) rebco_thickness : thickness of REBCO layer in tape (m)
+    !    lablxc(138) = 'rebco_thicknes'; boundl(138) = 0.01D-6; boundu(138) = 100.0D-6
+    !    !+ad_varc  <LI> (139) copper_thick : thickness of copper layer in tape (m)
+    !    lablxc(139) = 'copper_thick  '; boundl(139) = 1.00D-6; boundu(139) = 1.00D-3
+    !    !+ad_varc  <LI> (140) thkwp : radial thickness of TFC winding pack (m)
+    !    lablxc(140) = 'thkwp         '; boundl(140) = 0.001D0; boundu(140) = 2.000D0
+    !    !+ad_varc  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
+    !    lablxc(141) = 'fcqt          '; boundl(141) = 0.001D0; boundu(141) = 1.000D0
+    !    !+ad_varc  <LI> (142) nesep : electron density at separatrix [m-3]
+    !    lablxc(142) = 'nesep         '; boundl(142) = 1.00D17; boundu(142) = 1.00D20
+    !    !+ad_varc  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75)
+    !    lablxc(143) = 'f_copperA_m2  '; boundl(143) = 0.001D0; boundu(143) = 1.000D0
+    !    !+ad_varc  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]
+    !    lablxc(144) = 'fnesep        '; boundl(144) = 0.001D0; boundu(144) = 1.000D0
+    !    !+ad_varc  <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density
+    !    lablxc(145) = 'fgwped        '; boundl(145) = 0.500D0; boundu(145) = 1.000D0
+    !    !+ad_varc  <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)
+    !    lablxc(146) = 'fcpttf        '; boundl(146) = 0.001D0; boundu(146) = 1.000D0
+    !    !+ad_varc  <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)
+    !    lablxc(147) = 'freinke       '; boundl(147) = 0.001D0; boundu(147) = 1.000D0
+    !    !+ad_varc  <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion
+    !    lablxc(148) = 'fzactual      '; boundl(148) = 1.00D-8; boundu(148) = 1.000D0
+    !    !+ad_varc  <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
+    !    lablxc(149) = 'fbmaxcs       '; boundl(149) = 0.001D0; boundu(149) = 1.000D0
+    !     !+ad_varc  <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power
+    !    lablxc(150) = 'plasmod_fcdp  '; boundl(150) = 0.000D0; boundu(150) = 1.000D0
+    !    !+ad_varc  <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)
+    !    lablxc(151) = 'plasmod_fradc '; boundl(151) = 0.001D0; boundu(151) = 1.000D0
+    !    !+ad_varc  <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density
+    !    lablxc(152) = 'fgwsep        '; boundl(152) = 0.001D0; boundu(152) = 1.000D0
+    !    !+ad_varc  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)
+    !    lablxc(153) = 'fpdivlim      '; boundl(153) = 0.001D0; boundu(153) = 1.000D0
+    !    !+ad_varc  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)</UL>
+    !    lablxc(154) = 'fpdivlim      '; boundl(154) = 0.001D0; boundu(154) = 1.000D0
+
+
+    !  Initialise stellarator parameters if necessary
+    !  This overrides some of the bounds of the tokamak parameters.
     if (istell == 1) call stinit
 
 end subroutine initial
@@ -587,34 +1058,58 @@ subroutine check
      endif
 
      !if using Reinke iteration variable fzactual, then assign to imp. array
+     ! This is also done in iteration_variables.f90 - leave it in for the moment.
      if (any(ixc == 148)) then
         impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
      endif
 
 
-    !  Tight aspect ratio options
-    ! ---------------------------
-
+    !  Tight aspect ratio options (ST)
+    ! --------------------------------
      if (itart == 1) then
 
         icase  = 'Tight aspect ratio tokamak model'
+
+        ! Forcing that no inboard breeding blanket is used
         iblnkith = 0
 
+        ! Check if the choice of plasma current is addapted for ST
+        ! 2 : Peng Ip scaling (See STAR code documentation)
+        ! 9 : Fiesta Ip scaling
         if (icurr /= 2 .and. icurr /= 9) then
             idiags(1) = icurr ; call report_error(37)
         end if
+
+        ! Location of the TF coils 
+        ! 2 : PF coil on top of TF coil;
+        ! 3 : PF coil outside of TF coil</UL>
         ipfloc(1) = 2
         ipfloc(2) = 3
         ipfloc(3) = 3
-        if ( itfsup == 1 ) itfsup = 0
-        if ( itfsup == 2 ) tcpav  = 20.0D0  ! Initialize at low temperatures for cryoaluminium centerpost (20 K)
 
+        ! Call a lvl 3 error if superconductor magnets are used
+        if ( itfsup == 1 ) call report_error(233)
+
+        ! Initialize the CP conductor temperature to cryogenic temperatire for cryo-al magnets (20 K)
+        if ( itfsup == 2 ) tcpav  = 20.0D0
+
+        ! Check if the initial centrepost coolant loop adapted to the magnet technology
+        ! Ice cannot flow so tcoolin > 273.15 K 
+        if ( itfsup == 0 .and. tcoolin < 273.15D0 ) call report_error(234)
+
+        ! Too large temperatures leading to out of range resisitivity model
+        if ( itfsup == 2 .and. tcoolin > 50.0D0 ) call report_error(235)
+
+        ! Check if the boostrap current selection is addapted to ST
         if (ibss  == 1) call report_error(38)
+
+        ! Check if a single null divertor is used (double null not yet implemented)
         if (snull == 1) call report_error(39)
+    ! --------------------------------
 
     else
 
-        if (icurr == 2) call report_error(40)
+        if (icurr == 2 .or. icurr == 9) call report_error(40)
 
         if (snull == 0) then
             idivrt = 2
