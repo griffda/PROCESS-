@@ -399,7 +399,7 @@ contains
        sang = 1.0D0 - cos(phi)
        phi = atan(flirad/zu1)
        sang = sang - (1.0D0 - cos(phi))
-       wallmw = powfmw * sang / fwarea
+       wallmw = powfmw * 0.5D0*sang / fwarea
 
     else
        wallmw = powfmw / fwarea
@@ -1184,12 +1184,19 @@ contains
 
     call obuild(outfile,'Device centreline',0.0D0,0.0D0)
     call obuild(outfile,'Chamber',chrad,r1)
+    call ovarre(mfile,'Chamber (m)','(chrad)',chrad)
     call obuild(outfile,'First Wall',fwdr,r2)
+    call ovarre(mfile,'First Wall (m)','(fwdr)',fwdr)
     call obuild(outfile,'Void 1',v1dr,r3)
+    call ovarre(mfile,'Void 1 (m)','(v1dr)',v1dr)
     call obuild(outfile,'Blanket',bldr,r4)
+    call ovarre(mfile,'Blanket (m)','(bldr)',bldr)
     call obuild(outfile,'Void 2',v2dr,r5)
+    call ovarre(mfile,'Void 2 (m)','(v2dr)',v2dr)
     call obuild(outfile,'Shield',shdr,r6)
+    call ovarre(mfile,'Shield (m)','(shdr)',shdr)
     call obuild(outfile,'Void 3',v3dr,r7)
+    call ovarre(mfile,'Void 3 (m)','(v3dr)',v3dr)
 
 30  format(T43,'Thickness (m)',T60,'Height (m)')
 
@@ -1240,19 +1247,33 @@ contains
 
         call obuild(outfile,'Base of device',0.0D0,-zl7)
         call obuild(outfile,'Void 3',v3dzl,-zl6)
+        call ovarre(mfile,'Void 3 lower (m)','(v3dzl)',v3dzl)
         call obuild(outfile,'Shield',shdzl,-zl5)
+        call ovarre(mfile,'Shield lower (m)','(shdzl)',shdzl)
         call obuild(outfile,'Void 2',v2dzl,-zl4)
+        call ovarre(mfile,'Void 2 lower (m)','(v2dzl)',v2dzl)
         call obuild(outfile,'Blanket',bldzl,-zl3)
+        call ovarre(mfile,'Blanket lower (m)','(bldzl)',bldzl)
         call obuild(outfile,'Void 1',v1dzl,-zl2)
+        call ovarre(mfile,'Void 1 lower (m)','(v1dzl)',v1dzl)
         call obuild(outfile,'First Wall',fwdzl,-zl1)
+        call ovarre(mfile,'First Wall lower (m)','(fwdzl)',fwdzl)
         call obuild(outfile,'Chamber',chdzl,0.0D0)
+        call ovarre(mfile,'Chamber lower (m)','(chdzl)',chdzl)
         call obuild(outfile,'Chamber',chdzu,zu1)
+        call ovarre(mfile,'Chamber upper (m)','(chdzu)',chdzu)
         call obuild(outfile,'First Wall',fwdzu,zu2)
+        call ovarre(mfile,'First Wall upper (m)','(fwdzu)',fwdzu)
         call obuild(outfile,'Void 1',v1dzu,zu3)
+        call ovarre(mfile,'Void 1 upper (m)','(v1dzu)',v1dzu)
         call obuild(outfile,'Blanket',bldzu,zu4)
+        call ovarre(mfile,'Blanket upper (m)','(bldzu)',bldzu)
         call obuild(outfile,'Void 2',v2dzu,zu5)
+        call ovarre(mfile,'Void 2 upper (m)','(v2dzu)',v2dzu)
         call obuild(outfile,'Shield',shdzu,zu6)
+        call ovarre(mfile,'Shield upper (m)','(shdzu)',shdzu)
         call obuild(outfile,'Void 3',v3dzu,zu7)
+        call ovarre(mfile,'Void 3 upper (m)','(v3dzu)',v3dzu)
 
     end if   
 
@@ -1362,6 +1383,7 @@ contains
      !+ad_prob  None
      !+ad_call  None
      !+ad_hist  31/07/19 SIM Initial version
+     !+ad_hist  03/09/19 SIM Added lithium pump and curtain sizing
      !+ad_stat  Okay
      !+ad_docs  Issue #907
      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1375,6 +1397,7 @@ contains
      !  Local variables
 
      integer :: i,j
+     real(kind(1.0D0)), save :: g, vel, acurt, mdot, phi, sang, li_frac
 
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1387,6 +1410,49 @@ contains
           call report_error(232)
      end if
      
+     ! Lithium Pump 
+
+     ! Acceleration due to gravity (m/s^2)
+     g = 9.81D0
+
+     ! Velocity
+     vel = sqrt(2.0D0*g*(chdzu+bldzu))
+
+     ! Lithium Fraction
+     blmatf(1,8) = 0.91*sqrt(bldzu/(chdzu+bldzu))
+     blmatf(1,0) = 1.0D0 - blmatf(1,8)
+
+     ! Spatial Thickness
+     bldr = bldrc / blmatf(1,8)
+
+     ! Area
+     acurt = pi * ((chrad+bldr)**2.0D0-chrad**2.0D0)
+
+     ! Mass Flow
+     mdot = 512.0D0 * vel * blmatf(1,8) * acurt
+
+     ! Pump Power (MW)
+     lipmw = 1.0D-6 * mdot * g * (chdzl+chdzu+bldzu+bldzl) / etali
+
+     ! Fall Time
+     taufall = 2.0D0 * (chdzl+chdzu+bldzu) / vel
+
+     rrmax = 1.0D0 / taufall
+
+     ! TBR and Emult model was for spherical lithium
+     ! Remove reactor head
+     phi = atan(r1/zu1)
+     sang = 1.0D0 - cos(phi)
+     li_frac = 1.0D0 - 0.5D0 * sang
+
+     ! TBR
+     tbr = 3.7418D0 * (1.0D0 / (1.0D0 + exp(-2.6366D0 * bldrc)) - 0.5D0)
+     tbr = tbr * li_frac
+
+     ! Energy Multiplication
+     emult = 2.2414D0 * (1.0D0 / (1.0D0 + exp(-3.0038D0 * bldrc)) - 0.5D0)
+     emult = emult * li_frac
+
      !  Radial build
 
      r1 = chrad
@@ -1415,6 +1481,9 @@ contains
      zu4 = zu3 + bldzu
      zu5 = zu4 + v2dzu
      zu6 = zu5 + shdzu
+
+     v3dzu = (zu6+zl6) + trcl + stcl + 5.1D0 + 9.41D-6 * 1.0D5
+
      zu7 = zu6 + v3dzu
 
      !  Component volumes
@@ -2281,7 +2350,7 @@ contains
     !  and provide the energy multiplication as though it were a
     !  conventional blanket
 
-    if ((ifetyp /= 3).or.(ifetyp /= 3)) then
+    if ((ifetyp /= 3).and.(ifetyp /= 4)) then
        pfwdiv = 0.24D0 * pthermmw
        pnucblkt = pthermmw - pfwdiv
     else
@@ -2368,12 +2437,12 @@ contains
     !  Power needed per floor area, MW/m2
 
     pmwpm2 = pwpm2 * 1.0D-6
-
+    
     !  Total pulsed power system load, MW
 
     pacpmw = crypmw + vachtmw + tdspmw + tfacmw + &
          (htpmw_ife*reprat/6.0D0) + trithtmw + pinjwp + basemw + &
-         (efloor*pmwpm2)
+         (efloor*pmwpm2) + lipmw
 
     !  Total baseline power to facility loads, MW
 
@@ -2405,6 +2474,9 @@ contains
     call ovarre(outfile,'Cryogenic comp motors (MW)','(crypmw)',crypmw)
     call ovarre(outfile,'Heat transport system pump motors (MW)', &
          '(htpmw_ife*reprat/6)',htpmw_ife*reprat/6.0D0)
+    if (ifetyp.eq.4) then
+        call ovarre(outfile,'Lithium Pump Power (MW)','(lipmw)',lipmw)
+    end if
     call oblnkl(outfile)
     call ovarre(outfile,'Total pulsed power (MW)','(pacpmw)',pacpmw)
     call ovarre(outfile,'Total base power reqd at all times (MW)', &
@@ -2512,6 +2584,10 @@ contains
     call ovarre(outfile,'Fusion power escaping via holes (MW)', &
          '(pnucloss)',pnucloss)
     call ovarre(outfile,'Power multiplication factor','(emult)',emult)
+    if (ifetyp.eq.4) then
+        call ovarre(outfile,'Tritium Breeding Ratio','(tbr)',tbr)
+        call ovarre(outfile,'Lithium Fall Time (s)','(taufall)',taufall)
+    end if
     call ovarre(outfile,'Driver wall plug power (MW)','(pinjwp)' &
          ,pinjwp)
     call ovarre(outfile,'First wall nuclear heating (MW)','(pfwdiv)', &

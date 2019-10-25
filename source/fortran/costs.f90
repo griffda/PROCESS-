@@ -1859,10 +1859,8 @@ contains
        !  IFE driver costs (depends on driver type)
        !  Assume offset linear form for generic and SOMBRERO types,
        !  or one of two offset linear forms for OSIRIS type
-  
-       if (ifedrv /= 2) then
-          c2231 = mcdriv * (cdriv0 + dcdrv0*1.0D-6*edrive)
-       else
+
+       if (ifedrv == 2) then
           if (dcdrv1 <= dcdrv2) then
              switch = 0.0D0
           else
@@ -1873,6 +1871,10 @@ contains
           else
              c2231 = mcdriv * (cdriv2 + dcdrv2*1.0D-6*edrive)
           end if
+       else if (ifedrv==3) then
+             c2231 = mcdriv * 1.0D-6* cdriv3 * (edrive/etadrv)
+       else
+          c2231 = mcdriv * (cdriv0 + dcdrv0*1.0D-6*edrive)
        end if
   
        if (ifueltyp == 1) c2231 = (1.0D0-fcdfuel) * c2231
