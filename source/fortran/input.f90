@@ -471,7 +471,7 @@ contains
           no_iteration = isub1
 
        case ('ioptimz')
-          call parse_int_variable('ioptimz', ioptimz, -1, 1, &
+          call parse_int_variable('ioptimz', ioptimz, -2, 1, &
                'Switch for solver method')
        case ('maxcal')
           call parse_int_variable('maxcal', maxcal, 0, 10000, &
