@@ -976,6 +976,9 @@ contains
        case ('fvs')
           call parse_real_variable('fvs', fvs, 0.001D0, 10.0D0, &
                'F-value for startup V-s requirement')
+       case ('fvssu')
+         call parse_real_variable('fvssu', fvssu, 0.001D0, 10.0D0, &
+               'F-value for start up V-s requirement and availability equality')
        case ('fvvhe')
           call parse_real_variable('fvvhe', fvvhe, 0.001D0, 10.0D0, &
                'F-value for VV He concentration limit')

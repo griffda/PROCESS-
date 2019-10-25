@@ -68,7 +68,7 @@ module scan_module
   integer, parameter :: ipnscns = 1000
 
   !+ad_vars  ipnscnv /45/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 52
+  integer, parameter :: ipnscnv = 53
 
   !+ad_vars  scan_dim /1/ : 1-D or 2-D scan switch (1=1D, 2=2D)
   integer :: scan_dim = 1
@@ -902,6 +902,9 @@ contains
         case (52)
             rad_fraction_sol = swp(iscn)
             vlab = 'rad_fraction_sol' ; xlab = 'SoL radiation fraction'
+        case (53)
+            boundu(157) = swp(iscn)
+            vlab = 'boundu(157)' ; xlab = 'Max allowable fvssu'
         case default
             idiags(1) = nwp ; call report_error(96)
 

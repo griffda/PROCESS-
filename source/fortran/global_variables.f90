@@ -2065,6 +2065,8 @@ module pfcoil_variables
   real(kind(1.0D0)) :: fcuohsu = 0.7D0
   !+ad_vars  fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
   real(kind(1.0D0)) :: fcupfsu = 0.69D0
+  !+ad_vars  fvssu   /1.0/  : F-value for constraint equation 51 
+  real(kind(1.0D0)) :: fvssu = 1.0
   !+ad_vars  ipfloc(ngc) /2,2,3/ : switch for locating scheme of PF coil group i:<UL>
   !+ad_varc                   <LI> = 1 PF coil on top of central solenoid;
   !+ad_varc                   <LI> = 2 PF coil on top of TF coil;
