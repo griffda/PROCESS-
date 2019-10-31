@@ -4539,9 +4539,9 @@ module rebco_variables
   !real(kind(1.0D0)) :: cable_helium_fraction = 0.284D0
   !!! cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
 
-  real(kind(1.0D0)) :: copperA_m2_max = 1D8
+  real(kind(1.0D0)) :: coppera_m2_max = 1D8
   !! copperA_m2_max /1e8/ : Maximum TF coil current / copper area (A/m2)
-  real(kind(1.0D0)) :: f_copperA_m2 = 1d0
+  real(kind(1.0D0)) :: f_coppera_m2 = 1d0
   !! f_copperA_m2 /1/ : f-value for constraint 75: TF coil current / copper area < copperA_m2_max
 
 
