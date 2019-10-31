@@ -373,7 +373,6 @@ idensl   = 7 * Switch for density limit to enforce (constraint equation 5);
 ifalphap = 1 * Switch for fast alpha pressure calculation;
 ifispact = 0 * Switch for neutronics calculations;
 ipedestal = 1 * Switch for pedestal profiles;
-iscdens = 1 * set pedestal-top density as fgwped * Greenwald density limit
 
 fgwped = 0.85 * fraction of Greenwald density to set as pedestal-top density
 neped    = 0.678e20 * Electron density of pedestal (/m3) (ipedestal=1)

@@ -335,9 +335,6 @@ module physics_variables
   !!            <LI> = 1 use pedestal profiles
   !!            <LI> = 2 use pedestal profiles and run PLASMOD on final output
   !!            <LI> = 3 use PLASMOD transport model only to calculate pedestal profiles</UL>
-  ! Issue #589 remove iscdens
-  ! integer :: iscdens = 0
-  !! iscdens /0/ : switch for pedestal profiles: OBSOLETE
 
   ! Issue #413
   integer :: ieped = 0

@@ -193,10 +193,9 @@ end subroutine subr
             pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
        !  Calculate density and temperature profile quantities
-       !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
+       !  If ipedestal = 1 then set pedestal density to
        !    fgwped * Greenwald density limit
        !  Note: this used to be done before plasma current
-       ! Issue #589 remove iscdens
        if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwped >=0d0)) then
           neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
        endif
