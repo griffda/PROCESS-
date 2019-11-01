@@ -6,55 +6,13 @@ contains
 
 subroutine inform(progid)
 
-  !+ad_name  inform
-  !+ad_summ  Routine to obtain information about the program being executed
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  progid(0:10) : output string array : Strings containing useful info
-  !+ad_desc  This subroutine uses system calls to identify the user, date,
-  !+ad_desc  machine etc. for the present run, and stores the information
-  !+ad_desc  in a character string array.
-  !+ad_prob  Non-standard Fortran, because of the unix system calls used.
-  !+ad_call  get_DDMonYYTimeZone
-  !+ad_hist  03/10/96 PJK Initial version
-  !+ad_hist  07/10/96 PJK PROCESS 3001
-  !+ad_hist  08/10/96 PJK PROCESS 3002
-  !+ad_hist  22/10/96 PJK PROCESS 3003
-  !+ad_hist  20/01/97 PJK PROCESS 3004
-  !+ad_hist  24/01/97 PJK PROCESS 3005
-  !+ad_hist  05/02/97 PJK PROCESS 3006
-  !+ad_hist  19/02/97 PJK PROCESS 3007
-  !+ad_hist  26/02/97 PJK PROCESS 3008
-  !+ad_hist  21/03/97 PJK PROCESS 3009
-  !+ad_hist  10/09/97 PJK PROCESS 3010
-  !+ad_hist  17/09/97 PJK PROCESS 3011
-  !+ad_hist  19/11/97 PJK PROCESS 3012
-  !+ad_hist  01/04/98 PJK PROCESS 3013
-  !+ad_hist  24/04/98 PJK PROCESS 3014
-  !+ad_hist  23/06/98 PJK PROCESS 3015
-  !+ad_hist  26/06/98 PJK PROCESS 3016
-  !+ad_hist  17/07/98 PJK PROCESS 3017
-  !+ad_hist  08/10/98 PJK PROCESS 3018
-  !+ad_hist  19/01/99 PJK PROCESS 3019
-  !+ad_hist  17/05/99 PJK PROCESS 3020
-  !+ad_hist  06/07/99 PJK PROCESS 3021
-  !+ad_hist  16/06/00 PJK PROCESS 3022: Modified 'whoami' call in this
-  !+ad_hisc               routine, and made a single Makefile suitable
-  !+ad_hisc               for both AIX and Linux
-  !+ad_hist  04/05/01 PJK PROCESS 3023
-  !+ad_hist  03/07/01 PJK PROCESS 3024
-  !+ad_hist  16/07/01 PJK PROCESS 3025
-  !+ad_hist  25/04/02 PJK PROCESS 3026
-  !+ad_hist  16/06/04 PJK PROCESS 3027
-  !+ad_hist  22/05/06 PJK PROCESS 3028
-  !+ad_hist  22/05/07 PJK PROCESS 3029
-  !+ad_hist  21/08/12 PJK Initial F90 version
-  !+ad_hist  23/01/13 PJK Changed progver to update automatically with SVN
-  !+ad_hist  06/05/14 PJK progver must now be changed manually (SVN --> git)
-  !+ad_hist  23/07/14 PJK Modified system calls
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Routine to obtain information about the program being executed
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! progid(0:10) : output string array : Strings containing useful info
+  !! This subroutine uses system calls to identify the user, date,
+  !! machine etc. for the present run, and stores the information
+  !! in a character string array.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -102,40 +60,14 @@ end subroutine inform
 
 subroutine run_summary
 
-  !+ad_name  run_summary
-  !+ad_summ  Routine to print out a summary header
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  None
-  !+ad_desc  This routine prints out a header summarising the program
-  !+ad_desc  execution details, plus a list of the active iteration
-  !+ad_desc  variables and constraint equations for the run.
-  !+ad_prob  None
-  !+ad_call  global_variables
-  !+ad_call  numerics
-  !+ad_call  process_output
-  !+ad_call  inform
-  !+ad_call  oblnkl
-  !+ad_call  ocentr
-  !+ad_call  ocmmnt
-  !+ad_call  ostars
-  !+ad_call  osubhd
-  !+ad_call  ovarin
-  !+ad_call  ovarst
-  !+ad_hist  28/06/94 PJK Improved layout
-  !+ad_hist  03/10/12 PJK Initial F90 version
-  !+ad_hist  08/10/12 PJK Changed routine name from edit1 to run_summary
-  !+ad_hist  28/11/13 PJK Modified format statement for longer lablxc
-  !+ad_hist  27/02/14 PJK Introduced use of nineqns
-  !+ad_hist  22/07/14 PJK Moved routine from input.f90, and rearranged layout,
-  !+ad_hisc               incorporating old routine codever
-  !+ad_hisc  02/03/15 JM  Added runtitle to MFILE
-  !+ad_hist  05/08/15 MDK Header describes output flag
-  !+ad_hist  15/11/16 JM  Changed the version numbering to new format (1.0.0)
-  !+ad_stat  Okay
-  !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
-  !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
+  !! Routine to print out a summary header
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! None
+  !! This routine prints out a header summarising the program
+  !! execution details, plus a list of the active iteration
+  !! variables and constraint equations for the run.
+  !! A User's Guide to the PROCESS Systems Code, P. J. Knight,
+  !! AEA Fusion Report AEA FUS 251, 1993
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -302,47 +234,11 @@ end subroutine run_summary
 
 subroutine eqslv(ifail)
 
-  !+ad_name  eqslv
-  !+ad_summ  Routine to call the non-optimising equation solver
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  ifail   : output integer : error flag
-  !+ad_desc  This routine calls the non-optimising equation solver.
-  !+ad_prob  None
-  !+ad_call  constraints
-  !+ad_call  function_evaluator
-  !+ad_call  numerics
-  !+ad_call  process_output
-  !+ad_call  constraint_eqns
-  !+ad_call  eqsolv
-  !+ad_call  fcnhyb
-  !+ad_call  herror
-  !+ad_call  int_to_string3
-  !+ad_call  loadxc
-  !+ad_call  oblnkl
-  !+ad_call  ocmmnt
-  !+ad_call  oheadr
-  !+ad_call  osubhd
-  !+ad_call  ovarin
-  !+ad_call  ovarre
-  !+ad_call  report_error
-  !+ad_hist  03/10/96 PJK Initial upgraded version
-  !+ad_hist  08/10/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  10/10/12 PJK Modified to use new numerics, function_evaluator
-  !+ad_hisc               modules
-  !+ad_hist  31/01/13 PJK Added warning about high residuals if the convergence
-  !+ad_hisc               is suspicious
-  !+ad_hist  28/11/13 PJK Modified format line 40 for longer lablxc length
-  !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
-  !+ad_hist  13/03/14 PJK Added numerical state information to mfile
-  !+ad_hist  09/07/14 PJK Turned on error reporting
-  !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
-  !+ad_hisc               in physical units
-  !+ad_hist  19/08/14 PJK Added neqns, normalised residues to output
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Routine to call the non-optimising equation solver
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! ifail   : output integer : error flag
+  !! This routine calls the non-optimising equation solver.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -482,29 +378,17 @@ end subroutine eqslv
 
 subroutine herror(ifail)
 
-  !+ad_name  herror
-  !+ad_summ  Routine to print out relevant messages in the case of an
-  !+ad_summ  unfeasible result from a HYBRD (non-optimisation) run
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  ifail  : input integer : error flag
-  !+ad_desc  This routine prints out relevant messages in the case of
-  !+ad_desc  an unfeasible result from a HYBRD (non-optimisation) run.
-  !+ad_desc  <P>The messages are written to units NOUT and IOTTY, which are
-  !+ad_desc  by default the output file and screen, respectively.
-  !+ad_desc  <P>If <CODE>IFAIL=1</CODE> then a feasible solution has been
-  !+ad_desc  found and therefore no error message is required.
-  !+ad_prob  None
-  !+ad_call  process_output
-  !+ad_call  oblnkl
-  !+ad_call  ocmmnt
-  !+ad_hist  03/10/96 PJK Initial upgraded version
-  !+ad_hist  08/10/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  31/01/13 PJK Reworded the ifail=4 error message
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Routine to print out relevant messages in the case of an
+  !! unfeasible result from a HYBRD (non-optimisation) run
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! ifail  : input integer : error flag
+  !! This routine prints out relevant messages in the case of
+  !! an unfeasible result from a HYBRD (non-optimisation) run.
+  !! <P>The messages are written to units NOUT and IOTTY, which are
+  !! by default the output file and screen, respectively.
+  !! <P>If <CODE>IFAIL=1</CODE> then a feasible solution has been
+  !! found and therefore no error message is required.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -584,29 +468,17 @@ end subroutine herror
 
 subroutine verror(ifail)
 
-  !+ad_name  verror
-  !+ad_summ  Routine to print out relevant messages in the case of an
-  !+ad_summ  unfeasible result from a VMCON (optimisation) run
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  ifail  : input integer : error flag
-  !+ad_desc  This routine prints out relevant messages in the case of
-  !+ad_desc  an unfeasible result from a VMCON (optimisation) run.
-  !+ad_desc  <P>The messages are written to units NOUT and IOTTY, which are
-  !+ad_desc  by default the output file and screen, respectively.
-  !+ad_desc  <P>If <CODE>IFAIL=1</CODE> then a feasible solution has been
-  !+ad_desc  found and therefore no error message is required.
-  !+ad_prob  None
-  !+ad_call  process_output
-  !+ad_call  ocmmnt
-  !+ad_hist  03/10/96 PJK Initial upgraded version
-  !+ad_hist  08/10/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  31/01/13 PJK Reworded the ifail=2 error message
-  !+ad_hist  04/07/13 PJK Reworded the ifail=5 error message
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Routine to print out relevant messages in the case of an
+  !! unfeasible result from a VMCON (optimisation) run
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! ifail  : input integer : error flag
+  !! This routine prints out relevant messages in the case of
+  !! an unfeasible result from a VMCON (optimisation) run.
+  !! <P>The messages are written to units NOUT and IOTTY, which are
+  !! by default the output file and screen, respectively.
+  !! <P>If <CODE>IFAIL=1</CODE> then a feasible solution has been
+  !! found and therefore no error message is required.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -772,17 +644,12 @@ end subroutine runtests
 
 
 subroutine get_DDMonYYTimeZone(dt_time)
-  !+ad_name  get_DDMonYYTimeZone
-  !+ad_summ  Routine to get date, time and timezone
-  !+ad_type  Subroutine
-  !+ad_auth  M Kumar, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  dt_time : output string  : String containing formatted time and date
-  !+ad_desc  This routine calls the intrinsic DATE_AND_TIME subroutine
-  !+ad_desc  and format the output in
-  !+ad_desc  DD Mon YYYY hr:minute:second time difference from UTC.
-  !+ad_hist  28/10/16 MK Initial version
-  !+ad_stat  Okay
+  !! Routine to get date, time and timezone
+  !! author: M Kumar, CCFE, Culham Science Centre
+  !! dt_time : output string  : String containing formatted time and date
+  !! This routine calls the intrinsic DATE_AND_TIME subroutine
+  !! and format the output in
+  !! DD Mon YYYY hr:minute:second time difference from UTC.
 
 ! Arguments
     CHARACTER(len = *), INTENT(OUT) :: dt_time

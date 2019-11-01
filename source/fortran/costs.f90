@@ -1,67 +1,12 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module costs_module
-  !+ad_name  costs_module
-  !+ad_summ  Module containing fusion power plant costing algorithms
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  costs
-  !+ad_cont  coelc
-  !+ad_cont  acc21
-  !+ad_cont  acc22
-  !+ad_cont  acc221
-  !+ad_cont  acc2211
-  !+ad_cont  acc2212
-  !+ad_cont  acc2213
-  !+ad_cont  acc2214
-  !+ad_cont  acc2215
-  !+ad_cont  acc222
-  !+ad_cont  acc2221
-  !+ad_cont  acc2222
-  !+ad_cont  acc2221
-  !+ad_cont  acc2223
-  !+ad_cont  acc223
-  !+ad_cont  acc224
-  !+ad_cont  acc225
-  !+ad_cont  acc2251
-  !+ad_cont  acc2252
-  !+ad_cont  acc2253
-  !+ad_cont  acc226
-  !+ad_cont  acc227
-  !+ad_cont  acc228
-  !+ad_cont  acc229
-  !+ad_cont  acc23
-  !+ad_cont  acc24
-  !+ad_cont  acc25
-  !+ad_cont  acc26
-  !+ad_cont  acchyd
-  !+ad_cont  acc9
-  !+ad_args  N/A
-  !+ad_desc  This module contains the PROCESS fusion power plant costing model,
-  !+ad_desc  split into separate cost accounts.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  buildings_variables
-  !+ad_call  constants
-  !+ad_call  cost_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  pf_power_variables
-  !+ad_call  process_output
-  !+ad_call  pulse_variables
-  !+ad_call  structure_variables
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_call  vacuum_variables
-  !+ad_hist  15/10/12 PJK Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing fusion power plant costing algorithms
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains the PROCESS fusion power plant costing model,
+  !! split into separate cost accounts.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -121,51 +66,18 @@ contains
 
   subroutine costs(outfile,iprint)
 
-    !+ad_name  costs
-    !+ad_summ  Cost accounting for a fusion power plant
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine performs the cost accounting for a fusion power plant.
-    !+ad_desc  The direct costs are calculated based on parameters input
-    !+ad_desc  from other sections of the code.
-    !+ad_desc  <P>Costs are in 1990 $, and assume first-of-a-kind components
-    !+ad_desc  unless otherwise stated. Account 22 costs include a multiplier
-    !+ad_desc  to account for Nth-of-a-kind cost reductions.
-    !+ad_desc  <P>The code is arranged in the order of the standard accounts.
-    !+ad_prob  None
-    !+ad_call  acc21
-    !+ad_call  acc22
-    !+ad_call  acc23
-    !+ad_call  acc24
-    !+ad_call  acc25
-    !+ad_call  acc26
-    !+ad_call  acchyd
-    !+ad_call  acc9
-    !+ad_call  coelc
-    !+ad_call  oblnkl
-    !+ad_call  ocosts
-    !+ad_call  oheadr
-    !+ad_call  oshead
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  22/11/12 PJK Typo fix in comment
-    !+ad_hist  18/06/13 PJK Changed cryostat to vacuum vessel for c2223
-    !+ad_hist  17/02/14 PJK Output format modifications
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  08/09/14 PJK Modified blanket costs for ipowerflow=1 model
-    !+ad_hist  03/11/14 PJK Clarified ipowerflow, blkttype logic
-    !+ad_hist  17/11/14 PJK Added output_costs switch
-    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-    !+ad_hist  06/09/18 SIM Added variable name output to MFILE
-    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Cost accounting for a fusion power plant
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine performs the cost accounting for a fusion power plant.
+    !! The direct costs are calculated based on parameters input
+    !! from other sections of the code.
+    !! <P>Costs are in 1990 $, and assume first-of-a-kind components
+    !! unless otherwise stated. Account 22 costs include a multiplier
+    !! to account for Nth-of-a-kind cost reductions.
+    !! <P>The code is arranged in the order of the standard accounts.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -439,38 +351,16 @@ contains
 
   subroutine coelc(outfile,iprint)
 
-    !+ad_name  coelc
-    !+ad_summ  Routine to calculate the cost of electricity for a fusion power plant
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine performs the calculation of the cost of electricity
-    !+ad_desc  for a fusion power plant.
-    !+ad_desc  <P>Annual costs are in megadollars/year, electricity costs are in
-    !+ad_desc  millidollars/kWh, while other costs are in megadollars.
-    !+ad_desc  All values are based on 1990 dollars.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  oshead
-    !+ad_call  osubhd
-    !+ad_call  ovarrf
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  11/09/13 PJK Modified annfuel cost calculation
-    !+ad_hist  17/02/14 PJK Modified output format for some quantities
-    !+ad_hist  15/05/14 PJK Longer output line lengths
-    !+ad_hist  05/06/14 PJK Moved some power outputs to plant_power.f90
-    !+ad_hist  16/06/14 PJK Removed duplicate outputs
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  12/11/14 PJK tburn factor incorporated into cost of electricity
-    !+ad_hist  17/11/14 PJK Added output_costs switch
-    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the cost of electricity for a fusion power plant
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine performs the calculation of the cost of electricity
+    !! for a fusion power plant.
+    !! <P>Annual costs are in megadollars/year, electricity costs are in
+    !! millidollars/kWh, while other costs are in megadollars.
+    !! All values are based on 1990 dollars.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -816,27 +706,19 @@ contains
 
   subroutine acc21
 
-    !+ad_name  acc21
-    !+ad_summ  Account 21 : Structures and site facilities
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 21 (structures and site
-    !+ad_desc  facilities) costs.
-    !+ad_desc  Building costs are scaled with volume according to algorithms
-    !+ad_desc  developed from TFCX, TFTR, and commercial power plant buildings.
-    !+ad_desc  Costs include equipment, materials and installation labour, but
-    !+ad_desc  no engineering or construction management.
-    !+ad_desc  <P>The general form of the cost algorithm is cost=ucxx*volume**expxx.
-    !+ad_desc  Allowances are used for site improvements and for miscellaneous
-    !+ad_desc  buildings and land costs.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 21 : Structures and site facilities
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 21 (structures and site
+    !! facilities) costs.
+    !! Building costs are scaled with volume according to algorithms
+    !! developed from TFCX, TFTR, and commercial power plant buildings.
+    !! Costs include equipment, materials and installation labour, but
+    !! no engineering or construction management.
+    !! <P>The general form of the cost algorithm is cost=ucxx*volume**expxx.
+    !! Allowances are used for site improvements and for miscellaneous
+    !! buildings and land costs.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -908,30 +790,13 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc22
-    !+ad_name  acc22
-    !+ad_summ  Account 22 : Fusion power island
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 22 (fusion power island
-    !+ad_desc  - the tokamak itself plus auxiliary power systems, etc.) costs.
-    !+ad_prob  None
-    !+ad_call  acc221
-    !+ad_call  acc222
-    !+ad_call  acc223
-    !+ad_call  acc224
-    !+ad_call  acc225
-    !+ad_call  acc226
-    !+ad_call  acc227
-    !+ad_call  acc228
-    !+ad_call  acc229
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  19/07/19 JM  Add unit tests
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 22 : Fusion power island
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 22 (fusion power island
+    !! - the tokamak itself plus auxiliary power systems, etc.) costs.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -983,27 +848,15 @@ contains
 
   subroutine acc221
 
-    !+ad_name  acc221
-    !+ad_summ  Account 221 : Reactor
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 221 (reactor) costs.
-    !+ad_desc  These include the first wall, blanket, shield, support structure
-    !+ad_desc  and divertor plates.
-    !+ad_desc  <P>If ifueltyp = 1, the first wall, blanket and divertor costs are
-    !+ad_desc  treated as fuel costs, rather than as capital costs.
-    !+ad_prob  None
-    !+ad_call  acc2211
-    !+ad_call  acc2212
-    !+ad_call  acc2213
-    !+ad_call  acc2214
-    !+ad_call  acc2215
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 221 : Reactor
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 221 (reactor) costs.
+    !! These include the first wall, blanket, shield, support structure
+    !! and divertor plates.
+    !! <P>If ifueltyp = 1, the first wall, blanket and divertor costs are
+    !! treated as fuel costs, rather than as capital costs.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1045,26 +898,14 @@ contains
 
   subroutine acc2211
 
-    !+ad_name  acc2211
-    !+ad_summ  Account 221.1 : First wall
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 221.1 (first wall) costs.
-    !+ad_desc  The first wall cost is scaled linearly with surface area from TFCX.
-    !+ad_desc  If ifueltyp = 1, the first wall cost is treated as a fuel cost,
-    !+ad_desc  rather than as a capital cost.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  03/12/13 PJK Removed old comment about ucfwps; multiplied
-    !+ad_hisc               all terms by cmlsa, not just the ucfwps term
-    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 221.1 : First wall
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 221.1 (first wall) costs.
+    !! The first wall cost is scaled linearly with surface area from TFCX.
+    !! If ifueltyp = 1, the first wall cost is treated as a fuel cost,
+    !! rather than as a capital cost.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1115,25 +956,13 @@ contains
 
   subroutine acc2212
 
-    !+ad_name  acc2212
-    !+ad_summ  Account 221.2 : Blanket
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 221.2 (blanket) costs.
-    !+ad_desc  If ifueltyp = 1, the blanket cost is treated as a fuel cost,
-    !+ad_desc  rather than as a capital cost.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  03/06/13 PJK Added blktmodel>0 breeder cost
-    !+ad_hist  08/09/14 PJK Added blanket costs for ipowerflow=1 model
-    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 221.2 : Blanket
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 221.2 (blanket) costs.
+    !! If ifueltyp = 1, the blanket cost is treated as a fuel cost,
+    !! rather than as a capital cost.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1228,21 +1057,11 @@ contains
 
   subroutine acc2213
 
-    !+ad_name  acc2213
-    !+ad_summ  Account 221.3 : Shield
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 221.3 (shield) costs.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 221.3 : Shield
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 221.3 (shield) costs.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1297,20 +1116,12 @@ contains
 
   subroutine acc2214
 
-    !+ad_name  acc2214
-    !+ad_summ  Account 221.4 : Reactor structure
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 221.4 (reactor structure) costs.
-    !+ad_desc  The structural items are costed as standard steel elements.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 221.4 : Reactor structure
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 221.4 (reactor structure) costs.
+    !! The structural items are costed as standard steel elements.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1340,27 +1151,17 @@ contains
 
   subroutine acc2215
 
-    !+ad_name  acc2215
-    !+ad_summ  Account 221.5 : Divertor
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 221.5 (divertor) costs.
-    !+ad_desc  The cost of the divertor blade is scaled linearly with
-    !+ad_desc  surface area from TFCX. The graphite armour is assumed to
-    !+ad_desc  be brazed to water-cooled machined copper substrate.
-    !+ad_desc  Tenth-of-a-kind engineering and installation is assumed.
-    !+ad_desc  <P>If ifueltyp = 1, the divertor cost is treated as a fuel cost,
-    !+ad_desc  rather than as a capital cost.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 221.5 : Divertor
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 221.5 (divertor) costs.
+    !! The cost of the divertor blade is scaled linearly with
+    !! surface area from TFCX. The graphite armour is assumed to
+    !! be brazed to water-cooled machined copper substrate.
+    !! Tenth-of-a-kind engineering and installation is assumed.
+    !! <P>If ifueltyp = 1, the divertor cost is treated as a fuel cost,
+    !! rather than as a capital cost.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1389,24 +1190,12 @@ contains
 
   subroutine acc222
 
-    !+ad_name  acc222
-    !+ad_summ  Account 222 : Magnets, including cryostat
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 222 (magnet) costs,
-    !+ad_desc  including the costs of associated cryostats.
-    !+ad_prob  None
-    !+ad_call  acc2221
-    !+ad_call  acc2222
-    !+ad_call  acc2223
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 222 : Magnets, including cryostat
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 222 (magnet) costs,
+    !! including the costs of associated cryostats.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1444,24 +1233,16 @@ contains
 
   subroutine acc2221
 
-    !+ad_name  acc2221
-    !+ad_summ  Account 222.1 : TF magnet assemblies
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 222.1 (TF magnet) costs.
-    !+ad_desc  Copper magnets are costed from the TFCX data base ($/kg).
-    !+ad_desc  Superconductor magnets are costed using a new method devised
-    !+ad_desc  by R. Hancox under contract to Culham Laboratory, Jan/Feb 1994.
-    !+ad_desc  If ifueltyp = 1, the TART centrepost cost is treated as a fuel
-    !+ad_desc  cost, rather than as a capital cost.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 222.1 : TF magnet assemblies
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 222.1 (TF magnet) costs.
+    !! Copper magnets are costed from the TFCX data base ($/kg).
+    !! Superconductor magnets are costed using a new method devised
+    !! by R. Hancox under contract to Culham Laboratory, Jan/Feb 1994.
+    !! If ifueltyp = 1, the TART centrepost cost is treated as a fuel
+    !! cost, rather than as a capital cost.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1562,29 +1343,19 @@ contains
 
   subroutine acc2222
 
-    !+ad_name  acc2222
-    !+ad_summ  Account 222.2 : PF magnet assemblies
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 222.2 (PF magnet) costs.
-    !+ad_desc  Conductor costs previously used an algorithm devised by R. Hancox,
-    !+ad_desc  January 1994, under contract to Culham, which took into
-    !+ad_desc  account the fact that the superconductor/copper ratio in
-    !+ad_desc  the conductor is proportional to the maximum field that
-    !+ad_desc  each coil will experience. Now, the input copper fractions
-    !+ad_desc  are used instead.
-    !+ad_desc  Maximum values for current, current density and field
-    !+ad_desc  are used.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  24/11/14 PJK Corrected conductor costs for resistive coils
-    !+ad_hist  13/10/15 MDK Issue #328 Fix conductor costs.
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 222.2 : PF magnet assemblies
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 222.2 (PF magnet) costs.
+    !! Conductor costs previously used an algorithm devised by R. Hancox,
+    !! January 1994, under contract to Culham, which took into
+    !! account the fact that the superconductor/copper ratio in
+    !! the conductor is proportional to the maximum field that
+    !! each coil will experience. Now, the input copper fractions
+    !! are used instead.
+    !! Maximum values for current, current density and field
+    !! are used.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1733,20 +1504,11 @@ contains
 
   subroutine acc2223
 
-    !+ad_name  acc2223
-    !+ad_summ  Account 222.3 : Vacuum vessel
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 222.3 (vacuum vessel) costs.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  18/06/13 PJK Changed wording from cryostat to vacuum vessel
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 222.3 : Vacuum vessel
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 222.3 (vacuum vessel) costs.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1776,31 +1538,19 @@ contains
 
   subroutine acc223
 
-    !+ad_name  acc223
-    !+ad_summ  Account 223 : Power injection
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 223 (power injection) costs.
-    !+ad_desc  The costs are from TETRA, updated to 1990$.
-    !+ad_desc  Nominal TIBER values are used pending system designs. Costs are
-    !+ad_desc  scaled linearly with power injected into the plasma and include
-    !+ad_desc  the power supplies.
-    !+ad_desc  <P>If ifueltyp=1, the fraction (1-fcdfuel) of the cost of the
-    !+ad_desc  current drive system is considered as capital cost, and the
-    !+ad_desc  fraction (fcdfuel) is considered a recurring fuel cost due
-    !+ad_desc  to the system's short life.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  22/05/14 PJK Powers now in MW instead of W
-    !+ad_hist  17/09/15 MDK #327 Neutral beam cost now depends on pnbitot
-    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 223 : Power injection
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 223 (power injection) costs.
+    !! The costs are from TETRA, updated to 1990$.
+    !! Nominal TIBER values are used pending system designs. Costs are
+    !! scaled linearly with power injected into the plasma and include
+    !! the power supplies.
+    !! <P>If ifueltyp=1, the fraction (1-fcdfuel) of the cost of the
+    !! current drive system is considered as capital cost, and the
+    !! fraction (fcdfuel) is considered a recurring fuel cost due
+    !! to the system's short life.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1894,21 +1644,13 @@ contains
 
   subroutine acc224
 
-    !+ad_name  acc224
-    !+ad_summ  Account 224 : Vacuum system
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 224 (vacuum system) costs.
-    !+ad_desc  The costs are scaled from TETRA reactor code runs.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
+    !! Account 224 : Vacuum system
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 224 (vacuum system) costs.
+    !! The costs are scaled from TETRA reactor code runs.
     !+ad)hist  29/10/12 PJK Changed nvtype to ntype
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1965,23 +1707,11 @@ contains
 
   subroutine acc225
 
-    !+ad_name  acc225
-    !+ad_summ  Account 225 : Power conditioning
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 225 (power conditioning) costs.
-    !+ad_prob  None
-    !+ad_call  acc2251
-    !+ad_call  acc2252
-    !+ad_call  acc2253
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 225 : Power conditioning
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 225 (power conditioning) costs.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2021,24 +1751,15 @@ contains
 
   subroutine acc2251
 
-    !+ad_name  acc2251
-    !+ad_summ  Account 225.1 : TF coil power conditioning
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 225.1 (TF coil power
-    !+ad_desc  conditioning) costs.
-    !+ad_desc  Costs are developed based on the major equipment specification
-    !+ad_desc  of the tfcpwr module.  A multiplier is used to account for bulk
-    !+ad_desc  materials and installation.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  24/05/19 SIM Changed tfno*estotf to estotftgj for c22513 (#847)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 225.1 : TF coil power conditioning
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 225.1 (TF coil power
+    !! conditioning) costs.
+    !! Costs are developed based on the major equipment specification
+    !! of the tfcpwr module.  A multiplier is used to account for bulk
+    !! materials and installation.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2096,23 +1817,14 @@ contains
 
   subroutine acc2252
 
-    !+ad_name  acc2252
-    !+ad_summ  Account 225.2 : PF coil power conditioning
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 225.2 (PF coil power
-    !+ad_desc  conditioning) costs.
-    !+ad_desc  Costs are taken from the equipment specification of the
-    !+ad_desc  <A HREF="pfpwr.html">pfpwr</A> routine from the plant power module.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  04/02/13 PJK Comment change
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 225.2 : PF coil power conditioning
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 225.2 (PF coil power
+    !! conditioning) costs.
+    !! Costs are taken from the equipment specification of the
+    !! <A HREF="pfpwr.html">pfpwr</A> routine from the plant power module.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2174,20 +1886,11 @@ contains
 
   subroutine acc2253
 
-    !+ad_name  acc2253
-    !+ad_summ  Account 225.3 : Energy storage
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 225.3 (energy storage) costs.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  30/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 225.3 : Energy storage
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 225.3 (energy storage) costs.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2310,28 +2013,13 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc226
-    !+ad_name  acc226
-    !+ad_summ  Account 226 : Heat transport system
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 226 (heat transport system) costs.
-    !+ad_desc  Costs are estimated from major equipment and heat transport
-    !+ad_desc  system loops developed in the heatpwr module of the code.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  23/05/13 PJK Added blktmodel comment about coolant inconsistency
-    !+ad_hist  03/06/14 PJK Changed facht to fachtmw
-    !+ad_hist  17/06/14 PJK Changed priheat to pthermmw in chx calculation
-    !+ad_hist  08/09/14 PJK Changed costr to coolwh
-    !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
-    !+ad_hisc               deleted references to intermediate heat exchangers
-    !+ad_hist  18/07/19 JM  Move to separate subroutines for unit tests
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 226 : Heat transport system
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 226 (heat transport system) costs.
+    !! Costs are estimated from major equipment and heat transport
+    !! system loops developed in the heatpwr module of the code.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2346,16 +2034,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc2261() bind(C, name="c_acc2261")
-    !+ad_name  acc2261
-    !+ad_summ  Account 2261 : Reactor cooling system
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 2261 - 
-    !+ad_hist  16/07/19 JM  Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 2261 : Reactor cooling system
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 2261 - 
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2393,17 +2076,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc2262() bind(C, name="c_acc2262")
-    !+ad_name  acc2262
-    !+ad_summ  Account 2262 : Auxiliary component cooling
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 2262 - Auxiliary component cooling
-    !+ad_hist  16/07/19 JM  Initial F90 version
-    !+ad_hist  29/07/19 SIM Added IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 2262 : Auxiliary component cooling
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 2262 - Auxiliary component cooling
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2439,16 +2116,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc2263() bind(C, name="c_acc2263")
-    !+ad_name  acc2263
-    !+ad_summ  Account 2263 : Cryogenic system
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 2263 - Cryogenic system
-    !+ad_hist  16/07/19 JM  Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 2263 : Cryogenic system
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 2263 - Cryogenic system
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2473,26 +2145,15 @@ contains
 
   end subroutine acc2263
 
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc227
-    !+ad_name  acc227
-    !+ad_summ  Account 227 : Fuel handling
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 227 (fuel handling) costs.
-    !+ad_desc  Costs are scaled from TETRA reactor code runs.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  12/06/13 PJK Modified wtgpd calculation with new rndfuel definition
-    !+ad_hist  11/09/13 PJK Changed logic for detritiation costs
-    !+ad_hist  18/07/19 JM  Moved to separate subroutines for unit tests
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 227 : Fuel handling
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 227 (fuel handling) costs.
+    !! Costs are scaled from TETRA reactor code runs.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2506,16 +2167,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc2271() bind(C, name="c_acc2271")
-    !+ad_name  acc2271
-    !+ad_summ  Account 2271 : Fuelling system
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 2271 - Fuelling system
-    !+ad_hist  16/07/19 JM  Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 2271 : Fuelling system
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 2271 - Fuelling system
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2536,17 +2192,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc2272() bind(C, name="c_acc2272")
-    !+ad_name  acc2272
-    !+ad_summ  Account 2272 : Fuel processing and purification
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 2272 - Fuel processing
-    !+ad_hist  16/07/19 JM  Initial F90 version
-    !+ad_hist  29/07/19 SIM Added IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 2272 : Fuel processing and purification
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 2272 - Fuel processing
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2579,16 +2229,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc2273() bind(C, name="c_acc2273")
-    !+ad_name  acc2273
-    !+ad_summ  Account 2273 : Atmospheric recovery systems
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 2273 - Atmospheric recovery systems
-    !+ad_hist  16/07/19 JM  Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 2273 : Atmospheric recovery systems
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 2273 - Atmospheric recovery systems
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2618,16 +2263,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc2274() bind(C, name="c_acc2274")
-    !+ad_name  acc2274
-    !+ad_summ  Account 2274 : Nuclear building ventilation
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 2274 - Nuclear building ventilation
-    !+ad_hist  18/07/19 JM  Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 2274 : Nuclear building ventilation
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 2274 - Nuclear building ventilation
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2644,23 +2284,14 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc228() bind(C, name="c_acc228")
-    !+ad_name  acc228
-    !+ad_summ  Account 228 : Instrumentation and control
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 228 (instrumentation and
-    !+ad_desc  control) costs.
-    !+ad_desc  Costs are based on TFCX and INTOR.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  12/07/19 JM  Add unit test
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 228 : Instrumentation and control
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 228 (instrumentation and
+    !! control) costs.
+    !! Costs are based on TFCX and INTOR.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2674,21 +2305,12 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc229() bind(C, name="c_acc229")
-    !+ad_name  acc229
-    !+ad_summ  Account 229 : Maintenance equipment
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 229 (maintenance equipment) costs.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  12/07/19 JM  Add unit test
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 229 : Maintenance equipment
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 229 (maintenance equipment) costs.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2702,22 +2324,12 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc23() bind(C, name="c_acc23")
-    !+ad_name  acc23
-    !+ad_summ  Account 23 : Turbine plant equipment
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 23 (turbine plant equipment) costs.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  08/09/14 PJK Changed costr to coolwh
-    !+ad_hist  12/07/19 JM  Add unit test
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 23 : Turbine plant equipment
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 23 (turbine plant equipment) costs.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2738,21 +2350,12 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc24() bind(C, name="costs_1990_acc24")
-    !+ad_name  acc24
-    !+ad_summ  Account 24 : Electric plant equipment
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 24 (electric plant equipment) costs.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  12/07/19 JM  Add unit test
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 24 : Electric plant equipment
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 24 (electric plant equipment) costs.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2766,16 +2369,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc241() bind(C, name="c_acc241")
-    !+ad_name  acc241
-    !+ad_summ  Account 241 : Electric plant equipment - switchyard
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 241 - switchyard
-    !+ad_hist  15/07/19 JM  Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 241 : Electric plant equipment - switchyard
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 241 - switchyard
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2801,16 +2399,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc242() bind(C, name="c_acc242")
-    !+ad_name  acc242
-    !+ad_summ  Account 242 : Electric plant equipment - Transformers
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 242 - Transformers
-    !+ad_hist  15/07/19 JM  Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 242 : Electric plant equipment - Transformers
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 242 - Transformers
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2840,16 +2433,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc243() bind(C, name="c_acc243")
-    !+ad_name  acc243
-    !+ad_summ  Account 243 : Electric plant equipment - Low voltage
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 243 - Low voltage
-    !+ad_hist  15/07/19 JM  Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 243 : Electric plant equipment - Low voltage
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 243 - Low voltage
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2876,16 +2464,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc244() bind(C, name="c_acc244")
-    !+ad_name  acc244
-    !+ad_summ  Account 244 : Electric plant equipment - Diesel generators
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 244 - Diesel generators
-    !+ad_hist  15/07/19 JM  Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 244 : Electric plant equipment - Diesel generators
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 244 - Diesel generators
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2911,16 +2494,11 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc245() bind(C, name="c_acc245")
-    !+ad_name  acc245
-    !+ad_summ  Account 245 : Electric plant equipment - Aux facility power
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 245 - Aux facility power
-    !+ad_hist  15/07/19 JM  Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 245 : Electric plant equipment - Aux facility power
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 245 - Aux facility power
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2946,22 +2524,13 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc25() bind(C, name="c_acc25")
-    !+ad_name  acc25
-    !+ad_summ  Account 25 : Miscellaneous plant equipment
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 25 (miscellaneous plant
-    !+ad_desc  equipment) costs, such as waste treatment.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  12/07/19 JM  Add unit test
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 25 : Miscellaneous plant equipment
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 25 (miscellaneous plant
+    !! equipment) costs, such as waste treatment.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2987,24 +2556,15 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc26() bind(C, name="c_acc26")
-    !+ad_name  acc26
-    !+ad_summ  Account 26 : Heat rejection system
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 26 (heat rejection system) costs.
-    !+ad_desc  Costs are scaled with the total plant heat rejection based on
-    !+ad_desc  commercial systems.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  12/07/19 JM  Add unit test
-    !+ad_stat  Okay
-    !+ad_docs  J. Delene, private communication, ORNL, June 1990
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 26 : Heat rejection system
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 26 (heat rejection system) costs.
+    !! Costs are scaled with the total plant heat rejection based on
+    !! commercial systems.
+    !! J. Delene, private communication, ORNL, June 1990
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3039,29 +2599,20 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc9() bind(C, name="c_acc9")
-    !+ad_name  acc9
-    !+ad_summ  Account 9 : Indirect cost and contingency allowances
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 9 (indirect cost and
-    !+ad_desc  contingency allowances) costs.
-    !+ad_desc  The cost modelling is based on the commercial plant model of a
-    !+ad_desc  single contractor performing all plant engineering and construction
-    !+ad_desc  management, using commercially purchased equipment and materials.
-    !+ad_desc  <P>The project contingency is an allowance for incomplete design
-    !+ad_desc  specification and unforeseen events during the plant construction.
-    !+ad_desc  <P>The factors used are estimated from commercial plant experience.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  15/07/19 JM  Add unit test
-    !+ad_stat  Okay
-    !+ad_docs  J. Delene, private communication, ORNL, June 1990
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Account 9 : Indirect cost and contingency allowances
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine evaluates the Account 9 (indirect cost and
+    !! contingency allowances) costs.
+    !! The cost modelling is based on the commercial plant model of a
+    !! single contractor performing all plant engineering and construction
+    !! management, using commercially purchased equipment and materials.
+    !! <P>The project contingency is an allowance for incomplete design
+    !! specification and unforeseen events during the plant construction.
+    !! <P>The factors used are estimated from commercial plant experience.
+    !! J. Delene, private communication, ORNL, June 1990
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -2,42 +2,12 @@
 
 module scan_module
 
-  !+ad_name  scan_module
-  !+ad_summ  Module containing routines to perform a parameter scan
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  scan
-  !+ad_args  None
-  !+ad_desc  This module contains routines to perform a parameter scan
-  !+ad_desc  over a range of values of a particular scanning variable.
-  !+ad_prob  None
-  !+ad_call  constraint_variables
-  !+ad_call  cost_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  global_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  impurity_radiation_module
-  !+ad_call  numerics
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  pf_power_variables
-  !+ad_call  process_output
-  !+ad_call  tfcoil_variables
-  !+ad_hist  09/10/12 PJK Initial version of module
-  !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  28/11/13 PJK Added scan variable 27: tbrmin
-  !+ad_hist  12/02/14 PJK Added scan variable 28: bt
-  !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
-  !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_hist  22/07/14 PJK Raised ipnscns from 50 to 200
-  !+ad_hist  06/08/15 MDK Added taulimit (31)
-  !+ad_hist  14/11/16 JM  Added epsvmc (32)
-  !+ad_hist  10/03/17 MDK Added ttarget (33)
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing routines to perform a parameter scan
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! None
+  !! This module contains routines to perform a parameter scan
+  !! over a range of values of a particular scanning variable.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -148,28 +118,16 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine scan
-    !+ad_name  scan
-    !+ad_summ  Routine to call the optimisation routine VMCON over
-    !+ad_summ  a range of values of one of the variables
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calls the optimisation routine VMCON
-    !+ad_desc  a number of times, by performing a sweep over a range of
-    !+ad_desc  values of a particular variable.
-    !+ad_desc  <P>A number of output variable values are written to the
-    !+ad_desc  <CODE>PLOT.DAT</CODE> file at each scan point, for
-    !+ad_desc  plotting or other post-processing purposes.
-    !+ad_prob  None
-    !+ad_call  doopt
-    !+ad_call  final
-    !+ad_call  oblnkl
-    !+ad_call  ovarin
-    !+ad_call  ostars
-    !+ad_call  report_error
-    !+ad_hist  06/08/15 MDK Use 1p format: 3.0000E+01 instead of 0.3000E+01
-    !+ad_stat  Okay
+    !! Routine to call the optimisation routine VMCON over
+    !! a range of values of one of the variables
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine calls the optimisation routine VMCON
+    !! a number of times, by performing a sweep over a range of
+    !! values of a particular variable.
+    !! <P>A number of output variable values are written to the
+    !! <CODE>PLOT.DAT</CODE> file at each scan point, for
+    !! plotting or other post-processing purposes.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -203,10 +161,8 @@ contains
   end subroutine scan
 
   subroutine scan_1d
-    !+ad_name  scan_1d
-    !+ad_summ  Routine to call 1-D scan
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, UKAEA, Culham Science Centre
+    !! Routine to call 1-D scan
+    !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
@@ -452,10 +408,8 @@ contains
   end subroutine scan_1d
 
   subroutine scan_2d
-    !+ad_name  scan_2d
-    !+ad_summ  Routine to call 2-D scan
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, UKAEA, Culham Science Centre
+    !! Routine to call 2-D scan
+    !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
@@ -724,10 +678,8 @@ contains
   end subroutine scan_2d
 
   subroutine scan_select(nwp, swp, iscn, vlab, xlab)
-    !+ad_name  scan_select
-    !+ad_summ  Routine to select first scan case
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, UKAEA, Culham Science Centre
+    !! Routine to select first scan case
+    !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
@@ -911,51 +863,11 @@ contains
 
   subroutine doopt(ifail)
 
-  !+ad_name  doopt
-  !+ad_summ  Routine to call the optimising equation solver
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  ifail   : output integer : error flag
-  !+ad_desc  This routine calls the optimising equation solver.
-  !+ad_prob  None
-  !+ad_call  constraints
-  !+ad_call  error_handling
-  !+ad_call  function_evaluator
-  !+ad_call  numerics
-  !+ad_call  process_output
-  !+ad_call  boundxc
-  !+ad_call  constraint_eqns
-  !+ad_call  int_to_string3
-  !+ad_call  loadxc
-  !+ad_call  oblnkl
-  !+ad_call  ocmmnt
-  !+ad_call  oheadr
-  !+ad_call  optimiz
-  !+ad_call  osubhd
-  !+ad_call  ovarin
-  !+ad_call  ovarre
-  !+ad_call  report_error
-  !+ad_call  verror
-  !+ad_hist  03/10/96 PJK Initial upgraded version
-  !+ad_hist  08/10/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  10/10/12 PJK Modified to use new numerics and function_evaluator
-  !+ad_hisc               modules
-  !+ad_hist  31/01/13 PJK Added warning about high residuals if the convergence
-  !+ad_hisc               is suspicious
-  !+ad_hist  04/07/13 PJK Modified wording for variables at/beyond their bounds
-  !+ad_hist  28/11/13 PJK Modified format lines for longer lablxc length
-  !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
-  !+ad_hist  27/02/14 PJK Added nineqns usage; minor output modifications
-  !+ad_hist  13/03/14 PJK Added numerical state information to mfile
-  !+ad_hist  09/07/14 PJK Added error reporting
-  !+ad_hist  09/07/14 PJK Added range-normalised iteration variable values to mfile
-  !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
-  !+ad_hisc               in physical units
-  !+ad_hist  19/08/14 PJK Added nvar, neqns to output, constraint residues to mfile
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Routine to call the optimising equation solver
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! ifail   : output integer : error flag
+  !! This routine calls the optimising equation solver.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

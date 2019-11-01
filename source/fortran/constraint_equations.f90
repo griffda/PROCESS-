@@ -1,41 +1,17 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module constraints
-  !+ad_name  constraints
-  !+ad_summ  Module defining the constraint equations
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  constraint_eqns
-  !+ad_args  N/A
-  !+ad_desc  This module contains the routine that evaluates the constraint
-  !+ad_desc  equations.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  constraint_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  numerics
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  pf_power_variables
-  !+ad_call  pulse_variables
-  !+ad_call  report_error
-  !+ad_call  stellarator_variables
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_hist  28/07/14 PJK Initial conversion from a subroutine
-  !+ad_hist  23/05/16 JM  Extra comments
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Module defining the constraint equations
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains the routine that evaluates the constraint
+  !! equations.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Import modules !
-  !!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!
 
   use error_handling, only: report_error, idiags, fdiags
   
@@ -54,93 +30,27 @@ module constraints
 contains
 
    subroutine constraint_eqns(m,cc,ieqn,con,err,symbol,units)
-     !+ad_name  constraint_eqns
-     !+ad_summ  Routine that formulates the constraint equations
-     !+ad_type  Subroutine
-     !+ad_auth  P J Knight, CCFE, Culham Science Centre
-     !+ad_auth  J Morris, CCFE, Culham Science Centre
-     !+ad_cont  N/A
-     !+ad_args  m : input integer : Number of constraint equations to solve
-     !+ad_args  cc(m) : output real array : Residual error in equation i
-     !+ad_args  ieqn : input integer : Switch for constraint equations to evaluate;
-     !+ad_argc                         if <CODE>ieqn</CODE> is zero or negative, evaluate
-     !+ad_argc                         all the constraint equations, otherwise
-     !+ad_argc                         evaluate only the <CODE>ieqn</CODE>th equation
-     !+ad_args  con(m) : optional output real array : constraint value for equation i
-     !+ad_argc                         in physical units
-     !+ad_args  err(m) : optional output real array : residual error in equation i
-     !+ad_argc                         in physical units
-     !+ad_args  symbol(m) : optional output character array : <CODE>=</CODE>, <CODE>&gt;</CODE>
-     !+ad_argc         or <CODE>&lt;</CODE> symbol for equation i, denoting its type
-     !+ad_args  units(m) : optional output character array : constraint units in equation i
-     !+ad_desc  This routine formulates the constraint equations.
-     !+ad_desc  The code attempts to make cc(i) = 0 for all i=1 to m equations.
-     !+ad_desc  All relevant consistency equations should be active in order
-     !+ad_desc  to make a self-consistent machine.
-     !+ad_prob  None
-     !+ad_call  None
-     !+ad_hist  01/07/94 PJK Improved layout and added stellarator constraints
-     !+ad_hist  08/12/94 PJK Added stellarator radial build consistency
-     !+ad_hist  07/10/96 PJK Added ICULBL=2 option to constraint no.24
-     !+ad_hist  01/04/98 PJK Modified equations 2,3,4,7 and 28 to take into
-     !+ad_hisc               account IGNITE (ignition switch) setting
-     !+ad_hist  25/07/11 PJK Applied Greenwald density limit to line-averaged
-     !+ad_hisc               rather than volume-averaged density
-     !+ad_hist  20/09/11 PJK Initial F90 version
-     !+ad_hist  14/11/11 PJK Changed NaN error check
-     !+ad_hist  06/11/12 PJK Renamed routine from con1 to constraints,
-     !+ad_hisc               and the source file itself from eqns.f90 to
-     !+ad_hisc               constraint_equations.f90
-     !+ad_hist  17/12/12 PJK Eqn 30 inverted to prevent problems if pinj=0;
-     !+ad_hisc               Added new eqn 51, plus debug lines
-     !+ad_hist  23/01/13 PJK Allowed eqn.47 to be used for stellarators
-     !+ad_hist  04/06/13 PJK Added fwbs_variables, eqns 52-55
-     !+ad_hist  11/06/13 PJK Changed wording for eqn 41; added note about
-     !+ad_hisc               dign range
-     !+ad_hist  18/06/13 PJK Removed dign from power balance equations
-     !+ad_hist  27/06/13 PJK Removed Troyon as a beta limit descriptor
-     !+ad_hist  25/09/13 PJK Modified eqn.20 from port size limit to
-     !+ad_hisc               neutral beam tangency radius limit
-     !+ad_hist  30/09/13 PJK Added new eqn 56
-     !+ad_hist  10/10/13 PJK Made multiplier in beta equation explicit
-     !+ad_hist  17/12/13 PJK Added ieqn argument to optionally only evaluate
-     !+ad_hisc               one of the constraint equations
-     !+ad_hist  13/02/14 PJK Made limit equations uniform in style
-     !+ad_hist  26/02/14 PJK Added new eqns 57, 58
-     !+ad_hist  05/03/14 PJK Removed redundant eqn 17
-     !+ad_hist  01/05/14 PJK Changed eqn 28 description
-     !+ad_hist  08/05/14 PJK Modified eqn 28
-     !+ad_hist  19/05/14 PJK Removed redundant eqn 15
-     !+ad_hist  19/05/14 PJK Added new eqn 17; modified eqns 2,4 to use
-     !+ad_hisc               pcorerad instead of prad; added iradloss
-     !+ad_hist  22/05/14 PJK Name changes to power quantities
-     !+ad_hist  26/06/14 PJK Added error handling
-     !+ad_hist  28/07/14 PJK Subsumed routine into a module;
-     !+ad_hisc               Added evaluation of residues etc. in physical
-     !+ad_hisc               units
-     !+ad_hist  01/10/14 PJK Added new eqn 15
-     !+ad_hist  02/10/14 PJK Added new eqn 23
-     !+ad_hist  06/10/14 PJK Added new eqn 59
-     !+ad_hist  11/11/14 PJK Added new eqn 60
-     !+ad_hist  12/11/14 PJK tcycle now a global variable
-     !+ad_hist  13/11/14 PJK Changed iradloss usage in eqns 2 and 4
-     !+ad_hist  17/11/14 PJK Added 'not recommended' comments to constraints 3 and 4
-     !+ad_hist  25/11/14 JM  Added new eqn 61
-     !+ad_hist  06/08/15 MDK Eqn 62: Issue #213 - lower limit on taup/taueff the ratio of particle to energy confinement times
-     !+ad_hist  26/08/15 MDK Eqn 63: Issue #304 - upper limit on niterpump (vacuum_model = simple)
-     !+ad_hist  18/11/15 RK  Eqn 64: Added constrain equation to limit Zeff
-     !+ad_hist  26/11/15 RK  Eqn 65: Added constrain equation to set dump time
-     !+ad_hist  24/05/16 JM  Added more information in the comments
-     !+ad_hist  23/06/16 JM  Removed equation 38. No longer used anywhere in the code
-     !+ad_hist  09/11/16 HL  Added new eqn 67
-     !+ad_hist  25/01/17 JM  Added new eqn 68 for psep*b/q*A*r limit
-     !+ad_hist  08/02/17 JM  Added constraint equations 69,70 and 71 for Kallenbach model
-     !+ad_hist  27/02/17 JM  Added constraint equation 72 for Central Solenoid stress model
-     !+ad_hist  20/04/17 JM  Added string tags to constraints
-     !+ad_hist  25/04/19 SK  Added new constraint equation (81) ensuring ne(0) > ne(ped)
-     !+ad_hist  29/07/19 SIM Restored equation 50 (Issue #901)
-     !+ad_stat  Okay
-     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+     !! Routine that formulates the constraint equations
+     !! author: P J Knight, CCFE, Culham Science Centre
+     !! author: J Morris, CCFE, Culham Science Centre
+     !! m : input integer : Number of constraint equations to solve
+     !! cc(m) : output real array : Residual error in equation i
+     !! ieqn : input integer : Switch for constraint equations to evaluate;
+     !! if <CODE>ieqn</CODE> is zero or negative, evaluate
+     !! all the constraint equations, otherwise
+     !! evaluate only the <CODE>ieqn</CODE>th equation
+     !! con(m) : optional output real array : constraint value for equation i
+     !! in physical units
+     !! err(m) : optional output real array : residual error in equation i
+     !! in physical units
+     !! symbol(m) : optional output character array : <CODE>=</CODE>, <CODE>&gt;</CODE>
+     !! or <CODE>&lt;</CODE> symbol for equation i, denoting its type
+     !! units(m) : optional output character array : constraint units in equation i
+     !! This routine formulates the constraint equations.
+     !! The code attempts to make cc(i) = 0 for all i=1 to m equations.
+     !! All relevant consistency equations should be active in order
+     !! to make a self-consistent machine.
+     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -150,7 +60,7 @@ contains
      implicit none
 
      ! Arguments !
-     !!!!!!!!!!!!!
+     ! !!!!!!!!!!!!
 
      integer, intent(in) :: m, ieqn
      real(kind(1.0D0)),           dimension(m), intent(out) :: cc
@@ -160,7 +70,7 @@ contains
      character(len=10), optional, dimension(m), intent(out) :: units
 	
      ! Local variables !
-     !!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!
 	
      integer :: i,i1,i2
      real(kind(1.0D0)) :: cratmx,pdenom,pnumerator,pradmaxpv
@@ -398,10 +308,8 @@ contains
    !--- Error-handling routines
   
    subroutine constraint_err_001()
-     !+ad_name  constraint_err_001
-     !+ad_summ  Error in: Relationship between beta, temperature (keV) and density (consistency equation)
-     !+ad_type  Subroutine
-     !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
+     !! Error in: Relationship between beta, temperature (keV) and density (consistency equation)
+     !! author: P B Lloyd, CCFE, Culham Science Centre
      use physics_variables, only: betaft, betanb, dene, ten, dnitot, tin, btot, beta
      write(*,*) 'betaft = ', betaft
      write(*,*) 'betanb = ', betanb
@@ -414,10 +322,8 @@ contains
    end subroutine
    
    subroutine constraint_err_016()
-     !+ad_name  constraint_err_016
-     !+ad_summ  Error in: Equation for net electric power lower limit
-     !+ad_type  Subroutine
-     !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
+     !! Error in: Equation for net electric power lower limit
+     !! author: P B Lloyd, CCFE, Culham Science Centre
      use constraint_variables, only: fpnetel, pnetelin
      use heat_transport_variables, only: pnetelmw
      implicit none
@@ -427,10 +333,8 @@ contains
    end subroutine
  
    subroutine constraint_err_030()
-     !+ad_name  constraint_err_030
-     !+ad_summ  Error in: Equation for injection power upper limit
-     !+ad_type  Subroutine
-     !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
+     !! Error in: Equation for injection power upper limit
+     !! author: P B Lloyd, CCFE, Culham Science Centre
      use current_drive_variables, only: pinjmw, pinjalw
      use constraint_variables, only: fpinj
      implicit none
@@ -440,10 +344,8 @@ contains
    end subroutine
     
    subroutine constraint_err_066()
-     !+ad_name  constraint_err_066
-     !+ad_summ  Error in: Limit on rate of change of energy in poloidal field
-     !+ad_type  Subroutine
-     !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
+     !! Error in: Limit on rate of change of energy in poloidal field
+     !! author: P B Lloyd, CCFE, Culham Science Centre
      use constraint_variables, only: fpoloidalpower 
      use pf_power_variables, only: maxpoloidalpower, peakpoloidalpower
      implicit none
@@ -455,16 +357,14 @@ contains
    !---
 
    subroutine constraint_eqn_001(args)
-      !+ad_name  constraint_eqn_001
-      !+ad_summ  Relationship between beta, temperature (keV) and density
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Relationship between beta, temperature (keV) and density
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Relationship between beta, temperature (keV) and density
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Relationship between beta, temperature (keV) and density
+      !! #=# physics
+      !! #=#=# consistency
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  betaft : input real : fast alpha beta component
       !+ad_glos  betanb : input real : neutral beam beta component
       !+ad_glos  dene : input real : electron density (/m3) (iteration variable 6)
@@ -489,19 +389,17 @@ contains
    end subroutine constraint_eqn_001
 
    subroutine constraint_eqn_002(args)
-      !+ad_name  constraint_eqn_002
-      !+ad_summ  Global plasma power balance equation
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Global plasma power balance equation
-      !+ad_desc  This is a consistency equation
-      !+ad_desc  N.B. This constraint is currently NOT RECOMMENDED for use.
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Global plasma power balance equation
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Global plasma power balance equation
+      !! This is a consistency equation
+      !! N.B. This constraint is currently NOT RECOMMENDED for use.
+      !! #=# physics
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  iradloss : input integer : switch for radiation loss term usage in power balance (see User Guide):<UL>
       !+ad_gloc             <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
       !+ad_gloc             <LI> = 1 total power lost is scaling power plus core radiation only
@@ -557,17 +455,15 @@ contains
    end subroutine constraint_eqn_002
 
    subroutine constraint_eqn_003(args)
-      !+ad_name  constraint_eqn_003
-      !+ad_summ  Global power balance equation for ions
-      !+ad_type  Subroutine
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Global power balance equation for ions
-      !+ad_desc  This is a consistency equation (NBI)
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Global power balance equation for ions
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Global power balance equation for ions
+      !! This is a consistency equation (NBI)
+      !! #=# physics
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ignite : input integer : switch for ignition assumption:<UL>
       !+ad_gloc          <LI> = 0 do not assume plasma ignition;
       !+ad_gloc          <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
@@ -601,19 +497,17 @@ contains
    end subroutine constraint_eqn_003
 
    subroutine constraint_eqn_004(args)
-      !+ad_name  constraint_eqn_004
-      !+ad_summ  Global power balance equation for electrons
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Global power balance equation for electrons
-      !+ad_desc  This is a consistency equation
-      !+ad_desc  N.B. This constraint is currently NOT RECOMMENDED for use.
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Global power balance equation for electrons
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Global power balance equation for electrons
+      !! This is a consistency equation
+      !! N.B. This constraint is currently NOT RECOMMENDED for use.
+      !! #=# physics
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  iradloss : input integer : switch for radiation loss term usage in power balance (see User Guide):<UL>
       !+ad_gloc             <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
       !+ad_gloc             <LI> = 1 total power lost is scaling power plus core radiation only
@@ -666,17 +560,15 @@ contains
    end subroutine constraint_eqn_004
 
    subroutine constraint_eqn_005(args)
-      !+ad_name  constraint_eqn_005
-      !+ad_summ  Equation for density upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for density upper limit
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fdene, dnelimt
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for density upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for density upper limit
+      !! #=# physics
+      !! #=#=# fdene, dnelimt
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  idensl : input integer : switch for density limit to enforce (constraint equation 5):<UL>
       !+ad_gloc          <LI> = 1 old ASDEX;
       !+ad_gloc          <LI> = 2 Borrass model for ITER (I);
@@ -712,17 +604,15 @@ contains
    end subroutine constraint_eqn_005
 
    subroutine constraint_eqn_006(args)
-      !+ad_name  constraint_eqn_006
-      !+ad_summ  Equation for epsilon beta-poloidal upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for epsilon beta-poloidal upper limit
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fbeta, epbetmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for epsilon beta-poloidal upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for epsilon beta-poloidal upper limit
+      !! #=# physics
+      !! #=#=# fbeta, epbetmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fbeta : input real : f-value for epsilon beta-poloidal
       !+ad_glos  epbetmax : input real : maximum (eps*beta_poloidal)
       !+ad_glos  eps : input real : inverse aspect ratio
@@ -741,17 +631,15 @@ contains
    end subroutine constraint_eqn_006
 
    subroutine constraint_eqn_007(args)
-      !+ad_name  constraint_eqn_007
-      !+ad_summ  Equation for hot beam ion density
-      !+ad_type  Subroutine
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for hot beam ion density
-      !+ad_desc  This is a consistency equation (NBI)
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for hot beam ion density
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for hot beam ion density
+      !! This is a consistency equation (NBI)
+      !! #=# physics
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ignite : input integer : switch for ignition assumption:<UL>
       !+ad_gloc          <LI> = 0 do not assume plasma ignition;
       !+ad_gloc          <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
@@ -780,17 +668,15 @@ contains
    end subroutine constraint_eqn_007
 
    subroutine constraint_eqn_008(args)
-      !+ad_name  constraint_eqn_008
-      !+ad_summ  Equation for neutron wall load upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for neutron wall load upper limit
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fwalld, walalw
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for neutron wall load upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for neutron wall load upper limit
+      !! #=# physics
+      !! #=#=# fwalld, walalw
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fwalld : input real : f-value for maximum wall load
       !+ad_glos  walalw : input real : allowable wall-load (MW/m2)
       !+ad_glos  wallmw : input real : average neutron wall load (MW/m2)
@@ -808,17 +694,15 @@ contains
    end subroutine constraint_eqn_008
 
    subroutine constraint_eqn_009(args)
-      !+ad_name  constraint_eqn_009
-      !+ad_summ  Equation for fusion power upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for fusion power upper limit
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# ffuspow, powfmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for fusion power upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for fusion power upper limit
+      !! #=# physics
+      !! #=#=# ffuspow, powfmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ffuspow : input real : f-value for maximum fusion power
       !+ad_glos  powfmax : input real : maximum fusion power (MW)
       !+ad_glos  powfmw : input real : fusion power (MW)
@@ -836,18 +720,16 @@ contains
    end subroutine constraint_eqn_009
 
    subroutine constraint_eqn_010(args)
-      !+ad_name  constraint_eqn_010
-      !+ad_summ  Equation for field at TF coil
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for field at TF coil
-      !+ad_desc  (This is a consistency equation.)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for field at TF coil
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for field at TF coil
+      !! (This is a consistency equation.)
+      !! #=# tfcoil
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  rmajor : input real : plasma major radius (m) 
       !+ad_glos  bt : input real : toroidal field on axis (T)
       !+ad_glos  rbmax : input real : radius of maximum TF B-field (m)
@@ -866,18 +748,16 @@ contains
    end subroutine constraint_eqn_010
 
    subroutine constraint_eqn_011(args)
-      !+ad_name  constraint_eqn_011
-      !+ad_summ  Equation for radial build
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for radial build
-      !+ad_desc  (This is a consistency equation.)
-      !+ad_desc    #=# build
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for radial build
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for radial build
+      !! (This is a consistency equation.)
+      !! #=# build
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  rbld : input real : sum of thicknesses to the major radius (m)
       !+ad_glos  rmajor : input real : plasma major radius (m) 
       use build_variables, only: rbld
@@ -894,17 +774,15 @@ contains
    end subroutine constraint_eqn_011
 
    subroutine constraint_eqn_012(args)
-      !+ad_name  constraint_eqn_012
-      !+ad_summ  Equation for volt-second capability lower limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for volt-second capability lower limit
-      !+ad_desc    #=# pfcoil
-      !+ad_desc    #=#=# fvs, vsstt
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for volt-second capability lower limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for volt-second capability lower limit
+      !! #=# pfcoil
+      !! #=#=# fvs, vsstt
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  vsstt : input real : total V-s needed (Wb)
       !+ad_gloc     vsstt (lower limit) is positive; vstot (available) is negative
       !+ad_glos  fvs : input real : f-value for flux-swing (V-s) requirement (STEADY STATE)
@@ -924,17 +802,15 @@ contains
    end subroutine constraint_eqn_012
 
    subroutine constraint_eqn_013(args)
-      !+ad_name  constraint_eqn_013
-      !+ad_summ  Equation for burn time lower limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for burn time lower limit
-      !+ad_desc    #=# times
-      !+ad_desc    #=#=# ftburn, tbrnmn
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for burn time lower limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for burn time lower limit
+      !! #=# times
+      !! #=#=# ftburn, tbrnmn
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ftburn : input real : f-value for minimum burn time
       !+ad_glos  tburn : input real : burn time (s) (calculated if lpulse=1)
       !+ad_glos  tbrnmn : input real :  minimum burn time (s)
@@ -952,18 +828,16 @@ contains
    end subroutine constraint_eqn_013
 
    subroutine constraint_eqn_014(args)
-      !+ad_name  constraint_eqn_014
-      !+ad_summ  Equation to fix number of NBI decay lengths to plasma centre
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation to fix number of NBI decay lengths to plasma centre
-      !+ad_desc  This is a consistency equation
-      !+ad_desc    #=# current_drive
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation to fix number of NBI decay lengths to plasma centre
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation to fix number of NBI decay lengths to plasma centre
+      !! This is a consistency equation
+      !! #=# current_drive
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  taubeam : input real : neutral beam e-decay lengths to plasma centre
       !+ad_glos  tbeamin : input real : permitted neutral beam e-decay lengths to plasma centre
       use current_drive_variables, only: taubeam, tbeamin
@@ -979,17 +853,15 @@ contains
    end subroutine constraint_eqn_014
 
    subroutine constraint_eqn_015(args)
-      !+ad_name  constraint_eqn_015
-      !+ad_summ  Equation for L-H power threshold limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for L-H power threshold limit
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# flhthresh, plhthresh
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for L-H power threshold limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for L-H power threshold limit
+      !! #=# physics
+      !! #=#=# flhthresh, plhthresh
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  flhthresh : input real : f-value for L-H power threshold
       !+ad_glos  plhthresh : input real : L-H mode power threshold (MW)
       !+ad_glos  pdivt : input real : power to conducted to the divertor region (MW)
@@ -1011,17 +883,15 @@ contains
    end subroutine constraint_eqn_015
 
    subroutine constraint_eqn_016(args)
-      !+ad_name  constraint_eqn_016
-      !+ad_summ  Equation for net electric power lower limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for net electric power lower limit
-      !+ad_desc    #=# heat_transport
-      !+ad_desc    #=#=# fpnetel, pnetelin
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for net electric power lower limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for net electric power lower limit
+      !! #=# heat_transport
+      !! #=#=# fpnetel, pnetelin
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fpnetel : input real : f-value for net electric power
       !+ad_glos  pnetelmw : input real : net electric power (MW)
       !+ad_glos  pnetelin : input real : required net electric power (MW)
@@ -1039,17 +909,15 @@ contains
    end subroutine constraint_eqn_016
 
    subroutine constraint_eqn_017(args)
-      !+ad_name  constraint_eqn_017
-      !+ad_summ  Equation for radiation power upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
+      !! Equation for radiation power upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
       !+ad_Argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for radiation power upper limit
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fradpwr, pradmaxpv
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for radiation power upper limit
+      !! #=# physics
+      !! #=#=# fradpwr, pradmaxpv
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  falpha : input real : fraction of alpha power deposited in plasma
       !+ad_glos  pinjmw : input real : total auxiliary injected power (MW)
       !+ad_glos  vol : input real : plasma volume (m3)
@@ -1076,17 +944,15 @@ contains
    end subroutine constraint_eqn_017
 
    subroutine constraint_eqn_018(args)
-      !+ad_name  constraint_eqn_018
-      !+ad_summ  Equation for divertor heat load upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for divertor heat load upper limit
-      !+ad_desc    #=# divertor
-      !+ad_desc    #=#=# fhldiv, hldivlim
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for divertor heat load upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for divertor heat load upper limit
+      !! #=# divertor
+      !! #=#=# fhldiv, hldivlim
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fhldiv : input real : peak resistive TF coil inboard leg power (MW)
       !+ad_glos  hldivlim : input real : heat load limit (MW/m2)
       !+ad_glos  hldiv : input real : divertor heat load (MW/m2)
@@ -1104,17 +970,15 @@ contains
    end subroutine constraint_eqn_018
 
    subroutine constraint_eqn_019(args)
-      !+ad_name  constraint_eqn_019
-      !+ad_summ  Equation for MVA upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for MVA upper limit
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# fmva, mvalim
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for MVA upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for MVA upper limit
+      !! #=# tfcoil
+      !! #=#=# fmva, mvalim
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  tfcpmw : input real : peak resistive TF coil inboard leg power (MW)
       !+ad_glos  tflegmw : input real : TF coil outboard leg resistive power (MW)
       !+ad_glos  fmva : input real : f-value for maximum MVA
@@ -1136,17 +1000,15 @@ contains
    end subroutine constraint_eqn_019
 
    subroutine constraint_eqn_020(args)
-      !+ad_name  constraint_eqn_020
-      !+ad_summ  Equation for neutral beam tangency radius upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for neutral beam tangency radius upper limit
-      !+ad_desc    #=# current_drive
-      !+ad_desc    #=#=# fportsz, rtanmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for neutral beam tangency radius upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for neutral beam tangency radius upper limit
+      !! #=# current_drive
+      !! #=#=# fportsz, rtanmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fportsz : input real : f-value for neutral beam tangency radius limit
       !+ad_glos  rtanmax : input real : maximum tangency radius for centreline of beam (m)
       !+ad_glos  rtanbeam : input real : ratio of collision length / connection length
@@ -1164,17 +1026,15 @@ contains
    end subroutine constraint_eqn_020
 
    subroutine constraint_eqn_021(args)
-      !+ad_name  constraint_eqn_021
-      !+ad_summ  Equation for minor radius lower limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for minor radius lower limit
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# frminor, aplasmin
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for minor radius lower limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for minor radius lower limit
+      !! #=# physics
+      !! #=#=# frminor, aplasmin
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  frminor : input real : f-value for minor radius limit
       !+ad_glos  rminor : input real : plasma minor radius (m)
       !+ad_glos  aplasmin : input real : minimum minor radius (m)
@@ -1193,17 +1053,15 @@ contains
    end subroutine constraint_eqn_021
 
    subroutine constraint_eqn_022(args)
-      !+ad_name  constraint_eqn_022
-      !+ad_summ  Equation for divertor collision/connection length ratio upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for divertor collision/connection length ratio upper limit
-      !+ad_desc    #=# divertor
-      !+ad_desc    #=#=# fdivcol, rlenmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for divertor collision/connection length ratio upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for divertor collision/connection length ratio upper limit
+      !! #=# divertor
+      !! #=#=# fdivcol, rlenmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fdivcol : input real : f-value for divertor collisionality
       !+ad_glos  rlenmax : input real : maximum value for length ratio (rlclolcn)
       !+ad_glos  rlclolcn : input real : ratio of collision length / connection length
@@ -1221,17 +1079,15 @@ contains
    end subroutine constraint_eqn_022
 
    subroutine constraint_eqn_023(args)
-      !+ad_name  constraint_eqn_023
-      !+ad_summ  Equation for conducting shell radius / rminor upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for conducting shell radius / rminor upper limit
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fcwr, cwrmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for conducting shell radius / rminor upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for conducting shell radius / rminor upper limit
+      !! #=# physics
+      !! #=#=# fcwr, cwrmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  rminor : input real : plasma minor radius (m)
       !+ad_glos  scraplo : input real : gap between plasma and first wall, outboard side (m)
       !+ad_glos  fwoth : input real : outboard first wall thickness, initial estimate (m)
@@ -1256,17 +1112,15 @@ contains
    end subroutine constraint_eqn_023
 
    subroutine constraint_eqn_024(args)
-      !+ad_name  constraint_eqn_024
-      !+ad_summ  Equation for beta upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for beta upper limit
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fbetatry, betalim
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for beta upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for beta upper limit
+      !! #=# physics
+      !! #=#=# fbetatry, betalim
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  iculbl : input integer : switch for beta limit scaling (constraint equation  24):<UL>
       !+ad_gloc          <LI> = 0 apply limit to total beta;
       !+ad_gloc          <LI> = 1 apply limit to thermal beta;
@@ -1311,17 +1165,15 @@ contains
    end subroutine constraint_eqn_024
 
    subroutine constraint_eqn_025(args)
-      !+ad_name  constraint_eqn_025
-      !+ad_summ  Equation for peak toroidal field upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for peak toroidal field upper limit
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# fpeakb, bmxlim
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for peak toroidal field upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for peak toroidal field upper limit
+      !! #=# tfcoil
+      !! #=#=# fpeakb, bmxlim
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fpeakb : input real : f-value for maximum toroidal field
       !+ad_glos  bmxlim : input real : maximum peak toroidal field (T)
       !+ad_glos  bmaxtf : input real : mean peak field at TF coil (T)
@@ -1339,17 +1191,15 @@ contains
    end subroutine constraint_eqn_025
 
    subroutine constraint_eqn_026(args)
-      !+ad_name  constraint_eqn_026
-      !+ad_summ  Equation for Central Solenoid current density upper limit at EOF
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for Central Solenoid current density upper limit at EOF
-      !+ad_desc    #=# pfcoil
-      !+ad_desc    #=#=# fjohc, rjohc
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for Central Solenoid current density upper limit at EOF
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for Central Solenoid current density upper limit at EOF
+      !! #=# pfcoil
+      !! #=#=# fjohc, rjohc
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fjohc : input real : f-value for central solenoid current at end-of-flattop
       !+ad_glos  rjohc : input real : allowable central solenoid current density at end of flat-top (A/m2)
       !+ad_glos  coheof : input real : central solenoid overall current density at end of flat-top (A/m2)
@@ -1367,17 +1217,15 @@ contains
    end subroutine constraint_eqn_026
 
    subroutine constraint_eqn_027(args)
-      !+ad_name  constraint_eqn_027
-      !+ad_summ  Equation for Central Solenoid current density upper limit at BOP
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for Central Solenoid current density upper limit at BOP
-      !+ad_desc    #=# pfcoil
-      !+ad_desc    #=#=# fjohc0, rjohc0
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for Central Solenoid current density upper limit at BOP
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for Central Solenoid current density upper limit at BOP
+      !! #=# pfcoil
+      !! #=#=# fjohc0, rjohc0
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fjohc0 : input real : f-value for central solenoid current at beginning of pulse
       !+ad_glos  rjohc0 : input real : allowable central solenoid current density at beginning of pulse (A/m2)
       !+ad_glos  cohbop : input real : central solenoid overall current density at beginning of pulse (A/m2)
@@ -1395,17 +1243,15 @@ contains
    end subroutine constraint_eqn_027
 
    subroutine constraint_eqn_028(args)
-      !+ad_name  constraint_eqn_028
-      !+ad_summ  Equation for fusion gain (big Q) lower limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for fusion gain (big Q) lower limit
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fqval, bigqmin
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for fusion gain (big Q) lower limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for fusion gain (big Q) lower limit
+      !! #=# physics
+      !! #=#=# fqval, bigqmin
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fqval : input real : pf-value for Q
       !+ad_glos  bigq : input real : Fusion gain; P_fusion / (P_injection + P_ohmic)
       !+ad_glos  bigqmin : input real : minimum fusion gain Q
@@ -1438,17 +1284,15 @@ contains
    end subroutine constraint_eqn_028
 
    subroutine constraint_eqn_029(args)
-      !+ad_name  constraint_eqn_029
-      !+ad_summ  Equation for inboard major radius: This is a consistency equation
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for inboard major radius: This is a consistency equation
-      !+ad_desc    #=# build
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for inboard major radius: This is a consistency equation
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for inboard major radius: This is a consistency equation
+      !! #=# build
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  rmajor : input real : plasma major radius (m) (iteration variable 3)
       !+ad_glos  rminor : input real : plasma minor radius (m)
       !+ad_glos  rinboard : input real : plasma inboard radius (m)
@@ -1466,17 +1310,15 @@ contains
    end subroutine constraint_eqn_029
 
    subroutine constraint_eqn_030(args)
-      !+ad_name  constraint_eqn_030
-      !+ad_summ  Equation for injection power upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for injection power upper limit
-      !+ad_desc    #=# current_drive
-      !+ad_desc    #=#=# fpinj, pinjalw
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for injection power upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for injection power upper limit
+      !! #=# current_drive
+      !! #=#=# fpinj, pinjalw
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  pinjmw : input real : total auxiliary injected power (MW)
       !+ad_glos  fpinj : input real : f-value for injection power
       !+ad_glos  pinjalw : input real : Maximum allowable value for injected power (MW)
@@ -1494,17 +1336,15 @@ contains
    end subroutine constraint_eqn_030
 
    subroutine constraint_eqn_031(args)
-      !+ad_name  constraint_eqn_031
-      !+ad_summ  Equation for TF coil case stress upper limit (SCTF)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for TF coil case stress upper limit (SCTF)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# fstrcase, alstrtf
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for TF coil case stress upper limit (SCTF)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for TF coil case stress upper limit (SCTF)
+      !! #=# tfcoil
+      !! #=#=# fstrcase, alstrtf
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fstrcase : input real : f-value for TF coil case stress
       !+ad_glos  alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
       !+ad_glos  strtf2 : input real : Constrained stress in TF coil case (Pa) 
@@ -1522,17 +1362,15 @@ contains
    end subroutine constraint_eqn_031
 
    subroutine constraint_eqn_032(args)
-      !+ad_name  constraint_eqn_032
-      !+ad_summ  Equation for TF coil conduit stress upper limit (SCTF)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for TF coil conduit stress upper limit (SCTF)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# fstrcond, alstrtf
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for TF coil conduit stress upper limit (SCTF)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for TF coil conduit stress upper limit (SCTF)
+      !! #=# tfcoil
+      !! #=#=# fstrcond, alstrtf
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fstrcond : input real : f-value for TF coil conduit stress
       !+ad_glos  alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
       !+ad_glos  strtf1 : input real : Constrained Tresca stress in TF conductor conduit (Pa) 
@@ -1550,17 +1388,15 @@ contains
    end subroutine constraint_eqn_032
    
    subroutine constraint_eqn_033(args)
-      !+ad_name  constraint_eqn_033
-      !+ad_summ  Equation for TF coil operating/critical J upper limit (SCTF)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for TF coil operating/critical J upper limit (SCTF)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# fiooic, jwdgcrt
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for TF coil operating/critical J upper limit (SCTF)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for TF coil operating/critical J upper limit (SCTF)
+      !! #=# tfcoil
+      !! #=#=# fiooic, jwdgcrt
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fiooic : input real : f-value for TF coil operating current / critical
       !+ad_glos  jwdgcrt : input real : critical current density for winding pack (A/m2)
       !+ad_glos  jwptf : input real : winding pack current density (A/m2) 
@@ -1578,17 +1414,15 @@ contains
    end subroutine constraint_eqn_033
    
    subroutine constraint_eqn_034(args)
-      !+ad_name  constraint_eqn_034
-      !+ad_summ  Equation for TF coil dump voltage upper limit (SCTF)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for TF coil dump voltage upper limit (SCTF)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# fvdump, vdalw
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for TF coil dump voltage upper limit (SCTF)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for TF coil dump voltage upper limit (SCTF)
+      !! #=# tfcoil
+      !! #=#=# fvdump, vdalw
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fvdump : input real : f-value for dump voltage
       !+ad_glos  vdalw : input real : max voltage across TF coil during quench (kV)
       !+ad_glos  vtfskv : input real : voltage across a TF coil during quench (kV) 
@@ -1606,17 +1440,15 @@ contains
    end subroutine constraint_eqn_034
 
    subroutine constraint_eqn_035(args)
-      !+ad_name  constraint_eqn_035
-      !+ad_summ  Equation for TF coil J_wp/J_prot upper limit (SCTF)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for TF coil J_wp/J_prot upper limit (SCTF)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# fjprot, jwdgpro
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for TF coil J_wp/J_prot upper limit (SCTF)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for TF coil J_wp/J_prot upper limit (SCTF)
+      !! #=# tfcoil
+      !! #=#=# fjprot, jwdgpro
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fjprot : input real : f-value for TF coil winding pack current density
       !+ad_glos  jwdgpro : input real : allowable TF coil winding pack current density, for dump temperature rise protection (A/m2)
       !+ad_glos  jwptf : input real : winding pack current density (A/m2) 
@@ -1634,17 +1466,15 @@ contains
    end subroutine constraint_eqn_035
 
    subroutine constraint_eqn_036(args)
-      !+ad_name  constraint_eqn_036
-      !+ad_summ  Equation for TF coil s/c temperature margin lower limit (SCTF)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for TF coil s/c temperature margin lower limit (SCTF)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# ftmargtf, tmargmin_tf
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for TF coil s/c temperature margin lower limit (SCTF)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for TF coil s/c temperature margin lower limit (SCTF)
+      !! #=# tfcoil
+      !! #=#=# ftmargtf, tmargmin_tf
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ftmargtf : input real : f-value for TF coil temperature margin
       !+ad_glos  tmargtf : input real : TF coil temperature margin (K)
       !+ad_glos  tmargmin_tf : input real : minimum allowable temperature margin : TF coils (K) 
@@ -1662,17 +1492,15 @@ contains
    end subroutine constraint_eqn_036
 
    subroutine constraint_eqn_037(args)
-      !+ad_name  constraint_eqn_037
-      !+ad_summ  Equation for current drive gamma upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for current drive gamma upper limit
-      !+ad_desc    #=# current_drive
-      !+ad_desc    #=#=# fgamcd, gammax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for current drive gamma upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for current drive gamma upper limit
+      !! #=# current_drive
+      !! #=#=# fgamcd, gammax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fgamcd : input real : f-value for current drive gamma
       !+ad_glos  gammax : input real : maximum current drive gamma
       !+ad_glos  gamcd : input real : normalised current drive efficiency (1.0e20 A/W-m2) 
@@ -1690,13 +1518,11 @@ contains
    end subroutine constraint_eqn_037
 
    subroutine constraint_eqn_038(args)
-      !+ad_name  constraint_eqn_038
-      !+ad_summ  Obsolete
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_desc  Obsolete
-      !+ad_desc    #=# empty
-      !+ad_desc    #=#=# empty
+      !! Obsolete
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! Obsolete
+      !! #=# empty
+      !! #=#=# empty
       implicit none
 	   ! Dummy formal arguments, for compliance with interface
       type (constraint_args_type), intent(out) :: args
@@ -1706,17 +1532,15 @@ contains
    end subroutine constraint_eqn_038
 
    subroutine constraint_eqn_039(args)
-      !+ad_name  constraint_eqn_039
-      !+ad_summ  Equation for first wall temperature upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for first wall temperature upper limit
-      !+ad_desc    #=# fwbs
-      !+ad_desc    #=#=# ftpeak, tfwmatmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for first wall temperature upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for first wall temperature upper limit
+      !! #=# fwbs
+      !! #=#=# ftpeak, tfwmatmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ftpeak : input real : f-value for first wall peak temperature
       !+ad_glos  tfwmatmax : input real : maximum temperature of first wall material (K) (secondary_cycle>1)
       !+ad_glos  tpeak : input real : peak first wall temperature (K) 
@@ -1736,17 +1560,15 @@ contains
    end subroutine constraint_eqn_039
 
    subroutine constraint_eqn_040(args)
-      !+ad_name  constraint_eqn_040
-      !+ad_summ  Equation for auxiliary power lower limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for auxiliary power lower limit
-      !+ad_desc    #=# current_drive
-      !+ad_desc    #=#=# fauxmn, auxmin
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for auxiliary power lower limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for auxiliary power lower limit
+      !! #=# current_drive
+      !! #=#=# fauxmn, auxmin
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fauxmn : input real : f-value for minimum auxiliary power
       !+ad_glos  pinjmw : input real : total auxiliary injected power (MW) 
       !+ad_glos  auxmin : input real : minimum auxiliary power (MW)
@@ -1764,17 +1586,15 @@ contains
    end subroutine constraint_eqn_040
 
    subroutine constraint_eqn_041(args)
-      !+ad_name  constraint_eqn_041
-      !+ad_summ  Equation for plasma current ramp-up time lower limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for plasma current ramp-up time lower limit
-      !+ad_desc    #=# times
-      !+ad_desc    #=#=# ftohs, tohsmn
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for plasma current ramp-up time lower limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for plasma current ramp-up time lower limit
+      !! #=# times
+      !! #=#=# ftohs, tohsmn
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ftohs : input real : f-value for plasma current ramp-up time
       !+ad_glos  tohs : input real : plasma current ramp-up time for current initiation (s) 
       !+ad_glos  tohsmn : input real : minimum plasma current ramp-up time (s)
@@ -1792,17 +1612,15 @@ contains
    end subroutine constraint_eqn_041
 
    subroutine constraint_eqn_042(args)
-      !+ad_name  constraint_eqn_042
-      !+ad_summ  Equation for cycle time lower limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for cycle time lower limit
-      !+ad_desc    #=# times
-      !+ad_desc    #=#=# ftcycl, tcycmn
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for cycle time lower limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for cycle time lower limit
+      !! #=# times
+      !! #=#=# ftcycl, tcycmn
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ftcycl : input real : f-value for cycle time
       !+ad_glos  tcycle : input real : full cycle time (s) 
       !+ad_glos  tcycmn : input real : minimum cycle time (s) 
@@ -1822,17 +1640,15 @@ contains
    end subroutine constraint_eqn_042
 
    subroutine constraint_eqn_043(args)
-      !+ad_name  constraint_eqn_043
-      !+ad_summ  Equation for average centrepost temperature: This is a consistency equation (TART)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for average centrepost temperature: This is a consistency equation (TART)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for average centrepost temperature: This is a consistency equation (TART)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for average centrepost temperature: This is a consistency equation (TART)
+      !! #=# tfcoil
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  tcpav : input real : average temp of TF coil inboard leg conductor (C)e
       !+ad_glos  tcpav2 : input real : centrepost average temperature (C) (for consistency) 
       !+ad_glos  itart : input integer : switch for spherical tokamak (ST) models:<UL>
@@ -1871,17 +1687,15 @@ contains
    end subroutine constraint_eqn_043
 
    subroutine constraint_eqn_044(args)
-      !+ad_name  constraint_eqn_044
-      !+ad_summ  Equation for centrepost temperature upper limit (TART)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for centrepost temperature upper limit (TART)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# fptemp, ptempalw
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for centrepost temperature upper limit (TART)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for centrepost temperature upper limit (TART)
+      !! #=# tfcoil
+      !! #=#=# fptemp, ptempalw
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fptemp : input real : f-value for peak centrepost temperature
       !+ad_glos  ptempalw : input real : maximum peak centrepost temperature (K) 
       !+ad_glos  tcpmax : input real :  peak centrepost temperature (K)
@@ -1919,17 +1733,15 @@ contains
    end subroutine constraint_eqn_044
 
    subroutine constraint_eqn_045(args)
-      !+ad_name  constraint_eqn_045
-      !+ad_summ  Equation for edge safety factor lower limit (TART)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for edge safety factor lower limit (TART)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# fq, qlim
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for edge safety factor lower limit (TART)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for edge safety factor lower limit (TART)
+      !! #=# tfcoil
+      !! #=#=# fq, qlim
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fq : input real : f-value for edge safety factor
       !+ad_glos  q : safety factor 'near' plasma edge: equal to q95 
       !+ad_gloc  (unless icurr = 2 (ST current scaling), in which case q = mean edge safety factor qbar)
@@ -1953,17 +1765,15 @@ contains
    end subroutine constraint_eqn_045
 
    subroutine constraint_eqn_046(args)
-      !+ad_name  constraint_eqn_046
-      !+ad_summ  Equation for Ip/Irod upper limit (TART)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for Ip/Irod upper limit (TART)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# fipir, cratmx
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for Ip/Irod upper limit (TART)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for Ip/Irod upper limit (TART)
+      !! #=# tfcoil
+      !! #=#=# fipir, cratmx
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  eps : input real :  inverse aspect ratio
       !+ad_glos  fipir : input real :  f-value for Ip/Irod limit
       !+ad_glos  ritfc : input real :  total (summed) current in TF coils (A)
@@ -1991,14 +1801,12 @@ contains
    end subroutine constraint_eqn_046
 
    subroutine constraint_eqn_047(args)
-      !+ad_name  constraint_eqn_047
-      !+ad_summ  Issue #508 Remove RFP option: Relevant only to reversed field pinch devices
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_desc  Issue #508 Remove RFP option: Relevant only to reversed field pinch devices
-      !+ad_desc  Equation for TF coil toroidal thickness upper limit
-      !+ad_desc    #=# empty
-      !+ad_desc    #=#=# empty
+      !! Issue #508 Remove RFP option: Relevant only to reversed field pinch devices
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! Issue #508 Remove RFP option: Relevant only to reversed field pinch devices
+      !! Equation for TF coil toroidal thickness upper limit
+      !! #=# empty
+      !! #=#=# empty
       implicit none
       ! Dummy formal arguments, just to comply with the subroutine interface
       type (constraint_args_type), intent(out) :: args
@@ -2008,17 +1816,15 @@ contains
    end subroutine constraint_eqn_047
    
    subroutine constraint_eqn_048(args)
-      !+ad_name  constraint_eqn_048
-      !+ad_summ  Equation for poloidal beta upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for poloidal beta upper limit
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fbetap, betpmx
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for poloidal beta upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for poloidal beta upper limit
+      !! #=# physics
+      !! #=#=# fbetap, betpmx
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fbetap : input real : rf-value for poloidal beta
       !+ad_glos  betpmx : input real :  maximum poloidal beta
       !+ad_glos  betap : input real :  poloidal beta
@@ -2036,13 +1842,11 @@ contains
    end subroutine constraint_eqn_048
 
    subroutine constraint_eqn_049(args)
-      !+ad_name  constraint_eqn_049
-      !+ad_summ  Issue #508 Remove IFE option: Equation for repetition rate upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_desc  Issue #508 Remove IFE option: Equation for repetition rate upper limit
-      !+ad_desc    #=# empty
-      !+ad_desc    #=#=# empty
+      !! Issue #508 Remove IFE option: Equation for repetition rate upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! Issue #508 Remove IFE option: Equation for repetition rate upper limit
+      !! #=# empty
+      !! #=#=# empty
       ! Dummy formal arguments, just to comply with the subroutine interface
       type (constraint_args_type), intent(out) :: args
 
@@ -2051,15 +1855,12 @@ contains
    end subroutine constraint_eqn_049
 
    subroutine constraint_eqn_050(args)
-      !+ad_name  constraint_eqn_050
-      !+ad_summ  IFE option: Equation for repetition rate upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
-      !+ad_desc  IFE option: Equation for repetition rate upper limit
-      !+ad_desc    #=# IFE
-      !+ad_desc    #=#=# frrmax, rrmax
-      !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
+      !! IFE option: Equation for repetition rate upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! author: S I Muldrew, CCFE, Culham Science Centre
+      !! IFE option: Equation for repetition rate upper limit
+      !! #=# IFE
+      !! #=#=# frrmax, rrmax
       use ife_variables, only: frrmax, ife, rrmax, reprat
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2077,17 +1878,15 @@ contains
    end subroutine constraint_eqn_050
 
    subroutine constraint_eqn_051(args)
-      !+ad_name  constraint_eqn_051
-      !+ad_summ  Equation to enforce startup flux = available startup flux
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation to enforce startup flux = available startup flux
-      !+ad_desc    #=# pfcoil
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation to enforce startup flux = available startup flux
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation to enforce startup flux = available startup flux
+      !! #=# pfcoil
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  vsres : input real : resistive losses in startup V-s (Wb)
       !+ad_glos  vsind : input real :  internal and external plasma inductance V-s (Wb))
       !+ad_glos  vssu : input real :  total flux swing for startup (Wb)
@@ -2105,18 +1904,16 @@ contains
    end subroutine constraint_eqn_051
 
    subroutine constraint_eqn_052(args)
-      !+ad_name  constraint_eqn_052
-      !+ad_summ  Equation for tritium breeding ratio lower limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for tritium breeding ratio lower limit
-      !+ad_desc    #=# fwbs
-      !+ad_desc    #=#=# ftbr, tbrmin
-      !+ad_desc  ? TODO should this only be for certain blanket models ?
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for tritium breeding ratio lower limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for tritium breeding ratio lower limit
+      !! #=# fwbs
+      !! #=#=# ftbr, tbrmin
+      !! ? TODO should this only be for certain blanket models ?
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ftbr : input real : f-value for minimum tritium breeding ratio
       !+ad_glos  tbr : input real :  tritium breeding ratio (iblanket=2,3 (KIT HCPB/HCLL))
       !+ad_glos  tbrmin : input real :  minimum tritium breeding ratio (If iblanket=1, tbrmin=minimum 5-year time-averaged tritium breeding ratio)
@@ -2134,17 +1931,15 @@ contains
    end subroutine constraint_eqn_052
 
    subroutine constraint_eqn_053(args)
-      !+ad_name  constraint_eqn_053
-      !+ad_summ  Equation for fast neutron fluence on TF coil upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for fast neutron fluence on TF coil upper limit
-      !+ad_desc    #=# fwbs
-      !+ad_desc    #=#=# fflutf, nflutfmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for fast neutron fluence on TF coil upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for fast neutron fluence on TF coil upper limit
+      !! #=# fwbs
+      !! #=#=# fflutf, nflutfmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fflutf : input real : f-value for maximum TF coil nuclear heating
       !+ad_glos  nflutfmax : input real :  max fast neutron fluence on TF coil (n/m2)
       !+ad_glos  nflutf : input real :  peak fast neutron fluence on TF coil superconductor (n/m2)
@@ -2162,17 +1957,15 @@ contains
    end subroutine constraint_eqn_053
 
    subroutine constraint_eqn_054(args)
-      !+ad_name  constraint_eqn_054
-      !+ad_summ  Equation for peak TF coil nuclear heating upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for peak TF coil nuclear heating upper limit
-      !+ad_desc    #=# fwbs
-      !+ad_desc    #=#=# fptfnuc, ptfnucmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for peak TF coil nuclear heating upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for peak TF coil nuclear heating upper limit
+      !! #=# fwbs
+      !! #=#=# fptfnuc, ptfnucmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fptfnuc : input real : f-value for maximum TF coil nuclear heating
       !+ad_glos  ptfnucmax : input real :  maximum nuclear heating in TF coil (MW/m3)
       !+ad_glos  ptfnucpm3 : input real :  nuclear heating in the TF coil (MW/m3) (blktmodel>0)
@@ -2190,17 +1983,15 @@ contains
    end subroutine constraint_eqn_054
 
    subroutine constraint_eqn_055(args)
-      !+ad_name  constraint_eqn_055
-      !+ad_summ  Equation for helium concentration in vacuum vessel upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for helium concentration in vacuum vessel upper limit
-      !+ad_desc    #=# fwbs
-      !+ad_desc    #=#=# fvvhe, vvhemax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for helium concentration in vacuum vessel upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for helium concentration in vacuum vessel upper limit
+      !! #=# fwbs
+      !! #=#=# fvvhe, vvhemax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fvvhe : input real : f-value for vacuum vessel He concentration limit
       !+ad_glos  vvhealw : input real :  allowed maximum helium concentration in vacuum vessel at end of plant life (appm) (iblanket =2)
       !+ad_glos  vvhemax : ivvhemaxnput real :  maximum helium concentration in vacuum vessel at end of plant life (appm) (iblanket=2 (KIT HCPB))
@@ -2228,17 +2019,15 @@ contains
    end subroutine constraint_eqn_055
 
    subroutine constraint_eqn_056(args)
-      !+ad_name  constraint_eqn_056
-      !+ad_summ  Equation for power through separatrix / major radius upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for power through separatrix / major radius upper limit
-      !+ad_desc    #=# current_drive
-      !+ad_desc    #=#=# fnbshinef, nbshinefmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for power through separatrix / major radius upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for power through separatrix / major radius upper limit
+      !! #=# current_drive
+      !! #=#=# fnbshinef, nbshinefmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fpsepr : input real : f-value for maximum Psep/R limit
       !+ad_glos  pseprmax : input real :  maximum ratio of power crossing the separatrix to plasma major radius (Psep/R) (MW/m)
       !+ad_glos  pdivt : input real :  power to be conducted to the divertor region (MW)
@@ -2257,13 +2046,11 @@ contains
    end subroutine constraint_eqn_056
 
    subroutine constraint_eqn_057(args)
-      !+ad_name  constraint_eqn_057
-      !+ad_summ  Obsolete
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_desc  Obsolete
-      !+ad_desc    #=# empty
-      !+ad_desc    #=#=# empty
+      !! Obsolete
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! Obsolete
+      !! #=# empty
+      !! #=#=# empty
       ! Dummy formal arguments, just to comply with the subroutine interface
       type (constraint_args_type), intent(out) :: args
 
@@ -2272,13 +2059,11 @@ contains
    end subroutine constraint_eqn_057
 
    subroutine constraint_eqn_058(args)
-      !+ad_name  constraint_eqn_058
-      !+ad_summ  Obsolete
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_desc  Obsolete
-      !+ad_desc    #=# empty
-      !+ad_desc    #=#=# empty
+      !! Obsolete
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! Obsolete
+      !! #=# empty
+      !! #=#=# empty
       ! Dummy formal arguments, just to comply with the subroutine interface
       type (constraint_args_type), intent(out) :: args
 
@@ -2287,17 +2072,15 @@ contains
    end subroutine constraint_eqn_058
 
    subroutine constraint_eqn_059(args)
-      !+ad_name  constraint_eqn_059
-      !+ad_summ  Equation for neutral beam shine-through fraction upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for neutral beam shine-through fraction upper limit
-      !+ad_desc    #=# current_drive
-      !+ad_desc    #=#=# fnbshinef, nbshinefmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for neutral beam shine-through fraction upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for neutral beam shine-through fraction upper limit
+      !! #=# current_drive
+      !! #=#=# fnbshinef, nbshinefmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fnbshinef : input real : f-value for maximum neutral beam shine-through fraction
       !+ad_glos  nbshinefmax : input real :  maximum neutral beam shine-through fraction
       !+ad_glos  nbshinef : input real :  neutral beam shine-through fraction
@@ -2313,17 +2096,15 @@ contains
    end subroutine constraint_eqn_059
    
    subroutine constraint_eqn_060(args)
-      !+ad_name  constraint_eqn_060
-      !+ad_summ  Equation for Central Solenoid s/c temperature margin lower limi
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for Central Solenoid s/c temperature margin lower limi
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# ftmargoh, tmargmin_cs
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for Central Solenoid s/c temperature margin lower limi
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for Central Solenoid s/c temperature margin lower limi
+      !! #=# tfcoil
+      !! #=#=# ftmargoh, tmargmin_cs
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ftmargoh : input real :  f-value for central solenoid temperature margin
       !+ad_glos  tmargoh : input real :  Central solenoid temperature margin (K)
       !+ad_glos  tmargmin_cs : input real :  Minimum allowable temperature margin : CS (K)
@@ -2342,17 +2123,15 @@ contains
    end subroutine constraint_eqn_060
    
    subroutine constraint_eqn_061(args)
-      !+ad_name  constraint_eqn_061
-      !+ad_summ  Equation for availability limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Equation for availability limit
-      !+ad_desc    #=# cost
-      !+ad_desc    #=#=# favail, avail_min
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for availability limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for availability limit
+      !! #=# cost
+      !! #=#=# favail, avail_min
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  favail : input real : F-value for minimum availability 
       !+ad_glos  cfactr : input real : Total plant availability fraction
       !+ad_glos  avail_min : input real : Minimum availability
@@ -2369,17 +2148,15 @@ contains
    end subroutine constraint_eqn_061
 
    subroutine constraint_eqn_062(args)
-      !+ad_name  constraint_eqn_062
-      !+ad_summ  Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# ftaulimit, taulimit
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
+      !! #=# physics
+      !! #=#=# ftaulimit, taulimit
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ftaulimit : input real : f-value for lower limit on taup/taueff the ratio of alpha particle to energy confinement
       !+ad_glos  taup : input real : alpha particle confinement time (s)
       !+ad_glos  taueff : input real : global thermal energy confinement time (sec)
@@ -2398,17 +2175,15 @@ contains
    end subroutine constraint_eqn_062
 
    subroutine constraint_eqn_063(args)
-      !+ad_name  constraint_eqn_063
-      !+ad_summ  Upper limit on niterpump (vacuum_model = simple)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Upper limit on niterpump (vacuum_model = simple)
-      !+ad_desc    #=# vacuum
-      !+ad_desc    #=#=# fniterpump, tfno
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Upper limit on niterpump (vacuum_model = simple)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Upper limit on niterpump (vacuum_model = simple)
+      !! #=# vacuum
+      !! #=#=# fniterpump, tfno
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fniterpump : input real : f-value for constraint that number of pumps < tfno
       !+ad_glos  tfno : input real : number of TF coils (default = 50 for stellarators)
       !+ad_glos  niterpump : input real : number of high vacuum pumps (real number), each with the throughput
@@ -2427,17 +2202,15 @@ contains
    end subroutine constraint_eqn_063
 
    subroutine constraint_eqn_064(args)
-      !+ad_name  constraint_eqn_064
-      !+ad_summ  Upper limit on Zeff
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Upper limit on Zeff
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fzeffmax, zeffmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Upper limit on Zeff
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Upper limit on Zeff
+      !! #=# physics
+      !! #=#=# fzeffmax, zeffmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fzeffmax : input real : f-value for maximum zeff
       !+ad_glos  zeffmax : input real : maximum value for Zeff
       !+ad_glos  zeff : input real : plasma effective charge
@@ -2455,17 +2228,15 @@ contains
    end subroutine constraint_eqn_064
 
    subroutine constraint_eqn_065(args)
-      !+ad_name  constraint_eqn_065
-      !+ad_summ  Limit TF dump time to calculated quench time (IDM: 2MBSE3)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Limit TF dump time to calculated quench time (IDM: 2MBSE3)
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# ftaucq, taucq
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Limit TF dump time to calculated quench time (IDM: 2MBSE3)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Limit TF dump time to calculated quench time (IDM: 2MBSE3)
+      !! #=# tfcoil
+      !! #=#=# ftaucq, taucq
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  ftaucq : input real : f-value for calculated minimum TF quench time
       !+ad_glos  tdmptf : input real :  fast discharge time for TF coil in event of quench (s)
       !+ad_glos  taucq : input real :  allowable TF quench time (s)
@@ -2483,17 +2254,15 @@ contains
    end subroutine constraint_eqn_065
 
    subroutine constraint_eqn_066(args)
-      !+ad_name  constraint_eqn_066
-      !+ad_summ  Limit on rate of change of energy in poloidal field
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Limit on rate of change of energy in poloidal field
-      !+ad_desc    #=# pfcoil
-      !+ad_desc    #=#=# fpoloidalpower, maxpoloidalpower
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Limit on rate of change of energy in poloidal field
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Limit on rate of change of energy in poloidal field
+      !! #=# pfcoil
+      !! #=#=# fpoloidalpower, maxpoloidalpower
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fpoloidalpower : input real : f-value for constraint on rate of change of energy in poloidal field
       !+ad_glos  maxpoloidalpower : input real : Maximum permitted absolute rate of change of stored energy in poloidal field (MW)
       !+ad_glos  peakpoloidalpower : input real : Peak absolute rate of change of stored energy in poloidal field (MW) (11/01/16)
@@ -2511,17 +2280,15 @@ contains
    end subroutine constraint_eqn_066
 
    subroutine constraint_eqn_067(args)
-      !+ad_name  constraint_eqn_067
-      !+ad_summ  Simple upper limit on radiation wall load
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Simple upper limit on radiation wall load 
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fradwall, maxradwallload
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Simple upper limit on radiation wall load
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Simple upper limit on radiation wall load 
+      !! #=# physics
+      !! #=#=# fradwall, maxradwallload
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fradwall : input real : f-value for upper limit on radiation wall load
       !+ad_glos  maxradwallload : input real : Maximum permitted radiation wall load (MW/m^2)
       !+ad_glos  peakradwallload : input real : Peak radiation wall load (MW/m^2)
@@ -2538,18 +2305,16 @@ contains
    end subroutine constraint_eqn_067
 
    subroutine constraint_eqn_068(args)
-      !+ad_name  constraint_eqn_068
-      !+ad_summ  New Psep scaling (PsepB/qAR)
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  New Psep scaling (PsepB/qAR)
-      !+ad_desc  Issue #464
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fpsepbqar, psepbqarmax
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! New Psep scaling (PsepB/qAR)
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! New Psep scaling (PsepB/qAR)
+      !! Issue #464
+      !! #=# physics
+      !! #=#=# fpsepbqar, psepbqarmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fpsepbqar : input real : f-value for upper limit on psepbqar, maximum Psep*Bt/qAR limit 
       !+ad_glos  psepbqarmax : input real : maximum permitted value of ratio of Psep*Bt/qAR (MWT/m)
       !+ad_glos  pdivt : input real : Power to conducted to the divertor region (MW)
@@ -2571,18 +2336,16 @@ contains
    end subroutine constraint_eqn_068
 
    subroutine constraint_eqn_069(args)
-      !+ad_name  constraint_eqn_069
-      !+ad_summ  Ensure separatrix power is less than value from Kallenbach divertor
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Ensure separatrix power is less than value from Kallenbach divertor
-      !+ad_desc    #=# divertor_kallenbach
-      !+ad_desc    #=#=# consistency, psep_kallenbach
-      !+ad_desc  fpsep has been removed from the equation.
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Ensure separatrix power is less than value from Kallenbach divertor
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Ensure separatrix power is less than value from Kallenbach divertor
+      !! #=# divertor_kallenbach
+      !! #=#=# consistency, psep_kallenbach
+      !! fpsep has been removed from the equation.
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  psep_kallenbach : input real : Power conducted through the separatrix, as calculated by the divertor model [W]
       !+ad_glos  pdivt : input real :  power to conducted to the divertor region (MW)
       use divertor_kallenbach_variables, only: psep_kallenbach
@@ -2599,17 +2362,15 @@ contains
    end subroutine constraint_eqn_069
    
    subroutine constraint_eqn_070(args)
-      !+ad_name  constraint_eqn_070
-      !+ad_summ  Separatrix density consistency
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Separatrix density consistency
-      !+ad_desc    #=# divertor_kallenbach
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Separatrix density consistency
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Separatrix density consistency
+      !! #=# divertor_kallenbach
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  teomp : input real : Separatrix temperature calculated by the Kallenbach divertor model [eV]
       !+ad_glos  tesep : input real : Electron temperature at separatrix [keV]
       use divertor_kallenbach_variables, only: teomp
@@ -2626,17 +2387,15 @@ contains
    end subroutine constraint_eqn_070
 
    subroutine constraint_eqn_071(args)
-      !+ad_name  constraint_eqn_071
-      !+ad_summ  Separatrix density consistency
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Separatrix density consistency
-      !+ad_desc    #=# divertor_kallenbach
-      !+ad_desc    #=#=# consistency
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Separatrix density consistency
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Separatrix density consistency
+      !! #=# divertor_kallenbach
+      !! #=#=# consistency
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  neomp : input real : Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
       !+ad_glos  nesep : input real :  electron density at separatrix [m-3] (ipedestal=1,2, calculated if 3)
       !+ad_glos  neratio : input real : Ratio of mean SOL density at OMP to separatrix density at OMP (iteration variable 121)
@@ -2654,19 +2413,17 @@ contains
    end subroutine constraint_eqn_071
 		   
    subroutine constraint_eqn_072(args)
-      !+ad_name  constraint_eqn_072
-      !+ad_summ  Central Solenoid Tresca stress limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Central Solenoid Tresca stress limit
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# foh_stress, alstroh
-      !+ad_desc  Reverse the sign so it works as an inequality constraint (args%cc > 0)
-      !+ad_desc  This will have no effect if it is used as an equality constraint because it will be squared.
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Central Solenoid Tresca stress limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Central Solenoid Tresca stress limit
+      !! #=# tfcoil
+      !! #=#=# foh_stress, alstroh
+      !! Reverse the sign so it works as an inequality constraint (args%cc > 0)
+      !! This will have no effect if it is used as an equality constraint because it will be squared.
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  foh_stress : input real : f-value for Tresca stress limit in Central Solenoid
       !+ad_glos  alstroh : input real :  allowable hoop stress in Central Solenoid structural material (Pa)
       !+ad_glos  s_tresca_oh : input real : Tresca stress coils/central solenoid (Pa)
@@ -2684,17 +2441,15 @@ contains
    end subroutine constraint_eqn_072
    
    subroutine constraint_eqn_073(args)
-      !+ad_name  constraint_eqn_073
-      !+ad_summ  Ensure separatrix power is greater than the L-H power + auxiliary power
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Ensure separatrix power is greater than the L-H power + auxiliary power
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fplhsep, pdivt
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Ensure separatrix power is greater than the L-H power + auxiliary power
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Ensure separatrix power is greater than the L-H power + auxiliary power
+      !! #=# physics
+      !! #=#=# fplhsep, pdivt
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fplhsep : input real : F-value for Psep >= Plh + Paux : for consistency of two values of separatrix power
       !+ad_glos  plhthresh : input real : L-H mode power threshold (MW) 
       !+ad_glos  pdivt : input real : power to be conducted to the divertor region (MW)
@@ -2713,17 +2468,15 @@ contains
    end subroutine constraint_eqn_073
 
    subroutine constraint_eqn_074(args)
-      !+ad_name  constraint_eqn_074
-      !+ad_summ  Ensure TF coil quench temperature < tmax_croco ONLY used for croco HTS coil
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Ensure TF coil quench temperature < tmax_croco ONLY used for croco HTS coil
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# fcqt, tmax_croco
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Ensure TF coil quench temperature < tmax_croco ONLY used for croco HTS coil
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Ensure TF coil quench temperature < tmax_croco ONLY used for croco HTS coil
+      !! #=# physics
+      !! #=#=# fcqt, tmax_croco
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fcqt : input real : f-value: TF coil quench temparature remains below tmax_croco
       !+ad_glos  croco_quench_temperature : input real : CroCo strand: Actual temp reached during a quench (K)
       !+ad_glos  tmax_croco : input real : CroCo strand: maximum permitted temp during a quench (K)
@@ -2741,18 +2494,16 @@ contains
    end subroutine constraint_eqn_074
 
    subroutine constraint_eqn_075(args)
-      !+ad_name  constraint_eqn_075
-      !+ad_summ  Ensure that TF coil current / copper area < Maximum value
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_args  Ensure that TF coil current / copper area < Maximum value
-      !+ad_desc  ONLY used for croco HTS coil
-      !+ad_desc    #=# physics
-      !+ad_desc    #=#=# f_copperA_m2, copperA_m2_max
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Ensure that TF coil current / copper area < Maximum value
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Ensure that TF coil current / copper area < Maximum value
+      !! ONLY used for croco HTS coil
+      !! #=# physics
+      !! #=#=# f_copperA_m2, copperA_m2_max
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  copperA_m2 : input real : 
       !+ad_glos  copperA_m2_max : input real : 
       !+ad_glos  f_copperA_m2 : input real : 
@@ -2769,16 +2520,14 @@ contains
    end subroutine constraint_eqn_075
 
    subroutine constraint_eqn_076(args)
-      !+ad_name  constraint_eqn_076
-      !+ad_summ  Eich critical separatrix density model: Added for issue 558
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
+      !! Eich critical separatrix density model: Added for issue 558
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
       !+ad_argsc residual error in physical units; output string; units string
-      !+ad_desc  Eich critical separatrix density model
-      !+ad_desc  Added for issue 558 with ref to http://iopscience.iop.org/article/10.1088/1741-4326/aaa340/pdf
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Eich critical separatrix density model
+      !! Added for issue 558 with ref to http://iopscience.iop.org/article/10.1088/1741-4326/aaa340/pdf
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  alpha_crit : output real : critical ballooning parameter value
       !+ad_glos  nesep_crit : output real : critical electron density at separatrix [m-3]
       !+ad_glos  kappa : input real : plasma separatrix elongation (calculated if ishape > 0)
@@ -2806,16 +2555,14 @@ contains
    end subroutine constraint_eqn_076
 		   
    subroutine constraint_eqn_077(args)
-      !+ad_name  constraint_eqn_077
-      !+ad_summ  Equation for maximum TF current per turn upper limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; residual error in physical units; output string; units string
-      !+ad_desc  Equation for maximum TF current per turn upper limit
-      !+ad_desc    #=# tfcoil
-      !+ad_desc    #=#=# fcpttf, cpttf, cpttf_max
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for maximum TF current per turn upper limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; residual error in physical units; output string; units string
+      !! Equation for maximum TF current per turn upper limit
+      !! #=# tfcoil
+      !! #=#=# fcpttf, cpttf, cpttf_max
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fcpttf : input : f-value for TF coil current per turn
       !+ad_glos  cpttf_max  : input : allowable TF coil current per turn [A/turn]
       !+ad_glos  cpttf  : input : TF coil current per turn [A/turn]
@@ -2833,17 +2580,15 @@ contains
    end subroutine constraint_eqn_077
 
    subroutine constraint_eqn_078(args)
-      !+ad_name  constraint_eqn_078
-      !+ad_summ  Equation for Reinke criterion, divertor impurity fraction lower limit
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; residual error in physical units; output string; units string
-      !+ad_desc  Equation for Reinke criterion, divertor impurity fraction lower limit
-      !+ad_desc    #=# divertor
-      !+ad_desc    #=#=# freinke, fzactual, fzmin
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present;
-      !+ad_desc  and con will be printed out only if present. Thesw conditions were missing.
+      !! Equation for Reinke criterion, divertor impurity fraction lower limit
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; residual error in physical units; output string; units string
+      !! Equation for Reinke criterion, divertor impurity fraction lower limit
+      !! #=# divertor
+      !! #=#=# freinke, fzactual, fzmin
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present;
+      !! and con will be printed out only if present. Thesw conditions were missing.
       !+ad_glos  freinke : input : f-value for Reinke criterion (itv 147)
       !+ad_glos  fzmin : input : minimum impurity fraction from Reinke model
       !+ad_glos  fzactual : input : actual impurity fraction
@@ -2867,16 +2612,14 @@ contains
    end subroutine constraint_eqn_078
 
    subroutine constraint_eqn_079(args)
-      !+ad_name  constraint_eqn_079
-      !+ad_summ  Equation for maximum CS field
-      !+ad_type  Subroutine
-      !+ad_auth  P B Lloyd, CCFE, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; residual error in physical units; output string; units string
-      !+ad_desc  Equation for maximum CS field
-      !+ad_desc    #=# pfcoil
-      !+ad_desc    #=#=# fbmaxcs, bmaxoh, bmaxoh0, bmaxcs_lim
-      !+ad_desc  and hence also optional here.
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for maximum CS field
+      !! author: P B Lloyd, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; residual error in physical units; output string; units string
+      !! Equation for maximum CS field
+      !! #=# pfcoil
+      !! #=#=# fbmaxcs, bmaxoh, bmaxoh0, bmaxcs_lim
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fbmaxcs : input : F-value for CS mmax field (cons. 79, itvar 149)
       !+ad_glos  bmaxcs_lim : input : Central solenoid max field limit [T]
       !+ad_glos  bmaxoh0 : input : maximum field in central solenoid at beginning of pulse (T)
@@ -2895,16 +2638,14 @@ contains
    end subroutine constraint_eqn_079
 
    subroutine constraint_eqn_080(args)
-      !+ad_name  constraint_eqn_080
-      !+ad_summ  Equation for pdivt lower limit
-      !+ad_type  Subroutine
-      !+ad_auth  J Morris, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; residual error in physical units; 
-      !+ad_argc  output string; units string
-      !+ad_desc  Lower limit pdivt
-      !+ad_desc  #=# physics
-      !+ad_desc  #=#=# fpdivlim, pdivt
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! Equation for pdivt lower limit
+      !! author: J Morris, Culham Science Centre
+      !! args : output structure : residual error; constraint value; residual error in physical units; 
+      !! output string; units string
+      !! Lower limit pdivt
+      !! #=# physics
+      !! #=#=# fpdivlim, pdivt
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !+ad_glos  fpdivlim : input : F-value for lower limit on pdivt (cons. 80, itvar 153)
       !+ad_glos  pdivtlim : input : Minimum power crossing separatrix pdivt [MW]
       !+ad_glos  pdivt : input : Power crossing separatrix [MW]
@@ -2922,17 +2663,15 @@ contains
    end subroutine constraint_eqn_080
 
    subroutine constraint_eqn_081(args)
-      !+ad_name  constraint_eqn_081
-      !+ad_summ  Make sure that the central density is larger that the pedestal one
-      !+ad_type  Subroutine
-      !+ad_auth  S Kahn, Culham Science Centre
-      !+ad_args  args : output structure : residual error; constraint value; 
-      !+ad_argc  residual error in physical units; output string; units string
-      !+ad_desc  Lower limit ne0 > neped
-      !+ad_desc  !#=# physics
-      !+ad_argc  !#=#=# ne0, neped
-      !+ad_desc  Logic change during pre-factoring: err, symbol, units will be 
-      !+ad_desc  assigned only if present.
+      !! Make sure that the central density is larger that the pedestal one
+      !! author: S Kahn, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Lower limit ne0 > neped
+      !! !#=# physics
+      !! !#=#=# ne0, neped
+      !! Logic change during pre-factoring: err, symbol, units will be 
+      !! assigned only if present.
       !+ad_glos  fne0  : input : F-value for constraint on ne0 > neped 
       !+ad_glos  ne0   : input : Central electron density [m-3]
       !+ad_glos  neped : input : Electron density at pedestal [m-3]

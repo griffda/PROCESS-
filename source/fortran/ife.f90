@@ -2,52 +2,12 @@
 
 module ife_module
 
-  !+ad_name  ife_module
-  !+ad_summ  Module containing Inertial Fusion Energy device routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  ifecll
-  !+ad_cont  ifeout
-  !+ad_cont  ifephy
-  !+ad_cont  iondrv
-  !+ad_cont  lasdrv
-  !+ad_cont  driver
-  !+ad_cont  ifebld
-  !+ad_cont  ifestr
-  !+ad_cont  ifetgt
-  !+ad_cont  ifefbs
-  !+ad_cont  ifepw1
-  !+ad_cont  ifeacp
-  !+ad_cont  ifepw2
-  !+ad_cont  ifevac
-  !+ad_cont  ifebdg
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  parameters of an Inertial Fusion Energy power plant.
-  !+ad_prob  None
-  !+ad_call  availability_module
-  !+ad_call  build_variables
-  !+ad_call  buildings_variables
-  !+ad_call  constants
-  !+ad_call  cost_variables
-  !+ad_call  costs_module
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  ife_variables
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  pulse_variables
-  !+ad_call  structure_variables
-  !+ad_call  vacuum_variables
-  !+ad_hist  05/11/12 PJK Initial version of module
-  !+ad_hist  05/11/12 PJK Added pulse_variables
-  !+ad_hist  06/11/12 PJK Added availability_module
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_hist  08/05/17 MDK Removed from PROCESS (Issue #508)
-  !+ad_hist  29/07/19 SIM Returned to PROCESS (Issue #901)
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing Inertial Fusion Energy device routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! parameters of an Inertial Fusion Energy power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -78,36 +38,14 @@ contains
 
   subroutine ifecll
 
-    !+ad_name  ifecll
-    !+ad_summ  Routine to call the physics and engineering modules
-    !+ad_summ  relevant to inertial fusion energy power plants
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calls the physics and engineering modules
-    !+ad_desc  relevant to inertial fusion energy power plants.
-    !+ad_prob  None
-    !+ad_call  avail
-    !+ad_call  costs
-    !+ad_call  ifeacp
-    !+ad_call  ifebdg
-    !+ad_call  ifebld
-    !+ad_call  ifefbs
-    !+ad_call  ifephy
-    !+ad_call  ifepw1
-    !+ad_call  ifepw2
-    !+ad_call  ifestr
-    !+ad_call  ifetgt
-    !+ad_call  ifevac
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  19/05/99 PJK Added call to routine AVAIL
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added costs_module
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, p.66
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to call the physics and engineering modules
+    !! relevant to inertial fusion energy power plants
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine calls the physics and engineering modules
+    !! relevant to inertial fusion energy power plants.
+    !! F/MI/PJK/LOGBOOK12, p.66
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -173,35 +111,14 @@ contains
 
   subroutine ifeout(outfile)
 
-    !+ad_name  ifeout
-    !+ad_summ  Routine to output the physics and engineering information
-    !+ad_summ  relevant to inertial fusion energy power plants
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_desc  This routine outputs the physics and engineering information
-    !+ad_desc  relevant to inertial fusion energy power plants.
-    !+ad_prob  None
-    !+ad_call  avail
-    !+ad_call  costs
-    !+ad_call  ifeacp
-    !+ad_call  ifebdg
-    !+ad_call  ifebld
-    !+ad_call  ifefbs
-    !+ad_call  ifephy
-    !+ad_call  ifepw1
-    !+ad_call  ifepw2
-    !+ad_call  ifestr
-    !+ad_call  ifetgt
-    !+ad_call  ifevac
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  19/05/99 PJK Added call to routine AVAIL
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added costs_module
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, p.66
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to output the physics and engineering information
+    !! relevant to inertial fusion energy power plants
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! This routine outputs the physics and engineering information
+    !! relevant to inertial fusion energy power plants.
+    !! F/MI/PJK/LOGBOOK12, p.66
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -269,37 +186,15 @@ contains
 
   subroutine ifephy(outfile,iprint)
 
-    !+ad_name  ifephy
-    !+ad_summ  Routine to calculate the physics parameters of an Inertial Fusion
-    !+ad_summ  Energy power plant
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the physics parameters of an Inertial Fusion
-    !+ad_desc  Energy power plant.
-    !+ad_prob  None
-    !+ad_call  driver
-    !+ad_call  lasdrv
-    !+ad_call  iondrv
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_call  report_error
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  30/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, pp.68,85
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the physics parameters of an Inertial Fusion
+    !! Energy power plant
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the physics parameters of an Inertial Fusion
+    !! Energy power plant.
+    !! F/MI/PJK/LOGBOOK12, pp.68,85
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -438,47 +333,35 @@ contains
   subroutine iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
        nbeams,qion,sigma,sigma0,tauf,theta,vi,gain,etadrv)
 
-    !+ad_name  iondrv
-    !+ad_summ  Routine to calculate parameters of a heavy ion driver
-    !+ad_summ  suitable for inertial fusion energy
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  cbeam
-    !+ad_cont  betgam
-    !+ad_args  aaion  : input real : Ion mass (amu)
-    !+ad_args  bmax   : input real : Maximum field at the superconductor (T)
-    !+ad_args  dpp    : input real : Beam momentum spread
-    !+ad_args  dtheta : input real : Pointing error (rad)
-    !+ad_args  edrive : input real : Driver energy (J)
-    !+ad_args  emitt  : input real : Normalised beam emittance (metre-rad)
-    !+ad_args  etai   : input real : Axial quadrupole packing fraction at injection
-    !+ad_args  lf     : input real : Distance from final focussing quad to target (m)
-    !+ad_args  nbeams : input integer : Number of beams
-    !+ad_args  qion   : input real : Ion charge state
-    !+ad_args  sigma  : input real : Depressed tune (incl. space charge effects) (deg)
-    !+ad_args  sigma0 : input real : Phase advance per lattice period (tune) (deg)
-    !+ad_args  tauf   : input real : Post-acceleration pulse duration (s)
-    !+ad_args  theta  : input real : Final focussing half angle (rad)
-    !+ad_args  vi     : input real : Injection voltage (V)
-    !+ad_args  gain   : output real : Target gain
-    !+ad_args  etadrv : output real : Driver efficiency
-    !+ad_desc  This routine calculates the parameters of a heavy ion driver
-    !+ad_desc  suitable for inertial fusion energy.
-    !+ad_desc  <P>Currently, the complicated model taken from the reference is not
-    !+ad_desc  complete, so it is recommended that the simple model is used
-    !+ad_desc  (set <CODE>ISIMP=1</CODE>)
-    !+ad_prob  See above
-    !+ad_call  cbeam
-    !+ad_call  betgam
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  29/07/19 SIM Removed unused argument reprat
-    !+ad_stat  Okay
-    !+ad_docs  Heavy-ion Driver Design and Scaling, R. Bieri et al.,
-    !+ad_docc      Fusion Technology, vol.21 (1992) 1583
-    !+ad_docs  Meier and Bieri, Fusion Technology, vol.21 (1992) 1547
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate parameters of a heavy ion driver
+    !! suitable for inertial fusion energy
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! aaion  : input real : Ion mass (amu)
+    !! bmax   : input real : Maximum field at the superconductor (T)
+    !! dpp    : input real : Beam momentum spread
+    !! dtheta : input real : Pointing error (rad)
+    !! edrive : input real : Driver energy (J)
+    !! emitt  : input real : Normalised beam emittance (metre-rad)
+    !! etai   : input real : Axial quadrupole packing fraction at injection
+    !! lf     : input real : Distance from final focussing quad to target (m)
+    !! nbeams : input integer : Number of beams
+    !! qion   : input real : Ion charge state
+    !! sigma  : input real : Depressed tune (incl. space charge effects) (deg)
+    !! sigma0 : input real : Phase advance per lattice period (tune) (deg)
+    !! tauf   : input real : Post-acceleration pulse duration (s)
+    !! theta  : input real : Final focussing half angle (rad)
+    !! vi     : input real : Injection voltage (V)
+    !! gain   : output real : Target gain
+    !! etadrv : output real : Driver efficiency
+    !! This routine calculates the parameters of a heavy ion driver
+    !! suitable for inertial fusion energy.
+    !! <P>Currently, the complicated model taken from the reference is not
+    !! complete, so it is recommended that the simple model is used
+    !! (set <CODE>ISIMP=1</CODE>)
+    !! Heavy-ion Driver Design and Scaling, R. Bieri et al.,
+    !! Fusion Technology, vol.21 (1992) 1583
+    !! Meier and Bieri, Fusion Technology, vol.21 (1992) 1547
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -836,30 +719,22 @@ contains
 
     function cbeam(etai,bmax,aaion,qion,sigma,sigma0,emitt,vi,eomc2)
 
-      !+ad_name  cbeam
-      !+ad_summ  Routine to evaluate the beam current coefficient, CI
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  etai   : input real : Axial quadrupole packing fraction at injection
-      !+ad_args  bmax   : input real : Maximum field at the superconductor (T)
-      !+ad_args  aaion  : input real : Ion mass (amu)
-      !+ad_args  qion   : input real : Ion charge state
-      !+ad_args  sigma  : input real : Depressed tune (incl. space charge effects) (rad)
-      !+ad_args  sigma0 : input real : Phase advance per lattice period (tune) (rad)
-      !+ad_args  emitt  : input real : Normalised beam emittance (metre-rad)
-      !+ad_args  vi     : input real : Injection voltage (V)
-      !+ad_args  eomc2  : input real : Electron charge / (proton mass * light speed**2)
-      !+ad_desc  This routine calculates the beam current coefficient
-      !+ad_desc  of a heavy ion driver suitable for inertial fusion energy.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  21/03/97 PJK Initial version
-      !+ad_hist  24/09/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  Heavy-ion Driver Design and Scaling, R. Bieri et al.,
-      !+ad_docc      Fusion Technology, vol.21 (1992) 1583
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Routine to evaluate the beam current coefficient, CI
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! etai   : input real : Axial quadrupole packing fraction at injection
+      !! bmax   : input real : Maximum field at the superconductor (T)
+      !! aaion  : input real : Ion mass (amu)
+      !! qion   : input real : Ion charge state
+      !! sigma  : input real : Depressed tune (incl. space charge effects) (rad)
+      !! sigma0 : input real : Phase advance per lattice period (tune) (rad)
+      !! emitt  : input real : Normalised beam emittance (metre-rad)
+      !! vi     : input real : Injection voltage (V)
+      !! eomc2  : input real : Electron charge / (proton mass * light speed**2)
+      !! This routine calculates the beam current coefficient
+      !! of a heavy ion driver suitable for inertial fusion energy.
+      !! Heavy-ion Driver Design and Scaling, R. Bieri et al.,
+      !! Fusion Technology, vol.21 (1992) 1583
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -895,25 +770,17 @@ contains
 
     function betgam(aaion,qion,v)
 
-      !+ad_name  betgam
-      !+ad_summ  Routine to calculate the relativistic factor (beta*gamma) for the
-      !+ad_summ  heavy ions in the beam driver
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  aaion  : input real : Ion mass (amu)
-      !+ad_args  qion   : input real : Ion charge state
-      !+ad_args  v      : input real : Acceleration voltage (V)
-      !+ad_desc  This routine calculates the relativistic factor (beta*gamma) for the
-      !+ad_desc  heavy ions in a beam driver suitable for inertial fusion energy.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  21/03/97 PJK Initial version
-      !+ad_hist  24/09/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  Heavy-ion Driver Design and Scaling, R. Bieri et al.,
-      !+ad_docc      Fusion Technology, vol.21 (1992) 1583
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Routine to calculate the relativistic factor (beta*gamma) for the
+      !! heavy ions in the beam driver
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! aaion  : input real : Ion mass (amu)
+      !! qion   : input real : Ion charge state
+      !! v      : input real : Acceleration voltage (V)
+      !! This routine calculates the relativistic factor (beta*gamma) for the
+      !! heavy ions in a beam driver suitable for inertial fusion energy.
+      !! Heavy-ion Driver Design and Scaling, R. Bieri et al.,
+      !! Fusion Technology, vol.21 (1992) 1583
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -941,27 +808,19 @@ contains
 
   subroutine lasdrv(edrive,gain,etadrv)
 
-    !+ad_name  lasdrv
-    !+ad_summ  Routine to calculate parameters of a laser driver
-    !+ad_summ  suitable for inertial fusion energy
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  edrive : input real : Driver energy (J)
-    !+ad_args  gain   : output real : Target gain
-    !+ad_args  etadrv : output real : Driver efficiency
-    !+ad_desc  This routine calculates the parameters of a laser driver
-    !+ad_desc  suitable for inertial fusion energy.
-    !+ad_desc  Gain and driver efficiency data are taken from Figures 1 and 2 of
-    !+ad_desc  Meier and Rosenberg.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  Meier and Rosenberg, Fusion Technology vol.21 (1992) p.1552
-    !+ad_docs  F/MI/PJK/LOGBOOK12, p.86
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate parameters of a laser driver
+    !! suitable for inertial fusion energy
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! edrive : input real : Driver energy (J)
+    !! gain   : output real : Target gain
+    !! etadrv : output real : Driver efficiency
+    !! This routine calculates the parameters of a laser driver
+    !! suitable for inertial fusion energy.
+    !! Gain and driver efficiency data are taken from Figures 1 and 2 of
+    !! Meier and Rosenberg.
+    !! Meier and Rosenberg, Fusion Technology vol.21 (1992) p.1552
+    !! F/MI/PJK/LOGBOOK12, p.86
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1041,27 +900,19 @@ contains
 
   subroutine driver(edrive,gainve,etave,gain,etadrv)
 
-    !+ad_name  driver
-    !+ad_summ  Routine to calculate parameters of a generic driver
-    !+ad_summ  suitable for inertial fusion energy
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  edrive : input real : Driver energy (J)
-    !+ad_args  gainve(10) : input real array : Gain vs energy data
-    !+ad_args  etave(10) : input real array : Driver efficiency vs energy data
-    !+ad_args  gain   : output real : Target gain
-    !+ad_args  etadrv : output real : Driver efficiency
-    !+ad_desc  This routine calculates the parameters of a generic driver
-    !+ad_desc  suitable for inertial fusion energy.
-    !+ad_desc  Gain and driver efficiency data are interpolated from input data.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, p.85
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate parameters of a generic driver
+    !! suitable for inertial fusion energy
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! edrive : input real : Driver energy (J)
+    !! gainve(10) : input real array : Gain vs energy data
+    !! etave(10) : input real array : Driver efficiency vs energy data
+    !! gain   : output real : Target gain
+    !! etadrv : output real : Driver efficiency
+    !! This routine calculates the parameters of a generic driver
+    !! suitable for inertial fusion energy.
+    !! Gain and driver efficiency data are interpolated from input data.
+    !! F/MI/PJK/LOGBOOK12, p.85
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1116,38 +967,15 @@ contains
 
   subroutine ifebld(outfile,iprint)
 
-    !+ad_name  ifebld
-    !+ad_summ  Routine to create the build of an inertial fusion energy device
-    !+ad_summ  and to calculate the material volumes for the device core
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  genbld
-    !+ad_cont  hylbld
-    !+ad_cont  osibld
-    !+ad_cont  sombld
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine constructs the build of an inertial fusion energy device
-    !+ad_desc  and calculates the material volumes for the device core.
-    !+ad_prob  None
-    !+ad_call  genbld
-    !+ad_call  hylbld
-    !+ad_call  obuild
-    !+ad_call  oheadr
-    !+ad_call  osibld
-    !+ad_call  sombld
-    !+ad_call  bld2019
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  31/07/19 SIM Added bld2019 (Issue #907)
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, p.52
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to create the build of an inertial fusion energy device
+    !! and to calculate the material volumes for the device core
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine constructs the build of an inertial fusion energy device
+    !! and calculates the material volumes for the device core.
+    !! F/MI/PJK/LOGBOOK12, p.52
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1348,23 +1176,16 @@ contains
 
   subroutine bld2019
 
-     !+ad_name  bld2019
-     !+ad_summ  Routine to create the build of a 2019 inertial fusion energy
-     !+ad_summ  device, and to calculate the material volumes for the device core
-     !+ad_type  Subroutine
-     !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
-     !+ad_cont  None
-     !+ad_args  None
-     !+ad_desc  This routine constructs the build of a modern inertial fusion energy
-     !+ad_desc  device, assumed to be cylindrically-symmetric, with a pool at bottom
-     !+ad_desc  and top corners and with a lower shield at the centre.  See diagram
-     !+ad_desc  attached to Issue #907.
-     !+ad_prob  None
-     !+ad_call  None
-     !+ad_hist  31/07/19 SIM Initial version
-     !+ad_stat  Okay
-     !+ad_docs  Issue #907
-     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+     !! Routine to create the build of a 2019 inertial fusion energy
+     !! device, and to calculate the material volumes for the device core
+     !! author: S I Muldrew, CCFE, Culham Science Centre
+     !! None
+     !! This routine constructs the build of a modern inertial fusion energy
+     !! device, assumed to be cylindrically-symmetric, with a pool at bottom
+     !! and top corners and with a lower shield at the centre.  See diagram
+     !! attached to Issue #907.
+     !! Issue #907
+     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1500,23 +1321,15 @@ contains
 
     subroutine genbld
 
-      !+ad_name  genbld
-      !+ad_summ  Routine to create the build of a generic inertial fusion energy
-      !+ad_summ  device, and to calculate the material volumes for the device core
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  None
-      !+ad_desc  This routine constructs the build of a generic inertial fusion energy
-      !+ad_desc  device, assumed to be cylindrically-symmetric, and to calculate
-      !+ad_desc  the material volumes for the device core.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  21/03/97 PJK Initial version
-      !+ad_hist  24/09/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  F/MI/PJK/LOGBOOK12, p.52
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Routine to create the build of a generic inertial fusion energy
+      !! device, and to calculate the material volumes for the device core
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! None
+      !! This routine constructs the build of a generic inertial fusion energy
+      !! device, assumed to be cylindrically-symmetric, and to calculate
+      !! the material volumes for the device core.
+      !! F/MI/PJK/LOGBOOK12, p.52
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1630,24 +1443,16 @@ contains
 
     subroutine osibld
 
-      !+ad_name  osibld
-      !+ad_summ  Routine to create the build of an inertial fusion energy
-      !+ad_summ  device, based on the design of the OSIRIS study,
-      !+ad_summ  and to calculate the material volumes for the device core
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  None
-      !+ad_desc  This routine constructs the build of an inertial fusion energy
-      !+ad_desc  device, based on the design of the OSIRIS study, and to calculate
-      !+ad_desc  the material volumes for the device core.
-      !+ad_prob  None
-      !+ad_call  genbld
-      !+ad_hist  21/03/97 PJK Initial version
-      !+ad_hist  24/09/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  F/MI/PJK/LOGBOOK12, p.56
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Routine to create the build of an inertial fusion energy
+      !! device, based on the design of the OSIRIS study,
+      !! and to calculate the material volumes for the device core
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! None
+      !! This routine constructs the build of an inertial fusion energy
+      !! device, based on the design of the OSIRIS study, and to calculate
+      !! the material volumes for the device core.
+      !! F/MI/PJK/LOGBOOK12, p.56
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1675,25 +1480,17 @@ contains
 
     subroutine sombld
 
-      !+ad_name  sombld
-      !+ad_summ  Routine to create the build of an inertial fusion energy
-      !+ad_summ  device, based on the design of the SOMBRERO study,
-      !+ad_summ  and to calculate the material volumes for the device core
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  None
-      !+ad_desc  This routine constructs the build of an inertial fusion energy
-      !+ad_desc  device, based on the design of the SOMBRERO study, and to calculate
-      !+ad_desc  the material volumes for the device core.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  21/03/97 PJK Initial version
-      !+ad_hist  24/09/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  Sviatoslavsky et al, Fusion Technology vol.21 (1992) 1470
-      !+ad_docs  F/MI/PJK/LOGBOOK12, p.53
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Routine to create the build of an inertial fusion energy
+      !! device, based on the design of the SOMBRERO study,
+      !! and to calculate the material volumes for the device core
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! None
+      !! This routine constructs the build of an inertial fusion energy
+      !! device, based on the design of the SOMBRERO study, and to calculate
+      !! the material volumes for the device core.
+      !! Sviatoslavsky et al, Fusion Technology vol.21 (1992) 1470
+      !! F/MI/PJK/LOGBOOK12, p.53
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1836,25 +1633,17 @@ contains
 
     subroutine hylbld
 
-      !+ad_name  hylbld
-      !+ad_summ  Routine to create the build of an inertial fusion energy
-      !+ad_summ  device, based on the design of the HYLIFE-II study,
-      !+ad_summ  and to calculate the material volumes for the device core
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  None
-      !+ad_desc  This routine constructs the build of an inertial fusion energy
-      !+ad_desc  device, based on the design of the HYLIFE-II study, and to calculate
-      !+ad_desc  the material volumes for the device core.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  21/03/97 PJK Initial version
-      !+ad_hist  24/09/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  Moir, Fusion Technology vol.21 (1992) 1475
-      !+ad_docs  F/MI/PJK/LOGBOOK12, p.57
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Routine to create the build of an inertial fusion energy
+      !! device, based on the design of the HYLIFE-II study,
+      !! and to calculate the material volumes for the device core
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! None
+      !! This routine constructs the build of an inertial fusion energy
+      !! device, based on the design of the HYLIFE-II study, and to calculate
+      !! the material volumes for the device core.
+      !! Moir, Fusion Technology vol.21 (1992) 1475
+      !! F/MI/PJK/LOGBOOK12, p.57
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1977,25 +1766,15 @@ contains
 
   subroutine ifestr
 
-    !+ad_name  ifestr
-    !+ad_summ  Routine to calculate the support structural masses for the core of
-    !+ad_summ  an Inertial Fusion Energy power plant
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_desc  This routine calculates the support structural masses for the core of
-    !+ad_desc  an Inertial Fusion Energy power plant.
-    !+ad_desc  <P>In fact, the output masses are all trivially zero, as they are
-    !+ad_desc  magnetic fusion specific.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  29/10/12 PJK Added structure_variables
-    !+ad_hist  29/07/19 SIM Removed unused arguments 
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, p.87
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the support structural masses for the core of
+    !! an Inertial Fusion Energy power plant
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! This routine calculates the support structural masses for the core of
+    !! an Inertial Fusion Energy power plant.
+    !! <P>In fact, the output masses are all trivially zero, as they are
+    !! magnetic fusion specific.
+    !! F/MI/PJK/LOGBOOK12, p.87
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2021,23 +1800,14 @@ contains
 
   subroutine ifetgt() bind(C, name="c_ifetgt")
 
-    !+ad_name  ifetgt
-    !+ad_summ  Routine to calculate the power requirements of the target
-    !+ad_summ  delivery system and the target factory
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_desc  This routine calculates the power requirements of the target
-    !+ad_desc  delivery system and the target factory, for an Inertial
-    !+ad_desc  Fusion Energy power plant.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  29/07/19 SIM Removed unused arguments
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, pp.87-88
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the power requirements of the target
+    !! delivery system and the target factory
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! This routine calculates the power requirements of the target
+    !! delivery system and the target factory, for an Inertial
+    !! Fusion Energy power plant.
+    !! F/MI/PJK/LOGBOOK12, pp.87-88
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2064,34 +1834,16 @@ contains
 
   subroutine ifefbs(outfile,iprint)
 
-    !+ad_name  ifefbs
-    !+ad_summ  Routine to calculate the first wall, blanket and shield volumes,
-    !+ad_summ  masses and other parameters, for an Inertial Fusion Energy device
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the first wall, blanket and shield volumes,
-    !+ad_desc  masses and other parameters, for an Inertial Fusion Energy device.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_call  report_error
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  31/10/12 PJK Added cost_variables
-    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  26/06/14 PJK Added error_handling
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, p.86
-    !+ad_docs  Moir et al., Fusion Technology, vol.25 (1994) p.5
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the first wall, blanket and shield volumes,
+    !! masses and other parameters, for an Inertial Fusion Energy device
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the first wall, blanket and shield volumes,
+    !! masses and other parameters, for an Inertial Fusion Energy device.
+    !! F/MI/PJK/LOGBOOK12, p.86
+    !! Moir et al., Fusion Technology, vol.25 (1994) p.5
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2227,28 +1979,15 @@ contains
 
   subroutine ifepw1
 
-    !+ad_name  ifepw1
-    !+ad_summ  Routine to calculate the first part of the heat transport
-    !+ad_summ  and plant power balance constituents, for an IFE power plant
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  None
-    !+ad_desc  This routine calculates the first part of the heat transport
-    !+ad_desc  and plant power balance constituents, for an IFE power plant.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  30/10/12 PJK Added heat_transport_variables
-    !+ad_hist  17/04/13 PJK Changed priheat to pthermmw in rnphx calculation
-    !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, pp.67,89
-    !+ad_docs  Bourque et al., Fusion Technology vol.21 (1992) 1465
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the first part of the heat transport
+    !! and plant power balance constituents, for an IFE power plant
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine calculates the first part of the heat transport
+    !! and plant power balance constituents, for an IFE power plant.
+    !! F/MI/PJK/LOGBOOK12, pp.67,89
+    !! Bourque et al., Fusion Technology vol.21 (1992) 1465
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2321,31 +2060,13 @@ contains
 
   subroutine ifeacp(outfile,iprint)
 
-    !+ad_name  ifeacp
-    !+ad_summ  Routine to calculate AC power requirements for an IFE power plant
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the AC power requirements for an IFE power plant.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  30/10/12 PJK Added heat_transport_variables
-    !+ad_hist  30/10/12 PJK Added buildings_variables
-    !+ad_hist  05/02/13 PJK Clarified MGF output
-    !+ad_hist  27/03/13 PJK MGF power removed; irrelevant for IFE
-    !+ad_hist  17/04/13 PJK Removed 0.05*pacpmw contribution to fcsht
-    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, p.68
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate AC power requirements for an IFE power plant
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the AC power requirements for an IFE power plant.
+    !! F/MI/PJK/LOGBOOK12, p.68
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2417,43 +2138,18 @@ contains
 
   subroutine ifepw2(outfile,iprint)
 
-    !+ad_name  ifepw2
-    !+ad_summ  Routine to calculate the rest of the IFE heat transport
-    !+ad_summ  and plant power balance constituents, not already calculated in
-    !+ad_summ  IFEPW1 or IFEACP
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the rest of the IFE heat transport
-    !+ad_desc  and plant power balance constituents, not already calculated in
-    !+ad_desc  routines <A HREF="ifepw1.html">IFEPW1</A> or
-    !+ad_desc  <A HREF="ifeacp.html">IFEACP</A>.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_call  ovarrf
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  30/10/12 PJK Added heat_transport_variables
-    !+ad_hist  31/10/12 PJK Added cost_variables
-    !+ad_hist  17/04/13 PJK Corrected ctht
-    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
-    !+ad_hist  03/06/14 PJK precir renamed precircmw and made global;
-    !+ad_hisc               changed psecht to psechtmw, facht to fachtmw
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
-    !+ad_hisc               deleted ctht, rnihx
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, p.67
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the rest of the IFE heat transport
+    !! and plant power balance constituents, not already calculated in
+    !! IFEPW1 or IFEACP
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the rest of the IFE heat transport
+    !! and plant power balance constituents, not already calculated in
+    !! routines <A HREF="ifepw1.html">IFEPW1</A> or
+    !! <A HREF="ifeacp.html">IFEACP</A>.
+    !! F/MI/PJK/LOGBOOK12, p.67
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2553,26 +2249,15 @@ contains
 
   subroutine ifevac
 
-    !+ad_name  ifevac
-    !+ad_summ  Routine to calculate parameters of the vacuum system for an
-    !+ad_summ  Inertial Fusion Energy power plant
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_desc  This routine calculates the parameters of the vacuum system for an
-    !+ad_desc  Inertial Fusion Energy power plant.
-    !+ad_desc  <P>The calculated values are hard-wired; they are based loosely
-    !+ad_desc  on those for a tokamak of 6m major radius.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  29/10/12 PJK Added vacuum_variables
-    !+ad_hist  02/02/17 JM  Changed vpumpn to integer value
-    !+ad_hist  29/07/19 SIM Removed unused arguments
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, p.87
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate parameters of the vacuum system for an
+    !! Inertial Fusion Energy power plant
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! This routine calculates the parameters of the vacuum system for an
+    !! Inertial Fusion Energy power plant.
+    !! <P>The calculated values are hard-wired; they are based loosely
+    !! on those for a tokamak of 6m major radius.
+    !! F/MI/PJK/LOGBOOK12, p.87
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2596,32 +2281,17 @@ contains
 
   subroutine ifebdg(outfile,iprint)
 
-    !+ad_name  ifebdg
-    !+ad_summ  Routine to calculate the volumes of the buildings required for
-    !+ad_summ  an Inertial Fusion Energy power plant
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the volumes of the buildings required for
-    !+ad_desc  an Inertial Fusion Energy power plant. The method is based
-    !+ad_desc  closely on that for tokamaks etc. in routine
-    !+ad_desc  <A HREF="bldgs.html">BLDGS</A>.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  21/03/97 PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  30/10/12 PJK Added heat_transport_variables
-    !+ad_hist  30/10/12 PJK Added buildings_variables
-    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, p.87
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the volumes of the buildings required for
+    !! an Inertial Fusion Energy power plant
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the volumes of the buildings required for
+    !! an Inertial Fusion Energy power plant. The method is based
+    !! closely on that for tokamaks etc. in routine
+    !! <A HREF="bldgs.html">BLDGS</A>.
+    !! F/MI/PJK/LOGBOOK12, p.87
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

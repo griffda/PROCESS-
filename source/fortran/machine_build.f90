@@ -2,41 +2,15 @@
 
 module build_module
 
-  !+ad_name  build_module
-  !+ad_summ  Module containing machine build routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  radialb
-  !+ad_cont  vbuild
-  !+ad_cont  divgeom
-  !+ad_cont  rippl
-  !+ad_cont  ripple_amplitude
-  !+ad_cont  portsz
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  geometry (radial and vertical builds) of the fusion power
-  !+ad_desc  plant core.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  process_output
+  !! Module containing machine build routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! geometry (radial and vertical builds) of the fusion power
+  !! plant core.
 
-  !+ad_call  tfcoil_variables
-  !+ad_hist  30/10/12 PJK Initial version of module
 
-  !+ad_hist  09/05/13 PJK Added dshellarea, eshellarea
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_hist  19/08/14 PJK Added pfcoil_variables
-  !+ad_hist  23/04/15 MDK Removed fhole
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -65,61 +39,13 @@ contains
 
   subroutine radialb(outfile,iprint)
 
-    !+ad_name  radialb
-    !+ad_summ  Radial build
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This subroutine determines the radial build of the machine.
-    !+ad_prob  None
-    !+ad_call  dshellarea
-    !+ad_call  eshellarea
-    !+ad_call  obuild
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_call  report_error
-    !+ad_call  ripple_amplitude
-    !+ad_hist  26/07/11 PJK Initial F90 version
-    !+ad_hist  24/09/12 PJK Swapped argument order
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  18/12/12 PJK/RK Added single-null code
-    !+ad_hist  02/05/13 PJK Changed snull=1 top shield thickness to shldtth
-    !+ad_hist  09/05/13 PJK Changed first wall area calculation to be
-    !+ad_hisc               consistent with fwbsshape switch
-    !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
-    !+ad_hist  22/05/13 PJK Introduced fwareaib, fwareaob; added blanket thickness
-    !+ad_hisc               calculations
-    !+ad_hist  05/06/13 PJK shldtth now calculated if blktmodel>0
-    !+ad_hist  25/09/13 PJK Removed port size output
-    !+ad_hist  17/02/14 PJK Additional output information to mfile
-    !+ad_hist  06/03/14 PJK Changed mfile output to 'E' format
-    !+ad_hist  18/06/14 PJK New ripple amplitude model
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  24/06/14 PJK Removed bcylth;
-    !+ad_hisc               blnktth now always calculated
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  30/07/14 PJK Modified tfthko calculation
-    !+ad_hist  31/07/14 PJK Re-modified tfthko calculation
-    !+ad_hist  19/08/14 PJK Added ddwex, ohhghf to mfile
-    !+ad_hist  02/09/14 PJK Modified ripflag handling
-    !+ad_hist  20/10/14 PJK Changed Central Solenoid to central solenoid
-    !+ad_hist  06/02/15 JM  Added output of beamwd to mfile
-    !+ad_hist  06/03/15 JM  Put an additional call to ripple_amplitude after the change to
-    !+ad_hisc 				rtot (issue #221)
-    !+ad_hist  19/11/15 RK  Added pre-compression structure, thermal shield, and TF angular correction
-    !+ad_hist  01/11/16 JM  Added iprecomp switch for pre-compression structure calc. If 0 precomp=0
-    !+ad_hist  21/05/18 SIM Added deltf to output for ST (Issue #704)
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Radial build
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This subroutine determines the radial build of the machine.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -556,25 +482,14 @@ contains
 
   subroutine vbuild(outfile,iprint)
 
-    !+ad_name  vbuild
-    !+ad_summ  Vertical build
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This subroutine determines the vertical build of the machine
-    !+ad_desc  inside the TF coil.
-    !+ad_prob  None
-    !+ad_call  divgeom
-    !+ad_hist  26/07/11 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/12/12 PJK/RK Added single-null code
-    !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
-    !+ad_hist  19/11/15 RK  added vgaptop and thshield
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Vertical build
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This subroutine determines the vertical build of the machine
+    !! inside the TF coil.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -620,30 +535,17 @@ contains
 
   subroutine divgeom(divht,outfile,iprint)
 
-    !+ad_name  divgeom
-    !+ad_summ  Divertor geometry calculation
-    !+ad_type  Subroutine
-    !+ad_auth  J Galambos, ORNL
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  divht : output real : divertor height (m)
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This subroutine determines the divertor geometry.
-    !+ad_desc  The inboard (i) and outboard (o) plasma surfaces
-    !+ad_desc  are approximated by arcs, and followed past the X-point to
-    !+ad_desc  determine the maximum height.
-    !+ad_prob  No evidence of any inboard plasma surface being used...
-    !+ad_call  None
-    !+ad_hist  29/01/96 PJK Added TART option with expanded divertor chamber
-    !+ad_hist  26/07/11 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  17/10/12 PJK Added divertor_variables
-    !+ad_hist  01/12/15 RK  Added new geometry and output
-    !+ad_hist  26/05/16 RK  Fixed new geometry
-    !+ad_hist  02/02/17 JM  Replaces rstrko global variable with rspo
-    !+ad_stat  Okay
-    !+ad_docs  TART option: Peng SOFT paper
+    !! Divertor geometry calculation
+    !! author: J Galambos, ORNL
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! divht : output real : divertor height (m)
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This subroutine determines the divertor geometry.
+    !! The inboard (i) and outboard (o) plasma surfaces
+    !! are approximated by arcs, and followed past the X-point to
+    !! determine the maximum height.
+    !! TART option: Peng SOFT paper
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -948,34 +850,25 @@ contains
 
   subroutine ripple_amplitude(ripple,ripmax,rtot,rtotmin,flag)
 
-    !+ad_name  ripple_amplitude
-    !+ad_summ  TF ripple calculation
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  ripmax : input real  : maximum allowed ripple at plasma edge (%)
-    !+ad_args  ripple : output real : actual ripple at plasma edge (%)
-    !+ad_args  rtot   : input real  : radius to the centre of the outboard
-    !+ad_argc                         TF coil leg (m)
-    !+ad_args  rtotmin : output real : radius to the centre of the outboard
-    !+ad_argc                          TF coil leg which would produce
-    !+ad_argc                          a ripple of amplitude ripmax (m)
-    !+ad_args  flag : output integer : on exit, =1 if the fitted
-    !+ad_argc                          range of applicability is exceeded
-    !+ad_desc  This routine calculates the toroidal field ripple amplitude
-    !+ad_desc  at the midplane outboard plasma edge. The fitted coefficients
-    !+ad_desc  were produced from MATLAB runs by M. Kovari using the CCFE
-    !+ad_desc  MAGINT code to model the coils and fields.
-    !+ad_desc  <P>The minimum radius of the centre of the TF coil legs
-    !+ad_desc  to produce the maximum allowed ripple is also calculated.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  18/06/14 PJK Initial version
-    !+ad_hist  31/07/14 PJK Correction: tfthko to tftort
-    !+ad_hist  02/09/14 PJK Modified flag usage
-    !+ad_stat  Okay
-    !+ad_docs  M. Kovari, Toroidal Field Coils - Maximum Field and Ripple -
-    !+ad_docc  Parametric Calculation, July 2014
+    !! TF ripple calculation
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! ripmax : input real  : maximum allowed ripple at plasma edge (%)
+    !! ripple : output real : actual ripple at plasma edge (%)
+    !! rtot   : input real  : radius to the centre of the outboard
+    !! TF coil leg (m)
+    !! rtotmin : output real : radius to the centre of the outboard
+    !! TF coil leg which would produce
+    !! a ripple of amplitude ripmax (m)
+    !! flag : output integer : on exit, =1 if the fitted
+    !! range of applicability is exceeded
+    !! This routine calculates the toroidal field ripple amplitude
+    !! at the midplane outboard plasma edge. The fitted coefficients
+    !! were produced from MATLAB runs by M. Kovari using the CCFE
+    !! MAGINT code to model the coils and fields.
+    !! <P>The minimum radius of the centre of the TF coil legs
+    !! to produce the maximum allowed ripple is also calculated.
+    !! M. Kovari, Toroidal Field Coils - Maximum Field and Ripple -
+    !! Parametric Calculation, July 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1030,32 +923,16 @@ contains
 
   subroutine portsz
 
-    !+ad_name  portsz
-    !+ad_summ  Port size calculation
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  M D Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This subroutine finds the maximum possible tangency radius
-    !+ad_desc  for adequate beam access.
-    !+ad_desc  <P>The outputs from the routine are
-    !+ad_desc  <UL> <P><LI>rtanbeam : Beam tangency radius (m)
-    !+ad_desc       <P><LI>rtanmax : Maximum possible tangency radius (m) </UL>
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  27/07/11 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  16/10/12 PJK Added current_drive_variables
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  08/04/13 MDK Recalculated the geometry, and expressed in terms of
-    !+ad_hist               tangency radius
-    !+ad_hist  07/11/13 PJK Modified TF coil toroidal half-width calculation
-    !+ad_hist  25/02/14 PJK Added error trap for narrow gaps
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  A User's Guide to the PROCESS Systems Code
+    !! Port size calculation
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: M D Kovari, CCFE, Culham Science Centre
+    !! None
+    !! This subroutine finds the maximum possible tangency radius
+    !! for adequate beam access.
+    !! <P>The outputs from the routine are
+    !! <UL> <P><LI>rtanbeam : Beam tangency radius (m)
+    !! <P><LI>rtanmax : Maximum possible tangency radius (m) </UL>
+    !! A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

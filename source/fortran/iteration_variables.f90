@@ -1,7 +1,5 @@
 module define_iteration_variables 
-   !+ad_name  define_iteration_variables
-   !+ad_summ  Module to define iteration variables
-   !+ad_type  Module
+   !! Module to define iteration variables
 
    use build_variables
    use constraint_variables
@@ -2973,16 +2971,13 @@ end module define_iteration_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine loadxc
-  !+ad_name  loadxc
-  !+ad_summ  Routine to load the physics and engineering variables into the
-  !+ad_summ  optimisation variables array
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_auth  J Morris, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  None
-  !+ad_desc  This subroutine loads the physics and engineering variables
-  !+ad_desc  into the optimisation variables array <CODE>XCM</CODE>.
+  !! Routine to load the physics and engineering variables into the
+  !! optimisation variables array
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! author: J Morris, CCFE, Culham Science Centre
+  !! None
+  !! This subroutine loads the physics and engineering variables
+  !! into the optimisation variables array <CODE>XCM</CODE>.
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3245,17 +3240,14 @@ end subroutine loadxc
 
 subroutine convxc(xc,nn)
 
-  !+ad_name  convxc
-  !+ad_summ  Routine to convert scaled iteration variables back to
-  !+ad_summ  their real values
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_auth  J Morris, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  xc(ipnvars) : input/output real array : scaled iteration variable values
-  !+ad_args  nn : input integer : number of iteration variables
-  !+ad_desc  This subroutine converts the scaled iteration variables back to
-  !+ad_desc  their real values.
+  !! Routine to convert scaled iteration variables back to
+  !! their real values
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! author: J Morris, CCFE, Culham Science Centre
+  !! xc(ipnvars) : input/output real array : scaled iteration variable values
+  !! nn : input integer : number of iteration variables
+  !! This subroutine converts the scaled iteration variables back to
+  !! their real values.
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3504,18 +3496,12 @@ end subroutine convxc
 
 subroutine boundxc
 
-  !+ad_name  boundxc
-  !+ad_summ  Routine to convert variable bounds to their real values
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  None
-  !+ad_desc  This subroutine converts the scaled iteration variable bounds
-  !+ad_desc  back to their real values.
-  !+ad_prob  None
-  !+ad_call  numerics
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Routine to convert variable bounds to their real values
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! None
+  !! This subroutine converts the scaled iteration variable bounds
+  !! back to their real values.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3536,4 +3522,4 @@ subroutine boundxc
 
 end subroutine boundxc
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

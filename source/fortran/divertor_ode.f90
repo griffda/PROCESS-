@@ -1,16 +1,11 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module divertor_ode
-  !+ad_name  divertor_ode
-  !+ad_summ  Module containing divertor Kallenbach model
-  !+ad_type  Module
-  !+ad_auth  M Kovari, CCFE, Culham Science Centre
-  !+ad_args  N/A
-  !+ad_desc  This module contains the PROCESS Kallenbach divertor model
-  !+ad_prob  None
-  !+ad_hist  25/01/17 MDK  Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs
+  !! Module containing divertor Kallenbach model
+  !! author: M Kovari, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains the PROCESS Kallenbach divertor model
+  !! 
 
   use global_variables
   use maths_library
@@ -32,7 +27,7 @@ module divertor_ode
   implicit none
 
   ! Module-level declarations !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   logical, public, save :: impurities_present(nimp)=.false.
 
@@ -92,18 +87,14 @@ contains
              psep_kallenbach, teomp, neomp,  &
              outfile,iprint)
 
-    !+ad_name  divertor_Kallenbach
-    !+ad_summ  calculate radiative loss and plasma profiles along a flux tube including momentum losses
-    !+ad_type  subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate radiative loss and plasma profiles along a flux tube including momentum losses.
-    !+ad_desc  Description in A. Kallenbach et al., PPCF 58 (2016) 045013, this version based on that
-    !+ad_desc  sent by Arne 17.5.2016.
-    !+ad_desc  Note this solver is not suitable for stiff equations - which these are. Instead I have
-    !+ad_desc  set the neutral density derivatives to zero when the neutral density is small.
-    !+ad_stat  Okay
-    !+ad_docs  https://people.sc.fsu.edu/~jburkardt/f_src/ode/ode.html
+    !! calculate radiative loss and plasma profiles along a flux tube including momentum losses
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! Calculate radiative loss and plasma profiles along a flux tube including momentum losses.
+    !! Description in A. Kallenbach et al., PPCF 58 (2016) 045013, this version based on that
+    !! sent by Arne 17.5.2016.
+    !! Note this solver is not suitable for stiff equations - which these are. Instead I have
+    !! set the neutral density derivatives to zero when the neutral density is small.
+    !! https://people.sc.fsu.edu/~jburkardt/f_src/ode/ode.html
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -250,7 +241,7 @@ contains
 
 
     ! ODE solver parameters
-    !!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!
 
     ! Number of steps along the 1D line
     integer(kind=4), parameter :: step_num = 200
@@ -966,21 +957,15 @@ do i = 2, nimp
   ! ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine differential ( t, y, yp )
-    !+ad_name  differential
-    !+ad_summ  differential supplies the right hand side of the ODE
-    !+ad_type  subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  t : input real : T, the independent variable
-    !+ad_args  y : input real : Y(), the dependent variable
-    !+ad_args  yp : output real : YP(), the value of the derivative
-    !+ad_desc  differential supplies the right hand side of the ODE
-    !+ad_desc  Note that t is only used here because the area is a function of x.
-    !+ad_desc  Y(7-10) are the power loss integrals
-    !+ad_prob  None
-    !+ad_hist  01/02/17 MDK  Initial version
-    !+ad_stat  Okay
-    !+ad_docs
+    !! differential supplies the right hand side of the ODE
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! t : input real : T, the independent variable
+    !! y : input real : Y(), the dependent variable
+    !! yp : output real : YP(), the value of the derivative
+    !! differential supplies the right hand side of the ODE
+    !! Note that t is only used here because the area is a function of x.
+    !! Y(7-10) are the power loss integrals
+    !! 
 
     implicit none
 

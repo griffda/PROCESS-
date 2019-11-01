@@ -2,37 +2,12 @@
 
 module pulse_module
 
-  !+ad_name  pulse_module
-  !+ad_summ  Module containing pulsed reactor device routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  pulse
-  !+ad_cont  thrmal
-  !+ad_cont  tohswg
-  !+ad_cont  burn
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  parameters of a pulsed fusion power plant.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  constraint_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  pf_power_variables
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  pulse_variables
-  !+ad_call  times_variables
-  !+ad_hist  05/11/12 PJK Initial version of module
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_hist  29/07/14 PJK Added heat_transport_variables
-  !+ad_hist  23/04/15 MDK Removed fhole
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing pulsed reactor device routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! parameters of a pulsed fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -61,32 +36,14 @@ contains
 
   subroutine pulse(outfile,iprint)
 
-    !+ad_name  pulse
-    !+ad_summ  Caller for the pulsed reactor model
-    !+ad_type  Subroutine
-    !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This calls the routines relevant to a pulsed reactor scenario.
-    !+ad_prob  None
-    !+ad_call  thrmal
-    !+ad_call  tohswg
-    !+ad_call  burn
-    !+ad_call  25/11/93 CAG/PJK Implementation within PROCESS
-    !+ad_call  10/06/96 PJK Commented out call to STARTUP
-    !+ad_hist  01/10/12 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  30/10/12 PJK Added times_variables
-    !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  05/11/12 PJK Added pulse_variables
-    !+ad_hist  27/06/13 PJK Comment change
-    !+ad_hist  29/10/14 PJK Commented out call to thrmal
-    !+ad_stat  Okay
-    !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Caller for the pulsed reactor model
+    !! author: C A Gardner, AEA Fusion, Culham Laboratory
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This calls the routines relevant to a pulsed reactor scenario.
+    !! Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -122,37 +79,16 @@ contains
 
   subroutine tohswg(outfile,iprint)
 
-    !+ad_name  tohswg
-    !+ad_summ  Routine to calculate the plasma current ramp-up time
-    !+ad_type  Subroutine
-    !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the plasma current ramp-up time
-    !+ad_desc  for a pulsed reactor.
-    !+ad_prob  None
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_hist  25/11/93 PJK Incorporation into PROCESS
-    !+ad_hist  22/05/06 PJK Corrected error in tohsmn calculation
-    !+ad_hist  01/10/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/10/12 PJK Added pfcoil_variables
-    !+ad_hist  29/10/12 PJK Added pf_power_variables
-    !+ad_hist  31/10/12 PJK Added constraint_variables
-    !+ad_hist  04/02/13 PJK Comment change
-    !+ad_hist  11/06/13 PJK Modified ipdot and tohsmn equations
-    !+ad_hist  27/06/13 PJK Modified output heading
-    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
-    !+ad_hist  29/10/14 PJK Label changed from Central Solenoid to CS
-    !+ad_hist  27/11/15 MDK The whole of subroutine thrmal commented out.
-    !+ad_stat  Okay
-    !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
-    !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the plasma current ramp-up time
+    !! author: C A Gardner, AEA Fusion, Culham Laboratory
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the plasma current ramp-up time
+    !! for a pulsed reactor.
+    !! Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
+    !! Work File Note F/PL/PJK/PROCESS/CODE/050
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -232,38 +168,15 @@ contains
 
   subroutine burn(outfile,iprint)
 
-    !+ad_name  burn
-    !+ad_summ  Routine to calculate the burn time for a pulsed reactor
-    !+ad_type  Subroutine
-    !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the burn time for a pulsed reactor.
-    !+ad_prob  None
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_call  report_error
-    !+ad_hist  25/11/93 PJK Incorporation into PROCESS
-    !+ad_hist  25/05/06 PJK Corrected error in tohsmn calculation
-    !+ad_hist  01/10/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added current_drive_variables
-    !+ad_hist  18/10/12 PJK Added pfcoil_variables
-    !+ad_hist  30/10/12 PJK Added times_variables
-    !+ad_hist  17/12/12 PJK Modified burn volt-seconds calculation (RK)
-    !+ad_hist  27/11/13 PJK Deducted theat from tburn
-    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
-    !+ad_hist  19/05/14 PJK Added warning if tburn is negative
-    !+ad_hist  19/05/14 PJK Changed abs(vsbn) to -vsbn; added error line
-    !+ad_hist  16/06/14 PJK Removed duplicate outputs
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the burn time for a pulsed reactor
+    !! author: C A Gardner, AEA Fusion, Culham Laboratory
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the burn time for a pulsed reactor.
+    !! Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

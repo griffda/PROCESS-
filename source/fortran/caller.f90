@@ -2,92 +2,14 @@
 
 subroutine caller(xc,nvars)
 
-  !+ad_name  caller
-  !+ad_summ  Routine to call the physics and engineering modules
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_auth  J Morris, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  xc(ipnvars) : input real : Array of iteration variables
-  !+ad_args  nvars : input integer : Number of active iteration variables
-  !+ad_desc  This routine is the principal caller of all the physics and
-  !+ad_desc  engineering modules.
-  !+ad_prob  None
-  !+ad_call  availability_module
-  !+ad_call  build_module
-  !+ad_call  buildings_module
-  !+ad_call  ccfe_hcpb_module
-  !+ad_call  costs_module
-  !+ad_call  current_drive_module
-  !+ad_call  divertor_module
-  !+ad_call  fwbs_module
-  !+ad_call  ife_module
-  !+ad_call  ife_variables
-  !+ad_call  kit_hcpb_module
-  !+ad_call  numerics
-  !+ad_call  pfcoil_module
-  !+ad_call  physics_module
-  !+ad_call  physics_variables
-  !+ad_call  plasma_geometry_module
-  !+ad_call  power_module
-  !+ad_call  process_output
-  !+ad_call  pulse_module
-  !+ad_call  sctfcoil_module
-  !+ad_call  startup_module
-  !+ad_call  stellarator_module
-  !+ad_call  stellarator_variables
-  !+ad_call  structure_module
-  !+ad_call  tfcoil_module
-  !+ad_call  vacuum_module
-  !+ad_call  acpow
-  !+ad_call  avail
-  !+ad_call  avail_2
-  !+ad_call  bldgcall
-  !+ad_call  cntrpst
-  !+ad_call  convxc
-  !+ad_call  costs
-  !+ad_call  divcall
-  !+ad_call  fispac
-  !+ad_call  fwbs
-  !+ad_call  geomty
-  !+ad_call  ifecll
-  !+ad_call  induct
-  !+ad_call  loca
-  !+ad_call  pfcoil
-  !+ad_call  pfpwr
-  !+ad_call  physics
-  !+ad_call  power1
-  !+ad_call  power2
-  !+ad_call  pulse
-  !+ad_call  radialb
-  !+ad_call  startup
-  !+ad_call  stcall
-  !+ad_call  strucall
-  !+ad_call  tfcoil
-  !+ad_call  tfpwr
-  !+ad_call  tfspcall
-  !+ad_call  vaccall
-  !+ad_call  vbuild
-  !+ad_call  vsec
-  !+ad_hist  28/06/94 PJK Improved code layout
-  !+ad_hist  29/01/96 PJK Added routine CNTRPST
-  !+ad_hist  23/01/97 PJK Split routine POWER into POWER1 and POWER2
-  !+ad_hist  06/02/97 PJK Added routine LOCA
-  !+ad_hist  21/03/97 PJK Added routine IFECLL
-  !+ad_hist  18/11/97 PJK Removed NOUT argument from FISPAC call
-  !+ad_hist  19/05/99 PJK Added routine AVAIL
-  !+ad_hist  24/05/06 PJK Moved call to STRUCALL after DIVCALL
-  !+ad_hist  27/07/11 PJK Initial F90 version
-  !+ad_hist  24/09/12 PJK Swapped argument order of RADIALB, DIVCALL, INDUCT
-  !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
-  !+ad_hist  02/12/14 JM  Added new availability model in caller (avail_2)
-  !+ad_hist  13/03/15 JM  Changed calling of blanket models and import of blanket modules
-  !+ad_hist  20/05/16 JM  Added more detailed comments to the caller
-  !+ad_hist  10/02/17 JM  Added divertor Kallenbach divertor model
-  !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-  !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine to call the physics and engineering modules
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! author: J Morris, CCFE, Culham Science Centre
+  !! xc(ipnvars) : input real : Array of iteration variables
+  !! nvars : input integer : Number of active iteration variables
+  !! This routine is the principal caller of all the physics and
+  !! engineering modules.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -122,7 +44,7 @@ subroutine caller(xc,nvars)
   use cost_variables
 
   ! Import blanket modules !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!
 
   use ccfe_hcpb_module
   use kit_hcpb_module
@@ -131,7 +53,7 @@ subroutine caller(xc,nvars)
   implicit none
 
   !  Arguments !
-  !!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!
 
   real(kind(1.0D0)), dimension(ipnvars), intent(in) :: xc
   integer, intent(in) :: nvars
@@ -145,15 +67,15 @@ subroutine caller(xc,nvars)
   ncalls = ncalls + 1
 
   !  Convert variables !
-  !!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!
 
   call convxc(xc,nvars)
 
   !  Perform the various function calls !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Stellarator caller !
-  !!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!
 
   if (istell /= 0) then
      call stcall
@@ -161,7 +83,7 @@ subroutine caller(xc,nvars)
   end if
 
   !  Inertial Fusion Energy calls !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   if (ife /= 0) then
     call ifecll
@@ -169,15 +91,15 @@ subroutine caller(xc,nvars)
   end if
 
   !  Tokamak calls !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Plasma geometry model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!
 
   call geomty
 
   ! Machine Build Model !
-  !!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!
 
   ! Radial build
   call radialb(nout,0)
@@ -198,7 +120,7 @@ subroutine caller(xc,nvars)
 
 
   ! startup model (not used) !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!
   !call startup(nout,0)  !  commented-out for speed reasons
 
   
@@ -207,7 +129,7 @@ subroutine caller(xc,nvars)
 
 
   ! Toroidal field coil superconductor model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   if ( itfsup == 1 ) then
      call tfspcall(nout,0)
   end if 
@@ -223,12 +145,12 @@ subroutine caller(xc,nvars)
 
 
   ! Pulsed reactor model !
-  !!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!
   call pulse(nout,0)
 
 
   ! Blanket model !
-  !!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!
 
   ! Blanket switch values
   ! No.  |  model
@@ -251,7 +173,7 @@ subroutine caller(xc,nvars)
 
 
   ! Divertor Model !
-  !!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!
   if(verbose==1) then
       verbose_logical = .true.
   else
@@ -279,18 +201,18 @@ subroutine caller(xc,nvars)
 
 
   ! Structure Model !
-  !!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!
   call strucall(nout,0)
 
   ! Tight aspect ratio machine model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   if (itart == 1) then
      call cntrpst(nout,0)
   end if
 
   ! Toroidal field coil power model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call tfpwr(nout,0)
 
@@ -299,34 +221,34 @@ subroutine caller(xc,nvars)
 
 
   ! Plant heat transport part 1 !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call power1
 
   ! Vacuum model !
-  !!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!
 
   call vaccall(nout,0)
 
   ! Buildings model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call bldgcall(nout,0)
 
   ! Plant AC power requirements !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call acpow(nout,0)
 
   ! Plant heat transport pt 2 & 3!
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call power2(nout,0)
 
   call power3(nout,0)
 
   ! Availability model !
-  !!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!
 
   ! Availability switch values
   ! No.  |  model
@@ -342,7 +264,7 @@ subroutine caller(xc,nvars)
   end if
 
   ! Costs model !
-  !!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!
 
   ! Cost switch values
   ! No.  |  model
@@ -360,7 +282,7 @@ subroutine caller(xc,nvars)
   end if
 
   ! FISPACT and LOCA model (not used) !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  if (ifispact.eq.1) then
   !     call fispac(0)

@@ -87,7 +87,6 @@ module physics_variables
   !! Module containing global variables relating to the plasma physics
   !! This module contains global variables relating to the plasma
   !! physics.
-  !+ad_hisc               added iradloss
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1224,7 +1223,6 @@ module divertor_variables
   !! tokamak divertor components
   !! This module contains global variables relating to tokamak
   !! divertor components.
-  !+ad_hisc               tdiv now an input for stellarators
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1759,7 +1757,7 @@ module fwbs_variables
 
 
 end module fwbs_variables
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module primary_pumping_variables
 
@@ -2054,11 +2052,6 @@ module tfcoil_variables
   !! toroidal field coil systems
   !! This module contains global variables relating to the
   !! toroidal field coil systems of a fusion power plant.
-  !+ad_hisc               changed dcond dimensions
-  !+ad_hisc               added stress_model etc.; corrected arc array lengths
-  !+ad_hisc               replaced itfmod and stress_model with tfc_model
-  !+ad_hisc               removed aspcstf
-  !+ad_hisc               changed tfc_model switch values
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !! ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -2705,8 +2698,6 @@ module heat_transport_variables
   !! This module contains global variables relating to the
   !! heat transport system of a fusion power plant, and
   !! also those for a hydrogen production plant.
-  !+ad_hisc               deleted ctht, rnihx;
-  !+ad_hisc               modified some descriptions
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3190,9 +3181,9 @@ module build_variables
 
   ! Issue #514 Make tfcth an output not an iteration variable
   !real(kind(1.0D0)) :: tfcth = 1.173D0
-  !!!! tfcth /1.173/ : inboard TF coil(s  ) thickness (m)
-  !!!!               (calculated for stellarators)
-  !!!!               (iteration variable 13)
+  ! !!! tfcth /1.173/ : inboard TF coil(s  ) thickness (m)
+  ! !!!               (calculated for stellarators)
+  ! !!!               (iteration variable 13)
 
   real(kind(1.0D0)) :: tfcth = 0.0D0
   !! tfcth : inboard TF coil thickness, (centrepost for ST) (m)
@@ -3952,11 +3943,11 @@ module stellarator_variables
   !! This module contains global variables relating to the
   !! stellarator model.
   !! Stellarator Plasma Geometry Model for the Systems
-  !+ad_docc  Code PROCESS, F. Warmer, 19/06/2013
+  !! Code PROCESS, F. Warmer, 19/06/2013
   !! Stellarator Divertor Model for the Systems
-  !+ad_docc  Code PROCESS, F. Warmer, 21/06/2013
+  !! Code PROCESS, F. Warmer, 21/06/2013
   !! Stellarator Coil Model for the Systems
-  !+ad_docc  Code PROCESS, F. Warmer and F. Schauer, 07/10/2013
+  !! Code PROCESS, F. Warmer and F. Schauer, 07/10/2013
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4529,12 +4520,12 @@ module rebco_variables
   !! croco_thick /2.5e-3/ : Thickness of CroCo copper tube (m) (iteration variable 149)
 
   !real(kind(1.0D0)) :: copper_bar = 0.23d0
-  !!! copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
+  ! !! copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
   real(kind(1.0D0)) :: copper_rrr = 100d0
   !! copper_rrr /100.0/ : residual resistivity ratio copper in TF superconducting cable
 
   !real(kind(1.0D0)) :: cable_helium_fraction = 0.284D0
-  !!! cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
+  ! !! cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
 
   real(kind(1.0D0)) :: coppera_m2_max = 1D8
   !! copperA_m2_max /1e8/ : Maximum TF coil current / copper area (A/m2)

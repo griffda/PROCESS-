@@ -2,48 +2,10 @@
 
 subroutine initial
 
-    !+ad_name  initial
-    !+ad_summ  Routine to initialise
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_prob  None
-    !+ad_call  process_output
-    !+ad_call  stellarator_module
-    !+ad_call  stellarator_variables
-    !+ad_call  devtyp
-    !+ad_call  stinit
-    !+ad_hist  08/10/96 PJK Initial upgraded version
-    !+ad_hist  20/01/97 PJK Added htpmw
-    !+ad_hist  22/01/97 PJK Subsumed heattr.h, heatrinp.h and pfelect.h into
-    !+ad_hisc               htpwr.h
-    !+ad_hist  05/02/97 PJK Added Martensitic steel fractions fms...
-    !+ad_hist  13/02/97 PJK Changed initial value of fwlife to zero (no
-    !+ad_hisc               longer an input parameter, but calculated)
-    !+ad_hist  21/03/97 PJK Added new iteration variables 81--86
-    !+ad_hist  18/11/97 PJK Added ITER-97 scaling laws, IVMS,DRTOP,DZTOP
-    !+ad_hist  01/04/98 PJK Added ITER-96P scaling law, IGNITE, DNLA
-    !+ad_hist  24/04/98 PJK Added IMPC,IMPFE,IMPO,FKBLKT
-    !+ad_hist  17/07/98 PJK Added PTHRMW
-    !+ad_hist  08/10/98 PJK Added new ITER H98 scaling laws
-    !+ad_hist  19/01/99 PJK Added IGEOM, POWERHT
-    !+ad_hist  19/05/99 PJK Added new availability model variables
-    !+ad_hist  06/07/99 PJK Added BCRITSC, JCRITSC, TCRITSC
-    !+ad_hist  25/04/02 PJK Added ZEFFDIV
-    !+ad_hist  15/06/04 PJK Added IPRIMHTP
-    !+ad_hist  22/05/06 PJK Added IFALPHAP
-    !+ad_hist  22/05/07 PJK Added hydrogen plant variables
-    !+ad_hist  21/03/11 PJK Changed default value of FEFFCD to 1.0
-    !+ad_hist  26/07/11 PJK Added JCRIT_MODEL
-    !+ad_hist  09/11/11 PJK Removed ICULCR
-    !+ad_hist  19/09/12 PJK Initial F90 version
-    !+ad_hist  05/11/12 PJK Removed call to ifeini
-    !+ad_hist  05/11/12 PJK Removed pulsed reactor variables
-    !+ad_hist  05/03/15 JM  Changed blanket fraction check to new models
-    !+ad_hist  26/08/15 MDK Added check that constraint 63 is not used with wrong vacuum model
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to initialise
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -544,29 +506,14 @@ end subroutine initial
 
 subroutine devtyp
 
-    !+ad_name  devtyp
-    !+ad_summ  Routine to determine which type of device is to be modelled
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine uses the contents of an input file,
-    !+ad_desc  <CODE>device.dat</CODE>, to determine which type of device
-    !+ad_desc  is to be modelled. If the file is not present in the current
-    !+ad_desc  directory, a standard tokamak model is assumed.
-    !+ad_prob  None
-    !+ad_call  error_handling
-    !+ad_call  ife_variables
-    !+ad_call  stellarator_variables
-    !+ad_hist  27/02/96 PJK Initial version
-    !+ad_hist  08/10/96 PJK Fixed error: (istell.gt.2) should be (idev.gt.2)
-    !+ad_hist  14/03/97 PJK idev=3 ==> inertial fusion power plant
-    !+ad_hist  19/09/12 PJK Initial F90 version
-    !+ad_hist  04/11/16 MK Added check for content of device file
-    !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-    !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to determine which type of device is to be modelled
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine uses the contents of an input file,
+    !! <CODE>device.dat</CODE>, to determine which type of device
+    !! is to be modelled. If the file is not present in the current
+    !! directory, a standard tokamak model is assumed.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -630,63 +577,14 @@ end subroutine devtyp
 
 subroutine check
 
-    !+ad_name  check
-    !+ad_summ  Routine to reset specific variables if certain options are
-    !+ad_summ  being used
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine performs a sanity check of the input variables
-    !+ad_desc  and ensures other dependent variables are given suitable values.
-    !+ad_prob  None
-    !+ad_call  build_variables
-    !+ad_call  buildings_variables
-    !+ad_call  current_drive_variables
-    !+ad_call  error_handling
-    !+ad_call  fwbs_variables
-    !+ad_call  global_variables
-    !+ad_call  heat_transport_variables
+    !! Routine to reset specific variables if certain options are
+    !! being used
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine performs a sanity check of the input variables
+    !! and ensures other dependent variables are given suitable values.
 
-    !+ad_call  numerics
-    !+ad_call  pfcoil_variables
-    !+ad_call  physics_variables
-    !+ad_call  process_output
-    !+ad_call  pulse_variables
-    !+ad_call  tfcoil_variables
-    !+ad_call  report_error
-    !+ad_hist  08/10/96 PJK Initial upgraded version
-    !+ad_hist  23/01/97 PJK Moved resetting of trithtmw from POWER
-    !+ad_hist  01/04/98 PJK Added rnbeam reset for no NBI
-    !+ad_hist  19/01/99 PJK Added warning about iiter flag with non-ITER profiles
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  18/12/12 PJK Added snull and other PF coil location checks
-    !+ad_hist  11/04/13 PJK Energy storage building volume set to zero if lpulse=0
-    !+ad_hist  23/05/13 PJK Coolant type set to water if blktmodel>0
-    !+ad_hist  10/06/13 PJK Removed enforcement of ishape=0 for non-TART tokamaks
-    !+ad_hist  11/09/13 PJK Added check for fuel ion fractions; removed idhe3 setting;
-    !+ad_hisc               removed iiter usage
-    !+ad_hist  08/05/14 PJK Replaced itfmod with tfc_model
-    !+ad_hist  13/05/14 PJK Added impurity fraction initialisations
-    !+ad_hist  02/06/14 PJK Added fimpvar usage
-    !+ad_hist  24/06/14 PJK Removed refs to bcylth
-    !+ad_hist  26/06/14 PJK Added error_handling
-    !+ad_hist  23/07/14 PJK Modified icase descriptions
-    !+ad_hist  19/08/14 PJK Added trap for nvar < neqns
-    !+ad_hist  01/09/14 PJK Added trap for insufficient specification of ixc, icc
-    !+ad_hist  08/09/14 PJK Changed costr to coolwh
-    !+ad_hist  15/09/14 PJK Added plasma pedestal consistency checks
-    !+ad_hist  23/10/14 PJK ipowerflow=0 and blkttype=3 for KIT blanket model
-    !+ad_hist  29/10/14 PJK Ensured constraint 42 no longer used
-    !+ad_hist  17/11/14 PJK Added trap for deprecated constraints 3,4
-    !+ad_hist  24/11/14 PJK Added trap if blanket material fractions do not sum to 1.0
-    !+ad_hist  24/11/14 PJK Set coolwh via blkttype
-    !+ad_hist  25/02/15 JM  Changed blanket composition check to use new blanket model layout
-    !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
-    !+ad_hist  13/05/19 SIM Added error flag for input confinement time with wrong scaling option
-    !+ad_hist  29/07/19 SIM Stopped plasma check for IFE
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

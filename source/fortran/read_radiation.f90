@@ -1,20 +1,14 @@
 module read_radiation
-  !+ad_name  read_radiation
-  !+ad_summ  Module for reading radiation data
-  !+ad_type  Module
-  !+ad_auth  M Kovari, CCFE, Culham Science Centre
-  !+ad_args  N/A
-  !+ad_desc  This module contains the PROCESS Kallenbach divertor model
-  !+ad_prob  None
-  !+ad_hist  25/01/17 MDK Initial version of module
-  !+ad_hist  08/02/17 JM  Tidy up
-  !+ad_stat  Okay
-  !+ad_docs
+  !! Module for reading radiation data
+  !! author: M Kovari, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains the PROCESS Kallenbach divertor model
+  !! 
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Modules to import !
-  !!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!
 
   use maths_library
   use impurity_radiation_module, only: nimp, fimp, imp_label
@@ -26,35 +20,28 @@ module read_radiation
 contains
 
   FUNCTION read_lz(element, te, netau, mean_z, mean_qz, verbose)
-    !+ad_name  read_lz
-    !+ad_summ  Read Lz, mean_z or mean_qz data from database
-    !+ad_type  Function returning real
-    !+ad_auth  M Koviar, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  element : input char : element name
-    !+ad_args  te : input real : electron temperature [eV]
-    !+ad_args  netau : input real : "non-coronal parameter" for radiative loss function [ms.1e20/m3]
-    !+ad_args  mean_z : input logical : get mean charge instead of Lz
-    !+ad_args  mean_qz : input logical : get mean quadratic charge instead of Lz
-    !+ad_args  verbose : input logical : verbose boolean
-    !+ad_desc  read radiative loss data Lz calculated by M. O'Mullane from ADAS in 2016,
-    !+ad_desc  OR mean charge
-    !+ad_desc  A. Kallenbach, 11.1.2013, R. Dux (add readout of Z, Z^2, add a few elements)
-    !+ad_desc  Fortran: Michael Kovari 2/6/16
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  01/02/17 MDK Initial version
-    !+ad_stat  Okay
+    !! Read Lz, mean_z or mean_qz data from database
+    !! author: M Koviar, CCFE, Culham Science Centre
+    !! element : input char : element name
+    !! te : input real : electron temperature [eV]
+    !! netau : input real : "non-coronal parameter" for radiative loss function [ms.1e20/m3]
+    !! mean_z : input logical : get mean charge instead of Lz
+    !! mean_qz : input logical : get mean quadratic charge instead of Lz
+    !! verbose : input logical : verbose boolean
+    !! read radiative loss data Lz calculated by M. O'Mullane from ADAS in 2016,
+    !! OR mean charge
+    !! A. Kallenbach, 11.1.2013, R. Dux (add readout of Z, Z^2, add a few elements)
+    !! Fortran: Michael Kovari 2/6/16
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Modules to import !
-    !!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Variable declarations !
-    !!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!
 
     integer :: i, j
     integer :: location=0
@@ -222,33 +209,26 @@ contains
 
   end function read_lz
 
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine read_impurity_data(filename,nt,nnetau,impurity_data,logT_array,lnetau_array)
-    !+ad_name  read_impurity_data
-    !+ad_summ  Read impurity data from ADAS database
-    !+ad_type  subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  filename      : input character   : filename of data
-    !+ad_args  nt            : output integer    : length of temperature data
-    !+ad_args  nnetau        : output integer    : length of netau data
-    !+ad_args  impurity_data : output real array : impurity data array
-    !+ad_args  logT_array    : output real array : log temperature array
-    !+ad_args  lnetau_array  : output real array : log netau array
-    !+ad_desc  Read the impurity data from database
-    !+ad_prob  None
-    !+ad_hist  08/02/17 MDK  Initial version
-    !+ad_hist  08/02/17 JM  Tidy
-    !+ad_stat  Okay
-    !+ad_docs
+    !! Read impurity data from ADAS database
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! filename      : input character   : filename of data
+    !! nt            : output integer    : length of temperature data
+    !! nnetau        : output integer    : length of netau data
+    !! impurity_data : output real array : impurity data array
+    !! logT_array    : output real array : log temperature array
+    !! lnetau_array  : output real array : log netau array
+    !! Read the impurity data from database
+    !! 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Subroutine declarations !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Filename for data
     character(len=*), intent(in) :: filename
@@ -328,28 +308,21 @@ contains
 
   end subroutine read_impurity_data
 
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine plot_Lz()
-    !+ad_name  plot_lz
-    !+ad_summ  Write loss data to file for plotting
-    !+ad_type  subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Write loss data to file for plotting
-    !+ad_desc  Compare to Figure 3 in Kallenbach 2016.
-    !+ad_prob  None
-    !+ad_hist  08/02/17 MDK Initial version
-    !+ad_hist  13/02/17 JM  Tidy
-    !+ad_stat  Okay
-    !+ad_docs
+    !! Write loss data to file for plotting
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! Write loss data to file for plotting
+    !! Compare to Figure 3 in Kallenbach 2016.
+    !! 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Subroutine declarations !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
     character(len=2) :: element
 
@@ -386,27 +359,20 @@ contains
 
   end subroutine plot_Lz
 
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine plot_z()
-    !+ad_name  plot_z
-    !+ad_summ  Write z and z^2 data to file for plotting
-    !+ad_type  subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Write z and z^2 data to file for plotting
-    !+ad_prob  None
-    !+ad_hist  08/02/17 MDK Initial version
-    !+ad_hist  13/02/17 JM  Tidy
-    !+ad_stat  Okay
-    !+ad_docs
+    !! Write z and z^2 data to file for plotting
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! Write z and z^2 data to file for plotting
+    !! 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Subroutine declarations !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
     character(len=2) :: element
 
