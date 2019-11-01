@@ -399,8 +399,7 @@ pages:
   when: on_success
   only:
     - develop
-    - ford_docs
-    - ford_dicts
+    - issue-951-ford_var_des
   stage: pages
   script:
    - pwd
@@ -417,6 +416,9 @@ pages:
    - mkdocs build
    
    # FORD documentation
+   # Python3 uses the locale to choose the file encoding it uses
+   # Without this it will use ASCII encoding and Ford will fail
+   - export LANG=C.UTF-8
    # Ensure FORD can find create_dicts.py inside Process
    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
    - cd ..
