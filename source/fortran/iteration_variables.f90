@@ -2713,25 +2713,27 @@ subroutine init_itv_1
    end subroutine set_itv_156
 
    !---------------------------------
-   ! DUMMY variables below here
-   !---------------------------------
 
    subroutine init_itv_157
-      !+ad_varc  <LI> (157) DUMMY : Description
-      lablxc(157) = 'DUMMY         '
-      boundl(157) = 1.0d-99
-      boundu(157) = 1.0d99
+      !+ad_varc  <LI> (157) fvssu : F-value for available to required start up flux (con. 51)
+      lablxc(157) = 'fvssu         '
+      boundl(157) = 1.00d-3
+      boundu(157) = 1.000d1
    end subroutine init_itv_157
 
    real(kind(1.d0)) function itv_157()
-      itv_157 = DUMMY 
+      use pfcoil_variables, only: fvssu
+      itv_157 = fvssu 
    end function itv_157
 
    subroutine set_itv_157(ratio)
+      use pfcoil_variables, only: fvssu
       real(kind(1.d0)) :: ratio
-      DUMMY = ratio
+      fvssu = ratio
    end subroutine set_itv_157
 
+   !---------------------------------
+   ! DUMMY variables below here
    !---------------------------------
 
    subroutine init_itv_158

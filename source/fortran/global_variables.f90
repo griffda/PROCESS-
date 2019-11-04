@@ -213,9 +213,9 @@ module physics_variables
   !! falpi : fraction of alpha power to ions
   real(kind(1.0D0)) :: fdeut = 0.5D0
   !! fdeut /0.5/ : deuterium fuel fraction
-  real(kind(1.0D0)) :: ftar = 0.5D0
-  !! ftar  /0.5/ : fraction of power to the  lower divertor in double null
-  !!               configuration (snull = 0 only)
+  real(kind(1.0D0)) :: ftar = 1.0D0
+  !! ftar  /1.0/ : fraction of power to the  lower divertor in double null
+  !!               configuration (snull = 0 only) (default assumes SN)
   real(kind(1.0D0)) :: ffwal = 0.92D0
   !! ffwal /0.92/ : factor to convert plasma surface area to first wall
   !!                area in neutron wall load calculation (iwalld=1)
@@ -1868,6 +1868,8 @@ module pfcoil_variables
   !! fcuohsu /0.7/ : copper fraction of strand in central solenoid
   real(kind(1.0D0)) :: fcupfsu = 0.69D0
   !! fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
+  real(kind(1.0D0)) :: fvssu = 1.0
+  !! fvssu   /1.0/  : F-value for constraint equation 51 
   integer, dimension(ngc) :: ipfloc = (/2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0/)
   !! ipfloc(ngc) /2,2,3/ : switch for locating scheme of PF coil group i:<UL>
   !!                  <LI> = 1 PF coil on top of central solenoid;
@@ -4051,7 +4053,9 @@ module ife_variables
      !!             <LI> = 8 lithium </UL>
    
      real(kind(1.0D0)) :: bldr   = 1.0D0
-     !! bldr /1.0/ : radial thickness of IFE blanket (m)
+     !! bldr /1.0/ : radial thickness of IFE blanket (m; calculated if ifetyp=4)
+     real(kind(1.0D0)) :: bldrc   = 1.0D0
+     !! bldrc /1.0/ : radial thickness of IFE curtain (m; ifetyp=4)
      real(kind(1.0D0)) :: bldzl  = 4.0D0
      !! bldzl /4.0/ : vertical thickness of IFE blanket below chamber (m)
      real(kind(1.0D0)) :: bldzu  = 4.0D0
@@ -4081,6 +4085,8 @@ module ife_variables
      real(kind(1.0D0)) :: cdriv2 = 244.9D0
      !! cdriv2 /244.9/ : IFE high energy heavy ion beam driver cost
      !!                  extrapolated to edrive=0 (M$)
+     real(kind(1.0D0)) :: cdriv3 = 1.463D0
+     !! cdriv3 /1.463/ : IFE driver cost ($/J wall plug) (ifedrv==3)
      real(kind(1.0D0)) :: chdzl = 9.0D0
      !! chdzl /9.0/ : vertical thickness of IFE chamber below centre (m)
      real(kind(1.0D0)) :: chdzu = 9.0D0
@@ -4111,10 +4117,12 @@ module ife_variables
      !!                  (iteration variable 81)
      real(kind(1.0D0)) :: etadrv = 0.0D0
      !! etadrv : IFE driver wall plug to target efficiency
+     real(kind(1.0D0)) :: etali = 0.4D0
+     !! etali /0.40/ : IFE lithium pump wall plug efficiency (ifetyp=4)
      real(kind(1.0D0)), dimension(10) :: etave = (/ &
+      0.082D0,0.079D0,0.076D0,0.073D0,0.069D0, &
+      0.066D0,0.062D0,0.059D0,0.055D0,0.051D0 /)
      !! etave(10) : IFE driver efficiency vs driver energy (ifedrv=-1)
-          0.082D0,0.079D0,0.076D0,0.073D0,0.069D0, &
-          0.066D0,0.062D0,0.059D0,0.055D0,0.051D0 /)
      real(kind(1.0D0)) :: fauxbop = 0.06D0
      !! fauxbop /0.06/ : fraction of gross electric power to balance-of-plant (IFE)
      real(kind(1.0D0)) :: fbreed = 0.51D0
@@ -4176,6 +4184,8 @@ module ife_variables
      !!         <LI> = 2 SOMBRERO-like build;
      !!         <LI> = 3 HYLIFE-II-like build;
      !!         <LI> = 4 2019 build</UL>
+     real(kind(1.0D0)) :: lipmw = 0.0D0
+     !! lipmw : IFE lithium pump power (MW; ifetyp=4)
      real(kind(1.0D0)) :: mcdriv = 1.0D0
      !! mcdriv /1.0/ : IFE driver cost multiplier
      real(kind(1.0D0)) :: mflibe = 0.0D0
@@ -4236,6 +4246,8 @@ module ife_variables
      !! sombdr /2.7/ : radius of cylindrical blanket section below chamber (ifetyp=2)
      real(kind(1.0D0)) :: somtdr = 2.7D0
      !! somtdr /2.7/ : radius of cylindrical blanket section above chamber (ifetyp=2)
+     real(kind(1.0D0)) :: taufall = 0.0D0
+     !! taufall : Lithium Fall Time (s)
      real(kind(1.0D0)) :: tdspmw = 0.01D0
      !! tdspmw /0.01/ FIX : IFE target delivery system power (MW)
      real(kind(1.0D0)), bind(C) :: tfacmw = 0.0D0

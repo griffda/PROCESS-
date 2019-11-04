@@ -29,11 +29,12 @@ module numerics
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
   integer, parameter :: ipvp1   = ipnvars+1
 
+  integer :: ioptimz = 1
   !!  ioptimz /1/ : code operation switch:<UL>
+  !!           <LI> = -2 for no optimisation, no VMCOM or HYBRD;
   !!           <LI> = -1 for no optimisation, HYBRD only;
   !!           <LI> = 0  for HYBRD and VMCON (not recommended);
   !!           <LI> = 1  for optimisation, VMCON only</UL>
-  integer :: ioptimz = 1
 
   !!  minmax /7/ : switch for figure-of-merit (see lablmm for descriptions)
   !!               negative => maximise, positive => minimise
