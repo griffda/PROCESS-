@@ -785,28 +785,20 @@ contains
 
   ! subroutine rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
 
-  !   !+ad_name  rippl
-  !   !+ad_summ  TF ripple calculation
-  !   !+ad_type  Subroutine
-  !   !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !   !+ad_cont  N/A
-  !   !+ad_args  ripmax : input real : max ripple at plasma edge (peak to average) (%)
-  !   !+ad_args  rmajor : input real : plasma major radius (m)
-  !   !+ad_args  rminor : input real : plasma minor radius (m)
-  !   !+ad_args  rtot   : input real : default radius to the outboard TF coil leg (m)
-  !   !+ad_args  tfno   : input real(!) : number of TF coils
-  !   !+ad_args  ripple : output real : ripple at plasma edge (%)
-  !   !+ad_args  rtotl  : output real : required minimum radius to the centre
-  !   !+ad_argc                         of the outboard TF coil leg (m)
-  !   !+ad_desc  Subroutine to calculate TFC ripple and outboard TFC leg radius.
-  !   !+ad_desc  Input the max. ripple and default outboard leg location and the
-  !   !+ad_desc  routine checks to see if the ripple is OK. If not it moves
-  !   !+ad_desc  the outboard leg appropriately.
-  !   !+ad_prob  None
-  !   !+ad_call  None
-  !   !+ad_hist  27/07/11 PJK Initial F90 version
-  !   !+ad_stat  Okay
-  !   !+ad_docs  None
+  !   !! TF ripple calculation
+  !   !! P J Knight, CCFE, Culham Science Centre
+  !   !! ripmax : input real : max ripple at plasma edge (peak to average) (%)
+  !   !! rmajor : input real : plasma major radius (m)
+  !   !! rminor : input real : plasma minor radius (m)
+  !   !! rtot   : input real : default radius to the outboard TF coil leg (m)
+  !   !! tfno   : input real(!) : number of TF coils
+  !   !! ripple : output real : ripple at plasma edge (%)
+  !   !! rtotl  : output real : required minimum radius to the centre
+  !   !!                        of the outboard TF coil leg (m)
+  !   !! Subroutine to calculate TFC ripple and outboard TFC leg radius.
+  !   !! Input the max. ripple and default outboard leg location and the
+  !   !! routine checks to see if the ripple is OK. If not it moves
+  !   !! the outboard leg appropriately.
   !   !
   !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

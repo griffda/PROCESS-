@@ -1141,29 +1141,21 @@ end function sigvm
 
 ! subroutine sctfjalw(bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump,jtfalw)
 
-!     !+ad_name  sctfjalw
-!     !+ad_summ  Simple J(B) model for the superconducting TF Coil
-!     !+ad_type  Subroutine
-!     !+ad_auth  P J Knight, CCFE, Culham Science Centre
-!     !+ad_auth  J Galambos, FEDC/ORNL
-!     !+ad_cont  N/A
-!     !+ad_args  bmaxtf  : input real : peak field including ripple (T)
-!     !+ad_args  rtfmi   : input real : mean inboard leg radius (m)
-!     !+ad_args  rtfmo   : input real : mean outboard leg radius (m)
-!     !+ad_args  rtf2    : input real : radius of inboard leg point nearest plasma (m)
-!     !+ad_args  sigmatf : input real : allowable structure stress (MPa)
-!     !+ad_args  tdump   : input real : dump time (s)
-!     !+ad_args  jtfalw  : output real : overall allowable current density (A/m2)
-!     !+ad_desc  This routine using a simple model to calculate the allowable
-!     !+ad_desc  current density in a superconducting coil, given the magnetic
-!     !+ad_desc  field and the allowable stress.
-!     !+ad_desc  Programmed by J. Galambos from algorithms from J. Perkins.
-!     !+ad_prob  None
-!     !+ad_call  None
-!     !+ad_hist  25/01/91 JG  Initial version
-!     !+ad_hist  14/05/12 PJK Initial F90 version
-!     !+ad_stat  Okay
-!     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+!     !! Simple J(B) model for the superconducting TF Coil
+!     !! P J Knight, CCFE, Culham Science Centre
+!     !! J Galambos, FEDC/ORNL
+!     !! bmaxtf  : input real : peak field including ripple (T)
+!     !! rtfmi   : input real : mean inboard leg radius (m)
+!     !! rtfmo   : input real : mean outboard leg radius (m)
+!     !! rtf2    : input real : radius of inboard leg point nearest plasma (m)
+!     !! sigmatf : input real : allowable structure stress (MPa)
+!     !! tdump   : input real : dump time (s)
+!     !! jtfalw  : output real : overall allowable current density (A/m2)
+!     !! This routine using a simple model to calculate the allowable
+!     !! current density in a superconducting coil, given the magnetic
+!     !! field and the allowable stress.
+!     !! Programmed by J. Galambos from algorithms from J. Perkins.
+!     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
 !     !
 !     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2183,9 +2175,9 @@ end subroutine tfspcall
 ! --------------------------------------------------------------------
 ! ! subroutine croco_voltage()
 
-!     !+ad_name  croco_voltage
-!     !+ad_summ  Finds the dump voltage in quench for the Croco HTS conductor
-!     !+ad_type  Subroutine
+!     !! croco_voltage
+!     !! Finds the dump voltage in quench for the Croco HTS conductor
+!     !! Subroutine
 
 !     ! vtfskv : voltage across a TF coil during quench (kV)
 !     ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)

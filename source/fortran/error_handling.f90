@@ -48,17 +48,17 @@ module error_handling
   integer, parameter :: ERROR_WARN = 2
   integer, parameter :: ERROR_SEVERE = 3
 
-  !+ad_vars  error_id : identifier for final message encountered
   integer :: error_id = 0
+  !! error_id : identifier for final message encountered
 
   !  Overall status
 
-  !+ad_vars  error_status : overall status flag for a run; on exit:<UL>
-  !+ad_varc                 <LI> 0  all okay
-  !+ad_varc                 <LI> 1  informational messages have been encountered
-  !+ad_varc                 <LI> 2  warning (non-fatal) messages have been encountered
-  !+ad_varc                 <LI> 3  severe (fatal) errors have occurred</UL>
   integer :: error_status = ERROR_OKAY
+  !! error_status : overall status flag for a run; on exit:<UL>
+  !!                 <LI> 0  all okay
+  !!                 <LI> 1  informational messages have been encountered
+  !!                 <LI> 2  warning (non-fatal) messages have been encountered
+  !!                 <LI> 3  severe (fatal) errors have occurred</UL>
 
   integer, parameter :: INT_DEFAULT = -999999
   real(kind(1.0D0)), parameter :: FLT_DEFAULT = real(INT_DEFAULT, kind(1.0D0))

@@ -49,7 +49,7 @@ contains
     !! Transport Barriers, Journal of Physics: Conference Series
     !! 123 (2008) 012033
     !! J A Snipes and the International H-mode Threshold Database
-    !+ad+docc  Working Group, 2000, Plasma Phys. Control. Fusion, 42, A299
+    !! Working Group, 2000, Plasma Phys. Control. Fusion, 42, A299
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -350,7 +350,7 @@ contains
        q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end,pnuctfi,pnuctfo)
 
     !! Calculates the nuclear power density profiles
-    !+ad_dumm  within the KIT blanket sub-assemblies
+    !! within the KIT blanket sub-assemblies
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: F Franza, KIT (original MATLAB implementation)
     !! q_BZ_IB_end : output real : power density at outer edge of IB BZ (MW/m3)
@@ -453,7 +453,7 @@ contains
        q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end,P_th_tot,M_E,pnucsh)
 
     !! Calculates nuclear power production and energy multiplication factor
-    !+ad_dumm  within the KIT blanket sub-assemblies
+    !! within the KIT blanket sub-assemblies
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: F Franza, KIT (original MATLAB implementation)
     !! q_BZ_IB_end : input real : power density at outer edge of IB BZ (MW/m3)

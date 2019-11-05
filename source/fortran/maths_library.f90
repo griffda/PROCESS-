@@ -5471,7 +5471,7 @@ contains
     !! i=2 : B**(EMIN - 1), the smallest magnitude
     !! i=3 : B**EMAX*(1 - B**(-P)), the largest magnitude
     !! where the machine being used has P base B digits, and its smallest
-    !+ad_arc      and largest exponents are EMIN and EMAX, respectively.
+    !! and largest exponents are EMIN and EMAX, respectively.
     !! This routine evaluates the numerical machine parameters of the
     !! computer being used to run the program, as defined above.
     !! <P>Note that the values of these parameters can be found for a given

@@ -1651,7 +1651,6 @@ contains
     !! None
     !! This routine evaluates the Account 224 (vacuum system) costs.
     !! The costs are scaled from TETRA reactor code runs.
-    !+ad)hist  29/10/12 PJK Changed nvtype to ntype
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

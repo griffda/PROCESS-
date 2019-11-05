@@ -29,57 +29,57 @@ module impurity_radiation_module
   public :: imp_dat, Zav_of_te
 
 
-  !+ad_varc  (It is recommended to turn on
-  !+ad_varc  constraint eqn.17 with iteration variable 28: fradpwr.)
+  !! (It is recommended to turn on
+  !! constraint eqn.17 with iteration variable 28: fradpwr.)
 
-  !+ad_vars  nimp /14/ FIX : number of ion species in impurity radiation model
   integer, public, parameter :: nimp = 14
+  !! nimp /14/ FIX : number of ion species in impurity radiation model
 
-  !+ad_vars  coreradius /0.6/ : normalised radius defining the 'core' region
   real(kind(1.0D0)), public :: coreradius = 0.6D0
+  !! coreradius /0.6/ : normalised radius defining the 'core' region
 
-  !+ad_vars  coreradiationfraction /1.0/ : fraction of radiation from 'core' region that is subtracted from the loss power
   real(kind(1.0D0)), public :: coreradiationfraction = 1.0D0
+  !! coreradiationfraction /1.0/ : fraction of radiation from 'core' region that is subtracted from the loss power
 
-  !+ad_vars  fimp(nimp) /1.0,0.1,0.02,0.0,0.0,0.0,0.0,0.0,0.0016,0.0,0.0,0.0,0.0,0.0/ :
-  !+ad_varc         impurity number density fractions relative to electron density
-  !+ad_varc         (iteration variable 102 is fimp(impvar))
+  !! fimp(nimp) /1.0,0.1,0.02,0.0,0.0,0.0,0.0,0.0,0.0016,0.0,0.0,0.0,0.0,0.0/ :
+  !!        impurity number density fractions relative to electron density
+  !!        (iteration variable 102 is fimp(impvar))
   real(kind(1.0D0)), public, dimension(nimp) :: fimp = &
        (/ 1.0D0, 0.1D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.00D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
-  !+ad_vars  imp_label(nimp) : impurity ion species names:<UL>
-  character(len=2), public, dimension(nimp) :: imp_label = (/ &
-  !+ad_varc  <LI> ( 1)  Hydrogen  (fraction calculated by code)
+       character(len=2), public, dimension(nimp) :: imp_label = (/ &
+       !! imp_label(nimp) : impurity ion species names:<UL>
        'H_', &
-  !+ad_varc  <LI> ( 2)  Helium
+       !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
        'He', &
-  !+ad_varc  <LI> ( 3)  Beryllium
+       !! <LI> ( 2)  Helium
        'Be', &
-  !+ad_varc  <LI> ( 4)  Carbon
+       !! <LI> ( 3)  Beryllium
        'C_', &
-  !+ad_varc  <LI> ( 5)  Nitrogen
+       !! <LI> ( 4)  Carbon
        'N_', &
-  !+ad_varc  <LI> ( 6)  Oxygen
+       !! <LI> ( 5)  Nitrogen
        'O_', &
-  !+ad_varc  <LI> ( 7)  Neon
+       !! <LI> ( 6)  Oxygen
        'Ne', &
-  !+ad_varc  <LI> ( 8)  Silicon
+       !! <LI> ( 7)  Neon
        'Si', &
-  !+ad_varc  <LI> ( 9)  Argon
+       !! <LI> ( 8)  Silicon
        'Ar', &
-  !+ad_varc  <LI> (10)  Iron
+       !! <LI> ( 9)  Argon
        'Fe', &
-  !+ad_varc  <LI> (11)  Nickel
+       !! <LI> (10)  Iron
        'Ni', &
-  !+ad_varc  <LI> (12)  Krypton
+       !! <LI> (11)  Nickel
        'Kr', &
-  !+ad_varc  <LI> (13)  Xenon
+       !! <LI> (12)  Krypton
        'Xe', &
-  !+ad_varc  <LI> (14)  Tungsten</UL>
+       !! <LI> (13)  Xenon
        'W_'/)
+       !! <LI> (14)  Tungsten</UL>
 
-  !+ad_vars  fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
-  !+ad_varc                     (iteration variable 102)
+       !! fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
+       !!                    (iteration variable 102)
   ! Deprecated
   real(kind(1.0D0)), public :: fimpvar = 1.0D-3
 
@@ -87,12 +87,12 @@ module impurity_radiation_module
 
   include "root.dir"
 
-  !+ad_vars  impdir /'/home/PROCESS/[branch]/impuritydata'/ :
-  !+ad_varc           Directory containing impurity radiation data files
+  !! impdir /'/home/PROCESS/[branch]/impuritydata'/ :
+  !!          Directory containing impurity radiation data files
   character(len=200), public :: impdir = INSTALLDIR//'/data/impuritydata/'
 
-  !+ad_vars  impvar : impurity to be iterated (deprecated)
-  !+ad_varc                       variable number 102 is turned on
+  !! impvar : impurity to be iterated (deprecated)
+  !!                      variable number 102 is turned on
   integer, public :: impvar = 9
 
   !  Declare impurity data type

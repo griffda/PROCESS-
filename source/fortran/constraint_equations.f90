@@ -365,16 +365,16 @@ contains
       !! #=# physics
       !! #=#=# consistency
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  betaft : input real : fast alpha beta component
-      !+ad_glos  betanb : input real : neutral beam beta component
-      !+ad_glos  dene : input real : electron density (/m3) (iteration variable 6)
-      !+ad_glos  ten : input real : density weighted average electron temperature (keV)
-      !+ad_glos  dnitot : input real : total ion density (/m3)
-      !+ad_glos  tin : input real : density weighted average ion temperature (keV)
-      !+ad_glos  btot : input real : total toroidal + poloidal field (T)
-      !+ad_glos  beta : input real : total plasma beta (iteration variable 5) (calculated if ipedestal =3)
-      !+ad_glos  echarge : input real : FIX : electron charge (C)
-      !+ad_glos  rmu0 : input real : FIX : permeability of free space, 4.pi x 10^(-7) H/m
+      !! betaft : input real : fast alpha beta component
+      !! betanb : input real : neutral beam beta component
+      !! dene : input real : electron density (/m3) (iteration variable 6)
+      !! ten : input real : density weighted average electron temperature (keV)
+      !! dnitot : input real : total ion density (/m3)
+      !! tin : input real : density weighted average ion temperature (keV)
+      !! btot : input real : total toroidal + poloidal field (T)
+      !! beta : input real : total plasma beta (iteration variable 5) (calculated if ipedestal =3)
+      !! echarge : input real : FIX : electron charge (C)
+      !! rmu0 : input real : FIX : permeability of free space, 4.pi x 10^(-7) H/m
       use physics_variables, only: betaft, betanb, dene, ten, dnitot, tin, btot, beta
       use constants, only: echarge,rmu0
       implicit none
@@ -400,24 +400,24 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  iradloss : input integer : switch for radiation loss term usage in power balance (see User Guide):<UL>
-      !+ad_gloc             <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
-      !+ad_gloc             <LI> = 1 total power lost is scaling power plus core radiation only
-      !+ad_gloc             <LI> = 2 total power lost is scaling power only, with no additional
-      !+ad_gloc                      allowance for radiation. This is not recommended for power plant models.</UL>
-      !+ad_glos  ignite : input integer : switch for ignition assumption:<UL>
-      !+ad_gloc          <LI> = 0 do not assume plasma ignition;
-      !+ad_gloc          <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
-      !+ad_glos  ptrepv : input real : electron transport power per volume (MW/m3)
-      !+ad_glos  ptripv : input real :  ion transport power per volume (MW/m3)
-      !+ad_glos  pradpv : input real : total radiation power per volume (MW/m3)
-      !+ad_glos  pcoreradpv : input real : total core radiation power per volume (MW/m3)
-      !+ad_glos  falpha : input real : fraction of alpha power deposited in plasma
-      !+ad_glos  palppv : input real : alpha power per volume (MW/m3)
-      !+ad_glos  pchargepv : input real : non-alpha charged particle fusion power per volume (MW/m3)
-      !+ad_glos  pohmpv : input real : ohmic heating power per volume (MW/m3)
-      !+ad_glos  pinjmw : input real : total auxiliary injected power (MW)
-      !+ad_glos  vol : input real : plasma volume (m3)
+      !! iradloss : input integer : switch for radiation loss term usage in power balance (see User Guide):<UL>
+      !! <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
+      !! <LI> = 1 total power lost is scaling power plus core radiation only
+      !! <LI> = 2 total power lost is scaling power only, with no additional
+      !! allowance for radiation. This is not recommended for power plant models.</UL>
+      !! ignite : input integer : switch for ignition assumption:<UL>
+      !! <LI> = 0 do not assume plasma ignition;
+      !! <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
+      !! ptrepv : input real : electron transport power per volume (MW/m3)
+      !! ptripv : input real :  ion transport power per volume (MW/m3)
+      !! pradpv : input real : total radiation power per volume (MW/m3)
+      !! pcoreradpv : input real : total core radiation power per volume (MW/m3)
+      !! falpha : input real : fraction of alpha power deposited in plasma
+      !! palppv : input real : alpha power per volume (MW/m3)
+      !! pchargepv : input real : non-alpha charged particle fusion power per volume (MW/m3)
+      !! pohmpv : input real : ohmic heating power per volume (MW/m3)
+      !! pinjmw : input real : total auxiliary injected power (MW)
+      !! vol : input real : plasma volume (m3)
       use physics_variables, only: iradloss, ignite, ptrepv, ptripv, pradpv, & 
                                    pcoreradpv, falpha, palppv, pchargepv, &
                                    pohmpv, vol
@@ -464,15 +464,15 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ignite : input integer : switch for ignition assumption:<UL>
-      !+ad_gloc          <LI> = 0 do not assume plasma ignition;
-      !+ad_gloc          <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
-      !+ad_glos  ptripv : input real :  ion transport power per volume (MW/m3)
-      !+ad_glos  piepv : input real : ion/electron equilibration power per volume (MW/m3)
-      !+ad_glos  falpha : input real : fraction of alpha power deposited in plasma
-      !+ad_glos  palpipv : input real : alpha power per volume to ions (MW/m3)
-      !+ad_glos  pinjimw : input real : auxiliary injected power to ions (MW)
-      !+ad_glos  vol : input real : plasma volume (m3)
+      !! ignite : input integer : switch for ignition assumption:<UL>
+      !! <LI> = 0 do not assume plasma ignition;
+      !! <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
+      !! ptripv : input real :  ion transport power per volume (MW/m3)
+      !! piepv : input real : ion/electron equilibration power per volume (MW/m3)
+      !! falpha : input real : fraction of alpha power deposited in plasma
+      !! palpipv : input real : alpha power per volume to ions (MW/m3)
+      !! pinjimw : input real : auxiliary injected power to ions (MW)
+      !! vol : input real : plasma volume (m3)
       use physics_variables, only: ignite, ptripv, piepv, falpha, palpipv, vol
       use current_drive_variables, only: pinjimw
       implicit none
@@ -508,22 +508,22 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  iradloss : input integer : switch for radiation loss term usage in power balance (see User Guide):<UL>
-      !+ad_gloc             <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
-      !+ad_gloc             <LI> = 1 total power lost is scaling power plus core radiation only
-      !+ad_gloc             <LI> = 2 total power lost is scaling power only, with no additional
-      !+ad_gloc                      allowance for radiation. This is not recommended for power plant models.</UL>
-      !+ad_glos  ignite : input integer : switch for ignition assumption:<UL>
-      !+ad_gloc          <LI> = 0 do not assume plasma ignition;
-      !+ad_gloc          <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
-      !+ad_glos  ptrepv : input real : electron transport power per volume (MW/m3)
-      !+ad_glos  pradpv : input real : total radiation power per volume (MW/m3)
-      !+ad_glos  pcoreradpv : input real : total core radiation power per volume (MW/m3)
-      !+ad_glos  falpha : input real : fraction of alpha power deposited in plasma
-      !+ad_glos  palpepv : input real : alpha power per volume to electrons (MW/m3)
-      !+ad_glos  piepv : input real : ion/electron equilibration power per volume (MW/m3)
-      !+ad_glos  pinjemw : input real : auxiliary injected power to electrons (MW)
-      !+ad_glos  vol : input real : plasma volume (m3)
+      !! iradloss : input integer : switch for radiation loss term usage in power balance (see User Guide):<UL>
+      !! <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
+      !! <LI> = 1 total power lost is scaling power plus core radiation only
+      !! <LI> = 2 total power lost is scaling power only, with no additional
+      !! allowance for radiation. This is not recommended for power plant models.</UL>
+      !! ignite : input integer : switch for ignition assumption:<UL>
+      !! <LI> = 0 do not assume plasma ignition;
+      !! <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
+      !! ptrepv : input real : electron transport power per volume (MW/m3)
+      !! pradpv : input real : total radiation power per volume (MW/m3)
+      !! pcoreradpv : input real : total core radiation power per volume (MW/m3)
+      !! falpha : input real : fraction of alpha power deposited in plasma
+      !! palpepv : input real : alpha power per volume to electrons (MW/m3)
+      !! piepv : input real : ion/electron equilibration power per volume (MW/m3)
+      !! pinjemw : input real : auxiliary injected power to electrons (MW)
+      !! vol : input real : plasma volume (m3)
       use physics_variables, only: iradloss, ignite, ptrepv, pcoreradpv, falpha, & 
                                  palpepv, piepv, vol, pradpv
       use current_drive_variables, only: pinjemw
@@ -569,18 +569,18 @@ contains
       !! #=#=# fdene, dnelimt
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  idensl : input integer : switch for density limit to enforce (constraint equation 5):<UL>
-      !+ad_gloc          <LI> = 1 old ASDEX;
-      !+ad_gloc          <LI> = 2 Borrass model for ITER (I);
-      !+ad_gloc          <LI> = 3 Borrass model for ITER (II);
-      !+ad_gloc          <LI> = 4 JET edge radiation;
-      !+ad_gloc          <LI> = 5 JET simplified;
-      !+ad_gloc          <LI> = 6 Hugill-Murakami Mq limit;
-      !+ad_gloc          <LI> = 7 Greenwald limit</UL>
-      !+ad_glos  fdene : input real : f-value for density limit
-      !+ad_glos  dene : input real : electron density (/m3)
-      !+ad_glos  dnelimt : input real : density limit (/m3)
-      !+ad_glos  dnla : input real : line averaged electron density (m-3)
+      !! idensl : input integer : switch for density limit to enforce (constraint equation 5):<UL>
+      !! <LI> = 1 old ASDEX;
+      !! <LI> = 2 Borrass model for ITER (I);
+      !! <LI> = 3 Borrass model for ITER (II);
+      !! <LI> = 4 JET edge radiation;
+      !! <LI> = 5 JET simplified;
+      !! <LI> = 6 Hugill-Murakami Mq limit;
+      !! <LI> = 7 Greenwald limit</UL>
+      !! fdene : input real : f-value for density limit
+      !! dene : input real : electron density (/m3)
+      !! dnelimt : input real : density limit (/m3)
+      !! dnla : input real : line averaged electron density (m-3)
       use physics_variables, only: idensl, dnelimt, dnla, dene
       use constraint_variables, only: fdene
       implicit none
@@ -613,10 +613,10 @@ contains
       !! #=#=# fbeta, epbetmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fbeta : input real : f-value for epsilon beta-poloidal
-      !+ad_glos  epbetmax : input real : maximum (eps*beta_poloidal)
-      !+ad_glos  eps : input real : inverse aspect ratio
-      !+ad_glos  betap : input real : poloidal beta
+      !! fbeta : input real : f-value for epsilon beta-poloidal
+      !! epbetmax : input real : maximum (eps*beta_poloidal)
+      !! eps : input real : inverse aspect ratio
+      !! betap : input real : poloidal beta
       use physics_variables, only: epbetmax, eps, betap
       use constraint_variables, only: fbeta, fbeta
       implicit none
@@ -640,15 +640,15 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ignite : input integer : switch for ignition assumption:<UL>
-      !+ad_gloc          <LI> = 0 do not assume plasma ignition;
-      !+ad_gloc          <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
-      !+ad_gloc  Obviously, ignite must be zero if current drive is required.
-      !+ad_gloc  If ignite=1, any auxiliary power is assumed to be used only
-      !+ad_gloc  during plasma start-up, and is excluded from all steady-state
-      !+ad_gloc  power balance calculations.
-      !+ad_glos  dnbeam2 : input real :  hot beam ion density from calculation (/m3)
-      !+ad_glos  dnbeam : input real : hot beam ion density, variable (/m3)
+      !! ignite : input integer : switch for ignition assumption:<UL>
+      !! <LI> = 0 do not assume plasma ignition;
+      !! <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
+      !! Obviously, ignite must be zero if current drive is required.
+      !! If ignite=1, any auxiliary power is assumed to be used only
+      !! during plasma start-up, and is excluded from all steady-state
+      !! power balance calculations.
+      !! dnbeam2 : input real :  hot beam ion density from calculation (/m3)
+      !! dnbeam : input real : hot beam ion density, variable (/m3)
       use physics_variables, only: ignite, dnbeam2, dnbeam
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -677,9 +677,9 @@ contains
       !! #=#=# fwalld, walalw
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fwalld : input real : f-value for maximum wall load
-      !+ad_glos  walalw : input real : allowable wall-load (MW/m2)
-      !+ad_glos  wallmw : input real : average neutron wall load (MW/m2)
+      !! fwalld : input real : f-value for maximum wall load
+      !! walalw : input real : allowable wall-load (MW/m2)
+      !! wallmw : input real : average neutron wall load (MW/m2)
       use constraint_variables, only: fwalld, walalw
       use physics_variables, only: wallmw
       implicit none
@@ -703,9 +703,9 @@ contains
       !! #=#=# ffuspow, powfmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ffuspow : input real : f-value for maximum fusion power
-      !+ad_glos  powfmax : input real : maximum fusion power (MW)
-      !+ad_glos  powfmw : input real : fusion power (MW)
+      !! ffuspow : input real : f-value for maximum fusion power
+      !! powfmax : input real : maximum fusion power (MW)
+      !! powfmw : input real : fusion power (MW)
       use constraint_variables, only: ffuspow, powfmax
       use physics_variables, only: powfmw
       implicit none
@@ -730,10 +730,10 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  rmajor : input real : plasma major radius (m) 
-      !+ad_glos  bt : input real : toroidal field on axis (T)
-      !+ad_glos  rbmax : input real : radius of maximum TF B-field (m)
-      !+ad_glos  bmaxtf : input real : mean peak field at TF coil (T)
+      !! rmajor : input real : plasma major radius (m) 
+      !! bt : input real : toroidal field on axis (T)
+      !! rbmax : input real : radius of maximum TF B-field (m)
+      !! bmaxtf : input real : mean peak field at TF coil (T)
       use physics_variables, only: rmajor, bt
       use tfcoil_variables, only: rbmax, bmaxtf
       implicit none
@@ -758,8 +758,8 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  rbld : input real : sum of thicknesses to the major radius (m)
-      !+ad_glos  rmajor : input real : plasma major radius (m) 
+      !! rbld : input real : sum of thicknesses to the major radius (m)
+      !! rmajor : input real : plasma major radius (m) 
       use build_variables, only: rbld
       use physics_variables, only: rmajor
       implicit none
@@ -783,10 +783,10 @@ contains
       !! #=#=# fvs, vsstt
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  vsstt : input real : total V-s needed (Wb)
-      !+ad_gloc     vsstt (lower limit) is positive; vstot (available) is negative
-      !+ad_glos  fvs : input real : f-value for flux-swing (V-s) requirement (STEADY STATE)
-      !+ad_glos  vstot : input real :   total flux swing for pulse (Wb)
+      !! vsstt : input real : total V-s needed (Wb)
+      !! vsstt (lower limit) is positive; vstot (available) is negative
+      !! fvs : input real : f-value for flux-swing (V-s) requirement (STEADY STATE)
+      !! vstot : input real :   total flux swing for pulse (Wb)
       use physics_variables, only: vsstt
       use constraint_variables, only: fvs
       use pfcoil_variables, only: vstot
@@ -811,9 +811,9 @@ contains
       !! #=#=# ftburn, tbrnmn
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ftburn : input real : f-value for minimum burn time
-      !+ad_glos  tburn : input real : burn time (s) (calculated if lpulse=1)
-      !+ad_glos  tbrnmn : input real :  minimum burn time (s)
+      !! ftburn : input real : f-value for minimum burn time
+      !! tburn : input real : burn time (s) (calculated if lpulse=1)
+      !! tbrnmn : input real :  minimum burn time (s)
       use constraint_variables, only: ftburn,tbrnmn
       use times_variables, only: tburn
       implicit none
@@ -838,8 +838,8 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  taubeam : input real : neutral beam e-decay lengths to plasma centre
-      !+ad_glos  tbeamin : input real : permitted neutral beam e-decay lengths to plasma centre
+      !! taubeam : input real : neutral beam e-decay lengths to plasma centre
+      !! tbeamin : input real : permitted neutral beam e-decay lengths to plasma centre
       use current_drive_variables, only: taubeam, tbeamin
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -862,9 +862,9 @@ contains
       !! #=#=# flhthresh, plhthresh
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  flhthresh : input real : f-value for L-H power threshold
-      !+ad_glos  plhthresh : input real : L-H mode power threshold (MW)
-      !+ad_glos  pdivt : input real : power to conducted to the divertor region (MW)
+      !! flhthresh : input real : f-value for L-H power threshold
+      !! plhthresh : input real : L-H mode power threshold (MW)
+      !! pdivt : input real : power to conducted to the divertor region (MW)
       use constraint_variables, only: flhthresh
       use physics_variables, only: plhthresh, pdivt
       implicit none
@@ -892,9 +892,9 @@ contains
       !! #=#=# fpnetel, pnetelin
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fpnetel : input real : f-value for net electric power
-      !+ad_glos  pnetelmw : input real : net electric power (MW)
-      !+ad_glos  pnetelin : input real : required net electric power (MW)
+      !! fpnetel : input real : f-value for net electric power
+      !! pnetelmw : input real : net electric power (MW)
+      !! pnetelin : input real : required net electric power (MW)
       use constraint_variables, only: fpnetel, pnetelin
       use heat_transport_variables, only: pnetelmw
       implicit none
@@ -912,20 +912,20 @@ contains
       !! Equation for radiation power upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
-      !+ad_Argc  residual error in physical units; output string; units string
+      !! residual error in physical units; output string; units string
       !! Equation for radiation power upper limit
       !! #=# physics
       !! #=#=# fradpwr, pradmaxpv
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  falpha : input real : fraction of alpha power deposited in plasma
-      !+ad_glos  pinjmw : input real : total auxiliary injected power (MW)
-      !+ad_glos  vol : input real : plasma volume (m3)
-      !+ad_glos  palppv : input real : alpha power per volume (MW/m3)
-      !+ad_glos  pchargepv :  input real : non-alpha charged particle fusion power per volume (MW/m3)
-      !+ad_glos  pohmpv : input real : ohmic heating power per volume (MW/m3)
-      !+ad_glos  fradpwr : input real : f-value for core radiation power limit
-      !+ad_glos  pradpv : input real : total radiation power per volume (MW/m3)
+      !! falpha : input real : fraction of alpha power deposited in plasma
+      !! pinjmw : input real : total auxiliary injected power (MW)
+      !! vol : input real : plasma volume (m3)
+      !! palppv : input real : alpha power per volume (MW/m3)
+      !! pchargepv :  input real : non-alpha charged particle fusion power per volume (MW/m3)
+      !! pohmpv : input real : ohmic heating power per volume (MW/m3)
+      !! fradpwr : input real : f-value for core radiation power limit
+      !! pradpv : input real : total radiation power per volume (MW/m3)
       use physics_variables, only: falpha, vol, palppv, pchargepv, pohmpv, pradpv
       use current_drive_variables, only: pinjmw
       use constraint_variables, only: fradpwr
@@ -953,9 +953,9 @@ contains
       !! #=#=# fhldiv, hldivlim
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fhldiv : input real : peak resistive TF coil inboard leg power (MW)
-      !+ad_glos  hldivlim : input real : heat load limit (MW/m2)
-      !+ad_glos  hldiv : input real : divertor heat load (MW/m2)
+      !! fhldiv : input real : peak resistive TF coil inboard leg power (MW)
+      !! hldivlim : input real : heat load limit (MW/m2)
+      !! hldiv : input real : divertor heat load (MW/m2)
       use constraint_variables, only: fhldiv
       use divertor_variables, only: hldivlim, hldiv
       implicit none
@@ -979,10 +979,10 @@ contains
       !! #=#=# fmva, mvalim
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  tfcpmw : input real : peak resistive TF coil inboard leg power (MW)
-      !+ad_glos  tflegmw : input real : TF coil outboard leg resistive power (MW)
-      !+ad_glos  fmva : input real : f-value for maximum MVA
-      !+ad_glos  mvalim : input real : TF coil outboard leg resistive power (MW)
+      !! tfcpmw : input real : peak resistive TF coil inboard leg power (MW)
+      !! tflegmw : input real : TF coil outboard leg resistive power (MW)
+      !! fmva : input real : f-value for maximum MVA
+      !! mvalim : input real : TF coil outboard leg resistive power (MW)
       use tfcoil_variables, only: tfcpmw, tflegmw
       use constraint_variables, only: fmva, mvalim
       implicit none
@@ -1009,9 +1009,9 @@ contains
       !! #=#=# fportsz, rtanmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fportsz : input real : f-value for neutral beam tangency radius limit
-      !+ad_glos  rtanmax : input real : maximum tangency radius for centreline of beam (m)
-      !+ad_glos  rtanbeam : input real : ratio of collision length / connection length
+      !! fportsz : input real : f-value for neutral beam tangency radius limit
+      !! rtanmax : input real : maximum tangency radius for centreline of beam (m)
+      !! rtanbeam : input real : ratio of collision length / connection length
       use constraint_variables, only: fportsz
       use current_drive_variables, only: rtanmax, rtanbeam
       implicit none
@@ -1035,9 +1035,9 @@ contains
       !! #=#=# frminor, aplasmin
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  frminor : input real : f-value for minor radius limit
-      !+ad_glos  rminor : input real : plasma minor radius (m)
-      !+ad_glos  aplasmin : input real : minimum minor radius (m)
+      !! frminor : input real : f-value for minor radius limit
+      !! rminor : input real : plasma minor radius (m)
+      !! aplasmin : input real : minimum minor radius (m)
       use constraint_variables, only: frminor
       use physics_variables, only: rminor
       use build_variables, only: aplasmin 
@@ -1062,9 +1062,9 @@ contains
       !! #=#=# fdivcol, rlenmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fdivcol : input real : f-value for divertor collisionality
-      !+ad_glos  rlenmax : input real : maximum value for length ratio (rlclolcn)
-      !+ad_glos  rlclolcn : input real : ratio of collision length / connection length
+      !! fdivcol : input real : f-value for divertor collisionality
+      !! rlenmax : input real : maximum value for length ratio (rlclolcn)
+      !! rlclolcn : input real : ratio of collision length / connection length
       use constraint_variables, only: fdivcol
       use divertor_variables, only: rlenmax, rlclolcn
       implicit none
@@ -1088,12 +1088,12 @@ contains
       !! #=#=# fcwr, cwrmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  rminor : input real : plasma minor radius (m)
-      !+ad_glos  scraplo : input real : gap between plasma and first wall, outboard side (m)
-      !+ad_glos  fwoth : input real : outboard first wall thickness, initial estimate (m)
-      !+ad_glos  blnkoth : input real : outboard blanket thickness (m)
-      !+ad_glos  fcwr : input real : f-value for conducting wall radius / rminor limit
-      !+ad_glos  cwrmax : input real : maximum ratio of conducting wall distance to plasma minor radius for vertical stability
+      !! rminor : input real : plasma minor radius (m)
+      !! scraplo : input real : gap between plasma and first wall, outboard side (m)
+      !! fwoth : input real : outboard first wall thickness, initial estimate (m)
+      !! blnkoth : input real : outboard blanket thickness (m)
+      !! fcwr : input real : f-value for conducting wall radius / rminor limit
+      !! cwrmax : input real : maximum ratio of conducting wall distance to plasma minor radius for vertical stability
       use physics_variables, only: rminor, cwrmax
       use build_variables, only: scraplo, fwoth, blnkoth
       use constraint_variables, only: fcwr
@@ -1121,18 +1121,18 @@ contains
       !! #=#=# fbetatry, betalim
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  iculbl : input integer : switch for beta limit scaling (constraint equation  24):<UL>
-      !+ad_gloc          <LI> = 0 apply limit to total beta;
-      !+ad_gloc          <LI> = 1 apply limit to thermal beta;
-      !+ad_gloc          <LI> = 2 apply limit to thermal + neutral beam beta</UL>
-      !+ad_glos  istell : input integer : switch for stellarator option (set via <CODE>device.dat</CODE>):<UL>
-      !+ad_gloc          <LI> = 0 use tokamak model;
-      !+ad_gloc          <LI> = 1 use stellarator model</UL>
-      !+ad_glos  fbetatry : input real : f-value for beta limit
-      !+ad_glos  betalim : input real : allowable beta
-      !+ad_glos  beta : input real : total plasma beta (calculated if ipedestal =3)
-      !+ad_glos  betaft : input real : fast alpha beta component
-      !+ad_glos  betanb : input real : neutral beam beta component
+      !! iculbl : input integer : switch for beta limit scaling (constraint equation  24):<UL>
+      !! <LI> = 0 apply limit to total beta;
+      !! <LI> = 1 apply limit to thermal beta;
+      !! <LI> = 2 apply limit to thermal + neutral beam beta</UL>
+      !! istell : input integer : switch for stellarator option (set via <CODE>device.dat</CODE>):<UL>
+      !! <LI> = 0 use tokamak model;
+      !! <LI> = 1 use stellarator model</UL>
+      !! fbetatry : input real : f-value for beta limit
+      !! betalim : input real : allowable beta
+      !! beta : input real : total plasma beta (calculated if ipedestal =3)
+      !! betaft : input real : fast alpha beta component
+      !! betanb : input real : neutral beam beta component
       use physics_variables, only: iculbl, betalim, beta, betanb, betaft
       use stellarator_variables, only: istell
       use constraint_variables, only: fbetatry
@@ -1174,9 +1174,9 @@ contains
       !! #=#=# fpeakb, bmxlim
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fpeakb : input real : f-value for maximum toroidal field
-      !+ad_glos  bmxlim : input real : maximum peak toroidal field (T)
-      !+ad_glos  bmaxtf : input real : mean peak field at TF coil (T)
+      !! fpeakb : input real : f-value for maximum toroidal field
+      !! bmxlim : input real : maximum peak toroidal field (T)
+      !! bmaxtf : input real : mean peak field at TF coil (T)
       use constraint_variables, only: fpeakb, bmxlim
       use tfcoil_variables, only: bmaxtf
       implicit none
@@ -1200,9 +1200,9 @@ contains
       !! #=#=# fjohc, rjohc
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fjohc : input real : f-value for central solenoid current at end-of-flattop
-      !+ad_glos  rjohc : input real : allowable central solenoid current density at end of flat-top (A/m2)
-      !+ad_glos  coheof : input real : central solenoid overall current density at end of flat-top (A/m2)
+      !! fjohc : input real : f-value for central solenoid current at end-of-flattop
+      !! rjohc : input real : allowable central solenoid current density at end of flat-top (A/m2)
+      !! coheof : input real : central solenoid overall current density at end of flat-top (A/m2)
       use constraint_variables, only: fjohc
       use pfcoil_variables, only: rjohc, coheof
       implicit none
@@ -1226,9 +1226,9 @@ contains
       !! #=#=# fjohc0, rjohc0
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fjohc0 : input real : f-value for central solenoid current at beginning of pulse
-      !+ad_glos  rjohc0 : input real : allowable central solenoid current density at beginning of pulse (A/m2)
-      !+ad_glos  cohbop : input real : central solenoid overall current density at beginning of pulse (A/m2)
+      !! fjohc0 : input real : f-value for central solenoid current at beginning of pulse
+      !! rjohc0 : input real : allowable central solenoid current density at beginning of pulse (A/m2)
+      !! cohbop : input real : central solenoid overall current density at beginning of pulse (A/m2)
       use constraint_variables, only: fjohc0
       use pfcoil_variables, only: rjohc0, cohbop
       implicit none
@@ -1252,16 +1252,16 @@ contains
       !! #=#=# fqval, bigqmin
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fqval : input real : pf-value for Q
-      !+ad_glos  bigq : input real : Fusion gain; P_fusion / (P_injection + P_ohmic)
-      !+ad_glos  bigqmin : input real : minimum fusion gain Q
-      !+ad_glos  ignite : input integer : switch for ignition assumption:<UL>
-      !+ad_gloc          <LI> = 0 do not assume plasma ignition;
-      !+ad_gloc          <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
-      !+ad_gloc       Obviously, ignite must be zero if current drive is required.
-      !+ad_gloc       If ignite=1, any auxiliary power is assumed to be used only
-      !+ad_gloc       during plasma start-up, and is excluded from all steady-state
-      !+ad_gloc       power balance calculations.
+      !! fqval : input real : pf-value for Q
+      !! bigq : input real : Fusion gain; P_fusion / (P_injection + P_ohmic)
+      !! bigqmin : input real : minimum fusion gain Q
+      !! ignite : input integer : switch for ignition assumption:<UL>
+      !! <LI> = 0 do not assume plasma ignition;
+      !! <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
+      !! Obviously, ignite must be zero if current drive is required.
+      !! If ignite=1, any auxiliary power is assumed to be used only
+      !! during plasma start-up, and is excluded from all steady-state
+      !! power balance calculations.
       use constraint_variables, only: fqval, bigqmin
       use current_drive_variables, only: bigq
       use physics_variables, only: ignite
@@ -1293,9 +1293,9 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  rmajor : input real : plasma major radius (m) (iteration variable 3)
-      !+ad_glos  rminor : input real : plasma minor radius (m)
-      !+ad_glos  rinboard : input real : plasma inboard radius (m)
+      !! rmajor : input real : plasma major radius (m) (iteration variable 3)
+      !! rminor : input real : plasma minor radius (m)
+      !! rinboard : input real : plasma inboard radius (m)
       use physics_variables, only: rmajor, rminor
       use build_variables, only: rinboard
       implicit none
@@ -1319,9 +1319,9 @@ contains
       !! #=#=# fpinj, pinjalw
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  pinjmw : input real : total auxiliary injected power (MW)
-      !+ad_glos  fpinj : input real : f-value for injection power
-      !+ad_glos  pinjalw : input real : Maximum allowable value for injected power (MW)
+      !! pinjmw : input real : total auxiliary injected power (MW)
+      !! fpinj : input real : f-value for injection power
+      !! pinjalw : input real : Maximum allowable value for injected power (MW)
       use current_drive_variables, only: pinjmw, pinjalw
       use constraint_variables, only: fpinj
       implicit none
@@ -1345,9 +1345,9 @@ contains
       !! #=#=# fstrcase, alstrtf
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fstrcase : input real : f-value for TF coil case stress
-      !+ad_glos  alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
-      !+ad_glos  strtf2 : input real : Constrained stress in TF coil case (Pa) 
+      !! fstrcase : input real : f-value for TF coil case stress
+      !! alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
+      !! strtf2 : input real : Constrained stress in TF coil case (Pa) 
       use constraint_variables, only: fstrcase
       use tfcoil_variables, only: alstrtf, strtf2
       implicit none
@@ -1371,9 +1371,9 @@ contains
       !! #=#=# fstrcond, alstrtf
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fstrcond : input real : f-value for TF coil conduit stress
-      !+ad_glos  alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
-      !+ad_glos  strtf1 : input real : Constrained Tresca stress in TF conductor conduit (Pa) 
+      !! fstrcond : input real : f-value for TF coil conduit stress
+      !! alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
+      !! strtf1 : input real : Constrained Tresca stress in TF conductor conduit (Pa) 
       use constraint_variables, only: fstrcond
       use tfcoil_variables, only: alstrtf, strtf1
       implicit none
@@ -1397,9 +1397,9 @@ contains
       !! #=#=# fiooic, jwdgcrt
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fiooic : input real : f-value for TF coil operating current / critical
-      !+ad_glos  jwdgcrt : input real : critical current density for winding pack (A/m2)
-      !+ad_glos  jwptf : input real : winding pack current density (A/m2) 
+      !! fiooic : input real : f-value for TF coil operating current / critical
+      !! jwdgcrt : input real : critical current density for winding pack (A/m2)
+      !! jwptf : input real : winding pack current density (A/m2) 
       use constraint_variables, only: fiooic
       use tfcoil_variables, only: jwdgcrt, jwptf
       implicit none
@@ -1423,9 +1423,9 @@ contains
       !! #=#=# fvdump, vdalw
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fvdump : input real : f-value for dump voltage
-      !+ad_glos  vdalw : input real : max voltage across TF coil during quench (kV)
-      !+ad_glos  vtfskv : input real : voltage across a TF coil during quench (kV) 
+      !! fvdump : input real : f-value for dump voltage
+      !! vdalw : input real : max voltage across TF coil during quench (kV)
+      !! vtfskv : input real : voltage across a TF coil during quench (kV) 
       use constraint_variables, only: fvdump
       use tfcoil_variables, only: vdalw, vtfskv
       implicit none
@@ -1449,9 +1449,9 @@ contains
       !! #=#=# fjprot, jwdgpro
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fjprot : input real : f-value for TF coil winding pack current density
-      !+ad_glos  jwdgpro : input real : allowable TF coil winding pack current density, for dump temperature rise protection (A/m2)
-      !+ad_glos  jwptf : input real : winding pack current density (A/m2) 
+      !! fjprot : input real : f-value for TF coil winding pack current density
+      !! jwdgpro : input real : allowable TF coil winding pack current density, for dump temperature rise protection (A/m2)
+      !! jwptf : input real : winding pack current density (A/m2) 
       use constraint_variables, only: fjprot
       use tfcoil_variables, only: jwdgpro, jwptf
       implicit none
@@ -1475,9 +1475,9 @@ contains
       !! #=#=# ftmargtf, tmargmin_tf
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ftmargtf : input real : f-value for TF coil temperature margin
-      !+ad_glos  tmargtf : input real : TF coil temperature margin (K)
-      !+ad_glos  tmargmin_tf : input real : minimum allowable temperature margin : TF coils (K) 
+      !! ftmargtf : input real : f-value for TF coil temperature margin
+      !! tmargtf : input real : TF coil temperature margin (K)
+      !! tmargmin_tf : input real : minimum allowable temperature margin : TF coils (K) 
       use constraint_variables, only: ftmargtf
       use tfcoil_variables, only: tmargtf, tmargmin_tf
       implicit none
@@ -1501,9 +1501,9 @@ contains
       !! #=#=# fgamcd, gammax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fgamcd : input real : f-value for current drive gamma
-      !+ad_glos  gammax : input real : maximum current drive gamma
-      !+ad_glos  gamcd : input real : normalised current drive efficiency (1.0e20 A/W-m2) 
+      !! fgamcd : input real : f-value for current drive gamma
+      !! gammax : input real : maximum current drive gamma
+      !! gamcd : input real : normalised current drive efficiency (1.0e20 A/W-m2) 
       use constraint_variables, only: fgamcd, gammax
       use current_drive_variables, only: gamcd
       implicit none
@@ -1541,9 +1541,9 @@ contains
       !! #=#=# ftpeak, tfwmatmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ftpeak : input real : f-value for first wall peak temperature
-      !+ad_glos  tfwmatmax : input real : maximum temperature of first wall material (K) (secondary_cycle>1)
-      !+ad_glos  tpeak : input real : peak first wall temperature (K) 
+      !! ftpeak : input real : f-value for first wall peak temperature
+      !! tfwmatmax : input real : maximum temperature of first wall material (K) (secondary_cycle>1)
+      !! tpeak : input real : peak first wall temperature (K) 
       use constraint_variables, only: ftpeak
       use fwbs_variables, only: tfwmatmax, tpeak
       implicit none
@@ -1569,9 +1569,9 @@ contains
       !! #=#=# fauxmn, auxmin
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fauxmn : input real : f-value for minimum auxiliary power
-      !+ad_glos  pinjmw : input real : total auxiliary injected power (MW) 
-      !+ad_glos  auxmin : input real : minimum auxiliary power (MW)
+      !! fauxmn : input real : f-value for minimum auxiliary power
+      !! pinjmw : input real : total auxiliary injected power (MW) 
+      !! auxmin : input real : minimum auxiliary power (MW)
       use constraint_variables, only: fauxmn, auxmin
       use current_drive_variables, only: pinjmw
       implicit none
@@ -1595,9 +1595,9 @@ contains
       !! #=#=# ftohs, tohsmn
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ftohs : input real : f-value for plasma current ramp-up time
-      !+ad_glos  tohs : input real : plasma current ramp-up time for current initiation (s) 
-      !+ad_glos  tohsmn : input real : minimum plasma current ramp-up time (s)
+      !! ftohs : input real : f-value for plasma current ramp-up time
+      !! tohs : input real : plasma current ramp-up time for current initiation (s) 
+      !! tohsmn : input real : minimum plasma current ramp-up time (s)
       use constraint_variables, only: ftohs, tohsmn
       use times_variables, only: tohs
       implicit none
@@ -1621,9 +1621,9 @@ contains
       !! #=#=# ftcycl, tcycmn
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ftcycl : input real : f-value for cycle time
-      !+ad_glos  tcycle : input real : full cycle time (s) 
-      !+ad_glos  tcycmn : input real : minimum cycle time (s) 
+      !! ftcycl : input real : f-value for cycle time
+      !! tcycle : input real : full cycle time (s) 
+      !! tcycmn : input real : minimum cycle time (s) 
       use constraint_variables, only: ftcycl, tcycmn
       use times_variables, only: tcycle
       implicit none
@@ -1649,11 +1649,11 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  tcpav : input real : average temp of TF coil inboard leg conductor (C)e
-      !+ad_glos  tcpav2 : input real : centrepost average temperature (C) (for consistency) 
-      !+ad_glos  itart : input integer : switch for spherical tokamak (ST) models:<UL>
-      !+ad_gloc         <LI> = 0 use conventional aspect ratio models;
-      !+ad_gloc         <LI> = 1 use spherical tokamak models</UL>
+      !! tcpav : input real : average temp of TF coil inboard leg conductor (C)e
+      !! tcpav2 : input real : centrepost average temperature (C) (for consistency) 
+      !! itart : input integer : switch for spherical tokamak (ST) models:<UL>
+      !! <LI> = 0 use conventional aspect ratio models;
+      !! <LI> = 1 use spherical tokamak models</UL>
       use tfcoil_variables, only: tcpav, tcpav2
       use physics_variables, only: itart
       use tfcoil_variables, only:  itfsup
@@ -1696,12 +1696,12 @@ contains
       !! #=#=# fptemp, ptempalw
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fptemp : input real : f-value for peak centrepost temperature
-      !+ad_glos  ptempalw : input real : maximum peak centrepost temperature (K) 
-      !+ad_glos  tcpmax : input real :  peak centrepost temperature (K)
-      !+ad_glos  itart : input integer : switch for spherical tokamak (ST) models:<UL>
-      !+ad_gloc         <LI> = 0 use conventional aspect ratio models;
-      !+ad_gloc         <LI> = 1 use spherical tokamak models</UL>
+      !! fptemp : input real : f-value for peak centrepost temperature
+      !! ptempalw : input real : maximum peak centrepost temperature (K) 
+      !! tcpmax : input real :  peak centrepost temperature (K)
+      !! itart : input integer : switch for spherical tokamak (ST) models:<UL>
+      !! <LI> = 0 use conventional aspect ratio models;
+      !! <LI> = 1 use spherical tokamak models</UL>
       use constraint_variables, only: fptemp
       use tfcoil_variables, only: ptempalw, tcpmax
       use physics_variables, only: itart
@@ -1742,13 +1742,13 @@ contains
       !! #=#=# fq, qlim
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fq : input real : f-value for edge safety factor
-      !+ad_glos  q : safety factor 'near' plasma edge: equal to q95 
-      !+ad_gloc  (unless icurr = 2 (ST current scaling), in which case q = mean edge safety factor qbar)
-      !+ad_glos  qlim : input real :  lower limit for edge safety factor
-      !+ad_glos  itart : input integer : switch for spherical tokamak (ST) models:<UL>
-      !+ad_gloc         <LI> = 0 use conventional aspect ratio models;
-      !+ad_gloc         <LI> = 1 use spherical tokamak models</UL>
+      !! fq : input real : f-value for edge safety factor
+      !! q : safety factor 'near' plasma edge: equal to q95 
+      !! (unless icurr = 2 (ST current scaling), in which case q = mean edge safety factor qbar)
+      !! qlim : input real :  lower limit for edge safety factor
+      !! itart : input integer : switch for spherical tokamak (ST) models:<UL>
+      !! <LI> = 0 use conventional aspect ratio models;
+      !! <LI> = 1 use spherical tokamak models</UL>
       use constraint_variables, only: fq
       use physics_variables, only: q, qlim, itart
       implicit none
@@ -1774,13 +1774,13 @@ contains
       !! #=#=# fipir, cratmx
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  eps : input real :  inverse aspect ratio
-      !+ad_glos  fipir : input real :  f-value for Ip/Irod limit
-      !+ad_glos  ritfc : input real :  total (summed) current in TF coils (A)
-      !+ad_glos  plascur : input real :  plasma current (A)
-      !+ad_glos  itart : input integer : switch for spherical tokamak (ST) models:<UL>
-      !+ad_gloc         <LI> = 0 use conventional aspect ratio models;
-      !+ad_gloc         <LI> = 1 use spherical tokamak models</UL>
+      !! eps : input real :  inverse aspect ratio
+      !! fipir : input real :  f-value for Ip/Irod limit
+      !! ritfc : input real :  total (summed) current in TF coils (A)
+      !! plascur : input real :  plasma current (A)
+      !! itart : input integer : switch for spherical tokamak (ST) models:<UL>
+      !! <LI> = 0 use conventional aspect ratio models;
+      !! <LI> = 1 use spherical tokamak models</UL>
       use physics_variables, only: eps, plascur, itart
       use constraint_variables, only: fipir
       use tfcoil_variables, only: ritfc
@@ -1825,9 +1825,9 @@ contains
       !! #=#=# fbetap, betpmx
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fbetap : input real : rf-value for poloidal beta
-      !+ad_glos  betpmx : input real :  maximum poloidal beta
-      !+ad_glos  betap : input real :  poloidal beta
+      !! fbetap : input real : rf-value for poloidal beta
+      !! betpmx : input real :  maximum poloidal beta
+      !! betap : input real :  poloidal beta
       use constraint_variables, only: fbetap, betpmx
       use physics_variables, only: betap
       implicit none
@@ -1887,9 +1887,9 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  vsres : input real : resistive losses in startup V-s (Wb)
-      !+ad_glos  vsind : input real :  internal and external plasma inductance V-s (Wb))
-      !+ad_glos  vssu : input real :  total flux swing for startup (Wb)
+      !! vsres : input real : resistive losses in startup V-s (Wb)
+      !! vsind : input real :  internal and external plasma inductance V-s (Wb))
+      !! vssu : input real :  total flux swing for startup (Wb)
       use physics_variables, only: vsres, vsind
       use pfcoil_variables, only: vssu, fvssu
       implicit none
@@ -1914,9 +1914,9 @@ contains
       !! ? TODO should this only be for certain blanket models ?
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ftbr : input real : f-value for minimum tritium breeding ratio
-      !+ad_glos  tbr : input real :  tritium breeding ratio (iblanket=2,3 (KIT HCPB/HCLL))
-      !+ad_glos  tbrmin : input real :  minimum tritium breeding ratio (If iblanket=1, tbrmin=minimum 5-year time-averaged tritium breeding ratio)
+      !! ftbr : input real : f-value for minimum tritium breeding ratio
+      !! tbr : input real :  tritium breeding ratio (iblanket=2,3 (KIT HCPB/HCLL))
+      !! tbrmin : input real :  minimum tritium breeding ratio (If iblanket=1, tbrmin=minimum 5-year time-averaged tritium breeding ratio)
       use constraint_variables, only: ftbr, tbrmin
       use fwbs_variables, only: tbr
       implicit none
@@ -1940,9 +1940,9 @@ contains
       !! #=#=# fflutf, nflutfmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fflutf : input real : f-value for maximum TF coil nuclear heating
-      !+ad_glos  nflutfmax : input real :  max fast neutron fluence on TF coil (n/m2)
-      !+ad_glos  nflutf : input real :  peak fast neutron fluence on TF coil superconductor (n/m2)
+      !! fflutf : input real : f-value for maximum TF coil nuclear heating
+      !! nflutfmax : input real :  max fast neutron fluence on TF coil (n/m2)
+      !! nflutf : input real :  peak fast neutron fluence on TF coil superconductor (n/m2)
       use constraint_variables, only: fflutf, nflutfmax
       use fwbs_variables, only: nflutf
       implicit none
@@ -1966,9 +1966,9 @@ contains
       !! #=#=# fptfnuc, ptfnucmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fptfnuc : input real : f-value for maximum TF coil nuclear heating
-      !+ad_glos  ptfnucmax : input real :  maximum nuclear heating in TF coil (MW/m3)
-      !+ad_glos  ptfnucpm3 : input real :  nuclear heating in the TF coil (MW/m3) (blktmodel>0)
+      !! fptfnuc : input real : f-value for maximum TF coil nuclear heating
+      !! ptfnucmax : input real :  maximum nuclear heating in TF coil (MW/m3)
+      !! ptfnucpm3 : input real :  nuclear heating in the TF coil (MW/m3) (blktmodel>0)
       use constraint_variables, only: fptfnuc, ptfnucmax
       use fwbs_variables, only: ptfnucpm3
       implicit none
@@ -1992,14 +1992,14 @@ contains
       !! #=#=# fvvhe, vvhemax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fvvhe : input real : f-value for vacuum vessel He concentration limit
-      !+ad_glos  vvhealw : input real :  allowed maximum helium concentration in vacuum vessel at end of plant life (appm) (iblanket =2)
-      !+ad_glos  vvhemax : ivvhemaxnput real :  maximum helium concentration in vacuum vessel at end of plant life (appm) (iblanket=2 (KIT HCPB))
-      !+ad_glos  iblanket : input integer : switch for blanket model: <UL>
-      !+ad_gloc             <LI> = 1 CCFE HCPB model;
-      !+ad_gloc             <LI> = 2 KIT HCPB model;
-      !+ad_gloc             <LI> = 3 CCFE HCPB model with Tritium Breeding Ratio calculation;
-      !+ad_gloc             <LI> = 4 KIT HCLL model</UL>
+      !! fvvhe : input real : f-value for vacuum vessel He concentration limit
+      !! vvhealw : input real :  allowed maximum helium concentration in vacuum vessel at end of plant life (appm) (iblanket =2)
+      !! vvhemax : ivvhemaxnput real :  maximum helium concentration in vacuum vessel at end of plant life (appm) (iblanket=2 (KIT HCPB))
+      !! iblanket : input integer : switch for blanket model: <UL>
+      !! <LI> = 1 CCFE HCPB model;
+      !! <LI> = 2 KIT HCPB model;
+      !! <LI> = 3 CCFE HCPB model with Tritium Breeding Ratio calculation;
+      !! <LI> = 4 KIT HCLL model</UL>
       use constraint_variables, only: fvvhe, vvhealw
       use fwbs_variables, only: vvhemax, iblanket
       implicit none
@@ -2028,10 +2028,10 @@ contains
       !! #=#=# fnbshinef, nbshinefmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fpsepr : input real : f-value for maximum Psep/R limit
-      !+ad_glos  pseprmax : input real :  maximum ratio of power crossing the separatrix to plasma major radius (Psep/R) (MW/m)
-      !+ad_glos  pdivt : input real :  power to be conducted to the divertor region (MW)
-      !+ad_glos  rmajor : input real :  plasma major radius (m) 
+      !! fpsepr : input real : f-value for maximum Psep/R limit
+      !! pseprmax : input real :  maximum ratio of power crossing the separatrix to plasma major radius (Psep/R) (MW/m)
+      !! pdivt : input real :  power to be conducted to the divertor region (MW)
+      !! rmajor : input real :  plasma major radius (m) 
       use constraint_variables, only: fpsepr, pseprmax
       use physics_variables, only: pdivt, rmajor
       implicit none
@@ -2081,9 +2081,9 @@ contains
       !! #=#=# fnbshinef, nbshinefmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fnbshinef : input real : f-value for maximum neutral beam shine-through fraction
-      !+ad_glos  nbshinefmax : input real :  maximum neutral beam shine-through fraction
-      !+ad_glos  nbshinef : input real :  neutral beam shine-through fraction
+      !! fnbshinef : input real : f-value for maximum neutral beam shine-through fraction
+      !! nbshinefmax : input real :  maximum neutral beam shine-through fraction
+      !! nbshinef : input real :  neutral beam shine-through fraction
       use constraint_variables, only: fnbshinef, nbshinefmax
       use current_drive_variables, only: nbshinef
       implicit none
@@ -2105,9 +2105,9 @@ contains
       !! #=#=# ftmargoh, tmargmin_cs
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ftmargoh : input real :  f-value for central solenoid temperature margin
-      !+ad_glos  tmargoh : input real :  Central solenoid temperature margin (K)
-      !+ad_glos  tmargmin_cs : input real :  Minimum allowable temperature margin : CS (K)
+      !! ftmargoh : input real :  f-value for central solenoid temperature margin
+      !! tmargoh : input real :  Central solenoid temperature margin (K)
+      !! tmargmin_cs : input real :  Minimum allowable temperature margin : CS (K)
       use constraint_variables, only: ftmargoh
       use pfcoil_variables, only: tmargoh
       use tfcoil_variables, only: tmargmin_cs
@@ -2132,9 +2132,9 @@ contains
       !! #=#=# favail, avail_min
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  favail : input real : F-value for minimum availability 
-      !+ad_glos  cfactr : input real : Total plant availability fraction
-      !+ad_glos  avail_min : input real : Minimum availability
+      !! favail : input real : F-value for minimum availability 
+      !! cfactr : input real : Total plant availability fraction
+      !! avail_min : input real : Minimum availability
       use cost_variables, only: favail, cfactr, avail_min
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2157,10 +2157,10 @@ contains
       !! #=#=# ftaulimit, taulimit
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ftaulimit : input real : f-value for lower limit on taup/taueff the ratio of alpha particle to energy confinement
-      !+ad_glos  taup : input real : alpha particle confinement time (s)
-      !+ad_glos  taueff : input real : global thermal energy confinement time (sec)
-      !+ad_glos  taulimit : input real : Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
+      !! ftaulimit : input real : f-value for lower limit on taup/taueff the ratio of alpha particle to energy confinement
+      !! taup : input real : alpha particle confinement time (s)
+      !! taueff : input real : global thermal energy confinement time (sec)
+      !! taulimit : input real : Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
       use constraint_variables, only: ftaulimit, taulimit
       use physics_variables, only: taup, taueff
       implicit none
@@ -2184,9 +2184,9 @@ contains
       !! #=#=# fniterpump, tfno
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fniterpump : input real : f-value for constraint that number of pumps < tfno
-      !+ad_glos  tfno : input real : number of TF coils (default = 50 for stellarators)
-      !+ad_glos  niterpump : input real : number of high vacuum pumps (real number), each with the throughput
+      !! fniterpump : input real : f-value for constraint that number of pumps < tfno
+      !! tfno : input real : number of TF coils (default = 50 for stellarators)
+      !! niterpump : input real : number of high vacuum pumps (real number), each with the throughput
       use constraint_variables, only: fniterpump
       use tfcoil_variables, only: tfno
       use vacuum_variables, only: niterpump
@@ -2211,9 +2211,9 @@ contains
       !! #=#=# fzeffmax, zeffmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fzeffmax : input real : f-value for maximum zeff
-      !+ad_glos  zeffmax : input real : maximum value for Zeff
-      !+ad_glos  zeff : input real : plasma effective charge
+      !! fzeffmax : input real : f-value for maximum zeff
+      !! zeffmax : input real : maximum value for Zeff
+      !! zeff : input real : plasma effective charge
       use constraint_variables, only: fzeffmax, zeffmax
       use physics_variables, only: zeff
       implicit none
@@ -2237,9 +2237,9 @@ contains
       !! #=#=# ftaucq, taucq
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  ftaucq : input real : f-value for calculated minimum TF quench time
-      !+ad_glos  tdmptf : input real :  fast discharge time for TF coil in event of quench (s)
-      !+ad_glos  taucq : input real :  allowable TF quench time (s)
+      !! ftaucq : input real : f-value for calculated minimum TF quench time
+      !! tdmptf : input real :  fast discharge time for TF coil in event of quench (s)
+      !! taucq : input real :  allowable TF quench time (s)
       use constraint_variables, only: ftaucq
       use tfcoil_variables, only: tdmptf, taucq
       implicit none
@@ -2263,9 +2263,9 @@ contains
       !! #=#=# fpoloidalpower, maxpoloidalpower
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fpoloidalpower : input real : f-value for constraint on rate of change of energy in poloidal field
-      !+ad_glos  maxpoloidalpower : input real : Maximum permitted absolute rate of change of stored energy in poloidal field (MW)
-      !+ad_glos  peakpoloidalpower : input real : Peak absolute rate of change of stored energy in poloidal field (MW) (11/01/16)
+      !! fpoloidalpower : input real : f-value for constraint on rate of change of energy in poloidal field
+      !! maxpoloidalpower : input real : Maximum permitted absolute rate of change of stored energy in poloidal field (MW)
+      !! peakpoloidalpower : input real : Peak absolute rate of change of stored energy in poloidal field (MW) (11/01/16)
       use constraint_variables, only: fpoloidalpower 
       use pf_power_variables, only: maxpoloidalpower, peakpoloidalpower
       implicit none
@@ -2289,9 +2289,9 @@ contains
       !! #=#=# fradwall, maxradwallload
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fradwall : input real : f-value for upper limit on radiation wall load
-      !+ad_glos  maxradwallload : input real : Maximum permitted radiation wall load (MW/m^2)
-      !+ad_glos  peakradwallload : input real : Peak radiation wall load (MW/m^2)
+      !! fradwall : input real : f-value for upper limit on radiation wall load
+      !! maxradwallload : input real : Maximum permitted radiation wall load (MW/m^2)
+      !! peakradwallload : input real : Peak radiation wall load (MW/m^2)
       use constraint_variables, only: fradwall, maxradwallload, peakradwallload
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2315,13 +2315,13 @@ contains
       !! #=#=# fpsepbqar, psepbqarmax
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fpsepbqar : input real : f-value for upper limit on psepbqar, maximum Psep*Bt/qAR limit 
-      !+ad_glos  psepbqarmax : input real : maximum permitted value of ratio of Psep*Bt/qAR (MWT/m)
-      !+ad_glos  pdivt : input real : Power to conducted to the divertor region (MW)
-      !+ad_glos  bt : input real : toroidal field on axis (T) (iteration variable 2)
-      !+ad_glos  q95 : input real : safety factor q at 95% flux surface
-      !+ad_glos  aspect : input real : aspect ratio (iteration variable 1)
-      !+ad_glos  rmajor : input real : plasma major radius (m) (iteration variable 3)
+      !! fpsepbqar : input real : f-value for upper limit on psepbqar, maximum Psep*Bt/qAR limit 
+      !! psepbqarmax : input real : maximum permitted value of ratio of Psep*Bt/qAR (MWT/m)
+      !! pdivt : input real : Power to conducted to the divertor region (MW)
+      !! bt : input real : toroidal field on axis (T) (iteration variable 2)
+      !! q95 : input real : safety factor q at 95% flux surface
+      !! aspect : input real : aspect ratio (iteration variable 1)
+      !! rmajor : input real : plasma major radius (m) (iteration variable 3)
       use constraint_variables, only: fpsepbqar, psepbqarmax
       use physics_variables, only: pdivt, bt, q95, aspect, rmajor
       implicit none
@@ -2346,8 +2346,8 @@ contains
       !! fpsep has been removed from the equation.
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  psep_kallenbach : input real : Power conducted through the separatrix, as calculated by the divertor model [W]
-      !+ad_glos  pdivt : input real :  power to conducted to the divertor region (MW)
+      !! psep_kallenbach : input real : Power conducted through the separatrix, as calculated by the divertor model [W]
+      !! pdivt : input real :  power to conducted to the divertor region (MW)
       use divertor_kallenbach_variables, only: psep_kallenbach
       use physics_variables, only: pdivt
       implicit none
@@ -2371,8 +2371,8 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  teomp : input real : Separatrix temperature calculated by the Kallenbach divertor model [eV]
-      !+ad_glos  tesep : input real : Electron temperature at separatrix [keV]
+      !! teomp : input real : Separatrix temperature calculated by the Kallenbach divertor model [eV]
+      !! tesep : input real : Electron temperature at separatrix [keV]
       use divertor_kallenbach_variables, only: teomp
       use  physics_variables, only: tesep
       implicit none
@@ -2396,9 +2396,9 @@ contains
       !! #=#=# consistency
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  neomp : input real : Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
-      !+ad_glos  nesep : input real :  electron density at separatrix [m-3] (ipedestal=1,2, calculated if 3)
-      !+ad_glos  neratio : input real : Ratio of mean SOL density at OMP to separatrix density at OMP (iteration variable 121)
+      !! neomp : input real : Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
+      !! nesep : input real :  electron density at separatrix [m-3] (ipedestal=1,2, calculated if 3)
+      !! neratio : input real : Ratio of mean SOL density at OMP to separatrix density at OMP (iteration variable 121)
       use divertor_kallenbach_variables, only: neomp, neratio
       use physics_variables, only: nesep
       implicit none
@@ -2424,9 +2424,9 @@ contains
       !! This will have no effect if it is used as an equality constraint because it will be squared.
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  foh_stress : input real : f-value for Tresca stress limit in Central Solenoid
-      !+ad_glos  alstroh : input real :  allowable hoop stress in Central Solenoid structural material (Pa)
-      !+ad_glos  s_tresca_oh : input real : Tresca stress coils/central solenoid (Pa)
+      !! foh_stress : input real : f-value for Tresca stress limit in Central Solenoid
+      !! alstroh : input real :  allowable hoop stress in Central Solenoid structural material (Pa)
+      !! s_tresca_oh : input real : Tresca stress coils/central solenoid (Pa)
       use constraint_variables, only: foh_stress
       use pfcoil_variables, only: alstroh, s_tresca_oh
       implicit none
@@ -2450,10 +2450,10 @@ contains
       !! #=#=# fplhsep, pdivt
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fplhsep : input real : F-value for Psep >= Plh + Paux : for consistency of two values of separatrix power
-      !+ad_glos  plhthresh : input real : L-H mode power threshold (MW) 
-      !+ad_glos  pdivt : input real : power to be conducted to the divertor region (MW)
-      !+ad_glos  pinjmw : inout real : total auxiliary injected power (MW)
+      !! fplhsep : input real : F-value for Psep >= Plh + Paux : for consistency of two values of separatrix power
+      !! plhthresh : input real : L-H mode power threshold (MW) 
+      !! pdivt : input real : power to be conducted to the divertor region (MW)
+      !! pinjmw : inout real : total auxiliary injected power (MW)
       use physics_variables, only: fplhsep, plhthresh, pdivt
       use current_drive_variables, only: pinjmw
       implicit none
@@ -2477,9 +2477,9 @@ contains
       !! #=#=# fcqt, tmax_croco
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fcqt : input real : f-value: TF coil quench temparature remains below tmax_croco
-      !+ad_glos  croco_quench_temperature : input real : CroCo strand: Actual temp reached during a quench (K)
-      !+ad_glos  tmax_croco : input real : CroCo strand: maximum permitted temp during a quench (K)
+      !! fcqt : input real : f-value: TF coil quench temparature remains below tmax_croco
+      !! croco_quench_temperature : input real : CroCo strand: Actual temp reached during a quench (K)
+      !! tmax_croco : input real : CroCo strand: maximum permitted temp during a quench (K)
       use constraint_variables, only: fcqt
       use tfcoil_variables, only: croco_quench_temperature, tmax_croco
       implicit none
@@ -2504,9 +2504,9 @@ contains
       !! #=#=# f_copperA_m2, copperA_m2_max
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  copperA_m2 : input real : 
-      !+ad_glos  copperA_m2_max : input real : 
-      !+ad_glos  f_copperA_m2 : input real : 
+      !! copperA_m2 : input real : 
+      !! copperA_m2_max : input real : 
+      !! f_copperA_m2 : input real : 
       use rebco_variables, only: copperA_m2, copperA_m2_max, f_copperA_m2
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2523,19 +2523,19 @@ contains
       !! Eich critical separatrix density model: Added for issue 558
       !! author: P B Lloyd, CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
-      !+ad_argsc residual error in physical units; output string; units string
+      !! residual error in physical units; output string; units string
       !! Eich critical separatrix density model
       !! Added for issue 558 with ref to http://iopscience.iop.org/article/10.1088/1741-4326/aaa340/pdf
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  alpha_crit : output real : critical ballooning parameter value
-      !+ad_glos  nesep_crit : output real : critical electron density at separatrix [m-3]
-      !+ad_glos  kappa : input real : plasma separatrix elongation (calculated if ishape > 0)
-      !+ad_glos  triang : input real : plasma separatrix triangularity (calculated if ishape=1, 3 or 4)
-      !+ad_glos  aspect : input real : aspect ratio (iteration variable 1)
-      !+ad_glos  pdivt : input real : power to conducted to the divertor region (MW)
-      !+ad_glos  dlimit(7) : input real array : density limit (/m3) as calculated using various models
-      !+ad_glos  fnesep : input real : f-value for Eich critical separatrix density
+      !! alpha_crit : output real : critical ballooning parameter value
+      !! nesep_crit : output real : critical electron density at separatrix [m-3]
+      !! kappa : input real : plasma separatrix elongation (calculated if ishape > 0)
+      !! triang : input real : plasma separatrix triangularity (calculated if ishape=1, 3 or 4)
+      !! aspect : input real : aspect ratio (iteration variable 1)
+      !! pdivt : input real : power to conducted to the divertor region (MW)
+      !! dlimit(7) : input real array : density limit (/m3) as calculated using various models
+      !! fnesep : input real : f-value for Eich critical separatrix density
       use physics_variables, only: alpha_crit, nesep_crit, kappa, triang, & 
                                    aspect, pdivt, dlimit, nesep
       use constraint_variables, only: fnesep
@@ -2563,9 +2563,9 @@ contains
       !! #=#=# fcpttf, cpttf, cpttf_max
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fcpttf : input : f-value for TF coil current per turn
-      !+ad_glos  cpttf_max  : input : allowable TF coil current per turn [A/turn]
-      !+ad_glos  cpttf  : input : TF coil current per turn [A/turn]
+      !! fcpttf : input : f-value for TF coil current per turn
+      !! cpttf_max  : input : allowable TF coil current per turn [A/turn]
+      !! cpttf  : input : TF coil current per turn [A/turn]
       use constraint_variables, only: fcpttf 
       use tfcoil_variables, only: cpttf_max, cpttf
       implicit none
@@ -2589,9 +2589,9 @@ contains
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present;
       !! and con will be printed out only if present. Thesw conditions were missing.
-      !+ad_glos  freinke : input : f-value for Reinke criterion (itv 147)
-      !+ad_glos  fzmin : input : minimum impurity fraction from Reinke model
-      !+ad_glos  fzactual : input : actual impurity fraction
+      !! freinke : input : f-value for Reinke criterion (itv 147)
+      !! fzmin : input : minimum impurity fraction from Reinke model
+      !! fzactual : input : actual impurity fraction
       use constraint_variables, only: freinke
       use reinke_variables, only: fzactual, fzmin
       implicit none
@@ -2620,11 +2620,11 @@ contains
       !! #=#=# fbmaxcs, bmaxoh, bmaxoh0, bmaxcs_lim
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fbmaxcs : input : F-value for CS mmax field (cons. 79, itvar 149)
-      !+ad_glos  bmaxcs_lim : input : Central solenoid max field limit [T]
-      !+ad_glos  bmaxoh0 : input : maximum field in central solenoid at beginning of pulse (T)
-      !+ad_glos  bmaxoh : input real : maximum field in central solenoid at end of flat-top (EoF) (T)
-      !+ad_gloc    (Note: original code has "bmaxoh/bmaxoh0 |  peak CS field [T]".)
+      !! fbmaxcs : input : F-value for CS mmax field (cons. 79, itvar 149)
+      !! bmaxcs_lim : input : Central solenoid max field limit [T]
+      !! bmaxoh0 : input : maximum field in central solenoid at beginning of pulse (T)
+      !! bmaxoh : input real : maximum field in central solenoid at end of flat-top (EoF) (T)
+      !! (Note: original code has "bmaxoh/bmaxoh0 |  peak CS field [T]".)
       use pfcoil_variables, only: fbmaxcs, bmaxcs_lim, bmaxoh0, bmaxoh
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2646,9 +2646,9 @@ contains
       !! #=# physics
       !! #=#=# fpdivlim, pdivt
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !+ad_glos  fpdivlim : input : F-value for lower limit on pdivt (cons. 80, itvar 153)
-      !+ad_glos  pdivtlim : input : Minimum power crossing separatrix pdivt [MW]
-      !+ad_glos  pdivt : input : Power crossing separatrix [MW]
+      !! fpdivlim : input : F-value for lower limit on pdivt (cons. 80, itvar 153)
+      !! pdivtlim : input : Minimum power crossing separatrix pdivt [MW]
+      !! pdivt : input : Power crossing separatrix [MW]
       use physics_variables, only: fpdivlim, pdivt
       use constraint_variables, only : pdivtlim
       implicit none
@@ -2672,9 +2672,9 @@ contains
       !! !#=#=# ne0, neped
       !! Logic change during pre-factoring: err, symbol, units will be 
       !! assigned only if present.
-      !+ad_glos  fne0  : input : F-value for constraint on ne0 > neped 
-      !+ad_glos  ne0   : input : Central electron density [m-3]
-      !+ad_glos  neped : input : Electron density at pedestal [m-3]
+      !! fne0  : input : F-value for constraint on ne0 > neped 
+      !! ne0   : input : Central electron density [m-3]
+      !! neped : input : Electron density at pedestal [m-3]
       use physics_variables, only: ne0, fne0, neped
       implicit none
 

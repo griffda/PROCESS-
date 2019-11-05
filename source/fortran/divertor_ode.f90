@@ -136,8 +136,8 @@ contains
     ! qtargettotal : Power density on target including surface recombination [W/m2]
     real(kind(1.0D0)),intent(in) :: qtargettotal
 
-    !+ad_vars  qtargetcomplete : Total power density on target [W/m2]
     real(kind(1.0D0)) :: qtargetcomplete
+    !! qtargetcomplete : Total power density on target [W/m2]
 
     ! target angle [deg]
     real(kind(1.0D0)),intent(in) :: targetangle
@@ -228,12 +228,12 @@ contains
     real(kind(1.0D0)) :: Bp_target, Bt_target, Btotal_target, pitch_angle, sin_pitch_angle
     real(kind(1.0D0)) :: poloidal_flux_expansion
 
-    !+ad_vars  ptarget_conv : power deposited on target by convection [W]
     real(kind(1.0D0)) ::ptarget_conv
-    !+ad_vars  ptarget_cond : power deposited on target by conduction [W]
+    !! ptarget_conv : power deposited on target by convection [W]
     real(kind(1.0D0)) ::ptarget_cond
-    !+ad_vars  ptarget_recomb : power deposited on target by recombination of hydrogenic ions [W]
+    !! ptarget_cond : power deposited on target by conduction [W]
     real(kind(1.0D0)) ::ptarget_recomb
+    !! ptarget_recomb : power deposited on target by recombination of hydrogenic ions [W]
     real(kind(1.0D0)) ::ptarget_isotropic
     real(kind(1.0D0)) ::ptarget_total
     real(kind(1.0D0)) ::ptarget_complete
@@ -272,35 +272,35 @@ contains
     real(kind(1.0D0)) :: n, n01, n02, te, nv, pressure, Power, nv24, nel20, Pthermal, n0e20, bracket
     real(kind(1.0D0)) :: cs, mach
 
-    !+ad_vars  A_cross : Area of flux bundle perpendicular to B
     real(kind(1.0D0)) :: A_cross
+    !! A_cross : Area of flux bundle perpendicular to B
 
-    !+ad_vars  lambda_q_target : SOL radial thickness at the target, mapped to OMP [m]
     real(kind(1.0D0)) :: lambda_q_target
+    !! lambda_q_target : SOL radial thickness at the target, mapped to OMP [m]
 
-    !+ad_vars  Powerup : upstream power [W]
     real(kind(1.0D0)) :: Powerup
+    !! Powerup : upstream power [W]
 
-    !+ad_vars  balance : Power balance error - should be zero [W]
     real(kind(1.0D0)) :: balance
+    !! balance : Power balance error - should be zero [W]
 
     ! Plasma thermal pressure
     real(kind(1.0D0)) :: nete
 
-    !+ad_vars  nete0 : Plasma thermal pressure near target
     real(kind(1.0D0)) :: nete0
+    !! nete0 : Plasma thermal pressure near target
 
-    !+ad_vars  nel0 : Electron density near target [m-3]
     real(kind(1.0D0)) :: nel0
+    !! nel0 : Electron density near target [m-3]
 
-    !+ad_vars  qtarget : Power density on target not including surface recombination [W/m2]
     real(kind(1.0D0)) :: qtarget
+    !! qtarget : Power density on target not including surface recombination [W/m2]
 
-    !+ad_vars  qtarget_isotropic : Power density on target due to isotropic losses from SOL [W/m2]
     real(kind(1.0D0)) :: qtarget_isotropic
+    !! qtarget_isotropic : Power density on target due to isotropic losses from SOL [W/m2]
 
-    !+ad_vars  receiving_area : Area on which the power due to isotropic losses from SOL energy is incident [m2]
     real(kind(1.0D0)) :: receiving_area
+    !! receiving_area : Area on which the power due to isotropic losses from SOL energy is incident [m2]
 
     ! Mean charge and quadratic mean charge from ADAS
     real(kind(1.0D0)) :: z, qz
@@ -313,18 +313,18 @@ contains
 
 
 
-    !+ad_vars  WettedArea : Wetted area of target [m2]
     real(kind(1.0D0)) :: WettedArea, WettedAreaComparison
+    !! WettedArea : Wetted area of target [m2]
 
-    !+ad_vars  WettedLength : Wetted length on target measured in poloidal plane [m]
     real(kind(1.0D0)) :: WettedLength, WettedLengthComparison
+    !! WettedLength : Wetted length on target measured in poloidal plane [m]
 
-    !+ad_vars  sab : connection length used for calculating the "near zone" [m]
     real(kind(1.0D0)) :: sab
-    !+ad_vars  romp : Major radius at outer midplane  [m]
+    !! sab : connection length used for calculating the "near zone" [m]
     real(kind(1.0D0)) :: romp
-    !+ad_vars  ionfluxtarget : Ion flux density on target [m-2s-1]
+    !! romp : Major radius at outer midplane  [m]
     real(kind(1.0D0)) :: ionfluxtarget
+    !! ionfluxtarget : Ion flux density on target [m-2s-1]
     ! Typical SOL temperature, used only for estimating zeffective in the SOL [eV]
     real(kind(1.0D0)) :: ttypical
     ! Impurity radiation by species
