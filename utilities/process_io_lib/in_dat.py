@@ -425,6 +425,27 @@ def write_title(title, out_file):
     out_file.write(formatted_title)
     out_file.write("\n")
 
+def get_constraint_equations(data):
+    """Create the constraint equation information.
+
+    Use the constraint equation numbers from IN.DAT to find the comment 
+    associated with them in the source dictionary, then return both.
+
+    :param dict data: Data dictionary for the IN.DAT information
+    :return: dict of the constraint numbers and their comments
+    :rtype: dict
+    """
+    constraints = {}
+    
+    # List of constraint equation numbers in IN.DAT
+    constraint_numbers = data["icc"].value
+
+    # Find associated comments and create constraint dict
+    for constraint_number in constraint_numbers:
+        comment = DICT_ICC_FULL[str(constraint_number)]["name"]
+        constraints[constraint_number] = comment
+
+    return constraints
 
 def write_constraint_equations(data, out_file):
     """ Function to write constraint equation information to file
@@ -437,15 +458,53 @@ def write_constraint_equations(data, out_file):
     # Header
     write_title("Constraint Equations", out_file)
 
-    # List of constraints
-    constraint_equations = data["icc"].value
-
-    # Write constraints to file
-    for constraint in constraint_equations:
-        comment = DICT_ICC_FULL[str(constraint)]["name"]
-        constraint_line = "icc = {0} * {1}\n".format(constraint, comment)
+    # Fetch dict of constraint equation information
+    constraints = get_constraint_equations(data)
+    
+    for number, comment in constraints.items():
+        constraint_line = "icc = {0} * {1}\n".format(number, comment)
         out_file.write(constraint_line)
 
+def get_iteration_variables(data):
+    """Create the iteration variable information.
+
+    Use the iteration variable numbers from IN.DAT to find the comment 
+    associated with them in the source dictionary. Then check the information 
+    from the IN.DAT file to see if upper and/or lower bounds are present, and 
+    what the value is. Return all this information for each variable.
+
+    :param dict data: Data dictionary for the IN.DAT information
+    :return: variable number, comment, upper and/or lower bounds if present
+    :rtype: dict
+    """
+    variables = {}
+    
+    # List of variable numbers in IN.DAT
+    variable_numbers = data["ixc"].value
+
+    # Create variable dicts
+    for variable_number in variable_numbers:
+        variable = {}
+
+        comment = DICT_IXC_SIMPLE[str(variable_number).replace(",", ";").
+                                  replace(".", ";").replace(":", ";")]
+        variable["comment"] = comment
+
+        # Set bounds if there are any
+        if str(variable_number) in data["bounds"].value:
+            # Lower bound
+            if "l" in data["bounds"].value[str(variable_number)].keys():
+                variable["lower_bound"] = data["bounds"].value[
+                    str(variable_number)]["l"].replace("e", "d")
+
+            # Upper bound
+            if "u" in data["bounds"].value[str(variable_number)].keys():
+                variable["upper_bound"] = data["bounds"].value[
+                    str(variable_number)]["u"].replace("e", "d")
+
+        variables[variable_number] = variable
+
+    return variables
 
 def write_iteration_variables(data, out_file):
     """ Function to write iteration variable information to file
@@ -458,90 +517,96 @@ def write_iteration_variables(data, out_file):
     # Header
     write_title("Iteration Variables", out_file)
 
-    # List of constraints
-    iteration_variables = data["ixc"].value
-
-    # Write constraints to file
-    for variable in iteration_variables:
-        comment = DICT_IXC_SIMPLE[str(variable).replace(",", ";").
-                                  replace(".", ";").replace(":", ";")]
-        variable_line = "ixc = {0} * {1}\n".format(variable, comment)
+    # Fetch dict of iteration variable information
+    variables = get_iteration_variables(data)
+        
+    for number, info in variables.items():
+        variable_line = "ixc = {0} * {1}\n".format(number, 
+            info["comment"])
         out_file.write(variable_line)
+              
+        if "lower_bound" in info:
+            lower_bound_line = "boundl({0}) = {1}\n".\
+                format(number, info["lower_bound"])
+            out_file.write(lower_bound_line)
 
-        # Write bounds if there are any
-        if str(variable) in data["bounds"].value:
+        if "upper_bound" in info:
+            upper_bound_line = "boundu({0}) = {1}\n".\
+                format(number, info["upper_bound"])
+            out_file.write(upper_bound_line)
 
-            # Lower bound
-            if "l" in data["bounds"].value[str(variable)].keys():
-                lower_bound_line = "boundl({0}) = {1}\n".\
-                    format(variable, data["bounds"].value[str(variable)]["l"].
-                           replace("e", "d"))
-                out_file.write(lower_bound_line)
+def get_parameters(data):
+    """Create the parameter information.
 
-            # Upper bound
-            if "u" in data["bounds"].value[str(variable)].keys():
-                upper_bound_line = "boundu({0}) = {1}\n".\
-                    format(variable, data["bounds"].value[str(variable)]["u"].
-                           replace("e", "d"))
-                out_file.write(upper_bound_line)
+    Use the parameters from IN.DAT to produce a dict of name, value and 
+    optionally, comment.
 
-
-def write_parameters(data, out_file):
-    """ Write parameters to file
-
-    :param data: Data dictionary for the IN.DAT information
-    :param out_file: Output file for new IN.DAT
-    :return: Nothing
+    :param dict data: Data dictionary for the IN.DAT information
+    :return: dict of parameters containing names, values and comments
+    :rtype: dict
     """
+    source_variables = {}
+    # dict of all module-level variables in source, grouped by module
+    parameters = {}
+    # dict of all parameters set in input file, grouped by module
+    exclusions = ["neqns", "nvar", "icc", "ixc"]
+    # Parameters to exclude
 
-    # Write parameters in order defined in DICT_MODULE
-    for module in DICT_MODULE.keys():
+    # Change module keys from DICT_MODULE: replace spaces with underscores and 
+    # lower the case for consistency in the formatted_input_data_dict
+    # Store the key-modified dict in source_variables
+    for old_module_key, variables in DICT_MODULE.items():
+        new_module_key = old_module_key.replace(' ', '_').lower()
+        source_variables[new_module_key] = variables
 
-        # Write module heading
-        write_title("{0}".format(module), out_file)
+    # Store parameters in order defined in DICT_MODULE
+    # TODO: is order important? Not using ordered dicts any more
+    for module, module_variables in source_variables.items():
+        parameters[module] = {}
 
-        # Items to exclude
-        exclusions = ["neqns", "nvar", "icc", "ixc"]
-
-        # Write parameters for given module
-        for item in DICT_MODULE[module]:
+        # Loop over all module-level variables in source for given module
+        for item in module_variables:
+            # Store a variable in parameters dict if it's in the IN.DAT file 
+            # (and not in the exclusion list). Store parameter name and value
             if item not in exclusions and item in data.keys():
 
                 if item == "fimp":
                     for k in range(len(data["fimp"].get_value)):
-                        tmp_fimp_name = "fimp({0})".format(str(k+1).zfill(1))
-                        tmp_fimp_value = data["fimp"].get_value[k]
-                        parameter_line = "{0} = {1}\n".\
-                            format(tmp_fimp_name, tmp_fimp_value)
-                        out_file.write(parameter_line)
+                        name = "fimp({0})".format(str(k+1).zfill(1))
+                        value = data["fimp"].get_value[k]
+                        parameters[module][name] = value
+
                 elif item == "ioptimz":
+                    name = item
+                    ioptimz = {}
                     iop_val = data["ioptimz"].get_value
                     iop_comment = ioptimz_des[str(iop_val)]
-                    parameter_line = "{0} = {1} * {2}\n". \
-                        format(item.ljust(8), iop_val, iop_comment)
-                    out_file.write(parameter_line)
+                    ioptimz["value"] = iop_val
+                    ioptimz["comment"] = iop_comment
+                    parameters[module][name] = ioptimz
 
                 elif item == "zref":
                     for j in range(len(data["zref"].get_value)):
-                        tmp_zref_name = "zref({0})".format(str(j+1).zfill(1))
-                        tmp_zref_value = data["zref"].get_value[j]
-                        parameter_line = "{0} = {1}\n".\
-                            format(tmp_zref_name, tmp_zref_value)
-                        out_file.write(parameter_line)
+                        name = "zref({0})".format(str(j+1).zfill(1))
+                        value = data["zref"].get_value[j]
+                        parameters[module][name] = value
+
                 elif item == "impurity_enrichment":
                     for m in range(len(data["impurity_enrichment"].get_value)):
-                        tmp_imp_rich_name = "impurity_enrichment({0})".format(str(m+1).zfill(1))
-                        tmp_imp_rich_value = data["impurity_enrichment"].get_value[m]
-                        parameter_line = "{0} = {1}\n".\
-                            format(tmp_imp_rich_name, tmp_imp_rich_value)
-                        out_file.write(parameter_line)
+                        name = "impurity_enrichment({0})".format(
+                            str(m+1).zfill(1))
+                        value = data["impurity_enrichment"
+                            ].get_value[m]
+                        parameters[module][name] = value
+
                 elif "vmec" in item:
-                    parameter_line = "{0} = {1}\n".format(item,
-                                                          data[item].value)
-                    out_file.write(parameter_line)
+                    name = item
+                    value = data[item].value
+                    parameters[module][name] = value
+                
                 else:
-                    # Left justification set to 8 to allow easier reading
-                    # Only use first line of comment to avoid lots of info
+                    parameter = {}
+                    
                     line_value = data[item].value
                     line_string = ""
                     # if parameter is a list only output values comma separated
@@ -561,10 +626,45 @@ def write_parameters(data, out_file):
                     except:
                         pass
 
-                    parameter_line = "{0} = {1} * {2}\n". \
-                        format(item.ljust(8), line_value,
-                               data[item].comment.split("\n")[0])
-                    out_file.write(parameter_line)
+                    name = item
+                    parameter["value"] = line_value
+                    parameter["comment"] = data[item].comment.split("\n")[0]
+                    # Only use first line of comment to avoid lots of info
+                    parameters[module][name] = parameter
+
+    return parameters
+
+def write_parameters(data, out_file):
+    """ Write parameters to file
+
+    :param data: Data dictionary for the IN.DAT information
+    :param out_file: Output file for new IN.DAT
+    :return: Nothing
+    """
+    filter_list = ["fimp(", "zref(", "imp_rich", "vmec"]
+    # Special parameters that require different formatting
+    parameters = get_parameters(data)
+    
+    for module in parameters:
+        # Write module heading: format to be more readable again
+        formatted_module = module.replace('_', ' ').title()
+        write_title("{0}".format(formatted_module), out_file)
+
+        # Write out parameters for this module
+        for parameter, info in parameters[module].items():
+            
+            if any(var_name in parameter for var_name in filter_list):
+                # No justification formatting if parameter is in filter list
+                parameter_line = "{0} = {1}\n".\
+                    format(parameter, info)
+            else:
+                # All other parameters
+                # Left justification set to 8 to allow easier reading
+                parameter_line = "{0} = {1} * {2}\n". \
+                    format(parameter.ljust(8), info["value"], info["comment"])
+        
+            # Finally write the line
+            out_file.write(parameter_line)
 
 
 def add_iteration_variable(data, variable_number):
@@ -1173,6 +1273,28 @@ class InDat(object):
 
         # close file
         output.close()
+
+    def create_formatted_input_data_dict(self):
+        """Create and return a dict of the input file data
+
+        Similar to write_in_dat(), but returns a dict rather than writing a new 
+        IN.DAT file. Useful for exporting the IN.DAT data as a dict. This dict 
+        differs from the INDat.data dict in that its structure more closely 
+        resembles the IN.DAT input file, and hence it is ready to output to 
+        file or modify.
+
+        :return: dict of the input data
+        :rtype: dict
+        """
+        input_data_dict = {}
+
+        input_data_dict["constraint_equations"] = get_constraint_equations(
+            self.data)
+        input_data_dict["iteration_variables"] = get_iteration_variables(
+            self.data)
+        input_data_dict["parameters"] = get_parameters(self.data)
+
+        return input_data_dict
 
     @property
     def number_of_constraints(self):
