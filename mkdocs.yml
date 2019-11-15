@@ -9,7 +9,9 @@ nav:
         - Utilities: io/utilities-guide.md
         - Python Libraries: io/python-lib-guide.md
         - Variable Descriptions: vardes.md
-    - Solver: solver-guide.md
+    - Solver:
+        - Solver Guidde: solver/solver-guide.md
+        - VMCON Optimisation Solver Explained: solver/optsolverdoc.md
     - Physics Models:
         - Plasma: physics-models/plasma.md
         - PLASMOD: physics-models/plasmod.md
