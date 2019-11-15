@@ -471,7 +471,7 @@ contains
           no_iteration = isub1
 
        case ('ioptimz')
-          call parse_int_variable('ioptimz', ioptimz, -1, 1, &
+          call parse_int_variable('ioptimz', ioptimz, -2, 1, &
                'Switch for solver method')
        case ('maxcal')
           call parse_int_variable('maxcal', maxcal, 0, 10000, &
@@ -976,6 +976,9 @@ contains
        case ('fvs')
           call parse_real_variable('fvs', fvs, 0.001D0, 10.0D0, &
                'F-value for startup V-s requirement')
+       case ('fvssu')
+         call parse_real_variable('fvssu', fvssu, 0.001D0, 10.0D0, &
+               'F-value for start up V-s requirement and availability equality')
        case ('fvvhe')
           call parse_real_variable('fvvhe', fvvhe, 0.001D0, 10.0D0, &
                'F-value for VV He concentration limit')
@@ -1238,6 +1241,7 @@ contains
        case ('beamwd')
           call parse_real_variable('beamwd', beamwd, 0.001D0, 5.0D0, &
                'Beam width (m)')
+
        case ('bscfmax')
           call parse_real_variable('bscfmax', bscfmax, -0.999D0, 0.999D0, &
                '(-fixed)/maximum Bootstrap fraction')
@@ -2582,7 +2586,7 @@ contains
           call parse_real_variable('ucblbreed', ucblbreed, 1.0D0, 1.0D3, &
                'Unit cost for blanket breeder material ($/kg)')
        case ('ucblli')
-          call parse_real_variable('ucblli', ucblli, 1.0D2, 1.0D4, &
+          call parse_real_variable('ucblli', ucblli, 1.0D1, 1.0D4, &
                'Unit cost for blanket Li ($/kg)')
        case ('ucblli2o')
           call parse_real_variable('ucblli2o', ucblli2o, 1.0D2, 1.0D4, &
@@ -3039,6 +3043,9 @@ contains
        case ('bldr')
           call parse_real_variable('bldr', bldr, 0.0D0, 10.0D0, &
                     'IFE blanket radial thickness (m)')
+       case ('bldrc')
+          call parse_real_variable('bldrc', bldrc, 0.0D0, 10.0D0, &
+                    'IFE curtain radial thickness (m)')
        case ('bldzl')
           call parse_real_variable('bldzl', bldzl, 0.0D0, 10.0D0, &
                     'IFE blanket bottom part thickness (m)')
@@ -3082,8 +3089,11 @@ contains
           call parse_real_variable('drveff', drveff, 0.01D0, 1.0D0, &
                     'IFE driver efficiency')
        case ('edrive')
-          call parse_real_variable('edrive', edrive, 1.0D5, 50.0D6, &
+          call parse_real_variable('edrive', edrive, 1.0D5, 50.0D8, &
                     'IFE driver energy (J)')
+       case ('etali')
+          call parse_real_variable('etali', etali, 0.0D0, 1.0D0, &
+                    'IFE lithium pump wall plug efficiency')
        case ('etave')
           call parse_real_array('etave', etave, isub1, 10, &
                     'IFE driver efficiency vs driver energy', icode)
@@ -3121,7 +3131,7 @@ contains
           call parse_real_variable('htpmw_ife', htpmw_ife, 0.0D0, 1.0D3, &
                     'IFE heat transport system electrical pump power (MW)')          
        case ('ifedrv')
-          call parse_int_variable('ifedrv', ifedrv, -1, 2, &
+          call parse_int_variable('ifedrv', ifedrv, -1, 3, &
                     'IFE driver type')
        case ('ifetyp')
           call parse_int_variable('ifetyp', ifetyp, 0, 4, &

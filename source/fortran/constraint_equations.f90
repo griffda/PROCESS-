@@ -2092,11 +2092,11 @@ contains
       !+ad_glos  vsind : input real :  internal and external plasma inductance V-s (Wb))
       !+ad_glos  vssu : input real :  total flux swing for startup (Wb)
       use physics_variables, only: vsres, vsind
-      use pfcoil_variables, only: vssu
+      use pfcoil_variables, only: vssu, fvssu
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc =  1.0D0 - (vsres+vsind) / vssu
+      args%cc =  1.0D0 - fvssu * abs((vsres+vsind) / vssu)
       args%con = vssu * (1.0D0 - args%cc)
       args%err = vssu * args%cc
       args%symbol = '='
@@ -2579,7 +2579,7 @@ contains
       !+ad_argc  residual error in physical units; output string; units string
       !+ad_desc  Ensure separatrix power is less than value from Kallenbach divertor
       !+ad_desc    #=# divertor_kallenbach
-      !+ad_desc    #=#=# psep_kallenbach
+      !+ad_desc    #=#=# consistency, psep_kallenbach
       !+ad_desc  fpsep has been removed from the equation.
       !+ad_desc  and hence also optional here.
       !+ad_desc  Logic change during pre-factoring: err, symbol, units will be assigned only if present.

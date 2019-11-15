@@ -9,8 +9,6 @@
 #
 #-----------------------------------------------------
 
-# List of build stages
-
 stages:
   - build
   - testing
@@ -397,11 +395,12 @@ pages:
   when: on_success
   only:
     - develop
+    - ford_docs
   stage: pages
   script:
    - pwd
    - apt-get update
-   - apt-get install -y python-dev python-pip pandoc cmake gcc gfortran
+   - apt-get install -y python-dev python-pip pandoc cmake gcc gfortran graphviz
    - pip install mkdocs
    - pip install mkdocs-material
    - pip install pymdown-extensions
@@ -410,8 +409,17 @@ pages:
    - pandoc documentation/html/vardes.html -f html -t markdown -o documentation/proc-pages/vardes.md
    - python documentation/proc-pages/scripts/sort_vardes.py documentation/proc-pages/vardes.md
    - mkdocs build
+   
+   # FORD documentation
+   - rm -rf ../ford # Need to clone to empty dir
+   - git clone https://github.com/Fortran-FOSS-Programmers/ford ../ford
+   - pip install ../ford
+   - ford documentation/ford/index.md
+   
+   # Publish the MkDocs and FORD sites
    - ls site
    - mv site public
+   - mv ford_site public
    - ls public
   artifacts:
     paths:

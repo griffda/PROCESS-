@@ -63,3 +63,4 @@ lib/PLASMOD/*.DAT
 *.fdb_latexmk
 *.fls
 *.gz
+ford_site/

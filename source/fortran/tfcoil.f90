@@ -143,9 +143,6 @@ contains
        call ovarre(outfile,'Radial stress (MPa)','(sigrad)',sigrad)
        call ovarre(outfile,'Transverse stress (MPa)','(sigtan)',sigtan)
        call ovarre(outfile,'Vertical stress (MPa)','(sigver)',sigver)
-
-       call concoptf(outfile,iprint)
-
        call oblnkl(outfile)
        call ocmmnt(outfile,'TF coil inner surface shape is given by a rectangle with the')
        call ocmmnt(outfile,'following inner points (Note that this does not account')
@@ -335,8 +332,8 @@ contains
     ! Vertircal force    
     ! The outer radius of the inner leg and the inner radius of the outer leg is taken
     ! vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inleg_out) / tfno 
-    vforce = 0.25D0 * bmaxtf * ritfc / tfno * ( 0.5D0 * tfcth +                     &         ! Inner leg side component 
-                                              & r_tf_inleg_out * log(r_tf_outleg_in/r_tf_inleg_out) + &         ! TF bore component
+    vforce = 0.25D0 * bmaxtf * ritfc / tfno * ( 0.5D0 * tfcth +                                       &     ! Inner leg side component 
+                                              & r_tf_inleg_out * log(r_tf_outleg_in/r_tf_inleg_out) + &     ! TF bore component
                                               & 0.5D0 * tfcth*tfootfi * (r_tf_inleg_out/r_tf_outleg_in) )   ! Outer leg side component
 
     ! Current turn information 
@@ -387,7 +384,7 @@ contains
     if (iprint == 0) return
 
     !  Output section
-    call osubhd(outfile,'Conventional Copper TF Coil Information :')
+    call oheadr(outfile,'Copper TF Coil Information')
     call ovarin(outfile,'Copper TF coil','(itfsup)',itfsup)
     call ovarre(outfile,'Inboard leg current density (A/m2)','(oacdcp)',oacdcp)
     call ovarre(outfile,'Outboard leg current density (A/m2)','(cdtfleg)',cdtfleg)
@@ -401,6 +398,13 @@ contains
     call ovarre(outfile,'Inboard leg resistive power (W)','(prescp)',prescp)
     call ovarre(outfile,'Outboard leg resistance per coil (ohm)','(tflegres)',tflegres)
     call ovarre(outfile,'Average inboard leg temperature (K)','(tcpav)',tcpav)
+    if (itart==1) then
+      call osubhd(outfile,'Tapered Centrepost Dimensions:')
+      call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(rmid)',rmid)
+      call ovarre(outfile,'Radius of the ends of the centrepost (m)','(rtop)',rtop)
+      call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(ztop)',ztop)
+      call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax)
+    end if
     ! ---------------------------------------------
 
   end subroutine concoptf
@@ -631,8 +635,8 @@ contains
     !  Thermal hydraulics: friction factor from Z. Olujic, Chemical
     !  Engineering, Dec. 1981, p. 91
     roughrat = 4.6D-5 / dcool
-    fricfac  = 1.0D0/ (-2.0D0 * log(roughrat/3.7D0 - 5.02D0/reyn * &
-         log( roughrat/3.7D0 + 14.5D0/reyn) ) )**2
+    fricfac  = 1.0D0/ (-2.0D0 * log10(roughrat/3.7D0 - 5.02D0/reyn * &
+         log10( roughrat/3.7D0 + 14.5D0/reyn) ) )**2
 
     dpres = fricfac * (lcool/dcool) * coolant_density * 0.5D0*vcool**2
     ppump = dpres * acool * vcool / etapump

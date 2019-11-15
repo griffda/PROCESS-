@@ -294,9 +294,9 @@ module physics_variables
   real(kind(1.0D0)) :: falpi = 0.0D0
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: fdeut = 0.5D0
-  !+ad_vars  ftar  /0.5/ : fraction of power to the  lower divertor in double null
-  !+ad_vars                configuration (snull = 0 only)
-  real(kind(1.0D0)) :: ftar = 0.5D0
+  !+ad_vars  ftar  /1.0/ : fraction of power to the  lower divertor in double null
+  !+ad_vars                configuration (snull = 0 only) (default assumes SN)
+  real(kind(1.0D0)) :: ftar = 1.0D0
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
   !+ad_varc                 area in neutron wall load calculation (iwalld=1)
   real(kind(1.0D0)) :: ffwal = 0.92D0
@@ -2065,6 +2065,8 @@ module pfcoil_variables
   real(kind(1.0D0)) :: fcuohsu = 0.7D0
   !+ad_vars  fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
   real(kind(1.0D0)) :: fcupfsu = 0.69D0
+  !+ad_vars  fvssu   /1.0/  : F-value for constraint equation 51 
+  real(kind(1.0D0)) :: fvssu = 1.0
   !+ad_vars  ipfloc(ngc) /2,2,3/ : switch for locating scheme of PF coil group i:<UL>
   !+ad_varc                   <LI> = 1 PF coil on top of central solenoid;
   !+ad_varc                   <LI> = 2 PF coil on top of TF coil;
@@ -2747,11 +2749,12 @@ module tfcoil_variables
   !+ad_vars  tcoolin /313.15/ : centrepost coolant inlet temperature (K)
   real(kind(1.0D0)) :: tcoolin = 313.15D0   ! 40 C
 
-  !+ad_vars  tcpav /373.15/ : average temp of TF coil inboard leg conductor (K)
-  !+ad_varc                  (resistive coils) (iteration variable 20)
+  !+ad_vars  tcpav /373.15/ : Assumed temperature of centrepost called CP (K)
+  !+ad_varc                   Only used for resistive coils to compute the resisitive heating 
+  !+ad_varc                   Must be an iteration variable for ST (itart == 1) (iteration variable 20)
   real(kind(1.0D0)) :: tcpav = 373.15D0     ! 100 C
 
-  !+ad_vars  tcpav2 : centrepost average temperature (K) (for consistency)
+  !+ad_vars  tcpav2 : Computed centrepost average temperature (K) (for consistency)
   real(kind(1.0D0)) :: tcpav2 = 0.0D0
 
   !+ad_vars  tcpmax : peak centrepost temperature (K)
@@ -4469,8 +4472,10 @@ module ife_variables
      !+ad_varc              <LI> = 8 lithium </UL>
      integer, parameter ::  maxmat = 8
    
-     !+ad_vars  bldr /1.0/ : radial thickness of IFE blanket (m)
+     !+ad_vars  bldr /1.0/ : radial thickness of IFE blanket (m; calculated if ifetyp=4)
      real(kind(1.0D0)) :: bldr   = 1.0D0
+     !+ad_vars  bldrc /1.0/ : radial thickness of IFE curtain (m; ifetyp=4)
+     real(kind(1.0D0)) :: bldrc   = 1.0D0
      !+ad_vars  bldzl /4.0/ : vertical thickness of IFE blanket below chamber (m)
      real(kind(1.0D0)) :: bldzl  = 4.0D0
      !+ad_vars  bldzu /4.0/ : vertical thickness of IFE blanket above chamber (m)
@@ -4500,6 +4505,8 @@ module ife_variables
      !+ad_vars  cdriv2 /244.9/ : IFE high energy heavy ion beam driver cost
      !+ad_varc                   extrapolated to edrive=0 (M$)
      real(kind(1.0D0)) :: cdriv2 = 244.9D0
+     !+ad_vars  cdriv3 /1.463/ : IFE driver cost ($/J wall plug) (ifedrv==3)
+     real(kind(1.0D0)) :: cdriv3 = 1.463D0
      !+ad_vars  chdzl /9.0/ : vertical thickness of IFE chamber below centre (m)
      real(kind(1.0D0)) :: chdzl = 9.0D0
      !+ad_vars  chdzu /9.0/ : vertical thickness of IFE chamber above centre (m)
@@ -4530,6 +4537,8 @@ module ife_variables
      real(kind(1.0D0)) :: edrive = 5.0D6
      !+ad_vars  etadrv : IFE driver wall plug to target efficiency
      real(kind(1.0D0)) :: etadrv = 0.0D0
+     !+ad_vars  etali /0.40/ : IFE lithium pump wall plug efficiency (ifetyp=4)
+     real(kind(1.0D0)) :: etali = 0.4D0
      !+ad_vars  etave(10) : IFE driver efficiency vs driver energy (ifedrv=-1)
      real(kind(1.0D0)), dimension(10) :: etave = (/ &
           0.082D0,0.079D0,0.076D0,0.073D0,0.069D0, &
@@ -4595,6 +4604,8 @@ module ife_variables
      !+ad_varc          <LI> = 3 HYLIFE-II-like build;
      !+ad_varc          <LI> = 4 2019 build</UL>
      integer :: ifetyp = 0
+     !+ad_vars  lipmw : IFE lithium pump power (MW; ifetyp=4)
+     real(kind(1.0D0)) :: lipmw = 0.0D0
      !+ad_vars  mcdriv /1.0/ : IFE driver cost multiplier
      real(kind(1.0D0)) :: mcdriv = 1.0D0
      !+ad_vars  mflibe : total mass of FLiBe (kg)
@@ -4655,6 +4666,8 @@ module ife_variables
      real(kind(1.0D0)) :: sombdr = 2.7D0
      !+ad_vars  somtdr /2.7/ : radius of cylindrical blanket section above chamber (ifetyp=2)
      real(kind(1.0D0)) :: somtdr = 2.7D0
+     !+ad_vars  taufall : Lithium Fall Time (s)
+     real(kind(1.0D0)) :: taufall = 0.0D0
      !+ad_vars  tdspmw /0.01/ FIX : IFE target delivery system power (MW)
      real(kind(1.0D0)) :: tdspmw = 0.01D0
      !+ad_vars  tfacmw : IFE target factory power (MW)

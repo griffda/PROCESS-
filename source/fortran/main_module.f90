@@ -369,6 +369,7 @@ subroutine eqslv(ifail)
 
   !  If no HYBRD (non-optimisation) runs are required, exit routine
   if (ioptimz > 0) return
+  if (ioptimz == -2) return
 
   ncalls = 0
   nfev1 = 0
