@@ -1681,7 +1681,7 @@ contains
 
     !  ST centre post
     if (itart == 1) then
-       call osubhd(ofile,'(Copper centrepost used)')
+       call osubhd(ofile,'(Resistive centrepost used)')
        call ovarre(ofile,'ST centrepost heating (MW)','(pnuccp)',pnuccp, 'OP ')
     end if
 

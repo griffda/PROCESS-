@@ -398,8 +398,8 @@ contains
     if (iprint == 0) return
 
     !  Output section
-    call oheadr(outfile,'Copper TF Coil Information')
-    call ovarin(outfile,'Copper TF coil','(itfsup)',itfsup)
+    call oheadr(outfile,'Resistive TF Coil Information')
+    call ovarin(outfile,'Resistive TF coil option (0:copper 2:aluminium)','(itfsup)',itfsup)
     call ovarre(outfile,'Inboard leg current density (A/m2)','(oacdcp)',oacdcp)
     call ovarre(outfile,'Outboard leg current density (A/m2)','(cdtfleg)',cdtfleg)
     call ovarre(outfile,'Number of turns per outboard leg','(turnstf)',turnstf)
@@ -702,7 +702,7 @@ contains
     call osubhd(outfile,'Temperatures :')
     call ovarre(outfile,'Input coolant temperature (K)','(tcoolin)',tcoolin)
     call ovarre(outfile,'Input-output coolant temperature rise (K)','(dtiocool)',dtiocool)
-    call ovarre(outfile,'Film temperature rise (C)','(dtfilmav)',dtfilmav)
+    call ovarre(outfile,'Film temperature rise (K)','(dtfilmav)',dtfilmav)
     call ovarre(outfile,'Average temp gradient in conductor (K/m)','(dtcncpav)',dtcncpav)
     call ovarre(outfile,'Average centrepost temperature (K)','(tcpav2)',tcpav2)
     call ovarre(outfile,'Peak centrepost temperature (K)','(tcpmax)',tcpmax)
