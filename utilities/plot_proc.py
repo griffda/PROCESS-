@@ -1333,7 +1333,7 @@ def plot_tf_coils(axis, mfile_data, scan):
         itfsup = 1
   
     # Superconducting TF coils are D-shaped (itfsup=1), but copper TF coils are rectangular (itfsup=0)
-    if itfsup == 0:
+    if itfsup != 1:
         # Inboard leg   
         rect1 = patches.Rectangle([x5-tfcth, y5-tfcth], tfcth, (y1-y5+2.0*tfcth), lw=0, facecolor='cyan')
         # Outboard leg vertical
