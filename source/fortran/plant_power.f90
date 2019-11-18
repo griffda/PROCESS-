@@ -1297,6 +1297,10 @@ contains
         call ocmmnt(outfile, 'includes heat exchanger, using specified pressure drop')
     end if
 
+    call ovarre(outfile, 'Mechanical pumping power for FW cooling loop including heat exchanger (MW)', &
+                       '(htpmw_fw)', htpmw_fw, 'OP ')
+    call ovarre(outfile, 'Mechanical pumping power for blanket cooling loop including heat exchanger (MW)', &
+                       '(htpmw_blkt)', htpmw_blkt, 'OP ')
     call ovarre(outfile, 'Mechanical pumping power for FW and blanket cooling loop including heat exchanger (MW)', &
                        '(htpmw_fw_blkt)', htpmw_fw_blkt, 'OP ')
 

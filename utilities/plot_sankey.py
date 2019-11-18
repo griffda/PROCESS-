@@ -3,6 +3,7 @@
 Code to display the power flow of a PROCESS run in a Sankey diagram
 
 Author: H. Lux (Hanni.Lux@ukaea.uk)
+Updated 20/08/219: A. Brown (adam.brown@ukaea.uk)
 
 Input file:
 MFILE.DAT
@@ -25,14 +26,15 @@ if __name__ == '__main__':
 
     PARSER.add_argument("-e", "--end",
                         default='pdf',
-                        help="file format default = pdf")
+                        help="file format, default = pdf")
 
     PARSER.add_argument("-f", "--mfile",
                         default='MFILE.DAT',
-                        help="mfile, default = MFILE.DAT")
+                        help="mfile name, default = MFILE.DAT")
 
-    PARSER.add_argument("-s", "--simplified", action="store_true",
-                    help="Only plot a simplified version")
+    PARSER.add_argument("-s", "--simplified",
+                        action="store_true",
+                        help="Plot simplified version")
 
     ARGS = PARSER.parse_args()
 
@@ -45,6 +47,6 @@ if __name__ == '__main__':
     else:
         plot_sankey(ARGS.mfile)
         savefig("SankeyPowerFlow."+ARGS.end)
-    
-    show()
 
+    show()
+    
