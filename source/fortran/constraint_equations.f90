@@ -2092,11 +2092,11 @@ contains
       !+ad_glos  vsind : input real :  internal and external plasma inductance V-s (Wb))
       !+ad_glos  vssu : input real :  total flux swing for startup (Wb)
       use physics_variables, only: vsres, vsind
-      use pfcoil_variables, only: vssu
+      use pfcoil_variables, only: vssu, fvssu
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc =  1.0D0 - (vsres+vsind) / vssu
+      args%cc =  1.0D0 - fvssu * abs((vsres+vsind) / vssu)
       args%con = vssu * (1.0D0 - args%cc)
       args%err = vssu * args%cc
       args%symbol = '='
