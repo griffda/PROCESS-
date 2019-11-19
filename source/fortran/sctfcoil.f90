@@ -41,8 +41,7 @@ module sctfcoil_module
 !
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, tfcth, tfthko, hpfu, hr1, &
-    dh_tf_inner_bore, dr_tf_inner_bore, r_vv_inboard_out
+use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, tfcth, tfthko, hpfu, hr1, r_vv_inboard_out
 use constants
 use error_handling
 use fwbs_variables
