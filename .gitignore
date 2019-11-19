@@ -64,7 +64,3 @@ lib/PLASMOD/*.DAT
 *.fls
 *.gz
 ford_site/
-/utilities/OPT_plots
-CMakeLists.txt
-OPT.DAT
-IN.DAT
