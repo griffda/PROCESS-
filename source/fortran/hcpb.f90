@@ -1789,7 +1789,10 @@ contains
       f_neut_absorb = 1.0D0 - exp( -2.0D0*tfcth / 0.08D0) 
     
       ! Nuclear power
-      pnuccp = pneut * f_neut_geom * f_neut_shield * f_neut_absorb
+      pnuccp = pneut * f_neut_geom * f_neut_absorb
+      
+      ! Correct for shielding 
+      if ( f_neut_shield > 0.0D0 ) pnuccp = pnuccp * f_neut_shield 
       ! ---------
 
 
