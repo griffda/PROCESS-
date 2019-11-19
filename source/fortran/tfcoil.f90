@@ -37,7 +37,7 @@ module tfcoil_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use build_module
-  use build_variables, only : r_tf_inleg_mid, hmax, rtot, rtop, tfcth, tfthko, bore, hpfu
+  use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, rtop, tfcth, tfthko, bore, hpfu, dr_tf_inner_bore
   use constants
   use error_handling
   use fwbs_variables
@@ -229,15 +229,15 @@ contains
     ! Radial build
     ! ******
     ! Radial position of inner/outer edge of inboard TF coil leg [m]
-    r_tf_inleg_in  = r_tf_inleg_mid - 0.5D0 * tfcth
-    r_tf_inleg_out = r_tf_inleg_mid + 0.5D0 * tfcth
+    r_tf_inleg_in  = r_tf_inboard_mid - 0.5D0 * tfcth
+    r_tf_inleg_out = r_tf_inboard_mid + 0.5D0 * tfcth
     
     ! Position of the maximum magnetic field 
     ! No winding pack structure -> simply the innner legs plasma side radius
     rbmax = r_tf_inleg_out
     
     ! Radial position of centre of inboard TF coil leg [m]
-    r_tf_inleg_mid = r_tf_inleg_in + 0.5D0*tfcth
+    r_tf_inboard_mid = r_tf_inleg_in + 0.5D0*tfcth
     ! ******
 
 
@@ -307,7 +307,7 @@ contains
     ! Outboard leg information (per leg)
     ! ----------------------------------    
     ! Radius of inner edge of outboard TF coil leg (m)
-    r_tf_outleg_in = rtot - 0.5D0*tfthko
+    r_tf_outleg_in = r_tf_outboard_mid - 0.5D0*tfthko
     
     ! Outer leg cross-sectional area 
     arealeg = tfthko*tftort
@@ -316,9 +316,9 @@ contains
     ! coils, not D-shaped)
     ! A more comprehensive calculation will be present in next of the module
     if ( itart == 1 ) then
-       ltfleg = hmax + hpfu + 2.0D0 * ( rtot - rtop )
+       ltfleg = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - rtop )
     else 
-       ltfleg = hmax + hpfu + 2.0D0 * ( rtot - r_tf_inleg_out )
+       ltfleg = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - r_tf_inleg_out )
     end if
 
     ! Volume of the TF legs
@@ -337,9 +337,6 @@ contains
 
     ! Inner outter common quantities
     ! -----------------------------
-    !  TF bore (gap between inboard and outboard TF coil legs) (m)
-    tfboreh = rtot - rbmax - 0.5D0*tfthko
-
     ! Vertircal force    
     ! The outer radius of the inner leg and the inner radius of the outer leg is taken
     ! vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inleg_out) / tfno 
@@ -903,8 +900,8 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    xarc(1) = r_tf_inleg_mid + 0.5D0*tfcth
-    xarc(2) = rtot - 0.5D0*tfthko
+    xarc(1) = r_tf_inboard_mid + 0.5D0*tfcth
+    xarc(2) = r_tf_outboard_mid - 0.5D0*tfthko
     xarc(3) = xarc(2)
     xarc(4) = xarc(2)
     xarc(5) = xarc(1)

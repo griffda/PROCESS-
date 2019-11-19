@@ -85,7 +85,7 @@ contains
 
     twhtpf = whtpf + whtpfs
 
-    call struct(plascur,rmajor,rminor,kappa,bt,itfsup,ipfres,tf_total_h_width, &
+    call struct(plascur,rmajor,rminor,kappa,bt,itfsup,ipfres,dr_tf_inner_bore+tfthko+tfcth, &
          hmax,whtshld,divmas,twhtpf,whttf,fwmass,whtblkt,coolmass, &
          dewmkg,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
          gsmass)

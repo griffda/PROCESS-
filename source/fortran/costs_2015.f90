@@ -347,7 +347,7 @@ contains
     ! Cost of ITER road improvements
     s(12)%cref = 150.0D6
     ! Scale with TF coil longest dimension
-    s(12)%k = max(tfborev, tf_total_h_width) + 2.0D0*tfcth
+    s(12)%k = max(dh_tf_inner_bore, dr_tf_inner_bore) + 2.0D0*tfcth
     s(12)%kref = 14.0D0
     s(12)%cost = s(12)%cost_factor * s(12)%cref * (s(12)%k / s(12)%kref)**costexp
 

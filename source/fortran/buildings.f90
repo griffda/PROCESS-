@@ -116,10 +116,11 @@ contains
     tfmtn = 1.0D-3 * whttf/tfno
 
     ! TF coil inner and outer radial position (m)
-    tfro = rtot + 0.5D0*tfthko
-    tfri = r_tf_inleg_mid - 0.5D0*tfcth
+    tfro = r_tf_outboard_mid + 0.5D0*tfthko
+    tfri = r_tf_inboard_mid - 0.5D0*tfcth
 
     ! TF coil vertical height (m)
+    ! Rem : SK not valid for single null
     tfh = (hmax + tfcth)*2.0D0
 
     ! Reactor vault wall and roof thicknesses are hardwired

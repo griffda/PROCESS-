@@ -114,7 +114,7 @@ contains
     !+ad_hist  20/10/14 PJK Changed Central Solenoid to central solenoid
     !+ad_hist  06/02/15 JM  Added output of beamwd to mfile
     !+ad_hist  06/03/15 JM  Put an additional call to ripple_amplitude after the change to
-    !+ad_hisc 				rtot (issue #221)
+    !+ad_hisc 				r_tf_outboard_mid (issue #221)
     !+ad_hist  19/11/15 RK  Added pre-compression structure, thermal shield, and TF angular correction
     !+ad_hist  01/11/16 JM  Added iprecomp switch for pre-compression structure calc. If 0 precomp=0
     !+ad_hist  21/05/18 SIM Added deltf to output for ST (Issue #704)
@@ -132,7 +132,7 @@ contains
     !  Local variables
 
 
-    real(kind(1.0D0)) :: hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild, rbldtotf, deltf, vbuild1
+    real(kind(1.0D0)) :: hbot,hfw,htop,r1,r2,r3,radius,r_tf_outboard_midl,vbuild, rbldtotf, deltf, vbuild1
     real(kind(1.0D0)) :: fwtth
 
     integer :: ripflag = 0
@@ -166,8 +166,8 @@ contains
     endif
 
     ! Radial build to tfcoil
-    r_tf_inleg_mid = bore + ohcth + precomp + gapoh + 0.5D0*tfcth
-    rbldtotf = r_tf_inleg_mid + 0.5D0*tfcth
+    r_tf_inboard_mid = bore + ohcth + precomp + gapoh + 0.5D0*tfcth
+    rbldtotf = r_tf_inboard_mid + 0.5D0*tfcth
 
     ! Additional gap spacing due to flat surfaces of TF
     if ( itfsup == 1 ) then
@@ -181,7 +181,7 @@ contains
 
        rtop = rmajor - rminor * triang - ( deltf + thshield + gapds + ddwi + &
             & shldith + vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
-       rtop = max( rtop, ( r_tf_inleg_mid + 0.5D0*tfcth ) * 1.01D0 ) 
+       rtop = max( rtop, ( r_tf_inboard_mid + 0.5D0*tfcth ) * 1.01D0 ) 
        
        if (rtop <= 0.0D0) then
          fdiags(1) = rtop ; call report_error(115)
@@ -189,8 +189,11 @@ contains
     
        !write(*,*) ' rtop = ' , rtop
     else
-       rtop = r_tf_inleg_mid + 0.5D0*tfcth
+       rtop = r_tf_inboard_mid + 0.5D0*tfcth
     end if 
+
+    !  Radial position of vacuum vessel [m]
+    r_vv_inboard_out = rbldtotf + deltf + thshield + gapds + ddwi
 
     !  Radial build to centre of plasma (should be equal to rmajor)
     rbld = rbldtotf + deltf + thshield + gapds + ddwi + &
@@ -210,21 +213,24 @@ contains
     end if
 
     !  Radius to centre of outboard TF coil legs
-    rtot = rsldo + vvblgap + ddwi + gapomin + thshield + tftsgap + 0.5D0*tfthko
-
-    call ripple_amplitude(ripple,ripmax,rtot,rtotl,ripflag)
+    r_tf_outboard_mid = rsldo + vvblgap + ddwi + gapomin + thshield + tftsgap + 0.5D0*tfthko
+    
+    call ripple_amplitude(ripple,ripmax,r_tf_outboard_mid,r_tf_outboard_midl,ripflag)
 
     !  If the ripple is too large then move the outboard TF coil leg
-    if (rtotl > rtot) then
-       rtot = rtotl
-       gapsto = rtot - 0.5D0*tfthko - ddwi - rsldo - thshield - tftsgap - vvblgap
+    if (r_tf_outboard_midl > r_tf_outboard_mid) then
+       r_tf_outboard_mid = r_tf_outboard_midl
+       gapsto = r_tf_outboard_mid - 0.5D0*tfthko - ddwi - rsldo - thshield - tftsgap - vvblgap
     else
        gapsto = gapomin
     end if
 
-    !  Call ripple calculation again with new rtot/gapsto value
-    !  call rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
-    call ripple_amplitude(ripple,ripmax,rtot,rtotl,ripflag)
+    ! TF coil horizontal bore [m]
+    dr_tf_inner_bore = ( r_tf_outboard_mid - 0.5D0*tfthko ) - ( r_tf_inboard_mid - 0.5D0*tfcth )
+
+    !  Call ripple calculation again with new r_tf_outboard_mid/gapsto value
+    !  call rippl(ripmax,rmajor,rminor,r_tf_outboard_mid,tfno,ripple,r_tf_outboard_midl)
+    call ripple_amplitude(ripple,ripmax,r_tf_outboard_mid,r_tf_outboard_midl,ripflag)
 
     !  Calculate first wall area
     !  Old calculation... includes a mysterious factor 0.875
@@ -318,7 +324,7 @@ contains
           idiags(1) = INT(tfno)
           call report_error(142)
        else
-          fdiags(1) = (rmajor+rminor)/rtot
+          fdiags(1) = (rmajor+rminor)/r_tf_outboard_mid
           call report_error(143)
        end if
     end if
@@ -345,7 +351,9 @@ contains
     call obuild(outfile,'Gap',gapoh,radius,'(gapoh)')
     call ovarre(mfile,'CS precompresion to TF coil radial gap (m)','(gapoh)',gapoh)
     
-    radius = radius + tfcth
+    
+    
+
     call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
     call ovarre(mfile,'TF coil inboard leg (m)','(tfcth)',tfcth)
     
@@ -608,12 +616,16 @@ contains
     end if
     ! If vgap /= 0 use the value set by the user.
 
-    !  Height to inside edge of TF coil
+    ! Height to inside edge of TF coil
+    ! Rem SK : definition only valid for double null! 
+    hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
 
-        hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
+    ! TF coil vertical bore [m] (Not sure it is entirely consistent !)
+    ! Rem SK : not consistend for single null!
+    dh_tf_inner_bore = 2.0D0*(rminor*kappa + vgaptop + fwith + blnktth + vvblgap + &
+        shldtth + ddwi+ vgap2 + thshield + tftsgap)
 
     !  Vertical locations of divertor coils
-
     if (snull == 0) then
        hpfu = hmax + tfcth
        hpfdif = 0.0D0
@@ -890,7 +902,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! subroutine rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
+  ! subroutine rippl(ripmax,rmajor,rminor,r_tf_outboard_mid,tfno,ripple,r_tf_outboard_midl)
 
   !   !+ad_name  rippl
   !   !+ad_summ  TF ripple calculation
@@ -900,10 +912,10 @@ contains
   !   !+ad_args  ripmax : input real : max ripple at plasma edge (peak to average) (%)
   !   !+ad_args  rmajor : input real : plasma major radius (m)
   !   !+ad_args  rminor : input real : plasma minor radius (m)
-  !   !+ad_args  rtot   : input real : default radius to the outboard TF coil leg (m)
+  !   !+ad_args  r_tf_outboard_mid   : input real : default radius to the outboard TF coil leg (m)
   !   !+ad_args  tfno   : input real(!) : number of TF coils
   !   !+ad_args  ripple : output real : ripple at plasma edge (%)
-  !   !+ad_args  rtotl  : output real : required minimum radius to the centre
+  !   !+ad_args  r_tf_outboard_midl  : output real : required minimum radius to the centre
   !   !+ad_argc                         of the outboard TF coil leg (m)
   !   !+ad_desc  Subroutine to calculate TFC ripple and outboard TFC leg radius.
   !   !+ad_desc  Input the max. ripple and default outboard leg location and the
@@ -921,8 +933,8 @@ contains
 
   !   !  Arguments
 
-  !   real(kind(1.0D0)), intent(in) :: ripmax,rmajor,rminor,rtot,tfno
-  !   real(kind(1.0D0)), intent(out) :: ripple,rtotl
+  !   real(kind(1.0D0)), intent(in) :: ripmax,rmajor,rminor,r_tf_outboard_mid,tfno
+  !   real(kind(1.0D0)), intent(out) :: ripple,r_tf_outboard_midl
 
   !   !  Local variables
 
@@ -940,13 +952,13 @@ contains
   !   prip = 0.01D0 * ripmax/coeff
   !   rotrp = 1.023D0*(rmajor+rminor)/prip**(1.0D0/tfno)
 
-  !   if (rotrp > rtot) then
-  !      rtotl = rotrp
+  !   if (rotrp > r_tf_outboard_mid) then
+  !      r_tf_outboard_midl = rotrp
   !      pripc = prip * 100.0D0
   !      ripple = pripc * coeff
   !   else
-  !      rtotl = rtot
-  !      prip = (1.023D0*(rmajor+rminor)/rtot)**(tfno)
+  !      r_tf_outboard_midl = r_tf_outboard_mid
+  !      prip = (1.023D0*(rmajor+rminor)/r_tf_outboard_mid)**(tfno)
   !      pripc = prip*100.0D0
   !      ripple = pripc * coeff
   !   end if
@@ -955,7 +967,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ripple_amplitude(ripple,ripmax,rtot,rtotmin,flag)
+  subroutine ripple_amplitude(ripple,ripmax,r_tf_outboard_mid,r_tf_outboard_midmin,flag)
 
     !+ad_name  ripple_amplitude
     !+ad_summ  TF ripple calculation
@@ -964,9 +976,9 @@ contains
     !+ad_cont  N/A
     !+ad_args  ripmax : input real  : maximum allowed ripple at plasma edge (%)
     !+ad_args  ripple : output real : actual ripple at plasma edge (%)
-    !+ad_args  rtot   : input real  : radius to the centre of the outboard
+    !+ad_args  r_tf_outboard_mid   : input real  : radius to the centre of the outboard
     !+ad_argc                         TF coil leg (m)
-    !+ad_args  rtotmin : output real : radius to the centre of the outboard
+    !+ad_args  r_tf_outboard_midmin : output real : radius to the centre of the outboard
     !+ad_argc                          TF coil leg which would produce
     !+ad_argc                          a ripple of amplitude ripmax (m)
     !+ad_args  flag : output integer : on exit, =1 if the fitted
@@ -993,8 +1005,8 @@ contains
     !  Arguments
 
     integer, intent(out) :: flag
-    real(kind(1.0D0)), intent(in) :: ripmax,rtot
-    real(kind(1.0D0)), intent(out) :: ripple,rtotmin
+    real(kind(1.0D0)), intent(in) :: ripmax,r_tf_outboard_mid
+    real(kind(1.0D0)), intent(out) :: ripple,r_tf_outboard_midmin
 
     !  Local variables
 
@@ -1016,13 +1028,13 @@ contains
     c1 = 0.875D0 - 0.0557D0*x
     c2 = 1.617D0 + 0.0832D0*x
 
-    !  Calculated ripple for coil at rtot (%)
+    !  Calculated ripple for coil at r_tf_outboard_mid (%)
 
-    ripple = 100.0D0 * c1*( (rmajor+rminor)/rtot )**(n-c2)
+    ripple = 100.0D0 * c1*( (rmajor+rminor)/r_tf_outboard_mid )**(n-c2)
 
-    !  Calculated rtot to produce a ripple of amplitude ripmax
+    !  Calculated r_tf_outboard_mid to produce a ripple of amplitude ripmax
 
-    rtotmin = (rmajor+rminor) / &
+    r_tf_outboard_midmin = (rmajor+rminor) / &
          ( (0.01D0*ripmax/c1)**(1.0D0/(n-c2)) )
 
     !  Notify via flag if a range of applicability is violated
@@ -1030,8 +1042,8 @@ contains
     flag = 0
     if ((x < 0.737D0).or.(x > 2.95D0)) flag = 1
     if ((tfno < 16).or.(tfno > 20)) flag = 2
-    if ( ((rmajor+rminor)/rtot < 0.7D0).or. &
-         ((rmajor+rminor)/rtot > 0.8D0) ) flag = 3
+    if ( ((rmajor+rminor)/r_tf_outboard_mid < 0.7D0).or. &
+         ((rmajor+rminor)/r_tf_outboard_mid > 0.8D0) ) flag = 3
 
   end subroutine ripple_amplitude
 
@@ -1101,7 +1113,7 @@ contains
 
     !  Major radius of inner edge of outboard TF coil (m)
 
-    d = rtot - 0.5D0*b
+    d = r_tf_outboard_mid - 0.5D0*b
 
     !  Refer to figure in User Guide for remaining geometric calculations
 

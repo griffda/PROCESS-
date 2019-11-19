@@ -2277,7 +2277,7 @@ module tfcoil_variables
   !+ad_hist  08/05/14 PJK Changed ripmax description
   !+ad_hist  12/05/14 PJK Added insstrain
   !+ad_hist  24/06/14 PJK Removed wtbc
-  !+ad_hist  30/07/14 PJK Renamed borev to tfborev
+  !+ad_hist  30/07/14 PJK Renamed borev to dh_tf_inner_bore
   !+ad_hist  31/07/14 PJK Added acasetfo, dcondins, whtconin, whtgw, whtrp;
   !+ad_hisc               removed aspcstf
   !+ad_hist  19/08/14 PJK Removed casfact
@@ -2548,14 +2548,6 @@ module tfcoil_variables
   !+ad_vars  tfareain : area of inboard midplane TF legs (m2)
   real(kind(1.0D0)) :: tfareain = 0.0D0
 
-  !+ad_vars  tfboreh : TF coil horizontal inner bore (m)
-  real(kind(1.0D0)) :: tfboreh = 0.0D0
-
-  !+ad_vars  tf_total_h_width : TF coil horizontal inner bore (m)
-  real(kind(1.0D0)) :: tf_total_h_width = 0.0D0
-
-  !+ad_vars  tfborev : TF coil vertical inner bore (m)
-  real(kind(1.0D0)) :: tfborev = 0.0D0
   !+ad_vars  tfbusl : TF coil bus length (m)
   real(kind(1.0D0)) :: tfbusl = 0.0D0
   !+ad_vars  tfbusmas : TF coil bus mass (kg)
@@ -3524,14 +3516,23 @@ module build_variables
   !+ad_vars  rsldo : radius to outboard shield (outside point) (m)
   real(kind(1.0D0)) :: rsldo = 0.0D0
 
-  !+ad_vars  r_tf_inleg_mid : Mid-plane Outer radius of centre of inboard TF leg (m)
-  real(kind(1.0D0)) :: r_tf_inleg_mid = 0.0D0
+  !+ad_vars  r_vv_inboard_out  Radial position of vacuum vessel [m]
+  real(kind(1.0D0)) :: r_vv_inboard_out = 0.0D0
+
+  !+ad_vars  r_tf_inboard_mid : Mid-plane Outer radius of centre of inboard TF leg (m)
+  real(kind(1.0D0)) :: r_tf_inboard_mid = 0.0D0
        
+  !+ad_vars  r_tf_outboard_mid : radius to the centre of the outboard TF coil leg (m)
+  real(kind(1.0D0)) :: r_tf_outboard_mid = 0.0D0
+
   !+ad_vars  rtop : Top outer radius of centre of the centropost (ST only) (m)
   real(kind(1.0D0)) :: rtop = 0.0D0
-  
-  !+ad_vars  rtot : radius to the centre of the outboard TF coil leg (m)
-  real(kind(1.0D0)) :: rtot = 0.0D0
+
+  !+ad_vars  dr_tf_inner_bore : TF coil horizontal inner bore (m)
+  real(kind(1.0D0)) :: dr_tf_inner_bore = 0.0D0
+
+  !+ad_vars  dh_tf_inner_bore : TF coil vertical inner bore (m)
+  real(kind(1.0D0)) :: dh_tf_inner_bore = 0.0D0
 
   !+ad_vars  scrapli /0.14/ : gap between plasma and first wall, inboard side (m)
   !+ad_varc                   (used if iscrp=1) (iteration variable 73)
@@ -3578,8 +3579,10 @@ module build_variables
   real(kind(1.0D0)) :: tfootfi = 1.19D0
   !+ad_vars  tfthko : outboard TF coil thickness (m)
   real(kind(1.0D0)) :: tfthko = 0.0D0
+  
   !+ad_vars  tftsgap /0.05/ : Minimum metal-to-metal gap between TF coil and thermal shield (m)
   real(kind(1.0D0)) :: tftsgap = 0.05D0
+  
   !+ad_vars  thshield /0.05/ : TF-VV thermal shield thickness (m)
   real(kind(1.0D0)) :: thshield = 0.05D0
 

@@ -1859,7 +1859,7 @@ contains
 
     !  Vacuum vessel mass - original obscure calculation replaced
 
-    !cryomass = fvolcry * 4.0D0 * (2.0D0*(rtot-rsldi) + 2.0D0*hmax) * &
+    !cryomass = fvolcry * 4.0D0 * (2.0D0*(r_tf_outboard_mid-rsldi) + 2.0D0*hmax) * &
     !     2.0D0 * pi * rmajor * ddwi * denstl
 
     vvmass = vdewin * denstl

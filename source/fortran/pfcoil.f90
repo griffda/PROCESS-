@@ -253,7 +253,7 @@ contains
 
     signn(1) =  1.0D0
     signn(2) = -1.0D0
-    rclsnorm = rtot + 0.5D0*tfthko + routr
+    rclsnorm = r_tf_outboard_mid + 0.5D0*tfthko + routr
 
     !  N.B. Problems here if k=ncls(group) is greater than 2.
 

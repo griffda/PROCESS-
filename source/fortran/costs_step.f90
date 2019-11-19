@@ -138,7 +138,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Fusion Island Volume as defined by Sheffield & Milora (2016)
-    vfi = pi * (rtot + 0.5D0*tfthko)**2 * (hpfu + hmax + tfcth)
+    vfi = pi * (r_tf_outboard_mid + 0.5D0*tfthko)**2 * (hpfu + hmax + tfcth)
     pth = powfmw + emultmw + pinjwp
 
     !  STARFIRE Reference Values

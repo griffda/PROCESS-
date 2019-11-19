@@ -242,7 +242,7 @@ contains
     if (itart == 1) then
 
         ! Outer radius of the inborad neutronic shield (centra heigt of the CP)
-        r_sh_inboard_out = r_tf_inleg_mid + 0.5D0*tfcth + thshield + gapds + shldith
+        r_sh_inboard_out = r_tf_inboard_mid + 0.5D0*tfcth + thshield + gapds + shldith
         pnuccp = st_centrepost_nuclear_heating( pneutmw, hmax, r_sh_inboard_out )
     else
         pnuccp = 0.0D0

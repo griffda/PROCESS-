@@ -906,7 +906,7 @@ contains
     !  Radius to centre of outboard TF coil legs
 
     gapsto = gapomin
-    rtot = rsldo + ddwi + gapsto + 0.5D0*tfthko
+    r_tf_outboard_mid = rsldo + ddwi + gapsto + 0.5D0*tfthko
 
     !  Height to inside edge of TF coil
     !  Roughly equal to average of (inboard build from TF coil to plasma
@@ -1863,7 +1863,7 @@ contains
 
     !  External cryostat outboard major radius (m)
 
-    rdewex = rtot + 0.5D0*tfthko + rpf2dewar
+    rdewex = r_tf_outboard_mid + 0.5D0*tfthko + rpf2dewar
     adewex = rdewex-rmajor
 
     !  External cryostat volume
@@ -2650,7 +2650,7 @@ contains
     !+ad_hist  06/05/14 PJK Removed wpvf completely
     !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
     !+ad_hist  26/06/14 PJK Added error_handling
-    !+ad_hist  30/07/14 PJK Renamed borev to tfborev
+    !+ad_hist  30/07/14 PJK Renamed borev to dh_tf_inner_bore
     !+ad_hist  16/09/14 PJK Added tfcryoarea
     !+ad_hist  17/10/18 SIM Switched estotf for estotftgj
     !+ad_stat  Okay
@@ -2890,7 +2890,7 @@ contains
     !  Vertical ports
 
     !  Outer coil centre major radius, average (m)
-    !  (excludes half of coil thickness, otherwise equal to rtot)
+    !  (excludes half of coil thickness, otherwise equal to r_tf_outboard_mid)
 
     R_occ = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth + ddwi + gapsto
 
@@ -2962,9 +2962,9 @@ contains
     rbcndut = thwcndut*0.75D0
 
     arealeg = tfcth*tftort  ! [m^2] overall coil cross-sectional area
-    r_tf_inleg_mid = rmajor - (0.5D0*tfcth+gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor)
+    r_tf_inboard_mid = rmajor - (0.5D0*tfcth+gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor)
     ! [m] radius of centre of inboard leg, average
-    rcoil = r_tf_inleg_mid + 0.5D0*tfcth  ! [m] radius of outer edge of inboard leg, average
+    rcoil = r_tf_inboard_mid + 0.5D0*tfcth  ! [m] radius of outer edge of inboard leg, average
     tfareain = tfno*tfcth*tftort  ! [m^2] Total area of all coil legs
     tfarea_sc = tfno*awptf        ! [m^2] Total area of all coil winding packs
     ritfc = tfno * I * 1.0D6      ! [A] Total current in ALL coils
@@ -2972,8 +2972,8 @@ contains
     rbmax = rcoil                 ! [m] radius of peak field occurrence, average
                                   !     N.B. different to tokamak SCTF calculation
     hmax = 0.5D0*h_max - tfcth    ! [m] maximum half-height of coil
-    tf_total_h_width = D_coil     ! [m] estimated horizontal coil bore
-    tfborev = 2.0D0*hmax          ! [m] estimated vertical coil bore
+    dr_tf_inner_bore = D_coil     ! [m] estimated horizontal coil bore
+    dh_tf_inner_bore = 2.0D0*hmax          ! [m] estimated vertical coil bore
     tfleng = U                    ! [m] estimated average length of a coil
 
     estotftgj = W_mag             ! [GJ] Total magnetic energy
@@ -3035,7 +3035,7 @@ contains
 
     ! [m^2] Total surface area of toroidal shells covering coils
 
-    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inleg_mid+rtot)
+    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inboard_mid+r_tf_outboard_mid)
 
     !  Masses of conductor constituents
 
@@ -3764,7 +3764,7 @@ contains
     !+ad_call  ovarre
     !+ad_hist  03/03/14 PJK Initial version, based on outtf
     !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  30/07/14 PJK Renamed borev to tfborev
+    !+ad_hist  30/07/14 PJK Renamed borev to dh_tf_inner_bore
     !+ad_hist  31/07/14 PJK Removed aspcstf
     !+ad_hist  17/10/18 SIM Switched estotf for estotftgj
     !+ad_stat  Okay
@@ -3804,11 +3804,11 @@ contains
     call ovarre(outfile,'Total mass of coils (kg)','(whttf)',whttf)
 
     call osubhd(outfile,'Coil Geometry :')
-    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inleg_mid)',r_tf_inleg_mid)
-    call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot)
+    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inboard_mid)',r_tf_inboard_mid)
+    call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
-    call ovarre(outfile,'Clear horizontal bore (m)','(tf_total_h_width)',tf_total_h_width)
-    call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
+    call ovarre(outfile,'Clear horizontal bore (m)','(dr_tf_inner_bore)',dr_tf_inner_bore)
+    call ovarre(outfile,'Clear vertical bore (m)','(dh_tf_inner_bore)',dh_tf_inner_bore)
 
     call osubhd(outfile,'Conductor Information :')
     call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc)
