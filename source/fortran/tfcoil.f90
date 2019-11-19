@@ -116,7 +116,7 @@ contains
     ! Magnet desing dependent calculations
     ! ------------------------------------
     !  Resistive TF coils
-    if ( itfsup /= 1 ) then  
+    if ( i_tf_sup /= 1 ) then  
        call concoptf(outfile,iprint)
 
     !  Superconducting TF coils
@@ -138,14 +138,14 @@ contains
     if (iprint == 0) return
 
     !  Output section (resistive TF coils only)
-    if (itfsup /= 1) then
+    if (i_tf_sup /= 1) then
 
        call oheadr(outfile,'TF Coils')
        call ovarre(outfile,'TF coil current (summed over all coils) (A)','(ritfc)',ritfc)
        call ovarre(outfile,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
        call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
        call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
-       call ovarre(outfile,'Number of TF coil legs','(tfno)',tfno)
+       call ovarre(outfile,'Number of TF coil legs','(n_tf)',n_tf)
 
        call osubhd(outfile,'Energy and Forces :')
        call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj)
@@ -243,9 +243,9 @@ contains
 
     ! Toroidal thickness of TF coil outer leg [m]
     if ( itart == 1 ) then
-       tftort = 2.0D0 * rtop * sin(pi/tfno)
+       tftort = 2.0D0 * rtop * sin(pi/n_tf)
     else 
-       tftort = 2.0D0 * r_tf_inleg_out*sin(pi/tfno)
+       tftort = 2.0D0 * r_tf_inleg_out*sin(pi/n_tf)
     end if
 
     ! Inboard total cross-sectional area (m2)
@@ -264,7 +264,7 @@ contains
     if ( bore == 0.0D0 ) then
        cforce = 0.0D0
     else
-       cforce = 0.5D0 * bmaxtf * ritfc / tfno  !  N/m
+       cforce = 0.5D0 * bmaxtf * ritfc / n_tf  !  N/m
     end if
     ! ******
 
@@ -272,11 +272,11 @@ contains
     ! Power losses 
     ! ******
     ! Copper resistivity (0.92 factor for glidcop C15175)
-    if ( itfsup == 0 ) then
+    if ( i_tf_sup == 0 ) then
     rhocp = 1.0D-8 * ( 1.72D0 + 0.0039D0*(tcpav - 273.15D0) ) / 0.92D0
 
     ! Aluminium cryogenic resistivity
-   else if ( itfsup == 2 ) then
+   else if ( i_tf_sup == 2 ) then
       rhocp = 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav
    end if
 
@@ -325,13 +325,13 @@ contains
     voltfleg = ltfleg * arealeg
 
     ! Outboard leg current density
-    cdtfleg = ritfc/(tfno * arealeg)
+    cdtfleg = ritfc/(n_tf * arealeg)
 
     ! Resistive power
     ! Rem : Assuming the same CP-leg resistivity (as rhotfleg = -1 by default)
     if ( abs( rhotfleg + 1 ) < epsilon(rhotfleg) ) rhotfleg = rhocp
     tflegres = ltfleg * rhotfleg/arealeg
-    presleg  = (ritfc/tfno)**2 * tflegres * tfno 
+    presleg  = (ritfc/n_tf)**2 * tflegres * n_tf 
     ! ----------------------------------
 
 
@@ -339,33 +339,33 @@ contains
     ! -----------------------------
     ! Vertircal force    
     ! The outer radius of the inner leg and the inner radius of the outer leg is taken
-    ! vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inleg_out) / tfno 
-    vforce = 0.25D0 * bmaxtf * ritfc / tfno * ( 0.5D0 * tfcth +                                       &     ! Inner leg side component 
+    ! vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inleg_out) / n_tf 
+    vforce = 0.25D0 * bmaxtf * ritfc / n_tf * ( 0.5D0 * tfcth +                                       &     ! Inner leg side component 
                                               & r_tf_inleg_out * log(r_tf_outleg_in/r_tf_inleg_out) + &     ! TF bore component
                                               & 0.5D0 * tfthko * (r_tf_inleg_out/r_tf_outleg_in) )   ! Outer leg side component
 
     ! Current turn information 
     if (itart == 0) then ! CT case
        !  Number of turns per leg
-       turnstf = ritfc / (tfno * cpttf)
+       turnstf = ritfc / (n_tf * cpttf)
     else                 ! ST case
        !  Current per turn (N.B. cannot set CPTTF as an iteration variable for ST)
        turnstf = 1.0D0
-       cpttf = ritfc/(turnstf*tfno)
+       cpttf = ritfc/(turnstf*n_tf)
     end if
 
     ! Weight of conductor (outer legs, inner legs, total)
     ! ******
     ! Coolant density assumed negligible (gaz) 
     ! Copper
-    if ( itfsup == 0 ) then
-       whttflgs = voltfleg * tfno * (1.0D0 - vftf) * dcopper ! outer legs
+    if ( i_tf_sup == 0 ) then
+       whttflgs = voltfleg * n_tf * (1.0D0 - vftf) * dcopper ! outer legs
        whtcp = volcp * dcopper                               ! inner legs
        whttf = whtcp + whttflgs                              ! total
 
     ! Aluminium
-    else if ( itfsup == 2 ) then
-       whttflgs = voltfleg * tfno * (1.0D0 - vftf) * dalu  ! outer legs
+    else if ( i_tf_sup == 2 ) then
+       whttflgs = voltfleg * n_tf * (1.0D0 - vftf) * dalu  ! outer legs
        whtcp = volcp * dalu                                ! inner legs
        whttf = whtcp + whttflgs                            ! total
     end if
@@ -396,7 +396,7 @@ contains
 
     !  Output section
     call oheadr(outfile,'Resistive TF Coil Information')
-    call ovarin(outfile,'Resistive TF coil option (0:copper 2:aluminium)','(itfsup)',itfsup)
+    call ovarin(outfile,'Resistive TF coil option (0:copper 2:aluminium)','(i_tf_sup)',i_tf_sup)
     call ovarre(outfile,'Inboard leg current density (A/m2)','(oacdcp)',oacdcp)
     call ovarre(outfile,'Outboard leg current density (A/m2)','(cdtfleg)',cdtfleg)
     call ovarre(outfile,'Number of turns per outboard leg','(turnstf)',turnstf)
@@ -499,7 +499,7 @@ contains
     vcoolav = vcool * amid/acpav
 
     ! Water coolant physical properties
-    if ( itfsup ==  0 ) then
+    if ( i_tf_sup ==  0 ) then
        coolant_density = denh2o
        coolant_cp      = cph2o
        coolant_visco   = muh2o
@@ -507,12 +507,12 @@ contains
     end if
  
         ! Water coolant
-    if ( itfsup ==  0 ) then
+    if ( i_tf_sup ==  0 ) then
        dtiocool = ptot / (coolant_density*vcoolav*acool*coolant_cp)
 
     ! Helium coolant
     ! **************
-    else if ( itfsup ==  2 ) then
+    else if ( i_tf_sup ==  2 ) then
        tcool_calc = tcoolin ! K
 
        ! If T < 4 K -> Extrapolated data
@@ -565,7 +565,7 @@ contains
     
     ! Helium viscosity
     ! Ref : V.D. Arp,; R.D. McCarty ; Friend, D.G., Technical Note 1334, National Institute of Standards and Technology, Boulder, CO, 1998, 0.  (homemade fit 14 < T < 50 K fit)
-    if ( itfsup == 2 ) then
+    if ( i_tf_sup == 2 ) then
        if      ( tcool_calc < 22.5D0 ) then  ! Fit in the 4 < T < 25 K range
           coolant_visco = exp( -9.19688182D0 - 4.83007225D-1*tcool_calc + 3.47720002D-2*tcool_calc**2 &
                        & - 1.17501538D-3*tcool_calc**3 + 1.54218249D-5*tcool_calc**4 )  ! Pa.s
@@ -580,7 +580,7 @@ contains
     reyn = coolant_density * vcool * dcool / coolant_visco
    
     ! Prandlt number
-    if ( itfsup == 2 ) then
+    if ( i_tf_sup == 2 ) then
 
        ! Helium thermal conductivity [W/(m.K)]
        ! ******
@@ -614,11 +614,11 @@ contains
     ! Conductor thermal conductivity
     ! ******
     !  Copper conductor
-    if ( itfsup ==  0 ) then
+    if ( i_tf_sup ==  0 ) then
        conductor_th_cond = k_copper
     
     ! Cryogenic aluminium 
-    else if ( itfsup ==  2 ) then
+    else if ( i_tf_sup ==  2 ) then
 
        ! Ref : R.W. Powel, National Standard Reference Data Series, nov 25 1966 (homemade fit 15 < T < 60 K)
        conductor_th_cond = 16332.2073D0 - 776.91775*tcpav + 13.405688D0*tcpav**2 - 8.01D-02*tcpav**3 ! W/(m.K)
@@ -650,9 +650,9 @@ contains
          log10( roughrat/3.7D0 + 14.5D0/reyn) ) )**2
 
     ! Pumping efficiency
-    if      ( itfsup == 0 ) then ! Water cooled
+    if      ( i_tf_sup == 0 ) then ! Water cooled
       etapump = 0.8D0
-    else if ( itfsup == 2 ) then ! Cryogenic helium
+    else if ( i_tf_sup == 2 ) then ! Cryogenic helium
       etapump = 0.6D0
     end if
 
@@ -706,7 +706,7 @@ contains
 
     call osubhd(outfile,'Pump Power :')
     call ovarre(outfile,'Coolant pressure drop (Pa)','(dpres)',dpres)
-    if ( itfsup == 0 ) then ! Saturation pressure calculated with Water data ...
+    if ( i_tf_sup == 0 ) then ! Saturation pressure calculated with Water data ...
        call ovarre(outfile,'Coolant inlet pressure (Pa)','(presin)',presin)
     end if
     call ovarre(outfile,'Pump power (W)','(ppump)',ppump)

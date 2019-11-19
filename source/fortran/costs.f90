@@ -282,7 +282,7 @@ contains
 
        call oshead(outfile,'Magnets')
 
-       if (itfsup /= 1) then  !  Resistive TF coils
+       if (i_tf_sup /= 1) then  !  Resistive TF coils
           if (itart == 1) then
              call ocosts(outfile,'(c22211)','Centrepost costs (M$)',c22211)
           else
@@ -1483,7 +1483,7 @@ contains
     cmlsa(3) = 0.9225D0
     cmlsa(4) = 1.0000D0
 
-    if (itfsup /= 1) then  !  Resistive TF coils
+    if (i_tf_sup /= 1) then  !  Resistive TF coils
 
        !  Account 222.1.1 : Inboard TF coil legs
 
@@ -1527,17 +1527,17 @@ contains
 
        !  Total conductor costs
 
-       c22211 = 1.0D-6 * ctfconpm * tfno * tfleng * turnstf
+       c22211 = 1.0D-6 * ctfconpm * n_tf * tfleng * turnstf
        c22211 = fkind * c22211 * cmlsa(lsa)
 
        !  Account 222.1.2 : Winding
 
-       c22212 = 1.0D-6 * ucwindtf * tfno * tfleng * turnstf
+       c22212 = 1.0D-6 * ucwindtf * n_tf * tfleng * turnstf
        c22212 = fkind * c22212 * cmlsa(lsa)
 
        !  Account 222.1.3 : Case
 
-       c22213 = 1.0D-6 * (whtcas*uccase) * tfno
+       c22213 = 1.0D-6 * (whtcas*uccase) * n_tf
        c22213 = fkind * c22213 * cmlsa(lsa)
 
        !  Account 222.1.4 : Intercoil structure
@@ -2038,7 +2038,7 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_hist  24/05/19 SIM Changed tfno*estotf to estotftgj for c22513 (#847)
+    !+ad_hist  24/05/19 SIM Changed n_tf*estotf to estotftgj for c22513 (#847)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2061,8 +2061,8 @@ contains
 
     !  Account 225.1.2 : TF coil breakers (zero cost for copper coils)
 
-    if (itfsup == 1) then
-       c22512 = 1.0D-6 * (uctfbr*tfno*(cpttf*vtfskv*1.0D3)**expel+ &
+    if (i_tf_sup == 1) then
+       c22512 = 1.0D-6 * (uctfbr*n_tf*(cpttf*vtfskv*1.0D3)**expel+ &
             uctfsw*cpttf)
     else
        c22512 = 0.0D0
@@ -2071,17 +2071,17 @@ contains
 
     !  Account 225.1.3 : TF coil dump resistors
 
-    c22513 = 1.0D-6 * (1.0D9*uctfdr*estotftgj + uctfgr * 0.5D0*tfno)
+    c22513 = 1.0D-6 * (1.0D9*uctfdr*estotftgj + uctfgr * 0.5D0*n_tf)
     c22513 = fkind * c22513
 
     !  Account 225.1.4 : TF coil instrumentation and control
 
-    c22514 = 1.0D-6 * uctfic * (30.0D0*tfno)
+    c22514 = 1.0D-6 * uctfic * (30.0D0*n_tf)
     c22514 = fkind * c22514
 
     !  Account 225.1.5 : TF coil bussing
 
-    if (itfsup /= 1) then
+    if (i_tf_sup /= 1) then
        c22515 = 1.0D-6 * uctfbus * tfbusmas
     else
        c22515 = 1.0D-6 * ucbus * cpttf * tfbusl

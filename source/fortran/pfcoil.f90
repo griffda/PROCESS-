@@ -299,7 +299,7 @@ contains
              zcls(j,k) = rminor * zref(j) * signn(k)
              !  Coil radius follows TF coil curve for SC TF (D-shape)
              !  otherwise stacked for resistive TF (rectangle-shape)
-             if (itfsup /= 1) then
+             if (i_tf_sup /= 1) then
                  rcls(j,k) = rclsnorm
              else
                  rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2)

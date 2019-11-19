@@ -605,7 +605,7 @@ or \texttt{2} for ellipses.
 {\label{fig:build_d} \textit{Schematic diagram of the fusion
     power core of a typical tokamak power plant modelled by \process, showing
     the relative positions of the components. A double null plasma is assumed
-    (\texttt{snull=0}) --- compare Figure~\ref{fig:buildsnd}, and the first
+    (\texttt{i_single_null=0}) --- compare Figure~\ref{fig:buildsnd}, and the first
     wall, blanket, shield and vacuum vessel are D-shaped in cross-section
     (chosen by setting switch \texttt{fwbsshape=1}) --- compare
     Figure~\ref{fig:build_e}. Also shown are the code variables used to define
@@ -637,7 +637,7 @@ Section~\ref{sec:itvars}) to help in the optimisation process.
 {\label{fig:buildsnd}
   \textit{Schematic diagram of the fusion power core of a typical tokamak
     power plant modelled by \process, showing the relative positions of the
-    components. A single null plasma is assumed (\texttt{snull=1}) --- compare
+    components. A single null plasma is assumed (\texttt{i_single_null=1}) --- compare
     Figure~\ref{fig:build_e}. The radial build is the same as for a double null
     configuration; shown along the vertical axis are the code variables used
     to define the vertical thicknesses of the components. The arrowed labels
@@ -724,7 +724,7 @@ The plasma surface area, cross-sectional area and volume are calculated using
 formulations that approximate the LCFS as a revolution of two arcs which
 intersect the plasma X-points and the plasma midplane outer and inner
 radii. (This is a reasonable assumption for double-null diverted plasmas, but
-will be inaccurate for single-null plasmas, \texttt{snull = 1}.) Switch
+will be inaccurate for single-null plasmas, \texttt{i_single_null = 1}.) Switch
 \texttt{igeom} determines whether an old method is used (\texttt{igeom = 0})
 or calculations based on a more recent derivation (\texttt{igeom =
   1})~\cite{logbook14_41}.
@@ -1598,9 +1598,9 @@ The inboard and outboard shield thicknesses (\texttt{shldith} and
 
 The divertor provides a means of removing plasma reaching the scrape-off layer. The principal outputs from the code are the divertor heat load, used to determine its lifetime, and its peak temperature. The divertor is cooled either by gaseous helium or by pressurised water.
 
-Switch \texttt{snull} controls the overall plasma configuration. Setting
-\texttt{snull = 0} corresponds to an up-down symmetric, double null
-configuration, while \texttt{snull = 1} (the default) assumes a single null
+Switch \texttt{i_single_null} controls the overall plasma configuration. Setting
+\texttt{i_single_null = 0} corresponds to an up-down symmetric, double null
+configuration, while \texttt{i_single_null = 1} (the default) assumes a single null
 plasma with the divertor at the bottom of the machine. The vertical build (see
 Figure~\ref{fig:buildsnd}) and PF coil current scaling algorithms take the
 value of this switch into account, although not the plasma geometry at
@@ -1612,7 +1612,7 @@ The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER is 
 \label{sec:tfcoil}
 
 The toroidal field (TF) coils can be either resistive or
-superconducting. Switch \texttt{itfsup} should be set to \texttt{1} for
+superconducting. Switch \texttt{i_tf_sup} should be set to \texttt{1} for
 superconducting coils, or \texttt{0} for purely copper coils. In the
 superconductor model, the \textit{CICC}\/ (Conductor In Cable Conduit)
 structure shown in Figure~\ref{fig:CICC} is assumed, and the coils are cooled
@@ -1658,7 +1658,7 @@ current density, the stresses on the structure, the energy stored and the
 magnetic field produced by the coils.
 
 The following options are available within the superconducting TF coil model
-(\texttt{itfsup = 1}).
+(\texttt{i_tf_sup = 1}).
 
 \subsubsection{Superconducting materials}
 \label{sec:superconductors}
@@ -1769,7 +1769,7 @@ In the following, all variables are defined in the variable descriptor file
 the PF coils accurately.
 
 The three possible values of \texttt{ipfloc(j)} correspond to the following PF
-coil positions: (\Red{Redo taking into account snull and other recent changes
+coil positions: (\Red{Redo taking into account i_single_null and other recent changes
   e.g. rclsnorm})
 \begin{description} %!%!%! check this
 
@@ -2345,7 +2345,7 @@ summarises the switch values relevant to each aspect ratio regime.
     \texttt{ishape} (Section~\ref{sec:plasma_geometry}) & 0, 2 & 0, 1 \\
     \texttt{ibss} (Section~\ref{sec:bootstrap}) & 1, 2, 3 & 2, 3 \\
     \texttt{icurr} (Section~\ref{sec:current_scaling}) & 1, 3, 4, 5, 6, 7 & 2, 9 \\
-    \texttt{itfsup} (Section~\ref{sec:tfcoil}) & 0, 1 & 0 \\
+    \texttt{i_tf_sup} (Section~\ref{sec:tfcoil}) & 0, 1 & 0 \\
     \hline
 \end{tabular}
 \end{center}
@@ -4283,13 +4283,13 @@ csytf = 990000000.0  * Yield strength of case (tf coils and cs coils) (pa)
 fcutfsu = 0.61471  * Copper fraction of cable conductor (tf coils)
 oacdcp = 12367000.0  * Overall current density in tf coil inboard legs (a/m2)
 ripmax = 0.6     * Maximum allowable toroidal field ripple amplitude
-tfno = 18.0      * Number of tf coils (default = 50 for stellarators)
+n_tf = 18.0      * Number of tf coils (default = 50 for stellarators)
 tftmp = 4.75     * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 0.001  * Conduit insulation thickness (m)
 thkcas = 0.43968  * Inboard tf coil case outer (non-plasma side) thickness (m)
 thwcndut = 0.004  * Tf coil conduit case thickness (m)
 tmargmin = 1.7   * Minimum allowable temperature margin (cs and tf coils) (k)
-vftf = 0.333     * Coolant fraction of tf coil leg (itfsup=0)
+vftf = 0.333     * Coolant fraction of tf coil leg (i_tf_sup=0)
 
 
 *-----------------Times Variables------------------*
@@ -4382,7 +4382,7 @@ DENSTL=7800.                          [Steel density]
 * TF coil parameters
 
 OACDCP = 1.4e7,                       [N.B. active iteration variable 12]
-ITFSUP = 1,                           [Use superconducting TF coils]
+i_tf_sup = 1,                           [Use superconducting TF coils]
 RIPMAX = 5.,                          [Maximum TF ripple]
 
 * PF coil parameters

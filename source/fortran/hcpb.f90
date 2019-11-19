@@ -1779,7 +1779,7 @@ contains
     ! No shileding integrated
     ! Nuclear heating from solid angle fraction and neutron mean free path in copper
     ! Rem SK : This calculation must be replaced by neutronics with shielding
-    if ( itfsup == 0 ) then
+    if ( i_tf_sup == 0 ) then
 
       ! Fraction of neutrons that hit the centre post neutronic shield
       f_neut_geom = cphalflen / sqrt(cphalflen**2 + (rmajor-cpradius)**2 ) * &
@@ -1800,7 +1800,7 @@ contains
     ! ------------
     ! From Pfus = 1 GW ST neutronic calculations assuming
     ! Tungsten carbyde with 13% water cooling fraction
-    else if ( itfsup == 2 ) then
+    else if ( i_tf_sup == 2 ) then
       pnuccp = ( pneutmw / 800.0D0 ) * exp( 3.882D0 - 16.69D0*shldith )
     end if 
     ! ------------
@@ -2596,7 +2596,7 @@ contains
     ! Rough estimate of TF coil volume used, assuming 25% of the total
     ! TF coil perimeter is inboard, 75% outboard
     ptfnuc = 0.25D0*tfleng*tfareain * pnuctfi &
-         + 0.75D0*tfleng*arealeg*tfno * pnuctfo
+         + 0.75D0*tfleng*arealeg*n_tf * pnuctfo
 
     ! Maximum helium concentration in vacuum vessel at
     ! end of plant lifetime (appm)

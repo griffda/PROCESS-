@@ -230,7 +230,7 @@ contains
     !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
     !+ad_hist  03/10/12 PJK CENTORI version converted for PROCESS
     !+ad_hist  10/10/12 PJK Removed IVMS
-    !+ad_hist  18/12/12 PJK Added SNULL; removed IDIVRT
+    !+ad_hist  18/12/12 PJK Added i_single_null; removed IDIVRT
     !+ad_hist  03/01/13 PJK Removed ICULDL (replaced with error trap)
     !+ad_hist  08/01/13 PJK Commented out ICULDL error trap for time being
     !+ad_hisc               (ICULDL simply ignored now)
@@ -773,8 +773,8 @@ contains
        case ('rnbeam')
           call parse_real_variable('rnbeam', rnbeam, 0.0D0, 1.0D0, &
                'Hot beam density / electron density')
-       case ('snull')
-          call parse_int_variable('snull', snull, 0, 1, &
+       case ('i_single_null')
+          call parse_int_variable('i_single_null', i_single_null, 0, 1, &
                'Switch for single/double null plasma')
        case ('ssync')
           call parse_real_variable('ssync', ssync, 0.0D0, 1.0D0, &
@@ -1862,8 +1862,8 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('itfsup')
-          call parse_int_variable('itfsup', itfsup, 0, 2, &
+       case ('i_tf_sup')
+          call parse_int_variable('i_tf_sup', i_tf_sup, 0, 2, &
                'Switch for TF coil type')
        case ('jbus')
           call parse_real_variable('jbus', jbus, 1.0D4, 1.0D8, &
@@ -1938,8 +1938,8 @@ contains
        case ('rhotfleg')
           call parse_real_variable('rhotfleg', rhotfleg, 1.0D-10, 1.0D-5, &
                'TF coil leg resistivity (ohm-m)')
-       case ('tfno')
-          call parse_real_variable('tfno', tfno, 0.0D0, 100.0D0, &
+       case ('n_tf')
+          call parse_real_variable('n_tf', n_tf, 0.0D0, 100.0D0, &
                'Number of TF coils')
        case ('tftmp')
           call parse_real_variable('tftmp', tftmp, 0.01D0, 10.0D0, &

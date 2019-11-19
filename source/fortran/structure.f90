@@ -85,7 +85,7 @@ contains
 
     twhtpf = whtpf + whtpfs
 
-    call struct(plascur,rmajor,rminor,kappa,bt,itfsup,ipfres,dr_tf_inner_bore+tfthko+tfcth, &
+    call struct(plascur,rmajor,rminor,kappa,bt,i_tf_sup,ipfres,dr_tf_inner_bore+tfthko+tfcth, &
          hmax,whtshld,divmas,twhtpf,whttf,fwmass,whtblkt,coolmass, &
          dewmkg,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
          gsmass)
@@ -94,7 +94,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine struct(ai,r0,a,akappa,b0,itfsup,ipfres,tf_h_width,tfhmax, &
+  subroutine struct(ai,r0,a,akappa,b0,i_tf_sup,ipfres,tf_h_width,tfhmax, &
        shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass, &
        dewmass,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
        gsm)
@@ -110,7 +110,7 @@ contains
     !+ad_args  a : input real : plasma minor radius (m)
     !+ad_args  akappa : input real : plasma elongation
     !+ad_args  b0 : input real : axial B-field (T)
-    !+ad_args  itfsup : input integer : switch denoting whether TF coils
+    !+ad_args  i_tf_sup : input integer : switch denoting whether TF coils
     !+ad_argc                           are superconducting
     !+ad_args  ipfres : input integer : switch denoting whether PF coils
     !+ad_argc                           are resistive
@@ -150,7 +150,7 @@ contains
     !  Arguments
     real(kind(1.0D0)), intent(in) :: ai,r0,a,akappa,b0,tf_h_width,tfhmax, &
          shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass,dewmass
-    integer, intent(in) :: outfile,iprint,itfsup,ipfres
+    integer, intent(in) :: outfile,iprint,i_tf_sup,ipfres
     real(kind(1.0D0)), intent(out) :: fncmass,aintmass,clgsmass,coldmass,gsm
 
     !  Local variables
@@ -171,7 +171,7 @@ contains
 
     !  Total mass of cooled components
     coldmass = 0.0D0
-    if (itfsup == 1) coldmass = coldmass + tfmass + aintmass + dewmass
+    if (i_tf_sup == 1) coldmass = coldmass + tfmass + aintmass + dewmass
     if (ipfres /= 1) coldmass = coldmass + pfmass
 
     !  Coil gravity support mass

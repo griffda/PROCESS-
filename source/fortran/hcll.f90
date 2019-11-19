@@ -642,23 +642,23 @@ module kit_hcll_module
      nb_pol_ob = ceiling(len_act_ob/dp_bb_ib_max)
 
      ! Number of inboard  modules in the toroidal direction (blanket segment)
-     nb_tor_ib = ceiling((2.0D0*pi*rad_ib)/(tfno*dt_bb_ib_max))
+     nb_tor_ib = ceiling((2.0D0*pi*rad_ib)/(n_tf*dt_bb_ib_max))
 
      ! Number of outboard  modules in the toroidal direction (blanket segment)
-     nb_tor_ob = ceiling((2.0D0*pi*rad_ob)/(tfno*dt_bb_ob_max))
+     nb_tor_ob = ceiling((2.0D0*pi*rad_ob)/(n_tf*dt_bb_ob_max))
 
      ! Poloidal length of inboard/outboard blanket module
      dp_bb_ib = len_act_ib/nb_pol_ib
      dp_bb_ob = len_act_ob/nb_pol_ob
 
      ! Toroidal length of inboard/outboard blanket module (m)
-     dt_bb_ib = 2.0D0*pi*rad_ib/(tfno*nb_tor_ib)
-     dt_bb_ob = 2.0D0*pi*rad_ob/(tfno*nb_tor_ob)
+     dt_bb_ib = 2.0D0*pi*rad_ib/(n_tf*nb_tor_ib)
+     dt_bb_ob = 2.0D0*pi*rad_ob/(n_tf*nb_tor_ob)
 
      ! Inboard/outboard and total FW area (m2)
      ! TODO make with work with first wall area from regular calculation
-     area_fw_ib = dp_bb_ib*dt_bb_ib*nb_pol_ib*nb_tor_ib*tfno
-     area_fw_ob = dp_bb_ob*dt_bb_ob*nb_pol_ob*nb_tor_ob*tfno
+     area_fw_ib = dp_bb_ib*dt_bb_ib*nb_pol_ib*nb_tor_ib*n_tf
+     area_fw_ob = dp_bb_ob*dt_bb_ob*nb_pol_ob*nb_tor_ob*n_tf
      area_fw = area_fw_ib + area_fw_ob
 
      ! Breeding Zone (BZ) !
@@ -813,9 +813,9 @@ module kit_hcll_module
      !!!!!!!!!!!!!!!!!
 
      ! Volume of inboard/outboard and total blanket (m3)
-     volblkti = (vol_mf_ib*nb_pol_ib*nb_tor_ib + vol_bz_ib*nb_pol_ib*nb_tor_ib + vol_fw_ib*(nb_pol_ib*nb_tor_ib))*tfno
-     volblkto = (vol_mf_ob*nb_pol_ob*nb_tor_ob + vol_bz_ob*nb_pol_ob*nb_tor_ob + vol_fw_ob*(nb_pol_ob*nb_tor_ob))*tfno
-     volblkt = (vol_fw + vol_bz + vol_mf)*tfno
+     volblkti = (vol_mf_ib*nb_pol_ib*nb_tor_ib + vol_bz_ib*nb_pol_ib*nb_tor_ib + vol_fw_ib*(nb_pol_ib*nb_tor_ib))*n_tf
+     volblkto = (vol_mf_ob*nb_pol_ob*nb_tor_ob + vol_bz_ob*nb_pol_ob*nb_tor_ob + vol_fw_ob*(nb_pol_ob*nb_tor_ob))*n_tf
+     volblkt = (vol_fw + vol_bz + vol_mf)*n_tf
 
      ! Modules and segments mass !
      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -844,19 +844,19 @@ module kit_hcll_module
      mass_sector = mass_segm_ib*nb_tor_ib + mass_segm_ob*nb_tor_ob
 
      ! Total He mass for the whole blanket (kg)
-     mass_he_blanket = (mass_he_segm_ib*nb_tor_ib + mass_he_segm_ob*nb_tor_ob)*tfno
+     mass_he_blanket = (mass_he_segm_ib*nb_tor_ib + mass_he_segm_ob*nb_tor_ob)*n_tf
 
      ! Total PbLi mass for the whole blanket (kg)
-     mass_pbli_blanket = (mass_pbli_segm_ib*nb_tor_ib + mass_pbli_segm_ob*nb_tor_ob)*tfno
+     mass_pbli_blanket = (mass_pbli_segm_ib*nb_tor_ib + mass_pbli_segm_ob*nb_tor_ob)*n_tf
 
      ! Total steel mass for the whole blanket (kg)
-     mass_steel_blanket = (mass_steel_segm_ib*nb_tor_ib + mass_steel_segm_ob*nb_tor_ob)*tfno
+     mass_steel_blanket = (mass_steel_segm_ib*nb_tor_ib + mass_steel_segm_ob*nb_tor_ob)*n_tf
 
      ! Total tungsten mass for the whole breeding blanket (kg)
-     mass_w_blanket = (mass_w_segm_ib*nb_tor_ib + mass_w_segm_ob*nb_tor_ob)*tfno
+     mass_w_blanket = (mass_w_segm_ib*nb_tor_ib + mass_w_segm_ob*nb_tor_ob)*n_tf
 
      ! Total blanket mass (kg)
-     mass_blanket = mass_sector*tfno
+     mass_blanket = mass_sector*n_tf
 
    end subroutine
 

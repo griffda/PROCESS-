@@ -660,7 +660,7 @@ subroutine check
     !+ad_hist  01/04/98 PJK Added rnbeam reset for no NBI
     !+ad_hist  19/01/99 PJK Added warning about iiter flag with non-ITER profiles
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  18/12/12 PJK Added snull and other PF coil location checks
+    !+ad_hist  18/12/12 PJK Added i_single_null and other PF coil location checks
     !+ad_hist  11/04/13 PJK Energy storage building volume set to zero if lpulse=0
     !+ad_hist  23/05/13 PJK Coolant type set to water if blktmodel>0
     !+ad_hist  10/06/13 PJK Removed enforcement of ishape=0 for non-TART tokamaks
@@ -1088,32 +1088,32 @@ subroutine check
         ipfloc(3) = 3
 
         ! Call a lvl 3 error if superconductor magnets are used
-        if ( itfsup == 1 ) call report_error(233)
+        if ( i_tf_sup == 1 ) call report_error(233)
 
         ! Initialize the CP conductor temperature to cryogenic temperatire for cryo-al magnets (20 K)
-        if ( itfsup == 2 ) tcpav  = 20.0D0
+        if ( i_tf_sup == 2 ) tcpav  = 20.0D0
 
         ! Check if the initial centrepost coolant loop adapted to the magnet technology
         ! Ice cannot flow so tcoolin > 273.15 K 
-        if ( itfsup == 0 .and. tcoolin < 273.15D0 ) call report_error(234)
+        if ( i_tf_sup == 0 .and. tcoolin < 273.15D0 ) call report_error(234)
 
         ! Too large temperatures leading to out of range resisitivity model
-        if ( itfsup == 2 .and. tcoolin > 50.0D0 ) call report_error(235)
+        if ( i_tf_sup == 2 .and. tcoolin > 50.0D0 ) call report_error(235)
 
         ! Check if the boostrap current selection is addapted to ST
         if (ibss  == 1) call report_error(38)
 
         ! Check if a single null divertor is used (double null not yet implemented)
-        if (snull == 1) call report_error(39)
+        if (i_single_null == 1) call report_error(39)
     ! --------------------------------
 
     else
 
         if (icurr == 2 .or. icurr == 9) call report_error(40)
 
-        if (snull == 0) then
+        if (i_single_null == 0) then
             idivrt = 2
-        else  !  snull == 1
+        else  !  i_single_null == 1
             idivrt = 1
         end if
 
@@ -1134,7 +1134,7 @@ subroutine check
 
         if (k == 1) call report_error(42)
         if (k > 2) call report_error(43)
-        if ((snull == 1).and.(j < 2)) call report_error(44)
+        if ((i_single_null == 1).and.(j < 2)) call report_error(44)
 
     end if
 
@@ -1156,7 +1156,7 @@ subroutine check
     !  Ensure that if TF coils are non-superconducting,
     !  only simple stress calculations are performed
     ! See Issue #781
-    ! if (itfsup /= 1) tfc_model = 0
+    ! if (i_tf_sup /= 1) tfc_model = 0
 
     ! TF coil
     ! -------
@@ -1229,7 +1229,7 @@ subroutine check
     end if
 
     ! Initialise superconductor cable parameters
-    if(itfsup==1)then
+    if(i_tf_sup==1)then
         call initialise_cables()
     end if
 

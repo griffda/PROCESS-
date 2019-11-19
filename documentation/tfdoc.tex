@@ -140,10 +140,10 @@
     \noi The toroidal angular extent of a single TF coil inner leg is:
 
     \begin{equation}\label{eq: thtcoil}
-    \text{thtcoil} = \frac{\pi}{\text{tfno}} 
+    \text{thtcoil} = \frac{\pi}{\text{n_tf}} 
     \end{equation}
 
-    \noi where \emph{tfno} is the number of TF coils (seen in figure \ref{fig: geom-1}). 
+    \noi where \emph{n_tf} is the number of TF coils (seen in figure \ref{fig: geom-1}). 
     This enables the calculation of the annular area of the TF coil inboard legs.
 
     \begin{equation}\label{eq: tfareain}
@@ -161,7 +161,7 @@
     \noi The total current per TF coil is then given by
 
     \begin{equation}
-        \text{tfc\_current} = \frac{\text{ritfc}}{\text{tfno}}
+        \text{tfc\_current} = \frac{\text{ritfc}}{\text{n_tf}}
     \end{equation}
 
     \noi After defining the dimensions of the inboard leg PROCESS calculates 
@@ -211,7 +211,7 @@
     vertical stress on the TF coil uses this area.
 
     \begin{equation}\label{eq: acasetf}
-    \text{acasetf} = \frac{\text{tfareain}}{\text{tfno}} - \text{awpc}
+    \text{acasetf} = \frac{\text{tfareain}}{\text{n_tf}} - \text{awpc}
     \end{equation}
 
     \noi Given the relative winding pack areas PROCESS calculates the dimensions of 
@@ -219,7 +219,7 @@
     calculate the number of turns in the inner leg. The winding pack current density is:
 
     \begin{equation}
-    j_{wptf} = \text{max}(1.0, \frac{\text{ritfc}}{\text{tfno} \times \text{awptf}})
+    j_{wptf} = \text{max}(1.0, \frac{\text{ritfc}}{\text{n_tf} \times \text{awptf}})
     \end{equation}
 
     \begin{figure}[t!]
@@ -361,7 +361,7 @@
     vertical stress on the TF coil uses this area.
 
     \begin{equation}\label{eq: acasetf-int}
-    \text{acasetf} = \frac{\text{tfareain}}{\text{tfno}} - \text{awpc}
+    \text{acasetf} = \frac{\text{tfareain}}{\text{n_tf}} - \text{awpc}
     \end{equation}
 
     \noi Given the relative winding pack areas PROCESS calculates the dimensions of 
@@ -369,7 +369,7 @@
     calculate the number of turns in the inner leg. The winding pack current density is:
 
     \begin{equation}
-    j_{wptf} = \text{max}(1.0, \frac{\text{ritfc}}{\text{tfno} \times \text{awptf}})
+    j_{wptf} = \text{max}(1.0, \frac{\text{ritfc}}{\text{n_tf} \times \text{awptf}})
     \end{equation}
 
     \begin{figure}[t!]
@@ -949,7 +949,7 @@
     forces on the TF coil. 
 
     \vspace{1.0cm}\begin{equation}\label{eq: cforce}
-    \text{cforce} = \frac{\text{bmaxtf} \times \text{ritfc}}{2 \times \text{tfno}}
+    \text{cforce} = \frac{\text{bmaxtf} \times \text{ritfc}}{2 \times \text{n_tf}}
     \end{equation}
 
     \begin{equation}\label{eq: vforce}

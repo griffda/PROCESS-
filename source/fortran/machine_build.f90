@@ -92,7 +92,7 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  18/12/12 PJK/RK Added single-null code
-    !+ad_hist  02/05/13 PJK Changed snull=1 top shield thickness to shldtth
+    !+ad_hist  02/05/13 PJK Changed i_single_null=1 top shield thickness to shldtth
     !+ad_hist  09/05/13 PJK Changed first wall area calculation to be
     !+ad_hisc               consistent with fwbsshape switch
     !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
@@ -170,8 +170,8 @@ contains
     rbldtotf = r_tf_inboard_mid + 0.5D0*tfcth
 
     ! Additional gap spacing due to flat surfaces of TF
-    if ( itfsup == 1 ) then
-      deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    if ( i_tf_sup == 1 ) then
+      deltf = rbldtotf * ((1.0d0 / cos(pi/n_tf)) - 1.0d0) + tftsgap
     else
       deltf = tftsgap
     end if 
@@ -206,7 +206,7 @@ contains
     rsldo = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
 
     !  Thickness of outboard TF coil legs
-    if ( itfsup /= 1 ) then
+    if ( i_tf_sup /= 1 ) then
        tfthko = tfootfi*tfcth
     else
        tfthko = tfcth
@@ -214,7 +214,7 @@ contains
 
     !  Radius to centre of outboard TF coil legs
     r_tf_outboard_mid = rsldo + vvblgap + ddwi + gapomin + thshield + tftsgap + 0.5D0*tfthko
-    
+
     call ripple_amplitude(ripple,ripmax,r_tf_outboard_mid,r_tf_outboard_midl,ripflag)
 
     !  If the ripple is too large then move the outboard TF coil leg
@@ -229,7 +229,7 @@ contains
     dr_tf_inner_bore = ( r_tf_outboard_mid - 0.5D0*tfthko ) - ( r_tf_inboard_mid - 0.5D0*tfcth )
 
     !  Call ripple calculation again with new r_tf_outboard_mid/gapsto value
-    !  call rippl(ripmax,rmajor,rminor,r_tf_outboard_mid,tfno,ripple,r_tf_outboard_midl)
+    !  call rippl(ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf,ripple,r_tf_outboard_midl)
     call ripple_amplitude(ripple,ripmax,r_tf_outboard_mid,r_tf_outboard_midl,ripflag)
 
     !  Calculate first wall area
@@ -240,7 +240,7 @@ contains
     !  Half-height of first wall (internal surface)
 
     hbot = rminor*kappa + vgap + divfix - blnktth - 0.5D0*(fwith+fwoth)
-    if (idivrt == 2) then  !  (i.e. snull=0)
+    if (idivrt == 2) then  !  (i.e. i_single_null=0)
        htop = hbot
     else
        htop = rminor*kappa + vgaptop
@@ -317,11 +317,11 @@ contains
        call report_error(62)
 
        if (ripflag == 1) then
-          fdiags(1) = wwp1*tfno/rmajor
+          fdiags(1) = wwp1*n_tf/rmajor
           call report_error(141)
        else if (ripflag == 2) then
           ! Convert to integer as idiags is integer array
-          idiags(1) = INT(tfno)
+          idiags(1) = INT(n_tf)
           call report_error(142)
        else
           fdiags(1) = (rmajor+rminor)/r_tf_outboard_mid
@@ -434,9 +434,9 @@ contains
 
     call oheadr(outfile,'Vertical Build')
 
-    call ovarin(mfile,'Divertor null switch','(snull)',snull)
+    call ovarin(mfile,'Divertor null switch','(i_single_null)',i_single_null)
 
-    if (snull == 0) then
+    if (i_single_null == 0) then
        call ocmmnt(outfile,'Double null case')
 
        write(outfile,20)
@@ -626,7 +626,7 @@ contains
         shldtth + ddwi+ vgap2 + thshield + tftsgap)
 
     !  Vertical locations of divertor coils
-    if (snull == 0) then
+    if (i_single_null == 0) then
        hpfu = hmax + tfcth
        hpfdif = 0.0D0
     else
@@ -892,7 +892,7 @@ contains
          call ovarrf(outfile, 'Calculated maximum divertor height (m)', '(divht)', divht, 'OP ') 
       else
          call oheadr(outfile, 'Divertor build and plasma position')
-         call ocmmnt(outfile, 'ERROR: null value not supported, check snull value.')
+         call ocmmnt(outfile, 'ERROR: null value not supported, check i_single_null value.')
       end if
    
     
@@ -902,7 +902,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! subroutine rippl(ripmax,rmajor,rminor,r_tf_outboard_mid,tfno,ripple,r_tf_outboard_midl)
+  ! subroutine rippl(ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf,ripple,r_tf_outboard_midl)
 
   !   !+ad_name  rippl
   !   !+ad_summ  TF ripple calculation
@@ -913,7 +913,7 @@ contains
   !   !+ad_args  rmajor : input real : plasma major radius (m)
   !   !+ad_args  rminor : input real : plasma minor radius (m)
   !   !+ad_args  r_tf_outboard_mid   : input real : default radius to the outboard TF coil leg (m)
-  !   !+ad_args  tfno   : input real(!) : number of TF coils
+  !   !+ad_args  n_tf   : input real(!) : number of TF coils
   !   !+ad_args  ripple : output real : ripple at plasma edge (%)
   !   !+ad_args  r_tf_outboard_midl  : output real : required minimum radius to the centre
   !   !+ad_argc                         of the outboard TF coil leg (m)
@@ -933,7 +933,7 @@ contains
 
   !   !  Arguments
 
-  !   real(kind(1.0D0)), intent(in) :: ripmax,rmajor,rminor,r_tf_outboard_mid,tfno
+  !   real(kind(1.0D0)), intent(in) :: ripmax,rmajor,rminor,r_tf_outboard_mid,n_tf
   !   real(kind(1.0D0)), intent(out) :: ripple,r_tf_outboard_midl
 
   !   !  Local variables
@@ -943,14 +943,14 @@ contains
   !   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !   coeff = 1.03333D0 &
-  !        + 0.210480D0 * tfno &
-  !        - 4.45253D-2 * tfno**2 &
-  !        + 3.50210D-3 * tfno**3 &
-  !        - 1.28945D-4 * tfno**4 &
-  !        + 1.84776D-6 * tfno**5
+  !        + 0.210480D0 * n_tf &
+  !        - 4.45253D-2 * n_tf**2 &
+  !        + 3.50210D-3 * n_tf**3 &
+  !        - 1.28945D-4 * n_tf**4 &
+  !        + 1.84776D-6 * n_tf**5
 
   !   prip = 0.01D0 * ripmax/coeff
-  !   rotrp = 1.023D0*(rmajor+rminor)/prip**(1.0D0/tfno)
+  !   rotrp = 1.023D0*(rmajor+rminor)/prip**(1.0D0/n_tf)
 
   !   if (rotrp > r_tf_outboard_mid) then
   !      r_tf_outboard_midl = rotrp
@@ -958,7 +958,7 @@ contains
   !      ripple = pripc * coeff
   !   else
   !      r_tf_outboard_midl = r_tf_outboard_mid
-  !      prip = (1.023D0*(rmajor+rminor)/r_tf_outboard_mid)**(tfno)
+  !      prip = (1.023D0*(rmajor+rminor)/r_tf_outboard_mid)**(n_tf)
   !      pripc = prip*100.0D0
   !      ripple = pripc * coeff
   !   end if
@@ -1014,7 +1014,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    n = real(tfno, kind(1.0D0))
+    n = real(n_tf, kind(1.0D0))
 
     !  TF coil winding pack width
 
@@ -1041,7 +1041,7 @@ contains
 
     flag = 0
     if ((x < 0.737D0).or.(x > 2.95D0)) flag = 1
-    if ((tfno < 16).or.(tfno > 20)) flag = 2
+    if ((n_tf < 16).or.(n_tf > 20)) flag = 2
     if ( ((rmajor+rminor)/r_tf_outboard_mid < 0.7D0).or. &
          ((rmajor+rminor)/r_tf_outboard_mid > 0.8D0) ) flag = 3
 
@@ -1097,7 +1097,7 @@ contains
 
     !  Toroidal angle between adjacent TF coils
 
-    omega = twopi/tfno
+    omega = twopi/n_tf
 
     !  Half-width of outboard TF coil in toroidal direction (m)
 

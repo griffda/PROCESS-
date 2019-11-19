@@ -245,7 +245,7 @@ module numerics
        'Minimum availability value       ',  &
        !+ad_varc  <LI> (62) taup/taueff the ratio of particle to energy confinement times (itv 110)
        'taup/taueff                      ', &
-       !+ad_varc  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno (itv 111)
+       !+ad_varc  <LI> (63) The number of ITER-like vacuum pumps niterpump < n_tf (itv 111)
        'number of ITER-like vacuum pumps ',  &
        !+ad_varc  <LI> (64) Zeff less than or equal to zeffmax (itv 112)
        'Zeff limit                       ',  &

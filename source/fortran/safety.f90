@@ -272,8 +272,8 @@
     rbldtotf = bore + ohcth + precomp + gapoh + tfcth
     
     ! Additional gap spacing due to flat surfaces of TF
-    if ( itfsup == 1 ) then
-       deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    if ( i_tf_sup == 1 ) then
+       deltf = rbldtotf * ((1.0d0 / cos(pi/n_tf)) - 1.0d0) + tftsgap
     else
        deltf = tftsgap
     end if 
@@ -445,7 +445,7 @@
     !  Inboard TF coil
     ! ----------------
     ! resistive copper TF coils
-    if ( itfsup /= 1 ) then  
+    if ( i_tf_sup /= 1 ) then  
       matfrc(5,5) = fcoolcp         ! Dummy 
       matfrc(5,7) = 1.0D0 - fcoolcp ! Copper
 
@@ -575,7 +575,7 @@
     ! Outboard TF coil
     ! ----------------
     !  resistive copper TF coils
-    if ( itfsup /= 1 ) then 
+    if ( i_tf_sup /= 1 ) then 
        matfrc(23,5) = vftf
        matfrc(23,7) = 1.0D0 - vftf
 

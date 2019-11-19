@@ -409,7 +409,7 @@ contains
         outvar(54,iscan) = fcutfsu
         outvar(55,iscan) = (wwp1+wwp2)*thkwp
         outvar(56,iscan) = acond
-        outvar(57,iscan) = tfareain/tfno
+        outvar(57,iscan) = tfareain/n_tf
         outvar(58,iscan) = taulimit
         outvar(59,iscan) = tesep
         outvar(60,iscan) = neomp
@@ -674,7 +674,7 @@ contains
             outvar(54,iscan) = fcutfsu
             outvar(55,iscan) = (wwp1+wwp2)*thkwp
             outvar(56,iscan) = acond
-            outvar(57,iscan) = tfareain/tfno
+            outvar(57,iscan) = tfareain/n_tf
             outvar(58,iscan) = taulimit
             outvar(59,iscan) = tesep
             outvar(60,iscan) = neomp

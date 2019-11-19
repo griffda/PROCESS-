@@ -117,7 +117,7 @@ module physics_variables
   !+ad_hist  15/10/12 PJK Initial version of module
   !+ad_hist  17/12/12 PJK modified impfe, cfe0, rnfene, fbfe comments
   !+ad_hist  18/12/12 PJK Added pthrmw(6 to 8)
-  !+ad_hist  18/12/12 PJK Added snull; modified idivrt
+  !+ad_hist  18/12/12 PJK Added i_single_null; modified idivrt
   !+ad_hist  03/01/13 PJK Removed iculdl
   !+ad_hist  08/01/13 PJK Modified iinvqd, iiter, ires comments
   !+ad_hist  22/01/13 PJK Added two stellarator scaling laws; modified comments
@@ -295,7 +295,7 @@ module physics_variables
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: fdeut = 0.5D0
   !+ad_vars  ftar  /1.0/ : fraction of power to the  lower divertor in double null
-  !+ad_vars                configuration (snull = 0 only) (default assumes SN)
+  !+ad_vars                configuration (i_single_null = 0 only) (default assumes SN)
   real(kind(1.0D0)) :: ftar = 1.0D0
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
   !+ad_varc                 area in neutron wall load calculation (iwalld=1)
@@ -381,7 +381,7 @@ module physics_variables
   !+ad_varc          <LI> = 6 Hugill-Murakami Mq limit;
   !+ad_varc          <LI> = 7 Greenwald limit</UL>
   integer :: idensl = 7
-  !+ad_vars  idivrt : number of divertors (calculated from snull)
+  !+ad_vars  idivrt : number of divertors (calculated from i_single_null)
   integer :: idivrt = 2
   !+ad_vars  ifalphap /1/ : switch for fast alpha pressure calculation:<UL>
   !+ad_varc            <LI> = 0 ITER physics rules (Uckan) fit;
@@ -638,11 +638,11 @@ module physics_variables
   real(kind(1.0D0)) :: pdhe3 = 0.0D0
   !+ad_vars  pdivt : power to conducted to the divertor region (MW)
   real(kind(1.0D0)) :: pdivt = 0.0D0
-  !+ad_vars pdivl : power conducted to the lower divertor region (calculated if snull = 0) (MW)
+  !+ad_vars pdivl : power conducted to the lower divertor region (calculated if i_single_null = 0) (MW)
   real(kind(1.0D0)) :: pdivl = 0.0D0
-  !+ad_vars pdivu : power conducted to the upper divertor region (calculated if snull = 0) (MW)
+  !+ad_vars pdivu : power conducted to the upper divertor region (calculated if i_single_null = 0) (MW)
   real(kind(1.0D0)) :: pdivu = 0.0D0
-  !+ad_vars pdivmax : power conducted to the divertor with most load (calculated if snull = 0) (MW)
+  !+ad_vars pdivmax : power conducted to the divertor with most load (calculated if i_single_null = 0) (MW)
   real(kind(1.0D0)) :: pdivmax = 0.0D0
   !+ad_vars  pdt : deuterium-tritium fusion power (MW)
   real(kind(1.0D0)) :: pdt = 0.0D0
@@ -786,10 +786,10 @@ module physics_variables
   real(kind(1.0D0)) :: sareao = 0.0D0
   !+ad_vars  sf : shape factor = plasma poloidal perimeter / (2.pi.rminor)
   real(kind(1.0D0)) :: sf = 0.0D0
-  !+ad_vars  snull /1/ : switch for single null / double null plasma:<UL>
+  !+ad_vars  i_single_null /1/ : switch for single null / double null plasma:<UL>
   !+ad_varc          <LI> = 0 for double null;
   !+ad_varc          <LI> = 1 for single null (diverted side down)</UL>
-  integer :: snull = 1
+  integer :: i_single_null = 1
   !+ad_vars  ssync /0.6/ : synchrotron wall reflectivity factor
   real(kind(1.0D0)) :: ssync = 0.6D0
   !+ad_vars  tauee : electron energy confinement time (sec)
@@ -2260,7 +2260,7 @@ module tfcoil_variables
   !+ad_call  None
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  30/01/13 PJK Modified vftf comments
-  !+ad_hist  08/04/13 PJK Modified cpttf, tfno comments
+  !+ad_hist  08/04/13 PJK Modified cpttf, n_tf comments
   !+ad_hist  15/04/13 PJK Modified tfckw comments
   !+ad_hist  16/04/13 PJK Redefined isumattf; removed jcrit_model;
   !+ad_hisc               changed dcond dimensions
@@ -2441,10 +2441,10 @@ module tfcoil_variables
   !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation
   !+ad_varc            <LI> = 6 REBCO HTS tape in CroCo strand</UL>
   integer :: isumattf = 1
-  !+ad_vars  itfsup /1/ : switch for TF coil conductor model:<UL>
+  !+ad_vars  i_tf_sup /1/ : switch for TF coil conductor model:<UL>
   !+ad_varc          <LI> = 0 copper;
   !+ad_varc          <LI> = 1 superconductor</UL>
-  integer :: itfsup = 1
+  integer :: i_tf_sup = 1
   !+ad_vars  jbus /1.25e6/ : bussing current density (A/m2)
   real(kind(1.0D0)) :: jbus = 1.25D6
   !+ad_vars  jeff(2) : work array used in stress calculation (A/m2)
@@ -2577,9 +2577,9 @@ module tfcoil_variables
   real(kind(1.0D0)) :: rhotfleg = -1.0D0 ! 2.5D-8
   !+ad_vars  tfleng : TF coil circumference (m)
   real(kind(1.0D0)) :: tfleng = 0.0D0
-  !+ad_vars  tfno /16.0/ : number of TF coils (default = 50 for stellarators)
+  !+ad_vars  n_tf /16.0/ : number of TF coils (default = 50 for stellarators)
   !+ad_varc                number of TF coils outer legs for ST
-  real(kind(1.0D0)) :: tfno = 16.0D0
+  real(kind(1.0D0)) :: n_tf = 16.0D0
   !+ad_vars  tfocrn : TF coil half-width - outer bore (m)
   real(kind(1.0D0)) :: tfocrn = 0.0D0
   !+ad_vars  tfsai : area of the inboard TF coil legs (m2)
@@ -2643,7 +2643,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: vdalw = 20.0D0
   !+ad_vars  vforce : vertical separating force on inboard leg/coil (N)
   real(kind(1.0D0)) :: vforce = 0.0D0
-  !+ad_vars  vftf /0.4/ : coolant fraction of TFC 'cable' (itfsup=1), or of TFC leg (itfsup=0)
+  !+ad_vars  vftf /0.4/ : coolant fraction of TFC 'cable' (i_tf_sup=1), or of TFC leg (i_tf_sup=0)
   real(kind(1.0D0)) :: vftf = 0.4D0
   !+ad_vars  voltfleg : volume of each TF coil outboard leg (m3)
   real(kind(1.0D0)) :: voltfleg = 0.0D0
@@ -2701,7 +2701,7 @@ module tfcoil_variables
   real(kind(1.0D0)), dimension(4) :: tfb = 0.0D0
 
   !+ad_vars  <P><B>Quantities relating to the spherical tokamak model (itart=1)</B>
-  !+ad_varc        (and in some cases, also to resistive TF coils, itfsup=0):<P>
+  !+ad_varc        (and in some cases, also to resistive TF coils, i_tf_sup=0):<P>
 
   !+ad_vars  drtop /0.0/ : centrepost taper maximum radius adjustment (m)
   real(kind(1.0D0)) :: drtop = 0.0D0
@@ -3574,7 +3574,7 @@ module build_variables
   !+ad_vars  tfoffset : vertical distance between centre of TF coils and centre of plasma (m)
   real(kind(1.0D0)) :: tfoffset = 0.0D0
   !+ad_vars  tfootfi /1.19/ : TF coil outboard leg / inboard leg radial thickness
-  !+ad_varc                  ratio (itfsup=0 only)
+  !+ad_varc                  ratio (i_tf_sup=0 only)
   !+ad_varc                  (iteration variable 75)
   real(kind(1.0D0)) :: tfootfi = 1.19D0
   !+ad_vars  tfthko : outboard TF coil thickness (m)
@@ -4345,7 +4345,7 @@ module constraint_variables
   !+ad_varc                   (constraint equation 62, iteration variable 110)
   real(kind(1.0D0)) :: ftaulimit = 1.0D0
 
-  !+ad_vars  fniterpump /1.0/ : f-value for constraint that number of pumps < tfno
+  !+ad_vars  fniterpump /1.0/ : f-value for constraint that number of pumps < n_tf
   !+ad_varc                   (constraint equation 63, iteration variable 111)
   real(kind(1.0D0)) :: fniterpump = 1.0D0
   !+ad_vars  zeffmax /3.6/ : maximum value for Zeff

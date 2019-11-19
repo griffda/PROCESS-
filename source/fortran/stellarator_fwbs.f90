@@ -1291,7 +1291,7 @@ contains
     !  (average of above- and below-midplane parts)
 
     hbot = rminor*kappa + vgap + divfix - blnktth
-    if (idivrt == 2) then  !  (i.e. snull=0)
+    if (idivrt == 2) then  !  (i.e. i_single_null=0)
        htop = hbot
     else
        htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth)
@@ -1302,7 +1302,7 @@ contains
     !  (average of above- and below-midplane parts)
 
     hbot = rminor*kappa + vgap + divfix
-    if (idivrt == 2) then  !  (i.e. snull=0)
+    if (idivrt == 2) then  !  (i.e. i_single_null=0)
        htop = hbot
     else
        htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) + blnktth
@@ -1458,7 +1458,7 @@ contains
        !  The 'He can' previously referred to is actually the steel case on the
        !  plasma-facing side of the TF coil.
 
-       if (itfsup == 1) then
+       if (i_tf_sup == 1) then
 
           !  N.B. The vacuum vessel appears to be ignored
 
@@ -1585,7 +1585,7 @@ contains
        !  The 'He can' previously referred to is actually the steel case on the
        !  plasma-facing side of the TF coil.
 
-       if (itfsup == 1) then
+       if (i_tf_sup == 1) then
 
           !  N.B. The vacuum vessel appears to be ignored
 
@@ -1826,7 +1826,7 @@ contains
     !     2.0D0 * pi * rmajor * ddwi * 2.0D0 * fvoldw
 
     hbot = hmax - vgap2 - ddwi
-    if (idivrt == 2) then  !  (i.e. snull=0)
+    if (idivrt == 2) then  !  (i.e. i_single_null=0)
        htop = hbot
     else
        htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) &
@@ -2184,7 +2184,7 @@ contains
     !  TF coil perimeter is inboard, 75% outboard
 
     ptfnuc = 0.25D0*tfleng*tfareain * pnuctfi &
-         + 0.75D0*tfleng*arealeg*tfno * pnuctfo
+         + 0.75D0*tfleng*arealeg*n_tf * pnuctfo
 
     !  Maximum helium concentration in vacuum vessel at
     !  end of plant lifetime (appm)
@@ -2313,12 +2313,12 @@ contains
 
     !  Global shared variables
 
-    !  Input: blnkith,blnkoth,casthi,cfactr,fwith,fwoth,itfsup,shldith
+    !  Input: blnkith,blnkoth,casthi,cfactr,fwith,fwoth,i_tf_sup,shldith
     !  Input: shldoth,tfsai,tfsao,thkwp,tinstf,tlife,wallmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (itfsup /= 1) then  !  Resistive coils
+    if (i_tf_sup /= 1) then  !  Resistive coils
        coilhtmx = 0.0D0
        ptfiwp = 0.0D0
        ptfowp = 0.0D0
