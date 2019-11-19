@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import matplotlib
+matplotlib.use('Agg')
 import os
 import argparse
 from argparse import RawTextHelpFormatter

@@ -313,7 +313,7 @@ q        = 3.0 * Safety factor 'near' plasma edge (iteration variable 18);
 q0       = 1.0 * Safety factor on axis
 ralpne   = 0.06758 * Thermal alpha density / electron density (iteration variable 109)
 rmajor   = 8.797 * Plasma major radius (m) (iteration variable 3)
-snull    = 1 * Switch for single null / double null plasma;
+i_single_null    = 1 * Switch for single null / double null plasma;
 ssync    = 0.6 * Synchrotron wall reflectivity factor
 te       = 12.66 * Volume averaged electron temperature (kev)
 triang   = 0.5 * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
@@ -348,7 +348,7 @@ oacdcp   = 9873000.0 * Overall current density in tf coil inboard legs (a/m2)
 ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude
 sigvvall = 9.3e7 * Allowable stress from tf quench in vacuum vessel (pa)
 tdmptf   = 20.35 * Fast discharge time for tf coil in event of quench (s)
-tfno     = 16 * Number of tf coils (default = 50 for stellarators)
+n_tf     = 16 * Number of tf coils (default = 50 for stellarators)
 tftmp    = 4.750 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 0.0015 * Conduit insulation thickness (m)
 thkcas   = 0.4481 * Inboard tf coil case outer (non-plasma side) thickness (m)

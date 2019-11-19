@@ -146,7 +146,7 @@ kappa    = 2.75     *Plasma separatrix elongation
 q0       = 2.0      *Safety factor on axis
 ralpne   = 0.08     *Thermal alpha density / electron density
 rli      = 0.65     *Plasma normalised internal inductance
-snull    = 0        *Switch for divertor configuration (0: double null)
+i_single_null    = 0        *Switch for divertor configuration (0: double null)
 ssync    = 0.7      *Synchrotron wall reflectivity factor
 tratio   = 1.35     *Ion temperature / electron temperature
 triang   = 0.5      *Plasma separatrix triangularity triang
@@ -198,7 +198,7 @@ ptempalw = 473.15   *Maximum peak centrepost temperature (C) (constraint equatio
 rcool    = 3.0E-3   *Average radius of coolant channel (m) 
 ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma edge (%)
 rhotfleg = 2.5E-8   *Resistivity of a TF coil leg (Ohm-m)
-tfno     = 12       *Number of TF coils
+n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (itfsup=1) or of TFC leg (itfsup=0)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav

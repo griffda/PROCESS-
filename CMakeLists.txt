@@ -322,7 +322,7 @@ add_custom_target(dicts
   COMMAND mv process_io_lib/process_dicts.py process_io_lib/process_dicts.py_prev
   COMMAND echo ${UTILITIES_DIR}
   COMMAND echo "Creating Python dictionaries... warnings are usually ignorable!"
-  COMMAND python create_dicts.py > process_io_lib/process_dicts.py
+  COMMAND python3 create_dicts.py > process_io_lib/process_dicts.py
   COMMAND chmod 755 process_io_lib/process_dicts.py
   WORKING_DIRECTORY ${UTILITIES_DIR}
   DEPENDS ${CMAKE_SOURCE_DIR}/root.dir

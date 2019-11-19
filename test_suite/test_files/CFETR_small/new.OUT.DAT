@@ -1,0 +1,61 @@
+ *****  CFETR input file for EU-CN collaboration                             
+ *****                                                                       
+ *****  Based on 2014 paper by Son et al. "Concept design of CFETR tokamak ma
+ *****  http://ieeexplore.ieee.org/document/6716984/                         
+ *****                                                                       
+ *****  James Morris                                                         
+ *****  02/12/16                                                             
+ *****                                                                       
+ ****************************************************                        
+ 
+ **************************************************************************************************************
+ ************************************************** PROCESS ***************************************************
+ ************************************** Power Reactor Optimisation Code ***************************************
+ **************************************************************************************************************
+ 
+   Program : ./process.exe
+   Version : 1.0.16   Release Date :: 2019-07-15
+   Tag No. : 1.0.16-197-gd1311812 code contains untracked changes
+    Branch : issue-#943-#942-#941-#940
+   Git log : Related to issue #939  Changing variables names    - rtot -> r_tf_outb
+ Date/time : 19 Nov 2019 16:17:32 +00:00(hh:mm) UTC
+      User : root
+  Computer : J0320
+ Directory : /home/skahn/Linux_env/process_merge_standalone/test_suite
+     Input : IN.DAT
+ Run title : "CFETR small (5.7m) reference file"
+  Run type : Reactor concept design: Stellarator model, (c) CCFE
+ 
+ **************************************************************************************************************
+ 
+   Equality constraints : 24
+ Inequality constraints : 00
+      Total constraints : 24
+    Iteration variables : 41
+         Max iterations : 200
+       Figure of merit  : +10  -- minimise toroidal field.
+  Convergence parameter : 1.00E-08
+ 
+ **************************************************************************************************************
+ 
+ (Please include this header in any models, presentations and papers based on these results)
+ 
+ **************************************************************************************************************
+ 
+ Quantities listed in standard row format are labelled as follows in columns 112-114:
+ ITV : Active iteration variable (in any output blocks)
+ OP  : Calculated output quantity
+ Unlabelled quantities in standard row format are generally inputs
+ Note that calculated quantities may be trivially rescaled from inputs, or equal to bounds which are input.
+ 
+ 
+ ******************************************** Errors and Warnings *********************************************
+ 
+ (See top of file for solver errors and warnings.)
+ PROCESS status flag:   Errors
+ PROCESS error status flag                                                (error_status)                    3     
+147     2   CHECK: temperature pedestal is at plasma edge, but teped differs from tesep     
+152     2   CHECK: density pedestal is at plasma edge, but neped differs from nesep         
+155     2   CHECK: dene used as iteration variable without constraint 81 (neped<ne0)        
+ 55     3   LOADXC: Iteration variable is zero; change its initial value or lower bound     
+ Final error identifier                                                   (error_id)                       55     
