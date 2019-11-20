@@ -92,7 +92,7 @@ def main(mfile_data, output_file, scan=-1):
             ("triang95", "delta_95"),
             ("sarea", "Surface area"),
             ("vol", "Plasma volume"),
-            ("tfno", "No. of TF coils"),
+            ("n_tf", "No. of TF coils"),
             (in_blanket_thk, "i/b blkt/shld"),
             (out_blanket_thk, "o/b blkt/shld"),
             ("powfmw", "Fusion power")]

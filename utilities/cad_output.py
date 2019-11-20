@@ -49,16 +49,16 @@ class BuildDataContainer(object):
         self.a = data.data["rminor"].get_scan(-1)
 
         # Single or double null
-        if "snull" in data.data.keys():
-            self.snull = data.data["snull"].get_scan(-1)
+        if "i_single_null" in data.data.keys():
+            self.i_single_null = data.data["i_single_null"].get_scan(-1)
         else:
-            self.snull = 1
+            self.i_single_null = 1
 
         # Central Solenoid
-        if "itfsup" in data.data.keys():
-            self.itfsup = data.data["itfsup"].get_scan(-1)
+        if "i_tf_sup" in data.data.keys():
+            self.i_tf_sup = data.data["i_tf_sup"].get_scan(-1)
         else:
-            self.itfsup = 1
+            self.i_tf_sup = 1
 
         # Machine bore
         self.bore = data.data["bore"].get_scan(-1)
@@ -181,7 +181,7 @@ class BuildDataContainer(object):
         self.ddwex = data.data["ddwex"].get_scan(-1)
 
         # Number of TF coils
-        self.tfno = data.data["tfno"].get_scan(-1)
+        self.n_tf = data.data["n_tf"].get_scan(-1)
 
         # Toroidal thickness of TF coil outer leg
         self.tftort = data.data["tftort"].get_scan(-1)
@@ -459,7 +459,7 @@ def write_vacuum_vessel(data, output_file):
                       format(outside_inboard_ellipse_minor_radius))
 
     # Vacuum vessel ellipse major radius - outside upper
-    if data.snull==0:
+    if data.i_single_null==0:
         outside_upper_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix + data.shldlth + data.ddwi
     else:
@@ -493,7 +493,7 @@ def write_vacuum_vessel(data, output_file):
                       format(inside_inboard_ellipse_minor_radius))
 
     # Vacuum vessel ellipse major radius - inside upper
-    if data.snull==0:
+    if data.i_single_null==0:
         inside_upper_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix + data.shldlth
     else:
@@ -621,7 +621,7 @@ def write_shield(data, output_file):
                       format(outside_inboard_ellipse_minor_radius))
 
     # Outside upper ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         outside_upper_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix + data.shldlth
     else:
@@ -654,7 +654,7 @@ def write_shield(data, output_file):
                       format(inside_inboard_ellipse_minor_radius))
 
     # Inside upper ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         inside_upper_ellipse_major_radius = data.plasma_half_height + \
         data.vgap + data.divfix
     else:
@@ -783,7 +783,7 @@ def write_blanket(data, output_file):
                       format(outside_inboard_ellipse_minor_radius))
 
     # Outside upper ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         outside_upper_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix
     else:
@@ -817,7 +817,7 @@ def write_blanket(data, output_file):
                       format(inside_inboard_ellipse_minor_radius))
 
     # Inside upper ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         inside_upper_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth)
     else:
@@ -828,7 +828,7 @@ def write_blanket(data, output_file):
                       format(inside_upper_ellipse_major_radius))
 
     # Inside lower ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         inside_lower_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth)
     else:
@@ -960,7 +960,7 @@ def write_first_wall(data, output_file):
                       format(outside_inboard_ellipse_minor_radius))
 
     # Outside upper ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         outside_upper_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth)
     else:
@@ -971,7 +971,7 @@ def write_first_wall(data, output_file):
                       format(outside_upper_ellipse_major_radius))
 
     # Outside lower ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         outside_lower_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth)
     else:
@@ -1000,7 +1000,7 @@ def write_first_wall(data, output_file):
                       format(inside_inboard_ellipse_minor_radius))
 
     # Inside upper ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         inside_upper_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
             (data.fwith + data.fwoth)/2.0
@@ -1011,7 +1011,7 @@ def write_first_wall(data, output_file):
                       format(inside_upper_ellipse_major_radius))
 
     # Inside lower ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         inside_lower_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
             (data.fwith + data.fwoth)/2.0
@@ -1146,7 +1146,7 @@ def write_tungsten_armour(data, output_file):
                       format(outside_inboard_ellipse_minor_radius))
 
     # Outside upper ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         outside_upper_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
             0.5*(data.fwith + data.fwoth)
@@ -1157,7 +1157,7 @@ def write_tungsten_armour(data, output_file):
                       format(outside_upper_ellipse_major_radius))
 
     # Outside lower ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         outside_lower_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
             0.5*(data.fwith + data.fwoth)
@@ -1187,7 +1187,7 @@ def write_tungsten_armour(data, output_file):
                       format(inside_inboard_ellipse_minor_radius))
 
     # Inside upper ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         inside_upper_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
             (data.fwith + data.fwoth)/2.0 - 0.003
@@ -1199,7 +1199,7 @@ def write_tungsten_armour(data, output_file):
                       format(inside_upper_ellipse_major_radius))
 
     # Inside lower ellipse major radius
-    if data.snull==0:
+    if data.i_single_null==0:
         inside_lower_ellipse_major_radius = data.plasma_half_height + \
             data.vgap + data.divfix - 0.5*(data.blnkith + data.blnkoth) - \
             (data.fwith + data.fwoth)/2.0 - 0.003
@@ -1341,7 +1341,7 @@ def write_plasma_shape(data, output_file):
     outang = 1.5/r2
 
     # Array of angle values for outside arc
-    if data.snull==0:
+    if data.i_single_null==0:
         angles_1 = scipy.linspace(-(inang + theta1) + scipy.pi, (inang + theta1) \
                                  + scipy.pi, 100, endpoint=True)
     else:
@@ -1349,7 +1349,7 @@ def write_plasma_shape(data, output_file):
                               100, endpoint=True)
 
     # Array of angle values for inside arc
-    if data.snull==0:
+    if data.i_single_null==0:
         angles_2 = scipy.linspace(-(outang + theta2), (outang + theta2), 100,
                             endpoint=True)
     else:
@@ -1422,7 +1422,7 @@ def write_cutf_coils(data, output_file):
     output_file.write("\n# TF Coil Outboard leg\n")
 
     output_file.write("TF Coil - Number = {0:.0f} \n".
-                      format(data.tfno))   
+                      format(data.n_tf))   
 
     # Point 1 - top inboard
     output_file.write("TF Coil - point 1 R position = {0:.3f} m\n".
@@ -1768,7 +1768,7 @@ def write_cad_data(data, output_file):
     write_tungsten_armour(data, output_file)
 
     # Write TF coil data
-    if data.itfsup==0:
+    if data.i_tf_sup==0:
         write_cutf_coils(data, output_file)
     else:
         write_tf_coils(data, output_file)
