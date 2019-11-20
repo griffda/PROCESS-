@@ -454,7 +454,7 @@
  Gap_(m)_________________________________________________________________ (tftsgap)_____________________      5.0000E-02    
  TF_coil_outboard_leg_radial_thickness_(m)_______________________________ (tfthko)______________________      1.3046E+00    
  # Vertical Build #
- Divertor_null_switch____________________________________________________ (snull)_______________________              1    
+ Divertor_null_switch____________________________________________________ (i_single_null)_______________________              1    
  Vessel_-_TF_coil_vertical_gap_(m)_______________________________________ (vgap2)_______________________      5.0000E-02    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      3.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      8.6850E-01    
@@ -504,7 +504,7 @@
  TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      2.0370E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      8.8527E+06 ITV
- Number_of_TF_coils______________________________________________________ (tfno)________________________      1.6000E+01    
+ Number_of_TF_coils______________________________________________________ (n_tf)________________________      1.6000E+01    
  Total_inboard_leg_radial_thickness_(m)__________________________________ (tfcth)_______________________      1.3046E+00 ITV
  Total_outboard_leg_radial_thickness_(m)_________________________________ (tfthko)______________________      1.3046E+00    
  Inboard_leg_toroidal_thickness_at_widest_point_(m)______________________ (2*tficrn)____________________      1.6898E+00 OP 
@@ -517,7 +517,7 @@
  Ripple_amplitude_at_plasma_outboard_midplane_(%)________________________ (ripple)______________________      6.0000E-01 OP 
  Total_stored_energy_in_TF_coils_(GJ)____________________________________ (estotftgj)___________________      1.9803E+02 OP 
  Total_mass_of_TF_coils_(kg)_____________________________________________ (whttf)_______________________      2.3275E+07 OP 
- Mass_of_each_TF_coil_(kg)_______________________________________________ (whttf/tfno)__________________      1.4547E+06 OP 
+ Mass_of_each_TF_coil_(kg)_______________________________________________ (whttf/n_tf)__________________      1.4547E+06 OP 
  Vertical_separating_force_per_leg_(N)___________________________________ (vforce)______________________      3.3903E+08 OP 
  Centering_force_per_coil_(N/m)__________________________________________ (cforce)______________________      1.0427E+08 OP 
  Inboard_leg_centre_radius_(m)___________________________________________ (r_tf_inleg_mid)______________      3.6784E+00 OP 
@@ -1295,7 +1295,7 @@ q        = 3.8871 * Safety factor 'near' plasma edge (iteration variable 18);
 q0       = 1.0 * Safety factor on axis
 ralpne   = 0.070993 * Thermal alpha density / electron density (iteration variable 109)
 rmajor   = 9.0019 * Plasma major radius (m) (iteration variable 3)
-snull    = 1 * Switch for single null / double null plasma;
+i_single_null    = 1 * Switch for single null / double null plasma;
 ssync    = 0.6 * Synchrotron wall reflectivity factor
 te       = 12.485 * Volume averaged electron temperature (kev)
 triang   = 0.5 * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
@@ -1331,7 +1331,7 @@ isumattf = 5 * Switch for superconductor material in tf coils;
 oacdcp   = 8935500.0 * Overall current density in tf coil inboard legs (a/m2)
 ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude
 tdmptf   = 29.265 * Fast discharge time for tf coil in event of quench (s)
-tfno     = 16 * Number of tf coils (default = 50 for stellarators)
+n_tf     = 16 * Number of tf coils (default = 50 for stellarators)
 tftmp    = 4.750 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 1.5d-3 * Conduit insulation thickness (m)
 thkcas   = 0.60557 * Inboard tf coil case outer (non-plasma side) thickness (m)
@@ -1339,7 +1339,7 @@ thwcndut = 0.008 * Tf coil conduit case thickness (m) (iteration variable 58)
 tinstf   = 0.008 * Ground insulation thickness surrounding winding pack (m)
 tmargmin = 1.500 * Minimum allowable temperature margin ; tfc and cs (k)
 vdalw    = 9.3753 * Max voltage across tf coil during quench (kv)
-vftf     = 0.300 * Coolant fraction of tfc 'cable' (itfsup=1); or of tfc leg (itfsup=0)
+vftf     = 0.300 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
 
 *-----------------Times Variables------------------*
 

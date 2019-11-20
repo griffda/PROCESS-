@@ -346,8 +346,8 @@
  Gap_(m)_________________________________________________________________ (gapsto)______________________      2.5000E-02    
  Coil_outboard_leg_radial_thickness_(m)__________________________________ (tfthko)______________________      9.4966E-01    
  # Modular Coils #
- Number_of_modular_coils_________________________________________________ (tfno)________________________      5.0000E+01    
- Cross-sectional_area_per_coil_(m2)______________________________________ (tfarea/tfno)_________________      8.2970E-01    
+ Number_of_modular_coils_________________________________________________ (n_tf)________________________      5.0000E+01    
+ Cross-sectional_area_per_coil_(m2)______________________________________ (tfarea/n_tf)_________________      8.2970E-01    
  Total_inboard_leg_radial_thickness_(m)__________________________________ (tfcth)_______________________      9.4966E-01    
  Total_outboard_leg_radial_thickness_(m)_________________________________ (tfthko)______________________      9.4966E-01    
  Inboard_leg_outboard_half-width_(m)_____________________________________ (tficrn)______________________      4.3684E-01    
@@ -758,7 +758,7 @@ isumattf = 1            *Switch for superconductor material in tf coils (1: ITER
 tftmp    = 4.2          *Peak helium coolant temperature in TF coils and PF coils (k)
 thicndut = 0.002        *Conduit insulation thickness (m)
 thwcndut = 0.0012       *TF coil conduit case thickness (m)
-vftf     = 0.3          *Coolant fraction of TF coil leg (itfsup=0)
+vftf     = 0.3          *Coolant fraction of TF coil leg (i_tf_sup=0)
 
 *-----------------Pfcoil Variables-----------------*
 

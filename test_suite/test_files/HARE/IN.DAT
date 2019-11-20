@@ -359,7 +359,7 @@ thwcndut = 0.004 * Tf coil conduit case thickness (m)
 tinstf   = 0.008 * Ground insulation thickness surrounding winding pack (m)
 tmargmin = 1.7 * Minimum allowable temperature margin (cs and tf coils) (k)
 vdalw    = 12.64 * Max voltage across tf coil during quench (kv)
-vftf     = 0.333 * Coolant fraction of tfc 'cable' (itfsup=1); or of tfc leg (itfsup=0)
+vftf     = 0.333 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
 
 *-----------------Times Variables------------------*
 

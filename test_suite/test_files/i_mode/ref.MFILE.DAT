@@ -457,7 +457,7 @@
  Gap_(m)_________________________________________________________________ (tftsgap)_____________________      5.0000E-02    
  TF_coil_outboard_leg_radial_thickness_(m)_______________________________ (tfthko)______________________      1.6265E+00    
  # Vertical Build #
- Divertor_null_switch____________________________________________________ (snull)_______________________              1    
+ Divertor_null_switch____________________________________________________ (i_single_null)_______________________              1    
  Vessel_-_TF_coil_vertical_gap_(m)_______________________________________ (vgap2)_______________________      1.6300E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      6.0000E-01    
  Top_blanket_vertical_thickness_(m)______________________________________ (blnktth)_____________________      8.6850E-01    
@@ -507,7 +507,7 @@
  TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.8140E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      7.9227E+06 ITV
- Number_of_TF_coils______________________________________________________ (tfno)________________________      1.6000E+01    
+ Number_of_TF_coils______________________________________________________ (n_tf)________________________      1.6000E+01    
  Total_inboard_leg_radial_thickness_(m)__________________________________ (tfcth)_______________________      1.6265E+00 ITV
  Total_outboard_leg_radial_thickness_(m)_________________________________ (tfthko)______________________      1.6265E+00    
  Inboard_leg_toroidal_thickness_at_widest_point_(m)______________________ (2*tficrn)____________________      1.7905E+00 OP 
@@ -520,7 +520,7 @@
  Ripple_amplitude_at_plasma_outboard_midplane_(%)________________________ (ripple)______________________      6.0000E-01 OP 
  Total_stored_energy_in_TF_coils_(GJ)____________________________________ (estotftgj)___________________      2.8277E+02 OP 
  Total_mass_of_TF_coils_(kg)_____________________________________________ (whttf)_______________________      3.3335E+07 OP 
- Mass_of_each_TF_coil_(kg)_______________________________________________ (whttf/tfno)__________________      2.0834E+06 OP 
+ Mass_of_each_TF_coil_(kg)_______________________________________________ (whttf/n_tf)__________________      2.0834E+06 OP 
  Vertical_separating_force_per_leg_(N)___________________________________ (vforce)______________________      4.4928E+08 OP 
  Centering_force_per_coil_(N/m)__________________________________________ (cforce)______________________      1.2897E+08 OP 
  Inboard_leg_centre_radius_(m)___________________________________________ (r_tf_inleg_mid)______________      3.7756E+00 OP 
@@ -1433,7 +1433,7 @@ isc = 34
 q0 = 1.0
 
 * Switch for single null / double null plasma
-snull = 1
+i_single_null = 1
 
 * Synchrotron wall reflectivity factor
 ssync = 0.6
@@ -1599,7 +1599,7 @@ casths = 0.05
 ripmax = 0.6
 
 * Number of TF coils
-tfno = 16
+n_tf = 16
 
 * Groundwall insulation thickness [m]
 tinstf = 0.008

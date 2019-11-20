@@ -345,7 +345,7 @@ tinstf   = 0.008 * Ground insulation thickness surrounding winding pack (m)
 tmargmin_tf = 10 * Minimum allowable temperature margin ; tf coils (k)
 tmargmin_cs = 1.5 * Minimum allowable temperature margin ; cs (k)
 vdalw    = 10.00 * Max voltage across tf coil during quench (kv)
-vftf     = 0.300 * Coolant fraction of tfc 'cable' (itfsup=1); or of tfc leg (itfsup=0)
+vftf     = 0.300 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
 
 *-----------------Times Variables------------------*
 

@@ -634,7 +634,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  General Coil Parameters :
  
- Number of TF coils                                                       (tfno)                    1.600E+01     
+ Number of TF coils                                                       (n_tf)                    1.600E+01     
  Total inboard leg radial thickness (m)                                   (tfcth)                   1.626E+00  ITV
  Total outboard leg radial thickness (m)                                  (tfthko)                  1.626E+00     
  Inboard leg toroidal thickness at widest point (m)                       (2*tficrn)                1.790E+00  OP 
@@ -647,7 +647,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Ripple amplitude at plasma outboard midplane (%)                         (ripple)                  6.000E-01  OP 
  Total stored energy in TF coils (GJ)                                     (estotftgj)               2.828E+02  OP 
  Total mass of TF coils (kg)                                              (whttf)                   3.333E+07  OP 
- Mass of each TF coil (kg)                                                (whttf/tfno)              2.083E+06  OP 
+ Mass of each TF coil (kg)                                                (whttf/n_tf)              2.083E+06  OP 
  Vertical separating force per leg (N)                                    (vforce)                  4.493E+08  OP 
  Centering force per coil (N/m)                                           (cforce)                  1.290E+08  OP 
  
@@ -1874,7 +1874,7 @@ isc = 34
 q0 = 1.0
 
 * Switch for single null / double null plasma
-snull = 1
+i_single_null = 1
 
 * Synchrotron wall reflectivity factor
 ssync = 0.6
@@ -2040,7 +2040,7 @@ casths = 0.05
 ripmax = 0.6
 
 * Number of TF coils
-tfno = 16
+n_tf = 16
 
 * Groundwall insulation thickness [m]
 tinstf = 0.008

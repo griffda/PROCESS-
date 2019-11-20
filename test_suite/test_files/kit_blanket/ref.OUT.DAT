@@ -615,7 +615,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  General Coil Parameters :
  
- Number of TF coils                                                       (tfno)                    1.800E+01     
+ Number of TF coils                                                       (n_tf)                    1.800E+01     
  Total inboard leg radial thickness (m)                                   (tfcth)                   1.224E+00  ITV
  Total outboard leg radial thickness (m)                                  (tfthko)                  1.224E+00     
  Inboard leg toroidal thickness at widest point (m)                       (2*tficrn)                1.613E+00  OP 
@@ -628,7 +628,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Ripple amplitude at plasma outboard midplane (%)                         (ripple)                  6.000E-01  OP 
  Total stored energy in TF coils (GJ)                                     (estotftgj)               1.803E+02  OP 
  Total mass of TF coils (kg)                                              (whttf)                   2.462E+07  OP 
- Mass of each TF coil (kg)                                                (whttf/tfno)              1.368E+06  OP 
+ Mass of each TF coil (kg)                                                (whttf/n_tf)              1.368E+06  OP 
  Vertical separating force per leg (N)                                    (vforce)                  2.810E+08  OP 
  Centering force per coil (N/m)                                           (cforce)                  8.449E+07  OP 
  
@@ -1645,7 +1645,7 @@ q        = 3.2267e+00 * Safety factor 'near' plasma edge (iteration variable 18)
 q0       = 1.0 * Safety factor on axis
 ralpne   = 0.1 * Thermal alpha density / electron density (iteration variable 109)
 rmajor   = 9.0e+00 * Plasma major radius (m) (iteration variable 3)
-snull    = 1 * Switch for single null / double null plasma;
+i_single_null    = 1 * Switch for single null / double null plasma;
 ssync    = 0.6 * Synchrotron wall reflectivity factor
 te       = 1.3212e+01 * Volume averaged electron temperature (kev)
 triang   = 0.5 * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
@@ -1668,7 +1668,7 @@ fcutfsu  = 0.4 * Copper fraction of cable conductor (tf coils)
 oacdcp   = 9.9963e+06 * Overall current density in tf coil inboard legs (a/m2)
 ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude
 tdmptf   = 3.0e+01 * Dump time for tf coil (s)
-tfno     = 18 * Number of tf coils (default = 50 for stellarators)
+n_tf     = 18 * Number of tf coils (default = 50 for stellarators)
 tftmp    = 4.75 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 2.0d-3 * Conduit insulation thickness (m)
 thkcas   = 4.9102e-01 * Inboard tf coil case outer (non-plasma side) thickness (m)
@@ -1677,7 +1677,7 @@ tinstf   = 0.013 * Ground insulation thickness surrounding winding pack (m)
 tmargmin = 1.7 * Minimum allowable temperature margin (cs and tf coils) (k)
 * vdalw    = 1.2650e+01 * Max voltage across tf coil during quench (kv)
 vdalw    = 30.0        * Max voltage across tf coil during quench (kv)
-vftf     = 0.33 * Coolant fraction of tfc 'cable' (itfsup=1); or of tfc leg (itfsup=0)
+vftf     = 0.33 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
 *-----------------Times Variables------------------*
 tburn    = 1000.0 * Burn time (s) (calculated if lpulse=1)
 *-----------------Vacuum Variables-----------------*
