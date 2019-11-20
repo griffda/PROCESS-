@@ -101,7 +101,7 @@ pdivtlim = 240.0
 *--------------------------------*
 icc = 16
 ixc = 25 * fpnetel
-pnetelin = 225.0
+pnetelin = 220.0
 
 * Beta upper limit *
 *------------------*
