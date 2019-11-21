@@ -214,7 +214,7 @@ module physics_variables
   real(kind(1.0D0)) :: fdeut = 0.5D0
   !! fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: ftar = 1.0D0
-  !! ftar  /1.0/ : fraction of power to the  lower divertor in double null
+  !! ftar  /1.0/ : fraction of power to the lower divertor in double null
   !!               configuration (snull = 0 only) (default assumes SN)
   real(kind(1.0D0)) :: ffwal = 0.92D0
   !! ffwal /0.92/ : factor to convert plasma surface area to first wall
