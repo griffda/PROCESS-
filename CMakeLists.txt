@@ -166,56 +166,6 @@ endif()
 
 # Set build targets
 
-# Creating autodoc
-add_custom_target(autodoc
-COMMAND ${FORTRAN} -o autodoc autodoc.f90
-WORKING_DIRECTORY ${FORT_SOURCE_DIR}
-  DEPENDS ${FORT_SOURCE_DIR}/autodoc.f90
-)
-
-# Create vardes HTML documentation
-add_custom_target(vardes
-  COMMAND cat global_variables.f90 iteration_variables.f90 numerics.f90 impurity_radiation.f90 scan.f90 error_handlings.f90 | ./autodoc
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/documentation/html
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/autodoc_data.mod
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/calltree_data.mod
-  COMMAND ${MOVE_FILE} *.html ${HTML_DIR}
-  COMMENT "Copying html files"
-  DEPENDS autodoc
-  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
-)
-
-# Create all HTML documentation
-add_custom_target(html
-  COMMAND cat *.f90 | ./autodoc
-  COMMAND ${MOVE_FILE} vardes.html vardes_full.html
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/documentation/html
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/autodoc_data.mod
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/calltree_data.mod
-  COMMAND ${MOVE_FILE} *.html ${HTML_DIR}
-  DEPENDS autodoc
-  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
-)
-
-# Create the PROCESS userguide PDF from LaTeX
-add_custom_target(userguide
-  COMMAND pandoc --standalone ${HTML_DIR}/vardes.html --output ${HTML_DIR}/vardes.tex
-  COMMAND pdflatex -halt-on-error ${HTML_DIR}/vardes.tex > ${DOC_DIR}/vardes.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/vardes.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/process.tex > ${DOC_DIR}/userguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/userguide.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/process.tex > ${DOC_DIR}/userguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/userguide.log"
-  COMMAND ${MOVE_FILE} process.pdf process.log pdf
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.aux
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.out
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.lof
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.log
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.lot
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.toc
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/vardes.out
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/vardes.aux
-  DEPENDS vardes ${DOC_DIR}/process.tex
-  WORKING_DIRECTORY ${DOC_DIR}
-)
-
 # Create the PROCESS developer guide PDF from LaTeX
 add_custom_target(developerguide
   COMMAND pwd
@@ -284,21 +234,6 @@ add_custom_target(tfdoc
   COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/tfdoc.fls
   DEPENDS ${DOC_DIR}/tfdoc.tex
   WORKING_DIRECTORY ${DOC_DIR}
-)
-
-# Create all PROCESS documentation (HTML and PDF LaTeX)
-add_custom_target(doc
-  COMMAND pwd
-  COMMENT "Creating all documentation files"
-  DEPENDS vardes html userguide developerguide utilitiesdoc optsolverdoc tfdoc
-  WORKING_DIRECTORY ${DOC_DIR}
-)
-
-# Creates all PROCESS documentation (HTML and PDF LaTeX) and the Python dictionaries
-add_custom_target(all-builds
-  COMMAND pwd
-  COMMENT "Creating all documentation files"
-  DEPENDS doc dicts
 )
 
 # Create test files
