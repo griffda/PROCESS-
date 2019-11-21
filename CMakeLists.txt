@@ -158,6 +158,12 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 # Set library path
 set(CMAKE_LIBRARY_PATH /usr/lib)
 
+# Check that pip3 is installed in order to install Ford
+find_program(PIP3 NAMES pip3 PATHS ENV PATH NO_DEFAULT_PATH)
+if(NOT PIP3)
+  message(FATAL_ERROR "Can't find pip3. Please install pip3 and retry.")
+endif()
+
 # Set build targets
 
 # Creating autodoc
@@ -316,15 +322,19 @@ set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
   ${UTILITIES_DIR}/processgui/dicts/gui_dicts.py
 )
 
-# Create the Python dictionaries from FORTRAN source
+# Create the Python dictionaries from FORTRAN source using FORD
 add_custom_target(dicts
-  COMMAND ${CMAKE_COMMAND} -E touch process_io_lib/process_dicts.py
-  COMMAND mv process_io_lib/process_dicts.py process_io_lib/process_dicts.py_prev
-  COMMAND echo ${UTILITIES_DIR}
-  COMMAND echo "Creating Python dictionaries... warnings are usually ignorable!"
-  COMMAND python create_dicts.py > process_io_lib/process_dicts.py
-  COMMAND chmod 755 process_io_lib/process_dicts.py
-  WORKING_DIRECTORY ${UTILITIES_DIR}
+  # Install Process-customised FORD
+  COMMAND rm -rf ford
+  COMMAND git clone https://github.com/jonMaddockUkaea/ford.git ford
+  COMMAND pip3 install ford/ --user
+  # On Mac, ~/.local/bin is not in PATH, so running Ford using
+  # "ford" command fails. Run using python ford.py instead
+  # Add the utilities dir to the PYTHONPATH, so FORD can run create_dicts.py
+  # Then run FORD on a "fast" md file, which doesn't make graphs or a search index
+  # These are wanted for making docs, but not when making dicts quickly
+  COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${UTILITIES_DIR}" python3 ford/ford.py ${DOC_DIR}/ford/index_fast.md
+  WORKING_DIRECTORY ${PROCESS_LIB_DIR}
   DEPENDS ${CMAKE_SOURCE_DIR}/root.dir
   VERBATIM
 )

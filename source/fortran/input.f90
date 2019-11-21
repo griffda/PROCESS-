@@ -697,11 +697,6 @@ contains
        case ('isc')
           call parse_int_variable('isc', isc, 1, ipnlaws, &
                'Switch for confinement scaling law')
-       ! Issue #589 remove iscdens
-       case ('iscdens')
-           write(*,*)'Variable "iscdens" is obsolete.'
-        !   call parse_int_variable('iscdens', iscdens, 0, 1, &
-        !        'Switch for pedestal density scaling')
        case ('ieped')
           call parse_int_variable('ieped', ieped, 0, 1, &
                'Switch for scaling pedestal-top temperature with plasma parameters')
