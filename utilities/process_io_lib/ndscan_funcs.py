@@ -11,16 +11,14 @@ Notes:
 Compatible with PROCESS version 319
 """
 
-try:
-    from process_io_lib.process_dicts import DICT_IXC_SIMPLE
-except ImportError:
-    print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
-    exit()
-
 from process_io_lib.in_dat import InDat
 import collections as col
 import subprocess
+from create_dicts import get_dicts
+
+# Load dicts from dicts JSON file
+process_dicts = get_dicts()
+DICT_IXC_SIMPLE = process_dicts['DICT_IXC_SIMPLE']
 
 def get_var_name_or_number(variable):
     """

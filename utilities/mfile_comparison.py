@@ -14,8 +14,15 @@ import sys
 import scipy
 import argparse
 import process_io_lib.mfile as mf
-from process_io_lib.process_dicts import DICT_VAR_TYPE, DICT_DESCRIPTIONS
 from numpy import isfinite
+from create_dicts import get_dicts
+
+# Load dicts from dicts JSON file
+process_dicts = get_dicts()
+# Dictionary for variable types
+DICT_VAR_TYPE = process_dicts['DICT_VAR_TYPE']
+# Dictionary for parameter descriptions
+DICT_DESCRIPTIONS = process_dicts['DICT_DESCRIPTIONS']
 
 DEFAULT_COMPARE_PARAMS = [
     "rmajor", "rminor", "aspect", "kappa", "kappa95", "triang", "triang95",

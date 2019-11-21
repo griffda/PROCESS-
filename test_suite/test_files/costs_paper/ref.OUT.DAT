@@ -1991,7 +1991,6 @@ ibss = 4         * Switch for bootstrap current scaling * for sauter et al scali
 iculbl = 1       * Switch for beta limit scaling * apply limit to thermal beta;
 *impc = 0.0       * Carbon impurity multiplier (imprad_model=0 only)
 *impo = 0.0       * Oxygen impurity multiplier (imprad_model=0 only)
-iscdens = 1      * Switch for pedestal profiles * set pedestal-top density as fgwped * greenwald density limit
 nesep = 2e+19    * Electron density at separatrix (/m3) (ipedestal=1)
 neped = 5.75E+19 * Electron density at pedestal (/m3) (ipedestal=1)
 rhopedn = 0.94   * R/a of density pedestal (ipedestal=1)

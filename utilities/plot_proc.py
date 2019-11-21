@@ -26,16 +26,16 @@ from matplotlib.path import Path
 import matplotlib.patches as patches
 
 import numpy as np
-try:
-    import process_io_lib.process_dicts as proc_dict
-except ImportError:
-    print("The Python dictionaries have not yet been created. Please run",
-          " 'make dicts'!")
-    exit()
 
 # Get repository root directory
 import  pathlib
 import time
+
+from create_dicts import get_dicts
+
+# Load dicts from dicts JSON file
+proc_dict = get_dicts()
+
 timeout = time.time() + 10   # 10 seconds
 found_root = False
 back = ""
@@ -1539,8 +1539,8 @@ def plot_header(axis, mfile_data, scan):
              ("!" + mfile_data.data["date"].get_scan(-1), "Date:", ""),
              ("!" + mfile_data.data["time"].get_scan(-1), "Time:", ""),
              ("!" + mfile_data.data["username"].get_scan(-1), "User:", ""),
-             ("!" + proc_dict.DICT_OPTIMISATION_VARS
-             [abs(int(mfile_data.data["minmax"].get_scan(-1)))],
+             ("!" + proc_dict['DICT_OPTIMISATION_VARS']
+             [str(abs(int(mfile_data.data["minmax"].get_scan(-1))))],
              "Optimising:", "")]
 
 
@@ -1779,7 +1779,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
         isumattf = 0
 
     if isumattf > 0:
-        tftype = proc_dict.DICT_TF_TYPE[mfile_data.data["isumattf"].get_scan(scan)]
+        tftype = proc_dict['DICT_TF_TYPE'][str(int(mfile_data.data["isumattf"].get_scan(scan)))]
     else:
         tftype = "Resistive"
     

@@ -7,7 +7,10 @@ from argparse import RawTextHelpFormatter
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.lines  as mlines
-from process_io_lib import process_dicts as p_dicts
+from create_dicts import get_dicts
+
+# Load dicts from dicts JSON file
+p_dicts = get_dicts()
 
 """ Set of macro that plots information about the VMNCON optimization
     WARNING : YOU HAVE TO CREATE THE PROCESS DICT IN ORDER TO USE THIS MACRO !!
@@ -304,7 +307,7 @@ if __name__ == '__main__':
 
         # Plot
         for ii in range(0, n_ploted_const):
-            constraint_name = p_dicts.DICT_ICC_FULL[str(constraints_indexes[dominant_constaints_indexes[ii]])]['name']
+            constraint_name = p_dicts['DICT_ICC_FULL'][str(constraints_indexes[dominant_constaints_indexes[ii]])]['name']
             if n_ploted_const > 5 :
                 constraint_name = constraint_name.replace('Central solenoid', 'CS').replace('central solenoid', 'CS')
                 constraint_name = constraint_name[:17] 
@@ -342,7 +345,7 @@ if __name__ == '__main__':
     elif plot_const_spe :
         # Constraint selection
         ii_constraint = constraints_indexes.index(constraint_selection)
-        constraint_name = p_dicts.DICT_ICC_FULL[str(constraint_selection)]['name']
+        constraint_name = p_dicts['DICT_ICC_FULL'][str(constraint_selection)]['name']
 
         # Ranges
         x_min = 0
@@ -362,7 +365,7 @@ if __name__ == '__main__':
         plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
         plt.axis([ x_min, x_max, y_min, y_max ])
         plt.grid('true')
-        plt.savefig('OPT_plots/'+str(p_dicts.DICT_ICC_FULL[str(constraint_selection)]['name'])+'_dominant_constraints_evolution.'+save_format, format=save_format)
+        plt.savefig('OPT_plots/'+str(p_dicts['DICT_ICC_FULL'][str(constraint_selection)]['name'])+'_dominant_constraints_evolution.'+save_format, format=save_format)
         # plt.show()
         plt.close()
     # ----------------------------
@@ -390,7 +393,7 @@ if __name__ == '__main__':
 
         # Plot
         for ii in range(0, n_var_plots):
-            leg_label = '{} : {} ({})'.format(ii+1, p_dicts.DICT_IXC_SIMPLE[str(variables_indexes[ranked_variables_index[ii]])], variables_indexes[ranked_variables_index[ii]])
+            leg_label = '{} : {} ({})'.format(ii+1, p_dicts['DICT_IXC_SIMPLE'][str(variables_indexes[ranked_variables_index[ii]])], variables_indexes[ranked_variables_index[ii]])
             plt.plot( vmcon_indexes, variables[ranked_variables_index[ii]], plot_opt[ii], label=leg_label)
 
         # Action if the legend gets too big ...
@@ -428,8 +431,8 @@ if __name__ == '__main__':
         scat = plt.scatter( variables[ii_x_variable], variables[ii_y_variable], c=ln_convergence_parameter)
         plt.plot(variables[ii_x_variable], variables[ii_y_variable], 'k-')
         plt.grid('true')
-        plt.xlabel(p_dicts.DICT_IXC_SIMPLE[str(x_variable_selection)], fontsize = axis_font_size)
-        plt.ylabel(p_dicts.DICT_IXC_SIMPLE[str(y_variable_selection)], fontsize = axis_font_size)
+        plt.xlabel(p_dicts['DICT_IXC_SIMPLE'][str(x_variable_selection)], fontsize = axis_font_size)
+        plt.ylabel(p_dicts['DICT_IXC_SIMPLE'][str(y_variable_selection)], fontsize = axis_font_size)
         plot_colorbar = plt.colorbar(scat)
         plot_colorbar.set_label('$ln_{10}$(final conv)', size = axis_font_size)
         plt.savefig('OPT_plots/var'+str(x_variable_selection)+'_vs_var'+str(y_variable_selection)+'.'+save_format, format=save_format)
@@ -447,7 +450,7 @@ if __name__ == '__main__':
         ii = 0
         for variable in variables :
 
-            variable_name = p_dicts.DICT_IXC_SIMPLE[str(variables_indexes[ii])]
+            variable_name = p_dicts['DICT_IXC_SIMPLE'][str(variables_indexes[ii])]
             variable_name = variable_name.replace('(','').replace(')','')
         
             plt.plot( vmcon_indexes, variable, 'k-' )
@@ -476,7 +479,7 @@ if __name__ == '__main__':
         ii = 0
         for constraint in constraints :
 
-            constraint_name = p_dicts.DICT_ICC_FULL[str(constraints_indexes[ii])]['name']
+            constraint_name = p_dicts['DICT_ICC_FULL'][str(constraints_indexes[ii])]['name']
             plt.plot( vmcon_indexes, constraint            , 'r-' , label=constraint_name )
             plt.plot( vmcon_indexes, constraints_quad_sum  , 'k--', label='const quad sum' )
         

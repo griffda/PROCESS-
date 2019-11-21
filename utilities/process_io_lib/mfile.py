@@ -28,6 +28,7 @@ import operator
 import logging
 import sys
 from sys import stderr
+from create_dicts import get_dicts
 LOG = logging.getLogger("mfile")
 
 # try:
@@ -35,14 +36,9 @@ LOG = logging.getLogger("mfile")
 # except ImportError:
 #     LOG.info("Fuzzy variable name suggestions not available for MFile")
 
-try :
-    import process_io_lib.process_dicts
-    from process_io_lib.process_dicts import DICT_NSWEEP2VARNAME
-except ImportError:
-    print("Error: The Python dictionaries have not yet been created. Please"
-          "run 'make dicts'!", file=stderr)
-    exit()
-
+# Load dicts from dicts JSON file
+process_dicts = get_dicts()
+DICT_NSWEEP2VARNAME = process_dicts['DICT_NSWEEP2VARNAME']
 
 class MFileVariable(dict):
     """Class for containing a single mfile variable """

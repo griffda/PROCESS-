@@ -1335,7 +1335,6 @@ idensl   = 7 * Switch for density limit to enforce (constraint equation 5);
 ifalphap = 1 * Switch for fast alpha pressure calculation;
 ifispact = 0 * Switch for neutronics calculations;
 ipedestal = 1 * Switch for pedestal profiles;
-iscdens  = 1 * Switch for pedestal profiles; obsolete
 neped    = 0.678e20 * Electron density of pedestal [m-3] (ipedestal=1)
 rhopedn  = 0.94 * R/a of density pedestal (ipedestal=1)
 rhopedt  = 0.94 * R/a of temperature pedestal (ipedestal=1)
