@@ -349,15 +349,9 @@ pages:
    - pip install mkdocs-material
    - pip install pymdown-extensions
    - cmake -H. -Bbuild
-   - cmake --build build --target vardes
-   - pandoc documentation/html/vardes.html -f html -t markdown -o documentation/proc-pages/vardes.md
-   - python documentation/proc-pages/scripts/sort_vardes.py documentation/proc-pages/vardes.md
    - mkdocs build
    
    # FORD documentation
-   # Python3 uses the locale to choose the file encoding it uses
-   # Without this it will use ASCII encoding and Ford will fail
-   - export LANG=C.UTF-8
    # Ensure FORD can find create_dicts.py inside Process
    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
    - cd ..
