@@ -338,7 +338,6 @@ pages:
   when: on_success
   only:
     - develop
-    - issue-951-ford_var_des
   stage: pages
   script:
    - pwd
