@@ -331,7 +331,7 @@ contains
     ! Rem : Assuming the same CP-leg resistivity (as rhotfleg = -1 by default)
     if ( abs( rhotfleg + 1 ) < epsilon(rhotfleg) ) rhotfleg = rhocp
     tflegres = ltfleg * rhotfleg/arealeg
-    presleg  = (ritfc/n_tf)**2 * tflegres * n_tf 
+    presleg = (ritfc/n_tf)**2 * tflegres * n_tf 
     ! ----------------------------------
 
 

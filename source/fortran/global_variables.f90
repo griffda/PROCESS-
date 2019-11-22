@@ -218,7 +218,7 @@ module physics_variables
 
   real(kind(1.0D0)) :: ftar = 1.0D0
   !! ftar  /1.0/ : fraction of power to the lower divertor in double null
-  !!               configuration (snull = 0 only) (default assumes SN)
+  !!               configuration (i_single_null = 0 only) (default assumes SN)
   real(kind(1.0D0)) :: ffwal = 0.92D0
   !! ffwal /0.92/ : factor to convert plasma surface area to first wall
   !!                area in neutron wall load calculation (iwalld=1)
@@ -306,7 +306,7 @@ module physics_variables
   !!         <LI> = 7 Greenwald limit</UL>
 
   integer :: idivrt = 2
-  !! idivrt : number of divertors (calculated from snull)
+  !! idivrt : number of divertors (calculated from i_single_null)
 
   integer :: ifalphap = 1
   !! ifalphap /1/ : switch for fast alpha pressure calculation:<UL>
@@ -562,13 +562,13 @@ module physics_variables
   !! pdivt : power to conducted to the divertor region (MW)
 
   real(kind(1.0D0)) :: pdivl = 0.0D0
-  !!pdivl : power conducted to the lower divertor region (calculated if snull = 0) (MW)
+  !!pdivl : power conducted to the lower divertor region (calculated if i_single_null = 0) (MW)
 
   real(kind(1.0D0)) :: pdivu = 0.0D0
-  !!pdivu : power conducted to the upper divertor region (calculated if snull = 0) (MW)
+  !!pdivu : power conducted to the upper divertor region (calculated if i_single_null = 0) (MW)
 
   real(kind(1.0D0)) :: pdivmax = 0.0D0
-  !!pdivmax : power conducted to the divertor with most load (calculated if snull = 0) (MW)
+  !!pdivmax : power conducted to the divertor with most load (calculated if i_single_null = 0) (MW)
   real(kind(1.0D0)) :: pdt = 0.0D0
   !! pdt : deuterium-tritium fusion power (MW)
   real(kind(1.0D0)) :: pedgeradmw = 0.0D0
@@ -712,8 +712,8 @@ module physics_variables
   real(kind(1.0D0)) :: sf = 0.0D0
   !! sf : shape factor = plasma poloidal perimeter / (2.pi.rminor)
 
-  integer :: snull = 1
-  !! snull /1/ : switch for single null / double null plasma:<UL>
+  integer :: i_single_null = 1
+  !! i_single_null /1/ : switch for single null / double null plasma:<UL>
   !!         <LI> = 0 for double null;
   !!         <LI> = 1 for single null (diverted side down)</UL>
 
@@ -2224,8 +2224,8 @@ module tfcoil_variables
   !!           <LI> = 5 WST Nb3Sn parameterisation
   !!           <LI> = 6 REBCO HTS tape in CroCo strand</UL>
 
-  integer :: itfsup = 1
-  !! itfsup /1/ : switch for TF coil conductor model:<UL>
+  integer :: i_tf_sup = 1
+  !! i_tf_sup /1/ : switch for TF coil conductor model:<UL>
   !!         <LI> = 0 copper;
   !!         <LI> = 1 superconductor</UL>
 
@@ -2329,23 +2329,16 @@ module tfcoil_variables
   !!                 For REBCO model, meaning depends on quench_model:
   !!                 <LI> exponential quench : e-folding time (s)
   !!                 <LI> linear quench : discharge time (s)
+
   real(kind(1.0D0)) :: tfareain = 0.0D0
   !! tfareain : area of inboard midplane TF legs (m2)
-
-  real(kind(1.0D0)) :: tfboreh = 0.0D0
-  !! tfboreh : TF coil horizontal inner bore (m)
-
-  real(kind(1.0D0)) :: tf_total_h_width = 0.0D0
-  !! tf_total_h_width : TF coil horizontal inner bore (m)
-
-  real(kind(1.0D0)) :: tfborev = 0.0D0
-  !! tfborev : TF coil vertical inner bore (m)
 
   real(kind(1.0D0)) :: tfbusl = 0.0D0
   !! tfbusl : TF coil bus length (m)
 
   real(kind(1.0D0)) :: tfbusmas = 0.0D0
   !! tfbusmas : TF coil bus mass (kg)
+
   real(kind(1.0D0)) :: tfckw = 0.0D0
   !! tfckw :  available DC power for charging the TF coils (kW)
 ! Issue #781
@@ -2372,8 +2365,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfleng = 0.0D0
   !! tfleng : TF coil circumference (m)
 
-  real(kind(1.0D0)) :: tfno = 16.0D0
-  !! tfno /16.0/ : number of TF coils (default = 50 for stellarators)
+  real(kind(1.0D0)) :: n_tf = 16.0D0
+  !! n_tf /16.0/ : number of TF coils (default = 50 for stellarators)
   !!               number of TF coils outer legs for ST
 
   real(kind(1.0D0)) :: tfocrn = 0.0D0
@@ -2445,7 +2438,7 @@ module tfcoil_variables
   !! vforce : vertical separating force on inboard leg/coil (N)
   
   real(kind(1.0D0)) :: vftf = 0.4D0
-  !! vftf /0.4/ : coolant fraction of TFC 'cable' (itfsup=1), or of TFC leg (itfsup=0)
+  !! vftf /0.4/ : coolant fraction of TFC 'cable' (i_tf_sup=1), or of TFC leg (i_tf_ssup=0)
   real(kind(1.0D0)) :: voltfleg = 0.0D0
   !! voltfleg : volume of each TF coil outboard leg (m3)
   real(kind(1.0D0)) :: vtfkv = 0.0D0
@@ -2501,7 +2494,7 @@ module tfcoil_variables
   real(kind(1.0D0)), dimension(4) :: tfb = 0.0D0
   !! tfb(4) : Vertical radius of inside edge of TF coil (m)
   !! <P><B>Quantities relating to the spherical tokamak model (itart=1)</B>
-  !!       (and in some cases, also to resistive TF coils, itfsup=0):<P>
+  !!       (and in some cases, also to resistive TF coils, i_tf_sup=0):<P>
 
   real(kind(1.0D0)) :: drtop = 0.0D0
   !! drtop /0.0/ : centrepost taper maximum radius adjustment (m)
@@ -2530,6 +2523,9 @@ module tfcoil_variables
 
   real(kind(1.0D0)) :: prescp = 0.0D0
   !! prescp : resistive power in the centrepost (W)
+
+  real(kind(1.0D0)) :: presleg = 0.0D0
+  !! presleg : resistive power in the centrepost (W)
 
   real(kind(1.0D0)) :: ptempalw = 473.15D0   ! 200 C
   !! ptempalw /473.15/ : maximum peak centrepost temperature (K)
@@ -2953,14 +2949,18 @@ module buildings_variables
 
   real(kind(1.0D0)) :: admv = 1.0D5
   !! admv /1.0e5/ : administration building volume (m3)
+
   real(kind(1.0D0)) :: admvol = 0.0D0
   !! admvol : volume of administration buildings (m3)
+
   real(kind(1.0D0)) :: clh1 = 2.5D0
   !! clh1 /2.5/ : vertical clearance from TF coil to cryostat (m)
   !!              (calculated for tokamaks)
+
   real(kind(1.0D0)) :: clh2 = 15.0D0
   !! clh2 /15.0/ : clearance beneath TF coil to foundation
   !!               (including basement) (m)
+
   real(kind(1.0D0)) :: conv = 6.0D4
   !! conv /6.0e4/ : control building volume (m3)
   real(kind(1.0D0)) :: convol = 0.0D0
@@ -3256,7 +3256,7 @@ module build_variables
 
   real(kind(1.0D0)) :: tfootfi = 1.19D0
   !! tfootfi /1.19/ : TF coil outboard leg / inboard leg radial thickness
-  !!                 ratio (itfsup=0 only)
+  !!                 ratio (i_tf_sup=0 only)
   !!                 (iteration variable 75)
 
   real(kind(1.0D0)) :: tfthko = 0.0D0
