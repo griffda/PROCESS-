@@ -332,6 +332,9 @@ line_length:
 pages:
   before_script:
     - "export LOGNAME=root"
+    - export LANG=C.UTF-8
+    # Python3 uses the locale to choose the file encoding it uses
+    # Without this it will use ASCII encoding and Ford will fail
   when: on_success
   only:
     - develop
