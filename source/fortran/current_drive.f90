@@ -2,40 +2,17 @@
 
 module current_drive_module
 
-  !+ad_name  current_drive_module
-  !+ad_summ  Module containing current drive system routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  cudriv
-  !+ad_cont  iternb
-  !+ad_cont  cfnbi
-  !+ad_cont  sigbeam
-  !+ad_cont  cullhy
-  !+ad_cont  culecd
-  !+ad_cont  culnbi
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines relevant for calculating the
-  !+ad_desc  current drive parameters for a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  constants
-  !+ad_call  current_drive_variables
-  !+ad_call  error_handling
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  profiles_module
-  !+ad_hist  17/10/12 PJK Initial version of module
-  !+ad_hist  31/10/12 PJK Changed public/private lists
-  !+ad_hist  19/06/14 PJK Removed obsolete routines nbeam, ech, lwhymod
-  !+ad_hist  26/06/14 PJK Added error handling
-  !+ad_hist  25/01/17 JM  Added case 10 for iefrf for user input ECRH
-  !+ad_hist  24/10/18 MDK Added case 11 for iefrf for ECRH using Poli model "HARE"
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing current drive system routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines relevant for calculating the
+  !! current drive parameters for a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Import modules !
-  !!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!
   use iso_c_binding
 
   use constraint_variables
@@ -59,64 +36,26 @@ contains
 
   subroutine cudriv(outfile,iprint)
 
-    !+ad_name  cudriv
-    !+ad_summ  Routine to calculate the current drive power requirements
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the power requirements of the current
-    !+ad_desc  drive system, using a choice of models for the current drive
-    !+ad_desc  efficiency.
-    !+ad_prob  None
-    !+ad_call  culecd
-    !+ad_call  cullhy
-    !+ad_call  culnbi
-    !+ad_call  iternb
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_call  ovarrf
-    !+ad_call  report_error
-    !+ad_hist  22/08/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added current_drive_variables
-    !+ad_hist  23/01/13 PJK Added comment about ignited plasma
-    !+ad_hist  11/09/13 PJK Corrected error in NBI calls; ftr replaced by ftritbm
-    !+ad_hist  25/09/13 PJK Added nbshield, rtanbeam, rtanmax outputs
-    !+ad_hist  27/11/13 PJK Added ohmic power to bigq denominator
-    !+ad_hist  06/03/14 PJK Changed gamma units in output to 10^20 A/W-m2
-    !+ad_hist  01/05/14 PJK Changed bigq description
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  19/06/14 PJK Imported code from obsolete routines
-    !+ad_hisc               nbeam, ech, lwhymod
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  30/06/14 PJK Added error handling
-    !+ad_hist  06/10/14 PJK Use global nbshinef instead of local fshine
-    !+ad_hist  06/10/14 PJK Added use of forbitloss
-    !+ad_hist  06/10/14 PJK Made feffcd usage consistent for all CD methods
-    !+ad_hist  22/10/14 PJK Corrected forbitloss usage
-    !+ad_hist  01/12/14 PJK Modified pinjmw output description
-    !+ad_hist  01/04/15 JM  Implemented MDK's changes to NB power requirements
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the current drive power requirements
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the power requirements of the current
+    !! drive system, using a choice of models for the current drive
+    !! efficiency.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     integer, intent(in) :: iprint, outfile
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: dene20, effnbss, effrfss, gamnb, gamrf, power1
     real(kind(1.0D0)) :: effcdfix, effrfssfix, effnbssfix, pinjwp1
@@ -498,7 +437,7 @@ contains
     end if
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (iprint == 0) return
 
@@ -713,46 +652,28 @@ contains
 
   subroutine iternb(effnbss,fpion,fshine) bind(C, name="c_iternb")
 
-    !+ad_name  iternb
-    !+ad_summ  Routine to calculate ITER Neutral Beam current drive parameters
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  etanb
-    !+ad_args  effnbss : output real : neutral beam current drive efficiency (A/W)
-    !+ad_args  fpion   : output real : fraction of NB power given to ions
-    !+ad_args  fshine  : output real : shine-through fraction of beam
-    !+ad_desc  This routine calculates the current drive parameters for a
-    !+ad_desc  neutral beam system, based on the 1990 ITER model.
-    !+ad_prob  None
-    !+ad_call  cfnbi
-    !+ad_call  etanb
-    !+ad_call  report_error
-    !+ad_call  sigbeam
-    !+ad_hist  15/06/92 PJK Initial upgraded version
-    !+ad_hist  22/08/12 PJK Initial F90 version
-    !+ad_hist  19/06/13 PJK Corrected dpath calculation
-    !+ad_hist  03/07/13 PJK Changed zeffai description
-    !+ad_hist  24/02/14 PJK Rationalised arguments
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  01/09/14 PJK Set fshine to zero if it is negligible
-    !+ad_hist  06/10/14 PJK Set fshine to 1.0e-20 if it is negligible
-    !+ad_hist  06/10/14 PJK Moved feffcd usage to outside of this routine
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+    !! Routine to calculate ITER Neutral Beam current drive parameters
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! effnbss : output real : neutral beam current drive efficiency (A/W)
+    !! fpion   : output real : fraction of NB power given to ions
+    !! fshine  : output real : shine-through fraction of beam
+    !! This routine calculates the current drive parameters for a
+    !! neutral beam system, based on the 1990 ITER model.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !! ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: dend,dent,dpath,sigstop
 
@@ -794,35 +715,23 @@ contains
 
     function etanb(abeam,alphan,alphat,aspect,dene,ebeam,rmajor,ten,zeff)
 
-      !+ad_name  etanb
-      !+ad_summ  Routine to find neutral beam current drive efficiency
-      !+ad_summ  using the ITER 1990 formulation
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  abeam   : input real : beam ion mass (amu)
-      !+ad_args  alphan  : input real : density profile factor
-      !+ad_args  alphat  : input real : temperature profile factor
-      !+ad_args  aspect  : input real : aspect ratio
-      !+ad_args  dene    : input real : volume averaged electron density (m**-3)
-      !+ad_args  enbeam  : input real : neutral beam energy (keV)
-      !+ad_args  rmajor  : input real : plasma major radius (m)
-      !+ad_args  ten     : input real : density weighted average electron temp. (keV)
-      !+ad_args  zeff    : input real : plasma effective charge
-      !+ad_desc  This routine calculates the current drive efficiency of
-      !+ad_desc  a neutral beam system, based on the 1990 ITER model.
-      !+ad_prob  No account is taken of pedestal profiles, and the shine-through
-      !+ad_prob  power fraction is ignored. The improved version of this function,
-      !+ad_prob  <CODE>etanb2</CODE>, is more appropriate for non-ITER plasma sizes
-      !+ad_prob  and densities.
-      !+ad_call  None
-      !+ad_hist  15/06/92 PJK Initial upgraded version
-      !+ad_hist  22/08/12 PJK Initial F90 version
-      !+ad_hist  07/10/14 PJK Added comments about etanb2
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-      !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-      !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+      !! Routine to find neutral beam current drive efficiency
+      !! using the ITER 1990 formulation
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! abeam   : input real : beam ion mass (amu)
+      !! alphan  : input real : density profile factor
+      !! alphat  : input real : temperature profile factor
+      !! aspect  : input real : aspect ratio
+      !! dene    : input real : volume averaged electron density (m**-3)
+      !! enbeam  : input real : neutral beam energy (keV)
+      !! rmajor  : input real : plasma major radius (m)
+      !! ten     : input real : density weighted average electron temp. (keV)
+      !! zeff    : input real : plasma effective charge
+      !! This routine calculates the current drive efficiency of
+      !! a neutral beam system, based on the 1990 ITER model.
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+      !! ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -831,13 +740,13 @@ contains
       real(kind(1.0D0)) :: etanb
 
       ! Arguments !
-      !!!!!!!!!!!!!
+      ! !!!!!!!!!!!!
 
       real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene, &
            ebeam,rmajor,ten,zeff
 
       ! Local variables !
-      !!!!!!!!!!!!!!!!!!!
+      ! !!!!!!!!!!!!!!!!!!
 
       real(kind(1.0D0)) :: abd,bbd,dene20,dum,epseff,ffac,gfac,rjfunc, &
            xj,xjs,yj,zbeam
@@ -880,31 +789,21 @@ contains
 
   subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion) bind(C, name="c_cfnbi")
 
-    !+ad_name  cfnbi
-    !+ad_summ  Routine to calculate the fraction of the fast particle energy
-    !+ad_summ  coupled to the ions
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  xlmbdabi
-    !+ad_args  afast   : input real : mass of fast particle (units of proton mass)
-    !+ad_args  efast   : input real : energy of fast particle (keV)
-    !+ad_args  te      : input real : density weighted average electron temp. (keV)
-    !+ad_args  ne      : input real : volume averaged electron density (m**-3)
-    !+ad_args  nd      : input real : deuterium beam density (m**-3)
-    !+ad_args  nt      : input real : tritium beam density (m**-3)
-    !+ad_args  zeffai  : input real : mass weighted plasma effective charge
-    !+ad_args  xlmbda  : input real : ion-electron coulomb logarithm
-    !+ad_args  fpion   : output real : fraction of fast particle energy coupled to ions
-    !+ad_desc  This routine calculates the fast particle energy coupled to
-    !+ad_desc  the ions in the neutral beam system.
-    !+ad_prob  None
-    !+ad_call  xlmbdabi
-    !+ad_hist  15/06/92 PJK Initial upgraded version
-    !+ad_hist  22/08/12 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  03/07/13 PJK Changed zeffai description
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the fraction of the fast particle energy
+    !! coupled to the ions
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! afast   : input real : mass of fast particle (units of proton mass)
+    !! efast   : input real : energy of fast particle (keV)
+    !! te      : input real : density weighted average electron temp. (keV)
+    !! ne      : input real : volume averaged electron density (m**-3)
+    !! nd      : input real : deuterium beam density (m**-3)
+    !! nt      : input real : tritium beam density (m**-3)
+    !! zeffai  : input real : mass weighted plasma effective charge
+    !! xlmbda  : input real : ion-electron coulomb logarithm
+    !! fpion   : output real : fraction of fast particle energy coupled to ions
+    !! This routine calculates the fast particle energy coupled to
+    !! the ions in the neutral beam system.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -957,25 +856,17 @@ contains
 
     function xlmbdabi(mb,mth,eb,t,nelec)
 
-      !+ad_name  xlmbdabi
-      !+ad_summ  Calculates the Coulomb logarithm for ion-ion collisions
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  mb     : input real : mass of fast particle (units of proton mass)
-      !+ad_args  mth    : input real : mass of background ions (units of proton mass)
-      !+ad_args  eb     : input real : energy of fast particle (keV)
-      !+ad_args  t      : input real : density weighted average electron temp. (keV)
-      !+ad_args  nelec  : input real : volume averaged electron density (m**-3)
-      !+ad_desc  This function calculates the Coulomb logarithm for ion-ion
-      !+ad_desc  collisions where the relative velocity may be large compared
-      !+ad_desc  with the background ('mt') thermal velocity.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  15/06/92 PJK Initial upgraded version
-      !+ad_hist  22/08/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  Mikkelson and Singer, Nuc Tech/Fus, 4, 237 (1983)
+      !! Calculates the Coulomb logarithm for ion-ion collisions
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! mb     : input real : mass of fast particle (units of proton mass)
+      !! mth    : input real : mass of background ions (units of proton mass)
+      !! eb     : input real : energy of fast particle (keV)
+      !! t      : input real : density weighted average electron temp. (keV)
+      !! nelec  : input real : volume averaged electron density (m**-3)
+      !! This function calculates the Coulomb logarithm for ion-ion
+      !! collisions where the relative velocity may be large compared
+      !! with the background ('mt') thermal velocity.
+      !! Mikkelson and Singer, Nuc Tech/Fus, 4, 237 (1983)
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1007,29 +898,19 @@ contains
 
   function sigbeam(eb,te,ne,rnhe,rnc,rno,rnfe)
 
-    !+ad_name  sigbeam
-    !+ad_summ  Calculates the stopping cross-section for a hydrogen
-    !+ad_summ  beam in a fusion plasma
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  eb     : input real : beam energy (kev/amu)
-    !+ad_args  te     : input real : electron temperature (keV)
-    !+ad_args  ne     : input real : electron density (10^20m-3)
-    !+ad_args  rnhe   : input real : alpha density / ne
-    !+ad_args  rnc    : input real : carbon density /ne
-    !+ad_args  rno    : input real : oxygen density /ne
-    !+ad_args  rnfe   : input real : iron density /ne
-    !+ad_desc  This function calculates the stopping cross-section (m^-2)
-    !+ad_desc  for a hydrogen beam in a fusion plasma.
-    !+ad_prob  The model does not take into account impurities other than
-    !+ad_prob  carbon, oxygen and iron, so the results may be inaccurate
-    !+ad_prob  if additional impurities are present.
-    !+ad_call  None
-    !+ad_hist  15/06/92 PJK Initial upgraded version
-    !+ad_hist  22/08/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  Janev, Boley and Post, Nuclear Fusion 29 (1989) 2125
+    !! Calculates the stopping cross-section for a hydrogen
+    !! beam in a fusion plasma
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! eb     : input real : beam energy (kev/amu)
+    !! te     : input real : electron temperature (keV)
+    !! ne     : input real : electron density (10^20m-3)
+    !! rnhe   : input real : alpha density / ne
+    !! rnc    : input real : carbon density /ne
+    !! rno    : input real : oxygen density /ne
+    !! rnfe   : input real : iron density /ne
+    !! This function calculates the stopping cross-section (m^-2)
+    !! for a hydrogen beam in a fusion plasma.
+    !! Janev, Boley and Post, Nuclear Fusion 29 (1989) 2125
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1105,29 +986,13 @@ contains
 
   subroutine cullhy(effrfss)
 
-    !+ad_name  cullhy
-    !+ad_summ  Routine to calculate Lower Hybrid current drive efficiency
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  lhrad
-    !+ad_cont  lheval
-    !+ad_args  effrfss : output real : lower hybrid current drive efficiency (A/W)
-    !+ad_desc  This routine calculates the current drive parameters for a
-    !+ad_desc  lower hybrid system, based on the AEA FUS 172 model.
-    !+ad_prob  None
-    !+ad_call  lhrad
-    !+ad_call  nprofile
-    !+ad_call  report_error
-    !+ad_call  tprofile
-    !+ad_hist  15/06/92 PJK Initial upgraded version
-    !+ad_hist  22/08/12 PJK Initial F90 version
-    !+ad_hist  24/02/14 PJK Local density and temperature calculated using
-    !+ad_hisc               relevant profile model; rationalised arguments
-    !+ad_hist  30/06/14 PJK Added error_handling
-    !+ad_hist  06/10/14 PJK Moved feffcd usage to outside of this routine
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+    !! Routine to calculate Lower Hybrid current drive efficiency
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! effrfss : output real : lower hybrid current drive efficiency (A/W)
+    !! This routine calculates the current drive parameters for a
+    !! lower hybrid system, based on the AEA FUS 172 model.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! AEA FUS 172: Physics Assessment for the European Reactor Study
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1190,24 +1055,13 @@ contains
 
     subroutine lhrad(rratio)
 
-      !+ad_name  lhrad
-      !+ad_summ  Routine to calculate Lower Hybrid wave absorption radius
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  rratio  : output real : minor radius of penetration / rminor
-      !+ad_desc  This routine determines numerically the minor radius at which the
-      !+ad_desc  damping of Lower Hybrid waves occurs, using a Newton-Raphson method.
-      !+ad_prob  None
-      !+ad_call  lheval
-      !+ad_call  report_error
-      !+ad_hist  15/06/92 PJK Initial upgraded version
-      !+ad_hist  18/09/12 PJK Initial F90 version
-      !+ad_hist  24/02/14 PJK Rationalised argument list
-      !+ad_hist  26/06/14 PJK Added error handling
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-      !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+      !! Routine to calculate Lower Hybrid wave absorption radius
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! rratio  : output real : minor radius of penetration / rminor
+      !! This routine determines numerically the minor radius at which the
+      !! damping of Lower Hybrid waves occurs, using a Newton-Raphson method.
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! AEA FUS 172: Physics Assessment for the European Reactor Study
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1293,30 +1147,19 @@ contains
 
     subroutine lheval(drfind,rratio,ediff)
 
-      !+ad_name  lheval
-      !+ad_summ  Routine to evaluate the difference between electron energy
-      !+ad_summ  expressions required to find the Lower Hybrid absorption radius
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  drfind  : input real : correction to parallel refractive index
-      !+ad_args  rratio  : input real : guess for radius of penetration / rminor
-      !+ad_args  ediff   : output real : difference between the E values (keV)
-      !+ad_desc  This routine evaluates the difference between the values calculated
-      !+ad_desc  from the two equations for the electron energy E, given in
-      !+ad_desc  AEA FUS 172, p.58. This difference is used to locate the Lower Hybrid
-      !+ad_desc  wave absorption radius via a Newton-Raphson method, in calling
-      !+ad_desc  routine <A HREF="lhrad.html">lhrad</A>.
-      !+ad_prob  None
-      !+ad_call  nprofile
-      !+ad_call  tprofile
-      !+ad_hist  15/06/92 PJK Initial upgraded version
-      !+ad_hist  18/09/12 PJK Initial F90 version
-      !+ad_hist  24/02/14 PJK Rationalised argument list, and called profile
-      !+ad_hisc               routines to calculate local quantities
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-      !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+      !! Routine to evaluate the difference between electron energy
+      !! expressions required to find the Lower Hybrid absorption radius
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! drfind  : input real : correction to parallel refractive index
+      !! rratio  : input real : guess for radius of penetration / rminor
+      !! ediff   : output real : difference between the E values (keV)
+      !! This routine evaluates the difference between the values calculated
+      !! from the two equations for the electron energy E, given in
+      !! AEA FUS 172, p.58. This difference is used to locate the Lower Hybrid
+      !! wave absorption radius via a Newton-Raphson method, in calling
+      !! routine <A HREF="lhrad.html">lhrad</A>.
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! AEA FUS 172: Physics Assessment for the European Reactor Study
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1374,28 +1217,14 @@ contains
 
   subroutine culecd(effrfss)
 
-    !+ad_name  culecd
-    !+ad_summ  Routine to calculate Electron Cyclotron current drive efficiency
-    !+ad_type  Subroutine
-    !+ad_auth  M R O'Brien, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  eccdef
-    !+ad_cont  legend
-    !+ad_args  effrfss : output real : electron cyclotron current drive efficiency (A/W)
-    !+ad_desc  This routine calculates the current drive parameters for a
-    !+ad_desc  electron cyclotron system, based on the AEA FUS 172 model.
-    !+ad_prob  None
-    !+ad_call  eccdef
-    !+ad_call  nprofile
-    !+ad_call  tprofile
-    !+ad_hist  16/06/92 PJK Initial upgraded version
-    !+ad_hist  18/09/12 PJK Initial F90 version
-    !+ad_hist  24/02/14 PJK Rationalised argument list, and called profile
-    !+ad_hisc               routines to calculate local quantities
-    !+ad_hist  06/10/14 PJK Moved feffcd usage to outside of this routine
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+    !! Routine to calculate Electron Cyclotron current drive efficiency
+    !! author: M R O'Brien, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! effrfss : output real : electron cyclotron current drive efficiency (A/W)
+    !! This routine calculates the current drive parameters for a
+    !! electron cyclotron system, based on the AEA FUS 172 model.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! AEA FUS 172: Physics Assessment for the European Reactor Study
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1461,41 +1290,30 @@ contains
 
     subroutine eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam)
 
-      !+ad_name  eccdef
-      !+ad_summ  Routine to calculate Electron Cyclotron current drive efficiency
-      !+ad_type  Subroutine
-      !+ad_auth  M R O'Brien, CCFE, Culham Science Centre
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  tlocal : input real : local electron temperature (keV)
-      !+ad_args  epsloc : input real : local inverse aspect ratio
-      !+ad_args  zlocal : input real : local plasma effective charge
-      !+ad_args  cosang : input real : cosine of the poloidal angle at which ECCD takes
-      !+ad_argc                        place (+1 outside, -1 inside)
-      !+ad_args  coulog : input real : local coulomb logarithm for ion-electron collisions
-      !+ad_args  ecgam  : output real : normalised current drive efficiency (A/W m**-2)
-      !+ad_desc  This routine calculates the current drive parameters for a
-      !+ad_desc  electron cyclotron system, based on the AEA FUS 172 model.
-      !+ad_desc  It works out the ECCD efficiency using the formula due to Cohen
-      !+ad_desc  quoted in the ITER Physics Design Guidelines : 1989
-      !+ad_desc  (but including division by the Coulomb Logarithm omitted from
-      !+ad_desc  IPDG89). We have assumed gamma**2-1 << 1, where gamma is the
-      !+ad_desc  relativistic factor. The notation follows that in IPDG89.
-      !+ad_desc  <P>The answer ECGAM is the normalised efficiency nIR/P with n the
-      !+ad_desc  local density in 10**20 /m**3, I the driven current in MAmps,
-      !+ad_desc  R the major radius in metres, and P the absorbed power in MWatts.
-      !+ad_prob  None
-      !+ad_call  legend
-      !+ad_call  report_error
-      !+ad_hist  16/08/91 MOB Initial version
-      !+ad_hist  16/06/92 PJK Initial upgraded version
-      !+ad_hist  18/09/12 PJK Initial F90 version
-      !+ad_hist  26/06/14 PJK Added error handling
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-      !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
-      !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-      !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+      !! Routine to calculate Electron Cyclotron current drive efficiency
+      !! author: M R O'Brien, CCFE, Culham Science Centre
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! tlocal : input real : local electron temperature (keV)
+      !! epsloc : input real : local inverse aspect ratio
+      !! zlocal : input real : local plasma effective charge
+      !! cosang : input real : cosine of the poloidal angle at which ECCD takes
+      !! place (+1 outside, -1 inside)
+      !! coulog : input real : local coulomb logarithm for ion-electron collisions
+      !! ecgam  : output real : normalised current drive efficiency (A/W m**-2)
+      !! This routine calculates the current drive parameters for a
+      !! electron cyclotron system, based on the AEA FUS 172 model.
+      !! It works out the ECCD efficiency using the formula due to Cohen
+      !! quoted in the ITER Physics Design Guidelines : 1989
+      !! (but including division by the Coulomb Logarithm omitted from
+      !! IPDG89). We have assumed gamma**2-1 << 1, where gamma is the
+      !! relativistic factor. The notation follows that in IPDG89.
+      !! <P>The answer ECGAM is the normalised efficiency nIR/P with n the
+      !! local density in 10**20 /m**3, I the driven current in MAmps,
+      !! R the major radius in metres, and P the absorbed power in MWatts.
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! AEA FUS 172: Physics Assessment for the European Reactor Study
+      !! ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+      !! ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1556,38 +1374,28 @@ contains
 
     subroutine legend(zlocal,arg,palpha,palphap)
 
-      !+ad_name  legend
-      !+ad_summ  Routine to calculate Legendre function and its derivative
-      !+ad_type  Subroutine
-      !+ad_auth  M R O'Brien, CCFE, Culham Science Centre
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  zlocal  : input real : local plasma effective charge
-      !+ad_args  arg     : input real : argument of Legendre function
-      !+ad_args  palpha  : output real : value of Legendre function
-      !+ad_args  palphap : output real : derivative of Legendre function
-      !+ad_desc  This routine calculates the Legendre function <CODE>palpha</CODE>
-      !+ad_desc  of argument <CODE>arg</CODE> and order
-      !+ad_desc  <CODE>alpha = -0.5 + i sqrt(xisq)</CODE>,
-      !+ad_desc  and its derivative <CODE>palphap</CODE>.
-      !+ad_desc  <P>This Legendre function is a conical function and we use the series
-      !+ad_desc  in <CODE>xisq</CODE> given in Abramowitz and Stegun. The
-      !+ad_desc  derivative is calculated from the derivative of this series.
-      !+ad_desc  <P>The derivatives were checked by calculating <CODE>palpha</CODE> for
-      !+ad_desc  neighbouring arguments. The calculation of <CODE>palpha</CODE> for zero
-      !+ad_desc  argument was checked by comparison with the expression
-      !+ad_desc  <CODE>palpha(0) = 1/sqrt(pi) * cos(pi*alpha/2) * gam1 / gam2</CODE>
-      !+ad_desc  (Abramowitz and Stegun, eqn 8.6.1). Here <CODE>gam1</CODE> and
-      !+ad_desc  <CODE>gam2</CODE> are the Gamma functions of arguments
-      !+ad_desc  <CODE>0.5*(1+alpha)</CODE> and <CODE>0.5*(2+alpha)</CODE> respectively.
-      !+ad_prob  None
-      !+ad_call  report_error
-      !+ad_hist  16/08/91 MOB Initial version
-      !+ad_hist  16/06/92 PJK Initial upgraded version
-      !+ad_hist  18/09/12 PJK Initial F90 version
-      !+ad_hist  26/06/14 PJK Added error handling
-      !+ad_stat  Okay
-      !+ad_docs  Abramowitz and Stegun, equation 8.12.1
+      !! Routine to calculate Legendre function and its derivative
+      !! author: M R O'Brien, CCFE, Culham Science Centre
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! zlocal  : input real : local plasma effective charge
+      !! arg     : input real : argument of Legendre function
+      !! palpha  : output real : value of Legendre function
+      !! palphap : output real : derivative of Legendre function
+      !! This routine calculates the Legendre function <CODE>palpha</CODE>
+      !! of argument <CODE>arg</CODE> and order
+      !! <CODE>alpha = -0.5 + i sqrt(xisq)</CODE>,
+      !! and its derivative <CODE>palphap</CODE>.
+      !! <P>This Legendre function is a conical function and we use the series
+      !! in <CODE>xisq</CODE> given in Abramowitz and Stegun. The
+      !! derivative is calculated from the derivative of this series.
+      !! <P>The derivatives were checked by calculating <CODE>palpha</CODE> for
+      !! neighbouring arguments. The calculation of <CODE>palpha</CODE> for zero
+      !! argument was checked by comparison with the expression
+      !! <CODE>palpha(0) = 1/sqrt(pi) * cos(pi*alpha/2) * gam1 / gam2</CODE>
+      !! (Abramowitz and Stegun, eqn 8.6.1). Here <CODE>gam1</CODE> and
+      !! <CODE>gam2</CODE> are the Gamma functions of arguments
+      !! <CODE>0.5*(1+alpha)</CODE> and <CODE>0.5*(2+alpha)</CODE> respectively.
+      !! Abramowitz and Stegun, equation 8.12.1
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1654,33 +1462,17 @@ contains
 
   subroutine culnbi(effnbss,fpion,fshine)
 
-    !+ad_name  culnbi
-    !+ad_summ  Routine to calculate Neutral Beam current drive parameters
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  etanb2
-    !+ad_args  effnbss : output real : neutral beam current drive efficiency (A/W)
-    !+ad_args  fpion   : output real : fraction of NB power given to ions
-    !+ad_args  fshine  : output real : shine-through fraction of beam
-    !+ad_desc  This routine calculates Neutral Beam current drive parameters
-    !+ad_desc  using the corrections outlined in AEA FUS 172 to the ITER method.
-    !+ad_desc  <P>The result cannot be guaranteed for devices with aspect ratios far
-    !+ad_desc  from that of ITER (approx. 2.8).
-    !+ad_prob  None
-    !+ad_call  cfnbi
-    !+ad_call  etanb2
-    !+ad_call  report_error
-    !+ad_call  sigbeam
-    !+ad_hist  17/06/92 PJK Initial upgraded version
-    !+ad_hist  18/09/12 PJK Initial F90 version
-    !+ad_hist  19/06/13 PJK Corrected dpath calculation
-    !+ad_hist  03/07/13 PJK Changed zeffai description
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  01/09/14 PJK Set fshine to 1.0e-20 if it is negligible
-    !+ad_hist  06/10/14 PJK Moved feffcd usage to outside of this routine
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+    !! Routine to calculate Neutral Beam current drive parameters
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! effnbss : output real : neutral beam current drive efficiency (A/W)
+    !! fpion   : output real : fraction of NB power given to ions
+    !! fshine  : output real : shine-through fraction of beam
+    !! This routine calculates Neutral Beam current drive parameters
+    !! using the corrections outlined in AEA FUS 172 to the ITER method.
+    !! <P>The result cannot be guaranteed for devices with aspect ratios far
+    !! from that of ITER (approx. 2.8).
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! AEA FUS 172: Physics Assessment for the European Reactor Study
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1741,45 +1533,31 @@ contains
     function etanb2(abeam,alphan,alphat,aspect,dene,dnla,enbeam,frbeam, &
          fshine,rmajor,rminor,ten,zeff)
 
-      !+ad_name  etanb2
-      !+ad_summ  Routine to find neutral beam current drive efficiency
-      !+ad_summ  using the ITER 1990 formulation, plus correction terms
-      !+ad_summ  outlined in Culham Report AEA FUS 172
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  abeam   : input real : beam ion mass (amu)
-      !+ad_args  alphan  : input real : density profile factor
-      !+ad_args  alphat  : input real : temperature profile factor
-      !+ad_args  aspect  : input real : aspect ratio
-      !+ad_args  dene    : input real : volume averaged electron density (m**-3)
-      !+ad_args  dnla    : input real : line averaged electron density (m**-3)
-      !+ad_args  enbeam  : input real : neutral beam energy (keV)
-      !+ad_args  frbeam  : input real : R_tangent / R_major for neutral beam injection
-      !+ad_args  fshine  : input real : shine-through fraction of beam
-      !+ad_args  rmajor  : input real : plasma major radius (m)
-      !+ad_args  rminor  : input real : plasma minor radius (m)
-      !+ad_args  ten     : input real : density weighted average electron temperature (keV)
-      !+ad_args  zeff    : input real : plasma effective charge
-      !+ad_desc  This routine calculates the current drive efficiency in A/W of
-      !+ad_desc  a neutral beam system, based on the 1990 ITER model,
-      !+ad_desc  plus correction terms outlined in Culham Report AEA FUS 172.
-      !+ad_desc  <P>The formulae are from AEA FUS 172, unless denoted by IPDG89.
-      !+ad_prob  No account is taken of pedestal profiles.
-      !+ad_prob  Although it is taken account of here, fshine should be negligible
-      !+ad_prob  otherwise the transmitted NBI power is not accounted for in the
-      !+ad_prob  overall power balance.
-      !+ad_call  report_error
-      !+ad_hist  17/06/92 PJK Initial upgraded version
-      !+ad_hist  18/09/12 PJK Initial F90 version
-      !+ad_hist  10/10/12 PJK Changed enorm to ebnorm
-      !+ad_hist  26/06/14 PJK Added error handling
-      !+ad_hist  07/10/14 PJK Moved feffcd usage to outside of this routine
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-      !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
-      !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-      !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+      !! Routine to find neutral beam current drive efficiency
+      !! using the ITER 1990 formulation, plus correction terms
+      !! outlined in Culham Report AEA FUS 172
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! abeam   : input real : beam ion mass (amu)
+      !! alphan  : input real : density profile factor
+      !! alphat  : input real : temperature profile factor
+      !! aspect  : input real : aspect ratio
+      !! dene    : input real : volume averaged electron density (m**-3)
+      !! dnla    : input real : line averaged electron density (m**-3)
+      !! enbeam  : input real : neutral beam energy (keV)
+      !! frbeam  : input real : R_tangent / R_major for neutral beam injection
+      !! fshine  : input real : shine-through fraction of beam
+      !! rmajor  : input real : plasma major radius (m)
+      !! rminor  : input real : plasma minor radius (m)
+      !! ten     : input real : density weighted average electron temperature (keV)
+      !! zeff    : input real : plasma effective charge
+      !! This routine calculates the current drive efficiency in A/W of
+      !! a neutral beam system, based on the 1990 ITER model,
+      !! plus correction terms outlined in Culham Report AEA FUS 172.
+      !! <P>The formulae are from AEA FUS 172, unless denoted by IPDG89.
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! AEA FUS 172: Physics Assessment for the European Reactor Study
+      !! ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+      !! ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -2,50 +2,19 @@
 
 module impurity_radiation_module
 
-  !+ad_name  impurity_radiation_module
-  !+ad_summ  Module for new impurity radiation calculations
-  !+ad_type  Module
-  !+ad_auth  H Lux, CCFE, Culham Science Centre
-  !+ad_auth  R Kemp, CCFE, Culham Science Centre
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  initialise_imprad
-  !+ad_cont  init_imp_element
-  !+ad_cont  import_impdata
-  !+ad_cont  z2index
-  !+ad_cont  element2index
-  !+ad_cont  impradprofile
-  !+ad_cont  pbremden
-  !+ad_cont  pimpden
-  !+ad_cont  fradcore
-  !+ad_cont  Zav_of_te
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  bremsstrahlung and line radiation of impurities
-  !+ad_desc  including H  and He, assuming a coronal equilibrium.
-  !+ad_desc  <P>The model is only valid for T &gt; 30 eV. For some impurity
-  !+ad_desc  species there is also an upper temperature limit of T &lt; 40 keV.
-  !+ad_prob  None
-  !+ad_call  constants
-  !+ad_call  error_handling
-  !+ad_call  profiles_module
-  !+ad_hist  13/12/13 HL  Initial version of module
-  !+ad_hist  13/05/14 PJK Initial PROCESS implementation
-  !+ad_hist  02/06/14 PJK Added impvar, fimpvar
-  !+ad_hist  17/06/14 PJK Added impdir
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_hist  03/09/14 HL  Added average atomic charge values to data;
-  !+ad_hisc               changed directory containing datafiles
-  !+ad_hist  17/09/14 PJK Changed default values
-  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
-  !+ad_hist  24/09/14 PJK Path name now set automatically (via make)
-  !+ad_hist  25/09/14 PJK Corrected root.dir include syntax
-  !+ad_hist  06/10/14 PJK Changed impvar default from 10 to 9
-  !+ad_hist  08/12/14 PJK Changed impdir label
-  !+ad_hist  29/03/16 HL Added coreradiationfraction
-  !+ad_stat  Okay
-  !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
-  !+ad_docs  Sertoli, private communication
-  !+ad_docs  Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
+  !! Module for new impurity radiation calculations
+  !! author: H Lux, CCFE, Culham Science Centre
+  !! author: R Kemp, CCFE, Culham Science Centre
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! bremsstrahlung and line radiation of impurities
+  !! including H  and He, assuming a coronal equilibrium.
+  !! <P>The model is only valid for T &gt; 30 eV. For some impurity
+  !! species there is also an upper temperature limit of T &lt; 40 keV.
+  !! Johner, Fusion Science and Technology 59 (2011), pp 308-349
+  !! Sertoli, private communication
+  !! Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -60,57 +29,57 @@ module impurity_radiation_module
   public :: imp_dat, Zav_of_te
 
 
-  !+ad_varc  (It is recommended to turn on
-  !+ad_varc  constraint eqn.17 with iteration variable 28: fradpwr.)
+  !! (It is recommended to turn on
+  !! constraint eqn.17 with iteration variable 28: fradpwr.)
 
-  !+ad_vars  nimp /14/ FIX : number of ion species in impurity radiation model
   integer, public, parameter :: nimp = 14
+  !! nimp /14/ FIX : number of ion species in impurity radiation model
 
-  !+ad_vars  coreradius /0.6/ : normalised radius defining the 'core' region
   real(kind(1.0D0)), public :: coreradius = 0.6D0
+  !! coreradius /0.6/ : normalised radius defining the 'core' region
 
-  !+ad_vars  coreradiationfraction /1.0/ : fraction of radiation from 'core' region that is subtracted from the loss power
   real(kind(1.0D0)), public :: coreradiationfraction = 1.0D0
+  !! coreradiationfraction /1.0/ : fraction of radiation from 'core' region that is subtracted from the loss power
 
-  !+ad_vars  fimp(nimp) /1.0,0.1,0.02,0.0,0.0,0.0,0.0,0.0,0.0016,0.0,0.0,0.0,0.0,0.0/ :
-  !+ad_varc         impurity number density fractions relative to electron density
-  !+ad_varc         (iteration variable 102 is fimp(impvar))
+  !! fimp(nimp) /1.0,0.1,0.02,0.0,0.0,0.0,0.0,0.0,0.0016,0.0,0.0,0.0,0.0,0.0/ :
+  !!        impurity number density fractions relative to electron density
+  !!        (iteration variable 102 is fimp(impvar))
   real(kind(1.0D0)), public, dimension(nimp) :: fimp = &
        (/ 1.0D0, 0.1D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.00D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
-  !+ad_vars  imp_label(nimp) : impurity ion species names:<UL>
-  character(len=2), public, dimension(nimp) :: imp_label = (/ &
-  !+ad_varc  <LI> ( 1)  Hydrogen  (fraction calculated by code)
+       character(len=2), public, dimension(nimp) :: imp_label = (/ &
+       !! imp_label(nimp) : impurity ion species names:<UL>
        'H_', &
-  !+ad_varc  <LI> ( 2)  Helium
+       !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
        'He', &
-  !+ad_varc  <LI> ( 3)  Beryllium
+       !! <LI> ( 2)  Helium
        'Be', &
-  !+ad_varc  <LI> ( 4)  Carbon
+       !! <LI> ( 3)  Beryllium
        'C_', &
-  !+ad_varc  <LI> ( 5)  Nitrogen
+       !! <LI> ( 4)  Carbon
        'N_', &
-  !+ad_varc  <LI> ( 6)  Oxygen
+       !! <LI> ( 5)  Nitrogen
        'O_', &
-  !+ad_varc  <LI> ( 7)  Neon
+       !! <LI> ( 6)  Oxygen
        'Ne', &
-  !+ad_varc  <LI> ( 8)  Silicon
+       !! <LI> ( 7)  Neon
        'Si', &
-  !+ad_varc  <LI> ( 9)  Argon
+       !! <LI> ( 8)  Silicon
        'Ar', &
-  !+ad_varc  <LI> (10)  Iron
+       !! <LI> ( 9)  Argon
        'Fe', &
-  !+ad_varc  <LI> (11)  Nickel
+       !! <LI> (10)  Iron
        'Ni', &
-  !+ad_varc  <LI> (12)  Krypton
+       !! <LI> (11)  Nickel
        'Kr', &
-  !+ad_varc  <LI> (13)  Xenon
+       !! <LI> (12)  Krypton
        'Xe', &
-  !+ad_varc  <LI> (14)  Tungsten</UL>
+       !! <LI> (13)  Xenon
        'W_'/)
+       !! <LI> (14)  Tungsten</UL>
 
-  !+ad_vars  fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
-  !+ad_varc                     (iteration variable 102)
+       !! fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
+       !!                    (iteration variable 102)
   ! Deprecated
   real(kind(1.0D0)), public :: fimpvar = 1.0D-3
 
@@ -118,12 +87,12 @@ module impurity_radiation_module
 
   include "root.dir"
 
-  !+ad_vars  impdir /'/home/PROCESS/[branch]/impuritydata'/ :
-  !+ad_varc           Directory containing impurity radiation data files
+  !! impdir /'/home/PROCESS/[branch]/impuritydata'/ :
+  !!          Directory containing impurity radiation data files
   character(len=200), public :: impdir = INSTALLDIR//'/data/impuritydata/'
 
-  !+ad_vars  impvar : impurity to be iterated (deprecated)
-  !+ad_varc                       variable number 102 is turned on
+  !! impvar : impurity to be iterated (deprecated)
+  !!                      variable number 102 is turned on
   integer, public :: impvar = 9
 
   !  Declare impurity data type
@@ -152,18 +121,10 @@ contains
 
   subroutine initialise_imprad
 
-    !+ad_name  initialise_imprad
-    !+ad_summ  Initialises the impurity radiation data structure
-    !+ad_type  Subroutine
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine initialises the impurity radiation data.
-    !+ad_prob  None
-    !+ad_call  init_imp_element
-    !+ad_hist  08/05/14 HL  First draft of the routine
-    !+ad_hist  13/05/14 PJK First draft within PROCESS
-    !+ad_stat  Okay
+    !! Initialises the impurity radiation data structure
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! None
+    !! This routine initialises the impurity radiation data.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -257,34 +218,22 @@ contains
   subroutine init_imp_element(no, label, Z, amass, frac, len_tab, TinkeV, &
        LzinWm3, error)
 
-    !+ad_name  init_imp_element
-    !+ad_summ  Initialises the impurity radiation data for a species
-    !+ad_type  Subroutine
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  no      : input integer  : position of species in impurity array
-    !+ad_args  label   : input string   : species name
-    !+ad_args  Z       : input integer  : species charge number
-    !+ad_args  amass   : input real     : species atomic mass (amu)
-    !+ad_args  frac    : input real     : number density / electron density
-    !+ad_args  len_tab : input integer  : length of temperature and Lz tables
-    !+ad_args  TinkeV  : input real     : temperature conversion factor from file to keV
-    !+ad_args  LzinWm3 : input real     : Lz conversion factor from file to W/m3
-    !+ad_args  error   : input/output integer : Error flag; 0 = okay, 1 = missing
-    !+ad_argc                             impurity data
-    !+ad_desc  This routine initialises the impurity radiation data structure
-    !+ad_desc  for a given impurity species.
-    !+ad_desc  <P>The Lz versus temperature data are read in from file.
-    !+ad_prob  None
-    !+ad_call  import_impdata
-    !+ad_call  report_error
-    !+ad_hist  09/05/14 HL  First draft of the routine
-    !+ad_hist  14/05/14 PJK Initial PROCESS version
-    !+ad_hist  17/06/14 PJK Added impdir usage
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  26/05/17 JM  Lack of impurity data now exits instead of using old model
-    !+ad_stat  Okay
+    !! Initialises the impurity radiation data for a species
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! no      : input integer  : position of species in impurity array
+    !! label   : input string   : species name
+    !! Z       : input integer  : species charge number
+    !! amass   : input real     : species atomic mass (amu)
+    !! frac    : input real     : number density / electron density
+    !! len_tab : input integer  : length of temperature and Lz tables
+    !! TinkeV  : input real     : temperature conversion factor from file to keV
+    !! LzinWm3 : input real     : Lz conversion factor from file to W/m3
+    !! error   : input/output integer : Error flag; 0 = okay, 1 = missing
+    !! impurity data
+    !! This routine initialises the impurity radiation data structure
+    !! for a given impurity species.
+    !! <P>The Lz versus temperature data are read in from file.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -367,29 +316,18 @@ contains
 
   subroutine import_impdata(filename, nlines, col1, col2, col3, skiprows, fmt)
 
-    !+ad_name  import_impdata
-    !+ad_summ  Reads two columns of data from file
-    !+ad_type  Subroutine
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  filename : input char(len=128)     : input filename
-    !+ad_args  nlines   : input integer           : no. of lines to be read
-    !+ad_args  col1(nlines) : output real array   : data in column1
-    !+ad_args  col2(nlines) : output real array   : data in column2
-    !+ad_args  col3(nlines) : output real array   : data in column3
-    !+ad_args  skiprows : optional input integer  : no. of initial rows to skip
-    !+ad_args  fmt      : optional input char(len=128) : data format
-    !+ad_desc  This routine reads in the data of a two column file and
-    !+ad_desc  returns it. The first two rows are skipped by default.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  01/05/14 HL  First draft of routine
-    !+ad_hist  07/05/14 HL  Added skiprows
-    !+ad_hist  19/05/14 PJK Modified error handling
-    !+ad_hist  26/06/14 PJK Added (proper) error handling
-    !+ad_hist  03/09/14 HL  Added third column of data
-    !+ad_stat  Okay
-    !+ad_docs  N/A
+    !! Reads two columns of data from file
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! filename : input char(len=128)     : input filename
+    !! nlines   : input integer           : no. of lines to be read
+    !! col1(nlines) : output real array   : data in column1
+    !! col2(nlines) : output real array   : data in column2
+    !! col3(nlines) : output real array   : data in column3
+    !! skiprows : optional input integer  : no. of initial rows to skip
+    !! fmt      : optional input char(len=128) : data format
+    !! This routine reads in the data of a two column file and
+    !! returns it. The first two rows are skipped by default.
+    !! N/A
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -464,21 +402,12 @@ contains
 
   function z2index(zimp)
 
-    !+ad_name  z2index
-    !+ad_summ  Returns the index of element in the impurity array with charge Z
-    !+ad_type  Function returning integer
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  zimp : input integer : impurity atomic number Z
-    !+ad_desc  This function returns the index of the element
-    !+ad_desc  in the impurity array with the corresponding nuclear charge Z.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  17/12/13 HL  First draft of routine
-    !+ad_hist  09/05/14 HL  Using new data structure
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Returns the index of element in the impurity array with charge Z
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! zimp : input integer : impurity atomic number Z
+    !! This function returns the index of the element
+    !! in the impurity array with the corresponding nuclear charge Z.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -513,21 +442,13 @@ contains
 
   function element2index(element_label)
 
-    !+ad_name  element2index
-    !+ad_summ  Returns the index of the element in the impurity array with
-    !+ad_summ  a given name
-    !+ad_type  Function returning integer
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  element_label : input string : impurity name
-    !+ad_desc  This function returns the index of the element
-    !+ad_desc  in the impurity array with the corresponding name.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  14/05/14 PJK Initial version
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Returns the index of the element in the impurity array with
+    !! a given name
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! element_label : input string : impurity name
+    !! This function returns the index of the element
+    !! in the impurity array with the corresponding name.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -562,34 +483,23 @@ contains
 
   subroutine impradprofile(imp_element, ne, te, pimp, pbrem, pline)
 
-    !+ad_name  impradprofile
-    !+ad_summ  Implementation of Bremsstrahlung and loss-function curves
-    !+ad_type  Subroutine
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  imp_element : input imp_dat : impurity element
-    !+ad_args  ne    : input real  : electron density (/m3)
-    !+ad_args  te    : input real  : electron temperature (keV)
-    !+ad_args  pimp  : output real : total impurity radiation density (W/m3)
-    !+ad_args  pbrem : output real : Bremsstrahlung radiation density (W/m3)
-    !+ad_args  pline : output real : other radiation density (W/m3)
-    !+ad_desc  This routine calculates the impurity radiation losses
-    !+ad_desc  for a given temperature and density. Bremsstrahlung equation
-    !+ad_desc  from Johner, L(z) data (coronal equilibrium) from Marco
-    !+ad_desc  Sertoli, Asdex-U, ref. Kallenbach et al.
-    !+ad_prob  None
-    !+ad_call  pbremden
-    !+ad_call  pimpden
-    !+ad_hist  08/10/13 RK  First draft of routine
-    !+ad_hist  13/01/14 HL  Implemented fixed lower + variable higher temp limit
-    !+ad_hist  09/05/14 HL  Using new data structure
-    !+ad_hist  14/05/14 PJK First PROCESS version
-    !+ad_stat  Okay
-    !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
-    !+ad_docs  Sertoli, private communication
-    !+ad_docs  Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
+    !! Implementation of Bremsstrahlung and loss-function curves
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! imp_element : input imp_dat : impurity element
+    !! ne    : input real  : electron density (/m3)
+    !! te    : input real  : electron temperature (keV)
+    !! pimp  : output real : total impurity radiation density (W/m3)
+    !! pbrem : output real : Bremsstrahlung radiation density (W/m3)
+    !! pline : output real : other radiation density (W/m3)
+    !! This routine calculates the impurity radiation losses
+    !! for a given temperature and density. Bremsstrahlung equation
+    !! from Johner, L(z) data (coronal equilibrium) from Marco
+    !! Sertoli, Asdex-U, ref. Kallenbach et al.
+    !! Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !! Sertoli, private communication
+    !! Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -624,25 +534,16 @@ contains
 
   function pbremden(imp_element, ne, te)
 
-    !+ad_name  pbremden
-    !+ad_summ  Bremsstrahlung radiation density (W/m3)
-    !+ad_type  Function returning real
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  imp_element : input imp_dat : impurity element
-    !+ad_args  ne : input real : electron density (/m3)
-    !+ad_args  te : input real : electron temperature (keV)
-    !+ad_desc  This routine calculates the bremsstrahlung radiation losses
-    !+ad_desc  for a given temperature and density using the Born approximation
-    !+ad_desc  documented in Johner (2011).
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  08/10/13 RK  First draft of routine
-    !+ad_hist  13/01/14 HL  Separated bremsstrahlung from impurity radiation
-    !+ad_hist  09/05/14 HL  Using new data structure
-    !+ad_stat  Okay
-    !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !! Bremsstrahlung radiation density (W/m3)
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! imp_element : input imp_dat : impurity element
+    !! ne : input real : electron density (/m3)
+    !! te : input real : electron temperature (keV)
+    !! This routine calculates the bremsstrahlung radiation losses
+    !! for a given temperature and density using the Born approximation
+    !! documented in Johner (2011).
+    !! Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -666,32 +567,18 @@ contains
 
   function pimpden(imp_element, ne, te)
 
-    !+ad_name  pimpden
-    !+ad_summ  Total impurity radiation density (W/m3)
-    !+ad_type  Function returning real
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  imp_element : input imp_dat : impurity element
-    !+ad_args  ne : input real : electron density (m^-3)
-    !+ad_args  te : input real : electron temperature (keV)
-    !+ad_desc  This routine calculates the total impurity
-    !+ad_desc  radiation losses (line radiation + bremsstrahlung)
-    !+ad_desc  for a given temperature and density.
-    !+ad_desc  <P>The L(Z) versus temperature data is interpolated from
-    !+ad_desc  lookup tables.
-    !+ad_prob  If the requested temperature for the calculation is outside
-    !+ad_prob  of the tabulated range of the fit, the nearest temperature
-    !+ad_prob  point's data is used.
-    !+ad_call  report_error
-    !+ad_hist  09/05/14 HL  First draft of routine
-    !+ad_hist  14/05/14 PJK Initial PROCESS version; added treatment of out-of-range
-    !+ad_hisc               temperature values
-    !+ad_hist  19/05/14 PJK Added hydrogen isotopes' line radiation contribution
-    !+ad_hist  21/05/14 PJK Added warning message if te is below tabulated values
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Total impurity radiation density (W/m3)
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! imp_element : input imp_dat : impurity element
+    !! ne : input real : electron density (m^-3)
+    !! te : input real : electron temperature (keV)
+    !! This routine calculates the total impurity
+    !! radiation losses (line radiation + bremsstrahlung)
+    !! for a given temperature and density.
+    !! <P>The L(Z) versus temperature data is interpolated from
+    !! lookup tables.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -760,27 +647,17 @@ contains
 
   function fradcore(rho,coreradius,coreradiationfraction)
 
-    !+ad_name  fradcore
-    !+ad_summ  Function to calculate core radiation fraction
-    !+ad_type  Function returning real
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rho        : input real : normalised minor radius
-    !+ad_args  coreradius : input real : normalised core radius
-    !+ad_args coreradiationfraction : input real : fraction of core radiation
-    !+ad_desc  This function calculates the core radiation fraction
-    !+ad_desc  at normalised minor radius <CODE>rho</CODE> given a fixed
-    !+ad_desc  core radius using only a specified fraction of that radiation.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  08/10/13 RK  Initial draft
-    !+ad_hist  16/12/13 HL  Added coreradius as optional input
-    !+ad_hist  19/05/14 PJK First PROCESS implementation
-    !+ad_hist 29/03/16 HL Added coreradiationfraction
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Function to calculate core radiation fraction
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rho        : input real : normalised minor radius
+    !! coreradius : input real : normalised core radius
+    !! coreradiationfraction : input real : fraction of core radiation
+    !! This function calculates the core radiation fraction
+    !! at normalised minor radius <CODE>rho</CODE> given a fixed
+    !! core radius using only a specified fraction of that radiation.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -809,24 +686,15 @@ contains
 
   function Zav_of_te(imp_element,te)
 
-    !+ad_name  Zav_of_te
-    !+ad_summ  Electron temperature dependent average atomic number
-    !+ad_type  Function returning real
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  imp_element : input imp_dat : impurity element
-    !+ad_args  te : input real : electron temperature (keV)
-    !+ad_desc  This routine returns the interpolated average atomic
-    !+ad_desc  charge for a given electron temperature.
-    !+ad_desc  <P>The Zav versus temperature data is interpolated from
-    !+ad_desc  lookup tables from the ADAS data base provided by Martin O'Mullane.
-    !+ad_prob  If the requested temperature for the calculation is outside
-    !+ad_prob  of the tabulated range of the fit, the nearest temperature
-    !+ad_prob  point's data is used.
-    !+ad_call  report_error
-    !+ad_hist  22/02/16 HL  First draft of routine
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Electron temperature dependent average atomic number
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! imp_element : input imp_dat : impurity element
+    !! te : input real : electron temperature (keV)
+    !! This routine returns the interpolated average atomic
+    !! charge for a given electron temperature.
+    !! <P>The Zav versus temperature data is interpolated from
+    !! lookup tables from the ADAS data base provided by Martin O'Mullane.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
        implicit none

@@ -2,29 +2,12 @@
 
 module profiles_module
 
-  !+ad_name  profiles_module
-  !+ad_summ  Density and temperature profiles
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  plasma_profiles
-  !+ad_cont  tcore
-  !+ad_cont  tprofile
-  !+ad_cont  ncore
-  !+ad_cont  nprofile
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines that give the density and temperature
-  !+ad_desc  profile quantities
-  !+ad_prob  None
-  !+ad_call  constants
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  physics_variables
-  !+ad_call  maths_library
-  !+ad_hist  24/02/14 PJK Initial version
-  !+ad_hist  04/03/14 PJK Moved sumup3 into maths_library.f90
-  !+ad_hist  15/09/14 PJK Added error_handling
-  !+ad_stat  Okay
-  !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, pp.4-7
+  !! Density and temperature profiles
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines that give the density and temperature
+  !! profile quantities
+  !! T&amp;M/PKNIGHT/LOGBOOK24, pp.4-7
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -43,26 +26,13 @@ contains
 
   subroutine plasma_profiles
 
-    !+ad_name  plasma_profiles
-    !+ad_summ  Calculates density and temperature profile quantities
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  None
-    !+ad_desc  This subroutine initialises the density and temperature
-    !+ad_desc  profile averages and peak values, given the main
-    !+ad_desc  parameters describing these profiles.
-    !+ad_prob  None
-    !+ad_call  gamfun
-    !+ad_call  ncore
-    !+ad_call  nprofile
-    !+ad_call  sumup3
-    !+ad_call  tcore
-    !+ad_call  tprofile
-    !+ad_hist  19/02/14 PJK Initial version
-    !+ad_hist  24/02/14 PJK Corrected alphap
-    !+ad_stat  Okay
-    !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, pp.4-7
+    !! Calculates density and temperature profile quantities
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This subroutine initialises the density and temperature
+    !! profile averages and peak values, given the main
+    !! parameters describing these profiles.
+    !! T&amp;M/PKNIGHT/LOGBOOK24, pp.4-7
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -188,31 +158,19 @@ contains
   
   function tcore(rhopedt, tped, tsep, tav, alphat, tbeta)
 
-    !+ad_name  tcore
-    !+ad_summ  Central temperature for a pedestal profile
-    !+ad_type  Function returning real
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rhopedt : input real : normalised minor radius pedestal position
-    !+ad_args  tped : input real : pedestal temperature (keV)
-    !+ad_args  tsep : input real : separatrix temperature (keV)
-    !+ad_args  tav : input real : volume average temperature (keV)
-    !+ad_args  alphat : input real : temperature peaking parameter
-    !+ad_args  tbeta : input real : second temperature exponent
-    !+ad_desc  This routine calculates the core temperature (keV)
-    !+ad_desc  of a pedestalised profile.
-    !+ad_prob  None
-    !+ad_call  gamfun
-    !+ad_hist  07/10/13 RK  First draft of routine
-    !+ad_hist  19/12/13 HL  Separate function
-    !+ad_hist  19/02/14 PJK Minor modifications to use gamfun
-    !+ad_hist  25/02/14 PJK Fixed error in calculating factorial using gamfun
-    !+ad_hisc               (gamma(a) = factorial(a-1))
-    !+ad_hist  13/03/14 PJK Formula corrected by H Lux
-    !+ad_stat  Okay
-    !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !! Central temperature for a pedestal profile
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rhopedt : input real : normalised minor radius pedestal position
+    !! tped : input real : pedestal temperature (keV)
+    !! tsep : input real : separatrix temperature (keV)
+    !! tav : input real : volume average temperature (keV)
+    !! alphat : input real : temperature peaking parameter
+    !! tbeta : input real : second temperature exponent
+    !! This routine calculates the core temperature (keV)
+    !! of a pedestalised profile.
+    !! J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -255,33 +213,23 @@ contains
 
   function tprofile(rho, rhopedt, t0, tped, tsep, alphat, tbeta)
 
-    !+ad_name  tprofile
-    !+ad_summ  Implementation of HELIOS-type temperature pedestal profile
-    !+ad_type  Function returning real
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rho     : input real : normalised minor radius
-    !+ad_args  rhopedt : input real : normalised minor radius pedestal position
-    !+ad_args  t0      : input real : central temperature (keV)
-    !+ad_args  tped    : input real : pedestal temperature (keV)
-    !+ad_args  tsep    : input real : separatrix temperature (keV)
-    !+ad_args  alphat  : input real : temperature peaking parameter
-    !+ad_args  tbeta   : input real : second temperature exponent
-    !+ad_args  trho    : output real : T(rho) (keV)
-    !+ad_desc  This routine calculates the temperature at a normalised minor 
-    !+ad_desc  radius position rho for a pedestalised profile.
-    !+ad_desc  <P>If <CODE>ipedestal = 0</CODE> the original parabolic
-    !+ad_desc  profile form is used instead.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  07/10/13 RK  First draft of routine
-    !+ad_hist  12/12/13 HL  Separate n and T profiles, minor changes
-    !+ad_hist  19/02/14 PJK Transferred into PROCESS as a function
-    !+ad_hist  15/09/14 PJK Added error reporting
-    !+ad_stat  Okay
-    !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !! Implementation of HELIOS-type temperature pedestal profile
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rho     : input real : normalised minor radius
+    !! rhopedt : input real : normalised minor radius pedestal position
+    !! t0      : input real : central temperature (keV)
+    !! tped    : input real : pedestal temperature (keV)
+    !! tsep    : input real : separatrix temperature (keV)
+    !! alphat  : input real : temperature peaking parameter
+    !! tbeta   : input real : second temperature exponent
+    !! trho    : output real : T(rho) (keV)
+    !! This routine calculates the temperature at a normalised minor 
+    !! radius position rho for a pedestalised profile.
+    !! <P>If <CODE>ipedestal = 0</CODE> the original parabolic
+    !! profile form is used instead.
+    !! J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -323,28 +271,18 @@ contains
   
   function ncore(rhopedn, nped, nsep, nav, alphan)
     
-    !+ad_name  ncore
-    !+ad_summ  Central density of a pedestal profile
-    !+ad_type  Function returning real
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rhopedn : input real : normalised minor radius pedestal position
-    !+ad_args  nped : input real : pedestal density (/m3)
-    !+ad_args  nsep : input real : separatrix density (/m3)
-    !+ad_args  nav : input real : volume average density (/m3)
-    !+ad_args  alphan : input real : density peaking parameter
-    !+ad_desc  This routine calculates the central density
-    !+ad_desc  of a pedestalised profile.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  07/10/13 RK  First draft of routine
-    !+ad_hist  19/12/13 HL  Separate function
-    !+ad_hist  19/02/14 PJK First version within PROCESS
-    !+ad_hist  10/07/18 SIM Added error reporting
-    !+ad_stat  Okay
-    !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !! Central density of a pedestal profile
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rhopedn : input real : normalised minor radius pedestal position
+    !! nped : input real : pedestal density (/m3)
+    !! nsep : input real : separatrix density (/m3)
+    !! nav : input real : volume average density (/m3)
+    !! alphan : input real : density peaking parameter
+    !! This routine calculates the central density
+    !! of a pedestalised profile.
+    !! J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -377,31 +315,21 @@ contains
   
   function nprofile(rho, rhopedn, n0, nped, nsep, alphan)
     
-    !+ad_name  nprofile
-    !+ad_summ  Implementation of HELIOS-type density pedestal profile
-    !+ad_type  Function returning real
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rho     : input real : normalised minor radius
-    !+ad_args  rhopedn : input real : normalised minor radius pedestal position
-    !+ad_args  n0      : input real : central density (/m3)
-    !+ad_args  nped    : input real : pedestal density (/m3)
-    !+ad_args  nsep    : input real : separatrix density (/m3)
-    !+ad_args  alphan  : input real : density peaking parameter
-    !+ad_desc  This routine calculates the density at a normalised minor
-    !+ad_desc  radius position rho for a pedestalised profile.
-    !+ad_desc  <P>If <CODE>ipedestal = 0</CODE> the original parabolic
-    !+ad_desc  profile form is used instead.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  07/10/13 RK  First draft of routine
-    !+ad_hist  12/12/13 HL  Separate n and T profiles, minor changes
-    !+ad_hist  20/02/14 PJK Transferred into PROCESS as a function
-    !+ad_hist  15/09/14 PJK Added error reporting
-    !+ad_stat  Okay
-    !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !! Implementation of HELIOS-type density pedestal profile
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rho     : input real : normalised minor radius
+    !! rhopedn : input real : normalised minor radius pedestal position
+    !! n0      : input real : central density (/m3)
+    !! nped    : input real : pedestal density (/m3)
+    !! nsep    : input real : separatrix density (/m3)
+    !! alphan  : input real : density peaking parameter
+    !! This routine calculates the density at a normalised minor
+    !! radius position rho for a pedestalised profile.
+    !! <P>If <CODE>ipedestal = 0</CODE> the original parabolic
+    !! profile form is used instead.
+    !! J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
