@@ -61,7 +61,7 @@
 \maketitle
 
 \subsection{PROCESS Variable Descriptor File : dated
-20191116}\label{process-variable-descriptor-file-dated-20191116}
+20191119}\label{process-variable-descriptor-file-dated-20191119}
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -236,9 +236,9 @@ so need not be initialised.
 \item
   fdeut /0.5/ : deuterium fuel fraction
 \item
-  ftar /0.5/ : fraction of power to the lower divertor in double null
+  ftar /1.0/ : fraction of power to the lower divertor in double null
 \item
-  configuration (snull = 0 only)
+  configuration (snull = 0 only) (default assumes SN)
 \item
   ffwal /0.92/ : factor to convert plasma surface area to first wall
   area in neutron wall load calculation (iwalld=1)
@@ -2087,6 +2087,8 @@ so need not be initialised.
   fcuohsu /0.7/ : copper fraction of strand in central solenoid
 \item
   fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
+\item
+  fvssu /1.0/ : F-value for constraint equation 51
 \item
   ipfloc(ngc) /2,2,3/ : switch for locating scheme of PF coil group i:
 
@@ -4239,7 +4241,10 @@ so need not be initialised.
     = 8 lithium
   \end{itemize}
 \item
-  bldr /1.0/ : radial thickness of IFE blanket (m)
+  bldr /1.0/ : radial thickness of IFE blanket (m; calculated if
+  ifetyp=4)
+\item
+  bldrc /1.0/ : radial thickness of IFE curtain (m; ifetyp=4)
 \item
   bldzl /4.0/ : vertical thickness of IFE blanket below chamber (m)
 \item
@@ -4260,6 +4265,8 @@ so need not be initialised.
 \item
   cdriv2 /244.9/ : IFE high energy heavy ion beam driver cost
   extrapolated to edrive=0 (M\$)
+\item
+  cdriv3 /1.463/ : IFE driver cost (\$/J wall plug) (ifedrv==3)
 \item
   chdzl /9.0/ : vertical thickness of IFE chamber below centre (m)
 \item
@@ -4287,6 +4294,8 @@ so need not be initialised.
   edrive /5.0D6/ : IFE driver energy (J) (iteration variable 81)
 \item
   etadrv : IFE driver wall plug to target efficiency
+\item
+  etali /0.40/ : IFE lithium pump wall plug efficiency (ifetyp=4)
 \item
   etave(10) : IFE driver efficiency vs driver energy (ifedrv=-1)
 \item
@@ -4365,6 +4374,8 @@ so need not be initialised.
     = 4 2019 build
   \end{itemize}
 \item
+  lipmw : IFE lithium pump power (MW; ifetyp=4)
+\item
   mcdriv /1.0/ : IFE driver cost multiplier
 \item
   mflibe : total mass of FLiBe (kg)
@@ -4418,6 +4429,8 @@ so need not be initialised.
 \item
   somtdr /2.7/ : radius of cylindrical blanket section above chamber
   (ifetyp=2)
+\item
+  taufall : Lithium Fall Time (s)
 \item
   tdspmw /0.01/ FIX : IFE target delivery system power (MW)
 \item
@@ -5039,7 +5052,8 @@ so need not be initialised.
   \item
     (156) rrin : Input IFE repetition rate (Hz) (ifedrv=3 only)
   \item
-    (157) DUMMY : Description
+    (157) fvssu : F-value for available to required start up flux (con.
+    51)
   \item
     (158) DUMMY : Description
   \item
@@ -5090,6 +5104,8 @@ so need not be initialised.
 
   \begin{itemize}
   \tightlist
+  \item
+    = -2 for no optimisation, no VMCOM or HYBRD;
   \item
     = -1 for no optimisation, HYBRD only;
   \item
