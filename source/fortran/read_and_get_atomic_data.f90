@@ -1,19 +1,14 @@
 module read_and_get_atomic_data
-  !+ad_name  read_and_get_atomic_data
-  !+ad_summ  Module for reading atomic data
-  !+ad_type  Module
-  !+ad_auth  M Kovari, CCFE, Culham Science Centre
-  !+ad_args  N/A
-  !+ad_desc  This module reads atomic data for the PROCESS Kallenbach divertor model
-  !+ad_prob  None
-  !+ad_hist  25/01/17 MDK  Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs
+  !! Module for reading atomic data
+  !! author: M Kovari, CCFE, Culham Science Centre
+  !! N/A
+  !! This module reads atomic data for the PROCESS Kallenbach divertor model
+  !! 
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Modules to import !
-  !!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!
 
     use maths_library
     use read_radiation
@@ -23,32 +18,26 @@ module read_and_get_atomic_data
 contains
 
   subroutine get_h_rates(density, temperature, s, al, Rcx, plt, prb, mass, verbose)
-    !+ad_name  get_h_rates
-    !+ad_summ
-    !+ad_type  subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  density : input real : electron density  (m^-3)
-    !+ad_args  temperature : input real : electron temperature  (eV)
-    !+ad_args  s : output real : ionisation rate coefficient (m^3/s)
-    !+ad_args  al : output real : recombination rate coefficient (m^3/s)
-    !+ad_args  Rcx : output real : charge exchange rate coefficient (m^3/s)
-    !+ad_args  plt : output real : line radiation power rate coefficient (Wm^3)
-    !+ad_args  prb : output real : continuum radiation power rate coefficient (Wm^3)
-    !+ad_args  mass : input real : relative atomic mass for CX rate coefficient
-    !+ad_args  verbose : input logical : verbose switch
-    !+ad_desc
-    !+ad_prob  None
-    !+ad_hist  01/02/17 MDK  Initial version
-    !+ad_stat  Okay
-    !+ad_docs
+    !! 
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! density : input real : electron density  (m^-3)
+    !! temperature : input real : electron temperature  (eV)
+    !! s : output real : ionisation rate coefficient (m^3/s)
+    !! al : output real : recombination rate coefficient (m^3/s)
+    !! Rcx : output real : charge exchange rate coefficient (m^3/s)
+    !! plt : output real : line radiation power rate coefficient (Wm^3)
+    !! prb : output real : continuum radiation power rate coefficient (Wm^3)
+    !! mass : input real : relative atomic mass for CX rate coefficient
+    !! verbose : input logical : verbose switch
+    !! 
+    !! 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Subroutine declarations !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)), intent(in) :: density, temperature, mass
 
@@ -190,35 +179,29 @@ contains
 
   end subroutine get_h_rates
 
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine read_atomdat(density,temperature,rates, ine, ite, filename, verbose)
-    !+ad_name  get_h_rates
-    !+ad_summ
-    !+ad_type  subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  density : input real : electron density  (m^-3)
-    !+ad_args  temperature : input real : electron temperature  (eV)
-    !+ad_args  s : input  : ionisation rate coefficient (m^3/s)
-    !+ad_args  al : input  : recombination rate coefficient (m^3/s)
-    !+ad_args  Rcx : input  : charge exchange rate coefficient (m^3/s)
-    !+ad_args  plt : input  : line radiation power rate coefficient (Wm^3)
-    !+ad_args  prb : input  : continuum radiation power rate coefficient (Wm^3)
-    !+ad_args  mass : input  : relative atomic mass for CX rate coefficient
-    !+ad_args  verbose : output  : verbose switch
-    !+ad_desc
-    !+ad_prob  None
-    !+ad_hist  01/02/17 MDK  Initial version
-    !+ad_stat  Okay
-    !+ad_docs
+    !! 
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! density : input real : electron density  (m^-3)
+    !! temperature : input real : electron temperature  (eV)
+    !! s : input  : ionisation rate coefficient (m^3/s)
+    !! al : input  : recombination rate coefficient (m^3/s)
+    !! Rcx : input  : charge exchange rate coefficient (m^3/s)
+    !! plt : input  : line radiation power rate coefficient (Wm^3)
+    !! prb : input  : continuum radiation power rate coefficient (Wm^3)
+    !! mass : input  : relative atomic mass for CX rate coefficient
+    !! verbose : output  : verbose switch
+    !! 
+    !! 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Subroutine declarations !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)), dimension(ine) :: density
     real(kind(1.0D0)), dimension(ite):: temperature
@@ -243,7 +226,7 @@ contains
 
   end subroutine read_atomdat
 
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine unit_test_read()
         ! Radiative cooling function Lz
@@ -281,7 +264,7 @@ contains
         return
   end subroutine unit_test_read
 
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine plot_rates()
     ! Reads rate coefficients for deuterium.

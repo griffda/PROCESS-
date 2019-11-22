@@ -1185,31 +1185,13 @@ end module fson_path_m
 
 module fson_library
 
-  !+ad_name  fson_library
-  !+ad_summ  JSON file reading module
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  fson_parse
-  !+ad_cont  parse_value
-  !+ad_cont  parse_object
-  !+ad_cont  parse_array
-  !+ad_cont  parse_string
-  !+ad_cont  parse_for_chars
-  !+ad_cont  parse_number
-  !+ad_cont  parse_integer
-  !+ad_cont  pop_char
-  !+ad_cont  push_char
-  !+ad_args  N/A
-  !+ad_desc  This module uses a local copy of the freely-available FSON library,
-  !+ad_desc  written by Joseph A. Levin and distributed via github,
-  !+ad_desc  to enable PROCESS to read in information from JSON-formatted files.
-  !+ad_prob  None
-  !+ad_call  fson_value_m
-  !+ad_call  fson_string_m
-  !+ad_call  fson_path_m
-  !+ad_hist  01/09/14 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! JSON file reading module
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module uses a local copy of the freely-available FSON library,
+  !! written by Joseph A. Levin and distributed via github,
+  !! to enable PROCESS to read in information from JSON-formatted files.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

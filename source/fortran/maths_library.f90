@@ -13,65 +13,17 @@
 
 module maths_library
 
-  !+ad_name  maths_library
-  !+ad_summ  Library of mathematical and numerical routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  dogleg
-  !+ad_cont  dotpmc
-  !+ad_cont  dshellarea
-  !+ad_cont  dshellvol
-  !+ad_cont  ellipke
-  !+ad_cont  enorm
-  !+ad_cont  eshellarea
-  !+ad_cont  eshellvol
-  !+ad_cont  fdjac1
-  !+ad_cont  find_y_nonuniform_x
-  !+ad_cont  gamfun
-  !+ad_cont  harwfp
-  !+ad_cont  harwqp
-  !+ad_cont  hinv
-  !+ad_cont  hybrd
-  !+ad_cont  isamax
-  !+ad_cont  linesolv
-  !+ad_cont  qform
-  !+ad_cont  qpsub
-  !+ad_cont  qrfac
-  !+ad_cont  quanc8
-  !+ad_cont  r1mpyq
-  !+ad_cont  r1updt
-  !+ad_cont  saxpy
-  !+ad_cont  sdot
-  !+ad_cont  sgedi
-  !+ad_cont  sgefa
-  !+ad_cont  sgesl
-  !+ad_cont  spmpar
-  !+ad_cont  sscal
-  !+ad_cont  sswap
-  !+ad_cont  sumup2
-  !+ad_cont  sumup3
-  !+ad_cont  svd
-  !+ad_cont  tril
-  !+ad_cont  vmcon
-  !+ad_cont  zeroin
-  !+ad_args  N/A
-  !+ad_desc  This module contains a large number of routines to enable
-  !+ad_desc  PROCESS to perform a variety of numerical procedures, including
-  !+ad_desc  linear algebra, zero finding, integration and minimisation.
-  !+ad_desc  The module is an amalgamation of the contents of several
-  !+ad_desc  different pre-existing PROCESS source files, which themselves
-  !+ad_desc  were derived from a number of different numerical libraries
-  !+ad_desc  including BLAS, MINPAC and the Harwell subroutine library.
-  !+ad_prob  None
-  !+ad_call  global_variables
-  !+ad_hist  10/10/12 PJK Initial version of module
-  !+ad_hist  25/02/14 PJK Added global_variables
-  !+ad_hist  04/03/14 PJK Added sumup2, sumup3, tril, ellipke,
-  !+ad_hisc               find_y_nonuniform_x
-  !+ad_hist  04/03/14 PJK Added dshellvol, eshellvol, dshellarea, eshellarea
-  !+ad_hist  08/02/17 JM  Added interpolate and binary_search for Kallenbach
-  !+ad_stat  Okay
-  !+ad_docs  http://en.wikipedia.org/wiki/Gamma_function
+  !! Library of mathematical and numerical routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains a large number of routines to enable
+  !! PROCESS to perform a variety of numerical procedures, including
+  !! linear algebra, zero finding, integration and minimisation.
+  !! The module is an amalgamation of the contents of several
+  !! different pre-existing PROCESS source files, which themselves
+  !! were derived from a number of different numerical libraries
+  !! including BLAS, MINPAC and the Harwell subroutine library.
+  !! http://en.wikipedia.org/wiki/Gamma_function
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -100,25 +52,18 @@ contains
 
   function find_y_nonuniform_x(x0,x,y,n)
 
-    !+ad_name  find_y_nonuniform_x
-    !+ad_summ  Routine to find y0 such that y0 = y(x0) given a set of
-    !+ad_summ  values x(1:n), y(1:n)
-    !+ad_type  Function returning a real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  x0 : input real : x value at which we want to find y
-    !+ad_args  x(1:n) : input real array : monotonically de/increasing x values
-    !+ad_args  y(1:n) : input real array : y values at each x
-    !+ad_args  n : input integer : size of array
-    !+ad_desc  This routine performs a simple linear interpolation method
-    !+ad_desc  to find the y value at x = x0. If x0 lies outside the
-    !+ad_desc  range [x(1),x(n)], the y value at the nearest 'end' of the data
-    !+ad_desc  is returned.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  31/03/08 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine to find y0 such that y0 = y(x0) given a set of
+    !! values x(1:n), y(1:n)
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! x0 : input real : x value at which we want to find y
+    !! x(1:n) : input real array : monotonically de/increasing x values
+    !! y(1:n) : input real array : y values at each x
+    !! n : input integer : size of array
+    !! This routine performs a simple linear interpolation method
+    !! to find the y value at x = x0. If x0 lies outside the
+    !! range [x(1),x(n)], the y value at the nearest 'end' of the data
+    !! is returned.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -183,32 +128,22 @@ contains
 
   subroutine sumup2(dx,y,inty,n)
 
-    !+ad_name  sumup2
-    !+ad_summ  Routine to integrate a 1-D array of y values, using a process
-    !+ad_summ  similar to Simpson's Rule, and assuming equally-spaced x values.
-    !+ad_summ  It returns the integral at all tabulated points.
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  dx : input real : (constant) spacing between adjacent x values
-    !+ad_args  y(1:n) : input real array : y values to be integrated
-    !+ad_args  inty(1:n) : input/output real array : calculated integral
-    !+ad_argc    (see below)
-    !+ad_args  n : input integer : length of arrays y and inty
-    !+ad_desc  This routine uses a process similar to (but not quite the same
-    !+ad_desc  as) Simpson's Rule to integrate an array y,
-    !+ad_desc  returning the integral up to point i in array element inty(i).
-    !+ad_desc  Note that the first element of inty is not calculated, and must
-    !+ad_desc  be set to the required value on entry. Usually, but not always,
-    !+ad_desc  this value will be zero.
-    !+ad_prob  This routine does a very reasonable job; however, routine
-    !+ad_prob  <A HREF="sumup3.html">sumup3</A> is more accurate if only the
-    !+ad_prob  total integral over the given range is required.
-    !+ad_call  None
-    !+ad_hist  12/04/02 PJK Initial version
-    !+ad_hist  24/02/2009 PJK Added third as parameter
-    !+ad_stat  Okay
-    !+ad_docs  The original source for this algorithm is not known...
+    !! Routine to integrate a 1-D array of y values, using a process
+    !! similar to Simpson's Rule, and assuming equally-spaced x values.
+    !! It returns the integral at all tabulated points.
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! dx : input real : (constant) spacing between adjacent x values
+    !! y(1:n) : input real array : y values to be integrated
+    !! inty(1:n) : input/output real array : calculated integral
+    !! (see below)
+    !! n : input integer : length of arrays y and inty
+    !! This routine uses a process similar to (but not quite the same
+    !! as) Simpson's Rule to integrate an array y,
+    !! returning the integral up to point i in array element inty(i).
+    !! Note that the first element of inty is not calculated, and must
+    !! be set to the required value on entry. Usually, but not always,
+    !! this value will be zero.
+    !! The original source for this algorithm is not known...
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -251,26 +186,19 @@ contains
 
   subroutine sumup3(dx,y,integral,n)
 
-    !+ad_name  sumup3
-    !+ad_summ  Routine to integrate a 1-D array of y values using the
-    !+ad_summ  Extended Simpson's Rule, assuming equally-spaced x values
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  dx : input real : (constant) spacing between adjacent x values
-    !+ad_args  y(1:n) : input real array : y values to be integrated
-    !+ad_args  integral : output real : calculated integral
-    !+ad_args  n : input integer : length of array y
-    !+ad_desc  This routine uses Simpson's Rule to integrate an array y.
-    !+ad_desc  If n is even, routine <CODE>sumup2</CODE> is called to
-    !+ad_desc  perform the calculation.
-    !+ad_desc  <P>Note: unlike sumup1 and sumup2, this routine returns only
-    !+ad_desc  the complete integral, not the intermediate values as well.
-    !+ad_prob  None
-    !+ad_call  sumup2
-    !+ad_hist  28/06/06 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine to integrate a 1-D array of y values using the
+    !! Extended Simpson's Rule, assuming equally-spaced x values
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! dx : input real : (constant) spacing between adjacent x values
+    !! y(1:n) : input real array : y values to be integrated
+    !! integral : output real : calculated integral
+    !! n : input integer : length of array y
+    !! This routine uses Simpson's Rule to integrate an array y.
+    !! If n is even, routine <CODE>sumup2</CODE> is called to
+    !! perform the calculation.
+    !! <P>Note: unlike sumup1 and sumup2, this routine returns only
+    !! the complete integral, not the intermediate values as well.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -319,22 +247,15 @@ contains
 
   subroutine tril(a,n,alower)
 
-    !+ad_name  tril
-    !+ad_summ  Routine to extract the lower triangular part of a square matrix
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  a(n,n) : input real array : input matrix
-    !+ad_args  n      : input integer : number of rows and columns in A
-    !+ad_args  a(n,n) : output real array : lower triangular part of A
-    !+ad_desc  This routine extracts the lower triangular part of a square matrix,
-    !+ad_desc  excluding the diagonal, into a new square matrix. The remainder
-    !+ad_desc  of this matrix contains zeroes on exit.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  03/03/14 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine to extract the lower triangular part of a square matrix
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! a(n,n) : input real array : input matrix
+    !! n      : input integer : number of rows and columns in A
+    !! a(n,n) : output real array : lower triangular part of A
+    !! This routine extracts the lower triangular part of a square matrix,
+    !! excluding the diagonal, into a new square matrix. The remainder
+    !! of this matrix contains zeroes on exit.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -365,25 +286,18 @@ contains
 
   subroutine ellipke(sqk,kk,ek)
 
-    !+ad_name  ellipke
-    !+ad_summ  Routine that calculates the complete elliptic integral
-    !+ad_summ  of the first and second kinds
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  sqk : input real : square of the elliptic modulus
-    !+ad_args  kk  : output real : complete elliptic integral of the first kind
-    !+ad_args  ek  : output real : complete elliptic integral of the second kind
-    !+ad_desc  This routine calculates the complete elliptic integral
-    !+ad_desc  of the first and second kinds.
-    !+ad_desc  <P>The method used is that described in the reference, and
-    !+ad_desc  the code is taken from the Culham maglib library routine FN02A.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  03/03/14 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  Approximations for Digital Computers, C. Hastings,
-    !+ad_docc  Princeton University Press, 1955
+    !! Routine that calculates the complete elliptic integral
+    !! of the first and second kinds
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! sqk : input real : square of the elliptic modulus
+    !! kk  : output real : complete elliptic integral of the first kind
+    !! ek  : output real : complete elliptic integral of the second kind
+    !! This routine calculates the complete elliptic integral
+    !! of the first and second kinds.
+    !! <P>The method used is that described in the reference, and
+    !! the code is taken from the Culham maglib library routine FN02A.
+    !! Approximations for Digital Computers, C. Hastings,
+    !! Princeton University Press, 1955
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -445,22 +359,13 @@ contains
 
   recursive real(kind(1.0D0)) function gamfun(x) result(gamma)
 
-    !+ad_name  gamfun
-    !+ad_summ  Calculates the gamma function for arbitrary real x
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  x : input real : gamma function argument
-    !+ad_desc  This routine evaluates the gamma function, using an
-    !+ad_desc  asymptotic expansion based on Stirling's approximation.
-    !+ad_prob  Beware, gamma(x) is (correctly) infinite if x is zero or
-    !+ad_prob  a negative whole number.
-    !+ad_call  None
-    !+ad_hist  28/07/11 PJK Initial F90 version
-    !+ad_hist  18/02/14 PJK Extended range of argument to all real x
-    !+ad_stat  Okay
-    !+ad_docs  http://en.wikipedia.org/wiki/Gamma_function
-    !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, p.5
+    !! Calculates the gamma function for arbitrary real x
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! x : input real : gamma function argument
+    !! This routine evaluates the gamma function, using an
+    !! asymptotic expansion based on Stirling's approximation.
+    !! http://en.wikipedia.org/wiki/Gamma_function
+    !! T&amp;M/PKNIGHT/LOGBOOK24, p.5
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -592,37 +497,30 @@ contains
 
   subroutine quanc8(fun,a,b,abserr,relerr,result,errest,nofun,flag)
 
-    !+ad_name  quanc8
-    !+ad_summ  Estimate the integral of fun(x) from a to b
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  fun : external function : integrand function subprogram fun(x)
-    !+ad_args  a : input real : lower limit of integration
-    !+ad_args  b : input real : upper limit of integration (b may be less than a)
-    !+ad_args  abserr : input real : absolute error tolerance (should be non-negative)
-    !+ad_args  relerr : input real : relative error tolerance (should be non-negative)
-    !+ad_args  result : output real : approximation to the integral hopefully
-    !+ad_argc           satisfying the least stringent of the two error tolerances
-    !+ad_args  errest : output real : estimate of the magnitude of the actual error
-    !+ad_args  nofun : output integer : number of function values used in calculation
-    !+ad_args  flag : output real : Reliability indicator; if flag is zero, then
-    !+ad_argc         result probably satisfies the error tolerance.  If flag is
-    !+ad_argc         xxx.yyy , then  xxx = the number of intervals which have
-    !+ad_argc         not converged and  0.yyy = the fraction of the interval
-    !+ad_argc         left to do when the limit on  nofun  was approached.
-    !+ad_desc  This routine estimates the integral of fun(x) from a to b
-    !+ad_desc  to a user provided tolerance. An automatic adaptive
-    !+ad_desc  routine based on the 8-panel Newton-Cotes rule.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  28/07/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  http://www.netlib.org/fmm/index.html :
-    !+ad_docc    Computer Methods for Mathematical Computations,
-    !+ad_docc    G E Forsythe, M A Malcolm, and C B Moler,
-    !+ad_docc    Prentice-Hall, Englewood Cliffs, New Jersey
-    !+ad_docc    1977, ISBN 0-13-165332-6
+    !! Estimate the integral of fun(x) from a to b
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! fun : external function : integrand function subprogram fun(x)
+    !! a : input real : lower limit of integration
+    !! b : input real : upper limit of integration (b may be less than a)
+    !! abserr : input real : absolute error tolerance (should be non-negative)
+    !! relerr : input real : relative error tolerance (should be non-negative)
+    !! result : output real : approximation to the integral hopefully
+    !! satisfying the least stringent of the two error tolerances
+    !! errest : output real : estimate of the magnitude of the actual error
+    !! nofun : output integer : number of function values used in calculation
+    !! flag : output real : Reliability indicator; if flag is zero, then
+    !! result probably satisfies the error tolerance.  If flag is
+    !! xxx.yyy , then  xxx = the number of intervals which have
+    !! not converged and  0.yyy = the fraction of the interval
+    !! left to do when the limit on  nofun  was approached.
+    !! This routine estimates the integral of fun(x) from a to b
+    !! to a user provided tolerance. An automatic adaptive
+    !! routine based on the 8-panel Newton-Cotes rule.
+    !! http://www.netlib.org/fmm/index.html :
+    !! Computer Methods for Mathematical Computations,
+    !! G E Forsythe, M A Malcolm, and C B Moler,
+    !! Prentice-Hall, Englewood Cliffs, New Jersey
+    !! 1977, ISBN 0-13-165332-6
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -815,34 +713,27 @@ contains
 
   function zeroin(ax,bx,fhz,tol)
 
-    !+ad_name  zeroin
-    !+ad_summ  Root-finding algorithm
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  ax : input real : left endpoint of initial interval
-    !+ad_args  bx : input real : right endpoint of initial interval
-    !+ad_args  fhz : external real function : function subprogram which evaluates
-    !+ad_argc        fhz(x) for any x in the interval  ax,bx
-    !+ad_args  tol : input real : desired length of the interval of uncertainty
-    !+ad_argc                     of the final result ( >= 0 )
-    !+ad_desc  A zero of the function  fhz(x)  is computed in the interval ax,bx
-    !+ad_desc  It is assumed that fhz(ax) and fhz(bx) have opposite signs without a
-    !+ad_desc  check.  zeroin  returns a zero  x  in the given interval ax,bx  to
-    !+ad_desc  within a tolerance  4*macheps*abs(x) + tol, where macheps is the
-    !+ad_desc  relative machine precision.  This function subprogram is a slightly
-    !+ad_desc  modified translation of the algol 60 procedure  zero  given in
-    !+ad_desc  Richard Brent, algorithms for minimization without derivatives,
-    !+ad_desc  Prentice - Hall, inc. (1973).
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  28/07/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  http://www.netlib.org/fmm/index.html :
-    !+ad_docc    Computer Methods for Mathematical Computations,
-    !+ad_docc    G E Forsythe, M A Malcolm, and C B Moler,
-    !+ad_docc    Prentice-Hall, Englewood Cliffs, New Jersey
-    !+ad_docc    1977, ISBN 0-13-165332-6
+    !! Root-finding algorithm
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! ax : input real : left endpoint of initial interval
+    !! bx : input real : right endpoint of initial interval
+    !! fhz : external real function : function subprogram which evaluates
+    !! fhz(x) for any x in the interval  ax,bx
+    !! tol : input real : desired length of the interval of uncertainty
+    !! of the final result ( >= 0 )
+    !! A zero of the function  fhz(x)  is computed in the interval ax,bx
+    !! It is assumed that fhz(ax) and fhz(bx) have opposite signs without a
+    !! check.  zeroin  returns a zero  x  in the given interval ax,bx  to
+    !! within a tolerance  4*macheps*abs(x) + tol, where macheps is the
+    !! relative machine precision.  This function subprogram is a slightly
+    !! modified translation of the algol 60 procedure  zero  given in
+    !! Richard Brent, algorithms for minimization without derivatives,
+    !! Prentice - Hall, inc. (1973).
+    !! http://www.netlib.org/fmm/index.html :
+    !! Computer Methods for Mathematical Computations,
+    !! G E Forsythe, M A Malcolm, and C B Moler,
+    !! Prentice-Hall, Englewood Cliffs, New Jersey
+    !! 1977, ISBN 0-13-165332-6
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -967,24 +858,15 @@ contains
 
   subroutine linesolv(a, ndim, b, x)
 
-    !+ad_name  linesolv
-    !+ad_summ  Routine to solve the linear equation system Ax = b
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  a(ndim,ndim) : in/out real array : array A
-    !+ad_args  ndim         : input integer     : dimension of a
-    !+ad_args  b(ndim)      : in/out real array : RHS vector
-    !+ad_args  x(ndim)      : output real array : solution for Ax = b
-    !+ad_desc  This routine solves the linear equation Ax = b.
-    !+ad_desc  It calls (local copies of) the linpack routines sgefa and sgesl.
-    !+ad_prob  The called routines overwrite their array arguments, which
-    !+ad_prob  might save space but could be misleading.
-    !+ad_call  sgefa
-    !+ad_call  sgesl
-    !+ad_hist  14/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to solve the linear equation system Ax = b
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! a(ndim,ndim) : in/out real array : array A
+    !! ndim         : input integer     : dimension of a
+    !! b(ndim)      : in/out real array : RHS vector
+    !! x(ndim)      : output real array : solution for Ax = b
+    !! This routine solves the linear equation Ax = b.
+    !! It calls (local copies of) the linpack routines sgefa and sgesl.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1017,29 +899,19 @@ contains
 
   subroutine hinv(h,ih,n,ipvt,info)
 
-    !+ad_name  hinv
-    !+ad_summ  Matrix inversion routine
-    !+ad_type  Subroutine
-    !+ad_auth  Roger L. Crane, Kenneth E. Hillstrom, Michael Minkoff; Linpack
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  h(ih,ih) : input/output real array : On input, matrix to be inverted
-    !+ad_argc                                       On output, the calculated inverse
-    !+ad_args  ih       : input integer : array size
-    !+ad_args  n        : input integer : order of H; n <= ih
-    !+ad_args  ipvt(n)  : output integer array : pivot vector
-    !+ad_args  info     : output integer : info flag
-    !+ad_argc                              = 1  normal return
-    !+ad_argc                              = 2  H matrix is singular
-    !+ad_desc  This routine inverts the matrix H by use of linpack software.
-    !+ad_prob  None
-    !+ad_call  sgedi
-    !+ad_call  sgefa
-    !+ad_hist  --/06/79 Linpack algorithm version
-    !+ad_hist  15/11/11 PJK Initial F90 version
-    !+ad_hist  25/02/14 PJK Added diagnostic output
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Matrix inversion routine
+    !! author: Roger L. Crane, Kenneth E. Hillstrom, Michael Minkoff; Linpack
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! h(ih,ih) : input/output real array : On input, matrix to be inverted
+    !! On output, the calculated inverse
+    !! ih       : input integer : array size
+    !! n        : input integer : order of H; n <= ih
+    !! ipvt(n)  : output integer array : pivot vector
+    !! info     : output integer : info flag
+    !! = 1  normal return
+    !! = 2  H matrix is singular
+    !! This routine inverts the matrix H by use of linpack software.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1080,33 +952,25 @@ contains
 
   subroutine dotpmc(x,ix,y,iy,c,total,n,iflag)
 
-    !+ad_name  dotpmc
-    !+ad_summ  Calculates +/-C +/- (X.dot.Y) for arrays X, Y and scalar C
-    !+ad_type  Subroutine
-    !+ad_auth  Roger L. Crane, Kenneth E. Hillstrom, Michael Minkoff; Linpack
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  x(ix*n) : input real array : X array
-    !+ad_args  ix      : input integer : interval in storage between X array elements
-    !+ad_args  y(iy*n) : input real array : Y array
-    !+ad_args  iy      : input integer : interval in storage between Y array elements
-    !+ad_args  c       : input real : C value
-    !+ad_args  total   : output real : computed result
-    !+ad_args  n       : input integer : number of terms in the dot product
-    !+ad_args  iflag   : input integer : switch
-    !+ad_argc                            = 0    +c + (x dot y) is computed
-    !+ad_argc                            = 1    +c - (x dot y) is computed
-    !+ad_argc                            = 2    -c + (x dot y) is computed
-    !+ad_argc                            = 3    -c - (x dot y) is computed
-    !+ad_desc  This subroutine computes
-    !+ad_desc    total = (plus or minus c) plus or minus the dot product of x and y
-    !+ad_desc  by invoking the basic linear algebra routine dot.
-    !+ad_prob  None
-    !+ad_call  sdot
-    !+ad_hist  --/--/-- Linpack algorithm version
-    !+ad_hist  15/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Calculates +/-C +/- (X.dot.Y) for arrays X, Y and scalar C
+    !! author: Roger L. Crane, Kenneth E. Hillstrom, Michael Minkoff; Linpack
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! x(ix*n) : input real array : X array
+    !! ix      : input integer : interval in storage between X array elements
+    !! y(iy*n) : input real array : Y array
+    !! iy      : input integer : interval in storage between Y array elements
+    !! c       : input real : C value
+    !! total   : output real : computed result
+    !! n       : input integer : number of terms in the dot product
+    !! iflag   : input integer : switch
+    !! = 0    +c + (x dot y) is computed
+    !! = 1    +c - (x dot y) is computed
+    !! = 2    -c + (x dot y) is computed
+    !! = 3    -c - (x dot y) is computed
+    !! This subroutine computes
+    !! total = (plus or minus c) plus or minus the dot product of x and y
+    !! by invoking the basic linear algebra routine dot.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1140,35 +1004,26 @@ contains
 
   subroutine sgesl(a,lda,n,ipvt,b,job)
 
-    !+ad_name  sgesl
-    !+ad_summ  Routine to solve the the real system  Ax = b  or  transp(A).x = b
-    !+ad_type  Subroutine
-    !+ad_auth  Cleve Moler, University of New Mexico, Argonne National Lab.
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  a(lda,n) : input real array : output from <A HREF="sgefa.html">sgefa</A>
-    !+ad_args  lda : input integer : leading dimension of the array A
-    !+ad_args  n : input integer : order of the matrix A
-    !+ad_args  ipvt(n) : input integer array : pivot vector from <CODE>sgefa</CODE>
-    !+ad_args  b(n) : input/output real array : RHS vector on input,
-    !+ad_argc                                   solution vector x on output
-    !+ad_args  job : input integer : switch
-    !+ad_argc                        = 0         to solve  A*x = b ,
-    !+ad_argc                        = nonzero   to solve  transp(A)*x = b  where
-    !+ad_argc                                    transp(A)  is the transpose
-    !+ad_desc  This routine solves the real system  A*x = b  or  transp(A)*x = b
-    !+ad_desc  using the factors computed by <A HREF="sgefa.html">sgefa</A>.
-    !+ad_desc  <P>A division by zero will occur if the input factor contains a
-    !+ad_desc  zero on the diagonal.  Technically this indicates singularity
-    !+ad_desc  but it is often caused by improper arguments or improper
-    !+ad_desc  setting of <CODE>lda</CODE>.
-    !+ad_prob  None
-    !+ad_call  saxpy
-    !+ad_call  sdot
-    !+ad_hist  14/08/78 CM  Linpack version
-    !+ad_hist  14/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to solve the the real system  Ax = b  or  transp(A).x = b
+    !! author: Cleve Moler, University of New Mexico, Argonne National Lab.
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! a(lda,n) : input real array : output from <A HREF="sgefa.html">sgefa</A>
+    !! lda : input integer : leading dimension of the array A
+    !! n : input integer : order of the matrix A
+    !! ipvt(n) : input integer array : pivot vector from <CODE>sgefa</CODE>
+    !! b(n) : input/output real array : RHS vector on input,
+    !! solution vector x on output
+    !! job : input integer : switch
+    !! = 0         to solve  A*x = b ,
+    !! = nonzero   to solve  transp(A)*x = b  where
+    !! transp(A)  is the transpose
+    !! This routine solves the real system  A*x = b  or  transp(A)*x = b
+    !! using the factors computed by <A HREF="sgefa.html">sgefa</A>.
+    !! <P>A division by zero will occur if the input factor contains a
+    !! zero on the diagonal.  Technically this indicates singularity
+    !! but it is often caused by improper arguments or improper
+    !! setting of <CODE>lda</CODE>.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1247,34 +1102,23 @@ contains
 
   subroutine sgefa(a,lda,n,ipvt,info)
 
-    !+ad_name  sgefa
-    !+ad_summ  Routine to factor a real matrix by Gaussian elimination
-    !+ad_type  Subroutine
-    !+ad_auth  Cleve Moler, University of New Mexico, Argonne National Lab.
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  a(lda,n) : input/output real array : On entry, matrix to be factored.
-    !+ad_argc       On exit, an upper triangular matrix and the multipliers
-    !+ad_argc       which were used to obtain it.
-    !+ad_argc       The factorization can be written  A = L*U  where
-    !+ad_argc       L is a product of permutation and unit lower
-    !+ad_argc       triangular matrices and U is upper triangular.
-    !+ad_args  lda : input integer : leading dimension of the array A
-    !+ad_args  n : input integer : order of the matrix A
-    !+ad_args  ipvt(n) : output integer array : pivot indices
-    !+ad_args  info : output integer : info flag
-    !+ad_argc                          = 0  normal completion
-    !+ad_argc                          = k  if  u(k,k) == 0.0
-    !+ad_desc  This routine factors a real matrix by Gaussian elimination.
-    !+ad_prob  None
-    !+ad_call  isamax
-    !+ad_call  saxpy
-    !+ad_call  sscal
-    !+ad_hist  14/08/78 CM  Linpack version
-    !+ad_hist  15/11/11 PJK Initial F90 version
-    !+ad_hist  25/02/14 PJK Added diagnostic output
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to factor a real matrix by Gaussian elimination
+    !! author: Cleve Moler, University of New Mexico, Argonne National Lab.
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! a(lda,n) : input/output real array : On entry, matrix to be factored.
+    !! On exit, an upper triangular matrix and the multipliers
+    !! which were used to obtain it.
+    !! The factorization can be written  A = L*U  where
+    !! L is a product of permutation and unit lower
+    !! triangular matrices and U is upper triangular.
+    !! lda : input integer : leading dimension of the array A
+    !! n : input integer : order of the matrix A
+    !! ipvt(n) : output integer array : pivot indices
+    !! info : output integer : info flag
+    !! = 0  normal completion
+    !! = k  if  u(k,k) == 0.0
+    !! This routine factors a real matrix by Gaussian elimination.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1369,39 +1213,29 @@ contains
 
   subroutine sgedi(a,lda,n,ipvt,det,job)
 
-    !+ad_name  sgedi
-    !+ad_summ  Routine to compute the determinant and inverse of a matrix
-    !+ad_type  Subroutine
-    !+ad_auth  Cleve Moler, University of New Mexico, Argonne National Lab.
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  a(lda,n) : input/output real array :
-    !+ad_argc       On entry, output from <A HREF="sgefa.html">sgefa</A>.
-    !+ad_argc       On exit, the inverse if requested, otherwise unchanged
-    !+ad_args  lda      : input integer : leading dimension of the array A
-    !+ad_args  n        : input integer : order of the matrix A
-    !+ad_args  ipvt(n)  : input integer array : pivot vector from sgefa
-    !+ad_args  det(2)   : output real array : determinant of original matrix if requested,
-    !+ad_argc                                 otherwise not referenced.
-    !+ad_argc         Determinant = det(1) * 10.0**det(2)
-    !+ad_argc           with  1.0 .le. abs(det(1)) .lt. 10.0
-    !+ad_argc           or  det(1) .eq. 0.0 .
-    !+ad_args  job : input integer : switch for required outputs
-    !+ad_argc                        = 11   both determinant and inverse.
-    !+ad_argc                        = 01   inverse only.
-    !+ad_argc                        = 10   determinant only.
-    !+ad_desc  This routine computes the determinant and inverse of a matrix
-    !+ad_desc  using the factors computed by (SGECO or) <A HREF="sgefa.html">SGEFA</A>.
-    !+ad_desc  <P>A division by zero will occur if the input factor contains
-    !+ad_desc  a zero on the diagonal and the inverse is requested.
-    !+ad_prob  None
-    !+ad_call  saxpy
-    !+ad_call  sscal
-    !+ad_call  sswap
-    !+ad_hist  14/08/78 CM  Linpack version
-    !+ad_hist  15/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to compute the determinant and inverse of a matrix
+    !! author: Cleve Moler, University of New Mexico, Argonne National Lab.
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! a(lda,n) : input/output real array :
+    !! On entry, output from <A HREF="sgefa.html">sgefa</A>.
+    !! On exit, the inverse if requested, otherwise unchanged
+    !! lda      : input integer : leading dimension of the array A
+    !! n        : input integer : order of the matrix A
+    !! ipvt(n)  : input integer array : pivot vector from sgefa
+    !! det(2)   : output real array : determinant of original matrix if requested,
+    !! otherwise not referenced.
+    !! Determinant = det(1) * 10.0**det(2)
+    !! with  1.0 .le. abs(det(1)) .lt. 10.0
+    !! or  det(1) .eq. 0.0 .
+    !! job : input integer : switch for required outputs
+    !! = 11   both determinant and inverse.
+    !! = 01   inverse only.
+    !! = 10   determinant only.
+    !! This routine computes the determinant and inverse of a matrix
+    !! using the factors computed by (SGECO or) <A HREF="sgefa.html">SGEFA</A>.
+    !! <P>A division by zero will occur if the input factor contains
+    !! a zero on the diagonal and the inverse is requested.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1501,26 +1335,17 @@ contains
 
   subroutine sscal(n,sa,sx,incx)
 
-    !+ad_name  sscal
-    !+ad_summ  Routine to scale a vector by a constant
-    !+ad_type  Subroutine
-    !+ad_auth  Jack Dongarra, Linpack
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  n        : input integer : order of the matrix sx
-    !+ad_args  sa       : input real array : constant multiplier
-    !+ad_args  sx(n*incx) : input/output real array : On entry, matrix to be scaled;
-    !+ad_argc                                         On exit, the scaled matrix
-    !+ad_args  incx     : input integer : interval in storage between sx array elements
-    !+ad_desc  This routine scales a vector by a constant, using
-    !+ad_desc  unrolled loops for increments equal to 1.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  11/03/78 JD  Linpack version
-    !+ad_hist  29/09/88 JD  Corrected problem with negative increments
-    !+ad_hist  15/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to scale a vector by a constant
+    !! author: Jack Dongarra, Linpack
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! n        : input integer : order of the matrix sx
+    !! sa       : input real array : constant multiplier
+    !! sx(n*incx) : input/output real array : On entry, matrix to be scaled;
+    !! On exit, the scaled matrix
+    !! incx     : input integer : interval in storage between sx array elements
+    !! This routine scales a vector by a constant, using
+    !! unrolled loops for increments equal to 1.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1576,28 +1401,19 @@ contains
 
   subroutine saxpy(n,sa,sx,incx,sy,incy)
 
-    !+ad_name  saxpy
-    !+ad_summ  Routine to scale a vector by a constant, then add another vector
-    !+ad_type  Subroutine
-    !+ad_auth  Jack Dongarra, Linpack
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  n        : input integer : order of the matrices sx, sy
-    !+ad_args  sa       : input real array : constant multiplier
-    !+ad_args  sx(n*incx) : input real array : matrix to be scaled
-    !+ad_args  incx     : input integer : interval in storage between sx array elements
-    !+ad_args  sy(n*incy) : input/output real array : On entry, matrix being added;
-    !+ad_argc                                       On exit, the final result
-    !+ad_args  incy     : input integer : interval in storage between sy array elements
-    !+ad_desc  This routine calculates <CODE>sa*sx(:) + sy(:)</CODE>,
-    !+ad_desc  using unrolled loops for increments equal to 1.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  11/03/78 JD  Linpack version
-    !+ad_hist  29/09/88 JD  Corrected problem with negative increments
-    !+ad_hist  15/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to scale a vector by a constant, then add another vector
+    !! author: Jack Dongarra, Linpack
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! n        : input integer : order of the matrices sx, sy
+    !! sa       : input real array : constant multiplier
+    !! sx(n*incx) : input real array : matrix to be scaled
+    !! incx     : input integer : interval in storage between sx array elements
+    !! sy(n*incy) : input/output real array : On entry, matrix being added;
+    !! On exit, the final result
+    !! incy     : input integer : interval in storage between sy array elements
+    !! This routine calculates <CODE>sa*sx(:) + sy(:)</CODE>,
+    !! using unrolled loops for increments equal to 1.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1655,25 +1471,17 @@ contains
 
   subroutine sswap(n,sx,incx,sy,incy)
 
-    !+ad_name  sswap
-    !+ad_summ  Routine to interchange two vectors
-    !+ad_type  Subroutine
-    !+ad_auth  Jack Dongarra, Linpack
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  n        : input integer : order of the matrices sx, sy
-    !+ad_args  sx(n*incx) : input/output real array : first vector
-    !+ad_args  incx     : input integer : interval in storage between sx array elements
-    !+ad_args  sy(n*incy) : input/output real array : second vector
-    !+ad_args  incy     : input integer : interval in storage between sy array elements
-    !+ad_desc  This routine swaps the contents of two vectors,
-    !+ad_desc  using unrolled loops for increments equal to 1.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  11/03/78 JD  Linpack version
-    !+ad_hist  15/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to interchange two vectors
+    !! author: Jack Dongarra, Linpack
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! n        : input integer : order of the matrices sx, sy
+    !! sx(n*incx) : input/output real array : first vector
+    !! incx     : input integer : interval in storage between sx array elements
+    !! sy(n*incy) : input/output real array : second vector
+    !! incy     : input integer : interval in storage between sy array elements
+    !! This routine swaps the contents of two vectors,
+    !! using unrolled loops for increments equal to 1.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1740,25 +1548,17 @@ contains
 
   function sdot(n,sx,incx,sy,incy)
 
-    !+ad_name  sdot
-    !+ad_summ  Routine to compute X*Y where X and Y are vectors
-    !+ad_type  Function returning real
-    !+ad_auth  Jack Dongarra, Linpack
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  n        : input integer : order of the matrices sx, sy
-    !+ad_args  sx(n*incx) : input real array : first vector
-    !+ad_args  incx     : input integer : interval in storage between sx array elements
-    !+ad_args  sy(n*incy) : input real array : second vector
-    !+ad_args  incy     : input integer : interval in storage between sy array elements
-    !+ad_desc  This routine performs the dot product of two vectors, i.e.
-    !+ad_desc  calculates the sum from i=1 to N, of X(i)*Y(i).
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  11/03/78 JD  Linpack version
-    !+ad_hist  15/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to compute X*Y where X and Y are vectors
+    !! author: Jack Dongarra, Linpack
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! n        : input integer : order of the matrices sx, sy
+    !! sx(n*incx) : input real array : first vector
+    !! incx     : input integer : interval in storage between sx array elements
+    !! sy(n*incy) : input real array : second vector
+    !! incy     : input integer : interval in storage between sy array elements
+    !! This routine performs the dot product of two vectors, i.e.
+    !! calculates the sum from i=1 to N, of X(i)*Y(i).
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1796,25 +1596,16 @@ contains
 
   function isamax(n,sx,incx)
 
-    !+ad_name  isamax
-    !+ad_summ  Routine to finds the index of the array element having
-    !+ad_summ  the maximum absolute value
-    !+ad_type  Function returning integer
-    !+ad_auth  Jack Dongarra, Linpack
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  n        : input integer : order of the matrix sx
-    !+ad_args  sx(n*incx) : input real array : array being checked
-    !+ad_args  incx     : input integer : interval in storage between sx array elements
-    !+ad_desc  This routine finds the array element with the maximum
-    !+ad_desc  absolute value, and returns the element index.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  11/03/78 JD  Linpack version
-    !+ad_hist  29/09/88 JD  Corrected problem with negative increments
-    !+ad_hist  15/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to finds the index of the array element having
+    !! the maximum absolute value
+    !! author: Jack Dongarra, Linpack
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! n        : input integer : order of the matrix sx
+    !! sx(n*incx) : input real array : array being checked
+    !! incx     : input integer : interval in storage between sx array elements
+    !! This routine finds the array element with the maximum
+    !! absolute value, and returns the element index.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1871,51 +1662,44 @@ contains
 
   subroutine svd(nm,m,n,a,w,matu,u,matv,v,ierr,rv1)
 
-    !+ad_name  svd
-    !+ad_summ  Singular Value Decomposition
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  B. S. Garbow, Applied Mathematics Division, Argonne National Laboratory
-    !+ad_cont  N/A
-    !+ad_args  nm : input integer : Max number of rows of arrays a, u, v; >= m,n
-    !+ad_args  m : input integer : Actual number of rows of arrays a, u
-    !+ad_args  n : input integer : Number of columns of arrays a, u, and the order of v
-    !+ad_args  a(nm,n) : input/output real array : On input matrix to be decomposed;
-    !+ad_argc            on output, either unchanged or overwritten with u or v
-    !+ad_args  w(n) : output real array : The n (non-negative) singular values of a
-    !+ad_argc            (the diagonal elements of s); unordered.  If an error exit
-    !+ad_argc            is made, the singular values should be correct for indices
-    !+ad_argc            ierr+1,ierr+2,...,n.
-    !+ad_args  matu : input logical : Set to .true. if the u matrix in the
-    !+ad_argc            decomposition is desired, and to .false. otherwise.
-    !+ad_args  u(nm,n) : output real array : The matrix u (orthogonal column vectors)
-    !+ad_argc            of the decomposition if matu has been set to .true., otherwise
-    !+ad_argc            u is used as a temporary array.  u may coincide with a.
-    !+ad_argc            If an error exit is made, the columns of u corresponding
-    !+ad_argc            to indices of correct singular values should be correct.
-    !+ad_args  matv : input logical : Set to .true. if the v matrix in the
-    !+ad_argc            decomposition is desired, and to .false. otherwise.
-    !+ad_args  v(nm,n) : output real array : The matrix v (orthogonal) of the
-    !+ad_argc            decomposition if matv has been set to .true., otherwise
-    !+ad_argc            v is not referenced.  v may also coincide with a if u is
-    !+ad_argc            not needed.  If an error exit is made, the columns of v
-    !+ad_argc            corresponding to indices of correct singular values
-    !+ad_argc            should be correct.
-    !+ad_args  ierr : output integer :  zero for normal return, or <I>k</I> if the
-    !+ad_argc            k-th singular value has not been determined after 30 iterations.
-    !+ad_args  rv1(n) : output real array : work array
-    !+ad_desc  This subroutine is a translation of the algol procedure SVD,
-    !+ad_desc  Num. Math. 14, 403-420(1970) by Golub and Reinsch,
-    !+ad_desc  Handbook for Auto. Comp., vol II - Linear Algebra, 134-151(1971).
-    !+ad_desc  <P>It determines the singular value decomposition
-    !+ad_desc  <I>a=usv<SUP>t</SUP></I> of a real m by n rectangular matrix.
-    !+ad_desc  Householder bidiagonalization and a variant of the QR
-    !+ad_desc  algorithm are used.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  19/09/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Singular Value Decomposition
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: B. S. Garbow, Applied Mathematics Division, Argonne National Laboratory
+    !! nm : input integer : Max number of rows of arrays a, u, v; >= m,n
+    !! m : input integer : Actual number of rows of arrays a, u
+    !! n : input integer : Number of columns of arrays a, u, and the order of v
+    !! a(nm,n) : input/output real array : On input matrix to be decomposed;
+    !! on output, either unchanged or overwritten with u or v
+    !! w(n) : output real array : The n (non-negative) singular values of a
+    !! (the diagonal elements of s); unordered.  If an error exit
+    !! is made, the singular values should be correct for indices
+    !! ierr+1,ierr+2,...,n.
+    !! matu : input logical : Set to .true. if the u matrix in the
+    !! decomposition is desired, and to .false. otherwise.
+    !! u(nm,n) : output real array : The matrix u (orthogonal column vectors)
+    !! of the decomposition if matu has been set to .true., otherwise
+    !! u is used as a temporary array.  u may coincide with a.
+    !! If an error exit is made, the columns of u corresponding
+    !! to indices of correct singular values should be correct.
+    !! matv : input logical : Set to .true. if the v matrix in the
+    !! decomposition is desired, and to .false. otherwise.
+    !! v(nm,n) : output real array : The matrix v (orthogonal) of the
+    !! decomposition if matv has been set to .true., otherwise
+    !! v is not referenced.  v may also coincide with a if u is
+    !! not needed.  If an error exit is made, the columns of v
+    !! corresponding to indices of correct singular values
+    !! should be correct.
+    !! ierr : output integer :  zero for normal return, or <I>k</I> if the
+    !! k-th singular value has not been determined after 30 iterations.
+    !! rv1(n) : output real array : work array
+    !! This subroutine is a translation of the algol procedure SVD,
+    !! Num. Math. 14, 403-420(1970) by Golub and Reinsch,
+    !! Handbook for Auto. Comp., vol II - Linear Algebra, 134-151(1971).
+    !! <P>It determines the singular value decomposition
+    !! <I>a=usv<SUP>t</SUP></I> of a real m by n rectangular matrix.
+    !! Householder bidiagonalization and a variant of the QR
+    !! algorithm are used.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2293,132 +2077,111 @@ contains
        xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa,liwa,ilower, &
        iupper,bndl,bndu, sum)
 
-    !+ad_name  vmcon
-    !+ad_summ  Calculates the least value of a function of several variables
-    !+ad_summ  subject to linear and/or nonlinear equality and inequality
-    !+ad_summ  constraints
-    !+ad_type  Subroutine
-    !+ad_auth  R L Crane, K E Hillstrom, M Minkoff, Argonne National Lab
-    !+ad_auth  J Galambos, FEDC/ORNL
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  M D Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  fcnvmc1 : external subroutine : routine to calculate the
-    !+ad_argc    objective and constraint functions
-    !+ad_args  fcnvmc2 : external subroutine : routine to calculate the
-    !+ad_argc    gradients of the objective and constraint functions
-    !+ad_args  mode : input integer : 1 if B is provided by the user,
-    !+ad_argc                         0 if B is to be initialized to
-    !+ad_argc                           the identity matrix
-    !+ad_args  n : input integer : number of variables
-    !+ad_args  m : input integer : number of constraints
-    !+ad_args  meq : input integer : number of equality constraints
-    !+ad_args  x(n) : input/output real array : initial/final estimates of
-    !+ad_argc    solution vector
-    !+ad_args  objf : output real : objective function at output X
-    !+ad_args  fgrd(n) : output real array : components of the gradient of
-    !+ad_argc    the objective function at output X
-    !+ad_args  conf(m) : output real array : values of the constraint
-    !+ad_argc    functions at output X (equality constraints must precede
-    !+ad_argc    the inequality constraints)
-    !+ad_args  cnorm(lcnorm,m) : output real array : constraint normals at
-    !+ad_argc    output X
-    !+ad_args  lcnorm : input integer : array dimension, >= n+1
-    !+ad_args  b(lb,lb) : input/output real array : approximation to the
-    !+ad_argc    second derivative matrix of the Lagrangian function.
-    !+ad_argc    Often, an adequate initial B matrix can be obtained by
-    !+ad_argc    approximating the hessian of the objective function.
-    !+ad_argc    On input, the approximation is provided by the user if
-    !+ad_argc    MODE = 1 and is set to the identity matrix if MODE = 0.
-    !+ad_args  lb : input integer : array dimension, >= n+1
-    !+ad_args  tol : input real : A normal return occurs when the
-    !+ad_argc    objective function plus suitably weighted multiples
-    !+ad_argc    of the constraint functions are predicted to differ from
-    !+ad_argc    their optimal values by at most TOL.
-    !+ad_args  maxfev : input integer : maximum number of calls to FCNVMC1
-    !+ad_args  info : output integer : error flag<BR>
-    !+ad_argc    INFO < 0 : user termination<BR>
-    !+ad_argc    INFO = 0 : improper input parameters<BR>
-    !+ad_argc    INFO = 1 : normal return<BR>
-    !+ad_argc    INFO = 2 : number of calls to FCNVMC1 is at least MAXFEV<BR>
-    !+ad_argc    INFO = 3 : line search required ten calls of FCNVMC1<BR>
-    !+ad_argc    INFO = 4 : uphill search direction was calculated<BR>
-    !+ad_argc    INFO = 5 : quadratic programming technique was unable to find
-    !+ad_argc               a feasible point<BR>
-    !+ad_argc    INFO = 6 : quadratic programming technique was restricted by
-    !+ad_argc               an artificial bound or failed due to a singular
-    !+ad_argc               matrix
-    !+ad_argc    INFO = 7 : line search has been aborted
-    !+ad_args  nfev : output integer : number of calls to FCNVMC1
-    !+ad_args  niter : output integer : number of iterations
-    !+ad_args  vlam(m+2n+1) : output real array : Lagrange multipliers at output X.
-    !+ad_argc    The Lagrange multipliers provide the sensitivity of the objective
-    !+ad_argc    function to changes in the constraint functions.
-    !+ad_argc    Note that VLAM(M+I), I=1,...,N gives the multipliers for
-    !+ad_argc    the lower bound constraints.  VLAM(M+N+1+I), I=1,...,N
-    !+ad_argc    gives the multipliers for the upper bound constraints.
-    !+ad_args  glag(n) : output real array : components of the gradient of
-    !+ad_argc    the Lagrangian function at the output X.
-    !+ad_args  cm(m) : output real array : work array
-    !+ad_args  vmu(m+2n+1) : output real array : work array
-    !+ad_args  glaga(n) : output real array : work array
-    !+ad_args  gamma(n) : output real array : work array
-    !+ad_args  eta(n) : output real array : work array
-    !+ad_args  xa(n) : output real array : work array
-    !+ad_args  bdelta(n) : output real array : work array
-    !+ad_args  delta(ldel) : output real array : work array
-    !+ad_args  ldel : input integer : array dimension, >= max(7*(N+1),4*(N+1)+M)
-    !+ad_args  gm(n+1) : output real array : work array
-    !+ad_args  bdl(n+1) : output real array : work array
-    !+ad_args  bdu(n+1) : output real array : work array
-    !+ad_args  h(lh,lh) : output real array : work array
-    !+ad_args  lh : input integer : array dimension, >= 2*(N+1)
-    !+ad_args  wa(lwa) : output real array : work array
-    !+ad_args  lwa : input integer : array dimension, >= 2*(N+1)
-    !+ad_args  iwa(liwa) : output integer array : work array
-    !+ad_args  liwa : input integer : array dimension, >= 6*(N+1) + M
-    !+ad_args  ilower(n) : input integer array : If X(I) has a lower bound,
-    !+ad_argc    ILOWER(I) is set to 1 on input, otherwise 0
-    !+ad_args  bndl(n) : input real array : lower bound of X(I)
-    !+ad_args  iupper(n) : input integer array : If X(I) has an upper bound,
-    !+ad_argc    IUPPER(I) is set to 1 on input, otherwise 0
-    !+ad_args  bndu(n) : input real array : upper bound of X(I)
-    !+ad_desc  This subroutine calculates the least value of a function of
-    !+ad_desc  several variables subject to linear and/or nonlinear equality
-    !+ad_desc  and inequality constraints.
-    !+ad_desc  <P>More particularly, it solves the problem
-    !+ad_desc  <PRE>
-    !+ad_desc  Minimize f(x)
-    !+ad_desc     subject to c (x) =  0.0 ,  i = 1,...,meq
-    !+ad_desc                 i
-    !+ad_desc            and c (x) >= 0.0 ,  i = meq+1,...,m
-    !+ad_desc                 i
-    !+ad_desc            and l <= x <= u  ,  i = 1,...,n
-    !+ad_desc                 i    i    i
-    !+ad_desc  </PRE>
-    !+ad_desc  The subroutine implements a variable metric method for
-    !+ad_desc  constrained optimization developed by M.J.D. Powell.
-    !+ad_prob  None
-    !+ad_call  fcnvmc1
-    !+ad_call  fcnvmc2
-    !+ad_call  qpsub
-    !+ad_hist  --/06/79 MM  Modified for simple bounds
-    !+ad_hist  18/11/83 MM  Modified for separate function and gradient evaluation
-    !+ad_hist  21/05/91 JG  Modified argument list
-    !+ad_hist  21/05/91 JG  Modified for separate fcnvmc1, fcnvmc2 functions
-    !+ad_hist  09/10/12 PJK Initial F90 version
-    !+ad_hist  06/11/12 PJK Added recursive attribute, for startup routine
-    !+ad_hist  25/02/14 MDK Added an escape from the line search to help ensure
-    !+ad_hisc               convergence
-    !+ad_hist  26/02/14 PJK Added new output argument niter
-    !+ad_hist  08/07/14 PJK/MDK Added a test of the residuals to the convergence
-    !+ad_hisc               criteria
-    !+ad_hist  10/09/14 PJK/MDK Added new info=7 value
-    !+ad_hist  22/02/17 JM  Updated VMCON iteration info output
-    !+ad_stat  Okay
-    !+ad_docs  ANL-80-64: Solution of the General Nonlinear Programming Problem
-    !+ad_docc  with Subroutine VMCON, Roger L Crane, Kenneth E Hillstrom and
-    !+ad_docc  Michael Minkoff, Argonne National Laboratory, 1980
+    !! Calculates the least value of a function of several variables
+    !! subject to linear and/or nonlinear equality and inequality
+    !! constraints
+    !! author: R L Crane, K E Hillstrom, M Minkoff, Argonne National Lab
+    !! author: J Galambos, FEDC/ORNL
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: M D Kovari, CCFE, Culham Science Centre
+    !! fcnvmc1 : external subroutine : routine to calculate the
+    !! objective and constraint functions
+    !! fcnvmc2 : external subroutine : routine to calculate the
+    !! gradients of the objective and constraint functions
+    !! mode : input integer : 1 if B is provided by the user,
+    !! 0 if B is to be initialized to
+    !! the identity matrix
+    !! n : input integer : number of variables
+    !! m : input integer : number of constraints
+    !! meq : input integer : number of equality constraints
+    !! x(n) : input/output real array : initial/final estimates of
+    !! solution vector
+    !! objf : output real : objective function at output X
+    !! fgrd(n) : output real array : components of the gradient of
+    !! the objective function at output X
+    !! conf(m) : output real array : values of the constraint
+    !! functions at output X (equality constraints must precede
+    !! the inequality constraints)
+    !! cnorm(lcnorm,m) : output real array : constraint normals at
+    !! output X
+    !! lcnorm : input integer : array dimension, >= n+1
+    !! b(lb,lb) : input/output real array : approximation to the
+    !! second derivative matrix of the Lagrangian function.
+    !! Often, an adequate initial B matrix can be obtained by
+    !! approximating the hessian of the objective function.
+    !! On input, the approximation is provided by the user if
+    !! MODE = 1 and is set to the identity matrix if MODE = 0.
+    !! lb : input integer : array dimension, >= n+1
+    !! tol : input real : A normal return occurs when the
+    !! objective function plus suitably weighted multiples
+    !! of the constraint functions are predicted to differ from
+    !! their optimal values by at most TOL.
+    !! maxfev : input integer : maximum number of calls to FCNVMC1
+    !! info : output integer : error flag<BR>
+    !! INFO < 0 : user termination<BR>
+    !! INFO = 0 : improper input parameters<BR>
+    !! INFO = 1 : normal return<BR>
+    !! INFO = 2 : number of calls to FCNVMC1 is at least MAXFEV<BR>
+    !! INFO = 3 : line search required ten calls of FCNVMC1<BR>
+    !! INFO = 4 : uphill search direction was calculated<BR>
+    !! INFO = 5 : quadratic programming technique was unable to find
+    !! a feasible point<BR>
+    !! INFO = 6 : quadratic programming technique was restricted by
+    !! an artificial bound or failed due to a singular
+    !! matrix
+    !! INFO = 7 : line search has been aborted
+    !! nfev : output integer : number of calls to FCNVMC1
+    !! niter : output integer : number of iterations
+    !! vlam(m+2n+1) : output real array : Lagrange multipliers at output X.
+    !! The Lagrange multipliers provide the sensitivity of the objective
+    !! function to changes in the constraint functions.
+    !! Note that VLAM(M+I), I=1,...,N gives the multipliers for
+    !! the lower bound constraints.  VLAM(M+N+1+I), I=1,...,N
+    !! gives the multipliers for the upper bound constraints.
+    !! glag(n) : output real array : components of the gradient of
+    !! the Lagrangian function at the output X.
+    !! cm(m) : output real array : work array
+    !! vmu(m+2n+1) : output real array : work array
+    !! glaga(n) : output real array : work array
+    !! gamma(n) : output real array : work array
+    !! eta(n) : output real array : work array
+    !! xa(n) : output real array : work array
+    !! bdelta(n) : output real array : work array
+    !! delta(ldel) : output real array : work array
+    !! ldel : input integer : array dimension, >= max(7*(N+1),4*(N+1)+M)
+    !! gm(n+1) : output real array : work array
+    !! bdl(n+1) : output real array : work array
+    !! bdu(n+1) : output real array : work array
+    !! h(lh,lh) : output real array : work array
+    !! lh : input integer : array dimension, >= 2*(N+1)
+    !! wa(lwa) : output real array : work array
+    !! lwa : input integer : array dimension, >= 2*(N+1)
+    !! iwa(liwa) : output integer array : work array
+    !! liwa : input integer : array dimension, >= 6*(N+1) + M
+    !! ilower(n) : input integer array : If X(I) has a lower bound,
+    !! ILOWER(I) is set to 1 on input, otherwise 0
+    !! bndl(n) : input real array : lower bound of X(I)
+    !! iupper(n) : input integer array : If X(I) has an upper bound,
+    !! IUPPER(I) is set to 1 on input, otherwise 0
+    !! bndu(n) : input real array : upper bound of X(I)
+    !! This subroutine calculates the least value of a function of
+    !! several variables subject to linear and/or nonlinear equality
+    !! and inequality constraints.
+    !! <P>More particularly, it solves the problem
+    !! <PRE>
+    !! Minimize f(x)
+    !! subject to c (x) =  0.0 ,  i = 1,...,meq
+    !! i
+    !! and c (x) >= 0.0 ,  i = meq+1,...,m
+    !! i
+    !! and l <= x <= u  ,  i = 1,...,n
+    !! i    i    i
+    !! </PRE>
+    !! The subroutine implements a variable metric method for
+    !! constrained optimization developed by M.J.D. Powell.
+    !! ANL-80-64: Solution of the General Nonlinear Programming Problem
+    !! with Subroutine VMCON, Roger L Crane, Kenneth E Hillstrom and
+    !! Michael Minkoff, Argonne National Laboratory, 1980
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5701,30 +5464,22 @@ contains
 
   function spmpar(i)
 
-    !+ad_name  spmpar
-    !+ad_summ  Calculates machine (computing) parameters
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  i : input integer : Switch for return value:
-    !+ad_argc                      i=1 : B**(1 - P), the machine precision
-    !+ad_argc                      i=2 : B**(EMIN - 1), the smallest magnitude
-    !+ad_argc                      i=3 : B**EMAX*(1 - B**(-P)), the largest magnitude
-    !+ad_argc     where the machine being used has P base B digits, and its smallest
-    !+ad_arc      and largest exponents are EMIN and EMAX, respectively.
-    !+ad_desc  This routine evaluates the numerical machine parameters of the
-    !+ad_desc  computer being used to run the program, as defined above.
-    !+ad_desc  <P>Note that the values of these parameters can be found for a given
-    !+ad_desc  machine if the Mark 12 or later NAg library is installed on it.
-    !+ad_desc  <P><CODE>SPMPAR(1)</CODE> is equivalent to <CODE>X02AJF()</CODE>;
-    !+ad_desc  <BR><CODE>SPMPAR(2)</CODE> is equivalent to <CODE>X02AKF()</CODE>;
-    !+ad_desc  <BR><CODE>SPMPAR(3)</CODE> is equivalent to <CODE>X02ALF()</CODE>.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  28/07/11 PJK Initial F90 version
-    !+ad_hist  08/04/13 PJK Modified to use Fortran intrinsic functions
-    !+ad_stat  Okay
-    !+ad_docs  Metcalf and Reid, Fortran 90/95 Explained, 2nd Edition (section 8.7.2)
+    !! Calculates machine (computing) parameters
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! i : input integer : Switch for return value:
+    !! i=1 : B**(1 - P), the machine precision
+    !! i=2 : B**(EMIN - 1), the smallest magnitude
+    !! i=3 : B**EMAX*(1 - B**(-P)), the largest magnitude
+    !! where the machine being used has P base B digits, and its smallest
+    !! and largest exponents are EMIN and EMAX, respectively.
+    !! This routine evaluates the numerical machine parameters of the
+    !! computer being used to run the program, as defined above.
+    !! <P>Note that the values of these parameters can be found for a given
+    !! machine if the Mark 12 or later NAg library is installed on it.
+    !! <P><CODE>SPMPAR(1)</CODE> is equivalent to <CODE>X02AJF()</CODE>;
+    !! <BR><CODE>SPMPAR(2)</CODE> is equivalent to <CODE>X02AKF()</CODE>;
+    !! <BR><CODE>SPMPAR(3)</CODE> is equivalent to <CODE>X02ALF()</CODE>.
+    !! Metcalf and Reid, Fortran 90/95 Explained, 2nd Edition (section 8.7.2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5761,38 +5516,30 @@ contains
 
   subroutine eshellvol(rshell,rmini,rmino,zminor,drin,drout,dz,vin,vout,vtot)
 
-    !+ad_name  eshellvol
-    !+ad_summ  Routine to calculate the inboard, outboard and total volumes
-    !+ad_summ  of a toroidal shell comprising two elliptical sections
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rshell : input real : major radius of centre of both ellipses (m)
-    !+ad_args  rmini  : input real : horizontal distance from rshell to outer edge
-    !+ad_argc                        of inboard elliptical shell (m)
-    !+ad_args  rmino  : input real : horizontal distance from rshell to inner edge
-    !+ad_argc                        of outboard elliptical shell (m)
-    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
-    !+ad_args  drin   : input real : horiz. thickness of inboard shell at midplane (m)
-    !+ad_args  drout  : input real : horiz. thickness of outboard shell at midplane (m)
-    !+ad_args  dz     : input real : vertical thickness of shell at top/bottom (m)
-    !+ad_args  vin    : output real : volume of inboard section (m3)
-    !+ad_args  vout   : output real : volume of outboard section (m3)
-    !+ad_args  vtot   : output real : total volume of shell (m3)
-    !+ad_desc  This routine calculates the volume of the inboard and outboard sections
-    !+ad_desc  of a toroidal shell defined by two co-centred semi-ellipses.
-    !+ad_desc  Each section's internal and external surfaces are in turn defined
-    !+ad_desc  by two semi-ellipses. The volumes of each section are calculated as
-    !+ad_desc  the difference in those of the volumes of revolution enclosed by their
-    !+ad_desc  inner and outer surfaces.
-    !+ad_desc  <P>See also <A HREF="eshellarea.html"><CODE>eshellarea</CODE></A>
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/13 PJK Initial version
-    !+ad_hist  13/02/15 JM  Moved to maths library
-    !+ad_stat  Okay
-    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
-    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !! Routine to calculate the inboard, outboard and total volumes
+    !! of a toroidal shell comprising two elliptical sections
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rshell : input real : major radius of centre of both ellipses (m)
+    !! rmini  : input real : horizontal distance from rshell to outer edge
+    !! of inboard elliptical shell (m)
+    !! rmino  : input real : horizontal distance from rshell to inner edge
+    !! of outboard elliptical shell (m)
+    !! zminor : input real : vertical internal half-height of shell (m)
+    !! drin   : input real : horiz. thickness of inboard shell at midplane (m)
+    !! drout  : input real : horiz. thickness of outboard shell at midplane (m)
+    !! dz     : input real : vertical thickness of shell at top/bottom (m)
+    !! vin    : output real : volume of inboard section (m3)
+    !! vout   : output real : volume of outboard section (m3)
+    !! vtot   : output real : total volume of shell (m3)
+    !! This routine calculates the volume of the inboard and outboard sections
+    !! of a toroidal shell defined by two co-centred semi-ellipses.
+    !! Each section's internal and external surfaces are in turn defined
+    !! by two semi-ellipses. The volumes of each section are calculated as
+    !! the difference in those of the volumes of revolution enclosed by their
+    !! inner and outer surfaces.
+    !! <P>See also <A HREF="eshellarea.html"><CODE>eshellarea</CODE></A>
+    !! Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5848,36 +5595,29 @@ contains
 
   subroutine dshellvol(rmajor,rminor,zminor,drin,drout,dz,vin,vout,vtot)
 
-    !+ad_name  dshellvol
-    !+ad_summ  Routine to calculate the inboard, outboard and total volumes
-    !+ad_summ  of a D-shaped toroidal shell
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rmajor : input real : major radius to outer point of inboard
-    !+ad_argc                        straight section of shell (m)
-    !+ad_args  rminor : input real : horizontal internal width of shell (m)
-    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
-    !+ad_args  drin   : input real : horiz. thickness of inboard shell at midplane (m)
-    !+ad_args  drout  : input real : horiz. thickness of outboard shell at midplane (m)
-    !+ad_args  dz     : input real : vertical thickness of shell at top/bottom (m)
-    !+ad_args  vin    : output real : volume of inboard straight section (m3)
-    !+ad_args  vout   : output real : volume of outboard curved section (m3)
-    !+ad_args  vtot   : output real : total volume of shell (m3)
-    !+ad_desc  This routine calculates the volume of the inboard and outboard sections
-    !+ad_desc  of a D-shaped toroidal shell defined by the above input parameters.
-    !+ad_desc  The inboard section is assumed to be a cylinder of uniform thickness.
-    !+ad_desc  The outboard section's internal and external surfaces are defined
-    !+ad_desc  by two semi-ellipses, centred on the outer edge of the inboard section;
-    !+ad_desc  its volume is calculated as the difference in those of the volumes of
-    !+ad_desc  revolution enclosed by the two surfaces.
-    !+ad_desc  <P>See also <A HREF="dshellarea.html"><CODE>dshellarea</CODE></A>
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/13 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
-    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !! Routine to calculate the inboard, outboard and total volumes
+    !! of a D-shaped toroidal shell
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rmajor : input real : major radius to outer point of inboard
+    !! straight section of shell (m)
+    !! rminor : input real : horizontal internal width of shell (m)
+    !! zminor : input real : vertical internal half-height of shell (m)
+    !! drin   : input real : horiz. thickness of inboard shell at midplane (m)
+    !! drout  : input real : horiz. thickness of outboard shell at midplane (m)
+    !! dz     : input real : vertical thickness of shell at top/bottom (m)
+    !! vin    : output real : volume of inboard straight section (m3)
+    !! vout   : output real : volume of outboard curved section (m3)
+    !! vtot   : output real : total volume of shell (m3)
+    !! This routine calculates the volume of the inboard and outboard sections
+    !! of a D-shaped toroidal shell defined by the above input parameters.
+    !! The inboard section is assumed to be a cylinder of uniform thickness.
+    !! The outboard section's internal and external surfaces are defined
+    !! by two semi-ellipses, centred on the outer edge of the inboard section;
+    !! its volume is calculated as the difference in those of the volumes of
+    !! revolution enclosed by the two surfaces.
+    !! <P>See also <A HREF="dshellarea.html"><CODE>dshellarea</CODE></A>
+    !! Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5919,31 +5659,24 @@ contains
 
   subroutine dshellarea(rmajor,rminor,zminor,ain,aout,atot)
 
-    !+ad_name  dshellarea
-    !+ad_summ  Routine to calculate the inboard, outboard and total surface areas
-    !+ad_summ  of a D-shaped toroidal shell
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rmajor : input real : major radius of inboard straight section (m)
-    !+ad_args  rminor : input real : horizontal width of shell (m)
-    !+ad_args  zminor : input real : vertical half-height of shell (m)
-    !+ad_args  ain    : output real : surface area of inboard straight section (m3)
-    !+ad_args  aout   : output real : surface area of outboard curved section (m3)
-    !+ad_args  atot   : output real : total surface area of shell (m3)
-    !+ad_desc  This routine calculates the surface area of the inboard and outboard
-    !+ad_desc  sections of a D-shaped toroidal shell defined by the above input
-    !+ad_desc  parameters.
-    !+ad_desc  The inboard section is assumed to be a cylinder.
-    !+ad_desc  The outboard section is defined by a semi-ellipse, centred on the
-    !+ad_desc  major radius of the inboard section.
-    !+ad_desc  <P>See also <A HREF="dshellvol.html"><CODE>dshellvol</CODE></A>
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/13 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
-    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !! Routine to calculate the inboard, outboard and total surface areas
+    !! of a D-shaped toroidal shell
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rmajor : input real : major radius of inboard straight section (m)
+    !! rminor : input real : horizontal width of shell (m)
+    !! zminor : input real : vertical half-height of shell (m)
+    !! ain    : output real : surface area of inboard straight section (m3)
+    !! aout   : output real : surface area of outboard curved section (m3)
+    !! atot   : output real : total surface area of shell (m3)
+    !! This routine calculates the surface area of the inboard and outboard
+    !! sections of a D-shaped toroidal shell defined by the above input
+    !! parameters.
+    !! The inboard section is assumed to be a cylinder.
+    !! The outboard section is defined by a semi-ellipse, centred on the
+    !! major radius of the inboard section.
+    !! <P>See also <A HREF="dshellvol.html"><CODE>dshellvol</CODE></A>
+    !! Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5974,30 +5707,23 @@ contains
 
   subroutine eshellarea(rshell,rmini,rmino,zminor,ain,aout,atot)
 
-    !+ad_name  eshellarea
-    !+ad_summ  Routine to calculate the inboard, outboard and total surface areas
-    !+ad_summ  of a toroidal shell comprising two elliptical sections
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rshell : input real : major radius of centre of both ellipses (m)
-    !+ad_args  rmini  : input real : horizontal distance from rshell to
-    !+ad_argc                        inboard elliptical shell (m)
-    !+ad_args  rmino  : input real : horizontal distance from rshell to
-    !+ad_argc                        outboard elliptical shell (m)
-    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
-    !+ad_args  ain    : output real : surface area of inboard section (m3)
-    !+ad_args  aout   : output real : surface area of outboard section (m3)
-    !+ad_args  atot   : output real : total surface area of shell (m3)
-    !+ad_desc  This routine calculates the surface area of the inboard and outboard
-    !+ad_desc  sections of a toroidal shell defined by two co-centred semi-ellipses.
-    !+ad_desc  <P>See also <A HREF="eshellvol.html"><CODE>eshellvol</CODE></A>
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/13 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
-    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !! Routine to calculate the inboard, outboard and total surface areas
+    !! of a toroidal shell comprising two elliptical sections
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rshell : input real : major radius of centre of both ellipses (m)
+    !! rmini  : input real : horizontal distance from rshell to
+    !! inboard elliptical shell (m)
+    !! rmino  : input real : horizontal distance from rshell to
+    !! outboard elliptical shell (m)
+    !! zminor : input real : vertical internal half-height of shell (m)
+    !! ain    : output real : surface area of inboard section (m3)
+    !! aout   : output real : surface area of outboard section (m3)
+    !! atot   : output real : total surface area of shell (m3)
+    !! This routine calculates the surface area of the inboard and outboard
+    !! sections of a toroidal shell defined by two co-centred semi-ellipses.
+    !! <P>See also <A HREF="eshellvol.html"><CODE>eshellvol</CODE></A>
+    !! Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !! Surface Area and Volume Calculations for Toroidal Shells
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
