@@ -1,14 +1,11 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module numerics
-  !+ad_name  numerics
-  !+ad_summ  Module containing callers to the main equation solvers
-  !+ad_summ  HYBRD and VMCON
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_desc  This module contains the primary numerics variables and the
-  !+ad_desc  calling routines for the two equation solvers in the code.
-  !+ad_prob  None
+  !! Module containing callers to the main equation solvers
+  !! HYBRD and VMCON
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! This module contains the primary numerics variables and the
+  !! calling routines for the two equation solvers in the code.
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -21,279 +18,279 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars FIX : total number of variables available for iteration
   integer, parameter :: ipnvars = 170
-  !+ad_vars  ipeqns  FIX : number of constraint equations available
+  !!  ipnvars FIX : total number of variables available for iteration
   integer, parameter :: ipeqns = 81
-  !+ad_vars  ipnfoms FIX : number of available figures of merit
+  !!  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipnfoms = 19
+  !!  ipnfoms FIX : number of available figures of merit
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
   integer, parameter :: ipvp1   = ipnvars+1
 
-  !+ad_vars  ioptimz /1/ : code operation switch:<UL>
-  !+ad_varc           <LI> = -2 for no optimisation, no VMCOM or HYBRD;
-  !+ad_varc           <LI> = -1 for no optimisation, HYBRD only;
-  !+ad_varc           <LI> = 0  for HYBRD and VMCON (not recommended);
-  !+ad_varc           <LI> = 1  for optimisation, VMCON only</UL>
   integer :: ioptimz = 1
+  !!  ioptimz /1/ : code operation switch:<UL>
+  !!           <LI> = -2 for no optimisation, no VMCOM or HYBRD;
+  !!           <LI> = -1 for no optimisation, HYBRD only;
+  !!           <LI> = 0  for HYBRD and VMCON (not recommended);
+  !!           <LI> = 1  for optimisation, VMCON only</UL>
 
-  !+ad_vars  minmax /7/ : switch for figure-of-merit (see lablmm for descriptions)
-  !+ad_varc               negative => maximise, positive => minimise
+  !!  minmax /7/ : switch for figure-of-merit (see lablmm for descriptions)
+  !!               negative => maximise, positive => minimise
   integer :: minmax = 7
-  !+ad_vars  lablmm(ipnfoms) : labels describing figures of merit:<UL>
   character(len=22), dimension(ipnfoms) :: lablmm = (/ &
-       !+ad_varc  <LI> ( 1) major radius
+  !!  lablmm(ipnfoms) : labels describing figures of merit:<UL>
        'major radius.         ', &
-       !+ad_varc  <LI> ( 2) not used
+       !!  <LI> ( 1) major radius
        'not used.             ', &
-       !+ad_varc  <LI> ( 3) neutron wall load
+       !!  <LI> ( 2) not used
        'neutron wall load.    ', &
-       !+ad_varc  <LI> ( 4) P_tf + P_pf
+       !!  <LI> ( 3) neutron wall load
        'P_tf + P_pf.          ', &
-       !+ad_varc  <LI> ( 5) fusion gain Q
+       !!  <LI> ( 4) P_tf + P_pf
        'fusion gain.          ', &
-       !+ad_varc  <LI> ( 6) cost of electricity
+       !!  <LI> ( 5) fusion gain Q
        'cost of electricity.  ', &
-       !+ad_varc  <LI> ( 7) capital cost (direct cost if ireactor=0,
-       !+ad_varc                          constructed cost otherwise)
+       !!  <LI> ( 6) cost of electricity
        'capital cost.         ', &
-       !+ad_varc  <LI> ( 8) aspect ratio
+       !!  <LI> ( 7) capital cost (direct cost if ireactor=0,
+       !!                          constructed cost otherwise)
        'aspect ratio.         ', &
-       !+ad_varc  <LI> ( 9) divertor heat load
+       !!  <LI> ( 8) aspect ratio
        'divertor heat load.   ', &
-       !+ad_varc  <LI> (10) toroidal field
+       !!  <LI> ( 9) divertor heat load
        'toroidal field.       ', &
-       !+ad_varc  <LI> (11) total injected power
+       !!  <LI> (10) toroidal field
        'total injected power. ', &
-       !+ad_varc  <LI> (12) hydrogen plant capital cost OBSOLETE
+       !!  <LI> (11) total injected power
        'H plant capital cost. ', &
-       !+ad_varc  <LI> (13) hydrogen production rate OBSOLETE
+       !!  <LI> (12) hydrogen plant capital cost OBSOLETE
        'H production rate.    ', &
-       !+ad_varc  <LI> (14) pulse length
+       !!  <LI> (13) hydrogen production rate OBSOLETE
        'pulse length.         ', &
-       !+ad_varc  <LI> (15) plant availability factor (N.B. requires
-       !+ad_varc            iavail=1 to be set)
+       !!  <LI> (14) pulse length
        'plant availability.   ', &
-       !+ad_varc  <LI> (16) linear combination of major radius (minimised) and pulse length (maximised)
-       !+ad_varc              note: FoM should be minimised only!
+       !!  <LI> (15) plant availability factor (N.B. requires
+       !!            iavail=1 to be set)
        'min R0, max tau_burn. ', &
-       !+ad_varc  <LI> (17) net electrical output
+       !!  <LI> (16) linear combination of major radius (minimised) and pulse length (maximised)
+       !!              note: FoM should be minimised only!
        'net electrical output.', &
-       !+ad_varc  <LI> (18) Null Figure of Merit
+       !!  <LI> (17) net electrical output
        'Null figure of merit. ',  &
-       !+ad_varc  <LI> (19) linear combination of big Q and pulse length (maximised)
-       !+ad_varc              note: FoM should be minimised only!</UL>
+       !!  <LI> (18) Null Figure of Merit
        'max Q, max t_burn.    ' &
+       !!  <LI> (19) linear combination of big Q and pulse length (maximised)
+       !!              note: FoM should be minimised only!</UL>
         /)
-  !+ad_vars  ncalls : number of function calls during solution
   integer :: ncalls = 0
-  !+ad_vars  neqns /0/ : number of equality constraints to be satisfied
+  !!  ncalls : number of function calls during solution
   integer :: neqns = 0
-  !+ad_vars  nfev1 : number of calls to FCNHYB (HYBRD function caller) made
+  !!  neqns /0/ : number of equality constraints to be satisfied
   integer :: nfev1 = 0
-  !+ad_vars  nfev2 : number of calls to FCNVMC1 (VMCON function caller) made
+  !!  nfev1 : number of calls to FCNHYB (HYBRD function caller) made
   integer :: nfev2 = 0
-  !+ad_vars  nineqns /0/ : number of inequality constraints VMCON must satisfy
-  !+ad_varc                (leave at zero for now)
+  !!  nfev2 : number of calls to FCNVMC1 (VMCON function caller) made
   integer :: nineqns = 0
-  !+ad_vars  nvar /16/ : number of iteration variables to use
+  !!  nineqns /0/ : number of inequality constraints VMCON must satisfy
+  !!                (leave at zero for now)
   integer :: nvar = 16
-  !+ad_vars  nviter : number of VMCON iterations performed
+  !!  nvar /16/ : number of iteration variables to use
   integer :: nviter = 0
+  !!  nviter : number of VMCON iterations performed
 
-  !+ad_vars  icc(ipeqns) /0/ :
-  !+ad_varc           array defining which constraint equations to activate
-  !+ad_varc           (see lablcc for descriptions)
+  !!  icc(ipeqns) /0/ :
+  !!           array defining which constraint equations to activate
+  !!           (see lablcc for descriptions)
 
   ! TODO Check the dictionaries are created correctly.
   ! Issue #491 Default constraints removed.
   integer, dimension(ipeqns) :: icc = 0
 
-  !+ad_vars  active_constraints(ipeqns) : Logical array showing which constraints are active
   logical, dimension(ipeqns) :: active_constraints = .false.
+  !!  active_constraints(ipeqns) : Logical array showing which constraints are active
 
-  !+ad_vars  lablcc(ipeqns) : labels describing constraint equations (corresponding itvs)<UL>
   character(len=33), dimension(ipeqns) :: lablcc = (/ &
-       !+ad_varc  <LI> ( 1) Beta (consistency equation) (itv 5)
+  !!  lablcc(ipeqns) : labels describing constraint equations (corresponding itvs)<UL>
        'Beta consistency                 ', &
-       !+ad_varc  <LI> ( 2) Global power balance (consistency equation) (itv 10,1,2,3,4,6,11)
+       !!  <LI> ( 1) Beta (consistency equation) (itv 5)
        'Global power balance consistency ', &
-       !+ad_varc  <LI> ( 3) Ion power balance DEPRECATED (itv 10,1,2,3,4,6,11)
+       !!  <LI> ( 2) Global power balance (consistency equation) (itv 10,1,2,3,4,6,11)
        'Ion power balance                ', &
-       !+ad_varc  <LI> ( 4) Electron power balance DEPRECATED (itv 10,1,2,3,4,6,11)
+       !!  <LI> ( 3) Ion power balance DEPRECATED (itv 10,1,2,3,4,6,11)
        'Electron power balance           ', &
-       !+ad_varc  <LI> ( 5) Density upper limit (itv 9,1,2,3,4,5,6)
+       !!  <LI> ( 4) Electron power balance DEPRECATED (itv 10,1,2,3,4,6,11)
        'Density upper limit              ', &
-       !+ad_varc  <LI> ( 6) (Epsilon x beta poloidal) upper limit (itv 8,1,2,3,4,6)
+       !!  <LI> ( 5) Density upper limit (itv 9,1,2,3,4,5,6)
        '(Epsilon x beta-pol) upper limit ', &
-       !+ad_varc  <LI> ( 7) Beam ion density (NBI) (consistency equation) (itv 7)
+       !!  <LI> ( 6) (Epsilon x beta poloidal) upper limit (itv 8,1,2,3,4,6)
        'Beam ion density consistency     ', &
-       !+ad_varc  <LI> ( 8) Neutron wall load upper limit (itv 14,1,2,3,4,6)
+       !!  <LI> ( 7) Beam ion density (NBI) (consistency equation) (itv 7)
        'Neutron wall load upper limit    ', &
-       !+ad_varc  <LI> ( 9) Fusion power upper limit (itv 26,1,2,3,4,6)
+       !!  <LI> ( 8) Neutron wall load upper limit (itv 14,1,2,3,4,6)
        'Fusion power upper limit         ', &
-       !+ad_varc  <LI> (10) Toroidal field 1/R (consistency equation) (itv 12,1,2,3,13 )
+       !!  <LI> ( 9) Fusion power upper limit (itv 26,1,2,3,4,6)
        'Toroidal field 1/R consistency   ', &
-       !+ad_varc  <LI> (11) Radial build (consistency equation) (itv 3,1,13,16,29,42,61)
+       !!  <LI> (10) Toroidal field 1/R (consistency equation) (itv 12,1,2,3,13 )
        'Radial build consistency         ', &
-       !+ad_varc  <LI> (12) Volt second lower limit (STEADY STATE) (itv 15,1,2,3)
+       !!  <LI> (11) Radial build (consistency equation) (itv 3,1,13,16,29,42,61)
        'Volt second lower limit          ', &
-       !+ad_varc  <LI> (13) Burn time lower limit (PULSE) (itv 21,1,16,17,29,42,44,61)
+       !!  <LI> (12) Volt second lower limit (STEADY STATE) (itv 15,1,2,3)
        'Burn time lower limit            ', &
-       !+ad_varc  <LI> (14) Neutral beam decay lengths to plasma centre (NBI) (consistency equation)
+       !!  <LI> (13) Burn time lower limit (PULSE) (itv 21,1,16,17,29,42,44,61)
        !+ac_varc            (itv 19,1,2,3,6)
+       !!  <LI> (14) Neutral beam decay lengths to plasma centre (NBI) (consistency equation)
        'NBI decay lengths consistency    ', &
-       !+ad_varc  <LI> (15) LH power threshold limit (itv 103)
        'L-H power threshold limit        ', &
-       !+ad_varc  <LI> (16) Net electric power lower limit (itv 25,1,2,3)
+       !!  <LI> (15) LH power threshold limit (itv 103)
        'Net electric power lower limit   ', &
-       !+ad_varc  <LI> (17) Radiation fraction upper limit (itv 28)
+       !!  <LI> (16) Net electric power lower limit (itv 25,1,2,3)
        'Radiation fraction upper limit   ', &
-       !+ad_varc  <LI> (18) Divertor heat load upper limit (itv 27)
+       !!  <LI> (17) Radiation fraction upper limit (itv 28)
        'Divertor heat load upper limit   ', &
-       !+ad_varc  <LI> (19) MVA upper limit (itv 30)
+       !!  <LI> (18) Divertor heat load upper limit (itv 27)
        'MVA upper limit                  ', &
-       !+ad_varc  <LI> (20) Neutral beam tangency radius upper limit (NBI) (itv 33,31,3,13)
+       !!  <LI> (19) MVA upper limit (itv 30)
        'Beam tangency radius upper limit ', &
-       !+ad_varc  <LI> (21) Plasma minor radius lower limit (itv 32)
+       !!  <LI> (20) Neutral beam tangency radius upper limit (NBI) (itv 33,31,3,13)
        'Plasma minor radius lower limit  ', &
-       !+ad_varc  <LI> (22) Divertor collisionality upper limit (itv 34,43)
+       !!  <LI> (21) Plasma minor radius lower limit (itv 32)
        'Divertor collisionality upper lim', &
-       !+ad_varc  <LI> (23) Conducting shell to plasma minor radius ratio upper limit
-       !+ad_varc            (itv 104,1,74)
+       !!  <LI> (22) Divertor collisionality upper limit (itv 34,43)
        'Conducting shell radius upper lim', &
-       !+ad_varc  <LI> (24) Beta upper limit (itv 36,1,2,3,4,6,18)
+       !!  <LI> (23) Conducting shell to plasma minor radius ratio upper limit
+       !!            (itv 104,1,74)
        'Beta upper limit                 ', &
-       !+ad_varc  <LI> (25) Peak toroidal field upper limit (itv 35,3,13,29)
+       !!  <LI> (24) Beta upper limit (itv 36,1,2,3,4,6,18)
        'Peak toroidal field upper limit  ', &
-       !+ad_varc  <LI> (26) Central solenoid EOF current density upper limit (ipfres=0)
-       !+ad_varc            (itv 38,37,41,12)
+       !!  <LI> (25) Peak toroidal field upper limit (itv 35,3,13,29)
        'CS coil EOF current density limit', &
-       !+ad_varc  <LI> (27) Central solenoid BOP current density upper limit (ipfres=0)
-       !+ad_varc            (itv 39,37,41,12)
+       !!  <LI> (26) Central solenoid EOF current density upper limit (ipfres=0)
+       !!            (itv 38,37,41,12)
        'CS coil BOP current density limit', &
-       !+ad_varc  <LI> (28) Fusion gain Q lower limit (itv 45,47,40)
+       !!  <LI> (27) Central solenoid BOP current density upper limit (ipfres=0)
+       !!            (itv 39,37,41,12)
        'Fusion gain Q lower limit        ', &
-       !+ad_varc  <LI> (29) Inboard radial build consistency (itv 3,1,13,16,29,42,61)
+       !!  <LI> (28) Fusion gain Q lower limit (itv 45,47,40)
        'Inboard radial build consistency ', &
-       !+ad_varc  <LI> (30) Injection power upper limit (itv 46,47,11)
+       !!  <LI> (29) Inboard radial build consistency (itv 3,1,13,16,29,42,61)
        'Injection power upper limit      ', &
-       !+ad_varc  <LI> (31) TF coil case stress upper limit (SCTF) (itv 48,56,57,58,59,60,24)
+       !!  <LI> (30) Injection power upper limit (itv 46,47,11)
        'TF coil case stress upper limit  ', &
-       !+ad_varc  <LI> (32) TF coil conduit stress upper limit (SCTF) (itv 49,56,57,58,59,60,24)
+       !!  <LI> (31) TF coil case stress upper limit (SCTF) (itv 48,56,57,58,59,60,24)
        'TF coil conduit stress upper lim ', &
-       !+ad_varc  <LI> (33) I_op / I_critical (TF coil) (SCTF) (itv 50,56,57,58,59,60,24)
+       !!  <LI> (32) TF coil conduit stress upper limit (SCTF) (itv 49,56,57,58,59,60,24)
        'I_op / I_critical (TF coil)      ', &
-       !+ad_varc  <LI> (34) Dump voltage upper limit (SCTF) (itv 51,52,56,57,58,59,60,24)
+       !!  <LI> (33) I_op / I_critical (TF coil) (SCTF) (itv 50,56,57,58,59,60,24)
        'Dump voltage upper limit         ', &
-       !+ad_varc  <LI> (35) J_winding pack/J_protection upper limit (SCTF) (itv 53,56,57,58,59,60,24)
+       !!  <LI> (34) Dump voltage upper limit (SCTF) (itv 51,52,56,57,58,59,60,24)
        'J_winding pack/J_protection limit', &
-       !+ad_varc  <LI> (36) TF coil temperature margin lower limit (SCTF) (itv 54,55,56,57,58,59,60,24)
+       !!  <LI> (35) J_winding pack/J_protection upper limit (SCTF) (itv 53,56,57,58,59,60,24)
        'TF coil temp. margin lower limit ', &
-       !+ad_varc  <LI> (37) Current drive gamma upper limit (itv 40,47)
+       !!  <LI> (36) TF coil temperature margin lower limit (SCTF) (itv 54,55,56,57,58,59,60,24)
        'Current drive gamma limit        ', &
-       !+ad_varc  <LI> (38) First wall coolant temperature rise upper limit (itv 62)
+       !!  <LI> (37) Current drive gamma upper limit (itv 40,47)
        '1st wall coolant temp rise limit ', &
-       !+ad_varc  <LI> (39) First wall peak temperature upper limit (itv 63)
+       !!  <LI> (38) First wall coolant temperature rise upper limit (itv 62)
        'First wall peak temperature limit', &
-       !+ad_varc  <LI> (40) Start-up injection power lower limit (PULSE) (itv 64)
+       !!  <LI> (39) First wall peak temperature upper limit (itv 63)
        'Start-up inj. power lower limit  ', &
-       !+ad_varc  <LI> (41) Plasma current ramp-up time lower limit (PULSE) (itv  66,65)
+       !!  <LI> (40) Start-up injection power lower limit (PULSE) (itv 64)
        'Plasma curr. ramp time lower lim ', &
-       !+ad_varc  <LI> (42) Cycle time lower limit (PULSE) (itv 17,67,65)
+       !!  <LI> (41) Plasma current ramp-up time lower limit (PULSE) (itv  66,65)
        'Cycle time lower limit           ', &
-       !+ad_varc  <LI> (43) Average centrepost temperature
-       !+ad_varc            (TART) (consistency equation) (itv 13,20,69,70)
+       !!  <LI> (42) Cycle time lower limit (PULSE) (itv 17,67,65)
        'Average centrepost temperature   ', &
-       !+ad_varc  <LI> (44) Peak centrepost temperature upper limit (TART) (itv 68,69,70)
+       !!  <LI> (43) Average centrepost temperature
+       !!            (TART) (consistency equation) (itv 13,20,69,70)
        'Peak centrepost temp. upper limit', &
-       !+ad_varc  <LI> (45) Edge safety factor lower limit (TART) (itv 71,1,2,3)
+       !!  <LI> (44) Peak centrepost temperature upper limit (TART) (itv 68,69,70)
        'Edge safety factor lower limit   ', &
-       !+ad_varc  <LI> (46) Ip/Irod upper limit (TART) (itv 72,2,60)
+       !!  <LI> (45) Edge safety factor lower limit (TART) (itv 71,1,2,3)
        'Ip/Irod upper limit              ', &
-       !+ad_varc  <LI> (47) NOT USED
+       !!  <LI> (46) Ip/Irod upper limit (TART) (itv 72,2,60)
        'TF coil tor. thickness upper lim ', &
-       !+ad_varc  <LI> (48) Poloidal beta upper limit (itv 79,2,3,18)
+       !!  <LI> (47) NOT USED
        'Poloidal beta upper limit        ', &
-       !+ad_varc  <LI> (49) NOT USED
+       !!  <LI> (48) Poloidal beta upper limit (itv 79,2,3,18)
        'RFP reversal parameter < 0       ', &
-       !+ad_varc  <LI> (50) IFE repetition rate upper limit (IFE)
+       !!  <LI> (49) NOT USED
        'IFE repetition rate upper limit  ', &
-       !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE) (itv 16,29,3,1)
+       !!  <LI> (50) IFE repetition rate upper limit (IFE)
        'Startup volt-seconds consistency ', &
-       !+ad_varc  <LI> (52) Tritium breeding ratio lower limit (itv 89,90,91)
+       !!  <LI> (51) Startup volt-seconds consistency (PULSE) (itv 16,29,3,1)
        'Tritium breeding ratio lower lim ', &
-       !+ad_varc  <LI> (53) Neutron fluence on TF coil upper limit (itv 92,93,94)
+       !!  <LI> (52) Tritium breeding ratio lower limit (itv 89,90,91)
        'Neutron fluence on TF coil limit ', &
-       !+ad_varc  <LI> (54) Peak TF coil nuclear heating upper limit (itv 95,93,94)
+       !!  <LI> (53) Neutron fluence on TF coil upper limit (itv 92,93,94)
        'Peak TF coil nucl. heating limit ', &
-       !+ad_varc  <LI> (55) Vacuum vessel helium concentration upper limit iblanket =2 (itv 96,93,94)
+       !!  <LI> (54) Peak TF coil nuclear heating upper limit (itv 95,93,94)
        'Vessel helium concentration limit', &
-       !+ad_varc  <LI> (56) Pseparatrix/Rmajor upper limit (itv 97,1,3,102)
+       !!  <LI> (55) Vacuum vessel helium concentration upper limit iblanket =2 (itv 96,93,94)
        'Psep / R upper limit             ', &
-       !+ad_varc  <LI> (57) NOT USED
+       !!  <LI> (56) Pseparatrix/Rmajor upper limit (itv 97,1,3,102)
        'TF coil leg tor width lower limit', &
-       !+ad_varc  <LI> (58) NOT USED
+       !!  <LI> (57) NOT USED
        'TF coil leg rad width lower limit', &
-       !+ad_varc  <LI> (59) Neutral beam shine-through fraction upper limit (NBI) (itv 105,6,19,4 )
+       !!  <LI> (58) NOT USED
        'NB shine-through frac upper limit', &
-       !+ad_varc  <LI> (60) Central solenoid temperature margin lower limit (SCTF) (itv 106)
+       !!  <LI> (59) Neutral beam shine-through fraction upper limit (NBI) (itv 105,6,19,4 )
        'CS temperature margin lower limit', &
-       !+ad_varc  <LI> (61) Minimum availability value (itv 107)
+       !!  <LI> (60) Central solenoid temperature margin lower limit (SCTF) (itv 106)
        'Minimum availability value       ',  &
-       !+ad_varc  <LI> (62) taup/taueff the ratio of particle to energy confinement times (itv 110)
+       !!  <LI> (61) Minimum availability value (itv 107)
        'taup/taueff                      ', &
-       !+ad_varc  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno (itv 111)
+       !!  <LI> (62) taup/taueff the ratio of particle to energy confinement times (itv 110)
        'number of ITER-like vacuum pumps ',  &
-       !+ad_varc  <LI> (64) Zeff less than or equal to zeffmax (itv 112)
+       !!  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno (itv 111)
        'Zeff limit                       ',  &
-       !+ad_varc  <LI> (65) Dump time set by VV loads (itv 56, 113)
+       !!  <LI> (64) Zeff less than or equal to zeffmax (itv 112)
        'Dump time set by VV stress       ',   &
-       !+ad_varc  <LI> (66) Limit on rate of change of energy in poloidal field
-       !+ad_varc            (Use iteration variable 65(tohs), 115)
+       !!  <LI> (65) Dump time set by VV loads (itv 56, 113)
        'Rate of change of energy in field',   &
-       !+ad_varc  <LI> (67) Simple Radiation Wall load limit (itv 116, 102, 4,6)
+       !!  <LI> (66) Limit on rate of change of energy in poloidal field
+       !!            (Use iteration variable 65(tohs), 115)
        'Upper Lim. on Radiation Wall load',   &
-       !+ad_varc  <LI> (68) Psep * Bt / qAR upper limit (itv 117)
+       !!  <LI> (67) Simple Radiation Wall load limit (itv 116, 102, 4,6)
        'Upper Lim. on Psep * Bt / q A R  ',   &
-       !+ad_varc  <LI> (69) ensure separatrix power = the value from Kallenbach divertor (itv 118)
+       !!  <LI> (68) Psep * Bt / qAR upper limit (itv 117)
        'pdivt < psep_kallenbach divertor ',   &
-       !+ad_varc  <LI> (70) ensure that teomp = separatrix temperature in the pedestal profile,
-       !+ad_varc            (itv 119 (tesep))
+       !!  <LI> (69) ensure separatrix power = the value from Kallenbach divertor (itv 118)
        'Separatrix temp consistency      ',   &
-       !+ad_varc  <LI> (71) ensure that neomp = separatrix density (nesep) x neratio
+       !!  <LI> (70) ensure that teomp = separatrix temperature in the pedestal profile,
+       !!            (itv 119 (tesep))
        'Separatrix density consistency   ',    &
-       !+ad_varc  <LI> (72) central solenoid Tresca stress limit (itv 123 foh_stress)
+       !!  <LI> (71) ensure that neomp = separatrix density (nesep) x neratio
        'CS Tresca stress limit           ',    &
-       !+ad_varc  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep))
+       !!  <LI> (72) central solenoid Tresca stress limit (itv 123 foh_stress)
        'Psep >= Plh + Paux               ',   &
-       !+ad_varc  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
+       !!  <LI> (73) Psep >= Plh + Paux (itv 137 (fplhsep))
        'TFC quench < tmax_croco          ',    &
-       !+ad_varc  <LI> (75) TFC current/copper area < Maximum (itv 143 f_copperA_m2)
+       !!  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
        'TFC current/copper area < Max    ',    &
-       !+ad_varc  <LI> (76) Eich critical separatrix density
+       !!  <LI> (75) TFC current/copper area < Maximum (itv 143 f_copperA_m2)
        'Eich critical separatrix density ',   &
-       !+ad_varc  <LI> (77) TF coil current per turn upper limit
+       !!  <LI> (76) Eich critical separatrix density
        'TFC current per turn upper limit ',    &
-       !+ad_varc  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)
+       !!  <LI> (77) TF coil current per turn upper limit
        'Reinke criterion fZ lower limit  ',   &
-       !+ad_varc  <LI> (79) Peak CS field upper limit (itv  149 fbmaxcs)
+       !!  <LI> (78) Reinke criterion impurity fraction lower limit (itv  147 freinke)
        'Peak CS field upper limit        ',   &
-       !+ad_varc  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)
+       !!  <LI> (79) Peak CS field upper limit (itv  149 fbmaxcs)
        'pdivt lower limit                ',   &
-       !+ad_varc  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
+       !!  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)
        'ne0 > neped                      '    &
+       !!  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
        ! The last ad_varc line ends with the html tag "</UL>".
 
   ! Issue #495.  Remove default iteration variables
-  !+ad_vars  ixc(ipnvars) /0/ :
-  !+ad_varc               array defining which iteration variables to activate
-  !+ad_varc               (see lablxc for descriptions)
+  !!  ixc(ipnvars) /0/ :
+  !!               array defining which iteration variables to activate
+  !!               (see lablxc for descriptions)
   integer, dimension(ipnvars) :: ixc = 0
   
   ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
@@ -303,24 +300,24 @@ module numerics
 
   character(len=14), dimension(:), allocatable :: name_xc
 
-  !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
   real(kind(1.0D0)) :: sqsumsq = 0.0D0
-  !+ad_vars  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON derivatives
+  !!  sqsumsq : sqrt of the sum of the square of the constraint residuals
   real(kind(1.0D0)) :: epsfcn = 1.0D-3
-  !+ad_vars  epsvmc /1.0e-6/ : error tolerance for VMCON
+  !!  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON derivatives
   real(kind(1.0D0)) :: epsvmc = 1.0D-6
-  !+ad_vars  factor /0.1/ : used in HYBRD for first step size
+  !!  epsvmc /1.0e-6/ : error tolerance for VMCON
   real(kind(1.0D0)) :: factor = 0.1D0
-  !+ad_vars  ftol /1.0e-4/ : error tolerance for HYBRD
+  !!  factor /0.1/ : used in HYBRD for first step size
   real(kind(1.0D0)) :: ftol = 1.0D-4
+  !!  ftol /1.0e-4/ : error tolerance for HYBRD
 
-  !+ad_vars  boundl(ipnvars) /../ : lower bounds used on ixc variables during
-  !+ad_varc                         VMCON optimisation runs
   real(kind(1.0D0)), dimension(ipnvars) :: boundl = 9.d-99
+  !!  boundl(ipnvars) /../ : lower bounds used on ixc variables during
+  !!                         VMCON optimisation runs
 
-  ! !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables 
   ! Issue #287 These bounds now defined in initial.f90
   real(kind(1.0D0)), dimension(ipnvars) :: boundu = 9.d99
+  ! !!  boundu(ipnvars) /../ : upper bounds used on ixc variables 
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
   real(kind(1.0D0)), dimension(ipnvars) :: bondu = 0.0D0
@@ -339,79 +336,72 @@ contains
   subroutine eqsolv(fcnhyb,n,x,fvec,tol,epsfcn,factor,nprint,info, &
        wa,lwa,resdl,nfev)
 
-    !+ad_name  eqsolv
-    !+ad_summ  Find the non-optimising HYBRD solution to the problem
-    !+ad_type  Subroutine
-    !+ad_auth  Argonne National Laboratory. Minpack Project. March 1980.
-    !+ad_auth  Burton S. Garbow, Kenneth E. Hillstrom, Jorge J. More
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  fcnhyb : external routine name : see below
-    !+ad_args  n : input integer : number of functions and variables
-    !+ad_args  x(n) : input/output real array : On input X must contain
-    !+ad_argc    an initial estimate of the solution vector. On output X
-    !+ad_argc    contains the final estimate of the solution vector.
-    !+ad_args  fvec(n) : output real array : Functions evaluated at output X
-    !+ad_args  tol : input real : Termination occurs when the algorithm
-    !+ad_argc    estimates that the relative error between X and the solution
-    !+ad_argc    is at most TOL.
-    !+ad_args  epsfcn : input real : Used in determining a suitable
-    !+ad_argc    step length for the forward-difference approximation
-    !+ad_argc    (see <A HREF="hybrd.html">hybrd</A>)
-    !+ad_args  factor : input real : Used in determining the initial step bound
-    !+ad_argc    (see <A HREF="hybrd.html">hybrd</A>)
-    !+ad_args  nprint : input integer : Number of iterations between print-outs
-    !+ad_args  info : output integer : If the user has terminated execution,
-    !+ad_argc    INFO is set to the (negative) value of IFLAG, see description below.
-    !+ad_argc    Otherwise, INFO is set as follows:
-    !+ad_argc    <PRE>
-    !+ad_argc    INFO = 0   Improper input parameters.
-    !+ad_argc    INFO = 1   Algorithm estimates that the relative error
-    !+ad_argc               between X and the solution is at most TOL.
-    !+ad_argc    INFO = 2   Number of calls to FCNHYB has reached or exceeded
-    !+ad_argc               200*(N+1).
-    !+ad_argc    INFO = 3   TOL is too small. No further improvement in
-    !+ad_argc               the approximate solution X is possible.
-    !+ad_argc    INFO = 4   Iteration is not making good progress.
-    !+ad_argc    </PRE>
-    !+ad_args  wa(lwa) : input/output real array : work array
-    !+ad_args  lwa : input integer : work array size, not less than (N*(3*N+13))/2
-    !+ad_args  resdl(n) : output real array : residuals
-    !+ad_args  nfev : output integer : number of iterations performed
-    !+ad_desc  Routine EQSOLV is the Argonne Minpack subroutine HYBRD1
-    !+ad_desc  which has been modified by D.T. Blackfield FEDC/TRW.
-    !+ad_desc  The routine is the same except some of the arguments are
-    !+ad_desc  user supplied rather than 'hardwired'.
-    !+ad_desc  <P>The purpose of EQSOLV is to find a zero of a system of
-    !+ad_desc  N nonlinear functions in N variables by a modification
-    !+ad_desc  of the Powell hybrid method. This is done by using the
-    !+ad_desc  more general nonlinear equation solver <A HREF="hybrd.html">HYBRD</A>.
-    !+ad_desc  The user must provide a subroutine which calculates the functions.
-    !+ad_desc  The Jacobian is then calculated by a forward-difference
-    !+ad_desc  approximation.
-    !+ad_desc  <P>FCNHYB is the name of a user-supplied subroutine which
-    !+ad_desc  calculates the functions. FCNHYB must be declared
-    !+ad_desc  in an external statement in the user calling
-    !+ad_desc  program, and should be written as follows:
-    !+ad_desc  <PRE>
-    !+ad_desc  subroutine fcnhyb(n,x,fvec,iflag)
-    !+ad_desc  integer n,iflag
-    !+ad_desc  double precision x(n),fvec(n)
-    !+ad_desc  ----------
-    !+ad_desc  calculate the functions at x and
-    !+ad_desc  return this vector in fvec.
-    !+ad_desc  ---------
-    !+ad_desc  return
-    !+ad_desc  end
-    !+ad_desc  </PRE>
-    !+ad_desc  The value of iflag should not be changed by FCNHYB unless
-    !+ad_desc  the user wants to terminate execution of EQSOLV.
-    !+ad_desc  In this case set IFLAG to a negative integer.
-    !+ad_prob  None
-    !+ad_call  fcnhyb
-    !+ad_call  hybrd
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Find the non-optimising HYBRD solution to the problem
+    !! author: Argonne National Laboratory. Minpack Project. March 1980.
+    !! author: Burton S. Garbow, Kenneth E. Hillstrom, Jorge J. More
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! fcnhyb : external routine name : see below
+    !! n : input integer : number of functions and variables
+    !! x(n) : input/output real array : On input X must contain
+    !! an initial estimate of the solution vector. On output X
+    !! contains the final estimate of the solution vector.
+    !! fvec(n) : output real array : Functions evaluated at output X
+    !! tol : input real : Termination occurs when the algorithm
+    !! estimates that the relative error between X and the solution
+    !! is at most TOL.
+    !! epsfcn : input real : Used in determining a suitable
+    !! step length for the forward-difference approximation
+    !! (see <A HREF="hybrd.html">hybrd</A>)
+    !! factor : input real : Used in determining the initial step bound
+    !! (see <A HREF="hybrd.html">hybrd</A>)
+    !! nprint : input integer : Number of iterations between print-outs
+    !! info : output integer : If the user has terminated execution,
+    !! INFO is set to the (negative) value of IFLAG, see description below.
+    !! Otherwise, INFO is set as follows:
+    !! <PRE>
+    !! INFO = 0   Improper input parameters.
+    !! INFO = 1   Algorithm estimates that the relative error
+    !! between X and the solution is at most TOL.
+    !! INFO = 2   Number of calls to FCNHYB has reached or exceeded
+    !! 200*(N+1).
+    !! INFO = 3   TOL is too small. No further improvement in
+    !! the approximate solution X is possible.
+    !! INFO = 4   Iteration is not making good progress.
+    !! </PRE>
+    !! wa(lwa) : input/output real array : work array
+    !! lwa : input integer : work array size, not less than (N*(3*N+13))/2
+    !! resdl(n) : output real array : residuals
+    !! nfev : output integer : number of iterations performed
+    !! Routine EQSOLV is the Argonne Minpack subroutine HYBRD1
+    !! which has been modified by D.T. Blackfield FEDC/TRW.
+    !! The routine is the same except some of the arguments are
+    !! user supplied rather than 'hardwired'.
+    !! <P>The purpose of EQSOLV is to find a zero of a system of
+    !! N nonlinear functions in N variables by a modification
+    !! of the Powell hybrid method. This is done by using the
+    !! more general nonlinear equation solver <A HREF="hybrd.html">HYBRD</A>.
+    !! The user must provide a subroutine which calculates the functions.
+    !! The Jacobian is then calculated by a forward-difference
+    !! approximation.
+    !! <P>FCNHYB is the name of a user-supplied subroutine which
+    !! calculates the functions. FCNHYB must be declared
+    !! in an external statement in the user calling
+    !! program, and should be written as follows:
+    !! <PRE>
+    !! subroutine fcnhyb(n,x,fvec,iflag)
+    !! integer n,iflag
+    !! double precision x(n),fvec(n)
+    !! ----------
+    !! calculate the functions at x and
+    !! return this vector in fvec.
+    !! ---------
+    !! return
+    !! end
+    !! </PRE>
+    !! The value of iflag should not be changed by FCNHYB unless
+    !! the user wants to terminate execution of EQSOLV.
+    !! In this case set IFLAG to a negative integer.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -474,28 +464,18 @@ contains
 
   subroutine optimiz(fcnvmc1,fcnvmc2,ifail,f)
 
-    !+ad_name  optimiz
-    !+ad_summ  Calls the minimisation/maximisation routine VMCON
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  fcnvmc1 : external routine : objective function evaluator
-    !+ad_args  fcnvmc2 : external routine : gradient objective function evaluator
-    !+ad_args  ifail   : output integer : error flag
-    !+ad_args  f       : output real    : value of objective function at the output point
-    !+ad_desc  This routine calls the minimisation/maximisation routine VMCON,
-    !+ad_desc  developed by Argonne National Laboratory.
-    !+ad_desc  On exit, the (normalised) value of the variable being maximised
-    !+ad_desc  or minimised (i.e. the figure of merit) is returned in argument
-    !+ad_desc  <CODE>f</CODE>.
-    !+ad_prob  None
-    !+ad_call  fcnvmc1
-    !+ad_call  fcnvmc2
-    !+ad_call  vmcon
-    !+ad_hist  27/02/14 PJK Corrected usage of m, meq in case of inequalities
-    !+ad_hist  08/07/14 PJK Added attempt to fix problems if VMCON exits with ifail=5
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Calls the minimisation/maximisation routine VMCON
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! fcnvmc1 : external routine : objective function evaluator
+    !! fcnvmc2 : external routine : gradient objective function evaluator
+    !! ifail   : output integer : error flag
+    !! f       : output real    : value of objective function at the output point
+    !! This routine calls the minimisation/maximisation routine VMCON,
+    !! developed by Argonne National Laboratory.
+    !! On exit, the (normalised) value of the variable being maximised
+    !! or minimised (i.e. the figure of merit) is returned in argument
+    !! <CODE>f</CODE>.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

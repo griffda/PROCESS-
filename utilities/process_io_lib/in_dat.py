@@ -12,29 +12,28 @@
 import subprocess
 import numpy as np
 from sys import stderr
+from create_dicts import get_dicts
+
+# Load dicts from dicts JSON file
+process_dicts = get_dicts()
 
 # Dictionary for variable types
-try:
-    from process_io_lib.process_dicts import DICT_VAR_TYPE
-except ImportError:
-    print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!", file=stderr)
-    exit()
+DICT_VAR_TYPE = process_dicts['DICT_VAR_TYPE']
 
 # Dictionary for ixc -> name
-from process_io_lib.process_dicts import DICT_IXC_SIMPLE
+DICT_IXC_SIMPLE = process_dicts['DICT_IXC_SIMPLE']
 
 # Dictionary for icc -> name
-from process_io_lib.process_dicts import DICT_ICC_FULL
+DICT_ICC_FULL = process_dicts['DICT_ICC_FULL']
 
 # Dictionary for variable modules
-from process_io_lib.process_dicts import DICT_MODULE
+DICT_MODULE = process_dicts['DICT_MODULE']
 
 # Dictionary for parameter descriptions
-from process_io_lib.process_dicts import DICT_DESCRIPTIONS
+DICT_DESCRIPTIONS = process_dicts['DICT_DESCRIPTIONS']
 
 # Dictionary for parameter defaults
-from process_io_lib.process_dicts import DICT_DEFAULT
+DICT_DEFAULT = process_dicts['DICT_DEFAULT']
 
 # ioptimz values
 ioptimz_des = {"-2": "for no optimisation, no VMCOM or HYBRD",

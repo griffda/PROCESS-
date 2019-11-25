@@ -28,7 +28,11 @@ before_script:
   - module load gfortran
   - export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest
   - echo ld_library_path=$LD_LIBRARY_PATH
-
+  # Modify PATH so "ford" command can be found in cmake file
+  - export PATH=$PATH:~/.local/bin
+  # Python3 uses the locale to choose the file encoding it uses
+  # Without this it will use ASCII encoding and Ford will fail
+  - export LANG=en_GB.utf8
 
 # Build stage 
 #------------
@@ -81,40 +85,6 @@ make_default:
  tags:
   - freia
 
-make_doc:
-
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target doc
- tags:
-  - freia
-
-make_vardes:
-
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target vardes
- artifacts:
-   expire_in: 2 hrs
-   paths:
-     - documentation/html/*.html
- tags:
-  - freia
-
 make_dicts:
 
  only:
@@ -127,36 +97,6 @@ make_dicts:
   - ls -lah
   - cmake3 -H. -Bbuild
   - cmake3 --build build --target dicts
- tags:
-  - freia
-
-make_html:
-
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target html
- tags:
-  - freia
-
-make_userguide:
-
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target userguide
  tags:
   - freia
 
@@ -392,30 +332,35 @@ line_length:
 pages:
   before_script:
     - "export LOGNAME=root"
+    - export LANG=C.UTF-8
+    # Python3 uses the locale to choose the file encoding it uses
+    # Without this it will use ASCII encoding and Ford will fail
   when: on_success
   only:
     - develop
-    - ford_docs
   stage: pages
   script:
    - pwd
    - apt-get update
    - apt-get install -y python-dev python-pip pandoc cmake gcc gfortran graphviz
+   - apt-get install -y python3-pip
    - pip install mkdocs
    - pip install mkdocs-material
    - pip install pymdown-extensions
    - cmake -H. -Bbuild
-   - cmake --build build --target vardes
-   - pandoc documentation/html/vardes.html -f html -t markdown -o documentation/proc-pages/vardes.md
-   - python documentation/proc-pages/scripts/sort_vardes.py documentation/proc-pages/vardes.md
    - mkdocs build
    
    # FORD documentation
-   - rm -rf ../ford # Need to clone to empty dir
-   - git clone https://github.com/Fortran-FOSS-Programmers/ford ../ford
-   - pip install ../ford
+   # Ensure FORD can find create_dicts.py inside Process
+   - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+   - cd ..
+   - rm -rf ford # Need to clone to empty dir
+   - git clone https://github.com/jonMaddockUkaea/ford.git ford
+   - cd ford
+   - pip3 install .
+   - cd ../process
    - ford documentation/ford/index.md
-   
+
    # Publish the MkDocs and FORD sites
    - ls site
    - mv site public

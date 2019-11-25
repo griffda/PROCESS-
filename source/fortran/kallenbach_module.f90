@@ -1,14 +1,12 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module kallenbach_module
-  !+ad_name  kallenbach_module
-  !+ad_summ  Module for Kallenbach model testing and scans
-  !+ad_type  Module
-  !+ad_auth  M Kovari, CCFE, Culham Science Centre
-  !+ad_auth  J Morris, CCFE, Culham Science Centre
-  !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
-  !+ad_docs  Sertoli, private communication
-  !+ad_docs  Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
+  !! Module for Kallenbach model testing and scans
+  !! author: M Kovari, CCFE, Culham Science Centre
+  !! author: J Morris, CCFE, Culham Science Centre
+  !! Johner, Fusion Science and Technology 59 (2011), pp 308-349
+  !! Sertoli, private communication
+  !! Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   !---------------------------------------------------------------------------
@@ -24,16 +22,10 @@ contains
   ! This routine is outside the module, so it functions as test for the module.
 
   subroutine kallenbach_testing()
-    !+ad_name  kallenbach_testing
-    !+ad_summ  Tests for divertor kallenbach model
-    !+ad_type  subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Tests of Kallenbach divertor model
-    !+ad_prob  None
-    !+ad_hist  23/04/19 JM  Initial version
-    !+ad_stat  Okay
-    !+ad_docs
+    !! Tests for divertor kallenbach model
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! Tests of Kallenbach divertor model
+    !! 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -53,17 +45,11 @@ contains
   end subroutine kallenbach_testing
 
   subroutine kallenbach_test_paper()
-    !+ad_name  kallenbach_test_paper
-    !+ad_summ  Test for divertor kallenbach model for matching kallenbach paper
-    !+ad_type  subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Test of Kallenbach divertor model
-    !+ad_prob  None
-    !+ad_hist  01/02/17 MDK  Initial version
-    !+ad_stat  Okay
-    !+ad_docs
+    !! Test for divertor kallenbach model for matching kallenbach paper
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! Test of Kallenbach divertor model
+    !! 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -149,12 +135,9 @@ contains
   end subroutine kallenbach_test_paper
 
   subroutine kallenbach_test_user_inputs()
-    !+ad_name  kallenbach_test_user_inputs
-    !+ad_summ  Test for divertor kallenbach model for using input file
-    !+ad_type  subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Test of Kallenbach divertor model
+    !! Test for divertor kallenbach model for using input file
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! Test of Kallenbach divertor model
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -237,11 +220,9 @@ contains
   end subroutine kallenbach_test_user_inputs
 
   subroutine kallenbach_scan()
-    !+ad_name  kallenbach_scan
-    !+ad_summ  Scans for divertor kallenbach model: No optimisation
-    !+ad_type  subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !! Scans for divertor kallenbach model: No optimisation
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
     !
     use divertor_ode
     use read_and_get_atomic_data

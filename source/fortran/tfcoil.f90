@@ -2,35 +2,12 @@
 
 module tfcoil_module
 
-  !+ad_name  tfcoil_module
-  !+ad_summ  Module containing resistive TF coil routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  tfcoil
-  !+ad_cont  concoptf
-  !+ad_cont  cntrpst
-  !+ad_cont  cpost
-  !+ad_cont  cutfshape
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  parameters of a resistive TF coil system for a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  build_module
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  sctfcoil_module
-  !+ad_call  tfcoil_variables
-  !+ad_hist  29/10/12 PJK Initial version of module
-  !+ad_hist  29/10/12 PJK Added sctfcoil_module
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  30/10/12 PJK Added build_module
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing resistive TF coil routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! parameters of a resistive TF coil system for a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -53,41 +30,14 @@ contains
 
   subroutine tfcoil(outfile,iprint)
 
-    !+ad_name  tfcoil
-    !+ad_summ  TF coil module
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This subroutine calculates various parameters for the TF coil set.
-    !+ad_desc  If the TF coils are superconducting the calculations are performed
-    !+ad_desc  in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
-    !+ad_prob  None
-    !+ad_call  concoptf
-    !+ad_call  cutfshape
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_call  portsz
-    !+ad_call  sctfcoil
-    !+ad_hist  22/10/96 PJK Initial upgraded version
-    !+ad_hist  08/05/12 PJK Initial F90 version
-    !+ad_hist  08/10/12 PJK Swapped concoptf argument order
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  09/04/13 PJK Changed local variables routr to rout, rinr to rin
-    !+ad_hist  18/06/13 PJK Clarified ritfc output description
-    !+ad_hist  08/05/14 PJK Changed ripmax description
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  24/06/14 PJK Removed refs to bcylth
-    !+ad_hist  30/07/14 PJK Added tftort calculation
-    !+ad_hist  30/07/14 PJK Changed estotf output
-    !+ad_hist  11/04/18 SIM Added shape output
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! TF coil module
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This subroutine calculates various parameters for the TF coil set.
+    !! If the TF coils are superconducting the calculations are performed
+    !! in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -167,35 +117,13 @@ contains
 
   subroutine concoptf(outfile,iprint)
 
-    !+ad_name  concoptf
-    !+ad_summ  Calculates additional parameters for resistive TF coils
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This subroutine calculates various additional parameters for a
-    !+ad_desc  resistive TF coil set, including for TART machines.
-    !+ad_prob  None
-    !+ad_call  cpost
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_hist  22/10/96 PJK Initial upgraded version
-    !+ad_hist  18/11/97 PJK Modified RTOP,ZTOP values
-    !+ad_hist  08/05/12 PJK Initial F90 version
-    !+ad_hist  08/10/12 PJK Swapped argument order
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  28/11/13 PJK Modified ltfleg calculation
-    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  24/06/14 PJK Removed refs to bcylth
-    !+ad_hist  22/06/18 SIM Made cdtfleg an output instead of an input
-    !+ad_hist  18/05/19 SK Include the resistive magents calculations in concoptf()
-    !+ad_hist  21/05/19 Add the cryoginic aluminium resistivity calculations
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Calculates additional parameters for resistive TF coils
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This subroutine calculates various additional parameters for a
+    !! resistive TF coil set, including for TART machines.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -413,30 +341,14 @@ contains
 
   subroutine cntrpst(outfile,iprint)
 
-    !+ad_name  cntrpst
-    !+ad_summ  Evaluates the properties of a TART centrepost
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This subroutine evaluates the parameters of the centrepost for a
-    !+ad_desc  tight aspect ratio tokamak. The centrepost is assumed to be tapered,
-    !+ad_desc  i.e. narrowest on the midplane (z=0).
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_hist  22/10/96 PJK Initial upgraded version
-    !+ad_hist  08/05/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  24/06/14 PJK Removed refs to bcylth
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Evaluates the properties of a TART centrepost
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This subroutine evaluates the parameters of the centrepost for a
+    !! tight aspect ratio tokamak. The centrepost is assumed to be tapered,
+    !! i.e. narrowest on the midplane (z=0).
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -703,37 +615,27 @@ contains
 
   subroutine cpost(rtop,ztop,rmid,hmax,curr,rho,fcool,r_tfin_inleg,volume,respow)
 
-    !+ad_name  cpost
-    !+ad_summ  Calculates the volume and resistive power losses of a TART centrepost
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rtop   : input real : Radius of the ends of the centrepost (m)
-    !+ad_args  ztop   : input real : Distance from the midplane to the top of the
-    !+ad_argc                        tapered section (m)
-    !+ad_args  rmid   : input real : Radius of the centrepost at the midplane (m)
-    !+ad_args  hmax   : input real : Distance from the midplane to the top of the
-    !+ad_argc                        centrepost (m)
-    !+ad_args  curr   : input real : Centrepost current (A)
-    !+ad_args  rho    : input real : Centrepost resistivity (Ohm-m)
-    !+ad_args  fcool  : input real : Coolant fraction of centrepost
-    !+ad_args  r_tfin_inleg : input real : Inner radius of the TF inner leg
-    !+ad_args  volume : output real : Centrepost volume (m3)
-    !+ad_args  respow : output real : Centrepost resistive power losses (W)
-    !+ad_desc  This routine calculates the volume and resistive power losses
-    !+ad_desc  of a TART centrepost. It is assumed to be tapered - narrowest at
-    !+ad_desc  the midplane and reaching maximum thickness at the height of the
-    !+ad_desc  plasma. Above/below the plasma, the centrepost is cylindrical.
-    !+ad_desc  The shape of the taper is assumed to be an arc of a circle.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  21/10/96 PJK Initial version
-    !+ad_hist  08/05/12 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Added constants; removed argument pi
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, pp.33,34
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Calculates the volume and resistive power losses of a TART centrepost
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rtop   : input real : Radius of the ends of the centrepost (m)
+    !! ztop   : input real : Distance from the midplane to the top of the
+    !! tapered section (m)
+    !! rmid   : input real : Radius of the centrepost at the midplane (m)
+    !! hmax   : input real : Distance from the midplane to the top of the
+    !! centrepost (m)
+    !! curr   : input real : Centrepost current (A)
+    !! rho    : input real : Centrepost resistivity (Ohm-m)
+    !! fcool  : input real : Coolant fraction of centrepost
+    !! r_tfin_inleg : input real : Inner radius of the TF inner leg
+    !! volume : output real : Centrepost volume (m3)
+    !! respow : output real : Centrepost resistive power losses (W)
+    !! This routine calculates the volume and resistive power losses
+    !! of a TART centrepost. It is assumed to be tapered - narrowest at
+    !! the midplane and reaching maximum thickness at the height of the
+    !! plasma. Above/below the plasma, the centrepost is cylindrical.
+    !! The shape of the taper is assumed to be an arc of a circle.
+    !! F/MI/PJK/LOGBOOK12, pp.33,34
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -863,17 +765,10 @@ contains
 
   subroutine cutfshape
 
-    !+ad_name  cutfshape
-    !+ad_summ  Calculates the TF coil shape
-    !+ad_type  Subroutine
-    !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
-    !+ad_desc  Calculates the shape of the INSIDE of the TF coil. The coil is
-    !+ad_desc  given by a rectangular shape.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  11/04/18 SIM Copied from the SC TF subroutine coilshap
-    !+ad_hist  31/10/18 SIM Updated for a rectangular coil shape.
-    !+ad_stat  Okay
+    !! Calculates the TF coil shape
+    !! author: S I Muldrew, CCFE, Culham Science Centre
+    !! Calculates the shape of the INSIDE of the TF coil. The coil is
+    !! given by a rectangular shape.
 
     implicit none
 

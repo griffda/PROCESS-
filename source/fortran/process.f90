@@ -2,64 +2,34 @@
 
 program process
 
-  !+ad_name  process
-  !+ad_summ  Power Reactor Optimisation Code for Environmental and Safety Studies
-  !+ad_type  Main program
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_auth  M Kumar, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  None
-  !+ad_desc  Power Reactor Optimisation Code for Environmental and Safety Studies
-  !+ad_desc  <P>This is a systems code that evaluates various physics and
-  !+ad_desc  engineering aspects of a fusion power plant subject to given
-  !+ad_desc  constraints, and can optimise these parameters by minimising
-  !+ad_desc  or maximising a function of them, such as the fusion power or
-  !+ad_desc  cost of electricity.
-  !+ad_desc  <P>This program is derived from the TETRA and STORAC codes produced by
-  !+ad_desc  Oak Ridge National Laboratory, Tennessee, USA. The main authors in
-  !+ad_desc  the USA were J.D.Galambos and P.C.Shipe.
-  !+ad_desc  <P>The code was transferred to Culham Laboratory, Oxfordshire, UK, in
-  !+ad_desc  April 1992, and the physics models were updated by P.J.Knight to
-  !+ad_desc  include the findings of the Culham reactor studies documented in
-  !+ad_desc  Culham Report AEA FUS 172 (1992). The standard of the Fortran has
-  !+ad_desc  been thoroughly upgraded since that time, and a number of additional
-  !+ad_desc  models have been added.
-  !+ad_desc  <P>During 2012, PROCESS was upgraded from FORTRAN 77 to Fortran 95,
-  !+ad_desc  to facilitate the restructuring of the code into proper modules
-  !+ad_desc  (with all the benefits that modern software practices bring), and to
-  !+ad_desc  aid the inclusion of more advanced physics and engineering models under
-  !+ad_desc  development as part of a number of EFDA-sponsored collaborations.
-  !+ad_prob  None
-  !+ad_call  numerics
-  !+ad_call  error_handling
-  !+ad_call  global_variables
-  !+ad_call  process_input
-  !+ad_call  process_output
-  !+ad_call  scan_module
-  !+ad_call  eqslv
-  !+ad_call  final
-  !+ad_call  init
-  !+ad_call  oheadr
-  !+ad_call  scan
-  !+ad_call  show_errors
-  !+ad_hist  03/10/96 PJK Upgrade of main program unit
-  !+ad_hist  08/10/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  09/10/12 PJK Modified to use scan_module
-  !+ad_hist  10/10/12 PJK Modified to use numerics module
-  !+ad_hist  06/11/12 PJK Renamed this source file from aamain.f90 to process.f90.
-  !+ad_hisc               Transferred routine inform from aachange.f90
-  !+ad_hist  13/02/14 PJK Added mfile close statement
-  !+ad_hist  10/09/14 PJK Added vfile close statement
-  !+ad_hist  28/10/16 MK  Removed systems commands and added a subroutine
-  !+ad_hist               get_DDMonYYTimeZone to get date and time
-  !+ad_hist  04/11/16 MK  Added check for existence of input file
-  !+ad_hist  03/02/17 JM  Fixed input file existence check, now fileprefix defined before init
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !+ad_docs  Box file F/RS/CIRE5523/PWF (up to 15/01/96)
-  !+ad_docs  Box file F/MI/PJK/PROCESS and F/PL/PJK/PROCESS (15/01/96 to 24/01/12)
-  !+ad_docs  Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
+  !! Power Reactor Optimisation Code for Environmental and Safety Studies
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! author: M Kumar, CCFE, Culham Science Centre
+  !! None
+  !! Power Reactor Optimisation Code for Environmental and Safety Studies
+  !! <P>This is a systems code that evaluates various physics and
+  !! engineering aspects of a fusion power plant subject to given
+  !! constraints, and can optimise these parameters by minimising
+  !! or maximising a function of them, such as the fusion power or
+  !! cost of electricity.
+  !! <P>This program is derived from the TETRA and STORAC codes produced by
+  !! Oak Ridge National Laboratory, Tennessee, USA. The main authors in
+  !! the USA were J.D.Galambos and P.C.Shipe.
+  !! <P>The code was transferred to Culham Laboratory, Oxfordshire, UK, in
+  !! April 1992, and the physics models were updated by P.J.Knight to
+  !! include the findings of the Culham reactor studies documented in
+  !! Culham Report AEA FUS 172 (1992). The standard of the Fortran has
+  !! been thoroughly upgraded since that time, and a number of additional
+  !! models have been added.
+  !! <P>During 2012, PROCESS was upgraded from FORTRAN 77 to Fortran 95,
+  !! to facilitate the restructuring of the code into proper modules
+  !! (with all the benefits that modern software practices bring), and to
+  !! aid the inclusion of more advanced physics and engineering models under
+  !! development as part of a number of EFDA-sponsored collaborations.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Box file F/RS/CIRE5523/PWF (up to 15/01/96)
+  !! Box file F/MI/PJK/PROCESS and F/PL/PJK/PROCESS (15/01/96 to 24/01/12)
+  !! Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

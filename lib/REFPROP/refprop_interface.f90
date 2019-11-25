@@ -9,27 +9,17 @@
 
 module refprop_interface
 
-  !+ad_name  refprop_interface
-  !+ad_summ  Interface routines between PROCESS and REFPROP
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  enthalpy_ps
-  !+ad_cont  fluid_properties
-  !+ad_cont  initialise_refprop
-  !+ad_cont  tsat_refprop
-  !+ad_args  N/A
-  !+ad_desc  This module contains some interface routines to pass information
-  !+ad_desc  between PROCESS and the REFPROP routines contained in <CODE>refprop.f</CODE>.
-  !+ad_prob  None
-  !+ad_call  error_handling
-  !+ad_hist  16/12/14 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  REFPROP Version 9.1 User's Guide,
-  !+ad_docc  Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
-  !+ad_docc  Applied Chemicals and Materials Division,
-  !+ad_docc  National Institute of Standards and Technology,
-  !+ad_docc  Boulder, Colorado 80305,
-  !+ad_docc  April, 2013
+  !! Interface routines between PROCESS and REFPROP
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains some interface routines to pass information
+  !! between PROCESS and the REFPROP routines contained in <CODE>refprop.f</CODE>.
+  !! REFPROP Version 9.1 User's Guide,
+  !! Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
+  !! Applied Chemicals and Materials Division,
+  !! National Institute of Standards and Technology,
+  !! Boulder, Colorado 80305,
+  !! April, 2013
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #ifndef unit_test
@@ -63,32 +53,22 @@ contains
 
   subroutine initialise_refprop(fluid)
 
-    !+ad_name  initialise_refprop
-    !+ad_summ  Initialises the fluid data for future REFPROP calls
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  fluid : input integer : pure fluid to use; 1=helium, 2=water
-    !+ad_desc  This routine initialises the REFPROP fluid arrays and common
-    !+ad_desc  blocks, for a single (pure) fluid.
-    !+ad_desc  It also calculates the fluid's molar mass for future use.
-    !+ad_desc  <P>The routine need not be called explicitly by PROCESS, as it
-    !+ad_desc  is called by each of the other PROCESS/REFPROP interfacing
-    !+ad_desc  routines in this module; only the first call actually does
-    !+ad_desc  anything other than simply return.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_call  setpath(REFPROP)
-    !+ad_call  setup(REFPROP)
-    !+ad_call  wmol(REFPROP)
-    !+ad_hist  16/12/14 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  REFPROP Version 9.1 User's Guide,
-    !+ad_docc  Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
-    !+ad_docc  Applied Chemicals and Materials Division,
-    !+ad_docc  National Institute of Standards and Technology,
-    !+ad_docc  Boulder, Colorado 80305,
-    !+ad_docc  April, 2013
+    !! Initialises the fluid data for future REFPROP calls
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! fluid : input integer : pure fluid to use; 1=helium, 2=water
+    !! This routine initialises the REFPROP fluid arrays and common
+    !! blocks, for a single (pure) fluid.
+    !! It also calculates the fluid's molar mass for future use.
+    !! <P>The routine need not be called explicitly by PROCESS, as it
+    !! is called by each of the other PROCESS/REFPROP interfacing
+    !! routines in this module; only the first call actually does
+    !! anything other than simply return.
+    !! REFPROP Version 9.1 User's Guide,
+    !! Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
+    !! Applied Chemicals and Materials Division,
+    !! National Institute of Standards and Technology,
+    !! Boulder, Colorado 80305,
+    !! April, 2013
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -143,39 +123,29 @@ contains
        density,enthalpy,entropy,specific_heat_const_p, &
        thermal_conductivity,viscosity, label)
 
-    !+ad_name  fluid_properties
-    !+ad_summ  Calculates properties of a fluid given its temperature and
-    !+ad_summ  pressure, using REFPROP calls
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  temperature : input real : fluid temperature (K)
-    !+ad_args  pressure : input real : fluid pressure (Pa)
-    !+ad_args  fluid : input integer : pure fluid to use; 1=helium, 2=water
-    !+ad_args  density : optional output real : fluid density (kg/m3)
-    !+ad_args  enthalpy : optional output real : fluid specific enthalpy (J/kg)
-    !+ad_args  entropy : optional output real : fluid entropy (J/kg/K)
-    !+ad_args  specific_heat_const_p : optional output real : fluid specific
-    !+ad_argc      heat capacity at constant pressure (J/kg/K)
-    !+ad_args  thermal_conductivity : optional output real : fluid thermal conductivity (W/m/K)
-    !+ad_args  viscosity : optional output real : fluid viscosity (Pa.s)
-    !+ad_desc  This routine calculates a number of properties of a fluid, given
-    !+ad_desc  its temperature and pressure. It acts as an interface to
-    !+ad_desc  REFPROP routines, ensuring that the correct units are passed.
-    !+ad_desc  The quantities output may be chosen through the optional arguments.
-    !+ad_prob  None
-    !+ad_call  initialise_refprop
-    !+ad_call  report_error
-    !+ad_call  tpflsh(REFPROP)
-    !+ad_call  trnprp(REFPROP)
-    !+ad_hist  16/12/14 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  REFPROP Version 9.1 User's Guide,
-    !+ad_docc  Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
-    !+ad_docc  Applied Chemicals and Materials Division,
-    !+ad_docc  National Institute of Standards and Technology,
-    !+ad_docc  Boulder, Colorado 80305,
-    !+ad_docc  April, 2013
+    !! Calculates properties of a fluid given its temperature and
+    !! pressure, using REFPROP calls
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! temperature : input real : fluid temperature (K)
+    !! pressure : input real : fluid pressure (Pa)
+    !! fluid : input integer : pure fluid to use; 1=helium, 2=water
+    !! density : optional output real : fluid density (kg/m3)
+    !! enthalpy : optional output real : fluid specific enthalpy (J/kg)
+    !! entropy : optional output real : fluid entropy (J/kg/K)
+    !! specific_heat_const_p : optional output real : fluid specific
+    !! heat capacity at constant pressure (J/kg/K)
+    !! thermal_conductivity : optional output real : fluid thermal conductivity (W/m/K)
+    !! viscosity : optional output real : fluid viscosity (Pa.s)
+    !! This routine calculates a number of properties of a fluid, given
+    !! its temperature and pressure. It acts as an interface to
+    !! REFPROP routines, ensuring that the correct units are passed.
+    !! The quantities output may be chosen through the optional arguments.
+    !! REFPROP Version 9.1 User's Guide,
+    !! Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
+    !! Applied Chemicals and Materials Division,
+    !! National Institute of Standards and Technology,
+    !! Boulder, Colorado 80305,
+    !! April, 2013
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -266,31 +236,22 @@ contains
 
   subroutine enthalpy_ps(pressure,entropy,fluid,enthalpy)
 
-    !+ad_name  enthalpy_ps
-    !+ad_summ  Calculates the enthalpy of a fluid given its pressure and
-    !+ad_summ  entropy, using REFPROP calls
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  pressure : input real : fluid pressure (Pa)
-    !+ad_args  entropy : input real : fluid entropy (J/kg/K)
-    !+ad_args  fluid : input integer : pure fluid to use; 1=helium, 2=water
-    !+ad_args  enthalpy : output real : fluid specific enthalpy (J/kg)
-    !+ad_desc  This routine calculates a fluid's enthalpy, given its
-    !+ad_desc  pressure and entropy. It acts as an interface to the relevant
-    !+ad_desc  REFPROP routine, ensuring that the correct units are passed.
-    !+ad_prob  None
-    !+ad_call  initialise_refprop
-    !+ad_call  report_error
-    !+ad_call  psflsh(REFPROP)
-    !+ad_hist  16/12/14 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  REFPROP Version 9.1 User's Guide,
-    !+ad_docc  Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
-    !+ad_docc  Applied Chemicals and Materials Division,
-    !+ad_docc  National Institute of Standards and Technology,
-    !+ad_docc  Boulder, Colorado 80305,
-    !+ad_docc  April, 2013
+    !! Calculates the enthalpy of a fluid given its pressure and
+    !! entropy, using REFPROP calls
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! pressure : input real : fluid pressure (Pa)
+    !! entropy : input real : fluid entropy (J/kg/K)
+    !! fluid : input integer : pure fluid to use; 1=helium, 2=water
+    !! enthalpy : output real : fluid specific enthalpy (J/kg)
+    !! This routine calculates a fluid's enthalpy, given its
+    !! pressure and entropy. It acts as an interface to the relevant
+    !! REFPROP routine, ensuring that the correct units are passed.
+    !! REFPROP Version 9.1 User's Guide,
+    !! Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
+    !! Applied Chemicals and Materials Division,
+    !! National Institute of Standards and Technology,
+    !! Boulder, Colorado 80305,
+    !! April, 2013
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -333,29 +294,20 @@ contains
 
   function tsat_refprop(pressure, fluid)
 
-    !+ad_name  tsat_refprop
-    !+ad_summ  Calculates the liquid saturation temperature of a fluid
-    !+ad_summ  given its pressure, using REFPROP calls
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  pressure : input real : fluid pressure (Pa)
-    !+ad_args  fluid : input integer : pure fluid to use; 1=helium, 2=water
-    !+ad_desc  This routine calculates a fluid's liquid saturation temperature (K),
-    !+ad_desc  given its pressure. It acts as an interface to the relevant
-    !+ad_desc  REFPROP routine, ensuring that the correct units are passed.
-    !+ad_prob  None
-    !+ad_call  initialise_refprop
-    !+ad_call  report_error
-    !+ad_call  satp(REFPROP)
-    !+ad_hist  16/12/14 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  REFPROP Version 9.1 User's Guide,
-    !+ad_docc  Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
-    !+ad_docc  Applied Chemicals and Materials Division,
-    !+ad_docc  National Institute of Standards and Technology,
-    !+ad_docc  Boulder, Colorado 80305,
-    !+ad_docc  April, 2013
+    !! Calculates the liquid saturation temperature of a fluid
+    !! given its pressure, using REFPROP calls
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! pressure : input real : fluid pressure (Pa)
+    !! fluid : input integer : pure fluid to use; 1=helium, 2=water
+    !! This routine calculates a fluid's liquid saturation temperature (K),
+    !! given its pressure. It acts as an interface to the relevant
+    !! REFPROP routine, ensuring that the correct units are passed.
+    !! REFPROP Version 9.1 User's Guide,
+    !! Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
+    !! Applied Chemicals and Materials Division,
+    !! National Institute of Standards and Technology,
+    !! Boulder, Colorado 80305,
+    !! April, 2013
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

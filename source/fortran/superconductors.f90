@@ -1,7 +1,5 @@
 module superconductors
-  !+ad_name  superconductors
-  !+ad_summ  Module containing superconducter critical surfaces and conductor data
-  !+ad_type  Module
+  !! Module containing superconducter critical surfaces and conductor data
   use process_output
   use error_handling
   use rebco_variables
@@ -13,12 +11,10 @@ contains
 
 subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
 
-    !+ad_name  jcrit_rebco
-    !+ad_summ  Critical current density for "REBCO" 2nd generation HTS superconductor
-    !+ad_type  Subroutine
-    !+ad_args  temperature : input real : superconductor temperature (K)
-    !+ad_args  b : input real : Magnetic field at superconductor (T)
-    !+ad_args  jcrit : output real : Critical current density in superconductor (A/m2)
+    !! Critical current density for "REBCO" 2nd generation HTS superconductor
+    !! temperature : input real : superconductor temperature (K)
+    !! b : input real : Magnetic field at superconductor (T)
+    !! jcrit : output real : Critical current density in superconductor (A/m2)
     ! Will return a negative number if the temperature is greater than Tc0, the
     ! zero-field critical temperature.
     implicit none
@@ -80,13 +76,11 @@ end subroutine jcrit_rebco
 
 subroutine current_sharing_rebco(current_sharing_t, bfield, j)
 
-    !+ad_name  jcrit_rebco
-    !+ad_summ  Current sharing temperature for "REBCO" 2nd generation HTS superconductor
-    !+ad_type  Subroutine
-    !+ad_args  temperature : input real : superconductor temperature (K)
-    !+ad_args  b : input real : Magnetic field at superconductor (T)
-    !+ad_args  j : input real : Current density in superconductor (A/m2)
-    !+ad_args  current_sharing_t : output real : Current sharing temperature (K)
+    !! Current sharing temperature for "REBCO" 2nd generation HTS superconductor
+    !! temperature : input real : superconductor temperature (K)
+    !! b : input real : Magnetic field at superconductor (T)
+    !! j : input real : Current density in superconductor (A/m2)
+    !! current_sharing_t : output real : Current sharing temperature (K)
     ! Uses 'function jcrit_rebco' and the finds the temperature for given field and current density
     ! Will return a negative number if the current density is too high
 
@@ -221,38 +215,32 @@ subroutine test_quench()
     write(*,*) 'Data written to quench_data.DAT'
 
 end subroutine test_quench
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 
-  !+ad_name  itersc
-  !+ad_summ  Implementation of ITER Nb3Sn critical surface implementation
-  !+ad_type  Subroutine
-  !+ad_auth  R Kemp, CCFE, Culham Science Centre
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  thelium : input real : Coolant/SC temperature (K)
-  !+ad_args  bmax : input real : Magnetic field at conductor (T)
-  !+ad_args  strain : input real : Strain in superconductor
-  !+ad_args  bc20max : input real : Upper critical field (T) for superconductor
-  !+ad_argc                      at zero temperature and strain
-  !+ad_args  tc0max : input real : Critical temperature (K) at zero field and strain
-  !+ad_args  jcrit : output real : Critical current density in superconductor (A/m2)
-  !+ad_args  bcrit : output real : Critical field (T)
-  !+ad_args  tcrit : output real : Critical temperature (K)
-  !+ad_desc  This routine calculates the critical current density and
-  !+ad_desc  temperature in the superconducting TF coils using the
-  !+ad_desc  ITER Nb3Sn critical surface model.
-  !+ad_prob  None
-  !+ad_hist  18/11/15 RK  Updated to latest WPMAG coefficients (personal communication from Louis Zani describing TFEU4)
-  !+ad_stat  Okay
-  !+ad_docs  $J_C(B,T,\epsilon)$ Parameterization for ITER Nb3Sn production,
-  !+ad_docc    L. Bottura, CERN-ITER Collaboration Report, Version 2, April 2nd 2008
-  !+ad_docc    (distributed by Arnaud Devred, ITER, 10th April 2008)
-  !+ad_docs  ITER Nb3Sn critical surface parameterization (2MMF7J) (2008),
-  !+ad_docc    https://user.iter.org/?uid=2MMF7J&action=get_document
-  !+ad_docs  ITER DDD 11-7: Magnets - conductors (2NBKXY) (2009),
-  !+ad_docc    https://user.iter.org/?uid=2NBKXY&action=get_document
+  !! Implementation of ITER Nb3Sn critical surface implementation
+  !! author: R Kemp, CCFE, Culham Science Centre
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! thelium : input real : Coolant/SC temperature (K)
+  !! bmax : input real : Magnetic field at conductor (T)
+  !! strain : input real : Strain in superconductor
+  !! bc20max : input real : Upper critical field (T) for superconductor
+  !! at zero temperature and strain
+  !! tc0max : input real : Critical temperature (K) at zero field and strain
+  !! jcrit : output real : Critical current density in superconductor (A/m2)
+  !! bcrit : output real : Critical field (T)
+  !! tcrit : output real : Critical temperature (K)
+  !! This routine calculates the critical current density and
+  !! temperature in the superconducting TF coils using the
+  !! ITER Nb3Sn critical surface model.
+  !! $J_C(B,T,\epsilon)$ Parameterization for ITER Nb3Sn production,
+  !! L. Bottura, CERN-ITER Collaboration Report, Version 2, April 2nd 2008
+  !! (distributed by Arnaud Devred, ITER, 10th April 2008)
+  !! ITER Nb3Sn critical surface parameterization (2MMF7J) (2008),
+  !! https://user.iter.org/?uid=2MMF7J&action=get_document
+  !! ITER DDD 11-7: Magnets - conductors (2NBKXY) (2009),
+  !! https://user.iter.org/?uid=2NBKXY&action=get_document
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -351,40 +339,30 @@ end subroutine itersc
 
 subroutine bi2212(bmax,jstrand,tsc,fhts,jcrit,tmarg)
 
-    !+ad_name  bi2212
-    !+ad_summ  Fitted parameterization to Bi-2212 superconductor properties
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  bmax    : input real : Magnetic field at conductor (T)
-    !+ad_args  jstrand : input real : Current density in strand (A/m2)
-    !+ad_args  tsc     : input real : Superconductor temperature (K)
-    !+ad_args  fhts    : input real : Adjustment factor (<= 1) to account for strain,
-    !+ad_argc                         radiation damage, fatigue or AC losses
-    !+ad_args  jcrit : output real : Critical current density in strand (A/m2)
-    !+ad_args  tmarg : output real : Temperature margin (K)
-    !+ad_desc  This routine calculates the critical current density and
-    !+ad_desc  the temperature margin for Bi-2212 superconductor in the TF coils
-    !+ad_desc  using a fit by M. Kovari to measurements described in the reference,
-    !+ad_desc  specifically from the points shown in Figure 6.
-    !+ad_desc  <P>Bi-2212 (Bi<SUB>2</SUB>Sr<SUB>2</SUB>CaCu<SUB>2</SUB>O<SUB>8-x</SUB>)
-    !+ad_desc  is a first-generation high temperature superconductor; it still needs
-    !+ad_desc  to be operated below about 10K, but remains superconducting at much
-    !+ad_desc  higher fields at that temperature than Nb3Sn etc.
-    !+ad_desc  The model's range of validity is T &lt; 20K, adjusted field
-    !+ad_desc  b &lt; 104 T, B &gt; 6 T.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  08/10/13 PJK Initial version
-    !+ad_hist  05/03/14 PJK Added comment about range of validity
-    !+ad_hist  06/03/14 PJK Added warning if range of validity is violated
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  A transformative superconducting magnet technology for fields well
-    !+ad_docc  above 30 T using isotropic round wire multifilament
-    !+ad_docc  Bi2Sr2CaCu2O8-x conductor, D. C. Larbalestier et al., preprint,
-    !+ad_docc  9th April 2013
+    !! Fitted parameterization to Bi-2212 superconductor properties
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! bmax    : input real : Magnetic field at conductor (T)
+    !! jstrand : input real : Current density in strand (A/m2)
+    !! tsc     : input real : Superconductor temperature (K)
+    !! fhts    : input real : Adjustment factor (<= 1) to account for strain,
+    !! radiation damage, fatigue or AC losses
+    !! jcrit : output real : Critical current density in strand (A/m2)
+    !! tmarg : output real : Temperature margin (K)
+    !! This routine calculates the critical current density and
+    !! the temperature margin for Bi-2212 superconductor in the TF coils
+    !! using a fit by M. Kovari to measurements described in the reference,
+    !! specifically from the points shown in Figure 6.
+    !! <P>Bi-2212 (Bi<SUB>2</SUB>Sr<SUB>2</SUB>CaCu<SUB>2</SUB>O<SUB>8-x</SUB>)
+    !! is a first-generation high temperature superconductor; it still needs
+    !! to be operated below about 10K, but remains superconducting at much
+    !! higher fields at that temperature than Nb3Sn etc.
+    !! The model's range of validity is T &lt; 20K, adjusted field
+    !! b &lt; 104 T, B &gt; 6 T.
+    !! A transformative superconducting magnet technology for fields well
+    !! above 30 T using isotropic round wire multifilament
+    !! Bi2Sr2CaCu2O8-x conductor, D. C. Larbalestier et al., preprint,
+    !! 9th April 2013
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -434,29 +412,20 @@ end subroutine bi2212
 !------------------------------------------------------------------
 subroutine jcrit_nbti(temperature,bmax,c0,bc20max,tc0max,jcrit,tcrit)
 
-    !+ad_name  jcrit_nbti
-    !+ad_summ  Critical current density in a NbTi superconductor strand
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  temperature : input real : SC temperature (K)
-    !+ad_args  bmax : input real : Magnetic field at conductor (T)
-    !+ad_args  c0   : input real : Scaling constant (A/m2)
-    !+ad_args  bc20max : input real : Upper critical field (T) for superconductor
-    !+ad_argc                      at zero temperature and strain
-    !+ad_args  tc0max : input real : Critical temperature (K) at zero field and strain
-    !+ad_args  jcrit : output real : Critical current density in superconductor (A/m2)
-    !+ad_args  tcrit : output real : Critical temperature (K)
-    !+ad_desc  This routine calculates the critical current density and
-    !+ad_desc  temperature in superconducting TF coils using NbTi
-    !+ad_desc  as the superconductor.
-    !+ad_prob  Results will only be valid if bmax < bc20max, and
-    !+ad_prob  thelium is sufficiently low.
-    !+ad_call  None
-    !+ad_hist  09/10/14 PJK Initial version, taken from inline code in supercon
-    !+ad_hist  20/07/18 MDK Use inputs even if they are out of range.  Output is real but can be negative.
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Critical current density in a NbTi superconductor strand
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! temperature : input real : SC temperature (K)
+    !! bmax : input real : Magnetic field at conductor (T)
+    !! c0   : input real : Scaling constant (A/m2)
+    !! bc20max : input real : Upper critical field (T) for superconductor
+    !! at zero temperature and strain
+    !! tc0max : input real : Critical temperature (K) at zero field and strain
+    !! jcrit : output real : Critical current density in superconductor (A/m2)
+    !! tcrit : output real : Critical temperature (K)
+    !! This routine calculates the critical current density and
+    !! temperature in superconducting TF coils using NbTi
+    !! as the superconductor.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -496,29 +465,21 @@ end subroutine jcrit_nbti
 
 subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 
-    !+ad_name  wstsc
-    !+ad_summ  Implementation of WST Nb3Sn critical surface implementation
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  temperature : input real : SC temperature (K)
-    !+ad_args  bmax : input real : Magnetic field at conductor (T)
-    !+ad_args  strain : input real : Strain in superconductor
-    !+ad_args  bc20max : input real : Upper critical field (T) for superconductor
-    !+ad_argc                      at zero temperature and strain
-    !+ad_args  tc0max : input real : Critical temperature (K) at zero field and strain
-    !+ad_args  jcrit : output real : Critical current density in superconductor (A/m2)
-    !+ad_args  bcrit : output real : Critical field (T)
-    !+ad_args  tcrit : output real : Critical temperature (K)
-    !+ad_desc  This routine calculates the critical current density and
-    !+ad_desc  temperature in the superconducting TF coils using the
-    !+ad_desc  WST Nb3Sn critical surface model.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  22/02/17 JM  Initial version
-    !+ad_hist  23/07/18 MDK Output is always real, but can be negative, and always uses the input values given.
-    !+ad_stat  Okay
-    !+ad_docs  https://idm.euro-fusion.org/?uid=2MMDTG
+    !! Implementation of WST Nb3Sn critical surface implementation
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! temperature : input real : SC temperature (K)
+    !! bmax : input real : Magnetic field at conductor (T)
+    !! strain : input real : Strain in superconductor
+    !! bc20max : input real : Upper critical field (T) for superconductor
+    !! at zero temperature and strain
+    !! tc0max : input real : Critical temperature (K) at zero field and strain
+    !! jcrit : output real : Critical current density in superconductor (A/m2)
+    !! bcrit : output real : Critical field (T)
+    !! tcrit : output real : Critical temperature (K)
+    !! This routine calculates the critical current density and
+    !! temperature in the superconducting TF coils using the
+    !! WST Nb3Sn critical surface model.
+    !! https://idm.euro-fusion.org/?uid=2MMDTG
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -657,10 +618,8 @@ end subroutine wstsc
 
 subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
 
-    !+ad_name  croco
-    !+ad_summ  "CroCo" (cross-conductor) strand and cable design for
-    !+ad_summ  "REBCO" 2nd generation HTS superconductor
-    !+ad_type  Subroutine
+    !! "CroCo" (cross-conductor) strand and cable design for
+    !! "REBCO" 2nd generation HTS superconductor
     ! Updated 13/11/18 using data from Lewandowska et al 2018.
     implicit none
     real(kind(1.0D0)), intent(in) ::jcritsc

@@ -2,49 +2,13 @@
 
 module pfcoil_module
 
-  !+ad_name  pfcoil_module
-  !+ad_summ  Module containing PF coil routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_auth  R Kemp, CCFE, Culham Science Centre
-  !+ad_cont  pfcoil
-  !+ad_cont  ohcalc
-  !+ad_cont  efc
-  !+ad_cont  bfield
-  !+ad_cont  peakb
-  !+ad_cont  bfmax
-  !+ad_cont  waveform
-  !+ad_cont  superconpf
-  !+ad_cont  vsec
-  !+ad_cont  induct
-  !+ad_cont  outpf
-  !+ad_cont  outvolt
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  parameters of the PF coil systems for a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  maths_library
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_hist  18/10/12 PJK Initial version of module
-  !+ad_hist  30/10/12 PJK Added times_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  31/10/12 PJK Moved local common variables into module header
-  !+ad_hist  15/04/13 PJK Added fwbs_variables
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_hist  16/10/14 PJK Added sctfcoil_module
-  !+ad_hist  22/02/17 JM  Changed function selfinductance to Bunet's formula
-  !+ad_hist  27/02/17 JM  Added WST Nb3Sn as option for superconductor
-  !+ad_hist  22/03/17 JM  Removed pfjalw as no longer used anywhere
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing PF coil routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! author: R Kemp, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! parameters of the PF coil systems for a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -86,53 +50,14 @@ contains
 
   subroutine pfcoil
 
-    !+ad_name  pfcoil
-    !+ad_summ  Routine to perform calculations for the PF and Central Solenoid coils
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This subroutine performs the calculations for the PF and
-    !+ad_desc  Central Solenoid coils, to determine their size, location, current waveforms,
-    !+ad_desc  stresses etc.
-    !+ad_prob  On the very first call, the inductance matrix sxlg has not
-    !+ad_prob  previously been calculated by routine induct, so could in theory
-    !+ad_prob  contain any values... This is currently dealt with by setting
-    !+ad_prob  the matrix to unity during the first call to prevent problems.
-    !+ad_call  efc
-    !+ad_call  ohcalc
-    !+ad_call  peakb
-    !+ad_call  report_error
-    !+ad_call  superconpf
-    !+ad_call  waveform
-    !+ad_hist  01/02/96 PJK Initial version
-    !+ad_hist  09/05/12 PJK Initial F90 version
-    !+ad_hist  11/10/12 PJK Removed work1 argument from efc
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  18/12/12 PJK/RK Added single-null coding
-    !+ad_hist  08/04/13 PJK Comment change
-    !+ad_hist  15/04/13 PJK Modified PF coil case area for superconducting coils
-    !+ad_hist  16/04/13 PJK Replaced sigpfalw by sigpfcalw in above calculation
-    !+ad_hist  17/04/13 PJK Removed cohbof calculation
-    !+ad_hist  26/11/13 PJK Added fix for first lap inductance matrix values;
-    !+ad_hisc               new (but commented-out) CS flux swing requirement calc.
-    !+ad_hist  27/11/13 PJK Moved pfrmax, pfmmax calculations from buildings module
-    !+ad_hist  12/02/14 PJK Added turns array to first lap fix
-    !+ad_hist  23/04/14 PJK Added bvert assignment
-    !+ad_hist  01/05/14 PJK Removed redundant xctfc(5) terms
-    !+ad_hist  24/06/14 PJK Removed refs to bcylth
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  22/09/14 PJK Renamed snswit to top_bottom
-    !+ad_hist  16/10/14 PJK New calculation for critical current density
-    !+ad_hisc               and steel case thickness
-    !+ad_hist  17/11/14 PJK Removed aturn argument from superconpf
-    !+ad_hist  24/11/14 PJK Corrected wtc for resistive coils
-    !+ad_hist  16/01/15 JM  Added variable "itr_sum" for new costs module
-    !+ad_hist  16/01/15 JM  Added counter variables "c", "m" & "n" for new costs module
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to perform calculations for the PF and Central Solenoid coils
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! None
+    !! This subroutine performs the calculations for the PF and
+    !! Central Solenoid coils, to determine their size, location, current waveforms,
+    !! stresses etc.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -759,32 +684,12 @@ contains
 
   subroutine ohcalc
 
-    !+ad_name  ohcalc
-    !+ad_summ  Routine to perform calculations for the Central Solenoid solenoid
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This subroutine performs the calculations for the
-    !+ad_desc  Central Solenoid solenoid coil.
-    !+ad_prob  None
-    !+ad_call  bfmax
-    !+ad_call  peakb
-    !+ad_call  superconpf
-    !+ad_hist  01/02/96 PJK Initial version
-    !+ad_hist  09/05/12 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  25/11/13 PJK Simplified (R,Z) calculation
-    !+ad_hist  16/10/14 PJK New calculation for critical current density
-    !+ad_hisc               and steel case area
-    !+ad_hist  06/11/14 PJK Used strncon to specify strain in Central Solenoid superconductor
-    !+ad_hist  10/11/14 PJK Clarified comments
-    !+ad_hist  13/11/14 PJK Added fudge to ensure positive conductor area
-    !+ad_hist  17/11/14 PJK Removed aturn argument from superconpf
-    !+ad_hist  24/11/14 PJK Corrected wtc for resistive coils
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to perform calculations for the Central Solenoid solenoid
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This subroutine performs the calculations for the
+    !! Central Solenoid solenoid coil.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -981,72 +886,57 @@ contains
        rpts,zpts,brin,bzin,nfix,rfix,zfix,cfix,ngrp,ncls,rcls,zcls, &
        alfa,bfix,gmat,bvec,rc,zc,cc,xc,umat,vmat,sigma,work2,ssq,ccls)
 
-    !+ad_name  efc
-    !+ad_summ  Calculates field coil currents
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  D Strickler, ORNL
-    !+ad_auth  J Galambos, ORNL
-    !+ad_auth  P C Shipe, ORNL
-    !+ad_call  fixb
-    !+ad_call  mtrx
-    !+ad_call  rsid
-    !+ad_call  solv
-    !+ad_args  ngrpmx : input integer : maximum number of PF coil groups
-    !+ad_args  nclsmx : input integer : maximum number of coils in one group
-    !+ad_args  nptsmx : input integer : maximum number of points across the
-    !+ad_argc                           plasma midplane at which the magnetic
-    !+ad_argc                           field is fixed
-    !+ad_args  nfixmx : input integer : maximum number of fixed current coils
-    !+ad_args  lrow1 : input integer : row length of arrays bfix, bvec, gmat,
-    !+ad_argc                          umat, vmat; should be >= (2*nptsmx + ngrpmx)
-    !+ad_args  lcol1 : input integer : column length of arrays gmat, umat, vmat;
-    !+ad_argc                          should be >= ngrpmx
-    !+ad_args  npts : input integer : number of data points at which field is
-    !+ad_args                         to be fixed; should be <= nptsmx
-    !+ad_args  rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
-    !+ad_args  brin(nptsmx),bzin(nptsmx) : input real arrays : field components at
-    !+ad_argc                                                  data points (T)
-    !+ad_args  nfix : input integer : number of coils with fixed currents, <= nfixmx
-    !+ad_args  rfix(nfixmx),zfix(nfixmx) : input real arrays : coordinates of coils
-    !+ad_argc                                                  with fixed currents (m)
-    !+ad_args  cfix(nfixmx) : input real array : Fixed currents (A)
-    !+ad_args  ngrp : input integer : number of coil groups, where all coils in a
-    !+ad_argc                         group have the same current, <= ngrpmx
-    !+ad_args  ncls(ngrpmx+2) : input integer array : number of coils in each group,
-    !+ad_argc                   each value <= nclsmx
-    !+ad_args  rcls(ngrpmx,nclsmx),zcls(ngrpmx,nclsmx) : input real arrays : coords
-    !+ad_argc                               R(i,j), Z(i,j) of coil j in group i (m)
-    !+ad_args  alfa : input real : smoothing parameter (0 = no smoothing,
-    !+ad_argc                      1.0D-9 = large smoothing)
-    !+ad_args  bfix(lrow1) : input/output real array : work array
-    !+ad_args  gmat(lrow1,lcol1) : input/output real array : work array
-    !+ad_args  bvec(lrow1) : input/output real array : work array
-    !+ad_args  rc(nclsmx) : input/output real array : work array
-    !+ad_args  zc(nclsmx) : input/output real array : work array
-    !+ad_args  cc(nclsmx) : input/output real array : work array
-    !+ad_args  xc(nclsmx) : input/output real array : work array
-    !+ad_args  umat(lrow1,lcol1) : input/output real array : work array
-    !+ad_args  vmat(lrow1,lcol1) : input/output real array : work array
-    !+ad_args  sigma(ngrpmx) : input/output real array : work array
-    !+ad_args  work2(ngrpmx) : input/output real array : work array
-    !+ad_args  ssq : output real : sum of squares of elements of residual vector
-    !+ad_args  ccls(ngrpmx) : output real array : solution vector of coil currents
-    !+ad_argc                                     in each group (A)
-    !+ad_desc  This routine calculates the currents required in a group
-    !+ad_desc  of ring coils to produce a fixed field at prescribed
-    !+ad_desc  locations. Additional ring coils with fixed currents are
-    !+ad_desc  also allowed.
-    !+ad_prob  None
-    !+ad_call  fixb
-    !+ad_call  mtrx
-    !+ad_call  rsid
-    !+ad_call  solv
-    !+ad_hist  18/08/11 PJK Initial F90 version
-    !+ad_hist  11/10/12 PJK Moved from pfscl.f90 to pfcoil.f90, and 'contained'
-    !+ad_hisc               the four called routines. Removed work1 argument
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Calculates field coil currents
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: D Strickler, ORNL
+    !! author: J Galambos, ORNL
+    !! author: P C Shipe, ORNL
+    !! ngrpmx : input integer : maximum number of PF coil groups
+    !! nclsmx : input integer : maximum number of coils in one group
+    !! nptsmx : input integer : maximum number of points across the
+    !! plasma midplane at which the magnetic
+    !! field is fixed
+    !! nfixmx : input integer : maximum number of fixed current coils
+    !! lrow1 : input integer : row length of arrays bfix, bvec, gmat,
+    !! umat, vmat; should be >= (2*nptsmx + ngrpmx)
+    !! lcol1 : input integer : column length of arrays gmat, umat, vmat;
+    !! should be >= ngrpmx
+    !! npts : input integer : number of data points at which field is
+    !! to be fixed; should be <= nptsmx
+    !! rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
+    !! brin(nptsmx),bzin(nptsmx) : input real arrays : field components at
+    !! data points (T)
+    !! nfix : input integer : number of coils with fixed currents, <= nfixmx
+    !! rfix(nfixmx),zfix(nfixmx) : input real arrays : coordinates of coils
+    !! with fixed currents (m)
+    !! cfix(nfixmx) : input real array : Fixed currents (A)
+    !! ngrp : input integer : number of coil groups, where all coils in a
+    !! group have the same current, <= ngrpmx
+    !! ncls(ngrpmx+2) : input integer array : number of coils in each group,
+    !! each value <= nclsmx
+    !! rcls(ngrpmx,nclsmx),zcls(ngrpmx,nclsmx) : input real arrays : coords
+    !! R(i,j), Z(i,j) of coil j in group i (m)
+    !! alfa : input real : smoothing parameter (0 = no smoothing,
+    !! 1.0D-9 = large smoothing)
+    !! bfix(lrow1) : input/output real array : work array
+    !! gmat(lrow1,lcol1) : input/output real array : work array
+    !! bvec(lrow1) : input/output real array : work array
+    !! rc(nclsmx) : input/output real array : work array
+    !! zc(nclsmx) : input/output real array : work array
+    !! cc(nclsmx) : input/output real array : work array
+    !! xc(nclsmx) : input/output real array : work array
+    !! umat(lrow1,lcol1) : input/output real array : work array
+    !! vmat(lrow1,lcol1) : input/output real array : work array
+    !! sigma(ngrpmx) : input/output real array : work array
+    !! work2(ngrpmx) : input/output real array : work array
+    !! ssq : output real : sum of squares of elements of residual vector
+    !! ccls(ngrpmx) : output real array : solution vector of coil currents
+    !! in each group (A)
+    !! This routine calculates the currents required in a group
+    !! of ring coils to produce a fixed field at prescribed
+    !! locations. Additional ring coils with fixed currents are
+    !! also allowed.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1105,57 +995,48 @@ contains
          brin,bzin,ngrp,ncls,rcls,zcls,alfa,nrws,bfix,gmat,bvec, &
          rc,zc,cc,xc)
 
-      !+ad_name  mtrx
-      !+ad_summ  Set up the matrix equation to calculate the currents
-      !+ad_summ  in a group of ring coils
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  D Strickler, ORNL
-      !+ad_auth  J Galambos, ORNL
-      !+ad_cont  N/A
-      !+ad_args  nptsmx : input integer : maximum number of points across the
-      !+ad_argc                           plasma midplane at which the magnetic
-      !+ad_argc                           field is fixed
-      !+ad_args  ngrpmx : input integer : maximum number of PF coil groups
-      !+ad_args  nclsmx : input integer : maximum number of coils in one group
-      !+ad_args  lrow1 : input integer : row length of arrays bfix, bvec, gmat,
-      !+ad_argc                          umat, vmat; should be >= (2*nptsmx + ngrpmx)
-      !+ad_args  lcol1 : input integer : column length of arrays gmat, umat, vmat;
-      !+ad_argc                          should be >= ngrpmx
-      !+ad_args  npts : input integer : number of data points at which field is
-      !+ad_args                         to be fixed; should be <= nptsmx
-      !+ad_args  rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
-      !+ad_args  lrow1 : input integer : row length of array bfix; should be >= nptsmx
-      !+ad_args  npts : input integer : number of data points at which field is
-      !+ad_args                         to be fixed; should be <= nptsmx
-      !+ad_args  rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
-      !+ad_args  brin(nptsmx),bzin(nptsmx) : input real arrays : field components at
-      !+ad_argc                                                  data points (T)
-      !+ad_args  ngrp : input integer : number of coil groups, where all coils in a
-      !+ad_argc                         group have the same current, <= ngrpmx
-      !+ad_args  ncls(ngrpmx+2) : input integer array : number of coils in each group,
-      !+ad_argc                   each value <= nclsmx
-      !+ad_args  rcls(ngrpmx,nclsmx),zcls(ngrpmx,nclsmx) : input real arrays : coords
-      !+ad_argc                               R(i,j), Z(i,j) of coil j in group i (m)
-      !+ad_args  alfa : input real : smoothing parameter (0 = no smoothing,
-      !+ad_argc                      1.0D-9 = large smoothing)
-      !+ad_args  nrws : output integer : actual number of rows to use
-      !+ad_args  bfix(lrow1) : input real array : Fields at data points (T)
-      !+ad_args  gmat(lrow1,lcol1) : output real array : work array
-      !+ad_args  bvec(lrow1) : output real array : work array
-      !+ad_args  rc(nclsmx) : output real array : Coordinates of conductor loops (m)
-      !+ad_args  zc(nclsmx) : output real array : Coordinates of conductor loops (m)
-      !+ad_args  cc(nclsmx) : output real array : Currents in conductor loops (A)
-      !+ad_args  xc(nclsmx) : output real array : Mutual inductances (H)
-      !+ad_desc  This routine sets up the matrix equation for calculating the
-      !+ad_desc  currents in a group of ring coils.
-      !+ad_prob  None
-      !+ad_call  bfield
-      !+ad_hist  19/09/11 PJK Initial F90 version
-      !+ad_hist  20/09/11 PJK Removed dble call
-      !+ad_hist  26/11/13 PJK Removed obsolete argument to bfield
-      !+ad_stat  Okay
-      !+ad_docs  None
+      !! Set up the matrix equation to calculate the currents
+      !! in a group of ring coils
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: D Strickler, ORNL
+      !! author: J Galambos, ORNL
+      !! nptsmx : input integer : maximum number of points across the
+      !! plasma midplane at which the magnetic
+      !! field is fixed
+      !! ngrpmx : input integer : maximum number of PF coil groups
+      !! nclsmx : input integer : maximum number of coils in one group
+      !! lrow1 : input integer : row length of arrays bfix, bvec, gmat,
+      !! umat, vmat; should be >= (2*nptsmx + ngrpmx)
+      !! lcol1 : input integer : column length of arrays gmat, umat, vmat;
+      !! should be >= ngrpmx
+      !! npts : input integer : number of data points at which field is
+      !! to be fixed; should be <= nptsmx
+      !! rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
+      !! lrow1 : input integer : row length of array bfix; should be >= nptsmx
+      !! npts : input integer : number of data points at which field is
+      !! to be fixed; should be <= nptsmx
+      !! rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
+      !! brin(nptsmx),bzin(nptsmx) : input real arrays : field components at
+      !! data points (T)
+      !! ngrp : input integer : number of coil groups, where all coils in a
+      !! group have the same current, <= ngrpmx
+      !! ncls(ngrpmx+2) : input integer array : number of coils in each group,
+      !! each value <= nclsmx
+      !! rcls(ngrpmx,nclsmx),zcls(ngrpmx,nclsmx) : input real arrays : coords
+      !! R(i,j), Z(i,j) of coil j in group i (m)
+      !! alfa : input real : smoothing parameter (0 = no smoothing,
+      !! 1.0D-9 = large smoothing)
+      !! nrws : output integer : actual number of rows to use
+      !! bfix(lrow1) : input real array : Fields at data points (T)
+      !! gmat(lrow1,lcol1) : output real array : work array
+      !! bvec(lrow1) : output real array : work array
+      !! rc(nclsmx) : output real array : Coordinates of conductor loops (m)
+      !! zc(nclsmx) : output real array : Coordinates of conductor loops (m)
+      !! cc(nclsmx) : output real array : Currents in conductor loops (A)
+      !! xc(nclsmx) : output real array : Mutual inductances (H)
+      !! This routine sets up the matrix equation for calculating the
+      !! currents in a group of ring coils.
+      !! None
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1220,37 +1101,30 @@ contains
     subroutine solv(ngrpmx,lrow1,lcol1,ngrp,ccls,nrws,gmat,bvec,umat, &
          vmat,sigma,work2)
 
-      !+ad_name  solv
-      !+ad_summ  Solve a matrix using singular value decomposition
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  D Strickler, ORNL
-      !+ad_auth  J Galambos, ORNL
-      !+ad_auth  P C Shipe, ORNL
-      !+ad_cont  N/A
-      !+ad_args  ngrpmx : input integer : maximum number of PF coil groups
-      !+ad_args  lrow1 : input integer : row length of arrays bfix, bvec, gmat,
-      !+ad_argc                          umat, vmat; should be >= (2*nptsmx + ngrpmx)
-      !+ad_args  lcol1 : input integer : column length of arrays gmat, umat, vmat;
-      !+ad_argc                          should be >= ngrpmx
-      !+ad_args  ngrp : input integer : number of coil groups, where all coils in a
-      !+ad_argc                         group have the same current, <= ngrpmx
-      !+ad_args  ccls(ngrpmx) : output real array : solution vector of coil currents
-      !+ad_argc                                     in each group (A)
-      !+ad_args  nrws : input integer : actual number of rows to use
-      !+ad_args  gmat(lrow1,lcol1) : input/output real array : work array
-      !+ad_args  bvec(lrow1) : input/output real array : work array
-      !+ad_args  umat(lrow1,lcol1) : output real array : work array
-      !+ad_args  vmat(lrow1,lcol1) : output real array : work array
-      !+ad_args  sigma(ngrpmx) : output real array : work array
-      !+ad_args  work2(ngrpmx) : output real array : work array
-      !+ad_desc  This routine solves the matrix equation for calculating the
-      !+ad_desc  currents in a group of ring coils.
-      !+ad_prob  None
-      !+ad_call  svd
-      !+ad_hist  18/08/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  None
+      !! Solve a matrix using singular value decomposition
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: D Strickler, ORNL
+      !! author: J Galambos, ORNL
+      !! author: P C Shipe, ORNL
+      !! ngrpmx : input integer : maximum number of PF coil groups
+      !! lrow1 : input integer : row length of arrays bfix, bvec, gmat,
+      !! umat, vmat; should be >= (2*nptsmx + ngrpmx)
+      !! lcol1 : input integer : column length of arrays gmat, umat, vmat;
+      !! should be >= ngrpmx
+      !! ngrp : input integer : number of coil groups, where all coils in a
+      !! group have the same current, <= ngrpmx
+      !! ccls(ngrpmx) : output real array : solution vector of coil currents
+      !! in each group (A)
+      !! nrws : input integer : actual number of rows to use
+      !! gmat(lrow1,lcol1) : input/output real array : work array
+      !! bvec(lrow1) : input/output real array : work array
+      !! umat(lrow1,lcol1) : output real array : work array
+      !! vmat(lrow1,lcol1) : output real array : work array
+      !! sigma(ngrpmx) : output real array : work array
+      !! work2(ngrpmx) : output real array : work array
+      !! This routine solves the matrix equation for calculating the
+      !! currents in a group of ring coils.
+      !! None
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1303,43 +1177,36 @@ contains
     subroutine rsid(nptsmx,ngrpmx,lrow1,lcol1,npts,brin,bzin,nfix, &
          ngrp,ccls,brssq,brnrm,bzssq,bznrm,ssq,bfix,gmat)
 
-      !+ad_name  rsid
-      !+ad_summ  Computes the norm of the residual vectors
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  D Strickler, ORNL
-      !+ad_auth  J Galambos, ORNL
-      !+ad_auth  P C Shipe, ORNL
-      !+ad_cont  N/A
-      !+ad_args  nptsmx : input integer : maximum number of points across the
-      !+ad_argc                           plasma midplane at which the magnetic
-      !+ad_argc                           field is fixed
-      !+ad_args  ngrpmx : input integer : maximum number of PF coil groups
-      !+ad_args  lrow1 : input integer : row length of arrays bfix, gmat;
-      !+ad_argc                          should be >= (2*nptsmx + ngrpmx)
-      !+ad_args  lcol1 : input integer : column length of array gmat; should be >= ngrpmx
-      !+ad_args  npts : input integer : number of data points at which field is
-      !+ad_args                         to be fixed; should be <= nptsmx
-      !+ad_args  brin(nptsmx),bzin(nptsmx) : input real arrays : field components at
-      !+ad_argc                                                  data points (T)
-      !+ad_args  nfix : input integer : number of coils with fixed currents, <= nfixmx
-      !+ad_args  ngrp : input integer : number of coil groups, where all coils in a
-      !+ad_argc                         group have the same current, <= ngrpmx
-      !+ad_args  ccls(ngrpmx) : input real array : coil currents in each group (A)
-      !+ad_args  brssq : output real : sum of squares of radial field residues
-      !+ad_args  brnrm : output real : radial field residue norm
-      !+ad_args  bzssq : output real : sum of squares of vertical field residues
-      !+ad_args  bznrm : output real : vertical field residue norm
-      !+ad_args  ssq : output real : sum of squares of elements of residual vector
-      !+ad_args  bfix(lrow1) : input real array : work array
-      !+ad_args  gmat(lrow1,lcol1) : input real array : work array
-      !+ad_desc  This routine calculates the residuals from the matrix
-      !+ad_desc  equation for calculation of the currents in a group of ring coils.
-      !+ad_prob  None
-      !+ad_call  svd
-      !+ad_hist  18/08/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  None
+      !! Computes the norm of the residual vectors
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: D Strickler, ORNL
+      !! author: J Galambos, ORNL
+      !! author: P C Shipe, ORNL
+      !! nptsmx : input integer : maximum number of points across the
+      !! plasma midplane at which the magnetic
+      !! field is fixed
+      !! ngrpmx : input integer : maximum number of PF coil groups
+      !! lrow1 : input integer : row length of arrays bfix, gmat;
+      !! should be >= (2*nptsmx + ngrpmx)
+      !! lcol1 : input integer : column length of array gmat; should be >= ngrpmx
+      !! npts : input integer : number of data points at which field is
+      !! to be fixed; should be <= nptsmx
+      !! brin(nptsmx),bzin(nptsmx) : input real arrays : field components at
+      !! data points (T)
+      !! nfix : input integer : number of coils with fixed currents, <= nfixmx
+      !! ngrp : input integer : number of coil groups, where all coils in a
+      !! group have the same current, <= ngrpmx
+      !! ccls(ngrpmx) : input real array : coil currents in each group (A)
+      !! brssq : output real : sum of squares of radial field residues
+      !! brnrm : output real : radial field residue norm
+      !! bzssq : output real : sum of squares of vertical field residues
+      !! bznrm : output real : vertical field residue norm
+      !! ssq : output real : sum of squares of elements of residual vector
+      !! bfix(lrow1) : input real array : work array
+      !! gmat(lrow1,lcol1) : input real array : work array
+      !! This routine calculates the residuals from the matrix
+      !! equation for calculation of the currents in a group of ring coils.
+      !! None
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1400,35 +1267,26 @@ contains
     subroutine fixb(nptsmx,nfixmx,lrow1,npts,rpts,zpts,nfix,rfix, &
          zfix,cfix,bfix)
 
-      !+ad_name  fixb
-      !+ad_summ  Calculates the field from the fixed current loops
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  D Strickler, ORNL
-      !+ad_auth  J Galambos, ORNL
-      !+ad_cont  N/A
-      !+ad_args  nptsmx : input integer : maximum number of points across the
-      !+ad_argc                           plasma midplane at which the magnetic
-      !+ad_argc                           field is fixed
-      !+ad_args  nfixmx : input integer : maximum number of fixed current coils
-      !+ad_args  lrow1 : input integer : row length of array bfix; should be >= nptsmx
-      !+ad_args  npts : input integer : number of data points at which field is
-      !+ad_args                         to be fixed; should be <= nptsmx
-      !+ad_args  rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
-      !+ad_args  nfix : input integer : number of coils with fixed currents, <= nfixmx
-      !+ad_args  rfix(nfixmx),zfix(nfixmx) : input real arrays : coordinates of coils
-      !+ad_argc                                                  with fixed currents (m)
-      !+ad_args  cfix(nfixmx) : input real array : Fixed currents (A)
-      !+ad_args  bfix(lrow1) : output real array : Fields at data points (T)
-      !+ad_desc  This routine calculates the fields at the points specified by
-      !+ad_desc  (rpts,zpts) from the set of coils with fixed currents.
-      !+ad_prob  None
-      !+ad_call  bfield
-      !+ad_hist  19/09/11 PJK Initial F90 version
-      !+ad_hist  11/10/12 PJK Changed work1 argument to local array
-      !+ad_hist  26/11/13 PJK Removed obsolete argument to bfield
-      !+ad_stat  Okay
-      !+ad_docs  None
+      !! Calculates the field from the fixed current loops
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: D Strickler, ORNL
+      !! author: J Galambos, ORNL
+      !! nptsmx : input integer : maximum number of points across the
+      !! plasma midplane at which the magnetic
+      !! field is fixed
+      !! nfixmx : input integer : maximum number of fixed current coils
+      !! lrow1 : input integer : row length of array bfix; should be >= nptsmx
+      !! npts : input integer : number of data points at which field is
+      !! to be fixed; should be <= nptsmx
+      !! rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
+      !! nfix : input integer : number of coils with fixed currents, <= nfixmx
+      !! rfix(nfixmx),zfix(nfixmx) : input real arrays : coordinates of coils
+      !! with fixed currents (m)
+      !! cfix(nfixmx) : input real array : Fixed currents (A)
+      !! bfix(lrow1) : output real array : Fields at data points (T)
+      !! This routine calculates the fields at the points specified by
+      !! (rpts,zpts) from the set of coils with fixed currents.
+      !! None
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1470,34 +1328,26 @@ contains
 
   subroutine bfield(nc, rc, zc, cc, xc, rp, zp, br, bz, psi)
 
-    !+ad_name  bfield
-    !+ad_summ  Calculate the field at a point due to currents in a number
-    !+ad_summ  of circular poloidal conductor loops.
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  D Strickler, ORNL
-    !+ad_auth  J Galambos, ORNL
-    !+ad_cont  N/A
-    !+ad_args  nc : input integer : number of loops
-    !+ad_args  rc(nc) : input real array : R coordinates of loops (m)
-    !+ad_args  zc(nc) : input real array : Z coordinates of loops (m)
-    !+ad_args  cc(nc) : input real array : Currents in loops (A)
-    !+ad_args  xc(nc) : output real array : Mutual inductances (H)
-    !+ad_args  rp, zp : input real : coordinates of point of interest (m)
-    !+ad_args  br : output real : radial field component at (rp,zp) (T)
-    !+ad_args  bz : output real : vertical field component at (rp,zp) (T)
-    !+ad_args  psi : output real : poloidal flux at (rp,zp) (Wb)
-    !+ad_desc  This routine calculates the magnetic field components and
-    !+ad_desc  the poloidal flux at an (R,Z) point, given the locations
-    !+ad_desc  and currents of a set of conductor loops.
-    !+ad_desc  <P>The mutual inductances between the loops and a poloidal
-    !+ad_desc  filament at the (R,Z) point of interest is also found.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  19/09/11 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_stat  Okay; results agree with Culham MAGLIB routines
-    !+ad_docs  None
+    !! Calculate the field at a point due to currents in a number
+    !! of circular poloidal conductor loops.
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: D Strickler, ORNL
+    !! author: J Galambos, ORNL
+    !! nc : input integer : number of loops
+    !! rc(nc) : input real array : R coordinates of loops (m)
+    !! zc(nc) : input real array : Z coordinates of loops (m)
+    !! cc(nc) : input real array : Currents in loops (A)
+    !! xc(nc) : output real array : Mutual inductances (H)
+    !! rp, zp : input real : coordinates of point of interest (m)
+    !! br : output real : radial field component at (rp,zp) (T)
+    !! bz : output real : vertical field component at (rp,zp) (T)
+    !! psi : output real : poloidal flux at (rp,zp) (Wb)
+    !! This routine calculates the magnetic field components and
+    !! the poloidal flux at an (R,Z) point, given the locations
+    !! and currents of a set of conductor loops.
+    !! <P>The mutual inductances between the loops and a poloidal
+    !! filament at the (R,Z) point of interest is also found.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1588,31 +1438,20 @@ contains
 
   subroutine peakb(i,ii,it,bri,bro,bzi,bzo)
 
-    !+ad_name  peakb
-    !+ad_summ  Calculates the peak field at a PF coil
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  i : input integer : coil number
-    !+ad_args  ii : input integer : group number
-    !+ad_args  it : input/output integer : time point at which field is highest
-    !+ad_args  bri : output real : radial field at inner edge (T)
-    !+ad_args  bro : output real : radial field at outer edge (T)
-    !+ad_args  bzi : output real : vertical field at inner edge (T)
-    !+ad_args  bzo : output real : vertical field at outer edge (T)
-    !+ad_desc  This routine calculates the peak magnetic field components
-    !+ad_desc  at the inner and outer edges of a given PF coil.
-    !+ad_desc  The calculation includes the effects from all the coils
-    !+ad_desc  and the plasma.
-    !+ad_prob  None
-    !+ad_call  bfield
-    !+ad_call  report_error
-    !+ad_hist  09/05/12 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  26/11/13 PJK Removed obsolete argument to bfield
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Calculates the peak field at a PF coil
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! i : input integer : coil number
+    !! ii : input integer : group number
+    !! it : input/output integer : time point at which field is highest
+    !! bri : output real : radial field at inner edge (T)
+    !! bro : output real : radial field at outer edge (T)
+    !! bzi : output real : vertical field at inner edge (T)
+    !! bzo : output real : vertical field at outer edge (T)
+    !! This routine calculates the peak magnetic field components
+    !! at the inner and outer edges of a given PF coil.
+    !! The calculation includes the effects from all the coils
+    !! and the plasma.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1746,26 +1585,18 @@ contains
 
   function bfmax(rj,a,b,h)
 
-    !+ad_name  bfmax
-    !+ad_summ  Calculates the maximum field of a solenoid
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rj : input real : overall current density (A/m2)
-    !+ad_args  a  : input real : solenoid inner radius (m)
-    !+ad_args  b  : input real : solenoid outer radius (m)
-    !+ad_args  h  : input real : solenoid half height (m)
-    !+ad_desc  This routine calculates the peak field (T) at a solenoid's
-    !+ad_desc  inner radius, using fits taken from the figure
-    !+ad_desc  on p.22 of M. Wilson's book Superconducting Magnets,
-    !+ad_desc  Clarendon Press, Oxford, N.Y., 1983
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/12 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_stat  Okay
-    !+ad_docs  See above
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Calculates the maximum field of a solenoid
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rj : input real : overall current density (A/m2)
+    !! a  : input real : solenoid inner radius (m)
+    !! b  : input real : solenoid outer radius (m)
+    !! h  : input real : solenoid half height (m)
+    !! This routine calculates the peak field (T) at a solenoid's
+    !! inner radius, using fits taken from the figure
+    !! on p.22 of M. Wilson's book Superconducting Magnets,
+    !! Clarendon Press, Oxford, N.Y., 1983
+    !! See above
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1829,23 +1660,13 @@ contains
 
   subroutine waveform
 
-    !+ad_name  waveform
-    !+ad_summ  Sets up the PF coil waveforms
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine sets up the PF coil current waveforms.
-    !+ad_desc  <CODE>waves(i,j)</CODE> is the current in coil i, at time j,
-    !+ad_desc  normalized to the peak current in that coil at any time.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/12 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/12/12 PJK Modified if-logic to >= throughout
-    !+ad_hist  27/03/13 PJK Changed comment: TF coil to plasma
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Sets up the PF coil waveforms
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine sets up the PF coil current waveforms.
+    !! <CODE>waves(i,j)</CODE> is the current in coil i, at time j,
+    !! normalized to the peak current in that coil at any time.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1907,46 +1728,32 @@ contains
   subroutine superconpf(bmax,fhe,fcu,jwp,isumat,fhts,strain,thelium, &
        bcritsc,tcritsc,jcritwp,jcritstr,jcritsc,tmarg)
 
-    !+ad_name  superconpf
-    !+ad_summ  Routine to calculate the PF coil superconductor properties
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  bmax : input real : Peak field at conductor (T)
-    !+ad_args  fhe : input real : Fraction of cable space that is for He cooling
-    !+ad_args  fcu : input real : Fraction of strand that is copper
-    !+ad_args  jwp : input real : Actual winding pack current density (A/m2)
-    !+ad_args  isumat : input integer : Switch for conductor type:
-    !+ad_argc                           1 = ITER Nb3Sn, standard parameters,
-    !+ad_argc                           2 = Bi-2212 High Temperature Superconductor,
-    !+ad_argc                           3 = NbTi,
-    !+ad_argc                           4 = ITER Nb3Sn, user-defined parameters
-    !+ad_argc                           5 = WST Nb3Sn parameterisation
-    !+ad_args  fhts    : input real : Adjustment factor (<= 1) to account for strain,
-    !+ad_argc                         radiation damage, fatigue or AC losses
-    !+ad_args  strain : input real : Strain on superconductor at operation conditions
-    !+ad_args  thelium : input real : He temperature at peak field point (K)
-    !+ad_args  bcritsc : input real : Critical field at zero temperature and strain (T) (isumat=4 only)
-    !+ad_args  tcritsc : input real : Critical temperature at zero field and strain (K) (isumat=4 only)
-    !+ad_args  jcritwp : output real : Critical winding pack current density (A/m2)
-    !+ad_args  jcritstr : output real : Critical strand current density (A/m2)
-    !+ad_args  jcritsc : output real : Critical superconductor current density (A/m2)
-    !+ad_args  tmarg : output real : Temperature margin (K)
-    !+ad_desc  This routine calculates the superconductor critical winding pack
-    !+ad_desc  current density for the PF coils, plus the temperature margin.
-    !+ad_desc  It is based on the TF coil version, <CODE>supercon</CODE>.
-    !+ad_prob  The conduit and insulation around each turn is neglected.
-    !+ad_call  bi2212
-    !+ad_call  itersc
-    !+ad_call  jcrit_nbti
-    !+ad_call  report_error
-    !+ad_hist  16/10/14 PJK Initial version
-    !+ad_hist  06/11/14 PJK Added jcritstr and jcritsc outputs; inverted
-    !+ad_hisc               areas in bi2212 jstrand input
-    !+ad_hist  11/11/14 PJK Added temperature margin calculation
-    !+ad_hist  17/11/14 PJK Removed aturn argument
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine to calculate the PF coil superconductor properties
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! bmax : input real : Peak field at conductor (T)
+    !! fhe : input real : Fraction of cable space that is for He cooling
+    !! fcu : input real : Fraction of strand that is copper
+    !! jwp : input real : Actual winding pack current density (A/m2)
+    !! isumat : input integer : Switch for conductor type:
+    !! 1 = ITER Nb3Sn, standard parameters,
+    !! 2 = Bi-2212 High Temperature Superconductor,
+    !! 3 = NbTi,
+    !! 4 = ITER Nb3Sn, user-defined parameters
+    !! 5 = WST Nb3Sn parameterisation
+    !! fhts    : input real : Adjustment factor (<= 1) to account for strain,
+    !! radiation damage, fatigue or AC losses
+    !! strain : input real : Strain on superconductor at operation conditions
+    !! thelium : input real : He temperature at peak field point (K)
+    !! bcritsc : input real : Critical field at zero temperature and strain (T) (isumat=4 only)
+    !! tcritsc : input real : Critical temperature at zero field and strain (K) (isumat=4 only)
+    !! jcritwp : output real : Critical winding pack current density (A/m2)
+    !! jcritstr : output real : Critical strand current density (A/m2)
+    !! jcritsc : output real : Critical superconductor current density (A/m2)
+    !! tmarg : output real : Temperature margin (K)
+    !! This routine calculates the superconductor critical winding pack
+    !! current density for the PF coils, plus the temperature margin.
+    !! It is based on the TF coil version, <CODE>supercon</CODE>.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2153,18 +1960,12 @@ end subroutine superconpf
 
   subroutine vsec
 
-    !+ad_name  vsec
-    !+ad_summ  Calculation of volt-second capability of PF system
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calculates the volt-second capability of the PF
-    !+ad_desc  coil system.
-    !+ad_prob  None
-    !+ad_hist  01/08/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Calculation of volt-second capability of PF system
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine calculates the volt-second capability of the PF
+    !! coil system.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2233,19 +2034,13 @@ end subroutine superconpf
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine hoop_stress(r, s_hoop)
-    !+ad_name  hoop_stress
-    !+ad_summ  Calculation of hoop stress of central solenoid
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  r : input real : radial position a < r < b
-    !+ad_args  s_hoop : output real : hoop stress (MPa)
-    !+ad_desc  This routine calculates the hoop stress of the central solenoid
-    !+ad_desc  from "Superconducting magnets", M. N. Wilson OUP
-    !+ad_prob  None
-    !+ad_hist  24/02/17 JM  Initial version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Calculation of hoop stress of central solenoid
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! r : input real : radial position a < r < b
+    !! s_hoop : output real : hoop stress (MPa)
+    !! This routine calculates the hoop stress of the central solenoid
+    !! from "Superconducting magnets", M. N. Wilson OUP
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2312,19 +2107,13 @@ end subroutine superconpf
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine axial_stress(s_axial,axial_force)
-    !+ad_name  axial_stress
-    !+ad_summ  Calculation of axial stress of central solenoid
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  r : input real : radial position a < r < b
-    !+ad_args  s_hoop : output real : hoop stress (MPa)
-    !+ad_desc  This routine calculates the axial stress of the central solenoid
-    !+ad_desc  from "Case studies in superconducting magnets", Y. Iwasa, Springer
-    !+ad_prob  None
-    !+ad_hist  27/02/17 JM  Initial version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Calculation of axial stress of central solenoid
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! r : input real : radial position a < r < b
+    !! s_hoop : output real : hoop stress (MPa)
+    !! This routine calculates the axial stress of the central solenoid
+    !! from "Case studies in superconducting magnets", Y. Iwasa, Springer
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2387,39 +2176,13 @@ end subroutine superconpf
 
   subroutine induct(outfile,iprint)
 
-    !+ad_name  induct
-    !+ad_summ  Calculates PF coil set mutual inductance matrix
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the mutual inductances between all the
-    !+ad_desc  PF coils.
-    !+ad_prob  None
-    !+ad_call  bfield
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  report_error
-    !+ad_hist  01/08/11 PJK Initial F90 version
-    !+ad_hist  20/09/11 PJK Removed dble calls
-    !+ad_hist  24/09/12 PJK Swapped argument order
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  19/11/13 PJK Fixed problem with array bounds if ncls(1)=1
-    !+ad_hist  26/11/13 PJK Improved Central Solenoid self inductance, and Central Solenoid-plasma
-    !+ad_hisc               mutual inductance calculations;
-    !+ad_hisc               Removed obsolete argument to bfield calls
-    !+ad_hist  25/02/14 PJK Raised nohmax, and added warning message
-    !+ad_hisc               if noh is too large
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  06/01/16 MDK Put the self-inductance formula in a function,
-    !+ad_hist  06/01/16 MDK added Brooks coil test
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Calculates PF coil set mutual inductance matrix
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the mutual inductances between all the
+    !! PF coils.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2649,21 +2412,14 @@ end subroutine superconpf
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function selfinductance(a,b,c,N)
-    !+ad_name  selfinductance
-    !+ad_summ  Calculates the selfinductance using Bunet's formula
-    !+ad_type  Function returning real
-    !+ad_auth  M. Kovari, CCFE
-    !+ad_cont  N/A
-    !+ad_args  a  : input real : mean radius of coil (m)
-    !+ad_args  b  : input real : length of coil (m) (given as l in the reference)
-    !+ad_args  c  : input real : radial winding thickness (m)
-    !+ad_args  N  : input real : number of turns
-    !+ad_desc  This routine calculates the self inductance in Henries
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  22/02/17 JM  Initial version (issue #396)
-    !+ad_stat  Okay
-    !+ad_docs  Radiotron Designers Handbook (4th Edition) chapter 10
+    !! Calculates the selfinductance using Bunet's formula
+    !! author: M. Kovari, CCFE
+    !! a  : input real : mean radius of coil (m)
+    !! b  : input real : length of coil (m) (given as l in the reference)
+    !! c  : input real : radial winding thickness (m)
+    !! N  : input real : number of turns
+    !! This routine calculates the self inductance in Henries
+    !! Radiotron Designers Handbook (4th Edition) chapter 10
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2744,38 +2500,11 @@ end subroutine superconpf
 
   subroutine outpf(outfile)
 
-    !+ad_name  outpf
-    !+ad_summ  Routine to write output from PF coil module to file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_desc  This routine writes the PF coil information to the output file.
-    !+ad_prob  None
-    !+ad_call  int_to_string2
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_call  report_error
-    !+ad_hist  09/05/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  02/04/14 PJK Added coil geometry to mfile
-    !+ad_hist  03/04/14 PJK Added coil currents and fields to mfile
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  09/07/14 PJK Added info message if Central Solenoid current density is
-    !+ad_hist               not reaching its upper limit
-    !+ad_hist  01/09/14 PJK Changed .or. to .and. for the info message test
-    !+ad_hist  15/10/14 PJK Added more outputs
-    !+ad_hist  20/10/14 PJK Minor changes to output wording
-    !+ad_hist  06/11/14 PJK Added extra diagnostic outputs
-    !+ad_hist  10/11/14 PJK Removed critical current density output for resistive coils
-    !+ad_hist  11/11/14 PJK Added extra area outputs
-    !+ad_hist  13/10/15 MDK Issue #328 use max current in the PF Coil Table.
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to write output from PF coil module to file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! This routine writes the PF coil information to the output file.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3081,31 +2810,13 @@ end subroutine superconpf
 
   subroutine outvolt(outfile)
 
-    !+ad_name  outvolt
-    !+ad_summ  Writes volt-second information to output file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_desc  This routine writes the PF coil volt-second data to the
-    !+ad_desc  output file.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  oshead
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_hist  01/08/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  18/12/12 PJK/RK Modified for new PF coil current calculations
-    !+ad_hist  15/05/14 PJK Added vstot to output
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  20/10/14 PJK Central Solenoid to CS
-    !+ad_hist  03/08/15 MDK Change in output format for fcohop, fcohbof
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Writes volt-second information to output file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! This routine writes the PF coil volt-second data to the
+    !! output file.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

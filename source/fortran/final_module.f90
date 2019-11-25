@@ -7,26 +7,11 @@ contains
 
 subroutine final(ifail)
 
-  !+ad_name  final
-  !+ad_summ  Routine to print out the final point in the scan
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  ifail   : input integer : error flag
-  !+ad_desc  This routine prints out the final point in the scan.
-  !+ad_prob  None
-  !+ad_call  numerics
-  !+ad_call  process_output
-  !+ad_call  oheadr
-  !+ad_call  output
-  !+ad_hist  03/10/96 PJK Initial upgraded version
-  !+ad_hist  08/10/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  23/01/13 PJK Changed format for single iteration outputs
-  !+ad_hist  10/09/14 PJK Removed output lines if a given solver is unused
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Routine to print out the final point in the scan
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! ifail   : input integer : error flag
+  !! This routine prints out the final point in the scan.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

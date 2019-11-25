@@ -2,28 +2,12 @@
 
 module divertor_module
 
-  !+ad_name  divertor_module
-  !+ad_summ  Module containing divertor routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  divcall
-  !+ad_cont  divert
-  !+ad_cont  divtart
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines relevant for calculating the
-  !+ad_desc  divertor parameters for a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_hist  17/10/12 PJK Initial version of module
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing divertor routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines relevant for calculating the
+  !! divertor parameters for a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -46,47 +30,15 @@ contains
 
   subroutine divcall(outfile,iprint)
 
-    !+ad_name  divcall
-    !+ad_summ  Routine to call the divertor model
-    !+ad_type  Subroutine
-    !+ad_auth  J Galambos, ORNL
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This subroutine calls the divertor routine. This routine scales
-    !+ad_desc  dimensions, powers and field levels which are used as input to
-    !+ad_desc  the Harrison divertor model.
-    !+ad_prob  Many of the parameters are scaled from the ~1990 ITER point
-    !+ad_prob  (R=6.00, Bt = 4.85 T, Bp = 1.07 T, l_null-strike = 1.50 m).
-    !+ad_prob  Variation far from these parameters is uncertain.
-    !+ad_call  divert
-    !+ad_call  divtart
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_hist  27/06/89 JG  Put in ITER divertor model
-    !+ad_hist  27/11/90 JG  Modified to have a ST expanded divertor option
-    !+ad_hist  13/03/91 JG  Updated ITER model
-    !+ad_hist  18/03/91 JG  New scalings for connection lengths
-    !+ad_hist  29/01/96 PJK Added TART gaseous divertor model
-    !+ad_hist  14/05/96 PJK Improved calculation of TART divertor area
-    !+ad_hist  25/04/02 PJK Added ZEFFDIV; Changed DIVDUM to integer
-    !+ad_hist  17/11/11 PJK Initial F90 version;
-    !+ad_hisc               Moved TART model into new routine
-    !+ad_hist  24/09/12 PJK Swapped argument order
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  17/10/12 PJK Added divertor_variables
-    !+ad_hist  14/11/13 PJK Removed upper limit on plsep
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  02/02/17 JM  Replaced rstrko with rspo
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to call the divertor model
+    !! author: J Galambos, ORNL
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This subroutine calls the divertor routine. This routine scales
+    !! dimensions, powers and field levels which are used as input to
+    !! the Harrison divertor model.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -272,69 +224,55 @@ contains
        rbpbt,rconl,rmaj,rsrd,tconl,xpara,xperp,delta,delw,dendiv, &
        densin,gamdt,lamp,omlarg,ppdiv,ppdivr,ptpdiv,tdiv,tsep)
 
-    !+ad_name  divert
-    !+ad_summ  Harrison-Kukushkin analytic ITER divertor model
-    !+ad_type  Subroutine
-    !+ad_auth  J Galambos, ORNL
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  erprcy
-    !+ad_cont  ftdiv
-    !+ad_cont  ftpts
-    !+ad_cont  gammash
-    !+ad_args  adas     : input real : divertor flux area / main plasma area
-    !+ad_argc                          (long separatrix)
-    !+ad_args  aion     : input real : ion mass (assumes fuel only) (AMU)
-    !+ad_args  anginc   : input real : pol. angle of incidence of field line on plate (rad)
-    !+ad_args  c1div    : input real : fitting coefficient for plate temperature
-    !+ad_args  c2div    : input real : fitting coefficient for plate temperature
-    !+ad_args  c3div    : input real : fitting coefficient for heat load
-    !+ad_args  c4div    : input real : fitting coefficient for heat load
-    !+ad_args  c5div    : input real : fitting coefficient for 'omlarg'
-    !+ad_args  delld    : input real : coeff. for power distribution flow into scrapeoff
-    !+ad_args  delne    : input real : scrapeoff density by main plasma (10**20 m-3)
-    !+ad_args  fdfs     : input real : gradient ratio (private flux side/other side)
-    !+ad_argc                          in 'omlarg'
-    !+ad_args  fififi   : input real : coeff. used in sheath energy transfer factor calc.
-    !+ad_args  frgd     : input real : separatrix area to divertor / total separatrix area
-    !+ad_args  frrp     : input real : fraction of radiated power to plate
-    !+ad_args  minstang : input real : minimum strike angle (total) for heat flux calc.
-    !+ad_args  omegan   : input real : pressure ratio of (plate / main plasma)
-    !+ad_args  qdiv     : input real : heat flux across separatrix to divertor (MW/m2)
-    !+ad_args  pdiv     : input real : power flow to plate (MW)
-    !+ad_args  rbpbt    : input real : ratio of toroidal / poloidal field at strike point
-    !+ad_args  rconl    : input real : connection length ratio
-    !+ad_argc                          (divertor region/main plasma region)
-    !+ad_args  rmaj     : input real : major radius (m)
-    !+ad_args  rsrd     : input real : ratio of separatrix radius / divertor radius
-    !+ad_args  tconl    : input real : connection length along field line by main plasma (m)
-    !+ad_args  xpara    : input real : parallel diffusivity in the plasma scrapeoff (m2/s)
-    !+ad_args  xperp    : input real : perpend. diffusivity in the plasma scrapeoff (m2/s)
-    !+ad_args  delta    : output real : iteration relative error
-    !+ad_args  delw     : output real : energy flow thickness in scrape-off (m)
-    !+ad_args  dendiv   : output real : plasma density at divertor (10**20 m-3)
-    !+ad_args  densin   : output real : peak plasma density at divertor
-    !+ad_argc                           (on separatrix) (10**20 m-3)
-    !+ad_args  gamdt    : output real : plasma flow to plate (10**20/s)
-    !+ad_args  lamp     : output real : power flow width (m)
-    !+ad_args  omlarg   : output real : factor accounting for power flow
-    !+ad_argc                           to private flux region
-    !+ad_args  ppdiv    : output real : divertor heat load without radiation (MW/m2)
-    !+ad_args  ppdivr   : output real : divertor heat load with radiation (MW/m2)
-    !+ad_args  ptpdiv   : output real : peak plasma temperature at the divertor plate (eV)
-    !+ad_args  tdiv     : output real : temperature at the plate (eV)
-    !+ad_args  tsep     : output real : temperature at the separatrix (eV)
-    !+ad_desc  This subroutine performs the iteration described in M. Harrison's
-    !+ad_desc  and Kukushkin's analytic ITER divertor model.
-    !+ad_prob  None
-    !+ad_call  erprcy
-    !+ad_call  ftdiv
-    !+ad_call  ftpts
-    !+ad_call  gammash
-    !+ad_hist  17/11/11 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_stat  Okay
-    !+ad_docs  Report ITER-IL-PH-13-9-e12
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Harrison-Kukushkin analytic ITER divertor model
+    !! author: J Galambos, ORNL
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! adas     : input real : divertor flux area / main plasma area
+    !! (long separatrix)
+    !! aion     : input real : ion mass (assumes fuel only) (AMU)
+    !! anginc   : input real : pol. angle of incidence of field line on plate (rad)
+    !! c1div    : input real : fitting coefficient for plate temperature
+    !! c2div    : input real : fitting coefficient for plate temperature
+    !! c3div    : input real : fitting coefficient for heat load
+    !! c4div    : input real : fitting coefficient for heat load
+    !! c5div    : input real : fitting coefficient for 'omlarg'
+    !! delld    : input real : coeff. for power distribution flow into scrapeoff
+    !! delne    : input real : scrapeoff density by main plasma (10**20 m-3)
+    !! fdfs     : input real : gradient ratio (private flux side/other side)
+    !! in 'omlarg'
+    !! fififi   : input real : coeff. used in sheath energy transfer factor calc.
+    !! frgd     : input real : separatrix area to divertor / total separatrix area
+    !! frrp     : input real : fraction of radiated power to plate
+    !! minstang : input real : minimum strike angle (total) for heat flux calc.
+    !! omegan   : input real : pressure ratio of (plate / main plasma)
+    !! qdiv     : input real : heat flux across separatrix to divertor (MW/m2)
+    !! pdiv     : input real : power flow to plate (MW)
+    !! rbpbt    : input real : ratio of toroidal / poloidal field at strike point
+    !! rconl    : input real : connection length ratio
+    !! (divertor region/main plasma region)
+    !! rmaj     : input real : major radius (m)
+    !! rsrd     : input real : ratio of separatrix radius / divertor radius
+    !! tconl    : input real : connection length along field line by main plasma (m)
+    !! xpara    : input real : parallel diffusivity in the plasma scrapeoff (m2/s)
+    !! xperp    : input real : perpend. diffusivity in the plasma scrapeoff (m2/s)
+    !! delta    : output real : iteration relative error
+    !! delw     : output real : energy flow thickness in scrape-off (m)
+    !! dendiv   : output real : plasma density at divertor (10**20 m-3)
+    !! densin   : output real : peak plasma density at divertor
+    !! (on separatrix) (10**20 m-3)
+    !! gamdt    : output real : plasma flow to plate (10**20/s)
+    !! lamp     : output real : power flow width (m)
+    !! omlarg   : output real : factor accounting for power flow
+    !! to private flux region
+    !! ppdiv    : output real : divertor heat load without radiation (MW/m2)
+    !! ppdivr   : output real : divertor heat load with radiation (MW/m2)
+    !! ptpdiv   : output real : peak plasma temperature at the divertor plate (eV)
+    !! tdiv     : output real : temperature at the plate (eV)
+    !! tsep     : output real : temperature at the separatrix (eV)
+    !! This subroutine performs the iteration described in M. Harrison's
+    !! and Kukushkin's analytic ITER divertor model.
+    !! Report ITER-IL-PH-13-9-e12
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -455,24 +393,17 @@ contains
 
     function erprcy(tdiv,ndiv)
 
-      !+ad_name  erprcy
-      !+ad_summ  Function providing the (energy radiated + ionized) per neutral
-      !+ad_summ  recycle event from the Harrison / Kukushkin ITER model
-      !+ad_type  Function returning real
-      !+ad_auth  J Galambos, ORNL
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  tdiv     : input real : electron temperature at the plate (eV)
-      !+ad_args  ndiv     : input real : electron density at the plate (10**20 m-3)
-      !+ad_desc  This function calculates the total energy (in eV) radiated and
-      !+ad_desc  ionized, per neutral recycle event, from the Harrison / Kukushkin
-      !+ad_desc  ITER model.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  08/05/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  Report ITER-IL-PH-13-9-e12
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Function providing the (energy radiated + ionized) per neutral
+      !! recycle event from the Harrison / Kukushkin ITER model
+      !! author: J Galambos, ORNL
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! tdiv     : input real : electron temperature at the plate (eV)
+      !! ndiv     : input real : electron density at the plate (10**20 m-3)
+      !! This function calculates the total energy (in eV) radiated and
+      !! ionized, per neutral recycle event, from the Harrison / Kukushkin
+      !! ITER model.
+      !! Report ITER-IL-PH-13-9-e12
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -500,33 +431,25 @@ contains
     function ftdiv(aion,coefl,delne,fififi,omegan,omlarg,qdiv,tconl,xpara, &
          xperp,xx,yy)
 
-      !+ad_name  ftdiv
-      !+ad_summ  Function for divertor temperature solution
-      !+ad_type  Function returning real
-      !+ad_auth  J Galambos, ORNL
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  aion     : input real : ion mass (assumes fuel only) (AMU)
-      !+ad_args  coefl    : input real : little 'l' in Harrison model
-      !+ad_args  delne    : input real : scrapeoff density by main plasma (10**20 m-3)
-      !+ad_args  fififi   : input real : coeff. used in sheath energy transfer factor calc.
-      !+ad_args  omegan   : input real : pressure ratio of (plate / main plasma)
-      !+ad_args  omlarg   : input real : factor accounting for power flow
-      !+ad_args  qdiv     : input real : heat flux across separatrix to divertor (MW/m2)
-      !+ad_args  tconl    : input real : connection length along field line by main
-      !+ad_argc                          plasma (m)
-      !+ad_args  xpara    : input real : parallel diffusivity in the plasma scrapeoff (m2/s)
-      !+ad_args  xperp    : input real : perpend. diffusivity in the plasma scrapeoff (m2/s)
-      !+ad_args  xx       : input real : T_plate / T_separatrix guess
-      !+ad_args  yy       : input real : T_plate guess (eV)
-      !+ad_desc  This function calculates an estimate for the divertor temperature (eV).
-      !+ad_prob  None
-      !+ad_call  erprcy
-      !+ad_call  gammash
-      !+ad_hist  08/05/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  Report ITER-IL-PH-13-9-e12
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Function for divertor temperature solution
+      !! author: J Galambos, ORNL
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! aion     : input real : ion mass (assumes fuel only) (AMU)
+      !! coefl    : input real : little 'l' in Harrison model
+      !! delne    : input real : scrapeoff density by main plasma (10**20 m-3)
+      !! fififi   : input real : coeff. used in sheath energy transfer factor calc.
+      !! omegan   : input real : pressure ratio of (plate / main plasma)
+      !! omlarg   : input real : factor accounting for power flow
+      !! qdiv     : input real : heat flux across separatrix to divertor (MW/m2)
+      !! tconl    : input real : connection length along field line by main
+      !! plasma (m)
+      !! xpara    : input real : parallel diffusivity in the plasma scrapeoff (m2/s)
+      !! xperp    : input real : perpend. diffusivity in the plasma scrapeoff (m2/s)
+      !! xx       : input real : T_plate / T_separatrix guess
+      !! yy       : input real : T_plate guess (eV)
+      !! This function calculates an estimate for the divertor temperature (eV).
+      !! Report ITER-IL-PH-13-9-e12
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -568,33 +491,25 @@ contains
     function ftpts(aion,coefl,delne,fififi,omegan,omlarg,qdiv,tconl, &
          xpara,xperp,xx,yy)
 
-      !+ad_name  ftpts
-      !+ad_summ  Function for divertor model temperature ratio solution
-      !+ad_type  Function returning real
-      !+ad_auth  J Galambos, ORNL
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  aion     : input real : ion mass (assumes fuel only) (AMU)
-      !+ad_args  coefl    : input real : little 'l' in Harrison model
-      !+ad_args  delne    : input real : scrapeoff density by main plasma (10**20 m-3)
-      !+ad_args  fififi   : input real : coeff. used in sheath energy transfer factor calc.
-      !+ad_args  omegan   : input real : pressure ratio of (plate / main plasma)
-      !+ad_args  omlarg   : input real : factor accounting for power flow
-      !+ad_args  qdiv     : input real : heat flux across separatrix to divertor (MW/m2)
-      !+ad_args  tconl    : input real : connection length along field line by main
-      !+ad_argc                          plasma (m)
-      !+ad_args  xpara    : input real : parallel diffusivity in the plasma scrapeoff (m2/s)
-      !+ad_args  xperp    : input real : perpend. diffusivity in the plasma scrapeoff (m2/s)
-      !+ad_args  xx       : input real : T_plate / T_separatrix guess
-      !+ad_args  yy       : input real : T_plate guess (eV)
-      !+ad_desc  This function updates the divertor model temperature ratio solution.
-      !+ad_prob  None
-      !+ad_call  erprcy
-      !+ad_call  gammash
-      !+ad_hist  17/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  Report ITER-IL-PH-13-9-e12
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Function for divertor model temperature ratio solution
+      !! author: J Galambos, ORNL
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! aion     : input real : ion mass (assumes fuel only) (AMU)
+      !! coefl    : input real : little 'l' in Harrison model
+      !! delne    : input real : scrapeoff density by main plasma (10**20 m-3)
+      !! fififi   : input real : coeff. used in sheath energy transfer factor calc.
+      !! omegan   : input real : pressure ratio of (plate / main plasma)
+      !! omlarg   : input real : factor accounting for power flow
+      !! qdiv     : input real : heat flux across separatrix to divertor (MW/m2)
+      !! tconl    : input real : connection length along field line by main
+      !! plasma (m)
+      !! xpara    : input real : parallel diffusivity in the plasma scrapeoff (m2/s)
+      !! xperp    : input real : perpend. diffusivity in the plasma scrapeoff (m2/s)
+      !! xx       : input real : T_plate / T_separatrix guess
+      !! yy       : input real : T_plate guess (eV)
+      !! This function updates the divertor model temperature ratio solution.
+      !! Report ITER-IL-PH-13-9-e12
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -634,22 +549,15 @@ contains
 
     function gammash(gcoef,tdiv)
 
-      !+ad_name  gammash
-      !+ad_summ  Function to provide the plasma sheath energy transfer coefficient
-      !+ad_type  Function returning real
-      !+ad_auth  J Galambos, ORNL
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  gcoef    : input real : coefficient
-      !+ad_args  tdiv     : input real : electron temperature at the plate (eV)
-      !+ad_desc  This function provides the plasma sheath energy transfer coefficient
-      !+ad_desc  from the Harrison / Kukushkin ITER model.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  08/05/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  Report ITER-IL-PH-13-9-e12
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Function to provide the plasma sheath energy transfer coefficient
+      !! author: J Galambos, ORNL
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! gcoef    : input real : coefficient
+      !! tdiv     : input real : electron temperature at the plate (eV)
+      !! This function provides the plasma sheath energy transfer coefficient
+      !! from the Harrison / Kukushkin ITER model.
+      !! Report ITER-IL-PH-13-9-e12
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -674,41 +582,23 @@ contains
   subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pdivt,hldiv, &
        iprint,outfile)
 
-    !+ad_name  divtart
-    !+ad_summ  Tight aspect ratio tokamak divertor model
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rmajor : input real : plasma major radius (m)
-    !+ad_args  rminor : input real : plasma minor radius (m)
-    !+ad_args  triang : input real : plasma triangularity
-    !+ad_args  scrapli : input real : inboard scrape-off width (m)
-    !+ad_args  vgap : input real : top scrape-off width (m)
-    !+ad_args  pdivt : input real : power to the divertor (MW)
-    !+ad_args  hldiv : output real : heat load on the divertor (MW/m2)
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_desc  This subroutine calculates the divertor heat load for a tight aspect
-    !+ad_desc  ratio machine, by assuming that the power is evenly spread around the
-    !+ad_desc  divertor chamber by the action of a gaseous target. Each divertor is
-    !+ad_desc  assumed to be approximately triangular in the R,Z plane.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_call  report_error
-    !+ad_hist  29/01/96 PJK Added TART gaseous divertor model
-    !+ad_hist  14/05/96 PJK Improved calculation of TART divertor area
-    !+ad_hist  08/05/12 PJK Initial F90 version; Moved TART model into new routine
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  16/10/12 PJK Added constants; removed argument pi
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  21/05/18 SIM Corrected error in divertor area (Issue #697)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 64: Figure 2
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Tight aspect ratio tokamak divertor model
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rmajor : input real : plasma major radius (m)
+    !! rminor : input real : plasma minor radius (m)
+    !! triang : input real : plasma triangularity
+    !! scrapli : input real : inboard scrape-off width (m)
+    !! vgap : input real : top scrape-off width (m)
+    !! pdivt : input real : power to the divertor (MW)
+    !! hldiv : output real : heat load on the divertor (MW/m2)
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! outfile : input integer : output file unit
+    !! This subroutine calculates the divertor heat load for a tight aspect
+    !! ratio machine, by assuming that the power is evenly spread around the
+    !! divertor chamber by the action of a gaseous target. Each divertor is
+    !! assumed to be approximately triangular in the R,Z plane.
+    !! AEA FUS 64: Figure 2
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

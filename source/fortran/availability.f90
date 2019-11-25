@@ -2,39 +2,17 @@
 
 module availability_module
 
-  !+ad_name  availability_module
-  !+ad_summ  Module containing plant availability routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  avail
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  plant availability and component lifetimes for a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  cost_variables
-  !+ad_call  divertor_variables
-  !+ad_call  fwbs_variables
-  !+ad_call  ife_variables
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  pulse_variables
-  !+ad_call  times_variables
-  !+ad_call  vacuum_variables
-  !+ad_call  maths_library
-  !+ad_hist  06/11/12 PJK Initial version of module
-  !+ad_hist  24/11/14 JM  New version of availability model
-  !+ad_hist  18/12/14 JM  Update availability calculation with corrections
-  !+ad_hist  09/02/15 JM  Update to divertor and blanket models
-  !+ad_hist  20/05/16 JM  Tidy
-  !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-  !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing plant availability routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! plant availability and component lifetimes for a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Modules to import !
-  !!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!
 
   use cost_variables
   use divertor_variables
@@ -53,7 +31,7 @@ module availability_module
   implicit none
 
   ! Module subroutine and variable declarations !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   private
   public :: avail
@@ -67,51 +45,25 @@ contains
 
   subroutine avail(outfile,iprint)
 
-    !+ad_name  avail
-    !+ad_summ  Routine to calculate component lifetimes and the overall plant availability
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the component lifetimes and the overall
-    !+ad_desc  plant availability.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  27/07/11 PJK Initial F90 version
-    !+ad_hist  20/09/11 PJK Removed dble calls
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  17/10/12 PJK Added divertor_variables
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  31/10/12 PJK Added cost_variables
-    !+ad_hist  05/11/12 PJK Added pulse_variables
-    !+ad_hist  23/05/13 PJK Removed bktlife calculation if blktmodel>0
-    !+ad_hist  05/06/13 PJK Removed abktflnc output if blktmodel>0
-    !+ad_hist  15/08/13 PJK Changed cdrlife description
-    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint,
-    !+ad_hisc               thus correcting erroneous lifetimes shown
-    !+ad_hisc               in the output file
-    !+ad_hist  22/10/14 PJK Modified blanket and first wall lifetime
-    !+ad_hisc               calculation; fwlife is calculated in fwbs now
-    !+ad_hist  09/02/15 JM  Changed int function to ceiling
-    !+ad_hist  21/05/15 MDK Added capacity factor
-    !+ad_hist  20/05/16 JM  Tidy
-    !+ad_stat  Okay
-    !+ad_docs  F/PL/PJK/PROCESS/CODE/043
+    !! Routine to calculate component lifetimes and the overall plant availability
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the component lifetimes and the overall
+    !! plant availability.
+    !! F/PL/PJK/PROCESS/CODE/043
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments !
-    !!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!
 
     integer, intent(in) :: outfile,iprint
 
     !  Local variables !
-    !!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: lb, ld, td
     real(kind(1.0D0)), save :: uplanned, uutot
@@ -120,7 +72,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Full power lifetime (in years) !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (ife /= 1) then
 
@@ -150,7 +102,7 @@ contains
     end if
 
     ! Plant Availability (iavail=0,1) !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! if iavail = 0 use input value for cfactr
 
@@ -222,7 +174,7 @@ contains
     if (iprint /= 1) return
 
     !  Output section !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     call oheadr(outfile,'Plant Availability')
     if (blktmodel == 0) then
@@ -262,45 +214,26 @@ contains
 
   subroutine avail_2(outfile,iprint)
 
-    !+ad_name  avail_2
-    !+ad_summ  Routine to calculate component lifetimes and the overall plant availability
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the component lifetimes and the overall
-    !+ad_desc  plant availability using an updated model linked to the 2014 EUROfusion
-    !+ad_desc  RAMI task
-    !+ad_prob  None
-    !+ad_call  calc_u_planned
-    !+ad_call  calc_u_unplanned_bop
-    !+ad_call  calc_u_unplanned_divertor
-    !+ad_call  calc_u_unplanned_fwbs
-    !+ad_call  calc_u_unplanned_hc
-    !+ad_call  calc_u_unplanned_magnets
-    !+ad_call  calc_u_unplanned_vacuum
-    !+ad_call  modify_lifetimes
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  03/11/14 JM  Initial version
-    !+ad_hist  20/05/16 JM  Changed subroutine name and tidy
-    !+ad_stat  Okay
-    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !! Routine to calculate component lifetimes and the overall plant availability
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the component lifetimes and the overall
+    !! plant availability using an updated model linked to the 2014 EUROfusion
+    !! RAMI task
+    !! 2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments !
-    !!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!
 
     integer, intent(in) :: outfile, iprint
 
     !  Local variables !
-    !!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: u_planned
     real(kind(1.0D0)) :: u_unplanned
@@ -314,7 +247,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Plant Availability !
-    !!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!
 
     ! Planned unavailability
 
@@ -359,7 +292,7 @@ contains
     cpfact = cfactr * (tburn / tcycle)
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (iprint /= 1) return
 
@@ -380,39 +313,28 @@ contains
   subroutine calc_u_planned(outfile, iprint, u_planned) &
    bind(C, name = "c_calc_u_planned")
 
-    !+ad_name  calc_u_planned
-    !+ad_summ  Calculates the planned unavailability of the plant
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_args  u_planned : output real : planned unavailability of plant
-    !+ad_desc  This routine calculates the planned unavailability of the
-    !+ad_desc  plant, using the methodology outlined in the 2014 EUROfusion
-    !+ad_desc  RAMI report.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_hist  02/12/14 JM  Initial version
-    !+ad_stat  Okay
-    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !! Calculates the planned unavailability of the plant
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! u_planned : output real : planned unavailability of plant
+    !! This routine calculates the planned unavailability of the
+    !! plant, using the methodology outlined in the 2014 EUROfusion
+    !! RAMI report.
+    !! 2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!
 
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_planned
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: mttr_blanket, mttr_divertor, mttr_shortest
     real(kind(1.0D0)) :: lifetime_shortest, lifetime_longest
@@ -421,7 +343,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Full power lifetimes (in years) !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
        ! First wall / blanket lifetime (years)
        bktlife =  min(abktflnc/wallmw, tlife)
@@ -438,7 +360,7 @@ contains
     cdrlife = bktlife
 
     ! Calculate the blanket and divertor replacement times !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Blanket replacement time
     ! ( Calculated using scaling from 2014 EUROfusion RAMI report )
@@ -473,7 +395,7 @@ contains
          ( (n+1)*lifetime_shortest + (n*mttr_shortest + mttr_blanket) )
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (iprint /= 1) return
 
@@ -500,40 +422,28 @@ contains
   subroutine calc_u_unplanned_magnets(outfile, iprint, u_unplanned_magnets) &
    bind(C, name = "c_calc_u_unplanned_magnets")
 
-    !+ad_name  calc_u_unplanned_magnets
-    !+ad_summ  Calculates the unplanned unavailability of the magnets
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_args  u_unplanned_magnets : output real : unplanned unavailability of magnets
-    !+ad_desc  This routine calculates the unplanned unavailability of the magnets,
-    !+ad_desc  using the methodology outlined in the 2014 EUROfusion
-    !+ad_desc  RAMI report.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  ovarre
-    !+ad_hist  02/12/14 JM  Initial version
-    !+ad_hist  08/12/14 JM  Corrections to calculation for divertor
-    !+ad_hist  08/01/15 JM  Corrections to calculation for divertor
-    !+ad_hist  09/02/15 JM  More corrections to calculation for divertor
-    !+ad_stat  Okay
-    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !! Calculates the unplanned unavailability of the magnets
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! u_unplanned_magnets : output real : unplanned unavailability of magnets
+    !! This routine calculates the unplanned unavailability of the magnets,
+    !! using the methodology outlined in the 2014 EUROfusion
+    !! RAMI report.
+    !! 2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_magnets
 
     ! Local Variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: mag_temp_marg_limit, mag_temp_marg, mag_main_time
     real(kind(1.0D0)) :: mag_min_u_unplanned, start_of_risk, t_life
@@ -573,7 +483,7 @@ contains
     end if
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (iprint /= 1) return
 
@@ -592,36 +502,25 @@ contains
   subroutine calc_u_unplanned_divertor(outfile, iprint, u_unplanned_div) & 
    bind(C, name = "c_calc_u_unplanned_divertor")
 
-    !+ad_name  calc_u_unplanned_divertor
-    !+ad_summ  Calculates the unplanned unavailability of the divertor
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_args  u_unplanned_div : output real : unplanned unavailability of divertor
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_hist  02/12/14 JM  Initial version
-    !+ad_hist  06/05/15 MDK Rewrote routine to match engineering paper
-    !+ad_stat  Okay
-    !+ad_docs
+    !! Calculates the unplanned unavailability of the divertor
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! u_unplanned_div : output real : unplanned unavailability of divertor
+    !! 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_div
 
     ! Local Variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: a0, div_avail, n, pf
 
@@ -668,7 +567,7 @@ contains
     u_unplanned_div = 1.0D0 - div_avail
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (iprint /= 1) return
     call ocmmnt(outfile,'Divertor:')
@@ -688,44 +587,32 @@ contains
   subroutine calc_u_unplanned_fwbs(outfile, iprint, u_unplanned_fwbs) &
    bind(C, name = "c_calc_u_unplanned_fwbs")
 
-    !+ad_name  calc_u_unplanned_fwbs
-    !+ad_summ  Calculates the unplanned unavailability of the first wall and blanket
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_args  u_unplanned_fwbs : output real : unplanned unavailability of first wall and blanket
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_hist  02/12/14 JM  Initial version
-    !+ad_hist  08/12/14 JM  Corrections to calculation for blanket lifetime
-    !+ad_hist  09/02/15 JM  More corrections to calculation for divertor lifetime
-    !+ad_stat  Okay
-    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !! Calculates the unplanned unavailability of the first wall and blanket
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! u_unplanned_fwbs : output real : unplanned unavailability of first wall and blanket
+    !! 2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_fwbs
 
     ! Local Variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: a0, fwbs_avail, n, pf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Calculate cycle limit in terms of days !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Number of cycles between planned blanket replacements, N
     n = bktlife * year / tcycle
@@ -756,7 +643,7 @@ contains
     u_unplanned_fwbs = 1.0D0 - fwbs_avail
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (iprint /= 1) return
     call ocmmnt(outfile,'First wall / Blanket:')
@@ -775,38 +662,28 @@ contains
 
   subroutine calc_u_unplanned_bop(outfile, iprint, u_unplanned_bop) &
    bind(c,name= "c_calc_u_unplanned_bop")
-    !+ad_name  calc_u_unplanned_bop
-    !+ad_summ  Calculates the unplanned unavailability of the balance of plant
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_args  u_unplanned_bop : output real : unplanned unavailability of balance of plant
-    !+ad_desc  This routine calculates the unplanned unavailability of the balance of plant,
-    !+ad_desc  using the methodology outlined in the 2014 EUROfusion
-    !+ad_desc  RAMI report.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_hist  02/12/14 JM  Initial version
-    !+ad_stat  Okay
-    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !! Calculates the unplanned unavailability of the balance of plant
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! u_unplanned_bop : output real : unplanned unavailability of balance of plant
+    !! This routine calculates the unplanned unavailability of the balance of plant,
+    !! using the methodology outlined in the 2014 EUROfusion
+    !! RAMI report.
+    !! 2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_bop
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: bop_fail_rate, bop_mttr
     integer :: bop_num_failures
@@ -828,7 +705,7 @@ contains
     u_unplanned_bop = (bop_mttr * bop_num_failures)/(t_operation)
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (iprint /= 1) return
     call ocmmnt(outfile,'Balance of plant:')
@@ -846,34 +723,27 @@ contains
   subroutine calc_u_unplanned_hcd(u_unplanned_hcd) &
    bind(C,name="c_calc_u_unplanned_hcd")
 
-    !+ad_name  calc_u_unplanned_fwbs
-    !+ad_summ  Calculates the unplanned unavailability of the heating and current drive system
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_args  u_unplanned_hcd : output real : unplanned unavailability of hcd
-    !+ad_desc  This routine calculates the unplanned unavailability of the heating
-    !+ad_desc  and current drive system, using the methodology outlined in the
-    !+ad_desc  2014 EUROfusion RAMI report.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  02/12/14 JM  Initial version
-    !+ad_stat  Okay
-    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !! Calculates the unplanned unavailability of the heating and current drive system
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! u_unplanned_hcd : output real : unplanned unavailability of hcd
+    !! This routine calculates the unplanned unavailability of the heating
+    !! and current drive system, using the methodology outlined in the
+    !! 2014 EUROfusion RAMI report.
+    !! 2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     real(kind(1.0D0)), intent(out) :: u_unplanned_hcd
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -887,29 +757,15 @@ contains
 
   subroutine calc_u_unplanned_vacuum(outfile, iprint, u_unplanned_vacuum)
 
-    !+ad_name  calc_u_unplanned_fwbs
-    !+ad_summ  Calculates the unplanned unavailability of the vacuum system
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_args  u_unplanned_vacuum : output real : unplanned unavailability of vacuum system
-    !+ad_desc  This routine calculates the unplanned unavailability of the vacuum system,
-    !+ad_desc  using the methodology outlined in the 2014 EUROfusion
-    !+ad_desc  RAMI report.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_call  gamfun
-    !+ad_hist  02/12/14 JM  Initial version
-    !+ad_hist  18/12/14 JM  Corrected calculation now with binomial coefficients
-    !+ad_hist  20/05/15 MDK New binomial routine (maths_library) and revised code
-    !+ad_hist  here to resemble engineering paper more closely.
-    !+ad_stat  Okay
-    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in
+    !! Calculates the unplanned unavailability of the vacuum system
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! u_unplanned_vacuum : output real : unplanned unavailability of vacuum system
+    !! This routine calculates the unplanned unavailability of the vacuum system,
+    !! using the methodology outlined in the 2014 EUROfusion
+    !! RAMI report.
+    !! 2014 EUROfusion RAMI report, &quot;Availability in
     ! PROCESS&quot;
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -917,13 +773,13 @@ contains
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_vacuum
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     integer :: total_pumps, n
     real(kind(1.0D0)) :: cryo_failure_rate, cryo_main_time
@@ -975,7 +831,7 @@ contains
     u_unplanned_vacuum = max(0.005, t_down / (t_operation + t_down))
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (iprint /= 1) return
     call ocmmnt(outfile,'Vacuum:')
