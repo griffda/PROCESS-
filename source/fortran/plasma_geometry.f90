@@ -2,23 +2,13 @@
 
 module plasma_geometry_module
 
-  !+ad_name  plasma_geometry_module
-  !+ad_summ  Module containing plasma geometry routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  geomty
-  !+ad_cont  perim
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  plasma geometry (shape) for a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  physics_variables
+  !! Module containing plasma geometry routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! plasma geometry (shape) for a fusion power plant.
 
-  !+ad_hist  06/11/12 PJK Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -38,48 +28,19 @@ contains
 
   subroutine geomty
 
-    !+ad_name  geomty
-    !+ad_summ  Plasma geometry parameters
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  surfa
-    !+ad_cont  xparam
-    !+ad_cont  xsect0
-    !+ad_cont  xsecta
-    !+ad_cont  xsurf
-    !+ad_cont  xvol
-    !+ad_args  None
-    !+ad_desc  This subroutine calculates the plasma geometry parameters.
-    !+ad_prob  None
-    !+ad_call  fvol
-    !+ad_call  perim
-    !+ad_call  surfa
-    !+ad_call  xparam
-    !+ad_call  xsect0
-    !+ad_call  xsecta
-    !+ad_call  xsurf
-    !+ad_call  xvol
-    !+ad_hist  18/01/99 PJK New version incorporating upgraded coding and
-    !+ad_hisc               improved algorithms for double-null plasmas
-    !+ad_hist  14/11/11 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  30/10/12 PJK Added build_variables
+    !! Plasma geometry parameters
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This subroutine calculates the plasma geometry parameters.
 
-    !+ad_hist  10/06/13 PJK New ISHAPE=2 elongation scaling; sf2 replaced by
-    !+ad_hisc               global variable pperim
-    !+ad_hist  14/11/13 PJK Unified kappa95 estimate to Hartmann suggestion
-    !+ad_hist  28/11/13 PJK Updated references
-    !+ad_hist  01/10/14 PJK Added new ishape options
-    !+ad_hist  13/11/14 PJK Added fkzohm factor for ishape=2,3 elongations
-    !+ad_stat  Okay
-    !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
-    !+ad_docc  unpublished internal Oak Ridge document
-    !+ad_docs  F/MI/PJK/LOGBOOK14, pp.41-43
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  H. Zohm et al, On the Physics Guidelines for a Tokamak DEMO,
-    !+ad_docc  FTP/3-3, Proc. IAEA Fusion Energy Conference, October 2012, San Diego
-    !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
-    !+ad_docc  DEMO Tokamak' Document, March 2012, EFDA Report
+    !! J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
+    !! unpublished internal Oak Ridge document
+    !! F/MI/PJK/LOGBOOK14, pp.41-43
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! H. Zohm et al, On the Physics Guidelines for a Tokamak DEMO,
+    !! FTP/3-3, Proc. IAEA Fusion Energy Conference, October 2012, San Diego
+    !! T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
+    !! DEMO Tokamak' Document, March 2012, EFDA Report
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -191,28 +152,20 @@ contains
 
     subroutine surfa(a,r,k,d,sa,so)
 
-      !+ad_name  surfa
-      !+ad_summ  Plasma surface area calculation
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  a      : input real :  plasma minor radius (m)
-      !+ad_args  r      : input real :  plasma major radius (m)
-      !+ad_args  k      : input real :  plasma separatrix elongation
-      !+ad_args  d      : input real :  plasma separatrix triangularity
-      !+ad_args  sa     : output real : plasma total surface area (m2)
-      !+ad_args  so     : output real : plasma outboard surface area (m2)
-      !+ad_desc  This function finds the plasma surface area, using the
-      !+ad_desc  revolution of two intersecting arcs around the device centreline.
-      !+ad_desc  This calculation is appropriate for plasmas with a separatrix.
-      !+ad_desc  It was the original method in PROCESS.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  19/01/99 PJK Initial upgraded version
-      !+ad_hist  14/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
-      !+ad_docc  unpublished internal Oak Ridge document
+      !! Plasma surface area calculation
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! a      : input real :  plasma minor radius (m)
+      !! r      : input real :  plasma major radius (m)
+      !! k      : input real :  plasma separatrix elongation
+      !! d      : input real :  plasma separatrix triangularity
+      !! sa     : output real : plasma total surface area (m2)
+      !! so     : output real : plasma outboard surface area (m2)
+      !! This function finds the plasma surface area, using the
+      !! revolution of two intersecting arcs around the device centreline.
+      !! This calculation is appropriate for plasmas with a separatrix.
+      !! It was the original method in PROCESS.
+      !! J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
+      !! unpublished internal Oak Ridge document
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -250,29 +203,20 @@ contains
 
     function xsect0(a,kap,tri)
 
-      !+ad_name  xsect0
-      !+ad_summ  Plasma cross-sectional area calculation
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  a      : input real :  plasma minor radius (m)
-      !+ad_args  kap    : input real :  plasma separatrix elongation
-      !+ad_args  tri    : input real :  plasma separatrix triangularity
-      !+ad_desc  This function finds the plasma cross-sectional area, using the
-      !+ad_desc  revolution of two intersecting arcs around the device centreline.
-      !+ad_desc  This calculation is appropriate for plasmas with a separatrix.
-      !+ad_desc  The method for finding the arc radii and angles are copied from
-      !+ad_desc  routine <A HREF="perim.html">PERIM</A>, and are thought to be
-      !+ad_desc  by Peng.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  30/06/98 PJK Initial version (original version of xsecta)
-      !+ad_hist  16/07/01 PJK Correction to sign of TRI in DENOMI and XLI
-      !+ad_hist  14/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  F/MI/PJK/LOGBOOK14, p.41
-      !+ad_docs  F/PL/PJK/PROCESS/CODE/047
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Plasma cross-sectional area calculation
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! a      : input real :  plasma minor radius (m)
+      !! kap    : input real :  plasma separatrix elongation
+      !! tri    : input real :  plasma separatrix triangularity
+      !! This function finds the plasma cross-sectional area, using the
+      !! revolution of two intersecting arcs around the device centreline.
+      !! This calculation is appropriate for plasmas with a separatrix.
+      !! The method for finding the arc radii and angles are copied from
+      !! routine <A HREF="perim.html">PERIM</A>, and are thought to be
+      !! by Peng.
+      !! F/MI/PJK/LOGBOOK14, p.41
+      !! F/PL/PJK/PROCESS/CODE/047
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -320,26 +264,18 @@ contains
 
     function fvol(r,a,kap,tri)
 
-      !+ad_name  fvol
-      !+ad_summ  Plasma volume calculation
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  r      : input real :  plasma major radius (m)
-      !+ad_args  a      : input real :  plasma minor radius (m)
-      !+ad_args  kap    : input real :  plasma separatrix elongation
-      !+ad_args  tri    : input real :  plasma separatrix triangularity
-      !+ad_desc  This function finds the plasma volume, using the
-      !+ad_desc  revolution of two intersecting arcs around the device centreline.
-      !+ad_desc  This calculation is appropriate for plasmas with a separatrix.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  18/01/99 PJK Initial upgraded version
-      !+ad_hist  14/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  F/MI/PJK/LOGBOOK14, p.41
-      !+ad_docs  F/PL/PJK/PROCESS/CODE/047
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Plasma volume calculation
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! r      : input real :  plasma major radius (m)
+      !! a      : input real :  plasma minor radius (m)
+      !! kap    : input real :  plasma separatrix elongation
+      !! tri    : input real :  plasma separatrix triangularity
+      !! This function finds the plasma volume, using the
+      !! revolution of two intersecting arcs around the device centreline.
+      !! This calculation is appropriate for plasmas with a separatrix.
+      !! F/MI/PJK/LOGBOOK14, p.41
+      !! F/PL/PJK/PROCESS/CODE/047
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -381,26 +317,17 @@ contains
 
     function xsecta(xi,thetai,xo,thetao)
 
-      !+ad_name  xsecta
-      !+ad_summ  Plasma cross-sectional area calculation
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  xi     : input real :  radius of arc describing inboard surface (m)
-      !+ad_args  thetai : input real :  half-angle of arc describing inboard surface
-      !+ad_args  xo     : input real :  radius of arc describing outboard surface (m)
-      !+ad_args  thetao : input real :  half-angle of arc describing outboard surface
-      !+ad_desc  This function finds the plasma cross-sectional area, using the
-      !+ad_desc  revolution of two intersecting arcs around the device centreline.
-      !+ad_desc  This calculation is appropriate for plasmas with a separatrix.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  30/06/98 PJK Initial version
-      !+ad_hist  18/01/99 PJK Moved calculation of arc parameters into XPARAM
-      !+ad_hist  14/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  F/MI/PJK/LOGBOOK14, p.41
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Plasma cross-sectional area calculation
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! xi     : input real :  radius of arc describing inboard surface (m)
+      !! thetai : input real :  half-angle of arc describing inboard surface
+      !! xo     : input real :  radius of arc describing outboard surface (m)
+      !! thetao : input real :  half-angle of arc describing outboard surface
+      !! This function finds the plasma cross-sectional area, using the
+      !! revolution of two intersecting arcs around the device centreline.
+      !! This calculation is appropriate for plasmas with a separatrix.
+      !! F/MI/PJK/LOGBOOK14, p.41
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -423,27 +350,19 @@ contains
 
     function xvol(rmajor,rminor,xi,thetai,xo,thetao)
 
-      !+ad_name  xvol
-      !+ad_summ  Plasma volume calculation
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  rmajor : input real :  plasma major radius (m)
-      !+ad_args  rminor : input real :  plasma minor radius (m)
-      !+ad_args  xi     : input real :  radius of arc describing inboard surface (m)
-      !+ad_args  thetai : input real :  half-angle of arc describing inboard surface
-      !+ad_args  xo     : input real :  radius of arc describing outboard surface (m)
-      !+ad_args  thetao : input real :  half-angle of arc describing outboard surface
-      !+ad_desc  This function finds the plasma volume, using the
-      !+ad_desc  revolution of two intersecting arcs around the device centreline.
-      !+ad_desc  This calculation is appropriate for plasmas with a separatrix.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  18/01/99 PJK Initial version
-      !+ad_hist  14/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  F/MI/PJK/LOGBOOK14, p.43
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Plasma volume calculation
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! rmajor : input real :  plasma major radius (m)
+      !! rminor : input real :  plasma minor radius (m)
+      !! xi     : input real :  radius of arc describing inboard surface (m)
+      !! thetai : input real :  half-angle of arc describing inboard surface
+      !! xo     : input real :  radius of arc describing outboard surface (m)
+      !! thetao : input real :  half-angle of arc describing outboard surface
+      !! This function finds the plasma volume, using the
+      !! revolution of two intersecting arcs around the device centreline.
+      !! This calculation is appropriate for plasmas with a separatrix.
+      !! F/MI/PJK/LOGBOOK14, p.43
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -487,29 +406,21 @@ contains
 
     subroutine xsurf(rmajor,rminor,xi,thetai,xo,thetao,xsi,xso)
 
-      !+ad_name  xsurf
-      !+ad_summ  Plasma surface area calculation
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  rmajor : input real :  plasma major radius (m)
-      !+ad_args  rminor : input real :  plasma minor radius (m)
-      !+ad_args  xi     : input real :  radius of arc describing inboard surface (m)
-      !+ad_args  thetai : input real :  half-angle of arc describing inboard surface
-      !+ad_args  xo     : input real :  radius of arc describing outboard surface (m)
-      !+ad_args  thetao : input real :  half-angle of arc describing outboard surface
-      !+ad_args  xsi    : output real : inboard surface area (m2)
-      !+ad_args  xso    : output real : outboard surface area (m2)
-      !+ad_desc  This function finds the plasma surface area, using the
-      !+ad_desc  revolution of two intersecting arcs around the device centreline.
-      !+ad_desc  This calculation is appropriate for plasmas with a separatrix.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  18/01/99 PJK Initial version
-      !+ad_hist  14/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  F/MI/PJK/LOGBOOK14, p.43
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Plasma surface area calculation
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! rmajor : input real :  plasma major radius (m)
+      !! rminor : input real :  plasma minor radius (m)
+      !! xi     : input real :  radius of arc describing inboard surface (m)
+      !! thetai : input real :  half-angle of arc describing inboard surface
+      !! xo     : input real :  radius of arc describing outboard surface (m)
+      !! thetao : input real :  half-angle of arc describing outboard surface
+      !! xsi    : output real : inboard surface area (m2)
+      !! xso    : output real : outboard surface area (m2)
+      !! This function finds the plasma surface area, using the
+      !! revolution of two intersecting arcs around the device centreline.
+      !! This calculation is appropriate for plasmas with a separatrix.
+      !! F/MI/PJK/LOGBOOK14, p.43
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -542,25 +453,16 @@ contains
 
   function perim(a,kap,tri)
 
-    !+ad_name  perim
-    !+ad_summ  Plasma poloidal perimeter calculation
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  a      : input real :  plasma minor radius (m)
-    !+ad_args  kap    : input real :  plasma separatrix elongation
-    !+ad_args  tri    : input real :  plasma separatrix triangularity
-    !+ad_desc  This function finds the plasma poloidal perimeter, using the
-    !+ad_desc  revolution of two intersecting arcs around the device centreline.
-    !+ad_desc  This calculation is appropriate for plasmas with a separatrix.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  19/01/99 PJK Initial upgraded version
-    !+ad_hist  16/07/01 PJK Correction to sign of TRI in DENOMI and XLI
-    !+ad_hist  14/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  F/PL/PJK/PROCESS/CODE/047
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Plasma poloidal perimeter calculation
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! a      : input real :  plasma minor radius (m)
+    !! kap    : input real :  plasma separatrix elongation
+    !! tri    : input real :  plasma separatrix triangularity
+    !! This function finds the plasma poloidal perimeter, using the
+    !! revolution of two intersecting arcs around the device centreline.
+    !! This calculation is appropriate for plasmas with a separatrix.
+    !! F/PL/PJK/PROCESS/CODE/047
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -598,31 +500,22 @@ contains
 
   subroutine xparam(a,kap,tri,xi,thetai,xo,thetao)
 
-    !+ad_name  xparam
-    !+ad_summ  Routine to find parameters used for calculating geometrical
-    !+ad_summ  properties for double-null plasmas
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  a      : input real :  plasma minor radius (m)
-    !+ad_args  kap    : input real :  plasma separatrix elongation
-    !+ad_args  tri    : input real :  plasma separatrix triangularity
-    !+ad_args  xi     : output real : radius of arc describing inboard surface (m)
-    !+ad_args  thetai : output real : half-angle of arc describing inboard surface
-    !+ad_args  xo     : output real : radius of arc describing outboard surface (m)
-    !+ad_args  thetao : output real : half-angle of arc describing outboard surface
-    !+ad_desc  This function finds plasma geometrical parameters, using the
-    !+ad_desc  revolution of two intersecting arcs around the device centreline.
-    !+ad_desc  This calculation is appropriate for plasmas with a separatrix.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  18/01/99 PJK Initial upgraded version
-    !+ad_hist  16/07/01 PJK Correction of sign of TRI in XI
-    !+ad_hist  14/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK14, p.42
-    !+ad_docs  F/PL/PJK/PROCESS/CODE/047
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to find parameters used for calculating geometrical
+    !! properties for double-null plasmas
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! a      : input real :  plasma minor radius (m)
+    !! kap    : input real :  plasma separatrix elongation
+    !! tri    : input real :  plasma separatrix triangularity
+    !! xi     : output real : radius of arc describing inboard surface (m)
+    !! thetai : output real : half-angle of arc describing inboard surface
+    !! xo     : output real : radius of arc describing outboard surface (m)
+    !! thetao : output real : half-angle of arc describing outboard surface
+    !! This function finds plasma geometrical parameters, using the
+    !! revolution of two intersecting arcs around the device centreline.
+    !! This calculation is appropriate for plasmas with a separatrix.
+    !! F/MI/PJK/LOGBOOK14, p.42
+    !! F/PL/PJK/PROCESS/CODE/047
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

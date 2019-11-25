@@ -1,4 +1,4 @@
- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !  Uncomment #define line below to perform unit testing
 !  Compile using pre-processor, e.g. ifort -cpp input.f90
@@ -6,94 +6,57 @@
 
 module process_input
 
-  !+ad_name  process_input
-  !+ad_summ  Module containing the routines that perform the actual reading
-  !+ad_summ  and parsing of the input file
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  check_range_int
-  !+ad_cont  check_range_real
-  !+ad_cont  get_subscript
-  !+ad_cont  get_substring
-  !+ad_cont  get_substring_trim
-  !+ad_cont  get_value_int
-  !+ad_cont  get_value_real
-  !+ad_cont  get_variable_name
-  !+ad_call  ife_variables
-  !+ad_cont  input
-  !+ad_cont  parse_input_file
-  !+ad_cont  parse_int_array
-  !+ad_cont  parse_int_variable
-  !+ad_cont  parse_real_array
-  !+ad_cont  parse_real_variable
-  !+ad_cont  parse_string_variable
-  !+ad_cont  report_input_error
-  !+ad_cont  string_to_int
-  !+ad_cont  string_to_real
-  !+ad_cont  upper_case
-  !+ad_cont  lower_case
-  !+ad_args  N/A
-  !+ad_desc  This module provides a set of routines to read in data from the
-  !+ad_desc  main PROCESS input file (IN.DAT). The format of the file is
-  !+ad_desc  similar to the F90 NAMELIST structure, but with a few
-  !+ad_desc  additional features:
-  !+ad_desc  <OL>
-  !+ad_desc  <P><LI>Comments can be read in that are copied to the standard
-  !+ad_desc  output channel - these are lines with five (or more)
-  !+ad_desc  consecutive '*' characters at the start.
-  !+ad_desc  <P><LI>Other lines within the file can contain simple comments
-  !+ad_desc  for the user - these are not copied to the standard output
-  !+ad_desc  channel. They start with one to four '*' characters.
-  !+ad_desc  </OL>
-  !+ad_desc  <P>Character strings, integers and double precision values can
-  !+ad_desc  be read in.
-  !+ad_desc  <P>The following rules must be obeyed when writing an input
-  !+ad_desc  file:
-  !+ad_desc  <UL>
-  !+ad_desc  <P><LI>Each variable must be on a separate line.
-  !+ad_desc  <P><LI>Leading spaces are ignored.
-  !+ad_desc  <P><LI>Variable names can be upper case, lower case, or a
-  !+ad_desc  mixture of both.
-  !+ad_desc  <P><LI>Spaces may not appear within a variable name or data
-  !+ad_desc  value.
-  !+ad_desc  <P><LI>Other spaces within a line, and trailing spaces, are
-  !+ad_desc  ignored.
-  !+ad_desc  <P><LI>Commas are not necessary between variables.
-  !+ad_desc  <P><LI>Data can extend over more than one line.
-  !+ad_desc  <P><LI>One-dimensional arrays can be explicitly subscripted, or
-  !+ad_desc  unscripted, in which case the following element order is
-  !+ad_desc  assumed: A(1), A(2), A(3), ...
-  !+ad_desc  <P><LI>At present, multiple dimension arrays can only be
-  !+ad_desc  handled without reference to explicit subscripts, in which case
-  !+ad_desc  the following element order is assumed: B(1,1), B(2,1), B(3,1),
-  !+ad_desc  etc. The use of the input file to specify multiple dimension
-  !+ad_desc  array elements is prone to error.
-  !+ad_desc  <P><LI>Unscripted array elements must be separated by commas.
-  !+ad_desc  <P><LI>Blank lines are allowed anywhere in the input file.
-  !+ad_desc  <P><LI>Lines starting with a * are assumed to be comments.
-  !+ad_desc  <P><LI>Comment lines starting with five or more asterisks
-  !+ad_desc  (i.e. *****) are reproduced verbatim in the output file. These
-  !+ad_desc  should be used copiously to give a great deal of information
-  !+ad_desc  about the run being performed, and should be updated before
-  !+ad_desc  every single run of the code, as it is very easy to lose track
-  !+ad_desc  of what is being attempted.
-  !+ad_desc  </UL>
-  !+ad_prob  Some routines still contain GOTOs...
-  !+ad_hist  20/01/95 PJK Initial version (PROCESS)
-  !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
-  !+ad_hist  02/10/12 PJK Initial F90 version (PROCESS)
-  !+ad_hist  14/01/13 PJK Changed (maximum) line length from 200 to maxlen
-  !+ad_hist  13/05/14 PJK Added impurity_radiation_module
-  !+ad_hist  30/06/14 PJK Added error_handling
-  !+ad_hist  22/07/14 PJK Moved run_summary into process.f90
-  !+ad_hist  19/05/15 PJK Added lower_case
-  !+ad_hist  01/11/16 JM  Added iprecomp switch for Central Solenoid pre-compression structure
-  !+ad_hist  08/03/17 JM  Added time-dependent power reqs
-  !+ad_hist  08/05/17 MDK Removed IFE (Issue #508)
-  !+ad_hist  29/07/19 SIM Restored IFE (Issue #901)
-  !+ad_stat  Okay
-  !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
-  !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
+  !! Module containing the routines that perform the actual reading
+  !! and parsing of the input file
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module provides a set of routines to read in data from the
+  !! main PROCESS input file (IN.DAT). The format of the file is
+  !! similar to the F90 NAMELIST structure, but with a few
+  !! additional features:
+  !! <OL>
+  !! <P><LI>Comments can be read in that are copied to the standard
+  !! output channel - these are lines with five (or more)
+  !! consecutive '*' characters at the start.
+  !! <P><LI>Other lines within the file can contain simple comments
+  !! for the user - these are not copied to the standard output
+  !! channel. They start with one to four '*' characters.
+  !! </OL>
+  !! <P>Character strings, integers and double precision values can
+  !! be read in.
+  !! <P>The following rules must be obeyed when writing an input
+  !! file:
+  !! <UL>
+  !! <P><LI>Each variable must be on a separate line.
+  !! <P><LI>Leading spaces are ignored.
+  !! <P><LI>Variable names can be upper case, lower case, or a
+  !! mixture of both.
+  !! <P><LI>Spaces may not appear within a variable name or data
+  !! value.
+  !! <P><LI>Other spaces within a line, and trailing spaces, are
+  !! ignored.
+  !! <P><LI>Commas are not necessary between variables.
+  !! <P><LI>Data can extend over more than one line.
+  !! <P><LI>One-dimensional arrays can be explicitly subscripted, or
+  !! unscripted, in which case the following element order is
+  !! assumed: A(1), A(2), A(3), ...
+  !! <P><LI>At present, multiple dimension arrays can only be
+  !! handled without reference to explicit subscripts, in which case
+  !! the following element order is assumed: B(1,1), B(2,1), B(3,1),
+  !! etc. The use of the input file to specify multiple dimension
+  !! array elements is prone to error.
+  !! <P><LI>Unscripted array elements must be separated by commas.
+  !! <P><LI>Blank lines are allowed anywhere in the input file.
+  !! <P><LI>Lines starting with a * are assumed to be comments.
+  !! <P><LI>Comment lines starting with five or more asterisks
+  !! (i.e. *****) are reproduced verbatim in the output file. These
+  !! should be used copiously to give a great deal of information
+  !! about the run being performed, and should be updated before
+  !! every single run of the code, as it is very easy to lose track
+  !! of what is being attempted.
+  !! </UL>
+  !! A User's Guide to the PROCESS Systems Code, P. J. Knight,
+  !! AEA Fusion Report AEA FUS 251, 1993
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -150,22 +113,13 @@ contains
 
   subroutine input
 
-    !+ad_name  input
-    !+ad_summ  Routine that calls the main input file parsing routines
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine provides the interface between the input file
-    !+ad_desc  reading routines and the rest of PROCESS.
-    !+ad_prob  None
-    !+ad_call  parse_input_file
-    !+ad_hist  03/10/12 PJK Initial version
-    !+ad_hist  30/09/14 PJK Changed show_changes to 0
-    !+ad_hist  11/06/15 MDK Fill the two arrays that specify the active constraints
-    !+ad_stat  Okay
-    !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
-    !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
+    !! Routine that calls the main input file parsing routines
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine provides the interface between the input file
+    !! reading routines and the rest of PROCESS.
+    !! A User's Guide to the PROCESS Systems Code, P. J. Knight,
+    !! AEA Fusion Report AEA FUS 251, 1993
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -197,147 +151,27 @@ contains
 
   subroutine parse_input_file(in_file,out_file,show_changes)
 
-    !+ad_name  parse_input_file
-    !+ad_summ  Routine that parses the contents of the input file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_auth  F Warmer, IPP Greifswald
-    !+ad_cont  N/A
-    !+ad_args  in_file  : input integer : Fortran input unit identifier
-    !+ad_args  out_file : input integer : Fortran output unit identifier
-    !+ad_args  show_changes : input integer : switch to turn on (1) or off (0)
-    !+ad_argc    reporting of changed values
-    !+ad_desc  This routine reads the data from the PROCESS input file (IN.DAT),
-    !+ad_desc  dealing with comments or blank lines correctly, and sets the
-    !+ad_desc  value of any variables found in the file. Any changes
-    !+ad_desc  from the default values may be reported if required.
-    !+ad_desc  <P>Each possible variable in this block is dealt with
-    !+ad_desc  individually. (To add additional input variables, simply copy
-    !+ad_desc  and edit one of the similar existing examples.)
-    !+ad_desc  The routine also does the extremely useful function of checking
-    !+ad_desc  that the given value for a variable lies within a sensible
-    !+ad_desc  predefined range, and stops the program if apparently
-    !+ad_desc  nonsensical values are attempted.
-    !+ad_prob  None
-    !+ad_call  get_variable_name
-    !+ad_call  parse_int_array
-    !+ad_call  parse_int_variable
-    !+ad_call  parse_real_array
-    !+ad_call  parse_real_variable
-    !+ad_call  parse_string_variable
-    !+ad_call  report_input_error
-    !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
-    !+ad_hist  03/10/12 PJK CENTORI version converted for PROCESS
-    !+ad_hist  10/10/12 PJK Removed IVMS
-    !+ad_hist  18/12/12 PJK Added i_single_null; removed IDIVRT
-    !+ad_hist  03/01/13 PJK Removed ICULDL (replaced with error trap)
-    !+ad_hist  08/01/13 PJK Commented out ICULDL error trap for time being
-    !+ad_hisc               (ICULDL simply ignored now)
-    !+ad_hist  23/01/13 PJK Added IOTABAR
-    !+ad_hist  31/01/13 PJK Changed FACTOR comment
-    !+ad_hist  09/04/13 PJK Added RPF2DEWAR, RBVFAC, MBVFAC, WSVFAC
-    !+ad_hist  11/04/13 PJK Removed IRES (replaced with warning), RTPTE, ECHPWR0
-    !+ad_hist  15/04/13 PJK Added SIGPFCF
-    !+ad_hist  16/04/13 PJK Added SIGPFCALW; removed JCRIT_MODEL, JCRITSC
-    !+ad_hist  17/04/13 PJK Removed FCOHBOF; added obsolete_var usage to abort code
-    !+ad_hisc               if an obsolete variable is found in the input file
-    !+ad_hist  09/05/13 PJK Added FWBSSHAPE
-    !+ad_hist  15/05/13 PJK Added BLNKTTH, DIVFIX
-    !+ad_hist  22/05/13 PJK Added BLKTMODEL variables, removed FVOLBI,FVOLBO
-    !+ad_hist  10/06/13 PJK Modified ISHAPE range
-    !+ad_hist  12/06/13 PJK Restricted DIGN range
-    !+ad_hist  18/06/13 PJK Removed DIGN altogether
-    !+ad_hist  19/06/13 PJK Removed FJTFC
-    !+ad_hist  27/06/13 PJK Relabelled TOHS, FTOHS, DNBETA, GTSCALE, ICULBL, FBETATRY
-    !+ad_hist  14/08/13 PJK/FW Added stellarator divertor variables
-    !+ad_hist  15/08/13 PJK/FW Added stellarator VMEC filenames
-    !+ad_hist  11/09/13 PJK Removed FTR, IDHE3, IITER
-    !+ad_hist  25/09/13 PJK Added NBSHIELD
-    !+ad_hist  25/09/13 PJK Modified treatment for ISUMATTF=2
-    !+ad_hist  30/09/13 PJK Added PSEPRMAX, FPSEPR
-    !+ad_hist  08/10/13 PJK Reassigned ISUMATTF=2; added FHTS
-    !+ad_hist  07/11/13 PJK Removed obsolete switch MAGNT
-    !+ad_hist  28/11/13 PJK Added IPROFILE
-    !+ad_hist  17/12/13 PJK Changed IOPTIMZ description
-    !+ad_hist  19/12/13 PJK Changed EPSFCN description
-    !+ad_hist  19/02/14 PJK Added IPEDESTAL and other related quantities
-    !+ad_hist  24/02/14 PJK Removed echoing of long input lines to output
-    !+ad_hist  26/02/14 PJK Changed references to non-optimising solver
-    !+ad_hisc               from hybrid to hybrd
-    !+ad_hist  26/02/14 PJK Added FTFTHKO, FJOHC
-    !+ad_hist  27/02/14 PJK Added NINEQNS
-    !+ad_hist  03/03/14 PJK Changed lower bound of TRATIO to 0.0
-    !+ad_hist  10/03/14 PJK Removed CAREA
-    !+ad_hist  26/03/14 PJK Changed upper bound of IBSS to 4
-    !+ad_hist  28/04/14 PJK Added PRP, STRESS_MODEL
-    !+ad_hist  01/05/14 PJK Changed FQVAL description
-    !+ad_hist  06/05/14 PJK Removed WPVF
-    !+ad_hist  08/05/14 PJK Changed PRP definition; removed ITFMOD;
-    !+ad_hisc               replaced STRESS_MODEL with TFC_MODEL
-    !+ad_hist  08/05/14 PJK Added BIGQMIN
-    !+ad_hist  13/05/14 PJK Added IMPRAD#MODEL, FIMP, CORERADIUS
-    !+ad_hist  20/05/14 PJK Removed FRADMIN, added FRADPWR, IRADLOSS
-    !+ad_hist  22/05/14 PJK PHEAT units changed to MW
-    !+ad_hist  02/06/14 PJK Added IMPVAR, FIMPVAR
-    !+ad_hist  03/06/14 PJK Added new power flow variables
-    !+ad_hist  16/06/14 PJK Raised FIMPVAR upper limit
-    !+ad_hist  17/06/14 PJK Added IMPDIR
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  24/06/14 PJK Removed BCYLTH, BLNKTTH
-    !+ad_hist  22/07/14 PJK Added RUNTITLE
-    !+ad_hist  31/07/14 PJK Added DCONDINS; removed ASPCSTF
-    !+ad_hist  19/08/14 PJK Removed RECYLE, IMPFE
-    !+ad_hist  19/08/14 PJK Removed CASFACT
-    !+ad_hist  27/08/14 PJK Added new power flow variables
-    !+ad_hist  16/09/14 PJK Changed TFC_MODEL range
-    !+ad_hist  01/10/14 PJK Added KAPPA95, TRIANG95; changed ISHAPE range
-    !+ad_hist  01/10/14 PJK Added ILHTHRESH
-    !+ad_hist  02/10/14 PJK Added FLHTHRESH, FCWR, CWRMAX
-    !+ad_hist  06/10/14 PJK Added FNBSHINEF, NBSHINEFMAX
-    !+ad_hist  06/10/14 PJK Added FORBITLOSS
-    !+ad_hist  16/10/14 PJK Added ISUMATOH,FCUPFSU
-    !+ad_hist  22/10/14 PJK Modified FORBITLOSS upper limit
-    !+ad_hist  23/10/14 PJK Removed THERMAL_CYCLE; BLBOP --> BLKTCYCLE
-    !+ad_hist  13/11/14 PJK Added FKZOHM
-    !+ad_hist  13/11/14 PJK Modified IRADLOSS limit
-    !+ad_hist  17/11/14 PJK Added OUTPUT_COSTS
-    !+ad_hist  24/11/14 PJK Removed COOLWH (now set via blkttype)
-    !+ad_hist  25/11/14 JM  Added new availability model variables
-    !+ad_hist  25/11/14 JM  Changed default bound for for te flhthresh
-    !+ad_hist  10/12/14 PJK Removed UCIHX
-    !+ad_hist  17/12/14 PJK Added IREFPROP
-    !+ad_hist  05/01/15 JM  Added 2015 cost model variables
-    !+ad_hist  27/02/15 JM  Changed blktcycle to secondary_cycle
-    !+ad_hist  17/03/15 JM  Removed irefprop
-    !+ad_hist  02/04/15 JM  Removed fwerlim
-    !+ad_hist  12/04/15 JM  Removed costr, astr, bstr, estr, lblnkt
-    !+ad_hist  22/04/15 JM  Added etapsu
-    !+ad_hist  19/05/15 PJK Variable names in calls now lowercase
-    !+ad_hist  20/05/15 RK  Added iscdens, fgwped
-    !+ad_hist  12/08/15 MDK vacuum_model and associated variables #304
-    !+ad_hist  18/11/15 RK  zeffmax and fzeffmax for constraint equation 64
-    !+ad_hist  26/11/15 RK  added sigvvall to TF variables, tfinsgap
-    !+ad_hist  29/03/16 HL  Added coreradiationfraction
-    !+ad_hist  02/06/16 RK  Allowed negative triangularity
-    !+ad_hist  23/06/16 JM  Removed dtmpmx and tmprse as not in rest of code (#377)
-    !+ad_hist  10/11/16 HL  Added fradwall, maxradwallload, peakfactrad
-    !+ad_hist  06/12/16 HL  Added ftaulimit as input variable
-    !+ad_hist  19/01/17 JM  Added gamma_ecrh as an input variable
-    !+ad_hist  03/02/17 JM  Added psepbqarmax as input
-    !+ad_hist  08/02/17 JM  Added Kallenbach inputs
-    !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
-    !+ad_hist  12/01/18 KE  Added fnesep f-value for Eich crit. separatrix density
-    !+ad_hist  15/02/18 SIM Made denw an input
-    !+ad_hist  22/06/18 SIM Made cdtfleg an output instead of an input
-    !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
-    !+ad_hist  22/06/18 SIM tfacpd now always an output
-    !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
-    !+ad_hist  17/04/19 SIM Added step_ref
-    !+ad_hist  13/05/19 SIM Added tauee_in
-    !+ad_stat  Okay
-    !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
-    !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
+    !! Routine that parses the contents of the input file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! author: F Warmer, IPP Greifswald
+    !! in_file  : input integer : Fortran input unit identifier
+    !! out_file : input integer : Fortran output unit identifier
+    !! show_changes : input integer : switch to turn on (1) or off (0)
+    !! reporting of changed values
+    !! This routine reads the data from the PROCESS input file (IN.DAT),
+    !! dealing with comments or blank lines correctly, and sets the
+    !! value of any variables found in the file. Any changes
+    !! from the default values may be reported if required.
+    !! <P>Each possible variable in this block is dealt with
+    !! individually. (To add additional input variables, simply copy
+    !! and edit one of the similar existing examples.)
+    !! The routine also does the extremely useful function of checking
+    !! that the given value for a variable lies within a sensible
+    !! predefined range, and stops the program if apparently
+    !! nonsensical values are attempted.
+    !! A User's Guide to the PROCESS Systems Code, P. J. Knight,
+    !! AEA Fusion Report AEA FUS 251, 1993
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3272,28 +3106,19 @@ contains
 
   subroutine parse_real_variable(varnam,varval,vmin,vmax,description)
 
-    !+ad_name  parse_real_variable
-    !+ad_summ  Routine that obtains the value of a real variable from the input
-    !+ad_summ  file and checks that it lies within the expected range
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  varnam : input string : name of the variable
-    !+ad_args  varval : input/output real : value of the variable
-    !+ad_args  vmin : input real : minimum allowed value for the variable
-    !+ad_args  vmax : input real : maximum allowed value for the variable
-    !+ad_args  description : input string : brief description of the variable
-    !+ad_desc  This routine parses a line containing a 'name = value' pair
-    !+ad_desc  for a real variable, extracting the value from the line
-    !+ad_desc  and checking whether it lies between user-defined lower and
-    !+ad_desc  upper limits.
-    !+ad_prob  None
-    !+ad_call  get_value_real
-    !+ad_call  check_range_real
-    !+ad_call  report_input_error
-    !+ad_hist  13/04/11 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that obtains the value of a real variable from the input
+    !! file and checks that it lies within the expected range
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! varnam : input string : name of the variable
+    !! varval : input/output real : value of the variable
+    !! vmin : input real : minimum allowed value for the variable
+    !! vmax : input real : maximum allowed value for the variable
+    !! description : input string : brief description of the variable
+    !! This routine parses a line containing a 'name = value' pair
+    !! for a real variable, extracting the value from the line
+    !! and checking whether it lies between user-defined lower and
+    !! upper limits.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3348,28 +3173,19 @@ contains
 
   subroutine parse_int_variable(varnam,varval,vmin,vmax,description)
 
-    !+ad_name  parse_int_variable
-    !+ad_summ  Routine that obtains the value of an integer variable from the
-    !+ad_summ  input file and checks that it lies within the expected range
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  varnam : input string : name of the variable
-    !+ad_args  varval : input/output integer : value of the variable
-    !+ad_args  vmin : input integer : minimum allowed value for the variable
-    !+ad_args  vmax : input integer : maximum allowed value for the variable
-    !+ad_args  description : input string : brief description of the variable
-    !+ad_desc  This routine parses a line containing a 'name = value' pair
-    !+ad_desc  for an integer variable, extracting the value from the line
-    !+ad_desc  and checking whether it lies between user-defined lower and
-    !+ad_desc  upper limits.
-    !+ad_prob  None
-    !+ad_call  get_value_int
-    !+ad_call  check_range_int
-    !+ad_call  report_input_error
-    !+ad_hist  13/04/11 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that obtains the value of an integer variable from the
+    !! input file and checks that it lies within the expected range
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! varnam : input string : name of the variable
+    !! varval : input/output integer : value of the variable
+    !! vmin : input integer : minimum allowed value for the variable
+    !! vmax : input integer : maximum allowed value for the variable
+    !! description : input string : brief description of the variable
+    !! This routine parses a line containing a 'name = value' pair
+    !! for an integer variable, extracting the value from the line
+    !! and checking whether it lies between user-defined lower and
+    !! upper limits.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3422,24 +3238,15 @@ contains
 
   subroutine parse_string_variable(varnam,varval,description)
 
-    !+ad_name  parse_string_variable
-    !+ad_summ  Routine that obtains the value of a string variable from the
-    !+ad_summ  input file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  varnam : input string : name of the variable
-    !+ad_args  varval : input/output string : value of the variable
-    !+ad_args  description : input string : brief description of the variable
-    !+ad_desc  This routine parses a line containing a 'name = value' pair
-    !+ad_desc  for a string variable, extracting the value from the line.
-    !+ad_prob  None
-    !+ad_call  get_substring
-    !+ad_call  report_input_error
-    !+ad_hist  13/04/11 PJK Initial version
-    !+ad_hist  14/01/13 PJK Used maxlen for character array size
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that obtains the value of a string variable from the
+    !! input file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! varnam : input string : name of the variable
+    !! varval : input/output string : value of the variable
+    !! description : input string : brief description of the variable
+    !! This routine parses a line containing a 'name = value' pair
+    !! for a string variable, extracting the value from the line.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3488,31 +3295,22 @@ contains
 
   subroutine parse_real_array(varnam,varval,isub1,n,description,icode)
 
-    !+ad_name  parse_real_array
-    !+ad_summ  Routine that obtains the values of a real array from the input file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  varnam : input string : name of the variable
-    !+ad_args  varval(n) : input/output real array : value of the variable
-    !+ad_args  isub1 : input integer : array element pointer
-    !+ad_args  n : input integer : size of varval array
-    !+ad_args  icode : output integer : diagnostic flag
-    !+ad_args  description : input string : brief description of the variable
-    !+ad_desc  This routine parses a line in one of the two following forms:
-    !+ad_desc  <PRE>
-    !+ad_desc  name = v1[, v2, ...]
-    !+ad_desc  name(element) = v
-    !+ad_desc  </PRE>
-    !+ad_desc  to read in and extract one or more values for a real 1-D array.
-    !+ad_desc  <P>N.B. No array bounds or value range checking is performed.
-    !+ad_prob  None
-    !+ad_call  get_value_real
-    !+ad_call  report_input_error
-    !+ad_hist  03/10/12 PJK Initial version
-    !+ad_hist  25/09/13 PJK Slight output formatting change
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that obtains the values of a real array from the input file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! varnam : input string : name of the variable
+    !! varval(n) : input/output real array : value of the variable
+    !! isub1 : input integer : array element pointer
+    !! n : input integer : size of varval array
+    !! icode : output integer : diagnostic flag
+    !! description : input string : brief description of the variable
+    !! This routine parses a line in one of the two following forms:
+    !! <PRE>
+    !! name = v1[, v2, ...]
+    !! name(element) = v
+    !! </PRE>
+    !! to read in and extract one or more values for a real 1-D array.
+    !! <P>N.B. No array bounds or value range checking is performed.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3580,33 +3378,23 @@ contains
 
   subroutine parse_int_array(varnam,varval,isub1,n,description,icode,startindex)
 
-    !+ad_name  parse_int_array
-    !+ad_summ  Routine that obtains the values of an integer array
-    !+ad_summ  from the input file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  varnam : input string : name of the variable
-    !+ad_args  varval(n) : input/output integer array : value of the variable
-    !+ad_args  isub1 : input integer : array element pointer
-    !+ad_args  n : input integer : size of varval array
-    !+ad_args  icode : output integer : diagnostic flag
-    !+ad_args  description : input string : brief description of the variable
-    !+ad_desc  This routine parses a line in one of the two following forms:
-    !+ad_desc  <PRE>
-    !+ad_desc  name = v1[, v2, ...]
-    !+ad_desc  name(element) = v
-    !+ad_desc  </PRE>
-    !+ad_desc  to read in and extract one or more values for an integer 1-D array.
-    !+ad_desc  <P>N.B. No array bounds or value range checking is performed.
-    !+ad_prob  None
-    !+ad_call  get_value_int
-    !+ad_call  report_input_error
-    !+ad_hist  03/10/12 PJK Initial version
-    !+ad_hist  25/06/13 PJK Modified format statement to help gfortran compilation
-    !+ad_hist  25/09/13 PJK Slight output formatting change
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that obtains the values of an integer array
+    !! from the input file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! varnam : input string : name of the variable
+    !! varval(n) : input/output integer array : value of the variable
+    !! isub1 : input integer : array element pointer
+    !! n : input integer : size of varval array
+    !! icode : output integer : diagnostic flag
+    !! description : input string : brief description of the variable
+    !! This routine parses a line in one of the two following forms:
+    !! <PRE>
+    !! name = v1[, v2, ...]
+    !! name(element) = v
+    !! </PRE>
+    !! to read in and extract one or more values for an integer 1-D array.
+    !! <P>N.B. No array bounds or value range checking is performed.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3678,30 +3466,20 @@ contains
 
   subroutine string_to_int(string,length,ivar,icode)
 
-    !+ad_name  string_to_int
-    !+ad_summ  Routine that converts the ASCII digits in a string to
-    !+ad_summ  an integer
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  string : input string : contains digits of the number
-    !+ad_args  length : input integer : useful length of character string
-    !+ad_args  ivar : output integer : value stored in the string
-    !+ad_args  icode : output integer : diagnostic flag
-    !+ad_desc  This routine converts the ASCII digits in string(1:length)
-    !+ad_desc  to the integer ivar. It is equivalent to doing
-    !+ad_desc  'READ(STRING(1:LENGTH),I) IVAR' but this routine conforms
-    !+ad_desc  to the ANSI standard.
-    !+ad_desc  Each digit is parsed in turn, the current total is multiplied
-    !+ad_desc  by ten and the new digit is added.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  05/01/04 PJK Initial F90 version
-    !+ad_hist  01/04/08 PJK (v2.3.0.0) Replaced the use of an overflowing
-    !+ad_hisc    integer as a flag, with a non-overflowing but large value
-    !+ad_hist  14/01/13 PJK Used maxlen for character array size
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that converts the ASCII digits in a string to
+    !! an integer
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! string : input string : contains digits of the number
+    !! length : input integer : useful length of character string
+    !! ivar : output integer : value stored in the string
+    !! icode : output integer : diagnostic flag
+    !! This routine converts the ASCII digits in string(1:length)
+    !! to the integer ivar. It is equivalent to doing
+    !! 'READ(STRING(1:LENGTH),I) IVAR' but this routine conforms
+    !! to the ANSI standard.
+    !! Each digit is parsed in turn, the current total is multiplied
+    !! by ten and the new digit is added.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3824,26 +3602,19 @@ contains
 
   subroutine string_to_real(string,length,rval,icode)
 
-    !+ad_name  string_to_real
-    !+ad_summ  Routine that converts the ASCII digits in a string to
-    !+ad_summ  a real value
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  string : input string : contains digits of the number
-    !+ad_args  length : input integer : useful length of character string
-    !+ad_args  rvar : output real : value stored in the string
-    !+ad_args  icode : output integer : diagnostic flag
-    !+ad_desc  This routine converts the ASCII digits in string(1:length)
-    !+ad_desc  to the real variable rvar.
-    !+ad_desc  The string is parsed one character at a time, from the left,
-    !+ad_desc  handling the mantissa, and all other components of the real
-    !+ad_desc  number separately, combining them at the end.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  05/01/04 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that converts the ASCII digits in a string to
+    !! a real value
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! string : input string : contains digits of the number
+    !! length : input integer : useful length of character string
+    !! rvar : output real : value stored in the string
+    !! icode : output integer : diagnostic flag
+    !! This routine converts the ASCII digits in string(1:length)
+    !! to the real variable rvar.
+    !! The string is parsed one character at a time, from the left,
+    !! handling the mantissa, and all other components of the real
+    !! number separately, combining them at the end.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4024,25 +3795,15 @@ contains
 
   subroutine get_value_int(ival,icode)
 
-    !+ad_name  get_value_int
-    !+ad_summ  Routine that extracts an integer value from a line of the
-    !+ad_summ  input file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  ival   : output integer : extracted integer value
-    !+ad_args  icode  : output integer : diagnostic flag
-    !+ad_desc  This routine extracts an integer value from the current line of
-    !+ad_desc  the input file, i.e. the value of an integer variable as
-    !+ad_desc  specified by the user.
-    !+ad_prob  None
-    !+ad_call  string_to_int
-    !+ad_hist  05/01/04 PJK Initial F90 version
-    !+ad_hist  14/01/13 PJK Used maxlen for character array size
-    !+ad_hist  26/11/13 PJK Erroneous decimal points in input line are
-    !+ad_hisc               now discarded with a warning message
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that extracts an integer value from a line of the
+    !! input file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! ival   : output integer : extracted integer value
+    !! icode  : output integer : diagnostic flag
+    !! This routine extracts an integer value from the current line of
+    !! the input file, i.e. the value of an integer variable as
+    !! specified by the user.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4143,22 +3904,14 @@ contains
 
   subroutine get_value_real(rval,icode)
 
-    !+ad_name  get_value_real
-    !+ad_summ  Routine that extracts a real value from a line of the input file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rval   : output real : extracted real value
-    !+ad_args  icode  : output integer : diagnostic flag
-    !+ad_desc  This routine extracts a real value from the current line of
-    !+ad_desc  the input file, i.e. the value of a real variable as specified
-    !+ad_desc  by the user.
-    !+ad_prob  None
-    !+ad_call  string_to_real
-    !+ad_hist  05/01/04 PJK Initial F90 version
-    !+ad_hist  14/01/13 PJK Used maxlen for character array size
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that extracts a real value from a line of the input file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rval   : output real : extracted real value
+    !! icode  : output integer : diagnostic flag
+    !! This routine extracts a real value from the current line of
+    !! the input file, i.e. the value of a real variable as specified
+    !! by the user.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4248,24 +4001,17 @@ contains
 
   subroutine get_substring(string,icode)
 
-    !+ad_name  get_substring
-    !+ad_summ  Routine that extracts a substring from a line of the input file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  string : output string : extracted string
-    !+ad_args  icode  : output integer : diagnostic flag
-    !+ad_desc  This routine extracts a string from the current line of
-    !+ad_desc  the input file, i.e. the value of a string variable as specified
-    !+ad_desc  by the user. Unlike routine
-    !+ad_desc  <A HREF="get_substring_trim.html">get_substring_trim</A>,
-    !+ad_desc  this routine does not truncate the string found at its first
-    !+ad_desc  non-leading blank.
-    !+ad_prob  None
-    !+ad_hist  05/01/04 PJK Initial F90 version
-    !+ad_hist  14/01/13 PJK Used maxlen for character array size
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that extracts a substring from a line of the input file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! string : output string : extracted string
+    !! icode  : output integer : diagnostic flag
+    !! This routine extracts a string from the current line of
+    !! the input file, i.e. the value of a string variable as specified
+    !! by the user. Unlike routine
+    !! <A HREF="get_substring_trim.html">get_substring_trim</A>,
+    !! this routine does not truncate the string found at its first
+    !! non-leading blank.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4336,25 +4082,18 @@ contains
 
   subroutine get_subscript(isub1,isub2,icode)
 
-    !+ad_name  get_subscript
-    !+ad_summ  Routine that extracts any subscripts present in a line of
-    !+ad_summ  the input file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  isub1  : output integer : first subscript found
-    !+ad_args  isub2  : output integer : second subscript found
-    !+ad_args  icode  : output integer : diagnostic flag
-    !+ad_desc  This routine extracts any subscripts from the current line of
-    !+ad_desc  the input file, i.e. if any array elements are specified
-    !+ad_desc  by the user. It looks at the next non-space character in the
-    !+ad_desc  line, and if it is a left bracket, it assumes that at
-    !+ad_desc  least one subscript is to follow and extracts it/them.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  05/01/04 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that extracts any subscripts present in a line of
+    !! the input file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! isub1  : output integer : first subscript found
+    !! isub2  : output integer : second subscript found
+    !! icode  : output integer : diagnostic flag
+    !! This routine extracts any subscripts from the current line of
+    !! the input file, i.e. if any array elements are specified
+    !! by the user. It looks at the next non-space character in the
+    !! line, and if it is a left bracket, it assumes that at
+    !! least one subscript is to follow and extracts it/them.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4501,30 +4240,20 @@ contains
 
   subroutine get_variable_name(varnam,varlen,isub1,isub2)
 
-    !+ad_name  get_variable_name
-    !+ad_summ  Routine that extracts a variable name from a line of
-    !+ad_summ  the input file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  varnam : output string  : extracted variable name
-    !+ad_args  varlen : output integer : length of variable name
-    !+ad_args  isub1  : output integer : first subscript found
-    !+ad_args  isub2  : output integer : second subscript found
-    !+ad_desc  This routine extracts a variable name from the current line of
-    !+ad_desc  the input file. It also extracts any subscripts present.
-    !+ad_desc  On exit, the counter <CODE>iptr</CODE> points to the first
-    !+ad_desc  character of the value to be assigned to the variable.
-    !+ad_desc  If the routine finds an error a value of 0 is returned in
-    !+ad_desc  variable <CODE>varlen</CODE>.
-    !+ad_prob  None
-    !+ad_call  get_subscript
-    !+ad_call  lower_case
-    !+ad_hist  05/01/04 PJK Initial F90 version
-    !+ad_hist  14/01/13 PJK Used maxlen for character array size
-    !+ad_hist  19/05/15 PJK Variable name is now returned in lower case
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that extracts a variable name from a line of
+    !! the input file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! varnam : output string  : extracted variable name
+    !! varlen : output integer : length of variable name
+    !! isub1  : output integer : first subscript found
+    !! isub2  : output integer : second subscript found
+    !! This routine extracts a variable name from the current line of
+    !! the input file. It also extracts any subscripts present.
+    !! On exit, the counter <CODE>iptr</CODE> points to the first
+    !! character of the value to be assigned to the variable.
+    !! If the routine finds an error a value of 0 is returned in
+    !! variable <CODE>varlen</CODE>.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4620,27 +4349,18 @@ contains
 
   subroutine check_range_int(cvar,varval,min_value,max_value)
 
-    !+ad_name  check_range_int
-    !+ad_summ  Routine that checks whether an integer variable lies within
-    !+ad_summ  the desired range
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer  : Fortran output unit identifier
-    !+ad_args  cvar    : input string   : name of variable
-    !+ad_args  varval  : input integer  : value of variable
-    !+ad_args  min_value : input integer : minimum allowed value of variable
-    !+ad_args  max_value : input integer : maximum allowed value of variable
-    !+ad_desc  This routine checks whether an integer variable lies within
-    !+ad_desc  the range predetermined by the user, and reports an error
-    !+ad_desc  and stops if it doesn't.
-    !+ad_prob  None
-    !+ad_call  report_input_error
-    !+ad_hist  05/01/04 PJK Initial F90 version
-    !+ad_hist  13/04/11 PJK Improved error handling
-    !+ad_hist  04/10/12 PJK Allowed min_value = max_value
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that checks whether an integer variable lies within
+    !! the desired range
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer  : Fortran output unit identifier
+    !! cvar    : input string   : name of variable
+    !! varval  : input integer  : value of variable
+    !! min_value : input integer : minimum allowed value of variable
+    !! max_value : input integer : maximum allowed value of variable
+    !! This routine checks whether an integer variable lies within
+    !! the range predetermined by the user, and reports an error
+    !! and stops if it doesn't.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4681,26 +4401,17 @@ contains
 
   subroutine check_range_real(cvar,varval,min_value,max_value)
 
-    !+ad_name  check_range_real
-    !+ad_summ  Routine that checks whether a real variable lies within
-    !+ad_summ  the desired range
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  cvar    : input string   : name of variable
-    !+ad_args  varval  : input real     : value of variable
-    !+ad_args  min_value : input real   : minimum allowed value of variable
-    !+ad_args  max_value : input real   : maximum allowed value of variable
-    !+ad_desc  This routine checks whether a real variable lies within
-    !+ad_desc  the range predetermined by the user, and reports an error
-    !+ad_desc  and stops if it doesn't.
-    !+ad_prob  None
-    !+ad_call  report_input_error
-    !+ad_hist  05/01/04 PJK Initial F90 version
-    !+ad_hist  13/04/11 PJK Improved error handling
-    !+ad_hist  04/10/12 PJK Allowed min_value = max_value
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that checks whether a real variable lies within
+    !! the desired range
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! cvar    : input string   : name of variable
+    !! varval  : input real     : value of variable
+    !! min_value : input real   : minimum allowed value of variable
+    !! max_value : input real   : maximum allowed value of variable
+    !! This routine checks whether a real variable lies within
+    !! the range predetermined by the user, and reports an error
+    !! and stops if it doesn't.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4742,21 +4453,14 @@ contains
 
   subroutine lower_case(string,start,finish)
 
-    !+ad_name  lower_case
-    !+ad_summ  Routine that converts a (sub-)string to lowercase
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  string : input string   : character string of interest
-    !+ad_args  start  : optional input integer  : starting character for conversion
-    !+ad_args  finish : optional input integer  : final character for conversion
-    !+ad_desc  This routine converts the specified section of a string
-    !+ad_desc  to lowercase. By default, the whole string will be converted.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  19/05/15 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine that converts a (sub-)string to lowercase
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! string : input string   : character string of interest
+    !! start  : optional input integer  : starting character for conversion
+    !! finish : optional input integer  : final character for conversion
+    !! This routine converts the specified section of a string
+    !! to lowercase. By default, the whole string will be converted.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

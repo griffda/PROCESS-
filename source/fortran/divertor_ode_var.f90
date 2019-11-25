@@ -1,16 +1,11 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module divertor_ode_var
-  !+ad_name  divertor_ode
-  !+ad_summ  Module containing divertor Kallenbach model
-  !+ad_type  Module
-  !+ad_auth  M Kovari, CCFE, Culham Science Centre
-  !+ad_args  N/A
-  !+ad_desc  This module contains the PROCESS Kallenbach divertor model
-  !+ad_prob  None
-  !+ad_hist  25/01/17 MDK  Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs
+  !! Module containing divertor Kallenbach model
+  !! author: M Kovari, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains the PROCESS Kallenbach divertor model
+  !! 
 
   ! NEW VERSION! 29/6/18
   ! Using n as variable rather than Ptotal

@@ -1,16 +1,11 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module divertor_ode
-  !+ad_name  divertor_ode
-  !+ad_summ  Module containing divertor Kallenbach model
-  !+ad_type  Module
-  !+ad_auth  M Kovari, CCFE, Culham Science Centre
-  !+ad_args  N/A
-  !+ad_desc  This module contains the PROCESS Kallenbach divertor model
-  !+ad_prob  None
-  !+ad_hist  25/01/17 MDK  Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs
+  !! Module containing divertor Kallenbach model
+  !! author: M Kovari, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains the PROCESS Kallenbach divertor model
+  !! 
 
   use global_variables
   use maths_library
@@ -32,7 +27,7 @@ module divertor_ode
   implicit none
 
   ! Module-level declarations !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   logical, public, save :: impurities_present(nimp)=.false.
 
@@ -92,18 +87,14 @@ contains
              psep_kallenbach, teomp, neomp,  &
              outfile,iprint)
 
-    !+ad_name  divertor_Kallenbach
-    !+ad_summ  calculate radiative loss and plasma profiles along a flux tube including momentum losses
-    !+ad_type  subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate radiative loss and plasma profiles along a flux tube including momentum losses.
-    !+ad_desc  Description in A. Kallenbach et al., PPCF 58 (2016) 045013, this version based on that
-    !+ad_desc  sent by Arne 17.5.2016.
-    !+ad_desc  Note this solver is not suitable for stiff equations - which these are. Instead I have
-    !+ad_desc  set the neutral density derivatives to zero when the neutral density is small.
-    !+ad_stat  Okay
-    !+ad_docs  https://people.sc.fsu.edu/~jburkardt/f_src/ode/ode.html
+    !! calculate radiative loss and plasma profiles along a flux tube including momentum losses
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! Calculate radiative loss and plasma profiles along a flux tube including momentum losses.
+    !! Description in A. Kallenbach et al., PPCF 58 (2016) 045013, this version based on that
+    !! sent by Arne 17.5.2016.
+    !! Note this solver is not suitable for stiff equations - which these are. Instead I have
+    !! set the neutral density derivatives to zero when the neutral density is small.
+    !! https://people.sc.fsu.edu/~jburkardt/f_src/ode/ode.html
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -145,8 +136,8 @@ contains
     ! qtargettotal : Power density on target including surface recombination [W/m2]
     real(kind(1.0D0)),intent(in) :: qtargettotal
 
-    !+ad_vars  qtargetcomplete : Total power density on target [W/m2]
     real(kind(1.0D0)) :: qtargetcomplete
+    !! qtargetcomplete : Total power density on target [W/m2]
 
     ! target angle [deg]
     real(kind(1.0D0)),intent(in) :: targetangle
@@ -237,12 +228,12 @@ contains
     real(kind(1.0D0)) :: Bp_target, Bt_target, Btotal_target, pitch_angle, sin_pitch_angle
     real(kind(1.0D0)) :: poloidal_flux_expansion
 
-    !+ad_vars  ptarget_conv : power deposited on target by convection [W]
     real(kind(1.0D0)) ::ptarget_conv
-    !+ad_vars  ptarget_cond : power deposited on target by conduction [W]
+    !! ptarget_conv : power deposited on target by convection [W]
     real(kind(1.0D0)) ::ptarget_cond
-    !+ad_vars  ptarget_recomb : power deposited on target by recombination of hydrogenic ions [W]
+    !! ptarget_cond : power deposited on target by conduction [W]
     real(kind(1.0D0)) ::ptarget_recomb
+    !! ptarget_recomb : power deposited on target by recombination of hydrogenic ions [W]
     real(kind(1.0D0)) ::ptarget_isotropic
     real(kind(1.0D0)) ::ptarget_total
     real(kind(1.0D0)) ::ptarget_complete
@@ -250,7 +241,7 @@ contains
 
 
     ! ODE solver parameters
-    !!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!
 
     ! Number of steps along the 1D line
     integer(kind=4), parameter :: step_num = 200
@@ -281,35 +272,35 @@ contains
     real(kind(1.0D0)) :: n, n01, n02, te, nv, pressure, Power, nv24, nel20, Pthermal, n0e20, bracket
     real(kind(1.0D0)) :: cs, mach
 
-    !+ad_vars  A_cross : Area of flux bundle perpendicular to B
     real(kind(1.0D0)) :: A_cross
+    !! A_cross : Area of flux bundle perpendicular to B
 
-    !+ad_vars  lambda_q_target : SOL radial thickness at the target, mapped to OMP [m]
     real(kind(1.0D0)) :: lambda_q_target
+    !! lambda_q_target : SOL radial thickness at the target, mapped to OMP [m]
 
-    !+ad_vars  Powerup : upstream power [W]
     real(kind(1.0D0)) :: Powerup
+    !! Powerup : upstream power [W]
 
-    !+ad_vars  balance : Power balance error - should be zero [W]
     real(kind(1.0D0)) :: balance
+    !! balance : Power balance error - should be zero [W]
 
     ! Plasma thermal pressure
     real(kind(1.0D0)) :: nete
 
-    !+ad_vars  nete0 : Plasma thermal pressure near target
     real(kind(1.0D0)) :: nete0
+    !! nete0 : Plasma thermal pressure near target
 
-    !+ad_vars  nel0 : Electron density near target [m-3]
     real(kind(1.0D0)) :: nel0
+    !! nel0 : Electron density near target [m-3]
 
-    !+ad_vars  qtarget : Power density on target not including surface recombination [W/m2]
     real(kind(1.0D0)) :: qtarget
+    !! qtarget : Power density on target not including surface recombination [W/m2]
 
-    !+ad_vars  qtarget_isotropic : Power density on target due to isotropic losses from SOL [W/m2]
     real(kind(1.0D0)) :: qtarget_isotropic
+    !! qtarget_isotropic : Power density on target due to isotropic losses from SOL [W/m2]
 
-    !+ad_vars  receiving_area : Area on which the power due to isotropic losses from SOL energy is incident [m2]
     real(kind(1.0D0)) :: receiving_area
+    !! receiving_area : Area on which the power due to isotropic losses from SOL energy is incident [m2]
 
     ! Mean charge and quadratic mean charge from ADAS
     real(kind(1.0D0)) :: z, qz
@@ -322,18 +313,18 @@ contains
 
 
 
-    !+ad_vars  WettedArea : Wetted area of target [m2]
     real(kind(1.0D0)) :: WettedArea, WettedAreaComparison
+    !! WettedArea : Wetted area of target [m2]
 
-    !+ad_vars  WettedLength : Wetted length on target measured in poloidal plane [m]
     real(kind(1.0D0)) :: WettedLength, WettedLengthComparison
+    !! WettedLength : Wetted length on target measured in poloidal plane [m]
 
-    !+ad_vars  sab : connection length used for calculating the "near zone" [m]
     real(kind(1.0D0)) :: sab
-    !+ad_vars  romp : Major radius at outer midplane  [m]
+    !! sab : connection length used for calculating the "near zone" [m]
     real(kind(1.0D0)) :: romp
-    !+ad_vars  ionfluxtarget : Ion flux density on target [m-2s-1]
+    !! romp : Major radius at outer midplane  [m]
     real(kind(1.0D0)) :: ionfluxtarget
+    !! ionfluxtarget : Ion flux density on target [m-2s-1]
     ! Typical SOL temperature, used only for estimating zeffective in the SOL [eV]
     real(kind(1.0D0)) :: ttypical
     ! Impurity radiation by species
@@ -966,21 +957,15 @@ do i = 2, nimp
   ! ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine differential ( t, y, yp )
-    !+ad_name  differential
-    !+ad_summ  differential supplies the right hand side of the ODE
-    !+ad_type  subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  t : input real : T, the independent variable
-    !+ad_args  y : input real : Y(), the dependent variable
-    !+ad_args  yp : output real : YP(), the value of the derivative
-    !+ad_desc  differential supplies the right hand side of the ODE
-    !+ad_desc  Note that t is only used here because the area is a function of x.
-    !+ad_desc  Y(7-10) are the power loss integrals
-    !+ad_prob  None
-    !+ad_hist  01/02/17 MDK  Initial version
-    !+ad_stat  Okay
-    !+ad_docs
+    !! differential supplies the right hand side of the ODE
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! t : input real : T, the independent variable
+    !! y : input real : Y(), the dependent variable
+    !! yp : output real : YP(), the value of the derivative
+    !! differential supplies the right hand side of the ODE
+    !! Note that t is only used here because the area is a function of x.
+    !! Y(7-10) are the power loss integrals
+    !! 
 
     implicit none
 

@@ -85,40 +85,6 @@ make_default:
  tags:
   - freia
 
-make_doc:
-
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target doc
- tags:
-  - freia
-
-make_vardes:
-
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target vardes
- artifacts:
-   expire_in: 2 hrs
-   paths:
-     - documentation/html/*.html
- tags:
-  - freia
-
 make_dicts:
 
  only:
@@ -131,36 +97,6 @@ make_dicts:
   - ls -lah
   - cmake3 -H. -Bbuild
   - cmake3 --build build --target dicts
- tags:
-  - freia
-
-make_html:
-
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target html
- tags:
-  - freia
-
-make_userguide:
-
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target userguide
  tags:
   - freia
 
@@ -396,11 +332,12 @@ line_length:
 pages:
   before_script:
     - "export LOGNAME=root"
+    - export LANG=C.UTF-8
+    # Python3 uses the locale to choose the file encoding it uses
+    # Without this it will use ASCII encoding and Ford will fail
   when: on_success
   only:
     - develop
-    - ford_docs
-    - ford_dicts
   stage: pages
   script:
    - pwd
@@ -411,9 +348,6 @@ pages:
    - pip install mkdocs-material
    - pip install pymdown-extensions
    - cmake -H. -Bbuild
-   - cmake --build build --target vardes
-   - pandoc documentation/html/vardes.html -f html -t markdown -o documentation/proc-pages/vardes.md
-   - python documentation/proc-pages/scripts/sort_vardes.py documentation/proc-pages/vardes.md
    - mkdocs build
    
    # FORD documentation

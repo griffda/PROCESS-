@@ -1,38 +1,31 @@
-!+ad_name  refprop
-!+ad_summ  NIST Reference Fluid Thermodynamic and Transport Properties
-!+ad_summ  REFPROP Version 9.1
-!+ad_type  Subroutines
-!+ad_auth  P J Knight, CCFE, Culham Science Centre
-!+ad_cont  -
-!+ad_args  N/A
-!+ad_desc  This file contains the majority of the Fortran files comprising the
-!+ad_desc  REFPROP source code.
-!+ad_desc  <P>With the exception of this header, it was created simply by
-!+ad_desc  concatenating the following files:<P><CODE>
-!+ad_desc  core_anc.for  core_bwr.for  core_cpp.for  core_de.for
-!+ad_desc  core_ecs.for  core_feq.for  core_mlt.for  core_ph0.for
-!+ad_desc  core_pr.for   core_qui.for  core_stn.for  flash2.for
-!+ad_desc  flsh_sub.for  idealgas.for  mix_aga8.for  mix_hmx.for
-!+ad_desc  prop_sub.for  realgas.for   sat_sub.for   setup2.for
-!+ad_desc  setup.for     trns_ecs.for  trnsp.for     trns_tcx.for
-!+ad_desc  trns_vis.for  utility.for</CODE>
-!+ad_desc  <P>The additional Fortran files <CODE>commons.for</CODE> and
-!+ad_desc  <CODE>comtrn.for</CODE> are also required for compilation,
-!+ad_desc  and the <CODE>fluids</CODE> subdirectory and its contents
-!+ad_desc  are used during run-time.
-!+ad_desc  (Note that file <CODE>pass_ftn.for</CODE> is not used.)
-!+ad_desc  <P>The code was obtained for CCFE use by M. Kovari through
-!+ad_desc  CODAS PC Job Number 16359.
-!+ad_prob  None
-!+ad_call  -
-!+ad_hist  16/12/14 PJK Incorporated for PROCESS use
-!+ad_stat  Okay
-!+ad_docs  REFPROP Version 9.1 User's Guide,
-!+ad_docc  Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
-!+ad_docc  Applied Chemicals and Materials Division,
-!+ad_docc  National Institute of Standards and Technology,
-!+ad_docc  Boulder, Colorado 80305,
-!+ad_docc  April, 2013
+!! NIST Reference Fluid Thermodynamic and Transport Properties
+!! REFPROP Version 9.1
+!! author: P J Knight, CCFE, Culham Science Centre
+!! N/A
+!! This file contains the majority of the Fortran files comprising the
+!! REFPROP source code.
+!! <P>With the exception of this header, it was created simply by
+!! concatenating the following files:<P><CODE>
+!! core_anc.for  core_bwr.for  core_cpp.for  core_de.for
+!! core_ecs.for  core_feq.for  core_mlt.for  core_ph0.for
+!! core_pr.for   core_qui.for  core_stn.for  flash2.for
+!! flsh_sub.for  idealgas.for  mix_aga8.for  mix_hmx.for
+!! prop_sub.for  realgas.for   sat_sub.for   setup2.for
+!! setup.for     trns_ecs.for  trnsp.for     trns_tcx.for
+!! trns_vis.for  utility.for</CODE>
+!! <P>The additional Fortran files <CODE>commons.for</CODE> and
+!! <CODE>comtrn.for</CODE> are also required for compilation,
+!! and the <CODE>fluids</CODE> subdirectory and its contents
+!! are used during run-time.
+!! (Note that file <CODE>pass_ftn.for</CODE> is not used.)
+!! <P>The code was obtained for CCFE use by M. Kovari through
+!! CODAS PC Job Number 16359.
+!! REFPROP Version 9.1 User's Guide,
+!! Eric W. Lemmon, Marcia L. Huber, Mark O. McLinden,
+!! Applied Chemicals and Materials Division,
+!! National Institute of Standards and Technology,
+!! Boulder, Colorado 80305,
+!! April, 2013
 !
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -2,30 +2,12 @@
 
 module vacuum_module
 
-  !+ad_name  vacuum_module
-  !+ad_summ  Module containing vacuum system routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  vaccall
-  !+ad_cont  vacuum
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  parameters of the vacuum system for a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  error_handling
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_call  vacuum_variables
-  !+ad_hist  29/10/12 PJK Initial version of module
-  !+ad_hist  30/10/12 PJK Added times_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing vacuum system routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! parameters of the vacuum system for a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -49,24 +31,12 @@ contains
 
   subroutine vaccall(outfile,iprint)
 
-    !+ad_name  vaccall
-    !+ad_summ  Routine to call the vacuum module
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : Fortran output unit identifier
-    !+ad_args  iprint : input integer : Switch to write output (1=yes)
-    !+ad_desc  This routine calls the main vacuum package.
-    !+ad_prob  NBI gas load (qtorus) is currently hardwired to zero.
-    !+ad_call  vacuum
-    !+ad_hist  20/09/11 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  12/06/13 PJK Modified gasld calculation with new qfuel definition
-    !+ad_hist  15/08/13 PJK Changed arguments to vacuum call
-    !+ad_hist  10/09/13 PJK Removed specific reference to D-T fuel
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to call the vacuum module
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : Fortran output unit identifier
+    !! iprint : input integer : Switch to write output (1=yes)
+    !! This routine calls the main vacuum package.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -110,24 +80,11 @@ contains
   end subroutine vaccall
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   subroutine vacuum_simple(npump,iprint,outfile)
-    !+ad_name  vacuum_simple
-    !+ad_summ  Simple model of vacuum pumping system
-    !+ad_type  Subroutine
-    !+ad_auth  MD Kovari, CCFE, Culham Science Centre
-    !+ad_args  iprint : input integer : Switch to write output (1=yes)
-    !+ad_args  outfile : input integer : Fortran output unit identifier
-    !+ad_args  npump : output real : number of pumps for pumpdown and steady-state
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_hist  12/08/15 MDK
-    !+ad_hist  22/09/15 MDK. Battes, Day and Rohde pump-down model: See global_variables.f90
-    !+ad_hist  20/01/16  JM  Added pumptp variable for throughput. Default to ITER value.
-    !+ad_stat  Okay
+    !! Simple model of vacuum pumping system
+    !! author: MD Kovari, CCFE, Culham Science Centre
+    !! iprint : input integer : Switch to write output (1=yes)
+    !! outfile : input integer : Fortran output unit identifier
+    !! npump : output real : number of pumps for pumpdown and steady-state
 
     implicit none
 
@@ -182,61 +139,39 @@ contains
        thtf,ritf,n_tf,tdwell,nplasma,ndiv,qtorus,gasld,pumpn,nduct,dlscalc, &
        mvdsh,dimax,iprint,outfile)
 
-    !+ad_name  vacuum
-    !+ad_summ  Routine to calculate the parameters of the vacuum system
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Haines, FEDC (originator)
-    !+ad_auth  P Dubois, LLNL
-    !+ad_auth  J Galambos, ORNL
-    !+ad_auth  P C Shipe, ORNL
-    !+ad_cont  N/A
-    !+ad_args  pfusmw : input real : Fusion power (MW)
-    !+ad_args  r0 : input real : Major radius (m)
-    !+ad_args  aw : input real : Minor radius (m)
-    !+ad_args  dsol : input real : Scrape-off layer average width (m)
-    !+ad_args  plasma_sarea : input real : Plasma surface area (m2)
-    !+ad_args  plasma_vol : input real : Plasma volume (m3)
-    !+ad_args  thshldo : input real : Outboard shield thickness (m)
-    !+ad_args  thshldi : input real : Inboard shield thickness (m)
-    !+ad_args  thtf : input real : TF coil thickness (m)
-    !+ad_args  ritf : input real : Radius of inboard TF leg point nearest plasma (m)
-    !+ad_args  n_tf : input real : Number of TF coils
-    !+ad_args  tdwell : input real : Dwell time between pulses (s)
-    !+ad_args  nplasma : input real : Plasma density (m**-3)
-    !+ad_args  ndiv : input integer : Number of divertors with pumping
-    !+ad_argc      (single null = 1, double null = 2 if pumping provided at
-    !+ad_argc       both locations)
-    !+ad_args  qtorus : input real : Gas load  from NBI (deuterons/second)
-    !+ad_args  gasld : input real : Total D-T gas load (kg/s)
-    !+ad_args  pumpn : output real : Number of high vacuum pumps
-    !+ad_args  nduct : output integer : Number of ducts
-    !+ad_args  dlscalc : output real : Duct-length equivalent for costing purposes (m)
-    !+ad_args  mvdsh : output real : Mass of a single vacuum duct shield (kg)
-    !+ad_args  dimax : output real : Diameter of passage from divertor to pumping ducts (m)
-    !+ad_args  iprint : input integer : Switch to write output (1=yes)
-    !+ad_args  outfile : input integer : Fortran output unit identifier
-    !+ad_desc  This routine calculates the parameters of the vacuum system.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_call  report_error
-    !+ad_hist  20/09/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  15/08/13 PJK Modified arguments for new chamber surface area
-    !+ad_hisc               and volume calculations
-    !+ad_hist  14/10/13 PJK Added lap counter to help in pathological cases
-    !+ad_hist  19/11/13 PJK Moved l1,l2,l3 calculation out of loop
-    !+ad_hist  16/06/14 PJK Removed duplicate outputs
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the parameters of the vacuum system
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Haines, FEDC (originator)
+    !! author: P Dubois, LLNL
+    !! author: J Galambos, ORNL
+    !! author: P C Shipe, ORNL
+    !! pfusmw : input real : Fusion power (MW)
+    !! r0 : input real : Major radius (m)
+    !! aw : input real : Minor radius (m)
+    !! dsol : input real : Scrape-off layer average width (m)
+    !! plasma_sarea : input real : Plasma surface area (m2)
+    !! plasma_vol : input real : Plasma volume (m3)
+    !! thshldo : input real : Outboard shield thickness (m)
+    !! thshldi : input real : Inboard shield thickness (m)
+    !! thtf : input real : TF coil thickness (m)
+    !! ritf : input real : Radius of inboard TF leg point nearest plasma (m)
+    !! tfno : input real : Number of TF coils
+    !! tdwell : input real : Dwell time between pulses (s)
+    !! nplasma : input real : Plasma density (m**-3)
+    !! ndiv : input integer : Number of divertors with pumping
+    !! (single null = 1, double null = 2 if pumping provided at
+    !! both locations)
+    !! qtorus : input real : Gas load  from NBI (deuterons/second)
+    !! gasld : input real : Total D-T gas load (kg/s)
+    !! pumpn : output real : Number of high vacuum pumps
+    !! nduct : output integer : Number of ducts
+    !! dlscalc : output real : Duct-length equivalent for costing purposes (m)
+    !! mvdsh : output real : Mass of a single vacuum duct shield (kg)
+    !! dimax : output real : Diameter of passage from divertor to pumping ducts (m)
+    !! iprint : input integer : Switch to write output (1=yes)
+    !! outfile : input integer : Fortran output unit identifier
+    !! This routine calculates the parameters of the vacuum system.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -139,56 +139,18 @@
 
   subroutine loca(outfile,iprint)
 
-    !+ad_name  loca
-    !+ad_summ  Interface to Loss Of Coolant Accident model
-    !+ad_type  Subroutine
-    !+ad_auth  C B A Forty, Culham Laboratory
-    !+ad_auth  W E Han, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  blcyl3
-    !+ad_cont  deroff
-    !+ad_cont  fofx
-    !+ad_cont  newton
-    !+ad_cont  root
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine links the Loss Of Coolant Accident model to the rest of
-    !+ad_desc  PROCESS. The model calculates the steady state temperatures that
-    !+ad_desc  would develop following a loss of coolant accident.
-    !+ad_prob  None
-    !+ad_call  build_variables
-    !+ad_call  constants
-    !+ad_call  fispact_variables
-    !+ad_call  fwbs_variables
-    !+ad_call  heat_transport_variables
-    !+ad_call  pfcoil_variables
-    !+ad_call  physics_variables
-    !+ad_call  process_output
-    !+ad_call  tfcoil_variables
-    !+ad_call  blcyl3
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  06/02/97 PJK Initial version
-    !+ad_hist  26/02/97 PJK Corrected cases where there is no Central Solenoid
-    !+ad_hist  06/07/99 PJK Allowed for use of more ISUMATTF options
-    !+ad_hist  19/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  18/10/12 PJK Added pfcoil_variables
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  06/11/12 PJK Added fispact_variables
-    !+ad_hist  09/04/13 PJK Comment changes
-    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
-    !+ad_hist  24/06/14 PJK Removed refs to bcylth
-    !+ad_hist  08/09/14 PJK Simplistic changes for ipowerflow=1 model
-    !+ad_hist  16/05/19 SK Radial build made consistent (precompressor/thermal shield added)
-    !+ad_stat  This routine is untested in F90...
-    !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
-    !+ad_docs  Strategic Studies Note 96/30, January 1997
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Interface to Loss Of Coolant Accident model
+    !! author: C B A Forty, Culham Laboratory
+    !! author: W E Han, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine links the Loss Of Coolant Accident model to the rest of
+    !! PROCESS. The model calculates the steady state temperatures that
+    !! would develop following a loss of coolant accident.
+    !! F/MI/PJK/LOGBOOK12, pp.70,71,72,73
+    !! Strategic Studies Note 96/30, January 1997
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -630,26 +592,17 @@
 
     subroutine blcyl3(fwtemp)
 
-      !+ad_name  blcyl3
-      !+ad_summ  Fusion power plant heat transfer module
-      !+ad_type  Subroutine
-      !+ad_auth  C B A Forty, Culham Laboratory
-      !+ad_auth  W E Han, CCFE, Culham Science Centre
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  fwtemp : output real :  Outboard first wall temperature (K)
-      !+ad_desc  This routine calculates the steady state temperatures that
-      !+ad_desc  would develop following a loss of coolant accident.
-      !+ad_desc  Cylindrical geometry is assumed.
-      !+ad_prob  None
-      !+ad_call  root
-      !+ad_hist  17/01/97 CBAF Initial version
-      !+ad_hist  06/02/97 PJK Modified to allow input of QVOL rather than DECPW
-      !+ad_hist  19/09/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
-      !+ad_docs  Strategic Studies Note 96/30, January 1997
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Fusion power plant heat transfer module
+      !! author: C B A Forty, Culham Laboratory
+      !! author: W E Han, CCFE, Culham Science Centre
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! fwtemp : output real :  Outboard first wall temperature (K)
+      !! This routine calculates the steady state temperatures that
+      !! would develop following a loss of coolant accident.
+      !! Cylindrical geometry is assumed.
+      !! F/MI/PJK/LOGBOOK12, pp.70,71,72,73
+      !! Strategic Studies Note 96/30, January 1997
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -864,30 +817,20 @@
 
     subroutine root(q,x,a,t)
 
-      !+ad_name  root
-      !+ad_summ  Root finding routine for the LOCA model
-      !+ad_type  Subroutine
-      !+ad_auth  C B A Forty, Culham Laboratory
-      !+ad_auth  W E Han, CCFE, Culham Science Centre
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  q : input real : heat power (W)
-      !+ad_args  x : output real : temperature (K)
-      !+ad_args  a : input real : heat transfer coefficient
-      !+ad_args  t : input real : ambient air temperature (K)
-      !+ad_desc  This routine calculates the temperature at a layer given
-      !+ad_desc  the local thermal characteristics, via a Newton-Raphson
-      !+ad_desc  root-finding method.
-      !+ad_prob  None
-      !+ad_call  deroff
-      !+ad_call  fofx
-      !+ad_call  newton
-      !+ad_hist  17/01/97 CBAF Initial version
-      !+ad_hist  19/09/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  A First Course in Computational Physics - Paul L DeVries,
-      !+ad_docc  John Wiley & Sons, New York 1994: Chapter 2, p.54
-      !+ad_docs  Strategic Studies Note 96/30, January 1997
+      !! Root finding routine for the LOCA model
+      !! author: C B A Forty, Culham Laboratory
+      !! author: W E Han, CCFE, Culham Science Centre
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! q : input real : heat power (W)
+      !! x : output real : temperature (K)
+      !! a : input real : heat transfer coefficient
+      !! t : input real : ambient air temperature (K)
+      !! This routine calculates the temperature at a layer given
+      !! the local thermal characteristics, via a Newton-Raphson
+      !! root-finding method.
+      !! A First Course in Computational Physics - Paul L DeVries,
+      !! John Wiley & Sons, New York 1994: Chapter 2, p.54
+      !! Strategic Studies Note 96/30, January 1997
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -909,26 +852,18 @@
 
     function fofx(x, q, a, t)
 
-      !+ad_name  fofx
-      !+ad_summ  Radiation power function for the LOCA model
-      !+ad_type  Function returning real
-      !+ad_auth  C B A Forty, Culham Laboratory
-      !+ad_auth  W E Han, CCFE, Culham Science Centre
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  x : input real : temperature (K)
-      !+ad_args  q : input real : heat power (W)
-      !+ad_args  a : input real : heat transfer coefficient
-      !+ad_args  t : input real : ambient air temperature (K)
-      !+ad_desc  This routine evaluates the radiation power function...
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  17/01/97 CBAF Initial version
-      !+ad_hist  19/09/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  A First Course in Computational Physics - Paul L DeVries,
-      !+ad_docc  John Wiley & Sons, New York 1994: Chapter 2, p.54
-      !+ad_docs  Strategic Studies Note 96/30, January 1997
+      !! Radiation power function for the LOCA model
+      !! author: C B A Forty, Culham Laboratory
+      !! author: W E Han, CCFE, Culham Science Centre
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! x : input real : temperature (K)
+      !! q : input real : heat power (W)
+      !! a : input real : heat transfer coefficient
+      !! t : input real : ambient air temperature (K)
+      !! This routine evaluates the radiation power function...
+      !! A First Course in Computational Physics - Paul L DeVries,
+      !! John Wiley & Sons, New York 1994: Chapter 2, p.54
+      !! Strategic Studies Note 96/30, January 1997
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -955,25 +890,17 @@
 
     function deroff(x,a)
 
-      !+ad_name  deroff
-      !+ad_summ  Derivative of function fofx with respect to x
-      !+ad_type  Function returning real
-      !+ad_auth  C B A Forty, Culham Laboratory
-      !+ad_auth  W E Han, CCFE, Culham Science Centre
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  x : input real : temperature (K)
-      !+ad_args  a : input real : heat transfer coefficient
-      !+ad_desc  This routine evaluates the derivative with respect to x
-      !+ad_desc  of the function <A HREF="fofx.html">fofx</A>.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  17/01/97 CBAF Initial version
-      !+ad_hist  19/09/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  A First Course in Computational Physics - Paul L DeVries,
-      !+ad_docc  John Wiley & Sons, New York 1994: Chapter 2, p.54
-      !+ad_docs  Strategic Studies Note 96/30, January 1997
+      !! Derivative of function fofx with respect to x
+      !! author: C B A Forty, Culham Laboratory
+      !! author: W E Han, CCFE, Culham Science Centre
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! x : input real : temperature (K)
+      !! a : input real : heat transfer coefficient
+      !! This routine evaluates the derivative with respect to x
+      !! of the function <A HREF="fofx.html">fofx</A>.
+      !! A First Course in Computational Physics - Paul L DeVries,
+      !! John Wiley & Sons, New York 1994: Chapter 2, p.54
+      !! Strategic Studies Note 96/30, January 1997
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -995,29 +922,21 @@
 
     subroutine newton(x,f,fprime,q,a,t)
 
-      !+ad_name  newton
-      !+ad_summ  Newton-Raphson root-finder for the LOCA model
-      !+ad_type  Subroutine
-      !+ad_auth  C B A Forty, Culham Laboratory
-      !+ad_auth  W E Han, CCFE, Culham Science Centre
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  x : input/output real : x coordinate
-      !+ad_args  f : real function : f(x)
-      !+ad_args  fprime : real function : derivative d/dx (f(x))
-      !+ad_args  q : input real : heat power (W)
-      !+ad_args  a : input real : heat transfer coefficient
-      !+ad_args  t : input real : ambient air temperature (K)
-      !+ad_desc  This routine is the Newton-Raphson root-finder for the
-      !+ad_desc  LOCA model.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  17/01/97 CBAF Initial version
-      !+ad_hist  19/09/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  A First Course in Computational Physics - Paul L DeVries,
-      !+ad_docc  John Wiley & Sons, New York 1994: Chapter 2, p.54
-      !+ad_docs  Strategic Studies Note 96/30, January 1997
+      !! Newton-Raphson root-finder for the LOCA model
+      !! author: C B A Forty, Culham Laboratory
+      !! author: W E Han, CCFE, Culham Science Centre
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! x : input/output real : x coordinate
+      !! f : real function : f(x)
+      !! fprime : real function : derivative d/dx (f(x))
+      !! q : input real : heat power (W)
+      !! a : input real : heat transfer coefficient
+      !! t : input real : ambient air temperature (K)
+      !! This routine is the Newton-Raphson root-finder for the
+      !! LOCA model.
+      !! A First Course in Computational Physics - Paul L DeVries,
+      !! John Wiley & Sons, New York 1994: Chapter 2, p.54
+      !! Strategic Studies Note 96/30, January 1997
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

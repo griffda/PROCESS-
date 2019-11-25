@@ -1,16 +1,10 @@
 module kit_hcll_module
 
-  !+ad_name  kit_hcll_module
-  !+ad_summ  Module containing KIT HCLL blanket model
-  !+ad_type  Module
-  !+ad_auth  J Morris, CCFE, Culham Science Centre
-  !+ad_args  N/A
-  !+ad_desc  This module contains the PROCESS KIT HCLL blanket model
-  !+ad_desc  based on KIT HCLL model developed by F. Franza
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_hist  10/02/15 JM  Initial version of module
-  !+ad_stat  Okay
+  !! Module containing KIT HCLL blanket model
+  !! author: J Morris, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains the PROCESS KIT HCLL blanket model
+  !! based on KIT HCLL model developed by F. Franza
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -46,7 +40,7 @@ module kit_hcll_module
 
   ! TODO - need checking of the bounds of validity
 
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Variables for output to file
   integer, private :: ip, ofile
@@ -392,21 +386,12 @@ module kit_hcll_module
   contains
 
     subroutine kit_hcll(outfile, iprint)
-      !+ad_name  kit_hcll
-      !+ad_summ  KIT HCLL blanket model
-      !+ad_type  Subroutine
-      !+ad_auth  J Morris, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  outfile : input integer : output file unit
-      !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-      !+ad_desc  This routine calculates nuclear heating for the KIT HCLL
-      !+ad_desc  blanket model.
-      !+ad_prob  None
-      !+ad_call  initialise_params
-      !+ad_call  blanket_composition
-      !+ad_call  thermal_hydraulics
-      !+ad_hist  15/02/16 JM Initial version
-      !+ad_stat  Okay
+      !! KIT HCLL blanket model
+      !! author: J Morris, CCFE, Culham Science Centre
+      !! outfile : input integer : output file unit
+      !! iprint : input integer : switch for writing to output file (1=yes)
+      !! This routine calculates nuclear heating for the KIT HCLL
+      !! blanket model.
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -443,16 +428,9 @@ module kit_hcll_module
     end subroutine
 
    subroutine initialise_parameters
-      !+ad_name  initialise_parameters
-      !+ad_summ  KIT HCLL blanket model parameter initialisation
-      !+ad_type  Subroutine
-      !+ad_auth  J Morris, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_desc  This routine initialises parameters for the KIT HCLL blanket model
-      !+ad_prob  None
-      !+ad_call  component_volumes
-      !+ad_hist  15/02/16 JM Initial version
-      !+ad_stat  Okay
+      !! KIT HCLL blanket model parameter initialisation
+      !! author: J Morris, CCFE, Culham Science Centre
+      !! This routine initialises parameters for the KIT HCLL blanket model
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -545,15 +523,9 @@ module kit_hcll_module
     end subroutine
 
    subroutine blanket_composition
-     !+ad_name  blanket_composition
-     !+ad_summ  KIT HCLL blanket model blanket composition
-     !+ad_type  Subroutine
-     !+ad_auth  J Morris, CCFE, Culham Science Centre
-     !+ad_cont  N/A
-     !+ad_desc  This routine calculates blanket composition for the KIT HCLL blanket model.
-     !+ad_prob  None
-     !+ad_hist  15/02/16 JM Initial version
-     !+ad_stat  Okay
+     !! KIT HCLL blanket model blanket composition
+     !! author: J Morris, CCFE, Culham Science Centre
+     !! This routine calculates blanket composition for the KIT HCLL blanket model.
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -594,7 +566,7 @@ module kit_hcll_module
      thick_bp_ob = bp_ratio_ob*blnkoth
 
      ! Inboard ellipse !
-     !!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!
 
      ! Inboard ellipse minor radius (m)
      r_ib = rminor*(1.0D0 - 0.0D0*triang) + scrapli + dr_bb_ib/2.0D0
@@ -615,7 +587,7 @@ module kit_hcll_module
      len_act_ib = len_ib*(1.0D0 - frac_div_ib)
 
      ! Outboard ellipse !
-     !!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!
 
      ! Outboard ellipse minor radius (m)
      r_ob = rminor*(1.0D0 - 0.0D0*triang) + scraplo + dr_bb_ob/2.0D0
@@ -662,7 +634,7 @@ module kit_hcll_module
      area_fw = area_fw_ib + area_fw_ob
 
      ! Breeding Zone (BZ) !
-     !!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!
 
      ! Radial thickness of inboard/outboard breeding zone (m)
      dr_bz_ib = thick_bz_ib
@@ -677,7 +649,7 @@ module kit_hcll_module
      dp_bz_ob = dp_bb_ob - 2.0D0*thick_cap_ob
 
      ! Breeding Unit (BU) !
-     !!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!
 
      ! Number of BU in a inboard/outboard module along the toroidal direction
      nb_bu_tor_ib = ceiling(dt_bz_ib/dt_bu_max)
@@ -696,7 +668,7 @@ module kit_hcll_module
      dp_bu_ob = dp_bz_ob/nb_bu_pol_ob
 
      ! Manifold Region (Back Plates + Back Supporting Structure) !
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
      ! Radial thickness of inboard/outboard manifold region (m)
      dr_mf_ib = thick_bp_ib + thick_bss_ib
@@ -711,7 +683,7 @@ module kit_hcll_module
      dt_mf_ob = dt_bb_ob
 
      ! First wall (FW) material composition !
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
      ! Percentage of steel in the FW (%)
      frac_vol_steel_fw = 100.0D0 - frac_vol_he_fw
@@ -742,7 +714,7 @@ module kit_hcll_module
      vol_w_fw_ob = frac_vol_w_fw/100.0D0*vol_fw_ob
 
      ! Breeding Zone (BZ) !
-     !!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!
 
      ! Percentage of PbLi in the BZ
      frac_vol_pbli_bz = 100.0D0 - frac_vol_steel_bz - frac_vol_he_bz
@@ -776,7 +748,7 @@ module kit_hcll_module
      vol_pbli_bz = vol_bz -vol_steel_bz - vol_he_bz
 
      ! Manifold region (Back Plate + Back Supporting Structure) !
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
      ! Percentage of He in the manifold region (%)
      frac_vol_he_mf = 100.0D0 - frac_vol_pbli_mf - frac_vol_steel_mf
@@ -810,7 +782,7 @@ module kit_hcll_module
      vol_he_mf = vol_mf -vol_steel_mf - vol_pbli_mf
 
      ! Total volumes !
-     !!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!
 
      ! Volume of inboard/outboard and total blanket (m3)
      volblkti = (vol_mf_ib*nb_pol_ib*nb_tor_ib + vol_bz_ib*nb_pol_ib*nb_tor_ib + vol_fw_ib*(nb_pol_ib*nb_tor_ib))*n_tf
@@ -818,7 +790,7 @@ module kit_hcll_module
      volblkt = (vol_fw + vol_bz + vol_mf)*n_tf
 
      ! Modules and segments mass !
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
      ! Helium mass for an inboard/outboard reactor segment (kg)
      mass_he_segm_ib = denhe*nb_pol_ib*(vol_he_fw_ib + vol_he_bz_ib + vol_he_mf_ib)
@@ -861,15 +833,9 @@ module kit_hcll_module
    end subroutine
 
    subroutine neutronics
-     !+ad_name  neutronics
-     !+ad_summ  KIT HCLL blanket model neutronics
-     !+ad_type  Subroutine
-     !+ad_auth  J Morris, CCFE, Culham Science Centre
-     !+ad_desc  This routine calculates the neutronics for the KIT HCLL blanket model.
-     !+ad_cont  N/A
-     !+ad_prob  None
-     !+ad_hist  02/06/16 JM Initial version
-     !+ad_stat  Okay
+     !! KIT HCLL blanket model neutronics
+     !! author: J Morris, CCFE, Culham Science Centre
+     !! This routine calculates the neutronics for the KIT HCLL blanket model.
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -888,7 +854,7 @@ module kit_hcll_module
 
 
      ! TBR formula from CEA study !
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
      ! Dimensionless Inboard Tritium Production Rate
      TPR_ib = (bz_ri**3.0D0)*(8.686E-0*f_steel_bz**2.0D0 + 1.168E-0*f_steel_bz + 1.006E-0)* &
@@ -920,7 +886,7 @@ module kit_hcll_module
      TBR = TBR_ib + TBR_ob
 
      ! Peak fast neutron fluence on inboard TFC leg !
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
      ! Fast neutron flux on the inboard leg (cm-2 s-1)
      call fast_neutron_flux(fwith*100.0D0, dr_bz_ib*100.0D0, dr_mf_ib*100.0D0, &
@@ -933,15 +899,9 @@ module kit_hcll_module
    end subroutine
 
    subroutine thermal_hydraulics
-     !+ad_name  thermal_hydraulics
-     !+ad_summ  KIT HCLL blanket model thermal_hydraulics
-     !+ad_type  Subroutine
-     !+ad_auth  J Morris, CCFE, Culham Science Centre
-     !+ad_desc  This routine calculates the thermal_hydraulics for the KIT HCLL blanket model.
-     !+ad_cont  N/A
-     !+ad_prob  None
-     !+ad_hist  02/06/16 JM Initial version
-     !+ad_stat  Okay
+     !! KIT HCLL blanket model thermal_hydraulics
+     !! author: J Morris, CCFE, Culham Science Centre
+     !! This routine calculates the thermal_hydraulics for the KIT HCLL blanket model.
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1025,16 +985,9 @@ module kit_hcll_module
    end subroutine
 
    subroutine thermo_hydraulic_model
-   	!+ad_name  thermo_hydraulic_model
-     !+ad_summ  Thermo-hydraulic model for first wall and blanket
-     !+ad_type  Subroutine
-     !+ad_auth  J. Morris, CCFE, Culham Science Centre
-     !+ad_cont  N/A
-     !+ad_desc  Calculations for detailed powerflow model secondary_cycle > 0
-     !+ad_prob  None
-     !+ad_hist  23/02/15 JM  Initial version
-     !+ad_hist  01/12/15 MDK Extensively revised Issue #348 (01/12/2015)
-     !+ad_stat  Okay
+     !! Thermo-hydraulic model for first wall and blanket
+     !! author: J. Morris, CCFE, Culham Science Centre
+     !! Calculations for detailed powerflow model secondary_cycle > 0
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1060,7 +1013,7 @@ module kit_hcll_module
      ! String for formatting coolant type output
      character(len=8) :: cstring
 
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
      ! Determine size of blanket modules
      ! Radial length of coolant pipes is assumed to be 80% of total radial space
@@ -1100,7 +1053,7 @@ module kit_hcll_module
      ! -------------------------------
 
      ! INBOARD !
-     !!!!!!!!!!!
+     ! !!!!!!!!!!
 
      ! Maximum FW temperature. (27/11/2015) Issue #348
      ! First wall flow is just along the first wall, with no allowance for radial
@@ -1151,7 +1104,7 @@ module kit_hcll_module
          mfblktpi, no90bz, no180bz, etaiso, coolwh, 'Inboard blanket')
 
      ! OUTBOARD !
-     !!!!!!!!!!!!
+     ! !!!!!!!!!!!
 
      ! Maximum FW temperature. (27/11/2015) Issue #348.
      call fw_temp(ip, ofile, afw, fwoth, fwareaob, psurffwo, pnucfwo, tpeakfwo, cf, rhof, mffwo, 'Outboard first wall')
@@ -1206,7 +1159,7 @@ module kit_hcll_module
      mfblkt = mfblkti + mfblkto
 
      ! output !
-     !!!!!!!!!!
+     ! !!!!!!!!!
 
      if (ip == 0) return
      call oheadr(ofile, 'First wall and blanket thermohydraulics: Summary')
@@ -1253,43 +1206,32 @@ module kit_hcll_module
    end subroutine thermo_hydraulic_model
 
    function pumppower(temp_in, temp_out, pressure, flleng, rad, mf, mfp, no90, no180, etaiso, coolant, label)
-     !+ad_name  pumppower
-     !+ad_summ  Routine to calculate the coolant pumping power in MW in the first
-     !+ad_summ  wall and breeding zone
-     !+ad_type  Function returning real
-     !+ad_auth  P J Knight, CCFE, Culham Science Centre
-     !+ad_cont  N/A
-     !+ad_args  temp_in     : input real : inlet temperature (K)
-     !+ad_args  temp_out    : input real : outlet temperature (K)
-     !+ad_args  pressure    : input real : outlet coolant pressure (Pa)
-     !+ad_args  flleng      : input real : total flow length along pipe (m)
-     !+ad_args  rad         : input real : pipe inner radius (m)
-     !+ad_args  mf          : input real : total coolant mass flow rate in (kg/s)
-     !+ad_args  mfp         : input real : coolant mass flow rate per pipe (kg/s)
-     !+ad_args  no90        : input integer : number of 90 degree bends in pipe
-     !+ad_args  no180       : input integer : number of 180 degree bends in pipe
-     !+ad_args  etaiso      : input real : isentropic efficiency of coolant pumps
-     !+ad_args  coolant     : input integer: coolant fluid (1=helium, 2=water)
-     !+ad_args  label       : input string: description of this calculation
-     !+ad_desc  This routine calculates the power required (MW) to pump the coolant in the
-     !+ad_desc  first wall and breeding zone.
-     !+ad_desc  <P>Pressure drops are calculated for a pipe with a number of 90
-     !+ad_desc  and 180 degree bends.  The pressure drop due to frictional forces along
-     !+ad_desc  the total straight length of the pipe is calculated, then the pressure
-     !+ad_desc  drop due to the bends is calculated.  The total pressure drop is the sum
-     !+ad_desc  of all contributions.
-     !+ad_desc  The pumping power is be calculated in the most general way,
-     !+ad_desc  using enthalpies before and after the pump.
-     !+ad_prob  None
-     !+ad_call  enthalpy_ps
-     !+ad_call  fluid_properties
-     !+ad_call  report_error
-     !+ad_hist  04/09/14 PJK Initial version
-     !+ad_hist  17/12/14 PJK Added calls to REFPROP interface
-     !+ad_hist  01/12/15 MDK Remove call to subroutine cprops
-     !+ad_stat  Okay
-     !+ad_docs  WCLL DDD, WP12-DAS02-T03, J. Aubert et al, EFDA_D_2JNFUP
-     !+ad_docs  A Textbook on Heat Transfer, S.P. Sukhatme, 2005
+     !! Routine to calculate the coolant pumping power in MW in the first
+     !! wall and breeding zone
+     !! author: P J Knight, CCFE, Culham Science Centre
+     !! temp_in     : input real : inlet temperature (K)
+     !! temp_out    : input real : outlet temperature (K)
+     !! pressure    : input real : outlet coolant pressure (Pa)
+     !! flleng      : input real : total flow length along pipe (m)
+     !! rad         : input real : pipe inner radius (m)
+     !! mf          : input real : total coolant mass flow rate in (kg/s)
+     !! mfp         : input real : coolant mass flow rate per pipe (kg/s)
+     !! no90        : input integer : number of 90 degree bends in pipe
+     !! no180       : input integer : number of 180 degree bends in pipe
+     !! etaiso      : input real : isentropic efficiency of coolant pumps
+     !! coolant     : input integer: coolant fluid (1=helium, 2=water)
+     !! label       : input string: description of this calculation
+     !! This routine calculates the power required (MW) to pump the coolant in the
+     !! first wall and breeding zone.
+     !! <P>Pressure drops are calculated for a pipe with a number of 90
+     !! and 180 degree bends.  The pressure drop due to frictional forces along
+     !! the total straight length of the pipe is calculated, then the pressure
+     !! drop due to the bends is calculated.  The total pressure drop is the sum
+     !! of all contributions.
+     !! The pumping power is be calculated in the most general way,
+     !! using enthalpies before and after the pump.
+     !! WCLL DDD, WP12-DAS02-T03, J. Aubert et al, EFDA_D_2JNFUP
+     !! A Textbook on Heat Transfer, S.P. Sukhatme, 2005
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1299,7 +1241,7 @@ module kit_hcll_module
      real(kind=double) :: pumppower
 
      ! Arguments !
-     !!!!!!!!!!!!!
+     ! !!!!!!!!!!!!
 
      real(kind=double), intent(in) :: flleng, rad, mf, mfp, etaiso
      real(kind=double), intent(in) :: temp_in, temp_out, pressure
@@ -1307,7 +1249,7 @@ module kit_hcll_module
      character(len=*), intent(in) :: label
 
      ! Local variables !
-     !!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!
 
      ! Inlet pressure (Pa)
      real(kind=double) :: coolpin
@@ -1409,7 +1351,7 @@ module kit_hcll_module
      pumppower = 1.0D-6 * mf * (h2-h1) / etaiso
 
      ! Output !
-     !!!!!!!!!!
+     ! !!!!!!!!!
 
      if (ip  == 1) call write_output
 
@@ -1452,15 +1394,9 @@ module kit_hcll_module
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
    subroutine blanket_mod_pol_height
-     !+ad_name  blanket_mod_pol_height
-     !+ad_summ  Calculations for blanket module poloidal height
-     !+ad_type  Subroutine
-     !+ad_auth  J. Morris, CCFE, Culham Science Centre
-     !+ad_cont  N/A
-     !+ad_desc  Calculations for blanket module poloidal height for D shaped and elliptical machines
-     !+ad_prob  None
-     !+ad_hist  23/02/15 JM  Initial version
-     !+ad_stat  Okay
+     !! Calculations for blanket module poloidal height
+     !! author: J. Morris, CCFE, Culham Science Centre
+     !! Calculations for blanket module poloidal height for D shaped and elliptical machines
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1480,7 +1416,7 @@ module kit_hcll_module
      ! Major radius where half-ellipses 'meet' (m)
      real(kind=double) :: r1
 
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
      if ((itart == 1).or.(fwbsshape == 1)) then  ! D-shaped machine
 
@@ -1537,23 +1473,17 @@ module kit_hcll_module
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
    subroutine fast_neutron_flux(dr_fw, dr_bz, dr_mf, dr_sh, dr_vv, f_vol_steel_bz, f_vol_pbli_bz, fnflux)
-     !+ad_name  fast_neutron_flux
-     !+ad_summ  KIT HCLL blanket model fast_neutron_flux
-     !+ad_type  Subroutine
-     !+ad_auth  J Morris, CCFE, Culham Science Centre
-     !+ad_desc  This routine calculates the fast neutron flux on the TF coil for
-     !+ad_desc  the KIT HCLL blanket model.
-     !+ad_cont  N/A
-     !+ad_prob  None
-     !+ad_hist  02/06/16 JM Initial version
-     !+ad_stat  Okay
+     !! KIT HCLL blanket model fast_neutron_flux
+     !! author: J Morris, CCFE, Culham Science Centre
+     !! This routine calculates the fast neutron flux on the TF coil for
+     !! the KIT HCLL blanket model.
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
      implicit none
 
      ! Arguments !
-     !!!!!!!!!!!!!
+     ! !!!!!!!!!!!!
 
      ! Radial thicknesses of FW, BZ, MF, shield, VV for inboard or outboard (m)
      real(kind=double), intent(in) :: dr_fw, dr_bz, dr_mf, dr_sh, dr_vv
@@ -1569,7 +1499,7 @@ module kit_hcll_module
      ! Exponential factor
      real(kind=double) :: f
 
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
      ! Fast Neutron Flux formula (from CEA study)
 
@@ -1586,15 +1516,9 @@ module kit_hcll_module
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
    subroutine display_output
-     !+ad_name  display_output
-     !+ad_summ  KIT HCLL blanket model output
-     !+ad_type  Subroutine
-     !+ad_auth  J Morris, CCFE, Culham Science Centre
-     !+ad_desc  This routine outputs the results for the KIT HCLL blanket model.
-     !+ad_cont  N/A
-     !+ad_prob  None
-     !+ad_hist  02/06/16 JM Initial version
-     !+ad_stat  Okay
+     !! KIT HCLL blanket model output
+     !! author: J Morris, CCFE, Culham Science Centre
+     !! This routine outputs the results for the KIT HCLL blanket model.
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
