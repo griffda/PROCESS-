@@ -124,7 +124,7 @@ def plot_plasma(axis, mfile_data, scan):
     a = mfile_data.data["rminor"].get_scan(scan)
     delta = 1.5*mfile_data.data["triang95"].get_scan(scan)
     kappa = (1.1*mfile_data.data["kappa95"].get_scan(scan)) + 0.04
-    snull = mfile_data.data["snull"].get_scan(scan)
+    i_single_null = mfile_data.data["i_single_null"].get_scan(scan)
 
     x1 = (2.*r0*(1.+delta) - a*(delta**2 + kappa**2 - 1.0))/(2.*(1.+delta))
     x2 = (2.*r0*(delta-1.) - a*(delta**2 + kappa**2 - 1.0))/(2.*(delta-1.))
@@ -134,12 +134,12 @@ def plot_plasma(axis, mfile_data, scan):
     theta2 = sp.arcsin((kappa*a)/r2)
     inang = 1.0/r1
     outang = 1.5/r2
-    if snull == 0:
+    if i_single_null == 0:
         angs1 = np.linspace(-(inang+theta1)+np.pi, (inang+theta1)+np.pi,
                             256, endpoint=True)
         angs2 = np.linspace(-(outang+theta2), (outang+theta2), 256,
                             endpoint=True)
-    elif snull < 0:
+    elif i_single_null < 0:
         angs1 = np.linspace(-(inang+theta1)+np.pi, theta1+np.pi, 256,
                             endpoint=True)
         angs2 = np.linspace(-theta2, (outang+theta2), 256, endpoint=True)
@@ -258,15 +258,15 @@ def plot_machine_pic(axis, mfile_data, scan=-1):
     axis.set_ylabel('Z / m')
     axis.set_title('Radial build')
 
-    if mfile_data.data["snull"].get_scan(scan):
-        plot_snull_cryo(axis, mfile_data, scan)
-        plot_shield_snull(axis, mfile_data, scan)
+    if mfile_data.data["i_single_null"].get_scan(scan):
+        plot_i_single_null_cryo(axis, mfile_data, scan)
+        plot_shield_i_single_null(axis, mfile_data, scan)
 
     plot_plasma(axis, mfile_data, scan)
     plot_centre_cross(axis, mfile_data, scan)
 
 
-def plot_snull_cryo(axis, mfile_data, scan):
+def plot_i_single_null_cryo(axis, mfile_data, scan):
     """Function to plot top of cryostat
 
     Arguments:
@@ -322,7 +322,7 @@ def plot_snull_cryo(axis, mfile_data, scan):
     axis.fill(rs, zs, color=FILLCOLS[1])
 
 
-def plot_shield_snull(axis, mfile_data, scan):
+def plot_shield_i_single_null(axis, mfile_data, scan):
     """Function to plot single null case of shield
 
     Arguments:
@@ -690,7 +690,7 @@ def plot_geometry_info(axis, mfile_data, scan):
             ("triang95", "$\delta_{95}$", ""),
             ("sarea", "Surface area", "m$^2$"),
             ("vol", "Plasma volume", "m$^3$"),
-            ("tfno", "No. of TF coils", ""),
+            ("n_tf", "No. of TF coils", ""),
             (in_blanket_thk, "i/b blkt/shld", "m"),
             (out_blanket_thk, "o/b blkt/shld", "m"),
             ("powfmw", "Fusion power", "MW"),

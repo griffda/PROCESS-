@@ -74,7 +74,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (itfsup /= 1) then  !  Non-superconducting TF coils
+    if (i_tf_sup /= 1) then  !  Non-superconducting TF coils
 
        !  TF coil bus length (m)
        !  Assume power supplies are 5m away
@@ -93,23 +93,23 @@ contains
        tfbusmas = tfbusl * abus * dcopper
 
        !  Total maximum impedance MDK actually just fixed resistance
-       ztot = tfno*tflegres + (prescp/ritfc**2) + tfbusres
+       ztot = n_tf*tflegres + (prescp/ritfc**2) + tfbusres
 
        !  No reactive portion of the voltage is included here - assume long ramp times
        !  MDK This is steady state voltage, not "peak" voltage
-       vtfkv = 1.0D-3 * ztot * cpttf/tfno
+       vtfkv = 1.0D-3 * ztot * cpttf/n_tf
 
        !  Resistive powers (MW):
-       tfcpmw  = 1.0D-6 * prescp  !  inboard legs
-       tflegmw = 1.0D-6 * (ritfc/tfno)**2 * tflegres * tfno  !  outboard legs
-       tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus
+       tfcpmw  = 1.0D-6 * prescp   !  inboard legs
+       tflegmw = 1.0D-6 * presleg  !  outboard legs
+       tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus => Dodgy !
 
        !  TF coil reactive power
        !  Set reactive power to 0, since ramp up can be long
        !  The TF coil can be ramped up as slowly as you like
        !  (although this will affect the time to recover from a magnet quench).
        !     tfreacmw = 1.0D-6 * 1.0D9 * estotf/(tohs + tramp)
-       !                                 estotf(=estotftgj/tfno) has been removed (#199 #847)
+       !                                 estotf(=estotftgj/n_tf) has been removed (#199 #847)
        tfreacmw = 0.0D0
 
        !  Total power consumption (MW)
@@ -175,15 +175,15 @@ contains
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      !  Stored energy (MJ) MDK changed to estotftgj/tfno
+      !  Stored energy (MJ) MDK changed to estotftgj/n_tf
 
-      ettfmj = estotftgj / tfno * 1.0D3
+      ettfmj = estotftgj / n_tf * 1.0D3
 
       !  TF coil current (kA)
 
       itfka = 1.0D-3 * cpttf
 
-      call tfcpwr(outfile,iprint,tfno,ettfmj,itfka,tflegres, &
+      call tfcpwr(outfile,iprint,n_tf,ettfmj,itfka,tflegres, &
            vtfskv,rmajor,tfckw,tfbusl,drarea,tfcbv,tfacpd)
 
     end subroutine tfpwcall
@@ -425,7 +425,7 @@ contains
       call ovarre(outfile,'TF coil charge time (hours)','(tchghr)',tchghr)
       call ovarre(outfile,'Total inductance of TF coils (H)','(ltfth)', ltfth, 'OP ')
       call ovarre(outfile,'Total resistance of TF coils (ohm)','(rcoils)', rcoils, 'OP ')
-      ! MDK Remove this as it leads to confusion between (a) total inductance/tfno, or (b)
+      ! MDK Remove this as it leads to confusion between (a) total inductance/n_tf, or (b)
       !     self-inductance of one single coil
       !call ovarre(outfile,'Inductance per TF coil (H)','(lptfcs)',lptfcs, 'OP ')
       call ovarre(outfile,'TF coil charging voltage (V)','(tfcv)',tfcv)
@@ -842,6 +842,12 @@ contains
 
     implicit none
 
+    ! Cryo-aluminium coolant average temperature
+    real(kind(1.0D0)) :: t_tf_cryoal_cool_av = 0.0D0
+
+    ! Cryo-aluminium cryoplant power consumption
+    real(kind(1.0D0)) :: p_tf_cryoal_cryo = 0.0D0
+
     !------------------------------------------------------------------------------------
     !- Collate pumping powers
     !------------------------------------------------------------------------------------
@@ -944,14 +950,34 @@ contains
     end if
 
     !  Cryogenic power
-    if ((itfsup /= 1).and.(ipfres == 1)) then  !  no superconducting coils
-       helpow = 0.0D0
-    else
-       call cryo(itfsup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, tfno, helpow)
+    ! ---
+    ! Initialisation (unchanged if all coil resisitive)
+    helpow = 0.0D0
+    crypmw = 0.0D0
+    
+    ! Superconductors TF/PF cryogenic cooling
+    if ( i_tf_sup == 1 .or. ipfres == 0 ) then
+        ! helpow calculation
+        call cryo(i_tf_sup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, n_tf, helpow)
+
+        ! Use 13% of ideal Carnot efficiency to fit J. Miller estimate
+        ! Rem SK : This ITER efficiency is very low compare to the Strowbridge curve
+        !          any reasons why? 
+        crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(0.13D0*tmpcry) * helpow   
     end if
 
-    !  Use 13% of ideal Carnot efficiency to fit J. Miller estimate
-    crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(0.13D0*tmpcry) * helpow
+    ! Cryogenic aluminium 
+    ! Rem : The carnot efficiency is assumed at 40% as this is a conservative assumption since a 50%
+    !       has been deduced from detailed studies
+    ! Rem : Nuclear heating on the outer legs assumed to be negligible
+    ! Rem : To be updated with 2 cooling loops for TART designs
+    if ( i_tf_sup == 2 ) then
+        t_tf_cryoal_cool_av = tcoolin + 0.5D0*dtiocool
+        p_tf_cryoal_cryo = (293.0D0 - t_tf_cryoal_cool_av)/(0.4D0*t_tf_cryoal_cool_av) * &
+                           ( prescp + presleg + pnuccp * 1.0D6 )
+        crypmw = crypmw + 1.0D-6 * p_tf_cryoal_cryo
+    end if
+
 
   end subroutine power1
 
@@ -984,7 +1010,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Centrepost coolant pump power (ST)
-    if (itart == 1) then
+    if ( itart == 1 .and. i_tf_sup == 0 ) then
         ppumpmw = 1.0D-6 * ppump
     else
         ppumpmw = 0.0D0
@@ -1607,7 +1633,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cryo(itfsup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, tfno, helpow)
+  subroutine cryo(i_tf_sup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, n_tf, helpow)
 
     !! Calculates cryogenic loads
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -1632,8 +1658,8 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: itfsup
-    real(kind(1.0D0)), intent(in) :: coldmass,cpttf,ensxpfm,ptfnuc,tfno, &
+    integer, intent(in) :: i_tf_sup
+    real(kind(1.0D0)), intent(in) :: coldmass,cpttf,ensxpfm,ptfnuc,n_tf, &
          tfsai,tpulse
     real(kind(1.0D0)), intent(out) :: helpow
 
@@ -1645,18 +1671,18 @@ contains
 
     !  Steady state loads (W)
     qss = 4.3D-4 * coldmass
-    if (itfsup == 1) qss = qss + 2.0D0*tfsai
+    if ( i_tf_sup == 1 ) qss = qss + 2.0D0*tfsai
 
     !  Nuclear heating of TF coils (W) (zero if resistive)
-    if(inuclear==0.and.itfsup == 1) qnuc = 1.0D6 * ptfnuc
+    if( inuclear == 0 .and. i_tf_sup == 1) qnuc = 1.0D6 * ptfnuc
     ! Issue #511: if inuclear = 1 then qnuc is input.
 
     !  AC losses
     qac = 1.0D3 * ensxpfm/tpulse
 
     !  Current leads
-    if (itfsup == 1) then
-       qcl = 13.6D-3 * tfno * cpttf
+    if (i_tf_sup == 1) then
+       qcl = 13.6D-3 * n_tf * cpttf
     else
        qcl = 0.0D0
     end if

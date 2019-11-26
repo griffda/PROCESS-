@@ -15,7 +15,7 @@ module helias5b_coil_parameters
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Number of coils
-  integer, parameter :: tfno5B = 50
+  integer, parameter :: n_tf5B = 50
   !  Major radius (m)
   real(kind(1.0D0)), parameter :: Rg5B = 22.0D0
   !  Coil minor radius (m), = U/(2*pi), U=34 m
@@ -351,7 +351,7 @@ contains
     tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
     !  Coil quantities
-    tfno = 50.0D0
+    n_tf = 50.0D0
 
     !  Blanket properties
     !secondary_cycle = 0  !  simple thermal hydraulic model assumed
@@ -727,7 +727,7 @@ contains
     !  Radius to centre of outboard TF coil legs
 
     gapsto = gapomin
-    rtot = rsldo + ddwi + gapsto + 0.5D0*tfthko
+    r_tf_outboard_mid = rsldo + ddwi + gapsto + 0.5D0*tfthko
 
     !  Height to inside edge of TF coil
     !  Roughly equal to average of (inboard build from TF coil to plasma
@@ -1449,7 +1449,7 @@ contains
           !  (for superconducting coils at least) to be absorbed by the
           !  coils, and so contributes to the cryogenic load
 
-          if (itfsup == 1) then
+          if (i_tf_sup == 1) then
              ptfnuc = pnucsi + pnucso - pnucshldi - pnucshldo
           else  !  resistive coils
              ptfnuc = 0.0D0
@@ -1580,7 +1580,7 @@ contains
 
     !  External cryostat outboard major radius (m)
 
-    rdewex = rtot + 0.5D0*tfthko + rpf2dewar
+    rdewex = r_tf_outboard_mid + 0.5D0*tfthko + rpf2dewar
     adewex = rdewex-rmajor
 
     !  External cryostat volume
@@ -2294,7 +2294,7 @@ contains
 
     f_R = rmajor/Rg5B       !  Size scaling factor with respect to Helias 5-B
     f_s = D_coil/D_coil_5B  !  Coil scaling factor
-    f_N = tfno/tfno5B       !  Coil number factor
+    f_N = n_tf/n_tf5B       !  Coil number factor
     f_B = bt/B10            !  B-field scaling factor
     f_I = f_R*f_B/f_N       !  Current scaling factor
 
@@ -2319,7 +2319,7 @@ contains
 
        !  B-field calculation
 
-       call scaling_calculations(f_R, f_s, f_Q, f_I, tfno, &
+       call scaling_calculations(f_R, f_s, f_Q, f_I, n_tf, &
             b_abs_max, b_abs_mittel)
 
        B_k(k) = B_abs_mittel
@@ -2382,7 +2382,7 @@ contains
 
     !  Recalculate B-fields at intersection point of curves
 
-    call scaling_calculations(f_R, f_s, f_Q_final, f_I, tfno, &
+    call scaling_calculations(f_R, f_s, f_Q_final, f_I, n_tf, &
          B_max_final, B0_final)
 
     !  Maximum field at superconductor surface (T)
@@ -2392,7 +2392,7 @@ contains
     !  Total stored magnetic energy calculation (GJ)
     !  W_mag2 = k2.*(bt.^2).*(f_s.^2).*f_R;  ! alternative good approximation
 
-    W_mag = coil_energy(tfno, f_R, f_s, f_I, f_Q_final)
+    W_mag = coil_energy(n_tf, f_R, f_s, f_I, f_Q_final)
 
     !  Mass of support structure (includes casing) (tonnes)
     !  Scaling for required structure mass (Steel) from:
@@ -2455,13 +2455,13 @@ contains
     !  Vertical ports
 
     !  Outer coil centre major radius, average (m)
-    !  (excludes half of coil thickness, otherwise equal to rtot)
+    !  (excludes half of coil thickness, otherwise equal to r_tf_outboard_mid)
 
     R_occ = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth + ddwi + gapsto
 
     !  Average space between two coil centres (m)
 
-    dU = 2.0D0*pi * R_occ/tfno
+    dU = 2.0D0*pi * R_occ/n_tf
 
     !  Average toroidal port size (m)
 
@@ -2527,23 +2527,23 @@ contains
     rbcndut = thwcndut*0.75D0
 
     arealeg = tfcth*tftort  ! [m^2] overall coil cross-sectional area
-    r_tf_inleg_mid = rmajor - (0.5D0*tfcth+gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor)
+    r_tf_inboard_mid = rmajor - (0.5D0*tfcth+gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor)
     ! [m] radius of centre of inboard leg, average
-    rcoil = r_tf_inleg_mid + 0.5D0*tfcth  ! [m] radius of outer edge of inboard leg, average
-    tfareain = tfno*tfcth*tftort  ! [m^2] Total area of all coil legs
-    tfarea_sc = tfno*awptf        ! [m^2] Total area of all coil winding packs
-    ritfc = tfno * I * 1.0D6      ! [A] Total current in ALL coils
+    rcoil = r_tf_inboard_mid + 0.5D0*tfcth  ! [m] radius of outer edge of inboard leg, average
+    tfareain = n_tf*tfcth*tftort  ! [m^2] Total area of all coil legs
+    tfarea_sc = n_tf*awptf        ! [m^2] Total area of all coil winding packs
+    ritfc = n_tf * I * 1.0D6      ! [A] Total current in ALL coils
     oacdcp = ritfc/tfareain       ! [A / m^2] overall current density
     rbmax = rcoil                 ! [m] radius of peak field occurrence, average
                                   !     N.B. different to tokamak SCTF calculation
     hmax = 0.5D0*h_max - tfcth    ! [m] maximum half-height of coil
-    tf_total_h_width = D_coil     ! [m] estimated horizontal coil bore
-    tfborev = 2.0D0*hmax          ! [m] estimated vertical coil bore
+    dr_tf_inner_bore = D_coil     ! [m] estimated horizontal coil bore
+    dh_tf_inner_bore = 2.0D0*hmax          ! [m] estimated vertical coil bore
     tfleng = U                    ! [m] estimated average length of a coil
 
     estotftgj = W_mag             ! [GJ] Total magnetic energy
 
-    !jwptf = ritfc/(tfno*awptf)
+    !jwptf = ritfc/(n_tf*awptf)
     jwptf = j*1.0D6               ! [A/m^2] winding pack current density
 
     !leno = sqrt(cpttf/jwptf)
@@ -2592,7 +2592,7 @@ contains
 
     ! [m^2] Total surface area of coil side facing plasma: inboard region
 
-    tfsai = tfno*tftort * 0.5D0*tfleng
+    tfsai = n_tf*tftort * 0.5D0*tfleng
 
     ! [m^2] Total surface area of coil side facing plasma: outboard region
 
@@ -2600,7 +2600,7 @@ contains
 
     ! [m^2] Total surface area of toroidal shells covering coils
 
-    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inleg_mid+rtot)
+    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inboard_mid+r_tf_outboard_mid)
 
     !  Masses of conductor constituents
 
@@ -2627,14 +2627,14 @@ contains
 
     ! [kg] Total coil mass
 
-    whttf = (whtcas + whtcon)*tfno
+    whttf = (whtcas + whtcon)*n_tf
 
     ! [kg] Total support structure mass
     ! msupstr includes the casing mass, so this needs to be subtracted
     ! Currently, this is assumed to comprise all the machine's support
     ! structural mass
 
-    aintmass = msupstr - (whtcas*tfno)
+    aintmass = msupstr - (whtcas*n_tf)
 
     ! [m] Maximum available poloidal extent for horizontal ports
 
@@ -3302,9 +3302,9 @@ contains
 
     call osubhd(outfile,'General Coil Parameters :')
 
-    call ovarre(outfile,'Number of modular coils','(tfno)',tfno)
-    call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/tfno)', &
-         tfareain/tfno)
+    call ovarre(outfile,'Number of modular coils','(n_tf)',n_tf)
+    call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/n_tf)', &
+         tfareain/n_tf)
     call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
     call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
     call ovarre(outfile,'Inboard leg outboard half-width (m)','(tficrn)',tficrn)
@@ -3319,11 +3319,11 @@ contains
     call ovarre(outfile,'Total mass of coils (kg)','(whttf)',whttf)
 
     call osubhd(outfile,'Coil Geometry :')
-    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inleg_mid)',r_tf_inleg_mid)
-    call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot)
+    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inboard_mid)',r_tf_inboard_mid)
+    call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
-    call ovarre(outfile,'Clear horizontal bore (m)','(tf_total_h_width)',tf_total_h_width)
-    call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
+    call ovarre(outfile,'Clear horizontal bore (m)','(dr_tf_inner_bore)',dr_tf_inner_bore)
+    call ovarre(outfile,'Clear vertical bore (m)','(dh_tf_inner_bore)',dh_tf_inner_bore)
 
     call osubhd(outfile,'Conductor Information :')
     call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc)

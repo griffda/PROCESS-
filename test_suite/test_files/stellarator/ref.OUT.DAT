@@ -14,13 +14,13 @@
  
    Program : ./process.exe
    Version : 1.0.16   Release Date :: 2019-07-15
-   Tag No. : 1.0.16-99-gd70c72e2
-    Branch : issue-899-error_handling
-   Git log : Merge branch develop into issue-899-error_handling,
- Date/time :  9 Aug 2019 17:24:33 +01:00(hh:mm) UTC
-      User : morrisj
-  Computer : claptrap.ccfepc.ccfe.ac.uk
- Directory : /Users/morrisj/Work/process/merge_149/test_suite
+   Tag No. : 1.0.16-207-g66b10aaf
+    Branch : issue-#943-#942-#941-#940
+   Git log : Updating ALL the python utilities with the variable name,
+ Date/time : 21 Nov 2019 16:49:55 +00:00(hh:mm) UTC
+      User : skahn
+  Computer : J0320
+ Directory : /home/skahn/Linux_env/process_before_merge/test_suite
      Input : IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
@@ -308,6 +308,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  *************************************************** Plasma ***************************************************
  
  Plasma configuration = stellarator
+ Tokamak aspect ratio = Conventional, itart = 0                           (itart)                       0.000     
  
  Plasma Geometry :
  
@@ -425,7 +426,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  1.140E+00  OP 
  
  Power incident on the divertor targets (MW)                              (ptarmw)                  0.000E+00  OP 
- Fraction of power to the lower divertor                                  (ftar)                    5.000E-01  IP 
+ Fraction of power to the lower divertor                                  (ftar)                    1.000E+00  IP 
  Outboard side heat flux decay length (m)                                 (lambdaio)                0.000E+00  OP 
  Fraction of power on the inner targets                                   (fio)                     0.000E+00  OP 
  Fraction of power incident on the lower inner target                     (fLI)                     0.000E+00  OP 
@@ -557,8 +558,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  General Coil Parameters :
  
- Number of modular coils                                                  (tfno)                    5.000E+01     
- Cross-sectional area per coil (m2)                                       (tfarea/tfno)             8.297E-01     
+ Number of modular coils                                                  (n_tf)                    5.000E+01     
+ Cross-sectional area per coil (m2)                                       (tfarea/n_tf)             8.297E-01     
  Total inboard leg radial thickness (m)                                   (tfcth)                   9.497E-01     
  Total outboard leg radial thickness (m)                                  (tfthko)                  9.497E-01     
  Inboard leg outboard half-width (m)                                      (tficrn)                  4.368E-01     
@@ -574,11 +575,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Coil Geometry :
  
- Inboard leg centre radius (m)                                            (r_tf_inleg_mid)          1.808E+01     
- Outboard leg centre radius (m)                                           (rtot)                    2.647E+01     
+ Inboard leg centre radius (m)                                            (r_tf_inboard_mid)        1.808E+01     
+ Outboard leg centre radius (m)                                           (r_tf_outboard_mid)       2.647E+01     
  Maximum inboard edge height (m)                                          (hmax)                    5.231E+00     
- Clear horizontal bore (m)                                                (tf_total_h_width)        5.499E+00     
- Clear vertical bore (m)                                                  (tfborev)                 1.046E+01     
+ Clear horizontal bore (m)                                                (dr_tf_inner_bore)        5.499E+00     
+ Clear vertical bore (m)                                                  (dh_tf_inner_bore)        1.046E+01     
  
  Conductor Information :
  
@@ -813,6 +814,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  First wall area fraction                                                 (1-fdiv-fhcd)             8.850E-01     
  Switch for pumping of primary coolant                                    (primary_pumping)                 0     
  User sets mechanical pumping power directly
+ Mechanical pumping power for FW cooling loop including heat exchanger (M (htpmw_fw)                5.600E+01  OP 
+ Mechanical pumping power for blanket cooling loop including heat exchang (htpmw_blkt)              1.200E+02  OP 
  Mechanical pumping power for FW and blanket cooling loop including heat  (htpmw_fw_blkt)           1.760E+02  OP 
  Mechanical pumping power for FW (MW)                                     (htpmw_fw)                5.600E+01  OP 
  Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              1.200E+02  OP 
@@ -1133,7 +1136,7 @@ isumattf = 1            *Switch for superconductor material in tf coils (1: ITER
 tftmp    = 4.2          *Peak helium coolant temperature in TF coils and PF coils (k)
 thicndut = 0.002        *Conduit insulation thickness (m)
 thwcndut = 0.0012       *TF coil conduit case thickness (m)
-vftf     = 0.3          *Coolant fraction of TF coil leg (itfsup=0)
+vftf     = 0.3          *Coolant fraction of TF coil leg (i_tf_sup=0)
 
 *-----------------Pfcoil Variables-----------------*
 

@@ -1067,7 +1067,7 @@ subroutine init_itv_1
 
    real(kind(1.d0)) function itv_60()
       itv_60 = cpttf 
-      if ((istell == 1).or.(itfsup /= 1)) then
+      if ((istell == 1).or.(i_tf_sup /= 1)) then
          call report_error(49)
       end if
    end function itv_60

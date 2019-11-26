@@ -381,7 +381,7 @@ fcutfsu = 0.6667  * Copper fraction of cable conductor (tf coils)
 oacdcp = 10547000.0  * Overall current density in tf coil inboard legs (a/m2)
 ripmax = 0.6     * Maximum allowable toroidal field ripple amplitude
 tdmptf = 12.957  * Dump time for tf coil (s)
-tfno = 18.0      * Number of tf coils (default = 50 for stellarators)
+n_tf = 18.0      * Number of tf coils (default = 50 for stellarators)
 tftmp = 4.75     * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 0.002  * Conduit insulation thickness (m)
 thkcas = 0.49102  * Inboard tf coil case outer (non-plasma side) thickness (m)
@@ -389,7 +389,7 @@ thwcndut = 0.004  * Tf coil conduit case thickness (m)
 tinstf = 0.013   * Ground wall insulation thickness (m)
 tmargmin = 1.7   * Minimum allowable temperature margin (cs and tf coils) (k)
 vdalw = 12.65    * Max voltage across tf coil during quench (kv)
-vftf = 0.33      * Coolant fraction of tf coil leg (itfsup=0)
+vftf = 0.33      * Coolant fraction of tf coil leg (i_tf_sup=0)
 
 
 *-----------------Times Variables------------------*

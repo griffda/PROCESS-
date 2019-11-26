@@ -177,7 +177,7 @@ def plot_plasma(axis, mfile_data, scan):
     a = mfile_data.data["rminor"].get_scan(scan)
     delta = 1.5 * mfile_data.data["triang95"].get_scan(scan)
     kappa = (1.1 * mfile_data.data["kappa95"].get_scan(scan)) + 0.04
-    snull = mfile_data.data["snull"].get_scan(scan)
+    i_single_null = mfile_data.data["i_single_null"].get_scan(scan)
 
     x1 = (2. * r0 * (1. + delta) - a * (delta ** 2 + kappa ** 2 - 1.0)) /\
         (2. * (1. + delta))
@@ -191,12 +191,12 @@ def plot_plasma(axis, mfile_data, scan):
     theta2 = np.arcsin((kappa * a) / r2)
     inang = 1.0 / r1
     outang = 1.5 / r2
-    if snull == 0:
+    if i_single_null == 0:
         angs1 = np.linspace(-(inang + theta1) + np.pi, (inang + theta1) \
                                  + np.pi, 256, endpoint=True)
         angs2 = np.linspace(-(outang + theta2), (outang + theta2), 256,
                             endpoint=True)
-    elif snull < 0:
+    elif i_single_null < 0:
         angs1 = np.linspace(-(inang + theta1) + np.pi, theta1 + np.pi, 256,
                             endpoint=True)
         angs2 = np.linspace(-theta2, (outang + theta2), 256, endpoint=True)
@@ -417,10 +417,10 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
     
     
     # Check for Copper magnets
-    if "itfsup" in mfile_data.data.keys():
-        itfsup = mfile_data.data["itfsup"].get_scan(scan)
+    if "i_tf_sup" in mfile_data.data.keys():
+        i_tf_sup = mfile_data.data["i_tf_sup"].get_scan(scan)
     else:
-        itfsup = 1
+        i_tf_sup = 1
 
     axis.set_xlabel('x / m')
     axis.set_ylabel('y / m')
@@ -475,8 +475,8 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
 
     # Segment the TF coil inboard
     # Calculate centrelines
-    n = int(tfno/4)+1
-    spacing = 2*np.pi/tfno
+    n = int(n_tf/4)+1
+    spacing = 2*np.pi/n_tf
     i = np.arange(0, n)
 
     ang = i*spacing
@@ -506,13 +506,13 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
 
     for item in i:
         # Neutral beam shielding
-        TF_outboard(axis, item, tfno=tfno, r3=r3, r4=r4, w=w+nbshield,
+        TF_outboard(axis, item, n_tf=n_tf, r3=r3, r4=r4, w=w+nbshield,
                     facecolor=nbshield_colour)
         # Overlay TF coil segments
-        TF_outboard(axis, item, tfno=tfno, r3=r3, r4=r4, w=w, facecolor='cyan')
+        TF_outboard(axis, item, n_tf=n_tf, r3=r3, r4=r4, w=w, facecolor='cyan')
 
     # Winding pack : inboard (superconducor only)
-    if itfsup is 1 :
+    if i_tf_sup is 1 :
 
         # Inboard
         rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp/2, wwp2/2, lw=0,
@@ -570,8 +570,8 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
 
 
 
-def TF_outboard(axis, item, tfno, r3, r4, w, facecolor):
-    spacing = 2*np.pi/tfno
+def TF_outboard(axis, item, n_tf, r3, r4, w, facecolor):
+    spacing = 2*np.pi/n_tf
     ang = item*spacing
     dx = w * np.sin(ang)
     dy = w * np.cos(ang)
@@ -1072,7 +1072,7 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
         mfile_data --> MFILE data object
         scan --> scan number to use
     """
-    snull = mfile_data.data["snull"].get_scan(scan)
+    i_single_null = mfile_data.data["i_single_null"].get_scan(scan)
     triang = mfile_data.data["triang95"].get_scan(scan)
     temp_array_1 = ()
     temp_array_2 = ()
@@ -1085,7 +1085,7 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
 
     kapx = cumulative_upper['ddwi'] / rminx
 
-    if snull==1:
+    if i_single_null==1:
         (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
         temp_array_1 = temp_array_1 + ((rs, zs))
 
@@ -1099,7 +1099,7 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
              - cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
 
-    if snull==1:
+    if i_single_null==1:
         kapx = (cumulative_upper['ddwi'] - upper["ddwi"]) / rminx
         (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
         temp_array_1 = temp_array_1 + ((rs, zs))
@@ -1110,7 +1110,7 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
 
     # Single null: Draw top half from output
     # Double null: Reflect bottom half to top
-    if snull==1:
+    if i_single_null==1:
         rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
         zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
         axis.fill(rs, zs, color=vessel)
@@ -1119,7 +1119,7 @@ def plot_vacuum_vessel(axis, mfile_data, scan):
     zs = np.concatenate([temp_array_2[1], temp_array_2[3][::-1]])
     axis.fill(rs, zs, color=vessel)
     # For double null, reflect shape of lower half to top instead
-    if snull==0:
+    if i_single_null==0:
         axis.fill(rs, -zs, color=vessel)
 
 
@@ -1131,7 +1131,7 @@ def plot_shield(axis, mfile_data, scan):
         mfile_data --> MFILE data object
         scan --> scan number to use
     """
-    snull = mfile_data.data["snull"].get_scan(scan)
+    i_single_null = mfile_data.data["i_single_null"].get_scan(scan)
     triang = mfile_data.data["triang95"].get_scan(scan)
     temp_array_1 = ()
     temp_array_2 = ()
@@ -1142,7 +1142,7 @@ def plot_shield(axis, mfile_data, scan):
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
              - cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
 
-    if snull==1:
+    if i_single_null==1:
         kapx = cumulative_upper['shldtth'] / rminx
         (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
         temp_array_1 = temp_array_1 + ((rs, zs))
@@ -1158,7 +1158,7 @@ def plot_shield(axis, mfile_data, scan):
     rminx = (cumulative_radial_build("vvblgapo", mfile_data, scan)
              - cumulative_radial_build("shldith", mfile_data, scan)) / 2.0
 
-    if snull==1:
+    if i_single_null==1:
         kapx = (cumulative_upper['vvblgap']) / rminx
         (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
         temp_array_1 = temp_array_1 + ((rs, zs))
@@ -1169,7 +1169,7 @@ def plot_shield(axis, mfile_data, scan):
 
     # Single null: Draw top half from output
     # Double null: Reflect bottom half to top
-    if snull==1:
+    if i_single_null==1:
         rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
         zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
         axis.fill(rs, zs, color=shield)
@@ -1177,7 +1177,7 @@ def plot_shield(axis, mfile_data, scan):
     rs = np.concatenate([temp_array_2[0], temp_array_2[2][::-1]])
     zs = np.concatenate([temp_array_2[1], temp_array_2[3][::-1]])
     axis.fill(rs, zs, color=shield)
-    if snull==0:
+    if i_single_null==0:
         axis.fill(rs, -zs, color=shield)
 
 
@@ -1194,8 +1194,8 @@ def plot_blanket(axis, mfile_data, scan):
 
     # Single null: Draw top half from output
     # Double null: Reflect bottom half to top
-    snull = mfile_data.data["snull"].get_scan(scan)
-    if snull==1:
+    i_single_null = mfile_data.data["i_single_null"].get_scan(scan)
+    if i_single_null==1:
         # Upper blanket: outer surface
         radx = (cumulative_radial_build("blnkoth", mfile_data, scan) +
                 cumulative_radial_build("vvblgapi", mfile_data, scan)) / 2.0
@@ -1228,7 +1228,7 @@ def plot_blanket(axis, mfile_data, scan):
     divgap = cumulative_lower['divfix']
     plotdhgap(axis, c_shldith, c_blnkoth, blnkith, blnkoth, divgap,
               -blnktth, triang, blanket)
-    if snull==0:
+    if i_single_null==0:
         plotdhgap(axis, c_shldith, c_blnkoth, blnkith, blnkoth, -divgap,
                   -blnktth, triang, blanket)
               
@@ -1245,12 +1245,12 @@ def plot_firstwall(axis, mfile_data, scan):
     """
     blnktth = mfile_data.data["blnktth"].get_scan(scan)
     tfwvt = mfile_data.data["fwtth"].get_scan(scan)
-    snull = mfile_data.data["snull"].get_scan(scan)
+    i_single_null = mfile_data.data["i_single_null"].get_scan(scan)
     point_array = ()
 
     # Single null: Draw top half from output
     # Double null: Reflect bottom half to top
-    if snull==1:
+    if i_single_null==1:
         # Upper first wall: outer surface
         radx = (cumulative_radial_build("fwoth", mfile_data, scan) +
                 cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
@@ -1283,7 +1283,7 @@ def plot_firstwall(axis, mfile_data, scan):
     plotdhgap(axis, c_blnkith, c_fwoth, fwith, fwoth,
               divgap + blnktth, -tfwvt, triang, firstwall )
     
-    if snull==0:
+    if i_single_null==0:
         plotdhgap(axis, c_blnkith, c_fwoth, fwith, fwoth,
                   -(divgap + blnktth), -tfwvt, triang, firstwall )
 
@@ -1327,13 +1327,13 @@ def plot_tf_coils(axis, mfile_data, scan):
         print("TF coil geometry: The value of yarc(3) is not zero, but should be.")
     
     # Check for Copper magnets
-    if "itfsup" in mfile_data.data.keys():
-        itfsup = mfile_data.data["itfsup"].get_scan(scan)
+    if "i_tf_sup" in mfile_data.data.keys():
+        i_tf_sup = mfile_data.data["i_tf_sup"].get_scan(scan)
     else:
-        itfsup = 1
+        i_tf_sup = 1
   
-    # Superconducting TF coils are D-shaped (itfsup=1), but copper TF coils are rectangular (itfsup=0)
-    if itfsup == 0:
+    # Superconducting TF coils are D-shaped (i_tf_sup=1), but copper TF coils are rectangular (i_tf_sup=0)
+    if i_tf_sup != 1:
         # Inboard leg   
         rect1 = patches.Rectangle([x5-tfcth, y5-tfcth], tfcth, (y1-y5+2.0*tfcth), lw=0, facecolor='cyan')
         # Outboard leg vertical
@@ -1657,7 +1657,7 @@ def plot_geometry_info(axis, mfile_data, scan):
             ("triang95", "$\delta_{95}$", ""),
             ("sarea", "Surface area", "m$^2$"),
             ("vol", "Plasma volume", "m$^3$"),
-            ("tfno", "No. of TF coils", ""),
+            ("n_tf", "No. of TF coils", ""),
             (in_blanket_thk, "inboard blanket+shield", "m"),
             (out_blanket_thk, "ouboard blanket+shield", "m"),
             ("powfmw", "Fusion power", "MW"),
@@ -1732,10 +1732,10 @@ def plot_magnetics_info(axis, mfile_data, scan):
     """
 
     # Check for Copper magnets
-    if "itfsup" in mfile_data.data.keys():
-        itfsup = mfile_data.data["itfsup"].get_scan(scan)
+    if "i_tf_sup" in mfile_data.data.keys():
+        i_tf_sup = mfile_data.data["i_tf_sup"].get_scan(scan)
     else:
-        itfsup = 1
+        i_tf_sup = 1
 
     xmin = 0
     xmax = 1
@@ -1786,7 +1786,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
     vssoft = mfile_data.data["vsres"].get_scan(scan) + \
              mfile_data.data["vsind"].get_scan(scan)
 
-    if itfsup is 1:
+    if i_tf_sup is 1:
         data = [(pf_info[0][0], pf_info[0][1], "MA"),
                 (pf_info[1][0], pf_info[1][1], "MA"),
                 (pf_info_3_a, pf_info_3_b, "MA"),
@@ -1802,7 +1802,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
                 ("s_tresca_cond", "Conduit Von Mises stress", "Pa"),
                 ("s_tresca_case", "Case Von Mises stress", "Pa"),
                 ("alstrtf", "Allowable stress", "Pa"),
-                ("whttf/tfno", "Mass per TF coil", "kg")]
+                ("whttf/n_tf", "Mass per TF coil", "kg")]
 
     else:
         data = [(pf_info[0][0], pf_info[0][1], "MA"),
@@ -2151,10 +2151,10 @@ def test(f):
         scan = -1
 
         # Check for Copper magnets
-        if "itfsup" in m_file.data.keys():
-            itfsup = m_file.data["itfsup"].get_scan(scan)
+        if "i_tf_sup" in m_file.data.keys():
+            i_tf_sup = m_file.data["i_tf_sup"].get_scan(scan)
         else:
-            itfsup = 1
+            i_tf_sup = 1
 
         global bore
         bore = m_file.data["bore"].get_scan(scan)
@@ -2199,10 +2199,10 @@ def test(f):
         ddwex = m_file.data["ddwex"].get_scan(scan)
         global zdewex
         zdewex = m_file.data["zdewex"].get_scan(scan)
-        global tfno
-        tfno = m_file.data["tfno"].get_scan(scan)
+        global n_tf
+        n_tf = m_file.data["n_tf"].get_scan(scan)
 
-        if itfsup is 1 : 
+        if i_tf_sup is 1 : 
             global wwp1
             wwp1 = m_file.data["wwp1"].get_scan(scan)
             global wwp2
@@ -2380,10 +2380,10 @@ if __name__ == '__main__':
         demo_ranges = False
 
     # Check for Copper magnets
-    if "itfsup" in m_file.data.keys():
-        itfsup = m_file.data["itfsup"].get_scan(scan)
+    if "i_tf_sup" in m_file.data.keys():
+        i_tf_sup = m_file.data["i_tf_sup"].get_scan(scan)
     else:
-        itfsup = 1
+        i_tf_sup = 1
 
     bore = m_file.data["bore"].get_scan(scan)
     ohcth = m_file.data["ohcth"].get_scan(scan)
@@ -2409,8 +2409,8 @@ if __name__ == '__main__':
     ddwex = m_file.data["ddwex"].get_scan(scan)
 
     # Magnets related
-    tfno = m_file.data["tfno"].get_scan(scan)
-    if itfsup is 1: # If superconducting magnets 
+    n_tf = m_file.data["n_tf"].get_scan(scan)
+    if i_tf_sup is 1: # If superconducting magnets 
         wwp1 = m_file.data["wwp1"].get_scan(scan)
         wwp2 = m_file.data["wwp2"].get_scan(scan)
         thkwp = m_file.data["thkwp"].get_scan(scan)

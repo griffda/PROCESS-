@@ -67,17 +67,18 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! mass per TF coil (tonnes)
-    tfmtn = 1.0D-3 * whttf/tfno
+    tfmtn = 1.0D-3 * whttf/n_tf
 
     ! TF coil inner and outer radial position (m)
-    tfro = rtot + 0.5D0*tfthko
-    tfri = r_tf_inleg_mid - 0.5D0*tfcth
+    tfro = r_tf_outboard_mid + 0.5D0*tfthko
+    tfri = r_tf_inboard_mid - 0.5D0*tfcth
 
     ! TF coil vertical height (m)
+    ! Rem : SK not valid for single null
     tfh = (hmax + tfcth)*2.0D0
 
     ! Reactor vault wall and roof thicknesses are hardwired
-    call bldgs(pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,tfno,rsldo, &
+    call bldgs(pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,n_tf,rsldo, &
          rsldi,2.0D0*(hmax-ddwi-vgap2),whtshld,rdewex,helpow,iprint, &
          outfile,cryvol,volrci,rbvol,rmbvol,wsvol,elevol)
 
@@ -85,7 +86,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine bldgs(pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
+  subroutine bldgs(pfr,pfm,tfro,tfri,tfh,tfm,n_tf,shro,shri, &
        shh,shm,crr,helpow,iprint,outfile,cryv,vrci,rbv,rmbv,wsv,elev)
 
     !! Determines the sizes of the plant buildings
@@ -132,7 +133,7 @@ contains
 
     integer, intent(in) :: iprint, outfile
     real(kind(1.0D0)), intent(inout) :: pfr
-    real(kind(1.0D0)), intent(in) :: pfm,tfro,tfri,tfh,tfm,tfno,shro, &
+    real(kind(1.0D0)), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
          shri,shh,shm,crr,helpow
 
     real(kind(1.0D0)), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
@@ -192,7 +193,7 @@ contains
     if (wgt > 1.0D0) then
        wt = wgt
     else
-       wt = shmf*shm/tfno
+       wt = shmf*shm/n_tf
        wt = max(wt, 1.0D3*pfm, 1.0D3*tfm)
     end if
 
@@ -252,7 +253,7 @@ contains
     if (wgt2 >  1.0D0) then
        wgts = wgt2
     else
-       wgts = shmf*shm/tfno
+       wgts = shmf*shm/n_tf
     end if
     cran = 9.41D-6*wgts + 5.1D0
     rmbh = 10.0D0 + shh + trcl + cran + stcl + fndt

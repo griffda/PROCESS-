@@ -241,7 +241,7 @@ so need not be initialised.
 \item
   ftar /0.5/ : fraction of power to the lower divertor in double null
 \item
-  configuration (snull = 0 only)
+  configuration (i_single_null = 0 only)
 \item
   ffwal /0.92/ : factor to convert plasma surface area to first wall
   area in neutron wall load calculation (iwalld=1)
@@ -371,7 +371,7 @@ so need not be initialised.
     = 7 Greenwald limit
   \end{itemize}
 \item
-  idivrt : number of divertors (calculated from snull)
+  idivrt : number of divertors (calculated from i_single_null)
 \item
   ifalphap /1/ : switch for fast alpha pressure calculation:
 
@@ -726,13 +726,13 @@ so need not be initialised.
   pdivt : power to conducted to the divertor region (MW)
 \item
   pdivl : power conducted to the lower divertor region (calculated if
-  snull = 0) (MW)
+  i_single_null = 0) (MW)
 \item
   pdivu : power conducted to the upper divertor region (calculated if
-  snull = 0) (MW)
+  i_single_null = 0) (MW)
 \item
   pdivmax : power conducted to the divertor with most load (calculated
-  if snull = 0) (MW)
+  if i_single_null = 0) (MW)
 \item
   pdt : deuterium-tritium fusion power (MW)
 \item
@@ -893,7 +893,7 @@ so need not be initialised.
 \item
   sf : shape factor = plasma poloidal perimeter / (2.pi.rminor)
 \item
-  snull /1/ : switch for single null / double null plasma:
+  i_single_null /1/ : switch for single null / double null plasma:
 
   \begin{itemize}
   \tightlist
@@ -2432,7 +2432,7 @@ so need not be initialised.
     = 6 REBCO HTS tape in CroCo strand
   \end{itemize}
 \item
-  itfsup /1/ : switch for TF coil conductor model:
+  i_tf_sup /1/ : switch for TF coil conductor model:
 
   \begin{itemize}
   \tightlist
@@ -2589,7 +2589,7 @@ so need not be initialised.
 \item
   tfleng : TF coil circumference (m)
 \item
-  tfno /16.0/ : number of TF coils (default = 50 for stellarators)
+  n_tf /16.0/ : number of TF coils (default = 50 for stellarators)
   number of TF coils outer legs for ST
 \item
   tfocrn : TF coil half-width - outer bore (m)
@@ -2652,8 +2652,8 @@ so need not be initialised.
 \item
   vforce : vertical separating force on inboard leg/coil (N)
 \item
-  vftf /0.4/ : coolant fraction of TFC 'cable' (itfsup=1), or of TFC leg
-  (itfsup=0)
+  vftf /0.4/ : coolant fraction of TFC 'cable' (i_tf_sup=1), or of TFC leg
+  (i_tf_sup=0)
 \item
   voltfleg : volume of each TF coil outboard leg (m3)
 \item
@@ -2706,7 +2706,7 @@ so need not be initialised.
   tfb(4) : Vertical radius of inside edge of TF coil (m)
 \item
   \textbf{Quantities relating to the spherical tokamak model (itart=1)}
-  (and in some cases, also to resistive TF coils, itfsup=0):
+  (and in some cases, also to resistive TF coils, i_tf_sup=0):
 \item
   drtop /0.0/ : centrepost taper maximum radius adjustment (m)
 \item
@@ -3364,7 +3364,7 @@ so need not be initialised.
   plasma (m)
 \item
   tfootfi /1.19/ : TF coil outboard leg / inboard leg radial thickness
-  ratio (itfsup=0 only) (iteration variable 75)
+  ratio (i_tf_sup=0 only) (iteration variable 75)
 \item
   tfthko : outboard TF coil thickness (m)
 \item
@@ -4077,7 +4077,7 @@ so need not be initialised.
   iteration variable 110)
 \item
   fniterpump /1.0/ : f-value for constraint that number of pumps
-  \textless{} tfno (constraint equation 63, iteration variable 111)
+  \textless{} n_tf (constraint equation 63, iteration variable 111)
 \item
   zeffmax /3.6/ : maximum value for Zeff (constraint equation 64)
 \item
@@ -4597,7 +4597,7 @@ so need not be initialised.
     (62) taup/taueff the ratio of particle to energy confinement times
     (itv 110)
   \item
-    (63) The number of ITER-like vacuum pumps niterpump \textless{} tfno
+    (63) The number of ITER-like vacuum pumps niterpump \textless{} n_tf
     (itv 111)
   \item
     (64) Zeff less than or equal to zeffmax (itv 112)
