@@ -534,13 +534,22 @@ def write_iteration_variables(data, out_file):
                 format(number, info["upper_bound"])
             out_file.write(upper_bound_line)
 
-def get_parameters(data):
+def get_parameters(data, use_string_values=True):
     """Create the parameter information.
 
     Use the parameters from IN.DAT to produce a dict of name, value and 
-    optionally, comment.
+    comment (optional) for each parameter. This takes the form:
+    parameters[module][param_name] = param_value, or {value: param_value, 
+    comment: param_comment}. 
+
+    If use_string_values == True, in the returned dict, ensure that 
+    the values of the parameters are of type string. This is used for writing
+    new IN.DAT files. If False, store the values as their original type, e.g. 
+    int, float etc. This is used for validating the input file.
 
     :param dict data: Data dictionary for the IN.DAT information
+    :param bool use_string_values: If True, store all parameter values as 
+    strings. If False, preserve parameter value type.
     :return: dict of parameters containing names, values and comments
     :rtype: dict
     """
@@ -605,25 +614,34 @@ def get_parameters(data):
                 
                 else:
                     parameter = {}
-                    
-                    line_value = data[item].value
-                    line_string = ""
-                    # if parameter is a list only output values comma separated
-                    if isinstance(line_value, list):
-                        for val in line_value:
-                            line_string += str(val) + ", "
-                        line_value = line_string.rstrip(", ")
+                
+                    if use_string_values:
+                        # Store the parameter value as a string 
+                        # (data[item].value is a string)
+                        line_value = data[item].value
+                        line_string = ""
+                        # if parameter is a list only output values comma separated
+                        if isinstance(line_value, list):
+                            for val in line_value:
+                                line_string += str(val) + ", "
+                            line_value = line_string.rstrip(", ")
 
-                    if isinstance(line_value, str):
-                        split_line = line_value.split(" ")
-                    try:
-                        float(split_line[0])
-                        if len(split_line) > 1:
+                        if isinstance(line_value, str):
+                            split_line = line_value.split(" ")
+                        try:
+                            float(split_line[0])
+                            if len(split_line) > 1:
 
-                            line_value = ", ".\
-                                join([entry for entry in split_line])
-                    except:
-                        pass
+                                line_value = ", ".\
+                                    join([entry for entry in split_line])
+                        except:
+                            pass
+                        
+                    else:
+                        # Store the parameter value preserving its type 
+                        # (data[item].get_value preserves the parameter's type,
+                        # e.g. float)
+                        line_value = data[item].get_value
 
                     name = item
                     parameter["value"] = line_value
@@ -904,10 +922,16 @@ def parameter_type(name, value):
 
         # If a real variable just convert to float
         if "real_variable" in param_type:
+            # Prepare so float conversion succeeds
+            value = value.lower()
+            value = value.replace("d", "e")
             return float(value)
 
         # If a real array split and make a float list
         elif "real_array" in param_type:
+            # Prepare so float conversion succeeds
+            value = value.lower()
+            value = value.replace("d", "e")
             value = value.split(",")
             if value[-1] == '':
                 value = value[:-1]
@@ -1273,14 +1297,15 @@ class InDat(object):
         # close file
         output.close()
 
-    def create_formatted_input_data_dict(self):
-        """Create and return a dict of the input file data
+    def create_structured_input_data_dict(self):
+        """Create and return a dict of the input file data.
 
         Similar to write_in_dat(), but returns a dict rather than writing a new 
         IN.DAT file. Useful for exporting the IN.DAT data as a dict. This dict 
-        differs from the INDat.data dict in that its structure more closely 
-        resembles the IN.DAT input file, and hence it is ready to output to 
-        file or modify.
+        differs from the INDat.data dict in that it has a hierarchical structure
+        that more closely resembles the IN.DAT input file, and hence it is ready
+        to output to file or modify. For example, input_data_dict["parameters"]
+        ["physics_variables"]["ishape"]["value"] = int_value_of_ishape
 
         :return: dict of the input data
         :rtype: dict
@@ -1291,7 +1316,8 @@ class InDat(object):
             self.data)
         input_data_dict["iteration_variables"] = get_iteration_variables(
             self.data)
-        input_data_dict["parameters"] = get_parameters(self.data)
+        input_data_dict["parameters"] = get_parameters(self.data, 
+            use_string_values=False)
 
         return input_data_dict
 

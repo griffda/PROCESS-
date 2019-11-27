@@ -29,7 +29,7 @@ OUTPUT_FILE_PATH = "input.yml"
 in_dat_object = in_dat.InDat(filename=INPUT_FILE_PATH)
 
 # Loaded input data, now convert to YAML
-data_dict = in_dat_object.create_formatted_input_data_dict()
+data_dict = in_dat_object.create_structured_input_data_dict()
 
 # Dump YAML into output file (which is a YAML input file)
 output_file = open(OUTPUT_FILE_PATH, 'w')
