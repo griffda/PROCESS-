@@ -770,7 +770,7 @@ def plot_tprofile(prof, demo_ranges):
     # ---
 
 
-def plot_plasmod_tprofile(prof):
+def plot_plasmod_tprofile(prof, demo_ranges):
     """Function to plot plasmod temperature profile
     Arguments:
       prof --> axis object to add plot to
@@ -2345,7 +2345,8 @@ if __name__ == '__main__':
     # Setup command line arguments
     parser = argparse. \
         ArgumentParser(description="Produces a two page summary of the PROCESS MFILE output, using the MFILE.  "
-        "For info contact michael.kovari@ukaea.uk or james.morris2@ukaea.uk")
+        "For info contact michael.kovari@ukaea.uk or james.morris2@ukaea.uk.  "
+        "If using PLASMOD you must specify the profile file using -m.")
 
     parser.add_argument("-f", metavar='FILENAME', type=str,
                         default="", help='specify input/output file path')
@@ -2463,7 +2464,7 @@ if __name__ == '__main__':
     # Ion dens(10^19 m^-3) -- 15
     # Poloidal flux (Wb) -- 16
     if args.m != "":
-        plasmod_profiles = np.loadtxt(args.p).transpose()
+        plasmod_profiles = np.loadtxt(args.m).transpose()
         pmod_r = plasmod_profiles[0]
         pmod_ne = plasmod_profiles[1]
         pmod_te = plasmod_profiles[2]
@@ -2475,6 +2476,9 @@ if __name__ == '__main__':
         pmod_switch = True
         print("plasmod!")
     else:
+        if ipedestal==2 or ipedestal==3:
+            print('\n ERROR: Specify the PLASMOD profile file using -m \n')
+            exit()
         pmod_switch = False
     # rad profile
     ssync = m_file.data["ssync"].get_scan(scan)
