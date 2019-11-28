@@ -544,7 +544,7 @@ subroutine tf_field_and_force()
 
     ! Radial position of peak toroidal field (assuming axisymmetry) [m]
     ! (assumed to be at the outer edge of the winding pack)
-    rbmax = r_tf_inleg_out - casthi - tinstf
+    rbmax = r_tf_inleg_out - casthi - tinstf - tfinsgap
 
     ! Nominal axisymmetric peak toroidal field (excluding ripple) [T]
     bmaxtf = 2.0D-7 * ritfc / rbmax
