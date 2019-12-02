@@ -3,7 +3,7 @@
  "version":  [ "PROCESS version 1.0.16" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 235,
+ "n_errortypes": 236,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -239,6 +239,7 @@
   {"no": 232, "level": 3, "message": "BLD2019: fwdzl, v1dzl and v2dzl should be zero for 2019 IFE build."},
   {"no": 233, "level": 3, "message": "CHECK: Superconductor TF not implemented for ST, try itfsup = 0 or 2."},
   {"no": 234, "level": 3, "message": "CHECK: Coolant temperature (tcoolin) cannot be < 0 C (273.15 K) for water cooled copper magents."},
-  {"no": 235, "level": 3, "message": "CHECK: Coolant temperature (tcoolin) should be > 50 K for the cryo-al resistivity to be defined."}
+  {"no": 235, "level": 3, "message": "CHECK: Coolant temperature (tcoolin) should be > 50 K for the cryo-al resistivity to be defined."},
+  {"no": 236, "level": 3, "message": "CHECK: The 1/R toroidal B field dependency constraint is being depreciated (oacdcp is now calculated)."}
  ]
 }

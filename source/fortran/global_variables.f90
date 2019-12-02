@@ -2242,8 +2242,11 @@ module tfcoil_variables
   !! n_layer /20/ : Number of layers in TF coil (i_tf_turns_integer=1)
 
   real(kind(1.0D0)) :: oacdcp = 1.4D7
-  !! oacdcp /1.4e7/ : overall current density in TF coil inboard legs (A/m2)
-  !!                  (iteration variable 12)
+  !! oacdcp /1.4e7/ : overall current density in TF coil inboard legs midplane (A/m2)
+  !!                  Rem SK : Not used in tfcoil to set the current any more
+  !!                            -> SHOULD NOT BE USED AS ITERATION VARIABLE 12 ANY MORE
+  !!                            -> This variable is calculated
+
   real(kind(1.0D0)) :: poisson = 0.3D0
   !! poisson /0.3/ : Poisson's ratio for TF stress calculation
   !!                 (assumed constant over entire coil)
