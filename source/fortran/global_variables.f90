@@ -1162,8 +1162,9 @@ module divertor_kallenbach_variables
   real(kind(1.0D0)) :: targetangle = 30.0D0
   !! targetangle /30.0/ : Angle between field-line and divertor target (degrees)
 
-  real(kind(1.0D0)) :: ttarget = 2.3D0
-  !! ttarget /2.3/ : Plasma temperature adjacent to divertor sheath [eV] (iteration variable 120)
+  real(kind(1.0D0)) :: ttarget = 5.0D0
+  !! ttarget /5.0/ : Plasma temperature adjacent to divertor sheath [eV] (iteration variable 120)
+  !!                 Rem : 5 eV is the current limit for tungsten sputtering from argon impurity
 
   real(kind(1.0D0)) :: qtargettotal = 5.0D6
   !! qtargettotal /5.0e6/ : Power density on target including surface recombination [W/m2]

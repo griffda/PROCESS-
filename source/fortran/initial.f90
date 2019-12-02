@@ -706,67 +706,73 @@ subroutine check
         call report_error(138)
     end if
 
+    ! Check if the kallenbach model is used with a variable target temperature
+    ! is so a discontinuity might appears that is highly likely to prevent VMCON
+    ! to converge.
+    if ( any(ixc == 120 ) .and. kallenbach_switch == 1 ) then
+        call report_error(237)
+    end if 
+
     !  Plasma profile consistency checks
-
     if (ife /= 1) then
-    if (ipedestal == 1 .or. ipedestal == 2) then
+        if (ipedestal == 1 .or. ipedestal == 2) then
 
-        !  Temperature checks
+            !  Temperature checks
 
-        if (teped < tesep) then
-            fdiags(1) = teped ; fdiags(2) = tesep
-            call report_error(146)
-        end if
+            if (teped < tesep) then
+                fdiags(1) = teped ; fdiags(2) = tesep
+                call report_error(146)
+            end if
 
-        if ((abs(rhopedt-1.0D0) <= 1.0D-7).and.((teped-tesep) >= 1.0D-7)) then
-            fdiags(1) = rhopedt ; fdiags(2) = teped ; fdiags(3) = tesep
-            call report_error(147)
-        end if
+            if ((abs(rhopedt-1.0D0) <= 1.0D-7).and.((teped-tesep) >= 1.0D-7)) then
+                fdiags(1) = rhopedt ; fdiags(2) = teped ; fdiags(3) = tesep
+                call report_error(147)
+            end if
 
-        !  Core temperature should always be calculated (later) as being
-        !  higher than the pedestal temperature, if and only if the
-        !  volume-averaged temperature never drops below the pedestal
-        !  temperature. Prevent this by adjusting te, and its lower bound
-        !  (which will only have an effect if this is an optimisation run)
+            !  Core temperature should always be calculated (later) as being
+            !  higher than the pedestal temperature, if and only if the
+            !  volume-averaged temperature never drops below the pedestal
+            !  temperature. Prevent this by adjusting te, and its lower bound
+            !  (which will only have an effect if this is an optimisation run)
 
-        if (te <= teped) then
-            fdiags(1) = te ; fdiags(2) = teped
-            te = teped*1.001D0
-            call report_error(149)
-        end if
+            if (te <= teped) then
+                fdiags(1) = te ; fdiags(2) = teped
+                te = teped*1.001D0
+                call report_error(149)
+            end if
 
-        if ((ioptimz >= 0).and.(any(ixc == 4)).and.(boundl(4) < teped*1.001D0)) then
-            call report_error(150)
-            boundl(4) = teped*1.001D0
-            boundu(4) = max(boundu(4), boundl(4))
-        end if
+            if ((ioptimz >= 0).and.(any(ixc == 4)).and.(boundl(4) < teped*1.001D0)) then
+                call report_error(150)
+                boundl(4) = teped*1.001D0
+                boundu(4) = max(boundu(4), boundl(4))
+            end if
 
-         !  Density checks
-         !  Case where pedestal density is set manually
-         ! ---------------
-         if ( (fgwped < 0) .or. (.not.any(ixc==145)) ) then
-    
-             ! Issue #589 Pedestal density is set manually using neped but it is less than nesep.
-             if ( neped < nesep ) then
-                 fdiags(1) = neped ; fdiags(2) = nesep
-                 call report_error(151)
-             end if  
+             !  Density checks
+             !  Case where pedestal density is set manually
+             ! ---------------
+             if ( (fgwped < 0) .or. (.not.any(ixc==145)) ) then
+            
+                 ! Issue #589 Pedestal density is set manually using neped but it is less than nesep.
+                 if ( neped < nesep ) then
+                     fdiags(1) = neped ; fdiags(2) = nesep
+                     call report_error(151)
+                 end if  
 
-             ! Issue #589 Pedestal density is set manually using neped,
-             ! but pedestal width = 0.
-             if ( (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7) ) then
-                 fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
-                 call report_error(152)
+                 ! Issue #589 Pedestal density is set manually using neped,
+                 ! but pedestal width = 0.
+                 if ( (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7) ) then
+                     fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
+                     call report_error(152)
+                 end if
+             end if 
+
+             ! Issue #862 : Variable ne0/neped ratio without constraint eq 81 (ne0>neped)
+             !  -> Potential hollowed density profile
+             if ( (ioptimz >= 0) .and. (.not.any(icc==81)) ) then
+                 if ( any(ixc == 145 )) call report_error(154)
+                 if ( any(ixc ==   6 )) call report_error(155)
              end if
-         end if 
-
-         ! Issue #862 : Variable ne0/neped ratio without constraint eq 81 (ne0>neped)
-         !  -> Potential hollowed density profile
-         if ( (ioptimz >= 0) .and. (.not.any(icc==81)) ) then
-             if ( any(ixc == 145 )) call report_error(154)
-             if ( any(ixc ==   6 )) call report_error(155)
          end if
-     end if
      end if
      ! ---------------
 
@@ -1018,6 +1024,9 @@ subroutine check
         if (i_single_null == 1) call report_error(39)
     ! --------------------------------
 
+    
+    ! Conventionnal aspect ratios specific
+    ! ------------------------------------
     else
 
         if (icurr == 2 .or. icurr == 9) call report_error(40)
@@ -1048,6 +1057,7 @@ subroutine check
         if ((i_single_null == 1).and.(j < 2)) call report_error(44)
 
     end if
+    ! ------------------------------------
 
     !  Pulsed power plant model
 
