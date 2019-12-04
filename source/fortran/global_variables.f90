@@ -2435,6 +2435,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: vforce = 0.0D0
   !! vforce : vertical separating force on inboard leg/coil (N)
   
+  real(kind(1.0D0)) :: f_vforce_inboard = 0.58D0
+  !! f_vforce_inboard /0.58/ : Fraction of the total vertical force taken by the TF inboard leg
+  !!                           Not used for resistive itart = 1 (sliding joints)
+  
   real(kind(1.0D0)) :: vftf = 0.4D0
   !! vftf /0.4/ : coolant fraction of TFC 'cable' (i_tf_sup=1), or of TFC leg (i_tf_ssup=0)
   real(kind(1.0D0)) :: voltfleg = 0.0D0

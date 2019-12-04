@@ -1823,6 +1823,9 @@ contains
        case ('vdalw')
           call parse_real_variable('vdalw', vdalw, 0.0D0, 100.0D0, &
                'Max V across TFC during quench (kV)')
+       case ('f_vforce_inboard')
+          call parse_real_variable('f_vforce_inboard', f_vforce_inboard, 0.01D0, 1.0D0, &
+              'Fraction of vertical force taken by the TF inboard leg')
        case ('vftf')
           call parse_real_variable('vftf', vftf, 0.0D0, 1.0D0, &
                'Coolant fraction of TF coil leg')
