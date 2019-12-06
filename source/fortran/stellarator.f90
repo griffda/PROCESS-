@@ -428,238 +428,48 @@ contains
 
   subroutine stgeom
 
-    !! Routine to calculate the plasma volume and surface area for
-    !! a stellarator
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! author: F Warmer, IPP Greifswald
-    !! None
-    !! This routine calculates the plasma volume and surface area for
-    !! a stellarator configuration.
-    !! <P>The method is based on that described in Geiger, and
-    !! has been converted from MATLAB code written by Felix Warmer.
-    !! Stellarator Plasma Geometry Model for the Systems
-    !! Code PROCESS, F. Warmer, 19/06/2013
-    !! J. Geiger, IPP Greifswald internal document:  'Darstellung von
-    !! ineinandergeschachtelten toroidal geschlossenen Fl�chen mit
-    !! Fourierkoeffizienten' ('Representation of nested, closed
-    !! surfaces with Fourier coefficients')
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   !+ad_name  stgeom
+   !+ad_summ  Routine to calculate the plasma volume and surface area for
+   !+ad_summ  a stellarator using precalculated effective values
+   !+ad_type  Subroutine
+   !+ad_auth  J Lion, IPP Greifswald
+   !+ad_cont  N/A
+   !+ad_args  None
+   !+ad_desc  This routine calculates the plasma volume and surface area for
+   !+ad_desc  a stellarator configuration.
+   !+ad_desc  <P>It is simple scaling based on a Fourier representation based on 
+   !+ad_desc  that described in Geiger documentation.
+   !+ad_call  None
+   !+ad_hist  02/12/19 jlion Initial version
+   !+ad_stat  To be checked
+   !+ad_docs  J. Geiger, IPP Greifswald internal document:  'Darstellung von
+   !+ad_docc  ineinandergeschachtelten toroidal geschlossenen Flaechen mit
+   !+ad_docc  Fourierkoeffizienten' ('Representation of nested, closed
+   !+ad_docc  surfaces with Fourier coefficients')
+   !
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    implicit none
+   implicit none
 
-    !  Arguments
+   !  Arguments
 
-    !  Local variables
+   !  Local variables
 
-    integer, parameter :: n_i = 12, n_j = 25
-    integer, parameter :: m_max = n_i-1, n_max = (n_j-1)/2
-    integer, parameter :: nu = 200, nv = 200
-    integer, save :: nf_vmec
-    integer :: i,j,m,n,iu,iv,nf,m1,n1,m2,n2,a1,b1,a2,b2,a3,b3,a4,b4
-    real(kind(1.0D0)), dimension(0:m_max,-n_max:n_max), save :: Rmn0, Zmn0
-    real(kind(1.0D0)), dimension(0:m_max,-n_max:n_max) :: Rmn, Zmn
-    real(kind(1.0D0)), dimension(4*m_max+1,4*n_max+1) :: Rv, Zv
-    real(kind(1.0D0)), save :: r_vmec,a_vmec,aspect_vmec,v_vmec,s_vmec
-    real(kind(1.0D0)) :: a,a_square,sr,sa,r_maj,du,dv,rr,drdv,drdu
-    real(kind(1.0D0)) :: dzdv,dzdu,rtemp,sum1,sum2,rn,u,v,suv,cuv
-    character(len=80) :: header
-    logical :: first_call = .true.
+   !  Cross-sectional area, averaged over toroidal angle
+   rminor = rmajor/aspect
+   eps = 1.0D0/aspect
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   vol = rmajor*rminor**2 * 19.75D0 !This value is for Helias5 solely
 
-    if (first_call) then
+   sarea = rmajor*rminor * 48.56D0 !This value is for Helias5 solely
 
-       !  VMEC information file
+   xarea = pi*rminor*rminor  ! average, could be calculated for every toroidal angle if desired
 
-       open(unit=1,file=vmec_info_file,status='old')
-       read(1,'(A)') header
-       read(1,*) R_vmec, a_vmec, aspect_vmec, V_vmec, S_vmec, rn
-       close(unit=1)
+   !  sareao is retained only for obsolescent fispact calculation...
 
-       nf_vmec = int(rn)
+   sareao = 0.5D0*sarea  !  Used only in the divertor model; approximate as for tokamaks
 
-       !  Import VMEC boundary Fourier coefficients from files.
-       !  These contain the plasma boundary represented by Fourier components
-       !  R(m,n) and Z(m,n)
-       !
-       !  Fortran complication: array sizes n_i,n_j,m_max,n_max are needed in advance...
-
-       !  Rmn Fourier components
-
-       open(unit=1,file=vmec_rmn_file,status='old')
-       do m = 0,m_max
-          read(1,*) (Rmn0(m,n),n=-n_max,n_max)
-       end do
-       close(unit=1)
-
-       !  Zmn Fourier components
-
-       open(unit=1,file=vmec_zmn_file,status='old')
-       do m = 0,m_max
-          read(1,*) (Zmn0(m,n),n=-n_max,n_max)
-       end do
-       close(unit=1)
-
-       first_call = .false.
-    end if
-
-    Rmn = Rmn0
-    Zmn = Zmn0
-
-    rminor = rmajor/aspect
-    eps = 1.0D0/aspect
-
-    !  Number of field periods; this is always 5 for the W7-X line,
-    !  but a 4 periodic machine could be possible in the future
-
-    nf = nf_vmec
-
-    !  Scale major and minor radius
-    !  with scaling factors SR = R / R_vmec for the major radius
-    !                   and Sa = a / a_vmec for the minor radius
-    !
-    !  If a certain 'R' shall be used, calculate R_vmec in advance
-    !  and define SR not as factor, but as given above
-
-    SR = rmajor/R_vmec
-    Sa = rminor/a_vmec
-
-    do n = -n_max,n_max
-       do m = 0,m_max
-
-          if (m == 0) then
-             Rmn(m,n) = SR*Rmn(m,n)
-             Zmn(m,n) = SR*Zmn(m,n)
-          else
-             Rmn(m,n) = Sa*Rmn(m,n)
-             Zmn(m,n) = Sa*Zmn(m,n)
-          end if
-
-       end do
-    end do
-
-    !  Calculate effective minor radius
-    !  This is an average value integrated over toroidal angle
-
-    a_square = 0.0D0
-    do n = -n_max,n_max
-       do m = 0,m_max
-          a_square = a_square + m*Zmn(m,n)*Rmn(m,n)
-       end do
-    end do
-
-    a = sqrt(a_square)
-
-    !  Calculation of the plasma volume
-    !
-    !  Expand array and set not given fourier components to zero.
-    !  This is required because the volume is calculated with
-    !  a double sum over m1,n1 and m2,n2 resulting in mixed
-    !  mode numbers m*=m1+m2, etc.
-    !  Therefore m* > m_max meaning, that the sum goes over mode numbers,
-    !  which are not given by the input file - but these components can simply
-    !  be set to zero
-
-    Rv = 0.0D0 ; Zv = 0.0D0
-    do j = n_max+1,3*n_max+1
-       do i = 2*m_max+1,3*m_max+1
-          Rv(i,j) = Rmn(i-2*m_max-1,j-2*n_max-1)
-          Zv(i,j) = Zmn(i-2*m_max-1,j-2*n_max-1)
-       end do
-    end do
-
-    !  Double summation over m1,n1 and m2,n2 to calculate the volume
-
-    vol = 0.0D0
-
-    do n1 = -n_max,n_max
-       do m1 = 0,m_max
-
-          rtemp = Rmn(m1,n1)
-
-          do n2 = -n_max,n_max
-             do m2 = 0,m_max
-
-                a1 = m1+m2+1+2*m_max
-                b1 = n1+n2+1+2*n_max
-
-                a2 = m1-m2+1+2*m_max
-                b2 = n1-n2+1+2*n_max
-
-                a3 = m2-m1+1+2*m_max
-                b3 = n2-n1+1+2*n_max
-
-                a4 = -m1-m2+1+2*m_max
-                b4 = -n1-n2+1+2*n_max
-
-                sum1 = Zv(a1,b1) - Zv(a2,b2) + Zv(a3,b3) - Zv(a4,b4)
-                sum2 = Rv(a1,b1) + Rv(a2,b2) + Rv(a3,b3) + Rv(a4,b4)
-
-                vol = vol + rtemp*( (m2*Rmn(m2,n2)*sum1) + (m2*Zmn(m2,n2)*sum2) )
-
-             end do
-          end do
-       end do
-    end do
-
-    vol = vol * pi*pi/3.0D0
-
-    !  This is an average value using 'a' as calculated above
-
-    R_maj = vol / (2.0D0*a*a*pi*pi)
-
-    !  Calculation of the surface area of the LCFS
-    !
-    !  The integral cannot be simplified with analytical methods
-    !  as was done for the volume and poloidal surface
-    !  therefore it must be numerically 'integrated' over the poloidal and
-    !  toroidal angles; calculation time depends strongly on the fineness of the
-    !  grid 'nu' and 'nv'
-    !
-    !  I just dissolved the integral in the most simple Riemann sum, which is
-    !  very inaccurate, even at 400 points, which takes a few seconds only <1%
-
-    du = 2.0D0*pi/(nu-1)
-    dv = 2.0D0*pi/(nv-1)
-
-    sarea = 0.0D0
-    do iu = 1,nu
-       u = (iu-1)*du  !  poloidal angle
-       do iv = 1,nv
-          v = (iv-1)*dv  !  toroidal angle
-
-          RR = 0.0D0
-          dRdv = 0.0D0 ; dRdu = 0.0D0 ; dZdv = 0.0D0 ; dZdu = 0.0D0
-
-          do n = -n_max,n_max
-             do m = 0,m_max
-                suv = sin(m*u - nf*n*v)
-                cuv = cos(m*u - nf*n*v)
-                RR = RR + Rmn(m,n)*cos(m*u - n*v)
-                dRdv = dRdv + nf*n*Rmn(m,n)*suv
-                dRdu = dRdu -    m*Rmn(m,n)*suv
-                dZdv = dZdv - nf*n*Zmn(m,n)*cuv
-                dZdu = dZdu +    m*Zmn(m,n)*cuv
-             end do
-          end do
-
-          sarea = sarea + sqrt( (RR**2)*(dZdu**2) + &
-               ((dRdv*dZdu)-(dZdv*dRdu))**2 + &
-               (RR**2)*(dRdu**2) ) * du*dv
-
-       end do
-    end do
-
-    !  Cross-sectional area, averaged over toroidal angle
-
-    xarea = pi*a*a  ! average, could be calculated for every toroidal angle if desired
-
-    !  sareao is retained only for obsolescent fispact calculation...
-
-    sareao = 0.5D0*sarea  !  Used only in the divertor model; approximate as for tokamaks
-
-  end subroutine stgeom
+ end subroutine stgeom
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
