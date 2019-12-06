@@ -14,7 +14,7 @@ module tfcoil_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use build_module
-  use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, rtop, tfcth, tfthko, bore, hpfu
+  use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, r_cp_top, tfcth, tfthko, bore, hpfu
   use constants
   use error_handling
   use fwbs_variables
@@ -26,10 +26,10 @@ module tfcoil_module
   private
   
   ! Radial position of plasma-facing edge of TF coil outboard leg [m]
-  real(kind(1.0D0)), private :: r_tf_inleg_in
+  real(kind(1.0D0)), private :: r_tf_inboard_in
 
   ! Radial position of plasma-facing edge of TF coil inboard leg [m]
-  real(kind(1.0D0)), private :: r_tf_inleg_out
+  real(kind(1.0D0)), private :: r_tf_inboard_out
 
   public :: tfcoil, cntrpst
 
@@ -66,13 +66,13 @@ contains
     ! Magnet desing dependent calculations
     ! ------------------------------------
     !  Resistive TF coils
-    if ( i_tf_sup /= 1 ) then  
-       call concoptf(outfile,iprint)
-
+    !  if ( i_tf_sup /= 1 ) then  
+    !     call concoptf(outfile,iprint)
+    !  
     !  Superconducting TF coils
-    else  
+    !  else  
        call sctfcoil(outfile,iprint)
-    end if
+    !end if
     ! ------------------------------------
 
 
@@ -87,40 +87,40 @@ contains
     ! ---------------------------------------------
     if (iprint == 0) return
 
-    !  Output section (resistive TF coils only)
-    if (i_tf_sup /= 1) then
+    ! !  Output section (resistive TF coils only)
+    ! if (i_tf_sup /= 1) then
 
-       call oheadr(outfile,'TF Coils')
-       call ovarre(outfile,'TF coil current (summed over all coils) (A)','(ritfc)',ritfc)
-       call ovarre(outfile,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
-       call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
-       call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
-       call ovarre(outfile,'Number of TF coil legs','(n_tf)',n_tf)
+    !    call oheadr(outfile,'TF Coils')
+    !    call ovarre(outfile,'TF coil current (summed over all coils) (A)','(ritfc)',ritfc)
+    !    call ovarre(outfile,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
+    !    call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
+    !    call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
+    !    call ovarre(outfile,'Number of TF coil legs','(n_tf)',n_tf)
 
-       call osubhd(outfile,'Energy and Forces :')
-       call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj)
-       call ovarre(outfile,'Vertical force on inboard leg (N)','(vforce)',vforce)
-       call ovarre(outfile,'Centering force on inboard leg (N/m)','(cforce)',cforce)
-       call ovarre(outfile,'Radial stress (MPa)','(sigrad)',sigrad)
-       call ovarre(outfile,'Transverse stress (MPa)','(sigtan)',sigtan)
-       call ovarre(outfile,'Vertical stress (MPa)','(sigver)',sigver)
-       call oblnkl(outfile)
-       call ocmmnt(outfile,'TF coil inner surface shape is given by a rectangle with the')
-       call ocmmnt(outfile,'following inner points (Note that this does not account')
-       call ocmmnt(outfile,'for the ST tapered centrepost):')
-       call oblnkl(outfile)
+    !    call osubhd(outfile,'Energy and Forces :')
+    !    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj)
+    !    call ovarre(outfile,'Vertical force on inboard leg (N)','(vforce)',vforce)
+    !    call ovarre(outfile,'Centering force on inboard leg (N/m)','(cforce)',cforce)
+    !    call ovarre(outfile,'Radial stress (MPa)','(sigrad)',sigrad)
+    !    call ovarre(outfile,'Transverse stress (MPa)','(sigtan)',sigtan)
+    !    call ovarre(outfile,'Vertical stress (MPa)','(sigver)',sigver)
+    !    call oblnkl(outfile)
+    !    call ocmmnt(outfile,'TF coil inner surface shape is given by a rectangle with the')
+    !    call ocmmnt(outfile,'following inner points (Note that this does not account')
+    !    call ocmmnt(outfile,'for the ST tapered centrepost):')
+    !    call oblnkl(outfile)
 
-       write(outfile,10)
-       10  format(t2,'point',t16,'x(m)',t31,'y(m)')
-       do ii = 1,5
-          write(outfile,20) ii,xarc(ii),yarc(ii)
-          intstring = int2char(ii)
-          call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
-          call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
-       end do
-       20  format(i4,t10,f10.3,t25,f10.3)
-
-    end if
+    !    write(outfile,10)
+    !    10  format(t2,'point',t16,'x(m)',t31,'y(m)')
+    !    do ii = 1,5
+    !       write(outfile,20) ii,xarc(ii),yarc(ii)
+    !       intstring = int2char(ii)
+    !       call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
+    !       call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
+    !    end do
+    !    20  format(i4,t10,f10.3,t25,f10.3)
+ 
+    ! end if
     ! ---------------------------------------------
   end subroutine tfcoil
 
@@ -145,7 +145,7 @@ contains
 
     !  Local variables
     real(kind(1.0D0)) :: r_tf_outleg_in
-    real(kind(1.0D0)) :: ltfleg, rmid, ztop
+    real(kind(1.0D0)) :: ltfleg, rmid, ztop, vol_ins_cp, vol_case_cp
     real(kind(1.0D0)) :: tfcind1
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
@@ -157,27 +157,27 @@ contains
     ! Radial build
     ! ******
     ! Radial position of inner/outer edge of inboard TF coil leg [m]
-    r_tf_inleg_in  = r_tf_inboard_mid - 0.5D0 * tfcth
-    r_tf_inleg_out = r_tf_inboard_mid + 0.5D0 * tfcth
+    r_tf_inboard_in  = r_tf_inboard_mid - 0.5D0 * tfcth
+    r_tf_inboard_out = r_tf_inboard_mid + 0.5D0 * tfcth
     
     ! Position of the maximum magnetic field 
     ! No winding pack structure -> simply the innner legs plasma side radius
-    rbmax = r_tf_inleg_out
+    rbmax = r_tf_inboard_out
     
     ! Radial position of centre of inboard TF coil leg [m]
-    r_tf_inboard_mid = r_tf_inleg_in + 0.5D0*tfcth
+    r_tf_inboard_mid = r_tf_inboard_in + 0.5D0*tfcth
     ! ******
 
 
     ! Toroidal thickness of TF coil outer leg [m]
     if ( itart == 1 ) then
-       tftort = 2.0D0 * rtop * sin(pi/n_tf)
+       tftort = 2.0D0 * r_cp_top * sin(pi/n_tf)
     else 
-       tftort = 2.0D0 * r_tf_inleg_out*sin(pi/n_tf)
+       tftort = 2.0D0 * r_tf_inboard_out*sin(pi/n_tf)
     end if
 
     ! Inboard total cross-sectional area (m2)
-    tfareain = pi * (r_tf_inleg_out**2 - r_tf_inleg_in**2)
+    tfareain = pi * (r_tf_inboard_out**2 - r_tf_inboard_in**2)
 
 
     ! Inner legs physics
@@ -211,7 +211,7 @@ contains
 
     ! Conventionnal tokamak (geometry invariant with hight)
     if (itart == 0) then 
-       volcp = 2.0D0 * tfareain * ( hmax + tfthko ) !  volume
+       vol_cond_cp = 2.0D0 * tfareain * ( hmax + tfthko ) !  volume
 
        !  Inner legs resistive power losses
        prescp = rhocp * ritfc**2 * 2.0D0 * ( hmax + tfthko ) / ( tfareain * (1.0D0-fcoolcp) )
@@ -219,14 +219,16 @@ contains
     !  Spherical Tokamak (larger diameter at top/bottom)
     else  
        !  Radii and vertical height from midplane
-       rmid = r_tf_inleg_out
+       rmid = r_tf_inboard_out
        ztop = (rminor * kappa) + dztop
 
        !  Resistivity enhancement factor
        rhocp = rhocp * frhocp
 
        !  Volume and resistive power losses of TART centrepost
-       call cpost(rtop,ztop,rmid,hmax+tfthko,ritfc,rhocp,fcoolcp,r_tf_inleg_in,volcp,prescp)
+       call cpost(r_cp_top, ztop, rmid, hmax+tfthko, ritfc, rhocp, fcoolcp, r_tf_inboard_in, & ! Inputs
+                  0.0D0, 0.0D0, n_tf*turnstf, & ! Inputs
+                  a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp ) ! Outputs
     end if
 
     ! ******
@@ -245,9 +247,9 @@ contains
     ! coils, not D-shaped)
     ! A more comprehensive calculation will be present in next of the module
     if ( itart == 1 ) then
-       ltfleg = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - rtop )
+       ltfleg = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - r_cp_top )
     else 
-       ltfleg = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - r_tf_inleg_out )
+       ltfleg = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - r_tf_inboard_out )
     end if
 
     ! Volume of the TF legs
@@ -268,10 +270,10 @@ contains
     ! -----------------------------
     ! Vertircal force    
     ! The outer radius of the inner leg and the inner radius of the outer leg is taken
-    ! vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inleg_out) / n_tf 
-    vforce = 0.25D0 * bmaxtf * ritfc / n_tf * ( 0.5D0 * tfcth +                                       &     ! Inner leg side component 
-                                              & r_tf_inleg_out * log(r_tf_outleg_in/r_tf_inleg_out) + &     ! TF bore component
-                                              & 0.5D0 * tfthko * (r_tf_inleg_out/r_tf_outleg_in) )   ! Outer leg side component
+    ! vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inboard_out) / n_tf 
+    vforce = 0.25D0 * bmaxtf * ritfc / n_tf * ( 0.5D0 * tfcth +                                           & ! Inner leg side component 
+                                              & r_tf_inboard_out * log(r_tf_outleg_in/r_tf_inboard_out) + & ! TF bore component
+                                              & 0.5D0 * tfthko * (r_tf_inboard_out/r_tf_outleg_in) )        ! Outer leg side component
 
     ! Current turn information 
     if (itart == 0) then ! CT case
@@ -289,14 +291,12 @@ contains
     ! Copper
     if ( i_tf_sup == 0 ) then
        whttflgs = voltfleg * n_tf * (1.0D0 - vftf) * dcopper ! outer legs
-       whtcp = volcp * dcopper                               ! inner legs
-       whttf = whtcp + whttflgs                              ! total
+       whtcp = vol_cond_cp * dcopper                               ! inner legs
 
     ! Aluminium
     else if ( i_tf_sup == 2 ) then
        whttflgs = voltfleg * n_tf * (1.0D0 - vftf) * dalu  ! outer legs
-       whtcp = volcp * dalu                                ! inner legs
-       whttf = whtcp + whttflgs                            ! total
+       whtcp = vol_cond_cp * dalu                                ! inner legs
     end if
 
     !  Total weight of TF coils
@@ -312,7 +312,7 @@ contains
 
     ! Inductance 
     ! S.K. : COMPUTED WITH AN INTEGRAL IN THE SC CASE
-    tfcind1 = (hmax + tfthko) * rmu0/pi * log(r_tf_outleg_in/r_tf_inleg_out)
+    tfcind1 = (hmax + tfthko) * rmu0/pi * log(r_tf_outleg_in/r_tf_inboard_out)
 
     ! Stored energy (GJ)
     estotftgj = 0.5D-9 * tfcind1 * ritfc**2 
@@ -330,7 +330,7 @@ contains
     call ovarre(outfile,'Outboard leg current density (A/m2)','(cdtfleg)',cdtfleg)
     call ovarre(outfile,'Number of turns per outboard leg','(turnstf)',turnstf)
     call ovarre(outfile,'Outboard leg current per turn (A)','(cpttf)',cpttf)
-    call ovarre(outfile,'Inboard leg volume (m3)','(volcp)',volcp)
+    call ovarre(outfile,'Inboard leg conductor volume (m3)','(vol_cond_cp)',vol_cond_cp)
     call ovarre(outfile,'Outboard leg volume per coil (m3)','(voltfleg)',voltfleg)
     call ovarre(outfile,'Mass of inboard legs (kg)','(whtcp)',whtcp)
     call ovarre(outfile,'Mass of outboard legs (kg)','(whttflgs)',whttflgs)
@@ -341,7 +341,7 @@ contains
     if (itart==1) then
       call osubhd(outfile,'Tapered Centrepost Dimensions:')
       call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(rmid)',rmid)
-      call ovarre(outfile,'Radius of the ends of the centrepost (m)','(rtop)',rtop)
+      call ovarre(outfile,'Radius of the ends of the centrepost (m)','(r_cp_top)',r_cp_top)
       call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(ztop)',ztop)
       call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax + tfthko)
     end if
@@ -370,10 +370,10 @@ contains
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-    real(kind(1.0D0)) :: acool,acpav,amid,dcool,dpres,dtcncpav,dtconcpmx, &
+    real(kind(1.0D0)) :: acool,acpav,dcool,dpres,dtcncpav,dtconcpmx, &
          dtfilmav,fc,fricfac,h,lcool,nuselt,pcrt,presin,prndtl, &
-         psat,ptot,reyn,rmid,ro,roughrat,sum,tclmx,tclmxs,tcoolmx,tmarg,vcoolav, &
-         rmid_in, coolant_density, coolant_th_cond, coolant_visco, coolant_cp,&
+         psat,ptot,reyn,ro,roughrat,sum,tclmx,tclmxs,tcoolmx,tmarg,vcoolav, &
+         coolant_density, coolant_th_cond, coolant_visco, coolant_cp,&
          conductor_th_cond, dptot, tcool_calc
    
     integer, parameter :: n_tcool_it = 20
@@ -384,32 +384,27 @@ contains
     
     !  Temperature margin used in calculations (K)
     tmarg = 10.0D0
-
-    !  Midplane radius and area
-    rmid_in = max(0.0D0, (rbmax - tfcth) ) ! Radius of inner edge of inboard TF coil leg (m) 
-    rmid    = tfcth
-    amid    = pi * ( rmid**2 - rmid_in**2 )
-
-    !  Average cross-sectional area
-    acpav = volcp/(2.0D0*(hmax + tfthko))
-
-    !  Coolant channels:
-    acool = acpav * fcoolcp         !  Cross-sectional area
+    
+    ! Coolant channels:
+    acool = a_cp_cool * n_tf        !  Cooling cross-sectional area
     dcool = 2.0D0 * rcool           !  Diameter
     lcool = 2.0D0 * (hmax + tfthko) !  Length
     ncool = acool/( pi * rcool**2)  !  Number
 
-    ro = sqrt ( acpav/(pi*ncool) )
+    ! Average conductor cross-sectional area to cool (with cooling area)
+    acpav = 0.5D0 * vol_cond_cp/(hmax + tfthko) + acool
+
+    ro = sqrt( acpav/(pi*ncool) )
 
     !  Inner legs total heating power (to be removed by coolant)
     ptot = prescp + pnuccp*1.0D6
-
 
     !  Temperature calculations
     ! -------------------------
     !  Temperature rise in coolant (inlet to outlet)
     ! **********************************************
-    vcoolav = vcool * amid/acpav
+    ! The cooland flow is now homogeneous as a fixed cooling area is used
+    vcoolav = vcool 
 
     ! Water coolant physical properties
     if ( i_tf_sup ==  0 ) then
@@ -419,7 +414,7 @@ contains
        coolant_th_cond = kh2o
     end if
  
-        ! Water coolant
+    ! Water coolant
     if ( i_tf_sup ==  0 ) then
        dtiocool = ptot / (coolant_density*vcoolav*acool*coolant_cp)
 
@@ -539,12 +534,11 @@ contains
     ! ******
 
     ! Average temperature rise : To be changed with Gary's better documented formula (or add a switch?)
-    dtcncpav = (ptot/volcp)/(2.0D0*conductor_th_cond*(ro**2 - rcool**2) ) * &
-         ( ro**2*rcool**2 - 0.25D0*rcool**4 - 0.75D0*ro**4 + ro**4 * &
-         log(ro/rcool) )
+    dtcncpav = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond*(ro**2 - rcool**2) ) * &
+               ( ro**2*rcool**2 - 0.25D0*rcool**4 - 0.75D0*ro**4 + ro**4 * log(ro/rcool) )
 
     ! Peak temperature rise : To be changed with Gary's better documented formula (or add a switch?)
-    dtconcpmx = (ptot/volcp)/(2.0D0*conductor_th_cond) * &
+    dtconcpmx = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond) * &
          ( (rcool**2 - ro**2)/2.0D0 + ro**2 * log(ro/rcool) )
 
     !  Average conductor temperature
@@ -591,7 +585,6 @@ contains
     presin = psat + dpres
 
 
-
     if (iprint == 0) return
 
     !  Output section
@@ -633,7 +626,9 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cpost(rtop,ztop,rmid,hmax,curr,rho,fcool,r_tfin_inleg,volume,respow)
+  subroutine cpost(rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! Inputs
+                   ins_th, cas_out_th, n_turns_tot,                         &  ! Inputs
+                   acpcool, volume, respow, volins, volcasout )                ! Outputs
 
     !! Calculates the volume and resistive power losses of a TART centrepost
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -662,16 +657,23 @@ contains
     implicit none
 
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: rtop,ztop,rmid,hmax,curr,rho,fcool,&
-                                      &r_tfin_inleg
-    real(kind(1.0D0)), intent(out) :: volume,respow
+    ! ---
+    ! Inputs
+    real(kind(1.0D0)), intent(in) :: rtop,ztop,rmid,hmaxi,curr,rho,fcool,&
+                                     r_tfin_inleg, ins_th, cas_out_th, n_turns_tot
 
-    !  Local variables
-    real(kind(1.0D0)) :: r1,z1,x,y,rc,sum1,sum2,dz,r,z, a_tfin_hole, a_cp_cool
-    real(kind(1.0D0)), dimension(0:100) :: yy
+    ! Outputs
+    real(kind(1.0D0)), intent(out) :: volume, respow, acpcool, volins, volcasout
+
+    ! Internal
+    real(kind(1.0D0)) :: r1,z1,x,y,rc,dz,r,z, a_tfin_hole, res_cyl, res_taped
+    real(kind(1.0D0)) :: sum1, sum2, sum3, sum4
+    real(kind(1.0D0)) :: a_cond_midplane, a_cp_ins, a_casout
+    real(kind(1.0D0)), dimension(0:100) :: yy, yy_ins, yy_casout
+
     integer :: ii
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! ---
+    
 
     !  Error traps
     ! ------------
@@ -706,19 +708,45 @@ contains
     end if
     ! ------------
 
+ 
+    ! Mid-plane area calculations
+    ! ---------------------------
+    ! Area of the innner TF central hole [m2]
+    a_tfin_hole = pi*r_tfin_inleg**2  ! eq(32)
+
+    ! Mid-plane outer casing cross-section area [m2]
+    a_casout = pi * ( (rmid + cas_out_th)**2 - rmid**2 )
+
+    ! Mid-plane insualtion layer cross-section [m2]
+    a_cp_ins = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 ) + & ! Inner layer volume
+               pi * ( rmid**2 - ( rmid - ins_th )**2 )               + & ! Outter layer volume
+               2.0D0 * ins_th * (rmid - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers
+
+    ! Cooling pipes cross-section [m2]
+    acpcool = fcool * ( pi*rmid**2 - a_tfin_hole - a_cp_ins ) / n_tf
+    ! ---------------------------
+
 
     !  Trivial solutions
     ! ------------------
-    if (fcool == 1.0D0) then
+    if ( fcool == 1.0D0 ) then
        volume = 0.0D0
        respow = 0.0D0
        call report_error(122)
        return
     end if
 
-    if (rmid == rtop) then
-       volume = 2.0D0*hmax * pi*rmid*rmid
-       respow = 2.0D0 * rho * curr*curr * hmax / (pi*rmid*rmid) / (1.0D0-fcool)
+    if ( rmid == rtop ) then
+
+       ! Exact conductor cross-section
+       a_cond_midplane = pi*rmid**2 - a_tfin_hole - n_tf * acpcool - a_cp_ins
+
+       ! Volumes and resisitive losses calculations
+       volume = 2.0D0 * hmaxi * a_cond_midplane
+       volins = 2.0D0 * hmaxi * a_cp_ins
+       respow = 2.0D0 * hmaxi * curr**2 * rho / a_cond_midplane
+       volcasout = 2.0D0 * hmaxi * a_casout
+
        return
     end if
     ! ------------------
@@ -740,14 +768,8 @@ contains
     !  Find volume of tapered section of centrepost, and the resistive
     !  power losses, by integrating along the centrepost from the midplane
     ! --------------------------------------------------------------------
-    !  Calculate centrepost radius and cross-sectional area at each Z
+    !  Calculate centrepost radius and cross-sectional areas at each Z
     dz = 0.01D0*ztop
-
-    ! Area of the innner TF central hole
-    a_tfin_hole = pi*r_tfin_inleg**2
-    
-    ! Coolant area (invariant with z)
-    a_cp_cool = tfareain * fcool
 
     do ii = 0,100
        z = dble(ii) * dz
@@ -761,27 +783,63 @@ contains
           call report_error(123)
        end if
 
+       ! Insulation cross-sectional area at Z
+       yy_ins(ii) = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 )            + & ! Inner layer volume
+                    pi * ( r**2 - ( r - ins_th )**2 )                                + & ! Outter layer volume
+                    2.0D0 * ins_th * (r - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot     ! inter turn separtion layers
+
        !  Cross-sectional area at Z
-       yy(ii) = pi*r**2 - a_tfin_hole - a_cp_cool
+       yy(ii) = pi*r**2 - a_tfin_hole - n_tf*acpcool - yy_ins(ii)  ! eq(32)
+       
+       !  Outer casing Cross-sectional area at z 
+       yy_casout(ii) = pi * ( (r+cas_out_th)**2 - r**2 )
 
     end do
 
     !  Perform integrals using trapezium rule
     sum1 = 0.0D0
     sum2 = 0.0D0
+    sum3 = 0.0D0
+    sum4 = 0.0D0
     do ii = 1,99
        sum1 = sum1 + yy(ii)
        sum2 = sum2 + 1.0D0/yy(ii)
+       sum3 = sum3 + yy_ins(ii)
+       sum4 = sum4 + yy_casout(ii)
     end do
 
     sum1 = 0.5D0*dz * ( yy(0) + yy(100) + 2.0D0*sum1 )
     sum2 = 0.5D0*dz * ( 1.0D0/yy(0) + 1.0D0/yy(100) + 2.0D0*sum2 )
+    sum3 = 0.5D0*dz * ( yy_ins(0) + yy_ins(100) + 2.0D0*sum3 )
+    sum4 = 0.5D0*dz * ( yy_casout(0) + yy_casout(100) + 2.0D0*sum4 )
 
-    !  Centrepost volume (ignoring coolant fraction)
-    volume = 2.0D0 * (sum1 + (hmax-ztop)*(pi*rtop**2 - a_cp_cool - a_tfin_hole ))
+    ! Insulation layer cross section at CP top 
+    a_cp_ins = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 )           + & ! Inner layer volume
+               pi * ( rtop**2 - ( rtop - ins_th )**2 )                         + & ! Outter layer volume
+               2.0D0 * ins_th * (rtop - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers      
+
+    ! Outer casing cross-section area at CP top [m2]
+    a_casout = pi * ( (rtop + cas_out_th)**2 - rtop**2 )
+
+    ! Centrepost volume (ignoring coolant fraction) [m3]
+    volume = 2.0D0 * ( sum1 + ( hmaxi - ztop ) * &
+             ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*a_cp_cool ) )
     
-    !  Resistive power losses
-    respow = 2.0D0 * rho * curr**2 * (sum2 + (hmax-ztop)/(pi*rtop**2 - a_cp_cool - a_tfin_hole ))
+    ! Resistive power losses in taped section (variable radius section) [W]
+    res_taped = rho * curr**2 * sum2                    ! eq(31)
+
+    ! Centrepost insulator volume [m3]
+    volins = 2.0D0 * ( sum3 + (hmaxi - ztop) * a_cp_ins )
+    
+    ! Outer casing volume [m3]
+    volcasout = 2.0D0 * ( sum4 + (hmaxi - ztop) * a_casout ) 
+
+    ! Resistive power losses in cylindrical section (constant radius) [W]
+    res_cyl = rho * curr**2 * ( ( hmaxi - ztop ) / &    ! eq(30)
+              ( pi * rtop**2 - a_tfin_hole  - a_cp_ins - n_tf*acpcool ) )  
+       
+    ! Total CP resistive power [W]
+    respow = 2.0D0 * ( res_cyl + res_taped )   ! eq(36)   
     ! --------------------------------------------------------------------
   end subroutine cpost
 

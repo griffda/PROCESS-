@@ -622,7 +622,6 @@ subroutine check
     errors_on = .true.
 
     !  Check that there are sufficient iteration variables
-
     if (nvar < neqns) then
         idiags(1) = nvar ; idiags(2) = neqns
         call report_error(137)
@@ -689,14 +688,14 @@ subroutine check
 
     ! The 1/R B field dependency constraint variable is being depreciated
     ! Stop the run if the constraint 10 is used
-    if ( any(icc == 10 )) then
+    if ( any( icc == 10 ) ) then
         call report_error(236)
         stop
     end if
 
     ! Stop the run if oacdcp is used as an optimisation variable
     ! As the current density is now calculated from bt without constraint 10
-    if ( any(ixc == 12 ) ) then
+    if ( any( ixc == 12 ) ) then
         call report_error(236)
         stop
     end if 
@@ -718,7 +717,6 @@ subroutine check
         if (ipedestal == 1 .or. ipedestal == 2) then
 
             !  Temperature checks
-
             if (teped < tesep) then
                 fdiags(1) = teped ; fdiags(2) = tesep
                 call report_error(146)
@@ -734,7 +732,6 @@ subroutine check
             !  volume-averaged temperature never drops below the pedestal
             !  temperature. Prevent this by adjusting te, and its lower bound
             !  (which will only have an effect if this is an optimisation run)
-
             if (te <= teped) then
                 fdiags(1) = te ; fdiags(2) = teped
                 te = teped*1.001D0
@@ -983,7 +980,7 @@ subroutine check
 
     !  Tight aspect ratio options (ST)
     ! --------------------------------
-     if (itart == 1) then
+    if ( itart == 1 ) then
 
         icase  = 'Tight aspect ratio tokamak model'
 
@@ -1004,24 +1001,43 @@ subroutine check
         ipfloc(2) = 3
         ipfloc(3) = 3
 
+        ! Water cooled copper magnets initalisation / checks
+        if ( i_tf_sup == 0 ) then
+            ! Check if the initial centrepost coolant loop adapted to the magnet technology
+            ! Ice cannot flow so tcoolin > 273.15 K 
+            if ( tcoolin < 273.15D0 ) call report_error(234)
+
+            ! Temperature of the TF legs cannot be cooled down 
+            if ( abs(tlegav+1.0D0) > epsilon(tlegav) .and. tlegav < 273.15D0 ) call report_error(239)
+
         ! Call a lvl 3 error if superconductor magnets are used
-        if ( i_tf_sup == 1 ) call report_error(233)
+        else if ( i_tf_sup == 1 ) then 
+            call report_error(233)
 
-        ! Initialize the CP conductor temperature to cryogenic temperatire for cryo-al magnets (20 K)
-        if ( i_tf_sup == 2 ) tcpav  = 20.0D0
+        ! Helium cooled cryogenic aluminium magnets initalisation / checks
+        ! Initialize the CP conductor temperature to cryogenic temperature for cryo-al magnets (20 K)
+        else  if ( i_tf_sup == 2 ) then
 
-        ! Check if the initial centrepost coolant loop adapted to the magnet technology
-        ! Ice cannot flow so tcoolin > 273.15 K 
-        if ( i_tf_sup == 0 .and. tcoolin < 273.15D0 ) call report_error(234)
+            ! Call a lvl 3 error if the inlet coolant temperature is too large
+            ! Motivation : ill-defined aluminium resistivity fit for T > 40-50 K
+            if ( tcoolin > 40.0D0 ) call report_error(235)
+            
+            ! Check if the leg average temperature is low enough for the resisitivity fit
+            if ( tlegav > 50.0D0 ) call report_error(238)
 
-        ! Too large temperatures leading to out of range resisitivity model
-        if ( i_tf_sup == 2 .and. tcoolin > 50.0D0 ) call report_error(235)
+            ! Otherwise intitialise the average conductor temperature at 
+            tcpav = tcoolin
+        
+        end if
 
         ! Check if the boostrap current selection is addapted to ST
         if (ibss  == 1) call report_error(38)
 
         ! Check if a single null divertor is used (double null not yet implemented)
         if (i_single_null == 1) call report_error(39)
+
+        ! Set the poloidal coil shape to picture frame (if default value)
+        if ( i_tf_shape == 0 ) i_tf_shape = 2
     ! --------------------------------
 
     
@@ -1037,8 +1053,10 @@ subroutine check
             idivrt = 1
         end if
 
-        !  Check PF coil configurations
+        ! Set the poloidal coil shape to PROCESS D-shape (if default value)
+        if ( i_tf_shape == 0 ) i_tf_shape = 1
 
+        !  Check PF coil configurations
         j = 0 ; k = 0
         do i = 1, ngrp
             if ((ipfloc(i) /= 2).and.(ncls(i) /= 2)) then
