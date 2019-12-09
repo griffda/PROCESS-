@@ -427,49 +427,43 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine stgeom
+    !! author: J Lion, IPP Greifswald
+    !! Routine to calculate the plasma volume and surface area for
+    !! a stellarator using precalculated effective values
+    !!
+    !! This routine calculates the plasma volume and surface area for
+    !! a stellarator configuration.
+    !! It is simple scaling based on a Fourier representation based on 
+    !! that described in Geiger documentation.
+    !!
+    !! J. Geiger, IPP Greifswald internal document:  'Darstellung von
+    !! ineinandergeschachtelten toroidal geschlossenen Flaechen mit
+    !! Fourierkoeffizienten' ('Representation of nested, closed
+    !! surfaces with Fourier coefficients')
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   !+ad_name  stgeom
-   !+ad_summ  Routine to calculate the plasma volume and surface area for
-   !+ad_summ  a stellarator using precalculated effective values
-   !+ad_type  Subroutine
-   !+ad_auth  J Lion, IPP Greifswald
-   !+ad_cont  N/A
-   !+ad_args  None
-   !+ad_desc  This routine calculates the plasma volume and surface area for
-   !+ad_desc  a stellarator configuration.
-   !+ad_desc  <P>It is simple scaling based on a Fourier representation based on 
-   !+ad_desc  that described in Geiger documentation.
-   !+ad_call  None
-   !+ad_hist  02/12/19 jlion Initial version
-   !+ad_stat  To be checked
-   !+ad_docs  J. Geiger, IPP Greifswald internal document:  'Darstellung von
-   !+ad_docc  ineinandergeschachtelten toroidal geschlossenen Flaechen mit
-   !+ad_docc  Fourierkoeffizienten' ('Representation of nested, closed
-   !+ad_docc  surfaces with Fourier coefficients')
-   !
-   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    implicit none
 
-   implicit none
+    !  Arguments
 
-   !  Arguments
+    !  Local variables
 
-   !  Local variables
+    !  Cross-sectional area, averaged over toroidal angle
+    rminor = rmajor/aspect
+    eps = 1.0D0/aspect
 
-   !  Cross-sectional area, averaged over toroidal angle
-   rminor = rmajor/aspect
-   eps = 1.0D0/aspect
+    vol = rmajor*rminor**2 * 19.75D0 !This value is for Helias5 solely
 
-   vol = rmajor*rminor**2 * 19.75D0 !This value is for Helias5 solely
+    sarea = rmajor*rminor * 48.56D0 !This value is for Helias5 solely
 
-   sarea = rmajor*rminor * 48.56D0 !This value is for Helias5 solely
+    xarea = pi*rminor*rminor  ! average, could be calculated for every toroidal angle if desired
 
-   xarea = pi*rminor*rminor  ! average, could be calculated for every toroidal angle if desired
+    !  sareao is retained only for obsolescent fispact calculation...
 
-   !  sareao is retained only for obsolescent fispact calculation...
+    sareao = 0.5D0*sarea  !  Used only in the divertor model; approximate as for tokamaks
 
-   sareao = 0.5D0*sarea  !  Used only in the divertor model; approximate as for tokamaks
-
- end subroutine stgeom
+  end subroutine stgeom
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
