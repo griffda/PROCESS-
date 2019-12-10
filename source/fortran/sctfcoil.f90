@@ -700,8 +700,8 @@ subroutine tf_field_and_force()
             end if
 
             ! Leg resistivity (different leg temperature as separate cooling channels) 
-            if ( i_tf_sup == 0 ) rholeg = (frholeg/0.92D0) * ( 1.72D0 + 0.0039D0*(tlegav-273.15D0) ) * 1.0D-8               ! eq(25)
-            if ( i_tf_sup == 2 ) rholeg =  frholeg * ( 2.00016D-14*tlegav**3 - 6.75384D-13*tlegav**2 + 8.89159D-12*tlegav ) ! eq(26)
+            if ( i_tf_sup == 0 ) rhotfleg = (frholeg/0.92D0) * ( 1.72D0 + 0.0039D0*(tlegav-273.15D0) ) * 1.0D-8               ! eq(25)
+            if ( i_tf_sup == 2 ) rhotfleg =  frholeg * ( 2.00016D-14*tlegav**3 - 6.75384D-13*tlegav**2 + 8.89159D-12*tlegav ) ! eq(26)
 
             ! Tricky trick to make the leg / CP tempearture the same
             if ( is_leg_cp_temp_same == 1 ) tlegav = -1.0D0  
@@ -712,19 +712,28 @@ subroutine tf_field_and_force()
                            n_tf*turnstf,                                                    & ! Inputs
                            a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
 
-            ! Area taken by one ouboard legs turns insulation
+
+            ! Outter leg cross-section areas
+            ! ---
+            ! Area taken by one ouboard legs turns insulation [m2]
             a_wp_ins_turn = 2.0D0 * tinstf * ( (tftort/turnstf) + tfthko - 2.0D0*tinstf )
 
             ! Exact TF ouboard leg conductor area (per leg) [m2]
             a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )
+            ! ---
 
+
+            ! Outter leg resistive power losse
+            ! ---
             ! TF outboard legs resistance calculation (per leg) [ohm]
-            tflegres = rholeg * tfleng / a_wp_cond_leg   ! eq(29)
+            tflegres = rhotfleg * tfleng / a_wp_cond_leg   ! eq(29)
 
             ! TF outer leg resistive power (TOTAL) [W]   
-            presleg = n_tf * tflegres * ritfc**2   ! eq(29)
-                        
-            ! TF outer leg volume including insulation layer and cooling channels [m3]
+            presleg = tflegres * ritfc**2 / n_tf   ! eq(29)
+            ! ---
+
+
+            ! Total volume of one outerleg [m3]
             voltfleg = tfleng * arealeg
             
             ! Outboard leg TF conductor volume [m3]
@@ -2040,14 +2049,14 @@ subroutine outtf(outfile, peaktfflag)
         call ocmmnt(outfile,'for the ST tapered centrepost):')
         call oblnkl(outfile)
  
-        write(outfile,10)
-        30  format(t2,'point',t16,'x(m)',t31,'y(m)')
-        do ii = 1,5
-           write(outfile,30) ii,xarc(ii),yarc(ii)
-           intstring = int2char(ii)
-           call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
-           call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
-        end do
+        ! write(outfile,10)
+        ! 30  format(t2,'point',t16,'x(m)',t31,'y(m)')
+        ! do ii = 1,5
+        !    write(outfile,30) ii,xarc(ii),yarc(ii)
+        !    intstring = int2char(ii)
+        !    call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
+        !    call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
+        ! end do
 
     end if 
 end subroutine outtf
@@ -3023,7 +3032,7 @@ subroutine sc_cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, & 
 
     ! Centrepost volume (ignoring coolant fraction) [m3]
     volume = 2.0D0 * ( sum1 + ( hmaxi - ztop ) * &
-                     ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*a_cp_cool ) )
+                     ( pi*rtop**2 - a_tfin_hole - a_cp_ins - n_tf*acpcool ) )
 
     ! Resistive power losses in taped section (variable radius section) [W]
     res_taped = rho * curr**2 * sum2                    ! eq(31)

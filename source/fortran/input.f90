@@ -1773,9 +1773,9 @@ contains
        case ('tfinsgap')
           call parse_real_variable('tfinsgap', tfinsgap, 1.0D-10, 1.0D-1, &
                'TF coil WP insertion gap (m)')
-       case ('rhotfleg')
-          call parse_real_variable('rhotfleg', rhotfleg, 1.0D-10, 1.0D-5, &
-               'TF coil leg resistivity (ohm-m)')
+       case ('rhotfbus')
+          call parse_real_variable('rhotfbus', rhotfbus, 0.0D0, 1.0D-5, &
+               'TF coil bus (feeders) resistivity (ohm-m)')
        case ('n_tf')
           call parse_real_variable('n_tf', n_tf, 0.0D0, 100.0D0, &
                'Number of TF coils')

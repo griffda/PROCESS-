@@ -119,9 +119,11 @@ contains
     !  Radial position of vacuum vessel [m]
     r_vv_inboard_out = rbldtotf + deltf + thshield + gapds + ddwi
 
+    ! Radial position of the plasma facing side of inboard neutronic shield
+    r_sh_inboard_out = r_vv_inboard_out + shldith
+
     !  Radial build to centre of plasma (should be equal to rmajor)
-    rbld = rbldtotf + deltf + thshield + gapds + ddwi + &
-         shldith + vvblgap + blnkith + fwith + scrapli + rminor
+    rbld = r_sh_inboard_out + vvblgap + blnkith + fwith + scrapli + rminor
 
     !  Radius to inner edge of inboard shield
     rsldi = rmajor - rminor - scrapli - fwith - blnkith - shldith
@@ -275,10 +277,8 @@ contains
     radius = radius + gapoh
     call obuild(outfile,'Gap',gapoh,radius,'(gapoh)')
     call ovarre(mfile,'CS precompresion to TF coil radial gap (m)','(gapoh)',gapoh)
-    
-    
-    
 
+    radius = radius + tfcth
     call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
     call ovarre(mfile,'TF coil inboard leg (m)','(tfcth)',tfcth)
     

@@ -237,6 +237,7 @@ module physics_variables
   !! figmer : physics figure of merit (= plascur*aspect**sbar, where sbar=1)
   real(kind(1.0D0)) :: fkzohm = 1.0D0
   !! fkzohm /1.0/ : Zohm elongation scaling adjustment factor (ishape=2, 3)
+  
   real(kind(1.0D0)) :: fplhsep = 1.0D0
   !! fplhsep /1.0/ : F-value for Psep >= Plh + Paux (constraint equation 73)
   
@@ -2265,8 +2266,10 @@ module tfcoil_variables
   !! radtf(3) : work array used in stress calculation (m)
   real(kind(1.0D0)) :: rbmax = 0.0D0
   !! rbmax : radius of maximum TF B-field (m)
+
   real(kind(1.0D0)) :: tflegres = 0.0D0
   !! tflegres : TF coil leg resistance (ohm)
+
   real(kind(1.0D0)) :: ripmax = 1.0D0
   !! ripmax /1.0/ : maximum allowable toroidal field ripple amplitude
   !!                at plasma edge (%)
@@ -2372,9 +2375,26 @@ module tfcoil_variables
   
   real(kind(1.0D0)) :: tflegmw = 0.0D0
   !! tflegmw : TF coil outboard leg resistive power (MW)
-  real(kind(1.0D0)) :: rhotfleg = -1.0D0 ! 2.5D-8
-  !! rhotfleg /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
+
+  real(kind(1.0D0)) :: rhocp = 0.0D0
+  !! rhocp : TF coil inboard leg resistivity [Ohm-m]
+  !!         if itart == 0, this variable is the average resistivity over the whole magnet
+
+  real(kind(1.0D0)) :: rhotfleg = 0.0D0
+  !! rhotfleg : resistivity of a TF coil leg (Ohm-m)
+
+  real(kind(1.0D0)) :: rhotfbus = -1.0D0 ! 2.5D-8
+  !! rhotfbus /-1.0/ : resistivity of a TF coil bus (Ohm-m)
+  !!                   Default value takes the same res as the leg one
  
+  real(kind(1.0D0)) :: frhocp = 1.0D0
+  !! frhocp /1.0/ : Centrepost resistivity enhancement factor 
+  !!                For itart = 0, this factor is used for the whole magnet 
+  
+  real(kind(1.0D0)) :: frholeg = 1.0D0
+  !! frholeg /1.0/ : Ouboard legs resistivity enhancement factor
+  !!                 Only used for itart = 1
+
   real(kind(1.0D0)) :: tfleng = 0.0D0
   !! tfleng : TF coil circumference (m)
 
@@ -2545,14 +2565,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: a_cp_cool = 0.0D0
   !! a_cp_cool : Centrepost cooling area toroidal cross-section (constant over the whole CP)
 
-  real(kind(1.0D0)) :: frhocp = 1.0D0
-  !! frhocp /1.0/ : Centrepost resistivity enhancement factor 
-  !!                For itart = 0, this factor is used for the whole magnet 
-  
-  real(kind(1.0D0)) :: frholeg = 1.0D0
-  !! frholeg /1.0/ : Ouboard legs resistivity enhancement factor
-  !!                 Only used for itart = 1
-
   real(kind(1.0D0)), parameter :: k_copper = 330.0D0
   !! k_copper /330.0/ FIX : Copper thermal conductivity (W/m/K)
 
@@ -2573,7 +2585,7 @@ module tfcoil_variables
   !!          if itart == 0, this variable is the ressitive power on the whole magnet
 
   real(kind(1.0D0)) :: presleg = 0.0D0
-  !! presleg : resistive power in the centrepost (W)
+  !! presleg : Summed resistive power in the TF coil legs [W]
   !!           remain 0 if itart == 0
    
   real(kind(1.0D0)) :: ptempalw = 473.15D0   ! 200 C
@@ -2583,14 +2595,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: rcool = 0.005D0
   !! rcool /0.005/ : average radius of coolant channel (m)
   !!                 (iteration variable 69)
-
-  real(kind(1.0D0)) :: rhocp = 0.0D0
-  !! rhocp : TF coil inboard leg resistivity [Ohm-m]
-  !!          if itart == 0, this variable is the average resistivity over the whole magnet
-
-  real(kind(1.0D0)) :: rholeg = 0.0D0
-  !! rholeg : TF coil inboard leg resistivity [Ohm-m]
-  !!          Not used if itart == 0 
 
   real(kind(1.0D0)) :: tcoolin = 313.15D0   ! 40 C
   !! tcoolin /313.15/ : centrepost coolant inlet temperature (K)
@@ -2890,8 +2894,10 @@ module heat_transport_variables
   !! pinjwp : injector wall plug power (MW)
   real(kind(1.0D0)) :: pinjwpfix = 0.0D0
   !! pinjwpfix : secondary injector wall plug power (MW)
+
   real(kind(1.0D0)) :: pnetelmw = 0.0D0
   !! pnetelmw : net electric power (MW)
+
   real(kind(1.0D0)) :: precircmw = 0.0D0
   !! precircmw : recirculating electric power (MW)
   real(kind(1.0D0)) :: priheat = 0.0D0
@@ -2913,8 +2919,10 @@ module heat_transport_variables
   !! pthermmw : High-grade heat useful for electric production (MW)
   real(kind(1.0D0)) :: pwpm2 = 150.0D0
   !! pwpm2 /150.0/ : base AC power requirement per unit floor area (W/m2)
+
   real(kind(1.0D0)) :: tfacpd = 0.0D0
   !! tfacpd : total steady state TF coil AC power demand (MW)
+
   real(kind(1.0D0)), bind(C) :: tlvpmw = 0.0D0
   !! tlvpmw : estimate of total low voltage power (MW)
   real(kind(1.0D0)), bind(C) :: trithtmw = 15.0D0
@@ -3257,7 +3265,10 @@ module build_variables
   !! rsldo : radius to outboard shield (outside point) (m)
 
   real(kind(1.0D0)) :: r_vv_inboard_out = 0.0D0
-  !! r_vv_inboard_out : Radial position of vacuum vessel [m]
+  !! r_vv_inboard_out : Radial plasma facing side position of inboard vacuum vessel [m]
+
+  real(kind(1.0D0)) :: r_sh_inboard_out = 0.0D0
+  !! r_sh_inboard_out : Radial plasma facing side position of inboard neutronic shield [m]
 
   real(kind(1.0D0)) :: r_tf_inboard_mid = 0.0D0
   !!  r_tf_inboard_mid : Mid-plane Outer radius of centre of inboard TF leg (m)
@@ -3874,12 +3885,15 @@ module constraint_variables
   real(kind(1.0D0)) :: fmva = 1.0D0
   !! fmva /1.0/ : f-value for maximum MVA
   !!              (constraint equation 19, iteration variable 30)
+
   real(kind(1.0D0)) :: fnbshinef = 1.0D0
   !! fnbshinef /1.0/ : f-value for maximum neutral beam shine-through fraction
   !!                   (constraint equation 59, iteration variable 105)
+
   real(kind(1.0D0)) :: fnesep = 1.0D0
   !! fnesep /1.0/ : f-value for Eich critical separatrix density
   !!                   (constraint equation 76, iteration variable 144)
+
   real(kind(1.0D0)) :: foh_stress = 1.0D0
   !! foh_stress /1.0/ : f-value for Tresca stress in Central Solenoid
   !!                   (constraint equation 72, iteration variable 123)

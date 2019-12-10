@@ -1010,6 +1010,9 @@ subroutine check
             ! Temperature of the TF legs cannot be cooled down 
             if ( abs(tlegav+1.0D0) > epsilon(tlegav) .and. tlegav < 273.15D0 ) call report_error(239)
 
+            ! Check if conductor upper limit is properly set to 50 K or below
+            if ( any(ixc == 20 ) .and. boundu(20) < 273.15D0 ) call report_error(241)
+
         ! Call a lvl 3 error if superconductor magnets are used
         else if ( i_tf_sup == 1 ) then 
             call report_error(233)
@@ -1024,6 +1027,9 @@ subroutine check
             
             ! Check if the leg average temperature is low enough for the resisitivity fit
             if ( tlegav > 50.0D0 ) call report_error(238)
+
+            ! Check if conductor upper limit is properly set to 50 K or below
+            if ( any(ixc == 20 ) .and. boundu(20) > 50.0D0 ) call report_error(240)
 
             ! Otherwise intitialise the average conductor temperature at 
             tcpav = tcoolin
