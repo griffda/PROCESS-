@@ -2857,15 +2857,6 @@ contains
        case ('shear')
           call parse_real_variable('shear', shear, 0.1D0, 10.0D0, &
                'Magnetic shear')
-       case ('vmec_info_file')
-          call parse_string_variable('vmec_info_file', vmec_info_file, &
-               'VMEC information filename')
-       case ('vmec_rmn_file')
-          call parse_string_variable('vmec_rmn_file', vmec_rmn_file, &
-               'VMEC R(m,n) filename')
-       case ('vmec_zmn_file')
-          call parse_string_variable('vmec_zmn_file', vmec_zmn_file, &
-               'VMEC Z(m,n) filename')
 
        !  Inertial Fusion Energy plant settings
 
