@@ -1656,7 +1656,7 @@ contains
       !! <LI> = 1 use spherical tokamak models</UL>
       use tfcoil_variables, only: tcpav, tcpav2
       use physics_variables, only: itart
-      use tfcoil_variables, only:  itfsup
+      use tfcoil_variables, only:  i_tf_sup
 
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -1665,7 +1665,7 @@ contains
       if (itart == 0) call report_error(7)
 
       ! For some reasons these lines are needed to make VMCON CONVERGE ....
-      if ( itfsup == 0 ) then ! Copper case
+      if ( i_tf_sup == 0 ) then ! Copper case
          tcpav = tcpav - 273.15D0
          tcpav2 = tcpav2 - 273.15D0
       end if
@@ -1677,7 +1677,7 @@ contains
       args%units = 'deg C'
 
       ! For some reasons these lines are needed to make VMCON CONVERGE ....
-      if ( itfsup == 0 ) then ! Copper case
+      if ( i_tf_sup == 0 ) then ! Copper case
          tcpav = tcpav + 273.15D0
          tcpav2 = tcpav2 + 273.15D0
       end if
@@ -1705,7 +1705,7 @@ contains
       use constraint_variables, only: fptemp
       use tfcoil_variables, only: ptempalw, tcpmax
       use physics_variables, only: itart
-      use tfcoil_variables, only:  itfsup
+      use tfcoil_variables, only:  i_tf_sup
       implicit none
       type (constraint_args_type), intent(out) :: args
 
@@ -1713,7 +1713,7 @@ contains
       if (itart == 0) call report_error(8)
 
       ! For some reasons these lines are needed to make VMCON CONVERGE ....
-      if ( itfsup == 0 ) then ! Copper case
+      if ( i_tf_sup == 0 ) then ! Copper case
          ptempalw = ptempalw - 273.15D0
          tcpmax = tcpmax - 273.15D0
       end if
@@ -1725,7 +1725,7 @@ contains
       args%units = 'deg C'
 
       ! For some reasons these lines are needed to make VMCON CONVERGE ....
-      if ( itfsup == 0 ) then ! Copper case
+      if ( i_tf_sup == 0 ) then ! Copper case
          ptempalw = ptempalw + 273.15D0
          tcpmax = tcpmax + 273.15D0
       end if
@@ -2188,14 +2188,14 @@ contains
       !! tfno : input real : number of TF coils (default = 50 for stellarators)
       !! niterpump : input real : number of high vacuum pumps (real number), each with the throughput
       use constraint_variables, only: fniterpump
-      use tfcoil_variables, only: tfno
+      use tfcoil_variables, only: n_tf
       use vacuum_variables, only: niterpump
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc = 1.0D0 - fniterpump * tfno / niterpump
-      args%con = tfno
-      args%err = tfno * args%cc
+      args%cc = 1.0D0 - fniterpump * n_tf / niterpump
+      args%con = n_tf
+      args%err = n_tf * args%cc
       args%symbol = '<'
       args%units = ''
 

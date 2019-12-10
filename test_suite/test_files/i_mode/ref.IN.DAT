@@ -101,7 +101,7 @@ pdivtlim = 240.0
 *--------------------------------*
 icc = 16
 ixc = 25 * fpnetel
-pnetelin = 225.0
+pnetelin = 220.0
 
 * Beta upper limit *
 *------------------*
@@ -441,7 +441,7 @@ isc = 34
 q0 = 1.0
 
 * Switch for single null / double null plasma
-snull = 1
+i_single_null = 1
 
 * Synchrotron wall reflectivity factor
 ssync = 0.6
@@ -607,7 +607,7 @@ casths = 0.05
 ripmax = 0.6
 
 * Number of TF coils
-tfno = 16
+n_tf = 16
 
 * Groundwall insulation thickness [m]
 tinstf = 0.008

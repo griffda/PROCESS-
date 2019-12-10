@@ -15,7 +15,7 @@ module helias5b_coil_parameters
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Number of coils
-  integer, parameter :: tfno5B = 50
+  integer, parameter :: n_tf5B = 50
   !  Major radius (m)
   real(kind(1.0D0)), parameter :: Rg5B = 22.0D0
   !  Coil minor radius (m), = U/(2*pi), U=34 m
@@ -351,7 +351,7 @@ contains
     tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
     !  Coil quantities
-    tfno = 50.0D0
+    n_tf = 50.0D0
 
     !  Blanket properties
     !secondary_cycle = 0  !  simple thermal hydraulic model assumed
@@ -427,20 +427,17 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine stgeom
-
+    !! author: J Lion, IPP Greifswald
     !! Routine to calculate the plasma volume and surface area for
-    !! a stellarator
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! author: F Warmer, IPP Greifswald
-    !! None
+    !! a stellarator using precalculated effective values
+    !!
     !! This routine calculates the plasma volume and surface area for
     !! a stellarator configuration.
-    !! <P>The method is based on that described in Geiger, and
-    !! has been converted from MATLAB code written by Felix Warmer.
-    !! Stellarator Plasma Geometry Model for the Systems
-    !! Code PROCESS, F. Warmer, 19/06/2013
+    !! It is simple scaling based on a Fourier representation based on 
+    !! that described in Geiger documentation.
+    !!
     !! J. Geiger, IPP Greifswald internal document:  'Darstellung von
-    !! ineinandergeschachtelten toroidal geschlossenen Fl�chen mit
+    !! ineinandergeschachtelten toroidal geschlossenen Flaechen mit
     !! Fourierkoeffizienten' ('Representation of nested, closed
     !! surfaces with Fourier coefficients')
     !
@@ -452,208 +449,15 @@ contains
 
     !  Local variables
 
-    integer, parameter :: n_i = 12, n_j = 25
-    integer, parameter :: m_max = n_i-1, n_max = (n_j-1)/2
-    integer, parameter :: nu = 200, nv = 200
-    integer, save :: nf_vmec
-    integer :: i,j,m,n,iu,iv,nf,m1,n1,m2,n2,a1,b1,a2,b2,a3,b3,a4,b4
-    real(kind(1.0D0)), dimension(0:m_max,-n_max:n_max), save :: Rmn0, Zmn0
-    real(kind(1.0D0)), dimension(0:m_max,-n_max:n_max) :: Rmn, Zmn
-    real(kind(1.0D0)), dimension(4*m_max+1,4*n_max+1) :: Rv, Zv
-    real(kind(1.0D0)), save :: r_vmec,a_vmec,aspect_vmec,v_vmec,s_vmec
-    real(kind(1.0D0)) :: a,a_square,sr,sa,r_maj,du,dv,rr,drdv,drdu
-    real(kind(1.0D0)) :: dzdv,dzdu,rtemp,sum1,sum2,rn,u,v,suv,cuv
-    character(len=80) :: header
-    logical :: first_call = .true.
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (first_call) then
-
-       !  VMEC information file
-
-       open(unit=1,file=vmec_info_file,status='old')
-       read(1,'(A)') header
-       read(1,*) R_vmec, a_vmec, aspect_vmec, V_vmec, S_vmec, rn
-       close(unit=1)
-
-       nf_vmec = int(rn)
-
-       !  Import VMEC boundary Fourier coefficients from files.
-       !  These contain the plasma boundary represented by Fourier components
-       !  R(m,n) and Z(m,n)
-       !
-       !  Fortran complication: array sizes n_i,n_j,m_max,n_max are needed in advance...
-
-       !  Rmn Fourier components
-
-       open(unit=1,file=vmec_rmn_file,status='old')
-       do m = 0,m_max
-          read(1,*) (Rmn0(m,n),n=-n_max,n_max)
-       end do
-       close(unit=1)
-
-       !  Zmn Fourier components
-
-       open(unit=1,file=vmec_zmn_file,status='old')
-       do m = 0,m_max
-          read(1,*) (Zmn0(m,n),n=-n_max,n_max)
-       end do
-       close(unit=1)
-
-       first_call = .false.
-    end if
-
-    Rmn = Rmn0
-    Zmn = Zmn0
-
+    !  Cross-sectional area, averaged over toroidal angle
     rminor = rmajor/aspect
     eps = 1.0D0/aspect
 
-    !  Number of field periods; this is always 5 for the W7-X line,
-    !  but a 4 periodic machine could be possible in the future
+    vol = rmajor*rminor**2 * 19.75D0 !This value is for Helias5 solely
 
-    nf = nf_vmec
+    sarea = rmajor*rminor * 48.56D0 !This value is for Helias5 solely
 
-    !  Scale major and minor radius
-    !  with scaling factors SR = R / R_vmec for the major radius
-    !                   and Sa = a / a_vmec for the minor radius
-    !
-    !  If a certain 'R' shall be used, calculate R_vmec in advance
-    !  and define SR not as factor, but as given above
-
-    SR = rmajor/R_vmec
-    Sa = rminor/a_vmec
-
-    do n = -n_max,n_max
-       do m = 0,m_max
-
-          if (m == 0) then
-             Rmn(m,n) = SR*Rmn(m,n)
-             Zmn(m,n) = SR*Zmn(m,n)
-          else
-             Rmn(m,n) = Sa*Rmn(m,n)
-             Zmn(m,n) = Sa*Zmn(m,n)
-          end if
-
-       end do
-    end do
-
-    !  Calculate effective minor radius
-    !  This is an average value integrated over toroidal angle
-
-    a_square = 0.0D0
-    do n = -n_max,n_max
-       do m = 0,m_max
-          a_square = a_square + m*Zmn(m,n)*Rmn(m,n)
-       end do
-    end do
-
-    a = sqrt(a_square)
-
-    !  Calculation of the plasma volume
-    !
-    !  Expand array and set not given fourier components to zero.
-    !  This is required because the volume is calculated with
-    !  a double sum over m1,n1 and m2,n2 resulting in mixed
-    !  mode numbers m*=m1+m2, etc.
-    !  Therefore m* > m_max meaning, that the sum goes over mode numbers,
-    !  which are not given by the input file - but these components can simply
-    !  be set to zero
-
-    Rv = 0.0D0 ; Zv = 0.0D0
-    do j = n_max+1,3*n_max+1
-       do i = 2*m_max+1,3*m_max+1
-          Rv(i,j) = Rmn(i-2*m_max-1,j-2*n_max-1)
-          Zv(i,j) = Zmn(i-2*m_max-1,j-2*n_max-1)
-       end do
-    end do
-
-    !  Double summation over m1,n1 and m2,n2 to calculate the volume
-
-    vol = 0.0D0
-
-    do n1 = -n_max,n_max
-       do m1 = 0,m_max
-
-          rtemp = Rmn(m1,n1)
-
-          do n2 = -n_max,n_max
-             do m2 = 0,m_max
-
-                a1 = m1+m2+1+2*m_max
-                b1 = n1+n2+1+2*n_max
-
-                a2 = m1-m2+1+2*m_max
-                b2 = n1-n2+1+2*n_max
-
-                a3 = m2-m1+1+2*m_max
-                b3 = n2-n1+1+2*n_max
-
-                a4 = -m1-m2+1+2*m_max
-                b4 = -n1-n2+1+2*n_max
-
-                sum1 = Zv(a1,b1) - Zv(a2,b2) + Zv(a3,b3) - Zv(a4,b4)
-                sum2 = Rv(a1,b1) + Rv(a2,b2) + Rv(a3,b3) + Rv(a4,b4)
-
-                vol = vol + rtemp*( (m2*Rmn(m2,n2)*sum1) + (m2*Zmn(m2,n2)*sum2) )
-
-             end do
-          end do
-       end do
-    end do
-
-    vol = vol * pi*pi/3.0D0
-
-    !  This is an average value using 'a' as calculated above
-
-    R_maj = vol / (2.0D0*a*a*pi*pi)
-
-    !  Calculation of the surface area of the LCFS
-    !
-    !  The integral cannot be simplified with analytical methods
-    !  as was done for the volume and poloidal surface
-    !  therefore it must be numerically 'integrated' over the poloidal and
-    !  toroidal angles; calculation time depends strongly on the fineness of the
-    !  grid 'nu' and 'nv'
-    !
-    !  I just dissolved the integral in the most simple Riemann sum, which is
-    !  very inaccurate, even at 400 points, which takes a few seconds only <1%
-
-    du = 2.0D0*pi/(nu-1)
-    dv = 2.0D0*pi/(nv-1)
-
-    sarea = 0.0D0
-    do iu = 1,nu
-       u = (iu-1)*du  !  poloidal angle
-       do iv = 1,nv
-          v = (iv-1)*dv  !  toroidal angle
-
-          RR = 0.0D0
-          dRdv = 0.0D0 ; dRdu = 0.0D0 ; dZdv = 0.0D0 ; dZdu = 0.0D0
-
-          do n = -n_max,n_max
-             do m = 0,m_max
-                suv = sin(m*u - nf*n*v)
-                cuv = cos(m*u - nf*n*v)
-                RR = RR + Rmn(m,n)*cos(m*u - n*v)
-                dRdv = dRdv + nf*n*Rmn(m,n)*suv
-                dRdu = dRdu -    m*Rmn(m,n)*suv
-                dZdv = dZdv - nf*n*Zmn(m,n)*cuv
-                dZdu = dZdu +    m*Zmn(m,n)*cuv
-             end do
-          end do
-
-          sarea = sarea + sqrt( (RR**2)*(dZdu**2) + &
-               ((dRdv*dZdu)-(dZdv*dRdu))**2 + &
-               (RR**2)*(dRdu**2) ) * du*dv
-
-       end do
-    end do
-
-    !  Cross-sectional area, averaged over toroidal angle
-
-    xarea = pi*a*a  ! average, could be calculated for every toroidal angle if desired
+    xarea = pi*rminor*rminor  ! average, could be calculated for every toroidal angle if desired
 
     !  sareao is retained only for obsolescent fispact calculation...
 
@@ -727,7 +531,7 @@ contains
     !  Radius to centre of outboard TF coil legs
 
     gapsto = gapomin
-    rtot = rsldo + ddwi + gapsto + 0.5D0*tfthko
+    r_tf_outboard_mid = rsldo + ddwi + gapsto + 0.5D0*tfthko
 
     !  Height to inside edge of TF coil
     !  Roughly equal to average of (inboard build from TF coil to plasma
@@ -1449,7 +1253,7 @@ contains
           !  (for superconducting coils at least) to be absorbed by the
           !  coils, and so contributes to the cryogenic load
 
-          if (itfsup == 1) then
+          if (i_tf_sup == 1) then
              ptfnuc = pnucsi + pnucso - pnucshldi - pnucshldo
           else  !  resistive coils
              ptfnuc = 0.0D0
@@ -1580,7 +1384,7 @@ contains
 
     !  External cryostat outboard major radius (m)
 
-    rdewex = rtot + 0.5D0*tfthko + rpf2dewar
+    rdewex = r_tf_outboard_mid + 0.5D0*tfthko + rpf2dewar
     adewex = rdewex-rmajor
 
     !  External cryostat volume
@@ -2294,7 +2098,7 @@ contains
 
     f_R = rmajor/Rg5B       !  Size scaling factor with respect to Helias 5-B
     f_s = D_coil/D_coil_5B  !  Coil scaling factor
-    f_N = tfno/tfno5B       !  Coil number factor
+    f_N = n_tf/n_tf5B       !  Coil number factor
     f_B = bt/B10            !  B-field scaling factor
     f_I = f_R*f_B/f_N       !  Current scaling factor
 
@@ -2319,7 +2123,7 @@ contains
 
        !  B-field calculation
 
-       call scaling_calculations(f_R, f_s, f_Q, f_I, tfno, &
+       call scaling_calculations(f_R, f_s, f_Q, f_I, n_tf, &
             b_abs_max, b_abs_mittel)
 
        B_k(k) = B_abs_mittel
@@ -2382,7 +2186,7 @@ contains
 
     !  Recalculate B-fields at intersection point of curves
 
-    call scaling_calculations(f_R, f_s, f_Q_final, f_I, tfno, &
+    call scaling_calculations(f_R, f_s, f_Q_final, f_I, n_tf, &
          B_max_final, B0_final)
 
     !  Maximum field at superconductor surface (T)
@@ -2392,7 +2196,7 @@ contains
     !  Total stored magnetic energy calculation (GJ)
     !  W_mag2 = k2.*(bt.^2).*(f_s.^2).*f_R;  ! alternative good approximation
 
-    W_mag = coil_energy(tfno, f_R, f_s, f_I, f_Q_final)
+    W_mag = coil_energy(n_tf, f_R, f_s, f_I, f_Q_final)
 
     !  Mass of support structure (includes casing) (tonnes)
     !  Scaling for required structure mass (Steel) from:
@@ -2455,13 +2259,13 @@ contains
     !  Vertical ports
 
     !  Outer coil centre major radius, average (m)
-    !  (excludes half of coil thickness, otherwise equal to rtot)
+    !  (excludes half of coil thickness, otherwise equal to r_tf_outboard_mid)
 
     R_occ = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth + ddwi + gapsto
 
     !  Average space between two coil centres (m)
 
-    dU = 2.0D0*pi * R_occ/tfno
+    dU = 2.0D0*pi * R_occ/n_tf
 
     !  Average toroidal port size (m)
 
@@ -2527,23 +2331,23 @@ contains
     rbcndut = thwcndut*0.75D0
 
     arealeg = tfcth*tftort  ! [m^2] overall coil cross-sectional area
-    r_tf_inleg_mid = rmajor - (0.5D0*tfcth+gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor)
+    r_tf_inboard_mid = rmajor - (0.5D0*tfcth+gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor)
     ! [m] radius of centre of inboard leg, average
-    rcoil = r_tf_inleg_mid + 0.5D0*tfcth  ! [m] radius of outer edge of inboard leg, average
-    tfareain = tfno*tfcth*tftort  ! [m^2] Total area of all coil legs
-    tfarea_sc = tfno*awptf        ! [m^2] Total area of all coil winding packs
-    ritfc = tfno * I * 1.0D6      ! [A] Total current in ALL coils
+    rcoil = r_tf_inboard_mid + 0.5D0*tfcth  ! [m] radius of outer edge of inboard leg, average
+    tfareain = n_tf*tfcth*tftort  ! [m^2] Total area of all coil legs
+    tfarea_sc = n_tf*awptf        ! [m^2] Total area of all coil winding packs
+    ritfc = n_tf * I * 1.0D6      ! [A] Total current in ALL coils
     oacdcp = ritfc/tfareain       ! [A / m^2] overall current density
     rbmax = rcoil                 ! [m] radius of peak field occurrence, average
                                   !     N.B. different to tokamak SCTF calculation
     hmax = 0.5D0*h_max - tfcth    ! [m] maximum half-height of coil
-    tf_total_h_width = D_coil     ! [m] estimated horizontal coil bore
-    tfborev = 2.0D0*hmax          ! [m] estimated vertical coil bore
+    dr_tf_inner_bore = D_coil     ! [m] estimated horizontal coil bore
+    dh_tf_inner_bore = 2.0D0*hmax          ! [m] estimated vertical coil bore
     tfleng = U                    ! [m] estimated average length of a coil
 
     estotftgj = W_mag             ! [GJ] Total magnetic energy
 
-    !jwptf = ritfc/(tfno*awptf)
+    !jwptf = ritfc/(n_tf*awptf)
     jwptf = j*1.0D6               ! [A/m^2] winding pack current density
 
     !leno = sqrt(cpttf/jwptf)
@@ -2592,7 +2396,7 @@ contains
 
     ! [m^2] Total surface area of coil side facing plasma: inboard region
 
-    tfsai = tfno*tftort * 0.5D0*tfleng
+    tfsai = n_tf*tftort * 0.5D0*tfleng
 
     ! [m^2] Total surface area of coil side facing plasma: outboard region
 
@@ -2600,7 +2404,7 @@ contains
 
     ! [m^2] Total surface area of toroidal shells covering coils
 
-    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inleg_mid+rtot)
+    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inboard_mid+r_tf_outboard_mid)
 
     !  Masses of conductor constituents
 
@@ -2627,14 +2431,14 @@ contains
 
     ! [kg] Total coil mass
 
-    whttf = (whtcas + whtcon)*tfno
+    whttf = (whtcas + whtcon)*n_tf
 
     ! [kg] Total support structure mass
     ! msupstr includes the casing mass, so this needs to be subtracted
     ! Currently, this is assumed to comprise all the machine's support
     ! structural mass
 
-    aintmass = msupstr - (whtcas*tfno)
+    aintmass = msupstr - (whtcas*n_tf)
 
     ! [m] Maximum available poloidal extent for horizontal ports
 
@@ -3302,9 +3106,9 @@ contains
 
     call osubhd(outfile,'General Coil Parameters :')
 
-    call ovarre(outfile,'Number of modular coils','(tfno)',tfno)
-    call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/tfno)', &
-         tfareain/tfno)
+    call ovarre(outfile,'Number of modular coils','(n_tf)',n_tf)
+    call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/n_tf)', &
+         tfareain/n_tf)
     call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
     call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
     call ovarre(outfile,'Inboard leg outboard half-width (m)','(tficrn)',tficrn)
@@ -3319,11 +3123,11 @@ contains
     call ovarre(outfile,'Total mass of coils (kg)','(whttf)',whttf)
 
     call osubhd(outfile,'Coil Geometry :')
-    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inleg_mid)',r_tf_inleg_mid)
-    call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot)
+    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inboard_mid)',r_tf_inboard_mid)
+    call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
-    call ovarre(outfile,'Clear horizontal bore (m)','(tf_total_h_width)',tf_total_h_width)
-    call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
+    call ovarre(outfile,'Clear horizontal bore (m)','(dr_tf_inner_bore)',dr_tf_inner_bore)
+    call ovarre(outfile,'Clear vertical bore (m)','(dh_tf_inner_bore)',dh_tf_inner_bore)
 
     call osubhd(outfile,'Conductor Information :')
     call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc)

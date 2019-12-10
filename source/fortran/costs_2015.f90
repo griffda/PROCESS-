@@ -230,7 +230,7 @@ contains
     s(6)%label = "Magnet power supplies and related buildings"
     s(6)%cref = 110000.0D0 * light_build_cost_per_vol
     ! Scale with TF current per coil (MA)
-    s(6)%k = (ritfc/tfno)/1.0D6
+    s(6)%k = (ritfc/n_tf)/1.0D6
     s(6)%kref = 9.1D0
     s(6)%cost = s(6)%cost_factor * s(6)%cref * (s(6)%k / s(6)%kref)
 
@@ -319,7 +319,7 @@ contains
     ! Cost of ITER road improvements
     s(12)%cref = 150.0D6
     ! Scale with TF coil longest dimension
-    s(12)%k = max(tfborev, tf_total_h_width) + 2.0D0*tfcth
+    s(12)%k = max(dh_tf_inner_bore, dr_tf_inner_bore) + 2.0D0*tfcth
     s(12)%kref = 14.0D0
     s(12)%cost = s(12)%cost_factor * s(12)%cref * (s(12)%k / s(12)%kref)**costexp
 
@@ -362,7 +362,7 @@ contains
     ! ITER coil insertion and welding cost (2014 $)
     s(14)%cref = 258.0D6
     ! Scale with total TF coil length (m)
-    s(14)%k = tfno * tfleng
+    s(14)%k = n_tf * tfleng
     s(14)%kref = 18.0D0*34.1D0
     s(14)%cost = s(14)%cost_factor * s(14)%cref * (s(14)%k / s(14)%kref)**costexp    
 
@@ -371,7 +371,7 @@ contains
     ! ITER winding cost (2014 $)
     s(16)%cref = 414.0D6
     ! Scale with the total turn length (m)
-    s(16)%k = tfno * tfleng * turnstf
+    s(16)%k = n_tf * tfleng * turnstf
     s(16)%kref = 82249.0D0
     s(16)%cost = s(16)%cost_factor * s(16)%cref * (s(16)%k / s(16)%kref)**costexp
 
@@ -380,7 +380,7 @@ contains
     ! ITER Chromium plated Cu strand for TF SC cost (2014 $)
     s(17)%cref = 21.0D6
     ! Scale with total copper mass (kg)
-    s(17)%k = whtconcu * tfno
+    s(17)%k = whtconcu * n_tf
     s(17)%kref = 244.0D3
     s(17)%cost = s(17)%cost_factor * s(17)%cref * (s(17)%k / s(17)%kref)**costexp
 
@@ -389,7 +389,7 @@ contains
     ! ITER Nb3Sn SC strands cost (2014 $)
     s(18)%cref = 526.0D6
     ! Scale with the total mass of Nb3Sn (kg)
-    s(18)%k = whtconsc * tfno
+    s(18)%k = whtconsc * n_tf
     s(18)%kref = 210.0D3
     s(18)%cost = s(18)%cost_factor * s(18)%cref * (s(18)%k / s(18)%kref)**costexp
 
@@ -404,7 +404,7 @@ contains
     ! ITER cabling and jacketing costs (2014 $)
     s(20)%cref = 81.0D6
     ! Scale with total turn length.
-    s(20)%k = tfno * tfleng * turnstf
+    s(20)%k = n_tf * tfleng * turnstf
     s(20)%kref = 82249.0D0
     s(20)%cost = s(20)%cost_factor * s(20)%cref * (s(20)%k / s(20)%kref)**costexp
 

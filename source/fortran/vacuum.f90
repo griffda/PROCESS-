@@ -64,7 +64,7 @@ contains
 
     if (vacuum_model == 'old') then
         call vacuum(powfmw,rmajor,rminor,0.5D0*(scrapli+scraplo),sarea,vol, &
-         shldoth,shldith,tfcth,rsldi-gapds-ddwi,tfno,tdwell,dene,idivrt, &
+         shldoth,shldith,tfcth,rsldi-gapds-ddwi,n_tf,tdwell,dene,idivrt, &
          qtorus,gasld,pumpn,nvduct,dlscal,vacdshm,vcdimax,iprint,outfile)
         ! MDK pumpn is real: convert to integer by rounding.
         vpumpn = floor(pumpn+0.5D0)
@@ -104,7 +104,7 @@ contains
 
     ! Pump-down:
     ! Pumping speed per pump m3/s
-    pumpspeed = pumpspeedmax * pumpareafraction * pumpspeedfactor * sarea / tfno
+    pumpspeed = pumpspeedmax * pumpareafraction * pumpspeedfactor * sarea / n_tf
 
     wallarea = (sarea / 1084.0d0) * 2000.0d0
     ! Required pumping speed for pump-down
@@ -136,7 +136,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine vacuum(pfusmw,r0,aw,dsol,plasma_sarea,plasma_vol,thshldo,thshldi, &
-       thtf,ritf,tfno,tdwell,nplasma,ndiv,qtorus,gasld,pumpn,nduct,dlscalc, &
+       thtf,ritf,n_tf,tdwell,nplasma,ndiv,qtorus,gasld,pumpn,nduct,dlscalc, &
        mvdsh,dimax,iprint,outfile)
 
     !! Routine to calculate the parameters of the vacuum system
@@ -181,7 +181,7 @@ contains
 
     integer, intent(in) :: ndiv, iprint, outfile
     real(kind(1.0D0)), intent(in) :: pfusmw, r0, aw, dsol, plasma_sarea, plasma_vol
-    real(kind(1.0D0)), intent(in) :: thshldo, thshldi, thtf, ritf, tfno, tdwell
+    real(kind(1.0D0)), intent(in) :: thshldo, thshldi, thtf, ritf, n_tf, tdwell
     real(kind(1.0D0)), intent(in) :: nplasma, qtorus, gasld
     integer, intent(out) :: nduct
     real(kind(1.0D0)), intent(out) :: pumpn, dlscalc, mvdsh, dimax
@@ -210,7 +210,7 @@ contains
     !              (9.0 for N2, 5.0 for He and 25. for DT)
 
     pfus = pfusmw * 1.0D6  !  Fusion power (W)
-    ntf = int(tfno)
+    ntf = int(n_tf)
 
     !  Feed rate (gas load) of D-T into chamber (pellets + gas puffing +
     !     NBI + ...) = load from fueller + load from NBI

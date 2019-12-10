@@ -209,13 +209,16 @@ module physics_variables
   real(kind(1.0D0)) :: falpha = 0.95D0
   !! falpha /0.95/ : fraction of alpha power deposited in plasma
   !!                 (Physics of Energetic Ions, p.2489)
+
   real(kind(1.0D0)) :: falpi = 0.0D0
   !! falpi : fraction of alpha power to ions
+
   real(kind(1.0D0)) :: fdeut = 0.5D0
   !! fdeut /0.5/ : deuterium fuel fraction
+
   real(kind(1.0D0)) :: ftar = 1.0D0
   !! ftar  /1.0/ : fraction of power to the lower divertor in double null
-  !!               configuration (snull = 0 only) (default assumes SN)
+  !!               configuration (i_single_null = 0 only) (default assumes SN)
   real(kind(1.0D0)) :: ffwal = 0.92D0
   !! ffwal /0.92/ : factor to convert plasma surface area to first wall
   !!                area in neutron wall load calculation (iwalld=1)
@@ -291,6 +294,7 @@ module physics_variables
   !!        <LI> = 7 Connor-Hastie model;
   !!        <LI> = 8 Sauter scaling allowing negative triangularity;
   !!        <LI> = 9 FIESTA ST fit </UL>
+  
   integer :: idensl = 7
   !! idensl /7/ : switch for density limit to enforce (constraint equation 5):<UL>
   !!         <LI> = 1 old ASDEX;
@@ -300,8 +304,10 @@ module physics_variables
   !!         <LI> = 5 JET simplified;
   !!         <LI> = 6 Hugill-Murakami Mq limit;
   !!         <LI> = 7 Greenwald limit</UL>
+
   integer :: idivrt = 2
-  !! idivrt : number of divertors (calculated from snull)
+  !! idivrt : number of divertors (calculated from i_single_null)
+
   integer :: ifalphap = 1
   !! ifalphap /1/ : switch for fast alpha pressure calculation:<UL>
   !!           <LI> = 0 ITER physics rules (Uckan) fit;
@@ -554,12 +560,15 @@ module physics_variables
   !! pdhe3 : deuterium-helium3 fusion power (MW)
   real(kind(1.0D0)) :: pdivt = 0.0D0
   !! pdivt : power to conducted to the divertor region (MW)
+
   real(kind(1.0D0)) :: pdivl = 0.0D0
-  !!pdivl : power conducted to the lower divertor region (calculated if snull = 0) (MW)
+  !!pdivl : power conducted to the lower divertor region (calculated if i_single_null = 0) (MW)
+
   real(kind(1.0D0)) :: pdivu = 0.0D0
-  !!pdivu : power conducted to the upper divertor region (calculated if snull = 0) (MW)
+  !!pdivu : power conducted to the upper divertor region (calculated if i_single_null = 0) (MW)
+
   real(kind(1.0D0)) :: pdivmax = 0.0D0
-  !!pdivmax : power conducted to the divertor with most load (calculated if snull = 0) (MW)
+  !!pdivmax : power conducted to the divertor with most load (calculated if i_single_null = 0) (MW)
   real(kind(1.0D0)) :: pdt = 0.0D0
   !! pdt : deuterium-tritium fusion power (MW)
   real(kind(1.0D0)) :: pedgeradmw = 0.0D0
@@ -702,10 +711,12 @@ module physics_variables
   !! sareao : outboard plasma surface area
   real(kind(1.0D0)) :: sf = 0.0D0
   !! sf : shape factor = plasma poloidal perimeter / (2.pi.rminor)
-  integer :: snull = 1
-  !! snull /1/ : switch for single null / double null plasma:<UL>
+
+  integer :: i_single_null = 1
+  !! i_single_null /1/ : switch for single null / double null plasma:<UL>
   !!         <LI> = 0 for double null;
   !!         <LI> = 1 for single null (diverted side down)</UL>
+
   real(kind(1.0D0)) :: ssync = 0.6D0
   !! ssync /0.6/ : synchrotron wall reflectivity factor
   real(kind(1.0D0)) :: tauee = 0.0D0
@@ -2206,10 +2217,12 @@ module tfcoil_variables
   !!           <LI> = 4 ITER Nb3Sn model with user-specified parameters
   !!           <LI> = 5 WST Nb3Sn parameterisation
   !!           <LI> = 6 REBCO HTS tape in CroCo strand</UL>
-  integer :: itfsup = 1
-  !! itfsup /1/ : switch for TF coil conductor model:<UL>
+
+  integer :: i_tf_sup = 1
+  !! i_tf_sup /1/ : switch for TF coil conductor model:<UL>
   !!         <LI> = 0 copper;
   !!         <LI> = 1 superconductor</UL>
+
   real(kind(1.0D0)) :: jbus = 1.25D6
   !! jbus /1.25e6/ : bussing current density (A/m2)
   real(kind(1.0D0)), dimension(2) :: jeff = 0.0D0
@@ -2310,21 +2323,16 @@ module tfcoil_variables
   !!                 For REBCO model, meaning depends on quench_model:
   !!                 <LI> exponential quench : e-folding time (s)
   !!                 <LI> linear quench : discharge time (s)
+
   real(kind(1.0D0)) :: tfareain = 0.0D0
   !! tfareain : area of inboard midplane TF legs (m2)
 
-  real(kind(1.0D0)) :: tfboreh = 0.0D0
-  !! tfboreh : TF coil horizontal inner bore (m)
-
-  real(kind(1.0D0)) :: tf_total_h_width = 0.0D0
-  !! tf_total_h_width : TF coil horizontal inner bore (m)
-
-  real(kind(1.0D0)) :: tfborev = 0.0D0
-  !! tfborev : TF coil vertical inner bore (m)
   real(kind(1.0D0)) :: tfbusl = 0.0D0
   !! tfbusl : TF coil bus length (m)
+
   real(kind(1.0D0)) :: tfbusmas = 0.0D0
   !! tfbusmas : TF coil bus mass (kg)
+
   real(kind(1.0D0)) :: tfckw = 0.0D0
   !! tfckw :  available DC power for charging the TF coils (kW)
 ! Issue #781
@@ -2350,15 +2358,20 @@ module tfcoil_variables
   !! rhotfleg /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
   real(kind(1.0D0)) :: tfleng = 0.0D0
   !! tfleng : TF coil circumference (m)
-  real(kind(1.0D0)) :: tfno = 16.0D0
-  !! tfno /16.0/ : number of TF coils (default = 50 for stellarators)
+
+  real(kind(1.0D0)) :: n_tf = 16.0D0
+  !! n_tf /16.0/ : number of TF coils (default = 50 for stellarators)
   !!               number of TF coils outer legs for ST
+
   real(kind(1.0D0)) :: tfocrn = 0.0D0
   !! tfocrn : TF coil half-width - outer bore (m)
+
   real(kind(1.0D0)) :: tfsai = 0.0D0
   !! tfsai : area of the inboard TF coil legs (m2)
+
   real(kind(1.0D0)) :: tfsao = 0.0D0
   !! tfsao : area of the outboard TF coil legs (m2)
+
   real(kind(1.0D0)), bind(C) :: tftmp = 4.5D0
   !! tftmp /4.5/ : peak helium coolant temperature in TF coils and PF coils (K)
   ! ISSUE #508 Remove RFP option: frfpf, frfptf, sccufac
@@ -2414,10 +2427,12 @@ module tfcoil_variables
   real(kind(1.0D0)) :: vdalw = 20.0D0
   !! vdalw /20.0/ : max voltage across TF coil during quench (kV)
   !!                (iteration variable 52)
+
   real(kind(1.0D0)) :: vforce = 0.0D0
   !! vforce : vertical separating force on inboard leg/coil (N)
+  
   real(kind(1.0D0)) :: vftf = 0.4D0
-  !! vftf /0.4/ : coolant fraction of TFC 'cable' (itfsup=1), or of TFC leg (itfsup=0)
+  !! vftf /0.4/ : coolant fraction of TFC 'cable' (i_tf_sup=1), or of TFC leg (i_tf_ssup=0)
   real(kind(1.0D0)) :: voltfleg = 0.0D0
   !! voltfleg : volume of each TF coil outboard leg (m3)
   real(kind(1.0D0)) :: vtfkv = 0.0D0
@@ -2472,14 +2487,15 @@ module tfcoil_variables
   !! tfa(4) : Horizontal radius of inside edge of TF coil (m)
   real(kind(1.0D0)), dimension(4) :: tfb = 0.0D0
   !! tfb(4) : Vertical radius of inside edge of TF coil (m)
-
-
   !! <P><B>Quantities relating to the spherical tokamak model (itart=1)</B>
-  !!       (and in some cases, also to resistive TF coils, itfsup=0):<P>
+  !!       (and in some cases, also to resistive TF coils, i_tf_sup=0):<P>
+
   real(kind(1.0D0)) :: drtop = 0.0D0
   !! drtop /0.0/ : centrepost taper maximum radius adjustment (m)
+
   real(kind(1.0D0)) :: dztop = 0.0D0
   !! dztop /0.0/ : centrepost taper height adjustment (m)
+
   real(kind(1.0D0)) :: etapump = 0.8D0
   !! etapump /0.8/ : centrepost coolant pump efficiency
   real(kind(1.0D0)) :: fcoolcp = 0.3D0
@@ -2495,10 +2511,15 @@ module tfcoil_variables
   !! muh2o /4.71e-4/ FIX : water dynamic viscosity (kg/m/s)
   real(kind(1.0D0)) :: ncool = 0.0D0
   !! ncool : number of centrepost coolant tubes
+
   real(kind(1.0D0)) :: ppump = 0.0D0
   !! ppump : centrepost coolant pump power (W)
+
   real(kind(1.0D0)) :: prescp = 0.0D0
   !! prescp : resistive power in the centrepost (W)
+
+  real(kind(1.0D0)) :: presleg = 0.0D0
+  !! presleg : resistive power in the centrepost (W)
 
   real(kind(1.0D0)) :: ptempalw = 473.15D0   ! 200 C
   !! ptempalw /473.15/ : maximum peak centrepost temperature (K)
@@ -2513,6 +2534,9 @@ module tfcoil_variables
 
   real(kind(1.0D0)) :: tcoolin = 313.15D0   ! 40 C
   !! tcoolin /313.15/ : centrepost coolant inlet temperature (K)
+
+  real(kind(1.0D0)) :: dtiocool = 0.0D0
+  !! dtiocool : inlet / outlet TF coil coolant temperature rise (K)  
 
   real(kind(1.0D0)) :: tcpav = 373.15D0     ! 100 C
   !! tcpav /373.15/ : Assumed temperature of centrepost called CP (K)
@@ -2917,14 +2941,18 @@ module buildings_variables
 
   real(kind(1.0D0)) :: admv = 1.0D5
   !! admv /1.0e5/ : administration building volume (m3)
+
   real(kind(1.0D0)) :: admvol = 0.0D0
   !! admvol : volume of administration buildings (m3)
+
   real(kind(1.0D0)) :: clh1 = 2.5D0
   !! clh1 /2.5/ : vertical clearance from TF coil to cryostat (m)
   !!              (calculated for tokamaks)
+
   real(kind(1.0D0)) :: clh2 = 15.0D0
   !! clh2 /15.0/ : clearance beneath TF coil to foundation
   !!               (including basement) (m)
+
   real(kind(1.0D0)) :: conv = 6.0D4
   !! conv /6.0e4/ : control building volume (m3)
   real(kind(1.0D0)) :: convol = 0.0D0
@@ -3019,21 +3047,27 @@ module build_variables
 
   real(kind(1.0D0)) :: aplasmin = 0.25D0
   !! aplasmin /0.25/ : minimum minor radius (m)
+
   real(kind(1.0D0)) :: blarea = 0.0D0
   !! blarea : blanket total surface area (m2)
+
   real(kind(1.0D0)) :: blareaib = 0.0D0
   !! blareaib : inboard blanket surface area (m2)
+
   real(kind(1.0D0)) :: blareaob = 0.0D0
   !! blareaob : outboard blanket surface area (m2)
+  
   real(kind(1.0D0)) :: blbmith = 0.17D0
   !! blbmith /0.17/ : inboard blanket box manifold thickness (m)
   !!                   (blktmodel>0)
   real(kind(1.0D0)) :: blbmoth = 0.27D0
   !! blbmoth /0.27/ : outboard blanket box manifold thickness (m)
   !!                   (blktmodel>0)
+
   real(kind(1.0D0)) :: blbpith = 0.30D0
   !! blbpith /0.30/ : inboard blanket base plate thickness (m)
   !!                   (blktmodel>0)
+
   real(kind(1.0D0)) :: blbpoth = 0.35D0
   !! blbpoth /0.35/ : outboard blanket base plate thickness (m)
   !!                   (blktmodel>0)
@@ -3045,19 +3079,24 @@ module build_variables
   !! blbuoth /0.465/ : outboard blanket breeding zone thickness (m)
   !!                   (blktmodel>0)
   !!                   (iteration variable 91)
+
   real(kind(1.0D0)) :: blnkith = 0.115D0
   !! blnkith /0.115/ : inboard blanket thickness (m);
   !!                   (calculated if blktmodel > 0)
   !!                   (=0.0 if iblnkith=0)
+
   real(kind(1.0D0)) :: blnkoth = 0.235D0
   !! blnkoth /0.235/ : outboard blanket thickness (m);
   !!                   calculated if blktmodel > 0
+
   real(kind(1.0D0)) :: blnktth = 0.0D0
   !! blnktth : top blanket thickness (m),
   !!           = mean of inboard and outboard blanket thicknesses
+
   real(kind(1.0D0)) :: bore = 1.42D0
   !! bore /1.42/ : central solenoid inboard radius (m)
   !!               (iteration variable 29)
+
   real(kind(1.0D0)) :: clhsf = 4.268D0
   !! clhsf /4.268/ : cryostat lid height scaling factor (tokamaks)
   real(kind(1.0D0)) :: ddwex = 0.07D0
@@ -3082,12 +3121,16 @@ module build_variables
   !! fmssh /0.0/ : Martensitic fraction of steel in shield
   real(kind(1.0D0)) :: fmstf = 0.0D0
   !! fmstf /0.0/ : Martensitic fraction of steel in TF coil
+
   real(kind(1.0D0)) :: fseppc = 3.5D8
   !! fseppc /3.5d8/ : Separation force in CS coil pre-compression structure
+
   real(kind(1.0D0)) :: fwarea = 0.0D0
   !! fwarea : first wall total surface area (m2)
+
   real(kind(1.0D0)) :: fwareaib = 0.0D0
   !! fwareaib : inboard first wall surface area (m2)
+
   real(kind(1.0D0)) :: fwareaob = 0.0D0
   !! fwareaob : outboard first wall surface area (m2)
 
@@ -3108,8 +3151,10 @@ module build_variables
   !!                  (iteration variable 31)
   real(kind(1.0D0)) :: gapsto = 0.0D0
   !! gapsto : gap between outboard vacuum vessel and TF coil (m)
+
   real(kind(1.0D0)) :: hmax = 0.0D0
   !! hmax : maximum (half-)height of TF coil (inside edge) (m)
+
   real(kind(1.0D0)) :: hpfdif = 0.0D0
   !! hpfdif : difference in distance from midplane of upper and lower
   !!          portions of TF legs (non-zero for single-null devices) (m)
@@ -3127,10 +3172,10 @@ module build_variables
   !!        <LI> = 0 no pre-compression structure;
   !!        <LI> = 1 calculated pre-compression structure</UL>
 
-
   real(kind(1.0D0)) :: ohcth = 0.811D0
   !! ohcth /0.811/ : central solenoid thickness (m)
   !!                (iteration variable 16)
+
   real(kind(1.0D0)) :: precomp = 0.0D0
   !! precomp : CS coil precompression structure thickness (m)
   real(kind(1.0D0)) :: rbld = 0.0D0
@@ -3143,21 +3188,28 @@ module build_variables
   real(kind(1.0D0)) :: rsldo = 0.0D0
   !! rsldo : radius to outboard shield (outside point) (m)
 
-  real(kind(1.0D0)) :: r_tf_inleg_in = 0.0D0
-  !! r_tf_inleg_in : Inner edge radius of the TF inboard legs (m)
+  real(kind(1.0D0)) :: r_vv_inboard_out = 0.0D0
+  !! r_vv_inboard_out : Radial position of vacuum vessel [m]
 
-  real(kind(1.0D0)) :: r_tf_inleg_mid = 0.0D0
-  !! r_tf_inleg_mid : radius of centre of inboard TF leg (m)
-  
-  real(kind(1.0D0)) :: r_tf_inleg_out = 0.0D0
-  !! r_tf_inleg_in : Outer edge radius of the TF inboard legs (m)
-	
-  real(kind(1.0D0)) :: rtot = 0.0D0
-  !! rtot : radius to the centre of the outboard TF coil leg (m)
+  real(kind(1.0D0)) :: r_tf_inboard_mid = 0.0D0
+  !!  r_tf_inboard_mid : Mid-plane Outer radius of centre of inboard TF leg (m)
+       
+  real(kind(1.0D0)) :: r_tf_outboard_mid = 0.0D0
+  !!  r_tf_outboard_mid : radius to the centre of the outboard TF coil leg (m)
+
+  real(kind(1.0D0)) :: rtop = 0.0D0
+  !!  rtop : Top outer radius of centre of the centropost (ST only) (m)
+
+  real(kind(1.0D0)) :: dr_tf_inner_bore = 0.0D0
+  !!  dr_tf_inner_bore : TF coil horizontal inner bore (m)
+
+  real(kind(1.0D0)) :: dh_tf_inner_bore = 0.0D0
+  !!  dh_tf_inner_bore : TF coil vertical inner bore (m)
 
   real(kind(1.0D0)) :: scrapli = 0.14D0
   !! scrapli /0.14/ : gap between plasma and first wall, inboard side (m)
   !!                  (used if iscrp=1) (iteration variable 73)
+
   real(kind(1.0D0)) :: scraplo = 0.15D0
   !! scraplo /0.15/ : gap between plasma and first wall, outboard side (m)
   !!                  (used if iscrp=1) (iteration variable 74)
@@ -3193,14 +3245,18 @@ module build_variables
 
   real(kind(1.0D0)) :: tfoffset = 0.0D0
   !! tfoffset : vertical distance between centre of TF coils and centre of plasma (m)
+
   real(kind(1.0D0)) :: tfootfi = 1.19D0
   !! tfootfi /1.19/ : TF coil outboard leg / inboard leg radial thickness
-  !!                 ratio (itfsup=0 only)
+  !!                 ratio (i_tf_sup=0 only)
   !!                 (iteration variable 75)
+
   real(kind(1.0D0)) :: tfthko = 0.0D0
   !! tfthko : outboard TF coil thickness (m)
+
   real(kind(1.0D0)) :: tftsgap = 0.05D0
   !! tftsgap /0.05/ : Minimum metal-to-metal gap between TF coil and thermal shield (m)
+
   real(kind(1.0D0)) :: thshield = 0.05D0
   !! thshield /0.05/ : TF-VV thermal shield thickness (m)
 
@@ -3995,14 +4051,6 @@ module stellarator_variables
   !! n_res /5/ : toroidal resonance number
   real(kind(1.0D0)) :: shear = 0.5D0
   !! shear /0.5/ : magnetic shear, derivative of iotabar
-  character(len=48) :: vmec_info_file = 'vmec_info.dat'
-  !! vmec_info_file /vmec_info.dat/ : file containing general VMEC settings
-  character(len=48) :: vmec_rmn_file = 'vmec_Rmn.dat'
-  !! vmec_rmn_file /vmec_Rmn.dat/ : file containing plasma boundary R(m,n)
-  !!                                Fourier components
-  character(len=48) :: vmec_zmn_file = 'vmec_Zmn.dat'
-  !! vmec_zmn_file /vmec_Zmn.dat/ : file containing plasma boundary Z(m,n)
-  !!                                Fourier components
   real(kind(1.0D0)) :: vportamax = 0.0D0
   !! vportamax : maximum available area for vertical ports (m2)
   real(kind(1.0D0)) :: vportpmax = 0.0D0

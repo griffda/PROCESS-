@@ -629,7 +629,7 @@ def output_vertical_build():
     heading(2, "Vertical Build")
     table_heading(["Name", "Thickness [m]", "Height [m]", "Description"])
 
-    if MFILE.data["snull"].get_scan(-1):
+    if MFILE.data["i_single_null"].get_scan(-1):
         vert_build = DATA["Builds"]["Vertical Build"]["single"]
     else:
         vert_build = DATA["Builds"]["Vertical Build"]["double"]
