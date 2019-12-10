@@ -1297,30 +1297,6 @@ class InDat(object):
         # close file
         output.close()
 
-    def create_structured_input_data_dict(self):
-        """Create and return a dict of the input file data.
-
-        Similar to write_in_dat(), but returns a dict rather than writing a new 
-        IN.DAT file. Useful for exporting the IN.DAT data as a dict. This dict 
-        differs from the INDat.data dict in that it has a hierarchical structure
-        that more closely resembles the IN.DAT input file, and hence it is ready
-        to output to file or modify. For example, input_data_dict["parameters"]
-        ["physics_variables"]["ishape"]["value"] = int_value_of_ishape
-
-        :return: dict of the input data
-        :rtype: dict
-        """
-        input_data_dict = {}
-
-        input_data_dict["constraint_equations"] = get_constraint_equations(
-            self.data)
-        input_data_dict["iteration_variables"] = get_iteration_variables(
-            self.data)
-        input_data_dict["parameters"] = get_parameters(self.data, 
-            use_string_values=False)
-
-        return input_data_dict
-
     @property
     def number_of_constraints(self):
         """
@@ -1348,6 +1324,88 @@ def test(f):
     except:
         return False
 
+class StructuredInputData():
+    """Combines structured input file data and methods for accessing it.
+
+    This class uses the InDat class to read in an IN.DAT input file and create
+    a structured dict from it, combined with methods for accessing the data in
+    that dict. This is useful for exporting the IN.DAT data to other modules, 
+    for example the input_validator module.
+    
+    The data dict stored within this class differs from the INDat.data dict in 
+    that it has a hierarchical structure that more closely resembles the IN.DAT
+    input file, and hence it is more human-readable and ready to output to file.
+    
+    An example of the structure:
+    self.data["parameters"]["physics_variables"]["ishape"]["value"] = 0
+    """
+    def __init__(self, filename="IN.DAT"):
+        """Use InDat to create the data dict.
+        
+        Use InDat to read in an input file and store the data, then construct a
+        structured input data dict from it.
+
+        :param filename: input data filename, defaults to "IN.DAT"
+        :type filename: str, optional
+        """
+        self.data = {}
+        # Structured input data dict
+        
+        in_dat = InDat(filename)
+
+        self.data["constraint_equations"] = get_constraint_equations(
+            in_dat.data)
+        self.data["iteration_variables"] = get_iteration_variables(
+            in_dat.data)
+        self.data["parameters"] = get_parameters(in_dat.data, 
+            use_string_values=False)
+
+    def get_param(self, var_name):
+        """Get a parameter's dict from the data.
+        
+        :param var_name: The name of the parameter to be returned
+        :type var_name: str
+        :return: Dictionary of parameter's information, or None if not found
+        :rtype: dict
+        """
+        modules = self.data["parameters"]
+
+        for module_dict in modules.values():
+            var_dict = module_dict.get(var_name)
+            if var_dict is not None:
+                break
+
+        return var_dict
+
+    def is_param_defined(self, var_name):
+        """Check if a parameter is defined or not in the input data.
+        
+        :param var_name: Name of the parameter to be checked
+        :type var_name: str
+        :return: True if defined, False if not
+        :rtype: bool
+        """
+        defined = False
+
+        if self.get_param(var_name):
+            defined = True
+
+        return defined
+
+    def get_param_value(self, var_name):
+        """Gets the value of a parameter from the input data.
+        
+        :param var_name: The name of the parameter
+        :type var_name: str
+        :return: Value of that parameter; can be any type. None if not found.
+        :rtype: int, float
+        """
+        value = None
+        var_dict = self.get_param(var_name)
+        if var_dict:
+            value = var_dict.get("value")
+
+        return value
 
 if __name__ == "__main__":
     # i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")

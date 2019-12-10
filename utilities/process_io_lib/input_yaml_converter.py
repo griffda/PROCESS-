@@ -17,7 +17,7 @@ complex to parse and check.
 """
 
 import yaml
-import process_io_lib.in_dat as in_dat
+from process_io_lib import in_dat
 
 # Input file to read (.DAT) and output to write (.yml)
 # If filename is provided, look in current working directory
@@ -26,16 +26,13 @@ INPUT_FILE_PATH = "IN.DAT"
 OUTPUT_FILE_PATH = "input.yml"
 
 # Create InDat object by reading in .DAT input file
-in_dat_object = in_dat.InDat(filename=INPUT_FILE_PATH)
-
-# Loaded input data, now convert to YAML
-data_dict = in_dat_object.create_structured_input_data_dict()
+input_data = in_dat.StructuredInputData(filename=INPUT_FILE_PATH)
 
 # Dump YAML into output file (which is a YAML input file)
 output_file = open(OUTPUT_FILE_PATH, 'w')
 
 try:
-    yaml.dump(data_dict, output_file)
+    yaml.dump(input_data, output_file)
     print("Successfully converted input file to YAML, saved as "
         f"{OUTPUT_FILE_PATH}")
 except:
