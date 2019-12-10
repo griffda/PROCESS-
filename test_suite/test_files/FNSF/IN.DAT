@@ -190,14 +190,13 @@ vvblgap  = 0.0      *Gap between vacuum vessel and blanket (m)
 *Iteration variables: scrapli tfcth
 
 *-----------------TF Coil Variables----------------*
-tinstf   = 0.0      *Centrepost insulation thickness (no inusltion in this case)
+tinstf   = 1.5E-3      *Centrepost insulation thickness (no inusltion in this case)
 cpttf    = 9.0E4    *TF coil current per turn (A)
 frhocp   = 1.0      *Centrepost resistivity enhancement factor 
 i_tf_sup = 0        *Switch for TF coil conductor model (0: copper) 
 ptempalw = 473.15   *Maximum peak centrepost temperature (C) (constraint equation 44)
 rcool    = 3.0E-3   *Average radius of coolant channel (m) 
 ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma edge (%)
-rhotfleg = 2.5E-8   *Resistivity of a TF coil leg (Ohm-m)
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
