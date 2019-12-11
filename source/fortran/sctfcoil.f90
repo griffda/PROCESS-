@@ -1,47 +1,17 @@
 module sctfcoil_module
 
-!+ad_name  sctfcoil_module
-!+ad_summ  Module containing superconducting TF coil routines
-!+ad_type  Module
-!+ad_auth  P J Knight, CCFE, Culham Science Centre
-!+ad_auth  J Morris, CCFE, Culham Science Centre
-!+ad_cont  bi2212
-!+ad_cont  coilshap
-!+ad_cont  edoeeff
-!+ad_cont  eyngeff
-!+ad_cont  eyngzwp
-!+ad_cont  itersc
-!+ad_cont  jcrit_nbti
-!+ad_cont  outtf
-!+ad_cont  sctfcoil
-!+ad_cont  sigvm
-!+ad_cont  stresscl
-!+ad_cont  tfcind
-!+ad_cont  tfspcall
-!+ad_cont  two_layer_stress
-!+ad_args  N/A
-!+ad_desc  This module contains routines for calculating the
-!+ad_desc  parameters of a superconducting TF coil system for a
-!+ad_desc  fusion power plant.
-!+ad_prob  None
-!+ad_call  build_variables
-!+ad_call  constants
-!+ad_call  error_handling
-!+ad_call  fwbs_variables
-!+ad_call  maths_library
-!+ad_call  physics_variables
-!+ad_call  process_output
-!+ad_call  tfcoil_variables
-!+ad_hist  29/10/12 PJK Initial version of module
-!+ad_hist  16/09/14 PJK Removed myall_stress routine
-!+ad_hist  14/14/15 JM  Added output of peak field fit values if run_test=1
-!+ad_hist  27/02/17 JM  Added wstsc parameterisation
-!+ad_stat  Okay
-!+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
+!! Module containing superconducting TF coil routines
+!! author: P J Knight, CCFE, Culham Science Centre
+!! author: J Morris, CCFE, Culham Science Centre
+!! N/A
+!! This module contains routines for calculating the
+!! parameters of a superconducting TF coil system for a
+!! fusion power plant.
+!! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
 !
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-use build_variables
+use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, tfcth, tfthko, hpfu, hr1, r_vv_inboard_out
 use constants
 use error_handling
 use fwbs_variables
@@ -80,6 +50,11 @@ real(kind(1.0D0)), private :: awpc
 ! Total cross-sectional area of winding pack [m2]
 real(kind(1.0D0)), private :: awptf
 
+  ! Radial position of plasma-facing edge of TF coil outboard leg [m]
+real(kind(1.0D0)), private :: r_tf_inleg_in
+
+! Radial position of plasma-facing edge of TF coil inboard leg [m]
+real(kind(1.0D0)), private :: r_tf_inleg_out
 
 ! Radial position of inner/outer edge and centre of winding pack [m]
 real(kind(1.0D0)), private :: r_wp_inner, r_wp_outer, r_wp_centre
@@ -132,31 +107,17 @@ end subroutine initialise_cables
 
 subroutine sctfcoil(outfile,iprint)
 
-    !+ad_name  sctfcoil
-    !+ad_summ  Superconducting TF coil module
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Galambos, FEDC/ORNL
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This subroutine calculates various parameters for a superconducting
-    !+ad_desc  TF coil set. The primary outputs are coil size, shape, stress,
-    !+ad_desc  and fields.
-    !+ad_desc  <P>It is a variant from the original FEDC/Tokamak systems code.
-    !+ad_prob  None
-    !+ad_call  coilshap
-    !+ad_call  outtf
-    !+ad_call  peak_tf_with_ripple
-    !+ad_call  report_error
-    !+ad_call  stresscl
-    !+ad_call  tfcind
-    !+ad_hist  27/02/17 JM  Added WST Nb3Sn option for superconductor
-    !+ad_hist  10/05/17 MDK Issue #478 Removed radial plate option
-    !+ad_hist  31/10/18 SIM Corrected deltf (Issue #779)
-    !+ad_stat  Okay
+    !! Superconducting TF coil module
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Galambos, FEDC/ORNL
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This subroutine calculates various parameters for a superconducting
+    !! TF coil set. The primary outputs are coil size, shape, stress,
+    !! and fields.
+    !! <P>It is a variant from the original FEDC/Tokamak systems code.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -198,7 +159,7 @@ subroutine sctfcoil(outfile,iprint)
     call tf_coil_area_and_masses
 
     ! Peak field including ripple
-    call peak_tf_with_ripple(tfno, wwp1, thkwp, r_wp_centre, bmaxtf, bmaxtfrp, peaktfflag)
+    call peak_tf_with_ripple(n_tf, wwp1, thkwp, r_wp_centre, bmaxtf, bmaxtfrp, peaktfflag)
 
     ! Do stress calculations
     call stresscl
@@ -222,21 +183,20 @@ subroutine tf_coil_geometry()
     !----------------
     real(kind(1.0D0)) :: deltf
 
-    ! Radial position of inner edge of inboard TF coil leg [m]
-    r_tf_inleg_in = bore + ohcth + precomp + gapoh
-
-    ! Radial position of plasma-facing edge of TF coil inboard leg [m]
-    r_tf_inleg_out = r_tf_inleg_in + tfcth
-
+    
+    ! Radial position of inner/outer edge of inboard TF coil leg [m]
+    r_tf_inleg_in  = r_tf_inboard_mid - 0.5D0 * tfcth
+    r_tf_inleg_out = r_tf_inboard_mid + 0.5D0 * tfcth
+    
     ! Half toroidal angular extent of a single TF coil inboard leg
-    theta_coil = pi/tfno
+    theta_coil = pi/n_tf
     tan_theta_coil = tan(theta_coil)
 
     ! TF coil width in toroidal direction at inboard leg outer edge [m]
     tftort = 2.0D0 * r_tf_inleg_out*sin(theta_coil)
 
     ! Radial position of centre of inboard TF coil leg [m]
-    r_tf_inleg_mid = r_tf_inleg_in + 0.5D0*tfcth
+    r_tf_inboard_mid = r_tf_inleg_in + 0.5D0*tfcth
  
     ! Plasma-facing wall thickness if fraction option selected [m]
     if(casthi_is_fraction) casthi = casthi_fraction * tfcth
@@ -250,18 +210,10 @@ subroutine tf_coil_geometry()
     ! Area of rectangular cross-section TF outboard leg [m2]
     arealeg = tftort * tfthko
 
-    ! TF coil vertical bore [m]
-    tfborev = 2.0D0*(rminor*kappa + vgaptop + fwith + blnktth + vvblgap + &
-    shldtth + ddwi+ vgap2 + thshield + tftsgap)
-
     ! Gap between inboard TF coil and thermal shield [m]
-    deltf = r_tf_inleg_out * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    ! Not used and calculated in radial build
+    ! deltf = r_tf_inleg_out * ((1.0d0 / cos(pi/n_tf)) - 1.0d0) + tftsgap
 
-    ! TF coil horizontal bore [m]
-    tf_total_h_width = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &
-    blnkith + fwith + scrapli + rminor + rminor + scraplo + fwoth + &
-    blnkoth + vvblgap + shldoth + ddwi + gapsto + thshield + &
-    tftsgap + tfthko
 
 end subroutine tf_coil_geometry
 
@@ -295,7 +247,7 @@ subroutine tf_winding_pack()
     ritfc = oacdcp * tfareain
 
     ! Current per TF coil [A]
-    tfc_current = ritfc/tfno
+    tfc_current = ritfc/n_tf
 
     ! Radius of geometrical centre of winding pack [m]
     r_wp_centre = r_tf_inleg_out - casthi - tfinsgap - tinstf - 0.5D0*thkwp
@@ -316,7 +268,7 @@ subroutine tf_winding_pack()
     (0.5D0*thkwp + 2.0D0*tinstf + 2.0d0*tfinsgap)*(wwp1 + 2.0D0*tinstf+ 2.0d0*tfinsgap)
 
     ! Total cross-sectional area of surrounding case [m2]
-    acasetf = (tfareain/tfno) - awpc
+    acasetf = (tfareain/n_tf) - awpc
 
     if ((awptf <= 0.0D0).or.(awpc <= 0.0D0).or.(acasetf <= 0.0D0)) then
         fdiags(1) = awptf ; fdiags(2) = awpc ; fdiags(3) = acasetf
@@ -336,7 +288,7 @@ subroutine tf_winding_pack()
     acasetfo = arealeg - awpc
 
     ! Winding pack current density (forced to be positive) [A/m2]
-    jwptf = max(1.0D0, ritfc/(tfno*awptf))    
+    jwptf = max(1.0D0, ritfc/(n_tf*awptf))    
 
     ! Dimension of square conductor [m]
     ! Allow for additional inter-layer insulation MDK 13/11/18
@@ -445,7 +397,7 @@ subroutine tf_integer_winding_pack()
     ritfc = oacdcp * tfareain
 
     ! Current per TF coil [A]
-    tfc_current = ritfc/tfno
+    tfc_current = ritfc/n_tf
 
     ! Radius of geometrical centre of winding pack [m]
     r_wp_centre = r_tf_inleg_out - casthi - tfinsgap - tinstf - 0.5D0*thkwp
@@ -467,7 +419,7 @@ subroutine tf_integer_winding_pack()
     (t_wp_toroidal + 2.0D0*tinstf + 2.0D0*tfinsgap)
 
     ! Total cross-sectional area of surrounding case [m2]
-    acasetf = (tfareain/tfno) - awpc
+    acasetf = (tfareain/n_tf) - awpc
 
     if ((awptf <= 0.0D0).or.(awpc <= 0.0D0).or.(acasetf <= 0.0D0)) then
         fdiags(1) = awptf ; fdiags(2) = awpc ; fdiags(3) = acasetf
@@ -487,7 +439,7 @@ subroutine tf_integer_winding_pack()
     acasetfo = arealeg - awpc
 
     ! Winding pack current density (forced to be positive) [A/m2]
-    jwptf = max(1.0D0, ritfc/(tfno*awptf))
+    jwptf = max(1.0D0, ritfc/(n_tf*awptf))
 
     ! Radius of rounded corners of cable space inside conduit [m]
     rbcndut = thwcndut * 0.75D0
@@ -584,18 +536,11 @@ end subroutine tf_integer_winding_pack
 subroutine tf_field_and_force()
     ! Calculate the TF coil field, force and VV quench consideration
 
-    ! Local variables
-    !----------------
-    real(kind(1.0D0)) :: radvv
-
     ! Determine quench time (based on IDM: 2MBSE3)
     ! Issue #337: Force on the vessel wall due to TF coil quench
 
-    ! Radial position of vacuum vessel [m]
-    radvv = rmajor - rminor - scrapli - fwith - blnkith - vvblgap - shldith
-
     ! Quench time [s]
-    taucq = (bt * ritfc * rminor * rminor) / (radvv * sigvvall)
+    taucq = (bt * ritfc * rminor * rminor) / (r_vv_inboard_out * sigvvall)
 
     ! Radial position of peak toroidal field (assuming axisymmetry) [m]
     ! (assumed to be at the outer edge of the winding pack)
@@ -605,10 +550,10 @@ subroutine tf_field_and_force()
     bmaxtf = 2.0D-7 * ritfc / rbmax
 
     ! Centering force = net inwards radial force per TF coil [N]
-    cforce = bmaxtf*ritfc/(2.0D0*tfno)
+    cforce = bmaxtf*ritfc/(2.0D0*n_tf)
 
     ! Vertical force per leg [N]
-    vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * log(rtot/r_tf_inleg_mid) / tfno
+    vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outboard_mid/r_tf_inboard_mid) / n_tf
 
 
 end subroutine tf_field_and_force
@@ -626,15 +571,15 @@ subroutine tf_coil_area_and_masses()
     wbtf = r_tf_inleg_out*sin(theta_coil) - r_tf_inleg_in*tan_theta_coil
     tfocrn = r_tf_inleg_in * tan_theta_coil
     tficrn = tfocrn + wbtf
-    tfsai = 4.0D0 * tfno * tficrn * hr1
-    tfsao = 2.0D0 * tfno * tficrn * (tfleng - 2.0D0*hr1)
+    tfsai = 4.0D0 * n_tf * tficrn * hr1
+    tfsao = 2.0D0 * n_tf * tficrn * (tfleng - 2.0D0*hr1)
 
     ! Total surface area of two toroidal shells covering the TF coils [m2]
     ! (inside and outside surfaces)
     ! = 2 * centroid coil length * 2 pi R, where R is average of i/b and o/b centres
     ! (This will possibly be used to replace 2*tfsai in the calculation of qss
     ! in subroutine cryo - not done at present.)
-    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inleg_mid+rtot)
+    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inboard_mid+r_tf_outboard_mid)
 
     ! Mass of case [kg]
 
@@ -671,42 +616,33 @@ subroutine tf_coil_area_and_masses()
     whtcon = whtconsc + whtconcu + whtconsh + whtconin
 
     ! Total TF coil mass [kg] (all coils)
-    whttf = (whtcas + whtcon + whtgw) * tfno
+    whttf = (whtcas + whtcon + whtgw) * n_tf
 
 end subroutine tf_coil_area_and_masses
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine peak_tf_with_ripple(tfno,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
+subroutine peak_tf_with_ripple(n_tf,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
 
-    !+ad_name  peak_tf_with_ripple
-    !+ad_summ  Peak toroidal field on the conductor
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  tfno : input real : number of TF coils
-    !+ad_args  wwp1 : input real : width of plasma-facing face of winding pack (m)
-    !+ad_args  thkwp : input real : radial thickness of winding pack (m)
-    !+ad_args  tfin : input real : major radius of centre of winding pack (m)
-    !+ad_args  bmaxtf : input real : nominal (axisymmetric) peak toroidal field (T)
-    !+ad_args  bmaxtfrp : output real : peak toroidal field including ripple (T)
-    !+ad_args  flag : output integer : flag warning of applicability problems
-    !+ad_desc  This subroutine calculates the peak toroidal field at the
-    !+ad_desc  outboard edge of the inboard TF coil winding pack, including
-    !+ad_desc  the effects of ripple.
-    !+ad_desc  <P>For 16, 18 or 20 coils, the calculation uses fitting formulae
-    !+ad_desc  derived by M. Kovari using MAGINT calculations on coil sets based
-    !+ad_desc  on a DEMO1 case.
-    !+ad_desc  <P>For other numbers of coils, the original estimate using a 9%
-    !+ad_desc  increase due to ripple from the axisymmetric calculation is used.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  02/09/14 PJK Initial version
-    !+ad_hist  16/10/14 PJK Turned off output to screen
-    !+ad_hist  14/12/15 JM  Changed t,z,y var names for output at end of routine.
-    !+ad_stat  Okay
-    !+ad_docs  M. Kovari, Toroidal Field Coils - Maximum Field and Ripple -
-    !+ad_docc  Parametric Calculation, July 2014
+    !! Peak toroidal field on the conductor
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! tfno : input real : number of TF coils
+    !! wwp1 : input real : width of plasma-facing face of winding pack (m)
+    !! thkwp : input real : radial thickness of winding pack (m)
+    !! tfin : input real : major radius of centre of winding pack (m)
+    !! bmaxtf : input real : nominal (axisymmetric) peak toroidal field (T)
+    !! bmaxtfrp : output real : peak toroidal field including ripple (T)
+    !! flag : output integer : flag warning of applicability problems
+    !! This subroutine calculates the peak toroidal field at the
+    !! outboard edge of the inboard TF coil winding pack, including
+    !! the effects of ripple.
+    !! <P>For 16, 18 or 20 coils, the calculation uses fitting formulae
+    !! derived by M. Kovari using MAGINT calculations on coil sets based
+    !! on a DEMO1 case.
+    !! <P>For other numbers of coils, the original estimate using a 9%
+    !! increase due to ripple from the axisymmetric calculation is used.
+    !! M. Kovari, Toroidal Field Coils - Maximum Field and Ripple -
+    !! Parametric Calculation, July 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -714,7 +650,7 @@ subroutine peak_tf_with_ripple(tfno,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: tfno,wwp1,thkwp,tfin,bmaxtf
+    real(kind(1.0D0)), intent(in) :: n_tf,wwp1,thkwp,tfin,bmaxtf
     real(kind(1.0D0)), intent(out) :: bmaxtfrp
     integer, intent(out) :: flag
 
@@ -729,7 +665,7 @@ subroutine peak_tf_with_ripple(tfno,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
 
     !  Set fitting coefficients for different numbers of TF coils
 
-    select case (nint(tfno))
+    select case (nint(n_tf))
 
     case (16)
         a(1) =  0.28101D0
@@ -761,7 +697,7 @@ subroutine peak_tf_with_ripple(tfno,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
     !  Maximum winding pack width before adjacent packs touch
     !  (ignoring the external case and ground wall thicknesses)
 
-    wmax = (2.0D0 * tfin + thkwp) * tan(pi/tfno)
+    wmax = (2.0D0 * tfin + thkwp) * tan(pi/n_tf)
 
     !  Dimensionless winding pack width
 
@@ -791,25 +727,14 @@ end subroutine peak_tf_with_ripple
 
 subroutine stresscl
 
-    !+ad_name  stresscl
-    !+ad_summ  TF coil stress routine
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_auth  J Galambos, FEDC/ORNL
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This subroutine sets up the stress calculations for the
-    !+ad_desc  TF coil set.
-    !+ad_prob  None
-    !+ad_call  edoeeff
-    !+ad_call  eyngeff
-    !+ad_call  eyngzwp
-    !+ad_call  report_error
-    !+ad_call  sigvm
-    !+ad_call  two_layer_stress
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
+    !! TF coil stress routine
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! author: J Galambos, FEDC/ORNL
+    !! None
+    !! This subroutine sets up the stress calculations for the
+    !! TF coil set.
+    !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -826,7 +751,7 @@ subroutine stresscl
 
     !  Simple stress model option.  REMOVED Issue #781
     ! if (tfc_model == 0) then
-    !     call sctfjalw(bmaxtfrp,r_tf_inleg_mid,rtot,rbmax,(1.0D-6*alstrtf), tdmptf,jwdgcrt)
+    !     call sctfjalw(bmaxtfrp,r_tf_inboard_mid,r_tf_outboard_mid,rbmax,(1.0D-6*alstrtf), tdmptf,jwdgcrt)
     !     return
     ! end if
 
@@ -844,7 +769,7 @@ subroutine stresscl
     !  The first layer is the steel casing inboard of the winding pack,
     !  while the second layer is the winding pack itself.
 
-    radtf(1) = r_tf_inleg_mid - 0.5D0*tfcth
+    radtf(1) = r_tf_inboard_mid - 0.5D0*tfcth
     radtf(2) = rbmax - thkwp
     radtf(3) = rbmax
 
@@ -921,31 +846,24 @@ end subroutine stresscl
 
 subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect)
 
-    !+ad_name  two_layer_stress
-    !+ad_summ  Calculates the stresses in a superconductor TF coil
-    !+ad_summ  inboard leg at the midplane
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  nu      : input real : Poisson's ratio (assumed constant over entire coil)
-    !+ad_args  rad(3)  : input real array : Radius points of regions (m)
-    !+ad_argc                 (region i is bounded by rad(i) and rad(i+1) )
-    !+ad_args  ey(2)   : input real array : Effective Young's modulus of region i (Pa)
-    !+ad_args  j(2)    : input real array : Effective current density of region i (A/m2)
-    !+ad_args  sigr(2) : output real array : Radial stress in region i (Pa)
-    !+ad_args  sigt(2) : output real array : Tangential stress in region i (Pa)
-    !+ad_args  deflect : output real : Deflection at point rad(1) (m)
-    !+ad_desc  This routine calculates the stresses in a superconductor TF coil
-    !+ad_desc  inboard leg at midplane.
-    !+ad_desc  <P>A two-layer model developed by CCFE is used. The first layer
-    !+ad_desc  is the steel case inboard of the winding pack, and the second
-    !+ad_desc  layer is the winding pack itself.
-    !+ad_call  linesolv
-    !+ad_hist  08/05/14 PJK/JM Initial version
-    !+ad_hist  12/06/14 PJK Corrections to sigr(2), sigt(2)
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
+    !! Calculates the stresses in a superconductor TF coil
+    !! inboard leg at the midplane
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! nu      : input real : Poisson's ratio (assumed constant over entire coil)
+    !! rad(3)  : input real array : Radius points of regions (m)
+    !! (region i is bounded by rad(i) and rad(i+1) )
+    !! ey(2)   : input real array : Effective Young's modulus of region i (Pa)
+    !! j(2)    : input real array : Effective current density of region i (A/m2)
+    !! sigr(2) : output real array : Radial stress in region i (Pa)
+    !! sigt(2) : output real array : Tangential stress in region i (Pa)
+    !! deflect : output real : Deflection at point rad(1) (m)
+    !! This routine calculates the stresses in a superconductor TF coil
+    !! inboard leg at midplane.
+    !! <P>A two-layer model developed by CCFE is used. The first layer
+    !! is the steel case inboard of the winding pack, and the second
+    !! layer is the winding pack itself.
+    !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1044,28 +962,18 @@ end subroutine two_layer_stress
 
 function eyngeff(estl,eins,tins,tstl,tcs)
 
-    !+ad_name  eyngeff
-    !+ad_summ  Finds the effective Young's modulus of the TF coil winding pack
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_auth  J Galambos, FEDC/ORNL
-    !+ad_cont  N/A
-    !+ad_args  estl : input real : Young's modulus of steel (Pa)
-    !+ad_args  eins : input real : Young's modulus of insulator (Pa)
-    !+ad_args  tins : input real : insulator wrap thickness (m)
-    !+ad_args  tstl : input real : thickness of steel conduit (m)
-    !+ad_args  tcs  : input real : dimension of cable space area inside conduit (m)
-    !+ad_desc  This routine calculates the effective Young's modulus (Pa)
-    !+ad_desc  of the TF coil in the winding pack section.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/91 JG  Initial version
-    !+ad_hist  14/05/12 PJK Initial F90 version
-    !+ad_hist  30/04/14 PJK/JM Modifications for two-layer stress model
-    !+ad_hist  16/09/14 PJK Removed model switch and old (Galambos/Myall) calculation
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
+    !! Finds the effective Young's modulus of the TF coil winding pack
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! author: J Galambos, FEDC/ORNL
+    !! estl : input real : Young's modulus of steel (Pa)
+    !! eins : input real : Young's modulus of insulator (Pa)
+    !! tins : input real : insulator wrap thickness (m)
+    !! tstl : input real : thickness of steel conduit (m)
+    !! tcs  : input real : dimension of cable space area inside conduit (m)
+    !! This routine calculates the effective Young's modulus (Pa)
+    !! of the TF coil in the winding pack section.
+    !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1098,25 +1006,18 @@ end function eyngeff
 
 function edoeeff(estl,eins,tins,tstl,tcs)
 
-    !+ad_name  edoeeff
-    !+ad_summ  Returns ratio of E_d to E_eff in Morris
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  estl : input real : Young's modulus of steel (Pa)
-    !+ad_args  eins : input real : Young's modulus of insulator (Pa)
-    !+ad_args  tins : input real : insulator wrap thickness (m)
-    !+ad_args  tstl : input real : thickness of steel conduit (m)
-    !+ad_args  tcs  : input real : dimension of cable space area inside conduit (m)
-    !+ad_desc  This routine calculates the ratio of E_d to the effective Young's
-    !+ad_desc  modulus, given in Morris, Section III.4. This is used to calculate
-    !+ad_desc  the strain in the insulator.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  12/05/14 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
+    !! Returns ratio of E_d to E_eff in Morris
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! estl : input real : Young's modulus of steel (Pa)
+    !! eins : input real : Young's modulus of insulator (Pa)
+    !! tins : input real : insulator wrap thickness (m)
+    !! tstl : input real : thickness of steel conduit (m)
+    !! tcs  : input real : dimension of cable space area inside conduit (m)
+    !! This routine calculates the ratio of E_d to the effective Young's
+    !! modulus, given in Morris, Section III.4. This is used to calculate
+    !! the strain in the insulator.
+    !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1152,25 +1053,18 @@ end function edoeeff
 
 function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
 
-    !+ad_name  eyngzwp
-    !+ad_summ  Finds the vertical Young's modulus of the TF coil winding pack
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  estl : input real : Young's modulus of steel (Pa)
-    !+ad_args  eins : input real : Young's modulus of insulator (Pa)
-    !+ad_args  ewp  : input real : Young's modulus of windings (Pa)
-    !+ad_args  tins : input real : insulator wrap thickness (m)
-    !+ad_args  tstl : input real : thickness of steel conduit (m)
-    !+ad_args  tcs  : input real : dimension of cable space area inside conduit (m)
-    !+ad_desc  This routine calculates the vertical Young's modulus (Pa)
-    !+ad_desc  of the TF coil in the winding pack section.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  30/04/14 PJK/JM Initial version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
+    !! Finds the vertical Young's modulus of the TF coil winding pack
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! estl : input real : Young's modulus of steel (Pa)
+    !! eins : input real : Young's modulus of insulator (Pa)
+    !! ewp  : input real : Young's modulus of windings (Pa)
+    !! tins : input real : insulator wrap thickness (m)
+    !! tstl : input real : thickness of steel conduit (m)
+    !! tcs  : input real : dimension of cable space area inside conduit (m)
+    !! This routine calculates the vertical Young's modulus (Pa)
+    !! of the TF coil in the winding pack section.
+    !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1202,26 +1096,18 @@ end function eyngzwp
 
 function sigvm(sx,sy,sz,txy,txz,tyz)
 
-    !+ad_name  sigvm
-    !+ad_summ  Calculates Von Mises stress in a TF coil
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  B Reimer, FEDC
-    !+ad_cont  N/A
-    !+ad_args  sx  : input real : in-plane stress in X direction (Pa)
-    !+ad_args  sy  : input real : in-plane stress in Y direction (Pa)
-    !+ad_args  sz  : input real : in-plane stress in Z direction (Pa)
-    !+ad_args  txy : input real : out of plane stress in X-Y plane (Pa)
-    !+ad_args  txz : input real : out of plane stress in X-Z plane (Pa)
-    !+ad_args  tyz : input real : out of plane stress in Y-Z plane (Pa)
-    !+ad_desc  This routine calculates the Von Mises combination of
-    !+ad_desc  stresses (Pa) in a TF coil.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/07/88 BR  Original version
-    !+ad_hist  14/05/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Calculates Von Mises stress in a TF coil
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: B Reimer, FEDC
+    !! sx  : input real : in-plane stress in X direction (Pa)
+    !! sy  : input real : in-plane stress in Y direction (Pa)
+    !! sz  : input real : in-plane stress in Z direction (Pa)
+    !! txy : input real : out of plane stress in X-Y plane (Pa)
+    !! txz : input real : out of plane stress in X-Z plane (Pa)
+    !! tyz : input real : out of plane stress in Y-Z plane (Pa)
+    !! This routine calculates the Von Mises combination of
+    !! stresses (Pa) in a TF coil.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1244,29 +1130,21 @@ end function sigvm
 
 ! subroutine sctfjalw(bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump,jtfalw)
 
-!     !+ad_name  sctfjalw
-!     !+ad_summ  Simple J(B) model for the superconducting TF Coil
-!     !+ad_type  Subroutine
-!     !+ad_auth  P J Knight, CCFE, Culham Science Centre
-!     !+ad_auth  J Galambos, FEDC/ORNL
-!     !+ad_cont  N/A
-!     !+ad_args  bmaxtf  : input real : peak field including ripple (T)
-!     !+ad_args  rtfmi   : input real : mean inboard leg radius (m)
-!     !+ad_args  rtfmo   : input real : mean outboard leg radius (m)
-!     !+ad_args  rtf2    : input real : radius of inboard leg point nearest plasma (m)
-!     !+ad_args  sigmatf : input real : allowable structure stress (MPa)
-!     !+ad_args  tdump   : input real : dump time (s)
-!     !+ad_args  jtfalw  : output real : overall allowable current density (A/m2)
-!     !+ad_desc  This routine using a simple model to calculate the allowable
-!     !+ad_desc  current density in a superconducting coil, given the magnetic
-!     !+ad_desc  field and the allowable stress.
-!     !+ad_desc  Programmed by J. Galambos from algorithms from J. Perkins.
-!     !+ad_prob  None
-!     !+ad_call  None
-!     !+ad_hist  25/01/91 JG  Initial version
-!     !+ad_hist  14/05/12 PJK Initial F90 version
-!     !+ad_stat  Okay
-!     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+!     !! Simple J(B) model for the superconducting TF Coil
+!     !! P J Knight, CCFE, Culham Science Centre
+!     !! J Galambos, FEDC/ORNL
+!     !! bmaxtf  : input real : peak field including ripple (T)
+!     !! rtfmi   : input real : mean inboard leg radius (m)
+!     !! rtfmo   : input real : mean outboard leg radius (m)
+!     !! rtf2    : input real : radius of inboard leg point nearest plasma (m)
+!     !! sigmatf : input real : allowable structure stress (MPa)
+!     !! tdump   : input real : dump time (s)
+!     !! jtfalw  : output real : overall allowable current density (A/m2)
+!     !! This routine using a simple model to calculate the allowable
+!     !! current density in a superconducting coil, given the magnetic
+!     !! field and the allowable stress.
+!     !! Programmed by J. Galambos from algorithms from J. Perkins.
+!     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
 !     !
 !     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1298,16 +1176,10 @@ end function sigvm
 
 subroutine coilshap
 
-    !+ad_name  coilshap
-    !+ad_summ  Calculates the TF coil shape
-    !+ad_type  Subroutine
-    !+ad_desc  Calculates the shape of the INSIDE of the TF coil. The coil is
-    !+ad_desc  approximated by a straight inboard section and four elliptical arcs
-    !+ad_desc  This is a totally ad hoc model, with no physics or engineering basis.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  19/11/15 MDK Initial version
-    !+ad_stat  Okay
+    !! Calculates the TF coil shape
+    !! Calculates the shape of the INSIDE of the TF coil. The coil is
+    !! approximated by a straight inboard section and four elliptical arcs
+    !! This is a totally ad hoc model, with no physics or engineering basis.
     implicit none
     !  Arguments
     !  Local variables
@@ -1315,14 +1187,14 @@ subroutine coilshap
     integer :: i
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    xarc(1) = r_tf_inleg_mid + tfcth/2.0d0
+    xarc(1) = r_tf_inboard_mid + tfcth/2.0d0
     xarc(2) = rmajor - rminor/5.0d0
-    xarc(3) = rtot - tfcth/2.0d0
+    xarc(3) = r_tf_outboard_mid - tfcth/2.0d0
     xarc(4) = xarc(2)
     xarc(5) = xarc(1)
     ! Height of straight section as a fraction of the coil inner height
     fstraight = 0.6d0
-    if (snull==0) then
+    if (i_single_null==0) then
         ! Double null
         yarc(1) = fstraight * hmax
         yarc(2) = hmax
@@ -1365,22 +1237,16 @@ end subroutine coilshap
 
 subroutine tfcind(tfthk)
 
-    !+ad_name  tfcind
-    !+ad_summ  Calculates the self inductance of a TF coil
-    !+ad_type  Subroutine
-    !+ad_cont  N/A
-    !+ad_args  tfthk        : input real : TF coil thickness (m)
-    !+ad_desc  This routine calculates the self inductance of a TF coil
-    !+ad_desc  approximated by a straight inboard section and two elliptical arcs.
-    !+ad_desc  The inductance of the TFC (considered as a single axisymmetric turn)
-    !+ad_desc  is calculated by numerical integration over the cross-sectional area.
-    !+ad_desc  The contribution from the cross-sectional area of the
-    !+ad_desc  coil itself is calculated by taking the field as B(r)/2.
-    !+ad_desc  The field in the bore is calculated for unit current.
-    !+ad_desc  Top/bottom symmetry is assumed.
-    !+ad_call  None
-    !+ad_hist  19/11/15 MDK Initial version
-    !+ad_stat  Okay
+    !! Calculates the self inductance of a TF coil
+    !! tfthk        : input real : TF coil thickness (m)
+    !! This routine calculates the self inductance of a TF coil
+    !! approximated by a straight inboard section and two elliptical arcs.
+    !! The inductance of the TFC (considered as a single axisymmetric turn)
+    !! is calculated by numerical integration over the cross-sectional area.
+    !! The contribution from the cross-sectional area of the
+    !! coil itself is calculated by taking the field as B(r)/2.
+    !! The field in the bore is calculated for unit current.
+    !! Top/bottom symmetry is assumed.
     implicit none
     !  Arguments
     real(kind(1.0D0)), intent(in) :: tfthk
@@ -1461,26 +1327,13 @@ end subroutine tfcind
 
 subroutine outtf(outfile, peaktfflag)
 
-    !+ad_name  outtf
-    !+ad_summ  Writes superconducting TF coil output to file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  peaktfflag : input integer : warning flag from peak TF calculation
-    !+ad_desc  This routine writes the superconducting TF coil results
-    !+ad_desc  to the output file.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_call  report_error
-    !+ad_hist  14/05/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
+    !! Writes superconducting TF coil output to file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! peaktfflag : input integer : warning flag from peak TF calculation
+    !! This routine writes the superconducting TF coil results
+    !! to the output file.
+    !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1529,7 +1382,7 @@ subroutine outtf(outfile, peaktfflag)
     ! end if
 
     call osubhd(outfile,'General Coil Parameters :')
-    call ovarre(outfile,'Number of TF coils','(tfno)',tfno)
+    call ovarre(outfile,'Number of TF coils','(n_tf)',n_tf)
     call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
     call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
     call ovarre(outfile,'Inboard leg toroidal thickness at widest point (m)','(2*tficrn)',2d0*tficrn, 'OP ')
@@ -1542,7 +1395,7 @@ subroutine outtf(outfile, peaktfflag)
     call ovarre(outfile,'Ripple amplitude at plasma outboard midplane (%)','(ripple)',ripple, 'OP ')
     call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj, 'OP ')
     call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf, 'OP ')
-    call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/tfno)',whttf/tfno, 'OP ')
+    call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/n_tf)',whttf/n_tf, 'OP ')
     call ovarre(outfile,'Vertical separating force per leg (N)','(vforce)',vforce, 'OP ')
     call ovarre(outfile,'Centering force per coil (N/m)','(cforce)',cforce, 'OP ')
 
@@ -1557,10 +1410,10 @@ subroutine outtf(outfile, peaktfflag)
     end if
 
     call osubhd(outfile,'Coil Geometry :')
-    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inleg_mid)',r_tf_inleg_mid, 'OP ')
-    call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot, 'OP ')
+    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inboard_mid)',r_tf_inboard_mid, 'OP ')
+    call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid, 'OP ')
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
-    call ovarre(outfile,'gap between inboard vacuum vessel and thermal shield (m)','(gapds)',gapds)
+    ! call ovarre(outfile,'gap between inboard vacuum vessel and thermal shield (m)','(gapds)',gapds) ! Not relevant to TF
 
     call oblnkl(outfile)
     call ocmmnt(outfile,'TF coil inner surface shape is approximated')
@@ -1689,7 +1542,7 @@ subroutine outtf(outfile, peaktfflag)
     call osubhd(outfile,'Radial build of TF coil centre-line :')
     write(outfile,5)
     5   format(t43,'Thickness (m)',t60,'Outer radius (m)')
-    radius = bore + ohcth + precomp + gapoh
+    radius = r_tf_inboard_mid - 0.5D0*tfcth
     call obuild(outfile,'Innermost edge of TF coil',radius,radius)
     radius = radius + thkcas
     call obuild(outfile,'Coil case ("nose")',thkcas,radius,'(thkcas)')
@@ -1707,11 +1560,11 @@ subroutine outtf(outfile, peaktfflag)
     call obuild(outfile,'Insertion gap for winding pack',tfinsgap,radius,'(tfinsgap)')
     radius = radius + casthi
     call obuild(outfile,'Coil case (plasma side)',casthi,radius,'(casthi)')
-    if(abs((radius - r_tf_inleg_mid - 0.5D0*tfcth)) < 1d-6)then
+    if(abs((radius - r_tf_inboard_mid - 0.5D0*tfcth)) < 1d-6)then
         call ocmmnt(outfile,'TF coil dimensions are consistent')
     else
         call ocmmnt(outfile,'ERROR: TF coil dimensions are NOT consistent:')
-        call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inleg_mid + 0.5D0*tfcth)
+        call ovarre(outfile,'Radius of plasma-facing side of inner leg SHOULD BE [m]','',r_tf_inboard_mid + 0.5D0*tfcth)
         call ovarre(outfile,'Inboard TF coil radial thickness [m]','(tfcth)',tfcth)
         !thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
         call oblnkl(outfile)
@@ -1750,16 +1603,9 @@ end subroutine outtf
 
 subroutine tfspcall(outfile,iprint)
 
-    !+ad_name  tfspcall
-    !+ad_summ  Routine to call the superconductor module for the TF coils
-    !+ad_type  Subroutine
-    !+ad_cont  supercon
-    !+ad_cont  protect
-    !+ad_args  outfile : input integer : Fortran output unit identifier
-    !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
-    !+ad_prob  None
-    !+ad_call  supercon
-    !+ad_stat  Okay
+    !! Routine to call the superconductor module for the TF coils
+    !! outfile : input integer : Fortran output unit identifier
+    !! iprint : input integer : Switch to write output to file (1=yes)
     implicit none
     integer, intent(in) :: outfile, iprint
 
@@ -1773,9 +1619,9 @@ subroutine tfspcall(outfile,iprint)
     ! end if
 
     ! Stored energy (J) per coil (NOT a physical meaningful quantity)
-    tfes = estotft / tfno
+    tfes = estotft / n_tf
     ! Cross-sectional area per turn
-    aturn = ritfc/(jwptf*tfno*turnstf)    
+    aturn = ritfc/(jwptf*n_tf*turnstf)    
 
     if(isumattf==6)then
         call supercon_croco(aturn,bmaxtfrp,cpttf,tftmp, &
@@ -1798,62 +1644,47 @@ contains
         strain,tdmptf,tfes,thelium,tmax,bcritsc,tcritsc,iprint,outfile, &
         jwdgcrt,vd,tmarg)
 
-        !+ad_name  supercon
-        !+ad_summ  Routine to calculate the TF superconducting conductor  properties
-        !+ad_type  Subroutine
-        !+ad_auth  P J Knight, CCFE, Culham Science Centre
-        !+ad_auth  J Galambos, ORNL
-        !+ad_auth  R Kemp, CCFE, Culham Science Centre
-        !+ad_auth  M Kovari, CCFE, Culham Science Centre
-        !+ad_auth  J Miller, ORNL
-        !+ad_cont  N/A
-        !+ad_args  acs : input real : Cable space - inside area (m2)
-        !+ad_args  aturn : input real : Area per turn (i.e. entire jacketed conductor) (m2)
-        !+ad_args  bmax : input real : Peak field at conductor (T)
-        !+ad_args  fhe : input real : Fraction of cable space that is for He cooling
-        !+ad_args  fcu : input real : Fraction of conductor that is copper
-        !+ad_args  iop : input real : Operating current per turn (A)
-        !+ad_args  jwp : input real : Actual winding pack current density (A/m2)
-        !+ad_args  isumat : input integer : Switch for conductor type:
-        !+ad_argc                           1 = ITER Nb3Sn, standard parameters,
-        !+ad_argc                           2 = Bi-2212 High Temperature Superconductor,
-        !+ad_argc                           3 = NbTi,
-        !+ad_argc                           4 = ITER Nb3Sn, user-defined parameters
-        !+ad_argc                           5 = WST Nb3Sn parameterisation
-        !+ad_args  fhts    : input real : Adjustment factor (<= 1) to account for strain,
-        !+ad_argc                         radiation damage, fatigue or AC losses
-        !+ad_args  strain : input real : Strain on superconductor at operation conditions
-        !+ad_args  tdmptf : input real : Dump time (sec)
-        !+ad_args  tfes : input real : Energy stored in one TF coil (J)
-        !+ad_args  thelium : input real : He temperature at peak field point (K)
-        !+ad_args  tmax : input real : Max conductor temperature during quench (K)
-        !+ad_args  bcritsc : input real : Critical field at zero temperature and strain (T) (isumat=4 only)
-        !+ad_args  tcritsc : input real : Critical temperature at zero field and strain (K) (isumat=4 only)
-        !+ad_args  iprint : input integer : Switch for printing (1 = yes, 0 = no)
-        !+ad_args  outfile : input integer : Fortran output unit identifier
-        !+ad_args  jwdgpro : output real : Winding pack current density from temperature
-        !+ad_argc                          rise protection (A/m2)
-        !+ad_args  jwdgcrt : output real : Critical winding pack current density (A/m2)
-        !+ad_args  vd : output real : Discharge voltage imposed on a TF coil (V)
-        !+ad_args  tmarg : output real : Temperature margin (K)
-        !+ad_desc  This routine calculates the superconductor properties for the TF coils.
-        !+ad_desc  It was originally programmed by J. Galambos 1991, from algorithms provided
-        !+ad_desc  by J. Miller.
-        !+ad_desc  <P>The routine calculates the critical current density (winding pack)
-        !+ad_desc  and also the protection information (for a quench).
-        !+ad_desc  NOT used for the Croco conductor
-        !+ad_prob  None
-        !+ad_call  bi2212
-        !+ad_call  itersc
-        !+ad_call  jcrit_nbti
-        !+ad_call  oblnkl
-        !+ad_call  ocmmnt
-        !+ad_call  oheadr
-        !+ad_call  osubhd
-        !+ad_call  ovarre
-        !+ad_call  protect
-        !+ad_call  report_error
-        !+ad_stat  Okay
+        !! Routine to calculate the TF superconducting conductor  properties
+        !! author: P J Knight, CCFE, Culham Science Centre
+        !! author: J Galambos, ORNL
+        !! author: R Kemp, CCFE, Culham Science Centre
+        !! author: M Kovari, CCFE, Culham Science Centre
+        !! author: J Miller, ORNL
+        !! acs : input real : Cable space - inside area (m2)
+        !! aturn : input real : Area per turn (i.e. entire jacketed conductor) (m2)
+        !! bmax : input real : Peak field at conductor (T)
+        !! fhe : input real : Fraction of cable space that is for He cooling
+        !! fcu : input real : Fraction of conductor that is copper
+        !! iop : input real : Operating current per turn (A)
+        !! jwp : input real : Actual winding pack current density (A/m2)
+        !! isumat : input integer : Switch for conductor type:
+        !! 1 = ITER Nb3Sn, standard parameters,
+        !! 2 = Bi-2212 High Temperature Superconductor,
+        !! 3 = NbTi,
+        !! 4 = ITER Nb3Sn, user-defined parameters
+        !! 5 = WST Nb3Sn parameterisation
+        !! fhts    : input real : Adjustment factor (<= 1) to account for strain,
+        !! radiation damage, fatigue or AC losses
+        !! strain : input real : Strain on superconductor at operation conditions
+        !! tdmptf : input real : Dump time (sec)
+        !! tfes : input real : Energy stored in one TF coil (J)
+        !! thelium : input real : He temperature at peak field point (K)
+        !! tmax : input real : Max conductor temperature during quench (K)
+        !! bcritsc : input real : Critical field at zero temperature and strain (T) (isumat=4 only)
+        !! tcritsc : input real : Critical temperature at zero field and strain (K) (isumat=4 only)
+        !! iprint : input integer : Switch for printing (1 = yes, 0 = no)
+        !! outfile : input integer : Fortran output unit identifier
+        !! jwdgpro : output real : Winding pack current density from temperature
+        !! rise protection (A/m2)
+        !! jwdgcrt : output real : Critical winding pack current density (A/m2)
+        !! vd : output real : Discharge voltage imposed on a TF coil (V)
+        !! tmarg : output real : Temperature margin (K)
+        !! This routine calculates the superconductor properties for the TF coils.
+        !! It was originally programmed by J. Galambos 1991, from algorithms provided
+        !! by J. Miller.
+        !! <P>The routine calculates the critical current density (winding pack)
+        !! and also the protection information (for a quench).
+        !! NOT used for the Croco conductor
         implicit none
 
         integer, intent(in) :: isumat, iprint, outfile
@@ -2078,17 +1909,15 @@ contains
         iprint,outfile, &
         jwdgcrt,tmarg)
 
-        !+ad_name  supercon_croco
-        !+ad_summ  TF superconducting CroCo conductor using REBCO tape
-        !+ad_type  Subroutine
-        !+ad_auth  M Kovari, CCFE, Culham Science Centre
-        !+ad_args  bmax : input real : Peak field at conductor (T)
-        !+ad_args  iop : input real : Operating current per turn (A)
-        !+ad_args  thelium : input real : He temperature at peak field point (K)
-        !+ad_args  iprint : input integer : Switch for printing (1 = yes, 0 = no)
-        !+ad_args  outfile : input integer : Fortran output unit identifier
-        !+ad_args  jwdgcrt : output real : Critical winding pack current density (A/m2)
-        !+ad_args  tmarg : output real : Temperature margin (K)
+        !! TF superconducting CroCo conductor using REBCO tape
+        !! author: M Kovari, CCFE, Culham Science Centre
+        !! bmax : input real : Peak field at conductor (T)
+        !! iop : input real : Operating current per turn (A)
+        !! thelium : input real : He temperature at peak field point (K)
+        !! iprint : input integer : Switch for printing (1 = yes, 0 = no)
+        !! outfile : input integer : Fortran output unit identifier
+        !! jwdgcrt : output real : Critical winding pack current density (A/m2)
+        !! tmarg : output real : Temperature margin (K)
         
         implicit none
         
@@ -2230,35 +2059,26 @@ contains
 
     subroutine protect(aio,tfes,acs,aturn,tdump,fcond,fcu,tba,tmax,ajwpro,vd)
 
-        !+ad_name  protect
-        !+ad_summ  Finds the current density limited by the protection limit
-        !+ad_type  Subroutine
-        !+ad_auth  P J Knight, CCFE, Culham Science Centre
-        !+ad_auth  J Miller, ORNL
-        !+ad_cont  N/A
-        !+ad_args  aio : input real : Operating current (A)
-        !+ad_args  tfes : input real : Energy stored in one TF coil (J)
-        !+ad_args  acs : input real : Cable space - inside area (m2)
-        !+ad_args  aturn : input real : Area per turn (i.e.  entire cable) (m2)
-        !+ad_args  tdump : input real : Dump time (sec)
-        !+ad_args  fcond : input real : Fraction of cable space containing conductor
-        !+ad_args  fcu : input real : Fraction of conductor that is copper
-        !+ad_args  tba : input real : He temperature at peak field point (K)
-        !+ad_args  tmax : input real : Max conductor temperature during quench (K)
-        !+ad_args  ajwpro : output real :  Winding pack current density from temperature
-        !+ad_argc                          rise protection (A/m2)
-        !+ad_args  vd : output real :  Discharge voltage imposed on a TF coil (V)
-        !+ad_desc  This routine calculates maximum conductor current density which
-        !+ad_desc  limits the peak temperature in the winding to a given limit (tmax).
-        !+ad_desc  It also finds the dump voltage.
-        !+ad_desc  <P>These calculations are based on Miller's formulations.
-        !+ad_prob  This routine may be misleading for the Bi-2212 superconductor model,
-        !+ad_prob  as fcu is not used elsewhere in modelling this material.
-        !+ad_call  None
-        !+ad_hist  06/07/99 PJK Initial upgraded version
-        !+ad_hist  21/09/11 PJK Initial F90 version
-        !+ad_stat  Okay
-        !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        !! Finds the current density limited by the protection limit
+        !! author: P J Knight, CCFE, Culham Science Centre
+        !! author: J Miller, ORNL
+        !! aio : input real : Operating current (A)
+        !! tfes : input real : Energy stored in one TF coil (J)
+        !! acs : input real : Cable space - inside area (m2)
+        !! aturn : input real : Area per turn (i.e.  entire cable) (m2)
+        !! tdump : input real : Dump time (sec)
+        !! fcond : input real : Fraction of cable space containing conductor
+        !! fcu : input real : Fraction of conductor that is copper
+        !! tba : input real : He temperature at peak field point (K)
+        !! tmax : input real : Max conductor temperature during quench (K)
+        !! ajwpro : output real :  Winding pack current density from temperature
+        !! rise protection (A/m2)
+        !! vd : output real :  Discharge voltage imposed on a TF coil (V)
+        !! This routine calculates maximum conductor current density which
+        !! limits the peak temperature in the winding to a given limit (tmax).
+        !! It also finds the dump voltage.
+        !! <P>These calculations are based on Miller's formulations.
+        !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2344,9 +2164,9 @@ end subroutine tfspcall
 ! --------------------------------------------------------------------
 ! ! subroutine croco_voltage()
 
-!     !+ad_name  croco_voltage
-!     !+ad_summ  Finds the dump voltage in quench for the Croco HTS conductor
-!     !+ad_type  Subroutine
+!     !! croco_voltage
+!     !! Finds the dump voltage in quench for the Croco HTS conductor
+!     !! Subroutine
 
 !     ! vtfskv : voltage across a TF coil during quench (kV)
 !     ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
@@ -2354,19 +2174,17 @@ end subroutine tfspcall
 
 !     if(quench_model=='linear')then
 !         time2 = tdmptf
-!         vtfskv = 2.0D0/time2 * (estotft/tfno) / cpttf
+!         vtfskv = 2.0D0/time2 * (estotft/n_tf) / cpttf
 !     elseif(quench_model=='exponential')then
 !         tau2 = tdmptf
-!         vtfskv = 2.0D0/tau2 * (estotft/tfno) / cpttf
+!         vtfskv = 2.0D0/tau2 * (estotft/n_tf) / cpttf
 !     endif
 
 ! ! end subroutine croco_voltage
 ! --------------------------------------------------------------------
 function croco_voltage()
 
-    !+ad_name  croco_voltage
-    !+ad_summ  Finds the coil voltage during a quench
-    !+ad_type  Function
+    !! Finds the coil voltage during a quench
 
     ! croco_voltage : voltage across a TF coil during quench (V)
     ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
@@ -2376,10 +2194,10 @@ function croco_voltage()
 
     if(quench_model=='linear')then
         time2 = tdmptf
-        croco_voltage = 2.0D0/time2 * (estotft/tfno) / cpttf
+        croco_voltage = 2.0D0/time2 * (estotft/n_tf) / cpttf
     elseif(quench_model=='exponential')then
         tau2 = tdmptf
-        croco_voltage = 2.0D0/tau2 * (estotft/tfno) / cpttf
+        croco_voltage = 2.0D0/tau2 * (estotft/n_tf) / cpttf
     endif
 
 end function croco_voltage
@@ -2387,10 +2205,8 @@ end function croco_voltage
 ! --------------------------------------------------------------------
 subroutine croco_quench(conductor)
 
-    !+ad_name  croco_quench
-    !+ad_summ  Finds the current density limited by the maximum temperatures in quench
-    !+ad_type  Subroutine
-    !+ad_desc  It also finds the dump voltage.
+    !! Finds the current density limited by the maximum temperatures in quench
+    !! It also finds the dump voltage.
 
 
     type(volume_fractions), intent(in)::conductor
@@ -2435,10 +2251,10 @@ subroutine croco_quench(conductor)
 
     ! if(quench_model=='linear')then
     !     time2 = tdmptf
-    !     vtfskv = 2.0D0/time2 * (estotft/tfno) / cpttf
+    !     vtfskv = 2.0D0/time2 * (estotft/n_tf) / cpttf
     ! elseif(quench_model=='exponential')then
     !     tau2 = tdmptf
-    !     vtfskv = 2.0D0/tau2 * (estotft/tfno) / cpttf
+    !     vtfskv = 2.0D0/tau2 * (estotft/n_tf) / cpttf
     ! endif
 
     ! PHASE 2 OF QUENCH: fast discharge into resistor
@@ -2496,15 +2312,11 @@ contains
 end subroutine croco_quench
 !-------------------------------------------------------------------
 subroutine dtempbydtime ( qtime, qtemperature, derivative )
-    !+ad_name  dtempbydtime
-    !+ad_summ  Supplies the right hand side of the ODE for the croco quench phase 2 subroutine
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  qtime : input real : time, the independent variable
-    !+ad_args  qtemperature : input real : temperature, the dependent variable
-    !+ad_args  derivative : output real : the value of dtempbydtime
-    !+ad_hist  14/08/17 MDK  Initial version
-    !+ad_stat  Okay
+    !! Supplies the right hand side of the ODE for the croco quench phase 2 subroutine
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! qtime : input real : time, the independent variable
+    !! qtemperature : input real : temperature, the dependent variable
+    !! derivative : output real : the value of dtempbydtime
 
     ! Time-dependent quantities during the fast discharge local to this subroutine:
 

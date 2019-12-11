@@ -1,24 +1,18 @@
-#!/usr/bin/env python3
-
 """
-   This is a program to automatically produce the process_dicts.py file
-   used by PROCESS utility programs written in python. It does this by
-   scanning the fortran source code. Most dictionaries are created using
-   !+ad_vars and !+ad_varc comments that are used to produce the VarDes file
-   so the output of this program should be consistent with the VarDes.
+   This module produces the process_dicts.json file used by PROCESS Python 
+   utilities. The Ford documentation program reads in the PROCESS source, 
+   creates a project object which contains the structure of PROCESS used for
+   documenting the code within Ford, and then calls 
+   create_dicts.create_dicts(project). This module then creates dictionaries
+   of variables which are used by the Python utilities. The dicts are created 
+   from hardcoded values, PROCESS source parsing and the Ford project object, 
+   and then dumped into the JSON file for later use.
 
-   The program prints genuine output to stdout and warnings to stderr, so
-   stdout should be redirected to the intended dictionary file name.
-   ./create_dicts.py > process_dicts.py
+   Utilities can then call create_dicts.get_dicts() to load the dicts from the
+   saved JSON file and use them.
 
-   For a list of dictionaries this program currently produces, see the function
-   print_header()
-
-   Tom Miller, August-September 2014
-
-   P J Knight:
-   25/09/2014 Modified SOURCEDIR usage to use ROOTDIR
-
+   This ultimately provides Python utilities with the ability to access variable
+   information in the PROCESS Fortran source code.
 """
 
 import re
@@ -29,24 +23,301 @@ import argparse
 from pprint import pformat
 from collections import defaultdict
 import sys
-
 from rootdir import ROOTDIR
+import json
 
 #process source directory
 SOURCEDIR = ROOTDIR
 
-#These two dictionaries are used to help DICT_DEFAULT. FIXEDVALS is a list of
-#integers that occur as constant array lengths in the fortran code eg.
-#!+ad_vars  cptdin(ngc2) /4.0e4/: current per turn input for PF coil i (A)
-#This allows the function interpret_array to expand arrays to the correct length
+# Path to the process_dicts.json output file
+DICTS_FILE_PATH = os.path.join(os.path.dirname(__file__),
+    'process_io_lib/process_dicts.json')
 
-#FIXEDDEFS are hard coded default values of variables that are inserted into
-#DICT_DEFAULT. This is used for adding important variables to the dictionary
-#that the script fails to parse.
-FIXEDVALS = {"ngc2" : 18, "nimp" : 14}
-FIXEDDEFS = {"impdir" : ROOTDIR+"/data/impuritydata",
-             "sweep" : [0.0] * 200
-            }
+# Variables, arrays and dictionaries that aren't read from the source files so
+# have to be hard coded
+
+# ifail value of a successful process run
+IFAIL_SUCCESS = 1
+
+# default values for making a plot file from MFILE.DAT
+PARAMETER_DEFAULTS = ["rmajor", "aspect", "rminor", "bt", "powfmw",
+    "pnetelmw", "te", "pdivt", "strtf1", "strtf2"]
+
+# parameters that start with f, but are not f-values
+NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']
+
+# PROCESS TF Coil types
+DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn", 
+    5: "WST Nb3Sn", 6: "REBCO", 7: "YBCO"}
+
+# FIMP Values
+DICT_FIMP = {
+    "fimp(1)":"Hydrogen (fraction calculated by code)",
+    "fimp(2)":"Helium",
+    "fimp(3)":"Beryllium",
+    "fimp(4)":"Carbon",
+    "fimp(5)":"Nitrogen",
+    "fimp(6)":"Oxygen",
+    "fimp(7)":"Neon",
+    "fimp(8)":"Silicon",
+    "fimp(9)":"Argon",
+    "fimp(10)":"Iron",
+    "fimp(11)":"Nickel",
+    "fimp(12)":"Krypton",
+    "fimp(13)":"Xenon",
+    "fimp(14)":"Tungsten"
+    }
+
+# Optimisation variable dictionary
+DICT_OPTIMISATION_VARS = {
+    1: 'Plasma major radius',
+    2: 'ratio fusion power:input power',
+    3: 'neutron wall load',
+    4: 'total TF + PF coil power',
+    5: 'ratio fusion power:injection power',
+    6: 'cost of electricity',
+    7: 'constructed cost',
+    8: 'aspect ratio',
+    9: 'divertor heat load',
+    10: 'toroidal field on axis',
+    11: 'injection power',
+    12: 'hydrogen production capital cost',
+    13: 'hydrogen production rate',
+    14: 'pulse length',
+    15: 'plant availability factor',
+    16: 'linear combination of major radius (minimised) and pulse length (maximised)',
+    17: 'net electrical output'
+    }
+
+output_dict = {}
+# Dict of nested dicts e.g. output_dict['DICT_DESCRIPTIONS'] = 
+# {descriptions_dict}
+# Dicts stored in output_dict are used to create other derivative dicts 
+
+# Classes for the various dictionary types
+class Dictionary(object):
+    # Base Dictionary class for all dicts
+    def __init__(self, name):
+        self.name = name # Dict name
+        self.dict = {} # Contains the dict
+        self.dict[self.name] = {} # Structures this dict: key = dict name, 
+        # value = nested dict of variable info
+
+    def make_dict(self):
+        # Make the dictionary
+        pass
+
+    def post_process(self):
+        # Perform any processing after making the dict
+        pass
+
+    def publish(self):
+        # Add the finished dictionary to the output dict
+        output_dict.update(self.dict)
+
+class ProjectDictionary(Dictionary):
+    # Dicts that rely on the Ford project object
+    def __init__(self, name, project, value_type):
+        Dictionary.__init__(self, name)
+        self.project = project # The Ford project object
+        self.value_type = value_type
+        # The attribute in the project to make a dict for
+
+    def make_dict(self):
+        # Assign the variable name key to the value of an attribute of 
+        # the var object in the project ([var_name] = some_value_of_var)
+        for module in self.project.modules:
+            for var in module.variables:
+                self.dict[self.name][var.name] = getattr(var, self.value_type)
+
+class SourceDictionary(Dictionary):
+    # Dictionary created from Fortran source
+    def __init__(self, name, dict_creator_func):
+        Dictionary.__init__(self, name)
+        # Function that creates the dict
+        self.dict_creator_func = dict_creator_func
+
+    def make_dict(self):
+        # Make entire nested dict from function
+        self.dict[self.name] = self.dict_creator_func()
+
+class HardcodedDictionary(Dictionary):
+    # Dictionary created from a hardcoded dict in this file
+    def __init__(self, name, hardcoded_dict):
+        Dictionary.__init__(self, name)
+        self.dict[self.name] = None
+        # Hardcoded value isn't always a dict; override to None to allow the 
+        # value to be set to any type
+        self.hardcoded_dict = hardcoded_dict
+
+    def make_dict(self):
+        # Set the nested value to a hardcoded int, list or dict
+        self.dict[self.name] = self.hardcoded_dict
+
+class VariableDescriptions(ProjectDictionary):
+    # Dictionary of variable descriptions
+    def __init__(self, project):
+        ProjectDictionary.__init__(self, 'DICT_DESCRIPTIONS', project, 'doc')
+
+    def make_dict(self):
+        # Assign the variable name key to the var description
+        for module in self.project.modules:
+            for var in module.variables:
+                self.dict[self.name][var.name] = getattr(var, self.value_type)
+
+    def post_process(self):
+        for var_name, var_desc in self.dict[self.name].items():
+            # Strip the <p> and </p> tags from the description; not 
+            # required in output
+            self.dict[self.name][var_name] = re.sub('</?p>', '', var_desc)
+
+class DefaultValues(ProjectDictionary):
+    # Dictionary of default values of variables
+    def __init__(self, project):
+        ProjectDictionary.__init__(self, 'DICT_DEFAULT', project, 'initial')
+
+    def make_dict(self):
+        # Assign the variable name key to the initial value of the variable
+        # [var_name] = initial_value
+        for module in self.project.modules:
+            for var in module.variables:
+                self.dict[self.name][var.name] = self.process_initial_value(
+                    module.variables, var)
+
+    def process_initial_value(self, module_vars, var):
+        # The initial value could be an array that hasn't been picked up by Ford
+        # Ford can't handle implicit array initialisation
+        # e.g. real(kind(1.0D0)), dimension(14) :: impurity_enrichment = 5.0D0
+        # Ford's initial variable value is 5.0D0, but should be an array of 
+        # 14 5.0D0 values
+        
+        # module_vars: all module-level variables in a given module
+        # var: current variable for initial value processing
+
+        if var.initial and var.initial.find('(/') == -1:
+            # Initial value isn't currently an array
+            for attrib in var.attribs:
+                # Does the variable have a dimension attribute? i.e. is it
+                # actually an array?
+                # Interested in attrib of the form "dimension(size)"
+                
+                # Check for size being a hardcoded int first
+                size = self.find_int_array_dimension(attrib)
+                
+                if size is None:
+                    # Check for size being a variable
+                    size = self.find_var_array_dimension(attrib, module_vars)
+
+                if size:            
+                    # Therefore the variable's initial value should be an array
+                    # Replace the initial value with an array of intial values
+                    # of length size
+                    var.initial = [var.initial for i in range(size)]
+
+        # Return either the original initial value (which could be an array or 
+        # not), or the modified initial value, which is now an array          
+        return var.initial
+
+    def find_int_array_dimension(self, attrib):
+        # Attempt to find the size of an array given its dimension attribute
+        # with a hardcoded integer argument
+        size = None
+        match = re.match(r"dimension\((\d+)\)", attrib)
+        # 1st capturing group matches any number of digits for the size
+        if match:
+            # dimension argument is a hardcoded number
+            size = int(match.group(1))
+
+        return size
+
+    def find_var_array_dimension(self, attrib, module_vars):
+        # Attempt to find the size of an array given its dimension attribute
+        # with a variable argument
+        size = None
+        match = re.match(r"dimension\((\w+)\)", attrib)
+        # 1st capturing group matches any number of word characters
+        # for size: i.e. a variable name
+        if match:
+            # The array size is a variable or an expression
+            size_arg = match.group(1)
+            # Now look up the initial value of that variable within the current
+            # module in the Ford project object
+            for var in module_vars:
+                if var.name == size_arg:
+                    try:
+                        size = int(var.initial)
+                        break
+                    except ValueError:
+                        pass
+
+            # If size_arg doesn't match a var.name or var.initial can't be
+            # converted to int: they probably aren't a numerical value and 
+            # require further evaluation, e.g. var.initial = ngc+2
+            # Too complicated and probably not worth it: ignore
+        return size
+
+    def post_process(self):
+        # Most default values are numbers saved as strings, but some 
+        # are lists of these
+        # Attempt to convert strings to floats: 1.57812D3 to 1578.12
+        working_dict = self.dict[self.name]
+
+        for key, value in working_dict.items():
+            if value:
+                # Guard against None
+                # Is it a list?
+                if type(value) is list or value[0:2] == "(/":
+                    # Ford's arrays begin with "(/"
+                    value = self.convert_list_to_floats(value)
+                else:
+                    value = self.convert_value_to_float(value)
+
+                working_dict[key] = value
+
+    def convert_value_to_float(self, value):
+        # Convert a value to float: 1D3 to 1000
+        original_value = value
+
+        # Might not convert successfully; in which case return original value
+        try:
+            value = value.lower()
+            value = value.replace('d', 'E')
+            value = float(value)
+            return value
+        except:
+            # Failed conversion; don't change anything
+            return original_value
+
+    def convert_list_to_floats(self, working_list):
+        # Change the formatting for lists
+        # Change Ford string "(/1D3, 4D2, 2D7/)" or regular list [1D3, 4D2, 2D7]
+        # to Python list of floats [1000, 400, 20000000]
+        processed_list = []
+
+        if type(working_list) is not list:
+            # Ford list: convert string to an array of strings
+            working_list = working_list.replace('(/', '')
+            working_list = working_list.replace('/)', '')
+            working_list = working_list.split(', ')
+
+        # Convert list values to floats
+        for value in working_list:
+            value = self.convert_value_to_float(value)
+            processed_list.append(value)
+        return processed_list
+
+class Modules(ProjectDictionary):
+    # Dictionary mapping modules to arrays of its module-level variables
+    def __init__(self, project):
+        ProjectDictionary.__init__(self, 'DICT_MODULE', project, 'name')
+
+    def make_dict(self):
+        for module in self.project.modules:
+            # Create individual module dict
+            self.dict[self.name][module.name] = []
+            for var in module.variables:
+                # Add module-level variables
+                self.dict[self.name][module.name].append(var.name)
 
 def to_type(string):
     """Given a string, attempts to convert the string to a numerical
@@ -100,61 +371,6 @@ def grep(file, regexp, flags=re.U):
     except OSError:
       logging.warning("File : %s not found\n", file)
     return lines
-
-def grep_r(search_dir, regexp, flags=re.U, extension=""):
-    """Implements an in-python grep through every file in the given directory
-       No longer recursive. Returns the lines that match as a list.
-       Args:
-            search_dir --> Directory name
-            regexp --> Regular expression to search for
-            flags --> re flags to use in search. Default is re.U which has
-                        no effect
-            extension --> only search through files with this suffix extension
-       Returns:
-            lines --> List of matching lines
-    """
-
-    lines = []
-    for file in os.listdir(search_dir):
-        path = search_dir + "/" + file
-        if os.path.isdir(path):  #  ignore subdirectories
-            continue
-        if not file.endswith(extension):
-            continue
-        try:
-            lines += grep(path, regexp, flags)
-        except UnicodeDecodeError:
-            #this occurs when attempting to read binary files
-            continue
-    return lines
-
-def find(search_dir, regexp, flags=re.U):
-    """Searches through the search_dir to find files
-       that contain regexp. Returns matching files as a list
-       Args:
-            search_dir --> Path to directory to search
-            regexp --> regular expression to match to
-            flags --> regular expression flags to modify search
-       Returns:
-            files --> List of matching file paths
-
-    """
-    files = []
-    for file in os.listdir(search_dir):
-        if 'f90' in file:
-            path = search_dir + "/" + file
-            if os.path.isdir(path):
-                continue
-            try:
-                text = open(path,"r",encoding="utf-8").readlines()
-                for line in text:
-                    if re.search(regexp, line, flags):
-                        files.append(path)
-                        break
-            except UnicodeDecodeError:
-                continue
-
-    return files
 
 def slice_file(file, re1, re2):
     """Returns a slice of a file that is bounded by lines containing a
@@ -212,140 +428,21 @@ def remove_comments(line):
         line = line[:-1]
     return line
 
-def interpret_array(name, value):
-    """Function that interprets an array listed in the VarDes style
-       and returns the corresponding python list. Will pad out with last value
-       to correct length if it finds '..' or '...' at end of list or length of
-       value is less than the expected length. Checks that every element of
-       the list is the same type.
-       Args:
-            name --> Name of array and size eg. 'dcond(4)' or 'cptdin(ngc2)'
-            value --> String value of array eg. '1,2,3' or '4.0D4, ...'
-       Returns:
-            ret --> Interpreted array
-    """
-
-    #get the expected size of the array if possible
-    #if the substring between the brackets is a variable name rather than
-    #an integer this will only work if the variable name appears in FIXEDVALS.
-    #If it doesn't work, size will remain a string
-    match = re.search(r"\w+\((.*?)\)", name)
-    sizestr = match.group(1)
-
-    if sizestr in FIXEDVALS:
-        size = FIXEDVALS[sizestr]
-    else:
-        size = int(sizestr)
-
-    list_string = value.split(',')
-    if isinstance(size, int) and len(list_string) > size:
-        logging.warning("length of %s is > than %i for %s in" + \
-                        " interpret_array\n", value, size, name)
-        raise IndexError
-
-    if list_string[-1] == ".." or list_string[-1] == "...":
-        assert len(list_string) > 1
-        list_string = list_string[:-1]
-
-    #if we know how big the array should be and list_string is currently too
-    #small, pad it out with it's last value
-    if isinstance(size, int) and len(list_string) != size:
-        list_string += [list_string[-1]] * (size - len(list_string))
-
-    ret = [to_type(x) for x in list_string]
-
-    #check all elements of array have same type
-    list_type = type(ret[0])
-    assert all(isinstance(y, list_type) for y in ret)
-
-    return ret
-
-def get_array_from_fortran(array_name):
-    """Attempts to find a value for array_name by looking for an assignment
-       statement in the fortran.
-       Args:
-            array_name: Name of array to find eg. boundl
-       Returns:
-            value: Default value of array_name
-
-    """
-    rexp = array_name + r" = \(/"
-    # find files that look like they have an assignment in
-    filelist = find(SOURCEDIR, rexp)
-    if len(filelist) > 1:
-        print('The regular expression ', rexp,
-              '\n  does not appear exactly once in the folder \n', SOURCEDIR,
-              '\n The list of files is ', filelist, file=sys.stderr)
-    assert(len(filelist) == 1)
-    # slice the file between the parenthesis
-    arr = slice_file(filelist[0], rexp, r"/\)")
-
-    arr = [remove_comments(x) for x in arr]
-    # combine whole array onto one line
-    array_line = "".join(arr)
-    # regex that gets the string between the brackets
-    array_regex = rexp + r"(.*?)/\)"
-    val_string = re.search(array_regex, array_line).group(1)
-    # split the string and convert it to the correct type
-    value = [to_type(x) for x in val_string.split(",")]
-
-    list_type = type(value[0])
-    assert all(isinstance(y, list_type) for y in value)
-    return value
-
-
-def print_dict(di, name, comment="", lam=lambda x: x[0], dict_type="dict()"):
-    """Prints a dictionary to stdout, along with a comment. The sorting
-       of the dictionary can be specified using a lambda function.
-
-       The ouput takes the form:
-       #comment
-       name = dict()
-       name[key1]    = value1
-       name[key2]    = value2
-       etc
-
-       Args:
-            di --> Dictionary to be printed
-            name --> Name to use for dictionary
-            comment --> Optional comment to print above dictionary
-            lam --> Lambda function to control sorting. The lambda should
-                    take as its argument a (key, value) tuple. The default
-                    lambda will sort by the dictionary keys only.
-            dict_type --> A string that sets the type of the dictionary eg.
-                   'dict()' or 'defaultdict(list)'
-    """
-
-    if len(di) == 0:
-        return
-    print("\n#" + comment)
-    print(name + " = " + dict_type)
-    for key, value in sorted(di.items(), key=lam):
-        #repr will add quote marks around values and keys that are strings
-        if isinstance(value, dict):
-            valuestr = pformat(value)
-        else:
-            valuestr = repr(value)
-        indexstr = repr(key)
-        print((name + "[" + indexstr + "]").ljust(30) + " = " + valuestr)
-
-
 def dict_ixc2nsweep():
-    """Returns a dictionary mapping str(ixc_no) to str(nsweep_no) if both
-       exist for a particular variable. Looks in scan.f90 for mapping from
-       nsweep_no to iteration variable name, and uses ixc_full to map
-       variable name to ixc_no.
+    """Returns a dict mapping ixc_no to nsweep_no, if both exist for a 
+    particular variable. Looks in scan.f90 for mapping from nsweep_no to 
+    iteration variable name, and uses ixc_full to map variable name to ixc_no.
 
-       Example of a fragment we are looking for:
-           case (1)
-              aspect = swp(iscn)
-              vlabel = 'aspect = ' ; xlabel = 'Aspect_ratio'
+    Example of a fragment we are looking for:
+        case (1)
+            aspect = swp(iscn)
+            vlabel = 'aspect = ' ; xlabel = 'Aspect_ratio'
 
-       Example dictionary entry:
-            DICT_IXC2NSWEEP['1'] = '1'
+    Example dictionary entry:
+        DICT_IXC2NSWEEP['1'] = '1'
     """
 
-    di = {}
+    ixc2nsweep = {}
     file = SOURCEDIR + "/scan.f90"
     #slice the file to get the switch statement relating to nsweep
     lines = slice_file(file, r"select case \(nwp\)", r"case default")
@@ -377,10 +474,18 @@ def dict_ixc2nsweep():
                 name = match_2.group(1)
                 if name in ixc_simple_rev:
                     ixcnum = ixc_simple_rev[name]
-                    di[ixcnum] = num
+                    ixc2nsweep[ixcnum] = num
 
-    return di
+    return ixc2nsweep
 
+def dict_nsweep2ixc():
+    """Returns a dict mapping nsweep_no to ixc_no; the inverse of 
+    dict_ixc2nsweep"""
+
+    # Use dict_ixc2nsweep from output_dict to produce dict_nsweep2ixc
+    ixc2nsweep = output_dict['DICT_IXC2NSWEEP']
+    nsweep2ixc = {b:a for a, b in ixc2nsweep.items()}
+    return nsweep2ixc
 
 def dict_var_type():
     """Function to return a dictionary mapping variable name to variable type
@@ -402,6 +507,120 @@ def dict_var_type():
         var_type = re.search(regexp, line).group(1)
         scalar = re.search(regexp, line).group(2)
         di[name] = var_type + "_" + scalar
+    return di
+
+def dict_icc_full():
+    """Function to return a dictionary matching str(icc_no) to a dictionary
+       containing the name of that constraint equation. Looks in
+       numerics.f90 at !+ad_varc lines in lablcc to get icc_no and
+       variable names.
+
+       Example of a lablxc line we are looking for:
+           !+ad_varc  <LI> ( 5) * beta
+
+       Example dictionary entry:
+           DICT_IXC_FULL['5'] = {'name' : 'beta'}
+    """
+
+    di = dict()
+
+    # get slice of file from 'lablxc = (/' to '/)'
+    lcctext = slice_file(SOURCEDIR + "/numerics.f90", r"lablcc = \(/", r"/\)")
+
+    regexp = r"""
+               !!               #var comment begins with !!
+
+               .*?              #irrelevant stuff until open brackets
+
+               \(\s*(\d+)\s*\)  #an integer in brackets possibly bounded by
+                                #whitespace. Capture the number in group 1
+
+               \s*\*?\s*        #whitespace and a possible asterix
+
+               ([\w ]+)        #the name of the variable should be captured
+                               #in group 2
+              """
+    lcc = []
+    #ignore first and last lines
+    for line in lcctext[1:-1]:
+        match = re.search(regexp, line, re.VERBOSE)
+        if match:
+            num = int(match.group(1))
+            name = match.group(2).strip()
+            lcc.append(name)
+            assert num == len(lcc)
+
+    for i in range(len(lcc)):
+        assign = {"name" : lcc[i]}
+        di[str(i+1)] = assign
+
+    return di
+
+def dict_input_bounds():
+    """Returns a dictionary matching variable names to dictionary containing
+       upper and lower bounds that PROCESS checks variable lies between when
+       reading IN.DAT. Looks in input.f90 for parse_real_variable and
+       parse_int_variable.
+
+       Example of a line we are looking for:
+            call parse_real_variable('BETA', beta, 0.0D0, 1.0D0, &
+
+       Example dictionary entry:
+            DICT_INPUT_BOUNDS['beta'] = {'lb' : 0.0, 'ub' : 1.0}
+    """
+    di = {}
+    failedlines = []
+    regexp = r"call parse_(real|int)_variable\((.*)"
+    lines = grep(SOURCEDIR + "/input.f90", regexp)
+
+    for line in lines:
+        match = re.search(regexp, line)
+        try:
+            name = match.group(2).split(',')[1].strip()
+            lb = to_type(match.group(2).split(',')[2])
+            ub = to_type(match.group(2).split(',')[3])
+            if match.group(1) == "real":
+                assert isinstance(lb, float)
+            else:
+                assert isinstance(lb, int)
+            assert ub >= lb
+            di[name] = {"lb" : lb, "ub" : ub}
+        except (IndexError, AttributeError, AssertionError, TypeError):
+            failedlines.append(line)
+
+    if len(failedlines) != 0:
+        warn_string = "dict_input_bounds failed to parse:\n"
+        for line in failedlines:
+            warn_string += "%s\n" % line.strip()
+        logging.warning(warn_string)
+
+    return di
+
+def dict_nsweep2varname():
+    # This function creates the nsweep2varname dictionary from the fortran code
+    # It maps the sweep variable number to its variable name
+
+    di = {}
+    file = SOURCEDIR + "/scan.f90"
+
+    #slice the file to get the switch statement relating to nsweep
+    lines = slice_file(file, r"select case \(nwp\)", r"case default")
+
+    #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
+    modlines = []
+    for line in lines[1:-1]:
+        if "case" in line or "swp(iscn)" in line:
+            line = remove_comments(line).replace(' ', '')
+            modlines.append(line)
+
+    for i in range(len(modlines)//2):
+        line1 = modlines[i*2]
+        no = line1.replace('case(', '')
+        no = no.replace(')', '')
+        line2 = modlines[i*2+1]
+        varname = line2.replace('=swp(iscn)', '')
+        di[no] = varname
+
     return di
 
 def dict_ixc_full():
@@ -456,513 +675,9 @@ def dict_ixc_full():
 
     return ixc_full
 
-
-def dict_icc_full():
-    """Function to return a dictionary matching str(icc_no) to a dictionary
-       containing the name of that constraint equation. Looks in
-       numerics.f90 at !+ad_varc lines in lablcc to get icc_no and
-       variable names.
-
-       Example of a lablxc line we are looking for:
-           !+ad_varc  <LI> ( 5) * beta
-
-       Example dictionary entry:
-           DICT_IXC_FULL['5'] = {'name' : 'beta'}
-    """
-
-    di = dict()
-
-    # get slice of file from 'lablxc = (/' to '/)'
-    lcctext = slice_file(SOURCEDIR + "/numerics.f90", r"lablcc = \(/", r"/\)")
-
-    regexp = r"""
-               !\+ad_varc       #look for !+ad_varc
-
-               .*?              #irrelevant stuff until open brackets
-
-               \(\s*(\d+)\s*\)  #an integer in brackets possibly bounded by
-                                #whitespace. Capture the number in group 1
-
-               \s*\*?\s*        #whitespace and a possible asterix
-
-               ([\w ]+)        #the name of the variable should be captured
-                               #in group 2
-              """
-    lcc = []
-    #ignore first and last lines
-    for line in lcctext[1:-1]:
-        match = re.search(regexp, line, re.VERBOSE)
-        if match:
-            num = int(match.group(1))
-            name = match.group(2).strip()
-            lcc.append(name)
-            assert num == len(lcc)
-
-    for i in range(len(lcc)):
-        assign = {"name" : lcc[i]}
-        di[str(i+1)] = assign
-
-    return di
-
-
-def dict_default():
-    """Function to return a dictionary mapping input variable names to their
-       default values. Looks in every file in the source directory for
-       !+ad_vars and !+ad_varc lines and looks for the default value between
-       forward slashes. Ignore variables marked "FIX". Any lines that can't be
-       parsed but look like a default value is given are printed as warnings.
-
-       Example of a line we are looking for:
-           !+ad_vars  beta /0.042/ : total plasma beta (iteration variable 5)
-
-       Example dictionary entry:
-           DICT_DEFAULT['beta'] = 0.042
-    """
-    if dict_default.DICT_DEFAULT: #avoids repeat calls, see end of function
-        return copy.deepcopy(dict_default.DICT_DEFAULT)
-
-    di = dict_default.DICT_DEFAULT
-    failedlines = []
-    regexp = r"""
-                !\+ad_var(s|c)  #look for !+ad_var(s|c)
-
-                \s*             #possible whitespace
-
-                ([\w():+,-]+) #variable name may contain '(' or ')'
-                                #capture to group 2
-
-                \s*             #possible whitespace
-
-                /(.*?)/         #capture whatever is between brackets
-                                #to group 3
-              """
-    regexp1 = r"""
-                !\+ad_var(s|c)  #look for !+ad_var(s|c)
-
-#                /(.*?)/         #capture whatever is between brackets
-#                                #to group 3
-              """
-    variables_lines = grep_r(SOURCEDIR, regexp, re.VERBOSE, ".f90")
-#    for line in variables_lines:
-#      logging.warning("Manoj variables_lines : %s\n", line)
-    for line in variables_lines:
-#        logging.warning("Manoj : %s\n", line)
-        if "FIX" in line:
-            continue
-        try:
-            match = re.search(regexp, line.strip(), re.VERBOSE)
-            name = match.group(2).strip()
-            value_string = match.group(3).strip()
-#            logging.warning("value Manoj : name = %s , value_string = %s\n", name, value_string)
-            if not "(" in name:
-                #if the variable is not an array
-                value = to_type(value_string)
-                di[name] = value
-                
-            else:
-                #the variable is an array
-                #remove the brackets from name to get the array name
-                array_name = name[:name.find("(")]
-                try:
-                    #try to get the value from between the / /
-                    value = interpret_array(name, value_string)
-                except (IndexError, AttributeError, \
-                        AssertionError, TypeError, ValueError):
-                    value = get_array_from_fortran(array_name)
-
-                di[array_name] = value
-
-        except (IndexError, AttributeError, AssertionError, TypeError):
-            #anything that fails gets added to the warning list
-#            logging.warning("Manoj failedlines : %s\n", line)
-            failedlines.append(line)
-
-
-    # get boundl and boundu from fortran
-    # di["boundl"] = get_array_from_fortran("boundl")
-    # di["boundu"] = get_array_from_fortran("boundu")
-
-    #add the fixed values
-    for name, value in FIXEDDEFS.items():
-        di[name] = value
-
-    #report the failed lines
-    if len(failedlines) != 0:
-        warn_string = "dict_default failed to parse:\n"
-        for line in failedlines:
-            warn_string += "%s\n" % line.strip()
-        logging.warning(warn_string)
-
-#    for key in di:
-#       logging.warning("Manoj key = %s  ", key)
-
-    #check dict_default against input lines in input.f90. Report differences
-    regexp2 = r"call parse_(real|int)_(array|variable)\((.*)"
-    test = grep(SOURCEDIR + "/input.f90", regexp2)
-    for line in test:
-#        logging.warning("Manoj test : %s\n", line)
-        args = re.search(regexp2, line).group(3)
-        try:
-            name = args.split(',')[1].strip()
-#            logging.warning("Manoj name : %s\n", name)
-            if name not in di:
-                di[name] = -1
-                logging.warning(" " + str(name) + " looks like an input " + \
-                "variable but cout not find a default value. Setting " + \
-                "default to None")
-        except IndexError:
-            continue
-
-    dict_default.DICT_DEFAULT = di
-    return di
-
-dict_default.DICT_DEFAULT = {}
-
-def dict_input_bounds():
-    """Returns a dictionary matching variable names to dictionary containing
-       upper and lower bounds that PROCESS checks variable lies between when
-       reading IN.DAT. Looks in input.f90 for parse_real_variable and
-       parse_int_variable.
-
-       Example of a line we are looking for:
-            call parse_real_variable('BETA', beta, 0.0D0, 1.0D0, &
-
-       Example dictionary entry:
-            DICT_INPUT_BOUNDS['beta'] = {'lb' : 0.0, 'ub' : 1.0}
-    """
-    di = {}
-    failedlines = []
-    regexp = r"call parse_(real|int)_variable\((.*)"
-    lines = grep(SOURCEDIR + "/input.f90", regexp)
-
-    for line in lines:
-        match = re.search(regexp, line)
-        try:
-            name = match.group(2).split(',')[1].strip()
-            lb = to_type(match.group(2).split(',')[2])
-            ub = to_type(match.group(2).split(',')[3])
-            if match.group(1) == "real":
-                assert isinstance(lb, float)
-            else:
-                assert isinstance(lb, int)
-            assert ub >= lb
-            di[name] = {"lb" : lb, "ub" : ub}
-        except (IndexError, AttributeError, AssertionError, TypeError):
-            failedlines.append(line)
-
-    if len(failedlines) != 0:
-        warn_string = "dict_input_bounds failed to parse:\n"
-        for line in failedlines:
-            warn_string += "%s\n" % line.strip()
-        logging.warning(warn_string)
-
-    return di
-
-def remove_tags(line):
-    """Removes some html tags that appear in autodoc comments
-
-    """
-    line = line.replace("<LI>", "")
-    line = line.replace("<UL>", "")
-    line = line.replace("</UL>", "")
-    line = line.replace("<OL>", "")
-    line = line.replace("</OL>", "")
-    return line
-
-
-def dict_descriptions():
-    """Returns a dictionary matching variable names to variable description.
-       Looks in all source files for !+ad_vars and !+ad_varc lines.
-
-       Example of lines we are looking for:
-          !+ad_vars  cfe0 /0.0/ : seeded high-Z impurity fraction (n_highZ / n_e)
-          !+ad_varc               (imprad_model=0 only) (iteration variable 43)
-       Example dictionary entry:
-          DICT_DESCRIPTIONS['cfe0'] = "seeded high-Z impurity fraction (n_highZ / n_e)
-                                        (imprad_model=0 only) (iteration variable 43)"
-
-    """
-    di = {}
-    failedlines = []
-    lines = grep_r(SOURCEDIR, r"!\+ad_var(s|c)", extension=".f90")
-    #group lines by variable
-    sep = "".join(lines).split("!+ad_vars")
-    #sep is an array of multi line strings, one entry in array
-    #for each variable
-    #example entry: cfe0 /0.0/ : seeded ...
-    #               !+ad_varc    (imprad_model ...
-    for var_entry in sep:
-        try:
-            firstline = remove_tags(var_entry.split('\n')[0]).strip()
-            otherlines = var_entry.split('\n')[1:]
-            #name is before colon, description is after it
-            ma = re.search(r"(\w+).*?:\s*(.*)", firstline.strip())
-            name = ma.group(1).lower()
-            desc = ma.group(2)
-            if otherlines:
-                for line in otherlines:
-                    line = remove_tags(line)
-                    if line.strip() == "":
-                        continue
-
-                    #remove the !+ad_varc part and add it onto the desc
-                    ma2 = re.match(r"\s*!\+ad_varc\s*(.*)\Z", line)
-                    desc += "\n" + ma2.group(1).strip()
-            desc = desc.strip()
-            di[name] = desc.capitalize()
-
-        except (IndexError, AttributeError, AssertionError, TypeError):
-            failedlines.append(var_entry)
-            continue
-
-    #make manual changes
-    #description of "isc" does not include the explanation of
-    #the meaning of the values isc can take. Get it from lablmm
-    isc_desc = di["isc"].split('\n')[0]
-    lablmm = di["tauscl"].split('\n')[1:]
-    di["isc"] = "\n".join([isc_desc] + lablmm)
-
-    #same thing for minmax and tauscl
-    minmax_desc = di["minmax"]
-    tauscl = di["lablmm"].split('\n')[1:]
-    di["minmax"] = "\n".join([minmax_desc] + tauscl)
-
-    #report problems
-    if len(failedlines) != 0:
-        warn_string = "dict_descriptions failed to parse:\n"
-        for line in failedlines:
-            warn_string += "%s\n" % line.strip()
-        logging.warning(warn_string)
-    return di
-
-def dict_module():
-    """This function parses the fortran to return a dictionary that maps
-       module names to lists of variables.
-
-    """
-    module_dict = defaultdict(list)
-    currentmodule = ""
-    lines = grep_r(SOURCEDIR, r"^\s*!\+ad_(vars|name|type)", extension=".f90")
-    #an ad_vars line is a variable line
-    #an ad_name line followed by a ad_type Module line indicates the start
-    #of a new module
-    i = 0
-    while i < len(lines):
-        try:
-            ma = re.match(r"^\s*!\+ad_(vars|name|type)\s*(\w+)", lines[i])
-            #capture the text
-            if ma.group(1) == "name":
-                if re.match(r"^\s*!\+ad_type\s*Module", lines[i+1]):
-                    #an ad_name line followed by an ad_type Module line means
-                    #start a new module
-                    modulename = ma.group(2).replace('_', ' ').title()
-                    #replace '_' with ' ', capitalize, remove Variables suffix
-                    #since redundant in UI
-                    currentmodule = modulename
-
-            elif ma.group(1) == "vars":
-                varname = ma.group(2)
-                #only want input variables
-                if varname in dict_default():
-                    module_dict[currentmodule].append(varname)
-
-        except (IndexError, AttributeError, AssertionError, TypeError):
-            logging.warning(" dict_module: line failed: " + lines[i])
-
-        i += 1
-
-    #Every variable should have a module
-    assert not "" in module_dict
-
-    #Every input variable should appear
-    for key in dict_default().keys():
-        found = False
-        for module in module_dict.values():
-            if key in module:
-                found = True
-                break
-        if found == False:
-            logging.warning(key + " does not appear in any module")
-
-    return module_dict
-
-
-def dict_nsweep2varname():
-
-    """
-    This function creates the nsweep2varname dictionary from the fortran code
-    It maps the sweep variable number to its variable name
-    """
-
-    di = {}
-    file = SOURCEDIR + "/scan.f90"
-
-    #slice the file to get the switch statement relating to nsweep
-    lines = slice_file(file, r"select case \(nwp\)", r"case default")
-
-    #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
-    modlines = []
-    for line in lines[1:-1]:
-        if "case" in line or "swp(iscn)" in line:
-            line = remove_comments(line).replace(' ', '')
-            modlines.append(line)
-
-    for i in range(len(modlines)//2):
-        line1 = modlines[i*2]
-        no = line1.replace('case(', '')
-        no = no.replace(')', '')
-        line2 = modlines[i*2+1]
-        varname = line2.replace('=swp(iscn)', '')
-        di[no] = varname
-
-    return di
-
-
-def print_header():
-    """Prints the file header
-    """
-
-    #look for a line with 'Release Date'
-    rel_dat_list = grep(SOURCEDIR + "/process.f90", "Release Date")
-    if len(rel_dat_list) == 0:       # for new file structure
-        rel_dat_list = grep(SOURCEDIR + "/main_module.f90", "Release Date")
-
-    assert len(rel_dat_list) == 1
-    dat_line = rel_dat_list[0]
-    #the version number is right before 'Release Date'
-    version_num = int(re.search(r"(\d+)\s*Release Date", dat_line).group(1))
-
-    header = """\"\"\"
-This file contains python dictionaries for use by utility programs.
-
-List of dictionaries:
-    PARAMETER_DEFAULTS     : Default values for making a plot file from MFILE.DAT
-    NON_F_VALUES           : Parameters that start with f, but are not f-values
-    DICT_TF_TYPE           : PROCESS TF coil types
-    DICT_FIMP              : PROCESS impurity types for fimp
-    DICT_OPIMISATION_VARS  : Optimisation variable dictionary
-    DICT_IXC2NSWEEP        : Maps ixc no. to nsweep, if applicable
-    DICT_NSWEEP2IXC        : Maps nsweep to ixc no, if applicable
-    DICT_VAR_TYPE          : Maps variable name to variable type
-    DICT_IXC_FULL          : Maps ixc no. to ixc variable name and bounds
-    DICT_IXC_BOUNDS        : Maps ixc variable name to bounds
-    DICT_IXC_DEFAULT       : Maps ixc variable name to default value
-    DICT_IXC_SIMPLE        : Maps ixc no to ixc variable name
-    DICT_IXC_SIMPLE_REV    : Maps ixc variable name to ixc no
-    DICT_DEFAULT           : Dictionary of default values for variables
-    DICT_INPUT_BOUNDS      : Dictionary of bounds used by PROCESS when reading IN.DAT
-    DICT_DESCRIPTIONS      : Dictionary of variable descriptions
-    DICT_MODULE            : Ordered dictionary mapping module names to list
-                             of associatied variables
-    DICT_NSWEEP2VARNAME    : Dictionary mapping scan variable number to name
-
-Automatically produced by create_dicts.py for PROCESS version %i
-\"\"\"
-
-from collections import defaultdict, OrderedDict
-""" % version_num
-    print(header)
-    print("#Version number of process dictionaries created for")
-    print("DICTIONARY_VERSION = %i" % version_num)
-
-
-def print_hard_coded():
-    """Prints the dictionaries that aren't read from the source files so
-       have to be hard coded
-    """
-
-    out = """
-#ifail value of a successful process run
-IFAIL_SUCCESS = 1
-
-# default values for making a plot file from MFILE.DAT
-PARAMETER_DEFAULTS = ["rmajor", "aspect", "rminor", "bt", "powfmw", "pnetelmw",
-                          "te", "pdivt", "strtf1", "strtf2"]
-
-#parameters that start with f, but are not f-values
-NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu', 'fimpvar']
-
-# PROCESS TF Coil types
-DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn", 5: "WST Nb3Sn", 6: "REBCO", 7: "YBCO"}
-
-# FIMP Values
-DICT_FIMP = {"fimp(1)":"Hydrogen (fraction calculated by code)",
-             "fimp(2)":"Helium",
-             "fimp(3)":"Beryllium",
-             "fimp(4)":"Carbon",
-             "fimp(5)":"Nitrogen",
-             "fimp(6)":"Oxygen",
-             "fimp(7)":"Neon",
-             "fimp(8)":"Silicon",
-             "fimp(9)":"Argon",
-             "fimp(10)":"Iron",
-             "fimp(11)":"Nickel",
-             "fimp(12)":"Krypton",
-             "fimp(13)":"Xenon",
-             "fimp(14)":"Tungsten"}
-
-# Optimisation variable dictionary
-DICT_OPTIMISATION_VARS = {1: 'Plasma major radius',
-                          2: 'ratio fusion power:input power',
-                          3: 'neutron wall load',
-                          4: 'total TF + PF coil power',
-                          5: 'ratio fusion power:injection power',
-                          6: 'cost of electricity',
-                          7: 'constructed cost',
-                          8: 'aspect ratio',
-                          9: 'divertor heat load',
-                          10: 'toroidal field on axis',
-                          11: 'injection power',
-                          12: 'hydrogen production capital cost',
-                          13: 'hydrogen production rate',
-                          14: 'pulse length',
-                          15: 'plant availability factor',
-                          16: 'linear combination of major radius (minimised) and pulse length (maximised)',
-                          17: 'net electrical output'} """
-
-    print(out)
-
-def print_ixc2nsweep():
-    """Prints:
-        DICT_IXC2NSWEEP
-        DICT_NSWEEP2IXC
-    """
-
-    #lambda to sort by integer value of key
-    lam = lambda x: int(x[0])
-    ixc2nsweep = dict_ixc2nsweep()
-    comment = "Dictionary mapping ixc no to nsweep, if applicable"
-    print_dict(ixc2nsweep, "DICT_IXC2NSWEEP", comment, lam)
-
-    nsweep2ixc = {b:a for a, b in ixc2nsweep.items()}
-    comment = "Dictionary mapping to nsweep to ixc no, if applicable"
-    print_dict(nsweep2ixc, "DICT_NSWEEP2IXC", comment, lam)
-
-
-def print_var_type():
-    """Prints:
-        DICT_VAR_TYPE
-    """
-
-    var_type = dict_var_type()
-    comment = "Dictionary mapping variable name to variable type"
-    print_dict(var_type, "DICT_VAR_TYPE", comment)
-
-def print_ixc():
-    """Prints:
-        DICT_IXC_FULL
-        DICT_IXC_BOUNDS
-        DICT_IXC_DEFAULT
-        DICT_IXC_SIMPLE
-        DICT_IXC_SIMPLE_REV
-    """
-
-    #lambda to sort by integer value of key
-    lam = lambda x: int(x[0])
-    ixc_full = dict_ixc_full()
-    comment = "Dictionary mapping ixc no to name and bounds"
-    print_dict(ixc_full, "DICT_IXC_FULL", comment, lam, "defaultdict(dict)")
-
+def dict_ixc_bounds():
+    # Returns dictionary mapping iteration variable name to bounds
+    ixc_full = output_dict['DICT_IXC_FULL']
     ixc_bounds = {}
     for key, value in ixc_full.items():
         lb = value["lb"]
@@ -970,185 +685,89 @@ def print_ixc():
         temp = {"lb" : lb, "ub" : ub}
         ixc_bounds[value["name"]] = temp
 
-    comment = "Dictionary mapping iteration variable name to bounds"
-    print_dict(ixc_bounds, "DICT_IXC_BOUNDS", comment, \
-                dict_type="defaultdict(dict)")
+    return ixc_bounds
 
+def dict_ixc_default():
+    # Returns dictionary mapping iteration variable name to default value
     ixc_default = {}
-    default = dict_default()
+    default = output_dict['DICT_DEFAULT']
+    ixc_full = output_dict['DICT_IXC_FULL']
+
     for key, value in ixc_full.items():
         name = value["name"]
+
         if name in default:
             ixc_default[name] = default[name]
         else:
             logging.warning("print_dict_ixc could not find %s"\
                             " in DICT_DEFAULT\n", name)
-    comment = "Dictionary mapping iteration variable name to default value"
-    print_dict(ixc_default, "DICT_IXC_DEFAULT", comment)
 
+    return ixc_default
+    
+def dict_ixc_simple():
+    # Returns dictionary mapping ixc no to iteration variable name
     ixc_simple = {}
+    ixc_full = output_dict['DICT_IXC_FULL']
     for key, value in ixc_full.items():
         ixc_simple[key] = value["name"]
-    comment = "Dictionary mapping ixc no to iteration variable name"
-    print_dict(ixc_simple, "DICT_IXC_SIMPLE", comment, lam)
 
+    return ixc_simple
+
+def dict_ixc_simple_rev():
+    # Returns dictionary mapping iteration variable name to ixc no
+    ixc_simple = output_dict['DICT_IXC_SIMPLE']
     ixc_simple_rev = {b:a for a, b in ixc_simple.items()}
-    comment = "Dictionary mapping iteration variable name to ixc no"
-    print_dict(ixc_simple_rev, "DICT_IXC_SIMPLE_REV", comment)
+    
+    return ixc_simple_rev
 
+def create_dicts(project):
+    # There are 3 sources of dicts: from the Ford project object, from the 
+    # Fortran source and hardcoded ones from this file
 
-def print_icc():
-    """Prints:
-        DICT_ICC_FULL
-    """
+    dict_objects = []
+    # Different dict objects, e.g. variable descriptions
+    
+    # Make dict objects
+    # Some dicts depend on other dicts already existing in output_dicts, so
+    # be careful if changing the order!
+    dict_objects.extend([
+        VariableDescriptions(project),
+        DefaultValues(project),
+        Modules(project),
+        HardcodedDictionary('DICT_TF_TYPE', DICT_TF_TYPE),
+        HardcodedDictionary('DICT_FIMP', DICT_FIMP),
+        HardcodedDictionary('DICT_OPTIMISATION_VARS', DICT_OPTIMISATION_VARS),
+        HardcodedDictionary('IFAIL_SUCCESS', IFAIL_SUCCESS),
+        HardcodedDictionary('PARAMETER_DEFAULTS', PARAMETER_DEFAULTS),
+        HardcodedDictionary('NON_F_VALUES', NON_F_VALUES),
+        SourceDictionary('DICT_INPUT_BOUNDS', dict_input_bounds),
+        SourceDictionary('DICT_NSWEEP2VARNAME', dict_nsweep2varname),
+        SourceDictionary('DICT_VAR_TYPE', dict_var_type),
+        SourceDictionary('DICT_ICC_FULL', dict_icc_full),
+        SourceDictionary('DICT_IXC2NSWEEP', dict_ixc2nsweep),
+        SourceDictionary('DICT_NSWEEP2IXC', dict_nsweep2ixc),
+        SourceDictionary('DICT_IXC_FULL', dict_ixc_full),
+        SourceDictionary('DICT_IXC_BOUNDS', dict_ixc_bounds),
+        SourceDictionary('DICT_IXC_DEFAULT', dict_ixc_default),
+        SourceDictionary('DICT_IXC_SIMPLE', dict_ixc_simple),
+        SourceDictionary('DICT_IXC_SIMPLE_REV', dict_ixc_simple_rev)
+    ])
 
-    #lambda to sort by integer value of key
-    lam = lambda x: int(x[0])
-    icc_full = dict_icc_full()
-    comment = "Dictionary mapping icc no to name"
-    print_dict(icc_full, "DICT_ICC_FULL", comment, lam, "defaultdict(dict)")
+    # Make individual dicts within dict objects, process, then add to output_dict
+    for dict_object in dict_objects:
+        dict_object.make_dict()
+        dict_object.post_process()
+        dict_object.publish()
 
+    # Save output_dict as JSON, to be used by utilities scripts
+    with open(DICTS_FILE_PATH, 'w') as dicts_file:
+        json.dump(output_dict, dicts_file, indent=4, sort_keys=True)
 
-def print_default():
-    """Prints:
-        DICT_DEFAULT
-    """
-
-    default = dict_default()
-    comment = "Dictionary of default values of variables"
-    print_dict(default, "DICT_DEFAULT", comment)
-
-def print_input_bounds():
-    """Prints:
-        DICT_INPUT_BOUNDS
-    """
-
-    input_bounds = dict_input_bounds()
-    comment = "Dictionary of upper and lower bounds used when reading IN.DAT"
-    print_dict(input_bounds, "DICT_INPUT_BOUNDS",\
-                comment, dict_type="defaultdict(dict)")
-
-def print_descriptions():
-    """Prints:
-        DICT_DESCRIPTIONS
-    """
-    descriptions = dict_descriptions()
-    comment = "Dictionary of variable descriptions"
-    print_dict(descriptions, "DICT_DESCRIPTIONS", comment)
-
-def print_module():
-    """Prints:
-        DICT_MODULE
-    """
-    module = dict_module()
-    comment = "Dictionary mapping module name to list of variables"
-    print_dict(module, "DICT_MODULE", comment, dict_type="OrderedDict()")
-
-
-def print_nsweep2varname():
-
-    """
-    Prints:
-    DICT_NSWEEP2VARNAME
-    """
-
-    lam = lambda x: int(x[0])
-    nsweep2varname = dict_nsweep2varname()
-    comment = 'Dictionary mapping nsweep to varname'
-
-    print_dict(nsweep2varname, 'DICT_NSWEEP2VARNAME', comment, lam)
-
-def print_icc_module():
-
-    """
-    Prints:
-    DICT_ICC_MODULE
-    """
-
-    lam = lambda x: int(x[0])
-    icc_modules = dict()
-    comment = "Dictionary mapping icc number to module"
-
-    file_loc = SOURCEDIR + "/constraint_equations.f90"
-
-    with open(file_loc,"r",encoding="utf-8") as f:
-        lines = f.readlines()
-
-    counter = 1
-    for line in lines:
-        if "#=# " in line:
-            module = line.split("#=#")[-1].replace(" ", "").strip("\n")
-            icc_modules[str(counter)] = module
-            counter += 1
-    print_dict(icc_modules, "DICT_ICC_MODULE", comment, lam)
-
-
-def print_icc_vars():
-
-    """
-    Prints:
-    DICT_ICC_VARS
-    """
-
-    lam = lambda x: int(x[0])
-    icc_vars = dict()
-    comment = "Dictionary mapping icc number icc vars"
-
-    file_loc = SOURCEDIR + "/constraint_equations.f90"
-
-    with open(file_loc,"r",encoding="utf-8") as f:
-        lines = f.readlines()
-
-    counter = 1
-    for line in lines:
-        if "#=#=#" in line:
-            vars = line.split("#=#=#")[-1].replace(" ", "").strip("\n").split(",")
-            if vars[0] != "consistency" and vars[0] != "empty":
-                f_value = vars[0]
-                cons_var = vars[1]
-                icc_vars[str(counter)] = {"f":f_value, "v":cons_var}
-            else:
-                icc_vars[str(counter)] = "consistency"
-            counter += 1
-    print_dict(icc_vars, "DICT_ICC_VARS", comment, lam)
-
-
-def print_all():
-    """Prints every dictionary
-    """
-
-    print_header()
-    print_hard_coded()
-    print_ixc2nsweep()
-    print_var_type()
-    print_icc()
-    print_ixc()
-    print_default()
-    print_input_bounds()
-    print_descriptions()
-    print_module()
-    print_nsweep2varname()
-    print_icc_module()
-    print_icc_vars()
-
-
-if __name__ == "__main__":
-
-    desc = "Creates a python dictionary file for use by utility programs. " + \
-           "Prints to stdout. Redirect to output file using '>'"
-    PARSER = argparse.ArgumentParser(description=desc)
-
-    #PARSER.add_argument("dir", help="PROCESS source directory", \
-    #                    nargs="?", default=".")
-
-    ARGS = PARSER.parse_args()
-
-    #SOURCEDIR = ARGS.dir
+def get_dicts():
+    # Return dicts loaded from the JSON file for use in Python utilities
     try:
-      file = open("SOURCEDIR/global_variables.f90","r",encoding="utf-8")
-#      for line in file.readlines():#open(/builds/process/process/global_variables.f90).readlines():
-#        logging.warning("in global_variables.f90 , line ** %s\n", line)
-      file.close()
-    except IOError:
-      logging.warning( "Could not open file!")
-    print_all()
+        with open(DICTS_FILE_PATH, 'r') as dicts_file:
+            return json.load(dicts_file)
+    except:
+        print("Error loading the dicts JSON file")
+        exit()

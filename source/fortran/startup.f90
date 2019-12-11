@@ -3,26 +3,12 @@
 
 module startup_module
 
-  !+ad_name  startup_module
-  !+ad_summ  Module containing plasma start-up routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  startup
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  parameters of the plasma start-up phase.
-  !+ad_prob  None
-  !+ad_call  constraint_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  maths_library
-  !+ad_call  physics_module
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  startup_variables
-  !+ad_hist  06/11/12 PJK Initial version of module; vmcon1 subroutine
-  !+ad_hisc               deleted as F90 allows recursive calls
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing plasma start-up routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! parameters of the plasma start-up phase.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -45,81 +31,55 @@ contains
 
   subroutine startup(outfile,iprint)
 
-    !+ad_name  startup
-    !+ad_summ  NEVER CALLED
-    !+ad_summ  Routine to find the minimum auxiliary power required for start-up
-    !+ad_type  Subroutine
-    !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  constr
-    !+ad_cont  cudrv1
-    !+ad_cont  start1
-    !+ad_cont  start2
-    !+ad_args  outfile : input integer : Fortran output unit identifier
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine finds the minimum auxiliary power required in start-up.
-    !+ad_desc  This is accomplished by calling the non-linear optimisation routine
-    !+ad_desc  VMCON, so this subroutine simply sets up the equations to be solved.
-    !+ad_desc  <P>PROCESS assumes that all the ion temperatures and profile
-    !+ad_desc  parameters are identical and utilises charge neutrality in
-    !+ad_desc  order to calculate DENI.
-    !+ad_desc  <P>ZEFF is assumed to remain constant, in other words the
-    !+ad_desc  ion/electron ratios are invariant.
-    !+ad_desc  <P>The most general form for the energy confinement time is :
-    !+ad_desc  <PRE>
-    !+ad_desc                              ptaue   qtaue                   rtaue
-    !+ad_desc                          ____      __
-    !+ad_desc  taue =  gtaue + ftaue   dene      te     ( <Paux>  +  palpmw )
-    !+ad_desc        ____     __
-    !+ad_desc  where DENE and TE are the electron density (10**20 m**-3) and
-    !+ad_desc  electron temperature (10 keV) respectively.
-    !+ad_desc  </PRE>
-    !+ad_desc  The equation defining ignition has the form
-    !+ad_desc  <PRE>
-    !+ad_desc                       2   s                2   1/2      -3/2
-    !+ad_desc   A n   T      =   B n   T    +  P    - C n   T    + D T
-    !+ad_desc      e20 e10          e20 e10     aux      e20 e10      e10
-    !+ad_desc  ----------
-    !+ad_desc     tau
-    !+ad_desc        E
-    !+ad_desc                =    P         +  P    -  P         +  P
-    !+ad_desc                      alpha        aux     rad          ohm
-    !+ad_desc
-    !+ad_desc                      p   q                                  r
-    !+ad_desc  tau    =  gg  + ff n   T    ( P      + P    + P    + P    )
-    !+ad_desc     E                e20 e10    alpha    ohm    rad    ohm
-    !+ad_desc  </PRE>
-    !+ad_desc  We solve this equation for (ne20, Te10) subject to the constraints,
-    !+ad_desc  <PRE>
-    !+ad_desc            d P
-    !+ad_desc               aux
-    !+ad_desc            -----  =  0.
-    !+ad_desc            d T
-    !+ad_desc               e10
-    !+ad_desc  </PRE>
-    !+ad_desc  to find the minimum auxiliary power required in start-up.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_call  start1
-    !+ad_call  start2
-    !+ad_call  vmcon
-    !+ad_hist  25/11/93 PJK Incorporation into PROCESS
-    !+ad_hist  02/10/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added current_drive_variables
-    !+ad_hist  31/10/12 PJK Added constraint_variables
-    !+ad_hist  06/11/12 PJK Added outfile argument.
-    !+ad_hisc               Routine now calls VMCON instead of local version VMCON1.
-    !+ad_hist  11/04/13 PJK Removed ires if-statement
-    !+ad_hist  11/09/13 PJK Changed ftr to ftrit; N.B. D-T reaction is assumed.
-    !+ad_hist  26/02/14 PJK New argument niter added to vmcon call
-    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_stat  Not currently used
-    !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! NEVER CALLED
+    !! Routine to find the minimum auxiliary power required for start-up
+    !! author: C A Gardner, AEA Fusion, Culham Laboratory
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : Fortran output unit identifier
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine finds the minimum auxiliary power required in start-up.
+    !! This is accomplished by calling the non-linear optimisation routine
+    !! VMCON, so this subroutine simply sets up the equations to be solved.
+    !! <P>PROCESS assumes that all the ion temperatures and profile
+    !! parameters are identical and utilises charge neutrality in
+    !! order to calculate DENI.
+    !! <P>ZEFF is assumed to remain constant, in other words the
+    !! ion/electron ratios are invariant.
+    !! <P>The most general form for the energy confinement time is :
+    !! <PRE>
+    !! ptaue   qtaue                   rtaue
+    !! ____      __
+    !! taue =  gtaue + ftaue   dene      te     ( <Paux>  +  palpmw )
+    !! ____     __
+    !! where DENE and TE are the electron density (10**20 m**-3) and
+    !! electron temperature (10 keV) respectively.
+    !! </PRE>
+    !! The equation defining ignition has the form
+    !! <PRE>
+    !! 2   s                2   1/2      -3/2
+    !! A n   T      =   B n   T    +  P    - C n   T    + D T
+    !! e20 e10          e20 e10     aux      e20 e10      e10
+    !! ----------
+    !! tau
+    !! E
+    !! =    P         +  P    -  P         +  P
+    !! alpha        aux     rad          ohm
+    !! 
+    !! p   q                                  r
+    !! tau    =  gg  + ff n   T    ( P      + P    + P    + P    )
+    !! E                e20 e10    alpha    ohm    rad    ohm
+    !! </PRE>
+    !! We solve this equation for (ne20, Te10) subject to the constraints,
+    !! <PRE>
+    !! d P
+    !! aux
+    !! -----  =  0.
+    !! d T
+    !! e10
+    !! </PRE>
+    !! to find the minimum auxiliary power required in start-up.
+    !! Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -268,30 +228,21 @@ contains
 
     subroutine start1(n,m,x,objf,conf,info)
 
-      !+ad_name  start1
-      !+ad_summ  Calculates the auxiliary power and the constraint equations
-      !+ad_summ  relevant to the minimisation of the auxiliary power
-      !+ad_type  Subroutine
-      !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  n       : input integer : number of equations
-      !+ad_args  m       : input integer : number of constraints
-      !+ad_args  x(n)    : input real array : current values of the
-      !+ad_argc            density and temperature
-      !+ad_args  objf    : output real : auxiliary power (MW)
-      !+ad_args  conf(m) : output real array : contraints
-      !+ad_args  info    : in/out integer : error status flag
-      !+ad_desc  This routine calculates the auxiliary power and the
-      !+ad_desc  constraint equations relevant to its minimisation.
-      !+ad_prob  None
-      !+ad_call  constr
-      !+ad_call  cudrv1
-      !+ad_hist  25/11/93 PJK Incorporation into PROCESS
-      !+ad_hist  02/10/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Calculates the auxiliary power and the constraint equations
+      !! relevant to the minimisation of the auxiliary power
+      !! author: C A Gardner, AEA Fusion, Culham Laboratory
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! n       : input integer : number of equations
+      !! m       : input integer : number of constraints
+      !! x(n)    : input real array : current values of the
+      !! density and temperature
+      !! objf    : output real : auxiliary power (MW)
+      !! conf(m) : output real array : contraints
+      !! info    : in/out integer : error status flag
+      !! This routine calculates the auxiliary power and the
+      !! constraint equations relevant to its minimisation.
+      !! Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -320,33 +271,23 @@ contains
 
     subroutine start2(n,m,x,fgrd,cnorm,lcnorm,info)
 
-      !+ad_name  start2
-      !+ad_summ  Calculates the first derivative of the auxiliary power
-      !+ad_summ  and the constraint equations relevant to the minimisation
-      !+ad_summ  of the auxiliary power
-      !+ad_type  Subroutine
-      !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  n       : input integer : number of equations
-      !+ad_args  m       : input integer : number of constraints
-      !+ad_args  x(n)    : input real array : current values of the density and temperature
-      !+ad_args  fgrd(n) : output real array : first derivative of auxiliary power
-      !+ad_args  cnorm(m,lcnorm) : output real array : constraints
-      !+ad_args  lcnorm  : input integer : array index
-      !+ad_args  info    : in/out integer : error status flag
-      !+ad_desc  This routine calculates the first derivative of the
-      !+ad_desc  auxiliary power and the constraint equations relevant
-      !+ad_desc  to the minimisation of the auxiliary power.
-      !+ad_prob  None
-      !+ad_call  constr
-      !+ad_call  cudrv1
-      !+ad_hist  25/11/93 PJK Incorporation into PROCESS
-      !+ad_hist  02/10/12 PJK Initial F90 version
-      !+ad_hist  10/10/12 PJK Hardwired local value of epsfcn
-      !+ad_stat  Okay
-      !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Calculates the first derivative of the auxiliary power
+      !! and the constraint equations relevant to the minimisation
+      !! of the auxiliary power
+      !! author: C A Gardner, AEA Fusion, Culham Laboratory
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! n       : input integer : number of equations
+      !! m       : input integer : number of constraints
+      !! x(n)    : input real array : current values of the density and temperature
+      !! fgrd(n) : output real array : first derivative of auxiliary power
+      !! cnorm(m,lcnorm) : output real array : constraints
+      !! lcnorm  : input integer : array index
+      !! info    : in/out integer : error status flag
+      !! This routine calculates the first derivative of the
+      !! auxiliary power and the constraint equations relevant
+      !! to the minimisation of the auxiliary power.
+      !! Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -400,30 +341,17 @@ contains
 
     subroutine cudrv1(n,x,paux)
 
-      !+ad_name  cudrv1
-      !+ad_summ  Routine acting as interface between the start-up routines
-      !+ad_summ  and CUDRIV
-      !+ad_type  Subroutine
-      !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  n       : input integer : number of equations
-      !+ad_args  x(n)    : input real array : current values of the density and temperature
-      !+ad_args  paux    : output real : auxiliary power (MW)
-      !+ad_desc  This routine acts as the interface between the start-up routines
-      !+ad_desc  and <A HREF="cudriv.html">CUDRIV</A>.
-      !+ad_prob  None
-      !+ad_call  physics
-      !+ad_call  cudrv1
-      !+ad_hist  25/11/93 PJK Incorporation into PROCESS
-      !+ad_hist  02/10/12 PJK Initial F90 version
-      !+ad_hist  15/10/12 PJK Added physics_variables
-      !+ad_hist  16/10/12 PJK Added physics_module
-      !+ad_hist  16/10/12 PJK Added current_drive_variables
-      !+ad_hist  22/05/14 PJK Name changes to power quantities
-      !+ad_stat  Okay
-      !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Routine acting as interface between the start-up routines
+      !! and CUDRIV
+      !! author: C A Gardner, AEA Fusion, Culham Laboratory
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! n       : input integer : number of equations
+      !! x(n)    : input real array : current values of the density and temperature
+      !! paux    : output real : auxiliary power (MW)
+      !! This routine acts as the interface between the start-up routines
+      !! and <A HREF="cudriv.html">CUDRIV</A>.
+      !! Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -474,27 +402,19 @@ contains
 
     subroutine constr(n,m,x,paux,conf)
 
-      !+ad_name  constr
-      !+ad_summ  Calculates the constraint equations relevant to the
-      !+ad_summ  minimisation of the auxiliary power
-      !+ad_type  Subroutine
-      !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  n       : input integer : number of equations
-      !+ad_args  m       : input integer : number of constraints
-      !+ad_args  x(n)    : input real array : current values of the density and temperature
-      !+ad_args  paux    : input real : auxiliary power (MW)
-      !+ad_args  conf(m) : output real array : constraints
-      !+ad_desc  This routine calculates the constraint equations relevant
-      !+ad_desc  to the minimisation of the auxiliary power.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  25/11/93 PJK Incorporation into PROCESS
-      !+ad_hist  02/10/12 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Calculates the constraint equations relevant to the
+      !! minimisation of the auxiliary power
+      !! author: C A Gardner, AEA Fusion, Culham Laboratory
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! n       : input integer : number of equations
+      !! m       : input integer : number of constraints
+      !! x(n)    : input real array : current values of the density and temperature
+      !! paux    : input real : auxiliary power (MW)
+      !! conf(m) : output real array : constraints
+      !! This routine calculates the constraint equations relevant
+      !! to the minimisation of the auxiliary power.
+      !! Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

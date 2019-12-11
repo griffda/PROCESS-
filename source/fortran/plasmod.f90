@@ -1,34 +1,16 @@
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module plasmod_module
 
 
-  !+ad_name  plasmod
-  !+ad_summ  Module containing plasmod interface
-  !+ad_type  Module
-  !+ad_auth  K Ellis, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains all the interface
-  !+ad_desc  functions between the 1D transport and
-  !+ad_desc  equilibrium code PLASMOD and the rest
-  !+ad_desc  of PROCESS.
-  !+ad_prob  None
-  !+ad_call  constants
-  !+ad_call  constraint_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_kallenbach_variables
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  global_variables
-  !+ad_call  impurity_radiation_module
-  !+ad_call  numerics
-  !+ad_call  physics_variables
-  !+ad_call  plasmod_variables
-  !+ad_call  process_output
-  !+ad_hist  26/02/18 KE Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
+  !! Module containing plasmod interface
+  !! author: K Ellis, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains all the interface
+  !! functions between the 1D transport and
+  !! equilibrium code PLASMOD and the rest
+  !! of PROCESS.
+  !! E Fable et al. Fus. Eng. & Des. (2018)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -54,25 +36,17 @@ contains
 
   subroutine setupPlasmod(num,geom,comp,ped,inp0,i_flag)
 
-    !+ad_name  setupPlasmod
-    !+ad_summ  Routine to set up the PLASMOD input params
-    !+ad_type  Subroutine
-    !+ad_auth  K Ellis, UKAEA, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  num  : derived type : numerics information
-    !+ad_args  geom : derived type : geometry information
-    !+ad_args  comp : derived type : composition information
-    !+ad_args  ped  : derived type :  pedestal information
-    !+ad_args  inp0 : derived type : miscellaneous input information
-    !+ad_args  i_flag : integer    : PLASMOD error flag
-    !+ad_desc  This routine sets up the input parameters for
-    !+ad_desc  PLASMOD from PROCESS variables.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_call  element2index
-    !+ad_hist  26/02/18 KE Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  E Fable et al. Fus. Eng. & Des. (2018)
+    !! Routine to set up the PLASMOD input params
+    !! author: K Ellis, UKAEA, Culham Science Centre
+    !! num  : derived type : numerics information
+    !! geom : derived type : geometry information
+    !! comp : derived type : composition information
+    !! ped  : derived type :  pedestal information
+    !! inp0 : derived type : miscellaneous input information
+    !! i_flag : integer    : PLASMOD error flag
+    !! This routine sets up the input parameters for
+    !! PLASMOD from PROCESS variables.
+    !! E Fable et al. Fus. Eng. & Des. (2018)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -284,22 +258,15 @@ contains
   subroutine convert_Plasmod2PROCESS(geom,comp,ped,radp,mhd,loss,theat,&
 		& tburn,fusrat)
 
-    !+ad_name  convert_Plasmod2PROCESS
-    !+ad_summ  Routine to set up the PLASMOD input params
-    !+ad_type  Subroutine
-    !+ad_auth  K Ellis, UKAEA, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  num : derived type :
-    !+ad_args  geom : derived type :
-    !+ad_args  comp : derived type :
-    !+ad_args  ped : derived type :
-    !+ad_desc  This routine writes out the times of the various stages
-    !+ad_desc  during a single plant cycle.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  28/02/18 HL Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
+    !! Routine to set up the PLASMOD input params
+    !! author: K Ellis, UKAEA, Culham Science Centre
+    !! num : derived type :
+    !! geom : derived type :
+    !! comp : derived type :
+    !! ped : derived type :
+    !! This routine writes out the times of the various stages
+    !! during a single plant cycle.
+    !! E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -701,20 +668,11 @@ contains
   subroutine outputPlasmod(outfile)
 
 
-    !+ad_name  outputPlasmod
-    !+ad_summ  Routine to print out the output from PLASMOD
-    !+ad_type  Subroutine
-    !+ad_auth  K Ellis, UKAEA, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : Fortran output unit identifier
-    !+ad_desc  This routine writes out the results from the PLASMOD code
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarrf
-    !+ad_hist  27/02/18 KE Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine to print out the output from PLASMOD
+    !! author: K Ellis, UKAEA, Culham Science Centre
+    !! outfile : input integer : Fortran output unit identifier
+    !! This routine writes out the results from the PLASMOD code
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -849,18 +807,11 @@ contains
   subroutine outputRadialProf
 
 
-    !+ad_name  outputRadialProf
-    !+ad_summ  Routine to print out the radial profiles from PLASMOD
-    !+ad_type  Subroutine
-    !+ad_auth  K Ellis, UKAEA, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine writes out the radial profiles as created by the PLASMOD code
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  13/03/18 KE Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Routine to print out the radial profiles from PLASMOD
+    !! author: K Ellis, UKAEA, Culham Science Centre
+    !! None
+    !! This routine writes out the radial profiles as created by the PLASMOD code
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

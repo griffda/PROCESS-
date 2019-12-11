@@ -97,7 +97,7 @@ module unload ifort
 module unload pgi
 module load gfortran
 module unload python
-module load python/3.3
+module load python/3.5.1
 ```
 
 1. get repository

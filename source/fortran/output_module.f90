@@ -3,83 +3,14 @@ contains
 
 subroutine output(outfile)
 
-  !+ad_name  output
-  !+ad_summ  Subroutine to write the results to the main output file
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  outfile : input integer : Fortran output unit identifier
-  !+ad_desc  This routine writes the program results to a file,
-  !+ad_desc  in a tidy format.
-  !+ad_prob  None
-  !+ad_call  availability_module
-  !+ad_call  build_module
-  !+ad_call  buildings_module
-  !+ad_call  costs_module
-  !+ad_call  current_drive_module
-  !+ad_call  divertor_module
-  !+ad_call  fwbs_module
-  !+ad_call  ife_module
-  !+ad_call  ife_variables
-  !+ad_call  pfcoil_module
-  !+ad_call  physics_module
-  !+ad_call  physics_variables
-  !+ad_call  power_module
-  !+ad_call  pulse_module
+  !! Subroutine to write the results to the main output file
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! outfile : input integer : Fortran output unit identifier
+  !! This routine writes the program results to a file,
+  !! in a tidy format.
 
 
-  !+ad_call  sctfcoil_module
-  !+ad_call  startup_module
-  !+ad_call  stellarator_module
-  !+ad_call  stellarator_variables
-  !+ad_call  structure_module
-  !+ad_call  tfcoil_module
-  !+ad_call  vaccum_module
-  !+ad_call  acpow
-  !+ad_call  avail
-  !+ad_call  avail_2
-  !+ad_call  bldgcall
-  !+ad_call  cntrpst
-  !+ad_call  costs
-  !+ad_call  cudriv
-  !+ad_call  divcall
-  !+ad_call  fispac
-  !+ad_call  fwbs
-  !+ad_call  ifeout
-  !+ad_call  igmarcal
-  !+ad_call  induct
-  !+ad_call  loca
-  !+ad_call  outpf
-  !+ad_call  outplas
-  !+ad_call  outtim
-  !+ad_call  outvolt
-  !+ad_call  pfpwr
-  !+ad_call  power2
-  !+ad_call  pulse
-  !+ad_call  radialb
-  !+ad_call  startup
-  !+ad_call  stout
-  !+ad_call  strucall
-  !+ad_call  tfcoil
-  !+ad_call  tfpwr
-  !+ad_call  tfspcall
-  !+ad_call  vaccall
-  !+ad_hist  23/01/97 PJK Initial upgraded version. Split routine POWER
-  !+ad_hisc               into POWER1 and POWER2
-  !+ad_hist  06/02/97 PJK Added routine LOCA
-  !+ad_hist  21/03/97 PJK Added routine IFEOUT
-  !+ad_hist  18/11/97 PJK Removed NOUT argument from FISPAC call
-  !+ad_hist  19/05/99 PJK Added routine AVAIL
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_hist  24/09/12 PJK Swapped argument order of RADIALB, DIVCALL, INDUCT
-  !+ad_hist  10/10/12 PJK Moved routine from output.f90 to aamain.f90
-  !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
-  !+ad_hist  09/07/14 PJK Turned on error handling
-  !+ad_hist  07/06/16  JM Added some extra comments
-  !+ad_hist  27/02/2018 KE Added plasmod output routine
-  !+ad_hist  28/07/2019 SIM Restored IFE
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -148,7 +79,7 @@ subroutine output(outfile)
   end if
 
   ! Costs model !
-  !!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!
 
   ! Cost switch values
   ! No.  |  model
@@ -166,7 +97,7 @@ subroutine output(outfile)
   end if
 
   ! Availability model !
-  !!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!
 
   ! Availability switch values
   ! No.  |  model
@@ -193,7 +124,7 @@ subroutine output(outfile)
 
 
   ! startup model (not used) !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !call startup(outfile,1)  !  commented-out for speed reasons
 
@@ -204,7 +135,7 @@ subroutine output(outfile)
   call cudriv(outfile,1)
 
   ! Pulsed reactor model !
-  !!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!
 
   call pulse(outfile,1)
 
@@ -212,7 +143,7 @@ subroutine output(outfile)
   call outtim(outfile)
 
   ! Divertor Model !
-  !!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!
   if(verbose==1) then
     verbose_logical = .true.
   else
@@ -248,7 +179,7 @@ subroutine output(outfile)
   end if
 
   ! Machine Build Model !
-  !!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!
 
   ! Radial build
   call radialb(outfile,1)
@@ -260,14 +191,14 @@ subroutine output(outfile)
   call tfcoil(outfile,1)
 
   ! Toroidal field coil superconductor model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  if ( itfsup == 1 ) then
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  if ( i_tf_sup == 1 ) then
      call tfspcall(outfile,1)
   end if
 
 
   ! Tight aspect ratio machine model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   if (itart == 1) then
     call cntrpst(outfile,1)
   end if
@@ -279,14 +210,14 @@ subroutine output(outfile)
   call outvolt(outfile)
 
   ! Structure Model !
-  !!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!
   call strucall(outfile,1)
 
   ! Poloidal field coil inductance calculation
   call induct(outfile,1)
 
   ! Blanket model !
-  !!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!
 
   ! Blanket switch values
   ! No.  |  model
@@ -308,7 +239,7 @@ subroutine output(outfile)
   end if
 
   ! FISPACT and LOCA model (not used) !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! if (ifispact == 1) then
   !   call fispac(0)
@@ -318,27 +249,27 @@ subroutine output(outfile)
   !end if
 
   ! Toroidal field coil power model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   call tfpwr(outfile,1)
 
   ! Poloidal field coil power model !
   call pfpwr(outfile,1)
 
   ! Vacuum model !
-  !!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!
   call vaccall(outfile,1)
 
   ! Buildings model !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call bldgcall(outfile,1)
 
   ! Plant AC power requirements !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   call acpow(outfile,1)
 
   ! Plant heat transport pt 2 & 3 !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   call power2(outfile,1)
   call power3(nout,1)
 

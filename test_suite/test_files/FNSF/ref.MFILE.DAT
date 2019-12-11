@@ -383,7 +383,7 @@
  Gap_(m)_________________________________________________________________ (tftsgap)_____________________      5.0000E-02    
  TF_coil_outboard_leg_radial_thickness_(m)_______________________________ (tfthko)______________________      5.5300E-01    
  # Vertical Build #
- Divertor_null_switch____________________________________________________ (snull)_______________________              0    
+ Divertor_null_switch____________________________________________________ (i_single_null)_______________________              0    
  Plasma_half-height_(m)__________________________________________________ (rminor*kappa)________________      2.6714E+00    
  Top_scrape-off_vertical_thickness_(m)___________________________________ (vgap)________________________      5.0000E-01    
  Divertor_structure_vertical_thickness_(m)_______________________________ (divfix)______________________      2.0000E-01    
@@ -393,7 +393,7 @@
  Ratio_of_Central_solenoid_height_to_TF_coil_internal_height_____________ (ohhghf)______________________      7.1000E-01    
  Width_of_neutral_beam_duct_where_it_passes_between_the_TF_coils_(m)_____ (beamwd)______________________      3.1000E-01    
  # Copper TF Coil Information #
- Copper_TF_coil__________________________________________________________ (itfsup)______________________              0    
+ Copper_TF_coil__________________________________________________________ (i_tf_sup)______________________              0    
  Inboard_leg_current_density_(A/m2)______________________________________ (oacdcp)______________________      2.6543E+07 ITV
  Outboard_leg_current_density_(A/m2)_____________________________________ (cdtfleg)_____________________      1.3424E+07    
  Number_of_turns_per_outboard_leg________________________________________ (turnstf)_____________________      1.0000E+00    
@@ -415,7 +415,7 @@
  Peak_field_at_the_TF_coils_(T)__________________________________________ (bmaxtf)______________________      9.2225E+00    
  Ripple_at_plasma_edge_(%)_______________________________________________ (ripple)______________________      1.0000E+00    
  Max_allowed_ripple_amplitude_at_plasma_(%)______________________________ (ripmax)______________________      1.0000E+00    
- Number_of_TF_coil_legs__________________________________________________ (tfno)________________________      1.2000E+01    
+ Number_of_TF_coil_legs__________________________________________________ (n_tf)________________________      1.2000E+01    
  Total_stored_energy_in_TF_coils_(GJ)____________________________________ (estotftgj)___________________      1.0346E+00    
  Vertical_force_on_inboard_leg_(N)_______________________________________ (vforce)______________________      6.7808E+06    
  Centering_force_on_inboard_leg_(N/m)____________________________________ (cforce)______________________      0.0000E+00    
@@ -995,7 +995,7 @@ kappa    = 2.75     *Plasma separatrix elongation
 q0       = 2.0      *Safety factor on axis
 ralpne   = 0.08     *Thermal alpha density / electron density
 rli      = 0.65     *Plasma normalised internal inductance
-snull    = 0        *Switch for divertor configuration (0: double null)
+i_single_null    = 0        *Switch for divertor configuration (0: double null)
 ssync    = 0.7      *Synchrotron wall reflectivity factor
 tratio   = 1.35     *Ion temperature / electron temperature
 triang   = 0.5      *Plasma separatrix triangularity triang
@@ -1042,14 +1042,14 @@ vvblgap  = 0.0      *Gap between vacuum vessel and blanket (m)
 
 cpttf    = 9.0E4    *TF coil current per turn (A)
 frhocp   = 1.0      *Centrepost resistivity enhancement factor
-itfsup   = 0        *Switch for TF coil conductor model (0: copper)
+i_tf_sup   = 0        *Switch for TF coil conductor model (0: copper)
 ptempalw = 473.15   *Maximum peak centrepost temperature (C) (constraint equation 44)
 rcool    = 3.0E-3   *Average radius of coolant channel (m)
 ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma edge (%)
 rhotfleg = 2.5E-8   *Resistivity of a TF coil leg (Ohm-m)
-tfno     = 12       *Number of TF coils
+n_tf     = 12       *Number of TF coils
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
-vftf     = 0.2      *Coolant fraction of TFC 'cable' (itfsup=1) or of TFC leg (itfsup=0)
+vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav
 
 *-------------Current Drive Variables--------------*

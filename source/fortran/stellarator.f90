@@ -2,27 +2,20 @@
 
 module helias5b_coil_parameters
 
-  !+ad_name  helias5b_coil_parameters
-  !+ad_summ  Module containing Helias 5-B power plant parameter values
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_auth  F Warmer, IPP Greifswald
-  !+ad_cont  None
-  !+ad_args  N/A
-  !+ad_desc  This module contains a set of constants that define the
-  !+ad_desc  coil set parameters for the Helias 5-B stellarator power plant design.
-  !+ad_prob  None
-  !+ad_call  N/A
-  !+ad_hist  19/11/13 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  HELIAS 5-B magnet system structure and maintenance concept,
-  !+ad_docc  Felix Schauer, Konstantin Egorov, Victor Bykov, Fus. Eng. Design (2013),
-  !+ad_docc  in press
+  !! Module containing Helias 5-B power plant parameter values
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! author: F Warmer, IPP Greifswald
+  !! N/A
+  !! This module contains a set of constants that define the
+  !! coil set parameters for the Helias 5-B stellarator power plant design.
+  !! HELIAS 5-B magnet system structure and maintenance concept,
+  !! Felix Schauer, Konstantin Egorov, Victor Bykov, Fus. Eng. Design (2013),
+  !! in press
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Number of coils
-  integer, parameter :: tfno5B = 50
+  integer, parameter :: n_tf5B = 50
   !  Major radius (m)
   real(kind(1.0D0)), parameter :: Rg5B = 22.0D0
   !  Coil minor radius (m), = U/(2*pi), U=34 m
@@ -74,19 +67,12 @@ end module helias5b_coil_parameters
 
 module cartesian_vectors
 
-  !+ad_name  cartesian_vectors
-  !+ad_summ  Module providing Cartesian vectors and associated operations
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  None
-  !+ad_args  N/A
-  !+ad_desc  This module defines a vector datatype within Cartesian coordinates,
-  !+ad_desc  and provides a set of basic vector operators.
-  !+ad_prob  None
-  !+ad_call  N/A
-  !+ad_hist  19/11/13 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Module providing Cartesian vectors and associated operations
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module defines a vector datatype within Cartesian coordinates,
+  !! and provides a set of basic vector operators.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -200,72 +186,14 @@ end module cartesian_vectors
 
 module stellarator_module
 
-  !+ad_name  stellarator_module
-  !+ad_summ  Module containing stellarator routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  stcall
-  !+ad_cont  stinit
-  !+ad_cont  stgeom
-  !+ad_cont  stbild
-  !+ad_cont  stphys
-  !+ad_cont  stheat
-  !+ad_cont  stcoil
-  !+ad_cont  stfwbs
-  !+ad_cont  stdlim
-  !+ad_cont  stblim
-  !+ad_cont  stigma
-  !+ad_cont  stout
-  !+ad_cont  ststrc
-  !+ad_cont  stdiv
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  parameters of the first wall, blanket and shield components
-  !+ad_desc  of a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  availability_module
-  !+ad_call  build_variables
-  !+ad_call  buildings_module
-  !+ad_call  constants
-  !+ad_call  constraint_variables
-  !+ad_call  costs_module
-  !+ad_call  cost_variables
-  !+ad_call  current_drive_module
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_module
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  fwbs_module
-  !+ad_call  fwbs_variables
-  !+ad_call  global_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  impurity_radiation_module
-  !+ad_call  kit_blanket_model
-  !+ad_call  maths_library
-  !+ad_call  numerics
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_module
-  !+ad_call  physics_variables
-  !+ad_call  plasma_geometry_module
-  !+ad_call  power_module
-  !+ad_call  process_output
+  !! Module containing stellarator routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! parameters of the first wall, blanket and shield components
+  !! of a fusion power plant.
 
-  !+ad_call  sctfcoil_module
-  !+ad_call  stellarator_variables
-  !+ad_call  structure_module
-  !+ad_call  structure_variables
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_call  vacuum_module
-  !+ad_hist  31/10/12 PJK Initial version of module
-  !+ad_hist  06/11/12 PJK Added availability_module
-  !+ad_hist  06/11/12 PJK Added plasma_geometry_module
-  !+ad_hist  14/08/13 PJK Added cost_variables, kit_blanket_model
-  !+ad_hist  24/02/14 PJK Added profiles_module
-  !+ad_hist  14/05/14 PJK Added impurity_radiation_module
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -317,48 +245,13 @@ contains
 
   subroutine stcall
 
-    !+ad_name  stcall
-    !+ad_summ  Routine to call the physics and engineering modules
-    !+ad_summ  relevant to stellarators
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Warmer, IPP Greifswald
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine is the caller for the stellarator models.
-    !+ad_prob  None
-    !+ad_call  acpow
-    !+ad_call  avail
-    !+ad_call  bldgcall
-    !+ad_call  costs
-    !+ad_call  power1
-    !+ad_call  power2
-    !+ad_call  stbild
-    !+ad_call  stcoil
-    !+ad_call  stdiv
-    !+ad_call  stfwbs
-    !+ad_call  stgeom
-    !+ad_call  stphys
-    !+ad_call  ststrc
-    !+ad_call  tfpwr
-    !+ad_call  vaccall
-    !+ad_hist  28/06/94 PJK Initial version
-    !+ad_hist  23/01/97 PJK Split routine POWER into POWER1 and POWER2
-    !+ad_hist  19/11/97 PJK Corrected call to STCOIL (missing arguments)
-    !+ad_hist  19/05/99 PJK Added call to routine AVAIL
-    !+ad_hist  20/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added costs_module
-    !+ad_hist  17/10/12 PJK Added divertor_module
-    !+ad_hist  18/10/12 PJK Added fwbs_module
-    !+ad_hist  18/10/12 PJK Added vacuum_module
-    !+ad_hist  30/10/12 PJK Added power_module
-    !+ad_hist  30/10/12 PJK Added buildings_module
-    !+ad_hist  12/08/13 PJK Removed call to (tokamak) geomty
-    !+ad_hist  13/08/13 PJK/FW Added call to new stellarator divertor model
-    !+ad_hist  14/08/13 PJK/FW Removed call to (tokamak) fwbs
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to call the physics and engineering modules
+    !! relevant to stellarators
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Warmer, IPP Greifswald
+    !! None
+    !! This routine is the caller for the stellarator models.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -392,47 +285,14 @@ contains
 
   subroutine stinit
 
-    !+ad_name  stinit
-    !+ad_summ  Routine to initialise the variables relevant to stellarators
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Warmer, IPP Greifswald
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine initialises the variables relevant to stellarators.
-    !+ad_desc  Many of these may override the values set in routine
-    !+ad_desc  <A HREF="initial.html">initial</A>.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  28/06/94 PJK Initial version
-    !+ad_hist  09/09/94 PJK Changed ICASE
-    !+ad_hist  07/12/94 PJK Changed default q and kappa values
-    !+ad_hist  04/12/95 PJK Ensured stellarators do not use D-He3 reaction
-    !+ad_hist  26/02/96 PJK Modified initial setting of ISTELL (moved to
-    !+ad_hisc               routine DEVTYP)
-    !+ad_hist  22/01/97 PJK Subsumed heattr.h, heatrinp.h and pfelect.h into
-    !+ad_hisc               htpwr.h
-    !+ad_hist  20/09/12 PJK Initial F90 version
-    !+ad_hist  10/10/12 PJK Modified to use new numerics module
-    !+ad_hist  15/10/12 PJK Added global_variables module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/10/12 PJK Added pfcoil_variables
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  30/10/12 PJK Added times_variables
-    !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  31/10/12 PJK Added stellarator_variables
-    !+ad_hist  23/01/13 PJK Turned off some output sections
-    !+ad_hist  12/08/13 PJK/FW Changed kappa values to 1.0
-    !+ad_hist  11/09/13 PJK Removed idhe3 setting
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
-    !+ad_hist  23/07/14 PJK Changed icase description
-    !+ad_hist  06/11/14 PJK Added secondary_cycle=0 assumption
-    !+ad_hist  12/11/14 PJK Added tpulse, tdown, tcycle
-    !+ad_hist  24/11/14 PJK Brought blanket properties in line with tokamak
-    !+ad_hist  05/12/18 SIM Added primary_pumping, revised secondary_cycle
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to initialise the variables relevant to stellarators
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Warmer, IPP Greifswald
+    !! None
+    !! This routine initialises the variables relevant to stellarators.
+    !! Many of these may override the values set in routine
+    !! <A HREF="initial.html">initial</A>.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -491,7 +351,7 @@ contains
     tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
     !  Coil quantities
-    tfno = 50.0D0
+    n_tf = 50.0D0
 
     !  Blanket properties
     !secondary_cycle = 0  !  simple thermal hydraulic model assumed
@@ -567,32 +427,19 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine stgeom
-
-    !+ad_name  stgeom
-    !+ad_summ  Routine to calculate the plasma volume and surface area for
-    !+ad_summ  a stellarator
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Warmer, IPP Greifswald
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calculates the plasma volume and surface area for
-    !+ad_desc  a stellarator configuration.
-    !+ad_desc  <P>The method is based on that described in Geiger, and
-    !+ad_desc  has been converted from MATLAB code written by Felix Warmer.
-    !+ad_prob  The surface area integration is very slow; a different method
-    !+ad_prob  may be implemented in the future.
-    !+ad_call  None
-    !+ad_hist  28/06/94 PJK Initial version
-    !+ad_hist  20/09/12 PJK Initial F90 version
-    !+ad_hist  12/08/13 PJK/FW Implementation of full model
-    !+ad_stat  Okay
-    !+ad_docs  Stellarator Plasma Geometry Model for the Systems
-    !+ad_docc  Code PROCESS, F. Warmer, 19/06/2013
-    !+ad_docs  J. Geiger, IPP Greifswald internal document:  'Darstellung von
-    !+ad_docc  ineinandergeschachtelten toroidal geschlossenen Fl�chen mit
-    !+ad_docc  Fourierkoeffizienten' ('Representation of nested, closed
-    !+ad_docc  surfaces with Fourier coefficients')
+    !! author: J Lion, IPP Greifswald
+    !! Routine to calculate the plasma volume and surface area for
+    !! a stellarator using precalculated effective values
+    !!
+    !! This routine calculates the plasma volume and surface area for
+    !! a stellarator configuration.
+    !! It is simple scaling based on a Fourier representation based on 
+    !! that described in Geiger documentation.
+    !!
+    !! J. Geiger, IPP Greifswald internal document:  'Darstellung von
+    !! ineinandergeschachtelten toroidal geschlossenen Flaechen mit
+    !! Fourierkoeffizienten' ('Representation of nested, closed
+    !! surfaces with Fourier coefficients')
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -602,208 +449,15 @@ contains
 
     !  Local variables
 
-    integer, parameter :: n_i = 12, n_j = 25
-    integer, parameter :: m_max = n_i-1, n_max = (n_j-1)/2
-    integer, parameter :: nu = 200, nv = 200
-    integer, save :: nf_vmec
-    integer :: i,j,m,n,iu,iv,nf,m1,n1,m2,n2,a1,b1,a2,b2,a3,b3,a4,b4
-    real(kind(1.0D0)), dimension(0:m_max,-n_max:n_max), save :: Rmn0, Zmn0
-    real(kind(1.0D0)), dimension(0:m_max,-n_max:n_max) :: Rmn, Zmn
-    real(kind(1.0D0)), dimension(4*m_max+1,4*n_max+1) :: Rv, Zv
-    real(kind(1.0D0)), save :: r_vmec,a_vmec,aspect_vmec,v_vmec,s_vmec
-    real(kind(1.0D0)) :: a,a_square,sr,sa,r_maj,du,dv,rr,drdv,drdu
-    real(kind(1.0D0)) :: dzdv,dzdu,rtemp,sum1,sum2,rn,u,v,suv,cuv
-    character(len=80) :: header
-    logical :: first_call = .true.
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (first_call) then
-
-       !  VMEC information file
-
-       open(unit=1,file=vmec_info_file,status='old')
-       read(1,'(A)') header
-       read(1,*) R_vmec, a_vmec, aspect_vmec, V_vmec, S_vmec, rn
-       close(unit=1)
-
-       nf_vmec = int(rn)
-
-       !  Import VMEC boundary Fourier coefficients from files.
-       !  These contain the plasma boundary represented by Fourier components
-       !  R(m,n) and Z(m,n)
-       !
-       !  Fortran complication: array sizes n_i,n_j,m_max,n_max are needed in advance...
-
-       !  Rmn Fourier components
-
-       open(unit=1,file=vmec_rmn_file,status='old')
-       do m = 0,m_max
-          read(1,*) (Rmn0(m,n),n=-n_max,n_max)
-       end do
-       close(unit=1)
-
-       !  Zmn Fourier components
-
-       open(unit=1,file=vmec_zmn_file,status='old')
-       do m = 0,m_max
-          read(1,*) (Zmn0(m,n),n=-n_max,n_max)
-       end do
-       close(unit=1)
-
-       first_call = .false.
-    end if
-
-    Rmn = Rmn0
-    Zmn = Zmn0
-
+    !  Cross-sectional area, averaged over toroidal angle
     rminor = rmajor/aspect
     eps = 1.0D0/aspect
 
-    !  Number of field periods; this is always 5 for the W7-X line,
-    !  but a 4 periodic machine could be possible in the future
+    vol = rmajor*rminor**2 * 19.75D0 !This value is for Helias5 solely
 
-    nf = nf_vmec
+    sarea = rmajor*rminor * 48.56D0 !This value is for Helias5 solely
 
-    !  Scale major and minor radius
-    !  with scaling factors SR = R / R_vmec for the major radius
-    !                   and Sa = a / a_vmec for the minor radius
-    !
-    !  If a certain 'R' shall be used, calculate R_vmec in advance
-    !  and define SR not as factor, but as given above
-
-    SR = rmajor/R_vmec
-    Sa = rminor/a_vmec
-
-    do n = -n_max,n_max
-       do m = 0,m_max
-
-          if (m == 0) then
-             Rmn(m,n) = SR*Rmn(m,n)
-             Zmn(m,n) = SR*Zmn(m,n)
-          else
-             Rmn(m,n) = Sa*Rmn(m,n)
-             Zmn(m,n) = Sa*Zmn(m,n)
-          end if
-
-       end do
-    end do
-
-    !  Calculate effective minor radius
-    !  This is an average value integrated over toroidal angle
-
-    a_square = 0.0D0
-    do n = -n_max,n_max
-       do m = 0,m_max
-          a_square = a_square + m*Zmn(m,n)*Rmn(m,n)
-       end do
-    end do
-
-    a = sqrt(a_square)
-
-    !  Calculation of the plasma volume
-    !
-    !  Expand array and set not given fourier components to zero.
-    !  This is required because the volume is calculated with
-    !  a double sum over m1,n1 and m2,n2 resulting in mixed
-    !  mode numbers m*=m1+m2, etc.
-    !  Therefore m* > m_max meaning, that the sum goes over mode numbers,
-    !  which are not given by the input file - but these components can simply
-    !  be set to zero
-
-    Rv = 0.0D0 ; Zv = 0.0D0
-    do j = n_max+1,3*n_max+1
-       do i = 2*m_max+1,3*m_max+1
-          Rv(i,j) = Rmn(i-2*m_max-1,j-2*n_max-1)
-          Zv(i,j) = Zmn(i-2*m_max-1,j-2*n_max-1)
-       end do
-    end do
-
-    !  Double summation over m1,n1 and m2,n2 to calculate the volume
-
-    vol = 0.0D0
-
-    do n1 = -n_max,n_max
-       do m1 = 0,m_max
-
-          rtemp = Rmn(m1,n1)
-
-          do n2 = -n_max,n_max
-             do m2 = 0,m_max
-
-                a1 = m1+m2+1+2*m_max
-                b1 = n1+n2+1+2*n_max
-
-                a2 = m1-m2+1+2*m_max
-                b2 = n1-n2+1+2*n_max
-
-                a3 = m2-m1+1+2*m_max
-                b3 = n2-n1+1+2*n_max
-
-                a4 = -m1-m2+1+2*m_max
-                b4 = -n1-n2+1+2*n_max
-
-                sum1 = Zv(a1,b1) - Zv(a2,b2) + Zv(a3,b3) - Zv(a4,b4)
-                sum2 = Rv(a1,b1) + Rv(a2,b2) + Rv(a3,b3) + Rv(a4,b4)
-
-                vol = vol + rtemp*( (m2*Rmn(m2,n2)*sum1) + (m2*Zmn(m2,n2)*sum2) )
-
-             end do
-          end do
-       end do
-    end do
-
-    vol = vol * pi*pi/3.0D0
-
-    !  This is an average value using 'a' as calculated above
-
-    R_maj = vol / (2.0D0*a*a*pi*pi)
-
-    !  Calculation of the surface area of the LCFS
-    !
-    !  The integral cannot be simplified with analytical methods
-    !  as was done for the volume and poloidal surface
-    !  therefore it must be numerically 'integrated' over the poloidal and
-    !  toroidal angles; calculation time depends strongly on the fineness of the
-    !  grid 'nu' and 'nv'
-    !
-    !  I just dissolved the integral in the most simple Riemann sum, which is
-    !  very inaccurate, even at 400 points, which takes a few seconds only <1%
-
-    du = 2.0D0*pi/(nu-1)
-    dv = 2.0D0*pi/(nv-1)
-
-    sarea = 0.0D0
-    do iu = 1,nu
-       u = (iu-1)*du  !  poloidal angle
-       do iv = 1,nv
-          v = (iv-1)*dv  !  toroidal angle
-
-          RR = 0.0D0
-          dRdv = 0.0D0 ; dRdu = 0.0D0 ; dZdv = 0.0D0 ; dZdu = 0.0D0
-
-          do n = -n_max,n_max
-             do m = 0,m_max
-                suv = sin(m*u - nf*n*v)
-                cuv = cos(m*u - nf*n*v)
-                RR = RR + Rmn(m,n)*cos(m*u - n*v)
-                dRdv = dRdv + nf*n*Rmn(m,n)*suv
-                dRdu = dRdu -    m*Rmn(m,n)*suv
-                dZdv = dZdv - nf*n*Zmn(m,n)*cuv
-                dZdu = dZdu +    m*Zmn(m,n)*cuv
-             end do
-          end do
-
-          sarea = sarea + sqrt( (RR**2)*(dZdu**2) + &
-               ((dRdv*dZdu)-(dZdv*dRdu))**2 + &
-               (RR**2)*(dRdu**2) ) * du*dv
-
-       end do
-    end do
-
-    !  Cross-sectional area, averaged over toroidal angle
-
-    xarea = pi*a*a  ! average, could be calculated for every toroidal angle if desired
+    xarea = pi*rminor*rminor  ! average, could be calculated for every toroidal angle if desired
 
     !  sareao is retained only for obsolescent fispact calculation...
 
@@ -815,45 +469,16 @@ contains
 
   subroutine stbild(outfile,iprint)
 
-    !+ad_name  stbild
-    !+ad_summ  Routine to determine the build of a stellarator machine
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Warmer, IPP Greifswald
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine determines the build of the stellarator machine.
-    !+ad_desc  The values calculated are based on the mean minor radius, etc.,
-    !+ad_desc  as the actual radial and vertical build thicknesses vary with
-    !+ad_desc  toroidal angle.
-    !+ad_prob  None
-    !+ad_call  obuild
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_hist  29/06/94 PJK Initial version
-    !+ad_hist  10/06/96 PJK Added first wall area calculation
-    !+ad_hist  20/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  17/10/12 PJK Added divertor_variables
-    !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
-    !+ad_hist  12/08/13 PJK/FW Better approximation for fwarea
-    !+ad_hist  25/09/13 PJK Removed port size output
-    !+ad_hist  07/11/13 PJK Corrected blanket/shield thicknesses if blktmodel > 0
-    !+ad_hist  03/03/14 PJK tfootfi no longer used to calculate tfthko
-    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  24/06/14 PJK Removed refs to bcylth;
-    !+ad_hisc               blnktth now always calculated
-    !+ad_hist  06/11/14 PJK Added fhole etc. adjustment to first wall area
-    !+ad_hist  11/06/18 SIM Added fwith calculation using new inputs
-    !+ad_hist  16/10/18 SIM Output radial build to MFILE (Issue #770)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to determine the build of a stellarator machine
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Warmer, IPP Greifswald
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine determines the build of the stellarator machine.
+    !! The values calculated are based on the mean minor radius, etc.,
+    !! as the actual radial and vertical build thicknesses vary with
+    !! toroidal angle.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -906,7 +531,7 @@ contains
     !  Radius to centre of outboard TF coil legs
 
     gapsto = gapomin
-    rtot = rsldo + ddwi + gapsto + 0.5D0*tfthko
+    r_tf_outboard_mid = rsldo + ddwi + gapsto + 0.5D0*tfthko
 
     !  Height to inside edge of TF coil
     !  Roughly equal to average of (inboard build from TF coil to plasma
@@ -1014,65 +639,14 @@ contains
 
   subroutine stphys
 
-    !+ad_name  stphys
-    !+ad_summ  Routine to calculate stellarator plasma physics information
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Warmer, IPP Greifswald
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calculates the physics quantities relevant to
-    !+ad_desc  a stellarator device.
-    !+ad_prob  None
-    !+ad_call  beamfus
-    !+ad_call  palph
-    !+ad_call  palph2
-    !+ad_call  pcond
-    !+ad_call  phyaux
-    !+ad_call  radpwr
-    !+ad_call  rether
-    !+ad_call  stblim
-    !+ad_call  stdlim
-    !+ad_call  stheat
-    !+ad_hist  29/06/94 PJK Initial version
-    !+ad_hist  16/01/96 PJK Modifications in the light of D-He3 changes
-    !+ad_hisc               (idhe3 is always set to zero for stellarators)
-    !+ad_hist  20/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added physics_module
-    !+ad_hist  16/10/12 PJK Added current_drive_variables
-    !+ad_hist  17/10/12 PJK Added divertor_variables
-    !+ad_hist  30/10/12 PJK Added times_variables
-    !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  23/01/13 PJK Modified poloidal field calculation to use iotabar;
-    !+ad_hisc               Changed PCOND q95 argument to iotabar
-    !+ad_hist  12/06/13 PJK taup now global
-    !+ad_hist  14/08/13 PJK/FW New definition for plrad, using f_rad
-    !+ad_hist  10/09/13 PJK Modified calls to PALPH, PHYAUX
-    !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
-    !+ad_hist  28/11/13 PJK Added pdtpv, pdhe3pv, pddpv to palph arguments
-    !+ad_hist  13/02/14 PJK Added tratio usage to calculate ti from te
-    !+ad_hist  19/02/14 PJK Added plasma_profiles call and made other
-    !+ad_hisc               necessary changes
-    !+ad_hist  08/05/14 PJK Modified call to PHYAUX
-    !+ad_hist  14/05/14 PJK Added call to plasma_composition and new
-    !+ad_hisc               impurity radiation calculations
-    !+ad_hist  15/05/14 PJK Removed ffwal from iwalld=2 calculation
-    !+ad_hist  20/05/14 PJK Cleaned up radiation power usage
-    !+ad_hist  21/05/14 PJK Added ignite clause to powht calculation
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  11/06/14 PJK Introduced pchargemw, ptremw, ptrimw
-    !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
-    !+ad_hisc               in first wall
-    !+ad_hist  19/08/14 PJK Removed impfe usage
-    !+ad_hist  17/11/14 PJK Recalculated radiation power totals; included
-    !+ad_hisc               falpha contributions
-    !+ad_hist  16/01/19 SIM Revised core and edge radiation definition (#787)
-    !+ad_hist  17/01/19 SIM Added photon_wall and rad_fraction calculation
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+    !! Routine to calculate stellarator plasma physics information
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Warmer, IPP Greifswald
+    !! None
+    !! This routine calculates the physics quantities relevant to
+    !! a stellarator device.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! AEA FUS 172: Physics Assessment for the European Reactor Study
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1239,45 +813,15 @@ contains
 
   subroutine stheat(outfile,iprint)
 
-    !+ad_name  stheat
-    !+ad_summ  Routine to calculate the auxiliary heating power
-    !+ad_summ  in a stellarator
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the auxiliary heating power for
-    !+ad_desc  a stellarator device.
-    !+ad_prob  None
-    !+ad_call  culnbi
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_call  report_error
-    !+ad_hist  29/06/94 PJK Initial version
-    !+ad_hist  01/04/98 PJK Modified call to CULNBI
-    !+ad_hist  20/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added current_drive_variables
-    !+ad_hist  17/10/12 PJK Added current_drive_module
-    !+ad_hist  31/10/12 PJK Added stellarator_variables
-    !+ad_hist  23/01/13 PJK Added comment about ignited plasma
-    !+ad_hist  11/09/13 PJK Changed ftr to ftritbm
-    !+ad_hist  25/09/13 PJK Added nbshield, rtanbeam, rtanmax outputs
-    !+ad_hist  27/11/13 PJK Added ohmic power to bigq denominator
-    !+ad_hist  24/02/14 PJK Modified arguments to CULNBI
-    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
-    !+ad_hist  01/05/14 PJK Changed bigq description
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  06/10/14 PJK Use global nbshinef instead of local fshine
-    !+ad_hisc               introduced porbitlossmw
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+    !! Routine to calculate the auxiliary heating power
+    !! in a stellarator
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the auxiliary heating power for
+    !! a stellarator device.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! AEA FUS 172: Physics Assessment for the European Reactor Study
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1403,52 +947,29 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine stfwbs(outfile,iprint)
-    !+ad_name  stfwbs
-    !+ad_summ  Routine to calculate first wall, blanket and shield properties
-    !+ad_summ  for a stellarator
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Warmer, IPP Greifswald
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : Fortran output unit identifier
-    !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
-    !+ad_desc  This routine calculates a stellarator's first wall, blanket and
-    !+ad_desc  shield properties.
-    !+ad_desc  It calculates the nuclear heating in the blanket / shield, and
-    !+ad_desc  estimates the volume and masses of the first wall,
-    !+ad_desc  blanket, shield and vacuum vessel.
-    !+ad_desc  <P>The arrays <CODE>coef(i,j)</CODE> and <CODE>decay(i,j)</CODE>
-    !+ad_desc  are used for exponential decay approximations of the
-    !+ad_desc  (superconducting) TF coil nuclear parameters.
-    !+ad_desc  <UL><P><LI><CODE>j = 1</CODE> : stainless steel shield (assumed)
-    !+ad_desc      <P><LI><CODE>j = 2</CODE> : tungsten shield (not used)</UL>
-    !+ad_desc  Note: Costing and mass calculations elsewhere assume
-    !+ad_desc  stainless steel only.
-    !+ad_desc  <P>The method is the same as for tokamaks (as performed via
-    !+ad_desc  <A HREF="fwbs.html">fwbs</A>), except for the volume calculations,
-    !+ad_desc  which scale the surface area of the components from that
-    !+ad_desc  of the plasma.
-    !+ad_prob  None
-    !+ad_call  blanket_panos
-    !+ad_call  blanket_neutronics_hcpb_kit
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_call  sctfcoil_nuclear_heating_iter90
-    !+ad_hist  01/07/94 PJK Initial version
-    !+ad_hist  10/06/96 PJK Moved first wall area calculation into STBILD
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  14/08/13 PJK/FW First full replacement for FWBS
-    !+ad_hist  07/11/13 PJK Added fwareaib/ob calculations
-    !+ad_hist  03/03/14 PJK Moved divertor surface area calculation into STDIV
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  23/06/14 PJK Corrected wallmw units
-    !+ad_hist  23/10/14 PJK costr --> coolwh
-    !+ad_hist  29/10/14 PJK Added fwlife calculation
-    !+ad_hist  06/11/14 PJK Introduced ipowerflow=1 coding
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate first wall, blanket and shield properties
+    !! for a stellarator
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Warmer, IPP Greifswald
+    !! outfile : input integer : Fortran output unit identifier
+    !! iprint : input integer : Switch to write output to file (1=yes)
+    !! This routine calculates a stellarator's first wall, blanket and
+    !! shield properties.
+    !! It calculates the nuclear heating in the blanket / shield, and
+    !! estimates the volume and masses of the first wall,
+    !! blanket, shield and vacuum vessel.
+    !! <P>The arrays <CODE>coef(i,j)</CODE> and <CODE>decay(i,j)</CODE>
+    !! are used for exponential decay approximations of the
+    !! (superconducting) TF coil nuclear parameters.
+    !! <UL><P><LI><CODE>j = 1</CODE> : stainless steel shield (assumed)
+    !! <P><LI><CODE>j = 2</CODE> : tungsten shield (not used)</UL>
+    !! Note: Costing and mass calculations elsewhere assume
+    !! stainless steel only.
+    !! <P>The method is the same as for tokamaks (as performed via
+    !! <A HREF="fwbs.html">fwbs</A>), except for the volume calculations,
+    !! which scale the surface area of the components from that
+    !! of the plasma.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1732,7 +1253,7 @@ contains
           !  (for superconducting coils at least) to be absorbed by the
           !  coils, and so contributes to the cryogenic load
 
-          if (itfsup == 1) then
+          if (i_tf_sup == 1) then
              ptfnuc = pnucsi + pnucso - pnucshldi - pnucshldo
           else  !  resistive coils
              ptfnuc = 0.0D0
@@ -1863,7 +1384,7 @@ contains
 
     !  External cryostat outboard major radius (m)
 
-    rdewex = rtot + 0.5D0*tfthko + rpf2dewar
+    rdewex = r_tf_outboard_mid + 0.5D0*tfthko + rpf2dewar
     adewex = rdewex-rmajor
 
     !  External cryostat volume
@@ -2102,28 +1623,18 @@ contains
 
   subroutine stdlim(bt,powht,rmajor,rminor,dlimit)
 
-    !+ad_name  stdlim
-    !+ad_summ  Routine to calculate the density limit in a stellarator
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  bt     : input real : Toroidal field on axis (T)
-    !+ad_args  powht  : input real : Absorbed heating power (MW)
-    !+ad_args  rmajor : input real : Plasma major radius (m)
-    !+ad_args  rminor : input real : Plasma minor radius (m)
-    !+ad_args  dlimit : output real : Maximum volume-averaged plasma density (/m3)
-    !+ad_desc  This routine calculates the density limit for a stellarator.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  30/06/94 PJK Initial version
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  03/03/14 PJK Generalised for any density profile type
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  S.Sudo, Y.Takeiri, H.Zushi et al., Scalings of Energy Confinement
-    !+ad_docc  and Density Limit in Stellarator/Heliotron Devices, Nuclear Fusion
-    !+ad_docc  vol.30, 11 (1990).
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the density limit in a stellarator
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! bt     : input real : Toroidal field on axis (T)
+    !! powht  : input real : Absorbed heating power (MW)
+    !! rmajor : input real : Plasma major radius (m)
+    !! rminor : input real : Plasma minor radius (m)
+    !! dlimit : output real : Maximum volume-averaged plasma density (/m3)
+    !! This routine calculates the density limit for a stellarator.
+    !! S.Sudo, Y.Takeiri, H.Zushi et al., Scalings of Energy Confinement
+    !! and Density Limit in Stellarator/Heliotron Devices, Nuclear Fusion
+    !! vol.30, 11 (1990).
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2164,21 +1675,13 @@ contains
 
   subroutine stblim(betamx)
 
-    !+ad_name  stblim
-    !+ad_summ  Routine to calculate the beta limit in a stellarator
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  betamx : output real : Maximum volume-averaged plasma beta
-    !+ad_desc  This routine calculates the beta limit for a stellarator.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  30/06/94 PJK Initial version
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  J.F.Lyon, K.Gulec, R.L.Miller and L.El-Guebaly, Status of the U.S.
-    !+ad_docc  Stellarator Reactor Study
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the beta limit in a stellarator
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! betamx : output real : Maximum volume-averaged plasma beta
+    !! This routine calculates the beta limit for a stellarator.
+    !! J.F.Lyon, K.Gulec, R.L.Miller and L.El-Guebaly, Status of the U.S.
+    !! Stellarator Reactor Study
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2200,37 +1703,13 @@ contains
 
   subroutine stigma(outfile)
 
-    !+ad_name  stigma
-    !+ad_summ  Routine to calculate ignition margin at the final point
-    !+ad_summ  with different stellarator confinement time scaling laws
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_desc  This routine calculates the ignition margin at the final
-    !+ad_desc  point with different stellarator confinement time scaling laws
-    !+ad_prob  None
-    !+ad_call  fhfac
-    !+ad_call  oblnkl
-    !+ad_call  osubhd
-    !+ad_call  pcond
-    !+ad_hist  30/06/94 PJK Initial version
-    !+ad_hist  01/04/98 PJK Modified call to PCOND
-    !+ad_hist  30/06/98 PJK Modified call to PCOND
-    !+ad_hist  19/01/99 PJK Modified call to PCOND
-    !+ad_hist  16/07/01 PJK Modified call to PCOND
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added physics_module
-    !+ad_hist  16/10/12 PJK Added current_drive_variables
-    !+ad_hist  23/01/13 PJK Added two more scaling laws; changed PCOND argument
-    !+ad_hisc               q95 to iotabar
-    !+ad_hist  20/05/14 PJK Changed prad to pcorerad
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate ignition margin at the final point
+    !! with different stellarator confinement time scaling laws
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! This routine calculates the ignition margin at the final
+    !! point with different stellarator confinement time scaling laws
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2297,55 +1776,13 @@ contains
 
   subroutine stout(outfile)
 
-    !+ad_name  stout
-    !+ad_summ  Routine to print out the final stellarator machine parameters
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Warmer, IPP Greifswald
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_desc  This routine prints out the stellarator's parameters at the
-    !+ad_desc  end of a run.
-    !+ad_prob  None
-    !+ad_call  acpow
-    !+ad_call  avail
-    !+ad_call  bldgcall
-    !+ad_call  costs
-    !+ad_call  fispac
-    !+ad_call  loca
-    !+ad_call  outplas
-    !+ad_call  power2
-    !+ad_call  stbild
-    !+ad_call  stcoil
-    !+ad_call  stdiv
-    !+ad_call  stfwbs
-    !+ad_call  stheat
-    !+ad_call  stigma
-    !+ad_call  ststrc
-    !+ad_call  tfpwr
-    !+ad_call  tfspcall
-    !+ad_call  vaccall
-    !+ad_hist  30/06/94 PJK Initial version
-    !+ad_hist  27/02/96 PJK Added use of IFISPACT
-    !+ad_hist  23/01/97 PJK Split routine POWER into POWER1 and POWER2
-    !+ad_hist  26/02/97 PJK Added routine LOCA
-    !+ad_hist  18/11/97 PJK Removed NOUT argument from FISPAC call
-    !+ad_hist  19/05/99 PJK Added call to routine AVAIL
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added costs_module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  17/10/12 PJK Added divertor_module
-    !+ad_hist  18/10/12 PJK Added fwbs_module
-    !+ad_hist  29/10/12 PJK Added sctfcoil_module
-    !+ad_hist  29/10/12 PJK Added vacuum_module
-    !+ad_hist  30/10/12 PJK Added power_module
-    !+ad_hist  30/10/12 PJK Added buildings_module
-    !+ad_hist  23/01/13 PJK Commented out fispac, loca calls
-    !+ad_hist  13/08/13 PJK/FW Added new stellarator divertor module
-    !+ad_hist  14/08/13 PJK/FW Replaced fwbs with stfwbs
-    !+ad_hist  03/03/14 PJK Removed call to tfspcall
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to print out the final stellarator machine parameters
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Warmer, IPP Greifswald
+    !! outfile : input integer : output file unit
+    !! This routine prints out the stellarator's parameters at the
+    !! end of a run.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2389,37 +1826,16 @@ contains
 
   subroutine ststrc(outfile,iprint)
 
-    !+ad_name  ststrc
-    !+ad_summ  Routine to calculate the structural masses for a stellarator
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the structural masses for a stellarator.
-    !+ad_desc  This is the stellarator version of routine
-    !+ad_desc  <A HREF="struct.html">STRUCT</A>. In practice, many of the masses
-    !+ad_desc  are simply set to zero to avoid double-counting of structural
-    !+ad_desc  components that are specified differently for tokamaks.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  01/07/94 PJK Initial version
-    !+ad_hist  01/02/96 PJK Added itfsup, ipfres to argument list of STRUCT
-    !+ad_hist  24/09/12 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  17/10/12 PJK Added divertor_variables
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  18/10/12 PJK Added pfcoil_variables
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  29/10/12 PJK Added structure_variables
-    !+ad_hist  29/10/12 PJK Added structure_module
-    !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  03/03/14 PJK Calculations simplified and brought
-    !+ad_hisc               inside this routine
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate the structural masses for a stellarator
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the structural masses for a stellarator.
+    !! This is the stellarator version of routine
+    !! <A HREF="struct.html">STRUCT</A>. In practice, many of the masses
+    !! are simply set to zero to avoid double-counting of structural
+    !! components that are specified differently for tokamaks.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2463,27 +1879,15 @@ contains
 
   subroutine stdiv(outfile,iprint)
 
-    !+ad_name  stdiv
-    !+ad_summ  Routine to call the stellarator divertor model
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Warmer, IPP Greifswald
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calls the divertor model for a stellarator,
-    !+ad_desc  developed by Felix Warmer.
-    !+ad_prob  At present the divertor surface area calculation is
-    !+ad_prob  missing here (the tokamak version is used elsewhere), and
-    !+ad_prob  this affects the mass/size of the divertor, i.e. its cost.
-    !+ad_call  None
-    !+ad_hist  14/08/13 PJK/FW Initial version
-    !+ad_hist  03/03/14 PJK Divertor plate width calculated by assuming
-    !+ad_hisc               wetted area is a fraction fdivwet of total plate area
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_stat  Okay
-    !+ad_docs  Stellarator Divertor Model for the Systems
-    !+ad_docc  Code PROCESS, F. Warmer, 21/06/2013
+    !! Routine to call the stellarator divertor model
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Warmer, IPP Greifswald
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calls the divertor model for a stellarator,
+    !! developed by Felix Warmer.
+    !! Stellarator Divertor Model for the Systems
+    !! Code PROCESS, F. Warmer, 21/06/2013
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2606,56 +2010,21 @@ contains
 
   subroutine stcoil(outfile,iprint)
 
-    !+ad_name  stcoil
-    !+ad_summ  Routine that performs the calculations for stellarator coils
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Warmer, IPP Greifswald
-    !+ad_cont  coil_energy
-    !+ad_cont  intersect
-    !+ad_cont  scaling_calculations
-    !+ad_cont  solenoid
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the properties of the coils for
-    !+ad_desc  a stellarator device.
-    !+ad_desc  <P>The coil set parameters for the Helias 5-B stellarator power
-    !+ad_desc  plant design are used as the basis for the calculations. The coils
-    !+ad_desc  are assumed to be a fixed shape, but are scaled in size
-    !+ad_desc  appropriately for the machine being modelled. Analytic inductance
-    !+ad_desc  and field calculations based on the assumption of circular coils
-    !+ad_desc  are used to evaluate the critical field at the coil superconductor.
-    !+ad_prob  None
-    !+ad_call  helias5b_coil_parameters
-    !+ad_call  coil_energy
-    !+ad_call  find_y_nonuniform_x
-    !+ad_call  intersect
-    !+ad_call  report_error
-    !+ad_call  scaling_calculations
-    !+ad_call  stcoil_output
-    !+ad_hist  20/07/94 PJK Initial version
-    !+ad_hist  20/09/12 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  18/10/12 PJK Modified argument list of tfcind
-    !+ad_hist  29/10/12 PJK Added sctfcoil_module
-    !+ad_hist  30/10/12 PJK Added build_variables
-    !+ad_hist  23/01/13 PJK TFTORT now assumed to be the input value unless
-    !+ad_hisc               limited by space available
-    !+ad_hist  04/03/14 PJK/FW Routine completely rewritten; now based on
-    !+ad_hisc               Felix Warmer's MATLAB code
-    !+ad_hist  01/05/14 PJK Added rbmax comment
-    !+ad_hist  06/05/14 PJK Removed wpvf completely
-    !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
-    !+ad_hist  26/06/14 PJK Added error_handling
-    !+ad_hist  30/07/14 PJK Renamed borev to tfborev
-    !+ad_hist  16/09/14 PJK Added tfcryoarea
-    !+ad_hist  17/10/18 SIM Switched estotf for estotftgj
-    !+ad_stat  Okay
-    !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
-    !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
+    !! Routine that performs the calculations for stellarator coils
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Warmer, IPP Greifswald
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates the properties of the coils for
+    !! a stellarator device.
+    !! <P>The coil set parameters for the Helias 5-B stellarator power
+    !! plant design are used as the basis for the calculations. The coils
+    !! are assumed to be a fixed shape, but are scaled in size
+    !! appropriately for the machine being modelled. Analytic inductance
+    !! and field calculations based on the assumption of circular coils
+    !! are used to evaluate the critical field at the coil superconductor.
+    !! The Stellarator Coil model for the Systems code PROCESS,
+    !! F. Warmer, F. Schauer, IPP Greifswald, October 2013
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2729,7 +2098,7 @@ contains
 
     f_R = rmajor/Rg5B       !  Size scaling factor with respect to Helias 5-B
     f_s = D_coil/D_coil_5B  !  Coil scaling factor
-    f_N = tfno/tfno5B       !  Coil number factor
+    f_N = n_tf/n_tf5B       !  Coil number factor
     f_B = bt/B10            !  B-field scaling factor
     f_I = f_R*f_B/f_N       !  Current scaling factor
 
@@ -2754,7 +2123,7 @@ contains
 
        !  B-field calculation
 
-       call scaling_calculations(f_R, f_s, f_Q, f_I, tfno, &
+       call scaling_calculations(f_R, f_s, f_Q, f_I, n_tf, &
             b_abs_max, b_abs_mittel)
 
        B_k(k) = B_abs_mittel
@@ -2817,7 +2186,7 @@ contains
 
     !  Recalculate B-fields at intersection point of curves
 
-    call scaling_calculations(f_R, f_s, f_Q_final, f_I, tfno, &
+    call scaling_calculations(f_R, f_s, f_Q_final, f_I, n_tf, &
          B_max_final, B0_final)
 
     !  Maximum field at superconductor surface (T)
@@ -2827,7 +2196,7 @@ contains
     !  Total stored magnetic energy calculation (GJ)
     !  W_mag2 = k2.*(bt.^2).*(f_s.^2).*f_R;  ! alternative good approximation
 
-    W_mag = coil_energy(tfno, f_R, f_s, f_I, f_Q_final)
+    W_mag = coil_energy(n_tf, f_R, f_s, f_I, f_Q_final)
 
     !  Mass of support structure (includes casing) (tonnes)
     !  Scaling for required structure mass (Steel) from:
@@ -2890,13 +2259,13 @@ contains
     !  Vertical ports
 
     !  Outer coil centre major radius, average (m)
-    !  (excludes half of coil thickness, otherwise equal to rtot)
+    !  (excludes half of coil thickness, otherwise equal to r_tf_outboard_mid)
 
     R_occ = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth + ddwi + gapsto
 
     !  Average space between two coil centres (m)
 
-    dU = 2.0D0*pi * R_occ/tfno
+    dU = 2.0D0*pi * R_occ/n_tf
 
     !  Average toroidal port size (m)
 
@@ -2962,23 +2331,23 @@ contains
     rbcndut = thwcndut*0.75D0
 
     arealeg = tfcth*tftort  ! [m^2] overall coil cross-sectional area
-    r_tf_inleg_mid = rmajor - (0.5D0*tfcth+gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor)
+    r_tf_inboard_mid = rmajor - (0.5D0*tfcth+gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor)
     ! [m] radius of centre of inboard leg, average
-    rcoil = r_tf_inleg_mid + 0.5D0*tfcth  ! [m] radius of outer edge of inboard leg, average
-    tfareain = tfno*tfcth*tftort  ! [m^2] Total area of all coil legs
-    tfarea_sc = tfno*awptf        ! [m^2] Total area of all coil winding packs
-    ritfc = tfno * I * 1.0D6      ! [A] Total current in ALL coils
+    rcoil = r_tf_inboard_mid + 0.5D0*tfcth  ! [m] radius of outer edge of inboard leg, average
+    tfareain = n_tf*tfcth*tftort  ! [m^2] Total area of all coil legs
+    tfarea_sc = n_tf*awptf        ! [m^2] Total area of all coil winding packs
+    ritfc = n_tf * I * 1.0D6      ! [A] Total current in ALL coils
     oacdcp = ritfc/tfareain       ! [A / m^2] overall current density
     rbmax = rcoil                 ! [m] radius of peak field occurrence, average
                                   !     N.B. different to tokamak SCTF calculation
     hmax = 0.5D0*h_max - tfcth    ! [m] maximum half-height of coil
-    tf_total_h_width = D_coil     ! [m] estimated horizontal coil bore
-    tfborev = 2.0D0*hmax          ! [m] estimated vertical coil bore
+    dr_tf_inner_bore = D_coil     ! [m] estimated horizontal coil bore
+    dh_tf_inner_bore = 2.0D0*hmax          ! [m] estimated vertical coil bore
     tfleng = U                    ! [m] estimated average length of a coil
 
     estotftgj = W_mag             ! [GJ] Total magnetic energy
 
-    !jwptf = ritfc/(tfno*awptf)
+    !jwptf = ritfc/(n_tf*awptf)
     jwptf = j*1.0D6               ! [A/m^2] winding pack current density
 
     !leno = sqrt(cpttf/jwptf)
@@ -3027,7 +2396,7 @@ contains
 
     ! [m^2] Total surface area of coil side facing plasma: inboard region
 
-    tfsai = tfno*tftort * 0.5D0*tfleng
+    tfsai = n_tf*tftort * 0.5D0*tfleng
 
     ! [m^2] Total surface area of coil side facing plasma: outboard region
 
@@ -3035,7 +2404,7 @@ contains
 
     ! [m^2] Total surface area of toroidal shells covering coils
 
-    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inleg_mid+rtot)
+    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(r_tf_inboard_mid+r_tf_outboard_mid)
 
     !  Masses of conductor constituents
 
@@ -3062,14 +2431,14 @@ contains
 
     ! [kg] Total coil mass
 
-    whttf = (whtcas + whtcon)*tfno
+    whttf = (whtcas + whtcon)*n_tf
 
     ! [kg] Total support structure mass
     ! msupstr includes the casing mass, so this needs to be subtracted
     ! Currently, this is assumed to comprise all the machine's support
     ! structural mass
 
-    aintmass = msupstr - (whtcas*tfno)
+    aintmass = msupstr - (whtcas*n_tf)
 
     ! [m] Maximum available poloidal extent for horizontal ports
 
@@ -3103,34 +2472,26 @@ contains
 
     subroutine scaling_calculations(f_R, f_s, f_Q, f_I, Nsp, B_abs_max, B_abs_mittel)
 
-      !+ad_name  scaling_calculations
-      !+ad_summ  Routine that calculates the important magnetic field values
-      !+ad_summ  for stellarator coils
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  F Warmer, IPP Greifswald
-      !+ad_auth  F Schauer, IPP Greifswald
-      !+ad_cont  None
-      !+ad_args  f_R          : input real : major radius scaling factor
-      !+ad_args  f_s          : input real : coil width scaling factor
-      !+ad_args  f_Q          : input real : coil cross-section scaling factor
-      !+ad_args  f_I          : input real : current scaling factor
-      !+ad_args  Nsp          : input real : number of coils
-      !+ad_args  B_abs_max    : output real : maximum field at superconductor surface (T)
-      !+ad_args  B_abs_mittel : output real : magnetic field at plasma centre (T)
-      !+ad_desc  This routine calculates the magnetic field at the plasma centre
-      !+ad_desc  and the maximum field value on the superconductor using scaling factors
-      !+ad_desc  to adjust the values calculated for the Helias 5-B design.
-      !+ad_desc  <P>The coils are approximated by circular filaments, shifted and
-      !+ad_desc  tilted with respect to one another. The field calculations use elliptic
-      !+ad_desc  integrals.
-      !+ad_prob  None
-      !+ad_call  cartesian_vectors
-      !+ad_call  solenoid
-      !+ad_hist  03/03/14 PJK/FW Initial version
-      !+ad_stat  Okay
-      !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
-      !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
+      !! Routine that calculates the important magnetic field values
+      !! for stellarator coils
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: F Warmer, IPP Greifswald
+      !! author: F Schauer, IPP Greifswald
+      !! f_R          : input real : major radius scaling factor
+      !! f_s          : input real : coil width scaling factor
+      !! f_Q          : input real : coil cross-section scaling factor
+      !! f_I          : input real : current scaling factor
+      !! Nsp          : input real : number of coils
+      !! B_abs_max    : output real : maximum field at superconductor surface (T)
+      !! B_abs_mittel : output real : magnetic field at plasma centre (T)
+      !! This routine calculates the magnetic field at the plasma centre
+      !! and the maximum field value on the superconductor using scaling factors
+      !! to adjust the values calculated for the Helias 5-B design.
+      !! <P>The coils are approximated by circular filaments, shifted and
+      !! tilted with respect to one another. The field calculations use elliptic
+      !! integrals.
+      !! The Stellarator Coil model for the Systems code PROCESS,
+      !! F. Warmer, F. Schauer, IPP Greifswald, October 2013
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3321,37 +2682,30 @@ contains
 
     subroutine solenoid(Ri,H,L,nR,nZ,r,z, Br, Bz)
 
-      !+ad_name  solenoid
-      !+ad_summ  Routine that calculates the magnetic field due to a circular coil
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  F Warmer, IPP Greifswald
-      !+ad_auth  F Schauer, IPP Greifswald
-      !+ad_cont  None
-      !+ad_args  Ri : input real : radius of coil inner surface (m)
-      !+ad_args  H  : input real : coil cross-sectional radial width (m)
-      !+ad_args  L  : input real : coil cross-sectional axial width (m)
-      !+ad_args  nR : input integer : number of radial filaments to use
-      !+ad_args  nZ : input integer : number of axial filaments to use
-      !+ad_args  r  : input real : radial distance of point of interest from
-      !+ad_argc                    coil centre (m)
-      !+ad_args  z  : input real : axial distance of point of interest from coil (m)
-      !+ad_args  Br : output real : magnetic field radial component at (r,z) (T)
-      !+ad_args  Bz : output real : magnetic field axial component at (r,z) (T)
-      !+ad_desc  This routine calculates the magnetic field at a point (R,Z)
-      !+ad_desc  due to unit current flowing in a circular planar coil centred
-      !+ad_desc  at the origin, lying in the x-y plane.
-      !+ad_desc  <P>The coil is approximated by nR*nZ circular filaments, which
-      !+ad_desc  take account of the coil conductor cross-section.
-      !+ad_desc  The field calculations use elliptic integrals.
-      !+ad_prob  None
-      !+ad_call  ellipke
-      !+ad_hist  03/03/14 PJK/FW Initial version
-      !+ad_stat  Okay
-      !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
-      !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
-      !+ad_docs  D. Bruce Montgomery, Solenoid Magnet Design, Section 8.4.1, p.237,
-      !+ad_docc  Wiley-Interscience (1968)
+      !! Routine that calculates the magnetic field due to a circular coil
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: F Warmer, IPP Greifswald
+      !! author: F Schauer, IPP Greifswald
+      !! Ri : input real : radius of coil inner surface (m)
+      !! H  : input real : coil cross-sectional radial width (m)
+      !! L  : input real : coil cross-sectional axial width (m)
+      !! nR : input integer : number of radial filaments to use
+      !! nZ : input integer : number of axial filaments to use
+      !! r  : input real : radial distance of point of interest from
+      !! coil centre (m)
+      !! z  : input real : axial distance of point of interest from coil (m)
+      !! Br : output real : magnetic field radial component at (r,z) (T)
+      !! Bz : output real : magnetic field axial component at (r,z) (T)
+      !! This routine calculates the magnetic field at a point (R,Z)
+      !! due to unit current flowing in a circular planar coil centred
+      !! at the origin, lying in the x-y plane.
+      !! <P>The coil is approximated by nR*nZ circular filaments, which
+      !! take account of the coil conductor cross-section.
+      !! The field calculations use elliptic integrals.
+      !! The Stellarator Coil model for the Systems code PROCESS,
+      !! F. Warmer, F. Schauer, IPP Greifswald, October 2013
+      !! D. Bruce Montgomery, Solenoid Magnet Design, Section 8.4.1, p.237,
+      !! Wiley-Interscience (1968)
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3410,33 +2764,23 @@ contains
 
     function coil_energy(Nsp,f_R,f_s,f_I,f_Q)
 
-      !+ad_name  coil_energy
-      !+ad_summ  Routine that calculates the stored energy in the stellarator coils
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  F Warmer, IPP Greifswald
-      !+ad_auth  F Schauer, IPP Greifswald
-      !+ad_cont  None
-      !+ad_args  Nsp : input real : number of coils
-      !+ad_args  f_R : input real : major radius scaling factor
-      !+ad_args  f_s : input real : coil width scaling factor
-      !+ad_args  f_I : input real : current scaling factor
-      !+ad_args  f_Q : input real : coil cross-section scaling factor
-      !+ad_desc  This routine calculates the total stored energy in the modular
-      !+ad_desc  stellarator coils.
-      !+ad_desc  <P>The coils are approximated by a number of circular planar
-      !+ad_desc  filaments, which take account of the coil conductor cross-section.
-      !+ad_desc  The field calculations use elliptic integrals.
-      !+ad_prob  None
-      !+ad_call  ellipke
-      !+ad_call  sumup3
-      !+ad_call  tril
-      !+ad_hist  03/03/14 PJK Initial version
-      !+ad_hist  25/09/14 PJK Corrected do-loop argument
-      !+ad_stat  Okay
-      !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
-      !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
-      !+ad_docs  S. Babic et al, IEEE Transactions on Magnetics, 46, no.9 (2010) 3591
+      !! Routine that calculates the stored energy in the stellarator coils
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: F Warmer, IPP Greifswald
+      !! author: F Schauer, IPP Greifswald
+      !! Nsp : input real : number of coils
+      !! f_R : input real : major radius scaling factor
+      !! f_s : input real : coil width scaling factor
+      !! f_I : input real : current scaling factor
+      !! f_Q : input real : coil cross-section scaling factor
+      !! This routine calculates the total stored energy in the modular
+      !! stellarator coils.
+      !! <P>The coils are approximated by a number of circular planar
+      !! filaments, which take account of the coil conductor cross-section.
+      !! The field calculations use elliptic integrals.
+      !! The Stellarator Coil model for the Systems code PROCESS,
+      !! F. Warmer, F. Schauer, IPP Greifswald, October 2013
+      !! S. Babic et al, IEEE Transactions on Magnetics, 46, no.9 (2010) 3591
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3615,33 +2959,23 @@ contains
 
     subroutine intersect(x1,y1,n1,x2,y2,n2,x)
 
-      !+ad_name  intersect
-      !+ad_summ  Routine to find the x (abscissa) intersection point of two curves
-      !+ad_summ  each defined by tabulated (x,y) values
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  x1(1:n1) : input real array : x values for first curve
-      !+ad_args  y1(1:n1) : input real array : y values for first curve
-      !+ad_args  n1       : input integer : length of arrays x1, y1
-      !+ad_args  x2(1:n2) : input real array : x values for first curve
-      !+ad_args  y2(1:n2) : input real array : y values for first curve
-      !+ad_args  n2       : input integer : length of arrays x2, y2
-      !+ad_args  x        : input/output real : initial x value guess on entry;
-      !+ad_argc             x value at point of intersection on exit
-      !+ad_desc  This routine estimates the x point (abscissa) at which two curves
-      !+ad_desc  defined by tabulated (x,y) values intersect, using simple
-      !+ad_desc  linear interpolation and the Newton-Raphson method.
-      !+ad_desc  The routine will stop with an error message if no crossing point
-      !+ad_desc  is found within the x ranges of the two curves.
-      !+ad_prob  None
-      !+ad_call  find_y_nonuniform_x
-      !+ad_call  report_error
-      !+ad_hist  03/03/14 PJK Initial version; code will warn the user if there
-      !+ad_hisc               is a problem, but not stop
-      !+ad_hist  26/06/14 PJK Added error handling
-      !+ad_stat  Okay
-      !+ad_docs  None
+      !! Routine to find the x (abscissa) intersection point of two curves
+      !! each defined by tabulated (x,y) values
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! x1(1:n1) : input real array : x values for first curve
+      !! y1(1:n1) : input real array : y values for first curve
+      !! n1       : input integer : length of arrays x1, y1
+      !! x2(1:n2) : input real array : x values for first curve
+      !! y2(1:n2) : input real array : y values for first curve
+      !! n2       : input integer : length of arrays x2, y2
+      !! x        : input/output real : initial x value guess on entry;
+      !! x value at point of intersection on exit
+      !! This routine estimates the x point (abscissa) at which two curves
+      !! defined by tabulated (x,y) values intersect, using simple
+      !! linear interpolation and the Newton-Raphson method.
+      !! The routine will stop with an error message if no crossing point
+      !! is found within the x ranges of the two curves.
+      !! None
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3748,27 +3082,12 @@ contains
 
   subroutine stcoil_output(outfile)
 
-    !+ad_name  stcoil_output
-    !+ad_summ  Writes stellarator modular coil output to file
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_desc  This routine writes the stellarator modular coil results
-    !+ad_desc  to the output file.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_hist  03/03/14 PJK Initial version, based on outtf
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  30/07/14 PJK Renamed borev to tfborev
-    !+ad_hist  31/07/14 PJK Removed aspcstf
-    !+ad_hist  17/10/18 SIM Switched estotf for estotftgj
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Writes stellarator modular coil output to file
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! This routine writes the stellarator modular coil results
+    !! to the output file.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3787,9 +3106,9 @@ contains
 
     call osubhd(outfile,'General Coil Parameters :')
 
-    call ovarre(outfile,'Number of modular coils','(tfno)',tfno)
-    call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/tfno)', &
-         tfareain/tfno)
+    call ovarre(outfile,'Number of modular coils','(n_tf)',n_tf)
+    call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/n_tf)', &
+         tfareain/n_tf)
     call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
     call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
     call ovarre(outfile,'Inboard leg outboard half-width (m)','(tficrn)',tficrn)
@@ -3804,11 +3123,11 @@ contains
     call ovarre(outfile,'Total mass of coils (kg)','(whttf)',whttf)
 
     call osubhd(outfile,'Coil Geometry :')
-    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inleg_mid)',r_tf_inleg_mid)
-    call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot)
+    call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inboard_mid)',r_tf_inboard_mid)
+    call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
-    call ovarre(outfile,'Clear horizontal bore (m)','(tf_total_h_width)',tf_total_h_width)
-    call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
+    call ovarre(outfile,'Clear horizontal bore (m)','(dr_tf_inner_bore)',dr_tf_inner_bore)
+    call ovarre(outfile,'Clear vertical bore (m)','(dh_tf_inner_bore)',dh_tf_inner_bore)
 
     call osubhd(outfile,'Conductor Information :')
     call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc)

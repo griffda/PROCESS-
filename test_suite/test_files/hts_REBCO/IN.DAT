@@ -297,7 +297,7 @@ q        = 3.0 * Safety factor 'near' plasma edge (iteration variable 18);
 q0       = 1.0 * Safety factor on axis
 ralpne   = 0.1 * Thermal alpha density / electron density (iteration variable 109)
 rmajor   = 9.0852 * Plasma major radius (m) (iteration variable 3)
-snull    = 0 * Switch for single null / double null plasma;
+i_single_null    = 0 * Switch for single null / double null plasma;
 ssync    = 0.6 * Synchrotron wall reflectivity factor
 te       = 13.025 * Volume averaged electron temperature (kev)
 triang   = 0.5 * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
@@ -335,7 +335,7 @@ strncon_cs = -0.0066 * Strain in cs superconductor material
 quench_model = exponential * Switch for tf coil quench model;
 quench_detection_ef = 0.1 * Electric field at which tf quench is detected and discharge begins (v/m)
 tdmptf   = 23.363 * Fast discharge time for tf coil in event of quench (s)
-tfno     = 16 * Number of tf coils (default = 50 for stellarators)
+n_tf     = 16 * Number of tf coils (default = 50 for stellarators)
 tftmp    = 4.750 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 1.5d-3 * Conduit insulation thickness (m)
 thkcas   = 0.48936 * Inboard tf coil case outer (non-plasma side) thickness (m)
@@ -345,7 +345,7 @@ tinstf   = 0.008 * Ground insulation thickness surrounding winding pack (m)
 tmargmin_tf = 10 * Minimum allowable temperature margin ; tf coils (k)
 tmargmin_cs = 1.5 * Minimum allowable temperature margin ; cs (k)
 vdalw    = 10.00 * Max voltage across tf coil during quench (kv)
-vftf     = 0.300 * Coolant fraction of tfc 'cable' (itfsup=1); or of tfc leg (itfsup=0)
+vftf     = 0.300 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
 
 *-----------------Times Variables------------------*
 

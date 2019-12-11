@@ -1,41 +1,20 @@
+! THIS MODULE IS MEANT TO BE SOON REPLACED BY A REFACTORED VERSION 
+! WITH CONSISTENT GEOMETRIES AND PHYSICS
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module tfcoil_module
 
-  !+ad_name  tfcoil_module
-  !+ad_summ  Module containing resistive TF coil routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  tfcoil
-  !+ad_cont  concoptf
-  !+ad_cont  cntrpst
-  !+ad_cont  cpost
-  !+ad_cont  cutfshape
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  parameters of a resistive TF coil system for a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  build_module
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  sctfcoil_module
-  !+ad_call  tfcoil_variables
-  !+ad_hist  29/10/12 PJK Initial version of module
-  !+ad_hist  29/10/12 PJK Added sctfcoil_module
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  30/10/12 PJK Added build_module
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing resistive TF coil routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! parameters of a resistive TF coil system for a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use build_module
-  use build_variables
+  use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, rtop, tfcth, tfthko, bore, hpfu
   use constants
   use error_handling
   use fwbs_variables
@@ -45,7 +24,16 @@ module tfcoil_module
   use tfcoil_variables
 
   private
+  
+  ! Radial position of plasma-facing edge of TF coil outboard leg [m]
+  real(kind(1.0D0)), private :: r_tf_inleg_in
+
+  ! Radial position of plasma-facing edge of TF coil inboard leg [m]
+  real(kind(1.0D0)), private :: r_tf_inleg_out
+
   public :: tfcoil, cntrpst
+
+
 
 contains
 
@@ -53,41 +41,14 @@ contains
 
   subroutine tfcoil(outfile,iprint)
 
-    !+ad_name  tfcoil
-    !+ad_summ  TF coil module
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This subroutine calculates various parameters for the TF coil set.
-    !+ad_desc  If the TF coils are superconducting the calculations are performed
-    !+ad_desc  in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
-    !+ad_prob  None
-    !+ad_call  concoptf
-    !+ad_call  cutfshape
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_call  portsz
-    !+ad_call  sctfcoil
-    !+ad_hist  22/10/96 PJK Initial upgraded version
-    !+ad_hist  08/05/12 PJK Initial F90 version
-    !+ad_hist  08/10/12 PJK Swapped concoptf argument order
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  09/04/13 PJK Changed local variables routr to rout, rinr to rin
-    !+ad_hist  18/06/13 PJK Clarified ritfc output description
-    !+ad_hist  08/05/14 PJK Changed ripmax description
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  24/06/14 PJK Removed refs to bcylth
-    !+ad_hist  30/07/14 PJK Added tftort calculation
-    !+ad_hist  30/07/14 PJK Changed estotf output
-    !+ad_hist  11/04/18 SIM Added shape output
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! TF coil module
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This subroutine calculates various parameters for the TF coil set.
+    !! If the TF coils are superconducting the calculations are performed
+    !! in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -105,7 +66,7 @@ contains
     ! Magnet desing dependent calculations
     ! ------------------------------------
     !  Resistive TF coils
-    if ( itfsup /= 1 ) then  
+    if ( i_tf_sup /= 1 ) then  
        call concoptf(outfile,iprint)
 
     !  Superconducting TF coils
@@ -127,14 +88,14 @@ contains
     if (iprint == 0) return
 
     !  Output section (resistive TF coils only)
-    if (itfsup /= 1) then
+    if (i_tf_sup /= 1) then
 
        call oheadr(outfile,'TF Coils')
        call ovarre(outfile,'TF coil current (summed over all coils) (A)','(ritfc)',ritfc)
        call ovarre(outfile,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
        call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
        call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
-       call ovarre(outfile,'Number of TF coil legs','(tfno)',tfno)
+       call ovarre(outfile,'Number of TF coil legs','(n_tf)',n_tf)
 
        call osubhd(outfile,'Energy and Forces :')
        call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj)
@@ -167,35 +128,13 @@ contains
 
   subroutine concoptf(outfile,iprint)
 
-    !+ad_name  concoptf
-    !+ad_summ  Calculates additional parameters for resistive TF coils
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This subroutine calculates various additional parameters for a
-    !+ad_desc  resistive TF coil set, including for TART machines.
-    !+ad_prob  None
-    !+ad_call  cpost
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_hist  22/10/96 PJK Initial upgraded version
-    !+ad_hist  18/11/97 PJK Modified RTOP,ZTOP values
-    !+ad_hist  08/05/12 PJK Initial F90 version
-    !+ad_hist  08/10/12 PJK Swapped argument order
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  28/11/13 PJK Modified ltfleg calculation
-    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  24/06/14 PJK Removed refs to bcylth
-    !+ad_hist  22/06/18 SIM Made cdtfleg an output instead of an input
-    !+ad_hist  18/05/19 SK Include the resistive magents calculations in concoptf()
-    !+ad_hist  21/05/19 Add the cryoginic aluminium resistivity calculations
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Calculates additional parameters for resistive TF coils
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This subroutine calculates various additional parameters for a
+    !! resistive TF coil set, including for TART machines.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -206,8 +145,8 @@ contains
 
     !  Local variables
     real(kind(1.0D0)) :: r_tf_outleg_in
-    real(kind(1.0D0)) :: ltfleg, rmid, rtop, ztop
-    real(kind(1.0D0)) :: tfcind1, deltf
+    real(kind(1.0D0)) :: ltfleg, rmid, ztop
+    real(kind(1.0D0)) :: tfcind1
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
 
@@ -217,26 +156,25 @@ contains
     ! -----------------------
     ! Radial build
     ! ******
-    ! Radial position of inner edge of inboard TF coil leg [m]
-    r_tf_inleg_in = bore + ohcth + precomp + gapoh
+    ! Radial position of inner/outer edge of inboard TF coil leg [m]
+    r_tf_inleg_in  = r_tf_inboard_mid - 0.5D0 * tfcth
+    r_tf_inleg_out = r_tf_inboard_mid + 0.5D0 * tfcth
     
-    ! Radial position of plasma-facing edge of TF coil inboard leg [m]
-    r_tf_inleg_out = r_tf_inleg_in + tfcth
-
     ! Position of the maximum magnetic field 
     ! No winding pack structure -> simply the innner legs plasma side radius
     rbmax = r_tf_inleg_out
     
-    ! Gap between inboard TF coil and thermal shield [m]
-    deltf = tftsgap
-
     ! Radial position of centre of inboard TF coil leg [m]
-    r_tf_inleg_mid = r_tf_inleg_in + 0.5D0*tfcth
+    r_tf_inboard_mid = r_tf_inleg_in + 0.5D0*tfcth
     ! ******
 
 
-    ! Toroidal thickness of TF coil (m)
-    tftort = 2.0D0 * r_tf_inleg_out*sin(pi/tfno)
+    ! Toroidal thickness of TF coil outer leg [m]
+    if ( itart == 1 ) then
+       tftort = 2.0D0 * rtop * sin(pi/n_tf)
+    else 
+       tftort = 2.0D0 * r_tf_inleg_out*sin(pi/n_tf)
+    end if
 
     ! Inboard total cross-sectional area (m2)
     tfareain = pi * (r_tf_inleg_out**2 - r_tf_inleg_in**2)
@@ -251,10 +189,10 @@ contains
     bmaxtf = 2.0D-7 * ritfc / rbmax
 
     !  Centering force
-    if (bore == 0.0D0) then
+    if ( bore == 0.0D0 ) then
        cforce = 0.0D0
     else
-       cforce = bmaxtf * ritfc/(2.0D0*tfno)  !  N/m
+       cforce = 0.5D0 * bmaxtf * ritfc / n_tf  !  N/m
     end if
     ! ******
 
@@ -262,35 +200,32 @@ contains
     ! Power losses 
     ! ******
     ! Copper resistivity (0.92 factor for glidcop C15175)
-    if ( itfsup == 0 ) then
+    if ( i_tf_sup == 0 ) then
     rhocp = 1.0D-8 * ( 1.72D0 + 0.0039D0*(tcpav - 273.15D0) ) / 0.92D0
 
     ! Aluminium cryogenic resistivity
-   else if ( itfsup == 2 ) then
+   else if ( i_tf_sup == 2 ) then
       rhocp = 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav
    end if
 
     ! Conventionnal tokamak (geometry invariant with hight)
     if (itart == 0) then 
-       volcp = 2.0D0 * tfareain * hmax  !  volume
+       volcp = 2.0D0 * tfareain * ( hmax + tfthko ) !  volume
 
-      !  Inner legs resistive power losses
-      prescp = rhocp * ( ritfc/(tfareain*(1.0D0-fcoolcp)) )**2 &
-             * volcp * (1.0D0-fcoolcp)
-
+       !  Inner legs resistive power losses
+       prescp = rhocp * ritfc**2 * 2.0D0 * ( hmax + tfthko ) / ( tfareain * (1.0D0-fcoolcp) )
+      
     !  Spherical Tokamak (larger diameter at top/bottom)
     else  
        !  Radii and vertical height from midplane
-       rtop = (rmajor - rminor*triang - fwith - 3.0D0*scrapli) + drtop
        rmid = r_tf_inleg_out
-       rtop = max(rtop, (rmid*1.01D0))
        ztop = (rminor * kappa) + dztop
 
        !  Resistivity enhancement factor
        rhocp = rhocp * frhocp
 
        !  Volume and resistive power losses of TART centrepost
-       call cpost(rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,r_tf_inleg_in,volcp,prescp)
+       call cpost(rtop,ztop,rmid,hmax+tfthko,ritfc,rhocp,fcoolcp,r_tf_inleg_in,volcp,prescp)
     end if
 
     ! ******
@@ -300,68 +235,72 @@ contains
     ! Outboard leg information (per leg)
     ! ----------------------------------    
     ! Radius of inner edge of outboard TF coil leg (m)
-    r_tf_outleg_in = rtot - 0.5D0*tfthko
+    r_tf_outleg_in = r_tf_outboard_mid - 0.5D0*tfthko
     
-    ! Cross-sectional area
+    ! Outer leg cross-sectional area 
     arealeg = tfthko*tftort
 
     ! Length of leg centre-line (N.B. this assumes rectangular shaped
     ! coils, not D-shaped)
-    ltfleg = hmax + hpfu + 2.0D0*(rtot - rbmax)
+    ! A more comprehensive calculation will be present in next of the module
+    if ( itart == 1 ) then
+       ltfleg = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - rtop )
+    else 
+       ltfleg = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - r_tf_inleg_out )
+    end if
 
     ! Volume of the TF legs
     voltfleg = ltfleg * arealeg
 
     ! Outboard leg current density
-    cdtfleg = ritfc/(tfno * arealeg)
+    cdtfleg = ritfc/(n_tf * arealeg)
 
-    ! Resistance
+    ! Resistive power
+    ! Rem : Assuming the same CP-leg resistivity (as rhotfleg = -1 by default)
     if ( abs( rhotfleg + 1 ) < epsilon(rhotfleg) ) rhotfleg = rhocp
     tflegres = ltfleg * rhotfleg/arealeg
-    
-    !  Total weight of TF coils
-    whttf = whtcp + whttflgs
+    presleg = (ritfc/n_tf)**2 * tflegres * n_tf 
     ! ----------------------------------
 
 
     ! Inner outter common quantities
     ! -----------------------------
-    !  TF bore (gap between inboard and outboard TF coil legs) (m)
-    tfboreh = rtot - rbmax - 0.5D0*tfthko
-
     ! Vertircal force    
     ! The outer radius of the inner leg and the inner radius of the outer leg is taken
-    ! vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inleg_out) / tfno 
-    vforce = 0.25D0 * bmaxtf * ritfc / tfno * ( 0.5D0 * tfcth +                                       &     ! Inner leg side component 
+    ! vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outleg_in/r_tf_inleg_out) / n_tf 
+    vforce = 0.25D0 * bmaxtf * ritfc / n_tf * ( 0.5D0 * tfcth +                                       &     ! Inner leg side component 
                                               & r_tf_inleg_out * log(r_tf_outleg_in/r_tf_inleg_out) + &     ! TF bore component
-                                              & 0.5D0 * tfcth*tfootfi * (r_tf_inleg_out/r_tf_outleg_in) )   ! Outer leg side component
+                                              & 0.5D0 * tfthko * (r_tf_inleg_out/r_tf_outleg_in) )   ! Outer leg side component
 
     ! Current turn information 
     if (itart == 0) then ! CT case
        !  Number of turns per leg
-       turnstf = ritfc / (tfno * cpttf)
+       turnstf = ritfc / (n_tf * cpttf)
     else                 ! ST case
        !  Current per turn (N.B. cannot set CPTTF as an iteration variable for ST)
        turnstf = 1.0D0
-       cpttf = ritfc/(turnstf*tfno)
+       cpttf = ritfc/(turnstf*n_tf)
     end if
 
     ! Weight of conductor (outer legs, inner legs, total)
     ! ******
     ! Coolant density assumed negligible (gaz) 
     ! Copper
-    if ( itfsup == 0 ) then
-       whttflgs = voltfleg * tfno * (1.0D0 - vftf) * dcopper ! outer legs
-       whtcp = volcp * (1.0D0 - fcoolcp) * dcopper           ! inner legs
+    if ( i_tf_sup == 0 ) then
+       whttflgs = voltfleg * n_tf * (1.0D0 - vftf) * dcopper ! outer legs
+       whtcp = volcp * dcopper                               ! inner legs
        whttf = whtcp + whttflgs                              ! total
 
     ! Aluminium
-      else if ( itfsup == 2 ) then
-        whttflgs = voltfleg * tfno * (1.0D0 - vftf) * dalu  ! outer legs
-        whtcp = volcp * (1.0D0 - fcoolcp) * dalu            ! inner legs
-        whttf = whtcp + whttflgs                            ! total
-      end if
-      ! ******
+    else if ( i_tf_sup == 2 ) then
+       whttflgs = voltfleg * n_tf * (1.0D0 - vftf) * dalu  ! outer legs
+       whtcp = volcp * dalu                                ! inner legs
+       whttf = whtcp + whttflgs                            ! total
+    end if
+
+    !  Total weight of TF coils
+    whttf = whtcp + whttflgs
+    ! ******
 
 
     ! Stress information (radial, tangential, vertical)
@@ -372,7 +311,7 @@ contains
 
     ! Inductance 
     ! S.K. : COMPUTED WITH AN INTEGRAL IN THE SC CASE
-    tfcind1 = hmax * rmu0/pi * log(r_tf_outleg_in/r_tf_inleg_out)
+    tfcind1 = (hmax + tfthko) * rmu0/pi * log(r_tf_outleg_in/r_tf_inleg_out)
 
     ! Stored energy (GJ)
     estotftgj = 0.5D-9 * tfcind1 * ritfc**2 
@@ -384,8 +323,8 @@ contains
     if (iprint == 0) return
 
     !  Output section
-    call oheadr(outfile,'Copper TF Coil Information')
-    call ovarin(outfile,'Copper TF coil','(itfsup)',itfsup)
+    call oheadr(outfile,'Resistive TF Coil Information')
+    call ovarin(outfile,'Resistive TF coil option (0:copper 2:aluminium)','(i_tf_sup)',i_tf_sup)
     call ovarre(outfile,'Inboard leg current density (A/m2)','(oacdcp)',oacdcp)
     call ovarre(outfile,'Outboard leg current density (A/m2)','(cdtfleg)',cdtfleg)
     call ovarre(outfile,'Number of turns per outboard leg','(turnstf)',turnstf)
@@ -403,7 +342,7 @@ contains
       call ovarre(outfile,'Radius of the centrepost at the midplane (m)','(rmid)',rmid)
       call ovarre(outfile,'Radius of the ends of the centrepost (m)','(rtop)',rtop)
       call ovarre(outfile,'Distance from the midplane to the top of the tapered section (m)','(ztop)',ztop)
-      call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax)
+      call ovarre(outfile,'Distance from the midplane to the top of the centrepost (m)','(hmax)',hmax + tfthko)
     end if
     ! ---------------------------------------------
 
@@ -413,30 +352,14 @@ contains
 
   subroutine cntrpst(outfile,iprint)
 
-    !+ad_name  cntrpst
-    !+ad_summ  Evaluates the properties of a TART centrepost
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This subroutine evaluates the parameters of the centrepost for a
-    !+ad_desc  tight aspect ratio tokamak. The centrepost is assumed to be tapered,
-    !+ad_desc  i.e. narrowest on the midplane (z=0).
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarre
-    !+ad_hist  22/10/96 PJK Initial upgraded version
-    !+ad_hist  08/05/12 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  24/06/14 PJK Removed refs to bcylth
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Evaluates the properties of a TART centrepost
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This subroutine evaluates the parameters of the centrepost for a
+    !! tight aspect ratio tokamak. The centrepost is assumed to be tapered,
+    !! i.e. narrowest on the midplane (z=0).
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -447,7 +370,7 @@ contains
 
     !  Local variables
     real(kind(1.0D0)) :: acool,acpav,amid,dcool,dpres,dtcncpav,dtconcpmx, &
-         dtfilmav,dtiocool,fc,fricfac,h,lcool,nuselt,pcrt,presin,prndtl, &
+         dtfilmav,fc,fricfac,h,lcool,nuselt,pcrt,presin,prndtl, &
          psat,ptot,reyn,rmid,ro,roughrat,sum,tclmx,tclmxs,tcoolmx,tmarg,vcoolav, &
          rmid_in, coolant_density, coolant_th_cond, coolant_visco, coolant_cp,&
          conductor_th_cond, dptot, tcool_calc
@@ -467,12 +390,12 @@ contains
     amid    = pi * ( rmid**2 - rmid_in**2 )
 
     !  Average cross-sectional area
-    acpav = volcp/(2.0D0*hmax)
+    acpav = volcp/(2.0D0*(hmax + tfthko))
 
     !  Coolant channels:
-    acool = acpav * fcoolcp  !  Cross-sectional area
-    dcool = 2.0D0 * rcool    !  Diameter
-    lcool = 2.0D0 * hmax     !  Length
+    acool = acpav * fcoolcp         !  Cross-sectional area
+    dcool = 2.0D0 * rcool           !  Diameter
+    lcool = 2.0D0 * (hmax + tfthko) !  Length
     ncool = acool/( pi * rcool**2)  !  Number
 
     ro = sqrt ( acpav/(pi*ncool) )
@@ -488,7 +411,7 @@ contains
     vcoolav = vcool * amid/acpav
 
     ! Water coolant physical properties
-    if ( itfsup ==  0 ) then
+    if ( i_tf_sup ==  0 ) then
        coolant_density = denh2o
        coolant_cp      = cph2o
        coolant_visco   = muh2o
@@ -496,12 +419,12 @@ contains
     end if
  
         ! Water coolant
-    if ( itfsup ==  0 ) then
+    if ( i_tf_sup ==  0 ) then
        dtiocool = ptot / (coolant_density*vcoolav*acool*coolant_cp)
 
     ! Helium coolant
     ! **************
-    else if ( itfsup ==  2 ) then
+    else if ( i_tf_sup ==  2 ) then
        tcool_calc = tcoolin ! K
 
        ! If T < 4 K -> Extrapolated data
@@ -554,7 +477,7 @@ contains
     
     ! Helium viscosity
     ! Ref : V.D. Arp,; R.D. McCarty ; Friend, D.G., Technical Note 1334, National Institute of Standards and Technology, Boulder, CO, 1998, 0.  (homemade fit 14 < T < 50 K fit)
-    if ( itfsup == 2 ) then
+    if ( i_tf_sup == 2 ) then
        if      ( tcool_calc < 22.5D0 ) then  ! Fit in the 4 < T < 25 K range
           coolant_visco = exp( -9.19688182D0 - 4.83007225D-1*tcool_calc + 3.47720002D-2*tcool_calc**2 &
                        & - 1.17501538D-3*tcool_calc**3 + 1.54218249D-5*tcool_calc**4 )  ! Pa.s
@@ -569,7 +492,7 @@ contains
     reyn = coolant_density * vcool * dcool / coolant_visco
    
     ! Prandlt number
-    if ( itfsup == 2 ) then
+    if ( i_tf_sup == 2 ) then
 
        ! Helium thermal conductivity [W/(m.K)]
        ! ******
@@ -603,11 +526,11 @@ contains
     ! Conductor thermal conductivity
     ! ******
     !  Copper conductor
-    if ( itfsup ==  0 ) then
+    if ( i_tf_sup ==  0 ) then
        conductor_th_cond = k_copper
     
     ! Cryogenic aluminium 
-    else if ( itfsup ==  2 ) then
+    else if ( i_tf_sup ==  2 ) then
 
        ! Ref : R.W. Powel, National Standard Reference Data Series, nov 25 1966 (homemade fit 15 < T < 60 K)
        conductor_th_cond = 16332.2073D0 - 776.91775*tcpav + 13.405688D0*tcpav**2 - 8.01D-02*tcpav**3 ! W/(m.K)
@@ -638,6 +561,14 @@ contains
     fricfac  = 1.0D0/ (-2.0D0 * log10(roughrat/3.7D0 - 5.02D0/reyn * &
          log10( roughrat/3.7D0 + 14.5D0/reyn) ) )**2
 
+    ! Pumping efficiency
+    if      ( i_tf_sup == 0 ) then ! Water cooled
+      etapump = 0.8D0
+    else if ( i_tf_sup == 2 ) then ! Cryogenic helium
+      etapump = 0.6D0
+    end if
+
+    ! Pressure drop calculation
     dpres = fricfac * (lcool/dcool) * coolant_density * 0.5D0*vcool**2
     ppump = dpres * acool * vcool / etapump
 
@@ -680,14 +611,14 @@ contains
     call osubhd(outfile,'Temperatures :')
     call ovarre(outfile,'Input coolant temperature (K)','(tcoolin)',tcoolin)
     call ovarre(outfile,'Input-output coolant temperature rise (K)','(dtiocool)',dtiocool)
-    call ovarre(outfile,'Film temperature rise (C)','(dtfilmav)',dtfilmav)
+    call ovarre(outfile,'Film temperature rise (K)','(dtfilmav)',dtfilmav)
     call ovarre(outfile,'Average temp gradient in conductor (K/m)','(dtcncpav)',dtcncpav)
     call ovarre(outfile,'Average centrepost temperature (K)','(tcpav2)',tcpav2)
     call ovarre(outfile,'Peak centrepost temperature (K)','(tcpmax)',tcpmax)
 
     call osubhd(outfile,'Pump Power :')
     call ovarre(outfile,'Coolant pressure drop (Pa)','(dpres)',dpres)
-    if ( itfsup == 0 ) then ! Saturation pressure calculated with Water data ...
+    if ( i_tf_sup == 0 ) then ! Saturation pressure calculated with Water data ...
        call ovarre(outfile,'Coolant inlet pressure (Pa)','(presin)',presin)
     end if
     call ovarre(outfile,'Pump power (W)','(ppump)',ppump)
@@ -703,37 +634,27 @@ contains
 
   subroutine cpost(rtop,ztop,rmid,hmax,curr,rho,fcool,r_tfin_inleg,volume,respow)
 
-    !+ad_name  cpost
-    !+ad_summ  Calculates the volume and resistive power losses of a TART centrepost
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rtop   : input real : Radius of the ends of the centrepost (m)
-    !+ad_args  ztop   : input real : Distance from the midplane to the top of the
-    !+ad_argc                        tapered section (m)
-    !+ad_args  rmid   : input real : Radius of the centrepost at the midplane (m)
-    !+ad_args  hmax   : input real : Distance from the midplane to the top of the
-    !+ad_argc                        centrepost (m)
-    !+ad_args  curr   : input real : Centrepost current (A)
-    !+ad_args  rho    : input real : Centrepost resistivity (Ohm-m)
-    !+ad_args  fcool  : input real : Coolant fraction of centrepost
-    !+ad_args  r_tfin_inleg : input real : Inner radius of the TF inner leg
-    !+ad_args  volume : output real : Centrepost volume (m3)
-    !+ad_args  respow : output real : Centrepost resistive power losses (W)
-    !+ad_desc  This routine calculates the volume and resistive power losses
-    !+ad_desc  of a TART centrepost. It is assumed to be tapered - narrowest at
-    !+ad_desc  the midplane and reaching maximum thickness at the height of the
-    !+ad_desc  plasma. Above/below the plasma, the centrepost is cylindrical.
-    !+ad_desc  The shape of the taper is assumed to be an arc of a circle.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  21/10/96 PJK Initial version
-    !+ad_hist  08/05/12 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Added constants; removed argument pi
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  F/MI/PJK/LOGBOOK12, pp.33,34
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Calculates the volume and resistive power losses of a TART centrepost
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! rtop   : input real : Radius of the ends of the centrepost (m)
+    !! ztop   : input real : Distance from the midplane to the top of the
+    !! tapered section (m)
+    !! rmid   : input real : Radius of the centrepost at the midplane (m)
+    !! hmax   : input real : Distance from the midplane to the top of the
+    !! centrepost (m)
+    !! curr   : input real : Centrepost current (A)
+    !! rho    : input real : Centrepost resistivity (Ohm-m)
+    !! fcool  : input real : Coolant fraction of centrepost
+    !! r_tfin_inleg : input real : Inner radius of the TF inner leg
+    !! volume : output real : Centrepost volume (m3)
+    !! respow : output real : Centrepost resistive power losses (W)
+    !! This routine calculates the volume and resistive power losses
+    !! of a TART centrepost. It is assumed to be tapered - narrowest at
+    !! the midplane and reaching maximum thickness at the height of the
+    !! plasma. Above/below the plasma, the centrepost is cylindrical.
+    !! The shape of the taper is assumed to be an arc of a circle.
+    !! F/MI/PJK/LOGBOOK12, pp.33,34
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -745,7 +666,7 @@ contains
     real(kind(1.0D0)), intent(out) :: volume,respow
 
     !  Local variables
-    real(kind(1.0D0)) :: r1,z1,x,y,rc,sum1,sum2,dz,r,z, a_tfin_hole
+    real(kind(1.0D0)) :: r1,z1,x,y,rc,sum1,sum2,dz,r,z, a_tfin_hole, a_cp_cool
     real(kind(1.0D0)), dimension(0:100) :: yy
     integer :: ii
 
@@ -823,6 +744,9 @@ contains
 
     ! Area of the innner TF central hole
     a_tfin_hole = pi*r_tfin_inleg**2
+    
+    ! Coolant area (invariant with z)
+    a_cp_cool = tfareain * fcool
 
     do ii = 0,100
        z = dble(ii) * dz
@@ -837,7 +761,7 @@ contains
        end if
 
        !  Cross-sectional area at Z
-       yy(ii) = pi*r*r - a_tfin_hole
+       yy(ii) = pi*r**2 - a_tfin_hole - a_cp_cool
 
     end do
 
@@ -853,34 +777,26 @@ contains
     sum2 = 0.5D0*dz * ( 1.0D0/yy(0) + 1.0D0/yy(100) + 2.0D0*sum2 )
 
     !  Centrepost volume (ignoring coolant fraction)
-    volume = 2.0D0 * (sum1 + (hmax-ztop)*pi*rtop*rtop)
+    volume = 2.0D0 * (sum1 + (hmax-ztop)*(pi*rtop**2 - a_cp_cool - a_tfin_hole ))
     
     !  Resistive power losses
-    respow = 2.0D0 * rho * curr*curr * (sum2 + (hmax-ztop)/(pi*rtop*rtop)) &
-         / (1.0D0-fcool)
+    respow = 2.0D0 * rho * curr**2 * (sum2 + (hmax-ztop)/(pi*rtop**2 - a_cp_cool - a_tfin_hole ))
     ! --------------------------------------------------------------------
   end subroutine cpost
 
   subroutine cutfshape
 
-    !+ad_name  cutfshape
-    !+ad_summ  Calculates the TF coil shape
-    !+ad_type  Subroutine
-    !+ad_auth  S I Muldrew, CCFE, Culham Science Centre
-    !+ad_desc  Calculates the shape of the INSIDE of the TF coil. The coil is
-    !+ad_desc  given by a rectangular shape.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  11/04/18 SIM Copied from the SC TF subroutine coilshap
-    !+ad_hist  31/10/18 SIM Updated for a rectangular coil shape.
-    !+ad_stat  Okay
+    !! Calculates the TF coil shape
+    !! author: S I Muldrew, CCFE, Culham Science Centre
+    !! Calculates the shape of the INSIDE of the TF coil. The coil is
+    !! given by a rectangular shape.
 
     implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    xarc(1) = r_tf_inleg_mid + tfcth/2.0d0
-    xarc(2) = rtot - tfthko/2.0d0
+    xarc(1) = r_tf_inboard_mid + 0.5D0*tfcth
+    xarc(2) = r_tf_outboard_mid - 0.5D0*tfthko
     xarc(3) = xarc(2)
     xarc(4) = xarc(2)
     xarc(5) = xarc(1)

@@ -2,25 +2,17 @@
 
 module costs_2015_module
 
-  !+ad_name  costs_module
-  !+ad_summ  Module containing fusion power plant costing algorithms
-  !+ad_type  Module
-  !+ad_auth  J Morris, CCFE, Culham Science Centre
-  !+ad_args  N/A
-  !+ad_desc  This module contains the PROCESS fusion power plant costing model,
-  !+ad_desc  based on ITER costs and the PROCESS costs paper
-  !+ad_prob  None
-  !+ad_call  some function
-  !+ad_hist  05/01/15 JM  Initial version of module
-  !+ad_hist  18/05/15 MDK
-  !+ad_hist  24/05/16 JM  Tidy and add comments
-  !+ad_stat  Okay
-  !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+  !! Module containing fusion power plant costing algorithms
+  !! author: J Morris, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains the PROCESS fusion power plant costing model,
+  !! based on ITER costs and the PROCESS costs paper
+  !! PROCESS Costs Paper (M. Kovari, J. Morris)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Import modules !
-  !!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!
 
   use constants
   use cost_variables
@@ -79,27 +71,19 @@ contains
 
   subroutine costs_2015(outfile,iprint)
 
-    !+ad_name  costs
-    !+ad_summ  Cost accounting for a fusion power plant
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine performs the cost accounting for a fusion power plant.
-    !+ad_prob  None
-    !+ad_call  calc_building_costs
-    !+ad_hist  05/01/15 JM  Initial version
-    !+ad_hist  02/02/17 JM  Only calculate coe if electric output > 1E-5
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+    !! Cost accounting for a fusion power plant
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine performs the cost accounting for a fusion power plant.
+    !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     integer, intent(in) :: iprint, outfile
 
@@ -166,7 +150,7 @@ contains
     end if
 
     ! Output costs !
-    !!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!
 
     if ((ip == 0).or.(output_costs == 0)) return
 
@@ -176,31 +160,25 @@ contains
 
   subroutine calc_building_costs
 
-    !+ad_name  calc_building_costs
-    !+ad_summ  Function to calculate the cost of all buildings.
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calculates the building costs for a fusion power plant
-    !+ad_desc  based on the costings in the PROCESS costs Paper.
-    !+ad_desc  Buildings have a different scaling law, with fixed cost per unit volume.
-    !+ad_desc  Cref is therefore now f.Viter.unit_cost
-    !+ad_desc  The costs for individual buildings must not be output,
-    !+ad_desc  as the same mean cost per unit volume has been used both for light
-    !+ad_desc  and for shielded buildings
-    !+ad_desc  The exponent =1
-    !+ad_prob  None
-    !+ad_call  some function? (OUTPUT functions)
-    !+ad_hist  05/01/15 JM  Initial Version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+    !! Function to calculate the cost of all buildings.
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine calculates the building costs for a fusion power plant
+    !! based on the costings in the PROCESS costs Paper.
+    !! Buildings have a different scaling law, with fixed cost per unit volume.
+    !! Cref is therefore now f.Viter.unit_cost
+    !! The costs for individual buildings must not be output,
+    !! as the same mean cost per unit volume has been used both for light
+    !! and for shielded buildings
+    !! The exponent =1
+    !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Local Variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     integer :: i, j
 
@@ -252,7 +230,7 @@ contains
     s(6)%label = "Magnet power supplies and related buildings"
     s(6)%cref = 110000.0D0 * light_build_cost_per_vol
     ! Scale with TF current per coil (MA)
-    s(6)%k = (ritfc/tfno)/1.0D6
+    s(6)%k = (ritfc/n_tf)/1.0D6
     s(6)%kref = 9.1D0
     s(6)%cost = s(6)%cost_factor * s(6)%cref * (s(6)%k / s(6)%kref)
 
@@ -284,24 +262,18 @@ contains
 
   subroutine calc_land_costs
 
-    !+ad_name  calc_land_costs
-    !+ad_summ  Function to calculate the cost of land for the power plant
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  Land also uses a unit cost, but area is scaled.
-    !+ad_prob  None
-    !+ad_call  some function? (OUTPUT functions)
-    !+ad_hist  05/01/15 JM  Initial Version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+    !! Function to calculate the cost of land for the power plant
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! Land also uses a unit cost, but area is scaled.
+    !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Local Variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     integer :: i, j
     real(kind=double) :: ITER_total_land_area
@@ -347,7 +319,7 @@ contains
     ! Cost of ITER road improvements
     s(12)%cref = 150.0D6
     ! Scale with TF coil longest dimension
-    s(12)%k = max(tfborev, tf_total_h_width) + 2.0D0*tfcth
+    s(12)%k = max(dh_tf_inner_bore, dr_tf_inner_bore) + 2.0D0*tfcth
     s(12)%kref = 14.0D0
     s(12)%cost = s(12)%cost_factor * s(12)%cref * (s(12)%k / s(12)%kref)**costexp
 
@@ -362,25 +334,19 @@ contains
 
   subroutine calc_tf_coil_costs
 
-    !+ad_name  calc_tf_coil_costs
-    !+ad_summ  Function to calculate the cost of the TF coils for the power plant
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calculates the cost of the TF coils for a fusion power
-    !+ad_desc  plant based on the costings in the PROCESS costs Paper.
-    !+ad_prob  None
-    !+ad_call  some function? (OUTPUT functions)
-    !+ad_hist  06/01/15 JM  Initial Version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+    !! Function to calculate the cost of the TF coils for the power plant
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine calculates the cost of the TF coils for a fusion power
+    !! plant based on the costings in the PROCESS costs Paper.
+    !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Local Variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     integer :: i, j
 
@@ -396,7 +362,7 @@ contains
     ! ITER coil insertion and welding cost (2014 $)
     s(14)%cref = 258.0D6
     ! Scale with total TF coil length (m)
-    s(14)%k = tfno * tfleng
+    s(14)%k = n_tf * tfleng
     s(14)%kref = 18.0D0*34.1D0
     s(14)%cost = s(14)%cost_factor * s(14)%cref * (s(14)%k / s(14)%kref)**costexp    
 
@@ -405,7 +371,7 @@ contains
     ! ITER winding cost (2014 $)
     s(16)%cref = 414.0D6
     ! Scale with the total turn length (m)
-    s(16)%k = tfno * tfleng * turnstf
+    s(16)%k = n_tf * tfleng * turnstf
     s(16)%kref = 82249.0D0
     s(16)%cost = s(16)%cost_factor * s(16)%cref * (s(16)%k / s(16)%kref)**costexp
 
@@ -414,7 +380,7 @@ contains
     ! ITER Chromium plated Cu strand for TF SC cost (2014 $)
     s(17)%cref = 21.0D6
     ! Scale with total copper mass (kg)
-    s(17)%k = whtconcu * tfno
+    s(17)%k = whtconcu * n_tf
     s(17)%kref = 244.0D3
     s(17)%cost = s(17)%cost_factor * s(17)%cref * (s(17)%k / s(17)%kref)**costexp
 
@@ -423,7 +389,7 @@ contains
     ! ITER Nb3Sn SC strands cost (2014 $)
     s(18)%cref = 526.0D6
     ! Scale with the total mass of Nb3Sn (kg)
-    s(18)%k = whtconsc * tfno
+    s(18)%k = whtconsc * n_tf
     s(18)%kref = 210.0D3
     s(18)%cost = s(18)%cost_factor * s(18)%cref * (s(18)%k / s(18)%kref)**costexp
 
@@ -438,7 +404,7 @@ contains
     ! ITER cabling and jacketing costs (2014 $)
     s(20)%cref = 81.0D6
     ! Scale with total turn length.
-    s(20)%k = tfno * tfleng * turnstf
+    s(20)%k = n_tf * tfleng * turnstf
     s(20)%kref = 82249.0D0
     s(20)%cost = s(20)%cost_factor * s(20)%cref * (s(20)%k / s(20)%kref)**costexp
 
@@ -453,25 +419,19 @@ contains
 
   subroutine calc_fwbs_costs
 
-    !+ad_name  calc_fwbs_costs
-    !+ad_summ  Function to calculate the cost of the first wall, blanket and shield
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calculates the cost of the first wall, blanket and shield
-    !+ad_desc  coils for a fusion power plant based on the costings in the PROCESS costs paper.
-    !+ad_prob  None
-    !+ad_call  some function? (OUTPUT functions)
-    !+ad_hist  07/01/15 JM  Initial Version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+    !! Function to calculate the cost of the first wall, blanket and shield
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine calculates the cost of the first wall, blanket and shield
+    !! coils for a fusion power plant based on the costings in the PROCESS costs paper.
+    !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Local Variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     integer :: i, j
 
@@ -621,16 +581,10 @@ contains
 
   subroutine calc_remote_handling_costs
 
-    !+ad_name  calc_remote_handling_costs
-    !+ad_summ  Function to calculate the cost of the remote handling facilities
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_prob  None
-    !+ad_call  some function? (OUTPUT functions)
-    !+ad_hist  09/01/15 JM  Initial Version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+    !! Function to calculate the cost of the remote handling facilities
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -680,18 +634,12 @@ contains
 
   subroutine calc_n_plant_and_vv_costs
 
-    !+ad_name  calc_n_plant_and_vv
-    !+ad_summ  Function to calculate the cost of the nitrogen plant and vacuum vessel
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calculates the cost of the nitrogen plant and vacuum vessel
-    !+ad_desc  for a fusion power plant based on the costings in the PROCESS costs paper.
-    !+ad_prob  None
-    !+ad_call  some function? (OUTPUT functions)
-    !+ad_hist  09/01/15 JM  Initial Version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+    !! Function to calculate the cost of the nitrogen plant and vacuum vessel
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine calculates the cost of the nitrogen plant and vacuum vessel
+    !! for a fusion power plant based on the costings in the PROCESS costs paper.
+    !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -733,18 +681,12 @@ contains
 
   subroutine calc_energy_conversion_system
 
-    !+ad_name  calc_energy_conversion_system
-    !+ad_summ  Function to calculate the cost of the energy conversion system
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calculates the cost of the energy conversion system
-    !+ad_desc  for a fusion power plant based on the costings in the PROCESS costs paper.
-    !+ad_prob  None
-    !+ad_call  some function? (OUTPUT functions)
-    !+ad_hist  15/01/15 JM  Initial Version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+    !! Function to calculate the cost of the energy conversion system
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine calculates the cost of the energy conversion system
+    !! for a fusion power plant based on the costings in the PROCESS costs paper.
+    !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -766,19 +708,12 @@ contains
 
   subroutine calc_remaining_subsystems
 
-    !+ad_name  calc_remaining_subsystems
-    !+ad_summ  Function to calculate the cost of the remaining subsystems
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calculates the cost of the remaining subsystems
-    !+ad_desc  for a fusion power plant based on the costings in the PROCESS costs paper.
-    !+ad_prob  None
-    !+ad_call  some function? (OUTPUT functions)
-    !+ad_hist  15/01/15 JM  Initial Version
-    !+ad_hist  17/09/15 MDK Scale power supplies with total magnetic energy in the poloidal field / resistive diffusion time
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+    !! Function to calculate the cost of the remaining subsystems
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine calculates the cost of the remaining subsystems
+    !! for a fusion power plant based on the costings in the PROCESS costs paper.
+    !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -989,17 +924,11 @@ contains
   subroutine write_costs_to_output
 
 
-    !+ad_name  write_costs_to_output
-    !+ad_summ  Function to output the costs calculations
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine outputs the costs to output file
-    !+ad_prob  None
-    !+ad_hist  20/01/15 JM  Initial Version
-    !+ad_hist  05/08/15 MDK Output labels (only for ovarrf)
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+    !! Function to output the costs calculations
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This routine outputs the costs to output file
+    !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1065,16 +994,11 @@ contains
 
   subroutine value_function(x, v)
 
-    !+ad_name  value_function
-    !+ad_summ  Value function
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  Function for separative work unit calculation for enrichment cost
-    !+ad_prob  None
-    !+ad_hist  07/01/15 JM  Initial Version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
+    !! Value function
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! Function for separative work unit calculation for enrichment cost
+    !! PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1093,11 +1017,8 @@ contains
 
 subroutine ocost(file,descr,n,value)
 
-    !+ad_name  ocost
-    !+ad_summ  Routine to print out the code, description and value
-    !+ad_summ  of a cost item from array s in costs_2015
-    !+ad_type  Subroutine
-    !+ad_hist  06/09/18 SIM Added MFILE variable names
+    !! Routine to print out the code, description and value
+    !! of a cost item from array s in costs_2015
 
     implicit none
 
@@ -1125,11 +1046,8 @@ subroutine ocost(file,descr,n,value)
 
   subroutine ocost_vname(file,descr,vname,value)
 
-    !+ad_name  ocost_vname
-    !+ad_summ  Routine to print out the code, description and value
-    !+ad_summ  of a cost item not in the array s in costs_2015
-    !+ad_type  Subroutine
-    !+ad_hist  06/09/18 SIM Added additional subroutine to take strings
+    !! Routine to print out the code, description and value
+    !! of a cost item not in the array s in costs_2015
 
     implicit none
 

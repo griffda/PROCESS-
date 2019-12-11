@@ -1,0 +1,2052 @@
+ *****                                                                       
+ impvar is now deprecated - use iteration variables 125-136 instead.
+ 
+ **************************************************************************************************************
+ ************************************************** PROCESS ***************************************************
+ ************************************** Power Reactor Optimisation Code ***************************************
+ **************************************************************************************************************
+ 
+   Program : ./process.exe
+   Version : 1.0.16   Release Date :: 2019-07-15
+   Tag No. : 1.0.16-207-g66b10aaf
+    Branch : issue-#943-#942-#941-#940
+   Git log : Updating ALL the python utilities with the variable name,
+ Date/time : 21 Nov 2019 16:49:10 +00:00(hh:mm) UTC
+      User : skahn
+  Computer : J0320
+ Directory : /home/skahn/Linux_env/process_before_merge/test_suite
+     Input : IN.DAT
+ Run title : demo 1 model for cost paper
+  Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
+ 
+ **************************************************************************************************************
+ 
+   Equality constraints : 22
+ Inequality constraints : 00
+      Total constraints : 22
+    Iteration variables : 39
+         Max iterations : 200
+       Figure of merit  : +07  -- minimise capital cost.
+  Convergence parameter : 1.00E-04
+ 
+ **************************************************************************************************************
+ 
+ (Please include this header in any models, presentations and papers based on these results)
+ 
+ **************************************************************************************************************
+ 
+ Quantities listed in standard row format are labelled as follows in columns 112-114:
+ ITV : Active iteration variable (in any output blocks)
+ OP  : Calculated output quantity
+ Unlabelled quantities in standard row format are generally inputs
+ Note that calculated quantities may be trivially rescaled from inputs, or equal to bounds which are input.
+ 
+ 
+ **************************************************************************************************************
+ ***** Scan point  1 of  1: Net_electric_power_(MW), pnetelin =  5.000E+02 *****
+ **************************************************************************************************************
+ 
+ ************************************************** Numerics **************************************************
+ 
+ PROCESS has performed a VMCON (optimisation) run.
+ and found a feasible set of parameters.
+ 
+ VMCON error flag                                                         (ifail)                           1     
+ Number of iteration variables                                            (nvar)                           39     
+ Number of constraints (total)                                            (neqns+nineqns)                  22     
+ Optimisation switch                                                      (ioptimz)                         1     
+ Figure of merit switch                                                   (minmax)                          7     
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.203E-05  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   5.680E-05  OP 
+ Number of VMCON iterations                                               (nviter)                          6  OP 
+ 
+PROCESS has successfully optimised the iteration variables to minimise the figure of merit          CAPITAL COST.
+ 
+ Certain operating limits have been reached,
+ as shown by the following iteration variables that are
+ at or near to the edge of their prescribed range :
+ 
+                   rmajor        =  8.9723E+00 is at or above its upper bound:  9.0000E+00
+                   fdene         =  1.2000E+00 is at or above its upper bound:  1.2000E+00
+                   hfact         =  1.1000E+00 is at or above its upper bound:  1.1000E+00
+                   q             =  3.0000E+00 is at or below its lower bound:  3.0000E+00
+                   ftburn        =  1.0000E+00 is at or above its upper bound:  1.0000E+00
+                   fjohc         =  2.5000E-01 is at or above its upper bound:  2.5000E-01
+                   fjohc0        =  2.5000E-01 is at or above its upper bound:  2.5000E-01
+                   gapoh         =  5.0000E-02 is at or below its lower bound:  5.0000E-02
+                   fstrcase      =  1.0000E+00 is at or above its upper bound:  1.0000E+00
+                   fiooic        =  5.0000E-01 is at or above its upper bound:  5.0000E-01
+                   fvdump        =  1.0000E+00 is at or above its upper bound:  1.0000E+00
+                   fjprot        =  1.0000E+00 is at or above its upper bound:  1.0000E+00
+                   thwcndut      =  4.0000E-03 is at or below its lower bound:  4.0000E-03
+                   gapds         =  1.2000E-01 is at or below its lower bound:  1.2000E-01
+                   ftbr          =  1.0000E+00 is at or above its upper bound:  1.0000E+00
+                   fpsepr        =  1.0000E+00 is at or above its upper bound:  1.0000E+00
+ 
+ The solution vector is comprised as follows :
+ 
+                                          final       final /
+    i                                     value       initial
+ 
+    1                  bt               5.2374E+00     0.9730
+    2                  rmajor           8.9723E+00     1.0313
+    3                  te               1.2787E+01     1.0148
+    4                  beta             3.4719E-02     0.9920
+    5                  dene             7.9829E+19     0.9979
+    6                  rnbeam           1.5751E-03     0.7601
+    7                  fdene            1.2000E+00     1.1476
+    8                  hfact            1.1000E+00     1.0000
+    9                  oacdcp           8.9941E+06     0.8528
+   10                  tfcth            1.0938E+00     1.1908
+   11                  fwalld           1.2753E-01     0.9792
+   12                  ohcth            5.8431E-01     0.7090
+   13                  q                3.0000E+00     0.9297
+   14                  ftburn           1.0000E+00     1.0000
+   15                  fradpwr          6.3688E-01     1.0939
+   16                  bore             2.5657E+00     1.0899
+   17                  fbetatry         5.3171E-01     1.0017
+   18                  coheof           1.7137E+07     1.2727
+   19                  fjohc            2.5000E-01     1.0000
+   20                  fjohc0           2.5000E-01     1.0000
+   21                  fcohbop          9.3298E-01     0.9969
+   22                  gapoh            5.0000E-02     1.0000
+   23                  fvsbrnni         4.5642E-01     0.9650
+   24                  fstrcase         1.0000E+00     1.0000
+   25                  fstrcond         9.4101E-01     1.1398
+   26                  fiooic           5.0000E-01     1.0000
+   27                  fvdump           1.0000E+00     1.0000
+   28                  fjprot           1.0000E+00     1.0000
+   29                  tdmptf           1.8404E+01     1.4204
+   30                  thkcas           5.8815E-01     1.1978
+   31                  thwcndut         4.0000E-03     1.0000
+   32                  fcutfsu          7.4077E-01     1.1111
+   33                  gapds            1.2000E-01     1.0000
+   34                  ftbr             1.0000E+00     1.0000
+   35                  fpsepr           1.0000E+00     1.0000
+   36                  li6enrich        5.4963E+01     0.6585
+   37                  fimpvar          3.4243E-04     0.7782
+   38                  flhthresh        1.3532E+00     0.9680
+   39                  breeder_f        4.5808E-01     0.8974
+ 
+ The following equality constraint residues should be close to zero :
+ 
+                                               physical                 constraint                 normalised
+                                              constraint                 residue                    residue
+ 
+    1  Beta consistency                      =  3.4719E-02              5.1359E-11                -1.4793E-09
+    2  Global power balance consistency      =  1.7358E-01 MW/m3       -3.8291E-10 MW/m3           2.2059E-09
+    3  Density upper limit                   <  8.8407E+19 /m3          3.8508E+09 /m3             4.3558E-11
+    4  Beam ion density consistency          =  1.2574E+17 /m3          2.2596E+08 /m3            -1.7970E-09
+    5  Neutron wall load upper limit         <  1.0203E+00 MW/m2        1.1007E-08 MW/m2           1.0788E-08
+    6  Toroidal field 1/R consistency        =  4.6992E+01 T.m         -2.0153E-08 T.m             4.2886E-10
+    7  Radial build consistency              =  8.9723E+00 m           -1.5428E-09 m               1.7195E-10
+    8  Burn time lower limit                 >  7.2000E+03 sec         -2.7146E-02 sec             3.7703E-06
+    9  L-H power threshold limit             >  1.1272E+02 MW           2.6517E-06 MW             -2.3525E-08
+   10  Net electric power lower limit        >  5.0000E+02 MW           3.6152E-03 MW              7.2304E-06
+   11  Radiation fraction upper limit        <  1.7358E-01 MW/m3        4.7259E-10 MW/m3          -4.2749E-09
+   12  Beta upper limit                      <  5.6067E-02             -9.3185E-11                -1.6620E-09
+   13  CS coil EOF current density limit     <  6.8548E+07 A/m2         3.0628E+02 A/m2            4.4681E-06
+   14  CS coil BOP current density limit     <  6.3954E+07 A/m2         2.7175E+02 A/m2            4.2491E-06
+   15  Injection power upper limit           <  5.0000E+01 MW          -3.7461E-08 MW              7.4921E-10
+   16  TF coil case stress upper limit       <  5.5000E+08 Pa           2.7177E+00 Pa              4.9412E-09
+   17  TF coil conduit stress upper lim      <  5.5000E+08 Pa           2.9360E+00 Pa              5.3381E-09
+   18  I_op / I_critical (TF coil)           <  5.5918E+07 A/m2        -4.0254E-02 A/m2            1.4397E-09
+   19  Dump voltage upper limit              <  1.2650E+01 V            1.6706E-07 V               1.3206E-08
+   20  J_winding pack/J_protection limit     <  2.7959E+07 A/m2         0.0000E+00 A/m2            6.6297E-10
+   21  Tritium breeding ratio lower lim      >  1.1500E+00              3.4908E-05                -3.0355E-05
+   22  Psep / R upper limit                  <  1.7000E+01 MW/m        -3.6299E-07 MW/m            2.1352E-08
+ 
+ ******************************************** Final Feasible Point ********************************************
+ 
+ 
+ *************** Estimate of "overnight" capital cost for a first of kind power plant (2014 M$) ***************
+ 
+ 
+ ******************************** Buildings (M$) ********************************
+ 
+ Admin Buildings                                                               35 
+ Tokamak Complex (excluding hot cell)                                        2648 
+ Neutral beam buildings                                                         8 
+ Cryoplant buildings                                                           78 
+ PF Coil winding building                                                     113 
+ Magnet power supplies and related buildings                                   43 
+ Magnet discharge buildings                                                    31 
+ Heat removal system buildings                                                 42 
+ Total cost of buildings                                                     2997 
+ 
+ ********************************** Land (M$) ***********************************
+ 
+ Land purchasing                                                               65 
+ Land improvement                                                             336 
+ Road improvements                                                            175 
+ Total land costs                                                             576 
+ 
+ ******************************** TF Coils (M$) *********************************
+ 
+ TF Coil insertion and welding                                                340 
+ TF coil winding                                                              754 
+ Copper strand for TF coil                                                     63 
+ Strands with Nb3Sn superconductor and copper stabiliser                      744 
+ Testing of superconducting strands                                             4 
+ Cabling and jacketing                                                        147 
+ Total TF coil costs                                                         2052 
+ 
+ ************************* First wall and blanket (M$) **************************
+ 
+ Lithium enrichment                                                           316 
+ Lithium orthosilicate pebble manufacturing                                    63 
+ Titanium beryllide pebble manufacturing                                     1862 
+ First wall W coating manufacturing                                            70 
+ Blanket and shield materials and manufacturing                               375 
+ Total first wall and blanket cost                                           2687 
+ 
+ ***************** Active maintenance and remote handling (M$) ******************
+ 
+ Moveable equipment                                                           748 
+ Active maintenance facility with fixed equipment                            2278 
+ Total remote handling costs                                                 3027 
+ 
+ ***************** Vacuum vessel and liquid nitrogen plant (M$) *****************
+ 
+ Vacuum vessel                                                                981 
+ Liquid nitrogen plant                                                        190 
+ Total liquid nitrogen plant and vacuum vessel                               1172 
+ 
+ **************** System for converting heat to electricity (M$) ****************
+ 
+ Energy conversion system                                                     617 
+ 
+ ************************** Remaining subsystems (M$) ***************************
+ 
+ CS and PF coils                                                             2227 
+ Vacuum vessel in-wall shielding, ports and in-vessel coils                   337 
+ Divertor                                                                     408 
+ Ex-vessel neutral beam remote handling equipment                              90 
+ Vacuum vessel pressure suppression system                                    142 
+ Cryostat                                                                     581 
+ Heat removal system                                                         2572 
+ Thermal shields                                                              177 
+ Pellet injection system                                                       74 
+ Gas injection and wall conditioning system                                    95 
+ Vacuum pumping                                                               594 
+ Tritium plant                                                                668 
+ Cryoplant and distribution                                                   878 
+ Electrical power supply and distribution                                    1442 
+ Neutral beam heating and current drive system                                814 
+ Diagnostics systems                                                          640 
+ Radiological protection                                                       56 
+ Access control and security systems                                           66 
+ Assembly                                                                    2198 
+ Control and communication                                                    528 
+ Additional project expenditure                                              1624 
+ Logistics                                                                    214 
+ Total remaining subsystem costs                                            16424 
+ 
+ TOTAL OVERNIGHT CAPITAL COST (M$)                                          29550 
+ Annual maintenance cost (M$)                                                1436 
+ 
+ Net electric output (MW)                                                 (pnetelmw)                  500.004  OP 
+ Capacity factor                                                          (cpfact)                      0.462  OP 
+ Mean electric output (MW)                                                (mean_electric_outpu        230.771  OP 
+ Capital cost / mean electric output ($/W)                                                            128.050  OP 
+ Levelized cost of electricity ($/MWh)                                    (coe)                      2456.756  OP 
+ 
+ ********************************************* Plant Availability *********************************************
+ 
+ Allowable blanket neutron fluence (MW-yr/m2)                             (abktflnc)                1.500E+01     
+ Allowable divertor heat fluence (MW-yr/m2)                               (adivflnc)                2.000E+01     
+ First wall / blanket lifetime (years)                                    (bktlife)                 2.940E+01  OP 
+ Divertor lifetime (years)                                                (divlife)                 1.331E+01  OP 
+ Heating/CD system lifetime (years)                                       (cdrlife)                 2.940E+01  OP 
+ Total plant lifetime (years)                                             (tlife)                   4.000E+01     
+ Total plant availability fraction                                        (cfactr)                  5.000E-01     
+ 
+ *************************************************** Plasma ***************************************************
+ 
+ Plasma configuration = single null divertor
+ Tokamak aspect ratio = Conventional, itart = 0                           (itart)                       0.000     
+ 
+ Plasma Geometry :
+ 
+ Major radius (m)                                                         (rmajor)                      8.972  ITV
+ Minor radius (m)                                                         (rminor)                      2.894  OP 
+ Aspect ratio                                                             (aspect)                      3.100     
+ Elongation, X-point (Zohm scaling)                                       (kappa)                       1.781  OP 
+ Zohm scaling adjustment factor                                           (fkzohm)                      1.024     
+ Elongation, 95% surface (kappa/1.12)                                     (kappa95)                     1.590  OP 
+ Elongation, area ratio calc.                                             (kappaa)                      1.665  OP 
+ Triangularity, X-point (input value used)                                (triang)                      0.500     
+ Triangularity, 95% surface (triang/1.5)                                  (triang95)                    0.333  OP 
+ Plasma poloidal perimeter (m)                                            (pperim)                     25.486  OP 
+ Plasma cross-sectional area (m2)                                         (xarea)                      43.815  OP 
+ Plasma surface area (m2)                                                 (sarea)                   1.397E+03  OP 
+ Plasma volume (m3)                                                       (vol)                     2.420E+03  OP 
+ 
+ Current and Field :
+ 
+ Consistency between q0,q,alphaj,rli,dnbeta is enforced
+ 
+ Plasma current scaling law used                                          (icurr)                           4     
+ Plasma current (MA)                                                      (plascur/1D6)                19.388  OP 
+ Current density profile factor                                           (alphaj)                      1.508  OP 
+ Plasma internal inductance, li                                           (rli)                         1.096  OP 
+ Vertical field at plasma (T)                                             (bvert)                      -0.721  OP 
+ Vacuum toroidal field at R (T)                                           (bt)                          5.237  ITV
+ Average poloidal field (T)                                               (bp)                          0.956  OP 
+ Total field (sqrt(bp^2 + bt^2)) (T)                                      (btot)                        5.324  OP 
+ Safety factor on axis                                                    (q0)                          1.000     
+ Safety factor at 95% flux surface                                        (q95)                         3.000  ITV
+ Cylindrical safety factor (qcyl)                                         (qstar)                       2.508  OP 
+ 
+ Beta Information :
+ 
+ Total plasma beta                                                        (beta)                    3.472E-02  ITV
+ Total poloidal beta                                                      (betap)                   1.077E+00  OP 
+ Total toroidal beta                                                                                3.588E-02  OP 
+ Fast alpha beta                                                          (betaft)                  4.104E-03  OP 
+ Beam ion beta                                                            (betanb)                  8.033E-04  OP 
+ (Fast alpha + beam beta)/(thermal beta)                                  (gammaft)                 1.646E-01  OP 
+ Thermal beta                                                                                       2.981E-02  OP 
+ Thermal poloidal beta                                                                              9.246E-01  OP 
+ Thermal toroidal beta (= beta-exp)                                                                 3.080E-02  OP 
+ 2nd stability beta : beta_p / (R/a)                                      (eps*betap)                   0.347  OP 
+ 2nd stability beta upper limit                                           (epbetmax)                    1.380     
+ Beta g coefficient                                                       (dnbeta)                      4.383  OP 
+ Normalised thermal beta                                                                                2.331  OP 
+ Normalised total beta                                                                                  2.714  OP 
+ Limit on thermal beta                                                    (betalim)                     0.056  OP 
+ Plasma thermal energy (J)                                                                          1.220E+09  OP 
+ Total plasma internal energy (J)                                         (total_plasma_internal_en 1.421E+09  OP 
+ 
+ Temperature and Density (volume averaged) :
+ 
+ Electron temperature (keV)                                               (te)                         12.787  ITV
+ Electron temperature on axis (keV)                                       (te0)                        22.713  OP 
+ Ion temperature (keV)                                                    (ti)                         12.787     
+ Ion temperature on axis (keV)                                            (ti0)                        22.713  OP 
+ Electron temp., density weighted (keV)                                   (ten)                        13.976  OP 
+ Electron density (/m3)                                                   (dene)                    7.983E+19  ITV
+ Electron density on axis (/m3)                                           (ne0)                     1.050E+20  OP 
+ Line-averaged electron density (/m3)                                     (dnla)                    8.841E+19  OP 
+ Line-averaged electron density / Greenwald density                       (dnla_gw)                 1.200E+00  OP 
+ Ion density (/m3)                                                        (dnitot)                  7.031E+19  OP 
+ Fuel density (/m3)                                                       (deni)                    6.215E+19  OP 
+ High Z impurity density (/m3)                                            (dnz)                     3.133E+16  OP 
+ Helium ion density (thermalised ions only) (/m3)                         (dnalp)                   7.983E+18  OP 
+ Proton density (/m3)                                                     (dnprot)                  2.138E+16  OP 
+ Hot beam density (/m3)                                                   (dnbeam)                  1.257E+17  OP 
+ Density limit from scaling (/m3)                                         (dnelimt)                 7.367E+19  OP 
+ Density limit (enforced) (/m3)                                           (boundu(9)*dnelimt)       8.841E+19  OP 
+ Helium ion density (thermalised ions only) / electron density            (ralpne)                  1.000E-01     
+ 
+ Impurities
+ 
+ Plasma ion densities / electron density:
+ H_ concentration                                                         (fimp(01)                 7.804E-01  OP 
+ He concentration                                                         (fimp(02)                 1.000E-01     
+ Be concentration                                                         (fimp(03)                 0.000E+00     
+ C_ concentration                                                         (fimp(04)                 0.000E+00     
+ N_ concentration                                                         (fimp(05)                 0.000E+00     
+ O_ concentration                                                         (fimp(06)                 0.000E+00     
+ Ne concentration                                                         (fimp(07)                 0.000E+00     
+ Si concentration                                                         (fimp(08)                 0.000E+00     
+ Ar concentration                                                         (fimp(09)                 0.000E+00     
+ Fe concentration                                                         (fimp(10)                 0.000E+00     
+ Ni concentration                                                         (fimp(11)                 0.000E+00     
+ Kr concentration                                                         (fimp(12)                 0.000E+00     
+ Xe concentration                                                         (fimp(13)                 3.424E-04     
+ W_ concentration                                                         (fimp(14)                 5.000E-05     
+ Average mass of all ions (amu)                                           (aion)                    2.729E+00  OP 
+ 
+ Effective charge                                                         (zeff)                        2.167  OP 
+ Density profile factor                                                   (alphan)                      1.000     
+ Plasma profile model                                                     (ipedestal)                       1     
+ Pedestal profiles are used.
+ Density pedestal r/a location                                            (rhopedn)                     0.940     
+ Electron density pedestal height (/m3)                                   (neped)                   6.262E+19  OP 
+ Electron density at pedestal / nGW                                       (fgwped_out)              8.500E-01     
+ Temperature pedestal r/a location                                        (rhopedt)                     0.940     
+ Pedestal scaling switch                                                  (ieped)                           0     
+ Electron temp. pedestal height (keV)                                     (teped)                       5.500     
+ Electron temp. at separatrix (keV)                                       (tesep)                       0.100     
+ Electron density at separatrix (/m3)                                     (nesep)                   3.684E+19     
+ Electron density at separatrix / nGW                                     (fgwsep_out)              5.000E-01     
+ Temperature profile index                                                (alphat)                      1.000     
+ Temperature profile index beta                                           (tbeta)                       2.000     
+ 
+ Density Limit using different models :
+ 
+ Old ASDEX model                                                          (dlimit(1))               4.890E+19  OP 
+ Borrass ITER model I                                                     (dlimit(2))               9.767E+19  OP 
+ Borrass ITER model II                                                    (dlimit(3))               3.810E+19  OP 
+ JET edge radiation model                                                 (dlimit(4))               3.621E+21  OP 
+ JET simplified model                                                     (dlimit(5))               3.703E+20  OP 
+ Hugill-Murakami Mq model                                                 (dlimit(6))               6.983E+19  OP 
+ Greenwald model                                                          (dlimit(7))               7.367E+19  OP 
+ 
+ Fuel Constituents :
+ 
+ Deuterium fuel fraction                                                  (fdeut)                       0.500     
+ Tritium fuel fraction                                                    (ftrit)                       0.500     
+ 
+ Fusion Power :
+ 
+ Total fusion power (MW)                                                  (powfmw)                  1.937E+03  OP 
+  =    D-T fusion power (MW)                                              (pdt)                     1.935E+03  OP 
+   +   D-D fusion power (MW)                                              (pdd)                     2.225E+00  OP 
+   + D-He3 fusion power (MW)                                              (pdhe3)                   0.000E+00  OP 
+ Alpha power: total (MW)                                                  (palpmw)                  3.870E+02  OP 
+ Alpha power: beam-plasma (MW)                                            (palpnb)                  3.996E+00  OP 
+ Neutron power (MW)                                                       (pneutmw)                 1.549E+03  OP 
+ Charged particle power (excluding alphas) (MW)                           (pchargemw)               1.447E+00  OP 
+ Total power deposited in plasma (MW)                                     ()                        4.201E+02  OP 
+ 
+ Radiation Power (excluding SOL):
+ 
+ Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             7.124E+01  OP 
+ Line radiation power (MW)                                                (plinepv*vol)             1.798E+02  OP 
+ Synchrotron radiation power (MW)                                         (psyncpv*vol)             1.650E+01  OP 
+ Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
+ Normalised minor radius defining 'core'                                  (coreradius)              6.000E-01     
+ Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   1.000E+00     
+ Total core radiation power (MW)                                          (pcoreradmw)              1.190E+02  OP 
+ Edge radiation power (MW)                                                (pedgeradmw)              1.486E+02  OP 
+ Total radiation power (MW)                                               (pradmw)                  2.675E+02  OP 
+ Core radiation fraction = total radiation in core / total power deposite (rad_fraction_core)       6.369E-01  OP 
+ SoL radiation fraction = total radiation in SoL / total power accross se (rad_fraction_sol)        8.000E-01  IP 
+ Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            9.274E-01  OP 
+ Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             1.762E-01  OP 
+ Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
+ Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
+ Peak radiation wall load (MW/m^2)                                        (peakradwallload)         5.868E-01  OP 
+ Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  1.020E+00  OP 
+ 
+ Power incident on the divertor targets (MW)                              (ptarmw)                  3.051E+01  OP 
+ Fraction of power to the lower divertor                                  (ftar)                    1.000E+00  IP 
+ Outboard side heat flux decay length (m)                                 (lambdaio)                1.570E-03  OP 
+ Fraction of power on the inner targets                                   (fio)                     4.100E-01  OP 
+ Fraction of power incident on the lower inner target                     (fLI)                     4.100E-01  OP 
+ Fraction of power incident on the lower outer target                     (fLO)                     5.900E-01  OP 
+ Power incident on the lower inner target (MW)                            (pLImw)                   1.251E+01  OP 
+ Power incident on the lower outer target (MW)                            (pLOmw)                   1.800E+01  OP 
+ 
+ Ohmic heating power (MW)                                                 (pohmmw)                  9.469E-01  OP 
+ Fraction of alpha power deposited in plasma                              (falpha)                      0.950  OP 
+ Fraction of alpha power to electrons                                     (falpe)                       0.716  OP 
+ Fraction of alpha power to ions                                          (falpi)                       0.284  OP 
+ Ion transport (MW)                                                       (ptrimw)                  1.410E+02  OP 
+ Electron transport (MW)                                                  (ptremw)                  1.601E+02  OP 
+ Injection power to ions (MW)                                             (pinjimw)                 1.985E+01  OP 
+ Injection power to electrons (MW)                                        (pinjemw)                 3.015E+01  OP 
+ Ignited plasma switch (0=not ignited, 1=ignited)                         (ignite)                          0     
+ 
+ Power into divertor zone via charged particles (MW)                      (pdivt)                   1.525E+02  OP 
+ Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            1.700E+01  OP 
+ Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             9.574E+00  OP 
+ 
+ H-mode Power Threshold Scalings :
+ 
+ ITER 1996 scaling: nominal (MW)                                          (pthrmw(1))               1.602E+02  OP 
+ ITER 1996 scaling: upper bound (MW)                                      (pthrmw(2))               3.730E+02  OP 
+ ITER 1996 scaling: lower bound (MW)                                      (pthrmw(3))               6.791E+01  OP 
+ ITER 1997 scaling (1) (MW)                                               (pthrmw(4))               2.694E+02  OP 
+ ITER 1997 scaling (2) (MW)                                               (pthrmw(5))               2.062E+02  OP 
+ Martin 2008 scaling: nominal (MW)                                        (pthrmw(6))               1.127E+02  OP 
+ Martin 2008 scaling: 95% upper bound (MW)                                (pthrmw(7))               1.484E+02  OP 
+ Martin 2008 scaling: 95% lower bound (MW)                                (pthrmw(8))               7.707E+01  OP 
+ Snipes 2000 scaling: nominal (MW)                                        (pthrmw(9))               7.992E+01  OP 
+ Snipes 2000 scaling: upper bound (MW)                                    (pthrmw(10))              1.190E+02  OP 
+ Snipes 2000 scaling: lower bound (MW)                                    (pthrmw(11))              5.324E+01  OP 
+ Snipes 2000 scaling (closed divertor): nominal (MW)                      (pthrmw(12))              3.642E+01  OP 
+ Snipes 2000 scaling (closed divertor): upper bound (MW)                  (pthrmw(13))              5.106E+01  OP 
+ Snipes 2000 scaling (closed divertor): lower bound (MW)                  (pthrmw(14))              2.579E+01  OP 
+ Hubbard 2012 L-I threshold - nominal (MW)                                (pthrmw(15))              3.161E+01  OP 
+ Hubbard 2012 L-I threshold - lower bound (MW)                            (pthrmw(16))              1.586E+01  OP 
+ Hubbard 2012 L-I threshold - upper bound (MW)                            (pthrmw(17))              6.297E+01  OP 
+ Hubbard 2017 L-I threshold                                               (pthrmw(18))              3.076E+02  OP 
+ 
+ L-H threshold power (enforced) (MW)                                      (boundl(103)*plhthresh)   1.127E+02  OP 
+ L-H threshold power (MW)                                                 (plhthresh)               1.127E+02  OP 
+ 
+ Confinement :
+ 
+ Confinement scaling law                    IPB98(y,2)           (H)
+ Confinement H factor                                                     (hfact)                       1.100  ITV
+ Global thermal energy confinement time (s)                               (taueff)                      4.053  OP 
+ Ion energy confinement time (s)                                          (tauei)                       4.053  OP 
+ Electron energy confinement time (s)                                     (tauee)                       4.053  OP 
+ n.tau = Volume-average electron density x Energy confinement time (s/m3) (dntau)                   3.235E+20  OP 
+ Triple product = Vol-average electron density x Vol-average electron temperature x Energy confinement time:
+ Triple product  (keV s/m3)                                               (dntau*te)                4.137E+21  OP 
+ Transport loss power assumed in scaling law (MW)                         (powerht)                 3.011E+02  OP 
+ Switch for radiation loss term usage in power balance                    (iradloss)                        1     
+ Radiation power subtracted from plasma power balance (MW)                                          1.190E+02  OP 
+   (Radiation correction is core radiation power)
+ Alpha particle confinement time (s)                                      (taup)                       28.135  OP 
+ Alpha particle/energy confinement time ratio                             (taup/taueff)                 6.943  OP 
+ Lower limit on taup/taueff                                               (taulimit)                    5.000     
+ Total energy confinement time including radiation loss (s)               (total_energy_conf_t          3.384  OP 
+   (= stored energy including fast particles / loss power including radiation
+ 
+ Dimensionless plasma parameters
+ 
+ For definitions see
+ Recent progress on the development and analysis of the ITPA global H-mode confinement database
+ D.C. McDonald et al, 2007 Nuclear Fusion v47, 147. (nu_star missing 1/mu0)
+ Normalized plasma pressure beta as defined by McDonald et al             (beta_mcdonald)           3.588E-02  OP 
+ Normalized ion Larmor radius                                             (rho_star)                1.851E-03  OP 
+ Normalized collisionality                                                (nu_star)                 3.541E-03  OP 
+ Volume measure of elongation                                             (kappaa_IPB)              1.631E+00  OP 
+ 
+ Plasma Volt-second Requirements :
+ 
+ Total volt-second requirement (Wb)                                       (vsstt)                   7.223E+02  OP 
+ Inductive volt-seconds (Wb)                                              (vsind)                   3.046E+02  OP 
+ Ejima coefficient                                                        (gamma)                       0.300     
+ Start-up resistive (Wb)                                                  (vsres)                   6.558E+01  OP 
+ Flat-top resistive (Wb)                                                  (vsbrn)                   3.521E+02  OP 
+ bootstrap current fraction multiplier                                    (cboot)                       1.000     
+ Bootstrap fraction (ITER 1989)                                           (bscf_iter89)                 0.324  OP 
+ Bootstrap fraction (Sauter et al)                                        (bscf_sauter)                 0.347  OP 
+ Bootstrap fraction (Nevins et al)                                        (bscf_nevins)                 0.319  OP 
+ Bootstrap fraction (Wilson et al)                                        (bscf_wilson)                 0.392  OP 
+   (Sauter et al bootstrap current fraction model used)
+ Bootstrap fraction (enforced)                                            (bootipf.)                    0.347  OP 
+ Loop voltage during burn (V)                                             (vburn)                   4.884E-02  OP 
+ Plasma resistance (ohm)                                                  (rplas)                   4.634E-09  OP 
+ Resistive diffusion time (s)                                             (res_time)                3.061E+03  OP 
+ Plasma inductance (H)                                                    (rlp)                     1.571E-05  OP 
+ Coefficient for sawtooth effects on burn V-s requirement                 (csawth)                      1.000     
+ 
+ Fuelling :
+ 
+ Ratio of He and pellet particle confinement times                        (tauratio)                5.000E+00     
+ Fuelling rate (nucleus-pairs/s)                                          (qfuel)                   1.689E+22  OP 
+ Fuel burn-up rate (reactions/s)                                          (rndfuel)                 6.904E+20  OP 
+ Burn-up fraction                                                         (burnup)                      0.041  OP 
+ 
+ ***************************** Energy confinement times, and required H-factors : *****************************
+ 
+    scaling law              confinement time (s)     H-factor for
+                                 for H = 1           power balance
+ 
+ IPB98(y)             (H)          4.664                   0.869
+ IPB98(y,1)           (H)          4.618                   0.877
+ IPB98(y,2)           (H)          3.684                   1.100
+ IPB98(y,3)           (H)          3.824                   1.060
+ IPB98(y,4)           (H)          3.782                   1.071
+ ISS95            (stell)          2.213                   1.831
+ ISS04            (stell)          3.873                   1.046
+ DS03                 (H)          5.453                   0.743
+ Murari et al NPL     (H)          2.681                   1.512
+ Petty 2008           (H)          6.441                   0.630
+ Lang et al. 2012     (H)          2.371                   1.709
+ Hubbard 2017 - nom   (I)          0.072                  56.527
+ Hubbard 2017 - lower (I)          0.040                 100.000
+ Hubbard 2017 - upper (I)          0.127                  31.802
+ NSTX (Spherical)     (H)          8.489                   0.477
+ NSTX-Petty08 Hybrid  (H)          6.441                   0.630
+ 
+ ******************************************** Current Drive System ********************************************
+ 
+ Neutral Beam Current Drive
+ Current drive efficiency model                                           (iefrf)                           5     
+ 
+ Current is driven by both inductive
+ and non-inductive means.
+ Auxiliary power used for plasma heating only (MW)                        (pheat)                   0.000E+00     
+ Power injected for current drive (MW)                                    (pcurrentdrivemw)         5.000E+01     
+ Fusion gain factor Q                                                     (bigq)                    3.803E+01  OP 
+ Auxiliary current drive (A)                                              (auxiliary_cd)            2.120E+06  OP 
+ Current drive efficiency (A/W)                                           (effcd)                   4.240E-02  OP 
+ Normalised current drive efficiency, gamma (10^20 A/W-m2)                (gamcd)                   3.037E-01  OP 
+ Wall plug to injector efficiency                                         (etacd)                   4.000E-01     
+ 
+ Fractions of current drive :
+ 
+ Bootstrap fraction                                                       (bootipf)                     0.347  OP 
+ Auxiliary current drive fraction                                         (faccd)                       0.109  OP 
+ Inductive fraction                                                       (facoh)                       0.544  OP 
+ Total                                                                    (bootipf+faccd+facoh          1.000     
+ Fraction of the plasma current produced by non-inductive means           (fvsbrnni)                    0.456  ITV
+ 
+ Neutral beam energy (keV)                                                (enbeam)                  1.000E+03     
+ Neutral beam current (A)                                                 (cnbeam)                  5.001E+01  OP 
+ Beam efficiency (A/W)                                                    (effnbss)                 4.240E-02  OP 
+ Beam gamma (10^20 A/W-m2)                                                (gamnb)                   3.037E-01  OP 
+ Neutral beam wall plug efficiency                                        (etanbi)                  4.000E-01     
+ Beam decay lengths to centre                                             (taubeam)                 4.503E+00  OP 
+ Beam shine-through fraction                                              (nbshinef)                1.228E-04  OP 
+ Neutral beam wall plug power (MW)                                        (pwpnb)                   1.250E+02  OP 
+ 
+ Neutral beam power balance :
+ ----------------------------
+ Beam first orbit loss power (MW)                                         (porbitlossmw)                0.000  OP 
+ Beam shine-through power [MW]                                            (nbshinemw)                   0.006  OP 
+ Beam power deposited in plasma (MW)                                      (pinjmw)                     50.000  OP 
+ Maximum allowable beam power (MW)                                        (pinjalw)                    50.000     
+ Total (MW)                                                               (porbitlossmw+nbshin         50.006     
+ 
+ Beam power entering vacuum vessel (MW)                                   (pnbitot)                    50.006  OP 
+ 
+ Fraction of beam energy to ions                                          (fpion)                   3.970E-01  OP 
+ Beam duct shielding thickness (m)                                        (nbshield)                5.000E-01     
+ Beam tangency radius / Plasma major radius                               (frbeam)                  1.000E+00     
+ Beam centreline tangency radius (m)                                      (rtanbeam)                8.972E+00  OP 
+ Maximum possible tangency radius (m)                                     (rtanmax)                 1.418E+01  OP 
+ 
+ Volt-second considerations:
+ 
+ Total V-s capability of Central Solenoid/PF coils (Wb)                   (abs(vstot))              7.440E+02     
+ Required volt-seconds during start-up (Wb)                               (vssoft)                  3.702E+02     
+ Available volt-seconds during burn (Wb)                                  (vsmax)                   3.521E+02     
+ 
+ *************************************************** Times ****************************************************
+ 
+ Initial charge time for CS from zero current (s)                         (tramp)                      30.000     
+ Plasma current ramp-up time (s)                                          (tohs)                       30.000     
+ Heating time (s)                                                         (theat)                      10.000     
+ Burn time (s)                                                            (tburn)                   7.200E+03  OP 
+ Reset time to zero current for CS (s)                                    (tqnch)                      30.000     
+ Time between pulses (s)                                                  (tdwell)                    500.000     
+ 
+ Total plant cycle time (s)                                               (tcycle)                  7.800E+03  OP 
+ 
+ ************************************************ Radial Build ************************************************
+ 
+                                          Thickness (m)    Radius (m)
+ Device centreline                            0.000           0.000                       
+ Machine bore                                 2.566           2.566   (bore)              
+ Central solenoid                             0.584           3.150   (ohcth)             
+ CS precompression                            0.054           3.204   (precomp)           
+ Gap                                          0.050           3.254   (gapoh)             
+ TF coil inboard leg                          1.094           3.254   (tfcth)             
+ Gap                                          0.117           3.371   (deltf)             
+ Thermal shield                               0.050           3.421   (thshield)          
+ Gap                                          0.120           3.541   (gapds)             
+ Vacuum vessel (and shielding)                0.620           4.161   (ddwi + shldith)    
+ Gap                                          0.050           4.211   (vvblgap)           
+ Inboard blanket                              0.530           4.741   (blnkith)           
+ Inboard first wall                           0.018           4.759   (fwith)             
+ Inboard scrape-off                           0.225           4.984   (scrapli)           
+ Plasma geometric centre                      2.894           7.879   (rminor)            
+ Plasma outboard edge                         2.894          10.773   (rminor)            
+ Outboard scrape-off                          0.225          10.998   (scraplo)           
+ Outboard first wall                          0.018          11.016   (fwoth)             
+ Outboard blanket                             0.910          11.926   (blnkoth)           
+ Gap                                          0.050          11.976   (vvblgap)           
+ Vacuum vessel (and shielding)                1.120          13.096   (ddwi+shldoth)      
+ Gap                                          1.145          14.240   (gapsto)            
+ Thermal shield                               0.050          14.290   (thshield)          
+ Gap                                          0.050          14.340   (tftsgap)           
+ TF coil outboard leg                         1.094          15.434   (tfthko)            
+ 
+ *********************************************** Vertical Build ***********************************************
+ 
+ Single null case
+                                          Thickness (m)    Height (m)
+ TF coil                                      1.094           8.476   (tfcth)             
+ Gap                                          0.050           7.382   (tftsgap)           
+ Thermal shield                               0.050           7.332   (thshield)          
+ Gap                                          0.120           7.282   (vgap2)             
+ Vacuum vessel (and shielding)                0.620           7.162   (ddwi+shldtth)      
+ Gap                                          0.050           6.542   (vvblgap)           
+ Top blanket                                  0.720           6.492   (blnktth)           
+ Top first wall                               0.018           5.772   (fwtth)             
+ Top scrape-off                               0.600           5.754   (vgaptop)           
+ Plasma top                                   5.154           5.154   (rminor*kappa)      
+ Midplane                                     0.000           0.000                       
+ Plasma bottom                                5.154          -5.154   (rminor*kappa)      
+ Lower scrape-off                             1.600          -6.754   (vgap)              
+ Divertor structure                           0.621          -7.375   (divfix)            
+ Vacuum vessel (and shielding)                1.020          -8.395   (ddwi+shldlth)      
+ Gap                                          0.120          -8.515   (vgap2)             
+ Thermal shield                               0.050          -8.565   (thshield)          
+ Gap                                          0.050          -8.615   (tftsgap)           
+ TF coil                                      1.094          -9.709   (tfcth)             
+ 
+ ************************************* Divertor build and plasma position *************************************
+ 
+ Divertor Configuration = Single Null Divertor
+ 
+ Plasma top position, radial (m)                                          (ptop_radial)                 7.525  OP 
+ Plasma top position, vertical (m)                                        (ptop_vertical)               5.154  OP 
+ Plasma geometric centre, radial (m)                                      (rmajor.)                     8.972  OP 
+ Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
+ Plasma lower triangularity                                               (tril)                        0.500  OP 
+ Plasma elongation                                                        (kappa.)                      1.781  OP 
+ TF coil vertical offset (m)                                              (tfoffset)                   -0.617  OP 
+ Plasma outer arc radius of curvature (m)                                 (rco)                         5.230  OP 
+ Plasma inner arc radius of curvature (m)                                 (rci)                         9.901  OP 
+ Plasma lower X-pt, radial (m)                                            (rxpt)                        7.525  OP 
+ Plasma lower X-pt, vertical (m)                                          (zxpt)                       -5.154  OP 
+ Poloidal plane angle between vertical and inner leg (rad)                (thetai)                      0.171  OP 
+ Poloidal plane angle between vertical and outer leg (rad)                (thetao)                      1.023  OP 
+ Poloidal plane angle between inner leg and plate (rad)                   (betai)                       1.000     
+ Poloidal plane angle between outer leg and plate (rad)                   (betao)                       1.000     
+ Inner divertor leg poloidal length (m)                                   (plsepi)                      1.000     
+ Outer divertor leg poloidal length (m)                                   (plsepo)                      1.500     
+ Inner divertor plate length (m)                                          (plleni)                      1.000     
+ Outer divertor plate length (m)                                          (plleno)                      1.000     
+ Inner strike point, radial (m)                                           (rspi)                        6.540  OP 
+ Inner strike point, vertical (m)                                         (zspi)                       -5.324  OP 
+ Inner plate top, radial (m)                                              (rplti)                       6.734  OP 
+ Inner plate top, vertical (m)                                            (zplti)                      -4.863  OP 
+ Inner plate bottom, radial (m)                                           (rplbi)                       6.345  OP 
+ Inner plate bottom, vertical (m)                                         (zplbi)                      -5.784  OP 
+ Outer strike point, radial (m)                                           (rspo)                        8.306  OP 
+ Outer strike point, vertical (m)                                         (zspo)                       -6.435  OP 
+ Outer plate top, radial (m)                                              (rplto)                       8.525  OP 
+ Outer plate top, vertical (m)                                            (zplto)                      -5.985  OP 
+ Outer plate bottom, radial (m)                                           (rplbo)                       8.087  OP 
+ Outer plate bottom, vertical (m)                                         (zplbo)                      -6.884  OP 
+ Calculated maximum divertor height (m)                                   (divht)                       2.021  OP 
+ 
+ ************************************************** TF Coils **************************************************
+ 
+ Superconducting TF coils
+ TF coil superconductor material                                          (isumattf)                        1     
+   (ITER Nb3Sn critical surface model)
+ Current Density :
+ 
+ Winding pack current density (A/m2)                                      (jwptf)                   2.796E+07  OP 
+ Overall current density (A/m2)                                           (oacdcp)                  8.994E+06  ITV
+ 
+ General Coil Parameters :
+ 
+ Number of TF coils                                                       (n_tf)                    1.800E+01     
+ Total inboard leg radial thickness (m)                                   (tfcth)                   1.094E+00  ITV
+ Total outboard leg radial thickness (m)                                  (tfthko)                  1.094E+00     
+ Inboard leg toroidal thickness at widest point (m)                       (2*tficrn)                1.510E+00  OP 
+ Outboard leg toroidal thickness (m)                                      (tftort)                  1.510E+00  OP 
+ Mean coil circumference (m)                                              (tfleng)                  4.811E+01  OP 
+ Total current in all TF coils (MA)                                       (ritfc/1.D6)              2.350E+02  OP 
+ Nominal peak field assuming Amperes Law with toroidal symmetry (T)       (bmaxtf)                  1.095E+01  OP 
+ Actual peak field at discrete conductor (T)                              (bmaxtfrp)                1.184E+01  OP 
+ Max allowed ripple amplitude at plasma outboard midplane (%)             (ripmax)                  6.000E-01     
+ Ripple amplitude at plasma outboard midplane (%)                         (ripple)                  6.000E-01  OP 
+ Total stored energy in TF coils (GJ)                                     (estotftgj)               1.362E+02  OP 
+ Total mass of TF coils (kg)                                              (whttf)                   1.932E+07  OP 
+ Mass of each TF coil (kg)                                                (whttf/n_tf)              1.073E+06  OP 
+ Vertical separating force per leg (N)                                    (vforce)                  2.202E+08  OP 
+ Centering force per coil (N/m)                                           (cforce)                  7.144E+07  OP 
+ 
+ Coil Geometry :
+ 
+ Inboard leg centre radius (m)                                            (r_tf_inboard_mid)        3.801E+00  OP 
+ Outboard leg centre radius (m)                                           (r_tf_outboard_mid)       1.598E+01  OP 
+ Maximum inboard edge height (m)                                          (hmax)                    8.615E+00  OP 
+ 
+ TF coil inner surface shape is approximated
+ by a straight segment and elliptical arcs between the following points :
+ 
+ point         x(m)           y(m)
+   1          4.348          4.429
+   2          8.393          7.382
+   3         15.434          0.000
+   4          8.393         -8.615
+   5          4.348         -5.169
+ 
+ Quench information :
+ 
+ Allowable stress in vacuum vessel (VV) due to quench (Pa)                (sigvvall)                9.300E+07     
+ Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.237E+01  OP 
+ Actual quench time (or time constant) (s)                                (tdmptf)                  1.840E+01  ITV
+ Maximum allowed voltage during quench due to insulation (kV)             (vdalw)                   1.265E+01     
+ Actual quench voltage (kV)                                               (vtfskv)                  1.265E+01  OP 
+ Maximum allowed temp rise during a quench (K)                            (tmaxpro)                 1.500E+02     
+ 
+ Conductor Information :
+ 
+ Width of conductor (square) (m)                                          (conductor_width)         4.422E-02  OP 
+ Width of turn including inter-turn insulation (m)                        (leno)                    4.822E-02  OP 
+ Width of space inside conductor (m)                                      (leni)                    3.622E-02  OP 
+ Conduit thickness (m)                                                    (thwcndut)                4.000E-03  ITV
+ Inter-turn insulation thickness (m)                                      (thicndut)                2.000E-03     
+ Superconductor mass per coil (kg)                                        (whtconsc)                1.798E+04  OP 
+ Copper mass per coil (kg)                                                (whtconcu)                5.395E+04  OP 
+ Steel conduit mass per coil (kg)                                         (whtconsh)                4.907E+04  OP 
+ Conduit insulation mass per coil (kg)                                    (whtconin)                6.429E+03  OP 
+ Total conductor mass per coil (kg)                                       (whtcon)                  1.274E+05  OP 
+ 
+ Winding Pack Information :
+ 
+ Diameter of central helium channel in cable                              (dhecoil)                 5.000E-03     
+ Fractions by area
+ Coolant fraction in conductor excluding central channel                  (vftf)                    3.300E-01     
+ Copper fraction of conductor                                             (fcutfsu)                 7.408E-01  ITV
+ Superconductor fraction of conductor                                     (1-fcutfsu)               2.592E-01     
+ Check total area fractions in winding pack = 1                                                         1.000     
+ Winding radial thickness (m)                                             (thkwp)                   4.050E-01  OP 
+ Winding toroidal width 1 (m)                                             (wwp1)                    1.189E+00  OP 
+ Winding toroidal width 2 (m)                                             (wwp2)                    1.117E+00  OP 
+ Ground wall insulation thickness (m)                                     (tinstf)                  1.300E-02     
+ Winding pack insertion gap (m)                                           (tfinsgap)                1.000E-02     
+ Number of turns per TF coil                                              (turnstf)                 2.008E+02  OP 
+ 
+ External Case Information :
+ 
+ Inboard leg case plasma side wall thickness (m)                          (casthi)                  5.469E-02     
+ Inboard leg case inboard "nose" thickness (m)                            (thkcas)                  5.881E-01  ITV
+ Inboard leg case sidewall thickness at its narrowest point (m)           (casths)                  1.000E-01     
+ External case mass per coil (kg)                                         (whtcas)                  9.393E+05  OP 
+ 
+ Radial build of TF coil centre-line :
+ 
+                                          Thickness (m)    Outer radius (m)
+ Innermost edge of TF coil                    3.254           3.254                       
+ Coil case ("nose")                           0.588           3.842   (thkcas)            
+ Insertion gap for winding pack               0.010           3.852   (tfinsgap)          
+ Winding pack insulation                      0.013           3.865   (tinstf)            
+ Winding - first half                         0.202           4.068   (thkwp/2 - tinstf)  
+ Winding - second half                        0.202           4.270   (thkwp/2 - tinstf)  
+ Winding pack insulation                      0.013           4.283   (tinstf)            
+ Insertion gap for winding pack               0.010           4.293   (tfinsgap)          
+ Coil case (plasma side)                      0.055           4.348   (casthi)            
+ TF coil dimensions are consistent
+ 
+ TF Coil Stresses (CCFE two-layer model) :
+ 
+ Allowable Tresca stress limit (Pa)                                       (alstrtf)                 5.500E+08     
+ Vertical stress (Pa)                                                     (sigvert)                 2.118E+08  OP 
+ Case radial stress (Pa)                                                  (sigrtf(1))               0.000E+00     
+ Case tangential stress (Pa)                                              (sigttf(1))              -3.382E+08  OP 
+ Conduit radial stress (Pa)                                               (sigrcon)                -3.058E+08  OP 
+ Conduit tangential stress (Pa)                                           (sigtcon)                -2.421E+08  OP 
+ Tresca conduit stress criterion                                          (i_tf_tresca)                     0  OP 
+ Tresca stress in case (Pa)                                               (s_tresca_case)           5.500E+08  OP 
+ Tresca stress in conduit (Pa)                                            (s_tresca_cond)           5.176E+08  OP 
+ CEA Adjusted Tresca stress in conduit (Pa)                               (s_tresca_cond_cea)       6.508E+08  OP 
+ von Mises stress in case (Pa)                                            (s_vmises_case)           4.805E+08  OP 
+ von Mises stress in conduit (Pa)                                         (s_vmises_cond)           4.507E+08  OP 
+ Peak radial deflection at midplane (m)                                   (deflect)                -5.369E-03  OP 
+ Winding pack vertical Young's Modulus (Pa)                               (eyzwp)                   6.002E+10  OP 
+ Vertical strain on winding pack                                          (windstrain)              3.529E-03  OP 
+ Radial strain on insulator                                               (insstrain)              -1.531E-02  OP 
+ 
+ ****************************************** Superconducting TF Coils ******************************************
+ 
+ Superconductor switch                                                    (isumat)                          1     
+ Superconductor used: Nb3Sn
+   (ITER Jcrit model, standard parameters)
+ Critical field at zero temperature and strain (T)                        (bc20m)                   3.297E+01     
+ Critical temperature at zero field and strain (K)                        (tc0m)                    1.606E+01     
+ 
+ Helium temperature at peak field (= superconductor temperature) (K)      (thelium)                 4.750E+00     
+ Total helium fraction inside cable space                                 (fhetot)                  3.451E-01  OP 
+ Copper fraction of conductor                                             (fcutfsu)                 7.408E-01  ITV
+ Strain on superconductor                                                 (strncon_tf)             -5.000E-03     
+ Critical current density in superconductor (A/m2)                        (jcritsc)                 5.872E+08  OP 
+ Critical current density in strand (A/m2)                                (jcritstr)                1.522E+08  OP 
+ Critical current density in winding pack (A/m2)                          (jwdgcrt)                 5.592E+07  OP 
+ Actual current density in winding pack (A/m2)                            (jwdgop)                  2.796E+07  OP 
+ Minimum allowed temperature margin in superconductor (K)                 (tmargmin_tf)             1.700E+00     
+ Actual temperature margin in superconductor (K)                          (tmarg)                   2.254E+00  OP 
+ Critical current (A)                                                     (icrit)                   1.300E+05  OP 
+ Actual current (A)                                                       (cpttf)                   6.500E+04  OP 
+ Actual current / critical current                                        (iooic)                   5.000E-01  OP 
+ 
+ *************************************** Central Solenoid and PF Coils ****************************************
+ 
+ Superconducting central solenoid
+ Central solenoid superconductor material                                 (isumatoh)                        1     
+   (ITER Nb3Sn critical surface model)
+ 
+ Central Solenoid Current Density Limits :
+ 
+ Maximum field at Beginning Of Pulse (T)                                  (bmaxoh0)                 1.167E+01  OP 
+ Critical superconductor current density at BOP (A/m2)                    (jscoh_bop)               6.091E+08  OP 
+ Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           1.827E+08  OP 
+ Allowable overall current density at BOP (A/m2)                          (rjohc0)                  6.395E+07  OP 
+ Actual overall current density at BOP (A/m2)                             (cohbop)                  1.599E+07  OP 
+ 
+ Maximum field at End Of Flattop (T)                                      (bmaxoh)                  1.135E+01  OP 
+ Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               6.528E+08  OP 
+ Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.959E+08  OP 
+ Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.855E+07  OP 
+ Actual overall current density at EOF (A/m2)                             (coheof)                  1.714E+07  ITV
+ 
+ CS inside radius (m)                                                     (bore.)                   2.566E+00     
+ CS thickness (m)                                                         (ohcth.)                  5.843E-01     
+ Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
+ CS overall cross-sectional area (m2)                                     (areaoh)                  9.061E+00  OP 
+ CS conductor+void cross-sectional area (m2)                              (awpoh)                   4.530E+00  OP 
+    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.171E+00  OP 
+    CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.359E+00  OP 
+ CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            4.530E+00  OP 
+ CS steel area fraction                                                   (oh_steel_frac)           5.000E-01     
+ Only hoop stress considered
+ Switch for CS stress calculation                                         (i_cs_stress)                     0     
+ Allowable stress in CS steel (Pa)                                        (alstroh)                 5.500E+08     
+ Hoop stress in CS steel (Pa)                                             (sig_hoop)                5.958E+08  OP 
+ Axial stress in CS steel (Pa)                                            (sig_axial)              -6.627E+08  OP 
+ Tresca stress in CS steel (Pa)                                           (s_tresca_oh)             5.958E+08  OP 
+ Axial force in CS (N)                                                    (axial_force)            -1.738E+09  OP 
+ Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
+ Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
+ Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
+ Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
+ CS temperature margin (K)                                                (tmargoh)                 3.439E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.700E+00     
+ 
+ Superconducting PF coils
+ PF coil superconductor material                                          (isumatpf)                        3     
+   (NbTi)
+ Copper fraction in conductor                                             (fcupfsu)                 6.900E-01     
+ 
+ PF Coil Case Stress :
+ 
+ Maximum permissible tensile stress (MPa)                                 (sigpfcalw)               5.000E+02     
+ JxB hoop force fraction supported by case                                (sigpfcf)                 6.660E-01     
+ 
+ Geometry of PF coils, central solenoid and plasma :
+ 
+ coil           R(m)        Z(m)        dR(m)       dZ(m)       turns     steel thickness(m)
+ 
+  PF1            6.33        9.34        1.32        1.32      453.54        0.14
+  PF2            6.33      -10.57        1.42        1.42      524.54        0.16
+  PF3           17.79        2.89        1.19        1.19      200.28        0.09
+  PF4           17.79       -2.89        1.19        1.19      200.28        0.09
+  PF5           16.10        8.10        0.81        0.81      122.57        0.07
+  PF6           16.10       -8.10        0.81        0.81      122.57        0.07
+  CS             2.86        0.00        0.58       15.51     3611.02        0.15
+ Plasma          8.97        0.00        5.79       10.31        1.00
+ 
+ PF Coil Information at Peak Current:
+ 
+ coil  current  allowed J  actual J   J   cond. mass   steel mass     field
+         (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
+ 
+  PF1   19.14  3.932E+08  1.100E+07  0.03 4.361E+05   2.538E+05    6.096E+00
+  PF2   22.14  3.426E+08  1.100E+07  0.03 5.043E+05   3.127E+05    6.588E+00
+  PF3   -8.45  7.514E+08  6.000E+06  0.01 9.922E+05   4.056E+05    2.756E+00
+  PF4   -8.45  7.514E+08  6.000E+06  0.01 9.922E+05   4.056E+05    2.756E+00
+  PF5   -5.27  7.718E+08  8.000E+06  0.01 4.200E+05   1.885E+05    2.573E+00
+  PF6   -5.27  7.718E+08  8.000E+06  0.01 4.200E+05   1.885E+05    2.573E+00
+  CS  -155.27  6.395E+07  1.714E+07  0.27 5.125E+05   6.345E+05    1.167E+01
+       ------                             ---------   ---------
+       223.99                             4.277E+06   2.389E+06
+ 
+ PF coil current scaling information :
+ 
+ Sum of squares of residuals                                              (ssq0)                    6.043E-04  OP 
+ Smoothing parameter                                                      (alfapf)                  5.000E-10     
+ 
+ ****************************************** Volt Second Consumption *******************************************
+ 
+              volt-sec       volt-sec       volt-sec
+              start-up         burn          total
+
+ PF coils :    -214.53        -114.85        -329.38
+ CS coil  :    -177.37        -237.29        -414.66
+              --------       --------       --------
+ Total :       -391.91        -352.14        -744.05
+ 
+ Total volt-second consumption by coils (Wb)                              (vstot)                  -7.440E+02  OP 
+ 
+ Summary of volt-second consumption by circuit (Wb) :
+ 
+ circuit       BOP            BOF            EOF
+ 
+     1       38.905         47.874          1.748
+     2       40.663         45.150         -3.061
+     3        6.751        -71.193        -79.197
+     4        6.751        -71.193        -79.197
+     5        1.899        -34.152        -36.403
+     6        1.899        -34.152        -36.403
+ CS coil    200.143         22.772       -214.521
+ 
+ ********************************** Waveforms ***********************************
+ 
+ Currents (Amps/coil) as a function of time :
+ 
+                                       time (sec)
+
+                0.00      30.00      60.00      70.00    7270.03    7300.03
+               Start      BOP        EOR        BOF        EOF        EOP        
+ circuit
+   1         0.000E+00  1.555E+07  1.914E+07  1.914E+07  6.988E+05  0.000E+00
+   2         0.000E+00  1.994E+07  2.214E+07  2.214E+07 -1.501E+06  0.000E+00
+   3        -0.000E+00  7.205E+05 -7.597E+06 -7.597E+06 -8.452E+06 -0.000E+00
+   4        -0.000E+00  7.205E+05 -7.597E+06 -7.597E+06 -8.452E+06 -0.000E+00
+   5        -0.000E+00  2.749E+05 -4.944E+06 -4.944E+06 -5.270E+06 -0.000E+00
+   6        -0.000E+00  2.749E+05 -4.944E+06 -4.944E+06 -5.270E+06 -0.000E+00
+   7        -0.000E+00  1.449E+08  1.648E+07  1.648E+07 -1.553E+08 -0.000E+00
+ Plasma (A)  0.000E+00  0.000E+00  1.939E+07  1.939E+07  1.939E+07  0.000E+00
+ 
+ This consists of: CS coil field balancing:
+   1         0.000E+00  1.555E+07  1.770E+06  1.770E+06 -1.667E+07  0.000E+00
+   2         0.000E+00  1.994E+07  2.268E+06  2.268E+06 -2.137E+07  0.000E+00
+   3        -0.000E+00  7.205E+05  8.197E+04  8.197E+04 -7.722E+05 -0.000E+00
+   4        -0.000E+00  7.205E+05  8.197E+04  8.197E+04 -7.722E+05 -0.000E+00
+   5        -0.000E+00  2.749E+05  3.128E+04  3.128E+04 -2.947E+05 -0.000E+00
+   6        -0.000E+00  2.749E+05  3.128E+04  3.128E+04 -2.947E+05 -0.000E+00
+   7        -0.000E+00  1.449E+08  1.648E+07  1.648E+07 -1.553E+08 -0.000E+00
+ 
+ And: equilibrium field:
+   1         0.000E+00  0.000E+00  1.737E+07  1.737E+07  1.737E+07  0.000E+00
+   2         0.000E+00  0.000E+00  1.987E+07  1.987E+07  1.987E+07  0.000E+00
+   3         0.000E+00  0.000E+00 -7.679E+06 -7.679E+06 -7.679E+06  0.000E+00
+   4         0.000E+00  0.000E+00 -7.679E+06 -7.679E+06 -7.679E+06  0.000E+00
+   5         0.000E+00  0.000E+00 -4.976E+06 -4.976E+06 -4.976E+06  0.000E+00
+   6         0.000E+00  0.000E+00 -4.976E+06 -4.976E+06 -4.976E+06  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
+ 
+ Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.330E-01  ITV
+ Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.062E-01  OP 
+ 
+ *************************** PF Circuit Waveform Data ***************************
+ 
+ Number of PF circuits including CS and plasma                            (ncirt)                           8     
+ PF Circuit 01 - Time point 01 (A)                                        (pfc01t01)                0.000E+00     
+ PF Circuit 01 - Time point 02 (A)                                        (pfc01t02)                1.555E+07     
+ PF Circuit 01 - Time point 03 (A)                                        (pfc01t03)                1.914E+07     
+ PF Circuit 01 - Time point 04 (A)                                        (pfc01t04)                1.914E+07     
+ PF Circuit 01 - Time point 05 (A)                                        (pfc01t05)                6.988E+05     
+ PF Circuit 01 - Time point 06 (A)                                        (pfc01t06)                0.000E+00     
+ PF Circuit 02 - Time point 01 (A)                                        (pfc02t01)                0.000E+00     
+ PF Circuit 02 - Time point 02 (A)                                        (pfc02t02)                1.994E+07     
+ PF Circuit 02 - Time point 03 (A)                                        (pfc02t03)                2.214E+07     
+ PF Circuit 02 - Time point 04 (A)                                        (pfc02t04)                2.214E+07     
+ PF Circuit 02 - Time point 05 (A)                                        (pfc02t05)               -1.501E+06     
+ PF Circuit 02 - Time point 06 (A)                                        (pfc02t06)                0.000E+00     
+ PF Circuit 03 - Time point 01 (A)                                        (pfc03t01)               -0.000E+00     
+ PF Circuit 03 - Time point 02 (A)                                        (pfc03t02)                7.205E+05     
+ PF Circuit 03 - Time point 03 (A)                                        (pfc03t03)               -7.597E+06     
+ PF Circuit 03 - Time point 04 (A)                                        (pfc03t04)               -7.597E+06     
+ PF Circuit 03 - Time point 05 (A)                                        (pfc03t05)               -8.452E+06     
+ PF Circuit 03 - Time point 06 (A)                                        (pfc03t06)               -0.000E+00     
+ PF Circuit 04 - Time point 01 (A)                                        (pfc04t01)               -0.000E+00     
+ PF Circuit 04 - Time point 02 (A)                                        (pfc04t02)                7.205E+05     
+ PF Circuit 04 - Time point 03 (A)                                        (pfc04t03)               -7.597E+06     
+ PF Circuit 04 - Time point 04 (A)                                        (pfc04t04)               -7.597E+06     
+ PF Circuit 04 - Time point 05 (A)                                        (pfc04t05)               -8.452E+06     
+ PF Circuit 04 - Time point 06 (A)                                        (pfc04t06)               -0.000E+00     
+ PF Circuit 05 - Time point 01 (A)                                        (pfc05t01)               -0.000E+00     
+ PF Circuit 05 - Time point 02 (A)                                        (pfc05t02)                2.749E+05     
+ PF Circuit 05 - Time point 03 (A)                                        (pfc05t03)               -4.944E+06     
+ PF Circuit 05 - Time point 04 (A)                                        (pfc05t04)               -4.944E+06     
+ PF Circuit 05 - Time point 05 (A)                                        (pfc05t05)               -5.270E+06     
+ PF Circuit 05 - Time point 06 (A)                                        (pfc05t06)               -0.000E+00     
+ PF Circuit 06 - Time point 01 (A)                                        (pfc06t01)               -0.000E+00     
+ PF Circuit 06 - Time point 02 (A)                                        (pfc06t02)                2.749E+05     
+ PF Circuit 06 - Time point 03 (A)                                        (pfc06t03)               -4.944E+06     
+ PF Circuit 06 - Time point 04 (A)                                        (pfc06t04)               -4.944E+06     
+ PF Circuit 06 - Time point 05 (A)                                        (pfc06t05)               -5.270E+06     
+ PF Circuit 06 - Time point 06 (A)                                        (pfc06t06)               -0.000E+00     
+ CS Circuit  - Time point 01 (A)                                          (cst01)                  -0.000E+00     
+ CS Circuit  - Time point 02 (A)                                          (cst02)                   1.449E+08     
+ CS Circuit  - Time point 03 (A)                                          (cst03)                   1.648E+07     
+ CS Circuit  - Time point 04 (A)                                          (cst04)                   1.648E+07     
+ CS Circuit  - Time point 05 (A)                                          (cst05)                  -1.553E+08     
+ CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
+ Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
+ Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
+ Plasma  - Time point 03 (A)                                              (plasmat03)               1.939E+07     
+ Plasma  - Time point 04 (A)                                              (plasmat04)               1.939E+07     
+ Plasma  - Time point 05 (A)                                              (plasmat05)               1.939E+07     
+ Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
+ 
+ ********************************************* Support Structure **********************************************
+ 
+ Outer PF coil fence mass (kg)                                            (fncmass)                 3.650E+05  OP 
+ Intercoil support structure mass (kg)                                    (aintmass)                5.501E+06  OP 
+ Mass of cooled components (kg)                                           (coldmass)                4.787E+07  OP 
+ Gravity support structure mass (kg)                                      (clgsmass)                1.993E+06  OP 
+ Torus leg support mass (kg)                                              (gsm1)                    1.111E+05  OP 
+ Ring beam mass (kg)                                                      (gsm2)                    5.459E+05  OP 
+ Ring legs mass (kg)                                                      (gsm3)                    1.012E+06  OP 
+ 
+ ******************************************** PF Coil Inductances *********************************************
+ 
+ Inductance matrix (Henries-turns**2) :
+ 
+   1     4.0E+00 7.4E-02 3.4E-01 2.2E-01 2.9E-01 8.1E-02 1.2E+00 1.1E-03
+   2     7.4E-02 5.2E+00 2.3E-01 3.6E-01 8.4E-02 3.2E-01 1.0E+00 1.1E-03
+   3     3.4E-01 2.3E-01 3.2E+00 1.1E+00 6.6E-01 3.5E-01 5.9E-01 1.9E-03
+   4     2.2E-01 3.6E-01 1.1E+00 3.2E+00 3.5E-01 6.6E-01 5.9E-01 1.9E-03
+   5     2.9E-01 8.4E-02 6.6E-01 3.5E-01 1.2E+00 1.2E-01 3.1E-01 8.5E-04
+   6     8.1E-02 3.2E-01 3.5E-01 6.6E-01 1.2E-01 1.2E+00 3.1E-01 8.5E-04
+  CS     1.2E+00 1.0E+00 5.9E-01 5.9E-01 3.1E-01 3.1E-01 2.1E+01 5.0E-03
+ Plasma  1.1E-03 1.1E-03 1.9E-03 1.9E-03 8.5E-04 8.5E-04 5.0E-03 1.6E-05
+ 
+ ********************* Heat transfer parameters at the coolant outlet: Inboard first wall *********************
+ 
+ Radius of coolant channel (m)                                            (afw)                     6.000E-03     
+ Mean surface heat flux on first wall (W/m2)                              (qpp)                     1.295E+05  OP 
+ Mean nuclear power deposited in first wall per unit area (W/m2)                                    1.197E+05  OP 
+ Ratio of peak local heat load (surface and nuclear) to mean              (peaking_factor)          1.000E+00     
+ Length of a single coolant channel (all in parallel) (m)                 (fw_channel_length)       4.000E+00     
+ Pitch of coolant channels (m)                                            (pitch)                   2.000E-02     
+ Thermal conductivity of first wall material (W/K/m)                      (tkfw)                    3.106E+01  OP 
+ Coolant density (kg/m3)                                                  (rhofo)                   8.868E+00  OP 
+ Coolant mass flow rate in one channel (kg/s)                             (massrate)                1.538E-02  OP 
+ Coolant velocity (m/s)                                                   (velocity)                1.534E+01  OP 
+ Outlet temperature of first wall coolant (K)                             (fwoutlet)                8.230E+02     
+ Heat transfer coefficient                                                (hcoeff)                  2.284E+03  OP 
+ Temperature drop in the wall material (simple model)                     (deltat_solid)            3.396E+01  OP 
+ Temperature drop in the coolant (wall to bulk)                           (deltat_coolant)          5.787E+01  OP 
+ First wall temperature (excluding armour) (K)                            (tpeakfw)                 9.148E+02  OP 
+ Temperature drop in the wall material: 1D estimate                       (deltat_solid_1D)         2.567E+01  OP 
+ 
+ ************************************ Pumping power for Inboard first wall ************************************
+ 
+ Viscosity (Pa.s)                                                         (viscf)                   3.604E-05  OP 
+ Density (kg/m3)                                                          (rhof)                    1.041E+01  OP 
+ Velocity (m/s)                                                           (vv)                      1.307E+01  OP 
+ Reynolds number                                                          (reyn)                    4.527E+04  OP 
+ Darcy friction factor                                                    (lambda)                  2.164E-02  OP 
+ Channel length                                                           (flleng)                  4.000E+00  OP 
+ Pressure drop (Pa)                                                       (deltap)                  6.806E+03  OP 
+ This is the sum of the following:
+             Straight sections (Pa)                                       (pdropstraight)           6.411E+03  OP 
+             90 degree bends (Pa)                                         (pdrop90)                 3.956E+02  OP 
+             180 degree bends (Pa)                                        (pdrop180)                0.000E+00  OP 
+ Inlet pressure (Pa)                                                      (coolpin)                 1.551E+07  OP 
+ Total coolant mass flow rate in (kg/s)                                   (mf)                      1.344E+02  OP 
+ Coolant mass flow rate in one channel (kg/s)                             (mfp)                     1.538E-02  OP 
+ Pumping power (MW)                                                       (pumppower)               8.549E-02  OP 
+ Additional information is printed when verbose = 1
+ 
+ ************************************* Pumping power for Inboard blanket **************************************
+ 
+ Viscosity (Pa.s)                                                         (viscf)                   3.604E-05  OP 
+ Density (kg/m3)                                                          (rhof)                    1.041E+01  OP 
+ Velocity (m/s)                                                           (vv)                      1.940E+00  OP 
+ Reynolds number                                                          (reyn)                    6.719E+03  OP 
+ Darcy friction factor                                                    (lambda)                  3.470E-02  OP 
+ Channel length                                                           (flleng)                  5.003E+00  OP 
+ Pressure drop (Pa)                                                       (deltap)                  3.113E+02  OP 
+ This is the sum of the following:
+             Straight sections (Pa)                                       (pdropstraight)           2.832E+02  OP 
+             90 degree bends (Pa)                                         (pdrop90)                 1.984E+01  OP 
+             180 degree bends (Pa)                                        (pdrop180)                8.250E+00  OP 
+ Inlet pressure (Pa)                                                      (coolpin)                 1.550E+07  OP 
+ Total coolant mass flow rate in (kg/s)                                   (mf)                      2.912E+02  OP 
+ Coolant mass flow rate in one channel (kg/s)                             (mfp)                     2.283E-03  OP 
+ Pumping power (MW)                                                       (pumppower)               8.473E-03  OP 
+ Additional information is printed when verbose = 1
+ 
+ ******************** Heat transfer parameters at the coolant outlet: Outboard first wall *********************
+ 
+ Radius of coolant channel (m)                                            (afw)                     6.000E-03     
+ Mean surface heat flux on first wall (W/m2)                              (qpp)                     1.466E+05  OP 
+ Mean nuclear power deposited in first wall per unit area (W/m2)                                    1.197E+05  OP 
+ Ratio of peak local heat load (surface and nuclear) to mean              (peaking_factor)          1.000E+00     
+ Length of a single coolant channel (all in parallel) (m)                 (fw_channel_length)       4.000E+00     
+ Pitch of coolant channels (m)                                            (pitch)                   2.000E-02     
+ Thermal conductivity of first wall material (W/K/m)                      (tkfw)                    3.106E+01  OP 
+ Coolant density (kg/m3)                                                  (rhofo)                   8.868E+00  OP 
+ Coolant mass flow rate in one channel (kg/s)                             (massrate)                1.644E-02  OP 
+ Coolant velocity (m/s)                                                   (velocity)                1.639E+01  OP 
+ Outlet temperature of first wall coolant (K)                             (fwoutlet)                8.230E+02     
+ Heat transfer coefficient                                                (hcoeff)                  2.408E+03  OP 
+ Temperature drop in the wall material (simple model)                     (deltat_solid)            3.761E+01  OP 
+ Temperature drop in the coolant (wall to bulk)                           (deltat_coolant)          5.868E+01  OP 
+ First wall temperature (excluding armour) (K)                            (tpeakfw)                 9.193E+02  OP 
+ Temperature drop in the wall material: 1D estimate                       (deltat_solid_1D)         2.843E+01  OP 
+ 
+ *********************************** Pumping power for Outboard first wall ************************************
+ 
+ Viscosity (Pa.s)                                                         (viscf)                   3.604E-05  OP 
+ Density (kg/m3)                                                          (rhof)                    1.041E+01  OP 
+ Velocity (m/s)                                                           (vv)                      1.397E+01  OP 
+ Reynolds number                                                          (reyn)                    4.839E+04  OP 
+ Darcy friction factor                                                    (lambda)                  2.135E-02  OP 
+ Channel length                                                           (flleng)                  4.000E+00  OP 
+ Pressure drop (Pa)                                                       (deltap)                  7.673E+03  OP 
+ This is the sum of the following:
+             Straight sections (Pa)                                       (pdropstraight)           7.222E+03  OP 
+             90 degree bends (Pa)                                         (pdrop90)                 4.504E+02  OP 
+             180 degree bends (Pa)                                        (pdrop180)                0.000E+00  OP 
+ Inlet pressure (Pa)                                                      (coolpin)                 1.551E+07  OP 
+ Total coolant mass flow rate in (kg/s)                                   (mf)                      2.320E+02  OP 
+ Coolant mass flow rate in one channel (kg/s)                             (mfp)                     1.644E-02  OP 
+ Pumping power (MW)                                                       (pumppower)               1.663E-01  OP 
+ Additional information is printed when verbose = 1
+ 
+ ************************************* Pumping power for Outboard blanket *************************************
+ 
+ Viscosity (Pa.s)                                                         (viscf)                   3.604E-05  OP 
+ Density (kg/m3)                                                          (rhof)                    1.041E+01  OP 
+ Velocity (m/s)                                                           (vv)                      2.563E+00  OP 
+ Reynolds number                                                          (reyn)                    8.878E+03  OP 
+ Darcy friction factor                                                    (lambda)                  3.209E-02  OP 
+ Channel length                                                           (flleng)                  6.611E+00  OP 
+ Pressure drop (Pa)                                                       (deltap)                  6.522E+02  OP 
+ This is the sum of the following:
+             Straight sections (Pa)                                       (pdropstraight)           6.042E+02  OP 
+             90 degree bends (Pa)                                         (pdrop90)                 3.380E+01  OP 
+             180 degree bends (Pa)                                        (pdrop180)                1.419E+01  OP 
+ Inlet pressure (Pa)                                                      (coolpin)                 1.550E+07  OP 
+ Total coolant mass flow rate in (kg/s)                                   (mf)                      8.802E+02  OP 
+ Coolant mass flow rate in one channel (kg/s)                             (mfp)                     3.016E-03  OP 
+ Pumping power (MW)                                                       (pumppower)               5.365E-02  OP 
+ Additional information is printed when verbose = 1
+ 
+ ****************************** First wall and blanket thermohydraulics: Summary ******************************
+ 
+ Blanket coolant type (1=He, 2=H20)                                       (coolwh)                          1     
+ First wall coolant type                                                  (fwcoolant)                        "helium"
+ Wall thickness of first wall cooling channels (m)                        (fw_wall)                 3.000E-03     
+ Radius of first wall cooling channels (m)                                (afw)                     6.000E-03     
+ Roughness of first wall cooling channels (m)                             (roughness)               1.000E-06     
+ Inlet temperature of first wall coolant (K)                              (fwinlet)                   573.000     
+ Outlet temperature of first wall coolant (K)                             (fwoutlet)                  823.000     
+ Inlet temperature of blanket coolant (K)                                 (inlet_temp)                573.000     
+ Outlet temperature of blanket coolant (K)                                (outlet_temp)               823.000     
+ First wall coolant mass flow rate (kg/s)                                 (mffw)                    3.664E+02  OP 
+ Blanket coolant mass flow rate (kg/s)                                    (mfblkt)                  1.171E+03  OP 
+ Total coolant mass flow rate(kg/s)                                       (mftotal)                 1.538E+03  OP 
+ First wall coolant pressure (Pa)                                         (fwpressure)              1.550E+07     
+ Blanket coolant pressure (Pa)                                            (blpressure)              1.550E+07     
+ Allowable temperature of first wall material, excluding armour (K)       (tfwmatmax)                1100.000     
+ Actual peak temperature of first wall material (K)                       (tpeak)                     919.290  OP 
+ Mechanical pumping power for FW (MW)                                     (htpmw_fw)                2.518E-01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              6.212E-02  OP 
+ Pumping power for divertor (MW)                                          (htpmw_div)               1.518E+01  OP 
+ Pumping power for shield and vacuum vessel (MW)                          (htpmw_shld)              9.365E-02  OP 
+ Total primary coolant pumping power (MW)                                 (htpmw)                   1.000E+02  OP 
+ 
+ ********************************** First wall and blanket : CCFE HCPB model **********************************
+ 
+ 
+ Blanket Composition by volume :
+ 
+ Titanium beryllide fraction                                              (fbltibe12)                   0.406  OP 
+ Lithium orthosilicate fraction                                           (fblli2sio4)                  0.344  OP 
+ Steel fraction                                                           (fblss_ccfe)                  0.097  OP 
+ Coolant fraction                                                         (vfcblkt)                     0.053     
+ Purge gas fraction                                                       (vfpblkt)                     0.100     
+ 
+ Component Volumes :
+ 
+ First Wall Armour Volume (m3)                                            (fw_armour_vol)               4.190  OP 
+ First Wall Volume (m3)                                                   (volfw)                      22.570  OP 
+ Blanket Volume (m3)                                                      (volblkt)                  1161.452  OP 
+ Shield Volume (m3)                                                       (volshld)                   706.993  OP 
+ Vacuum vessel volume (m3)                                                (vdewin)                   1206.084  OP 
+ 
+ Component Masses :
+ 
+ First Wall Armour Mass (kg)                                              (fw_armour_mass)          8.065E+04  OP 
+ First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.760E+05  OP 
+ Blanket Mass - Total(kg)                                                 (whtblkt)                 2.904E+06  OP 
+     Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.067E+06  OP 
+     Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            9.577E+05  OP 
+     Blanket Mass - Steel (kg)                                            (whtblss)                 8.792E+05  OP 
+ Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       3.160E+06  OP 
+ Shield Mass (kg)                                                         (whtshld)                 4.136E+06  OP 
+ Vacuum vessel mass (kg)                                                  (vvmass)                  9.407E+06  OP 
+ 
+ Nuclear heating :
+ 
+ Total nuclear heating in TF+PF coils (CS is negligible) (MW)             (ptfnuc)                  5.197E-02  OP 
+ Total nuclear heating in FW (MW)                                         (pnucfw)                  2.188E+02  OP 
+ Total nuclear heating in the blanket (including emult) (MW)              (pnucblkt)                1.518E+03  OP 
+ (Note: emult is fixed for this model inside the code)
+ Total nuclear heating in the shield (MW)                                 (pnucshld)                2.230E+00  OP 
+ Total nuclear heating in the divertor (MW)                               (pnucdiv)                 1.782E+02  OP 
+ 
+ Diagostic output for nuclear heating :
+ 
+ Blanket exponential factor                                               (exp_blanket)             9.992E-01  OP 
+ Shield: first exponential                                                (exp_shield1)             5.135E-03  OP 
+ Shield: second exponential                                               (exp_shield2)             7.672E-02  OP 
+ Switch for plant secondary cycle                                         (secondary_cycle)                 3     
+ First wall coolant pressure (Pa)                                         (fwpressure)              1.550E+07     
+ Blanket coolant pressure (Pa)                                            (blpressure)              1.550E+07     
+ Mechanical pumping power for first wall (MW)                             (htpmw_fw)                2.518E-01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              6.212E-02  OP 
+ Mechanical pumping power for divertor (MW)                               (htpmw_div)               1.518E+01  OP 
+ Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              9.365E-02  OP 
+ Total electrical coolant pumping power: first wall, blanket, shield and  (htpmw)                   1.000E+02  OP 
+ Allowable nominal neutron fluence at first wall (MW.year/m2)             (abktflnc)                1.500E+01     
+ No of inboard blanket modules poloidally                                 (nblktmodpi)                      7     
+ No of inboard blanket modules toroidally                                 (nblktmodti)                     36     
+ No of outboard blanket modules poloidally                                (nblktmodpo)                      8     
+ No of outboard blanket modules toroidally                                (nblktmodto)                     54     
+ Isentropic efficiency of first wall / blanket coolant pumps              (etaiso)                  8.500E-01     
+ 
+ Other volumes, masses and areas :
+ 
+ First wall area (m2)                                                     (fwarea)                  1.828E+03  OP 
+ Cryostat internal radius (m)                                             (rdewex)                  1.889E+01  OP 
+ Cryostat internal half-height (m)                                        (zdewex)                  1.566E+01  OP 
+ Vertical clearance from TF coil to cryostat (m)                          (clh1)                    5.955E+00  OP 
+ Divertor area (m2)                                                       (divsur)                  1.811E+02  OP 
+ Divertor mass (kg)                                                       (divmas)                  4.437E+04  OP 
+ Lithium-6 enrichment (%)                                                 (li6enrich)                  54.963  ITV
+ Breeder fraction by volume: Li4SiO4/(Be12Ti+Li4SiO4)                     (breeder_f)                   0.458  ITV
+ Blanket thickness choice: THIN (0.53 m inboard, 0.91 m outboard)         (iblanket_thickness)              1     
+ Tritium breeding ratio (5-year time-averaged)                            (tbr)                         1.150  OP 
+ Minimum Tritium breeding ratio                                           (tbrmin)                      1.150     
+ (See "A parameter study of time-varying tritium production in solid-type breeder blankets,
+ J. Shimwell et al, Fusion Engineering and Design
+ For consistency, inboard first wall thicknesses should be 0.03 (m)       (fwith)                   1.800E-02     
+ For consistency, outboard first wall thicknesses should be 0.03 (m)      (fwoth)                   1.800E-02     
+ For consistency, first wall armour thickness should be 0.003 (m)         (fw_armour_thickness)     3.000E-03     
+ 
+ ********************************** Superconducting TF Coil Power Conversion **********************************
+ 
+ TF coil current (kA)                                                     (itfka)                   6.500E+01  OP 
+ Number of TF coils                                                       (ntfc)                    1.800E+01     
+ Voltage across a TF coil during quench (kV)                              (vtfskv)                  1.265E+01  OP 
+ TF coil charge time (hours)                                              (tchghr)                  4.000E+00     
+ Total inductance of TF coils (H)                                         (ltfth)                   6.447E+01  OP 
+ Total resistance of TF coils (ohm)                                       (rcoils)                  0.000E+00  OP 
+ TF coil charging voltage (V)                                             (tfcv)                    4.152E+02     
+ Number of DC circuit breakers                                            (ntfbkr)                  1.800E+01     
+ Number of dump resistors                                                 (ndumpr)                  7.200E+01     
+ Resistance per dump resistor (ohm)                                       (r1dump)                  1.946E-01  OP 
+ Dump resistor peak power (MW)                                            (r1ppmw)                  2.056E+02  OP 
+ Energy supplied per dump resistor (MJ)                                   (r1emj)                   1.892E+03  OP 
+ TF coil L/R time constant (s)                                            (ttfsec)                  1.840E+01  OP 
+ Power supply voltage (V)                                                 (tfpsv)                   4.359E+02  OP 
+ Power supply current (kA)                                                (tfpska)                  6.825E+01  OP 
+ DC power supply rating (kW)                                              (tfckw)                   2.975E+04  OP 
+ AC power for charging (kW)                                               (tfackw)                  3.306E+04  OP 
+ TF coil resistive power (MW)                                             (rpower)                  8.071E+00  OP 
+ TF coil inductive power (MVA)                                            (xpower)                  1.892E+01  OP 
+ Aluminium bus current density (kA/cm2)                                   (djmka)                   1.250E-01     
+ Aluminium bus cross-sectional area (cm2)                                 (albusa)                  5.200E+02  OP 
+ Total length of TF coil bussing (m)                                      (tfbusl)                  3.791E+03  OP 
+ Aluminium bus weight (tonnes)                                            (albuswt)                 5.323E+02  OP 
+ Total TF coil bus resistance (ohm)                                       (rtfbus)                  1.910E-03  OP 
+ TF coil bus voltage drop (V)                                             (vtfbus)                  1.242E+02  OP 
+ Dump resistor floor area (m2)                                            (drarea)                  5.522E+03  OP 
+ TF coil power conversion floor space (m2)                                (tfcfsp)                  1.925E+03  OP 
+ TF coil power conv. building volume (m3)                                 (tfcbv)                   1.155E+04  OP 
+ TF coil AC inductive power demand (MW)                                   (xpwrmw)                  2.102E+01  OP 
+ Total steady state AC power demand (MW)                                  (tfacpd)                  8.967E+00  OP 
+ 
+ ****************************** PF Coils and Central Solenoid: Power and Energy *******************************
+ 
+ Number of PF coil circuits                                               (pfckts)                  1.200E+01     
+ Sum of PF power supply ratings (MVA)                                     (spsmva)                  1.962E+03  OP 
+ Total PF coil circuit bus length (m)                                     (spfbusl)                 2.541E+03  OP 
+ Total PF coil bus resistive power (kW)                                   (pfbuspwr)                1.069E+03  OP 
+ Total PF coil resistive power (kW)                                       (srcktpm)                 1.069E+03  OP 
+ Maximum PF coil voltage (kV)                                             (vpfskv)                  2.000E+01     
+ Efficiency of transfer of PF stored energy into or out of storage        (etapsu)                  9.000E-01     
+ (Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)
+ Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 3.274E+04  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.091E+03  OP 
+ Energy stored in poloidal magnetic field :
+ 
+                                            time (sec)
+
+                     0.00      30.00      60.00      70.00    7270.03    7300.03
+ Time point         Start      BOP        EOR        BOF        EOF        EOP        
+ Energy (MJ)      0.000E+00  2.715E+04  1.613E+04  1.613E+04  3.274E+04  0.000E+00
+ 
+ Interval                tramp      tohs       theat      tburn      tqnch      
+ dE/dt (MW)            9.050E+02 -3.674E+02  0.000E+00  2.307E+00 -1.091E+03
+ 
+ 
+ *********************************************** Vacuum System ************************************************
+ 
+ Pumpdown to Base Pressure :
+ 
+ First wall outgassing rate (Pa m/s)                                      (rat)                     1.300E-08     
+ Total outgassing load (Pa m3/s)                                          (ogas)                    1.957E-04  OP 
+ Base pressure required (Pa)                                              (pbase)                   5.000E-04     
+ Required N2 pump speed (m3/s)                                            (s(1))                    3.913E-01  OP 
+ N2 pump speed provided (m3/s)                                            (snet(1))                 1.213E+02  OP 
+ 
+ Pumpdown between Burns :
+ 
+ Plasma chamber volume (m3)                                               (volume)                  2.811E+03  OP 
+ Chamber pressure after burn (Pa)                                         (pend)                    1.652E-01  OP 
+ Chamber pressure before burn (Pa)                                        (pstart)                  1.652E-03     
+ Allowable pumping time switch                                            (dwell_pump)                      0     
+ Dwell time between burns (s)                                             (tdwell.)                 5.000E+02     
+ CS ramp-up time burns (s)                                                (tramp.)                  3.000E+01     
+ Allowable pumping time between burns (s)                                 (tpump)                   5.000E+02     
+ Required D-T pump speed (m3/s)                                           (s(2))                    2.589E+01  OP 
+ D-T pump speed provided (m3/s)                                           (snet(2))                 2.944E+02  OP 
+ 
+ Helium Ash Removal :
+ 
+ Divertor chamber gas pressure (Pa)                                       (prdiv)                   3.600E-01     
+ Helium gas fraction in divertor chamber                                  (fhe)                     4.074E-02  OP 
+ Required helium pump speed (m3/s)                                        (s(3))                    1.942E+02  OP 
+ Helium pump speed provided (m3/s)                                        (snet(3))                 1.942E+02  OP 
+ 
+ D-T Removal at Fuelling Rate :
+ 
+ D-T fuelling rate (kg/s)                                                 (frate)                   1.402E-04  OP 
+ Required D-T pump speed (m3/s)                                           (s(4))                    1.942E+02  OP 
+ D-T pump speed provided (m3/s)                                           (snet(4))                 2.944E+02  OP 
+ 
+ The vacuum pumping system size is governed by the
+ requirements for helium ash removal.
+ 
+ Number of large pump ducts                                               (nduct)                          18     
+ Passage diameter, divertor to ducts (m)                                  (d(imax))                 8.598E-01  OP 
+ Passage length (m)                                                       (l1)                      1.894E+00  OP 
+ Diameter of ducts (m)                                                    (dout)                    1.032E+00  OP 
+ Duct length, divertor to elbow (m)                                       (l2)                      4.800E+00  OP 
+ Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
+ Number of pumps                                                          (pumpn)                   1.553E+02  OP 
+ 
+ The vacuum system uses cryo pumps
+ 
+ ******************************************* Plant Buildings System *******************************************
+ 
+ Internal volume of reactor building (m3)                                 (vrci)                    1.094E+06     
+ Dist from centre of torus to bldg wall (m)                               (wrbi)                    4.116E+01     
+ Effective floor area (m2)                                                (efloor)                  3.557E+05     
+ Reactor building volume (m3)                                             (rbv)                     1.237E+06     
+ Reactor maintenance building volume (m3)                                 (rmbv)                    3.994E+05     
+ Warmshop volume (m3)                                                     (wsv)                     1.251E+05     
+ Tritium building volume (m3)                                             (triv)                    4.000E+04     
+ Electrical building volume (m3)                                          (elev)                    5.255E+04     
+ Control building volume (m3)                                             (conv)                    6.000E+04     
+ Cryogenics building volume (m3)                                          (cryv)                    2.019E+04     
+ Administration building volume (m3)                                      (admv)                    1.000E+05     
+ Shops volume (m3)                                                        (shov)                    1.000E+05     
+ Total volume of nuclear buildings (m3)                                   (volnucb)                 1.679E+06     
+ 
+ **************************************** Electric Power Requirements *****************************************
+ 
+ Facility base load (MW)                                                  (basemw)                  5.000E+00     
+ Divertor coil power supplies (MW)                                        (bdvmw)                   0.000E+00     
+ Cryoplant electric power (MW)                                            (crymw)                   6.648E+01  OP 
+ Primary coolant pumps (MW)                                               (htpmw..)                 1.000E+02  OP 
+ PF coil power supplies (MW)                                              (ppfmw)                   5.662E+02  OP 
+ TF coil power supplies (MW)                                              (ptfmw)                   8.967E+00  OP 
+ Plasma heating supplies (MW)                                             (pheatingmw)              1.250E+02  OP 
+ Tritium processing (MW)                                                  (trithtmw..)              1.500E+01     
+ Vacuum pumps  (MW)                                                       (vachtmw..)               5.000E-01     
+ 
+ Total pulsed power (MW)                                                  (pacpmw)                  9.405E+02  OP 
+ Total base power required at all times (MW)                              (fcsht)                   5.835E+01  OP 
+ 
+ ************************************************* Cryogenics *************************************************
+ 
+ Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0D6)               2.058E-02  OP 
+ Nuclear heating of cryogenic components (MW)                             (qnuc/1.0D6)              5.197E-02  OP 
+ AC losses in cryogenic components (MW)                                   (qac/1.0D6)               4.503E-03  OP 
+ Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.591E-02  OP 
+ 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             4.184E-02  OP 
+ Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            1.348E-01  OP 
+ Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
+ Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
+ Electric power for cryogenic plant (MW)                                  (crypmw)                  6.648E+01  OP 
+ 
+ ************************************ Plant Power / Heat Transport Balance ************************************
+ 
+ 
+ Assumptions :
+ 
+ Neutron power multiplication in blanket                                  (emult)                   1.269E+00     
+ Divertor area fraction of whole toroid surface                           (fdiv)                    1.150E-01     
+ H/CD apparatus + diagnostics area fraction                               (fhcd)                    0.000E+00     
+ First wall area fraction                                                 (1-fdiv-fhcd)             8.850E-01     
+ Switch for pumping of primary coolant                                    (primary_pumping)                 2     
+ Mechanical pumping power is calculated for FW and blanket
+ Mechanical pumping power for FW cooling loop including heat exchanger (M (htpmw_fw)                2.518E-01  OP 
+ Mechanical pumping power for blanket cooling loop including heat exchang (htpmw_blkt)              6.212E-02  OP 
+ Mechanical pumping power for FW and blanket cooling loop including heat  (htpmw_fw_blkt)           3.139E-01  OP 
+ Mechanical pumping power for FW (MW)                                     (htpmw_fw)                2.518E-01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              6.212E-02  OP 
+ Mechanical pumping power for divertor (MW)                               (htpmw_div)               1.518E+01  OP 
+ Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              9.365E-02  OP 
+ Electrical pumping power for FW and blanket (MW)                         (htpmwe_fw_blkt)          3.304E-01  OP 
+ Electrical pumping power for shield (MW)                                 (htpmwe_shld)             9.857E-02  OP 
+ Electrical pumping power for divertor (MW)                               (htpmwe_div)              1.598E+01  OP 
+ Total electrical pumping power for primary coolant (MW)                  (htpmw)                   1.000E+02  OP 
+ Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               4.200E-02     
+ Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                4.200E-02     
+ Electrical efficiency of heat transport coolant pumps                    (etahtp)                  9.500E-01     
+ 
+ Plant thermodynamics: options :
+ 
+ Divertor thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
+ Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
+ Power conversion cycle efficiency model: steam Rankine cycle
+ Coolant temperature at turbine inlet (K)                                 (tturb)                     803.000     
+ Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.159  OP 
+ 
+ Power Balance for Reactor (across vacuum vessel boundary) - Detail
+ ------------------------------------------------------------------
+ 
+                                            High-grade             Low-grade              Total
+                                             thermal power (MW)     thermal power (MW)      (MW)
+         First wall:
+                               neutrons            218.83                0.00              218.83
+             charged particle transport             19.35                0.00               19.35
+                              radiation            236.76                0.00              236.76
+                        coolant pumping              0.25                0.00                0.25
+ 
+         Blanket:
+                               neutrons           1518.32                0.00             1518.32
+             charged particle transport              0.00                0.00                0.00
+                              radiation              0.00                0.00                0.00
+                        coolant pumping              0.06                0.00                0.06
+ 
+         Shield:
+                               neutrons              2.23                0.00                2.23
+             charged particle transport              0.00                0.00                0.00
+                              radiation              0.00                0.00                0.00
+                        coolant pumping              0.09                0.00                0.09
+ 
+         Divertor:
+                               neutrons            178.23                0.00              178.23
+             charged particle transport            152.53                0.00              152.53
+                              radiation             30.77                0.00               30.77
+                        coolant pumping             15.18                0.00               15.18
+ 
+         TF coil:
+                               neutrons              0.00                0.05                0.05
+             charged particle transport              0.00                0.00                0.00
+                              radiation              0.00                0.00                0.00
+                        coolant pumping              0.00                0.00                0.00
+ 
+         Losses to H/CD apparatus + diagnostics:
+                               neutrons              0.00                0.00                0.00
+             charged particle transport              0.00                0.00                0.00
+                              radiation              0.00                0.00                0.00
+                        coolant pumping              0.00                0.00                0.00
+ 
+         ----------------------------------------------------------------------------------------
+                                 Totals           2372.61                0.05             2372.66
+ 
+ Total power leaving reactor (across vacuum vessel boundary) (MW)                                    2372.714  OP 
+ 
+ Other secondary thermal power constituents :
+ 
+ Heat removal from cryogenic plant (MW)                                   (crypmw)                     66.482  OP 
+ Heat removal from facilities (MW)                                        (fachtmw)                    58.350  OP 
+ Coolant pumping efficiency losses (MW)                                   (htpsecmw)                   84.408  OP 
+ Heat removal from injection power (MW)                                   (pinjht)                     75.015  OP 
+ Heat removal from tritium plant (MW)                                     (trithtmw)                   15.000  OP 
+ Heat removal from vacuum pumps (MW)                                      (vachtmw)                     0.500  OP 
+ TF coil resistive power (MW)                                             (tfcmw)                       0.000  OP 
+ 
+ Total low-grade thermal power (MW)                                       (psechtmw)                  310.230  OP 
+ Total High-grade thermal power (MW)                                      (pthermmw)                 2372.617  OP 
+ 
+ Number of primary heat exchangers                                        (nphx)                            3  OP 
+ 
+ 
+ Power Balance across separatrix :
+ -------------------------------
+ Only energy deposited in the plasma is included here.
+ Total power loss is scaling power plus core radiation only (iradloss = 1)
+ Transport power from scaling law (MW)                                    (pscalingmw)                301.104  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               118.951  OP 
+ Total (MW)                                                                                           420.056  OP 
+ 
+ Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             367.662  OP 
+ Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw.)                  1.447  OP 
+ Ohmic heating (MW)                                                       (pohmmw.)                     0.947  OP 
+ Injected power deposited in plasma (MW)                                  (pinjmw)                     50.000  OP 
+ Total (MW)                                                                                           420.056  OP 
+ 
+ Power Balance for Reactor - Summary :
+ -------------------------------------
+ Fusion power (MW)                                                        (powfmw.)                  1937.287  OP 
+ Power from energy multiplication in blanket and shield (MW)              (emultmw)                   368.837  OP 
+ Injected power (MW)                                                      (pinjmw.)                    50.000  OP 
+ Ohmic power (MW)                                                         (pohmmw.)                     0.947  OP 
+ Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 15.592  OP 
+ Total (MW)                                                                                          2372.662  OP 
+ 
+ Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            1993.583  OP 
+ Heat extracted from shield  (MW)                                         (pthermshld)                  2.323  OP 
+ Heat extracted from divertor (MW)                                        (pthermdiv)                 376.710  OP 
+ Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
+ Total (MW)                                                                                          2372.617  OP 
+ 
+ Electrical Power Balance :
+ --------------------------
+ Net electric power output(MW)                                            (pnetelmw.)                 500.004  OP 
+ Required Net electric power output(MW)                                   (pnetelin)                  500.000     
+ Electric power for heating and current drive (MW)                        (pinjwp)                    125.015  OP 
+ Electric power for primary coolant pumps (MW)                            (htpmw)                     100.000  OP 
+ Electric power for vacuum pumps (MW)                                     (vachtmw)                     0.500     
+ Electric power for tritium plant (MW)                                    (trithtmw)                   15.000     
+ Electric power for cryoplant (MW)                                        (crypmw)                     66.482  OP 
+ Electric power for TF coils (MW)                                         (tfacpd)                      8.967  OP 
+ Electric power for PF coils (MW)                                         (pfwpmw)                      1.456  OP 
+ All other internal electric power requirements (MW)                      (fachtmw)                    58.350  OP 
+ Total (MW)                                                                                           875.773  OP 
+ 
+ Gross electrical output* (MW)                                            (pgrossmw)                  875.773  OP 
+ (*Power for pumps in secondary circuit already subtracted)
+ 
+ Power balance for power plant :
+ -------------------------------
+ Fusion power (MW)                                                        (powfmw.)                  1937.287  OP 
+ Power from energy multiplication in blanket and shield (MW)              (emultmw)                   368.837  OP 
+ Total (MW)                                                                                          2306.124  OP 
+ 
+ Net electrical output (MW)	                                              (pnetelmw)                  500.004  OP 
+ Heat rejected by main power conversion circuit (MW)                      (rejected_main)            1496.843  OP 
+ Heat rejected by other cooling circuits (MW)                             (psechtmw)                  310.230  OP 
+ Total (MW)                                                                                          2307.077  OP 
+ 
+ 
+ Plant efficiency measures :
+ 
+ Net electric power / total nuclear power (%)                             (pnetelmw/(powfmw+em         21.682  OP 
+ Net electric power / total fusion power (%)                              (pnetelmw/powfmw)            25.809  OP 
+ Gross electric power* / high grade heat (%)                              (etath)                      36.912     
+ (*Power for pumps in secondary circuit already subtracted)
+ Recirculating power fraction                                             (cirpowfr)                    0.429  OP 
+ 
+ Time-dependent power usage
+ 
+         Pulse timings [s]:
+ 
+                                          tramp      tohs     theat     tburn     tqnch    tdwell
+                                          -----      ----     -----     -----     -----    ------
+                               Duration   30.00     30.00     10.00   7200.03     30.00    500.00
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Continous power usage [MWe]:
+ 
+                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
+                                 ------   -----      ----     -----     -----     -----    ------
+                        Primary cooling  100.00    100.00    100.00    100.00    100.00    100.00
+                              Cyroplant   66.48     66.48     66.48     66.48     66.48     66.48
+                                 Vacuum    0.50      0.50      0.50      0.50      0.50      0.50
+                                Tritium   15.00     15.00     15.00     15.00     15.00     15.00
+                                     TF    8.97      8.97      8.97      8.97      8.97      8.97
+                             Facilities   58.35     58.35     58.35     58.35     58.35     58.35
+                                 ------   -----      ----     -----     -----     -----    ------
+                                  Total  249.30    249.30    249.30    249.30    249.30    249.30
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Intermittent power usage [MWe]:
+ 
+                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
+                                 ------   -----      ----     -----     -----     -----    ------
+                                 H & CD    0.00    300.00    300.00    125.02    300.00      0.00
+                                     PF  904.97   -367.36      0.00      2.31  -1091.18      0.00
+                                 ------   -----      ----     -----     -----     -----    ------
+                                  Total  904.97    -67.36    300.00    127.32   -791.18      0.00
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Power production [MWe]:
+ 
+                                          tramp      tohs     theat     tburn     tqnch    tdwell       avg
+                                          -----      ----     -----     -----     -----    ------       ---
+                            Gross power    0.00      0.00      0.00    875.77      0.00      0.00
+                              Net power-1154.27   -181.94   -549.30    499.15    541.88   -249.30    441.02
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+ 
+ ******************************************** Errors and Warnings *********************************************
+ 
+ (See top of file for solver errors and warnings.)
+ PROCESS status flag:   Warning messages
+ PROCESS error status flag                                                (error_status)                    2     
+150     2   CHECK: Lower limit of volume averaged electron temperature (te) has been raised 
+155     2   CHECK: dene used as iteration variable without constraint 81 (neped<ne0)        
+ Final error identifier                                                   (error_id)                      155     
+ 
+ ******************************************* End of PROCESS Output ********************************************
+ 
+ 
+ *************************************** Copy of PROCESS Input Follows ****************************************
+ 
+*****
+
+*--------------------------------------------------*
+
+*---------------Constraint Equations---------------*
+neqns = 22
+icc(1) = 1        * beta (consistency equation)
+icc(2) = 2        * global power balance (consistency equation)
+icc(3) = 5        * density upper limit
+icc(4) = 7        * beam ion density (nbi) (consistency equation)
+icc(5) = 8        * neutron wall load upper limit
+icc(6) = 10       * toroidal field 1/r (consistency equation)
+icc(7) = 11       * radial build (consistency equation)
+icc(8) = 13       * burn time lower limit (pulse)
+icc(9) = 15       * l-h power threshold limit
+icc(10) = 16      * net electric power lower limit
+icc(11) = 17      * radiation fraction upper limit
+icc(12) = 24      * beta upper limit
+icc(13) = 26      * central solenoid eof current density upper limit
+icc(14) = 27      * central solenoid bop current density upper limit
+icc(15) = 30      * injection power upper limit
+icc(16) = 31      * tf coil case stress upper limit (sctf)
+icc(17) = 32      * tf coil conduit stress upper limit (sctf)
+icc(18) = 33      * i_op / i_critical (tf coil) (sctf)
+icc(19) = 34      * dump voltage upper limit (sctf)
+icc(20) = 35      * j_winding pack/j_protection upper limit (sctf)
+icc(21) = 52      * tritium breeding ratio lower limit
+icc(22) = 56      * pseparatrix/rmajor upper limit
+
+*---------------Iteration Variables----------------*
+nvar = 39
+ixc(1) = 2        * bt * Toroidal field on axis (t) (iteration variable 2)
+boundl(2) = 0.01
+boundu(2) = 10.0
+
+ixc(2) = 3        * rmajor * Plasma major radius (m) (iteration variable 3)
+boundl(3) = 8.0
+boundu(3) = 9.0
+
+ixc(3) = 4        * te * Volume averaged electron temperature (kev)
+boundl(4) = 5.0
+boundu(4) = 150.0
+
+ixc(4) = 5        * beta * Total plasma beta (iteration variable 5)
+boundl(5) = 0.001
+boundu(5) = 1.0
+
+ixc(5) = 6        * dene * Electron density (/m3) (iteration variable 6)
+boundl(6) = 7e+19
+boundu(6) = 1e+21
+
+ixc(6) = 7        * rnbeam * Hot beam density / n_e (iteration variable 7)
+boundl(7) = 1e-06
+boundu(7) = 1.0
+
+ixc(7) = 9        * fdene * F-value for density limit
+boundl(9) = 0.001
+boundu(9) = 1.2
+
+ixc(8) = 10       * hfact * H factor on energy confinement times (iteration variable 10)
+boundl(10) = 0.1
+boundu(10) = 1.1
+
+ixc(9) = 12       * oacdcp * Overall current density in tf coil inboard legs (a/m2)
+boundl(12) = 100000.0
+boundu(12) = 150000000.0
+
+ixc(10) = 13      * tfcth * Inboard tf coil thickness; (centrepost for st) (m)
+boundl(13) = 1.05
+boundu(13) = 5.0
+
+ixc(11) = 14      * fwalld * F-value for maximum wall load
+boundl(14) = 0.001
+boundu(14) = 1.0
+
+ixc(12) = 16      * ohcth * Central solenoid thickness (m)
+boundl(16) = 0.2
+boundu(16) =2.0
+
+ixc(13) = 18      * q * Safety factor 'near' plasma edge (iteration variable 18)
+boundl(18) = 3.0
+boundu(18) = 100.0
+
+ixc(14) = 21      * ftburn * F-value for minimum burn time
+boundl(21) = 0.001
+boundu(21) = 1.0
+
+ixc(15) = 28      * fradpwr * F-value for core radiation power limit
+boundl(28) = 0.001
+boundu(28) = 0.99
+
+ixc(16) = 29      * bore * Central solenoid inboard radius (m)
+boundl(29) = 0.1
+boundu(29) = 10.0
+
+ixc(17) = 36      * fbetatry * F-value for beta limit
+boundl(36) = 0.001
+boundu(36) = 1.0
+
+ixc(18) = 37      * coheof * Central solenoid overall current density at end of flat-top (a/m2)
+boundl(37) = 100000.0
+boundu(37) = 100000000.0
+
+ixc(19) = 38      * fjohc * F-value for central solenoid current at end-of-flattop
+boundl(38) = 0.01
+boundu(38) = 0.25
+
+ixc(20) = 39      * fjohc0 * F-value for central solenoid current at beginning of pulse
+boundl(39) = 0.001
+boundu(39) = 0.25
+
+ixc(21) = 41      * fcohbop * Ratio of central solenoid overall current density at
+boundl(41) = 0.001
+boundu(41) = 1.0
+
+ixc(22) = 42      * gapoh * Gap between central solenoid and tf coil
+boundl(42) = 0.05
+boundu(42) = 0.1
+
+ixc(23) = 44      * fvsbrnni * Fraction of the plasma current produced by
+boundl(44) = 0.001
+boundu(44) = 1.0
+
+ixc(24) = 48      * fstrcase * F-value for tf coil case stress
+boundl(48) = 0.001
+boundu(48) = 1.0
+
+ixc(25) = 49      * fstrcond * F-value for tf coil conduit stress
+boundl(49) = 0.001
+boundu(49) = 1.0
+
+ixc(26) = 50      * fiooic * F-value for tf coil operating current / critical
+boundl(50) = 0.001
+boundu(50) = 0.5
+
+ixc(27) = 51      * fvdump * F-value for dump voltage
+boundl(51) = 0.001
+boundu(51) = 1.0
+
+ixc(28) = 53      * fjprot * F-value for tf coil winding pack current density
+boundl(53) = 0.001
+boundu(53) = 1.0
+
+ixc(29) = 56      * tdmptf * Dump time for tf coil (s)
+boundl(56) = 10.0
+boundu(56) = 1000000.0
+
+ixc(30) = 57      * thkcas * Inboard tf coil case outer (non-plasma side) thickness (m)
+boundl(57) = 0.05
+boundu(57) = 1.0
+
+ixc(31) = 58      * thwcndut * Tf coil conduit case thickness (m)
+boundl(58) = 0.004
+boundu(58) = 1.0
+
+ixc(32) = 59      * fcutfsu * Copper fraction of cable conductor (tf coils)
+boundl(59) = 0.001
+boundu(59) = 1.0
+
+ixc(33) = 61      * gapds * Gap between inboard vacuum vessel and tf coil (m)
+boundl(61) = 0.12
+boundu(61) = 10.0
+
+ixc(34) = 89      * ftbr * F-value for minimum tritium breeding ratio
+boundl(89) = 0.001
+boundu(89) = 1.0
+
+ixc(35) = 97      * fpsepr * F-value for maximum psep/r limit
+boundl(97) = 0.001
+boundu(97) = 1.0
+
+ixc(36) = 98      * li6enrich * Lithium-6 enrichment of breeding material (%)
+boundl(98) = 7.4
+boundu(98) = 100.0
+
+ixc(37) = 102     * fimpvar * Impurity fraction to be used as fimp(impvar)
+boundl(102) = 1e-06
+boundu(102) = 0.01
+
+ixc(38) = 103     * flhthresh * F-value for l-h power threshold
+boundl(103) = 1.0
+boundu(103) = 1000000.0
+
+ixc(39) = 108     * breeder_f * Volume ratio* li4sio4/(be12ti+li4sio4) (iteration variable 108)
+boundl(108) = 0.001
+boundu(108) = 1.0
+
+*-----------------Build Variables------------------*
+bore = 2.354     * Central solenoid inboard radius (m)
+ddwex = 0.15     * Cryostat thickness (m)
+ddwi = 0.32      * Vacuum vessel thickness (tf coil / shield) (m)
+gapds = 0.12     * Gap between inboard vacuum vessel and tf coil (m)
+gapoh = 0.05     * Gap between central solenoid and tf coil
+gapomin = 0.2    * Minimum gap between outboard vacuum vessel and tf coil (m)
+ohcth = 0.82414  * Central solenoid thickness (m)
+scrapli = 0.225  * Gap between plasma and first wall; inboard side (m)
+scraplo = 0.225  * Gap between plasma and first wall; outboard side (m)
+shldith = 0.3    * Inboard shield thickness (m)
+shldoth = 0.8    * Outboard shield thickness (m)
+shldtth = 0.3    * Upper/lower shield thickness (m);
+tfcth = 0.91859  * Inboard tf coil thickness; (centrepost for st) (m)
+vgap2 = 0.12     * Vertical gap between vacuum vessel and tf coil (m)
+vgap = 1.6     * Vertical gap between x-point and divertor (m)
+
+
+*---------------Buildings Variables----------------*
+
+
+*---------------Constraint Variables---------------*
+bmxlim = 14.0    * Maximum peak toroidal field (t)
+fbetatry = 0.5308  * F-value for beta limit
+fdene = 1.0457   * F-value for density limit
+fhldiv = 2.0     * F-value for divertor heat load
+fjohc = 0.25     * F-value for central solenoid current at end-of-flattop
+fjohc0 = 0.25    * F-value for central solenoid current at beginning of pulse
+flhthresh = 1.398  * F-value for l-h power threshold
+fpeakb = 0.9229  * F-value for maximum toroidal field
+fradpwr = 0.5822  * F-value for core radiation power limit
+fstrcond = 0.8256  * F-value for tf coil conduit stress
+fwalld = 0.13024  * F-value for maximum wall load
+pnetelin = 500.0  * Required net electric power (mw)
+pseprmax = 17.0  * Maximum ratio of power crossing the separatrix to
+tbrnmn = 7200.0  * Minimum burn time (s)
+walalw = 8.0     * Allowable wall-load (mw/m2)
+
+
+*------------------Cost Variables------------------*
+abktflnc = 15.0  * Allowable first wall/blanket neutron
+adivflnc = 20.0  * Allowable divertor heat fluence (mw-yr/m2)
+cfactr = 0.5     * Total plant availability fraction;
+iavail = 0       * Switch for plant availability model * use input value for cfactr;
+avail_min = 0.45  * Minimum availability (constraint equation 61)
+div_nref = 300000  * Reference value for cycle cycle life of divertor
+div_nu = 800000  * The cycle when the divertor fails with 100% probability
+fwbs_nref = 300000  * Reference value for cycle life of blanket
+fwbs_nu = 800000  * The cycle when the blanket fails with 100% probability
+tlife = 40.0     * Plant life (years)
+
+
+*-------------Current Drive Variables--------------*
+bscfmax = 0.99   * Maximum fraction of plasma current from bootstrap;
+etanbi = 0.4     * Neutral beam wall plug to injector efficiency
+frbeam = 1.0     * R_tangential / r_major for neutral beam injection
+pinjalw = 50.0   * Maximum allowable value for injected power (mw)
+
+
+*----------------Divertor Variables----------------*
+anginc = 0.175   * Angle of incidence of field line on plate (rad)
+divdum = 1       * Switch for divertor zeff model* 0=calc; 1=input
+divfix = 0.621   * Divertor structure vertical thickness (m)
+hldivlim = 10.0  * Heat load limit (mw/m2)
+ksic = 1.4       * Power fraction for outboard double-null scrape-off plasma
+prn1 = 0.4       * N-scrape-off / n-average plasma;
+zeffdiv = 3.5    * Zeff in the divertor region (if divdum /= 0)
+
+
+*------------------Fwbs Variables------------------*
+iblanket = 3     * Switch for blanket model * ccfe hcpb model with tritium breeding ratio calculation
+li6enrich = 83.463014  * Lithium-6 enrichment of breeding material (%)
+breeder_f = 0.510455  * Volume ratio* li4sio4/(be12ti+li4sio4) (iteration variable 108)
+
+vfpblkt = 0.1              * He purge void fraction of blanket by volume
+iblanket_thickness = 1  * Blanket thickness switch * thin    0;53 m inboard; 0;91 m outboard
+secondary_cycle = 3  * Switch for thermodynamic model of power conversion cycle * steam rankine cycle;
+afwi = 0.006     * Inner radius of inboard first wall/blanket coolant channels (m)
+afwo = 0.006     * Inner radius of outboard first wall/blanket coolant channels (m)
+nblktmodto = 54  * Number of outboard blanket modules in toroidal direction
+nblktmodti = 36  * Number of inboard blanket modules in toroidal direction
+tfwmatmax = 1100.0  * Maximum temperature of first wall material (k) (secondary_cycle>1)
+htpmw_min = 100.0   * Minimum total electrical power for primary coolant pumps  (MW)
+tbrmin = 1.15       * minimum tritium breeding ratio (constraint equation 52)
+
+*-----------------Global Variables-----------------*
+runtitle = demo 1 model for cost paper  * Short descriptive title for the run
+verbose = 0      * Switch for turning on/off diagnostic messages * turn on diagnostics
+
+
+*-------------Heat Transport Variables-------------*
+etath = 0.375    * Thermal to electric conversion efficiency; input if ipowerflow=0
+
+fpumpblkt = 0.042  * Fraction of total blanket thermal power required
+fpumpdiv = 0.042  * Fraction of total divertor thermal power required
+fpumpfw = 0.042  * Fraction of total first wall thermal power required
+fpumpshld = 0.042  * Fraction of total shield thermal power required
+ipowerflow = 0   * Switch for power flow model * pre-2014 version;
+
+
+*------------------Ife Variables-------------------*
+
+
+*------------Impurity Radiation Module-------------*
+coreradius = 0.6  * Normalised radius defining the 'core' region
+fimp = 1.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.00044, 5e-05  * Impurity number density fractions relative to
+fimpvar = 0.00023564  * Impurity fraction to be used as fimp(impvar)
+impvar = 13      * Fimp element value to be varied if iteration
+
+
+*---------------------Numerics---------------------*
+ioptimz = 1      * Code operation switch * for no optimisation; hybrd only;
+minmax = 7       * Switch for figure-of-merit * major radius
+epsvmc = 1.0e-4   * Error tolerance for vmcon
+
+
+*----------------Pf Power Variables----------------*
+
+
+*-----------------Pfcoil Variables-----------------*
+coheof = 13465000.0  * Central solenoid overall current density at end of flat-top (a/m2)
+cptdin = 42200.0, 42200.0, 42200.0, 42200.0, 43000.0, 43000.0, 43000.0, 43000.0  * Peak current per turn input for pf coil i (a)
+fcohbop = 0.9359  * Ratio of central solenoid overall current density at
+ipfloc = 2, 2, 3, 3  * Switch for locating scheme of pf coil group i
+isumatpf = 3     * Switch for superconductor material in pf coils * nbti;
+ncls = 1, 1, 2, 2  * Number of pf coils in group j
+ngrp = 4         * Number of groups of pf coils;
+ohhghf = 0.9     * Central solenoid height / tf coil internal height
+rjconpf = 11000000.0, 11000000.0, 6000000.0, 6000000.0, 8000000.0, 8000000.0, 8000000.0, 8000000.0  * Average winding pack current
+rpf2 = -1.825    * Offset (m) of radial position of ipfloc=2 pf coils
+
+zref = 3.6, 1.2, 1.0, 2.8, 1.0, 1.0, 1.0, 1.0  * Pf coil vertical positioning adjuster
+
+
+*----------------Physics Variables-----------------*
+alphaj = 2.0     * Current profile index;
+alphan = 1.0     * Density profile index
+alphat = 1.0     * Temperature profile index
+aspect = 3.1     * Aspect ratio (iteration variable 1)
+beta = 0.035  * Total plasma beta (iteration variable 5)
+bt = 5.3829      * Toroidal field on axis (t) (iteration variable 2)
+dene = 8.0e+19  * Electron density (/m3) (iteration variable 6)
+dnbeta = 3.0     * (troyon-like) coefficient for beta scaling;
+fkzohm = 1.0245  * Zohm elongation scaling adjustment factor (ishape=2; 3)
+fvsbrnni = 0.473  * Fraction of the plasma current produced by
+gamma = 0.3      * Ejima coefficient for resistive startup v-s formula
+hfact = 1.1      * H factor on energy confinement times (iteration variable 10)
+ibss = 4         * Switch for bootstrap current scaling * for sauter et al scaling
+iculbl = 1       * Switch for beta limit scaling * apply limit to thermal beta;
+*impc = 0.0       * Carbon impurity multiplier (imprad_model=0 only)
+*impo = 0.0       * Oxygen impurity multiplier (imprad_model=0 only)
+iscdens = 1      * Switch for pedestal profiles * set pedestal-top density as fgwped * greenwald density limit
+nesep = 2e+19    * Electron density at separatrix (/m3) (ipedestal=1)
+neped = 5.75E+19 * Electron density at pedestal (/m3) (ipedestal=1)
+rhopedn = 0.94   * R/a of density pedestal (ipedestal=1)
+rhopedt = 0.94   * R/a of temperature pedestal (ipedestal=1)
+teped = 5.5      * Electron temperature of pedestal (kev) (ipedestal=1)
+tesep = 0.1      * Electron temperature at separatrix (kev) (ipedestal=1)
+ishape = 2       * Switch for plasma cross-sectional shape calculation * set kappa to the natural elongation value (zohm iter scal
+kappa = 1.7      * Plasma separatrix elongation (calculated if ishape > 0)
+q = 3.2267       * Safety factor 'near' plasma edge (iteration variable 18)
+tauratio = 5.0   * Ratio of he and pellet particle confinement times
+rmajor = 8.7  * Plasma major radius (m) (iteration variable 3)
+rnbeam = 0.0020723  * Hot beam density / n_e (iteration variable 7)
+te = 12.6      * Volume averaged electron temperature (kev)
+triang = 0.5     * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
+*zfear = 1        * High-z impurity switch; 0=iron; 1=argon
+
+
+*-----------------Pulse Variables------------------*
+lpulse = 1       * Switch for reactor model * pulsed operation
+
+
+*------------------Rfp Variables-------------------*
+
+
+*-------------------Scan Module--------------------*
+isweep = 1       * Number of scan points to calculate
+nsweep = 3       * Switch denoting quantity to scan * pnetelin
+sweep = 500.0    * Actual values to use in scan
+
+
+*--------------Stellarator Variables---------------*
+
+
+*-----------------Tfcoil Variables-----------------*
+casths = 0.1     * Inboard tf coil sidewall case thickness (m)
+cpttf = 65000.0  * Tf coil current per turn (a)
+alstrtf = 5.5D8  * allowable von Mises stress in TF coil structural material (Pa)
+alstroh = 5.5D8  * allowable von Mises stress in CS structural material (Pa)
+fcutfsu = 0.6667  * Copper fraction of cable conductor (tf coils)
+oacdcp = 10547000.0  * Overall current density in tf coil inboard legs (a/m2)
+ripmax = 0.6     * Maximum allowable toroidal field ripple amplitude
+tdmptf = 12.957  * Dump time for tf coil (s)
+n_tf = 18.0      * Number of tf coils (default = 50 for stellarators)
+tftmp = 4.75     * Peak helium coolant temperature in tf coils and pf coils (k)
+thicndut = 0.002  * Conduit insulation thickness (m)
+thkcas = 0.49102  * Inboard tf coil case outer (non-plasma side) thickness (m)
+thwcndut = 0.004  * Tf coil conduit case thickness (m)
+tinstf = 0.013   * Ground wall insulation thickness (m)
+tmargmin = 1.7   * Minimum allowable temperature margin (cs and tf coils) (k)
+vdalw = 12.65    * Max voltage across tf coil during quench (kv)
+vftf = 0.33      * Coolant fraction of tf coil leg (i_tf_sup=0)
+
+
+*-----------------Times Variables------------------*
+tdwell = 500.0   * Time between pulses in a pulsed reactor (s)
+
+
+*-----------------Vacuum Variables-----------------*

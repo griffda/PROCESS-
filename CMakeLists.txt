@@ -158,57 +158,13 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 # Set library path
 set(CMAKE_LIBRARY_PATH /usr/lib)
 
+# Check that pip3 is installed in order to install Ford
+find_program(PIP3 NAMES pip3 PATHS ENV PATH NO_DEFAULT_PATH)
+if(NOT PIP3)
+  message(FATAL_ERROR "Can't find pip3. Please install pip3 and retry.")
+endif()
+
 # Set build targets
-
-# Creating autodoc
-add_custom_target(autodoc
-COMMAND ${FORTRAN} -o autodoc autodoc.f90
-WORKING_DIRECTORY ${FORT_SOURCE_DIR}
-  DEPENDS ${FORT_SOURCE_DIR}/autodoc.f90
-)
-
-# Create vardes HTML documentation
-add_custom_target(vardes
-  COMMAND cat global_variables.f90 iteration_variables.f90 numerics.f90 impurity_radiation.f90 scan.f90 error_handlings.f90 | ./autodoc
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/documentation/html
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/autodoc_data.mod
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/calltree_data.mod
-  COMMAND ${MOVE_FILE} *.html ${HTML_DIR}
-  COMMENT "Copying html files"
-  DEPENDS autodoc
-  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
-)
-
-# Create all HTML documentation
-add_custom_target(html
-  COMMAND cat *.f90 | ./autodoc
-  COMMAND ${MOVE_FILE} vardes.html vardes_full.html
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/documentation/html
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/autodoc_data.mod
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/calltree_data.mod
-  COMMAND ${MOVE_FILE} *.html ${HTML_DIR}
-  DEPENDS autodoc
-  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
-)
-
-# Create the PROCESS userguide PDF from LaTeX
-add_custom_target(userguide
-  COMMAND pandoc --standalone ${HTML_DIR}/vardes.html --output ${HTML_DIR}/vardes.tex
-  COMMAND pdflatex -halt-on-error ${HTML_DIR}/vardes.tex > ${DOC_DIR}/vardes.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/vardes.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/process.tex > ${DOC_DIR}/userguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/userguide.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/process.tex > ${DOC_DIR}/userguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/userguide.log"
-  COMMAND ${MOVE_FILE} process.pdf process.log pdf
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.aux
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.out
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.lof
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.log
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.lot
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.toc
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/vardes.out
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/vardes.aux
-  DEPENDS vardes ${DOC_DIR}/process.tex
-  WORKING_DIRECTORY ${DOC_DIR}
-)
 
 # Create the PROCESS developer guide PDF from LaTeX
 add_custom_target(developerguide
@@ -280,21 +236,6 @@ add_custom_target(tfdoc
   WORKING_DIRECTORY ${DOC_DIR}
 )
 
-# Create all PROCESS documentation (HTML and PDF LaTeX)
-add_custom_target(doc
-  COMMAND pwd
-  COMMENT "Creating all documentation files"
-  DEPENDS vardes html userguide developerguide utilitiesdoc optsolverdoc tfdoc
-  WORKING_DIRECTORY ${DOC_DIR}
-)
-
-# Creates all PROCESS documentation (HTML and PDF LaTeX) and the Python dictionaries
-add_custom_target(all-builds
-  COMMAND pwd
-  COMMENT "Creating all documentation files"
-  DEPENDS doc dicts
-)
-
 # Create test files
 add_custom_target(test-builds
   COMMAND make tests
@@ -316,15 +257,19 @@ set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
   ${UTILITIES_DIR}/processgui/dicts/gui_dicts.py
 )
 
-# Create the Python dictionaries from FORTRAN source
+# Create the Python dictionaries from FORTRAN source using FORD
 add_custom_target(dicts
-  COMMAND ${CMAKE_COMMAND} -E touch process_io_lib/process_dicts.py
-  COMMAND mv process_io_lib/process_dicts.py process_io_lib/process_dicts.py_prev
-  COMMAND echo ${UTILITIES_DIR}
-  COMMAND echo "Creating Python dictionaries... warnings are usually ignorable!"
-  COMMAND python create_dicts.py > process_io_lib/process_dicts.py
-  COMMAND chmod 755 process_io_lib/process_dicts.py
-  WORKING_DIRECTORY ${UTILITIES_DIR}
+  # Install Process-customised FORD
+  COMMAND rm -rf ford
+  COMMAND git clone https://github.com/jonMaddockUkaea/ford.git ford
+  COMMAND pip3 install ford/ --user
+  # On Mac, ~/.local/bin is not in PATH, so running Ford using
+  # "ford" command fails. Run using python ford.py instead
+  # Add the utilities dir to the PYTHONPATH, so FORD can run create_dicts.py
+  # Then run FORD on a "fast" md file, which doesn't make graphs or a search index
+  # These are wanted for making docs, but not when making dicts quickly
+  COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${UTILITIES_DIR}" python3 ford/ford.py ${DOC_DIR}/ford/index_fast.md
+  WORKING_DIRECTORY ${PROCESS_LIB_DIR}
   DEPENDS ${CMAKE_SOURCE_DIR}/root.dir
   VERBATIM
 )

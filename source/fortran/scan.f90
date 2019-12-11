@@ -2,42 +2,12 @@
 
 module scan_module
 
-  !+ad_name  scan_module
-  !+ad_summ  Module containing routines to perform a parameter scan
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  scan
-  !+ad_args  None
-  !+ad_desc  This module contains routines to perform a parameter scan
-  !+ad_desc  over a range of values of a particular scanning variable.
-  !+ad_prob  None
-  !+ad_call  constraint_variables
-  !+ad_call  cost_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  global_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  impurity_radiation_module
-  !+ad_call  numerics
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  pf_power_variables
-  !+ad_call  process_output
-  !+ad_call  tfcoil_variables
-  !+ad_hist  09/10/12 PJK Initial version of module
-  !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  28/11/13 PJK Added scan variable 27: tbrmin
-  !+ad_hist  12/02/14 PJK Added scan variable 28: bt
-  !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
-  !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_hist  22/07/14 PJK Raised ipnscns from 50 to 200
-  !+ad_hist  06/08/15 MDK Added taulimit (31)
-  !+ad_hist  14/11/16 JM  Added epsvmc (32)
-  !+ad_hist  10/03/17 MDK Added ttarget (33)
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing routines to perform a parameter scan
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! None
+  !! This module contains routines to perform a parameter scan
+  !! over a range of values of a particular scanning variable.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -64,112 +34,100 @@ module scan_module
 
   public
 
-  !+ad_vars  ipnscns /1000/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 1000
+  !! ipnscns /1000/ FIX : maximum number of scan points
 
-  !+ad_vars  ipnscnv /45/ FIX : number of available scan variables
   integer, parameter :: ipnscnv = 53
+  !! ipnscnv /45/ FIX : number of available scan variables
 
-  !+ad_vars  scan_dim /1/ : 1-D or 2-D scan switch (1=1D, 2=2D)
   integer :: scan_dim = 1
+  !! scan_dim /1/ : 1-D or 2-D scan switch (1=1D, 2=2D)
 
-  !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
+  !! isweep /0/ : number of scan points to calculate
 
-  !+ad_vars  isweep_2 /0/ : number of 2D scan points to calculate
   integer :: isweep_2 = 0
+  !! isweep_2 /0/ : number of 2D scan points to calculate
 
-  !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
-  !+ad_varc          <LI> 1  aspect
-  !+ad_varc          <LI> 2  hldivlim
-  !+ad_varc          <LI> 3  pnetelin
-  !+ad_varc          <LI> 4  hfact
-  !+ad_varc          <LI> 5  oacdcp
-  !+ad_varc          <LI> 6  walalw
-  !+ad_varc          <LI> 7  beamfus0
-  !+ad_varc          <LI> 8  fqval
-  !+ad_varc          <LI> 9  te
-  !+ad_varc          <LI> 10 boundu(15: fvs)
-  !+ad_varc          <LI> 11 dnbeta
-  !+ad_varc          <LI> 12 bscfmax (use negative values only)
-  !+ad_varc          <LI> 13 boundu(10: hfact)
-  !+ad_varc          <LI> 14 fiooic
-  !+ad_varc          <LI> 15 fjprot
-  !+ad_varc          <LI> 16 rmajor
-  !+ad_varc          <LI> 17 bmxlim
-  !+ad_varc          <LI> 18 gammax
-  !+ad_varc          <LI> 19 boundl(16: ohcth)
-  !+ad_varc          <LI> 20 tbrnmn
-  !+ad_varc          <LI> 21 not used
-  !+ad_varc          <LI> 22 cfactr (N.B. requires iavail=0)
-  !+ad_varc          <LI> 23 boundu(72: fipir)
-  !+ad_varc          <LI> 24 powfmax
-  !+ad_varc          <LI> 25 kappa
-  !+ad_varc          <LI> 26 triang
-  !+ad_varc          <LI> 27 tbrmin (for blktmodel > 0 only)
-  !+ad_varc          <LI> 28 bt
-  !+ad_varc          <LI> 29 coreradius
-  !+ad_varc          <LI> 30 fimpvar
-  !+ad_varc          <LI> 31 taulimit
-  !+ad_varc          <LI> 32 epsvmc
-  !+ad_varc          <LI> 33 ttarget
-  !+ad_varc          <LI> 34 qtargettotal
-  !+ad_varc          <LI> 35 lambda_q_omp
-  !+ad_varc          <LI> 36 lambda_target
-  !+ad_varc          <LI> 37 lcon_factor
-  !+ad_varc          <LI> 38 Neon upper limit
-  !+ad_varc          <LI> 39 Argon upper limit
-  !+ad_varc          <LI> 40 Xenon upper limit
-  !+ad_varc          <LI> 41 blnkoth
-  !+ad_varc          <LI> 42 Argon fraction fimp(9)
-  !+ad_varc          <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum
-  !+ad_varc          <LI> 44 Allowable tresca stress in tf coil structural material
-  !+ad_varc          <LI> 45 Minimum allowable temperature margin ; tf coils
-  !+ad_varc          <LI> 46 boundu(150) fgwsep
-  !+ad_varc          <LI> 47 impurity_enrichment(9) Argon impurity enrichment
-  !+ad_varc          <LI> 48 TF coil - n_pancake (integer turn winding pack)
-  !+ad_varc          <LI> 49 TF coil - n_layer (integer turn winding pack)
-  !+ad_varc          <LI> 50 Xenon fraction fimp(13)
-  !+ad_varc          <LI> 51 Power fraction to lower DN Divertor ftar
-  !+ad_varc          <LI> 52 SoL radiation fraction </UL>
   integer :: nsweep = 1
+  !! nsweep /1/ : switch denoting quantity to scan:<UL>
+  !!         <LI> 1  aspect
+  !!         <LI> 2  hldivlim
+  !!         <LI> 3  pnetelin
+  !!         <LI> 4  hfact
+  !!         <LI> 5  oacdcp
+  !!         <LI> 6  walalw
+  !!         <LI> 7  beamfus0
+  !!         <LI> 8  fqval
+  !!         <LI> 9  te
+  !!         <LI> 10 boundu(15: fvs)
+  !!         <LI> 11 dnbeta
+  !!         <LI> 12 bscfmax (use negative values only)
+  !!         <LI> 13 boundu(10: hfact)
+  !!         <LI> 14 fiooic
+  !!         <LI> 15 fjprot
+  !!         <LI> 16 rmajor
+  !!         <LI> 17 bmxlim
+  !!         <LI> 18 gammax
+  !!         <LI> 19 boundl(16: ohcth)
+  !!         <LI> 20 tbrnmn
+  !!         <LI> 21 not used
+  !!         <LI> 22 cfactr (N.B. requires iavail=0)
+  !!         <LI> 23 boundu(72: fipir)
+  !!         <LI> 24 powfmax
+  !!         <LI> 25 kappa
+  !!         <LI> 26 triang
+  !!         <LI> 27 tbrmin (for blktmodel > 0 only)
+  !!         <LI> 28 bt
+  !!         <LI> 29 coreradius
+  !!         <LI> 30 fimpvar
+  !!         <LI> 31 taulimit
+  !!         <LI> 32 epsvmc
+  !!         <LI> 33 ttarget
+  !!         <LI> 34 qtargettotal
+  !!         <LI> 35 lambda_q_omp
+  !!         <LI> 36 lambda_target
+  !!         <LI> 37 lcon_factor
+  !!         <LI> 38 Neon upper limit
+  !!         <LI> 39 Argon upper limit
+  !!         <LI> 40 Xenon upper limit
+  !!         <LI> 41 blnkoth
+  !!         <LI> 42 Argon fraction fimp(9)
+  !!         <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum
+  !!         <LI> 44 Allowable tresca stress in tf coil structural material
+  !!         <LI> 45 Minimum allowable temperature margin ; tf coils
+  !!         <LI> 46 boundu(150) fgwsep
+  !!         <LI> 47 impurity_enrichment(9) Argon impurity enrichment
+  !!         <LI> 48 TF coil - n_pancake (integer turn winding pack)
+  !!         <LI> 49 TF coil - n_layer (integer turn winding pack)
+  !!         <LI> 50 Xenon fraction fimp(13)
+  !!         <LI> 51 Power fraction to lower DN Divertor ftar
+  !!         <LI> 52 SoL radiation fraction </UL>
 
-  !+ad_vars  nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
   integer :: nsweep_2 = 3
+  !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
 
-  !+ad_vars  sweep(ipnscns) /../: actual values to use in scan
   real(kind(1.0D0)), dimension(ipnscns) :: sweep = 0.0D0
+  !! sweep(ipnscns) /../: actual values to use in scan
 
-  !+ad_vars  sweep_2(ipnscns) /../: actual values to use in 2D scan
   real(kind(1.0D0)), dimension(ipnscns) :: sweep_2 = 0.0D0
+  !! sweep_2(ipnscns) /../: actual values to use in 2D scan
 
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine scan
-    !+ad_name  scan
-    !+ad_summ  Routine to call the optimisation routine VMCON over
-    !+ad_summ  a range of values of one of the variables
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calls the optimisation routine VMCON
-    !+ad_desc  a number of times, by performing a sweep over a range of
-    !+ad_desc  values of a particular variable.
-    !+ad_desc  <P>A number of output variable values are written to the
-    !+ad_desc  <CODE>PLOT.DAT</CODE> file at each scan point, for
-    !+ad_desc  plotting or other post-processing purposes.
-    !+ad_prob  None
-    !+ad_call  doopt
-    !+ad_call  final
-    !+ad_call  oblnkl
-    !+ad_call  ovarin
-    !+ad_call  ostars
-    !+ad_call  report_error
-    !+ad_hist  06/08/15 MDK Use 1p format: 3.0000E+01 instead of 0.3000E+01
-    !+ad_stat  Okay
+    !! Routine to call the optimisation routine VMCON over
+    !! a range of values of one of the variables
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine calls the optimisation routine VMCON
+    !! a number of times, by performing a sweep over a range of
+    !! values of a particular variable.
+    !! <P>A number of output variable values are written to the
+    !! <CODE>PLOT.DAT</CODE> file at each scan point, for
+    !! plotting or other post-processing purposes.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -203,10 +161,8 @@ contains
   end subroutine scan
 
   subroutine scan_1d
-    !+ad_name  scan_1d
-    !+ad_summ  Routine to call 1-D scan
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, UKAEA, Culham Science Centre
+    !! Routine to call 1-D scan
+    !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
@@ -409,7 +365,7 @@ contains
         outvar(54,iscan) = fcutfsu
         outvar(55,iscan) = (wwp1+wwp2)*thkwp
         outvar(56,iscan) = acond
-        outvar(57,iscan) = tfareain/tfno
+        outvar(57,iscan) = tfareain/n_tf
         outvar(58,iscan) = taulimit
         outvar(59,iscan) = tesep
         outvar(60,iscan) = neomp
@@ -452,10 +408,8 @@ contains
   end subroutine scan_1d
 
   subroutine scan_2d
-    !+ad_name  scan_2d
-    !+ad_summ  Routine to call 2-D scan
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, UKAEA, Culham Science Centre
+    !! Routine to call 2-D scan
+    !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
@@ -674,7 +628,7 @@ contains
             outvar(54,iscan) = fcutfsu
             outvar(55,iscan) = (wwp1+wwp2)*thkwp
             outvar(56,iscan) = acond
-            outvar(57,iscan) = tfareain/tfno
+            outvar(57,iscan) = tfareain/n_tf
             outvar(58,iscan) = taulimit
             outvar(59,iscan) = tesep
             outvar(60,iscan) = neomp
@@ -724,10 +678,8 @@ contains
   end subroutine scan_2d
 
   subroutine scan_select(nwp, swp, iscn, vlab, xlab)
-    !+ad_name  scan_select
-    !+ad_summ  Routine to select first scan case
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, UKAEA, Culham Science Centre
+    !! Routine to select first scan case
+    !! author: J Morris, UKAEA, Culham Science Centre
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
@@ -914,51 +866,11 @@ contains
 
   subroutine doopt(ifail)
 
-  !+ad_name  doopt
-  !+ad_summ  Routine to call the optimising equation solver
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  ifail   : output integer : error flag
-  !+ad_desc  This routine calls the optimising equation solver.
-  !+ad_prob  None
-  !+ad_call  constraints
-  !+ad_call  error_handling
-  !+ad_call  function_evaluator
-  !+ad_call  numerics
-  !+ad_call  process_output
-  !+ad_call  boundxc
-  !+ad_call  constraint_eqns
-  !+ad_call  int_to_string3
-  !+ad_call  loadxc
-  !+ad_call  oblnkl
-  !+ad_call  ocmmnt
-  !+ad_call  oheadr
-  !+ad_call  optimiz
-  !+ad_call  osubhd
-  !+ad_call  ovarin
-  !+ad_call  ovarre
-  !+ad_call  report_error
-  !+ad_call  verror
-  !+ad_hist  03/10/96 PJK Initial upgraded version
-  !+ad_hist  08/10/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  10/10/12 PJK Modified to use new numerics and function_evaluator
-  !+ad_hisc               modules
-  !+ad_hist  31/01/13 PJK Added warning about high residuals if the convergence
-  !+ad_hisc               is suspicious
-  !+ad_hist  04/07/13 PJK Modified wording for variables at/beyond their bounds
-  !+ad_hist  28/11/13 PJK Modified format lines for longer lablxc length
-  !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
-  !+ad_hist  27/02/14 PJK Added nineqns usage; minor output modifications
-  !+ad_hist  13/03/14 PJK Added numerical state information to mfile
-  !+ad_hist  09/07/14 PJK Added error reporting
-  !+ad_hist  09/07/14 PJK Added range-normalised iteration variable values to mfile
-  !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
-  !+ad_hisc               in physical units
-  !+ad_hist  19/08/14 PJK Added nvar, neqns to output, constraint residues to mfile
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Routine to call the optimising equation solver
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! ifail   : output integer : error flag
+  !! This routine calls the optimising equation solver.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

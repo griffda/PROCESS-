@@ -14,15 +14,22 @@ import sys
 import scipy
 import argparse
 import process_io_lib.mfile as mf
-from process_io_lib.process_dicts import DICT_VAR_TYPE, DICT_DESCRIPTIONS
 from numpy import isfinite
+from create_dicts import get_dicts
+
+# Load dicts from dicts JSON file
+process_dicts = get_dicts()
+# Dictionary for variable types
+DICT_VAR_TYPE = process_dicts['DICT_VAR_TYPE']
+# Dictionary for parameter descriptions
+DICT_DESCRIPTIONS = process_dicts['DICT_DESCRIPTIONS']
 
 DEFAULT_COMPARE_PARAMS = [
     "rmajor", "rminor", "aspect", "kappa", "kappa95", "triang", "triang95",
     "fimp(01", "fimp(02", "fimp(03", "fimp(04", "fimp(05",
     "fimp(06", "fimp(07", "fimp(08", "fimp(09", "fimp(10",
     "fimp(11", "fimp(12", "fimp(13", "fimp(14",
-    "sarea", "vol", "tfno", "shldith", "shldoth", "blnkith", "blnkoth",
+    "sarea", "vol", "n_tf", "shldith", "shldoth", "blnkith", "blnkoth",
     "powfmw", "plascur/1d6", "bt", "q95", "betap", "te", "dene",
     "hfact", "vstot", "bt", "bmaxtfrp", "tmarg", "iooic",
     "strtf1", "strtf2", "alstrtf", "pgrossmw", "htpmw",
@@ -33,7 +40,7 @@ DEFAULT_COMPARE_PARAMS = [
 BASELINE_LIST = [
     "procver", "time", "username", "tagno", "commsg", "ifail", "rmajor", 
     "rminor", "aspect", "kappa", "kappa95", "triang", "triang95", "sarea", 
-    "vol", "tfno", "powfmw", "plascur/1d6", "bt", "q95", "beta", 
+    "vol", "n_tf", "powfmw", "plascur/1d6", "bt", "q95", "beta", 
     "normalised_thermal_beta", "normalised_total_beta",
     "thermal_beta", "thermal_poloidal_beta", "te", "te0", "dene", "ne0",
     "dnla_gw", "tesep", "nesep", "teped", "neped", "ieped", "zeff", "dnz",

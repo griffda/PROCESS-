@@ -2,76 +2,57 @@
   
   !       module e3m
   
-  !+ad_name  e3m
-  !+ad_summ  MHD Equilibrium Solver
-  !+ad_type  Module
-  !+ad_auth  ""
-  !+ad_cont  EMEQ
-  !+ad_cont  EQAB3
-  !+ad_cont  EQGB3
-  !+ad_cont  EQK3
-  !+ad_cont  EQLVU3 
-  !+ad_cont  EQC1
-  !+ad_cont  EQPPAB
-  !+ad_args  N/A
-  !+ad_desc  This module contains the routines that solve the MHD equilibrium equation for...
-  !+ad_prob  None
-  !+ad_call  ""
-  !+ad_call  ""
-  !+ad_hist  31/10/16  Documenting the initial version
-  !+ad_stat  Okay
-  !+ad_docs L.E. Zakharov,"Method of Electrodynamic Moments for Equilibrium Calculations in a Toroidal Plasma", Preprint of the Kurchatov Institute of Atomic Energy IAE-4114/6, Moscow (1985)
+  !! MHD Equilibrium Solver
+  !! author: ""
+  !! N/A
+  !! This module contains the routines that solve the MHD equilibrium equation for...
+  !! L.E. Zakharov,"Method of Electrodynamic Moments for Equilibrium Calculations in a Toroidal Plasma", Preprint of the Kurchatov Institute of Atomic Energy IAE-4114/6, Moscow (1985)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
   
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  !+ad_name EMEQ
-  !+ad_summ ""
+  !! ""
   ! INPUT
-  !+ad_args BA(1:NA1)[MA/m^2]     : input real array : flux function in front of R/r on the rhs of G-Sh. eq.
-  !+ad_args BB(1:NA1)[MA/m^2]     : input real array : flux function in front of (r/R-R/r) - " - " - " - " -
-  !+ad_args BR00 [m]              : input real : R geom. center of the edge magnetic surface
-  !+ad_args SA0  [m]              : input real : a_{edge} - "a" for the edge magnetic surface
-  !+ad_args GL0  [d/l]            : input real : elongation of the edge magnetic surface
-  !+ad_args GD30 [m]              : input real : triangularity of the edge magnetic surface (\delta(a_{edge}))
-  !+ad_args NA1 [d/l]             : input integer :: : # of grid points
-  !+ad_args ACC	                : input real : relative accuracy      ! ACEQLB
-  !+ad_args B0T  [T]              : input real : vacuum toroidal magnetic field at the point r=BR00
-  !+ad_args PLCUR[MA]             : input real : plasma current
+  !! BA(1:NA1)[MA/m^2]     : input real array : flux function in front of R/r on the rhs of G-Sh. eq.
+  !! BB(1:NA1)[MA/m^2]     : input real array : flux function in front of (r/R-R/r) - " - " - " - " -
+  !! BR00 [m]              : input real : R geom. center of the edge magnetic surface
+  !! SA0  [m]              : input real : a_{edge} - "a" for the edge magnetic surface
+  !! GL0  [d/l]            : input real : elongation of the edge magnetic surface
+  !! GD30 [m]              : input real : triangularity of the edge magnetic surface (\delta(a_{edge}))
+  !! NA1 [d/l]             : input integer :: : # of grid points
+  !! ACC	                : input real : relative accuracy      ! ACEQLB
+  !! B0T  [T]              : input real : vacuum toroidal magnetic field at the point r=BR00
+  !! PLCUR[MA]             : input real : plasma current
   ! OUTPUT
-  !+ad_args GR(1:NA1) [m]         : output real array : \rho(a)
-  !+ad_args GBD(1:NA1) [m]        : output real array : \Delta(a)
-  !+ad_args GL(1:NA1) [d/l]       : output real array : \lambda(a)
-  !+ad_args GSD(1:NA1) [d/l]      : output real array : \delta(a)/[a_{edge}(a/a_{edge})^2]
-  !+ad_args GRA(1:NA1) [d/l]      : output real array : <(\nabla a)^2>
-  !+ad_args SQGRA                 : output real :  <\sqrt{|g^{11}|}>	= <|nabla(a)|>
-  !+ad_args GRAR(1:NA1) [1/m^2]   : output real array : <[(\nabla a)/r]^2>
-  !+ad_args AVR2(1:NA1) [1/m^2]   : output real array : <[1/r]^2>
-  !+ad_args avsqg                 : output real : \prti{V}{a}/(4\pi^2)
-  !+ad_args Vol                   : output real :  V(a)
-  !+ad_args B2B0EQ                : output real :  <B**2/B0**2>
-  !+ad_args B0B2EQ                : output real :  <B0**2/B**2>
-  !+ad_args BMAXEQ                : output real :  BMAXT
-  !+ad_args BMINEQ                : output real :  BMINT
-  !+ad_args BMODEQ                : output real :  <B/BTOR>
-  !+ad_args FOFBEQ                : output real :  <(BTOR/B)**2*(1.-SQRT(1-B/Bmax)*(1+.5B/Bmax))>
-  !+ad_args GRDAEQ                : output real :  <grad a>
-  !+ad_args TIME                  : output real : 
-  !+ad_desc Everywhere above 
-  !+ad_desc (i)  the same equidistant grid with respect to the "radial" 
-  !+ad_desc      variable "a" is assumed to be used both for input and output.
-  !+ad_desc (ii) average <f> is an [0.5/\pi] integral over the poloidal angle \tau 
-  !+ad_desc      of the quantity [f\sqrt{g}], where g_{ij} is the metric tensor 
-  !+ad_desc      of {a,\tau,\zeta}.
-  !+ad_desc (iii) r is the current polar radius (the distance to the major axis)
-  !+ad_desc
-  !+ad_prob None
-  !+ad_call None
-  !+ad_hist 31/10/16  Documenting the initial version
-  !+ad_stat Okay
-  !+ad_docs None
+  !! GR(1:NA1) [m]         : output real array : \rho(a)
+  !! GBD(1:NA1) [m]        : output real array : \Delta(a)
+  !! GL(1:NA1) [d/l]       : output real array : \lambda(a)
+  !! GSD(1:NA1) [d/l]      : output real array : \delta(a)/[a_{edge}(a/a_{edge})^2]
+  !! GRA(1:NA1) [d/l]      : output real array : <(\nabla a)^2>
+  !! SQGRA                 : output real :  <\sqrt{|g^{11}|}>	= <|nabla(a)|>
+  !! GRAR(1:NA1) [1/m^2]   : output real array : <[(\nabla a)/r]^2>
+  !! AVR2(1:NA1) [1/m^2]   : output real array : <[1/r]^2>
+  !! avsqg                 : output real : \prti{V}{a}/(4\pi^2)
+  !! Vol                   : output real :  V(a)
+  !! B2B0EQ                : output real :  <B**2/B0**2>
+  !! B0B2EQ                : output real :  <B0**2/B**2>
+  !! BMAXEQ                : output real :  BMAXT
+  !! BMINEQ                : output real :  BMINT
+  !! BMODEQ                : output real :  <B/BTOR>
+  !! FOFBEQ                : output real :  <(BTOR/B)**2*(1.-SQRT(1-B/Bmax)*(1+.5B/Bmax))>
+  !! GRDAEQ                : output real :  <grad a>
+  !! TIME                  : output real : 
+  !! Everywhere above 
+  !! (i)  the same equidistant grid with respect to the "radial" 
+  !! variable "a" is assumed to be used both for input and output.
+  !! (ii) average <f> is an [0.5/\pi] integral over the poloidal angle \tau 
+  !! of the quantity [f\sqrt{g}], where g_{ij} is the metric tensor 
+  !! of {a,\tau,\zeta}.
+  !! (iii) r is the current polar radius (the distance to the major axis)
+  !! 
+  !! None
   
 	subroutine EMEQ(redo,BA,BB,   ! j_zeta = BA*(R00/r) + BB*(r/R00-R00/r)
      &   BR00, 	! R00 = R_0+\Delta_edge		! RTOR+SHIFT
@@ -156,7 +137,7 @@ C 		Set initial conditions / zero iteration
 !     &     .and. abs(GLOLD-GL0)   .lt. 1.E-6
 !     &     .and. abs(G3DOLD-GD30) .lt. 1.E-6
 !     *     )	goto	4
-      !!!!call add2loc("Calling EQGB3"//char(0))
+      ! !!!call add2loc("Calling EQGB3"//char(0))
 C      call EQGB3(BR00,SA0,GL0,GD30,NA)
       call EQGB3(BR00,SA0,GL0,GD30,NA,WBR0,WBR00,
      >			WSA,WSAA,WGL,WSD3,WDSD3,
@@ -173,7 +154,7 @@ C      call EQGB3(BR00,SA0,GL0,GD30,NA)
          WSP(I)=BB(I)
       enddo
       NITER=1e4                    ! Use 60 for the 1st entry only
-      !!!call add2loc("Calling EQAB3"//char(0))
+      ! !!call add2loc("Calling EQAB3"//char(0))
 !	write(*,*) NA,NT,NITER,ACC
       call EQAB3(NA,NT,NITER,ACC) ! Call MEM equil solver
 !	write(*,*) na
@@ -182,7 +163,7 @@ C      call EQGB3(BR00,SA0,GL0,GD30,NA)
 	 return
       endif
 !	write(*,*) WSD1(na1),wsaa(na1)
-      !!!call add2loc("Calling EQPPAB"//char(0))
+      ! !!call add2loc("Calling EQPPAB"//char(0))
       call EQPPAB(NA)
       D0=WSD1(NA1)*WSAA(NA1)
       GR(1)=0.
@@ -380,14 +361,14 @@ C     3	   WSL22(*),
       WSAC2=	WDGL(NA1)
       WSAC3=	WDSD3(NA1)
       WBR0=	WBR00+WSD1(NA1)*WSAA(NA1)
-      !!!call add2loc("Calling EQK3"//char(0))
+      ! !!call add2loc("Calling EQK3"//char(0))
       CALL EQK3(NA,NT)
-      !!!call add2loc("Calling EQALVU3"//char(0))
+      ! !!call add2loc("Calling EQALVU3"//char(0))
 C      CALL EQLVU3(NA)
       call EQLVU3(NA,WBR0,WSAA,WGL,WSD1,WSD3,
      >	WSL0,WSL1,WSL2,WSL3,WSL22,
      >	WSV0,WSV1,WSV2,WSV3,WSU0,WSU1,WSU2,WSU3)
-      !!!call add2loc("Calling EQC1"//char(0))
+      ! !!call add2loc("Calling EQC1"//char(0))
       CALL EQC1(NA,WBR0,WBR00,WBA,WBB,WSA,WSP,WSJP,WDBA,WDBB)
 C  GMC,SW0,SDD1,GDL
       WGMC(1)=WBA(1)*WSL0(1)/WBK0(1)

@@ -106,7 +106,7 @@ ixc = 124 * qtargettotal
 boundl(124) = 1.0d6
 boundu(124) = 10.0d6
 ixc = 135 * fimp(13)
-boundl(135) = 1.0d-10
+boundl(135) = 1.0d-8
 boundu(135) = 0.01
 
 *-----------------Build Variables------------------*
@@ -212,7 +212,7 @@ etahtp   = 1.0 * Electrical efficiency of primary coolant pumps
 *-----------------Global Variables-----------------*
 
 runtitle = kallenbach divertor model * Short descriptive title for the run
-maxcal   = 100 * Maximum number of vmcon iterations
+maxcal   = 50 * Maximum number of vmcon iterations
 
 *-------------Heat Transport Variables-------------*
 
@@ -247,7 +247,7 @@ fimp(14) = 5e-05
 
 ioptimz  = 1 * for optimisation VMCON only
 minmax   = 1 * Switch for figure-of-merit (see lablmm for descriptions)
-epsvmc   = 1.0e-6 * Error tolerance for vmcon
+epsvmc   = 5.0e-6 * Error tolerance for vmcon
 
 *----------------Pf Power Variables----------------*
 
@@ -299,7 +299,6 @@ idensl   = 7 * Switch for density limit to enforce (constraint equation 5);
 ifalphap = 1 * Switch for fast alpha pressure calculation;
 ifispact = 0 * Switch for neutronics calculations;
 ipedestal = 1 * Switch for pedestal profiles;
-iscdens  = 1 * Switch for pedestal profiles; obsolete
 neped    = 0.678e20 * Electron density of pedestal [m-3] (ipedestal=1)
 rhopedn  = 0.94 * R/a of density pedestal (ipedestal=1)
 rhopedt  = 0.94 * R/a of temperature pedestal (ipedestal=1)
@@ -313,7 +312,7 @@ q        = 3.0 * Safety factor 'near' plasma edge (iteration variable 18);
 q0       = 1.0 * Safety factor on axis
 ralpne   = 0.06758 * Thermal alpha density / electron density (iteration variable 109)
 rmajor   = 8.797 * Plasma major radius (m) (iteration variable 3)
-snull    = 1 * Switch for single null / double null plasma;
+i_single_null    = 1 * Switch for single null / double null plasma;
 ssync    = 0.6 * Synchrotron wall reflectivity factor
 te       = 12.66 * Volume averaged electron temperature (kev)
 triang   = 0.5 * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
@@ -343,12 +342,12 @@ cpttf    = 90000.0 * Tf coil current per turn (a);
 dhecoil  = 0.010 * Diameter of he coil in tf winding (m)
 fcutfsu  = 0.8348 * Copper fraction of cable conductor (tf coils)
 isumattf = 5 * Switch for superconductor material in tf coils;
-itfsup   = 1 * Switch for tf coil conductor model;
+i_tf_sup   = 1 * Switch for tf coil conductor model;
 oacdcp   = 9873000.0 * Overall current density in tf coil inboard legs (a/m2)
 ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude
 sigvvall = 9.3e7 * Allowable stress from tf quench in vacuum vessel (pa)
 tdmptf   = 20.35 * Fast discharge time for tf coil in event of quench (s)
-tfno     = 16 * Number of tf coils (default = 50 for stellarators)
+n_tf     = 16 * Number of tf coils (default = 50 for stellarators)
 tftmp    = 4.750 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 0.0015 * Conduit insulation thickness (m)
 thkcas   = 0.4481 * Inboard tf coil case outer (non-plasma side) thickness (m)
@@ -356,7 +355,7 @@ thwcndut = 0.008 * Tf coil conduit case thickness (m) (iteration variable 58)
 tinstf   = 0.008 * Ground insulation thickness surrounding winding pack (m)
 tmargmin = 1.500 * Minimum allowable temperature margin ; tfc and cs (k)
 vdalw    = 9.625 * Max voltage across tf coil during quench (kv)
-vftf     = 0.300 * Coolant fraction of tfc 'cable' (itfsup=1); or of tfc leg (itfsup=0)
+vftf     = 0.300 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
 
 *-----------------Times Variables------------------*
 

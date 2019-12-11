@@ -30,35 +30,27 @@ contains
     use divertor_ode_var, only: impurity_concs
     use read_radiation
 !    use divertor_kallenbach_variables, only: impurity_enrichment
-    !+ad_name  reinke_fzmin
-    !+ad_summ  Function for calculation of Reinke minimum impurity fraction
-    !+ad_type  Function returning real
-    !+ad_auth  H Lux, CCFE/UKAEA
-    !+ad_cont  N/A
-    !+ad_args  bt                  : input real : toroidal field on axis (T)
-    !+ad_args  flh                 : input real : fraction of Psep/P_LH
-    !+ad_args  qstar               : input real : safety factor similiar to q95 (see #707)
-    !+ad_args  rmajor              : input real : major radius (m)
-    !+ad_args  eps                 : input real : inverse aspect ratio
-    !+ad_args  fsep                : input real : ratio of separatrix to vol. av. density
-    !+ad_args  fgw                 : input real : ratio of volume averaged density to n_GW
-    !+ad_args  kappa               : input real : elongation
-    !+ad_args  lhat                : input real : connection length factor
-    !+ad_args  netau               : input real : "non-coronal parameter" for radiative loss func [ms.1e20/m3]
-    !+ad_args  tesep               : input real : temperature "upstream", i.e. at separatrix [eV]
-    !+ad_args  impvardiv           : input real : impurity index, e.g. 7 is Argon
-    !+ad_args  impurity_arr        : input imp_dat array : impurity fractions
-    !+ad_args  impurity_enrichment : input real array : enrichment factors between SOL and core
-    !+ad_desc  This function calculates the lower limit of the impurity fraction
-    !+ad_desc  needed in the SOL for divertor protection. It has huge uncertainties in netau.
-    !+ad_desc  Call the reinke_tsep function first then use as an argument to this function
-    !+ad_desc  Issue #707
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  16/05/18 HL Initial version of function
-    !+ad_hist  19/07/18 KE Testing and bug fixes
-    !+ad_stat  Okay
-    !+ad_docs  M.L. Reinke 2017 Nucl. Fusion 57 034004
+    !! Function for calculation of Reinke minimum impurity fraction
+    !! author: H Lux, CCFE/UKAEA
+    !! bt                  : input real : toroidal field on axis (T)
+    !! flh                 : input real : fraction of Psep/P_LH
+    !! qstar               : input real : safety factor similiar to q95 (see #707)
+    !! rmajor              : input real : major radius (m)
+    !! eps                 : input real : inverse aspect ratio
+    !! fsep                : input real : ratio of separatrix to vol. av. density
+    !! fgw                 : input real : ratio of volume averaged density to n_GW
+    !! kappa               : input real : elongation
+    !! lhat                : input real : connection length factor
+    !! netau               : input real : "non-coronal parameter" for radiative loss func [ms.1e20/m3]
+    !! tesep               : input real : temperature "upstream", i.e. at separatrix [eV]
+    !! impvardiv           : input real : impurity index, e.g. 7 is Argon
+    !! impurity_arr        : input imp_dat array : impurity fractions
+    !! impurity_enrichment : input real array : enrichment factors between SOL and core
+    !! This function calculates the lower limit of the impurity fraction
+    !! needed in the SOL for divertor protection. It has huge uncertainties in netau.
+    !! Call the reinke_tsep function first then use as an argument to this function
+    !! Issue #707
+    !! M.L. Reinke 2017 Nucl. Fusion 57 034004
     implicit none
     real(kind(1.0D0)) :: reinke_fzmin
     real(kind(1.0D0)) :: bt, flh, qstar, rmajor, eps, fsep, fgw, kappa
@@ -147,28 +139,20 @@ contains
 
   function reinke_tsep(bt, flh, qstar, rmajor, eps, fgw, kappa, lhat)
 
-    !+ad_name  reinke_tsep
-    !+ad_summ  Function for calculating upstream temperature(keV) in Reinke model
-    !+ad_type  Function returning real
-    !+ad_auth  H Lux, CCFE/UKAEA
-    !+ad_cont  N/A
-    !+ad_args  bt      : input real : toroidal field on axis (T)
-    !+ad_args  flh     : input real : fraction of Psep/P_LH
-    !+ad_args  qstar   : input real : safety factor similar to q95 (see #707)
-    !+ad_args  rmajor  : input real : major radius (m)
-    !+ad_args  eps     : input real : inverse aspect ratio
-    !+ad_args  fgw     : input real : ratio of volume averaged density to n_GW
-    !+ad_args  kappa   : input real : elongation
-    !+ad_args  lhat    : input real : connection length factor
-    !+ad_desc  This function calculates the upstream temperature in the
-    !+ad_desc  divertor/SoL model used for the Reinke citerion.
-    !+ad_desc  Issue #707
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/05/18 HL Initial version of function
-    !+ad_hist  19/07/18 KE Testing and correction on constant value
-    !+ad_stat  Okay
-    !+ad_docs  M.L. Reinke 2017 Nucl. Fusion 57 034004
+    !! Function for calculating upstream temperature(keV) in Reinke model
+    !! author: H Lux, CCFE/UKAEA
+    !! bt      : input real : toroidal field on axis (T)
+    !! flh     : input real : fraction of Psep/P_LH
+    !! qstar   : input real : safety factor similar to q95 (see #707)
+    !! rmajor  : input real : major radius (m)
+    !! eps     : input real : inverse aspect ratio
+    !! fgw     : input real : ratio of volume averaged density to n_GW
+    !! kappa   : input real : elongation
+    !! lhat    : input real : connection length factor
+    !! This function calculates the upstream temperature in the
+    !! divertor/SoL model used for the Reinke citerion.
+    !! Issue #707
+    !! M.L. Reinke 2017 Nucl. Fusion 57 034004
 
     real(kind(1.0D0)) :: reinke_tsep
     real(kind(1.0D0)) :: bt, flh, qstar, rmajor, eps, fgw, kappa, lhat

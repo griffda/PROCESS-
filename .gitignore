@@ -32,6 +32,7 @@ autodoc
 *.pro
 process_dicts.py
 process_dicts.py_prev
+process_dicts.json
 gui_dicts.py
 gui_dicts.py_prev
 rootdir.py
@@ -64,3 +65,4 @@ lib/PLASMOD/*.DAT
 *.fls
 *.gz
 ford_site/
+lib/ford
