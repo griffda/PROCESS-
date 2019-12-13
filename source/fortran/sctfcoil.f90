@@ -238,7 +238,7 @@ subroutine tf_winding_pack()
     thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
 
     ! Radial position of inner edge of winding pack [m]
-    r_wp_inner = r_tf_inleg_in + thkcas
+    r_wp_inner = r_tf_inleg_in + thkcas + tinstf + tfinsgap
 
     ! Radial position of outer edge of winding pack [m]
     r_wp_outer = r_wp_inner + thkwp
@@ -250,13 +250,13 @@ subroutine tf_winding_pack()
     tfc_current = ritfc/n_tf
 
     ! Radius of geometrical centre of winding pack [m]
-    r_wp_centre = r_tf_inleg_out - casthi - tfinsgap - tinstf - 0.5D0*thkwp
+    r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
 
     ! Thickness of winding pack section at R > r_wp_centre [m]
     wwp1 = 2.0D0 * (r_wp_centre*tan_theta_coil - casths - tinstf - tfinsgap)
 
     ! Thickness of winding pack section at R < r_wp_centre [m]
-    wwp2 = 2.0D0 * ((r_wp_centre-0.5D0*thkwp)*tan_theta_coil - casths - tinstf - tfinsgap)
+    wwp2 = 2.0D0 * ( r_wp_inner*tan_theta_coil - casths - tinstf - tfinsgap )
 
     ! Total cross-sectional area of winding pack [m2]
     awptf = (0.5D0*thkwp)*(wwp1 + wwp2)
@@ -388,7 +388,7 @@ subroutine tf_integer_winding_pack()
     thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
 
     ! Radial position of inner edge of winding pack [m]
-    r_wp_inner = r_tf_inleg_in + thkcas
+    r_wp_inner = r_tf_inleg_in + thkcas + tinstf + tfinsgap
 
     ! Radial position of outner edge of winding pack [m]
     r_wp_outer = r_wp_inner + thkwp
@@ -400,7 +400,7 @@ subroutine tf_integer_winding_pack()
     tfc_current = ritfc/n_tf
 
     ! Radius of geometrical centre of winding pack [m]
-    r_wp_centre = r_tf_inleg_out - casthi - tfinsgap - tinstf - 0.5D0*thkwp
+    r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
 
     ! TF coil width at inner egde of winding pack toroidal direction [m]
     t_tf_at_wp = 2.0D0 * r_wp_inner*sin(theta_coil)
@@ -544,7 +544,7 @@ subroutine tf_field_and_force()
 
     ! Radial position of peak toroidal field (assuming axisymmetry) [m]
     ! (assumed to be at the outer edge of the winding pack)
-    rbmax = r_tf_inleg_out - casthi
+    rbmax = r_tf_inleg_out - casthi - tinstf - tfinsgap
 
     ! Nominal axisymmetric peak toroidal field (excluding ripple) [T]
     bmaxtf = 2.0D-7 * ritfc / rbmax
