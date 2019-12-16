@@ -687,8 +687,21 @@ subroutine check
         impurity_arr(imp)%frac = fimp(imp)
     end do
 
-    !  Warn if ion power balance equation is being used with the new radiation model
+    ! The 1/R B field dependency constraint variable is being depreciated
+    ! Stop the run if the constraint 10 is used
+    if ( any(icc == 10 )) then
+        call report_error(236)
+        stop
+    end if
 
+    ! Stop the run if oacdcp is used as an optimisation variable
+    ! As the current density is now calculated from bt without constraint 10
+    if ( any(ixc == 12 ) ) then
+        call report_error(236)
+        stop
+    end if 
+
+    !  Warn if ion power balance equation is being used with the new radiation model
     if (any(icc == 3)) then
         call report_error(138)
     end if

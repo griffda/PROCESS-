@@ -32,7 +32,7 @@ icc = 2
 
 * Toroidal field 1/R consistency *
 *--------------------------------*
-icc = 10
+*icc = 10
 
 * Radial build consistency *
 *--------------------------*
@@ -230,8 +230,8 @@ boundu(4) = 150.0
 te = 12.33
 
 * oacdcp [A/m2]
-ixc = 12
-oacdcp = 8.67E6
+*ixc = 12
+*oacdcp = 8.67E6
 
 * tfcth [m]
 ixc = 13

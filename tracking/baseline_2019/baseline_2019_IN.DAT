@@ -26,7 +26,6 @@ epsvmc = 1e-7
 *---------------Constraint Equations---------------*
 
 icc = 8 * Neutron wall load upper limit
-icc = 10 * Toroidal field 1
 icc = 11 * Radial build
 icc = 13 * Burn time lower limit
 icc = 25 * Peak toroidal field upper limit
@@ -47,7 +46,6 @@ icc = 79 * F
 *---------------Iteration Variables----------------*
 
 ixc = 2 * bt
-ixc = 12 * oacdcp
 ixc = 14 * fwalld
 ixc = 18 * q
 boundl(18) = 3.5
