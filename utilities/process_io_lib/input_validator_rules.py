@@ -7,6 +7,12 @@ the input_validator module. Each rule class (a subclass of Rule) defines its own
 check method, which checks that particular rule against the input data. This 
 method stores the result and any messages on the instance of that rule class
 itself.
+
+To add a new rule, define a new class that inherits from the Rule class, then 
+override the __init__() and check() methods. The new rule class will be used by 
+the input_validator module automatically, and the rule will be checked when 
+input_validator is run. See class Ishape(Rule) for an example, or use the rule
+snippet in the Process project on Gitlab.
 """
 from abc import ABC, abstractmethod
 
