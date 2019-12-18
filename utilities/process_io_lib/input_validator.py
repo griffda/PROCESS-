@@ -7,6 +7,7 @@ static (i.e. pre-run-time) problems in the input to Process and provide clear
 feedback. This validation is based on a set of rules, which are defined in 
 input_validator_rules.
 """
+import inspect
 from process_io_lib import in_dat
 from process_io_lib import input_validator_rules
 
@@ -14,11 +15,46 @@ INPUT_FILE_PATH = "IN.DAT"
 # Todo: make dynamic
 
 class RuleList(object):
-    """Creates a list of Rule objects and validates them."""
+    """Creates a list of rule instances and validates them."""
     def __init__(self):
         """Fetches the rules and the input data."""
-        self.rules = input_validator_rules.get_rules()
+        self.rules = []
+        self.get_rules()
         self.data = in_dat.StructuredInputData(filename=INPUT_FILE_PATH)
+
+    def get_rules(self):
+        """Create the rule instances in a list and store them
+        
+        Inspects the input_validator_rules module and filters its classes to 
+        give only the rule classes (subclasses of Rule). Then creates an 
+        instance of each rule in a list.
+        """
+        def is_rule_class(a_class):
+            """Checks class is a rule (subclass of Rule)
+            
+            :param a_class: Any class
+            :type a_class: abc.ABCMeta
+            :return: True if Rule subclass, False if not
+            :rtype: bool
+            """
+            # Check if one of the class's parents is Rule
+            bases = a_class.__bases__
+            for base in bases:
+                if base is input_validator_rules.Rule:
+                    return True
+            return False
+
+        # Fetch all classes from input_validator_rules module as (name, class) 
+        # tuples
+        class_tuples = inspect.getmembers(input_validator_rules, 
+            inspect.isclass)
+
+        # Filter to get individual rule classes only (subclasses of Rule)
+        rule_classes = [class_tuple[1] for class_tuple in class_tuples
+            if is_rule_class(class_tuple[1])]
+
+        # Now create an instance of each rule class in a list
+        self.rules = [rule_class() for rule_class in rule_classes]
 
     def filter_rules(self, filter):
         """Use a filter string to select certain rules by tag.
@@ -30,12 +66,13 @@ class RuleList(object):
         pass
 
     def validate_data(self):
-        """Check all rules, passing the data to check.
+        """For all rules, set the input data, then check it.
         
-        This runs the rule function stored on each rule object.
+        This runs the check method of each rule instance.
         """
         for rule in self.rules:
-            rule.check(self.data)
+            rule.set_data(self.data)
+            rule.check()
 
     def print_results(self):
         """Print the results stored on all the rules objects."""
