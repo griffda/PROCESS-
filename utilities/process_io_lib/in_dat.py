@@ -677,9 +677,16 @@ def write_parameters(data, out_file):
             else:
                 # All other parameters
                 # Left justification set to 8 to allow easier reading
-                parameter_line = "{0} = {1} * {2}\n". \
-                    format(parameter.ljust(8), info["value"], info["comment"])
-        
+                # info can currently be either a value or a dict
+                if type(info) is dict and info.get("value") and (
+                    info.get("comment")):
+                    parameter_line = "{0} = {1} * {2}\n". \
+                        format(parameter.ljust(8), info["value"], 
+                            info["comment"])
+                else:
+                    parameter_line = "{0} = {1}\n". \
+                        format(parameter.ljust(8), info)
+
             # Finally write the line
             out_file.write(parameter_line)
 
