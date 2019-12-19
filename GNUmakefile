@@ -21,7 +21,7 @@ ifneq ($(UNAME),Windows)
 	PRC_DIR=$(TOP_DIR)/build/CMakeFiles/process.exe.dir/source/fortran
 	PRC_CALC_DIR=$(TOP_DIR)/build/CMakeFiles/PROCESS_calc_engine.dir/source/fortran
 	PLSM_DIR=$(TOP_DIR)/build/CMakeFiles/process.exe.dir/lib/PLASMOD
-	TEST_DIR=$(TOP_DIR)/test_files/pfunit_files
+	TEST_DIR=$(TOP_DIR)/unit_tests/pfunit_files
 	export LD_LIBRARY_PATH=$(SO_DIR)
 else
 	# When using CYGWIN, then relative paths have to be used.
