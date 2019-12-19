@@ -1,190 +1,190 @@
 *--------------------------------------------------*
 
 *---------------Constraint Equations---------------*
-neqns = 23
-icc(1) = 1        * beta (consistency equation)
-icc(2) = 2        * global power balance (consistency equation)
-icc(3) = 5        * density upper limit
-icc(4) = 7        * beam ion density (nbi) (consistency equation)
-icc(5) = 8        * neutron wall load upper limit
-icc(6) = 10       * toroidal field 1/r (consistency equation)
-icc(7) = 11       * radial build (consistency equation)
-icc(8) = 13       * burn time lower limit (pulse)
-icc(9) = 15       * l-h power threshold limit
-icc(10) = 16      * net electric power lower limit
-icc(11) = 17      * radiation fraction upper limit
-icc(12) = 24      * beta upper limit
-icc(13) = 26      * central solenoid eof current density upper limit
-icc(14) = 27      * central solenoid bop current density upper limit
-icc(15) = 30      * injection power upper limit
-icc(16) = 31      * tf coil case stress upper limit (sctf)
-icc(17) = 32      * tf coil conduit stress upper limit (sctf)
-icc(18) = 33      * i_op / i_critical (tf coil) (sctf)
-icc(19) = 34      * dump voltage upper limit (sctf)
-icc(20) = 35      * j_winding pack/j_protection upper limit (sctf)
-icc(21) = 52      * tritium breeding ratio lower limit
-icc(22) = 56      * pseparatrix/rmajor upper limit
-icc(23) = 63      *
+neqns = 22
+icc = 1        * beta (consistency equation)
+icc = 2        * global power balance (consistency equation)
+icc = 5        * density upper limit
+icc = 7        * beam ion density (nbi) (consistency equation)
+icc = 8        * neutron wall load upper limit
+*icc = 10       * toroidal field 1/r (consistency equation)
+icc = 11       * radial build (consistency equation)
+icc = 13       * burn time lower limit (pulse)
+icc = 15       * l-h power threshold limit
+icc = 16      * net electric power lower limit
+icc = 17      * radiation fraction upper limit
+icc = 24      * beta upper limit
+icc = 26      * central solenoid eof current density upper limit
+icc = 27      * central solenoid bop current density upper limit
+icc = 30      * injection power upper limit
+icc = 31      * tf coil case stress upper limit (sctf)
+icc = 32      * tf coil conduit stress upper limit (sctf)
+icc = 33      * i_op / i_critical (tf coil) (sctf)
+icc = 34      * dump voltage upper limit (sctf)
+icc = 35      * j_winding pack/j_protection upper limit (sctf)
+icc = 52      * tritium breeding ratio lower limit
+icc = 56      * pseparatrix/rmajor upper limit
+icc = 63      *
 
 *---------------Iteration Variables----------------*
-nvar = 40
-ixc(1) = 2        * bt * Toroidal field on axis (t) (iteration variable 2)
+nvar = 39
+ixc = 2        * bt * Toroidal field on axis (t) (iteration variable 2)
 boundl(2) = 0.01
 boundu(2) = 10.0
 
-ixc(2) = 3        * rmajor * Plasma major radius (m) (iteration variable 3)
+ixc = 3        * rmajor * Plasma major radius (m) (iteration variable 3)
 boundl(3) = 8.0
 boundu(3) = 9.0
 
-ixc(3) = 4        * te * Volume averaged electron temperature (kev)
+ixc = 4        * te * Volume averaged electron temperature (kev)
 boundl(4) = 5.0
 boundu(4) = 150.0
 
-ixc(4) = 5        * beta * Total plasma beta (iteration variable 5)
+ixc = 5        * beta * Total plasma beta (iteration variable 5)
 boundl(5) = 0.001
 boundu(5) = 1.0
 
-ixc(5) = 6        * dene * Electron density (/m3) (iteration variable 6)
+ixc = 6        * dene * Electron density (/m3) (iteration variable 6)
 boundl(6) = 7e+19
 boundu(6) = 1e+21
 
-ixc(6) = 7        * rnbeam * Hot beam density / n_e (iteration variable 7)
+ixc = 7        * rnbeam * Hot beam density / n_e (iteration variable 7)
 boundl(7) = 1e-06
 boundu(7) = 1.0
 
-ixc(7) = 9        * fdene * F-value for density limit
+ixc = 9        * fdene * F-value for density limit
 boundl(9) = 0.001
 boundu(9) = 1.2
 
-ixc(8) = 10       * hfact * H factor on energy confinement times (iteration variable 10)
+ixc = 10       * hfact * H factor on energy confinement times (iteration variable 10)
 boundl(10) = 0.1
 boundu(10) = 1.1
 
-ixc(9) = 12       * oacdcp * Overall current density in tf coil inboard legs (a/m2)
-boundl(12) = 100000.0
-boundu(12) = 150000000.0
+*ixc = 12       * oacdcp * Overall current density in tf coil inboard legs (a/m2)
+*boundl(12) = 100000.0
+*boundu(12) = 150000000.0
 
-ixc(10) = 13      * tfcth * Inboard tf coil thickness; (centrepost for st) (m)
+ixc = 13      * tfcth * Inboard tf coil thickness; (centrepost for st) (m)
 boundl(13) = 1.05
 boundu(13) = 5.0
 
-ixc(11) = 14      * fwalld * F-value for maximum wall load
+ixc = 14      * fwalld * F-value for maximum wall load
 boundl(14) = 0.001
 boundu(14) = 1.0
 
-ixc(12) = 16      * ohcth * Central solenoid thickness (m)
+ixc = 16      * ohcth * Central solenoid thickness (m)
 boundl(16) = 0.2
 boundu(16) =2.0
 
-ixc(13) = 18      * q * Safety factor 'near' plasma edge (iteration variable 18)
+ixc = 18      * q * Safety factor 'near' plasma edge (iteration variable 18)
 boundl(18) = 3.0
 boundu(18) = 100.0
 
-ixc(14) = 21      * ftburn * F-value for minimum burn time
+ixc = 21      * ftburn * F-value for minimum burn time
 boundl(21) = 0.001
 boundu(21) = 1.0
 
-ixc(15) = 28      * fradpwr * F-value for core radiation power limit
+ixc = 28      * fradpwr * F-value for core radiation power limit
 boundl(28) = 0.001
 boundu(28) = 0.99
 
-ixc(16) = 29      * bore * Central solenoid inboard radius (m)
+ixc = 29      * bore * Central solenoid inboard radius (m)
 boundl(29) = 0.1
 boundu(29) = 10.0
 
-ixc(17) = 36      * fbetatry * F-value for beta limit
+ixc = 36      * fbetatry * F-value for beta limit
 boundl(36) = 0.001
 boundu(36) = 1.0
 
-ixc(18) = 37      * coheof * Central solenoid overall current density at end of flat-top (a/m2)
+ixc = 37      * coheof * Central solenoid overall current density at end of flat-top (a/m2)
 boundl(37) = 100000.0
 boundu(37) = 100000000.0
 
-ixc(19) = 38      * fjohc * F-value for central solenoid current at end-of-flattop
+ixc = 38      * fjohc * F-value for central solenoid current at end-of-flattop
 boundl(38) = 0.01
 boundu(38) = 0.25
 
-ixc(20) = 39      * fjohc0 * F-value for central solenoid current at beginning of pulse
+ixc = 39      * fjohc0 * F-value for central solenoid current at beginning of pulse
 boundl(39) = 0.001
 boundu(39) = 0.25
 
-ixc(21) = 41      * fcohbop * Ratio of central solenoid overall current density at
+ixc = 41      * fcohbop * Ratio of central solenoid overall current density at
 boundl(41) = 0.001
 boundu(41) = 1.0
 
-ixc(22) = 42      * gapoh * Gap between central solenoid and tf coil
+ixc = 42      * gapoh * Gap between central solenoid and tf coil
 boundl(42) = 0.05
 boundu(42) = 0.1
 
-ixc(23) = 44      * fvsbrnni * Fraction of the plasma current produced by
+ixc = 44      * fvsbrnni * Fraction of the plasma current produced by
 boundl(44) = 0.001
 boundu(44) = 1.0
 
-ixc(24) = 48      * fstrcase * F-value for tf coil case stress
+ixc = 48      * fstrcase * F-value for tf coil case stress
 boundl(48) = 0.001
 boundu(48) = 1.0
 
-ixc(25) = 49      * fstrcond * F-value for tf coil conduit stress
+ixc = 49      * fstrcond * F-value for tf coil conduit stress
 boundl(49) = 0.001
 boundu(49) = 1.0
 
-ixc(26) = 50      * fiooic * F-value for tf coil operating current / critical
+ixc = 50      * fiooic * F-value for tf coil operating current / critical
 boundl(50) = 0.001
 boundu(50) = 0.5
 
-ixc(27) = 51      * fvdump * F-value for dump voltage
+ixc = 51      * fvdump * F-value for dump voltage
 boundl(51) = 0.001
 boundu(51) = 1.0
 
-ixc(28) = 53      * fjprot * F-value for tf coil winding pack current density
+ixc = 53      * fjprot * F-value for tf coil winding pack current density
 boundl(53) = 0.001
 boundu(53) = 1.0
 
-ixc(29) = 56      * tdmptf * Dump time for tf coil (s)
+ixc = 56      * tdmptf * Dump time for tf coil (s)
 boundl(56) = 10.0
 boundu(56) = 1000000.0
 
-ixc(30) = 57      * thkcas * Inboard tf coil case outer (non-plasma side) thickness (m)
+ixc = 57      * thkcas * Inboard tf coil case outer (non-plasma side) thickness (m)
 boundl(57) = 0.05
 boundu(57) = 1.0
 
-ixc(31) = 58      * thwcndut * Tf coil conduit case thickness (m)
+ixc = 58      * thwcndut * Tf coil conduit case thickness (m)
 boundl(58) = 0.004
 boundu(58) = 1.0
 
-ixc(32) = 59      * fcutfsu * Copper fraction of cable conductor (tf coils)
+ixc = 59      * fcutfsu * Copper fraction of cable conductor (tf coils)
 boundl(59) = 0.001
 boundu(59) = 1.0
 
-ixc(33) = 61      * gapds * Gap between inboard vacuum vessel and tf coil (m)
+ixc = 61      * gapds * Gap between inboard vacuum vessel and tf coil (m)
 boundl(61) = 0.12
 boundu(61) = 10.0
 
-ixc(34) = 89      * ftbr * F-value for minimum tritium breeding ratio
+ixc = 89      * ftbr * F-value for minimum tritium breeding ratio
 boundl(89) = 0.001
 boundu(89) = 1.0
 
-ixc(35) = 97      * fpsepr * F-value for maximum psep/r limit
+ixc = 97      * fpsepr * F-value for maximum psep/r limit
 boundl(97) = 0.001
 boundu(97) = 1.0
 
-ixc(36) = 98      * li6enrich * Lithium-6 enrichment of breeding material (%)
+ixc = 98      * li6enrich * Lithium-6 enrichment of breeding material (%)
 boundl(98) = 7.4
 boundu(98) = 100.0
 
-ixc(37) = 102     * fimpvar * Impurity fraction to be used as fimp(impvar)
+ixc = 102     * fimpvar * Impurity fraction to be used as fimp(impvar)
 boundl(102) = 1e-06
 boundu(102) = 0.01
 
-ixc(38) = 103     * flhthresh * F-value for l-h power threshold
+ixc = 103     * flhthresh * F-value for l-h power threshold
 boundl(103) = 1.0
 boundu(103) = 1000000.0
 
-ixc(39) = 108     * breeder_f * Volume ratio* li4sio4/(be12ti+li4sio4) (iteration variable 108)
+ixc = 108     * breeder_f * Volume ratio* li4sio4/(be12ti+li4sio4) (iteration variable 108)
 boundl(108) = 0.001
 boundu(108) = 1.0
 
-ixc(40) = 111     *
+ixc = 111     *
 boundl(111) = 0.001
 boundu(111) = 1.0
 

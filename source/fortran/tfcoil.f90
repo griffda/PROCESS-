@@ -182,11 +182,12 @@ contains
 
     ! Inner legs physics
     ! ******
-    ! Total current flowing through inboard TF coil legs (A)
-    ritfc = tfareain * oacdcp
-
-    ! Peak field (T)
-    bmaxtf = 2.0D-7 * ritfc / rbmax
+    ! Calculation of the maximum B field on the magnet [T]
+    bmaxtf = bt * rmajor / rbmax
+    
+    ! Calculation of the total current necessary to reach Bmax
+    ! rem SK : ritcf is no longer an input
+    ritfc = bmaxtf * rbmax * 5.0D6 
 
     !  Centering force
     if ( bore == 0.0D0 ) then
@@ -325,7 +326,7 @@ contains
     !  Output section
     call oheadr(outfile,'Resistive TF Coil Information')
     call ovarin(outfile,'Resistive TF coil option (0:copper 2:aluminium)','(i_tf_sup)',i_tf_sup)
-    call ovarre(outfile,'Inboard leg current density (A/m2)','(oacdcp)',oacdcp)
+    !call ovarre(outfile,'Inboard leg current density (A/m2)','(oacdcp)',oacdcp)
     call ovarre(outfile,'Outboard leg current density (A/m2)','(cdtfleg)',cdtfleg)
     call ovarre(outfile,'Number of turns per outboard leg','(turnstf)',turnstf)
     call ovarre(outfile,'Outboard leg current per turn (A)','(cpttf)',cpttf)

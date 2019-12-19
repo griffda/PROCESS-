@@ -12,11 +12,11 @@ module sctfcoil_module
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, tfcth, tfthko, hpfu, hr1, r_vv_inboard_out
-use constants
+! use constants  ! No constants seems to be used !
 use error_handling
 use fwbs_variables
 use maths_library
-use physics_variables
+use physics_variables, only : rmajor, rminor, bt, i_single_null
 use process_output
 use tfcoil_variables
 use superconductors
@@ -96,6 +96,9 @@ contains
 
 ! --------------------------------------------------------------------------
 subroutine initialise_cables()
+    
+    implicit none
+
     copper%rrr = copper_rrr
     copper%density = 8960.0d0
     hastelloy%density = 8890.0d0
@@ -215,6 +218,21 @@ subroutine tf_coil_geometry()
     ! deltf = r_tf_inleg_out * ((1.0d0 / cos(pi/n_tf)) - 1.0d0) + tftsgap
 
 
+    ! Magnetic field and current
+    ! ---    
+    ! Radial position of peak toroidal field (assuming axisymmetry) [m]
+    ! (assumed to be at the outer edge of the winding pack)
+    rbmax = r_tf_inleg_out - casthi - tinstf - tfinsgap
+
+    ! Calculation of the maximum B field on the magnet [T]
+    bmaxtf = bt * rmajor / rbmax
+
+    ! Calculation of the total current necessary to reach Bmax
+    ! rem SK : ritcf is no longer an input
+    ritfc = bmaxtf * rbmax * 5.0D6 
+    ! ---
+
+
 end subroutine tf_coil_geometry
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -238,25 +256,25 @@ subroutine tf_winding_pack()
     thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
 
     ! Radial position of inner edge of winding pack [m]
-    r_wp_inner = r_tf_inleg_in + thkcas
+    r_wp_inner = r_tf_inleg_in + thkcas + tinstf + tfinsgap
 
     ! Radial position of outer edge of winding pack [m]
     r_wp_outer = r_wp_inner + thkwp
 
-    ! Total current in TF coils [A]
-    ritfc = oacdcp * tfareain
+    ! Global inboard leg average current in TF coils [A/m2]
+    oacdcp = ritfc / tfareain
 
     ! Current per TF coil [A]
     tfc_current = ritfc/n_tf
 
     ! Radius of geometrical centre of winding pack [m]
-    r_wp_centre = r_tf_inleg_out - casthi - tfinsgap - tinstf - 0.5D0*thkwp
+    r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
 
     ! Thickness of winding pack section at R > r_wp_centre [m]
     wwp1 = 2.0D0 * (r_wp_centre*tan_theta_coil - casths - tinstf - tfinsgap)
 
     ! Thickness of winding pack section at R < r_wp_centre [m]
-    wwp2 = 2.0D0 * ((r_wp_centre-0.5D0*thkwp)*tan_theta_coil - casths - tinstf - tfinsgap)
+    wwp2 = 2.0D0 * ( r_wp_inner*tan_theta_coil - casths - tinstf - tfinsgap )
 
     ! Total cross-sectional area of winding pack [m2]
     awptf = (0.5D0*thkwp)*(wwp1 + wwp2)
@@ -388,19 +406,19 @@ subroutine tf_integer_winding_pack()
     thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
 
     ! Radial position of inner edge of winding pack [m]
-    r_wp_inner = r_tf_inleg_in + thkcas
+    r_wp_inner = r_tf_inleg_in + thkcas + tinstf + tfinsgap
 
     ! Radial position of outner edge of winding pack [m]
     r_wp_outer = r_wp_inner + thkwp
 
-    ! Total current in TF coils [A]
-    ritfc = oacdcp * tfareain
-
+    ! Global inboard leg average current in TF coils [A/m2]
+    oacdcp = ritfc / tfareain
+    
     ! Current per TF coil [A]
     tfc_current = ritfc/n_tf
 
     ! Radius of geometrical centre of winding pack [m]
-    r_wp_centre = r_tf_inleg_out - casthi - tfinsgap - tinstf - 0.5D0*thkwp
+    r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
 
     ! TF coil width at inner egde of winding pack toroidal direction [m]
     t_tf_at_wp = 2.0D0 * r_wp_inner*sin(theta_coil)
@@ -536,18 +554,14 @@ end subroutine tf_integer_winding_pack
 subroutine tf_field_and_force()
     ! Calculate the TF coil field, force and VV quench consideration
 
+    implicit none
+
     ! Determine quench time (based on IDM: 2MBSE3)
     ! Issue #337: Force on the vessel wall due to TF coil quench
 
     ! Quench time [s]
     taucq = (bt * ritfc * rminor * rminor) / (r_vv_inboard_out * sigvvall)
 
-    ! Radial position of peak toroidal field (assuming axisymmetry) [m]
-    ! (assumed to be at the outer edge of the winding pack)
-    rbmax = r_tf_inleg_out - casthi
-
-    ! Nominal axisymmetric peak toroidal field (excluding ripple) [T]
-    bmaxtf = 2.0D-7 * ritfc / rbmax
 
     ! Centering force = net inwards radial force per TF coil [N]
     cforce = bmaxtf*ritfc/(2.0D0*n_tf)
@@ -562,6 +576,8 @@ end subroutine tf_field_and_force
 
 subroutine tf_coil_area_and_masses()
     ! Subroutine to calculate the TF coil areas and masses
+
+    implicit none
 
     ! Local Variables
     real(kind(1.0D0)) :: cplen, wbtf
@@ -2168,6 +2184,8 @@ end subroutine tfspcall
 !     !! Finds the dump voltage in quench for the Croco HTS conductor
 !     !! Subroutine
 
+!     implicit none
+
 !     ! vtfskv : voltage across a TF coil during quench (kV)
 !     ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
 !     ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
@@ -2190,6 +2208,8 @@ function croco_voltage()
     ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
     ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
 
+    implicit none
+
     real(kind(1.0D0)):: croco_voltage
 
     if(quench_model=='linear')then
@@ -2208,6 +2228,7 @@ subroutine croco_quench(conductor)
     !! Finds the current density limited by the maximum temperatures in quench
     !! It also finds the dump voltage.
 
+    implicit none
 
     type(volume_fractions), intent(in)::conductor
     real(kind(1.0D0)):: current_density_in_conductor
@@ -2285,6 +2306,9 @@ contains
         ! Issue #548.
         ! The difference beteween the actual voltage developed during the first
         ! phase of the quench and the specified detection voltage
+
+        implicit none
+
         real(kind(1.0D0))::detection_field_error, deltaj,jcritsc
 
         real(kind(1.0D0)), intent(in) :: t1
@@ -2319,6 +2343,8 @@ subroutine dtempbydtime ( qtime, qtemperature, derivative )
     !! derivative : output real : the value of dtempbydtime
 
     ! Time-dependent quantities during the fast discharge local to this subroutine:
+
+    implicit none
 
     ! time, the independent variable
     real(kind(1.0D0)),intent(in) :: qtime
@@ -2372,6 +2398,9 @@ end subroutine dtempbydtime
 !-----------------------------------------------------------------------
 
 function resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,helium,jacket)
+
+    implicit none
+
     real(kind(1.0D0)),intent(in):: qtemp,qbfield
     ! Only those materials that are actually supplied in the arguments are used.
     type(resistive_material),intent(in),optional::copper,hastelloy,solder,helium,jacket
