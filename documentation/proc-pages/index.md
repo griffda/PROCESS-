@@ -64,14 +64,11 @@ to anyone using PROCESS outputs or models based on them.
 
 ## Developer Group
 
-- [Hanni Lux](mailto:hanni.lux@ukaea.uk)
 - [James Morris](mailto:james.morris2@ukaea.uk)
 - [Michael Kovari](mailto:michael.kovari@ukaea.uk)
 - [Stuart Muldrew](mailto:stuart.muldrew@ukaea.uk)
 - [Alex Pearce](mailto:alex.pearce@ukaea.uk)
 - [Sebastien Kahn](mailto:sebastien.kahn@ukaea.uk)
-- [Manoj Kumar](mailto:manoj.kumar@ukaea.uk) 
-- [Steven Pickering](mailto:steven.pickering@ukaea.uk)
 - [Adam Brown](mailto:adam.brown@ukaea.uk)
 - [Jonathan Maddock](mailto:jonathan.maddock@ukaea.uk)
 
