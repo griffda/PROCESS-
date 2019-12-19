@@ -36,9 +36,9 @@ class Rule(ABC):
         self.name = self.__class__.__name__
         # Set the rule's name to the name of the class
         self.tags = tags
-        self.passed = None
-        # Boolean set in rule_func to store result of check. Initialised to 
-        # None for flexibility in rule_func
+        self.passed = True
+        # Stores result of rule. Set to False in check method in case of 
+        # failure
         self.messages = []
         # List of strings storing reason(s) for check failure
         self.data = None
@@ -155,7 +155,3 @@ class Ishape(Rule):
             self.check_defined("triang95")
             self.check_undefined("kappa")
             self.check_undefined("triang")
-
-        if self.passed is None:
-            # No test has failed
-            self.passed = True
