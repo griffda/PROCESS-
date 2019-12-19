@@ -118,7 +118,7 @@ def setup_executable():
     Setup test_area directory with current version of PROCESS from the
     PROCESS folder
     """
-    subprocess.call(["cp ../process.exe ."], shell=True)
+    subprocess.call(["cp ../bin/process.exe ."], shell=True)
 
 
 def get_file_info(ar):

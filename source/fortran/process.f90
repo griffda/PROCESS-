@@ -1,10 +1,9 @@
  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 program process
-
   !! Power Reactor Optimisation Code for Environmental and Safety Studies
   !! author: P J Knight, CCFE, Culham Science Centre
-  !! author: M Kumar, CCFE, Culham Science Centre
+  !! author: J Morris, CCFE, Culham Science Centre
   !! None
   !! Power Reactor Optimisation Code for Environmental and Safety Studies
   !! <P>This is a systems code that evaluates various physics and
