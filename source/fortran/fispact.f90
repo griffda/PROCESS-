@@ -1039,7 +1039,7 @@
       IF (IVMS1.EQ.1) THEN
          TEMP = 'WARRY'//NUMRGN//'.DAT'
       ELSE
-         TEMP = 'fispact/WARRY'//NUMRGN//'.DAT'
+         TEMP = 'lib/fispact/WARRY'//NUMRGN//'.DAT'
       END IF
 
       OPEN(25,FILE=TEMP,STATUS='OLD')
@@ -1563,10 +1563,10 @@
          OPEN(21,FILE='INDEXSIM.DAT', STATUS='OLD')
          OPEN(22,FILE='PROCXSEC.DAT', STATUS='OLD')
       ELSE
-         TEMP = 'fispact/WCOLL'//NUMRGN//'.DAT'
+         TEMP = 'lib/fispact/WCOLL'//NUMRGN//'.DAT'
          OPEN(24,FILE= TEMP,          STATUS='UNKNOWN')
-         OPEN(21,FILE='fispact/INDEXSIM.DAT', STATUS='OLD')
-         OPEN(22,FILE='fispact/PROCXSEC.DAT', STATUS='OLD')
+         OPEN(21,FILE='lib/fispact/INDEXSIM.DAT', STATUS='OLD')
+         OPEN(22,FILE='lib/fispact/PROCXSEC.DAT', STATUS='OLD')
       END IF
 
       M = 0
@@ -2520,7 +2520,7 @@
       IF (IVMS1.EQ.1) THEN
          OPEN(23,FILE='PROCDEC1.001',STATUS='UNKNOWN')
       ELSE
-         OPEN(23,FILE='fispact/PROCDEC1.001',STATUS='UNKNOWN')
+         OPEN(23,FILE='lib/fispact/PROCDEC1.001',STATUS='UNKNOWN')
       END IF
 
       READ(23,99002) ILINES
@@ -3114,8 +3114,8 @@
          OPEN(23,FILE='PROCDEC1.001',STATUS='UNKNOWN')
          OPEN(21,FILE='INDEXSIM.DAT',STATUS='OLD')
       ELSE
-         OPEN(23,FILE='fispact/PROCDEC1.001',STATUS='UNKNOWN')
-         OPEN(21,FILE='fispact/INDEXSIM.DAT',STATUS='OLD')
+         OPEN(23,FILE='lib/fispact/PROCDEC1.001',STATUS='UNKNOWN')
+         OPEN(21,FILE='lib/fispact/INDEXSIM.DAT',STATUS='OLD')
       END IF
 
       IF (WTYPE.EQ.3) THEN
@@ -3127,9 +3127,9 @@
             OPEN(24,FILE=TEMP,STATUS='OLD')
             OPEN(25,FILE='WARRY000.DAT',STATUS='OLD')
          ELSE
-            TEMP = 'fispact/WCOLL'//NUMRGN//'.DAT'
+            TEMP = 'lib/fispact/WCOLL'//NUMRGN//'.DAT'
             OPEN(24,FILE=TEMP,STATUS='OLD')
-            OPEN(25,FILE='fispact/WARRY000.DAT',STATUS='OLD')
+            OPEN(25,FILE='lib/fispact/WARRY000.DAT',STATUS='OLD')
          END IF
 
          KNISOT = 0
@@ -3414,7 +3414,7 @@
          TEMP = 'WARRY'//NUMRGN//'.DAT'
          OPEN(25,FILE=TEMP,STATUS='UNKNOWN')
       ELSE
-         TEMP = 'fispact/WARRY'//NUMRGN//'.DAT'
+         TEMP = 'lib/fispact/WARRY'//NUMRGN//'.DAT'
          OPEN(25,FILE=TEMP,STATUS='UNKNOWN')
       END IF
       WRITE(25,'(a72)') LIBDAT
@@ -5612,7 +5612,7 @@
       IF (IVMS1.EQ.1) THEN
          OPEN(26,FILE='BBIFL.USER',STATUS='OLD')
       ELSE
-         OPEN(26,FILE='fispact/bbifl.user',STATUS='OLD')
+         OPEN(26,FILE='lib/fispact/bbifl.user',STATUS='OLD')
       END IF
 
 ! *** Values to be reset on every call

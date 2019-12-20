@@ -26,7 +26,7 @@ module global_variables
   integer :: maxcal = 200
   !! maxcal /200/ : maximum number of VMCON iterations
 
-  character(len=30) :: fileprefix = "" !'dummy_file_prefix'
+  character(len=50) :: fileprefix = "" !'dummy_file_prefix'
   character(len=50) :: output_prefix = "" ! output file prefix
   character(len=25) :: xlabel, vlabel
   character(len=25) :: xlabel_2, vlabel_2

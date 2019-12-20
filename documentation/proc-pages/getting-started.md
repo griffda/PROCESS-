@@ -38,7 +38,7 @@ The folder structure for the PROCESS system prior to compilation is described be
 |   +-- Fortran                         : Fortran source files
 |   +-- cpp                             : C++ source files
 +-- test_suite                          : Contains integration tests
-+-- test_files
++-- unit_tests
 |   +-- pfunit_files                    : pFUnit test files
 |   +-- gtest_files                     : GTest unit test files
 +-- utilities/                          : Python utilities files
@@ -50,7 +50,6 @@ The folder structure for the PROCESS system prior to compilation is described be
 |   +-- lz_non_corona
 |   +-- lz_non_corona_14_elements
 +-- documentation                       : Contain documentation files
-+-- IN.DAT                              : Sample PROCESS input file
 ```
 
 # Clone Repository
