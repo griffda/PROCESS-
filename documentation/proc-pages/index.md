@@ -77,22 +77,14 @@ to anyone using PROCESS outputs or models based on them.
 
 ## References
 
-Below is a list of PROCESS publications and reference material
+The main PROCESS references are:
 
-- M. Kovari et al., PROCESS: a systems code for fusion power plants - Part 1: 
+- M. Kovari et al., PROCESS: A systems code for fusion power plants - Part 1: 
   Physics ([link](http://www.sciencedirect.com/science/article/pii/S0920379614005961))
-- M. Kovari et al., PROCESS: a systems code for fusion power plants - Part 2: 
+- M. Kovari et al., PROCESS: A systems code for fusion power plants - Part 2: 
 Engineering ([link](http://www.sciencedirect.com/science/article/pii/S0920379614005961))
-- H. Lux et al., Implications of uncertainties on European DEMO design, Nuc. Fus. 59 
-  (2019) ([link](https://iopscience.iop.org/article/10.1088/1741-4326/ab13e2/meta))
-- J. Morris, at al., Validation and sensitivity of CFETR design using EU systems 
-  codes, FED 2019 in press corrected proof.
-- S.I. Muldrew et al., Uncertainty analysis of an SST-2 fusion reactor design. 
-  FED, 2019 in press corrected proof.
-- S.B.L Chislett-McDonald et al., Could high H98-factor commercial tokamak power plants 
-  use Nb–Ti toroidal field coils?, IEEE Transactions on Applied Superconductivity 29 (2019) 
-  ([link](https://ieeexplore.ieee.org/abstract/document/8630091))
 
+A list of publications using PROCESS can be found [here](./publications.md).
   
 [^1]: R. L. Reid et al., “ETR/ITER Systems Code”, Oak Ridge Report ORNL/FEDC-87/7 (1988)
 
