@@ -43,8 +43,8 @@ module autodoc_data
 
   integer, parameter :: iounit = 1, hfunit = 2, vdunit = 3
   integer, parameter :: lenmax = 120
-  character(len=lenmax) :: hfile = 'adheader.src'
-  character(len=lenmax) :: ffile = 'adfooter.src'
+  character(len=lenmax) :: hfile = 'documentation/adheader.src'
+  character(len=lenmax) :: ffile = 'documentation/adfooter.src'
   character(len=lenmax) :: vdfile = 'vardes.html'
   character(len=lenmax) :: outfile
 

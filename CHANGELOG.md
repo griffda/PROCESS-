@@ -12,7 +12,7 @@
 - CI jobs now run for cmake custom targets
 
 ## Minor Changes
-
+- Renamed 'test_files' to 'unit_tests' #972
 
 ## Documentation update
 
