@@ -81,7 +81,7 @@ The main PROCESS references are:
 - M. Kovari et al., PROCESS: A systems code for fusion power plants - Part 2: 
 Engineering ([link](http://www.sciencedirect.com/science/article/pii/S0920379614005961))
 
-A list of publications using PROCESS can be found [here](./publications.md).
+A list of publications using PROCESS can be found [here](../publications/index.html).
   
 [^1]: R. L. Reid et al., “ETR/ITER Systems Code”, Oak Ridge Report ORNL/FEDC-87/7 (1988)
 
