@@ -73,9 +73,16 @@ class RuleList(object):
                 if match:
                     var_names.append(match.group(1))
 
-        # Compare with rules
-        rules_total = len(self.rules)
+        # Check variable names for matches with rule names
+        # A variable is only "covered" by a rule if the rule shares the 
+        # variable's name
+        rule_names = [rule.name for rule in self.rules]
+        missing_rules = [var_name for var_name in var_names if var_name not in 
+            rule_names]
+
+        # Report rule coverage
         var_names_total = len(var_names)
+        rules_total = var_names_total - len(missing_rules)
         coverage = (rules_total / var_names_total) * 100
         coverage = "{0:.2f}".format(coverage)
         print(f"Rule coverage: {rules_total} variable rules / "

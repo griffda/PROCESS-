@@ -8,11 +8,12 @@ check method, which checks that particular rule against the input data. This
 method stores the result and any messages on the instance of that rule class
 itself.
 
-To add a new rule, define a new class that inherits from the Rule class, then 
-override the __init__() and check() methods. The new rule class will be used by 
-the input_validator module automatically, and the rule will be checked when 
-input_validator is run. See class Ishape(Rule) for an example, or use the rule
-snippet in the Process project on Gitlab.
+To add a new rule, define a new class that inherits from the Rule class, naming 
+it the same as the variable it covers, but with the first letter capitalised. 
+Then override the __init__() and check() methods. The new rule class will be 
+used by the input_validator module automatically, and the rule will be checked 
+when input_validator is run. See class Ishape(Rule) for an example, or use the 
+rule snippet in the Process project on Gitlab.
 """
 from abc import ABC, abstractmethod
 
@@ -33,8 +34,9 @@ class Rule(ABC):
         (list of strings)
         :type tags: list
         """
-        self.name = self.__class__.__name__
-        # Set the rule's name to the name of the class
+        self.name = self.__class__.__name__.lower()
+        # Set the rule's name to the name of the class. Lower to match the 
+        # variable name that the rule checks
         self.tags = tags
         self.passed = True
         # Stores result of rule. Set to False in check method in case of 
