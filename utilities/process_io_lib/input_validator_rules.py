@@ -155,3 +155,96 @@ class Ishape(Rule):
             self.check_defined("triang95")
             self.check_undefined("kappa")
             self.check_undefined("triang")
+
+class Aspect(Rule):
+    """Aspect ratio"""
+    def __init__(self):
+        """Set tags specific to Aspect"""
+        super().__init__(["aspect"])
+    
+    def check(self):
+        """Check that aspect exists in input"""
+        self.check_defined("aspect")
+        
+class Hfact(Rule):
+    """Energy confinement time H-factor"""
+    def __init__(self):
+        """Set tags specific to Hfact"""
+        super().__init__(["hfact"])
+    
+    def check(self):
+        """Check hfact is defined"""
+        self.check_defined("hfact")
+
+class Kappa(Rule):
+    """Plasma elongation"""
+    def __init__(self):
+        """Set tags specific to Kappa"""
+        super().__init__(["kappa", "ishape"])
+    
+    def check(self):
+        """Should kappa be defined, based on value of ishape"""
+        # This logic is covered in the Ishape rule
+        ishape = self.get_param_value("ishape")
+        if ishape is 0:
+            # kappa input value is used
+            self.check_defined("kappa")
+        else:
+            # kappa is calculated
+            self.check_undefined("kappa")
+
+class Triang(Rule):
+    """Plasma triangularity"""
+    def __init__(self):
+        """Set tags specific to Triang"""
+        super().__init__(["triang", "ishape"])
+    
+    def check(self):
+        """Should triang be defined, based on value of ishape"""
+        # This logic is covered in the the Ishape rule
+        ishape = self.get_param_value("ishape")
+        if ishape in [0, 2]:
+            self.check_defined("triang")
+        else:
+            self.check_undefined("triang")
+
+class Alphan(Rule):
+    """Density profile index"""
+    def __init__(self):
+        """Set tags specific to Alphan"""
+        super().__init__(["alphan"])
+    
+    def check(self):
+        """Check alphan is defined"""
+        self.check_defined("alphan")
+
+class Alphat(Rule):
+    """Temperature profile index"""
+    def __init__(self):
+        """Set tags specific to Alphat"""
+        super().__init__(["alphat"])
+    
+    def check(self):
+        """Check alphat is defined"""
+        self.check_defined("alphat")
+
+class Dnbeta(Rule):
+    """(Troyon-like) coefficient for beta scaling"""
+    def __init__(self):
+        """Set tags specific to Dnbeta"""
+        super().__init__(["dnbeta", "gtscale"])
+    
+    def check(self):
+        """Check if dnbeta input value is required or not"""
+        iprofile = self.get_param_value("iprofile")
+        gtscale = self.get_param_value("gtscale")
+        if iprofile is 0:
+            if gtscale is 1:
+                # dnbeta is calculated
+                self.check_undefined("dnbeta")
+            else:
+                # dnbeta is required
+                self.check_defined("dnbeta")
+        else:
+            # dnbeta is calculated
+            self.check_undefined("dnbeta")

@@ -117,7 +117,7 @@ class RuleList(object):
                 for message in rule.messages:
                     output += " " + message
 
-        print(output)
+            print(output)
 
 def main():
     """Create the rule list and validate each rule against the input data."""
