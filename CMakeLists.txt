@@ -162,10 +162,20 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 # Set library path
 set(CMAKE_LIBRARY_PATH /usr/lib)
 
+# Setup for Process-customised FORD installation
 # Check that pip3 is installed in order to install Ford
 find_program(PIP3 NAMES pip3 PATHS ENV PATH NO_DEFAULT_PATH)
 if(NOT PIP3)
   message(FATAL_ERROR "Can't find pip3. Please install pip3 and retry.")
+endif()
+
+# Set clone and install Ford commands if the ford folder doesn't exist
+if(NOT EXISTS ${PROCESS_LIB_DIR}/ford)
+  set(CLONE_FORD git clone https://github.com/jonMaddockUkaea/ford.git ${PROCESS_LIB_DIR}/ford)
+  set(INSTALL_FORD pip3 install ${PROCESS_LIB_DIR}/ford/ --user)
+else()
+  set(CLONE_FORD echo "Ford already cloned, skipping...")
+  set(INSTALL_FORD echo "Ford already installed, skipping...")
 endif()
 
 # Set build targets
@@ -263,10 +273,6 @@ set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
 
 # Create the Python dictionaries from FORTRAN source using FORD
 add_custom_target(dicts
-  # Install Process-customised FORD
-  COMMAND rm -rf ford
-  COMMAND git clone https://github.com/jonMaddockUkaea/ford.git ford
-  COMMAND pip3 install ford/ --user
   # On Mac, ~/.local/bin is not in PATH, so running Ford using
   # "ford" command fails. Run using python ford.py instead
   # Add the utilities dir to the PYTHONPATH, so FORD can run create_dicts.py
@@ -277,6 +283,10 @@ add_custom_target(dicts
   DEPENDS ${CMAKE_SOURCE_DIR}/root.dir
   VERBATIM
 )
+
+# Clone and install Ford, if required
+execute_process(COMMAND ${CLONE_FORD})
+execute_process(COMMAND ${INSTALL_FORD})
 
 # Get Git log information to put latest commit message into executable
 execute_process(
