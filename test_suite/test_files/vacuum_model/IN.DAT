@@ -208,7 +208,7 @@ vgap     = 1.6 * vgap /0;0/ ; vertical gap between x-point and divertor (m)
 
 bmxlim   = 14.0 * bmxlim /12;0/ ; maximum peak toroidal field (T)
 fbetatry = 0.8895559153126745 * fbetatry /1;0/ ; f-value for beta limit
-fdene    = 0.09170519712106953 * fdene /1;0/ ; f-value for density limit
+fdene    = 0.2 * fdene /1;0/ ; f-value for density limit
 fhldiv   = 2.0 * fhldiv /1;0/ ; f-value for divertor heat load
 fiooic   = 0.33280585413295405 * fiooic /0;5/ ; f-value for TF coil operating current / critical
 fjohc    = 0.2063462612199162 * fjohc /1;0/ ; f-value for central solenoid current at end-of-flattop

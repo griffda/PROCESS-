@@ -165,17 +165,25 @@ subroutine sctfcoil(outfile,iprint)
 
     call tf_coil_geometry
 
-    if ( i_tf_turns_integer == 1 ) then
-        call tf_integer_winding_pack()
+    call tf_current
+
+    if ( i_tf_sup /= 1 ) then
+        call tf_turn_geom
+    else if ( i_tf_turns_integer == 1 ) then
+        call tf_integer_winding_pack
     else
-        call tf_winding_pack()
+        call tf_winding_pack
     end if
 
     call coilshap
 
+    if ( i_tf_sup /= 1 ) call tf_res_heating
+
     call tf_field_and_force
 
+
     ! Calculation of TF coil inductance
+    ! ---
     if ( itart == 0 .and. i_tf_shape == 1 ) then 
         call tfcind(tfcth)
     else 
@@ -187,9 +195,8 @@ subroutine sctfcoil(outfile,iprint)
 
     ! Total TF coil stored magnetic energy [Gigajoule]
     estotftgj = 1.0D-9 * estotft
+    ! ---
 
-    ! Case thicknesses (inboard leg)
-    ! if (tfc_model == 0) thkcas = tfcth * 0.5D0
 
     ! Calculate TF coil areas and masses
     call tf_coil_area_and_masses
@@ -209,20 +216,19 @@ end subroutine sctfcoil
 subroutine tf_coil_geometry()
     !! Subroutine for calculating the TF coil geometry
     !! This includes:
-    !!   - Overall geometry of coil
-    !!   - Mid-plane cross-sectional areas of components
+    !!   - Overall geometry of coil (radii and toroidal planes area)
     !!   - Winding Pack NOT included
-    !!   - Maximum B field radius and total current calculation 
 
     implicit none
     
+
     ! Inner leg geometry
     ! ---
     ! Radial position of inner/outer edge of inboard TF coil leg [m]
     r_tf_inboard_in =  r_tf_inboard_mid - 0.5D0 * tfcth   ! eq(1)
     r_tf_inboard_out = r_tf_inboard_mid + 0.5D0 * tfcth   ! eq(2)
     
-    ! Annular area of midplane containing TF coil inboard legs [m2]
+    ! Annular area of midplane containing TF coil inboard legs ( WP + casing ) [m2]
     tfareain = pi * (r_tf_inboard_out**2 - r_tf_inboard_in**2)  ! eq(3)
 
     ! Vertical distance from the midplane to the top of the tapered section [m]
@@ -237,7 +243,7 @@ subroutine tf_coil_geometry()
     r_tf_outboard_out = r_tf_outboard_mid + tfthko * 0.5D0   ! eq(7)
 
     ! Half toroidal angular extent of a single TF coil inboard leg
-    theta_coil = pi/n_tf    ! eq(9)
+    theta_coil = pi/n_tf              ! eq(9)
     tan_theta_coil = tan(theta_coil)
 
     ! TF coil width in toroidal direction at inboard leg outer edge [m]
@@ -255,35 +261,79 @@ subroutine tf_coil_geometry()
     end if
 
     ! Area of rectangular cross-section TF outboard leg [m2]
-    arealeg = tftort * tfthko   ! eq(10)
+    arealeg = tftort * tfthko              ! eq(10)
     ! ---
 
+end subroutine tf_coil_geometry
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine tf_current()
+    !! Calculation of the maximum B field and the corresponding TF current
+    
+    implicit none
+
+
     ! Plasma-facing wall thickness if fraction option selected [m]
-    if(casthi_is_fraction) casthi = casthi_fraction * tfcth
+    if (casthi_is_fraction) casthi = casthi_fraction * tfcth
 
     ! Case thickness of side wall [m]
-    if(tfc_sidewall_is_fraction) casths = casths_fraction * tftort
-
-    ! Magnetic field and current
-    ! ---    
+    if (tfc_sidewall_is_fraction) casths = casths_fraction * tftort  
+    
     ! Radial position of peak toroidal field (assuming axisymmetry) [m]
-    ! (assumed to be at the outer edge of the winding pack)
+    ! (assumed to be at the outer edge of the winding pack)    
     if ( i_tf_sup == 1 ) then
         rbmax = r_tf_inboard_out - casthi - tinstf - tfinsgap
     else 
-        rbmax = r_tf_inboard_out - casthi - tinstf   ! eq(15)
+        rbmax = r_tf_inboard_out - casthi - tinstf   ! eq(11)
     end if
 
     ! Calculation of the maximum B field on the magnet [T]
-    bmaxtf = bt * rmajor / rbmax     ! eq(14)
+    bmaxtf = bt * rmajor / rbmax     ! eq(11)
     
     ! Total current in TF coils [A]
     ! rem SK : ritcf is no longer an input
-    ritfc = bmaxtf * rbmax * 5.0D6   ! eq(16)
-    ! ---
-    
+    ritfc = bmaxtf * rbmax * 5.0D6   ! eq(13)
 
-end subroutine tf_coil_geometry
+end subroutine tf_current
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine tf_turn_geom()
+    !! Resisitve TF turn geometry, equivalent to winding_pack subroutines
+    
+    implicit none
+            
+    ! Radial position of inner/outer edge of winding pack [m]
+    r_wp_inner = r_tf_inboard_in  + thkcas + tinstf    ! eq(15)
+    r_wp_outer = r_tf_inboard_out - casthi - tinstf    ! eq(16)
+
+    ! Mid-plane Radial thickness of conductor layer [m]
+    thkwp = r_wp_outer - r_wp_inner             ! eq(17)
+
+    ! Total mid-plane cross-sectional area of winding pack, [m2]
+    ! including the surrounding ground-wall insulation layer 
+    awpc = pi * ( (r_wp_outer + tinstf)**2 - ((r_wp_inner - tinstf))**2 ) / n_tf  ! eq(18)
+
+    ! Exact mid-plane cross-section area of the conductor per TF turn   
+    awptf = ( 1.0D0 - fcoolcp ) * ( pi*(r_wp_outer**2 - r_wp_inner**2)/(n_tf*turnstf) - &
+                                  2.0D0 * tinstf * thkwp )
+
+    ! Exact overall current density on the mid-plane conductors  
+    oacdcp = ritfc / ( awptf * n_tf * turnstf ) 
+
+    ! Total cross-sectional area of surrounding case [m2]
+    ! Only valid at mid-plane for resistive itart design
+    acasetf = ( tfareain / n_tf ) - awpc        ! eq(19)
+
+    ! Number of turns
+    ! Set by user (no turn structure by default, i.e. turnstf = 1 ) 
+    if ( abs(turnstf) < epsilon(turnstf) ) turnstf = 1.0D0
+
+    ! Current per turn 
+    cpttf = ritfc / ( turnstf * n_tf )   ! eq(14)
+
+end subroutine tf_turn_geom
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -301,168 +351,135 @@ subroutine tf_winding_pack()
     ! Rounded corner radius
     real(kind(1.0D0)) :: rbcndut
     real(kind(1.0D0)) :: A
+    !----------------
 
- 
-    ! Specific calculations for SC magnets
-    if ( i_tf_sup == 1 ) then
 
-        ! Radial position of inner edge of winding pack [m]
-        ! Rem SK : added the insulation thickness/insertion gap
-        r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap     ! eq(11)
+    ! Radial position of inner edge of winding pack [m]
+    ! Rem SK : added the insulation thickness/insertion gap
+    r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap     ! eq(11)
         
-        ! Radial thickness of winding pack [m]
-        thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
-        
-        ! Radial position of outer edge of winding pack [m]
-        r_wp_outer = r_wp_inner + thkwp
+    ! Radial thickness of winding pack [m]
+    thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
+    
+    ! Radial position of outer edge of winding pack [m]
+    r_wp_outer = r_wp_inner + thkwp
 
-        ! Global inboard leg average current in TF coils [A/m2]
-        oacdcp = ritfc / tfareain
+    ! Global inboard leg average current in TF coils [A/m2]
+    oacdcp = ritfc / tfareain
 
-        ! Current per TF coil [A]
-        tfc_current = ritfc/n_tf
+    ! Current per TF coil [A]
+    tfc_current = ritfc/n_tf
 
-        ! Radius of geometrical centre of winding pack [m]
-        r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
+    ! Radius of geometrical centre of winding pack [m]
+    r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
 
-        ! Thickness of winding pack section at R > r_wp_centre [m]
-        wwp1 = 2.0D0 * (r_wp_centre*tan_theta_coil - casths - tinstf - tfinsgap)
+    ! Thickness of winding pack section at R > r_wp_centre [m]
+    wwp1 = 2.0D0 * (r_wp_centre*tan_theta_coil - casths - tinstf - tfinsgap)
 
-        ! Thickness of winding pack section at R < r_wp_centre [m]
-        wwp2 = 2.0D0 * ( r_wp_inner*tan_theta_coil - casths - tinstf - tfinsgap )
+    ! Thickness of winding pack section at R < r_wp_centre [m]
+    wwp2 = 2.0D0 * ( r_wp_inner*tan_theta_coil - casths - tinstf - tfinsgap )
 
-        ! Total cross-sectional area of winding pack [m2]
-        awptf = (0.5D0*thkwp)*(wwp1 + wwp2)
+    ! Total cross-sectional area of winding pack [m2]
+    awptf = (0.5D0*thkwp)*(wwp1 + wwp2)
 
-        ! Total cross-sectional area of winding pack, [m2]
-        ! including the surrounding ground-wall insulation layer
-        ! and insertion gap [m2]
-        awpc = 0.5D0*thkwp*(wwp2 + 2.0D0*tinstf + 2.0d0*tfinsgap) + &
-            (0.5D0*thkwp + 2.0D0*tinstf + 2.0d0*tfinsgap)*(wwp1 + 2.0D0*tinstf+ 2.0d0*tfinsgap)
+    ! Total cross-sectional area of winding pack, [m2]
+    ! including the surrounding ground-wall insulation layer
+    ! and insertion gap [m2]
+    awpc = 0.5D0*thkwp*(wwp2 + 2.0D0*tinstf + 2.0d0*tfinsgap) + &
+        (0.5D0*thkwp + 2.0D0*tinstf + 2.0d0*tfinsgap)*(wwp1 + 2.0D0*tinstf+ 2.0d0*tfinsgap)
 
-        ! Total cross-sectional area of surrounding case [m2]
-        acasetf = ( tfareain / n_tf ) - awpc   ! eq(14)
+    ! Total cross-sectional area of surrounding case [m2]
+    acasetf = ( tfareain / n_tf ) - awpc   ! eq(14)
 
-        if ((awptf <= 0.0D0).or.(awpc <= 0.0D0).or.(acasetf <= 0.0D0)) then
-            fdiags(1) = awptf ; fdiags(2) = awpc ; fdiags(3) = acasetf
-            call report_error(99)
-            write(*,*) 'Error in routine SCTFCOIL: Winding pack cross-section problem'
-            write(*,*) 'awptf = ',awptf, '  awpc = ',awpc, '  acasetf = ',acasetf
-            write(*,*) 'KE thkwp, wwp1, wwp2 = ', thkwp, ', ', wwp1, ', ', wwp2
-            !negative awptf comes from neg. thkwp
-            write(*,*) 'tfcth, casthi, thkcas, tinstf, tfinsgap = ', tfcth, ', ', casthi, ', ', thkcas, ', ', tinstf, ', ', tfinsgap
-            write(*,*) ' '
+    if ((awptf <= 0.0D0).or.(awpc <= 0.0D0).or.(acasetf <= 0.0D0)) then
+        fdiags(1) = awptf ; fdiags(2) = awpc ; fdiags(3) = acasetf
+        call report_error(99)
+        write(*,*) 'Error in routine SCTFCOIL: Winding pack cross-section problem'
+        write(*,*) 'awptf = ',awptf, '  awpc = ',awpc, '  acasetf = ',acasetf
+        write(*,*) 'KE thkwp, wwp1, wwp2 = ', thkwp, ', ', wwp1, ', ', wwp2
+        !negative awptf comes from neg. thkwp
+        write(*,*) 'tfcth, casthi, thkcas, tinstf, tfinsgap = ', tfcth, ', ', casthi, ', ', thkcas, ', ', tinstf, ', ', tfinsgap
+        write(*,*) ' '
+    end if
+
+    ! Cross-sectional area of surrounding case, outboard leg [m2]
+    acasetfo = arealeg - awpc
+
+    ! Winding pack current density (forced to be positive) [A/m2]
+    jwptf = max(1.0D0, ritfc/(n_tf*awptf))    
+
+    ! Dimension of square conductor [m]
+    ! Allow for additional inter-layer insulation MDK 13/11/18
+    ! Area of turn including conduit and inter-layer insulation
+    A = cpttf / jwptf
+
+    ! Dimension of square cross-section of each turn including inter-turn insulation [m]
+    leno = sqrt(cpttf / jwptf)
+
+    ! See derivation in k:\power plant physics and technology\process\hts\hts coil module for process.docx
+    conductor_width = (-layer_ins + sqrt(layer_ins**2 + 4.d0*A))/2.d0 - 2.0D0*thicndut
+
+    ! Total number of turns per TF coil (not required to be an integer)
+    turnstf = awptf / A
+
+    ! Area of inter-turn insulation: single turn [m2]
+    insulation_area = A - conductor_width**2
+
+    ! Area of inter-turn insulation: total [m2]
+    aiwp = turnstf * insulation_area
+
+    ! Area of steel structure in winding pack [m2]
+    aswp = turnstf*acndttf
+
+    if ( isumattf .ne. 6) then  ! NOT REBCO
+        ! Radius of rounded corners of cable space inside conduit [m]
+        rbcndut = thwcndut * 0.75D0     
+
+        ! Dimension of square cable space inside conduit [m]
+        leni = conductor_width - 2.0D0*thwcndut
+
+        ! Cross-sectional area of cable space per turn
+        ! taking account of rounded inside corners [m2]
+        acstf = leni**2 - (4.0D0-pi)*rbcndut**2
+
+        if (acstf <= 0.0D0) then
+            if (leni < 0.0D0) then
+                fdiags(1) = acstf ; fdiags(2) = leni
+                call report_error(101)
+                write(*,*) 'Warning in routine SCTFCOIL:'
+                write(*,*) 'Cable space area, acstf = ',acstf, 'Cable space dimension, leni = ',leni
+                write(*,*) ' '
+            else
+                fdiags(1) = acstf ; fdiags(2) = leni
+                call report_error(102)
+                write(*,*) 'Warning in routine SCTFCOIL:'
+                write(*,*) 'Cable space area, acstf = ',acstf, 'Cable space dimension, leni = ',leni
+                write(*,*) 'Reduce the upper limit for thwcndut (TF coil conduitcase thickness, iteration variable 58),'
+                write(*,*) 'or remove it from the list of iteration variables.'
+                write(*,*) 'Artificially set rounded corner radius to zero'
+                write(*,*)
+                rbcndut = 0.0D0
+                acstf = leni**2
+            end if
         end if
 
-    ! Specific calculations for resistive magnets 
-    else
+        ! Cross-sectional area of conduit jacket per turn [m2]
+        acndttf = conductor_width**2 - acstf
+        ! Central helium channel down the conductor core [m2]
+        awphec = turnstf * ((pi/4.0d0)*dhecoil**2)
+        ! Total conductor cross-sectional area, taking account of void area
+        ! and central helium channel [m2]
+        acond = acstf * turnstf * (1.0D0-vftf) - awphec
+        ! Void area in conductor for He, not including central channel [m2]
+        avwp = acstf * turnstf * vftf
         
-        ! Radial position of inner/outer edge of winding pack [m]
-        r_wp_inner = r_tf_inboard_in  + thkcas + tinstf    ! eq(11)
-        r_wp_outer = r_tf_inboard_out - casthi - tinstf    ! eq(12)
+    else if (isumattf == 6 ) then  ! REBCO
+        ! Diameter of circular cable space inside conduit [m]
+        leni = conductor_width - 2.0D0*thwcndut
+        ! Cross-sectional area of conduit jacket per turn [m2]
+        acndttf = conductor_width**2 - acstf
 
-        ! Mid-plane Radial thickness of conductor layer [m]
-        thkwp = r_wp_outer - r_wp_inner
-
-        ! Total mid-plane cross-sectional area of winding pack, [m2]
-        ! including the surrounding ground-wall insulation layer 
-        awpc = pi * ( (r_wp_outer + tinstf)**2 - ((r_wp_inner - tinstf))**2 ) / n_tf  ! eq(11)
-
-        ! Exact mid-plane cross-section area of the conductor per TF turn   
-        awptf = ( 1.0D0 - fcoolcp ) * ( pi*(r_wp_outer**2 - r_wp_inner**2)/(n_tf*turnstf) - &
-                                      2.0D0 * tinstf * thkwp )
-
-        ! Exact overall current density on the mid-plane conductors  
-        oacdcp = ritfc / ( awptf * n_tf * turnstf ) 
-
-        ! Total cross-sectional area of surrounding case [m2]
-        ! Only valid at mid-plane for resistive itart design
-        acasetf = ( tfareain / n_tf ) - awpc   ! eq(14)
-
-    end if
-
-
-    ! Specific calculations for superconductors
-    if ( i_tf_sup == 1 ) then
-        ! Cross-sectional area of surrounding case, outboard leg [m2]
-        acasetfo = arealeg - awpc
-
-        ! Winding pack current density (forced to be positive) [A/m2]
-        jwptf = max(1.0D0, ritfc/(n_tf*awptf))    
-
-        ! Dimension of square conductor [m]
-        ! Allow for additional inter-layer insulation MDK 13/11/18
-        ! Area of turn including conduit and inter-layer insulation
-        A = cpttf / jwptf
-
-        ! Dimension of square cross-section of each turn including inter-turn insulation [m]
-        leno = sqrt(cpttf / jwptf)
-
-        ! See derivation in k:\power plant physics and technology\process\hts\hts coil module for process.docx
-        conductor_width = (-layer_ins + sqrt(layer_ins**2 + 4.d0*A))/2.d0 - 2.0D0*thicndut
-
-        ! Total number of turns per TF coil (not required to be an integer)
-        turnstf = awptf / A
-
-        ! Area of inter-turn insulation: single turn [m2]
-        insulation_area = A - conductor_width**2
-
-        ! Area of inter-turn insulation: total [m2]
-        aiwp = turnstf * insulation_area
-
-        ! Area of steel structure in winding pack [m2]
-        aswp = turnstf*acndttf
-
-        if ( isumattf .ne. 6) then  ! NOT REBCO
-            ! Radius of rounded corners of cable space inside conduit [m]
-            rbcndut = thwcndut * 0.75D0     
-
-            ! Dimension of square cable space inside conduit [m]
-            leni = conductor_width - 2.0D0*thwcndut
-
-            ! Cross-sectional area of cable space per turn
-            ! taking account of rounded inside corners [m2]
-            acstf = leni**2 - (4.0D0-pi)*rbcndut**2
-
-            if (acstf <= 0.0D0) then
-                if (leni < 0.0D0) then
-                    fdiags(1) = acstf ; fdiags(2) = leni
-                    call report_error(101)
-                    write(*,*) 'Warning in routine SCTFCOIL:'
-                    write(*,*) 'Cable space area, acstf = ',acstf, 'Cable space dimension, leni = ',leni
-                    write(*,*) ' '
-                else
-                    fdiags(1) = acstf ; fdiags(2) = leni
-                    call report_error(102)
-                    write(*,*) 'Warning in routine SCTFCOIL:'
-                    write(*,*) 'Cable space area, acstf = ',acstf, 'Cable space dimension, leni = ',leni
-                    write(*,*) 'Reduce the upper limit for thwcndut (TF coil conduitcase thickness, iteration variable 58),'
-                    write(*,*) 'or remove it from the list of iteration variables.'
-                    write(*,*) 'Artificially set rounded corner radius to zero'
-                    write(*,*)
-                    rbcndut = 0.0D0
-                    acstf = leni**2
-                end if
-            end if
-
-            ! Cross-sectional area of conduit jacket per turn [m2]
-            acndttf = conductor_width**2 - acstf
-            ! Central helium channel down the conductor core [m2]
-            awphec = turnstf * ((pi/4.0d0)*dhecoil**2)
-            ! Total conductor cross-sectional area, taking account of void area
-            ! and central helium channel [m2]
-            acond = acstf * turnstf * (1.0D0-vftf) - awphec
-            ! Void area in conductor for He, not including central channel [m2]
-            avwp = acstf * turnstf * vftf
-        
-        else if(isumattf == 6)then  ! REBCO
-            ! Diameter of circular cable space inside conduit [m]
-            leni = conductor_width - 2.0D0*thwcndut
-            ! Cross-sectional area of conduit jacket per turn [m2]
-            acndttf = conductor_width**2 - acstf
-
-        end if  
-    end if
+    end if  
 
 end subroutine tf_winding_pack
 
@@ -475,12 +492,13 @@ subroutine tf_integer_winding_pack()
     
     ! Local variables
     !----------------
-
     ! Radius of rounded corners of cable space inside conduit [m]
     real(kind(1.0D0)) :: rbcndut
 
     ! TF coil width at inner egde of winding pack toroidal direction [m]
     real(kind(1.0D0)) :: t_tf_at_wp
+    !----------------
+
 
     if(isumattf==6)then
         write(*,*)'Integer turns in TF coil not yet available for CROCO model (i_tf_turns_integer == 1)'
@@ -638,6 +656,125 @@ end subroutine tf_integer_winding_pack
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+subroutine tf_res_heating()
+    !! Resitive magnet resitive heating calculations
+    !! Rem SK : Clamped joinded superconductors might have resistive power losses on the joints
+    !! Rem SK : Slining joins might have a region of high resisitivity
+
+    implicit none
+
+    ! Internal variable
+    ! ---
+    ! TF ouboard leg insulation area  
+    real(kind(1.0D0)) :: a_wp_ins_turn
+
+    ! Exact TF ouboard leg conductor area 
+    real(kind(1.0D0)) :: a_wp_cond_leg
+
+    integer :: is_leg_cp_temp_same = 0
+    ! ---
+
+        
+    ! Copper : Copper resisitivity degraded by 1/0.92 for the used of GLIDCOP A-15 
+    !          Better structural properties at high temperature and radiation damage resilience
+    if ( i_tf_sup == 0 ) rhocp = (frhocp/0.92D0) * ( 1.72D0 + 0.0039D0*(tcpav-273.15D0) ) * 1.0D-8  ! eq(20)
+
+    ! Cryogenic aluminium
+    if ( i_tf_sup == 2 ) rhocp = frhocp * ( 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav )  ! eq(21)
+
+    ! Calculations dedicated for configurations with CP
+    ! ***
+    if ( itart == 1 ) then 
+
+        ! Tricky trick to make the leg / CP tempearture the same
+        if ( abs(tlegav + 1.0D0) < epsilon(tlegav) ) then 
+            is_leg_cp_temp_same = 1
+            tlegav = tcpav
+        end if
+
+        ! Leg resistivity (different leg temperature as separate cooling channels) 
+        if ( i_tf_sup == 0 ) rhotfleg = (frholeg/0.92D0) * ( 1.72D0 + 0.0039D0*(tlegav-273.15D0) ) * 1.0D-8               ! eq(25)
+        if ( i_tf_sup == 2 ) rhotfleg =  frholeg * ( 2.00016D-14*tlegav**3 - 6.75384D-13*tlegav**2 + 8.89159D-12*tlegav ) ! eq(26)
+
+        ! Tricky trick to make the leg / CP tempearture the same
+        if ( is_leg_cp_temp_same == 1 ) tlegav = -1.0D0  
+
+        ! Centrepost resisitivity and conductor/insulation volume
+        call sc_cpost( r_cp_top-casthi, h_cp_top, r_tf_inboard_out-casthi, hmax+tfthko, & ! Inputs
+                       ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, tinstf, casthi,   & ! Inputs
+                       n_tf*turnstf,                                                    & ! Inputs
+                       a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
+
+
+        ! Outter leg cross-section areas
+        ! ---
+        ! Area taken by one ouboard legs turns insulation [m2]
+        a_wp_ins_turn = 2.0D0 * tinstf * ( (tftort/turnstf) + tfthko - 2.0D0*tinstf ) ! eq(25)
+
+        ! Exact TF ouboard leg conductor area (per leg) [m2]
+        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )  ! eq(24)
+        ! ---
+
+
+        ! Outter leg resistive power losse
+        ! ---
+        ! TF outboard legs resistance calculation (per leg) [ohm]
+        tflegres = rhotfleg * tfleng / a_wp_cond_leg   ! eq(23)
+
+        ! TF outer leg resistive power (TOTAL) [W]   
+        presleg = tflegres * ritfc**2 / n_tf   ! eq(23)
+        ! ---
+
+
+        ! Total volume of one outerleg [m3]
+        voltfleg = tfleng * arealeg
+            
+        ! Outboard leg TF conductor volume [m3]
+        vol_cond_leg = tfleng * a_wp_cond_leg 
+
+        ! Total TF conductor volume [m3]
+        vol_cond = vol_cond_cp + n_tf * vol_cond_leg
+
+        ! Outboard leg TF insulation layer volume (per leg) [m3]
+        vol_ins_leg = tfleng * a_wp_ins_turn * turnstf
+
+        ! Total insulation layer volume [m3]
+        vol_ins = vol_ins_cp + n_tf * vol_ins_leg
+
+        ! Total volume of the CP casing [m3]
+        vol_case_cp = vol_case_cp + pi*((r_tf_inboard_in + thkcas)**2 - r_tf_inboard_in**2 )
+
+    ! Case of a continuous resistive magnet 
+    ! ***
+    else          
+                        
+        ! Conductor / insulation cross-section areas
+        ! ---
+        ! Rem SK : These quantities assume a square shape of the turn, this is a
+        !          crude approximation if the inboard legs are vaulted
+            
+        ! Area taken by the inter turn ground insulation
+        a_wp_ins_turn = 2.0D0 * tinstf * ( (tfcth/turnstf) + tfcth - 2.0D0*tinstf )   ! eq(25)
+
+        ! Exact TF ouboard leg conductor area
+        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )  ! eq(24)
+        ! ---
+
+        ! TF resistive powers
+        prescp = rhocp * ritfc**2 * tfleng / ( a_wp_cond_leg * n_tf )   ! eq(23)
+        presleg = 0.0D0
+
+        ! Total TF outer leg conductor volume (not per leg)
+        vol_cond = tfleng * a_wp_cond_leg * n_tf 
+
+        ! Total insulation layer volume
+        vol_ins = tfleng * a_wp_ins_turn * n_tf * turnstf
+                        
+    end if
+
+end subroutine tf_res_heating
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine tf_field_and_force()
     !! Calculate the TF coil field, force and VV quench consideration, and the resistive magnets resistance/volume
@@ -648,140 +785,9 @@ subroutine tf_field_and_force()
     ! Resistive magnets : caclulation of the resistive power losses added
     ! Issue #337: Force on the vessel wall due to TF coil quench
 
-    ! Internal variable
-    ! ---
-    ! Exact TF ouboard leg conductor area 
-    real(kind(1.0D0)) :: a_wp_cond_leg
-    
-    ! TF ouboard leg insulation area  
-    real(kind(1.0D0)) :: a_wp_ins_turn
-
-    integer :: is_leg_cp_temp_same = 0
-    ! ---
-
-
     ! Quench time [s]
     if ( i_tf_sup == 1 ) taucq = (bt * ritfc * rminor * rminor) / (r_vv_inboard_out * sigvvall)
-      
-    ! Current per turns    
-    ! REM SK the number of turns par legs turnstf is now an imput
-    if ( i_tf_sup /= 1 ) then
-
-        ! Default option : one turn per leg 
-        if ( abs(turnstf) < epsilon(turnstf) ) turnstf = 1.0D0
     
-        ! Current per turn 
-        cpttf = ritfc / ( turnstf * n_tf )   ! eq(17)
-    end if
-    ! ---
-
-
-    ! Resisitive power losses
-    ! Rem SK : Clamped joinded superconductors might have resistive power losses on the joints
-    ! Rem SK : Slining joins might have a region of high resisitivity
-    ! ---
-    if ( i_tf_sup /= 1 ) then
-
-        ! Copper : Copper resisitivity degraded by 1/0.92 for the used of GLIDCOP A-15 
-        !          Better structural properties at high temperature and radiation damage resilience
-        if ( i_tf_sup == 0 ) rhocp = (frhocp/0.92D0) * ( 1.72D0 + 0.0039D0*(tcpav-273.15D0) ) * 1.0D-8  ! eq(25)
-
-        ! Cryogenic aluminium
-        if ( i_tf_sup == 2 ) rhocp = frhocp * ( 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav )  ! eq(26)
-
-        ! Calculations dedicated for configurations with CP
-        ! ***
-        if ( itart == 1 ) then 
-
-            ! Tricky trick to make the leg / CP tempearture the same
-            if ( abs(tlegav + 1.0D0) < epsilon(tlegav) ) then 
-                is_leg_cp_temp_same = 1
-                tlegav = tcpav
-            end if
-
-            ! Leg resistivity (different leg temperature as separate cooling channels) 
-            if ( i_tf_sup == 0 ) rhotfleg = (frholeg/0.92D0) * ( 1.72D0 + 0.0039D0*(tlegav-273.15D0) ) * 1.0D-8               ! eq(25)
-            if ( i_tf_sup == 2 ) rhotfleg =  frholeg * ( 2.00016D-14*tlegav**3 - 6.75384D-13*tlegav**2 + 8.89159D-12*tlegav ) ! eq(26)
-
-            ! Tricky trick to make the leg / CP tempearture the same
-            if ( is_leg_cp_temp_same == 1 ) tlegav = -1.0D0  
-
-            ! Centrepost resisitivity and conductor/insulation volume
-            call sc_cpost( r_cp_top-casthi, h_cp_top, r_tf_inboard_out-casthi, hmax+tfthko, & ! Inputs
-                           ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, tinstf, casthi,   & ! Inputs
-                           n_tf*turnstf,                                                    & ! Inputs
-                           a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
-
-
-            ! Outter leg cross-section areas
-            ! ---
-            ! Area taken by one ouboard legs turns insulation [m2]
-            a_wp_ins_turn = 2.0D0 * tinstf * ( (tftort/turnstf) + tfthko - 2.0D0*tinstf )
-
-            ! Exact TF ouboard leg conductor area (per leg) [m2]
-            a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )
-            ! ---
-
-
-            ! Outter leg resistive power losse
-            ! ---
-            ! TF outboard legs resistance calculation (per leg) [ohm]
-            tflegres = rhotfleg * tfleng / a_wp_cond_leg   ! eq(29)
-
-            ! TF outer leg resistive power (TOTAL) [W]   
-            presleg = tflegres * ritfc**2 / n_tf   ! eq(29)
-            ! ---
-
-
-            ! Total volume of one outerleg [m3]
-            voltfleg = tfleng * arealeg
-            
-            ! Outboard leg TF conductor volume [m3]
-            vol_cond_leg = tfleng * a_wp_cond_leg 
-
-            ! Total TF conductor volume [m3]
-            vol_cond = vol_cond_cp + n_tf * vol_cond_leg
-
-            ! Outboard leg TF insulation layer volume (per leg) [m3]
-            vol_ins_leg = tfleng * a_wp_ins_turn * turnstf
-
-            ! Total insulation layer volume [m3]
-            vol_ins = vol_ins_cp + n_tf * vol_ins_leg
-
-            ! Total volume of the CP casing [m3]
-            vol_case_cp = vol_case_cp + pi*((r_tf_inboard_in + thkcas)**2 - r_tf_inboard_in**2 )
-
-        ! Case of a continuous resistive magnet 
-        ! ***
-        else          
-                        
-            ! Conductor / insulation cross-section areas
-            ! ---
-            ! Rem SK : These quantities assume a square shape of the turn, this is a
-            !          crude approximation if the inboard legs are vaulted
-            
-            ! Area taken by the inter turn ground insulation
-            a_wp_ins_turn = 2.0D0 * tinstf * ( (tfcth/turnstf) + tfcth - 2.0D0*tinstf )
-
-            ! Exact TF ouboard leg conductor area
-            a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )
-            ! ---
-
-            ! TF resistive powers
-            prescp = rhocp * ritfc**2 * tfleng / ( a_wp_cond_leg * n_tf )   ! eq(28)
-            presleg = 0.0D0
-
-            ! Total TF outer leg conductor volume (not per leg)
-            vol_cond = tfleng * a_wp_cond_leg * n_tf 
-
-            ! Total insulation layer volume
-            vol_ins = tfleng * a_wp_ins_turn * n_tf * turnstf
-                        
-        end if
-        ! ***
-    end if
-    ! ---
-
 
     ! In plane forces 
     ! ---
@@ -797,18 +803,18 @@ subroutine tf_field_and_force()
     ! Rem SK : casing/insulation thickness not subctracted as part of the CP is genuinly connected to the legs..
     if ( itart == 1 .and. i_tf_sup /= 1 ) then
         
-        vforce = 0.25D0 * (bt * rmajor * ritfc) / (n_tf * thkwp**2) * ( & 
+        vforce = 0.25D0 * (bt * rmajor * ritfc) / (n_tf * thkwp**2) * (       & 
                       2.0D0 * r_wp_outer**2 * log(r_wp_outer / r_wp_inner ) + &
-                      2.0D0 *   thkwp**2 * log( r_cp_top     / r_wp_inner ) + &
-                      3.0D0 *   thkwp**2                                 - &
-                      2.0D0 * thkwp * r_wp_outer                         + &
+                      2.0D0 * thkwp**2 * log( r_cp_top     / r_wp_inner )   + &
+                      3.0D0 * thkwp**2                                      - &
+                      2.0D0 * thkwp * r_wp_outer                            + &
                       4.0D0 * thkwp * r_wp_outer *log( r_wp_inner / r_wp_outer ) )
 
         r_tf_outboard_in = r_tf_outboard_in + tinstf    ! Tricky trick t avoid writting tinstg all the time           
         vforce_outboard = 0.5D0 * (bt * rmajor * ritfc) / (n_tf * thkwp**2) * ( &
-                      r_wp_outer**2       * log( r_wp_outer       / r_wp_inner                    ) + &
+                      r_wp_outer**2       * log( r_wp_outer       / r_wp_inner                 ) + &
                       r_tf_outboard_in**2 * log( (r_tf_outboard_in + thkwp) / r_tf_outboard_in ) + &
-                      thkwp**2         * log( (r_tf_outboard_in + thkwp) / r_wp_inner       )  - &
+                      thkwp**2         * log( (r_tf_outboard_in + thkwp) / r_wp_inner          ) - &
                       thkwp            * ( r_wp_outer + r_tf_outboard_in                       )  + &
                       2.0D0 * thkwp * ( r_wp_outer     * log(r_wp_inner / r_wp_outer)             + &
                                            r_tf_outboard_in * log((r_tf_outboard_in + thkwp)      / &
@@ -826,8 +832,8 @@ subroutine tf_field_and_force()
                          r_wp_outer**2       * log( r_wp_outer                 / r_wp_inner       ) + &
                          r_tf_outboard_in**2 * log( (r_tf_outboard_in + thkwp) / r_tf_outboard_in ) + &
                          thkwp**2            * log( (r_tf_outboard_in + thkwp) / r_wp_inner       ) - &
-                         thkwp * ( r_wp_outer + r_tf_outboard_in ) + &
-                         2.0D0 * thkwp * ( r_wp_outer       * log(r_wp_inner                 / r_wp_outer       )  + &
+                         thkwp * ( r_wp_outer + r_tf_outboard_in                                  ) + &
+                         2.0D0 * thkwp * ( r_wp_outer       * log(r_wp_inner                 / r_wp_outer ) + &
                                            r_tf_outboard_in * log((r_tf_outboard_in + thkwp) / r_tf_outboard_in ) ))      
         
         r_tf_outboard_in = r_tf_outboard_in - tinstf  ! Tricky trick to avoid writting tinstg all the time
@@ -2926,7 +2932,8 @@ subroutine sc_cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, & 
     ! Mid-plane outer casing cross-section area [m2]
     a_casout = pi * ( (rmid + cas_out_th)**2 - rmid**2 )
 
-    ! Mid-plane insualtion layer cross-section [m2]
+    ! Mid-plane insualtion layer cross-section [m2] 
+    ! eq(27)
     a_cp_ins = pi * ( (r_tfin_inleg + ins_th)**2 - r_tfin_inleg**2 ) + & ! Inner layer volume
                pi * ( rmid**2 - ( rmid - ins_th )**2 )               + & ! Outter layer volume
                2.0D0 * ins_th * (rmid - r_tfin_inleg - 2.0D0*ins_th) * n_turns_tot ! inter turn separtion layers
