@@ -1,5 +1,6 @@
-# CMake file for PROCESS
-# UKAEA
+#  CMake file for PROCESS
+#  J. Morris
+#  UKAEA
 
 # Specify the minimum version for CMake
 cmake_minimum_required(VERSION 3.5)
@@ -51,13 +52,13 @@ set(DATA_DIR ${CMAKE_SOURCE_DIR}/data)
 set(UTILITIES_DIR ${CMAKE_SOURCE_DIR}/utilities)
 set(HTML_DIR ${DOC_DIR}/html)
 set(PROCESS_LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
-set(TEST_DIR ${CMAKE_SOURCE_DIR}/test_files)
-set(GTEST_DIR ${CMAKE_SOURCE_DIR}/test_files/gtest_files)
+set(TEST_DIR ${CMAKE_SOURCE_DIR}/unit_tests)
+set(GTEST_DIR ${CMAKE_SOURCE_DIR}/unit_tests)
 set(OBJ_DIR ${CMAKE_BINARY_DIR}/CMakeFiles/process.exe.dir/source/fortran)
 set(BLD_DIR ${CMAKE_BINARY_DIR})
 set(CMAKE_INSTALL_RPATH ${CMAKE_BINARY_DIR})
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-include_directories(${TEST_DIR}/gtest_files)
+include_directories(${TEST_DIR})
 
 # Check operating systems and set OS specific options
 if(CMAKE_HOST_WIN32)  # For windows system
@@ -115,7 +116,7 @@ endif()
 
 # Set custom compiler flags for particular files
 message("\nFlag configuration for files")
-file(GLOB FORTRAN_FILES ${FORT_SOURCE_DIR}/*.f90)
+file(GLOB FORTRAN_FILES ${FORT_SOURCE_DIR}/*.f90 ${PROCESS_LIB_DIR}/PLASMOD/*.f)
 foreach(file ${FORTRAN_FILES})
   if(${file} MATCHES "fson_library.f90")
     message("-- Removed -Wconversion flag for -> " ${file})
@@ -132,6 +133,9 @@ foreach(file ${FORTRAN_FILES})
   elseif(${file} MATCHES "TorGA_curgap.f90")
     message("-- Use -fcheck=bounds -fbacktrace flags for --> " ${file})
     set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch")
+  elseif(${file} MATCHES "e3m.f")
+    message("-- Use -fcheck=bounds -fbacktrace -std=legacy flags for --> " ${file})
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch -std=legacy")
   else()
     # If debug mode chosen on command line turn on -Wall and -Wextra
     if(${debug} MATCHES ON)
@@ -389,6 +393,6 @@ endif()
 # Post build commands for copying executable and dynamic library to source dir
 add_custom_command(TARGET process.exe
   POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}
+  # COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}
   COMMAND ${CMAKE_COMMAND} -E ${MOVE_DLL}
 )

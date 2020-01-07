@@ -118,7 +118,7 @@ def setup_executable():
     Setup test_area directory with current version of PROCESS from the
     PROCESS folder
     """
-    subprocess.call(["cp ../process.exe ."], shell=True)
+    subprocess.call(["cp ../bin/process.exe ."], shell=True)
 
 
 def get_file_info(ar):
@@ -788,12 +788,6 @@ class TestCase(object):
         if self.test == "stellarator":
             subprocess.call(["cp {0} .".format(self.path + "device.dat")],
                             shell=True)
-            subprocess.call(["cp {0} .".format(self.path + "vmec_info.dat")],
-                            shell=True)
-            subprocess.call(["cp {0} .".format(self.path + "vmec_Rmn.dat")],
-                            shell=True)
-            subprocess.call(["cp {0} .".format(self.path + "vmec_Zmn.dat")],
-                            shell=True)
 
         if self.test == "IFE":
             subprocess.call(["cp {0} .".format(self.path + "device.dat")],
@@ -807,9 +801,6 @@ class TestCase(object):
 
         if self.test == "stellarator":
             subprocess.call(["rm device.dat"], shell=True)
-            subprocess.call(["rm vmec_info.dat"], shell=True)
-            subprocess.call(["rm vmec_Rmn.dat"], shell=True)
-            subprocess.call(["rm vmec_Zmn.dat"], shell=True)
 
         if self.test == "IFE":
             subprocess.call(["rm device.dat"], shell=True)

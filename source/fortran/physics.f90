@@ -3612,13 +3612,15 @@ end subroutine subr
        call ocmmnt(outfile,'Plasma configuration = stellarator')
     end if
 
-    if (itart == 0) then
-       itart_r = itart
-       call ovarrf(outfile,'Tokamak aspect ratio = Conventional, itart = 0','(itart)',itart_r)
-    else if (itart == 1) then
-       itart_r = itart
-      call ovarrf(outfile,'Tokamak aspect ratio = Spherical, itart = 1','(itart)',itart_r)
-   end if
+    if (istell == 0) then
+      if (itart == 0) then
+        itart_r = itart
+        call ovarrf(outfile,'Tokamak aspect ratio = Conventional, itart = 0','(itart)',itart_r)
+      else if (itart == 1) then
+        itart_r = itart
+        call ovarrf(outfile,'Tokamak aspect ratio = Spherical, itart = 1','(itart)',itart_r)
+      end if
+    end if
 
     call osubhd(outfile,'Plasma Geometry :')
     call ovarrf(outfile,'Major radius (m)','(rmajor)',rmajor)
@@ -3962,7 +3964,7 @@ end subroutine subr
         '(peakradwallload)', peakradwallload, 'OP ')
     call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)', &
         '(wallmw)', wallmw, 'OP ')
-
+    if (istell == 0) then
     call oblnkl(outfile)
     call ovarre(outfile,'Power incident on the divertor targets (MW)', &
         '(ptarmw)',ptarmw, 'OP ')
@@ -3996,7 +3998,7 @@ end subroutine subr
       call ovarre(outfile,'Power incident on the upper outer target (MW)', &
            '(pUOmw)',pUOmw, 'OP ')
     end if
-
+    end if
     call oblnkl(outfile)
     call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw, 'OP ')
     call ovarrf(outfile,'Fraction of alpha power deposited in plasma','(falpha)',falpha, 'OP ')
@@ -4143,6 +4145,7 @@ end subroutine subr
          '(total_energy_conf_time)', total_energy_conf_time, 'OP ')
     call ocmmnt(outfile,'  (= stored energy including fast particles / loss power including radiation')
 
+    if (istell == 0) then
     ! Issues 363 Output dimensionless plasma parameters MDK
     call osubhd(outfile,'Dimensionless plasma parameters')
     call ocmmnt(outfile,'For definitions see')
@@ -4152,6 +4155,7 @@ end subroutine subr
     call ovarre(outfile,'Normalized ion Larmor radius', '(rho_star)', rho_star,'OP ')
     call ovarre(outfile,'Normalized collisionality', '(nu_star)',nu_star,'OP ')
     call ovarre(outfile,'Volume measure of elongation','(kappaa_IPB)',kappaa_IPB,'OP ')
+    end if
 
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')

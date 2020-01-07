@@ -26,7 +26,7 @@ module global_variables
   integer :: maxcal = 200
   !! maxcal /200/ : maximum number of VMCON iterations
 
-  character(len=30) :: fileprefix = "" !'dummy_file_prefix'
+  character(len=50) :: fileprefix = "" !'dummy_file_prefix'
   character(len=50) :: output_prefix = "" ! output file prefix
   character(len=25) :: xlabel, vlabel
   character(len=25) :: xlabel_2, vlabel_2
@@ -4133,14 +4133,6 @@ module stellarator_variables
   !! n_res /5/ : toroidal resonance number
   real(kind(1.0D0)) :: shear = 0.5D0
   !! shear /0.5/ : magnetic shear, derivative of iotabar
-  character(len=48) :: vmec_info_file = 'vmec_info.dat'
-  !! vmec_info_file /vmec_info.dat/ : file containing general VMEC settings
-  character(len=48) :: vmec_rmn_file = 'vmec_Rmn.dat'
-  !! vmec_rmn_file /vmec_Rmn.dat/ : file containing plasma boundary R(m,n)
-  !!                                Fourier components
-  character(len=48) :: vmec_zmn_file = 'vmec_Zmn.dat'
-  !! vmec_zmn_file /vmec_Zmn.dat/ : file containing plasma boundary Z(m,n)
-  !!                                Fourier components
   real(kind(1.0D0)) :: vportamax = 0.0D0
   !! vportamax : maximum available area for vertical ports (m2)
   real(kind(1.0D0)) :: vportpmax = 0.0D0

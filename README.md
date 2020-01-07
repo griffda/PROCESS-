@@ -73,7 +73,7 @@ The folder structure for the PROCESS system prior to compilation is descibed bel
 |   *-- test_suite_functions.py         : Python functions  for running test suite by user on command line
 |   +-- test_files                      : Input files for test suite
 |   +-- test_area                       : Output files for test suite
-+-- test_files
++-- unit_tests
 |   +-- pfunit_files                    : pFUnit test files
 |   +-- gtest_files                     : GTest test files
 +-- utilities/                          : Python utilities files
@@ -84,7 +84,6 @@ The folder structure for the PROCESS system prior to compilation is descibed bel
 |   +-- lz_non_corona
 |   +-- lz_non_corona_14_elements
 +-- documentation                       : Contain documentation files
-*-- IN.DAT                              : Sample PROCESS input file
 ```
 
 ## Build Steps
@@ -108,8 +107,8 @@ module load python/3.5.1
       - or `cmake3 -H. -Bbuild -Ddll=OFF` to compile into single executable without dll.
     - `cmake3 --build build`
     - Step 2 will create a folder called `bin`, which contains three files: process.exe, process_GTest.exe and libPROCESS_calc_engine.so
-3. pFUnit unit test files are located in the folder _test_files/pfunit_files/_ with extension _.pf_. Use `make tests` from your home directory to run the pFUnit test suite   
-4. GTest unit test files are located in the folder _test_files/gtest_files/_ with extension _.h_. Use `./bin/process_test` from your home directory to run the GTest test suite 
+3. pFUnit unit test files are located in the folder _unit_tests/pfunit_files/_ with extension _.pf_. Use `make tests` from your home directory to run the pFUnit test suite   
+4. GTest unit test files are located in the folder _unit_tests/gtest_files/_ with extension _.h_. Use `./bin/process_test` from your home directory to run the GTest test suite 
 
 During the compile and build steps, a number of files and folders are created. Additional files in the folder structure are listed below:
 
@@ -426,8 +425,9 @@ If you encounter issues with file line endings when working between Windows and 
 
 ## Contacts
 
-[Hanni Lux](Hanni.lux@ukaea.uk)
+[James Morris](james.morris2@ukaea.uk)
 
 [Michael Kovari](michael.kovari@ukaea.uk)
 
-[James Morris](james.morris2@ukaea.uk)
+[Stuart Muldrew](stuart.muldrew@ukaea.uk)
+
