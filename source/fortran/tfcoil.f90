@@ -13,16 +13,6 @@ module tfcoil_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_module
-  use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, rtop, tfcth, tfthko, bore, hpfu
-  use constants
-  use error_handling
-  use fwbs_variables
-  use physics_variables
-  use process_output
-  use sctfcoil_module
-  use tfcoil_variables
-
   private
   
   ! Radial position of plasma-facing edge of TF coil outboard leg [m]
@@ -51,6 +41,13 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   use build_module, only: portsz
+   use process_output, only: mfile, int2char, oheadr, ovarre, osubhd, oblnkl, &
+      ocmmnt
+   use sctfcoil_module, only: sctfcoil
+   use tfcoil_variables, only: bmaxtf, cforce, estotftgj, i_tf_sup, n_tf, &
+      ripmax, ripple, ritfc, sigrad, sigtan, sigver, vforce, xarc, yarc
 
     implicit none
 
@@ -137,6 +134,16 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   use build_variables, only: bore, hmax, hpfu, r_tf_inboard_mid, &
+      r_tf_outboard_mid, rtop, tfcth, tfthko
+   use physics_variables, only: bt, itart, kappa, rmajor, rminor
+   use process_output, only: pi, rmu0, oheadr, ovarin, ovarre, osubhd
+   use tfcoil_variables, only: arealeg, bmaxtf, cdtfleg, cforce, cpttf, &
+      dalu, dcopper, dztop, estotftgj, fcoolcp, frhocp, i_tf_sup, n_tf, &
+      prescp, presleg, rbmax, rhocp, rhotfleg, ritfc, sigrad, sigver, &
+      tcpav, tftort, tfareain, tflegres, turnstf, vforce, vftf, volcp, &
+      voltfleg, whtcp, whttf, sigtan, whttflgs
 
     implicit none
 
@@ -363,6 +370,13 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   use build_variables, only: hmax, tfcth, tfthko
+   use fwbs_variables, only: pnuccp
+   use process_output, only: pi, oheadr, ovarre, osubhd
+   use tfcoil_variables, only: cph2o, denh2o, dtiocool, etapump, fcoolcp, &
+      i_tf_sup, k_copper, kh2o, muh2o, ncool, ppump, prescp, rbmax, rcool, &
+      rhocp, tcoolin, tcpav, tcpav2, tcpmax, vcool, volcp
 
     implicit none
 
@@ -659,6 +673,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+   use error_handling, only: fdiags, report_error
+   use process_output, only: pi
+   use tfcoil_variables, only: tfareain
+
     implicit none
 
     !  Arguments
@@ -791,6 +809,10 @@ contains
     !! author: S I Muldrew, CCFE, Culham Science Centre
     !! Calculates the shape of the INSIDE of the TF coil. The coil is
     !! given by a rectangular shape.
+
+   use build_variables, only: hmax, hpfu, r_tf_inboard_mid, r_tf_outboard_mid, &
+      tfcth, tfthko
+   use tfcoil_variables, only: vforce, xarc, yarc
 
     implicit none
 
