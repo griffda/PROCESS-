@@ -498,7 +498,7 @@ subroutine initial
 
     !  Initialise stellarator parameters if necessary
     !  This overrides some of the bounds of the tokamak parameters.
-    if (istell == 1) call stinit
+    if (istell /= 0) call stinit
 
 end subroutine initial
 

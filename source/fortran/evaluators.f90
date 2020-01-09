@@ -136,7 +136,7 @@ contains
 
     !  Convergence loop to ensure burn time consistency
 
-    if (istell /= 1) then
+    if (istell == 0) then
        loop = 0
        do while ( (loop < 10).and. &
             (abs((tburn-tburn0)/max(tburn,0.01D0)) > 0.001D0) )
