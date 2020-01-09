@@ -13,15 +13,6 @@ module structure_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_variables
-  use divertor_variables
-  use fwbs_variables
-  use pfcoil_variables
-  use physics_variables
-  use process_output
-  use structure_variables
-  use tfcoil_variables
-
   implicit none
 
   private
@@ -41,7 +32,14 @@ contains
     !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use build_variables, only: dr_tf_inner_bore, hmax, tfcth, tfthko
+    use divertor_variables, only: divmas
+    use fwbs_variables, only: coolmass, dewmkg, fwmass, whtblkt, whtshld
+    use pfcoil_variables, only: ipfres, whtpf, whtpfs
+    use physics_variables, only: bt, kappa, plascur, rmajor, rminor
+    use structure_variables, only: aintmass, clgsmass, coldmass, fncmass, &
+      gsmass
+    use tfcoil_variables, only: i_tf_sup, whttf
     implicit none
 
     !  Arguments
@@ -103,7 +101,7 @@ contains
     !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use process_output, only: oheadr, ovarre
     implicit none
 
     !  Arguments
