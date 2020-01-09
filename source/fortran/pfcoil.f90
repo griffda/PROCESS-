@@ -24,7 +24,7 @@ module pfcoil_module
   use superconductors
   use tfcoil_variables
   use times_variables
-
+  use resistive_materials, only: volume_fractions, supercon_strand
   implicit none
 
   private

@@ -96,7 +96,7 @@ contains
 
 ! --------------------------------------------------------------------------
 subroutine initialise_cables()
-    
+    use rebco_variables, only: copper_rrr
     implicit none
 
     copper%rrr = copper_rrr
@@ -1352,7 +1352,8 @@ subroutine outtf(outfile, peaktfflag)
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use rebco_variables, only: solder_area, copperA_m2, coppera_m2_max, &
+        copper_rrr
     implicit none
 
     !  Arguments
@@ -1622,6 +1623,10 @@ subroutine tfspcall(outfile,iprint)
     !! Routine to call the superconductor module for the TF coils
     !! outfile : input integer : Fortran output unit identifier
     !! iprint : input integer : Switch to write output to file (1=yes)
+    use rebco_variables, only: copper_area, copper_thick, copperA_m2, &
+        croco_id, croco_od, croco_od, croco_thick, hastelloy_area, &
+        hastelloy_thickness, rebco_area, stack_thickness, tape_thickness, &
+        tape_thickness, tape_width, tapes, rebco_thickness, solder_area
     implicit none
     integer, intent(in) :: outfile, iprint
 
