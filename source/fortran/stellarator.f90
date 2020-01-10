@@ -197,43 +197,6 @@ module stellarator_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use availability_module
-  use build_variables
-  use buildings_module
-  use constants
-  use constraint_variables
-  use costs_module
-  use cost_variables
-  use current_drive_module
-  use current_drive_variables
-  use divertor_module
-  use divertor_variables
-  use error_handling
-  use fwbs_module
-  use fwbs_variables
-  use global_variables
-  use heat_transport_variables
-  use impurity_radiation_module
-  use kit_blanket_model
-  use maths_library
-  use numerics
-  use pfcoil_variables
-  use physics_functions_module
-  use physics_module
-  use physics_variables
-  use plasma_geometry_module
-  use power_module
-  use process_output
-  use profiles_module
-
-  use sctfcoil_module
-  use stellarator_variables
-  use structure_module
-  use structure_variables
-  use tfcoil_variables
-  use times_variables
-  use vacuum_module
-
   implicit none
 
   private
@@ -255,6 +218,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use availability_module, only: avail
+    use buildings_module, only: bldgcall
+    use costs_module, only: costs
+    use power_module, only: tfpwr, power1, acpow, power2
+    use process_output, only: nout
+    use vacuum_module, only: vaccall
     implicit none
 
     !  Arguments
@@ -296,6 +265,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: gapoh, iohcl, ohcth, tfootfi
+    use current_drive_variables, only: irfcd
+    use pfcoil_variables, only: ohhghf
+    use physics_variables, only: aspect, dnbeta, kappa, kappa95, q, rmajor, &
+      triang, hfac, tauscl
+    use process_output, only: nout, icase, boundl, boundu
+    use stellarator_variables, only: istell
+    use tfcoil_variables, only: n_tf
+    use times_variables, only: tburn, tcycle, tdown, tdwell, theat, tohs, &
+      tpulse, tqnch, tramp
     implicit none
 
     !  Arguments
@@ -442,7 +421,9 @@ contains
     !! surfaces with Fourier coefficients')
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use physics_variables, only: aspect, eps, rmajor, rminor, sarea, sareao, &
+      vol, xarea
+    use process_output, only: pi
     implicit none
 
     !  Arguments
@@ -482,6 +463,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: blbmith, blbmoth, blbpith, blbpoth, blbuith, &
+      blbuoth, blnkith, blnkoth, blnktth, bore, ddwi, fwarea, fwith, fwoth, &
+      gapds, gapoh, gapomin, gapsto, hmax, ohcth, r_tf_outboard_mid, rbld, &
+      rsldi, rsldo, rspo, scrapli, scraplo, shldith, shldoth, shldtth, tfcth, &
+      tfthko
+    use fwbs_variables, only: afw, blktmodel, fdiv, fhcd, fhole, fw_wall
+    use heat_transport_variables, only: ipowerflow
+    use physics_variables, only: rmajor, rminor, sarea
+    use process_output, only: mfile, oheadr, obuild, ovarre
     implicit none
 
     !  Arguments
@@ -649,7 +639,29 @@ contains
     !! AEA FUS 172: Physics Assessment for the European Reactor Study
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use build_variables, only: fwarea
+    use constraint_variables, only: peakfactrad, peakradwallload
+    use current_drive_variables, only: cnbeam, enbeam, ftritbm, pinjmw, pnbeam
+    use fwbs_variables, only: fdiv, fhcd, fhole
+    use heat_transport_variables, only: ipowerflow
+    use physics_functions_module, only: palph, beamfus, palph2
+    use physics_module, only: plasma_composition, rether, radpwr, pcond, phyaux
+    use physics_variables, only: afuel, alphan, alpharate, alphat, aspect, &
+      beamfus0, beta, betaft, betalim, betanb, betap, betbm0, bp, bt, btot, &
+      burnup, dene, deni, dlamie, dnalp, dnbeam2, dnelimt, dnitot, dnla, &
+      dntau, ealphadt, eps, falpe, falpha, falpi, fdeut, fhe3, figmer, ftrit, &
+      fusionrate, hfact, ifalphap, ignite, iinvqd, isc, iwalld, kappa, &
+      kappa95, kappaa, palpepv, palpepv, palpfwmw, palpipv, palpmw, pbrempv, &
+      pchargemw, pcoreradmw, pcoreradpv, pdd, pdhe3, pdivt, pdt, pedgeradmw, &
+      pfuscmw, pedgeradpv, photon_wall, piepv, plascur, plinepv, pneutmw, &
+      pneutpv, pohmmw, powerht, powfmw, pradmw, pradpv, protonrate, &
+      pscalingmw, psolradmw, psyncpv, ptremw, ptrepv, ptrimw, ptripv, q, q95, &
+      qfuel, qstar, rad_fraction, rmajor, rminor, rndfuel, sarea, tauee, &
+      taueff, tauei, taup, te, ten, ti, tin, vol, wallmw, xarea, zeff, zeffai, &
+      ffwal, palpnb, palppv, pchargepv
+    use process_output, only: echarge, nout
+    use profiles_module, only: plasma_profiles
+    use stellarator_variables, only: f_rad, iotabar
     implicit none
 
     !  Arguments
@@ -825,6 +837,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use current_drive_variables, only: bigq, cnbeam, echpwr, enbeam, &
+      etacd, etaech, etalh, etanbi, forbitloss, frbeam, nbshield, nbshinef, &
+      pheat, pinjemw, pinjimw, pinjmw, plhybd, pnbeam, porbitlossmw, &
+      rtanbeam, rtanmax, taubeam
+    use current_drive_module, only: culnbi
+    use heat_transport_variables, only: pinjwp
+    use error_handling, only: idiags, report_error
+    use physics_variables, only: ignite, pohmmw, powfmw
+    use process_output, only: oheadr, ocmmnt, oblnkl, ovarre
+    use stellarator_variables, only: isthtr
     implicit none
 
     !  Arguments
@@ -973,6 +995,37 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: blarea, blareaib, blbmith, blbmoth, blbpith, &
+      blbpoth, blbuith, blbuoth, blnkith, blnkoth, blnktth, ddwex, ddwi, &
+      fwarea, fwareaib, fwareaob, fwith, fwoth, r_tf_outboard_mid, scrapli, &
+      scraplo, sharea, shareaib, shareaob, shldith, shldoth, shldtth, tfthko, &
+      blareaob
+    use cost_variables, only: abktflnc, tlife
+    use current_drive_variables, only: porbitlossmw
+    use divertor_variables, only: divclfr, divdens, divmas, divplt, divsur
+    use fwbs_module, only: tsat, blanket_neutronics, &
+      sctfcoil_nuclear_heating_iter90
+    use fwbs_variables, only: afwi, afwo, bktlife, blktmodel, blkttype, &
+      breedmat, coolmass, coolp, coolwh, declblkt, declfw, declshld, &
+      densbreed, denstl, dewmkg, emult, emultmw, fblbe, fblbreed, fblhebmi, &
+      fblhebmo, fblli, fbllipb, fblss, fblvd, fdiv, fhcd, fhole, fvoldw, &
+      fvolso, fwclfr, fwlife, fwmass, hcdportsize, li6enrich, nflutf, &
+      npdiv, nphcdin, nphcdout, outlet_temp, pnucblkt, pnuccp, pnucdiv, &
+      pnucdiv, pnucfw, pnuchcd, pnucloss, pnucshld, praddiv, pradfw, pradhcd, &
+      pradloss, primary_pumping, ptfnuc, rdewex, rpf2dewar, secondary_cycle, &
+      tbr, tritprate, vdewex, vdewin, vfblkt, vfshld, volblkt, volblkti, &
+      volblkto, volshld, vvmass, wallpf, whtblbe, whtblbreed, whtblkt, &
+      whtblli, whtblss, whtblvd, whtshld, wpenshld, wtblli2o, wtbllipb, &
+      fblhebpi, fblhebpo, fblli2o, fvolsi
+    use heat_transport_variables, only: fpumpblkt, fpumpdiv, fpumpfw, &
+      fpumpshld, htpmw_blkt, htpmw_div, htpmw_fw, htpmw_shld, ipowerflow
+    use kit_blanket_model, only: nflutfi, nflutfo, pnuctfi, pnuctfo, &
+      t_bl_y, vvhemaxi, vvhemaxo, vvhemini, vvhemino
+    use error_handling, only: report_error
+    use physics_variables, only: pdivt, pneutmw, pradmw, rminor, rmajor, &
+      sarea, wallmw
+    use process_output, only: pi, oheadr, ovarre, osubhd, ovarin, ocmmnt, oblnkl
+    use tfcoil_variables, only: i_tf_sup
     implicit none
 
     !  Arguments
@@ -1637,7 +1690,8 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use error_handling, only: fdiags, report_error
+    use physics_variables, only: dene, dnla
     implicit none
 
     !  Arguments
@@ -1713,6 +1767,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use current_drive_variables, only: pinjmw
+    use physics_module, only: fhfac, pcond
+    use physics_variables, only: afuel, aspect, bt, dene, dnitot, dnla, &
+      eps, ignite, iinvqd, kappa, kappa95, kappaa, palpmw, pchargemw, &
+      pchargepv, plascur, qstar, rmajor, rminor, te, ten, tin, vol, xarea, &
+      zeff, pcoreradpv, hfac, tauscl
+    use process_output, only: osubhd, oblnkl
+    use stellarator_variables, only: iotabar
     implicit none
 
     !  Arguments
@@ -1785,7 +1847,13 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    
+    use availability_module, only: avail
+    use buildings_module, only: bldgcall
+    use costs_module, only: costs
+    use physics_module, only: outplas
+    use power_module, only: tfpwr, acpow, power2
+    use vacuum_module, only: vaccall
     implicit none
 
     !  Arguments
@@ -1839,6 +1907,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use fwbs_variables, only: dewmkg
+    use process_output, only: oheadr, ovarre
+    use structure_variables, only: aintmass, clgsmass, coldmass, fncmass, gsmass
+    use tfcoil_variables, only: whttf
     implicit none
 
     !  Arguments
@@ -1891,6 +1963,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use divertor_variables, only: anginc, divsur, hldiv, tdiv, xpertin
+    use physics_variables, only: afuel, pdivt, rmajor
+    use process_output, only: echarge, pi, twopi, umass, oheadr, ovarre, ovarin
+    use stellarator_variables, only: bmn, f_asym, f_rad, f_w, fdivwet, &
+      flpitch, m_res, n_res, shear
     implicit none
 
     !  Arguments
@@ -2029,7 +2106,24 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use helias5b_coil_parameters
-
+    use build_variables, only: blnkith, blnkoth, ddwi, dh_tf_inner_bore, &
+      dr_tf_inner_bore, fwith, fwoth, gapds, gapsto, hmax, r_tf_outboard_mid, &
+      r_tf_outboard_mid, scrapli, scraplo, shldith, shldoth, tfcth, tfthko, &
+      r_tf_inboard_mid
+    use fwbs_variables, only: denstl
+    use error_handling, only: report_error, fdiags, idiags
+    use physics_variables, only: bt, rmajor, rminor
+    use process_output, only: pi, twopi, rmu0, find_y_nonuniform_x, ellipke, &
+      sumup3, tril
+    use stellarator_variables, only: hportamax, hporttmax, hportpmax, &
+      vportamax, vportpmax, vporttmax
+    use structure_variables, only: aintmass
+    use tfcoil_variables, only: acasetf, acndttf, acond, acstf, aiwp, arealeg, &
+      aswp, avwp, bmaxtf, casthi, casths, cpttf, dcase, dcopper, estotftgj, &
+      fcutfsu, isumattf, jwptf, n_tf, oacdcp, rbmax, ritfc, tfareain, &
+      tfcryoarea, tficrn, tfleng, tfocrn, tfsai, tfsao, tftmp, tftort, &
+      thicndut, thkcas, thkwp, thwcndut, tinstf, turnstf, vftf, whtcas, &
+      whtcon, whtconcu, whtconsc, whtconsh, whttf, wwp1, dcond
     implicit none
 
     !  Arguments
@@ -3091,6 +3185,16 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: dh_tf_inner_bore, dr_tf_inner_bore, hmax, &
+      r_tf_inboard_mid, r_tf_outboard_mid, tfcth, tfthko
+    use process_output, only: oheadr, osubhd, ovarre
+    use stellarator_variables, only: hportamax, hportpmax, hporttmax, &
+      vportamax, vportpmax, vporttmax
+    use tfcoil_variables, only: acasetf, acond, acasetf, aiwp, aswp, bmaxtf, &
+      casthi, casths, cpttf, estotftgj, fcutfsu, jwptf, n_tf, oacdcp, ritfc, &
+      tfareain, tficrn, tfleng, tfocrn, tftort, thicndut, thkcas, thkwp, &
+      thwcndut, turnstf, turnstf, vftf, whtcas, whtcon, whtconcu, whtconsc, &
+      whtconsh, whttf, wwp1, acstf, avwp, tinstf
     implicit none
 
     !  Arguments
