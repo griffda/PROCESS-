@@ -71,7 +71,7 @@ contains
     ! The # character must be at the start of the line.
     include "root.dir"
 
-!    character(len=120), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
+    !    character(len=120), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
     character(len=200), save :: hdatadir = trim(INSTALLDIR//'/data/h_data/')
 
     ! Maxima for log density and log temperature in each data file

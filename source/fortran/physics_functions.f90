@@ -154,6 +154,7 @@ contains
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         use constants, only: echarge
+        use maths_library, only: quanc8
 
         implicit none
 
@@ -791,6 +792,7 @@ contains
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       use error_handling, only: idiags, report_error
+      use maths_library, only: quanc8
 
       implicit none
 
