@@ -106,9 +106,9 @@
     This section outlines the geometry used in the TF model. Figure 
     \ref{fig: geom-1}  shows the overall geometry of the TF coil inboard leg excluding 
     dimensions of the internal make-up of the coil (e.g. winding pack). Where 
-    \texttt{rcoilp} is the coil inner radii, \texttt{rtfcin} the coil centre radii, 
-    \texttt{rcoil} the coil outer radii, \texttt{tfcth} is the total thickness of 
-    the inboard TF coil and \texttt{thtcoil} is the half toroidal angular extent of the coil.
+    \texttt{r\_tf\_inleg\_in} is the coil inner radii, \texttt{rtfcin} the coil centre radii, 
+    \texttt{r\_tf\_inleg\_out} the coil outer radii, \texttt{tfcth} is the total thickness of 
+    the inboard TF coil and \texttt{theta\_coil} is the half toroidal angular extent of the coil.
         
     \begin{figure}[!b]
      \begin{center}
@@ -122,14 +122,14 @@
         \filldraw[fill=black] (6.1,3.4) circle (0.05cm);
         \draw (6.15,3.6) node {rtfcin};
         \filldraw[fill=black] (7.45,3.4) circle (0.05cm);
-        \draw (7.15,3.6) node {rcoil};
+        \draw (7.15,3.6) node {r\_tf\_inleg\_out};
         \filldraw[fill=black] (4.6,3.4) circle (0.05cm);
-        \draw (4.95,3.6) node {rcoilp};  
+        \draw (4.95,3.6) node {r\_tf\_inleg\_in};  
         \draw[thick, dashed] (0,3.4)--(8,3.4);
         \draw[thick, dashed] (0.8,3.4)--(4.55,4.275);
         \draw[thick] [<->,>=stealth] (4.8,2.7)--(7.3,2.7);
         \draw (6.1,2.9) node {tfcth};
-        \draw (2.71,3.6) node {thtcoil/2};
+        \draw (2.71,3.6) node {theta\_coil/2};
        \end{tikzpicture}
     \end{center}
     \caption{Cross-sectional geometry of TF coil inner leg.} \label{fig: geom-1}
@@ -139,29 +139,15 @@
 
     \noi The toroidal angular extent of a single TF coil inner leg is:
 
-    \begin{equation}\label{eq: thtcoil}
-    \text{thtcoil} = \frac{\pi}{\text{tfno}} 
+    \begin{equation}\label{eq: theta_coil}
+    \text{theta\_coil} = \frac{\pi}{\text{n\_tf}} 
     \end{equation}
 
-    \noi where \emph{tfno} is the number of TF coils (seen in figure \ref{fig: geom-1}). 
-    This enables the calculation of the annular area of the TF coil inboard legs.
+    \noi where \emph{n\_tf} is the number of TF coils (seen in figure \ref{fig: geom-1}). 
+    Assuming an annular geometry, the area of the coil inboard leg is given by  
 
     \begin{equation}\label{eq: tfareain}
-    \text{tfareain} = \pi (\text{rcoil}^2 - \text{rcoilp}^2) 
-    \end{equation}
-
-    \noi The total current in the TF coils (\emph{ritfc}) is defined by the maximum allowable 
-    overall current density in the TF coil inboard legs (\emph{oacdcp}). The total current 
-    in TF coils is 
-    
-    \begin{equation}\label{eq: ritfc}
-        \text{ritfc} = \text{oacdcp} \times \text{tfareain}
-    \end{equation}
-
-    \noi The total current per TF coil is then given by
-
-    \begin{equation}
-        \text{tfc\_current} = \frac{\text{ritfc}}{\text{tfno}}
+    \text{tfareain} = \pi (\text{r\_tf\_inleg\_out}^2 - \text{r\_tf\_inleg\_in}^2) 
     \end{equation}
 
     \noi After defining the dimensions of the inboard leg PROCESS calculates 
@@ -180,12 +166,12 @@
     \ref{fig: winding-pack-non-integer}). The thicknesses are:
 
     \begin{equation}\label{eq: wwp1}
-    \text{wwp1} = 2(\text{radwp}\times \tan(\text{thtcoil}) - \text{casths} - \text{tinstf} 
+    \text{wwp1} = 2(\text{radwp}\times \tan(\text{theta\_coil}) - \text{casths} - \text{tinstf} 
     - \text{tfinsgap}); \hspace{0.3cm} r > \text{radwp}
     \end{equation}
 
     \begin{equation}\label{eq: wwp2}
-    \text{wwp2} = 2((\text{radwp}-\frac{1}{2}\text{thkwp})\times \tan(\text{thtcoil}) - 
+    \text{wwp2} = 2((\text{radwp}-\frac{1}{2}\text{thkwp})\times \tan(\text{theta\_coil}) - 
     \text{casths} - \text{tinstf}); \hspace{0.3cm} r < \text{radwp} 
     \end{equation}
 
@@ -211,7 +197,7 @@
     vertical stress on the TF coil uses this area.
 
     \begin{equation}\label{eq: acasetf}
-    \text{acasetf} = \frac{\text{tfareain}}{\text{tfno}} - \text{awpc}
+    \text{acasetf} = \frac{\text{tfareain}}{\text{n\_tf}} - \text{awpc}
     \end{equation}
 
     \noi Given the relative winding pack areas PROCESS calculates the dimensions of 
@@ -219,7 +205,7 @@
     calculate the number of turns in the inner leg. The winding pack current density is:
 
     \begin{equation}
-    j_{wptf} = \text{max}(1.0, \frac{\text{ritfc}}{\text{tfno} \times \text{awptf}})
+    j_{wptf} = \text{max}(1.0, \frac{\text{ritfc}}{\text{n\_tf} \times \text{awptf}})
     \end{equation}
 
     \begin{figure}[t!]
@@ -339,7 +325,7 @@
     pack thickness is given as:
 
     \begin{equation}\label{eq: wwp1-int}
-    \text{wwp1} = 2(\text{radwp}\times \tan(\text{thtcoil}) - \text{casths} - \text{tinstf} 
+    \text{wwp1} = 2(\text{radwp}\times \tan(\text{theta\_coil}) - \text{casths} - \text{tinstf} 
     - \text{tfinsgap}); \hspace{0.3cm} r > \text{radwp}
     \end{equation}
 
@@ -361,7 +347,7 @@
     vertical stress on the TF coil uses this area.
 
     \begin{equation}\label{eq: acasetf-int}
-    \text{acasetf} = \frac{\text{tfareain}}{\text{tfno}} - \text{awpc}
+    \text{acasetf} = \frac{\text{tfareain}}{\text{n\_tf}} - \text{awpc}
     \end{equation}
 
     \noi Given the relative winding pack areas PROCESS calculates the dimensions of 
@@ -369,7 +355,7 @@
     calculate the number of turns in the inner leg. The winding pack current density is:
 
     \begin{equation}
-    j_{wptf} = \text{max}(1.0, \frac{\text{ritfc}}{\text{tfno} \times \text{awptf}})
+    j_{wptf} = \text{max}(1.0, \frac{\text{ritfc}}{\text{n\_tf} \times \text{awptf}})
     \end{equation}
 
     \begin{figure}[t!]
@@ -933,30 +919,57 @@
     \noi The TF conductor is taken to be of the cable-in-conduit design, as 
     illustrated in figures 4 and 6.  The cross-sectional area of the conductor is 
     calculated, after allowing for the rounded corners and the fraction occupied by 
-    helium coolant. 
+    helium coolant. The radial position of the maximum magnetic filed (rbmax), is defined
+    as the inboard leg plasma facing edge of the current carrying layer: 
 
     \begin{equation}\label{eq: rbmax}
-    \text{rbmax} = \text{rcoil}
+    \text{rbmax} = \text{r\_tf\_inleg\_out - casthi - tinstf - tfinsgap}
     \end{equation}
 
-    \noi Then it sets the maximum toroidal field to:
+    \noi with casthi, tinstf and tfinsgap being the plasma facing side casing thickness, the 
+    ground insulation thickness and the insertion gap thickness. Following the $\frac{1}{R}$
+    magnetic field dependency of toroidal magnets, the maximum magnetic filed is given by
 
     \begin{equation}\label{eq: bmaxtf}
-    \text{bmaxtf} = \frac{\mu_0 \times \text{ritfc}}{2\pi \times \text{rbmax}}
+        \text{bmaxtf} = \frac{\text{bt}\times\text{rmajor}}{\text{rbmax}}
+        \end{equation}
+
+    \noi with rmajor, the radial position of the plasma centre. The total current in the
+    TF coils (\emph{ritfc}) is deduced 
+
+    \begin{equation}\label{eq: ritfc}
+        \text{ritfc} = \frac{\text{bmaxtf} \times \text{rbmax}}{2.10^{-7}} 
     \end{equation}
 
-    \noi using this peak field PROCESS can calculate the centering and vertical 
-    forces on the TF coil. 
 
-    \vspace{1.0cm}\begin{equation}\label{eq: cforce}
-    \text{cforce} = \frac{\text{bmaxtf} \times \text{ritfc}}{2 \times \text{tfno}}
+    \noi using this peak field PROCESS and the Winding pack radial geometry at mid-plane 
+    can calculate the total vertical forces $F_v$ (corresponding to the variable vforce in the code) 
+    on the TF coil.
+
+
+        
+    \begin{align}\label{eq: vforce}
+        F_v = \frac{1}{2} \frac{B_\text{max}R_{B_\mathrm{max}} I_\mathrm{tot}}{N_\mathrm{TF} {\Delta R_\mathrm{WP}}^2 }   & \left[{R_\mathrm{out}}^2 \ln\left(   \frac{R_\mathrm{out} + \Delta R_\mathrm{WP}}{R_\mathrm{out}} \right)  + {R_\mathrm{in}}^2 \ln\left( \frac{R_\mathrm{in} }{R_\mathrm{out} - \Delta R_\mathrm{WP}} \right) \right.  \\
+        & \qquad \left. {} + {\Delta R_\mathrm{WP}}^2 \ln\left( \frac{R_\mathrm{out} + \Delta R_\mathrm{WP} }{R_\mathrm{in} - \Delta R_\mathrm{WP}} \right)  - \Delta R_\mathrm{WP}\left( R_\mathrm{in} + R_\mathrm{out} \right)   \right.\nonumber \\
+        & \qquad \left. {}  2\Delta R_\mathrm{WP} \left\{ R_\mathrm{in}\ln\left(\frac{R_\mathrm{in}-\Delta R_\mathrm{WP}}{R_\mathrm{in}} \right) + R_\mathrm{out}\ln\left(\frac{R_\mathrm{out}+ \Delta R_\mathrm{WP}}{R_\mathrm{out}} + \right)   \right\}  \right] \nonumber
+    \end{align}
+
+    with $B_\text{max}$, $R_{B_\mathrm{max}}$, $I_\mathrm{tot}$, $N_\mathrm{TF}$, 
+    $\Delta R_\mathrm{WP}$, $R_\mathrm{in}$ and $R_\mathrm{out}$ being the maximum B 
+    field (bmaxtf), the radius of the maximum B field (rbmax), the total TF current (ritfc),
+    the number of TF coils (n\_tf), the winding pack thickness (thkwp), the winding pack 
+    inboard (r\_wp\_outer) and outplane (r\_tf\_outboard\_in + tinstf) mid-plane 
+    radius radius at the plasma facing side. At the limit condition 
+    $\Delta R_\mathrm{WP} \rightarrow 0$ the vertical force for infinitely thin coils 
+
+    \begin{equation}
+        F_v = \frac{1}{2} \frac{B_\text{max}R_{B_\mathrm{max}} I_\mathrm{tot}}{N_\mathrm{TF}}\ln\left(\frac{R_\mathrm{out}^\mathrm{mid}}{R_\mathrm{in}^\mathrm{mid}}\right)
     \end{equation}
-
-    \begin{equation}\label{eq: vforce}
-    \text{vforce} = \frac{1}{4}B_TR_{major}\times \text{ritfc} \times 
-    \log(\frac{\text{rtot}}{\text{rtfcin}})
-    \end{equation}
-
+    
+    \noi with $R_\mathrm{in}^\mathrm{mid}$ and $R_\mathrm{out}^\mathrm{mid}$ the inboard 
+    and outborad radius of the winding pack middle. More details on the derivation 
+    is given on the 2019 PROCESS eurofusion report. Please note that the vertical stress
+    at mid-plane is half of this force for perfect Princeton D shape.
 
     \subsection{Young's Modulus}
 
