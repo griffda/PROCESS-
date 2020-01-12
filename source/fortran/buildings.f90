@@ -2,38 +2,18 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module buildings_module
-
   !! Module containing plant buildings routines
   !! author: P J Knight, CCFE, Culham Science Centre
   !! N/A
   !! This module contains routines for calculating the
   !! parameters of the fusion power plant buildings.
-  
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! Import modules !
-  ! !!!!!!!!!!!!!!!!!
-
-  use build_variables
-  use buildings_variables
-  use fwbs_variables
-  use heat_transport_variables
-  use pf_power_variables
-  use pfcoil_variables
-  use physics_variables
-  use process_output
-  use stellarator_variables
-  use structure_variables
-  use tfcoil_variables
-  use times_variables
-
   implicit none
 
-  ! Module subroutine and variable declrations !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+  ! Module subroutine and variable declrations
   private
   public :: bldgcall
 
@@ -42,7 +22,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine bldgcall(outfile,iprint)
-
     !! Calls the buildings module
     !! author: P J Knight, CCFE, Culham Science Centre
     !! outfile : input integer : output file unit
@@ -52,17 +31,21 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: r_tf_inboard_mid, r_tf_outboard_mid, tfthko, tfcth, &
+      hmax, rsldo, ddwi, vgap2, rsldi
+    use fwbs_variables, only: whtshld, rdewex
+    use buildings_variables, only: cryvol, volrci, rbvol, rmbvol, wsvol, elevol
+    use heat_transport_variables, only: helpow
+    use pfcoil_variables, only: pfrmax, pfmmax
+    use tfcoil_variables, only: whttf, n_tf
+
     implicit none
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
-
+    ! Arguments
     integer, intent(in) :: iprint, outfile
 
-    ! Local variables !
-    ! !!!!!!!!!!!!!!!!!!
-
-    real(kind(1.0D0)) :: tfh,tfmtn,tfri,tfro
+    ! Local variables
+    real(kind(1.0D0)) :: tfh, tfmtn, tfri, tfro
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -79,16 +62,15 @@ contains
 
     ! Reactor vault wall and roof thicknesses are hardwired
     call bldgs(pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,n_tf,rsldo, &
-         rsldi,2.0D0*(hmax-ddwi-vgap2),whtshld,rdewex,helpow,iprint, &
-         outfile,cryvol,volrci,rbvol,rmbvol,wsvol,elevol)
+      rsldi,2.0D0*(hmax-ddwi-vgap2),whtshld,rdewex,helpow,iprint, &
+      outfile,cryvol,volrci,rbvol,rmbvol,wsvol,elevol)
 
   end subroutine bldgcall
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine bldgs(pfr,pfm,tfro,tfri,tfh,tfm,n_tf,shro,shri, &
-       shh,shm,crr,helpow,iprint,outfile,cryv,vrci,rbv,rmbv,wsv,elev)
-
+    shh,shm,crr,helpow,iprint,outfile,cryv,vrci,rbv,rmbv,wsv,elev)
     !! Determines the sizes of the plant buildings
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: P C Shipe, ORNL
@@ -126,11 +108,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use buildings_variables, only: wrbi, rxcl, trcl, row, wgt, shmf, clh2, clh1, &
+      stcl, rbvfac, rbwt, rbrt, fndt, hcwt, hccl, wgt2, mbvfac, wsvfac, &
+      tfcbv, pfbldgm3, esbldgm3, pibv, efloor, admvol, triv, conv, admv, shov, &
+      shovol, convol, volnucb
+    use process_output, only: oheadr, ovarre
+
     implicit none
 
-    ! Arguments !
-    ! !!!!!!!!!!!!
-
+    ! Arguments
     integer, intent(in) :: iprint, outfile
     real(kind(1.0D0)), intent(inout) :: pfr
     real(kind(1.0D0)), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
@@ -138,9 +124,7 @@ contains
 
     real(kind(1.0D0)), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
 
-    ! Local variables !
-    ! !!!!!!!!!!!!!!!!!!
-
+    ! Local variables
     real(kind(1.0D0)) :: ang, bmr, coill, crcl, cran, dcl,dcw, drbi, &
          hcl, hcw, hrbi, hy, layl, rbh, rbl, rbw, rmbh, rmbl, rmbw, rwl, rww, &
          sectl, tch, tcl, tcw, wgts, wsa, wt
