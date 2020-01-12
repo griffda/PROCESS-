@@ -1,7 +1,6 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine caller(xc,nvars)
-
   !! Routine to call the physics and engineering modules
   !! author: P J Knight, CCFE, Culham Science Centre
   !! author: J Morris, CCFE, Culham Science Centre
@@ -13,53 +12,46 @@ subroutine caller(xc,nvars)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use availability_module
-  use build_module
-  use buildings_module
-  use costs_module
-  use costs_2015_module
-  use costs_step_module
-  use current_drive_module
-  use divertor_module
-  use divertor_ode
-  use divertor_Kallenbach_variables
-  use fwbs_variables
-  use ife_module
-  use ife_variables
-  use numerics
-  use pfcoil_module
-  use physics_module
-  use physics_variables
-  use plasma_geometry_module
-  use power_module
-  use process_output
-  use pulse_module
-  use sctfcoil_module
-  use startup_module
-  use stellarator_module
-  use stellarator_variables
-  use structure_module
-  use tfcoil_module
-  use vacuum_module
-  use cost_variables
+  use availability_module, only: avail, avail_2
+  use build_module, only: radialb, vbuild
+  use buildings_module, only: bldgcall
+  use costs_module, only: costs
+  use costs_2015_module, only: costs_2015
+  use costs_step_module, only: costs_step
+  use divertor_module, only: divcall
+  use divertor_ode, only: divertor_Kallenbach
+  use divertor_Kallenbach_variables, only: kallenbach_switch, ttarget, qtargettotal, &
+    targetangle, psep_kallenbach, teomp, neomp
+  use fwbs_variables, only: iblanket, breeder_f, li6enrich, iblanket_thickness, tbr
+  use ife_module, only: ifecll
+  use ife_variables, only: ife
+  use pfcoil_module, only: pfcoil, induct, vsec
+  use physics_module, only: physics
+  use physics_variables, only: rmajor, rminor, bt, plascur, q, bp, ipedestal, itart
+  use plasma_geometry_module, only: geomty
+  use power_module, only: tfpwr, pfpwr, power1, power2, power3, acpow
+  use process_output, only: nout, ncalls, verbose, ipnvars
+  use pulse_module, only: pulse
+  use sctfcoil_module, only: tfspcall
+  use stellarator_module, only: stcall
+  use stellarator_variables, only: istell
+  use structure_module, only: strucall
+  use tfcoil_module, only: tfcoil, cntrpst
+  use tfcoil_variables, only: i_tf_sup
+  use vacuum_module, only: vaccall
+  use cost_variables, only: iavail, cost_model
 
-  ! Import blanket modules !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!
-
+  ! Import blanket modules
   use ccfe_hcpb_module
   use kit_hcpb_module
   use kit_hcll_module
 
   implicit none
 
-  !  Arguments !
-  ! !!!!!!!!!!!!!
-
+  !  Arguments
   real(kind(1.0D0)), dimension(ipnvars), intent(in) :: xc
   integer, intent(in) :: nvars
   logical :: verbose_logical
-
-  !  Local variables
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -78,8 +70,8 @@ subroutine caller(xc,nvars)
   ! !!!!!!!!!!!!!!!!!!!!!
 
   if (istell /= 0) then
-     call stcall
-     return
+    call stcall
+    return
   end if
 
   !  Inertial Fusion Energy calls !
@@ -111,27 +103,24 @@ subroutine caller(xc,nvars)
 
   !call build subroutines again if PLASMOD used, issue #650
   if (ipedestal == 3) then
-     ! Radial build
-     call radialb(nout,0)
+    ! Radial build
+    call radialb(nout,0)
 
-     ! Vertical build
-     call vbuild(nout,0)
+    ! Vertical build
+    call vbuild(nout,0)
   endif
-
 
   ! startup model (not used) !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!
   !call startup(nout,0)  !  commented-out for speed reasons
 
-  
   ! Toroidal field coil model !
   call tfcoil(nout,0)
-
 
   ! Toroidal field coil superconductor model !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   if ( i_tf_sup == 1 ) then
-     call tfspcall(nout,0)
+    call tfspcall(nout,0)
   end if 
 
   ! Poloidal field and Central Solenoid model
@@ -143,11 +132,9 @@ subroutine caller(xc,nvars)
   ! Volt-second capability of PF coil set
   call vsec
 
-
   ! Pulsed reactor model !
   ! !!!!!!!!!!!!!!!!!!!!!!!
   call pulse(nout,0)
-
 
   ! Blanket model !
   ! !!!!!!!!!!!!!!!!!
@@ -161,16 +148,15 @@ subroutine caller(xc,nvars)
   ! 4    |  KIT HCLL model
 
   if (iblanket == 1) then           ! CCFE HCPB model
-      call ccfe_hcpb(nout, 0)
+    call ccfe_hcpb(nout, 0)
   else if (iblanket == 2) then      ! KIT HCPB model
-     call kit_hcpb(nout, 0)
+    call kit_hcpb(nout, 0)
   else if (iblanket == 3) then      ! CCFE HCPB model with Tritium Breeding Ratio calculation
-     call ccfe_hcpb(nout, 0)
-     call tbr_shimwell(nout, 0, breeder_f, li6enrich, iblanket_thickness, tbr)
+    call ccfe_hcpb(nout, 0)
+    call tbr_shimwell(nout, 0, breeder_f, li6enrich, iblanket_thickness, tbr)
   else if (iblanket == 4) then      ! KIT HCLL model
-     call kit_hcll(nout, 0)
+    call kit_hcll(nout, 0)
   end if
-
 
   ! Divertor Model !
   ! !!!!!!!!!!!!!!!!!
@@ -202,6 +188,7 @@ subroutine caller(xc,nvars)
 
   ! Structure Model !
   ! !!!!!!!!!!!!!!!!!!
+
   call strucall(nout,0)
 
   ! Tight aspect ratio machine model !
@@ -217,8 +204,7 @@ subroutine caller(xc,nvars)
   call tfpwr(nout,0)
 
   ! Poloidal field coil power model !
-   call pfpwr(nout,0)
-
+  call pfpwr(nout,0)
 
   ! Plant heat transport part 1 !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -258,9 +244,9 @@ subroutine caller(xc,nvars)
   ! 2    |  Morris model (2015)
 
   if (iavail > 1) then
-     call avail_2(nout,0)  ! Morris model (2015)
+    call avail_2(nout,0)  ! Morris model (2015)
   else
-     call avail(nout,0)    ! Taylor and Ward model (1999)
+    call avail(nout,0)    ! Taylor and Ward model (1999)
   end if
 
   ! Costs model !
@@ -274,11 +260,11 @@ subroutine caller(xc,nvars)
   ! 2    |  2019 STEP model
 
   if (cost_model == 0) then
-      call costs(nout,0)
+    call costs(nout,0)
   else if (cost_model == 1) then
-      call costs_2015(0,0)
+    call costs_2015(0,0)
   else if (cost_model == 2) then
-     call costs_step(nout,0)
+    call costs_step(nout,0)
   end if
 
   ! FISPACT and LOCA model (not used) !
