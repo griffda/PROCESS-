@@ -494,6 +494,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    call stnewconfig
     call stgeom
     call stbild(nout,0)
     call stphys
