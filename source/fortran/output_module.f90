@@ -44,6 +44,7 @@ subroutine output(outfile)
   use stellarator_variables
   use structure_module
   use tfcoil_module
+  use tfcoil_variables, only: i_tf_sup
   use vacuum_module
 
   ! Import blanket modules

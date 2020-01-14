@@ -16,7 +16,6 @@
 !------- necessary for gfunc (solver SYNCH of S.Kasilov)
 ! USE store_gfunc_mod, only : prop
 !-------
- USE config_ext  ! for use out of TRAVIS
 !---
  IMPLICIT NONE
  CHARACTER(Len=1), PRIVATE :: adj_appr(6)    ! adjoint approach switcher

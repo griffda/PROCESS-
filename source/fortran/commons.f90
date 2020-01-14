@@ -2,25 +2,24 @@ module mod_f90_kind
 
   implicit none
 
-! Single byte integer
+  ! Single byte integer
   integer, parameter :: int_def = selected_int_kind(9)
 
-! Long byte integer
+  ! Long byte integer
   integer, parameter :: int_long = selected_int_kind(18)
 
-! Single precision
+  ! Single precision
   integer, parameter :: single  = selected_real_kind(6,37)
 
-! Double precision
+  ! Double precision
   integer, parameter :: double  = selected_real_kind(15,300)
 
-!logical
+  ! logical
   integer, parameter :: logical_def = kind(.true.)
 
-
-!-----------------------------------------------------------------------
-! Working precision
-!-----------------------------------------------------------------------
+  !-----------------------------------------------------------------------
+  ! Working precision
+  !-----------------------------------------------------------------------
   integer, parameter :: rkind   = double      ! double
   integer, parameter :: r4kind  = single      ! single
   integer, parameter :: ikind   = int_def     ! integer
