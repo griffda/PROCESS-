@@ -338,6 +338,8 @@ pages:
   when: on_success
   only:
     - develop
+    # Remove on merge to develop
+    - issue-vardes-to-gitpages
   stage: pages
   script:
    - pwd
@@ -348,7 +350,6 @@ pages:
    - pip install mkdocs-material
    - pip install pymdown-extensions
    - cmake -H. -Bbuild
-   - mkdocs build
    
    # FORD documentation
    # Ensure FORD can find create_dicts.py inside Process
@@ -356,12 +357,17 @@ pages:
    - cd ..
    - rm -rf ford # Need to clone to empty dir
    - git clone https://github.com/jonMaddockUkaea/ford.git ford
+   # Remove on merge to develop (merge branch on Github Ford fork)
+   - git checkout create_vardes
    - cd ford
    - pip3 install .
    - cd ../process
    - ford documentation/ford/index.md
+   
+   # Build the MkDocs site (after FORD has been used to create the vardes)
+   - mkdocs build
 
-   # Publish the MkDocs and FORD sites
+   # Publish the MkDocs and FORD sites on gitpages
    - ls site
    - mv site public
    - mv ford_site public
