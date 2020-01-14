@@ -107,7 +107,7 @@ class VarDes(object):
 
         for module, variables in self.vars.items():
             # Module title and table column headings
-            md_file.write(f"## {module}\n")
+            md_file.write("## ", module, "\n")
             md_file.write("|Name|Type|Initial|Description|\n")
             md_file.write("|---|---|---|---|\n")
             
@@ -117,7 +117,7 @@ class VarDes(object):
 
                 # Write the value of each of the fields in a separate cell
                 for value in fmt_var_info.values():
-                    md_file.write(f"|{value}")
+                    md_file.write("|", value)
 
                 # End of table row (one variable written)
                 md_file.write("|\n")
