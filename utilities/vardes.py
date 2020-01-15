@@ -36,19 +36,25 @@ class VarDes(object):
         :type project: obj
         """
         self.project = project
-        self.vars = {} # Dict to hold the processed variable information
+        self.vars = OrderedDict()
+        # Ordered dict to hold the processed variable information
 
     def process_project(self):
         """Process Ford's project object.
         
         Extract variable information from the project object and save it in a 
-        structured dict. This dict contains each module name, then a name, type,
-        initial value and description for each variable in each module.
+        structured ordered dict. This dict contains each module name, then a 
+        name, type, initial value and description for each variable in each 
+        module. This determines the order modules and vars are displayed.
         """
-        for module in self.project.modules:
-            self.vars[module.name] = {}
-            for var in module.variables:
-                var_info = {}
+        # Sort modules by module name, alphabetically
+        modules = sorted(self.project.modules, key=lambda module: module.name)
+        for module in modules:
+            self.vars[module.name] = OrderedDict()
+            # Sort module variables by name, alphabetically
+            variables = sorted(module.variables, key=lambda var: var.name)
+            for var in variables:
+                var_info = OrderedDict()
                 var_info["var_type"] = var.vartype
                 var_info["initial"] = var.initial
                 var_info["description"] = var.doc
