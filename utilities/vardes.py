@@ -5,6 +5,8 @@ code. This module uses that object to create variable descriptions in
 markdown format, which can then be used by mkdocs to create the variable 
 descriptions page on the gitpages site.
 """
+from collections import OrderedDict
+
 # Assume the script is being run from the Process root dir
 # This is ok as this module is only run from the cmake "dicts" target, which 
 # must be run from the Process root dir
@@ -82,7 +84,7 @@ class VarDes(object):
         :return: Formatted var info
         :rtype: dict
         """
-        fmt_info = {}
+        fmt_info = OrderedDict()
 
         fmt_info["var"] = self.format_value(var)
         fmt_info["var_type"] = self.format_value(info["var_type"])
