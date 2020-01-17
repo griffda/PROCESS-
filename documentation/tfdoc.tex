@@ -68,8 +68,8 @@
     \numberwithin{equation}{section}
     
     \title{Toroidal Field Coil Model in PROCESS}
-    \author{James Morris}
-    \date{April 2018}
+    \author{James Morris and sebastien Kahn}
+    \date{January 2020}
 
     \newenvironment{noi}{\noindent}
     
@@ -764,11 +764,13 @@
         \item ITER Nb$_3$Sn
         \item Bi-2212
         \item NbTi
-        \item WST Nb$_3$Sn
+        \item ITER Nb$_3$Sn with user defined parameters
+        \item WST Nb3Sn
         \item REBCO high-temperature superconductor (HTS)
     \end{enumerate}
     
-    \noi The strain in the TF coils is set by the user. The critical strand current is:
+    \noi The strain in the TF coils is set by the user. The critical strand
+    current provided by the ITER Nb$_3$Sn current density scaling is
 
     \begin{equation}\label{eq: strand-crit-current}
         I_c = \frac{C}{B}s(\epsilon)(1-t^{1.52})(1-t^2)b^p(1-b)^q
@@ -914,13 +916,13 @@
 
     \section{Stress Model}
 
-    \subsection{Forces}
-
+    \subsection{Maximum magnetic field}
+    
     \noi The TF conductor is taken to be of the cable-in-conduit design, as 
-    illustrated in figures 4 and 6.  The cross-sectional area of the conductor is 
-    calculated, after allowing for the rounded corners and the fraction occupied by 
-    helium coolant. The radial position of the maximum magnetic filed (rbmax), is defined
-    as the inboard leg plasma facing edge of the current carrying layer: 
+    illustrated in figures~\ref{fig: turn-non-int} and~\ref{fig: winding-pack-integer}.
+    The cross-sectional area of the conductor is calculated, after allowing for the rounded 
+    corners and the fraction occupied by helium coolant. The radial position of the maximum 
+    magnetic filed (rbmax or $R_{B_\mathrm{max}}$), is defined as the inboard leg plasma facing edge of the current carrying layer: 
 
     \begin{equation}\label{eq: rbmax}
     \text{rbmax} = \text{r\_tf\_inleg\_out - casthi - tinstf - tfinsgap}
@@ -928,48 +930,104 @@
 
     \noi with casthi, tinstf and tfinsgap being the plasma facing side casing thickness, the 
     ground insulation thickness and the insertion gap thickness. Following the $\frac{1}{R}$
-    magnetic field dependency of toroidal magnets, the maximum magnetic filed is given by
+    magnetic field dependency of toroidal magnets, the maximum magnetic (bmaxtf or $B_\mathrm{max}$) filed is given by
 
     \begin{equation}\label{eq: bmaxtf}
         \text{bmaxtf} = \frac{\text{bt}\times\text{rmajor}}{\text{rbmax}}
         \end{equation}
 
     \noi with rmajor, the radial position of the plasma centre. The total current in the
-    TF coils (\emph{ritfc}) is deduced 
+    TF coils (\emph{ritfc} or $I_\mathrm{tot}$) is deduced 
+
+    \begin{equation}\label{eq: ritfc_latex}
+        I_\mathrm{tot} = \frac{2\pi}{\mu_0}B_\mathrm{max}  R_{B_\mathrm{max}} 
+    \end{equation}
+    
+    \noi that translate into the PROCESS code into
 
     \begin{equation}\label{eq: ritfc}
         \text{ritfc} = \frac{\text{bmaxtf} \times \text{rbmax}}{2.10^{-7}} 
     \end{equation}
 
 
-    \noi using this peak field PROCESS and the Winding pack radial geometry at mid-plane 
-    can calculate the total vertical forces $F_v$ (corresponding to the variable vforce in the code) 
-    on the TF coil.
+    \subsection{Vertical forces}
 
+    \noi For large Winding Packs (0.9 m for DEMO), the approximation of infinitely thin coil thickness
+    is not valid anymore. The effect of finite thickness has been shown to reduce the value of the 
+    vertical force for circular coil geometry~[J. Thome book-p115], and similar result is 
+    expected for any shapes. A model has been developed within the PROCESS team to take this thickness 
+    effect into account for any TF coil shape. Let’s consider a winding pack (WP) of thickness
+    $\Delta R_\mathrm{WP}$ with a homogeneous current density. For convenience we refer to a thin toroidally
+    symmetric closed current sheet as a "current loop", indicating its appearance in poloidal cross-section. 
+    As a current loop does not generate any magnetic field outside the loop, the magnetic field at radial 
+    coordinate $R$ and at a given position in the winding pack $x$ (distance between the plasma facing side 
+    of the WP and the considered position in the WP) :
+    
+    \begin{equation}
+        B(R,x)=\frac{\mu_0}{2\pi R} I_\mathrm{tot}  \frac{\Delta R_\mathrm{WP}-x}{\Delta R_\mathrm{WP}}
+    \end{equation}
+    
+    \noi The vertical component of the force applied on half of an infinitesimal loop of thickness $dx$
+    carrying a current $\frac{I_\mathrm{tot} dx}{\Delta R_\mathrm{WP}}$ (homogeneous current density) 
+    is given by 
+    
+    \begin{equation}
+        dF_v (x) = \frac{dx}{\Delta R_\mathrm{WP}} I_\mathrm{tot} \int_\mathrm{loop} B(R,x)\cos\theta dl
+    \end{equation}
 
-        
+    \noi with $\theta$ the angle between the current direction on the loop section $dl$ and major
+    radius vector. As $\cos\theta dl$ corresponds to a radial infinitesimal distance $dR$, we get 
+    
+    \begin{equation}
+        dF_v(x) = \frac{dx}{\Delta R_\mathrm{WP}} I_\mathrm{tot} \int_{R_\mathrm{in}-x}^{R_\mathrm{out}+x} B(R,x) dR
+    \end{equation}
+    
+    \noi with $R_\mathrm{out}$ and $R_\mathrm{in}$ the inboard and outboard mid-plane radius of 
+    the WP plasma facing side. Using the $B(R,x)$ expression and integrating it, we get 
+    
+    \begin{equation}
+        dF_v (x)= \frac{\mu_0}{2\pi} I_\mathrm{tot} \frac{\Delta R_\mathrm{WP}-x}{{\Delta R_\mathrm{WP}}^2} \ln(\frac{R_\mathrm{out}+x}{R_\mathrm{in}-x})
+    \end{equation}
+
+    \noi The total vertical force is then given by the following integral
+
+    
+    \begin{equation}
+        F_v (x)=\frac{\mu_0}{2\pi} I_\mathrm{tot} \int_{0}^{\Delta R_\mathrm{WP}} \frac{\Delta R_\mathrm{WP}-x}{{\Delta R_\mathrm{WP}}^2}
+           \ln(\frac{R_\mathrm{out}+x}{R_\mathrm{in}-x}) dx
+    \end{equation}
+  
+    \noi This can be integrated in closed form to provide the total vertical force taken by the 
+    upper/lower section of the magnet. After replacing $\frac{\mu_0 I_\mathrm{tot}}{2\pi}=B_\mathrm{max} 
+    R_{B_\mathrm{max}}$, one can find
+ 
     \begin{align}\label{eq: vforce}
         F_v = \frac{1}{2} \frac{B_\text{max}R_{B_\mathrm{max}} I_\mathrm{tot}}{N_\mathrm{TF} {\Delta R_\mathrm{WP}}^2 }   & \left[{R_\mathrm{out}}^2 \ln\left(   \frac{R_\mathrm{out} + \Delta R_\mathrm{WP}}{R_\mathrm{out}} \right)  + {R_\mathrm{in}}^2 \ln\left( \frac{R_\mathrm{in} }{R_\mathrm{out} - \Delta R_\mathrm{WP}} \right) \right.  \\
         & \qquad \left. {} + {\Delta R_\mathrm{WP}}^2 \ln\left( \frac{R_\mathrm{out} + \Delta R_\mathrm{WP} }{R_\mathrm{in} - \Delta R_\mathrm{WP}} \right)  - \Delta R_\mathrm{WP}\left( R_\mathrm{in} + R_\mathrm{out} \right)   \right.\nonumber \\
         & \qquad \left. {}  2\Delta R_\mathrm{WP} \left\{ R_\mathrm{in}\ln\left(\frac{R_\mathrm{in}-\Delta R_\mathrm{WP}}{R_\mathrm{in}} \right) + R_\mathrm{out}\ln\left(\frac{R_\mathrm{out}+ \Delta R_\mathrm{WP}}{R_\mathrm{out}} + \right)   \right\}  \right] \nonumber
     \end{align}
 
-    with $B_\text{max}$, $R_{B_\mathrm{max}}$, $I_\mathrm{tot}$, $N_\mathrm{TF}$, 
-    $\Delta R_\mathrm{WP}$, $R_\mathrm{in}$ and $R_\mathrm{out}$ being the maximum B 
-    field (bmaxtf), the radius of the maximum B field (rbmax), the total TF current (ritfc),
-    the number of TF coils (n\_tf), the winding pack thickness (thkwp), the winding pack 
-    inboard (r\_wp\_outer) and outplane (r\_tf\_outboard\_in + tinstf) mid-plane 
-    radius radius at the plasma facing side. At the limit condition 
-    $\Delta R_\mathrm{WP} \rightarrow 0$ the vertical force for infinitely thin coils 
+    \noi with the varibles defned as 
+    \begin{itemize}
+        \item $N_\mathrm{TF}$, the number of TF coils (n\_tf)
+        \item $\Delta R_\mathrm{WP}$, the winding pack thickness without ground insulation and
+              insertion gap(thkwp)
+        \item $R_\mathrm{in}$, the winding pack inboard (r\_wp\_outer) radius at the plasma facing side
+        \item $R_\mathrm{out}$, the winding pack outboard (r\_tf\_outboard\_in + tinstf) radius at the plasma facing side 
+    \end{itemize}
 
+    \noi At the limit condition $\Delta R_\mathrm{WP} \rightarrow 0$ the vertical force for infinitely 
+    thin coils is recovered
+    
     \begin{equation}
         F_v = \frac{1}{2} \frac{B_\text{max}R_{B_\mathrm{max}} I_\mathrm{tot}}{N_\mathrm{TF}}\ln\left(\frac{R_\mathrm{out}^\mathrm{mid}}{R_\mathrm{in}^\mathrm{mid}}\right)
     \end{equation}
     
     \noi with $R_\mathrm{in}^\mathrm{mid}$ and $R_\mathrm{out}^\mathrm{mid}$ the inboard 
     and outborad radius of the winding pack middle. More details on the derivation 
-    is given on the 2019 PROCESS eurofusion report. Please note that the vertical stress
-    at mid-plane is half of this force for perfect Princeton D shape.
+    is given on the 2019 PROCESS eurofusion report. Please note that the contribution
+    of this vertical force to the TF inborad leg stress is half of this force for perfect
+    Princeton D shape, which is the current assumption in PROCESS. 
 
     \subsection{Young's Modulus}
 
@@ -1166,7 +1224,7 @@
         E_i((t_w+2t_s+2t_i)^2-(t_w+2t_s)^2)}{(t_{tot})^2}
     \end{equation}
 
-    \subsection{Stress Calculation}
+    \subsection{Horizontal mid-plane stress calculation}
 
     \begin{figure}[!t]
      \begin{center}
