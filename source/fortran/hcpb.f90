@@ -2115,26 +2115,7 @@ module kit_hcpb_module
   ! Element 1 = 'inner' edge, element np(=2) = 'outer' edge
   ! IB = inboard, OB = outboard
 
-  ! Modules to import !
-  ! !!!!!!!!!!!!!!!!!!!!
-
-  use build_variables
-  use cost_variables
-  use error_handling
-  use fwbs_variables
-  use physics_variables
-  use process_output
-  use tfcoil_variables
-  use times_variables
-  use divertor_variables
-  use pfcoil_variables
-  use global_variables
-  use buildings_variables
-
   implicit none
-
-  ! Subroutine declarations !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
   private
   public :: kit_hcpb
@@ -2360,10 +2341,22 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: fwith, fwoth, fwareaib, fwareaob, blareaib, &
+      blareaob, shareaib, shareaob, blbuith, blbmith, blbpith, shldith, ddwi, &
+      blbuoth, blbmoth, blbpoth, shldoth
+    use cost_variables, only: abktflnc, tlife, cfactr
+    use fwbs_variables, only: afw, fw_wall, fwlife, coolwh, wallpf, fhcd, fdiv, &
+      npdiv, nphcdin, nphcdout, hcdportsize, li6enrich, breedmat, densbreed, &
+      fblhebmi, fblhebmo, fblhebpi, fblhebpo, fblbe, fblbreed, fblss, pnucblkt, &
+      pnucshld, emult, tbr, tritprate, bktlife, nflutf, ptfnucpm3, ptfnuc, &
+      vvhemax
+    use physics_variables, only: wallmw, pneutmw
+    use tfcoil_variables, only: tfleng, tfareain, arealeg, n_tf
+    use times_variables, only: tpulse, tramp, tdwell
+
     implicit none
 
     ! Arguments
-
     integer, intent(in) :: iprint, outfile
 
     ! Assign module private variables to iprint and outfile
@@ -3112,6 +3105,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: blnkith, blbuith, blbmith, blbpith, blnkoth, &
+      blbuoth, blbmoth, blbpoth
+    use fwbs_variables, only: iblnkith, whtblss, denstl, volblkti, &
+      fblhebmi, fblhebpi, volblkto, fblhebmo, fblhebpo, fblss, whtblbe, fblbe, &
+      whtblbreed, densbreed, fblbreed, volblkt, vfblkt, whtblkt
+
     implicit none
 
     ! Mass of steel in blanket (kg)
@@ -3158,7 +3157,7 @@ contains
     ! Void fraction of blanket
     vfblkt = vfblkti + vfblkto
 
-  end subroutine
+  end subroutine component_masses
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3168,6 +3167,9 @@ contains
     !! Calculate the blanket, shield, vacuum vessel and cryostat volumes
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use fwbs_variables, only: fwbsshape
+    use physics_variables, only: itart
 
     implicit none
 
@@ -3206,7 +3208,7 @@ contains
     ! Calculate cryostat geometry
     call external_cryo_geometry
 
-  end subroutine
+  end subroutine component_volumes
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3216,6 +3218,12 @@ contains
     !! Calculate the blanket half-height
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use build_variables, only: vgap, blnktth, scrapli, scraplo, fwith, fwoth
+    use physics_variables, only: rminor, kappa, idivrt
+    use divertor_variables, only: divfix
+
+    implicit none
 
     ! Local variables
     real(kind(1.0D0)) :: hbot, htop
@@ -3234,7 +3242,7 @@ contains
     ! Average of top and bottom (m)
     hblnkt = 0.5D0*(htop + hbot)
 
-  end subroutine
+  end subroutine blanket_half_height
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3244,6 +3252,12 @@ contains
     !! Calculate the shield half-height
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use build_variables, only: vgap, scrapli, scraplo, fwith, fwoth, blnktth
+    use physics_variables, only: rminor, kappa, idivrt
+    use divertor_variables, only: divfix
+
+    implicit none
 
     ! Local variables
     real(kind(1.0D0)) :: hbot, htop
@@ -3262,7 +3276,7 @@ contains
     ! Average of top and bottom (m)
     hshld = 0.5D0*(htop + hbot)
 
-  end subroutine
+  end subroutine shield_half_height
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3272,6 +3286,12 @@ contains
     !! Calculate the vacuum vessel half-height
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use build_variables, only: hmax, vgap2, ddwi, scrapli, scraplo, fwith, &
+      fwoth, blnktth, shldtth
+    use physics_variables, only: idivrt, rminor, kappa
+
+    implicit none
 
     ! Local variables
     real(kind(1.0D0)) :: hbot, htop
@@ -3291,7 +3311,7 @@ contains
     ! Average of top and bottom (m)
     hvv = 0.5D0*(htop + hbot)
 
-  end subroutine
+  end subroutine vv_half_height
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3303,6 +3323,10 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use maths_library, only: dshellarea, dshellvol
+    use build_variables, only: rsldi, shldith, blnkith, fwith, scrapli, scraplo, &
+      fwoth, blareaib, blareaob, blarea, blnkoth, blnktth
+    use fwbs_variables, only: volblkti, volblkto, volblkt
+    use physics_variables, only: rminor
 
     implicit none
 
@@ -3322,7 +3346,7 @@ contains
     ! Calculate blanket volumes, assuming 100% coverage
     call dshellvol(r1, r2, hblnkt, blnkith, blnkoth, blnktth, volblkti, volblkto, volblkt)
 
-  end subroutine
+  end subroutine dshaped_blanket
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3334,6 +3358,10 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use maths_library, only: dshellarea, dshellvol
+    use build_variables, only: rsldi, shldith, blnkith, fwith, scrapli, scraplo, &
+      fwoth, blnkoth, shareaib, shareaob, sharea, shldoth, shldtth
+    use fwbs_variables, only: volshld
+    use physics_variables, only: rminor
 
     implicit none
 
@@ -3353,7 +3381,7 @@ contains
     ! Calculate shield volumes, assuming 100% coverage
     call dshellvol(r1, r2, hshld, shldith, shldoth, shldtth, volshldi, volshldo, volshld)
 
-  end subroutine
+  end subroutine dshaped_shield
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3363,6 +3391,10 @@ contains
     !! Calculate the vacuum vessel volume using dshaped scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use maths_library, only: dshellvol
+    use build_variables, only: rsldi, rsldo, ddwi
+    use fwbs_variables, only: vdewin, fvoldw
 
     implicit none
 
@@ -3382,7 +3414,7 @@ contains
     ! Apply area coverage factor
     vdewin = fvoldw*vdewin
 
-  end subroutine
+  end subroutine dshaped_vv
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3392,6 +3424,12 @@ contains
     !! Calculate the blanket surface area and volume using elliptical scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use maths_library, only: eshellarea, eshellvol
+    use build_variables, only: rsldi, shldith, blnkith, rsldo, shldoth, blnkoth, &
+      blareaib, blareaob, blarea, blnktth
+    use fwbs_variables, only: volblkti, volblkto, volblkt
+    use physics_variables, only: rmajor, rminor, triang
 
     implicit none
 
@@ -3414,7 +3452,7 @@ contains
     ! Calculate blanket volumes, assuming 100% coverage
     call eshellvol(r1, r2, r3, hblnkt, blnkith, blnkoth, blnktth, volblkti, volblkto, volblkt)
 
-  end subroutine
+  end subroutine elliptical_blanket
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3425,6 +3463,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: eshellarea, eshellvol
+    use build_variables, only: rsldi, shldith, rsldo, shldoth, shareaib, &
+      shareaob, sharea, shldtth
+    use fwbs_variables, only: volshld
+    use physics_variables, only: rmajor, rminor, triang
+    
     implicit none
 
     ! Local variables
@@ -3446,7 +3490,7 @@ contains
     ! Calculate shield volumes, assuming 100% coverage
     call eshellvol(r1, r2, r3, hshld, shldith, shldoth, shldtth, volshldi, volshldo, volshld)
 
-  end subroutine
+  end subroutine elliptical_shield
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3456,6 +3500,11 @@ contains
     !! Calculate the vacuum vessel volume using elliptical scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use maths_library, only: eshellvol
+    use build_variables, only: rsldi, rsldo, ddwi
+    use fwbs_variables, only: vdewin, fvoldw
+    use physics_variables, only: rmajor, rminor, triang
 
     implicit none
 
@@ -3478,7 +3527,7 @@ contains
     ! Apply area coverage factor
     vdewin = fvoldw*vdewin
 
-  end subroutine
+  end subroutine elliptical_vv
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3488,6 +3537,12 @@ contains
     !! Apply coverage factors to volumes
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use build_variables, only: blareaob, blarea, blareaib, shareaib, shareaob, &
+      sharea
+    use fwbs_variables, only: fdiv, fhcd, volblkto, volblkti, volblkt, fvolsi, &
+      fvolso, volshld
+    use physics_variables, only: idivrt
 
     implicit none
 
@@ -3514,7 +3569,7 @@ contains
     volshldo = fvolso*volshldo
     volshld = volshldi + volshldo
 
-  end subroutine
+  end subroutine apply_coverage_factors
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3524,6 +3579,13 @@ contains
     !! Calculate cryostat geometry
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use constants, only: pi
+    use build_variables, only: clhsf, hmax, tfcth, ddwex
+    use fwbs_variables, only: rdewex, rpf2dewar, zdewex, vdewex, vvmass, vdewin, &
+      denstl, dewmkg
+    use pfcoil_variables, only: rb, zh
+    use buildings_variables, only: clh1
 
     implicit none
 
@@ -3552,7 +3614,7 @@ contains
     ! Sum of internal vacuum vessel and cryostat masses (kg)
     dewmkg = (vdewin + vdewex) * denstl
 
-  end subroutine
+  end subroutine external_cryo_geometry
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3563,6 +3625,10 @@ contains
     !! an output file
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use fwbs_variables, only: pnucblkt, pnucshld, emult, npdiv, nphcdin, &
+      nphcdout, hcdportsize, breedmat, li6enrich, tbr, tritprate, ptfnuc, bktlife
+    use process_output, only: oheadr, osubhd, ovarre, ovarin, ocmmnt
 
     implicit none
 
@@ -3608,10 +3674,6 @@ contains
     call ovarre(ofile,'Blanket lifetime (full power years)','(t_bl_fpy)',bktlife)
     call ovarre(ofile,'Blanket lifetime (calendar years)','(t_bl_y)',t_bl_y)
 
-  end subroutine
+  end subroutine write_kit_hcpb_output
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-end module
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+end module kit_hcpb_module
