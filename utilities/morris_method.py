@@ -1,3 +1,29 @@
+"""
+Code to the Morris method of elementary elements to 
+investiage the sensistivity of the input parameters in PROCESS
+
+Author: A. Pearce (alexander.pearce@ukaea.uk)
+
+Input files:
+run_process.conf (config file, in the same directory as this file)
+???.json (config file for uncertainties in same
+                             directory as this file)
+An IN.DAT file as specified in the config file
+
+Output files:
+All of them in the work directory specified in the config file
+OUT.DAT     -  PROCESS output
+PLOT.DAT    -  PROCESS output
+MFILE.DAT   -  PROCESS output
+process.log -  logfile of PROCESS output to stdout
+capcost_sol.txt - contains lsit of all outputs
+error_log.txt  - contains list of all output with ifail != 1
+
+We need a way spit out the final dicts in a file called morris_method.txt or something 
+just modify the sobol printing routine
+
+"""
+
 import argparse
 from SALib.sample.morris import sample 
 from SALib.analyze import morris 
@@ -11,11 +37,12 @@ import pandas as pd
 def Get_Input():
     #Define the model inputs
     problem = {
-        'num_vars': 21,
+        'num_vars': 14,
         'names': ['boundu(9)', 'hfact', 'coreradius','fimp(2)','fimp(14)',\
             'psepbqarmax','boundl(103)','cboot','peakfactrad','kappa',\
-            'etaech','feffcd','etath','etaiso','boundl(18)','pinjalw',\
-            'alstroh','alstrtf','aspect','bmxlim','triang'],
+            'etaech','feffcd','etath','etaiso'],
+            #,'boundl(18)','pinjalw',\
+            #'alstroh','alstrtf','aspect','bmxlim','triang'],
         'bounds': [[1.1, 1.3],
                    [1.0, 1.2],
                    [0.45, 0.75],
@@ -29,16 +56,29 @@ def Get_Input():
                    [0.3, 0.5],
                    [0.5, 5.0],
                    [0.36, 0.40],
-                   [0.75, 0.95],
-                   [3.40, 3.60],
-                   [51.0, 61.0],
-                   [6.0e8, 7.2e8],
-                   [5.2e8, 6.4e8],
-                   [3.08, 3.12],
-                   [11.0, 12.0],
-                   [0.475, 0.525]] 
+                   [0.75, 0.95]]
+                   #,
+                   #[3.40, 3.60],
+                   #[51.0, 61.0],
+                   #[6.0e8, 7.2e8],
+                   #[5.2e8, 6.4e8],
+                   #[3.08, 3.12],
+                   #[11.0, 12.0],
+                   #[0.475, 0.525]] 
     }
     return problem
+
+def write_Morris_method_Output(X,S):
+    #open output file
+    f = open('morris_method_output.txt','w')
+    
+    #create sensistivity indices header
+    f.write('Parameter mu mu_star sigma mu_star_conf\n')
+
+    #print the sensistivity indices
+    for i in range(X['num_vars']):
+        f.write('%s %f %f %f %f\n' % (X['names'][i], S['mu'][i], \
+             S['mu_star'][i], S['sigma'][i], S['mu_star_conf'][i]) )
 
 if __name__ == "__main__":
 
@@ -67,10 +107,10 @@ if __name__ == "__main__":
 
     # Get parameters
     params_bounds = Get_Input()
-    capcost_mean = ARGS.m # 8056.98 #8631.54 older I think from FoM = 1  # fix this to argparse
+    capcost_mean = ARGS.m # 8056.98 used from minimsing capcost on 2018 DEMO baseline ~~CHECK!
     traj_num = ARGS.t 
-    capcost_sols = np.array([])
-    fail_rows = np.array([])
+    sols = np.array([])
+    fail = np.array([])
 
     # Generate samples
     params_values = sample(params_bounds, traj_num, num_levels=8)
@@ -87,7 +127,6 @@ if __name__ == "__main__":
         print('run number =',run_id)
         i = 0
         for n in params_bounds['names']:
-            #print(params_values[run_id][i])
             set_variable_in_indat(in_dat,n,params_values[run_id][i])
             i = i + 1
 
@@ -102,20 +141,21 @@ if __name__ == "__main__":
         print('ifail =', process_status)
 
         if process_status == 1.0:
-            # read the capcost from the MFILE  
-            capcost = m_file.data[ARGS.outputvarname].get_scan(-1) # this needs to talk to argparse
-            #capcost = m_file.data["coe"].get_scan(-1) # this is hard coded - need to be selected in an arg parse
-            capcost_sols = np.append(capcost_sols, capcost)
+            # read the figure of merit from the MFILE  
+            capcost = m_file.data[ARGS.outputvarname].get_scan(-1)
+            sols = np.append(sols, capcost)
         else:
-            fail_rows = np.append(fail_rows, run_id)
+            fail = np.append(fail, run_id)
             if run_id == 0:
                 #make mean
-                capcost_sols = np.append(capcost_sols, capcost_mean)
+                sols = np.append(sols, capcost_mean)
             else:
-                capcost_sols = np.append(capcost_sols, capcost_sols[np.size(capcost_sols)-1])
+                sols = np.append(sols, sols[np.size(sols)-1])
     
-    params_sol = morris.analyze(params_bounds,params_values,capcost_sols)
-    np.savetxt(ARGS.s, capcost_sols) # fix in the argparse
-    np.savetxt(ARGS.e, fail_rows) # also fix in the arg parse
+    params_sol = morris.analyze(params_bounds,params_values,sols)
+    np.savetxt(ARGS.s, sols) 
+    np.savetxt(ARGS.e, fail) 
     df = pd.DataFrame(params_sol)
-    print(df)
+    print(df) # need to update this bit... fix this copyy what we do on sobol i guess 
+    #write output file
+    write_Morris_method_Output(params_bounds,params_sol)
