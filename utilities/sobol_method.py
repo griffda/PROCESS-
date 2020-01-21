@@ -1,3 +1,29 @@
+"""
+Code to perform the Sobols sensistivity analysis to 
+investiage the sensistivity of the input parameters in PROCESS
+
+Author: A. Pearce (alexander.pearce@ukaea.uk)
+
+Input files:
+run_process.conf (config file, in the same directory as this file)
+sobol_method_conf.json (config file for parameters used by morris method,
+                        in same directory as this file)
+An IN.DAT file as specified in the config file
+
+Output files:
+All of them in the work directory specified in the config file
+OUT.DAT                     -  PROCESS output
+PLOT.DAT                    -  PROCESS output
+MFILE.DAT                   -  PROCESS output
+process.log                 -  logfile of PROCESS output to stdout
+output_solutions.txt        -  contains list of all output solutions
+output_failed_solutions.txt -  contains list of all output with ifail != 1
+output_conv_solution.txt    -  contains list of all output with ifail = 1
+sobol.txt                   -  contains the dictionary of the Sobol indices
+
+"""
+
+import os
 import argparse
 from SALib.sample.saltelli import sample
 from SALib.analyze import sobol
@@ -6,6 +32,7 @@ from process_io_lib.in_dat import InDat
 from process_io_lib.mfile import MFile
 from process_io_lib.process_funcs import set_variable_in_indat, process_stopped
 import numpy as np
+import json
 
 def Get_Input():
     #Define the model inputs
@@ -21,6 +48,9 @@ def Get_Input():
                    [5.2e8, 6.4e8],
                    [0.475, 0.525]],
     }
+    with open(DICTS_FILE_PATH, 'w') as dicts_file:
+        json.dump(problem, dicts_file, indent=4, sort_keys=True)
+    
     return problem
 
 def write_Sobol_Output(X,S):
@@ -29,13 +59,6 @@ def write_Sobol_Output(X,S):
     
     #create first order header
     f.write('Parameter S1 S1_conf ST ST_conf\n')
-
-    #params_bounds['num_vars']
-    #params_bounds['names']
-    #params_sol['S1']
-    #params_sol['S1_conf']
-    #params_sol['ST']
-    #params_sol['ST_conf']
 
     #print first order Sobol indices
     for i in range(X['num_vars']):
@@ -46,10 +69,10 @@ def write_Sobol_Output(X,S):
     f.write('Parameter_1 Parameter_2 S2 S2_conf\n')
 
     #print second order Sobol indices
-    for j in range(X['num_vars']):
-        for k in range(j + 1, X['num_vars']):
-            f.write("%s %s %f %f\n" % (X['names'][j], X['names'][k], \
-                                       S['S2'][j, k], S['S2_conf'][j, k]))
+    #for j in range(X['num_vars']):
+    #    for k in range(j + 1, X['num_vars']):
+    #        f.write("%s %s %f %f\n" % (X['names'][j], X['names'][k], \
+    #                                   S['S2'][j, k], S['S2_conf'][j, k]))
 
     f.close()
 
@@ -60,7 +83,7 @@ if __name__ == "__main__":
 
     PARSER.add_argument("-f", "--configfile", default="run_process.conf",
                         help="configuration file, default = run_process.conf")
-    PARSER.add_argument("-i", "--inputfile", default="morris_method_conf.json", type=str,
+    PARSER.add_argument("-i", "--inputfile", default="sobol_method_conf.json", type=str,
                         help="input parameters file, default = sobol_method_conf.json")
     PARSER.add_argument("-o", "--outputvarname", default="capcost", type=str,
                         help="PROCESS output analysed, default = capcost")
@@ -77,9 +100,16 @@ if __name__ == "__main__":
 
     ARGS = PARSER.parse_args()
 
+    # main program
+    DICTS_FILE_PATH = ARGS.inputfile
+
     # Get parameters
-    params_bounds = Get_Input()
-    model_iter = ARGS.ITER
+    Get_Input()
+    DICTS_FILE_PATH = os.path.join(os.path.dirname(__file__),
+            'sobol_method_conf.json')
+    dicts_file = open(DICTS_FILE_PATH, 'r')
+    params_bounds = json.load(dicts_file)
+    model_iter = ARGS.t
     capcost_mean = ARGS.m #8056.98 used from minimsing capcost on 2018 DEMO baseline ~~CHECK!
 
     # Setup output arrays
