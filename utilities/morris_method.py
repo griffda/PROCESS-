@@ -6,8 +6,8 @@ Author: A. Pearce (alexander.pearce@ukaea.uk)
 
 Input files:
 run_process.conf (config file, in the same directory as this file)
-???.json (config file for uncertainties in same
-                             directory as this file)
+morris_method_conf.json (config file for parameters used by morris method,
+                        in same directory as this file)
 An IN.DAT file as specified in the config file
 
 Output files:
@@ -18,12 +18,12 @@ MFILE.DAT   -  PROCESS output
 process.log -  logfile of PROCESS output to stdout
 capcost_sol.txt - contains lsit of all outputs
 error_log.txt  - contains list of all output with ifail != 1
-
-We need a way spit out the final dicts in a file called morris_method.txt or something 
-just modify the sobol printing routine
+morris_method_output - contains the dictorany of the mean and 
+                        variance of the elementary effects 
 
 """
 
+import os
 import argparse
 from SALib.sample.morris import sample 
 from SALib.analyze import morris 
@@ -32,7 +32,7 @@ from process_io_lib.in_dat import InDat
 from process_io_lib.mfile import MFile
 from process_io_lib.process_funcs import set_variable_in_indat, process_stopped
 import numpy as np
-import pandas as pd
+import json
 
 def Get_Input():
     #Define the model inputs
@@ -66,9 +66,12 @@ def Get_Input():
                    #[11.0, 12.0],
                    #[0.475, 0.525]] 
     }
-    return problem
+    with open(DICTS_FILE_PATH, 'w') as dicts_file:
+        json.dump(problem, dicts_file, indent=4, sort_keys=True)
 
-def write_Morris_method_Output(X,S):
+    return 
+
+def write_Morris_Method_Output(X,S):
     #open output file
     f = open('morris_method_output.txt','w')
     
@@ -88,6 +91,8 @@ if __name__ == "__main__":
 
     PARSER.add_argument("-f", "--configfile", default="run_process.conf", type=str,
                         help="configuration file, default = run_process.conf")
+    PARSER.add_argument("-i", "--inputfile", default="morris_method_conf.json", type=str,
+                        help="input parameters file, default = morris_method_conf.json")
     PARSER.add_argument("-o", "--outputvarname", default="capcost", type=str,
                         help="PROCESS output analysed, default = capcost")
     PARSER.add_argument("-s", metavar="SOLLIST", default="capcost_sol.txt", type=str,
@@ -101,12 +106,19 @@ if __name__ == "__main__":
     PARSER.add_argument("-n", metavar="NUMLVLS", default=4, type=int,
                         help="Number of grid levels used in hypercube sampling, default = 4")
 
-                        # need a solution to a hard coded dict for the inputs...
-
     ARGS = PARSER.parse_args()
 
-    # Get parameters
-    params_bounds = Get_Input()
+  
+    
+    # main program
+    DICTS_FILE_PATH = ARGS.inputfile
+
+    #Get parameters
+    #Get_Input()
+    DICTS_FILE_PATH = os.path.join(os.path.dirname(__file__),
+            'morris_method_conf.json')
+    dicts_file = open(DICTS_FILE_PATH, 'r')
+    params_bounds = json.load(dicts_file)
     capcost_mean = ARGS.m # 8056.98 used from minimsing capcost on 2018 DEMO baseline ~~CHECK!
     traj_num = ARGS.t 
     sols = np.array([])
@@ -155,7 +167,6 @@ if __name__ == "__main__":
     params_sol = morris.analyze(params_bounds,params_values,sols)
     np.savetxt(ARGS.s, sols) 
     np.savetxt(ARGS.e, fail) 
-    df = pd.DataFrame(params_sol)
-    print(df) # need to update this bit... fix this copyy what we do on sobol i guess 
+  
     #write output file
-    write_Morris_method_Output(params_bounds,params_sol)
+    write_Morris_Method_Output(params_bounds,params_sol)
