@@ -700,10 +700,10 @@ subroutine tf_res_heating()
         if ( is_leg_cp_temp_same == 1 ) tlegav = -1.0D0  
 
         ! Centrepost resisitivity and conductor/insulation volume
-        call sc_cpost( r_cp_top-casthi, h_cp_top, r_tf_inboard_out-casthi, hmax+tfthko, & ! Inputs
-                       ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, tinstf, casthi,   & ! Inputs
-                       n_tf*turnstf,                                                    & ! Inputs
-                       a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
+        call cpost( r_cp_top-casthi, h_cp_top, r_tf_inboard_out-casthi, hmax+tfthko, & ! Inputs
+                    ritfc, rhocp, fcoolcp, r_tf_inboard_in+thkcas, tinstf, casthi,   & ! Inputs
+                    n_tf*turnstf,                                                    & ! Inputs
+                    a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
 
 
         ! Outter leg cross-section areas
@@ -2848,7 +2848,7 @@ subroutine dtempbydtime ( qtime, qtemperature, derivative )
 end subroutine dtempbydtime
 
 !-----------------------------------------------------------------------
-subroutine sc_cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! Inputs
+subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! Inputs
                      ins_th, cas_out_th, n_turns_tot,                         &  ! Inputs
                      acpcool, volume, respow, volins, volcasout )                ! Outputs
 
@@ -3058,7 +3058,7 @@ subroutine sc_cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, & 
     respow = 2.0D0 * ( res_cyl + res_taped )   ! eq(36)   
     ! --------------------------------------------------------------------
 
-end subroutine sc_cpost
+end subroutine cpost
 
 
 !-----------------------------------------------------------------------
