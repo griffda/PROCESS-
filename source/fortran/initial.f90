@@ -1042,7 +1042,7 @@ subroutine check
         ! Check if a single null divertor is used
         if (i_single_null == 1) call report_error(39)
 
-        ! Set the toroidal coil shape to picture frame (if default value)
+        ! Set the TF coil shape to picture frame (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 2
     ! --------------------------------
 
@@ -1059,7 +1059,7 @@ subroutine check
             idivrt = 1
         end if
 
-        ! Set the poloidal coil shape to PROCESS D-shape (if default value)
+        ! Set the TF coil shape to PROCESS D-shape (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 1
 
         !  Check PF coil configurations
