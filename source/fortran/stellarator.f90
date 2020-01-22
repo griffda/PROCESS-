@@ -186,21 +186,13 @@ end module cartesian_vectors
 
 
 module stellarator_configuration
-   !+ad_name  stellarator_configuration_parameters
-   !+ad_summ  Module containing defining parameters for a stellarator
-   !+ad_type  Module
-   !+ad_auth  J Lion, IPP Greifswald
-   !+ad_cont  None
-   !+ad_args  N/A
-   !+ad_desc  This module contains a set of constants that defines a
-   !+ad_desc  stellator configuration. Those parameters is based off external
-   !+ad_desc  calculations.
-   !+ad_prob  None
-   !+ad_call  N/A
-   !+ad_hist  07/10/19 jlion Initial version
-   !+ad_stat  to be checked
-   !+ad_docs  tba
-   !
+   !! author: J Lion, IPP Greifswald
+   !! Module containing defining parameters for a stellarator
+   !!
+   !! This module contains a set of constants that defines a
+   !! stellarator configuration. These parameters are based on external
+   !! calculations.
+   !! The list will be modified in further commits.
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    implicit none
 
@@ -268,13 +260,21 @@ contains
 
 
       select case (index)
+
+         ! This is the istell case switch:
+         ! istell = 1: Helias5 machine
+         ! istell = 2: Helias4 machine
+         ! istell = 3: Helias3 machine
+
+         ! All parameters set here are prelimnirary versions and might be changed in further commits
+
          case(1)
             ! Helias5 Machine
             new_stella_config%name = "Helias 5b"
             ! Reference point where all the other variables are determined from
             ! Plasma outer radius
             new_stella_config%rmajor_ref = 22.0D0
-            new_stella_config%aspect_ref = 12.5D0   !? check this
+            new_stella_config%aspect_ref = 12.5D0
             new_stella_config%rminor_ref = 22.0D0/12.5D0
             new_stella_config%bt_ref = 5.6D0
 
@@ -302,8 +302,8 @@ contains
       
             new_stella_config%I0 = 13.06D0/5.6D0/22.46D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
             new_stella_config%inductivity = 1655.76D-6/22.0D0* 12.5D0**2 ! Inductivity/R*A^2 in muH/m
-            ! Here one could check if a vmec file should be used to calculate
-            ! vr2r and vr3. I see no reason for that though..
+
+
          case(2)
             ! Helias4 Machine
             new_stella_config%name = "Helias 4"
@@ -311,7 +311,7 @@ contains
             ! Plasma outer radius
             new_stella_config%rmajor_ref = 18.0D0
             new_stella_config%rminor_ref = 2.1D0
-            new_stella_config%aspect_ref =  18.0D0/2.1D0  !? check this
+            new_stella_config%aspect_ref =  18.0D0/2.1D0
             new_stella_config%bt_ref = 5.6D0
 
             new_stella_config%symmetry = 4
@@ -337,7 +337,7 @@ contains
             new_stella_config%coil_to_plasma_radius = 1.0D0 ! Approximately
       
             new_stella_config%I0 = 13.146D0/5.6D0/18.0D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
-            new_stella_config%inductivity = 1290.4D-6/18.0D0*(2.1D0/18.0D0)**2 ! Inductivity/R*A^2 in muH/m
+            new_stella_config%inductivity = 1290.4D-6/18.0D0*(18.0D0/2.1D0)**2 ! Inductivity/R*A^2 in muH/m
 
 
          case(3)
@@ -347,7 +347,7 @@ contains
             ! Plasma outer radius
             new_stella_config%rmajor_ref = 15.0D0
             new_stella_config%rminor_ref = 2.5D0
-            new_stella_config%aspect_ref =  15.0D0/2.5D0  !? check this
+            new_stella_config%aspect_ref =  15.0D0/2.5D0  
             new_stella_config%bt_ref = 5.6D0
 
             new_stella_config%symmetry = 3
@@ -373,7 +373,7 @@ contains
             new_stella_config%coil_to_plasma_radius = 1.0D0 ! Approximately
       
             new_stella_config%I0 = 14.23D0/5.6D0/15.0D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
-            new_stella_config%inductivity = 1250.7D-6/15.0D0*(2.5D0/15.0D0)**2 ! Inductivity/R*A^2 in muH/m
+            new_stella_config%inductivity = 1250.7D-6/15.0D0*(15.0D0/2.5D0)**2 ! Inductivity/R*A^2 in muH/m
 
 
 
@@ -2585,7 +2585,6 @@ contains
 
     !  Radius of rounded corners of cable space inside conduit
     !  0.75 taken from the former PROCESS model
-
     rbcndut = thwcndut*0.75D0
 
     arealeg = tfcth*tftort  ! [m^2] overall coil cross-sectional area
@@ -2597,10 +2596,10 @@ contains
     ritfc = n_tf * I * 1.0D6      ! [A] Total current in ALL coils
     oacdcp = ritfc/tfareain       ! [A / m^2] overall current density
     rbmax = rcoil                 ! [m] radius of peak field occurrence, average
-                                  !     N.B. different to tokamak SCTF calculation
+                                  !  N.B. different to tokamak SCTF calculation
     hmax = 0.5D0*h_max - tfcth    ! [m] maximum half-height of coil
     dr_tf_inner_bore = D_coil     ! [m] estimated horizontal coil bore
-    dh_tf_inner_bore = 2.0D0*hmax          ! [m] estimated vertical coil bore
+    dh_tf_inner_bore = 2.0D0*hmax ! [m] estimated vertical coil bore
     tfleng = U                    ! [m] estimated average length of a coil
 
     estotftgj = W_mag             ! [GJ] Total magnetic energy
