@@ -2254,10 +2254,10 @@ module tfcoil_variables
   !! n_layer /20/ : Number of layers in TF coil (i_tf_turns_integer=1)
 
   real(kind(1.0D0)) :: oacdcp = 0.0D0
-  !! oacdcp /1.4e7/ : overall current density in TF coil inboard legs midplane (A/m2)
-  !!                  Rem SK : Not used in tfcoil to set the current any more
-  !!                            -> SHOULD NOT BE USED AS ITERATION VARIABLE 12 ANY MORE
-  !!                            -> This variable is calculated
+  !! oacdcp /0.0/ : overall current density in TF coil inboard legs midplane (A/m2)
+  !!                Rem SK : Not used in tfcoil to set the current any more
+  !!                         -> SHOULD NOT BE USED AS ITERATION VARIABLE 12 ANY MORE
+  !!                         -> This variable is now calculated
 
   real(kind(1.0D0)) :: poisson = 0.3D0
   !! poisson /0.3/ : Poisson's ratio for TF stress calculation
@@ -2611,9 +2611,9 @@ module tfcoil_variables
   !! tcpav2 : Computed centrepost average temperature (K) (for consistency)
 
   real(kind(1.0D0)) :: tlegav = -1.0D0 
-  !! tcpav /373.15/ : Average temperature of the TF outboard legs [K]
-  !!                  if tlegav = -1.0, the same ouboard legs and the CP temperatures are the same 
-  !!                  Fixed for now, should be fixed with a contraints eq like tcpav 
+  !! tlegav /-1.0/ : Average temperature of the TF outboard legs [K]
+  !!                 if tlegav = -1.0, the ouboard legs and CP temperatures are the same 
+  !!                 Fixed for now, should be fixed with a contraints eq like tcpav 
 
   real(kind(1.0D0)) :: tcpmax = 0.0D0
   !! tcpmax : peak centrepost temperature (K)

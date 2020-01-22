@@ -1039,10 +1039,10 @@ subroutine check
         ! Check if the boostrap current selection is addapted to ST
         if (ibss  == 1) call report_error(38)
 
-        ! Check if a single null divertor is used (double null not yet implemented)
+        ! Check if a single null divertor is used
         if (i_single_null == 1) call report_error(39)
 
-        ! Set the poloidal coil shape to picture frame (if default value)
+        ! Set the toroidal coil shape to picture frame (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 2
     ! --------------------------------
 
