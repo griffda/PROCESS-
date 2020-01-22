@@ -4580,7 +4580,7 @@ module rebco_variables
   real(kind(1.0D0)) :: croco_id = 0.0D0
   !! croco_id : Inner diameter of CroCo copper tube (m)
   real(kind(1.0D0)) :: croco_thick = 2.5D-3
-  !! croco_thick /2.5e-3/ : Thickness of CroCo copper tube (m) (iteration variable 149)
+  !! croco_thick /2.5e-3/ : Thickness of CroCo copper tube (m) (iteration variable 158)
 
   !real(kind(1.0D0)) :: copper_bar = 0.23d0
   ! !! copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space

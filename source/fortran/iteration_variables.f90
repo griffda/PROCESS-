@@ -2733,25 +2733,25 @@ subroutine init_itv_1
    end subroutine set_itv_157
 
    !---------------------------------
-   ! DUMMY variables below here
-   !---------------------------------
 
    subroutine init_itv_158
-      !! <LI> (158) DUMMY : Description
-      lablxc(158) = 'DUMMY         '
-      boundl(158) = 1.0d-99
-      boundu(158) = 1.0d99
+      !! <LI> (158) croco_thick : Thickness of CroCo copper tube (m)
+      lablxc(158) = 'croco_thick   '
+      boundl(158) = 1.0d-3
+      boundu(158) = 1.0d-1
    end subroutine init_itv_158
 
    real(kind(1.d0)) function itv_158()
-      itv_158 = DUMMY 
+      itv_158 = croco_thick
    end function itv_158
 
    subroutine set_itv_158(ratio)
       real(kind(1.d0)) :: ratio
-      DUMMY = ratio
+      croco_thick = ratio
    end subroutine set_itv_158
 
+   !---------------------------------
+   ! DUMMY variables below here
    !---------------------------------
 
    subroutine init_itv_159
