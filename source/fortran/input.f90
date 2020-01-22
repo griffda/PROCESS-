@@ -1654,10 +1654,10 @@ contains
                'TF coil shape parameter')
        case ('fcoolcp')
           call parse_real_variable('fcoolcp', fcoolcp, 0.0D0, 1.0D0, &
-               'Coolant fraction of TF centrepost (itart=1) or the whole magent (itart=0)')
+               'Coolant fraction of TF centrepost (itart=1) or the whole magnet (itart=0)')
        case ('fcoolleg')
           call parse_real_variable('fcoolleg', fcoolleg, 0.0D0, 1.0D0, &
-               'Coolant fraction of TF outboard leg (tart=1 only)')
+               'Coolant fraction of TF outboard leg (itart=1 only)')
        case ('fcutfsu')
           call parse_real_variable('fcutfsu', fcutfsu, 0.0D0, 1.0D0, &
                'Cu fraction of SCTF cable conductor')
@@ -1702,7 +1702,7 @@ contains
                'Switch for TF coil type')
        case ('i_tf_shape')
          call parse_int_variable('i_tf_shape', i_tf_shape, 0, 2, &
-              'Switch for TF coil toroidal shape')
+              'Switch for TF coil shape')
        case ('jbus')
           call parse_real_variable('jbus', jbus, 1.0D4, 1.0D8, &
                'TF coil bus current density (A/m2)')
