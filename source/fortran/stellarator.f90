@@ -660,22 +660,14 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine stnewconfig
-   !+ad_name  stnewconfig
-   !+ad_summ  Routine to initialise the stellarator configuration
-   !+ad_type  Subroutine
-   !+ad_auth  J Lion, IPP Greifswald
-   !+ad_cont  N/A
-   !+ad_args  None
-   !+ad_desc  Routine to initialise the stellarator configuration
-   !+ad_desc  This routine is called right before the calculation and could
-   !+ad_desc  in principle overwrite variables from the input file.
-   !+ad_prob  None
-   !+ad_call  None
-   !+ad_hist  15/11/19 jlion Initial version
-   !+ad_stat  to be tested
-   !+ad_docs  no docs
-   !
-   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !! author: J Lion, IPP Greifswald
+    !! Routine to initialise the stellarator configuration
+    !!
+    !! Routine to initialise the stellarator configuration.
+    !! This routine is called right before the calculation and could
+    !! in principle overwrite variables from the input file.
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   config = new_stella_config(istell)
   !print *," Loaded Stellarator configuration ", config%name
