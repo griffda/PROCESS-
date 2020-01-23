@@ -123,7 +123,7 @@ contains
     ! -------------------------
     !  Temperature rise in coolant (inlet to outlet)
     ! **********************************************
-    ! The cooland flow is now homogeneous as a fixed cooling area is used
+    ! The coolant flow is now homogeneous as a fixed cooling area is used
     vcoolav = vcool 
 
     ! Water coolant physical properties
@@ -248,16 +248,16 @@ contains
     ! Cryogenic aluminium 
     else if ( i_tf_sup ==  2 ) then
 
-       ! Ref : R.W. Powel, National Standard Reference Data Series, nov 25 1966 (homemade fit 15 < T < 60 K)
+       ! Ref : R.W. Powel, National Standard Reference Data Series, Nov 25 1966 (S Kahn fit 15 < T < 60 K)
        conductor_th_cond = 16332.2073D0 - 776.91775*tcpav + 13.405688D0*tcpav**2 - 8.01D-02*tcpav**3 ! W/(m.K)
     end if 
     ! ******
 
-    ! Average temperature rise : To be changed with Gary's better documented formula (or add a switch?)
+    ! Average temperature rise : To be changed with Garry Voss' better documented formula (or add a switch?)
     dtcncpav = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond*(ro**2 - rcool**2) ) * &
                ( ro**2*rcool**2 - 0.25D0*rcool**4 - 0.75D0*ro**4 + ro**4 * log(ro/rcool) )
 
-    ! Peak temperature rise : To be changed with Gary's better documented formula (or add a switch?)
+    ! Peak temperature rise : To be changed with Garry Voss' better documented formula (or add a switch?)
     dtconcpmx = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond) * &
          ( (rcool**2 - ro**2)/2.0D0 + ro**2 * log(ro/rcool) )
 
