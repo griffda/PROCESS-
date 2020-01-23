@@ -1,5 +1,3 @@
-! THIS MODULE IS MEANT TO BE SOON REPLACED BY A REFACTORED VERSION 
-! WITH CONSISTENT GEOMETRIES AND PHYSICS
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module tfcoil_module
@@ -68,45 +66,6 @@ contains
     call portsz
 
 
-    ! Printing the final results in the output file
-    ! ---------------------------------------------
-    if (iprint == 0) return
-
-    ! !  Output section (resistive TF coils only)
-    ! if (i_tf_sup /= 1) then
-
-    !    call oheadr(outfile,'TF Coils')
-    !    call ovarre(outfile,'TF coil current (summed over all coils) (A)','(ritfc)',ritfc)
-    !    call ovarre(outfile,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
-    !    call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
-    !    call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
-    !    call ovarre(outfile,'Number of TF coil legs','(n_tf)',n_tf)
-
-    !    call osubhd(outfile,'Energy and Forces :')
-    !    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj)
-    !    call ovarre(outfile,'Vertical force on inboard leg (N)','(vforce)',vforce)
-    !    call ovarre(outfile,'Centering force on inboard leg (N/m)','(cforce)',cforce)
-    !    call ovarre(outfile,'Radial stress (MPa)','(sigrad)',sigrad)
-    !    call ovarre(outfile,'Transverse stress (MPa)','(sigtan)',sigtan)
-    !    call ovarre(outfile,'Vertical stress (MPa)','(sigver)',sigver)
-    !    call oblnkl(outfile)
-    !    call ocmmnt(outfile,'TF coil inner surface shape is given by a rectangle with the')
-    !    call ocmmnt(outfile,'following inner points (Note that this does not account')
-    !    call ocmmnt(outfile,'for the ST tapered centrepost):')
-    !    call oblnkl(outfile)
-
-    !    write(outfile,10)
-    !    10  format(t2,'point',t16,'x(m)',t31,'y(m)')
-    !    do ii = 1,5
-    !       write(outfile,20) ii,xarc(ii),yarc(ii)
-    !       intstring = int2char(ii)
-    !       call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
-    !       call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
-    !    end do
-    !    20  format(i4,t10,f10.3,t25,f10.3)
- 
-    ! end if
-    ! ---------------------------------------------
   end subroutine tfcoil
 
 
