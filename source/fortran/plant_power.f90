@@ -115,7 +115,7 @@ contains
        !  Total power consumption (MW)
        tfcmw = tfcpmw + tflegmw + tfbusmw + tfreacmw
 
-       !  Total steady state AC 1 demand (MW)
+       !  Total steady state AC power demand (MW)
        tfacpd = tfcmw / etatf
 
     else  !  Superconducting TF coil option
