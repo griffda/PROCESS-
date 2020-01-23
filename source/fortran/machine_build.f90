@@ -105,8 +105,8 @@ contains
     ! Radius of the centrepost at the top of the machine
     if ( itart == 1 ) then
 
-       r_cp_top = rmajor - rminor * triang - ( deltf + thshield + gapds + ddwi + &
-            & shldith + vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
+       r_cp_top = rmajor - rminor * triang - ( deltf + thshield + shldith + &
+                  vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
        r_cp_top = max( r_cp_top, ( r_tf_inboard_mid + 0.5D0*tfcth ) * 1.01D0 ) 
        
        if (r_cp_top <= 0.0D0) then
