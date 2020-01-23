@@ -278,9 +278,7 @@ contains
     call obuild(outfile,'Gap',gapoh,radius,'(gapoh)')
     call ovarre(mfile,'CS precompresion to TF coil radial gap (m)','(gapoh)',gapoh)
     
-    
-    
-
+    radius = radius + tfcth
     call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
     call ovarre(mfile,'TF coil inboard leg (m)','(tfcth)',tfcth)
     

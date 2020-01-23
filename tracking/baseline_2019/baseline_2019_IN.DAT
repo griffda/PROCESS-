@@ -26,7 +26,6 @@ epsvmc = 1e-7
 *---------------Constraint Equations---------------*
 
 icc = 8 * Neutron wall load upper limit
-icc = 10 * Toroidal field 1
 icc = 11 * Radial build
 icc = 13 * Burn time lower limit
 icc = 25 * Peak toroidal field upper limit
@@ -47,7 +46,6 @@ icc = 79 * F
 *---------------Iteration Variables----------------*
 
 ixc = 2 * bt
-ixc = 12 * oacdcp
 ixc = 14 * fwalld
 ixc = 18 * q
 boundl(18) = 3.5
@@ -84,9 +82,6 @@ boundu(118) = 1.05
 ixc = 119 * tesep
 boundl(119) = 0.1
 boundu(119) = 5.0
-ixc = 120 * ttarget
-boundl(120) = 1.0
-boundu(120) = 10.0
 ixc = 122 * oh_steel_frac
 ixc = 123 * foh_stress
 ixc = 124 * qtargettotal
@@ -103,6 +98,7 @@ boundu(152) = 0.5
 *-----------------Build Variables------------------*
 
 blnkith  = 0.755 * Inboard blanket thickness (m);
+blnkoth  = 0.982 * Inboard blanket thickness (m);
 bore     = 2.0682 * Central solenoid inboard radius (m)
 ddwex    = 0.15 * Cryostat thickness (m)
 ddwi     = 0.3 * Vacuum vessel thickness (tf coil / shield) (m)
@@ -164,7 +160,7 @@ target_spread = 3.0e-3 * Increase in sol power fall-off length due to spreading;
 lambda_q_omp = 0.002 * Sol power fall-off length at the outer midplane; perpendicular to field [m]
 netau_sol = 0.5 * Parameter describing the departure from local ionisation equilibrium in the sol; [ms;1e20/m3]
 targetangle = 30.0 * Angle between field-line and divertor target (degrees)
-ttarget  = 5.1929 * Plasma temperature adjacent to divertor sheath [ev] (iteration variable 120)
+ttarget  = 5.0 * Plasma temperature adjacent to divertor sheath [ev] (iteration variable 120)
 qtargettotal = 6450700.0 * Power density on target including surface recombination [w/m2]
 impurity_enrichment(1) = 5.0
 impurity_enrichment(2) = 1.0
