@@ -658,8 +658,8 @@ end subroutine tf_integer_winding_pack
 
 subroutine tf_res_heating()
     !! Resitive magnet resitive heating calculations
-    !! Rem SK : Clamped joinded superconductors might have resistive power losses on the joints
-    !! Rem SK : Slining joins might have a region of high resisitivity
+    !! Rem SK : Clamped joined superconductors might have resistive power losses on the joints
+    !! Rem SK : Sliding joints might have a region of high resistivity
 
     implicit none
 
@@ -675,7 +675,7 @@ subroutine tf_res_heating()
     ! ---
 
         
-    ! Copper : Copper resisitivity degraded by 1/0.92 for the used of GLIDCOP A-15 
+    ! Copper : Copper resistivity degraded by 1/0.92 for the used of GLIDCOP A-15 
     !          Better structural properties at high temperature and radiation damage resilience
     if ( i_tf_sup == 0 ) rhocp = (frhocp/0.92D0) * ( 1.72D0 + 0.0039D0*(tcpav-273.15D0) ) * 1.0D-8  ! eq(20)
 
@@ -706,19 +706,19 @@ subroutine tf_res_heating()
                     a_cp_cool, vol_cond_cp, prescp, vol_ins_cp, vol_case_cp )          ! Outputs
 
 
-        ! Outter leg cross-section areas
+        ! Outer leg cross-section areas
         ! ---
-        ! Area taken by one ouboard legs turns insulation [m2]
+        ! Area taken by one outboard leg's turns insulation [m2]
         a_wp_ins_turn = 2.0D0 * tinstf * ( (tftort/turnstf) + tfthko - 2.0D0*tinstf ) ! eq(25)
 
-        ! Exact TF ouboard leg conductor area (per leg) [m2]
+        ! Exact TF outboard leg conductor area (per leg) [m2]
         a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )  ! eq(24)
         ! ---
 
 
-        ! Outter leg resistive power losse
+        ! Outer leg resistive power loss
         ! ---
-        ! TF outboard legs resistance calculation (per leg) [ohm]
+        ! TF outboard leg's resistance calculation (per leg) [ohm]
         tflegres = rhotfleg * tfleng / a_wp_cond_leg   ! eq(23)
 
         ! TF outer leg resistive power (TOTAL) [W]   
@@ -756,7 +756,7 @@ subroutine tf_res_heating()
         ! Area taken by the inter turn ground insulation
         a_wp_ins_turn = 2.0D0 * tinstf * ( (tfcth/turnstf) + tfcth - 2.0D0*tinstf )   ! eq(25)
 
-        ! Exact TF ouboard leg conductor area
+        ! Exact TF outboard leg conductor area
         a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )  ! eq(24)
         ! ---
 
@@ -782,7 +782,7 @@ subroutine tf_field_and_force()
     implicit none
 
     ! Determine quench time (based on IDM: 2MBSE3)
-    ! Resistive magnets : caclulation of the resistive power losses added
+    ! Resistive magnets : calculation of the resistive power losses added
     ! Issue #337: Force on the vessel wall due to TF coil quench
 
     ! Quench time [s]
@@ -800,7 +800,7 @@ subroutine tf_field_and_force()
     ! Old formula : vforce = 0.25D0 * bt * rmajor * ritfc * log(r_tf_outboard_mid/r_tf_inboard_mid) / n_tf
 
     ! Case of a centrepost (itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
-    ! Rem SK : casing/insulation thickness not subctracted as part of the CP is genuinly connected to the legs..
+    ! Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
     if ( itart == 1 .and. i_tf_sup /= 1 ) then
         
         vforce = 0.25D0 * (bt * rmajor * ritfc) / (n_tf * thkwp**2) * (       & 
@@ -819,10 +819,10 @@ subroutine tf_field_and_force()
                       2.0D0 * thkwp * ( r_wp_outer     * log(r_wp_inner / r_wp_outer)             + &
                                            r_tf_outboard_in * log((r_tf_outboard_in + thkwp)      / &
                                            r_tf_outboard_in))) - vforce 
-        r_tf_outboard_in = r_tf_outboard_in - tinstf    ! Tricky trick to avoid writting tinstg all the time
+        r_tf_outboard_in = r_tf_outboard_in - tinstf    ! Tricky trick to avoid writting tinstf all the time
             
     ! Case of TF without joints or with clamped joints total
-    ! Rem SK : f_vforce_inboard might be calculated analytically (see M. Kovary comment in #848)
+    ! Rem SK : f_vforce_inboard might be calculated analytically (see M. Kovari comment in #848)
     else 
 
         ! Inboard leg vertical force (per coil) [N]
@@ -836,7 +836,7 @@ subroutine tf_field_and_force()
                          2.0D0 * thkwp * ( r_wp_outer       * log(r_wp_inner                 / r_wp_outer ) + &
                                            r_tf_outboard_in * log((r_tf_outboard_in + thkwp) / r_tf_outboard_in ) ))      
         
-        r_tf_outboard_in = r_tf_outboard_in - tinstf  ! Tricky trick to avoid writting tinstg all the time
+        r_tf_outboard_in = r_tf_outboard_in - tinstf  ! Tricky trick to avoid writting tinstf all the time
 
         vforce_outboard = vforce * ( ( 1.0D0 / f_vforce_inboard ) - 1.0D0 )    ! eq(24)
     end if
@@ -920,7 +920,7 @@ subroutine tf_coil_area_and_masses()
         ! Copper magnets casing/conductor weights per coil [kg]
         if ( i_tf_sup == 0 ) then 
 
-            whtcas = denstl * vol_case_cp / n_tf  ! Per TF leg, no casing for touter leg
+            whtcas = denstl * vol_case_cp / n_tf  ! Per TF leg, no casing for outer leg
             whtconcu = dcopper * vol_cond / n_tf
             whtconal = 0.0D0         
 
@@ -1810,7 +1810,7 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf, 'OP ')
         call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/n_tf)',whttf/n_tf, 'OP ')
         call ovarre(outfile,'Vertical separating force per leg (N)','(vforce)',vforce, 'OP ')
-        call ovarre(outfile,'Centering force per coil (N/m)','(cforce)',cforce, 'OP ')
+        call ovarre(outfile,'Centring force per coil (N/m)','(cforce)',cforce, 'OP ')
 
         !  Report any applicability issues with peak field with ripple calculation
 
@@ -2851,7 +2851,7 @@ end subroutine dtempbydtime
 subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! Inputs
                      ins_th, cas_out_th, n_turns_tot,                         &  ! Inputs
                      acpcool, volume, respow, volins, volcasout )                ! Outputs
-
+    !!  author: P J Knight, CCFE, Culham Science Centre
     !!  Calculates the volume and resistive power losses of a TART centrepost
     !!  This routine calculates the volume and resistive power losses
     !!  of a TART centrepost. It is assumed to be tapered - narrowest at
