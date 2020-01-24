@@ -313,7 +313,7 @@ subroutine tf_turn_geom()
 
     ! Total mid-plane cross-sectional area of winding pack, [m2]
     ! including the surrounding ground-wall insulation layer 
-    awpc = pi * ( (r_wp_outer + tinstf)**2 - ((r_wp_inner - tinstf))**2 ) / n_tf  ! eq(18)
+    awpc = pi * ( (r_wp_outer + tinstf)**2 - (r_wp_inner - tinstf)**2 ) / n_tf  ! eq(18)
 
     ! Exact mid-plane cross-section area of the conductor per TF turn   
     awptf = ( 1.0D0 - fcoolcp ) * ( pi*(r_wp_outer**2 - r_wp_inner**2)/(n_tf*turnstf) - &
@@ -2055,14 +2055,14 @@ subroutine outtf(outfile, peaktfflag)
         call ocmmnt(outfile,'for the ST tapered centrepost):')
         call oblnkl(outfile)
  
-        ! write(outfile,10)
-        ! 30  format(t2,'point',t16,'x(m)',t31,'y(m)')
-        ! do ii = 1,5
-        !    write(outfile,30) ii,xarc(ii),yarc(ii)
-        !    intstring = int2char(ii)
-        !    call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
-        !    call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
-        ! end do
+        write(outfile,10)
+        30  format(t2,'point',t16,'x(m)',t31,'y(m)')
+        do ii = 1,5
+           write(outfile,30) ii,xarc(ii),yarc(ii)
+           intstring = int2char(ii)
+           call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
+           call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
+        end do
 
     end if 
 end subroutine outtf
