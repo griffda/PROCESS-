@@ -11,8 +11,7 @@ module tfcoil_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_module
-  use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, r_cp_top, tfcth, tfthko, bore, hpfu
+  use build_variables, only : tfthko, hmax
   use constants
   use error_handling
   use fwbs_variables
@@ -49,6 +48,8 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
 
+    use build_module, only : portsz
+   
     implicit none
 
     !  Arguments
@@ -62,6 +63,7 @@ contains
     
     ! TF coil calculations
     call sctfcoil(outfile,iprint)
+
     !  Port size calculation
     call portsz
 

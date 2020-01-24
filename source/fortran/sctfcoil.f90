@@ -319,9 +319,6 @@ subroutine tf_turn_geom()
     awptf = ( 1.0D0 - fcoolcp ) * ( pi*(r_wp_outer**2 - r_wp_inner**2)/(n_tf*turnstf) - &
                                   2.0D0 * tinstf * thkwp )
 
-    ! Exact overall current density on the mid-plane conductors  
-    oacdcp = ritfc / ( awptf * n_tf * turnstf ) 
-
     ! Total cross-sectional area of surrounding case [m2]
     ! Only valid at mid-plane for resistive itart design
     acasetf = ( tfareain / n_tf ) - awpc        ! eq(19)
@@ -332,6 +329,15 @@ subroutine tf_turn_geom()
 
     ! Current per turn 
     cpttf = ritfc / ( turnstf * n_tf )   ! eq(14)
+
+    ! Exact current density on the mid-plane conductors  
+    oacdcp = ritfc / ( awptf * n_tf * turnstf ) 
+
+    ! Exact current density on TF oubard legs
+    cdtfleg = ritfc / ( ( 1.0D0 - fcoolcp ) * &
+                        ( tftort - 2.0D0 * turnstf * tinstf) * &
+                        ( tfthko - 2.0D0 * tinstf ) ) 
+
 
 end subroutine tf_turn_geom
 
@@ -2009,13 +2015,14 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
         call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
         ! end if
+    
+    
     else
-
         !  Output section
         call oheadr(outfile,'Resistive TF Coil Information')
         call ovarin(outfile,'Resistive TF coil option (0:copper 2:aluminium)','(i_tf_sup)',i_tf_sup)
-        !call ovarre(outfile,'Inboard leg current density (A/m2)','(oacdcp)',oacdcp)
-        call ovarre(outfile,'Outboard leg current density (A/m2)','(cdtfleg)',cdtfleg)
+        call ovarre(outfile,'Inboard leg mid-plane conductor current density (A/m2)','(oacdcp)',oacdcp)
+        call ovarre(outfile,'Outboard leg conductor current density (A/m2)','(cdtfleg)',cdtfleg)    
         call ovarre(outfile,'Number of turns per outboard leg','(turnstf)',turnstf)
         call ovarre(outfile,'Outboard leg current per turn (A)','(cpttf)',cpttf)
         call ovarre(outfile,'Inboard leg conductor volume (m3)','(vol_cond_cp)',vol_cond_cp)
@@ -2056,13 +2063,15 @@ subroutine outtf(outfile, peaktfflag)
         call oblnkl(outfile)
  
         write(outfile,10)
-        30  format(t2,'point',t16,'x(m)',t31,'y(m)')
+        ! 10  format(t2,'point',t16,'x(m)',t31,'y(m)')
         do ii = 1,5
-           write(outfile,30) ii,xarc(ii),yarc(ii)
+           write(outfile,20) ii,xarc(ii),yarc(ii)
            intstring = int2char(ii)
            call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
            call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
         end do
+        ! 20  format(i4,t10,f10.3,t25,f10.3)
+ 
 
     end if 
 end subroutine outtf

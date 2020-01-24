@@ -190,8 +190,7 @@ vvblgap  = 0.0      *Gap between vacuum vessel and blanket (m)
 *Iteration variables: scrapli tfcth
 
 *-----------------TF Coil Variables----------------*
-tinstf   = 1.5E-3      *Centrepost insulation thickness (no inusltion in this case)
-cpttf    = 9.0E4    *TF coil current per turn (A)
+tinstf   = 0.0     *Centrepost insulation thickness (no inusltion in this case)
 frhocp   = 1.0      *Centrepost resistivity enhancement factor 
 i_tf_sup = 0        *Switch for TF coil conductor model (0: copper) 
 ptempalw = 473.15   *Maximum peak centrepost temperature (C) (constraint equation 44)
