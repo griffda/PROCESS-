@@ -1,4 +1,3 @@
-
 {
  "version":  [ "PROCESS version 1.0.16" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
@@ -231,7 +230,7 @@
   {"no": 224, "level": 2, "message": "[fw.f90][fw_temp] First wall temperature (temp_k) out of range : [100-1500] K"},
   {"no": 225, "level": 2, "message": "[fw.f90][heat_transfer] Reynolds number out of range : [3e3-5000e3]"},
   {"no": 226, "level": 2, "message": "[fw.f90][heat_transfer] Prandtl number out of range : [0.5-2000]"},
-  {"no": 227, "level": 2, "message": "[fw.f90][heat_transfer] Negative Darcy friction factor (f) "},
+  {"no": 227, "level": 2, "message": "[fw.f90][heat_transfer] Negative Darcy friction factor (f)"},
   {"no": 228, "level": 3, "message": "RFP: RFP no longer available."},
   {"no": 229, "level": 2, "message": "[hcpb.f90][st_centrepost_nuclear_heating] Centrepost shiled thickness out of the neutronics fit range : [0.2-0.35] m"},
   {"no": 230, "level": 3, "message": "BLD2019: fwdr and v1dr should be zero for 2019 IFE build."},
@@ -241,10 +240,10 @@
   {"no": 234, "level": 3, "message": "CHECK: Coolant temperature (tcoolin) cannot be < 0 C (273.15 K) for water cooled copper magents."},
   {"no": 235, "level": 3, "message": "CHECK: Coolant temperature (tcoolin) should be > 40 K for the cryo-al resistivity to be defined."},
   {"no": 236, "level": 3, "message": "CHECK: The 1/R toroidal B field dependency constraint is being depreciated."},
-  {"no": 237, "level": 2, "message": "CHECK: Using variable Target temperature might lead to a discontinuity, preventing VMCON to converge. Try unsing fixed ttarget"},
-  {"no": 238, "level": 3, "message": "CHECK: TF legs conductor temperature (tlegav) shoulWd be < 40 K for the cryo-al resistivity to be defined."},
-  {"no": 239, "level": 3, "message": "CHECK: TF legs conductor temperature (tlegav) cannot be < 0 C (273.15 K) for water cooled copper magents."},
-  {"no": 240, "level": 3, "message": "CHECK: Too large CP conductor temperature (tcpav) upper limit for cryoal < 50 K"},
-  {"no": 241, "level": 3, "message": "CHECK: Too large CP conductor temperature (tcpav) lower linit for copper > 273.15 K"}
+  {"no": 237, "level": 2, "message": "CHECK: Using a variable target temperature might lead to a discontinuity, preventing VMCON to converge. Try using fixed ttarget"},
+  {"no": 238, "level": 3, "message": "CHECK: TF legs conductor temperature (tlegav) should be < 40 K for the cryo-al resistivity to be defined."},
+  {"no": 239, "level": 3, "message": "CHECK: TF legs conductor temperature (tlegav) cannot be < 0 C (273.15 K) for water cooled magents."},
+  {"no": 240, "level": 3, "message": "CHECK: Too large CP conductor temperature (tcpav). Upper limit for cryo-al < 50 K"},
+  {"no": 241, "level": 3, "message": "CHECK: Too low CP conductor temperature (tcpav). Lower limit for copper > 273.15 K"}
  ]
 }
