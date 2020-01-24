@@ -11,21 +11,13 @@ module sctfcoil_module
 !
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, tfcth, tfthko, hpfu, hr1, r_vv_inboard_out
-! use constants  ! No constants seems to be used !
-use error_handling
-use fwbs_variables
-use maths_library
-use physics_variables, only : rmajor, rminor, bt, i_single_null
-use process_output
-use tfcoil_variables
-use superconductors
-use resistive_materials
-use ode_mod
+use resistive_materials, only: resistive_material, volume_fractions, &
+    supercon_strand
+
 implicit none
 
 private
-public :: bi2212, itersc, wstsc, jcrit_nbti, outtf, sctfcoil, stresscl, &
+public :: outtf, sctfcoil, stresscl, &
 tfcind, tfspcall, initialise_cables
 
 ! Module variables
@@ -97,6 +89,7 @@ contains
 ! --------------------------------------------------------------------------
 subroutine initialise_cables()
     use rebco_variables, only: copper_rrr
+
     implicit none
 
     copper%rrr = copper_rrr
@@ -123,6 +116,9 @@ subroutine sctfcoil(outfile,iprint)
     !! <P>It is a variant from the original FEDC/Tokamak systems code.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use build_variables, only: tfcth
+    use tfcoil_variables, only: i_tf_turns_integer, wwp1, estotftgj, tfind, &
+        ritfc, thkwp, n_tf, bmaxtfrp, bmaxtf
 
     implicit none
 
@@ -179,6 +175,12 @@ subroutine tf_coil_geometry()
     !   - Overall geometry of coil
     !   - Cross-sectional areas of components
     !   - Winding Pack NOT included
+    use physics_variables, only: rmajor, bt
+    use build_variables, only: tfcth, tfthko, r_tf_inboard_mid
+    use process_output, only: pi
+    use tfcoil_variables, only: tinstf, tfc_sidewall_is_fraction, tfareain, &
+        ritfc, tftort, n_tf, casthi_is_fraction, bmaxtf, arealeg, &
+        casthi_fraction, casths_fraction, tfinsgap, rbmax, casthi, casths
 
     implicit none
 
@@ -243,6 +245,17 @@ subroutine tf_winding_pack()
     !   - Turn dimensions
     !   - Current, field, etc.
     !
+    use error_handling, only: fdiags, report_error
+    use build_variables, only: tfcth, tfthko
+    use process_output, only: pi
+    use tfcoil_variables, only: dhecoil, thicndut, cpttf, aswp, aiwp, tftort, &
+        leni, turnstf, tfareain, isumattf, n_tf, tinstf, leno, acstf, wwp1, &
+        vftf, avwp, jwptf, acasetfo, acasetf, wwp2, thwcndut, insulation_area, &
+        tftort, isumattf, aswp, tinstf, turnstf, leno, acasetf, n_tf, jwptf, &
+        thwcndut, avwp, aiwp, vftf, wwp2, acstf, acasetfo, thicndut, wwp1, &
+        dhecoil, tfareain, leni, insulation_area, cpttf, ritfc, thkwp, &
+        arealeg, casths, awphec, acndttf, acond, layer_ins, thkcas, &
+        conductor_width, oacdcp, tfinsgap, casthi
 
     implicit none
 
@@ -382,6 +395,16 @@ end subroutine tf_winding_pack
 
 subroutine tf_integer_winding_pack()
     ! Subroutine to calculate integer winding pack   
+    use error_handling, only: fdiags, report_error
+    use build_variables, only: tfcth, tfthko
+    use process_output, only: pi
+    use tfcoil_variables, only: dhecoil, thicndut, cpttf, aswp, aiwp, tftort, &
+        leni, turnstf, tfareain, casths, isumattf, n_tf, tinstf, acstf, wwp1, &
+        acndttf, vftf, avwp, jwptf, acasetfo, acasetf, thwcndut, &
+        insulation_area, avwp, arealeg, acasetf, ritfc, vftf, n_pancake, &
+        acstf, jwptf, acasetfo, wwp1, insulation_area, thwcndut, awphec, &
+        tinstf, acndttf, acond, oacdcp, n_layer, thkwp, thkcas, tfinsgap, &
+        casthi
 
     implicit none
     
@@ -553,6 +576,11 @@ end subroutine tf_integer_winding_pack
 
 subroutine tf_field_and_force()
     ! Calculate the TF coil field, force and VV quench consideration
+    use physics_variables, only: rminor, rmajor, bt
+    use build_variables, only: r_tf_outboard_mid, r_vv_inboard_out, &
+        r_tf_inboard_mid
+    use tfcoil_variables, only: vforce, n_tf, taucq, sigvvall, cforce, &
+        ritfc, bmaxtf
 
     implicit none
 
@@ -576,6 +604,14 @@ end subroutine tf_field_and_force
 
 subroutine tf_coil_area_and_masses()
     ! Subroutine to calculate the TF coil areas and masses
+    use build_variables, only: hr1, r_tf_outboard_mid, tfcth, r_tf_inboard_mid
+    use fwbs_variables, only: denstl
+    use process_output, only: twopi
+    use tfcoil_variables, only: whtconsh, whttf, whtcas, tficrn, tfcryoarea, &
+        tfsao, whtgw, isumattf, tfocrn, whtconsc, whtconcu, whtcon, whtconin, &
+        tfsai, dcopper, vftf, whtconin, tfsai, dcond, dcondins, whtcon, &
+        tfleng, dthet, dcase, acndttf, turnstf, n_tf, aiwp, radctf, acasetfo, &
+        acasetf, fcutfsu, awphec, acstf
 
     implicit none
 
@@ -661,6 +697,7 @@ subroutine peak_tf_with_ripple(n_tf,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
     !! Parametric Calculation, July 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use process_output, only: pi
 
     implicit none
 
@@ -753,6 +790,15 @@ subroutine stresscl
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use build_variables, only: tfcth, r_tf_inboard_mid
+    use process_output, only: pi
+    use tfcoil_variables, only: poisson, eyzwp, casestr, windstrain, turnstf, &
+        s_vmises_cond, thkwp, i_tf_tresca, s_tresca_cond, acstf, vforce, &
+        sigrcon, ritfc, jwptf, strtf1, s_tresca_case, strtf2, s_vmises_case, &
+        sigtcon, thwcndut, insstrain, eystl, strtf2, sigrtf, vforce, tinstf, &
+        deflect, acstf, jwptf, jeff, eywp, sigttf, eyoung, insstrain, radtf, &
+        strtf1, rbmax, cpttf, sigvert, thicndut, eyins, acndttf, tfinsgap, &
+        acasetf
 
     implicit none
 
@@ -882,6 +928,7 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect)
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use process_output, only: rmu0, linesolv
 
     implicit none
 
@@ -1196,6 +1243,12 @@ subroutine coilshap
     !! Calculates the shape of the INSIDE of the TF coil. The coil is
     !! approximated by a straight inboard section and four elliptical arcs
     !! This is a totally ad hoc model, with no physics or engineering basis.
+    use physics_variables, only: i_single_null, rminor, rmajor
+    use build_variables, only: hmax, hpfu, tfcth, r_tf_outboard_mid, &
+        r_tf_inboard_mid
+    use process_output, only: pi
+    use tfcoil_variables, only: yarc, xarc, tfleng, tfa, tfb
+    
     implicit none
     !  Arguments
     !  Local variables
@@ -1263,6 +1316,9 @@ subroutine tfcind(tfthk)
     !! coil itself is calculated by taking the field as B(r)/2.
     !! The field in the bore is calculated for unit current.
     !! Top/bottom symmetry is assumed.
+    use process_output, only: rmu0, pi
+    use tfcoil_variables, only: yarc, xarc, tfind
+
     implicit none
     !  Arguments
     real(kind(1.0D0)), intent(in) :: tfthk
@@ -1354,6 +1410,22 @@ subroutine outtf(outfile, peaktfflag)
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use rebco_variables, only: solder_area, copperA_m2, coppera_m2_max, &
         copper_rrr
+    use error_handling, only: report_error
+    use build_variables, only: hmax, r_tf_inboard_mid, r_tf_outboard_mid, &
+        tfcth, tfthko
+    use process_output, only: icc, mfile, int2char, ovarre, ocmmnt, oheadr, &
+        oblnkl, ovarin, osubhd, ovarrf, obuild
+    use tfcoil_variables, only: sigrtf, wwp1, whttf, sigttf, yarc, xarc, &
+        windstrain, wwp2, whtconsh, tftort, isumattf, whtconcu, ritfc, &
+        conductor_width, tfinsgap, deflect, vtfskv, tmaxpro, fcutfsu, &
+        s_tresca_cond, tinstf, turnstf, cforce, i_tf_turns_integer, tdmptf, &
+        leno, oacdcp, s_tresca_case, estotftgj, n_tf, whtconin, jwptf, tfa, &
+        tficrn, n_layer, tfleng, thwcndut, s_vmises_cond, casthi, sigvvall, &
+        sigrcon, thkcas, s_vmises_case, casths, vforce, n_pancake, sigvert, &
+        vftf, sigtcon, eyzwp, thicndut, dhecoil, insstrain, taucq, ripmax, &
+        whtconsc, alstrtf, bmaxtfrp, vdalw, leni, thkwp, whtcas, whtcon, &
+        ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf
+
     implicit none
 
     !  Arguments
@@ -1627,6 +1699,14 @@ subroutine tfspcall(outfile,iprint)
         croco_id, croco_od, croco_od, croco_thick, hastelloy_area, &
         hastelloy_thickness, rebco_area, stack_thickness, tape_thickness, &
         tape_thickness, tape_width, tapes, rebco_thickness, solder_area
+    use error_handling, only: idiags, fdiags, report_error
+    use process_output, only: pi, run_tests, pi, run_tests, ovarre, ocmmnt, oheadr, oblnkl, ovarin
+    use tfcoil_variables, only: tmargmin_tf, turnstf, n_tf, vftf, isumattf, &
+        temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
+        tmargtf, thwcndut, conductor_width, fcutfsu, jwdgcrt, tdmptf, cpttf, &
+        ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc
+    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212
+
     implicit none
     integer, intent(in) :: outfile, iprint
 
@@ -2212,6 +2292,7 @@ function croco_voltage()
     ! croco_voltage : voltage across a TF coil during quench (V)
     ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
     ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
+    use tfcoil_variables, only: n_tf, quench_model, tdmptf, cpttf
 
     implicit none
 
@@ -2232,6 +2313,11 @@ subroutine croco_quench(conductor)
 
     !! Finds the current density limited by the maximum temperatures in quench
     !! It also finds the dump voltage.
+    use process_output, only: secant_solve
+    use tfcoil_variables, only: leno, tmax_croco, bmaxtf, quench_detection_ef, &
+        tftmp, croco_quench_temperature, jwptf, conductor_width
+    use superconductors, only: copper_properties2, jcrit_rebco
+    use ode_mod, only: ode
 
     implicit none
 
@@ -2348,6 +2434,8 @@ subroutine dtempbydtime ( qtime, qtemperature, derivative )
     !! derivative : output real : the value of dtempbydtime
 
     ! Time-dependent quantities during the fast discharge local to this subroutine:
+    use tfcoil_variables, only: quench_model, bmaxtfrp, cpttf
+    use superconductors, only: jcrit_rebco
 
     implicit none
 
@@ -2403,6 +2491,7 @@ end subroutine dtempbydtime
 !-----------------------------------------------------------------------
 
 function resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,helium,jacket)
+    use superconductors, only: solder_properties, helium_properties, copper_properties2, jacket_properties, hastelloy_properties
 
     implicit none
 
