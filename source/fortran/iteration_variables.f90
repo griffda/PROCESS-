@@ -259,7 +259,7 @@ subroutine init_itv_1
 
    real(kind(1.d0)) function itv_13()
       itv_13 = tfcth
-      if (istell == 1) then 
+      if (istell /= 0) then 
          call report_error(46)   
       end if
    end function itv_13
@@ -1010,7 +1010,7 @@ subroutine init_itv_1
 
    real(kind(1.d0)) function itv_57()
       itv_57 = thkcas 
-      if (istell == 1) then
+      if (istell /= 0) then
          call report_error(48)
       end if
    end function itv_57
@@ -1067,7 +1067,7 @@ subroutine init_itv_1
 
    real(kind(1.d0)) function itv_60()
       itv_60 = cpttf 
-      if ((istell == 1).or.(i_tf_sup /= 1)) then
+      if ((istell /= 0).or.(i_tf_sup /= 1)) then
          call report_error(49)
       end if
    end function itv_60
