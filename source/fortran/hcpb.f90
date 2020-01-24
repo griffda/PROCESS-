@@ -186,9 +186,6 @@ contains
     ! !!!!!!!!!!!!
     ! Inputs
     integer, intent(in) :: iprint, outfile
-
-    ! Internal
-    real(kind(1.0D0)) :: r_sh_inboard_out
     ! !!!!!!!!!!!!
 
     !  Assign module private variables to iprint and outfile
