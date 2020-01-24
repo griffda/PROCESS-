@@ -143,11 +143,7 @@ the -s option is used, in the directory the utility was run.
 
 > `./utilities/morris_method.py`
 
-Program to evaluate model sensistivity by elementary effects method at a given PROCESS design point. The method of Morris is a technique for screening a large number of model parameters to identify the dominatant parameter for a global sensitivity analysis[1], more details can be found in textbook[2]. Note that this utility has a significanity longer run time that a typical evalution of PROCESS design points
-
-dependanceas - SALib
-the two types of config files (how is uses run_process.py)
-what files it outputs  - .txt files I beleive  
+Program to evaluate model sensistivity by elementary effects method at a given PROCESS design point. The method of Morris is a technique for screening a large number of model parameters to identify the dominatant parameter for a global sensitivity analysis[1], and a guide to more details can be found in the textbook[2]. Note that this utility has a significanity longer run time that a typical evalution of PROCESS design points. This utilities requires the use of the Python library [SALib](https://salib.readthedocs.io/en/latest/index.html).
 
 [1] M. Morris, (1991) "Factorial Sampling Plans for Preliminary Computational Experiments." Technometrics, 33(2):161-174
 
@@ -224,7 +220,7 @@ As this utility uses the `run_process.py` tool it produces the same output files
 
 > `./utilities/morris_plotting.py`
 
-creates a scatter plot from 
+Program to plot the output of the the sensistivity analysis by elementary effects method at a given PROCESS design point. It creates a scatter plot showing the mean agaisnt the variance of the elementary effects.
 
 ### Usage
 
@@ -232,16 +228,13 @@ creates a scatter plot from
 usage: morris_plotting.py [-h] [-f DATAFILE] [-o OUTPUTFILE]
 ```
 
-Program to plot the output of the the sensistivity analysis by elementary
-element method at a given PROCESS design point.
-
 ### Configuration File
 
-well its gonna read morris_method_output.txt
+The tool reads the data contained `morris_method_output.txt` produced from the program `morris_method.py`.
 
 ### Output
 
-make a .pdf file 
+A .pdf file is created called `morris_output.pdf`. The name of the produced pdf file can be specified using te option OUTPUTFILE.
 
 ### Options
 
@@ -255,6 +248,10 @@ make a .pdf file
 
 > `./utilities/sobol_method.py`
 
+Program to evaluate model sensistivity by Sobol's method at a given PROCESS design point. It uses the variance based global sensistivity analaysis to calculate the first order and total Sobol indices. More information on Sobol's method can be found in the testbook[1]. Note that this utility has a significanity longer run time that a typical evalution of PROCESS design points. This utilities requires the use of the Python library [SALib](https://salib.readthedocs.io/en/latest/index.html).
+
+[1] A. Saltelli, S. Tarantola, F. Campolongo, M. Ratto, T. Andres, J. Cariboni, D. Gatelli and M. Saisana, (2008) "Global Sensitivity Analysis: The Primer" (New York: Wiley)
+
 ### Usage
 
 ```bash
@@ -263,12 +260,43 @@ usage: sobol_method.py [-h] [-f CONFIGFILE] [-i INPUTFILE] [-o OUTPUTVARNAME]
                        [-m OUTPUTMEAN] [-t ITER]
 ```
 
-Program to evaluate model sensistivity by Sobols method at a given PROCESS
-design point.
-
 ### Configuration File
 
+The configuration file `sobol_method_conf.json` used the JSON format and has the following style
+```
+{
+    "bounds": [
+        [
+            1.1,
+            1.3
+        ],
+        [
+            3.4,
+            3.6
+        ],
+        [
+            520000000.0,
+            640000000.0
+        ],
+        [
+            0.475,
+            0.525
+        ]
+    ],
+    "names": [
+        "hfact",
+        "boundl(18)",
+        "alstrtf",
+        "triang"
+    ],
+    "num_vars": 4
+}
+```
+In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`.
+
 ### Output
+
+This utility uses the `run_process.py` tool and therefore produces the same output files and in addition the tool creates several file in a .txt format. The parameter sampling points generated in the Sobol method sampling are saved the same folder as the program is run from as `param_values.txt`. The output of Sobol's method is shpwn over four files created in the same folder as the `run_process.py` utility working directory. Firstly, `output_solutions.txt` which contains a list of the final value of the figure of merit of every PROCESS run done over the calucation of the Sobol indices. Then two files `output_failed_solutions.txt` and `output_conv_solutions.txt` which list all PROCESS run solutions that failed and succeeded to converge respectively. Finally, the file `sobol.txt` which gives all the first order and total Sobol indices and their 95% confidence intervals.
 
 ### Options
 
@@ -288,18 +316,21 @@ design point.
 
 > `./utilities/sobol_plotting.py`
 
+Program to plot the output of the the Sobols sensistivity analysis at a given PROCESS design point. It creates a bar chart showing both the first order and total Sobol indices for each variable and give the 95% confidence intervals.
+
 ### Usage
 
 ```bash
 usage: sobol_plotting.py [-h] [-f DATAFILE] [-o OUTPUTFILE]
 ```
 
-Program to plot the output of the the Sobols sensistivity analysis at a given
-PROCESS design point.
-
 ### Configuration File
 
+The tool reads the data contained `sobol.txt` produced from the program `sobol_method.py`. The name of the data file can be modified using the option DATAFILE.
+
 ### Output
+
+A .pdf file is created called `sobol_output.pdf`. The name of the produced pdf file can be specified using the option OUTPUTFILE.
 
 ### Options
 
