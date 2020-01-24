@@ -195,8 +195,7 @@ The configuration file `morris_method_conf.json` used the JSON format and has th
     "num_vars": 5
 }
 ```
-In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`.
-
+The file specifies a dictionary that gives all the information for running the Morris method tool. The number of variables considered in the Morris method with `num_vars`, the name of the variable as it appears the PROCESS MFILE is listed under `names` and the under and lower bounds of the flat distribution is given underbounds. In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`. Additionally, an `IN.DAT` file describing the relevant design point needs to be present.
 
 ### Output
 
@@ -292,7 +291,7 @@ The configuration file `sobol_method_conf.json` used the JSON format and has the
     "num_vars": 4
 }
 ```
-In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`.
+The file specifies a dictionary that gives all the information for running the Morris method tool. The number of variables considered in the Morris method with `num_vars`, the name of the variable as it appears the PROCESS MFILE is listed under `names` and the under and lower bounds of the flat distribution is given underbounds. In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`. Additionally, an `IN.DAT` file describing the relevant design point needs to be present.
 
 ### Output
 
