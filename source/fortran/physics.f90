@@ -905,9 +905,9 @@ end subroutine subr
     !  at tight aspect ratio.
     !  Tim Hender fit
 
-    if (itart == 1) then
+!    if (itart == 1) then
        bootstrap_fraction_wilson = bootstrap_fraction_wilson + beta/2.8D0
-    end if
+!    end if
 
   end function bootstrap_fraction_wilson
 
@@ -1752,7 +1752,7 @@ end subroutine subr
 
     case (9) ! FIESTA ST fit
 
-       fq = 0.704D0 * (1.0D0 + 2.440D0*eps**2.736D0) * kappa95**2.154D0 * triang95**0.060D0
+       fq = 0.538D0 * (1.0D0 + 2.440D0*eps**2.736D0) * kappa**2.154D0 * triang**0.060D0
 
     case default
        idiags(1) = icurr ; call report_error(77)

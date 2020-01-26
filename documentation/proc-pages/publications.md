@@ -164,6 +164,10 @@ H. Lux, R. Kemp, D.J. Ward, M. Sertoli
 
 ## 2013
 
+[FRESCO, a simplified code for cost analysis of fusion power plants](https://www.sciencedirect.com/science/article/pii/S092037961300656X?via%3Dihub)  
+C. Bustreo, G. Casini, G. Zollino, T. Bolzonella, R. Piovan  
+Fusion Engineering and Design 88 (2013) 3141-3151  
+
 [Start-up requirements and current-drive issues for a pulsed DEMO, and potential implications for power output to the grid](https://www.sciencedirect.com/science/article/pii/S0920379613003396)  
 W.E. Han, P.J. Knight, T.N. Todd, D.J. Ward  
 Fusion Engineering and Design 88 (2013) 994-997  

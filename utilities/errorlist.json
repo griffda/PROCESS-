@@ -44,7 +44,7 @@
   { "no": 37, "level": 2, "message": "CHECK: Usual current scaling for TARTs (icurr=2 or 9) is not being used" },
   { "no": 38, "level": 3, "message": "CHECK: Invalid boostrap current law for ST, do not use ibss = 1" },
   { "no": 39, "level": 3, "message": "CHECK: Double null not (yet) implemented for ST, use snull = 0 (single null)" },
-  { "no": 40, "level": 3, "message": "CHECK: icurr=2 is not a valid option for a non-TART device" },
+  { "no": 40, "level": 2, "message": "CHECK: icurr=2 is not a valid option for a non-TART device" },
   { "no": 41, "level": 3, "message": "CHECK: ncls(i) .ne. 2 is not a valid option except for (ipfloc = 2)" },
   { "no": 42, "level": 3, "message": "CHECK: Only 1 divertor coil (ipfloc = 2) is not a valid configuration" },
   { "no": 43, "level": 3, "message": "CHECK: More than 2 divertor coils (ipfloc = 2) is not a valid configuration" },
