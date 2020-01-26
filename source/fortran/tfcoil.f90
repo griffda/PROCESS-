@@ -607,7 +607,9 @@ contains
 
     call osubhd(outfile,'Resistive Heating :')
     call ovarre(outfile,'Average conductor resistivity (ohm.m)','(rhocp)',rhocp)
-    call ovarre(outfile,'Resistive heating (W)','(prescp)',prescp)
+    call ovarre(outfile,'Resistive heating (MW)','(prescp/1.0D6)',prescp/1.0D6)
+    call ovarre(outfile,'Nuclear heating (MW)','(pnuccp)',pnuccp)
+    call ovarre(outfile,'Total heating (MW)','(ptot/1.0D6)',ptot/1.0D6)
 
     call osubhd(outfile,'Temperatures :')
     call ovarre(outfile,'Input coolant temperature (K)','(tcoolin)',tcoolin)
