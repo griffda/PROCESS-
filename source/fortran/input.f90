@@ -1574,7 +1574,7 @@ contains
           call parse_real_variable('coppera_m2_max', copperA_m2_max, 1.0D6, 1.0D10, &
                'Maximum TF coil current / copper area (A/m2)')
        case ('f_coppera_m2')
-          call parse_real_variable('f_copperA_m2', f_copperA_m2, 1.0D-3, 1.0D1, &
+          call parse_real_variable('f_coppera_m2', f_coppera_m2, 1.0D-3, 1.0D1, &
                'f-value for constraint 75: TF coil current / copper area < copperA_m2_max')
 
        case ('casthi')

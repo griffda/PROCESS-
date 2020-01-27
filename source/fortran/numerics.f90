@@ -269,7 +269,7 @@ module numerics
        'TFC quench < tmax_croco          ',    &
        !!  <LI> (74) TFC quench < tmax_croco (itv 141 (fcqt))
        'TFC current/copper area < Max    ',    &
-       !!  <LI> (75) TFC current/copper area < Maximum (itv 143 f_copperA_m2)
+       !!  <LI> (75) TFC current/copper area < Maximum (itv 143 f_coppera_m2)
        'Eich critical separatrix density ',   &
        !!  <LI> (76) Eich critical separatrix density
        'TFC current per turn upper limit ',    &
