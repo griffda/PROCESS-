@@ -2493,13 +2493,16 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whtcas = 0.0D0
   !! whtcas : mass per coil of external case (kg)
   real(kind(1.0D0)) :: whtcon = 0.0D0
-  !! whtcon : TF coil conductor mass per coil (kg)
+  !! whtcon : TF coil conductor mass per coil (kg/coil)
+  !! For itart=1, coil is return limb plus centrepost/n_tf
 
   real(kind(1.0D0)) :: whtconcu = 0.0D0
   !! whtconcu : copper mass in TF coil conductor (kg/coil)
+  !! For itart=1, coil is return limb plus centrepost/n_tf
   
   real(kind(1.0D0)) :: whtconal = 0.0D0
   !! whtconal : Cryogenic aluminium mass in TF coil conductor (kg/coil)
+  !! For itart=1, coil is return limb plus centrepost/n_tf
   
   real(kind(1.0D0)) :: whtconin = 0.0D0
   !! whtconin : conduit insulation mass in TF coil conductor (kg/coil)
