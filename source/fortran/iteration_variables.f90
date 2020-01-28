@@ -3171,9 +3171,9 @@ subroutine loadxc
          case (154);  xcm(i) = itv_154()
          case (155);  xcm(i) = itv_155()
          case (156);  xcm(i) = itv_156()
-         ! DUMMY Cases
          case (157);  xcm(i) = itv_157()
          case (158);  xcm(i) = itv_158()
+          ! DUMMY Cases
          case (159);  xcm(i) = itv_159()
          case (160);  xcm(i) = itv_160()
          case (161);  xcm(i) = itv_161()
@@ -3448,9 +3448,9 @@ subroutine convxc(xc,nn)
          case (154);  call set_itv_154(ratio)
          case (155);  call set_itv_155(ratio)
          case (156);  call set_itv_156(ratio)
-         ! DUMMY Cases
          case (157);  call set_itv_157(ratio)
          case (158);  call set_itv_158(ratio)
+          ! DUMMY Cases
          case (159);  call set_itv_159(ratio)
          case (160);  call set_itv_160(ratio)
          case (161);  call set_itv_161(ratio)
