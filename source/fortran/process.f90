@@ -32,20 +32,17 @@ program process
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use error_handling
-  use global_variables
-  use process_input
-  use process_output
-  use scan_module
-  use numerics
-  use divertor_Kallenbach_variables, only: kallenbach_tests, kallenbach_scan_switch
-  use main_module
-!  use output_module
-  use init_module
-  use final_module
-  use kallenbach_module
-  use hare, only: hare_calc
-  use mode
+  use error_handling, only: show_errors
+  use process_input, only: nin
+  use scan_module, only: scan
+  use main_module, only: runtests, eqslv
+  use init_module, only: init
+  use final_module, only: final
+  use kallenbach_module, only: fileprefix, ioptimz, iotty, &
+    kallenbach_scan_switch, mfile, nout, nplot, opt_file, output_prefix, &
+    run_tests, kallenbach_tests, verbose, vfile, oblnkl, ostars, ocentr, &
+    osubhd, ocmmnt, oheadr, kallenbach_testing, kallenbach_scan
+  
   implicit none
 
   !  Arguments
