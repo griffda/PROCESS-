@@ -101,7 +101,7 @@ contains
     use ode_mod , only :            ode
     use numerics, only :            active_constraints
     use physics_variables, only :   nesep, pdivt
-
+    use read_radiation, only: read_lz
     implicit none
 
     logical::verbose
@@ -967,6 +967,7 @@ do i = 2, nimp
     !! Y(7-10) are the power loss integrals
     !! 
 
+    use read_radiation, only: read_lz
     implicit none
 
     real(kind(1.0D0)),intent(in) :: t       ! T, the independent variable

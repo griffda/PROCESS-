@@ -7,13 +7,7 @@ module read_and_get_atomic_data
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! Modules to import !
-  ! !!!!!!!!!!!!!!!!!!!!
-
-    use maths_library
-    use read_radiation
-
-    implicit none
+  implicit none
 
 contains
 
@@ -34,6 +28,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: interpolate
     implicit none
 
     ! Subroutine declarations !
@@ -232,6 +227,9 @@ contains
         ! Radiative cooling function Lz
         ! To test the interpolation, use a point at the geometrical mean of the two
         ! first temperatures and the two first values of ne.tau
+        use read_radiation, only: read_lz
+        implicit none
+
         real(kind(1.0D0)):: s, al, Rcx, plt, prb, density, temperature, mass
         real(kind(1.0D0)):: te,netau,test_lz,estimate_lz
         te=sqrt(1.000 * 1.047)
