@@ -1654,7 +1654,10 @@ contains
                'TF coil shape parameter')
        case ('fcoolcp')
           call parse_real_variable('fcoolcp', fcoolcp, 0.0D0, 1.0D0, &
-               'Coolant fraction of TF inboard leg')
+               'Coolant fraction of TF centrepost (itart=1) or the whole magnet (itart=0)')
+       case ('fcoolleg')
+          call parse_real_variable('fcoolleg', fcoolleg, 0.0D0, 1.0D0, &
+               'Coolant fraction of TF outboard leg (itart=1 only)')
        case ('fcutfsu')
           call parse_real_variable('fcutfsu', fcutfsu, 0.0D0, 1.0D0, &
                'Cu fraction of SCTF cable conductor')
@@ -1663,7 +1666,10 @@ contains
                'Technology adjustment factor for Bi-2212 HTS')
        case ('frhocp')
           call parse_real_variable('frhocp', frhocp, 0.01D0, 5.0D0, &
-               'TART c/p resistivity enhancement factor')
+               'Centrepost (itart=1) or global (itart=0) resistivity enhancement factor')
+       case ('frholeg')
+          call parse_real_variable('frholeg', frholeg, 0.01D0, 5.0D0, &
+               'TART outboard leg resistivity enhancement factor')
        case ('i_tf_tresca')
           call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &
                          'Switch for TF coil Tresca criterion.')
@@ -1694,6 +1700,9 @@ contains
        case ('i_tf_sup')
           call parse_int_variable('i_tf_sup', i_tf_sup, 0, 2, &
                'Switch for TF coil type')
+       case ('i_tf_shape')
+         call parse_int_variable('i_tf_shape', i_tf_shape, 0, 2, &
+              'Switch for TF coil shape')
        case ('jbus')
           call parse_real_variable('jbus', jbus, 1.0D4, 1.0D8, &
                'TF coil bus current density (A/m2)')
@@ -1764,9 +1773,9 @@ contains
        case ('tfinsgap')
           call parse_real_variable('tfinsgap', tfinsgap, 1.0D-10, 1.0D-1, &
                'TF coil WP insertion gap (m)')
-       case ('rhotfleg')
-          call parse_real_variable('rhotfleg', rhotfleg, 1.0D-10, 1.0D-5, &
-               'TF coil leg resistivity (ohm-m)')
+       case ('rhotfbus')
+          call parse_real_variable('rhotfbus', rhotfbus, 0.0D0, 1.0D-5, &
+               'TF coil bus (feeders) resistivity (ohm-m)')
        case ('n_tf')
           call parse_real_variable('n_tf', n_tf, 0.0D0, 100.0D0, &
                'Number of TF coils')
@@ -1823,11 +1832,14 @@ contains
        case ('vdalw')
           call parse_real_variable('vdalw', vdalw, 0.0D0, 100.0D0, &
                'Max V across TFC during quench (kV)')
+       case ('f_vforce_inboard')
+          call parse_real_variable('f_vforce_inboard', f_vforce_inboard, 0.01D0, 1.0D0, &
+               'Fraction of vertical force taken by the TF inboard leg')
        case ('vftf')
           call parse_real_variable('vftf', vftf, 0.0D0, 1.0D0, &
                'Coolant fraction of TF coil leg')
 
-          !  PF coil settings
+       !  PF coil settings
 
        case ('bmaxcs_lim')
          call parse_real_variable('bmaxcs_lim', bmaxcs_lim, 0.01D0, 100.0D0, &

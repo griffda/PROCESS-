@@ -1117,7 +1117,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
      Blanket Mass - Li2SiO4 (kg)                                          (whtblli4sio4)            4.777E+05  OP 
      Blanket Mass - Steel (kg)                                            (whtblss)                 4.018E+05  OP 
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       1.428E+06  OP 
- Shield Mass (kg)                                                         (whtshld)                 1.869E+06  OP 
+ Shield Mass (kg)                                                         (whtshld)                 1.870E+06  OP 
  Vacuum vessel mass (kg)                                                  (vvmass)                  3.820E+06  OP 
  
  Nuclear heating :

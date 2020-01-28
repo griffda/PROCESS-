@@ -973,7 +973,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    5     3.5E-01 9.8E-02 8.6E-01 4.6E-01 1.4E+00 1.5E-01 3.4E-01 9.0E-04
    6     9.8E-02 3.5E-01 4.6E-01 8.6E-01 1.5E-01 1.4E+00 3.4E-01 9.0E-04
   CS     1.1E+00 1.1E+00 6.7E-01 6.7E-01 3.4E-01 3.4E-01 2.4E+01 5.2E-03
- Plasma  1.1E-03 1.1E-03 2.0E-03 2.0E-03 9.0E-04 9.0E-04 5.2E-03 1.6E-05
+ Plasma  1.1E-03 1.1E-03 2.0E-03 2.0E-03 9.1E-04 9.1E-04 5.2E-03 1.6E-05
  
  ********************************** First wall and blanket : CCFE HCPB model **********************************
  
@@ -1221,7 +1221,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor thermal power is not used, but rejected directly to the environment.
  Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
  Power conversion cycle efficiency model: efficiency set according to blanket type (div power to secondary)
- Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.287  OP 
+ Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.288  OP 
  
  Power Balance for Reactor (across vacuum vessel boundary) - Detail
  ------------------------------------------------------------------

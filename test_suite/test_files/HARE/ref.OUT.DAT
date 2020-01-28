@@ -245,7 +245,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.240E-01  OP 
+ H_ concentration                                                         (fimp(01)                 7.241E-01  OP 
  He concentration                                                         (fimp(02)                 1.000E-01     
  Be concentration                                                         (fimp(03)                 0.000E+00     
  C_ concentration                                                         (fimp(04)                 0.000E+00     
@@ -337,8 +337,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fraction of alpha power deposited in plasma                              (falpha)                      0.950  OP 
  Fraction of alpha power to electrons                                     (falpe)                       0.705  OP 
  Fraction of alpha power to ions                                          (falpi)                       0.295  OP 
- Ion transport (MW)                                                       (ptrimw)                  1.421E+02  OP 
- Electron transport (MW)                                                  (ptremw)                  1.716E+02  OP 
+ Ion transport (MW)                                                       (ptrimw)                  1.423E+02  OP 
+ Electron transport (MW)                                                  (ptremw)                  1.718E+02  OP 
  Injection power to ions (MW)                                             (pinjimw)                 0.000E+00  OP 
  Injection power to electrons (MW)                                        (pinjemw)                 5.000E+01  OP 
  Ignited plasma switch (0=not ignited, 1=ignited)                         (ignite)                          0     
@@ -412,7 +412,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bootstrap fraction (ITER 1989)                                           (bscf_iter89)                 0.301  OP 
  Bootstrap fraction (Sauter et al)                                        (bscf_sauter)                 0.345  OP 
  Bootstrap fraction (Nevins et al)                                        (bscf_nevins)                 0.305  OP 
- Bootstrap fraction (Wilson et al)                                        (bscf_wilson)                 0.369  OP 
+ Bootstrap fraction (Wilson et al)                                        (bscf_wilson)                 0.368  OP 
    (Sauter et al bootstrap current fraction model used)
  Bootstrap fraction (enforced)                                            (bootipf.)                    0.345  OP 
  Loop voltage during burn (V)                                             (vburn)                   5.378E-02  OP 
@@ -469,9 +469,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Bootstrap fraction                                                       (bootipf)                     0.345  OP 
  Auxiliary current drive fraction                                         (faccd)                       0.099  OP 
- Inductive fraction                                                       (facoh)                       0.556  OP 
+ Inductive fraction                                                       (facoh)                       0.555  OP 
  Total                                                                    (bootipf+faccd+facoh          1.000     
- Fraction of the plasma current produced by non-inductive means           (fvsbrnni)                    0.444  ITV
+ Fraction of the plasma current produced by non-inductive means           (fvsbrnni)                    0.445  ITV
  
  Electron cyclotron injected power (MW)                                   (echpwr)                  5.000E+01  OP 
  Maximum allowable ECRH power (MW)                                        (pinjalw)                    50.000     
@@ -488,7 +488,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Optimum wave frequency for ECCD (GHz)                                    (xf/1e9)                    208.128  OP 
  Nparallel                                                                (enpa)                        0.729  OP 
  fT = Energy of resonant electrons / kTe at point of max absorption       (ftherm)                      4.195  OP 
- Ratio of energy of resonant electrons to kTe at pinch  point             (fpp)                         8.206  OP 
+ Ratio of energy of resonant electrons to kTe at pinch  point             (fpp)                         8.205  OP 
  Driven current per unit absorbed power (A/W)                             (ampperwatt)                  0.041  OP 
  
  Volt-second considerations:
@@ -646,7 +646,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Quench information :
  
  Allowable stress in vacuum vessel (VV) due to quench (Pa)                (sigvvall)                9.300E+07     
- Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.636E+01  OP 
+ Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.639E+01  OP 
  Actual quench time (or time constant) (s)                                (tdmptf)                  3.000E+01  ITV
  Maximum allowed voltage during quench due to insulation (kV)             (vdalw)                   1.517E+01  ITV
  Actual quench voltage (kV)                                               (vtfskv)                  1.114E+01  OP 
@@ -944,9 +944,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
  Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
  Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
- Plasma  - Time point 03 (A)                                              (plasmat03)               2.075E+07     
- Plasma  - Time point 04 (A)                                              (plasmat04)               2.075E+07     
- Plasma  - Time point 05 (A)                                              (plasmat05)               2.075E+07     
+ Plasma  - Time point 03 (A)                                              (plasmat03)               2.077E+07     
+ Plasma  - Time point 04 (A)                                              (plasmat04)               2.077E+07     
+ Plasma  - Time point 05 (A)                                              (plasmat05)               2.077E+07     
  Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
  
  ********************************************* Support Structure **********************************************
@@ -963,7 +963,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Inductance matrix (Henries-turns**2) :
  
-   1     4.8E+00 8.7E-02 4.1E-01 2.7E-01 3.2E-01 9.8E-02 1.3E+00 1.3E-03
+   1     4.8E+00 8.7E-02 4.1E-01 2.7E-01 3.3E-01 9.8E-02 1.3E+00 1.3E-03
    2     8.7E-02 5.9E+00 2.8E-01 4.3E-01 1.0E-01 3.5E-01 1.2E+00 1.2E-03
    3     4.1E-01 2.8E-01 4.3E+00 1.5E+00 8.6E-01 4.6E-01 6.9E-01 2.1E-03
    4     2.7E-01 4.3E-01 1.5E+00 4.3E+00 4.6E-01 8.6E-01 6.9E-01 2.1E-03
@@ -1346,7 +1346,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Net electric power / total fusion power (%)                              (pnetelmw/powfmw)            24.837  OP 
  Gross electric power* / high grade heat (%)                              (etath)                      41.100     
  (*Power for pumps in secondary circuit already subtracted)
- Recirculating power fraction                                             (cirpowfr)                    0.453  OP 
+ Recirculating power fraction                                             (cirpowfr)                    0.454  OP 
  
  Time-dependent power usage
  
@@ -1583,7 +1583,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.241E-01  OP 
+ H_ concentration                                                         (fimp(01)                 7.242E-01  OP 
  He concentration                                                         (fimp(02)                 1.000E-01     
  Be concentration                                                         (fimp(03)                 0.000E+00     
  C_ concentration                                                         (fimp(04)                 0.000E+00     
@@ -1675,8 +1675,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fraction of alpha power deposited in plasma                              (falpha)                      0.950  OP 
  Fraction of alpha power to electrons                                     (falpe)                       0.705  OP 
  Fraction of alpha power to ions                                          (falpi)                       0.295  OP 
- Ion transport (MW)                                                       (ptrimw)                  1.422E+02  OP 
- Electron transport (MW)                                                  (ptremw)                  1.717E+02  OP 
+ Ion transport (MW)                                                       (ptrimw)                  1.424E+02  OP 
+ Electron transport (MW)                                                  (ptremw)                  1.719E+02  OP 
  Injection power to ions (MW)                                             (pinjimw)                 0.000E+00  OP 
  Injection power to electrons (MW)                                        (pinjemw)                 5.000E+01  OP 
  Ignited plasma switch (0=not ignited, 1=ignited)                         (ignite)                          0     
@@ -1706,8 +1706,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Hubbard 2012 L-I threshold - upper bound (MW)                            (pthrmw(17))              6.468E+01  OP 
  Hubbard 2017 L-I threshold                                               (pthrmw(18))              3.294E+02  OP 
  
- L-H threshold power (enforced) (MW)                                      (boundl(103)*plhthresh)   1.159E+02  OP 
- L-H threshold power (MW)                                                 (plhthresh)               1.159E+02  OP 
+ L-H threshold power (enforced) (MW)                                      (boundl(103)*plhthresh)   1.160E+02  OP 
+ L-H threshold power (MW)                                                 (plhthresh)               1.160E+02  OP 
  
  Confinement :
  
@@ -1750,7 +1750,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bootstrap fraction (ITER 1989)                                           (bscf_iter89)                 0.301  OP 
  Bootstrap fraction (Sauter et al)                                        (bscf_sauter)                 0.345  OP 
  Bootstrap fraction (Nevins et al)                                        (bscf_nevins)                 0.305  OP 
- Bootstrap fraction (Wilson et al)                                        (bscf_wilson)                 0.369  OP 
+ Bootstrap fraction (Wilson et al)                                        (bscf_wilson)                 0.368  OP 
    (Sauter et al bootstrap current fraction model used)
  Bootstrap fraction (enforced)                                            (bootipf.)                    0.345  OP 
  Loop voltage during burn (V)                                             (vburn)                   5.425E-02  OP 
@@ -1806,7 +1806,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fractions of current drive :
  
  Bootstrap fraction                                                       (bootipf)                     0.345  OP 
- Auxiliary current drive fraction                                         (faccd)                       0.093  OP 
+ Auxiliary current drive fraction                                         (faccd)                       0.094  OP 
  Inductive fraction                                                       (facoh)                       0.561  OP 
  Total                                                                    (bootipf+faccd+facoh          1.000     
  Fraction of the plasma current produced by non-inductive means           (fvsbrnni)                    0.439  ITV
@@ -2182,7 +2182,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
               --------       --------       --------
  Total :       -449.21        -391.18        -840.38
  
- Total volt-second consumption by coils (Wb)                              (vstot)                  -8.404E+02  OP 
+ Total volt-second consumption by coils (Wb)                              (vstot)                  -8.402E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb) :
  
@@ -2305,10 +2305,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    2     8.8E-02 5.9E+00 2.8E-01 4.3E-01 1.0E-01 3.6E-01 1.2E+00 1.2E-03
    3     4.1E-01 2.8E-01 4.3E+00 1.5E+00 8.6E-01 4.6E-01 6.9E-01 2.1E-03
    4     2.7E-01 4.3E-01 1.5E+00 4.3E+00 4.6E-01 8.6E-01 6.9E-01 2.1E-03
-   5     3.3E-01 1.0E-01 8.6E-01 4.6E-01 1.5E+00 1.5E-01 3.6E-01 9.4E-04
-   6     9.9E-02 3.6E-01 4.6E-01 8.6E-01 1.5E-01 1.5E+00 3.6E-01 9.4E-04
+   5     3.3E-01 1.0E-01 8.6E-01 4.6E-01 1.5E+00 1.5E-01 3.6E-01 9.5E-04
+   6     9.9E-02 3.6E-01 4.6E-01 8.6E-01 1.5E-01 1.5E+00 3.6E-01 9.5E-04
   CS     1.3E+00 1.2E+00 6.9E-01 6.9E-01 3.6E-01 3.6E-01 2.6E+01 5.6E-03
- Plasma  1.3E-03 1.2E-03 2.1E-03 2.1E-03 9.4E-04 9.4E-04 5.6E-03 1.7E-05
+ Plasma  1.3E-03 1.2E-03 2.1E-03 2.1E-03 9.5E-04 9.5E-04 5.6E-03 1.7E-05
  
  ********************************** First wall and blanket : CCFE HCPB model **********************************
  
@@ -2493,7 +2493,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Reactor maintenance building volume (m3)                                 (rmbv)                    4.561E+05     
  Warmshop volume (m3)                                                     (wsv)                     1.338E+05     
  Tritium building volume (m3)                                             (triv)                    4.000E+04     
- Electrical building volume (m3)                                          (elev)                    5.161E+04     
+ Electrical building volume (m3)                                          (elev)                    5.164E+04     
  Control building volume (m3)                                             (conv)                    6.000E+04     
  Cryogenics building volume (m3)                                          (cryv)                    1.613E+04     
  Administration building volume (m3)                                      (admv)                    1.000E+05     
@@ -2684,7 +2684,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Net electric power / total fusion power (%)                              (pnetelmw/powfmw)            24.829  OP 
  Gross electric power* / high grade heat (%)                              (etath)                      41.100     
  (*Power for pumps in secondary circuit already subtracted)
- Recirculating power fraction                                             (cirpowfr)                    0.453  OP 
+ Recirculating power fraction                                             (cirpowfr)                    0.454  OP 
  
  Time-dependent power usage
  
@@ -2921,7 +2921,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.241E-01  OP 
+ H_ concentration                                                         (fimp(01)                 7.242E-01  OP 
  He concentration                                                         (fimp(02)                 1.000E-01     
  Be concentration                                                         (fimp(03)                 0.000E+00     
  C_ concentration                                                         (fimp(04)                 0.000E+00     
@@ -3044,8 +3044,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Hubbard 2012 L-I threshold - upper bound (MW)                            (pthrmw(17))              6.462E+01  OP 
  Hubbard 2017 L-I threshold                                               (pthrmw(18))              3.295E+02  OP 
  
- L-H threshold power (enforced) (MW)                                      (boundl(103)*plhthresh)   1.159E+02  OP 
- L-H threshold power (MW)                                                 (plhthresh)               1.159E+02  OP 
+ L-H threshold power (enforced) (MW)                                      (boundl(103)*plhthresh)   1.160E+02  OP 
+ L-H threshold power (MW)                                                 (plhthresh)               1.160E+02  OP 
  
  Confinement :
  
@@ -3088,7 +3088,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bootstrap fraction (ITER 1989)                                           (bscf_iter89)                 0.301  OP 
  Bootstrap fraction (Sauter et al)                                        (bscf_sauter)                 0.345  OP 
  Bootstrap fraction (Nevins et al)                                        (bscf_nevins)                 0.305  OP 
- Bootstrap fraction (Wilson et al)                                        (bscf_wilson)                 0.369  OP 
+ Bootstrap fraction (Wilson et al)                                        (bscf_wilson)                 0.368  OP 
    (Sauter et al bootstrap current fraction model used)
  Bootstrap fraction (enforced)                                            (bootipf.)                    0.345  OP 
  Loop voltage during burn (V)                                             (vburn)                   5.467E-02  OP 
@@ -3164,7 +3164,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Optimum wave frequency for ECCD (GHz)                                    (xf/1e9)                    206.947  OP 
  Nparallel                                                                (enpa)                        0.726  OP 
  fT = Energy of resonant electrons / kTe at point of max absorption       (ftherm)                      4.184  OP 
- Ratio of energy of resonant electrons to kTe at pinch  point             (fpp)                         8.182  OP 
+ Ratio of energy of resonant electrons to kTe at pinch  point             (fpp)                         8.181  OP 
  Driven current per unit absorbed power (A/W)                             (ampperwatt)                  0.037  OP 
  
  Volt-second considerations:
@@ -3620,9 +3620,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
  Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
  Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
- Plasma  - Time point 03 (A)                                              (plasmat03)               2.076E+07     
- Plasma  - Time point 04 (A)                                              (plasmat04)               2.076E+07     
- Plasma  - Time point 05 (A)                                              (plasmat05)               2.076E+07     
+ Plasma  - Time point 03 (A)                                              (plasmat03)               2.078E+07     
+ Plasma  - Time point 04 (A)                                              (plasmat04)               2.078E+07     
+ Plasma  - Time point 05 (A)                                              (plasmat05)               2.078E+07     
  Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
  
  ********************************************* Support Structure **********************************************
@@ -3760,8 +3760,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Maximum PF coil voltage (kV)                                             (vpfskv)                  2.000E+01     
  Efficiency of transfer of PF stored energy into or out of storage        (etapsu)                  9.000E-01     
  (Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)
- Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 4.125E+04  OP 
- Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.375E+03  OP 
+ Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 4.127E+04  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.376E+03  OP 
  Energy stored in poloidal magnetic field :
  
                                             time (sec)
@@ -3914,7 +3914,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                         coolant pumping              0.00                0.00                0.00
  
          Shield:
-                               neutrons              0.58                0.00                0.58
+                               neutrons              0.59                0.00                0.59
              charged particle transport              0.00                0.00                0.00
                               radiation              0.00                0.00                0.00
                         coolant pumping              0.00                0.00                0.00
@@ -4022,7 +4022,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Net electric power / total fusion power (%)                              (pnetelmw/powfmw)            24.823  OP 
  Gross electric power* / high grade heat (%)                              (etath)                      41.100     
  (*Power for pumps in secondary circuit already subtracted)
- Recirculating power fraction                                             (cirpowfr)                    0.453  OP 
+ Recirculating power fraction                                             (cirpowfr)                    0.454  OP 
  
  Time-dependent power usage
  
@@ -4220,12 +4220,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total plasma beta                                                        (beta)                    3.284E-02  ITV
  Total poloidal beta                                                      (betap)                   1.019E+00  OP 
  Total toroidal beta                                                                                3.394E-02  OP 
- Fast alpha beta                                                          (betaft)                  3.679E-03  OP 
+ Fast alpha beta                                                          (betaft)                  3.682E-03  OP 
  Beam ion beta                                                            (betanb)                  0.000E+00  OP 
  (Fast alpha + beam beta)/(thermal beta)                                  (gammaft)                 1.261E-01  OP 
  Thermal beta                                                                                       2.916E-02  OP 
- Thermal poloidal beta                                                                              9.045E-01  OP 
- Thermal toroidal beta (= beta-exp)                                                                 3.014E-02  OP 
+ Thermal poloidal beta                                                                              9.044E-01  OP 
+ Thermal toroidal beta (= beta-exp)                                                                 3.013E-02  OP 
  2nd stability beta : beta_p / (R/a)                                      (eps*betap)                   0.329  OP 
  2nd stability beta upper limit                                           (epbetmax)                    1.380     
  Beta g coefficient                                                       (dnbeta)                      4.383  OP 
@@ -4259,7 +4259,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.242E-01  OP 
+ H_ concentration                                                         (fimp(01)                 7.243E-01  OP 
  He concentration                                                         (fimp(02)                 1.000E-01     
  Be concentration                                                         (fimp(03)                 0.000E+00     
  C_ concentration                                                         (fimp(04)                 0.000E+00     
@@ -4275,7 +4275,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  W_ concentration                                                         (fimp(14)                 5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.876E+00  OP 
  
- Effective charge                                                         (zeff)                        2.599  OP 
+ Effective charge                                                         (zeff)                        2.598  OP 
  Density profile factor                                                   (alphan)                      1.000     
  Plasma profile model                                                     (ipedestal)                       1     
  Pedestal profiles are used.
@@ -4347,12 +4347,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power incident on the lower inner target (MW)                            (pLImw)                   1.330E+01  OP 
  Power incident on the lower outer target (MW)                            (pLOmw)                   1.913E+01  OP 
  
- Ohmic heating power (MW)                                                 (pohmmw)                  1.151E+00  OP 
+ Ohmic heating power (MW)                                                 (pohmmw)                  1.148E+00  OP 
  Fraction of alpha power deposited in plasma                              (falpha)                      0.950  OP 
  Fraction of alpha power to electrons                                     (falpe)                       0.705  OP 
  Fraction of alpha power to ions                                          (falpi)                       0.295  OP 
- Ion transport (MW)                                                       (ptrimw)                  1.424E+02  OP 
- Electron transport (MW)                                                  (ptremw)                  1.719E+02  OP 
+ Ion transport (MW)                                                       (ptrimw)                  1.426E+02  OP 
+ Electron transport (MW)                                                  (ptremw)                  1.721E+02  OP 
  Injection power to ions (MW)                                             (pinjimw)                 0.000E+00  OP 
  Injection power to electrons (MW)                                        (pinjemw)                 5.000E+01  OP 
  Ignited plasma switch (0=not ignited, 1=ignited)                         (ignite)                          0     
@@ -4382,8 +4382,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Hubbard 2012 L-I threshold - upper bound (MW)                            (pthrmw(17))              6.452E+01  OP 
  Hubbard 2017 L-I threshold                                               (pthrmw(18))              3.296E+02  OP 
  
- L-H threshold power (enforced) (MW)                                      (boundl(103)*plhthresh)   1.159E+02  OP 
- L-H threshold power (MW)                                                 (plhthresh)               1.159E+02  OP 
+ L-H threshold power (enforced) (MW)                                      (boundl(103)*plhthresh)   1.160E+02  OP 
+ L-H threshold power (MW)                                                 (plhthresh)               1.160E+02  OP 
  
  Confinement :
  
@@ -4502,7 +4502,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Optimum wave frequency for ECCD (GHz)                                    (xf/1e9)                    204.252  OP 
  Nparallel                                                                (enpa)                        0.718  OP 
  fT = Energy of resonant electrons / kTe at point of max absorption       (ftherm)                      4.150  OP 
- Ratio of energy of resonant electrons to kTe at pinch  point             (fpp)                         8.177  OP 
+ Ratio of energy of resonant electrons to kTe at pinch  point             (fpp)                         8.176  OP 
  Driven current per unit absorbed power (A/W)                             (ampperwatt)                  0.033  OP 
  
  Volt-second considerations:
@@ -4660,7 +4660,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Quench information :
  
  Allowable stress in vacuum vessel (VV) due to quench (Pa)                (sigvvall)                9.300E+07     
- Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.640E+01  OP 
+ Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.643E+01  OP 
  Actual quench time (or time constant) (s)                                (tdmptf)                  3.000E+01  ITV
  Maximum allowed voltage during quench due to insulation (kV)             (vdalw)                   1.519E+01  ITV
  Actual quench voltage (kV)                                               (vtfskv)                  1.116E+01  OP 
@@ -4977,10 +4977,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Inductance matrix (Henries-turns**2) :
  
-   1     5.0E+00 9.0E-02 4.2E-01 2.8E-01 3.3E-01 1.0E-01 1.3E+00 1.3E-03
-   2     9.0E-02 6.0E+00 2.9E-01 4.4E-01 1.0E-01 3.6E-01 1.2E+00 1.2E-03
-   3     4.2E-01 2.9E-01 4.3E+00 1.5E+00 8.6E-01 4.6E-01 7.0E-01 2.1E-03
-   4     2.8E-01 4.4E-01 1.5E+00 4.3E+00 4.6E-01 8.6E-01 7.0E-01 2.1E-03
+   1     5.0E+00 8.9E-02 4.2E-01 2.8E-01 3.3E-01 1.0E-01 1.3E+00 1.3E-03
+   2     8.9E-02 6.0E+00 2.9E-01 4.4E-01 1.0E-01 3.6E-01 1.2E+00 1.2E-03
+   3     4.2E-01 2.9E-01 4.4E+00 1.5E+00 8.6E-01 4.6E-01 7.0E-01 2.1E-03
+   4     2.8E-01 4.4E-01 1.5E+00 4.4E+00 4.6E-01 8.6E-01 7.0E-01 2.1E-03
    5     3.3E-01 1.0E-01 8.6E-01 4.6E-01 1.5E+00 1.5E-01 3.6E-01 9.5E-04
    6     1.0E-01 3.6E-01 4.6E-01 8.6E-01 1.5E-01 1.5E+00 3.6E-01 9.5E-04
   CS     1.3E+00 1.2E+00 7.0E-01 7.0E-01 3.6E-01 3.6E-01 2.6E+01 5.7E-03
@@ -5252,7 +5252,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                         coolant pumping              0.00                0.00                0.00
  
          Shield:
-                               neutrons              0.58                0.00                0.58
+                               neutrons              0.59                0.00                0.59
              charged particle transport              0.00                0.00                0.00
                               radiation              0.00                0.00                0.00
                         coolant pumping              0.00                0.00                0.00
@@ -5315,7 +5315,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fusion power (MW)                                                        (powfmw.)                  2015.158  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   383.651  OP 
  Injected power (MW)                                                      (pinjmw.)                    50.000  OP 
- Ohmic power (MW)                                                         (pohmmw.)                     1.151  OP 
+ Ohmic power (MW)                                                         (pohmmw.)                     1.148  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                155.000  OP 
  Total (MW)                                                                                          2604.961  OP 
  
@@ -5560,10 +5560,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total toroidal beta                                                                                3.394E-02  OP 
  Fast alpha beta                                                          (betaft)                  3.681E-03  OP 
  Beam ion beta                                                            (betanb)                  0.000E+00  OP 
- (Fast alpha + beam beta)/(thermal beta)                                  (gammaft)                 1.262E-01  OP 
+ (Fast alpha + beam beta)/(thermal beta)                                  (gammaft)                 1.263E-01  OP 
  Thermal beta                                                                                       2.916E-02  OP 
- Thermal poloidal beta                                                                              9.045E-01  OP 
- Thermal toroidal beta (= beta-exp)                                                                 3.014E-02  OP 
+ Thermal poloidal beta                                                                              9.044E-01  OP 
+ Thermal toroidal beta (= beta-exp)                                                                 3.013E-02  OP 
  2nd stability beta : beta_p / (R/a)                                      (eps*betap)                   0.329  OP 
  2nd stability beta upper limit                                           (epbetmax)                    1.380     
  Beta g coefficient                                                       (dnbeta)                      4.383  OP 
@@ -5597,7 +5597,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.243E-01  OP 
+ H_ concentration                                                         (fimp(01)                 7.244E-01  OP 
  He concentration                                                         (fimp(02)                 1.000E-01     
  Be concentration                                                         (fimp(03)                 0.000E+00     
  C_ concentration                                                         (fimp(04)                 0.000E+00     
@@ -5613,7 +5613,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  W_ concentration                                                         (fimp(14)                 5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.875E+00  OP 
  
- Effective charge                                                         (zeff)                        2.597  OP 
+ Effective charge                                                         (zeff)                        2.596  OP 
  Density profile factor                                                   (alphan)                      1.000     
  Plasma profile model                                                     (ipedestal)                       1     
  Pedestal profiles are used.
@@ -5689,8 +5689,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fraction of alpha power deposited in plasma                              (falpha)                      0.950  OP 
  Fraction of alpha power to electrons                                     (falpe)                       0.705  OP 
  Fraction of alpha power to ions                                          (falpi)                       0.295  OP 
- Ion transport (MW)                                                       (ptrimw)                  1.425E+02  OP 
- Electron transport (MW)                                                  (ptremw)                  1.720E+02  OP 
+ Ion transport (MW)                                                       (ptrimw)                  1.427E+02  OP 
+ Electron transport (MW)                                                  (ptremw)                  1.722E+02  OP 
  Injection power to ions (MW)                                             (pinjimw)                 0.000E+00  OP 
  Injection power to electrons (MW)                                        (pinjemw)                 5.000E+01  OP 
  Ignited plasma switch (0=not ignited, 1=ignited)                         (ignite)                          0     
@@ -5840,7 +5840,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Optimum wave frequency for ECCD (GHz)                                    (xf/1e9)                    200.129  OP 
  Nparallel                                                                (enpa)                        0.704  OP 
  fT = Energy of resonant electrons / kTe at point of max absorption       (ftherm)                      4.092  OP 
- Ratio of energy of resonant electrons to kTe at pinch  point             (fpp)                         8.200  OP 
+ Ratio of energy of resonant electrons to kTe at pinch  point             (fpp)                         8.199  OP 
  Driven current per unit absorbed power (A/W)                             (ampperwatt)                  0.029  OP 
  
  Volt-second considerations:
@@ -5998,7 +5998,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Quench information :
  
  Allowable stress in vacuum vessel (VV) due to quench (Pa)                (sigvvall)                9.300E+07     
- Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.642E+01  OP 
+ Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.645E+01  OP 
  Actual quench time (or time constant) (s)                                (tdmptf)                  3.000E+01  ITV
  Maximum allowed voltage during quench due to insulation (kV)             (vdalw)                   1.520E+01  ITV
  Actual quench voltage (kV)                                               (vtfskv)                  1.118E+01  OP 
@@ -6030,7 +6030,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Winding toroidal width 2 (m)                                             (wwp2)                    1.460E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
  Winding pack insertion gap (m)                                           (tfinsgap)                1.000E-02     
- Number of turns per TF coil                                              (turnstf)                 2.422E+02  OP 
+ Number of turns per TF coil                                              (turnstf)                 2.424E+02  OP 
  
  External Case Information :
  
@@ -6196,7 +6196,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
               --------       --------       --------
  Total :       -452.72        -405.02        -857.74
  
- Total volt-second consumption by coils (Wb)                              (vstot)                  -8.577E+02  OP 
+ Total volt-second consumption by coils (Wb)                              (vstot)                  -8.576E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb) :
  
@@ -6316,12 +6316,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Inductance matrix (Henries-turns**2) :
  
    1     5.0E+00 9.1E-02 4.2E-01 2.8E-01 3.3E-01 1.0E-01 1.4E+00 1.3E-03
-   2     9.1E-02 6.1E+00 2.9E-01 4.4E-01 1.0E-01 3.6E-01 1.3E+00 1.3E-03
-   3     4.2E-01 2.9E-01 4.3E+00 1.5E+00 8.7E-01 4.6E-01 7.1E-01 2.1E-03
-   4     2.8E-01 4.4E-01 1.5E+00 4.3E+00 4.6E-01 8.7E-01 7.1E-01 2.1E-03
-   5     3.3E-01 1.0E-01 8.7E-01 4.6E-01 1.5E+00 1.5E-01 3.7E-01 9.5E-04
-   6     1.0E-01 3.6E-01 4.6E-01 8.7E-01 1.5E-01 1.5E+00 3.7E-01 9.5E-04
-  CS     1.4E+00 1.3E+00 7.1E-01 7.1E-01 3.7E-01 3.7E-01 2.7E+01 5.7E-03
+   2     9.1E-02 6.1E+00 2.9E-01 4.4E-01 1.0E-01 3.6E-01 1.2E+00 1.3E-03
+   3     4.2E-01 2.9E-01 4.4E+00 1.5E+00 8.7E-01 4.7E-01 7.1E-01 2.1E-03
+   4     2.8E-01 4.4E-01 1.5E+00 4.4E+00 4.7E-01 8.7E-01 7.1E-01 2.1E-03
+   5     3.3E-01 1.0E-01 8.7E-01 4.7E-01 1.5E+00 1.5E-01 3.7E-01 9.5E-04
+   6     1.0E-01 3.6E-01 4.7E-01 8.7E-01 1.5E-01 1.5E+00 3.7E-01 9.5E-04
+  CS     1.4E+00 1.2E+00 7.1E-01 7.1E-01 3.7E-01 3.7E-01 2.7E+01 5.7E-03
  Plasma  1.3E-03 1.3E-03 2.1E-03 2.1E-03 9.5E-04 9.5E-04 5.7E-03 1.7E-05
  
  ********************************** First wall and blanket : CCFE HCPB model **********************************
@@ -6436,8 +6436,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Maximum PF coil voltage (kV)                                             (vpfskv)                  2.000E+01     
  Efficiency of transfer of PF stored energy into or out of storage        (etapsu)                  9.000E-01     
  (Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)
- Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 4.212E+04  OP 
- Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.404E+03  OP 
+ Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 4.214E+04  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.405E+03  OP 
  Energy stored in poloidal magnetic field :
  
                                             time (sec)
@@ -6570,7 +6570,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor thermal power is not used, but rejected directly to the environment.
  Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
  Power conversion cycle efficiency model: efficiency set according to blanket type (div power to secondary)
- Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.170  OP 
+ Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.171  OP 
  
  Power Balance for Reactor (across vacuum vessel boundary) - Detail
  ------------------------------------------------------------------
@@ -6896,9 +6896,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total plasma beta                                                        (beta)                    3.285E-02  ITV
  Total poloidal beta                                                      (betap)                   1.019E+00  OP 
  Total toroidal beta                                                                                3.394E-02  OP 
- Fast alpha beta                                                          (betaft)                  3.684E-03  OP 
+ Fast alpha beta                                                          (betaft)                  3.687E-03  OP 
  Beam ion beta                                                            (betanb)                  0.000E+00  OP 
- (Fast alpha + beam beta)/(thermal beta)                                  (gammaft)                 1.263E-01  OP 
+ (Fast alpha + beam beta)/(thermal beta)                                  (gammaft)                 1.264E-01  OP 
  Thermal beta                                                                                       2.916E-02  OP 
  Thermal poloidal beta                                                                              9.044E-01  OP 
  Thermal toroidal beta (= beta-exp)                                                                 3.013E-02  OP 
@@ -6935,7 +6935,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.244E-01  OP 
+ H_ concentration                                                         (fimp(01)                 7.245E-01  OP 
  He concentration                                                         (fimp(02)                 1.000E-01     
  Be concentration                                                         (fimp(03)                 0.000E+00     
  C_ concentration                                                         (fimp(04)                 0.000E+00     
@@ -7023,7 +7023,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power incident on the lower inner target (MW)                            (pLImw)                   1.337E+01  OP 
  Power incident on the lower outer target (MW)                            (pLOmw)                   1.924E+01  OP 
  
- Ohmic heating power (MW)                                                 (pohmmw)                  1.184E+00  OP 
+ Ohmic heating power (MW)                                                 (pohmmw)                  1.181E+00  OP 
  Fraction of alpha power deposited in plasma                              (falpha)                      0.950  OP 
  Fraction of alpha power to electrons                                     (falpe)                       0.705  OP 
  Fraction of alpha power to ions                                          (falpi)                       0.295  OP 
@@ -7058,8 +7058,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Hubbard 2012 L-I threshold - upper bound (MW)                            (pthrmw(17))              6.431E+01  OP 
  Hubbard 2017 L-I threshold                                               (pthrmw(18))              3.298E+02  OP 
  
- L-H threshold power (enforced) (MW)                                      (boundl(103)*plhthresh)   1.160E+02  OP 
- L-H threshold power (MW)                                                 (plhthresh)               1.160E+02  OP 
+ L-H threshold power (enforced) (MW)                                      (boundl(103)*plhthresh)   1.161E+02  OP 
+ L-H threshold power (MW)                                                 (plhthresh)               1.161E+02  OP 
  
  Confinement :
  
@@ -7071,7 +7071,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  n.tau = Volume-average electron density x Energy confinement time (s/m3) (dntau)                   3.476E+20  OP 
  Triple product = Vol-average electron density x Vol-average electron temperature x Energy confinement time:
  Triple product  (keV s/m3)                                               (dntau*te)                4.723E+21  OP 
- Transport loss power assumed in scaling law (MW)                         (powerht)                 3.148E+02  OP 
+ Transport loss power assumed in scaling law (MW)                         (powerht)                 3.152E+02  OP 
  Switch for radiation loss term usage in power balance                    (iradloss)                        1     
  Radiation power subtracted from plasma power balance (MW)                                          1.208E+02  OP 
    (Radiation correction is core radiation power)
@@ -7534,7 +7534,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
               --------       --------       --------
  Total :       -454.14        -410.58        -864.72
  
- Total volt-second consumption by coils (Wb)                              (vstot)                  -8.647E+02  OP 
+ Total volt-second consumption by coils (Wb)                              (vstot)                  -8.646E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb) :
  
@@ -7634,9 +7634,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
  Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
  Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
- Plasma  - Time point 03 (A)                                              (plasmat03)               2.080E+07     
- Plasma  - Time point 04 (A)                                              (plasmat04)               2.080E+07     
- Plasma  - Time point 05 (A)                                              (plasmat05)               2.080E+07     
+ Plasma  - Time point 03 (A)                                              (plasmat03)               2.082E+07     
+ Plasma  - Time point 04 (A)                                              (plasmat04)               2.082E+07     
+ Plasma  - Time point 05 (A)                                              (plasmat05)               2.082E+07     
  Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
  
  ********************************************* Support Structure **********************************************
@@ -7774,8 +7774,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Maximum PF coil voltage (kV)                                             (vpfskv)                  2.000E+01     
  Efficiency of transfer of PF stored energy into or out of storage        (etapsu)                  9.000E-01     
  (Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)
- Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 4.257E+04  OP 
- Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.419E+03  OP 
+ Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 4.260E+04  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.420E+03  OP 
  Energy stored in poloidal magnetic field :
  
                                             time (sec)
@@ -7845,7 +7845,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Reactor maintenance building volume (m3)                                 (rmbv)                    4.587E+05     
  Warmshop volume (m3)                                                     (wsv)                     1.343E+05     
  Tritium building volume (m3)                                             (triv)                    4.000E+04     
- Electrical building volume (m3)                                          (elev)                    5.164E+04     
+ Electrical building volume (m3)                                          (elev)                    5.167E+04     
  Control building volume (m3)                                             (conv)                    6.000E+04     
  Cryogenics building volume (m3)                                          (cryv)                    1.620E+04     
  Administration building volume (m3)                                      (admv)                    1.000E+05     
@@ -7991,7 +7991,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fusion power (MW)                                                        (powfmw.)                  2017.019  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   384.005  OP 
  Injected power (MW)                                                      (pinjmw.)                    50.000  OP 
- Ohmic power (MW)                                                         (pohmmw.)                     1.184  OP 
+ Ohmic power (MW)                                                         (pohmmw.)                     1.181  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                155.000  OP 
  Total (MW)                                                                                          2607.208  OP 
  
@@ -8236,7 +8236,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total toroidal beta                                                                                3.394E-02  OP 
  Fast alpha beta                                                          (betaft)                  3.686E-03  OP 
  Beam ion beta                                                            (betanb)                  0.000E+00  OP 
- (Fast alpha + beam beta)/(thermal beta)                                  (gammaft)                 1.264E-01  OP 
+ (Fast alpha + beam beta)/(thermal beta)                                  (gammaft)                 1.265E-01  OP 
  Thermal beta                                                                                       2.916E-02  OP 
  Thermal poloidal beta                                                                              9.044E-01  OP 
  Thermal toroidal beta (= beta-exp)                                                                 3.013E-02  OP 
@@ -8273,7 +8273,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.245E-01  OP 
+ H_ concentration                                                         (fimp(01)                 7.246E-01  OP 
  He concentration                                                         (fimp(02)                 1.000E-01     
  Be concentration                                                         (fimp(03)                 0.000E+00     
  C_ concentration                                                         (fimp(04)                 0.000E+00     
@@ -8287,9 +8287,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Kr concentration                                                         (fimp(12)                 0.000E+00     
  Xe concentration                                                         (fimp(13)                 0.000E+00     
  W_ concentration                                                         (fimp(14)                 5.000E-05     
- Average mass of all ions (amu)                                           (aion)                    2.875E+00  OP 
+ Average mass of all ions (amu)                                           (aion)                    2.874E+00  OP 
  
- Effective charge                                                         (zeff)                        2.594  OP 
+ Effective charge                                                         (zeff)                        2.592  OP 
  Density profile factor                                                   (alphan)                      1.000     
  Plasma profile model                                                     (ipedestal)                       1     
  Pedestal profiles are used.
@@ -8365,8 +8365,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fraction of alpha power deposited in plasma                              (falpha)                      0.950  OP 
  Fraction of alpha power to electrons                                     (falpe)                       0.705  OP 
  Fraction of alpha power to ions                                          (falpi)                       0.295  OP 
- Ion transport (MW)                                                       (ptrimw)                  1.428E+02  OP 
- Electron transport (MW)                                                  (ptremw)                  1.723E+02  OP 
+ Ion transport (MW)                                                       (ptrimw)                  1.430E+02  OP 
+ Electron transport (MW)                                                  (ptremw)                  1.725E+02  OP 
  Injection power to ions (MW)                                             (pinjimw)                 0.000E+00  OP 
  Injection power to electrons (MW)                                        (pinjemw)                 5.000E+01  OP 
  Ignited plasma switch (0=not ignited, 1=ignited)                         (ignite)                          0     
@@ -8676,8 +8676,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable stress in vacuum vessel (VV) due to quench (Pa)                (sigvvall)                9.300E+07     
  Minimum allowed quench time due to stress in VV (s)                      (taucq)                   2.645E+01  OP 
  Actual quench time (or time constant) (s)                                (tdmptf)                  3.000E+01  ITV
- Maximum allowed voltage during quench due to insulation (kV)             (vdalw)                   1.524E+01  ITV
- Actual quench voltage (kV)                                               (vtfskv)                  1.124E+01  OP 
+ Maximum allowed voltage during quench due to insulation (kV)             (vdalw)                   1.526E+01  ITV
+ Actual quench voltage (kV)                                               (vtfskv)                  1.126E+01  OP 
  Maximum allowed temp rise during a quench (K)                            (tmaxpro)                 1.500E+02     
  
  Conductor Information :
@@ -8706,7 +8706,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Winding toroidal width 2 (m)                                             (wwp2)                    1.469E+00  OP 
  Ground wall insulation thickness (m)                                     (tinstf)                  8.000E-03     
  Winding pack insertion gap (m)                                           (tfinsgap)                1.000E-02     
- Number of turns per TF coil                                              (turnstf)                 2.425E+02  OP 
+ Number of turns per TF coil                                              (turnstf)                 2.427E+02  OP 
  
  External Case Information :
  
@@ -8791,13 +8791,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Actual overall current density at BOP (A/m2)                             (cohbop)                  1.445E+07  OP 
  
  Maximum field at End Of Flattop (T)                                      (bmaxoh)                  1.182E+01  OP 
- Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               5.898E+08  OP 
- Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.769E+08  OP 
- Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.193E+07  OP 
- Actual overall current density at EOF (A/m2)                             (coheof)                  1.548E+07  ITV
+ Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               5.900E+08  OP 
+ Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.770E+08  OP 
+ Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.195E+07  OP 
+ Actual overall current density at EOF (A/m2)                             (coheof)                  1.549E+07  ITV
  
  CS inside radius (m)                                                     (bore.)                   2.711E+00     
- CS thickness (m)                                                         (ohcth.)                  6.733E-01     
+ CS thickness (m)                                                         (ohcth.)                  6.730E-01     
  Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
  CS overall cross-sectional area (m2)                                     (areaoh)                  1.092E+01  OP 
  CS conductor+void cross-sectional area (m2)                              (awpoh)                   5.460E+00  OP 
@@ -8809,14 +8809,14 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Switch for CS stress calculation                                         (i_cs_stress)                     0     
  Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                6.025E+08  OP 
- Axial stress in CS steel (Pa)                                            (sig_axial)              -6.709E+08  OP 
+ Axial stress in CS steel (Pa)                                            (sig_axial)              -6.710E+08  OP 
  Tresca stress in CS steel (Pa)                                           (s_tresca_oh)             6.025E+08  OP 
  Axial force in CS (N)                                                    (axial_force)            -2.163E+09  OP 
  Strain on CS superconductor                                              (strncon_cs)             -5.000E-03     
  Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
  Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
  Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
- CS temperature margin (K)                                                (tmargoh)                 3.298E+00  OP 
+ CS temperature margin (K)                                                (tmargoh)                 3.299E+00  OP 
  Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.700E+00     
  
  Superconducting PF coils
@@ -8872,7 +8872,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
               --------       --------       --------
  Total :       -455.35        -416.39        -871.74
  
- Total volt-second consumption by coils (Wb)                              (vstot)                  -8.717E+02  OP 
+ Total volt-second consumption by coils (Wb)                              (vstot)                  -8.718E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb) :
  
@@ -8972,9 +8972,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
  Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
  Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
- Plasma  - Time point 03 (A)                                              (plasmat03)               2.081E+07     
- Plasma  - Time point 04 (A)                                              (plasmat04)               2.081E+07     
- Plasma  - Time point 05 (A)                                              (plasmat05)               2.081E+07     
+ Plasma  - Time point 03 (A)                                              (plasmat03)               2.083E+07     
+ Plasma  - Time point 04 (A)                                              (plasmat04)               2.083E+07     
+ Plasma  - Time point 05 (A)                                              (plasmat05)               2.083E+07     
  Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
  
  ********************************************* Support Structure **********************************************
@@ -8993,12 +8993,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
    1     5.1E+00 9.3E-02 4.3E-01 2.8E-01 3.4E-01 1.0E-01 1.4E+00 1.3E-03
    2     9.3E-02 6.2E+00 2.9E-01 4.5E-01 1.1E-01 3.7E-01 1.3E+00 1.3E-03
-   3     4.3E-01 2.9E-01 4.4E+00 1.5E+00 8.7E-01 4.7E-01 7.3E-01 2.1E-03
-   4     2.8E-01 4.5E-01 1.5E+00 4.4E+00 4.7E-01 8.7E-01 7.3E-01 2.1E-03
-   5     3.4E-01 1.1E-01 8.7E-01 4.7E-01 1.5E+00 1.6E-01 3.8E-01 9.6E-04
-   6     1.0E-01 3.7E-01 4.7E-01 8.7E-01 1.6E-01 1.5E+00 3.8E-01 9.6E-04
-  CS     1.4E+00 1.3E+00 7.3E-01 7.3E-01 3.8E-01 3.8E-01 2.7E+01 5.8E-03
- Plasma  1.3E-03 1.3E-03 2.1E-03 2.1E-03 9.6E-04 9.6E-04 5.8E-03 1.7E-05
+   3     4.3E-01 2.9E-01 4.4E+00 1.5E+00 8.7E-01 4.7E-01 7.3E-01 2.2E-03
+   4     2.8E-01 4.5E-01 1.5E+00 4.4E+00 4.7E-01 8.7E-01 7.3E-01 2.2E-03
+   5     3.4E-01 1.1E-01 8.7E-01 4.7E-01 1.5E+00 1.6E-01 3.7E-01 9.6E-04
+   6     1.0E-01 3.7E-01 4.7E-01 8.7E-01 1.6E-01 1.5E+00 3.7E-01 9.6E-04
+  CS     1.4E+00 1.3E+00 7.3E-01 7.3E-01 3.7E-01 3.7E-01 2.7E+01 5.8E-03
+ Plasma  1.3E-03 1.3E-03 2.2E-03 2.2E-03 9.6E-04 9.6E-04 5.8E-03 1.7E-05
  
  ********************************** First wall and blanket : CCFE HCPB model **********************************
  
@@ -9073,7 +9073,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  TF coil current (kA)                                                     (itfka)                   6.500E+01  OP 
  Number of TF coils                                                       (ntfc)                    1.600E+01     
- Voltage across a TF coil during quench (kV)                              (vtfskv)                  1.124E+01  OP 
+ Voltage across a TF coil during quench (kV)                              (vtfskv)                  1.126E+01  OP 
  TF coil charge time (hours)                                              (tchghr)                  4.000E+00     
  Total inductance of TF coils (H)                                         (ltfth)                   8.301E+01  OP 
  Total resistance of TF coils (ohm)                                       (rcoils)                  0.000E+00  OP 
