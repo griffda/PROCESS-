@@ -41,7 +41,8 @@ contains
     use divertor_ode_var, only: impurity_concs
     use impurity_radiation_module, only: imp_dat
     use reinke_variables, only: reinke_mode
-    use read_radiation, only: nimp, imp_label, read_lz
+    use read_radiation, only: read_lz
+    use impurity_radiation_module, only: nimp, imp_label
     
     implicit none
     real(kind(1.0D0)) :: reinke_fzmin

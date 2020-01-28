@@ -7,12 +7,6 @@ module read_radiation
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! Modules to import !
-  ! !!!!!!!!!!!!!!!!!!!!
-
-  use maths_library
-  use impurity_radiation_module, only: nimp, fimp, imp_label
-
   implicit none
 
   ! List of impurities in the SOL/divertor model IS now same as the main plasma impurities
@@ -38,6 +32,8 @@ contains
     ! Modules to import !
     ! !!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: interpolate
+    use impurity_radiation_module, only: nimp, imp_label
     implicit none
 
     ! Variable declarations !
@@ -319,6 +315,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use impurity_radiation_module, only: nimp, imp_label
     implicit none
 
     ! Subroutine declarations !
@@ -369,6 +366,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use impurity_radiation_module, only: nimp, imp_label
     implicit none
 
     ! Subroutine declarations !
