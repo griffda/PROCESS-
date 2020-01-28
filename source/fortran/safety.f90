@@ -154,15 +154,20 @@
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables
-    use constants
-    use fispact_variables
-    use fwbs_variables
-    use heat_transport_variables
-    use pfcoil_variables
-    use physics_variables
-    use process_output
-    use tfcoil_variables
+    use build_variables, only: blnkith, blnkoth, bore, ddwex, ddwi, fmsbl, &
+      fmsdwe, fmsdwi, fmsfw, fmsoh, fmssh, fmstf, fwith, fwoth, gapds, gapoh, &
+      gapsto, iohcl, ohcth, precomp, scrapli, scraplo, shldith, shldoth, &
+      tfcth, tfootfi, tfthko, tftsgap, thshield, vvblgap
+    use fispact_variables, only: fwtemp, blihkw, fwihkw, fwohkw, blohkw
+    use fwbs_variables, only: blkttype, denstl, fblbe, fblli, fblli2o, &
+      fbllipb, fblss, fblvd, fwclfr, vfblkt, vfshld
+    use heat_transport_variables, only: ipowerflow
+    use pfcoil_variables, only: fcuohsu, ipfres, isumatoh, nohc, vfohc, zl, &
+      rpf, zh, wts, ra, rb
+    use physics_variables, only: rminor
+    use process_output, only: pi, oheadr, ovarre
+    use tfcoil_variables, only: acasetf, acond, aswp, avwp, fcoolcp, fcutfsu, &
+      i_tf_sup, isumattf, n_tf, vftf
 
     implicit none
 
