@@ -15,7 +15,7 @@ icc = 5             *Density limit
 icc = 7             *Beam ion density (NBI)
 icc = 8             *Neutron wall load upper limit
 icc = 9             *Fusion power upper limit
-icc = 10            *Toroidal field 1/R (consistency equation)
+*icc = 10            *Toroidal field 1/R (consistency equation)
 icc = 11            *Radial build (consistency equation)
 icc = 15            *LH power threshold limit
 icc = 17            *Radiation fraction upper limit
@@ -52,8 +52,8 @@ fdene = 0.75        *f-value for density limit (constraint equation 5)
 ixc = 10            *hfact
 hfact = 1.3      *H factor on energy confinement times
 
-ixc = 12            *oacdcp
-oacdcp = 68522000.0 *Overall current density in TF coil inboard legs (A/m2)
+* ixc = 12            *oacdcp
+* oacdcp = 68522000.0 *Overall current density in TF coil inboard legs (A/m2)
 
 ixc = 13            *tfcth
 tfcth = 0.36444     *Inboard TF coil thickness (centrepost for ST) (m)
@@ -193,12 +193,12 @@ vvblgap  = 0.0      *Gap between vacuum vessel and blanket (m)
 
 cpttf    = 9.0E4    *TF coil current per turn (A)
 frhocp   = 1.0      *Centrepost resistivity enhancement factor 
-i_tf_sup   = 0        *Switch for TF coil conductor model (0: copper) 
+i_tf_sup = 0        *Switch for TF coil conductor model (0: copper) 
 ptempalw = 473.15   *Maximum peak centrepost temperature (C) (constraint equation 44)
 rcool    = 3.0E-3   *Average radius of coolant channel (m) 
 ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma edge (%)
 rhotfleg = 2.5E-8   *Resistivity of a TF coil leg (Ohm-m)
-n_tf     = 12       *Number of TF coils
+n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
 *Iteration variables: cdtfleg fcoolcp oacdcp tcpav

@@ -4020,7 +4020,9 @@ module stellarator_variables
   !! istell /0/ : switch for stellarator option
   !!              (set via <CODE>device.dat</CODE>):<UL>
   !!         <LI> = 0 use tokamak model;
-  !!         <LI> = 1 use stellarator model</UL>
+  !!         <LI> = 1 use stellarator model: Helias5-b</UL>
+  !!         <LI> = 2 use stellarator model: Helias4-b</UL>
+  !!         <LI> = 3 use stellarator model: Helias3-b</UL>
 
   real(kind(1.0D0)) :: bmn = 1.0D-3
   !! bmn /0.001/ : relative radial field perturbation
@@ -4030,7 +4032,7 @@ module stellarator_variables
   !! f_rad /0.85/ : radiated power fraction in SOL
   real(kind(1.0D0)) :: f_w = 0.5D0
   !! f_w /0.5/ : island size fraction factor
-  real(kind(1.0D0)) :: fdivwet = 0.33333333333333333333333333333D0
+  real(kind(1.0D0)) :: fdivwet = 0.333333333333333D0
   !! fdivwet /0.3333/ : wetted fraction of the divertor area
   real(kind(1.0D0)) :: flpitch = 1.0D-3
   !! flpitch /0.001/ : field line pitch (rad)

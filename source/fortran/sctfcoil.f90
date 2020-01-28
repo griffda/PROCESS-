@@ -56,6 +56,12 @@ real(kind(1.0D0)), private :: r_tf_inleg_in
 ! Radial position of plasma-facing edge of TF coil inboard leg [m]
 real(kind(1.0D0)), private :: r_tf_inleg_out
 
+! Radial position of plasma-facing edge of TF coil outboard leg [m]
+real(kind(1.0D0)), private :: r_tf_outboard_in
+
+! Radial position of outer edge of TF coil inboard leg [m]
+real(kind(1.0D0)), private :: r_tf_outboard_out
+
 ! Radial position of inner/outer edge and centre of winding pack [m]
 real(kind(1.0D0)), private :: r_wp_inner, r_wp_outer, r_wp_centre
 
@@ -212,6 +218,10 @@ subroutine tf_coil_geometry()
 
     ! Area of rectangular cross-section TF outboard leg [m2]
     arealeg = tftort * tfthko
+    
+    ! Mid-plane inner/out radial position of the TF coil outer leg [m] 
+    r_tf_outboard_in =  r_tf_outboard_mid - tfthko * 0.5D0
+    r_tf_outboard_out = r_tf_outboard_mid + tfthko * 0.5D0
 
     ! Gap between inboard TF coil and thermal shield [m]
     ! Not used and calculated in radial build
@@ -567,8 +577,18 @@ subroutine tf_field_and_force()
     cforce = bmaxtf*ritfc/(2.0D0*n_tf)
 
     ! Vertical force per leg [N]
-    vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outboard_mid/r_tf_inboard_mid) / n_tf
-
+    ! vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * log(r_tf_outboard_mid/r_tf_inboard_mid) / n_tf
+    r_tf_outboard_in = r_tf_outboard_in + tinstf ! Tricky trick to avoid writting tinstg all the time    
+        
+    vforce = 0.25D0 * (bmaxtf * rbmax * ritfc) / (n_tf * thkwp**2) * ( &
+                     r_wp_outer**2       * log( r_wp_outer                 / r_wp_inner       ) + &
+                     r_tf_outboard_in**2 * log( (r_tf_outboard_in + thkwp) / r_tf_outboard_in ) + &
+                     thkwp**2            * log( (r_tf_outboard_in + thkwp) / r_wp_inner       ) - &
+                     thkwp * ( r_wp_outer + r_tf_outboard_in                                  ) + &
+                     2.0D0 * thkwp * ( r_wp_outer       * log(r_wp_inner                 / r_wp_outer ) + &
+                                       r_tf_outboard_in * log((r_tf_outboard_in + thkwp) / r_tf_outboard_in ) ))      
+    
+    r_tf_outboard_in = r_tf_outboard_in - tinstf  ! Tricky trick to avoid writting tinstg all the time
 
 end subroutine tf_field_and_force
 
