@@ -81,6 +81,7 @@ end subroutine subr
     !! DEMO Tokamak' Document, March 2012, EFDA Report
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    use divertor_kallenbach_variables, only: impurity_enrichment, netau_sol
 
     implicit none
     !  Local variables

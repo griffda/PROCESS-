@@ -14,20 +14,6 @@ module plasmod_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use constants
-  use constraint_variables
-  use current_drive_variables
-  use divertor_kallenbach_variables   !for impurity_enrichment
-  use divertor_variables
-  use error_handling
-  use global_variables
-  use impurity_radiation_module
-  use numerics                        !for boundl
-  use physics_variables
-  use plasmod_variables
-  use process_output
-
-
   implicit none
 
   public
@@ -50,6 +36,31 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constraint_variables, only: psepbqarmax, pseprmax
+    use current_drive_variables, only: fpion, pinjalw, pheat, gamcd
+    use divertor_kallenbach_variables, only: impurity_enrichment
+    use error_handling, only: report_error
+    use impurity_radiation_module, only: coreradiationfraction, &
+        impurity_arr, coreradius
+    use physics_variables, only: hfact, tesep, bt, protium, teped, rhopedn, &
+        triang95, triang, plascur, ieped, fgwped, aspect, kappa95, q95, &
+        kappa, ilhthresh, fdeut, fvsbrnni, rhopedt, fgwsep, rmajor
+    use process_output, only: geometry, composition, pedestal, &
+        plasmod_dt, plasmod_dx_cd, plasmod_contrpovs, &
+        plasmod_ainc, plasmod_fradc, plasmod_iprocess, plasmod_pedscal, &
+        plasmod_pfus, plasmod_nx, plasmod_dtmin, plasmod_imptype, &
+        plasmod_chisawpos, plasmod_gamcdothers, plasmod_v_loop, plasmod_dgy, &
+        plasmod_x_heat, plasmod_i_impmodel, plasmod_cxe_psepfac, boundl, &
+        plasmod_dx_control, plasmod_globtau, plasmod_qnbi_psepfac, &
+        plasmod_tolmin, plasmod_x_cd, plasmod_capa, plasmod_qdivt, &
+        plasmod_dx_heat, plasmod_x_fus, plasmod_car_qdivt, plasmod_chisaw, &
+        plasmod_nchannels, plasmod_sawpertau, plasmod_x_control, &
+        plasmod_test, plasmod_i_modeltype, plasmod_dtmaxmin, plasmod_eopt, &
+        plasmod_maxpauxor, plasmod_tol, plasmod_nxt, plasmod_fcdp, &
+        plasmod_psepplh_sup, plasmod_contrpovr, plasmod_dtmax, plasmod_isawt, &
+        plasmod_dtmaxmax, plasmod_maxa, plasmod_dx_fus, plasmod_nbi_energy, &
+        plasmod_dtinc, plasmod_i_equiltype, inputs, numerics_transp
+    
     implicit none
 
     !  Arguments
@@ -271,6 +282,30 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use current_drive_variables, only: pinjimw, bootipf, pinjemw, pinjmw, &
+        ftritbm
+		use divertor_kallenbach_variables, only: netau_sol
+		use error_handling, only: idiags, fdiags, report_error
+    use impurity_radiation_module, only: impurity_arr, nimp, element2index, &
+        zav_of_te
+    use physics_variables, only: rplas, tin, pohmmw, sf, facoh, eps, &
+        pneutmw, pdt, p0, powerht, faccd, gammaft, dnla, bp, ptripv, &
+        plhthresh, plascur, psyncpv, dlamee, q95, pradpv, dnalp, aion, &
+        ignite, dnitot, pdd, normalised_total_beta, afuel, vsbrn, zeffai, &
+        abeam, protonrate, alpharate, ti, phiint, dnbeam2, qstar, falpha, &
+        ptremw, taueff, ne0, pperim, plinepv, sarea, rnbeam, ftrit, &
+        fusionrate, xarea, pdhe3, rminor, te0, fhe3, fvsbrnni, burnup, ten, &
+        piepv, powfmw, neped, bt, vsind, vol, taup, teped, palpipv, csawth, &
+        falpe, pradmw, rncne, palpepv, qfuel, palpmw, te, betanb, dene, &
+        triang, rnone, ptrepv, palpnb, tauei, tauee, pneutpv, dntau, &
+        pcoreradmw, ti0, rli, pchargemw, pfuscmw, vsstt, rlp, ralpne, &
+        pchargepv, hfact, figmer, protium, pohmpv, pdivt, rndfuel, rpfac, &
+        betaft, ptrimw, ni0, zeff, vsres, nesep, dnz, pedgeradmw, dlamie, &
+        falpi, kappa, rnfene, pbrempv, rmajor, dnbeam, gamma, kappaa, deni, &
+        dnprot, beta, fdeut, palppv, aspect
+    use process_output, only: plasmod_i_impmodel, echarge, rmu0, pi, i_flag, &
+        geometry, composition, pedestal, radial_profiles, MHD_EQ, power_losses
+    
     implicit none
 
     !  Arguments
@@ -676,6 +711,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constraint_variables, only: psepbqarmax, pseprmax
+		use physics_variables, only: rmajor, bt, aspect
+    use process_output, only: inp0, radp, ped, loss, comp, num, mhd, geom, &
+      i_flag, plasmod_i_equiltype, ovarin, ocmmnt, oheadr, ovarrf, osubhd
+    
     implicit none
 
     !  Arguments
@@ -815,6 +855,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use process_output, only: output_prefix, geom, fileprefix, radp
+    
     implicit none
 
     !  Arguments
