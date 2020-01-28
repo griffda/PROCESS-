@@ -167,13 +167,21 @@ subroutine sctfcoil(outfile,iprint)
 
     call tf_current
 
-    if ( i_tf_sup /= 1 ) then
+    ! Conductor section internal geometry
+    ! ---
+    ! Resitive magnets
+    if ( i_tf_sup /= 1 ) then   
         call tf_turn_geom
-    else if ( i_tf_turns_integer == 1 ) then
+    
+    ! SC using an integer number of turns per WP
+    else if ( i_tf_turns_integer == 1 ) then  
         call tf_integer_winding_pack
-    else
+    
+    ! SC using a float numnber of turns per WP
+    else   
         call tf_winding_pack
     end if
+    ! ---
 
     call coilshap
 
@@ -225,22 +233,22 @@ subroutine tf_coil_geometry()
     ! Inner leg geometry
     ! ---
     ! Radial position of inner/outer edge of inboard TF coil leg [m]
-    r_tf_inboard_in =  r_tf_inboard_mid - 0.5D0 * tfcth   ! eq(1)
-    r_tf_inboard_out = r_tf_inboard_mid + 0.5D0 * tfcth   ! eq(2)
+    r_tf_inboard_in =  r_tf_inboard_mid - 0.5D0 * tfcth
+    r_tf_inboard_out = r_tf_inboard_mid + 0.5D0 * tfcth
     
     ! Annular area of midplane containing TF coil inboard legs ( WP + casing ) [m2]
-    tfareain = pi * (r_tf_inboard_out**2 - r_tf_inboard_in**2)  ! eq(3)
+    tfareain = pi * (r_tf_inboard_out**2 - r_tf_inboard_in**2)
 
     ! Vertical distance from the midplane to the top of the tapered section [m]
-    if ( itart ==  1 ) h_cp_top = rminor * kappa + dztop  ! eq(5)
+    if ( itart ==  1 ) h_cp_top = rminor * kappa + dztop 
     ! ---
 
 
     ! Outer leg geometry
     ! ---    
     ! Mid-plane inner/out radial position of the TF coil outer leg [m] 
-    r_tf_outboard_in =  r_tf_outboard_mid - tfthko * 0.5D0   ! eq(6)
-    r_tf_outboard_out = r_tf_outboard_mid + tfthko * 0.5D0   ! eq(7)
+    r_tf_outboard_in =  r_tf_outboard_mid - tfthko * 0.5D0 
+    r_tf_outboard_out = r_tf_outboard_mid + tfthko * 0.5D0 
 
     ! Half toroidal angular extent of a single TF coil inboard leg
     theta_coil = pi/n_tf              ! eq(9)
@@ -250,7 +258,7 @@ subroutine tf_coil_geometry()
     ! *** 
     ! Sliding joints geometry
     if ( itart == 1 .and. i_tf_sup /= 1 ) then 
-        tftort = 2.0D0 * r_cp_top * sin(theta_coil)   ! eq(8)
+        tftort = 2.0D0 * r_cp_top * sin(theta_coil) 
 
     ! Default thickness, initially written for DEMO SC magnets
     else if ( itart == 1 .and. i_tf_sup ==  1 ) then 
@@ -289,11 +297,11 @@ subroutine tf_current()
     end if
 
     ! Calculation of the maximum B field on the magnet [T]
-    bmaxtf = bt * rmajor / rbmax     ! eq(11)
+    bmaxtf = bt * rmajor / rbmax  
     
     ! Total current in TF coils [A]
     ! rem SK : ritcf is no longer an input
-    ritfc = bmaxtf * rbmax * 5.0D6   ! eq(13)
+    ritfc = bmaxtf * rbmax * 5.0D6 
 
 end subroutine tf_current
 
@@ -305,15 +313,15 @@ subroutine tf_turn_geom()
     implicit none
             
     ! Radial position of inner/outer edge of winding pack [m]
-    r_wp_inner = r_tf_inboard_in  + thkcas + tinstf    ! eq(15)
-    r_wp_outer = r_tf_inboard_out - casthi - tinstf    ! eq(16)
+    r_wp_inner = r_tf_inboard_in  + thkcas + tinstf 
+    r_wp_outer = r_tf_inboard_out - casthi - tinstf 
 
     ! Mid-plane Radial thickness of conductor layer [m]
-    thkwp = r_wp_outer - r_wp_inner             ! eq(17)
+    thkwp = r_wp_outer - r_wp_inner
 
     ! Total mid-plane cross-sectional area of winding pack, [m2]
     ! including the surrounding ground-wall insulation layer 
-    awpc = pi * ( (r_wp_outer + tinstf)**2 - (r_wp_inner - tinstf)**2 ) / n_tf  ! eq(18)
+    awpc = pi * ( (r_wp_outer + tinstf)**2 - (r_wp_inner - tinstf)**2 ) / n_tf
 
     ! Exact mid-plane cross-section area of the conductor per TF turn   
     awptf = ( 1.0D0 - fcoolcp ) * ( pi*(r_wp_outer**2 - r_wp_inner**2)/(n_tf*turnstf) - &
@@ -321,14 +329,14 @@ subroutine tf_turn_geom()
 
     ! Total cross-sectional area of surrounding case [m2]
     ! Only valid at mid-plane for resistive itart design
-    acasetf = ( tfareain / n_tf ) - awpc        ! eq(19)
+    acasetf = ( tfareain / n_tf ) - awpc 
 
     ! Number of turns
     ! Set by user (no turn structure by default, i.e. turnstf = 1 ) 
     if ( abs(turnstf) < epsilon(turnstf) ) turnstf = 1.0D0
 
     ! Current per turn 
-    cpttf = ritfc / ( turnstf * n_tf )   ! eq(14)
+    cpttf = ritfc / ( turnstf * n_tf )
 
     ! Exact current density on the mid-plane conductors  
     oacdcp = ritfc / ( awptf * n_tf * turnstf ) 
@@ -362,7 +370,7 @@ subroutine tf_winding_pack()
 
     ! Radial position of inner edge of winding pack [m]
     ! Rem SK : added the insulation thickness/insertion gap
-    r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap     ! eq(11)
+    r_wp_inner = r_tf_inboard_in + thkcas + tinstf + tfinsgap  
         
     ! Radial thickness of winding pack [m]
     thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
@@ -683,10 +691,10 @@ subroutine tf_res_heating()
         
     ! Copper : Copper resistivity degraded by 1/0.92 for the used of GLIDCOP A-15 
     !          Better structural properties at high temperature and radiation damage resilience
-    if ( i_tf_sup == 0 ) rhocp = (frhocp/0.92D0) * ( 1.72D0 + 0.0039D0*(tcpav-273.15D0) ) * 1.0D-8  ! eq(20)
+    if ( i_tf_sup == 0 ) rhocp = (frhocp/0.92D0) * ( 1.72D0 + 0.0039D0*(tcpav-273.15D0) ) * 1.0D-8
 
     ! Cryogenic aluminium
-    if ( i_tf_sup == 2 ) rhocp = frhocp * ( 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav )  ! eq(21)
+    if ( i_tf_sup == 2 ) rhocp = frhocp * ( 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav )
 
     ! Calculations dedicated for configurations with CP
     ! ***
@@ -699,8 +707,8 @@ subroutine tf_res_heating()
         end if
 
         ! Leg resistivity (different leg temperature as separate cooling channels) 
-        if ( i_tf_sup == 0 ) rhotfleg = (frholeg/0.92D0) * ( 1.72D0 + 0.0039D0*(tlegav-273.15D0) ) * 1.0D-8               ! eq(25)
-        if ( i_tf_sup == 2 ) rhotfleg =  frholeg * ( 2.00016D-14*tlegav**3 - 6.75384D-13*tlegav**2 + 8.89159D-12*tlegav ) ! eq(26)
+        if ( i_tf_sup == 0 ) rhotfleg = (frholeg/0.92D0) * ( 1.72D0 + 0.0039D0*(tlegav-273.15D0) ) * 1.0D-8              
+        if ( i_tf_sup == 2 ) rhotfleg =  frholeg * ( 2.00016D-14*tlegav**3 - 6.75384D-13*tlegav**2 + 8.89159D-12*tlegav )
 
         ! Tricky trick to make the leg / CP tempearture the same
         if ( is_leg_cp_temp_same == 1 ) tlegav = -1.0D0  
@@ -715,20 +723,20 @@ subroutine tf_res_heating()
         ! Outer leg cross-section areas
         ! ---
         ! Area taken by one outboard leg's turns insulation [m2]
-        a_wp_ins_turn = 2.0D0 * tinstf * ( (tftort/turnstf) + tfthko - 2.0D0*tinstf ) ! eq(25)
+        a_wp_ins_turn = 2.0D0 * tinstf * ( (tftort/turnstf) + tfthko - 2.0D0*tinstf ) 
 
         ! Exact TF outboard leg conductor area (per leg) [m2]
-        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )  ! eq(24)
+        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )  
         ! ---
 
 
         ! Outer leg resistive power loss
         ! ---
         ! TF outboard leg's resistance calculation (per leg) [ohm]
-        tflegres = rhotfleg * tfleng / a_wp_cond_leg   ! eq(23)
+        tflegres = rhotfleg * tfleng / a_wp_cond_leg  
 
         ! TF outer leg resistive power (TOTAL) [W]   
-        presleg = tflegres * ritfc**2 / n_tf   ! eq(23)
+        presleg = tflegres * ritfc**2 / n_tf 
         ! ---
 
 
@@ -760,14 +768,14 @@ subroutine tf_res_heating()
         !          crude approximation if the inboard legs are vaulted
             
         ! Area taken by the inter turn ground insulation
-        a_wp_ins_turn = 2.0D0 * tinstf * ( (tfcth/turnstf) + tfcth - 2.0D0*tinstf )   ! eq(25)
+        a_wp_ins_turn = 2.0D0 * tinstf * ( (tfcth/turnstf) + tfcth - 2.0D0*tinstf )
 
         ! Exact TF outboard leg conductor area
-        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf )  ! eq(24)
+        a_wp_cond_leg = ( 1.0D0 - fcoolleg ) * ( arealeg - a_wp_ins_turn * turnstf ) 
         ! ---
 
         ! TF resistive powers
-        prescp = rhocp * ritfc**2 * tfleng / ( a_wp_cond_leg * n_tf )   ! eq(23)
+        prescp = rhocp * ritfc**2 * tfleng / ( a_wp_cond_leg * n_tf ) 
         presleg = 0.0D0
 
         ! Total TF outer leg conductor volume (not per leg)
@@ -798,13 +806,11 @@ subroutine tf_field_and_force()
     ! In plane forces 
     ! ---
     ! Centering force = net inwards radial force per meters per TF coil [N/m]
-    cforce = 0.5D0 * bmaxtf*ritfc/n_tf   ! eq(18)
+    cforce = 0.5D0 * bmaxtf*ritfc/n_tf 
 
 
     ! Vertical force per leg [N]
     ! ***
-    ! Old formula : vforce = 0.25D0 * bt * rmajor * ritfc * log(r_tf_outboard_mid/r_tf_inboard_mid) / n_tf
-
     ! Case of a centrepost (itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
     ! Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
     if ( itart == 1 .and. i_tf_sup /= 1 ) then
@@ -844,7 +850,7 @@ subroutine tf_field_and_force()
         
         r_tf_outboard_in = r_tf_outboard_in - tinstf  ! Tricky trick to avoid writting tinstf all the time
 
-        vforce_outboard = vforce * ( ( 1.0D0 / f_vforce_inboard ) - 1.0D0 )    ! eq(24)
+        vforce_outboard = vforce * ( ( 1.0D0 / f_vforce_inboard ) - 1.0D0 )  
     end if
     ! ***
 

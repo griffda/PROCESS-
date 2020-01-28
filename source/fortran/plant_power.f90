@@ -85,7 +85,9 @@ contains
        !  jbus   - bus current density (A/m2)
        abus = cpttf/jbus
 
-       !  Bus resistance (ohm)
+       ! Bus resistance [ohm]
+       ! Bus resistivity (rhotfbus) default value : -1.0D0
+       ! If this value is chosen, the bus resistivity is the same as the leg one
        if ( abs(rhotfbus + 1.0D0) < epsilon(rhotfbus) ) rhotfbus = rhotfleg  
        tfbusres = rhotfbus * tfbusl/abus
 
