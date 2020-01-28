@@ -143,7 +143,7 @@ the -s option is used, in the directory the utility was run.
 
 > `./utilities/morris_method.py`
 
-Program to evaluate model sensistivity by elementary effects method at a given PROCESS design point. The method of Morris is a technique for screening a large number of model parameters to identify the dominatant parameter for a global sensitivity analysis[1], and a guide to more details can be found in the textbook[2]. Note that this utility has a significanity longer run time that a typical evalution of PROCESS design points. This utilities requires the use of the Python library [SALib](https://salib.readthedocs.io/en/latest/index.html).
+Program to evaluate model sensistivity by elementary effects method at a given PROCESS design point. The method of Morris is a technique for screening a large number of model parameters to identify the dominatant parameter for a global sensitivity analysis[1], and a guide to more details can be found, for example, in the textbook[2]. Note that this utility has a significanity longer run time that a typical evalution of PROCESS design points. This utilities requires the use of the Python library [SALib](https://salib.readthedocs.io/en/latest/index.html).
 
 [1] M. Morris, (1991) "Factorial Sampling Plans for Preliminary Computational Experiments." Technometrics, 33(2):161-174
 
@@ -195,7 +195,7 @@ The configuration file `morris_method_conf.json` used the JSON format and has th
     "num_vars": 5
 }
 ```
-The file specifies a dictionary that gives all the information for running the Morris method tool. The number of variables considered in the Morris method with `num_vars`, the name of the variable as it appears the PROCESS MFILE is listed under `names` and the under and lower bounds of the flat distribution is given underbounds. In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`. Additionally, an `IN.DAT` file describing the relevant design point needs to be present.
+The file specifies a dictionary that gives all the information for running the Morris method tool. The number of variables considered in the Morris method with `num_vars`, the name of the variable as it appears the PROCESS MFILE is listed under `names` and the upper and lower bounds of the flat distribution is given in bounds. In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`. Additionally, an `IN.DAT` file describing the relevant design point needs to be present.
 
 ### Output
 
@@ -247,7 +247,7 @@ A .pdf file is created called `morris_output.pdf`. The name of the produced pdf 
 
 > `./utilities/sobol_method.py`
 
-Program to evaluate model sensistivity by Sobol's method at a given PROCESS design point. It uses the variance based global sensistivity analaysis to calculate the first order and total Sobol indices. More information on Sobol's method can be found in the testbook[1]. Note that this utility has a significanity longer run time that a typical evalution of PROCESS design points. This utilities requires the use of the Python library [SALib](https://salib.readthedocs.io/en/latest/index.html).
+Program to evaluate model sensistivity by Sobol's method at a given PROCESS design point. It uses the variance based global sensistivity analaysis to calculate the first order and total Sobol indices. More information on Sobol's method can be found, for example, in the testbook[1]. Note that this utility has a significanity longer run time that a typical evalution of PROCESS design points. This utilities requires the use of the Python library [SALib](https://salib.readthedocs.io/en/latest/index.html).
 
 [1] A. Saltelli, S. Tarantola, F. Campolongo, M. Ratto, T. Andres, J. Cariboni, D. Gatelli and M. Saisana, (2008) "Global Sensitivity Analysis: The Primer" (New York: Wiley)
 
@@ -291,7 +291,7 @@ The configuration file `sobol_method_conf.json` used the JSON format and has the
     "num_vars": 4
 }
 ```
-The file specifies a dictionary that gives all the information for running the Morris method tool. The number of variables considered in the Morris method with `num_vars`, the name of the variable as it appears the PROCESS MFILE is listed under `names` and the under and lower bounds of the flat distribution is given underbounds. In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`. Additionally, an `IN.DAT` file describing the relevant design point needs to be present.
+The file specifies a dictionary that gives all the information for running the Morris method tool. The number of variables considered in the Morris method with `num_vars`, the name of the variable as it appears the PROCESS MFILE is listed under `names` and the upper and lower bounds of the flat distribution is given in bounds. In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`. Additionally, an `IN.DAT` file describing the relevant design point needs to be present.
 
 ### Output
 
