@@ -424,6 +424,27 @@ def write_title(title, out_file):
     out_file.write(formatted_title)
     out_file.write("\n")
 
+def get_constraint_equations(data):
+    """Create the constraint equation information.
+
+    Use the constraint equation numbers from IN.DAT to find the comment 
+    associated with them in the source dictionary, then return both.
+
+    :param dict data: Data dictionary for the IN.DAT information
+    :return: dict of the constraint numbers and their comments
+    :rtype: dict
+    """
+    constraints = {}
+    
+    # List of constraint equation numbers in IN.DAT
+    constraint_numbers = data["icc"].value
+
+    # Find associated comments and create constraint dict
+    for constraint_number in constraint_numbers:
+        comment = DICT_ICC_FULL[str(constraint_number)]["name"]
+        constraints[constraint_number] = comment
+
+    return constraints
 
 def write_constraint_equations(data, out_file):
     """ Function to write constraint equation information to file
@@ -436,15 +457,53 @@ def write_constraint_equations(data, out_file):
     # Header
     write_title("Constraint Equations", out_file)
 
-    # List of constraints
-    constraint_equations = data["icc"].value
-
-    # Write constraints to file
-    for constraint in constraint_equations:
-        comment = DICT_ICC_FULL[str(constraint)]["name"]
-        constraint_line = "icc = {0} * {1}\n".format(constraint, comment)
+    # Fetch dict of constraint equation information
+    constraints = get_constraint_equations(data)
+    
+    for number, comment in constraints.items():
+        constraint_line = "icc = {0} * {1}\n".format(number, comment)
         out_file.write(constraint_line)
 
+def get_iteration_variables(data):
+    """Create the iteration variable information.
+
+    Use the iteration variable numbers from IN.DAT to find the comment 
+    associated with them in the source dictionary. Then check the information 
+    from the IN.DAT file to see if upper and/or lower bounds are present, and 
+    what the value is. Return all this information for each variable.
+
+    :param dict data: Data dictionary for the IN.DAT information
+    :return: variable number, comment, upper and/or lower bounds if present
+    :rtype: dict
+    """
+    variables = {}
+    
+    # List of variable numbers in IN.DAT
+    variable_numbers = data["ixc"].value
+
+    # Create variable dicts
+    for variable_number in variable_numbers:
+        variable = {}
+
+        comment = DICT_IXC_SIMPLE[str(variable_number).replace(",", ";").
+                                  replace(".", ";").replace(":", ";")]
+        variable["comment"] = comment
+
+        # Set bounds if there are any
+        if str(variable_number) in data["bounds"].value:
+            # Lower bound
+            if "l" in data["bounds"].value[str(variable_number)].keys():
+                variable["lower_bound"] = data["bounds"].value[
+                    str(variable_number)]["l"].replace("e", "d")
+
+            # Upper bound
+            if "u" in data["bounds"].value[str(variable_number)].keys():
+                variable["upper_bound"] = data["bounds"].value[
+                    str(variable_number)]["u"].replace("e", "d")
+
+        variables[variable_number] = variable
+
+    return variables
 
 def write_iteration_variables(data, out_file):
     """ Function to write iteration variable information to file
@@ -457,33 +516,140 @@ def write_iteration_variables(data, out_file):
     # Header
     write_title("Iteration Variables", out_file)
 
-    # List of constraints
-    iteration_variables = data["ixc"].value
-
-    # Write constraints to file
-    for variable in iteration_variables:
-        comment = DICT_IXC_SIMPLE[str(variable).replace(",", ";").
-                                  replace(".", ";").replace(":", ";")]
-        variable_line = "ixc = {0} * {1}\n".format(variable, comment)
+    # Fetch dict of iteration variable information
+    variables = get_iteration_variables(data)
+        
+    for number, info in variables.items():
+        variable_line = "ixc = {0} * {1}\n".format(number, 
+            info["comment"])
         out_file.write(variable_line)
+              
+        if "lower_bound" in info:
+            lower_bound_line = "boundl({0}) = {1}\n".\
+                format(number, info["lower_bound"])
+            out_file.write(lower_bound_line)
 
-        # Write bounds if there are any
-        if str(variable) in data["bounds"].value:
+        if "upper_bound" in info:
+            upper_bound_line = "boundu({0}) = {1}\n".\
+                format(number, info["upper_bound"])
+            out_file.write(upper_bound_line)
 
-            # Lower bound
-            if "l" in data["bounds"].value[str(variable)].keys():
-                lower_bound_line = "boundl({0}) = {1}\n".\
-                    format(variable, data["bounds"].value[str(variable)]["l"].
-                           replace("e", "d"))
-                out_file.write(lower_bound_line)
+def get_parameters(data, use_string_values=True):
+    """Create the parameter information.
 
-            # Upper bound
-            if "u" in data["bounds"].value[str(variable)].keys():
-                upper_bound_line = "boundu({0}) = {1}\n".\
-                    format(variable, data["bounds"].value[str(variable)]["u"].
-                           replace("e", "d"))
-                out_file.write(upper_bound_line)
+    Use the parameters from IN.DAT to produce a dict of name, value and 
+    comment (optional) for each parameter. This takes the form:
+    parameters[module][param_name] = param_value, or {value: param_value, 
+    comment: param_comment}. 
 
+    If use_string_values == True, in the returned dict, ensure that 
+    the values of the parameters are of type string. This is used for writing
+    new IN.DAT files. If False, store the values as their original type, e.g. 
+    int, float etc. This is used for validating the input file.
+
+    :param dict data: Data dictionary for the IN.DAT information
+    :param bool use_string_values: If True, store all parameter values as 
+    strings. If False, preserve parameter value type.
+    :return: dict of parameters containing names, values and comments
+    :rtype: dict
+    """
+    source_variables = {}
+    # dict of all module-level variables in source, grouped by module
+    parameters = {}
+    # dict of all parameters set in input file, grouped by module
+    exclusions = ["neqns", "nvar", "icc", "ixc"]
+    # Parameters to exclude
+
+    # Change module keys from DICT_MODULE: replace spaces with underscores and 
+    # lower the case for consistency in the formatted_input_data_dict
+    # Store the key-modified dict in source_variables
+    for old_module_key, variables in DICT_MODULE.items():
+        new_module_key = old_module_key.replace(' ', '_').lower()
+        source_variables[new_module_key] = variables
+
+    # Store parameters in order defined in DICT_MODULE
+    # TODO: is order important? Not using ordered dicts any more
+    for module, module_variables in source_variables.items():
+        parameters[module] = {}
+
+        # Loop over all module-level variables in source for given module
+        for item in module_variables:
+            # Store a variable in parameters dict if it's in the IN.DAT file 
+            # (and not in the exclusion list). Store parameter name and value
+            if item not in exclusions and item in data.keys():
+
+                if item == "fimp":
+                    for k in range(len(data["fimp"].get_value)):
+                        name = "fimp({0})".format(str(k+1).zfill(1))
+                        value = data["fimp"].get_value[k]
+                        parameters[module][name] = value
+
+                elif item == "ioptimz":
+                    name = item
+                    ioptimz = {}
+                    iop_val = data["ioptimz"].get_value
+                    iop_comment = ioptimz_des[str(iop_val)]
+                    ioptimz["value"] = iop_val
+                    ioptimz["comment"] = iop_comment
+                    parameters[module][name] = ioptimz
+
+                elif item == "zref":
+                    for j in range(len(data["zref"].get_value)):
+                        name = "zref({0})".format(str(j+1).zfill(1))
+                        value = data["zref"].get_value[j]
+                        parameters[module][name] = value
+
+                elif item == "impurity_enrichment":
+                    for m in range(len(data["impurity_enrichment"].get_value)):
+                        name = "impurity_enrichment({0})".format(
+                            str(m+1).zfill(1))
+                        value = data["impurity_enrichment"
+                            ].get_value[m]
+                        parameters[module][name] = value
+
+                elif "vmec" in item:
+                    name = item
+                    value = data[item].value
+                    parameters[module][name] = value
+                
+                else:
+                    parameter = {}
+                
+                    if use_string_values:
+                        # Store the parameter value as a string 
+                        # (data[item].value is a string)
+                        line_value = data[item].value
+                        line_string = ""
+                        # if parameter is a list only output values comma separated
+                        if isinstance(line_value, list):
+                            for val in line_value:
+                                line_string += str(val) + ", "
+                            line_value = line_string.rstrip(", ")
+
+                        if isinstance(line_value, str):
+                            split_line = line_value.split(" ")
+                        try:
+                            float(split_line[0])
+                            if len(split_line) > 1:
+
+                                line_value = ", ".\
+                                    join([entry for entry in split_line])
+                        except:
+                            pass
+                        
+                    else:
+                        # Store the parameter value preserving its type 
+                        # (data[item].get_value preserves the parameter's type,
+                        # e.g. float)
+                        line_value = data[item].get_value
+
+                    name = item
+                    parameter["value"] = line_value
+                    parameter["comment"] = data[item].comment.split("\n")[0]
+                    # Only use first line of comment to avoid lots of info
+                    parameters[module][name] = parameter
+
+    return parameters
 
 def write_parameters(data, out_file):
     """ Write parameters to file
@@ -492,78 +658,37 @@ def write_parameters(data, out_file):
     :param out_file: Output file for new IN.DAT
     :return: Nothing
     """
+    filter_list = ["fimp(", "zref(", "imp_rich", "vmec"]
+    # Special parameters that require different formatting
+    parameters = get_parameters(data)
+    
+    for module in parameters:
+        # Write module heading: format to be more readable again
+        formatted_module = module.replace('_', ' ').title()
+        write_title("{0}".format(formatted_module), out_file)
 
-    # Write parameters in order defined in DICT_MODULE
-    for module in DICT_MODULE.keys():
-
-        # Write module heading
-        write_title("{0}".format(module), out_file)
-
-        # Items to exclude
-        exclusions = ["neqns", "nvar", "icc", "ixc"]
-
-        # Write parameters for given module
-        for item in DICT_MODULE[module]:
-            if item not in exclusions and item in data.keys():
-
-                if item == "fimp":
-                    for k in range(len(data["fimp"].get_value)):
-                        tmp_fimp_name = "fimp({0})".format(str(k+1).zfill(1))
-                        tmp_fimp_value = data["fimp"].get_value[k]
-                        parameter_line = "{0} = {1}\n".\
-                            format(tmp_fimp_name, tmp_fimp_value)
-                        out_file.write(parameter_line)
-                elif item == "ioptimz":
-                    iop_val = data["ioptimz"].get_value
-                    iop_comment = ioptimz_des[str(iop_val)]
+        # Write out parameters for this module
+        for parameter, info in parameters[module].items():
+            
+            if any(var_name in parameter for var_name in filter_list):
+                # No justification formatting if parameter is in filter list
+                parameter_line = "{0} = {1}\n".\
+                    format(parameter, info)
+            else:
+                # All other parameters
+                # Left justification set to 8 to allow easier reading
+                # info can currently be either a value or a dict
+                if type(info) is dict and info.get("value") and (
+                    info.get("comment")):
                     parameter_line = "{0} = {1} * {2}\n". \
-                        format(item.ljust(8), iop_val, iop_comment)
-                    out_file.write(parameter_line)
-
-                elif item == "zref":
-                    for j in range(len(data["zref"].get_value)):
-                        tmp_zref_name = "zref({0})".format(str(j+1).zfill(1))
-                        tmp_zref_value = data["zref"].get_value[j]
-                        parameter_line = "{0} = {1}\n".\
-                            format(tmp_zref_name, tmp_zref_value)
-                        out_file.write(parameter_line)
-                elif item == "impurity_enrichment":
-                    for m in range(len(data["impurity_enrichment"].get_value)):
-                        tmp_imp_rich_name = "impurity_enrichment({0})".format(str(m+1).zfill(1))
-                        tmp_imp_rich_value = data["impurity_enrichment"].get_value[m]
-                        parameter_line = "{0} = {1}\n".\
-                            format(tmp_imp_rich_name, tmp_imp_rich_value)
-                        out_file.write(parameter_line)
-                elif "vmec" in item:
-                    parameter_line = "{0} = {1}\n".format(item,
-                                                          data[item].value)
-                    out_file.write(parameter_line)
+                        format(parameter.ljust(8), info["value"], 
+                            info["comment"])
                 else:
-                    # Left justification set to 8 to allow easier reading
-                    # Only use first line of comment to avoid lots of info
-                    line_value = data[item].value
-                    line_string = ""
-                    # if parameter is a list only output values comma separated
-                    if isinstance(line_value, list):
-                        for val in line_value:
-                            line_string += str(val) + ", "
-                        line_value = line_string.rstrip(", ")
+                    parameter_line = "{0} = {1}\n". \
+                        format(parameter.ljust(8), info)
 
-                    if isinstance(line_value, str):
-                        split_line = line_value.split(" ")
-                    try:
-                        float(split_line[0])
-                        if len(split_line) > 1:
-
-                            line_value = ", ".\
-                                join([entry for entry in split_line])
-                    except:
-                        pass
-
-                    parameter_line = "{0} = {1} * {2}\n". \
-                        format(item.ljust(8), line_value,
-                               data[item].comment.split("\n")[0])
-                    out_file.write(parameter_line)
+            # Finally write the line
+            out_file.write(parameter_line)
 
 
 def add_iteration_variable(data, variable_number):
@@ -804,10 +929,16 @@ def parameter_type(name, value):
 
         # If a real variable just convert to float
         if "real_variable" in param_type:
+            # Prepare so float conversion succeeds
+            value = value.lower()
+            value = value.replace("d", "e")
             return float(value)
 
         # If a real array split and make a float list
         elif "real_array" in param_type:
+            # Prepare so float conversion succeeds
+            value = value.lower()
+            value = value.replace("d", "e")
             value = value.split(",")
             if value[-1] == '':
                 value = value[:-1]
@@ -1200,6 +1331,88 @@ def test(f):
     except:
         return False
 
+class StructuredInputData():
+    """Combines structured input file data and methods for accessing it.
+
+    This class uses the InDat class to read in an IN.DAT input file and create
+    a structured dict from it, combined with methods for accessing the data in
+    that dict. This is useful for exporting the IN.DAT data to other modules, 
+    for example the input_validator module.
+    
+    The data dict stored within this class differs from the INDat.data dict in 
+    that it has a hierarchical structure that more closely resembles the IN.DAT
+    input file, and hence it is more human-readable and ready to output to file.
+    
+    An example of the structure:
+    self.data["parameters"]["physics_variables"]["ishape"]["value"] = 0
+    """
+    def __init__(self, filename="IN.DAT"):
+        """Use InDat to create the data dict.
+        
+        Use InDat to read in an input file and store the data, then construct a
+        structured input data dict from it.
+
+        :param filename: input data filename, defaults to "IN.DAT"
+        :type filename: str, optional
+        """
+        self.data = {}
+        # Structured input data dict
+        
+        in_dat = InDat(filename)
+
+        self.data["constraint_equations"] = get_constraint_equations(
+            in_dat.data)
+        self.data["iteration_variables"] = get_iteration_variables(
+            in_dat.data)
+        self.data["parameters"] = get_parameters(in_dat.data, 
+            use_string_values=False)
+
+    def get_param(self, var_name):
+        """Get a parameter's dict from the data.
+        
+        :param var_name: The name of the parameter to be returned
+        :type var_name: str
+        :return: Dictionary of parameter's information, or None if not found
+        :rtype: dict
+        """
+        modules = self.data["parameters"]
+
+        for module_dict in modules.values():
+            var_dict = module_dict.get(var_name)
+            if var_dict is not None:
+                break
+
+        return var_dict
+
+    def is_param_defined(self, var_name):
+        """Check if a parameter is defined or not in the input data.
+        
+        :param var_name: Name of the parameter to be checked
+        :type var_name: str
+        :return: True if defined, False if not
+        :rtype: bool
+        """
+        defined = False
+
+        if self.get_param(var_name):
+            defined = True
+
+        return defined
+
+    def get_param_value(self, var_name):
+        """Gets the value of a parameter from the input data.
+        
+        :param var_name: The name of the parameter
+        :type var_name: str
+        :return: Value of that parameter; can be any type. None if not found.
+        :rtype: int, float
+        """
+        value = None
+        var_dict = self.get_param(var_name)
+        if var_dict:
+            value = var_dict.get("value")
+
+        return value
 
 if __name__ == "__main__":
     # i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")

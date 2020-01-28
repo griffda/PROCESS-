@@ -351,8 +351,7 @@ contains
           call parse_real_variable('coreradius', coreradius, 0.0D0, 1.0D0, &
                'Normalised core radius')
        case ('coreradiationfraction')
-          call parse_real_variable('coreradiationfraction', &
-               coreradiationfraction, 0.0D0, 1.0D0, &
+          call parse_real_variable('coreradiationfraction', coreradiationfraction, 0.0D0, 1.0D0, &
                'Fraction of core radiation subtracted from P_L')
        case ('csawth')
           call parse_real_variable('csawth', csawth, 0.0D0, 10.0D0, &
