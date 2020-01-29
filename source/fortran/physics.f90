@@ -11,38 +11,11 @@ module physics_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_variables
-  use constants
-  use constraint_variables
-  use current_drive_module
-  use current_drive_variables
-  use divertor_variables
-  use error_handling
-  use fwbs_variables
-  use grad_func
-  use heat_transport_variables
-  use impurity_radiation_module
-  use maths_library
-  use numerics
-  use physics_functions_module
-  use physics_variables
-  use plasmod_module
-  use plasmod_variables
-  use profiles_module
-  use process_output
-  use pulse_variables
-  use reinke_variables
-  use startup_variables
-  use stellarator_variables
-  use tfcoil_variables
-  use times_variables
-  use reinke_module
-
   implicit none
 
   private
   public :: bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
-       physics,plasma_composition,pohm,radpwr,rether, subr
+       physics,plasma_composition,pohm, rether, subr
 
   !  Module-level variables
 
@@ -83,6 +56,47 @@ end subroutine subr
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use divertor_kallenbach_variables, only: impurity_enrichment, netau_sol
 
+    use build_variables, only: fwarea
+    use constraint_variables, only: peakradwallload, flhthresh, peakfactrad
+    use current_drive_module, only: cudriv
+    use current_drive_variables, only: irfcd, bscf_nevins, bscfmax, cboot, &
+      cnbeam, ftritbm, bscf_wilson, bscf_sauter, pinjmw, bootipf, pinjimw, &
+      bscf_iter89, pinjemw, enbeam
+    use divertor_variables, only: prn1
+    use error_handling, only: idiags, report_error
+    use fwbs_variables, only: fhcd, fdiv
+    use impurity_radiation_module, only: fimp, impurity_arr
+    use physics_functions_module, only: plasma_elongation_ipb, &
+      total_mag_field, res_diff_time, t_eped_scaling, beta_poloidal, palph2, &
+      radpwr, pthresh, beamfus, palph
+    use physics_variables, only: ptremw, idensl, res_time, ignite, vol, dnalp, &
+      teped, beta, dnelimt, taup, pradpv, fgwped, photon_wall, kappaa_ipb, &
+      kappaa, gamma, plhthresh, betap, fvsbrnni, btot, hfact, nesep, palpfwmw, &
+      betanb, pradmw, rad_fraction, q95, wallmw, zeffai, dnla, vsstt, &
+      pedgeradmw, falpi, tin, ralpne, triang95, ti, tesep, ibss, dene, p0, &
+      psyncpv, pscalingmw, rad_fraction_sol, pcoreradmw, rplas, zeff, &
+      normalised_total_beta, pdhe3, pdivmax, pdivl, fgwsep, pdt, pdd, xarea, &
+      faccd, iwalld, itart, pdivu, gtscale, idivrt, pneutmw, neped, ipedestal, &
+      icurr, betalim, pdivt, te0, dlamie, dnbeta, ptrimw, facoh, te, &
+      protonrate, powfmw, rndfuel, csawth, q, ealphadt, falpha, &
+      pfuscmw, sarea, fusionrate, ilhthresh, pneutpv, isc, vsres, ftar, &
+      pedgeradpv, betbm0, palpnb, kappa95, rpfac, tauei, plinepv, ieped, &
+      aspect, falpe, piepv, pchargemw, alphat, triang, ne0, ten, aion, betaft, &
+      afuel, vsind, sf, palpipv, taueff, pcoreradpv, eps, &
+      dlimit, qfuel, pchargepv, pbrempv, pohmpv, alpharate, dnbeam2, ffwal, &
+      iinvqd, dnitot, alphan, beamfus0, palpmw, kappa, figmer, tauee, iprofile, &
+      rminor, vsbrn, ifalphap, palppv, palpepv, pohmmw, rlp, rmajor, ptripv, &
+      dntau, ftrit, bt, fhe3, rli, pthrmw, burnup, phiint, ptrepv, alphap, &
+      qstar, powerht, alphaj, fdeut, deni, q0, pperim, plascur, bp
+    use plasmod_module, only: convert_plasmod2process, setupplasmod
+    use profiles_module, only: plasma_profiles
+    use process_output, only: verbose, geom, icc, pi, echarge, loss, mhd, &
+      radp, ped, nout, rmu0, num, inp0, i_flag, comp
+    use pulse_variables, only: lpulse
+    use reinke_variables, only: lhat, fzactual, impvardiv, fzmin
+    use times_variables, only: tramp, theat, tcycle, tpulse, tohs, tburn0, &
+      tdwell, pulsetimings, tqnch, tohsin, tburn, tdown
+    use reinke_module, only: reinke_tsep, reinke_fzmin
     implicit none
     !  Local variables
 
@@ -575,6 +589,9 @@ end subroutine subr
 
   function eped_warning()
       ! Issue #413.  MDK 26/2/18: improved output
+    use physics_variables, only: rminor, tesep, triang, rmajor, kappa, &
+      normalised_total_beta, plascur
+    implicit none
       character(len=100) :: eped_warning, info_string
       eped_warning=''
       info_string = ''
@@ -632,6 +649,8 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use physics_functions_module, only: radpwr
+		use process_output, only: rmu0, pi
     implicit none
 
     real(kind(1.0D0)) :: bootstrap_fraction_iter89
@@ -688,6 +707,8 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use physics_variables, only: te0, ne0
+		use process_output, only: rmu0, echarge
     implicit none
 
     real(kind(1.0D0)) :: bootstrap_fraction_nevins
@@ -807,6 +828,7 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, report_error
     implicit none
 
     real(kind(1.0D0)) :: bootstrap_fraction_wilson
@@ -931,6 +953,11 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use physics_variables, only: dnitot, rminor, tesep, ti, triang, q0, afuel, &
+      zeff, rhopedn, bt, plascur, xarea, fhe3, teped, dene, te, rmajor, q, &
+      nesep, te0, neped, tbeta, ne0, alphan, rhopedt, alphat
+		use profiles_module, only: tprofile, nprofile
+		use process_output, only: pi
     implicit none
 
     real(kind(1.0D0)) :: bootstrap_fraction_sauter
@@ -1678,6 +1705,9 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: idiags, report_error
+		use physics_variables, only: normalised_total_beta, beta
+		use process_output, only: rmu0, pi
     implicit none
 
     !  Arguments
@@ -1994,6 +2024,7 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use process_output, only: rmu0, pi
     implicit none
 
     real(kind(1.0D0)) :: bpol
@@ -2114,6 +2145,14 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use current_drive_variables, only: ftritbm
+		use error_handling, only: fdiags, report_error
+    use impurity_radiation_module, only: nimp, impurity_arr, element2index, &
+      zav_of_te
+    use physics_variables, only: alphat, ignite, falpe, afuel, ftrit, deni, &
+      aion, dnitot, protium, zeffai, rncne, rnone, falpi, ralpne, dlamee, &
+      rnbeam, zeff, dnz, pcoef, alpharate, rnfene, abeam, dlamie, te, &
+      protonrate, fdeut, alphan, dnbeam, fhe3, dnalp, dene, dnprot
     implicit none
 
     !  Arguments
@@ -2310,6 +2349,8 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, idiags, report_error
+		use process_output, only: pi
     implicit none
 
     !  Arguments
@@ -2467,6 +2508,11 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: idiags, report_error
+    use physics_variables, only: iradloss, tauee_in, pradpv, kappaa_ipb, &
+      pohmmw, falpha
+		use process_output, only: pi
+		use startup_variables, only: ptaue, gtaue, ftaue, rtaue, qtaue
     implicit none
 
     !  Arguments
@@ -3144,6 +3190,7 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use process_output, only: rmu0
     implicit none
 
     !  Arguments
@@ -3229,6 +3276,7 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use physics_variables, only: tauratio
     implicit none
 
     !  Arguments
@@ -3356,6 +3404,8 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, report_error
+		use physics_variables, only: aspect, plasma_res_factor
     implicit none
 
     !  Arguments
@@ -3417,6 +3467,12 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use current_drive_variables, only: pinjmw
+    use physics_variables, only: vol, palpmw, zeff, pchargemw, hfac, xarea, &
+      tin, tauscl, eps, kappaa, dnla, kappa95, ten, te, kappa, dnitot, dene, &
+      iinvqd, rminor, bt, rmajor, ignite, aspect, qstar, q, afuel, plascur, &
+      pcoreradpv
+		use process_output, only: oheadr, oblnkl
     implicit none
 
     !  Arguments
@@ -3471,6 +3527,7 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use process_output, only: zeroin
     implicit none
 
     real(kind(1.0D0)) :: fhfac
@@ -3511,6 +3568,11 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use current_drive_variables, only: pinjmw
+    use physics_variables, only: iradloss, vol, palpmw, pradpv, pchargemw, &
+      zeff, pohmpv, pchargepv, xarea, tin, eps, kappaa, dnla, palppv, kappa95, &
+      ten, te, kappa, falpha, dnitot, dene, iinvqd, rminor, bt, rmajor, &
+      ignite, aspect, qstar, q, afuel, plascur, pcoreradpv
     implicit none
 
     real(kind(1.0D0)) :: fhz
@@ -3570,6 +3632,36 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constraint_variables, only: maxradwallload, peakradwallload, fbetatry, &
+      taulimit, peakfactrad
+    use current_drive_variables, only: bscf_nevins, bscfmax, cboot, &
+      bscf_wilson, bscf_sauter, pinjmw, bscf_iter89, bootipf, pinjimw, pinjemw
+		use error_handling, only: fdiags, idiags, report_error
+    use impurity_radiation_module, only: nimp, coreradiationfraction, &
+      coreradius, fimp, impurity_arr
+    use physics_variables, only: ieped, ftar, dnelimt, fgwped, kappaa, deni, &
+      betap, iculbl, rad_fraction, palpnb, ten, falpi, iradloss, pthrmw, &
+      ralpne, taueff, dntau, dene, rad_fraction_sol, iprofile, rhopedn, &
+      xarea, itart, epbetmax, neped, te0, ptrimw, dnbeta, powerht, psyncpv, &
+      res_time, ignite, vol, bvert, tbeta, photon_wall, burnup, kappaa_ipb, &
+      hfact, ilhthresh, alphan, fkzohm, alpha_crit, pohmmw, pedgeradmw, qlim, &
+      qfuel, triang95, rplas, zeff, pdhe3, plascur, pdt, pdd, pbrempv, &
+      ipedestal, dlamie, vsres, falpe, rli, ptremw, alphat, rminor, isc, &
+      teped, fdeut, gamma, dnprot, ftrit, aion, btot, vsbrn, betanb, protium, &
+      pchargemw, wallmw, vsstt, aspect, ti, q0, pcoreradmw, &
+      normalised_total_beta, pdivmax, dnbeam, kappa95, nesep_crit, fhe3, &
+      triang, pneutmw, tauee, betalim, rlp, te, dlimit, ne0, qstar, dnalp, &
+      taup, sarea, ti0, plhthresh, bp, dnitot, pradmw, csawth, rndfuel, q95, &
+      rhopedt, tauratio, pperim, tesep, vsind, ibss, alphaj, dnz, q, ssync, &
+      psolradmw, tauei, ishape, plinepv, palpmw, icurr, pdivt, gammaft, powfmw
+    use physics_variables, only: betaft, tauscl, fgwsep, rmajor, falpha, &
+      nesep, facoh, kappa, dlimit, beta, dlimit, eps, pthrmw, dnla, bt, &
+      pthrmw, pthrmw, pthrmw, idivrt
+    use process_output, only: mproton, int_to_string2, active_constraints, &
+      mfile, boundu, icc, boundl, rmu0, pi, ioptimz, epsilon0, echarge, &
+      ovarre, ovarrf, oheadr, oblnkl, ovarin, ocmmnt, osubhd, ovarst
+		use reinke_variables, only: fzactual, impvardiv, fzmin
+		use stellarator_variables, only: iotabar, istell
     implicit none
 
     !  Arguments
@@ -4230,6 +4322,8 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use process_output, only: ovarrf, ovarre, oheadr, oblnkl
+		use times_variables, only: tramp, theat, tcycle, tohs, tdwell, tqnch, tburn
     implicit none
 
     !  Arguments

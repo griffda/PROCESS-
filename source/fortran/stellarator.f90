@@ -645,7 +645,7 @@ contains
     use fwbs_variables, only: fdiv, fhcd, fhole
     use heat_transport_variables, only: ipowerflow
     use physics_functions_module, only: palph, beamfus, palph2
-    use physics_module, only: plasma_composition, rether, radpwr, pcond, phyaux
+    use physics_module, only: plasma_composition, rether, pcond, phyaux
     use physics_variables, only: afuel, alphan, alpharate, alphat, aspect, &
       beamfus0, beta, betaft, betalim, betanb, betap, betbm0, bp, bt, btot, &
       burnup, dene, deni, dlamie, dnalp, dnbeam2, dnelimt, dnitot, dnla, &
@@ -662,6 +662,7 @@ contains
     use process_output, only: echarge, nout
     use profiles_module, only: plasma_profiles
     use stellarator_variables, only: f_rad, iotabar
+    use physics_functions_module, only: radpwr
     implicit none
 
     !  Arguments
