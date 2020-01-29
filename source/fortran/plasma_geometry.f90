@@ -12,11 +12,6 @@ module plasma_geometry_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_variables
-  use constants
-  use physics_variables
-
-
   implicit none
 
   private
@@ -44,6 +39,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: scraplo, scrapli
+    use constants, only: twopi, pi
+    use physics_variables, only: eps, pperim, sareao, rminor, kappa95, sarea, &
+      triang95, fkzohm, vol, ishape, xarea, igeom, qlim, sf, iscrp, triang, &
+      cvol, rmajor, kappa, aspect
     implicit none
 
     !  Arguments
