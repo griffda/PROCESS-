@@ -169,46 +169,6 @@ def find_parameter_group(name):
         if name in DICT_MODULE[key]:
             return key
 
-
-def process_constraint_equation(data, line):
-    """ Function to process constraint equation entry in IN.DAT
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line: Line from IN.DAT to process
-    :return: Nothing
-    """
-
-    # Remove comment from line to make things easier
-    no_comment_line = line.split("*")[0].split("=")
-
-    # If the line contains a constraint equation in the form ICC(#)
-    if "(" in no_comment_line[0] and ")" in no_comment_line[0]:
-        constraints = [no_comment_line[1].strip()]
-
-    # Else the line contains a list of constraint equations icc = #, #, #
-    else:
-        constraints = no_comment_line[1].strip().split(",")
-        if "" in constraints:
-            constraints.remove("")
-
-    # List of new constraints read in
-    value = [int(item.strip()) for item in constraints]
-
-    # Populate data dictionary with constraint equations
-    # If constraint equation list not already in data dictionary initialise
-    # INVariable class
-    if "icc" not in data.keys():
-        data["icc"] = INVariable("icc", value, "Constraint Equation",
-                                 "Constraint Equation", "Constraint Equations")
-
-    else:
-        # Add constraint equation numbers to list
-        for item in constraints:
-            if int(item) not in data["icc"].value:
-                data["icc"].value.append(int(item))
-        data["icc"].value.sort()
-
-
 def process_iteration_variables(data, line):
     """ Function to process iteration variables entry in IN.DAT
 
@@ -1081,7 +1041,7 @@ class InDat(object):
 
         # Constraint equations
         if line_type == "Constraint Equation":
-            process_constraint_equation(self.data, line)
+            self.process_constraint_equation(line)
 
         # Iteration_variables
         elif line_type == "Iteration Variable":
@@ -1162,6 +1122,46 @@ class InDat(object):
 
         # Populate the IN.DAT dictionary with the information
         self.data[name] = INVariable(name, value, "Parameter", parameter_group, comment)
+
+    def process_constraint_equation(self, line):
+        """ Function to process constraint equation entry in IN.DAT
+
+        :param line: Line from IN.DAT to process
+        :return: Nothing
+        """
+
+        # Remove comment from line to make things easier
+        no_comment_line = line.split("*")[0].split("=")
+
+        # If the line contains a constraint equation in the form ICC(#)
+        if "(" in no_comment_line[0] and ")" in no_comment_line[0]:
+            constraints = [no_comment_line[1].strip()]
+
+        # Else the line contains a list of constraint equations icc = #, #, #
+        else:
+            constraints = no_comment_line[1].strip().split(",")
+            if "" in constraints:
+                constraints.remove("")
+
+        # List of new constraints read in
+        value = [int(item.strip()) for item in constraints]
+
+        # Populate data dictionary with constraint equations
+        # If constraint equation list not already in data dictionary initialise
+        # INVariable class
+        if "icc" not in self.data.keys():
+            self.data["icc"] = INVariable("icc", value, "Constraint Equation",
+                                    "Constraint Equation", "Constraint Equations")
+
+        else:
+            # Add constraint equation numbers to list
+            for item in constraints:
+                if int(item) not in self.data["icc"].value:
+                    self.data["icc"].value.append(int(item))
+                else:
+                    # Duplicate constraint equation number
+                    self.add_duplicate_variable(f"icc = {item}")
+            self.data["icc"].value.sort()
 
     def add_duplicate_variable(self, name):
         """Records duplicate variables in the input file.
