@@ -169,45 +169,6 @@ def find_parameter_group(name):
         if name in DICT_MODULE[key]:
             return key
 
-def process_iteration_variables(data, line):
-    """ Function to process iteration variables entry in IN.DAT
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line: Line from IN.DAT to process
-    :return: Nothing
-    """
-
-    # Remove comment from line to make things easier
-    no_comment_line = line.split("*")[0].split("=")
-
-    # If the line contains an iteration variable in the form IXC(#)
-    if "(" in no_comment_line[0] and ")" in no_comment_line[0]:
-        iteration_variables = [no_comment_line[1].strip()]
-
-    # Else the line contains a list of iteration variables IXC = #, #, #
-    else:
-        iteration_variables = no_comment_line[1].strip().split(",")
-        if "" in iteration_variables:
-            iteration_variables.remove("")
-
-    # List of new constraints read in
-    value = [int(item.strip()) for item in iteration_variables]
-
-    # Populate data dictionary with iteration variables
-    # If iteration variables list not already in data dictionary initialise
-    # INVariable class
-    if "ixc" not in data.keys():
-        data["ixc"] = INVariable("ixc", value, "Iteration Variable",
-                                 "Iteration Variable", "Iteration Variables")
-
-    else:
-        # Add iteration variable to list
-        for item in iteration_variables:
-            if int(item) not in data["ixc"].value:
-                data["ixc"].value.append(int(item))
-        data["ixc"].value.sort()
-
-
 def process_bound(data, line):
     """ Function to process bound entries in IN.DAT
 
@@ -1045,7 +1006,7 @@ class InDat(object):
 
         # Iteration_variables
         elif line_type == "Iteration Variable":
-            process_iteration_variables(self.data, line)
+            self.process_iteration_variables(line)
 
         # Bounds
         elif line_type == "Bound":
@@ -1162,6 +1123,46 @@ class InDat(object):
                     # Duplicate constraint equation number
                     self.add_duplicate_variable(f"icc = {item}")
             self.data["icc"].value.sort()
+
+    def process_iteration_variables(self, line):
+        """ Function to process iteration variables entry in IN.DAT
+
+        :param line: Line from IN.DAT to process
+        :return: Nothing
+        """
+
+        # Remove comment from line to make things easier
+        no_comment_line = line.split("*")[0].split("=")
+
+        # If the line contains an iteration variable in the form IXC(#)
+        if "(" in no_comment_line[0] and ")" in no_comment_line[0]:
+            iteration_variables = [no_comment_line[1].strip()]
+
+        # Else the line contains a list of iteration variables IXC = #, #, #
+        else:
+            iteration_variables = no_comment_line[1].strip().split(",")
+            if "" in iteration_variables:
+                iteration_variables.remove("")
+
+        # List of new constraints read in
+        value = [int(item.strip()) for item in iteration_variables]
+
+        # Populate data dictionary with iteration variables
+        # If iteration variables list not already in data dictionary initialise
+        # INVariable class
+        if "ixc" not in self.data.keys():
+            self.data["ixc"] = INVariable("ixc", value, "Iteration Variable",
+                                    "Iteration Variable", "Iteration Variables")
+
+        else:
+            # Add iteration variable to list
+            for item in iteration_variables:
+                if int(item) not in self.data["ixc"].value:
+                    self.data["ixc"].value.append(int(item))
+                else:
+                    # Duplicate iteration variable
+                    self.add_duplicate_variable(f"ixc = {item}")
+            self.data["ixc"].value.sort()
 
     def add_duplicate_variable(self, name):
         """Records duplicate variables in the input file.
@@ -1367,7 +1368,7 @@ class StructuredInputData():
         """
         self.data = {}
         # Structured input data dict
-        
+
         in_dat = InDat(filename)
 
         self.data["constraint_equations"] = get_constraint_equations(
