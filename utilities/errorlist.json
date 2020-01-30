@@ -244,6 +244,7 @@
   {"no": 238, "level": 3, "message": "CHECK: TF legs conductor temperature (tlegav) should be < 40 K for the cryo-al resistivity to be defined."},
   {"no": 239, "level": 3, "message": "CHECK: TF legs conductor temperature (tlegav) cannot be < 0 C (273.15 K) for water cooled magents."},
   {"no": 240, "level": 3, "message": "CHECK: Too large CP conductor temperature (tcpav). Upper limit for cryo-al < 50 K"},
-  {"no": 241, "level": 3, "message": "CHECK: Too low CP conductor temperature (tcpav). Lower limit for copper > 273.15 K"}
+  {"no": 241, "level": 3, "message": "CHECK: Too low CP conductor temperature (tcpav). Lower limit for copper > 273.15 K"},
+  {"no": 242, "level": 3, "message": "CHECK: Constraint 32 (conduit stress limit) depreciated (same stress limit for case and WP conduit)"}
  ]
 }

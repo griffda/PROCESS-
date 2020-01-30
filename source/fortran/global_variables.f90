@@ -2169,8 +2169,6 @@ module tfcoil_variables
 
   real(kind(1.0D0)) :: dalu = 2700.0D0
   !! dalu /2700.0/ : density of aluminium (kg/m3)
-  real(kind(1.0D0)) :: deflect = 0.0D0
-  !! deflect : TF coil deflection at full field (m)
   real(kind(1.0D0)), parameter :: denh2o = 985.0D0
   !! denh2o /985.0/ FIX : density of water (kg/m3)
   real(kind(1.0D0)) :: dhecoil = 0.005D0
@@ -2279,30 +2277,34 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ritfc = 0.0D0
   !! ritfc : total (summed) current in TF coils (A)
   
-  real(kind(1.0D0)) :: sigrad = 0.0D0
-  !! sigrad : radial TF coil stress (MPa)
-  real(kind(1.0D0)) :: sigrcon = 0.0D0
-  !! sigrcon : radial stress in the conductor conduit (Pa)
-  real(kind(1.0D0)), dimension(2) :: sigrtf = 0.0D0
-  !! sigrtf(2) : radial stress in TF coil regions (Pa)
-  real(kind(1.0D0)) :: sigtan = 0.0D0
-  !! sigtan : transverse TF coil stress (MPa)
-  real(kind(1.0D0)) :: sigtcon = 0.0D0
-  !! sigtcon : tangential stress in the conductor conduit (Pa)
-  real(kind(1.0D0)), dimension(2) :: sigttf = 0.0D0
-  !! sigttf(2) : tangential stress in TF coil regions (Pa)
-  real(kind(1.0D0)) :: s_tresca_case  = 0.0D0
-  !! s_tresca_case : TF coil case Tresca stress (MPa)
-  real(kind(1.0D0)) :: s_tresca_cond  = 0.0D0
-  !! s_tresca_cond : TF coil conduit Tresca stress (MPa)
-  real(kind(1.0D0)) :: s_vmises_case  = 0.0D0
-  !! s_vmises_case : TF coil case von Mises stress (MPa)
-  real(kind(1.0D0)) :: s_vmises_cond  = 0.0D0
-  !! s_vmises_cond : TF coil conduit von Mises stress (MPa)
-  real(kind(1.0D0)) :: sigver  = 0.0D0
-  !! sigver : vertical TF coil stress (MPa)
-  real(kind(1.0D0)) :: sigvert = 0.0D0
-  !! sigvert : vertical tensile stress in TF coil (Pa)
+  integer, parameter :: n_radial_array = 50
+  !! Size of the radial distribution arrays per layers
+  !! used for stress, strain and displacement distibution
+
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: radial_array = 0.0D0
+  !! Array refining the radii of the stress calculations arrays
+
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_r = 0.0D0
+  !! TF Inboard leg radial stress r distribution at mid-plane [Pa]
+  
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_t = 0.0D0
+  !! TF Inboard leg tangential stress r distribution at mid-plane [Pa]
+  
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: deflect = 0.0D0
+  !! TF coil radial deflection (displacement) radial distribution [m]
+
+  real(kind(1.0D0)) :: sig_tf_z = 0.0D0
+  !! TF Inboard leg vertical tensile stress at mid-plane [Pa]
+    
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_vmises = 0.0D0
+  !! TF Inboard leg Von-Mises stress r distribution at mid-plane [Pa]
+      
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_tresca = 0.0D0 
+  !! TF Inboard leg TRESCA stress r distribution at mid-plane [Pa]
+
+  real(kind(1.0D0)) :: strtf = 0.0D0
+  !! strtf : Constrained stress in TF Steel structures (Pa)
+    
   real(kind(1.0D0)) :: sigvvall = 9.3D7
   !! sigvvall /9.3e7/ : allowable stress from TF quench in vacuum vessel (Pa)
   real(kind(1.0D0)) :: strncon_cs = -0.005D0
@@ -2314,10 +2316,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: strncon_tf = -0.005D0
   !! strncon_tf /-0.005/ : strain in TF superconductor material
   !!                    (used in Nb3Sn critical surface model, isumattf=1, 4 or 5)
-  real(kind(1.0D0)) :: strtf1 = 0.0D0
-  !! strtf1 : Constrained stress in TF conductor conduit (Pa)
-  real(kind(1.0D0)) :: strtf2 = 0.0D0
-  !! strtf2 : Constrained stress in TF coil case (Pa)
 
   ! Issue #522: Quench models
   character(len=12) :: quench_model = 'exponential'

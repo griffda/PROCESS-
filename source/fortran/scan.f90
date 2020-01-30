@@ -340,7 +340,7 @@ contains
         outvar(34,iscan) = hldiv
         outvar(35,iscan) = tfcmw
         outvar(36,iscan) = whttf
-        outvar(37,iscan) = strtf2
+        outvar(37,iscan) = strtf
         outvar(38,iscan) = oacdcp/1.0D6
         outvar(39,iscan) = tcpmax
         outvar(40,iscan) = tfcpmw
@@ -603,7 +603,7 @@ contains
             outvar(34,iscan) = hldiv
             outvar(35,iscan) = tfcmw
             outvar(36,iscan) = whttf
-            outvar(37,iscan) = strtf2
+            outvar(37,iscan) = strtf
             outvar(38,iscan) = oacdcp/1.0D6
             outvar(39,iscan) = tcpmax
             outvar(40,iscan) = tfcpmw

@@ -628,7 +628,6 @@ subroutine check
     end if
 
     !  Check that sufficient elements of ixc and icc have been specified
-
     if ( any(ixc(1:nvar) == 0) ) then
         idiags(1) = nvar
         call report_error(139)
@@ -641,7 +640,6 @@ subroutine check
     end if
 
     !  Deprecate constraints 3 and 4
-
     if ( any(icc(1:neqns+nineqns) == 3) ) then
         call report_error(162)
         write(*,*) 'PROCESS stopping'
@@ -651,6 +649,12 @@ subroutine check
     if ( any(icc(1:neqns+nineqns) == 4) ) then
         call report_error(163)
         write(*,*) 'PROCESS stopping'
+        stop
+    end if
+
+    !  Depreciating constraint 32 (Only one TF stress limit is enough)
+    if ( any(icc(1:neqns+nineqns) == 32) ) then
+        call report_error(242)
         stop
     end if
 
