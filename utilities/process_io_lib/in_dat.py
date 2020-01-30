@@ -169,45 +169,6 @@ def find_parameter_group(name):
         if name in DICT_MODULE[key]:
             return key
 
-def process_bound(data, line):
-    """ Function to process bound entries in IN.DAT
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line: Line from IN.DAT to process
-    :return: Nothing
-    """
-
-    # Initialise bound type
-    bound_type = None
-
-    # Remove comment from line to make things easier
-    no_comment_line = line.split("*")[0].split("=")
-
-    # If upper bound
-    if "boundu" in no_comment_line[0]:
-        bound_type = "u"
-
-    # If lower bound
-    elif "boundl" in no_comment_line[0]:
-        bound_type = "l"
-
-    # Get bound information
-    bound = no_comment_line[0].strip("boundl").replace("(", "").\
-        replace(")", "").strip()
-    bound_value = no_comment_line[1].strip().replace(",", "").replace("d", "e").\
-        replace("D", "e")
-
-    # If bound not in the bound dictionary then add entry for bound with an
-    # empty dictionary
-    if bound not in data["bounds"].value.keys():
-        data["bounds"].value[bound] = dict()
-
-    # Populate data dictionary with bound information
-    data["bounds"].value[bound][bound_type] = bound_value
-
-
-
-
 def process_array(data, line):
     """Function to process generic array
 
@@ -1010,7 +971,7 @@ class InDat(object):
 
         # Bounds
         elif line_type == "Bound":
-            process_bound(self.data, line)
+            self.process_bound(line)
 
         # Arrays
         elif line_type == "Array":
@@ -1163,6 +1124,44 @@ class InDat(object):
                     # Duplicate iteration variable
                     self.add_duplicate_variable(f"ixc = {item}")
             self.data["ixc"].value.sort()
+
+    def process_bound(self, line):
+        """ Function to process bound entries in IN.DAT
+
+        :param line: Line from IN.DAT to process
+        :return: Nothing
+        """
+
+        # Initialise bound type
+        bound_type = None
+
+        # Remove comment from line to make things easier
+        no_comment_line = line.split("*")[0].split("=")
+
+        # If upper bound
+        if "boundu" in no_comment_line[0]:
+            bound_type = "u"
+
+        # If lower bound
+        elif "boundl" in no_comment_line[0]:
+            bound_type = "l"
+
+        # Get bound information
+        bound = no_comment_line[0].strip("boundl").replace("(", "").\
+            replace(")", "").strip()
+        bound_value = no_comment_line[1].strip().replace(",", "").replace("d", "e").\
+            replace("D", "e")
+
+        # If bound not in the bound dictionary then add entry for bound with an
+        # empty dictionary
+        if bound not in self.data["bounds"].value.keys():
+            self.data["bounds"].value[bound] = dict()
+        elif self.data["bounds"].value[bound].get(bound_type):
+            # Duplicate bound
+            self.add_duplicate_variable(f"bound{bound_type}({bound})")
+
+        # Populate self.data dictionary with bound information
+        self.data["bounds"].value[bound][bound_type] = bound_value
 
     def add_duplicate_variable(self, name):
         """Records duplicate variables in the input file.
