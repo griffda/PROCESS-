@@ -13,7 +13,7 @@ from process_io_lib import in_dat
 from process_io_lib import input_validator_rules
 from rootdir import ROOTDIR as FORTRAN_SOURCE_ROOTDIR
 
-INPUT_FILE_PATH = "IN.DAT"
+INPUT_FILE_PATH = "tracking/baseline_2018/baseline_2018_IN.DAT"
 # Todo: make dynamic
 
 class RuleList(object):
