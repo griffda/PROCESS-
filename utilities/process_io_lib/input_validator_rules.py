@@ -250,3 +250,19 @@ class Dnbeta(Rule):
         else:
             # dnbeta is calculated
             self.check_undefined("dnbeta")
+
+class DuplicateChecker(Rule):
+    """Ensures there are no duplicate variable initialisations."""
+    def __init__(self):
+        """Set tags specific to DuplicateChecker"""
+        super().__init__(["duplicates"])
+    
+    def check(self):
+        """Find any duplicate variables in the input data."""
+        duplicates = self.data.duplicates
+        if duplicates:
+            # Got some duplicates
+            self.passed = False
+            duplicates_no = len(duplicates)
+            message = f"Found {duplicates_no} duplicates: {duplicates}"
+            self.messages.append(message)
