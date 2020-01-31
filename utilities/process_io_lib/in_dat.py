@@ -169,26 +169,6 @@ def find_parameter_group(name):
         if name in DICT_MODULE[key]:
             return key
 
-def process_array(data, line):
-    """Function to process generic array
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line: Line from IN.DAT to process
-    :return: nothing
-    """
-
-    if "*" in line:
-        array_comment = line.split("*")[1]
-        line_commentless = line.split("*")[0]
-    else:
-        line_commentless = line
-
-    name  = line_commentless.split("(")[0]
-    index = int(line_commentless.split("(")[1].split(")")[0]) - 1
-    value = line_commentless.split("=")[-1].replace(",", "")
-
-    data[name].value[index] = eval(fortran_python_scientific(value))
-
 def write_title(title, out_file):
     """ Function to write title line to file with fixed width
 
@@ -980,19 +960,23 @@ class InDat(object):
             #if it does not yet exist
             line_commentless = line.split("*")[0]
             array_name = line_commentless.split("(")[0]
+            empty_array = DICT_DEFAULT[array_name]
             if array_name not in self.data.keys():
-                empty_array = DICT_DEFAULT[array_name]
                 parameter_group = find_parameter_group(array_name)
 
                 # Get parameter comment/description from dictionary
                 comment = DICT_DESCRIPTIONS[array_name].replace(",", ";").\
                         replace(".", ";").replace(":", ";")
                 
-                self.data[array_name] = INVariable(array_name, empty_array, array_name,
+                empty_array_copy = empty_array[:]
+                # Copy empty_array to decouple reference of self.data to 
+                # DICT_DEFAULT; don't want changes to data to change the 
+                # defaults
+                self.data[array_name] = INVariable(array_name, empty_array_copy, array_name,
                                             parameter_group, comment)
 
             
-            process_array(self.data, line)
+            self.process_array(line, empty_array)
             
             
         # Parameter
@@ -1162,6 +1146,39 @@ class InDat(object):
 
         # Populate self.data dictionary with bound information
         self.data["bounds"].value[bound][bound_type] = bound_value
+
+    def process_array(self, line, empty_array):
+        """Function to process generic array
+
+        :param line: Line from IN.DAT to process
+        :param empty_array: Default array for this array name
+        :return: nothing
+        """
+
+        if "*" in line:
+            array_comment = line.split("*")[1]
+            line_commentless = line.split("*")[0]
+        else:
+            line_commentless = line
+
+        name  = line_commentless.split("(")[0]
+        index = int(line_commentless.split("(")[1].split(")")[0]) - 1
+        value = line_commentless.split("=")[-1].replace(",", "")
+
+        # Array has already been set to default values (empty_array)
+        # Need a way of checking for duplicate initialisations
+        # If value is changing from default to custom value, then interpret as 
+        # first initialisation. If value is changing from one custom value to
+        # another, then interpret as a duplicate initialisation
+
+        if self.data[name].value[index] != empty_array[index]:
+            # This array index is already not its default value; any further 
+            # change must be a duplicate initialisation
+            fortran_index = index + 1 
+            # Index begins at 1!
+            self.add_duplicate_variable(f"{name}({fortran_index})")
+
+        self.data[name].value[index] = eval(fortran_python_scientific(value))
 
     def add_duplicate_variable(self, name):
         """Records duplicate variables in the input file.
