@@ -1109,20 +1109,21 @@ subroutine stresscl
     !  Local variables
 
     integer :: ii
+    !! do loop index
 
-    ! Index of the maximum TRESCA stress
     integer :: ii_max
+    !! Index of the maximum TRESCA stress
 
-    ! Working float to find maximum TRESCA stress index
     real(kind(1.0D0)) :: sig_max
+    !! Working float to find maximum TRESCA stress index
 
     real(kind(1.0D0)) :: seff, tcbs, fac, t_ins_eff
     
     real(kind(1.0D0)) :: svmxz
-    !! Von-mises stress seting the radial stress to 0
+    !! Von-mises stress setting the radial stress to 0
 
     real(kind(1.0D0)) :: svmyz
-    !! Von-mises stress seting the toroidal stress to 0
+    !! Von-mises stress setting the toroidal stress to 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1167,7 +1168,6 @@ subroutine stresscl
     ! Radial - Toroidal stress radial distribution [Pa]
     call two_layer_stress( poisson, radtf, eyoung, jeff,             & ! Inputs
                            sig_tf_r, sig_tf_t, deflect, radial_array ) ! Outputs
-
 
     ! Vertical stress [Pa]
     sig_tf_z = vforce / (acasetf + acndttf*turnstf)
@@ -1254,8 +1254,8 @@ subroutine stresscl
     sig_tf_vmises_max(2) = sig_tf_vmises(ii_max)
     sig_tf_tresca_max(2) = sig_tf_tresca(ii_max)
 
-    ! Maximum of the TRESCA stress distribution 
-    strtf = maxval(sig_tf_tresca_max)
+    ! Maximum of the TRESCA stress distribution [MPa]
+    strtf = maxval(sig_tf_tresca_max)*1.0D-6
     ! ---
 
 
@@ -1393,7 +1393,7 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
     sigt(:) = 0.0D0
     deflect(:) = 0.0D0
 
-
+    
     ! Output distribution
     ! ---
     ! Case layer (no current)
