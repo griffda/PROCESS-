@@ -1255,7 +1255,8 @@ subroutine stresscl
     sig_tf_tresca_max(2) = sig_tf_tresca(ii_max)
 
     ! Maximum of the TRESCA stress distribution [MPa]
-    strtf = maxval(sig_tf_tresca_max)*1.0D-6
+    strtf = maxval(sig_tf_tresca_max)
+    write(*,*) 'strtf = ', strtf
     ! ---
 
 
@@ -1370,8 +1371,6 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
     b(3) = kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu)*rad(3)**2  &
             + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu)*log(rad(3))) )
     b(4) = -0.125D0*alpha(2)*rad(2)**3 - 0.5D0*beta(2)*rad(2)*log(rad(2))
-
-    write(*,*) 'bb = ', b 
 
     !  Find solution vector c:  A times c = b
     !  N.B. In Morris, Section IV, C_xy is C_x in region y
