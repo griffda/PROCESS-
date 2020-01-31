@@ -10,7 +10,7 @@
 
 *---------------Constraint Equations---------------*
 
-neqns = 23       * Number of constraint equations
+neqns = 22       * Number of constraint equations
 icc = 1        * beta (consistency equation)
 icc = 2        * global power balance (consistency equation)
 *icc = 10       * toroidal field 1/r (consistency equation)
@@ -21,7 +21,6 @@ icc = 56       * pseparatrix/rmajor upper limit
 icc = 30       * Max neutral beam power
 icc = 8        * neutron wall load upper limit
 icc = 31      * tf coil case stress upper limit (sctf)
-icc = 32      * tf coil conduit stress upper limit (sctf)
 icc = 35      * j_winding pack/j_protection upper limit (sctf)
 icc = 33      * i_op / i_critical (tf coil) (sctf)
 icc = 17      * radiation fraction upper limit

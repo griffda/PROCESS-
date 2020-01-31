@@ -652,11 +652,6 @@ subroutine check
         stop
     end if
 
-    !  Depreciating constraint 32 (Only one TF stress limit is enough)
-    if ( any(icc(1:neqns+nineqns) == 32) ) then
-        call report_error(242)
-        stop
-    end if
 
     ! MDK Report error if constraint 63 is used with old vacuum model
     if (any(icc(1:neqns+nineqns) == 63).and.(vacuum_model.ne.'simple') ) then
@@ -673,7 +668,6 @@ subroutine check
     end if
 
     !  Fuel ion fractions must add up to 1.0
-
     if (abs(1.0D0 - fdeut - ftrit - fhe3) > 1.0D-6) then
         fdiags(1) = fdeut; fdiags(2) = ftrit ; fdiags(3) = fhe3
         call report_error(36)
@@ -1088,7 +1082,6 @@ subroutine check
     ! ------------------------------------
 
     !  Pulsed power plant model
-
     if (lpulse == 1) then
         icase = 'Pulsed tokamak model'
     else
@@ -1097,7 +1090,6 @@ subroutine check
 
     !  Ensure minimum cycle time constraint is turned off
     !  (not currently available, as routine thrmal has been commented out)
-
     if ( any(icc == 42) ) then
         call report_error(164)
     end if
@@ -1109,6 +1101,23 @@ subroutine check
 
     ! TF coil
     ! -------
+    !  Constraint 32 depreciated (one TF stress limit constraint 31 is now enough)
+    if ( any(icc(1:neqns+nineqns) == 32) ) then
+        call report_error(242)
+        stop
+    end if
+
+    ! TF stress model not defined of r_tf_inboard = 0
+    ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used
+    !    Generate a lvl 3 error proposing not to use any stress constraints
+    if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration  
+         .and. ( abs(bore + gapoh + ohcth) < epsilon(bore) )                           & ! bore + gapoh + ohcth = 0
+         .and. any(icc == 31) ) then                                                     ! Stress constraint (31) is used 
+
+        call report_error(244)
+        stop
+    end if
+     
 
     ! If TFC sidewall has not been set by user
     if(casths<0.1d-10) tfc_sidewall_is_fraction = .true.

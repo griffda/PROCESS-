@@ -15,7 +15,6 @@ icc = 16 * Net electric power lower limit
 icc = 24 * Beta upper limit
 icc = 30 * Injection power upper limit
 icc = 31 * TF coil case stress upper limit
-icc = 32 * TF coil conduit stress upper limit
 icc = 33 * I_op
 icc = 34 * Dump voltage upper limit
 icc = 36 * TF coil temperature margin lower limit

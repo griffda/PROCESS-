@@ -57,6 +57,7 @@ module constants
   integer, parameter :: mfile    = 13 !  Machine-optimised output file unit
   integer, parameter :: vfile    = 14 !  Verbose diagnostics file
   integer, parameter :: opt_file = 15 !  Optimisation information output file number
+  integer, parameter :: sig_file = 16 !  TF inboard stress radial distributions file number
 
   real(kind(1.0D0)), parameter :: degrad = 0.01745329251D0
   !! degrad FIX : degrees to radians, = pi/180

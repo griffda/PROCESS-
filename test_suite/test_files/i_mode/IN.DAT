@@ -207,7 +207,6 @@ psepbqarmax = 13.6
 
 icc = 31 * TF coil case stress upper limit
 ixc = 48 * fstrcase
-icc = 32 * TF coil conduit stress upper limit
 ixc = 49 * fstrcond
 alstrtf = 6.6e8
 

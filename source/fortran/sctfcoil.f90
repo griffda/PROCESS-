@@ -252,7 +252,7 @@ subroutine tf_coil_geometry()
     ! Radial position of inner/outer edge of inboard TF coil leg [m]
     r_tf_inboard_in =  r_tf_inboard_mid - 0.5D0 * tfcth
     r_tf_inboard_out = r_tf_inboard_mid + 0.5D0 * tfcth
-    
+
     ! Annular area of midplane containing TF coil inboard legs ( WP + casing ) [m2]
     tfareain = pi * (r_tf_inboard_out**2 - r_tf_inboard_in**2)
 
@@ -1126,6 +1126,14 @@ subroutine stresscl
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    ! Stress model not valid the TF does not contain any hole
+    ! Rem SK : Can be easily ameneded playing around the boundary conditions
+    if ( abs(r_tf_inboard_in) < epsilon(r_tf_inboard_in) ) then
+        call report_error(243)
+        strtf = 0.0D0
+        return
+    end if
+
     !  Setup stress model call
     ! ---
     seff = sqrt(cpttf/jwptf)
@@ -1169,6 +1177,7 @@ subroutine stresscl
     ! Casing yield stress
     ! ---
     sig_max = 0.0D0
+    ii_max = 1
     do ii = 1, n_radial_array
 
         ! Von-mises stress [Pa]
@@ -1353,14 +1362,16 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
     alpha(:) = 0.0D0
     alpha(2) = 0.5D0*rmu0 * j(2)*j(2) * (1.0D0 - nu*nu)/ey(2)
     beta(:) = 0.0D0
-    beta(2) = -alpha(2) * rad(2)*rad(2)
+    beta(2) = -alpha(2) * rad(2)**2
 
     b(:) = 0.0D0
-    b(2) = -kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu)*rad(2)*rad(2) &
+    b(2) = -kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu)*rad(2)**2 &
             + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu)*log(rad(2))) )
-    b(3) = kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu)*rad(3)*rad(3)  &
+    b(3) = kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu)*rad(3)**2  &
             + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu)*log(rad(3))) )
-    b(4) = -0.125D0*alpha(2)*(rad(2))**3 - 0.5D0*beta(2)*rad(2)*log(rad(2))
+    b(4) = -0.125D0*alpha(2)*rad(2)**3 - 0.5D0*beta(2)*rad(2)*log(rad(2))
+
+    write(*,*) 'bb = ', b 
 
     !  Find solution vector c:  A times c = b
     !  N.B. In Morris, Section IV, C_xy is C_x in region y
@@ -1932,6 +1943,7 @@ subroutine outtf(outfile, peaktfflag)
     !  Local variables
 
     integer :: ii
+    integer, dimension(2*n_radial_array) :: ii_vec
     real(kind(1.0D0)) :: ap, radius
     character(len=1) :: intstring
 
@@ -2168,39 +2180,35 @@ subroutine outtf(outfile, peaktfflag)
         end if
         
         ! OUT.DAT data on maximum TRESCA stress values
-        write(outfile, '(t2, "Layers", t26, *(i11) )') 1, 2
-        do ii = 1,2  
-            write(outfile,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r_max*1.0D-6
-            write(outfile,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t_max*1.0D-6
-            write(outfile,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z_max*1.0D-6
-            write(outfile,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises_max*1.0D-6
-            if ( i_tf_tresca == 1 ) then
-                write(*,'(t2, "CEA TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
-            else 
-                write(*,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
-            end if
+        write(outfile,'(t2, "Layers", t26, *(i11) )') 1, 2
+        write(outfile,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r_max*1.0D-6
+        write(outfile,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t_max*1.0D-6
+        write(outfile,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z_max*1.0D-6
+        write(outfile,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises_max*1.0D-6
+        if ( i_tf_tresca == 1 ) then
+            write(outfile,'(t2, "CEA TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+        else 
+            write(outfile,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+        end if
+
+        ! SIG.DAT storage  
+        do ii = 1, 2*n_radial_array
+            ii_vec(ii) = ii
         end do
 
-        ! MFile storage
-        do ii = 1, 2*n_radial_array    
-            intstring = int2char(ii)
-            call ovarre(mfile, 'stress_radius '//intstring//' (m)', &
-                        'radial_array('//intstring//'))', radial_array(ii))
-            call ovarre(mfile, 'Radial_stress '//intstring//' (MPa)', &
-                        'sig_tf_r('//intstring//'))', sig_tf_r(ii))
-            call ovarre(mfile, 'toroidal stress '//intstring//' (MPa)', &
-                        'sig_tf_t('//intstring//'))', sig_tf_t(ii))
-
-            call ovarre(mfile, 'Vertical stress '//intstring//' (MPa)', &
-                        'sig_tf_z('//intstring//'))', sig_tf_z)
-
-            call ovarre(mfile, 'Von-Mises stress '//intstring//' (MPa)', &
-                        'sig_tf_vmises('//intstring//'))', sig_tf_vmises(ii))
-            call ovarre(mfile, 'TRESCA stress '//intstring//' (MPa)', &
-                        'sig_tf_tresca('//intstring//'))', sig_tf_tresca(ii))
-            call ovarre(mfile, 'TRESCA CEA stress '//intstring//' (MPa)', &
-                        's_tresca_cond_cea('//intstring//'))', s_tresca_cond_cea(ii))
-        end do
+        write(sig_file,*) 'STRESS DISTRIBUTIONS'          
+        write(sig_file,'(t2, "index"                             ,t26, *(I11,3x))') ii_vec
+        write(sig_file,'(t2, "radius"              , t20, "(m)"  ,t26, *(F11.3,3x))') radial_array
+        write(sig_file,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r*1.0D-6
+        write(sig_file,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t*1.0D-6
+        write(sig_file,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z*1.0D-6
+        write(sig_file,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises*1.0D-6
+        write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
+        write(sig_file,'(t2, "CEA TRESCA"," stress", t20, "(MPa)",t26, *(F11.3,3x))') s_tresca_cond_cea*1.0D-6
+        write(sig_file,*)
+        write(sig_file,*) 'Displacement'          
+        write(sig_file,'(t2, "raidal displacement", t20, "(m)",t26, *(F11.3,3x))') deflect*1.0D-6
+        
 
         ! Other quantities (displacement strain, etc..)
         call ovarre(outfile,'Vertical stress (Pa)','(sig_tf_z)',sig_tf_z, 'OP ')

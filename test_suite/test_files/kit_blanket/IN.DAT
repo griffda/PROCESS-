@@ -1,11 +1,10 @@
 *--------------------------------------------------*
 *---------------Constraint Equations---------------*
-neqns = 21 * Number of equality constraints to be satisfied
+neqns = 20 * Number of equality constraints to be satisfied
 icc = 1
 icc = 2
 icc = 5
 icc = 8
-*icc = 10
 icc = 11
 icc = 13
 icc = 16
@@ -14,7 +13,6 @@ icc = 26
 icc = 27
 icc = 30
 icc = 31
-icc = 32
 icc = 33
 icc = 34
 icc = 35
