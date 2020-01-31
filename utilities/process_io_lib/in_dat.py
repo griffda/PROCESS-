@@ -1066,7 +1066,7 @@ class InDat(object):
                     self.data["icc"].value.append(int(item))
                 else:
                     # Duplicate constraint equation number
-                    self.add_duplicate_variable(f"icc = {item}")
+                    self.add_duplicate_variable("icc = {0}".format(item))
             self.data["icc"].value.sort()
 
     def process_iteration_variables(self, line):
@@ -1106,7 +1106,7 @@ class InDat(object):
                     self.data["ixc"].value.append(int(item))
                 else:
                     # Duplicate iteration variable
-                    self.add_duplicate_variable(f"ixc = {item}")
+                    self.add_duplicate_variable("ixc = {0}".format(item))
             self.data["ixc"].value.sort()
 
     def process_bound(self, line):
@@ -1142,7 +1142,8 @@ class InDat(object):
             self.data["bounds"].value[bound] = dict()
         elif self.data["bounds"].value[bound].get(bound_type):
             # Duplicate bound
-            self.add_duplicate_variable(f"bound{bound_type}({bound})")
+            self.add_duplicate_variable("bound{0}({1})".format(bound_type, 
+                bound))
 
         # Populate self.data dictionary with bound information
         self.data["bounds"].value[bound][bound_type] = bound_value
@@ -1176,7 +1177,7 @@ class InDat(object):
             # change must be a duplicate initialisation
             fortran_index = index + 1 
             # Index begins at 1!
-            self.add_duplicate_variable(f"{name}({fortran_index})")
+            self.add_duplicate_variable("{0}({1})".format(name, fortran_index))
 
         self.data[name].value[index] = eval(fortran_python_scientific(value))
 
