@@ -137,7 +137,7 @@ if __name__ == '__main__':
     gradients             = [[]]
 
     # Opening the pandora box
-    with open('../OPT.DAT', 'r') as opt_data :
+    with open('../bin/OPT.DAT', 'r') as opt_data :
         opt_data_lines = opt_data.readlines()
         opt_data_lines = [ line.strip('\n') for line in opt_data_lines ] # Just removing the \n statment
         
@@ -213,6 +213,7 @@ if __name__ == '__main__':
     ## PLOT 1 : Figure of merit evolution
     # -----------------------------------
     if plot_FoM :
+
         # Plot
         plt.plot( vmcon_indexes, figures_of_merit, 'g-' )
 
@@ -229,7 +230,7 @@ if __name__ == '__main__':
         plt.xlabel('$VMCON$ iteration', fontsize = axis_font_size)
         plt.ylabel('Figure of merit'  , fontsize = axis_font_size)
         plt.axis([ x_min, x_max, y_min, y_max ])
-        plt.grid('true')
+        plt.grid(True)
         plt.savefig('OPT_plots/FoM_evolution.'+save_format, format=save_format)
         plt.close()
     # -----------------------------------
