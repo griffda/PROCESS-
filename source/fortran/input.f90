@@ -740,6 +740,9 @@ contains
        case ('fpdivlim')
           call parse_real_variable('fpdivlim', fpdivlim, 0.001D0, 1.0D0, &
                'F-value for minimum pdivt')
+       case ('ftoroidalgap')
+          call parse_real_variable('ftoroidalgap', ftoroidalgap, 0.001D0, 10.0D0, &
+                'F-value for toroidal gap consistency')
        case ('fpsepr')
           call parse_real_variable('fpsepr', fpsepr, 0.001D0, 10.0D0, &
                'F-value for Psep/R limit')
@@ -1784,8 +1787,11 @@ contains
        case ('thicndut')
           call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
+      case ('leno')
+          call parse_real_variable('leno', leno, 0.0D0, 0.2D0, &
+               'Dimension conductor area including steel and insulation (m)')
        case ('layer_ins')
-              call parse_real_variable('layer_ins', layer_ins, 0.0D0, 0.1D0, &
+          call parse_real_variable('layer_ins', layer_ins, 0.0D0, 0.1D0, &
                'Additional insulation thickness between layers (m)')
        case ('thkcas')
           call parse_real_variable('thkcas', thkcas, 0.0D0, 1.0D0, &
@@ -2835,6 +2841,9 @@ contains
 
           !  Stellarator settings
 
+       case ('istell')
+          call parse_int_variable('istell', istell, 0, 5, &
+               'stellarator machine specification (1=Helias5, 2=Helias4, 3=Helias3)')
        case ('bmn')
           call parse_real_variable('bmn', bmn, 1.0D-4, 1.0D-2, &
                'Relative radial field perturbation')

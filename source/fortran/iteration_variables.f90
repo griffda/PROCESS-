@@ -2968,6 +2968,24 @@ subroutine init_itv_1
       DUMMY = ratio
    end subroutine set_itv_170
 
+   !---------------------------------
+
+   subroutine init_itv_171
+      !+ad_varc  <LI> (171) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
+      lablxc(171) = 'ftoroidalgap  ' 
+      boundl(171) = 1.0D-4
+      boundu(171) = 1.0D0
+   end subroutine init_itv_171
+
+   real(kind(1.d0)) function itv_171()
+      itv_171 = ftoroidalgap 
+   end function itv_171
+
+   subroutine set_itv_171(ratio)
+      real(kind(1.d0)) :: ratio
+      ftoroidalgap = ratio
+   end subroutine set_itv_171
+
 !! </UL>
 end module define_iteration_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3186,6 +3204,7 @@ subroutine loadxc
          case (168);  xcm(i) = itv_168()
          case (169);  xcm(i) = itv_169()
          case (170);  xcm(i) = itv_170()
+         case (171);  xcm(i) = itv_171()
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -3462,7 +3481,8 @@ subroutine convxc(xc,nn)
          case (167);  call set_itv_167(ratio)
          case (168);  call set_itv_168(ratio)
          case (169);  call set_itv_169(ratio)
-         case (170);  call set_itv_170(ratio)      
+         case (170);  call set_itv_170(ratio)
+         case (171);  call set_itv_171(ratio)      
 
          case default
             call report_error(57)

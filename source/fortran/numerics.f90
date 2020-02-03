@@ -18,9 +18,9 @@ module numerics
 
   public
 
-  integer, parameter :: ipnvars = 170
+  integer, parameter :: ipnvars = 171
   !!  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipeqns = 81
+  integer, parameter :: ipeqns = 82
   !!  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipnfoms = 19
   !!  ipnfoms FIX : number of available figures of merit
@@ -280,8 +280,10 @@ module numerics
        !!  <LI> (79) Peak CS field upper limit (itv  149 fbmaxcs)
        'pdivt lower limit                ',   &
        !!  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)
-       'ne0 > neped                      '    &
+       'ne0 > neped                      ',   &
        !!  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
+       'toroidalgap >  tftort            '    &
+       !!  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)</UL>
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.

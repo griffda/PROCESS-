@@ -2179,6 +2179,9 @@ module tfcoil_variables
   real(kind(1.0D0)) :: estotftgj = 0.0D0
   !! estotftgj : total stored energy in the toroidal field (GJ)
 
+  real(kind(1.0D0)) :: max_force_density = 0.0D0
+  !! max_force_density :  Maximal (WP averaged) force density in TF coils at 1 point. (MN/m3)
+
   real(kind(1.0D0)) :: eyins = 2.0D10
   !! eyins /2.0e10/ : insulator Young's modulus (Pa)
   !!                  (default value from DDD11-2 v2 2 (2009))
@@ -2269,6 +2272,12 @@ module tfcoil_variables
 
   real(kind(1.0D0)) :: tflegres = 0.0D0
   !! tflegres : TF coil leg resistance (ohm)
+
+  real(kind(1.0D0)) :: toroidalgap = 1.0D0 ![m]
+  !! toroidalgap: Minimal distance between two toroidal coils. (m)
+
+  real(kind(1.0D0)) :: ftoroidalgap = 1.0D0
+  !! ftoroidalgap: F-value for minimum tftort (constraint equation 82)
 
   real(kind(1.0D0)) :: ripmax = 1.0D0
   !! ripmax /1.0/ : maximum allowable toroidal field ripple amplitude

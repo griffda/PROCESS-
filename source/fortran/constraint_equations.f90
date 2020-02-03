@@ -258,7 +258,8 @@ contains
          case (80); call constraint_eqn_080(args)
          ! Constraint equation making sure that ne(0) > ne(ped)
          case (81); call constraint_eqn_081(args)
-         
+         ! Constraint equation making sure that stellarator coils dont touch in toroidal direction
+         case (82); call constraint_eqn_082(args)
        case default
 
          idiags(1) = icc(i)
@@ -2687,5 +2688,28 @@ contains
 
    end subroutine constraint_eqn_081
    
+   subroutine constraint_eqn_082(args)
+      !+ad_name  constraint_eqn_082
+      !+ad_summ  Equation to ensure that toroidal coils don't collide in toroidal direction
+      !+ad_type  Subroutine
+      !+ad_auth  J Lion, IPP Greifswald
+      !+ad_args  tba
+      !+ad_desc  Lower limit toroidalgap >  tftort
+      !+ad_glos  ftoroidalgap : input : fvalue for constraint toroidalgap > tftort
+      use tfcoil_variables, only: tftort,ftoroidalgap,toroidalgap
+      implicit none
+      type (constraint_args_type), intent(out) :: args
+
+      args%cc =  1.0D0 - ftoroidalgap * toroidalgap/tftort
+      args%con = ftoroidalgap!toroidalgap * (1.0D0 - args%cc)
+      args%err = args%cc!tftort * args%cc
+      args%symbol = '<'
+      args%units = '' !ftoroidalgap is unitless
+
+   end subroutine constraint_eqn_082
+
+
+
+
 end module constraints
 
