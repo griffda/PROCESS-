@@ -45,7 +45,7 @@ contains
     use physics_variables, only: hfact, tesep, bt, protium, teped, rhopedn, &
         triang95, triang, plascur, ieped, fgwped, aspect, kappa95, q95, &
         kappa, ilhthresh, fdeut, fvsbrnni, rhopedt, fgwsep, rmajor
-    use process_output, only: geometry, composition, pedestal, &
+    use numerics, only: geometry, composition, pedestal, &
         plasmod_dt, plasmod_dx_cd, plasmod_contrpovs, &
         plasmod_ainc, plasmod_fradc, plasmod_iprocess, plasmod_pedscal, &
         plasmod_pfus, plasmod_nx, plasmod_dtmin, plasmod_imptype, &
@@ -303,7 +303,7 @@ contains
         betaft, ptrimw, ni0, zeff, vsres, nesep, dnz, pedgeradmw, dlamie, &
         falpi, kappa, rnfene, pbrempv, rmajor, dnbeam, gamma, kappaa, deni, &
         dnprot, beta, fdeut, palppv, aspect
-    use process_output, only: plasmod_i_impmodel, echarge, rmu0, pi, i_flag, &
+    use numerics, only: plasmod_i_impmodel, echarge, rmu0, pi, i_flag, &
         geometry, composition, pedestal, radial_profiles, MHD_EQ, power_losses
     
     implicit none
@@ -713,8 +713,9 @@ contains
 
 		use constraint_variables, only: psepbqarmax, pseprmax
 		use physics_variables, only: rmajor, bt, aspect
-    use process_output, only: inp0, radp, ped, loss, comp, num, mhd, geom, &
-      i_flag, plasmod_i_equiltype, ovarin, ocmmnt, oheadr, ovarrf, osubhd
+    use numerics, only: inp0, radp, ped, loss, comp, num, mhd, geom, &
+        i_flag, plasmod_i_equiltype
+    use process_output, only: ovarin, ocmmnt, oheadr, ovarrf, osubhd
     
     implicit none
 
@@ -855,7 +856,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use process_output, only: output_prefix, geom, fileprefix, radp
+		use numerics, only: output_prefix, geom, fileprefix, radp
     
     implicit none
 

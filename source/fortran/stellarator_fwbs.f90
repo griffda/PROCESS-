@@ -1069,8 +1069,8 @@ contains
     use pfcoil_variables, only: rb, zh
     use physics_variables, only: idivrt, kappa, pneutmw, rmajor, rminor, &
       triang, wallmw
-    use process_output, only: pi, eshellarea, eshellvol, ovarre, osubhd, &
-      ovarin, oheadr, ocmmnt
+    use process_output, only: ovarre, osubhd, ovarin, oheadr, ocmmnt
+    use numerics, only: pi, eshellarea, eshellvol
     use tfcoil_variables, only: casthi, i_tf_sup, tfsai, tfsao, thkwp, tinstf
 
     implicit none

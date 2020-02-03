@@ -38,7 +38,8 @@ contains
     use error_handling, only: idiags, report_error
     use profiles_module, only: tprofile, nprofile
     use process_output, only: oblnkl, ocmmnt, ovarin, ovarre, ovarrf, osubhd, &
-      oheadr, nout
+      oheadr
+    use numerics, only: nout
     use heat_transport_variables, only: pinjwpfix, pinjwp
     use current_drive_variables, only: echpwr, pnbeam, plhybd, cnbeam, porbitlossmw, &
       iefrf, iefrffix, pheat, pheatfix, pinjfixmw, irfcd, feffcd, fpion, nbshinef, &

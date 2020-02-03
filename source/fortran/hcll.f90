@@ -1262,9 +1262,10 @@ contains
 
     use constants, only: pi
     use fwbs_variables, only: coolwh
-    use process_output, only: verbose, oheadr, ovarre, ocmmnt, oblnkl
+    use process_output, only: oheadr, ovarre, ocmmnt, oblnkl
     use fw_module, only: friction
     use refprop_interface, only: fluid_properties, enthalpy_ps
+    use numerics, only: verbose
 
     implicit none
 

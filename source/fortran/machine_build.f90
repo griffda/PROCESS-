@@ -48,7 +48,7 @@ contains
     !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use numerics, only: ixc, nvar
     implicit none
 
     !  Arguments

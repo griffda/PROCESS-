@@ -165,7 +165,8 @@
     use pfcoil_variables, only: fcuohsu, ipfres, isumatoh, nohc, vfohc, zl, &
       rpf, zh, wts, ra, rb
     use physics_variables, only: rminor
-    use process_output, only: pi, oheadr, ovarre
+    use process_output, only: oheadr, ovarre
+    use numerics, only: pi
     use tfcoil_variables, only: acasetf, acond, aswp, avwp, fcoolcp, fcutfsu, &
       i_tf_sup, isumattf, n_tf, vftf
 

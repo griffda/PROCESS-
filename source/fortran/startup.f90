@@ -77,7 +77,8 @@ contains
     use physics_variables, only: alphan, alphat, dene, deni, ftrit, kappa, &
       pcoef, plascur, ralpne, rmajor, rminor, rncne, rnfene, rnone, rpfac, &
       te, ti, vol, zeff, facoh
-    use process_output, only: vmcon, oheadr, ovarre
+    use process_output, only: oheadr, ovarre
+    use numerics, only: vmcon
     use startup_variables, only: nign, tign, ftaue, ftaue, ptaue, qtaue, &
       rtaue, gtaue
 

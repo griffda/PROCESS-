@@ -43,8 +43,9 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
    use build_module, only: portsz
-   use process_output, only: mfile, int2char, oheadr, ovarre, osubhd, oblnkl, &
+   use process_output, only: int2char, oheadr, ovarre, osubhd, oblnkl, &
       ocmmnt
+   use numerics, only: mfile
    use sctfcoil_module, only: sctfcoil
    use tfcoil_variables, only: bmaxtf, cforce, estotftgj, i_tf_sup, n_tf, &
       ripmax, ripple, ritfc, sigrad, sigtan, sigver, vforce, xarc, yarc
@@ -138,7 +139,8 @@ contains
    use build_variables, only: bore, hmax, hpfu, r_tf_inboard_mid, &
       r_tf_outboard_mid, rtop, tfcth, tfthko
    use physics_variables, only: bt, itart, kappa, rmajor, rminor
-   use process_output, only: pi, rmu0, oheadr, ovarin, ovarre, osubhd
+   use process_output, only: oheadr, ovarin, ovarre, osubhd
+   use numerics, only: pi, rmu0
    use tfcoil_variables, only: arealeg, bmaxtf, cdtfleg, cforce, cpttf, &
       dalu, dcopper, dztop, estotftgj, fcoolcp, frhocp, i_tf_sup, n_tf, &
       prescp, presleg, rbmax, rhocp, rhotfleg, ritfc, sigrad, sigver, &
@@ -373,7 +375,8 @@ contains
 
    use build_variables, only: hmax, tfcth, tfthko
    use fwbs_variables, only: pnuccp
-   use process_output, only: pi, oheadr, ovarre, osubhd
+   use process_output, only: oheadr, ovarre, osubhd
+   use numerics, only: pi
    use tfcoil_variables, only: cph2o, denh2o, dtiocool, etapump, fcoolcp, &
       i_tf_sup, k_copper, kh2o, muh2o, ncool, ppump, prescp, rbmax, rcool, &
       rhocp, tcoolin, tcpav, tcpav2, tcpmax, vcool, volcp
@@ -674,7 +677,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
    use error_handling, only: fdiags, report_error
-   use process_output, only: pi
+   use numerics, only: pi
    use tfcoil_variables, only: tfareain
 
     implicit none

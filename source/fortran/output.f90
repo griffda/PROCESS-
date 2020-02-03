@@ -10,8 +10,6 @@ module process_output
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  use global_variables
-  use numerics
   implicit none
 
   public
@@ -36,6 +34,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: mfile, pi, active_constraints, umass, mfile, vmcon, &
+      ncalls, ipnvars, run_tests, verbose, ioptimz, output_prefix
     implicit none
 
     !  Arguments
@@ -105,6 +105,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: comp, num, inp0, mfile, output_prefix, fileprefix
     implicit none
 
     !  Arguments
@@ -139,6 +140,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: comp, num, inp0, geom, pi, active_constraints, rmu0, &
+      vlabel, sqsumsq, run_tests, verbose, ioptimz
     implicit none
 
     !  Arguments
@@ -173,6 +176,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: inp0, loss, radp, mhd, pi, icase
     implicit none
 
     !  Arguments
@@ -204,6 +208,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: comp, inp0, ped, nout, pi
     implicit none
 
     !  Arguments
@@ -230,6 +235,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: pi, comp, geom, inp0, nout, iotty
     implicit none
 
     !  Arguments
@@ -258,6 +264,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: iotty, nout, comp, loss, inp0, pi, boundl, boundu, &
+      icase, rmu0, xlabel, sqsumsq, iscan_global, vlabel
     implicit none
 
     !  Arguments
@@ -313,6 +321,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: name_xc, mfile, verbose, pi, geometry, mhd, &
+      power_losses, i_flag, radp, ped, power_losses, &
+      geom, i_flag, echarge, nout, iotty, nplot
     implicit none
 
     !  Arguments
@@ -382,6 +393,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: name_xc, mfile, pi, comp, radp, echarge, ped, &
+      vlabel, icase, nout
     implicit none
 
     !  Arguments
@@ -448,6 +461,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: name_xc, mfile, variable_error, radp, &
+      plasmod_i_impmodel, rmu0, icc, ioptimz, pi, iotty, xlabel, xlabel_2, &
+      nout, iscan_global
     implicit none
 
     !  Arguments
@@ -512,6 +528,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: mfile, loss, geom, mhd, sqsumsq
     implicit none
 
     !  Arguments
@@ -562,6 +579,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: mfile, variable_error, loss, mhd, twopi, echarge, &
+      pi, nplot
     implicit none
 
     !  Arguments
@@ -608,6 +627,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: pi, variable_error, nout, loss, rmu0, echarge, &
+      boundl, boundu
     implicit none
 
     !  Arguments
@@ -653,6 +674,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: pi, rmu0, echarge, active_constraints, boundu, boundl
     implicit none
 
     !  Arguments
@@ -688,6 +710,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use numerics, only: pi, geom, plasmod_i_equiltype, comp, i_flag, rmu0, &
+      epsvmc, boundu
     implicit none
 
     character(len=1) :: int2char
@@ -727,6 +751,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: comp, loss, geom, ped, inp0, pi, boundu
     implicit none
 
     character(len=2) :: int_to_string2
@@ -769,6 +794,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use numerics, only: loss, num, inp0, mhd, radp, pi, boundu
     implicit none
 
     character(len=3) :: int_to_string3

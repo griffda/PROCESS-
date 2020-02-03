@@ -1030,7 +1030,8 @@ contains
     !! Routine to print out the code, description and value
     !! of a cost item from array s in costs_2015
 
-    use process_output, only: mfile, ovarrf
+    use process_output, only: ovarrf
+    use numerics, only: mfile
 
     implicit none
 
@@ -1060,7 +1061,8 @@ contains
     !! Routine to print out the code, description and value
     !! of a cost item not in the array s in costs_2015
 
-    use process_output, only: mfile, ovarrf
+    use process_output, only: ovarrf
+    use numerics, only: mfile
 
     implicit none
 

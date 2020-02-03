@@ -80,7 +80,7 @@ subroutine current_sharing_rebco(current_sharing_t, bfield, j)
     ! Uses 'function jcrit_rebco' and the finds the temperature for given field and current density
     ! Will return a negative number if the current density is too high
 
-    use process_output, only: secant_solve
+    use numerics, only: secant_solve
     implicit none
 
     !  Arguments
@@ -244,7 +244,7 @@ subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use process_output, only: pi
+  use numerics, only: pi
   use error_handling, only: fdiags, report_error
   implicit none
 
@@ -486,7 +486,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use process_output, only: variable_error
+    use numerics, only: variable_error
     use error_handling, only: fdiags, report_error
     implicit none
 
@@ -627,7 +627,7 @@ subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
     !! "REBCO" 2nd generation HTS superconductor
     ! Updated 13/11/18 using data from Lewandowska et al 2018.
     
-    use process_output, only: pi
+    use numerics, only: pi
     use rebco_variables, only: copper_area, copper_thick, croco_id, &
       hastelloy_area, hastelloy_thickness, rebco_area, solder_area, &
       stack_thickness, tape_thickness, tape_width, tapes, rebco_thickness

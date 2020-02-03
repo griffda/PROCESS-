@@ -35,8 +35,7 @@ contains
 
     use availability_module, only: avail
     use costs_module, only: costs
-    use process_output, only: nout
-
+    use numerics, only: nout
     implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -943,12 +942,13 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use process_output, only: mfile, oheadr, obuild, ovarre
+    use process_output, only: oheadr, obuild, ovarre
     use ife_variables, only: ifetyp, chrad, r1, fwdr, r2, v1dr, r3, bldr, r4, &
       v2dr, r5, shdr, r6, v3dr, r7, zl7, v3dzl, zl6, shdzl, zl5, v2dzl, zl4, &
       bldzl, zl3, v1dzl, zl2, fwdzl, zl1, chdzl, chdzu, zu1, fwdzu, zu2, &
       v1dzu, zu3, bldzu, zu4, v2dzu, zu5, shdzu, zu6, v3dzu, zu7, fwmatv, &
       v1matv, blmatv, v2matv, shmatv, v3matv, chmatv
+    use numerics, only: mfile
 
     implicit none
 

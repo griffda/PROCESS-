@@ -49,7 +49,8 @@ contains
     use buildings_variables, only: tfcbv
     use heat_transport_variables, only: tfacpd, etatf
     use physics_variables, only: rmajor
-    use process_output, only: pi, oheadr, ovarre
+    use process_output, only: oheadr, ovarre
+    use numerics, only: pi
     use tfcoil_variables, only: tflegmw, estotftgj, tfcpmw, rhotfleg, &
         tflegres, vtfskv, jbus, tfbusl, tfbusmas, tfcmw, vtfkv, i_tf_sup, &
         tfckw, presleg, dcopper, ritfc, cpttf, prescp, n_tf
@@ -475,8 +476,8 @@ contains
     use pfcoil_variables, only: ngc2, ngrp, cpt, pfwpmw, pfclres, ncirt, ncls, &
         ric, etapsu, cptdin, curpfb, sxlg, turns, vf, rjconpf, rpf
     use physics_variables, only: pohmmw, rmajor
-    use process_output, only: pi, active_constraints, ioptimz, oheadr, ovarre, &
-        oblnkl, ocmmnt
+    use process_output, only: oheadr, ovarre, oblnkl, ocmmnt
+    use numerics, only: pi, active_constraints, ioptimz
     use times_variables, only: tim, intervallabel, timelabel, tohs
     implicit none
 

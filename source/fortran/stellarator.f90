@@ -222,7 +222,7 @@ contains
     use buildings_module, only: bldgcall
     use costs_module, only: costs
     use power_module, only: tfpwr, power1, acpow, power2
-    use process_output, only: nout
+    use numerics, only: nout
     use vacuum_module, only: vaccall
     implicit none
 
@@ -270,7 +270,7 @@ contains
     use pfcoil_variables, only: ohhghf
     use physics_variables, only: aspect, dnbeta, kappa, kappa95, q, rmajor, &
       triang, hfac, tauscl
-    use process_output, only: nout, icase, boundl, boundu
+    use numerics, only: nout, icase, boundl, boundu
     use stellarator_variables, only: istell
     use tfcoil_variables, only: n_tf
     use times_variables, only: tburn, tcycle, tdown, tdwell, theat, tohs, &
@@ -423,7 +423,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use physics_variables, only: aspect, eps, rmajor, rminor, sarea, sareao, &
       vol, xarea
-    use process_output, only: pi
+    use numerics, only: pi
     implicit none
 
     !  Arguments
@@ -471,7 +471,8 @@ contains
     use fwbs_variables, only: afw, blktmodel, fdiv, fhcd, fhole, fw_wall
     use heat_transport_variables, only: ipowerflow
     use physics_variables, only: rmajor, rminor, sarea
-    use process_output, only: mfile, oheadr, obuild, ovarre
+    use process_output, only: oheadr, obuild, ovarre
+    use numerics, only: mfile
     implicit none
 
     !  Arguments
@@ -659,7 +660,7 @@ contains
       qfuel, qstar, rad_fraction, rmajor, rminor, rndfuel, sarea, tauee, &
       taueff, tauei, taup, te, ten, ti, tin, vol, wallmw, xarea, zeff, zeffai, &
       ffwal, palpnb, palppv, pchargepv
-    use process_output, only: echarge, nout
+    use numerics, only: nout, echarge
     use profiles_module, only: plasma_profiles
     use stellarator_variables, only: f_rad, iotabar
     use physics_functions_module, only: radpwr
@@ -1025,7 +1026,8 @@ contains
     use error_handling, only: report_error
     use physics_variables, only: pdivt, pneutmw, pradmw, rminor, rmajor, &
       sarea, wallmw
-    use process_output, only: pi, oheadr, ovarre, osubhd, ovarin, ocmmnt, oblnkl
+    use process_output, only: oheadr, ovarre, osubhd, ovarin, ocmmnt, oblnkl
+    use numerics, only: pi
     use tfcoil_variables, only: i_tf_sup
     implicit none
 
@@ -1966,7 +1968,8 @@ contains
 
     use divertor_variables, only: anginc, divsur, hldiv, tdiv, xpertin
     use physics_variables, only: afuel, pdivt, rmajor
-    use process_output, only: echarge, pi, twopi, umass, oheadr, ovarre, ovarin
+    use process_output, only: oheadr, ovarre, ovarin
+    use numerics, only: echarge, pi, twopi, umass
     use stellarator_variables, only: bmn, f_asym, f_rad, f_w, fdivwet, &
       flpitch, m_res, n_res, shear
     implicit none
@@ -2114,8 +2117,8 @@ contains
     use fwbs_variables, only: denstl
     use error_handling, only: report_error, fdiags, idiags
     use physics_variables, only: bt, rmajor, rminor
-    use process_output, only: pi, twopi, rmu0, find_y_nonuniform_x, ellipke, &
-      sumup3, tril
+    use numerics, only: find_y_nonuniform_x, ellipke, sumup3, tril, pi, &
+      twopi, rmu0
     use stellarator_variables, only: hportamax, hporttmax, hportpmax, &
       vportamax, vportpmax, vporttmax
     use structure_variables, only: aintmass

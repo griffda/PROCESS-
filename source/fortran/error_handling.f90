@@ -248,7 +248,7 @@ contains
     !! McGraw-Hill, ISBN 0-07-115896-0
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use numerics, only: iotty, nout
     implicit none
 
     !  Arguments

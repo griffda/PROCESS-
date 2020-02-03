@@ -62,7 +62,7 @@ contains
         coheof, zh, fcohbof, ra, rb, isumatpf, whtpf, fcupfsu, cohbop, rjpfalw
     use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
         triang, rminor, vsind, aspect, itart, betap, rmajor
-    use process_output, only: pi
+    use numerics, only: pi
     use tfcoil_variables, only: dcopper, tftmp, dcond, i_tf_sup, fhts, &
         tcritsc, strncon_pf, bcritsc
     use times_variables, only: tim, tramp, tburn, tohs, tqnch, theat
@@ -706,7 +706,7 @@ contains
         bmaxoh0, rjohc, tmargoh, ipfres, rjpfalw, pfclres, vf, ric, bpf, &
         jscoh_eof, zpf, rb, ra, jscoh_bop, cptdin, pfcaseth, rpf, cohbop, zh, &
         wtc, zl, turns, wts
-		use process_output, only: pi
+		use numerics, only: pi
 		use tfcoil_variables, only: dcopper, dcond, tftmp, tcritsc, strncon_cs, &
       fhts, bcritsc
     implicit none
@@ -956,7 +956,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use process_output, only: svd
+		use numerics, only: svd
     implicit none
 
     !  Arguments
@@ -1368,7 +1368,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use process_output, only: twopi, rmu0
+		use numerics, only: twopi, rmu0
     implicit none
 
     !  Arguments
@@ -1623,7 +1623,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use process_output, only: rmu0
+		use numerics, only: rmu0
     implicit none
 
     real(kind(1.0D0)) :: bfmax
@@ -1783,7 +1783,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use error_handling, only: fdiags, idiags, report_error
-		use process_output, only: variable_error, secant_solve
+		use numerics, only: variable_error, secant_solve
     use superconductors, only: jcrit_nbti, wstsc, jcrit_rebco, bi2212, &
       itersc, current_sharing_rebco
 		use tfcoil_variables, only: tmargmin_cs, temp_margin
@@ -2153,7 +2153,7 @@ end subroutine superconpf
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use pfcoil_variables, only: oh_steel_frac, nohc, ra, ric, rb, zh
-		use process_output, only: rmu0, pi, ellipke
+		use numerics, only: rmu0, pi, ellipke
     implicit none
 
     !  Arguments
@@ -2228,7 +2228,8 @@ end subroutine superconpf
     use pfcoil_variables, only: nohc, turns, zpf, rpf, sxlg, rohc, ngrp, &
         ncls, zl, ncirt, ra, zh, rb
 		use physics_variables, only: rmajor, rlp
-		use process_output, only: rmu0, pi, oheadr, oblnkl, ocmmnt
+    use process_output, only: oheadr, oblnkl, ocmmnt
+    use numerics, only: rmu0, pi
     implicit none
 
     !  Arguments
@@ -2563,9 +2564,10 @@ end subroutine superconpf
         turns, rpf, rjohc, tmargoh, ipfres, alfapf, rjpfalw, whtpf, rb, wts, &
         zh, wtc
 		use physics_variables, only: rminor, rmajor, kappa
-    use process_output, only: boundu, mfile, int_to_string2, ovarin, oheadr, &
+    use process_output, only: int_to_string2, ovarin, oheadr, &
       ovarre, osubhd, oblnkl, ocmmnt
-		use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp
+    use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp
+    use numerics, only: boundu, mfile
     implicit none
 
     !  Arguments

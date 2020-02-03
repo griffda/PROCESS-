@@ -394,6 +394,7 @@ subroutine herror(ifail)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use process_output
+  use numerics, only: iotty, nout
 
   implicit none
 
@@ -484,6 +485,7 @@ subroutine verror(ifail)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use process_output
+  use numerics, only: iotty, nout
 
   implicit none
 

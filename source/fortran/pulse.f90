@@ -83,7 +83,8 @@ contains
     use pfcoil_variables, only: ncirt, ipfres, nohc, powohres, sxlg, cpt, ric, &
       turns, cptdin
     use physics_variables, only: plascur, rmajor
-    use process_output, only: active_constraints, ovarre, osubhd
+    use process_output, only: ovarre, osubhd
+    use numerics, only: active_constraints
     use pulse_variables, only: lpulse
     implicit none
 

@@ -158,8 +158,9 @@ contains
 		use impurity_radiation_module, only: fimp
 		use pfcoil_variables, only: whtpf
 		use pf_power_variables, only: srcktpm
-    use process_output, only: xlabel, mfile, iscan_global, icase, nout, &
-      sqsumsq, nplot, vlabel, oblnkl, ostars, ovarin
+    use process_output, only: oblnkl, ostars, ovarin
+    use numerics, only: xlabel, mfile, iscan_global, icase, nout, sqsumsq, &
+        nplot, nplot, vlabel
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
 		  thkwp
@@ -427,8 +428,9 @@ contains
 		use impurity_radiation_module, only: fimp
 		use pfcoil_variables, only: whtpf
 		use pf_power_variables, only: srcktpm
-    use process_output, only: xlabel, mfile, xlabel_2, iscan_global, icase, &
-      nout, sqsumsq, nplot, vlabel_2, vlabel, oblnkl, ostars, ovarin
+    use numerics, only: xlabel, mfile, xlabel_2, iscan_global, icase, &
+      nout, sqsumsq, nplot, vlabel_2, vlabel
+    use process_output, only: oblnkl, ostars, ovarin
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
 		  thkwp
@@ -719,7 +721,7 @@ contains
 		use impurity_radiation_module, only: fimp, fimpvar, coreradius, impurity_arr
     use physics_variables, only: kappa, dnbeta, te, aspect, ftar, bt, &
       rad_fraction_sol, triang, rmajor, beamfus0, hfact
-		use process_output, only: epsvmc, boundu, boundl
+    use numerics, only: epsvmc, boundu, boundl
     use tfcoil_variables, only: tmargmin_tf, alstrtf, n_pancake, oacdcp, &
       n_layer
     use divertor_kallenbach_variables, only: lcon_factor, impurity_enrichment, &

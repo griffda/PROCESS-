@@ -30,7 +30,7 @@ subroutine caller(xc,nvars)
   use physics_variables, only: rmajor, rminor, bt, plascur, q, bp, ipedestal, itart
   use plasma_geometry_module, only: geomty
   use power_module, only: tfpwr, pfpwr, power1, power2, power3, acpow
-  use process_output, only: nout, ncalls, verbose, ipnvars
+  use numerics, only: nout, ncalls, verbose, ipnvars
   use pulse_module, only: pulse
   use sctfcoil_module, only: tfspcall
   use stellarator_module, only: stcall
