@@ -1122,6 +1122,7 @@ class InDat(object):
         # Initialise parameters
         self.in_dat_lines = list()
         self.data = dict()
+        self.unrecognised_vars = []
 
         # read in IN.DAT
         if filename is not None:
@@ -1162,6 +1163,11 @@ class InDat(object):
                     print("Warning: Line below is causing a problem. Check "
                           "that line in IN.DAT is valid. Line skipped!\n{0}".
                           format(line), file=stderr)
+                    
+                    # Store the first part of the unrecognised line (probably a
+                    # variable name) as an unrecognised var
+                    unrecognised_var = line.split("=")[0].strip()
+                    self.unrecognised_vars.append(unrecognised_var)
 
     def add_iteration_variable(self, variable_number):
         """ Function to add iteration variable to IN.DAT data dictionary
@@ -1366,6 +1372,8 @@ class StructuredInputData():
             in_dat.data)
         self.data["parameters"] = get_parameters(in_dat.data, 
             use_string_values=False)
+
+        self.unrecognised_vars = in_dat.unrecognised_vars
 
     def get_param(self, var_name):
         """Get a parameter's dict from the data.
