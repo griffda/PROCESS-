@@ -13,7 +13,6 @@
 neqns = 22       * Number of constraint equations
 icc = 1        * beta (consistency equation)
 icc = 2        * global power balance (consistency equation)
-*icc = 10       * toroidal field 1/r (consistency equation)
 icc = 36       * Temperature margin limit
 icc = 5        * density upper limit
 icc = 11       * radial build (consistency equation)

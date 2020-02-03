@@ -1102,7 +1102,7 @@ subroutine check
     ! TF coil
     ! -------
     !  Constraint 32 depreciated (one TF stress limit constraint 31 is now enough)
-    if ( any(icc(1:neqns+nineqns) == 32) ) then
+    if ( any(icc == 32) ) then
         call report_error(242)
         stop
     end if

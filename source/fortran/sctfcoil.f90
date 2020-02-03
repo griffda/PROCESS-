@@ -1163,7 +1163,7 @@ subroutine stresscl
     jeff(2) = ritfc / ( pi * (radtf(3)**2 - radtf(2)**2))
     ! ---
 
-    ! Stresse calculation
+    ! Stress calculation
     ! ---
     ! Radial - Toroidal stress radial distribution [Pa]
     call two_layer_stress( poisson, radtf, eyoung, jeff,             & ! Inputs
@@ -1181,10 +1181,10 @@ subroutine stresscl
     do ii = 1, n_radial_array
 
         ! Von-mises stress [Pa]
-        sig_tf_vmises(ii) = sigvm(sig_tf_r(ii), sig_tf_r(ii), sig_tf_z, 0.0D0, 0.0D0, 0.0D0)
+        sig_tf_vmises(ii) = sigvm(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z, 0.0D0, 0.0D0, 0.0D0)
 
         ! TRESCA stress [Pa] 
-        sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_r(ii), sig_tf_z)
+        sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z)
         
         ! TRESCA stress using CEA calculation [Pa]
         s_tresca_cond_cea(ii) = sig_tf_tresca(ii)
@@ -1203,7 +1203,7 @@ subroutine stresscl
     sig_tf_vmises_max(1) = sig_tf_vmises(ii_max)
     sig_tf_tresca_max(1) = sig_tf_tresca(ii_max)
     ! ---
-    
+
     
     ! WP steel conduid yield stress
     ! ---
@@ -1225,7 +1225,7 @@ subroutine stresscl
         sig_tf_vmises = max(svmxz, svmyz)
     
         ! TRESCA stres [Pa]
-        sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_r(ii), sig_tf_z)
+        sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z)
 
         ! TRESCA stress using CEA calculation [Pa]
         s_tresca_cond_cea(ii) = 1.02D0*abs(sig_tf_r(ii)) + 1.6D0*sig_tf_z
@@ -1252,11 +1252,14 @@ subroutine stresscl
     sig_tf_t_max(2) = sig_tf_t(ii_max)
     sig_tf_z_max(2) = sig_tf_z         ! sig_tf_z is not a distribution yet
     sig_tf_vmises_max(2) = sig_tf_vmises(ii_max)
-    sig_tf_tresca_max(2) = sig_tf_tresca(ii_max)
+    if ( i_tf_tresca == 1 ) then
+        sig_tf_tresca_max(2) = s_tresca_cond_cea(ii_max)
+    else
+        sig_tf_tresca_max(2) = sig_tf_tresca(ii_max)
+    end if
 
-    ! Maximum of the TRESCA stress distribution [MPa]
+    ! Maximum of the TRESCA stress distribution [Pa]
     strtf = maxval(sig_tf_tresca_max)
-    write(*,*) 'strtf = ', strtf
     ! ---
 
 
