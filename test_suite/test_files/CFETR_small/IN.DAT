@@ -36,7 +36,8 @@ icc = 9       * Fusion power upper limit
 
 *---------------Iteration Variables----------------*
 
-nvar      = 40       * Number of iteration variables
+nvar      = 38       * Number of iteration variables
+
 ixc       = 4        * te * Volume averaged electron temperature (kev)
 boundl(4) = 3.00
 boundu(4) = 14.00
@@ -139,7 +140,7 @@ ixc        = 13         * tfcth * Inboard tf coil thickness; (centrepost for st)
 boundl(13) = 0.85
 boundu(13) = 1.00
 
-ixc(27) = 28         * fradpwr * F-value for core radiation power limit
+ixc        = 28         * fradpwr * F-value for core radiation power limit
 boundl(28) = 0.001
 boundu(28) = 0.99
 
