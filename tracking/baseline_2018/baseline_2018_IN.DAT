@@ -57,7 +57,6 @@ boundl(42) = 0.05
 boundu(42) = 0.1
 ixc = 44 * fvsbrnni
 ixc = 48 * fstrcase
-ixc = 49 * fstrcond
 ixc = 50 * fiooic
 boundu(50) = 1.0
 ixc = 51 * fvdump
@@ -358,7 +357,6 @@ tburn    = 1.0d4 * Burn time (s) (calculated if lpulse=1)
                      gapoh          =  5.0000E-02
                      fvsbrnni       =  3.9566E-01
                      fstrcase       =  1.0000E+00
-                     fstrcond       =  9.2007E-01
                      fiooic         =  6.3437E-01
                      fvdump         =  1.0000E+00
                      vdalw          =  1.0000E+01
