@@ -183,10 +183,6 @@ boundu(59) = 1.0
 *boundl(12) = 1000000.0
 *boundu(12) = 150000000.0
 
-ixc        = 58         * thwcndut * Tf coil conduit case thickness (m)
-boundl(58) = 0.002
-boundu(58) = 1.0
-
 ixc        = 35         * fpeakb * F-value for peak TF field on coil
 boundl(35) = 0.001
 boundu(35) = 1.000

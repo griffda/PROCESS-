@@ -13,7 +13,6 @@ icc = 26 * Central solenoid EOF current density upper limit
 icc = 27 * Central solenoid BOP current density upper limit
 icc = 30 * Injection power upper limit
 icc = 31 * TF coil case stress upper limit
-icc = 32 * TF coil conduit stress upper limit
 icc = 33 * I_op/I_Crit
 icc = 34 * Dump voltage upper limit
 icc = 35 * J_winding pack
