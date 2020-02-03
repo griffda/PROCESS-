@@ -3943,12 +3943,16 @@ module constraint_variables
   real(kind(1.0D0)) :: frminor = 1.0D0
   !! frminor /1.0/ : f-value for minor radius limit
   !!                 (constraint equation 21, iteration variable 32)
+  
   real(kind(1.0D0)) :: fstrcase = 1.0D0
   !! fstrcase /1.0/ : f-value for TF coil case stress
   !!                  (constraint equation 31, iteration variable 48)
+
   real(kind(1.0D0)) :: fstrcond = 1.0D0
   !! fstrcond /1.0/ : f-value for TF coil conduit stress
   !!                  (constraint equation 32, iteration variable 49)
+  !!                  Depreciated
+
   real(kind(1.0D0)) :: ftaucq = 1.0D0
   !! ftaucq /1.0/ : f-value for calculated minimum TF quench time
   !!                (constraint equation 65, iteration variable 113)

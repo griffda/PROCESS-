@@ -1105,7 +1105,11 @@ subroutine check
     if ( any(icc == 32) ) then
         call report_error(242)
         stop
-    end if
+    else if ( any(ixc == 49 ) ) then
+        call report_error(245)
+        stop
+    end if 
+
 
     ! TF stress model not defined of r_tf_inboard = 0
     ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used

@@ -61,10 +61,6 @@ ixc        = 48      * fstrcase * F-value for tf coil case stress
 boundl(48) = 0.001
 boundu(48) = 1.1
 
-ixc        = 49      * fstrcond * F-value for tf coil conduit stress
-boundl(49) = 0.001
-boundu(49) = 1.1
-
 ixc        = 97      * fpsepr * F-value for maximum psep/r limit
 boundl(97) = 0.001
 boundu(97) = 1.000
