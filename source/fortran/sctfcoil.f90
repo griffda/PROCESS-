@@ -230,7 +230,7 @@ subroutine sctfcoil(outfile,iprint)
     call peak_tf_with_ripple(n_tf, wwp1, thkwp, r_wp_centre, bmaxtf, bmaxtfrp, peaktfflag)
 
     ! Do stress calculations
-    call stresscl
+    call stresscl(iprint)
 
     if (iprint == 1) call outtf(outfile, peaktfflag)
 
@@ -1089,7 +1089,7 @@ end subroutine peak_tf_with_ripple
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine stresscl
+subroutine stresscl(iprint)
 
     !! TF coil stress routine
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -1106,7 +1106,8 @@ subroutine stresscl
 
     !  Arguments
 
-    !  Local variables
+    integer, intent(in) :: iprint
+    !! Print option (if 1, output quantities calculated)
 
     integer :: ii
     !! do loop index
@@ -1182,7 +1183,9 @@ subroutine stresscl
     do ii = 1, n_radial_array
 
         ! Von-mises stress [Pa]
-        sig_tf_vmises(ii) = sigvm(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z, 0.0D0, 0.0D0, 0.0D0)
+        if ( iprint == 1 ) then
+            sig_tf_vmises(ii) = sigvm(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z, 0.0D0, 0.0D0, 0.0D0)
+        end if
 
         ! TRESCA stress [Pa] 
         sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z)
@@ -1197,12 +1200,15 @@ subroutine stresscl
         end if
     end do
 
-    ! Stress of the maximum TRESCA stress point
-    sig_tf_r_max(1) = sig_tf_r(ii_max)
-    sig_tf_t_max(1) = sig_tf_t(ii_max)
-    sig_tf_z_max(1) = sig_tf_z        ! sig_tf_z is not a distribution yet 
-    sig_tf_vmises_max(1) = sig_tf_vmises(ii_max)
+    ! Stresses of the maximum TRESCA stress point
     sig_tf_tresca_max(1) = sig_tf_tresca(ii_max)
+    
+    if ( iprint == 1 ) then
+        sig_tf_r_max(1) = sig_tf_r(ii_max)
+        sig_tf_t_max(1) = sig_tf_t(ii_max)
+        sig_tf_z_max(1) = sig_tf_z        ! sig_tf_z is not a distribution yet 
+        sig_tf_vmises_max(1) = sig_tf_vmises(ii_max)
+    end if
     ! ---
 
     
@@ -1221,9 +1227,11 @@ subroutine stresscl
         sig_tf_t(ii) = sig_tf_t(ii)/eyoung(2) * fac
         
         ! Von-mises stress calculation (addapted to the smearing procedure) [Pa]
-        svmxz = sigvm( 0.0D0, sig_tf_t(ii), sig_tf_z, 0.0D0,0.0D0,0.0D0)
-        svmyz = sigvm( sig_tf_r(ii), 0.0D0, sig_tf_z, 0.0D0,0.0D0,0.0D0)
-        sig_tf_vmises = max(svmxz, svmyz)
+        if ( iprint == 1 ) then
+            svmxz = sigvm( 0.0D0, sig_tf_t(ii), sig_tf_z, 0.0D0,0.0D0,0.0D0)
+            svmyz = sigvm( sig_tf_r(ii), 0.0D0, sig_tf_z, 0.0D0,0.0D0,0.0D0)
+            sig_tf_vmises(ii) = max(svmxz, svmyz)
+        end if
     
         ! TRESCA stres [Pa]
         sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z)
@@ -1249,10 +1257,13 @@ subroutine stresscl
     end do
     
     ! Stress of the maximum TRESCA stress point
-    sig_tf_r_max(2) = sig_tf_r(ii_max)
-    sig_tf_t_max(2) = sig_tf_t(ii_max)
-    sig_tf_z_max(2) = sig_tf_z         ! sig_tf_z is not a distribution yet
-    sig_tf_vmises_max(2) = sig_tf_vmises(ii_max)
+    if ( iprint == 1 ) then
+        sig_tf_r_max(2) = sig_tf_r(ii_max)
+        sig_tf_t_max(2) = sig_tf_t(ii_max)
+        sig_tf_z_max(2) = sig_tf_z         ! sig_tf_z is not a distribution yet
+        sig_tf_vmises_max(2) = sig_tf_vmises(ii_max)
+    end if
+
     if ( i_tf_tresca == 1 ) then
         sig_tf_tresca_max(2) = s_tresca_cond_cea(ii_max)
     else
@@ -2195,12 +2206,12 @@ subroutine outtf(outfile, peaktfflag)
             write(outfile,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
         end if
 
-        ! SIG.DAT storage  
+        ! SIG_TF.DAT storage  
         do ii = 1, 2*n_radial_array
             ii_vec(ii) = ii
         end do
 
-        write(sig_file,*) 'STRESS DISTRIBUTIONS'          
+        write(sig_file,'(t2, "Points per layers"                 ,t26, *(I11,3x))') n_radial_array          
         write(sig_file,'(t2, "index"                             ,t26, *(I11,3x))') ii_vec
         write(sig_file,'(t2, "radius"              , t20, "(m)"  ,t26, *(F11.3,3x))') radial_array
         write(sig_file,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r*1.0D-6
@@ -2211,7 +2222,7 @@ subroutine outtf(outfile, peaktfflag)
         write(sig_file,'(t2, "CEA TRESCA"," stress", t20, "(MPa)",t26, *(F11.3,3x))') s_tresca_cond_cea*1.0D-6
         write(sig_file,*)
         write(sig_file,*) 'Displacement'          
-        write(sig_file,'(t2, "raidal displacement", t20, "(m)",t26, *(F11.3,3x))') deflect*1.0D-6
+        write(sig_file,'(t2, "raidal displacement", t20, "(mm)",t26, *(F11.3,3x))') deflect*1.0D3
         
 
         ! Other quantities (displacement strain, etc..)

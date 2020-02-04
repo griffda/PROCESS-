@@ -2306,10 +2306,10 @@ module tfcoil_variables
   !! TF Inboard leg TRESCA stress r distribution at mid-plane [Pa]
 
   real(kind(1.0D0)) :: strtf1 = 0.0D0
-  !! strtf : Constrained stress in TF Steel structures (Pa)
+  !! strtf : Constrained stress in TF casing structures (Pa)
   
   real(kind(1.0D0)) :: strtf2 = 0.0D0
-  !! strtf : Constrained stress in TF Steel structures (Pa)
+  !! strtf : Constrained stress in TF WP conduit structures (Pa)
   
   real(kind(1.0D0)) :: sigvvall = 9.3D7
   !! sigvvall /9.3e7/ : allowable stress from TF quench in vacuum vessel (Pa)
