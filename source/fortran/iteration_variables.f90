@@ -259,7 +259,7 @@ subroutine init_itv_1
 
    real(kind(1.d0)) function itv_13()
       itv_13 = tfcth
-      if (istell == 1) then 
+      if (istell /= 0) then 
          call report_error(46)   
       end if
    end function itv_13
@@ -1010,7 +1010,7 @@ subroutine init_itv_1
 
    real(kind(1.d0)) function itv_57()
       itv_57 = thkcas 
-      if (istell == 1) then
+      if (istell /= 0) then
          call report_error(48)
       end if
    end function itv_57
@@ -1067,7 +1067,7 @@ subroutine init_itv_1
 
    real(kind(1.d0)) function itv_60()
       itv_60 = cpttf 
-      if ((istell == 1).or.(i_tf_sup /= 1)) then
+      if ((istell /= 0).or.(i_tf_sup /= 1)) then
          call report_error(49)
       end if
    end function itv_60
@@ -2733,25 +2733,25 @@ subroutine init_itv_1
    end subroutine set_itv_157
 
    !---------------------------------
-   ! DUMMY variables below here
-   !---------------------------------
 
    subroutine init_itv_158
-      !! <LI> (158) DUMMY : Description
-      lablxc(158) = 'DUMMY         '
-      boundl(158) = 1.0d-99
-      boundu(158) = 1.0d99
+      !! <LI> (158) croco_thick : Thickness of CroCo copper tube (m)
+      lablxc(158) = 'croco_thick   '
+      boundl(158) = 1.0d-3
+      boundu(158) = 1.0d-1
    end subroutine init_itv_158
 
    real(kind(1.d0)) function itv_158()
-      itv_158 = DUMMY 
+      itv_158 = croco_thick
    end function itv_158
 
    subroutine set_itv_158(ratio)
       real(kind(1.d0)) :: ratio
-      DUMMY = ratio
+      croco_thick = ratio
    end subroutine set_itv_158
 
+   !---------------------------------
+   ! DUMMY variables below here
    !---------------------------------
 
    subroutine init_itv_159
@@ -3171,9 +3171,9 @@ subroutine loadxc
          case (154);  xcm(i) = itv_154()
          case (155);  xcm(i) = itv_155()
          case (156);  xcm(i) = itv_156()
-         ! DUMMY Cases
          case (157);  xcm(i) = itv_157()
          case (158);  xcm(i) = itv_158()
+          ! DUMMY Cases
          case (159);  xcm(i) = itv_159()
          case (160);  xcm(i) = itv_160()
          case (161);  xcm(i) = itv_161()
@@ -3448,9 +3448,9 @@ subroutine convxc(xc,nn)
          case (154);  call set_itv_154(ratio)
          case (155);  call set_itv_155(ratio)
          case (156);  call set_itv_156(ratio)
-         ! DUMMY Cases
          case (157);  call set_itv_157(ratio)
          case (158);  call set_itv_158(ratio)
+          ! DUMMY Cases
          case (159);  call set_itv_159(ratio)
          case (160);  call set_itv_160(ratio)
          case (161);  call set_itv_161(ratio)

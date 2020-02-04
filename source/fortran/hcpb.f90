@@ -186,9 +186,6 @@ contains
     ! !!!!!!!!!!!!
     ! Inputs
     integer, intent(in) :: iprint, outfile
-
-    ! Internal
-    real(kind(1.0D0)) :: r_sh_inboard_out
     ! !!!!!!!!!!!!
 
     !  Assign module private variables to iprint and outfile
@@ -213,8 +210,7 @@ contains
     if (itart == 1) then
 
         ! Outer radius of the inborad neutronic shield (centra heigt of the CP)
-        r_sh_inboard_out = r_tf_inboard_mid + 0.5D0*tfcth + thshield + gapds + shldith
-        pnuccp = st_centrepost_nuclear_heating( pneutmw, hmax, r_sh_inboard_out )
+        call st_centrepost_nuclear_heating( pneutmw, hmax, r_sh_inboard_out, shldith, pnuccp )
     else
         pnuccp = 0.0D0
     end if
@@ -1551,8 +1547,8 @@ contains
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function st_centrepost_nuclear_heating(pneut, cphalflen, cpradius) &
-       result(pnuccp)
+  subroutine st_centrepost_nuclear_heating(pneut, cphalflen, cpradius, sh_width, pnuc_cp) 
+
     !! Estimates the nuclear power absorbed by the ST centrepost
     !! author: P J Knight, CCFE, Culham Science Centre
     !! pneut : input real : total neutron power (MW)
@@ -1574,13 +1570,14 @@ contains
     ! Arguments !
     ! !!!!!!!!!!!!
 
-    real(kind(1.0D0)), intent(in) :: pneut, cphalflen, cpradius
+    ! Inputs
+    real(kind(1.0D0)), intent(in) :: pneut, cphalflen, cpradius, sh_width
+    
+    ! Outputs
+    real(kind(1.0D0)), intent(out) :: pnuc_cp
 
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
-
-    ! nuclear heating in the ST centrepost [MW]
-    real(kind(1.0D0)) :: pnuccp
 
     ! Fraction of neutrons that hit the centrepost shield
     real(kind(1.0D0)) :: f_neut_geom
@@ -1605,10 +1602,10 @@ contains
       f_neut_absorb = 1.0D0 - exp( -2.0D0*tfcth / 0.08D0) 
     
       ! Nuclear power
-      pnuccp = pneut * f_neut_geom * f_neut_absorb
+      pnuc_cp = pneut * f_neut_geom * f_neut_absorb
       
       ! Correct for shielding 
-      if ( f_neut_shield > 0.0D0 ) pnuccp = pnuccp * f_neut_shield 
+      if ( f_neut_shield > 0.0D0 ) pnuc_cp = pnuc_cp * f_neut_shield 
       ! ---------
 
 
@@ -1617,11 +1614,11 @@ contains
     ! From Pfus = 1 GW ST neutronic calculations assuming
     ! Tungsten carbyde with 13% water cooling fraction
     else if ( i_tf_sup == 2 ) then
-      pnuccp = ( pneutmw / 800.0D0 ) * exp( 3.882D0 - 16.69D0*shldith )
+      pnuc_cp = ( pneutmw / 800.0D0 ) * exp( 3.882D0 - 16.69D0*sh_width )
     end if 
     ! ------------
 
-  end function st_centrepost_nuclear_heating
+  end subroutine st_centrepost_nuclear_heating
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

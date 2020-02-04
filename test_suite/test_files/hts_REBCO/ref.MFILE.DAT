@@ -383,7 +383,7 @@
  Auxiliary_current_drive_fraction________________________________________ (faccd)_______________________      1.0040E-01    
  Inductive_fraction______________________________________________________ (facoh)_______________________      5.3872E-01    
  Total___________________________________________________________________ (bootipf+faccd+facoh)_________      1.0000E+00    
- Fraction_of_the_plasma_current_produced_by_non-inductive_means__________ (fvsbrnni)____________________      4.6128E-01 ITV
+ Fraction_of_the_plasma_current_produced_by_non-inductive_means__________ (fvsbrnni)____________________      4.6127E-01 ITV
  Electron_cyclotron_injected_power_(MW)__________________________________ (echpwr)______________________      5.0000E+01 OP 
  Maximum_allowable_ECRH_power_(MW)_______________________________________ (pinjalw)_____________________      5.0000E+01    
  ECH_wall_plug_efficiency________________________________________________ (etaech)______________________      4.0000E-01    

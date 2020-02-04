@@ -70,7 +70,7 @@ contains
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-    real(kind(1.0D0)) :: abus, tfbusres, rhotfbus, ztot, tfbusmw, tfreacmw
+    real(kind(1.0D0)) :: abus, tfbusres, ztot, tfbusmw, tfreacmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -85,8 +85,10 @@ contains
        !  jbus   - bus current density (A/m2)
        abus = cpttf/jbus
 
-       !  Bus resistance (ohm)
-       rhotfbus = rhotfleg! 0.0D0 ! 
+       ! Bus resistance [ohm]
+       ! Bus resistivity (rhotfbus) default value : -1.0D0
+       ! If this value is chosen, the bus resistivity is the same as the leg one
+       if ( abs(rhotfbus + 1.0D0) < epsilon(rhotfbus) ) rhotfbus = rhotfleg  
        tfbusres = rhotfbus * tfbusl/abus
 
        !  Bus mass (kg)
@@ -100,7 +102,7 @@ contains
        vtfkv = 1.0D-3 * ztot * cpttf/n_tf
 
        !  Resistive powers (MW):
-       tfcpmw  = 1.0D-6 * prescp   !  inboard legs
+       tfcpmw  = 1.0D-6 * prescp   !  inboard legs (called centrepost, CP for tart design)
        tflegmw = 1.0D-6 * presleg  !  outboard legs
        tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus => Dodgy !
 

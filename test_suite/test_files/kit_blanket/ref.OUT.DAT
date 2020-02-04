@@ -200,7 +200,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Beta Information :
  
- Total plasma beta                                                        (beta)                    3.622E-02  ITV
+ Total plasma beta                                                        (beta)                    3.620E-02  ITV
  Total poloidal beta                                                      (betap)                   1.123E+00  OP 
  Total toroidal beta                                                                                3.743E-02  OP 
  Fast alpha beta                                                          (betaft)                  4.812E-03  OP 
@@ -330,7 +330,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power incident on the lower inner target (MW)                            (pLImw)                   1.341E+01  OP 
  Power incident on the lower outer target (MW)                            (pLOmw)                   1.930E+01  OP 
  
- Ohmic heating power (MW)                                                 (pohmmw)                  1.138E+00  OP 
+ Ohmic heating power (MW)                                                 (pohmmw)                  1.136E+00  OP 
  Fraction of alpha power deposited in plasma                              (falpha)                      0.950000  OP 
  Fraction of alpha power to electrons                                     (falpe)                       0.692965  OP 
  Fraction of alpha power to ions                                          (falpi)                       0.307035  OP 
@@ -342,7 +342,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power into divertor zone via charged particles (MW)                      (pdivt)                   1.635E+02  OP 
  Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            1.700E+01  OP 
- Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             1.004E+01  OP 
+ Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             1.002E+01  OP 
  
  H-mode Power Threshold Scalings :
  
@@ -766,8 +766,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable overall current density at EOF (A/m2)                          (rjohc)                   6.345E+07  OP 
  Actual overall current density at EOF (A/m2)                             (coheof)                  1.586E+07  ITV
  
- CS inside radius (m)                                                     (bore.)                   2.665E+00     
- CS thickness (m)                                                         (ohcth.)                  6.547E-01     
+ CS inside radius (m)                                                     (bore.)                   2.666E+00     
+ CS thickness (m)                                                         (ohcth.)                  6.546E-01     
  Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
  CS overall cross-sectional area (m2)                                     (areaoh)                  9.967E+00  OP 
  CS conductor+void cross-sectional area (m2)                              (awpoh)                   4.984E+00  OP 
@@ -968,7 +968,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    5     3.5E-01 1.0E-01 8.8E-01 4.7E-01 1.4E+00 1.4E-01 3.5E-01 9.7E-04
    6     9.9E-02 3.7E-01 4.7E-01 8.8E-01 1.4E-01 1.4E+00 3.5E-01 9.7E-04
   CS     1.2E+00 1.1E+00 7.3E-01 7.3E-01 3.5E-01 3.5E-01 2.4E+01 5.4E-03
- Plasma  1.3E-03 1.3E-03 2.4E-03 2.4E-03 9.7E-04 9.7E-04 5.4E-03 1.7E-05
+ Plasma  1.3E-03 1.3E-03 2.4E-03 2.4E-03 9.8E-04 9.8E-04 5.4E-03 1.7E-05
  
  *********************************** Blanket model output - KIT HCPB model ************************************
  
@@ -1103,7 +1103,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Diameter of ducts (m)                                                    (dout)                    6.709E-01  OP 
  Duct length, divertor to elbow (m)                                       (l2)                      4.800E+00  OP 
  Duct length, elbow to pumps (m)                                          (l3)                      2.000E+00     
- Number of pumps                                                          (pumpn)                   4.898E+01  OP 
+ Number of pumps                                                          (pumpn)                   4.897E+01  OP 
  
  The vacuum system uses cryo pumps
  
@@ -1202,7 +1202,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                         coolant pumping              0.00                0.00                0.00
  
          Shield:
-                               neutrons             10.34                0.00               10.34
+                               neutrons             10.35                0.00               10.35
              charged particle transport              0.00                0.00                0.00
                               radiation              0.00                0.00                0.00
                         coolant pumping              0.00                0.00                0.00

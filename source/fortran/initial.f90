@@ -498,7 +498,7 @@ subroutine initial
 
     !  Initialise stellarator parameters if necessary
     !  This overrides some of the bounds of the tokamak parameters.
-    if (istell == 1) call stinit
+    if (istell /= 0) call stinit
 
 end subroutine initial
 
@@ -622,7 +622,6 @@ subroutine check
     errors_on = .true.
 
     !  Check that there are sufficient iteration variables
-
     if (nvar < neqns) then
         idiags(1) = nvar ; idiags(2) = neqns
         call report_error(137)
@@ -689,14 +688,14 @@ subroutine check
 
     ! The 1/R B field dependency constraint variable is being depreciated
     ! Stop the run if the constraint 10 is used
-    if ( any(icc == 10 )) then
+    if ( any( icc == 10 ) ) then
         call report_error(236)
         stop
     end if
 
     ! Stop the run if oacdcp is used as an optimisation variable
     ! As the current density is now calculated from bt without constraint 10
-    if ( any(ixc == 12 ) ) then
+    if ( any( ixc == 12 ) ) then
         call report_error(236)
         stop
     end if 
@@ -706,67 +705,71 @@ subroutine check
         call report_error(138)
     end if
 
+    ! Check if the kallenbach model is used with a variable target temperature
+    ! is so a discontinuity might appears that is highly likely to prevent VMCON
+    ! to converge.
+    if ( any(ixc == 120 ) .and. kallenbach_switch == 1 ) then
+        call report_error(237)
+    end if 
+
     !  Plasma profile consistency checks
-
     if (ife /= 1) then
-    if (ipedestal == 1 .or. ipedestal == 2) then
+        if (ipedestal == 1 .or. ipedestal == 2) then
 
-        !  Temperature checks
+            !  Temperature checks
+            if (teped < tesep) then
+                fdiags(1) = teped ; fdiags(2) = tesep
+                call report_error(146)
+            end if
 
-        if (teped < tesep) then
-            fdiags(1) = teped ; fdiags(2) = tesep
-            call report_error(146)
-        end if
+            if ((abs(rhopedt-1.0D0) <= 1.0D-7).and.((teped-tesep) >= 1.0D-7)) then
+                fdiags(1) = rhopedt ; fdiags(2) = teped ; fdiags(3) = tesep
+                call report_error(147)
+            end if
 
-        if ((abs(rhopedt-1.0D0) <= 1.0D-7).and.((teped-tesep) >= 1.0D-7)) then
-            fdiags(1) = rhopedt ; fdiags(2) = teped ; fdiags(3) = tesep
-            call report_error(147)
-        end if
+            !  Core temperature should always be calculated (later) as being
+            !  higher than the pedestal temperature, if and only if the
+            !  volume-averaged temperature never drops below the pedestal
+            !  temperature. Prevent this by adjusting te, and its lower bound
+            !  (which will only have an effect if this is an optimisation run)
+            if (te <= teped) then
+                fdiags(1) = te ; fdiags(2) = teped
+                te = teped*1.001D0
+                call report_error(149)
+            end if
 
-        !  Core temperature should always be calculated (later) as being
-        !  higher than the pedestal temperature, if and only if the
-        !  volume-averaged temperature never drops below the pedestal
-        !  temperature. Prevent this by adjusting te, and its lower bound
-        !  (which will only have an effect if this is an optimisation run)
+            if ((ioptimz >= 0).and.(any(ixc == 4)).and.(boundl(4) < teped*1.001D0)) then
+                call report_error(150)
+                boundl(4) = teped*1.001D0
+                boundu(4) = max(boundu(4), boundl(4))
+            end if
 
-        if (te <= teped) then
-            fdiags(1) = te ; fdiags(2) = teped
-            te = teped*1.001D0
-            call report_error(149)
-        end if
+             !  Density checks
+             !  Case where pedestal density is set manually
+             ! ---------------
+             if ( (fgwped < 0) .or. (.not.any(ixc==145)) ) then
+            
+                 ! Issue #589 Pedestal density is set manually using neped but it is less than nesep.
+                 if ( neped < nesep ) then
+                     fdiags(1) = neped ; fdiags(2) = nesep
+                     call report_error(151)
+                 end if  
 
-        if ((ioptimz >= 0).and.(any(ixc == 4)).and.(boundl(4) < teped*1.001D0)) then
-            call report_error(150)
-            boundl(4) = teped*1.001D0
-            boundu(4) = max(boundu(4), boundl(4))
-        end if
+                 ! Issue #589 Pedestal density is set manually using neped,
+                 ! but pedestal width = 0.
+                 if ( (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7) ) then
+                     fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
+                     call report_error(152)
+                 end if
+             end if 
 
-         !  Density checks
-         !  Case where pedestal density is set manually
-         ! ---------------
-         if ( (fgwped < 0) .or. (.not.any(ixc==145)) ) then
-    
-             ! Issue #589 Pedestal density is set manually using neped but it is less than nesep.
-             if ( neped < nesep ) then
-                 fdiags(1) = neped ; fdiags(2) = nesep
-                 call report_error(151)
-             end if  
-
-             ! Issue #589 Pedestal density is set manually using neped,
-             ! but pedestal width = 0.
-             if ( (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7) ) then
-                 fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
-                 call report_error(152)
+             ! Issue #862 : Variable ne0/neped ratio without constraint eq 81 (ne0>neped)
+             !  -> Potential hollowed density profile
+             if ( (ioptimz >= 0) .and. (.not.any(icc==81)) ) then
+                 if ( any(ixc == 145 )) call report_error(154)
+                 if ( any(ixc ==   6 )) call report_error(155)
              end if
-         end if 
-
-         ! Issue #862 : Variable ne0/neped ratio without constraint eq 81 (ne0>neped)
-         !  -> Potential hollowed density profile
-         if ( (ioptimz >= 0) .and. (.not.any(icc==81)) ) then
-             if ( any(ixc == 145 )) call report_error(154)
-             if ( any(ixc ==   6 )) call report_error(155)
          end if
-     end if
      end if
      ! ---------------
 
@@ -977,7 +980,7 @@ subroutine check
 
     !  Tight aspect ratio options (ST)
     ! --------------------------------
-     if (itart == 1) then
+    if ( itart == 1 ) then
 
         icase  = 'Tight aspect ratio tokamak model'
 
@@ -998,26 +1001,54 @@ subroutine check
         ipfloc(2) = 3
         ipfloc(3) = 3
 
+        ! Water cooled copper magnets initalisation / checks
+        if ( i_tf_sup == 0 ) then
+            ! Check if the initial centrepost coolant loop adapted to the magnet technology
+            ! Ice cannot flow so tcoolin > 273.15 K 
+            if ( tcoolin < 273.15D0 ) call report_error(234)
+
+            ! Temperature of the TF legs cannot be cooled down 
+            if ( abs(tlegav+1.0D0) > epsilon(tlegav) .and. tlegav < 273.15D0 ) call report_error(239)
+
+            ! Check if conductor upper limit is properly set to 50 K or below
+            if ( any(ixc == 20 ) .and. boundu(20) < 273.15D0 ) call report_error(241)
+
         ! Call a lvl 3 error if superconductor magnets are used
-        if ( i_tf_sup == 1 ) call report_error(233)
+        else if ( i_tf_sup == 1 ) then 
+            call report_error(233)
 
-        ! Initialize the CP conductor temperature to cryogenic temperatire for cryo-al magnets (20 K)
-        if ( i_tf_sup == 2 ) tcpav  = 20.0D0
+        ! Helium cooled cryogenic aluminium magnets initalisation / checks
+        ! Initialize the CP conductor temperature to cryogenic temperature for cryo-al magnets (20 K)
+        else  if ( i_tf_sup == 2 ) then
 
-        ! Check if the initial centrepost coolant loop adapted to the magnet technology
-        ! Ice cannot flow so tcoolin > 273.15 K 
-        if ( i_tf_sup == 0 .and. tcoolin < 273.15D0 ) call report_error(234)
+            ! Call a lvl 3 error if the inlet coolant temperature is too large
+            ! Motivation : ill-defined aluminium resistivity fit for T > 40-50 K
+            if ( tcoolin > 40.0D0 ) call report_error(235)
+            
+            ! Check if the leg average temperature is low enough for the resisitivity fit
+            if ( tlegav > 50.0D0 ) call report_error(238)
 
-        ! Too large temperatures leading to out of range resisitivity model
-        if ( i_tf_sup == 2 .and. tcoolin > 50.0D0 ) call report_error(235)
+            ! Check if conductor upper limit is properly set to 50 K or below
+            if ( any(ixc == 20 ) .and. boundu(20) > 50.0D0 ) call report_error(240)
+
+            ! Otherwise intitialise the average conductor temperature at 
+            tcpav = tcoolin
+        
+        end if
 
         ! Check if the boostrap current selection is addapted to ST
         if (ibss  == 1) call report_error(38)
 
-        ! Check if a single null divertor is used (double null not yet implemented)
+        ! Check if a single null divertor is used
         if (i_single_null == 1) call report_error(39)
+
+        ! Set the TF coil shape to picture frame (if default value)
+        if ( i_tf_shape == 0 ) i_tf_shape = 2
     ! --------------------------------
 
+    
+    ! Conventionnal aspect ratios specific
+    ! ------------------------------------
     else
 
         if (icurr == 2 .or. icurr == 9) call report_error(40)
@@ -1028,8 +1059,10 @@ subroutine check
             idivrt = 1
         end if
 
-        !  Check PF coil configurations
+        ! Set the TF coil shape to PROCESS D-shape (if default value)
+        if ( i_tf_shape == 0 ) i_tf_shape = 1
 
+        !  Check PF coil configurations
         j = 0 ; k = 0
         do i = 1, ngrp
             if ((ipfloc(i) /= 2).and.(ncls(i) /= 2)) then
@@ -1048,6 +1081,7 @@ subroutine check
         if ((i_single_null == 1).and.(j < 2)) call report_error(44)
 
     end if
+    ! ------------------------------------
 
     !  Pulsed power plant model
 

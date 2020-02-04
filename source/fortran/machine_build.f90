@@ -105,25 +105,25 @@ contains
     ! Radius of the centrepost at the top of the machine
     if ( itart == 1 ) then
 
-       rtop = rmajor - rminor * triang - ( deltf + thshield + gapds + ddwi + &
-            & shldith + vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
-       rtop = max( rtop, ( r_tf_inboard_mid + 0.5D0*tfcth ) * 1.01D0 ) 
+       r_cp_top = rmajor - rminor * triang - ( deltf + thshield + shldith + &
+                  vvblgap + blnkith + fwith +  3.0D0*scrapli ) + drtop
+       r_cp_top = max( r_cp_top, ( r_tf_inboard_mid + 0.5D0*tfcth ) * 1.01D0 ) 
        
-       if (rtop <= 0.0D0) then
-         fdiags(1) = rtop ; call report_error(115)
+       if (r_cp_top <= 0.0D0) then
+         fdiags(1) = r_cp_top ; call report_error(115)
        end if
-    
-       !write(*,*) ' rtop = ' , rtop
     else
-       rtop = r_tf_inboard_mid + 0.5D0*tfcth
+       r_cp_top = r_tf_inboard_mid + 0.5D0*tfcth
     end if 
 
     !  Radial position of vacuum vessel [m]
     r_vv_inboard_out = rbldtotf + deltf + thshield + gapds + ddwi
 
+    ! Radial position of the plasma facing side of inboard neutronic shield
+    r_sh_inboard_out = r_vv_inboard_out + shldith
+
     !  Radial build to centre of plasma (should be equal to rmajor)
-    rbld = rbldtotf + deltf + thshield + gapds + ddwi + &
-         shldith + vvblgap + blnkith + fwith + scrapli + rminor
+    rbld = r_sh_inboard_out + vvblgap + blnkith + fwith + scrapli + rminor
 
     !  Radius to inner edge of inboard shield
     rsldi = rmajor - rminor - scrapli - fwith - blnkith - shldith
