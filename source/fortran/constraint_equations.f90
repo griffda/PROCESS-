@@ -1349,13 +1349,13 @@ contains
       !! alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
       !! strtf2 : input real : Constrained stress in TF coil case (Pa) 
       use constraint_variables, only: fstrcase
-      use tfcoil_variables, only: alstrtf, strtf
+      use tfcoil_variables, only: alstrtf, strtf1
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc =  1.0D0 - fstrcase * alstrtf/strtf
+      args%cc =  1.0D0 - fstrcase * alstrtf/strtf1
       args%con = alstrtf
-      args%err = alstrtf - strtf / fstrcase
+      args%err = alstrtf - strtf1 / fstrcase
       args%symbol = '<'
       args%units = 'Pa'
 
@@ -1375,13 +1375,13 @@ contains
       !! alstrtf : input real : allowable Tresca stress in TF coil structural material (Pa)
       !! strtf1 : input real : Constrained Tresca stress in TF conductor conduit (Pa) 
       use constraint_variables, only: fstrcond
-      use tfcoil_variables, only: alstrtf, strtf
+      use tfcoil_variables, only: alstrtf, strtf2
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc =  1.0D0 - fstrcond * alstrtf/strtf
+      args%cc =  1.0D0 - fstrcond * alstrtf/strtf2
       args%con = alstrtf
-      args%err = alstrtf - strtf / fstrcond
+      args%err = alstrtf - strtf2 / fstrcond
       args%symbol = '<'
       args%units = 'Pa'
 

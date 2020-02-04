@@ -30,10 +30,6 @@ beta = 0.03142
 *----------------------*
 icc = 2
 
-* Toroidal field 1/R consistency *
-*--------------------------------*
-*icc = 10
-
 * Radial build consistency *
 *--------------------------*
 icc = 11
@@ -206,7 +202,9 @@ psepbqarmax = 13.6
 *-----------------------*
 
 icc = 31 * TF coil case stress upper limit
+icc = 32 * TF coil conduit stress upper limit
 ixc = 48 * fstrcase
+ixc = 49 * fstrcond
 alstrtf = 6.6e8
 
 * Iteration Variables *

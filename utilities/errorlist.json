@@ -2,7 +2,7 @@
  "version":  [ "PROCESS version 1.0.16" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 245,
+ "n_errortypes": 243,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -245,9 +245,7 @@
   {"no": 239, "level": 3, "message": "CHECK: TF legs conductor temperature (tlegav) cannot be < 0 C (273.15 K) for water cooled magents."},
   {"no": 240, "level": 3, "message": "CHECK: Too large CP conductor temperature (tcpav). Upper limit for cryo-al < 50 K"},
   {"no": 241, "level": 3, "message": "CHECK: Too low CP conductor temperature (tcpav). Lower limit for copper > 273.15 K"},
-  {"no": 242, "level": 3, "message": "CHECK: Constraint 32 (conduit stress limit) depreciated (use only constraint 31)"},
-  {"no": 243, "level": 2, "message": "[sctfcoil] Invalid stress model (r_tf_inboard = 0), stress constraint switched off"},
-  {"no": 244, "level": 3, "message": "CHECK: Invalid stress model if bore + gapoh + ohcth = 0. Don't use constraint 31"},
-  {"no": 245, "level": 3, "message": "CHECK: fstrcond depreciated (constraint 32 depreciated)"}
+  {"no": 242, "level": 2, "message": "[sctfcoil] Invalid stress model (r_tf_inboard = 0), stress constraint switched off"},
+  {"no": 243, "level": 3, "message": "CHECK: Invalid stress model if bore + gapoh + ohcth = 0. Don't use constraint 31"}
  ]
 }

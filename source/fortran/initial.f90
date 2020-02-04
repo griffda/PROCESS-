@@ -1101,16 +1101,6 @@ subroutine check
 
     ! TF coil
     ! -------
-    !  Constraint 32 depreciated (one TF stress limit constraint 31 is now enough)
-    if ( any(icc == 32) ) then
-        call report_error(242)
-        stop
-    else if ( any(ixc == 49 ) ) then
-        call report_error(245)
-        stop
-    end if 
-
-
     ! TF stress model not defined of r_tf_inboard = 0
     ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used
     !    Generate a lvl 3 error proposing not to use any stress constraints
@@ -1118,7 +1108,7 @@ subroutine check
          .and. ( abs(bore + gapoh + ohcth) < epsilon(bore) )                           & ! bore + gapoh + ohcth = 0
          .and. any(icc == 31) ) then                                                     ! Stress constraint (31) is used 
 
-        call report_error(244)
+        call report_error(243)
         stop
     end if
      

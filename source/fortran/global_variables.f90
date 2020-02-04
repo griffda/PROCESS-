@@ -2305,9 +2305,12 @@ module tfcoil_variables
   real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_tresca = 0.0D0 
   !! TF Inboard leg TRESCA stress r distribution at mid-plane [Pa]
 
-  real(kind(1.0D0)) :: strtf = 0.0D0
+  real(kind(1.0D0)) :: strtf1 = 0.0D0
   !! strtf : Constrained stress in TF Steel structures (Pa)
-    
+  
+  real(kind(1.0D0)) :: strtf2 = 0.0D0
+  !! strtf : Constrained stress in TF Steel structures (Pa)
+  
   real(kind(1.0D0)) :: sigvvall = 9.3D7
   !! sigvvall /9.3e7/ : allowable stress from TF quench in vacuum vessel (Pa)
   real(kind(1.0D0)) :: strncon_cs = -0.005D0
@@ -3951,7 +3954,6 @@ module constraint_variables
   real(kind(1.0D0)) :: fstrcond = 1.0D0
   !! fstrcond /1.0/ : f-value for TF coil conduit stress
   !!                  (constraint equation 32, iteration variable 49)
-  !!                  Depreciated
 
   real(kind(1.0D0)) :: ftaucq = 1.0D0
   !! ftaucq /1.0/ : f-value for calculated minimum TF quench time

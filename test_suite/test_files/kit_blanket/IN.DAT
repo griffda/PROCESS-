@@ -1,6 +1,6 @@
 *--------------------------------------------------*
 *---------------Constraint Equations---------------*
-neqns = 20 * Number of equality constraints to be satisfied
+neqns = 21 * Number of equality constraints to be satisfied
 icc = 1
 icc = 2
 icc = 5
@@ -13,6 +13,7 @@ icc = 26
 icc = 27
 icc = 30
 icc = 31
+icc = 32
 icc = 33
 icc = 34
 icc = 35
@@ -55,6 +56,7 @@ boundl(42) = 0.05
 *boundu(42) = 0.1
 ixc = 44 * fvsbrnni
 ixc = 48 * fstrcase
+ixc = 49 * fstrcond
 ixc = 50 * fiooic
 boundu(50) = 0.5
 ixc = 51 * fvdump
@@ -129,6 +131,7 @@ fpeakb   = 9.2290d-1 * F-value for maximum toroidal field
 fpinj    = 1.0 * F-value for injection power
 fpnetel  = 1.0 * F-value for net electric power
 fstrcase = 1.0000e+00 * F-value for tf coil case stress
+fstrcond = 8.6890e-01 * F-value for tf coil conduit stress
 ftburn   = 1.00e+00 * F-value for minimum burn time
 fvdump   = 1.0      * F-value for dump voltage
 fwalld   = 1.3024e-01 * F-value for maximum wall load

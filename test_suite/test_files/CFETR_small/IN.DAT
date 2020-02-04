@@ -10,7 +10,7 @@
 
 *---------------Constraint Equations---------------*
 
-neqns = 22       * Number of constraint equations
+neqns = 23       * Number of constraint equations
 icc = 1        * beta (consistency equation)
 icc = 2        * global power balance (consistency equation)
 icc = 36       * Temperature margin limit
@@ -20,6 +20,7 @@ icc = 56       * pseparatrix/rmajor upper limit
 icc = 30       * Max neutral beam power
 icc = 8        * neutron wall load upper limit
 icc = 31      * tf coil case stress upper limit (sctf)
+icc = 32      * tf coil consuit stress upper limit (sctf)
 icc = 35      * j_winding pack/j_protection upper limit (sctf)
 icc = 33      * i_op / i_critical (tf coil) (sctf)
 icc = 17      * radiation fraction upper limit
@@ -36,7 +37,7 @@ icc = 9       * Fusion power upper limit
 
 *---------------Iteration Variables----------------*
 
-nvar      = 38       * Number of iteration variables
+nvar      = 39       * Number of iteration variables
 
 ixc       = 4        * te * Volume averaged electron temperature (kev)
 boundl(4) = 3.00
@@ -61,6 +62,10 @@ boundu(9) = 1.000
 ixc        = 48      * fstrcase * F-value for tf coil case stress
 boundl(48) = 0.001
 boundu(48) = 1.1
+
+ixc        = 49      * fstrcase * F-value for tf coil conduit stress
+boundl(49) = 0.001
+boundu(49) = 1.1
 
 ixc        = 97      * fpsepr * F-value for maximum psep/r limit
 boundl(97) = 0.001

@@ -3,7 +3,7 @@
 *--------------------------------------------------*
 
 *---------------Constraint Equations---------------*
-neqns = 20
+neqns = 21
 icc = 1        * beta (consistency equation)
 icc = 2        * global power balance (consistency equation)
 icc = 5        * density upper limit
@@ -19,6 +19,7 @@ icc = 26      * central solenoid eof current density upper limit
 icc = 27      * central solenoid bop current density upper limit
 icc = 30      * injection power upper limit
 icc = 31      * tf coil case stress upper limit (sctf)
+icc = 32      * tf coil conduit stress upper limit (sctf)
 icc = 33      * i_op / i_critical (tf coil) (sctf)
 icc = 34      * dump voltage upper limit (sctf)
 icc = 35      * j_winding pack/j_protection upper limit (sctf)
@@ -122,6 +123,10 @@ boundu(44) = 1.0
 ixc = 48      * fstrcase * F-value for tf coil case stress
 boundl(48) = 0.001
 boundu(48) = 1.0
+
+ixc = 49      * fstrcond * F-value for tf coil case stress
+boundl(49) = 0.001
+boundu(49) = 1.0
 
 ixc = 50      * fiooic * F-value for tf coil operating current / critical
 boundl(50) = 0.001

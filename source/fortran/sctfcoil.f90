@@ -1130,8 +1130,9 @@ subroutine stresscl
     ! Stress model not valid the TF does not contain any hole
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
     if ( abs(r_tf_inboard_in) < epsilon(r_tf_inboard_in) ) then
-        call report_error(243)
-        strtf = 0.0D0
+        call report_error(242)
+        strtf1 = 0.0D0
+        strtf2 = 0.0D0
         return
     end if
 
@@ -1259,7 +1260,8 @@ subroutine stresscl
     end if
 
     ! Maximum of the TRESCA stress distribution [Pa]
-    strtf = maxval(sig_tf_tresca_max)
+    strtf1 = sig_tf_tresca_max(1)     ! Casing TRESCA constraint
+    strtf2 = sig_tf_tresca_max(2)     ! Conduit TRESCA constraint
     ! ---
 
 
