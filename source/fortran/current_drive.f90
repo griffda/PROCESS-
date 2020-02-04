@@ -525,7 +525,7 @@ contains
 
     call osubhd(outfile,'Fractions of current drive :')
     call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf, 'OP ')
-    call ovarrf(outfile,'Diamagnetic fraction','(diatipf)',diaipf, 'OP ')
+    call ovarrf(outfile,'Diamagnetic fraction','(diaipf)',diaipf, 'OP ')
     call ovarrf(outfile,'Pfirsch-Schlüter fraction','(psipf)',psipf, 'OP ')
     call ovarrf(outfile,'Auxiliary current drive fraction','(faccd)',faccd, 'OP ')
     call ovarrf(outfile,'Inductive fraction','(facoh)',facoh, 'OP ')
