@@ -883,6 +883,7 @@ class InDat(object):
         # Initialise parameters
         self.in_dat_lines = list()
         self.data = dict()
+        self.unrecognised_vars = []
         self.duplicates = [] # Duplicate variables
 
         # read in IN.DAT
@@ -924,6 +925,11 @@ class InDat(object):
                     print("Warning: Line below is causing a problem. Check "
                           "that line in IN.DAT is valid. Line skipped!\n{0}".
                           format(line), file=stderr)
+                    
+                    # Store the first part of the unrecognised line (probably a
+                    # variable name) as an unrecognised var
+                    unrecognised_var = line.split("=")[0].strip()
+                    self.unrecognised_vars.append(unrecognised_var)
 
     def process_line(self, line_type, line):
         """ Function to process the line and return the appropriate INVariable
@@ -1395,6 +1401,7 @@ class StructuredInputData():
         self.data["parameters"] = get_parameters(in_dat.data, 
             use_string_values=False)
 
+        self.unrecognised_vars = in_dat.unrecognised_vars
         self.duplicates = in_dat.duplicates
         # Duplicate initialisations in the input file
 
