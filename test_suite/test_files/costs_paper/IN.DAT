@@ -124,7 +124,7 @@ ixc = 48      * fstrcase * F-value for tf coil case stress
 boundl(48) = 0.001
 boundu(48) = 1.0
 
-ixc = 49      * fstrcond * F-value for tf coil case stress
+ixc = 49      * fstrcond * F-value for tf coil conduit stress
 boundl(49) = 0.001
 boundu(49) = 1.0
 
