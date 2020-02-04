@@ -9,6 +9,8 @@ import os
 import sys
 import argparse
 
+PROCESS_EXE_PATH = "./bin/process.exe"
+
 def parse_args():
     """Parse the command line arguments
     
@@ -21,9 +23,9 @@ def parse_args():
     # Optional arguments
     parser.add_argument("--input",
         "-i",
-        metavar="input_filename",
+        metavar="input_file_path",
         default="IN.DAT",
-        help="The name of the input file that Process runs on")
+        help="The path to the input file that Process runs on")
     parser.add_argument("--build",
         "-b",
         action="store_true",
@@ -54,14 +56,13 @@ def build_process():
     subprocess.run(["cmake", "-H.", "-Bbuild"])
     subprocess.run(["cmake", "--build", "build"])
 
-def run_process(input_filename):
-    """Run Process using a given input file
+def run_process(input_file_path):
+    """Run Process using a given input file path.
     
-    :param input_filename: Filename of the input file
-    :type input_filename: str
+    :param input_file_path: Path to the input file from the project root dir
+    :type input_file_path: str
     """
-    # Todo: support file locations that aren't in the project root dir
-    subprocess.run(["./process.exe", input_filename])
+    subprocess.run([PROCESS_EXE_PATH, input_file_path])
 
 def create_dicts():
     """Create Python dictionaries"""
