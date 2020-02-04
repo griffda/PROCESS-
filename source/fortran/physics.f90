@@ -239,8 +239,8 @@ end subroutine subr
 
        !  Wilson scaling uses thermal poloidal beta, not total
        betpth = (beta-betaft-betanb) * ( btot/bp )**2
-       bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
-            q0,q95,rmajor,rminor,itart)
+       bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,betpth, &
+            q0,q95,rmajor,rminor)
     endif
 
     bscf_sauter = cboot * bootstrap_fraction_sauter()
@@ -263,14 +263,36 @@ end subroutine subr
 
           bootipf = min(bootipf,bscfmax)
 
+         if (idia == 1) then
+            !  Diamagnetic contribution at tight aspect ratio.
+            !  Tim Hender fit
+            diaipf = beta/2.8D0
+         else if (idia == 2) then
+            ! Diamagnetic fraction based on SCENE fit by
+            ! Tim Hender.
+            ! See Issue #992
+            diaipf = beta * (0.1D0*q95/q0+0.44D0) * 4.14D-1
+         end if
+
+         if (ips == 1) then
+            ! Pfirsch-Schlüter fraction based on SCENE fit by
+            ! Tim Hender.
+            ! Note Pfirsch-Schlüter current is negative.
+            ! See Issue #992
+            psipf = -9.0D-2 * beta
+         end if
+
+          plasipf = bootipf + diaipf + psipf
+
        end if
 
-       !  Bootstrap current fraction constrained to be less than
+       !  Plasma driven current fraction (Bootstrap + Diamagnetic
+       !  + Pfirsch-Schlüter) constrained to be less than
        !  or equal to the total fraction of the plasma current
        !  produced by non-inductive means (which also includes
        !  the current drive proportion)
 
-       bootipf = min(bootipf,fvsbrnni)
+       plasipf = min(plasipf,fvsbrnni)
 
     endif
 
@@ -278,7 +300,7 @@ end subroutine subr
     if (ipedestal .ne. 3) then
       facoh = max( 1.0D-10, (1.0D0 - fvsbrnni) )
     !   Fraction of plasma current produced by auxiliary current drive
-      faccd = fvsbrnni - bootipf
+      faccd = fvsbrnni - plasipf
     endif
 
     !  Auxiliary current drive power calculations
@@ -784,8 +806,8 @@ end subroutine subr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
-       q0,qpsi,rmajor,rminor,itart)
+  function bootstrap_fraction_wilson(alphaj,alphap,alphat,betpth, &
+       q0,qpsi,rmajor,rminor)
 
     !! Bootstrap current fraction from Wilson et al scaling
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -798,7 +820,6 @@ end subroutine subr
     !! qpsi    : input real :  edge safety factor
     !! rmajor  : input real :  major radius (m)
     !! rminor  : input real :  minor radius (m)
-    !! itart   : input integer :  switch denoting tight aspect ratio option
     !! This function calculates the bootstrap current fraction
     !! using the numerically fitted algorithm written by Howard Wilson.
     !! AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -812,8 +833,7 @@ end subroutine subr
 
     !  Arguments
 
-    integer, intent(in) :: itart
-    real(kind(1.0D0)), intent(in) :: alphaj,alphap,alphat,beta,betpth, &
+    real(kind(1.0D0)), intent(in) :: alphaj,alphap,alphat,betpth, &
          q0,qpsi,rmajor,rminor
 
     !  Local variables
@@ -900,14 +920,6 @@ end subroutine subr
     !  Empirical bootstrap current fraction
 
     bootstrap_fraction_wilson = seps1 * betpth * sss
-
-    !  Diamagnetic contribution to the bootstrap fraction
-    !  at tight aspect ratio.
-    !  Tim Hender fit
-
-!    if (itart == 1) then
-       bootstrap_fraction_wilson = bootstrap_fraction_wilson + beta/2.8D0
-!    end if
 
   end function bootstrap_fraction_wilson
 
@@ -4191,6 +4203,8 @@ end subroutine subr
        endif
 
        call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf, 'OP ')
+       call ovarrf(outfile,'Diamagnetic fraction (enforced)','(diaipf.)',diaipf, 'OP ')
+       call ovarrf(outfile,'Pfirsch-Schlüter fraction (enforced)','(psipf.)',psipf, 'OP ')
 
        call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', plascur*rplas*facoh, 'OP ')
        call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas, 'OP ')

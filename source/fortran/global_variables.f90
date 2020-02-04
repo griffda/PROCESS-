@@ -295,7 +295,11 @@ module physics_variables
   !!        <LI> = 7 Connor-Hastie model;
   !!        <LI> = 8 Sauter scaling allowing negative triangularity;
   !!        <LI> = 9 FIESTA ST fit </UL>
-  
+  integer :: idia = 0
+  !! idia /0/ : switch for diamagnetic current scaling:<UL>
+  !!       <LI> = 0 Do not calculate;
+  !!       <LI> = 1 Use original TART scaling;
+  !!       <LI> = 2 Use SCENE scaling</UL>
   integer :: idensl = 7
   !! idensl /7/ : switch for density limit to enforce (constraint equation 5):<UL>
   !!         <LI> = 1 old ASDEX;
@@ -341,6 +345,11 @@ module physics_variables
   !!            <LI> = 1 use pedestal profiles
   !!            <LI> = 2 use pedestal profiles and run PLASMOD on final output
   !!            <LI> = 3 use PLASMOD transport model only to calculate pedestal profiles</UL>
+
+  integer :: ips = 0
+  !! idia /0/ : switch for Pfirsch-Schlüter current scaling:<UL>
+  !!       <LI> = 0 Do not calculate;
+  !!       <LI> = 1 Use SCENE scaling</UL>
 
   ! Issue #413
   integer :: ieped = 0
@@ -989,6 +998,8 @@ module current_drive_variables
   !! cboot /1.0/ : bootstrap current fraction multiplier (ibss=1)
   real(kind(1.0D0)) :: cnbeam = 0.0D0
   !! cnbeam : neutral beam current (A)
+  real(kind(1.0D0)) :: diaipf = 0.0D0
+  !! diaipf : diamagnetic current fraction
   real(kind(1.0D0)) :: echpwr = 0.0D0
   !! echpwr : ECH power (MW)
   real(kind(1.0D0)) :: echwpow = 0.0D0
@@ -1080,6 +1091,8 @@ module current_drive_variables
   !! pinjmw : total auxiliary injected power (MW)
   real(kind(1.0D0))  :: pinjfixmw = 0.0D0
   !! pinjfixmw : secondary total fixed auxiliary injected power (MW)
+  real(kind(1.0D0)) :: plasipf = 0.0D0
+  !! plasipf : plasma driven current fraction (Bootstrap + Diamagnetic + PS)
   real(kind(1.0D0)) :: plhybd = 0.0D0
   !! plhybd : lower hybrid injection power (MW)
   real(kind(1.0D0)) :: pnbeam = 0.0D0
@@ -1087,6 +1100,8 @@ module current_drive_variables
   real(kind(1.0D0)) :: porbitlossmw = 0.0D0
   !! porbitlossmw : neutral beam power lost after ionisation but before
   !!                thermalisation (orbit loss power) (MW)
+  real(kind(1.0D0)) :: psipf = 0.0D0
+  !! psipf : Pfirsch-Schlüter current fraction
   real(kind(1.0D0)) :: pwplh = 0.0D0
   !! pwplh : lower hybrid wall plug power (MW)
   real(kind(1.0D0)) :: pwpnb = 0.0D0
