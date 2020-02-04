@@ -169,245 +169,6 @@ def find_parameter_group(name):
         if name in DICT_MODULE[key]:
             return key
 
-
-def process_constraint_equation(data, line):
-    """ Function to process constraint equation entry in IN.DAT
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line: Line from IN.DAT to process
-    :return: Nothing
-    """
-
-    # Remove comment from line to make things easier
-    no_comment_line = line.split("*")[0].split("=")
-
-    # If the line contains a constraint equation in the form ICC(#)
-    if "(" in no_comment_line[0] and ")" in no_comment_line[0]:
-        constraints = [no_comment_line[1].strip()]
-
-    # Else the line contains a list of constraint equations icc = #, #, #
-    else:
-        constraints = no_comment_line[1].strip().split(",")
-        if "" in constraints:
-            constraints.remove("")
-
-    # List of new constraints read in
-    value = [int(item.strip()) for item in constraints]
-
-    # Populate data dictionary with constraint equations
-    # If constraint equation list not already in data dictionary initialise
-    # INVariable class
-    if "icc" not in data.keys():
-        data["icc"] = INVariable("icc", value, "Constraint Equation",
-                                 "Constraint Equation", "Constraint Equations")
-
-    else:
-        # Add constraint equation numbers to list
-        for item in constraints:
-            if int(item) not in data["icc"].value:
-                data["icc"].value.append(int(item))
-        data["icc"].value.sort()
-
-
-def process_iteration_variables(data, line):
-    """ Function to process iteration variables entry in IN.DAT
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line: Line from IN.DAT to process
-    :return: Nothing
-    """
-
-    # Remove comment from line to make things easier
-    no_comment_line = line.split("*")[0].split("=")
-
-    # If the line contains an iteration variable in the form IXC(#)
-    if "(" in no_comment_line[0] and ")" in no_comment_line[0]:
-        iteration_variables = [no_comment_line[1].strip()]
-
-    # Else the line contains a list of iteration variables IXC = #, #, #
-    else:
-        iteration_variables = no_comment_line[1].strip().split(",")
-        if "" in iteration_variables:
-            iteration_variables.remove("")
-
-    # List of new constraints read in
-    value = [int(item.strip()) for item in iteration_variables]
-
-    # Populate data dictionary with iteration variables
-    # If iteration variables list not already in data dictionary initialise
-    # INVariable class
-    if "ixc" not in data.keys():
-        data["ixc"] = INVariable("ixc", value, "Iteration Variable",
-                                 "Iteration Variable", "Iteration Variables")
-
-    else:
-        # Add iteration variable to list
-        for item in iteration_variables:
-            if int(item) not in data["ixc"].value:
-                data["ixc"].value.append(int(item))
-        data["ixc"].value.sort()
-
-
-def process_bound(data, line):
-    """ Function to process bound entries in IN.DAT
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line: Line from IN.DAT to process
-    :return: Nothing
-    """
-
-    # Initialise bound type
-    bound_type = None
-
-    # Remove comment from line to make things easier
-    no_comment_line = line.split("*")[0].split("=")
-
-    # If upper bound
-    if "boundu" in no_comment_line[0]:
-        bound_type = "u"
-
-    # If lower bound
-    elif "boundl" in no_comment_line[0]:
-        bound_type = "l"
-
-    # Get bound information
-    bound = no_comment_line[0].strip("boundl").replace("(", "").\
-        replace(")", "").strip()
-    bound_value = no_comment_line[1].strip().replace(",", "").replace("d", "e").\
-        replace("D", "e")
-
-    # If bound not in the bound dictionary then add entry for bound with an
-    # empty dictionary
-    if bound not in data["bounds"].value.keys():
-        data["bounds"].value[bound] = dict()
-
-    # Populate data dictionary with bound information
-    data["bounds"].value[bound][bound_type] = bound_value
-
-
-
-
-def process_array(data, line):
-    """Function to process generic array
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line: Line from IN.DAT to process
-    :return: nothing
-    """
-
-    if "*" in line:
-        array_comment = line.split("*")[1]
-        line_commentless = line.split("*")[0]
-    else:
-        line_commentless = line
-
-    name  = line_commentless.split("(")[0]
-    index = int(line_commentless.split("(")[1].split(")")[0]) - 1
-    value = line_commentless.split("=")[-1].replace(",", "")
-
-    data[name].value[index] = eval(fortran_python_scientific(value))
-
-
-
-def process_parameter(data, line):
-    """ Function to process parameter entries in IN.DAT
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line: Line from IN.DAT to process
-    :return: Nothing
-    """
-
-    # Remove comment from line to make things easier
-    no_comment_line = line.split("*")[0].split("=")
-
-    # Parameter name
-    name = no_comment_line[0].strip()
-
-    # Parameter value
-    if len(no_comment_line[-1].split(",")) > 2:
-        try:
-            value = no_comment_line[1].strip()
-        except IndexError:
-            print('Error when reading IN.DAT file on line', no_comment_line,
-                  '\n Please note, that our Python Library cannot cope with',
-                  ' variable definitions on multiple lines.', file=stderr)
-            exit()
-    else:
-        try:
-            value = no_comment_line[1].strip().replace(",", "")
-        except IndexError:
-            print('Error when reading IN.DAT file on line', no_comment_line,
-                  '\n Please note, that our Python Library cannot cope with',
-                  ' variable definitions on multiple lines.', file=stderr)
-            exit()
-
-    # Find group of variables the parameter belongs to
-    parameter_group = find_parameter_group(name)
-
-    # Get parameter comment/description from dictionary
-    comment = DICT_DESCRIPTIONS[name].replace(",", ";").\
-        replace(".", ";").replace(":", ";")
-
-    # Populate the IN.DAT dictionary with the information
-    data[name] = INVariable(name, value, "Parameter", parameter_group, comment)
-
-
-def process_line(data, line_type, line):
-    """ Function to process the line and return the appropriate INVariable
-    object
-
-    :param data: Data dictionary for the IN.DAT information
-    :param line_type: Type of information the line contains
-    :param line: Line from IN.DAT to process
-    :return: Nothing
-    """
-
-    # Create bound variable class using INVariable class if the bounds entry
-    # doesn't exist
-    if "bounds" not in data.keys():
-        data["bounds"] = INVariable("bounds", dict(), "Bound",
-                                    "Bound", "Bounds")
-
-
-    # Constraint equations
-    if line_type == "Constraint Equation":
-        process_constraint_equation(data, line)
-
-    # Iteration_variables
-    elif line_type == "Iteration Variable":
-        process_iteration_variables(data, line)
-
-    # Bounds
-    elif line_type == "Bound":
-        process_bound(data, line)
-
-    # Arrays
-    elif line_type == "Array":
-        
-        #Create geneneric array variable class using INVariable class,
-        #if it does not yet exist
-        line_commentless = line.split("*")[0]
-        array_name = line_commentless.split("(")[0]
-        if array_name not in data.keys():
-            empty_array = DICT_DEFAULT[array_name]
-            parameter_group = find_parameter_group(array_name)
-
-            # Get parameter comment/description from dictionary
-            comment = DICT_DESCRIPTIONS[array_name].replace(",", ";").\
-                      replace(".", ";").replace(":", ";")
-            
-            data[array_name] = INVariable(array_name, empty_array, array_name,
-                                          parameter_group, comment)
-
-        
-        process_array(data, line)
-        
-        
-    # Parameter
-    else:
-        process_parameter(data, line)
-
-
 def write_title(title, out_file):
     """ Function to write title line to file with fixed width
 
@@ -1122,6 +883,8 @@ class InDat(object):
         # Initialise parameters
         self.in_dat_lines = list()
         self.data = dict()
+        self.unrecognised_vars = []
+        self.duplicates = [] # Duplicate variables
 
         # read in IN.DAT
         if filename is not None:
@@ -1157,11 +920,282 @@ class InDat(object):
 
                 try:
                     # for non-title lines process line and store data.
-                    process_line(self.data, line_type, l_line)
+                    self.process_line(line_type, l_line)
                 except KeyError:
                     print("Warning: Line below is causing a problem. Check "
                           "that line in IN.DAT is valid. Line skipped!\n{0}".
                           format(line), file=stderr)
+                    
+                    # Store the first part of the unrecognised line (probably a
+                    # variable name) as an unrecognised var
+                    unrecognised_var = line.split("=")[0].strip()
+                    self.unrecognised_vars.append(unrecognised_var)
+
+    def process_line(self, line_type, line):
+        """ Function to process the line and return the appropriate INVariable
+        object
+
+        :param line_type: Type of information the line contains
+        :param line: Line from IN.DAT to process
+        :return: Nothing
+        """
+
+        # Create bound variable class using INVariable class if the bounds entry
+        # doesn't exist
+        if "bounds" not in self.data.keys():
+            self.data["bounds"] = INVariable("bounds", dict(), "Bound",
+                                        "Bound", "Bounds")
+
+
+        # Constraint equations
+        if line_type == "Constraint Equation":
+            self.process_constraint_equation(line)
+
+        # Iteration_variables
+        elif line_type == "Iteration Variable":
+            self.process_iteration_variables(line)
+
+        # Bounds
+        elif line_type == "Bound":
+            self.process_bound(line)
+
+        # Arrays
+        elif line_type == "Array":
+            
+            #Create geneneric array variable class using INVariable class,
+            #if it does not yet exist
+            line_commentless = line.split("*")[0]
+            array_name = line_commentless.split("(")[0]
+            empty_array = DICT_DEFAULT[array_name]
+            if array_name not in self.data.keys():
+                parameter_group = find_parameter_group(array_name)
+
+                # Get parameter comment/description from dictionary
+                comment = DICT_DESCRIPTIONS[array_name].replace(",", ";").\
+                        replace(".", ";").replace(":", ";")
+                
+                empty_array_copy = empty_array[:]
+                # Copy empty_array to decouple reference of self.data to 
+                # DICT_DEFAULT; don't want changes to data to change the 
+                # defaults
+                self.data[array_name] = INVariable(array_name, empty_array_copy, array_name,
+                                            parameter_group, comment)
+
+            
+            self.process_array(line, empty_array)
+            
+            
+        # Parameter
+        else:
+            self.process_parameter(line)
+
+    def process_parameter(self, line):
+        """ Function to process parameter entries in IN.DAT
+
+        :param line: Line from IN.DAT to process
+        :return: Nothing
+        """
+
+        # Remove comment from line to make things easier
+        no_comment_line = line.split("*")[0].split("=")
+
+        # Parameter name
+        name = no_comment_line[0].strip()
+
+        # Parameter value
+        if len(no_comment_line[-1].split(",")) > 2:
+            try:
+                value = no_comment_line[1].strip()
+            except IndexError:
+                print('Error when reading IN.DAT file on line', no_comment_line,
+                    '\n Please note, that our Python Library cannot cope with',
+                    ' variable definitions on multiple lines.', file=stderr)
+                exit()
+        else:
+            try:
+                value = no_comment_line[1].strip().replace(",", "")
+            except IndexError:
+                print('Error when reading IN.DAT file on line', no_comment_line,
+                    '\n Please note, that our Python Library cannot cope with',
+                    ' variable definitions on multiple lines.', file=stderr)
+                exit()
+
+        # Find group of variables the parameter belongs to
+        parameter_group = find_parameter_group(name)
+
+        # Get parameter comment/description from dictionary
+        comment = DICT_DESCRIPTIONS[name].replace(",", ";").\
+            replace(".", ";").replace(":", ";")
+
+        # Check that the parameter isn't a duplicate; does the key already 
+        # exist?
+        if self.data.get(name):
+            self.add_duplicate_variable(name)
+
+        # Populate the IN.DAT dictionary with the information
+        self.data[name] = INVariable(name, value, "Parameter", parameter_group, comment)
+
+    def process_constraint_equation(self, line):
+        """ Function to process constraint equation entry in IN.DAT
+
+        :param line: Line from IN.DAT to process
+        :return: Nothing
+        """
+
+        # Remove comment from line to make things easier
+        no_comment_line = line.split("*")[0].split("=")
+
+        # If the line contains a constraint equation in the form ICC(#)
+        if "(" in no_comment_line[0] and ")" in no_comment_line[0]:
+            constraints = [no_comment_line[1].strip()]
+
+        # Else the line contains a list of constraint equations icc = #, #, #
+        else:
+            constraints = no_comment_line[1].strip().split(",")
+            if "" in constraints:
+                constraints.remove("")
+
+        # List of new constraints read in
+        value = [int(item.strip()) for item in constraints]
+
+        # Populate data dictionary with constraint equations
+        # If constraint equation list not already in data dictionary initialise
+        # INVariable class
+        if "icc" not in self.data.keys():
+            self.data["icc"] = INVariable("icc", value, "Constraint Equation",
+                                    "Constraint Equation", "Constraint Equations")
+
+        else:
+            # Add constraint equation numbers to list
+            for item in constraints:
+                if int(item) not in self.data["icc"].value:
+                    self.data["icc"].value.append(int(item))
+                else:
+                    # Duplicate constraint equation number
+                    self.add_duplicate_variable("icc = {0}".format(item))
+            self.data["icc"].value.sort()
+
+    def process_iteration_variables(self, line):
+        """ Function to process iteration variables entry in IN.DAT
+
+        :param line: Line from IN.DAT to process
+        :return: Nothing
+        """
+
+        # Remove comment from line to make things easier
+        no_comment_line = line.split("*")[0].split("=")
+
+        # If the line contains an iteration variable in the form IXC(#)
+        if "(" in no_comment_line[0] and ")" in no_comment_line[0]:
+            iteration_variables = [no_comment_line[1].strip()]
+
+        # Else the line contains a list of iteration variables IXC = #, #, #
+        else:
+            iteration_variables = no_comment_line[1].strip().split(",")
+            if "" in iteration_variables:
+                iteration_variables.remove("")
+
+        # List of new constraints read in
+        value = [int(item.strip()) for item in iteration_variables]
+
+        # Populate data dictionary with iteration variables
+        # If iteration variables list not already in data dictionary initialise
+        # INVariable class
+        if "ixc" not in self.data.keys():
+            self.data["ixc"] = INVariable("ixc", value, "Iteration Variable",
+                                    "Iteration Variable", "Iteration Variables")
+
+        else:
+            # Add iteration variable to list
+            for item in iteration_variables:
+                if int(item) not in self.data["ixc"].value:
+                    self.data["ixc"].value.append(int(item))
+                else:
+                    # Duplicate iteration variable
+                    self.add_duplicate_variable("ixc = {0}".format(item))
+            self.data["ixc"].value.sort()
+
+    def process_bound(self, line):
+        """ Function to process bound entries in IN.DAT
+
+        :param line: Line from IN.DAT to process
+        :return: Nothing
+        """
+
+        # Initialise bound type
+        bound_type = None
+
+        # Remove comment from line to make things easier
+        no_comment_line = line.split("*")[0].split("=")
+
+        # If upper bound
+        if "boundu" in no_comment_line[0]:
+            bound_type = "u"
+
+        # If lower bound
+        elif "boundl" in no_comment_line[0]:
+            bound_type = "l"
+
+        # Get bound information
+        bound = no_comment_line[0].strip("boundl").replace("(", "").\
+            replace(")", "").strip()
+        bound_value = no_comment_line[1].strip().replace(",", "").replace("d", "e").\
+            replace("D", "e")
+
+        # If bound not in the bound dictionary then add entry for bound with an
+        # empty dictionary
+        if bound not in self.data["bounds"].value.keys():
+            self.data["bounds"].value[bound] = dict()
+        elif self.data["bounds"].value[bound].get(bound_type):
+            # Duplicate bound
+            self.add_duplicate_variable("bound{0}({1})".format(bound_type, 
+                bound))
+
+        # Populate self.data dictionary with bound information
+        self.data["bounds"].value[bound][bound_type] = bound_value
+
+    def process_array(self, line, empty_array):
+        """Function to process generic array
+
+        :param line: Line from IN.DAT to process
+        :param empty_array: Default array for this array name
+        :return: nothing
+        """
+
+        if "*" in line:
+            array_comment = line.split("*")[1]
+            line_commentless = line.split("*")[0]
+        else:
+            line_commentless = line
+
+        name  = line_commentless.split("(")[0]
+        index = int(line_commentless.split("(")[1].split(")")[0]) - 1
+        value = line_commentless.split("=")[-1].replace(",", "")
+
+        # Array has already been set to default values (empty_array)
+        # Need a way of checking for duplicate initialisations
+        # If value is changing from default to custom value, then interpret as 
+        # first initialisation. If value is changing from one custom value to
+        # another, then interpret as a duplicate initialisation
+
+        if self.data[name].value[index] != empty_array[index]:
+            # This array index is already not its default value; any further 
+            # change must be a duplicate initialisation
+            fortran_index = index + 1 
+            # Index begins at 1!
+            self.add_duplicate_variable("{0}({1})".format(name, fortran_index))
+
+        self.data[name].value[index] = eval(fortran_python_scientific(value))
+
+    def add_duplicate_variable(self, name):
+        """Records duplicate variables in the input file.
+        
+        If a var is initialised more than once in the input file, the last 
+        value persists, but the overwriting is recorded here.
+        :param name: The name of the variable being duplicated
+        :type var: str
+        """
+        self.duplicates.append(name)
 
     def add_iteration_variable(self, variable_number):
         """ Function to add iteration variable to IN.DAT data dictionary
@@ -1357,7 +1391,7 @@ class StructuredInputData():
         """
         self.data = {}
         # Structured input data dict
-        
+
         in_dat = InDat(filename)
 
         self.data["constraint_equations"] = get_constraint_equations(
@@ -1366,6 +1400,10 @@ class StructuredInputData():
             in_dat.data)
         self.data["parameters"] = get_parameters(in_dat.data, 
             use_string_values=False)
+
+        self.unrecognised_vars = in_dat.unrecognised_vars
+        self.duplicates = in_dat.duplicates
+        # Duplicate initialisations in the input file
 
     def get_param(self, var_name):
         """Get a parameter's dict from the data.

@@ -1,0 +1,64 @@
+"""
+Code to create plots from the output of the Sobols
+sensistivity analysis to investiagethe input 
+parameters in PROCESS
+
+Author: A. Pearce (alexander.pearce@ukaea.uk)
+
+Input files:
+sobol.txt (datafile output from sobol_method.py,
+                             in the same directory as this file)
+
+Output files:
+In the work directory specified in the config file
+sobol_output.pdf     -  bar chart of sobol indices 
+
+"""
+
+import argparse
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.backends.backend_pdf as bpdf
+from matplotlib import rc
+
+if __name__ == "__main__":
+    
+        # set up command line arguments
+    PARSER = argparse.ArgumentParser(description='Program to plot the output of the\
+        the Sobols sensistivity analysis at a given PROCESS design point.')
+
+    PARSER.add_argument("-f", "--datafile", default="sobol.txt", type=str,
+                        help="datafile for plotting, default = sobol.txt")
+    PARSER.add_argument("-o", "--outputfile", default="sobol_output.pdf", type=str,
+                        help="filename of outputed pdf file, default = sobol_output.pdf")
+    
+    ARGS = PARSER.parse_args()
+
+    # setput files
+    INPUTFILE = ARGS.datafile
+    OUTPUTFILE = ARGS.outputfile
+    pdf = bpdf.PdfPages(OUTPUTFILE)
+    page = plt.figure(figsize=(12, 9), dpi=80)
+
+    # read in data
+    names = np.loadtxt(INPUTFILE,dtype=str,usecols=[0],skiprows=1)
+    S1 = np.loadtxt(INPUTFILE,usecols=[1],skiprows=1)
+    S1_conf = np.loadtxt(INPUTFILE,usecols=[2],skiprows=1)
+    ST = np.loadtxt(INPUTFILE,usecols=[3],skiprows=1)
+    ST_conf = np.loadtxt(INPUTFILE,usecols=[4],skiprows=1)
+
+    x = np.arange(len(names))
+    width = 0.35
+
+    plt.bar(x - width/2, S1, width, label='$S_1$', yerr=S1_conf)
+    plt.bar(x + width/2, ST, width, label='$S_T$', yerr=ST_conf)
+    plt.xticks(x,names)
+    plt.tick_params(labelsize=16) 
+    plt.legend(fontsize=16)
+    plt.ylabel('$S_{Sobol}(B_{\$})$', fontsize=22)
+    #plt.xlabel('$\mu^{*}$', fontsize=22)
+
+    pdf.savefig(page)
+    plt.clf()
+    pdf.close()

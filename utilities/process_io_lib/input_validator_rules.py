@@ -250,3 +250,66 @@ class Dnbeta(Rule):
         else:
             # dnbeta is calculated
             self.check_undefined("dnbeta")
+
+class ObsoleteVarChecker(Rule):
+    """Checks for obsolete or renamed vars, and suggests new names."""
+    def __init__(self):
+        """Set tags specific to ObsoleteVarChecker"""
+        super().__init__(["obsolete"])
+    
+    def check(self):
+        """Look for obsolete variable names and suggest alternatives."""
+        # Dict of obsolete vars and their new names
+        # Key is obsolete var, value is either new var name or None if the var
+        # is deprecated
+        obs_vars = {
+            "snull": "i_single_null",
+            "tfno":	"n_tf",
+            "itfsup": "i_tf_sup",
+            "r_tf_inleg_mid": "r_tf_inboard_mid",
+            "rtot":	"r_tf_outboard_mid",
+            "tfareain":	"a_tf_inboard",
+            "r_tf_inleg_in": "r_tf_inleg_in",
+            "r_tf_inleg_out": "r_tf_inleg_out",
+            "awpc":	"a_tf_wp"
+        }
+
+        # List of unrecognised vars in the input file
+        unrecog_vars = self.data.unrecognised_vars
+
+        # If there are obsolete vars in the input file, fail the rule, warn 
+        # and suggest alternatives, if available
+        for unrecog_var in unrecog_vars:
+            # Try to find the unrecognised var in the obsolete vars dict
+            recog_var = obs_vars.get(unrecog_var, False)
+
+            if recog_var:
+                # Obsolete var name with new var name suggestion found
+                message = (f"\"{unrecog_var}\" is obsolete; try \"{recog_var}\""
+                    " instead.")
+            elif recog_var is None:
+                # Obsolete var name, no new var name suggestion
+                message = f"{unrecog_var} is deprecated."
+            else:
+                # Var name is unrecognised, but not in obsolete list either
+                break
+            
+            # Fail rule with message
+            self.passed = False
+            self.messages.append(message)
+            
+class DuplicateChecker(Rule):
+    """Ensures there are no duplicate variable initialisations."""
+    def __init__(self):
+        """Set tags specific to DuplicateChecker"""
+        super().__init__(["duplicates"])
+    
+    def check(self):
+        """Find any duplicate variables in the input data."""
+        duplicates = self.data.duplicates
+        if duplicates:
+            # Got some duplicates
+            self.passed = False
+            duplicates_no = len(duplicates)
+            message = f"Found {duplicates_no} duplicates: {duplicates}"
+            self.messages.append(message)
