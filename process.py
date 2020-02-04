@@ -85,8 +85,9 @@ def main():
     if args.build:
         build_process()
     run_process(args.input)
-    create_dicts()
     if args.util:
+        # Only create dicts if necessary for utilities
+        create_dicts()
         run_utils(args.util)
 
 main()
