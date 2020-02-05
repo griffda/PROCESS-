@@ -476,6 +476,9 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
+       case ('idia')
+          call parse_int_variable('idia', idia, 0, 2, &
+                'Switch for diamagnetic scaling')
        case ('ifalphap')
           call parse_int_variable('ifalphap', ifalphap, 0, 1, &
                'Switch for fast alpha pressure fit')
@@ -516,6 +519,9 @@ contains
        case ('iprofile')
           call parse_int_variable('iprofile', iprofile, 0, 1, &
                'Switch for current profile consistency')
+       case ('ips')
+          call parse_int_variable('ips', ips, 0, 1, &
+               'Switch for Pfirsch-Schlüter scaling')
        case ('iradloss')
           call parse_int_variable('iradloss', iradloss, 0, 2, &
                'Switch for radiation loss term inclusion in pwr balance')

@@ -241,6 +241,15 @@ end subroutine subr
        betpth = (beta-betaft-betanb) * ( btot/bp )**2
        bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,betpth, &
             q0,q95,rmajor,rminor)
+
+       ! Hender scaling for diamagnetic current at tight aspect ratio
+       diacf_hender = diamagnetic_fraction_hender(beta)
+
+       ! SCENE scaling for diamagnetic current
+       diacf_scene = diamagnetic_fraction_scene(beta,q95,q0)
+
+       ! Pfirsch-Schlüter scaling for diamagnetic current
+       pscf_scene = ps_fraction_scene(beta)
     endif
 
     bscf_sauter = cboot * bootstrap_fraction_sauter()
@@ -261,26 +270,20 @@ end subroutine subr
              idiags(1) = ibss ; call report_error(75)
           end if
 
-          bootipf = min(bootipf,bscfmax)
+          if (bootipf.gt.bscfmax)then
+             bootipf = min(bootipf,bscfmax)
+             call report_error(242)
+          end if
 
-         if (idia == 1) then
-            !  Diamagnetic contribution at tight aspect ratio.
-            !  Tim Hender fit
-            diaipf = beta/2.8D0
-         else if (idia == 2) then
-            ! Diamagnetic fraction based on SCENE fit by
-            ! Tim Hender.
-            ! See Issue #992
-            diaipf = beta * (0.1D0*q95/q0+0.44D0) * 4.14D-1
-         end if
+          if (idia == 1) then
+             diaipf = diacf_hender
+          else if (idia == 2) then
+             diaipf = diacf_scene
+          end if
 
-         if (ips == 1) then
-            ! Pfirsch-Schlüter fraction based on SCENE fit by
-            ! Tim Hender.
-            ! Note Pfirsch-Schlüter current is negative.
-            ! See Issue #992
-            psipf = -9.0D-2 * beta
-         end if
+          if (ips == 1) then
+             psipf = pscf_scene
+          end if
 
           plasipf = bootipf + diaipf + psipf
 
@@ -292,7 +295,10 @@ end subroutine subr
        !  produced by non-inductive means (which also includes
        !  the current drive proportion)
 
-       plasipf = min(plasipf,fvsbrnni)
+       if (plasipf.gt.fvsbrnni)then
+          plasipf = min(plasipf,fvsbrnni)
+          call report_error(243)
+       end if
 
     endif
 
@@ -1634,6 +1640,79 @@ end subroutine subr
     !end subroutine fast_alpha_bs
 
   end function bootstrap_fraction_sauter
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function diamagnetic_fraction_hender(beta)
+
+    !! author: S.I. Muldrew, CCFE, Culham Science Centre
+    !! Diamagnetic contribution at tight aspect ratio.
+    !! Tim Hender fit
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   implicit none
+
+   real(kind(1.0D0)) :: diamagnetic_fraction_hender
+
+   !  Arguments
+
+   real(kind(1.0D0)), intent(in) :: beta
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   diamagnetic_fraction_hender = beta / 2.8D0
+
+
+  end function diamagnetic_fraction_hender
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function diamagnetic_fraction_scene(beta,q95,q0)
+
+    !! author: S.I. Muldrew, CCFE, Culham Science Centre
+    !! Diamagnetic fraction based on SCENE fit by Tim Hender
+    !! See Issue #992
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: diamagnetic_fraction_scene
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: beta, q95, q0
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    diamagnetic_fraction_scene = beta * (0.1D0*q95/q0+0.44D0) * 4.14D-1
+
+  end function diamagnetic_fraction_scene
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function ps_fraction_scene(beta)
+
+    !! author: S.I. Muldrew, CCFE, Culham Science Centre
+    !! Pfirsch-Schlüter fraction based on SCENE fit by Tim Hender
+    !! See Issue #992
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: ps_fraction_scene
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: beta
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ps_fraction_scene = -9.0D-2 * beta
+
+  end function ps_fraction_scene
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4189,6 +4268,9 @@ end subroutine subr
        else
           call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', '(bscf_nevins)',bscf_nevins, 'OP ')
           call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
+          call ovarrf(outfile,'Diamagnetic fraction (Hender)', '(diacf_hender)',diacf_hender, 'OP ')
+          call ovarrf(outfile,'Diamagnetic fraction (SCENE)', '(diacf_scene)',diacf_scene, 'OP ')
+          call ovarrf(outfile,'Pfirsch-Schlüter fraction (SCENE)', '(pscf_scene)',pscf_scene, 'OP ')
           if (bscfmax < 0.0D0) then
              call ocmmnt(outfile,'  (User-specified bootstrap current fraction used)')
           else if (ibss == 1) then
@@ -4200,6 +4282,18 @@ end subroutine subr
           else if (ibss == 4) then
              call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
           end if
+          if (idia == 0) then
+             call ocmmnt(outfile,'  (Diamagnetic current fraction not calculated)')
+          else if (idia == 1) then
+             call ocmmnt(outfile,'  (Hender diamagnetic current fraction scaling used)')
+          else if (idia == 1) then
+             call ocmmnt(outfile,'  (SCENE diamagnetic current fraction scaling used)')
+         end if
+         if (ips == 0) then
+              call ocmmnt(outfile,'  (Pfirsch-Schlüter current fraction not calculated)')
+         else if (ips == 1) then
+              call ocmmnt(outfile,'  (SCENE Pfirsch-Schlüter current fraction scaling used)')
+        end if
        endif
 
        call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf, 'OP ')

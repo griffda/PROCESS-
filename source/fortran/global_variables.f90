@@ -998,6 +998,10 @@ module current_drive_variables
   !! cboot /1.0/ : bootstrap current fraction multiplier (ibss=1)
   real(kind(1.0D0)) :: cnbeam = 0.0D0
   !! cnbeam : neutral beam current (A)
+  real(kind(1.0D0)) :: diacf_hender = 0.0D0
+  !! diacf_hender : diamagnetic current fraction, Hender fit
+  real(kind(1.0D0)) :: diacf_scene = 0.0D0
+  !! diacf_scene : diamagnetic current fraction, SCENE fit
   real(kind(1.0D0)) :: diaipf = 0.0D0
   !! diaipf : diamagnetic current fraction
   real(kind(1.0D0)) :: echpwr = 0.0D0
@@ -1022,6 +1026,8 @@ module current_drive_variables
   !!fpion  :  fraction of beam energy to ions
   real(kind(1.0D0)) :: pnbitot = 0.0D0
   !! pnbitot : neutral beam power entering vacuum vessel
+  real(kind(1.0D0)) :: pscf_scene = 0.0D0
+  !! pscf_scene : Pfirsch-Schlüter current fraction, SCENE fit
   real(kind(1.0D0)) :: nbshinemw = 0.0D0
   !! nbshinemw : neutral beam shine-through power
   real(kind(1.0D0)) :: feffcd = 1.0D0
