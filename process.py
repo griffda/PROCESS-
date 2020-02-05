@@ -8,7 +8,7 @@ import subprocess
 import os
 import sys
 import argparse
-import utilities.process_io_lib.input_validator as input_validator
+from utilities.process_io_lib import input_validator
 
 PROCESS_EXE_PATH = "./bin/process.exe"
 
@@ -91,7 +91,7 @@ def run_utils(util):
     # Todo: allow options to be passed to utils
     subprocess.run(["python", "./utilities/" + util + ".py"])
 
-def main():
+def run():
     """Run Process workflow based on command line arguments"""
     args = parse_args()
     check_root_dir()
@@ -105,4 +105,5 @@ def main():
         create_dicts()
         run_utils(args.util)
 
-main()
+if __name__ == "__main__":
+    run()
