@@ -2178,18 +2178,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: estotftgj = 0.0D0
   !! estotftgj : total stored energy in the toroidal field (GJ)
 
-  real(kind(1.0D0)) :: eyins = 2.0D10
-  !! eyins /2.0e10/ : insulator Young's modulus (Pa)
-  !!                  (default value from DDD11-2 v2 2 (2009))
-  real(kind(1.0D0)), dimension(2) :: eyoung = 0.0D0
-  !! eyoung(2) : work array used in stress calculation (Pa)
-  real(kind(1.0D0)) :: eystl = 2.05D11
-  !! eystl /2.05e11/ : steel case Young's modulus (Pa)
-  !!                   (default value from DDD11-2 v2 2 (2009))
-  real(kind(1.0D0)) :: eywp = 6.6D8
-  !! eywp /6.6e8/ : winding pack Young's modulus (Pa)
-  real(kind(1.0D0)) :: eyzwp = 0.0D0
-  !! eyzwp : winding pack vertical Young's modulus (Pa)
   real(kind(1.0D0)) :: farc4tf = 0.7D0
   !! farc4tf /0.7/ : factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: fcutfsu = 0.69D0
@@ -2210,9 +2198,19 @@ module tfcoil_variables
   !!         <LI> = 1 Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
   
   integer :: i_tf_turns_integer = 0
-  !! i_tf_turns_integer /0/ : switch for TF coil integer/non-integer turns<UL>
-  !!         <LI> = 0 non-integer turns;
-  !!         <LI> = 1 integer turns</UL>
+  !! Switch for TF coil integer/non-integer turns
+  !!   0 : non-integer turns
+  !!   1 : integer turns
+
+  integer :: i_tf_buking = -1
+  !! Switch for buking cylinder (case)
+  !!  -1 : Casing for SC i.e. i_tf_sup = 1 (default) 
+  !!       No casing for copper magnets
+  !!       Casing for aluminium magnets 
+  !!   0 : No casing/buking cylinder
+  !!   1 : casing/buling cylinder
+  !!   2 : Bucked and wedged design
+
   integer :: isumattf = 1
   !! isumattf /1/ : switch for superconductor material in TF coils:<UL>
   !!           <LI> = 1 ITER Nb3Sn critical surface model with standard
@@ -2260,16 +2258,56 @@ module tfcoil_variables
   !!                         -> SHOULD NOT BE USED AS ITERATION VARIABLE 12 ANY MORE
   !!                         -> This variable is now calculated
 
-  real(kind(1.0D0)) :: poisson = 0.3D0
-  !! poisson /0.3/ : Poisson's ratio for TF stress calculation
-  !!                 (assumed constant over entire coil)
-  real(kind(1.0D0)), dimension(3) :: radtf = 0.0D0
-  !! radtf(3) : work array used in stress calculation (m)
+  integer :: n_rad_per_layer = 50
+  !! Size of the arrays per layers storing the radial dependent 
+  !! stress quantities (stresses, strain displacement etc..)
+
+  integer :: n_tf_stress_layers = 2
+  !! Number of layers considered for the inboard TF stress calculations
+
+  real(kind(1.0D0)) :: eyzwp = 0.0D0
+  !! eyzwp : winding pack vertical Young's modulus (Pa)
+
+  real(kind(1.0D0)) :: eyoung_ins = 2.0D10
+  !! Insulator Young's modulus (Pa)
+  !!  (default value from DDD11-2 v2 2 (2009))
+
+  real(kind(1.0D0)) :: eyoung_steel = 2.05D11
+  !! teel case Young's modulus (Pa)
+  !!  (default value from DDD11-2 v2 2 (2009))
+
+  real(kind(1.0D0)) :: eyoung_winding = 6.6D8
+  !! SC TF coil winding Young's modulus (Pa)
+  
+  real(kind(1.0D0)) :: eyoung_copper = 117.0D9
+  !! Copper young modulus
+  !!  Default value taken from wikipedia
+  
+  real(kind(1.0D0)) :: eyoung_al = 69.0D9 
+  !! Aluminium young modulus
+  !!  Default value taken from wikipedia
+  
+  real(kind(1.0D0)) :: eyoung_reinforced_al = 180.0D9 
+  !! Reinforced aluminium young modulus 
+  !!  Default value given Garry 
+  !!  Rem : Al reinforcement can be tuned to any values
+
+  real(kind(1.0D0)) :: poisson_steel = 0.3D0
+  !! Steel Poisson's ratio 
+  
+  real(kind(1.0D0)):: poisson_copper = 0.35D0
+  !! Copper Poisson's ratio
+  !!  Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html
+
+  real(kind(1.0D0)):: poisson_al = 0.35D0
+  !! Aluminium Poisson's ratio 
+  !!  Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html
+
   real(kind(1.0D0)) :: rbmax = 0.0D0
-  !! rbmax : radius of maximum TF B-field (m)
+  !! Radius of maximum TF B-field (m)
 
   real(kind(1.0D0)) :: tflegres = 0.0D0
-  !! tflegres : TF coil leg resistance (ohm)
+  !! TF coil leg resistance (ohm)
 
   real(kind(1.0D0)) :: ripmax = 1.0D0
   !! ripmax /1.0/ : maximum allowable toroidal field ripple amplitude
@@ -2280,31 +2318,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ritfc = 0.0D0
   !! ritfc : total (summed) current in TF coils (A)
   
-  integer, parameter :: n_radial_array = 50
-  !! Size of the radial distribution arrays per layers
-  !! used for stress, strain and displacement distibution
-
-  real(kind(1.0D0)), dimension(2*n_radial_array) :: radial_array = 0.0D0
-  !! Array refining the radii of the stress calculations arrays
-
-  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_r = 0.0D0
-  !! TF Inboard leg radial stress r distribution at mid-plane [Pa]
-  
-  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_t = 0.0D0
-  !! TF Inboard leg tangential stress r distribution at mid-plane [Pa]
-  
-  real(kind(1.0D0)), dimension(2*n_radial_array) :: deflect = 0.0D0
-  !! TF coil radial deflection (displacement) radial distribution [m]
-
-  real(kind(1.0D0)) :: sig_tf_z = 0.0D0
-  !! TF Inboard leg vertical tensile stress at mid-plane [Pa]
-    
-  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_vmises = 0.0D0
-  !! TF Inboard leg Von-Mises stress r distribution at mid-plane [Pa]
-      
-  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_tresca = 0.0D0 
-  !! TF Inboard leg TRESCA stress r distribution at mid-plane [Pa]
-
   real(kind(1.0D0)) :: strtf1 = 0.0D0
   !! strtf : Constrained stress in TF casing structures (Pa)
   

@@ -1112,6 +1112,17 @@ subroutine check
         stop
     end if
      
+    ! Seting the buking cylinder default option 
+    !  - Buking (casing) for SC i_tf_buking ( i_tf_buking = 1 )
+    !  - No buking for copper magnets ( i_tf_buking = 0 )
+    !  - Bucking for aluminium magnets ( i_tf_buking = 1 )
+    if ( i_tf_buking == -1 ) then
+        if ( i_tf_sup == 0 ) then
+            i_tf_buking = 0
+        else
+            i_tf_buking = 1
+        end if
+    end if 
 
     ! If TFC sidewall has not been set by user
     if(casths<0.1d-10) tfc_sidewall_is_fraction = .true.
@@ -1123,6 +1134,8 @@ subroutine check
     ! if (any(ixc(1:nvar) == 140) ) then
     !     tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
     ! endif
+    ! -------
+
 
     !  PF coil resistivity is zero if superconducting
     if (ipfres == 0) pfclres = 0.0D0

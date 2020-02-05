@@ -54,10 +54,7 @@ contains
 
     !  Arguments
     integer, intent(in) :: outfile,iprint
-
-    !  Local variables
-    integer :: ii
-    character(len=1) :: intstring
+    
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     

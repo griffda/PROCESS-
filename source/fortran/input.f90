@@ -1639,15 +1639,21 @@ contains
        case ('etapump')
           call parse_real_variable('etapump', etapump, 0.0D0, 1.0D0, &
                'Efficiency of c/p coolant pump')
-       case ('eystl')
-          call parse_real_variable('eystl', eystl, 1.0D8, 1.0D13, &
+       case ('eyoung_steel')
+          call parse_real_variable('eyoung_steel', eyoung_steel, 1.0D8, 1.0D13, &
                'Steel case Youngs Modulus (Pa)')
-       case ('eyins')
-          call parse_real_variable('eyins', eyins, 1.0D8, 1.0D13, &
+       case ('eyoung_ins')
+          call parse_real_variable('eyoung_ins', eyoung_ins, 1.0D8, 1.0D13, &
                'Insulator Youngs Modulus (Pa)')
-       case ('eywp')
-          call parse_real_variable('eywp', eywp, 1.0D8, 1.0D13, &
+       case ('eyoung_winding')
+          call parse_real_variable('eyoung_winding', eyoung_winding, 1.0D8, 1.0D13, &
                'Winding pack Youngs Modulus (Pa)')
+       case ('eyoung_al')
+          call parse_real_variable('eyoung_al', eyoung_al, 0.0D0, 1.0D0, &
+               'Reinforced aluminium Young modulus for TF stress calc.')
+       case ('eyoung_reinforced_al')
+          call parse_real_variable('eyoung_reinforced_al', eyoung_reinforced_al, 0.0D0, 1.0D0, &
+               'Reinforced aluminium Young modulus for TF stress calc.')
        case ('farc4tf')
           call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &
                'TF coil shape parameter')
@@ -1675,6 +1681,9 @@ contains
        case ('i_tf_turns_integer')
           call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
                     'Switch for TF coil integer/non-integer turns')
+       case ('i_tf_buking')
+          call parse_int_variable('i_tf_buking', i_tf_buking, -1, 2, &
+               'Switch for buking cylinder (case)')
        case ('isumattf')
           call parse_int_variable('isumattf', isumattf, 1, 6, &
                'TF coil superconductor material')
@@ -1730,9 +1739,15 @@ contains
        case ('oacdcp')
           call parse_real_variable('oacdcp', oacdcp, 1.0D4, 1.0D9, &
                'Overall J in inboard TF coil midplane')
-       case ('poisson')
-          call parse_real_variable('poisson', poisson, 0.0D0, 1.0D0, &
-               'Poissons ratio for TF stress calc.')
+       case ('poisson_steel')
+          call parse_real_variable('poisson_steel', poisson_steel, 0.0D0, 1.0D0, &
+               'Steel Poissons ratio for TF stress calc.')
+       case ('poisson_copper')
+          call parse_real_variable('poisson_copper', poisson_copper, 0.0D0, 1.0D0, &
+               'Steel Poissons ratio for TF stress calc.')
+       case ('poisson_al')
+          call parse_real_variable('poisson_al', poisson_al, 0.0D0, 1.0D0, &
+               'Aluminium Poissons ratio for TF stress calc.')
        case ('ptempalw')
           call parse_real_variable('ptempalw', ptempalw, 4.0D0, 573.15D0, &
                'Maximum peak centrepost temp. (K)')

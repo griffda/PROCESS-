@@ -106,26 +106,6 @@ real(kind(1.0D0)), private :: t_cable_radial, t_cable_toroidal
 real(kind(1.0D0)), private :: t_turn_radial, t_turn_toroidal
 !! Turn radial and toroidal dimension [m]
 
-real(kind(1.0D0)), dimension(2*n_radial_array), private :: s_tresca_cond_cea
-!! Conduit Tresca stress with CEA adjustment factors [Pa]
-
-real(kind(1.0D0)), dimension(2), private :: sig_tf_r_max 
-!! Radial stress of the point of maximum TRESCA stress (for each layers) [Pa]
-
-real(kind(1.0D0)), dimension(2), private :: sig_tf_t_max
-!! Toroidal stress of the point of maximum TRESCA stress (for each layers) [Pa]
-
-real(kind(1.0D0)), dimension(2), private :: sig_tf_z_max
-!! Vertical stress of the point of maximum TRESCA stress (for each layers) [Pa]
-!! Rem : Currently constant but will be r dependent in the future
-
-real(kind(1.0D0)), dimension(2), private :: sig_tf_vmises_max
-!! Von-Mises stress of the point of maximum TRESCA stress (for each layers) [Pa]
-
-real(kind(1.0D0)), dimension(2), private :: sig_tf_tresca_max
-!! Maximum TRESCA stress (for each layers) [Pa]
-!! If the CEA correction is addopted, the CEA corrected value is used
-
 type(resistive_material):: copper
 type(resistive_material):: hastelloy
 type(resistive_material):: solder
@@ -161,19 +141,22 @@ subroutine sctfcoil(outfile,iprint)
     !! author: J Galambos, FEDC/ORNL
     !! author: R Kemp, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
-    !! outfile : input integer : output file unit
-    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! author: S Kahn, CCFE, Culham Science Centre
     !! This subroutine calculates various parameters for a superconducting
     !! TF coil set. The primary outputs are coil size, shape, stress,
     !! and fields.
-    !! <P>It is a variant from the original FEDC/Tokamak systems code.
+    !! It is a variant from the original FEDC/Tokamak systems code.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments
-    integer, intent(in) :: iprint, outfile
+    integer, intent(in) :: iprint
+    !! switch for writing to output file (1=yes)
+
+    integer, intent(in) :: outfile
+    !! output file unit
 
     !  Local variables
     integer :: peaktfflag
@@ -229,8 +212,8 @@ subroutine sctfcoil(outfile,iprint)
     ! Peak field including ripple
     call peak_tf_with_ripple(n_tf, wwp1, thkwp, r_wp_centre, bmaxtf, bmaxtfrp, peaktfflag)
 
-    ! Do stress calculations
-    call stresscl(iprint)
+    ! Do stress calculations (writes the stress output)
+    call stresscl(n_tf_stress_layers, n_rad_per_layer, iprint, outfile)
 
     if (iprint == 1) call outtf(outfile, peaktfflag)
 
@@ -1089,11 +1072,12 @@ end subroutine peak_tf_with_ripple
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine stresscl(iprint)
+subroutine stresscl( n_radial_array, n_tf_layer, iprint, outfile )
 
     !! TF coil stress routine
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
+    !! author: S Kahn, CCFE, Culham Science Centre
     !! author: J Galambos, FEDC/ORNL
     !! None
     !! This subroutine sets up the stress calculations for the
@@ -1108,7 +1092,77 @@ subroutine stresscl(iprint)
 
     integer, intent(in) :: iprint
     !! Print option (if 1, output quantities calculated)
+    
+    integer, intent(in) :: outfile
+    !! output file unit
 
+    integer, intent(in) :: n_radial_array
+    !! Size of the arrays per layers storing the radial dependent 
+    !! stress quantities (stresses, strain displacement etc..)
+    
+    integer, intent(in) :: n_tf_layer
+    !! Number of layers considered for the inboard TF stress calculations+
+
+    real(kind(1.0D0)), dimension(n_tf_layer*n_radial_array) :: radial_array
+    !! Array refining the radii of the stress calculations arrays
+    
+    real(kind(1.0D0)), dimension(n_tf_layer*n_radial_array) :: sig_tf_r
+    !! TF Inboard leg radial stress r distribution at mid-plane [Pa]
+    
+    real(kind(1.0D0)), dimension(n_tf_layer*n_radial_array) :: sig_tf_t
+    !! TF Inboard leg tangential stress r distribution at mid-plane [Pa]
+    
+    real(kind(1.0D0)), dimension(n_tf_layer*n_radial_array) :: sig_tf_z
+    !! TF Inboard leg vertical tensile stress at mid-plane [Pa]
+    
+    real(kind(1.0D0)), dimension(n_tf_layer*n_radial_array) :: deflect
+    !! TF coil radial deflection (displacement) radial distribution [m]
+    
+    real(kind(1.0D0)), dimension(n_tf_layer*n_radial_array) :: sig_tf_vmises
+    !! TF Inboard leg Von-Mises stress r distribution at mid-plane [Pa]
+        
+    real(kind(1.0D0)), dimension(n_tf_layer*n_radial_array) :: sig_tf_tresca 
+    !! TF Inboard leg TRESCA stress r distribution at mid-plane [Pa]
+    
+    real(kind(1.0D0)), dimension(n_tf_layer*n_radial_array) :: s_tresca_cond_cea
+    !! Conduit Tresca stress with CEA adjustment factors [Pa]
+    
+    real(kind(1.0D0)), dimension(n_tf_layer) :: sig_tf_r_max
+    !! Radial stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    
+    real(kind(1.0D0)), dimension(n_tf_layer) :: sig_tf_t_max 
+    !! Toroidal stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    
+    real(kind(1.0D0)), dimension(n_tf_layer) :: sig_tf_z_max
+    !! Vertical stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    !! Rem : Currently constant but will be r dependent in the future
+    
+    real(kind(1.0D0)), dimension(n_tf_layer) :: sig_tf_vmises_max 
+    !! Von-Mises stress of the point of maximum TRESCA stress (for each layers) [Pa]
+    
+    real(kind(1.0D0)), dimension(n_tf_layer) :: sig_tf_tresca_max
+    !! Maximum TRESCA stress (for each layers) [Pa]
+    !! If the CEA correction is addopted, the CEA corrected value is used
+    
+    real(kind(1.0D0)), dimension(n_tf_layer) :: strain_tf_r
+    !! Radial normal strain radial distribution
+    
+    real(kind(1.0D0)), dimension(n_tf_layer) :: strain_tf_t
+    !! Toroidal normal strain radial distribution
+     
+    real(kind(1.0D0)) :: strain_tf_z
+    !! Vertical normal strain (constant as layer assumed to be bonded)
+    
+    real(kind(1.0D0)), dimension(n_tf_layer+1) :: radtf
+    !! Radii used to define the layers used in the stress models [m]
+    !! Layers are labelled from inboard to outbard
+    
+    real(kind(1.0D0)), dimension(n_tf_layer) :: eyoung
+    !! Young modulae (one per layer) used in the stress models [Pa]
+    
+    real(kind(1.0D0)), dimension(n_tf_layer) :: poisson
+    !! Poisson's ratio (one per layer) used in the stress models
+    
     integer :: ii
     !! do loop index
 
@@ -1146,108 +1200,188 @@ subroutine stresscl(iprint)
         tcbs = 0.0D0
     end if
 
-    !  CCFE two-layer model
-    !  Layers are labelled from inboard to outboard.
-    !  The first layer is the steel casing inboard of the winding pack,
-    !  while the second layer is the winding pack itself.
+    ! Radii seting the stress model layers
     radtf(1) = r_tf_inboard_in
     radtf(2) = r_wp_inner
     radtf(3) = r_wp_outer
 
-    ! include groundwall insulation + insertion gap in thicndut
-    ! inertion gap is tfinsgap on 4 sides
-    t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
-
-    eyoung(1) = eystl
-    eyoung(2) = eyngeff(eystl,eyins,t_ins_eff,thwcndut,tcbs)
-
+    ! Average current density used in the model
     jeff(1) = 0.0D0
     jeff(2) = ritfc / ( pi * (radtf(3)**2 - radtf(2)**2))
-    ! ---
 
-    ! Stress calculation
-    ! ---
-    ! Radial - Toroidal stress radial distribution [Pa]
-    call two_layer_stress( poisson, radtf, eyoung, jeff,             & ! Inputs
-                           sig_tf_r, sig_tf_t, deflect, radial_array ) ! Outputs
+    ! Material properties constants : Young modulus/poissons 
+    ! ------
+    ! Rem : They are only unique for isotropic materials, hence
+    !       the underlying assumption of our models is the anisotropy
+    !       of the material. A good assumption for resistive magnets
+    !       but a doggy one for SC
 
-    ! Vertical stress [Pa]
-    sig_tf_z = vforce / (acasetf + acndttf*turnstf)
-    ! ---
+    ! Copper magnets
+    if ( i_tf_sup == 0 ) then  ! Copper magnets
+        eyoung(1) = eyoung_steel
+        eyoung(2) = eyoung_copper
 
+        poisson(1) = poisson_steel
+        poisson(2) = poisson_copper
 
-    ! Casing yield stress
-    ! ---
-    sig_max = 0.0D0
-    ii_max = 1
-    do ii = 1, n_radial_array
+    ! SC magnets
+    else if ( i_tf_sup == 1 ) then
+        ! include groundwall insulation + insertion gap in thicndut
+        ! inertion gap is tfinsgap on 4 sides
+        t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
 
-        ! Von-mises stress [Pa]
-        if ( iprint == 1 ) then
-            sig_tf_vmises(ii) = sigvm(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z, 0.0D0, 0.0D0, 0.0D0)
-        end if
-
-        ! TRESCA stress [Pa] 
-        sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z)
+        eyoung(1) = eyoung_steel
+        eyoung(2) = eyngeff( eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs )
         
-        ! TRESCA stress using CEA calculation [Pa]
-        s_tresca_cond_cea(ii) = sig_tf_tresca(ii)
+        ! The poisson's ratio of the WP might not be exactly the steel one
+        poisson(1) = poisson_steel
+        poisson(2) = poisson_steel
 
-        ! Finding maximum TRESCA
-        if ( sig_tf_tresca(ii) > sig_max ) then
-            sig_max = sig_tf_tresca(ii)
-            ii_max = ii
-        end if
-    end do
+    ! Cryo-aluminium magnet
+    else 
+        eyoung(1) = eyoung_reinforced_al
+        eyoung(2) = eyoung_al
+        
+        poisson(1) = poisson_al
+        poisson(2) = poisson_al
+    end if
+    ! ------
 
-    ! Stresses of the maximum TRESCA stress point
-    sig_tf_tresca_max(1) = sig_tf_tresca(ii_max)
+
+    ! Superconductor magnet stress calculation
+    ! ------
+    if ( i_tf_sup == 1 ) then 
+
+        ! Plane stress calculation (SC) [Pa]
+        call plane_stress( poisson, radtf, eyoung, jeff, & ! Inputs
+                           n_tf_layer, n_radial_array,   & ! Inputs
+                           sig_tf_r, sig_tf_t, deflect, radial_array ) ! Outputs
     
-    if ( iprint == 1 ) then
-        sig_tf_r_max(1) = sig_tf_r(ii_max)
-        sig_tf_t_max(1) = sig_tf_t(ii_max)
-        sig_tf_z_max(1) = sig_tf_z        ! sig_tf_z is not a distribution yet 
-        sig_tf_vmises_max(1) = sig_tf_vmises(ii_max)
+        ! Vertical stress [Pa]
+        sig_tf_z = vforce / (acasetf + acndttf*turnstf)
+
+
+        ! Casing yield stress
+        ! ---
+        do ii = 1, n_radial_array
+    
+            ! Von-mises stress [Pa]
+            if ( iprint == 1 ) then
+                sig_tf_vmises(ii) = sigvm( sig_tf_r(ii), sig_tf_t(ii), sig_tf_z(ii), &  
+                                           0.0D0, 0.0D0, 0.0D0 )
+            end if
+    
+            ! TRESCA stress [Pa] 
+            sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z(ii))
+            
+            ! TRESCA stress using CEA calculation [Pa]
+            s_tresca_cond_cea(ii) = sig_tf_tresca(ii)
+        end do
+        ! ---
+    
+        
+        ! WP steel conduid yield stress
+        ! ---
+        ! WP conduit stress unsmearing
+        fac = eyoung_steel*eyoung_ins*seff / &
+              (eyoung_ins*(seff-2.0D0*t_ins_eff) + 2.0D0*t_ins_eff*eyoung_steel)
+
+        do ii = n_radial_array + 1, n_tf_layer*n_radial_array
+
+            ! Stress unsmearing [Pa]
+            sig_tf_r(ii) = sig_tf_r(ii)/eyoung(2) * fac
+            sig_tf_t(ii) = sig_tf_t(ii)/eyoung(2) * fac
+  
+            ! Von-mises stress calculation (addapted to the smearing procedure) [Pa]
+            if ( iprint == 1 ) then
+                svmxz = sigvm( 0.0D0, sig_tf_t(ii), sig_tf_z(ii), 0.0D0,0.0D0,0.0D0)
+                svmyz = sigvm( sig_tf_r(ii), 0.0D0, sig_tf_z(ii), 0.0D0,0.0D0,0.0D0)
+                sig_tf_vmises(ii) = max(svmxz, svmyz)
+            end if
+
+            ! TRESCA stres [Pa]
+            sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z(ii))
+
+            ! TRESCA stress using CEA calculation [Pa]
+            s_tresca_cond_cea(ii) = 1.02D0*abs(sig_tf_r(ii)) + 1.6D0*sig_tf_z(ii)
+
+        end do ! end of radial array loop
+        ! ---
+
+
+        ! Strains
+        ! ---
+        ! Case strain
+        casestr = sig_tf_z(1) / eyoung_steel
+
+        ! Young's modulus in vertical direction on WP
+        eyzwp = eyngzwp(eyoung_steel,eyoung_ins,eyoung_winding,t_ins_eff,thwcndut,tcbs)
+    
+        ! Strain in vertical direction on WP
+        windstrain = sig_tf_z(1) / eyzwp
+    
+        ! Radial strain in insulator
+        insstrain = sig_tf_r(n_radial_array) / eyoung_ins * &
+                    edoeeff(eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs)
+        ! ---
+    ! ------
+
+                    
+    ! Resistive magnet stress calculation
+    ! ------
+    else 
+        call multilayer_stress( poisson, radtf, eyoung, jeff, vforce, & ! Inputs
+                                n_tf_layer, n_radial_array,           & ! Inputs
+                                sig_tf_r, sig_tf_t, sig_tf_z,                  & ! Outputs
+                                strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
+    
+        ! TRESCA stress (array equation)                     
+        sig_tf_tresca = max( abs(sig_tf_r - sig_tf_t), &
+                             abs(sig_tf_r - sig_tf_z), &
+                             abs(sig_tf_z - sig_tf_t) )
+ 
+        sig_tf_vmises = sqrt( 0.5D0*(  (sig_tf_r - sig_tf_t)**2  &
+                                     + (sig_tf_r - sig_tf_z)**2  &
+                                     + (sig_tf_z - sig_tf_t)**2 ) )
     end if
     ! ---
 
-    
-    ! WP steel conduid yield stress
-    ! ---
-    ! WP conduit stress unsmearing
-    fac = eystl*eyins*seff / &
-          (eyins*(seff-2.0D0*t_ins_eff) + 2.0D0*t_ins_eff*eystl)
-    
+
+    ! Output formating (Maximum TRESCA per layer and stress at the corresponding point)
+    ! ------
+    ! In case/buking cylinder
+    sig_max = 0.0D0
+    ii_max = 1
+    do ii = 1, n_radial_array
+        if ( sig_tf_tresca(ii) > sig_max ) then
+            ii_max = ii
+            sig_max = sig_tf_tresca(ii)
+        end if
+    end do    
+
+    if ( iprint == 1 ) then
+        sig_tf_r_max(1) = sig_tf_r(ii_max)
+        sig_tf_t_max(1) = sig_tf_t(ii_max)
+        sig_tf_z_max(1) = sig_tf_z(ii_max)
+        sig_tf_vmises_max(1) = sig_tf_vmises(ii_max)
+    end if
+
+    ! Stresses of the maximum TRESCA stress point
+    sig_tf_tresca_max(1) = sig_tf_tresca(ii_max)
+
+    ! In WP / Conductor layer
     sig_max = 0.0D0
     ii_max = 0
-    do ii = n_radial_array + 1, 2*n_radial_array
-    
-        ! Stress unsmearing [Pa]
-        sig_tf_r(ii) = sig_tf_r(ii)/eyoung(2) * fac
-        sig_tf_t(ii) = sig_tf_t(ii)/eyoung(2) * fac
+    do ii = n_radial_array + 1, n_tf_layer*n_radial_array
         
-        ! Von-mises stress calculation (addapted to the smearing procedure) [Pa]
-        if ( iprint == 1 ) then
-            svmxz = sigvm( 0.0D0, sig_tf_t(ii), sig_tf_z, 0.0D0,0.0D0,0.0D0)
-            svmyz = sigvm( sig_tf_r(ii), 0.0D0, sig_tf_z, 0.0D0,0.0D0,0.0D0)
-            sig_tf_vmises(ii) = max(svmxz, svmyz)
-        end if
-    
-        ! TRESCA stres [Pa]
-        sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z)
-
-        ! TRESCA stress using CEA calculation [Pa]
-        s_tresca_cond_cea(ii) = 1.02D0*abs(sig_tf_r(ii)) + 1.6D0*sig_tf_z
-
-        ! Finding maximum TRESCA
-        ! Using the Out of plane CEA correction
-        if (i_tf_tresca == 1) then
+        ! CEA out of plane approximation
+        if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
             if ( sig_max < s_tresca_cond_cea(ii) ) then
                 sig_max = s_tresca_cond_cea(ii)
                 ii_max = ii
             end if
-            
-        ! Without Out of plane correction
+
+        ! Mo out of plane approximation
         else 
             if ( sig_max < sig_tf_tresca(ii) ) then
                 sig_max = sig_tf_tresca(ii)
@@ -1255,12 +1389,12 @@ subroutine stresscl(iprint)
             end if
         end if
     end do
-    
+
     ! Stress of the maximum TRESCA stress point
     if ( iprint == 1 ) then
         sig_tf_r_max(2) = sig_tf_r(ii_max)
         sig_tf_t_max(2) = sig_tf_t(ii_max)
-        sig_tf_z_max(2) = sig_tf_z         ! sig_tf_z is not a distribution yet
+        sig_tf_z_max(2) = sig_tf_z(ii_max)
         sig_tf_vmises_max(2) = sig_tf_vmises(ii_max)
     end if
 
@@ -1273,30 +1407,94 @@ subroutine stresscl(iprint)
     ! Maximum of the TRESCA stress distribution [Pa]
     strtf1 = sig_tf_tresca_max(1)     ! Casing TRESCA constraint
     strtf2 = sig_tf_tresca_max(2)     ! Conduit TRESCA constraint
+    !-!
     ! ---
 
+    if ( iprint == 1 ) call out_stress
 
-    ! Strain calculations
-    ! ---
-    ! Case strain
-    casestr = sig_tf_z / eystl
 
-    ! Young's modulus in vertical direction on WP
-    eyzwp = eyngzwp(eystl,eyins,eywp,t_ins_eff,thwcndut,tcbs)
+    contains
 
-    ! Strain in vertical direction on WP
-    windstrain = sig_tf_z / eyzwp
+    subroutine out_stress
+        !! Subroutine showing the writing the TF midplane stress analysis
+        !! in the output file and the stress distribution in the SIG_TF.DAT
+        !! file used to plot stress distributions
+        !! Author : S. Kahn
 
-    ! Radial strain in insulator
-    insstrain = sig_tf_r(n_radial_array) / eyins * &
-                edoeeff(eystl, eyins, t_ins_eff, thwcndut, tcbs)
-    ! ---
+        
+        implicit none
+        
+        ! Stress output section
+        call osubhd(outfile,'TF Coil Stresses (CCFE model) :')
+        
+        if ( i_tf_sup == 1 ) then
+            call ocmmnt(outfile, 'Plane stress model with smeared properties')
+        else 
+            call ocmmnt(outfile, 'Generalized plane strain model')
+        end if
+
+        call ovarre(outfile, 'Allowable Tresca stress limit (Pa)','(alstrtf)',alstrtf)
+        if ( i_tf_tresca == 1  .and. i_tf_sup == 1) then
+            call ocmmnt(outfile, 'WP conduit TRESCA stress corrected using CEA formula (i_tf_tresca = 1)')
+        end if
+
+        ! OUT.DAT data on maximum TRESCA stress values
+        call ocmmnt(outfile, 'Stresses of the point of maximum TRESCA stress per layer')
+        call ocmmnt(outfile, 'Please use utility/plot_TF_stress.py for radial plots plots summary')
+        write(outfile,'(t2, "Layers", t26, *(i11) )') 1, 2
+        write(outfile,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r_max*1.0D-6
+        write(outfile,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t_max*1.0D-6
+        write(outfile,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z_max*1.0D-6
+        write(outfile,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises_max*1.0D-6
+        if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
+            write(outfile,'(t2, "CEA TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+        else 
+            write(outfile,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+        end if
+
+        ! SIG_TF.DAT storage  
+        write(sig_file,'(t2, "Points per layers"                 ,t26, *(I11,3x))') n_radial_array          
+        write(sig_file,*) 
+        write(sig_file,'(t2, "radius"              , t20, "(m)"  ,t26, *(F11.3,3x))') radial_array
+        write(sig_file,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r*1.0D-6
+        write(sig_file,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t*1.0D-6
+        write(sig_file,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z*1.0D-6
+        write(sig_file,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises*1.0D-6
+        write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
+        if ( i_tf_sup == 1 ) then
+            write(sig_file,'(t2, "CEA TRESCA"," stress", t20, "(MPa)",t26, *(F11.3,3x))') s_tresca_cond_cea*1.0D-6
+        else 
+            write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
+        end if 
+        write(sig_file,*) 
+        write(sig_file,*) 'Displacement'         
+        write(sig_file,'(t2, "raidal displacement", t20, "(mm)",t26, *(F11.3,3x))') deflect*1.0D3
+        if ( i_tf_sup /= 1 ) then
+            write(sig_file,*)
+            write(sig_file,*) 'Strain'    
+            write(sig_file,'(t2, "radial strain"   ,t26, *(F11.3,3x))') strain_tf_r
+            write(sig_file,'(t2, "toroidal strain" ,t26, *(F11.3,3x))') strain_tf_t
+            write(sig_file,'(t2, "vertical strain" ,t26, *(F11.3,3x))') strain_tf_z
+        end if
+
+             ! Other quantities (displacement strain, etc..)
+        call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
+                            deflect(n_radial_array), 'OP ')
+        call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
+        call ovarre(outfile,'Vertical strain on casing','(casestr)', casestr, 'OP ')
+        call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
+        call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
+
+    end subroutine out_stress
+
 
 end subroutine stresscl
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
+subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
+                         nlayers, n_radial_array, & ! Inputs
+                         sigr, sigt, r_deflect, rradius ) ! Outputs
 
     !! Calculates the stresses in a superconductor TF coil
     !! inboard leg at the midplane using the plain stress approximation 
@@ -1305,7 +1503,7 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
     !! author: S Kahn, CCFE, Culham Science Centre
     !! This routine calculates the stresses in a superconductor TF coil
     !! inboard leg at midplane.
-    !! <P>A two-layer model developed by CCFE is used. The first layer
+    !! <P>A 2 layer plane stress model developed by CCFE is used. The first layer
     !! is the steel case inboard of the winding pack, and the second
     !! layer is the winding pack itself.
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -1315,37 +1513,45 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: nu
+    integer, intent(in) :: n_radial_array
+    !! Number of elements per layers used in stress analysis 
+    !! quantities arrays (stress, strain, displacement) 
+
+    integer, intent(in) :: nlayers
+    !! Number of layers considered in the stress model
+
+    real(kind(1.0D0)), dimension(nlayers), intent(in) :: nu
     !! Poisson's ratio
 
-    real(kind(1.0D0)), dimension(3), intent(in) :: rad
+    real(kind(1.0D0)), dimension(nlayers+1), intent(in) :: rad
     !! Layers delimitation radii [m]
     
-    real(kind(1.0D0)), dimension(2), intent(in) :: ey
+    real(kind(1.0D0)), dimension(nlayers), intent(in) :: ey
     !! Young modulae [Pa]
     
-    real(kind(1.0D0)), dimension(2), intent(in) :: j
+    real(kind(1.0D0)), dimension(nlayers), intent(in) :: j
     !! Layers effective current density [A/m2]
 
-    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: sigr
+    real(kind(1.0D0)), dimension(nlayers*n_radial_array), intent(out) :: sigr
     !! Radial stress radial distribution [Pa]
     
-    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: sigt
+    real(kind(1.0D0)), dimension(nlayers*n_radial_array), intent(out) :: sigt
     !! Toroidal stress radial distribution [Pa]
 
-    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: deflect
+    real(kind(1.0D0)), dimension(nlayers*n_radial_array), intent(out) :: r_deflect
     !! Radial deflection (displacement) radial distribution [m]
 
-    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: rradius
+    real(kind(1.0D0)), dimension(nlayers*n_radial_array), intent(out) :: rradius
     !! Radial deflection (displacement) radial distribution [m]
 
 
     
     !  Local variables
-    real(kind(1.0D0)), dimension(2) :: kk
-    real(kind(1.0D0)), dimension(2) :: alpha, beta
-    real(kind(1.0D0)), dimension(4,4) :: a
-    real(kind(1.0D0)), dimension(4) :: b, c
+    real(kind(1.0D0)), dimension(nlayers) :: kk
+    real(kind(1.0D0)), dimension(nlayers) :: alpha, beta
+    real(kind(1.0D0)), dimension(2*nlayers,2*nlayers) :: aa
+    real(kind(1.0D0)), dimension(2*nlayers) :: bb, cc
+    real(kind(1.0D0)), dimension(nlayers) :: c1, c2
 
     ! Variables used for radial stress distribution  
     real(kind(1.0D0)) :: dradius
@@ -1360,33 +1566,33 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
     ! Array equation
     kk = ey/(1.0D0 - nu**2)
     
-    a(:,:) = 0.0D0
-    a(1,1) = kk(1) * (1.0D0+nu)
-    a(1,2) = -kk(1) * (1.0D0-nu)/(rad(1)**2)
-    a(2,1) = a(1,1)
-    a(2,2) = -kk(1) * (1.0D0-nu)/(rad(2)**2)
-    a(2,3) = -kk(2) * (1.0D0+nu)
-    a(2,4) = kk(2) * (1.0D0-nu)/(rad(2)**2)
-    a(3,3) = kk(2) * (1.0D0+nu)
-    a(3,4) = -kk(2) * (1.0D0-nu)/(rad(3)**2)
-    a(4,1) = rad(2)
-    a(4,2) = 1.0D0/rad(2)
-    a(4,3) = -rad(2)
-    a(4,4) = -1.0D0/rad(2)
+    aa(:,:) = 0.0D0
+    aa(1,1) = kk(1) * (1.0D0+nu(1))
+    aa(1,2) = -kk(1) * (1.0D0-nu(1))/(rad(1)**2)
+    aa(2,1) = aa(1,1)
+    aa(2,2) = -kk(1) * (1.0D0-nu(1))/(rad(2)**2)
+    aa(2,3) = -kk(2) * (1.0D0+nu(1))
+    aa(2,4) = kk(2) * (1.0D0-nu(1))/(rad(2)**2)
+    aa(3,3) = kk(2) * (1.0D0+nu(1))
+    aa(3,4) = -kk(2) * (1.0D0-nu(1))/(rad(3)**2)
+    aa(4,1) = rad(2)
+    aa(4,2) = 1.0D0/rad(2)
+    aa(4,3) = -rad(2)
+    aa(4,4) = -1.0D0/rad(2)
 
     !  RHS vector B
     !  alpha, beta only non-zero where current density is non-zero
     alpha(:) = 0.0D0
-    alpha(2) = 0.5D0*rmu0 * j(2)*j(2) * (1.0D0 - nu*nu)/ey(2)
+    alpha(2) = 0.5D0*rmu0 * j(2)*j(2) * (1.0D0 - nu(2)**2)/ey(2)
     beta(:) = 0.0D0
     beta(2) = -alpha(2) * rad(2)**2
 
-    b(:) = 0.0D0
-    b(2) = -kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu)*rad(2)**2 &
-            + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu)*log(rad(2))) )
-    b(3) = kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu)*rad(3)**2  &
-            + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu)*log(rad(3))) )
-    b(4) = -0.125D0*alpha(2)*rad(2)**3 - 0.5D0*beta(2)*rad(2)*log(rad(2))
+    bb(:) = 0.0D0
+    bb(2) = -kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu(2))*rad(2)**2 &
+            + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu(2))*log(rad(2))) )
+    bb(3) = kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu(2))*rad(3)**2  &
+            + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu(2))*log(rad(3))) )
+    bb(4) = -0.125D0*alpha(2)*rad(2)**3 - 0.5D0*beta(2)*rad(2)*log(rad(2))
 
     !  Find solution vector c:  A times c = b
     !  N.B. In Morris, Section IV, C_xy is C_x in region y
@@ -1396,17 +1602,21 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
     !  c(3) = C_32 = C_3 in winding pack
     !  c(4) = C_32 = C_4 in winding pack
 
-    c(:) = 0.0D0
-    call linesolv(a, 4, b, c)
+    cc(:) = 0.0D0
+    call linesolv(aa, 2*nlayers, bb, cc)
 
     !  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
-    c(:) = -1.0D0*c(:)
+    cc(:) = -1.0D0*cc(:)
+    do ii = 1, nlayers
+        c1(ii) = cc(2*ii-1) 
+        c2(ii) = cc(2*ii) 
+    end do
 
     !  Calculate stresses in each region
     rradius(:) = 0.0D0
     sigr(:) = 0.0D0
     sigt(:) = 0.0D0
-    deflect(:) = 0.0D0
+    r_deflect(:) = 0.0D0
 
     
     ! Output distribution
@@ -1420,11 +1630,11 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
         rradius(ii) = rad_c 
 
         ! Stress radial distribution [Pa]
-        sigr(ii) = kk(1) * ( (1.0D0+nu)*c(1) - (1.0D0-nu)*c(2)/rad_c**2 )
-        sigt(ii) = kk(1) * ( (1.0D0+nu)*c(1) + (1.0D0-nu)*c(2)/rad_c**2 )
+        sigr(ii) = kk(1) * ( (1.0D0+nu(1))*c1(1) - (1.0D0-nu(1))*c2(1)/rad_c**2 )
+        sigt(ii) = kk(1) * ( (1.0D0+nu(1))*c1(1) + (1.0D0-nu(1))*c2(1)/rad_c**2 )
 
         ! Displacement distribution [m]
-        deflect = c(1)*rad_c + c(2)/rad_c
+        r_deflect = c1(1)*rad_c + c2(1)/rad_c
     end do
 
     dradius = (rad(3) - rad(2)) / dble(n_radial_array)
@@ -1436,24 +1646,361 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
         rradius(ii_c) = rad_c
 
         ! Radial stress radial distribution [Pa]
-        sigr(ii_c) = kk(2) * ( (1.0D0+nu)*c(3) - ((1.0D0-nu)*c(4))/ rad_c**2 &
-                              + 0.125D0*(3.0D0 + nu)*alpha(2)* rad_c**2 &
-                              + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu)*log( rad_c)) )
+        sigr(ii_c) = kk(2) * ( (1.0D0+nu(2))*c1(2) - ((1.0D0-nu(2))*c2(2))/ rad_c**2 &
+                              + 0.125D0*(3.0D0 + nu(2))*alpha(2)* rad_c**2 &
+                              + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu(2))*log( rad_c)) )
 
         ! Radial stress radial distribution [Pa]
-        sigt(ii_c) = kk(2) * ( (1.0D0+nu)*c(3) + (1.0D0-nu)*c(4)/ rad_c**2 &
-                              + 0.125D0*(1.0D0+3.0D0*nu)*alpha(2)*rad_c**2 &
-                              + 0.5D0*beta(2)*(nu + (1.0D0+nu)*log(rad_c)) )
+        sigt(ii_c) = kk(2) * ( (1.0D0+nu(2))*c1(2) + (1.0D0-nu(2))*c2(2)/ rad_c**2 &
+                              + 0.125D0*(1.0D0+3.0D0*nu(2))*alpha(2)*rad_c**2 &
+                              + 0.5D0*beta(2)*(nu(2) + (1.0D0+nu(2))*log(rad_c)) )
 
         !  Deflection [m]
-        deflect(ii_c) = c(3)*rad_c + c(4)/rad_c       &
+        r_deflect(ii_c) = c1(2)*rad_c + c2(2)/rad_c       &
                      + 0.125D0*alpha(2) * rad_c**3  &
                      + 0.5D0*beta(2) * rad_c*log(rad_c)
 
     end do
     ! ---
 
-end subroutine two_layer_stress
+end subroutine plane_stress
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine multilayer_stress( nu, rad, ey, d_curr, v_force, & ! Inputs
+                              nlayers, n_radial_array,      & ! Inputs
+                              sigr, sigt, sigz,                       & ! Outputs
+                              strain_r, strain_t, strain_z, r_deflect ) ! Outputs
+      
+    !! This subroutine numerically find the constant (2 per layer) of the
+    !! analytical resolution of the mid-plane stress calculations using the
+    !! generalized plain strain formulation, from the radial stress and 
+    !! displacement boundary conditions. This conditions sets 2*nlayer
+    !! linear equation of the integrals constants cc, find with using matrix inversion 
+    !! S. Kahn, Jan 2020
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    ! Inputs
+    ! ---
+    integer, intent(in) :: n_radial_array
+    !! Number of elements per layers used in stress analysis 
+    !! quantities arrays (stress, strain, displacement) 
+
+    integer, intent(in) :: nlayers
+    !! Total number of layers
+
+    real(kind(1.0D0)), dimension(nlayers), intent(in) :: nu
+    !! Poisson's ratios
+
+    real(kind(1.0D0)), dimension(nlayers), intent(in) :: ey
+    !! Young modulae
+        
+    real(kind(1.0D0)), dimension(nlayers), intent(in) :: d_curr
+    !! Layers current densities [A.m-2]
+      
+    real(kind(1.0D0)), dimension(nlayers+1), intent(in) :: rad
+    !! Radii of the layers boundaries [m], starting from the innermost
+    !! i.e. the blking/casing cylinder
+        
+    real(kind(1.0D0)), intent(in) :: v_force
+    !! Electromecanical vertical forces
+    ! ---
+      
+        
+    ! Outputs
+    ! ---
+    real(kind(1.0D0)), dimension(n_radial_array*nlayers), intent(out) :: sigr
+    !! Stress distribution in the radial direction (r) [Pa]
+
+    real(kind(1.0D0)), dimension(n_radial_array*nlayers), intent(out) :: sigt
+    !! Stress distribution in the toroidal direction (t) [Pa]
+
+    real(kind(1.0D0)), dimension(n_radial_array*nlayers), intent(out) :: sigz
+    !! Stress distribution in the vertical direction (z)
+
+    real(kind(1.0D0)), dimension(n_radial_array*nlayers), intent(out) :: strain_r
+    !! Strain distribution in the radial direction (r)
+      
+    real(kind(1.0D0)), dimension(n_radial_array*nlayers), intent(out) :: strain_t
+    !! Strain distribution in the toroidal direction (t)
+      
+    real(kind(1.0D0)), intent(out) :: strain_z
+    !! Uniform strain in the vertical direction (z)
+
+    real(kind(1.0D0)), dimension(n_radial_array*nlayers), intent(out) :: r_deflect
+    !! Radial displacement radial distribution [m]
+    ! ---
+
+
+    ! Local variables
+    ! ---
+    ! Lorentz body force parametres
+    real(kind(1.0D0)), dimension(nlayers) :: alpha
+    real(kind(1.0D0)), dimension(nlayers) :: beta
+      
+    ! Strain to stress hooke's law coeficient
+    real(kind(1.0D0)), dimension(nlayers) :: kk
+
+    ! Layer area
+    real(kind(1.0D0)), dimension(nlayers) :: area
+
+    ! Vertical strain parameters
+    real(kind(1.0D0)) :: aleph
+    real(kind(1.0D0)) :: sum_1 
+    real(kind(1.0D0)) :: sum_2 
+    real(kind(1.0D0)), dimension(nlayers) :: beth
+    real(kind(1.0D0)), dimension(nlayers) :: par_1
+    real(kind(1.0D0)), dimension(nlayers) :: par_2
+
+    ! Matrix encoding the integration constant cc coeficients 
+    real(kind(1.0D0)), dimension(2*nlayers, 2*nlayers) :: aa
+
+    ! Vector encoding the alpha/beta (lorentz forces) contribution
+    real(kind(1.0D0)), dimension(2*nlayers) :: bb
+
+    ! Integration constants vector (solution)
+    real(kind(1.0D0)), dimension(2*nlayers) :: cc
+    real(kind(1.0D0)), dimension(nlayers) :: c1, c2
+
+    ! Variables used for radial stress distribution  
+    real(kind(1.0D0)), dimension(n_radial_array*nlayers) :: radius     
+    real(kind(1.0D0)) :: dradius  
+    real(kind(1.0D0)) :: inner_layer_curr
+      
+    ! Variables used for model checks
+    integer, parameter :: check = 0
+    real(kind(1.0D0)) :: sigz_int = 0.0D0
+    real(kind(1.0D0)), dimension(nlayers-1) :: diff_sigr
+    real(kind(1.0D0)), dimension(nlayers-1) :: diff_deflect
+
+    ! Indexes
+    integer :: ii = 0  ! Line in the aa matrix
+    integer :: jj = 0  ! Collumn in the aa matrix 
+    ! ---    
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      
+    ! The stress calcualtion differential equations is analytically sloved
+    ! The final solution is given by the layer boundary conditions on
+    ! radial stress and displacement between layers solved 
+    ! The problem is set as aa.cc = bb, cc being the constant we search
+    ! ------
+
+
+    ! Layer parameterisation
+    ! ***
+    ! Stress to strain coeficients (array equation)
+    kk = ey / ( 1.0D0 - nu - nu**2 )
+
+    ! Lorentz forces parametrisation coeficients (array equation)
+    alpha = 0.5D0*rmu0 * d_curr**2 / (kk * ( 1.0D0 - nu ))
+
+    inner_layer_curr = 0.0D0
+    do ii = 1, nlayers
+
+        beta(ii) = 0.5D0*rmu0 * d_curr(ii) * ( inner_layer_curr - pi*d_curr(ii)*rad(ii)**2 ) / &
+                                             ( pi*kk(ii)*(1.0D0 - nu(ii)) )
+         
+        ! Layer area
+        area(ii) = pi * (rad(ii+1)**2 - rad(ii)**2)
+
+        ! Total current carried by the inners layers 
+        inner_layer_curr = inner_layer_curr + area(ii)*d_curr(ii)
+    end do
+      
+    ! Plain strain generalisation parameters
+    !-!
+    do ii = 1, nlayers
+        par_1(ii) = pi * (rad(ii+1)**4 - rad(ii)**4)
+        par_2(ii) = pi * (log(rad(ii+1)) * rad(ii+1)**2 - log(rad(ii)) * rad(ii)**2)
+    end do
+ 
+    sum_1 = sum( kk * area * (1.0D0 - nu) )
+    sum_2 = sum( nu * kk * (0.25D0*alpha*par_1 + beta*par_2) )
+
+    aleph = (v_force - sum_2) / sum_1      
+    beth = - (2.0D0*nu*kk*area) / sum_1   ! Vector equation
+    !-!
+    ! ***
+      
+
+    ! Left hand side matrix aa
+    ! ***
+    aa(:,:) = 0.0D0
+
+    ! Null radial stress at R(1)
+    aa(1,1) = kk(1)
+    aa(1,2) = kk(1) * (2.0D0*nu(1) - 1.0D0) / rad(1)**2 
+
+    do jj = 1, nlayers ! Plain strain generalisation on C1 coeficients
+        aa(1, 2*jj-1) = aa(1, 2*jj-1) + beth(jj)*kk(1)*nu(1)
+    end do
+
+    ! Inter-layer boundary conditions
+    do ii = 1, nlayers - 1
+
+        ! Continuous radial normal stress at R(ii+1)
+        aa(2*ii, 2*ii-1) = kk(ii)
+        aa(2*ii, 2*ii  ) = kk(ii) * ( 2.0D0*nu(ii) - 1.0D0 ) / rad(ii+1)**2 
+        aa(2*ii, 2*ii+1) = -kk(ii+1)
+        aa(2*ii, 2*ii+2) = -kk(ii+1) * ( 2.0D0*nu(ii+1) - 1.0D0 ) / rad(ii+1)**2
+
+        do jj = 1, nlayers ! Plain strain generalisation
+            aa(2*ii, 2*jj-1) = aa(2*ii, 2*jj-1) + beth(jj)*(kk(ii)*nu(ii) - kk(ii+1)*nu(ii+1)) 
+        end do
+
+        ! Continuous displacement at R(ii+1)
+        aa(2*ii+1, 2*ii-1) = rad(ii+1)
+        aa(2*ii+1, 2*ii  ) = 1.0D0 / rad(ii+1)
+        aa(2*ii+1, 2*ii+1) = -rad(ii+1)
+        aa(2*ii+1, 2*ii+2) = -1.0D0 / rad(ii+1)
+
+    end do
+
+    ! Null radial stress at outermost radius at R(nlayers+1)
+    aa(2*nlayers, 2*nlayers - 1) = kk(nlayers)
+    aa(2*nlayers, 2*nlayers    ) = kk(nlayers) * (2.0D0*nu(nlayers) - 1.0D0) / rad(nlayers+1)**2
+
+    do jj = 1, nlayers ! Plain strain generalisation
+        aa(2*nlayers, 2*jj-1) = aa(2*nlayers, 2*jj-1) + beth(jj)*kk(nlayers)*nu(nlayers)
+    end do
+    ! ***
+
+    ! Right hand side vector bb
+    ! ***
+    ! Null radial stress at R(1)
+    bb(1) = -kk(1)*nu(1)*aleph ! Plain strain generalisation
+
+    ! Inter-layer boundary conditions
+    do ii = 1, nlayers - 1
+
+        ! Continuous radial normal stress at R(ii+1)
+        bb(2*ii) = - kk(ii) * ( 0.125D0*alpha(ii) * rad(ii+1)**2 * ( 3.0D0 - 2.0D0*nu(ii) )       &
+                               + 0.5D0*beta(ii) * ( 1.0D0 - nu(ii)   + log(rad(ii+1)) ) )        &
+                   + kk(ii+1) * ( 0.125D0*alpha(ii+1) * rad(ii+1)**2 * ( 3.0D0 - 2.0D0*nu(ii+1) ) &
+                                 + 0.5D0*beta(ii+1) * ( 1.0D0 - nu(ii+1) + log(rad(ii+1)) ) )      &
+                   - aleph * ( kk(ii)*nu(ii) - kk(ii+1)*nu(ii+1) ) ! Plain strain generalisation line
+
+        ! Continuous displacement at R(ii+1)
+        bb(2*ii+1) = - 0.125D0*alpha(ii)  * rad(ii+1)**3 - 0.5D0*beta(ii)  *rad(ii+1)*log(rad(ii+1))  &
+                     + 0.125D0*alpha(ii+1)* rad(ii+1)**3 + 0.5D0*beta(ii+1)*rad(ii+1)*log(rad(ii+1))
+
+    end do
+
+    ! Null radial stress at R(nlayers+1)
+    bb(2*nlayers) = -kk(nlayers) * ( 0.125D0*alpha(nlayers)*rad(nlayers+1)**2 * (3.0D0 - 2.0D0*nu(nlayers)) &
+                                    + 0.5D0*beta(nlayers) * (1.0D0 - nu(nlayers) + log(rad(nlayers+1)))      & 
+                                    + nu(nlayers)*aleph )   ! Plain strain generalisation
+    ! ***
+
+    !  Find solution vector c
+    ! ***
+    cc(:) = 0.0D0
+    call linesolv(aa, 2*nlayers, bb, cc)
+
+    do ii = 1, nlayers
+        c1(ii) = cc(2*ii-1)
+        c2(ii) = cc(2*ii)
+    end do
+    ! ***
+    ! ------
+
+
+    ! Radial/toroidal/vertical stress radial distribution
+    ! ------
+    radius(:) = 0.0D0
+    sigr(:) = 0.0D0
+    sigt(:) = 0.0D0
+    sigz(:) = 0.0D0
+    strain_r(:) = 0.0D0
+    strain_t(:) = 0.0D0
+    r_deflect(:) = 0.0D0
+
+    ! Vertical normal strain
+    strain_z = aleph
+    do ii = 1, nlayers
+        strain_z = strain_z + beth(ii)*c1(ii)
+    end do 
+
+    if ( check == 1 ) then
+       sigz_int = 0.0D0 ! Check
+    end if 
+
+    do ii = 1, nlayers
+         
+        dradius = (rad(ii+1) - rad(ii)) / dble(n_radial_array)
+        do jj = (ii-1)*n_radial_array + 1, ii*n_radial_array
+
+            radius(jj) = rad(ii) + dradius*dble(jj - n_radial_array*(ii-1) - 1)
+
+            sigr(jj) = kk(ii) * ( c1(ii) + (2.0D0*nu(ii) - 1.0D0)*c2(ii)/radius(jj)**2 + &
+                                  0.125D0*alpha(ii)*( 3.0D0 - 2.0D0*nu(ii) )*radius(jj)**2 + &
+                                  0.5D0*beta(ii)*(1.0D0 - nu(ii) + log(radius(jj)) ) + &
+                                  nu(ii)*strain_z )
+
+            sigt(jj) = kk(ii) * ( c1(ii) - (2.0D0*nu(ii) - 1.0D0)*c2(ii)/radius(jj)**2 + &
+                                  0.125D0*alpha(ii)*( 1.0D0 + 2.0D0*nu(ii) )*radius(jj)**2 + &
+                                  0.5D0*beta(ii)*(nu(ii) + log(radius(jj))) + &
+                                  nu(ii)*strain_z )
+                                     
+            sigz(jj) = kk(ii) * ( nu(ii) * ( 2.0D0*c1(ii) + &
+                                  0.5D0*alpha(ii) * radius(jj)**2 + &
+                                  0.5D0*beta(ii) * (1.0D0 + 2.0D0*log(radius(jj))) ) + &
+                                  (1.0D0 - nu(ii)) * strain_z )
+
+            ! Radisal strain
+            strain_r(jj) = c1(ii) - c2(ii) / radius(jj)**2 + &
+                           0.375D0*alpha(ii) * radius(jj)**2 + 0.5D0*beta(ii) * (1 + log(radius(jj)))
+      
+            ! Toroidal strain
+            strain_t(jj) = c1(ii) + c2(ii) / radius(jj)**2 + &
+                           0.125D0*alpha(ii) * radius(jj)**2 + 0.5D0*beta(ii) * log(radius(jj))
+                              
+            ! Radial displacement
+            r_deflect(jj) = c1(ii)*radius(jj) + c2(ii)/radius(jj)   &
+                            + 0.125D0*alpha(ii) * radius(jj)**3     &
+                            + 0.5D0*beta(ii) * radius(jj)*log(radius(jj))
+               
+            if ( check == 1 ) then
+               sigz_int = sigz_int + 2.0D0*pi*radius(jj)*sigz(jj)*dradius ! Check 
+            end if
+
+        end do ! layer array loop
+    end do ! Layer loop
+     
+    !! Checks to implement in G-test
+    if ( check == 1 ) then
+        do ii = 1, nlayers - 1
+            diff_sigr(ii) = kk(ii) * ( c1(ii) + (2.0D0*nu(ii) - 1.0D0)*c2(ii)/rad(ii+1)**2 + &
+                            0.125D0*alpha(ii)*( 3.0D0 - 2.0D0*nu(ii) )*rad(ii+1)**2 + &
+                            0.5D0*beta(ii)*(1.0D0 - nu(ii) + log(rad(ii+1)) ) + &
+                            nu(ii)*strain_z )
+         
+            diff_sigr(ii) = kk(ii+1) * ( c1(ii+1) + (2.0D0*nu(ii+1) - 1.0D0)*c2(ii+1)/rad(ii+1)**2 + &
+                            0.125D0*alpha(ii+1)*( 3.0D0 - 2.0D0*nu(ii+1) )*rad(ii+1)**2 + &
+                            0.5D0*beta(ii+1)*(1.0D0 - nu(ii+1) + log(rad(ii+1)) ) + &
+                            nu(ii+1)*strain_z ) - diff_sigr(ii) 
+
+            diff_deflect(ii) = c1(ii)*rad(ii+1) + c2(ii)/rad(ii+1)     &
+                               + 0.125D0*alpha(ii) * rad(ii+1)**3      &
+                               + 0.5D0*beta(ii) * rad(ii+1)*log(rad(ii+1))  &
+                               - c1(ii+1)*rad(ii+1) - c2(ii+1)/rad(ii+1)    &
+                               - 0.125D0*alpha(ii+1) * rad(ii+1)**3         &
+                               - 0.5D0*beta(ii+1) * rad(ii+1)*log(rad(ii+1)) 
+        end do
+        write(*,*)' Check radial stress cont = ', diff_sigr
+        write(*,*)' Check displacement cont = ', diff_deflect
+        write(*,*) sigr(1)
+        write(*,*) kk(nlayers) * ( c1(nlayers) + (2.0D0*nu(nlayers) - 1.0D0)*c2(nlayers)/rad(nlayers+1)**2 + &
+                    0.125D0*alpha(nlayers)*( 3.0D0 - 2.0D0*nu(nlayers) )*rad(nlayers+1)**2 + &
+                    0.5D0*beta(nlayers)*(1.0D0 - nu(nlayers) + log(rad(nlayers+1)) ) + &
+                    nu(nlayers)*strain_z )
+    end if     
+    ! ------     
+
+end subroutine multilayer_stress     
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1555,12 +2102,6 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
     !! Finds the vertical Young's modulus of the TF coil winding pack
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
-    !! estl : input real : Young's modulus of steel (Pa)
-    !! eins : input real : Young's modulus of insulator (Pa)
-    !! ewp  : input real : Young's modulus of windings (Pa)
-    !! tins : input real : insulator wrap thickness (m)
-    !! tstl : input real : thickness of steel conduit (m)
-    !! tcs  : input real : dimension of cable space area inside conduit (m)
     !! This routine calculates the vertical Young's modulus (Pa)
     !! of the TF coil in the winding pack section.
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -1573,10 +2114,25 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,tins,tstl,tcs
+    real(kind(1.0D0)), intent(in) :: estl
+    !! Young's modulus of steel (Pa)
 
+    real(kind(1.0D0)), intent(in) :: eins
+    !! Young's modulus of insulator (Pa)
+    
+    real(kind(1.0D0)), intent(in) :: ewp
+    !! Young's modulus of windings (Pa)
+    
+    real(kind(1.0D0)), intent(in) :: tins
+    !! insulator wrap thickness (m)
+
+    real(kind(1.0D0)), intent(in) :: tstl
+    !! thickness of steel conduit (m)
+
+    real(kind(1.0D0)), intent(in) :: tcs
+    !! dimension of cable space area inside conduit (m)
+ 
     !  Local variables
-
     real(kind(1.0D0)) :: ttot
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1584,8 +2140,8 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
     ttot = tcs + 2.0D0*(tins + tstl)
 
     eyngzwp = ewp*tcs*tcs &
-    + estl*( (tcs + 2.0D0*tstl)**2 - tcs*tcs ) &
-    + eins*( (tcs + 2.0D0*(tstl + tins))**2 - (tcs + 2.0D0*tstl)**2 )
+              + estl*( (tcs + 2.0D0*tstl)**2 - tcs*tcs ) &
+              + eins*( (tcs + 2.0D0*(tstl + tins))**2 - (tcs + 2.0D0*tstl)**2 )
 
     eyngzwp = eyngzwp / (ttot*ttot)
 
@@ -1958,7 +2514,6 @@ subroutine outtf(outfile, peaktfflag)
     !  Local variables
 
     integer :: ii
-    integer, dimension(2*n_radial_array) :: ii_vec
     real(kind(1.0D0)) :: ap, radius
     character(len=1) :: intstring
 
@@ -2184,55 +2739,6 @@ subroutine outtf(outfile, peaktfflag)
             call oblnkl(outfile)
         end if
 
-
-        ! Stress output section
-        call osubhd(outfile,'TF Coil Stresses (CCFE two-layer model) :')
-        call ovarre(outfile,'Allowable Tresca stress limit (Pa)','(alstrtf)',alstrtf)
-        call ocmmnt(outfile, 'Stresses of the point of maximum TRESCA stress per layer')
-        call ocmmnt(outfile, 'Please use utility/plot_TF_stress.py for radial plots plots summary')
-        if ( i_tf_tresca==1 ) then
-            call ocmmnt(outfile, 'Conduit TRESCA stress corrected using CEA formula (i_tf_tresca = 1)')
-        end if
-        
-        ! OUT.DAT data on maximum TRESCA stress values
-        write(outfile,'(t2, "Layers", t26, *(i11) )') 1, 2
-        write(outfile,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r_max*1.0D-6
-        write(outfile,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t_max*1.0D-6
-        write(outfile,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z_max*1.0D-6
-        write(outfile,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises_max*1.0D-6
-        if ( i_tf_tresca == 1 ) then
-            write(outfile,'(t2, "CEA TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
-        else 
-            write(outfile,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
-        end if
-
-        ! SIG_TF.DAT storage  
-        do ii = 1, 2*n_radial_array
-            ii_vec(ii) = ii
-        end do
-
-        write(sig_file,'(t2, "Points per layers"                 ,t26, *(I11,3x))') n_radial_array          
-        write(sig_file,'(t2, "index"                             ,t26, *(I11,3x))') ii_vec
-        write(sig_file,'(t2, "radius"              , t20, "(m)"  ,t26, *(F11.3,3x))') radial_array
-        write(sig_file,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r*1.0D-6
-        write(sig_file,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t*1.0D-6
-        write(sig_file,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z*1.0D-6
-        write(sig_file,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises*1.0D-6
-        write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
-        write(sig_file,'(t2, "CEA TRESCA"," stress", t20, "(MPa)",t26, *(F11.3,3x))') s_tresca_cond_cea*1.0D-6
-        write(sig_file,*)
-        write(sig_file,*) 'Displacement'          
-        write(sig_file,'(t2, "raidal displacement", t20, "(mm)",t26, *(F11.3,3x))') deflect*1.0D3
-        
-
-        ! Other quantities (displacement strain, etc..)
-        call ovarre(outfile,'Vertical stress (Pa)','(sig_tf_z)',sig_tf_z, 'OP ')
-        call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
-                            maxval(deflect), 'OP ')
-        call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
-        call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
-        call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
-    
     else
         !  Output section
         call oheadr(outfile,'Resistive TF Coil Information')
@@ -2287,6 +2793,7 @@ subroutine outtf(outfile, peaktfflag)
  
 
     end if 
+
 end subroutine outtf
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2387,7 +2894,7 @@ contains
         integer :: lap
         real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
         jcritsc,jcrit0,jcritm,jcritp,jcritstr,jsc,jstrand,jtol,jwdgop, &
-        t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot, total
+        t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ! Rename tdmptf as it is called tdump in this routine and those called from here.
@@ -3167,14 +3674,14 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
 
     !  Trivial solutions
     ! ------------------
-    if ( fcool == 1.0D0 ) then
+    if ( abs(fcool) < epsilon(fcool) ) then
         volume = 0.0D0
         respow = 0.0D0
         call report_error(122)
         return
     end if
 
-    if ( rmid == rtop ) then
+    if ( abs(rmid - rtop) < epsilon(rtop) ) then
 
         ! Exact conductor cross-section
         a_cond_midplane = pi*rmid**2 - a_tfin_hole - n_tf * acpcool - a_cp_ins
