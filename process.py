@@ -8,6 +8,7 @@ import subprocess
 import os
 import sys
 import argparse
+import utilities.process_io_lib.input_validator as input_validator
 
 PROCESS_EXE_PATH = "./bin/process.exe"
 
@@ -56,6 +57,18 @@ def build_process():
     subprocess.run(["cmake", "-H.", "-Bbuild"])
     subprocess.run(["cmake", "--build", "build"])
 
+def validate_input(input_file_path):
+    """Validate the input file using the input_validator module.
+    
+    :param input_file_path: Path to the input file from the project root dir
+    :type input_file_path: str
+    """
+    # Check the input file exists, then run the input validator
+    if os.path.isfile(input_file_path):
+        input_validator.validate(input_file_path)
+    else:
+        sys.exit("Input file not found; check the path.")
+
 def run_process(input_file_path):
     """Run Process using a given input file path.
     
@@ -84,6 +97,8 @@ def main():
     check_root_dir()
     if args.build:
         build_process()
+    
+    validate_input(args.input)
     run_process(args.input)
     if args.util:
         # Only create dicts if necessary for utilities
