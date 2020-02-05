@@ -97,6 +97,7 @@ def run():
     check_root_dir()
     if args.build:
         build_process()
+        create_dicts()
     
     validate_input(args.input)
     run_process(args.input)
