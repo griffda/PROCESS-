@@ -1072,7 +1072,7 @@ end subroutine peak_tf_with_ripple
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine stresscl( n_radial_array, n_tf_layer, iprint, outfile )
+subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     !! TF coil stress routine
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -1561,11 +1561,10 @@ subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
     integer :: ii_c = 0
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  LHS matrix A
-
     ! Array equation
     kk = ey/(1.0D0 - nu**2)
-    
+
+    !  LHS matrix A    
     aa(:,:) = 0.0D0
     aa(1,1) = kk(1) * (1.0D0+nu(1))
     aa(1,2) = -kk(1) * (1.0D0-nu(1))/(rad(1)**2)
@@ -2219,52 +2218,6 @@ end function sigvm
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-! subroutine sctfjalw(bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump,jtfalw)
-
-!     !! Simple J(B) model for the superconducting TF Coil
-!     !! P J Knight, CCFE, Culham Science Centre
-!     !! J Galambos, FEDC/ORNL
-!     !! bmaxtf  : input real : peak field including ripple (T)
-!     !! rtfmi   : input real : mean inboard leg radius (m)
-!     !! rtfmo   : input real : mean outboard leg radius (m)
-!     !! rtf2    : input real : radius of inboard leg point nearest plasma (m)
-!     !! sigmatf : input real : allowable structure stress (MPa)
-!     !! tdump   : input real : dump time (s)
-!     !! jtfalw  : output real : overall allowable current density (A/m2)
-!     !! This routine using a simple model to calculate the allowable
-!     !! current density in a superconducting coil, given the magnetic
-!     !! field and the allowable stress.
-!     !! Programmed by J. Galambos from algorithms from J. Perkins.
-!     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-!     !
-!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!     implicit none
-
-!     !  Arguments
-
-!     real(kind(1.0D0)), intent(in) :: bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump
-!     real(kind(1.0D0)), intent(out) :: jtfalw
-
-!     !  Local variables
-
-!     real(kind(1.0D0)), parameter :: tdumprf = 10.0D0  !  Reference dump time (s)
-
-!     real(kind(1.0D0)) :: sqrtdmp,temp1,temp2,temp3
-
-!     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!     sqrtdmp = sqrt(tdump/tdumprf)
-!     temp1 = 125.94D0*bmaxtf*rtf2 * log(rtfmo/rtfmi) / sigmatf
-!     temp2 = 0.036D0*sqrt(bmaxtf) / (1.0D0-bmaxtf/23.0D0)**2
-!     temp3 = 0.6D0 / (1.0D0 - (1.0D0 / (16.0D0 * (1.0D0 - bmaxtf/23.0D0)-5.0D0) ) )
-
-!     jtfalw = 152.0D6 / (temp1 + temp2*temp3 + sqrtdmp)
-
-! end subroutine sctfjalw
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 subroutine coilshap
 
     !! Calculates the TF coil shape
@@ -2489,7 +2442,6 @@ subroutine tfcind(tfthk)
     end do
 
 end subroutine tfcind
-
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3358,29 +3310,9 @@ contains
     end subroutine protect
 
 end subroutine tfspcall
-! --------------------------------------------------------------------
-! ! subroutine croco_voltage()
 
-!     !! croco_voltage
-!     !! Finds the dump voltage in quench for the Croco HTS conductor
-!     !! Subroutine
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!     implicit none
-
-!     ! vtfskv : voltage across a TF coil during quench (kV)
-!     ! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s) (time-dump-TF)
-!     ! For clarity I have copied this into 'time2' or 'tau2' depending on the model.
-
-!     if(quench_model=='linear')then
-!         time2 = tdmptf
-!         vtfskv = 2.0D0/time2 * (estotft/n_tf) / cpttf
-!     elseif(quench_model=='exponential')then
-!         tau2 = tdmptf
-!         vtfskv = 2.0D0/tau2 * (estotft/n_tf) / cpttf
-!     endif
-
-! ! end subroutine croco_voltage
-! --------------------------------------------------------------------
 function croco_voltage()
 
     !! Finds the coil voltage during a quench
