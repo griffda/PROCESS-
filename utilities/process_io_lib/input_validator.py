@@ -13,16 +13,17 @@ from process_io_lib import in_dat
 from process_io_lib import input_validator_rules
 from rootdir import ROOTDIR as FORTRAN_SOURCE_ROOTDIR
 
-INPUT_FILE_PATH = "tracking/baseline_2018/baseline_2018_IN.DAT"
-# Todo: make dynamic
-
 class RuleList(object):
     """Creates a list of rule instances and validates them."""
-    def __init__(self):
-        """Fetches the rules and the input data."""
+    def __init__(self, input_file_path):
+        """Fetches the rules and the input data.
+        
+        :param input_file_path: Path to the input file from the root project dir
+        :type input_file_path: str
+        """
         self.rules = []
         self.get_rules()
-        self.data = in_dat.StructuredInputData(filename=INPUT_FILE_PATH)
+        self.data = in_dat.StructuredInputData(filename=input_file_path)
 
     def get_rules(self):
         """Create the rule instances in a list and store them
@@ -126,11 +127,13 @@ class RuleList(object):
 
             print(output)
 
-def main():
-    """Create the rule list and validate each rule against the input data."""
-    rule_list = RuleList()
+def validate(input_file_path):
+    """Create the rule list and validate each rule against the input data.
+    
+    :param input_file_path: Path to the input file from the root project dir
+    :type input_file_path: str
+    """
+    rule_list = RuleList(input_file_path)
     rule_list.report_coverage()
     rule_list.validate_data()
     rule_list.print_results()
-
-main()
