@@ -19,7 +19,11 @@ import os
 import argparse
 import process_io_lib.mfile as mf
 from process_io_lib.mfile import make_plot_dat
-from process_io_lib.process_dicts import PARAMETER_DEFAULTS
+# from process_io_lib.process_dicts import PARAMETER_DEFAULTS
+
+from create_dicts import get_dicts
+# Load dicts from dicts JSON file
+proc_dict = get_dicts()
 
 if __name__ == "__main__":
 
@@ -52,7 +56,7 @@ if __name__ == "__main__":
     if args.f:
         M = mf.MFile(filename=args.f)
     else:
-        M = mf.MFile()
+        M.data["rmajor"].get_scan(-1)
 
     # Get files in current directory to check for the config file.
     current_directory = os.listdir(".")
@@ -81,11 +85,11 @@ if __name__ == "__main__":
 
             # If user has specified column format
             if args.columns:
-                make_plot_dat(M, PARAMETER_DEFAULTS, file_format="column")
+                make_plot_dat(M, proc_dicts[PARAMETER_DEFAULTS], file_format="column")
 
             # If user has specified row format
             else:
-                make_plot_dat(M, PARAMETER_DEFAULTS)
+                make_plot_dat(M, proc_dicts[PARAMETER_DEFAULTS])
         else:
 
             # If user has specified column format
