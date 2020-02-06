@@ -625,7 +625,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************** TF Coils **************************************************
  
  Superconducting TF coils
- TF coil superconductor material                                          (isumattf)                        5     
+ TF coil superconductor material                                          (i_tf_sup_mat)                        5     
   (WST Nb3Sn)
  Current Density :
  
@@ -2056,7 +2056,7 @@ tftmp = 4.75
 vftf = 0.3
 
 * Conductor type switch (WST Nb3Sn)
-isumattf = 5
+i_tf_sup_mat = 5
 
 * Number of pancakes in winding pack
 n_pancake = 20

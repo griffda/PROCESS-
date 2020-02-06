@@ -2104,7 +2104,7 @@ module tfcoil_variables
   !! awphec : winding pack He coil area (m2)
   real(kind(1.0D0)) :: bcritsc = 24.0D0
   !! bcritsc /24.0/ : upper critical field (T) for Nb3Sn superconductor
-  !!                  at zero temperature and strain (isumattf=4, =bc20m)
+  !!                  at zero temperature and strain (i_tf_sup_mat=4, =bc20m)
   real(kind(1.0D0)) :: bmaxtf = 0.0D0
   !! bmaxtf : mean peak field at TF coil (T)
   real(kind(1.0D0)) :: bmaxtfrp = 0.0D0
@@ -2160,7 +2160,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: dcase = 8000.0D0
   !! dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)), dimension(6) :: dcond = 9000.0D0
-  !! dcond(6) /9000.0/ : density of superconductor type given by isumattf/isumatoh/isumatpf (kg/m3)
+  !! dcond(6) /9000.0/ : density of superconductor type given by i_tf_sup_mat/isumatoh/isumatpf (kg/m3)
   
   real(kind(1.0D0)) :: dcondins = 1800.0D0
   !! dcondins /1800.0/ : density of conduit + ground-wall insulation (kg/m3)
@@ -2202,25 +2202,16 @@ module tfcoil_variables
   !!   0 : non-integer turns
   !!   1 : integer turns
 
-  integer :: i_tf_buking = -1
-  !! Switch for buking cylinder (case)
-  !!  -1 : Casing for SC i.e. i_tf_sup = 1 (default) 
-  !!       No casing for copper magnets
-  !!       Casing for aluminium magnets 
-  !!   0 : No casing/buking cylinder
-  !!   1 : casing/buling cylinder
-  !!   2 : Bucked and wedged design
-
-  integer :: isumattf = 1
-  !! isumattf /1/ : switch for superconductor material in TF coils:<UL>
-  !!           <LI> = 1 ITER Nb3Sn critical surface model with standard
-  !!                    ITER parameters;
-  !!           <LI> = 2 Bi-2212 high temperature superconductor (range of
-  !!                    validity T < 20K, adjusted field b < 104 T, B > 6 T);
-  !!           <LI> = 3 NbTi;
-  !!           <LI> = 4 ITER Nb3Sn model with user-specified parameters
-  !!           <LI> = 5 WST Nb3Sn parameterisation
-  !!           <LI> = 6 REBCO HTS tape in CroCo strand</UL>
+  integer :: i_tf_sup_mat = 1
+  !! Switch for superconductor material in TF coils:<UL>
+  !!   1 : ITER Nb3Sn critical surface model with standard
+  !!     : ITER parameters;
+  !!   2 : Bi-2212 high temperature superconductor (range of
+  !!     : validity T < 20K, adjusted field b < 104 T, B > 6 T);
+  !!   3 : NbTi;
+  !!   4 : ITER Nb3Sn model with user-specified parameters
+  !!   5 : WST Nb3Sn parameterisation
+  !!   6 : REBCO HTS tape in CroCo strand</UL>
 
   integer :: i_tf_sup = 1
   !! i_tf_sup /1/ : switch for TF coil conductor model:<UL>
@@ -2234,6 +2225,35 @@ module tfcoil_variables
   !!         <LI> = 1  PROCESS D-shape : parametrise with 2 arcs 
   !!         <LI> = 2  Picture frame coils 
 
+  integer :: n_pancake = 10
+  !! Number of pancakes in TF coil
+  !! Only used if i_tf_turns_integer = 1
+
+  integer :: n_layer = 20
+  !! Number of layers in TF coil
+  !! Only used if i_tf_turns_integer = 1
+  
+  integer :: n_rad_per_layer = 50
+  !! Size of the arrays per layers storing the radial dependent 
+  !! stress quantities (stresses, strain displacement etc..)
+
+  integer :: i_tf_buking = -1
+  !! Switch for buking cylinder (case)
+  !!  -1 : Casing for SC i.e. i_tf_sup = 1 (default) 
+  !!       No casing for copper magnets
+  !!       Casing for aluminium magnets 
+  !!   0 : No casing/buking cylinder
+  !!   1 : casing/buling cylinder
+  !!   2 : Bucked and wedged design
+
+  integer :: n_tf_graded_layers = 1
+  !! Number of layers of different case properties in the WP 
+  !! if n_tf_graded_layers > 1, a gradded coil is condidered
+
+  integer :: n_tf_stress_layers = 0
+  !! Number of layers considered for the inboard TF stress calculations
+  !! set in initial.f90 from i_tf_buking and n_tf_graded_layers
+
   real(kind(1.0D0)) :: jbus = 1.25D6
   !! jbus /1.25e6/ : bussing current density (A/m2)
   real(kind(1.0D0)), dimension(2) :: jeff = 0.0D0
@@ -2246,24 +2266,11 @@ module tfcoil_variables
   real(kind(1.0D0)) :: jwptf = 0.0D0
   !! jwptf : winding pack current density (A/m2)
 
-  integer :: n_pancake = 10
-  !! n_pancake /10/ : Number of pancakes in TF coil (i_tf_turns_integer=1)
-
-  integer :: n_layer = 20
-  !! n_layer /20/ : Number of layers in TF coil (i_tf_turns_integer=1)
-
   real(kind(1.0D0)) :: oacdcp = 0.0D0
   !! oacdcp /0.0/ : overall current density in TF coil inboard legs midplane (A/m2)
   !!                Rem SK : Not used in tfcoil to set the current any more
   !!                         -> SHOULD NOT BE USED AS ITERATION VARIABLE 12 ANY MORE
   !!                         -> This variable is now calculated
-
-  integer :: n_rad_per_layer = 50
-  !! Size of the arrays per layers storing the radial dependent 
-  !! stress quantities (stresses, strain displacement etc..)
-
-  integer :: n_tf_stress_layers = 2
-  !! Number of layers considered for the inboard TF stress calculations
 
   real(kind(1.0D0)) :: eyzwp = 0.0D0
   !! eyzwp : winding pack vertical Young's modulus (Pa)
@@ -2334,7 +2341,7 @@ module tfcoil_variables
   !!                    (used in Nb3Sn critical surface model, isumatph=1, 4 or 5)
   real(kind(1.0D0)) :: strncon_tf = -0.005D0
   !! strncon_tf /-0.005/ : strain in TF superconductor material
-  !!                    (used in Nb3Sn critical surface model, isumattf=1, 4 or 5)
+  !!                    (used in Nb3Sn critical surface model, i_tf_sup_mat=1, 4 or 5)
 
   ! Issue #522: Quench models
   character(len=12) :: quench_model = 'exponential'
@@ -2352,7 +2359,7 @@ module tfcoil_variables
   !! taucq : allowable TF quench time (s)
   real(kind(1.0D0)) :: tcritsc = 16.0D0
   !! tcritsc /16.0/ : critical temperature (K) for superconductor
-  !!                  at zero field and strain (isumattf=4, =tc0m)
+  !!                  at zero field and strain (i_tf_sup_mat=4, =tc0m)
   real(kind(1.0D0)) :: tdmptf = 10.0D0
   !! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s)
   !!                 (iteration variable 56)

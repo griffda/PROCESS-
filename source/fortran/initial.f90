@@ -1112,7 +1112,7 @@ subroutine check
         stop
     end if
      
-    ! Seting the buking cylinder default option 
+    ! Buking cylinder default option setting
     !  - Buking (casing) for SC i_tf_buking ( i_tf_buking = 1 )
     !  - No buking for copper magnets ( i_tf_buking = 0 )
     !  - Bucking for aluminium magnets ( i_tf_buking = 1 )
@@ -1123,6 +1123,9 @@ subroutine check
             i_tf_buking = 1
         end if
     end if 
+
+    ! Number of stress calculation layers
+    n_tf_stress_layers = i_tf_buking + n_tf_graded_layers
 
     ! If TFC sidewall has not been set by user
     if(casths<0.1d-10) tfc_sidewall_is_fraction = .true.

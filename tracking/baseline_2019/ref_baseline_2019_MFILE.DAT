@@ -569,7 +569,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -6.6378E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      1.9275E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sup_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.4939E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      8.2220E+06    
  Number_of_TF_coils______________________________________________________ (n_tf)________________________      1.6000E+01    
@@ -1429,7 +1429,7 @@ cpttf    = 80216.0 * Tf coil current per turn (a);
 dhecoil  = 0.01 * Diameter of he coil in tf winding (m)
 fcutfsu  = 0.84777 * Copper fraction of cable conductor (tf coils)
 i_tf_turns_integer = 1 * Switch for tf coil integer/non-integer turns
-isumattf = 5 * Switch for superconductor material in tf coils;
+i_tf_sup_mat = 5 * Switch for superconductor material in tf coils;
 n_pancake = 20 * Number of pancakes in tf coil (i_tf_turns_integer=1)
 n_layer  = 10 * Number of layers in tf coil (i_tf_turns_integer=1)
 oacdcp   = 8257600.0 * Overall current density in tf coil inboard legs (a/m2)

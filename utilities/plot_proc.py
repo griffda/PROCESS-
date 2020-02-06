@@ -1771,15 +1771,15 @@ def plot_magnetics_info(axis, mfile_data, scan):
 
     tburn = mfile_data.data["tburn"].get_scan(scan) / 3600.0
 
-    # Get superconductor material (isumattf)
-    # If isumattf not present, assume resistive
-    if "isumattf" in mfile_data.data.keys():
-        isumattf = mfile_data.data["isumattf"].get_scan(scan)
+    # Get superconductor material (i_tf_sup_mat)
+    # If i_tf_sup_mat not present, assume resistive
+    if "i_tf_sup_mat" in mfile_data.data.keys():
+        i_tf_sup_mat = mfile_data.data["i_tf_sup_mat"].get_scan(scan)
     else:
-        isumattf = 0
+        i_tf_sup_mat = 0
 
-    if isumattf > 0:
-        tftype = proc_dict['DICT_TF_TYPE'][str(int(mfile_data.data["isumattf"].get_scan(scan)))]
+    if i_tf_sup_mat > 0:
+        tftype = proc_dict['DICT_TF_TYPE'][str(int(mfile_data.data["i_tf_sup_mat"].get_scan(scan)))]
     else:
         tftype = "Resistive"
     

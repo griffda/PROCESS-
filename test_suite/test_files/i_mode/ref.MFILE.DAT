@@ -501,7 +501,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.3844E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sup_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.7704E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      8.0044E+06    
  Number_of_TF_coils______________________________________________________ (n_tf)________________________      1.6000E+01    
@@ -1612,7 +1612,7 @@ tftmp = 4.75
 vftf = 0.3
 
 * Conductor type switch (WST Nb3Sn)
-isumattf = 5
+i_tf_sup_mat = 5
 
 * Number of pancakes in winding pack
 n_pancake = 20

@@ -503,7 +503,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_____________     -6.930E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_____________      2.021E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)__________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sup_mat)__________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_____________      2.350E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)____________      9.730E+06 ITV
  Number_of_TF_coils______________________________________________________ (tfno)______________      1.600E+01    
@@ -1355,7 +1355,7 @@ sweep = 0.007
 
 *-----------------Tfcoil Variables-----------------*
 itfsup   = 1  * switch for TF coil conductor model 1=superconductor
-isumattf = 5
+i_tf_sup_mat = 5
 casthi   = 0.06 * Inboard tf coil case inner (plasma side) thickness (m)
 casths   = 0.05 * Inboard tf coil sidewall case thickness (m)
 ripmax   = 0.6 * maximum allowable toroidal field ripple amplitude at plasma edge (%)

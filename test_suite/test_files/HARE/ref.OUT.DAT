@@ -601,7 +601,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************** TF Coils **************************************************
  
  Superconducting TF coils
- TF coil superconductor material                                          (isumattf)                        1     
+ TF coil superconductor material                                          (i_tf_sup_mat)                        1     
    (ITER Nb3Sn critical surface model)
  Current Density :
  
@@ -1939,7 +1939,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************** TF Coils **************************************************
  
  Superconducting TF coils
- TF coil superconductor material                                          (isumattf)                        1     
+ TF coil superconductor material                                          (i_tf_sup_mat)                        1     
    (ITER Nb3Sn critical surface model)
  Current Density :
  
@@ -3277,7 +3277,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************** TF Coils **************************************************
  
  Superconducting TF coils
- TF coil superconductor material                                          (isumattf)                        1     
+ TF coil superconductor material                                          (i_tf_sup_mat)                        1     
    (ITER Nb3Sn critical surface model)
  Current Density :
  
@@ -4615,7 +4615,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************** TF Coils **************************************************
  
  Superconducting TF coils
- TF coil superconductor material                                          (isumattf)                        1     
+ TF coil superconductor material                                          (i_tf_sup_mat)                        1     
    (ITER Nb3Sn critical surface model)
  Current Density :
  
@@ -5953,7 +5953,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************** TF Coils **************************************************
  
  Superconducting TF coils
- TF coil superconductor material                                          (isumattf)                        1     
+ TF coil superconductor material                                          (i_tf_sup_mat)                        1     
    (ITER Nb3Sn critical surface model)
  Current Density :
  
@@ -7291,7 +7291,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************** TF Coils **************************************************
  
  Superconducting TF coils
- TF coil superconductor material                                          (isumattf)                        1     
+ TF coil superconductor material                                          (i_tf_sup_mat)                        1     
    (ITER Nb3Sn critical surface model)
  Current Density :
  
@@ -8629,7 +8629,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************** TF Coils **************************************************
  
  Superconducting TF coils
- TF coil superconductor material                                          (isumattf)                        1     
+ TF coil superconductor material                                          (i_tf_sup_mat)                        1     
    (ITER Nb3Sn critical surface model)
  Current Density :
  

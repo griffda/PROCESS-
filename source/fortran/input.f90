@@ -1684,14 +1684,14 @@ contains
        case ('i_tf_buking')
           call parse_int_variable('i_tf_buking', i_tf_buking, -1, 2, &
                'Switch for buking cylinder (case)')
-       case ('isumattf')
-          call parse_int_variable('isumattf', isumattf, 1, 6, &
+       case ('i_tf_sup_mat')
+          call parse_int_variable('i_tf_sup_mat', i_tf_sup_mat, 1, 6, &
                'TF coil superconductor material')
-          if (isumattf == 2) then
+          if (i_tf_sup_mat == 2) then
              write(outfile,*) ' '
              write(outfile,*) '**********'
              write(outfile,*) 'Warning if you are using an old input file:'
-             write(outfile,*) 'ISUMATTF=2 usage has changed -'
+             write(outfile,*) 'i_tf_sup_mat=2 usage has changed -'
              write(outfile,*) 'please check validity!'
              write(outfile,*) '**********'
              write(outfile,*) ' '

@@ -465,7 +465,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.1875E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sup_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.3482E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      7.4776E+06 ITV
  Number_of_TF_coils______________________________________________________ (n_tf)________________________      1.6000E+01    
@@ -1280,7 +1280,7 @@ tinstf   = 0.008 * Ground insulation thickness surrounding winding pack (m)
 tmargmin = 1.500 * Minimum allowable temperature margin (cs and tf coils) (k)
 vdalw    = 10.00 * Max voltage across tf coil during quench (kv)
 vftf     = 0.300 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
-isumattf = 5
+i_tf_sup_mat = 5
 *strncon = -0.0066
 
 n_pancake = 20
