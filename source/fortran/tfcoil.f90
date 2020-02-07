@@ -22,12 +22,6 @@ module tfcoil_module
 
   private
   
-  !! Radial position of plasma-facing edge of TF coil outboard leg [m]
-  !real(kind(1.0D0)), private :: r_tf_inboard_in
-  !
-  !! Radial position of plasma-facing edge of TF coil inboard leg [m]
-  !real(kind(1.0D0)), private :: r_tf_inboard_out
-
   public :: tfcoil, cntrpst
 
 

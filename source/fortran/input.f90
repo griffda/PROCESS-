@@ -1736,6 +1736,9 @@ contains
        case ('n_layer')
           call parse_int_variable('n_layer', n_layer, 1, 100, &
                'Number of layers in TF coil (i_tf_turns_integer=1)')
+       case ('n_tf_graded_layers')
+          call parse_int_variable('n_tf_graded_layers', n_tf_graded_layers, 1, 20, &
+               'Number of layers of different stress properties in the WP')
        case ('oacdcp')
           call parse_real_variable('oacdcp', oacdcp, 1.0D4, 1.0D9, &
                'Overall J in inboard TF coil midplane')

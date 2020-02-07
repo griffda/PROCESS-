@@ -2247,7 +2247,7 @@ module tfcoil_variables
   !!   2 : Bucked and wedged design
 
   integer :: n_tf_graded_layers = 1
-  !! Number of layers of different case properties in the WP 
+  !! Number of layers of different stress properties in the WP 
   !! if n_tf_graded_layers > 1, a gradded coil is condidered
 
   integer :: n_tf_stress_layers = 0

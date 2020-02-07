@@ -1105,8 +1105,8 @@ subroutine check
     ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used
     !    Generate a lvl 3 error proposing not to use any stress constraints
     if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration  
-         .and. ( abs(bore + gapoh + ohcth) < epsilon(bore) )                           & ! bore + gapoh + ohcth = 0
-         .and. any(icc == 31) ) then                                                     ! Stress constraint (31) is used 
+         .and. ( abs(bore + gapoh + ohcth + precomp) < epsilon(bore) )                 & ! bore + gapoh + ohcth = 0
+         .and. ( any(icc == 31) .or. any(icc == 32) ) ) then                                                     ! Stress constraint (31) is used 
 
         call report_error(243)
         stop
@@ -1123,6 +1123,12 @@ subroutine check
             i_tf_buking = 1
         end if
     end if 
+
+    ! Error indicating that the buck and wedge solution is not yet implemented
+    if ( i_tf_buking == 2 ) then
+        call report_error(244)
+        stop
+    end if
 
     ! Number of stress calculation layers
     n_tf_stress_layers = i_tf_buking + n_tf_graded_layers

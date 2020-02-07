@@ -815,6 +815,9 @@ subroutine tf_field_and_force()
     ! Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
     if ( itart == 1 .and. i_tf_sup /= 1 ) then
         
+        ! Tricky trick to avoid dividing by 0 if the TF has no hole in it
+        if ( abs(r_wp_inner) < epsilon(r_wp_inner) ) r_wp_inner = 1.0D-9
+
         vforce = 0.25D0 * (bt * rmajor * ritfc) / (n_tf * thkwp**2) * (       & 
                       2.0D0 * r_wp_outer**2 * log(r_wp_outer / r_wp_inner ) + &
                       2.0D0 * thkwp**2 * log( r_cp_top     / r_wp_inner )   + &
@@ -832,7 +835,10 @@ subroutine tf_field_and_force()
                                            r_tf_outboard_in * log((r_tf_outboard_in + thkwp)      / &
                                            r_tf_outboard_in))) - vforce 
         r_tf_outboard_in = r_tf_outboard_in - tinstf    ! Tricky trick to avoid writting tinstf all the time
-            
+        
+        ! End of tricky trick
+        if ( abs( r_wp_inner - 1.0D-9 ) < epsilon(r_wp_inner) ) r_wp_inner = 0.0D0
+
     ! Case of TF without joints or with clamped joints total
     ! Rem SK : f_vforce_inboard might be calculated analytically (see M. Kovari comment in #848)
     else 
@@ -1035,7 +1041,6 @@ subroutine peak_tf_with_ripple(n_tf,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
     case default
 
         !  Original calculation - no fits were performed
-
         bmaxtfrp = 1.09D0 * bmaxtf
         return
 
@@ -1144,10 +1149,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! Maximum TRESCA stress (for each layers) [Pa]
     !! If the CEA correction is addopted, the CEA corrected value is used
     
-    real(kind(1.0D0)), dimension(n_tf_layer) :: strain_tf_r
+    real(kind(1.0D0)), dimension(n_tf_layer*n_radial_array) :: strain_tf_r
     !! Radial normal strain radial distribution
     
-    real(kind(1.0D0)), dimension(n_tf_layer) :: strain_tf_t
+    real(kind(1.0D0)), dimension(n_tf_layer*n_radial_array) :: strain_tf_t
     !! Toroidal normal strain radial distribution
      
     real(kind(1.0D0)) :: strain_tf_z
@@ -1180,19 +1185,13 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(kind(1.0D0)) :: svmyz
     !! Von-mises stress setting the toroidal stress to 0
 
+    real(kind(1.0D0)) :: dr_wp_layer
+    !! Size of WP layer with homogeneous smeared property 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Stress model not valid the TF does not contain any hole
-    ! Rem SK : Can be easily ameneded playing around the boundary conditions
-    if ( abs(r_tf_inboard_in) < epsilon(r_tf_inboard_in) ) then
-        call report_error(242)
-        strtf1 = 0.0D0
-        strtf2 = 0.0D0
-        return
-    end if
 
     !  Setup stress model call
-    ! ---
+    ! ------
     seff = sqrt(cpttf/jwptf)
     if (acstf >= 0.0D0) then
         tcbs = sqrt(acstf)
@@ -1200,50 +1199,84 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         tcbs = 0.0D0
     end if
 
-    ! Radii seting the stress model layers
-    radtf(1) = r_tf_inboard_in
-    radtf(2) = r_wp_inner
-    radtf(3) = r_wp_outer
 
-    ! Average current density used in the model
-    jeff(1) = 0.0D0
-    jeff(2) = ritfc / ( pi * (radtf(3)**2 - radtf(2)**2))
+    ! Buking cylinder/casing properties
+    ! ---
+    if ( i_tf_buking == 1 ) then
+        
+        ! No current in buking cylinder/casing
+        jeff(1) = 0.0D0
 
-    ! Material properties constants : Young modulus/poissons 
-    ! ------
+        ! Steel buking cylinder (copper and SC design)
+        if ( i_tf_sup /= 2 ) then 
+            eyoung(1) = eyoung_steel
+            poisson(1) = poisson_steel
+        
+        ! Re-inforced aluminium 
+        else 
+            eyoung(1) = eyoung_reinforced_al
+            poisson(1) = poisson_al
+        end if
+        
+        ! Innernost TF radius
+        radtf(1) = r_tf_inboard_in
+
+    end if
+    ! ---
+
+
+    ! (Super)conductor layer properties
+    ! ---
     ! Rem : They are only unique for isotropic materials, hence
     !       the underlying assumption of our models is the anisotropy
     !       of the material. A good assumption for resistive magnets
     !       but a doggy one for SC
 
-    ! Copper magnets
-    if ( i_tf_sup == 0 ) then  ! Copper magnets
-        eyoung(1) = eyoung_steel
-        eyoung(2) = eyoung_copper
+    ! Thickness of a homognenous WP stress property layer
+    dr_wp_layer = thkwp / dble(n_tf_graded_layers)
 
-        poisson(1) = poisson_steel
-        poisson(2) = poisson_copper
+    ! WP effective insulation thickness (SC only)
+    ! include groundwall insulation + insertion gap in thicndut
+    ! inertion gap is tfinsgap on 4 sides
+    if ( i_tf_sup == 1 ) t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
 
-    ! SC magnets
-    else if ( i_tf_sup == 1 ) then
-        ! include groundwall insulation + insertion gap in thicndut
-        ! inertion gap is tfinsgap on 4 sides
-        t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
-
-        eyoung(1) = eyoung_steel
-        eyoung(2) = eyngeff( eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs )
+    ! Loop on layers
+    do ii = 1, n_tf_graded_layers
         
-        ! The poisson's ratio of the WP might not be exactly the steel one
-        poisson(1) = poisson_steel
-        poisson(2) = poisson_steel
+        ! Homogeneous current in (super)conductor
+        jeff(i_tf_buking + ii) = ritfc / (pi * (r_wp_outer**2 - r_wp_inner**2))
 
-    ! Cryo-aluminium magnet
-    else 
-        eyoung(1) = eyoung_reinforced_al
-        eyoung(2) = eyoung_al
+        ! Same thickness for all WP layers in stress calculation
+        radtf(i_tf_buking + ii) = r_wp_inner + dble(ii-1)*dr_wp_layer
+
+        ! Copper magent
+        if ( i_tf_sup == 0 ) then
+            eyoung(i_tf_buking  + ii) = eyoung_copper
+            poisson(i_tf_buking + ii) = poisson_copper
+            
+        ! SC magnets smeared properties
+        else if ( i_tf_sup == 1 ) then
+            eyoung(i_tf_buking  + ii) = eyngeff( eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs )
+            poisson(i_tf_buking + ii) = poisson_steel
         
-        poisson(1) = poisson_al
-        poisson(2) = poisson_al
+        ! Cryogenic aluminium properties
+        else 
+            eyoung(i_tf_buking  + ii) = eyoung_al
+            poisson(i_tf_buking + ii) = poisson_al
+        end if 
+    end do
+
+    ! last layer radius
+    radtf(n_tf_layer + 1) = r_wp_outer
+    ! ---  
+
+    ! Stress model not valid the TF does not contain any hole
+    ! Current action : trigger and error and add a little hole
+    !                  to allow stress calculations 
+    ! Rem SK : Can be easily ameneded playing around the boundary conditions
+    if ( abs(radtf(1)) < epsilon(radtf(1)) ) then
+        call report_error(242)
+        radtf(1) = 1.0D-9
     end if
     ! ------
 
@@ -1339,7 +1372,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         sig_tf_tresca = max( abs(sig_tf_r - sig_tf_t), &
                              abs(sig_tf_r - sig_tf_z), &
                              abs(sig_tf_z - sig_tf_t) )
- 
+        
         sig_tf_vmises = sqrt( 0.5D0*(  (sig_tf_r - sig_tf_t)**2  &
                                      + (sig_tf_r - sig_tf_z)**2  &
                                      + (sig_tf_z - sig_tf_t)**2 ) )
@@ -1350,29 +1383,39 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Output formating (Maximum TRESCA per layer and stress at the corresponding point)
     ! ------
     ! In case/buking cylinder
-    sig_max = 0.0D0
-    ii_max = 1
-    do ii = 1, n_radial_array
-        if ( sig_tf_tresca(ii) > sig_max ) then
-            ii_max = ii
-            sig_max = sig_tf_tresca(ii)
+    ! ---
+    if ( i_tf_buking == 1 ) then
+        sig_max = 0.0D0
+        ii_max = 1
+        do ii = 1, n_radial_array
+            if ( sig_tf_tresca(ii) > sig_max ) then
+                ii_max = ii
+                sig_max = sig_tf_tresca(ii)
+            end if
+        end do    
+
+        if ( iprint == 1 ) then
+            sig_tf_r_max(1) = sig_tf_r(ii_max)
+            sig_tf_t_max(1) = sig_tf_t(ii_max)
+            sig_tf_z_max(1) = sig_tf_z(ii_max)
+            sig_tf_vmises_max(1) = sig_tf_vmises(ii_max)
         end if
-    end do    
 
-    if ( iprint == 1 ) then
-        sig_tf_r_max(1) = sig_tf_r(ii_max)
-        sig_tf_t_max(1) = sig_tf_t(ii_max)
-        sig_tf_z_max(1) = sig_tf_z(ii_max)
-        sig_tf_vmises_max(1) = sig_tf_vmises(ii_max)
+        ! Stresses of the maximum TRESCA stress point
+        sig_tf_tresca_max(1) = sig_tf_tresca(ii_max)
+
+        ! Case/buking maximum TRESCA stress used in constraint 31 [Pa]
+        strtf1 = sig_tf_tresca_max(1)
+
     end if
+    ! ---
 
-    ! Stresses of the maximum TRESCA stress point
-    sig_tf_tresca_max(1) = sig_tf_tresca(ii_max)
 
     ! In WP / Conductor layer
+    ! ---
     sig_max = 0.0D0
     ii_max = 0
-    do ii = n_radial_array + 1, n_tf_layer*n_radial_array
+    do ii = i_tf_buking*n_radial_array + 1, n_tf_layer*n_radial_array
         
         ! CEA out of plane approximation
         if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
@@ -1381,7 +1424,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                 ii_max = ii
             end if
 
-        ! Mo out of plane approximation
+        ! No out of plane CEA approximation
         else 
             if ( sig_max < sig_tf_tresca(ii) ) then
                 sig_max = sig_tf_tresca(ii)
@@ -1389,24 +1432,23 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
             end if
         end if
     end do
-
+    
     ! Stress of the maximum TRESCA stress point
     if ( iprint == 1 ) then
-        sig_tf_r_max(2) = sig_tf_r(ii_max)
-        sig_tf_t_max(2) = sig_tf_t(ii_max)
-        sig_tf_z_max(2) = sig_tf_z(ii_max)
-        sig_tf_vmises_max(2) = sig_tf_vmises(ii_max)
+        sig_tf_r_max(i_tf_buking+1) = sig_tf_r(ii_max)
+        sig_tf_t_max(i_tf_buking+1) = sig_tf_t(ii_max)
+        sig_tf_z_max(i_tf_buking+1) = sig_tf_z(ii_max)
+        sig_tf_vmises_max(i_tf_buking+1) = sig_tf_vmises(ii_max)
     end if
 
     if ( i_tf_tresca == 1 ) then
-        sig_tf_tresca_max(2) = s_tresca_cond_cea(ii_max)
+        sig_tf_tresca_max(i_tf_buking+1) = s_tresca_cond_cea(ii_max)
     else
-        sig_tf_tresca_max(2) = sig_tf_tresca(ii_max)
+        sig_tf_tresca_max(i_tf_buking+1) = sig_tf_tresca(ii_max)
     end if
 
-    ! Maximum of the TRESCA stress distribution [Pa]
-    strtf1 = sig_tf_tresca_max(1)     ! Casing TRESCA constraint
-    strtf2 = sig_tf_tresca_max(2)     ! Conduit TRESCA constraint
+    ! WP conduit/conductor maximum TRESCA stress used in constraint 32 [Pa]
+    strtf2 = sig_tf_tresca_max(i_tf_buking+1)     ! Conduit TRESCA constraint
     !-!
     ! ---
 
@@ -1768,12 +1810,6 @@ subroutine multilayer_stress( nu, rad, ey, d_curr, v_force, & ! Inputs
     real(kind(1.0D0)) :: dradius  
     real(kind(1.0D0)) :: inner_layer_curr
       
-    ! Variables used for model checks
-    integer, parameter :: check = 0
-    real(kind(1.0D0)) :: sigz_int = 0.0D0
-    real(kind(1.0D0)), dimension(nlayers-1) :: diff_sigr
-    real(kind(1.0D0)), dimension(nlayers-1) :: diff_deflect
-
     ! Indexes
     integer :: ii = 0  ! Line in the aa matrix
     integer :: jj = 0  ! Collumn in the aa matrix 
@@ -1786,7 +1822,6 @@ subroutine multilayer_stress( nu, rad, ey, d_curr, v_force, & ! Inputs
     ! radial stress and displacement between layers solved 
     ! The problem is set as aa.cc = bb, cc being the constant we search
     ! ------
-
 
     ! Layer parameterisation
     ! ***
@@ -1927,10 +1962,6 @@ subroutine multilayer_stress( nu, rad, ey, d_curr, v_force, & ! Inputs
         strain_z = strain_z + beth(ii)*c1(ii)
     end do 
 
-    if ( check == 1 ) then
-       sigz_int = 0.0D0 ! Check
-    end if 
-
     do ii = 1, nlayers
          
         dradius = (rad(ii+1) - rad(ii)) / dble(n_radial_array)
@@ -1965,42 +1996,8 @@ subroutine multilayer_stress( nu, rad, ey, d_curr, v_force, & ! Inputs
             r_deflect(jj) = c1(ii)*radius(jj) + c2(ii)/radius(jj)   &
                             + 0.125D0*alpha(ii) * radius(jj)**3     &
                             + 0.5D0*beta(ii) * radius(jj)*log(radius(jj))
-               
-            if ( check == 1 ) then
-               sigz_int = sigz_int + 2.0D0*pi*radius(jj)*sigz(jj)*dradius ! Check 
-            end if
-
         end do ! layer array loop
     end do ! Layer loop
-     
-    !! Checks to implement in G-test
-    if ( check == 1 ) then
-        do ii = 1, nlayers - 1
-            diff_sigr(ii) = kk(ii) * ( c1(ii) + (2.0D0*nu(ii) - 1.0D0)*c2(ii)/rad(ii+1)**2 + &
-                            0.125D0*alpha(ii)*( 3.0D0 - 2.0D0*nu(ii) )*rad(ii+1)**2 + &
-                            0.5D0*beta(ii)*(1.0D0 - nu(ii) + log(rad(ii+1)) ) + &
-                            nu(ii)*strain_z )
-         
-            diff_sigr(ii) = kk(ii+1) * ( c1(ii+1) + (2.0D0*nu(ii+1) - 1.0D0)*c2(ii+1)/rad(ii+1)**2 + &
-                            0.125D0*alpha(ii+1)*( 3.0D0 - 2.0D0*nu(ii+1) )*rad(ii+1)**2 + &
-                            0.5D0*beta(ii+1)*(1.0D0 - nu(ii+1) + log(rad(ii+1)) ) + &
-                            nu(ii+1)*strain_z ) - diff_sigr(ii) 
-
-            diff_deflect(ii) = c1(ii)*rad(ii+1) + c2(ii)/rad(ii+1)     &
-                               + 0.125D0*alpha(ii) * rad(ii+1)**3      &
-                               + 0.5D0*beta(ii) * rad(ii+1)*log(rad(ii+1))  &
-                               - c1(ii+1)*rad(ii+1) - c2(ii+1)/rad(ii+1)    &
-                               - 0.125D0*alpha(ii+1) * rad(ii+1)**3         &
-                               - 0.5D0*beta(ii+1) * rad(ii+1)*log(rad(ii+1)) 
-        end do
-        write(*,*)' Check radial stress cont = ', diff_sigr
-        write(*,*)' Check displacement cont = ', diff_deflect
-        write(*,*) sigr(1)
-        write(*,*) kk(nlayers) * ( c1(nlayers) + (2.0D0*nu(nlayers) - 1.0D0)*c2(nlayers)/rad(nlayers+1)**2 + &
-                    0.125D0*alpha(nlayers)*( 3.0D0 - 2.0D0*nu(nlayers) )*rad(nlayers+1)**2 + &
-                    0.5D0*beta(nlayers)*(1.0D0 - nu(nlayers) + log(rad(nlayers+1)) ) + &
-                    nu(nlayers)*strain_z )
-    end if     
     ! ------     
 
 end subroutine multilayer_stress     
