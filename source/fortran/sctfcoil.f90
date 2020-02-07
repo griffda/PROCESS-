@@ -1363,10 +1363,10 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! Resistive magnet stress calculation
     ! ------
     else 
-        call multilayer_stress( poisson, radtf, eyoung, jeff, vforce, & ! Inputs
-                                n_tf_layer, n_radial_array,           & ! Inputs
-                                sig_tf_r, sig_tf_t, sig_tf_z,                  & ! Outputs
-                                strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
+        call generalized_plane_strain( poisson, radtf, eyoung, jeff, vforce, & ! Inputs
+                                       n_tf_layer, n_radial_array,           & ! Inputs
+                                       radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
+                                       strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
     
         ! TRESCA stress (array equation)                     
         sig_tf_tresca = max( abs(sig_tf_r - sig_tf_t), &
@@ -1514,9 +1514,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         if ( i_tf_sup /= 1 ) then
             write(sig_file,*)
             write(sig_file,*) 'Strain'    
-            write(sig_file,'(t2, "radial strain"   ,t26, *(F11.3,3x))') strain_tf_r
-            write(sig_file,'(t2, "toroidal strain" ,t26, *(F11.3,3x))') strain_tf_t
-            write(sig_file,'(t2, "vertical strain" ,t26, *(F11.3,3x))') strain_tf_z
+            write(sig_file,'(t2, "radial strain"   ,t26, *(F11.8,3x))') strain_tf_r
+            write(sig_file,'(t2, "toroidal strain" ,t26, *(F11.8,3x))') strain_tf_t
+            write(sig_file,'(t2, "vertical strain" ,t26, *(F11.8,3x))') strain_tf_z
         end if
 
              ! Other quantities (displacement strain, etc..)
@@ -1584,7 +1584,7 @@ subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
     !! Radial deflection (displacement) radial distribution [m]
 
     real(kind(1.0D0)), dimension(nlayers*n_radial_array), intent(out) :: rradius
-    !! Radial deflection (displacement) radial distribution [m]
+    !! Radius array [m]
 
 
     
@@ -1708,10 +1708,10 @@ end subroutine plane_stress
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine multilayer_stress( nu, rad, ey, d_curr, v_force, & ! Inputs
-                              nlayers, n_radial_array,      & ! Inputs
-                              sigr, sigt, sigz,                       & ! Outputs
-                              strain_r, strain_t, strain_z, r_deflect ) ! Outputs
+subroutine generalized_plane_strain( nu, rad, ey, d_curr, v_force, & ! Inputs
+                                     nlayers, n_radial_array,      & ! Inputs
+                                     rradius, sigr, sigt, sigz,              & ! Outputs
+                                     strain_r, strain_t, strain_z, r_deflect ) ! Outputs
       
     !! This subroutine numerically find the constant (2 per layer) of the
     !! analytical resolution of the mid-plane stress calculations using the
@@ -1772,6 +1772,9 @@ subroutine multilayer_stress( nu, rad, ey, d_curr, v_force, & ! Inputs
 
     real(kind(1.0D0)), dimension(n_radial_array*nlayers), intent(out) :: r_deflect
     !! Radial displacement radial distribution [m]
+
+    real(kind(1.0D0)), dimension(nlayers*n_radial_array), intent(out) :: rradius
+    !! Radius array [m]
     ! ---
 
 
@@ -1805,8 +1808,7 @@ subroutine multilayer_stress( nu, rad, ey, d_curr, v_force, & ! Inputs
     real(kind(1.0D0)), dimension(2*nlayers) :: cc
     real(kind(1.0D0)), dimension(nlayers) :: c1, c2
 
-    ! Variables used for radial stress distribution  
-    real(kind(1.0D0)), dimension(n_radial_array*nlayers) :: radius     
+    ! Variables used for radial stress distribution     
     real(kind(1.0D0)) :: dradius  
     real(kind(1.0D0)) :: inner_layer_curr
       
@@ -1948,7 +1950,7 @@ subroutine multilayer_stress( nu, rad, ey, d_curr, v_force, & ! Inputs
 
     ! Radial/toroidal/vertical stress radial distribution
     ! ------
-    radius(:) = 0.0D0
+    rradius(:) = 0.0D0
     sigr(:) = 0.0D0
     sigt(:) = 0.0D0
     sigz(:) = 0.0D0
@@ -1967,40 +1969,40 @@ subroutine multilayer_stress( nu, rad, ey, d_curr, v_force, & ! Inputs
         dradius = (rad(ii+1) - rad(ii)) / dble(n_radial_array)
         do jj = (ii-1)*n_radial_array + 1, ii*n_radial_array
 
-            radius(jj) = rad(ii) + dradius*dble(jj - n_radial_array*(ii-1) - 1)
+            rradius(jj) = rad(ii) + dradius*dble(jj - n_radial_array*(ii-1) - 1)
 
-            sigr(jj) = kk(ii) * ( c1(ii) + (2.0D0*nu(ii) - 1.0D0)*c2(ii)/radius(jj)**2 + &
-                                  0.125D0*alpha(ii)*( 3.0D0 - 2.0D0*nu(ii) )*radius(jj)**2 + &
-                                  0.5D0*beta(ii)*(1.0D0 - nu(ii) + log(radius(jj)) ) + &
+            sigr(jj) = kk(ii) * ( c1(ii) + (2.0D0*nu(ii) - 1.0D0)*c2(ii)/rradius(jj)**2 + &
+                                  0.125D0*alpha(ii)*( 3.0D0 - 2.0D0*nu(ii) )*rradius(jj)**2 + &
+                                  0.5D0*beta(ii)*(1.0D0 - nu(ii) + log(rradius(jj)) ) + &
                                   nu(ii)*strain_z )
 
-            sigt(jj) = kk(ii) * ( c1(ii) - (2.0D0*nu(ii) - 1.0D0)*c2(ii)/radius(jj)**2 + &
-                                  0.125D0*alpha(ii)*( 1.0D0 + 2.0D0*nu(ii) )*radius(jj)**2 + &
-                                  0.5D0*beta(ii)*(nu(ii) + log(radius(jj))) + &
+            sigt(jj) = kk(ii) * ( c1(ii) - (2.0D0*nu(ii) - 1.0D0)*c2(ii)/rradius(jj)**2 + &
+                                  0.125D0*alpha(ii)*( 1.0D0 + 2.0D0*nu(ii) )*rradius(jj)**2 + &
+                                  0.5D0*beta(ii)*(nu(ii) + log(rradius(jj))) + &
                                   nu(ii)*strain_z )
                                      
             sigz(jj) = kk(ii) * ( nu(ii) * ( 2.0D0*c1(ii) + &
-                                  0.5D0*alpha(ii) * radius(jj)**2 + &
-                                  0.5D0*beta(ii) * (1.0D0 + 2.0D0*log(radius(jj))) ) + &
+                                  0.5D0*alpha(ii) * rradius(jj)**2 + &
+                                  0.5D0*beta(ii) * (1.0D0 + 2.0D0*log(rradius(jj))) ) + &
                                   (1.0D0 - nu(ii)) * strain_z )
 
             ! Radisal strain
-            strain_r(jj) = c1(ii) - c2(ii) / radius(jj)**2 + &
-                           0.375D0*alpha(ii) * radius(jj)**2 + 0.5D0*beta(ii) * (1 + log(radius(jj)))
+            strain_r(jj) = c1(ii) - c2(ii) / rradius(jj)**2 + &
+                           0.375D0*alpha(ii) * rradius(jj)**2 + 0.5D0*beta(ii) * (1 + log(rradius(jj)))
       
             ! Toroidal strain
-            strain_t(jj) = c1(ii) + c2(ii) / radius(jj)**2 + &
-                           0.125D0*alpha(ii) * radius(jj)**2 + 0.5D0*beta(ii) * log(radius(jj))
+            strain_t(jj) = c1(ii) + c2(ii) / rradius(jj)**2 + &
+                           0.125D0*alpha(ii) * rradius(jj)**2 + 0.5D0*beta(ii) * log(rradius(jj))
                               
             ! Radial displacement
-            r_deflect(jj) = c1(ii)*radius(jj) + c2(ii)/radius(jj)   &
-                            + 0.125D0*alpha(ii) * radius(jj)**3     &
-                            + 0.5D0*beta(ii) * radius(jj)*log(radius(jj))
+            r_deflect(jj) = c1(ii)*rradius(jj) + c2(ii)/rradius(jj)   &
+                            + 0.125D0*alpha(ii) * rradius(jj)**3     &
+                            + 0.5D0*beta(ii) * rradius(jj)*log(rradius(jj))
         end do ! layer array loop
     end do ! Layer loop
     ! ------     
 
-end subroutine multilayer_stress     
+end subroutine generalized_plane_strain     
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
