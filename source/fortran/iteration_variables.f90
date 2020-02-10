@@ -771,10 +771,21 @@ subroutine init_itv_1
 
    !---------------------------------
 
-   !! <LI> (43) NOT USED
+   subroutine init_itv_43
+      !! <LI> (43) falpha
+      lablxc(43) = 'falpha         '
+      boundl(43) = 0.10D0
+      boundu(43) = 0.99D0
+   end subroutine init_itv_43
+
    real(kind(1.d0)) function itv_43()
-      write(*,*) 'Iteration variable 43 is no longer in use.'   
-   end function itv_43
+      itv_43 = falpha
+   end function
+
+   subroutine set_itv_43(ratio)
+      real(kind(1.d0)) :: ratio
+      falpha = ratio
+   end subroutine set_itv_43
 
    !---------------------------------
 

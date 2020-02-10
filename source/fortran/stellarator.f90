@@ -1,70 +1,3 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-module helias5b_coil_parameters
-
-  !! Module containing Helias 5-B power plant parameter values
-  !! author: P J Knight, CCFE, Culham Science Centre
-  !! author: F Warmer, IPP Greifswald
-  !! N/A
-  !! This module contains a set of constants that define the
-  !! coil set parameters for the Helias 5-B stellarator power plant design.
-  !! HELIAS 5-B magnet system structure and maintenance concept,
-  !! Felix Schauer, Konstantin Egorov, Victor Bykov, Fus. Eng. Design (2013),
-  !! in press
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Number of coils
-  integer, parameter :: n_tf5B = 50
-  !  Major radius (m)
-  real(kind(1.0D0)), parameter :: Rg5B = 22.0D0
-  !  Coil minor radius (m), = U/(2*pi), U=34 m
-  real(kind(1.0D0)), parameter :: Rk5B = 5.41127D0
-  !  Distance (m) from inner torus superconductor to outer torus superconductor
-  !  in bean-shaped cross-section
-  real(kind(1.0D0)), parameter :: D_coil_5B = 5.2625D0
-  !  Coil current (A)
-  real(kind(1.0D0)), parameter :: I5B = 13.65D6
-  !  Maximum field at superconductor surface (T)
-  real(kind(1.0D0)), parameter :: B1 = 12.5D0
-  !  Field at magnetic axis (T)
-  real(kind(1.0D0)), parameter :: B10 = 5.9D0
-  !  Nb3Sn critical field (T)
-  real(kind(1.0D0)), parameter :: Bco = 33.0D0
-  !  NbTi critical field (T)
-  real(kind(1.0D0)), parameter :: Bc2 = 14.2D0
-  !  Toroidal width of superconductor coil cross-section (winding pack) (m)
-  real(kind(1.0D0)), parameter :: b5B = 0.710D0
-  !  Radial width of superconductor coil cross-section (winding pack) (m)
-  real(kind(1.0D0)), parameter :: h5B = 0.750D0
-  !  Total toroidal width of the coil cross-section (m)
-  real(kind(1.0D0)), parameter :: bb5b = 0.920D0
-  !  Total radial width of the coil cross-section (m)
-  real(kind(1.0D0)), parameter :: hh5b = 1.000D0
-  !  Coil winding-pack radius (circular approximation) (m), = sqrt(h5B*b5B/pi)
-  real(kind(1.0D0)), parameter :: RQ5B = 0.41170379D0
-  !  Stored coil energy (GJ)
-  real(kind(1.0D0)), parameter :: W5B = 160.0D0
-
-  ! ~ 1.6626 m / 1.8 m  == r_theta0_5B / rminor_5B
-  real(kind(1.0D0)), parameter :: k0 = 0.4618D0
-  ! ~ 13.65 MA / 5.9 T  == I_5B / B0_5B
-  real(kind(1.0D0)), parameter :: k1 = 2.31356D0
-  ! ~ 160 GJ / (5.9 T)^2  == W_mag_5B / B0_5B^2
-  real(kind(1.0D0)), parameter :: k2 = 4.59638D0
-  ! ~ 11500 tonnes / 160 GJ  == M_struc_5B / W_mag_5B
-  real(kind(1.0D0)), parameter :: k3 = 71.875D0
-  ! ~ 7.6 m / 6.2 m  == width_max_5B / w_coil_5B
-  real(kind(1.0D0)), parameter :: k4 = 1.2233D0
-  ! ~ 12 m / 6.2 m  == height_max_5B / w_coil_5B
-  real(kind(1.0D0)), parameter :: k5 = 1.9316D0
-  ! ~ 34.14 m / 6.2 m  == U_avg_5B / w_coil_5B
-  real(kind(1.0D0)), parameter :: k6 = 5.4954D0
-
-end module helias5b_coil_parameters
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 module cartesian_vectors
 
   !! Module providing Cartesian vectors and associated operations
@@ -232,11 +165,16 @@ module stellarator_configuration
       real(kind(1.0D0)) max_portsize_width
       !  Average minor Coil Radius (as r/R) to get it dimensionless.
       real(kind(1.0D0)) coil_epsilon 
+
       !  The ratio of the coil to plasma radius.
-      real(kind(1.0D0)) coil_to_plasma_radius
+      !  (Average midpoint of the coils to average maj. radius. Will be approx. 1)
+      real(kind(1.0D0)) coil_to_plasma_ratio
 
       !  The maximal coil height at reference point.
       real(kind(1.0D0)) maximal_coil_height
+
+      !  The minimal distance between coil and plasma
+      real(kind(1.0D0)) min_plasma_coil_distance
 
       !  2 volume parameters v1 and v2. They scale according to r*R^2 and r^3
       real(kind(1.0D0)) vr2r
@@ -301,7 +239,7 @@ contains
 
             new_stella_config%coillength = 1681.0D0 ! Central filament length of machine with outer radius 1m.
 
-            new_stella_config%coil_to_plasma_radius = 22.46D0/22.0D0 ! Approximately
+            new_stella_config%coil_to_plasma_ratio = 22.46D0/22.0D0 ! Approximately
       
             new_stella_config%I0 = 13.06D0/5.6D0/22.46D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
             new_stella_config%inductivity = 1655.76D-6/22.0D0* 12.5D0**2 ! Inductivity/R*A^2 in muH/m
@@ -309,6 +247,8 @@ contains
             new_stella_config%WP_ratio = 1.3D0 ! The fit values in stellarator config class should be calculated using this value.
 
             new_stella_config%max_force_density = 0.37 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
+
+            new_stella_config%min_plasma_coil_distance = (4.7D0-1.76D0)/22.0D0 ! This is coil minor radius - plasma radius divided by major radius for scaling.
 
          case(2)
             ! Helias4 Machine
@@ -337,7 +277,7 @@ contains
 
             new_stella_config%coillength = 1435.07D0 ! Central filament length of machine with outer radius 1m.
 
-            new_stella_config%coil_to_plasma_radius = 1.0D0 ! Approximately
+            new_stella_config%coil_to_plasma_ratio = 1.0D0 ! Approximately
       
             new_stella_config%I0 = 13.146D0/5.6D0/18.0D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
             new_stella_config%inductivity = 1290.4D-6/18.0D0*(18.0D0/2.1D0)**2 ! Inductivity/R*A^2 in muH/m
@@ -345,6 +285,8 @@ contains
             new_stella_config%WP_ratio = 1.3D0
 
             new_stella_config%max_force_density = 0.37 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
+
+            new_stella_config%min_plasma_coil_distance = (4.95D0-2.1D0)/18.0D0 
 
 
          case(3)
@@ -375,7 +317,7 @@ contains
 
             new_stella_config%coillength = 1287.3D0 ! Central filament length of machine with outer radius 1m.
 
-            new_stella_config%coil_to_plasma_radius = 1.0D0 ! Approximately
+            new_stella_config%coil_to_plasma_ratio = 1.0D0 ! Approximately
       
             new_stella_config%I0 = 14.23D0/5.6D0/15.0D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
             new_stella_config%inductivity = 1250.7D-6/15.0D0*(15.0D0/2.5D0)**2 ! Inductivity/R*A^2 in muH/m
@@ -384,6 +326,7 @@ contains
 
             new_stella_config%max_force_density = 0.37 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
 
+            new_stella_config%min_plasma_coil_distance = (6.12D0-2.5D0)/15.0D0 
 
          case default
             ! Return some error here. The index is not implemented yet.
@@ -396,20 +339,6 @@ end module stellarator_configuration
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 module stellarator_module
@@ -560,6 +489,8 @@ contains
 
     icase = 'Stellarator model'
 
+
+    !  Are the following lines still up to date?
     !  Build quantities
 
     ohcth = 0.0D0
@@ -570,7 +501,6 @@ contains
 
     !  Physics quantities
 
-    aspect = 12.5D0
     dnbeta = 0.0D0
     rmajor = 20.0D0
     kappa = 1.0D0
@@ -592,8 +522,6 @@ contains
     tdown  = tramp + tohs + tqnch + tdwell
     tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
-    !  Coil quantities
-    n_tf = 50.0D0
 
     !  Blanket properties
     !secondary_cycle = 0  !  simple thermal hydraulic model assumed
@@ -677,17 +605,14 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     config = new_stella_config(istell)
-    !print *," Loaded Stellarator configuration ", config%name
+
     n_tf = config%coilspermodule*config%symmetry !! This overwrites n_tf in input file.
    
     !  Factors used to scale the reference point.
-    !  Not sure if this stays like this.
     f_R = rmajor/config%rmajor_ref       !  Size scaling factor with respect to Helias 5-B
     f_a = aspect / config%aspect_ref
-    !f_s = D_coil/D_coil_5B  !  Coil scaling factor
     f_N = n_tf/(config%coilspermodule * config%symmetry)       !  Coil number factor
     f_B = bt/config%bt_ref            !  B-field scaling factor
-    f_I = f_R*f_B/f_N       !  Current scaling factor
  
 
 
@@ -720,9 +645,9 @@ contains
     rminor = rmajor/aspect
     eps = 1.0D0/aspect
 
-    vol = rmajor*rminor**2 * config%vr2r !This value is for Helias5 solely
+    vol = rmajor*rminor**2 * config%vr2r
 
-    sarea = rmajor*rminor * config%s0 !This value is for Helias5 solely
+    sarea = rmajor*rminor * config%s0 
 
     xarea = pi*rminor*rminor  ! average, could be calculated for every toroidal angle if desired
 
@@ -780,6 +705,15 @@ contains
 
     rbld = bore + ohcth + gapoh + tfcth + gapds + &
          ddwi + shldith + blnkith + fwith + scrapli + rminor
+
+
+    ! Bc stellarators cannot scale rmninor reasonably well an additional constraint equation is required,
+    ! that ensures that there is enough space between coils and plasma.
+    required_radial_space = (tfcth/2.0D0 + gapds + ddwi + shldith + blnkith + fwith + scrapli)
+
+    available_radial_space = config%min_plasma_coil_distance * rmajor
+
+
 
     !  Radius to inner edge of inboard shield
 
@@ -1003,6 +937,9 @@ contains
     !  pradmw here is core + edge (no SOL)
 
     powht = falpha*palpmw + pchargemw + pohmmw - pradmw
+    powht = max(0.001D0, powht) ! To avoid negative heating power.
+
+
     if (ignite == 0) powht = powht + pinjmw
 
     !  Power to divertor, = (1-f_rad)*Psol
@@ -2047,6 +1984,13 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    ! Some on screen printouts for consistency checks:
+    print *,"Used stellarator configuration: ", config%name
+    print *,"Deviation from reference point"
+    print *,"aspect ratio",aspect/config%aspect_ref
+    print *,"major radius",rmajor/config%rmajor_ref
+    print *,"n_tf (should be 1)", n_tf/(config%coilspermodule*config%symmetry)
+
     call costs(outfile,1)
     call avail(outfile,1)
     call outplas(outfile)
@@ -2323,7 +2267,7 @@ contains
 
     ! Sets major and minor coil radius (important for machine scalings) 
    
-    r_coil_major = config%coil_to_plasma_radius * rmajor
+    r_coil_major = config%coil_to_plasma_ratio * rmajor
     r_coil_minor = config%coil_epsilon * r_coil_major * config%aspect_ref/aspect ! This aspect scaling is only valid close to the intended aspect ratio.
 
     ! Coil case thickness (m). Here assumed to be constant 
@@ -2341,7 +2285,7 @@ contains
      leni = leno - 2.0D0 * (thwcndut + thicndut)  !  leni = t_w
      if(leni<0) print *, "leni is negative. Check leno, thwcndut and thicndut."
      ! [m^2] Cross-sectional area of cable space per turn
-     acstf = 0.9D0 * leni**2 ! 0.9 to include some rounded corners. (acstf = pi (leni/2)**2 = pi/4 *leni**2 for perfect round conductor). This factor depends on how round the corners are. - (4.0D0-pi)*rbcndut**2 <- This was the old one. I dont think this makes much sense.
+     acstf = 0.9D0 * leni**2 ! 0.9 to include some rounded corners. (acstf = pi (leni/2)**2 = pi/4 *leni**2 for perfect round conductor). This factor depends on how round the corners are.
      ! [m^2] Cross-sectional area of conduit case per turn
      acndttf = (leni + 2.0D0*thwcndut)**2 - acstf
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2375,7 +2319,7 @@ contains
      ! The operation current density weighted with the global iop/icrit fraction
      LHS = fiooic * jcrit_vector 
      
-     !  Conduct fraction of conduit * Superconductor fraction in conductor
+     ! Conduct fraction of conduit * Superconductor fraction in conductor
      f_scu =   (acstf*(1.0D0-vftf))/(leno**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
  
      RHS = coilcurrent/(Awp(:)*f_scu) ! f_scu should be the fraction of the sc that is in the winding pack.
@@ -2386,7 +2330,7 @@ contains
      ! Find the intersection between LHS and RHS (or: how much awp do I need to get to the desired coil current)
      call intersect(Awp,LHS,N_it,Awp,RHS,N_it,Awp_min)
  
-     !  Maximum field at superconductor surface (T)
+     ! Maximum field at superconductor surface (T)
      Awp_min = Max(leno**2,Awp_min)
  
      ! Recalculate bmaxtf at the found awp_min:
@@ -2424,9 +2368,9 @@ contains
    !  Casing calculations
    !  
     !  For now assumed to be constant in a bolted plate model.
-    !
+    ! 
     casthi = case_thickness_constant/2.0D0 ! [m] coil case thickness outboard distance (radial)
-    thkcas = case_thickness_constant * f_B**2 ! [m] coil case thickness inboard distance  (radial). Here scaled in "direction of forces" which is mainly outwards.
+    thkcas = case_thickness_constant/2.0D0 ! [m] coil case thickness inboard distance  (radial).
     casths = case_thickness_constant/2.0D0 ! [m] coil case thickness toroidal distance (toroidal)
  
    ! End of casing calculations
@@ -2496,10 +2440,10 @@ contains
   
      !  Coil dimensions
      hmax = 0.5D0 * config%maximal_coil_height *f_r/f_a   ! [m] maximum half-height of coil
-     r_tf_inleg_mid =  r_coil_major-r_coil_minor ! This is not very well defined for a stellarator.
-                                                  ! Though, this is taken as an average value.
-     tf_total_h_width = r_coil_minor !? not really sure what this is supposed to be. Estimated as
-                                        ! the average minor coil radius
+     r_tf_inleg_mid =  r_coil_major-r_coil_minor          ! This is not very well defined for a stellarator.
+                                                          ! Though, this is taken as an average value.
+     tf_total_h_width = r_coil_minor                      !? not really sure what this is supposed to be. Estimated as
+                                                          ! the average minor coil radius
      
      
      tfborev = 2.0D0*hmax                   ! [m] estimated vertical coil bore
@@ -2553,8 +2497,7 @@ contains
  
      ! the conductor fraction is meant of the cable space!
      call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
- 
- 
+  
      ! Also give the copper area for REBCO quench calculations:
      copperA_m2 = cpttf/(acond * fcutfsu)
      vtfskv = vd/1.0D3 ! Dump voltage
@@ -2571,7 +2514,10 @@ contains
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !!!!!! Forces scaling !!!!!!!!!!!!!!
-    max_force_density = config%max_force_density * (ritfc*1.0D-6/n_tf)**2 / awptf
+    max_force_density = config%max_force_density *(ritfc*1.0D-6/n_tf) * bmaxtf / awptf
+
+    ! Approximate, very simple maxiumum stress: (needed for limitation of icc 32)
+    strtf2 = max_force_density * thkwp *1.0D6 ! in Pa
 
 
     if (iprint == 1) call stcoil_output(outfile)
@@ -2579,7 +2525,7 @@ contains
    contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      real(kind(1.0D0)) function bmax_from_awp(awp_dimensionless,current)
+    real(kind(1.0D0)) function bmax_from_awp(awp_dimensionless,current)
 
        !! Returns a fitted function for bmax for stellarators
        !! author: J Lion, IPP Greifswald
@@ -2600,9 +2546,9 @@ contains
        ! r_coil_major and r_coil_minor are taken from parent scope
        bmax_from_awp = 2.0D-1 * current*n_tf/(r_coil_major-r_coil_minor) &
                       * (config%a1+config%a2/(sqrt(awp_dimensionless)))
-      end function
+    end function 
 
-      real(kind(1.0D0)) function jcrit_frommaterial(bmax,thelium)
+    real(kind(1.0D0)) function jcrit_frommaterial(bmax,thelium)
 
        ! gives jcrit from material
   
@@ -2711,9 +2657,9 @@ contains
   
         jcrit_frommaterial = jcritsc *1.0D-6 ! To get it in MA/m^2
         return
-      end function
+    end function 
 
-      subroutine protect(aio,tfes,acs,aturn,tdump,fcond,fcu,tba,tmax,ajwpro,vd)
+    subroutine protect(aio,tfes,acs,aturn,tdump,fcond,fcu,tba,tmax,ajwpro,vd)
 
         !! Finds the current density limited by the protection limit
         !! author: P J Knight, CCFE, Culham Science Centre
@@ -2813,8 +2759,7 @@ contains
          ajcp = sqrt( aa* (bb+cc+dd) )
          ajwpro = ajcp*(acs/aturn)
    
-      end subroutine protect
-
+    end subroutine protect
 
     subroutine intersect(x1,y1,n1,x2,y2,n2,x)
 
@@ -3009,6 +2954,7 @@ contains
   
       call osubhd(outfile,'Forces and Stress :')
       call ovarre(outfile,'Maximal force density (MN/m3)','(max_force_density)',max_force_density)
+      call ovarre(outfile,'Maximal stress (approx.) (MPa)','(strtf2)',strtf2*1.0D-6)
   
       call osubhd(outfile,'Quench Restrictions :')
       call ovarre(outfile,'Allowable stress in vacuum vessel (VV) due to quench (Pa)','(sigvvall)',sigvvall)

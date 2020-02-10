@@ -2047,15 +2047,28 @@ contains
    end subroutine constraint_eqn_056
 
    subroutine constraint_eqn_057(args)
-      !! Obsolete
-      !! author: P B Lloyd, CCFE, Culham Science Centre
-      !! Obsolete
-      !! #=# empty
-      !! #=#=# empty
-      ! Dummy formal arguments, just to comply with the subroutine interface
+      !! Equation for radial consistency of stellarator build
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for power through separatrix / major radius upper limit
+      !! #=# current_drive
+      !! #=#=# fnbshinef, nbshinefmax
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! fpsepr : input real : f-value for maximum Psep/R limit
+      !! pseprmax : input real :  maximum ratio of power crossing the separatrix to plasma major radius (Psep/R) (MW/m)
+      !! pdivt : input real :  power to be conducted to the divertor region (MW)
+      !! rmajor : input real :  plasma major radius (m) 
+      use build_variables, only: available_radial_space, required_radial_space
+      implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args = constraint_args_type(0.0D0, 0.0D0, 0.0D0, '', '')
+      args%cc =  1.0D0 - required_radial_space/available_radial_space
+      args%con = available_radial_space * (1.0D0 - args%cc)
+      args%err = available_radial_space * args%cc
+      args%symbol = '='
+      args%units = 'm'
 
    end subroutine constraint_eqn_057
 

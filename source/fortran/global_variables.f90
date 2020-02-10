@@ -3136,6 +3136,9 @@ module build_variables
   real(kind(1.0D0)) :: aplasmin = 0.25D0
   !! aplasmin /0.25/ : minimum minor radius (m)
 
+  real(kind(1.0D0)) ::   available_radial_space = 0.0D0
+  !! available_radial_space /0.0/ : Minimal radial space between plasma and coils (m)
+
   real(kind(1.0D0)) :: blarea = 0.0D0
   !! blarea : blanket total surface area (m2)
 
@@ -3268,6 +3271,8 @@ module build_variables
   !! precomp : CS coil precompression structure thickness (m)
   real(kind(1.0D0)) :: rbld = 0.0D0
   !! rbld : sum of thicknesses to the major radius (m)
+  real(kind(1.0D0)) :: required_radial_space = 0.0D0
+  !! required_radial_space : Required space between coil and plasma for blanket shield wall etc (m)
   real(kind(1.0D0)) :: rinboard = 0.651D0
   !! rinboard /0.651/ : plasma inboard radius (m)
   !!                    (consistency equation 29)
