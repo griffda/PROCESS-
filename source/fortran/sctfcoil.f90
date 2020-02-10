@@ -1085,7 +1085,6 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! author: J Morris, CCFE, Culham Science Centre
     !! author: S Kahn, CCFE, Culham Science Centre
     !! author: J Galambos, FEDC/ORNL
-    !! None
     !! This subroutine sets up the stress calculations for the
     !! TF coil set.
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -1630,7 +1629,7 @@ subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
     inner_layer_curr = 0.0D0
     do ii = 1, nlayers
 
-        beta(ii) = 0.5D0*rmu0 * j(ii) * ( inner_layer_curr - pi*j(ii)*rad(1)**2 ) / (pi*kk(ii))
+        beta(ii) = 0.5D0*rmu0 * j(ii) * ( inner_layer_curr - pi*j(ii)*rad(ii)**2 ) / (pi*kk(ii))
 
         ! Layer area
         area(ii) = pi * (rad(ii+1)**2 - rad(ii)**2)
