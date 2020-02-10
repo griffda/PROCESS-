@@ -1643,7 +1643,8 @@ end subroutine subr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine diamagnetic_fraction_hender(beta,diacf)
+  subroutine diamagnetic_fraction_hender(beta,diacf) &
+           bind(C,name="c_diamagnetic_fraction_hender")
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Diamagnetic contribution at tight aspect ratio.
@@ -1667,7 +1668,8 @@ end subroutine subr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine diamagnetic_fraction_scene(beta,q95,q0,diacf)
+  subroutine diamagnetic_fraction_scene(beta,q95,q0,diacf) &
+                  bind(C,name="c_diamagnetic_fraction_scene")
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Diamagnetic fraction based on SCENE fit by Tim Hender
@@ -1690,7 +1692,8 @@ end subroutine subr
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ps_fraction_scene(beta,pscf)
+  subroutine ps_fraction_scene(beta,pscf) &
+          bind(C,name="c_ps_fraction_scene")
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Pfirsch-Schlüter fraction based on SCENE fit by Tim Hender
@@ -4283,7 +4286,7 @@ end subroutine subr
              call ocmmnt(outfile,'  (Diamagnetic current fraction not calculated)')
           else if (idia == 1) then
              call ocmmnt(outfile,'  (Hender diamagnetic current fraction scaling used)')
-          else if (idia == 1) then
+          else if (idia == 2) then
              call ocmmnt(outfile,'  (SCENE diamagnetic current fraction scaling used)')
          end if
          if (ips == 0) then
