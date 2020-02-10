@@ -213,6 +213,7 @@ subroutine sctfcoil(outfile,iprint)
     call peak_tf_with_ripple(n_tf, wwp1, thkwp, r_wp_centre, bmaxtf, bmaxtfrp, peaktfflag)
 
     ! Do stress calculations (writes the stress output)
+    if ( iprint == 1 ) n_rad_per_layer = 500
     call stresscl(n_tf_stress_layers, n_rad_per_layer, iprint, outfile)
 
     if (iprint == 1) call outtf(outfile, peaktfflag)
