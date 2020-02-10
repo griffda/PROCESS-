@@ -121,6 +121,7 @@ if __name__ == '__main__':
 
     ## PLOT 2 : Strain summary
     # ------------------------
+    if plot_strain and len(data) > 13 :
         plt.plot(radius, radial_strain  , '--', label = r'$\epsilon_{r}$')
         plt.plot(radius, toroidal_strain, '--', label = r'$\epsilon_{\theta}$')
         plt.plot(radius, vertical_strain, '--', label = r'$\epsilon_{z}$')

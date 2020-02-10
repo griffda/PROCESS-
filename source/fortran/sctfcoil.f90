@@ -1587,123 +1587,168 @@ subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
     !! Radius array [m]
 
 
-    
-    !  Local variables
+    ! Local variables
+    ! ---
+    ! Lorentz body force parametres
+    real(kind(1.0D0)), dimension(nlayers) :: alpha
+    real(kind(1.0D0)), dimension(nlayers) :: beta
+
+    ! Strain to stress hooke's law coeficient
     real(kind(1.0D0)), dimension(nlayers) :: kk
-    real(kind(1.0D0)), dimension(nlayers) :: alpha, beta
-    real(kind(1.0D0)), dimension(2*nlayers,2*nlayers) :: aa
-    real(kind(1.0D0)), dimension(2*nlayers) :: bb, cc
+
+    ! Layer area
+    real(kind(1.0D0)), dimension(nlayers) :: area
+    
+    ! Matrix encoding the integration constant cc coeficients 
+    real(kind(1.0D0)), dimension(2*nlayers, 2*nlayers) :: aa
+    
+    ! Vector encoding the alpha/beta (lorentz forces) contribution
+    real(kind(1.0D0)), dimension(2*nlayers) :: bb
+
+    ! Integration constants vector (solution)
+    real(kind(1.0D0)), dimension(2*nlayers) :: cc
     real(kind(1.0D0)), dimension(nlayers) :: c1, c2
 
     ! Variables used for radial stress distribution  
     real(kind(1.0D0)) :: dradius
+    real(kind(1.0D0)) :: inner_layer_curr
     real(kind(1.0D0)) :: rad_c
 
     integer :: ii = 0
-    integer :: ii_c = 0
+    integer :: jj = 0
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    ! Layer parameterisation
+    ! ***
     ! Array equation
     kk = ey/(1.0D0 - nu**2)
 
-    !  LHS matrix A    
+    ! Lorentz forces parametrisation coeficients (array equation)
+    alpha = 0.5D0*rmu0 * j**2 / kk
+    
+    inner_layer_curr = 0.0D0
+    do ii = 1, nlayers
+
+        beta(ii) = 0.5D0*rmu0 * j(ii) * ( inner_layer_curr - pi*j(ii)*rad(1)**2 ) / (pi*kk(ii))
+
+        ! Layer area
+        area(ii) = pi * (rad(ii+1)**2 - rad(ii)**2)
+
+        ! Total current carried by the inners layers 
+        inner_layer_curr = inner_layer_curr + area(ii)*j(ii)
+    end do
+    ! ***
+
+
+    ! Left hand side matrix aa
+    ! ***
     aa(:,:) = 0.0D0
+    
+    ! Null radial stress at R(1)
     aa(1,1) = kk(1) * (1.0D0+nu(1))
     aa(1,2) = -kk(1) * (1.0D0-nu(1))/(rad(1)**2)
-    aa(2,1) = aa(1,1)
-    aa(2,2) = -kk(1) * (1.0D0-nu(1))/(rad(2)**2)
-    aa(2,3) = -kk(2) * (1.0D0+nu(1))
-    aa(2,4) = kk(2) * (1.0D0-nu(1))/(rad(2)**2)
-    aa(3,3) = kk(2) * (1.0D0+nu(1))
-    aa(3,4) = -kk(2) * (1.0D0-nu(1))/(rad(3)**2)
-    aa(4,1) = rad(2)
-    aa(4,2) = 1.0D0/rad(2)
-    aa(4,3) = -rad(2)
-    aa(4,4) = -1.0D0/rad(2)
 
-    !  RHS vector B
-    !  alpha, beta only non-zero where current density is non-zero
-    alpha(:) = 0.0D0
-    alpha(2) = 0.5D0*rmu0 * j(2)*j(2) * (1.0D0 - nu(2)**2)/ey(2)
-    beta(:) = 0.0D0
-    beta(2) = -alpha(2) * rad(2)**2
 
-    bb(:) = 0.0D0
-    bb(2) = -kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu(2))*rad(2)**2 &
-            + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu(2))*log(rad(2))) )
-    bb(3) = kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu(2))*rad(3)**2  &
-            + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu(2))*log(rad(3))) )
-    bb(4) = -0.125D0*alpha(2)*rad(2)**3 - 0.5D0*beta(2)*rad(2)*log(rad(2))
+    ! Inter-layer boundary conditions
+    if ( nlayers /= 1 ) then 
+        do ii = 1, nlayers - 1
 
-    !  Find solution vector c:  A times c = b
-    !  N.B. In Morris, Section IV, C_xy is C_x in region y
-    !  Thus, array elements c(i) are as follows:
-    !  c(1) = C_31 = C_3 in case
-    !  c(2) = C_41 = C_4 in case
-    !  c(3) = C_32 = C_3 in winding pack
-    !  c(4) = C_32 = C_4 in winding pack
+            ! Continuous radial normal stress at R(ii+1)
+            aa(2*ii, 2*ii-1) = kk(ii) * ( 1.0D0 + nu(ii) )
+            aa(2*ii, 2*ii  ) = -kk(ii) * ( 1.0D0 - nu(ii) ) / rad(ii+1)**2 
+            aa(2*ii, 2*ii+1) = -kk(ii+1) * ( 1.0D0 + nu(ii+1) )
+            aa(2*ii, 2*ii+2) = kk(ii+1) * ( 1.0D0 - nu(ii+1) ) / rad(ii+1)**2 
 
+            ! Continuous displacement at R(ii+1)
+            aa(2*ii+1, 2*ii-1) = rad(ii+1)
+            aa(2*ii+1, 2*ii  ) = 1.0D0 / rad(ii+1)
+            aa(2*ii+1, 2*ii+1) = -rad(ii+1)
+            aa(2*ii+1, 2*ii+2) = -1.0D0 / rad(ii+1)
+
+        end do
+    end if
+
+    ! Radial stress = 0
+    aa(2*nlayers, 2*nlayers - 1) =  kk(nlayers) * ( 1.0D0 + nu(nlayers) )
+    aa(2*nlayers, 2*nlayers    ) = -kk(nlayers) * ( 1.0D0 - nu(nlayers) ) / rad(nlayers+1)**2
+    ! ***
+
+    ! Right hand side vector bb
+    ! ***
+    ! Null radial stress at R(1)
+    bb(1) = -kk(1) * ( 0.125D0*alpha(1)*(3.0D0+nu(1))*rad(1)**2   &
+                     + 0.5D0*beta(1)*(1.0D0 + (1.0D0+nu(1))*log(rad(1))) )
+
+    ! Inter-layer boundary conditions
+    if ( nlayers /= 1 ) then 
+        do ii = 1, nlayers - 1
+
+            ! Continuous radial normal stress at R(ii+1)
+            bb(2*ii) = -kk(ii) * ( 0.125D0*alpha(ii)*(3.0D0+nu(ii))*rad(ii+1)**2   &
+                                  + 0.5D0*beta(ii)*(1.0D0 + (1.0D0+nu(ii))*log(rad(ii+1))) ) &
+                       +kk(ii+1) * ( 0.125D0*alpha(ii+1)*(3.0D0+nu(ii+1))*rad(ii+1)**2   &
+                                  + 0.5D0*beta(ii+1)*(1.0D0 + (1.0D0+nu(ii+1))*log(rad(ii+1))) )
+
+            ! Continuous displacement at R(ii+1)
+            bb(2*ii+1) = - 0.125D0*alpha(ii)  * rad(ii+1)**3 - 0.5D0*beta(ii)  *rad(ii+1)*log(rad(ii+1))  &
+                         + 0.125D0*alpha(ii+1)* rad(ii+1)**3 + 0.5D0*beta(ii+1)*rad(ii+1)*log(rad(ii+1))
+        end do
+    end if
+
+    ! Null radial stress at R(nlayers+1)
+    bb(2*nlayers) = -kk(nlayers) * ( 0.125D0*alpha(nlayers)*(3.0D0+nu(nlayers))*rad(nlayers+1)**2  &
+                                   + 0.5D0*beta(nlayers)*(1.0D0 + (1.0D0+nu(nlayers))*log(rad(nlayers+1))) )
+    ! ***
+
+    !  Find solution vector cc
+    ! ***
     cc(:) = 0.0D0
     call linesolv(aa, 2*nlayers, bb, cc)
 
     !  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
-    cc(:) = -1.0D0*cc(:)
     do ii = 1, nlayers
         c1(ii) = cc(2*ii-1) 
         c2(ii) = cc(2*ii) 
     end do
+    ! ***
+    ! ------
+    
 
-    !  Calculate stresses in each region
+    ! Radial/toroidal/vertical stress radial distribution
+    ! ------
     rradius(:) = 0.0D0
     sigr(:) = 0.0D0
     sigt(:) = 0.0D0
     r_deflect(:) = 0.0D0
 
-    
-    ! Output distribution
-    ! ---
-    ! Case layer (no current)
-    dradius = (rad(2) - rad(1)) / dble(n_radial_array)
-    do ii = 1, n_radial_array
+    do ii = 1, nlayers
 
-        ! Radius array [m]
-        rad_c = rad(1) + dradius*dble(ii-1)
-        rradius(ii) = rad_c 
+        dradius = (rad(ii+1) - rad(ii)) / dble(n_radial_array)
+        do jj = (ii-1)*n_radial_array + 1, ii*n_radial_array
 
-        ! Stress radial distribution [Pa]
-        sigr(ii) = kk(1) * ( (1.0D0+nu(1))*c1(1) - (1.0D0-nu(1))*c2(1)/rad_c**2 )
-        sigt(ii) = kk(1) * ( (1.0D0+nu(1))*c1(1) + (1.0D0-nu(1))*c2(1)/rad_c**2 )
+            rad_c = rad(ii) + dradius*dble(jj - n_radial_array*(ii-1) - 1)
+            rradius(jj) = rad_c
 
-        ! Displacement distribution [m]
-        r_deflect = c1(1)*rad_c + c2(1)/rad_c
+
+            ! Radial stress radial distribution [Pa]
+            sigr(jj) = kk(ii) * ( (1.0D0+nu(ii))*c1(ii) - ((1.0D0-nu(ii))*c2(ii))/ rad_c**2 &
+                                  + 0.125D0*(3.0D0 + nu(ii))*alpha(ii)* rad_c**2            &
+                                  + 0.5D0*beta(ii)*(1.0D0 + (1.0D0+nu(ii))*log(rad_c)) )
+
+            ! Radial stress radial distribution [Pa]
+            sigt(jj) = kk(ii) * ( (1.0D0+nu(ii))*c1(ii) + (1.0D0-nu(ii))*c2(ii)/ rad_c**2 &
+                                  + 0.125D0*(1.0D0+3.0D0*nu(ii))*alpha(ii)*rad_c**2       &
+                                  + 0.5D0*beta(ii)*(nu(ii) + (1.0D0+nu(ii))*log(rad_c)) )
+
+            !  Deflection [m]
+            r_deflect(jj) = c1(ii)*rad_c + c2(ii)/rad_c      &
+                              + 0.125D0*alpha(ii) * rad_c**3 &
+                              + 0.5D0*beta(ii) * rad_c*log(rad_c)
+
+        end do
     end do
-
-    dradius = (rad(3) - rad(2)) / dble(n_radial_array)
-    do ii = 1, n_radial_array
-
-        ! Radius array [m]
-        ii_c = ii + n_radial_array
-        rad_c = rad(2) + dradius*dble(ii-1)
-        rradius(ii_c) = rad_c
-
-        ! Radial stress radial distribution [Pa]
-        sigr(ii_c) = kk(2) * ( (1.0D0+nu(2))*c1(2) - ((1.0D0-nu(2))*c2(2))/ rad_c**2 &
-                              + 0.125D0*(3.0D0 + nu(2))*alpha(2)* rad_c**2 &
-                              + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu(2))*log( rad_c)) )
-
-        ! Radial stress radial distribution [Pa]
-        sigt(ii_c) = kk(2) * ( (1.0D0+nu(2))*c1(2) + (1.0D0-nu(2))*c2(2)/ rad_c**2 &
-                              + 0.125D0*(1.0D0+3.0D0*nu(2))*alpha(2)*rad_c**2 &
-                              + 0.5D0*beta(2)*(nu(2) + (1.0D0+nu(2))*log(rad_c)) )
-
-        !  Deflection [m]
-        r_deflect(ii_c) = c1(2)*rad_c + c2(2)/rad_c       &
-                     + 0.125D0*alpha(2) * rad_c**3  &
-                     + 0.5D0*beta(2) * rad_c*log(rad_c)
-
-    end do
-    ! ---
-
+   ! ---
+ 
 end subroutine plane_stress
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1909,7 +1954,9 @@ subroutine generalized_plane_strain( nu, rad, ey, d_curr, v_force, & ! Inputs
     ! Right hand side vector bb
     ! ***
     ! Null radial stress at R(1)
-    bb(1) = -kk(1)*nu(1)*aleph ! Plain strain generalisation
+    bb(1) = -kk(1) * ( 0.125D0*alpha(1) * rad(1)**2 * ( 3.0D0 - 2.0D0*nu(1) ) &
+                      + 0.5D0*beta(1) * ( 1.0D0 - nu(1)   + log(rad(1)) )     &
+                      + nu(1)*aleph ) ! Plain strain generalisation
 
     ! Inter-layer boundary conditions
     if ( nlayers /= 1 ) then 
@@ -1935,7 +1982,7 @@ subroutine generalized_plane_strain( nu, rad, ey, d_curr, v_force, & ! Inputs
                                     + nu(nlayers)*aleph )   ! Plain strain generalisation
     ! ***
 
-    !  Find solution vector c
+    !  Find solution vector cc
     ! ***
     cc(:) = 0.0D0
     call linesolv(aa, 2*nlayers, bb, cc)
