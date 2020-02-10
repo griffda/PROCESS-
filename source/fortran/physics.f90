@@ -243,13 +243,13 @@ end subroutine subr
             q0,q95,rmajor,rminor)
 
        ! Hender scaling for diamagnetic current at tight aspect ratio
-       diacf_hender = diamagnetic_fraction_hender(beta)
+       call diamagnetic_fraction_hender(beta,diacf_hender)
 
        ! SCENE scaling for diamagnetic current
-       diacf_scene = diamagnetic_fraction_scene(beta,q95,q0)
+       call diamagnetic_fraction_scene(beta,q95,q0,diacf_scene)
 
        ! Pfirsch-Schlüter scaling for diamagnetic current
-       pscf_scene = ps_fraction_scene(beta)
+       call ps_fraction_scene(beta,pscf_scene)
     endif
 
     bscf_sauter = cboot * bootstrap_fraction_sauter()
@@ -1643,7 +1643,7 @@ end subroutine subr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function diamagnetic_fraction_hender(beta)
+  subroutine diamagnetic_fraction_hender(beta,diacf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Diamagnetic contribution at tight aspect ratio.
@@ -1653,22 +1653,21 @@ end subroutine subr
 
    implicit none
 
-   real(kind(1.0D0)) :: diamagnetic_fraction_hender
-
    !  Arguments
 
-   real(kind(1.0D0)), intent(in) :: beta
+   real(kind(1.0D0)), intent(in) ::  beta
+   real(kind(1.0D0)), intent(out) :: diacf
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   diamagnetic_fraction_hender = beta / 2.8D0
+   diacf = beta / 2.8D0
 
 
-  end function diamagnetic_fraction_hender
+  end subroutine diamagnetic_fraction_hender
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function diamagnetic_fraction_scene(beta,q95,q0)
+  subroutine diamagnetic_fraction_scene(beta,q95,q0,diacf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Diamagnetic fraction based on SCENE fit by Tim Hender
@@ -1678,21 +1677,20 @@ end subroutine subr
 
     implicit none
 
-    real(kind(1.0D0)) :: diamagnetic_fraction_scene
-
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: beta, q95, q0
+    real(kind(1.0D0)), intent(in) ::  beta, q95, q0
+    real(kind(1.0D0)), intent(out) :: diacf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    diamagnetic_fraction_scene = beta * (0.1D0*q95/q0+0.44D0) * 4.14D-1
+    diacf = beta * (0.1D0*q95/q0+0.44D0) * 4.14D-1
 
-  end function diamagnetic_fraction_scene
+  end subroutine diamagnetic_fraction_scene
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function ps_fraction_scene(beta)
+  subroutine ps_fraction_scene(beta,pscf)
 
     !! author: S.I. Muldrew, CCFE, Culham Science Centre
     !! Pfirsch-Schlüter fraction based on SCENE fit by Tim Hender
@@ -1702,17 +1700,16 @@ end subroutine subr
 
     implicit none
 
-    real(kind(1.0D0)) :: ps_fraction_scene
-
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: beta
+    real(kind(1.0D0)), intent(in) ::  beta
+    real(kind(1.0D0)), intent(out) :: pscf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ps_fraction_scene = -9.0D-2 * beta
+    pscf = -9.0D-2 * beta
 
-  end function ps_fraction_scene
+  end subroutine ps_fraction_scene
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
