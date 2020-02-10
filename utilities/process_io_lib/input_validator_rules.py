@@ -16,6 +16,7 @@ when input_validator is run. See class Ishape(Rule) for an example, or use the
 rule snippet in the Process project on Gitlab.
 """
 from abc import ABC, abstractmethod
+from process_io_lib.obsolete_vars import OBS_VARS
 
 class Rule(ABC):
     """Abstract rule class used by individual rule subclasses
@@ -259,21 +260,6 @@ class ObsoleteVarChecker(Rule):
     
     def check(self):
         """Look for obsolete variable names and suggest alternatives."""
-        # Dict of obsolete vars and their new names
-        # Key is obsolete var, value is either new var name or None if the var
-        # is deprecated
-        obs_vars = {
-            "snull": "i_single_null",
-            "tfno":	"n_tf",
-            "itfsup": "i_tf_sup",
-            "r_tf_inleg_mid": "r_tf_inboard_mid",
-            "rtot":	"r_tf_outboard_mid",
-            "tfareain":	"a_tf_inboard",
-            "r_tf_inleg_in": "r_tf_inleg_in",
-            "r_tf_inleg_out": "r_tf_inleg_out",
-            "awpc":	"a_tf_wp"
-        }
-
         # List of unrecognised vars in the input file
         unrecog_vars = self.data.unrecognised_vars
 
@@ -281,7 +267,7 @@ class ObsoleteVarChecker(Rule):
         # and suggest alternatives, if available
         for unrecog_var in unrecog_vars:
             # Try to find the unrecognised var in the obsolete vars dict
-            recog_var = obs_vars.get(unrecog_var, False)
+            recog_var = OBS_VARS.get(unrecog_var, False)
 
             if recog_var:
                 # Obsolete var name with new var name suggestion found
