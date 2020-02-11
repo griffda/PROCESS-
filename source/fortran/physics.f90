@@ -47,6 +47,7 @@ module physics_module
   !  Module-level variables
 
   integer :: iscz
+  integer :: err242, err243
   real(kind(1.0D0)) :: rad_fraction_core
   real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
   real(kind(1.0D0)) :: total_loss_power        ! [W]
@@ -270,15 +271,13 @@ end subroutine subr
              idiags(1) = ibss ; call report_error(75)
           end if
 
+          err242 = 0
           if (bootipf.gt.bscfmax)then
              bootipf = min(bootipf,bscfmax)
-             call report_error(242)
+             err242 = 1
           end if
-          if (idia == 0) then
-              if (diacf_scene.gt.0.01D0) then
-                  call report_error(244)
-              end if
-          else if (idia == 1) then
+
+          if (idia == 1) then
              diaipf = diacf_hender
           else if (idia == 2) then
              diaipf = diacf_scene
@@ -297,10 +296,10 @@ end subroutine subr
        !  or equal to the total fraction of the plasma current
        !  produced by non-inductive means (which also includes
        !  the current drive proportion)
-
+       err243 = 0
        if (plasipf.gt.fvsbrnni)then
           plasipf = min(plasipf,fvsbrnni)
-          call report_error(243)
+          err243 = 1
        end if
 
     endif
@@ -4274,6 +4273,15 @@ end subroutine subr
           call ovarrf(outfile,'Diamagnetic fraction (Hender)', '(diacf_hender)',diacf_hender, 'OP ')
           call ovarrf(outfile,'Diamagnetic fraction (SCENE)', '(diacf_scene)',diacf_scene, 'OP ')
           call ovarrf(outfile,'Pfirsch-Schlueter fraction (SCENE)', '(pscf_scene)',pscf_scene, 'OP ')
+          ! Error to catch if bootstap fraction limit has been enforced
+          if (err242==1)then
+              call report_error(242)
+          end if
+          ! Error to catch if self-driven current fraction limit has been enforced
+          if (err243==1)then
+              call report_error(243)
+          end if
+          
           if (bscfmax < 0.0D0) then
              call ocmmnt(outfile,'  (User-specified bootstrap current fraction used)')
           else if (ibss == 1) then
@@ -4285,18 +4293,25 @@ end subroutine subr
           else if (ibss == 4) then
              call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
           end if
+          
           if (idia == 0) then
              call ocmmnt(outfile,'  (Diamagnetic current fraction not calculated)')
+             ! Error to show if diamagnetic current is above 1% but not used
+             if (diacf_scene.gt.0.01D0) then
+               call report_error(244)
+             end if
           else if (idia == 1) then
              call ocmmnt(outfile,'  (Hender diamagnetic current fraction scaling used)')
           else if (idia == 2) then
              call ocmmnt(outfile,'  (SCENE diamagnetic current fraction scaling used)')
          end if
+         
          if (ips == 0) then
               call ocmmnt(outfile,'  (Pfirsch-Schlüter current fraction not calculated)')
          else if (ips == 1) then
               call ocmmnt(outfile,'  (SCENE Pfirsch-Schlüter current fraction scaling used)')
-        end if
+         end if
+
        endif
 
        call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf, 'OP ')
