@@ -35,6 +35,13 @@ Design, ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615302
 - "Implications of toroidal field coil stress limits on power plant design using PROCESS", J. Morris et al.,
 SOFT 2014, Fusion Engineering and Design ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615301290)).
 
+## Getting Started
+PROCESS can be run simply by using the `process.py` script located in the root 
+project directory. This automates compiling the source, validating the input 
+file, running the executable and running utilities on the output. It guides 
+those unfamiliar with the project and is a good place to start. More 
+information is available [here](documentation/proc-pages/getting-started.md).
+
 ## Build System
 
 A number of software technologies are employed in PROCESS. [CMake](https://cmake.org/) is the compiler, for 
