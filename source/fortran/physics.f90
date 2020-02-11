@@ -4267,10 +4267,10 @@ end subroutine subr
           call ocmmnt(outfile,'(PLASMOD bootstrap current fraction used)')
        else
           call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', '(bscf_nevins)',bscf_nevins, 'OP ')
-          call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
+          call ovarrf(outfile,'Bootstrap fraction (Wilson)', '(bscf_wilson)',bscf_wilson, 'OP ')
           call ovarrf(outfile,'Diamagnetic fraction (Hender)', '(diacf_hender)',diacf_hender, 'OP ')
           call ovarrf(outfile,'Diamagnetic fraction (SCENE)', '(diacf_scene)',diacf_scene, 'OP ')
-          call ovarrf(outfile,'Pfirsch-Schlüter fraction (SCENE)', '(pscf_scene)',pscf_scene, 'OP ')
+          call ovarrf(outfile,'Pfirsch-Schlueter fraction (SCENE)', '(pscf_scene)',pscf_scene, 'OP ')
           if (bscfmax < 0.0D0) then
              call ocmmnt(outfile,'  (User-specified bootstrap current fraction used)')
           else if (ibss == 1) then
@@ -4278,7 +4278,7 @@ end subroutine subr
           else if (ibss == 2) then
              call ocmmnt(outfile,'  (Nevins et al bootstrap current fraction model used)')
           else if (ibss == 3) then
-             call ocmmnt(outfile,'  (Wilson et al bootstrap current fraction model used)')
+             call ocmmnt(outfile,'  (Wilson bootstrap current fraction model used)')
           else if (ibss == 4) then
              call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
           end if
@@ -4298,7 +4298,7 @@ end subroutine subr
 
        call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf, 'OP ')
        call ovarrf(outfile,'Diamagnetic fraction (enforced)','(diaipf.)',diaipf, 'OP ')
-       call ovarrf(outfile,'Pfirsch-Schlüter fraction (enforced)','(psipf.)',psipf, 'OP ')
+       call ovarrf(outfile,'Pfirsch-Schlueter fraction (enforced)','(psipf.)',psipf, 'OP ')
 
        call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', plascur*rplas*facoh, 'OP ')
        call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas, 'OP ')

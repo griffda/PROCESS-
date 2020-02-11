@@ -347,7 +347,7 @@ module physics_variables
   !!            <LI> = 3 use PLASMOD transport model only to calculate pedestal profiles</UL>
 
   integer :: ips = 0
-  !! idia /0/ : switch for Pfirsch-Schlüter current scaling:<UL>
+  !! ips /0/ : switch for Pfirsch-Schlüter current scaling:<UL>
   !!       <LI> = 0 Do not calculate;
   !!       <LI> = 1 Use SCENE scaling</UL>
 
