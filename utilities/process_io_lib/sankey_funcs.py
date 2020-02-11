@@ -539,29 +539,29 @@ def plot_simplified_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow 
         # --------------------------------- ENERGY DEPOSITION - 1 ---------------------------------
         
         # Plasma power, - divertor deposited power, - blanket deposited power
-        DEPOSITION = [totalplasma, -totaldivetc, -totalblktetc]
+        DEPOSITION = [totalplasma, -totalblktetc-totaldivetc]
         # Check if difference >2 between plasma and divertor + blanket
         if _ == 1 and sqrt(sum(DEPOSITION)**2) > 2:
             print("\ncomponents power balance difference =", totalplasma-totaldivetc-totalblktetc)
         sankey.add(flows = DEPOSITION,
-                   orientations = [0, 1, 0], # [right(in), up(in), right(out)]
+                   orientations = [0, 0], # [right(in), up(in), right(out)]
                    prior = 0, # PLASMA
                    connect = (2, 0), # Plasma --> None
-                   pathlengths = [0.2, 0.25, 0.2+0.5*x_adj], # 'Plasma Heating' adjust
-                   labels = [None, 'Non-Electricity Producing Comp.', 'Blanket/etc.'])
+                   pathlengths = [0.2, 0.2+0.5*x_adj], # 'Plasma Heating' adjust
+                   labels = [None, 'Blanket/etc.'])
 
 
         # -------------------------------------- BLANKET - 2 --------------------------------------
 
         # Blanket deposited power, blanket energy multiplication, - primary heat
-        BLANKETSETC = [totalblktetc, emultmw, -pthermmw_p]
+        BLANKETSETC = [totalblktetc+totaldivetc, emultmw, -pthermmw_p-totaldivetc]
         #Check if difference >2 between primary heat and blanket + blanket multiplication
         if _ == 1 and sqrt(sum(BLANKETSETC)**2) > 2:
             print("blankets etc. power balance", totalblktetc+emultmw, -pthermmw_p)
         sankey.add(flows=BLANKETSETC,
                    orientations=[0, -1, 0], # [right(in), down(in), right(out)]
                    prior=1, # DEPOSITION
-                   connect=(2, 0), # Blanket/etc. --> None
+                   connect=(1, 0), # Blanket/etc. --> None
                    pathlengths = [0.5, 0.25, 0.0],
                    labels=[None,'Energy Mult.','Primary Heat'])
 
@@ -569,7 +569,7 @@ def plot_simplified_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow 
         # ------------------------------------- HEAT LOSS - 3 -------------------------------------
 
         # Primary heat, -Gross electric power, -difference (loss)
-        PRIMARY = [pthermmw_p, -pgrossmw, -pthermmw_p+pgrossmw]
+        PRIMARY = [pthermmw_p+totaldivetc, -pgrossmw, -pthermmw_p+pgrossmw-totaldivetc]
         sankey.add(flows=PRIMARY,
                    orientations=[0, -1, 0], # [right(in), down(out), right(out)]
                    prior=2, # BLANKETSETC
@@ -652,9 +652,7 @@ def plot_simplified_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow 
             if t == diagrams[0].texts[2]: # Plasma
                 t.set_horizontalalignment('right')
                 t.set_position((pos[0]-0.25,pos[1]))
-            if t == diagrams[1].texts[1]: # Non-Electricity Producing Comp.
-                t.set_position((pos[0]+0.05,pos[1]+0.15))
-            if t == diagrams[1].texts[2]: # Blanket/etc.
+            if t == diagrams[1].texts[1]: # Blanket/etc.
                 t.set_horizontalalignment('right')
                 t.set_position((pos[0]-0.2,pos[1]))
             if t == diagrams[2].texts[1]: # Energy Mult.
