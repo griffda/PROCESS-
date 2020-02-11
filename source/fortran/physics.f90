@@ -274,8 +274,11 @@ end subroutine subr
              bootipf = min(bootipf,bscfmax)
              call report_error(242)
           end if
-
-          if (idia == 1) then
+          if (idia == 0) then
+              if (diacf_scene.gt.0.01D0) then
+                  call report_error(244)
+              end if
+          else if (idia == 1) then
              diaipf = diacf_hender
           else if (idia == 2) then
              diaipf = diacf_scene
