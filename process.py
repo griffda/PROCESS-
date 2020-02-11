@@ -12,99 +12,87 @@ from utilities.process_io_lib import input_validator
 
 PROCESS_EXE_PATH = "./bin/process.exe"
 
-def parse_args():
-    """Parse the command line arguments
-    
-    :return: Namespace object of the args
-    :rtype: object
-    """
-    parser = argparse.ArgumentParser(description="Script to automate "
-        "running PROCESS")
+class Process(object):
+    """A Process workflow based on command line arguments."""
+    def __init__(self):
+        """Parse command line arguments and run accordingly."""
+        self.parse_args()
+        self.check_root_dir()
+        if self.args.build:
+            self.build_process()
+            self.create_dicts()
+        
+        self.validate_input()
+        self.run_process()
+        if self.args.util:
+            # Only create dicts if necessary for utilities
+            self.create_dicts()
+            self.run_utils()
 
-    # Optional arguments
-    parser.add_argument("--input",
-        "-i",
-        metavar="input_file_path",
-        default="IN.DAT",
-        help="The path to the input file that Process runs on")
-    parser.add_argument("--build",
-        "-b",
-        action="store_true",
-        help="Rebuilds Process if present")
-    parser.add_argument("--util",
-        "-u",
-        metavar="util_name",
-        help="Utility to run after Process runs")
+    def parse_args(self):
+        """Parse the command line arguments."""
+        parser = argparse.ArgumentParser(description="Script to automate "
+            "running PROCESS")
 
-    args = parser.parse_args()
-    return args
+        # Optional arguments
+        parser.add_argument("--input",
+            "-i",
+            metavar="input_file_path",
+            default="IN.DAT",
+            help="The path to the input file that Process runs on")
+        parser.add_argument("--build",
+            "-b",
+            action="store_true",
+            help="Rebuilds Process if present")
+        parser.add_argument("--util",
+            "-u",
+            metavar="util_name",
+            help="Utility to run after Process runs")
 
-def check_root_dir():
-    """Check the working dir is the Process root dir
+        self.args = parser.parse_args()
+        # Store namespace object of the args
 
-    Look for the .git dir. This is to make sure the subsequent terminal commands
-    work, as they must be run from PROCESS's root dir.
-    """
-    if os.path.isdir(".git"):
-        # Store the path for the root directory
-        root_dir = os.getcwd()
-    else:
-        sys.exit("Error: not in Process root dir. Please run this script from "
-            "the root directory of Process.")
+    def check_root_dir(self):
+        """Check the working dir is the Process root dir
 
-def build_process():
-    """Build Process"""
-    subprocess.run(["cmake", "-H.", "-Bbuild"])
-    subprocess.run(["cmake", "--build", "build"])
+        Look for the .git dir. This is to make sure the subsequent terminal commands
+        work, as they must be run from PROCESS's root dir.
+        """
+        if os.path.isdir(".git"):
+            # Store the path for the root directory
+            self.root_dir = os.getcwd()
+        else:
+            sys.exit("Error: not in Process root dir. Please run this script from "
+                "the root directory of Process.")
 
-def validate_input(input_file_path):
-    """Validate the input file using the input_validator module.
-    
-    :param input_file_path: Path to the input file from the project root dir
-    :type input_file_path: str
-    """
-    # Check the input file exists, then run the input validator
-    if os.path.isfile(input_file_path):
-        input_validator.validate(input_file_path)
-    else:
-        sys.exit("Input file not found; check the path.")
+    def build_process(self):
+        """Build Process"""
+        subprocess.run(["cmake", "-H.", "-Bbuild"])
+        subprocess.run(["cmake", "--build", "build"])
 
-def run_process(input_file_path):
-    """Run Process using a given input file path.
-    
-    :param input_file_path: Path to the input file from the project root dir
-    :type input_file_path: str
-    """
-    subprocess.run([PROCESS_EXE_PATH, input_file_path])
+    def create_dicts(self):
+        """Create Python dictionaries"""
+        subprocess.run(["cmake", "--build", "build", "--target", "dicts"])
 
-def create_dicts():
-    """Create Python dictionaries"""
-    subprocess.run(["cmake", "--build", "build", "--target", "dicts"])
+    def validate_input(self):
+        """Validate the input file using the input_validator module."""
+        # Check the input file exists, then run the input validator
+        # self.args.input: path to the input file from the project root dir
+        if os.path.isfile(self.args.input):
+            input_validator.validate(self.args.input)
+        else:
+            sys.exit("Input file not found; check the path.")
 
-def run_utils(util):
-    """Run a utility
-    
-    :param util: The name of the utility to run
-    :type util: str
-    """
-    # Todo: allow multiple utils to run
-    # Todo: allow options to be passed to utils
-    subprocess.run(["python", "./utilities/" + util + ".py"])
+    def run_process(self):
+        """Run Process using a given input file path."""
+        subprocess.run([PROCESS_EXE_PATH, self.args.input])
+        # self.args.input: Path to the input file from the project root dir
 
-def run():
-    """Run Process workflow based on command line arguments"""
-    args = parse_args()
-    check_root_dir()
-    if args.build:
-        build_process()
-        create_dicts()
-    
-    validate_input(args.input)
-    run_process(args.input)
-    if args.util:
-        # Only create dicts if necessary for utilities
-        create_dicts()
-        run_utils(args.util)
+    def run_utils(self):
+        """Run a utility if specified on the command line."""
+        # Todo: allow multiple utils to run
+        # Todo: allow options to be passed to utils
+        subprocess.run(["python", "./utilities/" + self.args.util + ".py"])
 
 if __name__ == "__main__":
-    run()
+    Process()
