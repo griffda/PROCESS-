@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from process_io_lib.mfile import MFile
 
 
-def plot_sankey(mfilename="MFILE.DAT",): # Plots the power flow from PROCESS as a Sankey Diagram
+def plot_full_sankey(mfilename="MFILE.DAT",): # Plots the power flow from PROCESS as a Sankey Diagram
 
 
     # ------------------------------- Pulling values from the MFILE -------------------------------
@@ -442,7 +442,7 @@ def plot_sankey(mfilename="MFILE.DAT",): # Plots the power flow from PROCESS as 
 
 
 
-def plot_simplified_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diagram
+def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diagram
 
 
     # ------------------------------- Pulling values from the MFILE -------------------------------
@@ -524,7 +524,7 @@ def plot_simplified_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow 
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[], frameon=False)
         sankey = Sankey(ax=ax, unit='MW', margin=0.0, format='%1.0f',scale = 1./(totalplasma))
-
+        
 
         # --------------------------------------- PLASMA - 0 --------------------------------------
 
