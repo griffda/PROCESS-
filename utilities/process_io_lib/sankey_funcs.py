@@ -458,6 +458,9 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
     # Used in [DEPOSITION]
     pradmw = m_file.data['pradmw'].get_scan(-1) # Total radiation Power (MW)
     fdiv = m_file.data['fdiv'].get_scan(-1) # Area fraction taken up by divertor
+    fdiv_2 = m_file.data['2*fdiv'].get_scan(-1) # Area fraction taken up by double null divertor
+    if fdiv_2 > 0: # Takes into account old MFILE representation of double null divertor
+        fdiv = fdiv_2
     praddiv = pradmw * fdiv # Radiation deposited on the divertor (MW)
     fhcd = m_file.data['fhcd'].get_scan(-1) # Area fraction covered by HCD and diagnostics
     pradhcd = pradmw * fhcd # Radiation deposited on HCD and diagnostics (MW)
@@ -524,7 +527,7 @@ def plot_sankey(mfilename='MFILE.DAT'): # Plot simplified power flow Sankey Diag
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1, xticks=[], yticks=[], frameon=False)
         sankey = Sankey(ax=ax, unit='MW', margin=0.0, format='%1.0f',scale = 1./(totalplasma))
-        
+
 
         # --------------------------------------- PLASMA - 0 --------------------------------------
 
