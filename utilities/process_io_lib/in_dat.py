@@ -440,7 +440,11 @@ def write_parameters(data, out_file):
                 # Left justification set to 8 to allow easier reading
                 # info can currently be either a value or a dict
                 if type(info) is dict and info.get("value") and (
-                    info.get("comment")):
+                    type(info.get("comment")) is str):
+                    
+                    if len(info["comment"]) == 0:
+                        info["comment"] = "blah"
+                    
                     parameter_line = "{0} = {1} * {2}\n". \
                         format(parameter.ljust(8), info["value"], 
                             info["comment"])
@@ -1003,7 +1007,7 @@ class InDat(object):
         name = no_comment_line[0].strip()
 
         # Parameter value
-        if len(no_comment_line[-1].split(",")) > 2:
+        if len(no_comment_line[-1].split(",")) > 1:
             try:
                 value = no_comment_line[1].strip()
             except IndexError:
