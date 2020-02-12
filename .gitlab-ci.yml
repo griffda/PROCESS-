@@ -344,9 +344,9 @@ pages:
    - apt-get update
    - apt-get install -y python-dev python-pip pandoc cmake gcc gfortran graphviz
    - apt-get install -y python3-pip
-   - pip install mkdocs
-   - pip install mkdocs-material
-   - pip install pymdown-extensions
+   - pip3 install mkdocs
+   - pip3 install mkdocs-material
+   - pip3 install pymdown-extensions
    - cmake -H. -Bbuild
    - mkdocs build
    

@@ -16,6 +16,7 @@ when input_validator is run. See class Ishape(Rule) for an example, or use the
 rule snippet in the Process project on Gitlab.
 """
 from abc import ABC, abstractmethod
+from process_io_lib.obsolete_vars import OBS_VARS
 
 class Rule(ABC):
     """Abstract rule class used by individual rule subclasses
@@ -250,3 +251,51 @@ class Dnbeta(Rule):
         else:
             # dnbeta is calculated
             self.check_undefined("dnbeta")
+
+class ObsoleteVarChecker(Rule):
+    """Checks for obsolete or renamed vars, and suggests new names."""
+    def __init__(self):
+        """Set tags specific to ObsoleteVarChecker"""
+        super().__init__(["obsolete"])
+    
+    def check(self):
+        """Look for obsolete variable names and suggest alternatives."""
+        # List of unrecognised vars in the input file
+        unrecog_vars = self.data.unrecognised_vars
+
+        # If there are obsolete vars in the input file, fail the rule, warn 
+        # and suggest alternatives, if available
+        for unrecog_var in unrecog_vars:
+            # Try to find the unrecognised var in the obsolete vars dict
+            recog_var = OBS_VARS.get(unrecog_var, False)
+
+            if recog_var:
+                # Obsolete var name with new var name suggestion found
+                message = (f"\"{unrecog_var}\" is obsolete; try \"{recog_var}\""
+                    " instead.")
+            elif recog_var is None:
+                # Obsolete var name, no new var name suggestion
+                message = f"{unrecog_var} is deprecated."
+            else:
+                # Var name is unrecognised, but not in obsolete list either
+                break
+            
+            # Fail rule with message
+            self.passed = False
+            self.messages.append(message)
+            
+class DuplicateChecker(Rule):
+    """Ensures there are no duplicate variable initialisations."""
+    def __init__(self):
+        """Set tags specific to DuplicateChecker"""
+        super().__init__(["duplicates"])
+    
+    def check(self):
+        """Find any duplicate variables in the input data."""
+        duplicates = self.data.duplicates
+        if duplicates:
+            # Got some duplicates
+            self.passed = False
+            duplicates_no = len(duplicates)
+            message = f"Found {duplicates_no} duplicates: {duplicates}"
+            self.messages.append(message)

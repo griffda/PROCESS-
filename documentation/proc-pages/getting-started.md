@@ -72,6 +72,43 @@ git clone git@git.ccfe.ac.uk:process/process.git -b <branch_name> <folder_name>
 Where `<branch_name>`is the name of the branch to checkout from the remote 
 repository.
 
+# The `process.py` Script
+In the project root directory, there's a script called `process.py` which aims 
+to make running the code simpler for newcomers and more efficient for more 
+experienced users.
+
+First, make sure that the `utilities` directory is on your PYTHONPATH:
+
+```bash
+echo $PYTHONPATH
+```
+
+If this includes the `process/utilities` directory already, then proceed to the 
+next step. Otherwise, add it to your PYTHONPATH:
+
+```bash
+export PYTHONPATH=$PYTHONPATH:~/<process>/utilities/
+```
+
+where `<process>` is the path to the PROCESS directory.
+
+Navigate into the PROCESS root directory (where `process.py` is located), and 
+run:
+
+```bash
+./process.py -h
+```
+
+This displays the help for the script's command line interface, and shows you 
+how the script can be used. For example, to build (`-b`) the source, then 
+validate and run on an input (`-i`) file, run:
+
+```bash
+./process.py -b -i tracking/baseline_2018/baseline_2018_IN.DAT
+```
+
+The output files will be put in the same directory as the supplied input file.
+
 # Compiling the Code
 
 !!! Note "On Freia cluster"
