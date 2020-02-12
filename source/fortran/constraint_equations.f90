@@ -2060,16 +2060,15 @@ contains
       !! pseprmax : input real :  maximum ratio of power crossing the separatrix to plasma major radius (Psep/R) (MW/m)
       !! pdivt : input real :  power to be conducted to the divertor region (MW)
       !! rmajor : input real :  plasma major radius (m) 
-      use build_variables, only: available_radial_space, required_radial_space
+      use build_variables, only: available_radial_space, required_radial_space, f_avspace
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc =  1.0D0 - required_radial_space/available_radial_space
+      args%cc =  1.0D0 - f_avspace  * available_radial_space/required_radial_space
       args%con = available_radial_space * (1.0D0 - args%cc)
-      args%err = available_radial_space * args%cc
-      args%symbol = '='
+      args%err = required_radial_space * args%cc
+      args%symbol = '<'
       args%units = 'm'
-
    end subroutine constraint_eqn_057
 
    subroutine constraint_eqn_058(args)

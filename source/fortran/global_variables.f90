@@ -3194,6 +3194,8 @@ module build_variables
   !! ddwex /0.07/ : cryostat thickness (m)
   real(kind(1.0D0)) :: ddwi = 0.07D0
   !! ddwi /0.07/ : vacuum vessel thickness (TF coil / shield) (m)
+  real(kind(1.0D0)) :: f_avspace = 1.0D0
+  !! f_avspace: F-value for stellarator radial space check (constraint equation 57)
   real(kind(1.0D0)) :: fcspc = 0.6D0
   !! fcspc /0.6/ : Fraction of space occupied by CS pre-compression structure
   real(kind(1.0D0)) :: fmsbc = 0.0D0

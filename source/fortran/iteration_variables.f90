@@ -1363,10 +1363,22 @@ subroutine init_itv_1
 
    !---------------------------------
 
-   !! <LI> (76) NOT USED
+   subroutine init_itv_76
+      !! <LI> (76) f_avspace (f-value for equation 57)
+      lablxc(76) = 'f_avspace     '
+      boundl(76) = 0.010D0
+      boundu(76) = 1.000D0
+   end subroutine init_itv_76
+
+
    real(kind(1.d0)) function itv_76()
-      write(*,*) 'Iteration variable 76 is no longer in use.'   
+      itv_76 = f_avspace 
    end function itv_76
+
+   subroutine set_itv_76(ratio)
+      real(kind(1.d0)) :: ratio
+      f_avspace = ratio
+   end subroutine set_itv_76
    
    !---------------------------------
 
@@ -2982,7 +2994,7 @@ subroutine init_itv_1
    !---------------------------------
 
    subroutine init_itv_171
-      !+ad_varc  <LI> (171) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
+      !! <LI> (171) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
       lablxc(171) = 'ftoroidalgap  ' 
       boundl(171) = 1.0D-4
       boundu(171) = 1.0D0
@@ -3397,7 +3409,7 @@ subroutine convxc(xc,nn)
          case (73);  call set_itv_73(ratio)
          case (74);  call set_itv_74(ratio)
          case (75);  call set_itv_75(ratio)
-         case (76);  
+         case (76);  call set_itv_76(ratio)
          case (77);  
          case (78);  
          case (79);  call set_itv_79(ratio)

@@ -106,6 +106,7 @@ subroutine initial
     call init_itv_73
     call init_itv_74
     call init_itv_75
+    call init_itv_76
     
     
     
@@ -347,8 +348,9 @@ subroutine initial
     !    !!  <LI> (74) scraplo
     !    lablxc(75) = 'tfootfi       '; boundl(75) = 0.200D0; boundu(75) = 5.000D0
     !    !!  <LI> (75) tfootfi
+    !    lablxc(76) = 'f_avspace       '; boundl(76) = 0.0010D0; boundu(76) = 1.000D0
+    !    !!  <LI> (76) f_avspace
     !    !!  <LI> (77) NOT USED
-    !    !!  <LI> (76) NOT USED
     !    !!  <LI> (78) NOT USED
     !    !!  <LI> (79) fbetap (f-value for equation 48)
     !    lablxc(79) = 'fbetap        '; boundl(79) = 0.001D0; boundu(79) = 1.000D0

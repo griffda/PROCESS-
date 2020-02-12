@@ -230,8 +230,8 @@ module numerics
        !!  <LI> (55) Vacuum vessel helium concentration upper limit iblanket =2 (itv 96,93,94)
        'Psep / R upper limit             ', &
        !!  <LI> (56) Pseparatrix/Rmajor upper limit (itv 97,1,3,102)
-       'TF coil leg tor width lower limit', &
-       !!  <LI> (57) NOT USED
+       'available_space > required_space ', &
+       !!  <LI> (57) Radial build consistency for stellarators (itv 76 f_avspace)
        'TF coil leg rad width lower limit', &
        !!  <LI> (58) NOT USED
        'NB shine-through frac upper limit', &

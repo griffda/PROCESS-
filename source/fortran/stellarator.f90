@@ -758,7 +758,14 @@ contains
 
     !  Print out device build
 
+
     call oheadr(outfile,'Radial Build')
+
+    call ovarre(outfile,'Avail. Space (m)','(available_radial_space)',available_radial_space)
+    call ovarre(outfile,'Req. Space (m)','(required_radial_space)',required_radial_space)
+    call ovarre(outfile,'f value: ','(f_avspace)',f_avspace)
+   
+
 
     write(outfile,10)
    10  format(t43,'Thickness (m)',t60,'Radius (m)')
@@ -2911,9 +2918,10 @@ contains
       call ovarre(outfile,'Inboard leg outboard half-width (m)','(tficrn)',tficrn)
       call ovarre(outfile,'Inboard leg inboard half-width (m)','(tfocrn)',tfocrn)
       call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort)
+      call ovarre(outfile,'Minimum Coil distance (m)','(toroidalgap)',toroidalgap)
       call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng)
-      call ovarre(outfile,'Total current (MA)','(ritfc/1.D6)',1.0D-6*ritfc)
-      call ovarre(outfile,'Current per coil(MA)','(ritfc/1.D6/n_tf)',1.0D-6*ritfc/n_tf)
+      call ovarre(outfile,'Total current (MA)','(ritfc)',1.0D-6*ritfc)
+      call ovarre(outfile,'Current per coil(MA)','(ritfc/n_tf)',1.0D-6*ritfc/n_tf)
       call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf)
       call ovarre(outfile,'Overall current density (A/m2)','(oacdcp)',oacdcp)
       call ovarre(outfile,'Maximum field on superconductor (T)','(bmaxtf)',bmaxtf)
@@ -2924,7 +2932,6 @@ contains
       call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inleg_mid)',r_tf_inleg_mid)
       call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid)
       call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
-      call ovarre(outfile,'Minimum Coil distance (m)','(toroidalgap)',toroidalgap)
       call ovarre(outfile,'Clear horizontal bore (m)','(tf_total_h_width)',tf_total_h_width)
       call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
   
@@ -2951,6 +2958,7 @@ contains
       call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
       call ovarre(outfile,'Number of turns per coil','(turnstf)',turnstf)
       call ovarre(outfile,'Current per turn (A)','(cpttf)',cpttf)
+      call ovarre(outfile,'jop/jcrit','(fiooic)',fiooic)
   
       call osubhd(outfile,'Forces and Stress :')
       call ovarre(outfile,'Maximal force density (MN/m3)','(max_force_density)',max_force_density)

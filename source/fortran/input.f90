@@ -743,6 +743,9 @@ contains
        case ('ftoroidalgap')
           call parse_real_variable('ftoroidalgap', ftoroidalgap, 0.001D0, 10.0D0, &
                 'F-value for toroidal gap consistency')
+       case ('f_avspace')
+          call parse_real_variable('f_avspace', f_avspace, 0.001D0, 10.0D0, &
+                'F-value for radial build consistency (stellarators)')
        case ('fpsepr')
           call parse_real_variable('fpsepr', fpsepr, 0.001D0, 10.0D0, &
                'F-value for Psep/R limit')
