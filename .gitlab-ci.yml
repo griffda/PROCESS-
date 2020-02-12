@@ -46,7 +46,7 @@ stages:
 
 make:
   only:
-    - /^issue-.*$/
+    - develop
   stage: build
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
