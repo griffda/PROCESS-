@@ -12,153 +12,138 @@
 stages:
   - build
   - testing
-  - jenkins
   - baseline
   - standards
+  - freia
   - pages
 
-before_script:
-  - export LOGNAME=root
-  - source /etc/profile.d/modules.sh
-  - module use /usr/local/modules/default
-  - module unload python
-  - module load python/3.5.1
-  - module load texlive/2017
-  - module unload ifort 
-  - module load gfortran
-  - export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest
-  - echo ld_library_path=$LD_LIBRARY_PATH
-  # Modify PATH so "ford" command can be found in cmake file
-  - export PATH=$PATH:~/.local/bin
-  # Python3 uses the locale to choose the file encoding it uses
-  # Without this it will use ASCII encoding and Ford will fail
-  - export LANG=en_GB.utf8
+.before_script_template: &build-freia-setup
+  before_script:
+    - export LOGNAME=root
+    - source /etc/profile.d/modules.sh
+    - module use /usr/local/modules/default
+    - module unload python
+    - module load python/3.5.1
+    - module load texlive/2017
+    - module unload ifort 
+    - module load gfortran
+    - export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest
+    - echo ld_library_path=$LD_LIBRARY_PATH
+    # Modify PATH so "ford" command can be found in cmake file
+    - export PATH=$PATH:~/.local/bin
+    # Python3 uses the locale to choose the file encoding it uses
+    # Without this it will use ASCII encoding and Ford will fail
+    - export LANG=en_GB.utf8
+
+.before_script_template: &build-ubuntu-setup
+  before_script:
+    # Modify PATH so "ford" command can be found in cmake file
+    - export PATH=$PATH:~/.local/bin
+    - export LANG=C.UTF-8
 
 # Build stage 
 #------------
 
 make:
-# image: ukaea/ubuntu
- only:
-  - develop
- stage: build
- script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - rm -rf build
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build
-  # Trigger for PROCESS_Testing on GitLab CI develop is PROCESS_Testing branch
-  - "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop \
-    https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"  
-  - ls bin -lah
-  - echo "Test "
- artifacts:
-   expire_in: 2 hrs
-   paths:
-     - bin/process.exe
-     - bin/process_GTest.exe
-     - bin/libPROCESS_calc_engine.so
- tags:
-  - freia
+  only:
+    - /^issue-.*$/
+  stage: build
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - pwd
+    - gcc --version
+    - ls -lah
+    - rm -rf build
+    - cmake -H. -Bbuild
+    - cmake --build build
+    - ls bin -lah
+    - echo "Test "
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+      - bin/process.exe
+      - bin/process_GTest.exe
+      - bin/libPROCESS_calc_engine.so
 
-make_default:
- only:
-  - /^issue-.*$/
- stage: build
- script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - rm -rf build
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build
-  - ls bin -lah
-  - echo "Test "
- artifacts:
-   expire_in: 2 hrs
-   paths:
-     - bin/process.exe
-     - bin/process_GTest.exe
-     - bin/libPROCESS_calc_engine.so
- tags:
-  - freia
 
 make_dicts:
+  only:
+    - develop
+    - /^issue-.*$/
+  stage: build
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - pwd
+    - gcc --version
+    - ls -lah
+    - cmake -H. -Bbuild
+    - cmake --build build --target dicts
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+      - utilities/process_io_lib/process_dicts.json
 
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target dicts
- tags:
-  - freia
 
 make_developerguide:
-
  only:
   - develop
   - /^issue-.*$/
  stage: build
+ <<: *build-ubuntu-setup
+ image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
  script:
   - pwd
   - gcc --version
   - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target developerguide
- tags:
-  - freia
+  - cmake -H. -Bbuild
+  - cmake --build build --target developerguide
+
 
 make_utilitiesdoc:
-
  only:
   - develop
   - /^issue-.*$/
  stage: build
+ <<: *build-ubuntu-setup
+ image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
  script:
   - pwd
   - gcc --version
   - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target utilitiesdoc
- tags:
-  - freia
+  - cmake -H. -Bbuild
+  - cmake --build build --target utilitiesdoc
+
 
 make_optsolverdoc:
-
  only:
   - develop
   - /^issue-.*$/
  stage: build
+ <<: *build-ubuntu-setup
+ image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
  script:
   - pwd
   - gcc --version
   - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target optsolverdoc
- tags:
-  - freia
+  - cmake -H. -Bbuild
+  - cmake --build build --target optsolverdoc
+
 
 make_tfdoc:
-
  only:
   - develop
   - /^issue-.*$/
  stage: build
+ <<: *build-ubuntu-setup
+ image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
  script:
   - pwd
   - gcc --version
   - ls -lah
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target tfdoc
- tags:
-  - freia
+  - cmake -H. -Bbuild
+  - cmake --build build --target tfdoc
 
 # Testing stage 
 #--------------
@@ -169,146 +154,123 @@ unit_tests:
   - develop
   - /^issue-.*$/
  stage: testing
+ <<: *build-ubuntu-setup
+ image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
  script:
   - pwd
   - ls bin/
   - ./bin/process_GTest.exe
- tags:
-  - freia
+
 
 test_suite:
- when: on_success  # Also default setting
- only:
-  - develop
- stage: testing
- script:
-  - pwd
-  # Now trigger testing on Jenkins
-  - "curl -X POST http://mkumar:0eb1252f76a609d527edfbfdc0559eae@process-\
-    jenkins-ci.apps.l:8080/jenkins/job/PROCESS/build?token=MiLNGc-QvyEevhKK54go"
- tags:
-  - freia
+  when: on_success  # Also default setting
+  only:
+    - develop
+    - /^issue-.*$/
+  stage: testing
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - pwd
+    - cmake -H. -Bbuild
+    - cmake --build build
+    - cmake --build build --target dicts
+    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+    - cd test_suite
+    - python3 test_suite.py 
 
-test_suite_gitlab:
- when: on_success  # Also default setting
- only:
-  - develop
-  - /^issue-.*$/
- stage: testing
- script:
-  - pwd
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build
-  - cmake3 --build build --target dicts
-  - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-  - cd test_suite
-  - python test_suite.py
- tags:
-  - freia
 
 baseline_2019_run:
- when: on_success  # Also default setting
- only:
-  - develop
-  - /^issue-.*$/
- stage: testing
- script:
-  - pwd
-  - cd tracking/baseline_2019
-  - ./../../bin/process.exe baseline_2019_IN.DAT
- artifacts:
-   expire_in: 2 hrs
-   paths:
-     - tracking/baseline_2019/baseline_2019_MFILE.DAT
- tags:
-  - freia
+  when: on_success  # Also default setting
+  only:
+    - develop
+    - /^issue-.*$/
+  stage: testing
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - pwd
+    - cd tracking/baseline_2019
+    - ./../../bin/process.exe baseline_2019_IN.DAT
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+      - tracking/baseline_2019/baseline_2019_MFILE.DAT
+
 
 baseline_2018_run:
- when: on_success  # Also default setting
- only:
-  - develop
-  - /^issue-.*$/
- stage: testing
- script:
-  - pwd
-  - cd tracking/baseline_2018
-  - ./../../bin/process.exe baseline_2018_IN.DAT
- artifacts:
-   expire_in: 2 hrs
-   paths:
-     - tracking/baseline_2018/baseline_2018_MFILE.DAT
- tags:
-  - freia
-
+  when: on_success
+  only:
+    - develop
+    - /^issue-.*$/
+  stage: testing
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - pwd
+    - cd tracking/baseline_2018
+    - ./../../bin/process.exe baseline_2018_IN.DAT
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+      - tracking/baseline_2018/baseline_2018_MFILE.DAT  
 
 # Baseline stage 
 #---------------
 
-baseline_tracking:
- when: on_success  # Also default setting
- only:
-#  - merge_requests # Enable if Only merge request trigger tracking job
-  - develop
- stage: baseline
- script: # Now trigger job in Jenkins
-  - "curl -X POST http://mkumar:11e6783cdcc8e709d27e5376d2f57d8741@process-\
-    jenkins-ci.apps.l:8080/jenkins/job/PROCESS_Tracking/build?token=MiLNGc-\
-    QvyEevhKK54go"
- tags:
-  - freia
-
 baseline_2019_results:
- when: on_success  # Also default setting
- only:
-  - develop
-  - /^issue-.*$/
- stage: baseline
- script:
-  - pwd
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target dicts
-  - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-  - cd tracking/baseline_2019
-  - > 
-    python ../../utilities/mfile_comparison.py 
-    -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
-    --acc 1.0 
-    --baseline
-  - > 
-    python ../../utilities/mfile_comparison.py 
-    -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
-    --acc 10.0 
-    --baseline
- tags:
-  - freia
+  when: on_success  # Also default setting
+  only:
+    - develop
+    - /^issue-.*$/
+  stage: baseline
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - pwd
+    - cmake -H. -Bbuild
+    - cmake --build build --target dicts
+    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+    - cd tracking/baseline_2019
+    - > 
+      python3 ../../utilities/mfile_comparison.py 
+      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
+      --acc 1.0 
+      --baseline
+    - > 
+      python3 ../../utilities/mfile_comparison.py 
+      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
+      --acc 10.0 
+      --baseline
+
 
 # Check the baseline 2018 test results for discrepancies at:
 #   -  1% 
 #   - 10%
 baseline_2018_results:
- when: on_success
- only:
-  - develop
-  - /^issue-.*$/
- stage: baseline
- script:
-  - pwd
-  - cmake3 -H. -Bbuild
-  - cmake3 --build build --target dicts
-  - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-  - cd tracking/baseline_2018
-  - >
-    python ../../utilities/mfile_comparison.py 
-    -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
-    --acc 1.0 
-    --baseline
-  - > 
-    python ../../utilities/mfile_comparison.py 
-    -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
-    --acc 10.0 
-    --baseline
- tags:
-  - freia
+  when: on_success
+  only:
+    - develop
+    - /^issue-.*$/
+  stage: baseline
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - pwd
+    - cmake -H. -Bbuild
+    - cmake --build build --target dicts
+    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+    - cd tracking/baseline_2018
+    - >
+      python3 ../../utilities/mfile_comparison.py 
+      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
+      --acc 1.0 
+      --baseline
+    - > 
+      python3 ../../utilities/mfile_comparison.py 
+      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
+      --acc 10.0 
+      --baseline
 
 
 # Standards stage 
@@ -320,11 +282,237 @@ line_length:
   - develop
   - /^issue-.*$/
  stage: standards
+ <<: *build-ubuntu-setup
+ image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
  script:
   - pwd
-  - python utilities/line_length_standard.py
- tags:
-  - freia
+  - python3 utilities/line_length_standard.py
+
+# Freia
+#------
+
+make_freia:
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - gcc --version
+    - ls -lah
+    - rm -rf build
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build
+    - ls bin -lah
+    - echo "Test "
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+      - bin/process.exe
+      - bin/process_GTest.exe
+      - bin/libPROCESS_calc_engine.so
+  tags:
+    - freia
+
+make_dicts_freia:
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - gcc --version
+    - ls -lah
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build --target dicts
+  tags:
+    - freia
+
+make_developerguide_freia:
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - gcc --version
+    - ls -lah
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build --target developerguide
+  tags:
+    - freia
+
+make_utilitiesdoc_freia:
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - gcc --version
+    - ls -lah
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build --target utilitiesdoc
+  tags:
+    - freia
+
+make_optsolverdoc_friea:
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - gcc --version
+    - ls -lah
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build --target optsolverdoc
+  tags:
+    - freia
+
+make_tfdoc_freia:
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - gcc --version
+    - ls -lah
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build --target tfdoc
+  tags:
+    - freia
+
+unit_tests_freia:
+  when: on_success  # Also default setting
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - gcc --version
+    - ls -lah
+    - rm -rf build
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build
+    - ls bin/
+    - ./bin/process_GTest.exe
+  tags:
+    - freia
+
+test_suite_freia:
+  when: on_success
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build
+    - cmake3 --build build --target dicts
+    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+    - cd test_suite
+    - python test_suite.py
+  tags:
+    - freia
+
+baseline_2019_run_freia:
+  when: on_success  # Also default setting
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - gcc --version
+    - ls -lah
+    - rm -rf build
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build
+    - cd tracking/baseline_2019
+    - ./../../bin/process.exe baseline_2019_IN.DAT
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+      - tracking/baseline_2019/baseline_2019_MFILE.DAT
+  tags:
+    - freia
+
+baseline_2018_run_freia:
+  when: on_success
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - pwd
+    - gcc --version
+    - ls -lah
+    - rm -rf build
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build
+    - cd tracking/baseline_2018
+    - ./../../bin/process.exe baseline_2018_IN.DAT
+  artifacts:
+    expire_in: 2 hrs
+    paths:
+      - tracking/baseline_2018/baseline_2018_MFILE.DAT
+  tags:
+    - freia
+
+baseline_2019_results_freia:
+  when: on_success  # Also default setting
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build --target dicts
+    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+    - cd tracking/baseline_2019
+    - > 
+      python ../../utilities/mfile_comparison.py 
+      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
+      --acc 1.0 
+      --baseline
+    - > 
+      python ../../utilities/mfile_comparison.py 
+      -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
+      --acc 10.0 
+      --baseline
+  tags:
+   - freia
+
+baseline_2018_results_freia:
+  when: on_success
+  only:
+    - develop
+  stage: freia
+  <<: *build-freia-setup
+  script:
+    - pwd
+    - cmake3 -H. -Bbuild
+    - cmake3 --build build --target dicts
+    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+    - cd tracking/baseline_2018
+    - >
+      python ../../utilities/mfile_comparison.py 
+      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
+      --acc 1.0 
+      --baseline
+    - > 
+      python ../../utilities/mfile_comparison.py 
+      -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
+      --acc 10.0 
+      --baseline
+  tags:
+    - freia
 
 # Pages
 #------
@@ -339,37 +527,23 @@ pages:
   only:
     - develop
   stage: pages
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
-   - pwd
-   - apt-get update
-   - apt-get install -y python-dev python-pip pandoc cmake gcc gfortran graphviz
-   - apt-get install -y python3-pip
-   - pip3 install mkdocs
-   - pip3 install mkdocs-material
-   - pip3 install pymdown-extensions
-   - cmake -H. -Bbuild
-   - mkdocs build
+    - pwd
+    - cmake -H. -Bbuild
+    - mkdocs build
    
-   # FORD documentation
-   # Ensure FORD can find create_dicts.py inside Process
-   - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-   - python3 lib/ford/ford.py documentation/ford/index.md
+    # FORD documentation
+    # Ensure FORD can find create_dicts.py inside Process
+    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+    - python3 lib/ford/ford.py documentation/ford/index.md
 
-   # Publish the MkDocs and FORD sites
-   - ls site
-   - mv site public
-   - mv ford_site public
-   - ls public
+    # Publish the MkDocs and FORD sites
+    - ls site
+    - mv site public
+    - mv ford_site public
+    - ls public
   artifacts:
     paths:
     - public
-
-# Old bits
-#---------
-
-# This command is used for generating gtest results in Jenkins  
-# ./bin/process_test.exe --gtest_output=xml:gtest_results.xml
-
-#after_script:  # Now trigger testing
-#- "curl -X POST -F token=24e840ea1977a3283dd1288732e5d0 -F ref=develop 
-# https://git.ccfe.ac.uk/api/v4/projects/2172/trigger/pipeline"
