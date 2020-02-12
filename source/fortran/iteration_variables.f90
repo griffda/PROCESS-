@@ -1363,22 +1363,10 @@ subroutine init_itv_1
 
    !---------------------------------
 
-   subroutine init_itv_76
-      !! <LI> (76) f_avspace (f-value for equation 57)
-      lablxc(76) = 'f_avspace     '
-      boundl(76) = 0.010D0
-      boundu(76) = 1.000D0
-   end subroutine init_itv_76
-
-
+   !! <LI> (76) NOT USED
    real(kind(1.d0)) function itv_76()
-      itv_76 = f_avspace 
+      write(*,*) 'Iteration variable 76 is no longer in use.'   
    end function itv_76
-
-   subroutine set_itv_76(ratio)
-      real(kind(1.d0)) :: ratio
-      f_avspace = ratio
-   end subroutine set_itv_76
    
    !---------------------------------
 
@@ -3009,6 +2997,25 @@ subroutine init_itv_1
       ftoroidalgap = ratio
    end subroutine set_itv_171
 
+
+   !---------------------------------
+
+   subroutine init_itv_172
+      !! <LI> (76) f_avspace (f-value for equation 57)
+      lablxc(172) = 'f_avspace     '
+      boundl(172) = 0.010D0
+      boundu(172) = 1.000D0
+   end subroutine init_itv_172
+
+
+   real(kind(1.d0)) function itv_172()
+      itv_172 = f_avspace 
+   end function itv_172
+
+   subroutine set_itv_172(ratio)
+      real(kind(1.d0)) :: ratio
+      f_avspace = ratio
+   end subroutine set_itv_172
 !! </UL>
 end module define_iteration_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3228,6 +3235,7 @@ subroutine loadxc
          case (169);  xcm(i) = itv_169()
          case (170);  xcm(i) = itv_170()
          case (171);  xcm(i) = itv_171()
+         case (172);  xcm(i) = itv_172()
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -3409,7 +3417,7 @@ subroutine convxc(xc,nn)
          case (73);  call set_itv_73(ratio)
          case (74);  call set_itv_74(ratio)
          case (75);  call set_itv_75(ratio)
-         case (76);  call set_itv_76(ratio)
+         case (76);  
          case (77);  
          case (78);  
          case (79);  call set_itv_79(ratio)
@@ -3505,7 +3513,8 @@ subroutine convxc(xc,nn)
          case (168);  call set_itv_168(ratio)
          case (169);  call set_itv_169(ratio)
          case (170);  call set_itv_170(ratio)
-         case (171);  call set_itv_171(ratio)      
+         case (171);  call set_itv_171(ratio)
+         case (172);  call set_itv_172(ratio)        
 
          case default
             call report_error(57)

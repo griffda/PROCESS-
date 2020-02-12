@@ -18,9 +18,9 @@ module numerics
 
   public
 
-  integer, parameter :: ipnvars = 171
+  integer, parameter :: ipnvars = 172
   !!  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipeqns = 82
+  integer, parameter :: ipeqns = 83
   !!  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipnfoms = 19
   !!  ipnfoms FIX : number of available figures of merit
@@ -230,8 +230,8 @@ module numerics
        !!  <LI> (55) Vacuum vessel helium concentration upper limit iblanket =2 (itv 96,93,94)
        'Psep / R upper limit             ', &
        !!  <LI> (56) Pseparatrix/Rmajor upper limit (itv 97,1,3,102)
-       'available_space > required_space ', &
-       !!  <LI> (57) Radial build consistency for stellarators (itv 76 f_avspace)
+       'TF coil leg rad width lower limit', &
+       !!  <LI> (57) NOT USED
        'TF coil leg rad width lower limit', &
        !!  <LI> (58) NOT USED
        'NB shine-through frac upper limit', &
@@ -282,8 +282,10 @@ module numerics
        !!  <LI> (80) Divertor power lower limit pdivt (itv  153 fpdivlim)
        'ne0 > neped                      ',   &
        !!  <LI> (81) Ne(0) > ne(ped) constraint (itv  154 fne0)</UL>
-       'toroidalgap >  tftort            '    &
+       'toroidalgap >  tftort            ',   &
        !!  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)</UL>
+       'available_space > required_space '    &
+       !!  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
