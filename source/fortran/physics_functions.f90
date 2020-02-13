@@ -143,6 +143,18 @@ contains
     ! Hubbard et al. 2017 L-I threshold scaling
     pthrmw(18) = 0.162 * dnla20 * sarea * (bt)**0.26
 
+    !  Aspect ratio corrected Martin et al (2008)
+    !  Correction: Takizuka 2004, Plasma Phys. Control Fusion 46 A227
+    if (aspect.le.2.7D0) then
+        pthrmw(19) = pthrmw(6) * (0.098D0 * aspect / (1.0D0 - (2.0D0/(1.0D0 + aspect))**0.5D0))
+        pthrmw(20) = pthrmw(7) * (0.098D0 * aspect / (1.0D0 - (2.0D0/(1.0D0 + aspect))**0.5D0))
+        pthrmw(21) = pthrmw(8) * (0.098D0 * aspect / (1.0D0 - (2.0D0/(1.0D0 + aspect))**0.5D0))
+    else
+        pthrmw(19) = pthrmw(6)
+        pthrmw(20) = pthrmw(7)
+        pthrmw(21) = pthrmw(8)
+    end if
+
   end subroutine pthresh
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

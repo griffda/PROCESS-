@@ -622,13 +622,13 @@ module physics_variables
   !! psolradmw : SOL radiation power (MW) (stellarator only)
   real(kind(1.0D0)) :: psyncpv = 0.0D0
   !! psyncpv : synchrotron radiation power per volume (MW/m3)
-  integer :: ilhthresh = 6
-  !! ilhthresh /6/ : switch for L-H mode power threshold scaling to use
+  integer :: ilhthresh = 19
+  !! ilhthresh /19/ : switch for L-H mode power threshold scaling to use
   !!                 (see pthrmw for list)
   real(kind(1.0D0)) :: plhthresh = 0.0D0
   !! plhthresh : L-H mode power threshold (MW)
   !!             (chosen via ilhthresh, and enforced if constraint equation 15 is on)
-  real(kind(1.0D0)), dimension(18) :: pthrmw = 0.0D0
+  real(kind(1.0D0)), dimension(21) :: pthrmw = 0.0D0
   !! pthrmw(18) : L-H power threshold for various scalings (MW): <OL>
   !!        <LI> ITER 1996 scaling: nominal
   !!        <LI> ITER 1996 scaling: upper bound
@@ -647,7 +647,10 @@ module physics_variables
   !!        <LI> Hubbard et al. 2012 L-I threshold scaling: nominal
   !!        <LI> Hubbard et al. 2012 L-I threshold scaling: lower bound
   !!        <LI> Hubbard et al. 2012 L-I threshold scaling: upper bound
-  !!        <LI> Hubbard et al. 2017 L-I threshold scaling</OL>
+  !!        <LI> Hubbard et al. 2017 L-I threshold scaling
+  !!        <LI> Martin 2008 aspect ratio corrected scaling: nominal
+  !!        <LI> Martin 2008 aspect ratio corrected scaling: 95% upper bound
+  !!        <LI> Martin 2008 aspect ratio corrected scaling: 95% lower bound </OL>
   real(kind(1.0D0)) :: ptremw = 0.0D0
   !! ptremw : electron transport power (MW)
   real(kind(1.0D0)) :: ptrepv = 0.0D0
