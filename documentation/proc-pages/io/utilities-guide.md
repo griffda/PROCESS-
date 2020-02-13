@@ -132,6 +132,11 @@ the -f option is used, in the directory the utility was run. The full version is
 not working and will be implemented in the future.
 N.B. Rounding to whole integer can cause errors of $\pm$1 between adjacent arrows.
 
+### Example Output
+
+![Sankey flow chart of 2018 baseline](../../img/SankeyPowerFlow.png)
+Figure 1: *Sankey flow chart of 2018 baseline*
+
 ### Options
 
 | Argument | Description |
