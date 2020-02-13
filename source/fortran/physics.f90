@@ -384,7 +384,7 @@ end subroutine subr
 
        !  Calculate L- to H-mode power threshold for different scalings
 
-       call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
+       call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,aspect,pthrmw)
 
        !  Enforced L-H power threshold value (if constraint 15 is turned on)
 

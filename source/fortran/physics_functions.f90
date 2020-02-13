@@ -28,10 +28,9 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
-
-    !! L-mode to H-mode power threshold calculation
+  subroutine pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,aspect,pthrmw)
     !! author: P J Knight, CCFE, Culham Science Centre
+    !! L-mode to H-mode power threshold calculation
     !! dene   : input real :  volume-averaged electron density (/m3)
     !! dnla   : input real :  line-averaged electron density (/m3)
     !! bt     : input real :  toroidal field on axis (T)
@@ -39,6 +38,7 @@ contains
     !! kappa  : input real :  plasma elongation
     !! sarea  : input real :  plasma surface area (m**2)
     !! aion   : input real :  average mass of all ions (amu)
+    !! aspect : input real :  aspect ratio
     !! pthrmw(17) : output real array : power threshold (different scalings)
     !! This routine calculates the power threshold for the L-mode to
     !! H-mode transition.
@@ -58,8 +58,8 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: dene,dnla,bt,rmajor,kappa,sarea,aion
-    real(kind(1.0D0)), dimension(18), intent(out) :: pthrmw
+    real(kind(1.0D0)), intent(in) :: dene,dnla,bt,rmajor,kappa,sarea,aion,aspect
+    real(kind(1.0D0)), dimension(21), intent(out) :: pthrmw
 
     !  Local variables
 
