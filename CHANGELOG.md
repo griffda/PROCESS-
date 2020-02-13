@@ -10,6 +10,7 @@
 - GitLab pages now hosts the autodoc html output (only develop) (issue #418)
 - Git branch now in output file (#912)
 - CI jobs now run for cmake custom targets
+- Added diamagnetic and Pfirsch-Schlüter current scalings #992
 
 ## Minor Changes
 - Renamed 'test_files' to 'unit_tests' #972

@@ -476,6 +476,9 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
+       case ('idia')
+          call parse_int_variable('idia', idia, 0, 2, &
+                'Switch for diamagnetic scaling')
        case ('ifalphap')
           call parse_int_variable('ifalphap', ifalphap, 0, 1, &
                'Switch for fast alpha pressure fit')
@@ -516,6 +519,9 @@ contains
        case ('iprofile')
           call parse_int_variable('iprofile', iprofile, 0, 1, &
                'Switch for current profile consistency')
+       case ('ips')
+          call parse_int_variable('ips', ips, 0, 1, &
+               'Switch for Pfirsch-Schlüter scaling')
        case ('iradloss')
           call parse_int_variable('iradloss', iradloss, 0, 2, &
                'Switch for radiation loss term inclusion in pwr balance')
@@ -1573,7 +1579,7 @@ contains
           call parse_real_variable('coppera_m2_max', copperA_m2_max, 1.0D6, 1.0D10, &
                'Maximum TF coil current / copper area (A/m2)')
        case ('f_coppera_m2')
-          call parse_real_variable('f_copperA_m2', f_copperA_m2, 1.0D-3, 1.0D1, &
+          call parse_real_variable('f_coppera_m2', f_coppera_m2, 1.0D-3, 1.0D1, &
                'f-value for constraint 75: TF coil current / copper area < copperA_m2_max')
 
        case ('casthi')

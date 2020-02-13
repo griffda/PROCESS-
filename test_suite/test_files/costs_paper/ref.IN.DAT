@@ -35,7 +35,7 @@ boundu(2) = 10.0
 
 ixc = 3        * rmajor * Plasma major radius (m) (iteration variable 3)
 boundl(3) = 8.0
-boundu(3) = 9.0
+boundu(3) = 9.1
 
 ixc = 4        * te * Volume averaged electron temperature (kev)
 boundl(4) = 5.0

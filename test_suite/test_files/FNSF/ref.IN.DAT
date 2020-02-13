@@ -136,11 +136,13 @@ dnbeta   = 6.0      *(Troyon-like) coefficient for beta scaling
 epbetmax = 10.0     *Maximum (eps*beta_poloidal) (constraint equation 6)
 ibss     = 3        *Switch for bootstrap current scaling (3: Wilson numerical scaling)
 iculbl   = 0        *Switch for beta limit scaling (CE 24) (2: apply limit to thermal + neutral beam beta)
-icurr    = 9        *Switch for plasma current scaling to use (2: Peng double null divertor scaling (ST))
+icurr    = 9        *Switch for plasma current scaling to use (9: FIESTA ST fit)
+idia     = 2        *switch for diamagnetic current scaling (2: SCENE scaling)
 idensl   = 7        *Switch for density limit to enforce (CE 5) (7: Greenwald limit)
 igeom    = 0        *Switch for plasma geometry calculation (0: original method)
 iohcl    = 0        *Switch for existence of central solenoid
 iprofile = 0        *Switch for current profile consistency (0: use input values for alphaj rli dnbeta)
+ips      = 1        *Switch for Pfirsch-Schlüter current scaling (1: SCENE scaling)
 itart    = 1        *Switch for spherical tokamak (ST) models (1: use spherical tokamak models)
 kappa    = 2.75     *Plasma separatrix elongation
 q0       = 2.0      *Safety factor on axis
@@ -190,14 +192,12 @@ vvblgap  = 0.0      *Gap between vacuum vessel and blanket (m)
 *Iteration variables: scrapli tfcth
 
 *-----------------TF Coil Variables----------------*
-
-cpttf    = 9.0E4    *TF coil current per turn (A)
+tinstf   = 0.0     *Centrepost insulation thickness (no inusltion in this case)
 frhocp   = 1.0      *Centrepost resistivity enhancement factor 
 i_tf_sup = 0        *Switch for TF coil conductor model (0: copper) 
 ptempalw = 473.15   *Maximum peak centrepost temperature (C) (constraint equation 44)
 rcool    = 3.0E-3   *Average radius of coolant channel (m) 
 ripmax   = 1.0      *Maximum allowable toroidal field ripple amplitude at plasma edge (%)
-rhotfleg = 2.5E-8   *Resistivity of a TF coil leg (Ohm-m)
 n_tf     = 12       *Number of TF coil  
 vcool    = 5.0      *Max centrepost coolant flow speed at midplane (m/s)
 vftf     = 0.2      *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
