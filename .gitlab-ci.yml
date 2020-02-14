@@ -554,12 +554,13 @@ pages:
 #----------------
 
 offline_job:
- when: on_success
- only:
-  - develop
-  - /^issue-.*$/
- <<: *build-ubuntu-setup
- image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
- script:
-  - pwd
-  - python3 utilities/line_length_standard.py
+  when: manual
+  only:
+    - develop
+    - /^issue-.*$/ 
+  stage: standards
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - pwd
+    - python3 utilities/line_length_standard.py
