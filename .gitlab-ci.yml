@@ -40,6 +40,10 @@ stages:
     # Modify PATH so "ford" command can be found in cmake file
     - export PATH=$PATH:~/.local/bin
     - export LANG=C.UTF-8
+    - pwd
+    - gcc --version
+    - ls -lah
+    - cmake -H. -Bbuild
 
 # Build stage 
 #------------
@@ -52,20 +56,7 @@ make:
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - rm -rf build
-    - cmake -H. -Bbuild
     - cmake --build build
-    - ls bin -lah
-    - echo "Test "
-  artifacts:
-    expire_in: 2 hrs
-    paths:
-      - bin/process.exe
-      - bin/process_GTest.exe
-      - bin/libPROCESS_calc_engine.so
 
 
 make_dicts:
@@ -76,15 +67,7 @@ make_dicts:
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - cmake -H. -Bbuild
     - cmake --build build --target dicts
-  artifacts:
-    expire_in: 2 hrs
-    paths:
-      - utilities/process_io_lib/process_dicts.json
 
 
 make_developerguide:
@@ -95,10 +78,6 @@ make_developerguide:
  <<: *build-ubuntu-setup
  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
  script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake -H. -Bbuild
   - cmake --build build --target developerguide
 
 
@@ -110,10 +89,6 @@ make_utilitiesdoc:
  <<: *build-ubuntu-setup
  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
  script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake -H. -Bbuild
   - cmake --build build --target utilitiesdoc
 
 
@@ -125,10 +100,6 @@ make_optsolverdoc:
  <<: *build-ubuntu-setup
  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
  script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake -H. -Bbuild
   - cmake --build build --target optsolverdoc
 
 
@@ -140,17 +111,13 @@ make_tfdoc:
  <<: *build-ubuntu-setup
  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
  script:
-  - pwd
-  - gcc --version
-  - ls -lah
-  - cmake -H. -Bbuild
   - cmake --build build --target tfdoc
 
 # Testing stage 
 #--------------
 
 unit_tests:
- when: on_success  # Also default setting
+ when: on_success
  only:
   - develop
   - /^issue-.*$/
@@ -164,7 +131,7 @@ unit_tests:
 
 
 test_suite:
-  when: on_success  # Also default setting
+  when: on_success
   only:
     - develop
     - /^issue-.*$/
@@ -182,7 +149,7 @@ test_suite:
 
 
 baseline_2019_run:
-  when: on_success  # Also default setting
+  when: on_success
   only:
     - develop
     - /^issue-.*$/
@@ -220,7 +187,7 @@ baseline_2018_run:
 #---------------
 
 baseline_2019_results:
-  when: on_success  # Also default setting
+  when: on_success
   only:
     - develop
     - /^issue-.*$/
@@ -386,7 +353,7 @@ make_tfdoc_freia:
     - freia
 
 unit_tests_freia:
-  when: on_success  # Also default setting
+  when: on_success
   only:
     - develop
   stage: freia
@@ -421,7 +388,7 @@ test_suite_freia:
     - freia
 
 baseline_2019_run_freia:
-  when: on_success  # Also default setting
+  when: on_success
   only:
     - develop
   stage: freia
@@ -466,7 +433,7 @@ baseline_2018_run_freia:
     - freia
 
 baseline_2019_results_freia:
-  when: on_success  # Also default setting
+  when: on_success
   only:
     - develop
   stage: freia
@@ -548,19 +515,3 @@ pages:
   artifacts:
     paths:
     - public
-
-#----------------
-#  Offline Jobs 
-#----------------
-
-offline_job:
-  when: manual
-  only:
-    - develop
-    - /^issue-.*$/ 
-  stage: standards
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - pwd
-    - python3 utilities/line_length_standard.py
