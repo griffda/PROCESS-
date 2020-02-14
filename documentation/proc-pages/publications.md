@@ -2,6 +2,12 @@
 
 Below is a list of publications using PROCESS by year:
 
+## 2020
+
+["PROCESS": Systems studies of spherical tokamaks](https://www.sciencedirect.com/science/article/pii/S0920379620300788)  
+S.I. Muldrew, H. Lux, G. Cunningham, T.C. Hender, S. Kahn, P.J. Knight, B. Patel, G.M. Voss, H.R. Wilson  
+Fusion Engineering and Design 154 (2020) 111530  
+
 ## 2019
 
 [Status of divertor/scrape-off layer modelling in PROCESS](https://conferences.iaea.org/event/192/contributions/15180/attachments/8316/10980/ID_045_-_Muldrew.pdf)  
