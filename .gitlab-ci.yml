@@ -12,7 +12,6 @@
 stages:
   - build
   - testing
-  - baseline
   - standards
   - freia
   - pages
@@ -45,8 +44,9 @@ stages:
     - ls -lah
     - cmake -H. -Bbuild
 
-# Build stage 
-#------------
+#-----------------
+#  Buidl
+#-----------------
 
 make:
   only:
@@ -113,8 +113,9 @@ make_tfdoc:
  script:
   - cmake --build build --target tfdoc
 
-# Testing stage 
-#--------------
+#-----------------
+#  Testing
+#-----------------
 
 unit_tests:
  when: on_success
@@ -146,43 +147,12 @@ test_suite:
     - python3 test_suite.py 
 
 
-baseline_2019_run:
+baseline_2019:
   when: on_success
   only:
     - develop
     - /^issue-.*$/
   stage: testing
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build
-    - cd tracking/baseline_2019
-    - ./../../bin/process.exe baseline_2019_IN.DAT
-
-
-baseline_2018_run:
-  when: on_success
-  only:
-    - develop
-    - /^issue-.*$/
-  stage: testing
-  <<: *build-ubuntu-setup
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - cmake --build build
-    - cd tracking/baseline_2018
-    - ./../../bin/process.exe baseline_2018_IN.DAT
-
-
-# Baseline stage 
-#---------------
-
-baseline_2019_results:
-  when: on_success
-  only:
-    - develop
-    - /^issue-.*$/
-  stage: baseline
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
@@ -203,15 +173,12 @@ baseline_2019_results:
       --baseline
 
 
-# Check the baseline 2018 test results for discrepancies at:
-#   -  1% 
-#   - 10%
-baseline_2018_results:
+baseline_2018:
   when: on_success
   only:
     - develop
     - /^issue-.*$/
-  stage: baseline
+  stage: testing
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
@@ -232,8 +199,9 @@ baseline_2018_results:
       --baseline
 
 
-# Standards stage 
-#----------------
+#-----------------
+#  Standards
+#-----------------
 
 line_length:
  when: on_success
@@ -247,8 +215,9 @@ line_length:
   - pwd
   - python3 utilities/line_length_standard.py
 
-# Freia
-#------
+#-----------------
+#  Freia
+#-----------------
 
 make_freia:
   only:
@@ -423,7 +392,7 @@ baseline_2018_run_freia:
   tags:
     - freia
 
-baseline_2019_results_freia:
+baseline_2019_freia:
   when: on_success
   only:
     - develop
@@ -448,7 +417,7 @@ baseline_2019_results_freia:
   tags:
    - freia
 
-baseline_2018_results_freia:
+baseline_2018_freia:
   when: on_success
   only:
     - develop
@@ -473,8 +442,9 @@ baseline_2018_results_freia:
   tags:
     - freia
 
-# Pages
-#------
+#-----------------
+#  Pages
+#-----------------
 
 pages:
   before_script:
