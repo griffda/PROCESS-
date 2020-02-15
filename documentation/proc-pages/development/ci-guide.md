@@ -97,8 +97,24 @@ image.
 | --- | ----------- |
 | `line_length` | Check line length compliance | 
 
+## Stage: Freia
+
+There is a Freia stage of jobs that only run on the develop branch. These jobs are the same as the jobs in build, testing and standards but using the Freia image.
+
 ## Stage: Pages
 
 | Job | Description |
 | --- | ----------- |
 | `pages` | Build and publish GitLab Pages website for PROCESS | 
+
+## Offline Jobs
+
+!!! Note
+    Only the non-freia jobs can be run offline
+
+To run to PROCESS GitLab jobs locally do the following:
+* Install `gitlab-runner` (see [here](https://docs.gitlab.com/runner/install/))
+* Install docker (see [here](https://docs.docker.com/install/))
+* In the top level of the repository run
+  * `gitlab-runner exec docker <job_name>`
+  * Where `<job_name>` is the name of the job from the tables above (excluding Freia jobs).
