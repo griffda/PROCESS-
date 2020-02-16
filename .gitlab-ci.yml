@@ -357,6 +357,7 @@ baseline_2019_freia:
   script:
     - pwd
     - cmake3 -H. -Bbuild
+    - cmake3 --build build
     - cmake3 --build build --target dicts
     - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
     - cd tracking/baseline_2019
@@ -383,6 +384,7 @@ baseline_2018_freia:
   script:
     - pwd
     - cmake3 -H. -Bbuild
+    - cmake3 --build build
     - cmake3 --build build --target dicts
     - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
     - cd tracking/baseline_2018
