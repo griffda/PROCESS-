@@ -347,50 +347,6 @@ test_suite_freia:
   tags:
     - freia
 
-baseline_2019_run_freia:
-  when: on_success
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - gcc --version
-    - ls -lah
-    - rm -rf build
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build
-    - cd tracking/baseline_2019
-    - ./../../bin/process.exe baseline_2019_IN.DAT
-  artifacts:
-    expire_in: 2 hrs
-    paths:
-      - tracking/baseline_2019/baseline_2019_MFILE.DAT
-  tags:
-    - freia
-
-baseline_2018_run_freia:
-  when: on_success
-  only:
-    - develop
-  stage: freia
-  <<: *build-freia-setup
-  script:
-    - pwd
-    - pwd
-    - gcc --version
-    - ls -lah
-    - rm -rf build
-    - cmake3 -H. -Bbuild
-    - cmake3 --build build
-    - cd tracking/baseline_2018
-    - ./../../bin/process.exe baseline_2018_IN.DAT
-  artifacts:
-    expire_in: 2 hrs
-    paths:
-      - tracking/baseline_2018/baseline_2018_MFILE.DAT
-  tags:
-    - freia
 
 baseline_2019_freia:
   when: on_success
@@ -404,6 +360,7 @@ baseline_2019_freia:
     - cmake3 --build build --target dicts
     - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
     - cd tracking/baseline_2019
+    - ./../../bin/process.exe baseline_2019_IN.DAT
     - > 
       python ../../utilities/mfile_comparison.py 
       -f baseline_2019_MFILE.DAT ref_baseline_2019_MFILE.DAT 
@@ -429,6 +386,7 @@ baseline_2018_freia:
     - cmake3 --build build --target dicts
     - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
     - cd tracking/baseline_2018
+    - ./../../bin/process.exe baseline_2018_IN.DAT
     - >
       python ../../utilities/mfile_comparison.py 
       -f baseline_2018_MFILE.DAT ref_baseline_2018_MFILE.DAT 
