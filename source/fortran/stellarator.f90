@@ -312,9 +312,9 @@ contains
 
     call stnewconfig          
     call stgeom
-    call stbild(nout,0)
     call stphys
     call stcoil(nout,0)
+    call stbild(nout,0)
     call ststrc(nout,0)
     call stfwbs(nout,0)
     call stdiv(nout,0)
@@ -890,9 +890,9 @@ contains
     call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
          taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
-    !  Calculate beta limit
-
-    call stblim(betalim)
+    !  Calculate beta limit. Does nothing atm so commented out
+    
+         call stblim(betalim)
 
   end subroutine stphys
 

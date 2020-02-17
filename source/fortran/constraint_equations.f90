@@ -2703,10 +2703,10 @@ contains
       type (constraint_args_type), intent(out) :: args
 
       args%cc =  1.0D0 - ftoroidalgap * toroidalgap/tftort
-      args%con = ftoroidalgap!toroidalgap * (1.0D0 - args%cc)
-      args%err = args%cc!tftort * args%cc
+      args%con = toroidalgap
+      args%err = toroidalgap - tftort/ftoroidalgap
       args%symbol = '<'
-      args%units = '' !ftoroidalgap is unitless
+      args%units = 'm' !ftoroidalgap is unitless
 
    end subroutine constraint_eqn_082
 
