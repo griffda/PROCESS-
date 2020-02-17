@@ -1131,7 +1131,7 @@ subroutine stresscl(iprint)
     ! Stress model not valid the TF does not contain any hole
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
     if ( abs(r_tf_inboard_in) < epsilon(r_tf_inboard_in) ) then
-        call report_error(242)
+        call report_error(245)
         strtf1 = 0.0D0
         strtf2 = 0.0D0
         return

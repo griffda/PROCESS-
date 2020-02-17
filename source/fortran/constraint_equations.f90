@@ -2501,17 +2501,17 @@ contains
       !! Ensure that TF coil current / copper area < Maximum value
       !! ONLY used for croco HTS coil
       !! #=# physics
-      !! #=#=# f_copperA_m2, copperA_m2_max
+      !! #=#=# f_coppera_m2, copperA_m2_max
       !! and hence also optional here.
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! copperA_m2 : input real : 
       !! copperA_m2_max : input real : 
-      !! f_copperA_m2 : input real : 
-      use rebco_variables, only: copperA_m2, copperA_m2_max, f_copperA_m2
+      !! f_coppera_m2 : input real : 
+      use rebco_variables, only: copperA_m2, copperA_m2_max, f_coppera_m2
       implicit none
       type (constraint_args_type), intent(out) :: args
 
-      args%cc = 1.0d0 - f_copperA_m2 * copperA_m2_max / copperA_m2
+      args%cc = 1.0d0 - f_coppera_m2 * copperA_m2_max / copperA_m2
       args%con = copperA_m2
       args%err = copperA_m2 * args%cc
       args%symbol = '<'
