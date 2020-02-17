@@ -45,7 +45,7 @@ stages:
     - cmake -H. -Bbuild
 
 #-----------------
-#  Buidl
+#  Build
 #-----------------
 
 make:
