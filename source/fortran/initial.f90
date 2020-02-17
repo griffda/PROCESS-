@@ -473,8 +473,8 @@ subroutine initial
     !    !!  <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
     !    lablxc(142) = 'nesep         '; boundl(142) = 1.00D17; boundu(142) = 1.00D20
     !    !!  <LI> (142) nesep : electron density at separatrix [m-3]
-    !    lablxc(143) = 'f_copperA_m2  '; boundl(143) = 0.001D0; boundu(143) = 1.000D0
-    !    !!  <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value (f-value for equation 75)
+    !    lablxc(143) = 'f_coppera_m2  '; boundl(143) = 0.001D0; boundu(143) = 1.000D0
+    !    !!  <LI> (143) f_coppera_m2 : TF coil current / copper area < Maximum value (f-value for equation 75)
     !    lablxc(144) = 'fnesep        '; boundl(144) = 0.001D0; boundu(144) = 1.000D0
     !    !!  <LI> (144) fnesep : Eich critical electron density at separatrix (f-value for constraint equation 76) [m-3]
     !    lablxc(145) = 'fgwped        '; boundl(145) = 0.500D0; boundu(145) = 1.000D0

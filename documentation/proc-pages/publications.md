@@ -2,6 +2,12 @@
 
 Below is a list of publications using PROCESS by year:
 
+## 2020
+
+["PROCESS": Systems studies of spherical tokamaks](https://www.sciencedirect.com/science/article/pii/S0920379620300788)  
+S.I. Muldrew, H. Lux, G. Cunningham, T.C. Hender, S. Kahn, P.J. Knight, B. Patel, G.M. Voss, H.R. Wilson  
+Fusion Engineering and Design 154 (2020) 111530  
+
 ## 2019
 
 [Status of divertor/scrape-off layer modelling in PROCESS](https://conferences.iaea.org/event/192/contributions/15180/attachments/8316/10980/ID_045_-_Muldrew.pdf)  
@@ -163,6 +169,10 @@ H. Lux, R. Kemp, D.J. Ward, M. Sertoli
 41st EPS Conference on Plasma Physics, Berlin, Germany (2014)  
 
 ## 2013
+
+[FRESCO, a simplified code for cost analysis of fusion power plants](https://www.sciencedirect.com/science/article/pii/S092037961300656X?via%3Dihub)  
+C. Bustreo, G. Casini, G. Zollino, T. Bolzonella, R. Piovan  
+Fusion Engineering and Design 88 (2013) 3141-3151  
 
 [Start-up requirements and current-drive issues for a pulsed DEMO, and potential implications for power output to the grid](https://www.sciencedirect.com/science/article/pii/S0920379613003396)  
 W.E. Han, P.J. Knight, T.N. Todd, D.J. Ward  

@@ -526,7 +526,7 @@ and any injected power, is converted into charged particle transport power
 power balance calculation is turned on using constraint equation no. 2 (which 
 should therefore always be used).
 
-## Bootstrap Current Scalings
+## Bootstrap, Diamagnetic and Pfirsch-Schlüter Current Scalings
 
 The fraction of the plasma current provided by the so-called bootstrap effect
 can be either input into the code directly, or calculated using one of four
@@ -545,6 +545,30 @@ existence of pedestals (`ipedestal = 1`), whereas the Sauter et al. scaling
 !!! Note "Fixed Bootstrap Current"
     Direct input -- To input the bootstrap current fraction directly, set `bscfmax` 
     to $(-1)$ times the required value (e.g. -0.73 sets the bootstrap faction to 0.73).
+
+The diamagnetic current fraction is strongly related to $\beta$ and is typically small,
+hence it is usually neglected.  For high $\beta$ plasmas, such as those at tight
+aspect ratio, it should be included and two scalings are offered.  If the diamagnetic
+current is expected to be above one per cent of the plasma current, a warning
+is issued to calculate it.
+
+| `idia` | Description |
+| :-: | - |
+| 0 | Diamagnetic current fraction is not calculated.
+| 1 | Diamagnetic current fraction is calculated using the original Tim Hender spherical tokamak fit.
+| 2 | Diamagnetic current fraction is calculated using a SCENE fit for all aspect ratio.
+
+A similar scaling is available for the Pfirsch-Schlüter current.  This is
+typically smaller than the diamagnetic current, but is negative.
+
+| `ips` | Description |
+| :-: | - | 
+| 0 | Pfirsch-Schlüter current fraction is not calculated.
+| 1 | Pfirsch-Schlüter current fraction is calculated using a SCENE fit for all aspect ratio.
+
+There is no ability to input the diamagnetic and Pfirsch-Schlüter current
+directly.  In this case, it is recommended to turn off these two scalings 
+and to use the method of fixing the bootstrap current fraction.
 
 ## L-H Power Threshold Scalings
 
