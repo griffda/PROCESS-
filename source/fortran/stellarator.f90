@@ -1964,7 +1964,7 @@ contains
     ! The thickness 0.18 was obtained as a measured value from Schauer, F. and Bykov, V. design of Helias 5-B. (nucl Fus. 2013)
     aintmass = 0.18D0 *f_B**1.5 * intercoil_surface * denstl 
     
-    clgsmass = 0.2D0*M_intercoil ! Very simple approximation for the gravity support.
+    clgsmass = 0.2D0*aintmass    ! Very simple approximation for the gravity support.
                                  ! This fits for the Helias 5b reactor design point ( F. and Bykov, V. design of Helias 5-B. (nucl Fus. 2013)).
 
 
