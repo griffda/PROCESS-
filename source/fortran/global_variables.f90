@@ -2288,28 +2288,28 @@ module tfcoil_variables
   !! Array refining the radii of the stress calculations arrays
 
   real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_r = 0.0D0
-  !! TF Inboard leg radial stress r distribution at mid-plane [Pa]
+  !! TF Inboard leg radial stress in steel r distribution at mid-plane [Pa]
   
   real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_t = 0.0D0
-  !! TF Inboard leg tangential stress r distribution at mid-plane [Pa]
+  !! TF Inboard leg tangential stress in steel r distribution at mid-plane [Pa]
   
   real(kind(1.0D0)), dimension(2*n_radial_array) :: deflect = 0.0D0
   !! TF coil radial deflection (displacement) radial distribution [m]
 
   real(kind(1.0D0)) :: sig_tf_z = 0.0D0
-  !! TF Inboard leg vertical tensile stress at mid-plane [Pa]
+  !! TF Inboard leg vertical tensile stress in steel at mid-plane [Pa]
     
   real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_vmises = 0.0D0
-  !! TF Inboard leg Von-Mises stress r distribution at mid-plane [Pa]
+  !! TF Inboard leg Von-Mises stress in steel r distribution at mid-plane [Pa]
       
   real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_tresca = 0.0D0 
-  !! TF Inboard leg TRESCA stress r distribution at mid-plane [Pa]
+  !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
 
   real(kind(1.0D0)) :: strtf1 = 0.0D0
-  !! strtf : Constrained stress in TF casing structures (Pa)
+  !! Maximum TRESCA stress in TF casing steel structures (Pa)
   
   real(kind(1.0D0)) :: strtf2 = 0.0D0
-  !! strtf : Constrained stress in TF WP conduit structures (Pa)
+  !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
   
   real(kind(1.0D0)) :: sigvvall = 9.3D7
   !! sigvvall /9.3e7/ : allowable stress from TF quench in vacuum vessel (Pa)
@@ -3948,12 +3948,12 @@ module constraint_variables
   !!                 (constraint equation 21, iteration variable 32)
   
   real(kind(1.0D0)) :: fstrcase = 1.0D0
-  !! fstrcase /1.0/ : f-value for TF coil case stress
-  !!                  (constraint equation 31, iteration variable 48)
+  !! f-value for maximum TF coil case TRESCA stress
+  !!   (constraint equation 31, iteration variable 48)
 
   real(kind(1.0D0)) :: fstrcond = 1.0D0
-  !! fstrcond /1.0/ : f-value for TF coil conduit stress
-  !!                  (constraint equation 32, iteration variable 49)
+  !! f-value for maxiumum TF coil conduit TRESCA stress
+  !!   (constraint equation 32, iteration variable 49)
 
   real(kind(1.0D0)) :: ftaucq = 1.0D0
   !! ftaucq /1.0/ : f-value for calculated minimum TF quench time

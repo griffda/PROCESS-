@@ -107,23 +107,23 @@ real(kind(1.0D0)), private :: t_turn_radial, t_turn_toroidal
 !! Turn radial and toroidal dimension [m]
 
 real(kind(1.0D0)), dimension(2*n_radial_array), private :: s_tresca_cond_cea
-!! Conduit Tresca stress with CEA adjustment factors [Pa]
+!! Conduit Tresca stress in stell with CEA adjustment factors [Pa]
 
 real(kind(1.0D0)), dimension(2), private :: sig_tf_r_max 
-!! Radial stress of the point of maximum TRESCA stress (for each layers) [Pa]
+!! Radial stress in steel of the point of maximum TRESCA stress (for each layers) [Pa]
 
 real(kind(1.0D0)), dimension(2), private :: sig_tf_t_max
-!! Toroidal stress of the point of maximum TRESCA stress (for each layers) [Pa]
+!! Toroidal stress in steel of the point of maximum TRESCA stress (for each layers) [Pa]
 
 real(kind(1.0D0)), dimension(2), private :: sig_tf_z_max
 !! Vertical stress of the point of maximum TRESCA stress (for each layers) [Pa]
 !! Rem : Currently constant but will be r dependent in the future
 
 real(kind(1.0D0)), dimension(2), private :: sig_tf_vmises_max
-!! Von-Mises stress of the point of maximum TRESCA stress (for each layers) [Pa]
+!! Von-Mises stress in steel of the point of maximum TRESCA stress (for each layers) [Pa]
 
 real(kind(1.0D0)), dimension(2), private :: sig_tf_tresca_max
-!! Maximum TRESCA stress (for each layers) [Pa]
+!! Maximum TRESCA stress in steel (for each layers) [Pa]
 !! If the CEA correction is addopted, the CEA corrected value is used
 
 type(resistive_material):: copper
@@ -1121,10 +1121,10 @@ subroutine stresscl(iprint)
     real(kind(1.0D0)) :: seff, tcbs, fac, t_ins_eff
     
     real(kind(1.0D0)) :: svmxz
-    !! Von-mises stress setting the radial stress to 0
+    !! Von-mises stress in steel setting the radial stress to 0
 
     real(kind(1.0D0)) :: svmyz
-    !! Von-mises stress setting the toroidal stress to 0
+    !! Von-mises stress in stell setting the toroidal stress to 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1176,7 +1176,7 @@ subroutine stresscl(iprint)
     ! ---
 
 
-    ! Casing yield stress
+    ! Casing stress distribution
     ! ---
     sig_max = 0.0D0
     ii_max = 1
@@ -1212,7 +1212,7 @@ subroutine stresscl(iprint)
     ! ---
 
     
-    ! WP steel conduid yield stress
+    ! WP steel conduid stress distributions
     ! ---
     ! WP conduit stress unsmearing
     fac = eystl*eyins*seff / &
@@ -1424,7 +1424,7 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
         sigt(ii) = kk(1) * ( (1.0D0+nu)*c(1) + (1.0D0-nu)*c(2)/rad_c**2 )
 
         ! Displacement distribution [m]
-        deflect = c(1)*rad_c + c(2)/rad_c
+        deflect(ii) = c(1)*rad_c + c(2)/rad_c
     end do
 
     dradius = (rad(3) - rad(2)) / dble(n_radial_array)
