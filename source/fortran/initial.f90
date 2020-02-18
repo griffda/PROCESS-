@@ -499,6 +499,8 @@ subroutine initial
     !    !!  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)</UL>
     !    lablxc(172) = 'f_avspace       '; boundl(172) = 0.0010D0; boundu(172) = 1.000D0
     !    !!  <LI> (172) f_avspace
+    !    lablxc(173) = 'fbetatry_lower       '; boundl(173) = 0.0010D0; boundu(173) = 1.000D0
+    !    !!  <LI> (173) fbetatry_lower
 
 
     !  Initialise stellarator parameters if necessary

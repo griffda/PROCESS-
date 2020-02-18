@@ -131,6 +131,8 @@ module physics_variables
   !! betaft : fast alpha beta component
   real(kind(1.0D0)) :: betalim = 0.0D0
   !! betalim : allowable beta
+  real(kind(1.0D0)) :: betalim_lower = 0.0D0
+  !! betalim : allowable lower beta
   real(kind(1.0D0)) :: betanb = 0.0D0
   !! betanb : neutral beam beta component
   real(kind(1.0D0)) :: betap = 0.0D0
@@ -3875,6 +3877,9 @@ module constraint_variables
   real(kind(1.0D0)) :: fbetatry = 1.0D0
   !! fbetatry /1.0/ : f-value for beta limit
   !!                  (constraint equation 24, iteration variable 36)
+  real(kind(1.0D0)) :: fbetatry_lower = 1.0D0
+  !! fbetatry /1.0/ : f-value for (lower) beta limit
+  !!                  (constraint equation 84, iteration variable 173)
   real(kind(1.0D0)) :: fcpttf = 1.0D0
   !! fcpttf /1.0/ : f-value for TF coil current per turn upper limit
   !!              (constraint equation 77, iteration variable 146)

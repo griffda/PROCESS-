@@ -752,15 +752,19 @@ contains
 
     call plasma_profiles
 
+
+    !  Total field
+    btot = sqrt(bt**2 + bp**2)
+
+    !  Set beta as a consequence:
+    !  This replaces constraint equation 1 as it is just an equaliity.
+    beta = (betaft + betanb + 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/btot**2 )
+
+
     q95 = q
 
     !  Calculate poloidal field using rotation transform
-
     bp = rminor * bt / rmajor * iotabar
-
-    !  Total field
-
-    btot = sqrt(bt**2 + bp**2)
 
     !  Poloidal beta
 
@@ -892,7 +896,8 @@ contains
 
     !  Calculate beta limit. Does nothing atm so commented out
     
-         call stblim(betalim)
+    call stblim(betalim)
+
 
   end subroutine stphys
 

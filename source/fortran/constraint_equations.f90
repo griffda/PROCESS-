@@ -262,6 +262,8 @@ contains
          case (82); call constraint_eqn_082(args)
          ! Constraint ensuring radial build consistency for stellarators
          case (83); call constraint_eqn_083(args)
+         ! Constraint for lower limit of beta
+         case (84); call constraint_eqn_084(args)
        case default
 
          idiags(1) = icc(i)
@@ -2691,13 +2693,17 @@ contains
    end subroutine constraint_eqn_081
    
    subroutine constraint_eqn_082(args)
-      !+ad_name  constraint_eqn_082
-      !+ad_summ  Equation to ensure that toroidal coils don't collide in toroidal direction
-      !+ad_type  Subroutine
-      !+ad_auth  J Lion, IPP Greifswald
-      !+ad_args  tba
-      !+ad_desc  Lower limit toroidalgap >  tftort
-      !+ad_glos  ftoroidalgap : input : fvalue for constraint toroidalgap > tftort
+      !! Equation for toroidal consistency of stellarator build
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! toroidalgap > tftort
+      !! #=# tfcoil
+      !! #=#=# tftort, ftoroidalgap
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! ftoroidalgap : input real : f-value for constraint toroidalgap > tftort
+      !! toroidalgap : input real :  minimal gap between two stellarator coils
+      !! tftort : input real :  total toroidal width of a tf coil
       use tfcoil_variables, only: tftort,ftoroidalgap,toroidalgap
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2706,7 +2712,7 @@ contains
       args%con = toroidalgap
       args%err = toroidalgap - tftort/ftoroidalgap
       args%symbol = '<'
-      args%units = 'm' !ftoroidalgap is unitless
+      args%units = 'm'
 
    end subroutine constraint_eqn_082
 
@@ -2715,15 +2721,13 @@ contains
       !! author: J Lion, IPP Greifswald
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
-      !! Equation for power through separatrix / major radius upper limit
-      !! #=# current_drive
-      !! #=#=# fnbshinef, nbshinefmax
-      !! and hence also optional here.
+      !! available_radial_space > required_radial_space
+      !! #=# build
+      !! #=#=# tftort, ftoroidalgap
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! fpsepr : input real : f-value for maximum Psep/R limit
-      !! pseprmax : input real :  maximum ratio of power crossing the separatrix to plasma major radius (Psep/R) (MW/m)
-      !! pdivt : input real :  power to be conducted to the divertor region (MW)
-      !! rmajor : input real :  plasma major radius (m) 
+      !! f_avspace : input real : f-value for constraint toroidalgap > tftort
+      !! available_radial_space : input real :  avaible space in radial direction as given by each s.-configuration
+      !! required_radial_space : input real :  required space in radial direction
       use build_variables, only: available_radial_space, required_radial_space, f_avspace
       implicit none
       type (constraint_args_type), intent(out) :: args
@@ -2734,6 +2738,36 @@ contains
       args%symbol = '<'
       args%units = 'm'
    end subroutine constraint_eqn_083
+
+
+   subroutine constraint_eqn_084(args)
+      !! Equation for the lower limit of beta
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !!  (beta-betaft) > betalim_lower
+      !! #=# tfcoil
+      !! #=#=# tftort, ftoroidalgap
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! fbetatry_lower : input real : f-value for constraint toroidalgap > tftort
+      !! betalim_lower : input real :  Lower limit for beta
+      !! beta : input real :  plasma beta
+      !! betaft : input real : Alpha particle beta
+
+      use physics_variables, only: betalim_lower, beta, betaft
+      use constraint_variables, only: fbetatry_lower
+      implicit none
+      type (constraint_args_type), intent(out) :: args
+
+
+      args%cc = 1.0D0 - fbetatry_lower * (beta-betaft)/betalim_lower
+      args%con = betalim_lower * (1.0D0 - args%cc)
+      args%err = (beta-betaft) * args%cc
+      args%symbol = '>'
+      args%units = ''
+
+
+   end subroutine constraint_eqn_084
 
 
 end module constraints

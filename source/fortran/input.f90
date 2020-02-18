@@ -341,6 +341,12 @@ contains
        case ('beta')
           call parse_real_variable('beta', beta, 0.0D0, 1.0D0, &
                'Plasma beta')
+       case ('betalim')
+          call parse_real_variable('betalim', betalim, 0.0D0, 1.0D0, &
+              'Plasma beta upper limit')
+       case ('betalim_lower')
+          call parse_real_variable('betalim_lower', betalim_lower, 0.0D0, 1.0D0, &
+                'Plasma beta lower limit')
        case ('betbm0')
           call parse_real_variable('betbm0', betbm0, 0.0D0, 10.0D0, &
                'Leading coeff. for NB beta fraction')
@@ -675,6 +681,9 @@ contains
        case ('fbetatry')
           call parse_real_variable('fbetatry', fbetatry, 0.001D0, 10.0D0, &
                'F-value for beta limit')
+       case ('fbetatry_lower')
+          call parse_real_variable('fbetatry_lower', fbetatry_lower, 0.001D0, 10.0D0, &
+                  'F-value for (lower) beta limit')
        case ('fcwr')
           call parse_real_variable('fcwr', fcwr, 0.001D0, 10.0D0, &
                'F-value for conducting wall radius')
