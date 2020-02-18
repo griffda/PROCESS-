@@ -442,9 +442,6 @@ def write_parameters(data, out_file):
                 if type(info) is dict and info.get("value") and (
                     type(info.get("comment")) is str):
                     
-                    if len(info["comment"]) == 0:
-                        info["comment"] = "blah"
-                    
                     parameter_line = "{0} = {1} * {2}\n". \
                         format(parameter.ljust(8), info["value"], 
                             info["comment"])
