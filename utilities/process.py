@@ -13,7 +13,11 @@ from pathlib import Path
 from difflib import unified_diff
 from utilities.process_io_lib import input_validator
 
-PROCESS_EXE_PATH = "./bin/process.exe"
+# Set required paths outside the Python package directory
+ROOT_DIR = Path(__file__).parent.parent
+# The root project directory (for running cmake)
+PROCESS_EXE_PATH = ROOT_DIR.joinpath("bin/process.exe")
+# The Process executable (for running Process)
 
 class Process(object):
     """A Process workflow based on command line arguments."""
@@ -26,7 +30,6 @@ class Process(object):
         
         # Run actions
         self.parse_args()
-        self.check_root_dir()
         if self.args.build:
             self.build_process()
             self.create_dicts()
@@ -71,23 +74,11 @@ class Process(object):
         self.args = parser.parse_args()
         # Store namespace object of the args
 
-    def check_root_dir(self):
-        """Check the working dir is the Process root dir
-
-        Look for the .git dir. This is to make sure the subsequent terminal commands
-        work, as they must be run from PROCESS's root dir.
-        """
-        if os.path.isdir(".git"):
-            # Store the path for the root directory
-            self.root_dir = os.getcwd()
-        else:
-            sys.exit("Error: not in Process root dir. Please run this script from "
-                "the root directory of Process.")
-
     def build_process(self):
         """Build Process"""
-        subprocess.run(["cmake", "-H.", "-Bbuild"])
-        subprocess.run(["cmake", "--build", "build"])
+        # cmake must be run from the project root dir
+        subprocess.run(["cmake", "-H.", "-Bbuild"], cwd=ROOT_DIR)
+        subprocess.run(["cmake", "--build", "build"], cwd=ROOT_DIR)
 
     def set_input(self):
         """Validate the input file path, then store it.
@@ -188,7 +179,9 @@ class Process(object):
 
     def create_dicts(self):
         """Create Python dictionaries"""
-        subprocess.run(["cmake", "--build", "build", "--target", "dicts"])
+        # cmake must be run from the project root directory
+        subprocess.run(["cmake", "--build", "build", "--target", "dicts"], 
+            cwd=ROOT_DIR)
 
     def validate_input(self):
         """Validate the input file using the input_validator module."""
@@ -206,8 +199,8 @@ class Process(object):
 
     def run_utils(self):
         """Run a utility if specified on the command line."""
-        # Todo: allow multiple utils to run
-        # Todo: allow options to be passed to utils
+        # TODO allow multiple utils to run
+        # TODO allow options to be passed to utils
         subprocess.run(["python", "./utilities/" + self.args.util + ".py"])
 
 def main():
