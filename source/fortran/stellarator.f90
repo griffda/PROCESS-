@@ -758,7 +758,7 @@ contains
 
     !  Set beta as a consequence:
     !  This replaces constraint equation 1 as it is just an equaliity.
-    beta = (betaft + betanb + 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/btot**2 )
+    beta = (betaft + betanb + 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/btot**2)
 
 
     q95 = q
@@ -768,7 +768,7 @@ contains
 
     !  Poloidal beta
 
-    betap = beta * ( btot/bp )**2
+    !betap = beta * ( btot/bp )**2 ! Dont need this I think.
 
     !  Perform auxiliary power calculations
 
@@ -2197,7 +2197,7 @@ contains
      do k = 1,N_it
  
        ! Sample coil winding pack
-       Awp(k) = (r_coil_minor/100.0D0 + (dble(k)-1) / (dble(N_it)-1) * (r_coil_minor/1.0D0-r_coil_minor/100.0D0))**2
+       Awp(k) = (r_coil_minor/50.0D0 + (dble(k)-1) / (dble(N_it)-1) * (r_coil_minor/1.0D0-r_coil_minor/50.0D0))**2
        if (isumattf==6) Awp(k) =(r_coil_minor/150.0D0 + (dble(k)-1) / (dble(N_it)-1) * (r_coil_minor/1.0D0-r_coil_minor/150.0D0))**2
  
        !  B-field calculation
@@ -2213,10 +2213,11 @@ contains
      
      ! Conduct fraction of conduit * Superconductor fraction in conductor
      f_scu =   (acstf*(1.0D0-vftf))/(leno**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
+     !print *, "f_scu. ",f_scu,"Awp min: ",Awp(1)
  
      RHS = coilcurrent/(Awp(:)*f_scu) ! f_scu should be the fraction of the sc that is in the winding pack.
  
-     Awp_min = (r_coil_minor/20.0D0)**2 ! Initial guess for intersection routine
+     Awp_min = (r_coil_minor/10.0D0)**2 ! Initial guess for intersection routine
      if (isumattf==6) Awp_min = (r_coil_minor/100.0D0)**2 ! If REBCO, then start at smaller winding pack ratios
  
      ! Find the intersection between LHS and RHS (or: how much awp do I need to get to the desired coil current)
@@ -2360,7 +2361,7 @@ contains
     whtcas = tfleng * acasetf * dcase
      ! [kg] mass of Superconductor
     whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
-               *dcond(isumattf)
+               *dcond(isumattf) !awphec is 0 for a stellarator. but keep this term for now.
       ! [kg] mass of Copper in conductor
     whtconcu =  (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
       ! [kg] mass of Steel conduit (sheath)
