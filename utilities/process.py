@@ -35,7 +35,6 @@ class Process(object):
             self.create_dicts()
 
         # Find the input file and look for changes to it
-        # TODO: input file needs to be mandatory; positional arg
         self.set_input()
         self.set_ref_input()
         self.input_file_diff()
@@ -56,7 +55,6 @@ class Process(object):
         parser.add_argument("--input",
             "-i",
             metavar="input_file_path",
-            default="IN.DAT",
             help="The path to the input file that Process runs on")
         parser.add_argument("--ref_input",
             "-r",
@@ -81,18 +79,38 @@ class Process(object):
         subprocess.run(["cmake", "--build", "build"], cwd=ROOT_DIR)
 
     def set_input(self):
-        """Validate the input file path, then store it.
+        """Try to find or validate the input file path, then store it.
         
         Also set the run directory according to the input file path.
         """
-        input_path = Path(self.args.input)
-        if input_path.exists():
-            self.input = input_path
-            # Set input as Path object
-            self.run_dir = Path(input_path.parent)
-            # Set run directory as dir that contains the input file
+        if self.args.input:
+            # Input file path specified as CLI argument
+            input_path = Path(self.args.input)
+            if input_path.exists():
+                self.input = input_path
+                # Set input as Path object
+            else:
+                raise FileNotFoundError("Input file not found on this path.")
         else:
-            raise FileNotFoundError("Input file not found on this path.")
+            # No input file specified; try to find one in the current dir
+            input_files = [path for path in Path.cwd().iterdir() if "IN.DAT" in
+                path.name and "REF_IN.DAT" not in path.name]
+            
+            if len(input_files) == 0:
+                # No input file found
+                raise FileNotFoundError("Input file not found in this dir.")
+            elif len(input_files) == 1:
+                # Only one input file in this dir; use it
+                self.input = input_files[0]
+            else:
+                # More than one input file; ambiguous which one to use
+                raise Exception("More than one IN.DAT found in this dir. "
+                    "Specifiy which one to use with the \"-i\" option, or "
+                    "remove the other ones.")
+
+        # self.input is now defined
+        self.run_dir = self.input.parent
+        # Set run directory as dir that contains the input file
 
     def set_ref_input(self):
         """Find an input file to use as a reference for changes.
@@ -185,17 +203,11 @@ class Process(object):
 
     def validate_input(self):
         """Validate the input file using the input_validator module."""
-        # Check the input file exists, then run the input validator
-        # self.args.input: path to the input file from the project root dir
-        if os.path.isfile(self.args.input):
-            input_validator.validate(self.args.input)
-        else:
-            sys.exit("Input file not found; check the path.")
+        input_validator.validate(self.input)
 
     def run_process(self):
-        """Run Process using a given input file path."""
-        subprocess.run([PROCESS_EXE_PATH, self.args.input])
-        # self.args.input: Path to the input file from the project root dir
+        """Run Process using the input file path."""
+        subprocess.run([PROCESS_EXE_PATH, self.input])
 
     def run_utils(self):
         """Run a utility if specified on the command line."""
