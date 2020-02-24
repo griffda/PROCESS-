@@ -2453,20 +2453,20 @@ subroutine init_itv_1
    !---------------------------------
 
    subroutine init_itv_143
-      !! <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value
+      !! <LI> (143) f_coppera_m2 : TF coil current / copper area < Maximum value
       !!            (f-value for equation 75)
-      lablxc(143) = 'f_copperA_m2  '
+      lablxc(143) = 'f_coppera_m2  '
       boundl(143) = 0.001D0
       boundu(143) = 1.000D0
    end subroutine init_itv_143
 
    real(kind(1.d0)) function itv_143()
-      itv_143 = f_copperA_m2 
+      itv_143 = f_coppera_m2 
    end function itv_143
 
    subroutine set_itv_143(ratio)
       real(kind(1.d0)) :: ratio
-      f_copperA_m2 = ratio
+      f_coppera_m2 = ratio
    end subroutine set_itv_143
 
    !---------------------------------

@@ -296,7 +296,11 @@ module physics_variables
   !!        <LI> = 7 Connor-Hastie model;
   !!        <LI> = 8 Sauter scaling allowing negative triangularity;
   !!        <LI> = 9 FIESTA ST fit </UL>
-  
+  integer :: idia = 0
+  !! idia /0/ : switch for diamagnetic current scaling:<UL>
+  !!       <LI> = 0 Do not calculate;
+  !!       <LI> = 1 Use original TART scaling;
+  !!       <LI> = 2 Use SCENE scaling</UL>
   integer :: idensl = 7
   !! idensl /7/ : switch for density limit to enforce (constraint equation 5):<UL>
   !!         <LI> = 1 old ASDEX;
@@ -342,6 +346,11 @@ module physics_variables
   !!            <LI> = 1 use pedestal profiles
   !!            <LI> = 2 use pedestal profiles and run PLASMOD on final output
   !!            <LI> = 3 use PLASMOD transport model only to calculate pedestal profiles</UL>
+
+  integer :: ips = 0
+  !! ips /0/ : switch for Pfirsch-Schlüter current scaling:<UL>
+  !!       <LI> = 0 Do not calculate;
+  !!       <LI> = 1 Use SCENE scaling</UL>
 
   ! Issue #413
   integer :: ieped = 0
@@ -990,6 +999,12 @@ module current_drive_variables
   !! cboot /1.0/ : bootstrap current fraction multiplier (ibss=1)
   real(kind(1.0D0)) :: cnbeam = 0.0D0
   !! cnbeam : neutral beam current (A)
+  real(kind(1.0D0)) :: diacf_hender = 0.0D0
+  !! diacf_hender : diamagnetic current fraction, Hender fit
+  real(kind(1.0D0)) :: diacf_scene = 0.0D0
+  !! diacf_scene : diamagnetic current fraction, SCENE fit
+  real(kind(1.0D0)) :: diaipf = 0.0D0
+  !! diaipf : diamagnetic current fraction
   real(kind(1.0D0)) :: echpwr = 0.0D0
   !! echpwr : ECH power (MW)
   real(kind(1.0D0)) :: echwpow = 0.0D0
@@ -1012,6 +1027,8 @@ module current_drive_variables
   !!fpion  :  fraction of beam energy to ions
   real(kind(1.0D0)) :: pnbitot = 0.0D0
   !! pnbitot : neutral beam power entering vacuum vessel
+  real(kind(1.0D0)) :: pscf_scene = 0.0D0
+  !! pscf_scene : Pfirsch-Schlüter current fraction, SCENE fit
   real(kind(1.0D0)) :: nbshinemw = 0.0D0
   !! nbshinemw : neutral beam shine-through power
   real(kind(1.0D0)) :: feffcd = 1.0D0
@@ -1081,6 +1098,8 @@ module current_drive_variables
   !! pinjmw : total auxiliary injected power (MW)
   real(kind(1.0D0))  :: pinjfixmw = 0.0D0
   !! pinjfixmw : secondary total fixed auxiliary injected power (MW)
+  real(kind(1.0D0)) :: plasipf = 0.0D0
+  !! plasipf : plasma driven current fraction (Bootstrap + Diamagnetic + PS)
   real(kind(1.0D0)) :: plhybd = 0.0D0
   !! plhybd : lower hybrid injection power (MW)
   real(kind(1.0D0)) :: pnbeam = 0.0D0
@@ -1088,6 +1107,8 @@ module current_drive_variables
   real(kind(1.0D0)) :: porbitlossmw = 0.0D0
   !! porbitlossmw : neutral beam power lost after ionisation but before
   !!                thermalisation (orbit loss power) (MW)
+  real(kind(1.0D0)) :: psipf = 0.0D0
+  !! psipf : Pfirsch-Schlüter current fraction
   real(kind(1.0D0)) :: pwplh = 0.0D0
   !! pwplh : lower hybrid wall plug power (MW)
   real(kind(1.0D0)) :: pwpnb = 0.0D0
@@ -2325,11 +2346,36 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ritfc = 0.0D0
   !! ritfc : total (summed) current in TF coils (A)
   
+  integer, parameter :: n_radial_array = 50
+  !! Size of the radial distribution arrays per layers
+  !! used for stress, strain and displacement distibution
+
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: radial_array = 0.0D0
+  !! Array refining the radii of the stress calculations arrays
+
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_r = 0.0D0
+  !! TF Inboard leg radial stress in steel r distribution at mid-plane [Pa]
+  
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_t = 0.0D0
+  !! TF Inboard leg tangential stress in steel r distribution at mid-plane [Pa]
+  
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: deflect = 0.0D0
+  !! TF coil radial deflection (displacement) radial distribution [m]
+
+  real(kind(1.0D0)) :: sig_tf_z = 0.0D0
+  !! TF Inboard leg vertical tensile stress in steel at mid-plane [Pa]
+    
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_vmises = 0.0D0
+  !! TF Inboard leg Von-Mises stress in steel r distribution at mid-plane [Pa]
+      
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_tresca = 0.0D0 
+  !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
+
   real(kind(1.0D0)) :: strtf1 = 0.0D0
-  !! strtf : Constrained stress in TF casing structures (Pa)
+  !! Maximum TRESCA stress in TF casing steel structures (Pa)
   
   real(kind(1.0D0)) :: strtf2 = 0.0D0
-  !! strtf : Constrained stress in TF WP conduit structures (Pa)
+  !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
   
   real(kind(1.0D0)) :: sigvvall = 9.3D7
   !! sigvvall /9.3e7/ : allowable stress from TF quench in vacuum vessel (Pa)
@@ -3968,12 +4014,12 @@ module constraint_variables
   !!                 (constraint equation 21, iteration variable 32)
   
   real(kind(1.0D0)) :: fstrcase = 1.0D0
-  !! fstrcase /1.0/ : f-value for TF coil case stress
-  !!                  (constraint equation 31, iteration variable 48)
+  !! f-value for maximum TF coil case TRESCA stress
+  !!   (constraint equation 31, iteration variable 48)
 
   real(kind(1.0D0)) :: fstrcond = 1.0D0
-  !! fstrcond /1.0/ : f-value for TF coil conduit stress
-  !!                  (constraint equation 32, iteration variable 49)
+  !! f-value for maxiumum TF coil conduit TRESCA stress
+  !!   (constraint equation 32, iteration variable 49)
 
   real(kind(1.0D0)) :: ftaucq = 1.0D0
   !! ftaucq /1.0/ : f-value for calculated minimum TF quench time
@@ -4704,7 +4750,7 @@ module rebco_variables
   real(kind(1.0D0)) :: coppera_m2_max = 1D8
   !! copperA_m2_max /1e8/ : Maximum TF coil current / copper area (A/m2)
   real(kind(1.0D0)) :: f_coppera_m2 = 1d0
-  !! f_copperA_m2 /1/ : f-value for constraint 75: TF coil current / copper area < copperA_m2_max
+  !! f_coppera_m2 /1/ : f-value for constraint 75: TF coil current / copper area < copperA_m2_max
 
 
   real(kind(1.0D0)) :: tape_thickness

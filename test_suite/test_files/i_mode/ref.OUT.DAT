@@ -25,13 +25,13 @@
  
    Program : ./process.exe
    Version : 1.0.16   Release Date :: 2019-07-15
-   Tag No. : 1.0.16-295-gc0b5505a
-    Branch : develop
-   Git log : Merge branch 'issue-848-vforce' into 'develop',
- Date/time : 21 Jan 2020 15:50:25 +00:00(hh:mm) UTC
-      User : morrisj
-  Computer : claptrap-2.local
- Directory : /Users/morrisj/Work/process/reset_suite/test_suite
+   Tag No. : 1.0.16-416-g7662003c
+    Branch : issue-992-ip
+   Git log : Added recommendation to use idia and ips if diamagnetic fraction is ov
+ Date/time : 11 Feb 2020 14:56:54 +00:00(hh:mm) UTC
+      User : smuldrew
+  Computer : J0670-iMac
+ Directory : /Users/smuldrew/process/develop/test_suite
      Input : IN.DAT
  Run title : I-mode 2019 PMU
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
@@ -69,8 +69,8 @@
  Number of constraints (total)                                            (neqns+nineqns)                  27     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.695E-09  OP 
- VMCON convergence parameter                                              (convergence_parameter)   3.384E-10  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.687E-09  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   3.376E-10  OP 
  Number of VMCON iterations                                               (nviter)                         38  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -157,33 +157,33 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  1.4260E-02              1.0203E-12                -7.1550E-11
+    1  Beta consistency                      =  1.4260E-02              1.0203E-12                -7.1552E-11
     2  Global power balance consistency      =  1.0133E-01 MW/m3       -1.4151E-11 MW/m3           1.3966E-10
     3  Radial build consistency              =  9.4670E+00 m           -2.1021E-15 m               2.2204E-16
-    4  Density upper limit                   <  6.3314E+19 /m3         -4.9152E+04 /m3            -7.7716E-16
-    5  Neutron wall load upper limit         <  5.8885E-01 MW/m2        3.2444E-10 MW/m2           5.5097E-10
+    4  Density upper limit                   <  6.3314E+19 /m3         -3.2768E+04 /m3            -5.5511E-16
+    5  Neutron wall load upper limit         <  5.8885E-01 MW/m2        3.2443E-10 MW/m2           5.5097E-10
     6  Fusion power upper limit              <  1.3000E+03 MW          -7.0193E-07 MW              5.5097E-10
-    7  Burn time lower limit                 >  7.2000E+03 sec         -7.3931E-08 sec             1.0268E-11
+    7  Burn time lower limit                 >  7.2000E+03 sec         -5.1141E-08 sec             7.1030E-12
     8  L-H power threshold limit             >  1.2493E+02 MW           8.8552E-08 MW             -7.0879E-10
-    9  Injection power upper limit           <  1.5000E+02 MW           1.3094E+02 MW             -5.9952E-15
+    9  Injection power upper limit           <  1.5000E+02 MW           1.3094E+02 MW             -4.9960E-15
    10  pdivt lower limit                     >  2.4000E+02 MW           1.3375E-07 MW             -5.5728E-10
-   11  Net electric power lower limit        >  2.2000E+02 MW           1.9488E-04 MW              8.8580E-07
-   12  Beta upper limit                      <  5.4212E-02             -4.4578E-12                -8.2229E-11
-   13  Peak toroidal field upper limit       <  1.3500E+01 T           -5.9952E-15 T               4.4409E-16
-   14  CS coil EOF current density limit     <  4.3503E+07 A/m2        -1.5165E-04 A/m2           -3.4860E-12
-   15  CS coil BOP current density limit     <  3.5153E+07 A/m2         1.0006E-05 A/m2            2.8466E-13
-   16  I_op / I_critical (TF coil)           <  3.1963E+07 A/m2         1.9459E-07 A/m2           -1.0991E-14
-   17  Dump voltage upper limit              <  1.0000E+01 V           -2.1469E-09 V              -2.1469E-10
-   18  J_winding pack/J_protection limit     <  1.7704E+07 A/m2         0.0000E+00 A/m2           -7.7716E-15
-   19  TF coil temp. margin lower limit      >  1.5000E+00 K            2.6645E-14 K              -1.7764E-14
-   20  CS temperature margin lower limit     >  1.5000E+00 K           -8.1624E-13 K               5.4423E-13
+   11  Net electric power lower limit        >  2.2000E+02 MW           1.9487E-04 MW              8.8579E-07
+   12  Beta upper limit                      <  5.4212E-02             -4.4578E-12                -8.2230E-11
+   13  Peak toroidal field upper limit       <  1.3500E+01 T            0.0000E+00 T              -0.0000E+00
+   14  CS coil EOF current density limit     <  4.3503E+07 A/m2        -1.5215E-04 A/m2           -3.4975E-12
+   15  CS coil BOP current density limit     <  3.5153E+07 A/m2         9.6187E-06 A/m2            2.7356E-13
+   16  I_op / I_critical (TF coil)           <  3.1963E+07 A/m2         2.3390E-07 A/m2           -1.3212E-14
+   17  Dump voltage upper limit              <  1.0000E+01 V           -2.1461E-09 V              -2.1461E-10
+   18  J_winding pack/J_protection limit     <  1.7704E+07 A/m2         0.0000E+00 A/m2           -6.7724E-15
+   19  TF coil temp. margin lower limit      >  1.5000E+00 K            3.1086E-14 K              -2.0761E-14
+   20  CS temperature margin lower limit     >  1.5000E+00 K           -7.8693E-13 K               5.2469E-13
    21  taup/taueff                           >  5.0000E+00             -1.0097E-09                 1.9197E-10
-   22  Dump time set by VV stress            >  3.8488E+01 s           -5.1956E+00 s              -2.4536E-14
-   23  CS Tresca stress limit                <  6.6000E+08 Pa           5.6505E-05 Pa              8.5709E-14
-   24  Peak CS field upper limit             <  1.3500E+01 A/turn      -1.1031E-12 A/turn          8.1712E-14
-   25  Upper Lim. on Psep * Bt / q A R       <  1.3600E+01 MWT/m       -7.5791E-09 MWT/m           5.5728E-10
-   26  TF coil case stress upper limit       <  6.6000E+08 Pa          -4.8855E-02 Pa             -7.4023E-11
-   27  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -5.4217E-02 Pa             -8.2147E-11
+   22  Dump time set by VV stress            >  3.8488E+01 s           -5.1956E+00 s              -2.4314E-14
+   23  CS Tresca stress limit                <  6.6000E+08 Pa           5.0902E-05 Pa              7.7272E-14
+   24  Peak CS field upper limit             <  1.3500E+01 A/turn      -1.0641E-12 A/turn          7.8826E-14
+   25  Upper Lim. on Psep * Bt / q A R       <  1.3600E+01 MWT/m       -7.5790E-09 MWT/m           5.5728E-10
+   26  TF coil case stress upper limit       <  6.6000E+08 Pa          -4.8828E-02 Pa             -7.3981E-11
+   27  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -5.4183E-02 Pa             -8.2095E-11
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -449,9 +449,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Bootstrap fraction (ITER 1989)                                           (bscf_iter89)                 0.153  OP 
  Bootstrap fraction (Sauter et al)                                        (bscf_sauter)                 0.217  OP 
  Bootstrap fraction (Nevins et al)                                        (bscf_nevins)                 0.195  OP 
- Bootstrap fraction (Wilson et al)                                        (bscf_wilson)                 0.221  OP 
+ Bootstrap fraction (Wilson)                                              (bscf_wilson)                 0.221  OP 
+ Diamagnetic fraction (Hender)                                            (diacf_hender)                0.005  OP 
+ Diamagnetic fraction (SCENE)                                             (diacf_scene)                 0.005  OP 
+ Pfirsch-Schlueter fraction (SCENE)                                       (pscf_scene)                 -0.001  OP 
    (Sauter et al bootstrap current fraction model used)
+   (Diamagnetic current fraction not calculated)
+   (Pfirsch-Schlüter current fraction not calculated)
  Bootstrap fraction (enforced)                                            (bootipf.)                    0.217  OP 
+ Diamagnetic fraction (enforced)                                          (diaipf.)                     0.000  OP 
+ Pfirsch-Schlueter fraction (enforced)                                    (psipf.)                      0.000  OP 
  Loop voltage during burn (V)                                             (vburn)                   3.197E-02  OP 
  Plasma resistance (ohm)                                                  (rplas)                   2.004E-09  OP 
  Resistive diffusion time (s)                                             (res_time)                7.196E+03  OP 
@@ -505,9 +512,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Fractions of current drive :
  
  Bootstrap fraction                                                       (bootipf)                     0.217  OP 
+ Diamagnetic fraction                                                     (diaipf)                      0.000  OP 
+ Pfirsch-Schlueter fraction                                               (psipf)                       0.000  OP 
  Auxiliary current drive fraction                                         (faccd)                       0.009  OP 
  Inductive fraction                                                       (facoh)                       0.774  OP 
- Total                                                                    (bootipf+faccd+facoh          1.000     
+ Total                                                                    (plasipf+faccd+facoh          1.000     
  Fraction of the plasma current produced by non-inductive means           (fvsbrnni)                    0.226  ITV
  
  Electron cyclotron injected power (MW)                                   (echpwr)                  5.347E+01  OP 
@@ -649,7 +658,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total mass of TF coils (kg)                                              (whttf)                   3.224E+07  OP 
  Mass of each TF coil (kg)                                                (whttf/n_tf)              2.015E+06  OP 
  Vertical separating force per leg (N)                                    (vforce)                  4.013E+08  OP 
- Centering force per coil (N/m)                                           (cforce)                  1.284E+08  OP 
+ Centring force per coil (N/m)                                            (cforce)                  1.284E+08  OP 
  
  Coil Geometry :
  
@@ -729,7 +738,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 6.600E+08     
  Vertical stress (Pa)                                                     (sigvert)                 2.410E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))               0.000E+00     
+ Case radial stress (Pa)                                                  (sigrtf(1))               4.885E-08     
  Case tangential stress (Pa)                                              (sigttf(1))              -4.190E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -3.230E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -3.537E+08  OP 
@@ -910,7 +919,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -7.687E+06 -7.687E+06 -7.687E+06  0.000E+00
    5         0.000E+00  0.000E+00 -5.288E+06 -5.288E+06 -5.288E+06  0.000E+00
    6         0.000E+00  0.000E+00 -5.288E+06 -5.288E+06 -5.288E+06  0.000E+00
-   7         0.000E+00  0.000E+00 -3.945E-09 -3.945E-09  3.156E-08  0.000E+00
+   7         0.000E+00  0.000E+00 -3.945E-09 -3.945E-09 -3.156E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.772E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                 1.837E-01  OP 

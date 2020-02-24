@@ -1180,15 +1180,23 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     real(kind(1.0D0)) :: seff, tcbs, fac, t_ins_eff
     
     real(kind(1.0D0)) :: svmxz
-    !! Von-mises stress setting the radial stress to 0
+    !! Von-mises stress in steel setting the radial stress to 0
 
     real(kind(1.0D0)) :: svmyz
-    !! Von-mises stress setting the toroidal stress to 0
+    !! Von-mises stress in stell setting the toroidal stress to 0
 
     real(kind(1.0D0)) :: dr_wp_layer
     !! Size of WP layer with homogeneous smeared property 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    ! Stress model not valid the TF does not contain any hole
+    ! Rem SK : Can be easily ameneded playing around the boundary conditions
+    if ( abs(r_tf_inboard_in) < epsilon(r_tf_inboard_in) ) then
+        call report_error(245)
+        strtf1 = 0.0D0
+        strtf2 = 0.0D0
+        return
+    end if
 
     !  Setup stress model call
     ! ------
@@ -1410,8 +1418,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     end if
     ! ---
 
-
-    ! In WP / Conductor layer
+    
+    ! WP steel conduit stress distributions
     ! ---
     sig_max = 0.0D0
     ii_max = 0
@@ -1808,10 +1816,10 @@ subroutine generalized_plane_strain( nu, rad, ey, d_curr, v_force, & ! Inputs
 
     real(kind(1.0D0)), dimension(n_radial_array*nlayers), intent(out) :: strain_r
     !! Strain distribution in the radial direction (r)
-      
+
     real(kind(1.0D0)), dimension(n_radial_array*nlayers), intent(out) :: strain_t
     !! Strain distribution in the toroidal direction (t)
-      
+          
     real(kind(1.0D0)), intent(out) :: strain_z
     !! Uniform strain in the vertical direction (z)
 

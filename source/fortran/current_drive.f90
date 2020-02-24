@@ -525,11 +525,13 @@ contains
 
     call osubhd(outfile,'Fractions of current drive :')
     call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf, 'OP ')
+    call ovarrf(outfile,'Diamagnetic fraction','(diaipf)',diaipf, 'OP ')
+    call ovarrf(outfile,'Pfirsch-Schlueter fraction','(psipf)',psipf, 'OP ')
     call ovarrf(outfile,'Auxiliary current drive fraction','(faccd)',faccd, 'OP ')
     call ovarrf(outfile,'Inductive fraction','(facoh)',facoh, 'OP ')
     ! Add total error check.
-    call ovarrf(outfile,'Total','(bootipf+faccd+facoh)',bootipf+faccd+facoh)
-    if (abs(bootipf+faccd+facoh-1.0d0) > 1.0d-8) then
+    call ovarrf(outfile,'Total','(plasipf+faccd+facoh)',plasipf+faccd+facoh)
+    if (abs(plasipf+faccd+facoh-1.0d0) > 1.0d-8) then
         call ocmmnt(outfile,'ERROR: current drive fractions do not add to 1')
     end if
     ! MDK Add fvsbrnni as it can be an iteration variable
