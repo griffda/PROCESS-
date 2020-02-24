@@ -21,7 +21,7 @@ if __name__ == '__main__':
     # Option definition
     # -----------------
     parser = argparse.ArgumentParser( description='Plot optimization information', formatter_class=RawTextHelpFormatter )
-    parser.add_argument('-p'  , '--plot_selec'    , nargs='?', default='all', help="Plot selection string :\n - If it containts 'sig'      -> Stress radial dependency \n - If it containts 'disp'     -> Displacement \n \n - If it containts 'all'      -> all the mentionned plots (default value)")
+    parser.add_argument('-p'  , '--plot_selec'    , nargs='?', default='all', help="Plot selection string :\n - If it containts 'sig'      -> Stress radial dependency \n - If it containts 'disp'     -> Displacement \n - If it containts 'all'      -> all the mentionned plots (default value)")
     parser.add_argument('-sf' , '--save_format'   , nargs='?', default='pdf', help="output format (default='pdf') " )
     parser.add_argument('-as' , '--axis_font_size', nargs='?', default=18   , help="Axis label font size selection (default=18)", type=int )
 
