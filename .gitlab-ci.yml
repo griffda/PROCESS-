@@ -49,9 +49,6 @@ stages:
 #-----------------
 
 make:
-  only:
-    - develop
-    - /^issue-.*$/
   stage: build
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
@@ -60,9 +57,6 @@ make:
 
 
 make_dicts:
-  only:
-    - develop
-    - /^issue-.*$/
   stage: build
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
@@ -71,71 +65,53 @@ make_dicts:
 
 
 make_developerguide:
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- <<: *build-ubuntu-setup
- image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
- script:
-  - cmake --build build --target developerguide
+  stage: build
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - cmake --build build --target developerguide
 
 
 make_utilitiesdoc:
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- <<: *build-ubuntu-setup
- image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
- script:
-  - cmake --build build --target utilitiesdoc
+  stage: build
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - cmake --build build --target utilitiesdoc
 
 
 make_optsolverdoc:
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- <<: *build-ubuntu-setup
- image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
- script:
-  - cmake --build build --target optsolverdoc
+  stage: build
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - cmake --build build --target optsolverdoc
 
 
 make_tfdoc:
- only:
-  - develop
-  - /^issue-.*$/
- stage: build
- <<: *build-ubuntu-setup
- image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
- script:
-  - cmake --build build --target tfdoc
+  stage: build
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - cmake --build build --target tfdoc
 
 #-----------------
 #  Testing
 #-----------------
 
 unit_tests:
- when: on_success
- only:
-  - develop
-  - /^issue-.*$/
- stage: testing
- <<: *build-ubuntu-setup
- image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
- script:
-  - cmake --build build
-  - ls bin/
-  - ./bin/process_GTest.exe
+  when: on_success
+  stage: testing
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - cmake --build build
+    - ls bin/
+    - ./bin/process_GTest.exe
 
 
 test_suite:
   when: on_success
-  only:
-    - develop
-    - /^issue-.*$/
   stage: testing
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
@@ -149,9 +125,6 @@ test_suite:
 
 baseline_2019:
   when: on_success
-  only:
-    - develop
-    - /^issue-.*$/
   stage: testing
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
@@ -175,9 +148,6 @@ baseline_2019:
 
 baseline_2018:
   when: on_success
-  only:
-    - develop
-    - /^issue-.*$/
   stage: testing
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
@@ -204,16 +174,13 @@ baseline_2018:
 #-----------------
 
 line_length:
- when: on_success
- only:
-  - develop
-  - /^issue-.*$/
- stage: standards
- <<: *build-ubuntu-setup
- image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
- script:
-  - pwd
-  - python3 utilities/line_length_standard.py
+  when: on_success
+  stage: standards
+  <<: *build-ubuntu-setup
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - pwd
+    - python3 utilities/line_length_standard.py
 
 #-----------------
 #  Freia
