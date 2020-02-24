@@ -115,20 +115,27 @@ config file
 > `./utilities/plot_sankey.py`
 
 The power flows of the power plant will be extracted from MFILE.DAT and used to populate a
-Sankey diagram. The diagram will start from the initial fusion power and show all of the inputs 
-and outputs for the power flows. The Recirculated will finish to connect with the initial
-fusion power.
+Sankey diagram. The diagram will start from the initial fusion power and show the inputs
+and outputs for the power flows. The Recirculated power will finish by connecting the plasma
+heating back into the fusion power.
 
 ### Usage
 
 ```
-python plot_sankey.py [-h] [-e END] [-f MFILE] [-s]
+python plot_sankey.py [-h] [-e END] [-m MFILE] [-f]
 ```
 
 ### Output
 
-A .pdf file is created called 'SankeyPowerFlow.pdf', and 'SankeyPowerFlow_simplified.pdf' if
-the -s option is used, in the directory the utility was run. 
+A .pdf file is created called 'SankeyPowerFlow.pdf', and 'SankeyPowerFlow_full.pdf' if
+the -f option is used, in the directory the utility was run. The full version is current
+not working and will be implemented in the future.
+N.B. Rounding to whole integer can cause errors of $\pm$1 between adjacent arrows.
+
+### Example Output
+
+![Sankey flow chart of 2018 baseline](../../img/SankeyPowerFlow.png)
+Figure 1: *Sankey flow chart of 2018 baseline*
 
 ### Options
 
@@ -136,8 +143,8 @@ the -s option is used, in the directory the utility was run.
 | - | - |
 | `-h --help`       | show help message and exit      |
 | `-e --end`        | file format, default = pdf      |
-| `-f --mfile`      | mfile name, default = MFILE.DAT |
-| `-s, --simplified`| Plot a simplified version       |
+| `-m --mfile`      | mfile name, default = MFILE.DAT |
+| `-f, --full`      | Plot a full version             |
 
 ## Morris Method
 
