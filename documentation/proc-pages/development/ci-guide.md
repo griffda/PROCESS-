@@ -1,9 +1,6 @@
 
 # Introduction
 
-!!! Note "CI Branches"
-    Currently runs on `develop` and any branch with a name starting with `issue-`
-
 The CI jobs run using the Ubuntu image that has been uploaded to the repository 
 called `git.ccfe.ac.uk:4567/process/process/ci-image`.
 
