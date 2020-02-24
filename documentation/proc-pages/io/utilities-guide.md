@@ -345,3 +345,39 @@ A .pdf file is created called `sobol_output.pdf`. The name of the produced pdf f
 | `-h, --help`    | show this help message and exit                           |
 | `-f DATAFILE`   | datafile for plotting, default = sobol.txt                |
 | `-o OUTPUTFILE` | filename of outputed pdf file, default = sobol_output.pdf |
+
+
+
+## TF Stress distribution plots
+
+> `./utilities/plot_stress_tf.py`
+
+Program to plot stress and displacement radial distributions at the inboard mid-plane section of the TF coil.
+This program uses the `SIG_TF.DAT` file, that store stress distributions of the VMCON point and stores the outputs
+plots in the `SIG_TF_plots/` folder, created if not existing.
+
+### Discussion of the stress modelling assumptions
+
+In case of a resisitive coil, the stress is calculated from a generalized plane strain model, hence provinding vertical
+stress radial distribution, alongside the radial and the toroidal ones. This is not the case for superconducting magnets
+as a plane stress modelling is used for now. The reason is that a transverse orthotropic formulation of the generalized 
+plane strain, is needed to correctly take the difference of the casing in the vertical direction properly. This will be
+done in the near future. 
+
+### Usage
+
+```bash
+usage: plot_stress_tf.py [-h] [-p [PLOT_SELEC]] [-sf [SAVE_FORMAT]] [-as [AXIS_FONT_SIZE]]
+```
+
+### Option
+
+| Argument | Description |
+| - | - |
+| `-h, --help`    | show this help message and exit                           |
+| `-p, --plot_selec [PLOT_SELEC]`   | Plot selection string :                 |
+| - |   - if the string contains `sig`, plot the stress distributions |
+| - |   - if the string contains `disp`, plot the radial displacement distribution |
+| - |   - if the string contains `all`, plot stress and displecement distributions |
+| `-sf, --save_format [SAVE_FORMAT]` | output format (default='pdf')  |
+| `-as, --axis_font_size [AXIS_FONT_SIZE]` | Axis label font size selection (default=18) |

@@ -27,87 +27,104 @@ tfcind, tfspcall, initialise_cables
 ! Module variables
 !-----------------
 
-! Dimensionless winding pack width
 real(kind(1.0D0)), private :: tf_fit_t
+!! Dimensionless winding pack width
 
-! Dimensionless winding pack radial thickness
 real(kind(1.0D0)), private :: tf_fit_z
+!! Dimensionless winding pack radial thickness
 
-! Ratio of peak field with ripple to nominal axisymmetric peak field
 real(kind(1.0D0)), private :: tf_fit_y
+!! Ratio of peak field with ripple to nominal axisymmetric peak field
 
-! Current in each TF coil
 real(kind(1.0D0)) :: tfc_current
+!! Current in each TF coil
 
-! Total cross-sectional area of winding pack including
-! GW insulation and insertion gap [m2]
 real(kind(1.0D0)), private :: awpc
+!! Total cross-sectional area of winding pack including
+!! GW insulation and insertion gap [m2]
 
-! Total cross-sectional area of winding pack [m2]
 real(kind(1.0D0)), private :: awptf
+!! Total cross-sectional area of winding pack [m2]
 
-! Vertical distance from the midplane to the top of the tapered section [m]
 real(kind(1.0D0)), private :: h_cp_top
+!! Vertical distance from the midplane to the top of the tapered section [m]
 
-! Radial position of inner edge of TF coil inboard leg [m]
 real(kind(1.0D0)), private :: r_tf_inboard_in
+!! Radial position of inner edge of TF coil inboard leg [m]
 
-! Radial position of plasma-facing edge of TF coil inboard leg [m]
 real(kind(1.0D0)), private :: r_tf_inboard_out
+!! Radial position of plasma-facing edge of TF coil inboard leg [m]
 
-! Radial position of plasma-facing edge of TF coil outboard leg [m]
 real(kind(1.0D0)), private :: r_tf_outboard_in
+!! Radial position of plasma-facing edge of TF coil outboard leg [m]
 
-! Radial position of outer edge of TF coil inboard leg [m]
 real(kind(1.0D0)), private :: r_tf_outboard_out
+!! Radial position of outer edge of TF coil inboard leg [m]
 
-! Radial position of inner edge and centre of winding pack [m]
 real(kind(1.0D0)), private :: r_wp_inner
+!! Radial position of inner edge and centre of winding pack [m]
 
-! Radial position of outer edge and centre of winding pack [m]
 real(kind(1.0D0)), private :: r_wp_outer
+!! Radial position of outer edge and centre of winding pack [m]
 
-! Radial position of centre and centre of winding pack [m]
 real(kind(1.0D0)), private :: r_wp_centre
+!! Radial position of centre and centre of winding pack [m]
 
-! Total/CP insulator insulator volume [m3]
 real(kind(1.0D0)), private :: vol_ins
+!! Total/CP insulator insulator volume [m3]
 
-! CP insulator insulator volume [m3]
 real(kind(1.0D0)), private :: vol_ins_cp
+!! CP insulator insulator volume [m3]
 
-! Outboard leg insulator volume [m3]
 real(kind(1.0D0)), private :: vol_ins_leg
+!! Outboard leg insulator volume [m3]
 
-! Total conductor insulator volume [m3]
 real(kind(1.0D0)), private :: vol_cond
+!! Total conductor insulator volume [m3]
 
-! Outboard leg conductor insulator volume [m3]
 real(kind(1.0D0)), private :: vol_cond_leg
+!! Outboard leg conductor insulator volume [m3]
 
-! Volume of the CP outer casing cylinder
 real(kind(1.0D0)), private :: vol_case_cp
+!! Volume of the CP outer casing cylinder
 
-! Toroidal thickness of of winding pack [m]
 real(kind(1.0D0)), private :: t_wp_toroidal
+!! Toroidal thickness of of winding pack [m]
 
-! Half toroidal angular extent of a single TF coil inboard leg
 real(kind(1.0D0)), private :: theta_coil
+!! Half toroidal angular extent of a single TF coil inboard leg
 
-! Tan half toroidal angular extent of a single TF coil inboard leg
 real(kind(1.0D0)), private :: tan_theta_coil
+!! Tan half toroidal angular extent of a single TF coil inboard leg
 
-! Conductor area radial and toroidal dimension [m]
 real(kind(1.0D0)), private :: t_conductor_radial, t_conductor_toroidal
+!! Conductor area radial and toroidal dimension [m]
 
-! Cable area radial and toroidal dimension [m]
 real(kind(1.0D0)), private :: t_cable_radial, t_cable_toroidal
+!! Cable area radial and toroidal dimension [m]
 
-! Turn radial and toroidal dimension [m]
 real(kind(1.0D0)), private :: t_turn_radial, t_turn_toroidal
+!! Turn radial and toroidal dimension [m]
 
-! Conduit Tresca stress with CEA adjustment factors [Pa]
-real(kind(1.0D0)), private :: s_tresca_cond_cea
+real(kind(1.0D0)), dimension(2*n_radial_array), private :: s_tresca_cond_cea
+!! Conduit Tresca stress in stell with CEA adjustment factors [Pa]
+
+real(kind(1.0D0)), dimension(2), private :: sig_tf_r_max 
+!! Radial stress in steel of the point of maximum TRESCA stress (for each layers) [Pa]
+
+real(kind(1.0D0)), dimension(2), private :: sig_tf_t_max
+!! Toroidal stress in steel of the point of maximum TRESCA stress (for each layers) [Pa]
+
+real(kind(1.0D0)), dimension(2), private :: sig_tf_z_max
+!! Vertical stress of the point of maximum TRESCA stress (for each layers) [Pa]
+!! Rem : Currently constant but will be r dependent in the future
+
+real(kind(1.0D0)), dimension(2), private :: sig_tf_vmises_max
+!! Von-Mises stress in steel of the point of maximum TRESCA stress (for each layers) [Pa]
+
+real(kind(1.0D0)), dimension(2), private :: sig_tf_tresca_max
+!! Maximum TRESCA stress in steel (for each layers) [Pa]
+!! If the CEA correction is addopted, the CEA corrected value is used
 
 type(resistive_material):: copper
 type(resistive_material):: hastelloy
@@ -213,7 +230,7 @@ subroutine sctfcoil(outfile,iprint)
     call peak_tf_with_ripple(n_tf, wwp1, thkwp, r_wp_centre, bmaxtf, bmaxtfrp, peaktfflag)
 
     ! Do stress calculations
-    call stresscl
+    call stresscl(iprint)
 
     if (iprint == 1) call outtf(outfile, peaktfflag)
 
@@ -235,7 +252,7 @@ subroutine tf_coil_geometry()
     ! Radial position of inner/outer edge of inboard TF coil leg [m]
     r_tf_inboard_in =  r_tf_inboard_mid - 0.5D0 * tfcth
     r_tf_inboard_out = r_tf_inboard_mid + 0.5D0 * tfcth
-    
+
     ! Annular area of midplane containing TF coil inboard legs ( WP + casing ) [m2]
     tfareain = pi * (r_tf_inboard_out**2 - r_tf_inboard_in**2)
 
@@ -1072,7 +1089,7 @@ end subroutine peak_tf_with_ripple
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine stresscl
+subroutine stresscl(iprint)
 
     !! TF coil stress routine
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -1089,21 +1106,39 @@ subroutine stresscl
 
     !  Arguments
 
-    !  Local variables
+    integer, intent(in) :: iprint
+    !! Print option (if 1, output quantities calculated)
 
-    !integer :: i
-    real(kind(1.0D0)) :: seff, tcbs, fac, svmxz, svmyz, t_ins_eff
+    integer :: ii
+    !! do loop index
+
+    integer :: ii_max
+    !! Index of the maximum TRESCA stress
+
+    real(kind(1.0D0)) :: sig_max
+    !! Working float to find maximum TRESCA stress index
+
+    real(kind(1.0D0)) :: seff, tcbs, fac, t_ins_eff
+    
+    real(kind(1.0D0)) :: svmxz
+    !! Von-mises stress in steel setting the radial stress to 0
+
+    real(kind(1.0D0)) :: svmyz
+    !! Von-mises stress in stell setting the toroidal stress to 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Simple stress model option.  REMOVED Issue #781
-    ! if (tfc_model == 0) then
-    !     call sctfjalw(bmaxtfrp,r_tf_inboard_mid,r_tf_outboard_mid,rbmax,(1.0D-6*alstrtf), tdmptf,jwdgcrt)
-    !     return
-    ! end if
+    ! Stress model not valid the TF does not contain any hole
+    ! Rem SK : Can be easily ameneded playing around the boundary conditions
+    if ( abs(r_tf_inboard_in) < epsilon(r_tf_inboard_in) ) then
+        call report_error(245)
+        strtf1 = 0.0D0
+        strtf2 = 0.0D0
+        return
+    end if
 
-    !  Set up graded stress model call information
-
+    !  Setup stress model call
+    ! ---
     seff = sqrt(cpttf/jwptf)
     if (acstf >= 0.0D0) then
         tcbs = sqrt(acstf)
@@ -1115,103 +1150,165 @@ subroutine stresscl
     !  Layers are labelled from inboard to outboard.
     !  The first layer is the steel casing inboard of the winding pack,
     !  while the second layer is the winding pack itself.
-
-    radtf(1) = r_tf_inboard_mid - 0.5D0*tfcth
-    radtf(2) = rbmax - thkwp
-    radtf(3) = rbmax
-
-    eyoung(1) = eystl
+    radtf(1) = r_tf_inboard_in
+    radtf(2) = r_wp_inner
+    radtf(3) = r_wp_outer
 
     ! include groundwall insulation + insertion gap in thicndut
     ! inertion gap is tfinsgap on 4 sides
     t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
 
+    eyoung(1) = eystl
     eyoung(2) = eyngeff(eystl,eyins,t_ins_eff,thwcndut,tcbs)
 
     jeff(1) = 0.0D0
     jeff(2) = ritfc / ( pi * (radtf(3)**2 - radtf(2)**2))
+    ! ---
 
-    !  Call stress routine
-    call two_layer_stress(poisson,radtf,eyoung,jeff,sigrtf,sigttf,deflect)
+    ! Stress calculation
+    ! ---
+    ! Radial - Toroidal stress radial distribution [Pa]
+    call two_layer_stress( poisson, radtf, eyoung, jeff,             & ! Inputs
+                           sig_tf_r, sig_tf_t, deflect, radial_array ) ! Outputs
 
-    !  Convert to conduit + case
+    ! Vertical stress [Pa]
+    sig_tf_z = vforce / (acasetf + acndttf*turnstf)
+    ! ---
 
-    !fac = eystl*eyins*seff / &
-    !     (eyins*(seff-2.0D0*thicndut) + 2.0D0*thicndut*eystl)
 
+    ! Casing stress distribution
+    ! ---
+    sig_max = 0.0D0
+    ii_max = 1
+    do ii = 1, n_radial_array
+
+        ! Von-mises stress [Pa]
+        if ( iprint == 1 ) then
+            sig_tf_vmises(ii) = sigvm(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z, 0.0D0, 0.0D0, 0.0D0)
+        end if
+
+        ! TRESCA stress [Pa] 
+        sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z)
+        
+        ! TRESCA stress using CEA calculation [Pa]
+        s_tresca_cond_cea(ii) = sig_tf_tresca(ii)
+
+        ! Finding maximum TRESCA
+        if ( sig_tf_tresca(ii) > sig_max ) then
+            sig_max = sig_tf_tresca(ii)
+            ii_max = ii
+        end if
+    end do
+
+    ! Stresses of the maximum TRESCA stress point
+    sig_tf_tresca_max(1) = sig_tf_tresca(ii_max)
+    
+    if ( iprint == 1 ) then
+        sig_tf_r_max(1) = sig_tf_r(ii_max)
+        sig_tf_t_max(1) = sig_tf_t(ii_max)
+        sig_tf_z_max(1) = sig_tf_z        ! sig_tf_z is not a distribution yet 
+        sig_tf_vmises_max(1) = sig_tf_vmises(ii_max)
+    end if
+    ! ---
+
+    
+    ! WP steel conduid stress distributions
+    ! ---
+    ! WP conduit stress unsmearing
     fac = eystl*eyins*seff / &
-    (eyins*(seff-2.0D0*t_ins_eff) + 2.0D0*t_ins_eff*eystl)
+          (eyins*(seff-2.0D0*t_ins_eff) + 2.0D0*t_ins_eff*eystl)
+    
+    sig_max = 0.0D0
+    ii_max = 0
+    do ii = n_radial_array + 1, 2*n_radial_array
+    
+        ! Stress unsmearing [Pa]
+        sig_tf_r(ii) = sig_tf_r(ii)/eyoung(2) * fac
+        sig_tf_t(ii) = sig_tf_t(ii)/eyoung(2) * fac
+        
+        ! Von-mises stress calculation (addapted to the smearing procedure) [Pa]
+        if ( iprint == 1 ) then
+            svmxz = sigvm( 0.0D0, sig_tf_t(ii), sig_tf_z, 0.0D0,0.0D0,0.0D0)
+            svmyz = sigvm( sig_tf_r(ii), 0.0D0, sig_tf_z, 0.0D0,0.0D0,0.0D0)
+            sig_tf_vmises(ii) = max(svmxz, svmyz)
+        end if
+    
+        ! TRESCA stres [Pa]
+        sig_tf_tresca(ii) = sig_tresca(sig_tf_r(ii), sig_tf_t(ii), sig_tf_z)
 
-    sigrcon = sigrtf(2)/eyoung(2) * fac
-    sigtcon = sigttf(2)/eyoung(2) * fac
-    sigvert = vforce / (acasetf + acndttf*turnstf)
+        ! TRESCA stress using CEA calculation [Pa]
+        s_tresca_cond_cea(ii) = 1.02D0*abs(sig_tf_r(ii)) + 1.6D0*sig_tf_z
 
-    !  Find case strain
-    casestr = sigvert / eystl
-
-    !  Find Von-Mises stresses
-    !  For winding pack region take worst of two walls
-    svmxz = sigvm(sigrcon, 0.0D0, sigvert, 0.0D0,0.0D0,0.0D0)
-    svmyz = sigvm(0.0D0, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
-
-    ! von Mises stresses [Pa]
-    s_vmises_case = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
-    s_vmises_cond = max(svmxz,svmyz)
-
-    ! Tresca stress criterion [pa]
-    s_tresca_case = max(ABS(sigrtf(1)-sigttf(1)), ABS(sigttf(1)-sigvert), ABS(sigvert-sigrtf(1)))
-    s_tresca_cond = max(ABS(sigrcon-sigtcon), ABS(sigtcon-sigvert), ABS(sigvert-sigrcon))
-
-    ! Tresca stress using CEA calculation [Pa]
-    s_tresca_cond_cea = 1.02D0*abs(sigrcon) + 1.6D0*sigvert
-
-    if (i_tf_tresca == 1) then
-        ! Use CEA adjusted stress
-        strtf1 = s_tresca_cond_cea
-    else
-        ! Stress to constrain
-        strtf1 = s_tresca_cond
+        ! Finding maximum TRESCA
+        ! Using the Out of plane CEA correction
+        if (i_tf_tresca == 1) then
+            if ( sig_max < s_tresca_cond_cea(ii) ) then
+                sig_max = s_tresca_cond_cea(ii)
+                ii_max = ii
+            end if
+            
+        ! Without Out of plane correction
+        else 
+            if ( sig_max < sig_tf_tresca(ii) ) then
+                sig_max = sig_tf_tresca(ii)
+                ii_max = ii
+            end if
+        end if
+    end do
+    
+    ! Stress of the maximum TRESCA stress point
+    if ( iprint == 1 ) then
+        sig_tf_r_max(2) = sig_tf_r(ii_max)
+        sig_tf_t_max(2) = sig_tf_t(ii_max)
+        sig_tf_z_max(2) = sig_tf_z         ! sig_tf_z is not a distribution yet
+        sig_tf_vmises_max(2) = sig_tf_vmises(ii_max)
     end if
 
-    strtf2 = s_tresca_case
+    if ( i_tf_tresca == 1 ) then
+        sig_tf_tresca_max(2) = s_tresca_cond_cea(ii_max)
+    else
+        sig_tf_tresca_max(2) = sig_tf_tresca(ii_max)
+    end if
 
-    ! Old von Mises
-    !strtf1 = s_vmises_cond
-    !strtf2 = s_vmises_case
+    ! Maximum of the TRESCA stress distribution [Pa]
+    strtf1 = sig_tf_tresca_max(1)     ! Casing TRESCA constraint
+    strtf2 = sig_tf_tresca_max(2)     ! Conduit TRESCA constraint
+    ! ---
 
-    !  Young's modulus and strain in vertical direction on winding pack
+
+    ! Strain calculations
+    ! ---
+    ! Case strain
+    casestr = sig_tf_z / eystl
+
+    ! Young's modulus in vertical direction on WP
     eyzwp = eyngzwp(eystl,eyins,eywp,t_ins_eff,thwcndut,tcbs)
-    windstrain = sigvert / eyzwp
 
-    !  Radial strain in insulator
-    insstrain = sigrtf(2) / eyins * &
-    edoeeff(eystl,eyins,t_ins_eff,thwcndut,tcbs)
+    ! Strain in vertical direction on WP
+    windstrain = sig_tf_z / eyzwp
+
+    ! Radial strain in insulator
+    insstrain = sig_tf_r(n_radial_array) / eyins * &
+                edoeeff(eystl, eyins, t_ins_eff, thwcndut, tcbs)
+    ! ---
 
 end subroutine stresscl
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect)
+subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
 
     !! Calculates the stresses in a superconductor TF coil
-    !! inboard leg at the midplane
+    !! inboard leg at the midplane using the plain stress approximation 
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
-    !! nu      : input real : Poisson's ratio (assumed constant over entire coil)
-    !! rad(3)  : input real array : Radius points of regions (m)
-    !! (region i is bounded by rad(i) and rad(i+1) )
-    !! ey(2)   : input real array : Effective Young's modulus of region i (Pa)
-    !! j(2)    : input real array : Effective current density of region i (A/m2)
-    !! sigr(2) : output real array : Radial stress in region i (Pa)
-    !! sigt(2) : output real array : Tangential stress in region i (Pa)
-    !! deflect : output real : Deflection at point rad(1) (m)
+    !! author: S Kahn, CCFE, Culham Science Centre
     !! This routine calculates the stresses in a superconductor TF coil
     !! inboard leg at midplane.
     !! <P>A two-layer model developed by CCFE is used. The first layer
     !! is the steel case inboard of the winding pack, and the second
     !! layer is the winding pack itself.
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
-    !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
@@ -1219,33 +1316,59 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect)
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: nu
+    !! Poisson's ratio
+
     real(kind(1.0D0)), dimension(3), intent(in) :: rad
-    real(kind(1.0D0)), dimension(2), intent(in) :: ey, j
-    real(kind(1.0D0)), dimension(2), intent(out) :: sigr, sigt
-    real(kind(1.0D0)), intent(out) :: deflect
+    !! Layers delimitation radii [m]
+    
+    real(kind(1.0D0)), dimension(2), intent(in) :: ey
+    !! Young modulae [Pa]
+    
+    real(kind(1.0D0)), dimension(2), intent(in) :: j
+    !! Layers effective current density [A/m2]
 
+    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: sigr
+    !! Radial stress radial distribution [Pa]
+    
+    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: sigt
+    !! Toroidal stress radial distribution [Pa]
+
+    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: deflect
+    !! Radial deflection (displacement) radial distribution [m]
+
+    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: rradius
+    !! Radial deflection (displacement) radial distribution [m]
+
+
+    
     !  Local variables
-
-    real(kind(1.0D0)) :: alpha,beta,k1,k2
+    real(kind(1.0D0)), dimension(2) :: kk
+    real(kind(1.0D0)), dimension(2) :: alpha, beta
     real(kind(1.0D0)), dimension(4,4) :: a
     real(kind(1.0D0)), dimension(4) :: b, c
 
+    ! Variables used for radial stress distribution  
+    real(kind(1.0D0)) :: dradius
+    real(kind(1.0D0)) :: rad_c
+
+    integer :: ii = 0
+    integer :: ii_c = 0
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  LHS matrix A
 
-    k1 = ey(1)/(1.0D0 - nu*nu)
-    k2 = ey(2)/(1.0D0 - nu*nu)
-
+    ! Array equation
+    kk = ey/(1.0D0 - nu**2)
+    
     a(:,:) = 0.0D0
-    a(1,1) = k1 * (1.0D0+nu)
-    a(1,2) = -k1 * (1.0D0-nu)/(rad(1)**2)
+    a(1,1) = kk(1) * (1.0D0+nu)
+    a(1,2) = -kk(1) * (1.0D0-nu)/(rad(1)**2)
     a(2,1) = a(1,1)
-    a(2,2) = -k1 * (1.0D0-nu)/(rad(2)**2)
-    a(2,3) = -k2 * (1.0D0+nu)
-    a(2,4) = k2 * (1.0D0-nu)/(rad(2)**2)
-    a(3,3) = k2 * (1.0D0+nu)
-    a(3,4) = -k2 * (1.0D0-nu)/(rad(3)**2)
+    a(2,2) = -kk(1) * (1.0D0-nu)/(rad(2)**2)
+    a(2,3) = -kk(2) * (1.0D0+nu)
+    a(2,4) = kk(2) * (1.0D0-nu)/(rad(2)**2)
+    a(3,3) = kk(2) * (1.0D0+nu)
+    a(3,4) = -kk(2) * (1.0D0-nu)/(rad(3)**2)
     a(4,1) = rad(2)
     a(4,2) = 1.0D0/rad(2)
     a(4,3) = -rad(2)
@@ -1253,16 +1376,17 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect)
 
     !  RHS vector B
     !  alpha, beta only non-zero where current density is non-zero
-
-    alpha = 0.5D0*rmu0 * j(2)*j(2) * (1.0D0 - nu*nu)/ey(2)
-    beta = -alpha * rad(2)*rad(2)
+    alpha(:) = 0.0D0
+    alpha(2) = 0.5D0*rmu0 * j(2)*j(2) * (1.0D0 - nu*nu)/ey(2)
+    beta(:) = 0.0D0
+    beta(2) = -alpha(2) * rad(2)**2
 
     b(:) = 0.0D0
-    b(2) = -k2 * ( 0.125D0*alpha*(3.0D0+nu)*rad(2)*rad(2) &
-    + 0.5D0*beta*(1.0D0 + (1.0D0+nu)*log(rad(2))) )
-    b(3) = k2 * ( 0.125D0*alpha*(3.0D0+nu)*rad(3)*rad(3)  &
-    + 0.5D0*beta*(1.0D0 + (1.0D0+nu)*log(rad(3))) )
-    b(4) = -0.125D0*alpha*(rad(2))**3 - 0.5D0*beta*rad(2)*log(rad(2))
+    b(2) = -kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu)*rad(2)**2 &
+            + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu)*log(rad(2))) )
+    b(3) = kk(2) * ( 0.125D0*alpha(2)*(3.0D0+nu)*rad(3)**2  &
+            + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu)*log(rad(3))) )
+    b(4) = -0.125D0*alpha(2)*rad(2)**3 - 0.5D0*beta(2)*rad(2)*log(rad(2))
 
     !  Find solution vector c:  A times c = b
     !  N.B. In Morris, Section IV, C_xy is C_x in region y
@@ -1276,32 +1400,58 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect)
     call linesolv(a, 4, b, c)
 
     !  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
-
     c(:) = -1.0D0*c(:)
 
     !  Calculate stresses in each region
-
+    rradius(:) = 0.0D0
     sigr(:) = 0.0D0
     sigt(:) = 0.0D0
+    deflect(:) = 0.0D0
 
-    !  Case; alpha = beta = 0 in this region
+    
+    ! Output distribution
+    ! ---
+    ! Case layer (no current)
+    dradius = (rad(2) - rad(1)) / dble(n_radial_array)
+    do ii = 1, n_radial_array
 
-    sigr(1) = k1 * ( (1.0D0+nu)*c(1) - (1.0D0-nu)*c(2)/(rad(1)*rad(1)) )
-    sigt(1) = k1 * ( (1.0D0+nu)*c(1) + (1.0D0-nu)*c(2)/(rad(1)*rad(1)) )
+        ! Radius array [m]
+        rad_c = rad(1) + dradius*dble(ii-1)
+        rradius(ii) = rad_c 
 
-    !  Winding pack
+        ! Stress radial distribution [Pa]
+        sigr(ii) = kk(1) * ( (1.0D0+nu)*c(1) - (1.0D0-nu)*c(2)/rad_c**2 )
+        sigt(ii) = kk(1) * ( (1.0D0+nu)*c(1) + (1.0D0-nu)*c(2)/rad_c**2 )
 
-    sigr(2) = k2 * ( (1.0D0+nu)*c(3) - ((1.0D0-nu)*c(4))/(rad(2)*rad(2)) &
-    + 0.125D0*(3.0D0 + nu)*alpha*rad(2)*rad(2) &
-    + 0.5D0*beta*(1.0D0 + (1.0D0+nu)*log(rad(2))) )
+        ! Displacement distribution [m]
+        deflect(ii) = c(1)*rad_c + c(2)/rad_c
+    end do
 
-    sigt(2) = k2 * ( (1.0D0+nu)*c(3) + (1.0D0-nu)*c(4)/(rad(2)*rad(2)) &
-    + 0.125D0*(1.0D0+3.0D0*nu)*alpha*rad(2)*rad(2) &
-    + 0.5D0*beta*(nu + (1.0D0+nu)*log(rad(2))) )
+    dradius = (rad(3) - rad(2)) / dble(n_radial_array)
+    do ii = 1, n_radial_array
 
-    !  Deflection at inside edge of TF coil (m)
+        ! Radius array [m]
+        ii_c = ii + n_radial_array
+        rad_c = rad(2) + dradius*dble(ii-1)
+        rradius(ii_c) = rad_c
 
-    deflect = c(1)*rad(1) + c(2)/rad(1)
+        ! Radial stress radial distribution [Pa]
+        sigr(ii_c) = kk(2) * ( (1.0D0+nu)*c(3) - ((1.0D0-nu)*c(4))/ rad_c**2 &
+                              + 0.125D0*(3.0D0 + nu)*alpha(2)* rad_c**2 &
+                              + 0.5D0*beta(2)*(1.0D0 + (1.0D0+nu)*log( rad_c)) )
+
+        ! Radial stress radial distribution [Pa]
+        sigt(ii_c) = kk(2) * ( (1.0D0+nu)*c(3) + (1.0D0-nu)*c(4)/ rad_c**2 &
+                              + 0.125D0*(1.0D0+3.0D0*nu)*alpha(2)*rad_c**2 &
+                              + 0.5D0*beta(2)*(nu + (1.0D0+nu)*log(rad_c)) )
+
+        !  Deflection [m]
+        deflect(ii_c) = c(3)*rad_c + c(4)/rad_c       &
+                     + 0.125D0*alpha(2) * rad_c**3  &
+                     + 0.5D0*beta(2) * rad_c*log(rad_c)
+
+    end do
+    ! ---
 
 end subroutine two_layer_stress
 
@@ -1356,16 +1506,10 @@ function edoeeff(estl,eins,tins,tstl,tcs)
     !! Returns ratio of E_d to E_eff in Morris
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
-    !! estl : input real : Young's modulus of steel (Pa)
-    !! eins : input real : Young's modulus of insulator (Pa)
-    !! tins : input real : insulator wrap thickness (m)
-    !! tstl : input real : thickness of steel conduit (m)
-    !! tcs  : input real : dimension of cable space area inside conduit (m)
     !! This routine calculates the ratio of E_d to the effective Young's
     !! modulus, given in Morris, Section III.4. This is used to calculate
     !! the strain in the insulator.
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
-    !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
@@ -1373,11 +1517,22 @@ function edoeeff(estl,eins,tins,tstl,tcs)
     real(kind(1.0D0)) :: edoeeff
 
     !  Arguments
+    real(kind(1.0D0)), intent(in) :: estl
+    !! Young's modulus of steel (Pa)
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,tins,tstl,tcs
+    real(kind(1.0D0)), intent(in) :: eins
+    !! Young's modulus of insulator (Pa)
+    
+    real(kind(1.0D0)), intent(in) :: tins
+    !! Insulator wrap thickness (m)
+    
+    real(kind(1.0D0)), intent(in) :: tstl
+    !! Thickness of steel conduit (m)
+    
+    real(kind(1.0D0)), intent(in) :: tcs
+    !! Dimension of cable space area inside conduit (m)
 
     !  Local variables
-
     real(kind(1.0D0)) :: ed,ttot,eeff
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1387,11 +1542,8 @@ function edoeeff(estl,eins,tins,tstl,tcs)
 
     !  Code copied from eyngeff routine
     !  See Figure 8 and Section III.4, Morris
-
     ed = ttot / (2.0D0*tins/eins + (tcs+2.0D0*tstl)/estl)
-
     eeff = 1.0D0/ttot * 2.0D0*tstl*ed
-
     edoeeff = ed/eeff
 
 end function edoeeff
@@ -1441,35 +1593,71 @@ end function eyngzwp
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+function sig_tresca(sx,sy,sz)
+    !! Calculates TRESCA stress in a TF coil
+    !! author: S Kahn
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    ! OUTPUT
+    real(kind(1.0D0)) :: sig_tresca
+
+    !  Arguments
+    real(kind(1.0D0)), intent(in) :: sx
+    !! In-plane stress in X direction [Pa]
+
+    real(kind(1.0D0)), intent(in) :: sy
+    !! In-plane stress in Y direction [Pa]
+    
+    real(kind(1.0D0)), intent(in) :: sz
+    !! In-plane stress in Z direction [Pa]
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    sig_tresca = max(ABS(sx-sy), ABS(sx-sz), ABS(sy-sz))
+
+end function sig_tresca
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 function sigvm(sx,sy,sz,txy,txz,tyz)
 
     !! Calculates Von Mises stress in a TF coil
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: B Reimer, FEDC
-    !! sx  : input real : in-plane stress in X direction (Pa)
-    !! sy  : input real : in-plane stress in Y direction (Pa)
-    !! sz  : input real : in-plane stress in Z direction (Pa)
-    !! txy : input real : out of plane stress in X-Y plane (Pa)
-    !! txz : input real : out of plane stress in X-Z plane (Pa)
-    !! tyz : input real : out of plane stress in Y-Z plane (Pa)
     !! This routine calculates the Von Mises combination of
     !! stresses (Pa) in a TF coil.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
+    ! OUTPUT
     real(kind(1.0D0)) :: sigvm
 
     !  Arguments
+    real(kind(1.0D0)), intent(in) :: sx
+    !! In-plane stress in X direction [Pa]
 
-    real(kind(1.0D0)), intent(in) :: sx,sy,sz,txy,txz,tyz
+    real(kind(1.0D0)), intent(in) :: sy
+    !! In-plane stress in Y direction [Pa]
+    
+    real(kind(1.0D0)), intent(in) :: sz
+    !! In-plane stress in Z direction [Pa]
+    
+    real(kind(1.0D0)), intent(in) :: txy
+    !! Out of plane stress in X-Y plane [Pa]
+    
+    real(kind(1.0D0)), intent(in) :: txz
+    !! Out of plane stress in X-Z plane [Pa]
+    
+    real(kind(1.0D0)), intent(in) :: tyz
+    !! Out of plane stress in Y-Z plane [Pa]
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     sigvm = sqrt( 0.5D0 * ( (sx-sy)**2 + (sx-sz)**2 + (sz-sy)**2 &
-    + 6.0D0*(txy**2 + txz**2 + tyz**2) ) )
+                + 6.0D0*(txy**2 + txz**2 + tyz**2) ) )
 
 end function sigvm
 
@@ -1770,6 +1958,7 @@ subroutine outtf(outfile, peaktfflag)
     !  Local variables
 
     integer :: ii
+    integer, dimension(2*n_radial_array) :: ii_vec
     real(kind(1.0D0)) :: ap, radius
     character(len=1) :: intstring
 
@@ -1995,33 +2184,54 @@ subroutine outtf(outfile, peaktfflag)
             call oblnkl(outfile)
         end if
 
-        ! if (tfc_model == 0) then
-        !     call osubhd(outfile,'TF Coil Stresses (solid copper coil model) :')
-        ! else
+
+        ! Stress output section
         call osubhd(outfile,'TF Coil Stresses (CCFE two-layer model) :')
-        ! end if
-        ! call ovarin(outfile,'TF coil model','(tfc_model)',tfc_model)
         call ovarre(outfile,'Allowable Tresca stress limit (Pa)','(alstrtf)',alstrtf)
-        call ovarre(outfile,'Vertical stress (Pa)','(sigvert)',sigvert, 'OP ')
-        ! if (tfc_model == 1) then
-        call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(1))',sigrtf(1))
-        call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(1))',sigttf(1), 'OP ')
-        ! end if
-        call ovarre(outfile,'Conduit radial stress (Pa)','(sigrcon)',sigrcon, 'OP ')
-        call ovarre(outfile,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon, 'OP ')
-        call ovarin(outfile,'Tresca conduit stress criterion', '(i_tf_tresca)', i_tf_tresca, 'OP ')
-        call ovarre(outfile,'Tresca stress in case (Pa)', '(s_tresca_case)', s_tresca_case, 'OP ')
-        call ovarre(outfile,'Tresca stress in conduit (Pa)', '(s_tresca_cond)', s_tresca_cond, 'OP ')
-        call ovarre(outfile,'CEA Adjusted Tresca stress in conduit (Pa)', '(s_tresca_cond_cea)', s_tresca_cond_cea, 'OP ')
-        call ovarre(outfile,'von Mises stress in case (Pa)', '(s_vmises_case)', s_vmises_case, 'OP ')
-        call ovarre(outfile,'von Mises stress in conduit (Pa)', '(s_vmises_cond)', s_vmises_cond, 'OP ')
-        call ovarre(outfile,'Peak radial deflection at midplane (m)','(deflect)',deflect, 'OP ')
-        ! if (tfc_model == 1) then
+        call ocmmnt(outfile, 'Stresses of the point of maximum TRESCA stress per layer')
+        call ocmmnt(outfile, 'Please use utility/plot_TF_stress.py for radial plots plots summary')
+        if ( i_tf_tresca==1 ) then
+            call ocmmnt(outfile, 'Conduit TRESCA stress corrected using CEA formula (i_tf_tresca = 1)')
+        end if
+        
+        ! OUT.DAT data on maximum TRESCA stress values
+        write(outfile,'(t2, "Layers", t26, *(i11) )') 1, 2
+        write(outfile,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r_max*1.0D-6
+        write(outfile,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t_max*1.0D-6
+        write(outfile,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z_max*1.0D-6
+        write(outfile,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises_max*1.0D-6
+        if ( i_tf_tresca == 1 ) then
+            write(outfile,'(t2, "CEA TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+        else 
+            write(outfile,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca_max*1.0D-6
+        end if
+
+        ! SIG_TF.DAT storage  
+        do ii = 1, 2*n_radial_array
+            ii_vec(ii) = ii
+        end do
+
+        write(sig_file,'(t2, "Points per layers"                 ,t26, *(I11,3x))') n_radial_array          
+        write(sig_file,'(t2, "index"                             ,t26, *(I11,3x))') ii_vec
+        write(sig_file,'(t2, "radius"              , t20, "(m)"  ,t26, *(F11.3,3x))') radial_array
+        write(sig_file,'(t2, "Radial"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_r*1.0D-6
+        write(sig_file,'(t2, "toroidal"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_t*1.0D-6
+        write(sig_file,'(t2, "Vertical"  ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_z*1.0D-6
+        write(sig_file,'(t2, "Von-Mises" ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_vmises*1.0D-6
+        write(sig_file,'(t2, "TRESCA"    ," stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_tresca*1.0D-6
+        write(sig_file,'(t2, "CEA TRESCA"," stress", t20, "(MPa)",t26, *(F11.3,3x))') s_tresca_cond_cea*1.0D-6
+        write(sig_file,*)
+        write(sig_file,*) 'Displacement'          
+        write(sig_file,'(t2, "raidal displacement", t20, "(mm)",t26, *(F11.3,3x))') deflect*1.0D3
+        
+
+        ! Other quantities (displacement strain, etc..)
+        call ovarre(outfile,'Vertical stress (Pa)','(sig_tf_z)',sig_tf_z, 'OP ')
+        call ovarre(outfile,'Maximum radial deflection at midplane (m)','(deflect)',&
+                            maxval(deflect), 'OP ')
         call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
         call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', windstrain, 'OP ')
         call ovarre(outfile,'Radial strain on insulator','(insstrain)', insstrain, 'OP ')
-        ! end if
-    
     
     else
         !  Output section
@@ -2059,9 +2269,6 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotftgj)',estotftgj)
         call ovarre(outfile,'Vertical force on inboard leg (N)','(vforce)',vforce)
         call ovarre(outfile,'Centering force on inboard leg (N/m)','(cforce)',cforce)
-        call ovarre(outfile,'Radial stress (MPa)','(sigrad)',sigrad)
-        call ovarre(outfile,'Transverse stress (MPa)','(sigtan)',sigtan)
-        call ovarre(outfile,'Vertical stress (MPa)','(sigver)',sigver)
         call oblnkl(outfile)
         call ocmmnt(outfile,'TF coil inner surface shape is given by a rectangle with the')
         call ocmmnt(outfile,'following inner points (Note that this does not account')

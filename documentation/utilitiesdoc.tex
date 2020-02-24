@@ -793,6 +793,26 @@ The options for the \texttt{output\_detailed.py} are:\\
 \texttt{output\_detailed.json}. This JSON file contains the grouping of the output 
 and allows the user to adjust what is output and where.
 
+
+
+
+The utility \texttt{mcnp\_output.py} takes a \texttt{MFILE.DAT} and converts it to a suitable 
+format for MCNP runs. The options for the script are:\\
+
+\begin{mdframed}
+ \begin{verbatim}
+  mcnp_output.py [-h] [-f f] [-o o] [--ctf]
+
+  Process MFILE.DAT into PROCESS.MCNP file.
+
+  optional arguments:
+   -h, --help  show this help message and exit
+   -f f        File to read as MFILE.DAT
+   -o o        File to write as PROCESS.MCNP
+   --ctf       True/False flag for CTF
+ \end{verbatim}
+\end{mdframed}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Output Plotting}
 
@@ -1197,13 +1217,44 @@ The use of the macro is described on the help option of the macro, shown for ind
 	\end{verbatim}
 \end{quote}
 
-The output can be defined in any visual data format supported by pyplot, the label font size can set. Please note that to select individual constraints or variable pair plots, it is enough to precise the \texttt{-ic} and the \texttt{-ixv/-iyv} pair, respectively.  \\
+\noindent The output can be defined in any visual data format supported by pyplot, 
+the label font size can set. Please note that to select individual constraints 
+or variable pair plots, it is enough to precise the \texttt{-ic} and the 
+\texttt{-ixv/-iyv} pair, respectively. 
 
-If any modification of improvements are foreseen, please let us know.
+\noindent If any modification of improvements
+are foreseen, please let us know.
 
 
+\subsubsection{Radial stress distribution plots (plot\_stress\_tf.py)}
 
+\noindent This utility allow to plot the inboard TF radial stress distribution at mid-plane 
+and the associated radial displacement. This utility is meat to be used from the utility and
+will use the \texttt{SIG\_TF.DAT} file generated in the \texttt{bin/} folder. The user has the
+option to plot only the stress plots or the r displacement if he wish. The options are 
+the following ones :
 
+\begin{quote}
+  \begin{verbatim}
+    usage: plot_stress_tf.py [-h] [-p [PLOT_SELEC]] [-sf [SAVE_FORMAT]]
+                         [-as [AXIS_FONT_SIZE]]
+
+    Plot TF stress informations 
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -p [PLOT_SELEC], --plot_selec [PLOT_SELEC]
+                            Plot selection string :
+                             - If it containts 'sig'      -> Stress radial dependency 
+                             - If it containts 'disp'     -> Displacement 
+                             
+                             - If it containts 'all'      -> all the mentionned plots (default value)
+      -sf [SAVE_FORMAT], --save_format [SAVE_FORMAT]
+                            output format (default='pdf') 
+      -as [AXIS_FONT_SIZE], --axis_font_size [AXIS_FONT_SIZE]
+                            Axis label font size selection (default=18)
+  \end{verbatim}
+\end{quote}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Uncertainty Tools}
 

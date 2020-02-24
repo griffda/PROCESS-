@@ -199,24 +199,6 @@ contains
       !! for superconducting coils
       !! author: P J Knight, CCFE, Culham Science Centre
       !! author: P C Shipe, ORNL
-      !! outfile : input integer : output file unit
-      !! iprint : input integer : switch for writing to output (1=yes)
-      !! ntfc : input real : number of TF coils
-      !! ettfmj : input real : total stored energy of one TF coils, MJ
-      !! itfka : input real : design current for the TF coils, kA
-      !! rptfc : input real : resistance of a TF coil, ohms
-      !! vtfskv : input real : allowable voltage across a TF coil
-      !! during quench, kV
-      !! rmajor : input real : plasma major radius, m
-      !! tfckw : output real : available DC power for charging the
-      !! TF coils, kW
-      !! tfbusl : output real : total bus length of the TF coil
-      !! system, m
-      !! drarea : output real : approx. area needed for the energy dump
-      !! resistors, m2
-      !! tfcbv : output real : approx. vol needed for the TF coil power
-      !! supplies and DC circuit breakers, m3
-      !! tfacpd : output real : steady state TF coil AC power demand, MW
       !! This routine calculates the TF power conversion system
       !! parameters:  floor space, power supplies, bussing,
       !! coil protection equipment, and the associated controls
@@ -229,14 +211,51 @@ contains
 
       implicit none
 
-      !  Arguments
+      ! Inputs
+      ! ---
+      integer, intent(in) :: outfile
+      !! Output file unit
 
-      integer, intent(in) :: outfile, iprint
-      real(kind(1.0D0)), intent(in) :: ntfc,ettfmj,itfka,rptfc,vtfskv,rmajor
-      real(kind(1.0D0)), intent(out) :: tfckw,tfbusl,drarea,tfcbv,tfacpd
+      integer, intent(in) :: iprint
+      !! Switch for writing to output (1=yes)
+
+      real(kind(1.0D0)), intent(in) :: ntfc
+      !! Number of TF coils
+      
+      real(kind(1.0D0)), intent(in) :: ettfmj
+      !! Total stored energy of one TF coils [MJ]
+
+      real(kind(1.0D0)), intent(in) :: itfka
+      !! Design current for the TF coils, kA
+      
+      real(kind(1.0D0)), intent(in) :: rptfc
+      !! Resistance of a TF coil [ohm]
+
+      real(kind(1.0D0)), intent(in) :: vtfskv
+      !! Allowable voltage across a TF coil during quench [kV]
+
+      real(kind(1.0D0)), intent(in) :: rmajor
+      !! Plasma major radius [m]
+      ! ---
+
+      ! Outputs
+      ! ---
+      real(kind(1.0D0)), intent(out) :: tfckw
+      !! Available DC power for charging the TF coils [kW]
+      
+      real(kind(1.0D0)), intent(out) :: tfbusl
+      !! Total bus length of the TF coil system [m]
+
+      real(kind(1.0D0)), intent(out) :: drarea
+      !! Approx. area needed for the energy dump resistors, [m2]
+
+      real(kind(1.0D0)), intent(out) :: tfcbv
+      !! Approx. vol needed for the TF coil power supplies and DC circuit breakers [m3]
+
+      real(kind(1.0D0)), intent(out) :: tfacpd
+      !! Steady state TF coil AC power demand, [MW]
 
       !  Local variables
-
       real(kind(1.0D0)) :: albusa,albuswt,djmka,fspc1,fspc2,fspc3,ettfc, &
            ltfth,lptfcs,ncpbkr,ndumpr,nsptfc,ntfbkr,ntfpm,part1,part2, &
            part3,rcoils,rpower,rtfbus,rtfps,r1dump,r1emj,r1ppmw,tchghr, &
@@ -261,163 +280,123 @@ contains
       end if
 
       !  Total steady state TF coil AC power demand (summed later)
-
       tfacpd = 0.0D0
 
       !  Stored energy of all TF coils, MJ
-
       ettfc = ntfc*ettfmj
 
       !  Inductance of all TF coils, Henries
-
       ltfth = 2.0D0*ettfc/itfka**2
 
       !  Number of circuit breakers
-
       ntfbkr = ntfc/ncpbkr
 
       !  Inductance per TF coil, Henries
-
       lptfcs = ltfth/ntfc
 
       !  Aluminium bus section area, sq cm
-
       albusa = itfka/djmka
 
       !  Total TF system bus length, m
-
       tfbusl = 8.0D0*pi*rmajor + &
            (1.0D0+ntfbkr)*(12.0D0*rmajor+80.0D0) + &
            0.2D0*itfka*sqrt(ntfc*rptfc*1000.0D0)
 
       !  Aluminium bus weight, tonnes
-
       albuswt = 2.7D0*albusa*tfbusl/1.0D4
 
       !  Total resistance of TF bus, ohms
-
       rtfbus = 2.62D-4*tfbusl/albusa
 
       !  Total voltage drop across TF bus, volts
-
       vtfbus = 1000.0D0*itfka*rtfbus
 
       !  Total resistance of the TF coils, ohms
-
       rcoils = ntfc*rptfc
 
       !  Total impedance, ohms
-
       ztotal = rtfbus+rcoils+ltfth/(3600.0D0*tchghr)
 
       !  Charging voltage for the TF coils, volts
-
       tfcv = 1000.0D0*itfka*ztotal
 
       !  Number of TF power modules
-
       ntfpm = (itfka * (1.0D0 + nsptfc) )/5.0D0
 
       !  TF coil power module voltage, volts
-
       tfpmv = rtfps*tfcv/(1.0D0+nsptfc)
 
       !  TF coil power supply voltage, volts
-
       tfpsv = rtfps*tfcv
 
       !  Power supply current, kA
-
       tfpska = rtfps*itfka
 
       !  TF power module current, kA
-
       tfpmka = rtfps*itfka/(ntfpm/(1.0D0+nsptfc))
 
       !  TF power module power, kW
-
       tfpmkw = tfpmv*tfpmka
 
       !  Available DC power for charging the TF coils, kW
-
       tfckw = tfpmkw*ntfpm
 
       !  Peak AC power needed to charge coils, kW
-
       tfackw = tfckw/0.9D0
 
       !  Resistance of dump resistor, ohms
-
       r1dump = nsptfc*vtfskv*ncpbkr/itfka
 
       !  Time constant, s
-
       ttfsec = lptfcs*ncpbkr/(r1dump*nsptfc+rptfc*(1.0D0-nsptfc))
 
       !  Number of dump resistors
-
       ndumpr = ntfbkr*4.0D0
 
       !  Peak power to a dump resistor during quench, MW
-
       r1ppmw = nsptfc*r1dump*(itfka/2.0D0)**2
 
       !  Energy to dump resistor during quench, MJ
-
       r1emj = nsptfc*ettfc/(ndumpr+0.0001D0)
 
       !  Total TF coil peak resistive power demand, MVA
-
       rpower = (ntfc*rptfc+rtfbus)*itfka**2
 
       !  Total TF coil peak inductive power demand, MVA
-
       xpower = ltfth/(3600.0D0*tchghr)*itfka**2
 
       !  Building space:
-
       !  Power modules floor space, m2
-
       part1 = fspc1*ntfpm*tfpmkw**0.667D0
 
       !  Circuit breakers floor space, m2
-
       part2 = fspc2*ntfbkr*(vtfskv*itfka)**0.667D0
 
       !  Load centres floor space, m2
-
       part3 = fspc3*(tfackw/(2.4D0*nsptfc+13.8D0*(1.0D0-nsptfc)))**0.667D0
 
       !  Power conversion building floor area, m2
-
       tfcfsp = part1 + part2 + part3
 
       !  Dump resistor floor area, m2
-
       drarea = 0.5D0*ndumpr*(1.0D0+r1emj)**0.667D0
 
       !  Total TF coil power conversion building volume, m3
-
       tfcbv = 6.0D0*tfcfsp
 
       !  TF coil AC inductive power demand, MW
-
       xpwrmw = xpower/0.9D0
 
       !  Total steady state AC power demand, MW
-
       tfacpd = tfacpd + rpower/etatf
-
       !  Total TF coil power conversion building floor area, m2
 
       tftsp = tfcfsp
-
       !  Total TF coil power conversion building volume, m3
 
       tftbv = tfcbv
 
       !  Output section
-
       if (iprint == 0) return
 
       call oheadr(outfile,'Superconducting TF Coil Power Conversion')

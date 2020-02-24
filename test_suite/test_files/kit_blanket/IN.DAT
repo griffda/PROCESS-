@@ -5,7 +5,6 @@ icc = 1
 icc = 2
 icc = 5
 icc = 8
-*icc = 10
 icc = 11
 icc = 13
 icc = 16

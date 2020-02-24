@@ -19,4 +19,15 @@ OBS_VARS = {
     "r_tf_inleg_in": "r_tf_inleg_in",
     "r_tf_inleg_out": "r_tf_inleg_out",
     "awpc":	"a_tf_wp"
+    "sigttf" :"sig_tf_t", 
+    "sigtcon":"sig_tf_t", 
+    "sigrtf" :"sig_tf_r", 
+    "sigrcon":"sig_tf_r", 
+    "sigvert":"sig_tf_z", 
+    "sig_vmises_case":"sig_tf_vmises", 
+    "sig_vmises_cond":"sig_tf_vmises", 
+    "sig_tresca_case":"sig_tf_treca", 
+    "sig_tresca_cond":"sig_tf_treca",
+    "sigver":"None",
+    "sigrad":"None"
 }

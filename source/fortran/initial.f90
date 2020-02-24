@@ -628,7 +628,6 @@ subroutine check
     end if
 
     !  Check that sufficient elements of ixc and icc have been specified
-
     if ( any(ixc(1:nvar) == 0) ) then
         idiags(1) = nvar
         call report_error(139)
@@ -641,7 +640,6 @@ subroutine check
     end if
 
     !  Deprecate constraints 3 and 4
-
     if ( any(icc(1:neqns+nineqns) == 3) ) then
         call report_error(162)
         write(*,*) 'PROCESS stopping'
@@ -653,6 +651,7 @@ subroutine check
         write(*,*) 'PROCESS stopping'
         stop
     end if
+
 
     ! MDK Report error if constraint 63 is used with old vacuum model
     if (any(icc(1:neqns+nineqns) == 63).and.(vacuum_model.ne.'simple') ) then
@@ -669,7 +668,6 @@ subroutine check
     end if
 
     !  Fuel ion fractions must add up to 1.0
-
     if (abs(1.0D0 - fdeut - ftrit - fhe3) > 1.0D-6) then
         fdiags(1) = fdeut; fdiags(2) = ftrit ; fdiags(3) = fhe3
         call report_error(36)
@@ -1084,7 +1082,6 @@ subroutine check
     ! ------------------------------------
 
     !  Pulsed power plant model
-
     if (lpulse == 1) then
         icase = 'Pulsed tokamak model'
     else
@@ -1093,7 +1090,6 @@ subroutine check
 
     !  Ensure minimum cycle time constraint is turned off
     !  (not currently available, as routine thrmal has been commented out)
-
     if ( any(icc == 42) ) then
         call report_error(164)
     end if
@@ -1105,6 +1101,17 @@ subroutine check
 
     ! TF coil
     ! -------
+    ! TF stress model not defined of r_tf_inboard = 0
+    ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used
+    !    Generate a lvl 3 error proposing not to use any stress constraints
+    if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration  
+         .and. ( abs(bore + gapoh + ohcth) < epsilon(bore) )                           & ! bore + gapoh + ohcth = 0
+         .and. any(icc == 31) ) then                                                     ! Stress constraint (31) is used 
+
+        call report_error(246)
+        stop
+    end if
+     
 
     ! If TFC sidewall has not been set by user
     if(casths<0.1d-10) tfc_sidewall_is_fraction = .true.
