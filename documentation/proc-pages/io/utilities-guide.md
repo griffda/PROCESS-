@@ -829,7 +829,7 @@ optional arguments:
 
 `popcon.py`
 
-This utility generates a POPCON plot from an MFILE th can be saved with the `-s` argument. `-x`, `-y` and `-z` aloow the user to set the definition of temperature, density and power respectively that is plotted. Currently the impurity is set with an effective charge, and this can be parsed using `-zimp` (default is Argon). The routine also features a test case that can be run by supplying the `-t` argument only.
+This utility generates a POPCON plot from an MFILE that can be saved with the `-s` argument. `-x`, `-y` and `-z` allow the user to set the definition of temperature, density and power respectively that is plotted. Currently the impurity is set with an effective charge, and this can be parsed using `-zimp` (default is Argon). The routine also features a test case that can be run by supplying the `-t` argument only.
 
 **Input**: `MFILE.DAT`
 

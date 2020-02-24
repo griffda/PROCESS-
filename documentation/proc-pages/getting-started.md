@@ -6,7 +6,7 @@
 | cmake      | 3+    |
 | python     | 3+    |
 | gcc        | 4.8+  |
-| texlive    | 2017+ |
+| texlive    | 2018+ |
 | googletest | 1.8+  |
 
 # UKAEA Freia Cluster
@@ -30,27 +30,27 @@ The folder structure for the PROCESS system prior to compilation is described be
 ```
 .
 +-- CMakeLists.txt                      : For building and compiling files
-+-- GNUmakefile                         : Build and compile pFUnit files
-+-- lib                                 : External libraries used in PROCESS
-|   +-- PLASMOD                         : PLASMOD lib files
-|   +-- REFPROP                         : REFPROP lib files
-+-- source                              
-|   +-- Fortran                         : Fortran source files
-|   +-- cpp                             : C++ source files
-+-- test_suite                          : Contains integration tests
-+-- test_files
-|   +-- pfunit_files                    : pFUnit test files
-|   +-- gtest_files                     : GTest unit test files
-+-- utilities/                          : Python utilities files
++-- CHANGELOG.md                        : A list of the major changes
++-- data/                               : data files
+|   +-- fluids/
+|   +-- h_data/
+|   +-- impuritydata/
+|   +-- lz_non_corona_14_elements/
++-- documentation/                      : Contains documentation files
 +-- fispact/                            : fispact Data file
-+-- data                                : data files
-|   +-- fluids
-|   +-- h_data
-|   +-- impuritydata
-|   +-- lz_non_corona
-|   +-- lz_non_corona_14_elements
-+-- documentation                       : Contain documentation files
++-- GNUmakefile                         : Build and compile pFUnit files
 +-- IN.DAT                              : Sample PROCESS input file
++-- lib/                                : External libraries used in PROCESS
+|   +-- ford/
+|   +-- PLASMOD/
+|   +-- REFPROP/
++-- mkdocs.yml                          : Index configuration file for online documentation
++-- source/                             : C++ and Fortran source files
+|   +-- cpp/
+|   +-- Fortran/
++-- test_suite/                         : Contains integration tests
++-- unit_tests/                         : Googletest unit tests
++-- utilities/                          : Python utilities files
 ```
 
 # Clone Repository
@@ -91,6 +91,8 @@ or to use all compiler warnings (`-Wall` and `-Wextra`) run:
 cmake -H. -Bbuild -Ddebug=ON
 ``` 
 
+!!! Note "Single executable"
+    The single executable is used to compare against legacy code
 
 or to compile into single executable without dll:
 
@@ -104,7 +106,7 @@ After compile the code giving the build directory
 cmake --build build
 ```
 
-This step will create a folder called `bin`, which contains three files
+This step will create a folder called `bin`, which contains three files (except with `-Ddll=OFF` `libPROCESS_calc_engine.so` will not be inside `bin`)
 
 - `process.exe`
 - `process_GTest.exe`
@@ -130,13 +132,13 @@ cmake --build build --target <target_name>
 | tfdoc          | Make PDF TF coil model documentation |
 
 !!! Note "Python dictionaries"
-    Once the dictionaries have been created add the utilities folder to the `PYTHONPATH` 
+    Once the dictionaries have been created add the utilities folder to the `PYTHONPATH` by using the following command:
 
     `export PYTHONPATH=$PYTHONPATH:/home/<user_name>/<path_to_process>/utilities/`
 
 # Running PROCESS
 
-Create input file IN.DAT ([see input file section](input-guide.md))
+Create input file IN.DAT ([see input file section](io/input-guide.md))
 
 To run the code (by default will try to use an input file called `IN.DAT` in 
 the current directory):
@@ -153,16 +155,16 @@ To see the code help page
 
 The results are output to the following output files:
 
-- `OUT.DAT`
 - `MFILE.DAT`
 - `OPT.DAT`
+- `OUT.DAT`
 - `PLOT.DAT`
 
 
 Optionally, one can run the `utilities/run_process.py` script in conjunction 
 with a config file to randomly vary the starting point of the input parameter 
-set until a feasilble solution is found. To look a the utility documentation 
-compile the utilities document as described [here](getting-started.md).
+set until a feasible solution is found. To look a the utility documentation 
+compile the utilities document as described [here](io/utilities-guide.md).
 
 # Troubleshooting
 
@@ -182,25 +184,25 @@ Level 3: An *error* message will occur is a severe of fatal error has occurred a
 
 These messages are printed on the screen during the course of a run, and those still active at the final (feasible or unfeasible) solution point are also written to the end of the output file (messages encountered during the iteration process are not copied to the output file, as the convergence to a valid solution might resolve some of the warnings produced earlier in the solution process).
 
-The `error_status` variable returns the highest security level that has been encountered (or xero if no abnormal conditions have been found); of a severe error (level 3) is flagged at any point the program is terminated immediately. The final message number encoutered during a run is returned via output variable `error_id` . In addition, with certain messages, a number of diagnostic values may also be given; these can be used to provide extra diagnostic information if the source code is available.
+The `error_status` variable returns the highest security level that has been encountered (or zero if no abnormal conditions have been found); of a severe error (level 3) is flagged at any point the program is terminated immediately. The final message number encountered during a run is returned via output variable `error_id` . In addition, with certain messages, a number of diagnostic values may also be given; these can be used to provide extra diagnostic information if the source code is available.
 
 ## General problems
 
-A code of teh size and complexity of `PROCESS` contains myriads of equations and variables. Virtually everything depends indirectly on everything else because because of the nature of the code structure, so perhaps it is not surprising that it is often difficult to achieve a successful outcome.
+A code of the size and complexity of `PROCESS` contains myriads of equations and variables. Virtually everything depends indirectly on everything else because of the nature of the code structure, so perhaps it is not surprising that it is often difficult to achieve a successful outcome.
 
-Naturally, problems will occur id some of the parameters become un-physical. For example, if the aspect ration becomes less than of equal to one, then we must expect problems to appear. For this reason, the bounds on the iteration variables should be selected with care.
+Naturally, problems will occur if some of the parameters become un-physical. For example, if the aspect ratio becomes less than or equal to one, then we must expect problems to appear. For this reason, the bounds on the iteration variables should be selected with care.
 
 Occasionally arithmetic ("NaN") errors are reported. They usually occur when the code is exploring un-physical values of the parameters, and often suggest that no feasible solution exists for the input file used.
 
-The error messages produced byt he code attempt to provide diagnostic information, telling the user where the problems occurs, and also suggest a possible solution. These messages are out of necessity brief, and so cannot promise to lead to a more successful outcome.
+The error messages produced by the code attempt to provide diagnostic information, telling the user where the problems occurs, and also suggest a possible solution. These messages are out of necessity brief, and so cannot promise to lead to a more successful outcome.
 
 The is the option to turn on extra debugging output; to do this, set `verbose = 1` in the input file.
 
 ## Optimisation problems
 
-On reflection it is perhaps surprising that `PROCESS` ever does manage to find the global minimum figure of merit value, if there are `nvar` iteration variables active the search is over `nvar`-dimensional parameter space, in which there may be many shallow minima of approximately equal depth. Remember that `nvar` is usually of t he order of twenty.
+On reflection it is perhaps surprising that `PROCESS` ever does manage to find the global minimum figure of merit value, if there are `nvar` iteration variables active the search is over `nvar`-dimensional parameter space, in which there may be many shallow minima of approximately equal depth. Remember that `nvar` is usually of the order of twenty.
 
-The machine found by `PROCESS` may not, therefore, be the absolutely optimal device. It is quite easy to have two or more solutions, with results only a few percent different, but a long way apart in parameter space. The technique of "stationary" scans is sometimes used in this situation: a scan is requested, but the same value of the scan variable is listed repeatedly.
+The machine found by `PROCESS` may not, therefore, be the absolute optimal device. It is quite easy to have two or more solutions, with results only a few percent different, but a long way apart in parameter space. The technique of "stationary" scans is sometimes used in this situation: a scan is requested, but the same value of the scan variable is listed repeatedly.
 
 Scans should be started in the middle of a range of values, to try to keep the scan within the same family of machines. The optimum machine found may otherwise suddenly jump to a new region of parameter space, causing the output variables to seem to vary unpredictably with the scanning variable.
 
@@ -210,9 +212,9 @@ It should be noted that in general the machine produced by `PROCESS` will always
 
 In the numerics section of the output file, the code indicates whether the run produced a feasible ot unfeasible result.
 
-The former implies a successful outcome, although it is always worth checking that the sum of the squares of the constraint residuals (`sqsumsq`) is small ($~10^{-3}$ or less); the code will issue a warning if the solver reports convergence but the value of `sqsumsq` exceeds $10^{-2}$. If this occurs, reducing the value of the HYBRD tolerance `ftol` or `VMCON` tolerance `epsvmc` as appropriate should indicate whether the result is valid ot not; the output can ususally be trusted of (1) the constraint residuals<sup>[1](#footnote1)</sup> fall as the tolerance is reduced to about $10^{-8}$, and (2) the code indicates that a feasible solution is still found.
+The former implies a successful outcome, although it is always worth checking that the sum of the squares of the constraint residuals (`sqsumsq`) is small ($~10^{-3}$ or less); the code will issue a warning if the solver reports convergence but the value of `sqsumsq` exceeds $10^{-2}$. If this occurs, reducing the value of the HYBRD tolerance `ftol` or `VMCON` tolerance `epsvmc` as appropriate should indicate whether the result is valid ot not; the output can usually be trusted of (1) the constraint residuals<sup>[1](#footnote1)</sup> fall as the tolerance is reduced to about $10^{-8}$, and (2) the code indicates that a feasible solution is still found.
 
-An unfeasible result occurs if `PROCESS` cannot find a set of values for the iteration variables which satisafies all the given constraints. In this case, the values of the constraint residues shown in the output give some indication of which constraint equations are not being satisfied - those with the highest residues should be examined further. In optimisation mode, the code also indicates which iteration variables lie at the edge of their allowed range.
+An unfeasible result occurs if `PROCESS` cannot find a set of values for the iteration variables which satisfies all the given constraints. In this case, the values of the constraint residues shown in the output give some indication of which constraint equations are not being satisfied - those with the highest residues should be examined further. In optimisation mode, the code also indicates which iteration variables lie at the edge of their allowed range.
 
 Unfeasible runs can be caused by specifying physical incompatible input parameters, using insufficient iteration variables, or by starting the problem with unsuitable values of the iteration variables.
 
@@ -220,11 +222,11 @@ The utility `run_process` carries out many runs, changing the starting values of
 
 Another approach is to start with an input file that gives a feasible solution, and modify it step by step towards the parameters desired. This process is automated by the utility `a_to_b`.
 
-It is important to choose the right number of *useful* iteration variables for th problem to be solved - it is possible to activate too many iteration variables as well as too few, some of which may be redundant.
+It is important to choose the right number of *useful* iteration variables for the problem to be solved - it is possible to activate too many iteration variables as well as too few, some of which may be redundant.
 
 Both optimisation and non-optimisation runs can fail with an error message suggesting that the iteration process is not making good progress. This is likely to be due to the code itself unable to escape a region of the parameters space where the minimum in the residuals is significantly above zero. In this situation, there is either no solution possible (the residuals can therefore never approach zero), or the topology of the local minimum makes it difficult for the code to escape to the global minimum. Again, a helpful technique os to wither change the list of iteration variables in use, or to simply modify their initial values to try to help the code avoid such regions.
 
-A technique that occasionally removes problems due to unfeasible results, particularly if an error code `ifail = 3` is encountered during an optimisation run, is to adjust slightly one of the limits imposed on the iteration variables, even if the limit in question has not been reached. This subtly alters the gradients computed by the code during the iteration process, and may tip the balance so that the code decides that the device produced is feasible after all. For instance, a certain component's temperature might be 400 K, and its maximum allowable temperature is 1000 K. Adjusting this limit to 900 K (which will make no different tot he *actual* temperature) may be enough to persuade the code that it has found a feasible solution.
+A technique that occasionally removes problems due to unfeasible results, particularly if an error code `ifail = 3` is encountered during an optimisation run, is to adjust slightly one of the limits imposed on the iteration variables, even if the limit in question has not been reached. This subtly alters the gradients computed by the code during the iteration process and may tip the balance so that the code decides that the device produced is feasible after all. For instance, a certain component's temperature might be 400 K, and its maximum allowable temperature is 1000 K. Adjusting this limit to 900 K (which will make no different to the *actual* temperature) may be enough to persuade the code that it has found a feasible solution.
 
 Similarly, the order in which the constraint equations and iteration variables are stored in the `icc` and `ixc` arrays can make the difference between a feasible and unfeasible result. This seemingly illogical behaviour is  typical of the way in which the code works.
 
@@ -236,10 +238,10 @@ It may be the case that the act of satisfying all the required constraints is im
 
 ## Hints
 
-The above sections should indicate that it is the complex iter-play between the constraint equations and the iteration variables that determines whether the code will eb successful at producing a useful result. It can be somewhat laborious process to arrive at a working vase, and experience is often of great value in this situation.
+The above sections should indicate that it is the complex inter-play between the constraint equations and the iteration variables that determines whether the code will eb successful at producing a useful result. It can be somewhat laborious process to arrive at a working vase, and experience is often of great value in this situation.
 
-It should be remembered that sufficient iteration variables should be used to solve each constraint equation. For instance, a particular limit equation may be $A \leq B$, i.e. $A = fB$, where the f-value $f$ must lie between zero and one for the relation to be satisfied. However, if none of the iteration variables have any effect on the values of $A$ and $B$, and $A$ happens to be *greater* than $B$, the `PROCESS` will clearly not be able to solve the constraint.
+It should be remembered that sufficient iteration variables should be used to solve each constraint equation. For instance, a specific limit equation may be $A \leq B$, i.e. $A = fB$, where the f-value $f$ must lie between zero and one for the relation to be satisfied. However, if none of the iteration variables have any effect on the values of $A$ and $B$, and $A$ happens to be *greater* than $B$, the `PROCESS` will clearly not be able to solve the constraint.
 
 The lower and upper bounds of the iteration variables are all available to be changed in the input file. Constraints can be relaxed in a controlled manner by moving these bounds, although in some cases care should be taken to ensure that un-physical values cannot occur. The code indicates which iteration variables lie at the edge of their range.
 
-It is suggested that constraint equations should be added one at a time, with sufficient new iteration variables activated at each step. If the situation becomes unfeasible it can be helpful to reset the initial iteration variable values to those shown in the output from a previous feasible case, and rerun the code.
+It is suggested that constraint equations should be added one at a time, with required new iteration variables activated at each step. If the situation becomes unfeasible it can be helpful to reset the initial iteration variable values to those shown in the output from a previous feasible case and rerun the code.
