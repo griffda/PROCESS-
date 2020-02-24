@@ -35,12 +35,11 @@ contains
       shldoth, tfcth
     use physics_variables, only: dene, idivrt, powfmw, qfuel, rmajor, rminor, &
       sarea, vol, afuel
-    use numerics, only: umass
     use tfcoil_variables, only: n_tf
     use times_variables, only: tdwell
     use vacuum_variables, only: dlscal, niterpump, nvduct, vacdshm, &
       vacuum_model, vcdimax, vpumpn
-
+    use constants, only: umass
     implicit none
 
     !  Arguments
@@ -186,10 +185,9 @@ contains
     use error_handling, only: fdiags, report_error
     use physics_variables, only: powfmw, te
     use process_output, only: ovarre, oblnkl, ovarin, osubhd, ocmmnt, oheadr
-    use numerics, only: pi
     use times_variables, only: tramp
     use vacuum_variables, only: dwell_pump, ntype, pbase, prdiv, rat, tn
-
+		use constants, only: mfile, nout, pi
     implicit none
 
     !  Arguments

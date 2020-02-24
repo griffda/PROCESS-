@@ -35,7 +35,7 @@ contains
 
     use availability_module, only: avail
     use costs_module, only: costs
-    use numerics, only: nout
+		use constants, only: nout
     implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -164,6 +164,7 @@ contains
       drveff, reprat, pdrive, rrin, pfusife, ifetyp, zl1, r1, zu1, flirad
     use physics_variables, only: powfmw, wallmw
 
+		use constants, only: pi
     implicit none
 
     !  Arguments
@@ -331,6 +332,7 @@ contains
 
     use constants, only: echarge, mproton, degrad, pi
 
+		use constants, only: pi
     implicit none
 
     !  Arguments
@@ -948,8 +950,7 @@ contains
       bldzl, zl3, v1dzl, zl2, fwdzl, zl1, chdzl, chdzu, zu1, fwdzu, zu2, &
       v1dzu, zu3, bldzu, zu4, v2dzu, zu5, shdzu, zu6, v3dzu, zu7, fwmatv, &
       v1matv, blmatv, v2matv, shmatv, v3matv, chmatv
-    use numerics, only: mfile
-
+		use constants, only: mfile
     implicit none
 
     !  Arguments

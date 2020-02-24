@@ -9,11 +9,6 @@ module numerics
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use global_variables
-  use constants
-  use maths_library
-  use plasmod_variables
-
   implicit none
 
   public
@@ -405,6 +400,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use global_variables, only: icase, verbose, vlabel
+    use constants, only: mfile, nout
+    use maths_library, only: HYBRD
+		use plasmod_variables, only: geom, power_losses, i_flag
     implicit none
 
     !  Arguments
@@ -479,6 +478,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use global_variables, only: maxcal, convergence_parameter, iscan_global, &
+      xlabel_2
+		use constants, only: mfile, nplot, nout, pi, opt_file
+		use maths_library, only: vmcon
+		use plasmod_variables, only: plasmod_i_impmodel
     implicit none
 
     !  Arguments

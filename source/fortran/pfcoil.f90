@@ -62,10 +62,10 @@ contains
         coheof, zh, fcohbof, ra, rb, isumatpf, whtpf, fcupfsu, cohbop, rjpfalw
     use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
         triang, rminor, vsind, aspect, itart, betap, rmajor
-    use numerics, only: pi
     use tfcoil_variables, only: dcopper, tftmp, dcond, i_tf_sup, fhts, &
         tcritsc, strncon_pf, bcritsc
     use times_variables, only: tim, tramp, tburn, tohs, tqnch, theat
+    use constants, only: pi, nout
     implicit none
 
     !  Arguments
@@ -706,9 +706,9 @@ contains
         bmaxoh0, rjohc, tmargoh, ipfres, rjpfalw, pfclres, vf, ric, bpf, &
         jscoh_eof, zpf, rb, ra, jscoh_bop, cptdin, pfcaseth, rpf, cohbop, zh, &
         wtc, zl, turns, wts
-		use numerics, only: pi
 		use tfcoil_variables, only: dcopper, dcond, tftmp, tcritsc, strncon_cs, &
       fhts, bcritsc
+		use constants, only: pi
     implicit none
 
     !  Arguments
@@ -956,7 +956,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use numerics, only: svd
+		use maths_library, only: svd
     implicit none
 
     !  Arguments
@@ -1368,7 +1368,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use numerics, only: twopi, rmu0
+		use constants, only: twopi, rmu0
     implicit none
 
     !  Arguments
@@ -1623,7 +1623,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use numerics, only: rmu0
+		use constants, only: rmu0
     implicit none
 
     real(kind(1.0D0)) :: bfmax
@@ -1783,10 +1783,10 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use error_handling, only: fdiags, idiags, report_error
-		use numerics, only: variable_error, secant_solve
     use superconductors, only: jcrit_nbti, wstsc, jcrit_rebco, bi2212, &
       itersc, current_sharing_rebco
 		use tfcoil_variables, only: tmargmin_cs, temp_margin
+		use maths_library, only: variable_error, secant_solve
     implicit none
 
     !  Arguments
@@ -2153,7 +2153,8 @@ end subroutine superconpf
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use pfcoil_variables, only: oh_steel_frac, nohc, ra, ric, rb, zh
-		use numerics, only: rmu0, pi, ellipke
+		use constants, only: pi, rmu0
+		use maths_library, only: ellipke
     implicit none
 
     !  Arguments
@@ -2229,7 +2230,7 @@ end subroutine superconpf
         ncls, zl, ncirt, ra, zh, rb
 		use physics_variables, only: rmajor, rlp
     use process_output, only: oheadr, oblnkl, ocmmnt
-    use numerics, only: rmu0, pi
+		use constants, only: pi, rmu0
     implicit none
 
     !  Arguments
@@ -2567,7 +2568,8 @@ end subroutine superconpf
     use process_output, only: int_to_string2, ovarin, oheadr, &
       ovarre, osubhd, oblnkl, ocmmnt
     use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp
-    use numerics, only: boundu, mfile
+    use numerics, only: boundu
+		use constants, only: mfile
     implicit none
 
     !  Arguments

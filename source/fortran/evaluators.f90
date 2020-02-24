@@ -103,6 +103,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use global_variables, only: vlabel, icase, verbose
+		use constants, only: nout, iotty, vfile
     implicit none
 
     !  Arguments
@@ -203,6 +205,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use global_variables, only: icase
     implicit none
 
     !  Arguments
@@ -285,6 +288,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use global_variables, only: xlabel, iscan_global
+		use constants, only: nout, iotty, mfile
     implicit none
 
     !  Arguments

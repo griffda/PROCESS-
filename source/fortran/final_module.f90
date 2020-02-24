@@ -19,6 +19,7 @@ subroutine final(ifail)
   use numerics
   use output_module!, only:output
   use constraints
+  use constants, only: mfile, nout, iotty
   implicit none
 
   !  Arguments

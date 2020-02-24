@@ -177,11 +177,11 @@ subroutine tf_coil_geometry()
     !   - Winding Pack NOT included
     use physics_variables, only: rmajor, bt
     use build_variables, only: tfcth, tfthko, r_tf_inboard_mid
-    use numerics, only: pi
     use tfcoil_variables, only: tinstf, tfc_sidewall_is_fraction, tfareain, &
         ritfc, tftort, n_tf, casthi_is_fraction, bmaxtf, arealeg, &
         casthi_fraction, casths_fraction, tfinsgap, rbmax, casthi, casths
 
+    use constants, only: pi
     implicit none
 
     ! Local variables
@@ -247,7 +247,6 @@ subroutine tf_winding_pack()
     !
     use error_handling, only: fdiags, report_error
     use build_variables, only: tfcth, tfthko
-    use numerics, only: pi
     use tfcoil_variables, only: dhecoil, thicndut, cpttf, aswp, aiwp, tftort, &
         leni, turnstf, tfareain, isumattf, n_tf, tinstf, leno, acstf, wwp1, &
         vftf, avwp, jwptf, acasetfo, acasetf, wwp2, thwcndut, insulation_area, &
@@ -257,6 +256,8 @@ subroutine tf_winding_pack()
         arealeg, casths, awphec, acndttf, acond, layer_ins, thkcas, &
         conductor_width, oacdcp, tfinsgap, casthi
 
+    use global_variables, only: icase
+    use constants, only: pi
     implicit none
 
     ! Local variables
@@ -397,7 +398,6 @@ subroutine tf_integer_winding_pack()
     ! Subroutine to calculate integer winding pack   
     use error_handling, only: fdiags, report_error
     use build_variables, only: tfcth, tfthko
-    use numerics, only: pi
     use tfcoil_variables, only: dhecoil, thicndut, cpttf, aswp, aiwp, tftort, &
         leni, turnstf, tfareain, casths, isumattf, n_tf, tinstf, acstf, wwp1, &
         acndttf, vftf, avwp, jwptf, acasetfo, acasetf, thwcndut, &
@@ -405,7 +405,8 @@ subroutine tf_integer_winding_pack()
         acstf, jwptf, acasetfo, wwp1, insulation_area, thwcndut, awphec, &
         tinstf, acndttf, acond, oacdcp, n_layer, thkwp, thkcas, tfinsgap, &
         casthi
-
+    use constants, only: pi
+    use maths_library, only: hybrd
     implicit none
     
     ! Local variables
@@ -606,13 +607,13 @@ subroutine tf_coil_area_and_masses()
     ! Subroutine to calculate the TF coil areas and masses
     use build_variables, only: hr1, r_tf_outboard_mid, tfcth, r_tf_inboard_mid
     use fwbs_variables, only: denstl
-    use numerics, only: twopi
     use tfcoil_variables, only: whtconsh, whttf, whtcas, tficrn, tfcryoarea, &
         tfsao, whtgw, isumattf, tfocrn, whtconsc, whtconcu, whtcon, whtconin, &
         tfsai, dcopper, vftf, whtconin, tfsai, dcond, dcondins, whtcon, &
         tfleng, dthet, dcase, acndttf, turnstf, n_tf, aiwp, radctf, acasetfo, &
         acasetf, fcutfsu, awphec, acstf
 
+    use constants, only: twopi
     implicit none
 
     ! Local Variables
@@ -697,8 +698,8 @@ subroutine peak_tf_with_ripple(n_tf,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
     !! Parametric Calculation, July 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use numerics, only: pi
 
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -791,7 +792,6 @@ subroutine stresscl
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use build_variables, only: tfcth, r_tf_inboard_mid
-    use numerics, only: pi
     use tfcoil_variables, only: poisson, eyzwp, casestr, windstrain, turnstf, &
         s_vmises_cond, thkwp, i_tf_tresca, s_tresca_cond, acstf, vforce, &
         sigrcon, ritfc, jwptf, strtf1, s_tresca_case, strtf2, s_vmises_case, &
@@ -799,7 +799,7 @@ subroutine stresscl
         deflect, acstf, jwptf, jeff, eywp, sigttf, eyoung, insstrain, radtf, &
         strtf1, rbmax, cpttf, sigvert, thicndut, eyins, acndttf, tfinsgap, &
         acasetf
-
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -928,8 +928,8 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect)
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use numerics, only: rmu0, linesolv
-
+    use constants, only: rmu0
+    use maths_library, only: linesolv
     implicit none
 
     !  Arguments
@@ -1084,6 +1084,7 @@ function edoeeff(estl,eins,tins,tstl,tcs)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use maths_library, only: eshellvol
     implicit none
 
     real(kind(1.0D0)) :: edoeeff
@@ -1246,9 +1247,8 @@ subroutine coilshap
     use physics_variables, only: i_single_null, rminor, rmajor
     use build_variables, only: hmax, hpfu, tfcth, r_tf_outboard_mid, &
         r_tf_inboard_mid
-    use numerics, only: pi
     use tfcoil_variables, only: yarc, xarc, tfleng, tfa, tfb
-    
+    use constants, only: pi
     implicit none
     !  Arguments
     !  Local variables
@@ -1316,9 +1316,8 @@ subroutine tfcind(tfthk)
     !! coil itself is calculated by taking the field as B(r)/2.
     !! The field in the bore is calculated for unit current.
     !! Top/bottom symmetry is assumed.
-    use numerics, only: rmu0, pi
     use tfcoil_variables, only: yarc, xarc, tfind
-
+    use constants, only: pi, rmu0
     implicit none
     !  Arguments
     real(kind(1.0D0)), intent(in) :: tfthk
@@ -1415,7 +1414,7 @@ subroutine outtf(outfile, peaktfflag)
         tfcth, tfthko
     use process_output, only: int2char, ovarre, ocmmnt, oheadr, &
         oblnkl, ovarin, osubhd, ovarrf, obuild
-    use numerics, only: icc, mfile
+    use numerics, only: icc
     use tfcoil_variables, only: sigrtf, wwp1, whttf, sigttf, yarc, xarc, &
         windstrain, wwp2, whtconsh, tftort, isumattf, whtconcu, ritfc, &
         conductor_width, tfinsgap, deflect, vtfskv, tmaxpro, fcutfsu, &
@@ -1427,6 +1426,7 @@ subroutine outtf(outfile, peaktfflag)
         whtconsc, alstrtf, bmaxtfrp, vdalw, leni, thkwp, whtcas, whtcon, &
         ripple, i_tf_tresca, bmaxtf, awphec, avwp, aiwp, acond, acndttf
 
+    use constants, only: mfile, pi
     implicit none
 
     !  Arguments
@@ -1702,13 +1702,14 @@ subroutine tfspcall(outfile,iprint)
         tape_thickness, tape_width, tapes, rebco_thickness, solder_area
     use error_handling, only: idiags, fdiags, report_error
     use process_output, only: ovarre, ocmmnt, oheadr, oblnkl, ovarin
-    use numerics, only: pi, run_tests
     use tfcoil_variables, only: tmargmin_tf, turnstf, n_tf, vftf, isumattf, &
         temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
         tmargtf, thwcndut, conductor_width, fcutfsu, jwdgcrt, tdmptf, cpttf, &
         ritfc, jwptf, bmaxtfrp, tcritsc, acstf, strncon_tf, fhts, bcritsc
     use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, jcrit_nbti, croco, bi2212
 
+    use global_variables, only: run_tests
+    use constants, only: pi
     implicit none
     integer, intent(in) :: outfile, iprint
 
@@ -2315,12 +2316,11 @@ subroutine croco_quench(conductor)
 
     !! Finds the current density limited by the maximum temperatures in quench
     !! It also finds the dump voltage.
-    use numerics, only: secant_solve
     use tfcoil_variables, only: leno, tmax_croco, bmaxtf, quench_detection_ef, &
         tftmp, croco_quench_temperature, jwptf, conductor_width
     use superconductors, only: copper_properties2, jcrit_rebco
     use ode_mod, only: ode
-
+    use maths_library, only: secant_solve
     implicit none
 
     type(volume_fractions), intent(in)::conductor

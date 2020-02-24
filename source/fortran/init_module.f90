@@ -24,6 +24,7 @@ subroutine init
   use process_input
   use process_output
   use main_module, only: run_summary
+  use constants, only: opt_file, vfile, nout, nplot, mfile
   implicit none
 
   !  Arguments

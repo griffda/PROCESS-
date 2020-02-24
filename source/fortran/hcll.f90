@@ -829,6 +829,7 @@ contains
     use build_variables, only: fwith, shldith, ddwi, fwoth, shldoth
     use fwbs_variables, only: tbr
 
+		use global_variables, only: output_prefix, fileprefix
     implicit none
 
     ! Local variables
@@ -1265,8 +1266,8 @@ contains
     use process_output, only: oheadr, ovarre, ocmmnt, oblnkl
     use fw_module, only: friction
     use refprop_interface, only: fluid_properties, enthalpy_ps
-    use numerics, only: verbose
 
+		use global_variables, only: verbose
     implicit none
 
     ! Function return parameter: Calculated pumping power (MW)

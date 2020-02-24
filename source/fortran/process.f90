@@ -42,7 +42,8 @@ program process
     kallenbach_scan_switch, mfile, nout, nplot, opt_file, &
     kallenbach_tests, vfile, oblnkl, ostars, ocentr, &
     osubhd, ocmmnt, oheadr, kallenbach_testing, kallenbach_scan
-  use numerics, only: fileprefix, ioptimz, output_prefix, run_tests, verbose
+  use numerics, only: ioptimz
+  use global_variables, only: output_prefix, fileprefix, run_tests, verbose
   
   implicit none
 

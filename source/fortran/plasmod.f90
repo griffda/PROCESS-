@@ -45,22 +45,26 @@ contains
     use physics_variables, only: hfact, tesep, bt, protium, teped, rhopedn, &
         triang95, triang, plascur, ieped, fgwped, aspect, kappa95, q95, &
         kappa, ilhthresh, fdeut, fvsbrnni, rhopedt, fgwsep, rmajor
-    use numerics, only: geometry, composition, pedestal, &
-        plasmod_dt, plasmod_dx_cd, plasmod_contrpovs, &
-        plasmod_ainc, plasmod_fradc, plasmod_iprocess, plasmod_pedscal, &
-        plasmod_pfus, plasmod_nx, plasmod_dtmin, plasmod_imptype, &
-        plasmod_chisawpos, plasmod_gamcdothers, plasmod_v_loop, plasmod_dgy, &
-        plasmod_x_heat, plasmod_i_impmodel, plasmod_cxe_psepfac, boundl, &
-        plasmod_dx_control, plasmod_globtau, plasmod_qnbi_psepfac, &
-        plasmod_tolmin, plasmod_x_cd, plasmod_capa, plasmod_qdivt, &
-        plasmod_dx_heat, plasmod_x_fus, plasmod_car_qdivt, plasmod_chisaw, &
-        plasmod_nchannels, plasmod_sawpertau, plasmod_x_control, &
-        plasmod_test, plasmod_i_modeltype, plasmod_dtmaxmin, plasmod_eopt, &
-        plasmod_maxpauxor, plasmod_tol, plasmod_nxt, plasmod_fcdp, &
-        plasmod_psepplh_sup, plasmod_contrpovr, plasmod_dtmax, plasmod_isawt, &
-        plasmod_dtmaxmax, plasmod_maxa, plasmod_dx_fus, plasmod_nbi_energy, &
-        plasmod_dtinc, plasmod_i_equiltype, inputs, numerics_transp
-    
+    use global_variables, only: verbose
+    use constants, only: pi, echarge, rmu0
+    use structs, only: geometry, composition, pedestal, inputs, &
+      numerics_transp
+    use numerics, only: boundl
+    use plasmod_variables, only: plasmod_nx, plasmod_dx_control, plasmod_dt, &
+      plasmod_sawpertau, plasmod_dtmin, plasmod_contrpovs, &
+      plasmod_car_qdivt, plasmod_gamcdothers, plasmod_dtmaxmax, &
+      plasmod_maxa, plasmod_pfus, plasmod_cxe_psepfac, plasmod_test, &
+      plasmod_chisawpos, plasmod_dtmaxmin, plasmod_maxpauxor, &
+      plasmod_fradc, plasmod_globtau, plasmod_i_equiltype, plasmod_capa, &
+      plasmod_qdivt, plasmod_qnbi_psepfac, plasmod_psepplh_sup, &
+      plasmod_x_heat, plasmod_tol, plasmod_contrpovr, plasmod_ainc, &
+      plasmod_dx_cd, plasmod_x_cd, plasmod_dtmax, plasmod_v_loop, &
+      plasmod_x_fus, plasmod_pedscal, plasmod_i_impmodel, &
+      plasmod_x_control, plasmod_nbi_energy, plasmod_dx_fus, &
+      plasmod_dx_heat, plasmod_eopt, plasmod_nxt, plasmod_chisaw, &
+      plasmod_dgy, plasmod_fcdp, plasmod_nchannels, plasmod_tolmin, &
+      plasmod_dtinc, plasmod_iprocess, plasmod_imptype, &
+      plasmod_i_modeltype, plasmod_isawt
     implicit none
 
     !  Arguments
@@ -303,9 +307,12 @@ contains
         betaft, ptrimw, ni0, zeff, vsres, nesep, dnz, pedgeradmw, dlamie, &
         falpi, kappa, rnfene, pbrempv, rmajor, dnbeam, gamma, kappaa, deni, &
         dnprot, beta, fdeut, palppv, aspect
-    use numerics, only: plasmod_i_impmodel, echarge, rmu0, pi, i_flag, &
-        geometry, composition, pedestal, radial_profiles, MHD_EQ, power_losses
     
+		use constants, only: rmu0, echarge, pi, nout
+    use structs, only: geometry, composition, pedestal, radial_profiles, &
+      MHD_EQ, power_losses
+    use plasmod_variables, only: power_losses, plasmod_i_impmodel, geometry, &
+      i_flag
     implicit none
 
     !  Arguments
@@ -713,10 +720,11 @@ contains
 
 		use constraint_variables, only: psepbqarmax, pseprmax
 		use physics_variables, only: rmajor, bt, aspect
-    use numerics, only: inp0, radp, ped, loss, comp, num, mhd, geom, &
-        i_flag, plasmod_i_equiltype
     use process_output, only: ovarin, ocmmnt, oheadr, ovarrf, osubhd
     
+		use constants, only: echarge, rmu0
+    use plasmod_variables, only: radp, ped, geom, plasmod_i_equiltype, loss, &
+      inp0, mhd, num, i_flag, comp
     implicit none
 
     !  Arguments
@@ -856,8 +864,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use numerics, only: output_prefix, geom, fileprefix, radp
-    
+		use global_variables, only: fileprefix, output_prefix
+		use plasmod_variables, only: radp, i_flag
     implicit none
 
     !  Arguments

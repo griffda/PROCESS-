@@ -50,10 +50,10 @@ contains
     use heat_transport_variables, only: tfacpd, etatf
     use physics_variables, only: rmajor
     use process_output, only: oheadr, ovarre
-    use numerics, only: pi
     use tfcoil_variables, only: tflegmw, estotftgj, tfcpmw, rhotfleg, &
         tflegres, vtfskv, jbus, tfbusl, tfbusmas, tfcmw, vtfkv, i_tf_sup, &
         tfckw, presleg, dcopper, ritfc, cpttf, prescp, n_tf
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -477,8 +477,9 @@ contains
         ric, etapsu, cptdin, curpfb, sxlg, turns, vf, rjconpf, rpf
     use physics_variables, only: pohmmw, rmajor
     use process_output, only: oheadr, ovarre, oblnkl, ocmmnt
-    use numerics, only: pi, active_constraints, ioptimz
+    use numerics, only: active_constraints, ioptimz
     use times_variables, only: tim, intervallabel, timelabel, tohs
+    use constants, only: twopi, pi
     implicit none
 
     !  Arguments
@@ -752,6 +753,7 @@ contains
         trithtmw, pinjwp, tlvpmw, peakmva, fcsht, fmgdmw, pwpm2, htpmw, pacpmw
     use pf_power_variables, only: iscenr, srcktpm
     use process_output, only: oheadr, ovarre, oblnkl
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -861,6 +863,7 @@ contains
         prescp, dtiocool, n_tf, cpttf
     use times_variables, only: tpulse
     use primary_pumping_variables, only: htpmw_fw_blkt
+    use constants, only: rmu0, pi
     implicit none
 
     ! Cryo-aluminium coolant average temperature
@@ -1037,6 +1040,7 @@ contains
         osubhd
     use tfcoil_variables, only: ppump, i_tf_sup, tfcmw, tmpcry
     use primary_pumping_variables, only: htpmw_fw_blkt
+    use constants, only: rmu0, mfile, pi
     implicit none
 
     !  Arguments
@@ -1496,6 +1500,7 @@ contains
     use pf_power_variables, only: poloidalpower
     use process_output, only: osubhd, oblnkl
     use times_variables, only: tramp, tburn, theat, tdwell, tqnch, tohs
+    use constants, only: mfile
     implicit none
 
     ! Arguments
@@ -1701,6 +1706,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use fwbs_variables, only: qnuc, inuclear
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -1765,6 +1771,7 @@ contains
     use error_handling, only: fdiags, idiags, report_error
     use fwbs_variables, only: iblanket, secondary_cycle, outlet_temp
     use heat_transport_variables, only: tturb
+    use constants, only: pi
     implicit none
 
     !  Arguments

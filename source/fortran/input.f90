@@ -123,6 +123,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: nout
     implicit none
 
     !  Arguments
@@ -175,6 +176,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use global_variables, only: run_tests, verbose, maxcal, runtitle
     implicit none
 
     !  Arguments
@@ -3180,6 +3182,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use constants, only: nout
     implicit none
 
     !  Arguments

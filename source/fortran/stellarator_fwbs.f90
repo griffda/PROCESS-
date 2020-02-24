@@ -373,7 +373,7 @@ contains
     !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -477,6 +477,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use maths_library, only: hybrd
     implicit none
 
     !  Arguments
@@ -978,7 +979,7 @@ contains
     !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+		use maths_library, only: linesolv
     implicit none
 
     !  Arguments
@@ -1070,9 +1071,9 @@ contains
     use physics_variables, only: idivrt, kappa, pneutmw, rmajor, rminor, &
       triang, wallmw
     use process_output, only: ovarre, osubhd, ovarin, oheadr, ocmmnt
-    use numerics, only: pi, eshellarea, eshellvol
     use tfcoil_variables, only: casthi, i_tf_sup, tfsai, tfsao, thkwp, tinstf
-
+		use constants, only: pi
+		use maths_library, only: eshellvol, eshellarea
     implicit none
 
     !  Arguments
@@ -2117,6 +2118,7 @@ contains
     use tfcoil_variables, only: casthi, i_tf_sup, tfsai, tfsao, thkwp, &
       tinstf
 
+		use maths_library, only: tril
     implicit none
 
     !  Arguments

@@ -3006,6 +3006,8 @@ subroutine loadxc
   use times_variables
   use global_variables
   use rebco_variables
+  use constants, only: nout
+  use maths_library, only: variable_error
 
   implicit none  
 
@@ -3273,6 +3275,7 @@ subroutine convxc(xc,nn)
   use reinke_variables
   use tfcoil_variables
   use times_variables
+  use maths_library, only: variable_error
 
   implicit none
 

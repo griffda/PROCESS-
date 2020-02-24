@@ -39,7 +39,6 @@ contains
     use profiles_module, only: tprofile, nprofile
     use process_output, only: oblnkl, ocmmnt, ovarin, ovarre, ovarrf, osubhd, &
       oheadr
-    use numerics, only: nout
     use heat_transport_variables, only: pinjwpfix, pinjwp
     use current_drive_variables, only: echpwr, pnbeam, plhybd, cnbeam, porbitlossmw, &
       iefrf, iefrffix, pheat, pheatfix, pinjfixmw, irfcd, feffcd, fpion, nbshinef, &
@@ -51,7 +50,7 @@ contains
       rhopedt, rhopedn, te0, teped, tesep, alphat, alphan, ne0, nesep, neped, &
       bt, rminor, tbeta, plascur, ipedestal, faccd, ignite, pohmmw, powfmw, &
       facoh, fvsbrnni
-
+    use constants, only: nout, echarge, pi
     implicit none
 
     ! Arguments
@@ -672,7 +671,7 @@ contains
     use current_drive_variables, only: frbeam, enbeam, taubeam, ftritbm
     use physics_variables, only: eps, rmajor, abeam, te, dene, ralpne, rncne, &
       rnone, rnfene, deni, ten, zeffai, dlamie, alphan, alphat, aspect, zeff
-
+		use constants, only: rmu0
     implicit none
 
     ! Arguments !

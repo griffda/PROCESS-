@@ -166,9 +166,9 @@
       rpf, zh, wts, ra, rb
     use physics_variables, only: rminor
     use process_output, only: oheadr, ovarre
-    use numerics, only: pi
     use tfcoil_variables, only: acasetf, acond, aswp, avwp, fcoolcp, fcutfsu, &
       i_tf_sup, isumattf, n_tf, vftf
+    use constants, only: pi
 
     implicit none
 

@@ -16,6 +16,7 @@ subroutine inform(progid)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants, only: nout
   implicit none
 
   !  Arguments
@@ -75,6 +76,8 @@ subroutine run_summary
   use numerics
   use process_output
 
+  use constants, only: nout, mfile, iotty, mfile
+  use maths_library, only: integer2string, integer3string
   implicit none
 
   !  Local variables
@@ -247,6 +250,7 @@ subroutine eqslv(ifail)
   use numerics
   use function_evaluator
 
+  use constants, only: nout, mfile, iotty
   implicit none
 
   !  Arguments
@@ -394,8 +398,7 @@ subroutine herror(ifail)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use process_output
-  use numerics, only: iotty, nout
-
+  use constants, only: nout, iotty
   implicit none
 
   !  Arguments
@@ -485,8 +488,7 @@ subroutine verror(ifail)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use process_output
-  use numerics, only: iotty, nout
-
+  use constants, only: nout, iotty
   implicit none
 
   !  Arguments
@@ -605,7 +607,7 @@ subroutine runtests
   use superconductors
   use reinke_module
   use hare, only:hare_calc
-
+  use constants, only: nout
   implicit none
   real(kind(1.0D0)) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
   logical :: Temperature_capped

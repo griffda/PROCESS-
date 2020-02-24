@@ -13,6 +13,7 @@ subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
     !! jcrit : output real : Critical current density in superconductor (A/m2)
     ! Will return a negative number if the temperature is greater than Tc0, the
     ! zero-field critical temperature.
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -80,7 +81,7 @@ subroutine current_sharing_rebco(current_sharing_t, bfield, j)
     ! Uses 'function jcrit_rebco' and the finds the temperature for given field and current density
     ! Will return a negative number if the current density is too high
 
-    use numerics, only: secant_solve
+    use maths_library, only: secant_solve
     implicit none
 
     !  Arguments
@@ -244,8 +245,8 @@ subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use numerics, only: pi
   use error_handling, only: fdiags, report_error
+    use constants, only: pi
   implicit none
 
   !  Arguments
@@ -432,6 +433,7 @@ subroutine jcrit_nbti(temperature,bmax,c0,bc20max,tc0max,jcrit,tcrit)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi
     implicit none
 
     !  Arguments
@@ -486,8 +488,8 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use numerics, only: variable_error
     use error_handling, only: fdiags, report_error
+    use maths_library, only: variable_error
     implicit none
 
     ! Arguments
@@ -627,11 +629,11 @@ subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
     !! "REBCO" 2nd generation HTS superconductor
     ! Updated 13/11/18 using data from Lewandowska et al 2018.
     
-    use numerics, only: pi
     use rebco_variables, only: copper_area, copper_thick, croco_id, &
       hastelloy_area, hastelloy_thickness, rebco_area, solder_area, &
       stack_thickness, tape_thickness, tape_width, tapes, rebco_thickness
     use resistive_materials, only: volume_fractions, supercon_strand
+    use constants, only: pi
     implicit none
     real(kind(1.0D0)), intent(in) ::jcritsc
     type(volume_fractions), intent(inout)::conductor
@@ -694,6 +696,7 @@ subroutine copper_properties(T,copper)
     ! Cryodata Software Package, CRYOCOMP, v 3.0, Florence, SC, 1997
     ! Data are available up to 1000 K.
     use resistive_materials, only: resistive_material
+    use constants, only: pi
     implicit none
 
     type(resistive_material)::copper
@@ -835,6 +838,7 @@ end subroutine hastelloy_properties
 ! --------------------------------------------------------------------------
 subroutine solder_properties(T,solder)
     use resistive_materials, only: resistive_material
+    use constants, only: pi
     implicit none
 
     type(resistive_material)::solder

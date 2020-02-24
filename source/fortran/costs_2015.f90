@@ -945,7 +945,7 @@ contains
     use heat_transport_variables, only: pnetelmw
     use process_output, only: oheadr, oshead, ocosts, oblnkl, ovarrf
     use cost_variables, only: coe, cpfact
-
+		use constants, only: mfile
     implicit none
 
     !  Local Variables
@@ -1031,8 +1031,7 @@ contains
     !! of a cost item from array s in costs_2015
 
     use process_output, only: ovarrf
-    use numerics, only: mfile
-
+		use constants, only: mfile
     implicit none
 
     !  Arguments
@@ -1062,8 +1061,7 @@ contains
     !! of a cost item not in the array s in costs_2015
 
     use process_output, only: ovarrf
-    use numerics, only: mfile
-
+		use constants, only: mfile
     implicit none
 
     !  Arguments

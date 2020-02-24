@@ -114,6 +114,7 @@ contains
 
     use error_handling, only: idiags, errors_on, report_error
     use final_module, only: final
+    use constants, only: nout
     implicit none
 
     ! Local variables
@@ -159,8 +160,7 @@ contains
 		use pfcoil_variables, only: whtpf
 		use pf_power_variables, only: srcktpm
     use process_output, only: oblnkl, ostars, ovarin
-    use numerics, only: xlabel, mfile, iscan_global, icase, nout, sqsumsq, &
-        nplot, nplot, vlabel
+    use numerics, only: sqsumsq
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
 		  thkwp
@@ -171,6 +171,9 @@ contains
     use physics_variables, only: q, aspect, pradmw, dene, powfmw, btot, tesep, &
       pdivt, ralpne, ten, betap, hfac, teped, palpnb, qlim, rmajor, wallmw, &
       beta, betalim, bt, plascur
+    use global_variables, only: iscan_global, vlabel, icase, xlabel, &
+        verbose, maxcal, runtitle, run_tests
+    use constants, only: nout, mfile, nplot
     implicit none
 
     ! Local variables
@@ -428,8 +431,7 @@ contains
 		use impurity_radiation_module, only: fimp
 		use pfcoil_variables, only: whtpf
 		use pf_power_variables, only: srcktpm
-    use numerics, only: xlabel, mfile, xlabel_2, iscan_global, icase, &
-      nout, sqsumsq, nplot, vlabel_2, vlabel
+    use numerics, only: sqsumsq
     use process_output, only: oblnkl, ostars, ovarin
     use tfcoil_variables, only: tfareain, wwp2, strtf2, tfcmw, tcpmax, oacdcp, &
       tfcpmw, fcutfsu, acond, fcoolcp, rcool, whttf, ppump, vcool, wwp1, n_tf, &
@@ -441,6 +443,9 @@ contains
     use physics_variables, only: q, aspect, pradmw, dene, powfmw, btot, tesep, &
       pdivt, ralpne, ten, betap, hfac, teped, palpnb, qlim, rmajor, wallmw, &
       beta, betalim, bt, plascur
+    use global_variables, only: icase, iscan_global, vlabel, xlabel, xlabel_2, &
+        vlabel_2
+    use constants, only: nout, mfile, nplot
     implicit none
 
     !  Arguments
@@ -928,7 +933,10 @@ contains
   ! for ipedestal = 2 option
   !use plasmod_variables
   use plasmod_module
-
+  use global_variables, only: convergence_parameter
+  use constants, only: iotty, nout, mfile
+  use plasmod_variables, only: ped, radp, num, mhd, inp0, loss, i_flag, geom, &
+    comp
   implicit none
 
   !  Arguments

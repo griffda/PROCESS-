@@ -90,13 +90,16 @@ end subroutine subr
       qstar, powerht, alphaj, fdeut, deni, q0, pperim, plascur, bp
     use plasmod_module, only: convert_plasmod2process, setupplasmod
     use profiles_module, only: plasma_profiles
-    use numerics, only: verbose, geom, icc, pi, echarge, loss, mhd, &
-      radp, ped, nout, rmu0, num, inp0, i_flag, comp
+    use numerics, only: icc
     use pulse_variables, only: lpulse
     use reinke_variables, only: lhat, fzactual, impvardiv, fzmin
     use times_variables, only: tramp, theat, tcycle, tpulse, tohs, tburn0, &
       tdwell, pulsetimings, tqnch, tohsin, tburn, tdown
     use reinke_module, only: reinke_tsep, reinke_fzmin
+		use global_variables, only: verbose
+		use constants, only: rmu0, pi, nout, echarge
+      use plasmod_variables, only: mhd, radp, loss, num, geom, ped, inp0, &
+         i_flag, comp
     implicit none
     !  Local variables
 
@@ -650,7 +653,7 @@ end subroutine subr
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use physics_functions_module, only: radpwr
-    use numerics, only: rmu0, pi
+    use constants, only: pi, rmu0
     implicit none
 
     real(kind(1.0D0)) :: bootstrap_fraction_iter89
@@ -708,7 +711,7 @@ end subroutine subr
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use physics_variables, only: te0, ne0
-		use numerics, only: rmu0, echarge
+		use constants, only: rmu0, echarge
     implicit none
 
     real(kind(1.0D0)) :: bootstrap_fraction_nevins
@@ -829,6 +832,7 @@ end subroutine subr
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use error_handling, only: fdiags, report_error
+		use maths_library, only: linesolv
     implicit none
 
     real(kind(1.0D0)) :: bootstrap_fraction_wilson
@@ -957,7 +961,8 @@ end subroutine subr
       zeff, rhopedn, bt, plascur, xarea, fhe3, teped, dene, te, rmajor, q, &
       nesep, te0, neped, tbeta, ne0, alphan, rhopedt, alphat
 		use profiles_module, only: tprofile, nprofile
-		use numerics, only: pi
+		use constants, only: pi
+		use plasmod_variables, only: radp, ped
     implicit none
 
     real(kind(1.0D0)) :: bootstrap_fraction_sauter
@@ -1707,7 +1712,8 @@ end subroutine subr
 
 		use error_handling, only: idiags, report_error
 		use physics_variables, only: normalised_total_beta, beta
-		use numerics, only: rmu0, pi
+		use global_variables, only: run_tests
+		use constants, only: pi, rmu0
     implicit none
 
     !  Arguments
@@ -2024,7 +2030,7 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use numerics, only: rmu0, pi
+		use constants, only: pi, rmu0
     implicit none
 
     real(kind(1.0D0)) :: bpol
@@ -2153,6 +2159,7 @@ end subroutine subr
       aion, dnitot, protium, zeffai, rncne, rnone, falpi, ralpne, dlamee, &
       rnbeam, zeff, dnz, pcoef, alpharate, rnfene, abeam, dlamie, te, &
       protonrate, fdeut, alphan, dnbeam, fhe3, dnalp, dene, dnprot
+		use maths_library, only: secant_solve
     implicit none
 
     !  Arguments
@@ -2350,7 +2357,7 @@ end subroutine subr
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use error_handling, only: fdiags, idiags, report_error
-		use numerics, only: pi
+		use constants, only: pi
     implicit none
 
     !  Arguments
@@ -2511,8 +2518,8 @@ end subroutine subr
 		use error_handling, only: idiags, report_error
     use physics_variables, only: iradloss, tauee_in, pradpv, kappaa_ipb, &
       pohmmw, falpha
-		use numerics, only: pi
 		use startup_variables, only: ptaue, gtaue, ftaue, rtaue, qtaue
+		use constants, only: pi
     implicit none
 
     !  Arguments
@@ -3190,7 +3197,7 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use numerics, only: rmu0
+		use constants, only: rmu0
     implicit none
 
     !  Arguments
@@ -3527,7 +3534,7 @@ end subroutine subr
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use numerics, only: zeroin
+		use maths_library, only: zeroin
     implicit none
 
     real(kind(1.0D0)) :: fhfac
@@ -3659,10 +3666,11 @@ end subroutine subr
       pthrmw, pthrmw, pthrmw, idivrt
     use process_output, only: int_to_string2, ovarre, ovarrf, oheadr, &
       oblnkl, ovarin, ocmmnt, osubhd, ovarst
-    use numerics, only: mproton, active_constraints, mfile, boundu, icc, &
-        boundl, pi, rmu0, ioptimz, epsilon0, echarge
+    use numerics, only: active_constraints, boundu, icc, &
+        boundl, ioptimz
     use reinke_variables, only: fzactual, impvardiv, fzmin
 		use stellarator_variables, only: iotabar, istell
+		use constants, only: rmu0, mproton, mfile, echarge, pi, epsilon0
     implicit none
 
     !  Arguments
