@@ -1208,14 +1208,14 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     end if
 
 
-    ! Buking cylinder/casing properties
+    ! bucking cylinder/casing properties
     ! ---
-    if ( i_tf_buking == 1 ) then
+    if ( i_tf_bucking == 1 ) then
         
-        ! No current in buking cylinder/casing
+        ! No current in bucking cylinder/casing
         jeff(1) = 0.0D0
 
-        ! Steel buking cylinder (copper and SC design)
+        ! Steel bucking cylinder (copper and SC design)
         if ( i_tf_sup /= 2 ) then 
             eyoung(1) = eyoung_steel
             poisson(1) = poisson_steel
@@ -1252,25 +1252,25 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     do ii = 1, n_tf_graded_layers
         
         ! Homogeneous current in (super)conductor
-        jeff(i_tf_buking + ii) = ritfc / (pi * (r_wp_outer**2 - r_wp_inner**2))
+        jeff(i_tf_bucking + ii) = ritfc / (pi * (r_wp_outer**2 - r_wp_inner**2))
 
         ! Same thickness for all WP layers in stress calculation
-        radtf(i_tf_buking + ii) = r_wp_inner + dble(ii-1)*dr_wp_layer
+        radtf(i_tf_bucking + ii) = r_wp_inner + dble(ii-1)*dr_wp_layer
 
         ! Copper magent
         if ( i_tf_sup == 0 ) then
-            eyoung(i_tf_buking  + ii) = eyoung_copper
-            poisson(i_tf_buking + ii) = poisson_copper
+            eyoung(i_tf_bucking  + ii) = eyoung_copper
+            poisson(i_tf_bucking + ii) = poisson_copper
             
         ! SC magnets smeared properties
         else if ( i_tf_sup == 1 ) then
-            eyoung(i_tf_buking  + ii) = eyngeff( eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs )
-            poisson(i_tf_buking + ii) = poisson_steel
+            eyoung(i_tf_bucking  + ii) = eyngeff( eyoung_steel, eyoung_ins, t_ins_eff, thwcndut, tcbs )
+            poisson(i_tf_bucking + ii) = poisson_steel
         
         ! Cryogenic aluminium properties
         else 
-            eyoung(i_tf_buking  + ii) = eyoung_al
-            poisson(i_tf_buking + ii) = poisson_al
+            eyoung(i_tf_bucking  + ii) = eyoung_al
+            poisson(i_tf_bucking + ii) = poisson_al
         end if 
     end do
 
@@ -1390,9 +1390,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     ! Output formating (Maximum TRESCA per layer and stress at the corresponding point)
     ! ------
-    ! In case/buking cylinder
+    ! In case/bucking cylinder
     ! ---
-    if ( i_tf_buking == 1 ) then
+    if ( i_tf_bucking == 1 ) then
         sig_max = 0.0D0
         ii_max = 1
         do ii = 1, n_radial_array
@@ -1412,7 +1412,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         ! Stresses of the maximum TRESCA stress point
         sig_tf_tresca_max(1) = sig_tf_tresca(ii_max)
 
-        ! Case/buking maximum TRESCA stress used in constraint 31 [Pa]
+        ! Case/bucking maximum TRESCA stress used in constraint 31 [Pa]
         strtf1 = sig_tf_tresca_max(1)
 
     end if
@@ -1423,7 +1423,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     ! ---
     sig_max = 0.0D0
     ii_max = 0
-    do ii = i_tf_buking*n_radial_array + 1, n_tf_layer*n_radial_array
+    do ii = i_tf_bucking*n_radial_array + 1, n_tf_layer*n_radial_array
         
         ! CEA out of plane approximation
         if ( i_tf_tresca == 1 .and. i_tf_sup == 1 ) then
@@ -1443,20 +1443,20 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     
     ! Stress of the maximum TRESCA stress point
     if ( iprint == 1 ) then
-        sig_tf_r_max(i_tf_buking+1) = sig_tf_r(ii_max)
-        sig_tf_t_max(i_tf_buking+1) = sig_tf_t(ii_max)
-        sig_tf_z_max(i_tf_buking+1) = sig_tf_z(ii_max)
-        sig_tf_vmises_max(i_tf_buking+1) = sig_tf_vmises(ii_max)
+        sig_tf_r_max(i_tf_bucking+1) = sig_tf_r(ii_max)
+        sig_tf_t_max(i_tf_bucking+1) = sig_tf_t(ii_max)
+        sig_tf_z_max(i_tf_bucking+1) = sig_tf_z(ii_max)
+        sig_tf_vmises_max(i_tf_bucking+1) = sig_tf_vmises(ii_max)
     end if
 
     if ( i_tf_tresca == 1 ) then
-        sig_tf_tresca_max(i_tf_buking+1) = s_tresca_cond_cea(ii_max)
+        sig_tf_tresca_max(i_tf_bucking+1) = s_tresca_cond_cea(ii_max)
     else
-        sig_tf_tresca_max(i_tf_buking+1) = sig_tf_tresca(ii_max)
+        sig_tf_tresca_max(i_tf_bucking+1) = sig_tf_tresca(ii_max)
     end if
 
     ! WP conduit/conductor maximum TRESCA stress used in constraint 32 [Pa]
-    strtf2 = sig_tf_tresca_max(i_tf_buking+1)     ! Conduit TRESCA constraint
+    strtf2 = sig_tf_tresca_max(i_tf_bucking+1)     ! Conduit TRESCA constraint
     !-!
     ! ---
 
@@ -2067,11 +2067,6 @@ function eyngeff(estl,eins,tins,tstl,tcs)
     !! author: P J Knight, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
     !! author: J Galambos, FEDC/ORNL
-    !! estl : input real : Young's modulus of steel (Pa)
-    !! eins : input real : Young's modulus of insulator (Pa)
-    !! tins : input real : insulator wrap thickness (m)
-    !! tstl : input real : thickness of steel conduit (m)
-    !! tcs  : input real : dimension of cable space area inside conduit (m)
     !! This routine calculates the effective Young's modulus (Pa)
     !! of the TF coil in the winding pack section.
     !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -2083,20 +2078,35 @@ function eyngeff(estl,eins,tins,tstl,tcs)
     real(kind(1.0D0)) :: eyngeff
 
     !  Arguments
+    ! ---
+    real(kind(1.0D0)), intent(in) :: estl
+    !! Young's modulus of steel (Pa)
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,tins,tstl,tcs
+    real(kind(1.0D0)), intent(in) :: eins
+    !! Young's modulus of insulator (Pa)
+
+    real(kind(1.0D0)), intent(in) :: tins
+    !! Insulator wrap thickness (m)
+
+    real(kind(1.0D0)), intent(in) :: tstl
+    !! Thickness of steel conduit (m)
+
+    real(kind(1.0D0)), intent(in) :: tcs
+    !! Dimension of cable space area inside conduit (m)
+
 
     !  Local variables
+    ! ---
+    real(kind(1.0D0)) :: ed
 
-    real(kind(1.0D0)) :: ed,ttot
-
+    real(kind(1.0D0)) :: ttot
+    !!  Total turn thickness
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Total thickness of a turn
     ttot = tcs + 2.0D0*(tins + tstl)
 
     !  See Figure 8 and Section III.4, Morris
-
     ed = ttot / (2.0D0*tins/eins + (tcs+2.0D0*tstl)/estl)
 
     eyngeff = 1.0D0/ttot * 2.0D0*tstl*ed

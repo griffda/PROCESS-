@@ -1687,9 +1687,9 @@ contains
        case ('i_tf_turns_integer')
           call parse_int_variable('i_tf_turns_integer', i_tf_turns_integer, 0, 1, &
                     'Switch for TF coil integer/non-integer turns')
-       case ('i_tf_buking')
-          call parse_int_variable('i_tf_buking', i_tf_buking, -1, 2, &
-               'Switch for buking cylinder (case)')
+       case ('i_tf_bucking')
+          call parse_int_variable('i_tf_bucking', i_tf_bucking, -1, 2, &
+               'Switch for bucking cylinder (case)')
        case ('i_tf_sup_mat')
           call parse_int_variable('i_tf_sup_mat', i_tf_sup_mat, 1, 6, &
                'TF coil superconductor material')

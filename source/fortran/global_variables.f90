@@ -2258,12 +2258,12 @@ module tfcoil_variables
   !! Size of the arrays per layers storing the radial dependent 
   !! stress quantities (stresses, strain displacement etc..)
 
-  integer :: i_tf_buking = -1
-  !! Switch for buking cylinder (case)
+  integer :: i_tf_bucking = -1
+  !! Switch for bucking cylinder (case)
   !!  -1 : Casing for SC i.e. i_tf_sup = 1 (default) 
   !!       No casing for copper magnets
   !!       Casing for aluminium magnets 
-  !!   0 : No casing/buking cylinder
+  !!   0 : No casing/bucking cylinder
   !!   1 : casing/buling cylinder
   !!   2 : Bucked and wedged design
 
@@ -2273,7 +2273,7 @@ module tfcoil_variables
 
   integer :: n_tf_stress_layers = 0
   !! Number of layers considered for the inboard TF stress calculations
-  !! set in initial.f90 from i_tf_buking and n_tf_graded_layers
+  !! set in initial.f90 from i_tf_bucking and n_tf_graded_layers
 
   real(kind(1.0D0)) :: jbus = 1.25D6
   !! jbus /1.25e6/ : bussing current density (A/m2)

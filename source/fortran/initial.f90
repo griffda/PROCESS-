@@ -1112,26 +1112,26 @@ subroutine check
         stop
     end if
      
-    ! Buking cylinder default option setting
-    !  - Buking (casing) for SC i_tf_buking ( i_tf_buking = 1 )
-    !  - No buking for copper magnets ( i_tf_buking = 0 )
-    !  - Bucking for aluminium magnets ( i_tf_buking = 1 )
-    if ( i_tf_buking == -1 ) then
+    ! bucking cylinder default option setting
+    !  - bucking (casing) for SC i_tf_bucking ( i_tf_bucking = 1 )
+    !  - No bucking for copper magnets ( i_tf_bucking = 0 )
+    !  - Bucking for aluminium magnets ( i_tf_bucking = 1 )
+    if ( i_tf_bucking == -1 ) then
         if ( i_tf_sup == 0 ) then
-            i_tf_buking = 0
+            i_tf_bucking = 0
         else
-            i_tf_buking = 1
+            i_tf_bucking = 1
         end if
     end if 
 
     ! Error indicating that the buck and wedge solution is not yet implemented
-    if ( i_tf_buking == 2 ) then
+    if ( i_tf_bucking == 2 ) then
         call report_error(247)
         stop
     end if
 
     ! Number of stress calculation layers
-    n_tf_stress_layers = i_tf_buking + n_tf_graded_layers
+    n_tf_stress_layers = i_tf_bucking + n_tf_graded_layers
 
     ! If TFC sidewall has not been set by user
     if(casths<0.1d-10) tfc_sidewall_is_fraction = .true.
