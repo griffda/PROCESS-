@@ -3608,6 +3608,9 @@ module cost_variables
   !!                (iavail=1)
   integer :: ifueltyp = 0
   !! ifueltyp /0/ : switch:<UL>
+  !!           <LI> = 2 treat initial blanket, divertor, first wall
+  !!                    as capital costs. Treat all later items and 
+  !!                    fraction fcdfuel of CD equipment as fuel costs;
   !!           <LI> = 1 treat blanket divertor, first wall and
   !!                    fraction fcdfuel of CD equipment as fuel cost;
   !!           <LI> = 0 treat these as capital cost</UL>
