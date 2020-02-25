@@ -1,24 +1,20 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module fw_module
-  !+ad_name  fw_module
-  !+ad_summ  Module containing first wall model
-  !+ad_type  Module
-  !+ad_auth  J Morris, CCFE, Culham Science Centre
-  !+ad_args  N/A
-  !+ad_desc  This module contains the PROCESS first wall model
-  !+ad_prob  None
-  !+ad_hist  08/06/16 JM  Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs  PROCESS Engineering paper (M. Kovari et al.)
+  !! Module containing first wall model
+  !! author: J Morris, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains the PROCESS first wall model
+  !! PROCESS Engineering paper (M. Kovari et al.)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Modules to import !
-  !!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!
 
   use constants
   use global_variables
+  use error_handling
   use fwbs_variables
   use refprop_interface
   use process_output
@@ -26,7 +22,7 @@ module fw_module
   implicit none
 
   ! Subroutine declarations !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
   private
   public :: friction, heat_transfer, fw_thermal_conductivity, fw_temp
@@ -39,36 +35,30 @@ module fw_module
 contains
 
   subroutine friction(reynolds, darcy_friction)
-    !+ad_name  friction
-    !+ad_summ  Calculate Darcy friction factor, using Haaland equation
-    !+ad_type  function
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  reynolds : input real : Reynolds number
-    !+ad_args  darcy_friction : output real : Darcy friction factor
-    !+ad_desc  Darcy friction factor, using Haaland equation, an approximation to the
-    !+ad_desc  implicit Colebrook–White equationGnielinski correlation.
-    !+ad_prob  None
-    !+ad_hist  26/05/16 JM  Initial tidied version
-    !+ad_stat  Okay
-    !+ad_docs  https://en.wikipedia.org/wiki/Darcy_friction_factor_formulae#Haaland_equation
+    !! Calculate Darcy friction factor, using Haaland equation
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! reynolds : input real : Reynolds number
+    !! darcy_friction : output real : Darcy friction factor
+    !! Darcy friction factor, using Haaland equation, an approximation to the
+    !! implicit Colebrook–White equationGnielinski correlation.
+    !! https://en.wikipedia.org/wiki/Darcy_friction_factor_formulae#Haaland_equation
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     real(kind=double), intent(in) :: reynolds
     real(kind=double), intent(out) :: darcy_friction
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     real(kind=double) :: bracket
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Bracketed term in Haaland equation
     bracket = (roughness/afw/3.7)**1.11d0 + 6.9/reynolds
@@ -79,30 +69,24 @@ contains
   end subroutine friction
 
   function heat_transfer(masflx, rhof, radius, cf, viscf, kf)
-    !+ad_name  heat_transfer
-    !+ad_summ  Calculate heat transfer coefficient using Gnielinski correlation
-    !+ad_type  function
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  masflx : input real : coolant mass flux in a single channel (kg/m2/s)
-    !+ad_args  rhof : input real : coolant density (average of inlet and outlet) (kg/m3)
-    !+ad_args  radius : input real : coolant pipe radius (m)
-    !+ad_args  cf : input real : coolant specific heat capacity (average of inlet and outlet) (J/K)
-    !+ad_args  viscf : input real : coolant viscosity (average of inlet and outlet) (Pa.s)
-    !+ad_args  kf : input real : thermal conductivity of coolant (average of inlet and outlet) (W/m.K)
-    !+ad_desc  Gnielinski correlation. Ignore the distinction between wall and
-    !+ad_desc  bulk temperatures. Valid for:3000 < Re < 5e6, 0.5 < Pr < 2000
-    !+ad_prob  None
-    !+ad_hist  26/05/16 JM  Initial tidied version
-    !+ad_stat  Okay
-    !+ad_docs  https://en.wikipedia.org/wiki/Nusselt_number#Gnielinski_correlation
+    !! Calculate heat transfer coefficient using Gnielinski correlation
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! masflx : input real : coolant mass flux in a single channel (kg/m2/s)
+    !! rhof : input real : coolant density (average of inlet and outlet) (kg/m3)
+    !! radius : input real : coolant pipe radius (m)
+    !! cf : input real : coolant specific heat capacity (average of inlet and outlet) (J/K)
+    !! viscf : input real : coolant viscosity (average of inlet and outlet) (Pa.s)
+    !! kf : input real : thermal conductivity of coolant (average of inlet and outlet) (W/m.K)
+    !! Gnielinski correlation. Ignore the distinction between wall and
+    !! bulk temperatures. Valid for:3000 < Re < 5e6, 0.5 < Pr < 2000
+    !! https://en.wikipedia.org/wiki/Nusselt_number#Gnielinski_correlation
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     ! Function output: Heat transfer coefficient (W/m2K)
     real(kind=double) :: heat_transfer
@@ -125,10 +109,10 @@ contains
     ! Thermal conductivity of coolant (average of inlet and outlet) (W/m.K)
     real(kind=double) :: kf
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     ! Calculate flow velocity (m/s)
     real(kind=double) :: velocity
@@ -148,7 +132,7 @@ contains
     ! Pipe diameter (m)
     real(kind=double) ::diameter
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Calculate pipe diameter (m)
     diameter = 2*radius
@@ -172,43 +156,26 @@ contains
     heat_transfer = nusselt * kf / (2.0d0*radius)
 
     ! Check that Reynolds number is in valid range for the Gnielinski correlation
-    if ((reynolds <= 3000.0d0).or.(reynolds>5.0d6)) call write_errors
+    if ( ( reynolds <= 3000.0d0 ).or.( reynolds > 5.0d6 ) ) then 
+      fdiags(1) = reynolds
+      call report_error(225)
+    end if
 
     ! Check that Prandtl number is in valid range for the Gnielinski correlation
-    if ((f<=0.0d0).or.(pr<=0.0d0).or.(pr<0.5d0).or.(pr>2000.0d0)) call write_errors
+    if ( ( pr < 0.5d0 ).or.( pr > 2000.0d0) ) then 
+      fdiags(1) = pr
+      call report_error(226)
+    end if
 
-    contains
-
-      subroutine write_errors
-        write(*,*)'Problem in heat_transfer'
-        write(*,*)'masflx = ', masflx
-        write(*,*)'rhof = ', rhof
-        write(*,*)'radius = ', radius
-        write(*,*)'cf = ', cf
-        write(*,*)'kf = ', kf
-        write(*,*)'velocity = ', velocity
-        write(*,*)'reynolds = ', reynolds
-        write(*,*)'Prandtl = ', pr
-        write(*,*)'nusselt = ', nusselt
-        write(*,*)'heat_transfer = ', heat_transfer
-      end subroutine
+    ! Check that the Darcy friction factor is in valid range for the Gnielinski correlation
+    if ( f <= 0.0d0 ) call report_error(227)
 
   end function heat_transfer
 
   function fw_thermal_conductivity(t)
-    !+ad_name  fw_thermal_conductivity
-    !+ad_summ  Calculates the thermal conductivity of the first wall
-    !+ad_type  Function returning real
-    !+ad_cont  None
-    !+ad_args  t : input real : property temperature (K)
-    !+ad_desc  Calculates the thermal conductivity of Eurofer (W/m/K).
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  25/11/93 PJK Incorporation into PROCESS
-    !+ad_hist  01/10/12 PJK Initial F90 version
-    !+ad_hist  04/09/14 PJK Added Eurofer steel fit
-    !+ad_hist  01/06/15 MDK Convert to Kelvin. Added user-defined multiplier fw_th_conductivity
-    !+ad_stat  Okay
+    !! Calculates the thermal conductivity of the first wall
+    !! t : input real : property temperature (K)
+    !! Calculates the thermal conductivity of Eurofer (W/m/K).
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
@@ -217,7 +184,7 @@ contains
     real(kind=double) :: fw_thermal_conductivity
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     real(kind=double), intent(in) :: t
 
@@ -232,48 +199,40 @@ contains
 
   subroutine fw_temp(ip, ofile, afw, thickness, area, prad_incident, pnuc_deposited, tpeakfw, &
                      cfmean, rhofmean, massrate, label)
-    !+ad_name  fw_temp
-    !+ad_summ  Thermo-hydraulic calculations for the first wall
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  afw : input real : first wall coolant channel radius (m)
-    !+ad_args  thickness : first wall thickness (fwith or fwoth) (m)
-    !+ad_args  area : input real : area of first wall section under consideration (m2)
-    !+ad_argc                      (i.e. area of inboard wall or outboard wall)
-    !+ad_args  prad_incident : input real : Surface heat flux on first wall (outboard and inboard) (MW)
-    !+ad_args  pnuc_deposited : input real : nuclear power deposited in FW (IB or OB) (MW)
-    !+ad_args  tpeakfw : output real : peak first wall temperature (K)
-    !+ad_args  cfmean : output real : coolant specific heat capacity at constant
-    !+ad_argc                     pressure (J/kg/K)
-    !+ad_args  rhofmean : output real : coolant density (kg/m3)
-    !+ad_args  massrate : output real : coolant mass flow rate in a single channel (kg/s)
-    !+ad_args  label : input string : information string
-    !+ad_desc  Detailed thermal hydraulic model for the blanket (first wall +
-    !+ad_desc  breeding zone).
-    !+ad_desc  Given the heating incident on the first wall, and the coolant
-    !+ad_desc  outlet temperature, the maximum temperature of the first wall is
-    !+ad_desc  calculated to check it is below material limits (tfwmatmax).
-    !+ad_desc  The routine is called separately for the inboard and outboard sides.
-    !+ad_prob  None
-    !+ad_hist  21/08/14 PJK Initial version
-    !+ad_hist  05/11/14 PJK Corrected position of fwlifs evaluation
-    !+ad_hist  27/11/15 MDK Complete rewrite with a non-iterative approach
-    !+ad_stat  Okay
-    !+ad_docs  The calculation of the maximum temperature is described by Gardner:
-    !+ad_docc  "Temperature distribution in the first wall", K:\Power Plant Physics and
-    !+ad_docc  Technology\ PROCESS\PROCESS References & Systems Codes\Pulsed option -
-    !+ad_docc  Gardner.
-    !+ad_docs  This is in turn taken from "Methods of First Wall Structural
-    !+ad_docc  Analysis with Application to the Long Pulse Commercial Tokamak Reactor
-    !+ad_docc  Design", R.J. LeClaire, MIT, PFC/RR-84-9
+    !! Thermo-hydraulic calculations for the first wall
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! afw : input real : first wall coolant channel radius (m)
+    !! thickness : first wall thickness (fwith or fwoth) (m)
+    !! area : input real : area of first wall section under consideration (m2)
+    !! (i.e. area of inboard wall or outboard wall)
+    !! prad_incident : input real : Surface heat flux on first wall (outboard and inboard) (MW)
+    !! pnuc_deposited : input real : nuclear power deposited in FW (IB or OB) (MW)
+    !! tpeakfw : output real : peak first wall temperature (K)
+    !! cfmean : output real : coolant specific heat capacity at constant
+    !! pressure (J/kg/K)
+    !! rhofmean : output real : coolant density (kg/m3)
+    !! massrate : output real : coolant mass flow rate in a single channel (kg/s)
+    !! label : input string : information string
+    !! Detailed thermal hydraulic model for the blanket (first wall +
+    !! breeding zone).
+    !! Given the heating incident on the first wall, and the coolant
+    !! outlet temperature, the maximum temperature of the first wall is
+    !! calculated to check it is below material limits (tfwmatmax).
+    !! The routine is called separately for the inboard and outboard sides.
+    !! The calculation of the maximum temperature is described by Gardner:
+    !! "Temperature distribution in the first wall", K:\Power Plant Physics and
+    !! Technology\ PROCESS\PROCESS References & Systems Codes\Pulsed option -
+    !! Gardner.
+    !! This is in turn taken from "Methods of First Wall Structural
+    !! Analysis with Application to the Long Pulse Commercial Tokamak Reactor
+    !! Design", R.J. LeClaire, MIT, PFC/RR-84-9
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     integer, intent(in) :: ip, ofile
     real(kind=double), intent(in) :: pnuc_deposited, afw, thickness, area, prad_incident
@@ -281,7 +240,7 @@ contains
     character(len=*) :: label
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     integer :: coolant
 
@@ -425,9 +384,11 @@ contains
     temp_k = (fwoutlet + tpeak) / 2.0d0   ! (K)
 
     ! Print debug info if temperature too low/high or NaN/Inf
-    if ((temp_k <= 100.0d0).or.(temp_k>1500.0d0).or.(temp_k/=temp_k)) then
-        write(*,*) 'temp_k = ', temp_k, 'fwoutlet = ', fwoutlet, 'tpeak = ', tpeak
-        stop
+    if ( temp_k /= temp_k ) then 
+      call report_error(223)
+    else if ( (temp_k <= 100.0d0 ).or.( temp_k > 1500.0d0 ) ) then
+      fdiags(1) = temp_k
+      call report_error(224)
     end if
 
     ! Thermal conductivity of first wall material (W/m.K)
@@ -437,14 +398,14 @@ contains
     hcoeff = heat_transfer(masflx, rhofo, afw, cfo, viscfo, kfo)
 
     ! Temperature drops between first-wall surface and bulk coolant !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Model C is used
     ! Model B is given for comparison
     ! Model A is not used.
 
     ! Model A: LeClaire formula for circular pipes (NOT USED) !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! This gives a very small temperature differential, as the wall thickness is
     ! the same all the way round, but the surface area is bigger than that of a flat wall.
@@ -460,7 +421,7 @@ contains
     ! tpeakfw = fwoutlet + deltat_solid + deltat_coolant + tmthet  !  in K
 
     ! Model B: Simple 1-dimensional calculation !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! This is optimistic as it neglects the higher temperature midway between the channels.
     ! I have included 1/4 of the volume load:
@@ -483,7 +444,7 @@ contains
     deltat_solid_1D = onedload * fw_wall / (tkfw * effective_area_for_heat_transfer)
 
     ! Model C: A more realistic model !
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Calculate maximum distance travelled by surface heat load (m)
     ! fw_wall | Minimum distance travelled by surface heat load (m)
@@ -515,7 +476,7 @@ contains
     end if
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (ip == 0) return
     call oheadr(ofile, 'Heat transfer parameters at the coolant outlet: ' // label)

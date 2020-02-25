@@ -3,40 +3,18 @@
 
 module buildings_module
 
-  !+ad_name  buildings_module
-  !+ad_summ  Module containing plant buildings routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  bldgcall
-  !+ad_cont  bldgs
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  parameters of the fusion power plant buildings.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  buildings_variables
-  !+ad_call  fwbs_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  pf_power_variables
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  stellarator_variables
-  !+ad_call  structure_variables
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_hist  30/10/12 PJK Initial version of module
-  !+ad_hist  30/10/12 PJK Added build_variables
+  !! Module containing plant buildings routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! parameters of the fusion power plant buildings.
   
-  !+ad_hist  24/01/13 PJK Added stellarator_variables
-  !+ad_hist  15/5/15 MDK This module is now only used for cost_model=0 (old cost model)
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Import modules !
-  !!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!
 
   use build_variables
   use buildings_variables
@@ -54,7 +32,7 @@ module buildings_module
   implicit none
 
   ! Module subroutine and variable declrations !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   private
   public :: bldgcall
@@ -65,65 +43,42 @@ contains
 
   subroutine bldgcall(outfile,iprint)
 
-    !+ad_name  bldgcall
-    !+ad_summ  Calls the buildings module
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calls the buildings calculations.
-    !+ad_prob  None
-    !+ad_call  bldgs
-    !+ad_hist  01/08/11 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  18/10/12 PJK Added pfcoil_variables
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  29/10/12 PJK Added structure_variables
-    !+ad_hist  29/10/12 PJK Added pf_power_variables
-    !+ad_hist  30/10/12 PJK Added heat_transport_variables
-    !+ad_hist  30/10/12 PJK Added times_variables
-    !+ad_hist  30/10/12 PJK Added buildings_variables
-    !+ad_hist  24/01/13 PJK Corrected cryostat radius for stellarators
-    !+ad_hist  09/04/13 PJK Used rdewex instead of tfro+2 for cryostat radius
-    !+ad_hist  09/04/13 PJK Modified use of tfmtn to be mass of one TF coil
-    !+ad_hist  10/04/13 PJK Modified shield height definition
-    !+ad_hist  27/06/13 PJK Used rdewex directly in all cases in call to bldgs
-    !+ad_hist  11/09/13 PJK Removed idhe3 from bldgs call
-    !+ad_hist  27/11/13 PJK Moved tokamak pfrmax, pfmmax calculations into
-    !+ad_hisc               PF coil module
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Calls the buildings module
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calls the buildings calculations.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     integer, intent(in) :: iprint, outfile
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: tfh,tfmtn,tfri,tfro
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! mass per TF coil (tonnes)
-    tfmtn = 1.0D-3 * whttf/tfno
+    tfmtn = 1.0D-3 * whttf/n_tf
 
     ! TF coil inner and outer radial position (m)
-    tfro = rtot + 0.5D0*tfthko
-    tfri = rtfcin - 0.5D0*tfcth
+    tfro = r_tf_outboard_mid + 0.5D0*tfthko
+    tfri = r_tf_inboard_mid - 0.5D0*tfcth
 
     ! TF coil vertical height (m)
+    ! Rem : SK not valid for single null
     tfh = (hmax + tfcth)*2.0D0
 
     ! Reactor vault wall and roof thicknesses are hardwired
-    call bldgs(pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,tfno,rsldo, &
+    call bldgs(pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,n_tf,rsldo, &
          rsldi,2.0D0*(hmax-ddwi-vgap2),whtshld,rdewex,helpow,iprint, &
          outfile,cryvol,volrci,rbvol,rmbvol,wsvol,elevol)
 
@@ -131,80 +86,60 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine bldgs(pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
+  subroutine bldgs(pfr,pfm,tfro,tfri,tfh,tfm,n_tf,shro,shri, &
        shh,shm,crr,helpow,iprint,outfile,cryv,vrci,rbv,rmbv,wsv,elev)
 
-    !+ad_name  bldgs
-    !+ad_summ  Determines the sizes of the plant buildings
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  P C Shipe, ORNL
-    !+ad_cont  N/A
-    !+ad_args  pfr : input/output real :  largest PF coil outer radius, m
-    !+ad_args  pfm : : input real : largest PF coil mass, tonne
-    !+ad_args  tfro : input real : outer radius of TF coil, m
-    !+ad_args  tfri : input real : inner radius of TF coil, m
-    !+ad_args  tfh : input real : full height of TF coil, m
-    !+ad_args  tfm : input real : mass of one TF coil, tonne
-    !+ad_args  tfno : input real : number of tf coils
-    !+ad_args  shro : input real : outer radius of attached shield, m
-    !+ad_args  shri : input real : inner radius of attached shield, m
-    !+ad_args  shh : input real : height of attached shield, m
-    !+ad_args  shm : input real : total mass of attached shield, kg
-    !+ad_args  crr : input real : outer radius of common cryostat, m
-    !+ad_args  helpow : input real : total cryogenic load, W
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  cryv : output real : volume of cryogenic building, m3
-    !+ad_args  vrci : output real : inner volume of reactor building, m3
-    !+ad_args  rbv : output real : outer volume of reactor building, m3
-    !+ad_args  rmbv : output real : volume of reactor maintenance building, m3
-    !+ad_args  wsv : output real : volume of warm shop, m3
-    !+ad_args  elev : output real : volume of electrical buildings, m3
-    !+ad_desc  This routine determines the size of the plant buildings.
-    !+ad_desc  The reactor building and maintenance building are sized
-    !+ad_desc  based on the tokamak dimensions. The cryogenic building volume is
-    !+ad_desc  scaled based on the total cryogenic load. The other building
-    !+ad_desc  sizes are input from other modules or by the user.
-    !+ad_desc  This routine was modified to include fudge factors (fac1,2,...)
-    !+ad_desc  to fit the ITER design, September 1990 (J. Galambos).
-    !+ad_desc  This routine was included in PROCESS in January 1992 by
-    !+ad_desc  P. C. Shipe.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  01/08/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  30/10/12 PJK Added buildings_variables
-    !+ad_hist  09/04/13 PJK Removed extra tfh term from hrbi
-    !+ad_hist  09/04/13 PJK Converted pfm, tfm to kg in wt calculation;
-    !+ad_hisc               removed extraneous 5.1m from rmbh calculation;
-    !+ad_hisc               building volume multipliers now input parameters
-    !+ad_hist  11/04/13 PJK Comment change
-    !+ad_hist  18/06/13 PJK Added back extra tfh term to hrbi
-    !+ad_hist  11/09/13 PJK Removed obsolete argument idhe3
-    !+ad_hist  19/06/14 PJK Removed sect?? output flag usage
-    !+ad_hist  03/09/14 PJK Changed clh1 comment
-    !+ad_hist  23/05/16 JM  Tidied up and changed overwriting of pfr
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Determines the sizes of the plant buildings
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: P C Shipe, ORNL
+    !! pfr : input/output real :  largest PF coil outer radius, m
+    !! pfm : : input real : largest PF coil mass, tonne
+    !! tfro : input real : outer radius of TF coil, m
+    !! tfri : input real : inner radius of TF coil, m
+    !! tfh : input real : full height of TF coil, m
+    !! tfm : input real : mass of one TF coil, tonne
+    !! tfno : input real : number of tf coils
+    !! shro : input real : outer radius of attached shield, m
+    !! shri : input real : inner radius of attached shield, m
+    !! shh : input real : height of attached shield, m
+    !! shm : input real : total mass of attached shield, kg
+    !! crr : input real : outer radius of common cryostat, m
+    !! helpow : input real : total cryogenic load, W
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! outfile : input integer : output file unit
+    !! cryv : output real : volume of cryogenic building, m3
+    !! vrci : output real : inner volume of reactor building, m3
+    !! rbv : output real : outer volume of reactor building, m3
+    !! rmbv : output real : volume of reactor maintenance building, m3
+    !! wsv : output real : volume of warm shop, m3
+    !! elev : output real : volume of electrical buildings, m3
+    !! This routine determines the size of the plant buildings.
+    !! The reactor building and maintenance building are sized
+    !! based on the tokamak dimensions. The cryogenic building volume is
+    !! scaled based on the total cryogenic load. The other building
+    !! sizes are input from other modules or by the user.
+    !! This routine was modified to include fudge factors (fac1,2,...)
+    !! to fit the ITER design, September 1990 (J. Galambos).
+    !! This routine was included in PROCESS in January 1992 by
+    !! P. C. Shipe.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     integer, intent(in) :: iprint, outfile
     real(kind(1.0D0)), intent(inout) :: pfr
-    real(kind(1.0D0)), intent(in) :: pfm,tfro,tfri,tfh,tfm,tfno,shro, &
+    real(kind(1.0D0)), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
          shri,shh,shm,crr,helpow
 
     real(kind(1.0D0)), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: ang, bmr, coill, crcl, cran, dcl,dcw, drbi, &
          hcl, hcw, hrbi, hy, layl, rbh, rbl, rbw, rmbh, rmbl, rmbw, rwl, rww, &
@@ -258,7 +193,7 @@ contains
     if (wgt > 1.0D0) then
        wt = wgt
     else
-       wt = shmf*shm/tfno
+       wt = shmf*shm/n_tf
        wt = max(wt, 1.0D3*pfm, 1.0D3*tfm)
     end if
 
@@ -318,7 +253,7 @@ contains
     if (wgt2 >  1.0D0) then
        wgts = wgt2
     else
-       wgts = shmf*shm/tfno
+       wgts = shmf*shm/n_tf
     end if
     cran = 9.41D-6*wgts + 5.1D0
     rmbh = 10.0D0 + shh + trcl + cran + stcl + fndt
@@ -349,7 +284,7 @@ contains
     volnucb = ( vrci + rmbv + wsv + triv + cryv )
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
     
     if (iprint == 0) return
     call oheadr(outfile,'Plant Buildings System')

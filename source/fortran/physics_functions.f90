@@ -1,56 +1,27 @@
 module physics_functions_module
 
-  !+ad_name  physics_functions_module
-  !+ad_summ  Module containing physics subfunctions
-  !+ad_type  Module
-  !+ad_auth  K Ellis, CCFE, Culham Science Centre
-  !+ad_cont  physics_functions
-  !+ad_cont  beamcalc
-  !+ad_cont  beamfus
-  !+ad_cont  bosch_hale
-  !+ad_cont  fsv
-  !+ad_cont  imprad
-  !+ad_cont  palph
-  !+ad_cont  palph2
-  !+ad_cont  p_eped_scaling
-  !+ad_cont  prad_ipdg89
-  !+ad_cont  psync_albajar_fidone
-  !+ad_cont  pthresh
-  !+ad_cont  radpwr
-  !+ad_cont  t_eped_scaling
-  !+ad_args  N/A
-  !+ad_desc  This module contains physics routines which can be called by physics or
-  !+ad_desc  other modules (e.g. PLASMOD).
-  !+ad_prob  None
-  !+ad_call  constants
-  !+ad_call  error_handling
-  !+ad_call  maths_library
-  !+ad_call  physics_variables
-  !+ad_call  profiles_module
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing physics subfunctions
+  !! author: K Ellis, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains physics routines which can be called by physics or
+  !! other modules (e.g. PLASMOD).
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
-!  use divertor_ode, only: impurity_concs
-!  use divertor_kallenbach_variables, only: impurity_enrichment
   use error_handling
   use impurity_radiation_module
   use maths_library
   use physics_variables
   use profiles_module
   use read_and_get_atomic_data
-!  use reinke_variables
 
   implicit none
 
-  !private
-  public :: beamfus,palph,palph2
+  public :: beamfus, palph, palph2
 
   !  Module-level variables
-
-  !integer ::
   real(kind(1.0D0)) :: vcritx
 
 contains
@@ -59,38 +30,27 @@ contains
 
   subroutine pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
-    !+ad_name  pthresh
-    !+ad_summ  L-mode to H-mode power threshold calculation
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  dene   : input real :  volume-averaged electron density (/m3)
-    !+ad_args  dnla   : input real :  line-averaged electron density (/m3)
-    !+ad_args  bt     : input real :  toroidal field on axis (T)
-    !+ad_args  rmajor : input real :  plasma major radius (m)
-    !+ad_args  kappa  : input real :  plasma elongation
-    !+ad_args  sarea  : input real :  plasma surface area (m**2)
-    !+ad_args  aion   : input real :  average mass of all ions (amu)
-    !+ad_args  pthrmw(17) : output real array : power threshold (different scalings)
-    !+ad_desc  This routine calculates the power threshold for the L-mode to
-    !+ad_desc  H-mode transition.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  17/07/98 PJK New routine
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  18/12/12 PJK Added scalings 6-8
-    !+ad_hist  16/04/18 KVE Cut from physics and pasted into physics_functions
-    !+ad_hist  02/05/18 SIM Added scaling 9-14
-    !+ad_stat  Okay
-    !+ad_docs  ITER Physics Design Description Document, p.2-2
-    !+ad_docs  ITER-FDR Plasma Performance Assessments, p.III-9
-    !+ad_docs  Snipes, 24th EPS Conference, Berchtesgaden 1997, p.961
-    !+ad_docs  Martin et al, 11th IAEA Tech. Meeting on H-mode Physics and
-    !+ad_docc  Transport Barriers, Journal of Physics: Conference Series
-    !+ad_docc  123 (2008) 012033
-    !+ad_docs  J A Snipes and the International H-mode Threshold Database
-    !+ad+docc  Working Group, 2000, Plasma Phys. Control. Fusion, 42, A299
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! L-mode to H-mode power threshold calculation
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! dene   : input real :  volume-averaged electron density (/m3)
+    !! dnla   : input real :  line-averaged electron density (/m3)
+    !! bt     : input real :  toroidal field on axis (T)
+    !! rmajor : input real :  plasma major radius (m)
+    !! kappa  : input real :  plasma elongation
+    !! sarea  : input real :  plasma surface area (m**2)
+    !! aion   : input real :  average mass of all ions (amu)
+    !! pthrmw(17) : output real array : power threshold (different scalings)
+    !! This routine calculates the power threshold for the L-mode to
+    !! H-mode transition.
+    !! ITER Physics Design Description Document, p.2-2
+    !! ITER-FDR Plasma Performance Assessments, p.III-9
+    !! Snipes, 24th EPS Conference, Berchtesgaden 1997, p.961
+    !! Martin et al, 11th IAEA Tech. Meeting on H-mode Physics and
+    !! Transport Barriers, Journal of Physics: Conference Series
+    !! 123 (2008) 012033
+    !! J A Snipes and the International H-mode Threshold Database
+    !! Working Group, 2000, Plasma Phys. Control. Fusion, 42, A299
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -191,45 +151,28 @@ contains
        palppv,pchargepv,pneutpv,sigvdt,fusionrate,alpharate,protonrate, &
        pdtpv,pdhe3pv,pddpv)
 
-    !+ad_name  palph
-    !+ad_summ  (Initial part of) fusion power and fast alpha pressure calculations
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  fint
-    !+ad_args  alphan     : input real :  density profile index
-    !+ad_args  alphat     : input real :  temperature profile index
-    !+ad_args  deni       : input real :  fuel ion density (/m3)
-    !+ad_args  fdeut      : input real :  deuterium fuel fraction
-    !+ad_args  fhe3       : input real :  helium-3 fuel fraction
-    !+ad_args  ftrit      : input real :  tritium fuel fraction
-    !+ad_args  ti         : input real :  ion temperature (keV)
-    !+ad_args  palppv     : output real : alpha particle fusion power per volume (MW/m3)
-    !+ad_args  pchargepv  : output real : other charged particle fusion power/volume (MW/m3)
-    !+ad_args  pneutpv    : output real : neutron fusion power per volume (MW/m3)
-    !+ad_args  sigvdt     : output real : profile averaged <sigma v DT> (m3/s)
-    !+ad_args  fusionrate : output real : fusion reaction rate (reactions/m3/s)
-    !+ad_args  alpharate  : output real : alpha particle production rate (/m3/s)
-    !+ad_args  protonrate : output real : proton production rate (/m3/s)
-    !+ad_args  pdtpv      : output real : D-T fusion power (MW/m3)
-    !+ad_args  pdhe3pv    : output real : D-He3 fusion power (MW/m3)
-    !+ad_args  pddpv      : output real : D-D fusion power (MW/m3)
-    !+ad_desc  This subroutine numerically integrates over plasma cross-section to
-    !+ad_desc  find the core plasma fusion power.
-    !+ad_prob  None
-    !+ad_call  fint
-    !+ad_call  quanc8
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  06/12/95 PJK Added D-He3 calculations
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Removed pi from argument list
-    !+ad_hist  10/09/13 PJK Added fusion, alpha and proton rate calculations
-    !+ad_hist  11/09/13 PJK Removed idhe3, ftr, ealpha, iiter usage
-    !+ad_hist  28/11/13 PJK Added powers for each fuel-pair to output
-    !+ad_hist  20/02/14 PJK Modified calculation to deal with pedestal profiles
-    !+ad_hist  04/03/14 PJK Changed fusion power upper integration bound to 1.0;
-    !+ad_hisc               corrected D-D reaction rates (MK/TNT)
-    !+ad_stat  Okay
-    !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, p.6
+    !! (Initial part of) fusion power and fast alpha pressure calculations
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! alphan     : input real :  density profile index
+    !! alphat     : input real :  temperature profile index
+    !! deni       : input real :  fuel ion density (/m3)
+    !! fdeut      : input real :  deuterium fuel fraction
+    !! fhe3       : input real :  helium-3 fuel fraction
+    !! ftrit      : input real :  tritium fuel fraction
+    !! ti         : input real :  ion temperature (keV)
+    !! palppv     : output real : alpha particle fusion power per volume (MW/m3)
+    !! pchargepv  : output real : other charged particle fusion power/volume (MW/m3)
+    !! pneutpv    : output real : neutron fusion power per volume (MW/m3)
+    !! sigvdt     : output real : profile averaged <sigma v DT> (m3/s)
+    !! fusionrate : output real : fusion reaction rate (reactions/m3/s)
+    !! alpharate  : output real : alpha particle production rate (/m3/s)
+    !! protonrate : output real : proton production rate (/m3/s)
+    !! pdtpv      : output real : D-T fusion power (MW/m3)
+    !! pdhe3pv    : output real : D-He3 fusion power (MW/m3)
+    !! pddpv      : output real : D-D fusion power (MW/m3)
+    !! This subroutine numerically integrates over plasma cross-section to
+    !! find the core plasma fusion power.
+    !! T&amp;M/PKNIGHT/LOGBOOK24, p.6
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -346,29 +289,17 @@ contains
 
     function fint(rho)
 
-      !+ad_name  fint
-      !+ad_summ  Integrand for fusion power integration
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  rho : input real :  Abscissa of the integration, = normalised
-      !+ad_argc                      plasma minor radius (0.0 <= rho < 1.0)
-      !+ad_desc  This function evaluates the integrand for the fusion power
-      !+ad_desc  integration, performed using routine
-      !+ad_desc  <A HREF="quanc8.html">QUANC8</A>
-      !+ad_desc  in routine <A HREF="palph.html">PALPH</A>.
-      !+ad_desc  The fusion reaction assumed is controlled by flag
-      !+ad_desc  <CODE>ireaction</CODE> set in <CODE>PALPH</CODE>.
-      !+ad_prob  None
-      !+ad_call  bosch_hale
-      !+ad_call  nprofile
-      !+ad_call  tprofile
-      !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-      !+ad_hist  09/11/11 PJK Initial F90 version
-      !+ad_hist  11/09/13 PJK Used bosch_hale instead of svfdt
-      !+ad_hist  20/02/14 PJK Modified to deal with generalised profiles
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Integrand for fusion power integration
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! rho : input real :  Abscissa of the integration, = normalised
+      !! plasma minor radius (0.0 <= rho < 1.0)
+      !! This function evaluates the integrand for the fusion power
+      !! integration, performed using routine
+      !! <A HREF="quanc8.html">QUANC8</A>
+      !! in routine <A HREF="palph.html">PALPH</A>.
+      !! The fusion reaction assumed is controlled by flag
+      !! <CODE>ireaction</CODE> set in <CODE>PALPH</CODE>.
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -414,55 +345,37 @@ contains
        ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw, &
        betaft,palppv,palpipv,palpepv,pfuscmw,powfmw)
 
-    !+ad_name  palph2
-    !+ad_summ  (Concluding part of) fusion power and fast alpha pressure
-    !+ad_summ  calculations
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  bp       : input real :  poloidal field (T)
-    !+ad_args  bt       : input real :  toroidal field on axis (T)
-    !+ad_args  dene     : input real :  electron density (/m3)
-    !+ad_args  deni     : input real :  fuel ion density (/m3)
-    !+ad_args  dnitot   : input real :  total ion density (/m3)
-    !+ad_args  falpe    : input real :  fraction of alpha energy to electrons
-    !+ad_args  falpi    : input real :  fraction of alpha energy to ions
-    !+ad_args  ifalphap : input integer :  switch for fast alpha pressure method
-    !+ad_args  palpnb   : input real :  alpha power from hot neutral beam ions (MW)
-    !+ad_args  pchargepv : input real : other charged particle fusion power/volume (MW/m3)
-    !+ad_args  pneutpv  : input/output real : neutron fusion power per volume (MW/m3)
-    !+ad_args  ten      : input real :  density-weighted electron temperature (keV)
-    !+ad_args  tin      : input real :  density-weighted ion temperature (keV)
-    !+ad_args  vol      : input real :  plasma volume (m3)
-    !+ad_args  palpmw   : output real : alpha power (MW)
-    !+ad_args  pneutmw  : output real : neutron fusion power (MW)
-    !+ad_args  pchargemw : output real : other charged particle fusion power (MW)
-    !+ad_args  betaft   : output real : fast alpha beta component
-    !+ad_args  palppv   : input/output real : alpha power per volume (MW/m3)
-    !+ad_args  palpepv  : output real : alpha power per volume to electrons (MW/m3)
-    !+ad_args  palpipv  : output real : alpha power per volume to ions (MW/m3)
-    !+ad_args  pfuscmw  : output real : charged particle fusion power (MW)
-    !+ad_args  powfmw   : output real : fusion power (MW)
-    !+ad_desc  This subroutine completes the calculation of the fusion power
-    !+ad_desc  fast alpha pressure, and determines other alpha particle quantities.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  06/12/95 PJK Added D-He3 calculations
-    !+ad_hist  22/05/06 PJK Added modified fit to fast alpha pressure
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  11/09/13 PJK Removed obsolete argument ftr
-    !+ad_hist  12/09/13 PJK Fixed betaft calculation when fdeut=1
-    !+ad_hist  10/10/13 PJK Made multiplier in betath equation explicit
-    !+ad_hist  19/02/14 PJK Removed obsolete argument pcoef;
-    !+ad_hisc               changed te,ti to ten,tin
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  03/06/14 PJK Added pchargemw output
-    !+ad_hist  17/11/14 PJK Added falpha dependencies
-    !+ad_stat  Okay
-    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
-    !+ad_docs  D J Ward, UKAEA Fusion: F/PL/PJK/PROCESS/CODE/050
+    !! (Concluding part of) fusion power and fast alpha pressure
+    !! calculations
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! bp       : input real :  poloidal field (T)
+    !! bt       : input real :  toroidal field on axis (T)
+    !! dene     : input real :  electron density (/m3)
+    !! deni     : input real :  fuel ion density (/m3)
+    !! dnitot   : input real :  total ion density (/m3)
+    !! falpe    : input real :  fraction of alpha energy to electrons
+    !! falpi    : input real :  fraction of alpha energy to ions
+    !! ifalphap : input integer :  switch for fast alpha pressure method
+    !! palpnb   : input real :  alpha power from hot neutral beam ions (MW)
+    !! pchargepv : input real : other charged particle fusion power/volume (MW/m3)
+    !! pneutpv  : input/output real : neutron fusion power per volume (MW/m3)
+    !! ten      : input real :  density-weighted electron temperature (keV)
+    !! tin      : input real :  density-weighted ion temperature (keV)
+    !! vol      : input real :  plasma volume (m3)
+    !! palpmw   : output real : alpha power (MW)
+    !! pneutmw  : output real : neutron fusion power (MW)
+    !! pchargemw : output real : other charged particle fusion power (MW)
+    !! betaft   : output real : fast alpha beta component
+    !! palppv   : input/output real : alpha power per volume (MW/m3)
+    !! palpepv  : output real : alpha power per volume to electrons (MW/m3)
+    !! palpipv  : output real : alpha power per volume to ions (MW/m3)
+    !! pfuscmw  : output real : charged particle fusion power (MW)
+    !! powfmw   : output real : fusion power (MW)
+    !! This subroutine completes the calculation of the fusion power
+    !! fast alpha pressure, and determines other alpha particle quantities.
+    !! ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !! ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+    !! D J Ward, UKAEA Fusion: F/PL/PJK/PROCESS/CODE/050
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -479,64 +392,59 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: betath, fact, fact2
+    real(kind(1.0D0)) :: betath, fact, fact2, palppv_no_nb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Add neutral beam alpha power / volume
+    ! Store the palppv value without the NB alpha power
+    palppv_no_nb = palppv
 
+    !  Add neutral beam alpha power / volume
     palppv = palppv + palpnb/vol
 
     !  Add extra neutron power
-
     pneutpv = pneutpv + 4.0D0*palpnb/vol
 
     !  Total alpha power
-
     palpmw = palppv*vol
 
     !  Total non-alpha charged particle power
-
     pchargemw = pchargepv*vol
 
     !  Total neutron power
-
     pneutmw = pneutpv*vol
 
     !  Total fusion power
-
     powfmw = palpmw + pneutmw + pchargemw
 
     !  Charged particle fusion power
-
     pfuscmw = palpmw + pchargemw
 
     !  Alpha power to electrons and ions (used with electron
     !  and ion power balance equations only)
     !  No consideration of pchargepv here...
-
     palpipv = falpha * palppv*falpi
     palpepv = falpha * palppv*falpe
 
     !  Determine average fast alpha density
-
     if (fdeut < 1.0D0) then
 
        betath = 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/(bt**2 + bp**2)
 
+       ! IPDG89 fast alpha scaling
        if (ifalphap == 0) then
-          !  IPDG89 fast alpha scaling
           fact = min( 0.30D0, &
                0.29D0*(deni/dene)**2 * ( (ten+tin)/20.0D0 - 0.37D0) )
+
+       ! Modified scaling, D J Ward
        else
-          !  Modified scaling, D J Ward
           fact = min( 0.30D0, &
                0.26D0*(deni/dene)**2 * &
                sqrt( max(0.0D0, ((ten+tin)/20.0D0 - 0.65D0)) ) )
        end if
 
        fact = max(fact,0.0D0)
-       fact2 = palppv/(palppv-(palpnb/vol))
+       fact2 = palppv / palppv_no_nb
        betaft = betath * fact*fact2
 
     else  !  negligible alpha production, palppv = palpnb = 0
@@ -549,28 +457,20 @@ contains
 
   function bosch_hale(t,reaction)
 
-    !+ad_name  bosch_hale
-    !+ad_summ  Routine to calculate the fusion reaction rate
-    !+ad_type  Function returning real
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  t : input real : Maxwellian density-weighted ion temperature (keV)
-    !+ad_args  reaction : input integer : flag for fusion reaction to use:
-    !+ad_argc                            1 : D-T reaction
-    !+ad_argc                            2 : D-3He reaction
-    !+ad_argc                            3 : D-D 1st reaction (50% probability)
-    !+ad_argc                            4 : D-D 2nd reaction (50% probability)
-    !+ad_desc  This routine calculates the volumetric fusion reaction rate
-    !+ad_desc  <I>&lt;sigma v&gt;</I> in m3/s for one of four nuclear reactions,
-    !+ad_desc  using the Bosch-Hale parametrization.
-    !+ad_desc  <P>The valid range of the fit is 0.2 keV < t < 100 keV
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  11/09/13 PJK Initial version
-    !+ad_hist  04/03/14 PJK Prevent division by zero problem if t=0
-    !+ad_stat  Okay
-    !+ad_docs  Bosch and Hale, Nuclear Fusion 32 (1992) 611-631
+    !! Routine to calculate the fusion reaction rate
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! t : input real : Maxwellian density-weighted ion temperature (keV)
+    !! reaction : input integer : flag for fusion reaction to use:
+    !! 1 : D-T reaction
+    !! 2 : D-3He reaction
+    !! 3 : D-D 1st reaction (50% probability)
+    !! 4 : D-D 2nd reaction (50% probability)
+    !! This routine calculates the volumetric fusion reaction rate
+    !! <I>&lt;sigma v&gt;</I> in m3/s for one of four nuclear reactions,
+    !! using the Bosch-Hale parametrization.
+    !! <P>The valid range of the fit is 0.2 keV < t < 100 keV
+    !! Bosch and Hale, Nuclear Fusion 32 (1992) 611-631
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -664,42 +564,31 @@ contains
        ealphadt,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol,zeffai, &
        betanb,dnbeam2,palpnb)
 
-    !+ad_name  beamfus
-    !+ad_summ  Routine to calculate beam slowing down properties
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  beamfus0: input real : multiplier for beam-background fusion calculation
-    !+ad_args  betbm0 : input real :  leading coefficient for neutral beam beta fraction
-    !+ad_args  bp     : input real :  poloidal field (T)
-    !+ad_args  bt     : input real :  toroidal field on axis (T)
-    !+ad_args  cnbeam : input real :  neutral beam current (A)
-    !+ad_args  dene   : input real :  electron density (/m3)
-    !+ad_args  deni   : input real :  fuel ion density (/m3)
-    !+ad_args  dlamie : input real :  ion-electron coulomb logarithm
-    !+ad_args  ealphadt : input real :  alpha particle birth energy (D-T) (keV)
-    !+ad_args  enbeam : input real :  neutral beam energy (keV)
-    !+ad_args  fdeut  : input real :  deuterium fraction of main plasma
-    !+ad_args  ftrit  : input real :  tritium fraction of main plasma
-    !+ad_args  ftritbm: input real :  tritium fraction of neutral beam
-    !+ad_args  sigvdt : input real :  profile averaged <sigma v> for D-T (m3/s)
-    !+ad_args  ten    : input real :  density weighted average electron temperature (keV)
-    !+ad_args  tin    : input real :  density weighted average ion temperature (keV)
-    !+ad_args  vol    : input real :  plasma volume (m3)
-    !+ad_args  zeffai : input real :  mass weighted plasma effective charge
-    !+ad_args  betanb : output real : neutral beam beta component
-    !+ad_args  dnbeam2: output real : hot beam ion density (/m3)
-    !+ad_args  palpnb : output real : alpha power from hot neutral beam ions (MW)
-    !+ad_desc  This routine calculates the beam slowing down properties.
-    !+ad_prob  None
-    !+ad_call  beamcalc
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  05/12/95 PJK Added ealpha to argument list
-    !+ad_hist  11/12/95 PJK Added fdeut to argument list
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  03/07/13 PJK Changed zeffai description
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate beam slowing down properties
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! beamfus0: input real : multiplier for beam-background fusion calculation
+    !! betbm0 : input real :  leading coefficient for neutral beam beta fraction
+    !! bp     : input real :  poloidal field (T)
+    !! bt     : input real :  toroidal field on axis (T)
+    !! cnbeam : input real :  neutral beam current (A)
+    !! dene   : input real :  electron density (/m3)
+    !! deni   : input real :  fuel ion density (/m3)
+    !! dlamie : input real :  ion-electron coulomb logarithm
+    !! ealphadt : input real :  alpha particle birth energy (D-T) (keV)
+    !! enbeam : input real :  neutral beam energy (keV)
+    !! fdeut  : input real :  deuterium fraction of main plasma
+    !! ftrit  : input real :  tritium fraction of main plasma
+    !! ftritbm: input real :  tritium fraction of neutral beam
+    !! sigvdt : input real :  profile averaged <sigma v> for D-T (m3/s)
+    !! ten    : input real :  density weighted average electron temperature (keV)
+    !! tin    : input real :  density weighted average ion temperature (keV)
+    !! vol    : input real :  plasma volume (m3)
+    !! zeffai : input real :  mass weighted plasma effective charge
+    !! betanb : output real : neutral beam beta component
+    !! dnbeam2: output real : hot beam ion density (/m3)
+    !! palpnb : output real : alpha power from hot neutral beam ions (MW)
+    !! This routine calculates the beam slowing down properties.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -757,41 +646,28 @@ contains
   subroutine beamcalc(nd,nt,ealphadt,ebeam,ecritd,ecritt,tausbme, &
        ftritbm,ibeam,ti,vol,svdt,palfdb,palftb,nhot,ehot)
 
-    !+ad_name  beamcalc
-    !+ad_summ  Neutral beam alpha power and ion energy
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  palphabm
-    !+ad_cont  sgvhot
-    !+ad_cont  xbrak
-    !+ad_args  ealphadt : input real :  alpha particle birth energy (D-T) (keV)
-    !+ad_args  ebeam  : input real :  beam energy (keV)
-    !+ad_args  ecritd : input real :  critical energy for electron/ion slowing down of
-    !+ad_argc                         the beam ion (deuterium neutral beam) (keV)
-    !+ad_args  ecritt : input real :  critical energy for beam slowing down
-    !+ad_argc                         (tritium neutral beam) (keV)
-    !+ad_args  ftritbm: input real :  beam tritium fraction (0.0 = deuterium beam)
-    !+ad_args  ibeam  : input real :  beam current (A)
-    !+ad_args  nd     : input real :  thermal deuterium density (/m3)
-    !+ad_args  nt     : input real :  thermal tritium density   (/m3)
-    !+ad_args  svdt   : input real :  profile averaged <sigma v> for D-T (m3/s)
-    !+ad_args  tausbme: input real :  beam ion slowing down time on electrons (s)
-    !+ad_args  ti     : input real :  thermal ion temperature (keV)
-    !+ad_args  vol    : input real :  plasma volume (m3) (95% flux surface)
-    !+ad_args  ehot   : output real : average hot beam ion energy (keV)
-    !+ad_args  nhot   : output real : hot beam ion density (/m3)
-    !+ad_args  palfdb : output real : alpha power from deut. beam-background fusion (MW)
-    !+ad_args  palftb : output real : alpha power from trit. beam-background fusion (MW)
-    !+ad_desc  This routine calculates the neutral beam alpha power and ion energy.
-    !+ad_prob  None
-    !+ad_call  palphabm
-    !+ad_call  sgvhot
-    !+ad_call  xbrak
-    !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  05/12/95 PJK Added ealpha to argument list
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Neutral beam alpha power and ion energy
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! ealphadt : input real :  alpha particle birth energy (D-T) (keV)
+    !! ebeam  : input real :  beam energy (keV)
+    !! ecritd : input real :  critical energy for electron/ion slowing down of
+    !! the beam ion (deuterium neutral beam) (keV)
+    !! ecritt : input real :  critical energy for beam slowing down
+    !! (tritium neutral beam) (keV)
+    !! ftritbm: input real :  beam tritium fraction (0.0 = deuterium beam)
+    !! ibeam  : input real :  beam current (A)
+    !! nd     : input real :  thermal deuterium density (/m3)
+    !! nt     : input real :  thermal tritium density   (/m3)
+    !! svdt   : input real :  profile averaged <sigma v> for D-T (m3/s)
+    !! tausbme: input real :  beam ion slowing down time on electrons (s)
+    !! ti     : input real :  thermal ion temperature (keV)
+    !! vol    : input real :  plasma volume (m3) (95% flux surface)
+    !! ehot   : output real : average hot beam ion energy (keV)
+    !! nhot   : output real : hot beam ion density (/m3)
+    !! palfdb : output real : alpha power from deut. beam-background fusion (MW)
+    !! palftb : output real : alpha power from trit. beam-background fusion (MW)
+    !! This routine calculates the neutral beam alpha power and ion energy.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -872,21 +748,13 @@ contains
 
     function xbrak(e0,ec)
 
-      !+ad_name  xbrak
-      !+ad_summ  Hot ion energy parameter
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  e0 : input real :  neutral beam energy (keV)
-      !+ad_args  ec : input real :  critical energy for electron/ion slowing down of
-      !+ad_argc                     the beam ion (keV)
-      !+ad_desc  This routine calculates something to do with the hot ion energy...
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-      !+ad_hist  10/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Hot ion energy parameter
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! e0 : input real :  neutral beam energy (keV)
+      !! ec : input real :  critical energy for electron/ion slowing down of
+      !! the beam ion (keV)
+      !! This routine calculates something to do with the hot ion energy...
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -923,28 +791,18 @@ contains
 
     function palphabm(ealphadt,nbm,nblk,sigv,vol,ti,svdt)
 
-      !+ad_name  palphabm
-      !+ad_summ  Alpha power from beam-background fusion
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  ealphadt : input real :  alpha particle birth energy (D-T) (keV)
-      !+ad_args  nblk   : input real :  thermal ion density (/m3)
-      !+ad_args  nbm    : input real :  hot beam ion density (/m3)
-      !+ad_args  sigv   : input real :  hot beam fusion reaction rate (m3/s)
-      !+ad_args  svdt   : input real :  profile averaged <sigma v> for D-T (m3/s)
-      !+ad_args  ti     : input real :  thermal ion temperature (keV)
-      !+ad_args  vol    : input real :  plasma volume (m3)
-      !+ad_desc  This routine calculates the alpha power from
-      !+ad_desc  beam-background fusion.
-      !+ad_prob  None
-      !+ad_call  bosch_hale
-      !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-      !+ad_hist  05/12/95 PJK Moved ealpha to argument list
-      !+ad_hist  10/11/11 PJK Initial F90 version
-      !+ad_hist  12/09/13 PJK Replaced svfdt usage with bosch_hale
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Alpha power from beam-background fusion
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! ealphadt : input real :  alpha particle birth energy (D-T) (keV)
+      !! nblk   : input real :  thermal ion density (/m3)
+      !! nbm    : input real :  hot beam ion density (/m3)
+      !! sigv   : input real :  hot beam fusion reaction rate (m3/s)
+      !! svdt   : input real :  profile averaged <sigma v> for D-T (m3/s)
+      !! ti     : input real :  thermal ion temperature (keV)
+      !! vol    : input real :  plasma volume (m3)
+      !! This routine calculates the alpha power from
+      !! beam-background fusion.
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -972,25 +830,14 @@ contains
 
     function sgvhot(iabm,vcrx,ebeam)
 
-      !+ad_name  sgvhot
-      !+ad_summ  Hot beam fusion reaction rate
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  ebeam  : input real :  neutral beam energy (keV)
-      !+ad_args  iabm   : input integer : switch denoting type of ion (2=D,3=T)
-      !+ad_args  vcrx   : input real :  critical velocity for electron/ion slowing down of
-      !+ad_argc                         the beam ion (m/s)
-      !+ad_desc  This routine calculates the hot beam fusion reaction rate in m3/s.
-      !+ad_prob  None
-      !+ad_call  fsv
-      !+ad_call  quanc8
-      !+ad_call  report_error
-      !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-      !+ad_hist  10/11/11 PJK Initial F90 version
-      !+ad_hist  26/06/14 PJK Added error handling
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Hot beam fusion reaction rate
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! ebeam  : input real :  neutral beam energy (keV)
+      !! iabm   : input integer : switch denoting type of ion (2=D,3=T)
+      !! vcrx   : input real :  critical velocity for electron/ion slowing down of
+      !! the beam ion (m/s)
+      !! This routine calculates the hot beam fusion reaction rate in m3/s.
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1046,20 +893,12 @@ contains
 
   function fsv(u)
 
-    !+ad_name  fsv
-    !+ad_summ  Integrand function for the hot beam fusion reaction rate
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  sigbmfus
-    !+ad_args  u : input real : abscissa of integration, = ratio of beam velocity
-    !+ad_argc                   to the critical velocity
-    !+ad_desc  This is the integrand function for the hot beam fusion reaction rate.
-    !+ad_prob  None
-    !+ad_call  sigbmfus
-    !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Integrand function for the hot beam fusion reaction rate
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! u : input real : abscissa of integration, = ratio of beam velocity
+    !! to the critical velocity
+    !! This is the integrand function for the hot beam fusion reaction rate.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1093,23 +932,15 @@ contains
 
     function sigbmfus(vrelsq)
 
-      !+ad_name  sigbmfus
-      !+ad_summ  Fusion reaction cross-section
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  vrelsq : input real :  square of the speed of the beam ion (keV/amu)
-      !+ad_desc  This function evaluates the fusion reaction cross-section as a
-      !+ad_desc  function of beam ion velocity (squared).
-      !+ad_desc  The functional form of the cross-section is in terms of the equivalent
-      !+ad_desc  deuterium energy, i.e. for a tritium beam at 500 keV the energy
-      !+ad_desc  used in the cross-section function is 333 keV.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-      !+ad_hist  10/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Fusion reaction cross-section
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! vrelsq : input real :  square of the speed of the beam ion (keV/amu)
+      !! This function evaluates the fusion reaction cross-section as a
+      !! function of beam ion velocity (squared).
+      !! The functional form of the cross-section is in terms of the equivalent
+      !! deuterium energy, i.e. for a tritium beam at 500 keV the energy
+      !! used in the cross-section function is 333 keV.
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1159,23 +990,19 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function t_eped_scaling()
-    !+ad_name  t_eped_scaling
-    !+ad_summ  Scaling function for calculation of pedestal temperature
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This function calculates pedestal temperature using a scaling formula
-    !+ad_desc  Issue #413.  See also comment dated 7/8/17
-    !+ad_desc  Predictive pedestal modelling for DEMO,  Samuli Saarelma.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_stat  Okay
-    !+ad_docs  https://idm.euro-fusion.org/?uid=2MSZ4T
-    !
+  function t_eped_scaling() bind(C, name="c_t_eped_scaling")
+    !! Scaling function for calculation of pedestal temperature
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! None
+    !! This function calculates pedestal temperature using a scaling formula
+    !! Issue #413.  See also comment dated 7/8/17
+    !! Predictive pedestal modelling for DEMO,  Samuli Saarelma.
+    !! https://idm.euro-fusion.org/?uid=2MSZ4T
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: t_eped_scaling
+
     ! Scaling constant and exponents
     real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
 
@@ -1196,29 +1023,25 @@ contains
     ! Correction for single null and for ELMs = 0.65
     ! Elongation and triangularity are defined at the plasma boundary.
     ! Total normalised plasma beta is used.
+    t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * & 
+                      rmajor**a_r * kappa**a_kappa  * &
+                      normalised_total_beta**a_beta  * rminor**a_a
 
-    t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
-         kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
     !Issue #730 - add scaling factor to eped model
     t_eped_scaling = eped_sf * t_eped_scaling
+    
   end function t_eped_scaling
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function p_eped_scaling(betan_pl,kappa_pl,delta_pl,ip_pl)
-    !+ad_name  p_eped_scaling
-    !+ad_summ  Scaling function for calculation of pedestal pressure
-    !+ad_type  Function returning real
-    !+ad_auth  E Fable, Max Planck Institute of Plasma Physics Garching
-    !+ad_cont  N/A
-    !+ad_args  This currently has PLASMOD inputs - could they come from global variables?
-    !+ad_desc  This function calculates pedestal pressure using a scaling formula
-    !+ad_desc  Issue #413.  See also comment dated 7/8/17
-    !+ad_desc  Predictive pedestal modelling for DEMO,  Samuli Saarelma.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_stat  Okay
-    !+ad_docs  https://idm.euro-fusion.org/?uid=2MSZ4T
+    !! Scaling function for calculation of pedestal pressure
+    !! author: E Fable, Max Planck Institute of Plasma Physics Garching
+    !! This currently has PLASMOD inputs - could they come from global variables?
+    !! This function calculates pedestal pressure using a scaling formula
+    !! Issue #413.  See also comment dated 7/8/17
+    !! Predictive pedestal modelling for DEMO,  Samuli Saarelma.
+    !! https://idm.euro-fusion.org/?uid=2MSZ4T
 
     real(kind(1.0D0)) :: p_eped_scaling !pressure in kev*10¹9*m¯3
     ! Scaling constant and exponents
@@ -1242,48 +1065,35 @@ contains
     ! Correction for single null and for ELMs = 0.65
     ! Elongation and triangularity are defined at the plasma boundary.
     ! Total normalised plasma beta is used.
-
     p_eped_scaling =  0.65d0 * c0 * delta_pl**a_delta * ip_pl**a_ip * rmajor**a_r * &
          kappa_pl**a_kappa  * betan_pl**a_beta * rminor**a_a
+
     !Issue #730 - add scaling factor to eped model
     p_eped_scaling = eped_sf * p_eped_scaling
+
   end function p_eped_scaling
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pradpv)
+  subroutine radpwr(pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pradpv)
 
-    !+ad_name  radpwr
-    !+ad_summ  Radiation power interface routine
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  imprad_model : input integer : switch to choose model
-    !+ad_args  pbrempv    : output real : bremsstrahlung radiation power/volume (MW/m3)
-    !+ad_args  plinepv    : output real : line radiation power/volume (MW/m3)
-    !+ad_args  psyncpv    : output real : synchrotron radiation power/volume (MW/m3)
-    !+ad_args  pcoreradpv : output real : total core radiation power/volume (MW/m3)
-    !+ad_args  pedgeradpv : output real : edge (non-core) radiation power/volume (MW/m3)
-    !+ad_args  pradpv     : output real : total radiation power/volume (MW/m3)
-    !+ad_desc  This routine finds the radiation powers in MW/m3 by calling
-    !+ad_desc  relevant routines.
-    !+ad_call  prad_ipdg89
-    !+ad_call  psync_albajar_fidone
-    !+ad_call  imprad
-    !+ad_call  report_error
-    !+ad_hist  14/05/14 PJK Redefined routine as a caller to the actual calculations
-    !+ad_hist  20/05/14 PJK Clarified core radiation vs bremsstrahlung
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Radiation power interface routine
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! pbrempv    : output real : bremsstrahlung radiation power/volume (MW/m3)
+    !! plinepv    : output real : line radiation power/volume (MW/m3)
+    !! psyncpv    : output real : synchrotron radiation power/volume (MW/m3)
+    !! pcoreradpv : output real : total core radiation power/volume (MW/m3)
+    !! pedgeradpv : output real : edge (non-core) radiation power/volume (MW/m3)
+    !! pradpv     : output real : total radiation power/volume (MW/m3)
+    !! This routine finds the radiation powers in MW/m3 by calling
+    !! relevant routines.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments
-
-    integer, intent(in) :: imprad_model
     real(kind(1.0D0)), intent(out) :: pbrempv,plinepv,psyncpv,pcoreradpv, &
          pedgeradpv,pradpv
 
@@ -1295,16 +1105,8 @@ subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pra
 
     !  Bremsstrahlung and line radiation
 
-    if (imprad_model == 0) then
-       call prad_ipdg89(pimpcore, pedgeradpv)
-       pimptot = pimpcore + pedgeradpv
-       pbrempv = 0.0D0 ; plinepv = 0.0D0  !  therefore, not useful...
-    else if (imprad_model == 1) then
-       call imprad(pbrempv, plinepv, pimpcore, pimptot)
-       pedgeradpv = pimptot - pimpcore
-    else
-       idiags(1) = imprad_model ; call report_error(82)
-    end if
+    call imprad(pbrempv, plinepv, pimpcore, pimptot)
+    pedgeradpv = pimptot - pimpcore
 
     !  Synchrotron radiation power/volume; assumed to be from core only
 
@@ -1316,111 +1118,22 @@ subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pra
 
     !  Total radiation power/volume
 
-    pradpv = pimptot + psyncpv  !  = pcoreradpv + pedgeradpv
+    pradpv = pimptot + psyncpv ! pcoreradpv + pedgeradpv !
 
   end subroutine radpwr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine prad_ipdg89(pcoreradpv,pedgeradpv)
-
-    !+ad_name  prad_ipdg89
-    !+ad_summ  Bremsstrahlung and line radiation power calculation
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  pcoreradpv : output real : core radiation power/volume (MW/m3)
-    !+ad_args  pedgeradpv : output real : edge line radiation power/volume (MW/m3)
-    !+ad_desc  This routine finds the D-T and impurity bremsstrahlung and line
-    !+ad_desc  radiation powers in MW/m3, using the IPDG89 formulation.
-    !+ad_prob  No account is taken of pedestal profiles.
-    !+ad_call  None
-    !+ad_hist  14/05/14 PJK Moved bremsstrahlung calculation here from original
-    !+ad_hisc               <CODE>radpwr</CODE> routine
-    !+ad_hist  19/05/14 PJK Renamed arguments
-    !+ad_hist  20/05/14 PJK Renamed routine from pbrems_ipdg89
-    !+ad_stat  Okay
-    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(out) :: pcoreradpv, pedgeradpv
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: den20,fbc,fbhe,fbo,pbremdt,pbremz,pc,phe, &
-         phighz,po,radexp,t10,vr
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    fbhe = 0.9D0
-    fbc = 0.52D0
-    fbo = 0.52D0
-
-    den20 = dene/1.0D20
-    t10 = ten/10.0D0
-
-    !  D-T bremsstrahlung (IPDG89)
-    !  Coefficient 0.016*radexp is C_B in IPDG89, with Zeff set to 1 for D-T
-    !  Note that the formula in IPDG89 should use ni/1.0E20 * ne/1.0E20,
-    !  not just (n20)^2 (the code below is correct)
-
-    radexp = (1.0D0 + alphan)**1.5D0 * sqrt(1.0D0 + alphan + alphat) / &
-         (1.0D0 + 2.0D0*alphan + 0.5D0*alphat)
-
-    pbremdt = 1.6D-2 * radexp * den20**2 * (deni/dene) * sqrt(t10)
-
-    !  High Z bremsstrahlung
-
-    vr = rmajor * (rminor*(1.0D0 + kappa95)/2.0D0)**2 / (58.652D0*vol)
-    phe = 65.8D0 * ralpne * (dene/7.0D19)**1.5D0 * vr
-    pc  = 1120.0D0 * rncne * (dene/7.0D19)**1.5D0 * vr
-    po  = 2240.0D0 * rnone * (dene/7.0D19)**1.5D0 * vr
-    if (zfear == 1) then  !  high-Z impurity is argon
-       phighz = 16000.0D0 * rnfene * (dene/7.0D19)**1.5D0 * vr
-    else  !  iron
-       phighz = 44800.0D0 * rnfene * (dene/7.0D19)**2.5D0 * vr
-    end if
-    pbremz = fbhe*phe + fbc*pc + fbo*po + fbfe*phighz
-
-    !  Total core radiation power (this is a more accurate description than
-    !  simply the bremsstrahlung power)
-
-    pcoreradpv = pbremz + pbremdt
-
-    !  Edge line radiation
-
-    pedgeradpv = (1.0D0-fbhe)*phe + (1.0D0-fbc)*pc + (1.0D0-fbo)*po + &
-         (1.0D0-fbfe)*phighz
-
-  end subroutine prad_ipdg89
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   subroutine psync_albajar_fidone(psyncpv)
 
-    !+ad_name  psync_albajar_fidone
-    !+ad_summ  Synchrotron radiation power calculation
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  psyncpv  : output real : synchrotron radiation power/volume (MW/m3)
-    !+ad_desc  This routine finds the synchrotron radiation power in MW/m3,
-    !+ad_desc  using the method of Albajar and Fidone.
-    !+ad_prob  No account is taken of pedestal profiles.
-    !+ad_call  None
-    !+ad_hist  14/05/14 PJK Moved synchrotron calculation here from original
-    !+ad_hisc               <CODE>radpwr</CODE> routine
-    !+ad_stat  Okay
-    !+ad_docs  Albajar, Nuclear Fusion 41 (2001) 665
-    !+ad_docs  Fidone, Giruzzi, Granata, Nuclear Fusion 41 (2001) 1755
+    !! Synchrotron radiation power calculation
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: R Kemp, CCFE, Culham Science Centre
+    !! psyncpv  : output real : synchrotron radiation power/volume (MW/m3)
+    !! This routine finds the synchrotron radiation power in MW/m3,
+    !! using the method of Albajar and Fidone.
+    !! Albajar, Nuclear Fusion 41 (2001) 665
+    !! Fidone, Giruzzi, Granata, Nuclear Fusion 41 (2001) 1755
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1476,35 +1189,22 @@ subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pra
 
   subroutine imprad(radb, radl, radcore, radtot)
 
-    !+ad_name  imprad
-    !+ad_summ  Total impurity line radiation and bremsstrahlung
-    !+ad_type  Subroutine
-    !+ad_auth  H Lux, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  radb    : output real : bremsstrahlung only (MW/m3)
-    !+ad_args  radl    : output real : line radiation only (MW/m3)
-    !+ad_args  radcore : output real : total impurity radiation from core (MW/m3)
-    !+ad_args  radtot  : output real : total impurity radiation (MW/m3)
-    !+ad_desc  This routine calculates the total radiation losses from
-    !+ad_desc  impurity line radiation and bremsstrahlung for all elements
-    !+ad_desc  for a given temperature and density profile.
-    !+ad_desc  <P>Bremsstrahlung equation from Johner
-    !+ad_desc  <P>L(z) data (coronal equilibrium) from Marco Sertoli, ASDEX-U,
-    !+ad_desc  ref. Kallenbach et al.
-    !+ad_prob  None
-    !+ad_call  Tprofile
-    !+ad_call  nprofile
-    !+ad_call  impradprofile
-    !+ad_call  fradcore
-    !+ad_hist  17/12/13 HL  First draft of routine, based on code by R Kemp
-    !+ad_hist  09/05/14 HL  Using new data structure
-    !+ad_hist  14/05/14 PJK First PROCESS implementation
-    !+ad_hist  19/05/14 PJK Added call to fradcore; radtot now an output arg
-    !+ad_stat  Okay
-    !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
-    !+ad_docs  Sertoli, private communication
-    !+ad_docs  Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
+    !! Total impurity line radiation and bremsstrahlung
+    !! author: H Lux, CCFE, Culham Science Centre
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! radb    : output real : bremsstrahlung only (MW/m3)
+    !! radl    : output real : line radiation only (MW/m3)
+    !! radcore : output real : total impurity radiation from core (MW/m3)
+    !! radtot  : output real : total impurity radiation (MW/m3)
+    !! This routine calculates the total radiation losses from
+    !! impurity line radiation and bremsstrahlung for all elements
+    !! for a given temperature and density profile.
+    !! <P>Bremsstrahlung equation from Johner
+    !! <P>L(z) data (coronal equilibrium) from Marco Sertoli, ASDEX-U,
+    !! ref. Kallenbach et al.
+    !! Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !! Sertoli, private communication
+    !! Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1564,5 +1264,81 @@ subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pra
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  function plasma_elongation_IPB() &
+     bind (C, name="c_plasma_elongation_IPB")
+     !! Volume measure of plasma elongation using the IPB definition
+     !! author: H Lux, CCFE, Culham Science Centre
+     !! author: P J Knight, CCFE, Culham Science Centre
+     !! Routine to calculate vol measure of plasma elongation for IPB98
+     !! Otto Kardaun et al 2008 Nucl. Fusion 48 099801
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     
+     ! Module variables
+     use physics_variables, only : vol, rminor, rmajor
+     use constants, only : pi
+
+     ! Return value
+     real(kind(1.0D0)) :: plasma_elongation_IPB
+
+     ! Volume measure of plasma elongation (used by IPB scalings)
+     plasma_elongation_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
+
+  end function plasma_elongation_IPB
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function total_mag_field() &
+     bind (C, name="c_total_mag_field")
+     !! Calculates the total magnetic field
+     !! author: J. Morris, CCFE, Culham Science Centre
+     
+     ! Module variables
+     use physics_variables, only : bt, bp
+
+     ! Return value
+     real(kind(1.0D0)) :: total_mag_field
+
+     ! Volume measure of plasma elongation (used by IPB scalings)
+     total_mag_field = sqrt(bt**2 + bp**2)
+
+  end function total_mag_field
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function beta_poloidal() &
+     bind (C, name="c_beta_poloidal")
+     !! Calculates beta poloidal
+     !! author: J. Morris, CCFE, Culham Science Centre
+     
+     ! Module variables
+     use physics_variables, only : btot, bp, beta
+
+     ! Return value
+     real(kind(1.0D0)) :: beta_poloidal
+
+     ! Volume measure of plasma elongation (used by IPB scalings)
+     beta_poloidal = beta * ( btot/bp )**2
+
+  end function beta_poloidal
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function res_diff_time() &
+     bind (C, name="c_res_diff_time")
+     !! Calculates resistive diffusion time
+     !! author: J. Morris, CCFE, Culham Science Centre
+     
+     ! Module variables
+     use physics_variables, only : rmajor, rplas, kappa95
+     use constants, only : rmu0
+
+     ! Return value
+     real(kind(1.0D0)) :: res_diff_time
+
+     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
+     res_diff_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
+
+  end function res_diff_time
 
 end module physics_functions_module

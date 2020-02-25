@@ -2,37 +2,19 @@
 
 module kit_blanket_model
 
-  !+ad_name  kit_blanket_model
-  !+ad_summ  Module containing the KIT blanket model
-  !+ad_summ  based on the HCPB concept
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_auth  F Franza, KIT (original MATLAB implementation)
-  !+ad_cont  blanket_lifetime
-  !+ad_cont  f_alpha
-  !+ad_cont  fast_neutron_fluence
-  !+ad_cont  he_production_vacuum_vessel
-  !+ad_cont  kit_blanket
-  !+ad_cont  nuclear_power_production
-  !+ad_cont  power_density
-  !+ad_cont  radial_coordinates
-  !+ad_cont  tritium_breeding_ratio
-  !+ad_args  N/A
-  !+ad_desc  This module contains the blanket neutronics model developed
-  !+ad_desc  by Fabrizio Franza et al. from Karlsruhe Institute of Technology (KIT)
-  !+ad_desc  based on the Helium-Cooled Pebble Bed (HCPB) blanket concept
-  !+ad_desc  of the PPCS Model B design.
-  !+ad_prob  None
-  !+ad_call  error_handling
-  !+ad_hist  06/06/13 PJK Initial release for comments
-  !+ad_hist  14/11/13 PJK Global replacement of BU by BZ (Unit --> Zone)
-  !+ad_hist  17/02/14 PJK Used np instead of 2 for array dimensions
-  !+ad_hist  30/06/14 PJK Added error_handling
-  !+ad_stat  Okay
-  !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-  !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-  !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-  !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+  !! Module containing the KIT blanket model
+  !! based on the HCPB concept
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! author: F Franza, KIT (original MATLAB implementation)
+  !! N/A
+  !! This module contains the blanket neutronics model developed
+  !! by Fabrizio Franza et al. from Karlsruhe Institute of Technology (KIT)
+  !! based on the Helium-Cooled Pebble Bed (HCPB) blanket concept
+  !! of the PPCS Model B design.
+  !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+  !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+  !! Karlsruhe Institute of Technology, January 2013;
+  !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -220,26 +202,19 @@ contains
 
   function f_alpha(alpha)
 
-    !+ad_name  f_alpha
-    !+ad_summ  Calculates the power density decay length multiplier
-    !+ad_summ  in a blanket region given the helium fraction
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  alpha : input real : helium fraction (%)
-    !+ad_desc  This routine calculates the power density decay length
-    !+ad_desc  multiplier in a blanket region comprising EUROFER steel and
-    !+ad_desc  helium coolant, given the helium volume fraction within the
-    !+ad_desc  region.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_stat  Okay
-    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !! Calculates the power density decay length multiplier
+    !! in a blanket region given the helium fraction
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! alpha : input real : helium fraction (%)
+    !! This routine calculates the power density decay length
+    !! multiplier in a blanket region comprising EUROFER steel and
+    !! helium coolant, given the helium volume fraction within the
+    !! region.
+    !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !! Karlsruhe Institute of Technology, January 2013;
+    !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -263,29 +238,16 @@ contains
 
   subroutine kit_blanket
 
-    !+ad_name  kit_blanket
-    !+ad_summ  Main routine for the KIT HCPB blanket model
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  None
-    !+ad_desc  This routine calls the main work routines for the KIT HCPB
-    !+ad_desc  blanket model.
-    !+ad_prob  None
-    !+ad_call  radial_coordinates
-    !+ad_call  power_density
-    !+ad_call  nuclear_power_production
-    !+ad_call  tritium_breeding_ratio
-    !+ad_call  fast_neutron_fluence
-    !+ad_call  he_production_vacuum_vessel
-    !+ad_call  blanket_lifetime
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_stat  Okay
-    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !! Main routine for the KIT HCPB blanket model
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! None
+    !! This routine calls the main work routines for the KIT HCPB
+    !! blanket model.
+    !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !! Karlsruhe Institute of Technology, January 2013;
+    !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -340,27 +302,20 @@ contains
 
   subroutine radial_coordinates
 
-    !+ad_name  radial_coordinates
-    !+ad_summ  Sets up the radial build within the KIT blanket
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  None
-    !+ad_desc  This routine sets up the arrays containing the radial
-    !+ad_desc  build within each blanket sub-assembly.
-    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
-    !+ad_desc  values at the inner and outer radial locations; however, if required,
-    !+ad_desc  they may be changed easily to provide several points for plotting
-    !+ad_desc  purposes, for example.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_stat  Okay
-    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !! Sets up the radial build within the KIT blanket
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! None
+    !! This routine sets up the arrays containing the radial
+    !! build within each blanket sub-assembly.
+    !! <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !! values at the inner and outer radial locations; however, if required,
+    !! they may be changed easily to provide several points for plotting
+    !! purposes, for example.
+    !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !! Karlsruhe Institute of Technology, January 2013;
+    !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -394,38 +349,31 @@ contains
   subroutine power_density(q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end, &
        q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end,pnuctfi,pnuctfo)
 
-    !+ad_name  power_density
-    !+ad_summ  Calculates the nuclear power density profiles
-    !+ad_dumm  within the KIT blanket sub-assemblies
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  q_BZ_IB_end : output real : power density at outer edge of IB BZ (MW/m3)
-    !+ad_args  q_BM_IB_end : output real : power density at outer edge of IB BM (MW/m3)
-    !+ad_args  q_BP_IB_end : output real : power density at outer edge of IB BP (MW/m3)
-    !+ad_args  q_BZ_OB_end : output real : power density at outer edge of OB BZ (MW/m3)
-    !+ad_args  q_BM_OB_end : output real : power density at outer edge of OB BM (MW/m3)
-    !+ad_args  q_BP_OB_end : output real : power density at outer edge of OB BP (MW/m3)
-    !+ad_args  pnuctfi     : output real : power density at outer edge of IB VV (MW/m3)
-    !+ad_argc                              = that on inner TF coil winding pack
-    !+ad_args  pnuctfo     : output real : power density at outer edge of OB VV (MW/m3)
-    !+ad_argc                              = that on outer TF coil winding pack
-    !+ad_desc  This routine calculates the nuclear power density profiles within each
-    !+ad_desc  blanket sub-assembly, assuming an exponential decay with distance through
-    !+ad_desc  each region, with the decay indices dependent on the material fractions.
-    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
-    !+ad_desc  values at the inner and outer radial locations; however, if required,
-    !+ad_desc  they may be changed easily to provide several points for plotting
-    !+ad_desc  purposes, for example.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_stat  Okay
-    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !! Calculates the nuclear power density profiles
+    !! within the KIT blanket sub-assemblies
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! q_BZ_IB_end : output real : power density at outer edge of IB BZ (MW/m3)
+    !! q_BM_IB_end : output real : power density at outer edge of IB BM (MW/m3)
+    !! q_BP_IB_end : output real : power density at outer edge of IB BP (MW/m3)
+    !! q_BZ_OB_end : output real : power density at outer edge of OB BZ (MW/m3)
+    !! q_BM_OB_end : output real : power density at outer edge of OB BM (MW/m3)
+    !! q_BP_OB_end : output real : power density at outer edge of OB BP (MW/m3)
+    !! pnuctfi     : output real : power density at outer edge of IB VV (MW/m3)
+    !! = that on inner TF coil winding pack
+    !! pnuctfo     : output real : power density at outer edge of OB VV (MW/m3)
+    !! = that on outer TF coil winding pack
+    !! This routine calculates the nuclear power density profiles within each
+    !! blanket sub-assembly, assuming an exponential decay with distance through
+    !! each region, with the decay indices dependent on the material fractions.
+    !! <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !! values at the inner and outer radial locations; however, if required,
+    !! they may be changed easily to provide several points for plotting
+    !! purposes, for example.
+    !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !! Karlsruhe Institute of Technology, January 2013;
+    !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -504,40 +452,31 @@ contains
   subroutine nuclear_power_production(q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end, &
        q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end,P_th_tot,M_E,pnucsh)
 
-    !+ad_name  nuclear_power_production
-    !+ad_summ  Calculates nuclear power production and energy multiplication factor
-    !+ad_dumm  within the KIT blanket sub-assemblies
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  q_BZ_IB_end : input real : power density at outer edge of IB BZ (MW/m3)
-    !+ad_args  q_BM_IB_end : input real : power density at outer edge of IB BM (MW/m3)
-    !+ad_args  q_BP_IB_end : input real : power density at outer edge of IB BP (MW/m3)
-    !+ad_args  q_BZ_OB_end : input real : power density at outer edge of OB BZ (MW/m3)
-    !+ad_args  q_BM_OB_end : input real : power density at outer edge of OB BM (MW/m3)
-    !+ad_args  q_BP_OB_end : input real : power density at outer edge of OB BP (MW/m3)
-    !+ad_args  p_th_tot    : output real : total nuclear power in the blanket (MW)
-    !+ad_args  m_e         : output real : energy multiplication factor in the blanket
-    !+ad_args  pnucsh      : output real : total nuclear power in the shield (MW)
-    !+ad_desc  This routine calculates the nuclear power production within each
-    !+ad_desc  blanket sub-assembly, assuming an exponential decay with distance through
-    !+ad_desc  each region, with the decay indices dependent on the material fractions.
-    !+ad_desc  These are summed to give the total nuclear power produced in the 'blanket'
-    !+ad_desc  (BZ+BM+BP) and 'shield' regions, and the energy multiplication factor
-    !+ad_desc  in the blanket is calculated.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_hist  26/09/13 PJK/FF Refined model to take into account average/peak PPCS
-    !+ad_hisc               wall load scaling in inboard and outboard regions
-    !+ad_stat  Okay
-    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
-    !+ad_docs  WP13-SYS01-A-T02 Interim Review Meeting, 10.07.2013, F. Franza
-    !+ad_docc  (describes 26/09/2013 model refinement)
+    !! Calculates nuclear power production and energy multiplication factor
+    !! within the KIT blanket sub-assemblies
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! q_BZ_IB_end : input real : power density at outer edge of IB BZ (MW/m3)
+    !! q_BM_IB_end : input real : power density at outer edge of IB BM (MW/m3)
+    !! q_BP_IB_end : input real : power density at outer edge of IB BP (MW/m3)
+    !! q_BZ_OB_end : input real : power density at outer edge of OB BZ (MW/m3)
+    !! q_BM_OB_end : input real : power density at outer edge of OB BM (MW/m3)
+    !! q_BP_OB_end : input real : power density at outer edge of OB BP (MW/m3)
+    !! p_th_tot    : output real : total nuclear power in the blanket (MW)
+    !! m_e         : output real : energy multiplication factor in the blanket
+    !! pnucsh      : output real : total nuclear power in the shield (MW)
+    !! This routine calculates the nuclear power production within each
+    !! blanket sub-assembly, assuming an exponential decay with distance through
+    !! each region, with the decay indices dependent on the material fractions.
+    !! These are summed to give the total nuclear power produced in the 'blanket'
+    !! (BZ+BM+BP) and 'shield' regions, and the energy multiplication factor
+    !! in the blanket is calculated.
+    !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !! Karlsruhe Institute of Technology, January 2013;
+    !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !! WP13-SYS01-A-T02 Interim Review Meeting, 10.07.2013, F. Franza
+    !! (describes 26/09/2013 model refinement)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -700,31 +639,21 @@ contains
 
   subroutine tritium_breeding_ratio(tbr,g_tot)
 
-    !+ad_name  nuclear_power_production
-    !+ad_summ  Calculates the tritium breeding ratio for the KIT blanket
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  tbr_breed
-    !+ad_cont  tbr_ports
-    !+ad_args  tbr   : output real : tritium breeding ratio
-    !+ad_args  g_tot : output real : tritium production rate (g/day)
-    !+ad_desc  This routine calculates the tritium breeding ratio and the rate
-    !+ad_desc  of production of tritium in the KIT blanket design, taking into
-    !+ad_desc  account the breeding material and the number and size of ports
-    !+ad_desc  in the blanket.
-    !+ad_prob  None
-    !+ad_call  tbr_breed
-    !+ad_call  tbr_ports
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_hist  26/09/13 PJK/FF Refinement to take into account IB/OB contributions
-    !+ad_stat  Okay
-    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
-    !+ad_docs  WP13-SYS01-A-T02 Interim Review Meeting, 10.07.2013, F. Franza
-    !+ad_docc  (describes 26/09/2013 model refinement)
+    !! Calculates the tritium breeding ratio for the KIT blanket
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! tbr   : output real : tritium breeding ratio
+    !! g_tot : output real : tritium production rate (g/day)
+    !! This routine calculates the tritium breeding ratio and the rate
+    !! of production of tritium in the KIT blanket design, taking into
+    !! account the breeding material and the number and size of ports
+    !! in the blanket.
+    !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !! Karlsruhe Institute of Technology, January 2013;
+    !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !! WP13-SYS01-A-T02 Interim Review Meeting, 10.07.2013, F. Franza
+    !! (describes 26/09/2013 model refinement)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -762,30 +691,22 @@ contains
 
     function TBR_breed(e_Li, breeder)
 
-      !+ad_name  tbr_breed
-      !+ad_summ  Returns a fit to the tritium breeding ratio for different breeder
-      !+ad_summ  materials
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  F Franza, KIT (original MATLAB implementation)
-      !+ad_cont  None
-      !+ad_args  e_li   : input real : Lithium-6 enrichment (%)
-      !+ad_args  breeder : input character string : breeder material; either
-      !+ad_argc          <UL><LI>'Orthosilicate' or
-      !+ad_argc              <LI>'Metatitanate' or
-      !+ad_argc              <LI>'Zirconate'</UL>
-      !+ad_desc  This routine provides the dependence of the tritium breeding
-      !+ad_desc  ratio on the ceramic breeder in use and the lithium-6 enrichment of
-      !+ad_desc  the breeder.
-      !+ad_prob  None
-      !+ad_call  report_error
-      !+ad_hist  06/06/13 PJK Initial release
-      !+ad_hist  30/06/14 PJK Added error handling
-      !+ad_stat  Okay
-      !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-      !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-      !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-      !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+      !! Returns a fit to the tritium breeding ratio for different breeder
+      !! materials
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: F Franza, KIT (original MATLAB implementation)
+      !! e_li   : input real : Lithium-6 enrichment (%)
+      !! breeder : input character string : breeder material; either
+      !! <UL><LI>'Orthosilicate' or
+      !! <LI>'Metatitanate' or
+      !! <LI>'Zirconate'</UL>
+      !! This routine provides the dependence of the tritium breeding
+      !! ratio on the ceramic breeder in use and the lithium-6 enrichment of
+      !! the breeder.
+      !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+      !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+      !! Karlsruhe Institute of Technology, January 2013;
+      !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -824,31 +745,24 @@ contains
 
     function TBR_ports(n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB, H_CD_ports)
 
-      !+ad_name  tbr_ports
-      !+ad_summ  Returns a fit to the tritium breeding ratio with different
-      !+ad_summ  machine port types
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  F Franza, KIT (original MATLAB implementation)
-      !+ad_cont  None
-      !+ad_args  n_ports_div : input integer : number of divertor ports
-      !+ad_args  n_ports_h_cd_ib : input integer : number of inboard H/CD ports
-      !+ad_args  n_ports_h_cd_ob : input integer : number of outboard H/CD ports
-      !+ad_args  h_cd_ports : input character string : H/CD port size;
-      !+ad_argc          <UL><LI>'small' or <LI>'large'</UL>
-      !+ad_desc  This routine provides the dependence of the tritium breeding
-      !+ad_desc  ratio on the number and size of machine ports.
-      !+ad_desc  The equatorial heating/current drive ports may be specified as
-      !+ad_desc  being either <CODE>'small'</CODE> (1.27 x 1.5 m2) or
-      !+ad_desc  <CODE>'large'</CODE> (3 x 3 m2).
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  06/06/13 PJK Initial release
-      !+ad_stat  Okay
-      !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-      !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-      !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-      !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+      !! Returns a fit to the tritium breeding ratio with different
+      !! machine port types
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: F Franza, KIT (original MATLAB implementation)
+      !! n_ports_div : input integer : number of divertor ports
+      !! n_ports_h_cd_ib : input integer : number of inboard H/CD ports
+      !! n_ports_h_cd_ob : input integer : number of outboard H/CD ports
+      !! h_cd_ports : input character string : H/CD port size;
+      !! <UL><LI>'small' or <LI>'large'</UL>
+      !! This routine provides the dependence of the tritium breeding
+      !! ratio on the number and size of machine ports.
+      !! The equatorial heating/current drive ports may be specified as
+      !! being either <CODE>'small'</CODE> (1.27 x 1.5 m2) or
+      !! <CODE>'large'</CODE> (3 x 3 m2).
+      !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+      !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+      !! Karlsruhe Institute of Technology, January 2013;
+      !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -888,34 +802,26 @@ contains
   subroutine fast_neutron_fluence(phi_n_vv_IB_start,phi_n_vv_OB_start, &
        phi_n_IB_TFC,phi_n_OB_TFC)
 
-    !+ad_name  fast_neutron_fluence
-    !+ad_summ  Calculates fast neutron fluence within the KIT blanket sub-assemblies
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  phi_n_vv_IB_start : output real : flux at inner edge of IB VV (n/cm2/s)
-    !+ad_args  phi_n_vv_OB_start : output real : flux at inner edge of OB VV (n/cm2/s)
-    !+ad_args  phi_n_IB_TFC      : output real : lifetime fluence at IB TF coil (n/cm2)
-    !+ad_args  phi_n_OB_TFC      : output real : lifetime fluence at OB TF coil (n/cm2)
-    !+ad_desc  This routine calculates the fast neutron flux profiles within each
-    !+ad_desc  blanket sub-assembly, assuming an exponential decay with distance through
-    !+ad_desc  each region, with the decay indices dependent on the material fractions.
-    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
-    !+ad_desc  values at the inner and outer radial locations; however, if required,
-    !+ad_desc  they may be changed easily to provide several points for plotting
-    !+ad_desc  purposes, for example.
-    !+ad_desc  <P>The total neutron fluence over the plant lifetime reaching the
-    !+ad_desc  TF coils is also calculated.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_hist  05/11/13 PJK Corrected lambda_q_VV to lambda_n_VV in two places
-    !+ad_stat  Okay
-    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !! Calculates fast neutron fluence within the KIT blanket sub-assemblies
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! phi_n_vv_IB_start : output real : flux at inner edge of IB VV (n/cm2/s)
+    !! phi_n_vv_OB_start : output real : flux at inner edge of OB VV (n/cm2/s)
+    !! phi_n_IB_TFC      : output real : lifetime fluence at IB TF coil (n/cm2)
+    !! phi_n_OB_TFC      : output real : lifetime fluence at OB TF coil (n/cm2)
+    !! This routine calculates the fast neutron flux profiles within each
+    !! blanket sub-assembly, assuming an exponential decay with distance through
+    !! each region, with the decay indices dependent on the material fractions.
+    !! <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !! values at the inner and outer radial locations; however, if required,
+    !! they may be changed easily to provide several points for plotting
+    !! purposes, for example.
+    !! <P>The total neutron fluence over the plant lifetime reaching the
+    !! TF coils is also calculated.
+    !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !! Karlsruhe Institute of Technology, January 2013;
+    !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -994,34 +900,27 @@ contains
   subroutine He_production_vacuum_vessel(phi_n_VV_IB_start,phi_n_VV_OB_start, &
        vvhemini,vvhemino,vvhemaxi,vvhemaxo)
 
-    !+ad_name  he_production_vacuum_vessel
-    !+ad_summ  Calculates helium concentrations in the vacuum vessel at the end
-    !+ad_summ  of the plant lifetime
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  phi_n_vv_IB_start : input real : n flux at inner edge of IB VV (n/cm2/s)
-    !+ad_args  phi_n_vv_OB_start : input real : n flux at inner edge of OB VV (n/cm2/s)
-    !+ad_args  vvhemini : output real : final He concentr. at outer edge of IB VV (appm)
-    !+ad_args  vvhemino : output real : final He concentr. at outer edge of OB VV (appm)
-    !+ad_args  vvhemaxi : output real : final He concentr. at inner edge of IB VV (appm)
-    !+ad_args  vvhemaxo : output real : final He concentr. at inner edge of OB VV (appm)
-    !+ad_desc  This routine calculates the helium production profiles, and the
-    !+ad_desc  minimum and maximum helium concentrations in the vacuum vessel
-    !+ad_desc  at the end of the plant lifetime.
-    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
-    !+ad_desc  values at the inner and outer radial locations; however, if required,
-    !+ad_desc  they may be changed easily to provide several points for plotting
-    !+ad_desc  purposes, for example.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_stat  Okay
-    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !! Calculates helium concentrations in the vacuum vessel at the end
+    !! of the plant lifetime
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! phi_n_vv_IB_start : input real : n flux at inner edge of IB VV (n/cm2/s)
+    !! phi_n_vv_OB_start : input real : n flux at inner edge of OB VV (n/cm2/s)
+    !! vvhemini : output real : final He concentr. at outer edge of IB VV (appm)
+    !! vvhemino : output real : final He concentr. at outer edge of OB VV (appm)
+    !! vvhemaxi : output real : final He concentr. at inner edge of IB VV (appm)
+    !! vvhemaxo : output real : final He concentr. at inner edge of OB VV (appm)
+    !! This routine calculates the helium production profiles, and the
+    !! minimum and maximum helium concentrations in the vacuum vessel
+    !! at the end of the plant lifetime.
+    !! <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !! values at the inner and outer radial locations; however, if required,
+    !! they may be changed easily to provide several points for plotting
+    !! purposes, for example.
+    !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !! Karlsruhe Institute of Technology, January 2013;
+    !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1068,24 +967,17 @@ contains
 
   subroutine blanket_lifetime(t_bl_FPY,t_bl_Y)
 
-    !+ad_name  blanket_lifetime
-    !+ad_summ  Calculates the blanket lifetime
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  t_bl_fpy : output real : blanket lifetime (full power years)
-    !+ad_args  t_bl_y   : output real : blanket lifetime (calendar years)
-    !+ad_desc  This routine calculates the blanket lifetime, assuming that the
-    !+ad_desc  maximum allowed neutron damage to the EUROFER steel is 60 dpa.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_stat  Okay
-    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !! Calculates the blanket lifetime
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! t_bl_fpy : output real : blanket lifetime (full power years)
+    !! t_bl_y   : output real : blanket lifetime (calendar years)
+    !! This routine calculates the blanket lifetime, assuming that the
+    !! maximum allowed neutron damage to the EUROFER steel is 60 dpa.
+    !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !! Karlsruhe Institute of Technology, January 2013;
+    !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1116,51 +1008,14 @@ end module kit_blanket_model
 
 module fwbs_module
 
-  !+ad_name  fwbs_module
-  !+ad_summ  Module containing first wall, blanket and shield routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  fwbs
-  !+ad_cont  dshellvol
-  !+ad_cont  eshellvol
-  !+ad_cont  blanket
-  !+ad_cont  blanket_neutronics
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  parameters of the first wall, blanket and shield components
-  !+ad_desc  of a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  build_module
-  !+ad_call  build_variables
-  !+ad_call  buildings_variables
-  !+ad_call  constants
-  !+ad_call  cost_variables
-  !+ad_call  divertor_variables
-  !+ad_call  fwbs_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  kit_blanket_model
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  plasma_geometry_module
-  !+ad_call  process_output
+  !! Module containing first wall, blanket and shield routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! parameters of the first wall, blanket and shield components
+  !! of a fusion power plant.
 
-  !+ad_call  stellarator_variables
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_hist  18/10/12 PJK Initial version of module
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  31/10/12 PJK Added cost_variables
-  !+ad_hist  31/10/12 PJK Moved local common variables into module header
-  !+ad_hist  06/11/12 PJK Added plasma_geometry_module
-  !+ad_hist  09/04/13 PJK Added buildings_variables, pfcoil_variables,
-  !+ad_hisc               stellarator_variables
-  !+ad_hist  08/05/13 PJK Added dshellvol, eshellvol
-  !+ad_hist  22/05/13 PJK Added kit_blanket_model, build_module, times_variables
-  !+ad_hist  14/08/13 PJK Made blanket_neutronics public
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1195,64 +1050,22 @@ contains
 
   subroutine fwbs(outfile,iprint)
 
-    !+ad_name  fwbs
-    !+ad_summ  First wall, blanket and shield module
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  C A Gardner, UKAEA Fusion
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : Fortran output unit identifier
-    !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
-    !+ad_desc  This subroutine calculates the nuclear heating in the blanket /
-    !+ad_desc  shield, and estimates the volume and masses of the first wall,
-    !+ad_desc  blanket and shield.
-    !+ad_desc  <P>The arrays <CODE>coef(i,j)</CODE> and <CODE>decay(i,j)</CODE>
-    !+ad_desc  are used for exponential decay approximations of the
-    !+ad_desc  (superconducting) TF coil nuclear parameters.
-    !+ad_desc  <UL><P><LI><CODE>j = 1</CODE> : stainless steel shield (assumed)
-    !+ad_desc      <P><LI><CODE>j = 2</CODE> : tungsten shield (not used)</UL>
-    !+ad_desc  Note: Costing and mass calculations elsewhere assume
-    !+ad_desc  stainless steel only.
-    !+ad_prob  None
-    !+ad_call  blanket
-    !+ad_call  blanket_neutronics
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_call  dshellarea
-    !+ad_call  dshellvol
-    !+ad_call  eshellarea
-    !+ad_call  eshellvol
-    !+ad_hist  14/11/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  17/10/12 PJK Added divertor_variables
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  09/04/13 PJK Replaced hardwired 5.0 by 2*clh1 in vdewex calculation;
-    !+ad_hisc               rdewex transferred to fwbs_variables, and now uses
-    !+ad_hisc               routr + rpf2dewar instead of hardwired value.
-    !+ad_hisc               New cryomass calculation
-    !+ad_hist  10/04/13 PJK Removed irrelevant vgap2 from ht1 calculation
-    !+ad_hist  11/04/13 PJK Modified definition of hecan and wpthk;
-    !+ad_hisc               modified beryllium density
-    !+ad_hist  09/05/13 PJK Redefined blanket, shield and vacuum vessel volumes
-    !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
-    !+ad_hist  21/05/13 PJK Added blanket, shield area calculations
-    !+ad_hist  18/06/13 PJK Corrected cryomass (= vacuum vessel mass, not cryostat mass)
-    !+ad_hist  25/06/13 PJK Removed hecan output if blktmodel > 0
-    !+ad_hist  16/08/13 PJK Removed obsolete stellarator clause (this routine
-    !+ad_hisc               is no longer used for stellarators)
-    !+ad_hist  24/04/14 PJK Changed bktlife output statement to avoid confusion
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  03/06/14 PJK Modified fhole etc. usage
-    !+ad_hist  16/06/14 PJK Reworded pnucblkt output; removed duplicate outputs
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  23/06/14 PJK Corrected wallmw units
-    !+ad_hist  03/09/14 PJK Changed PF coil to cryostat top vertical clearance
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! First wall, blanket and shield module
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: C A Gardner, UKAEA Fusion
+    !! outfile : input integer : Fortran output unit identifier
+    !! iprint : input integer : Switch to write output to file (1=yes)
+    !! This subroutine calculates the nuclear heating in the blanket /
+    !! shield, and estimates the volume and masses of the first wall,
+    !! blanket and shield.
+    !! <P>The arrays <CODE>coef(i,j)</CODE> and <CODE>decay(i,j)</CODE>
+    !! are used for exponential decay approximations of the
+    !! (superconducting) TF coil nuclear parameters.
+    !! <UL><P><LI><CODE>j = 1</CODE> : stainless steel shield (assumed)
+    !! <P><LI><CODE>j = 2</CODE> : tungsten shield (not used)</UL>
+    !! Note: Costing and mass calculations elsewhere assume
+    !! stainless steel only.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1291,7 +1104,7 @@ contains
     !  (average of above- and below-midplane parts)
 
     hbot = rminor*kappa + vgap + divfix - blnktth
-    if (idivrt == 2) then  !  (i.e. snull=0)
+    if (idivrt == 2) then  !  (i.e. i_single_null=0)
        htop = hbot
     else
        htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth)
@@ -1302,94 +1115,57 @@ contains
     !  (average of above- and below-midplane parts)
 
     hbot = rminor*kappa + vgap + divfix
-    if (idivrt == 2) then  !  (i.e. snull=0)
+    if (idivrt == 2) then  !  (i.e. i_single_null=0)
        htop = hbot
     else
        htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) + blnktth
     end if
     hshld = 0.5D0*(htop + hbot)
 
-    if ((itart == 1).or.(fwbsshape == 1)) then  !  D-shaped
 
-       !  Major radius to outer edge of inboard blanket
 
-       r1 = rsldi + shldith + blnkith
+    ! Cross-sections are assumed to be defined by two ellipses
 
-       !  Horizontal distance between inside edges of blanket,
-       !  i.e. outer radius of inboard part to inner radius of outboard part
+    !  Major radius to centre of inboard and outboard ellipses
+    !  (coincident in radius with top of plasma)
 
-       r2 = fwith + scrapli + 2.0D0*rminor + scraplo + fwoth
+    r1 = rmajor - rminor*triang
 
-       !  Calculate blanket surface area, assuming 100% coverage
+    !  Distance between r1 and outer edge of inboard blanket
 
-       call dshellarea(r1,r2,hblnkt,blareaib,blareaob,blarea)
+    r2 = r1 - (rsldi + shldith + blnkith)
 
-       !  Calculate blanket volumes, assuming 100% coverage
+    !  Distance between r1 and inner edge of outboard blanket
 
-       call dshellvol(r1,r2,hblnkt,blnkith,blnkoth,blnktth, &
-            volblkti,volblkto,volblkt)
+    r3 = (rsldo - shldoth - blnkoth) - r1
 
-       !  Major radius to outer edge of inboard shield
+    !  Calculate blanket surface area, assuming 100% coverage
 
-       r1 = rsldi + shldith
+    call eshellarea(r1,r2,r3,hblnkt,blareaib,blareaob,blarea)
 
-       !  Horizontal distance between inside edges of shield,
-       !  i.e. outer radius of inboard part to inner radius of outboard part
+    !  Calculate blanket volumes, assuming 100% coverage
 
-       r2 = blnkith + fwith + scrapli + 2.0D0*rminor + scraplo + fwoth + blnkoth
+    call eshellvol(r1,r2,r3,hblnkt,blnkith,blnkoth,blnktth, &
+                   volblkti,volblkto,volblkt)
 
-       !  Calculate shield surface area, assuming 100% coverage
+    !  Distance between r1 and outer edge of inboard shield
 
-       call dshellarea(r1,r2,hshld,shareaib,shareaob,sharea)
+    r2 = r1 - (rsldi + shldith)
 
-       !  Calculate shield volumes, assuming 100% coverage
+    !  Distance between r1 and inner edge of outboard shield
 
-       call dshellvol(r1,r2,hshld,shldith,shldoth,shldtth, &
+    r3 = (rsldo - shldoth) - r1
+
+    !  Calculate shield surface area, assuming 100% coverage
+
+    call eshellarea(r1,r2,r3,hshld,shareaib,shareaob,sharea)
+
+    !  Calculate shield volumes, assuming 100% coverage
+
+    call eshellvol(r1,r2,r3,hshld,shldith,shldoth,shldtth, &
             volshldi,volshldo,volshld)
 
-    else  !  Cross-sections are assumed to be defined by two ellipses
-
-       !  Major radius to centre of inboard and outboard ellipses
-       !  (coincident in radius with top of plasma)
-
-       r1 = rmajor - rminor*triang
-
-       !  Distance between r1 and outer edge of inboard blanket
-
-       r2 = r1 - (rsldi + shldith + blnkith)
-
-       !  Distance between r1 and inner edge of outboard blanket
-
-       r3 = (rsldo - shldoth - blnkoth) - r1
-
-       !  Calculate blanket surface area, assuming 100% coverage
-
-       call eshellarea(r1,r2,r3,hblnkt,blareaib,blareaob,blarea)
-
-        !  Calculate blanket volumes, assuming 100% coverage
-
-       call eshellvol(r1,r2,r3,hblnkt,blnkith,blnkoth,blnktth, &
-            volblkti,volblkto,volblkt)
-
-       !  Distance between r1 and outer edge of inboard shield
-
-       r2 = r1 - (rsldi + shldith)
-
-       !  Distance between r1 and inner edge of outboard shield
-
-       r3 = (rsldo - shldoth) - r1
-
-       !  Calculate shield surface area, assuming 100% coverage
-
-       call eshellarea(r1,r2,r3,hshld,shareaib,shareaob,sharea)
-
-       !  Calculate shield volumes, assuming 100% coverage
-
-       call eshellvol(r1,r2,r3,hshld,shldith,shldoth,shldtth, &
-            volshldi,volshldo,volshld)
-
-    end if
-
+   
     !  Apply area (and volume) coverage factors
 
     if (ipowerflow == 0) then
@@ -1470,17 +1246,7 @@ contains
        decay(6,2) = 15.25D0
        decay(7,2) = 17.25D0
 
-       !  TART centrepost nuclear heating. Estimate fraction hitting from a
-       !  point source at the plasma centre, and assume average path length
-       !  of 2*tfcth, and e-fold decay length of 0.08m (copper water mixture).
-
-       if (itart == 1) then
-          frachit = hmax / sqrt(hmax**2 + (rmajor-tfcth)**2 ) * &
-               atan(tfcth/(rmajor-tfcth) )/pi
-          pnuccp = pneutmw * frachit * (1.0D0 - exp(-2.0D0*tfcth/0.08D0))
-       else
-          pnuccp = 0.0D0
-       end if
+       pnuccp = 0.0D0
 
        !  Energy-multiplied neutron power
 
@@ -1505,7 +1271,7 @@ contains
        !  The 'He can' previously referred to is actually the steel case on the
        !  plasma-facing side of the TF coil.
 
-       if (itfsup == 1) then
+       if (i_tf_sup == 1) then
 
           !  N.B. The vacuum vessel appears to be ignored
 
@@ -1584,17 +1350,7 @@ contains
 
     else  !  ipowerflow == 1
 
-       !  TART centrepost nuclear heating. Estimate fraction hitting from a
-       !  point source at the plasma centre, and assume average path length
-       !  of 2*tfcth, and e-fold decay length of 0.08m (copper water mixture).
-
-       if (itart == 1) then
-          frachit = hmax / sqrt(hmax**2 + (rmajor-tfcth)**2 ) * &
-               atan(tfcth/(rmajor-tfcth) )/pi
-          pnuccp = pneutmw * frachit * (1.0D0 - exp(-2.0D0*tfcth/0.08D0))
-       else
-          pnuccp = 0.0D0
-       end if
+       pnuccp = 0.0D0
 
        !  Neutron power incident on divertor
 
@@ -1642,7 +1398,7 @@ contains
        !  The 'He can' previously referred to is actually the steel case on the
        !  plasma-facing side of the TF coil.
 
-       if (itfsup == 1) then
+       if (i_tf_sup == 1) then
 
           !  N.B. The vacuum vessel appears to be ignored
 
@@ -1883,7 +1639,7 @@ contains
     !     2.0D0 * pi * rmajor * ddwi * 2.0D0 * fvoldw
 
     hbot = hmax - vgap2 - ddwi
-    if (idivrt == 2) then  !  (i.e. snull=0)
+    if (idivrt == 2) then  !  (i.e. i_single_null=0)
        htop = hbot
     else
        htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) &
@@ -1891,53 +1647,32 @@ contains
     end if
     hvv = 0.5D0*(htop + hbot)
 
-    if ((itart == 1).or.(fwbsshape == 1)) then  !  D-shaped
+    !  Cross-section is assumed to be defined by two ellipses
 
-       !  Major radius to outer edge of inboard section
+    !  Major radius to centre of inboard and outboard ellipses
+    !  (coincident in radius with top of plasma)
 
-       r1 = rsldi
+    r1 = rmajor - rminor*triang
 
-       !  Horizontal distance between inside edges,
-       !  i.e. outer radius of inboard part to inner radius of outboard part
+    !  Distance between r1 and outer edge of inboard section
 
-       r2 = rsldo - r1
+    r2 = r1 - rsldi
 
-       !  Calculate volume, assuming 100% coverage
+    !  Distance between r1 and inner edge of outboard section
 
-       call dshellvol(r1,r2,hvv,ddwi,ddwi,ddwi,v1,v2,vdewin)
+    r3 = rsldo - r1
 
-       !  Apply area coverage factor
+    !  Calculate volume, assuming 100% coverage
 
-       vdewin = fvoldw*vdewin
+    call eshellvol(r1,r2,r3,hvv,ddwi,ddwi,ddwi,v1,v2,vdewin)
 
-    else  !  Cross-section is assumed to be defined by two ellipses
+    !  Apply area coverage factor
 
-       !  Major radius to centre of inboard and outboard ellipses
-       !  (coincident in radius with top of plasma)
-
-       r1 = rmajor - rminor*triang
-
-       !  Distance between r1 and outer edge of inboard section
-
-       r2 = r1 - rsldi
-
-       !  Distance between r1 and inner edge of outboard section
-
-       r3 = rsldo - r1
-
-       !  Calculate volume, assuming 100% coverage
-
-       call eshellvol(r1,r2,r3,hvv,ddwi,ddwi,ddwi,v1,v2,vdewin)
-
-       !  Apply area coverage factor
-
-       vdewin = fvoldw*vdewin
-
-    end if
+    vdewin = fvoldw*vdewin
 
     !  Vacuum vessel mass - original obscure calculation replaced
 
-    !cryomass = fvolcry * 4.0D0 * (2.0D0*(rtot-rsldi) + 2.0D0*hmax) * &
+    !cryomass = fvolcry * 4.0D0 * (2.0D0*(r_tf_outboard_mid-rsldi) + 2.0D0*hmax) * &
     !     2.0D0 * pi * rmajor * ddwi * denstl
 
     vvmass = vdewin * denstl
@@ -1971,10 +1706,7 @@ contains
          call ovarre(outfile,'Inboard side TF coil case thickness (m)', &
          '(hecan)',hecan)
 
-    if (itart == 1) then
-       call osubhd(outfile,'(Copper centrepost used)')
-       call ovarre(outfile,'Centrepost heating (MW)','(pnuccp)',pnuccp)
-    else if (blktmodel == 0) then
+    if (blktmodel == 0) then
        call osubhd(outfile,'TF coil nuclear parameters :')
        call ovarre(outfile,'Peak magnet heating (MW/m3)','(coilhtmx)', &
             coilhtmx)
@@ -2132,24 +1864,15 @@ contains
 
   subroutine blanket_neutronics
 
-    !+ad_name  blanket_neutronics
-    !+ad_summ  Interface between PROCESS and the KIT HCPB blanket model
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  None
-    !+ad_desc  This routine provides the interface between the KIT HCPB
-    !+ad_desc  blanket neutronics model and the rest of the code.
-    !+ad_prob  None
-    !+ad_call  kit_blanket
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  03/06/14 PJK Changed fhole usage for ipowerflow=1
-    !+ad_stat  Okay
-    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !! Interface between PROCESS and the KIT HCPB blanket model
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine provides the interface between the KIT HCPB
+    !! blanket neutronics model and the rest of the code.
+    !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !! Karlsruhe Institute of Technology, January 2013;
+    !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2265,7 +1988,7 @@ contains
     !  TF coil perimeter is inboard, 75% outboard
 
     ptfnuc = 0.25D0*tfleng*tfareain * pnuctfi &
-         + 0.75D0*tfleng*arealeg*tfno * pnuctfo
+         + 0.75D0*tfleng*arealeg*n_tf * pnuctfo
 
     !  Maximum helium concentration in vacuum vessel at
     !  end of plant lifetime (appm)
@@ -2276,25 +1999,17 @@ contains
 
   function tsat(p)
 
-    !+ad_name  tsat
-    !+ad_summ  Saturation temperature of water as a function of pressure
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  P Karditsas, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  p  : input real : saturated liquid/steam pressure (MPa)
-    !+ad_desc  This routine calculates the saturation temperature (K) of
-    !+ad_desc  water given the pressure. The calculation is performed
-    !+ad_desc  either by calling a REFPROP routine, or by using an
-    !+ad_desc  algorithm taken from Panos's satliq routine.
-    !+ad_prob  None
-    !+ad_call  tsat_refprop
-    !+ad_hist  04/09/14 PJK Initial version
-    !+ad_hist  17/12/14 PJK Added call to REFPROP interface
-    !+ad_stat  Okay
-    !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
-    !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
-    !+ad_docc  Dept., Culham Laboratory, Abingdon
+    !! Saturation temperature of water as a function of pressure
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: P Karditsas, CCFE, Culham Science Centre
+    !! p  : input real : saturated liquid/steam pressure (MPa)
+    !! This routine calculates the saturation temperature (K) of
+    !! water given the pressure. The calculation is performed
+    !! either by calling a REFPROP routine, or by using an
+    !! algorithm taken from Panos's satliq routine.
+    !! Blanket and Energy Conversion Model for Fusion Reactors,
+    !! Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
+    !! Dept., Culham Laboratory, Abingdon
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2342,37 +2057,30 @@ contains
   subroutine sctfcoil_nuclear_heating_iter90(coilhtmx,dpacop,htheci,nflutf, &
        pheci,pheco,ptfiwp,ptfowp,raddose,ptfnuc)
 
-    !+ad_name  sctfcoil_nuclear_heating_iter90
-    !+ad_summ  Superconducting TF coil nuclear heating estimate
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  coilhtmx : output real : peak magnet heating (MW/m3)
-    !+ad_args  dpacop : output real : copper stabiliser displacements/atom
-    !+ad_args  htheci : output real : peak TF coil case heating (MW/m3)
-    !+ad_args  nflutf : output real : maximum neutron fluence (n/m2)
-    !+ad_args  pheci : output real : inboard coil case heating (MW)
-    !+ad_args  pheco : output real : outboard coil case heating (MW)
-    !+ad_args  ptfiwp : output real : inboard TF coil winding pack heating (MW)
-    !+ad_args  ptfowp : output real : outboard TF coil winding pack heating (MW)
-    !+ad_args  raddose : output real : insulator dose (rad)
-    !+ad_args  ptfnuc : output real : TF coil nuclear heating (MW)
-    !+ad_desc  This subroutine calculates the nuclear heating in the
-    !+ad_desc  superconducting TF coils, assuming an exponential neutron
-    !+ad_desc  attenuation through the blanket and shield materials.
-    !+ad_desc  The estimates are based on 1990 ITER data.
-    !+ad_desc  <P>The arrays <CODE>coef(i,j)</CODE> and <CODE>decay(i,j)</CODE>
-    !+ad_desc  are used for exponential decay approximations of the
-    !+ad_desc  (superconducting) TF coil nuclear parameters.
-    !+ad_desc  <UL><P><LI><CODE>j = 1</CODE> : stainless steel shield (assumed)
-    !+ad_desc      <P><LI><CODE>j = 2</CODE> : tungsten shield (not used)</UL>
-    !+ad_desc  Note: Costing and mass calculations elsewhere assume
-    !+ad_desc  stainless steel only.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  04/11/14 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Superconducting TF coil nuclear heating estimate
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! coilhtmx : output real : peak magnet heating (MW/m3)
+    !! dpacop : output real : copper stabiliser displacements/atom
+    !! htheci : output real : peak TF coil case heating (MW/m3)
+    !! nflutf : output real : maximum neutron fluence (n/m2)
+    !! pheci : output real : inboard coil case heating (MW)
+    !! pheco : output real : outboard coil case heating (MW)
+    !! ptfiwp : output real : inboard TF coil winding pack heating (MW)
+    !! ptfowp : output real : outboard TF coil winding pack heating (MW)
+    !! raddose : output real : insulator dose (rad)
+    !! ptfnuc : output real : TF coil nuclear heating (MW)
+    !! This subroutine calculates the nuclear heating in the
+    !! superconducting TF coils, assuming an exponential neutron
+    !! attenuation through the blanket and shield materials.
+    !! The estimates are based on 1990 ITER data.
+    !! <P>The arrays <CODE>coef(i,j)</CODE> and <CODE>decay(i,j)</CODE>
+    !! are used for exponential decay approximations of the
+    !! (superconducting) TF coil nuclear parameters.
+    !! <UL><P><LI><CODE>j = 1</CODE> : stainless steel shield (assumed)
+    !! <P><LI><CODE>j = 2</CODE> : tungsten shield (not used)</UL>
+    !! Note: Costing and mass calculations elsewhere assume
+    !! stainless steel only.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2394,12 +2102,12 @@ contains
 
     !  Global shared variables
 
-    !  Input: blnkith,blnkoth,casthi,cfactr,fwith,fwoth,itfsup,shldith
+    !  Input: blnkith,blnkoth,casthi,cfactr,fwith,fwoth,i_tf_sup,shldith
     !  Input: shldoth,tfsai,tfsao,thkwp,tinstf,tlife,wallmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (itfsup == 0) then  !  Resistive coils
+    if (i_tf_sup /= 1) then  !  Resistive coils
        coilhtmx = 0.0D0
        ptfiwp = 0.0D0
        ptfowp = 0.0D0

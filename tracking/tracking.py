@@ -23,7 +23,7 @@ from process_io_lib import mfile as mf
 TRACKING_LIST = [
     "procver", "time", "username", "tagno", "commsg", "ifail",
     "isweep", "nsweep", "rmajor", "rminor", "aspect", "kappa", "kappa95",
-    "triang", "triang95", "sarea", "vol", "tfno", "powfmw", "plascur/1d6",
+    "triang", "triang95", "sarea", "vol", "n_tf", "powfmw", "plascur/1d6",
     "bt", "q95", "beta", "normalised_thermal_beta", "normalised_total_beta",
     "thermal_beta", "thermal_poloidal_beta", "te", "te0", "dene", "ne0",
     "dnla_gw", "tesep", "nesep", "teped", "neped", "ieped", "zeff", "dnz",

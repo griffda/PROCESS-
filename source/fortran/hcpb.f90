@@ -1,31 +1,17 @@
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module ccfe_hcpb_module
-  !+ad_name  ccfe_hcpb_module
-  !+ad_summ  Module containing CCFE HCPB blanket model
-  !+ad_type  Module
-  !+ad_auth  J Morris, CCFE, Culham Science Centre
-  !+ad_args  N/A
-  !+ad_desc  This module contains the PROCESS CCFE HCPB blanket model
-  !+ad_desc  based on CCFE HCPB model from the PROCESS engineering paper
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  fwbs_variables
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  tfcoil_variables
-  !+ad_hist  10/02/15 JM  Initial version of module
-  !+ad_hist  23/04/15 MDK Removed fhole, changed 1 to 1.0D) for safety
-  !+ad_hist  01/06/15 MDK Tidied up details: Issue #302.
-  !+ad_hist  01/12/15 MDK Thermohydraulic parts extensively revised.
-  !+ad_hist  26/05/16 JM  Removed cosine_term() and smt() subroutine as they aren't used
-  !+ad_stat  Okay
-  !+ad_docs  PROCESS Engineering paper (M. Kovari et al.)
+  !! Module containing CCFE HCPB blanket model
+  !! author: J Morris, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains the PROCESS CCFE HCPB blanket model
+  !! based on CCFE HCPB model from the PROCESS engineering paper
+  !! PROCESS Engineering paper (M. Kovari et al.)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   ! Modules to import !
-  !!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!
 
   use build_variables
   use buildings_variables
@@ -51,7 +37,7 @@ module ccfe_hcpb_module
   implicit none
 
   ! Subroutine declarations !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
   private
   public :: ccfe_hcpb, tbr_shimwell
@@ -64,157 +50,143 @@ module ccfe_hcpb_module
 
   ! Module variables
   ! Tungsten density (kg/m3)
-  real(kind=double), private :: W_density = 19.25D0 * 1000.0D0
+  real(kind(1.0D0)), private :: W_density = 19.25D0 * 1000.0D0
 
   ! Smeared densities of build sections
   ! FW armour density
-  real(kind=double), private :: armour_density
+  real(kind(1.0D0)), private :: armour_density
 
   ! FW density
-  real(kind=double), private :: fw_density
+  real(kind(1.0D0)), private :: fw_density
 
   ! Blanket density
-  real(kind=double), private :: blanket_density
+  real(kind(1.0D0)), private :: blanket_density
 
   ! Shield density
-  real(kind=double), private :: shield_density
+  real(kind(1.0D0)), private :: shield_density
 
   ! Vacuum vessel density
-  real(kind=double), private :: vv_density
+  real(kind(1.0D0)), private :: vv_density
 
   ! First wall volume
-  real(kind=double), private :: volfw
+  real(kind(1.0D0)), private :: volfw
 
   ! Blanket exponent (tonne/m2)
-  real(kind=double), private :: x_blanket
+  real(kind(1.0D0)), private :: x_blanket
 
   ! Shield exponent (tonne/m2)
-  real(kind=double), private :: x_shield
+  real(kind(1.0D0)), private :: x_shield
 
   ! Unit nuclear heating in TF coil (W per W of fusion power)
-  real(kind=double), private :: tfc_nuc_heating
+  real(kind(1.0D0)), private :: tfc_nuc_heating
 
   ! Unit heating of FW and armour in FW armour (W/kg per W of fusion power)
-  real(kind=double), private :: fw_armour_u_nuc_heating
+  real(kind(1.0D0)), private :: fw_armour_u_nuc_heating
 
   ! Unit nuclear heating in shield (W per W of fusion power)
-  real(kind=double), private :: shld_u_nuc_heating
+  real(kind(1.0D0)), private :: shld_u_nuc_heating
 
   ! Blanket internal half-height (m)
-  real(kind=double), private :: hblnkt
+  real(kind(1.0D0)), private :: hblnkt
 
   ! Shield internal half-height (m)
-  real(kind=double), private :: hshld
+  real(kind(1.0D0)), private :: hshld
 
   ! Clearance between uppermost PF coil and cryostat lid (m)
-  real(kind=double), private :: hcryopf
+  real(kind(1.0D0)), private :: hcryopf
 
   ! Vacuum vessel internal half-height (m)
-  real(kind=double), private :: hvv
+  real(kind(1.0D0)), private :: hvv
 
   ! Volume of inboard and outboard shield (m3)
-  real(kind=double), private :: volshldi, volshldo
+  real(kind(1.0D0)), private :: volshldi, volshldo
 
   ! Inboard/outboard FW coolant void fraction
-  real(kind=double), private :: vffwi, vffwo
+  real(kind(1.0D0)), private :: vffwi, vffwo
 
   ! Surface heat flux on first wall (MW) (sum = pradfw)
-  real(kind=double), private :: psurffwi, psurffwo
+  real(kind(1.0D0)), private :: psurffwi, psurffwo
 
   ! Inboard/outboard blanket coolant channel length (radial direction) (m)
-  real(kind=double), private :: bldepti, bldepto
+  real(kind(1.0D0)), private :: bldepti, bldepto
 
   ! Inboard/outboard blanket mid-plan toroidal circumference for segment (m)
-  real(kind=double), private :: blwidti, blwidto
+  real(kind(1.0D0)), private :: blwidti, blwidto
 
   ! Inboard/outboard blanket segment poloidal length (m)
-  real(kind=double), private :: bllengi, bllengo
+  real(kind(1.0D0)), private :: bllengi, bllengo
 
   ! Inboard/outboard blanket flow lengths (m)
-  real(kind=double), private :: bzfllengi, bzfllengo
+  real(kind(1.0D0)), private :: bzfllengi, bzfllengo
 
   ! Inboard/outboard first wall nuclear heating (MW)
-  real(kind=double), private :: pnucfwi, pnucfwo
+  real(kind(1.0D0)), private :: pnucfwi, pnucfwo
 
   ! Inboard/outboard first wall peak temperature (K)
-  real(kind=double), private :: tpeakfwi, tpeakfwo
+  real(kind(1.0D0)), private :: tpeakfwi, tpeakfwo
 
   ! Inboard/outboard total mass flow rate to remove inboard FW power (kg/s)
-  real(kind=double), private :: mffwi, mffwo, mffw
+  real(kind(1.0D0)), private :: mffwi, mffwo, mffw
 
   ! Inboard/utboard total number of pipes
-  real(kind=double), private :: npfwi, npfwo
+  real(kind(1.0D0)), private :: npfwi, npfwo
 
   ! Inboard/outboard mass flow rate per coolant pipe (kg/s)
-  real(kind=double), private :: mffwpi, mffwpo
+  real(kind(1.0D0)), private :: mffwpi, mffwpo
 
   ! Neutron power deposited inboard/outboard blanket blanket (MW)
-  real(kind=double), private :: pnucblkti, pnucblkto
+  real(kind(1.0D0)), private :: pnucblkti, pnucblkto
 
   ! Inboard/outboard blanket mass flow rate for coolant (kg/s)
-  real(kind=double), private :: mfblkti, mfblkto, mfblkt
+  real(kind(1.0D0)), private :: mfblkti, mfblkto, mfblkt
 
   ! Total mass flow rate for coolant (kg/s)
-  real(kind=double), private :: mftotal
+  real(kind(1.0D0)), private :: mftotal
 
   ! Inboard/outboard total num of pipes
-  real(kind=double), private :: npblkti, npblkto
+  real(kind(1.0D0)), private :: npblkti, npblkto
 
   ! Inboard/outboard mass flow rate per coolant pipe (kg/s)
-  real(kind=double), private :: mfblktpi, mfblktpo
+  real(kind(1.0D0)), private :: mfblktpi, mfblktpo
 
   ! Inboard/outboard coolant velocity in blanket (m/s)
-  real(kind=double), private :: velblkti, velblkto
+  real(kind(1.0D0)), private :: velblkti, velblkto
 
   ! Inboard/outboard first wall pumping power (MW)
-  real(kind=double), private :: htpmw_fwi, htpmw_fwo
+  real(kind(1.0D0)), private :: htpmw_fwi, htpmw_fwo
 
   ! Inboard/outboard blanket pumping power (MW)
-  real(kind=double), private :: htpmw_blkti, htpmw_blkto
+  real(kind(1.0D0)), private :: htpmw_blkti, htpmw_blkto
 
   ! Total nuclear power deposited in FW, BLKT, SHLD, DIV, TF (MW)
-  real(kind=double), private :: nuc_pow_dep_tot
+  real(kind(1.0D0)), private :: nuc_pow_dep_tot
 
   ! Exponential factors in nuclear heating calcs
-  real(kind=double), private :: exp_blanket, exp_shield1, exp_shield2
+  real(kind(1.0D0)), private :: exp_blanket, exp_shield1, exp_shield2
 
   ! Fractions of blanket by volume: steel, lithium orthosilicate, titanium beryllide
-  real(kind=double), private :: fblss_ccfe, fblli2sio4, fbltibe12
+  real(kind(1.0D0)), private :: fblss_ccfe, fblli2sio4, fbltibe12
 
 contains
 
   subroutine ccfe_hcpb(outfile, iprint)
-    !+ad_name  ccfe_hcpb
-    !+ad_summ  CCFE HCPB blanket model
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates nuclear heating for the CCFE HCPB
-    !+ad_desc  blanket model.
-    !+ad_prob  None
-    !+ad_call  component_volumes
-    !+ad_call  nuclear_heating_magnets
-    !+ad_call  nuclear_heating_fw
-    !+ad_call  nuclear_heating_blanket
-    !+ad_call  nuclear_heating_shield
-    !+ad_call  nuclear_heating_divertor
-    !+ad_call  powerflow_calc
-    !+ad_call  component_masses
-    !+ad_call  write_ccfe_hcpb_output
-    !+ad_hist  10/02/15 JM Initial version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Engineering paper (M. Kovari et al.)
+    !! CCFE HCPB blanket model
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calculates nuclear heating for the CCFE HCPB
+    !! blanket model.
+    !! PROCESS Engineering paper (M. Kovari et al.)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
-
+    ! !!!!!!!!!!!!
+    ! Inputs
     integer, intent(in) :: iprint, outfile
+    ! !!!!!!!!!!!!
 
     !  Assign module private variables to iprint and outfile
     ip = iprint
@@ -236,7 +208,9 @@ contains
 
     ! Centrepost heating for a ST machine
     if (itart == 1) then
-        pnuccp = st_centrepost_nuclear_heating(pneutmw,hmax,tfcth)
+
+        ! Outer radius of the inborad neutronic shield (centra heigt of the CP)
+        call st_centrepost_nuclear_heating( pneutmw, hmax, r_sh_inboard_out, shldith, pnuccp )
     else
         pnuccp = 0.0D0
     end if
@@ -264,22 +238,34 @@ contains
         write(*,*)'pnucshld =', pnucshld, ' ptfnuc =', ptfnuc
     end if
 
-    ! Power to the first wall (MW)
-    !pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
-    pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
 
-    ! Power to the blanket (MW)
-    !pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
-    pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
+    if (idivrt == 2) then 
+      ! Double Null Configuration 
+      ! Power to the first wall (MW)
+      pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * (1.0D0-2.0D0*fdiv) * pneutmw
+
+      ! Power to the blanket (MW)
+      pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult  * (1.0D0-2.0D0*fdiv) * pneutmw
     
-    ! Power to the shield(MW)
-    !pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
-    pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
+      ! Power to the shield(MW)
+      pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * (1.0D0-2.0D0*fdiv) * pneutmw
 
-    ! Power to the TF coils (MW)
-    !ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
-    ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
+      ! Power to the TF coils (MW)
+      ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult  * (1.0D0-2.0D0*fdiv) * pneutmw
+    else
+      ! Single Null Configuration
+      ! Power to the first wall (MW)
+      pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
 
+      ! Power to the blanket (MW)
+      pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
+    
+      ! Power to the shield(MW)
+      pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * (1.0D0-fdiv) * pneutmw
+
+      ! Power to the TF coils (MW)
+      ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult  * (1.0D0-fdiv) * pneutmw
+    end if
     ! pnucdiv is not changed.
     ! The energy due to multiplication, by subtraction:
     !emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
@@ -297,15 +283,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine component_volumes
-    !+ad_name  component_volumes
-    !+ad_summ  Calculate the blanket, shield, vacuum vessel and cryostat volumes
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the blanket, shield, vacuum vessel and cryostat volumes
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the blanket, shield, vacuum vessel and cryostat volumes
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the blanket, shield, vacuum vessel and cryostat volumes
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -342,24 +322,18 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine blanket_half_height
-    !+ad_name  blanket_half_height
-    !+ad_summ  Calculate the blanket half-height
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the blanket half-height
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the blanket half-height
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the blanket half-height
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Local variables
 
     ! Blanket bottom/top half-height (m)
-    real(kind=double) :: hbot, htop
+    real(kind(1.0D0)) :: hbot, htop
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Calculate blanket internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix - blnktth
@@ -380,24 +354,18 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine shield_half_height
-    !+ad_name  shield_half_height
-    !+ad_summ  Calculate the shield half-height
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the shield half-height
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the shield half-height
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the shield half-height
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Local variables
 
     ! Shield bottom/top half-height (m)
-    real(kind=double) :: hbot, htop
+    real(kind(1.0D0)) :: hbot, htop
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Calculate shield internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix
@@ -418,24 +386,18 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine vv_half_height
-    !+ad_name  vv_half_height
-    !+ad_summ  Calculate the vacuum vessel half-height
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the vacuum vessel half-height
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the vacuum vessel half-height
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the vacuum vessel half-height
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Local variables
 
     ! Vacuum vessel bottom/top internal half-height (m)
-    real(kind=double) :: hbot, htop
+    real(kind(1.0D0)) :: hbot, htop
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Calculate vacuum vessel internal lower half-height (m)
     hbot = hmax - vgap2 - ddwi
@@ -457,17 +419,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_blanket
-    !+ad_name  dshaped_blanket
-    !+ad_summ  Calculate the blanket surface area and volume using dshaped scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the blanket surface area and volume using dshaped scheme
-    !+ad_prob  None
-    !+ad_call  dhshellarea
-    !+ad_call  dhshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the blanket surface area and volume using dshaped scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the blanket surface area and volume using dshaped scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -476,13 +430,13 @@ contains
     ! Local variables
 
     ! Major radius to outer edge of inboard blanket (m)
-    real(kind=double) :: r1
+    real(kind(1.0D0)) :: r1
 
     ! Horizontal distance between inside edges of blanket (m)
     ! i.e. outer radius of inboard part to inner radius of outboard part
-    real(kind=double) :: r2
+    real(kind(1.0D0)) :: r2
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Major radius to outer edge of inboard blanket (m)
     r1 = rsldi + shldith + blnkith
@@ -501,17 +455,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_shield
-    !+ad_name  dshaped_shield
-    !+ad_summ  Calculate the shield surface area and volume using dshaped scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the shield surface area and volume using dshaped scheme
-    !+ad_prob  None
-    !+ad_call  dhshellarea
-    !+ad_call  dhshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the shield surface area and volume using dshaped scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the shield surface area and volume using dshaped scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -520,13 +466,13 @@ contains
     ! Local variables
 
     ! Major radius to outer edge of inboard shield (m)
-    real(kind=double) :: r1
+    real(kind(1.0D0)) :: r1
 
     ! Horizontal distance between inside edges of shield (m)
     ! i.e. outer radius of inboard part to inner radius of outboard part
-    real(kind=double) :: r2
+    real(kind(1.0D0)) :: r2
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Major radius to outer edge of inboard shield (m)
     r1 = rsldi + shldith
@@ -545,16 +491,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_vv
-    !+ad_name  dshaped_vv
-    !+ad_summ  Calculate the vacuum vessel volume using dshaped scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the vacuum vessel volume using dshaped scheme
-    !+ad_prob  None
-    !+ad_call  dhshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the vacuum vessel volume using dshaped scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the vacuum vessel volume using dshaped scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -563,15 +502,15 @@ contains
     ! Local variables
 
     ! Major radius to outer edge of inboard section (m)
-    real(kind=double) :: r1
+    real(kind(1.0D0)) :: r1
 
     ! Horizontal distance between inside edges (m)
-    real(kind=double) :: r2
+    real(kind(1.0D0)) :: r2
 
     ! Unused outputs from dshellvol
-    real(kind=double) :: v1, v2
+    real(kind(1.0D0)) :: v1, v2
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Major radius to outer edge of inboard section (m)
     r1 = rsldi
@@ -591,17 +530,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine elliptical_blanket
-    !+ad_name  elliptical_blanket
-    !+ad_summ  Calculate the blanket surface area and volume using elliptical scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the blanket surface area and volume using elliptical scheme
-    !+ad_prob  None
-    !+ad_call  ehshellarea
-    !+ad_call  eshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the blanket surface area and volume using elliptical scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the blanket surface area and volume using elliptical scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -610,15 +541,15 @@ contains
     ! Local variables
 
     ! Major radius to centre of inboard and outboard ellipses (m)
-    real(kind=double) :: r1
+    real(kind(1.0D0)) :: r1
 
     ! Distance between r1 and outer edge of inboard blanket (m)
-    real(kind=double) :: r2
+    real(kind(1.0D0)) :: r2
 
     ! Distance between r1 and inner edge of outboard blanket (m)
-    real(kind=double) :: r3
+    real(kind(1.0D0)) :: r3
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
@@ -641,17 +572,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine elliptical_shield
-    !+ad_name  elliptical_shield
-    !+ad_summ  Calculate the shield surface area and volume using elliptical scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the shield surface area and volume using elliptical scheme
-    !+ad_prob  None
-    !+ad_call  ehshellarea
-    !+ad_call  ehshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the shield surface area and volume using elliptical scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the shield surface area and volume using elliptical scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -660,15 +583,15 @@ contains
     ! Local variables
 
     ! Major radius to centre of inboard and outboard ellipses (m)
-    real(kind=double) :: r1
+    real(kind(1.0D0)) :: r1
 
     ! Distance between r1 and outer edge of inboard shield (m)
-    real(kind=double) :: r2
+    real(kind(1.0D0)) :: r2
 
     ! Distance between r1 and inner edge of outboard shield (m)
-    real(kind=double) :: r3
+    real(kind(1.0D0)) :: r3
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
@@ -691,16 +614,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine elliptical_vv
-    !+ad_name  elliptical_vv
-    !+ad_summ  Calculate the vacuum vessel volume using elliptical scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the vacuum vessel volume using elliptical scheme
-    !+ad_prob  None
-    !+ad_call  ehshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the vacuum vessel volume using elliptical scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the vacuum vessel volume using elliptical scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -709,18 +625,18 @@ contains
     ! Local variables
 
     ! Major radius to centre of inboard and outboard ellipses (m)
-    real(kind=double) :: r1
+    real(kind(1.0D0)) :: r1
 
     ! Distance between r1 and outer edge of inboard section (m)
-    real(kind=double) :: r2
+    real(kind(1.0D0)) :: r2
 
     ! Distance between r1 and inner edge of outboard section (m)
-    real(kind=double) :: r3
+    real(kind(1.0D0)) :: r3
 
     ! Unused output from eshellvol
-    real(kind=double) :: v1, v2
+    real(kind(1.0D0)) :: v1, v2
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
@@ -743,22 +659,23 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine apply_coverage_factors
-    !+ad_name  apply_coverage_factors
-    !+ad_summ  Apply coverage factors to volumes
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Apply coverage factors to volumes
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Apply coverage factors to volumes
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Apply coverage factors to volumes
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Apply blanket coverage factors
-    blareaob = blarea*(1.0D0-fdiv-fhcd) - blareaib
+    if (idivrt == 2) then
+      ! double null configuration
+      blareaob = blarea*(1.0D0-2.0D0*fdiv-fhcd) - blareaib
+    else
+      ! single null configuration
+      blareaob = blarea*(1.0D0-fdiv-fhcd) - blareaib
+    end if
+    
     blarea = blareaib + blareaob
 
     volblkto = volblkt*(1.0D0-fdiv-fhcd) - volblkti
@@ -778,15 +695,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine external_cryo_geometry
-    !+ad_name  external_cryo_geometry
-    !+ad_summ  Calculate cryostat geometry
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate cryostat geometry
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate cryostat geometry
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate cryostat geometry
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -823,19 +734,12 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine nuclear_heating_magnets
-    !+ad_name  nuclear_heating_magnets
-    !+ad_summ  Nuclear heating in the magnets for CCFE HCPB model
-    !+ad_type  Subroutine
-    !+ad_auth  Michael Kovari, CCFE, Culham Science Centre
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  This subroutine calculates the nuclear heating in the
-    !+ad_desc  coils.
-    !+ad_prob  None
-    !+ad_hist  10/02/15 MDK Initial version
-    !+ad_hist  10/02/15 JM  First complete version
-    !+ad_stat  Okay
-    !+ad_docs  PROCESS Engineering paper (M. Kovari et al.)
+    !! Nuclear heating in the magnets for CCFE HCPB model
+    !! author: Michael Kovari, CCFE, Culham Science Centre
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! This subroutine calculates the nuclear heating in the
+    !! coils.
+    !! PROCESS Engineering paper (M. Kovari et al.)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -844,14 +748,14 @@ contains
     ! Local variables
 
     ! Model factors and coefficients
-    real(kind=double) :: a ! Exponential factor (m2/tonne)
-    real(kind=double) :: b ! Exponential factor (m2/tonne)
-    real(kind=double) :: e ! Pre-factor (1/kg). Corrected see issue #272
+    real(kind(1.0D0)) :: a ! Exponential factor (m2/tonne)
+    real(kind(1.0D0)) :: b ! Exponential factor (m2/tonne)
+    real(kind(1.0D0)) :: e ! Pre-factor (1/kg). Corrected see issue #272
 
     ! mean FW coolant void fraction
-    real(kind=double) :: vffwm
+    real(kind(1.0D0)) :: vffwm
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Model factors and coefficients
     a = 2.830D0     ! Exponential factor (m2/tonne)
@@ -899,7 +803,7 @@ contains
     ptfnuc = tfc_nuc_heating * (powfmw / 1000.0D0) / 1.0D6
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (ip == 0) return
     if (verbose == 1) then
@@ -917,15 +821,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine nuclear_heating_fw
-    !+ad_name  nuclear_heating_fw
-    !+ad_summ  Nuclear heating in the FW for CCFE HCPB model
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  This subroutine calculates the nuclear heating in the FW
-    !+ad_prob  None
-    !+ad_hist  11/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Nuclear heating in the FW for CCFE HCPB model
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! This subroutine calculates the nuclear heating in the FW
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -947,15 +845,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine nuclear_heating_blanket
-    !+ad_name  nuclear_heating_blanket
-    !+ad_summ  Nuclear heating in the blanket for CCFE HCPB model
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  This subroutine calculates the nuclear heating in the blanket
-    !+ad_prob  None
-    !+ad_hist  11/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Nuclear heating in the blanket for CCFE HCPB model
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! This subroutine calculates the nuclear heating in the blanket
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -964,15 +856,15 @@ contains
     ! Local variables
 
     ! Blanket nuclear heating coefficient
-    real(kind=double) :: a
+    real(kind(1.0D0)) :: a
 
     ! Blanket nuclear heating exponent (1/tonne)
-    real(kind=double) :: b
+    real(kind(1.0D0)) :: b
 
     ! Mass of the blanket (tonnes)
-    real(kind=double) :: mass
+    real(kind(1.0D0)) :: mass
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Blanket nuclear heating coefficient and exponent
     a = 0.764D0
@@ -996,15 +888,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine nuclear_heating_shield
-    !+ad_name  nuclear_heating_shield
-    !+ad_summ  Nuclear heating in the shield for CCFE HCPB model
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  This subroutine calculates the nuclear heating in the shield
-    !+ad_prob  None
-    !+ad_hist  11/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Nuclear heating in the shield for CCFE HCPB model
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! This subroutine calculates the nuclear heating in the shield
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1013,15 +899,15 @@ contains
     ! Local variables
 
     ! Shield nuclear heating coefficient (W/kg/W)
-    real(kind=double) :: f
+    real(kind(1.0D0)) :: f
 
     ! Shield nuclear heating exponent m2/tonne
-    real(kind=double) :: g, h
+    real(kind(1.0D0)) :: g, h
 
     ! Decay "length" (kg/m2)
-    real(kind=double) :: y
+    real(kind(1.0D0)) :: y
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Shield nuclear heating coefficients and exponents
     f = 6.88D2  ! W/kg/W of fusion power
@@ -1042,15 +928,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine nuclear_heating_divertor
-    !+ad_name  nuclear_heating_divertor
-    !+ad_summ  Nuclear heating in the divertor for CCFE HCPB model
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  This subroutine calculates the nuclear heating in the divertor
-    !+ad_prob  None
-    !+ad_hist  11/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Nuclear heating in the divertor for CCFE HCPB model
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! This subroutine calculates the nuclear heating in the divertor
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1065,8 +945,13 @@ contains
     ! fdiv = 0.115D0
 
     ! Nuclear heating in the divertor just the neutron power times fdiv
-    pnucdiv = 0.8D0 * powfmw * fdiv
-
+    if (idivrt == 2) then
+      ! Double null configuration
+      pnucdiv = 0.8D0 * powfmw * 2.0D0*fdiv
+    else
+      ! single null configuration
+      pnucdiv = 0.8D0 * powfmw * fdiv
+    end if 
     ! No heating of the H & CD
     pnuchcd = 0.0D0
 
@@ -1075,25 +960,22 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine powerflow_calc
-    !+ad_name  powerflow_calc
-    !+ad_summ  Calculations for powerflow
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculations for powerflow
-    !+ad_prob  None
-    !+ad_hist  11/02/15 JM  Initial version
-    !+ad_hist  10/06/15 MDK Corrected surface heat flux on first wall #309
-    !+ad_hist  06/01/16 MDK Improved options for pumping power #347
-    !+ad_stat  Okay
+    !! Calculations for powerflow
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculations for powerflow
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-    real(kind=double):: t_in_compressor, dt_he, fpump, pfactor, p_plasma
+    real(kind(1.0D0)):: t_in_compressor, dt_he, fpump, pfactor, p_plasma
 
-    ! TODO - is this consistent with a double null machine?
     ! Radiation power incident on divertor (MW)
-    praddiv = pradmw * fdiv
+    if (idivrt == 2) then
+      ! Double null configuration
+      praddiv = pradmw * 2.0D0 *fdiv
+    else
+      ! single null configuration
+      praddiv = pradmw * fdiv
+    end if 
 
     ! Radiation power incident on HCD apparatus (MW)
     pradhcd = pradmw * fhcd
@@ -1164,17 +1046,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine thermo_hydraulic_model
-    !+ad_name  thermo_hydraulic_model
-    !+ad_summ  Thermo-hydraulic model for first wall and blanket
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculations for detailed powerflow model secondary_cycle > 0
-    !+ad_prob  None
-    !+ad_hist  23/02/15 JM  Initial version
-    !+ad_hist  01/12/15 MDK Extensively revised Issue #348 (01/12/2015)
-    !+ad_hist  29/06/18 SIM Added iblnkith conditions (Issue #732)
-    !+ad_stat  Okay
+    !! Thermo-hydraulic model for first wall and blanket
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculations for detailed powerflow model secondary_cycle > 0
     ! ONLY CALLED if primary_pumping = 2
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1183,10 +1057,10 @@ contains
     ! Local variables
 
     ! coolant specific heat capacity at constant pressure (J/kg/K)
-    real(kind=double) :: cf
+    real(kind(1.0D0)) :: cf
 
     ! coolant density (kg/m3)
-    real(kind=double) :: rhof
+    real(kind(1.0D0)) :: rhof
 
     ! Number of 90 degree angle turns in FW and blanket flow channels
     integer :: no90fw, no90bz
@@ -1200,7 +1074,7 @@ contains
     ! String for formatting coolant type output
     character(len=8) :: cstring
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Determine size of blanket modules
     ! Radial length of coolant pipes is assumed to be 80% of total radial space
@@ -1240,7 +1114,7 @@ contains
     ! -------------------------------
 
     ! INBOARD !
-    !!!!!!!!!!!
+    ! !!!!!!!!!!
 
     ! Maximum FW temperature. (27/11/2015) Issue #348
     ! First wall flow is just along the first wall, with no allowance for radial
@@ -1295,7 +1169,7 @@ contains
     end if
 
     ! OUTBOARD !
-    !!!!!!!!!!!!
+    ! !!!!!!!!!!!
 
     ! Maximum FW temperature. (27/11/2015) Issue #348.
     call fw_temp(ip, ofile, afw, fwoth, fwareaob, psurffwo, pnucfwo, tpeakfwo, cf, rhof, mffwo, 'Outboard first wall')
@@ -1350,7 +1224,7 @@ contains
     mfblkt = mfblkti + mfblkto
 
     ! output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (ip == 0) return
     call oheadr(ofile, 'First wall and blanket thermohydraulics: Summary')
@@ -1390,15 +1264,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine component_masses
-    !+ad_name  component_masses: CCFE model
-    !+ad_summ  Calculations for component masses
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculations for component masses
-    !+ad_prob  None
-    !+ad_hist  23/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculations for component masses
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculations for component masses
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1407,9 +1275,9 @@ contains
     ! Local variables
 
     ! Coolant volume (m3)
-    real(kind=double) :: coolvol
+    real(kind(1.0D0)) :: coolvol
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Start adding components of the coolant mass:
     ! Divertor coolant volume (m3)
@@ -1492,15 +1360,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine blanket_mod_pol_height
-    !+ad_name  blanket_mod_pol_height
-    !+ad_summ  Calculations for blanket module poloidal height
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculations for blanket module poloidal height for D shaped and elliptical machines
-    !+ad_prob  None
-    !+ad_hist  23/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculations for blanket module poloidal height
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculations for blanket module poloidal height for D shaped and elliptical machines
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1509,18 +1371,18 @@ contains
     ! Local variables
 
     ! Mid-plane distance from inboard to outboard side (m)
-    real(kind=double) :: a
+    real(kind(1.0D0)) :: a
 
     ! Internal half-height of blanket (m)
-    real(kind=double) :: b
+    real(kind(1.0D0)) :: b
 
     ! Calculate ellipse circumference using Ramanujan approximation (m)
-    real(kind=double) :: ptor
+    real(kind(1.0D0)) :: ptor
 
     ! Major radius where half-ellipses 'meet' (m)
-    real(kind=double) :: r1
+    real(kind(1.0D0)) :: r1
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if ((itart == 1).or.(fwbsshape == 1)) then  ! D-shaped machine
 
@@ -1540,7 +1402,13 @@ contains
       ptor = pi * ( 3.0D0*(a+b) - sqrt( (3.0D0*a + b)*(a + 3.0D0*b) ) )
 
       ! Calculate blanket poloidal length and segment, subtracting divertor length (m)
-      bllengo = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpo
+      if (idivrt == 2) then
+        ! Double null configuration
+        bllengo = 0.5D0*ptor * (1.0D0 - 2.0D0*fdiv) / nblktmodpo
+      else
+        ! single null configuration
+        bllengo = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpo
+      end if 
 
     ! shape defined by two half-ellipses
     else
@@ -1559,7 +1427,13 @@ contains
 
       ! Calculate inboard blanket poloidal length and segment, subtracting divertor length (m)
       ! Assume divertor lies between the two ellipses, so fraction fdiv still applies
-      bllengi = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpi
+      if (idivrt == 2) then
+        ! Double null configuration
+        bllengi = 0.5D0*ptor * (1.0D0 - 2.0D0*fdiv) / nblktmodpi
+      else
+        ! single null configuration
+        bllengi = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpi
+      end if
 
       ! Distance between r1 and inner edge of outboard first wall / blanket (m)
       a = rmajor + rminor + scraplo - r1
@@ -1568,7 +1442,13 @@ contains
       ptor = pi * ( 3.0D0*(a+b) - sqrt( (3.0D0*a + b)*(a + 3.0D0*b) ) )
 
       ! Calculate outboard blanket poloidal length and segment, subtracting divertor length (m)
-      bllengo = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpo
+      if (idivrt == 2) then
+        ! Double null configuration
+        bllengo = 0.5D0*ptor * (1.0D0 - 2.0D0*fdiv) / nblktmodpo
+      else
+        ! single null configuration
+        bllengo = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpo
+      end if
 
     end if
 
@@ -1577,17 +1457,10 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine write_ccfe_hcpb_output
-    !+ad_name  write_ccfe_hcpb_output
-    !+ad_summ  Write output to file for CCFE HCPB model
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  This subroutine outputs the CCFE HCPB model results to
-    !+ad_desc  an output file
-    !+ad_prob  None
-    !+ad_hist  10/02/15 JM  Initial version
-    !+ad_hist  10/02/15 JM  Added note about emult being fixed for this model
-    !+ad_stat  Okay
+    !! Write output to file for CCFE HCPB model
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! This subroutine outputs the CCFE HCPB model results to
+    !! an output file
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1627,7 +1500,7 @@ contains
 
     !  ST centre post
     if (itart == 1) then
-       call osubhd(ofile,'(Copper centrepost used)')
+       call osubhd(ofile,'(Resistive centrepost used)')
        call ovarre(ofile,'ST centrepost heating (MW)','(pnuccp)',pnuccp, 'OP ')
     end if
 
@@ -1674,138 +1547,148 @@ contains
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function st_centrepost_nuclear_heating(pneut, cphalflen, cpradius) &
-       result(pnuccp)
-    !+ad_name  st_centrepost_nuclear_heating
-    !+ad_summ  Estimates the nuclear power absorbed by the ST centrepost
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  pneut : input real : total neutron power (MW)
-    !+ad_args  cphalflen : input real : half-length of centrepost (m)
-    !+ad_args  cpradius : input real : centrepost radius (m)
-    !+ad_desc  This routine calculates the neutron power absorbed by a
-    !+ad_desc  copper spherical tokamak centrepost.
-    !+ad_desc  The calculation estimates the fraction of neutrons hitting
-    !+ad_desc  the centrepost from a point source at the plasma centre,
-    !+ad_desc  and assumes an average path length of 2*cpradius, and an
-    !+ad_desc  e-folding decay length of 0.08m (copper-water mixture).
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  05/11/14 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
-    !+ad_docc  unpublished internal Oak Ridge document
+  subroutine st_centrepost_nuclear_heating(pneut, cphalflen, cpradius, sh_width, pnuc_cp) 
+
+    !! Estimates the nuclear power absorbed by the ST centrepost
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! pneut : input real : total neutron power (MW)
+    !! cphalflen : input real : half-length of centrepost (m)
+    !! cpradius : input real : centrepost radius (m)
+    !! This routine calculates the neutron power absorbed by a
+    !! copper spherical tokamak centrepost.
+    !! The calculation estimates the fraction of neutrons hitting
+    !! the centrepost from a point source at the plasma centre,
+    !! and assumes an average path length of 2*cpradius, and an
+    !! e-folding decay length of 0.08m (copper-water mixture).
+    !! J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
+    !! unpublished internal Oak Ridge document
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
-    real(kind=double), intent(in) :: pneut, cphalflen, cpradius
+    ! Inputs
+    real(kind(1.0D0)), intent(in) :: pneut, cphalflen, cpradius, sh_width
+    
+    ! Outputs
+    real(kind(1.0D0)), intent(out) :: pnuc_cp
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
-    ! nuclear heating in the ST centrepost (MW)
-    real(kind=double) :: pnuccp
+    ! Fraction of neutrons that hit the centrepost shield
+    real(kind(1.0D0)) :: f_neut_geom
 
-    ! Fraction of neutrons that hit the centrepost
-    real(kind=double) :: frachit
+    ! Fraction of neutron power actually absobed by the magnet system
+    real(kind(1.0D0)) :: f_neut_absorb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Fraction of neutrons that hit the centre post
-    frachit = cphalflen / sqrt(cphalflen**2 + (rmajor-cpradius)**2 ) * &
-         atan(cpradius/(rmajor-cpradius) )/pi
+    ! Copper CP
+    ! ---------
+    ! No shileding integrated
+    ! Nuclear heating from solid angle fraction and neutron mean free path in copper
+    ! Rem SK : This calculation must be replaced by neutronics with shielding
+    if ( i_tf_sup == 0 ) then
 
-    ! Nuclear heating in the ST centrepost (MW)
-    pnuccp = pneut * frachit * (1.0D0 - exp(-2.0D0*cpradius/0.08D0))
+      ! Fraction of neutrons that hit the centre post neutronic shield
+      f_neut_geom = cphalflen / sqrt(cphalflen**2 + (rmajor-cpradius)**2 ) * &
+           atan(cpradius/(rmajor-cpradius) )/pi
 
-  end function st_centrepost_nuclear_heating
+      ! Fraction of the nuclear power absorbed by the copper centrepost (0.08 m e-folding decay length)
+      f_neut_absorb = 1.0D0 - exp( -2.0D0*tfcth / 0.08D0) 
+    
+      ! Nuclear power
+      pnuc_cp = pneut * f_neut_geom * f_neut_absorb
+      
+      ! Correct for shielding 
+      if ( f_neut_shield > 0.0D0 ) pnuc_cp = pnuc_cp * f_neut_shield 
+      ! ---------
+
+
+    ! Aluminium CP
+    ! ------------
+    ! From Pfus = 1 GW ST neutronic calculations assuming
+    ! Tungsten carbyde with 13% water cooling fraction
+    else if ( i_tf_sup == 2 ) then
+      pnuc_cp = ( pneutmw / 800.0D0 ) * exp( 3.882D0 - 16.69D0*sh_width )
+    end if 
+    ! ------------
+
+  end subroutine st_centrepost_nuclear_heating
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function pumppower(temp_in, temp_out, pressure, flleng, rad, mf, mfp, no90, no180, etaiso, coolant, label)
-    !+ad_name  pumppower
-    !+ad_summ  Routine to calculate the coolant pumping power in MW in the first
-    !+ad_summ  wall and breeding zone
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  temp_in     : input real : inlet temperature (K)
-    !+ad_args  temp_out    : input real : outlet temperature (K)
-    !+ad_args  pressure    : input real : outlet coolant pressure (Pa)
-    !+ad_args  flleng      : input real : total flow length along pipe (m)
-    !+ad_args  rad         : input real : pipe inner radius (m)
-    !+ad_args  mf          : input real : total coolant mass flow rate in (kg/s)
-    !+ad_args  mfp         : input real : coolant mass flow rate per pipe (kg/s)
-    !+ad_args  no90        : input integer : number of 90 degree bends in pipe
-    !+ad_args  no180       : input integer : number of 180 degree bends in pipe
-    !+ad_args  etaiso      : input real : isentropic efficiency of coolant pumps
-    !+ad_args  coolant     : input integer: coolant fluid (1=helium, 2=water)
-    !+ad_args  label       : input string: description of this calculation
-    !+ad_desc  This routine calculates the power required (MW) to pump the coolant in the
-    !+ad_desc  first wall and breeding zone.
-    !+ad_desc  <P>Pressure drops are calculated for a pipe with a number of 90
-    !+ad_desc  and 180 degree bends.  The pressure drop due to frictional forces along
-    !+ad_desc  the total straight length of the pipe is calculated, then the pressure
-    !+ad_desc  drop due to the bends is calculated.  The total pressure drop is the sum
-    !+ad_desc  of all contributions.
-    !+ad_desc  The pumping power is be calculated in the most general way,
-    !+ad_desc  using enthalpies before and after the pump.
-    !+ad_prob  None
-    !+ad_call  enthalpy_ps
-    !+ad_call  fluid_properties
-    !+ad_call  report_error
-    !+ad_hist  04/09/14 PJK Initial version
-    !+ad_hist  17/12/14 PJK Added calls to REFPROP interface
-    !+ad_hist  01/12/15 MDK Remove call to subroutine cprops
-    !+ad_stat  Okay
-    !+ad_docs  WCLL DDD, WP12-DAS02-T03, J. Aubert et al, EFDA_D_2JNFUP
-    !+ad_docs  A Textbook on Heat Transfer, S.P. Sukhatme, 2005
+    !! Routine to calculate the coolant pumping power in MW in the first
+    !! wall and breeding zone
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! temp_in     : input real : inlet temperature (K)
+    !! temp_out    : input real : outlet temperature (K)
+    !! pressure    : input real : outlet coolant pressure (Pa)
+    !! flleng      : input real : total flow length along pipe (m)
+    !! rad         : input real : pipe inner radius (m)
+    !! mf          : input real : total coolant mass flow rate in (kg/s)
+    !! mfp         : input real : coolant mass flow rate per pipe (kg/s)
+    !! no90        : input integer : number of 90 degree bends in pipe
+    !! no180       : input integer : number of 180 degree bends in pipe
+    !! etaiso      : input real : isentropic efficiency of coolant pumps
+    !! coolant     : input integer: coolant fluid (1=helium, 2=water)
+    !! label       : input string: description of this calculation
+    !! This routine calculates the power required (MW) to pump the coolant in the
+    !! first wall and breeding zone.
+    !! <P>Pressure drops are calculated for a pipe with a number of 90
+    !! and 180 degree bends.  The pressure drop due to frictional forces along
+    !! the total straight length of the pipe is calculated, then the pressure
+    !! drop due to the bends is calculated.  The total pressure drop is the sum
+    !! of all contributions.
+    !! The pumping power is be calculated in the most general way,
+    !! using enthalpies before and after the pump.
+    !! WCLL DDD, WP12-DAS02-T03, J. Aubert et al, EFDA_D_2JNFUP
+    !! A Textbook on Heat Transfer, S.P. Sukhatme, 2005
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Function return parameter: Calculated pumping power (MW)
-    real(kind=double) :: pumppower
+    real(kind(1.0D0)) :: pumppower
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
-    real(kind=double), intent(in) :: flleng, rad, mf, mfp, etaiso
-    real(kind=double), intent(in) :: temp_in, temp_out, pressure
+    real(kind(1.0D0)), intent(in) :: flleng, rad, mf, mfp, etaiso
+    real(kind(1.0D0)), intent(in) :: temp_in, temp_out, pressure
     integer, intent(in) :: no90, no180, coolant
     character(len=*), intent(in) :: label
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     ! Inlet pressure (Pa)
-    real(kind=double) :: coolpin
+    real(kind(1.0D0)) :: coolpin
 
     ! Coolant pressure drop (Pa)
-    real(kind=double) :: deltap
+    real(kind(1.0D0)) :: deltap
 
     ! Hydraulic diameter (circular channels assumed) (m)
-    real(kind=double) :: dh
+    real(kind(1.0D0)) :: dh
 
     ! Fluid specific enthalpy from refprop (J/kg)
-    real(kind=double) :: h1
+    real(kind(1.0D0)) :: h1
 
     ! enthalpy
-    !real(kind=double) ::
+    !real(kind(1.0D0)) ::
 
-    real(kind=double) :: h2, kelbwn, kelbwt, kstrght, &
+    real(kind(1.0D0)) :: h2, kelbwn, kelbwt, kstrght, &
          lambda, reyn, rhof, s1, s2, viscf, xifn, xift, ximn, ximt, vv, &
          temp_mean,pdropstraight, pdrop90, pdrop180
 
     ! TODO Variables that appear not to be used below. Check again before removing
-    !real(kind=double) :: cf
+    !real(kind(1.0D0)) :: cf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1885,7 +1768,7 @@ contains
     pumppower = 1.0D-6 * mf * (h2-h1) / etaiso
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (ip  == 1) call write_output
 
@@ -1928,38 +1811,34 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine tbr_shimwell(outfile, iprint, breeder_f, li6enrich, iblanket_thickness, tbr)
-    !+ad_name  tbr_shimwell
-    !+ad_summ  Calculates TBR
-    !+ad_type  Subroutine
-    !+ad_auth  Michael Kovari
-    !+ad_args  breeder_f   : input real : Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
-    !+ad_args  li6enrich   : input real : lithium-6 enrichment (%)
-    !+ad_args  iblanket_thickness   : input integer : blanket thickness switch
-    !+ad_args  tbr         : output real : 5-year time-averaged tritium breeding ratio
-    !+ad_hist  27/05/15 MDK Initial version
-    !+ad_stat  Okay
+    !! Calculates TBR
+    !! author: Michael Kovari
+    !! breeder_f   : input real : Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
+    !! li6enrich   : input real : lithium-6 enrichment (%)
+    !! iblanket_thickness   : input integer : blanket thickness switch
+    !! tbr         : output real : 5-year time-averaged tritium breeding ratio
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Arguments !
-    !!!!!!!!!!!!!
+    ! !!!!!!!!!!!!
 
     ! Inputs
     integer, intent(in) :: iprint, outfile, iblanket_thickness
-    real(kind=double), intent(in) :: breeder_f, li6enrich
+    real(kind(1.0D0)), intent(in) :: breeder_f, li6enrich
 
     ! outputs
-    real(kind=double) :: tbr
+    real(kind(1.0D0)) :: tbr
 
     ! Local variables !
-    !!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!
 
     ! Fit expansion terms
-    real(kind=double), dimension(3) :: v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, &
+    real(kind(1.0D0)), dimension(3) :: v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, &
                                        v11, v12, v13, v14, v15, v16, v17, v18, v19
-    real(kind=double) :: x, y
+    real(kind(1.0D0)) :: x, y
     integer ::  i
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Thin blanket:
     v1(1)= 1.93920586301
@@ -2034,7 +1913,7 @@ contains
           v17(i)*log(x) + v18(i)*log(y) + v19(i)*log(x)*log(y)
 
     ! Output !
-    !!!!!!!!!!
+    ! !!!!!!!!!
 
     if (iprint == 1) then
         call ovarrf(outfile, 'Lithium-6 enrichment (%)', '(li6enrich)', li6enrich)
@@ -2063,33 +1942,18 @@ end module
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module kit_hcpb_module
-  !+ad_name  kit_hcpb_module
-  !+ad_summ  Module containing the KIT HCPB blanket model based on the HCPB concept design
-  !+ad_type  Module
-  !+ad_auth  J Morris, CCFE, Culham Science Centre
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_auth  F Franza, KIT (original MATLAB implementation)
-  !+ad_cont  blanket_lifetime
-  !+ad_cont  f_alpha
-  !+ad_cont  fast_neutron_fluence
-  !+ad_cont  he_production_vacuum_vessel
-  !+ad_cont  kit_blanket
-  !+ad_cont  nuclear_power_production
-  !+ad_cont  power_density
-  !+ad_cont  radial_coordinates
-  !+ad_cont  tritium_breeding_ratio
-  !+ad_args  N/A
-  !+ad_desc  This module contains the blanket neutronics model developed
-  !+ad_desc  by Fabrizio Franza et al. from Karlsruhe Institute of Technology (KIT)
-  !+ad_desc  based on the EUROfusion Helium-Cooled Pebble Bed (HCPB) blanket concept.
-  !+ad_prob  None
-  !+ad_hist  12/02/15 JM  Initial version of refactor
-  !+ad_hist  26/11/15 JM  Updated to 2015 blanket report values.
-  !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
-  !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
-  !+ad_docc  Karlsruhe Institute of Technology, January 2013;
-  !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
-  !+ad_stat  Okay
+  !! Module containing the KIT HCPB blanket model based on the HCPB concept design
+  !! author: J Morris, CCFE, Culham Science Centre
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! author: F Franza, KIT (original MATLAB implementation)
+  !! N/A
+  !! This module contains the blanket neutronics model developed
+  !! by Fabrizio Franza et al. from Karlsruhe Institute of Technology (KIT)
+  !! based on the EUROfusion Helium-Cooled Pebble Bed (HCPB) blanket concept.
+  !! FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+  !! for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+  !! Karlsruhe Institute of Technology, January 2013;
+  !! EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2103,7 +1967,7 @@ module kit_hcpb_module
   ! IB = inboard, OB = outboard
 
   ! Modules to import !
-  !!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!
 
   use build_variables
   use cost_variables
@@ -2121,7 +1985,7 @@ module kit_hcpb_module
   implicit none
 
   ! Subroutine declarations !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
   private
   public :: kit_hcpb
@@ -2135,169 +1999,169 @@ module kit_hcpb_module
   ! Array length
   integer, parameter :: np = 2
 
-  real(kind=double), dimension(np) :: x_BZ_IB, x_BM_IB, x_BP_IB, x_VV_IB
-  real(kind=double), dimension(np) :: x_BZ_OB, x_BM_OB, x_BP_OB, x_VV_OB
+  real(kind(1.0D0)), dimension(np) :: x_BZ_IB, x_BM_IB, x_BP_IB, x_VV_IB
+  real(kind(1.0D0)), dimension(np) :: x_BZ_OB, x_BM_OB, x_BP_OB, x_VV_OB
 
   ! Values shared between subroutines in this module
-  real(kind=double) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
-  real(kind=double) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
-  real(kind=double) :: phi_n_vv_IB_start,phi_n_vv_OB_start
+  real(kind(1.0D0)) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+  real(kind(1.0D0)) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
+  real(kind(1.0D0)) :: phi_n_vv_IB_start,phi_n_vv_OB_start
 
   ! Universal constants
-  real(kind=double), parameter :: E_n = 14.1D0    ! [MeV] Average neutron energy
-  real(kind=double), parameter :: PA_T = 3.0D0    ! [g/mol] Tritium atomic weight
-  real(kind=double), parameter :: N_Av = 6.02D23  ! [at/mol] Avogadro number
+  real(kind(1.0D0)), parameter :: E_n = 14.1D0    ! [MeV] Average neutron energy
+  real(kind(1.0D0)), parameter :: PA_T = 3.0D0    ! [g/mol] Tritium atomic weight
+  real(kind(1.0D0)), parameter :: N_Av = 6.02D23  ! [at/mol] Avogadro number
 
   ! Constants and fixed coefficients used in the model
   ! Based on Helium-Cooled Pebble Beds (HCPB) configuration
   ! of the PPCS Model B design
-  real(kind=double) :: A_cov_PPCS = 1365.0D0   ! [m^2] Total blanket coverage area
-  real(kind=double) :: A_FW_PPCS = 1253.0D0    ! [m^2] First wall area
-  real(kind=double) :: NWL_av_PPCS = 1.94D0    ! [MW/m^2] Average neutron wall load
-  real(kind=double) :: NWL_av_IB_PPCS = 1.73D0 ! [MW/m^2] Average IB wall load
-  real(kind=double) :: NWL_av_OB_PPCS = 1.92D0 ! [MW/m^2] Average OB wall load
-  real(kind=double) :: NWL_max_IB_PPCS = 1.99D0 ! [MW/m^2] Maximum IB wall load
-  real(kind=double) :: NWL_max_OB_PPCS = 2.41D0 ! [MW/m^2] Maximum OB wall load
-  real(kind=double) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
+  real(kind(1.0D0)) :: A_cov_PPCS = 1365.0D0   ! [m^2] Total blanket coverage area
+  real(kind(1.0D0)) :: A_FW_PPCS = 1253.0D0    ! [m^2] First wall area
+  real(kind(1.0D0)) :: NWL_av_PPCS = 1.94D0    ! [MW/m^2] Average neutron wall load
+  real(kind(1.0D0)) :: NWL_av_IB_PPCS = 1.73D0 ! [MW/m^2] Average IB wall load
+  real(kind(1.0D0)) :: NWL_av_OB_PPCS = 1.92D0 ! [MW/m^2] Average OB wall load
+  real(kind(1.0D0)) :: NWL_max_IB_PPCS = 1.99D0 ! [MW/m^2] Maximum IB wall load
+  real(kind(1.0D0)) :: NWL_max_OB_PPCS = 2.41D0 ! [MW/m^2] Maximum OB wall load
+  real(kind(1.0D0)) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
 
   ! 2012 blanket report values and unused parameters
-  ! real(kind=double) :: e_Li_PPCS = 60.0D0      ! [%] Li6 enrichment
-  ! real(kind=double) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
-  ! real(kind=double) :: A_FW_OB_PPCS = 905.6D0  ! [m^2] OB first wall area
+  ! real(kind(1.0D0)) :: e_Li_PPCS = 60.0D0      ! [%] Li6 enrichment
+  ! real(kind(1.0D0)) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
+  ! real(kind(1.0D0)) :: A_FW_OB_PPCS = 905.6D0  ! [m^2] OB first wall area
   ! character(len=13) :: breeder_PPCS = 'Orthosilicate' ! Breeder type
-  ! real(kind=double) :: f_peak_PPCS = 1.21D0      ! [--] Neutron wall load peaking factor
-  ! real(kind=double) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
-  ! real(kind=double) :: t_BZ_IB_PPCS = 23.5D0   ! [cm] IB Breeding Zone thickness
-  ! real(kind=double) :: t_BZ_OB_PPCS = 50.4D0   ! [cm] OB Breeding Zone thickness
-  ! real(kind=double) :: TBR_PPCS = 1.09D0       ! [--] Tritium Breeding Ratio
-  ! real(kind=double) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
-  ! real(kind=double) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
-  ! real(kind=double) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
-  ! real(kind=double) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
+  ! real(kind(1.0D0)) :: f_peak_PPCS = 1.21D0      ! [--] Neutron wall load peaking factor
+  ! real(kind(1.0D0)) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
+  ! real(kind(1.0D0)) :: t_BZ_IB_PPCS = 23.5D0   ! [cm] IB Breeding Zone thickness
+  ! real(kind(1.0D0)) :: t_BZ_OB_PPCS = 50.4D0   ! [cm] OB Breeding Zone thickness
+  ! real(kind(1.0D0)) :: TBR_PPCS = 1.09D0       ! [--] Tritium Breeding Ratio
+  ! real(kind(1.0D0)) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
+  ! real(kind(1.0D0)) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
+  ! real(kind(1.0D0)) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
+  ! real(kind(1.0D0)) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
 
   ! Power density pre-exponential terms and decay lengths
-  real(kind=double) :: q_0_BZ_breed_IB = 23.41D0 ! [W/cm^3] Pre-exp term in IB BZ breeder
-  real(kind=double) :: q_0_BZ_breed_OB = 28.16D0 ! [W/cm^3] Pre-exp term in OB BZ breeder
-  real(kind=double) :: lambda_q_BZ_breed_IB = 44.56D0 ! [cm] Decay length in IB BZ breeder
-  real(kind=double) :: lambda_q_BZ_breed_OB = 28.37D0 ! [cm] Decay length in OB BZ breeder
+  real(kind(1.0D0)) :: q_0_BZ_breed_IB = 23.41D0 ! [W/cm^3] Pre-exp term in IB BZ breeder
+  real(kind(1.0D0)) :: q_0_BZ_breed_OB = 28.16D0 ! [W/cm^3] Pre-exp term in OB BZ breeder
+  real(kind(1.0D0)) :: lambda_q_BZ_breed_IB = 44.56D0 ! [cm] Decay length in IB BZ breeder
+  real(kind(1.0D0)) :: lambda_q_BZ_breed_OB = 28.37D0 ! [cm] Decay length in OB BZ breeder
 
-  real(kind=double) :: q_0_BZ_Be_IB = 7.5D0 ! [W/cm^3] Pre-exp term in IB BZ Beryllium
-  real(kind=double) :: q_0_BZ_Be_OB = 8.85D0 ! [W/cm^3] Pre-exp term in OB BZ Beryllium
-  real(kind=double) :: lambda_q_BZ_Be_IB = 21.19D0 ! [cm] Decay length in IB BZ Beryllium
-  real(kind=double) :: lambda_q_BZ_Be_OB = 19.33D0 ! [cm] Decay length in OB BZ Beryllium
+  real(kind(1.0D0)) :: q_0_BZ_Be_IB = 7.5D0 ! [W/cm^3] Pre-exp term in IB BZ Beryllium
+  real(kind(1.0D0)) :: q_0_BZ_Be_OB = 8.85D0 ! [W/cm^3] Pre-exp term in OB BZ Beryllium
+  real(kind(1.0D0)) :: lambda_q_BZ_Be_IB = 21.19D0 ! [cm] Decay length in IB BZ Beryllium
+  real(kind(1.0D0)) :: lambda_q_BZ_Be_OB = 19.33D0 ! [cm] Decay length in OB BZ Beryllium
 
-  real(kind=double) :: q_0_BZ_steels_IB = 9.04D0 ! [W/cm^3] Pre-exp term in IB BZ steels
-  real(kind=double) :: q_0_BZ_steels_OB = 9.93D0 ! [W/cm^3] Pre-exp term in OB BZ steels
-  real(kind=double) :: lambda_q_BZ_steels_IB = 21.59D0 ! [cm] Decay length in IB BZ steels
-  real(kind=double) :: lambda_q_BZ_steels_OB = 20.61D0 ! [cm] Decay length in OB BZ steels
+  real(kind(1.0D0)) :: q_0_BZ_steels_IB = 9.04D0 ! [W/cm^3] Pre-exp term in IB BZ steels
+  real(kind(1.0D0)) :: q_0_BZ_steels_OB = 9.93D0 ! [W/cm^3] Pre-exp term in OB BZ steels
+  real(kind(1.0D0)) :: lambda_q_BZ_steels_IB = 21.59D0 ! [cm] Decay length in IB BZ steels
+  real(kind(1.0D0)) :: lambda_q_BZ_steels_OB = 20.61D0 ! [cm] Decay length in OB BZ steels
 
-  real(kind=double) :: lambda_EU = 11.57D0  ! [cm] Decay length in EUROFER
-  real(kind=double) :: lambda_q_BM_IB       ! [cm] Decay length in IB BM (calculated)
-  real(kind=double) :: lambda_q_BM_OB       ! [cm] Decay length in OB BM (calculated)
-  real(kind=double) :: lambda_q_BP_IB       ! [cm] Decay length in IB BP (calculated)
-  real(kind=double) :: lambda_q_BP_OB       ! [cm] Decay length in OB BP (calculated)
-  real(kind=double) :: lambda_q_VV = 6.92D0 ! [cm] Decay length in Vacuum Vessel
+  real(kind(1.0D0)) :: lambda_EU = 11.57D0  ! [cm] Decay length in EUROFER
+  real(kind(1.0D0)) :: lambda_q_BM_IB       ! [cm] Decay length in IB BM (calculated)
+  real(kind(1.0D0)) :: lambda_q_BM_OB       ! [cm] Decay length in OB BM (calculated)
+  real(kind(1.0D0)) :: lambda_q_BP_IB       ! [cm] Decay length in IB BP (calculated)
+  real(kind(1.0D0)) :: lambda_q_BP_OB       ! [cm] Decay length in OB BP (calculated)
+  real(kind(1.0D0)) :: lambda_q_VV = 6.92D0 ! [cm] Decay length in Vacuum Vessel
 
   ! Fast neutron flux pre-exponential terms and decay lengths
-  real(kind=double) :: phi_0_n_BZ_IB = 5.12D14  ! [n/cm^2/sec] Pre-exp term in IB BZ
-  real(kind=double) :: phi_0_n_BZ_OB = 5.655D14 ! [n/cm^2/sec] Pre-exp term in OB BZ
-  real(kind=double) :: lambda_n_BZ_IB = 18.79D0 ! [cm] Decay length in IB BZ
-  real(kind=double) :: lambda_n_BZ_OB = 19.19D0 ! [cm] Decay length in OB BZ
-  real(kind=double) :: lambda_n_VV = 8.153D0    ! [cm] Decay length in VV
+  real(kind(1.0D0)) :: phi_0_n_BZ_IB = 5.12D14  ! [n/cm^2/sec] Pre-exp term in IB BZ
+  real(kind(1.0D0)) :: phi_0_n_BZ_OB = 5.655D14 ! [n/cm^2/sec] Pre-exp term in OB BZ
+  real(kind(1.0D0)) :: lambda_n_BZ_IB = 18.79D0 ! [cm] Decay length in IB BZ
+  real(kind(1.0D0)) :: lambda_n_BZ_OB = 19.19D0 ! [cm] Decay length in OB BZ
+  real(kind(1.0D0)) :: lambda_n_VV = 8.153D0    ! [cm] Decay length in VV
 
   ! [n/cm^2/sec] Reference fast neutron flux on VV inner side [Fish09]
-  real(kind=double) :: phi_n_0_VV_ref = 2.0D10
+  real(kind(1.0D0)) :: phi_n_0_VV_ref = 2.0D10
 
   ! Vacuum vessel helium production pre-exponential terms and decay lengths
-  real(kind=double) :: Gamma_He_0_ref = 1.8D-3  ! [appm/yr] Pre-exp term
-  real(kind=double) :: lambda_He_VV = 7.6002D0  ! [cm] Decay length
+  real(kind(1.0D0)) :: Gamma_He_0_ref = 1.8D-3  ! [appm/yr] Pre-exp term
+  real(kind(1.0D0)) :: lambda_He_VV = 7.6002D0  ! [cm] Decay length
 
   ! [dpa] Allowable neutron damage to the FW EUROFER
-  real(kind=double) :: D_EU_max = 60.0D0
+  real(kind(1.0D0)) :: D_EU_max = 60.0D0
 
   ! Variables used in this module, ultimately to be set via the calling routine
   ! to values given by PROCESS variables
-  real(kind=double), public :: P_n = 2720.0D0    ! [MW] Fusion neutron power
-  real(kind=double), public :: NWL_av = 1.94D0   ! [MW/m^2] Average neutron wall load
-  real(kind=double), public :: f_peak = 1.21D0   ! [--] NWL peaking factor
-  real(kind=double), public :: t_FW_IB = 2.3D0   ! [cm] IB first wall thickness
-  real(kind=double), public :: t_FW_OB = 2.3D0   ! [cm] OB first wall thickness
-  real(kind=double), public :: A_FW_IB = 3.5196D6 ! [cm^2] IB first wall area
-  real(kind=double), public :: A_FW_OB = 9.0504D6 ! [cm^2] OB first wall area
-  real(kind=double), public :: A_bl_IB = 3.4844D6 ! [cm^2] IB blanket area
-  real(kind=double), public :: A_bl_OB = 8.9599D6 ! [cm^2] OB blanket area
-  real(kind=double), public :: A_VV_IB = 3.8220D6 ! [cm^2] IB shield/VV area
-  real(kind=double), public :: A_VV_OB = 9.8280D6 ! [cm^2] OB shield/VV area
-  real(kind=double), public :: CF_bl = 91.7949D0 ! [%] Blanket coverage factor
+  real(kind(1.0D0)), public :: P_n = 2720.0D0    ! [MW] Fusion neutron power
+  real(kind(1.0D0)), public :: NWL_av = 1.94D0   ! [MW/m^2] Average neutron wall load
+  real(kind(1.0D0)), public :: f_peak = 1.21D0   ! [--] NWL peaking factor
+  real(kind(1.0D0)), public :: t_FW_IB = 2.3D0   ! [cm] IB first wall thickness
+  real(kind(1.0D0)), public :: t_FW_OB = 2.3D0   ! [cm] OB first wall thickness
+  real(kind(1.0D0)), public :: A_FW_IB = 3.5196D6 ! [cm^2] IB first wall area
+  real(kind(1.0D0)), public :: A_FW_OB = 9.0504D6 ! [cm^2] OB first wall area
+  real(kind(1.0D0)), public :: A_bl_IB = 3.4844D6 ! [cm^2] IB blanket area
+  real(kind(1.0D0)), public :: A_bl_OB = 8.9599D6 ! [cm^2] OB blanket area
+  real(kind(1.0D0)), public :: A_VV_IB = 3.8220D6 ! [cm^2] IB shield/VV area
+  real(kind(1.0D0)), public :: A_VV_OB = 9.8280D6 ! [cm^2] OB shield/VV area
+  real(kind(1.0D0)), public :: CF_bl = 91.7949D0 ! [%] Blanket coverage factor
   integer, public :: n_ports_div = 2             ! [ports] Number of divertor ports
   integer, public :: n_ports_H_CD_IB = 2         ! [ports] Number of IB H&CD ports
   integer, public :: n_ports_H_CD_OB = 2         ! [ports] Number of OB H&CD ports
   character(len=5), public :: H_CD_ports = 'small' ! Type of H&CD ports (small or large)
-  real(kind=double), public :: e_Li = 60.0D0     ! [%] Lithium 6 enrichment
-  real(kind=double), public :: t_plant = 40.0D0  ! [FPY] Plant lifetime
-  real(kind=double), public :: alpha_m = 0.75D0  ! [--] Availability factor
-  real(kind=double), public :: alpha_puls = 1.0D0 ! [--] Pulsed regime fraction
+  real(kind(1.0D0)), public :: e_Li = 60.0D0     ! [%] Lithium 6 enrichment
+  real(kind(1.0D0)), public :: t_plant = 40.0D0  ! [FPY] Plant lifetime
+  real(kind(1.0D0)), public :: alpha_m = 0.75D0  ! [--] Availability factor
+  real(kind(1.0D0)), public :: alpha_puls = 1.0D0 ! [--] Pulsed regime fraction
 
   ! Breeder type (allowed values are Orthosilicate, Metatitanate or Zirconate)
   character(len=20), public :: breeder = 'Orthosilicate'
 
   ! Inboard parameters
-  real(kind=double), public :: t_BZ_IB = 36.5D0     ! [cm] BZ thickness
-  real(kind=double), public :: t_BM_IB = 17.0D0     ! [cm] BM thickness
-  real(kind=double), public :: t_BP_IB = 30.0D0     ! [cm] BP thickness
-  real(kind=double), public :: t_VV_IB = 35.0D0     ! [cm] VV thickness
-  real(kind=double), public :: alpha_BM_IB = 40.0D0  ! [%] Helium fraction in the IB BM
-  real(kind=double), public :: alpha_BP_IB = 65.95D0 ! [%] Helium fraction in the IB BP
-  real(kind=double), public :: chi_Be_BZ_IB = 69.2D0 ! [%] Beryllium vol. frac. in IB BZ
-  real(kind=double), public :: chi_breed_BZ_IB = 15.4D0 ! [%] Breeder vol. frac. in IB BZ
-  real(kind=double), public :: chi_steels_BZ_IB = 9.8D0 ! [%] Steels vol. frac. in IB BZ
+  real(kind(1.0D0)), public :: t_BZ_IB = 36.5D0     ! [cm] BZ thickness
+  real(kind(1.0D0)), public :: t_BM_IB = 17.0D0     ! [cm] BM thickness
+  real(kind(1.0D0)), public :: t_BP_IB = 30.0D0     ! [cm] BP thickness
+  real(kind(1.0D0)), public :: t_VV_IB = 35.0D0     ! [cm] VV thickness
+  real(kind(1.0D0)), public :: alpha_BM_IB = 40.0D0  ! [%] Helium fraction in the IB BM
+  real(kind(1.0D0)), public :: alpha_BP_IB = 65.95D0 ! [%] Helium fraction in the IB BP
+  real(kind(1.0D0)), public :: chi_Be_BZ_IB = 69.2D0 ! [%] Beryllium vol. frac. in IB BZ
+  real(kind(1.0D0)), public :: chi_breed_BZ_IB = 15.4D0 ! [%] Breeder vol. frac. in IB BZ
+  real(kind(1.0D0)), public :: chi_steels_BZ_IB = 9.8D0 ! [%] Steels vol. frac. in IB BZ
 
   ! Outboard parameters
-  real(kind=double), public :: t_BZ_OB = 46.5D0     ! [cm] BZ thickness
-  real(kind=double), public :: t_BM_OB = 27.0D0     ! [cm] BM thickness
-  real(kind=double), public :: t_BP_OB = 35.0D0     ! [cm] BP thickness
-  real(kind=double), public :: t_VV_OB = 65.0D0     ! [cm] VV thickness
-  real(kind=double), public :: alpha_BM_OB = 40.0D0  ! [%] Helium fraction in the OB BM
-  real(kind=double), public :: alpha_BP_OB = 67.13D0 ! [%] Helium fraction in the OB BP
-  real(kind=double), public :: chi_Be_BZ_OB = 69.2D0 ! [%] Beryllium vol. frac. in OB BZ
-  real(kind=double), public :: chi_breed_BZ_OB = 15.4D0 ! [%] Breeder vol. frac. in OB BZ
-  real(kind=double), public :: chi_steels_BZ_OB = 9.8D0 ! [%] Steels vol. frac. in OB BZ
+  real(kind(1.0D0)), public :: t_BZ_OB = 46.5D0     ! [cm] BZ thickness
+  real(kind(1.0D0)), public :: t_BM_OB = 27.0D0     ! [cm] BM thickness
+  real(kind(1.0D0)), public :: t_BP_OB = 35.0D0     ! [cm] BP thickness
+  real(kind(1.0D0)), public :: t_VV_OB = 65.0D0     ! [cm] VV thickness
+  real(kind(1.0D0)), public :: alpha_BM_OB = 40.0D0  ! [%] Helium fraction in the OB BM
+  real(kind(1.0D0)), public :: alpha_BP_OB = 67.13D0 ! [%] Helium fraction in the OB BP
+  real(kind(1.0D0)), public :: chi_Be_BZ_OB = 69.2D0 ! [%] Beryllium vol. frac. in OB BZ
+  real(kind(1.0D0)), public :: chi_breed_BZ_OB = 15.4D0 ! [%] Breeder vol. frac. in OB BZ
+  real(kind(1.0D0)), public :: chi_steels_BZ_OB = 9.8D0 ! [%] Steels vol. frac. in OB BZ
 
   ! Model outputs
-  real(kind=double), public :: pnuctfi  ! [MW/m3] Nuclear heating on IB TF coil
-  real(kind=double), public :: pnuctfo  ! [MW/m3] Nuclear heating on OB TF coil
-  real(kind=double), public :: P_th_tot ! [MW] Nuclear power generated in blanket
-  real(kind=double), public :: pnucsh   ! [MW] Nuclear power generated in shield/VV
-  real(kind=double), public :: M_E      ! [--] Energy multiplication factor
-  real(kind=double), public :: tbratio  ! [--] Tritium breeding ratio
-  real(kind=double), public :: G_tot    ! [g/day] Tritium production rate
-  real(kind=double), public :: nflutfi  ! [n/cm2] Fast neutron fluence on IB TF coil
-  real(kind=double), public :: nflutfo  ! [n/cm2] Fast neutron fluence on OB TF coil
-  real(kind=double), public :: vvhemini ! [appm] minimum final He. conc in IB VV
-  real(kind=double), public :: vvhemino ! [appm] minimum final He. conc in OB VV
-  real(kind=double), public :: vvhemaxi ! [appm] maximum final He. conc in IB VV
-  real(kind=double), public :: vvhemaxo ! [appm] maximum final He. conc in OB VV
-  real(kind=double), public :: t_bl_fpy ! [y] blanket lifetime in full power years
-  real(kind=double), public :: t_bl_y   ! [y] blanket lifetime in calendar years
+  real(kind(1.0D0)), public :: pnuctfi  ! [MW/m3] Nuclear heating on IB TF coil
+  real(kind(1.0D0)), public :: pnuctfo  ! [MW/m3] Nuclear heating on OB TF coil
+  real(kind(1.0D0)), public :: P_th_tot ! [MW] Nuclear power generated in blanket
+  real(kind(1.0D0)), public :: pnucsh   ! [MW] Nuclear power generated in shield/VV
+  real(kind(1.0D0)), public :: M_E      ! [--] Energy multiplication factor
+  real(kind(1.0D0)), public :: tbratio  ! [--] Tritium breeding ratio
+  real(kind(1.0D0)), public :: G_tot    ! [g/day] Tritium production rate
+  real(kind(1.0D0)), public :: nflutfi  ! [n/cm2] Fast neutron fluence on IB TF coil
+  real(kind(1.0D0)), public :: nflutfo  ! [n/cm2] Fast neutron fluence on OB TF coil
+  real(kind(1.0D0)), public :: vvhemini ! [appm] minimum final He. conc in IB VV
+  real(kind(1.0D0)), public :: vvhemino ! [appm] minimum final He. conc in OB VV
+  real(kind(1.0D0)), public :: vvhemaxi ! [appm] maximum final He. conc in IB VV
+  real(kind(1.0D0)), public :: vvhemaxo ! [appm] maximum final He. conc in OB VV
+  real(kind(1.0D0)), public :: t_bl_fpy ! [y] blanket lifetime in full power years
+  real(kind(1.0D0)), public :: t_bl_y   ! [y] blanket lifetime in calendar years
 
   ! Inboard/outboard void fraction of blanket
-  real(kind=double), private :: vfblkti, vfblkto
+  real(kind(1.0D0)), private :: vfblkti, vfblkto
 
   ! Component volume info
   ! Blanket internal half-height (m)
-  real(kind=double), private :: hblnkt
+  real(kind(1.0D0)), private :: hblnkt
 
   ! Shield internal half-height (m)
-  real(kind=double), private :: hshld
+  real(kind(1.0D0)), private :: hshld
 
   ! Clearance between uppermost PF coil and cryostat lid (m)
-  real(kind=double), private :: hcryopf
+  real(kind(1.0D0)), private :: hcryopf
 
   ! Vacuum vessel internal half-height (m)
-  real(kind=double), private :: hvv
+  real(kind(1.0D0)), private :: hvv
 
   ! Volume of inboard and outboard shield (m3)
-  real(kind=double), private :: volshldi, volshldo
+  real(kind(1.0D0)), private :: volshldi, volshldo
 
 contains
 
@@ -2308,32 +2172,25 @@ contains
 
   function f_alpha(alpha)
 
-    !+ad_name  f_alpha
-    !+ad_summ  Calculates the power density decay length multiplier
-    !+ad_summ  in a blanket region given the helium fraction
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  alpha : input real : helium fraction (%)
-    !+ad_desc  This routine calculates the power density decay length
-    !+ad_desc  multiplier in a blanket region comprising EUROFER steel and
-    !+ad_desc  helium coolant, given the helium volume fraction within the
-    !+ad_desc  region.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_stat  Okay
+    !! Calculates the power density decay length multiplier
+    !! in a blanket region given the helium fraction
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! alpha : input real : helium fraction (%)
+    !! This routine calculates the power density decay length
+    !! multiplier in a blanket region comprising EUROFER steel and
+    !! helium coolant, given the helium volume fraction within the
+    !! region.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments
-    real(kind=double), intent(in) :: alpha
+    real(kind(1.0D0)), intent(in) :: alpha
 
     ! Local variables
-    real(kind=double) :: f_alpha
+    real(kind(1.0D0)) :: f_alpha
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2344,27 +2201,13 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine kit_hcpb(outfile, iprint)
-    !+ad_name  kit_hcpb
-    !+ad_summ  Main routine for the KIT HCPB blanket model
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calls the main work routines for the KIT HCPB
-    !+ad_desc  blanket model.
-    !+ad_prob  None
-    !+ad_call  radial_coordinates
-    !+ad_call  power_density
-    !+ad_call  nuclear_power_production
-    !+ad_call  tritium_breeding_ratio
-    !+ad_call  fast_neutron_fluence
-    !+ad_call  he_production_vacuum_vessel
-    !+ad_call  blanket_lifetime
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_hist  24/04/18 SIM Calc fwith and fwoth to mirror MDK change to ccfe_hcpb
-    !+ad_stat  Okay
+    !! Main routine for the KIT HCPB blanket model
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output file (1=yes)
+    !! This routine calls the main work routines for the KIT HCPB
+    !! blanket model.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2515,7 +2358,7 @@ contains
     ! Rough estimate of TF coil volume used, assuming 25% of the total
     ! TF coil perimeter is inboard, 75% outboard
     ptfnuc = 0.25D0*tfleng*tfareain * pnuctfi &
-         + 0.75D0*tfleng*arealeg*tfno * pnuctfo
+         + 0.75D0*tfleng*arealeg*n_tf * pnuctfo
 
     ! Maximum helium concentration in vacuum vessel at
     ! end of plant lifetime (appm)
@@ -2530,23 +2373,16 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine radial_coordinates
-    !+ad_name  radial_coordinates
-    !+ad_summ  Sets up the radial build within the KIT blanket
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  None
-    !+ad_desc  This routine sets up the arrays containing the radial
-    !+ad_desc  build within each blanket sub-assembly.
-    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
-    !+ad_desc  values at the inner and outer radial locations; however, if required,
-    !+ad_desc  they may be changed easily to provide several points for plotting
-    !+ad_desc  purposes, for example.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_stat  Okay
+    !! Sets up the radial build within the KIT blanket
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! None
+    !! This routine sets up the arrays containing the radial
+    !! build within each blanket sub-assembly.
+    !! <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !! values at the inner and outer radial locations; however, if required,
+    !! they may be changed easily to provide several points for plotting
+    !! purposes, for example.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2573,48 +2409,41 @@ contains
 
   subroutine power_density(q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end, &
     q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end,pnuctfi,pnuctfo)
-    !+ad_name  power_density
-    !+ad_summ  Calculates the nuclear power density profiles
-    !+ad_dumm  within the KIT blanket sub-assemblies
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  q_BZ_IB_end : output real : power density at outer edge of IB BZ (MW/m3)
-    !+ad_args  q_BM_IB_end : output real : power density at outer edge of IB BM (MW/m3)
-    !+ad_args  q_BP_IB_end : output real : power density at outer edge of IB BP (MW/m3)
-    !+ad_args  q_BZ_OB_end : output real : power density at outer edge of OB BZ (MW/m3)
-    !+ad_args  q_BM_OB_end : output real : power density at outer edge of OB BM (MW/m3)
-    !+ad_args  q_BP_OB_end : output real : power density at outer edge of OB BP (MW/m3)
-    !+ad_args  pnuctfi     : output real : power density at outer edge of IB VV (MW/m3)
-    !+ad_argc                              = that on inner TF coil winding pack
-    !+ad_args  pnuctfo     : output real : power density at outer edge of OB VV (MW/m3)
-    !+ad_argc                              = that on outer TF coil winding pack
-    !+ad_desc  This routine calculates the nuclear power density profiles within each
-    !+ad_desc  blanket sub-assembly, assuming an exponential decay with distance through
-    !+ad_desc  each region, with the decay indices dependent on the material fractions.
-    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
-    !+ad_desc  values at the inner and outer radial locations; however, if required,
-    !+ad_desc  they may be changed easily to provide several points for plotting
-    !+ad_desc  purposes, for example.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_stat  Okay
+    !! Calculates the nuclear power density profiles
+    !!  within the KIT blanket sub-assemblies
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! q_BZ_IB_end : output real : power density at outer edge of IB BZ (MW/m3)
+    !! q_BM_IB_end : output real : power density at outer edge of IB BM (MW/m3)
+    !! q_BP_IB_end : output real : power density at outer edge of IB BP (MW/m3)
+    !! q_BZ_OB_end : output real : power density at outer edge of OB BZ (MW/m3)
+    !! q_BM_OB_end : output real : power density at outer edge of OB BM (MW/m3)
+    !! q_BP_OB_end : output real : power density at outer edge of OB BP (MW/m3)
+    !! pnuctfi     : output real : power density at outer edge of IB VV (MW/m3)
+    !! = that on inner TF coil winding pack
+    !! pnuctfo     : output real : power density at outer edge of OB VV (MW/m3)
+    !! = that on outer TF coil winding pack
+    !! This routine calculates the nuclear power density profiles within each
+    !! blanket sub-assembly, assuming an exponential decay with distance through
+    !! each region, with the decay indices dependent on the material fractions.
+    !! <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !! values at the inner and outer radial locations; however, if required,
+    !! they may be changed easily to provide several points for plotting
+    !! purposes, for example.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments
-    real(kind=double), intent(out) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
-    real(kind=double), intent(out) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
-    real(kind=double), intent(out) :: pnuctfi, pnuctfo
+    real(kind(1.0D0)), intent(out) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+    real(kind(1.0D0)), intent(out) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
+    real(kind(1.0D0)), intent(out) :: pnuctfi, pnuctfo
 
     ! Local variables
-    real(kind=double), dimension(np) :: q_steels_BZ_IB, q_steels_BZ_OB
-    real(kind=double), dimension(np) :: q_BM_IB, q_BP_IB, q_VV_IB
-    real(kind=double), dimension(np) :: q_BM_OB, q_BP_OB, q_VV_OB
+    real(kind(1.0D0)), dimension(np) :: q_steels_BZ_IB, q_steels_BZ_OB
+    real(kind(1.0D0)), dimension(np) :: q_BM_IB, q_BP_IB, q_VV_IB
+    real(kind(1.0D0)), dimension(np) :: q_BM_OB, q_BP_OB, q_VV_OB
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2664,56 +2493,47 @@ contains
 
   subroutine nuclear_power_production(q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end, &
        q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end,P_th_tot,M_E,pnucsh)
-    !+ad_name  nuclear_power_production
-    !+ad_summ  Calculates nuclear power production and energy multiplication factor
-    !+ad_dumm  within the KIT blanket sub-assemblies
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  q_BZ_IB_end : input real : power density at outer edge of IB BZ (MW/m3)
-    !+ad_args  q_BM_IB_end : input real : power density at outer edge of IB BM (MW/m3)
-    !+ad_args  q_BP_IB_end : input real : power density at outer edge of IB BP (MW/m3)
-    !+ad_args  q_BZ_OB_end : input real : power density at outer edge of OB BZ (MW/m3)
-    !+ad_args  q_BM_OB_end : input real : power density at outer edge of OB BM (MW/m3)
-    !+ad_args  q_BP_OB_end : input real : power density at outer edge of OB BP (MW/m3)
-    !+ad_args  p_th_tot    : output real : total nuclear power in the blanket (MW)
-    !+ad_args  m_e         : output real : energy multiplication factor in the blanket
-    !+ad_args  pnucsh      : output real : total nuclear power in the shield (MW)
-    !+ad_desc  This routine calculates the nuclear power production within each
-    !+ad_desc  blanket sub-assembly, assuming an exponential decay with distance through
-    !+ad_desc  each region, with the decay indices dependent on the material fractions.
-    !+ad_desc  These are summed to give the total nuclear power produced in the 'blanket'
-    !+ad_desc  (BZ+BM+BP) and 'shield' regions, and the energy multiplication factor
-    !+ad_desc  in the blanket is calculated.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_hist  26/09/13 PJK/FF Refined model to take into account average/peak PPCS
-    !+ad_hisc               wall load scaling in inboard and outboard regions
-    !+ad_stat  Okay
-    !+ad_docs  WP13-SYS01-A-T02 Interim Review Meeting, 10.07.2013, F. Franza
-    !+ad_docc  (describes 26/09/2013 model refinement)
+    !! Calculates nuclear power production and energy multiplication factor
+    !! within the KIT blanket sub-assemblies
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! q_BZ_IB_end : input real : power density at outer edge of IB BZ (MW/m3)
+    !! q_BM_IB_end : input real : power density at outer edge of IB BM (MW/m3)
+    !! q_BP_IB_end : input real : power density at outer edge of IB BP (MW/m3)
+    !! q_BZ_OB_end : input real : power density at outer edge of OB BZ (MW/m3)
+    !! q_BM_OB_end : input real : power density at outer edge of OB BM (MW/m3)
+    !! q_BP_OB_end : input real : power density at outer edge of OB BP (MW/m3)
+    !! p_th_tot    : output real : total nuclear power in the blanket (MW)
+    !! m_e         : output real : energy multiplication factor in the blanket
+    !! pnucsh      : output real : total nuclear power in the shield (MW)
+    !! This routine calculates the nuclear power production within each
+    !! blanket sub-assembly, assuming an exponential decay with distance through
+    !! each region, with the decay indices dependent on the material fractions.
+    !! These are summed to give the total nuclear power produced in the 'blanket'
+    !! (BZ+BM+BP) and 'shield' regions, and the energy multiplication factor
+    !! in the blanket is calculated.
+    !! WP13-SYS01-A-T02 Interim Review Meeting, 10.07.2013, F. Franza
+    !! (describes 26/09/2013 model refinement)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments
-    real(kind=double), intent(in) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
-    real(kind=double), intent(in) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
-    real(kind=double), intent(out) :: P_th_tot, M_E, pnucsh
+    real(kind(1.0D0)), intent(in) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+    real(kind(1.0D0)), intent(in) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
+    real(kind(1.0D0)), intent(out) :: P_th_tot, M_E, pnucsh
 
     ! Local variables
-    real(kind=double) :: A_BZ_breed_IB, A_BZ_breed_OB, A_BZ_Be_IB, A_BZ_Be_OB
-    real(kind=double) :: A_BZ_steels_IB, A_BZ_steels_OB
-    real(kind=double) :: P_BZ_breed_IB, P_BZ_Be_IB, P_BZ_steels_IB
-    real(kind=double) :: P_BZ_IB, P_BM_IB, P_BP_IB, P_VV_IB
-    real(kind=double) :: P_BZ_breed_OB, P_BZ_Be_OB, P_BZ_steels_OB
-    real(kind=double) :: P_BZ_OB, P_BM_OB, P_BP_OB, P_VV_OB
-    real(kind=double) :: P_tot_IB, P_tot_OB, P_n_FW
+    real(kind(1.0D0)) :: A_BZ_breed_IB, A_BZ_breed_OB, A_BZ_Be_IB, A_BZ_Be_OB
+    real(kind(1.0D0)) :: A_BZ_steels_IB, A_BZ_steels_OB
+    real(kind(1.0D0)) :: P_BZ_breed_IB, P_BZ_Be_IB, P_BZ_steels_IB
+    real(kind(1.0D0)) :: P_BZ_IB, P_BM_IB, P_BP_IB, P_VV_IB
+    real(kind(1.0D0)) :: P_BZ_breed_OB, P_BZ_Be_OB, P_BZ_steels_OB
+    real(kind(1.0D0)) :: P_BZ_OB, P_BM_OB, P_BP_OB, P_VV_OB
+    real(kind(1.0D0)) :: P_tot_IB, P_tot_OB, P_n_FW
 
-    real(kind=double) :: nwl_ratio, nwl_IB_ratio_PPCS, nwl_OB_ratio_PPCS
+    real(kind(1.0D0)) :: nwl_ratio, nwl_IB_ratio_PPCS, nwl_OB_ratio_PPCS
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2828,28 +2648,17 @@ contains
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine tritium_breeding_ratio(tbr,g_tot)
-    !+ad_name  nuclear_power_production
-    !+ad_summ  Calculates the tritium breeding ratio for the KIT blanket
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  tbr_breed
-    !+ad_cont  tbr_ports
-    !+ad_args  tbr   : output real : tritium breeding ratio
-    !+ad_args  g_tot : output real : tritium production rate (g/day)
-    !+ad_desc  This routine calculates the tritium breeding ratio and the rate
-    !+ad_desc  of production of tritium in the KIT blanket design, taking into
-    !+ad_desc  account the breeding material and the number and size of ports
-    !+ad_desc  in the blanket.
-    !+ad_prob  None
-    !+ad_call  tbr_breed
-    !+ad_call  tbr_ports
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_hist  26/09/13 PJK/FF Refinement to take into account IB/OB contributions
-    !+ad_hist  26/11/15 JM  Changed to updated HCPB values. wib and wob changed to % units.
-    !+ad_stat  Okay
-    !+ad_docs  WP13-SYS01-A-T02 Interim Review Meeting, 10.07.2013, F. Franza
-    !+ad_docc  (describes 26/09/2013 model refinement)
+    !! Calculates the tritium breeding ratio for the KIT blanket
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! tbr   : output real : tritium breeding ratio
+    !! g_tot : output real : tritium production rate (g/day)
+    !! This routine calculates the tritium breeding ratio and the rate
+    !! of production of tritium in the KIT blanket design, taking into
+    !! account the breeding material and the number and size of ports
+    !! in the blanket.
+    !! WP13-SYS01-A-T02 Interim Review Meeting, 10.07.2013, F. Franza
+    !! (describes 26/09/2013 model refinement)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2857,12 +2666,12 @@ contains
 
     ! Arguments
 
-    real(kind=double), intent(out) :: tbr, g_tot
+    real(kind(1.0D0)), intent(out) :: tbr, g_tot
 
     ! Local variables
 
-    real(kind=double) :: wib, wob, eu_frac
-    real(kind=double), parameter :: wib_PPCS = 0.28D0, wob_PPCS = 0.72D0
+    real(kind(1.0D0)) :: wib, wob, eu_frac
+    real(kind(1.0D0)), parameter :: wib_PPCS = 0.28D0, wob_PPCS = 0.72D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2885,37 +2694,29 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     function TBR_breed(e_Li, breeder)
-      !+ad_name  tbr_breed
-      !+ad_summ  Returns a fit to the tritium breeding ratio for different breeder
-      !+ad_summ  materials
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  F Franza, KIT (original MATLAB implementation)
-      !+ad_cont  None
-      !+ad_args  e_li   : input real : Lithium-6 enrichment (%)
-      !+ad_args  breeder : input character string : breeder material; either
-      !+ad_argc          <UL><LI>'Orthosilicate' or
-      !+ad_argc              <LI>'Metatitanate' or
-      !+ad_argc              <LI>'Zirconate'</UL>
-      !+ad_desc  This routine provides the dependence of the tritium breeding
-      !+ad_desc  ratio on the ceramic breeder in use and the lithium-6 enrichment of
-      !+ad_desc  the breeder.
-      !+ad_prob  None
-      !+ad_call  report_error
-      !+ad_hist  06/06/13 PJK Initial release
-      !+ad_hist  30/06/14 PJK Added error handling
-      !+ad_stat  Okay
+      !! Returns a fit to the tritium breeding ratio for different breeder
+      !! materials
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: F Franza, KIT (original MATLAB implementation)
+      !! e_li   : input real : Lithium-6 enrichment (%)
+      !! breeder : input character string : breeder material; either
+      !! <UL><LI>'Orthosilicate' or
+      !! <LI>'Metatitanate' or
+      !! <LI>'Zirconate'</UL>
+      !! This routine provides the dependence of the tritium breeding
+      !! ratio on the ceramic breeder in use and the lithium-6 enrichment of
+      !! the breeder.
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       implicit none
 
       ! Arguments
-      real(kind=double), intent(in) :: e_Li
+      real(kind(1.0D0)), intent(in) :: e_Li
       character(len=*), intent(in) :: breeder
 
       ! Local variables
-      real(kind=double) :: TBR_breed
+      real(kind(1.0D0)) :: TBR_breed
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2940,27 +2741,20 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     function TBR_ports(n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB, H_CD_ports)
-      !+ad_name  tbr_ports
-      !+ad_summ  Returns a fit to the tritium breeding ratio with different
-      !+ad_summ  machine port types
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  F Franza, KIT (original MATLAB implementation)
-      !+ad_cont  None
-      !+ad_args  n_ports_div : input integer : number of divertor ports
-      !+ad_args  n_ports_h_cd_ib : input integer : number of inboard H/CD ports
-      !+ad_args  n_ports_h_cd_ob : input integer : number of outboard H/CD ports
-      !+ad_args  h_cd_ports : input character string : H/CD port size;
-      !+ad_argc          <UL><LI>'small' or <LI>'large'</UL>
-      !+ad_desc  This routine provides the dependence of the tritium breeding
-      !+ad_desc  ratio on the number and size of machine ports.
-      !+ad_desc  The equatorial heating/current drive ports may be specified as
-      !+ad_desc  being either <CODE>'small'</CODE> (1.27 x 1.5 m2) or
-      !+ad_desc  <CODE>'large'</CODE> (3 x 3 m2).
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  06/06/13 PJK Initial release
-      !+ad_stat  Okay
+      !! Returns a fit to the tritium breeding ratio with different
+      !! machine port types
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: F Franza, KIT (original MATLAB implementation)
+      !! n_ports_div : input integer : number of divertor ports
+      !! n_ports_h_cd_ib : input integer : number of inboard H/CD ports
+      !! n_ports_h_cd_ob : input integer : number of outboard H/CD ports
+      !! h_cd_ports : input character string : H/CD port size;
+      !! <UL><LI>'small' or <LI>'large'</UL>
+      !! This routine provides the dependence of the tritium breeding
+      !! ratio on the number and size of machine ports.
+      !! The equatorial heating/current drive ports may be specified as
+      !! being either <CODE>'small'</CODE> (1.27 x 1.5 m2) or
+      !! <CODE>'large'</CODE> (3 x 3 m2).
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2971,7 +2765,7 @@ contains
       character(len=*), intent(in) :: H_CD_ports
 
       ! Local variables
-      real(kind=double) :: TBR_ports
+      real(kind(1.0D0)) :: TBR_ports
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2997,46 +2791,38 @@ contains
 
   subroutine fast_neutron_fluence(phi_n_vv_IB_start,phi_n_vv_OB_start, &
        phi_n_IB_TFC,phi_n_OB_TFC)
-    !+ad_name  fast_neutron_fluence
-    !+ad_summ  Calculates fast neutron fluence within the KIT blanket sub-assemblies
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  phi_n_vv_IB_start : output real : flux at inner edge of IB VV (n/cm2/s)
-    !+ad_args  phi_n_vv_OB_start : output real : flux at inner edge of OB VV (n/cm2/s)
-    !+ad_args  phi_n_IB_TFC      : output real : lifetime fluence at IB TF coil (n/cm2)
-    !+ad_args  phi_n_OB_TFC      : output real : lifetime fluence at OB TF coil (n/cm2)
-    !+ad_desc  This routine calculates the fast neutron flux profiles within each
-    !+ad_desc  blanket sub-assembly, assuming an exponential decay with distance through
-    !+ad_desc  each region, with the decay indices dependent on the material fractions.
-    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
-    !+ad_desc  values at the inner and outer radial locations; however, if required,
-    !+ad_desc  they may be changed easily to provide several points for plotting
-    !+ad_desc  purposes, for example.
-    !+ad_desc  <P>The total neutron fluence over the plant lifetime reaching the
-    !+ad_desc  TF coils is also calculated.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_hist  05/11/13 PJK Corrected lambda_q_VV to lambda_n_VV in two places
-    !+ad_stat  Okay
+    !! Calculates fast neutron fluence within the KIT blanket sub-assemblies
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! phi_n_vv_IB_start : output real : flux at inner edge of IB VV (n/cm2/s)
+    !! phi_n_vv_OB_start : output real : flux at inner edge of OB VV (n/cm2/s)
+    !! phi_n_IB_TFC      : output real : lifetime fluence at IB TF coil (n/cm2)
+    !! phi_n_OB_TFC      : output real : lifetime fluence at OB TF coil (n/cm2)
+    !! This routine calculates the fast neutron flux profiles within each
+    !! blanket sub-assembly, assuming an exponential decay with distance through
+    !! each region, with the decay indices dependent on the material fractions.
+    !! <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !! values at the inner and outer radial locations; however, if required,
+    !! they may be changed easily to provide several points for plotting
+    !! purposes, for example.
+    !! <P>The total neutron fluence over the plant lifetime reaching the
+    !! TF coils is also calculated.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments
-    real(kind=double), intent(out) :: phi_n_VV_IB_start,phi_n_VV_OB_start
-    real(kind=double), intent(out) :: phi_n_IB_TFC, phi_n_OB_TFC
+    real(kind(1.0D0)), intent(out) :: phi_n_VV_IB_start,phi_n_VV_OB_start
+    real(kind(1.0D0)), intent(out) :: phi_n_IB_TFC, phi_n_OB_TFC
 
     ! Local variables
     integer, parameter :: K_tau = 31536000  ! [sec/yr] Number of seconds per year
-    real(kind=double), dimension(np) :: phi_n_BZ_IB, phi_n_BM_IB
-    real(kind=double), dimension(np) :: phi_n_BP_IB, phi_n_VV_IB
-    real(kind=double), dimension(np) :: phi_n_BZ_OB, phi_n_BM_OB
-    real(kind=double), dimension(np) :: phi_n_BP_OB, phi_n_VV_OB
-    real(kind=double) :: nwl_ratio
+    real(kind(1.0D0)), dimension(np) :: phi_n_BZ_IB, phi_n_BM_IB
+    real(kind(1.0D0)), dimension(np) :: phi_n_BP_IB, phi_n_VV_IB
+    real(kind(1.0D0)), dimension(np) :: phi_n_BZ_OB, phi_n_BM_OB
+    real(kind(1.0D0)), dimension(np) :: phi_n_BP_OB, phi_n_VV_OB
+    real(kind(1.0D0)) :: nwl_ratio
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3084,42 +2870,35 @@ contains
 
   subroutine He_production_vacuum_vessel(phi_n_VV_IB_start,phi_n_VV_OB_start, &
        vvhemini,vvhemino,vvhemaxi,vvhemaxo)
-    !+ad_name  he_production_vacuum_vessel
-    !+ad_summ  Calculates helium concentrations in the vacuum vessel at the end
-    !+ad_summ  of the plant lifetime
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  phi_n_vv_IB_start : input real : n flux at inner edge of IB VV (n/cm2/s)
-    !+ad_args  phi_n_vv_OB_start : input real : n flux at inner edge of OB VV (n/cm2/s)
-    !+ad_args  vvhemini : output real : final He concentr. at outer edge of IB VV (appm)
-    !+ad_args  vvhemino : output real : final He concentr. at outer edge of OB VV (appm)
-    !+ad_args  vvhemaxi : output real : final He concentr. at inner edge of IB VV (appm)
-    !+ad_args  vvhemaxo : output real : final He concentr. at inner edge of OB VV (appm)
-    !+ad_desc  This routine calculates the helium production profiles, and the
-    !+ad_desc  minimum and maximum helium concentrations in the vacuum vessel
-    !+ad_desc  at the end of the plant lifetime.
-    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
-    !+ad_desc  values at the inner and outer radial locations; however, if required,
-    !+ad_desc  they may be changed easily to provide several points for plotting
-    !+ad_desc  purposes, for example.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_stat  Okay
+    !! Calculates helium concentrations in the vacuum vessel at the end
+    !! of the plant lifetime
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! phi_n_vv_IB_start : input real : n flux at inner edge of IB VV (n/cm2/s)
+    !! phi_n_vv_OB_start : input real : n flux at inner edge of OB VV (n/cm2/s)
+    !! vvhemini : output real : final He concentr. at outer edge of IB VV (appm)
+    !! vvhemino : output real : final He concentr. at outer edge of OB VV (appm)
+    !! vvhemaxi : output real : final He concentr. at inner edge of IB VV (appm)
+    !! vvhemaxo : output real : final He concentr. at inner edge of OB VV (appm)
+    !! This routine calculates the helium production profiles, and the
+    !! minimum and maximum helium concentrations in the vacuum vessel
+    !! at the end of the plant lifetime.
+    !! <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !! values at the inner and outer radial locations; however, if required,
+    !! they may be changed easily to provide several points for plotting
+    !! purposes, for example.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments
-    real(kind=double), intent(in) :: phi_n_VV_IB_start,phi_n_VV_OB_start
-    real(kind=double), intent(out) :: vvhemini,vvhemino,vvhemaxi,vvhemaxo
+    real(kind(1.0D0)), intent(in) :: phi_n_VV_IB_start,phi_n_VV_OB_start
+    real(kind(1.0D0)), intent(out) :: vvhemini,vvhemino,vvhemaxi,vvhemaxo
 
     ! Local variables
-    real(kind=double), dimension(np) :: Gamma_He_IB, Gamma_He_OB
-    real(kind=double), dimension(np) :: C_He_IB, C_He_OB
+    real(kind(1.0D0)), dimension(np) :: Gamma_He_IB, Gamma_He_OB
+    real(kind(1.0D0)), dimension(np) :: C_He_IB, C_He_OB
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3147,27 +2926,20 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine blanket_lifetime(t_bl_FPY,t_bl_Y)
-    !+ad_name  blanket_lifetime
-    !+ad_summ  Calculates the blanket lifetime
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  F Franza, KIT (original MATLAB implementation)
-    !+ad_cont  None
-    !+ad_args  t_bl_fpy : output real : blanket lifetime (full power years)
-    !+ad_args  t_bl_y   : output real : blanket lifetime (calendar years)
-    !+ad_desc  This routine calculates the blanket lifetime, assuming that the
-    !+ad_desc  maximum allowed neutron damage to the EUROFER steel is 60 dpa.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  06/06/13 PJK Initial release
-    !+ad_stat  Okay
+    !! Calculates the blanket lifetime
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: F Franza, KIT (original MATLAB implementation)
+    !! t_bl_fpy : output real : blanket lifetime (full power years)
+    !! t_bl_y   : output real : blanket lifetime (calendar years)
+    !! This routine calculates the blanket lifetime, assuming that the
+    !! maximum allowed neutron damage to the EUROFER steel is 60 dpa.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Arguments
-    real(kind=double), intent(out) :: t_bl_FPY, t_bl_Y
+    real(kind(1.0D0)), intent(out) :: t_bl_FPY, t_bl_Y
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3183,15 +2955,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine component_masses
-    !+ad_name  component_masses KIT model
-    !+ad_summ  Calculations for component masses
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculations for component masses
-    !+ad_prob  None
-    !+ad_hist  23/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculations for component masses
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculations for component masses
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3244,15 +3010,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine component_volumes
-    !+ad_name  component_volumes
-    !+ad_summ  Calculate the blanket, shield, vacuum vessel and cryostat volumes
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the blanket, shield, vacuum vessel and cryostat volumes
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the blanket, shield, vacuum vessel and cryostat volumes
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the blanket, shield, vacuum vessel and cryostat volumes
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3298,20 +3058,14 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine blanket_half_height
-    !+ad_name  blanket_half_height
-    !+ad_summ  Calculate the blanket half-height
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the blanket half-height
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the blanket half-height
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the blanket half-height
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Local variables
-    real(kind=double) :: hbot, htop
+    real(kind(1.0D0)) :: hbot, htop
 
     ! Calculate blanket internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix - blnktth
@@ -3332,20 +3086,14 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine shield_half_height
-    !+ad_name  shield_half_height
-    !+ad_summ  Calculate the shield half-height
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the shield half-height
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the shield half-height
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the shield half-height
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Local variables
-    real(kind=double) :: hbot, htop
+    real(kind(1.0D0)) :: hbot, htop
 
     ! Calculate shield internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix
@@ -3366,20 +3114,14 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine vv_half_height
-    !+ad_name  vv_half_height
-    !+ad_summ  Calculate the vacuum vessel half-height
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the vacuum vessel half-height
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the vacuum vessel half-height
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the vacuum vessel half-height
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Local variables
-    real(kind=double) :: hbot, htop
+    real(kind(1.0D0)) :: hbot, htop
 
     ! Calculate vacuum vessel internal lower half-height (m)
     hbot = hmax - vgap2 - ddwi
@@ -3401,24 +3143,16 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_blanket
-    !+ad_name  dshaped_blanket
-    !+ad_summ  Calculate the blanket surface area and volume using dshaped scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the blanket surface area and volume using dshaped scheme
-    !+ad_prob  None
-    !+ad_call  dhshellarea
-    !+ad_call  dhshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the blanket surface area and volume using dshaped scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the blanket surface area and volume using dshaped scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Local variables
-    real(kind=double) :: r1, r2
+    real(kind(1.0D0)) :: r1, r2
 
     ! Major radius to outer edge of inboard blanket (m)
     r1 = rsldi + shldith + blnkith
@@ -3438,24 +3172,16 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_shield
-    !+ad_name  dshaped_shield
-    !+ad_summ  Calculate the shield surface area and volume using dshaped scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the shield surface area and volume using dshaped scheme
-    !+ad_prob  None
-    !+ad_call  dhshellarea
-    !+ad_call  dhshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the shield surface area and volume using dshaped scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the shield surface area and volume using dshaped scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Local variables
-    real(kind=double) :: r1, r2
+    real(kind(1.0D0)) :: r1, r2
 
     ! Major radius to outer edge of inboard shield (m)
     r1 = rsldi + shldith
@@ -3475,23 +3201,16 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_vv
-    !+ad_name  dshaped_vv
-    !+ad_summ  Calculate the vacuum vessel volume using dshaped scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the vacuum vessel volume using dshaped scheme
-    !+ad_prob  None
-    !+ad_call  dhshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the vacuum vessel volume using dshaped scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the vacuum vessel volume using dshaped scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Local variables
-    real(kind=double) :: r1, r2, v1, v2
+    real(kind(1.0D0)) :: r1, r2, v1, v2
 
     ! Major radius to outer edge of inboard section (m)
     r1 = rsldi
@@ -3511,24 +3230,16 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine elliptical_blanket
-    !+ad_name  elliptical_blanket
-    !+ad_summ  Calculate the blanket surface area and volume using elliptical scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the blanket surface area and volume using elliptical scheme
-    !+ad_prob  None
-    !+ad_call  ehshellarea
-    !+ad_call  eshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the blanket surface area and volume using elliptical scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the blanket surface area and volume using elliptical scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Local variables
-    real(kind=double) :: r1, r2, r3
+    real(kind(1.0D0)) :: r1, r2, r3
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
@@ -3551,24 +3262,16 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine elliptical_shield
-    !+ad_name  elliptical_shield
-    !+ad_summ  Calculate the shield surface area and volume using elliptical scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the shield surface area and volume using elliptical scheme
-    !+ad_prob  None
-    !+ad_call  ehshellarea
-    !+ad_call  ehshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the shield surface area and volume using elliptical scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the shield surface area and volume using elliptical scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Local variables
-    real(kind=double) :: r1, r2, r3
+    real(kind(1.0D0)) :: r1, r2, r3
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
@@ -3591,23 +3294,16 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine elliptical_vv
-    !+ad_name  elliptical_vv
-    !+ad_summ  Calculate the vacuum vessel volume using elliptical scheme
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate the vacuum vessel volume using elliptical scheme
-    !+ad_prob  None
-    !+ad_call  ehshellvol
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate the vacuum vessel volume using elliptical scheme
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate the vacuum vessel volume using elliptical scheme
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Local variables
-    real(kind=double) :: r1, r2, r3, v1, v2
+    real(kind(1.0D0)) :: r1, r2, r3, v1, v2
 
     ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
@@ -3630,22 +3326,23 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine apply_coverage_factors
-    !+ad_name  apply_coverage_factors
-    !+ad_summ  Apply coverage factors to volumes
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Apply coverage factors to volumes
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Apply coverage factors to volumes
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Apply coverage factors to volumes
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     ! Apply blanket coverage factors
-    blareaob = blarea*(1.0D0-fdiv-fhcd) - blareaib
+    if (idivrt == 2) then
+      ! double null configuration
+      blareaob = blarea*(1.0D0-2.0D0*fdiv-fhcd) - blareaib
+    else 
+      ! single null configuration
+      blareaob = blarea*(1.0D0-fdiv-fhcd) - blareaib
+    end if
+    
     blarea = blareaib + blareaob
 
     volblkto = volblkt*(1.0D0-fdiv-fhcd) - volblkti
@@ -3665,15 +3362,9 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine external_cryo_geometry
-    !+ad_name  external_cryo_geometry
-    !+ad_summ  Calculate cryostat geometry
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  Calculate cryostat geometry
-    !+ad_prob  None
-    !+ad_hist  16/02/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Calculate cryostat geometry
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! Calculate cryostat geometry
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3709,16 +3400,10 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine write_kit_hcpb_output
-    !+ad_name  write_kit_hcpb_output
-    !+ad_summ  Write output to file for KIT HCPB model
-    !+ad_type  Subroutine
-    !+ad_auth  J. Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_desc  This subroutine outputs the CCFE HCPB model results to
-    !+ad_desc  an output file
-    !+ad_prob  None
-    !+ad_hist  12/03/15 JM  Initial version
-    !+ad_stat  Okay
+    !! Write output to file for KIT HCPB model
+    !! author: J. Morris, CCFE, Culham Science Centre
+    !! This subroutine outputs the CCFE HCPB model results to
+    !! an output file
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

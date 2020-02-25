@@ -2,36 +2,14 @@
 
 module function_evaluator
 
-  !+ad_name  function_evaluator
-  !+ad_summ  Module containing function evaluators for HYBRD and VMCON
-  !+ad_summ  solvers
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  fcnhyb
-  !+ad_cont  fcnvmc1
-  !+ad_cont  fcnvmc2
-  !+ad_cont  funfom
-  !+ad_args  N/A
-  !+ad_desc  This module contains the function evaluators required
-  !+ad_desc  by the two equation solvers in the code.
-  !+ad_prob  None
-  !+ad_call  constraints
-  !+ad_call  cost_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  heat_transport_variables
+  !! Module containing function evaluators for HYBRD and VMCON
+  !! solvers
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains the function evaluators required
+  !! by the two equation solvers in the code.
 
-  !+ad_call  numerics
-  !+ad_call  physics_variables
-  !+ad_call  pf_power_variables
-  !+ad_call  process_output
-  !+ad_call  stellarator_variables
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_hist  10/10/12 PJK Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -62,29 +40,18 @@ contains
 
   subroutine fcnhyb(n,xc,rc,iflag)
 
-    !+ad_name  fcnhyb
-    !+ad_summ  Function evaluator for EQSOLV
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  n : input integer : Number of equations and unknowns
-    !+ad_args  xc(n) : input/output real array : On input XC must contain
-    !+ad_argc  an initial estimate of the solution vector. On output XC
-    !+ad_argc  contains the final estimate of the solution vector.
-    !+ad_args  rc(n) : output real array : Functions evaluated at the output XC
-    !+ad_args  iflag : input/output integer : Terminate execution of EQSOLV
-    !+ad_argc                                 by setting IFLAG to a negative integer.
-    !+ad_desc  This subroutine is the function evaluator for
-    !+ad_desc  <A HREF="eqsolv.html">EQSOLV</A> (q.v.).
-    !+ad_prob  None
-    !+ad_call  caller
-    !+ad_call  constraint_eqns
-    !+ad_hist  27/07/11 PJK Initial F90 version
-    !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
-    !+ad_hist  17/12/13 PJK Added new argument to constraints call
-    !+ad_hist  28/07/14 PJK Modified constraints call
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Function evaluator for EQSOLV
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! n : input integer : Number of equations and unknowns
+    !! xc(n) : input/output real array : On input XC must contain
+    !! an initial estimate of the solution vector. On output XC
+    !! contains the final estimate of the solution vector.
+    !! rc(n) : output real array : Functions evaluated at the output XC
+    !! iflag : input/output integer : Terminate execution of EQSOLV
+    !! by setting IFLAG to a negative integer.
+    !! This subroutine is the function evaluator for
+    !! <A HREF="eqsolv.html">EQSOLV</A> (q.v.).
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -118,39 +85,21 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine fcnvmc1(n,m,xv,objf,conf,ifail)
-    !+ad_name  fcnvmc1
-    !+ad_summ  Function evaluator for VMCON
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  n       : input integer     : number of variables
-    !+ad_args  m       : input integer     : number of constraints
-    !+ad_args  xv(n)   : input real array  : scaled variable values
-    !+ad_args  objf    : output real       : objective function
-    !+ad_args  conf(m) : output real array : constraint functions
-    !+ad_args  ifail   : input/output integer  : error flag, if < 0 stops calculation
-    !+ad_desc  This routine is the function evaluator for the VMCON
-    !+ad_desc  maximisation/minimisation routine.
-    !+ad_desc  <P>It calculates the objective and constraint functions at the
-    !+ad_desc  n-dimensional point of interest <CODE>xv</CODE>.
-    !+ad_desc  Note that the equality constraints must precede the inequality
-    !+ad_desc  constraints in <CODE>conf</CODE>.
-    !+ad_prob  None
-    !+ad_call  caller
-    !+ad_call  constraint_eqns
-    !+ad_call  funfom
-    !+ad_hist  02/10/96 PJK Initial upgraded version
-    !+ad_hist  08/10/12 PJK Initial F90 version
-    !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
-    !+ad_hist  17/01/13 PJK Corrected ifail to be input/output
-    !+ad_hist  17/12/13 PJK Added new argument to constraints call
-    !+ad_hist  06/02/14 PJK Added second call to caller to aid initialisation
-    !+ad_hist  19/05/14 PJK Added tburn consistency check
-    !+ad_hist  28/07/14 PJK Modified constraints call
-    !+ad_hist  10/09/14 PJK Added vfile output
-    !+ad_hist  01/04/15 JM  Reduced tburn consistency error output
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Function evaluator for VMCON
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! n       : input integer     : number of variables
+    !! m       : input integer     : number of constraints
+    !! xv(n)   : input real array  : scaled variable values
+    !! objf    : output real       : objective function
+    !! conf(m) : output real array : constraint functions
+    !! ifail   : input/output integer  : error flag, if < 0 stops calculation
+    !! This routine is the function evaluator for the VMCON
+    !! maximisation/minimisation routine.
+    !! <P>It calculates the objective and constraint functions at the
+    !! n-dimensional point of interest <CODE>xv</CODE>.
+    !! Note that the equality constraints must precede the inequality
+    !! constraints in <CODE>conf</CODE>.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -187,7 +136,7 @@ contains
 
     !  Convergence loop to ensure burn time consistency
 
-    if (istell /= 1) then
+    if (istell == 0) then
        loop = 0
        do while ( (loop < 10).and. &
             (abs((tburn-tburn0)/max(tburn,0.01D0)) > 0.001D0) )
@@ -233,39 +182,24 @@ contains
 
   subroutine fcnvmc2(n,m,xv,fgrd,cnorm,lcnorm,ifail)
 
-    !+ad_name  fcnvmc2
-    !+ad_summ  Gradient function evaluator for VMCON
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  n       : input integer     : number of variables
-    !+ad_args  m       : input integer     : number of constraints
-    !+ad_args  xv(n)   : input real array  : scaled variable values
-    !+ad_args  fgrd(n) : output real array : gradient of the objective function
-    !+ad_args  cnorm(lcnorm,m) : output real array : constraint gradients, i.e.
-    !+ad_argc           cnorm(i,j) is the derivative of constraint j w.r.t. variable i
-    !+ad_args  lcnorm  : input integer     : number of columns in cnorm
-    !+ad_args  ifail   : input/output integer  : error flag, if < 0 stops calculation
-    !+ad_desc  This routine is the gradient function evaluator for the VMCON
-    !+ad_desc  maximisation/minimisation routine.
-    !+ad_desc  <P>It calculates the gradients of the objective and constraint
-    !+ad_desc  functions at the n-dimensional point of interest <CODE>xv</CODE>.
-    !+ad_desc  Note that the equality constraints must precede the inequality
-    !+ad_desc  constraints in <CODE>conf</CODE>. The constraint gradients
-    !+ad_desc  or normals are returned as the columns of <CODE>cnorm</CODE>.
-    !+ad_prob  None
-    !+ad_call  caller
-    !+ad_call  constraint_eqns
-    !+ad_call  funfom
-    !+ad_hist  02/10/96 PJK Initial upgraded version
-    !+ad_hist  08/10/12 PJK Initial F90 version
-    !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
-    !+ad_hist  17/01/13 PJK Corrected ifail to be input/output
-    !+ad_hist  17/12/13 PJK Added new argument to constraints call
-    !+ad_hist  24/04/14 PJK Corrected problem with final evaluation
-    !+ad_hist  28/07/14 PJK Modified constraints call
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Gradient function evaluator for VMCON
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! n       : input integer     : number of variables
+    !! m       : input integer     : number of constraints
+    !! xv(n)   : input real array  : scaled variable values
+    !! fgrd(n) : output real array : gradient of the objective function
+    !! cnorm(lcnorm,m) : output real array : constraint gradients, i.e.
+    !! cnorm(i,j) is the derivative of constraint j w.r.t. variable i
+    !! lcnorm  : input integer     : number of columns in cnorm
+    !! ifail   : input/output integer  : error flag, if < 0 stops calculation
+    !! This routine is the gradient function evaluator for the VMCON
+    !! maximisation/minimisation routine.
+    !! <P>It calculates the gradients of the objective and constraint
+    !! functions at the n-dimensional point of interest <CODE>xv</CODE>.
+    !! Note that the equality constraints must precede the inequality
+    !! constraints in <CODE>conf</CODE>. The constraint gradients
+    !! or normals are returned as the columns of <CODE>cnorm</CODE>.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -337,34 +271,17 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine funfom(fc) bind(C, name="evaluators_funfom")
+  subroutine funfom(fc) bind(C, name="c_funfom")
 
-    !+ad_name  funfom
-    !+ad_summ  Objective function evaluator for VMCON
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  fc : output real : value of objective function at the output point
-    !+ad_desc  This routine evaluates the value of the objective function
-    !+ad_desc  i.e. the (normalised) figure-of-merit, at the nvar-dimensional
-    !+ad_desc  point of interest.
-    !+ad_desc  <P>Each equation for <CODE>fc<CODE> gives a value of the
-    !+ad_desc  order of unity for the sake of the numerics.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  02/10/96 PJK Initial upgraded version
-    !+ad_hist  08/10/12 PJK Initial F90 version
-    !+ad_hist  17/12/12 PJK Added new figure of merit 14
-    !+ad_hist  25/06/13 PJK Added kind() to sgn assignment
-    !+ad_hist  12/02/14 PJK Added new figure of merit 15
-    !+ad_hist  13/02/14 PJK Added trap if iavail /= 1 with fig of merit 15
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  06/10/14 PJK Added orbit loss power
-    !+ad_hist  18/11/15  RK Major radius/burn time optimiser added
-    !+ad_hist  10/12/15  RK Net electrical output added as FoM
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Objective function evaluator for VMCON
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! fc : output real : value of objective function at the output point
+    !! This routine evaluates the value of the objective function
+    !! i.e. the (normalised) figure-of-merit, at the nvar-dimensional
+    !! point of interest.
+    !! <P>Each equation for <CODE>fc<CODE> gives a value of the
+    !! order of unity for the sake of the numerics.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

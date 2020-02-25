@@ -7,19 +7,20 @@ Compatible with PROCESS version 368 """
 
 from os.path import join as pjoin
 from sys import stderr
-try:
-    from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
-    NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT, DICT_INPUT_BOUNDS
-except ImportError:
-    print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!", file=stderr)
-    exit()
 from process_io_lib.in_dat import InDat
 from process_io_lib.mfile import MFile
 from numpy.random import uniform
 from time import sleep
+from create_dicts import get_dicts
 
-
+# Load dicts from dicts JSON file
+process_dicts = get_dicts()
+DICT_IXC_SIMPLE = process_dicts['DICT_IXC_SIMPLE']
+DICT_IXC_BOUNDS = process_dicts['DICT_IXC_BOUNDS']
+NON_F_VALUES = process_dicts['NON_F_VALUES']
+IFAIL_SUCCESS = process_dicts['IFAIL_SUCCESS']
+DICT_DEFAULT = process_dicts['DICT_DEFAULT']
+DICT_INPUT_BOUNDS = process_dicts['DICT_INPUT_BOUNDS']
 
 def get_neqns_itervars(wdir='.'):
 
@@ -114,12 +115,16 @@ def  get_variable_range(itervars, factor, wdir='.'):
             elif value > DICT_IXC_BOUNDS[varname]['ub']:
                 value = DICT_IXC_BOUNDS[varname]['ub']
 
-            lbs += [max(value/factor, DICT_IXC_BOUNDS[varname]['lb'])]
-            ubs += [min(value*factor, DICT_IXC_BOUNDS[varname]['ub'])]
+            if value > 0 :
+                lbs += [max(value/factor, DICT_IXC_BOUNDS[varname]['lb'])]
+                ubs += [min(value*factor, DICT_IXC_BOUNDS[varname]['ub'])]
+            else :
+                lbs += [min(value/factor, DICT_IXC_BOUNDS[varname]['lb'])]
+                ubs += [max(value*factor, DICT_IXC_BOUNDS[varname]['ub'])]
 
         if lbs[-1] > ubs[-1]:
-            print('Error: Iteration variable {} has BOUNDL={.f} >\
- BOUNDU={.f}\n Update process_dicts or input file!'.format(varname,
+            print('Error: Iteration variable {0} has BOUNDL={1} >\
+ BOUNDU={2}\n Update process_dicts or input file!'.format(varname,
                                                            lbs[-1], ubs[-1]),
                   file=stderr)
 

@@ -17,7 +17,10 @@ subroutine compute_equil( &
 !variable declaration!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   integer, intent(inout) :: nx, jiter,i_equiltype,j_qeq1
   integer :: j,isawt
-  real(kind(1.0D0)), intent(in) :: q_edge_in,f_ind_in,R,rmin,btor,betaz,lint,ipol0,e_charge,mu_vacuum
+! SJP Issue #859
+  real(kind(1.0D0)), intent(in) :: q_edge_in,f_ind_in,R,rmin,btor,betaz,lint,e_charge,mu_vacuum
+  real(kind(1.0D0)), dimension(nx), intent(in) :: ipol0
+
   real(kind(1.0d0)), intent(inout) :: pres_fac,qedge,ip,q_95,elon,tria,elong95,triang95
   real(kind(1.0D0)), intent(inout) :: roc, Vloop, fbs,fcd, toleq
   real(kind(1.0d0)), dimension(nx), intent(in) :: x, te, ne, ni, cc, G30,qinit,G20,vp0
@@ -46,8 +49,11 @@ subroutine compute_equil( &
 
 !some initialization
   diagz=1
-	pres_fac=betaz*f_ind_in*ipol0*lint*vp0(1)
-	pres_fac=1.d0
+! SJP Issue #859
+! Correct the formula as ipol0 is now an array
+! Don't use the equation as pres_fac is overwritten in the next line
+! pres_fac=betaz*f_ind_in*ipol0(1)*lint*vp0(1)
+pres_fac=1.d0
   na = nx-1
   gp2 = 2.*pi
   gpp4 = gp2*gp2

@@ -1,7 +1,5 @@
 module superconductors
-  !+ad_name  superconductors
-  !+ad_summ  Module containing superconducter critical surfaces and conductor data
-  !+ad_type  Module
+  !! Module containing superconducter critical surfaces and conductor data
   use process_output
   use error_handling
   use rebco_variables
@@ -13,12 +11,10 @@ contains
 
 subroutine jcrit_rebco(temperature, b, jcrit, validity, iprint)
 
-    !+ad_name  jcrit_rebco
-    !+ad_summ  Critical current density for "REBCO" 2nd generation HTS superconductor
-    !+ad_type  Subroutine
-    !+ad_args  temperature : input real : superconductor temperature (K)
-    !+ad_args  b : input real : Magnetic field at superconductor (T)
-    !+ad_args  jcrit : output real : Critical current density in superconductor (A/m2)
+    !! Critical current density for "REBCO" 2nd generation HTS superconductor
+    !! temperature : input real : superconductor temperature (K)
+    !! b : input real : Magnetic field at superconductor (T)
+    !! jcrit : output real : Critical current density in superconductor (A/m2)
     ! Will return a negative number if the temperature is greater than Tc0, the
     ! zero-field critical temperature.
     implicit none
@@ -80,13 +76,11 @@ end subroutine jcrit_rebco
 
 subroutine current_sharing_rebco(current_sharing_t, bfield, j)
 
-    !+ad_name  jcrit_rebco
-    !+ad_summ  Current sharing temperature for "REBCO" 2nd generation HTS superconductor
-    !+ad_type  Subroutine
-    !+ad_args  temperature : input real : superconductor temperature (K)
-    !+ad_args  b : input real : Magnetic field at superconductor (T)
-    !+ad_args  j : input real : Current density in superconductor (A/m2)
-    !+ad_args  current_sharing_t : output real : Current sharing temperature (K)
+    !! Current sharing temperature for "REBCO" 2nd generation HTS superconductor
+    !! temperature : input real : superconductor temperature (K)
+    !! b : input real : Magnetic field at superconductor (T)
+    !! j : input real : Current density in superconductor (A/m2)
+    !! current_sharing_t : output real : Current sharing temperature (K)
     ! Uses 'function jcrit_rebco' and the finds the temperature for given field and current density
     ! Will return a negative number if the current density is too high
 
@@ -221,38 +215,32 @@ subroutine test_quench()
     write(*,*) 'Data written to quench_data.DAT'
 
 end subroutine test_quench
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 
-  !+ad_name  itersc
-  !+ad_summ  Implementation of ITER Nb3Sn critical surface implementation
-  !+ad_type  Subroutine
-  !+ad_auth  R Kemp, CCFE, Culham Science Centre
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  thelium : input real : Coolant/SC temperature (K)
-  !+ad_args  bmax : input real : Magnetic field at conductor (T)
-  !+ad_args  strain : input real : Strain in superconductor
-  !+ad_args  bc20max : input real : Upper critical field (T) for superconductor
-  !+ad_argc                      at zero temperature and strain
-  !+ad_args  tc0max : input real : Critical temperature (K) at zero field and strain
-  !+ad_args  jcrit : output real : Critical current density in superconductor (A/m2)
-  !+ad_args  bcrit : output real : Critical field (T)
-  !+ad_args  tcrit : output real : Critical temperature (K)
-  !+ad_desc  This routine calculates the critical current density and
-  !+ad_desc  temperature in the superconducting TF coils using the
-  !+ad_desc  ITER Nb3Sn critical surface model.
-  !+ad_prob  None
-  !+ad_hist  18/11/15 RK  Updated to latest WPMAG coefficients (personal communication from Louis Zani describing TFEU4)
-  !+ad_stat  Okay
-  !+ad_docs  $J_C(B,T,\epsilon)$ Parameterization for ITER Nb3Sn production,
-  !+ad_docc    L. Bottura, CERN-ITER Collaboration Report, Version 2, April 2nd 2008
-  !+ad_docc    (distributed by Arnaud Devred, ITER, 10th April 2008)
-  !+ad_docs  ITER Nb3Sn critical surface parameterization (2MMF7J) (2008),
-  !+ad_docc    https://user.iter.org/?uid=2MMF7J&action=get_document
-  !+ad_docs  ITER DDD 11-7: Magnets - conductors (2NBKXY) (2009),
-  !+ad_docc    https://user.iter.org/?uid=2NBKXY&action=get_document
+  !! Implementation of ITER Nb3Sn critical surface implementation
+  !! author: R Kemp, CCFE, Culham Science Centre
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! thelium : input real : Coolant/SC temperature (K)
+  !! bmax : input real : Magnetic field at conductor (T)
+  !! strain : input real : Strain in superconductor
+  !! bc20max : input real : Upper critical field (T) for superconductor
+  !! at zero temperature and strain
+  !! tc0max : input real : Critical temperature (K) at zero field and strain
+  !! jcrit : output real : Critical current density in superconductor (A/m2)
+  !! bcrit : output real : Critical field (T)
+  !! tcrit : output real : Critical temperature (K)
+  !! This routine calculates the critical current density and
+  !! temperature in the superconducting TF coils using the
+  !! ITER Nb3Sn critical surface model.
+  !! $J_C(B,T,\epsilon)$ Parameterization for ITER Nb3Sn production,
+  !! L. Bottura, CERN-ITER Collaboration Report, Version 2, April 2nd 2008
+  !! (distributed by Arnaud Devred, ITER, 10th April 2008)
+  !! ITER Nb3Sn critical surface parameterization (2MMF7J) (2008),
+  !! https://user.iter.org/?uid=2MMF7J&action=get_document
+  !! ITER DDD 11-7: Magnets - conductors (2NBKXY) (2009),
+  !! https://user.iter.org/?uid=2NBKXY&action=get_document
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -351,40 +339,30 @@ end subroutine itersc
 
 subroutine bi2212(bmax,jstrand,tsc,fhts,jcrit,tmarg)
 
-    !+ad_name  bi2212
-    !+ad_summ  Fitted parameterization to Bi-2212 superconductor properties
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  bmax    : input real : Magnetic field at conductor (T)
-    !+ad_args  jstrand : input real : Current density in strand (A/m2)
-    !+ad_args  tsc     : input real : Superconductor temperature (K)
-    !+ad_args  fhts    : input real : Adjustment factor (<= 1) to account for strain,
-    !+ad_argc                         radiation damage, fatigue or AC losses
-    !+ad_args  jcrit : output real : Critical current density in strand (A/m2)
-    !+ad_args  tmarg : output real : Temperature margin (K)
-    !+ad_desc  This routine calculates the critical current density and
-    !+ad_desc  the temperature margin for Bi-2212 superconductor in the TF coils
-    !+ad_desc  using a fit by M. Kovari to measurements described in the reference,
-    !+ad_desc  specifically from the points shown in Figure 6.
-    !+ad_desc  <P>Bi-2212 (Bi<SUB>2</SUB>Sr<SUB>2</SUB>CaCu<SUB>2</SUB>O<SUB>8-x</SUB>)
-    !+ad_desc  is a first-generation high temperature superconductor; it still needs
-    !+ad_desc  to be operated below about 10K, but remains superconducting at much
-    !+ad_desc  higher fields at that temperature than Nb3Sn etc.
-    !+ad_desc  The model's range of validity is T &lt; 20K, adjusted field
-    !+ad_desc  b &lt; 104 T, B &gt; 6 T.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  08/10/13 PJK Initial version
-    !+ad_hist  05/03/14 PJK Added comment about range of validity
-    !+ad_hist  06/03/14 PJK Added warning if range of validity is violated
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  A transformative superconducting magnet technology for fields well
-    !+ad_docc  above 30 T using isotropic round wire multifilament
-    !+ad_docc  Bi2Sr2CaCu2O8-x conductor, D. C. Larbalestier et al., preprint,
-    !+ad_docc  9th April 2013
+    !! Fitted parameterization to Bi-2212 superconductor properties
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: M Kovari, CCFE, Culham Science Centre
+    !! bmax    : input real : Magnetic field at conductor (T)
+    !! jstrand : input real : Current density in strand (A/m2)
+    !! tsc     : input real : Superconductor temperature (K)
+    !! fhts    : input real : Adjustment factor (<= 1) to account for strain,
+    !! radiation damage, fatigue or AC losses
+    !! jcrit : output real : Critical current density in strand (A/m2)
+    !! tmarg : output real : Temperature margin (K)
+    !! This routine calculates the critical current density and
+    !! the temperature margin for Bi-2212 superconductor in the TF coils
+    !! using a fit by M. Kovari to measurements described in the reference,
+    !! specifically from the points shown in Figure 6.
+    !! <P>Bi-2212 (Bi<SUB>2</SUB>Sr<SUB>2</SUB>CaCu<SUB>2</SUB>O<SUB>8-x</SUB>)
+    !! is a first-generation high temperature superconductor; it still needs
+    !! to be operated below about 10K, but remains superconducting at much
+    !! higher fields at that temperature than Nb3Sn etc.
+    !! The model's range of validity is T &lt; 20K, adjusted field
+    !! b &lt; 104 T, B &gt; 6 T.
+    !! A transformative superconducting magnet technology for fields well
+    !! above 30 T using isotropic round wire multifilament
+    !! Bi2Sr2CaCu2O8-x conductor, D. C. Larbalestier et al., preprint,
+    !! 9th April 2013
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -434,29 +412,20 @@ end subroutine bi2212
 !------------------------------------------------------------------
 subroutine jcrit_nbti(temperature,bmax,c0,bc20max,tc0max,jcrit,tcrit)
 
-    !+ad_name  jcrit_nbti
-    !+ad_summ  Critical current density in a NbTi superconductor strand
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  temperature : input real : SC temperature (K)
-    !+ad_args  bmax : input real : Magnetic field at conductor (T)
-    !+ad_args  c0   : input real : Scaling constant (A/m2)
-    !+ad_args  bc20max : input real : Upper critical field (T) for superconductor
-    !+ad_argc                      at zero temperature and strain
-    !+ad_args  tc0max : input real : Critical temperature (K) at zero field and strain
-    !+ad_args  jcrit : output real : Critical current density in superconductor (A/m2)
-    !+ad_args  tcrit : output real : Critical temperature (K)
-    !+ad_desc  This routine calculates the critical current density and
-    !+ad_desc  temperature in superconducting TF coils using NbTi
-    !+ad_desc  as the superconductor.
-    !+ad_prob  Results will only be valid if bmax < bc20max, and
-    !+ad_prob  thelium is sufficiently low.
-    !+ad_call  None
-    !+ad_hist  09/10/14 PJK Initial version, taken from inline code in supercon
-    !+ad_hist  20/07/18 MDK Use inputs even if they are out of range.  Output is real but can be negative.
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Critical current density in a NbTi superconductor strand
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! temperature : input real : SC temperature (K)
+    !! bmax : input real : Magnetic field at conductor (T)
+    !! c0   : input real : Scaling constant (A/m2)
+    !! bc20max : input real : Upper critical field (T) for superconductor
+    !! at zero temperature and strain
+    !! tc0max : input real : Critical temperature (K) at zero field and strain
+    !! jcrit : output real : Critical current density in superconductor (A/m2)
+    !! tcrit : output real : Critical temperature (K)
+    !! This routine calculates the critical current density and
+    !! temperature in superconducting TF coils using NbTi
+    !! as the superconductor.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -496,29 +465,21 @@ end subroutine jcrit_nbti
 
 subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 
-    !+ad_name  wstsc
-    !+ad_summ  Implementation of WST Nb3Sn critical surface implementation
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  temperature : input real : SC temperature (K)
-    !+ad_args  bmax : input real : Magnetic field at conductor (T)
-    !+ad_args  strain : input real : Strain in superconductor
-    !+ad_args  bc20max : input real : Upper critical field (T) for superconductor
-    !+ad_argc                      at zero temperature and strain
-    !+ad_args  tc0max : input real : Critical temperature (K) at zero field and strain
-    !+ad_args  jcrit : output real : Critical current density in superconductor (A/m2)
-    !+ad_args  bcrit : output real : Critical field (T)
-    !+ad_args  tcrit : output real : Critical temperature (K)
-    !+ad_desc  This routine calculates the critical current density and
-    !+ad_desc  temperature in the superconducting TF coils using the
-    !+ad_desc  WST Nb3Sn critical surface model.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  22/02/17 JM  Initial version
-    !+ad_hist  23/07/18 MDK Output is always real, but can be negative, and always uses the input values given.
-    !+ad_stat  Okay
-    !+ad_docs  https://idm.euro-fusion.org/?uid=2MMDTG
+    !! Implementation of WST Nb3Sn critical surface implementation
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! temperature : input real : SC temperature (K)
+    !! bmax : input real : Magnetic field at conductor (T)
+    !! strain : input real : Strain in superconductor
+    !! bc20max : input real : Upper critical field (T) for superconductor
+    !! at zero temperature and strain
+    !! tc0max : input real : Critical temperature (K) at zero field and strain
+    !! jcrit : output real : Critical current density in superconductor (A/m2)
+    !! bcrit : output real : Critical field (T)
+    !! tcrit : output real : Critical temperature (K)
+    !! This routine calculates the critical current density and
+    !! temperature in the superconducting TF coils using the
+    !! WST Nb3Sn critical surface model.
+    !! https://idm.euro-fusion.org/?uid=2MMDTG
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -655,33 +616,35 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 end subroutine wstsc
 !--------------------------------------------------------------------------
 
-subroutine croco(jcritsc,croco_strand,conductor,croco_od)
+subroutine croco(jcritsc,croco_strand,conductor,croco_od,croco_thick)
 
-    !+ad_name  croco
-    !+ad_summ  "CroCo" (cross-conductor) strand and cable design for
-    !+ad_summ  "REBCO" 2nd generation HTS superconductor
-    !+ad_type  Subroutine
+    !! "CroCo" (cross-conductor) strand and cable design for
+    !! "REBCO" 2nd generation HTS superconductor
     ! Updated 13/11/18 using data from Lewandowska et al 2018.
     implicit none
     real(kind(1.0D0)), intent(in) ::jcritsc
     type(volume_fractions), intent(inout)::conductor
     type(supercon_strand), intent(inout)::croco_strand
-    real(kind(1.0D0)) :: d, scaling, croco_od !, conductor_width, thwcndut
+    real(kind(1.0D0)) :: d, scaling, croco_od, croco_thick
     ! Define local alias
     d = croco_od
     !d = conductor_width / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
-    
+     
+    croco_id = d - 2.0d0 * croco_thick !scaling * 5.4d-3 
+    if (croco_id <= 0.0d0) then
+        write(*,*) 'Warning: negitive inner croco diameter!'
+        write(*,*)'croco_id =', croco_id, ',croco_thick = ', croco_thick, ', croco_od =', croco_od 
+    end if
     ! Define the scaling factor for the input REBCO variable
-    ! Ratio of new croco outer diameter and fixed base line value 
-    scaling = croco_od / 10.4d-3
+    ! Ratio of new croco inner diameter and fixed base line value
+    scaling = croco_id / 5.4d-3
     tape_width = scaling * 3.75d-3
-    croco_id = scaling * 5.4d-3
     ! Properties of a single strand
     tape_thickness = rebco_thickness + copper_thick + hastelloy_thickness
     stack_thickness = sqrt(croco_id**2 - tape_width**2)
     tapes = stack_thickness / tape_thickness
 
-    copper_area = pi / 4.0d0 * (d**2 - croco_id**2) &   ! copper tube
+    copper_area = pi * croco_thick * d - pi * croco_thick**2 &  ! copper tube
                   + copper_thick*tape_width*tapes          ! copper in tape
     hastelloy_area = hastelloy_thickness * tape_width * tapes
     solder_area = pi / 4.0d0 * croco_id**2 - stack_thickness * tape_width
@@ -959,7 +922,9 @@ real function dSn40Pb(T)
     dSn40Pb = 8400.0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function dSn40Pb
 !#####################################################################
 real function cSn40Pb(T)
     !#####################################################################
@@ -1037,7 +1002,9 @@ real function cSn40Pb(T)
     CC*TT**3/(1+TT/c)**nc + DD*TT**4/(1+TT/d)**nd
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function cSn40Pb
 !#####################################################################
 real function kSn40Pb(T)
     !#####################################################################
@@ -1106,7 +1073,9 @@ real function kSn40Pb(T)
     endif
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function kSn40Pb
 !#####################################################################
 real function rSn40Pb(T)
     !#####################################################################
@@ -1161,7 +1130,9 @@ real function rSn40Pb(T)
 
     !
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function rSn40Pb
 
 !#####################################################################
 !
@@ -1205,7 +1176,9 @@ real function dHastelloyC276(T)
     dHastelloyC276 = 8890.0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function dHastelloyC276
 !#####################################################################
 real(kind(1.0D0)) function cHastelloyC276(T)
     !#####################################################################
@@ -1254,7 +1227,9 @@ real(kind(1.0D0)) function cHastelloyC276(T)
     CC*TT**nc/(c+TT)**nc + DD*TT**nd/(d+TT)**nd
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function cHastelloyC276
 !#####################################################################
 real function kHastelloyC276(T)
     !#####################################################################
@@ -1297,7 +1272,9 @@ real function kHastelloyC276(T)
     kHastelloyC276 = p1*TT*(1+(TT/p2)**p4) / (1+(TT/p3)**p4)
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function kHastelloyC276
 !#####################################################################
 real function rHastelloyC276(T)
     !#####################################################################
@@ -1338,7 +1315,9 @@ real function rHastelloyC276(T)
     TT=max(TT,Tmin)
     rHastelloyC276 = A + B*TT + C*TT*TT
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function rHastelloyC276
 !#####################################################################
 !
 !                   COPPER PROPERTIES PACKAGE
@@ -1383,7 +1362,9 @@ real function dCu(T)
     !
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function dCu
 !#####################################################################
 real function cCu(T)
     !#####################################################################
@@ -1450,7 +1431,9 @@ real function cCu(T)
 
     !
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function cCu
 !#####################################################################
 real function kCu(T,B,RRR)
     !#####################################################################
@@ -1533,7 +1516,9 @@ real function kCu(T,B,RRR)
 
     kCu     = 1.0/(wt*magr)
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function kCu
 !#####################################################################
 real function rCu(T,B,RRR)
     !#####################################################################
@@ -1604,7 +1589,9 @@ real function rCu(T,B,RRR)
     rCu     = magr * rho0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function rCu
 !#####################################################################
 !
 ! Auxiliary functions and calculations
@@ -1699,7 +1686,9 @@ real function magrCu(T,B,RRR)
     magrCu  = magr+1.0
 
     return
-end
+! SJP Issue #835
+! For Intel compliance add "end function"
+end function magrCu
 
 !-----------------------------------------------------------------
 

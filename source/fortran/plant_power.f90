@@ -2,47 +2,13 @@
 
 module power_module
 
-  !+ad_name  power_module
-  !+ad_summ  Module containing heat/power transport and power balance routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  tfpwr
-  !+ad_cont  pfpwr
-  !+ad_cont  acpow
-  !+ad_cont  power1
-  !+ad_cont  power2
-  !+ad_cont  cryo
-  !+ad_args  N/A
-  !+ad_desc  This module contains routines for calculating the
-  !+ad_desc  power supply requirements, heat transport system parameters
-  !+ad_desc  and the power balance for a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  buildings_variables
-  !+ad_call  constants
-  !+ad_call  cost_variables
-  !+ad_call  current_drive_variables
-  !+ad_call  error_handling
-  !+ad_call  fwbs_module
-  !+ad_call  fwbs_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  pf_power_variables
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  structure_variables
-  !+ad_call  times_variables
-  !+ad_call  tfcoil_variables
-  !+ad_hist  30/10/12 PJK Initial version of module
-  !+ad_hist  30/10/12 PJK Added times_variables
-  !+ad_hist  30/10/12 PJK Added buildings_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  31/10/12 PJK Added cost_variables
-  !+ad_hist  17/12/14 PJK Added error_handling
-  !+ad_hist  23/04/15 MDK Removed fhole
-  !+ad_hist  07/03/17 JM  Added power3 for time-dependent power
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing heat/power transport and power balance routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains routines for calculating the
+  !! power supply requirements, heat transport system parameters
+  !! and the power balance for a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -53,7 +19,6 @@ module power_module
   use cost_variables
   use current_drive_variables
   use error_handling
-  !use fwbs_module
   use fwbs_variables
   use heat_transport_variables
   use pf_power_variables
@@ -88,47 +53,28 @@ contains
 
   subroutine tfpwr(outfile,iprint)
 
-    !+ad_name  tfpwr
-    !+ad_summ  TF coil power supply requirements for resistive coils
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  tfpwcall
-    !+ad_cont  tfcpwr
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output (1=yes)
-    !+ad_desc  This routine calculates the power conversion requirements for
-    !+ad_desc  resistive TF coils, or calls <CODE>tfpwcall</CODE> if the TF
-    !+ad_desc  coils are superconducting.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_call  tfpwcall
-    !+ad_hist  01/08/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  05/08/15 MDK Tweaked the terminology in the output, added output labels
-    !+ad_hist  22/06/18 SIM Added tfacpd calculation for resistive coils
-    !+ad_hist  25/10/18 SIM Corrected ztot calculation (Issue #773)
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! TF coil power supply requirements for resistive coils
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output (1=yes)
+    !! This routine calculates the power conversion requirements for
+    !! resistive TF coils, or calls <CODE>tfpwcall</CODE> if the TF
+    !! coils are superconducting.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments
-
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-
-    real(kind(1.0D0)) :: abus,rhobus,ztot,tfbusmw,tfreacmw
+    real(kind(1.0D0)) :: abus, tfbusres, ztot, tfbusmw, tfreacmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (itfsup == 0) then  !  Non-superconducting TF coils
+    if (i_tf_sup /= 1) then  !  Non-superconducting TF coils
 
        !  TF coil bus length (m)
        !  Assume power supplies are 5m away
@@ -139,29 +85,33 @@ contains
        !  jbus   - bus current density (A/m2)
        abus = cpttf/jbus
 
-       !  Bus resistance (ohm)
-       rhobus = tflegres * tfbusl/abus
+       ! Bus resistance [ohm]
+       ! Bus resistivity (rhotfbus) default value : -1.0D0
+       ! If this value is chosen, the bus resistivity is the same as the leg one
+       if ( abs(rhotfbus + 1.0D0) < epsilon(rhotfbus) ) rhotfbus = rhotfleg  
+       tfbusres = rhotfbus * tfbusl/abus
 
        !  Bus mass (kg)
        tfbusmas = tfbusl * abus * dcopper
 
        !  Total maximum impedance MDK actually just fixed resistance
-       ztot = tfno*rhotfleg + (prescp/ritfc**2) + rhobus
+       ztot = n_tf*tflegres + (prescp/ritfc**2) + tfbusres
 
        !  No reactive portion of the voltage is included here - assume long ramp times
        !  MDK This is steady state voltage, not "peak" voltage
-       vtfkv = 1.0D-3 * ztot * cpttf/tfno
+       vtfkv = 1.0D-3 * ztot * cpttf/n_tf
 
        !  Resistive powers (MW):
-       tfcpmw  = 1.0D-6 * prescp  !  inboard legs
-       tflegmw = 1.0D-6 * (ritfc/tfno)**2 * rhotfleg * tfno  !  outboard legs
-       tfbusmw = 1.0D-6 * cpttf**2 * rhobus  !  TF coil bus
+       tfcpmw  = 1.0D-6 * prescp   !  inboard legs (called centrepost, CP for tart design)
+       tflegmw = 1.0D-6 * presleg  !  outboard legs
+       tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus => Dodgy !
 
        !  TF coil reactive power
        !  Set reactive power to 0, since ramp up can be long
        !  The TF coil can be ramped up as slowly as you like
        !  (although this will affect the time to recover from a magnet quench).
        !     tfreacmw = 1.0D-6 * 1.0D9 * estotf/(tohs + tramp)
+       !                                 estotf(=estotftgj/n_tf) has been removed (#199 #847)
        tfreacmw = 0.0D0
 
        !  Total power consumption (MW)
@@ -181,7 +131,7 @@ contains
     if (iprint == 0) return
     ! Clarify that these outputs are for resistive coils only
     call oheadr(outfile,'Resistive TF Coil Power Conversion')
-    call ovarre(outfile,'Bus resistance (ohm)','(rhobus)',rhobus, 'OP ')
+    call ovarre(outfile,'Bus resistance (ohm)','(tfbusres)',tfbusres, 'OP ')
     call ovarre(outfile,'Bus current density (A/m2)','(jbus)',jbus)
     call ovarre(outfile,'Bus length - all coils (m)','(tfbusl)',tfbusl)
     call ovarre(outfile,'Bus mass (kg)','(tfbusmas)',tfbusmas, 'OP ')
@@ -203,25 +153,15 @@ contains
 
     subroutine tfpwcall(outfile,iprint)
 
-      !+ad_name  tfpwcall
-      !+ad_summ  Calls the TF coil power conversion routine for
-      !+ad_summ  superconducting coils
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  P C Shipe, ORNL
-      !+ad_cont  N/A
-      !+ad_args  outfile : input integer : output file unit
-      !+ad_args  iprint : input integer : switch for writing to output (1=yes)
-      !+ad_desc  This routine calls routine <CODE>tfcpwr</CODE> to calculate
-      !+ad_desc  the power conversion requirements for superconducting TF coils.
-      !+ad_prob  None
-      !+ad_call  tfcpwr
-      !+ad_hist  01/08/11 PJK Initial F90 version
-      !+ad_hist  15/10/12 PJK Added physics_variables
-      !+ad_hist  18/10/12 PJK Added tfcoil_variables
-      !+ad_hist  30/10/12 PJK Added heat_transport_variables
-      !+ad_stat  Okay
-      !+ad_docs  None
+      !! Calls the TF coil power conversion routine for
+      !! superconducting coils
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: P C Shipe, ORNL
+      !! outfile : input integer : output file unit
+      !! iprint : input integer : switch for writing to output (1=yes)
+      !! This routine calls routine <CODE>tfcpwr</CODE> to calculate
+      !! the power conversion requirements for superconducting TF coils.
+      !! None
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -237,15 +177,15 @@ contains
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      !  Stored energy (MJ) MDK changed to estotftgj/tfno
+      !  Stored energy (MJ) MDK changed to estotftgj/n_tf
 
-      ettfmj = estotftgj / tfno * 1.0D3
+      ettfmj = estotftgj / n_tf * 1.0D3
 
       !  TF coil current (kA)
 
       itfka = 1.0D-3 * cpttf
 
-      call tfcpwr(outfile,iprint,tfno,ettfmj,itfka,rhotfleg, &
+      call tfcpwr(outfile,iprint,n_tf,ettfmj,itfka,tflegres, &
            vtfskv,rmajor,tfckw,tfbusl,drarea,tfcbv,tfacpd)
 
     end subroutine tfpwcall
@@ -255,63 +195,67 @@ contains
     subroutine tfcpwr(outfile,iprint,ntfc,ettfmj,itfka, &
          rptfc,vtfskv,rmajor,tfckw,tfbusl,drarea,tfcbv,tfacpd)
 
-      !+ad_name  tfcpwr
-      !+ad_summ  Calculates the TF coil power conversion system parameters
-      !+ad_summ  for superconducting coils
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_auth  P C Shipe, ORNL
-      !+ad_cont  N/A
-      !+ad_args  outfile : input integer : output file unit
-      !+ad_args  iprint : input integer : switch for writing to output (1=yes)
-      !+ad_args  ntfc : input real : number of TF coils
-      !+ad_args  ettfmj : input real : total stored energy of one TF coils, MJ
-      !+ad_args  itfka : input real : design current for the TF coils, kA
-      !+ad_args  rptfc : input real : resistance of a TF coil, ohms
-      !+ad_args  vtfskv : input real : allowable voltage across a TF coil
-      !+ad_argc                        during quench, kV
-      !+ad_args  rmajor : input real : plasma major radius, m
-      !+ad_args  tfckw : output real : available DC power for charging the
-      !+ad_argc                        TF coils, kW
-      !+ad_args  tfbusl : output real : total bus length of the TF coil
-      !+ad_argc                         system, m
-      !+ad_args  drarea : output real : approx. area needed for the energy dump
-      !+ad_argc                         resistors, m2
-      !+ad_args  tfcbv : output real : approx. vol needed for the TF coil power
-      !+ad_argc                        supplies and DC circuit breakers, m3
-      !+ad_args  tfacpd : output real : steady state TF coil AC power demand, MW
-      !+ad_desc  This routine calculates the TF power conversion system
-      !+ad_desc  parameters:  floor space, power supplies, bussing,
-      !+ad_desc  coil protection equipment, and the associated controls
-      !+ad_desc  and instrumentation. It was originally written by G. Gorker,
-      !+ad_desc  FEDC/ORNL, April 1987, modified by J. Galambos in 1991 to
-      !+ad_desc  run in TETRA, and included in PROCESS in 1992 by P. C. Shipe.
-      !+ad_prob  None
-      !+ad_call  oheadr
-      !+ad_call  ovarre
-      !+ad_hist  01/08/11 PJK Initial F90 version
-      !+ad_hist  09/10/12 PJK Modified to use new process_output module
-      !+ad_hist  16/10/12 PJK Added constants
-      !+ad_hist  08/04/13 PJK Comment changes; xpower units changed from MW to MVA
-      !+ad_hist  15/04/13 PJK Comment changes
-      !+ad_hist  08/05/14 PJK Tidied up comments
-      !+ad_hist  19/06/14 PJK Removed sect?? flags
-      !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
-      !+ad_stat  Okay
-      !+ad_docs  None
+      !! Calculates the TF coil power conversion system parameters
+      !! for superconducting coils
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! author: P C Shipe, ORNL
+      !! This routine calculates the TF power conversion system
+      !! parameters:  floor space, power supplies, bussing,
+      !! coil protection equipment, and the associated controls
+      !! and instrumentation. It was originally written by G. Gorker,
+      !! FEDC/ORNL, April 1987, modified by J. Galambos in 1991 to
+      !! run in TETRA, and included in PROCESS in 1992 by P. C. Shipe.
+      !! None
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       implicit none
 
-      !  Arguments
+      ! Inputs
+      ! ---
+      integer, intent(in) :: outfile
+      !! Output file unit
 
-      integer, intent(in) :: outfile, iprint
-      real(kind(1.0D0)), intent(in) :: ntfc,ettfmj,itfka,rptfc,vtfskv,rmajor
-      real(kind(1.0D0)), intent(out) :: tfckw,tfbusl,drarea,tfcbv,tfacpd
+      integer, intent(in) :: iprint
+      !! Switch for writing to output (1=yes)
+
+      real(kind(1.0D0)), intent(in) :: ntfc
+      !! Number of TF coils
+      
+      real(kind(1.0D0)), intent(in) :: ettfmj
+      !! Total stored energy of one TF coils [MJ]
+
+      real(kind(1.0D0)), intent(in) :: itfka
+      !! Design current for the TF coils, kA
+      
+      real(kind(1.0D0)), intent(in) :: rptfc
+      !! Resistance of a TF coil [ohm]
+
+      real(kind(1.0D0)), intent(in) :: vtfskv
+      !! Allowable voltage across a TF coil during quench [kV]
+
+      real(kind(1.0D0)), intent(in) :: rmajor
+      !! Plasma major radius [m]
+      ! ---
+
+      ! Outputs
+      ! ---
+      real(kind(1.0D0)), intent(out) :: tfckw
+      !! Available DC power for charging the TF coils [kW]
+      
+      real(kind(1.0D0)), intent(out) :: tfbusl
+      !! Total bus length of the TF coil system [m]
+
+      real(kind(1.0D0)), intent(out) :: drarea
+      !! Approx. area needed for the energy dump resistors, [m2]
+
+      real(kind(1.0D0)), intent(out) :: tfcbv
+      !! Approx. vol needed for the TF coil power supplies and DC circuit breakers [m3]
+
+      real(kind(1.0D0)), intent(out) :: tfacpd
+      !! Steady state TF coil AC power demand, [MW]
 
       !  Local variables
-
       real(kind(1.0D0)) :: albusa,albuswt,djmka,fspc1,fspc2,fspc3,ettfc, &
            ltfth,lptfcs,ncpbkr,ndumpr,nsptfc,ntfbkr,ntfpm,part1,part2, &
            part3,rcoils,rpower,rtfbus,rtfps,r1dump,r1emj,r1ppmw,tchghr, &
@@ -336,163 +280,123 @@ contains
       end if
 
       !  Total steady state TF coil AC power demand (summed later)
-
       tfacpd = 0.0D0
 
       !  Stored energy of all TF coils, MJ
-
       ettfc = ntfc*ettfmj
 
       !  Inductance of all TF coils, Henries
-
       ltfth = 2.0D0*ettfc/itfka**2
 
       !  Number of circuit breakers
-
       ntfbkr = ntfc/ncpbkr
 
       !  Inductance per TF coil, Henries
-
       lptfcs = ltfth/ntfc
 
       !  Aluminium bus section area, sq cm
-
       albusa = itfka/djmka
 
       !  Total TF system bus length, m
-
       tfbusl = 8.0D0*pi*rmajor + &
            (1.0D0+ntfbkr)*(12.0D0*rmajor+80.0D0) + &
            0.2D0*itfka*sqrt(ntfc*rptfc*1000.0D0)
 
       !  Aluminium bus weight, tonnes
-
       albuswt = 2.7D0*albusa*tfbusl/1.0D4
 
       !  Total resistance of TF bus, ohms
-
       rtfbus = 2.62D-4*tfbusl/albusa
 
       !  Total voltage drop across TF bus, volts
-
       vtfbus = 1000.0D0*itfka*rtfbus
 
       !  Total resistance of the TF coils, ohms
-
       rcoils = ntfc*rptfc
 
       !  Total impedance, ohms
-
       ztotal = rtfbus+rcoils+ltfth/(3600.0D0*tchghr)
 
       !  Charging voltage for the TF coils, volts
-
       tfcv = 1000.0D0*itfka*ztotal
 
       !  Number of TF power modules
-
       ntfpm = (itfka * (1.0D0 + nsptfc) )/5.0D0
 
       !  TF coil power module voltage, volts
-
       tfpmv = rtfps*tfcv/(1.0D0+nsptfc)
 
       !  TF coil power supply voltage, volts
-
       tfpsv = rtfps*tfcv
 
       !  Power supply current, kA
-
       tfpska = rtfps*itfka
 
       !  TF power module current, kA
-
       tfpmka = rtfps*itfka/(ntfpm/(1.0D0+nsptfc))
 
       !  TF power module power, kW
-
       tfpmkw = tfpmv*tfpmka
 
       !  Available DC power for charging the TF coils, kW
-
       tfckw = tfpmkw*ntfpm
 
       !  Peak AC power needed to charge coils, kW
-
       tfackw = tfckw/0.9D0
 
       !  Resistance of dump resistor, ohms
-
       r1dump = nsptfc*vtfskv*ncpbkr/itfka
 
       !  Time constant, s
-
       ttfsec = lptfcs*ncpbkr/(r1dump*nsptfc+rptfc*(1.0D0-nsptfc))
 
       !  Number of dump resistors
-
       ndumpr = ntfbkr*4.0D0
 
       !  Peak power to a dump resistor during quench, MW
-
       r1ppmw = nsptfc*r1dump*(itfka/2.0D0)**2
 
       !  Energy to dump resistor during quench, MJ
-
       r1emj = nsptfc*ettfc/(ndumpr+0.0001D0)
 
       !  Total TF coil peak resistive power demand, MVA
-
       rpower = (ntfc*rptfc+rtfbus)*itfka**2
 
       !  Total TF coil peak inductive power demand, MVA
-
       xpower = ltfth/(3600.0D0*tchghr)*itfka**2
 
       !  Building space:
-
       !  Power modules floor space, m2
-
       part1 = fspc1*ntfpm*tfpmkw**0.667D0
 
       !  Circuit breakers floor space, m2
-
       part2 = fspc2*ntfbkr*(vtfskv*itfka)**0.667D0
 
       !  Load centres floor space, m2
-
       part3 = fspc3*(tfackw/(2.4D0*nsptfc+13.8D0*(1.0D0-nsptfc)))**0.667D0
 
       !  Power conversion building floor area, m2
-
       tfcfsp = part1 + part2 + part3
 
       !  Dump resistor floor area, m2
-
       drarea = 0.5D0*ndumpr*(1.0D0+r1emj)**0.667D0
 
       !  Total TF coil power conversion building volume, m3
-
       tfcbv = 6.0D0*tfcfsp
 
       !  TF coil AC inductive power demand, MW
-
       xpwrmw = xpower/0.9D0
 
       !  Total steady state AC power demand, MW
-
       tfacpd = tfacpd + rpower/etatf
-
       !  Total TF coil power conversion building floor area, m2
 
       tftsp = tfcfsp
-
       !  Total TF coil power conversion building volume, m3
 
       tftbv = tfcbv
 
       !  Output section
-
       if (iprint == 0) return
 
       call oheadr(outfile,'Superconducting TF Coil Power Conversion')
@@ -502,7 +406,7 @@ contains
       call ovarre(outfile,'TF coil charge time (hours)','(tchghr)',tchghr)
       call ovarre(outfile,'Total inductance of TF coils (H)','(ltfth)', ltfth, 'OP ')
       call ovarre(outfile,'Total resistance of TF coils (ohm)','(rcoils)', rcoils, 'OP ')
-      ! MDK Remove this as it leads to confusion between (a) total inductance/tfno, or (b)
+      ! MDK Remove this as it leads to confusion between (a) total inductance/n_tf, or (b)
       !     self-inductance of one single coil
       !call ovarre(outfile,'Inductance per TF coil (H)','(lptfcs)',lptfcs, 'OP ')
       call ovarre(outfile,'TF coil charging voltage (V)','(tfcv)',tfcv)
@@ -542,37 +446,17 @@ contains
 
   subroutine pfpwr(outfile,iprint)
 
-    !+ad_name  pfpwr
-    !+ad_summ  PF coil power supply requirements
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output (1=yes)
-    !+ad_desc  This routine calculates the MVA, power and energy requirements
-    !+ad_desc  for the PF coil systems.  Units are MW and MVA for power terms.
-    !+ad_desc  The routine checks at the beginning of the flattop for the
-    !+ad_desc  peak MVA, and at the end of flattop for the peak stored energy.
-    !+ad_desc  The reactive (inductive) components use waves to calculate the
-    !+ad_desc  <I>dI/dt</I> at the time periods.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  01/08/11 PJK Initial F90 version
-    !+ad_hist  20/09/11 PJK Removed dble calls
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  18/10/12 PJK Added pfcoil_variables
-    !+ad_hist  29/10/12 PJK Added pf_power_variables
-    !+ad_hist  30/10/12 PJK Added heat_transport_variables
-    !+ad_hist  04/02/13 PJK Comment change
-    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  05/08/15 MDK Added output labels.  Tweaked descriptions in output.
-    !+ad_hisc  03/02/17 JM  Added check for interval length on rate of change of stored energy
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! PF coil power supply requirements
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output (1=yes)
+    !! This routine calculates the MVA, power and energy requirements
+    !! for the PF coil systems.  Units are MW and MVA for power terms.
+    !! The routine checks at the beginning of the flattop for the
+    !! peak MVA, and at the end of flattop for the peak stored energy.
+    !! The reactive (inductive) components use waves to calculate the
+    !! <I>dI/dt</I> at the time periods.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -591,6 +475,8 @@ contains
         !  engxpc
     real(kind(1.0D0)), save :: pfbuspwr
     real(kind(1.0D0)), dimension(6) :: inductxcurrent,poloidalenergy
+    real(kind(1.0D0)), dimension(5) :: pfdissipation
+    real(kind(1.0D0)):: wall_plug_ohmicmw, pfpower, pfpowermw
     integer :: i,ic,ngrpt,ig,ipf,jjpf,jjpf2,jpf,time
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -660,8 +546,8 @@ contains
 
     jpf = 0
     poloidalenergy(:) = 0.0d0
-    do jjpf = 1,ngrpt
-       do jjpf2 = 1,ncls(jjpf)
+    do jjpf = 1,ngrpt           ! Loop over all groups of PF coils.
+       do jjpf2 = 1,ncls(jjpf)  ! Loop over all coils in each group 
           jpf = jpf + 1
           engx = 0.0D0
           inductxcurrent(:) = 0.0d0
@@ -685,21 +571,22 @@ contains
           end do
 
           !  Stored magnetic energy of the poloidal field at each time
+          ! 'time' is the time INDEX.  'tim' is the time.
           do time = 1,6
             poloidalenergy(time) = poloidalenergy(time) + 0.5D0 * inductxcurrent(time) * cpt(jpf,time)
           end do
-          do time = 1,5
-            ! Mean rate of change of stored energy between time and time+1
-            if(abs(tim(time+1)-tim(time)).gt.1.0d0) then
-                poloidalpower(time) = (poloidalenergy(time+1)-poloidalenergy(time)) / (tim(time+1)-tim(time))
-            else
-                ! Flag when an interval is small or zero MDK 30/11/16
-                poloidalpower(time) = 9.9d9
-            end if
+        !   do time = 1,5
+        !     ! Mean rate of change of stored energy between time and time+1
+        !     if(abs(tim(time+1)-tim(time)).gt.1.0d0) then
+        !         poloidalpower(time) = (poloidalenergy(time+1)-poloidalenergy(time)) / (tim(time+1)-tim(time))
+        !     else
+        !         ! Flag when an interval is small or zero MDK 30/11/16
+        !         poloidalpower(time) = 9.9d9
+        !     end if
 
-          end do
-          !engxpc = 0.5D0 * engx * cpt(jpf,5)
-          !ensxpf = ensxpf + engxpc
+        !   end do
+        !   !engxpc = 0.5D0 * engx * cpt(jpf,5)
+        !   !ensxpf = ensxpf + engxpc
 
           !  Resistive power in circuits at times tim(3) and tim(5) respectively (MW)
           powpfr = powpfr + turns(jpf) * cpt(jpf,3) * cktr(jjpf)/1.0D6
@@ -708,6 +595,34 @@ contains
 
        end do
     end do
+
+    do time = 1,5
+        ! Stored magnetic energy of the poloidal field at each time
+        ! 'time' is the time INDEX.  'tim' is the time.
+        ! Mean rate of change of stored energy between time and time+1
+        if(abs(tim(time+1)-tim(time)).gt.1.0d0) then
+            poloidalpower(time) = (poloidalenergy(time+1)-poloidalenergy(time)) / (tim(time+1)-tim(time))
+        else
+            ! Flag when an interval is small or zero MDK 30/11/16
+            poloidalpower(time) = 9.9d9
+        end if
+        ! Electrical energy dissipated in PFC power supplies as they increase or decrease the poloidal field energy
+        ! This assumes that the energy storage in the PFC power supply is lossless and that currents
+        ! in the coils can be varied without loss when there is no change in the energy in the poloidal field.
+        ! Energy is dissipated only when energy moves into or out of the store in the power supply.
+        ! Issue #713
+        pfdissipation(time) = abs( poloidalenergy(time+1)-poloidalenergy(time) ) * (1.d0/etapsu - 1.d0)
+    end do
+
+    ! Mean power dissipated
+    ! The flat top duration (time 4 to 5) is the denominator, as this is the time when electricity is generated.
+    if(tim(5)-tim(4).gt.1.0d0) then
+        pfpower = sum(pfdissipation(:)) / (tim(5) - tim(4))
+    else
+        ! Give up when an interval is small or zero.
+        pfpower = 0.d0
+    end if        
+    pfpowermw = pfpower / 1.d6
 
     !  Compute the maximum stored energy and the maximum dissipative
     !  energy in all the PF circuits over the entire cycle time, MJ
@@ -736,14 +651,19 @@ contains
        !  Average of the maximum currents in the PF circuits, kA
        acptmax = acptmax + 1.0D-3 * abs(cptdin(jpf))/pfckts
 
-    end do
+    end do    
 
-    !  PF Power requirements
-    !  Wall plug power (MW)
-    pfwp = pohmmw / etapsu
+    !  PF wall plug power dissipated in power supply for ohmic heating (MW)
+    !  This is additional to that required for moving stored energy around
+    !pfwpmw = pohmmw / etapsu
+    wall_plug_ohmicmw  = pohmmw * (1.d0 /etapsu - 1.d0) 
+    ! Total mean wall plug power dissipated in PFC and CS power supplies.  Issue #713
+    pfwpmw = wall_plug_ohmicmw + pfpowermw    
 
-    !  Secondary waste heat (MW)
-    pfsec = pfwp - pohmmw
+    ! Waste heat generated in PFC and CS power supplies (MW),
+    ! classed as "secondary waste heat"
+    ! pfsec = pfwpmw - pohmmw
+    ! pfsec = pfwpmw
 
     !  Output Section
     if (iprint == 0) return
@@ -755,6 +675,8 @@ contains
     call ovarre(outfile,'Total PF coil bus resistive power (kW)', '(pfbuspwr)',pfbuspwr, 'OP ')
     call ovarre(outfile,'Total PF coil resistive power (kW)', '(srcktpm)',srcktpm, 'OP ')
     call ovarre(outfile,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
+    call ovarre(outfile,'Efficiency of transfer of PF stored energy into or out of storage','(etapsu)',etapsu)
+    call ocmmnt(outfile,'(Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)')  
 
     call ovarre(outfile,'Maximum stored energy in poloidal field (MJ)', '(ensxpfm)',ensxpfm, 'OP ')
     call ovarre(outfile,'Peak absolute rate of change of stored energy in poloidal field (MW)',  &
@@ -794,39 +716,15 @@ contains
 
   subroutine acpow(outfile,iprint)
 
-    !+ad_name  acpow
-    !+ad_summ  AC power requirements
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  P C Shipe, ORNL
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output (1=yes)
-    !+ad_desc  The routine was drastically shortened on 23/01/90 (ORNL) from the
-    !+ad_desc  original TETRA routine to provide only the total power needs for
-    !+ad_desc  the plant. Included in STORAC in January 1992 by P.C. Shipe.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  --/--/92 PJK Initial PROCESS version
-    !+ad_hist  20/01/97 PJK Fixed error in pheatmw calculation, removed
-    !+ad_hisc               assignment of htpmw, and tidied up coding
-    !+ad_hist  22/01/97 PJK Subsumed heattr.h, heatrinp.h and pfelect.h into
-    !+ad_hisc               htpwr.h
-    !+ad_hist  27/07/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  29/10/12 PJK Added pf_power_variables
-    !+ad_hist  30/10/12 PJK Added heat_transport_variables
-    !+ad_hist  05/02/13 PJK Clarified MGF output
-    !+ad_hist  27/03/13 PJK MGF power only included if iscenr /= 2
-    !+ad_hist  17/04/13 PJK Removed 0.05*pacpmw contribution to fcsht
-    !+ad_hist  21/05/14 PJK Added ignite comment
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  05/08/15 MDK Added output labels.  Tweaked descriptions in output.
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! AC power requirements
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: P C Shipe, ORNL
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output (1=yes)
+    !! The routine was drastically shortened on 23/01/90 (ORNL) from the
+    !! original TETRA routine to provide only the total power needs for
+    !! the plant. Included in STORAC in January 1992 by P.C. Shipe.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -913,43 +811,23 @@ contains
 
   subroutine power1
 
-    !+ad_name  power1
-    !+ad_summ  Calculates the first part of the heat transport
-    !+ad_summ  and plant power balance constituents
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calculates the first part of the heat transport
-    !+ad_desc  and plant power balance constituents.
-    !+ad_prob  None
-    !+ad_call  cryo
-    !+ad_call  plant_thermal_efficiency
-    !+ad_hist  01/08/11 PJK Initial F90 version
-    !+ad_hist  17/04/13 PJK Changed priheat to pthermmw in rnphx calculation
-    !+ad_hist  17/04/13 PJK Added iprimnloss switch for pnucloss contribution
-    !+ad_hisc               to primary heating
-    !+ad_hist  21/05/14 PJK Added ignite clauses
-    !+ad_hist  22/05/14 PJK Name changes to power quantities; added pohmmw
-    !+ad_hisc               to pfwdiv
-    !+ad_hist  04/06/14 PJK New power flow model added
-    !+ad_hist  17/06/14 PJK Corrections to pfwdiv, priheat
-    !+ad_hist  19/06/14 PJK Simplified pinjwp calculation
-    !+ad_hist  21/08/14 PJK Revised new power flow model
-    !+ad_hist  28/08/14 PJK Corrections to etath fitted formulae
-    !+ad_hist  06/10/14 PJK Added orbit loss power to pfwdiv, pinjwp
-    !+ad_hist  22/10/14 PJK Corrected orbit loss power usage
-    !+ad_hist  04/11/14 PJK Corrected pnucblkt(*emult) usage
-    !+ad_hist  17/11/14 PJK Added palpfwmw to first wall thermal power
-    !+ad_hist  10/12/14 PJK Replaced real rnphx to integer nphx (with
-    !+ad_hisc               different scaling)
-    !+ad_hist  06/03/15 JM  Removed ipowerflow
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Calculates the first part of the heat transport
+    !! and plant power balance constituents
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine calculates the first part of the heat transport
+    !! and plant power balance constituents.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
+
+    ! Cryo-aluminium coolant average temperature
+    real(kind(1.0D0)) :: t_tf_cryoal_cool_av = 0.0D0
+
+    ! Cryo-aluminium cryoplant power consumption
+    real(kind(1.0D0)) :: p_tf_cryoal_cryo = 0.0D0
 
     !------------------------------------------------------------------------------------
     !- Collate pumping powers
@@ -1053,14 +931,34 @@ contains
     end if
 
     !  Cryogenic power
-    if ((itfsup /= 1).and.(ipfres == 1)) then  !  no superconducting coils
-       helpow = 0.0D0
-    else
-       call cryo(itfsup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, tfno, helpow)
+    ! ---
+    ! Initialisation (unchanged if all coil resisitive)
+    helpow = 0.0D0
+    crypmw = 0.0D0
+    
+    ! Superconductors TF/PF cryogenic cooling
+    if ( i_tf_sup == 1 .or. ipfres == 0 ) then
+        ! helpow calculation
+        call cryo(i_tf_sup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, n_tf, helpow)
+
+        ! Use 13% of ideal Carnot efficiency to fit J. Miller estimate
+        ! Rem SK : This ITER efficiency is very low compare to the Strowbridge curve
+        !          any reasons why? 
+        crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(0.13D0*tmpcry) * helpow   
     end if
 
-    !  Use 13% of ideal Carnot efficiency to fit J. Miller estimate
-    crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(0.13D0*tmpcry) * helpow
+    ! Cryogenic aluminium 
+    ! Rem : The carnot efficiency is assumed at 40% as this is a conservative assumption since a 50%
+    !       has been deduced from detailed studies
+    ! Rem : Nuclear heating on the outer legs assumed to be negligible
+    ! Rem : To be updated with 2 cooling loops for TART designs
+    if ( i_tf_sup == 2 ) then
+        t_tf_cryoal_cool_av = tcoolin + 0.5D0*dtiocool
+        p_tf_cryoal_cryo = (293.0D0 - t_tf_cryoal_cool_av)/(0.4D0*t_tf_cryoal_cool_av) * &
+                           ( prescp + presleg + pnuccp * 1.0D6 )
+        crypmw = crypmw + 1.0D-6 * p_tf_cryoal_cryo
+    end if
+
 
   end subroutine power1
 
@@ -1068,51 +966,15 @@ contains
 
   subroutine power2(outfile,iprint)
 
-    !+ad_name  power2
-    !+ad_summ  Calculates the remainder of the heat transport
-    !+ad_summ  and plant power balance constituents
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output (1=yes)
-    !+ad_desc  This routine calculates the rest of the heat transport
-    !+ad_desc  and plant power balance constituents, not already calculated in
-    !+ad_desc  <A HREF="acpow.html">ACPOW</A> or <A HREF="power1.html">POWER1</A>.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_call  ovarrf
-    !+ad_hist  23/01/97 PJK Initial version
-    !+ad_hist  10/09/97 PJK Removed IF-statement that bypassed coding if iprint=1
-    !+ad_hist  15/06/04 PJK Added use of IPRIMHTP, added HTPMW to PRECIR
-    !+ad_hist  22/05/07 PJK Added hydrogen plant power requirements
-    !+ad_hist  01/08/11 PJK Initial F90 version
-    !+ad_hist  17/04/13 PJK Corrected precir, psecht, ctht
-    !+ad_hist  17/04/13 PJK Added iprimnloss switch for pnucloss contribution
-    !+ad_hisc               to secondary heating
-    !+ad_hist  11/06/13 PJK Added output section on recirculating power
-    !+ad_hist  04/06/14 PJK New power flow model added
-    !+ad_hist  16/06/14 PJK Modified various labels to prevent duplicate outputs
-    !+ad_hist  17/06/14 PJK Removed blktmodel from ipowerflow if-statement
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  27/08/14 PJK Modifications for new power flow model
-    !+ad_hist  10/09/14 PJK Added power balance outputs
-    !+ad_hist  22/10/14 PJK Minor mods to outputs
-    !+ad_hist  04/11/14 PJK Corrected pnucblkt emult factor
-    !+ad_hist  17/11/14 PJK Added palpfwmw to first wall power balance
-    !+ad_hist  18/11/14 PJK Corrected input power when ignite=1
-    !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
-    !+ad_hisc               deleted ctht, rnihx
-    !+ad_hist  17/12/14 PJK Added tturb to output
-    !+ad_hist  18/03/15 JM  Made changes in line with fwbs refactor
-    !+ad_hist  02/04/15 JM  Pnetelmw doesn't scale on last run through
-    !+ad_hist  05/08/15 MDK Add output labels
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Calculates the remainder of the heat transport
+    !! and plant power balance constituents
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output (1=yes)
+    !! This routine calculates the rest of the heat transport
+    !! and plant power balance constituents, not already calculated in
+    !! <A HREF="acpow.html">ACPOW</A> or <A HREF="power1.html">POWER1</A>.
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1129,7 +991,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Centrepost coolant pump power (ST)
-    if (itart == 1) then
+    if ( itart == 1 .and. i_tf_sup == 0 ) then
         ppumpmw = 1.0D-6 * ppump
     else
         ppumpmw = 0.0D0
@@ -1140,9 +1002,10 @@ contains
 
     !  Electrical power consumed by fusion power core systems
     !  (excluding heat transport pumps and auxiliary injection power system)
-    !  Added pfwp (waste heat from PF coil ohmic heating)
-    !pcoresystems = crypmw + fachtmw + helecmw + ppumpmw + tfacpd + trithtmw + vachtmw + pfwp
-    pcoresystems = crypmw + fachtmw + ppumpmw + tfacpd + trithtmw + vachtmw + pfwp
+    !  pfwpmw = Mean electrical energy dissipated in PFC power supplies as they 
+    !  increase or decrease the poloidal field energy AND extra due to ohmic heating
+    !  of the plasma.  Issue #713
+    pcoresystems = crypmw + fachtmw + ppumpmw + tfacpd + trithtmw + vachtmw + pfwpmw
 
     !  Total secondary heat
     !  (total low-grade heat rejected - does not contribute to power conversion cycle)
@@ -1202,9 +1065,24 @@ contains
     call osubhd(outfile,'Assumptions :')
 
     call ovarre(outfile,'Neutron power multiplication in blanket', '(emult)', emult)
-    call ovarre(outfile, 'Divertor area fraction of whole toroid surface', '(fdiv)', fdiv)
+    
+    if (idivrt == 2) then
+        ! Double null configuration
+        call ovarre(outfile, 'Double Null Divertor area fraction of whole toroid surface', '(2*fdiv)', 2.0D0*fdiv)
+    else
+        ! Single null configuration
+        call ovarre(outfile, 'Divertor area fraction of whole toroid surface', '(fdiv)', fdiv)
+    end if 
+
     call ovarre(outfile,'H/CD apparatus + diagnostics area fraction', '(fhcd)', fhcd)
-    call ovarre(outfile,'First wall area fraction ', '(1-fdiv-fhcd)', 1.0D0-fdiv-fhcd)
+    
+    if (idivrt == 2) then
+        ! Double null configuration
+        call ovarre(outfile,'First wall area fraction ', '(1-2*fdiv-fhcd)', 1.0D0-2.0D0*fdiv-fhcd)
+    else
+        ! Single null configuration
+        call ovarre(outfile,'First wall area fraction ', '(1-fdiv-fhcd)', 1.0D0-fdiv-fhcd)
+    end if
 
     call ovarin(outfile, 'Switch for pumping of primary coolant', '(primary_pumping)', primary_pumping)
     if (primary_pumping == 0) then
@@ -1218,6 +1096,10 @@ contains
         call ocmmnt(outfile, 'includes heat exchanger, using specified pressure drop')
     end if
 
+    call ovarre(outfile, 'Mechanical pumping power for FW cooling loop including heat exchanger (MW)', &
+                       '(htpmw_fw)', htpmw_fw, 'OP ')
+    call ovarre(outfile, 'Mechanical pumping power for blanket cooling loop including heat exchanger (MW)', &
+                       '(htpmw_blkt)', htpmw_blkt, 'OP ')
     call ovarre(outfile, 'Mechanical pumping power for FW and blanket cooling loop including heat exchanger (MW)', &
                        '(htpmw_fw_blkt)', htpmw_fw_blkt, 'OP ')
 
@@ -1440,22 +1322,31 @@ contains
     call ovarrf(outfile,'Alpha power deposited in plasma (MW)','(falpha*palpmw)',falpha*palpmw, 'OP ')
     call ovarrf(outfile,'Power from charged products of DD and/or D-He3 fusion (MW)','(pchargemw.)',pchargemw, 'OP ')
     call ovarrf(outfile,'Ohmic heating (MW)','(pohmmw.)',pohmmw, 'OP ')
-    call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
-    call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
-    call oblnkl(outfile)
-    if (abs(sum - (falpha*palpmw+pchargemw+pohmmw+pinjmw)) > 5.0D0) then
-       write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
-    call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
-    end if
+    !if (ignite == 1) then
+    !    call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw, 'OP ')
+    !    call oblnkl(outfile)
+    !    if (abs(sum - (falpha*palpmw+pchargemw+pohmmw)) > 5.0D0) then
+    !        write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
+    !    call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
+    !    end if
+    !else
+        call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinj, 'OP ')
+        call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinj, 'OP ')
+        call oblnkl(outfile)
+        if (abs(sum - (falpha*palpmw+pchargemw+pohmmw+pinj)) > 5.0D0) then
+            write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
+        call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
+        end if
+    !end if 
 
     call ocmmnt(outfile,'Power Balance for Reactor - Summary :')
     call ocmmnt(outfile,'-------------------------------------')
     call ovarrf(outfile,'Fusion power (MW)','(powfmw.)',powfmw, 'OP ')
     call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
-    call ovarrf(outfile,'Injected power (MW)','(pinjmw.)',pinjmw, 'OP ')
+    call ovarrf(outfile,'Injected power (MW)','(pinjmw.)',pinj, 'OP ')
     call ovarrf(outfile,'Ohmic power (MW)','(pohmmw.)',pohmmw, 'OP ')
     call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech, 'OP ')
-    sum = powfmw+emultmw+pinjmw+htpmw_mech+pohmmw
+    sum = powfmw+emultmw+pinj+htpmw_mech+pohmmw
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
     call oblnkl(outfile)
     !call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw, 'OP ')
@@ -1484,9 +1375,9 @@ contains
     call ovarrf(outfile,'Electric power for tritium plant (MW)','(trithtmw)',trithtmw)
     call ovarrf(outfile,'Electric power for cryoplant (MW)','(crypmw)',crypmw, 'OP ')
     call ovarrf(outfile,'Electric power for TF coils (MW)','(tfacpd)',tfacpd, 'OP ')
-    call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwp)', pfwp, 'OP ')
+    call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwpmw)', pfwpmw, 'OP ')
     call ovarrf(outfile,'All other internal electric power requirements (MW)','(fachtmw)', fachtmw, 'OP ')
-    sum = pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwp
+    sum = pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwpmw
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
     call oblnkl(outfile)
     call ovarrf(outfile,'Gross electrical output* (MW)','(pgrossmw)',pgrossmw, 'OP ')
@@ -1530,19 +1421,13 @@ contains
 
   subroutine power3(outfile,iprint)
 
-    !+ad_name  power3
-    !+ad_summ  Calculates the time-dependent power requirements
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output (1=yes)
-    !+ad_desc  This routine calculates the time dependent power requirements
-    !+ad_desc  and outputs them to the output file
-    !+ad_prob  None
-    !+ad_hist  07/03/17 JM  Initial version
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Calculates the time-dependent power requirements
+    !! author: J Morris, CCFE, Culham Science Centre
+    !! outfile : input integer : output file unit
+    !! iprint : input integer : switch for writing to output (1=yes)
+    !! This routine calculates the time dependent power requirements
+    !! and outputs them to the output file
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1729,32 +1614,24 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cryo(itfsup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, tfno, helpow)
+  subroutine cryo(i_tf_sup, tfsai, coldmass, ptfnuc, ensxpfm, tpulse, cpttf, n_tf, helpow)
 
-    !+ad_name  cryo
-    !+ad_summ  Calculates cryogenic loads
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  itfsup : input integer : Switch denoting whether TF coils are
-    !+ad_argc                           superconducting
-    !+ad_args  tfsai : input real : Inboard TF coil surface area (m2)
-    !+ad_args  coldmass : input real : Mass of cold (cryogenic) components (kg),
-    !+ad_argc                          including TF coils, PF coils, cryostat, and
-    !+ad_argc                          intercoil structure
-    !+ad_args  ptfnuc : input real : Nuclear heating in TF coils (MW)
-    !+ad_args  ensxpfm : input real : Maximum PF coil stored energy (MJ)
-    !+ad_args  tpulse : input real : Pulse length of cycle (s)
-    !+ad_args  cpttf : input real : Current per turn in TF coils (A)
-    !+ad_args  tfno : input real : Number of TF coils
-    !+ad_args  helpow : output real : Helium heat removal at cryo temperatures (W)
-    !+ad_desc  This routine calculates the cryogenic heat load.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  02/08/11 PJK Initial F90 version
-    !+ad_hist  09/06/15 MDK Make the outputs module-level variables so they can be output
-    !+ad_stat  Okay
-    !+ad_docs  D. Slack memo SCMDG 88-5-1-059, LLNL ITER-88-054, Aug. 1988
+    !! Calculates cryogenic loads
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! itfsup : input integer : Switch denoting whether TF coils are
+    !! superconducting
+    !! tfsai : input real : Inboard TF coil surface area (m2)
+    !! coldmass : input real : Mass of cold (cryogenic) components (kg),
+    !! including TF coils, PF coils, cryostat, and
+    !! intercoil structure
+    !! ptfnuc : input real : Nuclear heating in TF coils (MW)
+    !! ensxpfm : input real : Maximum PF coil stored energy (MJ)
+    !! tpulse : input real : Pulse length of cycle (s)
+    !! cpttf : input real : Current per turn in TF coils (A)
+    !! tfno : input real : Number of TF coils
+    !! helpow : output real : Helium heat removal at cryo temperatures (W)
+    !! This routine calculates the cryogenic heat load.
+    !! D. Slack memo SCMDG 88-5-1-059, LLNL ITER-88-054, Aug. 1988
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1762,8 +1639,8 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: itfsup
-    real(kind(1.0D0)), intent(in) :: coldmass,cpttf,ensxpfm,ptfnuc,tfno, &
+    integer, intent(in) :: i_tf_sup
+    real(kind(1.0D0)), intent(in) :: coldmass,cpttf,ensxpfm,ptfnuc,n_tf, &
          tfsai,tpulse
     real(kind(1.0D0)), intent(out) :: helpow
 
@@ -1775,18 +1652,18 @@ contains
 
     !  Steady state loads (W)
     qss = 4.3D-4 * coldmass
-    if (itfsup == 1) qss = qss + 2.0D0*tfsai
+    if ( i_tf_sup == 1 ) qss = qss + 2.0D0*tfsai
 
     !  Nuclear heating of TF coils (W) (zero if resistive)
-    if(inuclear==0.and.itfsup == 1) qnuc = 1.0D6 * ptfnuc
+    if( inuclear == 0 .and. i_tf_sup == 1) qnuc = 1.0D6 * ptfnuc
     ! Issue #511: if inuclear = 1 then qnuc is input.
 
     !  AC losses
     qac = 1.0D3 * ensxpfm/tpulse
 
     !  Current leads
-    if (itfsup == 1) then
-       qcl = 13.6D-3 * tfno * cpttf
+    if (i_tf_sup == 1) then
+       qcl = 13.6D-3 * n_tf * cpttf
     else
        qcl = 0.0D0
     end if
@@ -1801,34 +1678,21 @@ contains
 
   subroutine plant_thermal_efficiency(etath)
 
-    !+ad_name  plant_thermal_efficiency
-    !+ad_summ  Calculates the thermal efficiency of the power conversion cycle
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  C Harrington, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  etath : input/output real : thermal to electric conversion efficiency
-    !+ad_desc  This routine calculates the thermal efficiency of the power conversion cycle.
-    !+ad_desc  This gives the gross power of the plant, i.e. the primary coolant pumping
-    !+ad_desc  power is not subtracted at this point; however, the pumping of the
-    !+ad_desc  secondary coolant is accounted for.
-    !+ad_desc  <P>If secondary_cycle = 0, 1, a set efficiency for the chosen blanket design is used,
-    !+ad_desc  taken from cycle modelling studies.
-    !+ad_desc  <P>If secondary_cycle > 1, the outlet temperature from the first wall
-    !+ad_desc  and breeder zone is used to calculate an efficiency, using a simple relationship
-    !+ad_desc  between etath and outlet_temp again obtained from previous studies.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  23/10/14 PJK Initial version
-    !+ad_hist  10/12/14 PJK Added tturb ranges of validity
-    !+ad_hist  17/12/14 PJK Added warning messages if tturb out of range
-    !+ad_hist  12/02/15 JM  Changed the thermal efficiency fits for detailed model
-    !+ad_hist  11/03/15 JM  Changed the argument list to remove global variables.
-    !+ad_hist  08/05/15 MDK Revised efficiency formulae: see issue #284
-    !+ad_hist  08/06/15 MDK Added missing iblanket=3 option.
-    !+ad_stat  Okay
-    !+ad_docs  C. Harrington, K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
-    !+ad_docc  \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
+    !! Calculates the thermal efficiency of the power conversion cycle
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! author: C Harrington, CCFE, Culham Science Centre
+    !! etath : input/output real : thermal to electric conversion efficiency
+    !! This routine calculates the thermal efficiency of the power conversion cycle.
+    !! This gives the gross power of the plant, i.e. the primary coolant pumping
+    !! power is not subtracted at this point; however, the pumping of the
+    !! secondary coolant is accounted for.
+    !! <P>If secondary_cycle = 0, 1, a set efficiency for the chosen blanket design is used,
+    !! taken from cycle modelling studies.
+    !! <P>If secondary_cycle > 1, the outlet temperature from the first wall
+    !! and breeder zone is used to calculate an efficiency, using a simple relationship
+    !! between etath and outlet_temp again obtained from previous studies.
+    !! C. Harrington, K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
+    !! \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

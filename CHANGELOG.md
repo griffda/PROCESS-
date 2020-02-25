@@ -1,17 +1,55 @@
-# 1.0.16
+# 1.0.17
 
 > next release
+> 
+## Bug Fixes
+ 
+
+## Features
+- Restored IFE (Issue #901)
+- GitLab pages now hosts the autodoc html output (only develop) (issue #418)
+- Git branch now in output file (#912)
+- CI jobs now run for cmake custom targets
+- Added diamagnetic and Pfirsch-Schlüter current scalings #992
+
+## Minor Changes
+- Renamed 'test_files' to 'unit_tests' #972
+
+## Documentation update
+
+
+# 1.0.16
 
 ## Bug Fixes
+ 
+- Fixed units issue with Lang et al. (2012) confinement scaling (#821)
+- Fixed issue with error numbering (#826)
+- Fixed issue with costing of TF coil dump resistors (#847)
 
 ## Features
 
 - new command line argument `./process.exe help` provides help info
 - new CMake option `-Ddll=ON/OFF`. Default is `ON`. Useful for profiling with gprof 
+- Updated version of Kallenbach testing (now can run test case that matches Kallenbach 
+  paper or user defined inputs). See Userguide for more info.
+- Updated version of Kallenbach scanning (now can specify the variable to scan 
+  from a selection, number of scan points etc.). See Userguide for more info.
+- Added NSTX and NSTX-Petty08 confinement time scalings (#820)
+- Added option to input the confinement time
+- Added a new spherical tokamak plasma current relation based on FIESTA fitting
+- CI now runs on all branches named "issue-*"
+- Unit tests incorporated into main branch
 
 ## Minor Changes
 
+- Increased the number of scan points to 1000 (issue #809)
 - For issue #379 constraint 52 now gives warning for iblanket=1
+- Updated FNSF test case (#822)
+- Removed obsolete variable estotf (#199 #847)
+
+## Documentation update
+
+- Developper documentation update (code description/compilation/git instructions) 
 
 # 1.0.15
 

@@ -26,17 +26,15 @@ from process_io_lib.ndscan_funcs import get_var_name_or_number,\
 from process_io_lib.in_dat import InDat
 from process_io_lib.mfile import MFile
 from process_io_lib.configuration import Config
-try:
-    from process_io_lib.process_dicts import DICT_NSWEEP2IXC, \
-        DICT_NSWEEP2VARNAME, DICT_IXC_SIMPLE, DICT_INPUT_BOUNDS
-except ImportError:
-    print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!", file=stderr)
-    exit()
 from process_io_lib.process_netcdf import NetCDFWriter
+from create_dicts import get_dicts
 
-
-
+# Load dicts from dicts JSON file
+process_dicts = get_dicts()
+DICT_NSWEEP2IXC = process_dicts['DICT_NSWEEP2IXC']
+DICT_NSWEEP2VARNAME = process_dicts['DICT_NSWEEP2VARNAME']
+DICT_IXC_SIMPLE = process_dicts['DICT_IXC_SIMPLE']
+DICT_INPUT_BOUNDS = process_dicts['DICT_INPUT_BOUNDS']
 
 class ProcessConfig(object):
 

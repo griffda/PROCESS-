@@ -7,9 +7,15 @@ can be found on the PROCESS [webpage](http://www.ccfe.ac.uk/powerplants.aspx).
 
 ## Documentation
 
+### HTML
+
+The HTML generated from the source code is hosted via GitLab Pages 
+[here](http://process.gitpages.ccfe.ac.uk/process). The `vardes_full.html` is 
+the index page.
+
 ### User guide
 To read about how the code works and the modules in it see the
-[user guide](http://www.ccfe.ac.uk/assets/Documents/Other/process.pdf)
+[documentation pages]( http://process.gitpages.ccfe.ac.uk/process)
 
 ### Physics paper
 
@@ -29,6 +35,13 @@ Design, ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615302
 - "Implications of toroidal field coil stress limits on power plant design using PROCESS", J. Morris et al.,
 SOFT 2014, Fusion Engineering and Design ([paper](http://www.sciencedirect.com/science/article/pii/S0920379615301290)).
 
+## Getting Started
+PROCESS can be run simply by using the `process.py` script located in the root 
+project directory. This automates compiling the source, validating the input 
+file, running the executable and running utilities on the output. It guides 
+those unfamiliar with the project and is a good place to start. More 
+information is available [here](documentation/proc-pages/getting-started.md).
+
 ## Build System
 
 A number of software technologies are employed in PROCESS. [CMake](https://cmake.org/) is the compiler, for 
@@ -41,8 +54,12 @@ PROCESS calculation modules are primarly written in Fortran. Python is used for 
 functions and subroutines within PROCESS. Googletest is also referred to as GTest in this document.
 
 On Freia, paths to PFUnit and GTEST can be set in your user profile (.bashrc) as 
-- `export PFUNIT=/home/PROCESS/testing_frameworks/pfunit_install/V_3-2_8`
-- `export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest`
+```bash
+export PFUNIT=/home/PROCESS/testing_frameworks/pfunit_install/V_3-2_8
+export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest
+export PYTHONPATH=$PYTHONPATH:[path to process folder]/utilities
+```
+
 
 ## Directory Structure
 
@@ -63,7 +80,7 @@ The folder structure for the PROCESS system prior to compilation is descibed bel
 |   *-- test_suite_functions.py         : Python functions  for running test suite by user on command line
 |   +-- test_files                      : Input files for test suite
 |   +-- test_area                       : Output files for test suite
-+-- test_files
++-- unit_tests
 |   +-- pfunit_files                    : pFUnit test files
 |   +-- gtest_files                     : GTest test files
 +-- utilities/                          : Python utilities files
@@ -74,14 +91,20 @@ The folder structure for the PROCESS system prior to compilation is descibed bel
 |   +-- lz_non_corona
 |   +-- lz_non_corona_14_elements
 +-- documentation                       : Contain documentation files
-*-- IN.DAT                              : Sample PROCESS input file
 ```
 
 ## Build Steps
-- When using Freia, it is recommended to load `gfortran` and unload `ifort` or other Fortran compilers explicitly before build:
-    - `module unload ifort`
-    - `module unload pgi`
-    - `module load gfortran`  
+
+When using Freia, it is recommended to load `gfortran` and unload `ifort` or 
+other Fortran compilers explicitly before build. These commands can be included 
+in your .bashrc file.
+```bash
+module unload ifort
+module unload pgi
+module load gfortran
+module unload python
+module load python/3.5.1
+```
 
 1. get repository
     - `git clone git@git.ccfe.ac.uk:process/process.git folder_name`. Where `folder_name`is the name of the folder which will be created when cloning the repository.  
@@ -91,8 +114,8 @@ The folder structure for the PROCESS system prior to compilation is descibed bel
       - or `cmake3 -H. -Bbuild -Ddll=OFF` to compile into single executable without dll.
     - `cmake3 --build build`
     - Step 2 will create a folder called `bin`, which contains three files: process.exe, process_GTest.exe and libPROCESS_calc_engine.so
-3. pFUnit unit test files are located in the folder _test_files/pfunit_files/_ with extension _.pf_. Use `make tests` from your home directory to run the pFUnit test suite   
-4. GTest unit test files are located in the folder _test_files/gtest_files/_ with extension _.h_. Use `./bin/process_test` from your home directory to run the GTest test suite 
+3. pFUnit unit test files are located in the folder _unit_tests/pfunit_files/_ with extension _.pf_. Use `make tests` from your home directory to run the pFUnit test suite   
+4. GTest unit test files are located in the folder _unit_tests/gtest_files/_ with extension _.h_. Use `./bin/process_test` from your home directory to run the GTest test suite 
 
 During the compile and build steps, a number of files and folders are created. Additional files in the folder structure are listed below:
 
@@ -116,6 +139,8 @@ During the compile and build steps, a number of files and folders are created. A
 Additionally
 
 - to make python dictionaries run `cmake3 --build build --target dicts`
+  - after creating dictionaries update your `PYTHONPATH` to point towards the utilities folder, e.g.:
+  - `export PYTHONPATH=$PYTHONPATH:/home/<user_name>/<path_to_process>/utilities/`
 - to make documentation run `cmake3 --build build --target doc`. (pdf compilation on UKAEA Freia machines 
   requires the following line in your `.bashrc` file: `module load texlive/2017`)
 - to make html files run `cmake3 --build build --target html`
@@ -320,6 +345,12 @@ updated upon compilation. This way each output file is trackable to a specific c
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 | `git checkout tags/<tag name>` | checkout a specific tag |
 
+## Unit Tests
+
+The PROCESS code uses Googletest framework for unit 
+testing. The instructions for adding unit tests is in the 
+repository file `unit-testing-guide.md` ([here](https://git.ccfe.ac.uk/process/process/blob/develop/unit-testing-guide.md))
+
 ## Profiling
 
 To profile the code and investigate which parts of the code are using the most 
@@ -331,6 +362,68 @@ computational time follow these steps:
 * Enter the command 
   * `gprof ./<path_to_executable>/process.exe --ignore-non-functions`
 
+## Code Coverage
+
+To perform a code coverage analysis of the source code, perform the following steps.
+* Read the man page for gcov
+  * `man gcov` 
+* Compile and link code with the flags `-fprofile-arcs -ftest-coverage`
+  * *`.gcno files will be created in the build directory`
+* Run the code (./process.exe)
+  * *`.gcda files will be created in the build directory`
+* Generate the code cover analysis for the source files that you want to analyse
+  * `gcov -a -c -d -f -l -p path_to/tfcoil.f90.gcda`
+  * `gcov -a -c -d -f -l -p path_to/*.gcda`
+* View the results
+  * `vi *.gcov`
+
+## CI Setup
+
+### Pre-testing setup
+
+The following part of the YAML file outlines the stages of the pipeline (build, testing, jenkins and baseline) and sets up the environment on the Freia image.
+
+```yaml
+stages:
+  - build
+  - testing
+  - jenkins
+  - baseline
+
+before_script:
+  - export LOGNAME=root
+  - source /etc/profile.d/modules.sh
+  - module use /usr/local/modules/default
+  - module unload python
+  - module load python/3.5.1
+  - module load texlive/2017
+  - module unload ifort 
+  - module load gfortran
+  - echo ld_library_path=$LD_LIBRARY_PATH
+```
+
+### CI setup example - running test suite
+
+The following YAML defines a test in the `testing` part of the pipeline called `test_suite_issues`. It only triggers `on_success` which means the previous stage of the pipeline has succeeded. It only runs on branches beginning with `issue-`. The `script` part of the setup outlines the commands to execute on Freia. The `tags` lets the CI system know what image to use.
+
+```yaml
+testing:test_suite_issue:
+ when: on_success  # Also default setting
+ only:
+  - /^issue-.*$/
+ stage: testing
+ script:
+  - pwd
+  - cmake3 -H. -Bbuild
+  - cmake3 --build build
+  - cmake3 --build build --target dicts
+  - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+  - cd test_suite
+  - python test_suite.py
+ tags:
+  - freia
+```
+
 ## Troubleshooting
 
 If you encounter issues with file line endings when working between Windows and Linux. Run the command on Freia to convert the line endings to unix based line endings for a given file (create_dicts.py in this case).
@@ -339,8 +432,9 @@ If you encounter issues with file line endings when working between Windows and 
 
 ## Contacts
 
-[Hanni Lux](Hanni.lux@ukaea.uk)
+[James Morris](james.morris2@ukaea.uk)
 
 [Michael Kovari](michael.kovari@ukaea.uk)
 
-[James Morris](james.morris2@ukaea.uk)
+[Stuart Muldrew](stuart.muldrew@ukaea.uk)
+

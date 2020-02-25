@@ -1,88 +1,13 @@
- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module physics_module
 
-  !+ad_name  physics_module
-  !+ad_summ  Module containing tokamak plasma physics routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  physics
-  !+ad_cont  betcom
-  !+ad_cont  bootstrap_fraction_iter89
-  !+ad_cont  bootstrap_fraction_nevins
-  !+ad_cont  bootstrap_fraction_sauter
-  !+ad_cont  bootstrap_fraction_wilson
-  !+ad_cont  bpol
-  !+ad_cont  culblm
-  !+ad_cont  culcur
-  !+ad_cont  culdlm
-  !+ad_cont  fhfac
-  !+ad_cont  fhz
-  !+ad_cont  igmarcal
-  !+ad_cont  outplas
-  !+ad_cont  outtim
-  !+ad_cont  pcond
-  !+ad_cont  phyaux
-  !+ad_cont  plasma_composition
-  !+ad_cont  pohm
-  !+ad_cont  radpwr
-  !+ad_cont  rether
-  !+ad_cont  vscalc
-  !+ad_args  N/A
-  !+ad_desc  This module contains all the primary plasma physics routines
-  !+ad_desc  for a tokamak device.
-  !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  constraint_variables
-  !+ad_call  current_drive_module
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_kallenbach_variables
-  !+ad_call  divertor_variables
-  !+ad_call  error_handling
-  !+ad_call  fwbs_variables
-  !+ad_call  grad_func
-  !+ad_call  heat_transport_variables
-  !+ad_call  impurity_radiation_module
-  !+ad_call  maths_library
-  !+ad_call  numerics
-  !+ad_call  physics_variables
-  !+ad_call  plasmod_module
-  !+ad_call  plasmod_variables
-  !+ad_call  profiles_module
-  !+ad_call  process_output
-  !+ad_call  pulse_variables
-  !+ad_call  startup_variables
-  !+ad_call  stellarator_variables
-  !+ad_call  tfcoil_variables
-  !+ad_call  times_variables
-  !+ad_hist  16/10/12 PJK Initial version of module
-  !+ad_hist  16/10/12 PJK Added constants
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added current_drive_module
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  30/10/12 PJK Added times_variables
-  !+ad_hist  30/10/12 PJK Added build_variables
-  !+ad_hist  31/10/12 PJK Changed private/public lists
-  !+ad_hist  31/10/12 PJK Moved local common variables into module header
-  !+ad_hist  05/11/12 PJK Added pulse_variables
-  !+ad_hist  05/11/12 PJK Added startup_variables
-  !+ad_hist  06/11/12 PJK Inserted routines outplas, outtim from outplas.f90
-  !+ad_hist  03/01/13 PJK Removed denlim routine
-  !+ad_hist  23/01/13 PJK Added stellarator_variables
-  !+ad_hist  10/06/13 PJK Added tfcoil_variables
-  !+ad_hist  12/09/13 PJK Removed svfdt,svfdt_orig,fpower,ffus; added bosch_hale
-  !+ad_hist  19/02/14 PJK Added plasma_profiles
-  !+ad_hist  24/02/14 PJK Moved plasma_profiles etc into new profiles_module
-  !+ad_hist  26/03/14 PJK Renamed bootstrap fraction routines; added Sauter model
-  !+ad_hist  13/05/14 PJK Added plasma_composition routine, impurity_radiation_module
-  !+ad_hist  26/06/14 PJK Added error_handling
-  !+ad_hist  01/10/14 PJK Added numerics
-  !+ad_hist  20/05/15 RK  Added iscdens, fgwped for pedestal density scaling
-  !+ad_hist  08/02/17 JM  Added Kallenbach model parameters
-  !+ad_hist  17/01/19 SIM Made photon_wall and rad_fraction global variables
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing tokamak plasma physics routines
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module contains all the primary plasma physics routines
+  !! for a tokamak device.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -116,22 +41,29 @@ module physics_module
   implicit none
 
   private
-  public :: betcom,bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
+  public :: bpol,fhfac,igmarcal,outplas,outtim,pcond,phyaux, &
        physics,plasma_composition,pohm,radpwr,rether, subr
 
   !  Module-level variables
 
   integer :: iscz
+  integer :: err242, err243
+  real(kind(1.0D0)) :: rad_fraction_core
   real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
   real(kind(1.0D0)) :: total_loss_power        ! [W]
   real(kind(1.0D0)) :: total_energy_conf_time  ! [s]
-
+  real(kind(1.0D0)) :: ptarmw, lambdaio, drsep
+  real(kind(1.0D0)) :: fio, fLI, fLO, fUI, fUO, pLImw, pLOmw, pUImw, pUOmw
+  real(kind(1.0D0)) :: rho_star  
+  real(kind(1.0D0)) :: nu_star  
+  real(kind(1.0D0)) :: beta_mcdonald
+  real(kind(1.0D0)) :: itart_r
 
 contains
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 subroutine subr(a, b)
    implicit none
-   real, intent(in) :: a 
+   real, intent(in) :: a
    real, intent(out) :: b
    b = a
 end subroutine subr
@@ -140,104 +72,18 @@ end subroutine subr
 
   subroutine physics
 
-    !+ad_name  physics
-    !+ad_summ  Routine to calculate tokamak plasma physics information
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine calculates all the primary plasma physics
-    !+ad_desc  characteristics for a tokamak device.
-    !+ad_prob  None
-    !+ad_call  beamfus
-    !+ad_call  betcom
-    !+ad_call  bootstrap_fraction_iter89
-    !+ad_call  bootstrap_fraction_nevins
-    !+ad_call  bootstrap_fraction_sauter
-    !+ad_call  bootstrap_fraction_wilson
-    !+ad_call  convert_Plasmod2PROCESS
-    !+ad_call  cudriv
-    !+ad_call  culblm
-    !+ad_call  culcur
-    !+ad_call  culdlm
-    !+ad_call  palph
-    !+ad_call  palph2
-    !+ad_call  pcond
-    !+ad_call  phyaux
-    !+ad_call  plasma_composition
-    !+ad_call  plasma_profiles
-    !+ad_call  plasmod_EF
-    !+ad_call  pohm
-    !+ad_call  pthresh
-    !+ad_call  radpwr
-    !+ad_call  report_error
-    !+ad_call  rether
-    !+ad_call  setupPlasmod
-    !+ad_call  vscalc
-    !+ad_hist  20/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  04/12/95 PJK Added D-He3 relevant coding
-    !+ad_hist  14/05/96 PJK Modified poloidal beta used in bootstrap formula
-    !+ad_hisc               and added diamagnetic contribution
-    !+ad_hist  10/06/96 PJK Added use of IWALLD in wall load calculation
-    !+ad_hist  07/10/96 PJK Added new ICULBL=2 option
-    !+ad_hist  17/09/97 PJK Added Greenwald density limit (added arguments
-    !+ad_hisc               to CULDLM)
-    !+ad_hist  01/04/98 PJK Changed PBREM to PRAD in argument list of PCOND,
-    !+ad_hisc               added DNLA and IGNITE to arguments of BETCOM
-    !+ad_hisc               and PCOND, and added other effects of IGNITE
-    !+ad_hist  24/04/98 PJK Added IMPC, IMPFE, IMPO to arguments of BETCOM
-    !+ad_hist  30/06/98 PJK Added XAREA to arguments of PCOND
-    !+ad_hist  17/07/98 PJK Added call to PTHRESH
-    !+ad_hist  19/01/99 PJK Added POWERHT to argument list of PCOND
-    !+ad_hist  16/07/01 PJK Added KAPPAA to argument list of PCOND
-    !+ad_hist  22/05/06 PJK Added IFALPHAP to argument list of PALPH2
-    !+ad_hist  10/11/11 PJK Initial F90 version; retired routine CURREN
-    !+ad_hisc               and switch ICULCR
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  17/12/12 PJK Added ZFEAR to argument lists of BETCOM, RADPWR
-    !+ad_hist  18/12/12 PJK Added SAREA,AION to argument list of PTHRESH
-    !+ad_hist  03/01/13 PJK Removed switch ICULDL and call to DENLIM
-    !+ad_hist  11/04/13 PJK Removed switch IRES from POHM call
-    !+ad_hist  12/06/13 PJK TAUP now global
-    !+ad_hist  10/09/13 PJK Added FUSIONRATE,ALPHARATE,PROTONRATE to PALPH arguments
-    !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
-    !+ad_hist  27/11/13 PJK Added THEAT to VSCALC arguments
-    !+ad_hist  27/11/13 PJK Added PPERIM to CULCUR arguments
-    !+ad_hist  28/11/13 PJK Added PDTPV, PDHE3PV, PDDPV to PALPH arguments
-    !+ad_hist  28/11/13 PJK Added current profile consistency option;
-    !+ad_hist               Added IPROFILE, Q0, RLI to CULCUR arguments
-    !+ad_hist  19/02/14 PJK Added pedestal profile model
-    !+ad_hist  24/02/14 PJK Modified CULBST arguments
-    !+ad_hist  26/03/14 PJK Converted BOOTST to a function;
-    !+ad_hisc               introduced Sauter et al bootstrap model
-    !+ad_hist  08/05/14 PJK Modified PHYAUX arguments
-    !+ad_hist  14/05/14 PJK Added call to plasma_composition and new
-    !+ad_hisc               impurity radiation calculations
-    !+ad_hist  15/05/14 PJK Removed ffwal from iwalld=2 calculation
-    !+ad_hist  19/05/14 PJK Clarified pcorerad vs pbrem; plrad --> pedgerad
-    !+ad_hist  21/05/14 PJK Added ignite clause to pinj calculation
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  03/06/14 PJK Modifications for new power flow model
-    !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
-    !+ad_hisc               in first wall
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  19/08/14 PJK Removed impfe usage
-    !+ad_hist  01/10/14 PJK Added plhthresh
-    !+ad_hist  01/04/15 JM  Added total transport power from scaling law
-    !+ad_hist  11/09/15 MDK Resistive diffusion time
-    !+ad_hist  10/11/16 HL  Added peakradwallload calculation
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
-    !+ad_docc  DEMO Tokamak' Document, March 2012, EFDA Report
+    !! Routine to calculate tokamak plasma physics information
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This routine calculates all the primary plasma physics
+    !! characteristics for a tokamak device.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
+    !! DEMO Tokamak' Document, March 2012, EFDA Report
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-implicit none
-
-    !  Arguments
-
+    implicit none
     !  Local variables
 
     real(kind(1.0D0)) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
@@ -245,6 +91,9 @@ implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    
+    ! Volume measure of plasma elongation (used by IPB scalings)
+    kappaa_IPB = plasma_elongation_IPB()
 
     if (icurr == 2) then
        q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
@@ -252,29 +101,20 @@ implicit none
        q95 = q  !  i.e. input (or iteration variable) value
     end if
 
-
-
     if (ipedestal .ne. 3) then
 
        !  Calculate plasma composition
-       if (imprad_model == 0) then
-          call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impo, &
-               ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
-               dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
-               zion,zfear)
-       else
-          call plasma_composition
-       end if
+       ! Issue #261 Remove old radiation model (imprad_model=0)
+       call plasma_composition
 
        !  Calculate plasma current
        call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
             pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
        !  Calculate density and temperature profile quantities
-       !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
+       !  If ipedestal = 1 then set pedestal density to
        !    fgwped * Greenwald density limit
        !  Note: this used to be done before plasma current
-       ! Issue #589 remove iscdens
        if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwped >=0d0)) then
           neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
        endif
@@ -340,11 +180,13 @@ implicit none
 
     endif
 
-    btot = sqrt(bt**2 + bp**2)
-    betap = beta * ( btot/bp )**2
+    ! Calculate total magnetic field [T]
+    btot = total_mag_field()
+
+    ! Calculate beta poloidal [-]
+    betap = beta_poloidal()
 
     !  Set PF coil ramp times
-
     if (lpulse /= 1) then
 
        if (tohsin == 0.0D0) then
@@ -375,22 +217,18 @@ implicit none
     !  Reset second tburn value (tburn0).
     !  This is used to ensure that the burn time is used consistently;
     !  see convergence loop in fcnvmc1, evaluators.f90
-
     tburn0 = tburn
 
     !  Pulse and down times : The reactor is assumed to be 'down'
     !  at all times outside of the plasma current flat-top period.
     !  The pulse length is the duration of non-zero plasma current
-
     tpulse = tohs + theat + tburn + tqnch
     tdown  = tramp + tohs + tqnch + tdwell
 
     !  Total cycle time
-
     tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
     !  Calculate bootstrap current fraction using various models
-
     bscf_iter89 = bootstrap_fraction_iter89(aspect,beta,btot,cboot,plascur, &
          q95,q0,rmajor,vol)
 
@@ -402,8 +240,17 @@ implicit none
 
        !  Wilson scaling uses thermal poloidal beta, not total
        betpth = (beta-betaft-betanb) * ( btot/bp )**2
-       bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
-            q0,q95,rmajor,rminor,itart)
+       bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,betpth, &
+            q0,q95,rmajor,rminor)
+
+       ! Hender scaling for diamagnetic current at tight aspect ratio
+       call diamagnetic_fraction_hender(beta,diacf_hender)
+
+       ! SCENE scaling for diamagnetic current
+       call diamagnetic_fraction_scene(beta,q95,q0,diacf_scene)
+
+       ! Pfirsch-Schlüter scaling for diamagnetic current
+       call ps_fraction_scene(beta,pscf_scene)
     endif
 
     bscf_sauter = cboot * bootstrap_fraction_sauter()
@@ -424,16 +271,36 @@ implicit none
              idiags(1) = ibss ; call report_error(75)
           end if
 
-          bootipf = min(bootipf,bscfmax)
+          err242 = 0
+          if (bootipf.gt.bscfmax)then
+             bootipf = min(bootipf,bscfmax)
+             err242 = 1
+          end if
+
+          if (idia == 1) then
+             diaipf = diacf_hender
+          else if (idia == 2) then
+             diaipf = diacf_scene
+          end if
+
+          if (ips == 1) then
+             psipf = pscf_scene
+          end if
+
+          plasipf = bootipf + diaipf + psipf
 
        end if
 
-       !  Bootstrap current fraction constrained to be less than
+       !  Plasma driven current fraction (Bootstrap + Diamagnetic
+       !  + Pfirsch-Schlüter) constrained to be less than
        !  or equal to the total fraction of the plasma current
        !  produced by non-inductive means (which also includes
        !  the current drive proportion)
-
-       bootipf = min(bootipf,fvsbrnni)
+       err243 = 0
+       if (plasipf.gt.fvsbrnni)then
+          plasipf = min(plasipf,fvsbrnni)
+          err243 = 1
+       end if
 
     endif
 
@@ -441,7 +308,7 @@ implicit none
     if (ipedestal .ne. 3) then
       facoh = max( 1.0D-10, (1.0D0 - fvsbrnni) )
     !   Fraction of plasma current produced by auxiliary current drive
-      faccd = fvsbrnni - bootipf
+      faccd = fvsbrnni - plasipf
     endif
 
     !  Auxiliary current drive power calculations
@@ -484,7 +351,13 @@ implicit none
     if (iwalld == 1) then
        wallmw = ffwal * pneutmw / sarea
     else
-       wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
+       if (idivrt == 2) then
+         !Double null configuration
+         wallmw = (1.0D0-fhcd-2.0D0*fdiv)*pneutmw / fwarea
+       else
+         ! Single null Configuration
+         wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
+       end if 
     end if
 
     if (ipedestal .ne. 3) then ! otherwise replaced by PLASMOD variables
@@ -496,25 +369,13 @@ implicit none
 
        !  Calculate radiation power
 
-       call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
+       call radpwr(pbrempv,plinepv,psyncpv, &
             pcoreradpv,pedgeradpv,pradpv)
 
        pcoreradmw = pcoreradpv*vol
        pedgeradmw = pedgeradpv*vol
        pradmw = pradpv*vol
-
     endif
-
-    ! MDK
-    !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
-    !  Note that 'fwarea' excludes these, so they have been added back in.
-    if (iwalld == 1) then
-       photon_wall = ffwal * pradmw / sarea
-    else
-       photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea
-    end if
-
-    peakradwallload = photon_wall * peakfactrad
 
     if (ipedestal .ne. 3) then
        !  Calculate ohmic power
@@ -543,20 +404,25 @@ implicit none
        !  Should be obsolete if constraint eqn 17 is turned on
        pdivt = max(0.001D0, pdivt)
 
-    endif
+       ! if double null configuration share the power 
+       ! over the upper and lower divertor, where ftar gives
+       ! the factor of power conducted to the lower divertor
+       if (idivrt == 2) then 
+         pdivl = ftar * pdivt
+         pdivu = (1.0D0-ftar) * pdivt
+         pdivmax = max(pdivl, pdivu)
+       end if
+    end if
 
     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
-    res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
+    res_time = res_diff_time()
 
     !  Power transported to the first wall by escaped alpha particles
-
     palpfwmw = palpmw * (1.0D0-falpha)
 
     !  Density limit
-
     call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
          rmajor,rminor,sarea,zeff,dlimit,dnelimt)
-
 
     if (ipedestal .ne. 3) then
 
@@ -588,10 +454,9 @@ implicit none
     !  Total transport power from scaling law (MW)
     pscalingmw = ptremw + ptrimw
 
-    !!!!vscal and phyaux should be replaced by PLASMOD output ipedestal 3 - is this done?
+    ! !!!vscal and phyaux should be replaced by PLASMOD output ipedestal 3 - is this done?
 
     !  Calculate beta limit
-
     if (iprofile == 0) then
 
        if (gtscale == 1) then
@@ -602,15 +467,65 @@ implicit none
     else
        !  Relation between beta limit and plasma internal inductance
        !  Hartmann and Zohm
-
        dnbeta = 4.0D0 * rli
     end if
 
     call culblm(bt,dnbeta,plascur,rminor,betalim)
 
+    ! MDK
+    !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
+    !  Note that 'fwarea' excludes these, so they have been added back in.
+    if (iwalld == 1) then
+       photon_wall = ffwal * pradmw / sarea
+    else
+       if (idivrt == 2) then
+         ! Double Null configuration in - including SoL radiation
+         photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea + &
+         (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea)
+       else
+         ! Single null configuration - including SoL radaition
+         photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea + &
+         (1.0D0-fhcd-fdiv)*rad_fraction_sol*pdivt / fwarea
+       end if 
+    end if
+
+    peakradwallload = photon_wall *peakfactrad 
+
+    ! Calculate the target imbalances 
+    ! find the total power into the targets
+    ptarmw =  pdivt * (1.0D0 - rad_fraction_sol) 
+    ! use ftar to find deltarsep
+    ! Parameters taken from double null machine 
+    ! D. Brunner et al 
+    lambdaio = 1.57d-3
+    drsep = - 2.0d0 * 1.5d-3 * atanh(2.0d0 *(ftar - 0.5d0)) ! this needs updating
+    ! Find the innner and outer lower target imbalance
+    fio = 0.16d0 + (0.16d0 - 0.41d0) * (1.0d0 - ( 2.0d0 / (1.0d0 + exp(-(drsep/lambdaio)**2))))
+    if (idivrt == 2) then
+      ! Double Null configuration
+      ! Find all the power fractions accross the targets
+      fLI = ftar * fio
+      fLO = ftar * ( 1.0d0 - fio )
+      fUI = (1.0d0 - ftar ) * fio
+      fUO = (1.0d0 - ftar ) * ( 1.0d0 - fio )  
+      ! power into each target
+      pLImw = fLI * ptarmw
+      pLOmw = fLO * ptarmw
+      pUImw = fUI * ptarmw
+      pUOmw = fUO * ptarmw
+    else
+      ! Single null configuration
+      fLI = fio
+      fLO = 1.0d0 - fio
+      ! power into each target 
+      pLImw = fLI * ptarmw
+      pLOmw = fLO * ptarmw
+    end if
+
     ! Calculate some derived quantities that may not have been defined earlier
     total_loss_power = 1d6 * (falpha*palpmw+pchargemw+pohmmw+pinjmw)
-    rad_fraction = 1.0D6*pradmw / total_loss_power
+    rad_fraction_core = 1.0D6*pradmw / total_loss_power
+    rad_fraction = rad_fraction_core + (1.0d0 - rad_fraction_core) * rad_fraction_sol
     total_plasma_internal_energy = 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol
     total_energy_conf_time = total_plasma_internal_energy / total_loss_power
 
@@ -624,12 +539,11 @@ implicit none
             netau_sol, tesep, impvardiv, impurity_arr, impurity_enrichment)
 
        if (fzmin >= 1.0D0) then
-          call report_error(216)
+          call report_error(217)
        endif
 
-       write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', impurity_arr(impvardiv)%frac, ', ',  impvardiv
-
-       ! frac is zero, impvardiv is 9 which is default. However, the initial set value of impurity 9 is zero...need to set that impurity fraction to AT LEAST the min value, i.e. fzmin, see above
+       write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', &
+         impurity_arr(impvardiv)%frac, ', ',  impvardiv  
 
     endif
 
@@ -686,7 +600,8 @@ implicit none
   end subroutine physics
 
 
-     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   function eped_warning()
       ! Issue #413.  MDK 26/2/18: improved output
       character(len=100) :: eped_warning, info_string
@@ -723,38 +638,26 @@ implicit none
       endif
   end function eped_warning
 
- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function bootstrap_fraction_iter89(aspect,beta,bt,cboot,plascur,q95,q0,rmajor,vol)
 
-    !+ad_name  bootstrap_fraction_iter89
-    !+ad_summ  Original ITER calculation of bootstrap-driven fraction
-    !+ad_summ  of the plasma current.
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  aspect  : input real : plasma aspect ratio
-    !+ad_args  beta    : input real : plasma total beta
-    !+ad_args  bt      : input real : toroidal field on axis (T)
-    !+ad_args  cboot   : input real : bootstrap current fraction multiplier
-    !+ad_args  plascur : input real : plasma current (A)
-    !+ad_args  q95     : input real : safety factor at 95% surface
-    !+ad_args  q0      : input real : central safety factor
-    !+ad_args  rmajor  : input real : plasma major radius (m)
-    !+ad_args  vol     : input real : plasma volume (m3)
-    !+ad_desc  This routine performs the original ITER calculation of the
-    !+ad_desc  plasma current bootstrap fraction.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  20/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  23/05/06 PJK Prevented negative square roots from being attempted
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Removed pi from argument list
-    !+ad_hist  26/03/14 PJK Converted to a function; renamed from BOOTST
-    !+ad_hist  01/10/14 PJK Renamed argument q to q95
-    !+ad_stat  Okay
-    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+    !! Original ITER calculation of bootstrap-driven fraction
+    !! of the plasma current.
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! aspect  : input real : plasma aspect ratio
+    !! beta    : input real : plasma total beta
+    !! bt      : input real : toroidal field on axis (T)
+    !! cboot   : input real : bootstrap current fraction multiplier
+    !! plascur : input real : plasma current (A)
+    !! q95     : input real : safety factor at 95% surface
+    !! q0      : input real : central safety factor
+    !! rmajor  : input real : plasma major radius (m)
+    !! vol     : input real : plasma volume (m3)
+    !! This routine performs the original ITER calculation of the
+    !! plasma current bootstrap fraction.
+    !! ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !! ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -793,38 +696,24 @@ implicit none
   function bootstrap_fraction_nevins(alphan,alphat,betat,bt,dene,plascur, &
        q95,q0,rmajor,rminor,ten,zeff)
 
-    !+ad_name  bootstrap_fraction_nevins
-    !+ad_summ  Bootstrap current fraction from Nevins et al scaling
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  bsinteg
-    !+ad_args  alphan : input real :  density profile index
-    !+ad_args  alphat : input real :  temperature profile index
-    !+ad_args  betat  : input real :  total plasma beta (with respect to the toroidal
-    !+ad_argc                         field)
-    !+ad_args  bt     : input real :  toroidal field on axis (T)
-    !+ad_args  dene   : input real :  electron density (/m3)
-    !+ad_args  plascur: input real :  plasma current (A)
-    !+ad_args  q0     : input real :  central safety factor
-    !+ad_args  q95    : input real :  safety factor at 95% surface
-    !+ad_args  rmajor : input real :  plasma major radius (m)
-    !+ad_args  rminor : input real :  plasma minor radius (m)
-    !+ad_args  ten    : input real :  density weighted average plasma temperature (keV)
-    !+ad_args  zeff   : input real :  plasma effective charge
-    !+ad_desc  This function calculates the bootstrap current fraction,
-    !+ad_desc  using the Nevins et al method, 4/11/90.
-    !+ad_prob  None
-    !+ad_call  bsinteg
-    !+ad_call  quanc8
-    !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  20/02/14 PJK Removed unnecessary use of shared variables;
-    !+ad_hist               Corrected error in peak electron beta
-    !+ad_hist  24/02/14 PJK Re-corrected peak electron beta (version prior to
-    !+ad_hisc               previous change was correct after all!)
-    !+ad_hist  26/03/14 PJK Renamed from FNEWBS
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Bootstrap current fraction from Nevins et al scaling
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! alphan : input real :  density profile index
+    !! alphat : input real :  temperature profile index
+    !! betat  : input real :  total plasma beta (with respect to the toroidal
+    !! field)
+    !! bt     : input real :  toroidal field on axis (T)
+    !! dene   : input real :  electron density (/m3)
+    !! plascur: input real :  plasma current (A)
+    !! q0     : input real :  central safety factor
+    !! q95    : input real :  safety factor at 95% surface
+    !! rmajor : input real :  plasma major radius (m)
+    !! rminor : input real :  plasma minor radius (m)
+    !! ten    : input real :  density weighted average plasma temperature (keV)
+    !! zeff   : input real :  plasma effective charge
+    !! This function calculates the bootstrap current fraction,
+    !! using the Nevins et al method, 4/11/90.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -866,21 +755,12 @@ implicit none
 
     function bsinteg(y)
 
-      !+ad_name  bsinteg
-      !+ad_summ  Integrand function for Nevins et al bootstrap current scaling
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  y : input real : abscissa of integration, = normalised minor radius
-      !+ad_desc  This function calculates the integrand function for the
-      !+ad_desc  Nevins et al bootstrap current scaling, 4/11/90.
-      !+ad_prob  No account is taken of pedestal profiles.
-      !+ad_call  None
-      !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-      !+ad_hist  10/11/11 PJK Initial F90 version
-      !+ad_hist  20/02/14 PJK Removed unnecessary use of shared variables
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Integrand function for Nevins et al bootstrap current scaling
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! y : input real : abscissa of integration, = normalised minor radius
+      !! This function calculates the integrand function for the
+      !! Nevins et al bootstrap current scaling, 4/11/90.
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -934,39 +814,24 @@ implicit none
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
-       q0,qpsi,rmajor,rminor,itart)
+  function bootstrap_fraction_wilson(alphaj,alphap,alphat,betpth, &
+       q0,qpsi,rmajor,rminor)
 
-    !+ad_name  bootstrap_fraction_wilson
-    !+ad_summ  Bootstrap current fraction from Wilson et al scaling
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  alphaj  : input real :  current profile index
-    !+ad_args  alphap  : input real :  pressure profile index
-    !+ad_args  alphat  : input real :  temperature profile index
-    !+ad_args  beta    : input real :  total beta
-    !+ad_args  betpth  : input real :  thermal component of poloidal beta
-    !+ad_args  q0      : input real :  safety factor on axis
-    !+ad_args  qpsi    : input real :  edge safety factor
-    !+ad_args  rmajor  : input real :  major radius (m)
-    !+ad_args  rminor  : input real :  minor radius (m)
-    !+ad_args  itart   : input integer :  switch denoting tight aspect ratio option
-    !+ad_desc  This function calculates the bootstrap current fraction
-    !+ad_desc  using the numerically fitted algorithm written by Howard Wilson.
-    !+ad_prob  No account is taken of pedestal profiles.
-    !+ad_call  report_error
-    !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  14/05/96 PJK Modified to use THERMAL poloidal beta, and
-    !+ad_hisc               added diamagnetic term at tight aspect ratio
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  20/02/14 PJK alphap now calculated elsewhere
-    !+ad_hist  24/02/14 PJK Swapped alphan for alphap in argument list
-    !+ad_hist  26/03/14 PJK Renamed from CULBST
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
-    !+ad_docs  H. R. Wilson, Nuclear Fusion <B>32</B> (1992) 257
+    !! Bootstrap current fraction from Wilson et al scaling
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! alphaj  : input real :  current profile index
+    !! alphap  : input real :  pressure profile index
+    !! alphat  : input real :  temperature profile index
+    !! beta    : input real :  total beta
+    !! betpth  : input real :  thermal component of poloidal beta
+    !! q0      : input real :  safety factor on axis
+    !! qpsi    : input real :  edge safety factor
+    !! rmajor  : input real :  major radius (m)
+    !! rminor  : input real :  minor radius (m)
+    !! This function calculates the bootstrap current fraction
+    !! using the numerically fitted algorithm written by Howard Wilson.
+    !! AEA FUS 172: Physics Assessment for the European Reactor Study
+    !! H. R. Wilson, Nuclear Fusion <B>32</B> (1992) 257
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -976,8 +841,7 @@ implicit none
 
     !  Arguments
 
-    integer, intent(in) :: itart
-    real(kind(1.0D0)), intent(in) :: alphaj,alphap,alphat,beta,betpth, &
+    real(kind(1.0D0)), intent(in) :: alphaj,alphap,alphat,betpth, &
          q0,qpsi,rmajor,rminor
 
     !  Local variables
@@ -1065,54 +929,24 @@ implicit none
 
     bootstrap_fraction_wilson = seps1 * betpth * sss
 
-    !  Diamagnetic contribution to the bootstrap fraction
-    !  at tight aspect ratio.
-    !  Tim Hender fit
-
-    if (itart == 1) then
-       bootstrap_fraction_wilson = bootstrap_fraction_wilson + beta/2.8D0
-    end if
-
   end function bootstrap_fraction_wilson
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function bootstrap_fraction_sauter()
 
-    !+ad_name  bootstrap_fraction_sauter
-    !+ad_summ  Bootstrap current fraction from Sauter et al scaling
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  beta_poloidal_local
-    !+ad_cont  beta_poloidal_local_total
-    !+ad_cont  nues
-    !+ad_cont  nuee
-    !+ad_cont  coulg
-    !+ad_cont  nuis
-    !+ad_cont  nui
-    !+ad_cont  dcsa
-    !+ad_cont  hcsa
-    !+ad_cont  xcsa
-    !+ad_cont  tpf
-    !+ad_args  None
-    !+ad_desc  This function calculates the bootstrap current fraction
-    !+ad_desc  using the Sauter, Angioni and Lin-Liu scaling.
-    !+ad_desc  <P>The code was extracted from the ASTRA code, and was
-    !+ad_desc  supplied by Emiliano Fable, IPP Garching
-    !+ad_desc  (private communication).
-    !+ad_prob  None
-    !+ad_call  nprofile
-    !+ad_call  tprofile
-    !+ad_call  dcsa
-    !+ad_call  hcsa
-    !+ad_call  xcsa
-    !+ad_hist  26/03/14 PJK Initial version
-    !+ad_hist  15/05/14 PJK Corrections made as per Fable's e-mail, 15/05/2014
-    !+ad_stat  Okay
-    !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
-    !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
-    !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
-    !+ad_docc    Physics of Plasmas <B>9</B> (2002) 5140
+    !! Bootstrap current fraction from Sauter et al scaling
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This function calculates the bootstrap current fraction
+    !! using the Sauter, Angioni and Lin-Liu scaling.
+    !! <P>The code was extracted from the ASTRA code, and was
+    !! supplied by Emiliano Fable, IPP Garching
+    !! (private communication).
+    !! O. Sauter, C. Angioni and Y. R. Lin-Liu,
+    !! Physics of Plasmas <B>6</B> (1999) 2834
+    !! O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
+    !! Physics of Plasmas <B>9</B> (2002) 5140
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1205,25 +1039,16 @@ implicit none
 
     function beta_poloidal_local(j,nr)
 
-      !+ad_name  beta_poloidal_local
-      !+ad_summ  Local beta poloidal calculation
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  j  : input integer : radial element index in range 1 to nr
-      !+ad_args  nr : input integer : maximum value of j
-      !+ad_desc  This function calculates the local beta poloidal.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
-      !+ad_desc  supplied by Emiliano Fable, IPP Garching
-      !+ad_desc  (private communication).
-      !+ad_desc  <P>beta poloidal = 4*pi*ne*Te/Bpo**2
-      !+ad_prob  PJK: I do not understand why it should be 4*pi*... instead
-      !+ad_prob  of 8*pi*... Presumably it is because of a strange ASTRA
-      !+ad_prob  method similar to that noted above in the calculation of jboot.
-      !+ad_call  None
-      !+ad_hist  26/03/14 PJK Initial version
-      !+ad_stat  Okay
-      !+ad_docs  Pereverzev, 25th April 1989 (?)
+      !! Local beta poloidal calculation
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! j  : input integer : radial element index in range 1 to nr
+      !! nr : input integer : maximum value of j
+      !! This function calculates the local beta poloidal.
+      !! <P>The code was extracted from the ASTRA code, and was
+      !! supplied by Emiliano Fable, IPP Garching
+      !! (private communication).
+      !! <P>beta poloidal = 4*pi*ne*Te/Bpo**2
+      !! Pereverzev, 25th April 1989 (?)
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1254,27 +1079,18 @@ implicit none
 
     function beta_poloidal_local_total(j,nr)
 
-      !+ad_name  beta_poloidal_local_total
-      !+ad_summ  Local beta poloidal calculation, including ion pressure
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  j  : input integer : radial element index in range 1 to nr
-      !+ad_args  nr : input integer : maximum value of j
-      !+ad_desc  This function calculates the local total beta poloidal.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
-      !+ad_desc  supplied by Emiliano Fable, IPP Garching
-      !+ad_desc  (private communication).
-      !+ad_desc  <P>beta poloidal = 4*pi*(ne*Te+ni*Ti)/Bpo**2
-      !+ad_desc  where ni is the sum of all ion densities (thermal)
-      !+ad_prob  PJK: I do not understand why it should be 4*pi*... instead
-      !+ad_prob  of 8*pi*... Presumably it is because of a strange ASTRA
-      !+ad_prob  method similar to that noted above in the calculation of jboot.
-      !+ad_call  None
-      !+ad_hist  15/05/14 PJK New routine, which includes the ion pressure contribution
-      !+ad_stat  Okay
-      !+ad_docs  Pereverzev, 25th April 1989 (?)
-      !+ad_docs  E Fable, private communication, 15th May 2014
+      !! Local beta poloidal calculation, including ion pressure
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! j  : input integer : radial element index in range 1 to nr
+      !! nr : input integer : maximum value of j
+      !! This function calculates the local total beta poloidal.
+      !! <P>The code was extracted from the ASTRA code, and was
+      !! supplied by Emiliano Fable, IPP Garching
+      !! (private communication).
+      !! <P>beta poloidal = 4*pi*(ne*Te+ni*Ti)/Bpo**2
+      !! where ni is the sum of all ion densities (thermal)
+      !! Pereverzev, 25th April 1989 (?)
+      !! E Fable, private communication, 15th May 2014
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1307,24 +1123,17 @@ implicit none
 
     function nues(j)
 
-      !+ad_name  nues
-      !+ad_summ  Relative frequency of electron collisions
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  j  : input integer : radial element index in range 1 to nr
-      !+ad_desc  This function calculates the relative frequency of electron
-      !+ad_desc  collisions: <I>NU* = Nuei*q*Rt/eps**1.5/Vte</I>
-      !+ad_desc  The electron-ion collision frequency NUEI=NUEE*1.4*ZEF is
-      !+ad_desc  used.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
-      !+ad_desc  supplied by Emiliano Fable, IPP Garching
-      !+ad_desc  (private communication).
-      !+ad_prob  None
-      !+ad_call  nuee
-      !+ad_hist  26/03/14 PJK Initial version
-      !+ad_stat  Okay
-      !+ad_docs  Yushmanov, 30th April 1987 (?)
+      !! Relative frequency of electron collisions
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! j  : input integer : radial element index in range 1 to nr
+      !! This function calculates the relative frequency of electron
+      !! collisions: <I>NU* = Nuei*q*Rt/eps**1.5/Vte</I>
+      !! The electron-ion collision frequency NUEI=NUEE*1.4*ZEF is
+      !! used.
+      !! <P>The code was extracted from the ASTRA code, and was
+      !! supplied by Emiliano Fable, IPP Garching
+      !! (private communication).
+      !! Yushmanov, 30th April 1987 (?)
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1349,24 +1158,17 @@ implicit none
 
     function nuee(j)
 
-      !+ad_name  nuee
-      !+ad_summ  Frequency of electron-electron collisions
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  j  : input integer : radial element index in range 1 to nr
-      !+ad_desc  This function calculates the frequency of electron-electron
-      !+ad_desc  collisions (Hz): <I>NUEE = 4*SQRT(pi)/3*Ne*e**4*lambd/
-      !+ad_desc  SQRT(Me)/Te**1.5</I>
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
-      !+ad_desc  supplied by Emiliano Fable, IPP Garching
-      !+ad_desc  (private communication).
-      !+ad_prob  None
-      !+ad_call  coulg
-      !+ad_hist  26/03/14 PJK Initial version
-      !+ad_stat  Okay
-      !+ad_docs  Yushmanov, 25th April 1987 (?),
-      !+ad_docc  updated by Pereverzev, 9th November 1994 (?)
+      !! Frequency of electron-electron collisions
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! j  : input integer : radial element index in range 1 to nr
+      !! This function calculates the frequency of electron-electron
+      !! collisions (Hz): <I>NUEE = 4*SQRT(pi)/3*Ne*e**4*lambd/
+      !! SQRT(Me)/Te**1.5</I>
+      !! <P>The code was extracted from the ASTRA code, and was
+      !! supplied by Emiliano Fable, IPP Garching
+      !! (private communication).
+      !! Yushmanov, 25th April 1987 (?),
+      !! updated by Pereverzev, 9th November 1994 (?)
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1390,24 +1192,17 @@ implicit none
 
     function coulg(j)
 
-      !+ad_name  coulg
-      !+ad_summ  Coulomb logarithm
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  j  : input integer : radial element index in range 1 to nr
-      !+ad_desc  This function calculates the Coulomb logarithm, valid
-      !+ad_desc  for e-e collisions (T_e > 0.01 keV), and for
-      !+ad_desc  e-i collisions (T_e > 0.01*Zeff^2) (Alexander, 9/5/1994).
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
-      !+ad_desc  supplied by Emiliano Fable, IPP Garching
-      !+ad_desc  (private communication).
-      !+ad_prob  None
-      !+ad_call  coulg
-      !+ad_hist  26/03/14 PJK Initial version
-      !+ad_stat  Okay
-      !+ad_docs  C. A. Ordonez and M. I. Molina, Phys. Plasmas <B>1</B> (1994) 2515
-      !+ad_docs  Rev. Mod. Phys., V.48, Part 1 (1976) 275
+      !! Coulomb logarithm
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! j  : input integer : radial element index in range 1 to nr
+      !! This function calculates the Coulomb logarithm, valid
+      !! for e-e collisions (T_e > 0.01 keV), and for
+      !! e-i collisions (T_e > 0.01*Zeff^2) (Alexander, 9/5/1994).
+      !! <P>The code was extracted from the ASTRA code, and was
+      !! supplied by Emiliano Fable, IPP Garching
+      !! (private communication).
+      !! C. A. Ordonez and M. I. Molina, Phys. Plasmas <B>1</B> (1994) 2515
+      !! Rev. Mod. Phys., V.48, Part 1 (1976) 275
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1431,23 +1226,16 @@ implicit none
 
     function nuis(j)
 
-      !+ad_name  nuis
-      !+ad_summ  Relative frequency of ion collisions
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  j  : input integer : radial element index in range 1 to nr
-      !+ad_desc  This function calculates the relative frequency of ion
-      !+ad_desc  collisions: <I>NU* = Nui*q*Rt/eps**1.5/Vti</I>
-      !+ad_desc  The full ion collision frequency NUI is used.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
-      !+ad_desc  supplied by Emiliano Fable, IPP Garching
-      !+ad_desc  (private communication).
-      !+ad_prob  None
-      !+ad_call  nui
-      !+ad_hist  26/03/14 PJK Initial version
-      !+ad_stat  Okay
-      !+ad_docs  Yushmanov, 30th April 1987 (?)
+      !! Relative frequency of ion collisions
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! j  : input integer : radial element index in range 1 to nr
+      !! This function calculates the relative frequency of ion
+      !! collisions: <I>NU* = Nui*q*Rt/eps**1.5/Vti</I>
+      !! The full ion collision frequency NUI is used.
+      !! <P>The code was extracted from the ASTRA code, and was
+      !! supplied by Emiliano Fable, IPP Garching
+      !! (private communication).
+      !! Yushmanov, 30th April 1987 (?)
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1472,22 +1260,15 @@ implicit none
 
     function nui(j)
 
-      !+ad_name  nui
-      !+ad_summ  Full frequency of ion collisions
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  j  : input integer : radial element index in range 1 to nr
-      !+ad_desc  This function calculates the full frequency of ion
-      !+ad_desc  collisions (Hz).
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
-      !+ad_desc  supplied by Emiliano Fable, IPP Garching
-      !+ad_desc  (private communication).
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  26/03/14 PJK Initial version
-      !+ad_stat  Okay
-      !+ad_docs  None
+      !! Full frequency of ion collisions
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! j  : input integer : radial element index in range 1 to nr
+      !! This function calculates the full frequency of ion
+      !! collisions (Hz).
+      !! <P>The code was extracted from the ASTRA code, and was
+      !! supplied by Emiliano Fable, IPP Garching
+      !! (private communication).
+      !! None
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1511,30 +1292,20 @@ implicit none
 
     function dcsa(j,nr)
 
-      !+ad_name  dcsa
-      !+ad_summ  Grad(ln(ne)) coefficient in the Sauter bootstrap scaling
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  j  : input integer : radial element index in range 1 to nr
-      !+ad_args  nr : input integer : maximum value of j
-      !+ad_desc  This function calculates the coefficient scaling grad(ln(ne))
-      !+ad_desc  in the Sauter bootstrap current scaling.
-      !+ad_desc  Code by Angioni, 29th May 2002.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
-      !+ad_desc  supplied by Emiliano Fable, IPP Garching
-      !+ad_desc  (private communication).
-      !+ad_prob  None
-      !+ad_call  beta_poloidal_local_total
-      !+ad_call  nues
-      !+ad_call  tpf
-      !+ad_hist  26/03/14 PJK Initial version
-      !+ad_hist  15/05/14 PJK Corrections made as per Fable's e-mail
-      !+ad_stat  Okay
-      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
-      !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
-      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
-      !+ad_docc    Physics of Plasmas <B>9</B> (2002) 5140
+      !! Grad(ln(ne)) coefficient in the Sauter bootstrap scaling
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! j  : input integer : radial element index in range 1 to nr
+      !! nr : input integer : maximum value of j
+      !! This function calculates the coefficient scaling grad(ln(ne))
+      !! in the Sauter bootstrap current scaling.
+      !! Code by Angioni, 29th May 2002.
+      !! <P>The code was extracted from the ASTRA code, and was
+      !! supplied by Emiliano Fable, IPP Garching
+      !! (private communication).
+      !! O. Sauter, C. Angioni and Y. R. Lin-Liu,
+      !! Physics of Plasmas <B>6</B> (1999) 2834
+      !! O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
+      !! Physics of Plasmas <B>9</B> (2002) 5140
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1576,32 +1347,20 @@ implicit none
 
     function hcsa(j,nr)
 
-      !+ad_name  hcsa
-      !+ad_summ  Grad(ln(Te)) coefficient in the Sauter bootstrap scaling
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  j  : input integer : radial element index in range 1 to nr
-      !+ad_args  nr : input integer : maximum value of j
-      !+ad_desc  This function calculates the coefficient scaling grad(ln(Te))
-      !+ad_desc  in the Sauter bootstrap current scaling.
-      !+ad_desc  Code by Angioni, 29th May 2002.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
-      !+ad_desc  supplied by Emiliano Fable, IPP Garching
-      !+ad_desc  (private communication).
-      !+ad_prob  None
-      !+ad_call  beta_poloidal_local
-      !+ad_call  beta_poloidal_local_total
-      !+ad_call  dcsa
-      !+ad_call  nues
-      !+ad_call  tpf
-      !+ad_hist  26/03/14 PJK Initial version
-      !+ad_hist  15/05/14 PJK Corrections made as per Fable's e-mail
-      !+ad_stat  Okay
-      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
-      !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
-      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
-      !+ad_docc    Physics of Plasmas <B>9</B> (2002) 5140
+      !! Grad(ln(Te)) coefficient in the Sauter bootstrap scaling
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! j  : input integer : radial element index in range 1 to nr
+      !! nr : input integer : maximum value of j
+      !! This function calculates the coefficient scaling grad(ln(Te))
+      !! in the Sauter bootstrap current scaling.
+      !! Code by Angioni, 29th May 2002.
+      !! <P>The code was extracted from the ASTRA code, and was
+      !! supplied by Emiliano Fable, IPP Garching
+      !! (private communication).
+      !! O. Sauter, C. Angioni and Y. R. Lin-Liu,
+      !! Physics of Plasmas <B>6</B> (1999) 2834
+      !! O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
+      !! Physics of Plasmas <B>9</B> (2002) 5140
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1663,32 +1422,20 @@ implicit none
 
     function xcsa(j,nr)
 
-      !+ad_name  xcsa
-      !+ad_summ  Grad(ln(Ti)) coefficient in the Sauter bootstrap scaling
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  j  : input integer : radial element index in range 1 to nr
-      !+ad_args  nr : input integer : maximum value of j
-      !+ad_desc  This function calculates the coefficient scaling grad(ln(Ti))
-      !+ad_desc  in the Sauter bootstrap current scaling.
-      !+ad_desc  Code by Angioni, 29th May 2002.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
-      !+ad_desc  supplied by Emiliano Fable, IPP Garching
-      !+ad_desc  (private communication).
-      !+ad_prob  None
-      !+ad_call  beta_poloidal_local
-      !+ad_call  dcsa
-      !+ad_call  nues
-      !+ad_call  nuis
-      !+ad_call  tpf
-      !+ad_hist  26/03/14 PJK Initial version
-      !+ad_hist  15/05/14 PJK Corrections made as per Fable's e-mail
-      !+ad_stat  Okay
-      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
-      !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
-      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
-      !+ad_docc    Physics of Plasmas <B>9</B> (2002) 5140
+      !! Grad(ln(Ti)) coefficient in the Sauter bootstrap scaling
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! j  : input integer : radial element index in range 1 to nr
+      !! nr : input integer : maximum value of j
+      !! This function calculates the coefficient scaling grad(ln(Ti))
+      !! in the Sauter bootstrap current scaling.
+      !! Code by Angioni, 29th May 2002.
+      !! <P>The code was extracted from the ASTRA code, and was
+      !! supplied by Emiliano Fable, IPP Garching
+      !! (private communication).
+      !! O. Sauter, C. Angioni and Y. R. Lin-Liu,
+      !! Physics of Plasmas <B>6</B> (1999) 2834
+      !! O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
+      !! Physics of Plasmas <B>9</B> (2002) 5140
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1743,26 +1490,18 @@ implicit none
 
     function tpf(j)
 
-      !+ad_name  tpf
-      !+ad_summ  Trapped particle fraction
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  None
-      !+ad_args  j  : input integer : radial element index in range 1 to nr
-      !+ad_desc  This function calculates the trapped particle fraction at
-      !+ad_desc  a given radius.
-      !+ad_desc  <P>A number of different fits are provided, but the one
-      !+ad_desc  to be used is hardwired prior to run-time.
-      !+ad_desc  <P>The ASTRA fit was supplied by Emiliano Fable, IPP Garching
-      !+ad_desc  (private communication).
-      !+ad_prob  The ASTRA and Sauter 2002 fits are almost identical, and it
-      !+ad_prob  is unclear which (if either) is better.
-      !+ad_call  None
-      !+ad_hist  26/03/14 PJK Initial version
-      !+ad_stat  Okay
-      !+ad_docs  O. Sauter et al, Plasma Phys. Contr. Fusion <B>44</B> (2002) 1999
-      !+ad_docs  O. Sauter, 2013:
-      !+ad_docc    http://infoscience.epfl.ch/record/187521/files/lrp_012013.pdf
+      !! Trapped particle fraction
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! j  : input integer : radial element index in range 1 to nr
+      !! This function calculates the trapped particle fraction at
+      !! a given radius.
+      !! <P>A number of different fits are provided, but the one
+      !! to be used is hardwired prior to run-time.
+      !! <P>The ASTRA fit was supplied by Emiliano Fable, IPP Garching
+      !! (private communication).
+      !! O. Sauter et al, Plasma Phys. Contr. Fusion <B>44</B> (2002) 1999
+      !! O. Sauter, 2013:
+      !! http://infoscience.epfl.ch/record/187521/files/lrp_012013.pdf
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1906,74 +1645,128 @@ implicit none
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  subroutine diamagnetic_fraction_hender(beta,diacf) &
+           bind(C,name="c_diamagnetic_fraction_hender")
+
+    !! author: S.I. Muldrew, CCFE, Culham Science Centre
+    !! Diamagnetic contribution at tight aspect ratio.
+    !! Tim Hender fit
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   implicit none
+
+   !  Arguments
+
+   real(kind(1.0D0)), intent(in) ::  beta
+   real(kind(1.0D0)), intent(out) :: diacf
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   diacf = beta / 2.8D0
+
+
+  end subroutine diamagnetic_fraction_hender
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine diamagnetic_fraction_scene(beta,q95,q0,diacf) &
+                  bind(C,name="c_diamagnetic_fraction_scene")
+
+    !! author: S.I. Muldrew, CCFE, Culham Science Centre
+    !! Diamagnetic fraction based on SCENE fit by Tim Hender
+    !! See Issue #992
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) ::  beta, q95, q0
+    real(kind(1.0D0)), intent(out) :: diacf
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    diacf = beta * (0.1D0*q95/q0+0.44D0) * 4.14D-1
+
+  end subroutine diamagnetic_fraction_scene
+
+   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ps_fraction_scene(beta,pscf) &
+          bind(C,name="c_ps_fraction_scene")
+
+    !! author: S.I. Muldrew, CCFE, Culham Science Centre
+    !! Pfirsch-Schlüter fraction based on SCENE fit by Tim Hender
+    !! See Issue #992
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) ::  beta
+    real(kind(1.0D0)), intent(out) :: pscf
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    pscf = -9.0D-2 * beta
+
+  end subroutine ps_fraction_scene
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95, &
        p0,pperim,q0,qpsi,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
-    !+ad_name  culcur
-    !+ad_summ  Routine to calculate the plasma current
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  conhas
-    !+ad_cont  plasc
-    !+ad_args  alphaj   : input/output real : current profile index
-    !+ad_args  alphap   : input real :  pressure profile index
-    !+ad_args  bt       : input real :  toroidal field on axis (T)
-    !+ad_args  eps      : input real :  inverse aspect ratio
-    !+ad_args  icurr    : input integer : current scaling model to use
-    !+ad_argc                           1 = Peng analytic fit
-    !+ad_argc                           2 = Peng divertor scaling (TART)
-    !+ad_argc                           3 = simple ITER scaling
-    !+ad_argc                           4 = revised ITER scaling
-    !+ad_argc                           5 = Todd empirical scaling I
-    !+ad_argc                           6 = Todd empirical scaling II
-    !+ad_argc                           7 = Connor-Hastie model
-    !+ad_args  iprofile : input integer : switch for current profile consistency
-    !+ad_argc                           0 = use input alphaj, rli
-    !+ad_argc                           1 = make these consistent with q, q0
-    !+ad_args  kappa    : input real :  plasma elongation
-    !+ad_args  kappa95  : input real :  plasma elongation at 95% surface
-    !+ad_args  p0       : input real :  central plasma pressure (Pa)
-    !+ad_args  pperim   : input real :  plasma perimeter length (m)
-    !+ad_args  q0       : input real :  plasma safety factor on axis
-    !+ad_args  qpsi     : input real :  plasma edge safety factor (= q-bar for icurr=2)
-    !+ad_args  rli      : input/output real : plasma normalised internal inductance
-    !+ad_args  rmajor   : input real :  major radius (m)
-    !+ad_args  rminor   : input real :  minor radius (m)
-    !+ad_args  sf       : input real :  shape factor for icurr=1 (=A/pi in documentation)
-    !+ad_args  triang   : input real :  plasma triangularity
-    !+ad_args  triang95 : input real :  plasma triangularity at 95% surface
-    !+ad_args  bp       : output real : poloidal field (T)
-    !+ad_args  qstar    : output real : equivalent cylindrical safety factor (shaped)
-    !+ad_args  plascur  : output real : plasma current (A)
-    !+ad_desc  This routine performs the calculation of the
-    !+ad_desc  plasma current, with a choice of formula for the edge
-    !+ad_desc  safety factor. It will also make the current profile parameters
-    !+ad_desc  consistent with the q-profile if required.
-    !+ad_prob  None
-    !+ad_call  bpol
-    !+ad_call  conhas
-    !+ad_call  plasc
-    !+ad_call  report_error
-    !+ad_hist  20/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  29/01/96 PJK Added icurr=2 TART option
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  22/11/12 PJK Added stop statement in error block
-    !+ad_hist  27/11/13 PJK Added new arguments to bpol
-    !+ad_hist  28/11/13 PJK Added current profile consistency if iprofile=1
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  02/06/16 RK  Added Sauter scaling for negative triangularity
-    !+ad_hist  25/01/19 SIM Changed conhas call to kappa95 and triang95 (Issue #791)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
-    !+ad_docc  unpublished internal Oak Ridge document
-    !+ad_docs  Y.-K. M. Peng, J. Galambos and P.C. Shipe, 1992,
-    !+ad_docc  Fusion Technology, 21, 1729
-    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
-    !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
-    !+ad_docc  DEMO Tokamak' Document, March 2012, EFDA Report
-    !+ad_docc  Sauter, Geometric formulas for systems codes..., FED 2016
+    !! Routine to calculate the plasma current
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! alphaj   : input/output real : current profile index
+    !! alphap   : input real :  pressure profile index
+    !! bt       : input real :  toroidal field on axis (T)
+    !! eps      : input real :  inverse aspect ratio
+    !! icurr    : input integer : current scaling model to use
+    !! 1 = Peng analytic fit
+    !! 2 = Peng divertor scaling (TART)
+    !! 3 = simple ITER scaling
+    !! 4 = revised ITER scaling
+    !! 5 = Todd empirical scaling I
+    !! 6 = Todd empirical scaling II
+    !! 7 = Connor-Hastie model
+    !! iprofile : input integer : switch for current profile consistency
+    !! 0 = use input alphaj, rli
+    !! 1 = make these consistent with q, q0
+    !! kappa    : input real :  plasma elongation
+    !! kappa95  : input real :  plasma elongation at 95% surface
+    !! p0       : input real :  central plasma pressure (Pa)
+    !! pperim   : input real :  plasma perimeter length (m)
+    !! q0       : input real :  plasma safety factor on axis
+    !! qpsi     : input real :  plasma edge safety factor (= q-bar for icurr=2)
+    !! rli      : input/output real : plasma normalised internal inductance
+    !! rmajor   : input real :  major radius (m)
+    !! rminor   : input real :  minor radius (m)
+    !! sf       : input real :  shape factor for icurr=1 (=A/pi in documentation)
+    !! triang   : input real :  plasma triangularity
+    !! triang95 : input real :  plasma triangularity at 95% surface
+    !! bp       : output real : poloidal field (T)
+    !! qstar    : output real : equivalent cylindrical safety factor (shaped)
+    !! plascur  : output real : plasma current (A)
+    !! This routine performs the calculation of the
+    !! plasma current, with a choice of formula for the edge
+    !! safety factor. It will also make the current profile parameters
+    !! consistent with the q-profile if required.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
+    !! unpublished internal Oak Ridge document
+    !! Y.-K. M. Peng, J. Galambos and P.C. Shipe, 1992,
+    !! Fusion Technology, 21, 1729
+    !! ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !! ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+    !! T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
+    !! DEMO Tokamak' Document, March 2012, EFDA Report
+    !! Sauter, Geometric formulas for systems codes..., FED 2016
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2050,6 +1843,10 @@ implicit none
        (1.0d0 + 0.45d0 * triang * eps)/(1.0d0 - 0.74d0 * eps) * &
        (1.0d0 + 0.55d0 * (w07 - 1.0d0))
 
+    case (9) ! FIESTA ST fit
+
+       fq = 0.538D0 * (1.0D0 + 2.440D0*eps**2.736D0) * kappa**2.154D0 * triang**0.060D0
+
     case default
        idiags(1) = icurr ; call report_error(77)
 
@@ -2078,7 +1875,7 @@ implicit none
 
     !  Calculate the poloidal field
 
-    bp = bpol(itart,plascur,qpsi,asp,bt,kappa,triang,pperim)
+    bp = bpol(icurr,plascur,qpsi,asp,bt,kappa,triang,pperim)
 
     !  Ensure current profile consistency, if required
     !  This is as described in Hartmann and Zohm only if icurr = 4 as well...
@@ -2090,35 +1887,27 @@ implicit none
 
   contains
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     function plasc(qbar,aspect,rminor,bt,kappa,delta)
 
-      !+ad_name  plasc
-      !+ad_summ  Function to calculate plasma current (Peng scaling)
-      !+ad_type  Function returning real
-      !+ad_auth  J Galambos, FEDC/ORNL
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  aspect : input real :  plasma aspect ratio
-      !+ad_args  bt     : input real :  toroidal field on axis (T)
-      !+ad_args  delta  : input real :  plasma triangularity
-      !+ad_args  kappa  : input real :  plasma elongation
-      !+ad_args  qbar   : input real :  edge q-bar
-      !+ad_args  rminor : input real :  plasma minor radius (m)
-      !+ad_desc  This function calculates the plasma current in MA,
-      !+ad_desc  using a scaling from Peng, Galambos and Shipe (1992).
-      !+ad_desc  It is primarily used for Tight Aspect Ratio Tokamaks and is
-      !+ad_desc  selected via <CODE>icurr=2</CODE>.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-      !+ad_hist  10/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
-      !+ad_docc  unpublished internal Oak Ridge document
-      !+ad_docs  Y.-K. M. Peng, J. Galambos and P.C. Shipe, 1992,
-      !+ad_docc  Fusion Technology, 21, 1729
+      !! Function to calculate plasma current (Peng scaling)
+      !! author: J Galambos, FEDC/ORNL
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! aspect : input real :  plasma aspect ratio
+      !! bt     : input real :  toroidal field on axis (T)
+      !! delta  : input real :  plasma triangularity
+      !! kappa  : input real :  plasma elongation
+      !! qbar   : input real :  edge q-bar
+      !! rminor : input real :  plasma minor radius (m)
+      !! This function calculates the plasma current in MA,
+      !! using a scaling from Peng, Galambos and Shipe (1992).
+      !! It is primarily used for Tight Aspect Ratio Tokamaks and is
+      !! selected via <CODE>icurr=2</CODE>.
+      !! J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
+      !! unpublished internal Oak Ridge document
+      !! Y.-K. M. Peng, J. Galambos and P.C. Shipe, 1992,
+      !! Fusion Technology, 21, 1729
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2181,32 +1970,23 @@ implicit none
 
     subroutine conhas(alphaj,alphap,bt,delta95,eps,kappa95,p0,fq)
 
-      !+ad_name  conhas
-      !+ad_summ  Routine to calculate the F coefficient used for scaling the
-      !+ad_summ  plasma current
-      !+ad_type  Subroutine
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  alphaj   : input real :  current profile index
-      !+ad_args  alphap   : input real :  pressure profile index
-      !+ad_args  bt       : input real :  toroidal field on axis (T)
-      !+ad_args  delta95  : input real :  plasma triangularity 95%
-      !+ad_args  eps      : input real :  inverse aspect ratio
-      !+ad_args  kappa95  : input real :  plasma elongation 95%
-      !+ad_args  p0       : input real :  central plasma pressure (Pa)
-      !+ad_args  fq       : output real : scaling for edge q from circular
-      !+ad_argc                           cross-section cylindrical case
-      !+ad_desc  This routine calculates the F coefficient used for scaling the
-      !+ad_desc  plasma current, using the Connor-Hastie scaling given in
-      !+ad_desc  AEA FUS 172.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-      !+ad_hist  09/11/11 PJK Initial F90 version
-      !+ad_hist  25/01/19 SIM Changed kappa and delta to 95% (Issue #791)
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !! Routine to calculate the F coefficient used for scaling the
+      !! plasma current
+      !! author: P J Knight, CCFE, Culham Science Centre
+      !! alphaj   : input real :  current profile index
+      !! alphap   : input real :  pressure profile index
+      !! bt       : input real :  toroidal field on axis (T)
+      !! delta95  : input real :  plasma triangularity 95%
+      !! eps      : input real :  inverse aspect ratio
+      !! kappa95  : input real :  plasma elongation 95%
+      !! p0       : input real :  central plasma pressure (Pa)
+      !! fq       : output real : scaling for edge q from circular
+      !! cross-section cylindrical case
+      !! This routine calculates the F coefficient used for scaling the
+      !! plasma current, using the Connor-Hastie scaling given in
+      !! AEA FUS 172.
+      !! AEA FUS 172: Physics Assessment for the European Reactor Study
+      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2282,36 +2062,27 @@ implicit none
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function bpol(itart,ip,qbar,aspect,bt,kappa,delta,perim)
+  function bpol(icurr,ip,qbar,aspect,bt,kappa,delta,perim)
 
-    !+ad_name  bpol
-    !+ad_summ  Function to calculate poloidal field
-    !+ad_type  Function returning real
-    !+ad_auth  J Galambos, FEDC/ORNL
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  itart  : input integer : Switch for tight aspect ratio tokamaks
-    !+ad_args  ip     : input real :  plasma current (A)
-    !+ad_args  qbar   : input real :  edge q-bar
-    !+ad_args  aspect : input real :  plasma aspect ratio
-    !+ad_args  bt     : input real :  toroidal field on axis (T)
-    !+ad_args  kappa  : input real :  plasma elongation
-    !+ad_args  delta  : input real :  plasma triangularity
-    !+ad_args  perim  : input real :  plasma perimeter (m)
-    !+ad_desc  This function calculates the poloidal field in Tesla,
-    !+ad_desc  using a simple calculation using Stoke's Law for conventional
-    !+ad_desc  tokamaks, or for TARTs, a scaling from Peng, Galambos and
-    !+ad_desc  Shipe (1992).
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  27/11/13 PJK Added conventional aspect ratio coding
-    !+ad_stat  Okay
-    !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
-    !+ad_docc  unpublished internal Oak Ridge document
-    !+ad_docs  Y.-K. M. Peng, J. Galambos and P.C. Shipe, 1992,
-    !+ad_docc  Fusion Technology, 21, 1729
+    !! Function to calculate poloidal field
+    !! author: J Galambos, FEDC/ORNL
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! icurr  : input integer : current scaling model to use
+    !! ip     : input real :  plasma current (A)
+    !! qbar   : input real :  edge q-bar
+    !! aspect : input real :  plasma aspect ratio
+    !! bt     : input real :  toroidal field on axis (T)
+    !! kappa  : input real :  plasma elongation
+    !! delta  : input real :  plasma triangularity
+    !! perim  : input real :  plasma perimeter (m)
+    !! This function calculates the poloidal field in Tesla,
+    !! using a simple calculation using Stoke's Law for conventional
+    !! tokamaks, or for TARTs, a scaling from Peng, Galambos and
+    !! Shipe (1992).
+    !! J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
+    !! unpublished internal Oak Ridge document
+    !! Y.-K. M. Peng, J. Galambos and P.C. Shipe, 1992,
+    !! Fusion Technology, 21, 1729
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2321,7 +2092,7 @@ implicit none
 
     !  Arguments
 
-    integer, intent(in) :: itart
+    integer, intent(in) :: icurr
     real(kind(1.0D0)), intent(in) :: aspect,bt,delta,ip,kappa,perim,qbar
 
     !  Local variables
@@ -2330,7 +2101,7 @@ implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (itart == 0) then
+    if (icurr /= 2) then
 
        !  Stoke's Law
 
@@ -2381,36 +2152,27 @@ implicit none
 
   subroutine culblm(bt,dnbeta,plascur,rminor,betalim)
 
-    !+ad_name  culblm
-    !+ad_summ  Beta scaling limit
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  bt      : input real :  toroidal B-field on plasma axis (T)
-    !+ad_args  dnbeta  : input real :  Troyon-like g coefficient
-    !+ad_args  plascur : input real :  plasma current (A)
-    !+ad_args  rminor  : input real :  plasma minor axis (m)
-    !+ad_args  betalim : output real : beta limit as defined below
-    !+ad_desc  This subroutine calculates the beta limit, using
-    !+ad_desc  the algorithm documented in AEA FUS 172.
-    !+ad_desc  <P>The limit applies to beta defined with respect to the total B-field.
-    !+ad_desc  Switch ICULBL determines which components of beta to include (see
-    !+ad_desc  routine <A HREF="constraints.html">constraints</A> for coding):
-    !+ad_desc  <UL>
-    !+ad_desc  <P><LI>If ICULBL = 0, then the limit is applied to the total beta
-    !+ad_desc  <P><LI>If ICULBL = 1, then the limit is applied to the thermal beta only
-    !+ad_desc  <P><LI>If ICULBL = 2, then the limit is applied to the thermal +
-    !+ad_desc                        neutral beam beta components
-    !+ad_desc  </UL>
-    !+ad_desc  The default value for the g coefficient is DNBETA = 3.5
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  27/06/13 PJK Modified header comments
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Beta scaling limit
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! bt      : input real :  toroidal B-field on plasma axis (T)
+    !! dnbeta  : input real :  Troyon-like g coefficient
+    !! plascur : input real :  plasma current (A)
+    !! rminor  : input real :  plasma minor axis (m)
+    !! betalim : output real : beta limit as defined below
+    !! This subroutine calculates the beta limit, using
+    !! the algorithm documented in AEA FUS 172.
+    !! <P>The limit applies to beta defined with respect to the total B-field.
+    !! Switch ICULBL determines which components of beta to include (see
+    !! routine <A HREF="constraints.html">constraints</A> for coding):
+    !! <UL>
+    !! <P><LI>If ICULBL = 0, then the limit is applied to the total beta
+    !! <P><LI>If ICULBL = 1, then the limit is applied to the thermal beta only
+    !! <P><LI>If ICULBL = 2, then the limit is applied to the thermal +
+    !! neutral beam beta components
+    !! </UL>
+    !! The default value for the g coefficient is DNBETA = 3.5
+    !! AEA FUS 172: Physics Assessment for the European Reactor Study
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2431,256 +2193,16 @@ implicit none
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc, &
-       impo,ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee, &
-       dlamie,dnalp,dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone, &
-       rnfene,zeffai,zion,zfear)
-
-    !+ad_name  betcom
-    !+ad_summ  Calculates various plasma component fractional makeups
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  cfe0   : input real :  additional iron impurity fraction
-    !+ad_args  dene   : input real :  electron density (/m3)
-    !+ad_args  fdeut  : input real :  deuterium fraction of fuel
-    !+ad_args  ftrit  : input real :  tritium fraction of fuel
-    !+ad_args  fhe3   : input real :  helium-3 fraction of fuel
-    !+ad_args  ftritbm: input real :  tritium fraction of beam
-    !+ad_args  ignite : input integer :  switch for ignited calculation
-    !+ad_args  impc   : input real :  carbon impurity multiplier
-    !+ad_args  impo   : input real :  oxygen impurity multiplier
-    !+ad_args  ralpne : input real :  thermal alpha density / electron density
-    !+ad_args  rnbeam : input real :  hot beam density / electron density
-    !+ad_args  te     : input real :  electron temperature (keV)
-    !+ad_args  zfear  : input integer :  high-Z impurity switch; 0=iron, 1=argon
-    !+ad_args  abeam  : output real : beam ion mass (amu)
-    !+ad_args  afuel  : output real : average mass of fuel portion of ions (amu)
-    !+ad_args  aion   : output real : average mass of all ions (amu)
-    !+ad_args  deni   : output real : fuel ion density (/m3)
-    !+ad_args  dlamee : output real : electron-electron coulomb logarithm
-    !+ad_args  dlamie : output real : ion-electron coulomb logarithm
-    !+ad_args  dnalp  : output real : alpha ash density (/m3)
-    !+ad_args  dnbeam : output real : hot beam ion density (/m3)
-    !+ad_args  dnitot : output real : total ion density (/m3)
-    !+ad_args  dnprot : output real : proton ash density (/m3)
-    !+ad_args  dnz    : output real : high Z ion density (/m3)
-    !+ad_args  falpe  : output real : fraction of alpha energy to electrons
-    !+ad_args  falpi  : output real : fraction of alpha energy to ions
-    !+ad_args  rncne  : output real : carbon density / electron density
-    !+ad_args  rnfene : output real : iron density / electron density
-    !+ad_args  rnone  : output real : oxygen density / electron density
-    !+ad_args  zeff   : output real : plasma effective charge
-    !+ad_args  zeffai : output real : mass weighted plasma effective charge
-    !+ad_args  zion   : output real : density weighted charge
-    !+ad_desc  This subroutine determines the various plasma component
-    !+ad_desc  fractional makeups.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  06/12/95 PJK Added D-He3 calculations
-    !+ad_hist  01/04/98 PJK Added calculation of line-averaged density
-    !+ad_hisc               and effects of IGNITE
-    !+ad_hist  24/04/98 PJK Added IMPC, IMPFE, IMPO impurity multipliers
-    !+ad_hist  23/05/06 PJK Ensured that deni is positive
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  17/12/12 PJK Added ZFEAR coding, and updated AION and other
-    !+ad_hisc               high-Z impurity terms
-    !+ad_hist  03/07/13 PJK Amended ZEFFAI coding as per long-standing comment
-    !+ad_hist  24/07/13 PJK Clarified DNLA comment
-    !+ad_hist  10/09/13 PJK Clarified DENI calculation for D-He3;
-    !+ad_hist               modified dnprot calculation
-    !+ad_hist  11/09/13 PJK Removed idhe3, ftr usage
-    !+ad_hist  12/02/14 PJK Modified initial dnprot approximation
-    !+ad_hist  19/02/14 PJK Moved PCOEF and DNLA calculations elsewhere
-    !+ad_hist  28/07/14 PJK Added fix for problems due to carbon impurity
-    !+ad_hisc               scaling at low electron density
-    !+ad_hist  19/08/14 PJK Removed IMPFE argument
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
-    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: ignite, zfear
-    real(kind(1.0D0)), intent(in) :: cfe0, dene, fdeut, ftrit, fhe3, &
-         ftritbm, impc, impo, ralpne, rnbeam, te
-    real(kind(1.0D0)), intent(out) :: abeam, afuel, aion, deni, dlamee, &
-         dlamie, dnalp, dnbeam, dnitot, dnprot, dnz, falpe, falpi, &
-         rncne, rnfene, rnone, zeff, zeffai, zion
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: fc, f_highz, fo, m_highz, pc, znfuel, z_highz
-    integer :: first_call = 1
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Ion density components
-    !  ======================
-
-    !  Alpha ash portion
-
-    dnalp = dene * ralpne
-
-    !  Protons
-    !  This calculation will be wrong on the first call as the particle
-    !  production rates are evaluated later in the calling sequence
-    !  Issue #557 Allow protium impurity to be specified: 'protium'
-    !  This will override the calculated value which is a minimum.
-
-    if (alpharate < 1.0D-6) then  !  not calculated yet...
-       dnprot = max(protium*dene, dnalp * (fhe3 + 1.0D-3)) !  rough estimate
-    else
-       dnprot = max(protium*dene, dnalp * protonrate/alpharate)
-    end if
-
-
-    !  Beam hot ion component
-    !  If ignited, prevent beam fusion effects
-
-    if (ignite == 0) then
-       dnbeam = dene * rnbeam
-    else
-       dnbeam = 0.0D0
-    end if
-
-    !  Carbon portion (IPDG89)
-
-    fc = impc * (0.009D0 + 0.006D0 * (7.0D19/dene)**2.6D0)
-
-    !  The following should prevent problems at low electron density
-    !  dene with ion density deni becoming negative
-
-    if (fc > 0.05D0) then
-       fc = 0.05D0
-       call report_error(136)
-    end if
-
-    rncne = fc
-
-    !  Oxygen portion (IPDG89)
-
-    fo = impo * 0.001D0
-    rnone = fo
-
-    !  High-Z portion (formerly assumed to be iron)
-
-    f_highz = cfe0
-    rnfene = f_highz
-
-    if (zfear == 1) then  !  High-Z impurity is argon
-       z_highz = 18.0D0
-       m_highz = 40.0D0
-    else  !  Iron
-       z_highz = 26.0D0
-       m_highz = 56.0D0
-    end if
-
-    !  Fuel portion - conserve charge neutrality
-    !  znfuel is the sum of Zi.ni for the three fuel ions
-
-    znfuel = dene - 2.0D0*dnalp - dnprot - dnbeam - &
-         dene*(6.0D0*fc + 8.0D0*fo + z_highz*f_highz)
-
-    !  Fuel ion density, deni
-    !  For D-T-He3 mix, deni = nD + nT + nHe3, while znfuel = nD + nT + 2*nHe3
-    !  So deni = znfuel - nHe3 = znfuel - fhe3*deni
-
-    deni = znfuel/(1.0D0+fhe3)
-
-    !  Ensure that deni is never negative or zero
-
-    deni = max(deni,1.0D0)
-
-    !  Total ion density
-
-    dnz = dene * (fc + fo + f_highz)
-    dnitot = deni + dnz + dnalp + dnprot + dnbeam
-
-    !  Effective charge
-    !  True calculation should be sum(ni.Zi^2) / sum(ni.Zi),
-    !  but ne = sum(ni.Zi) through quasineutrality
-
-    zeff = (fdeut + ftrit)*deni/dene + 4.0D0*fhe3*deni/dene + &
-         dnbeam/dene + 4.0D0*ralpne + dnprot/dene + 36.0D0*fc + &
-         64.0D0*fo + z_highz*z_highz*f_highz
-
-    !  Define coulomb logarithm
-    !  (collisions: ion-electron, electron-electron)
-
-    dlamee = 31.0D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
-    dlamie = 31.3D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
-
-    !  Fraction of alpha energy to ions and electrons
-    !  From Max Fenstermacher
-    !  (used with electron and ion power balance equations only)
-    !  No consideration of pchargepv here...
-
-    !  pcoef now calculated in plasma_profiles, after the very first
-    !  call of betcom; use old parabolic profile estimate in this case
-
-    if (first_call == 1) then
-       pc = (1.0D0 + alphan)*(1.0D0 + alphat)/(1.0D0+alphan+alphat)
-       first_call = 0
-    else
-       pc = pcoef
-    end if
-
-    falpe = 0.88155D0 * exp(-te*pc/67.4036D0)
-    falpi = 1.0D0 - falpe
-
-    !  Average atomic masses
-
-    afuel = 2.0D0*fdeut + 3.0D0*ftrit + 3.0D0*fhe3
-    abeam = 2.0D0*(1.0D0-ftritbm) + 3.0D0*ftritbm
-
-    !  Density weighted masses and charges
-
-    aion = ( afuel*deni + 4.0D0*dnalp + dnprot + abeam*dnbeam + &
-         dene*(12.0D0*fc + 16.0D0*fo + m_highz*f_highz) )/ dnitot
-
-    zion = ( fdeut*deni + ftrit*deni + 2.0D0*fhe3*deni + &
-         2.0D0*dnalp + dnprot + dnbeam + dene * &
-         (6.0D0*fc + 8.0D0*fo + z_highz*f_highz) )/dnitot
-
-    zeffai = ( &
-         fdeut*deni/2.0D0 + ftrit*deni/3.0D0 + 4.0D0*fhe3*deni/3.0D0 + &
-         dnalp + dnprot + &
-         (1.0D0-ftritbm)*dnbeam/2.0D0 + ftritbm*dnbeam/3.0D0 + &
-         dene*(3.0D0*fc + 4.0D0*fo + (z_highz*z_highz/m_highz)*f_highz) &
-         ) / dene
-
-  end subroutine betcom
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   subroutine plasma_composition
 
-    !+ad_name  plasma_composition
-    !+ad_summ  Calculates various plasma component fractional makeups
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This subroutine determines the various plasma component
-    !+ad_desc  fractional makeups. It is the replacement for the original
-    !+ad_desc  routine <CODE>betcom</CODE>, and is used in conjunction with
-    !+ad_desc  the new impurity radiation model
-    !+ad_prob  None
-    !+ad_call  element2index
-    !+ad_call  report_error
-    !+ad_hist  13/05/14 PJK Initial version
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  23/02/16 HL impurity Z now dependent on te
-    !+ad_stat  Okay
-    !+ad_docs  None
+    !! Calculates various plasma component fractional makeups
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! None
+    !! This subroutine determines the various plasma component
+    !! fractional makeups. It is the replacement for the original
+    !! It is the replacement for the original routine <CODE>betcom</CODE>,
+    !! and is used in conjunction with the new impurity radiation model
+    !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2778,11 +2300,13 @@ implicit none
 
     rncne = impurity_arr(element2index('C_'))%frac
     rnone = impurity_arr(element2index('O_'))%frac
-    if (zfear == 0) then
-       rnfene = impurity_arr(element2index('Fe'))%frac
-    else
-       rnfene = impurity_arr(element2index('Ar'))%frac
-    end if
+    ! Issue #261 Remove zfear.  Use the sum of Fe and Ar concentrations
+    ! if (zfear == 0) then
+    !    rnfene = impurity_arr(element2index('Fe'))%frac
+    ! else
+    !    rnfene = impurity_arr(element2index('Ar'))%frac
+    ! end if
+    rnfene = impurity_arr(element2index('Fe'))%frac + impurity_arr(element2index('Ar'))%frac
 
     !  Effective charge
     !  Calculation should be sum(ni.Zi^2) / sum(ni.Zi),
@@ -2854,38 +2378,27 @@ implicit none
   subroutine culdlm(bt,idensl,pdivt,plascur,prn1,qcyl,q95, &
        rmajor,rminor,sarea,zeff,dlimit,dnelimt)
 
-    !+ad_name  culdlm
-    !+ad_summ  Density limit calculation
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  bt       : input real :  toroidal field on axis (T)
-    !+ad_args  idensl   : input/output integer : switch denoting which formula to enforce
-    !+ad_args  pdivt    : input real :  power flowing to the edge plasma via
-    !+ad_argc                           charged particles (MW)
-    !+ad_args  plascur  : input real :  plasma current (A)
-    !+ad_args  prn1     : input real :  edge density / average plasma density
-    !+ad_args  qcyl     : input real :  equivalent cylindrical safety factor (qstar)
-    !+ad_args  q95      : input real :  safety factor at 95% surface
-    !+ad_args  rmajor   : input real :  plasma major radius (m)
-    !+ad_args  rminor   : input real :  plasma minor radius (m)
-    !+ad_args  sarea    : input real :  plasma surface area (m**2)
-    !+ad_args  zeff     : input real :  plasma effective charge
-    !+ad_args  dlimit(7): output real array : average plasma density limit using
-    !+ad_argc                                 seven different models (m**-3)
-    !+ad_args  dnelimt  : output real : enforced average plasma density limit (m**-3)
-    !+ad_desc  This routine calculates several different formulae for the
-    !+ad_desc  density limit, and enforces the one chosen by the user.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  17/09/97 PJK Added Greenwald limit (idensl=7)
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Removed pi from argument list
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Density limit calculation
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! bt       : input real :  toroidal field on axis (T)
+    !! idensl   : input/output integer : switch denoting which formula to enforce
+    !! pdivt    : input real :  power flowing to the edge plasma via
+    !! charged particles (MW)
+    !! plascur  : input real :  plasma current (A)
+    !! prn1     : input real :  edge density / average plasma density
+    !! qcyl     : input real :  equivalent cylindrical safety factor (qstar)
+    !! q95      : input real :  safety factor at 95% surface
+    !! rmajor   : input real :  plasma major radius (m)
+    !! rminor   : input real :  plasma minor radius (m)
+    !! sarea    : input real :  plasma surface area (m**2)
+    !! zeff     : input real :  plasma effective charge
+    !! dlimit(7): output real array : average plasma density limit using
+    !! seven different models (m**-3)
+    !! dnelimt  : output real : enforced average plasma density limit (m**-3)
+    !! This routine calculates several different formulae for the
+    !! density limit, and enforces the one chosen by the user.
+    !! AEA FUS 172: Physics Assessment for the European Reactor Study
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2916,7 +2429,7 @@ implicit none
     !  Power per unit area crossing the plasma edge
     !  (excludes radiation and neutrons)
 
-    qperp = pdivt/sarea
+      qperp = pdivt/sarea
 
     !  Old ASDEX density limit formula
     !  This applies to the density at the plasma edge, so must be scaled
@@ -2989,91 +2502,66 @@ implicit none
        plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
        xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
-    !+ad_name  pcond
-    !+ad_summ  Routine to calculate the confinement times and
-    !+ad_summ  the transport power loss terms.
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  afuel     : input real :  average mass of fuel (amu)
-    !+ad_args  palpmw    : input real :  alpha particle power (MW)
-    !+ad_args  aspect    : input real :  aspect ratio
-    !+ad_args  bt        : input real :  toroidal field on axis (T)
-    !+ad_args  dene      : input real :  volume averaged electron density (/m3)
-    !+ad_args  dnitot    : input real :  total ion density (/m3)
-    !+ad_args  dnla      : input real :  line-averaged electron density (/m3)
-    !+ad_args  eps       : input real :  inverse aspect ratio
-    !+ad_args  hfact     : input real :  H factor on energy confinement scalings
-    !+ad_args  iinvqd    : input integer :  switch for inverse quadrature
-    !+ad_args  isc       : input integer :  switch for energy confinement scaling to use
-    !+ad_args  ignite    : input integer :  switch for ignited calculation
-    !+ad_args  kappa     : input real :  plasma elongation
-    !+ad_args  kappa95   : input real :  plasma elongation at 95% surface
-    !+ad_args  kappaa    : output real : plasma elongation calculated using area ratio
-    !+ad_args  pchargemw : input real :  non-alpha charged particle fusion power (MW)
-    !+ad_args  pinjmw    : input real :  auxiliary power to ions and electrons (MW)
-    !+ad_args  plascur   : input real :  plasma current (A)
-    !+ad_args  pcoreradpv: input real :  total core radiation power (MW/m3)
-    !+ad_args  q         : input real :  edge safety factor (tokamaks), or
-    !+ad_argc                            rotational transform iotabar (stellarators)
-    !+ad_args  qstar     : input real :  equivalent cylindrical edge safety factor
-    !+ad_args  rmajor    : input real :  plasma major radius (m)
-    !+ad_args  rminor    : input real :  plasma minor radius (m)
-    !+ad_args  te        : input real :  average electron temperature (keV)
-    !+ad_args  ten       : input real :  density weighted average electron temp. (keV)
-    !+ad_args  tin       : input real :  density weighted average ion temperature (keV)
-    !+ad_args  vol       : input real :  plasma volume (m3)
-    !+ad_args  xarea     : input real :  plasma cross-sectional area (m2)
-    !+ad_args  zeff      : input real :  plasma effective charge
-    !+ad_args  ptrepv    : output real : electron transport power (MW/m3)
-    !+ad_args  ptripv    : output real : ion transport power (MW/m3)
-    !+ad_args  tauee     : output real : electron energy confinement time (s)
-    !+ad_args  taueff    : output real : global energy confinement time (s)
-    !+ad_args  tauei     : output real : ion energy confinement time (s)
-    !+ad_args  powerht   : output real : heating power (MW) assumed in calculation
-    !+ad_desc  This subroutine calculates the energy confinement time
-    !+ad_desc  using one of a large number of scaling laws, and the
-    !+ad_desc  transport power loss terms.
-    !+ad_prob  None
-    !+ad_call  report_error
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  30/06/94 PJK Added stellarator scaling laws 20-23
-    !+ad_hist  07/12/95 PJK Added pcharge to plasma input power
-    !+ad_hist  14/11/97 PJK Added ITER-97 scaling laws (26,27)
-    !+ad_hist  01/04/98 PJK Added ITER-96P scaling law (28) and moved
-    !+ad_hisc               calculation of dnla into BETCOM instead
-    !+ad_hist  26/06/98 PJK Added scaling laws 29,30,31
-    !+ad_hist  08/10/98 PJK Added scaling laws 32,33,34,35,36
-    !+ad_hist  16/07/01 PJK Added KAPPAA to argument list
-    !+ad_hist  23/05/06 PJK Ensured that powerht is always positive
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  23/01/13 PJK Added stellarator scaling laws 37,38
-    !+ad_hist  07/11/13 PJK Modified prad description
-    !+ad_hist  20/05/14 PJK Changed prad argument to pcorerad;
-    !+ad_hisc               introduced iradloss switch;
-    !+ad_hisc               added falpha multiplier to alpmw term
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  03/06/14 PJK Changed pchargepv usage to pchargemw
-    !+ad_hist  17/06/14 PJK Added scaling law 39
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  13/11/14 PJK Modified iradloss usage
-    !+ad_hist  17/06/15 MDK Added Murari scaling (40)
-    !+ad_hist  02/11/16 HL  Added Petty, Lang scalings (41,42)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  N. A. Uckan and ITER Physics Group,
-    !+ad_docc    "ITER Physics Design Guidelines: 1989",
-    !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990)
-    !+ad_docc  A. Murari et al 2015 Nucl. Fusion, 55, 073009
-    !+ad_docc  C.C. Petty 2008 Phys. Plasmas, 15, 080501
-    !+ad_docc  P.T. Lang et al. 2012 IAEA conference proceeding EX/P4-01
+    !! Routine to calculate the confinement times and
+    !! the transport power loss terms.
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! afuel     : input real :  average mass of fuel (amu)
+    !! palpmw    : input real :  alpha particle power (MW)
+    !! aspect    : input real :  aspect ratio
+    !! bt        : input real :  toroidal field on axis (T)
+    !! dene      : input real :  volume averaged electron density (/m3)
+    !! dnitot    : input real :  total ion density (/m3)
+    !! dnla      : input real :  line-averaged electron density (/m3)
+    !! eps       : input real :  inverse aspect ratio
+    !! hfact     : input real :  H factor on energy confinement scalings
+    !! iinvqd    : input integer :  switch for inverse quadrature
+    !! isc       : input integer :  switch for energy confinement scaling to use
+    !! ignite    : input integer :  switch for ignited calculation
+    !! kappa     : input real :  plasma elongation
+    !! kappa95   : input real :  plasma elongation at 95% surface
+    !! kappaa    : output real : plasma elongation calculated using area ratio
+    !! pchargemw : input real :  non-alpha charged particle fusion power (MW)
+    !! pinjmw    : input real :  auxiliary power to ions and electrons (MW)
+    !! plascur   : input real :  plasma current (A)
+    !! pcoreradpv: input real :  total core radiation power (MW/m3)
+    !! q         : input real :  edge safety factor (tokamaks), or
+    !! rotational transform iotabar (stellarators)
+    !! qstar     : input real :  equivalent cylindrical edge safety factor
+    !! rmajor    : input real :  plasma major radius (m)
+    !! rminor    : input real :  plasma minor radius (m)
+    !! te        : input real :  average electron temperature (keV)
+    !! ten       : input real :  density weighted average electron temp. (keV)
+    !! tin       : input real :  density weighted average ion temperature (keV)
+    !! vol       : input real :  plasma volume (m3)
+    !! xarea     : input real :  plasma cross-sectional area (m2)
+    !! zeff      : input real :  plasma effective charge
+    !! ptrepv    : output real : electron transport power (MW/m3)
+    !! ptripv    : output real : ion transport power (MW/m3)
+    !! tauee     : output real : electron energy confinement time (s)
+    !! taueff    : output real : global energy confinement time (s)
+    !! tauei     : output real : ion energy confinement time (s)
+    !! powerht   : output real : heating power (MW) assumed in calculation
+    !! This subroutine calculates the energy confinement time
+    !! using one of a large number of scaling laws, and the
+    !! transport power loss terms.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! N. A. Uckan and ITER Physics Group,
+    !! "ITER Physics Design Guidelines: 1989",
+    !! ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990)
+    !! ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990)
+    !! A. Murari et al 2015 Nucl. Fusion, 55, 073009
+    !! C.C. Petty 2008 Phys. Plasmas, 15, 080501
+    !! P.T. Lang et al. 2012 IAEA conference proceeding EX/P4-01
+    !! ITER physics basis Chapter 2, 1999 Nuclear Fusion 39 2175
+    !! Nuclear Fusion corrections, 2008 Nuclear Fusion 48 099801
+    !! Menard 2019, Phil. Trans. R. Soc. A 377:20170440
+    !! Kaye et al. 2006, Nucl. Fusion 46 848
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments
-
     integer, intent(in) :: iinvqd, isc, ignite
     real(kind(1.0D0)), intent(in) :: afuel, palpmw, aspect, bt, dene, &
          dnitot, dnla, eps, hfact, kappa, kappa95, pchargemw, pinjmw, &
@@ -3083,10 +2571,9 @@ implicit none
          tauee, taueff, tauei
 
     !  Local variables
-
     real(kind(1.0D0)) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
          n20,pcur,qhat,ratio,rll,str2,str5,taueena,tauit1,tauit2, &
-         term1,term2, h, qratio, nratio, nGW
+         term1,term2, h, qratio, nratio, nGW, taunstx,taupetty
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3105,15 +2592,12 @@ implicit none
     tauei = 0.375D0*rminor**2/chii*str2
 
     !  Calculate heating power (MW)
-
     powerht = falpha*palpmw + pchargemw + pohmmw
 
     !  If the device is not ignited, add the injected auxiliary power
-
     if (ignite == 0) powerht = powerht + pinjmw
 
     !  Include the radiation as a loss term if requested
-
     if (iradloss == 0) then
        powerht = powerht - pradpv*vol
     else if (iradloss == 1) then
@@ -3123,28 +2607,25 @@ implicit none
     end if
 
     !  Ensure heating power is positive (shouldn't be necessary)
-
     powerht = max(powerht,1.0D-3)
 
     !  Line averaged electron density in scaled units
-
     dnla20 = dnla * 1.0D-20
     dnla19 = dnla * 1.0D-19
 
     !  Volume averaged electron density in units of 10**20 m**-3
-
     n20 = dene / 1.0D20
 
     !  Plasma current in MA
-
     pcur = plascur / 1.0D6
 
-    !  kappaa = plasma X-sectional area/(pi*rminor*rminor) by definition
-
+    ! Separatrix kappa defined with X-section for general use
     kappaa = xarea/(pi*rminor*rminor)
 
-    !  Calculate Neo-Alcator confinement time (used in several scalings)
+    ! Separatrix kappa defined with plasma volume for IPB scalings
+    kappaa_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
 
+    !  Calculate Neo-Alcator confinement time (used in several scalings)
     taueena = 0.07D0 * n20 * rminor * rmajor*rmajor * qstar
 
     !  For reference (see startup.f90):
@@ -3474,7 +2955,8 @@ implicit none
        rtaue = -0.66D0
 
     case (32)  !  IPB98(y), ELMy H-mode scaling
-       !  Nuclear Fusion 39 (1999) 2175
+       !  Data selection : full ITERH.DB3
+       !  Nuclear Fusion 39 (1999) 2175, Table 5
        tauee = hfact * 0.0365D0 * pcur**0.97D0 * bt**0.08D0 * &
             dnla19**0.41D0 * powerht**(-0.63D0) * rmajor**1.93D0 * &
             kappa**0.67D0 * aspect**(-0.23D0) * afuel**0.2D0
@@ -3484,40 +2966,44 @@ implicit none
        rtaue = -0.63D0
 
     case (33)  !  IPB98(y,1), ELMy H-mode scaling
-       !  Nuclear Fusion 39 (1999) 2175
+       !  Data selection : full ITERH.DB3
+       !  Nuclear Fusion 39 (1999) 2175, Table 5 
        tauee = hfact * 0.0503D0 * pcur**0.91D0 * bt**0.15D0 * &
             dnla19**0.44D0 * powerht**(-0.65D0) * rmajor**2.05D0 * &
-            kappaa**0.72D0 * aspect**(-0.57D0) * afuel**0.13D0
+            kappaa_IPB**0.72D0 * aspect**(-0.57D0) * afuel**0.13D0
        gtaue = 0.0D0
        ptaue = 0.44D0
        qtaue = 0.0D0
        rtaue = -0.65D0
 
     case (34)  !  IPB98(y,2), ELMy H-mode scaling
-       !  Nuclear Fusion 39 (1999) 2175
+       !  Data selection : ITERH.DB3, NBI only
+       !  Nuclear Fusion 39 (1999) 2175, Table 5
        tauee = hfact * 0.0562D0 * pcur**0.93D0 * bt**0.15D0 * &
             dnla19**0.41D0 * powerht**(-0.69D0) * rmajor**1.97D0 * &
-            kappaa**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
+            kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
        gtaue = 0.0D0
        ptaue = 0.41D0
        qtaue = 0.0D0
        rtaue = -0.69D0
 
     case (35)  !  IPB98(y,3), ELMy H-mode scaling
-       !  Nuclear Fusion 39 (1999) 2175
+       !  Data selection : ITERH.DB3, NBI only, no C-Mod
+       !  Nuclear Fusion 39 (1999) 2175, Table 5
        tauee = hfact * 0.0564D0 * pcur**0.88D0 * bt**0.07D0 * &
             dnla19**0.40D0 * powerht**(-0.69D0) * rmajor**2.15D0 * &
-            kappaa**0.78D0 * aspect**(-0.64D0) * afuel**0.20D0
+            kappaa_IPB**0.78D0 * aspect**(-0.64D0) * afuel**0.20D0
        gtaue = 0.0D0
        ptaue = 0.4D0
        qtaue = 0.0D0
        rtaue = -0.69D0
 
     case (36)  !  IPB98(y,4), ELMy H-mode scaling
-       !  Nuclear Fusion 39 (1999) 2175
+       !  Data selection : ITERH.DB3, NBI only, ITER like devices
+       !  Nuclear Fusion 39 (1999) 2175, Table 5
        tauee = hfact * 0.0587D0 * pcur**0.85D0 * bt**0.29D0 * &
             dnla19**0.39D0 * powerht**(-0.70D0) * rmajor**2.08D0 * &
-            kappaa**0.76D0 * aspect**(-0.69D0) * afuel**0.17D0
+            kappaa_IPB**0.76D0 * aspect**(-0.69D0) * afuel**0.17D0
        gtaue = 0.0D0
        ptaue = 0.39D0
        qtaue = 0.0D0
@@ -3586,17 +3072,14 @@ implicit none
 
     case (42) ! High density relevant confinement scaling
        ! P.T. Lang et al. 2012, IAEA conference proceeding EX/P4-01
-       ! Note that in the paper kappaa is defined as V/(2pi^2Ra^2)
-       ! which should be equivalent to our local definition assuming
-       ! V = 2piR * (X-sectional area)
        ! q should be q95: incorrect if icurr = 2 (ST current scaling)
        qratio = q/qstar
        ! Greenwald density in m^-3
        nGW = 1.0D14 * plascur/(pi*rminor*rminor)
        nratio = dnla/nGW
-       tauee = hfact * 6.94D-7 * pcur**1.3678D0 * bt**0.12D0 * &
-            dnla19**0.032236D0 * powerht**(-0.74D0) * rmajor**1.2345D0 * &
-            kappaa**0.37D0 * aspect**2.48205D0 * afuel**0.2D0 * &
+       tauee = hfact * 6.94D-7 * plascur**1.3678D0 * bt**0.12D0 * &
+            dnla**0.032236D0 * (powerht*1.0D6)**(-0.74D0) * rmajor**1.2345D0 * &
+            kappaa_IPB**0.37D0 * aspect**2.48205D0 * afuel**0.2D0 * &
             qratio**0.77D0 * aspect**(-0.9D0*log(aspect)) * &
             nratio**(-0.22D0*log(nratio))
 
@@ -3605,34 +3088,93 @@ implicit none
        qtaue = 0.0D0
        rtaue = -0.74D0
 
-!  gtaue = offset term in tauee scaling
-    !  ptaue = exponent for density term in tauee scaling
-    !  qtaue = exponent for temperature term in tauee scaling
-    !  rtaue = exponent for power term in tauee scaling
-
     case (43)  !  Hubbard et al. 2017 I-mode confinement time scaling - nominal
-      tauee = 0.014D0 * (plascur/1.0D6)**0.68D0 * bt**0.77D0 * dnla20**0.02D0 &
+      tauee = hfact * 0.014D0 * (plascur/1.0D6)**0.68D0 * bt**0.77D0 * dnla20**0.02D0 &
               * powerht**(-0.29D0)
       gtaue = 0.0D0
       ptaue = 0.02D0
       qtaue = 0.0D0
       rtaue = -0.29D0
-    
+
     case (44)  !  Hubbard et al. 2017 I-mode confinement time scaling - lower
-      tauee = 0.014D0 * (plascur/1.0D6)**0.60D0 * bt**0.70D0 * dnla20**(-0.03D0) &
+      tauee = hfact * 0.014D0 * (plascur/1.0D6)**0.60D0 * bt**0.70D0 * dnla20**(-0.03D0) &
               * powerht**(-0.33D0)
       gtaue = 0.0D0
-      ptaue = 0.02D0
+      ptaue = -0.03D0
       qtaue = 0.0D0
-      rtaue = -0.29D0
+      rtaue = -0.33D0
 
     case (45)  !  Hubbard et al. 2017 I-mode confinement time scaling - upper
-      tauee = 0.014D0 * (plascur/1.0D6)**0.76D0 * bt**0.84D0  * dnla20**0.07 &
+      tauee = hfact * 0.014D0 * (plascur/1.0D6)**0.76D0 * bt**0.84D0  * dnla20**0.07 &
               * powerht**(-0.25D0)
       gtaue = 0.0D0
-      ptaue = 0.02D0
+      ptaue = 0.07D0
       qtaue = 0.0D0
-      rtaue = -0.29D0
+      rtaue = -0.25D0
+
+    case (46)  !  NSTX, ELMy H-mode scaling
+      !  NSTX scaling with IPB98(y,2) for other variables
+      !  Menard 2019, Phil. Trans. R. Soc. A 377:20170440
+      !  Kaye et al. 2006, Nucl. Fusion 46 848
+      tauee = hfact * 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
+           dnla19**0.44D0 * powerht**(-0.73D0) * rmajor**1.97D0 * &
+           kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
+      gtaue = 0.0D0
+      ptaue = 0.44D0
+      qtaue = 0.0D0
+      rtaue = -0.73D0
+
+    case (47) ! NSTX-Petty08 Hybrid
+      ! Linear interpolation between NSTX and Petty08 in eps
+      ! Menard 2019, Phil. Trans. R. Soc. A 377:20170440
+      if ((1.0D0/aspect).le.0.4D0) then
+      ! Petty08, i.e. case (41)
+        tauee = hfact * 0.052D0 * pcur**0.75D0 * bt**0.3D0 * &
+              dnla19**0.32D0 * powerht**(-0.47D0) * rmajor**2.09D0 * &
+              kappaa**0.88D0 * aspect**(-0.84D0)
+
+        gtaue = 0.0D0
+        ptaue = 0.32D0
+        qtaue = 0.0D0
+        rtaue = -0.47D0
+
+      else if ((1.0D0/aspect).ge.0.6D0) then
+        ! NSTX, i.e.case (46)
+        tauee = hfact * 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
+              dnla19**0.44D0 * powerht**(-0.73D0) * rmajor**1.97D0 * &
+              kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
+
+        gtaue = 0.0D0
+        ptaue = 0.44D0
+        qtaue = 0.0D0
+        rtaue = -0.73D0
+
+      else
+        taupetty = 0.052D0 * pcur**0.75D0 * bt**0.3D0 * &
+                dnla19**0.32D0 * powerht**(-0.47D0) * rmajor**2.09D0 * &
+                kappaa**0.88D0 * aspect**(-0.84D0)
+        taunstx= 0.095D0 * pcur**0.57D0 * bt**1.08D0 * &
+                dnla19**0.44D0 * powerht**(-0.73D0) * rmajor**1.97D0 * &
+                kappaa_IPB**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
+
+        tauee = hfact*((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*taunstx + &
+                 ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*taupetty)
+         
+        gtaue = 0.0D0
+        ptaue = ((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*0.32D0 + &
+                ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*0.44D0)
+        qtaue = 0.0D0
+        rtaue = ((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*(-0.47D0) + &
+                ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*(-0.73D0))
+      end if
+
+    case (48) ! tauee is an input
+      tauee = hfact * tauee_in
+
+      gtaue = 0.0D0
+      ptaue = 0.0D0
+      qtaue = 0.0D0
+      rtaue = 0.0D0
 
     case default
        idiags(1) = isc ; call report_error(81)
@@ -3669,39 +3211,28 @@ implicit none
   subroutine vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
        plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
 
-    !+ad_name  vscalc
-    !+ad_summ  Volt-second requirements
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  csawth : input real :  coefficient for sawteeth effects
-    !+ad_args  eps    : input real :  inverse aspect ratio
-    !+ad_args  facoh  : input real :  fraction of plasma current produced inductively
-    !+ad_args  gamma  : input real :  Ejima coeff for resistive start-up V-s component
-    !+ad_args  kappa  : input real :  plasma elongation
-    !+ad_args  plascur: input real :  plasma current (A)
-    !+ad_args  rli    : input real :  plasma normalised inductivity
-    !+ad_args  rmajor : input real :  plasma major radius (m)
-    !+ad_args  rplas  : input real :  plasma resistance (ohm)
-    !+ad_args  theat  : input real :  heating time (s)
-    !+ad_args  tburn  : input real :  burn time (s)
-    !+ad_args  phiint : output real : internal plasma volt-seconds (Wb)
-    !+ad_args  rlp    : output real : plasma inductance (H)
-    !+ad_args  vsbrn  : output real : volt-seconds needed during flat-top (heat+burn) (Wb)
-    !+ad_args  vsind  : output real : internal and external plasma inductance V-s (Wb)
-    !+ad_args  vsres  : output real : resistive losses in start-up volt-seconds (Wb)
-    !+ad_args  vsstt  : output real : total volt-seconds needed (Wb)
-    !+ad_desc  This subroutine calculates the volt-second requirements and some
-    !+ad_desc  other related items.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Removed rmu0 from argument list
-    !+ad_hist  11/06/13 PJK Removed 1.25 enhancement in rlp formula
-    !+ad_hist  27/11/13 PJK Added theat to tburn in vsbrn calculation
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Volt-second requirements
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! csawth : input real :  coefficient for sawteeth effects
+    !! eps    : input real :  inverse aspect ratio
+    !! facoh  : input real :  fraction of plasma current produced inductively
+    !! gamma  : input real :  Ejima coeff for resistive start-up V-s component
+    !! kappa  : input real :  plasma elongation
+    !! plascur: input real :  plasma current (A)
+    !! rli    : input real :  plasma normalised inductivity
+    !! rmajor : input real :  plasma major radius (m)
+    !! rplas  : input real :  plasma resistance (ohm)
+    !! theat  : input real :  heating time (s)
+    !! tburn  : input real :  burn time (s)
+    !! phiint : output real : internal plasma volt-seconds (Wb)
+    !! rlp    : output real : plasma inductance (H)
+    !! vsbrn  : output real : volt-seconds needed during flat-top (heat+burn) (Wb)
+    !! vsind  : output real : internal and external plasma inductance V-s (Wb)
+    !! vsres  : output real : resistive losses in start-up volt-seconds (Wb)
+    !! vsstt  : output real : total volt-seconds needed (Wb)
+    !! This subroutine calculates the volt-second requirements and some
+    !! other related items.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3765,41 +3296,28 @@ implicit none
   subroutine phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
        taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
-    !+ad_name  phyaux
-    !+ad_summ  Auxiliary physics quantities
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  aspect : input real :  plasma aspect ratio
-    !+ad_args  dene   : input real :  electron density (/m3)
-    !+ad_args  deni   : input real :  fuel ion density (/m3)
-    !+ad_args  dnalp  : input real :  alpha ash density (/m3)
-    !+ad_args  fusionrate : input real :  fusion reaction rate (/m3/s)
-    !+ad_args  alpharate  : input real :  alpha particle production rate (/m3/s)
-    !+ad_args  plascur: input real :  plasma current (A)
-    !+ad_args  sbar   : input real :  exponent for aspect ratio (normally 1)
-    !+ad_args  taueff : input real :  global energy confinement time (s)
-    !+ad_args  vol    : input real :  plasma volume (m3)
-    !+ad_args  burnup : output real : fractional plasma burnup
-    !+ad_args  dntau  : output real : plasma average n-tau (s/m3)
-    !+ad_args  figmer : output real : physics figure of merit
-    !+ad_args  fusrat : output real : number of fusion reactions per second
-    !+ad_args  qfuel  : output real : fuelling rate for D-T (nucleus-pairs/sec)
-    !+ad_args  rndfuel: output real : fuel burnup rate (reactions/s)
-    !+ad_args  taup   : output real : (alpha) particle confinement time (s)
-    !+ad_desc  This subroutine calculates extra physics related items
-    !+ad_desc  needed by other parts of the code
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  07/12/95 PJK Added D-He3 calculations
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  12/06/13 PJK Changed rndfuel, qfuel units from Amps
-    !+ad_hist  10/09/13 PJK Modified fusion reaction rate calculation
-    !+ad_hist  11/09/13 PJK Modified burnup calculation + comments
-    !+ad_hist  08/05/14 PJK Modified taup calculation
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Auxiliary physics quantities
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! aspect : input real :  plasma aspect ratio
+    !! dene   : input real :  electron density (/m3)
+    !! deni   : input real :  fuel ion density (/m3)
+    !! dnalp  : input real :  alpha ash density (/m3)
+    !! fusionrate : input real :  fusion reaction rate (/m3/s)
+    !! alpharate  : input real :  alpha particle production rate (/m3/s)
+    !! plascur: input real :  plasma current (A)
+    !! sbar   : input real :  exponent for aspect ratio (normally 1)
+    !! taueff : input real :  global energy confinement time (s)
+    !! vol    : input real :  plasma volume (m3)
+    !! burnup : output real : fractional plasma burnup
+    !! dntau  : output real : plasma average n-tau (s/m3)
+    !! figmer : output real : physics figure of merit
+    !! fusrat : output real : number of fusion reactions per second
+    !! qfuel  : output real : fuelling rate for D-T (nucleus-pairs/sec)
+    !! rndfuel: output real : fuel burnup rate (reactions/s)
+    !! taup   : output real : (alpha) particle confinement time (s)
+    !! This subroutine calculates extra physics related items
+    !! needed by other parts of the code
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3862,29 +3380,20 @@ implicit none
 
   subroutine rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
-    !+ad_name  rether
-    !+ad_summ  Routine to find the equilibration power between the
-    !+ad_summ  ions and electrons
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  alphan : input real :  density profile index
-    !+ad_args  alphat : input real :  temperature profile index
-    !+ad_args  dene   : input real :  electron density (/m3)
-    !+ad_args  dlamie : input real :  ion-electron coulomb logarithm
-    !+ad_args  te     : input real :  electron temperature (keV)
-    !+ad_args  ti     : input real :  ion temperature (keV)
-    !+ad_args  zeffai : input real :  mass weighted plasma effective charge
-    !+ad_args  piepv  : output real : ion/electron equilibration power (MW/m3)
-    !+ad_desc  This routine calculates the equilibration power between the
-    !+ad_desc  ions and electrons.
-    !+ad_prob  No account is taken of pedestal profiles.
-    !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  03/07/13 PJK Changed zeffai description
-    !+ad_stat  Okay
-    !+ad_docs  Unknown origin
+    !! Routine to find the equilibration power between the
+    !! ions and electrons
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! alphan : input real :  density profile index
+    !! alphat : input real :  temperature profile index
+    !! dene   : input real :  electron density (/m3)
+    !! dlamie : input real :  ion-electron coulomb logarithm
+    !! te     : input real :  electron temperature (keV)
+    !! ti     : input real :  ion temperature (keV)
+    !! zeffai : input real :  mass weighted plasma effective charge
+    !! piepv  : output real : ion/electron equilibration power (MW/m3)
+    !! This routine calculates the equilibration power between the
+    !! ions and electrons.
+    !! Unknown origin
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3916,37 +3425,26 @@ implicit none
   subroutine pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol, &
        zeff,pohmpv,pohmmw,rpfac,rplas)
 
-    !+ad_name  pohm
-    !+ad_summ  Ohmic power calculation
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  facoh  : input real :  fraction of plasma current produced inductively
-    !+ad_args  kappa95: input real :  plasma elongation at 95% flux
-    !+ad_args  plascur: input real :  plasma current (A)
-    !+ad_args  rmajor : input real :  plasma major radius (m)
-    !+ad_args  rminor : input real :  plasma minor radius (m)
-    !+ad_args  ten    : input real :  density weighted average electron temperature (keV)
-    !+ad_args  vol    : input real :  plasma volume (m3)
-    !+ad_args  zeff   : input real :  plasma effective charge
-    !+ad_args  pohmpv : output real : ohmic heating power per unit volume (MW/m3)
-    !+ad_args  pohmmw : output real : ohmic heating power (MW)
-    !+ad_args  rpfac  : output real : neoclassical resistivity enhancement factor
-    !+ad_args  rplas  : output real : plasma resistance (ohm)
-    !+ad_desc  This routine finds the ohmic heating power per unit volume.
-    !+ad_desc  The expression is a good fit for alphan = 0.5, alphat = 1.0,
-    !+ad_desc  alphaj = 1.5, aspect = 2.5 -- 4.
-    !+ad_prob  Therefore, no account is taken of pedestal profiles.
-    !+ad_call  report_error
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  25/07/11 PJK Correction to facoh coding
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  11/04/13 PJK Removed ires argument
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+    !! Ohmic power calculation
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! facoh  : input real :  fraction of plasma current produced inductively
+    !! kappa95: input real :  plasma elongation at 95% flux
+    !! plascur: input real :  plasma current (A)
+    !! rmajor : input real :  plasma major radius (m)
+    !! rminor : input real :  plasma minor radius (m)
+    !! ten    : input real :  density weighted average electron temperature (keV)
+    !! vol    : input real :  plasma volume (m3)
+    !! zeff   : input real :  plasma effective charge
+    !! pohmpv : output real : ohmic heating power per unit volume (MW/m3)
+    !! pohmmw : output real : ohmic heating power (MW)
+    !! rpfac  : output real : neoclassical resistivity enhancement factor
+    !! rplas  : output real : plasma resistance (ohm)
+    !! This routine finds the ohmic heating power per unit volume.
+    !! The expression is a good fit for alphan = 0.5, alphat = 1.0,
+    !! alphaj = 1.5, aspect = 2.5 -- 4.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !! ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4002,32 +3500,12 @@ implicit none
 
   subroutine igmarcal(outfile)
 
-    !+ad_name  igmarcal
-    !+ad_summ  Routine to calculate ignition margin
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile   : input integer : Fortran output unit identifier
-    !+ad_desc  This routine calculates the ignition margin at the final point
-    !+ad_desc  with different scalings.
-    !+ad_prob  None
-    !+ad_call  fhfac
-    !+ad_call  oblnkl
-    !+ad_call  osubhd
-    !+ad_call  pcond
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  01/04/98 PJK Modified PCOND arguments
-    !+ad_hist  30/06/98 PJK Modified PCOND arguments
-    !+ad_hist  19/01/99 PJK Modified PCOND arguments
-    !+ad_hist  17/07/01 PJK Modified PCOND arguments
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  20/05/14 PJK Changed prad to pcorerad
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  20/10/14 PJK Output power balances for H=1 instead of H=2
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to calculate ignition margin
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile   : input integer : Fortran output unit identifier
+    !! This routine calculates the ignition margin at the final point
+    !! with different scalings.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4059,7 +3537,7 @@ implicit none
 
     !  Calculate power balances for all scaling laws assuming H = 1
 
-    do iisc = 32,ipnlaws
+    do iisc = 32,47
        call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d1, &
             iinvqd,iisc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
             plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
@@ -4076,21 +3554,12 @@ implicit none
 
   function fhfac(is)
 
-    !+ad_name  fhfac
-    !+ad_summ  Function to find H-factor for power balance
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  is : input integer : confinement time scaling law of interest
-    !+ad_desc  This function calculates the H-factor required for power balance,
-    !+ad_desc  using the given energy confinement scaling law.
-    !+ad_prob  None
-    !+ad_call  fhz
-    !+ad_call  zeroin
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Function to find H-factor for power balance
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! is : input integer : confinement time scaling law of interest
+    !! This function calculates the H-factor required for power balance,
+    !! using the given energy confinement scaling law.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4123,32 +3592,14 @@ implicit none
 
   function fhz(hhh)
 
-    !+ad_name  fhz
-    !+ad_summ  Function used to find power balance
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  hhh : input real : test value for confinement time H-factor
-    !+ad_desc  This function is used to find power balance.
-    !+ad_desc  <CODE>FHZ</CODE> is zero at power balance, which is achieved
-    !+ad_desc  using routine <A HREF="zeroin.html">ZEROIN</A> to adjust the
-    !+ad_desc  value of <CODE>hhh</CODE>, the confinement time H-factor.
-    !+ad_prob  None
-    !+ad_call  pcond
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  01/04/98 PJK Modified PCOND arguments, and adding coding for
-    !+ad_hisc               use of IGNITE
-    !+ad_hist  30/06/98 PJK Modified PCOND arguments
-    !+ad_hist  19/01/99 PJK Modified PCOND arguments
-    !+ad_hist  16/07/01 PJK Modified PCOND arguments
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  20/05/14 PJK Changed prad to pcorerad; introduced iradloss;
-    !+ad_hisc               Added falpha multiplier to palp term
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  13/11/14 PJK Modified iradloss usage
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Function used to find power balance
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! hhh : input real : test value for confinement time H-factor
+    !! This function is used to find power balance.
+    !! <CODE>FHZ</CODE> is zero at power balance, which is achieved
+    !! using routine <A HREF="zeroin.html">ZEROIN</A> to adjust the
+    !! value of <CODE>hhh</CODE>, the confinement time H-factor.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4202,77 +3653,12 @@ implicit none
 
   subroutine outplas(outfile)
 
-    !+ad_name  outplas
-    !+ad_summ  Subroutine to output the plasma physics information
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : Fortran output unit identifier
-    !+ad_desc  This routine writes the plasma physics information
-    !+ad_desc  to a file, in a tidy format.
-    !+ad_prob  None
-    !+ad_call  int_to_string2
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_call  oheadr
-    !+ad_call  osubhd
-    !+ad_call  ovarin
-    !+ad_call  ovarre
-    !+ad_call  ovarrf
-    !+ad_call  ovarst
-    !+ad_call  report_error
-    !+ad_hist  17/09/97 PJK Upgrade to higher standard of coding. Added
-    !+ad_hisc               Greenwald density limit
-    !+ad_hist  17/11/97 PJK Added additional beta diagnostics
-    !+ad_hist  01/04/98 PJK Added dnla to output, and comment about ignition
-    !+ad_hist  17/07/98 PJK Added power threshold scalings
-    !+ad_hist  19/01/99 PJK Added powerht and minor word changes
-    !+ad_hist  16/07/01 PJK Added kappaa
-    !+ad_hist  20/09/11 PJK Initial F90 version
-    !+ad_hist  17/12/12 PJK Added ZFEAR lines
-    !+ad_hist  18/12/12 PJK Added PTHRMW(6 to 8)
-    !+ad_hist  03/01/13 PJK Removed ICULDL if-statement
-    !+ad_hist  23/01/13 PJK Modified logic for stellarators and ignite=1
-    !+ad_hist  10/06/13 PJK Added ISHAPE=2 and other outputs
-    !+ad_hist  12/06/13 PJK Added plasma energy and other outputs
-    !+ad_hist  12/08/13 PJK Removed some stellarator-irrelevant outputs
-    !+ad_hist  30/09/13 PJK Added Psep/R output line
-    !+ad_hist  02/10/13 PJK Changed pcharge output description
-    !+ad_hist  14/11/13 PJK Corrected thermal energy outputs by 3/2
-    !+ad_hist  14/11/13 PJK Changed kappa95 output description
-    !+ad_hist  26/11/13 PJK Added taup/taueff ratio to output
-    !+ad_hist  28/11/13 PJK Added fuel-ion pair fusion power contributions to output
-    !+ad_hist  28/11/13 PJK Added icurr, iprofile information to output
-    !+ad_hist  20/02/14 PJK Added pedestal profile quantities
-    !+ad_hist  05/03/14 PJK Added on-axis values
-    !+ad_hist  06/03/14 PJK Added warning if pdivt=0.001;
-    !+ad_hisc               clarified ishape effects on kappa, triang
-    !+ad_hist  26/03/14 PJK Added all bootstrap current estimations
-    !+ad_hist  02/04/14 PJK Added confinement scaling law name to mfile
-    !+ad_hist  03/04/14 PJK Used ovarst to write out confinement scaling law name
-    !+ad_hist  23/04/14 PJK Added bvert
-    !+ad_hist  14/05/14 PJK Added impurity concentration info
-    !+ad_hist  21/05/14 PJK Added ignite
-    !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  02/06/14 PJK Added fimpvar
-    !+ad_hist  05/06/14 PJK Rearranged power balance output
-    !+ad_hist  16/06/14 PJK Removed duplicate outputs
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  19/08/14 PJK Added dnla / Greenwald ratio
-    !+ad_hist  01/10/14 PJK Modified safety factor output statements
-    !+ad_hist  01/10/14 PJK Added plhthresh output
-    !+ad_hist  06/10/14 PJK Modified plhthresh output
-    !+ad_hist  11/11/14 PJK Added aion output
-    !+ad_hist  13/11/14 PJK Modified elong, triang outputs with ishape
-    !+ad_hist  13/11/14 PJK Modified iradloss usage
-    !+ad_hist  17/11/14 PJK Modified output to account for falpha, palpfwmw
-    !+ad_hist  18/11/14 PJK Corrected power balance output if ignite=1
-    !+ad_hist  01/04/15 JM  Core plasma power balance removed
-    !+ad_hist  05/08/15 MDK Output to say which impurity (if any) is an iteration variable.
-    !+ad_hist  02/05/18 SIM Added pthrmw(9-14) and associated error warnings
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Subroutine to output the plasma physics information
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : Fortran output unit identifier
+    !! This routine writes the plasma physics information
+    !! to a file, in a tidy format.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4293,9 +3679,17 @@ implicit none
     real(kind(1.0D0)) :: fgwsep_out ! nesep/dlimit(7)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! Dimensionless plasma parameters. See reference below.    
+    nu_star = 1/rmu0  * (15.d0*echarge**4 * dlamie) / (4.d0*pi**1.5d0 * epsilon0**2) * &
+              vol**2 * rmajor**2 * bt * sqrt(eps) * dnla**3 * kappa           / &
+              (total_plasma_internal_energy**2 * plascur)
+
+   rho_star = sqrt(2.d0* mproton * aion * total_plasma_internal_energy / (3.d0 * vol * dnla) ) / &
+              (echarge * bt * eps * rmajor)
+
+   beta_mcdonald = 4.d0/3.d0 *rmu0 * total_plasma_internal_energy / (vol * bt**2) 
 
     call oheadr(outfile,'Plasma')
-
     if (istell == 0) then
        select case (idivrt)
        case (0)
@@ -4309,6 +3703,16 @@ implicit none
        end select
     else
        call ocmmnt(outfile,'Plasma configuration = stellarator')
+    end if
+
+    if (istell == 0) then
+      if (itart == 0) then
+        itart_r = itart
+        call ovarrf(outfile,'Tokamak aspect ratio = Conventional, itart = 0','(itart)',itart_r)
+      else if (itart == 1) then
+        itart_r = itart
+        call ovarrf(outfile,'Tokamak aspect ratio = Spherical, itart = 1','(itart)',itart_r)
+      end if
     end if
 
     call osubhd(outfile,'Plasma Geometry :')
@@ -4502,35 +3906,24 @@ implicit none
     call ovarre(outfile,'Helium ion density (thermalised ions only) / electron density','(ralpne)',ralpne)
     call oblnkl(outfile)
 
-    call ovarin(outfile,'Plasma impurity model','(imprad_model)',imprad_model)
-    if (imprad_model == 0) then
-       call ocmmnt(outfile,'Original model; ITER 1989 Bremsstrahlung calculation')
-       call ovarre(outfile,'Carbon impurity concentration (%)','(rncne*100)',rncne*100)
-       call ovarre(outfile,'Oxygen impurity concentration (%)','(rnone*100)',rnone*100)
 
-       if (zfear == 1) then
-          call ovarre(outfile,'Argon impurity concentration (%)','(cfe0*100)',cfe0*100)
-       else
-          call ovarre(outfile,'Iron impurity concentration (%)','(cfe0*100)',cfe0*100)
-       end if
-    else
-       call ocmmnt(outfile,'New generalised impurity model')
-       call oblnkl(outfile)
-       call ocmmnt(outfile,'Plasma ion densities / electron density:')
-       do imp = 1,nimp
-          ! MDK Update fimp, as this will make the ITV output work correctly.
-          fimp(imp)=impurity_arr(imp)%frac
-          str1 = impurity_arr(imp)%label // ' concentration'
-          str2 = '(fimp('//int_to_string2(imp)//')'
-          ! MDK Add output flag for H which is calculated
-          if (imp==1) then
-            !call ovarre(outfile,str1,str2,impurity_arr(imp)%frac, 'OP ')
-            call ovarre(outfile,str1,str2,fimp(imp), 'OP ')
-          else
-            call ovarre(outfile,str1,str2,fimp(imp))
-          end if
-       end do
-    end if
+   call ocmmnt(outfile,'Impurities')
+   call oblnkl(outfile)
+   call ocmmnt(outfile,'Plasma ion densities / electron density:')
+   do imp = 1,nimp
+      ! MDK Update fimp, as this will make the ITV output work correctly.
+      fimp(imp) = impurity_arr(imp)%frac
+      str1 = impurity_arr(imp)%label // ' concentration'
+      str2 = '(fimp('//int_to_string2(imp)//')'
+      ! MDK Add output flag for H which is calculated
+      if (imp==1) then
+        !call ovarre(outfile,str1,str2,impurity_arr(imp)%frac, 'OP ')
+        call ovarre(outfile,str1,str2,fimp(imp), 'OP ')
+      else
+        call ovarre(outfile,str1,str2,fimp(imp))
+      end if
+   end do
+
     call ovarre(outfile,'Average mass of all ions (amu)','(aion)',aion, 'OP ')
     ! MDK Say which impurity is varied, if iteration variable fimpvar (102) is turned on
     !if (any(ixc == 102)) then
@@ -4635,23 +4028,23 @@ implicit none
     call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
 
     call osubhd(outfile,'Radiation Power (excluding SOL):')
-    if (imprad_model == 1) then
-       call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', pbrempv*vol, 'OP ')
-       call ovarre(outfile,'Line radiation power (MW)','(plinepv*vol)', plinepv*vol, 'OP ')
-    end if
+    call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', pbrempv*vol, 'OP ')
+    call ovarre(outfile,'Line radiation power (MW)','(plinepv*vol)', plinepv*vol, 'OP ')
     call ovarre(outfile,'Synchrotron radiation power (MW)','(psyncpv*vol)', psyncpv*vol, 'OP ')
     call ovarrf(outfile,'Synchrotron wall reflectivity factor','(ssync)',ssync)
-    if (imprad_model == 1) then
-       call ovarre(outfile,"Normalised minor radius defining 'core'", '(coreradius)',coreradius)
-       call ovarre(outfile,"Fraction of core radiation subtracted from P_L", &
-            '(coreradiationfraction)',coreradiationfraction)
-    end if
+    call ovarre(outfile,"Normalised minor radius defining 'core'", '(coreradius)',coreradius)
+    call ovarre(outfile,"Fraction of core radiation subtracted from P_L", &
+         '(coreradiationfraction)',coreradiationfraction)
     call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
     call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
     if (istell==1) then
         call ovarre(outfile,'SOL radiation power (MW)','(psolradmw)', psolradmw, 'OP ')
     end if
     call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')
+    call ovarre(outfile,'Core radiation fraction = total radiation in core / total power deposited in plasma', &
+        '(rad_fraction_core)', rad_fraction_core, 'OP ')
+    call ovarre(outfile,'SoL radiation fraction = total radiation in SoL / total power accross separatrix', &
+        '(rad_fraction_sol)', rad_fraction_sol, 'IP ')
     call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma', &
         '(rad_fraction)', rad_fraction, 'OP ')
     call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)', &
@@ -4664,7 +4057,41 @@ implicit none
         '(peakradwallload)', peakradwallload, 'OP ')
     call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)', &
         '(wallmw)', wallmw, 'OP ')
-
+    if (istell == 0) then
+    call oblnkl(outfile)
+    call ovarre(outfile,'Power incident on the divertor targets (MW)', &
+        '(ptarmw)',ptarmw, 'OP ')
+    call ovarre(outfile, 'Fraction of power to the lower divertor', &
+        '(ftar)', ftar, 'IP ')
+    call ovarre(outfile,'Outboard side heat flux decay length (m)', &
+        '(lambdaio)',lambdaio, 'OP ')
+    if (idivrt == 2) then
+      call ovarre(outfile,'Midplane seperation of the two magnetic closed flux surfaces (m)', &
+           '(drsep)',drsep, 'OP ')
+    end if 
+    call ovarre(outfile,'Fraction of power on the inner targets', &
+        '(fio)',fio, 'OP ')
+    call ovarre(outfile,'Fraction of power incident on the lower inner target', &
+        '(fLI)',fLI, 'OP ')
+    call ovarre(outfile,'Fraction of power incident on the lower outer target', &
+        '(fLO)',fLO, 'OP ')
+    if (idivrt == 2 ) then
+      call ovarre(outfile,'Fraction of power incident on the upper inner target', &
+       '(fUI)',fUI, 'OP ')
+      call ovarre(outfile,'Fraction of power incident on the upper outer target', &
+       '(fUO)',fUO, 'OP ')
+    end if
+    call ovarre(outfile,'Power incident on the lower inner target (MW)', &
+        '(pLImw)',pLImw, 'OP ')
+    call ovarre(outfile,'Power incident on the lower outer target (MW)', &
+        '(pLOmw)',pLOmw, 'OP ')
+    if (idivrt == 2) then    
+      call ovarre(outfile,'Power incident on the upper innner target (MW)', &
+           '(pUImw)',pUImw, 'OP ')
+      call ovarre(outfile,'Power incident on the upper outer target (MW)', &
+           '(pUOmw)',pUOmw, 'OP ')
+    end if
+    end if
     call oblnkl(outfile)
     call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw, 'OP ')
     call ovarrf(outfile,'Fraction of alpha power deposited in plasma','(falpha)',falpha, 'OP ')
@@ -4692,8 +4119,15 @@ implicit none
        call oblnkl(outfile)
     end if
 
-    call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
-    call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivtbt/qar)', ((pdivt*bt)/(q95*aspect*rmajor)), 'OP ')
+    if (idivrt == 2) then
+      ! Double null divertor configuration
+      call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivmax/rmajor)',pdivmax/rmajor, 'OP ')
+      call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivmaxbt/qar)', ((pdivmax*bt)/(q95*aspect*rmajor)), 'OP ')
+    else
+      ! Single null divertor configuration
+      call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
+      call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivtbt/qar)', ((pdivt*bt)/(q95*aspect*rmajor)), 'OP ')
+    end if
 
     if (istell == 0) then
        call osubhd(outfile,'H-mode Power Threshold Scalings :')
@@ -4805,6 +4239,18 @@ implicit none
     call ocmmnt(outfile,'  (= stored energy including fast particles / loss power including radiation')
 
     if (istell == 0) then
+    ! Issues 363 Output dimensionless plasma parameters MDK
+    call osubhd(outfile,'Dimensionless plasma parameters')
+    call ocmmnt(outfile,'For definitions see')
+    call ocmmnt(outfile,'Recent progress on the development and analysis of the ITPA global H-mode confinement database')
+    call ocmmnt(outfile,'D.C. McDonald et al, 2007 Nuclear Fusion v47, 147. (nu_star missing 1/mu0)')
+    call ovarre(outfile,'Normalized plasma pressure beta as defined by McDonald et al', '(beta_mcdonald)',beta_mcdonald,'OP ')
+    call ovarre(outfile,'Normalized ion Larmor radius', '(rho_star)', rho_star,'OP ')
+    call ovarre(outfile,'Normalized collisionality', '(nu_star)',nu_star,'OP ')
+    call ovarre(outfile,'Volume measure of elongation','(kappaa_IPB)',kappaa_IPB,'OP ')
+    end if
+
+    if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')
        call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt, 'OP ')
        call ovarre(outfile,'Inductive volt-seconds (Wb)','(vsind)',vsind, 'OP ')
@@ -4823,7 +4269,19 @@ implicit none
           call ocmmnt(outfile,'(PLASMOD bootstrap current fraction used)')
        else
           call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', '(bscf_nevins)',bscf_nevins, 'OP ')
-          call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
+          call ovarrf(outfile,'Bootstrap fraction (Wilson)', '(bscf_wilson)',bscf_wilson, 'OP ')
+          call ovarrf(outfile,'Diamagnetic fraction (Hender)', '(diacf_hender)',diacf_hender, 'OP ')
+          call ovarrf(outfile,'Diamagnetic fraction (SCENE)', '(diacf_scene)',diacf_scene, 'OP ')
+          call ovarrf(outfile,'Pfirsch-Schlueter fraction (SCENE)', '(pscf_scene)',pscf_scene, 'OP ')
+          ! Error to catch if bootstap fraction limit has been enforced
+          if (err242==1)then
+              call report_error(242)
+          end if
+          ! Error to catch if self-driven current fraction limit has been enforced
+          if (err243==1)then
+              call report_error(243)
+          end if
+          
           if (bscfmax < 0.0D0) then
              call ocmmnt(outfile,'  (User-specified bootstrap current fraction used)')
           else if (ibss == 1) then
@@ -4831,13 +4289,34 @@ implicit none
           else if (ibss == 2) then
              call ocmmnt(outfile,'  (Nevins et al bootstrap current fraction model used)')
           else if (ibss == 3) then
-             call ocmmnt(outfile,'  (Wilson et al bootstrap current fraction model used)')
+             call ocmmnt(outfile,'  (Wilson bootstrap current fraction model used)')
           else if (ibss == 4) then
              call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
           end if
+          
+          if (idia == 0) then
+             call ocmmnt(outfile,'  (Diamagnetic current fraction not calculated)')
+             ! Error to show if diamagnetic current is above 1% but not used
+             if (diacf_scene.gt.0.01D0) then
+               call report_error(244)
+             end if
+          else if (idia == 1) then
+             call ocmmnt(outfile,'  (Hender diamagnetic current fraction scaling used)')
+          else if (idia == 2) then
+             call ocmmnt(outfile,'  (SCENE diamagnetic current fraction scaling used)')
+         end if
+         
+         if (ips == 0) then
+              call ocmmnt(outfile,'  (Pfirsch-Schlüter current fraction not calculated)')
+         else if (ips == 1) then
+              call ocmmnt(outfile,'  (SCENE Pfirsch-Schlüter current fraction scaling used)')
+         end if
+
        endif
 
        call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf, 'OP ')
+       call ovarrf(outfile,'Diamagnetic fraction (enforced)','(diaipf.)',diaipf, 'OP ')
+       call ovarrf(outfile,'Pfirsch-Schlueter fraction (enforced)','(psipf.)',psipf, 'OP ')
 
        call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', plascur*rplas*facoh, 'OP ')
        call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas, 'OP ')
@@ -4866,26 +4345,13 @@ implicit none
 
   subroutine outtim(outfile)
 
-    !+ad_name  outtim
-    !+ad_summ  Routine to print out the times of the various stages
-    !+ad_summ  during a single plant cycle
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : Fortran output unit identifier
-    !+ad_desc  This routine writes out the times of the various stages
-    !+ad_desc  during a single plant cycle.
-    !+ad_prob  None
-    !+ad_call  oblnkl
-    !+ad_call  oheadr
-    !+ad_call  ovarrf
-    !+ad_hist  20/09/11 PJK Initial F90 version
-    !+ad_hist  30/10/12 PJK Added times_variables
-    !+ad_hist  27/06/13 PJK Relabelled tohs
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
-    !+ad_hist  12/11/14 PJK tcycle now a global variable
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !! Routine to print out the times of the various stages
+    !! during a single plant cycle
+    !! author: P J Knight, CCFE, Culham Science Centre
+    !! outfile : input integer : Fortran output unit identifier
+    !! This routine writes out the times of the various stages
+    !! during a single plant cycle.
+    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

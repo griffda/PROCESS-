@@ -1,27 +1,14 @@
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module autodoc_data
 
-  !+ad_name  autodoc_data
-  !+ad_summ  Module providing global storage for autodoc variables
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  None
-  !+ad_args  N/A
-  !+ad_desc  This module provides a means of sharing globally-used variables
-  !+ad_desc  between all the subprograms of autodoc. A number of widely-used
-  !+ad_desc  constants and character strings are also defined.
-  !+ad_prob  None
-  !+ad_call  N/A
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_hist  06/11/2006 PJK Changed lenmax from 80 to 85
-  !+ad_hist  13/03/2009 PJK Changed lenmax from 85 to 100
-  !+ad_hist  09/06/2011 PJK Added version number
-  !+ad_hist  07/11/2012 PJK Added variable descriptor file coding
-  !+ad_hist  07/11/2012 PJK Initialised all flags components to zero
-  !+ad_hist  06/01/2015 MDK Changed lenmax to 120
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Module providing global storage for autodoc variables
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module provides a means of sharing globally-used variables
+  !! between all the subprograms of autodoc. A number of widely-used
+  !! constants and character strings are also defined.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -56,8 +43,8 @@ module autodoc_data
 
   integer, parameter :: iounit = 1, hfunit = 2, vdunit = 3
   integer, parameter :: lenmax = 120
-  character(len=lenmax) :: hfile = 'adheader.src'
-  character(len=lenmax) :: ffile = 'adfooter.src'
+  character(len=lenmax) :: hfile = 'documentation/adheader.src'
+  character(len=lenmax) :: ffile = 'documentation/adfooter.src'
   character(len=lenmax) :: vdfile = 'vardes.html'
   character(len=lenmax) :: outfile
 
@@ -94,56 +81,49 @@ module autodoc_data
 
 end module autodoc_data
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module calltree_data
 
-  !+ad_name  calltree_data
-  !+ad_summ  Module providing global storage for calling tree variables
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  None
-  !+ad_args  N/A
-  !+ad_desc  This module provides a means of sharing globally-used variables
-  !+ad_desc  between all the subprograms of autodoc involved in tracking the
-  !+ad_desc  calling tree.
-  !+ad_desc  <P>The calling tree is built using linked lists as the information
-  !+ad_desc  is gathered from the 'cont' and 'call' autodoc entries. A 'master'
-  !+ad_desc  linked list of subprograms is created, and each entry in this list
-  !+ad_desc  has two sub-lists, one containing the subprogram's parents (i.e.
-  !+ad_desc  the routines/modules etc. that directly call or contain the
-  !+ad_desc  subprogram), and the other containing the subprogram's children
-  !+ad_desc  (i.e. the routines/modules etc. that it calls/uses).
-  !+ad_desc  <P>
-  !+ad_desc  An example follows for clarity. Consider a program in which there
-  !+ad_desc  are five routines:
-  !+ad_desc  <P><DIR>a calls b and c; b calls c and d; c calls d; d calls e</DIR>
-  !+ad_desc  <P>Graphically, we then have the following calling tree:
-  !+ad_desc  <PRE>
-  !+ad_desc  depth: 0    1    2    3    4
-  !+ad_desc  .      a -- b ------- d -- e
-  !+ad_desc  .       \    \       /
-  !+ad_desc  .        \----\- c -/
-  !+ad_desc  </PRE>
-  !+ad_desc  This will be stored as the following linked list of five items:
-  !+ad_desc  <PRE>
-  !+ad_desc     a - parents none ; children b, c
-  !+ad_desc     b - parents a    ; children c, d
-  !+ad_desc     c - parents a, b ; children d
-  !+ad_desc     d - parents b, c ; children e
-  !+ad_desc     e - parents d    ; children none
-  !+ad_desc  </PRE>
-  !+ad_desc  (Note that the order may well be different to that above, but the
-  !+ad_desc  'topology' will be unchanged)
-  !+ad_desc  <P>
-  !+ad_desc  The module includes global pointers to enable the calling tree
-  !+ad_desc  routines to keep track of where they are in the various linked
-  !+ad_desc  lists.
-  !+ad_prob  None
-  !+ad_call  N/A
-  !+ad_hist  11/02/2009 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Module providing global storage for calling tree variables
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This module provides a means of sharing globally-used variables
+  !! between all the subprograms of autodoc involved in tracking the
+  !! calling tree.
+  !! <P>The calling tree is built using linked lists as the information
+  !! is gathered from the 'cont' and 'call' autodoc entries. A 'master'
+  !! linked list of subprograms is created, and each entry in this list
+  !! has two sub-lists, one containing the subprogram's parents (i.e.
+  !! the routines/modules etc. that directly call or contain the
+  !! subprogram), and the other containing the subprogram's children
+  !! (i.e. the routines/modules etc. that it calls/uses).
+  !! <P>
+  !! An example follows for clarity. Consider a program in which there
+  !! are five routines:
+  !! <P><DIR>a calls b and c; b calls c and d; c calls d; d calls e</DIR>
+  !! <P>Graphically, we then have the following calling tree:
+  !! <PRE>
+  !! depth: 0    1    2    3    4
+  !! .      a -- b ------- d -- e
+  !! .       \    \       /
+  !! .        \----\- c -/
+  !! </PRE>
+  !! This will be stored as the following linked list of five items:
+  !! <PRE>
+  !! a - parents none ; children b, c
+  !! b - parents a    ; children c, d
+  !! c - parents a, b ; children d
+  !! d - parents b, c ; children e
+  !! e - parents d    ; children none
+  !! </PRE>
+  !! (Note that the order may well be different to that above, but the
+  !! 'topology' will be unchanged)
+  !! <P>
+  !! The module includes global pointers to enable the calling tree
+  !! routines to keep track of where they are in the various linked
+  !! lists.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -178,113 +158,79 @@ module calltree_data
 
 end module calltree_data
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 program autodoc
 
-  !+ad_name  autodoc
-  !+ad_summ  Main program for autodoc
-  !+ad_type  Main program
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  None
-  !+ad_args  N/A
-  !+ad_desc  This is the autodoc main program.
-  !+ad_desc  The program simply reads a text file (typically a program source
-  !+ad_desc  file) from standard input, line-by-line, and acts on any
-  !+ad_desc  autodoc commands it finds, creating a series of html files as
-  !+ad_desc  it goes. It is not limited to documenting Fortran source!
-  !+ad_desc  <P>
-  !+ad_desc  Autodoc commands consist of a marker string, <CODE>+ad_</CODE>,
-  !+ad_desc  followed by a four-character command label, with the rest
-  !+ad_desc  of the line acting as the 'argument' of the command.
-  !+ad_desc  <P>
-  !+ad_desc  The available command labels are:
-  !+ad_desc  <UL>
-  !+ad_desc  <LI> <CODE>name</CODE>: Name of the subprogram (once only per
-  !+ad_desc       subprogram) - must come first
-  !+ad_desc  <LI> <CODE>summ</CODE>: Summary text
-  !+ad_desc  <LI> <CODE>type</CODE>: Module, Subroutine, Main Program, Function
-  !+ad_desc       etc.
-  !+ad_desc  <LI> <CODE>auth</CODE>: Author's name
-  !+ad_desc  <LI> <CODE>cont</CODE>: Contents - names of subroutines within a
-  !+ad_desc       module, for instance, or None, or N/A
-  !+ad_desc  <LI> <CODE>args</CODE>: Arguments, or None, or N/A
-  !+ad_desc  <LI> <CODE>argc</CODE>: Continuation of an argument description
-  !+ad_desc       (to limit line lengths)
-  !+ad_desc  <LI> <CODE>desc</CODE>: Wordy description
-  !+ad_desc  <LI> <CODE>prob</CODE>: Known problems or issues
-  !+ad_desc  <LI> <CODE>call</CODE>: Subprograms called, or None, or N/A
-  !+ad_desc  <LI> <CODE>hist</CODE>: History, in chronological order
-  !+ad_desc  <LI> <CODE>hisc</CODE>: Continuation of a history description
-  !+ad_desc       (to limit line lengths)
-  !+ad_desc  <LI> <CODE>stat</CODE>: Status
-  !+ad_desc  <LI> <CODE>stac</CODE>: Continuation of a status description
-  !+ad_desc       (to limit line lengths)
-  !+ad_desc  <LI> <CODE>docs</CODE>: Further documentation
-  !+ad_desc  <LI> <CODE>docc</CODE>: Continuation of a documentation description
-  !+ad_desc       (to limit line lengths)
-  !+ad_desc  <LI> <CODE>vars</CODE>: Variable description
-  !+ad_desc  <LI> <CODE>varc</CODE>: Continuation of a variable description
-  !+ad_desc       (to limit line lengths)
-  !+ad_desc  </UL>
-  !+ad_desc  <P>
-  !+ad_desc  A new html file is created whenever a 'name' command is found
-  !+ad_desc  (so it is important that this is the first command to be given
-  !+ad_desc  within a particular subprogram). The other commands can occur
-  !+ad_desc  in any order, but it is encouraged that a standard order
-  !+ad_desc  (such as that demonstrated here!) is adhered to.
-  !+ad_desc  <P>
-  !+ad_desc  Most commands can be repeated consecutively; however, some cannot,
-  !+ad_desc  as they would lead to strange formatting in the html. If, for
-  !+ad_desc  example, the description of a subprogram's argument is going
-  !+ad_desc  to extend beyond a single line, the description should be
-  !+ad_desc  continued using the 'argc' command, not the 'args' command.
-  !+ad_desc  <P>
-  !+ad_desc  The 'name', 'cont', and 'call' commands must contain a single
-  !+ad_desc  string without spaces, as these will be converted into file names
-  !+ad_desc  in the hypertext.
-  !+ad_desc  <P>
-  !+ad_desc  The user can use extra hypertext features as they see fit.
-  !+ad_desc  <P>
-  !+ad_desc  As the program's autodoc commands are read in, its <I>calling</I>
-  !+ad_desc  and <I>called-by</I> trees are built up automatically from the
-  !+ad_desc  information provided in the 'cont' and 'call' entries. (See the
-  !+ad_desc  <A HREF="calltree_data.html">calling tree data module</A> for
-  !+ad_desc  more information.)
-  !+ad_desc  These trees are written out after input has completed, to a file
-  !+ad_desc  called <CODE>callingtree.html</CODE>.
-  !+ad_prob  Part of the calling tree code is commented out, as it currently fails
-  !+ad_prob  to deal successfully with a program in which recursion is present.
-  !+ad_call  autodoc_data
-  !+ad_call  check_calltree_depth
-  !+ad_call  print_calltree
-  !+ad_call  close_file
-  !+ad_call  close_vardes
-  !+ad_call  open_file
-  !+ad_call  read_line
-  !+ad_call  reset_flags
-  !+ad_call  section_arguments
-  !+ad_call  section_arguments_cont
-  !+ad_call  section_author
-  !+ad_call  section_calls
-  !+ad_call  section_contents
-  !+ad_call  section_details
-  !+ad_call  section_documentation
-  !+ad_call  section_documentation_cont
-  !+ad_call  section_history
-  !+ad_call  section_history_cont
-  !+ad_call  section_problems
-  !+ad_call  section_status
-  !+ad_call  section_status_cont
-  !+ad_call  section_summary
-  !+ad_call  section_type
-  !+ad_call  section_variables
-  !+ad_call  section_variables_cont
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_hist  11/02/2009 PJK Added calling tree routines
-  !+ad_hist  06/11/2012 PJK Added variable routines
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Main program for autodoc
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! N/A
+  !! This is the autodoc main program.
+  !! The program simply reads a text file (typically a program source
+  !! file) from standard input, line-by-line, and acts on any
+  !! autodoc commands it finds, creating a series of html files as
+  !! it goes. It is not limited to documenting Fortran source!
+  !! <P>
+  !! Autodoc commands consist of a marker string, <CODE>+ad_</CODE>,
+  !! followed by a four-character command label, with the rest
+  !! of the line acting as the 'argument' of the command.
+  !! <P>
+  !! The available command labels are:
+  !! <UL>
+  !! <LI> <CODE>name</CODE>: Name of the subprogram (once only per
+  !! subprogram) - must come first
+  !! <LI> <CODE>summ</CODE>: Summary text
+  !! <LI> <CODE>type</CODE>: Module, Subroutine, Main Program, Function
+  !! etc.
+  !! <LI> <CODE>auth</CODE>: Author's name
+  !! <LI> <CODE>cont</CODE>: Contents - names of subroutines within a
+  !! module, for instance, or None, or N/A
+  !! <LI> <CODE>args</CODE>: Arguments, or None, or N/A
+  !! <LI> <CODE>argc</CODE>: Continuation of an argument description
+  !! (to limit line lengths)
+  !! <LI> <CODE>desc</CODE>: Wordy description
+  !! <LI> <CODE>prob</CODE>: Known problems or issues
+  !! <LI> <CODE>call</CODE>: Subprograms called, or None, or N/A
+  !! <LI> <CODE>hist</CODE>: History, in chronological order
+  !! <LI> <CODE>hisc</CODE>: Continuation of a history description
+  !! (to limit line lengths)
+  !! <LI> <CODE>stat</CODE>: Status
+  !! <LI> <CODE>stac</CODE>: Continuation of a status description
+  !! (to limit line lengths)
+  !! <LI> <CODE>docs</CODE>: Further documentation
+  !! <LI> <CODE>docc</CODE>: Continuation of a documentation description
+  !! (to limit line lengths)
+  !! <LI> <CODE>vars</CODE>: Variable description
+  !! <LI> <CODE>varc</CODE>: Continuation of a variable description
+  !! (to limit line lengths)
+  !! </UL>
+  !! <P>
+  !! A new html file is created whenever a 'name' command is found
+  !! (so it is important that this is the first command to be given
+  !! within a particular subprogram). The other commands can occur
+  !! in any order, but it is encouraged that a standard order
+  !! (such as that demonstrated here!) is adhered to.
+  !! <P>
+  !! Most commands can be repeated consecutively; however, some cannot,
+  !! as they would lead to strange formatting in the html. If, for
+  !! example, the description of a subprogram's argument is going
+  !! to extend beyond a single line, the description should be
+  !! continued using the 'argc' command, not the 'args' command.
+  !! <P>
+  !! The 'name', 'cont', and 'call' commands must contain a single
+  !! string without spaces, as these will be converted into file names
+  !! in the hypertext.
+  !! <P>
+  !! The user can use extra hypertext features as they see fit.
+  !! <P>
+  !! As the program's autodoc commands are read in, its <I>calling</I>
+  !! and <I>called-by</I> trees are built up automatically from the
+  !! information provided in the 'cont' and 'call' entries. (See the
+  !! <A HREF="calltree_data.html">calling tree data module</A> for
+  !! more information.)
+  !! These trees are written out after input has completed, to a file
+  !! called <CODE>callingtree.html</CODE>.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -347,26 +293,18 @@ program autodoc
 
 end program autodoc
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine reset_flags(flag)
 
-  !+ad_name  reset_flags
-  !+ad_summ  Routine that resets all the command flags to indicate that
-  !+ad_summ  the command sections are all 'closed'
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  flag : input/output flags object : set of flags to be reset
-  !+ad_desc  This routine sets all the components of the given flag
-  !+ad_desc  object to zero, indicating that all the command sections
-  !+ad_desc  are now inactive, or closed.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_hist  07/11/2012 PJK Added flag%variables, vardes
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that resets all the command flags to indicate that
+  !! the command sections are all 'closed'
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! flag : input/output flags object : set of flags to be reset
+  !! This routine sets all the components of the given flag
+  !! object to zero, indicating that all the command sections
+  !! are now inactive, or closed.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -398,34 +336,24 @@ subroutine reset_flags(flag)
 
 end subroutine reset_flags
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 integer function read_line(line,command)
 
-  !+ad_name  read_line
-  !+ad_summ  Routine that reads a line from standard input and parses it
-  !+ad_summ  to find any autodoc commands and their associated arguments
-  !+ad_type  Function returning integer
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : output string : extracted autodoc command argument
-  !+ad_args  command : output string : extracted autodoc command
-  !+ad_desc  This routine reads a line from the standard input channel
-  !+ad_desc  and looks for the autodoc marker (the string of characters
-  !+ad_desc  '+ad_') within it. If this marker is present, the routine
-  !+ad_desc  extracts the specific autodoc command and its argument
-  !+ad_desc  from the line, and returns them via the function's arguments.
-  !+ad_desc  <P>The routine returns 0 if a line was read in correctly
-  !+ad_desc  (irrespective of whether there was an autodoc command within it),
-  !+ad_desc  or -1 if the end of the file has been reached.
-  !+ad_prob  The fact that the function modifies its arguments is
-  !+ad_prob  deprecated in standard Fortran - this is a standard
-  !+ad_prob  methodology by C programmers! Its use here merely keeps
-  !+ad_prob  the main program tidy...
-  !+ad_call  autodoc_data
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that reads a line from standard input and parses it
+  !! to find any autodoc commands and their associated arguments
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : output string : extracted autodoc command argument
+  !! command : output string : extracted autodoc command
+  !! This routine reads a line from the standard input channel
+  !! and looks for the autodoc marker (the string of characters
+  !! '+ad_') within it. If this marker is present, the routine
+  !! extracts the specific autodoc command and its argument
+  !! from the line, and returns them via the function's arguments.
+  !! <P>The routine returns 0 if a line was read in correctly
+  !! (irrespective of whether there was an autodoc command within it),
+  !! or -1 if the end of the file has been reached.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -488,39 +416,24 @@ integer function read_line(line,command)
 
 end function read_line
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine open_file(line,flag)
 
-  !+ad_name  open_file
-  !+ad_summ  Routine that opens a new html file for autodoc to write to
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : root of the filename to be opened
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine opens a new html file for autodoc to use for the
-  !+ad_desc  current subprogram's documentation. The filename to be used
-  !+ad_desc  is the string contained within the <CODE>line</CODE> argument
-  !+ad_desc  followed by <CODE>.html</CODE>.
-  !+ad_desc  If another html file is already open, this is closed first.
-  !+ad_desc  <P>After opening the new file, the header for the html is
-  !+ad_desc  written to it, followed by a title line.
-  !+ad_desc  <P>Next, the title line is written to the variable descriptor file.
-  !+ad_desc  <P>Finally, a new entry is added to the calling tree.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_file
-  !+ad_call  header
-  !+ad_call  new_parent
-  !+ad_call  open_vardes
-  !+ad_call  write_to_file
-  !+ad_call  write_to_vardes
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_hist  11/02/2009 PJK Added call to new_parent
-  !+ad_hist  07/11/2012 PJK Added variable descriptor file coding
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that opens a new html file for autodoc to write to
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : root of the filename to be opened
+  !! flag : input/output flags object : set of command flags
+  !! This routine opens a new html file for autodoc to use for the
+  !! current subprogram's documentation. The filename to be used
+  !! is the string contained within the <CODE>line</CODE> argument
+  !! followed by <CODE>.html</CODE>.
+  !! If another html file is already open, this is closed first.
+  !! <P>After opening the new file, the header for the html is
+  !! written to it, followed by a title line.
+  !! <P>Next, the title line is written to the variable descriptor file.
+  !! <P>Finally, a new entry is added to the calling tree.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -572,30 +485,18 @@ subroutine open_file(line,flag)
 
 end subroutine open_file
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine close_file(flag)
 
-  !+ad_name  close_file
-  !+ad_summ  Routine that completes and closes an html file
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine closes an html file being used by autodoc.
-  !+ad_desc  First, any currently open command sections are closed.
-  !+ad_desc  Then the html footer is written to the file.
-  !+ad_desc  Finally, the file is closed and the command flags are reset.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  footer
-  !+ad_call  reset_flags
-  !+ad_call  write_to_vardes
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_hist  07/11/2012 PJK Added write_to_vardes call
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that completes and closes an html file
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! flag : input/output flags object : set of command flags
+  !! This routine closes an html file being used by autodoc.
+  !! First, any currently open command sections are closed.
+  !! Then the html footer is written to the file.
+  !! Finally, the file is closed and the command flags are reset.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -628,24 +529,17 @@ subroutine close_file(flag)
 
 end subroutine close_file
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine write_to_file(line,flag)
 
-  !+ad_name  write_to_file
-  !+ad_summ  Routine that writes a line of text to the current html file
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : text to be written
-  !+ad_args  flag : input flags object : set of command flags
-  !+ad_desc  This routine simply writes a line of text to the current
-  !+ad_desc  html file.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that writes a line of text to the current html file
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : text to be written
+  !! flag : input flags object : set of command flags
+  !! This routine simply writes a line of text to the current
+  !! html file.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -668,29 +562,20 @@ subroutine write_to_file(line,flag)
 
 end subroutine write_to_file
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine close_sections(flag)
 
-  !+ad_name  close_sections
-  !+ad_summ  Routine that closes any currently-open command sections
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  Some of the autodoc commands result in an un-numbered list
-  !+ad_desc  of bullet points being created in the html file. When a new
-  !+ad_desc  command is encountered, or when the file is to be closed,
-  !+ad_desc  any un-numbered lists currently in use must be closed with the
-  !+ad_desc  relevant html tag. This routine ensures that this happens, and
-  !+ad_desc  resets the relevant flag accordingly.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_hist  07/11/2012 PJK Added variables stanza
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that closes any currently-open command sections
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! flag : input/output flags object : set of command flags
+  !! Some of the autodoc commands result in an un-numbered list
+  !! of bullet points being created in the html file. When a new
+  !! command is encountered, or when the file is to be closed,
+  !! any un-numbered lists currently in use must be closed with the
+  !! relevant html tag. This routine ensures that this happens, and
+  !! resets the relevant flag accordingly.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -750,28 +635,19 @@ subroutine close_sections(flag)
 
 end subroutine close_sections
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_summary(line,flag)
 
-  !+ad_name  section_summary
-  !+ad_summ  Routine that acts on a 'summ' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'summ' command is encountered.
-  !+ad_desc  If one is not already open, a 'Summary' section is started
-  !+ad_desc  by writing the relevant section header line to the html file.
-  !+ad_desc  The given line of text is then written to the html file.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'summ' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'summ' command is encountered.
+  !! If one is not already open, a 'Summary' section is started
+  !! by writing the relevant section header line to the html file.
+  !! The given line of text is then written to the html file.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -800,28 +676,19 @@ subroutine section_summary(line,flag)
 
 end subroutine section_summary
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_type(line,flag)
 
-  !+ad_name  section_type
-  !+ad_summ  Routine that acts on a 'type' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'type' command is encountered.
-  !+ad_desc  If one is not already open, a 'Type' section is started
-  !+ad_desc  by writing the relevant section header line to the html file.
-  !+ad_desc  The given line of text is then written to the html file.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'type' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'type' command is encountered.
+  !! If one is not already open, a 'Type' section is started
+  !! by writing the relevant section header line to the html file.
+  !! The given line of text is then written to the html file.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -850,28 +717,19 @@ subroutine section_type(line,flag)
 
 end subroutine section_type
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_details(line,flag)
 
-  !+ad_name  section_details
-  !+ad_summ  Routine that acts on a 'desc' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'desc' command is encountered.
-  !+ad_desc  If one is not already open, a 'Details' section is started
-  !+ad_desc  by writing the relevant section header line to the html file.
-  !+ad_desc  The given line of text is then written to the html file.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'desc' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'desc' command is encountered.
+  !! If one is not already open, a 'Details' section is started
+  !! by writing the relevant section header line to the html file.
+  !! The given line of text is then written to the html file.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -900,28 +758,19 @@ subroutine section_details(line,flag)
 
 end subroutine section_details
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_problems(line,flag)
 
-  !+ad_name  section_problems
-  !+ad_summ  Routine that acts on a 'prob' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'prob' command is encountered.
-  !+ad_desc  If one is not already open, a 'Known Issues' section is started
-  !+ad_desc  by writing the relevant section header line to the html file.
-  !+ad_desc  The given line of text is then written to the html file.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'prob' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'prob' command is encountered.
+  !! If one is not already open, a 'Known Issues' section is started
+  !! by writing the relevant section header line to the html file.
+  !! The given line of text is then written to the html file.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -950,38 +799,27 @@ subroutine section_problems(line,flag)
 
 end subroutine section_problems
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_contents(line,flag)
 
-  !+ad_name  section_contents
-  !+ad_summ  Routine that acts on a 'cont' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'cont' command is encountered.
-  !+ad_desc  If one is not already open, a 'Contents' section is started
-  !+ad_desc  by writing the relevant section header line to the html file,
-  !+ad_desc  and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument (which must contain a single word
-  !+ad_desc  without spaces) is then written to the html file as a list item,
-  !+ad_desc  becoming a hypertext link to a file of the same name as the
-  !+ad_desc  <CODE>line</CODE> string itself followed by <CODE>.html</CODE>.
-  !+ad_desc  However, if <CODE>line</CODE> contains 'None' or 'N/A', then
-  !+ad_desc  this is written out instead, without becoming a link to a file.
-  !+ad_desc  <P>Finally, a 'child' entry for the current subprogram is added
-  !+ad_desc  to the calling tree.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  new_child
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_hist  11/02/2009 PJK Added call to new_child
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'cont' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'cont' command is encountered.
+  !! If one is not already open, a 'Contents' section is started
+  !! by writing the relevant section header line to the html file,
+  !! and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument (which must contain a single word
+  !! without spaces) is then written to the html file as a list item,
+  !! becoming a hypertext link to a file of the same name as the
+  !! <CODE>line</CODE> string itself followed by <CODE>.html</CODE>.
+  !! However, if <CODE>line</CODE> contains 'None' or 'N/A', then
+  !! this is written out instead, without becoming a link to a file.
+  !! <P>Finally, a 'child' entry for the current subprogram is added
+  !! to the calling tree.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1026,34 +864,25 @@ subroutine section_contents(line,flag)
 
 end subroutine section_contents
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_arguments(line,flag)
 
-  !+ad_name  section_arguments
-  !+ad_summ  Routine that acts on an 'args' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if an 'args' command is encountered.
-  !+ad_desc  If one is not already open, an 'Arguments' section is started
-  !+ad_desc  by writing the relevant section header line to the html file,
-  !+ad_desc  and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
-  !+ad_desc  as a list item.
-  !+ad_desc  <P>If a description of the argument extends over more than
-  !+ad_desc  one line of the source file, an 'argc' command should be used
-  !+ad_desc  instead for continuation lines, otherwise a new bullet will be
-  !+ad_desc  written to the html file, making the output look strange.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on an 'args' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if an 'args' command is encountered.
+  !! If one is not already open, an 'Arguments' section is started
+  !! by writing the relevant section header line to the html file,
+  !! and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument is then written to the html file
+  !! as a list item.
+  !! <P>If a description of the argument extends over more than
+  !! one line of the source file, an 'argc' command should be used
+  !! instead for continuation lines, otherwise a new bullet will be
+  !! written to the html file, making the output look strange.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1084,34 +913,25 @@ subroutine section_arguments(line,flag)
 
 end subroutine section_arguments
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_arguments_cont(line,flag)
 
-  !+ad_name  section_arguments_cont
-  !+ad_summ  Routine that acts on an 'argc' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if an 'argc' command is encountered.
-  !+ad_desc  If one is not already open, an 'Arguments' section is started
-  !+ad_desc  by writing the relevant section header line to the html file,
-  !+ad_desc  and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
-  !+ad_desc  as a continuation of a list item.
-  !+ad_desc  <P>The 'argc' command should be used to continue an 'args'
-  !+ad_desc  command if the description of the argument extends over more than
-  !+ad_desc  one line of the source file, to prevent extra bullets being
-  !+ad_desc  written to the html file, making the output look strange.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on an 'argc' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if an 'argc' command is encountered.
+  !! If one is not already open, an 'Arguments' section is started
+  !! by writing the relevant section header line to the html file,
+  !! and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument is then written to the html file
+  !! as a continuation of a list item.
+  !! <P>The 'argc' command should be used to continue an 'args'
+  !! command if the description of the argument extends over more than
+  !! one line of the source file, to prevent extra bullets being
+  !! written to the html file, making the output look strange.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1142,38 +962,27 @@ subroutine section_arguments_cont(line,flag)
 
 end subroutine section_arguments_cont
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_calls(line,flag)
 
-  !+ad_name  section_calls
-  !+ad_summ  Routine that acts on a 'call' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'call' command is encountered.
-  !+ad_desc  If one is not already open, a 'Routines/Modules Called' section
-  !+ad_desc  is started by writing the relevant section header line to the
-  !+ad_desc  html file, and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument (which must contain a single word
-  !+ad_desc  without spaces) is then written to the html file as a list item,
-  !+ad_desc  becoming a hypertext link to a file of the same name as the
-  !+ad_desc  <CODE>line</CODE> string itself followed by <CODE>.html</CODE>.
-  !+ad_desc  However, if <CODE>line</CODE> contains 'None' or 'N/A', then
-  !+ad_desc  this is written out instead, without becoming a link to a file.
-  !+ad_desc  <P>Finally, a 'child' entry for the current subprogram is added
-  !+ad_desc  to the calling tree.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  new_child
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_hist  11/02/2009 PJK Added call to new_child
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'call' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'call' command is encountered.
+  !! If one is not already open, a 'Routines/Modules Called' section
+  !! is started by writing the relevant section header line to the
+  !! html file, and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument (which must contain a single word
+  !! without spaces) is then written to the html file as a list item,
+  !! becoming a hypertext link to a file of the same name as the
+  !! <CODE>line</CODE> string itself followed by <CODE>.html</CODE>.
+  !! However, if <CODE>line</CODE> contains 'None' or 'N/A', then
+  !! this is written out instead, without becoming a link to a file.
+  !! <P>Finally, a 'child' entry for the current subprogram is added
+  !! to the calling tree.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1218,34 +1027,25 @@ subroutine section_calls(line,flag)
 
 end subroutine section_calls
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_history(line,flag)
 
-  !+ad_name  section_history
-  !+ad_summ  Routine that acts on a 'hist' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'hist' command is encountered.
-  !+ad_desc  If one is not already open, a 'History' section is started
-  !+ad_desc  by writing the relevant section header line to the html file,
-  !+ad_desc  and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
-  !+ad_desc  as a list item.
-  !+ad_desc  <P>If a description of a given history item extends over more than
-  !+ad_desc  one line of the source file, a 'hisc' command should be used
-  !+ad_desc  instead for continuation lines, otherwise a new bullet will be
-  !+ad_desc  written to the html file, making the output look strange.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'hist' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'hist' command is encountered.
+  !! If one is not already open, a 'History' section is started
+  !! by writing the relevant section header line to the html file,
+  !! and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument is then written to the html file
+  !! as a list item.
+  !! <P>If a description of a given history item extends over more than
+  !! one line of the source file, a 'hisc' command should be used
+  !! instead for continuation lines, otherwise a new bullet will be
+  !! written to the html file, making the output look strange.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1276,34 +1076,25 @@ subroutine section_history(line,flag)
 
 end subroutine section_history
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_history_cont(line,flag)
 
-  !+ad_name  section_history_cont
-  !+ad_summ  Routine that acts on a 'hisc' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'hisc' command is encountered.
-  !+ad_desc  If one is not already open, a 'History' section is started
-  !+ad_desc  by writing the relevant section header line to the html file,
-  !+ad_desc  and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
-  !+ad_desc  as a continuation of a list item.
-  !+ad_desc  <P>The 'hisc' command should be used to continue a 'hist'
-  !+ad_desc  command if the description of a given history item extends over
-  !+ad_desc  more than one line of the source file, to prevent extra bullets
-  !+ad_desc  being written to the html file, making the output look strange.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'hisc' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'hisc' command is encountered.
+  !! If one is not already open, a 'History' section is started
+  !! by writing the relevant section header line to the html file,
+  !! and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument is then written to the html file
+  !! as a continuation of a list item.
+  !! <P>The 'hisc' command should be used to continue a 'hist'
+  !! command if the description of a given history item extends over
+  !! more than one line of the source file, to prevent extra bullets
+  !! being written to the html file, making the output look strange.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1334,34 +1125,25 @@ subroutine section_history_cont(line,flag)
 
 end subroutine section_history_cont
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_status(line,flag)
 
-  !+ad_name  section_status
-  !+ad_summ  Routine that acts on a 'stat' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'stat' command is encountered.
-  !+ad_desc  If one is not already open, a 'Status' section is started
-  !+ad_desc  by writing the relevant section header line to the html file,
-  !+ad_desc  and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
-  !+ad_desc  as a list item.
-  !+ad_desc  <P>If a description of the status extends over more than
-  !+ad_desc  one line of the source file, a 'stac' command should be used
-  !+ad_desc  instead for continuation lines, otherwise a new bullet will be
-  !+ad_desc  written to the html file, making the output look strange.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'stat' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'stat' command is encountered.
+  !! If one is not already open, a 'Status' section is started
+  !! by writing the relevant section header line to the html file,
+  !! and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument is then written to the html file
+  !! as a list item.
+  !! <P>If a description of the status extends over more than
+  !! one line of the source file, a 'stac' command should be used
+  !! instead for continuation lines, otherwise a new bullet will be
+  !! written to the html file, making the output look strange.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1392,34 +1174,25 @@ subroutine section_status(line,flag)
 
 end subroutine section_status
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_status_cont(line,flag)
 
-  !+ad_name  section_status_cont
-  !+ad_summ  Routine that acts on a 'stac' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'stac' command is encountered.
-  !+ad_desc  If one is not already open, a 'Status' section is started
-  !+ad_desc  by writing the relevant section header line to the html file,
-  !+ad_desc  and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
-  !+ad_desc  as a continuation of a list item.
-  !+ad_desc  <P>The 'stac' command should be used to continue a 'stat'
-  !+ad_desc  command if the description of the status extends over more than
-  !+ad_desc  one line of the source file, to prevent extra bullets being
-  !+ad_desc  written to the html file, making the output look strange.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'stac' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'stac' command is encountered.
+  !! If one is not already open, a 'Status' section is started
+  !! by writing the relevant section header line to the html file,
+  !! and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument is then written to the html file
+  !! as a continuation of a list item.
+  !! <P>The 'stac' command should be used to continue a 'stat'
+  !! command if the description of the status extends over more than
+  !! one line of the source file, to prevent extra bullets being
+  !! written to the html file, making the output look strange.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1450,35 +1223,25 @@ subroutine section_status_cont(line,flag)
 
 end subroutine section_status_cont
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_variables(line,flag)
 
-  !+ad_name  section_variables
-  !+ad_summ  Routine that acts on a 'vars' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'vars' command is encountered.
-  !+ad_desc  If one is not already open, a 'Variables' section is started
-  !+ad_desc  by writing the relevant section header line to the html file,
-  !+ad_desc  and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
-  !+ad_desc  and to the variable descriptor file as a list item.
-  !+ad_desc  <P>If a description of the variable extends over more than
-  !+ad_desc  one line of the source file, a 'varc' command should be used
-  !+ad_desc  instead for continuation lines, otherwise a new bullet will be
-  !+ad_desc  written to the html file, making the output look strange.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_call  write_to_vardes
-  !+ad_hist  07/11/2012 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'vars' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'vars' command is encountered.
+  !! If one is not already open, a 'Variables' section is started
+  !! by writing the relevant section header line to the html file,
+  !! and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument is then written to the html file
+  !! and to the variable descriptor file as a list item.
+  !! <P>If a description of the variable extends over more than
+  !! one line of the source file, a 'varc' command should be used
+  !! instead for continuation lines, otherwise a new bullet will be
+  !! written to the html file, making the output look strange.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1518,35 +1281,25 @@ subroutine section_variables(line,flag)
 
 end subroutine section_variables
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_variables_cont(line,flag)
 
-  !+ad_name  section_variables_cont
-  !+ad_summ  Routine that acts on a 'varc' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'varc' command is encountered.
-  !+ad_desc  If one is not already open, a 'Variables' section is started
-  !+ad_desc  by writing the relevant section header line to the html file,
-  !+ad_desc  and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
-  !+ad_desc  and the variable descriptor file as a continuation of a list item.
-  !+ad_desc  <P>The 'varc' command should be used to continue a 'vars'
-  !+ad_desc  command if the description of the variable extends over more than
-  !+ad_desc  one line of the source file, to prevent extra bullets being
-  !+ad_desc  written to the html file, making the output look strange.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_call  write_to_vardes
-  !+ad_hist  07/11/2012 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'varc' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'varc' command is encountered.
+  !! If one is not already open, a 'Variables' section is started
+  !! by writing the relevant section header line to the html file,
+  !! and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument is then written to the html file
+  !! and the variable descriptor file as a continuation of a list item.
+  !! <P>The 'varc' command should be used to continue a 'vars'
+  !! command if the description of the variable extends over more than
+  !! one line of the source file, to prevent extra bullets being
+  !! written to the html file, making the output look strange.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1578,30 +1331,21 @@ subroutine section_variables_cont(line,flag)
 
 end subroutine section_variables_cont
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_author(line,flag)
 
-  !+ad_name  section_author
-  !+ad_summ  Routine that acts on an 'auth' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if an 'auth' command is encountered.
-  !+ad_desc  If one is not already open, an 'Author' section is started
-  !+ad_desc  by writing the relevant section header line to the html file,
-  !+ad_desc  and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
-  !+ad_desc  as a list item.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on an 'auth' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if an 'auth' command is encountered.
+  !! If one is not already open, an 'Author' section is started
+  !! by writing the relevant section header line to the html file,
+  !! and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument is then written to the html file
+  !! as a list item.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1632,34 +1376,25 @@ subroutine section_author(line,flag)
 
 end subroutine section_author
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_documentation(line,flag)
 
-  !+ad_name  section_documentation
-  !+ad_summ  Routine that acts on a 'docs' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'docs' command is encountered.
-  !+ad_desc  If one is not already open, a 'Further Documentation' section
-  !+ad_desc  is started by writing the relevant section header line to the
-  !+ad_desc  html file, and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
-  !+ad_desc  as a list item.
-  !+ad_desc  <P>If a description of a piece of documentation extends over
-  !+ad_desc  more than one line of the source file, a 'docc' command should
-  !+ad_desc  be used instead for continuation lines, otherwise a new bullet
-  !+ad_desc  will be written to the html file, making the output look strange.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'docs' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'docs' command is encountered.
+  !! If one is not already open, a 'Further Documentation' section
+  !! is started by writing the relevant section header line to the
+  !! html file, and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument is then written to the html file
+  !! as a list item.
+  !! <P>If a description of a piece of documentation extends over
+  !! more than one line of the source file, a 'docc' command should
+  !! be used instead for continuation lines, otherwise a new bullet
+  !! will be written to the html file, making the output look strange.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1690,35 +1425,26 @@ subroutine section_documentation(line,flag)
 
 end subroutine section_documentation
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine section_documentation_cont(line,flag)
 
-  !+ad_name  section_documentation_cont
-  !+ad_summ  Routine that acts on a 'docc' command
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : line of text to be written
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'docc' command is encountered.
-  !+ad_desc  If one is not already open, a 'Further Documentation' section
-  !+ad_desc  is started by writing the relevant section header line to the
-  !+ad_desc  html file, and an un-numbered list (of bullet points) is started.
-  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
-  !+ad_desc  as a continuation of a list item.
-  !+ad_desc  <P>The 'docc' command should be used to continue a 'docs'
-  !+ad_desc  command if the description of a piece of documentation extends
-  !+ad_desc  over more than one line of the source file, to prevent extra
-  !+ad_desc  bullets being written to the html file, making the output look
-  !+ad_desc  strange.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  close_sections
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that acts on a 'docc' command
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : line of text to be written
+  !! flag : input/output flags object : set of command flags
+  !! This routine is called if a 'docc' command is encountered.
+  !! If one is not already open, a 'Further Documentation' section
+  !! is started by writing the relevant section header line to the
+  !! html file, and an un-numbered list (of bullet points) is started.
+  !! The <CODE>line</CODE> argument is then written to the html file
+  !! as a continuation of a list item.
+  !! <P>The 'docc' command should be used to continue a 'docs'
+  !! command if the description of a piece of documentation extends
+  !! over more than one line of the source file, to prevent extra
+  !! bullets being written to the html file, making the output look
+  !! strange.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1749,28 +1475,20 @@ subroutine section_documentation_cont(line,flag)
 
 end subroutine section_documentation_cont
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine header(flag)
 
-  !+ad_name  header
-  !+ad_summ  Routine that writes the header of the html file
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine writes the header of the newly-opened html file.
-  !+ad_desc  If file <CODE>adheader.src</CODE> exists in the current working
-  !+ad_desc  directory it is used as the html source for the header; this
-  !+ad_desc  can be modified as necessary to provide links to other files,
-  !+ad_desc  or to customise the html to local conditions, etc.
-  !+ad_desc  Otherwise, a plain header is written to the html file.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that writes the header of the html file
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! flag : input/output flags object : set of command flags
+  !! This routine writes the header of the newly-opened html file.
+  !! If file <CODE>adheader.src</CODE> exists in the current working
+  !! directory it is used as the html source for the header; this
+  !! can be modified as necessary to provide links to other files,
+  !! or to customise the html to local conditions, etc.
+  !! Otherwise, a plain header is written to the html file.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1810,28 +1528,20 @@ subroutine header(flag)
 
 end subroutine header
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine footer(flag)
 
-  !+ad_name  footer
-  !+ad_summ  Routine that writes the footer of the html file
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine writes the footer of the currently-open html file.
-  !+ad_desc  If file <CODE>adfooter.src</CODE> exists in the current working
-  !+ad_desc  directory it is used as the html source for the footer; this
-  !+ad_desc  can be modified as necessary to provide links to other files,
-  !+ad_desc  or to customise the html to local conditions, etc.
-  !+ad_desc  Otherwise a plain footer is written to the html file.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  write_to_file
-  !+ad_hist  20/04/2006 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that writes the footer of the html file
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! flag : input/output flags object : set of command flags
+  !! This routine writes the footer of the currently-open html file.
+  !! If file <CODE>adfooter.src</CODE> exists in the current working
+  !! directory it is used as the html source for the footer; this
+  !! can be modified as necessary to provide links to other files,
+  !! or to customise the html to local conditions, etc.
+  !! Otherwise a plain footer is written to the html file.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1871,31 +1581,21 @@ subroutine footer(flag)
 
 end subroutine footer
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine open_vardes(flag)
 
-  !+ad_name  open_vardes
-  !+ad_summ  Routine that opens a new variable descriptor html file for
-  !+ad_summ  autodoc to write to
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine opens a new html file for autodoc to use for the
-  !+ad_desc  variable descriptor file. The filename to be used
-  !+ad_desc  is defined by variable <CODE>vdfile</CODE> in the
-  !+ad_desc  <A HREF="autodoc_data.html"><CODE>autodoc_data</CODE></A> module.
-  !+ad_desc  <P>After opening the new file, the header for the html is
-  !+ad_desc  written to it, followed by a title line.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  header_vardes
-  !+ad_call  write_to_vardes
-  !+ad_hist  07/11/2012 PJK Initial version
-  !+ad_hist  18/09/2014 PJK Added reference to default values
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that opens a new variable descriptor html file for
+  !! autodoc to write to
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! flag : input/output flags object : set of command flags
+  !! This routine opens a new html file for autodoc to use for the
+  !! variable descriptor file. The filename to be used
+  !! is defined by variable <CODE>vdfile</CODE> in the
+  !! <A HREF="autodoc_data.html"><CODE>autodoc_data</CODE></A> module.
+  !! <P>After opening the new file, the header for the html is
+  !! written to it, followed by a title line.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1975,26 +1675,17 @@ subroutine open_vardes(flag)
 
 end subroutine open_vardes
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine close_vardes(flag)
 
-  !+ad_name  close_vardes
-  !+ad_summ  Routine that completes and closes a variable descriptor html file
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine closes the variable descriptor html file.
-  !+ad_desc  Firstly, the html footer is written to the file.
-  !+ad_desc  Then, the file is closed and the command flags are reset.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  footer_vardes
-  !+ad_call  write_to_vardes
-  !+ad_hist  07/11/2012 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that completes and closes a variable descriptor html file
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! flag : input/output flags object : set of command flags
+  !! This routine closes the variable descriptor html file.
+  !! Firstly, the html footer is written to the file.
+  !! Then, the file is closed and the command flags are reset.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2019,28 +1710,20 @@ subroutine close_vardes(flag)
 
 end subroutine close_vardes
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine header_vardes(flag)
 
-  !+ad_name  header_vardes
-  !+ad_summ  Routine that writes the header of the variable descriptor html file
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine writes the header of the variable descriptor html file.
-  !+ad_desc  If file <CODE>adheader.src</CODE> exists in the current working
-  !+ad_desc  directory it is used as the html source for the header; this
-  !+ad_desc  can be modified as necessary to provide links to other files,
-  !+ad_desc  or to customise the html to local conditions, etc.
-  !+ad_desc  Otherwise, a plain header is written to the html file.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  write_to_vardes
-  !+ad_hist  07/11/2012 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that writes the header of the variable descriptor html file
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! flag : input/output flags object : set of command flags
+  !! This routine writes the header of the variable descriptor html file.
+  !! If file <CODE>adheader.src</CODE> exists in the current working
+  !! directory it is used as the html source for the header; this
+  !! can be modified as necessary to provide links to other files,
+  !! or to customise the html to local conditions, etc.
+  !! Otherwise, a plain header is written to the html file.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2079,28 +1762,20 @@ subroutine header_vardes(flag)
 
 end subroutine header_vardes
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine footer_vardes(flag)
 
-  !+ad_name  footer
-  !+ad_summ  Routine that writes the footer of the variable descriptor html file
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine writes the footer of the variable descriptor html file.
-  !+ad_desc  If file <CODE>adfooter.src</CODE> exists in the current working
-  !+ad_desc  directory it is used as the html source for the footer; this
-  !+ad_desc  can be modified as necessary to provide links to other files,
-  !+ad_desc  or to customise the html to local conditions, etc.
-  !+ad_desc  Otherwise a plain footer is written to the html file.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  write_to_vardes
-  !+ad_hist  07/11/2012 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that writes the footer of the variable descriptor html file
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! flag : input/output flags object : set of command flags
+  !! This routine writes the footer of the variable descriptor html file.
+  !! If file <CODE>adfooter.src</CODE> exists in the current working
+  !! directory it is used as the html source for the footer; this
+  !! can be modified as necessary to provide links to other files,
+  !! or to customise the html to local conditions, etc.
+  !! Otherwise a plain footer is written to the html file.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2139,25 +1814,18 @@ subroutine footer_vardes(flag)
 
 end subroutine footer_vardes
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine write_to_vardes(line,flag)
 
-  !+ad_name  write_to_vardes
-  !+ad_summ  Routine that writes a line of text to the variable
-  !+ad_summ  descriptor html file
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  line : input string : text to be written
-  !+ad_args  flag : input flags object : set of command flags
-  !+ad_desc  This routine simply writes a line of text to the
-  !+ad_desc  variable descriptor html file.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_hist  07/11/2012 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that writes a line of text to the variable
+  !! descriptor html file
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! line : input string : text to be written
+  !! flag : input flags object : set of command flags
+  !! This routine simply writes a line of text to the
+  !! variable descriptor html file.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2180,26 +1848,18 @@ subroutine write_to_vardes(line,flag)
 
 end subroutine write_to_vardes
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine new_parent(name)
 
-  !+ad_name  new_parent
-  !+ad_summ  Routine that adds a new entry to the calling tree list
-  !+ad_summ  if it is not already present
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  name : input string : name of routine to be added to list
-  !+ad_desc  This routine adds a new entry to the master list of routines,
-  !+ad_desc  if a routine of the given name is not already present in the
-  !+ad_desc  linked list.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  calltree_data
-  !+ad_hist  11/02/2009 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that adds a new entry to the calling tree list
+  !! if it is not already present
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! name : input string : name of routine to be added to list
+  !! This routine adds a new entry to the master list of routines,
+  !! if a routine of the given name is not already present in the
+  !! linked list.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2262,28 +1922,20 @@ subroutine new_parent(name)
 
 end subroutine new_parent
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine new_child(name)
 
-  !+ad_name  new_child
-  !+ad_summ  Routine that adds a new child to the calling tree list
-  !+ad_summ  if it is not already present
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  name : input string : name of routine to be added to list
-  !+ad_desc  This routine adds a new entry to the current subprogram's list
-  !+ad_desc  of children, and adds the current subprogram to the list of the
-  !+ad_desc  child's parents.
-  !+ad_desc  <P>If the child does not yet exist in the master linked list
-  !+ad_desc  it is added to this list first.
-  !+ad_prob  None
-  !+ad_call  autodoc_data
-  !+ad_call  calltree_data
-  !+ad_hist  11/02/2009 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that adds a new child to the calling tree list
+  !! if it is not already present
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! name : input string : name of routine to be added to list
+  !! This routine adds a new entry to the current subprogram's list
+  !! of children, and adds the current subprogram to the list of the
+  !! child's parents.
+  !! <P>If the child does not yet exist in the master linked list
+  !! it is added to this list first.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2368,45 +2020,36 @@ subroutine new_child(name)
 
 end subroutine new_child
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine check_calltree_depth
 
-  !+ad_name  check_calltree_depth
-  !+ad_summ  Routine that checks each routine's depth within the calling tree
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  None
-  !+ad_desc  This routine loops through all the entries in the master calling
-  !+ad_desc  tree linked list and checks that each entry is 'deeper' than all
-  !+ad_desc  its parents. A routine's 'depth' is zero if nothing calls it, and
-  !+ad_desc  is at least one more than the depth of any routine that directly
-  !+ad_desc  calls it. This is evaluated by continually looping through the
-  !+ad_desc  list of entries, checking their depth against those of their
-  !+ad_desc  parents, and adjusting their depth if it is not consistent. The
-  !+ad_desc  task is complete only when a loop does not make any depth
-  !+ad_desc  adjustments.
-  !+ad_desc  <P>In many programs, the calling tree is straightforward,
-  !+ad_desc  as in the following example:
-  !+ad_desc  <P>a calls b and c; b calls c and d; c calls d; d calls e
-  !+ad_desc  <PRE>
-  !+ad_desc  depth: 0    1    2    3    4
-  !+ad_desc  .      a -- b ------- d -- e
-  !+ad_desc  .       \    \       /
-  !+ad_desc  .        \----\- c -/
-  !+ad_desc  </PRE>
-  !+ad_desc  However, in the case of programs which contain any
-  !+ad_desc  recursive calls (a calls b calls c calls a, for instance)
-  !+ad_desc  the depth is badly defined and this routine fails to deal with
-  !+ad_desc  it correctly at present.
-  !+ad_prob  Cases with recursion need to be sorted out before this routine
-  !+ad_prob  is used in anger
-  !+ad_call  autodoc_data
-  !+ad_call  calltree_data
-  !+ad_hist  11/02/2009 PJK Initial version
-  !+ad_stat  Not currently used because of the problem with recursive programs
-  !+ad_docs  None
+  !! Routine that checks each routine's depth within the calling tree
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! None
+  !! This routine loops through all the entries in the master calling
+  !! tree linked list and checks that each entry is 'deeper' than all
+  !! its parents. A routine's 'depth' is zero if nothing calls it, and
+  !! is at least one more than the depth of any routine that directly
+  !! calls it. This is evaluated by continually looping through the
+  !! list of entries, checking their depth against those of their
+  !! parents, and adjusting their depth if it is not consistent. The
+  !! task is complete only when a loop does not make any depth
+  !! adjustments.
+  !! <P>In many programs, the calling tree is straightforward,
+  !! as in the following example:
+  !! <P>a calls b and c; b calls c and d; c calls d; d calls e
+  !! <PRE>
+  !! depth: 0    1    2    3    4
+  !! .      a -- b ------- d -- e
+  !! .       \    \       /
+  !! .        \----\- c -/
+  !! </PRE>
+  !! However, in the case of programs which contain any
+  !! recursive calls (a calls b calls c calls a, for instance)
+  !! the depth is badly defined and this routine fails to deal with
+  !! it correctly at present.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2465,34 +2108,18 @@ subroutine check_calltree_depth
 
 end subroutine check_calltree_depth
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine print_calltree(flag)
 
-  !+ad_name  print_calltree
-  !+ad_summ  Routine that prints the calling and called-by trees
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine runs through the master list of routines
-  !+ad_desc  stored in the calling tree, and writes out an html file
-  !+ad_desc  called <A HREF="callingtree.html"><CODE>callingtree.html</CODE></A>
-  !+ad_desc  which lists each routine's parents and children.
-  !+ad_prob  Output in a 'tree' form is not yet possible due to problems
-  !+ad_prob  with the calculation of a routine's depth within the calling
-  !+ad_prob  tree if a program contains any recursion - see
-  !+ad_prob  <A HREF="check_calltree_depth.html">
-  !+ad_prob  <CODE>check_calltree_depth</CODE</A>.
-  !+ad_call  autodoc_data
-  !+ad_call  calltree_data
-  !+ad_call  close_file
-  !+ad_call  descend_tree
-  !+ad_call  header
-  !+ad_call  write_to_file
-  !+ad_hist  11/02/2009 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that prints the calling and called-by trees
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! flag : input/output flags object : set of command flags
+  !! This routine runs through the master list of routines
+  !! stored in the calling tree, and writes out an html file
+  !! called <A HREF="callingtree.html"><CODE>callingtree.html</CODE></A>
+  !! which lists each routine's parents and children.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2625,31 +2252,19 @@ subroutine print_calltree(flag)
 
 end subroutine print_calltree
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 recursive subroutine descend_tree(subprogram)
 
-  !+ad_name  descend_tree
-  !+ad_summ  Routine that drills down the calling tree recursively to
-  !+ad_summ  print its structure, correctly indented
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  subprogram : input/output routine type :
-  !+ad_desc  This routine writes out the calling tree using correctly
-  !+ad_desc  indented branches from each entry to show the tree structure.
-  !+ad_desc  The routine is recursive so that each child's child is
-  !+ad_desc  accounted for.
-  !+ad_prob  The routine works, but the results are misleading if
-  !+ad_prob  recursion is present within the program! See above...
-  !+ad_prob  <P>The output will need to be converted to html before it
-  !+ad_prob  is used in anger.
-  !+ad_call  autodoc_data
-  !+ad_call  calltree_data
-  !+ad_call  descend_tree
-  !+ad_hist  11/02/2009 PJK Initial version
-  !+ad_stat  Okay
-  !+ad_docs  None
+  !! Routine that drills down the calling tree recursively to
+  !! print its structure, correctly indented
+  !! author: P J Knight, CCFE, Culham Science Centre
+  !! subprogram : input/output routine type :
+  !! This routine writes out the calling tree using correctly
+  !! indented branches from each entry to show the tree structure.
+  !! The routine is recursive so that each child's child is
+  !! accounted for.
+  !! None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

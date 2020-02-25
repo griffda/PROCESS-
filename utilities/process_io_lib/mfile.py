@@ -26,22 +26,19 @@
 from collections import OrderedDict
 import operator
 import logging
+import sys
 from sys import stderr
+from create_dicts import get_dicts
 LOG = logging.getLogger("mfile")
 
-try:
-    from fuzzywuzzy import process as fuzzysearch
-except ImportError:
-    LOG.info("Fuzzy variable name suggestions not available for MFile")
+# try:
+#     from fuzzywuzzy import process as fuzzysearch
+# except ImportError:
+#     LOG.info("Fuzzy variable name suggestions not available for MFile")
 
-try :
-    import process_io_lib.process_dicts
-    from process_io_lib.process_dicts import DICT_NSWEEP2VARNAME
-except ImportError:
-    print("Error: The Python dictionaries have not yet been created. Please"
-          "run 'make dicts'!", file=stderr)
-    exit()
-
+# Load dicts from dicts JSON file
+process_dicts = get_dicts()
+DICT_NSWEEP2VARNAME = process_dicts['DICT_NSWEEP2VARNAME']
 
 class MFileVariable(dict):
     """Class for containing a single mfile variable """
@@ -319,15 +316,15 @@ class MFile(object):
             self.data[var_key] = var
             self.data[var_key].set_scan(1, value)
 
-    def suggest_variable(self, search_string, limit=3):
-        """
-        Return a list of possible variable matches for the given search_string
-        in this MFile.
-        limit is the maximum number of suggestions returned.
-        """
-        return [x[0] for x in fuzzysearch.extract(search_string,
-                                                  self.data.keys(),
-                                                  limit=limit)]
+    # def suggest_variable(self, search_string, limit=3):
+    #     """
+    #     Return a list of possible variable matches for the given search_string
+    #     in this MFile.
+    #     limit is the maximum number of suggestions returned.
+    #     """
+    #     return [x[0] for x in fuzzysearch.extract(search_string,
+    #                                               self.data.keys(),
+    #                                               limit=limit)]
 
 
 def sort_value(val):
@@ -617,4 +614,8 @@ def test(f):
     return True
 
 # if __name__ == "__main__":
-#     test("MFILE.DAT")
+    # filename = sys.argv[1]
+    # m = MFile(filename)
+    # print(m.data["rmajor"].get_number_of_scans())
+    # print(m.data["rmajor"].get_scans())
+    # print(m.data["rmajor"].get_scan(2))

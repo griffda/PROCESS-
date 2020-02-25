@@ -9,9 +9,14 @@
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{framed}
+\usepackage{mdframed}
+\definecolor{codeColour}{HTML}{F7F9FA}
+\definecolor{codeLine}{HTML}{E6E8EB}
+\mdfsetup{backgroundcolor=codeColour,  linecolor=codeLine,
+linewidth=3pt, topline=false, bottomline=false, rightline=false,
+innertopmargin=15pt, innerbottommargin=5pt}
+
 \usetikzlibrary{trees}
-
-
 
 \pretolerance=10000
 \topmargin=0mm
@@ -38,9 +43,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-9 November 2018
-\hfill
-PROCESS version: 1.0.14
+  25 February 2020
+  \hfill
+  PROCESS version: 1.0.17
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -136,7 +141,7 @@ addition, many of the mathematical routines have been taken from a number of
 different well-established source libraries.
 
 A great deal of effort was expended at Culham on the code's arrival from ORNL in the early
-1990s to upgrade and extend the code, including the addition of machines based on the stellarator, reversed field pinch and inertial confinement concepts. However, in 2017 the reversed field pinch, the inertial confinement concept and the hydrogen plant models have been retired due to lack of use.
+1990s to upgrade and extend the code, including the addition of machines based on the stellarator, reversed field pinch and inertial confinement concepts. However, in 2017 the reversed field pinch, the inertial confinement concept and the hydrogen plant models have been retired due to lack of use.  The Inertial Confinement model was restored in 2019.
 
 \process\ is being developed actively. This User Guide is updated in parallel with the 
 code itself to ensure that the documentation remains consistent with
@@ -1027,6 +1032,7 @@ relevant value, as follows:-
 \item [\texttt{icurr = 6} :] Todd empirical scaling, II
 \item [\texttt{icurr = 7} :] Connor-Hastie model
 \item [\texttt{icurr = 8} :] Sauter model, allows negative $\delta$
+\item [\texttt{icurr = 9} :] \textsc{fiesta} fit for spherical tokamaks
 \end{description}
 
 \subsubsection{Plasma current profile consistency}
@@ -1109,18 +1115,23 @@ p.11 \\
 \texttt{29} & Valovic modified ELMy (H-mode) &  \\
 \texttt{30} & Kaye PPPL April 98 (L-mode) &  \\
 \texttt{31} & ITERH-PB98P(y) (H-mode) &  \\
-\texttt{32} & IPB98(y) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175 \\
-\texttt{33} & IPB98(y,1) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175 \\
-\texttt{34} & IPB98(y,2) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175 \\
-\texttt{35} & IPB98(y,3) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175 \\
-\texttt{36} & IPB98(y,4) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175 \\
+\texttt{32} & IPB98(y) (H-mode)   & Nuclear Fusion \textbf{39} (1999) p.2175, Table 5, \\
+\texttt{33} & IPB98(y,1) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175, Table 5, full data\\
+\texttt{34} & IPB98(y,2) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175, Table 5, NBI only\\
+\texttt{35} & IPB98(y,3) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175, Table 5, NBI only, no C-Mod\\
+\texttt{36} & IPB98(y,4) (H-mode) & Nuclear Fusion \textbf{39} (1999) p.2175, Table 5, NBI only ITER like\\
 \texttt{37} & ISS95 (stellarator) & Nuclear Fusion \textbf{36} (1996) p.1063 \\
 \texttt{38} & ISS04 (stellarator) & Nuclear Fusion \textbf{45} (2005) p.1684 \\
 \texttt{39} & DS03 (H-mode) & Plasma Phys.\ Control.\ Fusion \textbf{50} (2008) 043001, equation 4.13 \\
-\texttt{40} & Non-power law & A. Murari et al 2015 Nucl. Fusion 55 073009, \\
- & & doi:10.1088/0029-5515/55/7/073009  Table 4. \\
-\texttt{41} & Petty 2008 &  C.C.~Petty 2008 Phys.\ Plasmas \textbf{15} 080501, equation 36\\
-\texttt{42} & Lang 2012 & P.T.~Lang et al. 2012 IAEA conference proceeding EX/P4-01\\
+\texttt{40} & Non-power law (H-mode) & A. Murari et al 2015 Nucl. Fusion 55 073009, Table 4. \\
+\texttt{41} & Petty 2008 (H-mode)&  C.C.~Petty 2008 Phys.\ Plasmas \textbf{15} 080501, equation 36\\
+\texttt{42} & Lang 2012 (H-mode)& P.T.~Lang et al. 2012 IAEA conference proceeding EX/P4-01\\
+\texttt{43} & Hubbard 2017 -- nominal (I-mode) & A.E.~Hubbard et al. 2017, Nuclear Fusion 57 126039\\
+\texttt{44} & Hubbard 2017 -- lower (I-mode) & A.E.~Hubbard et al. 2017, Nuclear Fusion 57 126039\\
+\texttt{45} & Hubbard 2017 -- upper (I-mode) & A.E.~Hubbard et al. 2017, Nuclear Fusion 57 126039\\
+\texttt{46} & NSTX (H-mode; spherical tokamak) & J.~Menard 2019, Phil. Trans. R. Soc. A 377:201704401\\
+\texttt{47} & NSTX-Petty08 Hybrid (H-mode) & J.~Menard 2019, Phil. Trans. R. Soc. A 377:201704401\\
+\texttt{48} & Use input tauee\_in & \\
 \hline
 \end{tabular}
 \normalsize
@@ -2333,7 +2344,7 @@ summarises the switch values relevant to each aspect ratio regime.
     switch & \texttt{itart = 0} & \texttt{itart = 1} \\ \hline
     \texttt{ishape} (Section~\ref{sec:plasma_geometry}) & 0, 2 & 0, 1 \\
     \texttt{ibss} (Section~\ref{sec:bootstrap}) & 1, 2, 3 & 2, 3 \\
-    \texttt{icurr} (Section~\ref{sec:current_scaling}) & 1, 3, 4, 5, 6, 7 & 2 \\
+    \texttt{icurr} (Section~\ref{sec:current_scaling}) & 1, 3, 4, 5, 6, 7 & 2, 9 \\
     \texttt{itfsup} (Section~\ref{sec:tfcoil}) & 0, 1 & 0 \\
     \hline
 \end{tabular}
@@ -2403,57 +2414,6 @@ but augments it with an additional boiler. This may be used for machine down
 times of up to 300~seconds. Finally, if \texttt{istore = 3}, a large stainless
 steel block acts as the thermal storage medium.
 
-\section{Hydrogen Production Facility}
-\label{sec:hplant}
-
-Fusion power plants have been mooted as a means of producing hydrogen for use
-in fuel cells for cars, for instance. \process\ includes options to enable
-the plant to produce hydrogen using a number of different processes.
-
-To include the production of hydrogen by the power plant, it is necessary to
-set the switch \texttt{ihplant}, as follows:
-\begin{description}
-\item [\texttt{ihplant = 0} :] No hydrogen production (default)
-\item [\texttt{ihplant = 1} :] Hydrogen production by low temperature electrolysis
-\item [\texttt{ihplant = 2} :] Hydrogen production by endothermic high
-  temperature electrolysis
-\item [\texttt{ihplant = 3} :] Hydrogen production by exothermic high
-  temperature electrolysis
-\item [\texttt{ihplant = 4} :] Hydrogen production by thermo-chemical processes
-\end{description}
-Table~\ref{tab:hplant} describes the additional options available for each of
-the types of hydrogen production given above. The different processes use
-either electrical power or thermal power directly, so the required inputs
-differ. Variable \texttt{helecmw} (iteration variable no.\ 87) is the
-electrical power in MW required for hydrogen production, while
-\texttt{hthermmw} (iteration variable no.\ 88) is the thermal power
-required. Note that \texttt{hthermmw} must not be used as an iteration
-variable if $\mathtt{ihplant \not= 4}$, as it will be calculated from the
-required electrical power instead. Similarly, \texttt{helecmw} must not be
-used as an iteration variable if \texttt{ihplant = 4}.
-
-\begin{table}[tbph]
-\begin{center}
-\begin{tabular}{||c|c|c|c||} \hline
-hydrogen plant option & \texttt{helecmw} & \texttt{hthermmw} & efficiency
-variable \\ \hline
-\texttt{ihplant=1} & input & zero & \texttt{etahlte} \\
-\texttt{ihplant=2} & input & calculated & \texttt{etahten} \\
-\texttt{ihplant=3} & input & calculated & \texttt{etahtex} \\
-\texttt{ihplant=4} & zero & input & \texttt{etahth} \\
-\hline
-\end{tabular}
-\end{center}
-\caption[Variables used in the hydrogen plant model]
-{\label{tab:hplant}
-  \textit{Summary of the variables in PROCESS that relate to
-    the different hydrogen plant processes.}
-}
-\end{table}
-The efficiency variables given in Table~\ref{tab:hplant} are all input
-parameters, and are the factors to be used to convert the value of
-\texttt{helecmw} to the amount of hydrogen produced (in MW equivalent); these
-can be greater than unity in all cases except \texttt{ihplant = 4}.
 
 \section{Stellarator Model}
 
@@ -2700,7 +2660,62 @@ certain iteration variables (\texttt{tfcth}, no.\ 13; \texttt{thkcas}, no.\
 on in the input file as they are calculated self-consistently; the code will
 stop with an error message if this is attempted.
 
+\section{Inertial Fusion Energy Model}
+\label{sec:ife}
 
+As well as magnetic confinement devices, \process\ has the ability to model
+inertial fusion plants, in which a laser or ion beam is used to ignite a
+target pellet containing the fusion fuel.
+
+To activate the inertial fusion energy (IFE) coding, it is necessary to create
+a file \texttt{device.dat}, containing the single character \texttt{3} in the
+first row, in the working directory (see Section~\ref{sec:infile}). This has
+the effect of setting the internally-used switch \texttt{ife = 1}. If the file
+is absent, or its first character is set to something other than \texttt{3},
+the IFE model is not used, and \texttt{ife} is set to \texttt{0}.
+
+The IFE model~\cite{process_ife} is controlled using two additional switches.
+\begin{description}
+\item [\texttt{ifetyp = 0} :] Generic device build
+\item [\texttt{ifetyp = 1} :] OSIRIS-type device build~\cite{osiris1,osiris2,osiris3}
+\item [\texttt{ifetyp = 2} :] SOMBRERO-type device build~\cite{sombrero1,sombrero2}
+\item [\texttt{ifetyp = 3} :] HYLIFE-II-type device build~\cite{hylife1,hylife2,hylife3}
+\item [\texttt{ifetyp = 4} :] 2019 device build
+\end{description}
+Switch \texttt{ifetyp} defines the type of device that is assumed; this varies
+widely between different conceptual designs. The generic type assumes a
+cylindrically symmetric device, while the other types are approximations to
+the builds of the given conceptual machines~\cite{ife_build}. In general, the
+build from the centre of the device (at the target ignition location) is in
+the order: chamber, first wall, gap, blanket, gap, shield, gap, building
+wall. The user specifies the thicknesses of these regions, and also the
+materials that are present and in what proportions.%%% \Red{[expand one day]} %%%
+\begin{description}
+\item [\texttt{ifedrv = -1} :] Driver efficiency and target gain are input as
+  functions of driver energy
+\item [\texttt{ifedrv = 0} :] Driver efficiency and target gain are input
+\item [\texttt{ifedrv = 1} :] SOMBRERO laser drive efficiency and target gain assumed
+\item [\texttt{ifedrv = 2} :] OSIRIS heavy ion beam driver efficiency and
+  target gain are assumed~\cite{ife_driver}
+\end{description}
+Switch \texttt{ifedrv} defines how the code calculates the driver efficiency
+and target gain --- these are the primary outputs required from the physics
+part of the model. For the SOMBRERO and OSIRIS cases (\texttt{ifedrv = 1} and
+\texttt{ifedrv = 2}, respectively) the driver efficiency and gain are
+calculated from curves of these parameters as functions of the driver
+energy. For the \texttt{ifedrv = -1} case, the user provides the driver
+efficiency and target gain versus driver energy, via the two arrays
+\texttt{etave(1:10)} and \texttt{gainve(1:10)} respectively; the element number
+corresponds to the driver energy in MJ, and outside the range 1--10~MJ the
+curves are extrapolated linearly. Finally, for the \texttt{ifedrv = 0} case,
+the user inputs single values for the driver efficiency (\texttt{drveff}) and
+target gain (\texttt{tgain}).
+
+Constraint equation no.\ 50 can be turned on to enable the ignition repetition
+rate to remain below a user-specified upper limit (\texttt{rrmax}); iteration
+variable no.\ 86 (\texttt{frrmax}) is the associated f-value. The other iteration variables relevant for the
+IFE model are nos.~81--85 (\texttt{edrive}, \texttt{drveff}, \texttt{tgain},
+\texttt{chrad} and \texttt{pdrive}).
 
 \section{Safety and Environment Models}
 
@@ -2891,7 +2906,8 @@ utilities (see utilities documentation), add the following lines to your \texttt
 \begin{quote}
 \begin{verbatim}
 module use /home/PROCESS/modules
-module swap python
+module unload python
+module load python/3.5.1
 module load process/master
 
 If using default gfortran compiler instead of ifort:
@@ -3010,6 +3026,151 @@ optimisation mode and non-optimisation mode are:
 As before, the user must decide which constraint equations and iteration
 variables to activate.
 
+\section{Kallenbach Model}\label{sec:kallenbach}
+
+\subsection{Testing}
+
+The ability to test the Kallenbach model while not running all of PROCESS has 
+been implemented. To run the model the PROCESS IN.DAT file needs to contain the 
+following lines to turn on the testing functionality.
+
+\begin{mdframed}
+  \begin{verbatim}
+    * Switch to turn on the 1d kallenbach divertor model (1=on; 0=off)
+    kallenbach_switch = 1
+
+    * Switch to run tests of 1d kallenbach divertor model (1=on; 0=off)
+    kallenbach_tests = 1
+  \end{verbatim}
+\end{mdframed}
+
+ There are currently two testing options in PROCESS for the Kallenbach model. 
+ One is to use the test case that is supposed to match the Kallenbach paper and 
+ the other is to use user inputs from the IN.DAT file.
+
+\begin{mdframed}
+\begin{verbatim}
+  * Switch to choose which test case to use for kallenbach model
+  * 0 = user defined inputs
+  * 1 = Kallenbach paper test case
+  kallenbach_test_option = 0
+\end{verbatim}
+\end{mdframed}
+
+ If you select option 1 then you don't need any other lines in the IN.DAT (just 
+ the three lines described above). However, if you choose option 0 then the 
+ following inputs need to be given in addition to the above (example values 
+ are given).
+
+\begin{mdframed}
+\begin{verbatim}
+
+* Increase in sol power fall-off length due to spreading; mapped to omp [m]
+target_spread = 7.0e-3
+
+* Sol power fall-off length at the outer midplane; perpendicular to field [m]
+lambda_q_omp = 0.002
+
+* Parameter describing the departure from local ionisation equilibrium in 
+* the sol; [ms;1e20/m3]
+netau_sol    = 0.5
+
+* Target temperature [eV]
+ttarget = 2.3D0
+
+* Angle between flux surface and divertor target [degrees]
+targetangle = 30.0
+
+* Power density on target including surface recombination [w/m2]
+qtargettotal = 1671000.0 
+
+* Array of core impurity fractions
+fimp(3) = 0.0
+fimp(4) = 0.0
+fimp(5) = 0.0
+fimp(6) = 0.0
+fimp(7) = 0.0
+fimp(8) = 0.0
+fimp(9) = 2.353e-3
+fimp(10) = 0.0
+fimp(11) = 0.0
+fimp(12) = 0.0
+fimp(13) = 0.0
+fimp(14) = 5.5e-5
+
+* Array of ratio of SOL impurity concentration to core concentration
+impurity_enrichment(1) = 0.0 * H
+impurity_enrichment(2) = 1.0 * He
+impurity_enrichment(9) = 5.0 * Argon
+
+* Ratio of mean sol density at omp to separatrix density at omp
+neratio  = 0.9 
+
+* Distance from target at which sol gets broader as a fraction of 
+* connection length
+fractionwidesol = 0.1
+
+* Plasma temperature at target [eV]
+ttarget = 2.3
+
+* Plasma major radius [m]
+rmajor = 8.0D0
+
+* Aspect ratio
+aspect = 2.91
+
+* Toroidal field on-axis [T]
+bt = 4
+
+* Safety factor at edge
+q = 3.0D0
+
+* Plasma elongation
+kappa = 1.8
+
+* Plasma triangularity
+triang = 0.5
+
+* Electron temperature at separatrix [kev]
+tesep = 0.298
+\end{verbatim}
+\end{mdframed}
+
+\subsection{Scanning}
+
+To use the scanning functionality in the Kallenbach model you must include the 
+following options in the input file.
+
+\begin{mdframed}
+\begin{verbatim}
+  * Switch to turn on the 1d kallenbach divertor model (1=on; 0=off)
+  kallenbach_switch = 1
+
+  * Switch to run scans of 1d kallenbach divertor model (1=on; 0=off)
+  kallenbach_scan_switch = 1
+
+  * Switch to run tests of 1d kallenbach divertor model (1=on; 0=off)
+  kallenbach_tests = 0
+
+  * Parameter to scan
+  * 0 - ttarget
+  * 1 - qtargettotal
+  * 2 - targetangle
+  * 3 - lambda_q_omp
+  * 4 - netau_sol
+  kallenbach_scan_var = 0
+
+  * Scan start and end points
+  kallenbach_scan_start = 2.0
+  kallenbach_scan_end = 12.0
+  kallenbach_scan_num = 10
+
+\end{verbatim}
+\end{mdframed}
+
+After the following inputs the user should populate the IN.DAT with the same 
+inputs described in the previous section for 
+\texttt{kallenbach\_test\_option = 0}.
 
 \section{Troubleshooting}
 \label{sec:problems}
@@ -3507,6 +3668,64 @@ F.\ Warmer,
 \textit{``Stellarator Modular Coil model for the systems code PROCESS''},
 IPP Greifswald, Germany, internal note, 31/07/2013
 
+\bibitem{process_ife}
+P.\ J.\ Knight,
+\textit{``PROCESS 3009: Incorporation of Inertial Fusion Energy Model''},
+Work File Note F/MI/PJK/PROCESS/CODE/032
+
+\bibitem{osiris1}
+Bourque et al.,
+\textit{``Overview of the OSIRIS IFE Reactor Conceptual Design''},
+Fusion Technology \textbf{21} (1992) 1465
+
+\bibitem{osiris2}
+Meier and Bieri,
+\textit{``Economic Modeling and Parametric Studies for OSIRIS --- a HIB-Driven
+  IFE Power Plant''},
+Fusion Technology \textbf{21} (1992) 1547
+
+\bibitem{osiris3}
+Ghose et al.,
+\textit{``BOP Designs for OSIRIS and SOMBRERO IFE Reactor Plants''},
+Fusion Technology \textbf{21} (1992) 1501
+
+\bibitem{sombrero1}
+Sviatoslavsky et al.,
+\textit{``A KrF Laser Driven Inertial Fusion Reactor SOMBRERO''},
+Fusion Technology \textbf{21} (1992) 1470
+
+\bibitem{sombrero2}
+Meier and Bieri,
+\textit{``Economic Modeling and Parametric Studies for SOMBRERO --- a Laser-Driven
+  IFE Power Plant''},
+Fusion Technology \textbf{21} (1992) 1552
+
+\bibitem{hylife1}
+Moir et al.,
+\textit{``HYLIFE-II: A Molten-Salt Inertial Fusion Energy Power Plant Design
+  --- Final Report''},
+Fusion Technology \textbf{25} (1994) 5
+
+\bibitem{hylife2}
+Moir,
+\textit{``HYLIFE-II Inertial Fusion Energy Power Plant Design''},
+Fusion Technology \textbf{21} (1992) 1475
+
+\bibitem{hylife3}
+Hoffman and Lee,
+\textit{``Performance and Cost of the HYLIFE-II Balance of Plant''},
+Fusion Technology \textbf{21} (1992) 1475
+
+\bibitem{ife_build}
+P.\ J.\ Knight,
+\textit{``PROCESS IFE Build Details''},
+F/MI/PJK/LOGBOOK12, pp.\ 52, 53, 56, 57
+
+\bibitem{ife_driver}
+Bieri and Meier,
+\textit{``Heavy-Ion Driver Parametric Studies and Choice of a Base 5~MJ Driver
+  Design''},
+Fusion Technology \textbf{21} (1992) 1557
 
 \bibitem{FISPACT}
 N.\ P.\ Taylor, R.\ A.\ Forrest, P.\ J.\ Knight and L.\ J.\ Baker,
@@ -3608,6 +3827,7 @@ Fusion Engineering and Design 130, 131-136 (2018)
 G.V.\ Pereverzev, P.N.\ Yushmanov,
 \textit{``ASTRA. Automated System for Transport Analysis in a Tokamak''},
 Garching: Max-Planck-Institut für Plasmaphysik (2002), presented at IPP 5/98 
+
 
 \end{thebibliography}
 
@@ -4162,7 +4382,7 @@ DENSTL=7800.                          [Steel density]
 * TF coil parameters
 
 OACDCP = 1.4e7,                       [N.B. active iteration variable 12]
-ITFSUP = 1,                           [Use superconducting TF coils]
+itfsup = 1,                           [Use superconducting TF coils]
 RIPMAX = 5.,                          [Maximum TF ripple]
 
 * PF coil parameters

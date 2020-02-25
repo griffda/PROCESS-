@@ -20,10 +20,12 @@ import logging
 logging.basicConfig(level=logging.CRITICAL)
 
 # PROCESS libraries
+sys.path.append(os.path.join(os.path.dirname(__file__), '../utilities/'))
 from process_io_lib.mfile import MFile
 
 # Constants
-EXCLUSIONS = ["normres", "nitvar", "itvar", "xcm"]
+EXCLUSIONS = ["normres", "nitvar", "itvar", "xcm", "sigrtf(1)", "balance", 
+              "convergence_parameter", "branch_name", "nviter"]
 
 # *********************************** #
 
@@ -60,7 +62,8 @@ def welcome_print(df, ars):
     # welcome to terminal
     print(BColours.BOLD + "\nPROCESS Test Suite" + BColours.ENDC)
     print("Date: {0}".format(datetime.date.today()))
-    print("Diff set to:" + " {0}%\n".format(df) +
+    if not ars.utilities :
+        print("Diff set to:" + " {0}%\n".format(df) +
           BColours.ENDC)
     print("Using reference folder: " + BColours.BOLD + "{0}\n".format(ars.ref)
           + BColours.ENDC)
@@ -115,7 +118,7 @@ def setup_executable():
     Setup test_area directory with current version of PROCESS from the
     PROCESS folder
     """
-    subprocess.call(["cp ../process.exe ."], shell=True)
+    subprocess.call(["cp ../bin/process.exe ."], shell=True)
 
 
 def get_file_info(ar):
@@ -127,7 +130,7 @@ def get_file_info(ar):
 
     # List of directories in the reference folder
     dirs = os.listdir(ar.ref)
-
+    
     # File information in dictionary form
     file_info = dict()
 
@@ -363,6 +366,7 @@ def copy_test_to_test_area(test_name, test_status, ars):
 
     # diff.log
     if test_status == "DIFF":
+        subprocess.call(["cat", "diff.log"])
         subprocess.call(["mv", "diff.log", "test_area/{0}/".format(test_name)])
 
 
@@ -558,12 +562,12 @@ def amend_utility_log(u):
     f.close()
 
 
-def test_utilities(file_dict):
+def test_utilities(file_dict, utils_only):
     """Testing python utilities for PROCESS
 
     :param file_dict: dictionary of the test files for PROCESS.
     """
-
+    
     # utility testing message to terminal and summary.log
     print(BColours.BOLD + "\nUtilities and Python libraries testing\n" +
           BColours.ENDC)
@@ -574,16 +578,16 @@ def test_utilities(file_dict):
     save_summary("\n\nCheck utilities.log for warnings and errors.\n\n")
 
     # test mfile.py library
-    test_mfile_lib(file_dict)
+    test_mfile_lib(file_dict, utils_only)
 
     # test in_dat.py library
-    test_in_dat_lib(file_dict)
+    test_in_dat_lib(file_dict, utils_only)
 
     # test make_plot_dat
     # TODO test_make_plot_dat(file_dict)
 
     # test plot_proc.py
-    test_plot_proc(file_dict)
+    test_plot_proc(file_dict, utils_only)
 
     # test convert_in_dat.py
     # TODO test_convert_in_dat(file_dict)
@@ -594,7 +598,7 @@ def test_utilities(file_dict):
     return
 
 
-def test_mfile_lib(fs):
+def test_mfile_lib(fs, utils_only):
     """Test the PROCESS mfile library
 
     :param fs: files to test
@@ -613,7 +617,10 @@ def test_mfile_lib(fs):
     # test all MFILEs
     for key in fs.keys():
         if "error_" not in key:
-            file_name = "test_area/{0}/new.MFILE.DAT".format(key)
+            if utils_only:
+                file_name = "test_files/{0}/ref.MFILE.DAT".format(key)
+            else:
+                file_name = "test_area/{0}/new.MFILE.DAT".format(key)
             results.append(mf.test(file_name))
 
     sys.stdout = sys.__stdout__
@@ -634,7 +641,7 @@ def test_mfile_lib(fs):
     save_summary(lmsg)
 
 
-def test_in_dat_lib(fs):
+def test_in_dat_lib(fs, utils_only):
     """Test the PROCESS in_dat library
 
     :param fs: files to test
@@ -644,6 +651,7 @@ def test_in_dat_lib(fs):
 
     # results list
     results = list()
+    files_in_order = list()
 
     # add to utilities.log
     amend_utility_log("in_dat.py")
@@ -653,9 +661,14 @@ def test_in_dat_lib(fs):
     # test all MFILEs
     for key in fs.keys():
         if "error_" not in key:
-            file_name = "test_area/{0}/IN.DAT".format(key)
-            # file_name = fs[key]["path"] + "IN.DAT"
-            results.append(indat.test(file_name))
+            if "IFE" not in key:
+                if utils_only:
+                    file_name = "test_files/{0}/ref.IN.DAT".format(key)
+                else:
+                    file_name = "test_area/{0}/IN.DAT".format(key)
+                files_in_order.append(file_name)
+                # file_name = fs[key]["path"] + "IN.DAT"
+                results.append(indat.test(file_name))
 
     sys.stdout = sys.__stdout__
 
@@ -663,19 +676,25 @@ def test_in_dat_lib(fs):
     msg = "Test ==>  {0:<40}".format("in_dat.py")
 
     # check results
+    error_status = False
     if len(results) == results.count(True):
         lmsg = msg + "OK\n"
         msg += BColours.OKGREEN + "OK" + BColours.ENDC
-
     else:
         lmsg = msg + "ERROR\n"
         msg += BColours.FAIL + "ERROR" + BColours.ENDC
+        error_status = True
 
     print(msg)
     save_summary(lmsg)
 
+    if error_status:
+        print(results)
+        print(files_in_order)
+        sys.exit("in_dat test_suite failure")
 
-def test_plot_proc(fs):
+
+def test_plot_proc(fs, utils_only):
     """Test the PROCESS in_dat library
 
     :param fs: files to test
@@ -695,9 +714,13 @@ def test_plot_proc(fs):
     for key in fs.keys():
         if "error_" not in key:
             if "stellarator" not in key:
-                file_name = "test_area/{0}/new.MFILE.DAT".format(key)
-                # file_name = fs[key]["path"] + "new.MFILE.DAT"
-                results.append(pp.test(file_name))
+                if "IFE" not in key:
+                    if utils_only:
+                        file_name = "test_files/{0}/ref.MFILE.DAT".format(key)
+                    else:
+                        file_name = "test_area/{0}/new.MFILE.DAT".format(key)
+                    # file_name = fs[key]["path"] + "new.MFILE.DAT"
+                    results.append(pp.test(file_name))
 
             # if results[-1]:
             #    subprocess.call(["mv", "ref.SUMMARY.pdf", "test_area/{0}/".
@@ -709,15 +732,20 @@ def test_plot_proc(fs):
     msg = "Test ==>  {0:<40}".format("plot_proc.py")
 
     # check results
+    error_status = False
     if len(results) == results.count(True):
         lmsg = msg + "OK\n"
         msg += BColours.OKGREEN + "OK" + BColours.ENDC
     else:
         lmsg = msg + "ERROR\n"
         msg += BColours.FAIL + "ERROR" + BColours.ENDC
+        error_status = True
 
     print(msg)
     save_summary(lmsg)
+
+    if error_status:
+        sys.exit("plot_proc test_suite failure")
 
 
 class TestCase(object):
@@ -760,11 +788,9 @@ class TestCase(object):
         if self.test == "stellarator":
             subprocess.call(["cp {0} .".format(self.path + "device.dat")],
                             shell=True)
-            subprocess.call(["cp {0} .".format(self.path + "vmec_info.dat")],
-                            shell=True)
-            subprocess.call(["cp {0} .".format(self.path + "vmec_Rmn.dat")],
-                            shell=True)
-            subprocess.call(["cp {0} .".format(self.path + "vmec_Zmn.dat")],
+
+        if self.test == "IFE":
+            subprocess.call(["cp {0} .".format(self.path + "device.dat")],
                             shell=True)
 
         # run PROCESS
@@ -775,9 +801,9 @@ class TestCase(object):
 
         if self.test == "stellarator":
             subprocess.call(["rm device.dat"], shell=True)
-            subprocess.call(["rm vmec_info.dat"], shell=True)
-            subprocess.call(["rm vmec_Rmn.dat"], shell=True)
-            subprocess.call(["rm vmec_Zmn.dat"], shell=True)
+
+        if self.test == "IFE":
+            subprocess.call(["rm device.dat"], shell=True)
 
         # check PROCESS call exit code
         if self.process_exit_code != 0:
@@ -795,7 +821,7 @@ class TestCase(object):
         new_mfile = MFile("{0}".format("MFILE.DAT"))
 
         # get process version number
-        self.proc_ver = new_mfile.data["procver"].get_scan(-1)
+        self.proc_ver = new_mfile.data["tagno"].get_scan(-1)
 
         # check ifail
         self.ifail = new_mfile.data["ifail"].get_scan(-1)
@@ -832,6 +858,7 @@ class TestCase(object):
             return True
 
         return False
+
     def user_run_test(self):
         """ Run PROCESS test by user
         This function will call run_test
@@ -839,6 +866,7 @@ class TestCase(object):
         files appropriately.
         """
         self.run_test()
+
         if self.check_diff_status():
 
             # change test status
@@ -847,10 +875,12 @@ class TestCase(object):
             # output differences to diff.log
             write_diff_log(self.test, self.diff, self.diffs, self.diff_num,
                            self.only_ref, self.only_new)
+            
         # copy files to test_area
         copy_test_to_test_area(self.test, self.status, self.arguments)
 
         return
+
     def CI_run_test(self):
         """ Run PROCESS test by user
         This function will call run_test
@@ -909,7 +939,6 @@ def main(args):
             if args.debug:
                 # initiate test object for the test case
                 tests[key] = TestCase(key, drs[key], difference, args)
-
 
                 # run test
                 tests[key].user_run_test()

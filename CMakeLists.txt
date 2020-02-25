@@ -1,5 +1,6 @@
-# CMake file for PROCESS
-# UKAEA
+#  CMake file for PROCESS
+#  J. Morris
+#  UKAEA
 
 # Specify the minimum version for CMake
 cmake_minimum_required(VERSION 3.5)
@@ -51,13 +52,13 @@ set(DATA_DIR ${CMAKE_SOURCE_DIR}/data)
 set(UTILITIES_DIR ${CMAKE_SOURCE_DIR}/utilities)
 set(HTML_DIR ${DOC_DIR}/html)
 set(PROCESS_LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
-set(TEST_DIR ${CMAKE_SOURCE_DIR}/test_files)
-set(GTEST_DIR ${CMAKE_SOURCE_DIR}/test_files/gtest_files)
+set(TEST_DIR ${CMAKE_SOURCE_DIR}/unit_tests)
+set(GTEST_DIR ${CMAKE_SOURCE_DIR}/unit_tests)
 set(OBJ_DIR ${CMAKE_BINARY_DIR}/CMakeFiles/process.exe.dir/source/fortran)
 set(BLD_DIR ${CMAKE_BINARY_DIR})
 set(CMAKE_INSTALL_RPATH ${CMAKE_BINARY_DIR})
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-include_directories(${TEST_DIR}/gtest_files)
+include_directories(${TEST_DIR})
 
 # Check operating systems and set OS specific options
 if(CMAKE_HOST_WIN32)  # For windows system
@@ -115,7 +116,7 @@ endif()
 
 # Set custom compiler flags for particular files
 message("\nFlag configuration for files")
-file(GLOB FORTRAN_FILES ${FORT_SOURCE_DIR}/*.f90)
+file(GLOB FORTRAN_FILES ${FORT_SOURCE_DIR}/*.f90 ${PROCESS_LIB_DIR}/PLASMOD/*.f)
 foreach(file ${FORTRAN_FILES})
   if(${file} MATCHES "fson_library.f90")
     message("-- Removed -Wconversion flag for -> " ${file})
@@ -132,6 +133,9 @@ foreach(file ${FORTRAN_FILES})
   elseif(${file} MATCHES "TorGA_curgap.f90")
     message("-- Use -fcheck=bounds -fbacktrace flags for --> " ${file})
     set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch")
+  elseif(${file} MATCHES "e3m.f")
+    message("-- Use -fcheck=bounds -fbacktrace -std=legacy flags for --> " ${file})
+    set_source_files_properties(${file} PROPERTIES COMPILE_FLAGS "-fcheck=bounds -fbacktrace -Wno-argument-mismatch -std=legacy")
   else()
     # If debug mode chosen on command line turn on -Wall and -Wextra
     if(${debug} MATCHES ON)
@@ -158,57 +162,23 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 # Set library path
 set(CMAKE_LIBRARY_PATH /usr/lib)
 
+# Setup for Process-customised FORD installation
+# Check that pip3 is installed in order to install Ford
+find_program(PIP3 NAMES pip3 PATHS ENV PATH NO_DEFAULT_PATH)
+if(NOT PIP3)
+  message(FATAL_ERROR "Can't find pip3. Please install pip3 and retry.")
+endif()
+
+# Set clone and install Ford commands if the ford folder doesn't exist
+if(NOT EXISTS ${PROCESS_LIB_DIR}/ford)
+  set(CLONE_FORD git clone https://github.com/jonMaddockUkaea/ford.git ${PROCESS_LIB_DIR}/ford)
+  set(INSTALL_FORD pip3 install ${PROCESS_LIB_DIR}/ford/ --user)
+else()
+  set(CLONE_FORD echo "Ford already cloned, skipping...")
+  set(INSTALL_FORD echo "Ford already installed, skipping...")
+endif()
+
 # Set build targets
-
-# Creating autodoc
-add_custom_target(autodoc
-COMMAND ${FORTRAN} -o autodoc autodoc.f90
-WORKING_DIRECTORY ${FORT_SOURCE_DIR}
-  DEPENDS ${FORT_SOURCE_DIR}/autodoc.f90
-)
-
-# Create vardes HTML documentation
-add_custom_target(vardes
-  COMMAND cat global_variables.f90 numerics.f90 | ./autodoc
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/documentation/html
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/autodoc_data.mod
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/calltree_data.mod
-  COMMAND ${MOVE_FILE} *.html ${HTML_DIR}
-  COMMENT "Copying html files"
-  DEPENDS autodoc
-  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
-)
-
-# Create all HTML documentation
-add_custom_target(html
-  COMMAND cat *.f90 | ./autodoc
-  COMMAND ${MOVE_FILE} vardes.html vardes_full.html
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/documentation/html
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/autodoc_data.mod
-  COMMAND ${CMAKE_COMMAND} -E remove ${FORT_SOURCE_DIR}/calltree_data.mod
-  COMMAND ${MOVE_FILE} *.html ${HTML_DIR}
-  DEPENDS autodoc
-  WORKING_DIRECTORY ${FORT_SOURCE_DIR}
-)
-
-# Create the PROCESS userguide PDF from LaTeX
-add_custom_target(userguide
-  COMMAND pandoc --standalone ${HTML_DIR}/vardes.html --output ${HTML_DIR}/vardes.tex
-  COMMAND pdflatex -halt-on-error ${HTML_DIR}/vardes.tex > ${DOC_DIR}/vardes.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/vardes.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/process.tex > ${DOC_DIR}/userguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/userguide.log"
-  COMMAND pdflatex -halt-on-error ${DOC_DIR}/process.tex > ${DOC_DIR}/userguide.log || ${CMAKE_COMMAND} -E echo "Error: See documentation/userguide.log"
-  COMMAND ${MOVE_FILE} process.pdf process.log pdf
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.aux
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.out
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.lof
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.log
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.lot
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/process.toc
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/vardes.out
-  COMMAND ${CMAKE_COMMAND} -E remove ${DOC_DIR}/vardes.aux
-  DEPENDS vardes ${DOC_DIR}/process.tex
-  WORKING_DIRECTORY ${DOC_DIR}
-)
 
 # Create the PROCESS developer guide PDF from LaTeX
 add_custom_target(developerguide
@@ -280,21 +250,6 @@ add_custom_target(tfdoc
   WORKING_DIRECTORY ${DOC_DIR}
 )
 
-# Create all PROCESS documentation (HTML and PDF LaTeX)
-add_custom_target(doc
-  COMMAND pwd
-  COMMENT "Creating all documentation files"
-  DEPENDS vardes html userguide developerguide utilitiesdoc optsolverdoc tfdoc
-  WORKING_DIRECTORY ${DOC_DIR}
-)
-
-# Creates all PROCESS documentation (HTML and PDF LaTeX) and the Python dictionaries
-add_custom_target(all-builds
-  COMMAND pwd
-  COMMENT "Creating all documentation files"
-  DEPENDS doc dicts
-)
-
 # Create test files
 add_custom_target(test-builds
   COMMAND make tests
@@ -316,18 +271,22 @@ set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
   ${UTILITIES_DIR}/processgui/dicts/gui_dicts.py
 )
 
-# Create the Python dictionaries from FORTRAN source
+# Create the Python dictionaries from FORTRAN source using FORD
 add_custom_target(dicts
-  COMMAND ${CMAKE_COMMAND} -E touch process_io_lib/process_dicts.py
-  COMMAND mv process_io_lib/process_dicts.py process_io_lib/process_dicts.py_prev
-  COMMAND echo ${UTILITIES_DIR}
-  COMMAND echo "Creating Python dictionaries... warnings are usually ignorable!"
-  COMMAND python create_dicts.py > process_io_lib/process_dicts.py
-  COMMAND chmod 755 process_io_lib/process_dicts.py
-  WORKING_DIRECTORY ${UTILITIES_DIR}
+  # On Mac, ~/.local/bin is not in PATH, so running Ford using
+  # "ford" command fails. Run using python ford.py instead
+  # Add the utilities dir to the PYTHONPATH, so FORD can run create_dicts.py
+  # Then run FORD on a "fast" md file, which doesn't make graphs or a search index
+  # These are wanted for making docs, but not when making dicts quickly
+  COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${UTILITIES_DIR}" python3 ford/ford.py ${DOC_DIR}/ford/index_fast.md
+  WORKING_DIRECTORY ${PROCESS_LIB_DIR}
   DEPENDS ${CMAKE_SOURCE_DIR}/root.dir
   VERBATIM
 )
+
+# Clone and install Ford, if required
+execute_process(COMMAND ${CLONE_FORD})
+execute_process(COMMAND ${INSTALL_FORD})
 
 # Get Git log information to put latest commit message into executable
 execute_process(
@@ -346,6 +305,14 @@ execute_process(
 )
 file(WRITE ${FORT_SOURCE_DIR}/tag.num "  character(len=*), parameter :: tagno = \"" ${TAG_NO} "\"")
 
+# Get git branch name
+execute_process(
+ COMMAND git rev-parse --abbrev-ref HEAD OUTPUT_VARIABLE GIT_BRANCH
+ WORKING_DIRECTORY ${FORT_SOURCE_DIR}
+ OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+file(WRITE ${FORT_SOURCE_DIR}/branch.name "  character(len=*), parameter :: branch_name = \"" ${GIT_BRANCH} "\"")
+
 # Check Git status for untracked changes and put info into executable
 execute_process(
  COMMAND git diff OUTPUT_VARIABLE UNTR_INFO
@@ -355,9 +322,16 @@ execute_process(
 string(LENGTH "${UNTR_INFO}" UNTR_LN)  # count no of words
 file(WRITE ${FORT_SOURCE_DIR}/untracked.info "  integer::untracked = " ${UNTR_LN} )
 
+# Set the REFPROP source code directory
+set(REFPROP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/REFPROP)
+
 # Create files for FORTRAN root and install directories
 file(WRITE ${FORT_SOURCE_DIR}/root.dir "      character(len=*), parameter :: ROOTDIR = \"" ${FORT_SOURCE_DIR} "\"\n")
 file(APPEND ${FORT_SOURCE_DIR}/root.dir "      character(len=*), parameter :: INSTALLDIR = \"" ${CMAKE_SOURCE_DIR} "\"")
+
+file(WRITE ${REFPROP_SOURCE_DIR}/root.dir "      character(len=*), parameter :: ROOTDIR = \"" ${FORT_SOURCE_DIR} "\"\n")
+file(APPEND ${REFPROP_SOURCE_DIR}/root.dir "      character(len=*), parameter :: INSTALLDIR = \"" ${CMAKE_SOURCE_DIR} "\"")
+
 file(WRITE ${UTILITIES_DIR}/rootdir.py "ROOTDIR = '" ${FORT_SOURCE_DIR} "'")
 file(WRITE ${CMAKE_SOURCE_DIR}/test_suite/bindir.py "BINDIR = '" ${CMAKE_BINARY_DIR} "'")
 file(COPY ${FORT_SOURCE_DIR}/root.dir DESTINATION ${CMAKE_SOURCE_DIR})
@@ -376,6 +350,8 @@ list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/grad_func.f90)
 list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/structs.f90)
 list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/transport_solver.f90)
 list(APPEND all_sources ${PLSMOD_SOURCE_DIR}/trmodel.f90)
+list(APPEND all_sources ${REFPROP_SOURCE_DIR}/refprop.f)
+list(APPEND all_sources ${REFPROP_SOURCE_DIR}/refprop_interface.f90)
 set(autodoc_sources ${all_sources})
 
 # Remove autodoc.f90 from compilation list
@@ -427,6 +403,6 @@ endif()
 # Post build commands for copying executable and dynamic library to source dir
 add_custom_command(TARGET process.exe
   POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}
+  # COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/process.exe ${CMAKE_SOURCE_DIR}
   COMMAND ${CMAKE_COMMAND} -E ${MOVE_DLL}
 )

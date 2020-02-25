@@ -3,6 +3,7 @@
 Code to display the power flow of a PROCESS run in a Sankey diagram
 
 Author: H. Lux (Hanni.Lux@ukaea.uk)
+Updated 20/08/219: A. Brown (adam.brown@ukaea.uk)
 
 Input file:
 MFILE.DAT
@@ -11,7 +12,7 @@ MFILE.DAT
 
 import argparse
 from pylab import show, savefig
-from process_io_lib.sankey_funcs import plot_sankey, plot_simplified_sankey
+from process_io_lib.sankey_funcs import plot_full_sankey, plot_sankey
 
 
 
@@ -25,26 +26,26 @@ if __name__ == '__main__':
 
     PARSER.add_argument("-e", "--end",
                         default='pdf',
-                        help="file format default = pdf")
+                        help="file format, default = pdf")
 
-    PARSER.add_argument("-f", "--mfile",
+    PARSER.add_argument("-m", "--mfile",
                         default='MFILE.DAT',
-                        help="mfile, default = MFILE.DAT")
+                        help="mfile name, default = MFILE.DAT")
 
-    PARSER.add_argument("-s", "--simplified", action="store_true",
-                    help="Only plot a simplified version")
+    PARSER.add_argument("-f", "--full",
+                        action="store_true",
+                        help="Plot full version")
 
     ARGS = PARSER.parse_args()
 
     #########################################################
     #main program
 
-    if ARGS.simplified:
-        plot_simplified_sankey(ARGS.mfile)
-        savefig("SankeyPowerFlow_simplified."+ARGS.end)
+    if ARGS.full:
+        plot_full_sankey(ARGS.mfile)
+        savefig("SankeyPowerFlow_full."+ARGS.end)
     else:
         plot_sankey(ARGS.mfile)
         savefig("SankeyPowerFlow."+ARGS.end)
-    
-    show()
 
+    show()

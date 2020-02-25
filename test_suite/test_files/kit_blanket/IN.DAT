@@ -1,95 +1,94 @@
 *--------------------------------------------------*
 *---------------Constraint Equations---------------*
-neqns = 22 * Number of equality constraints to be satisfied
-icc(1) = 1
-icc(2) = 2
-icc(3) = 5
-icc(4) = 8
-icc(5) = 10
-icc(6) = 11
-icc(7) = 13
-icc(8) = 16
-icc(9) = 24
-icc(10) = 26
-icc(11) = 27
-icc(12) = 30
-icc(13) = 31
-icc(14) = 32
-icc(15) = 33
-icc(16) = 34
-icc(17) = 35
-icc(18) = 39
-icc(19) = 15
-icc(20) = 56
-icc(21) = 62
-icc(22) = 66
+neqns = 21 * Number of equality constraints to be satisfied
+icc = 1
+icc = 2
+icc = 5
+icc = 8
+icc = 11
+icc = 13
+icc = 16
+icc = 24
+icc = 26
+icc = 27
+icc = 30
+icc = 31
+icc = 32
+icc = 33
+icc = 34
+icc = 35
+icc = 39
+icc = 15
+icc = 56
+icc = 62
+icc = 66
 
 *---------------Iteration Variables----------------*
-nvar = 40 * Number of iteration variables to use
-ixc(1) = 2 * bt
-ixc(2) = 3 * rmajor
+nvar = 39 * Number of iteration variables to use
+ixc = 2 * bt
+ixc = 3 * rmajor
 boundu(3) = 13
-ixc(3) = 4 * te
+ixc = 4 * te
 boundl(4) = 5.6
-ixc(4) = 5 * beta
-ixc(5) = 6 * dene
+ixc = 5 * beta
+ixc = 6 * dene
 boundl(6) = 0.69e20
-ixc(6) = 9 * fdene
+ixc = 9 * fdene
 boundu(9) = 1.2
-ixc(7) = 10 * hfact
+ixc = 10 * hfact
 boundu(10) = 1.1
-ixc(8) = 12 * oacdcp
-ixc(9) = 14 * fwalld
-ixc(10) = 16 * ohcth
-ixc(11) = 18 * q
+*ixc = 12 * oacdcp
+ixc = 14 * fwalld
+ixc = 16 * ohcth
+ixc = 18 * q
 boundl(18) = 3.0
-ixc(12) = 29 * bore
+ixc = 29 * bore
 boundl(29) = 0.1
-ixc(13) = 36 * fbetatry
-ixc(14) = 37 * coheof
-ixc(15) = 38 * fjohc
+ixc = 36 * fbetatry
+ixc = 37 * coheof
+ixc = 38 * fjohc
 boundu(38) = 0.25
-ixc(16) = 39 * fjohc0
+ixc = 39 * fjohc0
 boundu(39) = 0.25
-ixc(17) = 41 * fcohbop
-ixc(18) = 42 * gapoh
+ixc = 41 * fcohbop
+ixc = 42 * gapoh
 boundl(42) = 0.05
 *boundu(42) = 0.1
-ixc(19) = 44 * fvsbrnni
-ixc(20) = 48 * fstrcase
-ixc(21) = 49 * fstrcond
-ixc(22) = 50 * fiooic
+ixc = 44 * fvsbrnni
+ixc = 48 * fstrcase
+ixc = 49 * fstrcond
+ixc = 50 * fiooic
 boundu(50) = 0.5
-ixc(23) = 51 * fvdump
-ixc(24) = 52 * vdalw
-ixc(25) = 53 * fjprot
-ixc(26) = 56 * tdmptf
+ixc = 51 * fvdump
+ixc = 52 * vdalw
+ixc = 53 * fjprot
+ixc = 56 * tdmptf
 *boundl(56) = 30.0
 boundl(56) = 10.0
-ixc(27) = 57 * thkcas
-ixc(28) = 58 * thwcndut
+ixc = 57 * thkcas
+ixc = 58 * thwcndut
 boundl(58) = 8.0d-3
-ixc(29) = 61 * gapds
+ixc = 61 * gapds
 boundl(61) = 0.12
-ixc(30) = 13 * tfcth
+ixc = 13 * tfcth
 boundl(13) = 0.5
-ixc(31) = 103 * flhthresh
-ixc(32) = 102 * fimpvar
-ixc(33) = 60 * cpttf
+ixc = 103 * flhthresh
+ixc = 102 * fimpvar
+ixc = 60 * cpttf
 boundl(60) = 1.0d4
 boundu(60) = 9.0d4
-ixc(34) = 59 * fcutfsu
+ixc = 59 * fcutfsu
 *boundl(59) = 0.66667
 boundl(59) = 0.4
 
-ixc(35) = 63  * ftpeak (f-value for equation 39)
+ixc = 63  * ftpeak (f-value for equation 39)
 
-ixc(36) = 109 * ralpne
-ixc(37) = 110 * ftaulimit
+ixc = 109 * ralpne
+ixc = 110 * ftaulimit
 
-ixc(38) = 114 * fw_channel_length
-ixc(39) = 115 * fpoloidalpower: f-value for max rate of change of energy in poloidal field
-ixc(40) = 65 * tohs
+ixc = 114 * fw_channel_length
+ixc = 115 * fpoloidalpower: f-value for max rate of change of energy in poloidal field
+ixc = 65 * tohs
 boundu(65) = 1000
 
 *-----------------Build Variables------------------*
@@ -191,7 +190,7 @@ baseel   = 55.0d6 * Base plant electric load (w)
 htpmw_min = 0.0 * Minimum total electrical power for primary coolant pumps (mw)
 *------------------Ife Variables-------------------*
 *------------Impurity Radiation Module-------------*
-imprad_model = 1 * Switch for impurity radiation model;
+*imprad_model = 1 * Switch for impurity radiation model;
 coreradius = 0.6 * Normalised radius defining the 'core' region
 fimp(1) = 1.0
 fimp(2) = 0.1
@@ -274,11 +273,11 @@ q        = 3.2267e+00 * Safety factor 'near' plasma edge (iteration variable 18)
 q0       = 1.0 * Safety factor on axis
 ralpne   = 0.1 * Thermal alpha density / electron density (iteration variable 109)
 rmajor   = 9.0e+00 * Plasma major radius (m) (iteration variable 3)
-snull    = 1 * Switch for single null / double null plasma;
+i_single_null    = 1 * Switch for single null / double null plasma;
 ssync    = 0.6 * Synchrotron wall reflectivity factor
 te       = 1.3212e+01 * Volume averaged electron temperature (kev)
 triang   = 0.5 * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
-zfear    = 1 * High-z impurity switch; 0=iron; 1=argon
+*zfear    = 1 * High-z impurity switch; 0=iron; 1=argon
 taulimit = 5.0 * Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
 *-----------------Pulse Variables------------------*
 lpulse   = 1 * Switch for reactor model;
@@ -297,7 +296,7 @@ fcutfsu  = 0.4 * Copper fraction of cable conductor (tf coils)
 oacdcp   = 9.9963e+06 * Overall current density in tf coil inboard legs (a/m2)
 ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude
 tdmptf   = 3.0e+01 * Dump time for tf coil (s)
-tfno     = 18 * Number of tf coils (default = 50 for stellarators)
+n_tf     = 18 * Number of tf coils (default = 50 for stellarators)
 tftmp    = 4.75 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 2.0d-3 * Conduit insulation thickness (m)
 thkcas   = 4.9102e-01 * Inboard tf coil case outer (non-plasma side) thickness (m)
@@ -306,7 +305,7 @@ tinstf   = 0.013 * Ground insulation thickness surrounding winding pack (m)
 tmargmin = 1.7 * Minimum allowable temperature margin (cs and tf coils) (k)
 * vdalw    = 1.2650e+01 * Max voltage across tf coil during quench (kv)
 vdalw    = 30.0        * Max voltage across tf coil during quench (kv)
-vftf     = 0.33 * Coolant fraction of tfc 'cable' (itfsup=1); or of tfc leg (itfsup=0)
+vftf     = 0.33 * Coolant fraction of tfc 'cable' (i_tf_sup=1); or of tfc leg (i_tf_sup=0)
 *-----------------Times Variables------------------*
 tburn    = 1000.0 * Burn time (s) (calculated if lpulse=1)
 *-----------------Vacuum Variables-----------------*

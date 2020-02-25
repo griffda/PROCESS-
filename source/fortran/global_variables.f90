@@ -2,41 +2,31 @@
 
 module global_variables
 
-  !+ad_name  global_variables
-  !+ad_summ  Module containing miscellaneous global variables
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains miscellaneous global variables not
-  !+ad_desc  well-suited to any of the other 'variables' modules.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  15/10/12 PJK Initial version of module
-  !+ad_hist  23/07/14 PJK Added runtitle; modified icase
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing miscellaneous global variables
+  !! This module contains miscellaneous global variables not
+  !! well-suited to any of the other 'variables' modules.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
   implicit none
   public
 
-  !+ad_vars  icase : power plant type
   character(len=48) :: icase = 'Steady-state tokamak model'
-  !+ad_vars  runtitle /Run Title/ : short descriptive title for the run
+  !! icase : power plant type
   character(len=180) :: runtitle = &
        "Run Title (change this line using input variable 'runtitle')"
+       !! runtitle /Run Title/ : short descriptive title for the run
 
-  !+ad_vars  verbose /0/ : switch for turning on/off diagnostic messages:<UL>
-  !+ad_varc            <LI> = 0 turn off diagnostics
-  !+ad_varc            <LI> = 1 turn on diagnostics</UL>
   integer :: verbose = 0
-  !+ad_vars  run_tests /0/ : Turns on built-in tests if set to 1
+  !! verbose /0/ : switch for turning on/off diagnostic messages:<UL>
+  !!           <LI> = 0 turn off diagnostics
+  !!           <LI> = 1 turn on diagnostics</UL>
   integer :: run_tests = 0
+  !! run_tests /0/ : Turns on built-in tests if set to 1
 
-  !+ad_vars  maxcal /200/ : maximum number of VMCON iterations
   integer :: maxcal = 200
+  !! maxcal /200/ : maximum number of VMCON iterations
 
-  character(len=30) :: fileprefix = "" !'dummy_file_prefix'
+  character(len=50) :: fileprefix = "" !'dummy_file_prefix'
   character(len=50) :: output_prefix = "" ! output file prefix
   character(len=25) :: xlabel, vlabel
   character(len=25) :: xlabel_2, vlabel_2
@@ -49,20 +39,10 @@ end module global_variables
 
 module constants
 
-  !+ad_name  constants
-  !+ad_summ  Module containing miscellaneous numerical and physical constants
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains miscellaneous numerical and
-  !+ad_desc  physical constants.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  16/10/12 PJK Initial version of module
-  !+ad_hist  12/06/13 PJK Added umass
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing miscellaneous numerical and physical constants
+  !! This module contains miscellaneous numerical and
+  !! physical constants.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -70,27 +50,31 @@ module constants
 
   public
 
-  ! MDK These moved here to prevent circular dependency
-  integer, parameter :: iotty = 6  !  Standard output unit identifier
-  integer, parameter :: nout = 11  !  Output file unit identifier
-  integer, parameter :: nplot = 12 !  Plot data file unit identifier
-  integer, parameter :: mfile = 13 !  Machine-optimised output file unit
-  integer, parameter :: vfile = 14 !  Verbose diagnostics file
+  ! File output indexes
+  integer, parameter :: iotty    = 6  !  Standard output unit identifier
+  integer, parameter :: nout     = 11 !  Output file unit identifier
+  integer, parameter :: nplot    = 12 !  Plot data file unit identifier
+  integer, parameter :: mfile    = 13 !  Machine-optimised output file unit
+  integer, parameter :: vfile    = 14 !  Verbose diagnostics file
+  integer, parameter :: opt_file = 15 !  Optimisation information output file number
+  integer, parameter :: sig_file = 16 !  TF inboard stress radial distributions file number
 
-  !+ad_vars  degrad FIX : degrees to radians, = pi/180
   real(kind(1.0D0)), parameter :: degrad = 0.01745329251D0
-  !+ad_vars  echarge FIX : electron charge (C)
+  !! degrad FIX : degrees to radians, = pi/180
   real(kind(1.0D0)), parameter :: echarge = 1.60217733D-19
-  !+ad_vars  mproton FIX : proton mass (kg)
+  !! echarge FIX : electron charge (C)
   real(kind(1.0D0)), parameter :: mproton = 1.6726231D-27
-  !+ad_vars  pi FIX : famous number
+  !! mproton FIX : proton mass (kg)
   real(kind(1.0D0)), parameter :: pi = 3.1415926535897932D0
-  !+ad_vars  rmu0 FIX : permeability of free space, 4.pi x 10^(-7) H/m
+  !! pi FIX : famous number
   real(kind(1.0D0)), parameter :: rmu0 = 1.256637062D-6
-  !+ad_vars  twopi FIX : 2 pi
+  !! rmu0 FIX : permeability of free space, 4.pi x 10^(-7) H/m
   real(kind(1.0D0)), parameter :: twopi = 6.2831853071795862D0
-  !+ad_vars  umass FIX : unified atomic mass unit (kg)
+  !! twopi FIX : 2 pi
   real(kind(1.0D0)), parameter :: umass = 1.660538921D-27
+  !! umass FIX : unified atomic mass unit (kg)
+  real(kind(1.0D0)), parameter :: epsilon0 = 8.85418781D-12
+  !! epsilon0 FIX : permittivity of free space (Farad/m)
 
 contains
 
@@ -101,71 +85,10 @@ end module constants
 
 module physics_variables
 
-  !+ad_name  physics_variables
-  !+ad_summ  Module containing global variables relating to the plasma physics
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the plasma
-  !+ad_desc  physics.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  15/10/12 PJK Initial version of module
-  !+ad_hist  17/12/12 PJK Added zfear; modified impfe, cfe0, rnfene, fbfe comments
-  !+ad_hist  18/12/12 PJK Added pthrmw(6 to 8)
-  !+ad_hist  18/12/12 PJK Added snull; modified idivrt
-  !+ad_hist  03/01/13 PJK Removed iculdl
-  !+ad_hist  08/01/13 PJK Modified iinvqd, iiter, ires comments
-  !+ad_hist  22/01/13 PJK Added two stellarator scaling laws; modified comments
-  !+ad_hist  11/04/13 PJK Removed ires, rtpte; changed isc, ifispact default values
-  !+ad_hist  10/06/13 PJK Modified ishape
-  !+ad_hist  12/06/13 PJK Added gammaft, taup; changed rndfuel, qfuel units
-  !+ad_hist  18/06/13 PJK Removed dign; changed ffwal, ishape comments
-  !+ad_hist  27/06/13 PJK Changed iculbl comment
-  !+ad_hist  03/07/13 PJK Changed zeffai comment
-  !+ad_hist  10/09/13 PJK Added alpharate, fusionrate, protonrate
-  !+ad_hist  11/09/13 PJK Removed ftr, idhe3, iiter; changed ealpha to ealphadt
-  !+ad_hist  10/10/13 PJK Modified prad comment
-  !+ad_hist  27/11/13 PJK Modified vsbrn description
-  !+ad_hist  28/11/13 PJK Added pdd, pdhe3, pdt
-  !+ad_hist  28/11/13 PJK Added iprofile
-  !+ad_hist  06/03/14 PJK Clarified effect of ishape on kappa, triang
-  !+ad_hist  10/03/14 PJK Removed carea
-  !+ad_hist  01/04/14 PJK Added ibss=4 option
-  !+ad_hist  02/04/14 PJK Added iprofile=1 recommendation to use icurr=4
-  !+ad_hist  23/04/14 PJK Added bvert
-  !+ad_hist  01/05/14 PJK Changed dnbeta, gtscale comments
-  !+ad_hist  14/05/14 PJK Modified impc, impo, cfe0, zfear comments;
-  !+ad_hisc               added pcorerad
-  !+ad_hist  15/05/14 PJK Changed ffwal comment
-  !+ad_hist  19/05/14 PJK Changed plrad to pedgerad; removed fradmin;
-  !+ad_hisc               added iradloss
-  !+ad_hist  21/05/14 PJK Changed ignite wording
-  !+ad_hist  22/05/14 PJK Name changes to power quantities
-  !+ad_hist  11/06/14 PJK Added pchargemw, ptremw, ptrimw
-  !+ad_hist  17/06/14 PJK Added scaling law 39
-  !+ad_hist  19/08/14 PJK Removed recyle, impfe
-  !+ad_hist  01/09/14 PJK Minor comment changes
-  !+ad_hist  17/09/14 PJK Changed default values
-  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
-  !+ad_hist  01/10/14 PJK Added more ishape options
-  !+ad_hist  01/10/14 PJK Modified q wording
-  !+ad_hist  01/10/14 PJK Added ilhthresh, plhthresh
-  !+ad_hist  02/10/14 PJK Added cwrmax
-  !+ad_hist  13/11/14 PJK Added fkzohm
-  !+ad_hist  13/11/14 PJK Modified iradloss usage
-  !+ad_hist  17/11/14 PJK Added palpfwmw
-  !+ad_hist  20/05/15 RK  Added iscdens, fgwped for pedestal density scaling
-  !+ad_hist  17/06/15 MDK Added Murari scaling (isc=40)
-  !+ad_hist  11/09/15 MDK res_time
-  !+ad_hist  02/11/16 HL  Added Petty and Lang confinement scalings (isc=41/42)
-  !+ad_hist  08/02/17 JM  Added fgwsep the fraction of Greenwald density to set as separatrix density
-  !+ad_hist  08/02/17 JM  Gave teped, tesep, neped and nesep non-zero defaults
-  !+ad_hist  02/05/18 SIM Added pthrmw(9-14)
-  !+ad_hist  17/01/19 SIM Moved photon_wall and rad_fraction to global from physics
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the plasma physics
+  !! This module contains global variables relating to the plasma
+  !! physics.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -174,661 +97,694 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /45/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 45
+  integer, parameter :: ipnlaws = 48
+  !! ipnlaws /48/ FIX : number of energy confinement time scaling laws
 
-  !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
+  !! abeam : beam ion mass (amu)
 
-  !+ad_vars  afuel : average mass of fuel portion of ions (amu)
-  real(kind(1.0D0)) :: afuel = 0.0D0
+  real(kind(1.0D0)), bind(C) :: afuel = 0.0D0
+  !! afuel : average mass of fuel portion of ions (amu)
 
-  !+ad_vars  aion : average mass of all ions (amu)
   real(kind(1.0D0)) :: aion = 0.0D0
+  !! aion : average mass of all ions (amu)
 
-  !+ad_vars  alphaj /1.0/ : current profile index;
-  !+ad_varc                 calculated from q0, q if iprofile=1
   real(kind(1.0D0)) :: alphaj = 1.0D0
+  !! alphaj /1.0/ : current profile index;
+  !!                calculated from q0, q if iprofile=1
 
-  !+ad_vars  alphan /0.25/ : density profile index
   real(kind(1.0D0)) :: alphan = 0.25D0
-  !+ad_vars  alphap : pressure profile index
+  !! alphan /0.25/ : density profile index
   real(kind(1.0D0)) :: alphap = 0.0D0
-  !+ad_vars  alpharate : alpha particle production rate (particles/m3/sec)
+  !! alphap : pressure profile index
   real(kind(1.0D0)) :: alpharate = 0.0D0
-  !+ad_vars  alphat /0.5/ : temperature profile index
+  !! alpharate : alpha particle production rate (particles/m3/sec)
   real(kind(1.0D0)) :: alphat = 0.5D0
-  !+ad_vars  aspect /2.907/ : aspect ratio (iteration variable 1)
+  !! alphat /0.5/ : temperature profile index
   real(kind(1.0D0)) :: aspect = 2.907D0
-  !+ad_vars  beamfus0 /1.0/ : multiplier for beam-background fusion calculation
+  !! aspect /2.907/ : aspect ratio (iteration variable 1)
   real(kind(1.0D0)) :: beamfus0 = 1.0D0
-  !+ad_vars  beta /0.042/ : total plasma beta (iteration variable 5)
-  !+ad_varc             (calculated if ipedestal =3)
-  real(kind(1.0D0)) :: beta = 0.042D0
-  !+ad_vars  betaft : fast alpha beta component
+  !! beamfus0 /1.0/ : multiplier for beam-background fusion calculation
+  real(kind(1.0D0)), bind(C) :: beta = 0.042D0
+  !! beta /0.042/ : total plasma beta (iteration variable 5)
+  !!            (calculated if ipedestal =3)
   real(kind(1.0D0)) :: betaft = 0.0D0
-  !+ad_vars  betalim : allowable beta
+  !! betaft : fast alpha beta component
   real(kind(1.0D0)) :: betalim = 0.0D0
-  !+ad_vars  betanb : neutral beam beta component
+  !! betalim : allowable beta
   real(kind(1.0D0)) :: betanb = 0.0D0
-  !+ad_vars  betap : poloidal beta
+  !! betanb : neutral beam beta component
   real(kind(1.0D0)) :: betap = 0.0D0
-  !+ad_vars  normalised_total_beta : normaised total beta
-  real(kind(1.0D0)) :: normalised_total_beta = 0.0D0
+  !! betap : poloidal beta
+  real(kind(1.0D0)), bind(C) :: normalised_total_beta = 0.0D0
+  !! normalised_total_beta : normaised total beta
 
-  !+ad_vars  betbm0 /1.5/ : leading coefficient for NB beta fraction
   real(kind(1.0D0)) :: betbm0 = 1.5D0
-  !+ad_vars  bp : poloidal field (T)
-  real(kind(1.0D0)) :: bp = 0.0D0
-  !+ad_vars  bt /5.68/ : toroidal field on axis (T) (iteration variable 2)
-  real(kind(1.0D0)) :: bt = 5.68D0
-  !+ad_vars  btot : total toroidal + poloidal field (T)
-  real(kind(1.0D0)) :: btot = 0.0D0
-  !+ad_vars  burnup : fractional plasma burnup
+  !! betbm0 /1.5/ : leading coefficient for NB beta fraction
+  real(kind(1.0D0)), bind(C) :: bp = 0.0D0
+  !! bp : poloidal field (T)
+  real(kind(1.0D0)), bind(C) :: bt = 5.68D0
+  !! bt /5.68/ : toroidal field on axis (T) (iteration variable 2)
+  real(kind(1.0D0)), bind(C) :: btot = 0.0D0
+  !! btot : total toroidal + poloidal field (T)
   real(kind(1.0D0)) :: burnup = 0.0D0
-  !+ad_vars  bvert : vertical field at plasma (T)
+  !! burnup : fractional plasma burnup
   real(kind(1.0D0)) :: bvert = 0.0D0
-  !+ad_vars  cfe0 /0.0/ : seeded high-Z impurity fraction (n_highZ / n_e)
-  !+ad_varc               (imprad_model=0 only) (iteration variable 43)
-  real(kind(1.0D0)) :: cfe0 = 0.0D0
-  !+ad_vars  csawth /1.0/ : coeff. for sawteeth effects on burn V-s requirement
+  !! bvert : vertical field at plasma (T)
   real(kind(1.0D0)) :: csawth = 1.0D0
-  !+ad_vars  cvol /1.0/ : multiplying factor times plasma volume (normally=1)
+  !! csawth /1.0/ : coeff. for sawteeth effects on burn V-s requirement
   real(kind(1.0D0)) :: cvol = 1.0D0
-  !+ad_vars  cwrmax /1.35/ : maximum ratio of conducting wall distance to
-  !+ad_varc                  plasma minor radius for vertical stability
-  !+ad_varc                  (constraint equation 23)
+  !! cvol /1.0/ : multiplying factor times plasma volume (normally=1)
   real(kind(1.0D0)) :: cwrmax = 1.35D0
-  !+ad_vars  dene /9.8e19/ : electron density (/m3) (iteration variable 6)
-  !+ad_varc                  (calculated if ipedestal=3)
+  !! cwrmax /1.35/ : maximum ratio of conducting wall distance to
+  !!                 plasma minor radius for vertical stability
+  !!                 (constraint equation 23)
   real(kind(1.0D0)) :: dene = 9.8D19
-  !+ad_vars  deni : fuel ion density (/m3)
+  !! dene /9.8e19/ : electron density (/m3) (iteration variable 6)
+  !!                 (calculated if ipedestal=3)
   real(kind(1.0D0)) :: deni = 0.0D0
-  !+ad_vars  dlamee : electron-electron coulomb logarithm
+  !! deni : fuel ion density (/m3)
   real(kind(1.0D0)) :: dlamee = 0.0D0
-  !+ad_vars  dlamie : ion-electron coulomb logarithm
+  !! dlamee : electron-electron coulomb logarithm
   real(kind(1.0D0)) :: dlamie = 0.0D0
-  !+ad_vars  dlimit(7) : density limit (/m3) as calculated using various models
+  !! dlamie : ion-electron coulomb logarithm
   real(kind(1.0D0)), dimension(7) :: dlimit = 0.0D0
-  !+ad_vars  dnalp : thermal alpha density (/m3)
+  !! dlimit(7) : density limit (/m3) as calculated using various models
   real(kind(1.0D0)) :: dnalp = 0.0D0
-  !+ad_vars  dnbeam : hot beam ion density, variable (/m3)
+  !! dnalp : thermal alpha density (/m3)
   real(kind(1.0D0)) :: dnbeam = 0.0D0
-  !+ad_vars  dnbeam2 : hot beam ion density from calculation (/m3)
+  !! dnbeam : hot beam ion density, variable (/m3)
   real(kind(1.0D0)) :: dnbeam2 = 0.0D0
-  !+ad_vars  dnbeta /3.5/ : (Troyon-like) coefficient for beta scaling;
-  !+ad_varc                 calculated as (4.0*rli) if iprofile=1
-  !+ad_varc                 (see also gtscale option)
+  !! dnbeam2 : hot beam ion density from calculation (/m3)
   real(kind(1.0D0)) :: dnbeta = 3.5D0
-  !+ad_vars  dnelimt : density limit (/m3)
+  !! dnbeta /3.5/ : (Troyon-like) coefficient for beta scaling;
+  !!                calculated as (4.0*rli) if iprofile=1
+  !!                (see also gtscale option)
   real(kind(1.0D0)) :: dnelimt = 0.0D0
-  !+ad_vars  dnitot : total ion density (/m3)
+  !! dnelimt : density limit (/m3)
   real(kind(1.0D0)) :: dnitot = 0.0D0
-  !+ad_vars  dnla : line averaged electron density (/m3)
+  !! dnitot : total ion density (/m3)
   real(kind(1.0D0)) :: dnla = 0.0D0
-  !+ad_vars  dnprot : proton ash density (/m3)
+  !! dnla : line averaged electron density (/m3)
   real(kind(1.0D0)) :: dnprot = 0.0D0
-  !+ad_vars  dntau : plasma average "n-tau" (seconds/m3)
+  !! dnprot : proton ash density (/m3)
   real(kind(1.0D0)) :: dntau = 0.0D0
-  !+ad_vars  dnz : high Z ion density (/m3)
+  !! dntau : plasma average "n-tau" (seconds/m3)
   real(kind(1.0D0)) :: dnz = 0.0D0
-  !+ad_vars  ealphadt /3520.0/ FIX : alpha birth energy in D-T reaction (keV)
+  !! dnz : high Z ion density (/m3)
   real(kind(1.0D0)), parameter :: ealphadt = 3520.0D0
-  !+ad_vars  epbetmax /1.38/ : maximum (eps*beta_poloidal) (constraint equation 6)
-  !+ad_varc                    revised (07/01/16) Issue #346
-  !+ad_varc                    "Operation at the tokamak equilibrium poloidal beta-limit in TFTR"
-  !+ad_varc                    1992 Nucl. Fusion 32 1468
+  !! ealphadt /3520.0/ FIX : alpha birth energy in D-T reaction (keV)
   real(kind(1.0D0)) :: epbetmax = 1.38D0
-  !+ad_vars  eps : inverse aspect ratio
+  !! epbetmax /1.38/ : maximum (eps*beta_poloidal) (constraint equation 6)
+  !!                   revised (07/01/16) Issue #346
+  !!                   "Operation at the tokamak equilibrium poloidal beta-limit in TFTR"
+  !!                   1992 Nucl. Fusion 32 1468
   real(kind(1.0D0)) :: eps = 0.34399724802D0
-  !+ad_vars  faccd : fraction of plasma current produced by auxiliary current drive
+  !! eps : inverse aspect ratio
   real(kind(1.0D0)) :: faccd = 0.0D0
-  !+ad_vars  facoh : fraction of plasma current produced inductively
+  !! faccd : fraction of plasma current produced by auxiliary current drive
   real(kind(1.0D0)) :: facoh = 0.0D0
-  !+ad_vars  falpe : fraction of alpha energy to electrons
+  !! facoh : fraction of plasma current produced inductively
   real(kind(1.0D0)) :: falpe = 0.0D0
-  !+ad_vars  falpha /0.95/ : fraction of alpha power deposited in plasma
-  !+ad_varc                  (Physics of Energetic Ions, p.2489)
+  !! falpe : fraction of alpha energy to electrons
   real(kind(1.0D0)) :: falpha = 0.95D0
-  !+ad_vars  falpi : fraction of alpha power to ions
+  !! falpha /0.95/ : fraction of alpha power deposited in plasma
+  !!                 (Physics of Energetic Ions, p.2489)
+
   real(kind(1.0D0)) :: falpi = 0.0D0
-  !+ad_vars  fbfe /0.35/ : fraction of high-Z radiation to Bremsstrahlung
-  !+ad_varc                (imprad_model=0 only)
-  real(kind(1.0D0)) :: fbfe = 0.35D0
-  !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
+  !! falpi : fraction of alpha power to ions
+
   real(kind(1.0D0)) :: fdeut = 0.5D0
-  !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
-  !+ad_varc                 area in neutron wall load calculation (iwalld=1)
+  !! fdeut /0.5/ : deuterium fuel fraction
+
+  real(kind(1.0D0)) :: ftar = 1.0D0
+  !! ftar  /1.0/ : fraction of power to the lower divertor in double null
+  !!               configuration (i_single_null = 0 only) (default assumes SN)
   real(kind(1.0D0)) :: ffwal = 0.92D0
-  !+ad_vars  fgwped /0.85/ : fraction of Greenwald density to set as pedestal-top density
-  !+ad_varc                  If <0, pedestal-top density set manually using neped (ipedestal>=1)
-  !+ad_varc                  Needs to be >0 if ipedestal = 3
-  !+ad_varc                  (iteration variable 145)
+  !! ffwal /0.92/ : factor to convert plasma surface area to first wall
+  !!                area in neutron wall load calculation (iwalld=1)
   real(kind(1.0D0)) :: fgwped = 0.85D0
-  !+ad_vars  fgwsep /0.50/ : fraction of Greenwald density to set as separatrix density
-  !+ad_varc                  If <0, separatrix density set manually using nesep (ipedestal>=1)
-  !+ad_varc                  Needs to be >0 if ipedestal = 3
+  !! fgwped /0.85/ : fraction of Greenwald density to set as pedestal-top density
+  !!                 If <0, pedestal-top density set manually using neped (ipedestal>=1)
+  !!                 Needs to be >0 if ipedestal = 3
+  !!                 (iteration variable 145)
   real(kind(1.0D0)) :: fgwsep = 0.50D0
-
-  !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
+  !! fgwsep /0.50/ : fraction of Greenwald density to set as separatrix density
+  !!                 If <0, separatrix density set manually using nesep (ipedestal>=1)
+  !!                 Needs to be >0 if ipedestal = 3
   real(kind(1.0D0)) :: fhe3 = 0.0D0
-  !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar, where sbar=1)
+  !! fhe3 /0.0/ : helium-3 fuel fraction
   real(kind(1.0D0)) :: figmer = 0.0D0
-  !+ad_vars  fkzohm /1.0/ : Zohm elongation scaling adjustment factor (ishape=2, 3)
+  !! figmer : physics figure of merit (= plascur*aspect**sbar, where sbar=1)
   real(kind(1.0D0)) :: fkzohm = 1.0D0
-  !+ad_vars  fplhsep /1.0/ : F-value for Psep >= Plh + Paux (constraint equation 73)
+  !! fkzohm /1.0/ : Zohm elongation scaling adjustment factor (ishape=2, 3)
+  
   real(kind(1.0D0)) :: fplhsep = 1.0D0
-  !+ad_vars  ftrit /0.5/ : tritium fuel fraction
-  real(kind(1.0D0)) :: ftrit = 0.5D0
-  !+ad_vars  fusionrate : fusion reaction rate (reactions/m3/sec)
-  real(kind(1.0D0)) :: fusionrate = 0.0D0
-  !+ad_vars  fvsbrnni /1.0/ : fraction of the plasma current produced by
-  !+ad_varc                   non-inductive means (iteration variable 44)
-  real(kind(1.0D0)) :: fvsbrnni = 1.0D0
-  !+ad_vars  gamma /0.4/ : Ejima coefficient for resistive startup V-s formula
-  real(kind(1.0D0)) :: gamma = 0.4D0
-  !+ad_vars  gammaft : ratio of (fast alpha + neutral beam beta) to thermal beta
-  real(kind(1.0D0)) :: gammaft = 0.0D0
-  !+ad_vars  gtscale /0/ : switch for a/R scaling of dnbeta (iprofile=0 only):<UL>
-  !+ad_varc          <LI>  = 0 do not scale dnbeta with eps;
-  !+ad_varc          <LI>  = 1 scale dnbeta with eps</UL>
-  integer :: gtscale = 0
-  !+ad_vars  hfac(ipnlaws) : H factors for an ignited plasma for each energy confinement
-  !+ad_varc                  time scaling law
-  real(kind(1.0D0)), dimension(ipnlaws) :: hfac = 0.0D0
-  !+ad_vars  hfact /1.0/ : H factor on energy confinement times, radiation corrected
-  !+ad_varc                (iteration variable 10).
-  !+ad_varc                If ipedestal=2 or 3 and hfact = 0, not used in PLASMOD
-  !+ad_varc                (see also plasmod_i_modeltype)
-  real(kind(1.0D0)) :: hfact = 1.0D0
-  ! Issue #219
-  !+ad_vars  taumax /10/ : Maximum allowed energy confinement time (s)
-  real(kind(1.0D0)) :: taumax = 10.0D0
-  !+ad_vars  ibss /3/ : switch for bootstrap current scaling:<UL>
-  !+ad_varc        <LI> = 1 ITER 1989 bootstrap scaling (high R/a only);
-  !+ad_varc        <LI> = 2 for Nevins et al general scaling;
-  !+ad_varc        <LI> = 3 for Wilson et al numerical scaling;
-  !+ad_varc        <LI> = 4 for Sauter et al scaling</UL>
-  integer :: ibss = 3
-  !+ad_vars  iculbl /0/ : switch for beta limit scaling (constraint equation 24):<UL>
-  !+ad_varc          <LI> = 0 apply limit to total beta;
-  !+ad_varc          <LI> = 1 apply limit to thermal beta;
-  !+ad_varc          <LI> = 2 apply limit to thermal + neutral beam beta</UL>
-  integer :: iculbl = 0
-  !+ad_vars  icurr /4/ : switch for plasma current scaling to use:<UL>
-  !+ad_varc         <LI> = 1 Peng analytic fit;
-  !+ad_varc         <LI> = 2 Peng double null divertor scaling (ST);
-  !+ad_varc         <LI> = 3 simple ITER scaling (k = 2.2, d = 0.6);
-  !+ad_varc         <LI> = 4 later ITER scaling, a la Uckan;
-  !+ad_varc         <LI> = 5 Todd empirical scaling I;
-  !+ad_varc         <LI> = 6 Todd empirical scaling II;
-  !+ad_varc         <LI> = 7 Connor-Hastie model;
-  !+ad_varc         <LI> = 8 Sauter scaling allowing negative triangularity</UL>
-  integer :: icurr = 4
-  !+ad_vars  idensl /7/ : switch for density limit to enforce (constraint equation 5):<UL>
-  !+ad_varc          <LI> = 1 old ASDEX;
-  !+ad_varc          <LI> = 2 Borrass model for ITER (I);
-  !+ad_varc          <LI> = 3 Borrass model for ITER (II);
-  !+ad_varc          <LI> = 4 JET edge radiation;
-  !+ad_varc          <LI> = 5 JET simplified;
-  !+ad_varc          <LI> = 6 Hugill-Murakami Mq limit;
-  !+ad_varc          <LI> = 7 Greenwald limit</UL>
-  integer :: idensl = 7
-  !+ad_vars  idivrt : number of divertors (calculated from snull)
-  integer :: idivrt = 2
-  !+ad_vars  ifalphap /1/ : switch for fast alpha pressure calculation:<UL>
-  !+ad_varc            <LI> = 0 ITER physics rules (Uckan) fit;
-  !+ad_varc            <LI> = 1 Modified fit (D. Ward) - better at high temperature</UL>
-  integer :: ifalphap = 1
-  !+ad_vars  ifispact /0/ : switch for neutronics calculations:<UL>
-  !+ad_varc            <LI> = 0 neutronics calculations turned off;
-  !+ad_varc            <LI> = 1 neutronics calculations turned on</UL>
-  integer :: ifispact = 0
-  !+ad_vars  igeom /1/ : switch for plasma geometry calculation:<UL>
-  !+ad_varc         <LI> = 0 original method (possibly based on Peng ST modelling);
-  !+ad_varc         <LI> = 1 improved (and traceable) method</UL>
-  integer :: igeom = 1
-  !+ad_vars  ignite /0/ : switch for ignition assumption:<UL>
-  !+ad_varc          <LI> = 0 do not assume plasma ignition;
-  !+ad_varc          <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
-  !+ad_varc       Obviously, ignite must be zero if current drive is required.
-  !+ad_varc       If ignite=1, any auxiliary power is assumed to be used only
-  !+ad_varc       during plasma start-up, and is excluded from all steady-state
-  !+ad_varc       power balance calculations.
-  integer :: ignite = 0
-  !+ad_vars  iinvqd /1/ : switch for inverse quadrature in L-mode scaling laws 5 and 9:<UL>
-  !+ad_varc          <LI> = 0 inverse quadrature not used;
-  !+ad_varc          <LI> = 1 inverse quadrature with Neo-Alcator tau-E used</UL>
-  integer :: iinvqd = 1
-  !+ad_vars  impc /1.0/ : carbon impurity multiplier (imprad_model=0 only)
-  real(kind(1.0D0)) :: impc = 1.0D0
-  !+ad_vars  impo /1.0/ : oxygen impurity multiplier (imprad_model=0 only)
-  real(kind(1.0D0)) :: impo = 1.0D0
+  !! fplhsep /1.0/ : F-value for Psep >= Plh + Paux (constraint equation 73)
+  
+  real(kind(1.0D0)) :: fpdivlim = 1.0D0
+  !! fpdivlim /1.0/ : F-value for minimum pdivt (constraint equation 80)
 
-  !+ad_vars  ipedestal /1/ : switch for pedestal profiles:<UL>
-  !+ad_varc             <LI> = 0 use original parabolic profiles;
-  !+ad_varc             <LI> = 1 use pedestal profiles
-  !+ad_varc             <LI> = 2 use pedestal profiles and run PLASMOD on final output
-  !+ad_varc             <LI> = 3 use PLASMOD transport model only to calculate pedestal profiles</UL>
+  real(kind(1.0D0)) :: fne0 = 1.0D0
+  !! fne0 /1.0/ : F-value for minimum pdivt (constraint equation 81)
+
+  real(kind(1.0D0)), bind(C) :: ftrit = 0.5D0
+  !! ftrit /0.5/ : tritium fuel fraction
+  real(kind(1.0D0)) :: fusionrate = 0.0D0
+  !! fusionrate : fusion reaction rate (reactions/m3/sec)
+  real(kind(1.0D0)) :: fvsbrnni = 1.0D0
+  !! fvsbrnni /1.0/ : fraction of the plasma current produced by
+  !!                  non-inductive means (iteration variable 44)
+  real(kind(1.0D0)) :: gamma = 0.4D0
+  !! gamma /0.4/ : Ejima coefficient for resistive startup V-s formula
+  real(kind(1.0D0)) :: gammaft = 0.0D0
+  !! gammaft : ratio of (fast alpha + neutral beam beta) to thermal beta
+  integer :: gtscale = 0
+  !! gtscale /0/ : switch for a/R scaling of dnbeta (iprofile=0 only):<UL>
+  !!         <LI>  = 0 do not scale dnbeta with eps;
+  !!         <LI>  = 1 scale dnbeta with eps</UL>
+  real(kind(1.0D0)), dimension(ipnlaws) :: hfac = 0.0D0
+  !! hfac(ipnlaws) : H factors for an ignited plasma for each energy confinement
+  !!                 time scaling law
+  real(kind(1.0D0)) :: hfact = 1.0D0
+  !! hfact /1.0/ : H factor on energy confinement times, radiation corrected
+  !!               (iteration variable 10).
+  !!               If ipedestal=2 or 3 and hfact = 0, not used in PLASMOD
+  !!               (see also plasmod_i_modeltype)
+  ! Issue #219
+  real(kind(1.0D0)) :: taumax = 10.0D0
+  !! taumax /10/ : Maximum allowed energy confinement time (s)
+  integer :: ibss = 3
+  !! ibss /3/ : switch for bootstrap current scaling:<UL>
+  !!       <LI> = 1 ITER 1989 bootstrap scaling (high R/a only);
+  !!       <LI> = 2 for Nevins et al general scaling;
+  !!       <LI> = 3 for Wilson et al numerical scaling;
+  !!       <LI> = 4 for Sauter et al scaling</UL>
+  integer :: iculbl = 0
+  !! iculbl /0/ : switch for beta limit scaling (constraint equation 24):<UL>
+  !!         <LI> = 0 apply limit to total beta;
+  !!         <LI> = 1 apply limit to thermal beta;
+  !!         <LI> = 2 apply limit to thermal + neutral beam beta</UL>
+  integer :: icurr = 4
+  !! icurr /4/ : switch for plasma current scaling to use:<UL>
+  !!        <LI> = 1 Peng analytic fit;
+  !!        <LI> = 2 Peng double null divertor scaling (ST);
+  !!        <LI> = 3 simple ITER scaling (k = 2.2, d = 0.6);
+  !!        <LI> = 4 later ITER scaling, a la Uckan;
+  !!        <LI> = 5 Todd empirical scaling I;
+  !!        <LI> = 6 Todd empirical scaling II;
+  !!        <LI> = 7 Connor-Hastie model;
+  !!        <LI> = 8 Sauter scaling allowing negative triangularity;
+  !!        <LI> = 9 FIESTA ST fit </UL>
+  integer :: idia = 0
+  !! idia /0/ : switch for diamagnetic current scaling:<UL>
+  !!       <LI> = 0 Do not calculate;
+  !!       <LI> = 1 Use original TART scaling;
+  !!       <LI> = 2 Use SCENE scaling</UL>
+  integer :: idensl = 7
+  !! idensl /7/ : switch for density limit to enforce (constraint equation 5):<UL>
+  !!         <LI> = 1 old ASDEX;
+  !!         <LI> = 2 Borrass model for ITER (I);
+  !!         <LI> = 3 Borrass model for ITER (II);
+  !!         <LI> = 4 JET edge radiation;
+  !!         <LI> = 5 JET simplified;
+  !!         <LI> = 6 Hugill-Murakami Mq limit;
+  !!         <LI> = 7 Greenwald limit</UL>
+
+  integer :: idivrt = 2
+  !! idivrt : number of divertors (calculated from i_single_null)
+
+  integer :: ifalphap = 1
+  !! ifalphap /1/ : switch for fast alpha pressure calculation:<UL>
+  !!           <LI> = 0 ITER physics rules (Uckan) fit;
+  !!           <LI> = 1 Modified fit (D. Ward) - better at high temperature</UL>
+  integer :: ifispact = 0
+  !! ifispact /0/ : switch for neutronics calculations:<UL>
+  !!           <LI> = 0 neutronics calculations turned off;
+  !!           <LI> = 1 neutronics calculations turned on</UL>
+  integer :: igeom = 1
+  !! igeom /1/ : switch for plasma geometry calculation:<UL>
+  !!        <LI> = 0 original method (possibly based on Peng ST modelling);
+  !!        <LI> = 1 improved (and traceable) method</UL>
+  integer :: ignite = 0
+  !! ignite /0/ : switch for ignition assumption. Obviously, ignite must 
+  !!              be zero if current drive is required. If ignite is 1, any 
+  !!              auxiliary power is assumed to be used only during plasma 
+  !!              start-up, and is excluded from all steady-state power 
+  !!              balance calculations.<UL>
+  !!         <LI> = 0 do not assume plasma ignition;
+  !!         <LI> = 1 assume ignited (but include auxiliary power in costs)</UL>
+  !! 
+  integer :: iinvqd = 1
+  !! iinvqd /1/ : switch for inverse quadrature in L-mode scaling laws 5 and 9:<UL>
+  !!         <LI> = 0 inverse quadrature not used;
+  !!         <LI> = 1 inverse quadrature with Neo-Alcator tau-E used</UL>
+
   integer :: ipedestal = 1
-  ! Issue #589 remove iscdens
-  !+ad_vars  iscdens /0/ : switch for pedestal profiles: OBSOLETE
-  ! integer :: iscdens = 0
+  !! ipedestal /1/ : switch for pedestal profiles:<UL>
+  !!            <LI> = 0 use original parabolic profiles;
+  !!            <LI> = 1 use pedestal profiles
+  !!            <LI> = 2 use pedestal profiles and run PLASMOD on final output
+  !!            <LI> = 3 use PLASMOD transport model only to calculate pedestal profiles</UL>
+
+  integer :: ips = 0
+  !! ips /0/ : switch for Pfirsch-Schlüter current scaling:<UL>
+  !!       <LI> = 0 Do not calculate;
+  !!       <LI> = 1 Use SCENE scaling</UL>
 
   ! Issue #413
-  !+ad_vars  ieped /0/ : switch for scaling pedestal-top temperature with plasma parameters:<UL>
-  !+ad_varc             <LI> = 0 set pedestal-top temperature manually using teped;
-  !+ad_varc             <LI> = 1 set pedestal-top temperature using EPED scaling;
-  !+ad_varc                   (PLASMOD implementation of scaling within PLASMOD, ipedestal =2,3)
-  !+ad_varc             <LI>    https://idm.euro-fusion.org/?uid=2MSZ4T </UL>
   integer :: ieped = 0
+  !! ieped /0/ : switch for scaling pedestal-top temperature with plasma parameters:<UL>
+  !!            <LI> = 0 set pedestal-top temperature manually using teped;
+  !!            <LI> = 1 set pedestal-top temperature using EPED scaling;
+  !!                  (PLASMOD implementation of scaling within PLASMOD, ipedestal =2,3)
+  !!            <LI>    https://idm.euro-fusion.org/?uid=2MSZ4T </UL>
 
   ! Issue #730
-  !+ad_vars  eped_sf /1.0/ : Adjustment factor for EPED scaling to reduce pedestal temperature or pressure to mitigate or prevent ELMs
-  real(kind(1.0D0)) :: eped_sf = 1.0D0
+  real(kind(1.0D0)), bind(C) :: eped_sf = 1.0D0
+  !! eped_sf /1.0/ : Adjustment factor for EPED scaling to reduce 
+  !! pedestal temperature or pressure to mitigate or prevent ELMs
 
-  !+ad_vars  neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1,2, calculated if 3)
   real(kind(1.0D0)) :: neped = 4.0D19
-  !+ad_vars  nesep /3.0e19/ : electron density at separatrix [m-3] (ipedestal=1,2, calculated if 3)
+  !! neped /4.0e19/ : electron density of pedestal [m-3] (ipedestal=1,2, calculated if 3)
   real(kind(1.0D0)) :: nesep = 3.0D19
-  !+ad_vars  alpha_crit : critical ballooning parameter value
+  !! nesep /3.0e19/ : electron density at separatrix [m-3] (ipedestal=1,2, calculated if 3)
   real(kind(1.0D0)) :: alpha_crit = 0.0D0
-  !+ad_vars  nesep_crit : critical electron density at separatrix [m-3]
+  !! alpha_crit : critical ballooning parameter value
   real(kind(1.0D0)) :: nesep_crit = 0.0D0
-  !+ad_vars  plasma_res_factor /1.0/ : plasma resistivity pre-factor
+  !! nesep_crit : critical electron density at separatrix [m-3]
   real(kind(1.0D0)) :: plasma_res_factor = 1.0D0
-  !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal>=1)
+  !! plasma_res_factor /1.0/ : plasma resistivity pre-factor
   real(kind(1.0D0)) :: rhopedn = 1.0D0
-  !+ad_vars  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal>=1)
+  !! rhopedn /1.0/ : r/a of density pedestal (ipedestal>=1)
   real(kind(1.0D0)) :: rhopedt = 1.0D0
-  !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1,2)
+  !! rhopedt /1.0/ : r/a of temperature pedestal (ipedestal>=1)
   real(kind(1.0D0)) :: tbeta = 2.0D0
-  !+ad_vars  teped /1.0/ : electron temperature of pedestal (keV) (ipedestal>=1, ieped=0, calculated for ieped=1)
+  !! tbeta /2.0/ : temperature profile index beta  (ipedestal=1,2)
   real(kind(1.0D0)) :: teped = 1.0D0
-  !+ad_vars  tesep /0.1/ : electron temperature at separatrix (keV) (ipedestal>=1)
-  !+ad_varc                calculated if reinke criterion is used (icc = 78)
+  !! teped /1.0/ : electron temperature of pedestal (keV) (ipedestal>=1, ieped=0, calculated for ieped=1)
   real(kind(1.0D0)) :: tesep = 0.1D0
+  !! tesep /0.1/ : electron temperature at separatrix (keV) (ipedestal>=1)
+  !!               calculated if reinke criterion is used (icc = 78)
 
-  !+ad_vars  iprofile /1/ : switch for current profile consistency:<UL>
-  !+ad_varc             <LI> = 0 use input values for alphaj, rli, dnbeta
-  !+ad_varc                      (but see gtscale option);
-  !+ad_varc             <LI> = 1 make these consistent with input q, q0 values
-  !+ad_varc                      (recommendation: use icurr=4 with this option) </UL>
   integer :: iprofile = 1
-  !+ad_vars  iradloss /1/ : switch for radiation loss term usage in power balance (see User Guide):<UL>
-  !+ad_varc             <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
-  !+ad_varc             <LI> = 1 total power lost is scaling power plus core radiation only
-  !+ad_varc             <LI> = 2 total power lost is scaling power only, with no additional
-  !+ad_varc                      allowance for radiation. This is not recommended for power plant models.</UL>
+  !! iprofile /1/ : switch for current profile consistency:<UL>
+  !!            <LI> = 0 use input values for alphaj, rli, dnbeta
+  !!                     (but see gtscale option);
+  !!            <LI> = 1 make these consistent with input q, q0 values
+  !!                     (recommendation: use icurr=4 with this option) </UL>
   integer :: iradloss = 1
+  !! iradloss /1/ : switch for radiation loss term usage in power balance (see User Guide):<UL>
+  !!            <LI> = 0 total power lost is scaling power plus radiation (needed for ipedestal=2,3)
+  !!            <LI> = 1 total power lost is scaling power plus core radiation only
+  !!            <LI> = 2 total power lost is scaling power only, with no additional
+  !!                     allowance for radiation. This is not recommended for power plant models.</UL>
 
-  !+ad_vars  isc /34 (=IPB98(y,2))/ : switch for energy confinement time scaling law
-  !+ad_varc          (see description in tauscl)
   integer :: isc = 34
-  !+ad_vars  tauscl(ipnlaws) : labels describing energy confinement scaling laws:<UL>
+  !! isc /34 (=IPB98(y,2))/ : switch for energy confinement time scaling law
+  !!         (see description in tauscl)
   character(len=24), dimension(ipnlaws) :: tauscl = (/ &
-  !+ad_varc  <LI> ( 1)  Neo-Alcator (ohmic)
+  !! tauscl(ipnlaws) : labels describing energy confinement scaling laws:<UL>
        'Neo-Alcator      (ohmic)', &
-  !+ad_varc  <LI> ( 2)  Mirnov (H-mode)
+       !! <LI> ( 1)  Neo-Alcator (ohmic)
        'Mirnov               (H)', &
-  !+ad_varc  <LI> ( 3)  Merezkhin-Muhkovatov (L-mode)
+       !! <LI> ( 2)  Mirnov (H-mode)
        'Merezkhin-Muhkovatov (L)', &
-  !+ad_varc  <LI> ( 4)  Shimomura (H-mode)
+       !! <LI> ( 3)  Merezkhin-Muhkovatov (L-mode)
        'Shimomura            (H)', &
-  !+ad_varc  <LI> ( 5)  Kaye-Goldston (L-mode)
+       !! <LI> ( 4)  Shimomura (H-mode)
        'Kaye-Goldston        (L)', &
-  !+ad_varc  <LI> ( 6)  ITER 89-P (L-mode)
+       !! <LI> ( 5)  Kaye-Goldston (L-mode)
        'ITER 89-P            (L)', &
-  !+ad_varc  <LI> ( 7)  ITER 89-O (L-mode)
+       !! <LI> ( 6)  ITER 89-P (L-mode)
        'ITER 89-O            (L)', &
-  !+ad_varc  <LI> ( 8)  Rebut-Lallia (L-mode)
+       !! <LI> ( 7)  ITER 89-O (L-mode)
        'Rebut-Lallia         (L)', &
-  !+ad_varc  <LI> ( 9)  Goldston (L-mode)
+       !! <LI> ( 8)  Rebut-Lallia (L-mode)
        'Goldston             (L)', &
-  !+ad_varc  <LI> (10)  T10 (L-mode)
+       !! <LI> ( 9)  Goldston (L-mode)
        'T10                  (L)', &
-  !+ad_varc  <LI> (11)  JAERI-88 (L-mode)
+       !! <LI> (10)  T10 (L-mode)
        'JAERI-88             (L)', &
-  !+ad_varc  <LI> (12)  Kaye-Big Complex (L-mode)
+       !! <LI> (11)  JAERI-88 (L-mode)
        'Kaye-Big Complex     (L)', &
-  !+ad_varc  <LI> (13)  ITER H90-P (H-mode)
+       !! <LI> (12)  Kaye-Big Complex (L-mode)
        'ITER H90-P           (H)', &
-  !+ad_varc  <LI> (14)  ITER Mix (L-mode)
+       !! <LI> (13)  ITER H90-P (H-mode)
        'ITER Mix             (L)', &
-  !+ad_varc  <LI> (15)  Riedel (L-mode)
+       !! <LI> (14)  ITER Mix (L-mode)
        'Riedel               (L)', &
-  !+ad_varc  <LI> (16)  Christiansen (L-mode)
+       !! <LI> (15)  Riedel (L-mode)
        'Christiansen         (L)', &
-  !+ad_varc  <LI> (17)  Lackner-Gottardi (L-mode)
+       !! <LI> (16)  Christiansen (L-mode)
        'Lackner-Gottardi     (L)', &
-  !+ad_varc  <LI> (18)  Neo-Kaye (L-mode)
+       !! <LI> (17)  Lackner-Gottardi (L-mode)
        'Neo-Kaye             (L)', &
-  !+ad_varc  <LI> (19)  Riedel (H-mode)
+       !! <LI> (18)  Neo-Kaye (L-mode)
        'Riedel               (H)', &
-  !+ad_varc  <LI> (20)  ITER H90-P amended (H-mode)
+       !! <LI> (19)  Riedel (H-mode)
        'ITER H90-P amended   (H)', &
-  !+ad_varc  <LI> (21)  LHD (stellarator)
+       !! <LI> (20)  ITER H90-P amended (H-mode)
        'LHD              (stell)', &
-  !+ad_varc  <LI> (22)  Gyro-reduced Bohm (stellarator)
+       !! <LI> (21)  LHD (stellarator)
        'Gyro-reduced Bohm(stell)', &
-  !+ad_varc  <LI> (23)  Lackner-Gottardi (stellarator)
+       !! <LI> (22)  Gyro-reduced Bohm (stellarator)
        'Lackner-Gottardi (stell)', &
-  !+ad_varc  <LI> (24)  ITER-93H (H-mode)
+       !! <LI> (23)  Lackner-Gottardi (stellarator)
        'ITER-93H             (H)', &
-  !+ad_varc  <LI> (25)
+       !! <LI> (24)  ITER-93H (H-mode)
        'TITAN RFP OBSOLETE      ', &
-  !+ad_varc  <LI> (26)  ITER H-97P ELM-free (H-mode)
+       !! <LI> (25) OBSOLETE
        'ITER H-97P ELM-free  (H)', &
-  !+ad_varc  <LI> (27)  ITER H-97P ELMy (H-mode)
+       !! <LI> (26)  ITER H-97P ELM-free (H-mode)
        'ITER H-97P ELMy      (H)', &
-  !+ad_varc  <LI> (28)  ITER-96P (=ITER-97L) (L-mode)
+       !! <LI> (27)  ITER H-97P ELMy (H-mode)
        'ITER-96P             (L)', &
-  !+ad_varc  <LI> (29)  Valovic modified ELMy (H-mode)
+       !! <LI> (28)  ITER-96P (=ITER-97L) (L-mode)
        'Valovic modified ELMy(H)', &
-  !+ad_varc  <LI> (30)  Kaye PPPL April 98 (L-mode)
+       !! <LI> (29)  Valovic modified ELMy (H-mode)
        'Kaye PPPL April 98   (L)', &
-  !+ad_varc  <LI> (31)  ITERH-PB98P(y) (H-mode)
+       !! <LI> (30)  Kaye PPPL April 98 (L-mode)
        'ITERH-PB98P(y)       (H)', &
-  !+ad_varc  <LI> (32)  IPB98(y) (H-mode)
+       !! <LI> (31)  ITERH-PB98P(y) (H-mode)
        'IPB98(y)             (H)', &
-  !+ad_varc  <LI> (33)  IPB98(y,1) (H-mode)
+       !! <LI> (32)  IPB98(y) (H-mode)
        'IPB98(y,1)           (H)', &
-  !+ad_varc  <LI> (34)  IPB98(y,2) (H-mode)
+       !! <LI> (33)  IPB98(y,1) (H-mode)
        'IPB98(y,2)           (H)', &
-  !+ad_varc  <LI> (35)  IPB98(y,3) (H-mode)
+       !! <LI> (34)  IPB98(y,2) (H-mode)
        'IPB98(y,3)           (H)', &
-  !+ad_varc  <LI> (36)  IPB98(y,4) (H-mode)
+       !! <LI> (35)  IPB98(y,3) (H-mode)
        'IPB98(y,4)           (H)', &
-  !+ad_varc  <LI> (37)  ISS95 (stellarator)
+       !! <LI> (36)  IPB98(y,4) (H-mode)
        'ISS95            (stell)', &
-  !+ad_varc  <LI> (38)  ISS04 (stellarator)
+       !! <LI> (37)  ISS95 (stellarator)
        'ISS04            (stell)', &
-  !+ad_varc  <LI> (39)  DS03 (H-mode)
+       !! <LI> (38)  ISS04 (stellarator)
        'DS03                 (H)', &
-  !+ad_varc  <LI> (40)  Murari et al non-power law (H-mode)
+       !! <LI> (39)  DS03 (H-mode)
        'Murari et al NPL     (H)', &
-  !+ad_varc  <LI> (41)  Petty 2008 (H-mode)
+       !! <LI> (40)  Murari et al non-power law (H-mode)
        'Petty 2008           (H)', &
-  !+ad_varc  <LI> (42)  Lang et al. 2012 (H-mode)
+       !! <LI> (41)  Petty 2008 (H-mode)
        'Lang et al. 2012     (H)', &
-  !+ad_varc  <LI> (43)  Hubbard 2017 (I-mode) - nominal
+       !! <LI> (42)  Lang et al. 2012 (H-mode)
        'Hubbard 2017 - nom   (I)', &
-  !+ad_varc  <LI> (44)  Hubbard 2017 (I-mode) - lower bound
+       !! <LI> (43)  Hubbard 2017 (I-mode) - nominal
        'Hubbard 2017 - lower (I)', &
-  !+ad_varc  <LI> (45)  Hubbard 2017 (I-mode) - upper bound</UL>
-       'Hubbard 2017 - upper (I)' /)
+       !! <LI> (44)  Hubbard 2017 (I-mode) - lower bound
+       'Hubbard 2017 - upper (I)', &
+       !! <LI> (45)  Hubbard 2017 (I-mode) - upper bound
+       'NSTX (Spherical)     (H)', &
+       !! <LI> (46)  NSTX (H-mode; Spherical tokamak)
+       'NSTX-Petty08 Hybrid  (H)', &
+       !! <LI> (47)  NSTX-Petty08 Hybrid (H-mode)
+       'Input tauee_in          ' /)
+       !! <LI> (48)  Use input tauee_in </UL>
 
-  !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
-  !+ad_varc         <LI> = 0 use 10% of rminor;
-  !+ad_varc         <LI> = 1 use input (scrapli and scraplo)</UL>
   integer :: iscrp = 1
-  !+ad_vars  ishape /0/ : switch for plasma cross-sectional shape calculation:<UL>
-  !+ad_varc          <LI> = 0 use input kappa, triang to calculate 95% values;
-  !+ad_varc          <LI> = 1 scale qlim, kappa, triang with aspect ratio (ST);
-  !+ad_varc          <LI> = 2 set kappa to the natural elongation value (Zohm ITER scaling),
-  !+ad_varc                   triang input;
-  !+ad_varc          <LI> = 3 set kappa to the natural elongation value (Zohm ITER scaling),
-  !+ad_varc                   triang95 input;
-  !+ad_varc          <LI> = 4 use input kappa95, triang95 to calculate separatrix values</UL>
+  !! iscrp /1/ : switch for plasma-first wall clearances:<UL>
+  !!        <LI> = 0 use 10% of rminor;
+  !!        <LI> = 1 use input (scrapli and scraplo)</UL>
   integer :: ishape = 0
-  !+ad_vars  itart /0/ : switch for spherical tokamak (ST) models:<UL>
-  !+ad_varc         <LI> = 0 use conventional aspect ratio models;
-  !+ad_varc         <LI> = 1 use spherical tokamak models</UL>
-  integer :: itart = 0
-  !+ad_vars  itartpf /0/ : switch for Spherical Tokamak PF models:<UL>
-  !+ad_varc         <LI> = 0 use Peng and Strickler (1986) model;
-  !+ad_varc         <LI> = 1 use conventional aspect ratio model</UL>
+  !! ishape /0/ : switch for plasma cross-sectional shape calculation:<UL>
+  !!         <LI> = 0 use input kappa, triang to calculate 95% values;
+  !!         <LI> = 1 scale qlim, kappa, triang with aspect ratio (ST);
+  !!         <LI> = 2 set kappa to the natural elongation value (Zohm ITER scaling),
+  !!                  triang input;
+  !!         <LI> = 3 set kappa to the natural elongation value (Zohm ITER scaling),
+  !!                  triang95 input;
+  !!         <LI> = 4 use input kappa95, triang95 to calculate separatrix values</UL>
+  integer, bind(C) :: itart = 0
+  !! itart /0/ : switch for spherical tokamak (ST) models:<UL>
+  !!        <LI> = 0 use conventional aspect ratio models;
+  !!        <LI> = 1 use spherical tokamak models</UL>
   integer :: itartpf = 0
-  !+ad_vars  iwalld /1/ : switch for neutron wall load calculation:<UL>
-  !+ad_varc          <LI> = 1 use scaled plasma surface area;
-  !+ad_varc          <LI> = 2 use first wall area directly</UL>
+  !! itartpf /0/ : switch for Spherical Tokamak PF models:<UL>
+  !!        <LI> = 0 use Peng and Strickler (1986) model;
+  !!        <LI> = 1 use conventional aspect ratio model</UL>
   integer :: iwalld = 1
-  !+ad_vars  kappa /1.792/ : plasma separatrix elongation (calculated if ishape > 0)
-  real(kind(1.0D0)) :: kappa = 1.792D0
-  !+ad_vars  kappa95 /1.6/ : plasma elongation at 95% surface (calculated if ishape < 4)
-  real(kind(1.0D0)) :: kappa95 = 1.6D0
-  !+ad_vars  kappaa : plasma elongation calculated as xarea/(pi.a2)
+  !! iwalld /1/ : switch for neutron wall load calculation:<UL>
+  !!         <LI> = 1 use scaled plasma surface area;
+  !!         <LI> = 2 use first wall area directly</UL>
+  real(kind(1.0D0)), bind(C) :: kappa = 1.792D0
+  !! kappa /1.792/ : plasma separatrix elongation (calculated if ishape > 0)
+  real(kind(1.0D0)), bind(C) :: kappa95 = 1.6D0
+  !! kappa95 /1.6/ : plasma elongation at 95% surface (calculated if ishape < 4)
   real(kind(1.0D0)) :: kappaa = 0.0D0
-  !+ad_vars  ne0 : central electron density (/m3)
+  !! kappaa : plasma elongation calculated as xarea/(pi.a2)
+  real(kind(1.0D0)) :: kappaa_IPB = 0.d0
+  !! kappaa_IPB : Volume measure of plasma elongation
   real(kind(1.0D0)) :: ne0 = 0.0D0
-  !+ad_vars  ni0 : central ion density (/m3)
+  !! ne0 : central electron density (/m3)
   real(kind(1.0D0)) :: ni0 = 0.0D0
-  !+ad_vars  p0 : central total plasma pressure (Pa)
+  !! ni0 : central ion density (/m3)
   real(kind(1.0D0)) :: p0 = 0.0D0
-  !+ad_vars  palppv : alpha power per volume (MW/m3)
+  !! p0 : central total plasma pressure (Pa)
   real(kind(1.0D0)) :: palppv = 0.0D0
-  !+ad_vars  palpepv : alpha power per volume to electrons (MW/m3)
+  !! palppv : alpha power per volume (MW/m3)
   real(kind(1.0D0)) :: palpepv = 0.0D0
-  !+ad_vars  palpfwmw : alpha power escaping plasma and reaching first wall (MW)
+  !! palpepv : alpha power per volume to electrons (MW/m3)
   real(kind(1.0D0)) :: palpfwmw = 0.0D0
-  !+ad_vars  palpipv : alpha power per volume to ions (MW/m3)
+  !! palpfwmw : alpha power escaping plasma and reaching first wall (MW)
   real(kind(1.0D0)) :: palpipv = 0.0D0
-  !+ad_vars  palpmw : alpha power (MW)
+  !! palpipv : alpha power per volume to ions (MW/m3)
   real(kind(1.0D0)) :: palpmw = 0.0D0
-  !+ad_vars  palpnb : alpha power from hot neutral beam ions (MW)
+  !! palpmw : alpha power (MW)
   real(kind(1.0D0)) :: palpnb = 0.0D0
-  !+ad_vars  pbrempv : bremsstrahlung power per volume (MW/m3)
-  !+ad_varc            (calculated only if imprad_model=1)
+  !! palpnb : alpha power from hot neutral beam ions (MW)
   real(kind(1.0D0)) :: pbrempv = 0.0D0
-  !+ad_vars  pchargemw : non-alpha charged particle fusion power (MW)
+  !! pbrempv : bremsstrahlung power per volume (MW/m3)
   real(kind(1.0D0)) :: pchargemw = 0.0D0
-  !+ad_vars  pchargepv : non-alpha charged particle fusion power per volume (MW/m3)
+  !! pchargemw : non-alpha charged particle fusion power (MW)
   real(kind(1.0D0)) :: pchargepv = 0.0D0
-  !+ad_vars  pcoef : profile factor (= n-weighted T / average T)
+  !! pchargepv : non-alpha charged particle fusion power per volume (MW/m3)
   real(kind(1.0D0)) :: pcoef = 0.0D0
-  !+ad_vars  pcoreradmw : total core radiation power (MW)
+  !! pcoef : profile factor (= n-weighted T / average T)
   real(kind(1.0D0)) :: pcoreradmw = 0.0D0
-  !+ad_vars  pcoreradpv : total core radiation power per volume (MW/m3)
+  !! pcoreradmw : total core radiation power (MW)
   real(kind(1.0D0)) :: pcoreradpv = 0.0D0
-  !+ad_vars  pdd : deuterium-deuterium fusion power (MW)
+  !! pcoreradpv : total core radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: pdd = 0.0D0
-  !+ad_vars  pdhe3 : deuterium-helium3 fusion power (MW)
+  !! pdd : deuterium-deuterium fusion power (MW)
   real(kind(1.0D0)) :: pdhe3 = 0.0D0
-  !+ad_vars  pdivt : power to conducted to the divertor region (MW)
+  !! pdhe3 : deuterium-helium3 fusion power (MW)
   real(kind(1.0D0)) :: pdivt = 0.0D0
-  !+ad_vars  pdt : deuterium-tritium fusion power (MW)
+  !! pdivt : power to conducted to the divertor region (MW)
+
+  real(kind(1.0D0)) :: pdivl = 0.0D0
+  !!pdivl : power conducted to the lower divertor region (calculated if i_single_null = 0) (MW)
+
+  real(kind(1.0D0)) :: pdivu = 0.0D0
+  !!pdivu : power conducted to the upper divertor region (calculated if i_single_null = 0) (MW)
+
+  real(kind(1.0D0)) :: pdivmax = 0.0D0
+  !!pdivmax : power conducted to the divertor with most load (calculated if i_single_null = 0) (MW)
   real(kind(1.0D0)) :: pdt = 0.0D0
-  !+ad_vars  pedgeradmw : edge radiation power (MW)
+  !! pdt : deuterium-tritium fusion power (MW)
   real(kind(1.0D0)) :: pedgeradmw = 0.0D0
-  !+ad_vars  pedgeradpv : edge radiation power per volume (MW/m3)
+  !! pedgeradmw : edge radiation power (MW)
   real(kind(1.0D0)) :: pedgeradpv = 0.0D0
-  !+ad_vars  pfuscmw : charged particle fusion power (MW)
+  !! pedgeradpv : edge radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: pfuscmw = 0.0D0
-  !+ad_vars  phiint : internal plasma V-s
+  !! pfuscmw : charged particle fusion power (MW)
   real(kind(1.0D0)) :: phiint = 0.0D0
-  !+ad_vars  photon_wall : Nominal mean radiation load on inside surface of reactor (MW/m2)
+  !! phiint : internal plasma V-s
   real(kind(1.0D0)) :: photon_wall = 0.0D0
-  !+ad_vars  piepv : ion/electron equilibration power per volume (MW/m3)
+  !! photon_wall : Nominal mean radiation load on inside surface of reactor (MW/m2)
   real(kind(1.0D0)) :: piepv = 0.0D0
-  !+ad_vars  plascur : plasma current (A)
-  real(kind(1.0D0)) :: plascur = 0.0D0
-  !+ad_vars  plinepv : line radiation power per volume (MW/m3)
-  !+ad_varc            (calculated only if imprad_model=1)
+  !! piepv : ion/electron equilibration power per volume (MW/m3)
+  real(kind(1.0D0)), bind(C) :: plascur = 0.0D0
+  !! plascur : plasma current (A)
   real(kind(1.0D0)) :: plinepv = 0.0D0
-  !+ad_vars  pneutmw : neutron fusion power (MW)
+  !! plinepv : line radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: pneutmw = 0.0D0
-  !+ad_vars  pneutpv : neutron fusion power per volume (MW/m3)
+  !! pneutmw : neutron fusion power (MW)
   real(kind(1.0D0)) :: pneutpv = 0.0D0
-  !+ad_vars  pohmmw : ohmic heating power (MW)
+  !! pneutpv : neutron fusion power per volume (MW/m3)
   real(kind(1.0D0)) :: pohmmw = 0.0D0
-  !+ad_vars  pohmpv : ohmic heating power per volume (MW/m3)
+  !! pohmmw : ohmic heating power (MW)
   real(kind(1.0D0)) :: pohmpv = 0.0D0
-  !+ad_vars  powerht : heating power (= transport loss power) (MW) used in
-  !+ad_varc            confinement time calculation
+  !! pohmpv : ohmic heating power per volume (MW/m3)
   real(kind(1.0D0)) :: powerht = 0.0D0
-  !+ad_vars  powfmw : fusion power (MW)
-  real(kind(1.0D0)) :: powfmw = 0.0D0
-  !+ad_vars  pperim : plasma poloidal perimeter (m)
+  !! powerht : heating power (= transport loss power) (MW) used in
+  !!           confinement time calculation
+  real(kind(1.0D0)), bind(C) :: powfmw = 0.0D0
+  !! powfmw : fusion power (MW)
   real(kind(1.0D0)) :: pperim = 0.0D0
-  !+ad_vars  pradmw : total radiation power (MW)
+  !! pperim : plasma poloidal perimeter (m)
   real(kind(1.0D0)) :: pradmw = 0.0D0
-  !+ad_vars  pradpv : total radiation power per volume (MW/m3)
+  !! pradmw : total radiation power (MW)
   real(kind(1.0D0)) :: pradpv = 0.0D0
-  !+ad_vars  protonrate : proton production rate (particles/m3/sec)
+  !! pradpv : total radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: protonrate = 0.0D0
-  !+ad_vars  psolradmw : SOL radiation power (MW) (stellarator only)
+  !! protonrate : proton production rate (particles/m3/sec)
   real(kind(1.0D0)) :: psolradmw = 0.0D0
-  !+ad_vars  psyncpv : synchrotron radiation power per volume (MW/m3)
+  !! psolradmw : SOL radiation power (MW) (stellarator only)
   real(kind(1.0D0)) :: psyncpv = 0.0D0
-  !+ad_vars  ilhthresh /6/ : switch for L-H mode power threshold scaling to use
-  !+ad_varc                  (see pthrmw for list)
+  !! psyncpv : synchrotron radiation power per volume (MW/m3)
   integer :: ilhthresh = 6
-  !+ad_vars  plhthresh : L-H mode power threshold (MW)
-  !+ad_varc              (chosen via ilhthresh, and enforced if constraint equation 15 is on)
+  !! ilhthresh /6/ : switch for L-H mode power threshold scaling to use
+  !!                 (see pthrmw for list)
   real(kind(1.0D0)) :: plhthresh = 0.0D0
-  !+ad_vars  pthrmw(18) : L-H power threshold for various scalings (MW): <OL>
-  !+ad_varc         <LI> ITER 1996 scaling: nominal
-  !+ad_varc         <LI> ITER 1996 scaling: upper bound
-  !+ad_varc         <LI> ITER 1996 scaling: lower bound
-  !+ad_varc         <LI> ITER 1997 scaling: excluding elongation
-  !+ad_varc         <LI> ITER 1997 scaling: including elongation
-  !+ad_varc         <LI> Martin 2008 scaling: nominal
-  !+ad_varc         <LI> Martin 2008 scaling: 95% upper bound
-  !+ad_varc         <LI> Martin 2008 scaling: 95% lower bound
-  !+ad_varc         <LI> Snipes 2000 scaling: nominal
-  !+ad_varc         <LI> Snipes 2000 scaling: upper bound
-  !+ad_varc         <LI> Snipes 2000 scaling: lower bound
-  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): nominal
-  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): upper bound
-  !+ad_varc         <LI> Snipes 2000 scaling (closed divertor): lower bound
-  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: nominal
-  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: lower bound
-  !+ad_varc         <LI> Hubbard et al. 2012 L-I threshold scaling: upper bound
-  !+ad_varc         <LI> Hubbard et al. 2017 L-I threshold scaling</OL>
+  !! plhthresh : L-H mode power threshold (MW)
+  !!             (chosen via ilhthresh, and enforced if constraint equation 15 is on)
   real(kind(1.0D0)), dimension(18) :: pthrmw = 0.0D0
-  !+ad_vars  ptremw : electron transport power (MW)
+  !! pthrmw(18) : L-H power threshold for various scalings (MW): <OL>
+  !!        <LI> ITER 1996 scaling: nominal
+  !!        <LI> ITER 1996 scaling: upper bound
+  !!        <LI> ITER 1996 scaling: lower bound
+  !!        <LI> ITER 1997 scaling: excluding elongation
+  !!        <LI> ITER 1997 scaling: including elongation
+  !!        <LI> Martin 2008 scaling: nominal
+  !!        <LI> Martin 2008 scaling: 95% upper bound
+  !!        <LI> Martin 2008 scaling: 95% lower bound
+  !!        <LI> Snipes 2000 scaling: nominal
+  !!        <LI> Snipes 2000 scaling: upper bound
+  !!        <LI> Snipes 2000 scaling: lower bound
+  !!        <LI> Snipes 2000 scaling (closed divertor): nominal
+  !!        <LI> Snipes 2000 scaling (closed divertor): upper bound
+  !!        <LI> Snipes 2000 scaling (closed divertor): lower bound
+  !!        <LI> Hubbard et al. 2012 L-I threshold scaling: nominal
+  !!        <LI> Hubbard et al. 2012 L-I threshold scaling: lower bound
+  !!        <LI> Hubbard et al. 2012 L-I threshold scaling: upper bound
+  !!        <LI> Hubbard et al. 2017 L-I threshold scaling</OL>
   real(kind(1.0D0)) :: ptremw = 0.0D0
-  !+ad_vars  ptrepv : electron transport power per volume (MW/m3)
+  !! ptremw : electron transport power (MW)
   real(kind(1.0D0)) :: ptrepv = 0.0D0
-  !+ad_vars  ptrimw : ion transport power (MW)
+  !! ptrepv : electron transport power per volume (MW/m3)
   real(kind(1.0D0)) :: ptrimw = 0.0D0
-  !+ad_vars  pscalingmw : Total transport power from scaling law (MW)
+  !! ptrimw : ion transport power (MW)
   real(kind(1.0D0)) :: pscalingmw = 0.0D0
-  !+ad_vars  ptripv : ion transport power per volume (MW/m3)
+  !! pscalingmw : Total transport power from scaling law (MW)
   real(kind(1.0D0)) :: ptripv = 0.0D0
-  !+ad_vars  q /3.0/ : safety factor 'near' plasma edge (iteration variable 18):
-  !+ad_varc            equal to q95 (unless icurr = 2 (ST current scaling),
-  !+ad_varc            in which case q = mean edge safety factor qbar)
+  !! ptripv : ion transport power per volume (MW/m3)
   real(kind(1.0D0)) :: q = 3.0D0
-  !+ad_vars  q0 /1.0/ : safety factor on axis
+  !! q /3.0/ : safety factor 'near' plasma edge (iteration variable 18):
+  !!           equal to q95 (unless icurr = 2 (ST current scaling),
+  !!           in which case q = mean edge safety factor qbar)
   real(kind(1.0D0)) :: q0 = 1.0D0
-  !+ad_vars  q95 : safety factor at 95% surface
+  !! q0 /1.0/ : safety factor on axis
   real(kind(1.0D0)) :: q95 = 0.0D0
-  !+ad_vars  qfuel : plasma fuelling rate (nucleus-pairs/s)
+  !! q95 : safety factor at 95% surface
   real(kind(1.0D0)) :: qfuel = 0.0D0
+  !! qfuel : plasma fuelling rate (nucleus-pairs/s)
 
-  !+ad_vars  tauratio /1.0/ : ratio of He and pellet particle confinement times
   real(kind(1.0D0)) :: tauratio = 1.0D0
+  !! tauratio /1.0/ : ratio of He and pellet particle confinement times
 
 
-  !+ad_vars  qlim : lower limit for edge safety factor
   real(kind(1.0D0)) :: qlim = 0.0D0
-  !+ad_vars  qstar : cylindrical safety factor
+  !! qlim : lower limit for edge safety factor
   real(kind(1.0D0)) :: qstar = 0.0D0
-  !+ad_vars rad_fraction : Radiation fraction = total radiation / total power deposited in plasma
+  !! qstar : cylindrical safety factor
+  real(kind(1.0D0)) :: rad_fraction_sol = 0.8D0
+  !! rad_fraction_sol /0.8/ : SoL radiation fraction 
   real(kind(1.0D0)) :: rad_fraction = 0.0D0
-  !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
-  !+ad_varc            (calculated if ipedestal=3)
+  !!rad_fraction : Radiation fraction = total radiation / total power deposited in plasma
   real(kind(1.0D0)) :: ralpne = 0.10D0
-  !+ad_vars  protium /0.0/ : Seeded protium density / electron density.
+  !! ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
+  !!           (calculated if ipedestal=3)
   real(kind(1.0D0)) :: protium = 0.0D0
+  !! protium /0.0/ : Seeded protium density / electron density.
 
-  !+ad_vars  rli /0.9/ : plasma normalised internal inductance;
-  !+ad_varc              calculated from alphaj if iprofile=1
   real(kind(1.0D0)) :: rli = 0.9D0
-  !+ad_vars  rlp : plasma inductance (H)
+  !! rli /0.9/ : plasma normalised internal inductance;
+  !!             calculated from alphaj if iprofile=1
   real(kind(1.0D0)) :: rlp = 0.0D0
-  !+ad_vars  rmajor /8.14/ : plasma major radius (m) (iteration variable 3)
-  real(kind(1.0D0)) :: rmajor = 8.14D0
-  !+ad_vars  rminor : plasma minor radius (m)
-  real(kind(1.0D0)) :: rminor = 0.0D0
-  !+ad_vars  rnbeam /0.005/ : hot beam density / n_e (iteration variable 7)
+  !! rlp : plasma inductance (H)
+  real(kind(1.0D0)), bind(C) :: rmajor = 8.14D0
+  !! rmajor /8.14/ : plasma major radius (m) (iteration variable 3)
+  real(kind(1.0D0)), bind(C) :: rminor = 0.0D0
+  !! rminor : plasma minor radius (m)
   real(kind(1.0D0)) :: rnbeam = 0.005D0
-  !+ad_vars  rncne : n_carbon / n_e
+  !! rnbeam /0.005/ : hot beam density / n_e (iteration variable 7)
   real(kind(1.0D0)) :: rncne = 0.0D0
-  !+ad_vars  rndfuel : fuel burnup rate (reactions/second)
-  real(kind(1.0D0)) :: rndfuel = 0.0D0
-  !+ad_vars  rnfene : n_highZ / n_e
+  !! rncne : n_carbon / n_e
+  real(kind(1.0D0)), bind(C) :: rndfuel = 0.0D0
+  !! rndfuel : fuel burnup rate (reactions/second)
   real(kind(1.0D0)) :: rnfene = 0.0D0
-  !+ad_vars  rnone : n_oxygen / n_e
+  !! rnfene : n_highZ / n_e
   real(kind(1.0D0)) :: rnone = 0.0D0
-  !+ad_vars  rpfac : neo-classical correction factor to rplas
+  !! rnone : n_oxygen / n_e
   real(kind(1.0D0)) :: rpfac = 0.0D0
-  !+ad_vars  rplas : plasma resistance (ohm)
-  real(kind(1.0D0)) :: rplas = 0.0D0
+  !! rpfac : neo-classical correction factor to rplas
+  real(kind(1.0D0)), bind(C) :: rplas = 0.0D0
+  !! rplas : plasma resistance (ohm)
 
-  !+ad_vars  res_time : plasma current resistive diffusion time (s)
   real(kind(1.0D0)) :: res_time = 0.0D0
+  !! res_time : plasma current resistive diffusion time (s)
 
 
-  !+ad_vars  sarea : plasma surface area
   real(kind(1.0D0)) :: sarea = 0.0D0
-  !+ad_vars  sareao : outboard plasma surface area
+  !! sarea : plasma surface area
   real(kind(1.0D0)) :: sareao = 0.0D0
-  !+ad_vars  sf : shape factor = plasma poloidal perimeter / (2.pi.rminor)
+  !! sareao : outboard plasma surface area
   real(kind(1.0D0)) :: sf = 0.0D0
-  !+ad_vars  snull /1/ : switch for single null / double null plasma:<UL>
-  !+ad_varc          <LI> = 0 for double null;
-  !+ad_varc          <LI> = 1 for single null (diverted side down)</UL>
-  integer :: snull = 1
-  !+ad_vars  ssync /0.6/ : synchrotron wall reflectivity factor
-  real(kind(1.0D0)) :: ssync = 0.6D0
-  !+ad_vars  tauee : electron energy confinement time (sec)
-  real(kind(1.0D0)) :: tauee = 0.0D0
-  !+ad_vars  taueff : global thermal energy confinement time (sec)
-  real(kind(1.0D0)) :: taueff = 0.0D0
-  !+ad_vars  tauei : ion energy confinement time (sec)
-  real(kind(1.0D0)) :: tauei = 0.0D0
-  !+ad_vars  taup : alpha particle confinement time (sec)
-  real(kind(1.0D0)) :: taup = 0.0D0
+  !! sf : shape factor = plasma poloidal perimeter / (2.pi.rminor)
 
-  !+ad_vars  te /12.9/ : volume averaged electron temperature (keV)
-  !+ad_varc              (iteration variable 4)
-  !+ad_varc              (calculated if ipedestal = 3)
+  integer :: i_single_null = 1
+  !! i_single_null /1/ : switch for single null / double null plasma:<UL>
+  !!         <LI> = 0 for double null;
+  !!         <LI> = 1 for single null (diverted side down)</UL>
+
+  real(kind(1.0D0)) :: ssync = 0.6D0
+  !! ssync /0.6/ : synchrotron wall reflectivity factor
+  real(kind(1.0D0)) :: tauee = 0.0D0
+  !! tauee : electron energy confinement time (sec)
+  real(kind(1.0D0)) :: tauee_in = 0.0D0
+  !! tauee_in /0.0/  : Input electron energy confinement time (sec) (isc=48 only)
+  real(kind(1.0D0)) :: taueff = 0.0D0
+  !! taueff : global thermal energy confinement time (sec)
+  real(kind(1.0D0)) :: tauei = 0.0D0
+  !! tauei : ion energy confinement time (sec)
+  real(kind(1.0D0)) :: taup = 0.0D0
+  !! taup : alpha particle confinement time (sec)
+
   real(kind(1.0D0)) :: te = 12.9D0
-  !+ad_vars  te0 : central electron temperature (keV)
+  !! te /12.9/ : volume averaged electron temperature (keV)
+  !!             (iteration variable 4)
+  !!             (calculated if ipedestal = 3)
   real(kind(1.0D0)) :: te0 = 0.0D0
-  !+ad_vars  ten : density weighted average electron temperature (keV)
+  !! te0 : central electron temperature (keV)
   real(kind(1.0D0)) :: ten = 0.0D0
-  !+ad_vars  ti /12.9/ : volume averaged ion temperature (keV);
-  !+ad_varc              N.B. calculated from te if tratio > 0.0
+  !! ten : density weighted average electron temperature (keV)
   real(kind(1.0D0)) :: ti = 12.9D0
-  !+ad_vars  ti0 : central ion temperature (keV)
+  !! ti /12.9/ : volume averaged ion temperature (keV);
+  !!             N.B. calculated from te if tratio > 0.0
   real(kind(1.0D0)) :: ti0 = 0.0D0
-  !+ad_vars  tin : density weighted average ion temperature (keV)
+  !! ti0 : central ion temperature (keV)
   real(kind(1.0D0)) :: tin = 0.0D0
-  !+ad_vars  tratio /1.0/ : ion temperature / electron temperature;
-  !+ad_varc                 used to calculate ti if tratio > 0.0
+  !! tin : density weighted average ion temperature (keV)
   real(kind(1.0D0)) :: tratio = 1.0D0
-  !+ad_vars  triang /0.36/ : plasma separatrix triangularity (calculated if ishape=1, 3 or 4)
-  real(kind(1.0D0)) :: triang = 0.36D0
-  !+ad_vars  triang95 /0.24/ : plasma triangularity at 95% surface (calculated if ishape < 3)
+  !! tratio /1.0/ : ion temperature / electron temperature;
+  !!                used to calculate ti if tratio > 0.0
+  real(kind(1.0D0)), bind(C) :: triang = 0.36D0
+  !! triang /0.36/ : plasma separatrix triangularity (calculated if ishape=1, 3 or 4)
   real(kind(1.0D0)) :: triang95 = 0.24D0
-  !+ad_vars  vol : plasma volume (m3)
-  real(kind(1.0D0)) :: vol = 0.0D0
-  !+ad_vars  vsbrn : V-s needed during flat-top (heat + burn times) (Wb)
+  !! triang95 /0.24/ : plasma triangularity at 95% surface (calculated if ishape < 3)
+  real(kind(1.0D0)), bind(C) :: vol = 0.0D0
+  !! vol : plasma volume (m3)
   real(kind(1.0D0)) :: vsbrn = 0.0D0
-  !+ad_vars  vshift : plasma/device midplane vertical shift - single null
+  !! vsbrn : V-s needed during flat-top (heat + burn times) (Wb)
   real(kind(1.0D0)) :: vshift = 0.0D0
-  !+ad_vars  vsind : internal and external plasma inductance V-s (Wb)
+  !! vshift : plasma/device midplane vertical shift - single null
   real(kind(1.0D0)) :: vsind = 0.0D0
-  !+ad_vars  vsres : resistive losses in startup V-s (Wb)
+  !! vsind : internal and external plasma inductance V-s (Wb)
   real(kind(1.0D0)) :: vsres = 0.0D0
-  !+ad_vars  vsstt : total V-s needed (Wb)
+  !! vsres : resistive losses in startup V-s (Wb)
   real(kind(1.0D0)) :: vsstt = 0.0D0
-  !+ad_vars  wallmw : average neutron wall load (MW/m2)
-  real(kind(1.0D0)) :: wallmw = 0.0D0
-  !+ad_vars  wtgpd : mass of fuel used per day (g)
-  real(kind(1.0D0)) :: wtgpd = 0.0D0
-  !+ad_vars  xarea : plasma cross-sectional area (m2)
+  !! vsstt : total V-s needed (Wb)
+  real(kind(1.0D0)), bind(C) :: wallmw = 0.0D0
+  !! wallmw : average neutron wall load (MW/m2)
+  real(kind(1.0D0)), bind(C) :: wtgpd = 0.0D0
+  !! wtgpd : mass of fuel used per day (g)
   real(kind(1.0D0)) :: xarea = 0.0D0
-  !+ad_vars  zeff : plasma effective charge
+  !! xarea : plasma cross-sectional area (m2)
   real(kind(1.0D0)) :: zeff = 0.0D0
-  !+ad_vars  zeffai : mass weighted plasma effective charge
+  !! zeff : plasma effective charge
   real(kind(1.0D0)) :: zeffai = 0.0D0
-  !+ad_vars  zfear /0/ : high-Z impurity switch; 0=iron, 1=argon
-  !+ad_varc              (if imprad_model=1, only used in neutral beam stopping calc.)
-  integer :: zfear = 0
+  !! zeffai : mass weighted plasma effective charge
 
 end module physics_variables
 
@@ -837,18 +793,9 @@ end module physics_variables
 
 module plasmod_variables
 
-  !+ad_name  plasmod_variables
-  !+ad_summ  Module containing global variables relating to PLASMOD
-  !+ad_type  Module
-  !+ad_auth  K Ellis, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to PLASMOD
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  26/02/18 KE Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs  E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
+  !! Module containing global variables relating to PLASMOD
+  !! This module contains global variables relating to PLASMOD
+  !! E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   use structs
@@ -860,152 +807,152 @@ module plasmod_variables
   public
 
  !Derived type numerics_transp
-  !+ad_vars  plasmod_tol /1.0d-10/ : tolerance to be reached at each time step (%)
   real(kind(1.0D0)) :: plasmod_tol = 1.0d-10
-  !+ad_vars  plasmod_dtmin /0.05d0/ : min time step
+  !! plasmod_tol /1.0d-10/ : tolerance to be reached at each time step (%)
   real(kind(1.0D0)) :: plasmod_dtmin = 0.05d0
-  !+ad_vars  plasmod_dtmax /0.1d0/ : max time step
+  !! plasmod_dtmin /0.05d0/ : min time step
   real(kind(1.0D0)) :: plasmod_dtmax = 0.1d0
-  !+ad_vars  plasmod_dt /0.01d0/ : time step
+  !! plasmod_dtmax /0.1d0/ : max time step
   real(kind(1.0D0)) :: plasmod_dt = 0.01d0
-  !+ad_vars  plasmod_dtinc /2.0d0/ : decrease of dt
+  !! plasmod_dt /0.01d0/ : time step
   real(kind(1.0D0)) :: plasmod_dtinc = 2.0d0
-  !+ad_vars  plasmod_ainc /1.1d0/ : increase of dt
+  !! plasmod_dtinc /2.0d0/ : decrease of dt
   real(kind(1.0D0)) :: plasmod_Ainc = 1.1d0
-  !+ad_vars  plasmod_test /100000.0d0/ : max number of iterations
+  !! plasmod_Ainc /1.1d0/ : increase of dt
   real(kind(1.0D0)) :: plasmod_test = 1000000.0d0
-  !+ad_vars  plasmod_tolmin /10.1d0/ : multiplier of etolm which can not be exceeded
+  !! plasmod_test /100000.0d0/ : max number of iterations
   real(kind(1.0D0)) :: plasmod_tolmin = 10.1d0
-  !+ad_vars  plasmod_eopt /0.15d0/ : exponent of jipperdo
+  !! plasmod_tolmin /10.1d0/ : multiplier of etolm which can not be exceeded
   real(kind(1.0D0)) :: plasmod_eopt = 0.15d0
-  !+ad_vars  plasmod_dtmaxmin /0.15d0/ : exponent of jipperdo2
+  !! plasmod_eopt /0.15d0/ : exponent of jipperdo
   real(kind(1.0D0)) :: plasmod_dtmaxmin = 0.15d0
-  !+ad_vars  plasmod_dtmaxmax /0.0d0/ : stabilizing coefficient
+  !! plasmod_dtmaxmin /0.15d0/ : exponent of jipperdo2
   real(kind(1.0D0)) :: plasmod_dtmaxmax = 0.0d0
-  !+ad_vars  plasmod_capa /0.1d0/ : first radial grid point
+  !! plasmod_dtmaxmax /0.0d0/ : stabilizing coefficient
   real(kind(1.0D0)) :: plasmod_capA = 0.1d0
-  !+ad_vars  plasmod_maxa /0.0d0/ : diagz 0 or 1
+  !! plasmod_capA /0.1d0/ : first radial grid point
   real(kind(1.0D0)) :: plasmod_maxA = 0.0d0
-  !+ad_vars  plasmod_dgy /1.0d-5/ : Newton differential
+  !! plasmod_maxA /0.0d0/ : diagz 0 or 1
   real(kind(1.0D0)) :: plasmod_dgy = 1.0d-5
+  !! plasmod_dgy /1.0d-5/ : Newton differential
 
-  !+ad_vars  plasmod_iprocess /1/ : 0 - use PLASMOD functions, 1 - use PROCESS functions
   integer :: plasmod_iprocess = 1
-  !+ad_vars  plasmod_i_modeltype /1/ : switch for the transport model <UL>
-  !+ad_varc  <LI> 1 - Simple gyrobohm scaling with imposed
-  !+ad_varc  H factor > 1. Other values give H factor as output
-  !+ad_varc  <LI> 111 - roughly calibrated to give H=1 for DEMO, but not fixed H </UL>
+  !! plasmod_iprocess /1/ : 0 - use PLASMOD functions, 1 - use PROCESS functions
   integer :: plasmod_i_modeltype = 1
+  !! plasmod_i_modeltype /1/ : switch for the transport model <UL>
+  !! <LI> 1 - Simple gyrobohm scaling with imposed
+  !! H factor > 1. Other values give H factor as output
+  !! <LI> 111 - roughly calibrated to give H=1 for DEMO, but not fixed H </UL>
 
-  !+ad_vars  plasmod_i_equiltype /1/ : 1 - EMEQ, solve with sawteeth and inputted q95.
-  !+ad_varc  2 - EMEQ, solve with sawteeth and inputted Ip (not recommended!).
   integer :: plasmod_i_equiltype = 1
+  !! plasmod_i_equiltype /1/ : 1 - EMEQ, solve with sawteeth and inputted q95.
+  !! 2 - EMEQ, solve with sawteeth and inputted Ip (not recommended!).
 
-  !+ad_vars  plasmod_isawt /1/ : 0 - no sawteeth, 1 - solve with sawteeth.
   integer :: plasmod_isawt = 1
+  !! plasmod_isawt /1/ : 0 - no sawteeth, 1 - solve with sawteeth.
 
-  !+ad_vars  plasmod_nx /41/ : number of interpolated grid points
   integer :: plasmod_nx = 41
-  !+ad_vars  plasmod_nxt /7/ : number of solved grid points
+  !! plasmod_nx /41/ : number of interpolated grid points
   integer :: plasmod_nxt = 7
-  !+ad_vars  plasmod_nchannels /3/ : leave this at 3
+  !! plasmod_nxt /7/ : number of solved grid points
   integer :: plasmod_nchannels = 3
-  !+ad_vars  plasmod_i_impmodel /1/ : impurity model: 0 - fixed concentration,
-  !+ad_varc  1 - fixed concentration at pedestal top, then fixed density.
+  !! plasmod_nchannels /3/ : leave this at 3
   integer :: plasmod_i_impmodel = 1
+  !! plasmod_i_impmodel /1/ : impurity model: 0 - fixed concentration,
+  !! 1 - fixed concentration at pedestal top, then fixed density.
 
  !Derived type composition
-  !+ad_vars  plasmod_globtau(5) /5.0d0, 5.0d0, 7.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
-  !+ad_varc  (NOT used for Xe!)
   real(kind(1.0D0)), dimension(5) :: plasmod_globtau = (/ 5.0d0, 5.0d0, 7.0d0, 5.0d0, 1.0d0 /)
-  !+ad_vars  plasmod_psepplh_sup /12000.0d0/ : Psep/PLH if above this, use Xe
+  !! plasmod_globtau(5) /5.0d0, 5.0d0, 7.0d0, 5.0d0, 1.0d0/ : tauparticle/tauE for D, T, He, Xe, Ar
+  !! (NOT used for Xe!)
   real(kind(1.0D0)) :: plasmod_psepplh_sup = 12000.0d0
-  !+ad_vars  plasmod_qdivt /0.0d0/ : divertor heat flux in MW/m^2, if 0, dont use SOL model
+  !! plasmod_psepplh_sup /12000.0d0/ : Psep/PLH if above this, use Xe
   real(kind(1.0D0)) :: plasmod_qdivt = 0.0d0
-  !+ad_vars  plasmod_imptype(3) /14, 13, 9/ : Impurities: element 1 - intrinsic impurity, element 2 - Psep control, element 3 - seeding for SOL (defaults: W, Xe, Ar)
+  !! plasmod_qdivt /0.0d0/ : divertor heat flux in MW/m^2, if 0, dont use SOL model
   integer, dimension(3) :: plasmod_imptype = (/ 14, 13, 9 /)
+  !! plasmod_imptype(3) /14, 13, 9/ : Impurities: element 1 - intrinsic impurity, element 2 - Psep control, element 3 - seeding for SOL (defaults: W, Xe, Ar)
 
  !Derived type inputs
-  !+ad_vars  plasmod_qnbi_psepfac /50.0d0/ : dqnbi/d(1-Psep/PLH)
   real(kind(1.0D0)) :: plasmod_qnbi_psepfac = 50.0d0
-  !+ad_vars  plasmod_cxe_psepfac /1.0d-4/ : dcxe/d(1-Psep/PLH)
+  !! plasmod_qnbi_psepfac /50.0d0/ : dqnbi/d(1-Psep/PLH)
   real(kind(1.0D0)) :: plasmod_cxe_psepfac = 1.0d-4
-  !+ad_vars  plasmod_car_qdivt /1.0d-4/ : dcar/d(qdivt)
+  !! plasmod_cxe_psepfac /1.0d-4/ : dcxe/d(1-Psep/PLH)
   real(kind(1.0D0)) :: plasmod_car_qdivt = 1.0d-4
-  !+ad_vars  plasmod_maxpauxor /20.0d0/ : max allowed auxiliary power / R
+  !! plasmod_car_qdivt /1.0d-4/ : dcar/d(qdivt)
   real(kind(1.0D0)) :: plasmod_maxpauxor = 20.0d0
+  !! plasmod_maxpauxor /20.0d0/ : max allowed auxiliary power / R
     !deposition locations
-  !+ad_vars  plasmod_x_heat(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_heat = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_x_cd(2) /0.0d0/ : element 1 - nbi, element 2 - ech
+  !! plasmod_x_heat(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_cd = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_x_fus(2) /0.0d0/ : element 1 - nbi, element 2 - ech
+  !! plasmod_x_cd(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_fus = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_x_control(2) /0.0d0/ : element 1 - nbi, element 2 - ech
+  !! plasmod_x_fus(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_x_control = (/ 0.0d0, 0.0d0 /)
-  !+ad_vars  plasmod_dx_heat(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
+  !! plasmod_x_control(2) /0.0d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_heat = (/ 0.2d0, 0.03d0 /)
-  !+ad_vars  plasmod_dx_cd(2) /0.2d0, 0.03/ : element 1 - nbi, element 2 - ech
+  !! plasmod_dx_heat(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_cd = (/ 0.2d0, 0.03d0 /)
-  !+ad_vars  plasmod_dx_fus(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
+  !! plasmod_dx_cd(2) /0.2d0, 0.03/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_fus = (/ 0.2d0, 0.03d0 /)
-  !+ad_vars  plasmod_dx_control(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
+  !! plasmod_dx_fus(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)), dimension(2) :: plasmod_dx_control = (/ 0.2d0, 0.03d0 /)
-  !+ad_vars  plasmod_contrpovs /0.0d0/ :: control power in Paux/lateral_area (MW/m2)
+  !! plasmod_dx_control(2) /0.2d0, 0.03d0/ : element 1 - nbi, element 2 - ech
   real(kind(1.0D0)) :: plasmod_contrpovs = 0.0d0
-  !+ad_vars  plasmod_contrpovr /0.0d0/ :: control power in Paux/R (MW/m)
+  !! plasmod_contrpovs /0.0d0/ :: control power in Paux/lateral_area (MW/m2)
   real(kind(1.0D0)) :: plasmod_contrpovr = 0.0d0
-  !+ad_vars  plasmod_nbi_energy /1000.0d0/ :: In keV
+  !! plasmod_contrpovr /0.0d0/ :: control power in Paux/R (MW/m)
   real(kind(1.0D0)) :: plasmod_nbi_energy = 1000.0d0
-  !+ad_vars  plasmod_v_loop /-1.0d-6/ :: target loop voltage. If lower than -1.e5 do not use
+  !! plasmod_nbi_energy /1000.0d0/ :: In keV
   real(kind(1.0D0)) :: plasmod_v_loop = -1.0d-6
-  !+ad_vars  plasmod_pfus /0.0d0/ :: if 0. not used (otherwise controlled with Pauxheat)
+  !! plasmod_v_loop /-1.0d-6/ :: target loop voltage. If lower than -1.e5 do not use
   real(kind(1.0D0)) :: plasmod_pfus = 0.0d0
-  !+ad_vars  plasmod_eccdeff /0.3d0/ :: current drive multiplier: CD = eccdeff*PCD*TE/NE (not in use yet)
+  !! plasmod_pfus /0.0d0/ :: if 0. not used (otherwise controlled with Pauxheat)
   real(kind(1.0D0)) :: plasmod_eccdeff = 0.3d0
-  !+ad_vars  plasmod_fcdp /-1.0d0/ :: (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power (iteration variable 147)
+  !! plasmod_eccdeff /0.3d0/ :: current drive multiplier: CD = eccdeff*PCD*TE/NE (not in use yet)
   real(kind(1.0D0)) :: plasmod_fcdp = -1.0d0
-  !+ad_vars  plasmod_fradc /-1.0d0/ :: Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad) (iteration variable 148)
+  !! plasmod_fcdp /-1.0d0/ :: (P_CD - Pheat)/(Pmax-Pheat),i.e. ratio of CD power over available power (iteration variable 147)
   real(kind(1.0D0)) :: plasmod_fradc = -1.0d0
-  !+ad_vars  plasmod_pech /0.0d0/ :: ech power (not in use yet)
+  !! plasmod_fradc /-1.0d0/ :: Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad) (iteration variable 148)
   real(kind(1.0D0)) :: plasmod_pech = 0.0d0
-  !+ad_vars  plasmod_gamcdothers /1.0d0/ :: efficiency multiplier for non-CD heating. If 0.0 pheat treated as if it had no current drive associated
+  !! plasmod_pech /0.0d0/ :: ech power (not in use yet)
   real(kind(1.0D0)) :: plasmod_gamcdothers = 1.0d0
-  !+ad_vars  plasmod_chisawpos /-1.0d0/ :: position where artificial sawtooth diffusivity is added, -1 - uses q=1 position
+  !! plasmod_gamcdothers /1.0d0/ :: efficiency multiplier for non-CD heating. If 0.0 pheat treated as if it had no current drive associated
   real(kind(1.0D0)) :: plasmod_chisawpos = -1.0d0
-  !+ad_vars  plasmod_chisaw /0.0d0/ :: artificial diffusivity in m^2/s
+  !! plasmod_chisawpos /-1.0d0/ :: position where artificial sawtooth diffusivity is added, -1 - uses q=1 position
   real(kind(1.0D0)) :: plasmod_chisaw = 0.0d0
-  !+ad_vars  plasmod_sawpertau /1.0d-6/ :: ratio between sawtooth period and confinement time
+  !! plasmod_chisaw /0.0d0/ :: artificial diffusivity in m^2/s
   real(kind(1.0D0)) :: plasmod_sawpertau = 1.0d-6
-  !+ad_vars  plasmod_spellet /0.0d0/ :: pellet mass in units of D in 10^19
+  !! plasmod_sawpertau /1.0d-6/ :: ratio between sawtooth period and confinement time
   real(kind(1.0D0)) :: plasmod_spellet = 0.0d0
-  !+ad_vars  plasmod_fpellet /0.5d0/ :: pellet frequency in Hz
+  !! plasmod_spellet /0.0d0/ :: pellet mass in units of D in 10^19
   real(kind(1.0D0)) :: plasmod_fpellet = 0.5d0
+  !! plasmod_fpellet /0.5d0/ :: pellet frequency in Hz
 
   !Derived type pedestal
-  !+ad_vars  plasmod_pedscal /1.0d0/ :: multiplication factor of the pedestal scaling in PLASMOD
-  !+ad_varc                             can be used to scan the pedestal height.
   real(kind(1.0D0)) :: plasmod_pedscal = 1.0d0
+  !! plasmod_pedscal /1.0d0/ :: multiplication factor of the pedestal scaling in PLASMOD
+  !!                            can be used to scan the pedestal height.
 
 
-  !+ad_vars  geom ::  Derived type containing all geometry information for PLASMOD
   type (geometry) :: geom
-  !+ad_vars  comp ::  Derived type containing all composition information for PLASMOD
+  !! geom ::  Derived type containing all geometry information for PLASMOD
   type (composition) :: comp
-  !+ad_vars  ped ::  Derived type containing all pedestal information for PLASMOD
+  !! comp ::  Derived type containing all composition information for PLASMOD
   type (pedestal) :: ped
-  !+ad_vars  inp0 ::  Derived type containing miscellaneous input information for PLASMOD
+  !! ped ::  Derived type containing all pedestal information for PLASMOD
   type (inputs) :: inp0
-  !+ad_vars  radp ::  Derived type containing all radial profile information for PLASMOD
+  !! inp0 ::  Derived type containing miscellaneous input information for PLASMOD
   type (radial_profiles) :: radp
-  !+ad_vars  mhd ::  Derived type containing all mhd information for PLASMOD
+  !! radp ::  Derived type containing all radial profile information for PLASMOD
   type (MHD_EQ) :: mhd
-  !+ad_vars  loss ::  Derived type containing all power loss information for PLASMOD
+  !! mhd ::  Derived type containing all mhd information for PLASMOD
   type (power_losses) :: loss
-  !+ad_vars  num ::  Derived type containing all numerics information for PLASMOD
+  !! loss ::  Derived type containing all power loss information for PLASMOD
   type (numerics_transp) :: num
-  !+ad_vars  i_flag ::  Error flag for PLASMOD
+  !! num ::  Derived type containing all numerics information for PLASMOD
   integer :: i_flag
+  !! i_flag ::  Error flag for PLASMOD
 
 
 end module plasmod_variables
@@ -1015,32 +962,11 @@ end module plasmod_variables
 
 module current_drive_variables
 
-  !+ad_name  current_drive_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  current drive system
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to tokamak
-  !+ad_desc  current drive systems.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  16/10/12 PJK Initial version of module
-  !+ad_hist  08/01/13 PJK Modified irfcd comments
-  !+ad_hist  14/01/13 PJK Corrected some more comments; removed echpwr0
-  !+ad_hist  25/09/13 PJK Added rtanbeam, rtanmax, nbshield
-  !+ad_hist  27/11/13 PJK Modified bigq description
-  !+ad_hist  06/03/14 PJK Modified gamcd units
-  !+ad_hist  26/03/14 PJK Added extra boostrap current fraction variables
-  !+ad_hist  01/05/14 PJK Changed bigq description
-  !+ad_hist  19/06/14 PJK Added effcd, etacd
-  !+ad_hist  17/09/14 PJK Changed default values
-  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
-  !+ad_hist  06/10/14 PJK Added nbshinef
-  !+ad_hist  06/10/14 PJK Added forbitloss, porbitlossmw
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! current drive system
+  !! This module contains global variables relating to tokamak
+  !! current drive systems.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1048,121 +974,153 @@ module current_drive_variables
 
   public
 
-  !+ad_vars  beamwd /0.58/ : width of neutral beam duct where it passes
-  !+ad_varc                  between the TF coils (m)
-  !+ad_varc    (T Inoue et al, Design of neutral beam system for ITER-FEAT,
-  !+ad_varc     <A HREF=http://dx.doi.org/10.1016/S0920-3796(01)00339-8>
-  !+ad_varc      Fusion Engineering and Design, Volumes 56-57, October 2001, Pages 517-521</A>)
   real(kind(1.0D0)) :: beamwd = 0.58D0
-  !+ad_vars  bigq : Fusion gain; P_fusion / (P_injection + P_ohmic)
+  !! beamwd /0.58/ : width of neutral beam duct where it passes
+  !!                 between the TF coils (m)
+  !!   (T Inoue et al, Design of neutral beam system for ITER-FEAT,
+  !!    <A HREF=http://dx.doi.org/10.1016/S0920-3796(01)00339-8>
+  !!     Fusion Engineering and Design, Volumes 56-57, October 2001, Pages 517-521</A>)
   real(kind(1.0D0)) :: bigq = 0.0D0
-  !+ad_vars  bootipf : bootstrap current fraction (enforced; see ibss)
+  !! bigq : Fusion gain; P_fusion / (P_injection + P_ohmic)
   real(kind(1.0D0)) :: bootipf = 0.0D0
-  !+ad_vars  bscfmax /0.9/ : maximum fraction of plasma current from bootstrap;
-  !+ad_varc                  if bscfmax < 0, bootstrap fraction = abs(bscfmax)
+  !! bootipf : bootstrap current fraction (enforced; see ibss)
   real(kind(1.0D0)) :: bscfmax = 0.9D0
-  !+ad_vars  bscf_iter89 : bootstrap current fraction, ITER 1989 model
+  !! bscfmax /0.9/ : maximum fraction of plasma current from bootstrap;
+  !!                 if bscfmax < 0, bootstrap fraction = abs(bscfmax)
   real(kind(1.0D0)) :: bscf_iter89 = 0.0D0
-  !+ad_vars  bscf_nevins : bootstrap current fraction, Nevins et al model
+  !! bscf_iter89 : bootstrap current fraction, ITER 1989 model
   real(kind(1.0D0)) :: bscf_nevins = 0.0D0
-  !+ad_vars  bscf_sauter : bootstrap current fraction, Sauter et al model
+  !! bscf_nevins : bootstrap current fraction, Nevins et al model
   real(kind(1.0D0)) :: bscf_sauter = 0.0D0
-  !+ad_vars  bscf_wilson : bootstrap current fraction, Wilson et al model
+  !! bscf_sauter : bootstrap current fraction, Sauter et al model
   real(kind(1.0D0)) :: bscf_wilson = 0.0D0
-  !+ad_vars  cboot /1.0/ : bootstrap current fraction multiplier (ibss=1)
+  !! bscf_wilson : bootstrap current fraction, Wilson et al model
   real(kind(1.0D0)) :: cboot = 1.0D0
-  !+ad_vars  cnbeam : neutral beam current (A)
+  !! cboot /1.0/ : bootstrap current fraction multiplier (ibss=1)
   real(kind(1.0D0)) :: cnbeam = 0.0D0
-  !+ad_vars  echpwr : ECH power (MW)
+  !! cnbeam : neutral beam current (A)
+  real(kind(1.0D0)) :: diacf_hender = 0.0D0
+  !! diacf_hender : diamagnetic current fraction, Hender fit
+  real(kind(1.0D0)) :: diacf_scene = 0.0D0
+  !! diacf_scene : diamagnetic current fraction, SCENE fit
+  real(kind(1.0D0)) :: diaipf = 0.0D0
+  !! diaipf : diamagnetic current fraction
   real(kind(1.0D0)) :: echpwr = 0.0D0
-  !+ad_vars  echwpow : ECH wall plug power (MW)
+  !! echpwr : ECH power (MW)
   real(kind(1.0D0)) :: echwpow = 0.0D0
-  !+ad_vars  effcd : current drive efficiency (A/W)
+  !! echwpow : ECH wall plug power (MW)
   real(kind(1.0D0)) :: effcd = 0.0D0
-  !+ad_vars  enbeam /1.0e3/ : neutral beam energy (keV) (iteration variable 19)
+  !! effcd : current drive efficiency (A/W)
   real(kind(1.0D0)) :: enbeam = 1.0D3
-  !+ad_vars  etacd : auxiliary power wall plug to injector efficiency
+  !! enbeam /1.0e3/ : neutral beam energy (keV) (iteration variable 19)
   real(kind(1.0D0)) :: etacd = 0.0D0
-  !+ad_vars  etaech /0.3/ : ECH wall plug to injector efficiency
+  !! etacd : auxiliary power wall plug to injector efficiency
+  real(kind(1.0D0)) :: etacdfix = 0.0D0
+  !! etacdfix : secondary auxiliary power wall plug to injector efficiency
   real(kind(1.0D0)) :: etaech = 0.3D0
-  !+ad_vars  etalh /0.3/ : lower hybrid wall plug to injector efficiency
+  !! etaech /0.3/ : ECH wall plug to injector efficiency
   real(kind(1.0D0)) :: etalh = 0.3D0
-  !+ad_vars  etanbi /0.3/ : neutral beam wall plug to injector efficiency
+  !! etalh /0.3/ : lower hybrid wall plug to injector efficiency
   real(kind(1.0D0)) :: etanbi = 0.3D0
-  !+ad_vars fpion  :  fraction of beam energy to ions
+  !! etanbi /0.3/ : neutral beam wall plug to injector efficiency
   real(kind(1.0D0)) :: fpion = 0.5D0
-  !+ad_vars  pnbitot : neutral beam power entering vacuum vessel
+  !!fpion  :  fraction of beam energy to ions
   real(kind(1.0D0)) :: pnbitot = 0.0D0
-  !+ad_vars  nbshinemw : neutral beam shine-through power
+  !! pnbitot : neutral beam power entering vacuum vessel
+  real(kind(1.0D0)) :: pscf_scene = 0.0D0
+  !! pscf_scene : Pfirsch-Schlüter current fraction, SCENE fit
   real(kind(1.0D0)) :: nbshinemw = 0.0D0
-  !+ad_vars  feffcd /1.0/ : current drive efficiency fudge factor (iteration variable 47)
+  !! nbshinemw : neutral beam shine-through power
   real(kind(1.0D0)) :: feffcd = 1.0D0
-  !+ad_vars  forbitloss /0.0/ : fraction of neutral beam power lost after ionisation but
-  !+ad_varc                     before thermalisation (orbit loss fraction)
+  !! feffcd /1.0/ : current drive efficiency fudge factor (iteration variable 47)
   real(kind(1.0D0)) :: forbitloss = 0.0D0
-  !+ad_vars  frbeam /1.05/ : R_tangential / R_major for neutral beam injection
+  !! forbitloss /0.0/ : fraction of neutral beam power lost after ionisation but
+  !!                    before thermalisation (orbit loss fraction)
   real(kind(1.0D0)) :: frbeam = 1.05D0
-  !+ad_vars  ftritbm /1.0e-6/ : fraction of beam that is tritium
+  !! frbeam /1.05/ : R_tangential / R_major for neutral beam injection
   real(kind(1.0D0)) :: ftritbm = 1.0D-6
-  !+ad_vars  gamcd : normalised current drive efficiency (1.0e20 A/(W m^2))
+  !! ftritbm /1.0e-6/ : fraction of beam that is tritium
   real(kind(1.0D0)) :: gamcd = 0.0D0
-  !+ad_vars  gamma_ecrh /0.35/ : user input ECRH gamma (1.0e20 A/(W m^2))
+  !! gamcd : normalised current drive efficiency (1.0e20 A/(W m^2))
   real(kind(1.0D0)) :: gamma_ecrh = 0.35D0
-  !+ad_vars  rho_ecrh /0.1/ : normalised minor radius at which electron cyclotron current drive is maximum
+  !! gamma_ecrh /0.35/ : user input ECRH gamma (1.0e20 A/(W m^2))
   real(kind(1.0D0)) :: rho_ecrh = 0.1D0
+  !! rho_ecrh /0.1/ : normalised minor radius at which electron cyclotron current drive is maximum
 
-  !+ad_vars  iefrf /5/ : switch for current drive efficiency model: <OL>
-  !+ad_varc         <LI> Fenstermacher Lower Hybrid
-  !+ad_varc         <LI> Ion Cyclotron current drive
-  !+ad_varc         <LI> Fenstermacher ECH
-  !+ad_varc         <LI> Ehst Lower Hybrid
-  !+ad_varc         <LI> ITER Neutral Beam
-  !+ad_varc         <LI> new Culham Lower Hybrid model
-  !+ad_varc         <LI> new Culham ECCD model
-  !+ad_varc         <LI> new Culham Neutral Beam model
-  !+ad_varc         <LI> Empty (Oscillating field CD removed)
-  !+ad_varc         <LI> ECRH user input gamma
-  !+ad_varc         <LI> ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </OL>
   integer :: iefrf = 5
-  !+ad_vars  irfcd /1/ : switch for current drive calculation:<UL>
-  !+ad_varc         <LI> = 0 turned off;
-  !+ad_varc         <LI> = 1 turned on</UL>
+  !! iefrf /5/ : switch for current drive efficiency model: <OL>
+  !!        <LI> Fenstermacher Lower Hybrid
+  !!        <LI> Ion Cyclotron current drive
+  !!        <LI> Fenstermacher ECH
+  !!        <LI> Ehst Lower Hybrid
+  !!        <LI> ITER Neutral Beam
+  !!        <LI> new Culham Lower Hybrid model
+  !!        <LI> new Culham ECCD model
+  !!        <LI> new Culham Neutral Beam model
+  !!        <LI> Empty (Oscillating field CD removed)
+  !!        <LI> ECRH user input gamma
+  !!        <LI> ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </OL>
+  integer :: iefrffix = 0 
+  !! iefrffix /0/ : switch for 2nd current drive efficiency model <UL>
+  !!        <LI> = 0 No fixed current drive
+  !!        <LI> = 1 Fenstermacher Lower Hybrid
+  !!        <LI> = 2 Ion Cyclotron current drive
+  !!        <LI> = 3 Fenstermacher ECH
+  !!        <LI> = 4 Ehst Lower Hybrid
+  !!        <LI> = 5 ITER Neutral Beam
+  !!        <LI> = 6 new Culham Lower Hybrid model
+  !!        <LI> = 7 new Culham ECCD model
+  !!        <LI> = 8 new Culham Neutral Beam model
+  !!        <LI> = 9 Empty (Oscillating field CD removed)
+  !!        <LI> = 10 ECRH user input gamma
+  !!        <LI> = 11 ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </UL>
   integer :: irfcd = 1
-  !+ad_vars  nbshinef : neutral beam shine-through fraction
+  !! irfcd /1/ : switch for current drive calculation:<UL>
+  !!        <LI> = 0 turned off;
+  !!        <LI> = 1 turned on</UL>
   real(kind(1.0D0)) :: nbshinef = 0.0D0
-  !+ad_vars  nbshield /0.5/ : neutral beam duct shielding thickness (m)
+  !! nbshinef : neutral beam shine-through fraction
   real(kind(1.0D0)) :: nbshield = 0.5D0
-  !+ad_vars  pheat /0.0/ : heating power not used for current drive (MW)
-  !+ad_varc                (iteration variable 11)
+  !! nbshield /0.5/ : neutral beam duct shielding thickness (m)
   real(kind(1.0D0)) :: pheat = 0.0D0
-  !+ad_vars  pinjalw /150.0/ : Maximum allowable value for injected power (MW)
-  !+ad_varc                   (constraint equation 30)
+  !! pheat /0.0/ : heating power not used for current drive (MW)
+  !!               (iteration variable 11)
+  real(kind(1.0D0)) :: pheatfix = 0.0D0
+  !! pheatfix /0.0/ : secondary fixed heating power not used for current drive (MW)
   real(kind(1.0D0)) :: pinjalw = 150.0D0
-  !+ad_vars  pinjemw : auxiliary injected power to electrons (MW)
+  !! pinjalw /150.0/ : Maximum allowable value for injected power (MW)
+  !!                  (constraint equation 30)
   real(kind(1.0D0)) :: pinjemw = 0.0D0
-  !+ad_vars  pinjimw : auxiliary injected power to ions (MW)
+  !! pinjemw : auxiliary injected power to electrons (MW)
   real(kind(1.0D0)) :: pinjimw = 0.0D0
-  !+ad_vars  pinjmw : total auxiliary injected power (MW)
+  !! pinjimw : auxiliary injected power to ions (MW)
   real(kind(1.0D0)) :: pinjmw = 0.0D0
-  !+ad_vars  plhybd : lower hybrid injection power (MW)
+  !! pinjmw : total auxiliary injected power (MW)
+  real(kind(1.0D0))  :: pinjfixmw = 0.0D0
+  !! pinjfixmw : secondary total fixed auxiliary injected power (MW)
+  real(kind(1.0D0)) :: plasipf = 0.0D0
+  !! plasipf : plasma driven current fraction (Bootstrap + Diamagnetic + PS)
   real(kind(1.0D0)) :: plhybd = 0.0D0
-  !+ad_vars  pnbeam : neutral beam injection power (MW)
+  !! plhybd : lower hybrid injection power (MW)
   real(kind(1.0D0)) :: pnbeam = 0.0D0
-  !+ad_vars  porbitlossmw : neutral beam power lost after ionisation but before
-  !+ad_varc                 thermalisation (orbit loss power) (MW)
+  !! pnbeam : neutral beam injection power (MW)
   real(kind(1.0D0)) :: porbitlossmw = 0.0D0
-  !+ad_vars  pwplh : lower hybrid wall plug power (MW)
+  !! porbitlossmw : neutral beam power lost after ionisation but before
+  !!                thermalisation (orbit loss power) (MW)
+  real(kind(1.0D0)) :: psipf = 0.0D0
+  !! psipf : Pfirsch-Schlüter current fraction
   real(kind(1.0D0)) :: pwplh = 0.0D0
-  !+ad_vars  pwpnb : neutral beam wall plug power (MW)
+  !! pwplh : lower hybrid wall plug power (MW)
   real(kind(1.0D0)) :: pwpnb = 0.0D0
-  !+ad_vars  rtanbeam : neutral beam centreline tangency radius (m)
+  !! pwpnb : neutral beam wall plug power (MW)
   real(kind(1.0D0)) :: rtanbeam = 0.0D0
-  !+ad_vars  rtanmax : maximum tangency radius for centreline of beam (m)
+  !! rtanbeam : neutral beam centreline tangency radius (m)
   real(kind(1.0D0)) :: rtanmax = 0.0D0
-  !+ad_vars  taubeam : neutral beam e-decay lengths to plasma centre
+  !! rtanmax : maximum tangency radius for centreline of beam (m)
   real(kind(1.0D0)) :: taubeam = 0.0D0
-  !+ad_vars  tbeamin /3.0/ : permitted neutral beam e-decay lengths to plasma centre
+  !! taubeam : neutral beam e-decay lengths to plasma centre
   real(kind(1.0D0)) :: tbeamin = 3.0D0
+  !! tbeamin /3.0/ : permitted neutral beam e-decay lengths to plasma centre
 
 end module current_drive_variables
 
@@ -1170,107 +1128,124 @@ end module current_drive_variables
 
 module divertor_kallenbach_variables
 
-  !+ad_name  divertor_kallenbach_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  tokamak divertor components, Kallenbach model, issue #400
-  !+ad_type  Module
-  !+ad_auth  Michael Kovari, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to tokamak
-  !+ad_desc  divertor components.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  04/07/16 MDK Initial version of module
-  !+ad_stat  Okay
+  !! Module containing global variables relating to the
+  !! tokamak divertor components, Kallenbach model, issue #400
+  !! This module contains global variables relating to tokamak
+  !! divertor components.
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   implicit none
 
   public
 
-  !+ad_vars  kallenbach_switch /0/ : Switch to turn on the 1D Kallenbach divertor model (1=on, 0=off)
   integer :: kallenbach_switch = 0
+  !! kallenbach_switch /0/ : Switch to turn on the 1D Kallenbach divertor model (1=on, 0=off)
 
-  !+ad_vars  kallenbach_tests /0/ : Switch to run tests of 1D Kallenbach divertor model (1=on, 0=off)
   integer :: kallenbach_tests = 0
+  !! kallenbach_tests /0/ : Switch to run tests of 1D Kallenbach divertor model (1=on, 0=off)
 
-  !+ad_vars  target_spread /0.003/ : Increase in SOL power fall-off length due to spreading, mapped to OMP [m]
+  integer :: kallenbach_test_option = 0
+  !! kallenbach_test_option /0/ : Switch to choose kallenbach test option: <UL>
+  !!            <LI> = 0 Test case with user inputs;
+  !!            <LI> = 1 Test case for Kallenbach paper;</UL>
+
+  integer :: kallenbach_scan_switch = 0
+  !! kallenbach_scan_switch /0/ : Switch to run scan of 1D Kallenbach divertor model (1=on, 0=off)
+
+  integer :: kallenbach_scan_var = 0
+  !! kallenbach_scan_var /0/ : Switch for parameter to scan for kallenbach scan test:<UL>
+  !!                 <LI> = 0 ttarget
+  !!                 <LI> = 1 qtargettotal
+  !!                 <LI> = 2 targetangle
+  !!                 <LI> = 3 lambda_q_omp
+  !!                 <LI> = 4 netau_sol</UL>
+
+  real(kind(1.0D0)) :: kallenbach_scan_start = 2.0
+  !! kallenbach_scan_start /2.0/ : Start value for kallenbach scan parameter
+
+  real(kind(1.0D0)) :: kallenbach_scan_end = 10.0
+  !! kallenbach_scan_end /10.0/ : End value for kallenbach scan parameter
+
+  integer :: kallenbach_scan_num = 1
+  !! kallenbach_scan_num /1/ : Number of scans for kallenbach scan test
+
   real(kind(1.0D0)) :: target_spread = 0.003D0
+  !! target_spread /0.003/ : Increase in SOL power fall-off length due to spreading, mapped to OMP [m]
 
-  !+ad_vars  lambda_q_omp /0.002/ : SOL power fall-off length at the outer midplane, perpendicular to field [m]
   real(kind(1.0D0)) :: lambda_q_omp = 0.002D0
+  !! lambda_q_omp /0.002/ : SOL power fall-off length at the outer midplane, perpendicular to field [m]
 
-  !+ad_vars  lcon_factor /1.0/ : Correction factor for connection length from OMP to divertor =
-  !+ad_varc                      connection length/(pi*q*rmajor)
   real(kind(1.0D0)) :: lcon_factor = 1.0D0
+  !! lcon_factor /1.0/ : Correction factor for connection length from OMP to divertor =
+  !!                     connection length/(pi*q*rmajor)
 
-  !+ad_vars  netau_sol /0.5/ : Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
   real(kind(1.0D0)) :: netau_sol = 0.5D0
+  !! netau_sol /0.5/ : Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
 
-  !+ad_vars  targetangle /30.0/ : Angle between field-line and divertor target (degrees)
   real(kind(1.0D0)) :: targetangle = 30.0D0
+  !! targetangle /30.0/ : Angle between field-line and divertor target (degrees)
 
-  !+ad_vars  ttarget /2.3/ : Plasma temperature adjacent to divertor sheath [eV] (iteration variable 120)
-  real(kind(1.0D0)) :: ttarget = 2.3D0
+  real(kind(1.0D0)) :: ttarget = 5.0D0
+   !! ttarget /5.0/ : Plasma temperature adjacent to divertor sheath [eV] (iteration variable 120)
+  !!                 Rem : 5 eV is the current limit for tungsten sputtering from argon impurity
 
-  !+ad_vars  qtargettotal /5.0e6/ : Power density on target including surface recombination [W/m2]
-  !+ad_varc (iteration variable 124)
   real(kind(1.0D0)) :: qtargettotal = 5.0D6
+  !! qtargettotal /5.0e6/ : Power density on target including surface recombination [W/m2]
+  !!(iteration variable 124)
 
   ! real(kind(1.0D0)) :: helium_enrichment = 1.0D0
   ! real(kind(1.0D0)) :: impurity_enrichment = 5.0D0
 
-  !+ad_vars  impurity_enrichment(14) /5.0/ : Ratio of each impurity concentration in SOL to confined plasma+
-  !+ad_varc the enrichment for Argon is also propagated for PLASMOD (ipedestal=3)
   real(kind(1.0D0)), dimension(14) :: impurity_enrichment = 5.0D0
+  !! impurity_enrichment(14) /5.0/ : Ratio of each impurity concentration in SOL to confined plasma+
+  !!the enrichment for Argon is also propagated for PLASMOD (ipedestal=3)
 
-  !+ad_vars  psep_kallenbach : Power conducted through the separatrix, as calculated by the divertor model [W]
-  !+ad_varc                    Not equal to pdivt unless constraint is imposed.
   real(kind(1.0D0)) :: psep_kallenbach = 0.0D0
+  !! psep_kallenbach : Power conducted through the separatrix, as calculated by the divertor model [W]
+  !!                   Not equal to pdivt unless constraint is imposed.
 
-  !+ad_vars  teomp : separatrix temperature calculated by the Kallenbach divertor model [eV]
   real(kind(1.0D0)) :: teomp = 0.0D0
+  !! teomp : separatrix temperature calculated by the Kallenbach divertor model [eV]
 
   ! Issue #457
-  !+ad_vars  neomp : Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
   real(kind(1.0D0)) :: neomp = 0.0D0
+  !! neomp : Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
 
-  !+ad_vars  neratio /0.75/ : Ratio of mean SOL density at OMP to separatrix density at OMP (iteration variable 121)
   real(kind(1.0D0)) :: neratio = 0.75D0
+  !! neratio /0.75/ : Ratio of mean SOL density at OMP to separatrix density at OMP (iteration variable 121)
 
-  !+ad_vars  pressure0 : Total plasma pressure near target (thermal+dynamic) [Pa]
   real(kind(1.0D0)) :: pressure0 = 0.0D0
+  !! pressure0 : Total plasma pressure near target (thermal+dynamic) [Pa]
 
-  !+ad_vars  fractionwidesol /0.1/ : Distance from target at which SOL gets broader as a fraction of connection length
   real(kind(1.0D0)) :: fractionwidesol = 0.1D0
+  !! fractionwidesol /0.1/ : Distance from target at which SOL gets broader as a fraction of connection length
 
-  !+ad_vars  fmom : momentum factor [-]
   real(kind(1.0D0)), public :: fmom
+  !! fmom : momentum factor [-]
 
-  !+ad_vars  totalpowerlost : Total power lost due to radiation, ionisation and recombination [W]
   real(kind(1.0D0)), public :: totalpowerlost
+  !! totalpowerlost : Total power lost due to radiation, ionisation and recombination [W]
 
-  !+ad_vars  impuritypowerlost : Power lost due to impurity radiation [W]
   real(kind(1.0D0)), public :: impuritypowerlost
+  !! impuritypowerlost : Power lost due to impurity radiation [W]
 
-  !+ad_vars  hydrogenicpowerlost : Power lost due to hydrogenic radiation [W]
   real(kind(1.0D0)), public :: hydrogenicpowerlost
+  !! hydrogenicpowerlost : Power lost due to hydrogenic radiation [W]
 
-  !+ad_vars  exchangepowerlost : Power lost due to charge exchange  [W]
   real(kind(1.0D0)), public :: exchangepowerlost
+  !! exchangepowerlost : Power lost due to charge exchange  [W]
 
-  !+ad_vars  ionisationpowerlost : Power lost due to electron impact ionisation [W]
   real(kind(1.0D0)), public :: ionisationpowerlost
+  !! ionisationpowerlost : Power lost due to electron impact ionisation [W]
 
-  !+ad_vars  abserr_sol : Absolute contribution to the error tolerance in the Kallenbach divertor model
   real(kind(1.0D0)), public :: abserr_sol = 1.d-4
+  !! abserr_sol : Absolute contribution to the error tolerance in the Kallenbach divertor model
 
-  !+ad_vars  relerr_sol : Relative contribution to the error tolerance in the Kallenbach divertor model
   real(kind(1.0D0)), public :: relerr_sol = 1.d-4
+  !! relerr_sol : Relative contribution to the error tolerance in the Kallenbach divertor model
 
-  !+ad_vars  mach0 : Mach number at target (must be just less than 1)
   real(kind(1.0D0)), public :: mach0 = 0.999
+  !! mach0 : Mach number at target (must be just less than 1)
 
 
 end module divertor_kallenbach_variables
@@ -1279,23 +1254,11 @@ end module divertor_kallenbach_variables
 
 module divertor_variables
 
-  !+ad_name  divertor_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  tokamak divertor components
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to tokamak
-  !+ad_desc  divertor components.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  17/10/12 PJK Initial version of module
-  !+ad_hist  13/08/13 PJK Changed hldiv comment (no 'outboard');
-  !+ad_hisc               tdiv now an input for stellarators
-  !+ad_hist  02/02/17 JM  Replaced rstrko with rspo
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! tokamak divertor components
+  !! This module contains global variables relating to tokamak
+  !! divertor components.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1303,102 +1266,102 @@ module divertor_variables
 
   public
 
-  !+ad_vars  adas : area divertor / area main plasma (along separatrix)
   real(kind(1.0D0)) :: adas = 0.0D0
-  !+ad_vars  anginc /0.262/ : angle of incidence of field line on plate (rad)
+  !! adas : area divertor / area main plasma (along separatrix)
   real(kind(1.0D0)) :: anginc = 0.262D0
-  !+ad_vars  betai /1.0/ : poloidal plane angle between divertor plate and leg, inboard (rad)
+  !! anginc /0.262/ : angle of incidence of field line on plate (rad)
   real(kind(1.0D0)) :: betai = 1.0D0
-  !+ad_vars  betao /1.0/ : poloidal plane angle between divertor plate and leg, outboard (rad)
+  !! betai /1.0/ : poloidal plane angle between divertor plate and leg, inboard (rad)
   real(kind(1.0D0)) :: betao = 1.0D0
-  !+ad_vars  bpsout /0.6/ : reference B_p at outboard divertor strike point (T)
+  !! betao /1.0/ : poloidal plane angle between divertor plate and leg, outboard (rad)
   real(kind(1.0D0)) :: bpsout = 0.60D0
-  !+ad_vars  c1div /0.45/ : fitting coefficient to adjust ptpdiv, ppdiv
+  !! bpsout /0.6/ : reference B_p at outboard divertor strike point (T)
   real(kind(1.0D0)) :: c1div = 0.45D0
-  !+ad_vars  c2div /-7.0/ : fitting coefficient to adjust ptpdiv, ppdiv
+  !! c1div /0.45/ : fitting coefficient to adjust ptpdiv, ppdiv
   real(kind(1.0D0)) :: c2div = -7.0D0
-  !+ad_vars  c3div /0.54/ : fitting coefficient to adjust ptpdiv, ppdiv
+  !! c2div /-7.0/ : fitting coefficient to adjust ptpdiv, ppdiv
   real(kind(1.0D0)) :: c3div = 0.54D0
-  !+ad_vars  c4div /-3.6/ : fitting coefficient to adjust ptpdiv, ppdiv
+  !! c3div /0.54/ : fitting coefficient to adjust ptpdiv, ppdiv
   real(kind(1.0D0)) :: c4div = -3.6D0
-  !+ad_vars  c5div /0.7/ : fitting coefficient to adjust ptpdiv, ppdiv
+  !! c4div /-3.6/ : fitting coefficient to adjust ptpdiv, ppdiv
   real(kind(1.0D0)) :: c5div = 0.7D0
-  !+ad_vars  c6div /0.0/ : fitting coefficient to adjust ptpdiv, ppdiv
+  !! c5div /0.7/ : fitting coefficient to adjust ptpdiv, ppdiv
   real(kind(1.0D0)) :: c6div = 0.0D0
-  !+ad_vars  delld /1.0/ : coeff for power distribution along main plasma
+  !! c6div /0.0/ : fitting coefficient to adjust ptpdiv, ppdiv
   real(kind(1.0D0)) :: delld = 1.0D0
-  !+ad_vars  dendiv : plasma density at divertor (10**20 /m3)
+  !! delld /1.0/ : coeff for power distribution along main plasma
   real(kind(1.0D0)) :: dendiv = 0.0D0
-  !+ad_vars  densin : density at plate (on separatrix) (10**20 /m3)
+  !! dendiv : plasma density at divertor (10**20 /m3)
   real(kind(1.0D0)) :: densin = 0.0D0
-  !+ad_vars  divclfr /0.3/ : divertor coolant fraction
+  !! densin : density at plate (on separatrix) (10**20 /m3)
   real(kind(1.0D0)) :: divclfr = 0.3D0
-  !+ad_vars  divdens /1.0e4/ : divertor structure density (kg/m3)
+  !! divclfr /0.3/ : divertor coolant fraction
   real(kind(1.0D0)) :: divdens = 1.0D4
-  !+ad_vars  divdum /0/ : switch for divertor Zeff model: 0=calc, 1=input
+  !! divdens /1.0e4/ : divertor structure density (kg/m3)
   integer :: divdum = 0
-  !+ad_vars  divfix /0.2/ : divertor structure vertical thickness (m)
+  !! divdum /0/ : switch for divertor Zeff model: 0=calc, 1=input
   real(kind(1.0D0)) :: divfix = 0.2D0
-  !+ad_vars  divmas : divertor plate mass (kg)
+  !! divfix /0.2/ : divertor structure vertical thickness (m)
   real(kind(1.0D0)) :: divmas = 0.0D0
-  !+ad_vars  divplt /0.035/ : divertor plate thickness (m) (from Spears, Sept 1990)
+  !! divmas : divertor plate mass (kg)
   real(kind(1.0D0)) :: divplt = 0.035D0
-  !+ad_vars  divsur : divertor surface area (m2)
+  !! divplt /0.035/ : divertor plate thickness (m) (from Spears, Sept 1990)
   real(kind(1.0D0)) :: divsur = 0.0D0
-  !+ad_vars  fdfs /10.0/ : radial gradient ratio
+  !! divsur : divertor surface area (m2)
   real(kind(1.0D0)) :: fdfs = 10.0D0
-  !+ad_vars  fdiva /1.11/ : divertor area fudge factor (for ITER, Sept 1990)
+  !! fdfs /10.0/ : radial gradient ratio
   real(kind(1.0D0)) :: fdiva = 1.11D0
-  !+ad_vars  fgamp /1.0/ : sheath potential factor (not used)
+  !! fdiva /1.11/ : divertor area fudge factor (for ITER, Sept 1990)
   real(kind(1.0D0)) :: fgamp = 1.0D0
-  !+ad_vars  fhout : fraction of power to outboard divertor (for single null)
+  !! fgamp /1.0/ : sheath potential factor (not used)
   real(kind(1.0D0)) :: fhout = 0.0D0
-  !+ad_vars  fififi /0.004/ : coefficient for gamdiv
+  !! fhout : fraction of power to outboard divertor (for single null)
   real(kind(1.0D0)) :: fififi = 4.0D-3
-  !+ad_vars  frrp /0.4/ : fraction of radiated power to plate
+  !! fififi /0.004/ : coefficient for gamdiv
   real(kind(1.0D0)) :: frrp = 0.4D0
-  !+ad_vars  hldiv : divertor heat load (MW/m2)
-  real(kind(1.0D0)) :: hldiv = 0.0D0
-  !+ad_vars  hldivlim /5.0/ : heat load limit (MW/m2)
+  !! frrp /0.4/ : fraction of radiated power to plate
+  real(kind(1.0D0)), bind(C) :: hldiv = 0.0D0
+  !! hldiv : divertor heat load (MW/m2)
   real(kind(1.0D0)) :: hldivlim = 5.0D0
-  !+ad_vars  ksic /0.8/ : power fraction for outboard double-null scrape-off plasma
+  !! hldivlim /5.0/ : heat load limit (MW/m2)
   real(kind(1.0D0)) :: ksic = 0.8D0
-  !+ad_vars  lamp : power flow width (m)
+  !! ksic /0.8/ : power fraction for outboard double-null scrape-off plasma
   real(kind(1.0D0)) :: lamp = 0.0D0
-  !+ad_vars  minstang : minimum strike angle for heat flux calculation
+  !! lamp : power flow width (m)
   real(kind(1.0D0)) :: minstang = 0.0D0
-  !+ad_vars  omegan /1.0/ : pressure ratio (nT)_plasma / (nT)_scrape-off
+  !! minstang : minimum strike angle for heat flux calculation
   real(kind(1.0D0)) :: omegan = 1.0D0
-  !+ad_vars  omlarg : power spillage to private flux factor
+  !! omegan /1.0/ : pressure ratio (nT)_plasma / (nT)_scrape-off
   real(kind(1.0D0)) :: omlarg = 0.0D0
-  !+ad_vars  ppdivr : peak heat load at plate (with radiation) (MW/m2)
+  !! omlarg : power spillage to private flux factor
   real(kind(1.0D0)) :: ppdivr = 0.0D0
-  !+ad_vars  prn1 /0.285/ : n-scrape-off / n-average plasma;
-  !+ad_varc                 (input for ipedestal=0, = nesep/dene if ipedestal>=1)
+  !! ppdivr : peak heat load at plate (with radiation) (MW/m2)
   real(kind(1.0D0)) :: prn1 = 0.285D0
-  !+ad_vars  ptpdiv : peak temperature at the plate (eV)
+  !! prn1 /0.285/ : n-scrape-off / n-average plasma;
+  !!                (input for ipedestal=0, = nesep/dene if ipedestal>=1)
   real(kind(1.0D0)) :: ptpdiv = 0.0D0
-  !+ad_vars  rconl : connection length ratio, outboard side
+  !! ptpdiv : peak temperature at the plate (eV)
   real(kind(1.0D0)) :: rconl = 0.0D0
-  !+ad_vars  rlclolcn : ratio of collision length / connection length
+  !! rconl : connection length ratio, outboard side
   real(kind(1.0D0)) :: rlclolcn = 0.0D0
-  !+ad_vars  rlenmax /0.5/ : maximum value for length ratio (rlclolcn) (eqn.22)
+  !! rlclolcn : ratio of collision length / connection length
   real(kind(1.0D0)) :: rlenmax = 0.5D0
-  !+ad_vars  rsrd : effective separatrix/divertor radius ratio
+  !! rlenmax /0.5/ : maximum value for length ratio (rlclolcn) (eqn.22)
   real(kind(1.0D0)) :: rsrd = 0.0D0
-  !+ad_vars  tconl : main plasma connection length (m)
+  !! rsrd : effective separatrix/divertor radius ratio
   real(kind(1.0D0)) :: tconl = 0.0D0
-  !+ad_vars  tdiv /2.0/ : temperature at divertor (eV)
-  !+ad_varc               (input for stellarator only, calculated for tokamaks)
+  !! tconl : main plasma connection length (m)
   real(kind(1.0D0)) :: tdiv = 2.0D0
-  !+ad_vars  tsep : temperature at the separatrix (eV)
+  !! tdiv /2.0/ : temperature at divertor (eV)
+  !!              (input for stellarator only, calculated for tokamaks)
   real(kind(1.0D0)) :: tsep = 0.0D0
-  !+ad_vars  xparain /2.1e3/ : parallel heat transport coefficient (m2/s)
+  !! tsep : temperature at the separatrix (eV)
   real(kind(1.0D0)) :: xparain = 2.1D3
-  !+ad_vars  xpertin /2.0/ : perpendicular heat transport coefficient (m2/s)
+  !! xparain /2.1e3/ : parallel heat transport coefficient (m2/s)
   real(kind(1.0D0)) :: xpertin = 2.0D0
-  !+ad_vars  zeffdiv /1.0/ : Zeff in the divertor region (if divdum /= 0)
+  !! xpertin /2.0/ : perpendicular heat transport coefficient (m2/s)
   real(kind(1.0D0)) :: zeffdiv = 1.0D0
+  !! zeffdiv /1.0/ : Zeff in the divertor region (if divdum /= 0)
 
 end module divertor_variables
 
@@ -1406,42 +1369,11 @@ end module divertor_variables
 
 module fwbs_variables
 
-  !+ad_name  fwbs_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  first wall, blanket and shield components
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the first
-  !+ad_desc  wall, blanket and shield components.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  18/10/12 PJK Initial version of module
-  !+ad_hist  09/04/13 PJK Added rdewex, rpf2dewar; changed some labels
-  !+ad_hist  17/04/13 PJK Removed fvolcry
-  !+ad_hist  09/05/13 PJK Added fwbsshape
-  !+ad_hist  16/05/13 PJK Changed default value of fwbsshape
-  !+ad_hist  20/05/13 PJK Added KIT PPCS model variables
-  !+ad_hist  18/06/13 PJK Changed cryomass description
-  !+ad_hist  14/11/13 PJK Changed 'breeding unit' to 'breeding zone'
-  !+ad_hist  03/06/14 PJK Added new power flow variables
-  !+ad_hist  21/08/14 PJK Added new thermodynamic blanket model variables
-  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
-  !+ad_hist  30/10/14 PJK Changed blkttype default from 1 to 3
-  !+ad_hist  05/11/14 PJK Added praddiv etc.
-  !+ad_hist  24/11/14 PJK Modified coolwh comments
-  !+ad_hist  10/12/14 PJK Modified secondary_cycle, blkttype descriptions
-  !+ad_hist  17/12/14 PJK Added irefprop
-  !+ad_hist  08/01/15 JM  Changed default blanket now has (li4sio4 and tibe12)
-  !+ad_hist  25/02/15 JM  Removed redundant blanket fractions and switches
-  !+ad_hist  02/04/15 JM  Removed fwerlim
-  !+ad_hist  12/04/15 JM  Removed costr, astr, bstr, estr, lblnkt
-  !+ad_hist  01/06/16 JM  Added denw
-  !+ad_hist  01/06/16 JM  Added option 4 to iblanket
-  !+ad_hist  28/06/18 SIM Added iblnkith (Issue #732)
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! first wall, blanket and shield components
+  !! This module contains global variables relating to the first
+  !! wall, blanket and shield components.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1451,421 +1383,424 @@ module fwbs_variables
 
   ! General blanket parameters
 
-  !+ad_vars  bktlife : blanket lifetime (years)
-  real(kind(1.0D0)) :: bktlife = 0.0D0
+  real(kind(1.0D0)), bind(C):: bktlife = 0.0D0
+  !! bktlife : blanket lifetime (years)
 
-  !+ad_vars  coolmass : mass of water coolant (in shield, blanket,
-  !+ad_varc             first wall, divertor) (kg)
   real(kind(1.0D0)) :: coolmass = 0.0D0
+  !! coolmass : mass of water coolant (in shield, blanket,
+  !!            first wall, divertor) (kg)
 
-  !+ad_vars  vvmass : vacuum vessel mass (kg)
   ! Formerly known as cryomass.
+  !! vvmass : vacuum vessel mass (kg)
   real(kind(1.0D0)) :: vvmass = 0.0D0
 
-  !+ad_vars  denstl /7800.0/ : density of steel (kg/m3)
   real(kind(1.0D0)) :: denstl = 7800.0D0
+  !! denstl /7800.0/ : density of steel (kg/m3)
 
-  !+ad_vars  denw /19250.0/ : density of tungsten (kg/m3)
   real(kind(1.0D0)) :: denw = 19250.0D0
+  !! denw /19250.0/ : density of tungsten (kg/m3)
 
-  !+ad_vars  dewmkg : total mass of vacuum vessel + cryostat (kg)
   real(kind(1.0D0)) :: dewmkg = 0.0D0
+  !! dewmkg : total mass of vacuum vessel + cryostat (kg)
 
-  !+ad_vars  emult /1.269/ : energy multiplication in blanket and shield
   !                         (calculated if blktmodel>0)
+  !! emult /1.269/ : energy multiplication in blanket and shield
   real(kind(1.0D0)) :: emult = 1.269D0
 
-  !+ad_vars  emultmw : power due to energy multiplication in blanket and shield [MW]
   real(kind(1.0D0)) :: emultmw = 0.0D0
+  !! emultmw : power due to energy multiplication in blanket and shield [MW]
 
-  !+ad_vars  fblss /0.09705/ : KIT blanket model: steel fraction of breeding zone
   real(kind(1.0D0)) :: fblss = 0.09705D0
+  !! fblss /0.09705/ : KIT blanket model: steel fraction of breeding zone
 
-  !+ad_vars  fdiv /0.115/ : area fraction taken up by divertor
   real(kind(1.0D0)) :: fdiv = 0.115D0
+  !! fdiv /0.115/ : area fraction taken up by divertor
 
-  !+ad_vars  fhcd /0.0/ : area fraction covered by heating/current drive
-  !+ad_varc               apparatus plus diagnostics
   real(kind(1.0D0)) :: fhcd = 0.0D0
+  !! fhcd /0.0/ : area fraction covered by heating/current drive
+  !!              apparatus plus diagnostics
 
-  !+ad_vars  fhole /0.0/ : area fraction taken up by other holes (not used)
   real(kind(1.0D0)) :: fhole = 0.0D0
+  !! fhole /0.0/ : area fraction taken up by other holes (IFE)
 
-  !+ad_vars  fwbsshape /2/ : first wall, blanket, shield and vacuum vessel shape:<UL>
-  !+ad_varc                  <LI> = 1 D-shaped (cylinder inboard + ellipse outboard);
-  !+ad_varc                  <LI> = 2 defined by two ellipses</UL>
   integer :: fwbsshape = 2
+  !! fwbsshape /2/ : first wall, blanket, shield and vacuum vessel shape:<UL>
+  !!                 <LI> = 1 D-shaped (cylinder inboard + ellipse outboard);
+  !!                 <LI> = 2 defined by two ellipses</UL>
 
-  !+ad_vars  fwlife : first wall full-power lifetime (y)
   real(kind(1.0D0)) :: fwlife = 0.0D0
+  !! fwlife : first wall full-power lifetime (y)
 
-  !+ad_vars  fwmass : first wall mass (kg)
   real(kind(1.0D0)) :: fwmass = 0.0D0
+  !! fwmass : first wall mass (kg)
 
-  !+ad_vars  fw_armour_mass : first wall armour mass (kg)
   real(kind(1.0D0)) :: fw_armour_mass = 0.0D0
+  !! fw_armour_mass : first wall armour mass (kg)
 
-  !+ad_vars  fw_armour_thickness /0.005/ : first wall armour thickness (m)
   real(kind(1.0D0)) :: fw_armour_thickness = 0.005D0
+  !! fw_armour_thickness /0.005/ : first wall armour thickness (m)
 
-  !+ad_vars  fw_armour_vol : first wall armour volume (m3)
   real(kind(1.0D0)) :: fw_armour_vol = 0.0D0
+  !! fw_armour_vol : first wall armour volume (m3)
 
-  !+ad_vars  iblanket /1/ : switch for blanket model: <UL>
-  !+ad_varc             <LI> = 1 CCFE HCPB model;
-  !+ad_varc             <LI> = 2 KIT HCPB model;
-  !+ad_varc             <LI> = 3 CCFE HCPB model with Tritium Breeding Ratio calculation;
-  !+ad_varc             <LI> = 4 KIT HCLL model</UL>
   integer :: iblanket = 1
+  !! iblanket /1/ : switch for blanket model: <UL>
+  !!            <LI> = 1 CCFE HCPB model;
+  !!            <LI> = 2 KIT HCPB model;
+  !!            <LI> = 3 CCFE HCPB model with Tritium Breeding Ratio calculation;
+  !!            <LI> = 4 KIT HCLL model</UL>
 
-  !+ad_vars  iblnkith /1/ : switch for inboard blanket: <UL>
-  !+ad_varc             <LI> = 0 No inboard blanket (blnkith=0.0);
-  !+ad_varc             <LI> = 1 Inboard blanket present</UL>
   integer :: iblnkith = 1
+  !! iblnkith /1/ : switch for inboard blanket: <UL>
+  !!            <LI> = 0 No inboard blanket (blnkith=0.0);
+  !!            <LI> = 1 Inboard blanket present</UL>
 
-  !+ad_vars  inuclear /0/ : switch for nuclear heating in the coils: <UL>
-  !+ad_varc             <LI> = 0 Frances Fox model (default);
-  !+ad_varc             <LI> = 1 Fixed by user (qnuc)</UL>
   integer :: inuclear = 0
-  !+ad_vars  qnuc /0.0/ : nuclear heating in the coils (W) (inuclear=1)
+  !! inuclear /0/ : switch for nuclear heating in the coils: <UL>
+  !!            <LI> = 0 Frances Fox model (default);
+  !!            <LI> = 1 Fixed by user (qnuc)</UL>
   real(kind(1.0D0)) :: qnuc = 0.0D0
+  !! qnuc /0.0/ : nuclear heating in the coils (W) (inuclear=1)
 
-  !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
   real(kind(1.0D0)) :: li6enrich = 30.0D0
+  !! li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
 
-  !+ad_vars  pnucblkt : nuclear heating in the blanket (MW)
-  real(kind(1.0D0)) :: pnucblkt = 0.0D0
+  real(kind(1.0D0)), bind(C) :: pnucblkt = 0.0D0
+  !! pnucblkt : nuclear heating in the blanket (MW)
 
-  !+ad_vars  pnuccp : nuclear heating in the ST centrepost (MW)
   real(kind(1.0D0)) :: pnuccp = 0.0D0
+  !! pnuccp : nuclear heating in the ST centrepost (MW)
 
-  !+ad_vars  pnucdiv : nuclear heating in the divertor (MW)
   real(kind(1.0D0)) :: pnucdiv = 0.0D0
+  !! pnucdiv : nuclear heating in the divertor (MW)
 
-  !+ad_vars  pnucfw : nuclear heating in the first wall (MW)
   real(kind(1.0D0)) :: pnucfw = 0.0D0
+  !! pnucfw : nuclear heating in the first wall (MW)
 
-  !+ad_vars  pnuchcd : nuclear heating in the HCD apparatus and diagnostics (MW)
   real(kind(1.0D0)) :: pnuchcd = 0.0D0
+  !! pnuchcd : nuclear heating in the HCD apparatus and diagnostics (MW)
 
-  !+ad_vars  pnucloss : nuclear heating lost via holes (MW)
   real(kind(1.0D0)) :: pnucloss = 0.0D0
+  !! pnucloss : nuclear heating lost via holes (MW)
 
-  !+ad_vars  pnucloss : nuclear heating to vacuum vessel and beyond(MW)
   real(kind(1.0D0)) :: pnucvvplus = 0.0D0
+  !! pnucloss : nuclear heating to vacuum vessel and beyond(MW)
 
-  !+ad_vars  pnucshld : nuclear heating in the shield (MW)
-  real(kind(1.0D0)) :: pnucshld = 0.0D0
+  real(kind(1.0D0)), bind(C) :: pnucshld = 0.0D0
+  !! pnucshld : nuclear heating in the shield (MW)
 
-  !+ad_vars  whtblkt : mass of blanket (kg)
   real(kind(1.0D0)) :: whtblkt = 0.0D0
+  !! whtblkt : mass of blanket (kg)
 
-  !+ad_vars  whtblss : mass of blanket - steel part (kg)
   real(kind(1.0D0)) :: whtblss = 0.0D0
+  !! whtblss : mass of blanket - steel part (kg)
 
-  !+ad_vars  armour_fw_bl_mass : Total mass of armour, first wall and blanket (kg)
   real(kind(1.0D0)) :: armour_fw_bl_mass = 0.0D0
+  !! armour_fw_bl_mass : Total mass of armour, first wall and blanket (kg)
+
 
   ! CCFE HCPB Blanket Model (with or without TBR calculation)
+  ! ----------
 
-  !+ad_vars  <P><B>The following are used only in the CCFE HCPB blanket model
-  !+ad_varc  (iblanket=1):</B><P>
-
-  !+ad_vars  breeder_f /0.5/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
+  !! <P><B>The following are used only in the CCFE HCPB blanket model
+  !! (iblanket=1):</B><P>
   real(kind(1.0D0)) :: breeder_f = 0.5D0
-  !+ad_vars  breeder_multiplier /0.75/ : combined breeder/multipler fraction of blanket by volume
+  !! breeder_f /0.5/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
+  
   real(kind(1.0D0)) :: breeder_multiplier = 0.75D0
-  !+ad_vars  vfcblkt /0.05295/ : He coolant fraction of blanket by volume
-  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
+  !! breeder_multiplier /0.75/ : combined breeder/multipler fraction of blanket by volume
+  
   real(kind(1.0D0)) :: vfcblkt = 0.05295D0
-  !+ad_vars  vfpblkt /0.1/ : He purge gas fraction of blanket by volume
-  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
+  !! vfcblkt /0.05295/ : He coolant fraction of blanket by volume
+  !!                  (iblanket = 1 or 3 (CCFE HCPB))
+  
   real(kind(1.0D0)) :: vfpblkt = 0.1D0
-  !+ad_vars  whtblli4sio4 : mass of lithium orthosilicate in blanket (kg)
-  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
+  !! vfpblkt /0.1/ : He purge gas fraction of blanket by volume
+  !!                  (iblanket = 1 or 3 (CCFE HCPB))
+
   real(kind(1.0D0)) :: whtblli4sio4 = 0.0D0
-  !+ad_vars  whtbltibe12 : mass of titanium beryllide in blanket (kg)
-  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
+  !! whtblli4sio4 : mass of lithium orthosilicate in blanket (kg)
+  !!                  (iblanket = 1 or 3 (CCFE HCPB))
+  
   real(kind(1.0D0)) :: whtbltibe12 = 0.0D0
+  !! whtbltibe12 : mass of titanium beryllide in blanket (kg)
+  !!                  (iblanket = 1 or 3 (CCFE HCPB))
+
+  real(kind(1.0D0)) :: f_neut_shield = -1.0D0
+  !! f_neut_shield : Fraction of nuclear power shielded before the CP magnet (ST)
+  !!                 ( neut_absorb = -1 --> a fit on simplified MCNP neutronic
+  !!                   calculation is used assuming water cooled (13%) tungesten carbyde )
+  ! ----------
+
 
   !  KIT HCPB blanket model
 
-  !+ad_vars  <P><B>The following are used in the KIT HCPB blanket model
-  !+ad_varc  (iblanket=2):</B><P>
-
-  !+ad_vars  breedmat /1/ : breeder material switch (iblanket=2 (KIT HCPB)):<UL>
-  !+ad_varc                  <LI> = 1 Lithium orthosilicate;
-  !+ad_varc                  <LI> = 2 Lithium methatitanate;
-  !+ad_varc                  <LI> = 3 Lithium zirconate</UL>
+  !! <P><B>The following are used in the KIT HCPB blanket model
+  !! (iblanket=2):</B><P>
   integer :: breedmat = 1
-  !+ad_vars  densbreed : density of breeder material (kg/m3) (iblanket=2 (KIT HCPB))
+  !! breedmat /1/ : breeder material switch (iblanket=2 (KIT HCPB)):<UL>
+  !!                 <LI> = 1 Lithium orthosilicate;
+  !!                 <LI> = 2 Lithium methatitanate;
+  !!                 <LI> = 3 Lithium zirconate</UL>
   real(kind(1.0D0)) :: densbreed = 0.0D0
-  !+ad_vars  fblbe /0.6/ : beryllium fraction of blanket by volume
-  !+ad_varc                (if (iblanket=2 (KIT HCPB)), Be fraction of breeding zone)
+  !! densbreed : density of breeder material (kg/m3) (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: fblbe = 0.6D0
-  !+ad_vars  fblbreed /0.154/ : breeder fraction of blanket breeding zone by volume
-  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  !! fblbe /0.6/ : beryllium fraction of blanket by volume
+  !!               (if (iblanket=2 (KIT HCPB)), Be fraction of breeding zone)
   real(kind(1.0D0)) :: fblbreed = 0.154D0
-  !+ad_vars  fblhebmi /0.40/ : helium fraction of inboard blanket box manifold by volume
-  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  !! fblbreed /0.154/ : breeder fraction of blanket breeding zone by volume
+  !!                    (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: fblhebmi = 0.4D0
-  !+ad_vars  fblhebmo /0.40/ : helium fraction of outboard blanket box manifold by volume
-  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  !! fblhebmi /0.40/ : helium fraction of inboard blanket box manifold by volume
+  !!                    (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: fblhebmo = 0.4D0
-  !+ad_vars  fblhebpi /0.6595/ : helium fraction of inboard blanket back plate by volume
-  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  !! fblhebmo /0.40/ : helium fraction of outboard blanket box manifold by volume
+  !!                    (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: fblhebpi = 0.6595D0
-  !+ad_vars  fblhebpo /0.6713/ : helium fraction of outboard blanket back plate by volume
-  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  !! fblhebpi /0.6595/ : helium fraction of inboard blanket back plate by volume
+  !!                    (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: fblhebpo = 0.6713D0
-  !+ad_vars  hcdportsize /1/ : size of heating/current drive ports (iblanket=2 (KIT HCPB)): <UL>
-  !+ad_varc                  <LI> = 1 'small'
-  !+ad_varc                  <LI> = 2 'large'</UL>
+  !! fblhebpo /0.6713/ : helium fraction of outboard blanket back plate by volume
+  !!                    (iblanket=2 (KIT HCPB))
   integer :: hcdportsize = 1
-  !+ad_vars  nflutf : peak fast neutron fluence on TF coil superconductor (n/m2)
-  !+ad_varc           (iblanket=2 (KIT HCPB))
+  !! hcdportsize /1/ : size of heating/current drive ports (iblanket=2 (KIT HCPB)): <UL>
+  !!                 <LI> = 1 'small'
+  !!                 <LI> = 2 'large'</UL>
   real(kind(1.0D0)) :: nflutf = 0.0D0
-  !+ad_vars  npdiv /2/ : number of divertor ports (iblanket=2 (KIT HCPB))
+  !! nflutf : peak fast neutron fluence on TF coil superconductor (n/m2)
+  !!          (iblanket=2 (KIT HCPB))
   integer :: npdiv = 2
-  !+ad_vars  nphcdin /2/ : number of inboard ports for heating/current drive
-  !+ad_varc                (iblanket=2 (KIT HCPB))
+  !! npdiv /2/ : number of divertor ports (iblanket=2 (KIT HCPB))
   integer :: nphcdin = 2
-  !+ad_vars  nphcdout /2/ : number of outboard ports for heating/current drive
-  !+ad_varc                 (iblanket=2 (KIT HCPB))
+  !! nphcdin /2/ : number of inboard ports for heating/current drive
+  !!               (iblanket=2 (KIT HCPB))
   integer :: nphcdout = 2
-  !+ad_vars  tbr : tritium breeding ratio (iblanket=2,3 (KIT HCPB/HCLL))
+  !! nphcdout /2/ : number of outboard ports for heating/current drive
+  !!                (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: tbr = 0.0D0
-  !+ad_vars  tritprate : tritium production rate (g/day) (iblanket=2 (KIT HCPB))
+  !! tbr : tritium breeding ratio (iblanket=2,3 (KIT HCPB/HCLL))
   real(kind(1.0D0)) :: tritprate = 0.0D0
-  !+ad_vars  vvhemax : maximum helium concentration in vacuum vessel at end of
-  !+ad_varc            plant life (appm) (iblanket=2 (KIT HCPB))
+  !! tritprate : tritium production rate (g/day) (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: vvhemax = 0.0D0
-  !+ad_vars  wallpf /1.21/ : neutron wall load peaking factor (iblanket=2 (KIT HCPB))
+  !! vvhemax : maximum helium concentration in vacuum vessel at end of
+  !!           plant life (appm) (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: wallpf = 1.21D0
-  !+ad_vars  whtblbreed : mass of blanket - breeder part (kg) (iblanket=2 (KIT HCPB))
+  !! wallpf /1.21/ : neutron wall load peaking factor (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: whtblbreed = 0.0D0
-  !+ad_vars  whtblbe : mass of blanket - beryllium part (kg)
+  !! whtblbreed : mass of blanket - breeder part (kg) (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: whtblbe = 0.0D0
+  !! whtblbe : mass of blanket - beryllium part (kg)
 
-  !+ad_vars  <P><B>CCFE HCPB model with Tritium Breeding Ratio calculation
-  !+ad_varc  (iblanket=3):</B><P>
 
-  !+ad_vars  tbrmin /1.1/ : minimum tritium breeding ratio (constraint equation 52)
-  !+ad_varc                 (If iblanket=1, tbrmin=minimum 5-year time-averaged tritium breeding ratio)
+  !! <P><B>CCFE HCPB model with Tritium Breeding Ratio calculation
+  !! (iblanket=3):</B><P>
 
-  !+ad_vars  iblanket_thickness /2/ : Blanket thickness switch:<UL>
-  !+ad_varc     <LI> = 1 thin    0.53 m inboard, 0.91 m outboard
-  !+ad_varc     <LI> = 2 medium  0.64 m inboard, 1.11 m outboard
-  !+ad_varc     <LI> = 3 thick   0.75 m inboard, 1.30 m outboard</UL>
-  !+ad_vars  Do not set blnkith, blnkoth, fwith or fwoth when iblanket=3.
+  !! tbrmin /1.1/ : minimum tritium breeding ratio (constraint equation 52)
+  !!                (If iblanket=1, tbrmin=minimum 5-year time-averaged tritium breeding ratio)
   integer :: iblanket_thickness = 2
+  !! iblanket_thickness /2/ : Blanket thickness switch:<UL>
+  !!    <LI> = 1 thin    0.53 m inboard, 0.91 m outboard
+  !!    <LI> = 2 medium  0.64 m inboard, 1.11 m outboard
+  !!    <LI> = 3 thick   0.75 m inboard, 1.30 m outboard</UL>
+  !! Do not set blnkith, blnkoth, fwith or fwoth when iblanket=3.
 
-  !+ad_vars  primary_pumping /2/ : Switch for pumping power for primary coolant (06/01/2016):
-  !+ad_varc       (mechanical power only)<UL>
-  !+ad_varc     <LI> = 0 User sets pump power directly (htpmw_blkt, htpmw_fw, htpmw_div, htpmw_shld)
-  !+ad_varc     <LI> = 1 User sets pump power as a fraction of thermal power (fpumpblkt, fpumpfw, fpumpdiv, fpumpshld)
-  !+ad_varc     <LI> = 2 Mechanical pumping power is calculated
-  !+ad_varc     <LI> = 3 Mechanical pumping power is calculated using specified pressure drop</UL>
-  !+ad_vars  (peak first wall temperature is only calculated if primary_pumping = 2)
   integer :: primary_pumping = 2
+  !! primary_pumping /2/ : Switch for pumping power for primary coolant (06/01/2016):
+  !!      (mechanical power only)<UL>
+  !!    <LI> = 0 User sets pump power directly (htpmw_blkt, htpmw_fw, htpmw_div, htpmw_shld)
+  !!    <LI> = 1 User sets pump power as a fraction of thermal power (fpumpblkt, fpumpfw, fpumpdiv, fpumpshld)
+  !!    <LI> = 2 Mechanical pumping power is calculated
+  !!    <LI> = 3 Mechanical pumping power is calculated using specified pressure drop</UL>
+  !! (peak first wall temperature is only calculated if primary_pumping = 2)
 
-  !+ad_vars  secondary_cycle /0/ : Switch for power conversion cycle:<UL>
-  !+ad_varc     <LI> = 0 Set efficiency for chosen blanket, from detailed models (divertor heat not used)
-  !+ad_varc     <LI> = 1 Set efficiency for chosen blanket, from detailed models (divertor heat used)
-  !+ad_varc     <LI> = 2 user input thermal-electric efficiency (etath)
-  !+ad_varc     <LI> = 3 steam Rankine cycle
-  !+ad_varc     <LI> = 4 supercritical CO2 cycle</UL>
   integer :: secondary_cycle = 0
-  !+ad_vars  coolwh : Blanket coolant (set via blkttype):<UL>
-  !+ad_varc         <LI> = 1 helium;
-  !+ad_varc         <LI> = 2 pressurized water</UL>
-  integer :: coolwh = 1
-  !+ad_vars  afwi /0.008/ : inner radius of inboard first wall/blanket coolant channels OBSOLETE (m)
+  !! secondary_cycle /0/ : Switch for power conversion cycle:<UL>
+  !!    <LI> = 0 Set efficiency for chosen blanket, from detailed models (divertor heat not used)
+  !!    <LI> = 1 Set efficiency for chosen blanket, from detailed models (divertor heat used)
+  !!    <LI> = 2 user input thermal-electric efficiency (etath)
+  !!    <LI> = 3 steam Rankine cycle
+  !!    <LI> = 4 supercritical CO2 cycle</UL>
+  integer, bind(C) :: coolwh = 1
+  !! coolwh : Blanket coolant (set via blkttype):<UL>
+  !!        <LI> = 1 helium;
+  !!        <LI> = 2 pressurized water</UL>
   real(kind(1.0D0)) :: afwi = 0.008D0
-  !+ad_vars  afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels OBSOLETE (m)
+  !! afwi /0.008/ : inner radius of inboard first wall/blanket coolant channels OBSOLETE (m)
   real(kind(1.0D0)) :: afwo = 0.008D0
+  !! afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels OBSOLETE (m)
 
   ! MDK New first wall calculation
-  !+ad_vars  fwcoolant /helium/ : first wall coolant (can be different from blanket coolant)
-  !+ad_varc                       'helium' or 'water'  (27/11/2015)
   character(len=6) :: fwcoolant = 'helium'
-  !+ad_vars  fw_wall /0.003/ : wall thickness of first wall coolant channels (m) (27/11/2015)
+  !! fwcoolant /helium/ : first wall coolant (can be different from blanket coolant)
+  !!                      'helium' or 'water'  (27/11/2015)
   real(kind(1.0D0)) :: fw_wall = 0.003D0
-  !+ad_vars  afw /0.006/ : radius of first wall cooling channels (m) (27/11/15)
+  !! fw_wall /0.003/ : wall thickness of first wall coolant channels (m) (27/11/2015)
   real(kind(1.0D0)) :: afw = 0.006D0
-  !+ad_vars  pitch /0.020/ : pitch of first wall cooling channels (m) (27/11/15)
+  !! afw /0.006/ : radius of first wall cooling channels (m) (27/11/15)
   real(kind(1.0D0)) :: pitch = 0.020D0
-  !+ad_vars  fwinlet /573/ : inlet temperature of first wall coolant (K) (27/11/2015)
+  !! pitch /0.020/ : pitch of first wall cooling channels (m) (27/11/15)
   real(kind(1.0D0)) :: fwinlet = 573.0D0
-  !+ad_vars  fwoutlet /823/ : outlet temperature of first wall coolant (K) (27/11/2015)
+  !! fwinlet /573/ : inlet temperature of first wall coolant (K) (27/11/2015)
   real(kind(1.0D0)) :: fwoutlet = 823.0D0
-  !+ad_vars  fwpressure /15.5e6/ : first wall coolant pressure (Pa) (secondary_cycle>1)
+  !! fwoutlet /823/ : outlet temperature of first wall coolant (K) (27/11/2015)
   real(kind(1.0D0)) :: fwpressure = 15.5D6
-  !+ad_vars  tpeak : peak first wall temperature (K) (27/11/2015)
+  !! fwpressure /15.5e6/ : first wall coolant pressure (Pa) (secondary_cycle>1)
   real(kind(1.0D0)) :: tpeak = 873.0D0
-  !+ad_vars  roughness /1e-6/ : first wall channel roughness epsilon (m) (27/11/2015)
+  !! tpeak : peak first wall temperature (K) (27/11/2015)
   real(kind(1.0D0)) :: roughness = 1.0D-6
-  !+ad_vars  fw_channel_length /4.0/ : Length of a single first wall channel (all in parallel) (m) (27/11/2015)
-  !+ad_varc                            (iteration variable 114, useful for constraint equation 39)
+  !! roughness /1e-6/ : first wall channel roughness epsilon (m) (27/11/2015)
   real(kind(1.0D0)) :: fw_channel_length = 4.0D0
-  !+ad_vars  peaking_factor /1.0/ : peaking factor for first wall heat loads (27/11/2015)
-  !+ad_varc                         (Applied separately to inboard and outboard loads.
-  !+ad_varc                         Applies to both neutron and surface loads.
-  !+ad_varc                         Only used to calculate peak temperature - not the coolant flow rate.)
+  !! fw_channel_length /4.0/ : Length of a single first wall channel (all in parallel) (m) (27/11/2015)
+  !!                           (iteration variable 114, useful for constraint equation 39)
   real(kind(1.0D0)) :: peaking_factor = 1.0D0
+  !! peaking_factor /1.0/ : peaking factor for first wall heat loads (27/11/2015)
+  !!                        (Applied separately to inboard and outboard loads.
+  !!                        Applies to both neutron and surface loads.
+  !!                        Only used to calculate peak temperature - not the coolant flow rate.)
 
   ! MDK Blanket has not changed as much, but some new variable names
-  !+ad_vars  blpressure /15.5e6/ : blanket coolant pressure (Pa) (secondary_cycle>1) (27/11/2015)
   real(kind(1.0D0)) :: blpressure = 15.5D6
-  !+ad_vars  inlet_temp /573.0/ : inlet temperature of blanket coolant  (K) (secondary_cycle>1) (27/11/2015)
+  !! blpressure /15.5e6/ : blanket coolant pressure (Pa) (secondary_cycle>1) (27/11/2015)
   real(kind(1.0D0)) :: inlet_temp = 573.0D0
-  !+ad_vars  outlet_temp /823.0/ : outlet temperature of blanket coolant (K) (27/11/2015)<UL>
-  !+ad_varc         <LI> (secondary_cycle>1);
-  !+ad_varc         <LI> input if coolwh=1 (helium), calculated if coolwh=2 (water)</UL>
+  !! inlet_temp /573.0/ : inlet temperature of blanket coolant  (K) (secondary_cycle>1) (27/11/2015)
   real(kind(1.0D0)) :: outlet_temp = 823.0D0
+  !! outlet_temp /823.0/ : outlet temperature of blanket coolant (K) (27/11/2015)<UL>
+  !!        <LI> (secondary_cycle>1);
+  !!        <LI> input if coolwh=1 (helium), calculated if coolwh=2 (water)</UL>
 
 
-  !+ad_vars  coolp /15.5e6/ : blanket coolant pressure (Pa) stellarator ONLY (27/11/2015)
   real(kind(1.0D0)) :: coolp = 15.5D6
+  !! coolp /15.5e6/ : blanket coolant pressure (Pa) stellarator ONLY (27/11/2015)
 
 
-  !+ad_vars  nblktmodpo /8/ : number of outboard blanket modules in poloidal direction (secondary_cycle>1)
   integer :: nblktmodpo = 8
-  !+ad_vars  nblktmodpi /7/ : number of inboard blanket modules in poloidal direction (secondary_cycle>1)
+  !! nblktmodpo /8/ : number of outboard blanket modules in poloidal direction (secondary_cycle>1)
   integer :: nblktmodpi = 7
-  !+ad_vars  nblktmodto /48/ : number of outboard blanket modules in toroidal direction (secondary_cycle>1)
+  !! nblktmodpi /7/ : number of inboard blanket modules in poloidal direction (secondary_cycle>1)
   integer :: nblktmodto = 48
-  !+ad_vars  nblktmodti /32/ : number of inboard blanket modules in toroidal direction (secondary_cycle>1)
+  !! nblktmodto /48/ : number of outboard blanket modules in toroidal direction (secondary_cycle>1)
   integer :: nblktmodti = 32
-  !+ad_vars  tfwmatmax /823.0/ : maximum temperature of first wall material (K) (secondary_cycle>1)
+  !! nblktmodti /32/ : number of inboard blanket modules in toroidal direction (secondary_cycle>1)
   real(kind(1.0D0)) :: tfwmatmax = 823.0D0
-  !+ad_vars  fw_th_conductivity /28.34/ : thermal conductivity of first wall material at
-  !+ad_varc        293 K (W/m/K) (Temperature dependence is as for unirradiated Eurofer)
+  !! tfwmatmax /823.0/ : maximum temperature of first wall material (K) (secondary_cycle>1)
   real(kind(1.0D0)) :: fw_th_conductivity = 28.34D0
+  !! fw_th_conductivity /28.34/ : thermal conductivity of first wall material at
+  !!       293 K (W/m/K) (Temperature dependence is as for unirradiated Eurofer)
 
 
-  !+ad_vars  fvoldw /1.74/ : area coverage factor for vacuum vessel volume
   real(kind(1.0D0)) :: fvoldw = 1.74D0
-  !+ad_vars  fvolsi /1.0/ : area coverage factor for inboard shield volume
+  !! fvoldw /1.74/ : area coverage factor for vacuum vessel volume
   real(kind(1.0D0)) :: fvolsi = 1.0D0
-  !+ad_vars  fvolso /0.64/ : area coverage factor for outboard shield volume
+  !! fvolsi /1.0/ : area coverage factor for inboard shield volume
   real(kind(1.0D0)) :: fvolso = 0.64D0
-  !+ad_vars  fwclfr /0.15/ : first wall coolant fraction
-  !+ad_varc                  (calculated if lpulse=1 or ipowerflow=1)
+  !! fvolso /0.64/ : area coverage factor for outboard shield volume
   real(kind(1.0D0)) :: fwclfr = 0.15D0
-  !+ad_vars  praddiv : radiation power incident on the divertor (MW)
+  !! fwclfr /0.15/ : first wall coolant fraction
+  !!                 (calculated if lpulse=1 or ipowerflow=1)
   real(kind(1.0D0)) :: praddiv = 0.0D0
-  !+ad_vars  pradfw : radiation power incident on the divertor (MW)
+  !! praddiv : radiation power incident on the divertor (MW)
   real(kind(1.0D0)) :: pradfw = 0.0D0
-  !+ad_vars  pradhcd : radiation power incident on the divertor (MW)
+  !! pradfw : radiation power incident on the divertor (MW)
   real(kind(1.0D0)) :: pradhcd = 0.0D0
-  !+ad_vars  pradloss : radiation power incident on the divertor (MW)
+  !! pradhcd : radiation power incident on the divertor (MW)
   real(kind(1.0D0)) :: pradloss = 0.0D0
-  !+ad_vars  ptfnuc : nuclear heating in the TF coil (MW)
+  !! pradloss : radiation power incident on the divertor (MW)
   real(kind(1.0D0)) :: ptfnuc = 0.0D0
-  !+ad_vars  ptfnucpm3 : nuclear heating in the TF coil (MW/m3) (blktmodel>0)
+  !! ptfnuc : nuclear heating in the TF coil (MW)
   real(kind(1.0D0)) :: ptfnucpm3 = 0.0D0
-  !+ad_vars  rdewex : cryostat radius (m)
+  !! ptfnucpm3 : nuclear heating in the TF coil (MW/m3) (blktmodel>0)
   real(kind(1.0D0)) :: rdewex = 0.0D0
-  !+ad_vars  zdewex : cryostat height (m)
+  !! rdewex : cryostat radius (m)
   real(kind(1.0D0)) :: zdewex = 0.0D0
-  !+ad_vars  rpf2dewar /0.5/ : radial distance between outer edge of largest
-  !+ad_varc                    ipfloc=3 PF coil (or stellarator modular coil)
-  !+ad_varc                    and cryostat (m)
+  !! zdewex : cryostat height (m)
   real(kind(1.0D0)) :: rpf2dewar = 0.5D0
-  !+ad_vars  vdewex : cryostat volume (m3)
+  !! rpf2dewar /0.5/ : radial distance between outer edge of largest
+  !!                   ipfloc=3 PF coil (or stellarator modular coil)
+  !!                   and cryostat (m)
   real(kind(1.0D0)) :: vdewex = 0.0D0
-  !+ad_vars  vdewin : vacuum vessel volume (m3)
+  !! vdewex : cryostat volume (m3)
   real(kind(1.0D0)) :: vdewin = 0.0D0
-  !+ad_vars  vfshld /0.25/ : coolant void fraction in shield
+  !! vdewin : vacuum vessel volume (m3)
   real(kind(1.0D0)) :: vfshld = 0.25D0
-  !+ad_vars  volblkt : volume of blanket (m3)
+  !! vfshld /0.25/ : coolant void fraction in shield
   real(kind(1.0D0)) :: volblkt = 0.0D0
-  !+ad_vars  volblkti : volume of inboard blanket (m3)
+  !! volblkt : volume of blanket (m3)
   real(kind(1.0D0)) :: volblkti = 0.0D0
-  !+ad_vars  volblkto : volume of outboard blanket (m3)
+  !! volblkti : volume of inboard blanket (m3)
   real(kind(1.0D0)) :: volblkto = 0.0D0
-  !+ad_vars  volshld : volume of shield (m3)
+  !! volblkto : volume of outboard blanket (m3)
   real(kind(1.0D0)) :: volshld = 0.0D0
-  !+ad_vars  whtshld : mass of shield (kg)
+  !! volshld : volume of shield (m3)
   real(kind(1.0D0)) :: whtshld = 0.0D0
-  !+ad_vars  wpenshld : mass of the penetration shield (kg)
+  !! whtshld : mass of shield (kg)
   real(kind(1.0D0)) :: wpenshld = 0.0D0
-  !+ad_vars  wtshldi : mass of inboard shield (kg)
+  !! wpenshld : mass of the penetration shield (kg)
   real(kind(1.0D0)) :: wtshldi = 0.0D0
-  !+ad_vars  wtshldo : mass of outboard shield (kg)
+  !! wtshldi : mass of inboard shield (kg)
   real(kind(1.0D0)) :: wtshldo = 0.0D0
+  !! wtshldo : mass of outboard shield (kg)
 
-  !+ad_vars  irefprop /1/ : obsolete
   integer :: irefprop = 1
+  !! irefprop /1/ : obsolete
 
   real(kind(1.0D0)) :: fblli = 0.0D0
-  !+ad_vars  fblli2o /0.08/ : lithium oxide fraction of blanket by volume
-  !+ad_varc                   (blktmodel=0)
   real(kind(1.0D0)) :: fblli2o = 0.08D0
-  !+ad_vars  fbllipb /0.68/ : lithium lead fraction of blanket by volume
-  !+ad_varc                   (blktmodel=0)
+  !! fblli2o /0.08/ : lithium oxide fraction of blanket by volume
+  !!                  (blktmodel=0)
   real(kind(1.0D0)) :: fbllipb = 0.68D0
-  !+ad_vars  fblvd /0.0/ : vanadium fraction of blanket by volume
-  !+ad_varc                (blktmodel=0)
+  !! fbllipb /0.68/ : lithium lead fraction of blanket by volume
+  !!                  (blktmodel=0)
   real(kind(1.0D0)) :: fblvd = 0.0D0
-  !+ad_vars  wtblli2o : mass of blanket - Li_2O part (kg)
+  !! fblvd /0.0/ : vanadium fraction of blanket by volume
+  !!               (blktmodel=0)
   real(kind(1.0D0)) :: wtblli2o = 0.0D0
-  !+ad_vars  wtbllipb : mass of blanket - Li-Pb part (kg)
+  !! wtblli2o : mass of blanket - Li_2O part (kg)
   real(kind(1.0D0)) :: wtbllipb = 0.0D0
-  !+ad_vars  whtblvd : mass of blanket - vanadium part (kg)
+  !! wtbllipb : mass of blanket - Li-Pb part (kg)
   real(kind(1.0D0)) :: whtblvd = 0.0D0
-  !+ad_vars  whtblli : mass of blanket - lithium part (kg)
+  !! whtblvd : mass of blanket - vanadium part (kg)
   real(kind(1.0D0)) :: whtblli = 0.0D0
-  !+ad_vars  vfblkt /0.25/ : coolant void fraction in blanket (blktmodel=0),
-  !+ad_varc                  (calculated if blktmodel > 0)
+  !! whtblli : mass of blanket - lithium part (kg)
   real(kind(1.0D0)) :: vfblkt = 0.25D0
-  !+ad_vars  blktmodel /0/ : switch for blanket/tritium breeding model
-  !+ad_varc                  (but see <CODE>iblanket</CODE>):<UL>
-  !+ad_varc             <LI> = 0 original simple model;
-  !+ad_varc             <LI> = 1 KIT model based on a helium-cooled pebble-bed
-  !+ad_varc                      blanket (HCPB) reference design</UL>
+  !! vfblkt /0.25/ : coolant void fraction in blanket (blktmodel=0),
+  !!                 (calculated if blktmodel > 0)
   integer :: blktmodel = 0
-  !+ad_vars  declblkt /0.075/ : neutron power deposition decay length of blanket structural material (m)
-  !+ad_varc  (Stellarators only)
+  !! blktmodel /0/ : switch for blanket/tritium breeding model
+  !!                 (but see <CODE>iblanket</CODE>):<UL>
+  !!            <LI> = 0 original simple model;
+  !!            <LI> = 1 KIT model based on a helium-cooled pebble-bed
+  !!                     blanket (HCPB) reference design</UL>
   real(kind(1.0D0)) :: declblkt = 0.075D0
-  !+ad_vars  declfw /0.075/ : neutron power deposition decay length of first wall structural material (m)
-  !+ad_varc (Stellarators only)
+  !! declblkt /0.075/ : neutron power deposition decay length of blanket structural material (m)
+  !! (Stellarators only)
   real(kind(1.0D0)) :: declfw = 0.075D0
-  !+ad_vars  declshld /0.075/ : neutron power deposition decay length of shield structural material (m)
-  !+ad_varc  (Stellarators only)
+  !! declfw /0.075/ : neutron power deposition decay length of first wall structural material (m)
+  !!(Stellarators only)
   real(kind(1.0D0)) :: declshld = 0.075D0
-  !+ad_vars  blkttype /3/ : Switch for blanket type:<UL>
-  !+ad_varc            <LI> = 1 WCLL; efficiency taken from WP13-DAS08-T02, EFDA_D_2M97B7
-  !+ad_varc            <LI> = 2 HCLL; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
-  !+ad_varc            <LI> = 3 HCPB; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX</UL>
+  !! declshld /0.075/ : neutron power deposition decay length of shield structural material (m)
+  !! (Stellarators only)
   integer :: blkttype = 3
+  !! blkttype /3/ : Switch for blanket type:<UL>
+  !!           <LI> = 1 WCLL; efficiency taken from WP13-DAS08-T02, EFDA_D_2M97B7
+  !!           <LI> = 2 HCLL; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
+  !!           <LI> = 3 HCPB; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX</UL>
 
-  !+ad_vars  etaiso /0.85/ : isentropic efficiency of FW and blanket coolant pumps
   real(kind(1.0D0)) :: etaiso = 0.85D0
-  !+ad_vars  etahtp /0.95/ : electrical efficiency of primary coolant pumps
+  !! etaiso /0.85/ : isentropic efficiency of FW and blanket coolant pumps
   real(kind(1.0D0)) :: etahtp = 0.95D0
+  !! etahtp /0.95/ : electrical efficiency of primary coolant pumps
 
 
 end module fwbs_variables
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module primary_pumping_variables
 
-  !+ad_name  primary_pumping_variables
-  !+ad_summ  Module containing global variables relating to the priamry_pumping
-  !+ad_summ  primary_pumping=3 option  (Mechanical pumping power is calculated using specified pressure drop)
-  !+ad_type  Module
-  !+ad_auth  M Kovari, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  primary pumping information
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_stat  Okay
-  !+ad_docs
-  !
+  !! Module containing global variables relating to the priamry_pumping
+  !! primary_pumping=3 option  (Mechanical pumping power is calculated using specified pressure drop)
+  !! This module contains global variables relating to the
+  !! primary pumping information
+  !!  !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   implicit none
@@ -1873,53 +1808,31 @@ module primary_pumping_variables
   public
 
   ! Issue #503
-  !+ad_vars  gamma_he /1.667/ FIX : ratio of specific heats for helium (primary_pumping=3)
-  real(kind(1.0D0)) :: gamma_he = 1.667D0
-  !+ad_vars  cp_he /5195/ FIX: specific heat capacity at constant pressure: helium (primary_pumping=3) [J/(kg.K)]
-  real(kind(1.0D0)) :: cp_he = 5195.0D0
-  !+ad_vars  t_in_bb /573.13/ FIX: temperature in FW and blanket coolant at blanket entrance (primary_pumping=3) [K]
-  real(kind(1.0D0)) :: t_in_bb =573.13D0
-  !+ad_vars  t_out_bb /773.13/ FIX: temperature in FW and blanket coolant at blanket exit (primary_pumping=3) [K]
-  real(kind(1.0D0)) :: t_out_bb =773.13D0
-  !+ad_vars  p_he /8.0e6/ FIX: pressure in FW and blanket coolant at pump exit (primary_pumping=3) [Pa]
-  real(kind(1.0D0)) :: p_he =8.0D6
-  !+ad_vars  dp_he /5.5e5/ FIX: pressure drop in FW and blanket coolant including heat exchanger and pipes (primary_pumping=3) [Pa]
-  real(kind(1.0D0)) :: dp_he =5.5D5
-  !+ad_vars  htpmw_fw_blkt : mechanical pumping power for FW and blanket including heat exchanger and pipes (primary_pumping=3) [MW]
+  real(kind(1.0D0)), parameter :: gamma_he = 1.667D0
+  !! gamma_he /1.667/ FIX : ratio of specific heats for helium (primary_pumping=3)
+  real(kind(1.0D0)), parameter :: cp_he = 5195.0D0
+  !! cp_he /5195/ FIX: specific heat capacity at constant pressure: helium (primary_pumping=3) [J/(kg.K)]
+  real(kind(1.0D0)), parameter :: t_in_bb =573.13D0
+  !! t_in_bb /573.13/ FIX: temperature in FW and blanket coolant at blanket entrance (primary_pumping=3) [K]
+  real(kind(1.0D0)), parameter :: t_out_bb =773.13D0
+  !! t_out_bb /773.13/ FIX: temperature in FW and blanket coolant at blanket exit (primary_pumping=3) [K]
+  real(kind(1.0D0)), parameter :: p_he =8.0D6
+  !! p_he /8.0e6/ FIX: pressure in FW and blanket coolant at pump exit (primary_pumping=3) [Pa]
+  real(kind(1.0D0)), parameter :: dp_he =5.5D5
+  !! dp_he /5.5e5/ FIX: pressure drop in FW and blanket coolant including heat exchanger and pipes (primary_pumping=3) [Pa]
   real(kind(1.0D0)) :: htpmw_fw_blkt = 0.0d0
+  !! htpmw_fw_blkt : mechanical pumping power for FW and blanket including heat exchanger and pipes (primary_pumping=3) [MW]
 
 end module primary_pumping_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module pfcoil_variables
 
-  !+ad_name  pfcoil_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  poloidal field coil systems
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  poloidal field coil systems of a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  18/10/12 PJK Initial version of module
-  !+ad_hist  15/04/13 PJK Added sigpfcf
-  !+ad_hist  16/04/13 PJK Added sigpfcalw
-  !+ad_hist  17/04/13 PJK Removed cohbof; changed fcohbof initial value
-  !+ad_hist  17/09/14 PJK Changed default values
-  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
-  !+ad_hist  22/09/14 PJK Attempted to clarify zref description
-  !+ad_hist  16/10/14 PJK Added pfcaseth,isumatoh,fcupfsu,awpoh
-  !+ad_hist  20/10/14 PJK Added alstroh
-  !+ad_hist  06/11/14 PJK Added areaoh,jstrandoh_bop,jstrandoh_eof,jscoh_bop,jscoh_eof
-  !+ad_hist  11/11/14 PJK Changed default values for fcuohsu, vfohc
-  !+ad_hist  11/11/14 PJK Added tmargoh
-  !+ad_hist  22/04/15 JM  Added etapsu, pfwp and pfsec
-  !+ad_hist  24/02/17 JM  Added oh_steel_frac
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! poloidal field coil systems
+  !! This module contains global variables relating to the
+  !! poloidal field coil systems of a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1927,241 +1840,243 @@ module pfcoil_variables
 
   public
 
-  !+ad_vars  ngrpmx /8/ FIX : maximum number of groups of PF coils
   integer, parameter :: ngrpmx = 8
-  !+ad_vars  nclsmx /2/ FIX : maximum number of PF coils in a given group
+  !! ngrpmx /8/ FIX : maximum number of groups of PF coils
   integer, parameter :: nclsmx = 2
-  !+ad_vars  nptsmx /32/ FIX : maximum number of points across the midplane of the
-  !+ad_varc           plasma at which the field from the PF coils is fixed
+  !! nclsmx /2/ FIX : maximum number of PF coils in a given group
   integer, parameter :: nptsmx = 32
-  !+ad_vars  nfixmx /64/ FIX : maximum number of fixed current PF coils
+  !! nptsmx /32/ FIX : maximum number of points across the midplane of the
+  !!          plasma at which the field from the PF coils is fixed
   integer, parameter :: nfixmx = 64
+  !! nfixmx /64/ FIX : maximum number of fixed current PF coils
 
   integer, parameter :: ngc = ngrpmx*nclsmx
   integer, parameter :: ngc2 = ngc+2
 
-  !+ad_vars  alfapf /5.0e-10/ : smoothing parameter used in PF coil
-  !+ad_varc                     current calculation at the beginning of pulse (BoP)
   real(kind(1.0D0)) :: alfapf = 5.0D-10
+  !! alfapf /5.0e-10/ : smoothing parameter used in PF coil
+  !!                    current calculation at the beginning of pulse (BoP)
 
-  !+ad_vars  alstroh /4.0D8/ : allowable hoop stress in Central Solenoid structural material (Pa)
   real(kind(1.0D0)) :: alstroh = 4.0D8
+  !! alstroh /4.0D8/ : allowable hoop stress in Central Solenoid structural material (Pa)
 
-  !+ad_vars  i_cs_stress /0/ : Switch for CS stress calculation:<UL>
-  !+ad_varc                   <LI> = 0 Hoop stress only;
-  !+ad_varc                   <LI> = 1 Hoop + Axial stress</UL>
   integer :: i_cs_stress = 0
+  !! i_cs_stress /0/ : Switch for CS stress calculation:<UL>
+  !!                  <LI> = 0 Hoop stress only;
+  !!                  <LI> = 1 Hoop + Axial stress</UL>
 
-  !+ad_vars  areaoh : central solenoid cross-sectional area (m2)
   real(kind(1.0D0)) :: areaoh = 0.0D0
-  !+ad_vars  awpoh : central solenoid conductor+void area (m2)
+  !! areaoh : central solenoid cross-sectional area (m2)
   real(kind(1.0D0)) :: awpoh = 0.0D0
-  !+ad_vars  bmaxoh : maximum field in central solenoid at end of flat-top (EoF) (T)
+  !! awpoh : central solenoid conductor+void area (m2)
   real(kind(1.0D0)) :: bmaxoh = 0.0D0
-  !+ad_vars  bmaxoh0 : maximum field in central solenoid at beginning of pulse (T)
+  !! bmaxoh : maximum field in central solenoid at end of flat-top (EoF) (T)
   real(kind(1.0D0)) :: bmaxoh0 = 0.0D0
-  !+ad_vars  bpf(ngc2) : peak field at coil i (T)
+  !! bmaxoh0 : maximum field in central solenoid at beginning of pulse (T)
   real(kind(1.0D0)), dimension(ngc2) :: bpf = 0.0D0
-  !+ad_vars  cohbop : central solenoid overall current density at beginning of pulse (A/m2)
+  !! bpf(ngc2) : peak field at coil i (T)
   real(kind(1.0D0)) :: cohbop = 0.0D0
-  !+ad_vars  coheof /1.85e7/ : central solenoid overall current density at end of flat-top (A/m2)
-  !+ad_varc                    (iteration variable 37)
+  !! cohbop : central solenoid overall current density at beginning of pulse (A/m2)
   real(kind(1.0D0)) :: coheof = 1.85D7
-  !+ad_vars  cpt(ngc2,6) : current per turn in coil i at time j (A)
+  !! coheof /1.85e7/ : central solenoid overall current density at end of flat-top (A/m2)
+  !!                   (iteration variable 37)
   real(kind(1.0D0)), dimension(ngc2,6) :: cpt = 0.0D0
-  !+ad_vars  cptdin(ngc2) /4.0e4/: peak current per turn input for PF coil i (A)
+  !! cpt(ngc2,6) : current per turn in coil i at time j (A)
   real(kind(1.0D0)), dimension(ngc2) :: cptdin = 4.0D4
-  !+ad_vars  curpfb(ngc2) : work array
+  !! cptdin(ngc2) /4.0e4/: peak current per turn input for PF coil i (A)
   real(kind(1.0D0)), dimension(ngc2) :: curpfb = 0.0D0
-  !+ad_vars  curpff(ngc2) : work array
+  !! curpfb(ngc2) : work array
   real(kind(1.0D0)), dimension(ngc2) :: curpff = 0.0D0
-  !+ad_vars  curpfs(ngc2) : work array
+  !! curpff(ngc2) : work array
   real(kind(1.0D0)), dimension(ngc2) :: curpfs = 0.0D0
-  !+ad_vars  etapsu /0.9/ : Efficiency of ohmic heating
+  !! curpfs(ngc2) : work array
   real(kind(1.0D0)) :: etapsu = 0.9D0
-  !+ad_vars  fcohbof : ratio of central solenoid overall current density at
-  !+ad_varc            beginning of flat-top / end of flat-top
+  !! etapsu /0.9/ : Efficiency of transfer of PF stored energy into or out of storage.
   real(kind(1.0D0)) :: fcohbof = 0.0D0
-  !+ad_vars  fcohbop /0.9/ : ratio of central solenoid overall current density at
-  !+ad_varc                  beginning of pulse / end of flat-top
-  !+ad_varc                  (iteration variable 41)
+  !! fcohbof : ratio of central solenoid overall current density at
+  !!           beginning of flat-top / end of flat-top
   real(kind(1.0D0)) :: fcohbop = 0.9D0
-  !+ad_vars  fcuohsu /0.7/ : copper fraction of strand in central solenoid
+  !! fcohbop /0.9/ : ratio of central solenoid overall current density at
+  !!                 beginning of pulse / end of flat-top
+  !!                 (iteration variable 41)
   real(kind(1.0D0)) :: fcuohsu = 0.7D0
-  !+ad_vars  fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
+  !! fcuohsu /0.7/ : copper fraction of strand in central solenoid
   real(kind(1.0D0)) :: fcupfsu = 0.69D0
-  !+ad_vars  ipfloc(ngc) /2,2,3/ : switch for locating scheme of PF coil group i:<UL>
-  !+ad_varc                   <LI> = 1 PF coil on top of central solenoid;
-  !+ad_varc                   <LI> = 2 PF coil on top of TF coil;
-  !+ad_varc                   <LI> = 3 PF coil outside of TF coil</UL>
+  !! fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
+  real(kind(1.0D0)) :: fvssu = 1.0
+  !! fvssu   /1.0/  : F-value for constraint equation 51 
   integer, dimension(ngc) :: ipfloc = (/2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0/)
-  !+ad_vars  ipfres /0/ : switch for PF coil type:<UL>
-  !+ad_varc          <LI> = 0 superconducting PF coils;
-  !+ad_varc          <LI> = 1 resistive PF coils</UL>
+  !! ipfloc(ngc) /2,2,3/ : switch for locating scheme of PF coil group i:<UL>
+  !!                  <LI> = 1 PF coil on top of central solenoid;
+  !!                  <LI> = 2 PF coil on top of TF coil;
+  !!                  <LI> = 3 PF coil outside of TF coil</UL>
   integer :: ipfres = 0
-  !+ad_vars  itr_sum : total sum of I x turns x radius for all PF coils and CS (Am)
+  !! ipfres /0/ : switch for PF coil type:<UL>
+  !!         <LI> = 0 superconducting PF coils;
+  !!         <LI> = 1 resistive PF coils</UL>
   real(kind(1.0D0)) :: itr_sum = 0.0D0
-  !+ad_vars  isumatoh /1/ : switch for superconductor material in central solenoid:<UL>
-  !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
-  !+ad_varc                     ITER parameters;
-  !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor (range of
-  !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
-  !+ad_varc            <LI> = 3 NbTi;
-  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters
-  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation
-  !+ad_varc            <LI> = 6 REBCO HTS parameterisation</UL>
+  !! itr_sum : total sum of I x turns x radius for all PF coils and CS (Am)
   integer :: isumatoh = 1
-  !+ad_vars  isumatpf /1/ : switch for superconductor material in PF coils:<UL>
-  !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
-  !+ad_varc                     ITER parameters;
-  !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor (range of
-  !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
-  !+ad_varc            <LI> = 3 NbTi;
-  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters
-  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation</UL>
+  !! isumatoh /1/ : switch for superconductor material in central solenoid:<UL>
+  !!           <LI> = 1 ITER Nb3Sn critical surface model with standard
+  !!                    ITER parameters;
+  !!           <LI> = 2 Bi-2212 high temperature superconductor (range of
+  !!                    validity T < 20K, adjusted field b < 104 T, B > 6 T);
+  !!           <LI> = 3 NbTi;
+  !!           <LI> = 4 ITER Nb3Sn model with user-specified parameters
+  !!           <LI> = 5 WST Nb3Sn parameterisation
+  !!           <LI> = 6 REBCO HTS parameterisation</UL>
 
+  !! isumatpf /1/ : switch for superconductor material in PF coils:<UL>
+  !!           <LI> = 1 ITER Nb3Sn critical surface model with standard
+  !!                    ITER parameters;
+  !!           <LI> = 2 Bi-2212 high temperature superconductor (range of
+  !!                    validity T < 20K, adjusted field b < 104 T, B > 6 T);
+  !!           <LI> = 3 NbTi;
+  !!           <LI> = 4 ITER Nb3Sn model with user-specified parameters
+  !!           <LI> = 5 WST Nb3Sn parameterisation</UL>
   integer :: isumatpf = 1
-  !+ad_vars  jscoh_bop : central solenoid superconductor critical current density (A/m2)
-  !+ad_varc                  at beginning-of-pulse
   real(kind(1.0D0)) :: jscoh_bop = 0.0D0
-  !+ad_vars  jscoh_eof : central solenoid superconductor critical current density (A/m2)
-  !+ad_varc                  at end-of-flattop
+  !! jscoh_bop : central solenoid superconductor critical current density (A/m2)
+  !!                 at beginning-of-pulse
   real(kind(1.0D0)) :: jscoh_eof = 0.0D0
-  !+ad_vars  jstrandoh_bop : central solenoid strand critical current density (A/m2)
-  !+ad_varc                  at beginning-of-pulse
+  !! jscoh_eof : central solenoid superconductor critical current density (A/m2)
+  !!                 at end-of-flattop
   real(kind(1.0D0)) :: jstrandoh_bop = 0.0D0
-  !+ad_vars  jstrandoh_eof : central solenoid strand critical current density (A/m2)
-  !+ad_varc                  at end-of-flattop
+  !! jstrandoh_bop : central solenoid strand critical current density (A/m2)
+  !!                 at beginning-of-pulse
   real(kind(1.0D0)) :: jstrandoh_eof = 0.0D0
-  !+ad_vars  ncirt : number of PF circuits (including central solenoid and plasma)
+  !! jstrandoh_eof : central solenoid strand critical current density (A/m2)
+  !!                 at end-of-flattop
   integer :: ncirt = 0
-  !+ad_vars  ncls(ngrpmx+2) /1,1,2/ : number of PF coils in group j
+  !! ncirt : number of PF circuits (including central solenoid and plasma)
   integer, dimension(ngrpmx+2) :: ncls = (/1,1,2,0,0,0,0,0,0,0/)
-  !+ad_vars  nfxfh /7/ : number of filaments the top and bottom of the central solenoid
-  !+ad_varc              should be broken into during scaling (5 - 10 is good)
+  !! ncls(ngrpmx+2) /1,1,2/ : number of PF coils in group j
   integer :: nfxfh = 7
-  !+ad_vars  ngrp /3/ : number of groups of PF coils.
-  !+ad_varc             Symmetric coil pairs should all be in the same group
+  !! nfxfh /7/ : number of filaments the top and bottom of the central solenoid
+  !!             should be broken into during scaling (5 - 10 is good)
   integer :: ngrp = 3
-  !+ad_vars  nohc : number of PF coils (excluding the central solenoid) + 1
+  !! ngrp /3/ : number of groups of PF coils.
+  !!            Symmetric coil pairs should all be in the same group
   integer :: nohc = 0
-  !+ad_vars  ohhghf /0.71/ : central solenoid height / TF coil internal height
+  !! nohc : number of PF coils (excluding the central solenoid) + 1
   real(kind(1.0D0)) :: ohhghf = 0.71D0
-  !+ad_vars  oh_steel_frac /0.5/ : central solenoid steel fraction (iteration variable 122)
+  !! ohhghf /0.71/ : central solenoid height / TF coil internal height
   real(kind(1.0D0)) :: oh_steel_frac = 0.5D0
-  !+ad_vars  pfcaseth(ngc2) : steel case thickness for PF coil i (m)
+  !! oh_steel_frac /0.5/ : central solenoid steel fraction (iteration variable 122)
   real(kind(1.0D0)), dimension(ngc2) :: pfcaseth = 0.0D0
-  !+ad_vars  pfclres /2.5e-8/ : PF coil resistivity (if ipfres=1) (Ohm-m)
+  !! pfcaseth(ngc2) : steel case thickness for PF coil i (m)
   real(kind(1.0D0)) :: pfclres = 2.5D-8
-  !+ad_vars  pfmmax : mass of heaviest PF coil (tonnes)
+  !! pfclres /2.5e-8/ : PF coil resistivity (if ipfres=1) (Ohm-m)
   real(kind(1.0D0)) :: pfmmax = 0.0D0
-  !+ad_vars  pfrmax : radius of largest PF coil (m)
+  !! pfmmax : mass of heaviest PF coil (tonnes)
   real(kind(1.0D0)) :: pfrmax = 0.0D0
-  !+ad_vars  pfsec : PF Coil waste heat (MW)
-  real(kind(1.0D0)) :: pfsec = 0.0D0
-  !+ad_vars  pfwp : PF Coil wall-plug power requirements (MW)
-  real(kind(1.0D0)) :: pfwp = 0.0D0
-  !+ad_vars  powohres : central solenoid resistive power during flattop (W)
+  !! pfrmax : radius of largest PF coil (m)
+  !  real(kind(1.0D0)) :: pfsec = 0.0D0
+  ! !! pfsec : PF Coil waste heat (MW)
+  real(kind(1.0D0)) :: pfwpmw = 0.0D0
+  !! pfwpmw : Total mean wall plug power dissipated in PFC and CS power supplies.  Issue #713 (MW)
   real(kind(1.0D0)) :: powohres = 0.0D0
-  !+ad_vars  powpfres : total PF coil resistive losses during flattop (W)
+  !! powohres : central solenoid resistive power during flattop (W)
   real(kind(1.0D0)) :: powpfres = 0.0D0
-  !+ad_vars  ra(ngc2) : inner radius of coil i (m)
+  !! powpfres : total PF coil resistive losses during flattop (W)
   real(kind(1.0D0)), dimension(ngc2) :: ra = 0.0D0
-  !+ad_vars  rb(ngc2) : outer radius of coil i (m)
+  !! ra(ngc2) : inner radius of coil i (m)
   real(kind(1.0D0)), dimension(ngc2) :: rb = 0.0D0
-  !+ad_vars  ric(ngc2) : peak current in coil i (MA-turns)
+  !! rb(ngc2) : outer radius of coil i (m)
   real(kind(1.0D0)), dimension(ngc2) :: ric = 0.0D0
-  !+ad_vars  rjconpf(ngc2) /3.0e7/ : average winding pack current density of PF coil i (A/m2)
-  !+ad_varc                          at time of peak current in that coil
-  !+ad_varc                          (calculated for ipfloc=1 coils)
+  !! ric(ngc2) : peak current in coil i (MA-turns)
   real(kind(1.0D0)), dimension(ngc2) :: rjconpf = 3.0D7
-  !+ad_vars  rjohc : allowable central solenoid current density at end of flat-top (A/m2)
+  !! rjconpf(ngc2) /3.0e7/ : average winding pack current density of PF coil i (A/m2)
+  !!                         at time of peak current in that coil
+  !!                         (calculated for ipfloc=1 coils)
   real(kind(1.0D0)) :: rjohc = 0.0D0
-  !+ad_vars  rjohc0 : allowable central solenoid current density at beginning of pulse (A/m2)
+  !! rjohc : allowable central solenoid current density at end of flat-top (A/m2)
   real(kind(1.0D0)) :: rjohc0 = 0.0D0
-  !+ad_vars  rjpfalw(ngc2) : allowable winding pack current density of PF coil i (A/m2)
+  !! rjohc0 : allowable central solenoid current density at beginning of pulse (A/m2)
   real(kind(1.0D0)), dimension(ngc2) :: rjpfalw = 0.0D0
-  !+ad_vars  rohc : radius to the centre of the central solenoid (m)
+  !! rjpfalw(ngc2) : allowable winding pack current density of PF coil i (A/m2)
   real(kind(1.0D0)) :: rohc = 0.0D0
-  !+ad_vars  routr /1.5/ : radial distance (m) from outboard TF coil leg to centre of
-  !+ad_varc                ipfloc=3 PF coils
+  !! rohc : radius to the centre of the central solenoid (m)
   real(kind(1.0D0)) :: routr = 1.5D0
-  !+ad_vars  rpf(ngc2) : radius of PF coil i (m)
+  !! routr /1.5/ : radial distance (m) from outboard TF coil leg to centre of
+  !!               ipfloc=3 PF coils
   real(kind(1.0D0)), dimension(ngc2) :: rpf = 0.0D0
-  !+ad_vars  rpf1 /0.0/ : offset (m) of radial position of ipfloc=1 PF coils
-  !+ad_varc               from being directly above the central solenoid
+  !! rpf(ngc2) : radius of PF coil i (m)
   real(kind(1.0D0)) :: rpf1 = 0.0D0
-  !+ad_vars  rpf2 /-1.63/ : offset (m) of radial position of ipfloc=2 PF coils
-  !+ad_varc                 from being at rmajor (offset = rpf2*triang*rminor)
+  !! rpf1 /0.0/ : offset (m) of radial position of ipfloc=1 PF coils
+  !!              from being directly above the central solenoid
   real(kind(1.0D0)) :: rpf2 = -1.63D0
-  !+ad_vars  s_tresca_oh : Tresca stress coils/central solenoid [MPa]
+  !! rpf2 /-1.63/ : offset (m) of radial position of ipfloc=2 PF coils
+  !!                from being at rmajor (offset = rpf2*triang*rminor)
   real(kind(1.0D0)) :: s_tresca_oh = 0.0D0
-  !+ad_vars  sigpfcalw /500.0/ : maximum permissible tensile stress (MPa) in
-  !+ad_varc                      steel coil cases for superconducting PF coils
-  !+ad_varc                      (ipfres=0)
+  !! s_tresca_oh : Tresca stress coils/central solenoid [MPa]
   real(kind(1.0D0)) :: sigpfcalw = 500.0D0
-  !+ad_vars  sigpfcf /0.666/ : fraction of JxB hoop force supported by steel case
-  !+ad_varc                    for superconducting PF coils (ipfres=0)
+  !! sigpfcalw /500.0/ : maximum permissible tensile stress (MPa) in
+  !!                     steel coil cases for superconducting PF coils
+  !!                     (ipfres=0)
   real(kind(1.0D0)) :: sigpfcf = 0.666D0
-  !+ad_vars  sxlg(ngc2,ngc2) : mutual inductance matrix (H)
+  !! sigpfcf /0.666/ : fraction of JxB hoop force supported by steel case
+  !!                   for superconducting PF coils (ipfres=0)
   real(kind(1.0D0)), dimension(ngc2,ngc2) :: sxlg = 0.0D0
-  !+ad_vars  tmargoh :  Central solenoid temperature margin (K)
+  !! sxlg(ngc2,ngc2) : mutual inductance matrix (H)
   real(kind(1.0D0)) :: tmargoh = 0.0D0
-  !+ad_vars  turns(ngc2) : number of turns in PF coil i
+  !! tmargoh :  Central solenoid temperature margin (K)
   real(kind(1.0D0)), dimension(ngc2) :: turns = 0.0D0
-  !+ad_vars  vf(ngc2) /0.3/ : winding pack void fraction of PF coil i for coolant
+  !! turns(ngc2) : number of turns in PF coil i
   real(kind(1.0D0)), dimension(ngc2) :: vf = 0.3D0
-  !+ad_vars  vfohc /0.3/ : void fraction of central solenoid conductor for coolant
+  !! vf(ngc2) /0.3/ : winding pack void fraction of PF coil i for coolant
   real(kind(1.0D0)) :: vfohc = 0.3D0
-  !+ad_vars  vsbn : total flux swing available for burn (Wb)
+  !! vfohc /0.3/ : void fraction of central solenoid conductor for coolant
   real(kind(1.0D0)) :: vsbn = 0.0D0
-  !+ad_vars  vsefbn : flux swing from PF coils for burn (Wb)
+  !! vsbn : total flux swing available for burn (Wb)
   real(kind(1.0D0)) :: vsefbn = 0.0D0
-  !+ad_vars  vsefsu : flux swing from PF coils for startup (Wb)
+  !! vsefbn : flux swing from PF coils for burn (Wb)
   real(kind(1.0D0)) :: vsefsu = 0.0D0
-  !+ad_vars  vseft : total flux swing from PF coils (Wb)
+  !! vsefsu : flux swing from PF coils for startup (Wb)
   real(kind(1.0D0)) :: vseft = 0.0D0
-  !+ad_vars  vsoh : total flux swing from the central solenoid (Wb)
+  !! vseft : total flux swing from PF coils (Wb)
   real(kind(1.0D0)) :: vsoh = 0.0D0
-  !+ad_vars  vsohbn : central solenoid flux swing for burn (Wb)
+  !! vsoh : total flux swing from the central solenoid (Wb)
   real(kind(1.0D0)) :: vsohbn = 0.0D0
-  !+ad_vars  vsohsu : central solenoid flux swing for startup (Wb)
+  !! vsohbn : central solenoid flux swing for burn (Wb)
   real(kind(1.0D0)) :: vsohsu = 0.0D0
-  !+ad_vars  vssu : total flux swing for startup (Wb)
+  !! vsohsu : central solenoid flux swing for startup (Wb)
   real(kind(1.0D0)) :: vssu = 0.0D0
-  !+ad_vars  vstot : total flux swing for pulse (Wb)
+  !! vssu : total flux swing for startup (eqn 51 to enforce vssu=vsres+vsind) (Wb)
   real(kind(1.0D0)) :: vstot = 0.0D0
-  !+ad_vars  waves(ngc2, 6) : used in current waveform of PF coils/central solenoid
+  !! vstot : total flux swing for pulse (Wb)
   real(kind(1.0D0)), dimension(ngc2,6) :: waves = 0.0D0
-  !+ad_vars  whtpf : total mass of the PF coil conductor (kg)
+  !! waves(ngc2, 6) : used in current waveform of PF coils/central solenoid
   real(kind(1.0D0)) :: whtpf = 0.0D0
-  !+ad_vars  whtpfs : total mass of the PF coil structure (kg)
+  !! whtpf : total mass of the PF coil conductor (kg)
   real(kind(1.0D0)) :: whtpfs = 0.0D0
-  !+ad_vars  wtc(ngc2) : conductor mass for PF coil i (kg)
+  !! whtpfs : total mass of the PF coil structure (kg)
   real(kind(1.0D0)), dimension(ngc2) :: wtc = 0.0D0
-  !+ad_vars  wts(ngc2) : structure mass for PF coil i (kg)
+  !! wtc(ngc2) : conductor mass for PF coil i (kg)
   real(kind(1.0D0)), dimension(ngc2) :: wts = 0.0D0
-  !+ad_vars  zh(ngc2) : upper point of PF coil i (m)
+  !! wts(ngc2) : structure mass for PF coil i (kg)
   real(kind(1.0D0)), dimension(ngc2) :: zh = 0.0D0
-  !+ad_vars  zl(ngc2) : lower point of PF coil i (m)
+  !! zh(ngc2) : upper point of PF coil i (m)
   real(kind(1.0D0)), dimension(ngc2) :: zl = 0.0D0
-  !+ad_vars  zpf(ngc2) : z (height) location of PF coil i (m)
+  !! zl(ngc2) : lower point of PF coil i (m)
   real(kind(1.0D0)), dimension(ngc2) :: zpf = 0.0D0
-  !+ad_vars  zref(ngrpmx) /../ : PF coil vertical positioning adjuster:<UL>
-  !+ad_varc        <LI> - for groups j with ipfloc(j) = 1; zref(j) is ignored
-  !+ad_varc        <LI> - for groups j with ipfloc(j) = 2 AND itart=1 (only);
-  !+ad_varc               zref(j) is distance of centre of PF coil from inside
-  !+ad_varc               edge of TF coil (remember that PF coils for STs lie
-  !+ad_varc               within the TF coil)
-  !+ad_varc        <LI> - for groups j with ipfloc(j) = 3; zref(j) = ratio of
-  !+ad_varc               height of coil group j to plasma minor radius</UL>
+  !! zpf(ngc2) : z (height) location of PF coil i (m)
   real(kind(1.0D0)), dimension(ngrpmx) :: zref = (/3.6D0, 1.2D0, 2.5D0, &
+  !! zref(ngrpmx) /../ : PF coil vertical positioning adjuster:<UL>
+  !!       <LI> - for groups j with ipfloc(j) = 1; zref(j) is ignored
+  !!       <LI> - for groups j with ipfloc(j) = 2 AND itart=1 (only);
+  !!              zref(j) is distance of centre of PF coil from inside
+  !!              edge of TF coil (remember that PF coils for STs lie
+  !!              within the TF coil)
+  !!       <LI> - for groups j with ipfloc(j) = 3; zref(j) = ratio of
+  !!              height of coil group j to plasma minor radius</UL>
        1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
 
-  !+ad_vars  bmaxcs_lim : Central solenoid max field limit [T]
   real(kind(1.0D0)) :: bmaxcs_lim = 13.0
-  !+ad_vars  fbmaxcs : F-value for CS mmax field (cons. 79, itvar 149)
+  !! bmaxcs_lim : Central solenoid max field limit [T]
   real(kind(1.0D0)) :: fbmaxcs = 13.0
+  !! fbmaxcs : F-value for CS mmax field (cons. 79, itvar 149)
 
 
 end module pfcoil_variables
@@ -2170,49 +2085,12 @@ end module pfcoil_variables
 
 module tfcoil_variables
 
-  !+ad_name  tfcoil_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  toroidal field coil systems
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  toroidal field coil systems of a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  18/10/12 PJK Initial version of module
-  !+ad_hist  30/01/13 PJK Modified vftf comments
-  !+ad_hist  08/04/13 PJK Modified cpttf, tfno comments
-  !+ad_hist  15/04/13 PJK Modified tfckw comments
-  !+ad_hist  16/04/13 PJK Redefined isumattf; removed jcrit_model;
-  !+ad_hisc               changed dcond dimensions
-  !+ad_hist  19/06/13 PJK Removed rjtfsual
-  !+ad_hist  08/10/13 PJK Reassigned isumattf=2; added fhts
-  !+ad_hist  17/10/13 PJK Modified cdtfleg comment
-  !+ad_hist  06/11/13 PJK Modified various comments; removed obsolete switch magnt
-  !+ad_hist  01/05/14 PJK Changed TF coil stress model limits to recent ITER values;
-  !+ad_hisc               added stress_model etc.; corrected arc array lengths
-  !+ad_hist  01/05/14 PJK Lowered ripmax default value from 5.0 to 1.0
-  !+ad_hist  06/05/14 PJK Removed wpvf
-  !+ad_hist  07/05/14 PJK removed rnltf;
-  !+ad_hisc               replaced itfmod and stress_model with tfc_model
-  !+ad_hist  08/05/14 PJK Changed ripmax description
-  !+ad_hist  12/05/14 PJK Added insstrain
-  !+ad_hist  24/06/14 PJK Removed wtbc
-  !+ad_hist  30/07/14 PJK Renamed borev to tfborev
-  !+ad_hist  31/07/14 PJK Added acasetfo, dcondins, whtconin, whtgw, whtrp;
-  !+ad_hisc               removed aspcstf
-  !+ad_hist  19/08/14 PJK Removed casfact
-  !+ad_hist  16/09/14 PJK Added tfcryoarea
-  !+ad_hist  16/09/14 PJK Modified array sizes in TF coil stress calculations;
-  !+ad_hisc               changed tfc_model switch values
-  !+ad_hist  11/06/15 MDK Mods to TF coil defaults
-  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
-  !+ad_hist  26/11/15 RK  Added variables for quench time calculation: taucq, sigvvall
-  !+ad_hist  22/06/18 SIM Made cdtfleg an output instead of an input
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
+  !! Module containing global variables relating to the
+  !! toroidal field coil systems
+  !! This module contains global variables relating to the
+  !! toroidal field coil systems of a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2220,457 +2098,566 @@ module tfcoil_variables
 
   public
 
-  !+ad_vars  acasetf : external case area per coil (inboard leg) (m2)
   real(kind(1.0D0)) :: acasetf = 0.0D0
-  !+ad_vars  acasetfo : external case area per coil (outboard leg) (m2)
+  !! acasetf : external case area per coil (inboard leg) (m2)
   real(kind(1.0D0)) :: acasetfo = 0.0D0
-  !+ad_vars  acndttf : area of the cable conduit (m2)
+  !! acasetfo : external case area per coil (outboard leg) (m2)
   real(kind(1.0D0)) :: acndttf = 0.0D0
-  !+ad_vars  acond : conductor area (winding pack) (m2)
+  !! acndttf : area of the cable conduit (m2)
   real(kind(1.0D0)) :: acond = 0.0D0
-  !+ad_vars  acstf : internal area of the cable space (m2)
+  !! acond : conductor area (winding pack) (m2)
   real(kind(1.0D0)) :: acstf = 0.0D0
-  !+ad_vars  insulation_area : single turn insulation area (m2)
+  !! acstf : internal area of the cable space (m2)
   real(kind(1.0D0)) :: insulation_area = 0.0D0
-  !+ad_vars  aiwp : winding pack insulation area (m2)
+  !! insulation_area : single turn insulation area (m2)
   real(kind(1.0D0)) :: aiwp = 0.0D0
-  !+ad_vars  alstrtf /6.0D8/ : allowable Tresca stress in TF coil structural material (Pa)
+  !! aiwp : winding pack insulation area (m2)
   real(kind(1.0D0)) :: alstrtf = 6.0D8
+  !! alstrtf /6.0D8/ : allowable Tresca stress in TF coil structural material (Pa)
 
-  !+ad_vars  arealeg : outboard TF leg area (m2)
   real(kind(1.0D0)) :: arealeg = 0.0D0
-  !+ad_vars  aswp : winding pack structure area (m2)
+  !! arealeg : outboard TF leg area (m2)
   real(kind(1.0D0)) :: aswp = 0.0D0
-  !+ad_vars  avwp : winding pack void (He coolant) area (m2)
+  !! aswp : winding pack structure area (m2)
   real(kind(1.0D0)) :: avwp = 0.0D0
-  !+ad_vars  awphec : winding pack He coil area (m2)
+  !! avwp : winding pack void (He coolant) area (m2)
   real(kind(1.0D0)) :: awphec = 0.0D0
-  !+ad_vars  bcritsc /24.0/ : upper critical field (T) for Nb3Sn superconductor
-  !+ad_varc                   at zero temperature and strain (isumattf=4, =bc20m)
+  !! awphec : winding pack He coil area (m2)
   real(kind(1.0D0)) :: bcritsc = 24.0D0
-  !+ad_vars  bmaxtf : mean peak field at TF coil (T)
+  !! bcritsc /24.0/ : upper critical field (T) for Nb3Sn superconductor
+  !!                  at zero temperature and strain (isumattf=4, =bc20m)
   real(kind(1.0D0)) :: bmaxtf = 0.0D0
-  !+ad_vars  bmaxtfrp : peak field at TF conductor with ripple (T)
+  !! bmaxtf : mean peak field at TF coil (T)
   real(kind(1.0D0)) :: bmaxtfrp = 0.0D0
-  !+ad_vars  casestr : case strain
+  !! bmaxtfrp : peak field at TF conductor with ripple (T)
   real(kind(1.0D0)) :: casestr = 0.0D0
+  !! casestr : case strain
 
-  !+ad_vars  casthi /0.0/ : EITHER: inboard TF coil case plasma side thickness (m)
-  !+ad_varc                  (calculated for stellarators)
   real(kind(1.0D0)) :: casthi = 0.0D0
-  !+ad_vars  casthi_fraction /0.05/ : OR: inboard TF coil case plasma side thickness as a fraction of tfcth
+  !! casthi /0.0/ : EITHER: inboard TF coil case plasma side thickness (m)
+  !!                 (calculated for stellarators)
   real(kind(1.0D0)) :: casthi_fraction = 0.05D0
+  !! casthi_fraction /0.05/ : OR: inboard TF coil case plasma side thickness as a fraction of tfcth
   logical :: casthi_is_fraction
 
-  !+ad_vars  casths /0.0/ : EITHER: inboard TF coil sidewall case thickness (m)
-  !+ad_varc                  (calculated for stellarators)
   real(kind(1.0D0)) :: casths = 0.0D0
-  !+ad_vars  casths_fraction /0.03/ : OR: inboard TF coil sidewall case thickness as a fraction of tftort
+  !! casths /0.0/ : EITHER: inboard TF coil sidewall case thickness (m)
+  !!                 (calculated for stellarators)
   real(kind(1.0D0)) :: casths_fraction = 0.03D0
+  !! casths_fraction /0.03/ : OR: inboard TF coil sidewall case thickness as a fraction of tftort
   logical :: tfc_sidewall_is_fraction
 
-  !+ad_vars  conductor_width : Width of square conductor (m)
   real(kind(1.0D0)) :: conductor_width
-  !+ad_vars  leno : Dimension of each turn including inter-turn insulation (m)
+  !! conductor_width : Width of square conductor (m)
   real(kind(1.0D0)) :: leno
+  !! leno : Dimension of each turn including inter-turn insulation (m)
 
 
-  !+ad_vars  leni : Dimension of space inside conductor (m)
   real(kind(1.0D0)) :: leni
-  !+ad_vars  acs : Area of space inside conductor (m2)
+  !! leni : Dimension of space inside conductor (m)
   real(kind(1.0D0)) :: acs
+  !! acs : Area of space inside conductor (m2)
 
-  !+ad_vars  cdtfleg : TF outboard leg current density (A/m2) (resistive coils only)
   real(kind(1.0D0)) :: cdtfleg = 0.0D0
-  !+ad_vars  cforce : centering force on inboard leg (per coil) (N/m)
+  !! cdtfleg : TF outboard leg current density (A/m2) (resistive coils only)
+  
   real(kind(1.0D0)) :: cforce = 0.0D0
-  !+ad_vars  cph2o /4180.0/ FIX : specific heat capacity of water (J/kg/K)
-  real(kind(1.0D0)) :: cph2o = 4180.0D0
+  !! cforce : centering force on inboard leg (per coil) (N/m)
 
-  !+ad_vars  cpttf /7.0e4/ : TF coil current per turn (A).
-  !+ad_varc                  (calculated for stellarators)
-  !+ad_varc                  (calculated for integer-turn TF coils i_tf_turns_integer=1)
-  !+ad_varc                  (iteration variable 60)
+  real(kind(1.0D0)), parameter :: cph2o = 4180.0D0
+  !! cph2o /4180.0/ FIX : specific heat capacity of water (J/kg/K)
+
   real(kind(1.0D0)) :: cpttf = 7.0e4
+  !! cpttf /7.0e4/ : TF coil current per turn (A).
+  !!                 (calculated for stellarators)
+  !!                 (calculated for integer-turn TF coils i_tf_turns_integer=1)
+  !!                 (iteration variable 60)
 
-  !+ad_vars  cpttf_max /9.0e4/ : Max TF coil current per turn [A].
-  !+ad_varc                  (For stellarators and i_tf_turns_integer=1)
-  !+ad_varc                  (constraint equation 77)
   real(kind(1.0D0)) :: cpttf_max = 9.0e4
+  !! cpttf_max /9.0e4/ : Max TF coil current per turn [A].
+  !!                 (For stellarators and i_tf_turns_integer=1)
+  !!                 (constraint equation 77)
 
-  !+ad_vars  dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)) :: dcase = 8000.0D0
-  !+ad_vars  dcond(6) /9000.0/ : density of superconductor type given by isumattf/isumatoh/isumatpf (kg/m3)
+  !! dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)), dimension(6) :: dcond = 9000.0D0
-  !+ad_vars  dcondins /1800.0/ : density of conduit + ground-wall insulation (kg/m3)
+  !! dcond(6) /9000.0/ : density of superconductor type given by isumattf/isumatoh/isumatpf (kg/m3)
+  
   real(kind(1.0D0)) :: dcondins = 1800.0D0
-  !+ad_vars  dcopper /8900.0/ : density of copper (kg/m3)
+  !! dcondins /1800.0/ : density of conduit + ground-wall insulation (kg/m3)
+
   real(kind(1.0D0)) :: dcopper = 8900.0D0
-  !+ad_vars  deflect : TF coil deflection at full field (m)
-  real(kind(1.0D0)) :: deflect = 0.0D0
-  !+ad_vars  denh2o /985.0/ FIX : density of water (kg/m3)
-  real(kind(1.0D0)) :: denh2o = 985.0D0
-  !+ad_vars  dhecoil /0.005/ : diameter of He coil in TF winding (m)
+  !! dcopper /8900.0/ : density of copper (kg/m3)
+
+  real(kind(1.0D0)) :: dalu = 2700.0D0
+  !! dalu /2700.0/ : density of aluminium (kg/m3)
+  real(kind(1.0D0)), parameter :: denh2o = 985.0D0
+  !! denh2o /985.0/ FIX : density of water (kg/m3)
   real(kind(1.0D0)) :: dhecoil = 0.005D0
-  !+ad_vars  estotf : stored energy per TF coil (GJ) OBSOLETE
-  real(kind(1.0D0)) :: estotf = 0.0D0
+  !! dhecoil /0.005/ : diameter of He coil in TF winding (m)
 
-  !+ad_vars  estotftgj : total stored energy in the toroidal field (GJ)
   real(kind(1.0D0)) :: estotftgj = 0.0D0
+  !! estotftgj : total stored energy in the toroidal field (GJ)
 
-  !+ad_vars  eyins /2.0e10/ : insulator Young's modulus (Pa)
-  !+ad_varc                   (default value from DDD11-2 v2 2 (2009))
   real(kind(1.0D0)) :: eyins = 2.0D10
-  !+ad_vars  eyoung(2) : work array used in stress calculation (Pa)
+  !! eyins /2.0e10/ : insulator Young's modulus (Pa)
+  !!                  (default value from DDD11-2 v2 2 (2009))
   real(kind(1.0D0)), dimension(2) :: eyoung = 0.0D0
-  !+ad_vars  eystl /2.05e11/ : steel case Young's modulus (Pa)
-  !+ad_varc                    (default value from DDD11-2 v2 2 (2009))
+  !! eyoung(2) : work array used in stress calculation (Pa)
   real(kind(1.0D0)) :: eystl = 2.05D11
-  !+ad_vars  eywp /6.6e8/ : winding pack Young's modulus (Pa)
+  !! eystl /2.05e11/ : steel case Young's modulus (Pa)
+  !!                   (default value from DDD11-2 v2 2 (2009))
   real(kind(1.0D0)) :: eywp = 6.6D8
-  !+ad_vars  eyzwp : winding pack vertical Young's modulus (Pa) (tfc_model=1)
+  !! eywp /6.6e8/ : winding pack Young's modulus (Pa)
   real(kind(1.0D0)) :: eyzwp = 0.0D0
-  !+ad_vars  farc4tf /0.7/ : factor to size height of point 4 on TF coil
+  !! eyzwp : winding pack vertical Young's modulus (Pa)
   real(kind(1.0D0)) :: farc4tf = 0.7D0
-  !+ad_vars  fcutfsu /0.69/ : copper fraction of cable conductor (TF coils)
-  !+ad_varc                   (iteration variable 59)
+  !! farc4tf /0.7/ : factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: fcutfsu = 0.69D0
-  !+ad_vars  fhts /0.5/ : technology adjustment factor for critical current density fit
-  !+ad_varc               for isumat..=2 Bi-2212 superconductor, to describe the level
-  !+ad_varc               of technology assumed (i.e. to account for stress, fatigue,
-  !+ad_varc               radiation, AC losses, joints or manufacturing variations;
-  !+ad_varc               1.0 would be very optimistic)
+  !! fcutfsu /0.69/ : copper fraction of cable conductor (TF coils)
+  !!                  (iteration variable 59)
   real(kind(1.0D0)) :: fhts = 0.5D0
-  !+ad_vars  insstrain : radial strain in insulator (tfc_model=1)
+  !! fhts /0.5/ : technology adjustment factor for critical current density fit
+  !!              for isumat..=2 Bi-2212 superconductor, to describe the level
+  !!              of technology assumed (i.e. to account for stress, fatigue,
+  !!              radiation, AC losses, joints or manufacturing variations;
+  !!              1.0 would be very optimistic)
   real(kind(1.0D0)) :: insstrain = 0.0D0
-  !+ad_vars  i_tf_tresca /0/ : switch for TF coil conduit Tresca stress criterion:<UL>
-  !+ad_varc          <LI> = 0 Tresca (no adjustment);
-  !+ad_varc          <LI> = 1 Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
+  !! insstrain : radial strain in insulator
+
   integer :: i_tf_tresca = 0
-  !+ad_vars  i_tf_turns_integer /0/ : switch for TF coil integer/non-integer turns<UL>
-  !+ad_varc          <LI> = 0 non-integer turns;
-  !+ad_varc          <LI> = 1 integer turns</UL>
+  !! i_tf_tresca /0/ : switch for TF coil conduit Tresca stress criterion:<UL>
+  !!         <LI> = 0 Tresca (no adjustment);
+  !!         <LI> = 1 Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
+  
   integer :: i_tf_turns_integer = 0
-  !+ad_vars  isumattf /1/ : switch for superconductor material in TF coils:<UL>
-  !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
-  !+ad_varc                     ITER parameters;
-  !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor (range of
-  !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
-  !+ad_varc            <LI> = 3 NbTi;
-  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters
-  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation
-  !+ad_varc            <LI> = 6 REBCO HTS tape in CroCo strand</UL>
+  !! i_tf_turns_integer /0/ : switch for TF coil integer/non-integer turns<UL>
+  !!         <LI> = 0 non-integer turns;
+  !!         <LI> = 1 integer turns</UL>
   integer :: isumattf = 1
-  !+ad_vars  itfsup /1/ : switch for TF coil conductor model:<UL>
-  !+ad_varc          <LI> = 0 copper;
-  !+ad_varc          <LI> = 1 superconductor</UL>
-  integer :: itfsup = 1
-  !+ad_vars  jbus /1.25e6/ : bussing current density (A/m2)
+  !! isumattf /1/ : switch for superconductor material in TF coils:<UL>
+  !!           <LI> = 1 ITER Nb3Sn critical surface model with standard
+  !!                    ITER parameters;
+  !!           <LI> = 2 Bi-2212 high temperature superconductor (range of
+  !!                    validity T < 20K, adjusted field b < 104 T, B > 6 T);
+  !!           <LI> = 3 NbTi;
+  !!           <LI> = 4 ITER Nb3Sn model with user-specified parameters
+  !!           <LI> = 5 WST Nb3Sn parameterisation
+  !!           <LI> = 6 REBCO HTS tape in CroCo strand</UL>
+
+  integer :: i_tf_sup = 1
+  !! i_tf_sup /1/ : switch for TF coil conductor model:<UL>
+  !!         <LI> = 0 copper;
+  !!         <LI> = 1 superconductor</UL>
+  !!         <LI> = 2 Cryogenic aluminium
+
+  integer :: i_tf_shape = 0
+  !! i_tf_shape /0/ : Switch for TF coil toroidal shape
+  !!         <LI> = 0  Default value : Picture frame coil for TART / PROCESS D-shape for non itart
+  !!         <LI> = 1  PROCESS D-shape : parametrise with 2 arcs 
+  !!         <LI> = 2  Picture frame coils 
+
   real(kind(1.0D0)) :: jbus = 1.25D6
-  !+ad_vars  jeff(2) : work array used in stress calculation (A/m2)
+  !! jbus /1.25e6/ : bussing current density (A/m2)
   real(kind(1.0D0)), dimension(2) :: jeff = 0.0D0
-  !+ad_vars  jwdgcrt : critical current density for winding pack (A/m2)
+  !! jeff(2) : work array used in stress calculation (A/m2)
   real(kind(1.0D0)) :: jwdgcrt = 0.0D0
-  !+ad_vars  jwdgpro : allowable TF coil winding pack current density,
-  !+ad_varc            for dump temperature rise protection (A/m2)
+  !! jwdgcrt : critical current density for winding pack (A/m2)
   real(kind(1.0D0)) :: jwdgpro = 0.0D0
-  !+ad_vars  jwptf : winding pack current density (A/m2)
+  !! jwdgpro : allowable TF coil winding pack current density,
+  !!           for dump temperature rise protection (A/m2)
   real(kind(1.0D0)) :: jwptf = 0.0D0
+  !! jwptf : winding pack current density (A/m2)
 
-  !+ad_vars  n_pancake /10/ : Number of pancakes in TF coil (i_tf_turns_integer=1)
   integer :: n_pancake = 10
+  !! n_pancake /10/ : Number of pancakes in TF coil (i_tf_turns_integer=1)
 
-  !+ad_vars  n_layer /20/ : Number of layers in TF coil (i_tf_turns_integer=1)
   integer :: n_layer = 20
+  !! n_layer /20/ : Number of layers in TF coil (i_tf_turns_integer=1)
 
-  !+ad_vars  oacdcp /1.4e7/ : overall current density in TF coil inboard legs (A/m2)
-  !+ad_varc                   (iteration variable 12)
-  real(kind(1.0D0)) :: oacdcp = 1.4D7
-  !+ad_vars  poisson /0.3/ : Poisson's ratio for TF stress calculation
-  !+ad_varc                  (assumed constant over entire coil)
+  real(kind(1.0D0)) :: oacdcp = 0.0D0
+  !! oacdcp /0.0/ : overall current density in TF coil inboard legs midplane (A/m2)
+  !!                Rem SK : Not used in tfcoil to set the current any more
+  !!                         -> SHOULD NOT BE USED AS ITERATION VARIABLE 12 ANY MORE
+  !!                         -> This variable is now calculated
+
   real(kind(1.0D0)) :: poisson = 0.3D0
-  !+ad_vars  radtf(3) : work array used in stress calculation (m)
+  !! poisson /0.3/ : Poisson's ratio for TF stress calculation
+  !!                 (assumed constant over entire coil)
   real(kind(1.0D0)), dimension(3) :: radtf = 0.0D0
-  !+ad_vars  rbmax : radius of maximum TF B-field (m)
+  !! radtf(3) : work array used in stress calculation (m)
   real(kind(1.0D0)) :: rbmax = 0.0D0
-  !+ad_vars  rhotfleg : TF coil leg resistance (ohm)
-  real(kind(1.0D0)) :: rhotfleg = 0.0D0
-  !+ad_vars  ripmax /1.0/ : maximum allowable toroidal field ripple amplitude
-  !+ad_varc                 at plasma edge (%)
+  !! rbmax : radius of maximum TF B-field (m)
+
+  real(kind(1.0D0)) :: tflegres = 0.0D0
+  !! tflegres : TF coil leg resistance (ohm)
+
   real(kind(1.0D0)) :: ripmax = 1.0D0
-  !+ad_vars  ripple : peak/average toroidal field ripple at plasma edge (%)
+  !! ripmax /1.0/ : maximum allowable toroidal field ripple amplitude
+  !!                at plasma edge (%)
   real(kind(1.0D0)) :: ripple = 0.0D0
-  !+ad_vars  ritfc : total (summed) current in TF coils (A)
+  !! ripple : peak/average toroidal field ripple at plasma edge (%)
+
   real(kind(1.0D0)) :: ritfc = 0.0D0
-  !+ad_vars  sigrad : radial TF coil stress (MPa)
-  real(kind(1.0D0)) :: sigrad = 0.0D0
-  !+ad_vars  sigrcon : radial stress in the conductor conduit (Pa)
-  real(kind(1.0D0)) :: sigrcon = 0.0D0
-  !+ad_vars  sigrtf(2) : radial stress in TF coil regions (Pa)
-  real(kind(1.0D0)), dimension(2) :: sigrtf = 0.0D0
-  !+ad_vars  sigtan : transverse TF coil stress (MPa)
-  real(kind(1.0D0)) :: sigtan = 0.0D0
-  !+ad_vars  sigtcon : tangential stress in the conductor conduit (Pa)
-  real(kind(1.0D0)) :: sigtcon = 0.0D0
-  !+ad_vars  sigttf(2) : tangential stress in TF coil regions (Pa)
-  real(kind(1.0D0)), dimension(2) :: sigttf = 0.0D0
-  !+ad_vars  s_tresca_case : TF coil case Tresca stress (MPa)
-  real(kind(1.0D0)) :: s_tresca_case  = 0.0D0
-  !+ad_vars  s_tresca_cond : TF coil conduit Tresca stress (MPa)
-  real(kind(1.0D0)) :: s_tresca_cond  = 0.0D0
-  !+ad_vars  s_vmises_case : TF coil case von Mises stress (MPa)
-  real(kind(1.0D0)) :: s_vmises_case  = 0.0D0
-  !+ad_vars  s_vmises_cond : TF coil conduit von Mises stress (MPa)
-  real(kind(1.0D0)) :: s_vmises_cond  = 0.0D0
-  !+ad_vars  sigver : vertical TF coil stress (MPa)
-  real(kind(1.0D0)) :: sigver  = 0.0D0
-  !+ad_vars  sigvert : vertical tensile stress in TF coil (Pa)
-  real(kind(1.0D0)) :: sigvert = 0.0D0
-  !+ad_vars  sigvvall /9.3e7/ : allowable stress from TF quench in vacuum vessel (Pa)
-  real(kind(1.0D0)) :: sigvvall = 9.3D7
-  !+ad_vars  strncon_cs /-0.005/ : strain in CS superconductor material
-  !+ad_varc                     (used in Nb3Sn critical surface model, isumatoh=1, 4 or 5)
-  real(kind(1.0D0)) :: strncon_cs = -0.005D0
-  !+ad_vars  strncon_pf /-0.005/ : strain in PF superconductor material
-  !+ad_varc                     (used in Nb3Sn critical surface model, isumatph=1, 4 or 5)
-  real(kind(1.0D0)) :: strncon_pf = -0.005D0
-  !+ad_vars  strncon_tf /-0.005/ : strain in TF superconductor material
-  !+ad_varc                     (used in Nb3Sn critical surface model, isumattf=1, 4 or 5)
-  real(kind(1.0D0)) :: strncon_tf = -0.005D0
-  !+ad_vars  strtf1 : Constrained stress in TF conductor conduit (Pa)
+  !! ritfc : total (summed) current in TF coils (A)
+  
+  integer, parameter :: n_radial_array = 50
+  !! Size of the radial distribution arrays per layers
+  !! used for stress, strain and displacement distibution
+
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: radial_array = 0.0D0
+  !! Array refining the radii of the stress calculations arrays
+
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_r = 0.0D0
+  !! TF Inboard leg radial stress in steel r distribution at mid-plane [Pa]
+  
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_t = 0.0D0
+  !! TF Inboard leg tangential stress in steel r distribution at mid-plane [Pa]
+  
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: deflect = 0.0D0
+  !! TF coil radial deflection (displacement) radial distribution [m]
+
+  real(kind(1.0D0)) :: sig_tf_z = 0.0D0
+  !! TF Inboard leg vertical tensile stress in steel at mid-plane [Pa]
+    
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_vmises = 0.0D0
+  !! TF Inboard leg Von-Mises stress in steel r distribution at mid-plane [Pa]
+      
+  real(kind(1.0D0)), dimension(2*n_radial_array) :: sig_tf_tresca = 0.0D0 
+  !! TF Inboard leg TRESCA stress in steel r distribution at mid-plane [Pa]
+
   real(kind(1.0D0)) :: strtf1 = 0.0D0
-  !+ad_vars  strtf2 : Constrained stress in TF coil case (Pa)
+  !! Maximum TRESCA stress in TF casing steel structures (Pa)
+  
   real(kind(1.0D0)) :: strtf2 = 0.0D0
+  !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
+  
+  real(kind(1.0D0)) :: sigvvall = 9.3D7
+  !! sigvvall /9.3e7/ : allowable stress from TF quench in vacuum vessel (Pa)
+  real(kind(1.0D0)) :: strncon_cs = -0.005D0
+  !! strncon_cs /-0.005/ : strain in CS superconductor material
+  !!                    (used in Nb3Sn critical surface model, isumatoh=1, 4 or 5)
+  real(kind(1.0D0)) :: strncon_pf = -0.005D0
+  !! strncon_pf /-0.005/ : strain in PF superconductor material
+  !!                    (used in Nb3Sn critical surface model, isumatph=1, 4 or 5)
+  real(kind(1.0D0)) :: strncon_tf = -0.005D0
+  !! strncon_tf /-0.005/ : strain in TF superconductor material
+  !!                    (used in Nb3Sn critical surface model, isumattf=1, 4 or 5)
 
   ! Issue #522: Quench models
-  !+ad_vars  quench_model /exponential/ : switch for TF coil quench model:<UL>
-  !+ad_varc                  <LI> = 'exponential' exponential quench with constant discharge resistor
-  !+ad_varc                  <LI> = 'linear' quench with constant voltage</UL>
-  !+ad_varc                    Only applies to REBCO magnet at present
   character(len=12) :: quench_model = 'exponential'
+  !! quench_model /exponential/ : switch for TF coil quench model,
+  !!                   Only applies to REBCO magnet at present.<UL>
+  !!                 <LI> = 'exponential' exponential quench with constant discharge resistor
+  !!                 <LI> = 'linear' quench with constant voltage</UL>
 
-  !+ad_vars  quench_detection_ef /0.0/ : Electric field at which TF quench is detected and discharge begins (V/m)
   real(kind(1.0D0)) :: quench_detection_ef = 0D0
-  !+ad_vars  time1 : Time at which TF quench is detected (s)
+  !! quench_detection_ef /0.0/ : Electric field at which TF quench is detected and discharge begins (V/m)
   real(kind(1.0D0)) :: time1 = 0D0
+  !! time1 : Time at which TF quench is detected (s)
 
-  !+ad_vars  taucq : allowable TF quench time (s)
   real(kind(1.0D0)) :: taucq = 30.0D0
-  !+ad_vars  tcritsc /16.0/ : critical temperature (K) for superconductor
-  !+ad_varc                   at zero field and strain (isumattf=4, =tc0m)
+  !! taucq : allowable TF quench time (s)
   real(kind(1.0D0)) :: tcritsc = 16.0D0
-  !+ad_vars  tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s)
-  !+ad_varc                  (iteration variable 56)
-  !+ad_varc                  For REBCO model, meaning depends on quench_model:
-  !+ad_varc                  <LI> exponential quench : e-folding time (s)
-  !+ad_varc                  <LI> linear quench : discharge time (s)
+  !! tcritsc /16.0/ : critical temperature (K) for superconductor
+  !!                  at zero field and strain (isumattf=4, =tc0m)
   real(kind(1.0D0)) :: tdmptf = 10.0D0
-  !+ad_vars  tfareain : area of inboard midplane TF legs (m2)
+  !! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s)
+  !!                 (iteration variable 56)
+  !!                 For REBCO model, meaning depends on quench_model:
+  !!                 <LI> exponential quench : e-folding time (s)
+  !!                 <LI> linear quench : discharge time (s)
+
   real(kind(1.0D0)) :: tfareain = 0.0D0
-  !+ad_vars  tfboreh : TF coil horizontal bore (m)
-  real(kind(1.0D0)) :: tfboreh = 0.0D0
-  !+ad_vars  tfborev : vertical inner bore of TF coil (m)
-  real(kind(1.0D0)) :: tfborev = 0.0D0
-  !+ad_vars  tfbusl : TF coil bus length (m)
+  !! tfareain : area of inboard midplane TF legs (m2)
+
   real(kind(1.0D0)) :: tfbusl = 0.0D0
-  !+ad_vars  tfbusmas : TF coil bus mass (kg)
+  !! tfbusl : TF coil bus length (m)
+
   real(kind(1.0D0)) :: tfbusmas = 0.0D0
-  !+ad_vars  tfckw :  available DC power for charging the TF coils (kW)
+  !! tfbusmas : TF coil bus mass (kg)
+
   real(kind(1.0D0)) :: tfckw = 0.0D0
-  !+ad_vars  tfc_model /1/ : switch for TF coil magnet stress model:<UL>
-  !+ad_varc                  <LI> = 0 simple model (solid copper coil)
-  !+ad_varc                  <LI> = 1 CCFE two-layer stress model; superconductor</UL>
-  integer :: tfc_model = 1
-  !+ad_vars  tfcmw : peak power per TF power supply (MW)
-  real(kind(1.0D0)) :: tfcmw = 0.0D0
-  !+ad_vars  tfcpmw : peak resistive TF coil inboard leg power (MW)
+  !! tfckw :  available DC power for charging the TF coils (kW)
+! Issue #781
+!   integer :: tfc_model = 1
+!   !! tfc_model /1/ : switch for TF coil magnet stress model:<UL>
+!   !!                 <LI> = 0 simple model (solid copper coil)
+!   !!                 <LI> = 1 CCFE two-layer stress model; superconductor</UL>
+  real(kind(1.0D0)), bind(C) :: tfcmw = 0.0D0
+  !! tfcmw : peak power per TF power supply (MW)
   real(kind(1.0D0)) :: tfcpmw = 0.0D0
-  !+ad_vars  tfcryoarea : surface area of toroidal shells covering TF coils (m2)
+  !! tfcpmw : peak resistive TF coil inboard leg power (MW)
   real(kind(1.0D0)) :: tfcryoarea = 0.0D0
-  !+ad_vars  tficrn : TF coil half-width - inner bore (m)
+  !! tfcryoarea : surface area of toroidal shells covering TF coils (m2)
   real(kind(1.0D0)) :: tficrn = 0.0D0
-  !+ad_vars  tfind : TF coil inductance (H)
+  !! tficrn : TF coil half-width - inner bore (m)
   real(kind(1.0D0)) :: tfind = 0.0D0
-  !+ad_vars  tfinsgap /0.010/ : TF coil WP insertion gap (m)
+  !! tfind : TF coil inductance (H)
+
   real(kind(1.0D0)) :: tfinsgap = 0.010D0
-  !+ad_vars  tflegmw : TF coil outboard leg resistive power (MW)
+  !! tfinsgap /0.010/ : TF coil WP insertion gap (m)
+  
   real(kind(1.0D0)) :: tflegmw = 0.0D0
-  !+ad_vars  tflegres /2.5e-8/ : resistivity of a TF coil leg and bus(Ohm-m)
-  real(kind(1.0D0)) :: tflegres = 2.5D-8
-  !+ad_vars  tfleng : TF coil circumference (m)
+  !! tflegmw : TF coil outboard leg resistive power (MW)
+
+  real(kind(1.0D0)) :: rhocp = 0.0D0
+  !! rhocp : TF coil inboard leg resistivity [Ohm-m]
+  !!         if itart == 0, this variable is the average resistivity over the whole magnet
+
+  real(kind(1.0D0)) :: rhotfleg = 0.0D0
+  !! rhotfleg : resistivity of a TF coil leg (Ohm-m)
+
+  real(kind(1.0D0)) :: rhotfbus = -1.0D0 ! 2.5D-8
+  !! rhotfbus /-1.0/ : resistivity of a TF coil bus (Ohm-m)
+  !!                   Default value takes the same res as the leg one
+ 
+  real(kind(1.0D0)) :: frhocp = 1.0D0
+  !! frhocp /1.0/ : Centrepost resistivity enhancement factor 
+  !!                For itart = 0, this factor is used for the whole magnet 
+  
+  real(kind(1.0D0)) :: frholeg = 1.0D0
+  !! frholeg /1.0/ : Ouboard legs resistivity enhancement factor
+  !!                 Only used for itart = 1
+
   real(kind(1.0D0)) :: tfleng = 0.0D0
-  !+ad_vars  tfno /16.0/ : number of TF coils (default = 50 for stellarators)
-  real(kind(1.0D0)) :: tfno = 16.0D0
-  !+ad_vars  tfocrn : TF coil half-width - outer bore (m)
+  !! tfleng : TF coil circumference (m)
+
+  real(kind(1.0D0)) :: n_tf = 16.0D0
+  !! n_tf /16.0/ : number of TF coils (default = 50 for stellarators)
+  !!               number of TF coils outer legs for ST
+
   real(kind(1.0D0)) :: tfocrn = 0.0D0
-  !+ad_vars  tfsai : area of the inboard TF coil legs (m2)
+  !! tfocrn : TF coil half-width - outer bore (m)
+
   real(kind(1.0D0)) :: tfsai = 0.0D0
-  !+ad_vars  tfsao : area of the outboard TF coil legs (m2)
+  !! tfsai : area of the inboard TF coil legs (m2)
+
   real(kind(1.0D0)) :: tfsao = 0.0D0
-  !+ad_vars  tftmp /4.5/ : peak helium coolant temperature in TF coils and PF coils (K)
-  real(kind(1.0D0)) :: tftmp = 4.5D0
+  !! tfsao : area of the outboard TF coil legs (m2)
+
+  real(kind(1.0D0)), bind(C) :: tftmp = 4.5D0
+  !! tftmp /4.5/ : peak helium coolant temperature in TF coils and PF coils (K)
   ! ISSUE #508 Remove RFP option: frfpf, frfptf, sccufac
-  !+ad_vars  tftort : TF coil toroidal thickness (m)
-  real(kind(1.0D0)) :: tftort = 4.5D0
+! SJP Issue #863
+!! tftort : TF coil toroidal thickness (m)
+! tftort physically to large, reduced to 1.0
+  real(kind(1.0D0)) :: tftort = 1.0D0
 
-  !+ad_vars  thicndut /8.0e-4/ : conduit insulation thickness (m)
   real(kind(1.0D0)) :: thicndut = 8.0D-4
-  !+ad_vars  layer_ins /0/ : Additional insulation thickness between layers (m)
+  !! thicndut /8.0e-4/ : conduit insulation thickness (m)
   real(kind(1.0D0)) :: layer_ins = 0.0D0
-  !+ad_vars  thkcas /0.3/ : inboard TF coil case outer (non-plasma side) thickness (m)
-  !+ad_varc                 (iteration variable 57)
-  !+ad_varc                 (calculated for stellarators)
+  !! layer_ins /0/ : Additional insulation thickness between layers (m)
   real(kind(1.0D0)) :: thkcas = 0.3D0
+  !! thkcas /0.3/ : inboard TF coil case outer (non-plasma side) thickness (m)
+  !!                (iteration variable 57)
+  !!                (calculated for stellarators)
   ! Issue #514 Make thkwp an iteration variable
-  !+ad_vars  thkwp /0.0/ : radial thickness of winding pack (m) (iteration variable 140)
   real(kind(1.0D0)) :: thkwp = 0.0D0
-  !+ad_vars  thwcndut /8.0e-3/ : TF coil conduit case thickness (m) (iteration variable 58)
+  !! thkwp /0.0/ : radial thickness of winding pack (m) (iteration variable 140)
   real(kind(1.0D0)) :: thwcndut = 8.0D-3
-  !+ad_vars  tinstf /0.018/ : ground insulation thickness surrounding winding pack (m)
-  !+ad_vars                   Includes allowance for 10 mm insertion gap.
-  !+ad_varc                   (calculated for stellarators)
+  !! thwcndut /8.0e-3/ : TF coil conduit case thickness (m) (iteration variable 58)
   real(kind(1.0D0)) :: tinstf = 0.018D0
+  !! tinstf /0.018/ : ground insulation thickness surrounding winding pack (m)
+  !!                  Includes allowance for 10 mm insertion gap.
+  !!                  (calculated for stellarators)
 
-  !+ad_vars  tmargmin_tf /0/ : minimum allowable temperature margin : TF coils (K)
-  real(kind(1.0D0)) :: tmargmin_tf = 0D0
-  !+ad_vars  tmargmin_cs /0/ : minimum allowable temperature margin : CS (K)
-  real(kind(1.0D0)) :: tmargmin_cs = 0D0
-  !+ad_vars  tmargmin /0/ : minimum allowable temperature margin : TFC AND CS (K)
+  real(kind(1.0D0)), bind(C) :: tmargmin_tf = 0D0
+  !! tmargmin_tf /0/ : minimum allowable temperature margin : TF coils (K)
+  real(kind(1.0D0)), bind(C) :: tmargmin_cs = 0D0
+  !! tmargmin_cs /0/ : minimum allowable temperature margin : CS (K)
   real(kind(1.0D0)) :: tmargmin = 0D0
+  !! tmargmin /0/ : minimum allowable temperature margin : TFC AND CS (K)
 
-  !+ad_vars  temp_margin  : temperature margin (K)
-  real(kind(1.0D0)) :: temp_margin = 0.00D0
-  !+ad_vars  tmargtf :  TF coil temperature margin (K)
+  real(kind(1.0D0)), bind(C) :: temp_margin = 0.00D0
+  !! temp_margin  : temperature margin (K)
   real(kind(1.0D0)) :: tmargtf = 0.0D0
-  !+ad_vars  tmaxpro /150.0/ : maximum temp rise during a quench for protection (K)
+  !! tmargtf :  TF coil temperature margin (K)
   real(kind(1.0D0)) :: tmaxpro = 150.0D0
+  !! tmaxpro /150.0/ : maximum temp rise during a quench for protection (K)
 
-  !+ad_vars  tmax_croco /200.0/ : CroCo strand: maximum permitted temp during a quench (K)
   real(kind(1.0D0)) :: tmax_croco = 200.0D0
-  ! !+ad_vars  tmax_jacket /150.0/ : Jacket: maximum temp during a quench (K)
+  !! tmax_croco /200.0/ : CroCo strand: maximum permitted temp during a quench (K)
   ! real(kind(1.0D0)) :: tmax_jacket = 150.0D0
+  ! !! tmax_jacket /150.0/ : Jacket: maximum temp during a quench (K)
 
-  !+ad_vars  croco_quench_temperature : CroCo strand: Actual temp reached during a quench (K)
   real(kind(1.0D0)) :: croco_quench_temperature = 0D0
+  !! croco_quench_temperature : CroCo strand: Actual temp reached during a quench (K)
 
-  !+ad_vars  tmpcry /4.5/ : coil temperature for cryogenic plant power calculation (K)
   real(kind(1.0D0)) :: tmpcry = 4.5D0
-  !+ad_vars  turnstf : number of turns per TF coil
+  !! tmpcry /4.5/ : coil temperature for cryogenic plant power calculation (K)
+
   real(kind(1.0D0)) :: turnstf = 0.0D0
-  !+ad_vars  vdalw /20.0/ : max voltage across TF coil during quench (kV)
-  !+ad_varc                 (iteration variable 52)
+  !! turnstf : number of turns per TF coil
+
   real(kind(1.0D0)) :: vdalw = 20.0D0
-  !+ad_vars  vforce : vertical separating force on inboard leg/coil (N)
+  !! vdalw /20.0/ : max voltage across TF coil during quench (kV)
+  !!                (iteration variable 52)
+
   real(kind(1.0D0)) :: vforce = 0.0D0
-  !+ad_vars  vftf /0.4/ : coolant fraction of TFC 'cable' (itfsup=1), or of TFC leg (itfsup=0)
+  !! vforce : vertical separating force on inboard leg/coil (N)
+  
+  real(kind(1.0D0)) :: f_vforce_inboard = 0.5D0
+  !! f_vforce_inboard /0.50/ : Fraction of the total vertical force taken by the TF inboard leg
+  !!                           Not used for resistive itart = 1 (sliding joints)
+  
+
+  real(kind(1.0D0)) :: vforce_outboard = 0.0D0
+  !! vforce_outboard : vertical separating force on out board leg/coil (N)
+
   real(kind(1.0D0)) :: vftf = 0.4D0
-  !+ad_vars  voltfleg : volume of each TF coil outboard leg (m3)
+  !! vftf /0.4/ : coolant fraction of TFC 'cable' (i_tf_sup=1), or of TFC leg (i_tf_ssup=0)
+
   real(kind(1.0D0)) :: voltfleg = 0.0D0
-  !+ad_vars  vtfkv : TF coil voltage for resistive coil including bus (kV)
+  !! voltfleg : volume of each TF coil outboard leg (m3)
+
   real(kind(1.0D0)) :: vtfkv = 0.0D0
-  !+ad_vars  vtfskv : voltage across a TF coil during quench (kV)
+  !! vtfkv : TF coil voltage for resistive coil including bus (kV)
   real(kind(1.0D0)) :: vtfskv = 0.0D0
-  !+ad_vars  whtcas : mass per coil of external case (kg)
+  !! vtfskv : voltage across a TF coil during quench (kV)
   real(kind(1.0D0)) :: whtcas = 0.0D0
-  !+ad_vars  whtcon : TF coil conductor mass per coil (kg)
+  !! whtcas : mass per coil of external case (kg)
   real(kind(1.0D0)) :: whtcon = 0.0D0
-  !+ad_vars  whtconcu : copper mass in TF coil conductor (kg/coil)
+  !! whtcon : TF coil conductor mass per coil (kg/coil)
+  !! For itart=1, coil is return limb plus centrepost/n_tf
+
   real(kind(1.0D0)) :: whtconcu = 0.0D0
-  !+ad_vars  whtconin : conduit insulation mass in TF coil conductor (kg/coil)
+  !! whtconcu : copper mass in TF coil conductor (kg/coil)
+  !! For itart=1, coil is return limb plus centrepost/n_tf
+  
+  real(kind(1.0D0)) :: whtconal = 0.0D0
+  !! whtconal : Cryogenic aluminium mass in TF coil conductor (kg/coil)
+  !! For itart=1, coil is return limb plus centrepost/n_tf
+  
   real(kind(1.0D0)) :: whtconin = 0.0D0
-  !+ad_vars  whtconsc : superconductor mass in TF coil cable (kg/coil)
+  !! whtconin : conduit insulation mass in TF coil conductor (kg/coil)
   real(kind(1.0D0)) :: whtconsc = 0.0D0
-  !+ad_vars  whtconsh : steel conduit mass in TF coil conductor (kg/coil)
+  !! whtconsc : superconductor mass in TF coil cable (kg/coil)
   real(kind(1.0D0)) :: whtconsh = 0.0D0
-  !+ad_vars  whtgw : mass of ground-wall insulation layer per coil (kg/coil)
+  !! whtconsh : steel conduit mass in TF coil conductor (kg/coil)
   real(kind(1.0D0)) :: whtgw = 0.0D0
-  !+ad_vars  whttf : total mass of the TF coils (kg)
+  !! whtgw : mass of ground-wall insulation layer per coil (kg/coil)
   real(kind(1.0D0)) :: whttf = 0.0D0
-  !+ad_vars  windstrain : longitudinal strain in winding pack (tfc_model=1)
+  !! whttf : total mass of the TF coils (kg)
   real(kind(1.0D0)) :: windstrain = 0.0D0
-  !+ad_vars  wwp1 : width of first step of winding pack (m)
+  !! windstrain : longitudinal strain in winding pack
   real(kind(1.0D0)) :: wwp1 = 0.0D0
-  !+ad_vars  wwp2 : width of second step of winding pack (m)
+  !! wwp1 : width of first step of winding pack (m)
   real(kind(1.0D0)) :: wwp2 = 0.0D0
+  !! wwp2 : width of second step of winding pack (m)
 
-  !+ad_vars  <P><B>Superconducting TF coil shape parameters</B> (see also farc4tf);
-  !+ad_varc  <BR>the TF inner surface top half is approximated by four circular arcs.
-  !+ad_varc  Arc 1 goes through points 1 and 2 on the inner surface. Arc 2
-  !+ad_varc  goes through points 2 and 3, etc.<P>
 
-  !+ad_vars  dthet(4) : angle of arc i (rad)
+  !! <P><B>Superconducting TF coil shape parameters</B> (see also farc4tf);
+  !! <BR>the TF inner surface top half is approximated by four circular arcs.
+  !! Arc 1 goes through points 1 and 2 on the inner surface. Arc 2
+  !! goes through points 2 and 3, etc.<P>
   real(kind(1.0D0)), dimension(4) :: dthet = 0.0D0
-  !+ad_vars  radctf(4) : radius of arc i (m)
+  !! dthet(4) : angle of arc i (rad)
   real(kind(1.0D0)), dimension(4) :: radctf = 0.0D0
-  !+ad_vars  xarc(5) : x location of arc point i on surface (m)
+  !! radctf(4) : radius of arc i (m)
   real(kind(1.0D0)), dimension(5) :: xarc = 0.0D0
-  !+ad_vars  xctfc(4) : x location of arc centre i (m)
+  !! xarc(5) : x location of arc point i on surface (m)
   real(kind(1.0D0)), dimension(4) :: xctfc = 0.0D0
-  !+ad_vars  yarc(5) : y location of arc point i on surface (m)
+  !! xctfc(4) : x location of arc centre i (m)
   real(kind(1.0D0)), dimension(5) :: yarc = 0.0D0
-  !+ad_vars  yctfc(4) : y location of arc centre i (m)
+  !! yarc(5) : y location of arc point i on surface (m)
   real(kind(1.0D0)), dimension(4) :: yctfc = 0.0D0
+  !! yctfc(4) : y location of arc centre i (m)
 
   ! New TF shape:  Horizontal and vertical radii of inside edge of TF coil
   ! Arcs are numbered clockwise:
   ! 1=upper inboard, 2=upper outboard, 3=lower ouboard, 4=lower inboard
-  !+ad_vars  tfa(4) : Horizontal radius of inside edge of TF coil (m)
   real(kind(1.0D0)), dimension(4) :: tfa = 0.0D0
-  !+ad_vars  tfb(4) : Vertical radius of inside edge of TF coil (m)
+  !! tfa(4) : Horizontal radius of inside edge of TF coil (m)
   real(kind(1.0D0)), dimension(4) :: tfb = 0.0D0
+  !! tfb(4) : Vertical radius of inside edge of TF coil (m)
+  !! <P><B>Quantities relating to the spherical tokamak model (itart=1)</B>
+  !!       (and in some cases, also to resistive TF coils, i_tf_sup=0):<P>
 
-  !+ad_vars  <P><B>Quantities relating to the spherical tokamak model (itart=1)</B>
-  !+ad_varc        (and in some cases, also to resistive TF coils, itfsup=0):<P>
-
-  !+ad_vars  drtop /0.0/ : centrepost taper maximum radius adjustment (m)
   real(kind(1.0D0)) :: drtop = 0.0D0
-  !+ad_vars  dztop /0.0/ : centrepost taper height adjustment (m)
+  !! drtop /0.0/ : centrepost taper maximum radius adjustment (m)
+
   real(kind(1.0D0)) :: dztop = 0.0D0
-  !+ad_vars  etapump /0.8/ : centrepost coolant pump efficiency
+  !! dztop /0.0/ : centrepost taper height adjustment (m)
+
   real(kind(1.0D0)) :: etapump = 0.8D0
-  !+ad_vars  fcoolcp /0.3/ : coolant fraction of TF coil inboard legs
-  !+ad_varc                  (iteration variable 23)
+  !! etapump /0.8/ : centrepost coolant pump efficiency
+
   real(kind(1.0D0)) :: fcoolcp = 0.3D0
-  !+ad_vars  frhocp /1.0/ : centrepost resistivity enhancement factor
-  real(kind(1.0D0)) :: frhocp = 1.0D0
-  !+ad_vars  kcp /330.0/ FIX : thermal conductivity of centrepost (W/m/K)
-  real(kind(1.0D0)) :: kcp = 330.0D0
-  !+ad_vars  kh2o /0.651/ FIX : thermal conductivity of water (W/m/K)
-  real(kind(1.0D0)) :: kh2o = 0.651D0
-  !+ad_vars  muh2o /4.71e-4/ FIX : water dynamic viscosity (kg/m/s)
-  real(kind(1.0D0)) :: muh2o = 4.71D-4
-  !+ad_vars  ncool : number of centrepost coolant tubes
+  !! fcoolcp /0.3/ : coolant fraction of TF coil inboard legs
+  !!                 (iteration variable 23)
+
+  real(kind(1.0D0)) :: fcoolleg = 0.2D0
+  !! fcoolleg /0.2/ : coolant fraction of TF coil inboard legs
+  
+  real(kind(1.0D0)) :: a_cp_cool = 0.0D0
+  !! a_cp_cool : Centrepost cooling area toroidal cross-section (constant over the whole CP)
+
+  real(kind(1.0D0)), parameter :: k_copper = 330.0D0
+  !! k_copper /330.0/ FIX : Copper thermal conductivity (W/m/K)
+
+  real(kind(1.0D0)), parameter :: kh2o = 0.651D0
+  !! kh2o /0.651/ FIX : thermal conductivity of water (W/m/K)
+
+  real(kind(1.0D0)), parameter :: muh2o = 4.71D-4
+  !! muh2o /4.71e-4/ FIX : water dynamic viscosity (kg/m/s)
+
   real(kind(1.0D0)) :: ncool = 0.0D0
-  !+ad_vars  ppump : centrepost coolant pump power (W)
+  !! ncool : number of centrepost coolant tubes
+
   real(kind(1.0D0)) :: ppump = 0.0D0
-  !+ad_vars  prescp : resistive power in the centrepost (W)
+  !! ppump : centrepost coolant pump power (W)
+
   real(kind(1.0D0)) :: prescp = 0.0D0
-  !+ad_vars  ptempalw /200.0/ : maximum peak centrepost temperature (C)
-  !+ad_varc                     (constraint equation 44)
-  real(kind(1.0D0)) :: ptempalw = 200.0D0
-  !+ad_vars  rcool /0.005/ : average radius of coolant channel (m)
-  !+ad_varc                  (iteration variable 69)
+  !! prescp : resistive power in the centrepost (itart=1) [W]
+  !!          if itart == 0, this variable is the ressitive power on the whole magnet
+
+  real(kind(1.0D0)) :: presleg = 0.0D0
+  !! presleg : Summed resistive power in the TF coil legs [W]
+  !!           remain 0 if itart == 0
+   
+  real(kind(1.0D0)) :: ptempalw = 473.15D0   ! 200 C
+  !! ptempalw /473.15/ : maximum peak centrepost temperature (K)
+  !!                    (constraint equation 44)
+
   real(kind(1.0D0)) :: rcool = 0.005D0
-  !+ad_vars  rhocp : TF coil inboard leg resistivity (Ohm-m)
-  real(kind(1.0D0)) :: rhocp = 0.0D0
-  !+ad_vars  tcoolin /40.0/ : centrepost coolant inlet temperature (C)
-  real(kind(1.0D0)) :: tcoolin = 40.0D0
-  !+ad_vars  tcpav /100.0/ : average temp of TF coil inboard leg conductor (C)
-  !+ad_varc                  (resistive coils) (iteration variable 20)
-  real(kind(1.0D0)) :: tcpav = 100.0D0
-  !+ad_vars  tcpav2 : centrepost average temperature (C) (for consistency)
+  !! rcool /0.005/ : average radius of coolant channel (m)
+  !!                 (iteration variable 69)
+
+  real(kind(1.0D0)) :: tcoolin = 313.15D0   ! 40 C
+  !! tcoolin /313.15/ : centrepost coolant inlet temperature (K)
+
+  real(kind(1.0D0)) :: dtiocool = 0.0D0
+  !! dtiocool : inlet / outlet TF coil coolant temperature rise (K)  
+
+  real(kind(1.0D0)) :: tcpav = 373.15D0     ! 100 C
+  !! tcpav /373.15/ : Average temperature of centrepost called CP (K)
+  !!                  Only used for resistive coils to compute the resisitive heating 
+  !!                  Must be an iteration variable for ST (itart == 1) (iteration variable 20)
+
   real(kind(1.0D0)) :: tcpav2 = 0.0D0
-  !+ad_vars  tcpmax : peak centrepost temperature (C)
+  !! tcpav2 : Computed centrepost average temperature (K) (for consistency)
+
+  real(kind(1.0D0)) :: tlegav = -1.0D0 
+  !! tlegav /-1.0/ : Average temperature of the TF outboard legs [K]
+  !!                 if tlegav = -1.0, the ouboard legs and CP temperatures are the same 
+  !!                 Fixed for now, should be fixed with a contraints eq like tcpav 
+
   real(kind(1.0D0)) :: tcpmax = 0.0D0
-  !+ad_vars  vcool /20.0/ : max centrepost coolant flow speed at midplane (m/s)
-  !+ad_varc                 (iteration variable 70)
+  !! tcpmax : peak centrepost temperature (K)
+  
   real(kind(1.0D0)) :: vcool = 20.0D0
-  !+ad_vars  volcp : total volume of TF coil inboard legs (m3)
-  real(kind(1.0D0)) :: volcp = 0.0D0
-  !+ad_vars  whtcp : mass of TF coil inboard legs (kg)
+  !! vcool /20.0/ : max centrepost coolant flow speed at midplane (m/s)
+  !!                (iteration variable 70)
+
+  real(kind(1.0D0)) :: vol_cond_cp = 0.0D0
+  !! vol_cond_cp : Exact conductor volume in the centrepost (m3)
+  
   real(kind(1.0D0)) :: whtcp = 0.0D0
-  !+ad_vars  whttflgs : mass of the TF coil legs (kg)
+  !! whtcp : mass of TF coil inboard legs (kg)
+
   real(kind(1.0D0)) :: whttflgs = 0.0D0
+  !! whttflgs : mass of the TF coil legs (kg)
 
 end module tfcoil_variables
 
@@ -2678,20 +2665,11 @@ end module tfcoil_variables
 
 module structure_variables
 
-  !+ad_name  structure_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  support structure
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  support structure of a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  29/10/12 PJK Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! support structure
+  !! This module contains global variables relating to the
+  !! support structure of a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2699,17 +2677,17 @@ module structure_variables
 
   public
 
-  !+ad_vars  aintmass : intercoil structure mass (kg)
   real(kind(1.0D0)) :: aintmass = 0.0D0
-  !+ad_vars  clgsmass : gravity support structure for TF coil, PF coil
-  !+ad_varc             and intercoil support systems (kg)
+  !! aintmass : intercoil structure mass (kg)
   real(kind(1.0D0)) :: clgsmass = 0.0D0
-  !+ad_vars  coldmass : total mass of components at cryogenic temperatures (kg)
+  !! clgsmass : gravity support structure for TF coil, PF coil
+  !!            and intercoil support systems (kg)
   real(kind(1.0D0)) :: coldmass = 0.0D0
-  !+ad_vars  fncmass : PF coil outer support fence mass (kg)
+  !! coldmass : total mass of components at cryogenic temperatures (kg)
   real(kind(1.0D0)) :: fncmass = 0.0D0
-  !+ad_vars  gsmass : reactor core gravity support mass (kg)
+  !! fncmass : PF coil outer support fence mass (kg)
   real(kind(1.0D0)) :: gsmass = 0.0D0
+  !! gsmass : reactor core gravity support mass (kg)
 
 end module structure_variables
 
@@ -2717,89 +2695,76 @@ end module structure_variables
 
 module vacuum_variables
 
-  !+ad_name  vacuum_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  vacuum system
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  vacuum system of a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  29/10/12 PJK Initial version of module
-  !+ad_hist  12/08/15 MDK vacuum_model and associated variables (#304 section 1)
-  !+ad_hist  22/09/15 MDK Battes, Day and Rohde pump-down model (#304 section 2)
-  !+ad_hist  20/01/16 JM  Added pump throughput defaulted to ITER value
-  !+ad_hist  02/02/17 JM  Changed vpumpn to integer
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! vacuum system
+  !! This module contains global variables relating to the
+  !! vacuum system of a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   implicit none
 
   public
-  !+ad_vars  vacuum_model /old/ : switch for vacuum pumping model:<UL>
-  !+ad_varc         <LI> = 'old' for old detailed ETR model;
-  !+ad_varc         <LI> = 'simple' for simple steady-state model with comparison to ITER cryopumps</UL>
   character(len=6) :: vacuum_model = 'old'
-  !+ad_vars  niterpump : number of high vacuum pumps (real number), each with the throughput
-  !+ad_varc              of one ITER cryopump (50 Pa m3 s-1), all operating at the same time
-  !+ad_varc              (vacuum_model = 'simple')
+  !! vacuum_model /old/ : switch for vacuum pumping model:<UL>
+  !!        <LI> = 'old' for old detailed ETR model;
+  !!        <LI> = 'simple' for simple steady-state model with comparison to ITER cryopumps</UL>
   real(kind(1.0D0)) :: niterpump = 0.0D0
-  !+ad_vars  ntype /1/ : switch for vacuum pump type:<UL>
-  !+ad_varc         <LI> = 0 for turbomolecular pump (magnetic bearing)
-  !+ad_varc                  with speed of 2.0 m3/s
-  !+ad_varc                  (1.95 for N2, 1.8 for He, 1.8 for DT);
-  !+ad_varc         <LI> = 1 for compound cryopump with nominal speed of 10.0 m3/s
-  !+ad_varc                  (9.0 for N2, 5.0 for He and 25.0 for DT)</UL>
+  !! niterpump : number of high vacuum pumps (real number), each with the throughput
+  !!             of one ITER cryopump (50 Pa m3 s-1), all operating at the same time
+  !!             (vacuum_model = 'simple')
   integer :: ntype = 1
-  !+ad_vars  nvduct : number of ducts (torus to pumps)
+  !! ntype /1/ : switch for vacuum pump type:<UL>
+  !!        <LI> = 0 for turbomolecular pump (magnetic bearing)
+  !!                 with speed of 2.0 m3/s
+  !!                 (1.95 for N2, 1.8 for He, 1.8 for DT);
+  !!        <LI> = 1 for compound cryopump with nominal speed of 10.0 m3/s
+  !!                 (9.0 for N2, 5.0 for He and 25.0 for DT)</UL>
   integer :: nvduct = 0
-  !+ad_vars  dlscal : vacuum system duct length scaling
+  !! nvduct : number of ducts (torus to pumps)
   real(kind(1.0D0)) :: dlscal = 0.0D0
-  !+ad_vars  pbase /5.0e-4/ : base pressure during dwell before gas pre-fill(Pa)
+  !! dlscal : vacuum system duct length scaling
   real(kind(1.0D0)) :: pbase = 5.0D-4
-  !+ad_vars  prdiv /0.36/ : divertor chamber pressure during burn (Pa)
+  !! pbase /5.0e-4/ : base pressure during dwell before gas pre-fill(Pa)
   real(kind(1.0D0)) :: prdiv = 0.36D0
-  !+ad_vars  pumptp /1.2155D22/ : Pump throughput (molecules/s) (default is ITER value)
+  !! prdiv /0.36/ : divertor chamber pressure during burn (Pa)
   real(kind(1.0D0)) :: pumptp = 1.2155D22
-  !+ad_vars  rat /1.3e-8/ : plasma chamber wall outgassing rate (Pa-m/s)
+  !! pumptp /1.2155D22/ : Pump throughput (molecules/s) (default is ITER value)
   real(kind(1.0D0)) :: rat = 1.3D-8
-  !+ad_vars  tn /300.0/ : neutral gas temperature in chamber (K)
+  !! rat /1.3e-8/ : plasma chamber wall outgassing rate (Pa-m/s)
   real(kind(1.0D0)) :: tn = 300.0D0
-  !+ad_vars  vacdshm : mass of vacuum duct shield (kg)
+  !! tn /300.0/ : neutral gas temperature in chamber (K)
   real(kind(1.0D0)) :: vacdshm = 0.0D0
-  !+ad_vars  vcdimax : diameter of duct passage (m)
+  !! vacdshm : mass of vacuum duct shield (kg)
   real(kind(1.0D0)) :: vcdimax = 0.0D0
-  !+ad_vars  vpumpn : number of high vacuum pumps
+  !! vcdimax : diameter of duct passage (m)
   integer :: vpumpn = 0
-  !+ad_vars  dwell_pump /0/ : switch for dwell pumping options:<UL>
-  !+ad_varc              <LI> = 0 pumping only during tdwell;
-  !+ad_varc              <LI> = 1 pumping only during tramp
-  !+ad_varc              <LI> = 2 pumping during tdwell + tramp</UL>
+  !! vpumpn : number of high vacuum pumps
   integer :: dwell_pump = 0
+  !! dwell_pump /0/ : switch for dwell pumping options:<UL>
+  !!             <LI> = 0 pumping only during tdwell;
+  !!             <LI> = 1 pumping only during tramp
+  !!             <LI> = 2 pumping during tdwell + tramp</UL>
 
-  !+ad_vars  <P><B>The following are used in the Battes, Day and Rohde pump-down model
-  !+ad_varc  See "Basic considerations on the pump-down time in the dwell phase of a pulsed fusion DEMO"
-  !+ad_varc  http://dx.doi.org/10.1016/j.fusengdes.2015.07.011)
-  !+ad_varc  (vacuum_model=simple'):</B><P>
-  !+ad_vars  pumpareafraction /0.0203/ : area of one pumping port as a fraction of plasma surface area
   real(kind(1.0D0)) :: pumpareafraction = 0.0203D0
-  !+ad_vars  pumpspeedmax /27.3/ : maximum pumping speed per unit area for deuterium & tritium, molecular flow
+  !! <P><B>The following are used in the Battes, Day and Rohde pump-down model
+  !! See "Basic considerations on the pump-down time in the dwell phase of a pulsed fusion DEMO"
+  !! http://dx.doi.org/10.1016/j.fusengdes.2015.07.011)
+  !! (vacuum_model=simple'):</B><P>
+  !! pumpareafraction /0.0203/ : area of one pumping port as a fraction of plasma surface area
   real(kind(1.0D0)) :: pumpspeedmax = 27.3D0
-  !+ad_vars  pumpspeedfactor /0.167/ : effective pumping speed reduction factor due to duct impedance
+  !! pumpspeedmax /27.3/ : maximum pumping speed per unit area for deuterium & tritium, molecular flow
   real(kind(1.0D0)) :: pumpspeedfactor = 0.167D0
-  !+ad_vars  initialpressure /1.0/ : initial neutral pressure at the beginning of the dwell phase (Pa)
+  !! pumpspeedfactor /0.167/ : effective pumping speed reduction factor due to duct impedance
   real(kind(1.0D0)) :: initialpressure = 1.0D0
-  !+ad_vars  pbase /5.0e-4/ : base pressure during dwell before gas pre-fill (Pa)
+  !! initialpressure /1.0/ : initial neutral pressure at the beginning of the dwell phase (Pa)
   ! (duplicate message)
-  !+ad_vars  outgasindex /1.0/ : outgassing decay index
+  !! pbase /5.0e-4/ : base pressure during dwell before gas pre-fill (Pa)
   real(kind(1.0D0)) :: outgasindex = 1.0D0
-  !+ad_vars  outgasfactor /0.0235/ : outgassing prefactor kw: outgassing rate at 1 s per unit area (Pa m s-1)
+  !! outgasindex /1.0/ : outgassing decay index
   real(kind(1.0D0)) :: outgasfactor = 0.0235D0
+  !! outgasfactor /0.0235/ : outgassing prefactor kw: outgassing rate at 1 s per unit area (Pa m s-1)
 
 end module vacuum_variables
 
@@ -2807,21 +2772,11 @@ end module vacuum_variables
 
 module pf_power_variables
 
-  !+ad_name  pf_power_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  PF coil power conversion system
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  PF coil power conversion system of a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  29/10/12 PJK Initial version of module
-  !+ad_hist  27/03/13 PJK Comment change to ISCENR
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! PF coil power conversion system
+  !! This module contains global variables relating to the
+  !! PF coil power conversion system of a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2829,33 +2784,33 @@ module pf_power_variables
 
   public
 
-  !+ad_vars  acptmax : average of currents in PF circuits (A)
   real(kind(1.0D0)) :: acptmax = 0.0D0
-  !+ad_vars  ensxpfm : maximum stored energy in the PF circuits (MJ)
+  !! acptmax : average of currents in PF circuits (kA)
   real(kind(1.0D0)) :: ensxpfm = 0.0D0
-  !+ad_vars  iscenr /2/ : Switch for PF coil energy storage option:<UL>
-  !+ad_varc          <LI> = 1 all power from MGF (motor-generator flywheel) units;
-  !+ad_varc          <LI> = 2 all pulsed power from line;
-  !+ad_varc          <LI> = 3 PF power from MGF, heating from line</UL>
-  !+ad_varc          (In fact, options 1 and 3 are not treated differently)
+  !! ensxpfm : maximum stored energy in the PF circuits (MJ)
   integer :: iscenr = 2
-  !+ad_vars  pfckts : number of PF coil circuits
+  !! iscenr /2/ : Switch for PF coil energy storage option:<UL>
+  !!         <LI> = 1 all power from MGF (motor-generator flywheel) units;
+  !!         <LI> = 2 all pulsed power from line;
+  !!         <LI> = 3 PF power from MGF, heating from line</UL>
+  !!         (In fact, options 1 and 3 are not treated differently)
   real(kind(1.0D0)) :: pfckts = 0.0D0
-  !+ad_vars  spfbusl : total PF coil circuit bus length (m)
+  !! pfckts : number of PF coil circuits
   real(kind(1.0D0)) :: spfbusl = 0.0D0
-  !+ad_vars  spsmva : sum of PF power supply ratings (MVA)
+  !! spfbusl : total PF coil circuit bus length (m)
   real(kind(1.0D0)) :: spsmva = 0.0D0
-  !+ad_vars  srcktpm : sum of resistive PF coil power (kW)
+  !! spsmva : sum of PF power supply ratings (MVA)
   real(kind(1.0D0)) :: srcktpm = 0.0D0
-  !+ad_vars  vpfskv : PF coil voltage (kV)
+  !! srcktpm : sum of resistive PF coil power (kW)
   real(kind(1.0D0)) :: vpfskv = 0.0D0
+  !! vpfskv : PF coil voltage (kV)
 
-  !+ad_vars  peakpoloidalpower : Peak absolute rate of change of stored energy in poloidal field (MW) (11/01/16)
   real(kind(1.0D0)) :: peakpoloidalpower = 0.0D0
-  !+ad_vars  maxpoloidalpower /1000/ : Maximum permitted absolute rate of change of stored energy in poloidal field (MW)
+  !! peakpoloidalpower : Peak absolute rate of change of stored energy in poloidal field (MW) (11/01/16)
   real(kind(1.0D0)) :: maxpoloidalpower = 1000.0D0
-  !+ad_vars  poloidalpower : Poloidal power usage at time t (MW)
+  !! maxpoloidalpower /1000/ : Maximum permitted absolute rate of change of stored energy in poloidal field (MW)
   real(kind(1.0D0)), dimension(5) :: poloidalpower = 0.0D0
+  !! poloidalpower : Poloidal power usage at time t (MW)
 
 
 end module pf_power_variables
@@ -2864,42 +2819,12 @@ end module pf_power_variables
 
 module heat_transport_variables
 
-  !+ad_name  heat_transport_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  heat transport system
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  heat transport system of a fusion power plant, and
-  !+ad_desc  also those for a hydrogen production plant.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  30/10/12 PJK Initial version of module
-  !+ad_hist  27/03/13 PJK Comment change to fmgdmw
-  !+ad_hist  11/04/13 PJK Comment change to tfacpd
-  !+ad_hist  17/04/13 PJK Comment change to fcsht, priheat
-  !+ad_hist  17/04/13 PJK Added iprimnloss
-  !+ad_hist  04/06/14 PJK Added/modified various quantities for new power flow method
-  !+ad_hist  17/06/14 PJK Comment change to pfwdiv, ctht
-  !+ad_hist  21/08/14 PJK Added etathdiv
-  !+ad_hist  27/08/14 PJK Replaced etahtp* with just etahtp
-  !+ad_hist  17/09/14 PJK Changed default values
-  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
-  !+ad_hist  22/10/14 PJK Removed psechole, etathdiv
-  !+ad_hist  05/11/14 PJK Added htpmw_*
-  !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
-  !+ad_hisc               deleted ctht, rnihx;
-  !+ad_hisc               modified some descriptions
-  !+ad_hist  17/12/14 PJK Modified htpmw_* descriptions
-  !+ad_hist  13/01/15 PJK Changed pinjht description
-  !+ad_hist  08/03/17 JM  Added time-dependent power reqs
-  !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
-  !+ad_hist  22/06/18 SIM Added etatf (previously hardwired)
-  !+ad_hist  22/06/18 SIM tfacpd now always an output
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! heat transport system
+  !! This module contains global variables relating to the
+  !! heat transport system of a fusion power plant, and
+  !! also those for a hydrogen production plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2907,132 +2832,133 @@ module heat_transport_variables
 
   public
 
-  !+ad_vars  baseel /5.0e6/ : base plant electric load (W)
   real(kind(1.0D0)) :: baseel = 5.0D6
-  !+ad_vars  crypmw : cryogenic plant power (MW)
-  real(kind(1.0D0)) :: crypmw = 0.0D0
+  !! baseel /5.0e6/ : base plant electric load (W)
+  real(kind(1.0D0)), bind(C) :: crypmw = 0.0D0
+  !! crypmw : cryogenic plant power (MW)
 
-  !+ad_vars  etatf /0.9/ : AC to resistive power conversion for TF coils
   real(kind(1.0D0)) :: etatf = 0.9D0
-  !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency
-  !+ad_varc                 if secondary_cycle=2; otherwise calculated
+  !! etatf /0.9/ : AC to resistive power conversion for TF coils
   real(kind(1.0D0)) :: etath = 0.35D0
-  !+ad_vars  fachtmw : facility heat removal (MW)
-  real(kind(1.0D0)) :: fachtmw = 0.0D0
-  !+ad_vars  fcsht : total baseline power required at all times (MW)
-  real(kind(1.0D0)) :: fcsht = 0.0D0
-  !+ad_vars  fgrosbop : scaled fraction of gross power to balance-of-plant
+  !! etath /0.35/ : thermal to electric conversion efficiency
+  !!                if secondary_cycle=2; otherwise calculated
+  real(kind(1.0D0)), bind(C) :: fachtmw = 0.0D0
+  !! fachtmw : facility heat removal (MW)
+  real(kind(1.0D0)), bind(C) :: fcsht = 0.0D0
+  !! fcsht : total baseline power required at all times (MW)
   real(kind(1.0D0)) :: fgrosbop = 0.0D0
-  !+ad_vars  fmgdmw /0.0/ : power to mgf (motor-generator flywheel) units (MW)
-  !+ad_varc                 (ignored if iscenr=2)
+  !! fgrosbop : scaled fraction of gross power to balance-of-plant
   real(kind(1.0D0)) :: fmgdmw = 0.0D0
-  !+ad_vars  fpumpblkt /0.005/ : fraction of total blanket thermal power required
-  !+ad_varc                      to drive the blanket coolant pumps (default assumes
-  !+ad_varc                      water coolant) (secondary_cycle=0)
+  !! fmgdmw /0.0/ : power to mgf (motor-generator flywheel) units (MW)
+  !!                (ignored if iscenr=2)
   real(kind(1.0D0)) :: fpumpblkt = 0.005D0
-  !+ad_vars  fpumpdiv /0.005/ : fraction of total divertor thermal power required
-  !+ad_varc                     to drive the divertor coolant pumps (default assumes
-  !+ad_varc                     water coolant)
+  !! fpumpblkt /0.005/ : fraction of total blanket thermal power required
+  !!                     to drive the blanket coolant pumps (default assumes
+  !!                     water coolant) (secondary_cycle=0)
   real(kind(1.0D0)) :: fpumpdiv = 0.005D0
-  !+ad_vars  fpumpfw /0.005/ : fraction of total first wall thermal power required
-  !+ad_varc                    to drive the FW coolant pumps (default assumes water
-  !+ad_varc                    coolant) (secondary_cycle=0)
+  !! fpumpdiv /0.005/ : fraction of total divertor thermal power required
+  !!                    to drive the divertor coolant pumps (default assumes
+  !!                    water coolant)
   real(kind(1.0D0)) :: fpumpfw = 0.005D0
-  !+ad_vars  fpumpshld /0.005/ : fraction of total shield thermal power required
-  !+ad_varc                      to drive the shield coolant pumps (default assumes
-  !+ad_varc                      water coolant)
+  !! fpumpfw /0.005/ : fraction of total first wall thermal power required
+  !!                   to drive the FW coolant pumps (default assumes water
+  !!                   coolant) (secondary_cycle=0)
   real(kind(1.0D0)) :: fpumpshld = 0.005D0
-  !+ad_vars  htpmw_min /0.0/ : Minimum total electrical power for primary coolant pumps (MW) NOT RECOMMENDED
+  !! fpumpshld /0.005/ : fraction of total shield thermal power required
+  !!                     to drive the shield coolant pumps (default assumes
+  !!                     water coolant)
   real(kind(1.0D0)) :: htpmw_min = 0.0D0
+  !! htpmw_min /0.0/ : Minimum total electrical power for primary coolant pumps (MW) NOT RECOMMENDED
 
-  !+ad_vars  helpow : heat removal at cryogenic temperatures (W)
-  real(kind(1.0D0)) :: helpow = 0.0D0
-  !+ad_vars  htpmw  :: heat transport system electrical pump power (MW)
+  real(kind(1.0D0)), bind(C) :: helpow = 0.0D0
+  !! helpow : heat removal at cryogenic temperatures (W)
   real(kind(1.0D0)) :: htpmw = 0.0D0
-  !+ad_vars  htpmw_blkt /0.0/ : blanket coolant mechanical pumping power (MW)
+  !! htpmw  :: heat transport system electrical pump power (MW)
   real(kind(1.0D0)) :: htpmw_blkt = 0.0D0
-  !+ad_vars  htpmw_div /0.0/ : divertor coolant mechanical pumping power (MW)
+  !! htpmw_blkt /0.0/ : blanket coolant mechanical pumping power (MW)
   real(kind(1.0D0)) :: htpmw_div = 0.0D0
-  !+ad_vars  htpmw_fw /0.0/ : first wall coolant mechanical pumping power (MW)
+  !! htpmw_div /0.0/ : divertor coolant mechanical pumping power (MW)
   real(kind(1.0D0)) :: htpmw_fw = 0.0D0
-  !+ad_vars  htpmw_shld /.0/ : shield and vacuum vessel coolant mechanical pumping power (MW)
+  !! htpmw_fw /0.0/ : first wall coolant mechanical pumping power (MW)
   real(kind(1.0D0)) :: htpmw_shld = 0.0D0
-  !+ad_vars  htpsecmw : Waste power lost from primary coolant pumps (MW)
-  !+ad_varc
+  !! htpmw_shld /.0/ : shield and vacuum vessel coolant mechanical pumping power (MW)
   real(kind(1.0D0)) :: htpsecmw = 0.0D0
-
+  !! htpsecmw : Waste power lost from primary coolant pumps (MW)
+  !!
 
   ! Issue #506 Hydrogen production removed
 
   !  To be REMOVED
-  !+ad_vars  ipowerflow /1/ : switch for power flow model:<UL>
-  !+ad_varc              <LI> = 0 pre-2014 version;
-  !+ad_varc              <LI> = 1 comprehensive 2014 model</UL>
   integer :: ipowerflow = 1
-  !+ad_vars  iprimnloss /0/ : switch for lost neutron power through holes destiny:<UL>
-  !+ad_varc              <LI> = 0 does not contribute to energy generation cycle;
-  !+ad_varc              <LI> = 1 contributes to energy generation cycle</UL>
-  !+ad_varc              (ipowerflow=0)
+  !! ipowerflow /1/ : switch for power flow model:<UL>
+  !!             <LI> = 0 pre-2014 version;
+  !!             <LI> = 1 comprehensive 2014 model</UL>
   integer :: iprimnloss = 0
+  !! iprimnloss /0/ : switch for lost neutron power through holes destiny (ipowerflow=0):<UL>
+  !!             <LI> = 0 does not contribute to energy generation cycle;
+  !!             <LI> = 1 contributes to energy generation cycle</UL>
 
   ! KEEP
-  !+ad_vars  iprimshld /1/ : switch for shield thermal power destiny:<UL>
-  !+ad_varc             <LI> = 0 does not contribute to energy generation cycle;
-  !+ad_varc             <LI> = 1 contributes to energy generation cycle</UL>
-  !+ad_varc
   integer :: iprimshld = 1
+  !! iprimshld /1/ : switch for shield thermal power destiny:<UL>
+  !!            <LI> = 0 does not contribute to energy generation cycle;
+  !!            <LI> = 1 contributes to energy generation cycle</UL>
 
-
-
-  !+ad_vars  nphx : number of primary heat exchangers
-  integer :: nphx = 0
-  !+ad_vars  pacpmw : total pulsed power system load (MW)
-  real(kind(1.0D0)) :: pacpmw = 0.0D0
-  !+ad_vars  peakmva : peak MVA requirement
+  integer, bind(C) :: nphx = 0
+  !! nphx : number of primary heat exchangers
+  real(kind(1.0D0)), bind(C) :: pacpmw = 0.0D0
+  !! pacpmw : total pulsed power system load (MW)
   real(kind(1.0D0)) :: peakmva = 0.0D0
-  !+ad_vars  pfwdiv : heat removal from first wall/divertor (MW)
-  real(kind(1.0D0)) :: pfwdiv = 0.0D0
-  !+ad_vars  pgrossmw : gross electric power (MW)
-  real(kind(1.0D0)) :: pgrossmw = 0.0D0
-  !+ad_vars  pinjht : power dissipated in heating and current drive system (MW)
-  real(kind(1.0D0)) :: pinjht = 0.0D0
-  !+ad_vars  pinjmax : maximum injector power during pulse (heating and ramp-up/down phase) (MW)
+  !! peakmva : peak MVA requirement
+  real(kind(1.0D0)), bind(C) :: pfwdiv = 0.0D0
+  !! pfwdiv : heat removal from first wall/divertor (MW)
+  real(kind(1.0D0)), bind(C) :: pgrossmw = 0.0D0
+  !! pgrossmw : gross electric power (MW)
+  real(kind(1.0D0)), bind(C) :: pinjht = 0.0D0
+  !! pinjht : power dissipated in heating and current drive system (MW)
   real(kind(1.0D0)) :: pinjmax = 120.0D0
-  !+ad_vars  pinjwp : injector wall plug power (MW)
-  real(kind(1.0D0)) :: pinjwp = 0.0D0
-  !+ad_vars  pnetelmw : net electric power (MW)
+  !! pinjmax : maximum injector power during pulse (heating and ramp-up/down phase) (MW)
+  real(kind(1.0D0)), bind(C) :: pinjwp = 0.0D0
+  !! pinjwp : injector wall plug power (MW)
+  real(kind(1.0D0)) :: pinjwpfix = 0.0D0
+  !! pinjwpfix : secondary injector wall plug power (MW)
+
   real(kind(1.0D0)) :: pnetelmw = 0.0D0
-  !+ad_vars  precircmw : recirculating electric power (MW)
+  !! pnetelmw : net electric power (MW)
+
   real(kind(1.0D0)) :: precircmw = 0.0D0
-  !+ad_vars  priheat : total thermal power removed from fusion core (MW)
+  !! precircmw : recirculating electric power (MW)
   real(kind(1.0D0)) :: priheat = 0.0D0
-  !+ad_vars  psecdiv : Low-grade heat lost in divertor (MW)
+  !! priheat : total thermal power removed from fusion core (MW)
   real(kind(1.0D0)) :: psecdiv = 0.0D0
-  !+ad_vars  psechcd : Low-grade heat lost into HCD apparatus (MW)
+  !! psecdiv : Low-grade heat lost in divertor (MW)
   real(kind(1.0D0)) :: psechcd = 0.0D0
-  !+ad_vars  psechtmw : Low-grade heat (MW)
+  !! psechcd : Low-grade heat lost into HCD apparatus (MW)
   real(kind(1.0D0)) :: psechtmw = 0.0D0
+  !! psechtmw : Low-grade heat (MW)
 
   ! NEW
-  !+ad_vars  pseclossmw : Low-grade heat (VV + lost)(MW)
   real(kind(1.0D0)) :: pseclossmw = 0.0D0
+  !! pseclossmw : Low-grade heat (VV + lost)(MW)
 
-  !+ad_vars  psecshld : Low-grade heat deposited in shield (MW)
   real(kind(1.0D0)) :: psecshld = 0.0D0
-  !+ad_vars  pthermmw : High-grade heat useful for electric production (MW)
-  real(kind(1.0D0)) :: pthermmw = 0.0D0
-  !+ad_vars  pwpm2 /150.0/ : base AC power requirement per unit floor area (W/m2)
+  !! psecshld : Low-grade heat deposited in shield (MW)
+  real(kind(1.0D0)), bind(C) :: pthermmw = 0.0D0
+  !! pthermmw : High-grade heat useful for electric production (MW)
   real(kind(1.0D0)) :: pwpm2 = 150.0D0
-  !+ad_vars  tfacpd : total steady state TF coil AC power demand (MW)
+  !! pwpm2 /150.0/ : base AC power requirement per unit floor area (W/m2)
+
   real(kind(1.0D0)) :: tfacpd = 0.0D0
-  !+ad_vars  tlvpmw : estimate of total low voltage power (MW)
-  real(kind(1.0D0)) :: tlvpmw = 0.0D0
-  !+ad_vars  trithtmw /15.0/ : power required for tritium processing (MW)
-  real(kind(1.0D0)) :: trithtmw = 15.0D0
-  !+ad_vars  tturb : coolant temperature at turbine inlet (K) (secondary_cycle = 3,4)
+  !! tfacpd : total steady state TF coil AC power demand (MW)
+
+  real(kind(1.0D0)), bind(C) :: tlvpmw = 0.0D0
+  !! tlvpmw : estimate of total low voltage power (MW)
+  real(kind(1.0D0)), bind(C) :: trithtmw = 15.0D0
+  !! trithtmw /15.0/ : power required for tritium processing (MW)
   real(kind(1.0D0)) :: tturb = 0.0D0
-  !+ad_vars  vachtmw /0.5/ : vacuum pump power (MW)
-  real(kind(1.0D0)) :: vachtmw = 0.5D0
+  !! tturb : coolant temperature at turbine inlet (K) (secondary_cycle = 3,4)
+  real(kind(1.0D0)), bind(C) :: vachtmw = 0.5D0
+  !! vachtmw /0.5/ : vacuum pump power (MW)
 
 end module heat_transport_variables
 
@@ -3040,24 +2966,11 @@ end module heat_transport_variables
 
 module times_variables
 
-  !+ad_name  times_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  plasma pulse timings
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  plasma pulse timings.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  30/10/12 PJK Initial version of module
-  !+ad_hist  27/06/13 PJK Relabelled tohs, tohsin
-  !+ad_hist  17/09/14 PJK Changed default values
-  !+ad_hist  12/11/14 PJK Added tcycle; tdwell default changed from 100s to 1800s
-  !+ad_hist  06/03/17 JM  Added pulsetimings switch
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! plasma pulse timings
+  !! This module contains global variables relating to the
+  !! plasma pulse timings.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3065,52 +2978,52 @@ module times_variables
 
   public
 
-  !+ad_vars  pulsetimings /0.0/ : switch for pulse timings (if lpulse=1):<UL>
-  !+ad_varc            <LI> = 0, tohs = Ip(MA)/0.1 tramp, tqnch = input;
-  !+ad_varc            <LI> = 1, tohs = iteration var or input. tramp/tqnch max of input or tohs</UL>
   real(kind(1.0D0)) :: pulsetimings = 1.0D0
-  !+ad_vars  tburn /1000.0/ : burn time (s) (calculated if lpulse=1)
-  real(kind(1.0D0)) :: tburn = 1000.0D0
-  !+ad_vars  tburn0 : burn time (s) - used for internal consistency
+  !! pulsetimings /0.0/ : switch for pulse timings (if lpulse=1):<UL>
+  !!           <LI> = 0, tohs = Ip(MA)/0.1 tramp, tqnch = input;
+  !!           <LI> = 1, tohs = iteration var or input. tramp/tqnch max of input or tohs</UL>
+  real(kind(1.0D0)), bind(C) :: tburn = 1000.0D0
+  !! tburn /1000.0/ : burn time (s) (calculated if lpulse=1)
   real(kind(1.0D0)) :: tburn0 = 0.0D0
-  !+ad_vars  tcycle : full cycle time (s)
-  real(kind(1.0D0)) :: tcycle = 0.0D0
-  !+ad_vars  tdown : down time (s)
-  real(kind(1.0D0)) :: tdown = 0.0D0
-  !+ad_vars  tdwell /1800.0/ : time between pulses in a pulsed reactor (s)
-  !+ad_varc                   (iteration variable 17)
-  real(kind(1.0D0)) :: tdwell = 1800.0D0
-  !+ad_vars  theat /10.0/ : heating time, after current ramp up (s)
-  real(kind(1.0D0)) :: theat = 10.0D0
-  !+ad_vars  tim(6) : array of time points during plasma pulse (s)
+  !! tburn0 : burn time (s) - used for internal consistency
+  real(kind(1.0D0)), bind(C) :: tcycle = 0.0D0
+  !! tcycle : full cycle time (s)
+  real(kind(1.0D0)), bind(C) :: tdown = 0.0D0
+  !! tdown : down time (s)
+  real(kind(1.0D0)), bind(C) :: tdwell = 1800.0D0
+  !! tdwell /1800.0/ : time between pulses in a pulsed reactor (s)
+  !!                  (iteration variable 17)
+  real(kind(1.0D0)), bind(C) :: theat = 10.0D0
+  !! theat /10.0/ : heating time, after current ramp up (s)
   real(kind(1.0D0)), dimension(6) :: tim = 0.0D0
-  !+ad_vars  timelabel(6) : array of time labels during plasma pulse (s)
+  !! tim(6) : array of time points during plasma pulse (s)
   character(len=11), dimension(6) :: timelabel = (/ 'Start',   &
+  !! timelabel(6) : array of time labels during plasma pulse (s)
                                                     'BOP  ',     &
                                                     'EOR  ',     &
                                                     'BOF  ',     &
                                                     'EOF  ',     &
                                                     'EOP  ' /)
-  !+ad_vars  intervallabel(6) : time intervals - as strings (s)
   character(len=11), dimension(5) :: intervallabel = (/ 'tramp',     &
+  !! intervallabel(6) : time intervals - as strings (s)
                                                         'tohs ',      &
                                                         'theat',     &
                                                         'tburn',     &
                                                         'tqnch' /)
-  !+ad_vars  tohs /30.0/ : plasma current ramp-up time for current initiation (s)
-  !+ad_varc                (but calculated if lpulse=0)
-  !+ad_varc                (iteration variable 65)
-  real(kind(1.0D0)) :: tohs = 30.0D0
-  !+ad_vars  tohsin /0.0/ : switch for plasma current ramp-up time (if lpulse=0):<UL>
-  !+ad_varc            <LI> = 0, tohs = tramp = tqnch = Ip(MA)/0.5;
-  !+ad_varc            <LI> <>0, tohs = tohsin; tramp, tqnch are input</UL>
+  real(kind(1.0D0)), bind(C) :: tohs = 30.0D0
+  !! tohs /30.0/ : plasma current ramp-up time for current initiation (s)
+  !!               (but calculated if lpulse=0)
+  !!               (iteration variable 65)
   real(kind(1.0D0)) :: tohsin = 0.0D0
-  !+ad_vars  tpulse : pulse length = tohs + theat + tburn + tqnch
+  !! tohsin /0.0/ : switch for plasma current ramp-up time (if lpulse=0):<UL>
+  !!           <LI> = 0, tohs = tramp = tqnch = Ip(MA)/0.5;
+  !!           <LI> <>0, tohs = tohsin; tramp, tqnch are input</UL>
   real(kind(1.0D0)) :: tpulse = 0.0D0
-  !+ad_vars  tqnch /15.0/ : shut down time for PF coils (s); if pulsed, = tohs
+  !! tpulse : pulse length = tohs + theat + tburn + tqnch
   real(kind(1.0D0)) :: tqnch = 15.0D0
-  !+ad_vars  tramp /15.0/ : initial PF coil charge time (s); if pulsed, = tohs
+  !! tqnch /15.0/ : shut down time for PF coils (s); if pulsed, = tohs
   real(kind(1.0D0)) :: tramp = 15.0D0
+  !! tramp /15.0/ : initial PF coil charge time (s); if pulsed, = tohs
 
 end module times_variables
 
@@ -3118,25 +3031,11 @@ end module times_variables
 
 module buildings_variables
 
-  !+ad_name  buildings_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  plant buildings
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  plant buildings.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  30/10/12 PJK Initial version of module
-  !+ad_hist  08/04/13 PJK Modified wrbi comment
-  !+ad_hist  09/04/13 PJK Changed clh1 default from 8.0 to 2.5
-  !+ad_hist  09/04/13 PJK Added building volume multipliers rbvfac, mbvfac, wsvfac
-  !+ad_hist  11/04/13 PJK Comment change to esbldgm3
-  !+ad_hist  03/09/14 PJK Comment change to clh1
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! plant buildings
+  !! This module contains global variables relating to the
+  !! plant buildings.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3144,89 +3043,93 @@ module buildings_variables
 
   public
 
-  !+ad_vars  admv /1.0e5/ : administration building volume (m3)
   real(kind(1.0D0)) :: admv = 1.0D5
-  !+ad_vars  admvol : volume of administration buildings (m3)
+  !! admv /1.0e5/ : administration building volume (m3)
+
   real(kind(1.0D0)) :: admvol = 0.0D0
-  !+ad_vars  clh1 /2.5/ : vertical clearance from TF coil to cryostat (m)
-  !+ad_varc               (calculated for tokamaks)
+  !! admvol : volume of administration buildings (m3)
+
   real(kind(1.0D0)) :: clh1 = 2.5D0
-  !+ad_vars  clh2 /15.0/ : clearance beneath TF coil to foundation
-  !+ad_varc                (including basement) (m)
+  !! clh1 /2.5/ : vertical clearance from TF coil to cryostat (m)
+  !!              (calculated for tokamaks)
+
   real(kind(1.0D0)) :: clh2 = 15.0D0
-  !+ad_vars  conv /6.0e4/ : control building volume (m3)
+  !! clh2 /15.0/ : clearance beneath TF coil to foundation
+  !!               (including basement) (m)
+
   real(kind(1.0D0)) :: conv = 6.0D4
-  !+ad_vars  convol : volume of control, protection and i&c building (m3)
+  !! conv /6.0e4/ : control building volume (m3)
   real(kind(1.0D0)) :: convol = 0.0D0
-  !+ad_vars  cryvol : volume of cryoplant building (m3)
+  !! convol : volume of control, protection and i&c building (m3)
   real(kind(1.0D0)) :: cryvol = 0.0D0
-  !+ad_vars  efloor : effective total floor space (m2)
+  !! cryvol : volume of cryoplant building (m3)
   real(kind(1.0D0)) :: efloor = 0.0D0
-  !+ad_vars  elevol : volume of electrical equipment building (m3)
+  !! efloor : effective total floor space (m2)
   real(kind(1.0D0)) :: elevol = 0.0D0
-  !+ad_vars  esbldgm3 /1.0e3/ : volume of energy storage equipment building (m3)
-  !+ad_varc                     (not used if lpulse=0)
+  !! elevol : volume of electrical equipment building (m3)
   real(kind(1.0D0)) :: esbldgm3 = 1.0D3
-  !+ad_vars  fndt /2.0/ : foundation thickness (m)
+  !! esbldgm3 /1.0e3/ : volume of energy storage equipment building (m3)
+  !!                    (not used if lpulse=0)
   real(kind(1.0D0)) :: fndt = 2.0D0
-  !+ad_vars  hccl /5.0/ : clearance around components in hot cell (m)
+  !! fndt /2.0/ : foundation thickness (m)
   real(kind(1.0D0)) :: hccl = 5.0D0
-  !+ad_vars  hcwt /1.5/ : hot cell wall thickness (m)
+  !! hccl /5.0/ : clearance around components in hot cell (m)
   real(kind(1.0D0)) :: hcwt = 1.5D0
-  !+ad_vars  mbvfac /2.8/ : maintenance building volume multiplication factor
+  !! hcwt /1.5/ : hot cell wall thickness (m)
   real(kind(1.0D0)) :: mbvfac = 2.8D0
-  !+ad_vars  pfbldgm3 /2.0e4/ : volume of PF coil power supply building (m3)
+  !! mbvfac /2.8/ : maintenance building volume multiplication factor
   real(kind(1.0D0)) :: pfbldgm3 = 2.0D4
-  !+ad_vars  pibv /2.0e4/ : power injection building volume (m3)
+  !! pfbldgm3 /2.0e4/ : volume of PF coil power supply building (m3)
   real(kind(1.0D0)) :: pibv = 2.0D4
-  !+ad_vars  rbrt /1.0/ : reactor building roof thickness (m)
+  !! pibv /2.0e4/ : power injection building volume (m3)
   real(kind(1.0D0)) :: rbrt = 1.0D0
-  !+ad_vars  rbvfac /1.6/ : reactor building volume multiplication factor
+  !! rbrt /1.0/ : reactor building roof thickness (m)
   real(kind(1.0D0)) :: rbvfac = 1.6D0
-  !+ad_vars  rbvol : reactor building volume (m3)
+  !! rbvfac /1.6/ : reactor building volume multiplication factor
   real(kind(1.0D0)) :: rbvol = 0.0D0
-  !+ad_vars  rbwt /2.0/ : reactor building wall thickness (m)
+  !! rbvol : reactor building volume (m3)
   real(kind(1.0D0)) :: rbwt = 2.0D0
-  !+ad_vars  rmbvol : volume of maintenance and assembly building (m3)
+  !! rbwt /2.0/ : reactor building wall thickness (m)
   real(kind(1.0D0)) :: rmbvol = 0.0D0
-  !+ad_vars  row /4.0/ : clearance to building wall for crane operation (m)
+  !! rmbvol : volume of maintenance and assembly building (m3)
   real(kind(1.0D0)) :: row = 4.0D0
-  !+ad_vars  rxcl /4.0/ : clearance around reactor (m)
+  !! row /4.0/ : clearance to building wall for crane operation (m)
   real(kind(1.0D0)) :: rxcl = 4.0D0
-  !+ad_vars  shmf /0.5/ : fraction of shield mass per TF coil
-  !+ad_varc               to be moved in the maximum shield lift
+  !! rxcl /4.0/ : clearance around reactor (m)
   real(kind(1.0D0)) :: shmf = 0.5D0
-  !+ad_vars  shov /1.0e5/ : shops and warehouse volume (m3)
+  !! shmf /0.5/ : fraction of shield mass per TF coil
+  !!              to be moved in the maximum shield lift
   real(kind(1.0D0)) :: shov = 1.0D5
-  !+ad_vars  shovol :volume of shops and buildings for plant auxiliaries (m3)
+  !! shov /1.0e5/ : shops and warehouse volume (m3)
   real(kind(1.0D0)) :: shovol = 0.0D0
-  !+ad_vars  stcl /3.0/ : clearance above crane to roof (m)
+  !! shovol :volume of shops and buildings for plant auxiliaries (m3)
   real(kind(1.0D0)) :: stcl = 3.0D0
-  !+ad_vars  tfcbv /2.0e4/ : volume of TF coil power supply building (m3)
-  !+ad_varc                  (calculated if TF coils are superconducting)
+  !! stcl /3.0/ : clearance above crane to roof (m)
   real(kind(1.0D0)) :: tfcbv = 2.0D4
-  !+ad_vars  trcl /1.0/ : transportation clearance between components (m)
+  !! tfcbv /2.0e4/ : volume of TF coil power supply building (m3)
+  !!                 (calculated if TF coils are superconducting)
   real(kind(1.0D0)) :: trcl = 1.0D0
-  !+ad_vars  triv /4.0e4/ : volume of tritium, fuel handling and
-  !+ad_varc                 health physics buildings (m3)
+  !! trcl /1.0/ : transportation clearance between components (m)
   real(kind(1.0D0)) :: triv = 4.0D4
-  !+ad_vars  volnucb : sum of nuclear buildings volumes (m3)
+  !! triv /4.0e4/ : volume of tritium, fuel handling and
+  !!                health physics buildings (m3)
   real(kind(1.0D0)) :: volnucb = 0.0D0
-  !+ad_vars  volrci : internal volume of reactor building (m3)
-  real(kind(1.0D0)) :: volrci = 0.0D0
-  !+ad_vars  wgt /5.0e5/ : reactor building crane capacity (kg)
-  !+ad_varc                (calculated if 0 is input)
+  !! volnucb : sum of nuclear buildings volumes (m3)
+  real(kind(1.0D0)), bind(C) :: volrci = 0.0D0
+  !! volrci : internal volume of reactor building (m3)
   real(kind(1.0D0)) :: wgt = 5.0D5
-  !+ad_vars  wgt2 /1.0e5/ : hot cell crane capacity (kg)
-  !+ad_varc                 (calculated if 0 is input)
+  !! wgt /5.0e5/ : reactor building crane capacity (kg)
+  !!               (calculated if 0 is input)
   real(kind(1.0D0)) :: wgt2 = 1.0D5
-  !+ad_vars  wrbi : distance from centre of machine to building wall (m),
-  !+ad_varc         i.e. reactor building half-width
+  !! wgt2 /1.0e5/ : hot cell crane capacity (kg)
+  !!                (calculated if 0 is input)
   real(kind(1.0D0)) :: wrbi = 0.0D0
-  !+ad_vars  wsvfac /1.9/ : warm shop building volume multiplication factor
+  !! wrbi : distance from centre of machine to building wall (m),
+  !!        i.e. reactor building half-width
   real(kind(1.0D0)) :: wsvfac = 1.9D0
-  !+ad_vars  wsvol : volume of warm shop building (m3)
-  real(kind(1.0D0)) :: wsvol = 0.0D0
+  !! wsvfac /1.9/ : warm shop building volume multiplication factor
+  real(kind(1.0D0)), bind(C) :: wsvol = 0.0D0
+  !! wsvol : volume of warm shop building (m3)
 
 end module buildings_variables
 
@@ -3234,31 +3137,11 @@ end module buildings_variables
 
 module build_variables
 
-  !+ad_name  build_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  machine's radial and vertical build
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  fusion power core's radial and vertical geometry (build).
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  30/10/12 PJK Initial version of module
-  !+ad_hist  18/12/12 PJK Added hpfdif, hpfu
-  !+ad_hist  09/04/13 PJK Relabelled ddwex, ddwi etc.
-  !+ad_hist  10/04/13 PJK Relabelled gapsto, gapomin etc.
-  !+ad_hist  15/05/13 PJK Relabelled gapds, gapomin, gapsto, vgap2; added blnktth
-  !+ad_hist  22/05/13 PJK Added blanket subcomponent thicknesses
-  !+ad_hist  05/06/13 PJK Modified shldtth comment
-  !+ad_hist  25/09/13 PJK Removed prtsz, prtszreq
-  !+ad_hist  24/06/14 PJK Removed bcylth
-  !+ad_hist  03/09/14 PJK Added clhsf
-  !+ad_hist  17/09/14 PJK Changed default values
-  !+ad_hist  19/11/15 RK  Added precompression variables, thshield, vgaptop, shldlth, tftsgap, vvblgap
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! machine's radial and vertical build
+  !! This module contains global variables relating to the
+  !! fusion power core's radial and vertical geometry (build).
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3266,205 +3149,245 @@ module build_variables
 
   public
 
-  !+ad_vars  aplasmin /0.25/ : minimum minor radius (m)
   real(kind(1.0D0)) :: aplasmin = 0.25D0
-  !+ad_vars  blarea : blanket total surface area (m2)
+  !! aplasmin /0.25/ : minimum minor radius (m)
+
   real(kind(1.0D0)) :: blarea = 0.0D0
-  !+ad_vars  blareaib : inboard blanket surface area (m2)
+  !! blarea : blanket total surface area (m2)
+
   real(kind(1.0D0)) :: blareaib = 0.0D0
-  !+ad_vars  blareaob : outboard blanket surface area (m2)
+  !! blareaib : inboard blanket surface area (m2)
+
   real(kind(1.0D0)) :: blareaob = 0.0D0
-  !+ad_vars  blbmith /0.17/ : inboard blanket box manifold thickness (m)
-  !+ad_varc                    (blktmodel>0)
+  !! blareaob : outboard blanket surface area (m2)
+  
   real(kind(1.0D0)) :: blbmith = 0.17D0
-  !+ad_vars  blbmoth /0.27/ : outboard blanket box manifold thickness (m)
-  !+ad_varc                    (blktmodel>0)
+  !! blbmith /0.17/ : inboard blanket box manifold thickness (m)
+  !!                   (blktmodel>0)
   real(kind(1.0D0)) :: blbmoth = 0.27D0
-  !+ad_vars  blbpith /0.30/ : inboard blanket base plate thickness (m)
-  !+ad_varc                    (blktmodel>0)
+  !! blbmoth /0.27/ : outboard blanket box manifold thickness (m)
+  !!                   (blktmodel>0)
+
   real(kind(1.0D0)) :: blbpith = 0.30D0
-  !+ad_vars  blbpoth /0.35/ : outboard blanket base plate thickness (m)
-  !+ad_varc                    (blktmodel>0)
+  !! blbpith /0.30/ : inboard blanket base plate thickness (m)
+  !!                   (blktmodel>0)
+
   real(kind(1.0D0)) :: blbpoth = 0.35D0
-  !+ad_vars  blbuith /0.365/ : inboard blanket breeding zone thickness (m)
-  !+ad_varc                    (blktmodel>0)
-  !+ad_varc                    (iteration variable 90)
+  !! blbpoth /0.35/ : outboard blanket base plate thickness (m)
+  !!                   (blktmodel>0)
   real(kind(1.0D0)) :: blbuith = 0.365D0
-  !+ad_vars  blbuoth /0.465/ : outboard blanket breeding zone thickness (m)
-  !+ad_varc                    (blktmodel>0)
-  !+ad_varc                    (iteration variable 91)
+  !! blbuith /0.365/ : inboard blanket breeding zone thickness (m)
+  !!                   (blktmodel>0)
+  !!                   (iteration variable 90)
   real(kind(1.0D0)) :: blbuoth = 0.465D0
-  !+ad_vars  blnkith /0.115/ : inboard blanket thickness (m);
-  !+ad_varc                    (calculated if blktmodel > 0)
-  !+ad_varc                    (=0.0 if iblnkith=0)
+  !! blbuoth /0.465/ : outboard blanket breeding zone thickness (m)
+  !!                   (blktmodel>0)
+  !!                   (iteration variable 91)
+
   real(kind(1.0D0)) :: blnkith = 0.115D0
-  !+ad_vars  blnkoth /0.235/ : outboard blanket thickness (m);
-  !+ad_varc                    calculated if blktmodel > 0
+  !! blnkith /0.115/ : inboard blanket thickness (m);
+  !!                   (calculated if blktmodel > 0)
+  !!                   (=0.0 if iblnkith=0)
+
   real(kind(1.0D0)) :: blnkoth = 0.235D0
-  !+ad_vars  blnktth : top blanket thickness (m),
-  !+ad_varc            = mean of inboard and outboard blanket thicknesses
+  !! blnkoth /0.235/ : outboard blanket thickness (m);
+  !!                   calculated if blktmodel > 0
+
   real(kind(1.0D0)) :: blnktth = 0.0D0
-  !+ad_vars  bore /1.42/ : central solenoid inboard radius (m)
-  !+ad_varc                (iteration variable 29)
+  !! blnktth : top blanket thickness (m),
+  !!           = mean of inboard and outboard blanket thicknesses
+
   real(kind(1.0D0)) :: bore = 1.42D0
-  !+ad_vars  clhsf /4.268/ : cryostat lid height scaling factor (tokamaks)
+  !! bore /1.42/ : central solenoid inboard radius (m)
+  !!               (iteration variable 29)
+
   real(kind(1.0D0)) :: clhsf = 4.268D0
-  !+ad_vars  ddwex /0.07/ : cryostat thickness (m)
+  !! clhsf /4.268/ : cryostat lid height scaling factor (tokamaks)
   real(kind(1.0D0)) :: ddwex = 0.07D0
-  !+ad_vars  ddwi /0.07/ : vacuum vessel thickness (TF coil / shield) (m)
+  !! ddwex /0.07/ : cryostat thickness (m)
   real(kind(1.0D0)) :: ddwi = 0.07D0
-  !+ad_vars  fcspc /0.6/ : Fraction of space occupied by CS pre-compression structure
+  !! ddwi /0.07/ : vacuum vessel thickness (TF coil / shield) (m)
   real(kind(1.0D0)) :: fcspc = 0.6D0
-  !+ad_vars  fmsbc /0.0/ : Martensitic fraction of steel in (non-existent!) bucking cylinder
+  !! fcspc /0.6/ : Fraction of space occupied by CS pre-compression structure
   real(kind(1.0D0)) :: fmsbc = 0.0D0
-  !+ad_vars  fmsbl /0.0/ : Martensitic fraction of steel in blanket
+  !! fmsbc /0.0/ : Martensitic fraction of steel in (non-existent!) bucking cylinder
   real(kind(1.0D0)) :: fmsbl = 0.0D0
-  !+ad_vars  fmsdwe /0.0/ : Martensitic fraction of steel in cryostat
+  !! fmsbl /0.0/ : Martensitic fraction of steel in blanket
   real(kind(1.0D0)) :: fmsdwe = 0.0D0
-  !+ad_vars  fmsdwi /0.0/ : Martensitic fraction of steel in vacuum vessel
+  !! fmsdwe /0.0/ : Martensitic fraction of steel in cryostat
   real(kind(1.0D0)) :: fmsdwi = 0.0D0
-  !+ad_vars  fmsfw /0.0/ : Martensitic fraction of steel in first wall
+  !! fmsdwi /0.0/ : Martensitic fraction of steel in vacuum vessel
   real(kind(1.0D0)) :: fmsfw = 0.0D0
-  !+ad_vars  fmsoh /0.0/ : Martensitic fraction of steel in central solenoid
+  !! fmsfw /0.0/ : Martensitic fraction of steel in first wall
   real(kind(1.0D0)) :: fmsoh = 0.0D0
-  !+ad_vars  fmssh /0.0/ : Martensitic fraction of steel in shield
+  !! fmsoh /0.0/ : Martensitic fraction of steel in central solenoid
   real(kind(1.0D0)) :: fmssh = 0.0D0
-  !+ad_vars  fmstf /0.0/ : Martensitic fraction of steel in TF coil
+  !! fmssh /0.0/ : Martensitic fraction of steel in shield
   real(kind(1.0D0)) :: fmstf = 0.0D0
-  !+ad_vars  fseppc /3.5d8/ : Separation force in CS coil pre-compression structure
+  !! fmstf /0.0/ : Martensitic fraction of steel in TF coil
+
   real(kind(1.0D0)) :: fseppc = 3.5D8
-  !+ad_vars  fwarea : first wall total surface area (m2)
+  !! fseppc /3.5d8/ : Separation force in CS coil pre-compression structure
+
   real(kind(1.0D0)) :: fwarea = 0.0D0
-  !+ad_vars  fwareaib : inboard first wall surface area (m2)
+  !! fwarea : first wall total surface area (m2)
+
   real(kind(1.0D0)) :: fwareaib = 0.0D0
-  !+ad_vars  fwareaob : outboard first wall surface area (m2)
+  !! fwareaib : inboard first wall surface area (m2)
+
   real(kind(1.0D0)) :: fwareaob = 0.0D0
+  !! fwareaob : outboard first wall surface area (m2)
 
   ! MDK These are now calculated
-  !+ad_vars  fwith : inboard first wall thickness, initial estimate (m)
   real(kind(1.0D0)) :: fwith = 0.0D0
-  !+ad_vars  fwoth : outboard first wall thickness, initial estimate (m)
+  !! fwith : inboard first wall thickness, initial estimate (m)
   real(kind(1.0D0)) :: fwoth = 0.0D0
+  !! fwoth : outboard first wall thickness, initial estimate (m)
   ! Issue #481 Rename gapds
-  !+ad_vars  gapds /0.155/ : gap between inboard vacuum vessel and thermal shield (m)
-  !+ad_varc                (iteration variable 61)
   real(kind(1.0D0)) :: gapds = 0.155D0
-  !+ad_vars  gapoh /0.08/ : gap between central solenoid and TF coil (m)
-  !+ad_varc                (iteration variable 42)
+  !! gapds /0.155/ : gap between inboard vacuum vessel and thermal shield (m)
+  !!               (iteration variable 61)
   real(kind(1.0D0)) :: gapoh = 0.08D0
-  !+ad_vars  gapomin /0.234/ : minimum gap between outboard vacuum vessel and TF coil (m)
-  !+ad_varc                   (iteration variable 31)
+  !! gapoh /0.08/ : gap between central solenoid and TF coil (m)
+  !!               (iteration variable 42)
   real(kind(1.0D0)) :: gapomin = 0.234D0
-  !+ad_vars  gapsto : gap between outboard vacuum vessel and TF coil (m)
+  !! gapomin /0.234/ : minimum gap between outboard vacuum vessel and TF coil (m)
+  !!                  (iteration variable 31)
   real(kind(1.0D0)) :: gapsto = 0.0D0
-  !+ad_vars  hmax : maximum (half-)height of TF coil (inside edge) (m)
+  !! gapsto : gap between outboard vacuum vessel and TF coil (m)
+
   real(kind(1.0D0)) :: hmax = 0.0D0
-  !+ad_vars  hpfdif : difference in distance from midplane of upper and lower
-  !+ad_varc           portions of TF legs (non-zero for single-null devices) (m)
+  !! hmax : maximum (half-)height of TF coil (inside edge) (m)
+
   real(kind(1.0D0)) :: hpfdif = 0.0D0
-  !+ad_vars  hpfu : height to top of (upper) TF coil leg (m)
+  !! hpfdif : difference in distance from midplane of upper and lower
+  !!          portions of TF legs (non-zero for single-null devices) (m)
   real(kind(1.0D0)) :: hpfu = 0.0D0
-  !+ad_vars  hr1 : half-height of TF coil inboard leg straight section (m)
+  !! hpfu : height to top of (upper) TF coil leg (m)
   real(kind(1.0D0)) :: hr1 = 0.0D0
-  !+ad_vars  iohcl /1/ : switch for existence of central solenoid:<UL>
-  !+ad_varc         <LI> = 0 central solenoid not present;
-  !+ad_varc         <LI> = 1 central solenoid exists</UL>
+  !! hr1 : half-height of TF coil inboard leg straight section (m)
   integer :: iohcl = 1
+  !! iohcl /1/ : switch for existence of central solenoid:<UL>
+  !!        <LI> = 0 central solenoid not present;
+  !!        <LI> = 1 central solenoid exists</UL>
 
-  !+ad_vars  iprecomp /1/ : switch for existence of central solenoid pre-compression structure:<UL>
-  !+ad_varc         <LI> = 0 no pre-compression structure;
-  !+ad_varc         <LI> = 1 calculated pre-compression structure</UL>
   integer :: iprecomp = 1
+  !! iprecomp /1/ : switch for existence of central solenoid pre-compression structure:<UL>
+  !!        <LI> = 0 no pre-compression structure;
+  !!        <LI> = 1 calculated pre-compression structure</UL>
 
-
-  !+ad_vars  ohcth /0.811/ : central solenoid thickness (m)
-  !+ad_varc                 (iteration variable 16)
   real(kind(1.0D0)) :: ohcth = 0.811D0
-  !+ad_vars  precomp : CS coil precompression structure thickness (m)
+  !! ohcth /0.811/ : central solenoid thickness (m)
+  !!                (iteration variable 16)
+
   real(kind(1.0D0)) :: precomp = 0.0D0
-  !+ad_vars  rbld : sum of thicknesses to the major radius (m)
+  !! precomp : CS coil precompression structure thickness (m)
   real(kind(1.0D0)) :: rbld = 0.0D0
-  !+ad_vars  rinboard /0.651/ : plasma inboard radius (m)
-  !+ad_varc                     (consistency equation 29)
+  !! rbld : sum of thicknesses to the major radius (m)
   real(kind(1.0D0)) :: rinboard = 0.651D0
-  !+ad_vars  rsldi : radius to inboard shield (inside point) (m)
+  !! rinboard /0.651/ : plasma inboard radius (m)
+  !!                    (consistency equation 29)
   real(kind(1.0D0)) :: rsldi = 0.0D0
-  !+ad_vars  rsldo : radius to outboard shield (outside point) (m)
+  !! rsldi : radius to inboard shield (inside point) (m)
   real(kind(1.0D0)) :: rsldo = 0.0D0
-  !+ad_vars  rtfcin : radius of centre of inboard TF leg (m)
-  real(kind(1.0D0)) :: rtfcin = 0.0D0
-  !+ad_vars  rtot : radius to the centre of the outboard TF coil leg (m)
-  real(kind(1.0D0)) :: rtot = 0.0D0
-  !+ad_vars  scrapli /0.14/ : gap between plasma and first wall, inboard side (m)
-  !+ad_varc                   (used if iscrp=1) (iteration variable 73)
+  !! rsldo : radius to outboard shield (outside point) (m)
+
+  real(kind(1.0D0)) :: r_vv_inboard_out = 0.0D0
+  !! r_vv_inboard_out : Radial plasma facing side position of inboard vacuum vessel [m]
+
+  real(kind(1.0D0)) :: r_sh_inboard_out = 0.0D0
+  !! r_sh_inboard_out : Radial plasma facing side position of inboard neutronic shield [m]
+
+  real(kind(1.0D0)) :: r_tf_inboard_mid = 0.0D0
+  !!  r_tf_inboard_mid : Mid-plane Outer radius of centre of inboard TF leg (m)
+       
+  real(kind(1.0D0)) :: r_tf_outboard_mid = 0.0D0
+  !!  r_tf_outboard_mid : radius to the centre of the outboard TF coil leg (m)
+
+  real(kind(1.0D0)) :: r_cp_top = 0.0D0
+  !!  r_cp_top : Top outer radius of centre of the centropost (ST only) (m)
+
+  real(kind(1.0D0)) :: dr_tf_inner_bore = 0.0D0
+  !!  dr_tf_inner_bore : TF coil horizontal inner bore (m)
+
+  real(kind(1.0D0)) :: dh_tf_inner_bore = 0.0D0
+  !!  dh_tf_inner_bore : TF coil vertical inner bore (m)
+
   real(kind(1.0D0)) :: scrapli = 0.14D0
-  !+ad_vars  scraplo /0.15/ : gap between plasma and first wall, outboard side (m)
-  !+ad_varc                   (used if iscrp=1) (iteration variable 74)
+  !! scrapli /0.14/ : gap between plasma and first wall, inboard side (m)
+  !!                  (used if iscrp=1) (iteration variable 73)
+
   real(kind(1.0D0)) :: scraplo = 0.15D0
-  !+ad_vars  sharea : shield total surface area (m2)
+  !! scraplo /0.15/ : gap between plasma and first wall, outboard side (m)
+  !!                  (used if iscrp=1) (iteration variable 74)
   real(kind(1.0D0)) :: sharea = 0.0D0
-  !+ad_vars  shareaib : inboard shield surface area (m2)
+  !! sharea : shield total surface area (m2)
   real(kind(1.0D0)) :: shareaib = 0.0D0
-  !+ad_vars  shareaob : outboard shield surface area (m2)
+  !! shareaib : inboard shield surface area (m2)
   real(kind(1.0D0)) :: shareaob = 0.0D0
-  !+ad_vars  shldith /0.69/ : inboard shield thickness (m)
-  !+ad_varc                   (iteration variable 93)
+  !! shareaob : outboard shield surface area (m2)
   real(kind(1.0D0)) :: shldith = 0.69D0
-  !+ad_vars  shldlth /0.7/ : lower (under divertor) shield thickness (m)
+  !! shldith /0.69/ : inboard shield thickness (m)
+  !!                  (iteration variable 93)
    real(kind(1.0D0)) :: shldlth = 0.7D0
-  !+ad_vars  shldoth /1.05/ : outboard shield thickness (m)
-  !+ad_varc                   (iteration variable 94)
+   !! shldlth /0.7/ : lower (under divertor) shield thickness (m)
   real(kind(1.0D0)) :: shldoth = 1.05D0
-  !+ad_vars  shldtth /0.60/ : upper/lower shield thickness (m);
-  !+ad_varc                   calculated if blktmodel > 0
+  !! shldoth /1.05/ : outboard shield thickness (m)
+  !!                  (iteration variable 94)
   real(kind(1.0D0)) :: shldtth = 0.6D0
-  !+ad_vars  sigallpc /3.0d8/ : allowable stress in CSpre-compression structure (Pa);
+  !! shldtth /0.60/ : upper/lower shield thickness (m);
+  !!                  calculated if blktmodel > 0
   real(kind(1.0D0)) :: sigallpc = 3.0D8
+  !! sigallpc /3.0d8/ : allowable stress in CSpre-compression structure (Pa);
 
   ! Issue #514 Make tfcth an output not an iteration variable
-  !!!+ad_vars  tfcth /1.173/ : inboard TF coil thickness, (centrepost for ST) (m)
-  !!!+ad_varc                (calculated for stellarators)
-  !!!+ad_varc                (iteration variable 13)
   !real(kind(1.0D0)) :: tfcth = 1.173D0
+  ! !!! tfcth /1.173/ : inboard TF coil(s  ) thickness (m)
+  ! !!!               (calculated for stellarators)
+  ! !!!               (iteration variable 13)
 
-  !+ad_vars  tfcth : inboard TF coil thickness, (centrepost for ST) (m)
-  !+ad_varc                (calculated, NOT an iteration variable)
   real(kind(1.0D0)) :: tfcth = 0.0D0
+  !! tfcth : inboard TF coil thickness, (centrepost for ST) (m)
+  !!               (calculated, NOT an iteration variable)
 
-  !+ad_vars  tfoffset : vertical distance between centre of TF coils and centre of plasma (m)
   real(kind(1.0D0)) :: tfoffset = 0.0D0
-  !+ad_vars  tfootfi /1.19/ : TF coil outboard leg / inboard leg radial thickness
-  !+ad_varc                  ratio (itfsup=0 only)
-  !+ad_varc                  (iteration variable 75)
+  !! tfoffset : vertical distance between centre of TF coils and centre of plasma (m)
+
   real(kind(1.0D0)) :: tfootfi = 1.19D0
-  !+ad_vars  tfthko : outboard TF coil thickness (m)
+  !! tfootfi /1.19/ : TF coil outboard leg / inboard leg radial thickness
+  !!                 ratio (i_tf_sup=0 only)
+  !!                 (iteration variable 75)
+
   real(kind(1.0D0)) :: tfthko = 0.0D0
-  !+ad_vars  tftsgap /0.05/ : Minimum metal-to-metal gap between TF coil and thermal shield (m)
+  !! tfthko : outboard TF coil thickness (m)
+
   real(kind(1.0D0)) :: tftsgap = 0.05D0
-  !+ad_vars  thshield /0.05/ : TF-VV thermal shield thickness (m)
+  !! tftsgap /0.05/ : Minimum metal-to-metal gap between TF coil and thermal shield (m)
+
   real(kind(1.0D0)) :: thshield = 0.05D0
+  !! thshield /0.05/ : TF-VV thermal shield thickness (m)
 
-  !+ad_vars  vgap2 /0.163/ : vertical gap between vacuum vessel and TF coil (m)
   real(kind(1.0D0)) :: vgap2 = 0.163D0
+  !! vgap2 /0.163/ : vertical gap between vacuum vessel and thermal shields (m)
   ! Issue #481 Remove vgaptf
-  !+ad_vars  vgap /0.0/ : vertical gap between x-point and divertor (m)
-  !+ad_varc                (if = 0, it is calculated)
   real(kind(1.0D0)) :: vgap= 0.0D0
-  !+ad_vars  vgaptop /0.60/ : vertical gap between top of plasma and first wall (m)
+  !! vgap /0.0/ : vertical gap between x-point and divertor (m)
+  !!               (if = 0, it is calculated)
   real(kind(1.0D0)) :: vgaptop = 0.60D0
-  !+ad_vars  vvblgap /0.05/ : gap between vacuum vessel and blanket (m)
+  !! vgaptop /0.60/ : vertical gap between top of plasma and first wall (m)
   real(kind(1.0D0)) :: vvblgap = 0.05D0
+  !! vvblgap /0.05/ : gap between vacuum vessel and blanket (m)
 
-  !+ad_vars  plleni /1.0/ : length of inboard divertor plate (m)
   real(kind(1.0D0)) :: plleni = 1.0D0
-  !+ad_vars  plleno /1.0/ : length of outboard divertor plate (m)
+  !! plleni /1.0/ : length of inboard divertor plate (m)
   real(kind(1.0D0)) :: plleno = 1.0D0
-  !+ad_vars  plsepi /1.0/ : poloidal length, x-point to inboard strike point (m)
+  !! plleno /1.0/ : length of outboard divertor plate (m)
   real(kind(1.0D0)) :: plsepi = 1.0D0
-  !+ad_vars  plsepo /1.5/ : poloidal length, x-point to outboard strike point (m)
+  !! plsepi /1.0/ : poloidal length, x-point to inboard strike point (m)
   real(kind(1.0D0)) :: plsepo = 1.5D0
-  !+ad_vars  rspo : outboard strike point radius (m)
+  !! plsepo /1.5/ : poloidal length, x-point to outboard strike point (m)
   real(kind(1.0D0)) :: rspo = 0.0D0
+  !! rspo : outboard strike point radius (m)
 
 
 end module build_variables
@@ -3473,30 +3396,11 @@ end module build_variables
 
 module cost_variables
 
-  !+ad_name  cost_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  costing algorithms
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_auth  J Morris, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  costing algorithms of a fusion power plant.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  31/10/12 PJK Initial version of module
-  !+ad_hist  16/04/13 PJK Changed ucsc dimensions
-  !+ad_hist  18/06/13 PJK Changed uccryo from cryostat to vacuum vessel
-  !+ad_hist  15/08/13 PJK Changed cdrlife description
-  !+ad_hist  03/12/13 PJK Changed ucfwps units from $/m2 to $
-  !+ad_hist  19/11/14 PJK Modified iavail wording
-  !+ad_hist  25/11/14 JM  Added new availability model variables
-  !+ad_hist  02/12/14 PJK Changed abktflnc, adivflnc default values
-  !+ad_hist  10/12/14 PJK Removed ucihx
-  !+ad_hist  05/01/15 JM  Added 2015 costs model variables
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! costing algorithms
+  !! This module contains global variables relating to the
+  !! costing algorithms of a fusion power plant.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3504,416 +3408,417 @@ module cost_variables
 
   public
 
-  !+ad_vars  abktflnc /5.0/ : allowable first wall/blanket neutron
-  !+ad_varc                    fluence (MW-yr/m2) (blktmodel=0)
-  real(kind(1.0D0)) :: abktflnc = 5.0D0
-  !+ad_vars  adivflnc /7.0/ : allowable divertor heat fluence (MW-yr/m2)
-  real(kind(1.0D0)) :: adivflnc = 7.0D0
-  !+ad_vars  blkcst : blanket direct cost (M$)
+  real(kind(1.0D0)), bind(C) :: abktflnc = 5.0D0
+  !! abktflnc /5.0/ : allowable first wall/blanket neutron
+  !!                   fluence (MW-yr/m2) (blktmodel=0)
+  real(kind(1.0D0)), bind(C) :: adivflnc = 7.0D0
+  !! adivflnc /7.0/ : allowable divertor heat fluence (MW-yr/m2)
   real(kind(1.0D0)) :: blkcst = 0.0D0
-  !+ad_vars  c221 : total account 221 cost (M$) (first wall, blanket, shield,
-  !+ad_varc         support structure and divertor plates)
+  !! blkcst : blanket direct cost (M$)
   real(kind(1.0D0)) :: c221 = 0.0D0
-  !+ad_vars  c222 : total account 222 cost (M$) (TF coils + PF coils)
+  !! c221 : total account 221 cost (M$) (first wall, blanket, shield,
+  !!        support structure and divertor plates)
   real(kind(1.0D0)) :: c222 = 0.0D0
-  !+ad_vars  capcost : total capital cost including interest (M$)
+  !! c222 : total account 222 cost (M$) (TF coils + PF coils)
   real(kind(1.0D0)) :: capcost = 0.0D0
-  !+ad_vars  cconfix /80.0/ : fixed cost of superconducting cable ($/m)
+  !! capcost : total capital cost including interest (M$)
   real(kind(1.0D0)) :: cconfix = 80.0D0
-  !+ad_vars  cconshpf /70.0/ : cost of PF coil steel conduit/sheath ($/m)
+  !! cconfix /80.0/ : fixed cost of superconducting cable ($/m)
   real(kind(1.0D0)) :: cconshpf = 70.0D0
-  !+ad_vars  cconshtf /75.0/ : cost of TF coil steel conduit/sheath ($/m)
+  !! cconshpf /70.0/ : cost of PF coil steel conduit/sheath ($/m)
   real(kind(1.0D0)) :: cconshtf = 75.0D0
-  !+ad_vars  cdcost : current drive direct costs (M$)
+  !! cconshtf /75.0/ : cost of TF coil steel conduit/sheath ($/m)
   real(kind(1.0D0)) :: cdcost = 0.0D0
-  !+ad_vars  cdirt : total plant direct cost (M$)
-  real(kind(1.0D0)) :: cdirt = 0.0D0
-  !+ad_vars  cdrlife : lifetime of heating/current drive system (y)
-  real(kind(1.0D0)) :: cdrlife = 0.0D0
-  !+ad_vars  cfactr /0.75/ : Total plant availability fraction;
-  !+ad_varc                  input if iavail = 0
+  !! cdcost : current drive direct costs (M$)
+  real(kind(1.0D0)), bind(C) :: cdirt = 0.0D0
+  !! cdirt : total plant direct cost (M$)
+  real(kind(1.0D0)), bind(C) :: cdrlife = 0.0D0
+  !! cdrlife : lifetime of heating/current drive system (y)
   real(kind(1.0D0)) :: cfactr = 0.75D0
-  !+ad_vars  cpfact : Total plant capacity factor
+  !! cfactr /0.75/ : Total plant availability fraction;
+  !!                 input if iavail = 0
   real(kind(1.0D0)) :: cpfact = 0.0D0
+  !! cpfact : Total plant capacity factor
 
-  !+ad_vars  cfind(4) /0.244,0.244,0.244,0.29/ : indirect cost factor (func of lsa)
   real(kind(1.0D0)), dimension(4) :: cfind = &
+  !! cfind(4) /0.244,0.244,0.244,0.29/ : indirect cost factor (func of lsa)
        (/0.244D0, 0.244D0, 0.244D0, 0.29D0/)
 
-  !+ad_vars  cland /19.2/ : cost of land (M$)
   real(kind(1.0D0)) :: cland = 19.2D0
-  !+ad_vars  coe : cost of electricity ($/MW-hr)
+  !! cland /19.2/ : cost of land (M$)
   real(kind(1.0D0)) :: coe = 0.0D0
-  !+ad_vars  coecap : capital cost of electricity (m$/kW-hr)
+  !! coe : cost of electricity ($/MW-hr)
   real(kind(1.0D0)) :: coecap = 0.0D0
-  !+ad_vars  coefuelt : 'fuel' (including replaceable components) contribution to
-  !+ad_varc             cost of electricity (m$/kW-hr)
+  !! coecap : capital cost of electricity (m$/kW-hr)
   real(kind(1.0D0)) :: coefuelt = 0.0D0
-  !+ad_vars  coeoam : operation and maintenance contribution to
-  !+ad_varc           cost of electricity (m$/kW-hr)
+  !! coefuelt : 'fuel' (including replaceable components) contribution to
+  !!            cost of electricity (m$/kW-hr)
   real(kind(1.0D0)) :: coeoam = 0.0D0
-  !+ad_vars  concost : plant construction cost (M$)
+  !! coeoam : operation and maintenance contribution to
+  !!          cost of electricity (m$/kW-hr)
   real(kind(1.0D0)) :: concost = 0.0D0
-  !+ad_vars  costexp /0.8/ : cost exponent for scaling in 2015 costs model
+  !! concost : plant construction cost (M$)
   real(kind(1.0D0)) :: costexp = 0.8D0
-  !+ad_vars  costexp_pebbles /0.6/ : cost exponent for pebbles in 2015 costs model
+  !! costexp /0.8/ : cost exponent for scaling in 2015 costs model
   real(kind(1.0D0)) :: costexp_pebbles = 0.6D0
-  !+ad_vars  cost_factor_buildings /1.0/ : cost scaling factor for buildings
+  !! costexp_pebbles /0.6/ : cost exponent for pebbles in 2015 costs model
   real(kind(1.0D0)) :: cost_factor_buildings = 1.0D0
-  !+ad_vars  cost_factor_land /1.0/ : cost scaling factor for land
+  !! cost_factor_buildings /1.0/ : cost scaling factor for buildings
   real(kind(1.0D0)) :: cost_factor_land = 1.0D0
-  !+ad_vars  cost_factor_tf_coils /1.0/ : cost scaling factor for TF coils
+  !! cost_factor_land /1.0/ : cost scaling factor for land
   real(kind(1.0D0)) :: cost_factor_tf_coils = 1.0D0
-  !+ad_vars  cost_factor_fwbs /1.0/ : cost scaling factor for fwbs
+  !! cost_factor_tf_coils /1.0/ : cost scaling factor for TF coils
   real(kind(1.0D0)) :: cost_factor_fwbs = 1.0D0
-  !+ad_vars  cost_factor_rh /1.0/ : cost scaling factor for remote handling
+  !! cost_factor_fwbs /1.0/ : cost scaling factor for fwbs
   real(kind(1.0D0)) :: cost_factor_rh = 1.0D0
-  !+ad_vars  cost_factor_vv /1.0/ : cost scaling factor for vacuum vessel
+  !! cost_factor_rh /1.0/ : cost scaling factor for remote handling
   real(kind(1.0D0)) :: cost_factor_vv = 1.0D0
-  !+ad_vars  cost_factor_bop /1.0/ : cost scaling factor for energy conversion system
+  !! cost_factor_vv /1.0/ : cost scaling factor for vacuum vessel
   real(kind(1.0D0)) :: cost_factor_bop = 1.0D0
-  !+ad_vars  cost_factor_misc /1.0/ : cost scaling factor for remaining subsystems
+  !! cost_factor_bop /1.0/ : cost scaling factor for energy conversion system
   real(kind(1.0D0)) :: cost_factor_misc = 1.0D0
+  !! cost_factor_misc /1.0/ : cost scaling factor for remaining subsystems
 
-  !+ad_vars  maintenance_fwbs /0.2/ : Maintenance cost factor:
-  !+ad_varc                           first wall, blanket, shield, divertor
   real(kind(1.0D0)) :: maintenance_fwbs = 0.2D0
-  !+ad_vars  maintenance_gen /0.05/ : Maintenance cost factor: All other components except
-  !+ad_varc                           coils, vacuum vessel, thermal shield, cryostat, land
+  !! maintenance_fwbs /0.2/ : Maintenance cost factor:
+  !!                          first wall, blanket, shield, divertor
   real(kind(1.0D0)) :: maintenance_gen = 0.05D0
-  !+ad_vars  amortization /13.6/ : amortization factor (fixed charge factor) "A" (years)
+  !! maintenance_gen /0.05/ : Maintenance cost factor: All other components except
+  !!                          coils, vacuum vessel, thermal shield, cryostat, land
   real(kind(1.0D0)) :: amortization = 13.6D0
+  !! amortization /13.6/ : amortization factor (fixed charge factor) "A" (years)
 
-  !+ad_vars  cost_model /1/ : switch for cost model:<UL>
-  !+ad_varc          <LI> = 0 use $ 1990 PROCESS model
-  !+ad_varc          <LI> = 1 use $ 2015 Kovari model</UL>
   integer :: cost_model = 1
-  !+ad_vars  cowner /0.15/ : owner cost factor
-  real(kind(1.0D0)) :: cowner = 0.15D0
-  !+ad_vars  cplife : lifetime of centrepost (y)
+  !! cost_model /1/ : switch for cost model:<UL>
+  !!         <LI> = 0 use $ 1990 PROCESS model
+  !!         <LI> = 1 use $ 2014 Kovari model
+  !!         <LI> = 2 use $ 1980 STEP model (NOT RECOMMENDED - Under Development)</UL>
+  real(kind(1.0D0)), bind(C) :: cowner = 0.15D0
+  !! cowner /0.15/ : owner cost factor
   real(kind(1.0D0)) :: cplife = 0.0D0
-  !+ad_vars  cpstcst : ST centrepost direct cost (M$)
+  !! cplife : lifetime of centrepost (y)
   real(kind(1.0D0)) :: cpstcst = 0.0D0
-  !+ad_vars  cpstflnc /10.0/ : allowable ST centrepost neutron fluence (MW-yr/m2)
-  real(kind(1.0D0)) :: cpstflnc = 10.0D0
-  !+ad_vars  crctcore : reactor core costs (categories 221, 222 and 223)
+  !! cpstcst : ST centrepost direct cost (M$)
+  real(kind(1.0D0)), bind(C) :: cpstflnc = 10.0D0
+  !! cpstflnc /10.0/ : allowable ST centrepost neutron fluence (MW-yr/m2)
   real(kind(1.0D0)) :: crctcore = 0.0D0
-  !+ad_vars  csi /16.0/ : allowance for site costs (M$)
+  !! crctcore : reactor core costs (categories 221, 222 and 223)
   real(kind(1.0D0)) :: csi = 16.0D0
-  !+ad_vars  cturbb /380.0/ : cost of turbine building (M$)
-  real(kind(1.0D0)) :: cturbb = 380.0D0
-  !+ad_vars  decomf /0.1/ : proportion of constructed cost required for
-  !+ad_varc                 decommissioning fund
+  !! csi /16.0/ : allowance for site costs (M$)
+  real(kind(1.0D0)) :: cturbb = 38.0D0
+  !! cturbb /38.0/ : cost of turbine building (M$)
   real(kind(1.0D0)) :: decomf = 0.1D0
-  !+ad_vars  dintrt /0.0/ : diff between borrowing and saving interest rates
+  !! decomf /0.1/ : proportion of constructed cost required for
+  !!                decommissioning fund
   real(kind(1.0D0)) :: dintrt = 0.0D0
-  !+ad_vars  divcst : divertor direct cost (M$)
+  !! dintrt /0.0/ : diff between borrowing and saving interest rates
   real(kind(1.0D0)) :: divcst = 0.0D0
-  !+ad_vars  divlife : lifetime of divertor (y)
-  real(kind(1.0D0)) :: divlife = 0.0D0
-  !+ad_vars  dtlife /0.0/ : period prior to the end of the plant life that
-  !+ad_varc                 the decommissioning fund is used (years)
+  !! divcst : divertor direct cost (M$)
+  real(kind(1.0D0)), bind(C) :: divlife = 0.0D0
+  !! divlife : lifetime of divertor (y)
   real(kind(1.0D0)) :: dtlife = 0.0D0
-  !+ad_vars  fcap0 /1.165/ : average cost of money for construction of plant
-  !+ad_varc                  assuming design/construction time of six years
+  !! dtlife /0.0/ : period prior to the end of the plant life that
+  !!                the decommissioning fund is used (years)
   real(kind(1.0D0)) :: fcap0 = 1.165D0
-  !+ad_vars  fcap0cp /1.08/ : average cost of money for replaceable components
-  !+ad_varc                   assuming lead time for these of two years
+  !! fcap0 /1.165/ : average cost of money for construction of plant
+  !!                 assuming design/construction time of six years
   real(kind(1.0D0)) :: fcap0cp = 1.08D0
-  !+ad_vars  fcdfuel /0.1/ : fraction of current drive cost treated as fuel
-  !+ad_varc                  (if ifueltyp = 1)
+  !! fcap0cp /1.08/ : average cost of money for replaceable components
+  !!                  assuming lead time for these of two years
   real(kind(1.0D0)) :: fcdfuel = 0.1D0
-  !+ad_vars  fcontng /0.195/ : project contingency factor
-  real(kind(1.0D0)) :: fcontng = 0.195D0
-  !+ad_vars  fcr0 /0.0966/ : fixed charge rate during construction
+  !! fcdfuel /0.1/ : fraction of current drive cost treated as fuel
+  !!                 (if ifueltyp = 1)
+  real(kind(1.0D0)), bind(C) :: fcontng = 0.195D0
+  !! fcontng /0.195/ : project contingency factor
   real(kind(1.0D0)) :: fcr0 = 0.0966D0
-  !+ad_vars  fkind /1.0/ : multiplier for Nth of a kind costs
-  real(kind(1.0D0)) :: fkind = 1.0D0
-  !+ad_vars  fwallcst : first wall cost (M$)
+  !! fcr0 /0.0966/ : fixed charge rate during construction
+  real(kind(1.0D0)), bind(C) :: fkind = 1.0D0
+  !! fkind /1.0/ : multiplier for Nth of a kind costs
   real(kind(1.0D0)) :: fwallcst = 0.0D0
-  !+ad_vars  iavail /2/ : switch for plant availability model:<UL>
-  !+ad_varc          <LI> = 0 use input value for cfactr;
-  !+ad_varc          <LI> = 1 calculate cfactr using Taylor and Ward 1999 model;
-  !+ad_varc          <LI> = 2 calculate cfactr using new (2015) model</UL>
+  !! fwallcst : first wall cost (M$)
   integer :: iavail= 2
-  !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 61)
+  !! iavail /2/ : switch for plant availability model:<UL>
+  !!         <LI> = 0 use input value for cfactr;
+  !!         <LI> = 1 calculate cfactr using Taylor and Ward 1999 model;
+  !!         <LI> = 2 calculate cfactr using new (2015) model</UL>
   real(kind(1.0D0)) :: avail_min = 0.75D0
-
-  !+ad_vars  tok_build_cost_per_vol /1283.0/ : Unit cost for tokamak complex buildings,
-  !+ad_varc                                    including building and site services ($/m3)
+  !! avail_min /0.75/ : Minimum availability (constraint equation 61)
   real(kind(1.0D0)) :: tok_build_cost_per_vol = 1283.0D0
-  !+ad_vars  light_build_cost_per_vol /270.0/ : Unit cost for unshielded non-active buildings ($/m3)
+  !! tok_build_cost_per_vol /1283.0/ : Unit cost for tokamak complex buildings,
+  !!                                   including building and site services ($/m3)
   real(kind(1.0D0)) :: light_build_cost_per_vol = 270.0D0
-
-  !+ad_vars  favail /1.0/ : F-value for minimum availability (constraint equation 61)
+  !! light_build_cost_per_vol /270.0/ : Unit cost for unshielded non-active buildings ($/m3)
   real(kind(1.0D0)) :: favail = 1.0D0
-  !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
-  integer :: num_rh_systems = 4
-  !+ad_vars  conf_mag /0.99/ : c parameter, which determines the temperature margin at which magnet lifetime starts to decline
-  real(kind(1.0D0)) :: conf_mag = 0.99D0
-  !+ad_vars  div_prob_fail /0.0002/ : Divertor probability of failure (per op day)
-  real(kind(1.0D0)) :: div_prob_fail = 0.0002D0
-  !+ad_vars  div_umain_time /0.25/ : Divertor unplanned maintenance time (years)
-  real(kind(1.0D0)) :: div_umain_time = 0.25D0
-
-  ! MDK
-  !+ad_vars  div_nref /7000/ : Reference value for cycle cycle life of divertor
-  real(kind(1.0D0)) :: div_nref = 7000.0D0
-  !+ad_vars  div_nu /14000/ : The cycle when the divertor fails with 100% probability
-  real(kind(1.0D0)) :: div_nu = 14000.0D0
-
-
-  !+ad_vars  fwbs_nref /20000/ : Reference value for cycle life of blanket
-  real(kind(1.0D0)) :: fwbs_nref = 20000.0D0
-  !+ad_vars  fwbs_nu /40000/ : The cycle when the blanket fails with 100% probability
-  real(kind(1.0D0)) :: fwbs_nu = 40000.0D0
-
-
-  !+ad_vars  fwbs_prob_fail /0.0002/ : Fwbs probability of failure (per op day)
-  real(kind(1.0D0)) :: fwbs_prob_fail = 0.0002D0
-  !+ad_vars  fwbs_umain_time /0.25/ : Fwbs unplanned maintenance time (years)
-  real(kind(1.0D0)) :: fwbs_umain_time = 0.25D0
-  !+ad_vars  redun_vacp /25/ : Vacuum system pump redundancy level (%)
+  !! favail /1.0/ : F-value for minimum availability (constraint equation 61)
+  integer, bind(C) :: num_rh_systems = 4
+  !! num_rh_systems /4/ : Number of remote handling systems (1-10)
+  real(kind(1.0D0)), bind(C) :: conf_mag = 0.99D0
+  !! conf_mag /0.99/ : c parameter, which determines the temperature margin at which magnet lifetime starts to decline
+  real(kind(1.0D0)), bind(C) :: div_prob_fail = 0.0002D0
+  !! div_prob_fail /0.0002/ : Divertor probability of failure (per op day)
+  real(kind(1.0D0)), bind(C) :: div_umain_time = 0.25D0
+  !! div_umain_time /0.25/ : Divertor unplanned maintenance time (years)
+  real(kind(1.0D0)), bind(C) :: div_nref = 7000.0D0
+  !! div_nref /7000/ : Reference value for cycle cycle life of divertor
+  real(kind(1.0D0)), bind(C) :: div_nu = 14000.0D0
+  !! div_nu /14000/ : The cycle when the divertor fails with 100% probability
+  real(kind(1.0D0)),bind(C) :: fwbs_nref = 20000.0D0
+  !! fwbs_nref /20000/ : Reference value for cycle life of blanket
+  real(kind(1.0D0)), bind(C) :: fwbs_nu = 40000.0D0
+  !! fwbs_nu /40000/ : The cycle when the blanket fails with 100% probability
+  real(kind(1.0D0)), bind(C) :: fwbs_prob_fail = 0.0002D0
+  !! fwbs_prob_fail /0.0002/ : Fwbs probability of failure (per op day)
+  real(kind(1.0D0)), bind(C) :: fwbs_umain_time = 0.25D0
+  !! fwbs_umain_time /0.25/ : Fwbs unplanned maintenance time (years)
   real(kind(1.0D0)) :: redun_vacp = 25.0D0
-  !+ad_vars  redun_vac : Number of redundant vacuum pumps
+  !! redun_vacp /25/ : Vacuum system pump redundancy level (%)
   integer :: redun_vac = 0
-  !+ad_vars  t_operation : Operational time (yrs)
-  real(kind(1.0D0)) :: t_operation = 0.0D0
-  !+ad_vars  tbktrepl /0.5/ : time taken to replace blanket (y)
-  !+ad_varc                 (iavail=1)
+  !! redun_vac : Number of redundant vacuum pumps
+  real(kind(1.0D0)), bind(C) :: t_operation = 0.0D0
+  !! t_operation : Operational time (yrs)
   real(kind(1.0D0)) :: tbktrepl = 0.5D0
-  !+ad_vars  tcomrepl /0.5/ : time taken to replace both blanket and divertor (y)
-  !+ad_varc                 (iavail=1)
+  !! tbktrepl /0.5/ : time taken to replace blanket (y)
+  !!                (iavail=1)
   real(kind(1.0D0)) :: tcomrepl = 0.5D0
-  !+ad_vars  tdivrepl /0.25/ : time taken to replace divertor (y)
-  !+ad_varc                 (iavail=1)
+  !! tcomrepl /0.5/ : time taken to replace both blanket and divertor (y)
+  !!                (iavail=1)
   real(kind(1.0D0)) :: tdivrepl = 0.25D0
-  !+ad_vars  uubop /0.02/ : unplanned unavailability factor for balance of plant
-  !+ad_varc                 (iavail=1)
+  !! tdivrepl /0.25/ : time taken to replace divertor (y)
+  !!                (iavail=1)
   real(kind(1.0D0)) :: uubop = 0.02D0
-  !+ad_vars  uucd /0.02/ : unplanned unavailability factor for current drive
-  !+ad_varc                 (iavail=1)
+  !! uubop /0.02/ : unplanned unavailability factor for balance of plant
+  !!                (iavail=1)
   real(kind(1.0D0)) :: uucd = 0.02D0
-  !+ad_vars  uudiv /0.04/ : unplanned unavailability factor for divertor
-  !+ad_varc                 (iavail=1)
+  !! uucd /0.02/ : unplanned unavailability factor for current drive
+  !!                (iavail=1)
   real(kind(1.0D0)) :: uudiv = 0.04D0
-  !+ad_vars  uufuel /0.02/ : unplanned unavailability factor for fuel system
-  !+ad_varc                 (iavail=1)
+  !! uudiv /0.04/ : unplanned unavailability factor for divertor
+  !!                (iavail=1)
   real(kind(1.0D0)) :: uufuel = 0.02D0
-  !+ad_vars  uufw /0.04/ : unplanned unavailability factor for first wall
-  !+ad_varc                 (iavail=1)
+  !! uufuel /0.02/ : unplanned unavailability factor for fuel system
+  !!                (iavail=1)
   real(kind(1.0D0)) :: uufw = 0.04D0
-  !+ad_vars  uumag /0.02/ : unplanned unavailability factor for magnets
-  !+ad_varc                 (iavail=1)
+  !! uufw /0.04/ : unplanned unavailability factor for first wall
+  !!                (iavail=1)
   real(kind(1.0D0)) :: uumag = 0.02D0
-  !+ad_vars  uuves /0.04/ : unplanned unavailability factor for vessel
-  !+ad_varc                 (iavail=1)
+  !! uumag /0.02/ : unplanned unavailability factor for magnets
+  !!                (iavail=1)
   real(kind(1.0D0)) :: uuves = 0.04D0
-
-  !+ad_vars  ifueltyp /0/ : switch:<UL>
-  !+ad_varc            <LI> = 1 treat blanket divertor, first wall and
-  !+ad_varc                     fraction fcdfuel of CD equipment as fuel cost;
-  !+ad_varc            <LI> = 0 treat these as capital cost</UL>
+  !! uuves /0.04/ : unplanned unavailability factor for vessel
+  !!                (iavail=1)
   integer :: ifueltyp = 0
-  !+ad_vars  ipnet /0/ : switch for net electric power calculation:<UL>
-  !+ad_varc         <LI> = 0 scale so that always > 0;
-  !+ad_varc         <LI> = 1 let go < 0 (no c-o-e)</UL>
+  !! ifueltyp /0/ : switch:<UL>
+  !!           <LI> = 1 treat blanket divertor, first wall and
+  !!                    fraction fcdfuel of CD equipment as fuel cost;
+  !!           <LI> = 0 treat these as capital cost</UL>
   integer :: ipnet = 0
-
-
-  !+ad_vars  ireactor /1/ : switch for net electric power and cost of
-  !+ad_varc                 electricity calculations:<UL>
-  !+ad_varc            <LI> = 0 do not calculate MW(electric) or c-o-e;
-  !+ad_varc            <LI> = 1 calculate MW(electric) and c-o-e</UL>
-  integer :: ireactor = 1
-  !+ad_vars  lsa /4/ : level of safety assurance switch (generally, use 3 or 4):<UL>
-  !+ad_varc       <LI> = 1 truly passively safe plant;
-  !+ad_varc       <LI> = 2,3 in-between;
-  !+ad_varc       <LI> = 4 like current fission plant</UL>
-  integer :: lsa = 4
-  !+ad_vars  moneyint : interest portion of capital cost (M$)
+  !! ipnet /0/ : switch for net electric power calculation:<UL>
+  !!        <LI> = 0 scale so that always > 0;
+  !!        <LI> = 1 let go < 0 (no c-o-e)</UL>
+  integer, bind(C) :: ireactor = 1
+  !! ireactor /1/ : switch for net electric power and cost of
+  !!                electricity calculations:<UL>
+  !!           <LI> = 0 do not calculate MW(electric) or c-o-e;
+  !!           <LI> = 1 calculate MW(electric) and c-o-e</UL>
+  integer, bind(C) :: lsa = 4
+  !! lsa /4/ : level of safety assurance switch (generally, use 3 or 4):<UL>
+  !!      <LI> = 1 truly passively safe plant;
+  !!      <LI> = 2,3 in-between;
+  !!      <LI> = 4 like current fission plant</UL>
   real(kind(1.0D0)) :: moneyint = 0.0D0
-  !+ad_vars  output_costs /1/ : switch for costs output:<UL>
-  !+ad_varc            <LI> = 0 do not write cost-related outputs to file;
-  !+ad_varc            <LI> = 1 write cost-related outputs to file</UL>
+  !! moneyint : interest portion of capital cost (M$)
   integer :: output_costs = 1
-  !+ad_vars  ratecdol /0.0435/ : effective cost of money in constant dollars
+  !! output_costs /1/ : switch for costs output:<UL>
+  !!           <LI> = 0 do not write cost-related outputs to file;
+  !!           <LI> = 1 write cost-related outputs to file</UL>
   real(kind(1.0D0)) :: ratecdol = 0.0435D0
-  !+ad_vars  tlife /30.0/ : plant life (years)
-  real(kind(1.0D0)) :: tlife = 30.0D0
-  !+ad_vars  ucad /180.0/ FIX : unit cost for administration buildings (M$/m3)
-  real(kind(1.0D0)) :: ucad = 180.0D0
-  !+ad_vars  ucaf /1.5e6/ FIX : unit cost for aux facility power equipment ($)
-  real(kind(1.0D0)) :: ucaf = 1.5D6
-  !+ad_vars  ucahts /31.0/ FIX : unit cost for aux heat transport equipment ($/W**exphts)
-  real(kind(1.0D0)) :: ucahts = 31.0D0
-  !+ad_vars  ucap /17.0/ FIX : unit cost of auxiliary transformer ($/kVA)
-  real(kind(1.0D0)) :: ucap = 17.0D0
-  !+ad_vars  ucblbe /260.0/ : unit cost for blanket beryllium ($/kg)
+  !! ratecdol /0.0435/ : effective cost of money in constant dollars
+  real(kind(1.0D0)) :: step_con = 1.5D-1
+  !! step_con /0.15/ : Contingency Percentage
+  real(kind(1.0D0)), dimension(68) :: step_ref = &
+  !! step_ref(68) /.../ : Reference values for cost model 2
+  (/ 3.0D0, 3.0D-1, 1.115D1, 1.5744D2, 3.592D1, 7.96D0, 9.16D0, 3.26D0, 5.369D1, &
+  1.88D0, 6.6D-1, 8.63D0, 3.1D0, 2.05D0, 8.7D-1, 8.7D-1, 9.1D-1, 3.1D-1, 1.81D0, &
+  8.236D1, 1.8607D2, 1.2572D2, 3.46D1, 7.25D0, 4.0D0, 3.349D1, 5.274D1, 4.86D0, &
+  5.29D1, 2.45D0, 2.82D0, 1.676D1, 6.984D1, 7.7D0, 3.6D0, 2.8D0, 8.0D-1, 1.7D0, &
+  1.8D0, 1.3D0, 3.86D1, 3.83D1, 0.0D0, 2.4D-1, 8.0D-2, 0.0D0, 2.0D0, 1.97D0, 1.16D0, &
+  2.341D1, 7.733D1, 4.37D0, 4.434D1, 1.918D1, 9.39D0, 5.084D1, 8.7D0, 1.239D1, &
+  1.704D1, 7.8D0, 2.11D0, 1.74D1, 3.599D1, 8.2D0, 1.568D1, 1.235D1, 6.22D0, 7.5D-1 /)
+  real(kind(1.0D0)), bind(C) :: tlife = 30.0D0
+  !! tlife /30.0/ : plant life (years)
+  real(kind(1.0D0)), parameter :: ucad = 180.0D0
+  !! ucad /180.0/ FIX : unit cost for administration buildings (M$/m3)
+  real(kind(1.0D0)), parameter :: ucaf = 1.5D6
+  !! ucaf /1.5e6/ FIX : unit cost for aux facility power equipment ($)
+  real(kind(1.0D0)), parameter :: ucahts = 31.0D0
+  !! ucahts /31.0/ FIX : unit cost for aux heat transport equipment ($/W**exphts)
+  real(kind(1.0D0)), parameter :: ucap = 17.0D0
+  !! ucap /17.0/ FIX : unit cost of auxiliary transformer ($/kVA)
   real(kind(1.0D0)) :: ucblbe = 260.0D0
-  !+ad_vars  ucblbreed /875.0/ : unit cost for breeder material ($/kg) (blktmodel>0)
+  !! ucblbe /260.0/ : unit cost for blanket beryllium ($/kg)
   real(kind(1.0D0)) :: ucblbreed = 875.0D0
-  !+ad_vars  ucblli /875.0/ : unit cost for blanket lithium ($/kg) (30% Li6)
+  !! ucblbreed /875.0/ : unit cost for breeder material ($/kg) (blktmodel>0)
   real(kind(1.0D0)) :: ucblli = 875.0D0
-  !+ad_vars  ucblli2o /600.0/ : unit cost for blanket Li_2O ($/kg)
+  !! ucblli /875.0/ : unit cost for blanket lithium ($/kg) (30% Li6)
   real(kind(1.0D0)) :: ucblli2o = 600.0D0
-  !+ad_vars  ucbllipb /10.3/ : unit cost for blanket Li-Pb ($/kg) (30% Li6)
+  !! ucblli2o /600.0/ : unit cost for blanket Li_2O ($/kg)
   real(kind(1.0D0)) :: ucbllipb = 10.3D0
-  !+ad_vars  ucblss /90.0/ : unit cost for blanket stainless steel ($/kg)
+  !! ucbllipb /10.3/ : unit cost for blanket Li-Pb ($/kg) (30% Li6)
   real(kind(1.0D0)) :: ucblss = 90.0D0
-  !+ad_vars  ucblvd /200.0/ : unit cost for blanket vanadium ($/kg)
+  !! ucblss /90.0/ : unit cost for blanket stainless steel ($/kg)
   real(kind(1.0D0)) :: ucblvd = 200.0D0
-  !+ad_vars  ucbpmp /2.925e5/ FIX : vacuum system backing pump cost ($)
-  real(kind(1.0D0)) :: ucbpmp = 2.925D5
-  !+ad_vars  ucbus /0.123/ : cost of aluminium bus for TF coil ($/A-m)
+  !! ucblvd /200.0/ : unit cost for blanket vanadium ($/kg)
+  real(kind(1.0D0)), parameter :: ucbpmp = 2.925D5
+  !! ucbpmp /2.925e5/ FIX : vacuum system backing pump cost ($)
   real(kind(1.0D0)) :: ucbus = 0.123D0
-  !+ad_vars  uccase /50.0/ : cost of superconductor case ($/kg)
+  !! ucbus /0.123/ : cost of aluminium bus for TF coil ($/A-m)
   real(kind(1.0D0)) :: uccase = 50.0D0
-  !+ad_vars  ucco /350.0/ FIX : unit cost for control buildings (M$/m3)
-  real(kind(1.0D0)) :: ucco = 350.0D0
-  !+ad_vars  uccpcl1 /250.0/ : cost of high strength tapered copper ($/kg)
+  !! uccase /50.0/ : cost of superconductor case ($/kg)
+  real(kind(1.0D0)), parameter :: ucco = 350.0D0
+  !! ucco /350.0/ FIX : unit cost for control buildings (M$/m3)
   real(kind(1.0D0)) :: uccpcl1 = 250.0D0
-  !+ad_vars  uccpclb /150.0/ : cost of TF outboard leg plate coils ($/kg)
+  !! uccpcl1 /250.0/ : cost of high strength tapered copper ($/kg)
   real(kind(1.0D0)) :: uccpclb = 150.0D0
-  !+ad_vars  uccpmp /3.9e5/ FIX : vacuum system cryopump cost ($)
-  real(kind(1.0D0)) :: uccpmp = 3.9D5
-  !+ad_vars  uccr /460.0/ FIX : unit cost for cryogenic building (M$/vol)
-  real(kind(1.0D0)) :: uccr = 460.0D0
-  !+ad_vars  uccry /9.3e4/ : heat transport system cryoplant costs ($/W**expcry)
-  real(kind(1.0D0)) :: uccry = 9.3D4
-  !+ad_vars  uccryo /32.0/ : unit cost for vacuum vessel ($/kg)
+  !! uccpclb /150.0/ : cost of TF outboard leg plate coils ($/kg)
+  real(kind(1.0D0)), parameter :: uccpmp = 3.9D5
+  !! uccpmp /3.9e5/ FIX : vacuum system cryopump cost ($)
+  real(kind(1.0D0)), parameter :: uccr = 460.0D0
+  !! uccr /460.0/ FIX : unit cost for cryogenic building (M$/vol)
+  real(kind(1.0D0)), bind(C) :: uccry = 9.3D4
+  !! uccry /9.3e4/ : heat transport system cryoplant costs ($/W**expcry)
   real(kind(1.0D0)) :: uccryo = 32.0D0
-  !+ad_vars  uccu /75.0/ : unit cost for copper in superconducting cable ($/kg)
+  !! uccryo /32.0/ : unit cost for vacuum vessel ($/kg)
   real(kind(1.0D0)) :: uccu = 75.0D0
-  !+ad_vars  ucdgen /1.7e6/ FIX : cost per 8 MW diesel generator ($)
-  real(kind(1.0D0)) :: ucdgen = 1.7D6
-  !+ad_vars  ucdiv /2.8e5/ : cost of divertor blade ($)
+  !! uccu /75.0/ : unit cost for copper in superconducting cable ($/kg)
+  real(kind(1.0D0)), parameter :: ucdgen = 1.7D6
+  !! ucdgen /1.7e6/ FIX : cost per 8 MW diesel generator ($)
   real(kind(1.0D0)) :: ucdiv = 2.8D5
-  !+ad_vars  ucdtc /13.0/ FIX : detritiation, air cleanup cost ($/10000m3/hr)
-  real(kind(1.0D0)) :: ucdtc = 13.0D0
-  !+ad_vars  ucduct /4.225e4/ FIX : vacuum system duct cost ($/m)
-  real(kind(1.0D0)) :: ucduct = 4.225D4
-  !+ad_vars  ucech /3.0/ : ECH system cost ($/W)
+  !! ucdiv /2.8e5/ : cost of divertor blade ($)
+  real(kind(1.0D0)), parameter :: ucdtc = 13.0D0
+  !! ucdtc /13.0/ FIX : detritiation, air cleanup cost ($/10000m3/hr)
+  real(kind(1.0D0)), parameter :: ucduct = 4.225D4
+  !! ucduct /4.225e4/ FIX : vacuum system duct cost ($/m)
   real(kind(1.0D0)) :: ucech = 3.0D0
-  !+ad_vars  ucel /380.0/ FIX : unit cost for electrical equipment building (M$/m3)
-  real(kind(1.0D0)) :: ucel = 380.0D0
-  !+ad_vars  uces1 /3.2e4/ FIX : MGF (motor-generator flywheel) cost factor ($/MVA**0.8)
-  real(kind(1.0D0)) :: uces1 = 3.2D4
-  !+ad_vars  uces2 /8.8e3/ FIX : MGF (motor-generator flywheel) cost factor ($/MJ**0.8)
-  real(kind(1.0D0)) :: uces2 = 8.8D3
-  !+ad_vars  ucf1 /2.23e7/ : cost of fuelling system ($)
-  real(kind(1.0D0)) :: ucf1 = 2.23D7
-  !+ad_vars  ucfnc /35.0/ : outer PF coil fence support cost ($/kg)
+  !! ucech /3.0/ : ECH system cost ($/W)
+  real(kind(1.0D0)), parameter :: ucel = 380.0D0
+  !! ucel /380.0/ FIX : unit cost for electrical equipment building (M$/m3)
+  real(kind(1.0D0)), parameter :: uces1 = 3.2D4
+  !! uces1 /3.2e4/ FIX : MGF (motor-generator flywheel) cost factor ($/MVA**0.8)
+  real(kind(1.0D0)), parameter :: uces2 = 8.8D3
+  !! uces2 /8.8e3/ FIX : MGF (motor-generator flywheel) cost factor ($/MJ**0.8)
+  real(kind(1.0D0)), bind(C) :: ucf1 = 2.23D7
+  !! ucf1 /2.23e7/ : cost of fuelling system ($)
   real(kind(1.0D0)) :: ucfnc = 35.0D0
-  !+ad_vars  ucfpr /4.4e7/ FIX : cost of 60g/day tritium processing unit ($)
-  real(kind(1.0D0)) :: ucfpr = 4.4D7
-  !+ad_vars  ucfuel /3.45/ : unit cost of D-T fuel (M$/year/1200MW)
+  !! ucfnc /35.0/ : outer PF coil fence support cost ($/kg)
+  real(kind(1.0D0)), parameter :: ucfpr = 4.4D7
+  !! ucfpr /4.4e7/ FIX : cost of 60g/day tritium processing unit ($)
   real(kind(1.0D0)) :: ucfuel = 3.45D0
-  !+ad_vars  ucfwa /6.0e4/ FIX : first wall armour cost ($/m2)
-  real(kind(1.0D0)) :: ucfwa = 6.0D4
-  !+ad_vars  ucfwps /1.0e7/ FIX : first wall passive stabiliser cost ($)
-  real(kind(1.0D0)) :: ucfwps = 1.0D7
-  !+ad_vars  ucfws /5.3e4/ FIX : first wall structure cost ($/m2)
-  real(kind(1.0D0)) :: ucfws = 5.3D4
-  !+ad_vars  ucgss /35.0/ FIX : cost of reactor structure ($/kg)
-  real(kind(1.0D0)) :: ucgss = 35.0D0
-  !+ad_vars  uche3 /1.0e6/ : cost of helium-3 ($/kg)
+  !! ucfuel /3.45/ : unit cost of D-T fuel (M$/year/1200MW)
+  real(kind(1.0D0)), parameter :: ucfwa = 6.0D4
+  !! ucfwa /6.0e4/ FIX : first wall armour cost ($/m2)
+  real(kind(1.0D0)), parameter :: ucfwps = 1.0D7
+  !! ucfwps /1.0e7/ FIX : first wall passive stabiliser cost ($)
+  real(kind(1.0D0)), parameter :: ucfws = 5.3D4
+  !! ucfws /5.3e4/ FIX : first wall structure cost ($/m2)
+  real(kind(1.0D0)), parameter :: ucgss = 35.0D0
+  !! ucgss /35.0/ FIX : cost of reactor structure ($/kg)
   real(kind(1.0D0)) :: uche3 = 1.0D6
-  !+ad_vars  uchrs /87.9e6/ : cost of heat rejection system ($)
-  real(kind(1.0D0)) :: uchrs = 87.9D6
-  !+ad_vars  uchts(2) /15.3,19.1/ : cost of heat transport system equipment
-  !+ad_varc                         per loop ($/W); dependent on coolant type (coolwh)
+  !! uche3 /1.0e6/ : cost of helium-3 ($/kg)
+  real(kind(1.0D0)), bind(C) :: uchrs = 87.9D6
+  !! uchrs /87.9e6/ : cost of heat rejection system ($)
   real(kind(1.0D0)), dimension(2) :: uchts = (/15.3D0, 19.1D0/)
-  !+ad_vars  uciac /1.5e8/ : cost of instrumentation, control & diagnostics ($)
-  real(kind(1.0D0)) :: uciac = 1.5D8
-  !+ad_vars  ucich /3.0/ : ICH system cost ($/W)
+  !! uchts(2) /15.3,19.1/ : cost of heat transport system equipment
+  !!                        per loop ($/W); dependent on coolant type (coolwh)
+  real(kind(1.0D0)), bind(C) :: uciac = 1.5D8
+  !! uciac /1.5e8/ : cost of instrumentation, control & diagnostics ($)
   real(kind(1.0D0)) :: ucich = 3.0D0
-  !+ad_vars  ucint /35.0/ FIX : superconductor intercoil structure cost ($/kg)
-  real(kind(1.0D0)) :: ucint = 35.0D0
-  !+ad_vars  uclh /3.3/ : lower hybrid system cost ($/W)
+  !! ucich /3.0/ : ICH system cost ($/W)
+  real(kind(1.0D0)), parameter :: ucint = 35.0D0
+  !! ucint /35.0/ FIX : superconductor intercoil structure cost ($/kg)
   real(kind(1.0D0)) :: uclh = 3.3D0
-  !+ad_vars  uclv /16.0/ FIX : low voltage system cost ($/kVA)
-  real(kind(1.0D0)) :: uclv = 16.0D0
-  !+ad_vars  ucmb /260.0/ FIX: unit cost for reactor maintenance building (M$/m3)
-  real(kind(1.0D0)) :: ucmb = 260.0D0
-  !+ad_vars  ucme /1.25e8/ : cost of maintenance equipment ($/)
-  real(kind(1.0D0)) :: ucme = 1.25D8
-  !+ad_vars  ucmisc /2.5e7/ : miscellaneous plant allowance ($)
-  real(kind(1.0D0)) :: ucmisc = 2.5D7
-  !+ad_vars  ucnbi /3.3/ : NBI system cost ($/W)
+  !! uclh /3.3/ : lower hybrid system cost ($/W)
+  real(kind(1.0D0)), parameter :: uclv = 16.0D0
+  !! uclv /16.0/ FIX : low voltage system cost ($/kVA)
+  real(kind(1.0D0)), parameter :: ucmb = 260.0D0
+  !! ucmb /260.0/ FIX: unit cost for reactor maintenance building (M$/m3)
+  real(kind(1.0D0)), bind(C) :: ucme = 1.25D8
+  !! ucme /1.25e8/ : cost of maintenance equipment ($)
+  real(kind(1.0D0)), bind(C) :: ucmisc = 2.5D7
+  !! ucmisc /2.5e7/ : miscellaneous plant allowance ($)
   real(kind(1.0D0)) :: ucnbi = 3.3D0
-  !+ad_vars  ucnbv /1000.0/ FIX : cost of nuclear building ventilation ($/m3)
-  real(kind(1.0D0)) :: ucnbv = 1000.0D0
-  !+ad_vars  ucoam(4) /68.8,68.8,68.8,74.4/ : annual cost of operation and
-  !+ad_varc                                   maintenance (M$/year/1200MW**0.5)
+  !! ucnbi /3.3/ : NBI system cost ($/W)
+  real(kind(1.0D0)), parameter :: ucnbv = 1000.0D0
+  !! ucnbv /1000.0/ FIX : cost of nuclear building ventilation ($/m3)
   real(kind(1.0D0)), dimension(4) :: ucoam = &
+  !! ucoam(4) /68.8,68.8,68.8,74.4/ : annual cost of operation and
+  !!                                  maintenance (M$/year/1200MW**0.5)
        (/68.8D0, 68.8D0, 68.8D0, 74.4D0/)
-  !+ad_vars  ucpens /32.0/ : penetration shield cost ($/kg)
   real(kind(1.0D0)) :: ucpens = 32.0D0
-  !+ad_vars  ucpfb /210.0/ : cost of PF coil buses ($/kA/m)
+  !! ucpens /32.0/ : penetration shield cost ($/kg)
   real(kind(1.0D0)) :: ucpfb = 210.0D0
-  !+ad_vars  ucpfbk /1.66e4/ : cost of PF coil DC breakers ($/MVA)
+  !! ucpfb /210.0/ : cost of PF coil buses ($/kA-m)
   real(kind(1.0D0)) :: ucpfbk = 1.66D4
-  !+ad_vars  ucpfbs /4.9e3/ : cost of PF burn power supplies ($/kW**0.7)
+  !! ucpfbk /1.66e4/ : cost of PF coil DC breakers ($/MVA**0.7)
   real(kind(1.0D0)) :: ucpfbs = 4.9D3
-  !+ad_vars  ucpfcb /7.5e4/ : cost of PF coil AC breakers ($/circuit)
+  !! ucpfbs /4.9e3/ : cost of PF burn power supplies ($/kW**0.7)
   real(kind(1.0D0)) :: ucpfcb = 7.5D4
-  !+ad_vars  ucpfdr1 /150.0/ : cost factor for dump resistors ($/MJ)
+  !! ucpfcb /7.5e4/ : cost of PF coil AC breakers ($/circuit)
   real(kind(1.0D0)) :: ucpfdr1 = 150.0D0
-  !+ad_vars  ucpfic /1.0e4/ : cost of PF instrumentation and control ($/channel)
+  !! ucpfdr1 /150.0/ : cost factor for dump resistors ($/MJ)
   real(kind(1.0D0)) :: ucpfic = 1.0D4
-  !+ad_vars  ucpfps /3.5e4/ : cost of PF coil pulsed power supplies ($/MVA)
+  !! ucpfic /1.0e4/ : cost of PF instrumentation and control ($/channel)
   real(kind(1.0D0)) :: ucpfps = 3.5D4
-  !+ad_vars  ucphx /15.0/ FIX : primary heat transport cost ($/W**exphts)
-  real(kind(1.0D0)) :: ucphx = 15.0D0
-  !+ad_vars  ucpp /48.0/ FIX : cost of primary power transformers ($/kVA**0.9)
-  real(kind(1.0D0)) :: ucpp = 48.0D0
-  !+ad_vars  ucrb /400.0/ : cost of reactor building (M$/m3)
+  !! ucpfps /3.5e4/ : cost of PF coil pulsed power supplies ($/MVA)
+  real(kind(1.0D0)), parameter :: ucphx = 15.0D0
+  !! ucphx /15.0/ FIX : primary heat transport cost ($/W**exphts)
+  real(kind(1.0D0)), parameter :: ucpp = 48.0D0
+  !! ucpp /48.0/ FIX : cost of primary power transformers ($/kVA**0.9)
   real(kind(1.0D0)) :: ucrb = 400.0D0
-  !+ad_vars  ucsc(6) /600.0,600.0,300.0,600.0/ : cost of superconductor ($/kg)
+  !! ucrb /400.0/ : cost of reactor building (M$/m3)
   real(kind(1.0D0)), dimension(6) :: ucsc = &
+  !! ucsc(6) /600.0,600.0,300.0,600.0/ : cost of superconductor ($/kg)
        (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0/)
-  !+ad_vars  ucsh /115.0/ FIX : cost of shops and warehouses (M$/m3)
-  real(kind(1.0D0)) :: ucsh = 115.0D0
-  !+ad_vars  ucshld /32.0/ : cost of shield structural steel ($/kg)
+  real(kind(1.0D0)), parameter :: ucsh = 115.0D0
+  !! ucsh /115.0/ FIX : cost of shops and warehouses (M$/m3)
   real(kind(1.0D0)) :: ucshld = 32.0D0
-  !+ad_vars  ucswyd /1.84e7/ FIX : switchyard equipment costs ($)
-  real(kind(1.0D0)) :: ucswyd = 1.84D7
-  !+ad_vars  uctfbr /1.22/ : cost of TF coil breakers ($/W**0.7)
+  !! ucshld /32.0/ : cost of shield structural steel ($/kg)
+  real(kind(1.0D0)), parameter :: ucswyd = 1.84D7
+  !! ucswyd /1.84e7/ FIX : switchyard equipment costs ($)
   real(kind(1.0D0)) :: uctfbr = 1.22D0
-  !+ad_vars  uctfbus /100.0/ : cost of TF coil bus ($/kg)
+  !! uctfbr /1.22/ : cost of TF coil breakers ($/W**0.7)
   real(kind(1.0D0)) :: uctfbus = 100.0D0
-  !+ad_vars  uctfdr /1.75e-4/ FIX : cost of TF coil dump resistors ($/J)
-  real(kind(1.0D0)) :: uctfdr = 1.75D-4
-  !+ad_vars  uctfgr /5000.0/ FIX : additional cost of TF coil dump resistors ($/coil)
-  real(kind(1.0D0)) :: uctfgr = 5000.0D0
-  !+ad_vars  uctfic /1.0e4/ FIX : cost of TF coil instrumentation and control ($/coil/30)
-  real(kind(1.0D0)) :: uctfic = 1.0D4
-  !+ad_vars  uctfps /24.0/ : cost of TF coil power supplies ($/W**0.7)
+  !! uctfbus /100.0/ : cost of TF coil bus ($/kg)
+  real(kind(1.0D0)), parameter :: uctfdr = 1.75D-4
+  !! uctfdr /1.75e-4/ FIX : cost of TF coil dump resistors ($/J)
+  real(kind(1.0D0)), parameter :: uctfgr = 5000.0D0
+  !! uctfgr /5000.0/ FIX : additional cost of TF coil dump resistors ($/coil)
+  real(kind(1.0D0)), parameter :: uctfic = 1.0D4
+  !! uctfic /1.0e4/ FIX : cost of TF coil instrumentation and control ($/coil/30)
   real(kind(1.0D0)) :: uctfps = 24.0D0
-  !+ad_vars  uctfsw /1.0/ : cost of TF coil slow dump switches ($/A)
+  !! uctfps /24.0/ : cost of TF coil power supplies ($/W**0.7)
   real(kind(1.0D0)) :: uctfsw = 1.0D0
-  !+ad_vars  uctpmp /1.105e5/ FIX : cost of turbomolecular pump ($)
-  real(kind(1.0D0)) :: uctpmp = 1.105D5
-  !+ad_vars  uctr /370.0/ FIX : cost of tritium building ($/m3)
-  real(kind(1.0D0)) :: uctr = 370.0D0
-  !+ad_vars  ucturb(2) /230.0e6, 245.0e6/: cost of turbine plant equipment ($)
-  !+ad_varc                               (dependent on coolant type coolwh)
-  real(kind(1.0D0)), dimension(2) :: ucturb = (/230.0D6, 245.0D6/)
-  !+ad_vars  ucvalv /3.9e5/ FIX : vacuum system valve cost ($)
-  real(kind(1.0D0)) :: ucvalv = 3.9D5
-  !+ad_vars  ucvdsh /26.0/ FIX : vacuum duct shield cost ($/kg)
-  real(kind(1.0D0)) :: ucvdsh = 26.0D0
-  !+ad_vars  ucviac /1.3e6/ FIX : vacuum system instrumentation and control cost ($)
-  real(kind(1.0D0)) :: ucviac = 1.3D6
-  !+ad_vars  ucwindpf /465.0/ : cost of PF coil superconductor windings ($/m)
+  !! uctfsw /1.0/ : cost of TF coil slow dump switches ($/A)
+  real(kind(1.0D0)), parameter :: uctpmp = 1.105D5
+  !! uctpmp /1.105e5/ FIX : cost of turbomolecular pump ($)
+  real(kind(1.0D0)), parameter :: uctr = 370.0D0
+  !! uctr /370.0/ FIX : cost of tritium building ($/m3)
+  real(kind(1.0D0)), dimension(2), bind(C) :: ucturb = (/230.0D6, 245.0D6/)
+  !! ucturb(2) /230.0e6, 245.0e6/: cost of turbine plant equipment ($)
+  !!                              (dependent on coolant type coolwh)
+  real(kind(1.0D0)), parameter :: ucvalv = 3.9D5
+  !! ucvalv /3.9e5/ FIX : vacuum system valve cost ($)
+  real(kind(1.0D0)), parameter :: ucvdsh = 26.0D0
+  !! ucvdsh /26.0/ FIX : vacuum duct shield cost ($/kg)
+  real(kind(1.0D0)), parameter :: ucviac = 1.3D6
+  !! ucviac /1.3e6/ FIX : vacuum system instrumentation and control cost ($)
   real(kind(1.0D0)) :: ucwindpf = 465.0D0
-  !+ad_vars  ucwindtf /480.0/ : cost of TF coil superconductor windings ($/m)
+  !! ucwindpf /465.0/ : cost of PF coil superconductor windings ($/m)
   real(kind(1.0D0)) :: ucwindtf = 480.0D0
-  !+ad_vars  ucws /460.0/ FIX : cost of active assembly shop ($/m3)
-  real(kind(1.0D0)) :: ucws = 460.0D0
-  !+ad_vars  ucwst(4) /0.0,3.94,5.91,7.88/ : cost of waste disposal (M$/y/1200MW)
+  !! ucwindtf /480.0/ : cost of TF coil superconductor windings ($/m)
+  real(kind(1.0D0)), parameter :: ucws = 460.0D0
+  !! ucws /460.0/ FIX : cost of active assembly shop ($/m3)
   real(kind(1.0D0)), dimension(4) :: ucwst = &
+  !! ucwst(4) /0.0,3.94,5.91,7.88/ : cost of waste disposal (M$/y/1200MW)
        (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
 
 end module cost_variables
@@ -3922,39 +3827,11 @@ end module cost_variables
 
 module constraint_variables
 
-  !+ad_name  constraint_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  constraint equations
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  constraint equations (f-values, limits, etc.).
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  31/10/12 PJK Initial version of module
-  !+ad_hist  19/06/13 PJK Removed fjtfc
-  !+ad_hist  27/06/13 PJK Relabelled ftohs, tohsmn, fbetatry
-  !+ad_hist  25/09/13 PJK Changed fportsz description
-  !+ad_hist  30/09/13 PJK Added pseprmax, fpsepr
-  !+ad_hist  28/10/13 PJK Corrected fdene comment
-  !+ad_hist  26/02/14 PJK Added ftfthko
-  !+ad_hist  08/05/14 PJK Added bigqmin
-  !+ad_hist  19/05/14 PJK Added fradpwr
-  !+ad_hist  17/09/14 PJK Changed default values
-  !+ad_hist  01/10/14 PJK Added flhthresh
-  !+ad_hist  02/10/14 PJK Added fcwr
-  !+ad_hist  06/10/14 PJK Added fnbshinef, nbshinefmax
-  !+ad_hist  11/11/14 PJK Added ftmargoh
-  !+ad_hist  06/08/15 MDK ftaulimit
-  !+ad_hist  18/11/15 RK  fzeffmax and zeffmax
-  !+ad_hist  23/06/16 JM  Removed dtmpmx as no longer used anywhere
-  !+ad_hist  09/11/16 HL  Added fradwall, maxradwalload, peakfactrad and peakradwalload
-  !+ad_hist  19/01/17 JM  Added variables for constraint equation for psepbqar (68)
-  !+ad_hist  12/01/18 KE  Added fnesep f-value for Eich critical separatrix density
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! constraint equations
+  !! This module contains global variables relating to the
+  !! constraint equations (f-values, limits, etc.).
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3962,260 +3839,268 @@ module constraint_variables
 
   public
 
-  !+ad_vars  auxmin /0.1/ : minimum auxiliary power (MW)
-  !+ad_varc                 (constraint equation 40)
   real(kind(1.0D0)) :: auxmin = 0.1D0
-  !+ad_vars  betpmx /0.19/ : maximum poloidal beta
-  !+ad_varc                  (constraint equation 48)
+  !! auxmin /0.1/ : minimum auxiliary power (MW)
+  !!                (constraint equation 40)
   real(kind(1.0D0)) :: betpmx = 0.19D0
-  !+ad_vars  bigqmin /10.0/ : minimum fusion gain Q
-  !+ad_varc                  (constraint equation 28)
+  !! betpmx /0.19/ : maximum poloidal beta
+  !!                 (constraint equation 48)
   real(kind(1.0D0)) :: bigqmin = 10.0D0
-  !+ad_vars  bmxlim /12.0/ : maximum peak toroidal field (T)
-  !+ad_varc                  (constraint equation 25)
+  !! bigqmin /10.0/ : minimum fusion gain Q
+  !!                 (constraint equation 28)
   real(kind(1.0D0)) :: bmxlim = 12.0D0
-  !+ad_vars  fauxmn /1.0/ : f-value for minimum auxiliary power
-  !+ad_varc                 (constraint equation 40, iteration variable 64)
+  !! bmxlim /12.0/ : maximum peak toroidal field (T)
+  !!                 (constraint equation 25)
   real(kind(1.0D0)) :: fauxmn = 1.0D0
-  !+ad_vars  fbeta /1.0/ : f-value for epsilon beta-poloidal
-  !+ad_varc                (constraint equation 6, iteration variable 8)
+  !! fauxmn /1.0/ : f-value for minimum auxiliary power
+  !!                (constraint equation 40, iteration variable 64)
   real(kind(1.0D0)) :: fbeta = 1.0D0
-  !+ad_vars  fbetap /1.0/ : f-value for poloidal beta
-  !+ad_varc                 (constraint equation 48, iteration variable 79)
+  !! fbeta /1.0/ : f-value for epsilon beta-poloidal
+  !!               (constraint equation 6, iteration variable 8)
   real(kind(1.0D0)) :: fbetap = 1.0D0
-  !+ad_vars  fbetatry /1.0/ : f-value for beta limit
-  !+ad_varc                   (constraint equation 24, iteration variable 36)
+  !! fbetap /1.0/ : f-value for poloidal beta
+  !!                (constraint equation 48, iteration variable 79)
   real(kind(1.0D0)) :: fbetatry = 1.0D0
-  !+ad_vars  fcpttf /1.0/ : f-value for TF coil current per turn upper limit
-  !+ad_varc               (constraint equation 77, iteration variable 146)
+  !! fbetatry /1.0/ : f-value for beta limit
+  !!                  (constraint equation 24, iteration variable 36)
   real(kind(1.0D0)) :: fcpttf = 1.0D0
-  !+ad_vars  fcwr /1.0/ : f-value for conducting wall radius / rminor limit
-  !+ad_varc               (constraint equation 23, iteration variable 104)
+  !! fcpttf /1.0/ : f-value for TF coil current per turn upper limit
+  !!              (constraint equation 77, iteration variable 146)
   real(kind(1.0D0)) :: fcwr = 1.0D0
-  !+ad_vars  fdene /1.0/ : f-value for density limit
-  !+ad_varc                (constraint equation 5, iteration variable 9)
-  !+ad_varc                (invalid if ipedestal = 3)
+  !! fcwr /1.0/ : f-value for conducting wall radius / rminor limit
+  !!              (constraint equation 23, iteration variable 104)
   real(kind(1.0D0)) :: fdene = 1.0D0
-  !+ad_vars  fdivcol /1.0/ : f-value for divertor collisionality
-  !+ad_varc                  (constraint equation 22, iteration variable 34)
+  !! fdene /1.0/ : f-value for density limit
+  !!               (constraint equation 5, iteration variable 9)
+  !!               (invalid if ipedestal = 3)
   real(kind(1.0D0)) :: fdivcol = 1.0D0
-  !+ad_vars  fdtmp /1.0/ : f-value for first wall coolant temperature rise
-  !+ad_varc                (constraint equation 38, iteration variable 62)
+  !! fdivcol /1.0/ : f-value for divertor collisionality
+  !!                 (constraint equation 22, iteration variable 34)
   real(kind(1.0D0)) :: fdtmp = 1.0D0
-  !+ad_vars  fflutf /1.0/ : f-value for neutron fluence on TF coil
-  !+ad_varc                  (constraint equation 53, iteration variable 92)
+  !! fdtmp /1.0/ : f-value for first wall coolant temperature rise
+  !!               (constraint equation 38, iteration variable 62)
   real(kind(1.0D0)) :: fflutf = 1.0D0
-  !+ad_vars  ffuspow /1.0/ : f-value for maximum fusion power
-  !+ad_varc                  (constraint equation 9, iteration variable 26)
+  !! fflutf /1.0/ : f-value for neutron fluence on TF coil
+  !!                 (constraint equation 53, iteration variable 92)
   real(kind(1.0D0)) :: ffuspow = 1.0D0
-  !+ad_vars  fgamcd /1.0/ : f-value for current drive gamma
-  !+ad_varc                 (constraint equation 37, iteration variable 40)
+  !! ffuspow /1.0/ : f-value for maximum fusion power
+  !!                 (constraint equation 9, iteration variable 26)
   real(kind(1.0D0)) :: fgamcd = 1.0D0
-  !+ad_vars  fhldiv /1.0/ : f-value for divertor heat load
-  !+ad_varc                 (constraint equation 18, iteration variable 27)
+  !! fgamcd /1.0/ : f-value for current drive gamma
+  !!                (constraint equation 37, iteration variable 40)
   real(kind(1.0D0)) :: fhldiv = 1.0D0
-  !+ad_vars  fiooic /0.5/ : f-value for TF coil operating current / critical
-  !+ad_varc                 current ratio
-  !+ad_varc                 (constraint equation 33, iteration variable 50)
+  !! fhldiv /1.0/ : f-value for divertor heat load
+  !!                (constraint equation 18, iteration variable 27)
   real(kind(1.0D0)) :: fiooic = 0.5D0
-  !+ad_vars  fipir /1.0/ : f-value for Ip/Irod limit
-  !+ad_varc                (constraint equation 46, iteration variable 72)
+  !! fiooic /0.5/ : f-value for TF coil operating current / critical
+  !!                current ratio
+  !!                (constraint equation 33, iteration variable 50)
   real(kind(1.0D0)) :: fipir = 1.0D0
-  !+ad_vars  fjohc /1.0/ : f-value for central solenoid current at end-of-flattop
-  !+ad_varc                (constraint equation 26, iteration variable 38)
+  !! fipir /1.0/ : f-value for Ip/Irod limit
+  !!               (constraint equation 46, iteration variable 72)
   real(kind(1.0D0)) :: fjohc = 1.0D0
-  !+ad_vars  fjohc0 /1.0/ : f-value for central solenoid current at beginning of pulse
-  !+ad_varc                 (constraint equation 27, iteration variable 39)
+  !! fjohc /1.0/ : f-value for central solenoid current at end-of-flattop
+  !!               (constraint equation 26, iteration variable 38)
   real(kind(1.0D0)) :: fjohc0 = 1.0D0
-  !+ad_vars  fjprot /1.0/ : f-value for TF coil winding pack current density
-  !+ad_varc                 (constraint equation 35, iteration variable 53)
+  !! fjohc0 /1.0/ : f-value for central solenoid current at beginning of pulse
+  !!                (constraint equation 27, iteration variable 39)
   real(kind(1.0D0)) :: fjprot = 1.0D0
-  !+ad_vars  flhthresh /1.0/ : f-value for L-H power threshold
-  !+ad_varc                    (constraint equation 15, iteration variable 103)
+  !! fjprot /1.0/ : f-value for TF coil winding pack current density
+  !!                (constraint equation 35, iteration variable 53)
   real(kind(1.0D0)) :: flhthresh = 1.0D0
-  !+ad_vars  fmva /1.0/ : f-value for maximum MVA
-  !+ad_varc               (constraint equation 19, iteration variable 30)
+  !! flhthresh /1.0/ : f-value for L-H power threshold
+  !!                   (constraint equation 15, iteration variable 103)
   real(kind(1.0D0)) :: fmva = 1.0D0
-  !+ad_vars  fnbshinef /1.0/ : f-value for maximum neutral beam shine-through fraction
-  !+ad_varc                    (constraint equation 59, iteration variable 105)
+  !! fmva /1.0/ : f-value for maximum MVA
+  !!              (constraint equation 19, iteration variable 30)
+
   real(kind(1.0D0)) :: fnbshinef = 1.0D0
-  !+ad_vars  fnesep /1.0/ : f-value for Eich critical separatrix density
-  !+ad_varc                    (constraint equation 76, iteration variable 144)
+  !! fnbshinef /1.0/ : f-value for maximum neutral beam shine-through fraction
+  !!                   (constraint equation 59, iteration variable 105)
+
   real(kind(1.0D0)) :: fnesep = 1.0D0
-  !+ad_vars  foh_stress /1.0/ : f-value for Tresca stress in Central Solenoid
-  !+ad_varc                    (constraint equation 72, iteration variable 123)
+  !! fnesep /1.0/ : f-value for Eich critical separatrix density
+  !!                   (constraint equation 76, iteration variable 144)
+
   real(kind(1.0D0)) :: foh_stress = 1.0D0
-  !+ad_vars  fpeakb /1.0/ : f-value for maximum toroidal field
-  !+ad_varc                 (constraint equation 25, iteration variable 35)
+  !! foh_stress /1.0/ : f-value for Tresca stress in Central Solenoid
+  !!                   (constraint equation 72, iteration variable 123)
   real(kind(1.0D0)) :: fpeakb = 1.0D0
-  !+ad_vars  fpinj /1.0/ : f-value for injection power
-  !+ad_varc                (constraint equation 30, iteration variable 46)
+  !! fpeakb /1.0/ : f-value for maximum toroidal field
+  !!                (constraint equation 25, iteration variable 35)
   real(kind(1.0D0)) :: fpinj = 1.0D0
-  !+ad_vars  fpnetel /1.0/ : f-value for net electric power
-  !+ad_varc                  (constraint equation 16, iteration variable 25)
+  !! fpinj /1.0/ : f-value for injection power
+  !!               (constraint equation 30, iteration variable 46)
   real(kind(1.0D0)) :: fpnetel = 1.0D0
-  !+ad_vars  fportsz /1.0/ : f-value for neutral beam tangency radius limit
-  !+ad_varc                  (constraint equation 20, iteration variable 33)
+  !! fpnetel /1.0/ : f-value for net electric power
+  !!                 (constraint equation 16, iteration variable 25)
   real(kind(1.0D0)) :: fportsz = 1.0D0
-  !+ad_vars  fpsepbqar /1.0/ : f-value for maximum Psep*Bt/qAR limit
-  !+ad_varc                 (constraint equation 68, iteration variable 117)
+  !! fportsz /1.0/ : f-value for neutral beam tangency radius limit
+  !!                 (constraint equation 20, iteration variable 33)
   real(kind(1.0D0)) :: fpsepbqar = 1.0D0
-  !+ad_vars  fpsepr /1.0/ : f-value for maximum Psep/R limit
-  !+ad_varc                 (constraint equation 56, iteration variable 97)
+  !! fpsepbqar /1.0/ : f-value for maximum Psep*Bt/qAR limit
+  !!                (constraint equation 68, iteration variable 117)
   real(kind(1.0D0)) :: fpsepr = 1.0D0
-  !+ad_vars  fptemp /1.0/ : f-value for peak centrepost temperature
-  !+ad_varc                 (constraint equation 44, iteration variable 68)
+  !! fpsepr /1.0/ : f-value for maximum Psep/R limit
+  !!                (constraint equation 56, iteration variable 97)
   real(kind(1.0D0)) :: fptemp = 1.0D0
-  !+ad_vars  fptfnuc /1.0/ : f-value for maximum TF coil nuclear heating
-  !+ad_varc                  (constraint equation 54, iteration variable 95)
+  !! fptemp /1.0/ : f-value for peak centrepost temperature
+  !!                (constraint equation 44, iteration variable 68)
   real(kind(1.0D0)) :: fptfnuc = 1.0D0
-  !+ad_vars  fq /1.0/ : f-value for edge safety factor
-  !+ad_varc             (constraint equation 45, iteration variable 71)
+  !! fptfnuc /1.0/ : f-value for maximum TF coil nuclear heating
+  !!                 (constraint equation 54, iteration variable 95)
   real(kind(1.0D0)) :: fq = 1.0D0
-  !+ad_vars  fqval /1.0/ : f-value for Q
-  !+ad_varc                (constraint equation 28, iteration variable 45)
+  !! fq /1.0/ : f-value for edge safety factor
+  !!            (constraint equation 45, iteration variable 71)
   real(kind(1.0D0)) :: fqval = 1.0D0
-  !+ad_vars  fradpwr /1.0/ : f-value for core radiation power limit
-  !+ad_varc                  (constraint equation 17, iteration variable 28)
+  !! fqval /1.0/ : f-value for Q
+  !!               (constraint equation 28, iteration variable 45)
   real(kind(1.0D0)) :: fradpwr = 1.0D0
-  !+ad_vars  fradwall /1.0/ : f-value for upper limit on radiation wall load
-  !+ad_varc                   (constr. equ. 67, iteration variable 116 )
+  !! fradpwr /1.0/ : f-value for core radiation power limit
+  !!                 (constraint equation 17, iteration variable 28)
   real(kind(1.0D0)) :: fradwall = 1.0D0
-  !+ad_vars  freinke /1.0/ : f-value for Reinke detachment criterion
-  !+ad_varc                   (constr. equ. 78, iteration variable 147)
+  !! fradwall /1.0/ : f-value for upper limit on radiation wall load
+  !!                  (constr. equ. 67, iteration variable 116 )
   real(kind(1.0D0)) :: freinke = 1.0D0
-  !+ad_vars  frminor /1.0/ : f-value for minor radius limit
-  !+ad_varc                  (constraint equation 21, iteration variable 32)
+  !! freinke /1.0/ : f-value for Reinke detachment criterion
+  !!                  (constr. equ. 78, iteration variable 147)
   real(kind(1.0D0)) :: frminor = 1.0D0
-  !+ad_vars  fstrcase /1.0/ : f-value for TF coil case stress
-  !+ad_varc                   (constraint equation 31, iteration variable 48)
+  !! frminor /1.0/ : f-value for minor radius limit
+  !!                 (constraint equation 21, iteration variable 32)
+  
   real(kind(1.0D0)) :: fstrcase = 1.0D0
-  !+ad_vars  fstrcond /1.0/ : f-value for TF coil conduit stress
-  !+ad_varc                   (constraint equation 32, iteration variable 49)
+  !! f-value for maximum TF coil case TRESCA stress
+  !!   (constraint equation 31, iteration variable 48)
+
   real(kind(1.0D0)) :: fstrcond = 1.0D0
-  !+ad_vars  ftaucq /1.0/ : f-value for calculated minimum TF quench time
-  !+ad_varc                 (constraint equation 65, iteration variable 113)
+  !! f-value for maxiumum TF coil conduit TRESCA stress
+  !!   (constraint equation 32, iteration variable 49)
+
   real(kind(1.0D0)) :: ftaucq = 1.0D0
-  !+ad_vars  ftbr /1.0/ : f-value for minimum tritium breeding ratio
-  !+ad_varc                 (constraint equation 52, iteration variable 89)
+  !! ftaucq /1.0/ : f-value for calculated minimum TF quench time
+  !!                (constraint equation 65, iteration variable 113)
   real(kind(1.0D0)) :: ftbr = 1.0D0
-  !+ad_vars  ftburn /1.0/ : f-value for minimum burn time
-  !+ad_varc                 (constraint equation 13, iteration variable 21)
+  !! ftbr /1.0/ : f-value for minimum tritium breeding ratio
+  !!                (constraint equation 52, iteration variable 89)
   real(kind(1.0D0)) :: ftburn = 1.0D0
-  !+ad_vars  ftcycl /1.0/ : f-value for cycle time
-  !+ad_varc                 (constraint equation 42, iteration variable 67)
+  !! ftburn /1.0/ : f-value for minimum burn time
+  !!                (constraint equation 13, iteration variable 21)
   real(kind(1.0D0)) :: ftcycl = 1.0D0
-  !+ad_vars  ftmargoh /1.0/ : f-value for central solenoid temperature margin
-  !+ad_varc                   (constraint equation 60, iteration variable 106)
+  !! ftcycl /1.0/ : f-value for cycle time
+  !!                (constraint equation 42, iteration variable 67)
   real(kind(1.0D0)) :: ftmargoh = 1.0D0
-  !+ad_vars  ftmargtf /1.0/ : f-value for TF coil temperature margin
-  !+ad_varc                   (constraint equation 36, iteration variable 54)
+  !! ftmargoh /1.0/ : f-value for central solenoid temperature margin
+  !!                  (constraint equation 60, iteration variable 106)
   real(kind(1.0D0)) :: ftmargtf = 1.0D0
-  !+ad_vars  ftohs /1.0/ : f-value for plasma current ramp-up time
-  !+ad_varc                (constraint equation 41, iteration variable 66)
+  !! ftmargtf /1.0/ : f-value for TF coil temperature margin
+  !!                  (constraint equation 36, iteration variable 54)
   real(kind(1.0D0)) :: ftohs = 1.0D0
-  !+ad_vars  ftpeak /1.0/ : f-value for first wall peak temperature
-  !+ad_varc                 (constraint equation 39, iteration variable 63)
+  !! ftohs /1.0/ : f-value for plasma current ramp-up time
+  !!               (constraint equation 41, iteration variable 66)
   real(kind(1.0D0)) :: ftpeak = 1.0D0
-  !+ad_vars  fvdump /1.0/ : f-value for dump voltage
-  !+ad_varc                 (constraint equation 34, iteration variable 51)
+  !! ftpeak /1.0/ : f-value for first wall peak temperature
+  !!                (constraint equation 39, iteration variable 63)
   real(kind(1.0D0)) :: fvdump = 1.0D0
-  !+ad_vars  fvs /1.0/ : f-value for flux-swing (V-s) requirement (STEADY STATE)
-  !+ad_varc              (constraint equation 12, iteration variable 15)
+  !! fvdump /1.0/ : f-value for dump voltage
+  !!                (constraint equation 34, iteration variable 51)
   real(kind(1.0D0)) :: fvs = 1.0D0
-  !+ad_vars  fvvhe /1.0/ : f-value for vacuum vessel He concentration limit
-  !+ad_varc                (iblanket = 2)
-  !+ad_varc                (constraint equation 55, iteration variable 96)
+  !! fvs /1.0/ : f-value for flux-swing (V-s) requirement (STEADY STATE)
+  !!             (constraint equation 12, iteration variable 15)
   real(kind(1.0D0)) :: fvvhe = 1.0D0
-  !+ad_vars  fwalld /1.0/ : f-value for maximum wall load
-  !+ad_varc                 (constraint equation 8, iteration variable 14)
+  !! fvvhe /1.0/ : f-value for vacuum vessel He concentration limit
+  !!               (iblanket = 2)
+  !!               (constraint equation 55, iteration variable 96)
   real(kind(1.0D0)) :: fwalld = 1.0D0
-  !+ad_vars  fzeffmax /1.0/ : f-value for maximum zeff
-  !+ad_varc                 (constraint equation 64, iteration variable 112)
+  !! fwalld /1.0/ : f-value for maximum wall load
+  !!                (constraint equation 8, iteration variable 14)
   real(kind(1.0D0)) :: fzeffmax = 1.0D0
-  !+ad_vars  gammax /2.0/ : maximum current drive gamma
-  !+ad_varc                 (constraint equation 37)
+  !! fzeffmax /1.0/ : f-value for maximum zeff
+  !!                (constraint equation 64, iteration variable 112)
   real(kind(1.0D0)) :: gammax = 2.0D0
-  !+ad_vars maxradwallload /1.0/ :  Maximum permitted radiation wall load (MW/m^2)
-  !+ad_varc                         (constraint equation 67)
+  !! gammax /2.0/ : maximum current drive gamma
+  !!                (constraint equation 37)
   real(kind(1.0D0)) :: maxradwallload = 1.0D0
-  !+ad_vars  mvalim /40.0/ : maximum MVA limit
-  !+ad_varc                  (constraint equation 19)
+  !!maxradwallload /1.0/ :  Maximum permitted radiation wall load (MW/m^2)
+  !!                        (constraint equation 67)
   real(kind(1.0D0)) :: mvalim = 40.0D0
-  !+ad_vars  nbshinefmax /1.0e-3/ : maximum neutral beam shine-through fraction
-  !+ad_varc                         (constraint equation 59)
+  !! mvalim /40.0/ : maximum MVA limit
+  !!                 (constraint equation 19)
   real(kind(1.0D0)) :: nbshinefmax = 1.0D-3
-  !+ad_vars  nflutfmax /1.0e23/ : max fast neutron fluence on TF coil (n/m2)
-  !+ad_varc                      (blktmodel>0)
-  !+ad_varc                      (constraint equation 53)
+  !! nbshinefmax /1.0e-3/ : maximum neutral beam shine-through fraction
+  !!                        (constraint equation 59)
   real(kind(1.0D0)) :: nflutfmax = 1.0D23
-  !+ad_vars  peakfactrad /3.33/  : peaking factor for radiation wall load
-  !+ad_varc                       (constraint equation 67)
+  !! nflutfmax /1.0e23/ : max fast neutron fluence on TF coil (n/m2)
+  !!                     (blktmodel>0)
+  !!                     (constraint equation 53)
+  real(kind(1.0D0)) :: pdivtlim = 150.0D0
+  !! pdivtlim /150.0/  : Minimum pdivt [MW] (constraint equation 80)
   real(kind(1.0D0)) :: peakfactrad = 3.33D0
-  !+ad_vars  peakradwallload : Peak radiation wall load (MW/m^2)
-  !+ad_varc                        (constraint equation 67)
+  !! peakfactrad /3.33/  : peaking factor for radiation wall load
+  !!                      (constraint equation 67)
   real(kind(1.0D0)) :: peakradwallload = 0.0D0
-  !+ad_vars  pnetelin /1000.0/ : required net electric power (MW)
-  !+ad_varc                      (constraint equation 16)
+  !! peakradwallload : Peak radiation wall load (MW/m^2)
+  !!                       (constraint equation 67)
   real(kind(1.0D0)) :: pnetelin = 1.0D3
-  !+ad_vars  powfmax /1500.0/ : maximum fusion power (MW)
-  !+ad_varc                     (constraint equation 9)
+  !! pnetelin /1000.0/ : required net electric power (MW)
+  !!                     (constraint equation 16)
   real(kind(1.0D0)) :: powfmax = 1.5D3
-  !+ad_vars  psepbqarmax /9.5/ : maximum ratio of Psep*Bt/qAR (MWT/m)
-  !+ad_varc                      (constraint equation 68)
+  !! powfmax /1500.0/ : maximum fusion power (MW)
+  !!                    (constraint equation 9)
   real(kind(1.0D0)) :: psepbqarmax = 9.5D0
-  !+ad_vars  pseprmax /25.0/ : maximum ratio of power crossing the separatrix to
-  !+ad_varc                      plasma major radius (Psep/R) (MW/m)
-  !+ad_varc                      (constraint equation 56)
+  !! psepbqarmax /9.5/ : maximum ratio of Psep*Bt/qAR (MWT/m)
+  !!                     (constraint equation 68)
   real(kind(1.0D0)) :: pseprmax = 25.0D0
-  !+ad_vars  ptfnucmax /1.0e-3/ : maximum nuclear heating in TF coil (MW/m3)
-  !+ad_varc                       (constraint equation 54)
+  !! pseprmax /25.0/ : maximum ratio of power crossing the separatrix to
+  !!                     plasma major radius (Psep/R) (MW/m)
+  !!                     (constraint equation 56)
   real(kind(1.0D0)) :: ptfnucmax = 1.0D-3
-  !+ad_vars  tbrmin /1.1/ : minimum tritium breeding ratio
-  !+ad_varc                 (constraint equation 52)
+  !! ptfnucmax /1.0e-3/ : maximum nuclear heating in TF coil (MW/m3)
+  !!                      (constraint equation 54)
   real(kind(1.0D0)) :: tbrmin = 1.1D0
-  !+ad_vars  tbrnmn /1.0/ : minimum burn time (s)
-  !+ad_varc                 (KE - no longer itv., see issue 706)
+  !! tbrmin /1.1/ : minimum tritium breeding ratio
+  !!                (constraint equation 52)
   real(kind(1.0D0)) :: tbrnmn = 1.0D0
-  !+ad_vars  tcycmn : minimum cycle time (s)
-  !+ad_varc           (constraint equation 42)
+  !! tbrnmn /1.0/ : minimum burn time (s)
+  !!                (KE - no longer itv., see issue 706)
   real(kind(1.0D0)) :: tcycmn = 0.0D0
-  !+ad_vars  tohsmn : minimum plasma current ramp-up time (s)
-  !+ad_varc           (constraint equation 41)
+  !! tcycmn : minimum cycle time (s)
+  !!          (constraint equation 42)
   real(kind(1.0D0)) :: tohsmn = 1.0D0
-  !+ad_vars  vvhealw /1.0/ : allowed maximum helium concentration in vacuum vessel
-  !+ad_varc                  at end of plant life (appm) (iblanket =2)
-  !+ad_varc                  (constraint equation 55)
+  !! tohsmn : minimum plasma current ramp-up time (s)
+  !!          (constraint equation 41)
   real(kind(1.0D0)) :: vvhealw = 1.0D0
-  !+ad_vars  walalw /1.0/ : allowable wall-load (MW/m2)
-  !+ad_varc                 (constraint equation 8)
+  !! vvhealw /1.0/ : allowed maximum helium concentration in vacuum vessel
+  !!                 at end of plant life (appm) (iblanket =2)
+  !!                 (constraint equation 55)
   real(kind(1.0D0)) :: walalw = 1.0D0
+  !! walalw /1.0/ : allowable wall-load (MW/m2)
+  !!                (constraint equation 8)
 
-  !+ad_vars  taulimit /5.0/ : Lower limit on taup/taueff the ratio of alpha particle
-  !+ad_varc                  to energy confinement times (constraint equation 62)
   real(kind(1.0D0)) :: taulimit = 5.0D0
-  !+ad_vars  ftaulimit /1.0/ : f-value for lower limit on taup/taueff the ratio
-  !+ad_varc                    of alpha particle to energy confinement times
-  !+ad_varc                   (constraint equation 62, iteration variable 110)
+  !! taulimit /5.0/ : Lower limit on taup/taueff the ratio of alpha particle
+  !!                 to energy confinement times (constraint equation 62)
   real(kind(1.0D0)) :: ftaulimit = 1.0D0
+  !! ftaulimit /1.0/ : f-value for lower limit on taup/taueff the ratio
+  !!                   of alpha particle to energy confinement times
+  !!                  (constraint equation 62, iteration variable 110)
 
-  !+ad_vars  fniterpump /1.0/ : f-value for constraint that number of pumps < tfno
-  !+ad_varc                   (constraint equation 63, iteration variable 111)
   real(kind(1.0D0)) :: fniterpump = 1.0D0
-  !+ad_vars  zeffmax /3.6/ : maximum value for Zeff
-  !+ad_varc                   (constraint equation 64)
+  !! fniterpump /1.0/ : f-value for constraint that number of pumps < tfno
+  !!                  (constraint equation 63, iteration variable 111)
   real(kind(1.0D0)) :: zeffmax = 3.6D0
-  !+ad_vars  fpoloidalpower /1.0/ : f-value for constraint on rate of change of energy in poloidal field
-  !+ad_varc                   (constraint equation 66, iteration variable 115)
+  !! zeffmax /3.6/ : maximum value for Zeff
+  !!                  (constraint equation 64)
   real(kind(1.0D0)) :: fpoloidalpower = 1.0D0
+  !! fpoloidalpower /1.0/ : f-value for constraint on rate of change of energy in poloidal field
+  !!                  (constraint equation 66, iteration variable 115)
 
-  !+ad_vars  fpsep /1.0/ : f-value to ensure separatrix power is less than value from Kallenbach divertor
-  !+ad_varc                   (Not required as constraint 69 is an equality)
   real(kind(1.0D0)) :: fpsep = 1.0D0
+  !! fpsep /1.0/ : f-value to ensure separatrix power is less than value from Kallenbach divertor
+  !!                  (Not required as constraint 69 is an equality)
 
-  !+ad_vars  fcqt /1.0/ : f-value: TF coil quench temparature remains below tmax_croco
-  !+ad_varc                   (constraint equation 74, iteration variable 141)
   real(kind(1.0D0)) :: fcqt = 1.0D0
+  !! fcqt /1.0/ : f-value: TF coil quench temparature remains below tmax_croco
+  !!                  (constraint equation 74, iteration variable 141)
 
 
 end module constraint_variables
@@ -4224,30 +4109,16 @@ end module constraint_variables
 
 module stellarator_variables
 
-  !+ad_name  stellarator_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  stellarator model
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_auth  F Warmer, IPP Greifswald
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  stellarator model.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  31/10/12 PJK Initial version of module
-  !+ad_hist  23/01/13 PJK Added iotabar
-  !+ad_hist  14/08/13 PJK/FW Added stellarator divertor variables
-  !+ad_hist  05/03/14 PJK Added fdivwet and port size variables
-  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
-  !+ad_stat  Okay
-  !+ad_docs  Stellarator Plasma Geometry Model for the Systems
-  !+ad_docc  Code PROCESS, F. Warmer, 19/06/2013
-  !+ad_docs  Stellarator Divertor Model for the Systems
-  !+ad_docc  Code PROCESS, F. Warmer, 21/06/2013
-  !+ad_docs  Stellarator Coil Model for the Systems
-  !+ad_docc  Code PROCESS, F. Warmer and F. Schauer, 07/10/2013
+  !! Module containing global variables relating to the
+  !! stellarator model
+  !! This module contains global variables relating to the
+  !! stellarator model.
+  !! Stellarator Plasma Geometry Model for the Systems
+  !! Code PROCESS, F. Warmer, 19/06/2013
+  !! Stellarator Divertor Model for the Systems
+  !! Code PROCESS, F. Warmer, 21/06/2013
+  !! Stellarator Coil Model for the Systems
+  !! Code PROCESS, F. Warmer and F. Schauer, 07/10/2013
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4255,87 +4126,416 @@ module stellarator_variables
 
   public
 
-  !+ad_vars  istell /0/ : switch for stellarator option
-  !+ad_varc               (set via <CODE>device.dat</CODE>):<UL>
-  !+ad_varc          <LI> = 0 use tokamak model;
-  !+ad_varc          <LI> = 1 use stellarator model</UL>
   integer :: istell = 0
+  !! istell /0/ : switch for stellarator option
+  !!              (set via <CODE>device.dat</CODE>):<UL>
+  !!         <LI> = 0 use tokamak model;
+  !!         <LI> = 1 use stellarator model: Helias5-b</UL>
+  !!         <LI> = 2 use stellarator model: Helias4-b</UL>
+  !!         <LI> = 3 use stellarator model: Helias3-b</UL>
 
-  !+ad_vars  bmn /0.001/ : relative radial field perturbation
   real(kind(1.0D0)) :: bmn = 1.0D-3
-  !+ad_vars  f_asym /1.0/ : divertor heat load peaking factor
+  !! bmn /0.001/ : relative radial field perturbation
   real(kind(1.0D0)) :: f_asym = 1.0D0
-  !+ad_vars  f_rad /0.85/ : radiated power fraction in SOL
+  !! f_asym /1.0/ : divertor heat load peaking factor
   real(kind(1.0D0)) :: f_rad = 0.85D0
-  !+ad_vars  f_w /0.5/ : island size fraction factor
+  !! f_rad /0.85/ : radiated power fraction in SOL
   real(kind(1.0D0)) :: f_w = 0.5D0
-  !+ad_vars  fdivwet /0.3333/ : wetted fraction of the divertor area
-  real(kind(1.0D0)) :: fdivwet = 0.33333333333333333333333333333D0
-  !+ad_vars  flpitch /0.001/ : field line pitch (rad)
+  !! f_w /0.5/ : island size fraction factor
+  real(kind(1.0D0)) :: fdivwet = 0.333333333333333D0
+  !! fdivwet /0.3333/ : wetted fraction of the divertor area
   real(kind(1.0D0)) :: flpitch = 1.0D-3
-  !+ad_vars  hportamax : maximum available area for horizontal ports (m2)
+  !! flpitch /0.001/ : field line pitch (rad)
   real(kind(1.0D0)) :: hportamax = 0.0D0
-  !+ad_vars  hportpmax : maximum available poloidal extent for horizontal ports (m)
+  !! hportamax : maximum available area for horizontal ports (m2)
   real(kind(1.0D0)) :: hportpmax = 0.0D0
-  !+ad_vars  hporttmax : maximum available toroidal extent for horizontal ports (m)
+  !! hportpmax : maximum available poloidal extent for horizontal ports (m)
   real(kind(1.0D0)) :: hporttmax = 0.0D0
-  !+ad_vars  iotabar /1.0/ : rotational transform (reciprocal of tokamak q)
-  !+ad_varc                  for stellarator confinement time scaling laws
+  !! hporttmax : maximum available toroidal extent for horizontal ports (m)
   real(kind(1.0D0)) :: iotabar = 1.0D0
-  !+ad_vars  isthtr /3/ : switch for stellarator auxiliary heating method:<UL>
-  !+ad_varc          <LI> = 1 electron cyclotron resonance heating;
-  !+ad_varc          <LI> = 2 lower hybrid heating;
-  !+ad_varc          <LI> = 3 neutral beam injection</UL>
+  !! iotabar /1.0/ : rotational transform (reciprocal of tokamak q)
+  !!                 for stellarator confinement time scaling laws
   integer :: isthtr = 3
-  !+ad_vars  m_res /5/ : poloidal resonance number
+  !! isthtr /3/ : switch for stellarator auxiliary heating method:<UL>
+  !!         <LI> = 1 electron cyclotron resonance heating;
+  !!         <LI> = 2 lower hybrid heating;
+  !!         <LI> = 3 neutral beam injection</UL>
   integer :: m_res = 5
-  !+ad_vars  n_res /5/ : toroidal resonance number
+  !! m_res /5/ : poloidal resonance number
   integer :: n_res = 5
-  !+ad_vars  shear /0.5/ : magnetic shear, derivative of iotabar
+  !! n_res /5/ : toroidal resonance number
   real(kind(1.0D0)) :: shear = 0.5D0
-  !+ad_vars  vmec_info_file /vmec_info.dat/ : file containing general VMEC settings
-  character(len=48) :: vmec_info_file = 'vmec_info.dat'
-  !+ad_vars  vmec_rmn_file /vmec_Rmn.dat/ : file containing plasma boundary R(m,n)
-  !+ad_varc                                 Fourier components
-  character(len=48) :: vmec_rmn_file = 'vmec_Rmn.dat'
-  !+ad_vars  vmec_zmn_file /vmec_Zmn.dat/ : file containing plasma boundary Z(m,n)
-  !+ad_varc                                 Fourier components
-  character(len=48) :: vmec_zmn_file = 'vmec_Zmn.dat'
-  !+ad_vars  vportamax : maximum available area for vertical ports (m2)
+  !! shear /0.5/ : magnetic shear, derivative of iotabar
   real(kind(1.0D0)) :: vportamax = 0.0D0
-  !+ad_vars  vportpmax : maximum available poloidal extent for vertical ports (m)
+  !! vportamax : maximum available area for vertical ports (m2)
   real(kind(1.0D0)) :: vportpmax = 0.0D0
-  !+ad_vars  vporttmax : maximum available toroidal extent for vertical ports (m)
+  !! vportpmax : maximum available poloidal extent for vertical ports (m)
   real(kind(1.0D0)) :: vporttmax = 0.0D0
+  !! vporttmax : maximum available toroidal extent for vertical ports (m)
 
 end module stellarator_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ! Issue #508 Remove RFP option: module rfp_variables
-! Issue #508 Remove IFE option: module ife_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+module ife_variables
+
+     !! Module containing global variables relating to the
+     !! inertial fusion energy model
+     !! This module contains global variables relating to the
+     !! inertial fusion energy model.
+     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
+     !
+     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   
+     implicit none
+   
+     public
+   
+   
+     !! Default IFE builds and material volumes are those for the SOMBRERO device.
+     !! The 2-dimensional arrays have indices (region, material), where 'region'
+     !! is the region and maxmat is the 'material'<UL>
+     !! <LI>'region' = 1 radially outside chamber
+     !! <LI>         = 2 above chamber
+     !! <LI>         = 3 below chamber</UL>
+     integer, parameter ::  maxmat = 8
+     !! maxmat /8/ FIX : total number of materials in IFE device.
+     !!                  Material numbers are as follows:<UL>
+     !!             <LI> = 0 void;
+     !!             <LI> = 1 steel;
+     !!             <LI> = 2 carbon cloth;
+     !!             <LI> = 3 FLiBe;
+     !!             <LI> = 4 lithium oxide Li2O;
+     !!             <LI> = 5 concrete;
+     !!             <LI> = 6 helium;
+     !!             <LI> = 7 xenon;
+     !!             <LI> = 8 lithium </UL>
+   
+     real(kind(1.0D0)) :: bldr   = 1.0D0
+     !! bldr /1.0/ : radial thickness of IFE blanket (m; calculated if ifetyp=4)
+     real(kind(1.0D0)) :: bldrc   = 1.0D0
+     !! bldrc /1.0/ : radial thickness of IFE curtain (m; ifetyp=4)
+     real(kind(1.0D0)) :: bldzl  = 4.0D0
+     !! bldzl /4.0/ : vertical thickness of IFE blanket below chamber (m)
+     real(kind(1.0D0)) :: bldzu  = 4.0D0
+     !! bldzu /4.0/ : vertical thickness of IFE blanket above chamber (m)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: blmatf = reshape( (/ &
+     !! blmatf(3,0:maxmat) /.../ : IFE blanket material fractions
+          0.05D0,0.05D0,0.05D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.45D0,0.45D0,0.45D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.20D0,0.20D0,0.20D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.30D0,0.30D0,0.30D0, &
+          0.0D0,0.0D0,0.0D0,    &
+          0.0D0, 0.0D0, 0.0D0  /), shape(blmatf))
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: blmatm = 0.0D0
+     !! blmatm(3,0:maxmat) : IFE blanket material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: blmatv = 0.0D0
+     !! blmatv(3,0:maxmat) : IFE blanket material volumes (m3)
+     real(kind(1.0D0)), dimension(3) :: blvol = 0.0D0
+     !! blvol(3) : IFE blanket volume (m3)
+     real(kind(1.0D0)) :: cdriv0 = 154.3D0
+     !! cdriv0 /154.3/ : IFE generic/laser driver cost at edrive=0 (M$)
+     real(kind(1.0D0)) :: cdriv1 = 163.2D0
+     !! cdriv1 /163.2/ : IFE low energy heavy ion beam driver cost
+     !!                  extrapolated to edrive=0 (M$)
+     real(kind(1.0D0)) :: cdriv2 = 244.9D0
+     !! cdriv2 /244.9/ : IFE high energy heavy ion beam driver cost
+     !!                  extrapolated to edrive=0 (M$)
+     real(kind(1.0D0)) :: cdriv3 = 1.463D0
+     !! cdriv3 /1.463/ : IFE driver cost ($/J wall plug) (ifedrv==3)
+     real(kind(1.0D0)) :: chdzl = 9.0D0
+     !! chdzl /9.0/ : vertical thickness of IFE chamber below centre (m)
+     real(kind(1.0D0)) :: chdzu = 9.0D0
+     !! chdzu /9.0/ : vertical thickness of IFE chamber above centre (m)
+     real(kind(1.0D0)), dimension(0:maxmat) :: chmatf = &
+     !! chmatf(0:maxmat) : IFE chamber material fractions
+          (/1.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0,0.0D0/)
+     real(kind(1.0D0)), dimension(0:maxmat) :: chmatm = 0.0D0
+     !! chmatm(0:maxmat) : IFE chamber material masses (kg)
+     real(kind(1.0D0)), dimension(0:maxmat) :: chmatv = 0.0D0
+     !! chmatv(0:maxmat) : IFE chamber material volumes (m3)
+     real(kind(1.0D0)) :: chrad = 6.5D0
+     !! chrad /6.5/ : radius of IFE chamber (m)
+     !!               (iteration variable 84)
+     real(kind(1.0D0)) :: chvol = 0.0D0
+     !! chvol : IFE chamber volume (m3)
+     real(kind(1.0D0)) :: dcdrv0 = 111.4D0
+     !! dcdrv0 /111.4/ : IFE generic/laser driver cost gradient (M$/MJ)
+     real(kind(1.0D0)) :: dcdrv1 = 78.0D0
+     !! dcdrv1 /78.0/ : HIB driver cost gradient at low energy (M$/MJ)
+     real(kind(1.0D0)) :: dcdrv2 = 59.9D0
+     !! dcdrv2 /59.9/ : HIB driver cost gradient at high energy (M$/MJ)
+     real(kind(1.0D0)) :: drveff = 0.28D0
+     !! drveff /0.28/ : IFE driver wall plug to target efficiency (ifedrv=0,3)
+     !!                 (iteration variable 82)
+     real(kind(1.0D0)) :: edrive = 5.0D6
+     !! edrive /5.0D6/ : IFE driver energy (J)
+     !!                  (iteration variable 81)
+     real(kind(1.0D0)) :: etadrv = 0.0D0
+     !! etadrv : IFE driver wall plug to target efficiency
+     real(kind(1.0D0)) :: etali = 0.4D0
+     !! etali /0.40/ : IFE lithium pump wall plug efficiency (ifetyp=4)
+     real(kind(1.0D0)), dimension(10) :: etave = (/ &
+      0.082D0,0.079D0,0.076D0,0.073D0,0.069D0, &
+      0.066D0,0.062D0,0.059D0,0.055D0,0.051D0 /)
+     !! etave(10) : IFE driver efficiency vs driver energy (ifedrv=-1)
+     real(kind(1.0D0)) :: fauxbop = 0.06D0
+     !! fauxbop /0.06/ : fraction of gross electric power to balance-of-plant (IFE)
+     real(kind(1.0D0)) :: fbreed = 0.51D0
+     !! fbreed /0.51/ : fraction of breeder external to device core
+     real(kind(1.0D0)) :: fburn  = 0.3333D0
+     !! fburn /0.3333/ : IFE burn fraction (fraction of tritium fused/target)
+     real(kind(1.0D0)) :: flirad = 0.78D0
+     !! flirad /0.78/ : radius of FLiBe/lithium inlet (m) (ifetyp=3,4)
+     real(kind(1.0D0)) :: frrmax = 1.0D0
+     !! frrmax /1.0/ : f-value for maximum IFE repetition rate
+     !!                (constraint equation 50, iteration variable 86)
+     real(kind(1.0D0)) :: fwdr = 0.01D0
+     !! fwdr /0.01/ : radial thickness of IFE first wall (m)
+     real(kind(1.0D0)) :: fwdzl = 0.01D0
+     !! fwdzl /0.01/ : vertical thickness of IFE first wall below chamber (m)
+     real(kind(1.0D0)) :: fwdzu = 0.01D0
+     !! fwdzu /0.01/ : vertical thickness of IFE first wall above chamber (m)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: fwmatf = reshape( (/ &
+     !! fwmatf(3,0:maxmat) /.../ : IFE first wall material fractions
+          0.05D0,0.05D0,0.05D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.95D0,0.95D0,0.95D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0  /), shape(fwmatf))
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: fwmatm = 0.0D0
+     !! fwmatm(3,0:maxmat) : IFE first wall material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: fwmatv = 0.0D0
+     !! fwmatv(3,0:maxmat) : IFE first wall material volumes (kg)
+     real(kind(1.0D0)), dimension(3) :: fwvol = 0.0D0
+     !! fwvol(3) : IFE first wall volume (m3)
+     real(kind(1.0D0)) :: gain = 0.0D0
+     !! gain : IFE target gain
+     real(kind(1.0D0)), dimension(10) :: gainve = (/ &
+     !! gainve(10) /.../ : IFE target gain vs driver energy (ifedrv=-1)
+           60.0D0, 95.0D0,115.0D0,125.0D0,133.0D0, &
+          141.0D0,152.0D0,160.0D0,165.0D0,170.0D0 /)
+     real(kind(1.0D0)) :: htpmw_ife = 0.0D0         
+     !! htpmw_ife /0.0/ : IFE heat transport system electrical pump power (MW)
+     integer :: ife = 0
+     !! ife /0/ : switch for IFE option
+     !!           (set via <CODE>device.dat</CODE>):<UL>
+     !!      <LI> = 0 use tokamak, RFP or stellarator model;
+     !!      <LI> = 1 use IFE model</UL>
+     integer :: ifedrv = 2
+     !! ifedrv /2/ : switch for type of IFE driver:<UL>
+     !!         <LI> = -1 use gainve, etave for gain and driver efficiency;
+     !!         <LI> =  0 use tgain, drveff for gain and driver efficiency;
+     !!         <LI> =  1 use laser driver based on SOMBRERO design;
+     !!         <LI> =  2 use heavy ion beam driver based on OSIRIS;
+     !!         <LI> =  3 Input pfusife, rrin and drveff</UL>
+     integer :: ifetyp = 0
+     !! ifetyp /0/ : switch for type of IFE device build:<UL>
+     !!         <LI> = 0 generic (cylindrical) build;
+     !!         <LI> = 1 OSIRIS-like build;
+     !!         <LI> = 2 SOMBRERO-like build;
+     !!         <LI> = 3 HYLIFE-II-like build;
+     !!         <LI> = 4 2019 build</UL>
+     real(kind(1.0D0)) :: lipmw = 0.0D0
+     !! lipmw : IFE lithium pump power (MW; ifetyp=4)
+     real(kind(1.0D0)) :: mcdriv = 1.0D0
+     !! mcdriv /1.0/ : IFE driver cost multiplier
+     real(kind(1.0D0)) :: mflibe = 0.0D0
+     !! mflibe : total mass of FLiBe (kg)
+     real(kind(1.0D0)) :: pdrive = 23.0D6
+     !! pdrive /23.0D6/ : IFE driver power reaching target (W)
+     !!                   (iteration variable 85)
+     real(kind(1.0D0)) :: pfusife = 1000.0D0
+     !! pfusife /1000.0/ : IFE input fusion power (MW) (ifedrv=3 only; itv 155)
+     real(kind(1.0D0)) :: pifecr = 10.0D0
+     !! pifecr /10.0/ : IFE cryogenic power requirements (MW)
+     real(kind(1.0D0)), bind(C) :: ptargf = 2.0D0
+     !! ptargf /2.0/ : IFE target factory power at 6 Hz repetition rate (MW)
+     real(kind(1.0D0)) :: r1 = 0.0D0
+     !! r1 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r2 = 0.0D0
+     !! r2 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r3 = 0.0D0
+     !! r3 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r4 = 0.0D0
+     !! r4 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r5 = 0.0D0
+     !! r5 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r6 = 0.0D0
+     !! r6 : IFE device radial build (m)
+     real(kind(1.0D0)) :: r7 = 0.0D0
+     !! r7 : IFE device radial build (m)
+     real(kind(1.0D0)), bind(C) :: reprat = 0.0D0
+     !! reprat : IFE driver repetition rate (Hz)
+     real(kind(1.0D0)) :: rrin = 6.0D0
+     !! rrin /6.0/ : Input IFE repetition rate (Hz) (ifedrv=3 only; itv 156)
+     real(kind(1.0D0)) :: rrmax = 20.0D0
+     !! rrmax /20.0/ : maximum IFE repetition rate (Hz)
+     real(kind(1.0D0)) :: shdr = 1.7D0
+     !! shdr /1.7/ : radial thickness of IFE shield (m)
+     real(kind(1.0D0)) :: shdzl = 5.0D0
+     !! shdzl /5.0/ : vertical thickness of IFE shield below chamber (m)
+     real(kind(1.0D0)) :: shdzu  = 5.0D0
+     !! shdzu /5.0/ : vertical thickness of IFE shield above chamber (m)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: shmatf = reshape( (/ &
+     !! shmatf(3,0:maxmat) /.../ : IFE shield material fractions
+          0.05D0,0.05D0,0.05D0, &
+          0.19D0,0.19D0,0.19D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.665D0,0.665D0,0.665D0, &
+          0.095D0,0.095D0,0.095D0, &
+          0.0D0, 0.0D0, 0.0D0,  &
+          0.0D0, 0.0D0, 0.0D0  /), shape(shmatf))
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: shmatm = 0.0D0
+     !! shmatm(3,0:maxmat) : IFE shield material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: shmatv = 0.0D0
+     !! shmatv(3,0:maxmat) : IFE shield material volumes (kg)
+     real(kind(1.0D0)), dimension(3) :: shvol = 0.0D0
+     !! shvol(3) : IFE shield volume (m3)
+     real(kind(1.0D0)) :: sombdr = 2.7D0
+     !! sombdr /2.7/ : radius of cylindrical blanket section below chamber (ifetyp=2)
+     real(kind(1.0D0)) :: somtdr = 2.7D0
+     !! somtdr /2.7/ : radius of cylindrical blanket section above chamber (ifetyp=2)
+     real(kind(1.0D0)) :: taufall = 0.0D0
+     !! taufall : Lithium Fall Time (s)
+     real(kind(1.0D0)) :: tdspmw = 0.01D0
+     !! tdspmw /0.01/ FIX : IFE target delivery system power (MW)
+     real(kind(1.0D0)), bind(C) :: tfacmw = 0.0D0
+     !! tfacmw : IFE target factory power (MW)
+     real(kind(1.0D0)) :: tgain = 85.0D0
+     !! tgain /85.0/ : IFE target gain (if ifedrv = 0)
+     !!                (iteration variable 83)
+     real(kind(1.0D0)) :: uccarb = 50.0D0
+     !! uccarb /50.0/ : cost of carbon cloth ($/kg)
+     real(kind(1.0D0)) :: ucconc = 0.1D0
+     !! ucconc /0.1/ : cost of concrete ($/kg)
+     real(kind(1.0D0)) :: ucflib = 84.0D0
+     !! ucflib /84.0/ : cost of FLiBe ($/kg)
+     real(kind(1.0D0)) :: uctarg = 0.3D0
+     !! uctarg /0.3/ : cost of IFE target ($/target)
+     real(kind(1.0D0)) :: v1dr = 0.0D0
+     !! v1dr /0.0/ : radial thickness of IFE void between first wall and blanket (m)
+     real(kind(1.0D0)) :: v1dzl = 0.0D0
+     !! v1dzl /0.0/ : vertical thickness of IFE void 1 below chamber (m)
+     real(kind(1.0D0)) :: v1dzu = 0.0D0
+     !! v1dzu /0.0/ : vertical thickness of IFE void 1 above chamber (m)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v1matf = reshape( (/ &
+     !! v1matf(3,0:maxmat) /.../ : IFE void 1 material fractions
+          1.0D0, 1.0D0, 1.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0  /), shape(v1matf))
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v1matm = 0.0D0
+     !! v1matm(3,0:maxmat) : IFE void 1 material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v1matv = 0.0D0
+     !! v1matv(3,0:maxmat) : IFE void 1 material volumes (kg)
+     real(kind(1.0D0)), dimension(3) :: v1vol = 0.0D0
+     !! v1vol(3) : IFE void 1 volume (m3)
+     real(kind(1.0D0)) :: v2dr = 2.0D0
+     !! v2dr /2.0/ : radial thickness of IFE void between blanket and shield (m)
+     real(kind(1.0D0)) :: v2dzl = 7.0D0
+     !! v2dzl /7.0/ : vertical thickness of IFE void 2 below chamber (m)
+     real(kind(1.0D0)) :: v2dzu = 7.0D0
+     !! v2dzu /7.0/ : vertical thickness of IFE void 2 above chamber (m)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v2matf = reshape( (/ &
+     !! v2matf(3,0:maxmat) /.../ : IFE void 2 material fractions
+          1.0D0, 1.0D0, 1.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0  /), shape(v2matf))
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v2matm = 0.0D0
+     !! v2matm(3,0:maxmat) : IFE void 2 material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v2matv = 0.0D0
+     !! v2matv(3,0:maxmat) : IFE void 2 material volumes (kg)
+     real(kind(1.0D0)), dimension(3) :: v2vol = 0.0D0
+     !! v2vol(3) : IFE void 2 volume (m3)
+     real(kind(1.0D0)) :: v3dr   = 43.3D0
+     !! v3dr /43.3/ : radial thickness of IFE void outside shield (m)
+     real(kind(1.0D0)) :: v3dzl  = 30.0D0
+     !! v3dzl /30.0/ : vertical thickness of IFE void 3 below chamber (m)
+     real(kind(1.0D0)) :: v3dzu  = 20.0D0
+     !! v3dzu /20.0/ : vertical thickness of IFE void 3 above chamber (m)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v3matf = reshape( (/ &
+     !! v3matf(3,0:maxmat) /.../ : IFE void 3 material fractions
+          1.0D0, 1.0D0, 1.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0, &
+          0.0D0, 0.0D0, 0.0D0  /), shape(v3matf))
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v3matm = 0.0D0
+     !! v3matm(3,0:maxmat) : IFE void 3 material masses (kg)
+     real(kind(1.0D0)), dimension(3,0:maxmat) :: v3matv = 0.0D0
+     !! v3matv(3,0:maxmat) : IFE void 3 material volumes (kg)
+     real(kind(1.0D0)), dimension(3) :: v3vol = 0.0D0
+     !! v3vol(3) : IFE void 3 volume (m3)
+     real(kind(1.0D0)) :: zl1 = 0.0D0
+     !! zl1 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl2 = 0.0D0
+     !! zl2 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl3 = 0.0D0
+     !! zl3 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl4 = 0.0D0
+     !! zl4 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl5 = 0.0D0
+     !! zl5 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl6 = 0.0D0
+     !! zl6 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zl7 = 0.0D0
+     !! zl7 : IFE vertical build below centre (m)
+     real(kind(1.0D0)) :: zu1 = 0.0D0
+     !! zu1 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu2 = 0.0D0
+     !! zu2 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu3 = 0.0D0
+     !! zu3 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu4 = 0.0D0
+     !! zu4 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu5 = 0.0D0
+     !! zu5 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu6 = 0.0D0
+     !! zu6 : IFE vertical build above centre (m)
+     real(kind(1.0D0)) :: zu7 = 0.0D0
+     !! zu7 : IFE vertical build above centre (m)
+   
+   end module ife_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module pulse_variables
 
-  !+ad_name  pulse_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  pulsed reactor model
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  pulsed reactor model.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  05/11/12 PJK Initial version of module
-  !+ad_hist  21/08/14 PJK Moved some variables into fwbs_variables
-  !+ad_hist  23/06/16 JM  Removed tmprse as no longer used anywhere
-  !+ad_stat  Okay
-  !+ad_docs  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! pulsed reactor model
+  !! This module contains global variables relating to the
+  !! pulsed reactor model.
+  !! Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4343,28 +4543,28 @@ module pulse_variables
 
   public
 
-  !+ad_vars  bctmp /320.0/ : first wall bulk coolant temperature (C)
   real(kind(1.0D0)) :: bctmp = 320.0D0
-  !+ad_vars  bfw : outer radius of each first wall structural tube (m)
-  !+ad_varc        (0.5 * average of fwith and fwoth)
+  !! bctmp /320.0/ : first wall bulk coolant temperature (C)
   real(kind(1.0D0)) :: bfw = 0.0D0
-  !+ad_vars  dtstor /300.0/ : maximum allowable temperature change in stainless
-  !+ad_varc                   steel thermal storage block (K) (istore=3)
+  !! bfw : outer radius of each first wall structural tube (m)
+  !!       (0.5 * average of fwith and fwoth)
   real(kind(1.0D0)) :: dtstor = 300.0D0
-  !+ad_vars  istore /1/ : switch for thermal storage method:<UL>
-  !+ad_varc          <LI> = 1 option 1 of Electrowatt report, AEA FUS 205;
-  !+ad_varc          <LI> = 2 option 2 of Electrowatt report, AEA FUS 205;
-  !+ad_varc          <LI> = 3 stainless steel block</UL>
+  !! dtstor /300.0/ : maximum allowable temperature change in stainless
+  !!                  steel thermal storage block (K) (istore=3)
   integer :: istore = 1
-  !+ad_vars  itcycl /1/ : switch for first wall axial stress model:<UL>
-  !+ad_varc          <LI> = 1 total axial constraint, no bending;
-  !+ad_varc          <LI> = 2 no axial constraint, no bending;
-  !+ad_varc          <LI> = 3 no axial constraint, bending</UL>
+  !! istore /1/ : switch for thermal storage method:<UL>
+  !!         <LI> = 1 option 1 of Electrowatt report, AEA FUS 205;
+  !!         <LI> = 2 option 2 of Electrowatt report, AEA FUS 205;
+  !!         <LI> = 3 stainless steel block</UL>
   integer :: itcycl = 1
-  !+ad_vars  lpulse /0/ : switch for reactor model:<UL>
-  !+ad_varc          <LI> = 0 continuous operation;
-  !+ad_varc          <LI> = 1 pulsed operation</UL>
+  !! itcycl /1/ : switch for first wall axial stress model:<UL>
+  !!         <LI> = 1 total axial constraint, no bending;
+  !!         <LI> = 2 no axial constraint, no bending;
+  !!         <LI> = 3 no axial constraint, bending</UL>
   integer :: lpulse = 0
+  !! lpulse /0/ : switch for reactor model:<UL>
+  !!         <LI> = 0 continuous operation;
+  !!         <LI> = 1 pulsed operation</UL>
 
 end module pulse_variables
 
@@ -4372,22 +4572,12 @@ end module pulse_variables
 
 module startup_variables
 
-  !+ad_name  startup_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  plasma start-up model
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  plasma start-up model.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  05/11/12 PJK Initial version of module
-  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
-  !+ad_stat  Okay
-  !+ad_docs  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! plasma start-up model
+  !! This module contains global variables relating to the
+  !! plasma start-up model.
+  !! Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4395,20 +4585,20 @@ module startup_variables
 
   public
 
-  !+ad_vars  ftaue : factor in energy confinement time formula
   real(kind(1.0D0)) :: ftaue = 0.0D0
-  !+ad_vars  gtaue : offset term in energy confinement time scaling
+  !! ftaue : factor in energy confinement time formula
   real(kind(1.0D0)) :: gtaue  = 0.0D0
-  !+ad_vars  nign : electron density at ignition (start-up) (/m3)
+  !! gtaue : offset term in energy confinement time scaling
   real(kind(1.0D0)) :: nign  = 0.0D0
-  !+ad_vars  ptaue : exponent for density term in energy confinement time formula
+  !! nign : electron density at ignition (start-up) (/m3)
   real(kind(1.0D0)) :: ptaue  = 0.0D0
-  !+ad_vars  qtaue : exponent for temperature term in energy confinement time formula
+  !! ptaue : exponent for density term in energy confinement time formula
   real(kind(1.0D0)) :: qtaue  = 0.0D0
-  !+ad_vars  rtaue : exponent for power term in energy confinement time formula
+  !! qtaue : exponent for temperature term in energy confinement time formula
   real(kind(1.0D0)) :: rtaue  = 0.0D0
-  !+ad_vars  tign : electron temperature at ignition (start-up) (keV)
+  !! rtaue : exponent for power term in energy confinement time formula
   real(kind(1.0D0)) :: tign  = 0.0D0
+  !! tign : electron temperature at ignition (start-up) (keV)
 
 end module startup_variables
 
@@ -4416,20 +4606,11 @@ end module startup_variables
 
 module fispact_variables
 
-  !+ad_name  fispact_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  fispact routines
-  !+ad_type  Module
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  nuclear data (fispact) routines.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  06/11/12 PJK Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !! Module containing global variables relating to the
+  !! fispact routines
+  !! This module contains global variables relating to the
+  !! nuclear data (fispact) routines.
+  !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4437,53 +4618,53 @@ module fispact_variables
 
   public
 
-  !+ad_vars  Fispact arrays with 3 elements contain the results at the following times:
-  !+ad_varc    (1) - at end of component life
-  !+ad_varc    (2) - after 3 months cooling time
-  !+ad_varc    (3) - 100 years after end of plant life
 
-  !+ad_vars  bliact(3) : inboard blanket total activity (Bq)
+  !! Fispact arrays with 3 elements contain the results at the following times:
+  !!   (1) - at end of component life
+  !!   (2) - after 3 months cooling time
+  !!   (3) - 100 years after end of plant life
   real(kind(1.0D0)), dimension(3) :: bliact = 0.0D0
-  !+ad_vars  bligdr(3) : inboard blanket total gamma dose rate (Sv/hr)
+  !! bliact(3) : inboard blanket total activity (Bq)
   real(kind(1.0D0)), dimension(3) :: bligdr = 0.0D0
-  !+ad_vars  blihkw(3) : inboard blanket total heat output (kW)
+  !! bligdr(3) : inboard blanket total gamma dose rate (Sv/hr)
   real(kind(1.0D0)), dimension(3) :: blihkw = 0.0D0
-  !+ad_vars  bliizp : inboard blanket integrated zone power / neutron
+  !! blihkw(3) : inboard blanket total heat output (kW)
   real(kind(1.0D0)) :: bliizp = 0.0D0
-  !+ad_vars  blimzp : inboard blanket mean zone power density / neutron
+  !! bliizp : inboard blanket integrated zone power / neutron
   real(kind(1.0D0)) :: blimzp = 0.0D0
-  !+ad_vars  bloact(3) : outboard blanket total activity (Bq)
+  !! blimzp : inboard blanket mean zone power density / neutron
   real(kind(1.0D0)), dimension(3) :: bloact = 0.0D0
-  !+ad_vars  blogdr(3) : outboard blanket total gamma dose rate (Sv/hr)
+  !! bloact(3) : outboard blanket total activity (Bq)
   real(kind(1.0D0)), dimension(3) :: blogdr = 0.0D0
-  !+ad_vars  blohkw(3) : outboard blanket total heat output (kW)
+  !! blogdr(3) : outboard blanket total gamma dose rate (Sv/hr)
   real(kind(1.0D0)), dimension(3) :: blohkw = 0.0D0
-  !+ad_vars  bloizp : outboard blanket integrated zone power / neutron
+  !! blohkw(3) : outboard blanket total heat output (kW)
   real(kind(1.0D0)) :: bloizp = 0.0D0
-  !+ad_vars  blomzp : outboard blanket mean zone power density / neutron
+  !! bloizp : outboard blanket integrated zone power / neutron
   real(kind(1.0D0)) :: blomzp = 0.0D0
-  !+ad_vars  fwiact(3) : inboard first wall total activity (Bq)
+  !! blomzp : outboard blanket mean zone power density / neutron
   real(kind(1.0D0)), dimension(3) :: fwiact = 0.0D0
-  !+ad_vars  fwigdr(3) : inboard first wall total gamma dose rate (Sv/hr)
+  !! fwiact(3) : inboard first wall total activity (Bq)
   real(kind(1.0D0)), dimension(3) :: fwigdr = 0.0D0
-  !+ad_vars  fwihkw(3) : inboard first wall total heat output (kW)
+  !! fwigdr(3) : inboard first wall total gamma dose rate (Sv/hr)
   real(kind(1.0D0)), dimension(3) :: fwihkw = 0.0D0
-  !+ad_vars  fwiizp : inboard first wall integrated zone power / neutron
+  !! fwihkw(3) : inboard first wall total heat output (kW)
   real(kind(1.0D0)) :: fwiizp = 0.0D0
-  !+ad_vars  fwimzp : inboard first wall mean zone power density/neutron
+  !! fwiizp : inboard first wall integrated zone power / neutron
   real(kind(1.0D0)) :: fwimzp = 0.0D0
-  !+ad_vars  fwoact(3) : outboard first wall total activity (Bq)
+  !! fwimzp : inboard first wall mean zone power density/neutron
   real(kind(1.0D0)), dimension(3) :: fwoact = 0.0D0
-  !+ad_vars  fwogdr(3) : outboard first wall total gamma dose rate (Sv/hr)
+  !! fwoact(3) : outboard first wall total activity (Bq)
   real(kind(1.0D0)), dimension(3) :: fwogdr = 0.0D0
-  !+ad_vars  fwohkw(3) : outboard first wall total heat output (kW)
+  !! fwogdr(3) : outboard first wall total gamma dose rate (Sv/hr)
   real(kind(1.0D0)), dimension(3) :: fwohkw = 0.0D0
-  !+ad_vars  fwoizp : outboard first wall integrated zone power / neutron
+  !! fwohkw(3) : outboard first wall total heat output (kW)
   real(kind(1.0D0)) :: fwoizp = 0.0D0
-  !+ad_vars  fwomzp : outboard first wall mean zone power density/neutron
+  !! fwoizp : outboard first wall integrated zone power / neutron
   real(kind(1.0D0)) :: fwomzp = 0.0D0
-  !+ad_vars  fwtemp : outboard first wall temperature after a LOCA (K)
+  !! fwomzp : outboard first wall mean zone power density/neutron
   real(kind(1.0D0)) :: fwtemp = 0.0D0
+  !! fwtemp : outboard first wall temperature after a LOCA (K)
 
 end module fispact_variables
 
@@ -4491,40 +4672,40 @@ end module fispact_variables
 
 module rebco_variables
 
-  !+ad_name  rebco_variables
-  !+ad_summ  Variables relating to the REBCO HTS tape, strand and conductor
-  !+ad_summ  Conduit information is in the modules relating to each coil.
-  !+ad_type  Module
-  !+ad_docs  TODO
+  !! Variables relating to the REBCO HTS tape, strand and conductor
+  !! Conduit information is in the modules relating to each coil.
+  !! TODO
   implicit none ! ---------------------------------------------------------
   ! Updated 13/11/18 using data from Lewandowska et al 2018.
 
-  !+ad_vars  rebco_thickness /1.0e-6/ : thickness of REBCO layer in tape (m) (iteration variable 138)
   real(kind(1.0D0)) :: rebco_thickness = 1.0D-6
-  !+ad_vars  copper_thick /100e-6/ : thickness of copper layer in tape (m) (iteration variable 139)
+  !! rebco_thickness /1.0e-6/ : thickness of REBCO layer in tape (m) (iteration variable 138)
   real(kind(1.0D0)) :: copper_thick = 100.0D-6
-  !+ad_vars  hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
+  !! copper_thick /100e-6/ : thickness of copper layer in tape (m) (iteration variable 139)
   real(kind(1.0D0)) :: hastelloy_thickness = 50.0D-6
-  !+ad_vars  tape_width /3.75e-3/ : Mean width of tape (m)
-  real(kind(1.0D0)) :: tape_width = 3.75D-3
+  !! hastelloy_thickness /50/e-6 : thickness of Hastelloy layer in tape (m)
+  real(kind(1.0D0)) :: tape_width = 0.0D0
+  !! tape_width : Mean width of tape (m)
 
-  !+ad_vars  croco_od /10.4e-3/ : Outer diameter of CroCo strand (m)
-  real(kind(1.0D0)) :: croco_od = 10.4D-3
-  !+ad_vars  croco_id /5.4e-3/ : Inner diameter of CroCo copper tube (m)
-  real(kind(1.0D0)) :: croco_id = 5.4D-3
+  real(kind(1.0D0)) :: croco_od = 0.0D0
+  !! croco_od : Outer diameter of CroCo strand (m)
+  real(kind(1.0D0)) :: croco_id = 0.0D0
+  !! croco_id : Inner diameter of CroCo copper tube (m)
+  real(kind(1.0D0)) :: croco_thick = 2.5D-3
+  !! croco_thick /2.5e-3/ : Thickness of CroCo copper tube (m) (iteration variable 158)
 
-  !!+ad_vars  copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
   !real(kind(1.0D0)) :: copper_bar = 0.23d0
-  !+ad_vars  copper_rrr /100.0/ : residual resistivity ratio copper in TF superconducting cable
+  ! !! copper_bar /1.0/ : area of central copper bar, as a fraction of the cable space
   real(kind(1.0D0)) :: copper_rrr = 100d0
+  !! copper_rrr /100.0/ : residual resistivity ratio copper in TF superconducting cable
 
-  !!+ad_vars  cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
   !real(kind(1.0D0)) :: cable_helium_fraction = 0.284D0
+  ! !! cable_helium_fraction /0.284/ : Helium area as a fraction of the cable space.
 
-  !+ad_vars  copperA_m2_max /1e8/ : Maximum TF coil current / copper area (A/m2)
-  real(kind(1.0D0)) :: copperA_m2_max = 1D8
-  !+ad_vars  f_copperA_m2 /1/ : f-value for constraint 75: TF coil current / copper area < copperA_m2_max
-  real(kind(1.0D0)) :: f_copperA_m2 = 1d0
+  real(kind(1.0D0)) :: coppera_m2_max = 1D8
+  !! copperA_m2_max /1e8/ : Maximum TF coil current / copper area (A/m2)
+  real(kind(1.0D0)) :: f_coppera_m2 = 1d0
+  !! f_coppera_m2 /1/ : f-value for constraint 75: TF coil current / copper area < copperA_m2_max
 
 
   real(kind(1.0D0)) :: tape_thickness
@@ -4544,10 +4725,8 @@ end module rebco_variables
 
 module resistive_materials
 
-  !+ad_name  resistive_material
-  !+ad_summ  Variables relating to resistive materials in superconducting conductors
-  !+ad_type  Module
-  !+ad_docs  TODO
+  !! Variables relating to resistive materials in superconducting conductors
+  !! TODO
   implicit none ! ---------------------------------------------------------
   type resistive_material
      real(kind(1.0D0)) :: cp            ! Specific heat capacity J/(K kg).
@@ -4579,22 +4758,13 @@ end module resistive_materials
 !------------------------------------------------------------------------
 
 module reinke_variables
-  !+ad_name  reinke_variables
-  !+ad_summ  Module containing global variables relating to the
-  !+ad_summ  Reinke Criterion
-  !+ad_type  Module
-  !+ad_auth  H Lux, CCFE/UKAEA, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  N/A
-  !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  minimum impurity fraction for detached divertor conditions
-  !+ad_desc  Reinke criterion. It furthermore uses several parameters from
-  !+ad_desc  Kallenbach model like netau and empurity_enrichment.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  22/05/18 HL Initial version of module
-  !+ad_stat  Okay
-  !+ad_docs  M.L. Reinke 2017 Nucl. Fusion 57 034004
+  !! Module containing global variables relating to the
+  !! Reinke Criterion
+  !! This module contains global variables relating to the
+  !! minimum impurity fraction for detached divertor conditions
+  !! Reinke criterion. It furthermore uses several parameters from
+  !! Kallenbach model like netau and empurity_enrichment.
+  !! M.L. Reinke 2017 Nucl. Fusion 57 034004
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4603,28 +4773,28 @@ module reinke_variables
   public
 
 
-  !+ad_vars  impvardiv /9/ : index of impurity to be iterated for
-  !+ad_varc           Reinke divertor detachment criterion
   integer       :: impvardiv = 9
+  !! impvardiv /9/ : index of impurity to be iterated for
+  !!          Reinke divertor detachment criterion
 
-  !+ad_vars  lhat /4.33/ : connection length factor L|| = lhat qstar R
-  !+ad_varc                for Reinke criterion, default value from
-  !+ad_varc                Post et al. 1995 J. Nucl. Mat.  220-2 1014
   real(kind(1.0D0)) :: lhat = 4.33D0
+  !! lhat /4.33/ : connection length factor L|| = lhat qstar R
+  !!               for Reinke criterion, default value from
+  !!               Post et al. 1995 J. Nucl. Mat.  220-2 1014
 
-  !+ad_vars  fzmin : Minimum impurity fraction necessary for detachment
-  !+ad_varc          This is the impurity at the SOL/Div
   real(kind(1.0D0)) :: fzmin = 0.0D0
+  !! fzmin : Minimum impurity fraction necessary for detachment
+  !!         This is the impurity at the SOL/Div
 
-  !+ad_vars  fzactual : Actual impurity fraction of divertor impurity
-  !+ad_varc             (impvardiv) in the SoL (taking impurity_enrichment
-  !+ad_varc             into account) (iteration variable 148)
   real(kind(1.0D0)) :: fzactual = 0.001D0
+  !! fzactual : Actual impurity fraction of divertor impurity
+  !!            (impvardiv) in the SoL (taking impurity_enrichment
+  !!            into account) (iteration variable 148)
 
-  !+ad_vars  reinke_mode /0/ : Switch for Reinke criterion H/I mode
-  !+ad_varc          <LI> = 0 H-mode;
-  !+ad_varc          <LI> = 1 I-mode;</UL>
   integer       :: reinke_mode = 0
+  !! reinke_mode /0/ : Switch for Reinke criterion H/I mode
+  !!         <LI> = 0 H-mode;
+  !!         <LI> = 1 I-mode;</UL>
 
 end module reinke_variables
 

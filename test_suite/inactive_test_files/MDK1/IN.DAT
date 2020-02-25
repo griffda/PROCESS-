@@ -175,7 +175,7 @@ baseel   = 55.0d6 * Base plant electric load (w)
 htpmw_min = 0.0 * Minimum total electrical power for primary coolant pumps (mw)
 *------------------Ife Variables-------------------*
 *------------Impurity Radiation Module-------------*
-imprad_model = 1 * Switch for impurity radiation model;
+* imprad_model = 1 * Switch for impurity radiation model;
 coreradius = 0.6 * Normalised radius defining the 'core' region
 fimp(1) = 1.0
 fimp(2) = 0.1
@@ -254,11 +254,11 @@ q        = 3.2267e+00 * Safety factor 'near' plasma edge (iteration variable 18)
 q0       = 1.0 * Safety factor on axis
 ralpne   = 0.1 * Thermal alpha density / electron density (iteration variable 109)
 rmajor   = 9.0e+00 * Plasma major radius (m) (iteration variable 3)
-snull    = 1 * Switch for single null / double null plasma;
+i_single_null    = 1 * Switch for single null / double null plasma;
 ssync    = 0.6 * Synchrotron wall reflectivity factor
 te       = 1.3212e+01 * Volume averaged electron temperature (kev)
 triang   = 0.5 * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
-zfear    = 1 * High-z impurity switch; 0=iron; 1=argon
+* zfear    = 1 * High-z impurity switch; 0=iron; 1=argon
 taulimit = 5.0 * Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
 *-----------------Pulse Variables------------------*
 lpulse   = 1 * Switch for reactor model;
@@ -277,7 +277,7 @@ fcutfsu  = 0.4 * Copper fraction of cable conductor (tf coils)
 oacdcp   = 9.9963e+06 * Overall current density in tf coil inboard legs (a/m2)
 ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude
 tdmptf   = 3.0e+01 * Dump time for tf coil (s)
-tfno     = 18 * Number of tf coils (default = 50 for stellarators)
+n_tf     = 18 * Number of tf coils (default = 50 for stellarators)
 tftmp    = 4.75 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 2.0d-3 * Conduit insulation thickness (m)
 thkcas   = 4.9102e-01 * Inboard tf coil case outer (non-plasma side) thickness (m)

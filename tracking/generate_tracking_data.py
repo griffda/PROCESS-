@@ -1,7 +1,9 @@
 """
-
+python3.6 generate_tracking_data.py --project=baseline_2018 --ref_folder=/home/jenkins_ci/tracking_ref_data/ --sep="comma"
+python3.6 generate_tracking_data.py --project=baseline_2019 --ref_folder=/home/jenkins_ci/tracking_ref_data/ --sep="comma"
     Change tracking tool
 
+    Manoj Kumar
     James Morris
     UKAEA
 
@@ -10,18 +12,18 @@
 """
 
 import sys
+import os.path
 from collections import OrderedDict
 import argparse
-
-import pandas
+import datetime
+import pandas 
 from process_io_lib import mfile as mf
-
 
 # List of variables to be tracked
 TRACKING_LIST = [
-    "procver", "time", "username", "tagno", "commsg", "ifail",
+    "procver", "nviter", "time", "username", "tagno", "commsg", "ifail",
     "isweep", "nsweep", "rmajor", "rminor", "aspect", "kappa", "kappa95",
-    "triang", "triang95", "sarea", "vol", "tfno", "powfmw", "plascur/1d6",
+    "triang", "triang95", "sarea", "vol", "n_tf", "powfmw", "plascur/1d6",
     "bt", "q95", "beta", "normalised_thermal_beta", "normalised_total_beta",
     "thermal_beta", "thermal_poloidal_beta", "te", "te0", "dene", "ne0",
     "dnla_gw", "tesep", "nesep", "teped", "neped", "ieped", "zeff", "dnz",
@@ -37,6 +39,7 @@ TRACKING_LIST = [
     "strtf2", "alstrtf", "coe", "concost", "capcosts", "fmom", "qtarget",
     "qtargetcomplete", "totalpowerlost"
 ]
+ref_sep = ","
 
 def add_mfile_to_database(cargs, pdat, mdat, scan_num):
     """Add MFILE entry for a given scan to the Pandas dataframe
@@ -47,8 +50,21 @@ def add_mfile_to_database(cargs, pdat, mdat, scan_num):
         mdat {MFILE object} -- MFILE data object
         scan_num {int} -- Scan number to use
     """
-
+    ref_folder=cargs.ref_folder# "/home/jenkins_ci/tracking_ref_data/"
+    ref_file=ref_folder+cargs.project+"_ref_data.csv"
+#        
+    ref_data_frame = {}
+    grp_size = cargs.var_group
+#    grp_size = 5  
     new_entry = list()
+    ref_columns = list()
+
+    try:
+        ref_data_frame = pandas.read_csv(ref_file, delimiter=ref_sep, index_col=0)
+    except FileNotFoundError:
+        # Create new frame with no columns
+        ref_data_frame = pandas.DataFrame(columns=[])
+
 
     if "isweep" in mdat.data.keys():
         number_of_scans = mdat.data["isweep"].get_scan(-1)
@@ -66,66 +82,63 @@ def add_mfile_to_database(cargs, pdat, mdat, scan_num):
     for item in TRACKING_LIST:
         new_entry.append(mdat.data[item].get_scan(scan_num))
 
-    new_entry.append(cargs.comment)
+#    new_entry.append(cargs.comment)
 
     # Create list of headers
     column_headers = TRACKING_LIST.copy()
-    column_headers.append("comment")
+#    column_headers.append("comment")
 
     # Create new frame
-    new_frame = pandas.DataFrame([new_entry], columns=column_headers)
-
+    new_frame = pandas.DataFrame([new_entry], columns=TRACKING_LIST)
+    new_frame['date'] = datetime.datetime.now().strftime("%d-%B-%Y") # now.strftime("%Y-%m-%d %H:%M") 
+#    new_frame['date'] = 'Manoj1' 
     # Append frame to existing one
-    new_pdat = pandas.concat([pdat, new_frame], ignore_index=True, sort=False, 
-                              verify_integrity=True)
+    new_pdat = pandas.concat([pdat, new_frame], sort=False, ignore_index=True)#, verify_integrity=False)
+    new_frame.drop('date', axis=1,inplace=True)
+
+    if cargs.sep == "tab":
+        sep = "\t"
+    elif cargs.sep == "comma":
+        sep = ","
+    else:
+        sep = " "
+    ref_columns = list(ref_data_frame)
+    ref_file_changed=False
+    for var in TRACKING_LIST:
+      if(new_frame[var].dtype == "float64" ):
+         if var not in ref_columns:
+            ref_data_frame[var] = new_frame[var]
+            ref_file_changed=True
+      elif(new_frame[var].dtype == "object" ):# or pdat[var].dtype == "int64"):       
+          new_frame.drop(var,axis=1,inplace=True)
+      else:
+          new_frame.drop(var,axis=1,inplace=True)
+#
+    if ref_file_changed:
+       ref_data_frame.to_csv(ref_file, sep=ref_sep)  # Now write updated file
+
+    ref_columns = list(ref_data_frame)
+    for var in ref_columns:
+      if(ref_data_frame[var].dtype == "float64" ):
+#        rat = new_frame[var]/ref_data_frame[var]
+        new_frame[var] = new_frame[var]/ref_data_frame[var]
+      else:
+        print(var, "is not float")
+
+    new_file=cargs.project+"_plot_data.csv"
+    new_frame.to_csv(new_file, index = False, sep=ref_sep)
+    ndim = new_frame.ndim
+    n=new_frame.size
+    grp_indx = 0
+#    for i in range(0, n, grp_size):
+#       grp_indx = int(1+i/grp_size)
+#       ub = min(i + grp_size - 1, n)
+#       new_file=cargs.project+"_"+str(grp_indx)+"_plot_data.csv"
+#       new_frame.iloc[:ndim, i:ub].to_csv(new_file, index = False, sep=ref_sep)
+
+#    print(" Created ",grp_indx," group of variables")
     return new_pdat
 
-def add_latest_parametric_entry(cargs, pdat):
-    """Save changes to overwrite input database
-
-    Arguments:
-        cargs {list} -- Command line arguments
-        pdat {Pandas DataFrame} -- Pandas DataFrame object
-    """
-
-    # Check separator
-    if cargs.sep == "tab":
-        sep = "\t"
-    elif cargs.sep == "comma":
-        sep = ","
-    else:
-        sep = " "
-
-    for var in TRACKING_LIST:
-      first_val = pdat[var][0]
-      if(pdat[var].dtype == "float64"):# or pdat[var].dtype == "int64"):
-#        print(first_val)
-        pdat[var] = pdat[var]/first_val
-#        print(var, pdat[var].dtype)
-      else:
-        pdat.drop(var,axis=1,inplace=True)
-#      print(var)
-#        print(var,pdat[var].dtype)
-      
-    pdat.to_csv(cargs.jenkins, sep=sep)
-
-def save_latest_entry(cargs, pdat):
-    """Save changes to overwrite input database
-
-    Arguments:
-        cargs {list} -- Command line arguments
-        pdat {Pandas DataFrame} -- Pandas DataFrame object
-    """
-
-    # Check separator
-    if cargs.sep == "tab":
-        sep = "\t"
-    elif cargs.sep == "comma":
-        sep = ","
-    else:
-        sep = " "
-
-    pdat.to_csv(cargs.save, sep=sep)
 
 def main(clargs):
     """Main
@@ -133,36 +146,29 @@ def main(clargs):
     Arguments:
         clargs {list} -- Command line arguments
     """
-
     # Open database
+    
+    dtbase_folder = clargs.ref_folder#+"/" #  Database folder location
+    dtbase_file=dtbase_folder+clargs.project+"_tracking_data.csv"          # Database file name
+    print("-- Info : Tracked file exist. Found one.", dtbase_folder, dtbase_file)
     try:
-        pdframe = pandas.read_csv(clargs.database, delim_whitespace=True)
+        pdframe = pandas.read_csv(dtbase_file, delimiter=ref_sep, index_col=0)
+        print("-- Info : Tracked file exist. Found one.", dtbase_folder, dtbase_file)
     except FileNotFoundError:
         # Create new frame
         pdframe = pandas.DataFrame(columns=TRACKING_LIST)
-        clargs.save = clargs.database
+#        pdframe.to_csv(dtbase_file, sep=ref_sep)
         print("-- Warning: Tracked file doesn't exist. Creating new one.")
-        print("          : saved as {0}".format(clargs.database))
 
     # Read MFILE
-    mfile_data = mf.MFile(clargs.mfile)
+    prj_mfile =  clargs.project+"_MFILE.DAT"  # Project MFILE
+    mfile_data = mf.MFile(prj_mfile) #clargs.mfile)
 
     # Add MFILE entry to pandas object and return new frame
-    pdframe = add_mfile_to_database(clargs, pdframe, mfile_data, clargs.scan)
-    pdframe.to_csv('plot_data.csv', encoding='utf-8', index=False)
-    
-#df.to_csv('plot_data.csv', encoding='utf-8', mode='a', header=False, index=False)
+    pdframe = add_mfile_to_database(clargs, pdframe, mfile_data, clargs.var_group)
+#    add_mfile_to_database(clargs, pdframe, mfile_data, clargs.var_group)
+    pdframe.to_csv(dtbase_file, sep=ref_sep)
 
-    if clargs.save:
-        save_latest_entry(clargs, pdframe)
-    if clargs.jenkins:        
-        add_latest_parametric_entry(clargs, pdframe)
-#    pdframe.to_csv('plot_data.csv', encoding='utf-8', index=False)
-#    print("",pdframe["rmajor"])
-#    print(pdframe.columns)
-#    print(TRACKING_LIST)
-#    for var in TRACKING_LIST:
-#      print(pdframe[var].size)
 
 
 if __name__ == "__main__":
@@ -195,23 +201,16 @@ if __name__ == "__main__":
     )
 
     PARSER.add_argument(
-        "--jenkins",
-        type=str,
-        default="jenkins_plot.csv",
-        help="print parametric output of tracking tool to the specified filename"
-    )
-
-    PARSER.add_argument(
         "--plot",
         help="make pdf plots of changes",
         action="store_true"
     )
 
     PARSER.add_argument(
-        "--scan",
+        "--var_group",
         type=int,
-        default=-1,
-        help="Which scan to use from MFILE"
+        default=5,
+        help="Number of variables in a group for plot"
     )
 
     PARSER.add_argument(
@@ -231,8 +230,22 @@ if __name__ == "__main__":
     PARSER.add_argument(
         "--entries",
         type=int,
-        default=0,
+        default=5,
         help="Number of entries to plot (0=all)"
+    )
+
+    PARSER.add_argument(
+        "--project",
+        type=str,
+        default="base_line",
+        help="Name of project i.e. PROCESS input file name"
+    )
+
+    PARSER.add_argument(
+        "--ref_folder",
+        type=str,
+        default="base_line",
+        help="Name of reference folder where reference data is kept"
     )
 
     ARGS = PARSER.parse_args()
