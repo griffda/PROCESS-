@@ -1961,13 +1961,13 @@ contains
     !total_coil_width = b + 2* d_ic + 2* case_thickness_constant
     !total_coil_thickness = h + 2* d_ic + 2* case_thickness_constant
     !
-    intercoil_surface = config%coilsurface * f_a*f_r &
+    intercoil_surface = config%coilsurface *f_r**2 &
                          - tftort * config%coillength* f_r/f_a * f_N 
 
 
     ! This 0.18 m is an effective thickness which is scaled with empirial 1.5 law. 5.6 T is reference point of Helias
     ! The thickness 0.18 was obtained as a measured value from Schauer, F. and Bykov, V. design of Helias 5-B. (nucl Fus. 2013)
-    aintmass = 0.18D0 *f_B**1.5 * intercoil_surface * denstl 
+    aintmass = 0.18D0 *f_B**2 * intercoil_surface * denstl 
     
     clgsmass = 0.2D0*aintmass    ! Very simple approximation for the gravity support.
                                  ! This fits for the Helias 5b reactor design point ( F. and Bykov, V. design of Helias 5-B. (nucl Fus. 2013)).
@@ -1984,7 +1984,7 @@ contains
     call ovarre(outfile,'Intercoil support structure mass (from intercoil calculation) (kg)', &
          '(aintmass)',aintmass)
    call ovarre(outfile,'Intercoil support structure mass (scaling, for comparison) (kg)', &
-         '(aintmass)',msupstr)
+         '(empiricalmass)',msupstr)
     call ovarre(outfile,'Gravity support structure mass (kg)', &
          '(clgsmass)',clgsmass)
     call ovarre(outfile,'Mass of cooled components (kg)', &
@@ -2392,16 +2392,7 @@ contains
      call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
   
      ! Also give the copper area for REBCO quench calculations:
-     copperA_m2 = cpttf/(acond * fcutfsu)
-     vtfskv = vd/1.0D3 ! Dump voltage
-  
-     ! the conductor fraction is meant of the cable space!
-     call protect(cpttf,estotftgj/n_tf*1.0D9,acstf,   leno**2   ,tdmptf,1-vftf,fcutfsu,tftmp,tmaxpro,jwdgpro,vd)
- 
-  
-  
-     ! Also give the copper area for REBCO quench calculations:
-     copperA_m2 = cpttf/(acond * fcutfsu)
+     copperA_m2 = coilcurrent*1.0D6/(acond * fcutfsu)
      vtfskv = vd/1.0D3 ! Dump voltage
  
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2832,8 +2823,9 @@ contains
       call ovarre(outfile,'Cable insulation thickness (m)','(thicndut)',thicndut)
   
 
-  
+      ap = awptf
       call osubhd(outfile,'Winding Pack Information :')
+      call ovarre(outfile,'Winding pack area','(ap)',ap)
       call ovarre(outfile,'Conductor fraction of winding pack','(acond/ap)',acond/ap)
       call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcutfsu)
       call ovarre(outfile,'Structure fraction of winding pack','(aswp/ap)',aswp/ap)
@@ -2856,7 +2848,8 @@ contains
       call ovarre(outfile,'Actual quench time (or time constant) (s)','(tdmptf)',tdmptf)
       call ovarre(outfile,'Maximum allowed voltage during quench due to insulation (kV)', '(vdalw)', vdalw)
       call ovarre(outfile,'Actual quench voltage (kV)','(vtfskv)',vtfskv, 'OP ')
-      call ovarre(outfile,'Current (A) per m^2 copper:','(coppera_m2/coppera_m2_max)',coppera_m2/coppera_m2_max)
+      call ovarre(outfile,'Current (A) per mm^2 copper (A/mm2)','(coppera_m2)',coppera_m2*1.0D-6)
+      call ovarre(outfile,'Max Copper current fraction:','(coppera_m2/coppera_m2_max)',coppera_m2/coppera_m2_max)
 
 
 
