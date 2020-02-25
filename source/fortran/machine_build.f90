@@ -13,21 +13,6 @@ module build_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use build_variables
-  use constants
-  use current_drive_variables
-  use divertor_variables
-  use error_handling
-  use fwbs_variables
-  use heat_transport_variables
-  use maths_library
-  use pfcoil_variables
-  use physics_variables
-  use process_output
-
-  use tfcoil_variables
-
   implicit none
 
   private
@@ -49,6 +34,28 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use numerics, only: ixc, nvar
+    use build_variables, only: sigallpc, r_tf_outboard_mid, vgap2, ddwex, &
+      shldlth, tftsgap, dr_tf_inner_bore, blnkith, thshield, rsldi, blnkoth, &
+      rsldo, tfcth, tfthko, vgaptop, blnktth, gapsto, vgap, vvblgap, &
+      r_vv_inboard_out, fwareaob, tfoffset, shldtth, rbld, iprecomp, &
+      r_tf_inboard_mid, shldtth, blbuith, r_vv_inboard_out, tfcth, &
+      gapsto, vgaptop, precomp, r_tf_inboard_mid, gapomin, vvblgap, rtop, &
+      fwareaob, blnktth, rbld, blnkoth, tfoffset, iprecomp, plsepo, tfthko, &
+      rsldo, vgap, gapoh, fwoth, ohcth, shldoth, scraplo, fwith, blbpith, &
+      tfootfi, blbuoth, gapds, fwareaib, fseppc, scrapli, blbmith, shldith, &
+      ddwi, fwarea, blbpoth, blbmoth, fcspc, bore
+    use constants, only: mfile, nout, pi
+    use current_drive_variables, only: beamwd
+    use divertor_variables, only: divfix
+    use error_handling, only: idiags, fdiags, report_error
+    use fwbs_variables, only: fwbsshape, blktmodel, fhcd, fdiv
+    use maths_library, only: eshellarea, dshellarea
+    use pfcoil_variables, only: ohhghf
+    use physics_variables, only: itart, i_single_null, idivrt, kappa, triang, &
+      rminor, rmajor
+    use process_output, only: ocmmnt, oheadr, ovarre, ovarin, obuild, oblnkl
+    use tfcoil_variables, only: ripple, tinstf, wwp1, drtop, i_tf_sup, n_tf, &
+      thkwp, ripmax, thkcas, tfinsgap, casthi
     implicit none
 
     !  Arguments
@@ -510,7 +517,11 @@ contains
     !! None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use build_variables, only: shldtth, vgap2, fwoth, vgap, vvblgap, hpfdif, &
+      tfcth, vgaptop, hpfu, thshield, fwith, tftsgap, dh_tf_inner_bore, &
+      shldlth, hmax, blnktth, ddwi
+		use divertor_variables, only: divfix
+		use physics_variables, only: rminor, i_single_null, kappa
     implicit none
 
     !  Arguments
@@ -571,6 +582,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: rspo, plleno, tfoffset, plsepi, plleni, plsepo
+		use divertor_variables, only: betao, betai
+		use physics_variables, only: itart, rmajor, rminor, idivrt, kappa, triang
+		use process_output, only: ocmmnt, oblnkl, ovarrf, oheadr
     implicit none
 
     !  Arguments
@@ -886,6 +901,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use physics_variables, only: rminor, rmajor
+		use tfcoil_variables, only: tinstf, wwp1, n_tf, tftort, casths
     implicit none
 
     !  Arguments
@@ -950,6 +967,13 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use build_variables, only: r_tf_outboard_mid, tfthko
+		use constants, only: twopi
+    use current_drive_variables, only: rtanbeam, rtanmax, nbshield, beamwd, &
+      frbeam
+		use error_handling, only: fdiags, report_error
+		use physics_variables, only: rmajor
+		use tfcoil_variables, only: tftort, n_tf
     implicit none
 
     !  Arguments
