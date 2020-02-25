@@ -10,12 +10,6 @@ module kallenbach_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   !---------------------------------------------------------------------------
-
-  use process_output
-  use output_module
-  use constants
-  use divertor_kallenbach_variables
-
 contains
 
   !---------------------------------------------------------------------------
@@ -28,7 +22,12 @@ contains
     !! 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    use process_output, only: ocmmnt, osubhd
+    use constants, only: opt_file, vfile, iotty
+    use divertor_kallenbach_variables, only: kallenbach_test_option, &
+      kallenbach_tests
+    implicit none
+    
     call osubhd(iotty,'# Running test of Kallenbach divertor model')
     select case (kallenbach_test_option)
         case (0)
@@ -58,9 +57,9 @@ contains
     use read_radiation
     use constants
     use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, &
-                              ovarin, ovarre, ovarrf, ovarst
+      ovarin, ovarre, ovarrf, ovarst
     use physics_variables, only: tesep
-
+		use constants, only: iotty
     implicit none
 
     integer :: i
@@ -152,7 +151,9 @@ contains
     use divertor_kallenbach_variables, only: ttarget, qtargettotal, targetangle
     use physics_module, only: bpol
     use plasma_geometry_module, only: xparam
-
+		use constants, only: mfile, vfile, nout, nplot, opt_file
+    use divertor_kallenbach_variables, only: kallenbach_tests, &
+      kallenbach_scan_switch
     implicit none
 
     real(kind(1.0D0)):: b_pol

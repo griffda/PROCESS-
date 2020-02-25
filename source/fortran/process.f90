@@ -38,10 +38,11 @@ program process
   use main_module, only: runtests, eqslv
   use init_module, only: init
   use final_module, only: final
-  use kallenbach_module, only: iotty, &
-    kallenbach_scan_switch, mfile, nout, nplot, opt_file, &
-    kallenbach_tests, vfile, oblnkl, ostars, ocentr, &
-    osubhd, ocmmnt, oheadr, kallenbach_testing, kallenbach_scan
+  use kallenbach_module, only: kallenbach_testing, kallenbach_scan
+  use divertor_kallenbach_variables, only: kallenbach_scan_switch, &
+    kallenbach_tests
+  use constants, only: iotty, mfile, nout, nplot, opt_file, vfile
+  use process_output, only: oblnkl, ostars, ocentr, osubhd, ocmmnt, oheadr
   use numerics, only: ioptimz
   use global_variables, only: output_prefix, fileprefix, run_tests, verbose
   
