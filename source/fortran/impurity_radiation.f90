@@ -18,10 +18,6 @@ module impurity_radiation_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use constants
-  use error_handling
-  use profiles_module
-
   implicit none
 
   private
@@ -237,6 +233,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use error_handling, only: idiags, report_error
     implicit none
 
     !  Arguments
@@ -331,6 +328,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: idiags, report_error
     implicit none
 
     !  Arguments
@@ -411,6 +409,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: idiags, report_error
     implicit none
 
     integer :: z2index
@@ -452,6 +451,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: report_error 
     implicit none
 
     integer :: element2index
@@ -582,6 +582,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+		use error_handling, only: fdiags, report_error
     implicit none
 
     real(kind(1.0D0)) :: pimpden
