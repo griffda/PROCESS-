@@ -8,7 +8,7 @@
 ! the current drive value by adjoint approach
 !
 !#######################################################################
- USE const_and_precisions
+USE const_and_precisions, only: wp_, unit, zero, mc2_, comp_eps
 ! USE rayinfo_data
 ! USE config
 ! USE kinetic
