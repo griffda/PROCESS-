@@ -9,11 +9,37 @@ subroutine initial
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use process_output
-    use stellarator_module
-    use stellarator_variables
-    use numerics
-    use define_iteration_variables
+    use stellarator_module, only: stinit
+    use stellarator_variables, only: istell
+    use define_iteration_variables, only: init_itv_1, init_itv_2, init_itv_3, &
+        init_itv_4, init_itv_5, init_itv_6, init_itv_7, init_itv_8, init_itv_9, &
+        init_itv_10, init_itv_11, init_itv_12, init_itv_13, init_itv_14, init_itv_15, &
+        init_itv_16, init_itv_17, init_itv_18, init_itv_19, init_itv_20, init_itv_21, &
+        init_itv_23, init_itv_25, init_itv_26, init_itv_27, init_itv_28, init_itv_29, &
+        init_itv_30, init_itv_31, init_itv_32, init_itv_33, init_itv_34, init_itv_35, &
+        init_itv_36, init_itv_37, init_itv_38, init_itv_39, init_itv_40, init_itv_41, &
+        init_itv_42, init_itv_44, init_itv_45, init_itv_46, init_itv_47, init_itv_48, &
+        init_itv_49, init_itv_50, init_itv_51, init_itv_52, init_itv_53, init_itv_54, &
+        init_itv_56, init_itv_57, init_itv_58, init_itv_59, init_itv_60, init_itv_61, &
+        init_itv_62, init_itv_63, init_itv_64, init_itv_65, init_itv_66, init_itv_67, &
+        init_itv_68, init_itv_69, init_itv_70, init_itv_71, init_itv_72, init_itv_73, &
+        init_itv_74, init_itv_75, init_itv_79, init_itv_81, init_itv_82, init_itv_83, &
+        init_itv_84, init_itv_85, init_itv_86, init_itv_89, init_itv_90, init_itv_91, &
+        init_itv_92, init_itv_93, init_itv_94, init_itv_95, init_itv_96, init_itv_97, &
+        init_itv_98, init_itv_102, init_itv_103, init_itv_104, init_itv_105, &
+        init_itv_106, init_itv_107, init_itv_108, init_itv_109, init_itv_110, &
+        init_itv_111, init_itv_112, init_itv_113, init_itv_114, init_itv_115, &
+        init_itv_116, init_itv_117, init_itv_118, init_itv_119, init_itv_120, &
+        init_itv_121, init_itv_122, init_itv_123, init_itv_124, init_itv_125, &
+        init_itv_126, init_itv_127, init_itv_128, init_itv_129, init_itv_130, &
+        init_itv_131, init_itv_132, init_itv_133, init_itv_134, init_itv_135, &
+        init_itv_136, init_itv_137, init_itv_138, init_itv_139, init_itv_140, &
+        init_itv_141, init_itv_142, init_itv_143, init_itv_144, init_itv_145, &
+        init_itv_146, init_itv_147, init_itv_148, init_itv_149, init_itv_150, &
+        init_itv_151, init_itv_152, init_itv_153, init_itv_154, init_itv_155, &
+        init_itv_156, init_itv_157, init_itv_158, init_itv_159, init_itv_160, &
+        init_itv_161, init_itv_162, init_itv_163, init_itv_164, init_itv_165, &
+        init_itv_166, init_itv_167, init_itv_168, init_itv_169, init_itv_170
 
     implicit none
 
@@ -517,10 +543,10 @@ subroutine devtyp
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use error_handling
-    use global_variables
-    use ife_variables
-    use stellarator_variables
+    use error_handling, only: report_error
+    use global_variables, only: icase
+    use ife_variables, only: ife
+    use stellarator_variables, only: istell
 
     implicit none
 
@@ -588,27 +614,34 @@ subroutine check
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use build_variables
-    use buildings_variables
-    use current_drive_variables
-    use divertor_kallenbach_variables
-    use error_handling
-    use fwbs_variables
-    use global_variables
-    use heat_transport_variables
-    use ife_variables
-    use impurity_radiation_module
-    use numerics
-    use pfcoil_variables
-    use physics_variables
-    use plasmod_variables
-    use process_output
-    use pulse_variables
-    use reinke_variables
-    use tfcoil_variables
-    use stellarator_variables
-    use sctfcoil_module
-    use vacuum_variables
+    use build_variables, only: blnkith
+    use buildings_variables, only: esbldgm3, triv
+    use current_drive_variables, only: gamcd, iefrf, irfcd
+    use divertor_kallenbach_variables, only: impurity_enrichment
+    use error_handling, only: errors_on, idiags, fdiags, report_error
+    use fwbs_variables, only: breeder_multiplier, iblanket, vfcblkt, vfpblkt, &
+        iblnkith
+    use global_variables, only: icase
+    use heat_transport_variables, only: trithtmw
+    use ife_variables, only: ife
+    use impurity_radiation_module, only: nimp, impurity_arr, fimp
+    use numerics, only: ixc, icc, ioptimz, neqns, nineqns, nvar, boundl, &
+        boundu
+    use pfcoil_variables, only: ipfres, ngrp, pfclres, ipfloc, ncls
+    use physics_variables, only: aspect, eped_sf, fdeut, fgwped, fhe3, &
+        fgwsep, ftrit, ibss, i_single_null, icurr, ieped, idivrt, ishape, &
+        iradloss, isc, ipedestal, ilhthresh, itart, nesep, rhopedn, rhopedt, &
+        rnbeam, ifispact, neped, te, tauee_in, tesep, teped
+    use plasmod_variables, only: plasmod_contrpovr, plasmod_i_equiltype, &
+        plasmod_i_modeltype, plasmod_contrpovs
+    use pulse_variables, only: lpulse
+    use reinke_variables, only: fzactual, impvardiv
+    use tfcoil_variables, only: casthi, casthi_is_fraction, casths, i_tf_sup, &
+        tcoolin, tcpav, tfc_sidewall_is_fraction, tmargmin, tmargmin_cs, &
+        tmargmin_tf
+    use stellarator_variables, only: istell
+    use sctfcoil_module, only: initialise_cables
+    use vacuum_variables, only: vacuum_model
 
     implicit none
 
