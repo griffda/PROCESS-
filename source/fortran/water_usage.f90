@@ -23,7 +23,7 @@ program Water_module
     ! Type
     Wat_type = 1  ! Water type: Light = 1 / Heavy = 2
     ! Site/Weather Data
-    Wat_source = 3  ! Water Source
+    Wat_source = 3  ! Water Source: River/Inland = 1, Sea/Coast = 2, Effluent = 3
     T_db = 40  ! Air temperature (Dry Bulb) (oC)
     RH = 0.3  ! Relative Humidity (%)
     ! T_wb = 25.2  ! Air Temperature (Wet Bulb) (oC)
@@ -121,7 +121,8 @@ program Water_module
     call Output(Q_cr)
 
     write(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Site conditions:"
-    write(*,*) "Water source / Plant Location ---> Effluent"
+    write(*,*) "Water source / Plant Location:"
+    call Water_source(Wat_source)
     write(*,'(a60)',advance='no') "Dry bulb temperature (oC) = "
     call Output(T_db)
     write(*,'(a60)',advance='no') "Wet bulb temperature (oC) = "
@@ -394,6 +395,25 @@ subroutine F_to_C(Temp)
     Temp = (5.00/9.00) * (Temp - 32.00)
     return
 end subroutine
+
+
+!--------------------------------------------------------------------------------------------------
+
+
+! Printing the water source type
+subroutine Water_source(Wat_source)
+    implicit none
+    double precision, intent(in) :: Wat_source
+    if (Wat_source == 1) then
+        write(*,*) "River/Inland"
+    else if (Wat_source == 2) then
+        write(*,*) "Sea/Coast"
+    else if (Wat_source == 3) then
+        write(*,*) "Effluent"
+    else
+        write(*,*) "Unknown water source"
+    end if
+end subroutine Water_source
 
 
 !--------------------------------------------------------------------------------------------------
@@ -1360,7 +1380,6 @@ end subroutine Potable_water
 subroutine sys_inven(array)
     implicit none
     double precision, intent(out) :: array(4,14)
-    !double precision, dimension(4,14) :: array2
     array = reshape( [  6500.0, 0.0, 6500.0, 0.0, &
                         18.6, 0.0, 18.6, 0.0, &
                         415.0, 415.0, 300.0, 300.0, &
@@ -1376,8 +1395,29 @@ subroutine sys_inven(array)
                         400.0, 400.0, 400.0, 400.0, &
                         310.0, 310.0, 0.0, 0.0 ], &
                         [4, 14])
-    !array2 = transpose(array)
 end subroutine sys_inven
+
+
+!--------------------------------------------------------------------------------------------------
+
+
+! 'model tab' - Type table
+! A reference subroutine for various cooling system dependent values:
+! Can treatment?, Water evaporated, Drift, Water dischage, Cap cost, Op cost, Visual impat,
+! Impingment, Plume, Thermal polution, Air polution, Type
+subroutine types(array)
+    implicit none
+    double precision, intent(out) :: array(12,8)
+    array = reshape( [  1.0, 0.0, 0.22, 0.0, 21.27, 0.0, 0.0, 0.0, 5.0, 0.0, 3.0, 0.0, 1.0, &
+                        2.0, 0.0, 0.22, 0.0, 21.27, 45.0, 0.0, 2.0, 5.0, 0.0, 0.0, 0.0, 1.0, &
+                        3.0, 0.0, 0.35, 0.0, 0.07, 33.4, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 1.0, &
+                        4.0, 1.0, 0.0, 0.0, -0.01, 18.6, 0.47, 2.0, 1.0, 4.0, 3.0, 0.0, 2.0, &
+                        5.0, 1.0, 0.0, 0.0, -0.01, 32.5, 0.17, 5.0, 1.0, 4.0, 3.0, 0.0, 2.0, &
+                        6.0, 0.0, 0.0, 0.0, 0.0, 71.5, 0.95, 1.0, 0.0, 0.0, 0.0, 3.0, 4.0, &
+                        7.0, 1.0, 0.0, 0.0, -0.01, 51.1, 0.65, 2.0, 1.0, 0.0, 1.0, 1.0, 2.0, &
+                        8.0, 0.0, 0.0, 0.0, 0.0, 69.7, 0.83, 2.0, 0.0, 0.0, 1.0, 2.0, 2.0], &
+                        [12, 8])
+end subroutine types
 
 
 !--------------------------------------------------------------------------------------------------
