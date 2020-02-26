@@ -787,7 +787,8 @@ module plasmod_variables
   !! E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  use structs
+  use structs, only: geometry, pedestal, inputs, radial_profiles, &
+    power_losses, numerics_transp, MHD_EQ, composition
 
 
   implicit none
