@@ -10,9 +10,6 @@ module current_drive_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use iso_c_binding
-  use hare, only: hare_calc
-
   implicit none
 
   private
@@ -51,6 +48,8 @@ contains
       bt, rminor, tbeta, plascur, ipedestal, faccd, ignite, pohmmw, powfmw, &
       facoh, fvsbrnni
     use constants, only: nout, echarge, pi
+    use hare, only: hare_calc
+
     implicit none
 
     ! Arguments
