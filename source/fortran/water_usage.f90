@@ -5,7 +5,7 @@
 program Water_module
     implicit none
     double precision T_db, Type, T_sw, DT_ta, DT_cr, DT_ca, RH, P_elec, Eta, T_desal
-    double precision Desal_cap, Desal_rate, Q_cr, P_therm, T_steam, Wat_type, Wat_source
+    double precision Desal_cap, Desal_rate, Q_cr, P_therm, T_steam
     double precision Spd_wind, Dislv_solid, Suspnd_solid, Ammonia, Plant_life, Discnt_rate
     double precision Elec_level, Plant_avail, Con_cycle, P_sat, T_wb, T_c_m, Q_lat_desal
     double precision Q_desal, P_ratio, Q_cr_m, W_fr, T_c, Wat_evap, Wat_bleed, Wat_mkup
@@ -13,7 +13,11 @@ program Water_module
     double precision Bleed_MWh, Makeup_MWh, Wat_drift, Drift_MWh, Wat_consump, Consump_MWh
     double precision Wat_excav, Wat_concrt, Wat_constr_max, Wat_constr, Wat_dom, Wat_drink
     double precision Wat_mkup_2, Wat_mkup_1, Wat_wst, Wat_pol, Wat_com, Wat_fr, Wat_pot
-    double precision array(4,14)
+    double precision array(4,14), Flow_riv, Mix_riv, Q_coeff_wat, Q_coeff, Evap_riv, Temp_pond
+    integer Wat_source, Wat_type, choice
+    !double precision, dimension(12:8) :: List
+    double precision, parameter :: True = 1, False = 0
+
 
     ! List of inputs as described in the excel input:
     ! Nuclear Power Plant
@@ -21,14 +25,14 @@ program Water_module
     Eta = 0.1  ! Reference net efficiency (%)
     T_steam = 350  ! Live steam temperature (oC)
     ! Type
-    Wat_type = 1  ! Water type: Light = 1 / Heavy = 2
+    Wat_type = 1 ! Water type: Light = 3 / Heavy = 1
     ! Site/Weather Data
-    Wat_source = 3  ! Water Source: River/Inland = 1, Sea/Coast = 2, Effluent = 3
+    Wat_source = 0  ! Water Source: River/Inland = 0, Sea/Coast = 1, Effluent = 2
     T_db = 40  ! Air temperature (Dry Bulb) (oC)
     RH = 0.3  ! Relative Humidity (%)
     ! T_wb = 25.2  ! Air Temperature (Wet Bulb) (oC)
-    T_sw = 20  ! Inlet water temperature (oC)
-    !Flow_riv = 50  ! River flow (if applicable) (m3/s)
+    T_sw = 20  ! Inlet water temperature (oC) (Tsw)
+    Flow_riv = 50  ! River flow (if applicable) (m3/s) (Friver)
     Spd_wind = 2  ! Wind speed (m/s)
     ! Water Quality
     Dislv_solid = 1500  ! Total Dissolved Solids (TDS) (ppm)
@@ -44,7 +48,7 @@ program Water_module
     Type = 2  ! Cooling System, e.g. 2 --> 'Wet cooling - Natural Draft'
     ! Approaches and ranges for heat exchanging devices
     DT_ca = 6  ! Condenser Approach (oC)
-    DT_cr = 10  ! Condenser Range (oC)
+    DT_cr = 10  ! Condenser Range (oC) (Dtcr)
     ! Cooling Tower Parameters
     DT_ta = 6  ! Cooling Tower Approach (oC)
     Con_cycle = 6  ! Cycles of Concentration
@@ -105,8 +109,22 @@ program Water_module
     call Comp_water(P_elec, Wat_com)
     call Fire_water(P_elec, Wat_fr)
     call Potable_water(P_elec, Wat_pot)
+    call River_mix_temp(Q_cr_m, Dt_cr, Flow_riv, T_sw, Mix_riv)
+    call Heat_coeff_wat(Mix_riv, Spd_wind, Q_coeff_wat)
+    call Heat_coeff(Mix_riv, Spd_wind, Q_coeff)
+    call River_evap(Q_cr, Q_desal, P_ratio, Mix_riv, Spd_wind, Evap_riv)
+    call sys_inven_ch(Wat_source, Wat_type, choice)
     call sys_inven(array)
 
+    !List = reshape( [  False, Evap_riv, 0.0, 21.27, 0.0, 0.0, 0.0, 5.0, 0.0, 3.0, 0.0, 1.0, &
+    !                   False, Evap_riv, 0.0, 21.27, 45.0, 0.0, 2.0, 5.0, 0.0, 0.0, 0.0, 1.0, &
+    !                   False, 0.35, 0.0, 0.07, 33.4, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 1.0, &
+    !                   True, 0.0, 0.0, -0.01, 18.6, 0.47, 2.0, 1.0, 4.0, 3.0, 0.0, 2.0, &
+    !                   True, 0.0, 0.0, -0.01, 32.5, 0.17, 5.0, 1.0, 4.0, 3.0, 0.0, 2.0, &
+    !                   False, 0.0, 0.0, 0.0, 71.5, 0.95, 1.0, 0.0, 0.0, 0.0, 3.0, 4.0, &
+    !                   True, 0.0, 0.0, -0.01, 51.1, 0.65, 2.0, 1.0, 0.0, 1.0, 1.0, 2.0, &
+    !                   False, 0.0, 0.0, 0.0, 69.7, 0.83, 2.0, 0.0, 0.0, 1.0, 2.0, 2.0], &
+    !                   [1, 8])
 
     ! Printing the report
     write(*,*) ' '//NEW_LINE('A')//" Power Plant Specification:"
@@ -116,7 +134,7 @@ program Water_module
     write(*,'(a60)',advance='no') "Reactor thermal capacity (MWth) = "
     call Output(P_therm)
     write(*,'(a60)',advance='no') "Reference efficiency (%) = "
-    call Output(Eta)
+    call Output(Eta*100)
     write(*,'(a60)',advance='no') "Rejected heat (MWth) = "
     call Output(Q_cr)
 
@@ -128,7 +146,7 @@ program Water_module
     write(*,'(a60)',advance='no') "Wet bulb temperature (oC) = "
     call Output(T_wb)
     write(*,'(a60)',advance='no') "Relative Humidity (%) = "
-    call Output(RH)
+    call Output(RH*100)
     write(*,'(a60)',advance='no') "Surface water temperature (oC) = "
     call Output(T_sw)
     write(*,'(a60)',advance='no') "Average wind velocity (m/s) = "
@@ -151,6 +169,23 @@ program Water_module
     call Output(Wat_mkup)
     write(*,'(a60)',advance='no') "Make-up water - supporting (m3/s) = "
     call Output(Sup_mkup)
+
+    write(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Total Water needed:"
+    write(*,'(a60)',advance='no') "During Construction (m3) = "
+    call Output(-1*(Wat_excav+Wat_concrt+Wat_constr))
+    write(*,'(a60)',advance='no') "During commissioning (m3) = "
+    call Output(Wat_dom+Wat_drink)
+    write(*,'(a60)',advance='yes') "During opreation:"
+    write(*,'(a60)',advance='yes') "Condenser cooling - withdrawal (Million m3/month) = "
+    write(*,'(a60)') "Need to calculate form spreadhseet"
+    write(*,'(a60)',advance='no') "Other support systems (m3/month) = "
+    call Output(Wat_mkup_2+Wat_mkup_1+Wat_wst+Wat_pol+Wat_com+Wat_fr+Wat_pot)
+
+    write(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Total water inventory needed:"
+    write(*,'(a60)',advance='no') "Fresh water (m3) = "
+    call Output(array(choice,1)+array(choice,2)+array(choice,4))
+    write(*,'(a60)',advance='no') "Demineralised water (m3) = "
+    call Output(array(choice,3)+sum(array(choice,5:14)))
 
     write(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Design variables:"
     write(*,*) "Cooling system type ---> Wet cooling - Natural Draft"
@@ -187,17 +222,17 @@ program Water_module
 
     write(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Water needs during construction:"
     write(*,'(a60)',advance='no') "Excavation (m3) = "
-    call Output(Wat_excav)
+    call Output(-1*(Wat_excav))
     write(*,'(a60)',advance='no') "Concrete mixing (m3) = "
     call Output(Wat_concrt)
     write(*,'(a60)',advance='no') "Supply for construction staff (m3) = "
-    call Output(Wat_constr)
+    call Output(-1*(Wat_constr))
 
     write(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Water needs during commissioning:"
     write(*,'(a60)',advance='no') "Flushing, cleaning etc (m3) = "
     call Output(Wat_dom)
     write(*,'(a60)',advance='no') "Drinking water (m3) = "
-    call Output(Wat_drink)
+    call Output(-1*(Wat_drink))
 
     write(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')// &
     " Water needs during operation (except from condenser cooling):"
@@ -219,34 +254,38 @@ program Water_module
     write(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')// &
     " Water system inventories during operation:"
     write(*,'(a60)',advance='no') "Condenser cooling water circuit (m3) = "
-    call Output(array(4,1))
+    call Output(array(choice,1))
     write(*,'(a60)',advance='no') "Service water circuit (IDCT) + 7 days storage (m3) = "
-    call Output(array(4,2))
+    call Output(array(choice,2))
     write(*,'(a60)',advance='no') "Fire water circuit - pipes (m3) = "
-    call Output(array(4,3))
+    call Output(array(choice,3))
     write(*,'(a60)',advance='no') "Fire water circuit - storage (m3) = "
-    call Output(array(4,4))
+    call Output(array(choice,4))
     write(*,'(a60)',advance='no') "Nuclear systems & component cooling circuit (m3) = "
-    call Output(array(4,5))
+    call Output(array(choice,5))
     write(*,'(a60)',advance='no') "TG component cooling circuit (m3) = "
-    call Output(array(4,6))
+    call Output(array(choice,6))
     write(*,'(a60)',advance='no') "Feed water circuit (m3) = "
-    call Output(array(4,7))
+    call Output(array(choice,7))
     write(*,'(a60)',advance='no') "Steam generator secondary side inventory (m3) = "
-    call Output(array(4,8))
+    call Output(array(choice,8))
     write(*,'(a60)',advance='no') "Reactor auxilary circuits (m3) = "
-    call Output(array(4,9))
+    call Output(array(choice,9))
     write(*,'(a60)',advance='no') "Spent fuel bay cooling circuit (m3) = "
-    call Output(array(4,10))
+    call Output(array(choice,10))
     write(*,'(a60)',advance='no') "Emergency core cooling circuit (and dump inventory) (m3) = "
-    call Output(array(4,11))
+    call Output(array(choice,11))
     write(*,'(a60)',advance='no') "Emergency feed water pools and circuit (m3) = "
-    call Output(array(4,12))
-    write(*,'(a60)',advance='no') "Primary heat trannsport system (m3) = "
-    call Output(array(4,13))
+    call Output(array(choice,12))
+    write(*,'(a60)',advance='no') "Primary heat transport system (m3) = "
+    call Output(array(choice,13))
     write(*,'(a60)',advance='no') "Moderator system (m3) = "
-    call Output(array(4,14))
+    call Output(array(choice,14))
 
+    write(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')// &
+    "Testing"
+    call Pond_temp(Dt_ca, Dt_cr, Temp_pond)
+    print *, Temp_pond
 end
 
 
@@ -403,7 +442,7 @@ end subroutine
 ! Printing the water source type
 subroutine Water_source(Wat_source)
     implicit none
-    double precision, intent(in) :: Wat_source
+    integer, intent(in) :: Wat_source
     if (Wat_source == 1) then
         write(*,*) "River/Inland"
     else if (Wat_source == 2) then
@@ -1375,12 +1414,123 @@ end subroutine Potable_water
 !--------------------------------------------------------------------------------------------------
 
 
+! 'Model' tab - Temperature after mixing (Tmix)
+! Water temperature in the river after mixing with waaste water from power plant -> TESTED
+! Prerequest: Wat_con_mod()
+subroutine River_mix_temp(Q_cr_m, Dt_cr, Flow_riv, T_sw, Mix_riv)
+    implicit none
+    double precision, intent(in) :: Q_cr_m, Flow_riv, Dt_cr, T_sw
+    double precision, intent(out) :: Mix_riv
+    double precision W_fr
+    ! Q_cr_m = Desalination modulated condenser reject heat
+    ! Flow_riv = River water flow volume m3/s
+    ! DT_cr = Condenser range temperature
+    ! T_sw = Surface water temperature of open water source
+    ! Mix_riv = River water mixed with power plant output temperature
+    call Wat_con_mod(Q_cr_m, DT_cr, W_fr)
+    Mix_riv = ((W_fr / Flow_riv) * Dt_cr) + T_sw
+end subroutine River_mix_temp
+
+
+!--------------------------------------------------------------------------------------------------
+
+
+! HeatCoeffEvap()
+! Estimation of Heat coefficient of water evaporation (kW/m2 K) according to TRS 155 -> TESTED
+subroutine Heat_coeff_wat(Temp, Spd_wind, Q_coeff_wat)
+    implicit none
+    double precision, intent(in) :: Temp, Spd_wind
+    double precision, intent(out) :: Q_coeff_wat
+    ! Temp = Temperature
+    ! Spd_wind = wind speed
+    ! Q_coeff_wat = Heat coefficient of evaporation water (kW/m2 K)
+    Q_coeff_wat = (2.615 + 1.55 * Spd_wind) * Exp(0.05 * Temp)
+end subroutine Heat_coeff_wat
+
+
+!--------------------------------------------------------------------------------------------------
+
+
+! HeatCoeff()
+! Estimation of Heat coefficient (kW/m2 K) according to TRS 155 -> TESTED
+subroutine Heat_coeff(Temp, Spd_wind, Q_coeff)
+    implicit none
+    double precision, intent(in) :: Temp, Spd_wind
+    double precision, intent(out) :: Q_coeff
+    double precision Q_coeff_wat, Conv, Rad
+    ! Temp = Temperature
+    ! Spd_wind = wind speed
+    ! Q_coeff = Heat coefficient (kW/m2 K)
+    ! Conv = convection
+    ! Rad = Radiation
+    call Heat_coeff_wat(Temp, Spd_wind, Q_coeff_wat)
+    Conv = 3.003 + 1.792 * Spd_wind
+    Rad = 4.6 + 0.0484 * Temp
+    Q_coeff = (Rad + Q_coeff_wat + Conv)
+end subroutine Heat_coeff
+
+
+!--------------------------------------------------------------------------------------------------
+
+
+! 'Model' tab - Evaporation (Evriver)
+! The evaporation of water from the river after power plant water output -> TESTED
+subroutine River_evap(Q_cr, Q_desal, P_ratio, Temp, Spd_wind, Evap_riv)
+    implicit none
+    double precision, intent(in) :: Q_cr, Q_desal, P_ratio, Spd_wind
+    double precision, intent(inout) :: Temp
+    double precision, intent(out) :: Evap_riv
+    double precision Q_cr_m, Q_lat, Q_coeff_wat, Q_coeff
+    call Heat_con_mod(Q_cr, Q_desal, P_ratio, Q_cr_m)
+    call Heat_lat(Temp, Q_lat)
+    call Heat_coeff_wat(Temp, Spd_wind, Q_coeff_wat)
+    call Heat_coeff(Temp, Spd_wind, Q_coeff)
+    Evap_riv = (Q_cr_m / Q_lat) * (Q_coeff_wat / Q_coeff)
+end subroutine River_evap
+
+
+!--------------------------------------------------------------------------------------------------
+
+
+! 'Model' tab - Temperature increment in pond (Dtpond)
+! The change in temperature of the cooling pond
+subroutine Pond_temp(Dt_ca, Dt_cr, Temp_pond)
+    implicit none
+    double precision, intent(in) :: Dt_ca, Dt_cr
+    double precision, intent(out) :: Temp_pond
+    ! DT_cr = Condenser range temperature
+    ! DT_ca = Condenser approach temperature
+    ! Temp_pond = Cooling pond temperature change
+    Temp_pond = Dt_ca / log(1 + Dt_cr / Dt_ca)
+end subroutine Pond_temp
+
+
+!--------------------------------------------------------------------------------------------------
+
+
+! 'Report' tab - NPP system inventories choice
+! Using water type and water source determines what values to retrieve from sys_inven() -> TESTED
+subroutine sys_inven_ch(Wat_source, Wat_type, choice)
+    implicit none
+    integer, intent(in) :: Wat_type
+    integer, intent(inout) :: Wat_source
+    integer, intent(out) :: choice
+    if (Wat_source == 2) then
+        Wat_source = 0
+    end if
+    choice = Wat_type + Wat_source
+end subroutine sys_inven_ch
+
+
+!--------------------------------------------------------------------------------------------------
+
+
 ! 'sheet 2' - NPP system inventories
 ! A reference subroutine for the water inventories
 subroutine sys_inven(array)
     implicit none
-    double precision, intent(out) :: array(4,14)
-    array = reshape( [  6500.0, 0.0, 6500.0, 0.0, &
+    double precision, dimension(4,14), intent(out) :: array
+    array =    reshape ( [6500.0, 0.0, 6500.0, 0.0, &
                         18.6, 0.0, 18.6, 0.0, &
                         415.0, 415.0, 300.0, 300.0, &
                         0.0, 0.0, 1000.0, 3000.0, &
@@ -1393,31 +1543,9 @@ subroutine sys_inven(array)
                         1200.0, 1200.0, 1900.0, 1900.0, &
                         0.0, 0.0, 1700.0, 1700.0, &
                         400.0, 400.0, 400.0, 400.0, &
-                        310.0, 310.0, 0.0, 0.0 ], &
-                        [4, 14])
+                        310.0, 310.0, 0.0, 0.0], &
+                        [4,14] )
 end subroutine sys_inven
-
-
-!--------------------------------------------------------------------------------------------------
-
-
-! 'model tab' - Type table
-! A reference subroutine for various cooling system dependent values:
-! Can treatment?, Water evaporated, Drift, Water dischage, Cap cost, Op cost, Visual impat,
-! Impingment, Plume, Thermal polution, Air polution, Type
-subroutine types(array)
-    implicit none
-    double precision, intent(out) :: array(12,8)
-    array = reshape( [  1.0, 0.0, 0.22, 0.0, 21.27, 0.0, 0.0, 0.0, 5.0, 0.0, 3.0, 0.0, 1.0, &
-                        2.0, 0.0, 0.22, 0.0, 21.27, 45.0, 0.0, 2.0, 5.0, 0.0, 0.0, 0.0, 1.0, &
-                        3.0, 0.0, 0.35, 0.0, 0.07, 33.4, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 1.0, &
-                        4.0, 1.0, 0.0, 0.0, -0.01, 18.6, 0.47, 2.0, 1.0, 4.0, 3.0, 0.0, 2.0, &
-                        5.0, 1.0, 0.0, 0.0, -0.01, 32.5, 0.17, 5.0, 1.0, 4.0, 3.0, 0.0, 2.0, &
-                        6.0, 0.0, 0.0, 0.0, 0.0, 71.5, 0.95, 1.0, 0.0, 0.0, 0.0, 3.0, 4.0, &
-                        7.0, 1.0, 0.0, 0.0, -0.01, 51.1, 0.65, 2.0, 1.0, 0.0, 1.0, 1.0, 2.0, &
-                        8.0, 0.0, 0.0, 0.0, 0.0, 69.7, 0.83, 2.0, 0.0, 0.0, 1.0, 2.0, 2.0], &
-                        [12, 8])
-end subroutine types
 
 
 !--------------------------------------------------------------------------------------------------
