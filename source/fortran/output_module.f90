@@ -21,9 +21,7 @@ subroutine output(outfile)
   use costs_step_module, only: costs_step
   use cost_variables, only: iavail, cost_model
   use current_drive_module, only: cudriv
-  use divertor_ode, only: verbose, teomp, mfile, targetangle, nout, ttarget, &
-    kallenbach_switch, psep_kallenbach, qtargettotal, neomp, &
-    divertor_Kallenbach, ovarin
+  use divertor_ode, only: divertor_Kallenbach
   use divertor_module, only: divcall
   use error_handling, only: errors_on
   use fwbs_variables, only: tbr, iblanket, li6enrich, iblanket_thickness, &
@@ -47,6 +45,11 @@ subroutine output(outfile)
   use kit_hcpb_module, only: kit_hcpb
   use kit_hcll_module, only: kit_hcll
   use tfcoil_variables, only: i_tf_sup
+  use global_variables, only: verbose
+  use process_output, only: ovarin
+  use constants, only: mfile, nout
+  use divertor_kallenbach_variables, only: kallenbach_switch, neomp, &
+    ttarget, targetangle, psep_kallenbach, qtargettotal, teomp
   implicit none
   
   ! Arguments
