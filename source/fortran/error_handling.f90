@@ -25,9 +25,6 @@ module error_handling
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use fson_library
-  use process_output
-
   implicit none
 
   private
@@ -112,6 +109,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use fson_library, only: fson_parse, fson_value, fson_get, fson_destroy 
     implicit none
 
     !  Arguments
@@ -248,7 +246,8 @@ contains
     !! McGraw-Hill, ISBN 0-07-115896-0
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		use constants, only: iotty, nout
+    use constants, only: iotty, nout
+    use process_output, only: oblnkl, oheadr, ocmmnt, ovarin 
     implicit none
 
     !  Arguments
