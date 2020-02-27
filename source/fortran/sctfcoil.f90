@@ -320,21 +320,24 @@ subroutine tf_turn_geom()
     ! Mid-plane Radial thickness of conductor layer [m]
     thkwp = r_wp_outer - r_wp_inner
 
+    ! Number of turns
+    ! Set by user (no turn structure by default, i.e. turnstf = 1 ) 
+    if ( abs(turnstf) < epsilon(turnstf) ) turnstf = 1.0D0
+
     ! Total mid-plane cross-sectional area of winding pack, [m2]
     ! including the surrounding ground-wall insulation layer 
     awpc = pi * ( (r_wp_outer + tinstf)**2 - (r_wp_inner - tinstf)**2 ) / n_tf
 
-    ! Exact mid-plane cross-section area of the conductor per TF turn   
+    ! Exact mid-plane cross-section area of the conductor per TF turn [m2]
     awptf = ( 1.0D0 - fcoolcp ) * ( pi*(r_wp_outer**2 - r_wp_inner**2)/(n_tf*turnstf) - &
                                   2.0D0 * tinstf * thkwp )
+
+    ! Inter turn insulation area per turn [m2]                    
+    aiwp = (awpc / turnstf) - awptf / ( 1.0D0 - fcoolcp )  
 
     ! Total cross-sectional area of surrounding case [m2]
     ! Only valid at mid-plane for resistive itart design
     acasetf = ( tfareain / n_tf ) - awpc 
-
-    ! Number of turns
-    ! Set by user (no turn structure by default, i.e. turnstf = 1 ) 
-    if ( abs(turnstf) < epsilon(turnstf) ) turnstf = 1.0D0
 
     ! Current per turn 
     cpttf = ritfc / ( turnstf * n_tf )
@@ -1095,6 +1098,8 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     !  Arguments
 
+    ! Inputs
+    ! ------
     integer, intent(in) :: iprint
     !! Print option (if 1, output quantities calculated)
     
@@ -1106,8 +1111,12 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !! stress quantities (stresses, strain displacement etc..)
     
     integer, intent(in) :: n_tf_layer
-    !! Number of layers considered for the inboard TF stress calculations+
+    !! Number of layers considered for the inboard TF stress calculations
+    ! ------
 
+
+    ! Internal parameters
+    ! ---
     real(kind(1.0D0)), dimension(n_tf_layer*n_radial_array) :: radial_array
     !! Array refining the radii of the stress calculations arrays
     
@@ -1179,6 +1188,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     real(kind(1.0D0)) :: seff, tcbs, fac, t_ins_eff
     
+    real(kind(1.0D0)) :: sig_z_fac
+    !! Vertical stress correction factor for inter turn structure
+
     real(kind(1.0D0)) :: svmxz
     !! Von-mises stress in steel setting the radial stress to 0
 
@@ -1187,6 +1199,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     real(kind(1.0D0)) :: dr_wp_layer
     !! Size of WP layer with homogeneous smeared property 
+    ! ---
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Stress model not valid the TF does not contain any hole
@@ -1376,6 +1389,23 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
                                        radial_array, sig_tf_r, sig_tf_t, sig_tf_z,    & ! Outputs
                                        strain_tf_r, strain_tf_t, strain_tf_z, deflect ) ! Outputs
     
+        ! Vertical stress turn structure correction (cooling fraction and insulation layer)
+        !-!
+        ! Vertical stress correction factor 
+        if ( i_tf_sup == 0 ) then
+            sig_z_fac = 1.0D0 / ( 1 - fcoolcp ) 
+        else if (i_tf_sup == 2 ) then
+            sig_z_fac = eyoung_al / ( awptf * eyoung_al + aiwp * eyoung_ins ) &
+                                  * ( awpc / turnstf ) 
+        end if
+        
+        ! Applying vertical stress correction factor
+        do ii = n_radial_array + 1, n_tf_layer*n_radial_array
+            sig_tf_z(ii) = sig_z_fac * sig_tf_z(ii)
+        end do
+        !-!
+
+
         ! TRESCA stress (array equation)                     
         sig_tf_tresca = max( abs(sig_tf_r - sig_tf_t), &
                              abs(sig_tf_r - sig_tf_z), &

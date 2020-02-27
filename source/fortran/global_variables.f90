@@ -2294,11 +2294,13 @@ module tfcoil_variables
   !!   -> This variable is now calculated
 
   real(kind(1.0D0)) :: eyzwp = 0.0D0
-  !! eyzwp : winding pack vertical Young's modulus (Pa)
+  !! Winding pack vertical Young's modulus (Pa)
 
-  real(kind(1.0D0)) :: eyoung_ins = 2.0D10
-  !! Insulator Young's modulus (Pa)
-  !!  (default value from DDD11-2 v2 2 (2009))
+  real(kind(1.0D0)) :: eyoung_ins = 1.0D8
+  !! Insulator Young's modulus [Pa]
+  !! Default value (1.0D8) setup the following values
+  !!  - SC TF, eyoung_ins = 20 Mpa (default value from DDD11-2 v2 2 (2009))
+  !!  - Cryo-Al TF, eyoung_ins = 2.5 MPa (Kapton polymer)
 
   real(kind(1.0D0)) :: eyoung_steel = 2.05D11
   !! teel case Young's modulus (Pa)

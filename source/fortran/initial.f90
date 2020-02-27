@@ -1138,7 +1138,8 @@ subroutine check
     ! If inboard TF coil case plasma side thickness has not been set by user
     if(casthi<0.1d-10) casthi_is_fraction = .true.
 
-    ! Setting the default cryo-plants efficiencies 
+    ! Setting the default cryo-plants efficiencies
+    !-!
     if ( abs(eff_tf_cryo + 1.0D0) < epsilon(eff_tf_cryo) ) then 
         
         ! The ITER cyoplant efficiency is used for SC
@@ -1154,8 +1155,29 @@ subroutine check
     else if ( eff_tf_cryo >  1.0D0 .or. eff_tf_cryo < 0.0D0 ) then
         call report_error(248)
         stop
-    end if  
+    end if
+    !-!  
 
+    ! Setting up insulation layer young modulae default values [Pa]
+    !-!
+    if ( abs(eyoung_ins - 1.0D8 ) < epsilon(eyoung_ins) ) then
+
+        ! Copper magnets, no insulation material defined
+        ! But use the ITER design by default
+        if ( i_tf_sup == 0 ) then
+            eyoung_ins = 20.0D9
+
+        ! SC magnets 
+        ! Value from DDD11-2 v2 2 (2009)
+        if ( i_tf_sup == 1 ) then
+            eyoung_ins = 20.0D9
+        
+        ! Cryo-aluminum (Kapton polymer)
+        else if ( i_tf_sup == 2 ) then
+            eyoung_ins = 2.5D9
+        end if
+    end if
+    !-!
 
     !  PF coil resistivity is zero if superconducting
     if (ipfres == 0) pfclres = 0.0D0
