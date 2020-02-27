@@ -937,6 +937,7 @@ contains
   use constants, only: iotty, nout, mfile
   use plasmod_variables, only: ped, radp, num, mhd, inp0, loss, i_flag, geom, &
     comp
+  use physics_variables, only: ipedestal
   implicit none
 
   !  Arguments

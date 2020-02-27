@@ -13,23 +13,6 @@ module function_evaluator
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use constraints
-  use cost_variables
-  use current_drive_variables
-  use divertor_variables
-  use error_handling
-  use heat_transport_variables
-
-  use numerics
-  use physics_variables
-  use pf_power_variables
-  use process_output
-  use stellarator_variables
-  use tfcoil_variables
-  use times_variables
-
-  use iso_c_binding
-
   implicit none
 
   public
@@ -55,6 +38,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constraints, only: constraint_eqns 
+    use numerics, only: neqns 
     implicit none
 
     !  Arguments
@@ -105,6 +90,12 @@ contains
 
 		use global_variables, only: vlabel, icase, verbose
 		use constants, only: nout, iotty, vfile
+		use constraints, only: constraint_eqns 
+		use cost_variables, only: coe 
+		use numerics, only: nviter 
+		use physics_variables, only: te ,rmajor ,powfmw ,bt 
+		use stellarator_variables, only: istell 
+		use times_variables, only: tburn0, tburn
     implicit none
 
     !  Arguments
@@ -206,6 +197,10 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use global_variables, only: icase
+		use constraints, only: constraint_eqns 
+		use error_handling, only: report_error, idiags, fdiags, errors_on 
+		use numerics, only: ipnvars, epsfcn 
+		use process_output, only: int_to_string3 
     implicit none
 
     !  Arguments
@@ -290,6 +285,18 @@ contains
 
 		use global_variables, only: xlabel, iscan_global
 		use constants, only: nout, iotty, mfile
+		use constraints, only: constraint_eqns 
+		use cost_variables, only: concost, cfactr, cdirt, ireactor, iavail, coe 
+		use current_drive_variables, only: bigq, porbitlossmw, pinjmw
+		use divertor_variables, only: hldiv
+		use error_handling, only: idiags, fdiags, errors_on, report_error
+		use heat_transport_variables, only: pnetelmw 
+    use numerics, only: minmax 
+		use physics_variables, only: powfmw, bt, rmajor, wallmw, aspect, pohmmw
+		use pf_power_variables, only: srcktpm 
+		use process_output, only: int_to_string3 
+		use tfcoil_variables, only: tfcmw 
+		use times_variables, only: tburn
     implicit none
 
     !  Arguments

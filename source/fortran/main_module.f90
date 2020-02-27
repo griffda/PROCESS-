@@ -78,6 +78,7 @@ subroutine run_summary
   use numerics, only: nvar, neqns, ioptimz, nineqns, epsvmc, minmax, icc, &
     lablcc, lablmm
   use process_output, only: ocentr, oblnkl, ocmmnt, ostars, ovarst
+  use physics_variables, only: te 
   implicit none
 
   !  Local variables
@@ -245,11 +246,15 @@ subroutine eqslv(ifail)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   use constants, only: nout, mfile, iotty
-  use function_evaluator, only: idiags, ipeqns, scafc, rcm, ncalls, neqns, &
-    nfev2, sqsumsq, fdiags, iptnt, icc, nfev1, ioptimz, resdl, &
-    xcm, ixc, epsfcn, ftol, lablcc, errors_on, int_to_string3, xcs, lablxc, &
-    factor, fcnhyb, oblnkl, oheadr, report_error, ocmmnt, osubhd, eqsolv, &
-    ovarre, ovarin, constraint_eqns
+  use constraints, only: constraint_eqns
+  use function_evaluator, only: fcnhyb
+  use error_handling, only: idiags, fdiags, errors_on, report_error
+  use numerics, only: ipeqns, epsfcn, factor, ftol, iptnt, ncalls, ioptimz, &
+    neqns, nfev1, nfev2, sqsumsq, xcm, rcm, xcs, resdl, scafc, ixc, lablxc, &
+    icc, lablcc, eqsolv
+  use process_output, only: ovarin, oblnkl, ocmmnt, oheadr, osubhd, &
+    ovarre, int_to_string3
+  use physics_variables, only: bt, aspect, rmajor, powfmw, wallmw 
   implicit none
 
   !  Arguments
