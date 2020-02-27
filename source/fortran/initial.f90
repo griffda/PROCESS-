@@ -1169,10 +1169,10 @@ subroutine check
 
         ! SC magnets 
         ! Value from DDD11-2 v2 2 (2009)
-        if ( i_tf_sup == 1 ) then
+        else if ( i_tf_sup == 1 ) then
             eyoung_ins = 20.0D9
         
-        ! Cryo-aluminum (Kapton polymer)
+        ! Cryo-aluminum magnets (Kapton polymer)
         else if ( i_tf_sup == 2 ) then
             eyoung_ins = 2.5D9
         end if
