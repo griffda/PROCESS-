@@ -15,12 +15,7 @@ subroutine currn(om,zacosarg,xk0,xnpa,enpep,angnb,op,oc,ocmax,ocmin, &
     !          by (ergs/sec) to (amps*cm) divided by watts, i.e., zconvr/e4
 
     !use t4_mod_tprof
-    use param  !pi,c   !EXTERNAL
-    use machin !EXTERNAL
-    use bsquar !EXTERNAL
-    use mode   !EXTERNAL
-    use linliu !EXTERNAL
-    use abs_cd !EXTERNAL
+    use abs_cd, only: rkind
     implicit real*8 (a-h,o-z)
     COMPLEX CEFLDX, CEFLDY, CEFLDZ
 
