@@ -2288,10 +2288,10 @@ module tfcoil_variables
   !! jwptf : winding pack current density (A/m2)
 
   real(kind(1.0D0)) :: oacdcp = 0.0D0
-  !! oacdcp /0.0/ : overall current density in TF coil inboard legs midplane (A/m2)
-  !!                Rem SK : Not used in tfcoil to set the current any more
-  !!                         -> SHOULD NOT BE USED AS ITERATION VARIABLE 12 ANY MORE
-  !!                         -> This variable is now calculated
+  !! Overall current density in TF coil inboard legs midplane (A/m2)
+  !!  Rem SK : Not used in tfcoil to set the current any more
+  !!   -> SHOULD NOT BE USED AS ITERATION VARIABLE 12 ANY MORE
+  !!   -> This variable is now calculated
 
   real(kind(1.0D0)) :: eyzwp = 0.0D0
   !! eyzwp : winding pack vertical Young's modulus (Pa)
@@ -2414,13 +2414,13 @@ module tfcoil_variables
   !!                 <LI> linear quench : discharge time (s)
 
   real(kind(1.0D0)) :: tfareain = 0.0D0
-  !! tfareain : area of inboard midplane TF legs (m2)
+  !! Area of inboard midplane TF legs (m2)
 
   real(kind(1.0D0)) :: tfbusl = 0.0D0
-  !! tfbusl : TF coil bus length (m)
+  !! TF coil bus length (m)
 
   real(kind(1.0D0)) :: tfbusmas = 0.0D0
-  !! tfbusmas : TF coil bus mass (kg)
+  !! TF coil bus mass (kg)
 
   real(kind(1.0D0)) :: tfckw = 0.0D0
   !! tfckw :  available DC power for charging the TF coils (kW)
