@@ -823,12 +823,9 @@ contains
 
     implicit none
 
-    ! Cryo-aluminium coolant average temperature
-    real(kind(1.0D0)) :: t_tf_cryoal_cool_av = 0.0D0
-
-    ! Cryo-aluminium cryoplant power consumption
     real(kind(1.0D0)) :: p_tf_cryoal_cryo = 0.0D0
-
+    !! Cryo-aluminium cryoplant power consumption
+    
     !------------------------------------------------------------------------------------
     !- Collate pumping powers
     !------------------------------------------------------------------------------------
@@ -953,8 +950,7 @@ contains
     ! Rem : Nuclear heating on the outer legs assumed to be negligible
     ! Rem : To be updated with 2 cooling loops for TART designs
     if ( i_tf_sup == 2 ) then
-        t_tf_cryoal_cool_av = tcoolin + 0.5D0*dtiocool
-        p_tf_cryoal_cryo = (293.0D0 - t_tf_cryoal_cool_av)/(eff_tf_cryo*t_tf_cryoal_cool_av) * &
+        p_tf_cryoal_cryo = (293.0D0 - tcoolin)/(eff_tf_cryo*tcoolin) * &
                            ( prescp + presleg + pnuccp * 1.0D6 )
         crypmw = crypmw + 1.0D-6 * p_tf_cryoal_cryo
     end if
