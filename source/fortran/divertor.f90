@@ -11,14 +11,6 @@ module divertor_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use build_variables
-  use constants
-  use divertor_variables
-  use tfcoil_variables, only : drtop
-  use error_handling
-  use physics_variables
-  use process_output
-
   implicit none
 
   private
@@ -42,6 +34,15 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use build_variables, only: plsepo, vgap, rspo, scrapli
+    use constants, only: pi 
+    use divertor_variables, only: prn1, rlclolcn, c6div, c5div, ksic, omegan, &
+      rconl, minstang, hldiv, rsrd, xparain, divdum, tsep, &
+      densin, zeffdiv, xpertin, fgamp, adas, tconl, c4div, dendiv, tdiv, frrp, &
+      c3div, fififi, ptpdiv , ppdivr, c2div, fdfs , delld, omlarg, c1div, &
+      anginc, lamp 
+    use physics_variables, only: dene, itart, triang, bp, zeff, q, sarea, &
+      sareao, bt, afuel, rminor, aspect, rmajor, pdivt
     implicit none
 
     !  Arguments
@@ -276,6 +277,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi 
     implicit none
 
     !  Arguments
@@ -602,6 +604,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use constants, only: pi 
+    use error_handling, only: fdiags, report_error
+    use tfcoil_variables, only: drtop
+    use process_output, only: ocmmnt, osubhd, ovarre, oblnkl
     implicit none
 
     !  Arguments
