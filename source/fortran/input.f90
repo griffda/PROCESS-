@@ -1681,6 +1681,9 @@ contains
        case ('frholeg')
           call parse_real_variable('frholeg', frholeg, 0.01D0, 5.0D0, &
                'TART outboard leg resistivity enhancement factor')
+       case ('eff_tf_cryo')
+          call parse_real_variable('eff_tf_cryo', eff_tf_cryo, -1.0D0, 1.0D0, &
+               'TF coil cryo-plane efficiency')  
        case ('i_tf_tresca')
           call parse_int_variable('i_tf_tresca', i_tf_tresca, 0, 1, &
                          'Switch for TF coil Tresca criterion.')

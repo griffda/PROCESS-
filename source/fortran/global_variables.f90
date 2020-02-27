@@ -2454,23 +2454,29 @@ module tfcoil_variables
   !! rhotfleg : resistivity of a TF coil leg (Ohm-m)
 
   real(kind(1.0D0)) :: rhotfbus = -1.0D0 ! 2.5D-8
-  !! rhotfbus /-1.0/ : resistivity of a TF coil bus (Ohm-m)
-  !!                   Default value takes the same res as the leg one
+  !! Resistivity of a TF coil bus (Ohm-m)
+  !!  Default value takes the same res as the leg one
  
   real(kind(1.0D0)) :: frhocp = 1.0D0
-  !! frhocp /1.0/ : Centrepost resistivity enhancement factor 
-  !!                For itart = 0, this factor is used for the whole magnet 
+  !! Centrepost resistivity enhancement factor 
+  !!  For itart = 0, this factor is used for the whole magnet 
   
   real(kind(1.0D0)) :: frholeg = 1.0D0
-  !! frholeg /1.0/ : Ouboard legs resistivity enhancement factor
-  !!                 Only used for itart = 1
-
+  !! Ouboard legs resistivity enhancement factor
+  !!   Only used for itart = 1
+  
   real(kind(1.0D0)) :: tfleng = 0.0D0
-  !! tfleng : TF coil circumference (m)
+  !! TF coil circumference (m)
+
+  real(kind(1.0D0)) :: eff_tf_cryo = -1.0D0
+  !! TF cryoplant efficiency (compared to pefect Carnot cycle)
+  !! Using -1 set the default value depending on magnet technology
+  !!  - i_tf_sup = 1 : SC magnet, eff_tf_cryo = 0.13 (ITER design)
+  !!  - i_tf_sup = 2 : Cryo-aluminium, eff_tf_cryo = 0.4
 
   real(kind(1.0D0)) :: n_tf = 16.0D0
-  !! n_tf /16.0/ : number of TF coils (default = 50 for stellarators)
-  !!               number of TF coils outer legs for ST
+  !! Number of TF coils (default = 50 for stellarators)
+  !! Number of TF coils outer legs for ST
 
   real(kind(1.0D0)) :: tfocrn = 0.0D0
   !! tfocrn : TF coil half-width - outer bore (m)

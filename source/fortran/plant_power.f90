@@ -944,7 +944,7 @@ contains
         ! Use 13% of ideal Carnot efficiency to fit J. Miller estimate
         ! Rem SK : This ITER efficiency is very low compare to the Strowbridge curve
         !          any reasons why? 
-        crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(0.13D0*tmpcry) * helpow   
+        crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(eff_tf_cryo*tmpcry) * helpow   
     end if
 
     ! Cryogenic aluminium 
@@ -954,7 +954,7 @@ contains
     ! Rem : To be updated with 2 cooling loops for TART designs
     if ( i_tf_sup == 2 ) then
         t_tf_cryoal_cool_av = tcoolin + 0.5D0*dtiocool
-        p_tf_cryoal_cryo = (293.0D0 - t_tf_cryoal_cool_av)/(0.4D0*t_tf_cryoal_cool_av) * &
+        p_tf_cryoal_cryo = (293.0D0 - t_tf_cryoal_cool_av)/(eff_tf_cryo*t_tf_cryoal_cool_av) * &
                            ( prescp + presleg + pnuccp * 1.0D6 )
         crypmw = crypmw + 1.0D-6 * p_tf_cryoal_cryo
     end if

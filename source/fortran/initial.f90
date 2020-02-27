@@ -1138,12 +1138,23 @@ subroutine check
     ! If inboard TF coil case plasma side thickness has not been set by user
     if(casthi<0.1d-10) casthi_is_fraction = .true.
 
-    ! Issue #514 Radial dimensions of inboard leg
-    ! Ensure that tfcth is defined if thkwp is an iteration variable (140)
-    ! if (any(ixc(1:nvar) == 140) ) then
-    !     tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
-    ! endif
-    ! -------
+    ! Setting the default cryo-plants efficiencies 
+    if ( abs(eff_tf_cryo + 1.0D0) < epsilon(eff_tf_cryo) ) then 
+        
+        ! The ITER cyoplant efficiency is used for SC
+        if ( i_tf_sup == 1 ) then
+            eff_tf_cryo = 0.13D0
+
+        ! Strawbrige plot extrapolation is used for Cryo-Al
+        else if ( i_tf_sup == 2 ) then
+            eff_tf_cryo = 0.40D0
+        end if
+    
+    ! Cryo-plane efficiency must be in [0-1.0]
+    else if ( eff_tf_cryo >  1.0D0 .or. eff_tf_cryo < 0.0D0 ) then
+        call report_error(248)
+        stop
+    end if  
 
 
     !  PF coil resistivity is zero if superconducting
