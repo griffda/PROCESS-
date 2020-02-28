@@ -1296,7 +1296,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     !                  to allow stress calculations 
     ! Rem SK : Can be easily ameneded playing around the boundary conditions
     if ( abs(radtf(1)) < epsilon(radtf(1)) ) then
-        call report_error(242)
+        call report_error(245)
         radtf(1) = 1.0D-9
     end if
     ! ------

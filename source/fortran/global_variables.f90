@@ -246,7 +246,8 @@ module physics_variables
   !! fpdivlim /1.0/ : F-value for minimum pdivt (constraint equation 80)
 
   real(kind(1.0D0)) :: fne0 = 1.0D0
-  !! fne0 /1.0/ : F-value for minimum pdivt (constraint equation 81)
+  !! F-value for minimum pdivt (constraint equation 81)
+  !! Iteration variable 154 
 
   real(kind(1.0D0)), bind(C) :: ftrit = 0.5D0
   !! ftrit /0.5/ : tritium fuel fraction
