@@ -29,12 +29,8 @@ import logging
 import sys
 from sys import stderr
 from create_dicts import get_dicts
+import json
 LOG = logging.getLogger("mfile")
-
-# try:
-#     from fuzzywuzzy import process as fuzzysearch
-# except ImportError:
-#     LOG.info("Fuzzy variable name suggestions not available for MFile")
 
 # Load dicts from dicts JSON file
 process_dicts = get_dicts()
@@ -316,15 +312,44 @@ class MFile(object):
             self.data[var_key] = var
             self.data[var_key].set_scan(1, value)
 
-    # def suggest_variable(self, search_string, limit=3):
-    #     """
-    #     Return a list of possible variable matches for the given search_string
-    #     in this MFile.
-    #     limit is the maximum number of suggestions returned.
-    #     """
-    #     return [x[0] for x in fuzzysearch.extract(search_string,
-    #                                               self.data.keys(),
-    #                                               limit=limit)]
+    def write_to_json(self, keys_to_write={}, scan=-1, verbose=False):
+        """Write MFILE object to JSON file
+        """
+
+        if keys_to_write == {}:
+            keys_to_write = self.data.keys()
+
+        filename=f"{self.filename}.json"
+
+        dict_to_write = dict()
+        if scan == 0:
+            for i in range(self.data["rmajor"].get_number_of_scans()):
+                sub_dict = {}
+                for item in keys_to_write:
+                    if self.data[item].get_number_of_scans() == 1:
+                        dat_key = -1
+                    else: 
+                        dat_key = i+1
+                    data = self.data[item].get_scan(dat_key)
+                    des = self.data[item].var_description.replace("_", " ")
+                    if verbose:
+                        entry = {"value" : data, "description": des}
+                    else: 
+                        entry = data
+                    sub_dict[item] = entry
+                dict_to_write[f"scan-{i+1}"] = sub_dict
+        else:
+            for item in keys_to_write:
+                data = self.data[item].get_scan(dat_key)
+                des = self.data[item].var_description.replace("_", " ")
+                if verbose:
+                    entry = {"value" : data, "description": des}
+                else: 
+                    entry = data
+                dict_to_write[item] = entry
+
+        with open(filename, 'w') as fp:
+            json.dump(dict_to_write, fp, indent=4)
 
 
 def sort_value(val):
