@@ -298,6 +298,7 @@ The configuration file `sobol_method_conf.json` used the JSON format and has the
     "num_vars": 4
 }
 ```
+
 The file specifies a dictionary that gives all the information for running the Morris method tool. The number of variables considered in the Morris method with `num_vars`, the name of the variable as it appears the PROCESS MFILE is listed under `names` and the upper and lower bounds of the flat distribution is given in bounds. In addition the utility also uses `run_process.py` and therefore can optionally use the configuation file `run_process.conf`. Additionally, an `IN.DAT` file describing the relevant design point needs to be present.
 
 ### Output
@@ -381,3 +382,30 @@ usage: plot_stress_tf.py [-h] [-p [PLOT_SELEC]] [-sf [SAVE_FORMAT]] [-as [AXIS_F
 | - |   - if the string contains `all`, plot stress and displecement distributions |
 | `-sf, --save_format [SAVE_FORMAT]` | output format (default='pdf')  |
 | `-as, --axis_font_size [AXIS_FONT_SIZE]` | Axis label font size selection (default=18) |
+
+## JSON Exporter
+
+```bash
+./utilities/mfile_to_json.py
+```
+
+This script outputs the contents of the MFILE to a JSON file.
+
+### Usage
+
+```bash
+usage: mfile-to-json.py [-h] [-f filename] [-n N] [--radial_build]
+                        [--vertical_build] [--all_build] [--verbose]
+```
+
+### Option
+
+| Argument | Description |
+| - | - |
+| `-h, --help`    | show this help message and exit |
+| `-f, [filename]` | specify MFILE file path |
+| `-n, [N]` | specify scan to plot (-1=last, 0=all) |
+| `--radial-build` | only output radial build |
+| `--vertical-build` | only output vertical build  |
+| `--all-build` | only output radial + vertical build |
+| `--verbose` | output both variable name and description |
