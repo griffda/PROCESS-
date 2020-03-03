@@ -168,6 +168,30 @@ baseline_2018:
       --acc 10.0 
       --baseline
 
+step_input:
+  when: on_success
+  only: 
+    - develop
+  stage: testing
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  stage: pages
+  script:
+    - git config --global user.email "james.morris2@ukaea.uk"
+    - git config --global user.name "James Morris"
+    - git log -1 --format=oneline >> commit_msg.txt
+    - MESSAGE=$(git describe)
+    - echo $MESSAGE
+    - pwd
+    - cat commit_msg.txt
+    - git clone https://smuldrew:Lxf8sdD9uvMxfdU6UEYS@git.ccfe.ac.uk/smuldrew/process-step.git
+    - cp commit_msg.txt process-step
+    - cd process-step
+    - ls
+    - date >> date_of_push.txt
+    - git add commit_msg.txt date_of_push.txt
+    - git commit -m "PROCESS commit - $MESSAGE"
+    - git config --global push.default matching
+    - git push origin
 
 #-----------------
 #  Standards
