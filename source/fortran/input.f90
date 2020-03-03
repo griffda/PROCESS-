@@ -1681,6 +1681,18 @@ contains
        case ('frholeg')
           call parse_real_variable('frholeg', frholeg, 0.01D0, 5.0D0, &
                'TART outboard leg resistivity enhancement factor')
+       case ('rho_tf_joints')
+          call parse_real_variable('rho_tf_joints', rho_tf_joints, 0.0D0, 1.0D-2, &
+               'TF joints surfacic resistivity')
+       case ('th_joint_contact')
+          call parse_real_variable('th_joint_contact', th_joint_contact, 0.0D0, 1.0D0, &
+               'TF sliding joints contact pad width')
+       case ('n_tf_joints_contact')
+          call parse_int_variable('n_tf_joints_contact', n_tf_joints_contact, 1, 50, &
+               'Number of contact per sliding joint')
+       case ('n_tf_joints')
+          call parse_int_variable('n_tf_joints', n_tf_joints, 1, 50, &
+               'Number of joints per turn')
        case ('eff_tf_cryo')
           call parse_real_variable('eff_tf_cryo', eff_tf_cryo, -1.0D0, 1.0D0, &
                'TF coil cryo-plane efficiency')  

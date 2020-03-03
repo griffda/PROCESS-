@@ -270,7 +270,7 @@ subroutine tf_coil_geometry()
     end if
 
     ! Area of rectangular cross-section TF outboard leg [m2]
-    arealeg = tftort * tfthko              ! eq(10)
+    arealeg = tftort * tfthko
     ! ---
 
 end subroutine tf_coil_geometry
@@ -683,11 +683,17 @@ subroutine tf_res_heating()
 
     ! Internal variable
     ! ---
-    ! TF ouboard leg insulation area  
     real(kind(1.0D0)) :: a_wp_ins_turn
+    !! TF ouboard leg insulation area  
 
-    ! Exact TF ouboard leg conductor area 
     real(kind(1.0D0)) :: a_wp_cond_leg
+    !! Exact TF ouboard leg conductor area 
+    
+    real(kind(1.0D0)) :: a_joints
+    !! Total area of joint contact
+
+    integer ::  n_contact_tot
+    !! Total number of contact area (4 joints section per legs)
 
     integer :: is_leg_cp_temp_same = 0
     ! ---
@@ -741,6 +747,25 @@ subroutine tf_res_heating()
 
         ! TF outer leg resistive power (TOTAL) [W]   
         presleg = tflegres * ritfc**2 / n_tf 
+        ! ---
+
+
+        ! Sliding joints resistive heating
+        ! ---
+        if ( i_tf_sup /= 1 ) then
+
+            ! Total number of contact area (4 joints section per legs)
+            n_contact_tot = 4.0D0 * n_tf_joints_contact* n_tf_joints * turnstf * n_tf
+            
+            ! Total area of joint contact
+            a_joints = tfthko * th_joint_contact * dble(n_contact_tot)
+
+            ! joints resistive power losses
+            pres_joints = rho_tf_joints * ritfc**2 / a_joints
+        else 
+            ! Joints resistance to be evaluated for SC
+            pres_joints = 0.0D0
+        end if
         ! ---
 
 

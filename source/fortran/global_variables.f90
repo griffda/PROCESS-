@@ -2438,10 +2438,16 @@ module tfcoil_variables
 !   !! tfc_model /1/ : switch for TF coil magnet stress model:<UL>
 !   !!                 <LI> = 0 simple model (solid copper coil)
 !   !!                 <LI> = 1 CCFE two-layer stress model; superconductor</UL>
+
   real(kind(1.0D0)), bind(C) :: tfcmw = 0.0D0
-  !! tfcmw : peak power per TF power supply (MW)
+  !! Peak power per TF power supply (MW)
+  
   real(kind(1.0D0)) :: tfcpmw = 0.0D0
-  !! tfcpmw : peak resistive TF coil inboard leg power (MW)
+  !! Peak resistive TF coil inboard leg power (MW)
+
+  real(kind(1.0D0)) :: tfjtsmw = 0.0D0
+  !! TF joints resistive power losses (MW)
+
   real(kind(1.0D0)) :: tfcryoarea = 0.0D0
   !! tfcryoarea : surface area of toroidal shells covering TF coils (m2)
   real(kind(1.0D0)) :: tficrn = 0.0D0
@@ -2453,14 +2459,14 @@ module tfcoil_variables
   !! tfinsgap /0.010/ : TF coil WP insertion gap (m)
   
   real(kind(1.0D0)) :: tflegmw = 0.0D0
-  !! tflegmw : TF coil outboard leg resistive power (MW)
+  !! TF coil outboard leg resistive power (MW)
 
   real(kind(1.0D0)) :: rhocp = 0.0D0
-  !! rhocp : TF coil inboard leg resistivity [Ohm-m]
-  !!         if itart == 0, this variable is the average resistivity over the whole magnet
+  !! TF coil inboard leg resistivity [Ohm-m]
+  !!  if itart == 0, this variable is the average resistivity over the whole magnet
 
   real(kind(1.0D0)) :: rhotfleg = 0.0D0
-  !! rhotfleg : resistivity of a TF coil leg (Ohm-m)
+  !! Resistivity of a TF coil leg (Ohm-m)
 
   real(kind(1.0D0)) :: rhotfbus = -1.0D0 ! 2.5D-8
   !! Resistivity of a TF coil bus (Ohm-m)
@@ -2474,6 +2480,22 @@ module tfcoil_variables
   !! Ouboard legs resistivity enhancement factor
   !!   Only used for itart = 1
   
+  real(kind(1.0D0)) :: rho_tf_joints = 2.5D-10
+  !! TF joints surfacic resistivity [ohm.m^2]
+  !! Feldmetal joints assumed
+
+  integer :: n_tf_joints_contact = 6
+  !! Number of contact per sliding joint
+
+  integer :: n_tf_joints = 4
+  !! Number of joint per turn
+
+  real(kind(1.0D0)) :: th_joint_contact = 0.03D0
+  !! TF sliding joints contact pad width [m]
+
+  real(kind(1.0D0)) :: pres_joints = 0.0D0
+  !! Calculated TF joints resistive power losses [W]
+
   real(kind(1.0D0)) :: tfleng = 0.0D0
   !! TF coil circumference (m)
 

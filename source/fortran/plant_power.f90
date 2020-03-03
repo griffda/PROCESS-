@@ -104,6 +104,7 @@ contains
        !  Resistive powers (MW):
        tfcpmw  = 1.0D-6 * prescp   !  inboard legs (called centrepost, CP for tart design)
        tflegmw = 1.0D-6 * presleg  !  outboard legs
+       tfjtsmw =  1.0D-6 * pres_joints  ! Joints 
        tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus => Dodgy !
 
        !  TF coil reactive power
@@ -115,7 +116,7 @@ contains
        tfreacmw = 0.0D0
 
        !  Total power consumption (MW)
-       tfcmw = tfcpmw + tflegmw + tfbusmw + tfreacmw
+       tfcmw = tfcpmw + tflegmw + tfbusmw + tfreacmw + tfjtsmw
 
        !  Total steady state AC power demand (MW)
        tfacpd = tfcmw / etatf
@@ -951,7 +952,7 @@ contains
     ! Rem : To be updated with 2 cooling loops for TART designs
     if ( i_tf_sup == 2 ) then
         p_tf_cryoal_cryo = (293.0D0 - tcoolin)/(eff_tf_cryo*tcoolin) * &
-                           ( prescp + presleg + pnuccp * 1.0D6 )
+                           ( prescp + presleg + pres_joints + pnuccp * 1.0D6 )
         crypmw = crypmw + 1.0D-6 * p_tf_cryoal_cryo
     end if
 
