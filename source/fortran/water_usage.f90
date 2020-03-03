@@ -10,7 +10,7 @@ PROGRAM water_use_module
     sup_mkup, wat_evap_rate, evap_mwh, bleed_mwh, makeup_mwh, wat_drift, drift_mwh, wat_consump, &
     consump_mwh, wat_excav, wat_concrt, wat_constr_max, wat_constr, wat_dom, wat_drink, &
     wat_mkup_2, wat_mkup_1, wat_wst, wat_pol, wat_com, wat_fr, wat_pot, flow_riv, mix_riv, &
-    q_coeff_wat, q_coeff, evap_riv, t_pond, dt_pond, km3_pond, evap_pond, bleed_pond, therm
+    q_coeff_wat, q_coeff, evap_riv, t_pond, dt_pond, km2_pond, evap_pond, bleed_pond, therm, wat_makeup, wat_withdraw, km2_pond_mwh
     DOUBLE PRECISION, PARAMETER :: true = 1, false = 0, zero = 0, one = 1
 
     ! Arrays
@@ -27,7 +27,7 @@ PROGRAM water_use_module
     eta = 0.1  ! Reference net efficiency (%)
     t_steam = 350  ! Live steam temperature (oC)
     ! Type
-    wat_type = 1 ! Water type: Light = 3 / Heavy = 1
+    wat_type = 3 ! Water type: Light = 3 / Heavy = 1
     ! Site/Weather Data
     wat_source = 0  ! Water Source: River/Inland = 0, Sea/Coast = 1, Effluent = 2
     t_db = 40  ! Air temperature (Dry Bulb) (oC)
@@ -48,7 +48,7 @@ PROGRAM water_use_module
 
 
     ! Select Cooling System
-    c_type = 2  ! Cooling System, e.g. 2 --> 'Wet cooling - Natural Draft'
+    c_type = 4  ! Cooling System, see name_array
     ! Approaches and ranges for heat exchanging devices
     dt_ca = 6  ! Condenser Approach (oC)
     dt_cr = 10  ! Condenser Range (oC) (Dtcr)
@@ -92,14 +92,9 @@ PROGRAM water_use_module
     CALL Nat_draft_bleed(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_elec, eta, t_desal, &
     Desal_cap, Desal_rate, con_cycle, Wat_bleed)
     CALL Nat_draft_makeup(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_elec, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, Wat_mkup)
+    Desal_cap, Desal_rate, con_cycle, wat_mkup)
     CALL Nat_draft_consump(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_elec, eta, t_desal, &
     Desal_cap, Desal_rate, con_cycle, Wat_consump)
-    CALL Wat_conv(Wat_evap_rate, p_elec, Evap_MWh)
-    CALL Wat_conv(Wat_drift, p_elec, Drift_MWh)
-    CALL Wat_conv(Wat_bleed, p_elec, Bleed_MWh)
-    CALL Wat_conv(Wat_mkup, p_elec, Makeup_MWh)
-    CALL Wat_conv(Wat_consump, p_elec, Consump_MWh)
     CALL excav_water(p_elec, wat_excav)
     CALL concrete_water(p_elec, wat_concrt)
     CALL constr_water(p_elec, wat_constr)
@@ -120,8 +115,8 @@ PROGRAM water_use_module
     CALL sys_inven(array)
     CALL pond_dtemp(dt_ca, dt_cr, dt_pond)
     CALL pond_temp(dt_pond, t_db, t_pond)
-    CALL pond_area(q_cr_m, dt_cr, t_pond, spd_wind, km3_pond)
-    CALL pond_evap(km3_pond, spd_wind, t_pond, r_h, t_db, evap_pond)
+    CALL pond_area(q_cr_m, dt_cr, t_pond, spd_wind, km2_pond)
+    CALL pond_evap(km2_pond, spd_wind, t_pond, r_h, t_db, evap_pond)
     CALL pond_bleed(evap_pond, con_cycle, bleed_pond)
 
 
@@ -148,6 +143,16 @@ PROGRAM water_use_module
     air_pol_array = [0, 0, 0, 0, 0, 3, 1, 2]
     type_array = [1, 1, 1, 2, 2, 3, 2, 2]
 
+    wat_makeup = drift_array(INT(c_type)) + wat_evap_array(INT(c_type)) + wat_dis_array(INT(c_type))
+    wat_withdraw = wat_makeup*3600*24*30/1000
+    km2_pond_mwh = km2_pond / (p_elec/eta) * 1000000
+    CALL Wat_conv(wat_evap_array(INT(c_type)), p_elec, Evap_MWh)
+    CALL Wat_conv(drift_array(INT(c_type)), p_elec, Drift_MWh)
+    CALL Wat_conv(wat_dis_array(INT(c_type)), p_elec, Bleed_MWh)
+    CALL Wat_conv(wat_makeup, p_elec, Makeup_MWh)
+    CALL Wat_conv(Wat_consump, p_elec, Consump_MWh)
+
+    WRITE(*,*) Wat_evap_rate
 
     ! Printing the report
     WRITE(*,*) ' '//NEW_LINE('A')//" Power Plant Specification:"
@@ -174,6 +179,10 @@ PROGRAM water_use_module
     CALL output(t_sw)
     WRITE(*,'(a60)',advance='no') "Average wind velocity (m/s) = "
     CALL output(spd_wind)
+    IF (wat_source == 0) then
+        WRITE(*,'(a60)',advance='no') "River flow (m3/s) = "
+        CALL output(flow_riv)
+    END IF
 
     WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Summary of Results:"
     WRITE(*,'(a60)',advance='no') "Recirculating cooling water - main (m3/s) = "
@@ -181,15 +190,15 @@ PROGRAM water_use_module
     WRITE(*,'(a60)',advance='no') "Recirculating cooling water - supporting (m3/s) = "
     CALL output(Sup_recirc)
     WRITE(*,'(a60)',advance='no') "Evaporation losses - main (m3/s) = "
-    CALL output(Wat_evap_rate)
+    CALL output(wat_evap_array(INT(c_type)))
     WRITE(*,'(a60)',advance='no') "Evaporation losses - supporting (m3/s) = "
     CALL output(Sup_evap)
     WRITE(*,'(a60)',advance='no') "Blow-down losses - main (m3/s) = "
-    CALL output(Wat_bleed)
+    CALL output(wat_dis_array(INT(c_type)))
     WRITE(*,'(a60)',advance='no') "Blow-down losses - supporting (m3/s) = "
     CALL output(Sup_bleed)
     WRITE(*,'(a60)',advance='no') "Make-up water - main (m3/s) = "
-    CALL output(Wat_mkup)
+    CALL output(wat_makeup)
     WRITE(*,'(a60)',advance='no') "Make-up water - supporting (m3/s) = "
     CALL output(Sup_mkup)
 
@@ -198,9 +207,9 @@ PROGRAM water_use_module
     CALL output(-1*(wat_excav+wat_concrt+wat_constr))
     WRITE(*,'(a60)',advance='no') "During commissioning (m3) = "
     CALL output(wat_dom+wat_drink)
-    WRITE(*,'(a60)',advance='yes') "During opreation:"
-    WRITE(*,'(a60)',advance='yes') "Condenser cooling - withdrawal (Million m3/month) = "
-    WRITE(*,'(a60)') "Need to calculate form spREADhseet"
+    WRITE(*,*) "During operation:"
+    WRITE(*,'(a60)',advance='no') "Condenser cooling - withdrawal (Million m3/month) = "
+    CALL output(wat_withdraw)
     WRITE(*,'(a60)',advance='no') "Other support systems (m3/month) = "
     CALL output(wat_mkup_2+wat_mkup_1+wat_wst+wat_pol+wat_com+wat_fr+wat_pot)
 
@@ -211,8 +220,9 @@ PROGRAM water_use_module
     CALL output(array(choice,3)+sum(array(choice,5:14)))
 
     WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Design variables:"
-    WRITE(*,*) "Cooling system type ---> Wet cooling - Natural Draft"
-    WRITE(*,'(a60)',advance='no') "Cycles of Concentration ="
+    WRITE(*,'(a59)', advance='no') "Cooling system type ="
+    WRITE(*,*) name_array(INT(c_type))  
+    WRITE(*,'(a60)',advance='no') "Cycles of Concentration = "
     CALL output(con_cycle)
     WRITE(*,'(a60)',advance='no') "Condenser Approach (oC) = "
     CALL output(dt_ca)
@@ -220,28 +230,38 @@ PROGRAM water_use_module
     CALL output(dt_cr)
     WRITE(*,'(a60)',advance='no') "Cooling Tower Approach (oC) = "
     CALL output(dt_ta)
+    IF (c_type == 2) THEN
+        WRITE(*,'(a60)',advance='no') "Cooling Pond Area (km2) = "
+        CALL output(km2_pond)
+    END IF
 
     WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Results:"
+    IF (c_type == 3) THEN
+        WRITE(*,'(a60)',advance='no') "Pond Area Needed (km2) = "
+        CALL output(km2_pond)
+        WRITE(*,'(a60)',advance='no') "Pond Area Needed (m2/MWh) = "
+        CALL output(km2_pond_mwh)
+    END IF
     WRITE(*,'(a60)',advance='no') "Evaporation losses (m3/s) = "
-    CALL output(Wat_evap_rate)
+    CALL output(wat_evap_array(INT(c_type)))
     WRITE(*,'(a60)',advance='no') "Evaporation losses (MWh) = "
     CALL output(Evap_MWh)
     WRITE(*,'(a60)',advance='no') "Drift losses (m3/s) = "
-    CALL output(Wat_drift)
+    CALL output(drift_array(INT(c_type)))
     WRITE(*,'(a60)',advance='no') "Drift losses (MWh) = "
     CALL output(Drift_MWh)
     WRITE(*,'(a60)',advance='no') "Blow-down losses (m3/s) = "
-    CALL output(Wat_bleed)
+    CALL output(wat_dis_array(INT(c_type)))
     WRITE(*,'(a60)',advance='no') "Blow-down losses (MWh) = "
     CALL output(Bleed_MWh)
     WRITE(*,'(a60)',advance='no') "Cooling system makeup water (m3/s) = "
-    CALL output(Wat_mkup)
+    CALL output(wat_makeup)
     WRITE(*,'(a60)',advance='no') "Cooling system makeup water (MWh) = "
     CALL output(Makeup_MWh)
     WRITE(*,'(a60)',advance='no') "Total consumption (m3/s) = "
-    CALL output(Wat_consump)
+    CALL output(wat_evap_array(INT(c_type)) + drift_array(INT(c_type)))
     WRITE(*,'(a60)',advance='no') "Total consumption (MWh) = "
-    CALL output(Consump_MWh)
+    CALL output(Evap_MWh + Drift_MWh)
 
     WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')//" Water needs during construction:"
     WRITE(*,'(a60)',advance='no') "Excavation (m3) = "
@@ -305,9 +325,9 @@ PROGRAM water_use_module
     WRITE(*,'(a60)',advance='no') "Moderator system (m3) = "
     CALL output(array(choice,14))
 
-    WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')// &
-    "Testing"
-    PRINT *, t_pond    
+    !WRITE(*,*) ' '//NEW_LINE('A')//' '//NEW_LINE('A')// &
+    !"Testing"
+    !PRINT *, t_pond
 
 END PROGRAM water_use_module
 
@@ -385,7 +405,7 @@ END PROGRAM water_use_module
     ! Wat_drift = Water loss from drift
     ! con_cycle = The number of times water completes the cooling circuit before being expelled
     ! Wat_bleed = Water expelled to remove impurities
-    ! Wat_mkup = Water required to replenish all water lost from cooling cycle
+    ! wat_mkup = Water required to replenish all water lost from cooling cycle
     ! Wat_consump = Water lost from the cooling tower by evaporation and drift
     ! Wat_m3 = Water rate in meter cubed
     ! Hr = Number of seconds in an hour
@@ -410,7 +430,7 @@ END PROGRAM water_use_module
     ! dt_cr = Condenser range temperature
     ! t_pond = Cooling pond temperature
     ! spd_wind = The wind speed
-    ! km3_pond = Size of the cooling pond in km3
+    ! km2_pond = Size of the cooling pond in km2
     ! w_fr = Condenser water flow rate (tn/s)
     ! q_coeff = Heat coefficient (kW/m2 K)
     ! dt_pond = Cooling pond temperature change
@@ -459,11 +479,11 @@ END SUBROUTINE
 SUBROUTINE water_source(wat_source)
     IMPLICIT NONE
     INTEGER, INTENT(IN) :: wat_source
-    IF (wat_source == 1) THEN
+    IF (wat_source == 0) THEN
         WRITE(*,*) "River/Inland"
-    ELSE IF (wat_source == 2) THEN
+    ELSE IF (wat_source == 1) THEN
         WRITE(*,*) "Sea/Coast"
-    ELSE IF (wat_source == 3) THEN
+    ELSE IF (wat_source == 2) THEN
         WRITE(*,*) "Effluent"
     ELSE
         WRITE(*,*) "Unknown water source"
@@ -476,12 +496,15 @@ END SUBROUTINE water_source
 SUBROUTINE sys_inven_ch(wat_source, wat_type, choice)
     IMPLICIT NONE
     INTEGER, INTENT(IN) :: wat_type
-    INTEGER, intent(inout) :: wat_source
-    INTEGER, intent(out) :: choice
+    INTEGER, INTENT(INOUT) :: wat_source
+    INTEGER, INTENT(OUT) :: choice
+    INTEGER wat_source_2
     IF (wat_source == 2) THEN
-        wat_source = 0
+        wat_source_2 = 0
+    ELSE
+        wat_source_2 = wat_source
     END IF
-    choice = wat_type + wat_source
+    choice = wat_type + wat_source_2
 END SUBROUTINE sys_inven_ch
 
 
@@ -489,7 +512,7 @@ END SUBROUTINE sys_inven_ch
 ! A reference SUBROUTINE for the water inventories
 SUBROUTINE sys_inven(array)
     IMPLICIT NONE
-    DOUBLE PRECISION, dimension(4,14), intent(out) :: array
+    DOUBLE PRECISION, dimension(4,14), INTENT(OUT) :: array
     array =    reshape ( [6500.0, 0.0, 6500.0, 0.0, &
                         18.6, 0.0, 18.6, 0.0, &
                         415.0, 415.0, 300.0, 300.0, &
@@ -932,6 +955,7 @@ END SUBROUTINE RH_wet_bulb__dry_bulb
 !--------------------------------------------------------------------------------------------------
 
 
+! NOTE!! THIS IS THE SOURCE OF THE ERROR MESSAGES - INVESTIGATE
 ! GetMoistAirEnthalpy()
 ! Calculating the enthalpy of moist air from the dry bulb temperature -> TESTED
 SUBROUTINE Dry_bulb__enth_wb(t_db, rh_ratio, H_wb)
@@ -943,7 +967,7 @@ SUBROUTINE Dry_bulb__enth_wb(t_db, rh_ratio, H_wb)
     IF (rh_ratio > 0) THEN
         H_wb = ((1.006 * t_db) + (rh_ratio * (2501 + (1.86 * t_db)))) * KILO
     ELSE
-        PRINT *, 'Humidity ratio is negative'
+        !PRINT *, 'Humidity ratio is negative'
     END IF
 END SUBROUTINE Dry_bulb__enth_wb
 
@@ -1245,11 +1269,11 @@ END SUBROUTINE Nat_draft_bleed
 !              Nat_draft_drift()
 !              Nat_draft_bleed()
 SUBROUTINE Nat_draft_makeup(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_elec, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, Wat_mkup)
+    Desal_cap, Desal_rate, con_cycle, wat_mkup)
     IMPLICIT NONE
     DOUBLE PRECISION, INTENT(INOUT) :: t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_elec, eta, &
     t_desal, Desal_cap, Desal_rate, con_cycle
-    DOUBLE PRECISION, INTENT(OUT) :: Wat_mkup
+    DOUBLE PRECISION, INTENT(OUT) :: wat_mkup
     DOUBLE PRECISION Wat_evap, Wat_evap_rate, Wat_drift, Wat_bleed
     CALL Nat_draft_evap(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_elec, eta, t_desal, &
     Desal_cap, Desal_rate, Wat_evap, Wat_evap_rate)
@@ -1257,7 +1281,7 @@ SUBROUTINE Nat_draft_makeup(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_elec
     Desal_cap, Desal_rate, Wat_drift)
     CALL Nat_draft_bleed(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_elec, eta, t_desal, &
     Desal_cap, Desal_rate, con_cycle, Wat_bleed)
-    Wat_mkup = Wat_evap_rate + Wat_drift + Wat_bleed
+    wat_mkup = Wat_evap_rate + Wat_drift + Wat_bleed
 END SUBROUTINE Nat_draft_makeup
 
 
@@ -1269,12 +1293,12 @@ SUBROUTINE Nat_draft_consump(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_ele
     DOUBLE PRECISION, INTENT(INOUT) :: t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_elec, eta, &
     t_desal, Desal_cap, Desal_rate, con_cycle
     DOUBLE PRECISION, INTENT(OUT) :: Wat_consump
-    DOUBLE PRECISION Wat_bleed, Wat_mkup
+    DOUBLE PRECISION Wat_bleed, wat_mkup
     CALL Nat_draft_bleed(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_elec, eta, t_desal, &
     Desal_cap, Desal_rate, con_cycle, Wat_bleed)
     CALL Nat_draft_makeup(t_db, c_type, t_sw, dt_ta, dt_cr, dt_ca, r_h, p_elec, eta, t_desal, &
-    Desal_cap, Desal_rate, con_cycle, Wat_mkup)
-    Wat_consump = Wat_mkup - Wat_bleed
+    Desal_cap, Desal_rate, con_cycle, wat_mkup)
+    Wat_consump = wat_mkup - Wat_bleed
 END SUBROUTINE Nat_draft_consump
 
 
@@ -1372,24 +1396,24 @@ END SUBROUTINE pond_temp
 
 ! 'Model' tab - Surface needed (Spond)
 ! The surface area of the cooling pond required to sufficiently cool the reactor -> TESTED
-SUBROUTINE pond_area(q_cr_m, dt_cr, t_pond, spd_wind, km3_pond)
+SUBROUTINE pond_area(q_cr_m, dt_cr, t_pond, spd_wind, km2_pond)
     IMPLICIT NONE
     DOUBLE PRECISION, INTENT(IN) :: q_cr_m, dt_cr, t_pond, spd_wind
-    DOUBLE PRECISION, INTENT(OUT) :: km3_pond
+    DOUBLE PRECISION, INTENT(OUT) :: km2_pond
     DOUBLE PRECISION w_fr, q_coeff
     CALL wat_con_mod(q_cr_m, dt_cr, w_fr)
     CALL heat_coeff(t_pond, spd_wind, q_coeff)
-    km3_pond = (w_fr * 1000) * (4.187 / (q_coeff / 1000)) * log(1 + dt_cr /(dt_cr))*0.000001
+    km2_pond = (w_fr * 1000) * (4.187 / (q_coeff / 1000)) * log(1 + dt_cr /(dt_cr))*0.000001
 END SUBROUTINE pond_area
 
 
 ! 'Model' tab - Evaporation (Evpond)
 ! The evaporation for the cooling pond as the temperature is raised from heating -> TESTED
-SUBROUTINE pond_evap(km3_pond, spd_wind, t_pond, r_h, t_db, evap_pond)
+SUBROUTINE pond_evap(km2_pond, spd_wind, t_pond, r_h, t_db, evap_pond)
     IMPLICIT NONE
-    DOUBLE PRECISION, INTENT(IN) :: km3_pond, spd_wind, t_pond, r_h, t_db
+    DOUBLE PRECISION, INTENT(IN) :: km2_pond, spd_wind, t_pond, r_h, t_db
     DOUBLE PRECISION, INTENT(OUT) :: evap_pond
-    evap_pond = 0.01 * km3_pond * (2.12 + 1.25 * spd_wind) * (EXP(0.05 * t_pond) - r_h * EXP(0.05 * t_db))
+    evap_pond = 0.01 * km2_pond * (2.12 + 1.25 * spd_wind) * (EXP(0.05 * t_pond) - r_h * EXP(0.05 * t_db))
 END SUBROUTINE pond_evap
 
 
@@ -1556,4 +1580,14 @@ SUBROUTINE output(output_1)
 END SUBROUTINE output
 
 
-!--------------------------------------------------------------------------------------------------
+! https://www.math.fsu.edu/~dmandel/Fortran/ReadingArrayData.pdf
+! Outputting a value form an array
+!SUBROUTINE print_array(array, n)
+!    IMPLICIT NONE
+!    DOUBLE PRECISION, INTENT(IN) :: array(n)
+!    INTEGER, INTENT(IN) :: n
+!    INTEGER i
+!    DO i = 1, n
+!        WRITE(*,'(f0.2)') array(i)
+!    END do
+!END SUBROUTINE print_array
