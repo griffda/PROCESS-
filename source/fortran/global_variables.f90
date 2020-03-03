@@ -1043,42 +1043,48 @@ module current_drive_variables
   !! ftritbm /1.0e-6/ : fraction of beam that is tritium
   real(kind(1.0D0)) :: gamcd = 0.0D0
   !! gamcd : normalised current drive efficiency (1.0e20 A/(W m^2))
+  
   real(kind(1.0D0)) :: gamma_ecrh = 0.35D0
-  !! gamma_ecrh /0.35/ : user input ECRH gamma (1.0e20 A/(W m^2))
+  !! User input ECRH gamma (1.0e20 A/(W m^2))
+
   real(kind(1.0D0)) :: rho_ecrh = 0.1D0
   !! rho_ecrh /0.1/ : normalised minor radius at which electron cyclotron current drive is maximum
 
   integer :: iefrf = 5
-  !! iefrf /5/ : switch for current drive efficiency model: <OL>
-  !!        <LI> Fenstermacher Lower Hybrid
-  !!        <LI> Ion Cyclotron current drive
-  !!        <LI> Fenstermacher ECH
-  !!        <LI> Ehst Lower Hybrid
-  !!        <LI> ITER Neutral Beam
-  !!        <LI> new Culham Lower Hybrid model
-  !!        <LI> new Culham ECCD model
-  !!        <LI> new Culham Neutral Beam model
-  !!        <LI> Empty (Oscillating field CD removed)
-  !!        <LI> ECRH user input gamma
-  !!        <LI> ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </OL>
+  !! Switch for current drive efficiency model:
+  !!  1 : Fenstermacher Lower Hybrid
+  !!  2 : Ion Cyclotron current drive
+  !!  3 : Fenstermacher ECH
+  !!  4 : Ehst Lower Hybrid
+  !!  5 : ITER Neutral Beam
+  !!  6 : new Culham Lower Hybrid model
+  !!  7 : new Culham ECCD model
+  !!  8 : new Culham Neutral Beam model
+  !!  9 : Simple NBI model (see SYCOMORE HELIOS paper)
+  !!  10 : ECRH user input gamma
+  !!  11 : ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
+  !!  12 : Simple NBI model
+  
   integer :: iefrffix = 0 
-  !! iefrffix /0/ : switch for 2nd current drive efficiency model <UL>
-  !!        <LI> = 0 No fixed current drive
-  !!        <LI> = 1 Fenstermacher Lower Hybrid
-  !!        <LI> = 2 Ion Cyclotron current drive
-  !!        <LI> = 3 Fenstermacher ECH
-  !!        <LI> = 4 Ehst Lower Hybrid
-  !!        <LI> = 5 ITER Neutral Beam
-  !!        <LI> = 6 new Culham Lower Hybrid model
-  !!        <LI> = 7 new Culham ECCD model
-  !!        <LI> = 8 new Culham Neutral Beam model
-  !!        <LI> = 9 Empty (Oscillating field CD removed)
-  !!        <LI> = 10 ECRH user input gamma
-  !!        <LI> = 11 ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </UL>
+  !! Switch for 2nd current drive efficiency model:
+  !!  0 : No fixed current drive
+  !!  1 : Fenstermacher Lower Hybrid
+  !!  2 : Ion Cyclotron current drive
+  !!  3 : Fenstermacher ECH
+  !!  4 : Ehst Lower Hybrid
+  !!  5 : ITER Neutral Beam
+  !!  6 : new Culham Lower Hybrid model
+  !!  7 : new Culham ECCD model
+  !!  8 : new Culham Neutral Beam model
+  !!  9 : Simple NBI model (see SYCOMORE HELIOS paper)
+  !!  10 :  ECRH user input gamma
+  !!  11 :  ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
+
   integer :: irfcd = 1
-  !! irfcd /1/ : switch for current drive calculation:<UL>
-  !!        <LI> = 0 turned off;
-  !!        <LI> = 1 turned on</UL>
+  !! Switch for current drive calculation:
+  !!  0 : turned off
+  !!  1 : turned on
+
   real(kind(1.0D0)) :: nbshinef = 0.0D0
   !! nbshinef : neutral beam shine-through fraction
   real(kind(1.0D0)) :: nbshield = 0.5D0

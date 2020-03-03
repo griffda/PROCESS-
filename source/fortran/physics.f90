@@ -59,14 +59,14 @@ module physics_module
   real(kind(1.0D0)) :: beta_mcdonald
   real(kind(1.0D0)) :: itart_r
 
-contains
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine subr(a, b)
-   implicit none
-   real, intent(in) :: a
-   real, intent(out) :: b
-   b = a
-end subroutine subr
+  contains
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  subroutine subr(a, b)
+     implicit none
+     real, intent(in) :: a
+     real, intent(out) :: b
+     b = a
+  end subroutine subr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
