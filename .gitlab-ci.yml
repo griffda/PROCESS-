@@ -430,7 +430,7 @@ pages:
     - TAG=$(git describe --abbrev=0)
     - VERSION=$(git describe)
     - cd anybadge
-    - python3 anybadge.py -v $TAG -l tag -c lightgrey -f tag.svg
+    - python3 anybadge.py -v $TAG -l tag -c blue -f tag.svg
     - python3 anybadge.py -v $VERSION -l version -c blue -f version.svg
     - cp tag.svg ../public
     - cp version.svg ../public
