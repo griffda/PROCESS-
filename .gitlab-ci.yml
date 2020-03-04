@@ -431,9 +431,10 @@ pages:
     - VERSION=$(git describe)
     - cd anybadge
     - python3 anybadge.py -v $TAG -l tag -c lightgrey -f tag.svg
-    - python3 anybadge.py -v $VERSION -l tag -c lightgrey -f version.svg
-    - mv tag.svg public
-    - mv version.svg public
+    - python3 anybadge.py -v $VERSION -l version -c blue -f version.svg
+    - cp tag.svg ../public
+    - cp version.svg ../public
+    - ls ../public
 
     - ls public
   artifacts:
