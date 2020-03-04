@@ -206,27 +206,6 @@ line_length:
     - pwd
     - python3 utilities/line_length_standard.py
 
-badges:
-  when: on_success
-  stage: quality
-  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
-  script:
-    - pwd
-    - git clone https://github.com/jmorris-uk/anybadge.git
-    - TAG=$(git describe --abbrev=0)
-    - VERSION=$(git describe)
-    - cd anybadge
-    - python3 anybadge.py -v $TAG -l tag -c lightgrey -f tag.svg
-    - python3 anybadge.py -v $VERSION -l tag -c lightgrey -f version.svg
-    - mv tag.svg public
-    - mv version.svg public
-    - ls public
-  artifacts:
-    paths:
-      - public/tag.svg
-      - public/version.svg
-
-
 #-----------------
 #  Freia
 #-----------------
@@ -445,6 +424,17 @@ pages:
     - ls site
     - mv site public
     - mv ford_site public
+
+    # Setup badges
+    - git clone https://github.com/jmorris-uk/anybadge.git
+    - TAG=$(git describe --abbrev=0)
+    - VERSION=$(git describe)
+    - cd anybadge
+    - python3 anybadge.py -v $TAG -l tag -c lightgrey -f tag.svg
+    - python3 anybadge.py -v $VERSION -l tag -c lightgrey -f version.svg
+    - mv tag.svg public
+    - mv version.svg public
+
     - ls public
   artifacts:
     paths:
