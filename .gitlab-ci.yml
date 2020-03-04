@@ -435,8 +435,7 @@ pages:
     - cp tag.svg ../public
     - cp version.svg ../public
     - ls ../public
-
-    - ls public
+    
   artifacts:
     paths:
     - public
