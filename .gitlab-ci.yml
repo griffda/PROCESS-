@@ -12,7 +12,7 @@
 stages:
   - build
   - testing
-  - standards
+  - quality
   - freia
   - pages
 
@@ -194,17 +194,33 @@ step_input:
     - git push origin
 
 #-----------------
-#  Standards
+#  Quality
 #-----------------
 
 line_length:
   when: on_success
-  stage: standards
+  stage: quality
   <<: *build-ubuntu-setup
   image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
   script:
     - pwd
     - python3 utilities/line_length_standard.py
+
+badges:
+  when: on_success
+  stage: quality
+  image: git.ccfe.ac.uk:4567/process/process/ci-image:latest
+  script:
+    - pwd
+    - git clone https://github.com/jmorris-uk/anybadge.git
+    - TAG=$(git describe --abbrev=0)
+    - VERSION=$(git describe)
+    - cd anybadge
+    - python3 anybadge.py -v $TAG -l tag -c lightgrey -f tag.svg
+    - python3 anybadge.py -v $VERSION -l tag -c lightgrey -f version.svg
+    - cp tag.svg public
+    - cp version.svg public
+
 
 #-----------------
 #  Freia
@@ -392,6 +408,7 @@ baseline_2018_freia:
       --baseline
   tags:
     - freia
+
 
 #-----------------
 #  Pages
