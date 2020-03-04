@@ -218,8 +218,9 @@ badges:
     - cd anybadge
     - python3 anybadge.py -v $TAG -l tag -c lightgrey -f tag.svg
     - python3 anybadge.py -v $VERSION -l tag -c lightgrey -f version.svg
-    - mv tag.svg public/
-    - mv version.svg public/
+    - mv tag.svg public
+    - mv version.svg public
+    - ls public
   artifacts:
     paths:
       - public/tag.svg
