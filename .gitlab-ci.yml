@@ -434,7 +434,7 @@ pages:
     - cd anybadge
     - python3 anybadge.py -v $TAG -l tag -c blue -f tag.svg
     - python3 anybadge.py -v $VERSION -l version -c blue -f version.svg
-    - python3 anybadge.py -v $CONTRIBUTORS -l contributors -c blue -f contributors.svg
+    - python3 anybadge.py -v $CONTRIBUTORS -l contributors -c blue -f contributors.svg -m "%d"
     - cp tag.svg ../public
     - cp version.svg ../public
     - cp contributors.svg ../public
