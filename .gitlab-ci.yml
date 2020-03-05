@@ -417,19 +417,19 @@ pages:
    
     # FORD documentation
     # Ensure FORD can find create_dicts.py inside Process
-    # - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
-    # - python3 lib/ford/ford.py documentation/ford/index.md
+    - export PYTHONPATH=$PYTHONPATH:/builds/process/process/utilities/
+    - python3 lib/ford/ford.py documentation/ford/index.md
 
     # Publish the MkDocs and FORD sites
     - ls site
     - mv site public
-    # - mv ford_site public
+    - mv ford_site public
 
     # Setup badges
     - git clone https://github.com/jmorris-uk/anybadge.git
     - TAG=$(git describe --abbrev=0)
     - VERSION=$(git describe)
-    - CONTRIBUTORS=$(git shortlog -s -n | wc -l)
+    - CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
     - cd anybadge
     - python3 anybadge.py -v $TAG -l tag -c blue -f tag.svg
     - python3 anybadge.py -v $VERSION -l version -c blue -f version.svg
