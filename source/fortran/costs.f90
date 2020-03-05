@@ -185,6 +185,12 @@ contains
 20     format(t2, &
             'First wall, total blanket and divertor direct costs',/, &
             t2,'are zero as they are assumed to be fuel costs.')
+    elseif (ifueltyp == 2) then 
+         call oblnkl(outfile)
+         write(outfile,20)
+20     format(t2, &
+            'First wall, total blanket and divertor direct costs',/,&
+            t2,'are in capital and cost of electricity')
     end if
 
     call oblnkl(outfile)
@@ -225,6 +231,12 @@ contains
 30        format(t2, &
                'Centrepost direct cost is zero, as it ', &
                'is assumed to be a fuel cost.')
+       elseif ((itart == 1).and.(ifueltyp == 2)) then
+          call oblnkl(outfile)
+          write(outfile,30)
+30        format(t2, &
+               'Centrepost direct cost in included in capital ', &
+               'cost and it is assumed to be a fuel cost.')
        end if
 
        call oblnkl(outfile)
@@ -856,6 +868,8 @@ contains
     !! and divertor plates.
     !! <P>If ifueltyp = 1, the first wall, blanket and divertor costs are
     !! treated as fuel costs, rather than as capital costs.
+    !! <P>If ifueltyp = 2, the initial first wall, blanket and divertor costs are
+    !! treated as capital costs, and are also included as as fuel costs.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -905,6 +919,8 @@ contains
     !! The first wall cost is scaled linearly with surface area from TFCX.
     !! If ifueltyp = 1, the first wall cost is treated as a fuel cost,
     !! rather than as a capital cost.
+    !! If ifueltyp = 2, the first wall cost is treated as a fuel cost,
+    !! and the inital first wall is included as a capital cost.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -946,6 +962,8 @@ contains
     if (ifueltyp == 1) then
        fwallcst = c2211
        c2211 = 0.0D0
+    elseif (ifueltyp == 2) then
+       fwallcst = c2211
     else
        fwallcst = 0.0D0
     end if
@@ -962,6 +980,8 @@ contains
     !! This routine evaluates the Account 221.2 (blanket) costs.
     !! If ifueltyp = 1, the blanket cost is treated as a fuel cost,
     !! rather than as a capital cost.
+    !! If ifueltyp = 2, the blanket cost is treated as a fuel cost,
+    !! and the initial blanket is included as a capital cost.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1047,6 +1067,8 @@ contains
     if (ifueltyp == 1) then
        blkcst = c2212
        c2212 = 0.0D0
+    elseif (ifueltyp == 2) then
+       blkcst = c2212
     else
        blkcst = 0.0D0
     end if
@@ -1161,6 +1183,8 @@ contains
     !! Tenth-of-a-kind engineering and installation is assumed.
     !! <P>If ifueltyp = 1, the divertor cost is treated as a fuel cost,
     !! rather than as a capital cost.
+    !! <P>If ifueltyp = 2, the divertor cost is treated as a fuel cost,
+    !! additionally the initial divertor is included as a capital cost.
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1176,6 +1200,8 @@ contains
        if (ifueltyp == 1) then
           divcst = c2215
           c2215 = 0.0D0
+       elseif (ifueltyp == 2) then
+          divcst = c2215 
        else
           divcst = 0.0D0
        end if
@@ -1242,6 +1268,8 @@ contains
     !! by R. Hancox under contract to Culham Laboratory, Jan/Feb 1994.
     !! If ifueltyp = 1, the TART centrepost cost is treated as a fuel
     !! cost, rather than as a capital cost.
+    !! If ifueltyp = 2, the TART centrepost cost is treated as a fuel
+    !! cost, additionally the initial centrepost is included as a capital cost
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1275,6 +1303,8 @@ contains
        if ((itart == 1).and.(ifueltyp == 1)) then
           cpstcst = c22211
           c22211 = 0.0D0
+       elseif ((itart == 1).and.(ifueltyp == 2)) then
+          cpstcst = c22211
        end if
 
        !  Account 222.1.2 : Outboard TF coil legs
