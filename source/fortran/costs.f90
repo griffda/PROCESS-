@@ -187,8 +187,8 @@ contains
             t2,'are zero as they are assumed to be fuel costs.')
     elseif (ifueltyp == 2) then 
          call oblnkl(outfile)
-         write(outfile,20)
-20     format(t2, &
+         write(outfile,31)
+21     format(t2, &
             'First wall, total blanket and divertor direct costs',/,&
             t2,'are in capital and cost of electricity')
     end if
@@ -233,8 +233,8 @@ contains
                'is assumed to be a fuel cost.')
        elseif ((itart == 1).and.(ifueltyp == 2)) then
           call oblnkl(outfile)
-          write(outfile,30)
-30        format(t2, &
+          write(outfile,31)
+31        format(t2, &
                'Centrepost direct cost in included in capital ', &
                'cost and it is assumed to be a fuel cost.')
        end if
