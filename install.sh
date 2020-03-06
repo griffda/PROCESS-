@@ -20,7 +20,7 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
     if [ "$MY_OS" == "ubuntu" ]; then
         version_required="18.0"
         if version_gt $MY_OS_VERSION $version_required; then
-            apt-get -y install sudo
+            apt-get update && apt-get -y install sudo
             sudo bash scripts/install_ubuntu_dependencies.sh
             sudo pip3 install -r requirements.txt
 
