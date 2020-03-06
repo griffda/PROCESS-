@@ -772,7 +772,7 @@ contains
     if (iscenr /= 2) pacpmw = pacpmw + fmgdmw
 
     !  Total baseline power to facility loads, MW
-    fcsht  = basemw + efloor*pkwpm2/1000.0D0
+    fcsht = basemw + efloor*pkwpm2/1000.0D0
 
     ! Estimate of the total low voltage power, MW
     ! MDK No idea what this is - especially the last term
