@@ -291,7 +291,7 @@ subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
   tc0eps = tc0max * strfun**(1.0D0/3.0D0)
 
   !  Reduced temperature, restricted to be < 1
-  !  Should remain < 1 for thelium < 0.94*tc0max (i.e. 15 kelvin for i_tf_sup_mat=1)
+  !  Should remain < 1 for thelium < 0.94*tc0max (i.e. 15 kelvin for i_tf_sc_mat=1)
 
   if (thelium/tc0eps >= 1.0D0) then
      fdiags(1) = thelium ; fdiags(2) = tc0eps
@@ -300,7 +300,7 @@ subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
   t = min(thelium/tc0eps, 0.9999D0)
 
   !  Reduced magnetic field at zero temperature
-  !  Should remain < 1 for bmax < 0.83*bc20max (i.e. 27 tesla for i_tf_sup_mat=1)
+  !  Should remain < 1 for bmax < 0.83*bc20max (i.e. 27 tesla for i_tf_sc_mat=1)
 
   if (bmax/bc20eps >= 1.0D0) then
      fdiags(1) = bmax ; fdiags(2) = bc20eps
@@ -528,7 +528,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     tc0eps = tc0max * strfun**(1.0D0/3.0D0)
 
     !  Reduced temperature
-    !  Should remain < 1 for temperature < 0.94*tc0max (i.e. 15 kelvin for i_tf_sup_mat=1)
+    !  Should remain < 1 for temperature < 0.94*tc0max (i.e. 15 kelvin for i_tf_sc_mat=1)
 
     if (temperature/tc0eps >= 1.0D0) then
         fdiags(1) = temperature ; fdiags(2) = tc0eps
@@ -538,7 +538,7 @@ subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
     t = temperature/tc0eps
 
     !  Reduced magnetic field at zero temperature
-    !  Should remain < 1 for bmax < 0.83*bc20max (i.e. 27 tesla for i_tf_sup_mat=1)
+    !  Should remain < 1 for bmax < 0.83*bc20max (i.e. 27 tesla for i_tf_sc_mat=1)
 
     if (bmax/bc20eps >= 1.0D0) then
         fdiags(1) = bmax ; fdiags(2) = bc20eps

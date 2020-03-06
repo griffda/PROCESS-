@@ -2303,7 +2303,7 @@ so need not be initialised.
   awphec : winding pack He coil area (m2)
 \item
   bcritsc /24.0/ : upper critical field (T) for Nb3Sn superconductor at
-  zero temperature and strain (i\_tf\_sup\_mat=4, =bc20m)
+  zero temperature and strain (i\_tf\_sc\_mat=4, =bc20m)
 \item
   bmaxtf : mean peak field at TF coil (T)
 \item
@@ -2348,7 +2348,7 @@ so need not be initialised.
   dcase /8000.0/ : density of coil case (kg/m3)
 \item
   dcond(6) /9000.0/ : density of superconductor type given by
-  i\_tf\_sup\_mat/isumatoh/isumatpf (kg/m3)
+  i\_tf\_sc\_mat/isumatoh/isumatpf (kg/m3)
 \item
   dcondins /1800.0/ : density of conduit + ground-wall insulation
   (kg/m3)
@@ -2412,7 +2412,7 @@ so need not be initialised.
     = 1 integer turns
   \end{itemize}
 \item
-  i\_tf\_sup\_mat /1/ : switch for superconductor material in TF coils:
+  i\_tf\_sc\_mat /1/ : switch for superconductor material in TF coils:
 
   \begin{itemize}
   \tightlist
@@ -2511,7 +2511,7 @@ so need not be initialised.
   Nb3Sn critical surface model, isumatph=1, 4 or 5)
 \item
   strncon\_tf /-0.005/ : strain in TF superconductor material (used in
-  Nb3Sn critical surface model, i\_tf\_sup\_mat=1, 4 or 5)
+  Nb3Sn critical surface model, i\_tf\_sc\_mat=1, 4 or 5)
 \item
   strtf1 : Constrained stress in TF conductor conduit (Pa)
 \item
@@ -2537,7 +2537,7 @@ so need not be initialised.
   taucq : allowable TF quench time (s)
 \item
   tcritsc /16.0/ : critical temperature (K) for superconductor at zero
-  field and strain (i\_tf\_sup\_mat=4, =tc0m)
+  field and strain (i\_tf\_sc\_mat=4, =tc0m)
 \item
   tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s)
   (iteration variable 56) For REBCO model, meaning depends on

@@ -449,7 +449,7 @@ subroutine tf_winding_pack()
     ! Area of steel structure in winding pack [m2]
     aswp = turnstf*acndttf
 
-    if ( i_tf_sup_mat .ne. 6) then  ! NOT REBCO
+    if ( i_tf_sc_mat .ne. 6) then  ! NOT REBCO
         ! Radius of rounded corners of cable space inside conduit [m]
         rbcndut = thwcndut * 0.75D0     
 
@@ -491,7 +491,7 @@ subroutine tf_winding_pack()
         ! Void area in conductor for He, not including central channel [m2]
         avwp = acstf * turnstf * vftf
         
-    else if (i_tf_sup_mat == 6 ) then  ! REBCO
+    else if (i_tf_sc_mat == 6 ) then  ! REBCO
         ! Diameter of circular cable space inside conduit [m]
         leni = conductor_width - 2.0D0*thwcndut
         ! Cross-sectional area of conduit jacket per turn [m2]
@@ -518,7 +518,7 @@ subroutine tf_integer_winding_pack()
     !----------------
 
 
-    if(i_tf_sup_mat==6)then
+    if(i_tf_sc_mat==6)then
         write(*,*)'Integer turns in TF coil not yet available for CROCO model (i_tf_turns_integer == 1)'
         stop
     end if
@@ -940,7 +940,7 @@ subroutine tf_coil_area_and_masses()
         ! Superconductor mass [kg]
         ! Includes space allowance for central helium channel, area awphec
         whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
-        *dcond(i_tf_sup_mat)
+        *dcond(i_tf_sc_mat)
 
         ! Copper mass [kg]
         whtconcu = (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) * dcopper
@@ -2598,9 +2598,9 @@ subroutine outtf(outfile, peaktfflag)
         call oheadr(outfile,'TF Coils')
         call ocmmnt(outfile,'Superconducting TF coils')
 
-        call ovarin(outfile,'TF coil superconductor material','(i_tf_sup_mat)',i_tf_sup_mat)
+        call ovarin(outfile,'TF coil superconductor material','(i_tf_sc_mat)',i_tf_sc_mat)
 
-        select case (i_tf_sup_mat)
+        select case (i_tf_sc_mat)
         case (1)
             call ocmmnt(outfile,'  (ITER Nb3Sn critical surface model)')
         case (2)
@@ -2685,7 +2685,7 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Maximum allowed voltage during quench due to insulation (kV)', '(vdalw)', vdalw)
         call ovarre(outfile,'Actual quench voltage (kV)','(vtfskv)',vtfskv, 'OP ')
 
-        select case (i_tf_sup_mat)
+        select case (i_tf_sc_mat)
         case (1,2,3,4,5)
             call ovarre(outfile,'Maximum allowed temp rise during a quench (K)','(tmaxpro)', tmaxpro)
         case(6)
@@ -2736,7 +2736,7 @@ subroutine outtf(outfile, peaktfflag)
         call ovarre(outfile,'Conduit insulation mass per coil (kg)','(whtconin)',whtconin, 'OP ')
         call ovarre(outfile,'Total conductor mass per coil (kg)','(whtcon)',whtcon, 'OP ')
 
-        select case (i_tf_sup_mat)
+        select case (i_tf_sc_mat)
         case (1,2,3,4,5)
             call osubhd(outfile,'Winding Pack Information :')
             call ovarre(outfile,'Diameter of central helium channel in cable','(dhecoil)',dhecoil)
@@ -2895,7 +2895,7 @@ subroutine tfspcall(outfile,iprint)
     ! Cross-sectional area per turn
     aturn = ritfc/(jwptf*n_tf*turnstf)    
 
-    if(i_tf_sup_mat==6)then
+    if(i_tf_sc_mat==6)then
         call supercon_croco(aturn,bmaxtfrp,cpttf,tftmp, &
         iprint, outfile,  &
         jwdgcrt,tmargtf)
@@ -2903,7 +2903,7 @@ subroutine tfspcall(outfile,iprint)
         vtfskv = croco_voltage()/1.0D3  !  TFC Quench voltage in kV
         
     else
-        call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,jwptf,i_tf_sup_mat, &
+        call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,jwptf,i_tf_sc_mat, &
         fhts,strncon_tf,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
         outfile,jwdgcrt,vdump,tmargtf)
         
@@ -3038,7 +3038,7 @@ contains
             icrit = jcritstr * acs * fcond
 
         case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
-            write(*,*)'ERROR: subroutine supercon has been called but i_tf_sup_mat=6'
+            write(*,*)'ERROR: subroutine supercon has been called but i_tf_sc_mat=6'
             stop
         case default  !  Error condition
             idiags(1) = isumat ; call report_error(105)

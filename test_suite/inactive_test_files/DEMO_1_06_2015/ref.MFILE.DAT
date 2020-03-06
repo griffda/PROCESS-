@@ -482,7 +482,7 @@
  Ratio_of_Central_solenoid_height_to_TF_coil_internal_height_____________ (ohhghf)______________________      9.0000E-01    
  Width_of_neutral_beam_duct_where_it_passes_between_the_TF_coils_(m)_____ (beamwd)______________________      5.8000E-01    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (i_tf_sup_mat)____________________              1    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              1    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.9796E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      1.0176E+07 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.8000E+01    
@@ -1527,7 +1527,7 @@
  Ratio_of_Central_solenoid_height_to_TF_coil_internal_height_____________ (ohhghf)______________________      9.0000E-01    
  Width_of_neutral_beam_duct_where_it_passes_between_the_TF_coils_(m)_____ (beamwd)______________________      5.8000E-01    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (i_tf_sup_mat)____________________              1    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              1    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.9796E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      1.0176E+07 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.8000E+01    
@@ -2572,7 +2572,7 @@
  Ratio_of_Central_solenoid_height_to_TF_coil_internal_height_____________ (ohhghf)______________________      9.0000E-01    
  Width_of_neutral_beam_duct_where_it_passes_between_the_TF_coils_(m)_____ (beamwd)______________________      5.8000E-01    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (i_tf_sup_mat)____________________              1    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              1    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.9796E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      1.0176E+07 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.8000E+01    

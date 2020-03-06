@@ -487,7 +487,7 @@
  Lower_outer_plate_bottom,_vertical_(m)__________________________________ (zplbo)_______________________     -6.8962E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0211E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (i_tf_sup_mat)____________________              6    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              6    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      2.7897E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      9.7078E+06    
  Number_of_TF_coils______________________________________________________ (n_tf)________________________      1.6000E+01    
@@ -1547,7 +1547,7 @@ casthi   = 0.06 * casthi /0;0/ ; EITHER; inboard TF coil case plasma side thickn
 casths   = 0.05 * casths /0;0/ ; EITHER; inboard TF coil sidewall case thickness (m)
 cpttf    = 62598.39441806726 * cpttf /7;0e4/ ; TF coil current per turn (A);
 dhecoil  = 0.010 * dhecoil /0;005/ ; diameter of He coil in TF winding (m)
-i_tf_sup_mat = 6 * i_tf_sup_mat /1/ ; switch for superconductor material in TF coils;<UL>
+i_tf_sc_mat = 6 * i_tf_sc_mat /1/ ; switch for superconductor material in TF coils;<UL>
 oacdcp   = 9580100.0 * oacdcp /1;4e7/ ; overall current density in TF coil inboard legs midplane (A/m2)
 ripmax   = 0.6 * ripmax /1;0/ ; maximum allowable toroidal field ripple amplitude
 sigvvall = 9.3e7 * sigvvall /9;3e7/ ; allowable stress from TF quench in vacuum vessel (Pa)

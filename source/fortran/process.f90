@@ -219,7 +219,7 @@ end program process
 !          calculation)
 ! SVN 161: PF coil case area modified for superconducting coils; new sigpfcf input
 ! SVN 162: sigpfcalw added, replacing sigpfalw in PF coil case area calculation
-! SVN 163: Modified i_tf_sup_mat usage; implemented Richard Kemp's corrections to itersc
+! SVN 163: Modified i_tf_sc_mat usage; implemented Richard Kemp's corrections to itersc
 ! SVN 164: Removed cohbof; fcohbof no longer an input parameter
 ! SVN 165: Corrected various power conversion values
 ! SVN 166: Added new switch iprimnloss to control destiny of pnucloss
@@ -258,7 +258,7 @@ end program process
 ! SVN 188: Modified output formatting for reporting of arrays set in input file
 ! SVN 189: Incorporated Fabrizio Franza's suggested revisions to the KIT blanket model
 ! SVN 190: Added Psep/R limit equation (no.56)
-! SVN 191: Re-assigned i_tf_sup_mat=2 to new Bi-2212 high-temperature superconductor model
+! SVN 191: Re-assigned i_tf_sc_mat=2 to new Bi-2212 high-temperature superconductor model
 ! SVN 192: Minor adjustment of multiplier in beta calculations for consistency
 ! SVN 193: Correction to fast neutron flux profiles in VV in KIT blanket model
 ! SVN 194: Added fwareaib, fwareaob to calculations in stfwbs
@@ -342,7 +342,7 @@ end program process
 !          Corrected D-D reaction rates
 ! SVN 243: Minor comment changes; User Guide stellarator wording changes (F Warmer)
 ! SVN 244: Output of floats to mfile now always in scientific 'E' format;
-!          Warning added if i_tf_sup_mat=2 range of validity is not upheld;
+!          Warning added if i_tf_sc_mat=2 range of validity is not upheld;
 !          Warning about pdivt = 0.001 added;
 !          Clarified ishape effects on kappa, triang
 ! SVN 245: Added references to STAR Code formulae
@@ -355,7 +355,7 @@ end program process
 !          Added new description of optimisation algorithm to User Guide
 !          (N.B. LaTeX not working properly due to problem with flow diagram)
 ! SVN 251: Corrected problem with User Guide
-! SVN 252: Added i_tf_sup_mat to mfile
+! SVN 252: Added i_tf_sc_mat to mfile
 ! SVN 253: Added full list of python utilities to repository, plus a new write-up in the
 !          User Guide
 ! SVN 254: Minor changes to write_constraints.py

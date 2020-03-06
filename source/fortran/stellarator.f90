@@ -2384,12 +2384,12 @@ contains
     !  Ensure that the maximal field is smaller than the critical field of
     !  Nb3SN / NbTi
 
-    if (i_tf_sup_mat == 1) then
+    if (i_tf_sc_mat == 1) then
        Bc = Bco
-    else if (i_tf_sup_mat == 3) then
+    else if (i_tf_sc_mat == 3) then
        Bc = Bc2
     else
-       idiags(1) = i_tf_sup_mat ; call report_error(110)
+       idiags(1) = i_tf_sc_mat ; call report_error(110)
     end if
 
     if (maxval(B_max_k) > Bc) then
@@ -2398,7 +2398,7 @@ contains
        B_max_max = maxval(B_max_k)
     end if
 
-    if ( (i_tf_sup_mat == 3).and.(nbticool == 1) ) then
+    if ( (i_tf_sc_mat == 3).and.(nbticool == 1) ) then
        B_max_max = 10.0D0
     end if
 
@@ -2409,13 +2409,13 @@ contains
        b_lin(k) = minval(b_max_k) + dble(k-1)/(n_it-1) * (b_max_max - minval(b_max_k))
     end do
 
-    if (i_tf_sup_mat == 1) then
+    if (i_tf_sc_mat == 1) then
        !  Nb3Sn critical field scaling:
        !  Y. Ilyin et al., Supercond. Sci. Technol. 20 (2007) 186
        !  Normal helium cooling with T=4.2K intrinsically assumed
        f_Q_crit_k(:) = 10.9D0 * sqrt(f_I) * (B_lin(:)**0.25D0) / (Bc - B_lin(:))
 
-    else if (i_tf_sup_mat == 3) then
+    else if (i_tf_sc_mat == 3) then
        ! NbTi critical field scaling:
        ! F. Schauer et al., Mechanical Quench Test, see Documentation
 
@@ -2566,7 +2566,7 @@ contains
     tfthko = tfcth                   ! [m] Thickness of outboard leg in radial direction
     acasetf = (tfcth*tftort)-awpc    ! [m^2] Cross-sectional area of surrounding case
 
-    if (i_tf_sup_mat == 3) tftmp = T_u  ! [K] Helium coolant temperature for NbTi
+    if (i_tf_sc_mat == 3) tftmp = T_u  ! [K] Helium coolant temperature for NbTi
 
     !  Single turn outputs according to PROCESS variables
 
@@ -2664,7 +2664,7 @@ contains
 
     ! [kg] mass of Superconductor
 
-    whtconsc = tfleng*turnstf*acstf*(1.0D0-vftf)*(1.0D0-fcutfsu) * dcond(i_tf_sup_mat)
+    whtconsc = tfleng*turnstf*acstf*(1.0D0-vftf)*(1.0D0-fcutfsu) * dcond(i_tf_sc_mat)
 
     ! [kg] mass of Copper in conductor
 

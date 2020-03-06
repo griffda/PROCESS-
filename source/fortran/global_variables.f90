@@ -2132,7 +2132,7 @@ module tfcoil_variables
   !! awphec : winding pack He coil area (m2)
   real(kind(1.0D0)) :: bcritsc = 24.0D0
   !! bcritsc /24.0/ : upper critical field (T) for Nb3Sn superconductor
-  !!                  at zero temperature and strain (i_tf_sup_mat=4, =bc20m)
+  !!                  at zero temperature and strain (i_tf_sc_mat=4, =bc20m)
   real(kind(1.0D0)) :: bmaxtf = 0.0D0
   !! bmaxtf : mean peak field at TF coil (T)
   real(kind(1.0D0)) :: bmaxtfrp = 0.0D0
@@ -2188,7 +2188,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: dcase = 8000.0D0
   !! dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)), dimension(6) :: dcond = 9000.0D0
-  !! dcond(6) /9000.0/ : density of superconductor type given by i_tf_sup_mat/isumatoh/isumatpf (kg/m3)
+  !! dcond(6) /9000.0/ : density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
   real(kind(1.0D0)) :: dcondins = 1800.0D0
   !! dcondins /1800.0/ : density of conduit + ground-wall insulation (kg/m3)
@@ -2230,7 +2230,7 @@ module tfcoil_variables
   !!   0 : non-integer turns
   !!   1 : integer turns
 
-  integer :: i_tf_sup_mat = 1
+  integer :: i_tf_sc_mat = 1
   !! Switch for superconductor material in TF coils:<UL>
   !!   1 : ITER Nb3Sn critical surface model with standard
   !!     : ITER parameters;
@@ -2396,7 +2396,7 @@ module tfcoil_variables
   !!                    (used in Nb3Sn critical surface model, isumatph=1, 4 or 5)
   real(kind(1.0D0)) :: strncon_tf = -0.005D0
   !! strncon_tf /-0.005/ : strain in TF superconductor material
-  !!                    (used in Nb3Sn critical surface model, i_tf_sup_mat=1, 4 or 5)
+  !!                    (used in Nb3Sn critical surface model, i_tf_sc_mat=1, 4 or 5)
 
   ! Issue #522: Quench models
   character(len=12) :: quench_model = 'exponential'
@@ -2414,7 +2414,7 @@ module tfcoil_variables
   !! taucq : allowable TF quench time (s)
   real(kind(1.0D0)) :: tcritsc = 16.0D0
   !! tcritsc /16.0/ : critical temperature (K) for superconductor
-  !!                  at zero field and strain (i_tf_sup_mat=4, =tc0m)
+  !!                  at zero field and strain (i_tf_sc_mat=4, =tc0m)
   real(kind(1.0D0)) :: tdmptf = 10.0D0
   !! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s)
   !!                 (iteration variable 56)

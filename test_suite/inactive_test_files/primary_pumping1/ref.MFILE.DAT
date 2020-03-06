@@ -487,7 +487,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_____________     -6.922E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_____________      2.021E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (i_tf_sup_mat)__________              1    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)__________              1    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_____________      2.698E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)____________      9.421E+06 ITV
  Number_of_TF_coils______________________________________________________ (tfno)______________      1.800E+01    

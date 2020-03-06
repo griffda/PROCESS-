@@ -203,7 +203,7 @@ def main(mfile_data, output_file, scan=-1):
             pf_info.append((mfile_data.data["ric(%s)" % str(i).zfill(2)].
                            get_scan(scan), "PF %s" % str(i)))
     tburn = mfile_data.data["tburn"].get_scan(scan)/3600.0
-#    tftype = proc_dict.DICT_TF_TYPE[mfile_data.data["i_tf_sup_mat"].get_scan(scan)]
+#    tftype = proc_dict.DICT_TF_TYPE[mfile_data.data["i_tf_sc_mat"].get_scan(scan)]
     vssoft = mfile_data.data["vsres"].get_scan(scan) + \
              mfile_data.data["vsind"].get_scan(scan)
 

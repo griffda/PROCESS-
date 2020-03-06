@@ -1159,7 +1159,7 @@ so need not be initialised.
 -   avwp : winding pack void (He coolant) area (m2)
 -   awphec : winding pack He coil area (m2)
 -   bcritsc /24.0/ : upper critical field (T) for Nb3Sn superconductor
-    at zero temperature and strain (i_tf_sup_mat=4, =bc20m)
+    at zero temperature and strain (i_tf_sc_mat=4, =bc20m)
 -   bmaxtf : mean peak field at TF coil (T)
 -   bmaxtfrp : peak field at TF conductor with ripple (T)
 -   casestr : case strain
@@ -1186,7 +1186,7 @@ so need not be initialised.
     stellarators and i\_tf\_turns\_integer=1) (constraint equation 77)
 -   dcase /8000.0/ : density of coil case (kg/m3)
 -   dcond(6) /9000.0/ : density of superconductor type given by
-    i_tf_sup_mat/isumatoh/isumatpf (kg/m3)
+    i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
 -   dcondins /1800.0/ : density of conduit + ground-wall insulation
     (kg/m3)
 -   dcopper /8900.0/ : density of copper (kg/m3)
@@ -1219,7 +1219,7 @@ so need not be initialised.
     turns
     -   = 0 non-integer turns;
     -   = 1 integer turns
--   i_tf_sup_mat /1/ : switch for superconductor material in TF coils:
+-   i_tf_sc_mat /1/ : switch for superconductor material in TF coils:
     -   = 1 ITER Nb3Sn critical surface model with standard ITER
         parameters;
     -   = 2 Bi-2212 high temperature superconductor (range of validity T
@@ -1271,7 +1271,7 @@ so need not be initialised.
 -   strncon\_pf /-0.005/ : strain in PF superconductor material (used in
     Nb3Sn critical surface model, isumatph=1, 4 or 5)
 -   strncon\_tf /-0.005/ : strain in TF superconductor material (used in
-    Nb3Sn critical surface model, i_tf_sup_mat=1, 4 or 5)
+    Nb3Sn critical surface model, i_tf_sc_mat=1, 4 or 5)
 -   strtf1 : Constrained stress in TF conductor conduit (Pa)
 -   strtf2 : Constrained stress in TF coil case (Pa)
 -   quench\_model /exponential/ : switch for TF coil quench model, Only
@@ -1284,7 +1284,7 @@ so need not be initialised.
 -   time1 : Time at which TF quench is detected (s)
 -   taucq : allowable TF quench time (s)
 -   tcritsc /16.0/ : critical temperature (K) for superconductor at zero
-    field and strain (i_tf_sup_mat=4, =tc0m)
+    field and strain (i_tf_sc_mat=4, =tc0m)
 -   tdmptf /10.0/ : fast discharge time for TF coil in event of quench
     (s) (iteration variable 56) For REBCO model, meaning depends on
     quench\_model:

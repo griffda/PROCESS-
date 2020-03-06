@@ -622,7 +622,7 @@ tftmp = 4.75
 vftf = 0.3
 
 * Conductor type switch (WST Nb3Sn)
-i_tf_sup_mat = 5
+i_tf_sc_mat = 5
 
 * Number of pancakes in winding pack
 n_pancake = 20

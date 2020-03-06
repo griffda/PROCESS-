@@ -34,7 +34,7 @@ OBS_VARS = {
     "eywp":"eyoung_winding",
     "eyins":"eyoung_ins",
     "eystl":"eyoung_steel",
-    "isumattf":"i_tf_sup_mat",
+    "isumattf":"i_tf_sc_mat",
     "turnstf":"n_tf_turn",
     "awptf":"a_tf_wp",
     "thkcas":"dr_tf_case_in",

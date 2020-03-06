@@ -1663,27 +1663,27 @@ The following options are available within the superconducting TF coil model
 \subsubsection{Superconducting materials}
 \label{sec:superconductors}
 
-Switch \texttt{i\_tf\_sup\_mat} specifies which superconducting material is to be
+Switch \texttt{i\_tf\_sc\_mat} specifies which superconducting material is to be
 used:
 \begin{description}
-\item [\texttt{i\_tf\_sup\_mat = 1} :] Nb$_3$Sn superconductor, ITER critical surface
+\item [\texttt{i\_tf\_sc\_mat = 1} :] Nb$_3$Sn superconductor, ITER critical surface
   parameterization~\cite{iter_nb3sn}, standard critical values
-\item [\texttt{i\_tf\_sup\_mat = 2} :] Bi-2212 high temperature superconductor %!%!%! ref
-\item [\texttt{i\_tf\_sup\_mat = 3} :] NbTi superconductor
-\item [\texttt{i\_tf\_sup\_mat = 4} :] Nb$_3$Sn superconductor, ITER critical surface
+\item [\texttt{i\_tf\_sc\_mat = 2} :] Bi-2212 high temperature superconductor %!%!%! ref
+\item [\texttt{i\_tf\_sc\_mat = 3} :] NbTi superconductor
+\item [\texttt{i\_tf\_sc\_mat = 4} :] Nb$_3$Sn superconductor, ITER critical surface
   parameterization~\cite{iter_nb3sn}, user-defined critical parameters
 \end{description}
 The fraction of copper present in the superconducting filaments is given by
 the value of variable \texttt{fcutfsu} (iteration variable no.\ 59).
 
-For \texttt{i\_tf\_sup\_mat = 2}, a technology adjustment factor \texttt{fhts} may be
+For \texttt{i\_tf\_sc\_mat = 2}, a technology adjustment factor \texttt{fhts} may be
 used to modify the critical current density fit for the Bi-2212
 superconductor, to describe the level of technology assumed (i.e.\ to account
 for stress, fatigue, radiation, AC losses, joints or manufacturing variations).
 The default value for \texttt{fhts} is 0.5 (a value of 1.0 would be very
 optimistic).
 
-For \texttt{i\_tf\_sup\_mat = 4}, important superconductor properties may be input by
+For \texttt{i\_tf\_sc\_mat = 4}, important superconductor properties may be input by
 the user as follows: the upper critical field at zero temperature and strain
 is set using input parameter \texttt{bcritsc}, and the critical temperature at
 zero field and strain is set using input parameter \texttt{tcritsc}.
@@ -1831,7 +1831,7 @@ variable \texttt{pfclres}.
 
 If \texttt{ipfres = 0}, switch \texttt{isumatpf} specifies which
 superconducting material is to be used for the PF coils. The values for
-\texttt{isumatpf} are used in the same way as switch \texttt{i\_tf\_sup\_mat} is for
+\texttt{isumatpf} are used in the same way as switch \texttt{i\_tf\_sc\_mat} is for
 the TF coils (see Section~\ref{sec:superconductors}).
 
 The fraction of copper present in the superconducting filaments is given by
@@ -1867,7 +1867,7 @@ should be set to zero. No PF coils should be located at positions defined by
 The central solenoid can be either resistive or superconducting (controlled
 via switch \texttt{ipfres} as for the other PF coils), and if superconducting,
 switch \texttt{isumatoh} determines the superconducting material to use ---
-its value is used like \texttt{i\_tf\_sup\_mat} and \texttt{isumatpf}. The fraction
+its value is used like \texttt{i\_tf\_sc\_mat} and \texttt{isumatpf}. The fraction
 of copper present in the superconducting filaments is given by the value of
 variable \texttt{fcuohsu}.
 
@@ -2647,8 +2647,8 @@ The stellarator coils are assumed to be superconducting --- no resistive coil
 calculations are performed.  The critical field at the superconductor is
 calculated using circular approximations for the coils in the inductance and
 field calculations, and the limit is enforced automatically. Available
-superconductors are Nb$_3$Sn (\texttt{i\_tf\_sup\_mat = 1}) and NbTi
-(\texttt{i\_tf\_sup\_mat = 3}).
+superconductors are Nb$_3$Sn (\texttt{i\_tf\_sc\_mat = 1}) and NbTi
+(\texttt{i\_tf\_sc\_mat = 3}).
 
 The winding pack cross-section is rectangular for the stellarator coils,
 rather than the complicated two-step cross-section assumed for tokamaks. The

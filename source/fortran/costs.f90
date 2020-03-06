@@ -1292,7 +1292,7 @@ contains
 
        !  Superconductor ($/m)
 
-       costtfsc = ucsc(i_tf_sup_mat) * whtconsc / (tfleng*turnstf)
+       costtfsc = ucsc(i_tf_sc_mat) * whtconsc / (tfleng*turnstf)
 
        !  Copper ($/m)
 
