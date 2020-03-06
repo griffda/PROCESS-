@@ -101,7 +101,7 @@ install:
   script:
     - export LOGNAME=root
     - ls -lah
-    - ./install.sh
+    - sudo -u $USERNAME bash install.sh
 
 #-----------------
 #  Testing

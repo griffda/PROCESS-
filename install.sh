@@ -20,28 +20,36 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
     if [ "$MY_OS" == "ubuntu" ]; then
         version_required="18.0"
         if version_gt $MY_OS_VERSION $version_required; then
+            export DEBIAN_FRONTEND noninteractive
             apt-get update && apt-get -y install sudo
             sudo bash scripts/install_ubuntu_dependencies.sh
             sudo pip3 install -r requirements.txt
 
             # Setting python to python 3
-            echo "- Aliasing python to python3 in bashrc"
-            echo 'alias python="python3"' >> ~/.bashrc
+            echo "- Aliasing python to python3 in bashrc if doesn't already exist."
+            grep -qxF 'alias python="python3"' .bashrc || \
+                echo 'alias python="python3"' >> .bashrc
 
             # Modify PATH so "ford" command can be found in cmake file
             echo "- Adding ~/.local/bin to PATH"
             export PATH=$PATH:~/.local/bin
-            echo 'export PATH=$PATH:~/.local/bin' >> ~/.bashrc
+            grep -qxF 'export PATH=$PATH:~/.local/bin' .bashrc || \
+                echo 'export PATH=$PATH:~/.local/bin' >> .bashrc
+
             echo "- Setting language to UTF8"
             export LANG=C.UTF-8
-            echo 'export LANG=C.UTF-8' >> ~/.bashrc
+            grep -qxF 'export LANG=C.UTF-8' .bashrc || echo 'export LANG=C.UTF-8' >> .bashrc
 
             # Set PYTHONPATH to utilities
             declare SRC_PATH = $(pwd)
-            echo "export PYTHONPATH=$PYTHONPATH:${SRC_PATH}/utilities' >> ~/.bashrc"
+            grep -qxF "export PYTHONPATH=$PYTHONPATH:${SRC_PATH}/utilities .bashrc" || \
+                echo "export PYTHONPATH=$PYTHONPATH:${SRC_PATH}/utilities >> .bashrc"
 
             ./scripts/clone_script.sh
             export GTEST='/usr/src/gtest/'
+            grep -qxF 'export GTEST="/usr/src/gtest/"' .bashrc || \
+                echo 'export GTEST="/usr/src/gtest/"' .bashrc >> .bashrc
+
             cmake -H. -Bbuild
             cmake --build build
             cmake --build build --target dicts
