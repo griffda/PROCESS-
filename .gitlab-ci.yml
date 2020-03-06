@@ -95,6 +95,13 @@ make_tfdoc:
   script:
     - cmake --build build --target tfdoc
 
+install:
+  stage: build
+  image: ubuntu
+  script:
+    - ls -lah
+    - ./install.sh
+
 #-----------------
 #  Testing
 #-----------------
