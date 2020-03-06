@@ -20,12 +20,13 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
     if [ "$MY_OS" == "ubuntu" ]; then
         version_required="18.0"
         if version_gt $MY_OS_VERSION $version_required; then
-           sudo bash scripts/install_ubuntu_dependencies.sh
-           sudo pip3 install -r requirements.txt
+            apt-get -y install sudo
+            sudo bash scripts/install_ubuntu_dependencies.sh
+            sudo pip3 install -r requirements.txt
 
-           # Setting python to python 3
-           echo "- Aliasing python to python3 in bashrc"
-           echo 'alias python="python3"' >> ~/.bashrc
+            # Setting python to python 3
+            echo "- Aliasing python to python3 in bashrc"
+            echo 'alias python="python3"' >> ~/.bashrc
 
             # Modify PATH so "ford" command can be found in cmake file
             echo "- Adding ~/.local/bin to PATH"

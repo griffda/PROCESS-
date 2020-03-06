@@ -99,6 +99,7 @@ install:
   stage: build
   image: ubuntu
   script:
+    - export LOGNAME=root
     - ls -lah
     - ./install.sh
 
