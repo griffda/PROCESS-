@@ -9,9 +9,10 @@
 
 echo "Installing PROCESS Ubuntu dependencies"
 
-export DEBIAN_FRONTEND=noninteractive
+declare DEBIAN_FRONTEND=noninteractive
 sudo apt-get update -y
 sudo apt-get update
+ln -fs /usr/share/zoneinfo/GMT /etc/localtime
 
 sudo apt-get install -y --fix-missing\
     gfortran-4.8 \
