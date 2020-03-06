@@ -101,7 +101,10 @@ install:
   script:
     - export LOGNAME=root
     - ls -lah
-    - sudo -u $USERNAME bash install.sh
+    - apt-get update
+    - apt-get -y install sudo
+    - sudo bash install.sh
+    - process --help
 
 #-----------------
 #  Testing

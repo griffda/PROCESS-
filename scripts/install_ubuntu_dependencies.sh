@@ -9,7 +9,7 @@
 
 echo "Installing PROCESS Ubuntu dependencies"
 
-export DEBIAN_FRONTEND noninteractive
+export DEBIAN_FRONTEND=noninteractive
 sudo apt-get update -y
 sudo apt-get update
 
@@ -39,4 +39,3 @@ sudo apt-get install -y --fix-missing\
 # compile googletest
 cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && \
     sudo rm -rf lib && sudo mkdir lib && sudo cp *.a lib
-echo 'export GTEST="/usr/src/gtest/"' >> ~/.bashrc
