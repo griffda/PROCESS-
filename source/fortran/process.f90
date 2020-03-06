@@ -54,8 +54,8 @@ program process
   integer :: ifail
   character(len = 130) :: line
   character(len = 10)  :: fmtAppend
-  character(len = 50) :: inFile
-  character(len = 50) :: outFile
+  character(len = 200) :: inFile
+  character(len = 200) :: outFile
   integer :: iost
   logical :: inExist
   integer :: nargs

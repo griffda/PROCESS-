@@ -72,3 +72,4 @@ test_suite/FZMIN_TEST.DAT
 test_suite/REBCO_JC.DAT
 test_suite/quench_data.DAT
 test_suite/OPT.DAT
+*.egg-info
