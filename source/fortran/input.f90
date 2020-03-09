@@ -2861,7 +2861,7 @@ contains
 
        case ('istell')
           call parse_int_variable('istell', istell, 0, 5, &
-               'stellarator machine specification (1=Helias5, 2=Helias4, 3=Helias3)')
+               'Stellarator machine specification (1=Helias5, 2=Helias4, 3=Helias3)')
        case ('bmn')
           call parse_real_variable('bmn', bmn, 1.0D-4, 1.0D-2, &
                'Relative radial field perturbation')
