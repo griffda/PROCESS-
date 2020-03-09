@@ -4,6 +4,10 @@ Below is a list of publications using PROCESS by year:
 
 ## 2020
 
+[Comparison of the PROCESS systems code with the SONIC divertor code](https://ieeexplore.ieee.org/abstract/document/8998560)   
+J. Morris, N. Asakura, Y. Homma, K. Hoshino, M. Kovari   
+IEEE Transactions on Plasma Science (Early Access)   
+
 ["PROCESS": Systems studies of spherical tokamaks](https://www.sciencedirect.com/science/article/pii/S0920379620300788)  
 S.I. Muldrew, H. Lux, G. Cunningham, T.C. Hender, S. Kahn, P.J. Knight, B. Patel, G.M. Voss, H.R. Wilson  
 Fusion Engineering and Design 154 (2020) 111530  
