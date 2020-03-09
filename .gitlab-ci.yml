@@ -95,16 +95,18 @@ make_tfdoc:
   script:
     - cmake --build build --target tfdoc
 
-install:
-  stage: build
-  image: ubuntu
-  script:
-    - export LOGNAME=root
-    - ls -lah
-    - apt-get update
-    - apt-get -y install sudo
-    - sudo bash install.sh
-    - process --help
+# install:
+#   stage: build
+#   only:
+#     - develop
+#   image: ubuntu
+#   script:
+#     - export LOGNAME=root
+#     - ls -lah
+#     - apt-get update
+#     - apt-get -y install sudo
+#     - sudo bash install.sh
+#     - process --help
 
 #-----------------
 #  Testing

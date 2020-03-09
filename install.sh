@@ -25,29 +25,32 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
 
             # Setting python to python 3
             echo "- Aliasing python to python3 in bashrc if doesn't already exist."
-            grep -qxF 'alias python="python3"' .bashrc || \
-                echo 'alias python="python3"' >> .bashrc
+            grep -qxF 'alias python="python3"' ~/.bashrc || \
+                echo 'alias python="python3"' >> ~/.bashrc
 
             # Modify PATH so "ford" command can be found in cmake file
             echo "- Adding ~/.local/bin to PATH"
             export PATH=$PATH:~/.local/bin
-            grep -qxF 'export PATH=$PATH:~/.local/bin' .bashrc || \
-                echo 'export PATH=$PATH:~/.local/bin' >> .bashrc
+            grep -qxF 'export PATH=$PATH:~/.local/bin' ~/.bashrc || \
+                echo 'export PATH=$PATH:~/.local/bin' >> ~/.bashrc
 
             echo "- Setting language to UTF8"
             export LANG=C.UTF-8
-            grep -qxF 'export LANG=C.UTF-8' .bashrc || echo 'export LANG=C.UTF-8' >> .bashrc
+            grep -qxF 'export LANG=C.UTF-8' ~/.bashrc || \
+                echo 'export LANG=C.UTF-8' >> ~/.bashrc
+
+            git clone https://git.ccfe.ac.uk/process/process.git
+            export GTEST='/usr/src/gtest/'
+            grep -qxF 'export GTEST="/usr/src/gtest/"' ~/.bashrc || \
+                echo 'export GTEST="/usr/src/gtest/"' ~/.bashrc >> ~/.bashrc
 
             # Set PYTHONPATH to utilities
-            declare SRC_PATH = $(pwd)
-            grep -qxF "export PYTHONPATH=$PYTHONPATH:${SRC_PATH}/utilities .bashrc" || \
-                echo "export PYTHONPATH=$PYTHONPATH:${SRC_PATH}/utilities >> .bashrc"
+            echo "- Setting Pythonpath"
+            export SRC_PATH=$(pwd)
+            # grep -qxF "export PYTHONPATH=$PYTHONPATH:$SRC_PATH/utilities ~/.bashrc" || \
+                # echo "export PYTHONPATH=$PYTHONPATH:$SRC_PATH/utilities >> ~/.bashrc"
 
-            ./scripts/clone_script.sh
-            export GTEST='/usr/src/gtest/'
-            grep -qxF 'export GTEST="/usr/src/gtest/"' .bashrc || \
-                echo 'export GTEST="/usr/src/gtest/"' .bashrc >> .bashrc
-
+            cd process
             cmake -H. -Bbuild
             cmake --build build
             cmake --build build --target dicts
