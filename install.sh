@@ -21,7 +21,7 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
         version_required="18.0"
         if version_gt $MY_OS_VERSION $version_required; then
             sudo bash scripts/install_ubuntu_dependencies.sh
-            sudo pip3 install -r requirements.txt
+            sudo pip3 install -r requirements.txt --user
 
             # Setting python to python 3
             echo "- Aliasing python to python3 in bashrc if doesn't already exist."
@@ -39,22 +39,22 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
             grep -qxF 'export LANG=C.UTF-8' ~/.bashrc || \
                 echo 'export LANG=C.UTF-8' >> ~/.bashrc
 
-            git clone https://git.ccfe.ac.uk/process/process.git
             export GTEST='/usr/src/gtest/'
             grep -qxF 'export GTEST="/usr/src/gtest/"' ~/.bashrc || \
-                echo 'export GTEST="/usr/src/gtest/"' ~/.bashrc >> ~/.bashrc
+                echo 'export GTEST="/usr/src/gtest/"' >> ~/.bashrc
+
+            cd process
 
             # Set PYTHONPATH to utilities
             echo "- Setting Pythonpath"
             export SRC_PATH=$(pwd)
-            # grep -qxF "export PYTHONPATH=$PYTHONPATH:$SRC_PATH/utilities ~/.bashrc" || \
-                # echo "export PYTHONPATH=$PYTHONPATH:$SRC_PATH/utilities >> ~/.bashrc"
-
-            cd process
+            grep -qxF "export PYTHONPATH=$PYTHONPATH:$SRC_PATH/utilities" ~/.bashrc || \
+                echo "export PYTHONPATH=$PYTHONPATH:$SRC_PATH/utilities" >> ~/.bashrc
+            
             cmake -H. -Bbuild
             cmake --build build
             cmake --build build --target dicts
-            pip3 install -e .
+            sudo pip3 install -e .
 
         else
             echo "ERROR :: Ubuntu version must be > 18.04"

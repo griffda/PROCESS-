@@ -6,3 +6,4 @@ scipy>=0.19.1
 matplotlib>=2.1.1
 pathlib>=1.0.1
 pillow>=5.1.0
+toposort>=0.8
