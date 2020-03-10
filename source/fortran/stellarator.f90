@@ -587,7 +587,7 @@ contains
          ddwi + shldith + blnkith + fwith + scrapli + rminor
 
 
-    ! Bc stellarators cannot scale rmninor reasonably well an additional constraint equation is required,
+    ! Bc stellarators cannot scale rminor reasonably well an additional constraint equation is required,
     ! that ensures that there is enough space between coils and plasma.
     required_radial_space = (tfcth/2.0D0 + gapds + ddwi + shldith + blnkith + fwith + scrapli)
 
@@ -757,7 +757,7 @@ contains
     btot = sqrt(bt**2 + bp**2)
 
     !  Set beta as a consequence:
-    !  This replaces constraint equation 1 as it is just an equaliity.
+    !  This replaces constraint equation 1 as it is just an equality.
     beta = (betaft + betanb + 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/btot**2)
 
 
@@ -1954,10 +1954,10 @@ contains
 
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    ! Intercoil suppeort structure calculation:
+    ! Intercoil support structure calculation:
     ! Calculate the intercoil bolted plates structure from the coil surface
     ! which needs to be precalculated (or calculated in PROCESS but this not done here)
-    ! The coil width is substracted from that:
+    ! The coil width is subtracted from that:
     !total_coil_width = b + 2* d_ic + 2* case_thickness_constant
     !total_coil_thickness = h + 2* d_ic + 2* case_thickness_constant
     !
@@ -1966,7 +1966,7 @@ contains
 
 
     ! This 0.18 m is an effective thickness which is scaled with empirial 1.5 law. 5.6 T is reference point of Helias
-    ! The thickness 0.18 was obtained as a measured value from Schauer, F. and Bykov, V. design of Helias 5-B. (nucl Fus. 2013)
+    ! The thickness 0.18 was obtained as a measured value from Schauer, F. and Bykov, V. design of Helias 5-B. (Nucl Fus. 2013)
     aintmass = 0.18D0 *f_B**2 * intercoil_surface * denstl 
     
     clgsmass = 0.2D0*aintmass    ! Very simple approximation for the gravity support.
