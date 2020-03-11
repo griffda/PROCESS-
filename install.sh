@@ -21,7 +21,7 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
         version_required="18.0"
         if version_gt $MY_OS_VERSION $version_required; then
             sudo bash scripts/install_ubuntu_dependencies.sh
-            sudo pip3 install -r requirements.txt --user
+            sudo pip3 install -r requirements.txt
 
             # Setting python to python 3
             echo "- Aliasing python to python3 in bashrc if doesn't already exist."
@@ -43,7 +43,11 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
             grep -qxF 'export GTEST="/usr/src/gtest/"' ~/.bashrc || \
                 echo 'export GTEST="/usr/src/gtest/"' >> ~/.bashrc
 
-            cd process
+            echo "- Linking gfortran to /usr/bin/gfortran"
+            alias gfortran='/usr/bin/gfortran-4.8'
+            grep -qxF "alias gfortran='/usr/bin/gfortran-4.8'" ~/.bashrc || \
+                echo "alias gfortran='/usr/bin/gfortran-4.8'" >> ~/.bashrc
+            sudo ln -sf /usr/bin/gfortran-4.8 /usr/bin/gfortran
 
             # Set PYTHONPATH to utilities
             echo "- Setting Pythonpath"
