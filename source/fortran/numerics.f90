@@ -286,7 +286,7 @@ module numerics
        !!  <LI> (82) toroidalgap >  tftort constraint (itv  171 ftoroidalgap)</UL>
        'available_space > required_space ',   &
        !!  <LI> (83) Radial build consistency for stellarators (itv 172 f_avspace)
-       'beta < betalim_lower             '    &
+       'beta > betalim_lower             '    &
        !!  <LI> (84) Lower limit for beta (itv 173 fbetatry_lower)
        /)
        ! Please note: All strings between '...' above must be exactly 33 chars long
