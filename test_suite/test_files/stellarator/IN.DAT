@@ -9,17 +9,26 @@
 
 *---------------Constraint Equations---------------*
 
-icc = 1                 *Beta (consistency equation)
+neqns = 3               *number of equalities
+
+
+*--------------- equaltities
 icc = 2                 *Global power balance (consistency equation)
 icc = 11                *Radial build (consistency equation)
 icc = 16                *Net electric power lower limit
 
+
+*-------------- inequaltities
+icc = 84                *Lower beta limit
+icc = 24                *Upper beta limit
+
+
+
 *---------------Iteration Variables----------------*
 
-ixc = 5                 *beta
-beta = 0.044513         *Total plasma beta
-boundl(5) = 0.02
-boundu(5) = 0.09
+ixc = 4                 *te
+boundl(4) = 4.
+boundu(4) = 25.
 
 ixc = 6                 *dene
 dene = 2.0914E20        *Electron density (/m3)
@@ -42,6 +51,7 @@ boundl(29) = 5.0
 ixc = 50                * itv_fiooic
 boundu(50) = 0.9
 boundl(50) = 0.001
+
 
 *----------------Physics Variables-----------------*
 
@@ -91,6 +101,8 @@ vgap     = 0.0          *Vertical gap between x-point and divertor (m)
 *---------------Constraint Variables---------------*
 
 pnetelin = 1000         *Required net electric power (MW)
+betalim = 0.05          *upper beta limit
+betalim_lower = 0.01    *lower beta limit
 
 *-------------Current Drive Variables--------------*
 

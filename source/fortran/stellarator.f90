@@ -757,6 +757,11 @@ contains
     !  Total field
     btot = sqrt(bt**2 + bp**2)
 
+    
+    if ( ANY( ixc == 5 ) ) then  ! Check if beta (iteration variable 5) is an iteration variable
+      call report_error(245)
+    end if
+
     !  Set beta as a consequence:
     !  This replaces constraint equation 1 as it is just an equality.
     beta = (betaft + betanb + 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/btot**2)

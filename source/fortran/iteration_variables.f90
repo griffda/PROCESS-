@@ -771,21 +771,10 @@ subroutine init_itv_1
 
    !---------------------------------
 
-   subroutine init_itv_43
-      !! <LI> (43) falpha
-      lablxc(43) = 'falpha         '
-      boundl(43) = 0.10D0
-      boundu(43) = 0.99D0
-   end subroutine init_itv_43
-
+   !! <LI> (43) NOT USED
    real(kind(1.d0)) function itv_43()
-      itv_43 = falpha
-   end function
-
-   subroutine set_itv_43(ratio)
-      real(kind(1.d0)) :: ratio
-      falpha = ratio
-   end subroutine set_itv_43
+      write(*,*) 'Iteration variable 43 is no longer in use.'   
+   end function itv_43
 
    !---------------------------------
 
@@ -3126,7 +3115,7 @@ subroutine loadxc
          case (40);  xcm(i) = itv_40()
          case (41);  xcm(i) = itv_41()
          case (42);  xcm(i) = itv_42()
-         case (43);  xcm(i) = itv_43()
+         case (43);  
          case (44);  xcm(i) = itv_44()
          case (45);  xcm(i) = itv_45()
          case (46);  xcm(i) = itv_46()
