@@ -1289,18 +1289,19 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function total_mag_field() &
-     bind (C, name="c_total_mag_field")
-     !! Calculates the total magnetic field
-     !! author: J. Morris, CCFE, Culham Science Centre
+    bind (C, name="c_total_mag_field")
+    !! author: J. Morris (UKAEA)
+    !! 
+    !! Calculates the total magnetic field
      
-     ! Module variables
-     use physics_variables, only : bt, bp
+    ! Module variables
+    use physics_variables, only : bt, bp
 
-     ! Return value
-     real(kind(1.0D0)) :: total_mag_field
+    ! Return value
+    real(kind(1.0D0)) :: total_mag_field
 
-     ! Volume measure of plasma elongation (used by IPB scalings)
-     total_mag_field = sqrt(bt**2 + bp**2)
+    total_mag_field = sqrt(bt**2 + bp**2)
+    !! \begin{equation} B_{tot} = \sqrt{B_T^2 + B_p^2} \end{equation}
 
   end function total_mag_field
 
@@ -1308,9 +1309,9 @@ contains
 
   function beta_poloidal() &
     bind (C, name="c_beta_poloidal")
-    !! Calculates total poloidal beta
+    !! author: J. Morris (UKAEA)
     !!
-    !! **author: J. Morris** (UKAEA)
+    !! Calculates total poloidal beta
      
     ! Module variables
     use physics_variables, only : btot, bp, beta
@@ -1328,29 +1329,29 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function res_diff_time() &
-     bind (C, name="c_res_diff_time")
-     !! Calculates resistive diffusion time
-     !!
-     !! **author: J. Morris** (UKAEA)
+    bind (C, name="c_res_diff_time")
+    !! author: J. Morris (UKAEA)
+    !!
+    !! Calculates resistive diffusion time
      
-     ! Module variables
-     use physics_variables, only : rmajor, rplas, kappa95
-     use constants, only : rmu0
+    ! Module variables
+    use physics_variables, only : rmajor, rplas, kappa95
+    use constants, only : rmu0
 
-     ! Return value
-     real(kind(1.0D0)) :: res_diff_time
+    ! Return value
+    real(kind(1.0D0)) :: res_diff_time
 
-     res_diff_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
-     !! Resistive diffusion time equals the current penetration time which is approximated by:
-     !! \begin{equation} t_{\text{res-diff}} \sim 
-     !! \frac{2\mu_0.R_0}{\rho_{\text{plasma}}\kappa_{95}}\end{equation}
-     !!
-     !! * \( \mu_0 \) -- permittivity of free space [H/m]
-     !! * \( R_0 \) -- plasma major radius [m]
-     !! - \( \rho_{\text{plasma}} \) -- plasma resistivity [Ohms]
-     !! - \( \kappa_{95} \) -- plasma elongation at 95% flux surface
-     !!
-     !! #TODO Reference needed
+    res_diff_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
+    !! Resistive diffusion time equals the current penetration time which is approximated by:
+    !! \begin{equation} t_{\text{res-diff}} \sim 
+    !! \frac{2\mu_0.R_0}{\rho_{\text{plasma}}\kappa_{95}}\end{equation}
+    !!
+    !! * \( \mu_0 \) -- permittivity of free space [H/m]
+    !! * \( R_0 \) -- plasma major radius [m]
+    !! - \( \rho_{\text{plasma}} \) -- plasma resistivity [Ohms]
+    !! - \( \kappa_{95} \) -- plasma elongation at 95% flux surface
+    !!
+    !! #TODO Reference needed
 
   end function res_diff_time
 
