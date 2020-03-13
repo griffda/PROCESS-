@@ -421,7 +421,7 @@
       matfrc(5,5) = avwp / a1
       matfrc(5,7) = acond / a1 * fcutfsu
 
-      if (isumattf /= 3) then  !  treat generic superconductors like Nb3Sn
+      if (i_tf_sc_mat /= 3) then  !  treat generic superconductors like Nb3Sn
          matfrc(5,12) = acond / a1 * (1.0D0 - fcutfsu)
       else
          matfrc(5,13) = acond / a1 * (1.0D0 - fcutfsu)
@@ -553,7 +553,7 @@
        matfrc(23,5) = avwp / a1
        matfrc(23,7) = acond / a1 * fcutfsu
 
-       if (isumattf /= 3) then  !  treat generic superconductors like Nb3Sn
+       if (i_tf_sc_mat /= 3) then  !  treat generic superconductors like Nb3Sn
           matfrc(23,12) = acond / a1 * (1.0D0 - fcutfsu)
        else
           matfrc(23,13) = acond / a1 * (1.0D0 - fcutfsu)

@@ -11,8 +11,8 @@ module current_drive_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! Import modules !
-  ! !!!!!!!!!!!!!!!!!
+  ! Import modules
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use iso_c_binding
 
   use constraint_variables
@@ -57,15 +57,15 @@ contains
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: dene20, effnbss, effrfss, gamnb, gamrf, power1
-    real(kind(1.0D0)) :: effcdfix, effrfssfix, effnbssfix, pinjwp1
-    real(kind(1.0D0)) :: pnbitotfix, nbshinemwfix, porbitlossmwfix, cnbeamfix
-    real(kind(1.0D0)) :: pinjimw1, pinjemw1, pinjimwfix, pinjemwfix, pinjmw1, pinjmwfix 
-    real(kind(1.0D0)) :: auxiliary_cdfix, faccdfix, gamcdfix
-    real(kind(1.0D0)) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
-    real(kind(1.0D0)) :: dens_at_rho, te_at_rho
+    real(dp) :: dene20, effnbss, effrfss, gamnb, gamrf, power1
+    real(dp) :: effcdfix, effrfssfix, effnbssfix, pinjwp1
+    real(dp) :: pnbitotfix, nbshinemwfix, porbitlossmwfix, cnbeamfix
+    real(dp) :: pinjimw1, pinjemw1, pinjimwfix, pinjemwfix, pinjmw1, pinjmwfix 
+    real(dp) :: auxiliary_cdfix, faccdfix, gamcdfix
+    real(dp) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
+    real(dp) :: dens_at_rho, te_at_rho
     logical :: Temperature_capped
-    real(kind(1.0D0)) :: auxiliary_cd
+    real(dp) :: auxiliary_cd
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -672,12 +672,12 @@ contains
     ! Arguments !
     ! !!!!!!!!!!!!
 
-    real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine
+    real(dp), intent(out) :: effnbss,fpion,fshine
 
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: dend,dent,dpath,sigstop
+    real(dp) :: dend,dent,dpath,sigstop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -739,18 +739,18 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: etanb
+      real(dp) :: etanb
 
       ! Arguments !
       ! !!!!!!!!!!!!
 
-      real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene, &
+      real(dp), intent(in) :: abeam,alphan,alphat,aspect,dene, &
            ebeam,rmajor,ten,zeff
 
       ! Local variables !
       ! !!!!!!!!!!!!!!!!!!
 
-      real(kind(1.0D0)) :: abd,bbd,dene20,dum,epseff,ffac,gfac,rjfunc, &
+      real(dp) :: abd,bbd,dene20,dum,epseff,ffac,gfac,rjfunc, &
            xj,xjs,yj,zbeam
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -813,21 +813,21 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: afast,efast,te,ne,nd,nt,zeffai,xlmbda
-    real(kind(1.0D0)), intent(out) :: fpion
+    real(dp), intent(in) :: afast,efast,te,ne,nd,nt,zeffai,xlmbda
+    real(dp), intent(out) :: fpion
 
     !  Local variables
 
-    real(kind(1.0D0)) :: ans,ecritfi,ecritfix,sum,sumln,thx,t1,t2,ve,x, &
+    real(dp) :: ans,ecritfi,ecritfix,sum,sumln,thx,t1,t2,ve,x, &
          xlbd,xlbt,xlmbdai,xlnrat
 
-    real(kind(1.0D0)), parameter :: atmd = 2.0D0
-    real(kind(1.0D0)), parameter :: atmdt = 2.5D0
-    real(kind(1.0D0)), parameter :: atmt = 3.0D0
-    real(kind(1.0D0)), parameter :: c = 3.0D8
-    real(kind(1.0D0)), parameter :: me = 9.1D-31
-    real(kind(1.0D0)), parameter :: zd = 1.0D0
-    real(kind(1.0D0)), parameter :: zt = 1.0D0
+    real(dp), parameter :: atmd = 2.0D0
+    real(dp), parameter :: atmdt = 2.5D0
+    real(dp), parameter :: atmt = 3.0D0
+    real(dp), parameter :: c = 3.0D8
+    real(dp), parameter :: me = 9.1D-31
+    real(dp), parameter :: zd = 1.0D0
+    real(dp), parameter :: zt = 1.0D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -874,15 +874,15 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: xlmbdabi
+      real(dp) :: xlmbdabi
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: mb,mth,eb,t,nelec
+      real(dp), intent(in) :: mb,mth,eb,t,nelec
 
       !  Local variables
 
-      real(kind(1.0D0)) :: ans,x1,x2
+      real(dp) :: ans,x1,x2
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -918,18 +918,18 @@ contains
 
     implicit none
 
-    real(kind(1.0D0)) :: sigbeam
+    real(dp) :: sigbeam
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: eb,te,ne,rnhe,rnc,rno,rnfe
+    real(dp), intent(in) :: eb,te,ne,rnhe,rnc,rno,rnfe
 
     !  Local variables
 
-    real(kind(1.0D0)) :: ans,nen,sz,s1
-    real(kind(1.0D0)), dimension(2,3,2) :: a
-    real(kind(1.0D0)), dimension(3,2,2,4) :: b
-    real(kind(1.0D0)), dimension(4) :: nn,z
+    real(dp) :: ans,nen,sz,s1
+    real(dp), dimension(2,3,2) :: a
+    real(dp), dimension(3,2,2,4) :: b
+    real(dp), dimension(4) :: nn,z
 
     integer :: i,is,j,k
 
@@ -1002,11 +1002,11 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: effrfss
+    real(dp), intent(out) :: effrfss
 
     !  Local variables
 
-    real(kind(1.0D0)) :: blocal,dlocal,epslh,frac,gamlh,nplacc,rpenet, &
+    real(dp) :: blocal,dlocal,epslh,frac,gamlh,nplacc,rpenet, &
          rratio,term01,term02,term03,term04,tlocal,x
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1071,11 +1071,11 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(out) :: rratio
+      real(dp), intent(out) :: rratio
 
       !  Local variables
 
-      real(kind(1.0D0)) :: dgdr,drfind,g0,g1,g2,rat0,rat1,r1,r2
+      real(dp) :: dgdr,drfind,g0,g1,g2,rat0,rat1,r1,r2
       integer :: lapno
       integer, parameter :: maxlap = 100
 
@@ -1169,12 +1169,12 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: drfind,rratio
-      real(kind(1.0D0)), intent(out) :: ediff
+      real(dp), intent(in) :: drfind,rratio
+      real(dp), intent(out) :: ediff
 
       !  Local variables
 
-      real(kind(1.0D0)) :: blocal,dlocal,e1,e2,frac,nplacc,refind,tlocal
+      real(dp) :: blocal,dlocal,e1,e2,frac,nplacc,refind,tlocal
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1234,11 +1234,11 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: effrfss
+    real(dp), intent(out) :: effrfss
 
     !  Local variables
 
-    real(kind(1.0D0)) :: cosang,coulog,dlocal,ecgam,ecgam1,ecgam2,ecgam3,ecgam4, &
+    real(dp) :: cosang,coulog,dlocal,ecgam,ecgam1,ecgam2,ecgam3,ecgam4, &
          epsloc,rrr,tlocal,zlocal
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1323,12 +1323,12 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: tlocal,epsloc,zlocal,cosang,coulog
-      real(kind(1.0D0)), intent(out) :: ecgam
+      real(dp), intent(in) :: tlocal,epsloc,zlocal,cosang,coulog
+      real(dp), intent(out) :: ecgam
 
       !  Local variables
 
-      real(kind(1.0D0)) :: f,facm,fp,h,hp,lam,lams,mcsq,palpha,palphap,palphaps, &
+      real(dp) :: f,facm,fp,h,hp,lam,lams,mcsq,palpha,palphap,palphaps, &
            palphas,y
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1405,12 +1405,12 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: zlocal,arg
-      real(kind(1.0D0)), intent(out) ::  palpha,palphap
+      real(dp), intent(in) :: zlocal,arg
+      real(dp), intent(out) ::  palpha,palphap
 
       !  Local variables
 
-      real(kind(1.0D0)) :: arg2,pold,poldp,pterm,sinsq,term1,term2,xisq
+      real(dp) :: arg2,pold,poldp,pterm,sinsq,term1,term2,xisq
       integer :: n
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1482,11 +1482,11 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine
+    real(dp), intent(out) :: effnbss,fpion,fshine
 
     !  Local variables
 
-    real(kind(1.0D0)) :: dend,dent,dpath,sigstop
+    real(dp) :: dend,dent,dpath,sigstop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1565,16 +1565,16 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: etanb2
+      real(dp) :: etanb2
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene,dnla, &
+      real(dp), intent(in) :: abeam,alphan,alphat,aspect,dene,dnla, &
            enbeam,frbeam,fshine,rmajor,rminor,ten,zeff
 
       !  Local variables
 
-      real(kind(1.0D0)) :: abd,bbd,d,dene20,dnla20,dnorm,ebmev,ebnorm, &
+      real(dp) :: abd,bbd,d,dene20,dnla20,dnorm,ebmev,ebnorm, &
            ecrit,epseff,epsitr,eps1,ffac,gamnb,gfac,j0,nnorm,r,xj, &
            xjs,yj,zbeam
 

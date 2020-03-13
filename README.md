@@ -5,6 +5,14 @@
 PROCESS is the reactor systems code at [CCFE](www.ccfe.ac.uk). More information on PROCESS
 can be found on the PROCESS [webpage](http://www.ccfe.ac.uk/powerplants.aspx).
 
+## Install
+
+Clone code from Gitlab, enter the process directory and run:
+
+```bash
+sudo -u $USER bash install.sh
+```
+
 ## Documentation
 
 ### HTML

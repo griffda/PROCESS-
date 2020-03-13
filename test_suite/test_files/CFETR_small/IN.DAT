@@ -13,7 +13,6 @@
 neqns = 23       * Number of constraint equations
 icc = 1        * beta (consistency equation)
 icc = 2        * global power balance (consistency equation)
-*icc = 10       * toroidal field 1/r (consistency equation)
 icc = 36       * Temperature margin limit
 icc = 5        * density upper limit
 icc = 11       * radial build (consistency equation)
@@ -21,7 +20,7 @@ icc = 56       * pseparatrix/rmajor upper limit
 icc = 30       * Max neutral beam power
 icc = 8        * neutron wall load upper limit
 icc = 31      * tf coil case stress upper limit (sctf)
-icc = 32      * tf coil conduit stress upper limit (sctf)
+icc = 32      * tf coil consuit stress upper limit (sctf)
 icc = 35      * j_winding pack/j_protection upper limit (sctf)
 icc = 33      * i_op / i_critical (tf coil) (sctf)
 icc = 17      * radiation fraction upper limit
@@ -38,7 +37,8 @@ icc = 9       * Fusion power upper limit
 
 *---------------Iteration Variables----------------*
 
-nvar      = 40       * Number of iteration variables
+nvar      = 39       * Number of iteration variables
+
 ixc       = 4        * te * Volume averaged electron temperature (kev)
 boundl(4) = 3.00
 boundu(4) = 14.00
@@ -63,7 +63,7 @@ ixc        = 48      * fstrcase * F-value for tf coil case stress
 boundl(48) = 0.001
 boundu(48) = 1.1
 
-ixc        = 49      * fstrcond * F-value for tf coil conduit stress
+ixc        = 49      * fstrcase * F-value for tf coil conduit stress
 boundl(49) = 0.001
 boundu(49) = 1.1
 
@@ -145,7 +145,7 @@ ixc        = 13         * tfcth * Inboard tf coil thickness; (centrepost for st)
 boundl(13) = 0.85
 boundu(13) = 1.00
 
-ixc(27) = 28         * fradpwr * F-value for core radiation power limit
+ixc        = 28         * fradpwr * F-value for core radiation power limit
 boundl(28) = 0.001
 boundu(28) = 0.99
 
@@ -184,10 +184,6 @@ boundu(59) = 1.0
 *ixc     = 12         * oacdcp * Overall current density in tf coil inboard legs (a/m2)
 *boundl(12) = 1000000.0
 *boundu(12) = 150000000.0
-
-ixc        = 58         * thwcndut * Tf coil conduit case thickness (m)
-boundl(58) = 0.002
-boundu(58) = 1.0
 
 ixc        = 35         * fpeakb * F-value for peak TF field on coil
 boundl(35) = 0.001

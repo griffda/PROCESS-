@@ -501,7 +501,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.5466E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.0683E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      5.8982E+06 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.6000E+01    
@@ -1472,7 +1472,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.5332E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.0776E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      5.9328E+06 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.6000E+01    
@@ -2443,7 +2443,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.5313E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.0802E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      5.9436E+06 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.6000E+01    
@@ -3414,7 +3414,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.5308E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.0812E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      5.9480E+06 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.6000E+01    
@@ -4385,7 +4385,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.4963E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.8932E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      7.5737E+06 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.6000E+01    
@@ -5356,7 +5356,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.4969E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.8931E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      7.5729E+06 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.6000E+01    
@@ -6327,7 +6327,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.4969E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.8931E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      7.5729E+06 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.6000E+01    
@@ -7298,7 +7298,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.4969E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.8931E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      7.5729E+06 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.6000E+01    
@@ -8269,7 +8269,7 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -7.4969E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0024E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              5    
  Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      1.8931E+07 OP 
  Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      7.5729E+06 ITV
  Number_of_TF_coils______________________________________________________ (tfno)________________________      1.6000E+01    
@@ -9107,7 +9107,7 @@ cpttf    = 79454.0 * Tf coil current per turn (a);
 dhecoil  = 0.010 * Diameter of he coil in tf winding (m)
 fcutfsu  = 0.76538 * Copper fraction of cable conductor (tf coils)
 i_tf_turns_integer = 1 * Switch for tf coil integer/non-integer turns
-isumattf = 5 * Switch for superconductor material in tf coils;
+i_tf_sc_mat = 5 * Switch for superconductor material in tf coils;
 n_pancake = 20 * Number of pancakes in tf coil (i_tf_turns_integer=1)
 n_layer  = 10 * Number of layers in tf coil (i_tf_turns_integer=1)
 oacdcp   = 8050500.0 * Overall current density in tf coil inboard legs (a/m2)

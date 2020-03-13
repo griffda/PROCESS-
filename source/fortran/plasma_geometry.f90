@@ -12,10 +12,10 @@ module plasma_geometry_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use build_variables
   use constants
   use physics_variables
-
 
   implicit none
 
@@ -50,7 +50,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: sa,so,xsi,xso,thetai,thetao,xi,xo
+    real(dp) :: sa,so,xsi,xso,thetai,thetao,xi,xo
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -173,12 +173,12 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: a,r,k,d
-      real(kind(1.0D0)), intent(out) :: sa,so
+      real(dp), intent(in) :: a,r,k,d
+      real(dp), intent(out) :: sa,so
 
       !  Local variables
 
-      real(kind(1.0D0)) :: b,radci,radco,si,thti,thto
+      real(dp) :: b,radci,radco,si,thti,thto
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -222,16 +222,16 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: xsect0
+      real(dp) :: xsect0
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: a,kap,tri
+      real(dp), intent(in) :: a,kap,tri
 
       !  Local variables
 
-      real(kind(1.0D0)) :: denomi,denomo,thetai,thetao,xli,xlo
-      real(kind(1.0D0)) :: cti,sti,cto,sto
+      real(dp) :: denomi,denomo,thetai,thetao,xli,xlo
+      real(dp) :: cti,sti,cto,sto
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -281,15 +281,15 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: fvol
+      real(dp) :: fvol
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: r,a,kap,tri
+      real(dp), intent(in) :: r,a,kap,tri
 
       !  Local variables
 
-      real(kind(1.0D0)) :: c1,c2,rc2,rc1,vin,vout,zn
+      real(dp) :: c1,c2,rc2,rc1,vin,vout,zn
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -333,11 +333,11 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: xsecta
+      real(dp) :: xsecta
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: xi,thetai,xo,thetao
+      real(dp), intent(in) :: xi,thetai,xo,thetao
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -368,15 +368,15 @@ contains
 
       implicit none
 
-      real(kind(1.0D0)) :: xvol
+      real(dp) :: xvol
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
+      real(dp), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
 
       !  Local variables
 
-      real(kind(1.0D0)) :: rc,third,vin,vout
+      real(dp) :: rc,third,vin,vout
 
       !--End of preamble--CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
@@ -428,12 +428,12 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
-      real(kind(1.0D0)), intent(out) :: xsi,xso
+      real(dp), intent(in) :: rmajor,rminor,xi,thetai,xo,thetao
+      real(dp), intent(out) :: xsi,xso
 
       !  Local variables
 
-      real(kind(1.0D0)) :: fourpi,rc
+      real(dp) :: fourpi,rc
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -468,15 +468,15 @@ contains
 
     implicit none
 
-    real(kind(1.0D0)) :: perim
+    real(dp) :: perim
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: a,kap,tri
+    real(dp), intent(in) :: a,kap,tri
 
     !  Local variables
 
-    real(kind(1.0D0)) :: denomi,denomo,thetai,thetao,xli,xlo
+    real(dp) :: denomi,denomo,thetai,thetao,xli,xlo
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -523,12 +523,12 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: a,kap,tri
-    real(kind(1.0D0)), intent(out) :: xi,thetai,xo,thetao
+    real(dp), intent(in) :: a,kap,tri
+    real(dp), intent(out) :: xi,thetai,xo,thetao
 
     !  Local variables
 
-    real(kind(1.0D0)) :: denomi,denomo,n,t
+    real(dp) :: denomi,denomo,n,t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

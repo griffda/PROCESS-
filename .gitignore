@@ -15,8 +15,8 @@
 /test_suite/bindir.py
 /test_suite/test_area/*
 /test_suite/test_area/
-/build/*
-/bin/*
+/build/
+/bin/
 site/*
 *.name
 .DS_store
@@ -72,3 +72,4 @@ test_suite/FZMIN_TEST.DAT
 test_suite/REBCO_JC.DAT
 test_suite/quench_data.DAT
 test_suite/OPT.DAT
+*.egg-info

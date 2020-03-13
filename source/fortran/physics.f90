@@ -48,25 +48,25 @@ module physics_module
 
   integer :: iscz
   integer :: err242, err243
-  real(kind(1.0D0)) :: rad_fraction_core
-  real(kind(1.0D0)) :: total_plasma_internal_energy  ! [J]
-  real(kind(1.0D0)) :: total_loss_power        ! [W]
-  real(kind(1.0D0)) :: total_energy_conf_time  ! [s]
-  real(kind(1.0D0)) :: ptarmw, lambdaio, drsep
-  real(kind(1.0D0)) :: fio, fLI, fLO, fUI, fUO, pLImw, pLOmw, pUImw, pUOmw
-  real(kind(1.0D0)) :: rho_star  
-  real(kind(1.0D0)) :: nu_star  
-  real(kind(1.0D0)) :: beta_mcdonald
-  real(kind(1.0D0)) :: itart_r
+  real(dp) :: rad_fraction_core
+  real(dp) :: total_plasma_internal_energy  ! [J]
+  real(dp) :: total_loss_power        ! [W]
+  real(dp) :: total_energy_conf_time  ! [s]
+  real(dp) :: ptarmw, lambdaio, drsep
+  real(dp) :: fio, fLI, fLO, fUI, fUO, pLImw, pLOmw, pUImw, pUOmw
+  real(dp) :: rho_star  
+  real(dp) :: nu_star  
+  real(dp) :: beta_mcdonald
+  real(dp) :: itart_r
 
-contains
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine subr(a, b)
-   implicit none
-   real, intent(in) :: a
-   real, intent(out) :: b
-   b = a
-end subroutine subr
+  contains
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  subroutine subr(a, b)
+     implicit none
+     real, intent(in) :: a
+     real, intent(out) :: b
+     b = a
+  end subroutine subr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -86,7 +86,7 @@ end subroutine subr
     implicit none
     !  Local variables
 
-    real(kind(1.0D0)) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
+    real(dp) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
          pinj,sbar,sigvdt,zion, fsep, fgw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -663,16 +663,16 @@ end subroutine subr
 
     implicit none
 
-    real(kind(1.0D0)) :: bootstrap_fraction_iter89
+    real(dp) :: bootstrap_fraction_iter89
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: aspect, beta, bt, cboot, &
+    real(dp), intent(in) :: aspect, beta, bt, cboot, &
          plascur, q95, q0, rmajor, vol
 
     !  Local variables
 
-    real(kind(1.0D0)) :: betapbs, bpbs, cbs, xbs, bootipf
+    real(dp) :: betapbs, bpbs, cbs, xbs, bootipf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -719,17 +719,17 @@ end subroutine subr
 
     implicit none
 
-    real(kind(1.0D0)) :: bootstrap_fraction_nevins
+    real(dp) :: bootstrap_fraction_nevins
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: alphan,alphat,betat,bt,dene,plascur, &
+    real(dp), intent(in) :: alphan,alphat,betat,bt,dene,plascur, &
          q0,q95,rmajor,rminor,ten,zeff
 
     !  Local variables
 
     integer :: nofun
-    real(kind(1.0D0)) :: aibs,ainteg,betae0,dum1,fibs,flag
+    real(dp) :: aibs,ainteg,betae0,dum1,fibs,flag
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -766,15 +766,15 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: bsinteg
+      real(dp) :: bsinteg
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: y
+      real(dp), intent(in) :: y
 
       !  Local variables
 
-      real(kind(1.0D0)) :: alphai,al1,al2,a1,a2,betae,c1,c2,c3, &
+      real(dp) :: alphai,al1,al2,a1,a2,betae,c1,c2,c3, &
            d,del,pratio,q,x,z
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -837,18 +837,18 @@ end subroutine subr
 
     implicit none
 
-    real(kind(1.0D0)) :: bootstrap_fraction_wilson
+    real(dp) :: bootstrap_fraction_wilson
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: alphaj,alphap,alphat,betpth, &
+    real(dp), intent(in) :: alphaj,alphap,alphat,betpth, &
          q0,qpsi,rmajor,rminor
 
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)), dimension(12) :: a, b
-    real(kind(1.0D0)) :: aj,alfpnw,alftnw,eps1,r1,r2, &
+    real(dp), dimension(12) :: a, b
+    real(dp) :: aj,alfpnw,alftnw,eps1,r1,r2, &
          saj,seps1,sss,termj,termp,termt,term1,term2,z
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -952,7 +952,7 @@ end subroutine subr
 
     implicit none
 
-    real(kind(1.0D0)) :: bootstrap_fraction_sauter
+    real(dp) :: bootstrap_fraction_sauter
 
     !  Arguments
 
@@ -960,9 +960,9 @@ end subroutine subr
 
     integer, parameter :: nr = 200
     integer :: ir
-    real(kind(1.0D0)) :: da,drho,iboot,jboot,roa
-    real(kind(1.0D0)) :: dlogne_drho,dlogte_drho,dlogti_drho
-    real(kind(1.0D0)), dimension(nr) :: amain,mu,ne,ni,rho,sqeps,tempe,tempi,zef,zmain
+    real(dp) :: da,drho,iboot,jboot,roa
+    real(dp) :: dlogne_drho,dlogte_drho,dlogti_drho
+    real(dp), dimension(nr) :: amain,mu,ne,ni,rho,sqeps,tempe,tempi,zef,zmain
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1054,7 +1054,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: beta_poloidal_local
+      real(dp) :: beta_poloidal_local
 
       !  Arguments
 
@@ -1096,7 +1096,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: beta_poloidal_local_total
+      real(dp) :: beta_poloidal_local_total
 
       !  Arguments
 
@@ -1139,7 +1139,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: nues
+      real(dp) :: nues
 
       !  Arguments
 
@@ -1174,7 +1174,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: nuee
+      real(dp) :: nuee
 
       !  Arguments
 
@@ -1208,7 +1208,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: coulg
+      real(dp) :: coulg
 
       !  Arguments
 
@@ -1241,7 +1241,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: nuis
+      real(dp) :: nuis
 
       !  Arguments
 
@@ -1272,7 +1272,7 @@ end subroutine subr
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      real(kind(1.0D0)) :: nui
+      real(dp) :: nui
 
       !  Arguments
 
@@ -1313,7 +1313,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: dcsa
+      real(dp) :: dcsa
 
       !  Arguments
 
@@ -1321,7 +1321,7 @@ end subroutine subr
 
       !  Local variables
 
-      real(kind(1.0D0)) :: zz,zft,zdf
+      real(dp) :: zz,zft,zdf
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1368,7 +1368,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: hcsa
+      real(dp) :: hcsa
 
       !  Arguments
 
@@ -1376,8 +1376,8 @@ end subroutine subr
 
       !  Local variables
 
-      real(kind(1.0D0)) :: zz,zft,zdf,zfte,zfte2,zfte3,zfte4
-      real(kind(1.0D0)) :: zfti,zfti2,zfti3,zfti4,hcee,hcei
+      real(dp) :: zz,zft,zdf,zfte,zfte2,zfte3,zfte4
+      real(dp) :: zfti,zfti2,zfti3,zfti4,hcee,hcei
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1441,7 +1441,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: xcsa
+      real(dp) :: xcsa
 
       !  Arguments
 
@@ -1449,7 +1449,7 @@ end subroutine subr
 
       !  Local variables
 
-      real(kind(1.0D0)) :: zz,zft,zdf,a0,alp,a1,zfte
+      real(dp) :: zz,zft,zdf,a0,alp,a1,zfte
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1507,7 +1507,7 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: tpf
+      real(dp) :: tpf
 
       !  Arguments
 
@@ -1517,7 +1517,7 @@ end subroutine subr
 
       integer, parameter :: ASTRA=1, SAUTER2002=2, SAUTER2013=3
 
-      real(kind(1.0D0)) :: eps,epseff,g,s,zz
+      real(dp) :: eps,epseff,g,s,zz
 
       integer :: fit = ASTRA
 
@@ -1658,8 +1658,8 @@ end subroutine subr
 
    !  Arguments
 
-   real(kind(1.0D0)), intent(in) ::  beta
-   real(kind(1.0D0)), intent(out) :: diacf
+   real(dp), intent(in) ::  beta
+   real(dp), intent(out) :: diacf
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1683,8 +1683,8 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) ::  beta, q95, q0
-    real(kind(1.0D0)), intent(out) :: diacf
+    real(dp), intent(in) ::  beta, q95, q0
+    real(dp), intent(out) :: diacf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1707,8 +1707,8 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) ::  beta
-    real(kind(1.0D0)), intent(out) :: pscf
+    real(dp), intent(in) ::  beta
+    real(dp), intent(out) :: pscf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1775,14 +1775,14 @@ end subroutine subr
     !  Arguments
 
     integer, intent(in) :: icurr, iprofile
-    real(kind(1.0D0)), intent(inout) :: alphaj, rli
-    real(kind(1.0D0)), intent(in) :: alphap, bt, eps, kappa, &
+    real(dp), intent(inout) :: alphaj, rli
+    real(dp), intent(in) :: alphap, bt, eps, kappa, &
          kappa95, p0, pperim, q0, qpsi, rmajor, rminor, sf, triang, triang95
-    real(kind(1.0D0)), intent(out) :: bp, qstar, plascur
+    real(dp), intent(out) :: bp, qstar, plascur
 
     !  Local variables
 
-    real(kind(1.0D0)) :: asp, curhat, fq, w07
+    real(dp) :: asp, curhat, fq, w07
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1913,15 +1913,15 @@ end subroutine subr
 
       implicit none
 
-      real(kind(1.0D0)) :: plasc
+      real(dp) :: plasc
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: aspect,bt,delta,kappa,qbar,rminor
+      real(dp), intent(in) :: aspect,bt,delta,kappa,qbar,rminor
 
       !  Local variables
 
-      real(kind(1.0D0)) :: c1,c2,d1,d2,eps,e1,e2,f1,f2,ff1,ff2,g,h1,h2,y1,y2
+      real(dp) :: c1,c2,d1,d2,eps,e1,e2,f1,f2,ff1,ff2,g,h1,h2,y1,y2
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1994,12 +1994,12 @@ end subroutine subr
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: alphaj,alphap,bt,delta95,eps,kappa95,p0
-      real(kind(1.0D0)), intent(out) :: fq
+      real(dp), intent(in) :: alphaj,alphap,bt,delta95,eps,kappa95,p0
+      real(dp), intent(out) :: fq
 
       !  Local variables
 
-      real(kind(1.0D0)) :: beta0, deltap, deltar, eprime, er, kap1, &
+      real(dp) :: beta0, deltap, deltar, eprime, er, kap1, &
            lambda, lamp1, li, nu, tprime, tr
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2088,16 +2088,16 @@ end subroutine subr
 
     implicit none
 
-    real(kind(1.0D0)) :: bpol
+    real(dp) :: bpol
 
     !  Arguments
 
     integer, intent(in) :: icurr
-    real(kind(1.0D0)), intent(in) :: aspect,bt,delta,ip,kappa,perim,qbar
+    real(dp), intent(in) :: aspect,bt,delta,ip,kappa,perim,qbar
 
     !  Local variables
 
-    real(kind(1.0D0)) :: c1,c2,d1,d2,eps,f1,f2,ff1,ff2,g,h1,h2,y1,y2
+    real(dp) :: c1,c2,d1,d2,eps,f1,f2,ff1,ff2,g,h1,h2,y1,y2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2180,8 +2180,8 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: bt, dnbeta, plascur, rminor
-    real(kind(1.0D0)), intent(out) :: betalim
+    real(dp), intent(in) :: bt, dnbeta, plascur, rminor
+    real(dp), intent(out) :: betalim
 
     !  Local variables
 
@@ -2212,7 +2212,7 @@ end subroutine subr
 
     !  Local variables
 
-    real(kind(1.0D0)) :: znimp, pc, znfuel
+    real(dp) :: znimp, pc, znfuel
     integer :: imp
     integer :: first_call = 1
 
@@ -2407,14 +2407,14 @@ end subroutine subr
     !  Arguments
 
     integer, intent(inout) :: idensl
-    real(kind(1.0D0)), intent(in) :: bt, pdivt, plascur, prn1, q95, &
+    real(dp), intent(in) :: bt, pdivt, plascur, prn1, q95, &
          qcyl, rmajor, rminor, sarea, zeff
-    real(kind(1.0D0)), intent(out) :: dnelimt
-    real(kind(1.0D0)), dimension(7), intent(out) :: dlimit
+    real(dp), intent(out) :: dnelimt
+    real(dp), dimension(7), intent(out) :: dlimit
 
     !  Local variables
 
-    real(kind(1.0D0)) :: denom, dlim, qperp
+    real(dp) :: denom, dlim, qperp
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2563,15 +2563,15 @@ end subroutine subr
 
     !  Arguments
     integer, intent(in) :: iinvqd, isc, ignite
-    real(kind(1.0D0)), intent(in) :: afuel, palpmw, aspect, bt, dene, &
+    real(dp), intent(in) :: afuel, palpmw, aspect, bt, dene, &
          dnitot, dnla, eps, hfact, kappa, kappa95, pchargemw, pinjmw, &
          plascur, pcoreradpv, q, qstar, rmajor, rminor, te, &
          ten, tin, vol, xarea, zeff
-    real(kind(1.0D0)), intent(out) :: kappaa, powerht, ptrepv, ptripv, &
+    real(dp), intent(out) :: kappaa, powerht, ptrepv, ptripv, &
          tauee, taueff, tauei
 
     !  Local variables
-    real(kind(1.0D0)) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
+    real(dp) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
          n20,pcur,qhat,ratio,rll,str2,str5,taueena,tauit1,tauit2, &
          term1,term2, h, qratio, nratio, nGW, taunstx,taupetty
 
@@ -3240,13 +3240,13 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: csawth, eps, facoh, gamma, kappa, &
+    real(dp), intent(in) :: csawth, eps, facoh, gamma, kappa, &
          plascur, rli, rmajor, rplas, tburn, theat
-    real(kind(1.0D0)), intent(out) :: phiint, rlp, vsbrn, vsind, vsres, vsstt
+    real(dp), intent(out) :: phiint, rlp, vsbrn, vsind, vsres, vsstt
 
     !  Local variables
 
-    real(kind(1.0D0)) :: aeps,beps,rlpext,rlpint,vburn
+    real(dp) :: aeps,beps,rlpext,rlpint,vburn
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3325,9 +3325,9 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: aspect, dene, deni, dnalp, &
+    real(dp), intent(in) :: aspect, dene, deni, dnalp, &
          fusionrate, alpharate, plascur, sbar, taueff, vol
-    real(kind(1.0D0)), intent(out) :: burnup, dntau, figmer, fusrat, &
+    real(dp), intent(out) :: burnup, dntau, figmer, fusrat, &
          qfuel, rndfuel, taup
 
     !  Local variables
@@ -3401,13 +3401,13 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: alphan, alphat, dene, dlamie, &
+    real(dp), intent(in) :: alphan, alphat, dene, dlamie, &
          te, ti, zeffai
-    real(kind(1.0D0)), intent(out) :: piepv
+    real(dp), intent(out) :: piepv
 
     !  Local variables
 
-    real(kind(1.0D0)) :: conie, profie
+    real(dp) :: conie, profie
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3452,13 +3452,13 @@ end subroutine subr
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: facoh, kappa95, plascur, rmajor, &
+    real(dp), intent(in) :: facoh, kappa95, plascur, rmajor, &
          rminor, ten, vol, zeff
-    real(kind(1.0D0)), intent(out) :: pohmpv, pohmmw, rpfac, rplas
+    real(dp), intent(out) :: pohmpv, pohmmw, rpfac, rplas
 
     !  Local variables
 
-    real(kind(1.0D0)) :: t10
+    real(dp) :: t10
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3518,8 +3518,8 @@ end subroutine subr
     !  Local variables
 
     integer :: iisc
-    real(kind(1.0D0)), parameter :: d1 = 1.0D0
-    real(kind(1.0D0)) :: powerhtz, ptrez, ptriz, &
+    real(dp), parameter :: d1 = 1.0D0
+    real(dp) :: powerhtz, ptrez, ptriz, &
          taueez, taueffz, taueiz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3565,7 +3565,7 @@ end subroutine subr
 
     implicit none
 
-    real(kind(1.0D0)) :: fhfac
+    real(dp) :: fhfac
 
     !  Arguments
 
@@ -3573,9 +3573,9 @@ end subroutine subr
 
     !  Local variables
 
-    real(kind(1.0D0)) :: abserr = 0.003D0  !  numerical tolerance
-    real(kind(1.0D0)) :: xlow = 0.01D0     !  minimum bound on H-factor
-    real(kind(1.0D0)) :: xhigh = 100.0D0   !  maximum bound on H-factor
+    real(dp) :: abserr = 0.003D0  !  numerical tolerance
+    real(dp) :: xlow = 0.01D0     !  minimum bound on H-factor
+    real(dp) :: xhigh = 100.0D0   !  maximum bound on H-factor
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3605,15 +3605,15 @@ end subroutine subr
 
     implicit none
 
-    real(kind(1.0D0)) :: fhz
+    real(dp) :: fhz
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: hhh
+    real(dp), intent(in) :: hhh
 
     !  Local variables
 
-    real(kind(1.0D0)) :: powerhtz,ptrez,ptriz,taueezz,taueiz,taueffz
+    real(dp) :: powerhtz,ptrez,ptriz,taueezz,taueiz,taueffz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3670,13 +3670,13 @@ end subroutine subr
 
     !  Local variables
 
-    real(kind(1.0D0)) :: betath
+    real(dp) :: betath
     ! pinj
     integer :: imp
     character(len=30) :: tauelaw
     character(len=30) :: str1,str2
-    real(kind(1.0D0)) :: fgwped_out ! neped/dlimit(7)
-    real(kind(1.0D0)) :: fgwsep_out ! nesep/dlimit(7)
+    real(dp) :: fgwped_out ! neped/dlimit(7)
+    real(dp) :: fgwsep_out ! nesep/dlimit(7)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ! Dimensionless plasma parameters. See reference below.    

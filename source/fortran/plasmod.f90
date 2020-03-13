@@ -14,6 +14,7 @@ module plasmod_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use constants
   use constraint_variables
   use current_drive_variables

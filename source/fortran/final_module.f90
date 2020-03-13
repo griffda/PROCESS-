@@ -1,5 +1,9 @@
 module final_module
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+
+  implicit none
+
 contains
 
 
@@ -24,7 +28,7 @@ subroutine final(ifail)
   !  Arguments
   integer, intent(in) :: ifail
   integer :: inn
-  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  real(dp), dimension(ipeqns) :: con1, con2, err
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
 
