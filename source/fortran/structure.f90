@@ -13,6 +13,7 @@ module structure_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use build_variables
   use divertor_variables
   use fwbs_variables
@@ -50,7 +51,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: twhtpf
+    real(dp) :: twhtpf
 
     !  Total weight of the PF coil conductor and its structure
 
@@ -107,14 +108,14 @@ contains
     implicit none
 
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: ai,r0,a,akappa,b0,tf_h_width,tfhmax, &
+    real(dp), intent(in) :: ai,r0,a,akappa,b0,tf_h_width,tfhmax, &
          shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass,dewmass
     integer, intent(in) :: outfile,iprint,i_tf_sup,ipfres
-    real(kind(1.0D0)), intent(out) :: fncmass,aintmass,clgsmass,coldmass,gsm
+    real(dp), intent(out) :: fncmass,aintmass,clgsmass,coldmass,gsm
 
     !  Local variables
 
-    real(kind(1.0D0)) :: dens,gsm1,gsm2,gsm3,sigal,ws1,ws2,coilmass
+    real(dp) :: dens,gsm1,gsm2,gsm3,sigal,ws1,ws2,coilmass
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

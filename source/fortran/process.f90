@@ -32,6 +32,7 @@ program process
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use error_handling
   use global_variables
   use process_input

@@ -1,6 +1,7 @@
 module define_iteration_variables 
    !! Module to define iteration variables
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
    use build_variables
    use constraint_variables
    use cost_variables
@@ -26,7 +27,7 @@ module define_iteration_variables
 
    public
 
-   real(kind(1.0D0)) :: DUMMY
+   real(dp) :: DUMMY
 
 contains
    
@@ -3279,12 +3280,12 @@ subroutine convxc(xc,nn)
   !  Arguments
 
   integer, intent(in) :: nn
-  real(kind(1.0D0)), dimension(ipnvars), intent(in) :: xc
+  real(dp), dimension(ipnvars), intent(in) :: xc
 
   !  Local variables
 
   integer :: i
-  real(kind(1.0D0))::ratio
+  real(dp)::ratio
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

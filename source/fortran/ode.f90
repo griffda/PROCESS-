@@ -1,6 +1,10 @@
 module ode_mod
-    implicit none
-    contains
+
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+
+  implicit none
+  
+contains
     
 subroutine ode ( f, neqn, y, t, tout, relerr, abserr, iflag, work, iwork )
 

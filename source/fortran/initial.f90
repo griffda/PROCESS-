@@ -9,6 +9,7 @@ subroutine initial
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use, intrinsic :: iso_fortran_env, only: dp=>real64
     use process_output
     use stellarator_module
     use stellarator_variables
@@ -615,7 +616,7 @@ subroutine check
     !  Local variables
 
     integer :: i,j,k,imp
-    real(kind(1.0D0)) :: fsum
+    real(dp) :: fsum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
