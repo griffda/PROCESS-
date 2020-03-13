@@ -10,7 +10,7 @@ module tfcoil_module
   !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use build_variables, only : tfthko, hmax
   use constants
   use error_handling
@@ -23,10 +23,10 @@ module tfcoil_module
   private
   
   !! Radial position of plasma-facing edge of TF coil outboard leg [m]
-  !real(kind(1.0D0)), private :: r_tf_inboard_in
+  !real(dp), private :: r_tf_inboard_in
   !
   !! Radial position of plasma-facing edge of TF coil inboard leg [m]
-  !real(kind(1.0D0)), private :: r_tf_inboard_out
+  !real(dp), private :: r_tf_inboard_out
 
   public :: tfcoil, cntrpst
 
@@ -92,7 +92,7 @@ contains
     integer, intent(in) :: outfile,iprint
 
     !  Local variables
-    real(kind(1.0D0)) :: acool,acpav,dcool,dpres,dtcncpav,dtconcpmx, &
+    real(dp) :: acool,acpav,dcool,dpres,dtcncpav,dtconcpmx, &
          dtfilmav,fc,fricfac,h,lcool,nuselt,pcrt,presin,prndtl, &
          psat,ptot,reyn,ro,roughrat,sum,tclmx,tclmxs,tcoolmx,tmarg,vcoolav, &
          coolant_density, coolant_th_cond, coolant_visco, coolant_cp,&

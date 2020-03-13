@@ -60,6 +60,7 @@ module process_input
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use build_variables
   use buildings_variables
   use constraint_variables
@@ -3135,12 +3136,12 @@ contains
     !  Arguments
 
     character(len=*), intent(in) :: varnam, description
-    real(kind(1.0D0)), intent(inout) :: varval
-    real(kind(1.0D0)), intent(in) :: vmin, vmax
+    real(dp), intent(inout) :: varval
+    real(dp), intent(in) :: vmin, vmax
 
     !  Local variables
 
-    real(kind(1.0D0)) :: oldval
+    real(dp) :: oldval
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3330,11 +3331,11 @@ contains
     integer, intent(inout) :: isub1
     integer, intent(in) :: n
     integer, intent(out) :: icode
-    real(kind(1.0D0)), dimension(n), intent(inout) :: varval
+    real(dp), dimension(n), intent(inout) :: varval
 
     !  Local variables
 
-    real(kind(1.0D0)) :: oldval, val
+    real(dp) :: oldval, val
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3632,12 +3633,12 @@ contains
 
     character(len=*), intent(in) :: string
     integer, intent(in) :: length
-    real(kind(1.0D0)), intent(out) :: rval
+    real(dp), intent(out) :: rval
     integer, intent(out) :: icode
 
     !  Local variables
 
-    real(kind(1.0D0)) :: valbdp,valadp,xfact
+    real(dp) :: valbdp,valadp,xfact
     integer :: iptr,izero,iexpon
     logical :: negatm,negate
 
@@ -3928,7 +3929,7 @@ contains
     !  Arguments
 
     integer, intent(out) :: icode
-    real(kind(1.0D0)), intent(out) :: rval
+    real(dp), intent(out) :: rval
 
     !  Local variables
 
@@ -4428,7 +4429,7 @@ contains
     !  Arguments
 
     character(len=*), intent(in) :: cvar
-    real(kind(1.0D0)), intent(in) :: varval,min_value,max_value
+    real(dp), intent(in) :: varval,min_value,max_value
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

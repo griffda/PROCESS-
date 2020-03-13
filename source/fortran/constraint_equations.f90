@@ -10,8 +10,8 @@ module constraints
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! Import modules !
-  ! !!!!!!!!!!!!!!!!!
+  ! Import modules
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
 
   use error_handling, only: report_error, idiags, fdiags
   
@@ -20,9 +20,9 @@ module constraints
   public :: constraint_eqns
 
   type constraint_args_type
-    real(kind(1.0D0)) :: cc
-    real(kind(1.0D0)) :: con
-    real(kind(1.0D0)) :: err
+    real(dp) :: cc
+    real(dp) :: con
+    real(dp) :: err
     character(len=1)  :: symbol
     character(len=10) :: units
   end type
@@ -63,9 +63,9 @@ contains
      ! !!!!!!!!!!!!
 
      integer, intent(in) :: m, ieqn
-     real(kind(1.0D0)),           dimension(m), intent(out) :: cc
-     real(kind(1.0D0)), optional, dimension(m), intent(out) :: con
-     real(kind(1.0D0)), optional, dimension(m), intent(out) :: err
+     real(dp),           dimension(m), intent(out) :: cc
+     real(dp), optional, dimension(m), intent(out) :: con
+     real(dp), optional, dimension(m), intent(out) :: err
      character(len=1),  optional, dimension(m), intent(out) :: symbol
      character(len=10), optional, dimension(m), intent(out) :: units
 	
@@ -73,8 +73,8 @@ contains
      ! !!!!!!!!!!!!!!!!!!
 	
      integer :: i,i1,i2
-     real(kind(1.0D0)) :: cratmx,pdenom,pnumerator,pradmaxpv
-     real(kind(1.0D0)) :: pscaling,rcw,totmva
+     real(dp) :: cratmx,pdenom,pnumerator,pradmaxpv
+     real(dp) :: pscaling,rcw,totmva
 
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -426,8 +426,8 @@ contains
       type (constraint_args_type), intent(out) :: args
 
       ! pscaling : Local real : total transport power per volume (MW/m3)
-      real(kind(1.0D0)) :: pscaling
-      real(kind(1.0D0)) :: pnumerator, pdenom
+      real(dp) :: pscaling
+      real(dp) :: pnumerator, pdenom
       pscaling = ptrepv + ptripv
 	   ! Total power lost is scaling power plus radiation:
       if (iradloss == 0) then
@@ -531,8 +531,8 @@ contains
       type (constraint_args_type), intent(out) :: args
 
       ! pscaling : Local real : total transport power per volume (MW/m3)
-      real(kind(1.0D0)) :: pscaling
-      real(kind(1.0D0)) :: pnumerator, pdenom
+      real(dp) :: pscaling
+      real(dp) :: pnumerator, pdenom
       pscaling = ptrepv
 	   ! Total power lost is scaling power plus radiation:
       if (iradloss == 0) then
@@ -933,7 +933,7 @@ contains
       type (constraint_args_type), intent(out) :: args
 
       ! pradmaxpv : local real :  the maximum possible power/vol that can be radiated
-      real(kind(1.0D0)) pradmaxpv
+      real(dp) :: pradmaxpv
       pradmaxpv = pinjmw/vol + palppv*falpha + pchargepv + pohmpv
       args%cc =  1.0D0 - fradpwr * pradmaxpv / pradpv
       args%con = pradmaxpv * (1.0D0 - args%cc)
@@ -988,7 +988,7 @@ contains
       implicit none
       type (constraint_args_type), intent(out) :: args
       ! totmva : local real : total MVA in TF coil (MW)
-      real(kind(1.0D0)) totmva
+      real(dp) :: totmva
 
       totmva = tfcpmw + tflegmw
       args%cc =  1.0D0 - fmva * mvalim/totmva
@@ -1100,7 +1100,7 @@ contains
       implicit none
       type (constraint_args_type), intent(out) :: args
       ! rcw : local real : conducting shell radius (m)
-      real(kind(1.0D0)) rcw
+      real(dp) :: rcw
 
       rcw = rminor + scraplo + fwoth + blnkoth
       args%cc =  1.0D0 - fcwr * cwrmax*rminor / rcw
@@ -1786,7 +1786,7 @@ contains
       use tfcoil_variables, only: ritfc
       implicit none
       ! cratmx : local real : maximum ratio of plasma current to centrepost current
-      real(kind(1.0D0)) :: cratmx
+      real(dp) :: cratmx
       type (constraint_args_type), intent(out) :: args
 
       ! if the machine isn't a ST then report error

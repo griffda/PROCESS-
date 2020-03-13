@@ -1,5 +1,6 @@
 module utilities
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use iso_c_binding
 contains
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

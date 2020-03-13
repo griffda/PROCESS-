@@ -11,6 +11,7 @@ module sctfcoil_module
 !
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+use, intrinsic :: iso_fortran_env, only: dp=>real64
 use build_variables, only : r_tf_inboard_mid, hmax, r_tf_outboard_mid, tfcth, tfthko, hpfu, hr1, &
     r_cp_top, r_vv_inboard_out
 use fwbs_variables, only : denstl
@@ -27,102 +28,102 @@ tfcind, tfspcall, initialise_cables
 ! Module variables
 !-----------------
 
-real(kind(1.0D0)), private :: tf_fit_t
+real(dp), private :: tf_fit_t
 !! Dimensionless winding pack width
 
-real(kind(1.0D0)), private :: tf_fit_z
+real(dp), private :: tf_fit_z
 !! Dimensionless winding pack radial thickness
 
-real(kind(1.0D0)), private :: tf_fit_y
+real(dp), private :: tf_fit_y
 !! Ratio of peak field with ripple to nominal axisymmetric peak field
 
-real(kind(1.0D0)) :: tfc_current
+real(dp) :: tfc_current
 !! Current in each TF coil
 
-real(kind(1.0D0)), private :: awpc
+real(dp), private :: awpc
 !! Total cross-sectional area of winding pack including
 !! GW insulation and insertion gap [m2]
 
-real(kind(1.0D0)), private :: awptf
+real(dp), private :: awptf
 !! Total cross-sectional area of winding pack [m2]
 
-real(kind(1.0D0)), private :: h_cp_top
+real(dp), private :: h_cp_top
 !! Vertical distance from the midplane to the top of the tapered section [m]
 
-real(kind(1.0D0)), private :: r_tf_inboard_in
+real(dp), private :: r_tf_inboard_in
 !! Radial position of inner edge of TF coil inboard leg [m]
 
-real(kind(1.0D0)), private :: r_tf_inboard_out
+real(dp), private :: r_tf_inboard_out
 !! Radial position of plasma-facing edge of TF coil inboard leg [m]
 
-real(kind(1.0D0)), private :: r_tf_outboard_in
+real(dp), private :: r_tf_outboard_in
 !! Radial position of plasma-facing edge of TF coil outboard leg [m]
 
-real(kind(1.0D0)), private :: r_tf_outboard_out
+real(dp), private :: r_tf_outboard_out
 !! Radial position of outer edge of TF coil inboard leg [m]
 
-real(kind(1.0D0)), private :: r_wp_inner
+real(dp), private :: r_wp_inner
 !! Radial position of inner edge and centre of winding pack [m]
 
-real(kind(1.0D0)), private :: r_wp_outer
+real(dp), private :: r_wp_outer
 !! Radial position of outer edge and centre of winding pack [m]
 
-real(kind(1.0D0)), private :: r_wp_centre
+real(dp), private :: r_wp_centre
 !! Radial position of centre and centre of winding pack [m]
 
-real(kind(1.0D0)), private :: vol_ins
+real(dp), private :: vol_ins
 !! Total/CP insulator insulator volume [m3]
 
-real(kind(1.0D0)), private :: vol_ins_cp
+real(dp), private :: vol_ins_cp
 !! CP insulator insulator volume [m3]
 
-real(kind(1.0D0)), private :: vol_ins_leg
+real(dp), private :: vol_ins_leg
 !! Outboard leg insulator volume [m3]
 
-real(kind(1.0D0)), private :: vol_cond
+real(dp), private :: vol_cond
 !! Total conductor insulator volume [m3]
 
-real(kind(1.0D0)), private :: vol_cond_leg
+real(dp), private :: vol_cond_leg
 !! Outboard leg conductor insulator volume [m3]
 
-real(kind(1.0D0)), private :: vol_case_cp
+real(dp), private :: vol_case_cp
 !! Volume of the CP outer casing cylinder
 
-real(kind(1.0D0)), private :: t_wp_toroidal
+real(dp), private :: t_wp_toroidal
 !! Toroidal thickness of of winding pack [m]
 
-real(kind(1.0D0)), private :: theta_coil
+real(dp), private :: theta_coil
 !! Half toroidal angular extent of a single TF coil inboard leg
 
-real(kind(1.0D0)), private :: tan_theta_coil
+real(dp), private :: tan_theta_coil
 !! Tan half toroidal angular extent of a single TF coil inboard leg
 
-real(kind(1.0D0)), private :: t_conductor_radial, t_conductor_toroidal
+real(dp), private :: t_conductor_radial, t_conductor_toroidal
 !! Conductor area radial and toroidal dimension [m]
 
-real(kind(1.0D0)), private :: t_cable_radial, t_cable_toroidal
+real(dp), private :: t_cable_radial, t_cable_toroidal
 !! Cable area radial and toroidal dimension [m]
 
-real(kind(1.0D0)), private :: t_turn_radial, t_turn_toroidal
+real(dp), private :: t_turn_radial, t_turn_toroidal
 !! Turn radial and toroidal dimension [m]
 
-real(kind(1.0D0)), dimension(2*n_radial_array), private :: s_tresca_cond_cea
+real(dp), dimension(2*n_radial_array), private :: s_tresca_cond_cea
 !! Conduit Tresca stress in stell with CEA adjustment factors [Pa]
 
-real(kind(1.0D0)), dimension(2), private :: sig_tf_r_max 
+real(dp), dimension(2), private :: sig_tf_r_max 
 !! Radial stress in steel of the point of maximum TRESCA stress (for each layers) [Pa]
 
-real(kind(1.0D0)), dimension(2), private :: sig_tf_t_max
+real(dp), dimension(2), private :: sig_tf_t_max
 !! Toroidal stress in steel of the point of maximum TRESCA stress (for each layers) [Pa]
 
-real(kind(1.0D0)), dimension(2), private :: sig_tf_z_max
+real(dp), dimension(2), private :: sig_tf_z_max
 !! Vertical stress of the point of maximum TRESCA stress (for each layers) [Pa]
 !! Rem : Currently constant but will be r dependent in the future
 
-real(kind(1.0D0)), dimension(2), private :: sig_tf_vmises_max
+real(dp), dimension(2), private :: sig_tf_vmises_max
 !! Von-Mises stress in steel of the point of maximum TRESCA stress (for each layers) [Pa]
 
-real(kind(1.0D0)), dimension(2), private :: sig_tf_tresca_max
+real(dp), dimension(2), private :: sig_tf_tresca_max
 !! Maximum TRESCA stress in steel (for each layers) [Pa]
 !! If the CEA correction is addopted, the CEA corrected value is used
 
@@ -134,10 +135,10 @@ type(resistive_material):: helium
 type(volume_fractions):: conductor
 type(supercon_strand)::croco_strand
 
-real(kind(1.0D0)):: T1, time2, tau2, estotft
+real(dp):: T1, time2, tau2, estotft
 ! (OBSOLETE, but leave for moment)
 ! real (kind(1.0D0)) ::croco_quench_factor
-! real(kind(1.0D0)):: jwdgpro_1, jwdgpro_2,  etamax
+! real(dp):: jwdgpro_1, jwdgpro_2,  etamax
 contains
 
 ! --------------------------------------------------------------------------
@@ -380,8 +381,8 @@ subroutine tf_winding_pack()
     ! Local variables
     !----------------
     ! Rounded corner radius
-    real(kind(1.0D0)) :: rbcndut
-    real(kind(1.0D0)) :: A
+    real(dp) :: rbcndut
+    real(dp) :: A
     !----------------
 
 
@@ -524,10 +525,10 @@ subroutine tf_integer_winding_pack()
     ! Local variables
     !----------------
     ! Radius of rounded corners of cable space inside conduit [m]
-    real(kind(1.0D0)) :: rbcndut
+    real(dp) :: rbcndut
 
     ! TF coil width at inner egde of winding pack toroidal direction [m]
-    real(kind(1.0D0)) :: t_tf_at_wp
+    real(dp) :: t_tf_at_wp
     !----------------
 
 
@@ -697,10 +698,10 @@ subroutine tf_res_heating()
     ! Internal variable
     ! ---
     ! TF ouboard leg insulation area  
-    real(kind(1.0D0)) :: a_wp_ins_turn
+    real(dp) :: a_wp_ins_turn
 
     ! Exact TF ouboard leg conductor area 
-    real(kind(1.0D0)) :: a_wp_cond_leg
+    real(dp) :: a_wp_cond_leg
 
     integer :: is_leg_cp_temp_same = 0
     ! ---
@@ -881,7 +882,7 @@ subroutine tf_coil_area_and_masses()
     implicit none
 
     ! Local Variables
-    real(kind(1.0D0)) :: cplen, wbtf
+    real(dp) :: cplen, wbtf
 
     ! Surface areas (for cryo system) [m2]
     ! tfsai, tfsao are retained for the (obsolescent) TF coil nuclear heating calculation
@@ -1014,14 +1015,14 @@ subroutine peak_tf_with_ripple(n_tf,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: n_tf,wwp1,thkwp,tfin,bmaxtf
-    real(kind(1.0D0)), intent(out) :: bmaxtfrp
+    real(dp), intent(in) :: n_tf,wwp1,thkwp,tfin,bmaxtf
+    real(dp), intent(out) :: bmaxtfrp
     integer, intent(out) :: flag
 
     !  Local variables
 
-    real(kind(1.0D0)) :: wmax
-    real(kind(1.0D0)), dimension(4) :: a
+    real(dp) :: wmax
+    real(dp), dimension(4) :: a
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1115,15 +1116,15 @@ subroutine stresscl(iprint)
     integer :: ii_max
     !! Index of the maximum TRESCA stress
 
-    real(kind(1.0D0)) :: sig_max
+    real(dp) :: sig_max
     !! Working float to find maximum TRESCA stress index
 
-    real(kind(1.0D0)) :: seff, tcbs, fac, t_ins_eff
+    real(dp) :: seff, tcbs, fac, t_ins_eff
     
-    real(kind(1.0D0)) :: svmxz
+    real(dp) :: svmxz
     !! Von-mises stress in steel setting the radial stress to 0
 
-    real(kind(1.0D0)) :: svmyz
+    real(dp) :: svmyz
     !! Von-mises stress in stell setting the toroidal stress to 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1315,41 +1316,41 @@ subroutine two_layer_stress(nu,rad,ey,j,sigr,sigt,deflect,rradius)
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: nu
+    real(dp), intent(in) :: nu
     !! Poisson's ratio
 
-    real(kind(1.0D0)), dimension(3), intent(in) :: rad
+    real(dp), dimension(3), intent(in) :: rad
     !! Layers delimitation radii [m]
     
-    real(kind(1.0D0)), dimension(2), intent(in) :: ey
+    real(dp), dimension(2), intent(in) :: ey
     !! Young modulae [Pa]
     
-    real(kind(1.0D0)), dimension(2), intent(in) :: j
+    real(dp), dimension(2), intent(in) :: j
     !! Layers effective current density [A/m2]
 
-    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: sigr
+    real(dp), dimension(2*n_radial_array), intent(out) :: sigr
     !! Radial stress radial distribution [Pa]
     
-    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: sigt
+    real(dp), dimension(2*n_radial_array), intent(out) :: sigt
     !! Toroidal stress radial distribution [Pa]
 
-    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: deflect
+    real(dp), dimension(2*n_radial_array), intent(out) :: deflect
     !! Radial deflection (displacement) radial distribution [m]
 
-    real(kind(1.0D0)), dimension(2*n_radial_array), intent(out) :: rradius
+    real(dp), dimension(2*n_radial_array), intent(out) :: rradius
     !! Radial deflection (displacement) radial distribution [m]
 
 
     
     !  Local variables
-    real(kind(1.0D0)), dimension(2) :: kk
-    real(kind(1.0D0)), dimension(2) :: alpha, beta
-    real(kind(1.0D0)), dimension(4,4) :: a
-    real(kind(1.0D0)), dimension(4) :: b, c
+    real(dp), dimension(2) :: kk
+    real(dp), dimension(2) :: alpha, beta
+    real(dp), dimension(4,4) :: a
+    real(dp), dimension(4) :: b, c
 
     ! Variables used for radial stress distribution  
-    real(kind(1.0D0)) :: dradius
-    real(kind(1.0D0)) :: rad_c
+    real(dp) :: dradius
+    real(dp) :: rad_c
 
     integer :: ii = 0
     integer :: ii_c = 0
@@ -1476,15 +1477,15 @@ function eyngeff(estl,eins,tins,tstl,tcs)
 
     implicit none
 
-    real(kind(1.0D0)) :: eyngeff
+    real(dp) :: eyngeff
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,tins,tstl,tcs
+    real(dp), intent(in) :: estl,eins,tins,tstl,tcs
 
     !  Local variables
 
-    real(kind(1.0D0)) :: ed,ttot
+    real(dp) :: ed,ttot
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1514,26 +1515,26 @@ function edoeeff(estl,eins,tins,tstl,tcs)
 
     implicit none
 
-    real(kind(1.0D0)) :: edoeeff
+    real(dp) :: edoeeff
 
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: estl
+    real(dp), intent(in) :: estl
     !! Young's modulus of steel (Pa)
 
-    real(kind(1.0D0)), intent(in) :: eins
+    real(dp), intent(in) :: eins
     !! Young's modulus of insulator (Pa)
     
-    real(kind(1.0D0)), intent(in) :: tins
+    real(dp), intent(in) :: tins
     !! Insulator wrap thickness (m)
     
-    real(kind(1.0D0)), intent(in) :: tstl
+    real(dp), intent(in) :: tstl
     !! Thickness of steel conduit (m)
     
-    real(kind(1.0D0)), intent(in) :: tcs
+    real(dp), intent(in) :: tcs
     !! Dimension of cable space area inside conduit (m)
 
     !  Local variables
-    real(kind(1.0D0)) :: ed,ttot,eeff
+    real(dp) :: ed,ttot,eeff
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1569,15 +1570,15 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
 
     implicit none
 
-    real(kind(1.0D0)) :: eyngzwp
+    real(dp) :: eyngzwp
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,tins,tstl,tcs
+    real(dp), intent(in) :: estl,eins,ewp,tins,tstl,tcs
 
     !  Local variables
 
-    real(kind(1.0D0)) :: ttot
+    real(dp) :: ttot
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1601,16 +1602,16 @@ function sig_tresca(sx,sy,sz)
     implicit none
 
     ! OUTPUT
-    real(kind(1.0D0)) :: sig_tresca
+    real(dp) :: sig_tresca
 
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: sx
+    real(dp), intent(in) :: sx
     !! In-plane stress in X direction [Pa]
 
-    real(kind(1.0D0)), intent(in) :: sy
+    real(dp), intent(in) :: sy
     !! In-plane stress in Y direction [Pa]
     
-    real(kind(1.0D0)), intent(in) :: sz
+    real(dp), intent(in) :: sz
     !! In-plane stress in Z direction [Pa]
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1633,25 +1634,25 @@ function sigvm(sx,sy,sz,txy,txz,tyz)
     implicit none
 
     ! OUTPUT
-    real(kind(1.0D0)) :: sigvm
+    real(dp) :: sigvm
 
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: sx
+    real(dp), intent(in) :: sx
     !! In-plane stress in X direction [Pa]
 
-    real(kind(1.0D0)), intent(in) :: sy
+    real(dp), intent(in) :: sy
     !! In-plane stress in Y direction [Pa]
     
-    real(kind(1.0D0)), intent(in) :: sz
+    real(dp), intent(in) :: sz
     !! In-plane stress in Z direction [Pa]
     
-    real(kind(1.0D0)), intent(in) :: txy
+    real(dp), intent(in) :: txy
     !! Out of plane stress in X-Y plane [Pa]
     
-    real(kind(1.0D0)), intent(in) :: txz
+    real(dp), intent(in) :: txz
     !! Out of plane stress in X-Z plane [Pa]
     
-    real(kind(1.0D0)), intent(in) :: tyz
+    real(dp), intent(in) :: tyz
     !! Out of plane stress in Y-Z plane [Pa]
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1687,14 +1688,14 @@ end function sigvm
 
 !     !  Arguments
 
-!     real(kind(1.0D0)), intent(in) :: bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump
-!     real(kind(1.0D0)), intent(out) :: jtfalw
+!     real(dp), intent(in) :: bmaxtf,rtfmi,rtfmo,rtf2,sigmatf,tdump
+!     real(dp), intent(out) :: jtfalw
 
 !     !  Local variables
 
-!     real(kind(1.0D0)), parameter :: tdumprf = 10.0D0  !  Reference dump time (s)
+!     real(dp), parameter :: tdumprf = 10.0D0  !  Reference dump time (s)
 
-!     real(kind(1.0D0)) :: sqrtdmp,temp1,temp2,temp3
+!     real(dp) :: sqrtdmp,temp1,temp2,temp3
 
 !     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1720,8 +1721,8 @@ subroutine coilshap
 
     !  Arguments
     !  Local variables
-    real(kind(1.0D0)), parameter :: fstraight = 0.6D0
-    real(kind(1.0D0)) :: aa, bb
+    real(dp), parameter :: fstraight = 0.6D0
+    real(dp) :: aa, bb
     integer :: ii
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1833,9 +1834,9 @@ subroutine coilshap
         !!  See https://www.johndcook.com/blog/2013/05/05/ramanujan-circumference-ellipse/
         !!  for a discussion of the precision of the formula 
 
-        real(kind(1.0D0)) :: circumference
-        real(kind(1.0D0)), intent(in) :: aaa, bbb
-        real(kind(1.0D0)) :: hh
+        real(dp) :: circumference
+        real(dp), intent(in) :: aaa, bbb
+        real(dp) :: hh
         hh = ( aaa - bbb )**2 / ( aaa + bbb )**2
         circumference = pi* ( aaa + bbb ) * ( 1.0D0 + (3.0D0*hh)/(10.0D0 + sqrt(4.0D0 - 3.0D0*hh)) )  ! eq(14)
 
@@ -1861,12 +1862,12 @@ subroutine tfcind(tfthk)
     !! Top/bottom symmetry is assumed.
     implicit none
     !  Arguments
-    real(kind(1.0D0)), intent(in) :: tfthk
+    real(dp), intent(in) :: tfthk
 
     !  Local variables
     integer, parameter :: nintervals = 100
     integer :: i
-    real(kind(1.0D0)) :: ai, ao, bi, bo, x0, y0, h_bore, h_thick, dr, r, b
+    real(dp) :: ai, ao, bi, bo, x0, y0, h_bore, h_thick, dr, r, b
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1959,7 +1960,7 @@ subroutine outtf(outfile, peaktfflag)
 
     integer :: ii
     integer, dimension(2*n_radial_array) :: ii_vec
-    real(kind(1.0D0)) :: ap, radius
+    real(dp) :: ap, radius
     character(len=1) :: intstring
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2300,7 +2301,7 @@ subroutine tfspcall(outfile,iprint)
     integer, intent(in) :: outfile, iprint
 
     !  Local variables
-    real(kind(1.0D0)) :: aturn, tfes, vdump
+    real(dp) :: aturn, tfes, vdump
 
     ! Simple model REMOVED Issue #781
     ! if (tfc_model == 0) then
@@ -2378,14 +2379,14 @@ contains
         implicit none
 
         integer, intent(in) :: isumat, iprint, outfile
-        real(kind(1.0D0)), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts
-        real(kind(1.0D0)), intent(in) :: iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
-        real(kind(1.0D0)), intent(out) :: jwdgcrt, vd, tmarg
+        real(dp), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts
+        real(dp), intent(in) :: iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
+        real(dp), intent(out) :: jwdgcrt, vd, tmarg
 
         !  Local variables
 
         integer :: lap
-        real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
+        real(dp) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
         jcritsc,jcrit0,jcritm,jcritp,jcritstr,jsc,jstrand,jtol,jwdgop, &
         t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot, total
 
@@ -2611,13 +2612,13 @@ contains
         
         implicit none
         
-        real(kind(1.0D0)), intent(in) :: aturn, bmax, iop, thelium
+        real(dp), intent(in) :: aturn, bmax, iop, thelium
         integer, intent(in) :: iprint, outfile
-        real(kind(1.0D0)), intent(out) :: jwdgcrt, tmarg
+        real(dp), intent(out) :: jwdgcrt, tmarg
 
         !  Local variables
-        real(kind(1.0D0)) :: icrit,iooic, jcritsc,jcritstr,jsc,jwdgop, total
-        real(kind(1.0D0)) :: current_sharing_t
+        real(dp) :: icrit,iooic, jcritsc,jcritstr,jsc,jwdgop, total
+        real(dp) :: current_sharing_t
         logical:: validity
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2776,15 +2777,15 @@ contains
 
         !  Arguments
 
-        real(kind(1.0D0)), intent(in) :: aio, tfes, acs, aturn, tdump, fcond, &
+        real(dp), intent(in) :: aio, tfes, acs, aturn, tdump, fcond, &
         fcu,tba,tmax
-        real(kind(1.0D0)), intent(out) :: ajwpro, vd
+        real(dp), intent(out) :: ajwpro, vd
 
         !  Local variables
 
         integer :: no,np
-        real(kind(1.0D0)) :: aa,ai1,ai2,ai3,ajcp,bb,cc,dd,tav
-        real(kind(1.0D0)), dimension(11) :: p1, p2, p3
+        real(dp) :: aa,ai1,ai2,ai3,ajcp,bb,cc,dd,tav
+        real(dp), dimension(11) :: p1, p2, p3
 
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2884,7 +2885,7 @@ function croco_voltage()
 
     implicit none
 
-    real(kind(1.0D0)):: croco_voltage
+    real(dp):: croco_voltage
 
     if(quench_model=='linear')then
         time2 = tdmptf
@@ -2905,20 +2906,20 @@ subroutine croco_quench(conductor)
     implicit none
 
     type(volume_fractions), intent(in)::conductor
-    real(kind(1.0D0)):: current_density_in_conductor
+    real(dp):: current_density_in_conductor
 
 
-    real(kind(1.0D0))::tout     !for the phase 2
-    real(kind(1.0D0))::relerr= 0.01d0, abserr= 0.01d0
+    real(dp)::tout     !for the phase 2
+    real(dp)::relerr= 0.01d0, abserr= 0.01d0
 
     integer(kind=4), parameter :: neqn = 1
     integer(kind=4) :: iflag
     integer(kind=4) :: iwork(5)
 
-    real(kind(1.0D0)) :: work(100+21*neqn)
-    real(kind(1.0D0)) :: y(neqn)
+    real(dp) :: work(100+21*neqn)
+    real(dp) :: y(neqn)
 
-    real(kind(1.0D0))::residual, t
+    real(dp)::residual, t
     logical::error
 
     if(quench_detection_ef>1d-10)then
@@ -2983,10 +2984,10 @@ contains
 
         implicit none
 
-        real(kind(1.0D0))::detection_field_error, deltaj,jcritsc
+        real(dp)::detection_field_error, deltaj,jcritsc
 
-        real(kind(1.0D0)), intent(in) :: t1
-        real(kind(1.0D0)):: jc
+        real(dp), intent(in) :: t1
+        real(dp):: jc
         logical :: validity
         integer :: iprint
 
@@ -3021,20 +3022,20 @@ subroutine dtempbydtime ( qtime, qtemperature, derivative )
     implicit none
 
     ! time, the independent variable
-    real(kind(1.0D0)),intent(in) :: qtime
+    real(dp),intent(in) :: qtime
 
     ! Y(), the dependent variable
-    real(kind(1.0D0)),intent(in) :: qtemperature(1)
+    real(dp),intent(in) :: qtemperature(1)
 
     ! YP(), the value of the derivative
-    real(kind(1.0D0)),intent(out) :: derivative(1)
+    real(dp),intent(out) :: derivative(1)
 
-    real(kind(1.0D0))::qj  ! Current density in superconductor during fast discharge
-    real(kind(1.0D0))::qcurrent  ! Total current in cable during fast discharge
-    real(kind(1.0D0))::qbfield  ! Peak magnetic field in cable during fast discharge
-    real(kind(1.0D0))::q_crit_current ! Critical current during fast discharge
+    real(dp)::qj  ! Current density in superconductor during fast discharge
+    real(dp)::qcurrent  ! Total current in cable during fast discharge
+    real(dp)::qbfield  ! Peak magnetic field in cable during fast discharge
+    real(dp)::q_crit_current ! Critical current during fast discharge
     logical :: validity
-    real(kind(1.0D0))::qratio,qtemp
+    real(dp)::qratio,qtemp
 
     !write(*,*)'subroutine dtempbydtime ( qtime, qtemperature, derivative )'
     !write(*,*)'qtime = ',qtime,' qtemperature = ',qtemperature
@@ -3096,17 +3097,17 @@ subroutine cpost( rtop, ztop, rmid, hmaxi, curr, rho, fcool, r_tfin_inleg, &  ! 
     !  Arguments
     ! ---
     ! Inputs
-    real(kind(1.0D0)), intent(in) :: rtop,ztop,rmid,hmaxi,curr,rho,fcool,&
+    real(dp), intent(in) :: rtop,ztop,rmid,hmaxi,curr,rho,fcool,&
                           r_tfin_inleg, ins_th, cas_out_th, n_turns_tot
 
     ! Outputs
-    real(kind(1.0D0)), intent(out) :: volume, respow, acpcool, volins, volcasout
+    real(dp), intent(out) :: volume, respow, acpcool, volins, volcasout
 
     ! Internal
-    real(kind(1.0D0)) :: r1,z1,x,y,rc,dz,r,z, a_tfin_hole, res_cyl, res_taped
-    real(kind(1.0D0)) :: sum1, sum2, sum3, sum4
-    real(kind(1.0D0)) :: a_cond_midplane, a_cp_ins, a_casout
-    real(kind(1.0D0)), dimension(0:100) :: yy, yy_ins, yy_casout
+    real(dp) :: r1,z1,x,y,rc,dz,r,z, a_tfin_hole, res_cyl, res_taped
+    real(dp) :: sum1, sum2, sum3, sum4
+    real(dp) :: a_cond_midplane, a_cp_ins, a_casout
+    real(dp), dimension(0:100) :: yy, yy_ins, yy_casout
 
     integer :: ii
     ! ---
@@ -3289,10 +3290,10 @@ function resistivity_over_heat_capacity(qtemp,qbfield,copper,hastelloy,solder,he
     
     implicit none
     
-    real(kind(1.0D0)),intent(in):: qtemp,qbfield
+    real(dp),intent(in):: qtemp,qbfield
     ! Only those materials that are actually supplied in the arguments are used.
     type(resistive_material),intent(in),optional::copper,hastelloy,solder,helium,jacket
-    real(kind(1.0D0))::sum,resistivity_over_heat_capacity
+    real(dp)::sum,resistivity_over_heat_capacity
 
     sum = 0d0
     call copper_properties2(qtemp,qbfield, copper)

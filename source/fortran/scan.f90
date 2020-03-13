@@ -11,6 +11,7 @@ module scan_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use build_variables
   use constraint_variables
   use cost_variables
@@ -107,10 +108,10 @@ module scan_module
   integer :: nsweep_2 = 3
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
 
-  real(kind(1.0D0)), dimension(ipnscns) :: sweep = 0.0D0
+  real(dp), dimension(ipnscns) :: sweep = 0.0D0
   !! sweep(ipnscns) /../: actual values to use in scan
 
-  real(kind(1.0D0)), dimension(ipnscns) :: sweep_2 = 0.0D0
+  real(dp), dimension(ipnscns) :: sweep_2 = 0.0D0
   !! sweep_2(ipnscns) /../: actual values to use in 2D scan
 
 contains
@@ -172,7 +173,7 @@ contains
     integer, parameter :: noutvars = 83
     integer, parameter :: width = 110
     character(len=25), dimension(noutvars), save :: plabel
-    real(kind(1.0D0)), dimension(noutvars,ipnscns) :: outvar
+    real(dp), dimension(noutvars,ipnscns) :: outvar
     integer :: ifail, iscan, ivar
     logical :: first_call = .TRUE.
 
@@ -421,10 +422,10 @@ contains
     integer, parameter :: noutvars = 83
     integer, parameter :: width = 110
     character(len=25), dimension(noutvars), save :: plabel
-    real(kind(1.0D0)), dimension(noutvars,ipnscns) :: outvar
+    real(dp), dimension(noutvars,ipnscns) :: outvar
     integer :: ifail, iscan, ivar, iscan_1, iscan_2, iscan_R
     logical :: first_call = .TRUE.
-    real(kind(1.0D0)), dimension(ipnscns) :: sweep_1_vals, sweep_2_vals
+    real(dp), dimension(ipnscns) :: sweep_1_vals, sweep_2_vals
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -686,7 +687,7 @@ contains
 
     ! Arguments
     integer, intent(in) :: nwp, iscn
-    real(kind(1.0D0)), intent(in), dimension(ipnscns) :: swp
+    real(dp), intent(in), dimension(ipnscns) :: swp
     character(len=25), intent(out) :: vlab, xlab
 
     select case (nwp)
@@ -892,8 +893,8 @@ contains
 
   !  Local variables
   integer :: ii,inn,iflag
-  real(kind(1.0D0)) :: summ,xcval,xmaxx,xminn,f,xnorm
-  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  real(dp) :: summ,xcval,xmaxx,xminn,f,xnorm
+  real(dp), dimension(ipeqns) :: con1, con2, err
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
   character(len=30) :: strfom

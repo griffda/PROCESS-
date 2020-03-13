@@ -13,6 +13,8 @@ subroutine caller(xc,nvars)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
+
   use availability_module
   use build_module
   use buildings_module
@@ -55,7 +57,7 @@ subroutine caller(xc,nvars)
   !  Arguments !
   ! !!!!!!!!!!!!!
 
-  real(kind(1.0D0)), dimension(ipnvars), intent(in) :: xc
+  real(dp), dimension(ipnvars), intent(in) :: xc
   integer, intent(in) :: nvars
   logical :: verbose_logical
 
