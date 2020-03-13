@@ -462,6 +462,70 @@ subroutine jcrit_nbti(temperature,bmax,c0,bc20max,tc0max,jcrit,tcrit)
 
 end subroutine jcrit_nbti
 !--------------------------------------------------------------------
+subroutine GL_nbti(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
+  
+    !!  Critical current density of the superconductor in an ITER 
+    !!  Nb-Ti strand based on the Ginzburg-Landau theory of superconductivity 
+    !!  Author: S B L Chislett-McDonald Durham University
+    !!  thelium : input real : Coolant/SC temperature (K)
+    !!  bmax : input real : Magnetic field at conductor (T)
+    !!  strain : input real : Strain in superconductor
+    !!  bc20max : input real : Upper critical field (T) for superconductor
+    !!                      at zero temperature and strain
+    !!  tc0max : input real : Critical temperature (K) at zero field and strain
+    !!  jcrit : output real : Critical current density in superconductor (A/m2)
+    !!  tcrit : output real : Critical temperature (K)
+    !!  This routine calculates the critical current density and
+    !!  temperature in superconducting TF coils using NbTi
+    !!  as the superconductor.   
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+    real(kind(1.0D0)), intent(in) :: thelium, bmax, strain, bc20max, t_c0
+    real(kind(1.0D0)), intent(out) :: jcrit, tcrit, bcrit
+
+    !  Local variables
+    real(kind(1.0D0)) :: strain_func, T_e, A_e, b_reduced, t_reduced
+    real(kind(1.0D0)), parameter :: A_0 = 1102D6
+    real(kind(1.0D0)), parameter :: p = 0.49D0
+    real(kind(1.0D0)), parameter :: q = 0.56D0
+    real(kind(1.0D0)), parameter :: v = 1.42D0
+    real(kind(1.0D0)), parameter  :: n = 1.83D0
+    real(kind(1.0D0)), parameter  :: c2 = -0.0025D0
+    real(kind(1.0D0)), parameter  :: c3 = -0.0003D0
+    real(kind(1.0D0)), parameter  :: c4 = -0.0001D0
+    real(kind(1.0D0)), parameter  :: em = -0.002D-2
+    real(kind(1.0D0)), parameter  :: u = 0.0D0
+    real(kind(1.0D0)), parameter  :: w = 2.2D0
+
+
+    strain_func = 1 + c2*(strain-em)**2 + c3*(strain-em)**3 + c4*(strain-em)**4
+
+    T_e = t_c0 * strain_func**(1 / w)
+
+    t_reduced = min(thelium/T_e, 0.9999D0)  !  avoids NaNs 
+
+    A_e = A_0 * strain_func**(u / w) 
+
+    ! Critical field (T)
+
+    bcrit = bc20max * (1 - t_reduced**v) * strain_func
+
+    b_reduced = min(bmax/bcrit, 0.9999D0)  !  avoids NaNs 
+
+    !  Critical temperature (K)
+
+    tcrit = t_c0
+
+    !  Critical current density (A/m2)
+
+    jcrit = A_e * (T_e*(1-t_reduced**2))**2 * bcrit**(n-3) * b_reduced**(p-1) * (1 - b_reduced)**q 
+
+   
+end subroutine GL_nbti
 
 subroutine wstsc(temperature,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 

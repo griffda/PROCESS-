@@ -2214,6 +2214,8 @@ module tfcoil_variables
   !! eyzwp : winding pack vertical Young's modulus (Pa)
   real(kind(1.0D0)) :: farc4tf = 0.7D0
   !! farc4tf /0.7/ : factor to size height of point 4 on TF coil
+  real(kind(1.0D0)) :: fbcupper = 14.86D0
+  !! fbcupper /14.86/ : upper critical field of GL_nbti
   real(kind(1.0D0)) :: fcutfsu = 0.69D0
   !! fcutfsu /0.69/ : copper fraction of cable conductor (TF coils)
   !!                  (iteration variable 59)

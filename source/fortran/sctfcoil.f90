@@ -21,7 +21,7 @@ use ode_mod
 implicit none
 
 private
-public :: bi2212, itersc, wstsc, jcrit_nbti, outtf, sctfcoil, stresscl, &
+public :: bi2212, itersc, wstsc, jcrit_nbti, GL_nbti, outtf, sctfcoil, stresscl, &
 tfcind, tfspcall, initialise_cables
 
 ! Module variables
@@ -2254,6 +2254,14 @@ contains
         case default  !  Error condition
             idiags(1) = isumat ; call report_error(105)
 
+        case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
+            bc20m = fbcupper
+            tc0m = 9.04D0
+            call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+            jcritstr = jcritsc  * (1.0D0-fcu)
+            !  Critical current in cable
+            icrit = jcritstr * acs * fcond
+
         end select
 
         ! Critical current density in winding pack
@@ -2308,6 +2316,11 @@ contains
                     if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
                     call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
                     call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+                case (7)
+                    call GL_nbti(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+                    if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
+                    call GL_nbti(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+                    call GL_nbti(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
                 end select
                 ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
             end do solve_for_tmarg

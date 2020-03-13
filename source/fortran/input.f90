@@ -1657,6 +1657,9 @@ contains
        case ('farc4tf')
           call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &
                'TF coil shape parameter')
+       case ('fbcupper')
+          call parse_real_variable('fbcupper', fbcupper, 0.0D0, 30.0D0, &
+               'Upper critical field of GL_nbti ')
        case ('fcoolcp')
           call parse_real_variable('fcoolcp', fcoolcp, 0.0D0, 1.0D0, &
                'Coolant fraction of TF centrepost (itart=1) or the whole magnet (itart=0)')
