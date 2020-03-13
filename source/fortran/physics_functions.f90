@@ -1307,18 +1307,21 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function beta_poloidal() &
-     bind (C, name="c_beta_poloidal")
-     !! Calculates beta poloidal
-     !! author: J. Morris, CCFE, Culham Science Centre
+    bind (C, name="c_beta_poloidal")
+    !! Calculates total poloidal beta
+    !!
+    !! **author: J. Morris** (UKAEA)
      
-     ! Module variables
-     use physics_variables, only : btot, bp, beta
+    ! Module variables
+    use physics_variables, only : btot, bp, beta
 
-     ! Return value
-     real(kind(1.0D0)) :: beta_poloidal
+    ! Return value
+    real(kind(1.0D0)) :: beta_poloidal
 
-     ! Volume measure of plasma elongation (used by IPB scalings)
-     beta_poloidal = beta * ( btot/bp )**2
+    beta_poloidal = beta * ( btot/bp )**2
+    !! \begin{equation} \beta_p = \beta \left( \frac{B_{tot}}{B_p} \right)^2 \end{equation}
+    !! See J.P. Freidberg, "Plasma physics and fusion energy", Cambridge University Press (2007) 
+    !! Page 270 ISBN 0521851076
 
   end function beta_poloidal
 
@@ -1327,7 +1330,8 @@ contains
   function res_diff_time() &
      bind (C, name="c_res_diff_time")
      !! Calculates resistive diffusion time
-     !! author: J. Morris, CCFE, Culham Science Centre
+     !!
+     !! **author: J. Morris** (UKAEA)
      
      ! Module variables
      use physics_variables, only : rmajor, rplas, kappa95
@@ -1336,8 +1340,17 @@ contains
      ! Return value
      real(kind(1.0D0)) :: res_diff_time
 
-     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
      res_diff_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
+     !! Resistive diffusion time equals the current penetration time which is approximated by:
+     !! \begin{equation} t_{\text{res-diff}} \sim 
+     !! \frac{2\mu_0.R_0}{\rho_{\text{plasma}}\kappa_{95}}\end{equation}
+     !!
+     !! * \( \mu_0 \) -- permittivity of free space [H/m]
+     !! * \( R_0 \) -- plasma major radius [m]
+     !! - \( \rho_{\text{plasma}} \) -- plasma resistivity [Ohms]
+     !! - \( \kappa_{95} \) -- plasma elongation at 95% flux surface
+     !!
+     !! #TODO Reference needed
 
   end function res_diff_time
 
