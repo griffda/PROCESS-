@@ -353,7 +353,7 @@ A .pdf file is created called `sobol_output.pdf`. The name of the produced pdf f
 
 > `./utilities/plot_stress_tf.py`
 
-Program to plot stress and displacement radial distributions at the inboard mid-plane section of the TF coil.
+Program to plot stress, strain and displacement radial distributions at the inboard mid-plane section of the TF coil.
 This program uses the `SIG_TF.DAT` file, that store stress distributions of the VMCON point and stores the outputs
 plots in the `SIG_TF_plots/` folder, created if not existing.
 
@@ -378,6 +378,7 @@ usage: plot_stress_tf.py [-h] [-p [PLOT_SELEC]] [-sf [SAVE_FORMAT]] [-as [AXIS_F
 | `-h, --help`    | show this help message and exit                           |
 | `-p, --plot_selec [PLOT_SELEC]`   | Plot selection string :                 |
 | - |   - if the string contains `sig`, plot the stress distributions |
+| - |   - if the string contains `strain`, plot the strain distributions |
 | - |   - if the string contains `disp`, plot the radial displacement distribution |
 | - |   - if the string contains `all`, plot stress and displecement distributions |
 | `-sf, --save_format [SAVE_FORMAT]` | output format (default='pdf')  |

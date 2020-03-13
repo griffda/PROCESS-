@@ -346,7 +346,7 @@ cpttf    = 89778.0 * Tf coil current per turn (a);
 dhecoil  = 0.010 * Diameter of he coil in tf winding (m)
 fcutfsu  = 0.87368 * Copper fraction of cable conductor (tf coils)
 i_tf_turns_integer = 1 * Switch for tf coil integer/non-integer turns
-isumattf = 5 * Switch for superconductor material in tf coils;
+i_tf_sc_mat = 5 * Switch for superconductor material in tf coils;
 n_pancake = 20 * Number of pancakes in tf coil (i_tf_turns_integer=1)
 n_layer  = 10 * Number of layers in tf coil (i_tf_turns_integer=1)
 oacdcp   = 3991500.0 * Overall current density in tf coil inboard legs (a/m2)

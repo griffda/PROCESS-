@@ -9,6 +9,7 @@ subroutine initial
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    use, intrinsic :: iso_fortran_env, only: dp=>real64
     use process_output
     use stellarator_module
     use stellarator_variables
@@ -615,7 +616,7 @@ subroutine check
     !  Local variables
 
     integer :: i,j,k,imp
-    real(kind(1.0D0)) :: fsum
+    real(dp) :: fsum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1105,24 +1106,79 @@ subroutine check
     ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used
     !    Generate a lvl 3 error proposing not to use any stress constraints
     if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration  
-         .and. ( abs(bore + gapoh + ohcth) < epsilon(bore) )                           & ! bore + gapoh + ohcth = 0
-         .and. any(icc == 31) ) then                                                     ! Stress constraint (31) is used 
+         .and. ( abs(bore + gapoh + ohcth + precomp) < epsilon(bore) )                 & ! bore + gapoh + ohcth = 0
+         .and. ( any(icc == 31) .or. any(icc == 32) ) ) then                                                     ! Stress constraint (31) is used 
 
         call report_error(246)
         stop
     end if
      
+    ! bucking cylinder default option setting
+    !  - bucking (casing) for SC i_tf_bucking ( i_tf_bucking = 1 )
+    !  - No bucking for copper magnets ( i_tf_bucking = 0 )
+    !  - Bucking for aluminium magnets ( i_tf_bucking = 1 )
+    if ( i_tf_bucking == -1 ) then
+        if ( i_tf_sup == 0 ) then
+            i_tf_bucking = 0
+        else
+            i_tf_bucking = 1
+        end if
+    end if 
+
+    ! Error indicating that the buck and wedge solution is not yet implemented
+    if ( i_tf_bucking == 2 ) then
+        call report_error(247)
+        stop
+    end if
+
+    ! Number of stress calculation layers
+    n_tf_stress_layers = i_tf_bucking + n_tf_graded_layers
 
     ! If TFC sidewall has not been set by user
     if(casths<0.1d-10) tfc_sidewall_is_fraction = .true.
     ! If inboard TF coil case plasma side thickness has not been set by user
     if(casthi<0.1d-10) casthi_is_fraction = .true.
 
-    ! Issue #514 Radial dimensions of inboard leg
-    ! Ensure that tfcth is defined if thkwp is an iteration variable (140)
-    ! if (any(ixc(1:nvar) == 140) ) then
-    !     tfcth = thkwp + casthi + thkcas + 2.0D0*tinstf + 2.0d0*tfinsgap
-    ! endif
+    ! Setting the default cryo-plants efficiencies
+    !-!
+    if ( abs(eff_tf_cryo + 1.0D0) < epsilon(eff_tf_cryo) ) then 
+        
+        ! The ITER cyoplant efficiency is used for SC
+        if ( i_tf_sup == 1 ) then
+            eff_tf_cryo = 0.13D0
+
+        ! Strawbrige plot extrapolation is used for Cryo-Al
+        else if ( i_tf_sup == 2 ) then
+            eff_tf_cryo = 0.40D0
+        end if
+    
+    ! Cryo-plane efficiency must be in [0-1.0]
+    else if ( eff_tf_cryo >  1.0D0 .or. eff_tf_cryo < 0.0D0 ) then
+        call report_error(248)
+        stop
+    end if
+    !-!  
+
+    ! Setting up insulation layer young modulae default values [Pa]
+    !-!
+    if ( abs(eyoung_ins - 1.0D8 ) < epsilon(eyoung_ins) ) then
+
+        ! Copper magnets, no insulation material defined
+        ! But use the ITER design by default
+        if ( i_tf_sup == 0 ) then
+            eyoung_ins = 20.0D9
+
+        ! SC magnets 
+        ! Value from DDD11-2 v2 2 (2009)
+        else if ( i_tf_sup == 1 ) then
+            eyoung_ins = 20.0D9
+        
+        ! Cryo-aluminum magnets (Kapton polymer)
+        else if ( i_tf_sup == 2 ) then
+            eyoung_ins = 2.5D9
+        end if
+    end if
+    !-!
 
     !  PF coil resistivity is zero if superconducting
     if (ipfres == 0) pfclres = 0.0D0

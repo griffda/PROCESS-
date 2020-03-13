@@ -535,8 +535,8 @@ contains
       type (constraint_args_type), intent(out) :: args
 
       ! pscaling : Local real : total transport power per volume (MW/m3)
-      real(kind(1.0D0)) :: pscaling
-      real(kind(1.0D0)) :: pnumerator, pdenom
+      real(dp) :: pscaling
+      real(dp) :: pnumerator, pdenom
       pscaling = ptrepv
 	   ! Total power lost is scaling power plus radiation:
       if (iradloss == 0) then
@@ -937,7 +937,7 @@ contains
       type (constraint_args_type), intent(out) :: args
 
       ! pradmaxpv : local real :  the maximum possible power/vol that can be radiated
-      real(kind(1.0D0)) pradmaxpv
+      real(dp) :: pradmaxpv
       pradmaxpv = pinjmw/vol + palppv*falpha + pchargepv + pohmpv
       args%cc =  1.0D0 - fradpwr * pradmaxpv / pradpv
       args%con = pradmaxpv * (1.0D0 - args%cc)
@@ -992,7 +992,7 @@ contains
       implicit none
       type (constraint_args_type), intent(out) :: args
       ! totmva : local real : total MVA in TF coil (MW)
-      real(kind(1.0D0)) totmva
+      real(dp) :: totmva
 
       totmva = tfcpmw + tflegmw
       args%cc =  1.0D0 - fmva * mvalim/totmva
@@ -1104,7 +1104,7 @@ contains
       implicit none
       type (constraint_args_type), intent(out) :: args
       ! rcw : local real : conducting shell radius (m)
-      real(kind(1.0D0)) rcw
+      real(dp) :: rcw
 
       rcw = rminor + scraplo + fwoth + blnkoth
       args%cc =  1.0D0 - fcwr * cwrmax*rminor / rcw
@@ -1790,7 +1790,7 @@ contains
       use tfcoil_variables, only: ritfc
       implicit none
       ! cratmx : local real : maximum ratio of plasma current to centrepost current
-      real(kind(1.0D0)) :: cratmx
+      real(dp) :: cratmx
       type (constraint_args_type), intent(out) :: args
 
       ! if the machine isn't a ST then report error

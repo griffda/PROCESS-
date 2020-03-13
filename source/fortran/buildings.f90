@@ -13,8 +13,8 @@ module buildings_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! Import modules !
-  ! !!!!!!!!!!!!!!!!!
+  ! Import modules
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
 
   use build_variables
   use buildings_variables
@@ -62,7 +62,7 @@ contains
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: tfh,tfmtn,tfri,tfro
+    real(dp) :: tfh,tfmtn,tfri,tfro
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -132,16 +132,16 @@ contains
     ! !!!!!!!!!!!!
 
     integer, intent(in) :: iprint, outfile
-    real(kind(1.0D0)), intent(inout) :: pfr
-    real(kind(1.0D0)), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
+    real(dp), intent(inout) :: pfr
+    real(dp), intent(in) :: pfm,tfro,tfri,tfh,tfm,n_tf,shro, &
          shri,shh,shm,crr,helpow
 
-    real(kind(1.0D0)), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
+    real(dp), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
 
     ! Local variables !
     ! !!!!!!!!!!!!!!!!!!
 
-    real(kind(1.0D0)) :: ang, bmr, coill, crcl, cran, dcl,dcw, drbi, &
+    real(dp) :: ang, bmr, coill, crcl, cran, dcl,dcw, drbi, &
          hcl, hcw, hrbi, hy, layl, rbh, rbl, rbw, rmbh, rmbl, rmbw, rwl, rww, &
          sectl, tch, tcl, tcw, wgts, wsa, wt
 

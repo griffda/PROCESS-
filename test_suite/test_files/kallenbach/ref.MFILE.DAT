@@ -554,9 +554,9 @@
  Outer_plate_bottom,_vertical_(m)________________________________________ (zplbo)_______________________     -6.8114E+00    
  Calculated_maximum_divertor_height_(m)__________________________________ (divht)_______________________      2.0211E+00    
  # TF Coils #
- TF_coil_superconductor_material_________________________________________ (isumattf)____________________              5    
- Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      2.3258E+07 OP 
- Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      9.6910E+06    
+ TF_coil_superconductor_material_________________________________________ (i_tf_sc_mat)____________________              5    
+ Winding_pack_current_density_(A/m2)_____________________________________ (jwptf)_______________________      2.3242E+07 OP 
+ Overall_current_density_(A/m2)__________________________________________ (oacdcp)______________________      9.6789E+06    
  Number_of_TF_coils______________________________________________________ (n_tf)________________________      1.6000E+01    
  Total_inboard_leg_radial_thickness_(m)__________________________________ (tfcth)_______________________      1.0167E+00 ITV
  Total_outboard_leg_radial_thickness_(m)_________________________________ (tfthko)______________________      1.0167E+00    
@@ -1380,7 +1380,7 @@ casths   = 0.05 * Either; inboard tf coil sidewall case thickness (m)
 cpttf    = 90000.0 * Tf coil current per turn (a);
 dhecoil  = 0.010 * Diameter of he coil in tf winding (m)
 fcutfsu  = 0.8348 * Copper fraction of cable conductor (tf coils)
-isumattf = 5 * Switch for superconductor material in tf coils;
+i_tf_sc_mat = 5 * Switch for superconductor material in tf coils;
 i_tf_sup   = 1 * Switch for tf coil conductor model;
 oacdcp   = 9873000.0 * Overall current density in tf coil inboard legs (a/m2)
 ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude

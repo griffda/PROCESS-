@@ -12,6 +12,7 @@ module startup_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use, intrinsic :: iso_fortran_env, only: dp=>real64
   use constraint_variables
   use current_drive_variables
   use maths_library
@@ -91,7 +92,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: aa,bb,cc,dd,ne20,te10,ti10,fd,fdt,rrplas,objf,tol
+    real(dp) :: aa,bb,cc,dd,ne20,te10,ti10,fd,fdt,rrplas,objf,tol
     integer :: meq,maxfev,info,nfev,niter,mode,s
 
     integer, parameter :: n = 2
@@ -103,16 +104,16 @@ contains
     integer, parameter :: lwa = 2*(n+1)
     integer, parameter :: liwa = 6*(n+1)+m
 
-    real(kind(1.0D0)), dimension(n) :: x,fgrd,glag,glaga,gamma1, &
+    real(dp), dimension(n) :: x,fgrd,glag,glaga,gamma1, &
          eta,xa,bdelta,bndl,bndu
-    real(kind(1.0D0)), dimension(m) :: conf,cm
-    real(kind(1.0D0)), dimension(lcnorm,m) :: cnorm
-    real(kind(1.0D0)), dimension(lb,lb) :: b
-    real(kind(1.0D0)), dimension(m+2*n+1) :: vlam1,vmu
-    real(kind(1.0D0)), dimension(ldel) :: delta
-    real(kind(1.0D0)), dimension(n+1) :: gm,bdl,bdu
-    real(kind(1.0D0)), dimension(lh,lh) :: h
-    real(kind(1.0D0)), dimension(lwa) :: wa
+    real(dp), dimension(m) :: conf,cm
+    real(dp), dimension(lcnorm,m) :: cnorm
+    real(dp), dimension(lb,lb) :: b
+    real(dp), dimension(m+2*n+1) :: vlam1,vmu
+    real(dp), dimension(ldel) :: delta
+    real(dp), dimension(n+1) :: gm,bdl,bdu
+    real(dp), dimension(lh,lh) :: h
+    real(dp), dimension(lwa) :: wa
     integer, dimension(liwa) :: iwa
     integer, dimension(n) :: ilower,iupper
 
@@ -252,9 +253,9 @@ contains
 
       integer, intent(in) :: n,m
       integer, intent(inout) :: info
-      real(kind(1.0D0)), dimension(n), intent(in) :: x
-      real(kind(1.0D0)), dimension(m), intent(out) :: conf
-      real(kind(1.0D0)), intent(out) :: objf
+      real(dp), dimension(n), intent(in) :: x
+      real(dp), dimension(m), intent(out) :: conf
+      real(dp), intent(out) :: objf
 
       !  Local variables
 
@@ -297,15 +298,15 @@ contains
 
       integer, intent(in) :: n,m,lcnorm
       integer, intent(inout) :: info
-      real(kind(1.0D0)), dimension(n), intent(in) :: x
-      real(kind(1.0D0)), dimension(n), intent(out) :: fgrd
-      real(kind(1.0D0)), dimension(lcnorm,m), intent(out) :: cnorm
+      real(dp), dimension(n), intent(in) :: x
+      real(dp), dimension(n), intent(out) :: fgrd
+      real(dp), dimension(lcnorm,m), intent(out) :: cnorm
 
       !  Local variables
 
-      real(kind(1.0D0)), dimension(2) :: xfor,xbac,cfor,cbac
-      real(kind(1.0D0)) :: ffor,fbac
-      real(kind(1.0D0)) :: epsfcn = 1.0D-3
+      real(dp), dimension(2) :: xfor,xbac,cfor,cbac
+      real(dp) :: ffor,fbac
+      real(dp) :: epsfcn = 1.0D-3
       integer :: i,j
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -360,12 +361,12 @@ contains
       !  Arguments
 
       integer, intent(in) :: n
-      real(kind(1.0D0)), dimension(n), intent(in) :: x
-      real(kind(1.0D0)), intent(out) :: paux
+      real(dp), dimension(n), intent(in) :: x
+      real(dp), intent(out) :: paux
 
       !  Local variables
 
-      real(kind(1.0D0)) :: storen,storet
+      real(dp) :: storen,storet
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -423,13 +424,13 @@ contains
       !  Arguments
 
       integer, intent(in) :: n,m
-      real(kind(1.0D0)), intent(in) :: paux
-      real(kind(1.0D0)), dimension(n), intent(in) :: x
-      real(kind(1.0D0)), dimension(m), intent(out) :: conf
+      real(dp), intent(in) :: paux
+      real(dp), dimension(n), intent(in) :: x
+      real(dp), dimension(m), intent(out) :: conf
 
       !  Local variables
 
-      real(kind(1.0D0)) :: eta,detadt
+      real(dp) :: eta,detadt
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

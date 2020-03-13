@@ -7,13 +7,29 @@
 
 # Coding Standards
 
+## Double declarations
+
+PROCESS uses the Fortran 2008+ intrinsic precision module as shown in the example below. The 
+use statement will need to be at the module level. See the 
+[fortran wiki](http://fortranwiki.org/fortran/show/Real+precision) for more information.
+
+```fortran
+use, intrinsic :: iso_fortran_env, only: dp=>real64
+
+real(dp) :: b
+
+```
 
 ## Naming conventions
 
 # Code Documentation Using FORD
-PROCESS uses FORD (FORtran Documentation) to automatically generate documentation from comments in the FORTRAN code. FORD parses FORTRAN source to understand the structure of the project as well as picking up "docmarked" comments in the source to create the documentation.
+PROCESS uses FORD (FORtran Documentation) to automatically generate documentation from comments 
+in the FORTRAN code. FORD parses FORTRAN source to understand the structure of the project as well 
+as picking up "docmarked" comments in the source to create the documentation.
 
-Regular Fortran comments are prefixed with a "!"; these are ignored by FORD and don't go into the documentation. FORD comments are prefixed by a "!!", called a docmark; these are picked up by FORD and go into the documentation.
+Regular Fortran comments are prefixed with a "!"; these are ignored by FORD and don't go into 
+the documentation. FORD comments are prefixed by a "!!", called a docmark; these are picked up 
+by FORD and go into the documentation.
 
 The "!!" docmark goes after the statement it documents. For example, to document variables:
 
@@ -34,8 +50,13 @@ module global_variables
   !! well-suited to any of the other 'variables' modules.
 ```
 
-This documentation will appear in the [FORD docs](http://process.gitpages.ccfe.ac.uk/process/ford_site/index.html) section in the left-hand navigation bar. Within this site, the "Variables" section in the top navigation bar provides variable descriptions in the same manner as the original "vardes" page. 
+This documentation will appear in the 
+[FORD docs](http://process.gitpages.ccfe.ac.uk/process/ford_site/index.html) section in the 
+left-hand navigation bar. Within this site, the "Variables" section in the top navigation bar 
+provides variable descriptions in the same manner as the original "vardes" page. 
 
-To document a statement before it occurs in the source, use "!>". However, it is encouraged to use "!!" for consistency. The rationale behind this and further information is included on the [FORD wiki](https://github.com/Fortran-FOSS-Programmers/ford/wiki/Writing-Documentation).
+To document a statement before it occurs in the source, use "!>". However, it is encouraged to 
+use "!!" for consistency. The rationale behind this and further information is included on the 
+[FORD wiki](https://github.com/Fortran-FOSS-Programmers/ford/wiki/Writing-Documentation).
 
 The FORD project on github can be found [here](https://github.com/Fortran-FOSS-Programmers/ford).
