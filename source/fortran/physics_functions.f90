@@ -1339,7 +1339,7 @@ contains
     use constants, only : rmu0
 
     ! Return value
-    real(kind(1.0D0)) :: res_diff_time
+    real(dp) :: res_diff_time
 
     res_diff_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
     !! Resistive diffusion time equals the current penetration time which is approximated by:
