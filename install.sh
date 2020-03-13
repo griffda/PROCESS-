@@ -60,6 +60,9 @@ if [ "$OSTYPE" == "linux-gnu" ]; then
             cmake --build build --target dicts
             sudo pip3 install -e .
 
+            echo "Check your ~/.bashrc for duplicate entries if you have installed"\
+                "process in other locations previously."
+
         else
             echo "ERROR :: Ubuntu version must be > 18.04"
             echo "ERROR :: Detected version $MY_OS_VERSION"
