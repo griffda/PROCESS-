@@ -9,6 +9,8 @@ Input file:
 MFILE.DAT
 
 """
+import matplotlib
+matplotlib.use('Agg')
 
 import argparse
 from pylab import show, savefig

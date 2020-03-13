@@ -249,7 +249,8 @@ module physics_variables
   !! fpdivlim /1.0/ : F-value for minimum pdivt (constraint equation 80)
 
   real(dp) :: fne0 = 1.0D0
-  !! fne0 /1.0/ : F-value for minimum pdivt (constraint equation 81)
+  !! F-value for minimum pdivt (constraint equation 81)
+  !! Iteration variable 154 
 
   real(dp), bind(C) :: ftrit = 0.5D0
   !! ftrit /0.5/ : tritium fuel fraction
@@ -1043,42 +1044,48 @@ module current_drive_variables
   !! ftritbm /1.0e-6/ : fraction of beam that is tritium
   real(dp) :: gamcd = 0.0D0
   !! gamcd : normalised current drive efficiency (1.0e20 A/(W m^2))
+  
   real(dp) :: gamma_ecrh = 0.35D0
-  !! gamma_ecrh /0.35/ : user input ECRH gamma (1.0e20 A/(W m^2))
+  !! User input ECRH gamma (1.0e20 A/(W m^2))
+
   real(dp) :: rho_ecrh = 0.1D0
   !! rho_ecrh /0.1/ : normalised minor radius at which electron cyclotron current drive is maximum
 
   integer :: iefrf = 5
-  !! iefrf /5/ : switch for current drive efficiency model: <OL>
-  !!        <LI> Fenstermacher Lower Hybrid
-  !!        <LI> Ion Cyclotron current drive
-  !!        <LI> Fenstermacher ECH
-  !!        <LI> Ehst Lower Hybrid
-  !!        <LI> ITER Neutral Beam
-  !!        <LI> new Culham Lower Hybrid model
-  !!        <LI> new Culham ECCD model
-  !!        <LI> new Culham Neutral Beam model
-  !!        <LI> Empty (Oscillating field CD removed)
-  !!        <LI> ECRH user input gamma
-  !!        <LI> ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </OL>
+  !! Switch for current drive efficiency model:
+  !!  1 : Fenstermacher Lower Hybrid
+  !!  2 : Ion Cyclotron current drive
+  !!  3 : Fenstermacher ECH
+  !!  4 : Ehst Lower Hybrid
+  !!  5 : ITER Neutral Beam
+  !!  6 : new Culham Lower Hybrid model
+  !!  7 : new Culham ECCD model
+  !!  8 : new Culham Neutral Beam model
+  !!  9 : Simple NBI model (see SYCOMORE HELIOS paper)
+  !!  10 : ECRH user input gamma
+  !!  11 : ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
+  !!  12 : Simple NBI model
+  
   integer :: iefrffix = 0 
-  !! iefrffix /0/ : switch for 2nd current drive efficiency model <UL>
-  !!        <LI> = 0 No fixed current drive
-  !!        <LI> = 1 Fenstermacher Lower Hybrid
-  !!        <LI> = 2 Ion Cyclotron current drive
-  !!        <LI> = 3 Fenstermacher ECH
-  !!        <LI> = 4 Ehst Lower Hybrid
-  !!        <LI> = 5 ITER Neutral Beam
-  !!        <LI> = 6 new Culham Lower Hybrid model
-  !!        <LI> = 7 new Culham ECCD model
-  !!        <LI> = 8 new Culham Neutral Beam model
-  !!        <LI> = 9 Empty (Oscillating field CD removed)
-  !!        <LI> = 10 ECRH user input gamma
-  !!        <LI> = 11 ECRH "HARE" model (E. Poli, Physics of Plasmas 2019) </UL>
+  !! Switch for 2nd current drive efficiency model:
+  !!  0 : No fixed current drive
+  !!  1 : Fenstermacher Lower Hybrid
+  !!  2 : Ion Cyclotron current drive
+  !!  3 : Fenstermacher ECH
+  !!  4 : Ehst Lower Hybrid
+  !!  5 : ITER Neutral Beam
+  !!  6 : new Culham Lower Hybrid model
+  !!  7 : new Culham ECCD model
+  !!  8 : new Culham Neutral Beam model
+  !!  9 : Simple NBI model (see SYCOMORE HELIOS paper)
+  !!  10 :  ECRH user input gamma
+  !!  11 :  ECRH "HARE" model (E. Poli, Physics of Plasmas 2019)
+
   integer :: irfcd = 1
-  !! irfcd /1/ : switch for current drive calculation:<UL>
-  !!        <LI> = 0 turned off;
-  !!        <LI> = 1 turned on</UL>
+  !! Switch for current drive calculation:
+  !!  0 : turned off
+  !!  1 : turned on
+
   real(dp) :: nbshinef = 0.0D0
   !! nbshinef : neutral beam shine-through fraction
   real(dp) :: nbshield = 0.5D0
@@ -2136,7 +2143,7 @@ module tfcoil_variables
   !! awphec : winding pack He coil area (m2)
   real(dp) :: bcritsc = 24.0D0
   !! bcritsc /24.0/ : upper critical field (T) for Nb3Sn superconductor
-  !!                  at zero temperature and strain (isumattf=4, =bc20m)
+  !!                  at zero temperature and strain (i_tf_sc_mat=4, =bc20m)
   real(dp) :: bmaxtf = 0.0D0
   !! bmaxtf : mean peak field at TF coil (T)
   real(dp) :: bmaxtfrp = 0.0D0
@@ -2192,7 +2199,7 @@ module tfcoil_variables
   real(dp) :: dcase = 8000.0D0
   !! dcase /8000.0/ : density of coil case (kg/m3)
   real(dp), dimension(6) :: dcond = 9000.0D0
-  !! dcond(6) /9000.0/ : density of superconductor type given by isumattf/isumatoh/isumatpf (kg/m3)
+  !! dcond(6) /9000.0/ : density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
   
   real(dp) :: dcondins = 1800.0D0
   !! dcondins /1800.0/ : density of conduit + ground-wall insulation (kg/m3)
@@ -2210,18 +2217,6 @@ module tfcoil_variables
   real(dp) :: estotftgj = 0.0D0
   !! estotftgj : total stored energy in the toroidal field (GJ)
 
-  real(dp) :: eyins = 2.0D10
-  !! eyins /2.0e10/ : insulator Young's modulus (Pa)
-  !!                  (default value from DDD11-2 v2 2 (2009))
-  real(dp), dimension(2) :: eyoung = 0.0D0
-  !! eyoung(2) : work array used in stress calculation (Pa)
-  real(dp) :: eystl = 2.05D11
-  !! eystl /2.05e11/ : steel case Young's modulus (Pa)
-  !!                   (default value from DDD11-2 v2 2 (2009))
-  real(dp) :: eywp = 6.6D8
-  !! eywp /6.6e8/ : winding pack Young's modulus (Pa)
-  real(dp) :: eyzwp = 0.0D0
-  !! eyzwp : winding pack vertical Young's modulus (Pa)
   real(dp) :: farc4tf = 0.7D0
   !! farc4tf /0.7/ : factor to size height of point 4 on TF coil
   real(dp) :: fcutfsu = 0.69D0
@@ -2242,19 +2237,20 @@ module tfcoil_variables
   !!         <LI> = 1 Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
   
   integer :: i_tf_turns_integer = 0
-  !! i_tf_turns_integer /0/ : switch for TF coil integer/non-integer turns<UL>
-  !!         <LI> = 0 non-integer turns;
-  !!         <LI> = 1 integer turns</UL>
-  integer :: isumattf = 1
-  !! isumattf /1/ : switch for superconductor material in TF coils:<UL>
-  !!           <LI> = 1 ITER Nb3Sn critical surface model with standard
-  !!                    ITER parameters;
-  !!           <LI> = 2 Bi-2212 high temperature superconductor (range of
-  !!                    validity T < 20K, adjusted field b < 104 T, B > 6 T);
-  !!           <LI> = 3 NbTi;
-  !!           <LI> = 4 ITER Nb3Sn model with user-specified parameters
-  !!           <LI> = 5 WST Nb3Sn parameterisation
-  !!           <LI> = 6 REBCO HTS tape in CroCo strand</UL>
+  !! Switch for TF coil integer/non-integer turns
+  !!   0 : non-integer turns
+  !!   1 : integer turns
+
+  integer :: i_tf_sc_mat = 1
+  !! Switch for superconductor material in TF coils:<UL>
+  !!   1 : ITER Nb3Sn critical surface model with standard
+  !!     : ITER parameters;
+  !!   2 : Bi-2212 high temperature superconductor (range of
+  !!     : validity T < 20K, adjusted field b < 104 T, B > 6 T);
+  !!   3 : NbTi;
+  !!   4 : ITER Nb3Sn model with user-specified parameters
+  !!   5 : WST Nb3Sn parameterisation
+  !!   6 : REBCO HTS tape in CroCo strand</UL>
 
   integer :: i_tf_sup = 1
   !! i_tf_sup /1/ : switch for TF coil conductor model:<UL>
@@ -2268,6 +2264,35 @@ module tfcoil_variables
   !!         <LI> = 1  PROCESS D-shape : parametrise with 2 arcs 
   !!         <LI> = 2  Picture frame coils 
 
+  integer :: n_pancake = 10
+  !! Number of pancakes in TF coil
+  !! Only used if i_tf_turns_integer = 1
+
+  integer :: n_layer = 20
+  !! Number of layers in TF coil
+  !! Only used if i_tf_turns_integer = 1
+  
+  integer :: n_rad_per_layer = 50
+  !! Size of the arrays per layers storing the radial dependent 
+  !! stress quantities (stresses, strain displacement etc..)
+
+  integer :: i_tf_bucking = -1
+  !! Switch for bucking cylinder (case)
+  !!  -1 : Casing for SC i.e. i_tf_sup = 1 (default) 
+  !!       No casing for copper magnets
+  !!       Casing for aluminium magnets 
+  !!   0 : No casing/bucking cylinder
+  !!   1 : casing/buling cylinder
+  !!   2 : Bucked and wedged design
+
+  integer :: n_tf_graded_layers = 1
+  !! Number of layers of different stress properties in the WP 
+  !! if n_tf_graded_layers > 1, a gradded coil is condidered
+
+  integer :: n_tf_stress_layers = 0
+  !! Number of layers considered for the inboard TF stress calculations
+  !! set in initial.f90 from i_tf_bucking and n_tf_graded_layers
+
   real(dp) :: jbus = 1.25D6
   !! jbus /1.25e6/ : bussing current density (A/m2)
   real(dp), dimension(2) :: jeff = 0.0D0
@@ -2280,28 +2305,57 @@ module tfcoil_variables
   real(dp) :: jwptf = 0.0D0
   !! jwptf : winding pack current density (A/m2)
 
-  integer :: n_pancake = 10
-  !! n_pancake /10/ : Number of pancakes in TF coil (i_tf_turns_integer=1)
-
-  integer :: n_layer = 20
-  !! n_layer /20/ : Number of layers in TF coil (i_tf_turns_integer=1)
-
   real(dp) :: oacdcp = 0.0D0
-  !! oacdcp /0.0/ : overall current density in TF coil inboard legs midplane (A/m2)
-  !!                Rem SK : Not used in tfcoil to set the current any more
-  !!                         -> SHOULD NOT BE USED AS ITERATION VARIABLE 12 ANY MORE
-  !!                         -> This variable is now calculated
+  !! Overall current density in TF coil inboard legs midplane (A/m2)
+  !!  Rem SK : Not used in tfcoil to set the current any more
+  !!   -> SHOULD NOT BE USED AS ITERATION VARIABLE 12 ANY MORE
+  !!   -> This variable is now calculated
 
-  real(dp) :: poisson = 0.3D0
-  !! poisson /0.3/ : Poisson's ratio for TF stress calculation
-  !!                 (assumed constant over entire coil)
-  real(dp), dimension(3) :: radtf = 0.0D0
-  !! radtf(3) : work array used in stress calculation (m)
+  real(dp) :: eyzwp = 0.0D0
+  !! Winding pack vertical Young's modulus (Pa)
+
+  real(dp) :: eyoung_ins = 1.0D8
+  !! Insulator Young's modulus [Pa]
+  !! Default value (1.0D8) setup the following values
+  !!  - SC TF, eyoung_ins = 20 Mpa (default value from DDD11-2 v2 2 (2009))
+  !!  - Cryo-Al TF, eyoung_ins = 2.5 MPa (Kapton polymer)
+
+  real(dp) :: eyoung_steel = 2.05D11
+  !! teel case Young's modulus (Pa)
+  !!  (default value from DDD11-2 v2 2 (2009))
+
+  real(dp) :: eyoung_winding = 6.6D8
+  !! SC TF coil winding Young's modulus (Pa)
+  
+  real(dp) :: eyoung_copper = 117.0D9
+  !! Copper young modulus
+  !!  Default value taken from wikipedia
+  
+  real(dp) :: eyoung_al = 69.0D9 
+  !! Aluminium young modulus
+  !!  Default value taken from wikipedia
+  
+  real(dp) :: eyoung_reinforced_al = 180.0D9 
+  !! Reinforced aluminium young modulus 
+  !!  Default value given Garry 
+  !!  Rem : Al reinforcement can be tuned to any values
+
+  real(dp) :: poisson_steel = 0.3D0
+  !! Steel Poisson's ratio 
+  
+  real(dp):: poisson_copper = 0.35D0
+  !! Copper Poisson's ratio
+  !!  Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html
+
+  real(dp):: poisson_al = 0.35D0
+  !! Aluminium Poisson's ratio 
+  !!  Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html
+
   real(dp) :: rbmax = 0.0D0
-  !! rbmax : radius of maximum TF B-field (m)
+  !! Radius of maximum TF B-field (m)
 
   real(dp) :: tflegres = 0.0D0
-  !! tflegres : TF coil leg resistance (ohm)
+  !! TF coil leg resistance (ohm)
 
   real(dp) :: ripmax = 1.0D0
   !! ripmax /1.0/ : maximum allowable toroidal field ripple amplitude
@@ -2353,7 +2407,7 @@ module tfcoil_variables
   !!                    (used in Nb3Sn critical surface model, isumatph=1, 4 or 5)
   real(dp) :: strncon_tf = -0.005D0
   !! strncon_tf /-0.005/ : strain in TF superconductor material
-  !!                    (used in Nb3Sn critical surface model, isumattf=1, 4 or 5)
+  !!                    (used in Nb3Sn critical surface model, i_tf_sc_mat=1, 4 or 5)
 
   ! Issue #522: Quench models
   character(len=12) :: quench_model = 'exponential'
@@ -2371,7 +2425,7 @@ module tfcoil_variables
   !! taucq : allowable TF quench time (s)
   real(dp) :: tcritsc = 16.0D0
   !! tcritsc /16.0/ : critical temperature (K) for superconductor
-  !!                  at zero field and strain (isumattf=4, =tc0m)
+  !!                  at zero field and strain (i_tf_sc_mat=4, =tc0m)
   real(dp) :: tdmptf = 10.0D0
   !! tdmptf /10.0/ : fast discharge time for TF coil in event of quench (s)
   !!                 (iteration variable 56)
@@ -2380,13 +2434,13 @@ module tfcoil_variables
   !!                 <LI> linear quench : discharge time (s)
 
   real(dp) :: tfareain = 0.0D0
-  !! tfareain : area of inboard midplane TF legs (m2)
+  !! Area of inboard midplane TF legs (m2)
 
   real(dp) :: tfbusl = 0.0D0
-  !! tfbusl : TF coil bus length (m)
+  !! TF coil bus length (m)
 
   real(dp) :: tfbusmas = 0.0D0
-  !! tfbusmas : TF coil bus mass (kg)
+  !! TF coil bus mass (kg)
 
   real(dp) :: tfckw = 0.0D0
   !! tfckw :  available DC power for charging the TF coils (kW)
@@ -2395,10 +2449,16 @@ module tfcoil_variables
   !   !! tfc_model /1/ : switch for TF coil magnet stress model:<UL>
   !   !!                 <LI> = 0 simple model (solid copper coil)
   !   !!                 <LI> = 1 CCFE two-layer stress model; superconductor</UL>
+
   real(dp), bind(C) :: tfcmw = 0.0D0
-  !! tfcmw : peak power per TF power supply (MW)
+  !! Peak power per TF power supply (MW)
+  
   real(dp) :: tfcpmw = 0.0D0
-  !! tfcpmw : peak resistive TF coil inboard leg power (MW)
+  !! Peak resistive TF coil inboard leg power (MW)
+
+  real(dp) :: tfjtsmw = 0.0D0
+  !! TF joints resistive power losses (MW)
+
   real(dp) :: tfcryoarea = 0.0D0
   !! tfcryoarea : surface area of toroidal shells covering TF coils (m2)
   real(dp) :: tficrn = 0.0D0
@@ -2410,33 +2470,55 @@ module tfcoil_variables
   !! tfinsgap /0.010/ : TF coil WP insertion gap (m)
   
   real(dp) :: tflegmw = 0.0D0
-  !! tflegmw : TF coil outboard leg resistive power (MW)
+  !! TF coil outboard leg resistive power (MW)
 
   real(dp) :: rhocp = 0.0D0
-  !! rhocp : TF coil inboard leg resistivity [Ohm-m]
-  !!         if itart == 0, this variable is the average resistivity over the whole magnet
+  !! TF coil inboard leg resistivity [Ohm-m]
+  !!  if itart == 0, this variable is the average resistivity over the whole magnet
 
   real(dp) :: rhotfleg = 0.0D0
-  !! rhotfleg : resistivity of a TF coil leg (Ohm-m)
+  !! Resistivity of a TF coil leg (Ohm-m)
 
   real(dp) :: rhotfbus = -1.0D0 ! 2.5D-8
-  !! rhotfbus /-1.0/ : resistivity of a TF coil bus (Ohm-m)
-  !!                   Default value takes the same res as the leg one
+  !! Resistivity of a TF coil bus (Ohm-m)
+  !!  Default value takes the same res as the leg one
  
   real(dp) :: frhocp = 1.0D0
-  !! frhocp /1.0/ : Centrepost resistivity enhancement factor 
-  !!                For itart = 0, this factor is used for the whole magnet 
+  !! Centrepost resistivity enhancement factor 
+  !!  For itart = 0, this factor is used for the whole magnet 
   
   real(dp) :: frholeg = 1.0D0
-  !! frholeg /1.0/ : Ouboard legs resistivity enhancement factor
-  !!                 Only used for itart = 1
+  !! Ouboard legs resistivity enhancement factor
+  !!   Only used for itart = 1
+  
+  real(dp) :: rho_tf_joints = 2.5D-10
+  !! TF joints surfacic resistivity [ohm.m^2]
+  !! Feldmetal joints assumed
+
+  integer :: n_tf_joints_contact = 6
+  !! Number of contact per sliding joint
+
+  integer :: n_tf_joints = 4
+  !! Number of joint per turn
+
+  real(dp) :: th_joint_contact = 0.03D0
+  !! TF sliding joints contact pad width [m]
+
+  real(dp) :: pres_joints = 0.0D0
+  !! Calculated TF joints resistive power losses [W]
 
   real(dp) :: tfleng = 0.0D0
-  !! tfleng : TF coil circumference (m)
+  !! TF coil circumference (m)
+
+  real(dp) :: eff_tf_cryo = -1.0D0
+  !! TF cryoplant efficiency (compared to pefect Carnot cycle)
+  !! Using -1 set the default value depending on magnet technology
+  !!  - i_tf_sup = 1 : SC magnet, eff_tf_cryo = 0.13 (ITER design)
+  !!  - i_tf_sup = 2 : Cryo-aluminium, eff_tf_cryo = 0.4
 
   real(dp) :: n_tf = 16.0D0
-  !! n_tf /16.0/ : number of TF coils (default = 50 for stellarators)
-  !!               number of TF coils outer legs for ST
+  !! Number of TF coils (default = 50 for stellarators)
+  !! Number of TF coils outer legs for ST
 
   real(dp) :: tfocrn = 0.0D0
   !! tfocrn : TF coil half-width - outer bore (m)

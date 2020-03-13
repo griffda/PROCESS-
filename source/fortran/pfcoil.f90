@@ -2088,15 +2088,15 @@ end subroutine superconpf
     M = ((B_a - B_b)*j*a)/(alpha - 1.0D0)
 
     ! calculate hoop stress terms
-    hp_term_1 = K*((2.0D0 + poisson)/(3.0D0*(alpha + 1.0D0)))
+    hp_term_1 = K*((2.0D0 + poisson_steel)/(3.0D0*(alpha + 1.0D0)))
 
     hp_term_2 = alpha**2 + alpha + 1.0D0 + alpha**2/epsilon**2 - &
-      epsilon*(((1.0D0 + 2.0D0*poisson)*(alpha + 1.0D0)) / (2.0D0 + poisson))
+      epsilon*(((1.0D0 + 2.0D0*poisson_steel)*(alpha + 1.0D0)) / (2.0D0 + poisson_steel))
 
-    hp_term_3 = M*((3.0D0 + poisson) / (8.0D0))
+    hp_term_3 = M*((3.0D0 + poisson_steel) / (8.0D0))
 
     hp_term_4 = alpha**2 + 1.0D0 + alpha**2/epsilon**2 - &
-            epsilon**2*((1.0D0 + 3.0D0*poisson)/(3.0D0 + poisson))
+            epsilon**2*((1.0D0 + 3.0D0*poisson_steel)/(3.0D0 + poisson_steel))
 
     s_hoop_nom = hp_term_1*hp_term_2 - hp_term_3*hp_term_4
 

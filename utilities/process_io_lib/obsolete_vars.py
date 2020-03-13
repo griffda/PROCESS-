@@ -29,5 +29,16 @@ OBS_VARS = {
     "sig_tresca_case":"sig_tf_treca", 
     "sig_tresca_cond":"sig_tf_treca",
     "sigver":"None",
-    "sigrad":"None"
+    "sigrad":"None",
+    "poisson":"poisson_steel",
+    "eywp":"eyoung_winding",
+    "eyins":"eyoung_ins",
+    "eystl":"eyoung_steel",
+    "isumattf":"i_tf_sc_mat",
+    "turnstf":"n_tf_turn",
+    "awptf":"a_tf_wp",
+    "thkcas":"dr_tf_case_in",
+    "tinstf":"dr_tf_ins",
+    "casthi_fraction":"f_tf_case_out",
+    "casthi":"dr_tf_case_out"
 }

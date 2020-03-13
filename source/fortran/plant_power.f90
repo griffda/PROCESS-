@@ -106,6 +106,7 @@ contains
        !  Resistive powers (MW):
        tfcpmw  = 1.0D-6 * prescp   !  inboard legs (called centrepost, CP for tart design)
        tflegmw = 1.0D-6 * presleg  !  outboard legs
+       tfjtsmw =  1.0D-6 * pres_joints  ! Joints 
        tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus => Dodgy !
 
        !  TF coil reactive power
@@ -117,7 +118,7 @@ contains
        tfreacmw = 0.0D0
 
        !  Total power consumption (MW)
-       tfcmw = tfcpmw + tflegmw + tfbusmw + tfreacmw
+       tfcmw = tfcpmw + tflegmw + tfbusmw + tfreacmw + tfjtsmw
 
        !  Total steady state AC power demand (MW)
        tfacpd = tfcmw / etatf
@@ -773,7 +774,7 @@ contains
     if (iscenr /= 2) pacpmw = pacpmw + fmgdmw
 
     !  Total baseline power to facility loads, MW
-    fcsht  = basemw + efloor*pkwpm2/1000.0D0
+    fcsht = basemw + efloor*pkwpm2/1000.0D0
 
     ! Estimate of the total low voltage power, MW
     ! MDK No idea what this is - especially the last term
@@ -825,12 +826,9 @@ contains
 
     implicit none
 
-    ! Cryo-aluminium coolant average temperature
-    real(dp) :: t_tf_cryoal_cool_av = 0.0D0
-
-    ! Cryo-aluminium cryoplant power consumption
     real(dp) :: p_tf_cryoal_cryo = 0.0D0
-
+    !! Cryo-aluminium cryoplant power consumption
+    
     !------------------------------------------------------------------------------------
     !- Collate pumping powers
     !------------------------------------------------------------------------------------
@@ -946,7 +944,7 @@ contains
         ! Use 13% of ideal Carnot efficiency to fit J. Miller estimate
         ! Rem SK : This ITER efficiency is very low compare to the Strowbridge curve
         !          any reasons why? 
-        crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(0.13D0*tmpcry) * helpow   
+        crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(eff_tf_cryo*tmpcry) * helpow   
     end if
 
     ! Cryogenic aluminium 
@@ -955,9 +953,8 @@ contains
     ! Rem : Nuclear heating on the outer legs assumed to be negligible
     ! Rem : To be updated with 2 cooling loops for TART designs
     if ( i_tf_sup == 2 ) then
-        t_tf_cryoal_cool_av = tcoolin + 0.5D0*dtiocool
-        p_tf_cryoal_cryo = (293.0D0 - t_tf_cryoal_cool_av)/(0.4D0*t_tf_cryoal_cool_av) * &
-                           ( prescp + presleg + pnuccp * 1.0D6 )
+        p_tf_cryoal_cryo = (293.0D0 - tcoolin)/(eff_tf_cryo*tcoolin) * &
+                           ( prescp + presleg + pres_joints + pnuccp * 1.0D6 )
         crypmw = crypmw + 1.0D-6 * p_tf_cryoal_cryo
     end if
 

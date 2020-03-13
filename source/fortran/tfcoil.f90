@@ -22,15 +22,7 @@ module tfcoil_module
 
   private
   
-  !! Radial position of plasma-facing edge of TF coil outboard leg [m]
-  !real(dp), private :: r_tf_inboard_in
-  !
-  !! Radial position of plasma-facing edge of TF coil inboard leg [m]
-  !real(dp), private :: r_tf_inboard_out
-
   public :: tfcoil, cntrpst
-
-
 
 contains
 
@@ -54,10 +46,7 @@ contains
 
     !  Arguments
     integer, intent(in) :: outfile,iprint
-
-    !  Local variables
-    integer :: ii
-    character(len=1) :: intstring
+    
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     
@@ -115,7 +104,6 @@ contains
 
     ! Average conductor cross-sectional area to cool (with cooling area)
     acpav = 0.5D0 * vol_cond_cp/(hmax + tfthko) + acool
-
     ro = sqrt( acpav/(pi*ncool) )
 
     !  Inner legs total heating power (to be removed by coolant)
@@ -255,14 +243,27 @@ contains
     end if 
     ! ******
 
-    ! Average temperature rise : To be changed with Garry Voss' better documented formula (or add a switch?)
+    ! Average temperature rise : To be changed with Garry Voss' better documented formula ? 
     dtcncpav = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond*(ro**2 - rcool**2) ) * &
                ( ro**2*rcool**2 - 0.25D0*rcool**4 - 0.75D0*ro**4 + ro**4 * log(ro/rcool) )
 
-    ! Peak temperature rise : To be changed with Garry Voss' better documented formula (or add a switch?)
+    ! Peak temperature rise : To be changed with Garry Voss' better documented formula ?
     dtconcpmx = (ptot/vol_cond_cp)/(2.0D0*conductor_th_cond) * &
-         ( (rcool**2 - ro**2)/2.0D0 + ro**2 * log(ro/rcool) )
+                ( (rcool**2 - ro**2)/2.0D0 + ro**2 * log(ro/rcool) )
 
+
+    ! If the average conductor temperature difference is negative, set it to 0 
+    if ( dtcncpav < 0.0D0 ) then 
+      call report_error(249)
+      dtcncpav = 0.0D0
+    end if
+
+    ! If the average conductor temperature difference is negative, set it to 0  
+    if ( dtconcpmx < 0.0D0 ) then 
+      call report_error(250)
+      dtconcpmx = 0.0D0
+    end if
+    
     !  Average conductor temperature
     tcpav2 = tcoolin + dtcncpav + dtfilmav + 0.5D0*dtiocool
 
@@ -342,12 +343,5 @@ contains
     call ovarre(outfile,'Pump power (W)','(ppump)',ppump)
 
   end subroutine cntrpst
-
-
-
-
-
-
-
 
 end module tfcoil_module
