@@ -7,7 +7,7 @@ can be found on the PROCESS [webpage](http://www.ccfe.ac.uk/powerplants.aspx).
 
 ## Install
 
-Run
+Clone code from Gitlab, enter the process directory and run:
 
 ```bash
 sudo -u $USER bash install.sh
