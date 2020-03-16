@@ -243,21 +243,26 @@ contains
         ! ensure TF coil quench temperature < tmax_croco   
         case (74); call constraint_eqn_074(args)
 	      ! ensure that TF coil current / copper area < Maximum value ONLY used for croco HTS coil
-        case (75); call constraint_eqn_075(args)
-        ! Eich critical separatrix density model
-        case (76); call constraint_eqn_076(args)
-        ! Equation for maximum TF current per turn upper limit
-        case (77); call constraint_eqn_077(args)
-	  	  ! Equation for Reinke criterion, divertor impurity fraction lower limit
-        case (78); call constraint_eqn_078(args)
-        ! Equation for maximum CS field
-        case (79); call constraint_eqn_079(args)
-        ! Lower limit pdivt
-        case (80); call constraint_eqn_080(args)
-        ! Constraint equation making sure that ne(0) > ne(ped)
-        case (81); call constraint_eqn_081(args)
-         
-      case default
+         case (75); call constraint_eqn_075(args)
+         ! Eich critical separatrix density model
+         case (76); call constraint_eqn_076(args)
+         ! Equation for maximum TF current per turn upper limit
+         case (77); call constraint_eqn_077(args)
+	  	   ! Equation for Reinke criterion, divertor impurity fraction lower limit
+         case (78); call constraint_eqn_078(args)
+         ! Equation for maximum CS field
+         case (79); call constraint_eqn_079(args)
+         ! Lower limit pdivt
+         case (80); call constraint_eqn_080(args)
+         ! Constraint equation making sure that ne(0) > ne(ped)
+         case (81); call constraint_eqn_081(args)
+         ! Constraint equation making sure that stellarator coils dont touch in toroidal direction
+         case (82); call constraint_eqn_082(args)
+         ! Constraint ensuring radial build consistency for stellarators
+         case (83); call constraint_eqn_083(args)
+         ! Constraint for lower limit of beta
+         case (84); call constraint_eqn_084(args)
+       case default
 
         idiags(1) = icc(i)
         call report_error(13)
@@ -2691,5 +2696,83 @@ contains
 
    end subroutine constraint_eqn_081
    
+   subroutine constraint_eqn_082(args)
+      !! Equation for toroidal consistency of stellarator build
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! toroidalgap > tftort
+      !! #=# tfcoil
+      !! #=#=# tftort, ftoroidalgap
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! ftoroidalgap : input real : f-value for constraint toroidalgap > tftort
+      !! toroidalgap : input real :  minimal gap between two stellarator coils
+      !! tftort : input real :  total toroidal width of a tf coil
+      use tfcoil_variables, only: tftort,ftoroidalgap,toroidalgap
+      implicit none
+      type (constraint_args_type), intent(out) :: args
+
+      args%cc =  1.0D0 - ftoroidalgap * toroidalgap/tftort
+      args%con = toroidalgap
+      args%err = toroidalgap - tftort/ftoroidalgap
+      args%symbol = '<'
+      args%units = 'm'
+
+   end subroutine constraint_eqn_082
+
+   subroutine constraint_eqn_083(args)
+      !! Equation for radial consistency of stellarator build
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! available_radial_space > required_radial_space
+      !! #=# build
+      !! #=#=# tftort, ftoroidalgap
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! f_avspace : input real : f-value for constraint toroidalgap > tftort
+      !! available_radial_space : input real :  avaible space in radial direction as given by each s.-configuration
+      !! required_radial_space : input real :  required space in radial direction
+      use build_variables, only: available_radial_space, required_radial_space, f_avspace
+      implicit none
+      type (constraint_args_type), intent(out) :: args
+
+      args%cc =  1.0D0 - f_avspace  * available_radial_space/required_radial_space
+      args%con = available_radial_space * (1.0D0 - args%cc)
+      args%err = required_radial_space * args%cc
+      args%symbol = '<'
+      args%units = 'm'
+   end subroutine constraint_eqn_083
+
+
+   subroutine constraint_eqn_084(args)
+      !! Equation for the lower limit of beta
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !!  (beta-betaft) > betalim_lower
+      !! #=# tfcoil
+      !! #=#=# tftort, ftoroidalgap
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! fbetatry_lower : input real : f-value for constraint toroidalgap > tftort
+      !! betalim_lower : input real :  Lower limit for beta
+      !! beta : input real :  plasma beta
+      !! betaft : input real : Alpha particle beta
+
+      use physics_variables, only: betalim_lower, beta, betaft
+      use constraint_variables, only: fbetatry_lower
+      implicit none
+      type (constraint_args_type), intent(out) :: args
+
+
+      args%cc = 1.0D0 - fbetatry_lower * (beta-betaft)/betalim_lower
+      args%con = betalim_lower * (1.0D0 - args%cc)
+      args%err = (beta-betaft) * args%cc
+      args%symbol = '>'
+      args%units = ''
+
+
+   end subroutine constraint_eqn_084
+
+
 end module constraints
 

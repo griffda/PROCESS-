@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup_kwargs = {
     "name": "process",
-    "version": "0.1",
+    "version": "1.0.17",
     "description": ("Power Reactor Optimisation Code for Environmental and "
         "Safety Studies"),
     "url": "https://ccfe.ukaea.uk/resources/process/",

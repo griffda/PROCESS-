@@ -2,7 +2,7 @@
  "version":  [ "PROCESS version 1.0.16" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 250,
+ "n_errortypes": 251,
  "errors": [
   { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -253,6 +253,8 @@
   {"no": 247, "level": 3, "message": "CHECK: Bucked and wedged TF design not yet implemented"},
   {"no": 248, "level": 3, "message": "CHECK: TF cryo-plant efficiency `eff_tf_cryo` must be within [0-1]"},
   {"no": 249, "level": 2, "message": "[tfcoil][cntrpst] Negative conductor average temperature difference, set to 0"},
-  {"no": 250, "level": 2, "message": "[tfcoil][cntrpst] Negative conductor peak temperature difference, set to 0"}
+  {"no": 250, "level": 2, "message": "[tfcoil][cntrpst] Negative conductor peak temperature difference, set to 0"},
+  {"no": 251, "level": 3, "message": "LOADXC: Beta should not be in ixc if istell>0. Use Constraints 24 and 84 instead."}
 ]
+
 }

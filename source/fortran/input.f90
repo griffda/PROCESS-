@@ -342,6 +342,12 @@ contains
        case ('beta')
           call parse_real_variable('beta', beta, 0.0D0, 1.0D0, &
                'Plasma beta')
+       case ('betalim')
+          call parse_real_variable('betalim', betalim, 0.0D0, 1.0D0, &
+              'Plasma beta upper limit')
+       case ('betalim_lower')
+          call parse_real_variable('betalim_lower', betalim_lower, 0.0D0, 1.0D0, &
+                'Plasma beta lower limit')
        case ('betbm0')
           call parse_real_variable('betbm0', betbm0, 0.0D0, 10.0D0, &
                'Leading coeff. for NB beta fraction')
@@ -676,6 +682,9 @@ contains
        case ('fbetatry')
           call parse_real_variable('fbetatry', fbetatry, 0.001D0, 10.0D0, &
                'F-value for beta limit')
+       case ('fbetatry_lower')
+          call parse_real_variable('fbetatry_lower', fbetatry_lower, 0.001D0, 10.0D0, &
+                  'F-value for (lower) beta limit')
        case ('fcwr')
           call parse_real_variable('fcwr', fcwr, 0.001D0, 10.0D0, &
                'F-value for conducting wall radius')
@@ -747,6 +756,12 @@ contains
        case ('fpdivlim')
           call parse_real_variable('fpdivlim', fpdivlim, 0.001D0, 1.0D0, &
                'F-value for minimum pdivt')
+       case ('ftoroidalgap')
+          call parse_real_variable('ftoroidalgap', ftoroidalgap, 0.001D0, 10.0D0, &
+                'F-value for toroidal gap consistency')
+       case ('f_avspace')
+          call parse_real_variable('f_avspace', f_avspace, 0.001D0, 10.0D0, &
+                'F-value for radial build consistency (stellarators)')
        case ('fpsepr')
           call parse_real_variable('fpsepr', fpsepr, 0.001D0, 10.0D0, &
                'F-value for Psep/R limit')
@@ -1827,8 +1842,11 @@ contains
        case ('thicndut')
           call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
+      case ('leno')
+          call parse_real_variable('leno', leno, 0.0D0, 0.2D0, &
+               'Dimension conductor area including steel and insulation (m)')
        case ('layer_ins')
-              call parse_real_variable('layer_ins', layer_ins, 0.0D0, 0.1D0, &
+          call parse_real_variable('layer_ins', layer_ins, 0.0D0, 0.1D0, &
                'Additional insulation thickness between layers (m)')
        case ('thkcas')
           call parse_real_variable('thkcas', thkcas, 0.0D0, 1.0D0, &
@@ -2878,6 +2896,9 @@ contains
 
           !  Stellarator settings
 
+       case ('istell')
+          call parse_int_variable('istell', istell, 0, 5, &
+               'Stellarator machine specification (1=Helias5, 2=Helias4, 3=Helias3)')
        case ('bmn')
           call parse_real_variable('bmn', bmn, 1.0D-4, 1.0D-2, &
                'Relative radial field perturbation')
