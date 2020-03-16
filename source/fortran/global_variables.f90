@@ -130,12 +130,14 @@ module physics_variables
   !! beamfus0 /1.0/ : multiplier for beam-background fusion calculation
   real(dp), bind(C) :: beta = 0.042D0
   !! beta /0.042/ : total plasma beta (iteration variable 5)
-  !!            (calculated if ipedestal =3)
+  !!            (calculated if ipedestal =3 or stellarator)
   real(dp) :: betaft = 0.0D0
   !! betaft : fast alpha beta component
   real(dp) :: betalim = 0.0D0
   !! betalim : allowable beta
-  real(dp) :: betanb = 0.0D0
+  real(kind(1.0D0)) :: betalim_lower = 0.0D0
+  !! betalim : allowable lower beta
+  real(kind(1.0D0)) :: betanb = 0.0D0
   !! betanb : neutral beam beta component
   real(dp) :: betap = 0.0D0
   !! betap : poloidal beta
@@ -2219,6 +2221,10 @@ module tfcoil_variables
 
   real(dp) :: farc4tf = 0.7D0
   !! farc4tf /0.7/ : factor to size height of point 4 on TF coil
+
+  real(kind(1.0D0)) :: max_force_density = 0.0D0
+  !! max_force_density :  Maximal (WP averaged) force density in TF coils at 1 point. (MN/m3)
+
   real(dp) :: fcutfsu = 0.69D0
   !! fcutfsu /0.69/ : copper fraction of cable conductor (TF coils)
   !!                  (iteration variable 59)
@@ -2356,6 +2362,12 @@ module tfcoil_variables
 
   real(dp) :: tflegres = 0.0D0
   !! TF coil leg resistance (ohm)
+
+  real(kind(1.0D0)) :: toroidalgap = 1.0D0 ![m]
+  !! toroidalgap: Minimal distance between two toroidal coils. (m)
+
+  real(kind(1.0D0)) :: ftoroidalgap = 1.0D0
+  !! ftoroidalgap: F-value for minimum tftort (constraint equation 82)
 
   real(dp) :: ripmax = 1.0D0
   !! ripmax /1.0/ : maximum allowable toroidal field ripple amplitude
@@ -3259,7 +3271,10 @@ module build_variables
   real(dp) :: aplasmin = 0.25D0
   !! aplasmin /0.25/ : minimum minor radius (m)
 
-  real(dp) :: blarea = 0.0D0
+  real(kind(1.0D0)) ::   available_radial_space = 0.0D0
+  !! available_radial_space /0.0/ : Minimal radial space between plasma and coils (m)
+
+  real(kind(1.0D0)) :: blarea = 0.0D0
   !! blarea : blanket total surface area (m2)
 
   real(dp) :: blareaib = 0.0D0
@@ -3314,7 +3329,9 @@ module build_variables
   !! ddwex /0.07/ : cryostat thickness (m)
   real(dp) :: ddwi = 0.07D0
   !! ddwi /0.07/ : vacuum vessel thickness (TF coil / shield) (m)
-  real(dp) :: fcspc = 0.6D0
+  real(kind(1.0D0)) :: f_avspace = 1.0D0
+  !! f_avspace: F-value for stellarator radial space check (constraint equation 83)
+  real(kind(1.0D0)) :: fcspc = 0.6D0
   !! fcspc /0.6/ : Fraction of space occupied by CS pre-compression structure
   real(dp) :: fmsbc = 0.0D0
   !! fmsbc /0.0/ : Martensitic fraction of steel in (non-existent!) bucking cylinder
@@ -3391,7 +3408,9 @@ module build_variables
   !! precomp : CS coil precompression structure thickness (m)
   real(dp) :: rbld = 0.0D0
   !! rbld : sum of thicknesses to the major radius (m)
-  real(dp) :: rinboard = 0.651D0
+  real(kind(1.0D0)) :: required_radial_space = 0.0D0
+  !! required_radial_space : Required space between coil and plasma for blanket shield wall etc (m)
+  real(kind(1.0D0)) :: rinboard = 0.651D0
   !! rinboard /0.651/ : plasma inboard radius (m)
   !!                    (consistency equation 29)
   real(dp) :: rsldi = 0.0D0
@@ -3974,7 +3993,10 @@ module constraint_variables
   real(dp) :: fbetatry = 1.0D0
   !! fbetatry /1.0/ : f-value for beta limit
   !!                  (constraint equation 24, iteration variable 36)
-  real(dp) :: fcpttf = 1.0D0
+  real(kind(1.0D0)) :: fbetatry_lower = 1.0D0
+  !! fbetatry /1.0/ : f-value for (lower) beta limit
+  !!                  (constraint equation 84, iteration variable 173)
+  real(kind(1.0D0)) :: fcpttf = 1.0D0
   !! fcpttf /1.0/ : f-value for TF coil current per turn upper limit
   !!              (constraint equation 77, iteration variable 146)
   real(dp) :: fcwr = 1.0D0

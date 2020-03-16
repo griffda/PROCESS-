@@ -2969,6 +2969,64 @@ subroutine init_itv_1
       DUMMY = ratio
    end subroutine set_itv_170
 
+   !---------------------------------
+
+   subroutine init_itv_171
+      !! <LI> (171) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
+      lablxc(171) = 'ftoroidalgap  ' 
+      boundl(171) = 1.0D-4
+      boundu(171) = 1.0D0
+   end subroutine init_itv_171
+
+   real(kind(1.d0)) function itv_171()
+      itv_171 = ftoroidalgap 
+   end function itv_171
+
+   subroutine set_itv_171(ratio)
+      real(kind(1.d0)) :: ratio
+      ftoroidalgap = ratio
+   end subroutine set_itv_171
+
+
+   !---------------------------------
+
+   subroutine init_itv_172
+      !! <LI> (76) f_avspace (f-value for equation 83)
+      lablxc(172) = 'f_avspace     '
+      boundl(172) = 0.010D0
+      boundu(172) = 1.000D0
+   end subroutine init_itv_172
+
+
+   real(kind(1.d0)) function itv_172()
+      itv_172 = f_avspace 
+   end function itv_172
+
+   subroutine set_itv_172(ratio)
+      real(kind(1.d0)) :: ratio
+      f_avspace = ratio
+   end subroutine set_itv_172
+
+
+   !---------------------------------
+
+
+   subroutine init_itv_173
+      !! <LI> (76) fbetatry_lower (f-value for equation 84)
+      lablxc(173) = 'fbetatry_lower     '
+      boundl(173) = 0.010D0
+      boundu(173) = 1.000D0
+   end subroutine init_itv_173
+
+
+   real(kind(1.d0)) function itv_173()
+      itv_173 = fbetatry_lower 
+   end function itv_173
+
+   subroutine set_itv_173(ratio)
+      real(kind(1.d0)) :: ratio
+      fbetatry_lower = ratio
+   end subroutine set_itv_173
 !! </UL>
 end module define_iteration_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3058,7 +3116,7 @@ subroutine loadxc
          case (40);  xcm(i) = itv_40()
          case (41);  xcm(i) = itv_41()
          case (42);  xcm(i) = itv_42()
-         case (43);  xcm(i) = itv_43()
+         case (43);  
          case (44);  xcm(i) = itv_44()
          case (45);  xcm(i) = itv_45()
          case (46);  xcm(i) = itv_46()
@@ -3187,6 +3245,9 @@ subroutine loadxc
          case (168);  xcm(i) = itv_168()
          case (169);  xcm(i) = itv_169()
          case (170);  xcm(i) = itv_170()
+         case (171);  xcm(i) = itv_171()
+         case (172);  xcm(i) = itv_172()
+         case (173);  xcm(i) = itv_173()
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -3463,7 +3524,10 @@ subroutine convxc(xc,nn)
          case (167);  call set_itv_167(ratio)
          case (168);  call set_itv_168(ratio)
          case (169);  call set_itv_169(ratio)
-         case (170);  call set_itv_170(ratio)      
+         case (170);  call set_itv_170(ratio)
+         case (171);  call set_itv_171(ratio)
+         case (172);  call set_itv_172(ratio)    
+         case (173);  call set_itv_173(ratio)     
 
          case default
             call report_error(57)

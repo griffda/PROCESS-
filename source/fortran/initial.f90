@@ -107,6 +107,7 @@ subroutine initial
     call init_itv_73
     call init_itv_74
     call init_itv_75
+
     
     
     
@@ -200,6 +201,8 @@ subroutine initial
     call init_itv_168
     call init_itv_169
     call init_itv_170
+    call init_itv_171
+    call init_itv_172
 
 
     !    call init_itv_1
@@ -348,8 +351,8 @@ subroutine initial
     !    !!  <LI> (74) scraplo
     !    lablxc(75) = 'tfootfi       '; boundl(75) = 0.200D0; boundu(75) = 5.000D0
     !    !!  <LI> (75) tfootfi
-    !    !!  <LI> (77) NOT USED
     !    !!  <LI> (76) NOT USED
+    !    !!  <LI> (77) NOT USED
     !    !!  <LI> (78) NOT USED
     !    !!  <LI> (79) fbetap (f-value for equation 48)
     !    lablxc(79) = 'fbetap        '; boundl(79) = 0.001D0; boundu(79) = 1.000D0
@@ -495,6 +498,10 @@ subroutine initial
     !    !!  <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)
     !    lablxc(154) = 'fpdivlim      '; boundl(154) = 0.001D0; boundu(154) = 1.000D0
     !    !!  <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)</UL>
+    !    lablxc(172) = 'f_avspace       '; boundl(172) = 0.0010D0; boundu(172) = 1.000D0
+    !    !!  <LI> (172) f_avspace
+    !    lablxc(173) = 'fbetatry_lower       '; boundl(173) = 0.0010D0; boundu(173) = 1.000D0
+    !    !!  <LI> (173) fbetatry_lower
 
 
     !  Initialise stellarator parameters if necessary
