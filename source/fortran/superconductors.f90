@@ -465,22 +465,26 @@ end subroutine jcrit_nbti
 !--------------------------------------------------------------------
 subroutine GL_nbti(thelium,bmax,strain,bc20max,t_c0,jcrit,bcrit,tcrit)
   
+    !!  Author: S B L Chislett-McDonald Durham University
+    !!  Category: subroutine
+    !!
     !!  Critical current density of the superconductor in an ITER 
     !!  Nb-Ti strand based on the Ginzburg-Landau theory of superconductivity 
-    !!  Author: S B L Chislett-McDonald Durham University
-    !!  thelium : input real : Coolant/SC temperature (K)
-    !!  bmax : input real : Magnetic field at conductor (T)
-    !!  strain : input real : Strain in superconductor
-    !!  bc20max : input real : Upper critical field (T) for superconductor
-    !!                      at zero temperature and strain
-    !!  tc0max : input real : Critical temperature (K) at zero field and strain
-    !!  jcrit : output real : Critical current density in superconductor (A/m2)
-    !!  tcrit : output real : Critical temperature (K)
-    !!  This routine calculates the critical current density and
-    !!  temperature in superconducting TF coils using NbTi
-    !!  as the superconductor.   
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !!
+    !! \begin{equation}
+    !!  J_{c,TS}(B,T,\epsilon_{I}) = A(\epsilon_{I}) \left[T_{c}(\epsilon_{I})*(1-t^2)\right]^2\left
+    !!  [B_{c2}(\epsilon_I)*(1-t^\nu)\right]^{n-3}b^{p-1}(1-b)^q~.
+    !! \end{equation}
+    !!
+    !!  - \( \thelium \) -- Coolant/SC temperature [K]
+    !!  - \( \bmax \) -- Magnetic field at conductor [T]
+    !!  - \( \\epsilon_{I} \) -- Intrinsic strain in superconductor [\%]
+    !!  - \( \B_{c2}(\epsilon_I) \) -- Strain dependent upper critical field [T]    
+    !!  - \( \b \) -- Reduced field = bmax / \B_{c2}(\epsilon_I)*(1-t^\nu) [unitless]           
+    !!  - \( \T_{c}(\epsilon_{I}) \) -- Strain dependent critical temperature (K)
+    !!  - \( \t \) -- Reduced temperature = thelium / \T_{c}(\epsilon_{I}) [unitless]
+    !!  - \( \A(epsilon_{I}) \) -- Strain dependent Prefactor [A / ( m\(^2\) K\(^-2) T\(^n-3))]
+    !!  - \( \J_{c,TS} \) --  Critical current density in superconductor [A / m\(^-2\)]
 
     implicit none
 
