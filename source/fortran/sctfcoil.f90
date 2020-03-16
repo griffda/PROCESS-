@@ -3047,7 +3047,7 @@ contains
             idiags(1) = isumat ; call report_error(105)
 
         case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
-            bc20m = upper_critical_field
+            bc20m = b_crit_upper_nbti
             tc0m = 9.04D0
             call GL_nbti(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
             jcritstr = jcritsc  * (1.0D0-fcu)

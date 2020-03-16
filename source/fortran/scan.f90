@@ -864,7 +864,7 @@ contains
             boundu(157) = swp(iscn)
             vlab = 'boundu(157)' ; xlab = 'Max allowable fvssu'
         case (54)
-            fbcupper = swp(iscn)
+            b_crit_upper_nbti = swp(iscn)
             vlab = 'Bc2(0K)' ; xlab = 'GL_NbTi Bc2(0K)'
             
         case default
